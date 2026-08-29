@@ -1,3 +1,5 @@
+import { CORE_CATALOG, type CoreTranslationKey } from "./coreCatalog";
+
 export type Locale = "zh-TW" | "zh-CN" | "en";
 
 export const LOCALES: readonly Locale[] = ["zh-TW", "zh-CN", "en"] as const;
@@ -257,10 +259,12 @@ const catalog = {
   },
 } as const;
 
-export type TranslationKey = keyof typeof catalog;
+type BaseTranslationKey = keyof typeof catalog;
+export type TranslationKey = BaseTranslationKey | CoreTranslationKey;
 
 export function translate(locale: Locale, key: TranslationKey): string {
-  return catalog[key][locale];
+  if (key in CORE_CATALOG) return CORE_CATALOG[key as CoreTranslationKey][locale];
+  return catalog[key as BaseTranslationKey][locale];
 }
 
 export function isLocale(value: string | null): value is Locale {
