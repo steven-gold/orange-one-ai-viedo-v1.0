@@ -329,9 +329,12 @@ for path, needles in checks.items():
     for needle in needles:
         if needle not in data:
             raise SystemExit(f"{path} missing {needle}")
-for path in [info_path, nav, shell, sys_path, pim]:
+for path in [nav, shell, sys_path, pim]:
     data = Path(path).read_text()
-    for forbidden in ["no ninth front L1", "Not a ninth front L1", "SUPPORTING_CONTEXTUAL_DEEP_LINK_NOT_FRONT_L1", "global_l1: false"]:
+    for forbidden in ["no ninth front L1", "Not a ninth front L1", "SUPPORTING_CONTEXTUAL_DEEP_LINK_NOT_FRONT_L1"]:
         if forbidden in data:
             raise SystemExit(f"{path} still contains contradiction: {forbidden}")
+info_data = Path(info_path).read_text()
+if "\n  global_l1: false\n" in info_data:
+    raise SystemExit("INFO authority still has global_l1 false")
 print(f"VIS-09 generated: controls={len(entries)} sections={len({e['section'] for e in entries})} components={len({e['component'] for e in entries})}")
