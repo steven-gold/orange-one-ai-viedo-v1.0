@@ -100,56 +100,58 @@ jobs:
               '      brand_lockup_note: ORANGE ONE text lockup rendered; no generated/recolored substitute logo asset was introduced.\n',
               '      brand_lockup_note: Superseded during VIS-01 by the canonical user-supplied transparent logo asset; dark-header render uses the user-approved white monochrome color adaptation while preserving artwork content, geometry, and intrinsic aspect ratio.\n'
           )
-          old_vis01 = '''  - id: VIS-01
-    group: HOME
-    page_uid: workspace:WB-01
-    name: 儀表板 / Dashboard
-    status: NOT_STARTED
-'''
-          new_vis01 = f'''  - id: VIS-01
-    group: HOME
-    page_uid: workspace:WB-01
-    name: 儀表板 / Dashboard
-    status: COMPLETE
-    scope: 14 canonical dashboard sections, 14 SECTION_OPEN controls, fixed empty/loading/error presentation, 520px projection drawer, shared Global Header language selector, and canonical ORANGE ONE logo only; no business API/DB/provider/crawler logic.
-    evidence:
-      implementation_commit: {os.environ['VALIDATED_SHA']}
-      final_validation_run_id: {os.environ['VALIDATION_RUN_ID']}
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      locale_sequence: zh-TW -> zh-CN -> en -> zh-TW
-      business_requests_during_locale_switch: 0
-      manual_visual_inspection: PASS
-      manual_visual_inspection_basis: All seven persisted screenshots from the same visual implementation were inspected; no unintended clipping, overlap, logo distortion, or shell reflow found. 1200px intentionally preserves the registered 1280px dashboard min-width with horizontal scrolling.
-      render_evidence:
-      - docs/construction/evidence/VIS-01/vis01-1440-top.png
-      - docs/construction/evidence/VIS-01/vis01-1440-middle.png
-      - docs/construction/evidence/VIS-01/vis01-1440-bottom.png
-      - docs/construction/evidence/VIS-01/vis01-1440-drawer.png
-      - docs/construction/evidence/VIS-01/vis01-language-menu-zh-tw.png
-      - docs/construction/evidence/VIS-01/vis01-1366-top.png
-      - docs/construction/evidence/VIS-01/vis01-1200-minwidth.png
-      - docs/construction/evidence/VIS-01/vis01-validation.json
-      verified_contract:
-        sections: 14
-        section_open_controls: 14
-        kpi_count: 6
-        drawer_width: 520px
-        fake_business_data: false
-        business_fetch_xhr: 0
-        global_nav_count: 8
-        header_height: 58px
-        workspace_origin: x=78,y=68
-        logo_asset: public/brand/orange-one-logo.png
-        logo_source_dimensions: 416x192
-        logo_render_dimensions: 104x48
-        logo_aspect_ratio_preserved: true
-        logo_color_application: USER_APPROVED_WHITE_MONOCHROME_FOR_DARK_HEADER
-        supported_locales: zh-TW/zh-CN/en
-'''
+          old_vis01 = (
+              '  - id: VIS-01\n'
+              '    group: HOME\n'
+              '    page_uid: workspace:WB-01\n'
+              '    name: 儀表板 / Dashboard\n'
+              '    status: NOT_STARTED\n'
+          )
+          new_vis01 = (
+              '  - id: VIS-01\n'
+              '    group: HOME\n'
+              '    page_uid: workspace:WB-01\n'
+              '    name: 儀表板 / Dashboard\n'
+              '    status: COMPLETE\n'
+              '    scope: 14 canonical dashboard sections, 14 SECTION_OPEN controls, fixed empty/loading/error presentation, 520px projection drawer, shared Global Header language selector, and canonical ORANGE ONE logo only; no business API/DB/provider/crawler logic.\n'
+              '    evidence:\n'
+              f"      implementation_commit: {os.environ['VALIDATED_SHA']}\n"
+              f"      final_validation_run_id: {os.environ['VALIDATION_RUN_ID']}\n"
+              '      typecheck: PASS\n'
+              '      next_build: PASS\n'
+              '      production_server: PASS\n'
+              '      chromium_render_and_geometry: PASS\n'
+              '      locale_switch_runtime: PASS\n'
+              '      locale_sequence: zh-TW -> zh-CN -> en -> zh-TW\n'
+              '      business_requests_during_locale_switch: 0\n'
+              '      manual_visual_inspection: PASS\n'
+              '      manual_visual_inspection_basis: All seven persisted screenshots from the same visual implementation were inspected; no unintended clipping, overlap, logo distortion, or shell reflow found. 1200px intentionally preserves the registered 1280px dashboard min-width with horizontal scrolling.\n'
+              '      render_evidence:\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1440-top.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1440-middle.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1440-bottom.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1440-drawer.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-language-menu-zh-tw.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1366-top.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1200-minwidth.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-validation.json\n'
+              '      verified_contract:\n'
+              '        sections: 14\n'
+              '        section_open_controls: 14\n'
+              '        kpi_count: 6\n'
+              '        drawer_width: 520px\n'
+              '        fake_business_data: false\n'
+              '        business_fetch_xhr: 0\n'
+              '        global_nav_count: 8\n'
+              '        header_height: 58px\n'
+              '        workspace_origin: x=78,y=68\n'
+              '        logo_asset: public/brand/orange-one-logo.png\n'
+              '        logo_source_dimensions: 416x192\n'
+              '        logo_render_dimensions: 104x48\n'
+              '        logo_aspect_ratio_preserved: true\n'
+              '        logo_color_application: USER_APPROVED_WHITE_MONOCHROME_FOR_DARK_HEADER\n'
+              '        supported_locales: zh-TW/zh-CN/en\n'
+          )
           if old_vis01 not in text:
               raise SystemExit('VIS-01 NOT_STARTED block not found; refusing ambiguous progress edit')
           text = text.replace(old_vis01, new_vis01)
@@ -158,7 +160,7 @@ jobs:
           if marker not in text:
               raise SystemExit('progress truthful_progress_note not found')
           prefix = text.split(marker, 1)[0]
-          note = '''  truthful_progress_note: VIS-00 Global Shell and VIS-01 WB-01 visual positioning are implemented and verified. VIS-01 evidence includes TypeScript/Next build, production-server Chromium validation, 1440/1366/1200 layout checks, 520px Drawer behavior, zh-TW/zh-CN/en switching with zero business requests, canonical uploaded ORANGE ONE logo with user-approved white monochrome dark-header adaptation, persisted render evidence, and manual visual inspection. VIS-02 CORE-01 is current. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.\n'''
+          note = '  truthful_progress_note: VIS-00 Global Shell and VIS-01 WB-01 visual positioning are implemented and verified. VIS-01 evidence includes TypeScript/Next build, production-server Chromium validation, 1440/1366/1200 layout checks, 520px Drawer behavior, zh-TW/zh-CN/en switching with zero business requests, canonical uploaded ORANGE ONE logo with user-approved white monochrome dark-header adaptation, persisted render evidence, and manual visual inspection. VIS-02 CORE-01 is current. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.\n'
           p.write_text(prefix + note, encoding='utf-8')
           PY
           git config user.name 'steven-gold'
