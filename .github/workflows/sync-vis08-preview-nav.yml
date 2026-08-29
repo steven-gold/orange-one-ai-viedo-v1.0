@@ -1,0 +1,37 @@
+name: Sync VIS-08 Preview Navigation
+on:
+  push:
+    branches: [acpos-live-preview]
+    paths: ['.github/workflows/sync-vis08-preview-nav.yml']
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+      - name: Enable NAV-08 in existing preview pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          files=['preview/index.html','preview/edit.html','preview/qa.html']
+          variants=[
+            ('<button disabled><span class="ico">◎</span><span class="nav-label" data-i="strategy">戰略中心</span></button>', '<a href="strategy.html"><span class="ico">◎</span><span class="nav-label" data-i="strategy">戰略中心</span></a>'),
+            ('<button disabled><span class="ico">◎</span><span class="nav-label" data-tw="戰略中心" data-cn="战略中心" data-en="Strategy Center">戰略中心</span></button>', '<a href="strategy.html"><span class="ico">◎</span><span class="nav-label" data-tw="戰略中心" data-cn="战略中心" data-en="Strategy Center">戰略中心</span></a>')
+          ]
+          for f in files:
+            p=Path(f); s=p.read_text(); before=s
+            for old,new in variants: s=s.replace(old,new)
+            if s==before: raise SystemExit(f'NAV-08 pattern not found in {f}')
+            p.write_text(s)
+          PY
+      - name: Commit exact preview nav changes and remove workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add preview/index.html preview/edit.html preview/qa.html
+          git rm .github/workflows/sync-vis08-preview-nav.yml
+          git commit -m 'preview(vis08): enable Strategy navigation across preview shell [skip ci]'
+          git push origin HEAD:acpos-live-preview
