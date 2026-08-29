@@ -1,0 +1,81 @@
+name: VIS-10 blocker truth sync
+on:
+  push:
+    branches:
+      - acpos-vis10-staging
+    paths:
+      - .github/workflows/vis10-blocker-sync.yml
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis10-staging
+      - name: Record truthful VIS-10 authority blockers
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml')
+          s=p.read_text()
+          old='''  current_task: VIS-10_ADMIN_SYS-01_VISUAL_POSITIONING
+  last_completed_task: VIS-09_FRONT_INFO-01_VISUAL_POSITIONING
+'''
+          new='''  current_task: VIS-10_ADMIN_SYS-01_VISUAL_POSITIONING
+  current_task_state: BLOCKED_BY_AUTHORITY_GAP
+  current_task_blockers:
+  - CANONICAL_ROUTE_RESOLVER_MISSING
+  - PRESERVED_25_CONTROL_REGISTRY_UID_SOURCE_MISSING
+  last_completed_task: VIS-09_FRONT_INFO-01_VISUAL_POSITIONING
+'''
+          if old not in s: raise SystemExit('current_state anchor not found')
+          s=s.replace(old,new,1)
+          old2='''  - id: VIS-10
+    group: ADMIN
+    page_uid: admin:SYS-01
+    name: 系統維護
+    status: NOT_STARTED
+'''
+          new2='''  - id: VIS-10
+    group: ADMIN
+    page_uid: admin:SYS-01
+    name: 系統維護
+    status: BLOCKED_BY_AUTHORITY_GAP
+    blocker_detail:
+      canonical_route_resolver:
+        state: MISSING
+        finding: ADMIN-NAV-01 binds admin:SYS-01, but Current Authority/repo contains no literal route/path/href/URL resolver for this page.
+        rule: Do not invent /admin/system or any other route.
+      preserved_control_registry:
+        state: MISSING
+        finding: SYS-01 Current Page Authority declares 25 existing registered controls must be preserved, but their exact control UIDs are not present in the Current Authority repository text; only the 4 explicit Multi-AI controls are enumerated.
+        rule: Do not invent or semantically reconstruct the missing 25 control UIDs.
+    discovery_evidence:
+      registry_scan_run_id: 33282112752
+      registry_scan_artifact_id: 9723286489
+      registry_scan_result: No separate exact 25-control SYS-01 UID registry found in current repository.
+      route_scan_run_id: 33282172518
+      route_scan_artifact_id: 9723304445
+      route_scan_result: No literal SYS-01 route/path/href resolver found in current repository.
+      pre_blocker_sync_staging_diff_vs_new: ZERO_FILES
+    resume_gate:
+    - Publish/identify canonical literal route resolver for admin:SYS-01 / ADMIN-NAV-01.
+    - Publish/identify exact authoritative UID registry for the preserved 25 SYS-01 controls, including section/action/component/visual bindings where required.
+    - Then restart VIS-10 from Current Authority without inferring missing definitions.
+'''
+          if old2 not in s: raise SystemExit('VIS-10 anchor not found')
+          s=s.replace(old2,new2,1)
+          p.write_text(s)
+          PY
+          ruby -e 'require "yaml"; YAML.load_file("docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml"); puts "PROGRESS YAML PASS"'
+      - name: Commit tracker and self-clean
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+          git commit -m "docs(vis10): record SYS-01 authority blockers"
+          git rm .github/workflows/vis10-blocker-sync.yml
+          git commit -m "chore(vis10): remove temporary blocker sync workflow"
+          git push origin HEAD:acpos-vis10-staging
