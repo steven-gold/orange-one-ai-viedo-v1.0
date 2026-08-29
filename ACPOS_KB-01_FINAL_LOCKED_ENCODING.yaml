@@ -1,0 +1,583 @@
+authority:
+  id: ACPOS_KB-01_FINAL_LOCKED_ENCODING
+  page_uid: admin:KB-01
+  status: FINAL_LOCKED
+  current_only: true
+  surface: ADMIN
+  model: SINGLE_PAGE_5_VIEW
+  system: ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+  visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
+  nav_permission: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+  undefined: BLOCK + REPORT_AUTHORITY_GAP
+  real_data_only: true
+  missing: —
+purpose: Knowledge Source/Acquisition/Search-Citation-Context/Experience Replay/Learning/Knowledge Review governance surface.
+boundaries:
+- NO_PARALLEL_CONTEXT_EXPERIENCE_LEARNING_EVENT_CRAWLER
+- NO_INFO_DUPLICATION
+- NO_CANON_BLUEPRINT_WRITE
+- NO_STRATEGY_FORMAL_DECISION
+- NO_PROVIDER_PICKER
+- NO_MEDIA_QA
+- CONVERSATION_NOT_APPROVED_KNOWLEDGE
+layout:
+  min_width: 1280
+  context_h: 56
+  tabs_h: 52
+  gap: 16
+  padding: 16
+  panel_r: 12
+  control_h: 40
+  drawer: 500-560
+  views:
+  - V:OVERVIEW|S:02,S:16|KPI5 h132;main68/32|A:SEARCH
+  - V:SOURCE|S:03,S:04,S:05,S:16|24/50/26;drawer520|A:SOURCE-CREATE,A:SOURCE-SAVE,A:INGEST-START
+  - V:SEARCH|S:06,S:07,S:08,S:16|34/44/22|A:SEARCH,A:CONTEXT-CANDIDATE-CREATE
+  - V:EXPERIENCE|S:09,S:10,S:11,S:16|24/54/22|A:REPLAY-OPEN,A:LEARNING-CREATE,A:KNOWLEDGE-DRAFT-FROM-EXPERIENCE
+  - V:REVIEW|S:12,S:13,S:14,S:15,S:16|23/55/22|A:KNOWLEDGE-DRAFT-SAVE,A:KNOWLEDGE-APPROVE,A:KNOWLEDGE-RETURN,A:KNOWLEDGE-REJECT
+uid_expansion:
+  S: KB-01-SEC-
+  C: KB-01-CMP-
+  F: KB-01-FLD-
+  T: KB-01-CTL-
+  A: KB-01-ACT-
+  G: KB-01-GATE-
+  E: KB-01-ERR-
+  V: KB-01-VIEW-
+section_registry:
+  count: 16
+  format: S:nn::order::name::responsibility
+  rows:
+  - S:01::1::Page Context / View Navigation::頁面標題、Active View、授權範圍、全域頁內 Search、View 切換。
+  - S:02::2::Knowledge Overview::來源、Ingestion、Experience、Knowledge Review、Approved Knowledge 的治理摘要與警示。
+  - S:03::3::Source Directory::Knowledge Source 搜尋、篩選、清單、選取。
+  - S:04::4::Source Detail / Governance::來源 Scope、Rights、Classification、Freshness、Retention、Status 設定。
+  - S:05::5::Research / Ingestion Queue::Research/Ingestion 執行、進度、Normalization、Failure、Retry。
+  - S:06::6::Search / Result Explorer::Approved/traceable Knowledge、Fact、Evidence 的 Search/Filter/Result。
+  - S:07::7::Citation / Evidence Detail::Citation、Source Metadata、Source Time/Version、Classification、Freshness、Evidence。
+  - S:08::8::Context Candidate Builder::將選取的 Knowledge/Fact/Evidence 組成共用 ACPOSContextCandidate。
+  - S:09::9::Experience Directory::ACPOSExperienceRecord 搜尋、篩選、Outcome Completeness。
+  - S:10::10::Experience Replay::以 ACPOSStateProjection + ACPOSExperienceRecord 重播 Input→Route→Output→Evaluation→Correction→Outcome。
+  - S:11::11::Root Cause / Learning Candidate::Root Cause、Pattern、限制與 ACPOSLearningCandidate 建立。
+  - S:12::12::Knowledge Review Queue::Knowledge Draft 待審查清單、狀態、優先序。
+  - S:13::13::Knowledge Draft / Evidence Review::Draft Content、Fact/Inference 分類、Citation/Outcome Validation。
+  - S:14::14::Version Diff / Supersession::Draft vs Previous Approved Knowledge Version 差異與 supersedes 關係。
+  - S:15::15::Review Decision Rail::Mandatory Checklist、Approve / Return / Reject、Review Rationale。
+  - S:16::16::Status / Error / Audit::Correlation、Error、Audit、State/Disabled Reason、最近操作結果。
+component_registry:
+  count: 22
+  format: C:suffix::S:nn::name
+  rows:
+  - C:CONTEXT::S:01::Page Context Bar
+  - C:VIEW-TABS::S:01::Five View Tabs
+  - C:OVERVIEW-KPI::S:02::Knowledge / Experience KPI Summary
+  - C:OVERVIEW-WARN::S:02::Governance Warning Feed
+  - C:SOURCE-LIST::S:03::Source Directory / Filter
+  - C:SOURCE-DETAIL::S:04::Source Detail / Configuration
+  - C:INGESTION::S:05::Research / Ingestion Queue
+  - C:INGESTION-DRAWER::S:05::Failure / Retry Detail Drawer
+  - C:SEARCH::S:06::Knowledge Search / Filters
+  - C:RESULTS::S:06::Search Results
+  - C:CITATION::S:07::Citation / Evidence Detail
+  - C:CONTEXT-BASKET::S:08::ACPOS Context Candidate Basket
+  - C:EXP-LIST::S:09::ACPOS Experience Directory
+  - C:REPLAY::S:10::Experience Replay Timeline / Compare
+  - C:ROOT-CAUSE::S:11::Root Cause / Pattern
+  - C:LEARNING::S:11::ACPOS Learning Candidate Draft
+  - C:REVIEW-QUEUE::S:12::Knowledge Review Queue
+  - C:DRAFT::S:13::Knowledge Draft
+  - C:EVIDENCE-CHECK::S:13::Evidence / Citation / Outcome Validation
+  - C:VERSION-DIFF::S:14::Knowledge Version Diff
+  - C:REVIEW-RAIL::S:15::Review Checklist / Decision
+  - C:STATUS::S:16::Status / Error / Audit Strip
+field_registry:
+  count: 127
+  defaults:
+    missing: —
+    visibility: AUTHORIZED_SCOPE_ONLY
+    version: EXACT_OR_PROJECTION_VERSION
+    audit: true
+    read_only: unless field_key in W
+  format: section|component|source_object|F:suffix:key:type,...|R=required_keys|W=editable_keys|P=permissions
+  rows:
+  - S:01|C:CONTEXT|PAGE_AUTHORITY|F:PAGE-TITLE:page_title:TEXT|R=page_title|W=|P=knowledge.read
+  - S:01|C:CONTEXT|PAGE_UI_STATE|F:ACTIVE-VIEW:active_view:ENUM|R=active_view|W=|P=knowledge.read
+  - S:01|C:CONTEXT|ACPOS_PERMISSION_SCOPE|F:SCOPE:authorized_scope:SCOPE_REF|R=authorized_scope|W=|P=knowledge.read
+  - S:04|C:SOURCE-DETAIL|KnowledgeSource|F:SOURCE-ID:source_id:ID_REF,F:SOURCE-VERSION:source_version:VERSION_REF,F:SOURCE-NAME:name:TEXT,F:SOURCE-TYPE:source_type:ENUM,F:SOURCE-SCOPE:scope:SCOPE_REF,F:SOURCE-RIGHTS:rights:RIGHTS_POLICY_REF,F:SOURCE-CLASS:classification:ENUM,F:SOURCE-COLLECT:collection_method:ENUM,F:SOURCE-CONFIG:collection_config:JSON_FORM,F:SOURCE-FRESH:freshness_policy:POLICY_REF,F:SOURCE-RETENTION:retention_policy:POLICY_REF,F:SOURCE-STATUS:status:ENUM|R=source_id,source_version,name,source_type,scope,rights,classification,collection_method,freshness_policy,retention_policy,status|W=name,source_type,scope,rights,classification,collection_method,collection_config,freshness_policy,retention_policy|P=knowledge.source.read
+  - S:05|C:INGESTION|KnowledgeIngestionRun|F:RUN-ID:run_id:ID_REF,F:RUN-SOURCE:source_ref:REF,F:RUN-MODE:run_type:ENUM,F:RUN-STATUS:status:ENUM,F:RUN-PROGRESS:progress:PERCENT,F:RUN-START:started_at:DATETIME,F:RUN-END:ended_at:DATETIME,F:RUN-RAW:raw_output_refs:REF_LIST,F:RUN-NORMALIZED:normalized_refs:REF_LIST,F:RUN-EVIDENCE:evidence_refs:REF_LIST,F:RUN-FAIL:failure_ref:ERROR_REF,F:RUN-RETRY:retry_eligible:BOOLEAN|R=|W=|P=knowledge.ingestion.read
+  - S:06|C:RESULTS|KnowledgeSearchResult|F:RESULT-ID:result_ref:REF,F:RESULT-TYPE:classification_type:ENUM,F:RESULT-TITLE:title:TEXT,F:RESULT-SCOPE:scope:SCOPE_REF,F:RESULT-SOURCE:source_ref:REF,F:RESULT-TIME:source_time:DATETIME,F:RESULT-VERSION:source_version:VERSION_REF,F:RESULT-FRESH:freshness_state:ENUM,F:RESULT-REVIEW:review_state:ENUM|R=|W=|P=knowledge.read
+  - S:07|C:CITATION|KnowledgeCitation|F:CIT-ID:citation_id:ID_REF,F:CIT-SOURCE:source_ref:REF,F:CIT-LOC:source_location:TEXT,F:CIT-TIME:source_time:DATETIME,F:CIT-VER:source_version:VERSION_REF,F:CIT-CHECKSUM:checksum:HASH,F:CIT-CLASS:classification:ENUM,F:CIT-EVIDENCE:evidence_ref:REF|R=|W=|P=knowledge.read
+  - S:08|C:CONTEXT-BASKET|ACPOSContextCandidate|F:CTX-CAND-ID:context_candidate_id:ID_REF,F:CTX-CAND-VERSION:version:VERSION_REF,F:CTX-CAND-PURPOSE:purpose:TEXTAREA,F:CTX-CAND-SCOPE:scope:SCOPE_REF,F:CTX-CAND-ITEMS:selected_refs:REF_LIST,F:CTX-CAND-EVIDENCE:evidence_refs:REF_LIST,F:CTX-CAND-STATE:state:ENUM,F:CTX-CAND-FP:context_fingerprint:HASH|R=|W=purpose,scope,selected_refs|P=knowledge.context.create,knowledge.read
+  - S:09|C:EXP-LIST|ACPOSExperienceRecord|F:EXP-ID:experience_id:ID_REF,F:EXP-DOMAIN:domain:ENUM,F:EXP-DEPT:department:ENUM,F:EXP-TASKTYPE:task_type:TEXT,F:EXP-SOURCECTX:source_context_refs:REF_LIST,F:EXP-PROVIDER:provider_model_ref:REF,F:EXP-ROUTE:route_decision_ref:REF,F:EXP-ATTEMPT:attempt_count:INTEGER,F:EXP-LATENCY:latency_ms:INTEGER,F:EXP-COST:cost_ref:MONEY_REF,F:EXP-EVAL:evaluation_refs:REF_LIST,F:EXP-QA:qa_outcome_refs:REF_LIST,F:EXP-CORR:correction_refs:REF_LIST,F:EXP-OUTCOME:business_human_outcome:OBJECT,F:EXP-STATE:state:ENUM|R=|W=|P=knowledge.experience.read
+  - S:10|C:REPLAY|ACPOSExperienceReplayProjection|F:REPLAY-SOURCE:source_input_refs:REF_LIST,F:REPLAY-INSTRUCTION:instruction_refs:REF_LIST,F:REPLAY-ROUTE:route_refs:REF_LIST,F:REPLAY-OUTPUT:output_refs:REF_LIST,F:REPLAY-EVAL:evaluation_refs:REF_LIST,F:REPLAY-CORRECTION:correction_refs:REF_LIST,F:REPLAY-OUTCOME:outcome_refs:REF_LIST,F:REPLAY-ROOT:root_cause:OBJECT|R=|W=|P=knowledge.experience.read
+  - S:11|C:LEARNING|ACPOSLearningCandidate|F:LEARN-ID:learning_candidate_id:ID_REF,F:LEARN-VERSION:version:VERSION_REF,F:LEARN-SCOPE:scope:SCOPE_REF,F:LEARN-PATTERN:pattern:TEXTAREA,F:LEARN-PROPOSAL:proposed_improvement:TEXTAREA,F:LEARN-EVIDENCE:evidence_refs:REF_LIST,F:LEARN-LIMIT:limitations:TEXTAREA,F:LEARN-STATE:state:ENUM|R=|W=scope,pattern,proposed_improvement,evidence_refs,limitations|P=knowledge.learning.create,knowledge.read
+  - S:13|C:DRAFT|KnowledgeVersion|F:KN-ID:knowledge_id:ID_REF,F:KN-DRAFTVER:draft_version:VERSION_REF,F:KN-TITLE:title:TEXT,F:KN-TYPE:knowledge_type:ENUM,F:KN-SUMMARY:summary:TEXTAREA,F:KN-CONTENT:content:RICH_TEXT,F:KN-SCOPE:scope:SCOPE_REF,F:KN-CLASS:classification:ENUM,F:KN-CIT:citation_refs:REF_LIST,F:KN-OUTCOME:outcome_refs:REF_LIST,F:KN-SOURCEEXP:experience_refs:REF_LIST,F:KN-STATE:review_state:ENUM|R=title,knowledge_type,scope,classification|W=title,knowledge_type,summary,content,scope,classification,citation_refs,outcome_refs,experience_refs|P=knowledge.draft.write,knowledge.read
+  - S:15|C:REVIEW-RAIL|KnowledgeReviewProjection|F:REV-PREV:previous_approved_version_ref:VERSION_REF,F:REV-DIFF:version_diff:DIFF,F:REV-CONFLICT:conflict_refs:REF_LIST,F:REV-CHECK:mandatory_check_results:OBJECT_LIST,F:REV-BY:reviewed_by:ACCOUNT_REF,F:REV-AT:reviewed_at:DATETIME|R=|W=|P=knowledge.read
+  - S:15|C:REVIEW-RAIL|KnowledgeReviewDraft|F:REV-RATIONALE:review_rationale:TEXTAREA,F:REV-DECISION:review_decision:ENUM|R=review_rationale|W=review_rationale,review_decision|P=knowledge.review.approve
+  - S:04|C:SOURCE-DETAIL|KnowledgeAcquisitionIntent|F:ACQ-MODE:acquisition_mode:ENUM,F:SEED:seed_url_or_query:TEXT,F:ALLOW-DOMAINS:allowed_domains:STRING_LIST,F:DENY-DOMAINS:denied_domains:STRING_LIST,F:PATH-POLICY:path_allow_deny:OBJECT,F:SAME-DOMAIN:same_domain_only:BOOLEAN,F:MAX-DEPTH:max_depth:INTEGER,F:MAX-PAGES:max_pages:INTEGER,F:SITEMAP:sitemap_enabled:BOOLEAN,F:JS-RENDER:javascript_render_mode:ENUM,F:CONTENT-TYPES:content_types:STRING_LIST,F:LANGUAGE:language_scope:STRING_LIST,F:SCHEDULE:schedule_mode:ENUM,F:RECRAWL:recrawl_interval:DURATION,F:RATE-PROFILE:rate_limit_profile:REF|R=acquisition_mode|W=acquisition_mode,seed_url_or_query,allowed_domains,denied_domains,path_allow_deny,same_domain_only,max_depth,max_pages,sitemap_enabled,javascript_render_mode,content_types,language_scope,schedule_mode,recrawl_interval,rate_limit_profile|P=knowledge.source.configure
+  - S:05|C:INGESTION|KnowledgeAcquisitionResultProjection|F:ACQ-JOB-ID:job_id:ID_REF,F:ACQ-ATTEMPT-ID:attempt_id:ID_REF,F:ACQ-HTTP:http_status:INTEGER,F:ACQ-CANONICAL:canonical_url:URL,F:ACQ-HASH:content_hash:HASH,F:ACQ-LAST:last_crawled_at:DATETIME,F:ACQ-NEXT:next_crawl_at:DATETIME,F:ACQ-PARSER:parser:TEXT,F:ACQ-RENDER:render_mode:ENUM|R=|W=|P=knowledge.ingestion.read
+  extra_field: FORBIDDEN
+control_registry:
+  count: 27
+  format: uid::section::component::label::type::action::gate::permission::target::visible_when
+  feedback:
+    loading: PRESERVE_LAYOUT
+    success: REFRESH_AFFECTED_PROJECTION_KEEP_CONTEXT
+    error: SHOW_REGISTERED_ERROR
+  rows:
+  - T:VIEW-OVERVIEW::S:01::C:VIEW-TABS::知識總覽::TAB::::::knowledge.read::V:OVERVIEW::["AUTHORIZED"]
+  - T:VIEW-SOURCE::S:01::C:VIEW-TABS::來源與蒐集::TAB::::::knowledge.read::V:SOURCE::["AUTHORIZED"]
+  - T:VIEW-SEARCH::S:01::C:VIEW-TABS::搜尋 / Citation / Context::TAB::::::knowledge.read::V:SEARCH::["AUTHORIZED"]
+  - T:VIEW-EXPERIENCE::S:01::C:VIEW-TABS::Experience / Replay::TAB::::::knowledge.read::V:EXPERIENCE::["AUTHORIZED"]
+  - T:VIEW-REVIEW::S:01::C:VIEW-TABS::Knowledge Review::TAB::::::knowledge.read::V:REVIEW::["AUTHORIZED"]
+  - T:SEARCH-GLOBAL::S:01::C:CONTEXT::搜尋::SEARCH::A:SEARCH::G:READ::knowledge.read::::["AUTHORIZED"]
+  - T:SOURCE-CREATE::S:04::C:SOURCE-DETAIL::新增來源::PRIMARY_BUTTON::A:SOURCE-CREATE::G:SOURCE-WRITE::knowledge.source.configure::::["VIEW_SOURCE","AUTHORIZED"]
+  - T:SOURCE-SAVE::S:04::C:SOURCE-DETAIL::儲存來源設定::PRIMARY_BUTTON::A:SOURCE-SAVE::G:SOURCE-SAVE::knowledge.source.configure::::["VIEW_SOURCE","SOURCE_SELECTED","AUTHORIZED"]
+  - T:SOURCE-PAUSE::S:04::C:SOURCE-DETAIL::暫停::BUTTON::A:SOURCE-PAUSE::G:SOURCE-PAUSE::knowledge.source.configure::::["VIEW_SOURCE","SOURCE_STATUS_ACTIVE"]
+  - T:SOURCE-RESUME::S:04::C:SOURCE-DETAIL::恢復::BUTTON::A:SOURCE-RESUME::G:SOURCE-RESUME::knowledge.source.configure::::["VIEW_SOURCE","SOURCE_STATUS_PAUSED"]
+  - T:SOURCE-RETIRE::S:04::C:SOURCE-DETAIL::退役::DANGER_BUTTON::A:SOURCE-RETIRE::G:SOURCE-RETIRE::knowledge.source.configure::::["VIEW_SOURCE","SOURCE_SELECTED"]
+  - T:INGEST-START::S:05::C:INGESTION::開始蒐集 / Ingest::PRIMARY_BUTTON::A:INGEST-START::G:INGEST-START::knowledge.ingestion.execute::::["VIEW_SOURCE","SOURCE_STATUS_ACTIVE"]
+  - T:INGEST-RETRY::S:05::C:INGESTION-DRAWER::重試::BUTTON::A:INGEST-RETRY::G:INGEST-RETRY::knowledge.ingestion.execute::::["RUN_RETRY_ELIGIBLE"]
+  - T:SEARCH::S:06::C:SEARCH::搜尋::PRIMARY_BUTTON::A:SEARCH::G:READ::knowledge.read::::["VIEW_SEARCH"]
+  - T:CITATION-OPEN::S:07::C:CITATION::查看 Citation::BUTTON::A:CITATION-OPEN::G:READ::knowledge.read::::["RESULT_SELECTED"]
+  - T:CONTEXT-ADD::S:08::C:CONTEXT-BASKET::加入 Context::BUTTON::A:CONTEXT-ITEM-ADD::G:CONTEXT-DRAFT::knowledge.context.create::::["RESULT_SELECTED","VIEW_SEARCH"]
+  - T:CONTEXT-REMOVE::S:08::C:CONTEXT-BASKET::移除::BUTTON::A:CONTEXT-ITEM-REMOVE::G:CONTEXT-DRAFT::knowledge.context.create::::["CONTEXT_ITEM_SELECTED"]
+  - T:CONTEXT-CREATE::S:08::C:CONTEXT-BASKET::建立 Context Candidate::PRIMARY_BUTTON::A:CONTEXT-CANDIDATE-CREATE::G:CONTEXT-CREATE::knowledge.context.create::::["VIEW_SEARCH"]
+  - T:REPLAY-OPEN::S:10::C:REPLAY::查看 Replay::BUTTON::A:REPLAY-OPEN::G:EXPERIENCE-READ::knowledge.experience.read::::["EXPERIENCE_SELECTED"]
+  - T:REPLAY-COMPARE::S:10::C:REPLAY::比較 Attempt / Version::BUTTON::A:REPLAY-COMPARE::G:REPLAY-COMPARE::knowledge.experience.read::::["REPLAY_HAS_COMPARABLE_ITEMS"]
+  - T:LEARNING-CREATE::S:11::C:LEARNING::建立 Learning Candidate::PRIMARY_BUTTON::A:LEARNING-CREATE::G:LEARNING-CREATE::knowledge.learning.create::::["EXPERIENCE_OUTCOME_COMPLETE"]
+  - T:DRAFT-FROM-EXP::S:11::C:LEARNING::建立 Knowledge Draft::BUTTON::A:KNOWLEDGE-DRAFT-FROM-EXPERIENCE::G:DRAFT-FROM-EXP::knowledge.draft.write::::["EXPERIENCE_OUTCOME_COMPLETE"]
+  - T:DRAFT-SAVE::S:13::C:DRAFT::儲存 Draft::PRIMARY_BUTTON::A:KNOWLEDGE-DRAFT-SAVE::G:DRAFT-SAVE::knowledge.draft.write::::["VIEW_REVIEW","DRAFT_EDITABLE"]
+  - T:VERSION-COMPARE::S:14::C:VERSION-DIFF::比較前版::BUTTON::A:KNOWLEDGE-VERSION-COMPARE::G:READ::knowledge.read::::["PREVIOUS_APPROVED_VERSION_EXISTS"]
+  - T:APPROVE::S:15::C:REVIEW-RAIL::核准::PRIMARY_BUTTON::A:KNOWLEDGE-APPROVE::G:KNOWLEDGE-APPROVE::knowledge.review.approve::::["VIEW_REVIEW","DRAFT_IN_REVIEW"]
+  - T:RETURN::S:15::C:REVIEW-RAIL::退回修改::BUTTON::A:KNOWLEDGE-RETURN::G:KNOWLEDGE-REVIEW::knowledge.review.approve::::["VIEW_REVIEW","DRAFT_IN_REVIEW"]
+  - T:REJECT::S:15::C:REVIEW-RAIL::拒絕::DANGER_BUTTON::A:KNOWLEDGE-REJECT::G:KNOWLEDGE-REVIEW::knowledge.review.approve::::["VIEW_REVIEW","DRAFT_IN_REVIEW"]
+action_registry:
+  count: 21
+  format: uid::effect::owner::operation::method::path::schema::permission::errors_csv::audit_event
+  defaults:
+    correlation_id: true
+    idempotency_key: true
+    expected_version_on_versioned_mutation: true
+  rows:
+  - A:SEARCH::READ_SEARCH::FactPackService + KnowledgeExperienceService::searchKnowledge::POST::/v1/knowledge/search::KBSearchRequest::knowledge.read::["E:001","E:002"]::knowledge.search
+  - A:CITATION-OPEN::READ::FactPackService + KnowledgeExperienceService::getCitation::GET::/v1/knowledge/citations/{citationId}::::knowledge.read::["E:001"]::knowledge.citation.view
+  - A:SOURCE-CREATE::CREATE::KnowledgeExperienceService::createKnowledgeSource::POST::/v1/knowledge/sources::CreateKnowledgeSourceRequest::knowledge.source.configure::["E:002","E:004","E:013"]::knowledge.source.created
+  - A:SOURCE-SAVE::UPDATE::KnowledgeExperienceService::updateKnowledgeSource::PATCH::/v1/knowledge/sources/{sourceId}::UpdateKnowledgeSourceRequest::knowledge.source.configure::["E:002","E:003","E:004","E:013"]::knowledge.source.updated
+  - A:SOURCE-PAUSE::STATE_TRANSITION::KnowledgeExperienceService::pauseKnowledgeSource::POST::/v1/knowledge/sources/{sourceId}/pause::SourceStateChangeRequest::knowledge.source.configure::["E:003"]::knowledge.source.paused
+  - A:SOURCE-RESUME::STATE_TRANSITION::KnowledgeExperienceService::resumeKnowledgeSource::POST::/v1/knowledge/sources/{sourceId}/resume::SourceStateChangeRequest::knowledge.source.configure::["E:003","E:004"]::knowledge.source.resumed
+  - A:SOURCE-RETIRE::STATE_TRANSITION::KnowledgeExperienceService::retireKnowledgeSource::POST::/v1/knowledge/sources/{sourceId}/retire::SourceStateChangeRequest::knowledge.source.configure::["E:003","E:005"]::knowledge.source.retired
+  - A:INGEST-START::CREATE_JOB::ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME::createAcquisitionJob::POST::/v1/acpos/acquisition/jobs::CreateKnowledgeAcquisitionIntentRequest::knowledge.ingestion.execute::["E:004","E:005"]::knowledge.ingestion.started
+  - A:INGEST-RETRY::RETRY::ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME::retryAcquisitionJob::POST::/v1/acpos/acquisition/jobs/{jobId}/retry::RetryAcquisitionJobRequest::knowledge.ingestion.execute::["E:006"]::knowledge.ingestion.retry
+  - 'A:CONTEXT-ITEM-ADD::LOCAL_DRAFT_MUTATION::PAGE_UI_STATE::addContextDraftItem::LOCAL::LOCAL::ContextDraftItem::knowledge.context.create::[]::'
+  - 'A:CONTEXT-ITEM-REMOVE::LOCAL_DRAFT_MUTATION::PAGE_UI_STATE::removeContextDraftItem::LOCAL::LOCAL::ContextDraftItem::knowledge.context.create::[]::'
+  - A:CONTEXT-CANDIDATE-CREATE::CREATE::ACPOSContextEngine::createContextCandidate::POST::/v1/acpos/context-candidates::CreateACPOSContextCandidateRequest::knowledge.context.create::["E:002","E:007","E:008"]::acpos.context_candidate.created
+  - A:REPLAY-OPEN::READ::ACPOSExperienceEngine::getExperienceReplay::GET::/v1/acpos/experience/{experienceId}/replay::::knowledge.experience.read::["E:001","E:010"]::acpos.experience.replay.view
+  - A:REPLAY-COMPARE::READ_COMPARE::ACPOSExperienceEngine::compareExperienceReplay::POST::/v1/acpos/experience/replay/compare::CompareExperienceReplayRequest::knowledge.experience.read::["E:010"]::acpos.experience.replay.compare
+  - A:LEARNING-CREATE::CREATE::ACPOSEvolutionEngine::createLearningCandidate::POST::/v1/acpos/learning-candidates::CreateACPOSLearningCandidateRequest::knowledge.learning.create::["E:009","E:010"]::acpos.learning_candidate.created
+  - A:KNOWLEDGE-DRAFT-FROM-EXPERIENCE::CREATE::KnowledgeExperienceService::createKnowledgeDraftFromExperience::POST::/v1/knowledge/drafts/from-experience::CreateKnowledgeDraftFromExperienceRequest::knowledge.draft.write::["E:009","E:010"]::knowledge.draft.from_experience
+  - A:KNOWLEDGE-DRAFT-SAVE::UPDATE::KnowledgeExperienceService::saveKnowledgeDraft::PATCH::/v1/knowledge/drafts/{knowledgeId}::SaveKnowledgeDraftRequest::knowledge.draft.write::["E:003","E:007","E:012"]::knowledge.draft.saved
+  - A:KNOWLEDGE-VERSION-COMPARE::READ_COMPARE::KnowledgeExperienceService::compareKnowledgeVersions::POST::/v1/knowledge/versions/compare::CompareKnowledgeVersionsRequest::knowledge.read::["E:001"]::knowledge.version.compare
+  - A:KNOWLEDGE-APPROVE::APPROVE::KnowledgeExperienceService::approveKnowledgeDraft::POST::/v1/knowledge/drafts/{knowledgeId}/approve::ReviewKnowledgeDraftRequest::knowledge.review.approve::["E:003","E:007","E:011","E:012"]::knowledge.approved
+  - A:KNOWLEDGE-RETURN::REVIEW_DECISION::KnowledgeExperienceService::returnKnowledgeDraft::POST::/v1/knowledge/drafts/{knowledgeId}/return::ReviewKnowledgeDraftRequest::knowledge.review.approve::["E:003","E:011"]::knowledge.returned
+  - A:KNOWLEDGE-REJECT::REVIEW_DECISION::KnowledgeExperienceService::rejectKnowledgeDraft::POST::/v1/knowledge/drafts/{knowledgeId}/reject::ReviewKnowledgeDraftRequest::knowledge.review.approve::["E:003","E:011"]::knowledge.rejected
+gate_registry:
+  count: 17
+  format: uid::REQ=a|b::BLOCK=x|y
+  rows:
+  - G:READ::REQ=account authenticated|knowledge.read|authorized scope::BLOCK=permission denied|classification mask denies object
+  - G:SOURCE-WRITE::REQ=knowledge.source.configure|authorized scope::BLOCK=permission denied
+  - G:SOURCE-SAVE::REQ=knowledge.source.configure|source draft selected|scope valid|rights valid|classification set|expected_version matches::BLOCK=missing required source field|version conflict|invalid
+    rights/config
+  - G:SOURCE-PAUSE::REQ=knowledge.source.configure|source status ACTIVE|expected_version matches::BLOCK=source already paused/retired|version conflict
+  - G:SOURCE-RESUME::REQ=knowledge.source.configure|source status PAUSED|rights/config still valid|expected_version matches::BLOCK=source not paused|rights/config invalid|version conflict
+  - G:SOURCE-RETIRE::REQ=knowledge.source.configure|source exists|expected_version matches::BLOCK=active non-cancelable run|version conflict
+  - G:INGEST-START::REQ=knowledge.ingestion.execute|source ACTIVE|rights/config valid|no prohibited duplicate active run::BLOCK=source paused/retired|rights invalid|duplicate active run|connector unavailable
+  - G:INGEST-RETRY::REQ=knowledge.ingestion.execute|run status FAILED|retry_eligible true::BLOCK=retry policy blocks|source retired|non-retryable failure
+  - G:CONTEXT-DRAFT::REQ=knowledge.context.create|result authorized|source/evidence traceable::BLOCK=classification denied|untraceable result
+  - G:CONTEXT-CREATE::REQ=knowledge.context.create|selected_refs >= 1|scope set|purpose set|all selected refs authorized|all factual refs traceable::BLOCK=empty selection|missing scope/purpose|citation
+    missing|classification denied|conflicting exact versions unresolved
+  - G:EXPERIENCE-READ::REQ=knowledge.experience.read|experience authorized::BLOCK=scope denied
+  - G:REPLAY-COMPARE::REQ=knowledge.experience.read|at least two comparable attempts/versions::BLOCK=insufficient comparable items
+  - G:LEARNING-CREATE::REQ=knowledge.learning.create|ACPOSExperienceRecord state OUTCOME_COMPLETE|root cause/pattern evidence exists::BLOCK=outcome pending|insufficient evidence|scope unresolved
+  - G:DRAFT-FROM-EXP::REQ=knowledge.draft.write|experience outcome complete|trace lineage complete::BLOCK=outcome pending|lineage incomplete
+  - G:DRAFT-SAVE::REQ=knowledge.draft.write|draft selected|required fields valid|expected_version matches::BLOCK=version conflict|required field missing|classification invalid
+  - G:KNOWLEDGE-REVIEW::REQ=knowledge.review.approve|draft state REVIEW|review rationale present::BLOCK=permission denied|draft not in review|rationale missing
+  - G:KNOWLEDGE-APPROVE::REQ=knowledge.review.approve|draft state REVIEW|review rationale present|scope explicit|classification explicit|mandatory checks complete|factual claims have citation/source or
+    validated governed outcome|conflicts resolved or explicitly blocked|previous approved version preserved when superseding|expected_version matches::BLOCK=citation missing|outcome unvalidated|unsupported
+    factual generalization|authority conflict unresolved|mandatory check incomplete|version conflict
+error_registry:
+  count: 14
+  format: uid::code::message_zh::recovery
+  rows:
+  - E:001::KB_PERMISSION_DENIED::沒有此知識範圍的權限。::HIDE_PROTECTED_CONTENT_AND_ACTION
+  - E:002::KB_SCOPE_INVALID::Scope 缺失或超出授權範圍。::CORRECT_SCOPE
+  - E:003::KB_VERSION_CONFLICT::資料版本已變更。::REFRESH_EXACT_VERSION_AND_REVIEW_DIFF
+  - E:004::KB_SOURCE_RIGHTS_INVALID::來源 Rights / Classification 不允許目前操作。::FIX_SOURCE_GOVERNANCE
+  - E:005::KB_DUPLICATE_ACTIVE_RUN::已有不可重複的執行中 Run。::OPEN_EXISTING_RUN
+  - E:006::KB_INGESTION_NOT_RETRYABLE::此失敗不可直接重試。::OPEN_FAILURE_DETAIL_AND_RESOLVE_CAUSE
+  - E:007::KB_CITATION_REQUIRED::Fact 缺少可追溯 Citation / Evidence。::ADD_VALID_CITATION_OR_RECLASSIFY
+  - E:008::KB_CONTEXT_CONFLICT::Context Candidate 存在未解決版本/來源衝突。::RESOLVE_CONFLICT_BEFORE_CREATE
+  - E:009::KB_OUTCOME_PENDING::Experience 尚未完成 Outcome。::WAIT_FOR_REAL_OUTCOME
+  - E:010::KB_LINEAGE_INCOMPLETE::Experience Replay 缺少必要 Exact Lineage。::RESOLVE_SOURCE_LINEAGE
+  - E:011::KB_REVIEW_CHECK_INCOMPLETE::Knowledge Review Mandatory Check 尚未完成。::COMPLETE_REVIEW_CHECKLIST
+  - E:012::KB_AUTHORITY_CONFLICT::Draft 與 Current Authority / Confirmed Truth 衝突。::REVIEW_AND_RESOLVE_CONFLICT
+  - E:013::KB_RAW_SECRET_FORBIDDEN::禁止在 Knowledge Source 儲存或顯示 Raw Secret。::USE_SECRET_REFERENCE_OR_REGISTERED_CONNECTOR
+  - E:014::KB_UNSUPPORTED_OPERATION::此操作未在 KB-01 Current Authority 註冊。::BLOCK_AND_REPORT_AUTHORITY_GAP
+state_machines:
+  KnowledgeSource:
+    states:
+    - DRAFT
+    - ACTIVE
+    - PAUSED
+    - RETIRED
+    transitions:
+    - DRAFT->ACTIVE::A:SOURCE-SAVE::G:SOURCE-SAVE
+    - ACTIVE->PAUSED::A:SOURCE-PAUSE::G:SOURCE-PAUSE
+    - PAUSED->ACTIVE::A:SOURCE-RESUME::G:SOURCE-RESUME
+    - DRAFT,ACTIVE,PAUSED->RETIRED::A:SOURCE-RETIRE::G:SOURCE-RETIRE
+  KnowledgeIngestionRun:
+    states:
+    - PENDING
+    - RUNNING
+    - NORMALIZING
+    - COMPLETED
+    - FAILED
+    - RETRY_ELIGIBLE
+    transitions:
+    - 'PENDING->RUNNING::ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME::'
+    - 'RUNNING->NORMALIZING::ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME::'
+    - 'NORMALIZING->COMPLETED::ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME::'
+    - 'RUNNING,NORMALIZING->FAILED::ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME::'
+    - FAILED->RETRY_ELIGIBLE::ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME::failure policy permits retry
+    - RETRY_ELIGIBLE->PENDING::A:INGEST-RETRY::G:INGEST-RETRY
+  ACPOSContextCandidate:
+    states:
+    - DRAFT
+    - READY_FOR_CONSUMER_REVIEW
+    - ADOPTED
+    - REJECTED
+    - RETIRED
+    transitions:
+    - DRAFT->READY_FOR_CONSUMER_REVIEW::A:CONTEXT-CANDIDATE-CREATE::G:CONTEXT-CREATE
+    - READY_FOR_CONSUMER_REVIEW->ADOPTED,REJECTED::CONSUMER_DOMAIN_GOVERNANCE::KB-01 cannot perform consumer adoption.
+  ACPOSExperienceRecord:
+    states:
+    - CAPTURED
+    - OUTCOME_PENDING
+    - OUTCOME_COMPLETE
+    - REPLAY_READY
+    transitions:
+    - 'CAPTURED->OUTCOME_PENDING::ACPOSExperienceEngine::'
+    - OUTCOME_PENDING->OUTCOME_COMPLETE::ACPOSExperienceEngine::real outcome/evaluation data sufficient
+    - OUTCOME_COMPLETE->REPLAY_READY::ACPOSExperienceEngine::required lineage resolvable
+  ACPOSLearningCandidate:
+    states:
+    - DRAFT
+    - REVIEW
+    - ADOPTED
+    - REJECTED
+    - SUPERSEDED
+    transitions:
+    - ->DRAFT::A:LEARNING-CREATE::G:LEARNING-CREATE
+    - 'DRAFT->REVIEW::ACPOSEvolutionEngine / Governance::'
+    - REVIEW->ADOPTED,REJECTED::ACPOS_GOVERNANCE::Cannot silently mutate Canon/Criteria/Permission/RoutePolicy.
+  KnowledgeVersion:
+    states:
+    - DRAFT
+    - REVIEW
+    - APPROVED
+    - RETURNED
+    - REJECTED
+    - SUPERSEDED
+    - RETIRED
+    transitions:
+    - ->DRAFT::A:KNOWLEDGE-DRAFT-FROM-EXPERIENCE::G:DRAFT-FROM-EXP
+    - DRAFT->DRAFT::A:KNOWLEDGE-DRAFT-SAVE::G:DRAFT-SAVE
+    - DRAFT->REVIEW::KnowledgeExperienceService::submit for review
+    - REVIEW->APPROVED::A:KNOWLEDGE-APPROVE::G:KNOWLEDGE-APPROVE
+    - REVIEW->RETURNED::A:KNOWLEDGE-RETURN::G:KNOWLEDGE-REVIEW
+    - REVIEW->REJECTED::A:KNOWLEDGE-REJECT::G:KNOWLEDGE-REVIEW
+    - APPROVED->SUPERSEDED::KnowledgeExperienceService::new approved version supersedes exact prior version
+request_schemas:
+  CreateKnowledgeSourceRequest:
+    required:
+    - name
+    - source_type
+    - scope
+    - rights
+    - classification
+    - collection_method
+    - freshness_policy
+    - retention_policy
+    - correlation_id
+    - idempotency_key
+    optional:
+    - collection_config
+    - secret_reference_id
+    forbidden:
+    - raw_secret
+    - credential_plaintext
+    additionalProperties: false
+  UpdateKnowledgeSourceRequest:
+    required:
+    - source_id
+    - expected_version
+    - correlation_id
+    - idempotency_key
+    patchable:
+    - name
+    - source_type
+    - scope
+    - rights
+    - classification
+    - collection_method
+    - collection_config
+    - freshness_policy
+    - retention_policy
+    forbidden:
+    - raw_secret
+    - credential_plaintext
+    - status_direct_write
+    additionalProperties: false
+  SourceStateChangeRequest:
+    required:
+    - source_id
+    - expected_version
+    - reason
+    - correlation_id
+    - idempotency_key
+    additionalProperties: false
+  CreateKnowledgeIngestionRunRequest:
+    required:
+    - source_ref
+    - scope
+    - run_type
+    - correlation_id
+    - idempotency_key
+    optional:
+    - query_or_collection_config_ref
+    additionalProperties: false
+  RetryKnowledgeIngestionRunRequest:
+    required:
+    - run_id
+    - failure_ref
+    - correlation_id
+    - idempotency_key
+    additionalProperties: false
+  KBSearchRequest:
+    required:
+    - query
+    - scope
+    optional:
+    - classification
+    - freshness_state
+    - knowledge_type
+    - review_state
+    - source_ref
+    - date_range
+    - cursor
+    - page_size
+    additionalProperties: false
+  CreateACPOSContextCandidateRequest:
+    required:
+    - purpose
+    - scope
+    - selected_refs
+    - evidence_refs
+    - correlation_id
+    - idempotency_key
+    required_system_bindings:
+    - account_scope
+    - current_page_uid
+    - context_fingerprint
+    additionalProperties: false
+  CompareExperienceReplayRequest:
+    required:
+    - experience_id
+    - compare_refs
+    optional:
+    - compare_mode
+    additionalProperties: false
+  CreateACPOSLearningCandidateRequest:
+    required:
+    - experience_refs
+    - scope
+    - pattern
+    - proposed_improvement
+    - evidence_refs
+    - limitations
+    - correlation_id
+    - idempotency_key
+    additionalProperties: false
+  CreateKnowledgeDraftFromExperienceRequest:
+    required:
+    - experience_refs
+    - scope
+    - knowledge_type
+    - correlation_id
+    - idempotency_key
+    optional:
+    - learning_candidate_ref
+    - title_seed
+    additionalProperties: false
+  SaveKnowledgeDraftRequest:
+    required:
+    - knowledge_id
+    - expected_version
+    - title
+    - knowledge_type
+    - scope
+    - classification
+    - correlation_id
+    - idempotency_key
+    optional:
+    - summary
+    - content
+    - citation_refs
+    - outcome_refs
+    - experience_refs
+    additionalProperties: false
+  CompareKnowledgeVersionsRequest:
+    required:
+    - knowledge_id
+    - left_version
+    - right_version
+    additionalProperties: false
+  ReviewKnowledgeDraftRequest:
+    required:
+    - knowledge_id
+    - expected_version
+    - review_rationale
+    - decision
+    - mandatory_check_results
+    - correlation_id
+    - idempotency_key
+    decision_enum:
+    - APPROVE
+    - RETURN
+    - REJECT
+    additionalProperties: false
+  CreateKnowledgeAcquisitionIntentRequest:
+    required:
+    - source_ref
+    - scope
+    - acquisition_mode
+    - correlation_id
+    - idempotency_key
+    optional:
+    - seed_url_or_query
+    - allowed_domains
+    - denied_domains
+    - path_allow_deny
+    - same_domain_only
+    - max_depth
+    - max_pages
+    - sitemap_enabled
+    - javascript_render_mode
+    - content_types
+    - language_scope
+    - schedule_mode
+    - recrawl_interval
+    - rate_limit_profile
+    system_owned:
+    - robots_policy
+    - rights_gate
+    - credential_resolution
+    - retry_backoff_policy
+    - raw_snapshot_persistence
+    - dedupe_engine
+    additionalProperties: false
+  RetryAcquisitionJobRequest:
+    required:
+    - job_id
+    - failure_ref
+    - correlation_id
+    - idempotency_key
+    additionalProperties: false
+permissions:
+  page: knowledge.read
+  resources:
+  - knowledge.read
+  - knowledge.source.read
+  - knowledge.source.configure
+  - knowledge.ingestion.read
+  - knowledge.ingestion.execute
+  - knowledge.context.create
+  - knowledge.experience.read
+  - knowledge.learning.create
+  - knowledge.draft.write
+  - knowledge.review.approve
+  role_name_authorization: FORBIDDEN
+  department_membership_as_allow: FORBIDDEN
+acpos:
+  role: ADMIN_KNOWLEDGE_EXPERIENCE_GOVERNANCE_SURFACE
+  shared_objects:
+  - ACPOSContextCandidate
+  - ACPOSContextPackage
+  - ACPOSStateProjection
+  - ACPOSExperienceRecord
+  - ACPOSLearningCandidate
+  - ACPOSIntegrationEvent
+  services:
+  - FactPackService
+  - KnowledgeExperienceService
+  context_adoption: CONSUMER_DOMAIN_GOVERNANCE
+  experience: REAL_EXECUTION_ONLY
+  learning: GOVERNED_CANDIDATE_ONLY
+  approved_knowledge: ELIGIBLE_CONTEXT_INPUT_SUBJECT_TO_SCOPE_PERMISSION_CURRENT_TRUTH
+acquisition:
+  runtime: ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME
+  page_owns_runtime: false
+  modes:
+  - WEB_CRAWL
+  - WEB_FETCH
+  - SEARCH_DISCOVERY
+  - SITEMAP_DISCOVERY
+  - RSS_ATOM_INGEST
+  - STRUCTURED_HTTP_JSON_FETCH
+  - DOCUMENT_FETCH
+  - OPTIONAL_JS_RENDER_WHEN_REGISTERED
+  - SCHEDULED_RECRAWL
+  intent: KnowledgeAcquisitionIntent
+  result: KnowledgeAcquisitionResultProjection
+  runtime_owns:
+  - robots/rights/domain/rate
+  - fetch/render/retry
+  - immutable snapshot
+  - canonical-url/hash dedupe
+  - normalize
+  - evidence/citation
+  - audit
+knowledge_lifecycle: SOURCE>ACQUISITION>NORMALIZE>EVIDENCE/CITATION>CONTEXT_CANDIDATE | REAL_EXECUTION>EXPERIENCE>REPLAY>LEARNING_CANDIDATE>KNOWLEDGE_DRAFT>HUMAN_REVIEW>APPROVED_VERSION
+admin:
+  bundle: ADMIN-L1-KNOWLEDGE
+  page_owns_global_order: false
+audit:
+  correlation_effectful: true
+  idempotency_effectful: true
+  audit_event_effectful: true
+  raw_secret: FORBIDDEN
+  history: APPEND_ONLY_VERSIONED
+i18n:
+- zh-TW
+- zh-CN
+- en
+acceptance:
+- COUNTS_EXACT
+- EFFECTFUL_CONTROL_HAS_ACTION_GATE
+- FACT_APPROVAL_REQUIRES_TRACEABLE_EVIDENCE
+- NO_PARALLEL_ACPOS_OBJECT_OR_CRAWLER
+- NO_INFO_DUPLICATION
+- NO_PROVIDER_PICKER
+- APPROVED_VERSION_IMMUTABLE
+- RUNTIME_NOT_CLAIMED
+runtime_truth:
+  authority: FINAL_LOCKED
+  application: NOT_EXECUTED
+  api: NOT_EXECUTED
+  db: NOT_EXECUTED
+  crawler_execution: NOT_EXECUTED
+  e2e: NOT_EXECUTED
+  deploy: NOT_EXECUTED

@@ -1,0 +1,534 @@
+authority:
+  id: ACPOS_SYSTEM_AUTHORITY
+  version: V1.0
+  status: FINAL_LOCKED
+  current_only: true
+  scope: ORANGE_ONE_WHOLE_SITE_CENTRAL_BRAIN_AND_CROSS_PAGE_INTEGRATION_AUTHORITY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  page_usage_precedence: CURRENT_PAGE_AUTHORITY
+  truth_rule: FILE_SPEC_FINAL_LOCKED does not mean application/runtime/deployment complete.
+  references:
+    global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+    global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
+    navigation_permission: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+    production_script: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+    page_integration_matrix: ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml
+    knowledge_page: ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+    authority_manifest: ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+core_identity:
+  definition_zh: ACPOS 是 ORANGE ONE 全站中央大腦。所有 Current Page 都是 ACPOS 的生產、操作、觀測、資訊或治理介面；ACPOS 統一理解全站受治理狀態、Exact Version、Context、Memory、Decision、Handoff、AI
+    Capability、Provider Execution、Experience 與 Audit，並在保留各 Domain Owner 的前提下協調跨頁流程與持續進化。
+  not_a_page: true
+  external_ai_role: CAPABILITY_PROVIDER_ONLY
+  acpos_retains:
+  - whole-site system understanding
+  - context selection
+  - conversation continuity
+  - memory
+  - decision governance
+  - version and lineage
+  - cross-domain orchestration
+  - AI capability routing governance
+  - experience and evolution
+  - permission policy audit coordination
+  domain_ownership: Each Current Page/Domain retains business ownership. ACPOS links and coordinates; it does not duplicate domain systems.
+navigation_surfaces:
+  front_workspace:
+    authority: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 + ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+    l1_count: 8
+    meaning: Front workspace navigation only
+    page_uids:
+    - workspace:WB-01
+    - CORE-01
+    - ASSET-01
+    - VIDEO-01
+    - EDIT-01
+    - QA-01
+    - admin:DB-01
+    - workspace:STR-01
+  admin:
+    authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+    l1_count: 9
+    page_uids:
+    - admin:SYS-01
+    - admin:IAM-01
+    - admin:DEV-01
+    - admin:SOC-01
+    - admin:ERP-01
+    - admin:AIAPI-01
+    - admin:SG-02
+    - admin:STR-01
+    - admin:KB-01
+  supporting:
+    workspace:INFO-01: Not a ninth front L1; contextual/deep-link entry only.
+page_title_rule:
+  authority: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+  global_header_center_page_identity: REMOVED
+  page_title_owner: PAGE_AUTHORITY
+  second_page_header: FORBIDDEN_UNLESS_PAGE_AUTHORITY_EXPLICITLY_DEFINES_AN_INTERNAL_CONTEXT_BAR
+brain_runtime_layers:
+- layer: BRAIN-01 SYSTEM_STATE
+  owner: ACPOS Brain
+  purpose: Whole-site exact state/version/relationship projection without replacing domain records.
+- layer: BRAIN-02 CONTEXT
+  owner: ACPOSContextEngine
+  purpose: Resolve relevant authorized exact context and create ACPOSContextPackage / ACPOSContextCandidate.
+- layer: BRAIN-03 CONVERSATION
+  owner: ACPOS AI Conversation Core
+  purpose: Shared thread/branch/context continuity for CORE, Strategy and System AI surfaces.
+- layer: BRAIN-04 MEMORY
+  owner: ACPOS Memory
+  purpose: Conversation, Working, Decision, Version and Operational memory.
+- layer: BRAIN-05 DECISION_GOVERNANCE
+  owner: ACPOS Governance + Domain Owner
+  purpose: AI output remains candidate/analysis until required governed decision is completed.
+- layer: BRAIN-06 VERSION_LINEAGE
+  owner: ACPOS Version / Lineage
+  purpose: Exact version/hash/checksum/provenance; no silent overwrite.
+- layer: BRAIN-07 ORCHESTRATION
+  owner: ACPOS Orchestration
+  purpose: Coordinate legal next action and exact handoff while preserving Page Authority.
+- layer: BRAIN-08 AI_EXECUTION
+  owner: ACPOS AI Execution + current AI API Router
+  purpose: Domain instruction -> normalized instruction -> capability -> eligible ProviderModelProfile -> Provider -> normalized result.
+- layer: BRAIN-09 EXPERIENCE
+  owner: ACPOSExperienceEngine
+  purpose: Capture real execution/outcomes/cost/latency/evaluation/correction as ACPOSExperienceRecord.
+- layer: BRAIN-10 EVOLUTION
+  owner: ACPOSEvolutionEngine
+  purpose: Experience -> pattern -> ACPOSLearningCandidate -> governed adoption -> future recommendation.
+- layer: BRAIN-11 EXTERNAL_DATA_ACQUISITION
+  owner: ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME
+  purpose: One whole-site crawl/search/fetch/ingestion runtime; produces governed snapshots/evidence rather than business truth.
+- layer: BRAIN-12 GOVERNANCE_OBSERVABILITY
+  owner: ACPOS Permission / Policy / Audit
+  purpose: Permission, policy, classification, correlation, audit, error, health and truthful state.
+context_resolution:
+  principle: ACPOS may understand whole-site state; each request receives only relevant authorized exact context.
+  ordered_resolution:
+  - Current user + page operation
+  - Current domain and authorized scope
+  - Exact Project / Topic / Task / Object refs when applicable
+  - Exact approved/confirmed versions
+  - Current Page Authority and confirmed decisions
+  - Relevant upstream/downstream state
+  - Relevant Approved Knowledge / validated Experience when allowed
+  - Relevant external Fact/Evidence only when allowed
+  - Conflict detection
+  - Context fingerprint
+  - ACPOSContextPackage
+  forbidden:
+  - load_entire_site_into_every_prompt
+  - formal_execution_using_latest_current_default_alias
+  - cross_project_silent_fallback
+  - external_information_overwriting_confirmed_internal_truth
+  - permission_or_classification_bypass
+memory_experience:
+  memory_types:
+  - Conversation Memory
+  - Working Memory
+  - Decision Memory
+  - Version Memory
+  - Operational Memory
+  experience_object: ACPOSExperienceRecord
+  experience_definition: Derived from real governed execution and outcomes, not conversation text alone.
+  experience_scope:
+  - GLOBAL
+  - DOMAIN
+  - DEPARTMENT
+  - TASK_TYPE
+  - PROVIDER_MODEL
+  - PROJECT
+  - TOPIC
+  evolution_object: ACPOSLearningCandidate
+  evolution_loop:
+  - Execution
+  - Observed Result
+  - Evaluation / QA / Business Outcome
+  - Cost / Latency / Attempts / Correction
+  - ACPOSExperienceRecord
+  - Pattern / Root Cause
+  - ACPOSLearningCandidate
+  - Governed Review / Adoption
+  - Future Context / Routing / Correction / Workflow recommendation
+  - Measure next outcome
+  hard_rules:
+  - No silent Canon rewrite
+  - No silent Criteria rewrite
+  - No silent Permission rewrite
+  - No silent RoutePolicy rewrite
+  - Failed Experience is retained
+  - No wasteful generation solely to collect Experience
+five_department_orchestration:
+  chain:
+  - CORE-01
+  - ASSET-01
+  - VIDEO-01
+  - EDIT-01
+  - QA-01
+  display: CORE → ASSET → VIDEO → EDIT+VOICE → QA
+  ownership:
+    CORE-01: Project/Topic Core + Blueprint/DNA + Canonical Production Script
+    ASSET-01: Asset production/version/correction/handoff
+    VIDEO-01: Video production/version/correction/handoff
+    EDIT-01: Integrated post-production/output
+    QA-01: Finished-output review/correction request/recheck/pass
+  rules:
+  - Each stage consumes exact upstream refs.
+  - AUTO/MANUAL changes progression behavior, not source truth.
+  - Confirmed work creates a new version; no overwrite.
+  - Correction targets exact source version/scope and preserves unaffected governed content.
+  - QA never generates replacement media; correction returns to owning production domain.
+three_ai_conversation_surfaces:
+  shared_core: ACPOS AI Conversation Core
+  CORE_AI:
+    page_uid: CORE-01
+    scope: Project/Topic/Blueprint/DNA/Canonical Script
+  STRATEGY_AI:
+    page_uid: workspace:STR-01
+    scope: Intelligence/options/risk/resources/strategy
+  SYSTEM_AI:
+    page_uid: admin:SYS-01
+    scope: System truth/design/change/impact/validation
+  rule: Three specialized surfaces share ACPOS core logic but do not share unrestricted domain context.
+ai_api_provider_route:
+  current_admin_page: admin:AIAPI-01
+  provider_profile_owner: admin:AIAPI-01#provider_model_profiles
+  single_current_ui: true
+  department_provider_picker: FORBIDDEN
+  pipeline:
+  - Resolve exact Page/Task/Script/Context
+  - Build provider-neutral instruction
+  - Resolve required capability
+  - Apply permission/policy/rights/data-classification/health eligibility
+  - Rank eligible ProviderModelProfiles
+  - Provider Prompt Adapter renders provider syntax
+  - Provider Gateway executes
+  - Normalize/validate result
+  - Persist route/job/attempt/result lineage
+  - Return to owning domain for evaluation/version/decision
+  experience_routing:
+    hard_eligibility_first: true
+    ranking_signals:
+    - task-type success rate
+    - QA pass rate
+    - correction rate
+    - latency
+    - cost efficiency
+    - fallback/failure pattern
+    - identity/continuity quality when applicable
+    experience_cannot_override_hard_gate: true
+production_script_integration:
+  authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+  CORE:
+    capability:
+    - TEXT_CHAT
+    role: Canonical Production Script authoring/revision
+  ASSET:
+    section_count: 8
+    capabilities:
+    - TEXT_TO_IMAGE
+    - IMAGE_EDIT
+    - TEXT_TO_VOICE
+    - VOICE_TO_VOICE
+    - OTHER
+  VIDEO:
+    section_count: 8
+    capabilities:
+    - TEXT_TO_VIDEO
+    - VIDEO_EDIT
+    - OTHER
+  EDIT_VOICE:
+    role_count: 8
+    execution: Deterministic editing runtime + registered external AI only when needed
+  QA:
+    production_script_authoring: false
+    role: Review exact completed output with validation/criteria/evidence
+  provider_syntax_inside_department_script: FORBIDDEN
+  department_provider_picker: FORBIDDEN
+shared_external_data_acquisition:
+  service_key: ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME
+  role: WHOLE_SITE_SHARED_INFRASTRUCTURE
+  owner_boundary: WHOLE_SITE_SHARED_RUNTIME_NOT_OWNED_BY_ANY_PAGE
+  purpose: Provide one governed external data acquisition/crawler/search/fetch/ingestion runtime for multiple ACPOS pages. Pages declare
+    domain-specific acquisition intent/scope; shared runtime owns fetch execution, compliance, rate controls, snapshots, normalization,
+    evidence, retry and audit.
+  capabilities:
+  - WEB_CRAWL
+  - WEB_FETCH
+  - SEARCH_DISCOVERY
+  - SITEMAP_DISCOVERY
+  - RSS_ATOM_INGEST
+  - STRUCTURED_HTTP_JSON_FETCH
+  - DOCUMENT_FETCH
+  - OPTIONAL_JS_RENDER_WHEN_REGISTERED
+  - LINK_DISCOVERY
+  - SCHEDULED_RECRAWL
+  - CONTINUOUS_DISCOVERY_WHEN_POLICY_ALLOWS
+  governance:
+    robots_txt: REQUIRED_WHEN_APPLICABLE
+    terms_rights_policy: REQUIRED
+    domain_allow_deny: REQUIRED
+    rate_limit: CENTRALIZED
+    concurrency: CENTRALIZED
+    request_interval: CENTRALIZED
+    user_agent_identity: CENTRALIZED_CONFIG
+    credential_handling: SECRET_REFERENCE_ONLY
+    data_classification: REQUIRED
+    scope_isolation: REQUIRED
+    kill_switch: SYSTEM_AND_DOMAIN_GOVERNED
+    raw_secret_logging: FORBIDDEN
+  shared_objects:
+  - AcquisitionSource
+  - AcquisitionPolicy
+  - AcquisitionJob
+  - AcquisitionAttempt
+  - RawSourceSnapshot
+  - NormalizedSourceDocument
+  - AcquisitionEvidence
+  - AcquisitionFailure
+  - RecrawlSchedule
+  canonical_flow:
+  - Domain Page creates AcquisitionIntent
+  - Resolve source/scope/policy/rights
+  - 'Resolve method: crawl/search/fetch/rss/api/document'
+  - Preflight robots/rights/domain/rate/credential policy
+  - Create AcquisitionJob
+  - Execute one or more AcquisitionAttempts
+  - Persist immutable RawSourceSnapshot
+  - Deduplicate by canonical URL/content hash
+  - Normalize content + metadata + published/source time
+  - Produce Evidence/Citation-ready refs
+  - Return domain-scoped result projection
+  - Emit ACPOSIntegrationEvent
+  - Update freshness/recrawl state
+  crawler_controls:
+  - seed_url_or_query
+  - allowed_domains
+  - denied_domains
+  - path_allow_deny
+  - same_domain_only
+  - cross_domain_discovery_policy
+  - max_depth
+  - max_pages
+  - sitemap_enabled
+  - robots_policy
+  - javascript_render_mode
+  - content_types
+  - language_scope
+  - published_time_extraction
+  - canonical_url_resolution
+  - dedupe_mode
+  - schedule_mode
+  - recrawl_interval
+  - rate_limit_profile
+  - timeout_profile
+  - retry_backoff_policy
+  runtime_observability:
+  - job_id
+  - attempt_id
+  - requested_url_or_query
+  - resolved_url
+  - http_status
+  - fetch_started_at
+  - fetch_completed_at
+  - latency
+  - bytes
+  - content_hash
+  - canonical_url
+  - parser
+  - render_mode
+  - retry_count
+  - failure_class
+  - next_retry_at
+  - last_crawled_at
+  - next_crawl_at
+  - correlation_id
+  - audit_ref
+  hard_boundaries:
+  - No page may implement a second crawler runtime.
+  - No page may bypass robots/rights/rate/scope policy.
+  - No page directly writes raw crawl results into Canon/Knowledge/Strategy/Company Directory.
+  - Raw acquisition result must pass domain normalization/validation before adoption.
+  - Search provider/API and web crawler are execution adapters, not separate business databases.
+  domain_consumers:
+    admin:KB-01:
+      mode: SOURCE_INGESTION
+      uses:
+      - WEB_CRAWL
+      - WEB_FETCH
+      - SEARCH_DISCOVERY
+      - RSS_ATOM_INGEST
+      - DOCUMENT_FETCH
+      - SCHEDULED_RECRAWL
+      output_target: Knowledge source/evidence/citation pipeline
+      page_owns_runtime: false
+    workspace:INFO-01:
+      mode: RESEARCH_AND_FACT_ACQUISITION
+      uses:
+      - SEARCH_DISCOVERY
+      - WEB_FETCH
+      - WEB_CRAWL
+      output_target: Fact/Evidence/Context Candidate workflow
+      page_owns_runtime: false
+    admin:STR-01:
+      mode: STRATEGIC_INTELLIGENCE_ACQUISITION
+      uses:
+      - SEARCH_DISCOVERY
+      - WEB_CRAWL
+      - WEB_FETCH
+      - SCHEDULED_RECRAWL
+      output_target: Strategy source/watchlist/fact/trend pipeline
+      page_owns_runtime: false
+    workspace:STR-01:
+      mode: STRATEGY_CONSUMER
+      uses: []
+      output_target: Consumes governed strategic intelligence from admin/source pipeline; does not run raw crawl by default.
+      page_owns_runtime: false
+    admin:DEV-01:
+      mode: COMPANY_DISCOVERY
+      uses:
+      - SEARCH_DISCOVERY
+      - WEB_CRAWL
+      - WEB_FETCH
+      - STRUCTURED_HTTP_JSON_FETCH
+      - CONTINUOUS_DISCOVERY_WHEN_POLICY_ALLOWS
+      output_target: Company discovery evidence -> identity resolution -> company directory
+      page_owns_runtime: false
+    admin:SOC-01:
+      mode: SOCIAL_TARGET_DISCOVERY
+      uses:
+      - SEARCH_DISCOVERY
+      - WEB_FETCH
+      - STRUCTURED_HTTP_JSON_FETCH
+      output_target: Target discovery evidence / platform target directory
+      page_owns_runtime: false
+      boundary: Official platform API/adapter remains preferred/required where platform policy demands; generic crawler cannot bypass
+        platform restrictions.
+knowledge_system:
+  page_uid: admin:KB-01
+  page_authority: ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+  current_services:
+  - FactPackService
+  - KnowledgeExperienceService
+  shared_acpos_objects:
+  - ACPOSContextCandidate
+  - ACPOSContextPackage
+  - ACPOSStateProjection
+  - ACPOSExperienceRecord
+  - ACPOSLearningCandidate
+  - ACPOSIntegrationEvent
+  lifecycle:
+  - External/registered source -> Shared Acquisition -> normalized evidence/citation
+  - Search / Context Candidate
+  - Real execution -> Experience -> Replay -> Learning Candidate
+  - Knowledge Draft -> Human Review -> Approved Knowledge Version
+  - Approved Knowledge becomes eligible ACPOS Context input subject to scope/permission/current truth
+  hard_rules:
+  - Conversation != Approved Knowledge
+  - Experience != automatic rule change
+  - Approved Knowledge never overrides current Page Authority
+  - INFO-01 and KB-01 must not duplicate lifecycle ownership
+system_level_objects:
+  objects:
+  - name: ACPOSContextPackage
+    purpose: Frozen exact authorized context for one runtime/AI operation.
+    minimum_fields:
+    - operation_id
+    - page_uid
+    - domain
+    - account_scope
+    - object_refs
+    - exact_version_refs
+    - decision_refs
+    - source_refs
+    - context_fingerprint
+  - name: ACPOSContextCandidate
+    purpose: Governed versioned candidate for consumer-domain review.
+    minimum_fields:
+    - context_candidate_id
+    - version
+    - producer_page
+    - purpose
+    - scope
+    - selected_refs
+    - evidence_refs
+    - context_fingerprint
+    - state
+    - correlation_id
+    adoption_owner: CONSUMER_DOMAIN_GOVERNANCE
+  - name: ACPOSStateProjection
+    purpose: Whole-site owner/state/version/relationship/blocker projection; does not replace domain records.
+  - name: ACPOSExperienceRecord
+    purpose: Real execution/outcome record.
+    minimum_fields:
+    - experience_id
+    - domain
+    - task_type
+    - source_context_refs
+    - provider_model_ref_if_any
+    - attempts
+    - latency
+    - cost
+    - evaluation_refs
+    - qa_outcome_refs
+    - correction_refs
+    - final_outcome
+    - state
+  - name: ACPOSLearningCandidate
+    purpose: Governed improvement proposal derived from validated Experience.
+    minimum_fields:
+    - learning_candidate_id
+    - version
+    - scope
+    - pattern
+    - evidence_refs
+    - proposed_improvement
+    - limitations
+    - state
+  - name: ACPOSIntegrationEvent
+    purpose: Cross-page state notification envelope; domain owner remains source-of-truth owner.
+    minimum_fields:
+    - event_id
+    - event_type
+    - source_page
+    - source_domain
+    - source_object_ref
+    - exact_version_ref_if_applicable
+    - correlation_id
+    - timestamp
+    - scope
+  page_level_parallel_object: FORBIDDEN_WHEN_SHARED_OBJECT_ALREADY_EXISTS
+page_precedence:
+  cross_page_system_logic: ACPOS_SYSTEM_AUTHORITY
+  front_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  navigation_and_l1_permission: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY
+  page_ui_business_logic: CURRENT_PAGE_AUTHORITY
+  production_instruction_provider_adapter: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT V1.3
+  undefined: BLOCK + REPORT_AUTHORITY_GAP
+implementation_truth:
+  authority_spec: FINAL_LOCKED
+  page_integration_spec: FINAL_LOCKED
+  global_visual_spec: FINAL_LOCKED
+  navigation_permission_spec: FINAL_LOCKED
+  knowledge_page_spec: FINAL_LOCKED
+  production_script_contract: FINAL_LOCKED
+  application_code: NOT_EXECUTED
+  api_binding: NOT_EXECUTED
+  database_binding: NOT_EXECUTED
+  shared_crawler_runtime_execution: NOT_EXECUTED
+  e2e: NOT_EXECUTED
+  deployment: NOT_EXECUTED
+acceptance:
+- 18 unique current page authorities are represented in the Page Integration Matrix.
+- Front workspace navigation has exactly 8 L1 items.
+- Admin navigation has exactly 9 L1 items including Knowledge.
+- INFO-01 is not a ninth front L1.
+- All department Provider/Model binding resolves through admin:AIAPI-01 and the shared router.
+- QA is review/correction-request/recheck/pass, not production-script authoring.
+- KB reuses FactPackService + KnowledgeExperienceService and shared ACPOS objects.
+- External data acquisition is one shared runtime used by KB/INFO/Strategy Admin/DEV/SOC where applicable.
+- Global Visual Authority exists and all pages inherit it.
+- No duplicate shared Context/Experience/Learning/Event/Crawler subsystem is allowed.
+- Runtime completion must not be claimed without actual implementation and test evidence.

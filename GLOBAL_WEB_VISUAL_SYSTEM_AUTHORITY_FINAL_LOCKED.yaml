@@ -1,0 +1,181 @@
+authority:
+  id: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  version: V1.0
+  status: FINAL_LOCKED
+  current_only: true
+  scope: GLOBAL_VISUAL_TOKENS_COMPONENT_STATES_AND_SHARED_PRESENTATION_ONLY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  page_visual_override: FORBIDDEN
+  real_data_only: true
+design_intent:
+- dark purple enterprise AI production workstation
+- professional technology interface
+- compact high-information layout without clutter
+- restrained violet emphasis
+- consistent visual semantics across FRONT and ADMIN surfaces
+tokens:
+  background:
+    page: '#050816'
+    deep_navy: '#070B1D'
+    workspace: '#080C20'
+  surface:
+    l1: '#0C1026'
+    l2: '#111936'
+    input: '#0A0F24'
+    popup: '#0B1027'
+    message_user: '#141A36'
+    message_ai: '#0F1530'
+    message_assistant: '#111936'
+  purple:
+    primary: '#8B5CFF'
+    secondary: '#6E35FF'
+    highlight: '#B38CFF'
+    active_surface: rgba(139,92,255,0.28)
+    hover_surface: rgba(139,92,255,0.18)
+    glow: rgba(139,92,255,0.20)
+  border:
+    normal: rgba(142,112,255,0.28)
+    subtle: rgba(142,112,255,0.18)
+    active: rgba(179,140,255,0.46)
+  text:
+    primary: '#F3F5FF'
+    secondary: '#AEB7D9'
+    muted: '#7F88A8'
+    disabled: rgba(174,183,217,0.42)
+  status:
+    success: '#50D890'
+    warning: '#F3B84B'
+    error: '#FF6B7A'
+    processing: '#4D6BFF'
+geometry:
+  control_height: 40px
+  compact_control_height: 32px
+  button_radius: 10px
+  panel_radius: 12px
+  large_container_radius: 24px
+  section_gap: 16px
+  inner_gap: 12px
+  content_padding: 16px
+  compact_card_padding: 12px
+  minimum_touch_target: 44x44px
+  drawer_default_width: 520px
+  drawer_allowed_range: 480-560px unless Page Authority defines an exact current value
+button_system:
+  primary:
+    height: 40px
+    radius: 10px
+    background: 'linear-gradient(135deg, #6E35FF 0%, #8B5CFF 100%)'
+    text: '#F3F5FF'
+    border: rgba(179,140,255,0.46)
+  secondary:
+    height: 40px
+    radius: 10px
+    background: '#111936'
+    text: '#AEB7D9'
+    border: rgba(142,112,255,0.28)
+  selected:
+    height: 40px
+    radius: 10px
+    active_background: rgba(139,92,255,0.28)
+    active_border: rgba(179,140,255,0.46)
+    active_text: '#F3F5FF'
+    inactive_background: '#0C1026'
+    inactive_text: '#AEB7D9'
+  disabled:
+    opacity: 0.42
+    text: rgba(174,183,217,0.42)
+    pointer_action: BLOCKED
+    disabled_reason_required: true
+  danger:
+    rule: Use status.error only for registered destructive/reject actions; never replace Primary Purple globally.
+control_system:
+  input:
+    height: 40px
+    radius: 10px
+    background: '#0A0F24'
+    border: rgba(142,112,255,0.28)
+    text: '#F3F5FF'
+    placeholder: '#7F88A8'
+    focus_border: rgba(179,140,255,0.46)
+  select: Same base geometry/state semantics as input; Page Authority owns option data.
+  tab:
+    height: 40px
+    selected: button_system.selected
+    unselected: transparent or surface.l1 according to Page Authority geometry
+  drawer:
+    surface: '#0B1027'
+    border: rgba(142,112,255,0.28)
+    focus_trap: true
+    escape_close: true
+  modal:
+    surface: '#0B1027'
+    border: rgba(142,112,255,0.28)
+    focus_trap: true
+    effectful_form_only_when_registered: true
+state_semantics:
+  DEFAULT: neutral
+  HOVER: subtle violet hover only
+  ACTIVE: primary/selected violet semantics
+  SELECTED: selected violet semantics
+  DISABLED: reduced opacity + mandatory disabled reason for effectful controls
+  LOADING: preserve geometry; no fake data
+  ERROR: status.error + actual registered error
+  SUCCESS: status.success only
+  WARNING: status.warning only
+  PROCESSING: status.processing only
+usage_lock:
+  primary_purple_only_for:
+  - active_navigation
+  - selected_work_item
+  - selected_conversation_mode
+  - primary_button
+  - focus
+  - selected_version
+  - final_confirmation
+  status_colors_do_not_replace_primary_color: true
+  forbidden:
+  - unapproved_orange_primary
+  - unapproved_blue_theme
+  - rainbow_card_colors
+  - bright_background_override
+  - per_card_random_color
+  - page_local_button_theme
+  - page_local_global_palette
+data_display:
+  authoritative_real_data_only: true
+  missing_value: —
+  loading: 載入中
+  error: 資料載入失敗
+  invented_business_value: FORBIDDEN
+  invented_project_topic_user_provider_score_version_status: FORBIDDEN
+accessibility:
+  keyboard_focus_visible: true
+  focus_never_color_only: true
+  disabled_reason_accessible: true
+  drawer_modal_focus_management: REQUIRED
+responsive_boundary:
+  desktop_first: true
+  page_internal_layout_owned_by_page_authority: true
+  global_visual_must_not_reorder_page_sections: true
+  mobile_only_parallel_page: FORBIDDEN
+i18n:
+  supported_locales:
+  - zh-TW
+  - zh-CN
+  - en
+  brand: ORANGE ONE
+  brand_translation: FORBIDDEN
+  fixed_system_terms_may_remain_english:
+  - ACPOS
+  - AI
+  - API
+  - QA
+  - Provider
+  - Experience
+  - Citation
+acceptance:
+- All pages inherit this visual authority.
+- No page defines a second global palette or button theme.
+- Global Shell V1.9 owns exact shell geometry/surfaces.
+- Missing business data renders —; no samples.
+- Control states are deterministic and permission/state aware.

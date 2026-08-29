@@ -1,0 +1,232 @@
+authority:
+  id: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY
+  version: V1.0
+  status: FINAL_LOCKED
+  current_only: true
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
+  page_declared_global_order: NON_EXECUTABLE
+front_workspace_navigation:
+  owner: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 + this canonical target registry
+  count: 8
+  flat_l1_only: true
+  items:
+  - order: 1
+    nav_id: NAV-01
+    label:
+      zh-TW: 儀表板
+      en: Dashboard
+    page_uid: workspace:WB-01
+    child_menu: FORBIDDEN
+    unauthorized: HIDDEN
+  - order: 2
+    nav_id: NAV-02
+    label:
+      zh-TW: 專案 / 專題
+      en: Project / Topic
+    page_uid: CORE-01
+    child_menu: FORBIDDEN
+    unauthorized: HIDDEN
+  - order: 3
+    nav_id: NAV-03
+    label:
+      zh-TW: 素材
+      en: Assets
+    page_uid: ASSET-01
+    child_menu: FORBIDDEN
+    unauthorized: HIDDEN
+  - order: 4
+    nav_id: NAV-04
+    label:
+      zh-TW: 影片
+      en: Video
+    page_uid: VIDEO-01
+    child_menu: FORBIDDEN
+    unauthorized: HIDDEN
+  - order: 5
+    nav_id: NAV-05
+    label:
+      zh-TW: 剪輯配音
+      en: Editing & Voice
+    page_uid: EDIT-01
+    child_menu: FORBIDDEN
+    unauthorized: HIDDEN
+  - order: 6
+    nav_id: NAV-06
+    label:
+      zh-TW: QA
+      en: QA
+    page_uid: QA-01
+    child_menu: FORBIDDEN
+    unauthorized: HIDDEN
+  - order: 7
+    nav_id: NAV-07
+    label:
+      zh-TW: 資料庫
+      en: Database
+    page_uid: admin:DB-01
+    child_menu: FORBIDDEN
+    unauthorized: HIDDEN
+  - order: 8
+    nav_id: NAV-08
+    label:
+      zh-TW: 戰略中心
+      en: Strategy Center
+    page_uid: workspace:STR-01
+    child_menu: FORBIDDEN
+    unauthorized: HIDDEN
+admin_navigation:
+  owner: THIS_AUTHORITY
+  count: 9
+  items:
+  - order: 1
+    nav_id: ADMIN-NAV-01
+    label:
+      zh-TW: 系統維護
+      en: System Maintenance
+    page_uid: admin:SYS-01
+    permission_bundle: ADMIN-L1-SYSTEM
+    unauthorized: HIDDEN
+  - order: 2
+    nav_id: ADMIN-NAV-02
+    label:
+      zh-TW: 帳戶與權限
+      en: Account & Permission
+    page_uid: admin:IAM-01
+    permission_bundle: ADMIN-L1-IAM
+    unauthorized: HIDDEN
+  - order: 3
+    nav_id: ADMIN-NAV-03
+    label:
+      zh-TW: 企業自動開發系統
+      en: Enterprise Automation
+    page_uid: admin:DEV-01
+    permission_bundle: ADMIN-L1-DEV
+    unauthorized: HIDDEN
+  - order: 4
+    nav_id: ADMIN-NAV-04
+    label:
+      zh-TW: 社群發布
+      en: Social Publishing
+    page_uid: admin:SOC-01
+    permission_bundle: ADMIN-L1-SOCIAL
+    unauthorized: HIDDEN
+  - order: 5
+    nav_id: ADMIN-NAV-05
+    label:
+      zh-TW: ERP
+      en: ERP & Finance
+    page_uid: admin:ERP-01
+    permission_bundle: ADMIN-L1-ERP
+    unauthorized: HIDDEN
+  - order: 6
+    nav_id: ADMIN-NAV-06
+    label:
+      zh-TW: AI API
+      en: AI API
+    page_uid: admin:AIAPI-01
+    permission_bundle: ADMIN-L1-AIAPI
+    unauthorized: HIDDEN
+  - order: 7
+    nav_id: ADMIN-NAV-07
+    label:
+      zh-TW: QA 評分項目
+      en: QA Review Criteria
+    page_uid: admin:SG-02
+    permission_bundle: ADMIN-L1-QA-CRITERIA
+    unauthorized: HIDDEN
+  - order: 8
+    nav_id: ADMIN-NAV-08
+    label:
+      zh-TW: 戰略中心
+      en: Strategy Administration
+    page_uid: admin:STR-01
+    permission_bundle: ADMIN-L1-STRATEGY
+    unauthorized: HIDDEN
+  - order: 9
+    nav_id: ADMIN-NAV-09
+    label:
+      zh-TW: 知識庫
+      en: Knowledge & Experience
+    page_uid: admin:KB-01
+    permission_bundle: ADMIN-L1-KNOWLEDGE
+    unauthorized: HIDDEN
+supporting_page_entry:
+  workspace:INFO-01:
+    global_l1: false
+    role: Supporting Information / Fact / Evidence / Context workspace
+    allowed_entry_sources:
+    - Dashboard information/news projection
+    - Strategy authorized information context
+    - Knowledge / Citation / Context workflow
+    - Registered contextual deep link
+    route_resolution: Canonical page UID resolver; no ninth front L1.
+iam_permission_bundles:
+  front:
+  - bundle: FRONT-L1-01
+    page_uid: workspace:WB-01
+    label_zh: 儀表板
+  - bundle: FRONT-L1-02
+    page_uid: CORE-01
+    label_zh: 專案 / 專題
+  - bundle: FRONT-L1-03
+    page_uid: ASSET-01
+    label_zh: 素材
+  - bundle: FRONT-L1-04
+    page_uid: VIDEO-01
+    label_zh: 影片
+  - bundle: FRONT-L1-05
+    page_uid: EDIT-01
+    label_zh: 剪輯配音
+  - bundle: FRONT-L1-06
+    page_uid: QA-01
+    label_zh: QA
+  - bundle: FRONT-L1-07
+    page_uid: admin:DB-01
+    label_zh: 資料庫
+  - bundle: FRONT-L1-08
+    page_uid: workspace:STR-01
+    label_zh: 戰略中心
+  admin:
+  - bundle: ADMIN-L1-SYSTEM
+    page_uid: admin:SYS-01
+    label_zh: 系統維護
+  - bundle: ADMIN-L1-IAM
+    page_uid: admin:IAM-01
+    label_zh: 帳戶與權限
+  - bundle: ADMIN-L1-DEV
+    page_uid: admin:DEV-01
+    label_zh: 企業自動開發系統
+  - bundle: ADMIN-L1-SOCIAL
+    page_uid: admin:SOC-01
+    label_zh: 社群發布
+  - bundle: ADMIN-L1-ERP
+    page_uid: admin:ERP-01
+    label_zh: ERP
+  - bundle: ADMIN-L1-AIAPI
+    page_uid: admin:AIAPI-01
+    label_zh: AI API
+  - bundle: ADMIN-L1-QA-CRITERIA
+    page_uid: admin:SG-02
+    label_zh: QA 評分項目
+  - bundle: ADMIN-L1-STRATEGY
+    page_uid: admin:STR-01
+    label_zh: 戰略中心
+  - bundle: ADMIN-L1-KNOWLEDGE
+    page_uid: admin:KB-01
+    label_zh: 知識庫
+  all_toggle:
+    meaning: UI select-all for explicit assignments only
+    role_or_super_admin_semantics: FORBIDDEN
+  save_behavior: Expand selected L1 bundles into explicit registered resources/actions/scopes; no implicit department inheritance.
+visibility_and_active_rules:
+  permission_denied: HIDDEN
+  authorized_but_state_blocked: Existing control may be DISABLED with reason
+  active_front_item: Resolve from canonical page ancestry; no URL text guessing
+  active_admin_item: Resolve exact admin page UID
+  relative_order: Preserve fixed order among visible authorized items
+subordinate_metadata_rule:
+  page_file_may_declare_own_identity: true
+  page_file_may_declare_global_sibling_order: false
+  page_file_may_add_global_l1: false
+  page_local_navigation_metadata_conflict: THIS_AUTHORITY_WINS

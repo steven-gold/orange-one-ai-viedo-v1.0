@@ -1,0 +1,173 @@
+authority:
+  id: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT
+  version: V1.3
+  status: FINAL_LOCKED
+  current_only: true
+  scope: CROSS_DEPARTMENT_SCRIPT_BINDING_PROVIDER_NEUTRAL_COMPILATION_AND_PROVIDER_ADAPTER_ONLY
+  new_page: false
+  new_runtime_service: false
+  new_provider_registry: false
+  new_script_engine: false
+  qa_in_scope: false
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  system_authority: ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  provider_profile_current_owner: admin:AIAPI-01#provider_model_profiles
+content_ownership:
+  CORE:
+    page_authority: CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    role: Canonical Production Script authoring/revision
+    capability: TEXT_CHAT
+  ASSET:
+    page_authority: ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    role: Asset production/correction script content
+  VIDEO:
+    page_authority: VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    role: Video production/correction script content
+  EDIT_VOICE:
+    page_authority: ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    role: Eight existing post-production script roles/correction content
+  QA:
+    page_authority: ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+    role: Validation/review only; no production-script authoring
+  STRATEGY:
+    page_authority: ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+    role: Strategic AI instruction/context binding; raw AI output is never formal decision
+shared_rules:
+  canonical_language: zh-TW provider-neutral production instruction
+  first_production_free_prompt: FORBIDDEN_WHERE_PAGE_AUTHORITY_REQUIRES_BOUND_SCRIPT
+  provider_syntax_inside_department_script: FORBIDDEN
+  manual_provider_model_picker: FORBIDDEN
+  meaning_preservation: Provider conversion may change syntax/field placement only; may not add/delete/weaken/reorder/reinterpret governed intent
+    or constraints.
+  trace_required:
+  - project_id
+  - topic_id
+  - task_id_if_applicable
+  - blueprint_version_id
+  - script_view_or_role_id
+  - script_version_or_section_version
+  - script_hash
+  - input_fingerprint
+normalized_instruction:
+  required:
+  - canonical_instruction_id
+  - department
+  - operation_or_task_ref
+  - script_view_or_role_ref
+  - exact_script_version_ref
+  - source_hash
+  - capability_requirement
+  - canonical_instruction_zh_tw
+  - reference_inputs
+  - output_contract
+  - preserve_constraints
+  - forbidden_constraints
+  provider_specific_keys: FORBIDDEN
+capability_registry:
+  allowed:
+  - TEXT_CHAT
+  - TEXT_TO_IMAGE
+  - IMAGE_EDIT
+  - TEXT_TO_VIDEO
+  - VIDEO_EDIT
+  - TEXT_TO_VOICE
+  - VOICE_TO_VOICE
+  - EMBEDDING
+  - OTHER
+  exact_match_required: true
+  silent_downgrade: FORBIDDEN
+provider_adapter:
+  owner: Existing ACPOS Provider Prompt Adapter / AI API Router / ProviderGateway
+  profile_owner: admin:AIAPI-01#provider_model_profiles
+  existing_adapter_types_only:
+  - OPENAI_COMPATIBLE_CHAT
+  - GENERIC_JSON_HTTP
+  required_profile_fields:
+  - provider_id
+  - model_id
+  - capability_type
+  - adapter_type
+  - base_url
+  - endpoint_path
+  - http_method
+  - secret_env_ref
+  - timeout_seconds
+  - request_template
+  - response_text_path
+  - enabled
+  - profile_version
+  - prompt_template
+  conditional_profile_fields:
+  - preferred_language
+  - max_context
+  - additional_capabilities
+  - data_classifications
+  - supports_references
+  - rights_compatible
+  - health_status
+  - profile_test_evidence
+  secret_rule: SECRET_REFERENCE_ONLY; raw credential in page/script/log/audit is forbidden
+  prompt_template_rule: Must contain canonical instruction placeholder and preserve canonical meaning.
+  request_template_rule: May map canonical placeholders to provider-specific JSON keys; department never knows those keys.
+routing_gates:
+  ordered:
+  - Required capability exact match
+  - Reference-media support when required
+  - Rights compatibility
+  - Data classification compatibility
+  - Profile enabled
+  - Health/test policy pass
+  - Budget/cost/policy gate when registered
+  experience_use: Only after hard eligibility; ACPOS Experience may rank eligible profiles.
+  fallback: Recompile same canonical meaning for target ProviderModelProfile; compiled prompt reuse across providers is forbidden.
+conversion_pipeline:
+- Resolve exact Page Authority script view/role/section
+- Build NormalizedInstruction
+- Resolve required capability
+- Resolve eligible admin:AIAPI-01 ProviderModelProfile
+- Render profile prompt_template
+- Render adapter request_template
+- Inject secret reference at gateway only
+- Execute existing ProviderGateway
+- Normalize/validate response
+- Persist canonical_instruction_id -> profile/version -> compiled_prompt_hash -> api_request_hash -> job/result lineage
+- Return normalized result to owning domain for evaluation/version/decision
+correction_contract:
+  applies_to:
+  - ASSET
+  - VIDEO
+  - EDIT_VOICE
+  source: Existing page-specific CorrectionScriptCandidate / correction context
+  required:
+  - exact_source_output_version_ref
+  - exact_source_script_ref
+  - source_script_hash
+  - target_scope
+  - finding_or_issue_ref
+  - current_problem
+  - requested_delta_zh_tw
+  - expected_result
+  - preserve_constraints
+  - candidate_hash
+  - approval_state
+  rule: Compile only approved delta against exact source; preserve unchanged governed fields; correction creates a new output/version according
+    to owning Page Authority.
+strategy_contract:
+  capability: TEXT_CHAT
+  same_basis_for_multi_ai: true
+  basis:
+  - original_user_question
+  - shared_governed_strategy_context
+  - exact_source_fact_and_evidence_refs
+  - current_user_instruction
+  provider_brand_visibility: Conversation UI may show brand; full model/capability management remains AIAPI-01.
+  raw_ai_formal_decision: false
+acceptance:
+- No duplicate page script content is stored in this central contract.
+- All page script content remains owned by the listed Current Page Authorities.
+- Provider profile binding is current AIAPI-01 only.
+- No department Provider/Model picker exists.
+- Only existing adapter types are used.
+- QA is excluded from production/correction script authoring.
+- Cross-provider fallback recompiles canonical meaning.
+- Provider/model profiles remain runtime/admin data and are never fabricated in this file.

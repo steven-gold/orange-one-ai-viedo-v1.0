@@ -1,0 +1,583 @@
+authority:
+  id: ACPOS_PAGE_INTEGRATION_MATRIX
+  version: V1.0
+  status: FINAL_LOCKED
+  current_only: true
+  page_count: 18
+  system_authority: ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  navigation_permission_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+  rule: Integrates current pages into ACPOS without replacing page UI/operation authority.
+pages:
+- page_uid: workspace:WB-01
+  name_zh: 儀表板
+  surface: FRONT_WORKSPACE
+  domain: COMPANY_DASHBOARD
+  acpos_role: 全站摘要與入口投影，不擁有下游業務資料。
+  consumes:
+  - Project / Topic progress projections
+  - Production status projections
+  - Pending / Review / Notification / To-do / Running summaries
+  - Company announcement / AI-industry information summary
+  - System health/status projections
+  produces:
+  - Navigation intent
+  - Authorized drill-down context
+  ai_usage: NONE_REQUIRED_FOR_PAGE_RENDER
+  handoff_in: []
+  handoff_out:
+  - Navigate to exact owning page/context
+  experience_signals: []
+  decision_boundary: READ_SUMMARY_ONLY
+  version_boundary: Read exact projection/version where provided
+  integration_rule: Dashboard never becomes a second owner for project, production, QA, ERP, strategy or system data.
+- page_uid: CORE-01
+  name_zh: 專案 / 專題核心工作區
+  surface: FRONT_WORKSPACE
+  domain: CORE
+  acpos_role: Project Core、Blueprint/DNA、Topic Scope、Canonical Production Script 的主要建立與決策入口。
+  consumes:
+  - Project metadata and confirmed Project versions
+  - Approved/confirmed decision context
+  - Governed Strategy/Information context candidates when explicitly adopted
+  - Current system naming/version governance
+  produces:
+  - Story / Chapter / World / DNA / Blueprint candidate and confirmed versions
+  - Topic Production Scope
+  - Canonical Production Script candidate/confirmed version
+  - Production Package readiness and exact source refs
+  - Conversation / decision / candidate records
+  ai_usage:
+    surface: CORE_AI
+    modes:
+    - SINGLE_AI
+    - MULTI_AI
+    capabilities:
+    - TEXT_CHAT
+    provider_picker: FORBIDDEN
+    formalization: AI result -> evaluation/assistant structure -> human governed decision -> candidate/version
+  handoff_in:
+  - Governed Project/Strategy/Information context
+  handoff_out:
+  - CORE -> ASSET Production Package
+  experience_signals:
+  - candidate accepted/rejected
+  - revision count
+  - human decision
+  - downstream QA outcome linked back to source Blueprint/Script
+  decision_boundary: AI cannot silently confirm Canon/Blueprint/Script.
+  version_boundary: Confirmed/locked source creates immutable version lineage.
+- page_uid: ASSET-01
+  name_zh: 素材生產工作區
+  surface: FRONT_WORKSPACE
+  domain: ASSET
+  acpos_role: 依 Exact Blueprint/Script/DNA/Manifest 生產或重用素材，完成評估、修正、版本與 VIDEO Handoff。
+  consumes:
+  - Exact Project / Topic / Task
+  - Blueprint version
+  - ASSET Script View/Sections
+  - DNA / Continuity refs
+  - Asset Manifest
+  - Naming / Rights / Policy
+  - Current AI route/capability decision
+  produces:
+  - AssetOutputVersion
+  - Layer/Patch version where applicable
+  - Asset score/evaluation/finding
+  - Correction candidate/result
+  - Exact ASSET -> VIDEO handoff manifest
+  ai_usage:
+    capabilities:
+    - TEXT_TO_IMAGE
+    - IMAGE_EDIT
+    - TEXT_TO_VOICE
+    - VOICE_TO_VOICE
+    - OTHER_WHEN_REGISTERED
+    - NO_PROVIDER_EXECUTION_REFERENCE_ONLY
+    first_production_free_prompt: FORBIDDEN
+    provider_picker: FORBIDDEN
+  handoff_in:
+  - CORE Production Package
+  handoff_out:
+  - ASSET -> VIDEO exact asset handoff
+  experience_signals:
+  - provider/model route
+  - attempt count
+  - latency/cost
+  - asset evaluation score
+  - correction count
+  - QA downstream findings attributable to asset
+  decision_boundary: Confirm/Modify/Lock according to current ASSET authority; page cannot alter upstream Canon.
+  version_boundary: Accepted mutation creates new AssetVersion; never overwrite confirmed source.
+- page_uid: VIDEO-01
+  name_zh: 影片生產工作區
+  surface: FRONT_WORKSPACE
+  domain: VIDEO
+  acpos_role: 依 Exact Scene/Shot + Blueprint/Script/DNA/Asset 生成影片、局部修正、評估並交付 EDIT。
+  consumes:
+  - Exact Project / Topic / Task
+  - Blueprint version
+  - VIDEO Script View/Sections
+  - DNA / Continuity refs
+  - Approved AssetVersion refs
+  - Output contract / rights / policy
+  - Current AI route/capability decision
+  produces:
+  - VideoOutputVersion
+  - Scene/Shot evaluation
+  - Finding/evidence/recheck state where defined
+  - Correction result
+  - Exact VIDEO -> EDIT handoff
+  ai_usage:
+    capabilities:
+    - TEXT_TO_VIDEO
+    - VIDEO_EDIT
+    - OTHER_WHEN_REGISTERED
+    first_production_free_prompt: FORBIDDEN
+    project_asset_picker: FORBIDDEN
+    provider_picker: FORBIDDEN
+  handoff_in:
+  - ASSET -> VIDEO exact handoff
+  handoff_out:
+  - VIDEO -> EDIT exact output handoff
+  experience_signals:
+  - provider/model route
+  - shot type
+  - attempt/correction count
+  - latency/cost
+  - video evaluation score
+  - identity/continuity success
+  - QA downstream findings attributable to video
+  decision_boundary: Confirm/Modify/Lock only inside current VIDEO state/gate.
+  version_boundary: Correction always creates new exact video version.
+- page_uid: EDIT-01
+  name_zh: 整合後製剪輯工作台
+  surface: FRONT_WORKSPACE
+  domain: EDIT_VOICE
+  acpos_role: 整合 Video / Overlay / Voice / Music / SFX / Subtitle / LipSync / Timeline / Finalize 的完整後製工作台。
+  consumes:
+  - PROJECT_TASK exact handoff or STANDALONE_UPLOAD
+  - Blueprint / Production Package
+  - Exact video/media refs
+  - Voice/music/SFX/subtitle/lipsync requirements
+  - Current editing/AI correction context
+  produces:
+  - EditingOutputVersion
+  - Timeline/track/clip state
+  - Voice/music/SFX/subtitle/lipsync output refs
+  - Correction candidate/result
+  - QA-ready exact output + provenance
+  ai_usage:
+    deterministic_runtime:
+    - timeline move/trim/split/order
+    - range/marker
+    - mix/manual adjustment
+    - registered non-AI editing operations
+    external_capabilities:
+    - TEXT_TO_VOICE
+    - VOICE_TO_VOICE
+    - VIDEO_EDIT_OR_REGISTERED_OTHER
+    first_production_free_prompt: FORBIDDEN_FOR_PROJECT_TASK
+  handoff_in:
+  - VIDEO -> EDIT exact handoff
+  - Standalone media session when explicitly selected
+  handoff_out:
+  - EDIT -> QA exact output handoff
+  experience_signals:
+  - editing correction pattern
+  - timeline/manual adjustment frequency
+  - AI correction effectiveness
+  - voice/lipsync/subtitle issue rate
+  - cost/latency when external AI is used
+  - QA downstream findings attributable to edit/voice
+  decision_boundary: Manual editing may alter working draft/output only; cannot rewrite Blueprint/Project Canon.
+  version_boundary: Confirmed output is versioned; source media/history is preserved.
+- page_uid: QA-01
+  name_zh: QA 審查工作區
+  surface: FRONT_WORKSPACE
+  domain: QA
+  acpos_role: 審查成片/成品是否符合要求；系統/AI評分、找問題、要求修改、Recheck、Pass，不負責生產內容。
+  consumes:
+  - ExactOutputVersion
+  - QAValidationScriptView
+  - Approved CriteriaVersion / QualityGatePolicy
+  - Evidence
+  - Rights / Policy
+  - Checksum / Provenance
+  produces:
+  - QAScorecard
+  - Finding
+  - ManualReviewCase when policy requires
+  - CorrectionRequest
+  - QAGateDecision
+  - ReleaseCandidate / ReleasePackage candidate
+  ai_usage:
+    role: REVIEW_ASSISTANCE_AND_SYSTEM_SCORING
+    production_script_authoring: OUT_OF_SCOPE
+    actions:
+    - generate_scorecard
+    - evidence assistance
+    - consistency check
+    - policy/check assistance
+    - candidate comparison
+  handoff_in:
+  - EDIT/other exact finished output
+  handoff_out:
+  - CorrectionRequest -> original owner
+  - PASS -> Release candidate
+  experience_signals:
+  - scorecard
+  - finding categories/severity
+  - root cause
+  - recheck count
+  - pass/fail
+  - manual review outcome
+  decision_boundary: QA cannot edit upstream output and cannot publish directly.
+  version_boundary: Finding closes only after verified new exact version + recheck when correction is required.
+- page_uid: admin:DB-01
+  name_zh: 資料模型與追溯工作區
+  surface: FRONT_EXPOSED_TECHNICAL_WORKSPACE
+  domain: DATA_TRACE
+  acpos_role: 讓 ACPOS 與授權使用者查看全站 Canonical Data、Exact Version Lineage、Relationship、Integrity、Migration/Audit。
+  consumes:
+  - All registered entity/version refs and schema/trace projections
+  produces:
+  - Integrity finding
+  - Trace/debug context
+  ai_usage: NONE_REQUIRED
+  handoff_in: []
+  handoff_out:
+  - Integrity issue -> owning domain/System lifecycle
+  experience_signals:
+  - integrity failure pattern
+  - migration/regression evidence when linked
+  decision_boundary: Read-only inspection; not generic CRUD.
+  version_boundary: No latest/current/default inference for formal trace.
+- page_uid: workspace:STR-01
+  name_zh: 戰略中心工作區
+  surface: FRONT_WORKSPACE
+  domain: STRATEGY
+  acpos_role: 整合市場情報、企業內部資料、資源/成本/風險與歷史 Experience，進行策略分析與人工決策輔助。
+  consumes:
+  - Market/industry/competitor intelligence
+  - Internal business data
+  - ERP cost/capacity information
+  - Risk/governance conditions
+  - Historical strategic analysis and experience
+  - Governed information/context candidates
+  produces:
+  - Strategy Recommendation
+  - Strategy Alert
+  - Resource Proposal
+  - Decision Brief
+  - Strategy candidate/adoption refs
+  - Decision ledger context
+  ai_usage:
+    surface: STRATEGY_AI
+    modes:
+    - SINGLE_AI
+    - MULTI_AI
+    capability: TEXT_CHAT
+    provider_picker: FORBIDDEN
+  handoff_in:
+  - INFO/ERP/System authorized context
+  handoff_out:
+  - Governed strategy/context proposal -> owning module/human decision
+  experience_signals:
+  - recommendation adopted/rejected
+  - expected vs actual result
+  - business KPI impact
+  - forecast accuracy
+  - strategy success/failure pattern
+  decision_boundary: AI recommendation is not formal strategy decision.
+  version_boundary: Strategy outputs/candidates are append-only versions.
+  shared_acquisition: GOVERNED_RESULT_CONSUMER_NO_RAW_CRAWL_BY_DEFAULT
+- page_uid: workspace:INFO-01
+  name_zh: 最新資訊工作區
+  surface: SUPPORTING_FRONT_WORKSPACE
+  domain: INFORMATION
+  acpos_role: 提供 Fact / Inference / Evidence / Source / Freshness / Context Candidate；不直接修改 Canon。
+  consumes:
+  - Authorized source/research/fact/evidence projections
+  produces:
+  - FactPack view
+  - Context Candidate
+  - Adoption/decision refs
+  ai_usage: INFORMATION_ANALYSIS_WHERE_REGISTERED
+  handoff_in:
+  - Source / research / fact data
+  handoff_out:
+  - Governed Context Candidate -> CORE/Strategy/other authorized consumer
+  experience_signals:
+  - source quality/freshness
+  - candidate adoption/rejection
+  - fact usefulness
+  decision_boundary: Fact/Inference/Recommendation separation mandatory; no direct Canon/Task/Budget/Release/Publish write.
+  version_boundary: Source time/version and citation remain explicit.
+  navigation_note: Not a ninth V1.9 front L1; current entry/deep-link mapping to be normalized.
+  shared_acquisition: RESEARCH_FACT_ACQUISITION_CONSUMER
+  navigation: SUPPORTING_PAGE_NOT_FRONT_L1
+  shared_context_object: ACPOSContextCandidate
+- page_uid: admin:SYS-01
+  name_zh: 系統 AI 工作區
+  surface: ADMIN
+  domain: SYSTEM_LIFECYCLE
+  acpos_role: 讓 ACPOS 對自身 Authority / Page / API / Runtime / Change / Test / Release 做受治理的系統設計與維護。
+  consumes:
+  - Current system truth
+  - Current authority refs
+  - Service/runtime/provider refs
+  - Change context
+  - Impact scope
+  - Sandbox/test/regression evidence
+  produces:
+  - System candidate
+  - Change request
+  - Impact preview
+  - Validation evidence
+  - Release candidate context
+  ai_usage:
+    surface: SYSTEM_AI
+    modes:
+    - SINGLE_AI
+    - MULTI_AI
+    provider_picker: FORBIDDEN
+  handoff_in:
+  - System issue/change request
+  handoff_out:
+  - Governed implementation/validation/release lifecycle
+  experience_signals:
+  - change success/failure
+  - regression pattern
+  - test result
+  - rollback/incident
+  - repair effectiveness
+  decision_boundary: AI cannot direct-deploy or directly mutate production.
+  version_boundary: System change and authority revisions are versioned/audited.
+- page_uid: admin:IAM-01
+  name_zh: 帳戶與權限
+  surface: ADMIN
+  domain: IAM
+  acpos_role: 管理帳戶、前台/後台 L1 權限配置、預覽、Security/Access Review。
+  consumes:
+  - Current front L1 registry
+  - Current admin L1 registry
+  - Account/security/access projections
+  produces:
+  - Explicit Account Permission Assignments
+  - Access review/audit outcomes
+  ai_usage: NONE_REQUIRED
+  handoff_in: []
+  handoff_out:
+  - Authorization outcome -> all ACPOS pages/runtime
+  experience_signals:
+  - access-review/security incident patterns only; never auto-grant permission
+  decision_boundary: Department membership/preset is not runtime authorization.
+  version_boundary: Permission changes explicit and auditable.
+  knowledge_slot_rule: Reserved Knowledge backend module is NOT selectable until a Current Knowledge Page Authority exists.
+  permission_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+  admin_l1_bundle_count: 9
+  knowledge_bundle: ADMIN-L1-KNOWLEDGE
+- page_uid: admin:DEV-01
+  name_zh: 企業自動開發系統
+  surface: ADMIN
+  domain: ENTERPRISE_OUTREACH
+  acpos_role: 企業名單發掘、Directory、開發信 Candidate、Campaign、Individual Delivery 的單頁工作流。
+  consumes:
+  - Allowed source/policy
+  - Company identity/contact/evidence
+  - Suppression/compliance
+  - Message/campaign configuration
+  produces:
+  - Company/contact/evidence records
+  - Message candidates
+  - Campaign/audience batches
+  - Individual delivery results
+  - Bounce/reply/suppression outcomes
+  ai_usage: AI-assisted message/candidate generation only where current page operations allow
+  handoff_in:
+  - Strategy/Information context if explicitly used by current workflow
+  handoff_out:
+  - Delivery outcome -> ACPOS Experience / business metrics
+  experience_signals:
+  - message acceptance/rejection
+  - delivery success
+  - bounce/reply
+  - campaign response pattern
+  decision_boundary: Candidate cannot directly send; campaign/delivery governed by approval/policy.
+  version_boundary: Message/campaign history preserved.
+  shared_acquisition: COMPANY_DISCOVERY_CONSUMER
+- page_uid: admin:SOC-01
+  name_zh: 社群發布
+  surface: ADMIN
+  domain: SOCIAL_PUBLISHING
+  acpos_role: Platform/Account/Target/Content Package/Publish Plan/Result 的受治理發布流程。
+  consumes:
+  - Release Candidate/source
+  - Platform/account/target capability
+  - Publishing policy
+  - Approved content package context
+  produces:
+  - Platform-native content package
+  - Publish request
+  - Publish status/history
+  - Metrics/interactions/incidents
+  ai_usage: AI/draft assistance only inside current content candidate rules
+  handoff_in:
+  - Release Candidate / approved source content
+  handoff_out:
+  - Publishing result/metrics -> ACPOS Experience / Strategy
+  experience_signals:
+  - publish success/failure
+  - platform/target performance
+  - engagement/interaction
+  - withdrawal/incident
+  decision_boundary: No blind mass publish or invented direct platform action.
+  version_boundary: Content package/publish request/history remain traceable.
+  shared_acquisition: SOCIAL_TARGET_DISCOVERY_CONSUMER_OFFICIAL_PLATFORM_BOUNDARY
+- page_uid: admin:ERP-01
+  name_zh: ERP / Finance
+  surface: ADMIN
+  domain: ERP_FINANCE
+  acpos_role: 提供財務/成本/容量/預測/Guardrail 與 ERP Connector/Snapshot/Sync 資訊。
+  consumes:
+  - ERP connector data
+  - Finance/capacity projections
+  produces:
+  - Cost / Revenue / Cashflow / Capacity / Forecast projections
+  - Finance guardrail
+  - ERP connector/snapshot/sync health
+  ai_usage: NONE_REQUIRED_FOR_CORE_FINANCE_TRUTH
+  handoff_in: []
+  handoff_out:
+  - Finance/capacity context -> Strategy / routing / governance when authorized
+  experience_signals:
+  - actual provider/production cost, capacity trend, forecast variance
+  decision_boundary: Current authority does not permit external ERP writeback or page-local accounting ledger.
+  version_boundary: Snapshot/freshness/time/currency explicit.
+- page_uid: admin:AIAPI-01
+  name_zh: AI API 管理
+  surface: ADMIN
+  domain: AI_API
+  acpos_role: 全站唯一 Provider / Model Profile / Capability / Route / Test / Job / Cost / Incident 管理面。
+  consumes:
+  - Provider configuration
+  - Credential references
+  - Capability/route policy
+  - Job/attempt/callback/cost/incident projections
+  - ACPOS experience-derived routing signals when governed
+  produces:
+  - ProviderModelProfile
+  - Provider/capability eligibility
+  - Route/test/health result
+  - Job/attempt/cost/incident data
+  ai_usage: SYSTEM_INFRASTRUCTURE
+  handoff_in:
+  - Capability request / normalized instruction from ACPOS AI Execution
+  handoff_out:
+  - Route decision -> Provider Gateway -> normalized result -> owning page/domain
+  experience_signals:
+  - provider/model success rate
+  - task-type success
+  - latency
+  - cost
+  - failure/retry/fallback
+  - QA downstream quality
+  decision_boundary: Business pages do not select Provider manually.
+  version_boundary: ProviderModelProfile/config changes are governed/versioned where current operations require.
+  current_profile_binding: admin:AIAPI-01#provider_model_profiles
+- page_uid: admin:SG-02
+  name_zh: QA 審查項目名單
+  surface: ADMIN
+  domain: QUALITY_GOVERNANCE
+  acpos_role: 管理 QA Criteria/Dimension/Threshold/Required Check/Gate Policy/Approval 的版本化治理。
+  consumes:
+  - Criteria/dimension/policy/mapping/approval projections
+  produces:
+  - Approved CriteriaVersion
+  - QualityGatePolicy
+  - Department mapping/required checks
+  ai_usage: NONE_REQUIRED_FOR_GOVERNANCE_DECISION
+  handoff_in: []
+  handoff_out:
+  - Approved criteria/policy -> QA-01 and relevant department evaluation
+  experience_signals:
+  - criteria effectiveness may inform future governed criteria-change candidate; never auto-edit active criteria
+  decision_boundary: Criteria changes require configure/review/approval; no hard-coded page threshold.
+  version_boundary: Active criteria immutable; change creates approved new version.
+- page_uid: admin:STR-01
+  name_zh: 戰略中心後台
+  surface: ADMIN
+  domain: STRATEGY_ADMIN
+  acpos_role: 治理 Strategy Source/Fact/Playbook/Trend/Opportunity/Decision Context，不取代前台 Strategy Workspace。
+  consumes:
+  - Facts/sources/watchlists/alerts/candidates/playbooks/trends/opportunities/evidence
+  produces:
+  - Governed strategy configuration/source/candidate/decision context
+  ai_usage: ADMIN_GOVERNANCE_SUPPORT_ONLY
+  handoff_in:
+  - Information/finance/system governed context
+  handoff_out:
+  - Governed strategy data/context -> workspace:STR-01
+  experience_signals:
+  - trend/opportunity/decision outcome history
+  decision_boundary: Cannot directly write Canon/Task/Budget/Publish.
+  version_boundary: Governed configuration/candidate/history remains traceable.
+  shared_acquisition: STRATEGIC_INTELLIGENCE_ACQUISITION_CONSUMER
+- page_uid: admin:KB-01
+  name_zh: 知識庫與 Experience 中心
+  surface: ADMIN
+  domain: KNOWLEDGE_EXPERIENCE_GOVERNANCE
+  acpos_role: 治理 Knowledge Source / Ingestion / Search-Citation / Context Candidate / Experience Replay / Learning Candidate / Knowledge
+    Review；作為 ACPOS Brain 的 Knowledge/Experience 治理面。
+  consumes:
+  - ACPOSStateProjection
+  - ACPOSExperienceRecord
+  - ACPOSLearningCandidate
+  - ACPOSIntegrationEvent
+  - authorized Fact/Evidence/Source projections
+  - AIAPI provider/job/cost lineage when linked
+  - QA outcomes/findings when linked
+  - Strategy/ERP/DEV/SOC/SYS outcomes when linked
+  produces:
+  - KnowledgeSource / KnowledgeIngestionRun
+  - ACPOSContextCandidate
+  - ACPOSLearningCandidate via ACPOS Evolution
+  - KnowledgeVersion draft/review/approved lifecycle
+  - knowledge lifecycle ACPOSIntegrationEvents
+  ai_usage: AI may assist search/summarization/conflict/review analysis only through ACPOS; human approval required for Approved Knowledge.
+  handoff_in:
+  - Real execution outcomes -> ACPOSExperienceRecord
+  - INFO-01 / other source/fact/evidence refs
+  handoff_out:
+  - ACPOSContextCandidate -> consumer-domain review/adoption
+  - Approved Knowledge -> eligible ACPOS Context input
+  - ACPOSLearningCandidate -> ACPOS governance/evolution
+  experience_signals:
+  - knowledge usefulness/adoption
+  - source quality/freshness
+  - review rejection/return reason
+  - learning candidate adoption result
+  decision_boundary: KB-01 cannot edit Canon/Blueprint, make formal Strategy Decision, select Provider/Model, perform media QA, or silently
+    update authority/policy.
+  version_boundary: Knowledge Approved versions are immutable; updates create new version and preserve supersession history.
+  system_object_reuse:
+    context: ACPOSContextCandidate
+    experience: ACPOSExperienceRecord
+    learning: ACPOSLearningCandidate
+    state: ACPOSStateProjection
+    event: ACPOSIntegrationEvent
+    services:
+    - FactPackService
+    - KnowledgeExperienceService
+  current_status: FINAL_LOCKED
+  shared_acquisition: KNOWLEDGE_SOURCE_ACQUISITION_CONSUMER
+  page_authority: ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+global_rules:
+- Every current page is a governed Data Producer and/or Data Consumer.
+- Page UI/controls remain owned by its Current Page Authority.
+- Cross-page integration uses exact refs/versions and shared ACPOS objects.
+- No generic Sync-to-ACPOS button is added unless explicitly registered.
+- Provider selection is centralized through admin:AIAPI-01 / shared router.
+- External data acquisition is one shared runtime; pages define domain intent, not separate crawler engines.
+- Experience comes from real outcomes and cannot silently change authority.
+- Navigation and IAM L1 bundles are owned by ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml.
