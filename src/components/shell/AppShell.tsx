@@ -10,7 +10,7 @@ import languageStyles from "./LanguageSelector.module.css";
 type NavItem = {
   id: string;
   labelKey: TranslationKey;
-  icon: "dashboard" | "project" | "asset" | "video" | "edit" | "qa" | "database" | "strategy";
+  icon: "dashboard" | "project" | "asset" | "video" | "edit" | "qa" | "database" | "strategy" | "info";
   href?: string;
 };
 
@@ -28,6 +28,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { id: "NAV-06", labelKey: "global.nav.qa", icon: "qa", href: "/qa" },
   { id: "NAV-07", labelKey: "global.nav.database", icon: "database", href: "/database" },
   { id: "NAV-08", labelKey: "global.nav.strategy", icon: "strategy", href: "/strategy" },
+  { id: "NAV-09", labelKey: "global.nav.latest_information", icon: "info", href: "/info" },
 ] as const;
 
 function Icon({ name }: { name: NavItem["icon"] }) {
@@ -60,6 +61,8 @@ function Icon({ name }: { name: NavItem["icon"] }) {
       return <svg {...common}><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/><path d="M4 11.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>;
     case "strategy":
       return <svg {...common}><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="m14 10 4-4M18 6h-3M18 6v3"/></svg>;
+    case "info":
+      return <svg {...common}><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg>;
   }
 }
 

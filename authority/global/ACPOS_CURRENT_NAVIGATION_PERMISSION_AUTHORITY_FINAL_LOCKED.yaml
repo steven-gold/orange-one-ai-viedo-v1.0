@@ -2,13 +2,14 @@ authority:
   id: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY
   version: V1.0
   status: FINAL_LOCKED
+  revision: 2026-08-30-USER-APPROVED-INFO-NAV09
   current_only: true
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
   page_declared_global_order: NON_EXECUTABLE
 front_workspace_navigation:
   owner: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 + this canonical target registry
-  count: 8
+  count: 9
   flat_l1_only: true
   items:
   - order: 1
@@ -73,6 +74,14 @@ front_workspace_navigation:
       zh-TW: 戰略中心
       en: Strategy Center
     page_uid: workspace:STR-01
+    child_menu: FORBIDDEN
+    unauthorized: HIDDEN
+  - order: 9
+    nav_id: NAV-09
+    label:
+      zh-TW: 最新資訊
+      en: Latest Information
+    page_uid: workspace:INFO-01
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
 admin_navigation:
@@ -151,16 +160,6 @@ admin_navigation:
     page_uid: admin:KB-01
     permission_bundle: ADMIN-L1-KNOWLEDGE
     unauthorized: HIDDEN
-supporting_page_entry:
-  workspace:INFO-01:
-    global_l1: false
-    role: Supporting Information / Fact / Evidence / Context workspace
-    allowed_entry_sources:
-    - Dashboard information/news projection
-    - Strategy authorized information context
-    - Knowledge / Citation / Context workflow
-    - Registered contextual deep link
-    route_resolution: Canonical page UID resolver; no ninth front L1.
 iam_permission_bundles:
   front:
   - bundle: FRONT-L1-01
@@ -187,6 +186,9 @@ iam_permission_bundles:
   - bundle: FRONT-L1-08
     page_uid: workspace:STR-01
     label_zh: 戰略中心
+  - bundle: FRONT-L1-09
+    page_uid: workspace:INFO-01
+    label_zh: 最新資訊
   admin:
   - bundle: ADMIN-L1-SYSTEM
     page_uid: admin:SYS-01

@@ -4,8 +4,9 @@ authority:
   control_prefix: INFO-01
   page_name_zh: 最新資訊工作區
   page_name_en: Latest Information Workspace
-  surface: WORKSPACE
+  surface: FRONT_WORKSPACE
   status: FINAL_LOCKED
+  revision: 2026-08-30-USER-APPROVED-FRONT-L1-NAV09
   current_only: true
   single_page_workspace: true
   single_machine_authority: true
@@ -22,8 +23,11 @@ authority:
     Canon, Lock, Priority, Budget, Task, Release or Publish.
   system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
   navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
-  navigation_mode: SUPPORTING_CONTEXTUAL_DEEP_LINK
-  global_l1: false
+  navigation_mode: FRONT_L1
+  global_l1: true
+  navigation_id: NAV-09
+  navigation_label_zh: 最新資訊
+  navigation_label_en: Latest Information
   navigation_entry_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 layout:
   desktop_min_width: 1280px

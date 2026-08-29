@@ -8,19 +8,19 @@ authority:
   scope: GLOBAL_FIXED_HEADER_AUTO_COLLAPSE_SIDEBAR_QUICK_STATUS_LANGUAGE_ACCOUNT_WORKSPACE_SLOT_ONLY
   undefined: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
-  revision: 2026-08-29-USER-APPROVED-LOGO-COLOR-ADAPTATION
+  revision: 2026-08-30-USER-APPROVED-INFO-NAV09
 user_decisions_2026_08_28:
 - Delete AI Workspace from L1 navigation
 - 'Merge Editing and Voice into one L1 item: 剪輯配音'
-- 'L1 navigation is exactly: 儀表板 / 專案/專題 / 素材 / 影片 / 剪輯配音 / QA / 資料庫 / 戰略中心'
+- 'L1 navigation is exactly: 儀表板 / 專案/專題 / 素材 / 影片 / 剪輯配音 / QA / 資料庫 / 戰略中心 / 最新資訊'
 - Dashboard L1 has no child/sub-title
 - Top-left = canonical ORANGE ONE logo
 - Logo color may be adapted for background contrast when explicitly approved by the user; artwork content, geometry, typography, crop, and intrinsic aspect ratio remain unchanged
 - Top-right = account login/account information
 - Immediately left of account = language selector
 - Sidebar auto-collapses by default to maximize workspace visual width
-- All eight navigation items are direct first-level L1 entries; no child menu, no submenu, no subtitle/secondary line for any L1 item
-- Collapsed sidebar has no visible sidebar panel/frame/background; only the eight icons remain visible
+- All nine navigation items are direct first-level L1 entries; no child menu, no submenu, no subtitle/secondary line for any L1 item
+- Collapsed sidebar has no visible sidebar panel/frame/background; only the nine icons remain visible
 - Expanded menu surface/frame appears only while pointer/focus activates the navigation rail
 - Remove Permission from the top-right header cluster
 - Account permissions are bound to the account and configured when the account is created / managed; Global Shell consumes authorization outcomes
@@ -129,7 +129,7 @@ auto_collapse_sidebar:
   no_reflow: true
   workspace_origin_during_both_states: x=78px
   keyboard: Tab focus expands sidebar so labels are visible; focus leaving entire sidebar collapses after 180ms
-  collapsed_render: ONLY 8 canonical navigation icons visible. No visible sidebar panel, no vertical rail background, no frame, border, glow,
+  collapsed_render: ONLY 9 canonical navigation icons visible. No visible sidebar panel, no vertical rail background, no frame, border, glow,
     row card, label, subtitle, or 221px expanded menu surface.
   expanded_render: 221px menu surface appears ONLY at runtime after pointerenter/focusin. It is absent from the canonical collapsed-state screenshot.
   interaction_rail: Invisible/transparent 64px hit rail aligned left beneath Header; contains 44x44 icon hit targets. The rail itself must not
@@ -137,7 +137,7 @@ auto_collapse_sidebar:
   icon_hit_target: 44x44px per L1 item; icon 20px; Default icon-only has no enclosing row/card. Active icon may use compact active halo/highlight
     but not a full-height sidebar frame.
   surface_visibility: VISIBLE_ONLY_WHEN_EXPANDED_OVERLAY_ACTIVE
-  reference_visual_rule: The canonical collapsed-state reference image must show ONLY the 8 navigation icons. It must NOT draw the 221px expanded
+  reference_visual_rule: The canonical collapsed-state reference image must show ONLY the 9 navigation icons. It must NOT draw the 221px expanded
     menu surface anywhere in the same collapsed-state main screenshot. Expanded state may be documented only in text/spec or a separately labeled
     secondary figure.
 brand:
@@ -198,7 +198,7 @@ header_account_cluster:
 navigation:
   component_uid: GHS-CMP-NAV
   visual_uid: GHS-VIS-NAV
-  count: 8
+  count: 9
   order_fixed: true
   secondary_subtitle_line: FORBIDDEN_FOR_ALL_L1_ROWS
   items:
@@ -290,12 +290,23 @@ navigation:
     submenu: FORBIDDEN
     subtitle: FORBIDDEN
     chevron: FORBIDDEN
+  - nav_id: NAV-09
+    label:
+      zh-TW: 最新資訊
+      zh-CN: 最新资讯
+      en: Latest Information
+    child_policy: NO_CHILD_MENU
+    control_uid: GHS-CTL-NAV-09
+    target: Resolve from Canonical Navigation Authority by nav_id; frontend must not invent route
+    submenu: FORBIDDEN
+    subtitle: FORBIDDEN
+    chevron: FORBIDDEN
   dashboard_rule: 'NAV-01 儀表板 is a direct L1 leaf: no child menu, no submenu, no subtitle, no chevron; direct navigate only'
   permission: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY + Canonical Navigation Authority. Permissions are configured on the account; Global Shell only
     consumes the authorization result and never renders a Permission field.
   unauthorized: HIDDEN; preserve order among visible items
   active: Resolve from canonical page ancestry; no URL text guessing
-  all_l1_flat_rule: ALL NAV-01..NAV-08 are direct L1 leaves in Global Sidebar. Sidebar child/submenu rendering is forbidden for every item. Any
+  all_l1_flat_rule: ALL NAV-01..NAV-09 are direct L1 leaves in Global Sidebar. Sidebar child/submenu rendering is forbidden for every item. Any
     lower-level page navigation belongs to the destination Page Authority, not Global Shell.
 quick_link_resolution:
   resolver: Canonical Quick Link / Navigation Authority
@@ -345,7 +356,7 @@ components:
 - component_uid: GHS-CMP-NAV
   section_uid: GHS-SEC-03
   visual_uid: GHS-VIS-NAV
-  responsibility: Eight direct flat L1 navigation icons/labels; no child/submenu/subtitle
+  responsibility: Nine direct flat L1 navigation icons/labels; no child/submenu/subtitle
 - component_uid: GHS-CMP-WORKSPACE-SLOT
   section_uid: GHS-SEC-04
   visual_uid: GHS-VIS-WORKSPACE-SLOT
@@ -593,6 +604,25 @@ controls:
   subtitle: FORBIDDEN
   submenu: FORBIDDEN
   chevron: FORBIDDEN
+- control_uid: GHS-CTL-NAV-09
+  section_uid: GHS-SEC-03
+  component_uid: GHS-CMP-NAV
+  visual_uid: GHS-VIS-NAV
+  type: NAV_ITEM
+  label:
+    zh-TW: 最新資訊
+    zh-CN: 最新资讯
+    en: Latest Information
+  nav_id: NAV-09
+  child_policy: NO_CHILD_MENU
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  collapsed: ICON_ONLY_WITH_ACCESSIBLE_NAME
+  expanded: ICON_PLUS_SINGLE_LINE_L1_LABEL_ONLY
+  subtitle: FORBIDDEN
+  submenu: FORBIDDEN
+  chevron: FORBIDDEN
 - control_uid: GHS-CTL-NOTIFICATION
   section_uid: GHS-SEC-02
   component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
@@ -664,7 +694,7 @@ controls:
   visibility: ALWAYS_WHEN_SHELL_VISIBLE
 states:
 - state_uid: GHS-STATE-SIDEBAR-COLLAPSED
-  meaning: 'Resting state: transparent 64px interaction rail; only 8 nav icons visible; no full-height sidebar panel/frame/background; workspace
+  meaning: 'Resting state: transparent 64px interaction rail; only 9 nav icons visible; no full-height sidebar panel/frame/background; workspace
     x78'
 - state_uid: GHS-STATE-SIDEBAR-EXPANDED-OVERLAY
   meaning: Temporary 221px sidebar surface/frame visible with icon + single-line L1 labels; workspace remains x78; no child/submenu

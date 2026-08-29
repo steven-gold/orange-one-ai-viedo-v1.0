@@ -87,6 +87,11 @@ const catalog = {
     "zh-CN": "战略中心",
     en: "Strategy Center",
   },
+  "global.nav.latest_information": {
+    "zh-TW": "最新資訊",
+    "zh-CN": "最新资讯",
+    en: "Latest Information",
+  },
   "global.common.view": {
     "zh-TW": "查看",
     "zh-CN": "查看",

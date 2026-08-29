@@ -2,6 +2,7 @@ authority:
   id: ACPOS_SYSTEM_AUTHORITY
   version: V1.0
   status: FINAL_LOCKED
+  revision: 2026-08-30-USER-APPROVED-INFO-NAV09
   current_only: true
   scope: ORANGE_ONE_WHOLE_SITE_CENTRAL_BRAIN_AND_CROSS_PAGE_INTEGRATION_AUTHORITY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
@@ -35,7 +36,7 @@ core_identity:
 navigation_surfaces:
   front_workspace:
     authority: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 + ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
-    l1_count: 8
+    l1_count: 9
     meaning: Front workspace navigation only
     page_uids:
     - workspace:WB-01
@@ -46,6 +47,7 @@ navigation_surfaces:
     - QA-01
     - admin:DB-01
     - workspace:STR-01
+    - workspace:INFO-01
   admin:
     authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
     l1_count: 9
@@ -59,8 +61,6 @@ navigation_surfaces:
     - admin:SG-02
     - admin:STR-01
     - admin:KB-01
-  supporting:
-    workspace:INFO-01: Not a ninth front L1; contextual/deep-link entry only.
 page_title_rule:
   authority: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
   global_header_center_page_identity: REMOVED

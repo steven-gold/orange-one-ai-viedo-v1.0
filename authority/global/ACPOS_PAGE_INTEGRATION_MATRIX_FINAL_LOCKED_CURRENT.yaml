@@ -2,6 +2,7 @@ authority:
   id: ACPOS_PAGE_INTEGRATION_MATRIX
   version: V1.0
   status: FINAL_LOCKED
+  revision: 2026-08-30-USER-APPROVED-INFO-NAV09
   current_only: true
   page_count: 18
   system_authority: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
@@ -293,7 +294,7 @@ pages:
   shared_acquisition: GOVERNED_RESULT_CONSUMER_NO_RAW_CRAWL_BY_DEFAULT
 - page_uid: workspace:INFO-01
   name_zh: 最新資訊工作區
-  surface: SUPPORTING_FRONT_WORKSPACE
+  surface: FRONT_WORKSPACE
   domain: INFORMATION
   acpos_role: 提供 Fact / Inference / Evidence / Source / Freshness / Context Candidate；不直接修改 Canon。
   consumes:
@@ -314,7 +315,7 @@ pages:
   decision_boundary: Fact/Inference/Recommendation separation mandatory; no direct Canon/Task/Budget/Release/Publish write.
   version_boundary: Source time/version and citation remain explicit.
   shared_acquisition: RESEARCH_FACT_ACQUISITION_CONSUMER
-  navigation: SUPPORTING_CONTEXTUAL_DEEP_LINK_NOT_FRONT_L1
+  navigation: FRONT_L1_NAV-09
   shared_context_object: ACPOSContextCandidate
 - page_uid: admin:SYS-01
   name_zh: 系統 AI 工作區
