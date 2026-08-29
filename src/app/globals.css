@@ -43,7 +43,8 @@ body {
 }
 button, input, select, textarea { font: inherit; }
 button { color: inherit; }
-button:focus-visible {
+button:focus-visible,
+a:focus-visible {
   outline: 2px solid var(--purple-highlight);
   outline-offset: 2px;
 }
@@ -199,8 +200,10 @@ button:focus-visible {
   cursor: default;
   overflow: hidden;
   white-space: nowrap;
+  text-decoration: none;
   transition: width 100ms ease, color 120ms ease, background 120ms ease, border-color 120ms ease;
 }
+.nav-item[href] { cursor: pointer; }
 .global-sidebar.is-expanded .nav-item { width: 191px; }
 .nav-item:hover,
 .nav-item:focus-visible {
