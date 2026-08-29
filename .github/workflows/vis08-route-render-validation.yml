@@ -55,7 +55,7 @@ jobs:
       - name: Chromium authority and geometry validation
         run: |
           mkdir -p docs/construction/evidence/VIS-08
-          cat > /tmp/vis08.mjs <<'JS'
+          cat > .vis08-validation.mjs <<'JS'
           import { chromium } from 'playwright';
           import fs from 'node:fs';
           const browser=await chromium.launch({headless:true});
@@ -83,9 +83,8 @@ jobs:
             }));
             if(counts.controls!==57||counts.sections!==12||counts.visuals!==12||counts.components!==16||counts.enabled!==0) throw new Error(`counts ${JSON.stringify(counts)}`);
             const providerPicker=await root.locator('[data-control-id*="PROVIDER"], [data-control-id*="MODEL"]').count();
-            if(providerPicker!==1) throw new Error(`provider/model controls ${providerPicker}`); // Provider Brand readonly only
-            const providerBrand=await root.locator('[data-control-id="STR-01-FLD-PROVIDER-BRAND"]').count();
-            if(providerBrand!==1) throw new Error('Provider Brand missing');
+            if(providerPicker!==1) throw new Error(`provider/model controls ${providerPicker}`);
+            if(await root.locator('[data-control-id="STR-01-FLD-PROVIDER-BRAND"]').count()!==1) throw new Error('Provider Brand missing');
             const ws=page.locator('.workspace-slot');
             const sidebar=page.locator('.global-sidebar');
             const before=await ws.boundingBox();
@@ -96,7 +95,7 @@ jobs:
             const dims=await root.evaluate(el=>({client:el.clientWidth,scroll:el.scrollWidth}));
             const primary=await page.locator('[data-section-id="STR-01-SEC-02"]').evaluate(el=>{
               const grid=el.closest('aside')?.parentElement; if(!grid) return null;
-              const kids=[...grid.children].map(x=>x.getBoundingClientRect().width); return kids;
+              return [...grid.children].map(x=>x.getBoundingClientRect().width);
             });
             const language=page.locator('button[aria-haspopup="listbox"]');
             await language.click(); await page.locator('[role="option"]').nth(2).click();
@@ -118,7 +117,8 @@ jobs:
           if(results['vis08-1200-minwidth'].page.scroll<=results['vis08-1200-minwidth'].page.client) throw new Error(`1200 should horizontal scroll ${JSON.stringify(results['vis08-1200-minwidth'].page)}`);
           fs.writeFileSync('docs/construction/evidence/VIS-08/vis08-validation.json',JSON.stringify(results,null,2));
           JS
-          node /tmp/vis08.mjs
+          node .vis08-validation.mjs
+          rm .vis08-validation.mjs
       - name: Commit only formal route and evidence
         run: |
           git config user.name 'github-actions[bot]'
