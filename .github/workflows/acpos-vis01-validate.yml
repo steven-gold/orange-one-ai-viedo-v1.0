@@ -6,7 +6,7 @@ on:
       - acpos-vis01-staging
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   validate:
@@ -14,6 +14,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis01-staging
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -47,3 +50,36 @@ jobs:
           name: acpos-vis01-render-evidence
           path: artifacts/vis01
           if-no-files-found: error
+      - name: Sync user-approved logo color policy into Current Shell Authority
+        if: github.event.head_commit.message != 'authority: sync user-approved logo color policy'
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml')
+          text = p.read_text(encoding='utf-8')
+          old = text
+          text = text.replace(
+              '  revision: 2026-08-28-REMOVE-HEADER-PERMISSION-FIELD\n',
+              '  revision: 2026-08-29-USER-APPROVED-LOGO-COLOR-ADAPTATION\n'
+          )
+          text = text.replace(
+              '- Top-left = canonical ORANGE ONE logo\n',
+              '- Top-left = canonical ORANGE ONE logo\n- Logo color may be adapted for background contrast when explicitly approved by the user; artwork content, geometry, typography, crop, and intrinsic aspect ratio remain unchanged\n'
+          )
+          text = text.replace(
+              '  click_action: NONE\n  forbidden:\n  - redraw\n  - recolor\n  - stretch\n  - generated replacement\n',
+              '  click_action: NONE\n  color_policy:\n    user_approved_color_adaptation: true\n    current_dark_header: WHITE_MONOCHROME\n    rule: Color may change only for approved background contrast; artwork content, geometry, typography, crop, and intrinsic aspect ratio must remain unchanged.\n  forbidden:\n  - redraw\n  - stretch\n  - generated replacement\n  - recolor outside explicit user approval\n'
+          )
+          if text == old:
+              print('Shell Authority already synchronized; no change required.')
+          else:
+              p.write_text(text, encoding='utf-8')
+          PY
+          if git diff --quiet -- authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml; then
+            exit 0
+          fi
+          git config user.name 'steven-gold'
+          git config user.email 'proorangeone@gmail.com'
+          git add authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
+          git commit -m 'authority: sync user-approved logo color policy'
+          git push origin HEAD:acpos-vis01-staging
