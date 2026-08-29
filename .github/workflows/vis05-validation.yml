@@ -2,8 +2,7 @@ name: VIS-05 EDIT-01 Validation
 
 on:
   push:
-    branches:
-      - acpos-vis05-staging
+    branches: [acpos-vis05-staging]
   workflow_dispatch:
 
 permissions:
@@ -42,11 +41,8 @@ jobs:
       - name: Start production server
         run: |
           npm run start -- -p 3000 > /tmp/vis05-next.log 2>&1 &
-          echo $! > /tmp/vis05-next.pid
           for i in $(seq 1 40); do
-            if curl -fsS http://127.0.0.1:3000/edit >/dev/null; then
-              exit 0
-            fi
+            if curl -fsS http://127.0.0.1:3000/edit >/dev/null; then exit 0; fi
             sleep 1
           done
           cat /tmp/vis05-next.log
@@ -55,176 +51,134 @@ jobs:
       - name: Validate authority registry and browser geometry
         run: |
           mkdir -p docs/construction/evidence/VIS-05
-          cat > /tmp/vis05-validate.cjs <<'NODE'
+          node <<'NODE'
           const fs = require('fs');
           const { chromium } = require('playwright');
-
           const source = fs.readFileSync('src/components/pages/EditVisual.tsx', 'utf8');
           const catalog = fs.readFileSync('src/i18n/editCatalog.ts', 'utf8');
           const shell = fs.readFileSync('src/components/shell/AppShell.tsx', 'utf8');
           const css = fs.readFileSync('src/components/pages/EditVisual.module.css', 'utf8');
-          const allSourceIds = [...source.matchAll(/EDIT-01-(?:CTL|FLD|BTN|LBL|LST|PNL|TOOL|TAB)-[A-Z0-9-]+/g)].map(m => m[0]);
-          const sourceIds = [...new Set(allSourceIds)];
+          const ids = text => [...new Set([...text.matchAll(/EDIT-01-(?:CTL|FLD|BTN|LBL|LST|PNL|TOOL|TAB)-[A-Z0-9-]+/g)].map(m => m[0]))];
+          const sourceIds = ids(source);
           const catalogIds = [...new Set([...catalog.matchAll(/"(EDIT-01-(?:CTL|FLD|BTN|LBL|LST|PNL|TOOL|TAB)-[A-Z0-9-]+)"\s*:/g)].map(m => m[1]))];
           const rawColors = [...css.matchAll(/#[0-9a-fA-F]{3,8}|rgba?\(/g)].map(m => m[0]);
-          if (sourceIds.length !== 160) throw new Error(`Expected 160 unique EDIT controls in source, got ${sourceIds.length}`);
-          if (catalogIds.length !== 160) throw new Error(`Expected 160 unique EDIT labels, got ${catalogIds.length}`);
-          if (!sourceIds.every(id => catalogIds.includes(id))) throw new Error('Control/catalog registry mismatch');
-          if (!shell.includes('{ id: "NAV-05", labelKey: "global.nav.edit_voice", icon: "edit", href: "/edit" }')) throw new Error('NAV-05 route binding missing');
-          if (rawColors.length !== 0) throw new Error(`Page-local raw color detected: ${rawColors.join(', ')}`);
-          if (/\bfetch\s*\(|XMLHttpRequest|\baxios\b/.test(source)) throw new Error('Business network implementation detected in visual phase');
+          if (sourceIds.length !== 160) throw new Error(`source controls=${sourceIds.length}`);
+          if (catalogIds.length !== 160) throw new Error(`catalog controls=${catalogIds.length}`);
+          if (!sourceIds.every(id => catalogIds.includes(id))) throw new Error('registry/catalog mismatch');
+          if (!shell.includes('{ id: "NAV-05", labelKey: "global.nav.edit_voice", icon: "edit", href: "/edit" }')) throw new Error('NAV-05 route missing');
+          if (rawColors.length) throw new Error(`page-local colors=${rawColors.join(',')}`);
+          if (/\bfetch\s*\(|XMLHttpRequest|\baxios\b/.test(source)) throw new Error('business network code detected');
 
           (async () => {
-            const browser = await chromium.launch({ headless: true });
-            const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+            const browser = await chromium.launch({headless:true});
+            const context = await browser.newContext({viewport:{width:1440,height:900}});
             const page = await context.newPage();
             let businessRequests = 0;
-            page.on('request', req => {
-              if (req.resourceType() === 'xhr' || req.resourceType() === 'fetch') businessRequests += 1;
-            });
-            const response = await page.goto('http://127.0.0.1:3000/edit', { waitUntil: 'networkidle' });
-            if (!response || response.status() !== 200) throw new Error(`EDIT route HTTP ${response && response.status()}`);
+            page.on('request', r => { if (['xhr','fetch'].includes(r.resourceType())) businessRequests++; });
+            const response = await page.goto('http://127.0.0.1:3000/edit',{waitUntil:'networkidle'});
+            if (!response || response.status() !== 200) throw new Error(`HTTP=${response && response.status()}`);
 
-            const result = await page.evaluate(() => {
+            const top = await page.evaluate(() => {
               const root = document.querySelector('[data-page-uid="EDIT-01"]');
               const workspace = document.querySelector('.workspace-slot');
-              const preview = document.querySelector('[data-visual-uid="EDIT-01-VIS-PREVIEW"]');
-              const viewer = preview && preview.querySelector('[data-component-uid="EDIT-01-CMP-PREVIEW"]');
+              const viewer = document.querySelector('[data-component-uid="EDIT-01-CMP-PREVIEW"]');
               const timeline = document.querySelector('[data-visual-uid="EDIT-01-VIS-TIMELINE"]');
               const primary = document.querySelector('[data-page-uid="EDIT-01"] > div:nth-of-type(1)');
               const adjustment = document.querySelector('[data-page-uid="EDIT-01"] > div:nth-of-type(2)');
               const bottom = document.querySelector('[data-page-uid="EDIT-01"] > div:nth-of-type(3)');
-              const active = document.querySelector('[data-nav-id="NAV-05"][aria-current="page"]');
-              const sectionIds = [...document.querySelectorAll('[data-page-uid="EDIT-01"] [data-section-id]')].map(el => el.getAttribute('data-section-id'));
-              const componentIds = [...document.querySelectorAll('[data-page-uid="EDIT-01"] [data-component-uid]')].map(el => el.getAttribute('data-component-uid'));
-              const controlIds = [...document.querySelectorAll('[data-page-uid="EDIT-01"] [data-control-id]')].map(el => el.getAttribute('data-control-id'));
-              const enabledBusinessControls = [...document.querySelectorAll('[data-page-uid="EDIT-01"] button, [data-page-uid="EDIT-01"] input, [data-page-uid="EDIT-01"] select, [data-page-uid="EDIT-01"] textarea')].filter(el => !el.disabled).length;
-              const rect = el => el ? el.getBoundingClientRect().toJSON() : null;
-              const gridWidths = el => el ? [...el.children].map(child => child.getBoundingClientRect().width) : [];
+              const unique = (selector, attr) => new Set([...document.querySelectorAll(selector)].map(el => el.getAttribute(attr))).size;
+              const widths = el => [...el.children].map(c => c.getBoundingClientRect().width);
               return {
-                registryValid: root && root.getAttribute('data-registry-valid'),
-                authorityControls: root && root.getAttribute('data-authority-controls'),
-                pageWidth: root && root.getBoundingClientRect().width,
-                workspaceX: workspace && workspace.getBoundingClientRect().x,
-                workspaceWidth: workspace && workspace.getBoundingClientRect().width,
-                viewer: rect(viewer),
-                timeline: rect(timeline),
-                primaryWidths: gridWidths(primary),
-                adjustmentWidths: gridWidths(adjustment),
-                bottomWidths: gridWidths(bottom),
-                uniqueSections: new Set(sectionIds).size,
-                uniqueComponents: new Set(componentIds).size,
-                uniqueControls: new Set(controlIds).size,
-                activeNav: active && active.getAttribute('href'),
-                enabledBusinessControls,
-                hiddenCorrectionPrompt: getComputedStyle(document.querySelector('[data-control-id="EDIT-01-FLD-API-INSTRUCTION"]')).display === 'none' || !document.querySelector('[data-control-id="EDIT-01-FLD-API-INSTRUCTION"]').getClientRects().length,
-                hiddenStandaloneUpload: !document.querySelector('[data-control-id="EDIT-01-BTN-ADD-MEDIA"]').getClientRects().length,
+                registryValid: root.getAttribute('data-registry-valid'),
+                authorityControls: root.getAttribute('data-authority-controls'),
+                pageWidth: root.getBoundingClientRect().width,
+                workspaceX: workspace.getBoundingClientRect().x,
+                viewer: viewer.getBoundingClientRect().toJSON(),
+                timelineHeight: timeline.getBoundingClientRect().height,
+                primaryWidths: widths(primary),
+                adjustmentWidths: widths(adjustment),
+                bottomWidths: widths(bottom),
+                sections: unique('[data-page-uid="EDIT-01"] [data-section-id]','data-section-id'),
+                components: unique('[data-page-uid="EDIT-01"] [data-component-uid]','data-component-uid'),
+                controls: unique('[data-page-uid="EDIT-01"] [data-control-id]','data-control-id'),
+                activeNav: document.querySelector('[data-nav-id="NAV-05"][aria-current="page"]')?.getAttribute('href'),
+                enabled: [...document.querySelectorAll('[data-page-uid="EDIT-01"] button,[data-page-uid="EDIT-01"] input,[data-page-uid="EDIT-01"] select,[data-page-uid="EDIT-01"] textarea')].filter(el => !el.disabled).length,
+                correctionVisible: !!document.querySelector('[data-control-id="EDIT-01-FLD-API-INSTRUCTION"]')?.getClientRects().length,
+                standaloneUploadVisible: !!document.querySelector('[data-control-id="EDIT-01-BTN-ADD-MEDIA"]')?.getClientRects().length,
               };
             });
 
-            if (result.registryValid !== 'true') throw new Error('Registry self-check failed');
-            if (result.authorityControls !== '160') throw new Error('Authority control count attribute mismatch');
-            if (result.uniqueSections !== 16) throw new Error(`Expected 16 unique sections, got ${result.uniqueSections}`);
-            if (result.uniqueComponents !== 24) throw new Error(`Expected 24 unique components, got ${result.uniqueComponents}`);
-            if (result.uniqueControls !== 160) throw new Error(`Expected 160 unique rendered/registered controls, got ${result.uniqueControls}`);
-            if (result.activeNav !== '/edit') throw new Error(`NAV-05 active href mismatch: ${result.activeNav}`);
-            if (result.enabledBusinessControls !== 0) throw new Error(`Premature enabled business controls: ${result.enabledBusinessControls}`);
-            if (!result.hiddenCorrectionPrompt) throw new Error('Project first-production correction prompt is visible');
-            if (!result.hiddenStandaloneUpload) throw new Error('Standalone upload control visible in default project state');
-            if (!result.viewer || Math.abs(result.viewer.width / result.viewer.height - 16 / 9) > 0.02) throw new Error(`Preview ratio invalid: ${result.viewer && result.viewer.width / result.viewer.height}`);
-            if (!result.timeline || result.timeline.height < 320) throw new Error(`Timeline height invalid: ${result.timeline && result.timeline.height}`);
-            if (result.pageWidth < 1280) throw new Error(`Page min width invalid: ${result.pageWidth}`);
-            if (result.workspaceX !== 78) throw new Error(`Workspace origin invalid: ${result.workspaceX}`);
-            if (result.primaryWidths.length !== 2 || result.primaryWidths[0] < 240) throw new Error(`Primary grid invalid: ${JSON.stringify(result.primaryWidths)}`);
-            if (result.adjustmentWidths.length !== 2) throw new Error('Adjustment row must have two columns');
-            if (result.bottomWidths.length !== 3) throw new Error('Bottom row must have three columns');
+            const ratio = top.viewer.width/top.viewer.height;
+            if (top.registryValid !== 'true' || top.authorityControls !== '160') throw new Error('registry self-check failed');
+            if (top.sections !== 16) throw new Error(`sections=${top.sections}`);
+            if (top.components !== 24) throw new Error(`components=${top.components}`);
+            if (top.controls !== 160) throw new Error(`controls=${top.controls}`);
+            if (top.activeNav !== '/edit') throw new Error(`activeNav=${top.activeNav}`);
+            if (top.enabled !== 0) throw new Error(`enabled business controls=${top.enabled}`);
+            if (top.correctionVisible) throw new Error('project first-production correction prompt visible');
+            if (top.standaloneUploadVisible) throw new Error('standalone upload visible in default state');
+            if (Math.abs(ratio-16/9) > .02) throw new Error(`preview ratio=${ratio}`);
+            if (top.timelineHeight < 320) throw new Error(`timeline height=${top.timelineHeight}`);
+            if (top.pageWidth < 1280) throw new Error(`page width=${top.pageWidth}`);
+            if (top.workspaceX !== 78) throw new Error(`workspace x=${top.workspaceX}`);
+            if (top.primaryWidths.length !== 2 || top.primaryWidths[0] < 240) throw new Error(`primary=${JSON.stringify(top.primaryWidths)}`);
+            if (top.adjustmentWidths.length !== 2) throw new Error(`adjustment=${JSON.stringify(top.adjustmentWidths)}`);
+            if (top.bottomWidths.length !== 3) throw new Error(`bottom=${JSON.stringify(top.bottomWidths)}`);
 
-            const beforeExpandX = result.workspaceX;
             await page.locator('.global-sidebar').hover();
             await page.waitForTimeout(250);
-            const sidebarCheck = await page.evaluate(() => ({
-              expandedWidth: document.querySelector('.global-sidebar').getBoundingClientRect().width,
-              workspaceX: document.querySelector('.workspace-slot').getBoundingClientRect().x,
+            const expanded = await page.evaluate(() => ({
+              sidebarWidth: document.querySelector('.global-sidebar').getBoundingClientRect().width,
+              workspaceX: document.querySelector('.workspace-slot').getBoundingClientRect().x
             }));
-            if (sidebarCheck.expandedWidth !== 221) throw new Error(`Expanded sidebar width invalid: ${sidebarCheck.expandedWidth}`);
-            if (sidebarCheck.workspaceX !== beforeExpandX) throw new Error('Sidebar expansion reflowed workspace');
-            await page.screenshot({ path: 'docs/construction/evidence/VIS-05/vis05-1440-expanded.png', fullPage: false });
-            await page.mouse.move(800, 400);
-            await page.waitForTimeout(250);
-            await page.screenshot({ path: 'docs/construction/evidence/VIS-05/vis05-1440-top.png', fullPage: false });
+            if (expanded.sidebarWidth !== 221 || expanded.workspaceX !== 78) throw new Error(`sidebar=${JSON.stringify(expanded)}`);
+            await page.screenshot({path:'docs/construction/evidence/VIS-05/vis05-1440-expanded.png'});
+            await page.mouse.move(800,400); await page.waitForTimeout(250);
+            await page.screenshot({path:'docs/construction/evidence/VIS-05/vis05-1440-top.png'});
 
             const workspace = page.locator('.workspace-slot');
-            await workspace.evaluate(el => { el.scrollTop = Math.round((el.scrollHeight - el.clientHeight) / 2); });
+            await workspace.evaluate(el => el.scrollTop = Math.round((el.scrollHeight-el.clientHeight)/2));
             await page.waitForTimeout(100);
-            await page.screenshot({ path: 'docs/construction/evidence/VIS-05/vis05-1440-middle.png', fullPage: false });
-            await workspace.evaluate(el => { el.scrollTop = el.scrollHeight; });
-            await page.waitForTimeout(100);
-            await page.screenshot({ path: 'docs/construction/evidence/VIS-05/vis05-1440-bottom.png', fullPage: false });
+            await page.screenshot({path:'docs/construction/evidence/VIS-05/vis05-1440-middle.png'});
+            await workspace.evaluate(el => el.scrollTop = el.scrollHeight); await page.waitForTimeout(100);
+            await page.screenshot({path:'docs/construction/evidence/VIS-05/vis05-1440-bottom.png'});
+            await workspace.evaluate(el => {el.scrollTop=0;el.scrollLeft=0;});
 
-            await workspace.evaluate(el => { el.scrollTop = 0; el.scrollLeft = 0; });
-            const languageButton = page.locator('button[aria-haspopup="listbox"]');
-            await languageButton.click();
-            await page.getByRole('option', { name: /English/ }).click();
-            await page.waitForTimeout(80);
-            const englishVisible = await page.getByText('Asset Binding', { exact: true }).count();
-            if (!englishVisible) throw new Error('English locale did not render EDIT UI');
-            await languageButton.click();
-            await page.getByRole('option', { name: /简体中文/ }).click();
-            await page.waitForTimeout(80);
-            const simplifiedVisible = await page.getByText('素材绑定', { exact: true }).count();
-            if (!simplifiedVisible) throw new Error('zh-CN locale did not render EDIT UI');
-            await languageButton.click();
-            await page.getByRole('option', { name: /繁體中文/ }).click();
-            await page.waitForTimeout(80);
-            const traditionalVisible = await page.getByText('素材綁定', { exact: true }).count();
-            if (!traditionalVisible) throw new Error('zh-TW locale did not render EDIT UI');
+            const lang = page.locator('button[aria-haspopup="listbox"]');
+            await lang.click(); await page.getByRole('option',{name:/English/}).click();
+            if (!(await page.getByText('Asset Binding',{exact:true}).count())) throw new Error('en locale failed');
+            await lang.click(); await page.getByRole('option',{name:/简体中文/}).click();
+            if (!(await page.getByText('素材绑定',{exact:true}).count())) throw new Error('zh-CN locale failed');
+            await lang.click(); await page.getByRole('option',{name:/繁體中文/}).click();
+            if (!(await page.getByText('素材綁定',{exact:true}).count())) throw new Error('zh-TW locale failed');
 
-            await page.setViewportSize({ width: 1200, height: 900 });
-            await page.waitForTimeout(100);
+            await page.setViewportSize({width:1200,height:900}); await page.waitForTimeout(100);
             const narrow = await page.evaluate(() => ({
               pageWidth: document.querySelector('[data-page-uid="EDIT-01"]').getBoundingClientRect().width,
-              workspaceClientWidth: document.querySelector('.workspace-slot').clientWidth,
-              workspaceScrollWidth: document.querySelector('.workspace-slot').scrollWidth,
+              client: document.querySelector('.workspace-slot').clientWidth,
+              scroll: document.querySelector('.workspace-slot').scrollWidth
             }));
-            if (narrow.pageWidth < 1280 || narrow.workspaceScrollWidth <= narrow.workspaceClientWidth) throw new Error(`1280 min-width/horizontal-scroll contract failed: ${JSON.stringify(narrow)}`);
-            await page.screenshot({ path: 'docs/construction/evidence/VIS-05/vis05-1200-minwidth.png', fullPage: false });
+            if (narrow.pageWidth < 1280 || narrow.scroll <= narrow.client) throw new Error(`min-width=${JSON.stringify(narrow)}`);
+            await page.screenshot({path:'docs/construction/evidence/VIS-05/vis05-1200-minwidth.png'});
+            if (businessRequests !== 0) throw new Error(`business fetch/xhr=${businessRequests}`);
 
             const validation = {
               source_sha: process.env.GITHUB_SHA,
-              route: '/edit',
-              http_status: 200,
-              registry_controls: 160,
-              unique_sections: result.uniqueSections,
-              unique_components: result.uniqueComponents,
-              unique_controls: result.uniqueControls,
-              preview_ratio: result.viewer.width / result.viewer.height,
-              timeline_height: result.timeline.height,
-              page_min_width_1440: result.pageWidth,
-              primary_column_widths: result.primaryWidths,
-              adjustment_column_widths: result.adjustmentWidths,
-              bottom_column_widths: result.bottomWidths,
-              workspace_origin_x: result.workspaceX,
-              sidebar_expanded_width: sidebarCheck.expandedWidth,
-              workspace_reflow_on_expand: false,
-              enabled_business_controls: result.enabledBusinessControls,
-              business_fetch_xhr: businessRequests,
-              project_first_production_prompt_visible: false,
-              standalone_upload_visible_by_default: false,
-              page_local_raw_colors: rawColors.length,
-              supported_locales: ['zh-TW', 'zh-CN', 'en'],
-              authority_files_modified: false,
-              typecheck: 'PASS',
-              next_build: 'PASS',
-              production_server: 'PASS',
-              chromium_geometry: 'PASS'
+              route:'/edit', http_status:200,
+              registry_controls:160, unique_sections:top.sections, unique_components:top.components, unique_controls:top.controls,
+              preview_ratio:ratio, timeline_height:top.timelineHeight, page_width_1440:top.pageWidth,
+              primary_column_widths:top.primaryWidths, adjustment_column_widths:top.adjustmentWidths, bottom_column_widths:top.bottomWidths,
+              workspace_origin_x:top.workspaceX, sidebar_expanded_width:expanded.sidebarWidth, workspace_reflow_on_expand:false,
+              enabled_business_controls:top.enabled, business_fetch_xhr:businessRequests,
+              project_first_production_prompt_visible:false, standalone_upload_visible_by_default:false,
+              page_local_raw_colors:rawColors.length, supported_locales:['zh-TW','zh-CN','en'], authority_files_modified:false,
+              typecheck:'PASS', next_build:'PASS', production_server:'PASS', chromium_geometry:'PASS'
             };
-            if (businessRequests !== 0) throw new Error(`Business fetch/xhr requests detected: ${businessRequests}`);
-            fs.writeFileSync('docs/construction/evidence/VIS-05/vis05-validation.json', JSON.stringify(validation, null, 2) + '\n');
+            fs.writeFileSync('docs/construction/evidence/VIS-05/vis05-validation.json',JSON.stringify(validation,null,2)+'\n');
+            console.log(JSON.stringify(validation,null,2));
             await browser.close();
-            console.log(JSON.stringify(validation, null, 2));
-          })().catch(error => { console.error(error); process.exit(1); });
+          })().catch(e => { console.error(e); process.exit(1); });
           NODE
-          node /tmp/vis05-validate.cjs
 
       - name: Persist validated VIS-05 evidence
         run: |
