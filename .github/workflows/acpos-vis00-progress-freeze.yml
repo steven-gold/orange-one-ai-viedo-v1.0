@@ -1,0 +1,90 @@
+name: ACPOS VIS-00 progress freeze
+
+on:
+  push:
+    branches:
+      - acpos-vis00-staging
+
+permissions:
+  contents: write
+
+jobs:
+  freeze-progress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+      - name: Mark VIS-00 complete from verified evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+
+          path = Path('docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml')
+          data = yaml.safe_load(path.read_text(encoding='utf-8'))
+
+          state = data['current_state']
+          state['visual_construction'] = 'IN_PROGRESS'
+          state['last_completed_task'] = 'VIS-00_GLOBAL_SHELL_VISUAL_BASELINE'
+          state['current_task'] = 'VIS-01_HOME_WB-01_VISUAL_POSITIONING'
+
+          for step in data['phase_1_visual_positioning']['steps']:
+              if step['id'] == 'VIS-00':
+                  step['status'] = 'COMPLETE'
+                  step['evidence'] = {
+                      'implementation_commit': 'f9bb2f4635f985ddf180ac511f605ae4f29b31ba',
+                      'final_validation_run_id': 33251062067,
+                      'final_evidence_artifact_id': 9714380396,
+                      'artifact_sha256': 'f35bb5d63e8cf3aec5969828870cbb6a38ba552c9f98fbb4e845f9b466122ef9',
+                      'typecheck': 'PASS',
+                      'next_build': 'PASS',
+                      'production_server': 'PASS',
+                      'chromium_geometry': 'PASS',
+                      'manual_visual_inspection': 'PASS',
+                      'viewport': '1440x900',
+                      'render_evidence': [
+                          'docs/construction/evidence/VIS-00/vis00-collapsed-1440x900.png',
+                          'docs/construction/evidence/VIS-00/vis00-expanded-1440x900.png',
+                          'docs/construction/evidence/VIS-00/vis00-geometry.json',
+                      ],
+                      'verified_geometry': {
+                          'header_height': 58,
+                          'sidebar_collapsed_width': 64,
+                          'sidebar_expanded_width': 221,
+                          'workspace_origin': 'x=78,y=68',
+                          'workspace_reflow_on_expand': False,
+                          'nav_count': 8,
+                          'nav_hit_target': '44x44',
+                      },
+                      'brand_lockup_note': 'ORANGE ONE text lockup rendered; no generated/recolored substitute logo asset was introduced.',
+                  }
+                  break
+          else:
+              raise SystemExit('VIS-00 not found')
+
+          summary = data['progress_summary']
+          summary['visual_steps_complete'] = 1
+          summary['truthful_progress_note'] = (
+              'VIS-00 Global Shell + Global Visual baseline is implemented and verified by TypeScript, Next build, '
+              'production-server Chromium geometry checks, persisted render evidence, and manual visual inspection. '
+              'VIS-01 WB-01 visual positioning is next. Page business/runtime logic remains blocked until all visual steps complete.'
+          )
+
+          path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False, width=130), encoding='utf-8')
+          # Parse the serialized file again before commit.
+          yaml.safe_load(path.read_text(encoding='utf-8'))
+          PY
+      - name: Commit progress and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/acpos-vis00-progress-freeze.yml
+          git add docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+          git diff --check
+          git commit -m "chore: close VIS-00 and advance to VIS-01 [vis00-complete]"
+          git push origin HEAD:acpos-vis00-staging
