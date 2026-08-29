@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { LOCALES, LOCALE_LABELS, type TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
+import brandStyles from "./BrandLogo.module.css";
 import languageStyles from "./LanguageSelector.module.css";
 
 type NavItem = {
@@ -129,7 +130,9 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
   return (
     <div className="acpos-shell" data-vis-step="VIS-00">
       <header className="global-header" aria-label="Global Header">
-        <div className="brand-lockup" aria-label="ORANGE ONE">{t("global.brand.name")}</div>
+        <div className={brandStyles.wrapper} aria-label="ORANGE ONE">
+          <img className={brandStyles.logo} src="/brand/orange-one-logo.png" alt="ORANGE ONE" />
+        </div>
         <div className="header-cluster">
           <button className="quick-button" type="button" aria-label={t("global.header.notifications")}><HeaderIcon kind="bell"/><span>—</span></button>
           <button className="quick-button" type="button" aria-label={t("global.header.todo")}><HeaderIcon kind="todo"/><span>—</span></button>
