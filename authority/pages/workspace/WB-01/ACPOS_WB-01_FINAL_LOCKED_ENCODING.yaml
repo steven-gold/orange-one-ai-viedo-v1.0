@@ -14,42 +14,36 @@ authority:
   final_lock: true
   single_page_authority: true
   single_machine_authority: true
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
   missing_value_display: —
   page_permission: workspace.dashboard.view
   allowed_action_ids: []
   completion_basis: USER_APPROVED_PAGE_AUTHORITY_COMPLETION_2026-08-28
-  completion_scope: Adds WB-01 presentation/component/visual/render-schema decisions only; does not add canonical business
-    Section/Field/Control/Action/API objects.
+  completion_scope: Adds WB-01 presentation/component/visual/render-schema decisions only; does not add canonical business Section/Field/Control/Action/API
+    objects.
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 source_binding:
-  primary: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL.yaml
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL.yaml
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
-  supersedes:
-  - WB-01_儀表板_頁面設計權威規格_REVIEW_CANDIDATE.docx
-  - ACPOS_WB-01_REVIEW_CANDIDATE_ENCODING.yaml
-  legacy_dashboard_images: VISUAL_REFERENCE_ONLY_NON_EXECUTABLE
-  source_precedence:
-  - canonical master Page/Section/Field/Control/API/Permission
-  - this WB-01 FINAL_LOCKED page completion for presentation/render ambiguity closure
-  - Global Shell / Global Visual
-  - historical visual references (non-executable)
+  system_authority: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  global_shell: authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
+  global_visual: authority/global/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
+  navigation_permission_authority: authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
   ai_inference_for_missing_definition: FORBIDDEN
 purpose: 全公司首頁總覽；以卡片摘要顯示公司專案、進度、Topic 總作業時間、待處理／待審查、生產、通知、公司公告、AI／產業新聞、系統狀態與近期完成。各部門細節必須回各自部門頁查看。
 authority_decisions:
 - decision_uid: WB-01-DECISION-001-CORRECTION-RATE
   subject: Correction Rate conflict
   decision: DO_NOT_RENDER
-  reason: The page-specific 14 Section/Field/Control registry and UT-R9-DASH-003 require exactly six KPI cards and contain
+  reason: The page-specific 14 Section/Field/Control registry and UT-current registered authority-DASH-003 require exactly six KPI cards and contain
     no correction-rate field/control. A seventh KPI is forbidden until canonically registered.
 - decision_uid: WB-01-DECISION-002-HEADER
   subject: Dashboard page-local header/context bar ambiguity
   decision: NO_PAGE_LOCAL_HEADER
-  reason: Global Shell owns header/page identity and explicitly forbids page_specific_header. CMP-CONTEXT-BAR may exist as
-    shell infrastructure but WB-01 shall not render a 15th visible business section.
+  reason: Global Shell owns shared header frame; Page Authority owns page title and explicitly forbids page_specific_header. CMP-CONTEXT-BAR may
+    exist as shell infrastructure but WB-01 shall not render a 15th visible business section.
 - decision_uid: WB-01-DECISION-003-TRIGGER
   subject: Section open trigger surface
   decision: HEADER_TRAILING_VIEW_BUTTON_ONLY
@@ -57,13 +51,12 @@ authority_decisions:
 - decision_uid: WB-01-DECISION-004-POLICY
   subject: Hidden vs disabled
   decision: PERMISSION_DENIED=HIDDEN; STATE_TEMPORARILY_UNAVAILABLE=DISABLED
-  reason: Permission does not render unauthorized content/control. Disabled is reserved for authorized controls blocked by
-    current UI/read state.
+  reason: Permission does not render unauthorized content/control. Disabled is reserved for authorized controls blocked by current UI/read state.
 - decision_uid: WB-01-DECISION-005-RETRY
   subject: Error retry
   decision: NO_NEW_RETRY_CONTROL
-  reason: No Retry control is registered. A user may invoke the same registered 查看/SECTION_OPEN control again after an error;
-    label and identity remain unchanged.
+  reason: No Retry control is registered. A user may invoke the same registered 查看/SECTION_OPEN control again after an error; label and identity
+    remain unchanged.
 layout:
   main_workspace:
     display: CSS_GRID
@@ -86,10 +79,10 @@ layout:
   desktop_1280_1439:
     kpi: 3 + 3, each span 4, exact canonical order
     remaining_sections: same 8/4, 4/4/4, 12/12 spans as >=1440; no 'where possible' discretion
-  below_1280: Keep Main Workspace min-width=1280px and horizontal scroll. No alternate mobile workflow, stacking, drawer conversion
-    or section reordering.
-  visibility_reflow: Within each row group, authorized visible sections pack left-to-right in canonical order without changing
-    each section's span. Never migrate a section to a different row group and never stretch to fill a denied sibling.
+  below_1280: Keep Main Workspace min-width=1280px and horizontal scroll. No alternate mobile workflow, stacking, drawer conversion or section
+    reordering.
+  visibility_reflow: Within each row group, authorized visible sections pack left-to-right in canonical order without changing each section's
+    span. Never migrate a section to a different row group and never stretch to fill a denied sibling.
   card_common:
     panel_style: GLOBAL_VISUAL_PANEL_ONLY
     padding: 16px
@@ -101,72 +94,72 @@ layout:
     decorative_asset: NONE
     loading_empty_error_preserve_geometry: true
   section_slots:
-    1: &id001
+    1:
       group: kpi
       ge1440: col 1-2
       w1280_1439: row 1 col 1-4
       height: 136px
-    2: &id002
+    2:
       group: kpi
       ge1440: col 3-4
       w1280_1439: row 1 col 5-8
       height: 136px
-    3: &id003
+    3:
       group: kpi
       ge1440: col 5-6
       w1280_1439: row 1 col 9-12
       height: 136px
-    4: &id004
+    4:
       group: kpi
       ge1440: col 7-8
       w1280_1439: row 2 col 1-4
       height: 136px
-    5: &id005
+    5:
       group: kpi
       ge1440: col 9-10
       w1280_1439: row 2 col 5-8
       height: 136px
-    6: &id006
+    6:
       group: kpi
       ge1440: col 11-12
       w1280_1439: row 2 col 9-12
       height: 136px
-    7: &id007
+    7:
       group: progress
       ge1440: col 1-8
       w1280_1439: col 1-8
       height: 320px
-    8: &id008
+    8:
       group: progress
       ge1440: col 9-12
       w1280_1439: col 9-12
       height: 320px
-    9: &id009
+    9:
       group: production
       ge1440: col 1-8
       w1280_1439: col 1-8
       height: 280px
-    10: &id010
+    10:
       group: production
       ge1440: col 9-12
       w1280_1439: col 9-12
       height: 280px
-    11: &id011
+    11:
       group: information
       ge1440: col 1-4
       w1280_1439: col 1-4
       height: 240px
-    12: &id012
+    12:
       group: information
       ge1440: col 5-8
       w1280_1439: col 5-8
       height: 240px
-    13: &id013
+    13:
       group: information
       ge1440: col 9-12
       w1280_1439: col 9-12
       height: 240px
-    14: &id014
+    14:
       group: recent
       ge1440: col 1-12
       w1280_1439: col 1-12
@@ -205,7 +198,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id001
+  geometry:
+    group: kpi
+    ge1440: col 1-2
+    w1280_1439: row 1 col 1-4
+    height: 136px
 - order: 2
   section_id: SEC-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT
   section_key: company_running_project_count
@@ -239,7 +236,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id002
+  geometry:
+    group: kpi
+    ge1440: col 3-4
+    w1280_1439: row 1 col 5-8
+    height: 136px
 - order: 3
   section_id: SEC-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT
   section_key: company_pending_action_count
@@ -273,7 +274,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id003
+  geometry:
+    group: kpi
+    ge1440: col 5-6
+    w1280_1439: row 1 col 9-12
+    height: 136px
 - order: 4
   section_id: SEC-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT
   section_key: company_pending_review_count
@@ -307,7 +312,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id004
+  geometry:
+    group: kpi
+    ge1440: col 7-8
+    w1280_1439: row 2 col 1-4
+    height: 136px
 - order: 5
   section_id: SEC-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT
   section_key: company_completed_project_count
@@ -341,7 +350,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id005
+  geometry:
+    group: kpi
+    ge1440: col 9-10
+    w1280_1439: row 2 col 5-8
+    height: 136px
 - order: 6
   section_id: SEC-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS
   section_key: company_average_progress
@@ -375,7 +388,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id006
+  geometry:
+    group: kpi
+    ge1440: col 11-12
+    w1280_1439: row 2 col 9-12
+    height: 136px
 - order: 7
   section_id: SEC-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW
   section_key: project_progress_overview
@@ -409,7 +426,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id007
+  geometry:
+    group: progress
+    ge1440: col 1-8
+    w1280_1439: col 1-8
+    height: 320px
 - order: 8
   section_id: SEC-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY
   section_key: company_progress_summary
@@ -443,7 +464,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id008
+  geometry:
+    group: progress
+    ge1440: col 9-12
+    w1280_1439: col 9-12
+    height: 320px
 - order: 9
   section_id: SEC-WORKSPACE-WB-01-PRODUCTION-SUMMARY
   section_key: production_summary
@@ -477,7 +502,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id009
+  geometry:
+    group: production
+    ge1440: col 1-8
+    w1280_1439: col 1-8
+    height: 280px
 - order: 10
   section_id: SEC-WORKSPACE-WB-01-NOTIFICATIONS
   section_key: notifications
@@ -511,7 +540,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id010
+  geometry:
+    group: production
+    ge1440: col 9-12
+    w1280_1439: col 9-12
+    height: 280px
 - order: 11
   section_id: SEC-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS
   section_key: company_announcements
@@ -545,7 +578,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id011
+  geometry:
+    group: information
+    ge1440: col 1-4
+    w1280_1439: col 1-4
+    height: 240px
 - order: 12
   section_id: SEC-WORKSPACE-WB-01-INDUSTRY-NEWS
   section_key: industry_news
@@ -579,7 +616,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id012
+  geometry:
+    group: information
+    ge1440: col 5-8
+    w1280_1439: col 5-8
+    height: 240px
 - order: 13
   section_id: SEC-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY
   section_key: system_status_summary
@@ -613,7 +654,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id013
+  geometry:
+    group: information
+    ge1440: col 9-12
+    w1280_1439: col 9-12
+    height: 240px
 - order: 14
   section_id: SEC-WORKSPACE-WB-01-RECENT-COMPLETIONS
   section_key: recent_completions
@@ -647,7 +692,11 @@ canonical_sections:
     visibility: authorized_scope_only
     classification: OPERATIONAL
     version_binding: read_model_version
-  geometry: *id014
+  geometry:
+    group: recent
+    ge1440: col 1-12
+    w1280_1439: col 1-12
+    height: 220px
 component_registry:
 - component_uid: WB-01-CMP-KPI-PROJECT-COUNT
   section_id: SEC-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT
@@ -712,72 +761,128 @@ component_registry:
 visual_registry:
 - visual_uid: WB-01-VIS-KPI-01
   section_id: SEC-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT
-  geometry: *id001
+  geometry:
+    group: kpi
+    ge1440: col 1-2
+    w1280_1439: row 1 col 1-4
+    height: 136px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-KPI-02
   section_id: SEC-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT
-  geometry: *id002
+  geometry:
+    group: kpi
+    ge1440: col 3-4
+    w1280_1439: row 1 col 5-8
+    height: 136px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-KPI-03
   section_id: SEC-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT
-  geometry: *id003
+  geometry:
+    group: kpi
+    ge1440: col 5-6
+    w1280_1439: row 1 col 9-12
+    height: 136px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-KPI-04
   section_id: SEC-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT
-  geometry: *id004
+  geometry:
+    group: kpi
+    ge1440: col 7-8
+    w1280_1439: row 2 col 1-4
+    height: 136px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-KPI-05
   section_id: SEC-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT
-  geometry: *id005
+  geometry:
+    group: kpi
+    ge1440: col 9-10
+    w1280_1439: row 2 col 5-8
+    height: 136px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-KPI-06
   section_id: SEC-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS
-  geometry: *id006
+  geometry:
+    group: kpi
+    ge1440: col 11-12
+    w1280_1439: row 2 col 9-12
+    height: 136px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-PROJECT-PROGRESS
   section_id: SEC-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW
-  geometry: *id007
+  geometry:
+    group: progress
+    ge1440: col 1-8
+    w1280_1439: col 1-8
+    height: 320px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-COMPANY-PROGRESS
   section_id: SEC-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY
-  geometry: *id008
+  geometry:
+    group: progress
+    ge1440: col 9-12
+    w1280_1439: col 9-12
+    height: 320px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-PRODUCTION
   section_id: SEC-WORKSPACE-WB-01-PRODUCTION-SUMMARY
-  geometry: *id009
+  geometry:
+    group: production
+    ge1440: col 1-8
+    w1280_1439: col 1-8
+    height: 280px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-NOTIFICATIONS
   section_id: SEC-WORKSPACE-WB-01-NOTIFICATIONS
-  geometry: *id010
+  geometry:
+    group: production
+    ge1440: col 9-12
+    w1280_1439: col 9-12
+    height: 280px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-ANNOUNCEMENTS
   section_id: SEC-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS
-  geometry: *id011
+  geometry:
+    group: information
+    ge1440: col 1-4
+    w1280_1439: col 1-4
+    height: 240px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-INDUSTRY-NEWS
   section_id: SEC-WORKSPACE-WB-01-INDUSTRY-NEWS
-  geometry: *id012
+  geometry:
+    group: information
+    ge1440: col 5-8
+    w1280_1439: col 5-8
+    height: 240px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-SYSTEM-STATUS
   section_id: SEC-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY
-  geometry: *id013
+  geometry:
+    group: information
+    ge1440: col 9-12
+    w1280_1439: col 9-12
+    height: 240px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-RECENT-COMPLETIONS
   section_id: SEC-WORKSPACE-WB-01-RECENT-COMPLETIONS
-  geometry: *id014
+  geometry:
+    group: recent
+    ge1440: col 1-12
+    w1280_1439: col 1-12
+    height: 220px
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   visual_override: FORBIDDEN
 - visual_uid: WB-01-VIS-DRAWER-PROJECTION
@@ -986,8 +1091,8 @@ render_rules:
   fake_data_policy: FORBIDDEN; null or unavailable = —
   sorting: API response order only; no client sorting
   search_filter_pagination: FORBIDDEN in WB-01 Main Workspace and Drawer because no registered controls exist
-  refresh_polling: Initial page load fetch once; each registered SECTION_OPEN may read again. No auto polling, timer, auto
-    refresh or new Refresh control.
+  refresh_polling: Initial page load fetch once; each registered SECTION_OPEN may read again. No auto polling, timer, auto refresh or new Refresh
+    control.
   external_links: FORBIDDEN unless a future registered control/action explicitly authorizes navigation
   topic_total_operation_time:
     required_location: Section 7 Project Progress -> each Topic row
@@ -1041,16 +1146,15 @@ permission_and_render_gates:
   control_render_requires: visible section + exact control VIEW
   permission_denied_behavior: HIDDEN; do not render disabled unauthorized card/control
   field_mask_behavior: MASK using backend-provided mask; do not infer hidden value
-  state_disabled_behavior: Only an authorized existing control may be Disabled while LOADING or temporarily unavailable by
-    state; permission denial never uses Disabled.
+  state_disabled_behavior: Only an authorized existing control may be Disabled while LOADING or temporarily unavailable by state; permission denial
+    never uses Disabled.
   role_name_authorization: FORBIDDEN
 states:
   LOADING: Use skeleton in exact card geometry; value must not temporarily display 0.
   EMPTY: Preserve exact geometry; show — / empty text only; no sample rows.
-  ERROR: Preserve exact geometry; show real error state. Same registered 查看 control may be invoked again; do not create Retry
-    button.
-  POLICY_BLOCKED: If permission denied, hide. If an already-authorized resource receives a discloseable policy block from
-    backend, show only permitted blocked reason.
+  ERROR: Preserve exact geometry; show real error state. Same registered 查看 control may be invoked again; do not create Retry button.
+  POLICY_BLOCKED: If permission denied, hide. If an already-authorized resource receives a discloseable policy block from backend, show only permitted
+    blocked reason.
   VERSION_CONFLICT: Show stale/conflict status; no write-resolution. User may invoke same read control again.
   REVIEW_REQUIRED: Display returned read-only review status/count only; no approve action.
   EXTERNAL_PENDING: Display returned Pending state only; never promote to Completed locally.
@@ -1061,10 +1165,9 @@ state_transitions:
 - LOADING -> READ_ONLY on successful authorized projection
 - LOADING -> EMPTY on successful projection with no visible authorized data
 - LOADING -> ERROR on read failure
-- READ_ONLY/EMPTY/ERROR/VERSION_CONFLICT -> LOADING only when user invokes an existing registered SECTION_OPEN control or
-  page is explicitly re-entered
-- Any displayed section may present REVIEW_REQUIRED / EXTERNAL_PENDING / ARCHIVED only when those states are returned by the
-  read model; these are presentation states, not WB-01 business mutations
+- READ_ONLY/EMPTY/ERROR/VERSION_CONFLICT -> LOADING only when user invokes an existing registered SECTION_OPEN control or page is explicitly re-entered
+- Any displayed section may present REVIEW_REQUIRED / EXTERNAL_PENDING / ARCHIVED only when those states are returned by the read model; these
+  are presentation states, not WB-01 business mutations
 - Permission loss -> HIDDEN/POLICY_BLOCKED according to backend disclosure policy; no client-side authorization inference
 error_registry:
 - error_uid: WB-01-ERR-READ-001
@@ -1080,8 +1183,8 @@ error_registry:
   context: Unregistered card/control/chart/action/field/navigation requested
   recovery: BLOCK + REPORT_AUTHORITY_GAP
 i18n:
-  policy: All visible WB-01 section/control/state text resolves from this explicit page dictionary or canonical global resources.
-    Brand/global fixed English remains unchanged.
+  policy: All visible WB-01 section/control/state text resolves from this explicit page dictionary or canonical global resources. Brand/global
+    fixed English remains unchanged.
   sections:
     company_project_count:
       zh-TW: 專案總數
@@ -1299,13 +1402,13 @@ acceptance_matrix:
   pass: Missing = —; no sample/mock/fake values
 - uid: WB-01-ACC-14
   name: Global Shell
-  pass: No page-local header/sidebar/nav; Global Header owns page identity
+  pass: No page-local header/sidebar/nav; Global Shell owns shared header frame; Page Authority owns page title
 - uid: WB-01-ACC-15
   name: Functional Controls
   pass: Master 14/14 functional control tests PASS
 - uid: WB-01-ACC-16
-  name: R9 Dashboard Test
-  pass: UT-R9-DASH-003 PASS including compact cards and Topic total operation time
+  name: current registered authority Dashboard Test
+  pass: UT-current registered authority-DASH-003 PASS including compact cards and Topic total operation time
 - uid: WB-01-ACC-17
   name: Machine Closure
   pass: No unresolved component_uid/visual_uid/render_schema_uid/trigger/layout ambiguity in this page authority
@@ -1324,10 +1427,9 @@ machine_validation:
   final_status: FINAL_LOCKED
   implementation_ready_for_wb01_page_presentation: true
 ai_execution_gate:
-  rule: For workspace:WB-01, construction AI must implement exactly this page authority plus inherited Global Shell/Visual.
-    No product/UI decision is delegated to AI.
+  rule: For workspace:WB-01, construction AI must implement exactly this page authority plus inherited Global Shell/Visual. No product/UI decision
+    is delegated to AI.
   on_unknown: DO_NOT_IMPLEMENT_UNKNOWN; REPORT_AUTHORITY_GAP
-  on_conflict: Use exact page-specific canonical Section/Field/Control registry and this completion decision ledger; never
-    revive legacy mock dashboard.
-  completion_claim: AI may claim WB-01 presentation complete only when all acceptance_matrix items pass with zero unresolved
-    refs.
+  on_conflict: Use exact page-specific canonical Section/Field/Control registry and this completion decision ledger; never revive legacy mock
+    dashboard.
+  completion_claim: AI may claim WB-01 presentation complete only when all acceptance_matrix items pass with zero unresolved refs.

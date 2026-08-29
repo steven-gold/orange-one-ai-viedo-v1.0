@@ -3,7 +3,7 @@ authority:
   version: V1.1
   status: FINAL_LOCKED
   current_only: true
-  load_rule: Load this manifest first, then load only the repository paths listed in current_authority_set for Current construction.
+  load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
   global:
@@ -45,9 +45,9 @@ front_l1_count: 8
 admin_l1_count: 9
 repository_layout:
   authority_root: authority/
-  global_authority_root: authority/global/
-  page_authority_root: authority/pages/
-  reference_document_root: docs/reference/
+  global: authority/global/
+  pages: authority/pages/
+  reference_docs: docs/reference/
 single_source_rules:
 - No second ACPOS System authority.
 - No second Global Visual authority.

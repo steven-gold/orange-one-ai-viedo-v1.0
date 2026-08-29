@@ -14,8 +14,10 @@ authority:
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
   missing_value_display: —
-  purpose: 管理/Debug Viewer for ACPOS canonical data model, exact version lineage, relationships, traceability, schema/migration history, integrity findings and audit.
-  boundary: DB-01 is not a generic CRUD table editor and never bypasses Domain Service, Permission, Audit, Version, Change Management or Migration governance.
+  purpose: 管理/Debug Viewer for ACPOS canonical data model, exact version lineage, relationships, traceability, schema/migration history, integrity
+    findings and audit.
+  boundary: DB-01 is not a generic CRUD table editor and never bypasses Domain Service, Permission, Audit, Version, Change Management or Migration
+    governance.
 layout:
   desktop_min_width: 1280px
   vertical_scroll: Main Workspace height:auto; overflow-y:auto; independent from Global Sidebar/Menu height
@@ -53,8 +55,8 @@ layout:
     touch_target_min: 44px × 44px
   visual_override: FORBIDDEN; inherit Global Visual tokens only
 database_contract:
-  positioning: The data layer is Project -> Mother Structure Versions -> Production Topics -> Child Blueprint Versions; all Task/Job/Asset/Review/Decision/Release records must be traceable
-    through explicit exact refs.
+  positioning: The data layer is Project -> Mother Structure Versions -> Production Topics -> Child Blueprint Versions; all Task/Job/Asset/Review/Decision/Release
+    records must be traceable through explicit exact refs.
   required_trace_keys:
   - project_id
   - mother_structure_version_id
@@ -121,8 +123,8 @@ traceability_contract:
   - Decision
   - Release
   - Any registered entity/version
-  output: 'Exact clickable lineage: Source Entity -> Project -> Mother Structure Version -> Topic -> Child Blueprint Version -> Boundary -> Continuity Bridge -> Script/DNA/Input -> Task/Job/Output
-    -> QA/Decision/Release.'
+  output: 'Exact clickable lineage: Source Entity -> Project -> Mother Structure Version -> Topic -> Child Blueprint Version -> Boundary -> Continuity
+    Bridge -> Script/DNA/Input -> Task/Job/Output -> QA/Decision/Release.'
   rules:
   - Version must be a clickable exact entity/ref, not only a display string such as M1/C1.
   - Trace uses canonical IDs/refs/checksums, never filename guessing.
@@ -172,8 +174,8 @@ integrity_contract:
   - Scope/tenant/project/department access valid
   - Migration history/checksum consistent
   - Audit/correlation trace exists for effectful writes
-  finding_behavior: DB-01 surfaces integrity findings and affected refs. Repair is routed to the owning Domain/System Lifecycle workflow; DB-01 does not mutate production data to hide
-    the error.
+  finding_behavior: DB-01 surfaces integrity findings and affected refs. Repair is routed to the owning Domain/System Lifecycle workflow; DB-01
+    does not mutate production data to hide the error.
 system_lifecycle_boundary:
   db01_can:
   - inspect

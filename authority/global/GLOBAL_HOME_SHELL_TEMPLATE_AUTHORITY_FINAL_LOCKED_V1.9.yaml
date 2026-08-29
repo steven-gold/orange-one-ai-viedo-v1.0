@@ -22,8 +22,8 @@ user_decisions_2026_08_28:
 - Collapsed sidebar has no visible sidebar panel/frame/background; only the eight icons remain visible
 - Expanded menu surface/frame appears only while pointer/focus activates the navigation rail
 - Remove Permission from the top-right header cluster
-- Account permissions are bound to the account and configured when the account is created / managed; Global Shell consumes authorization
-  outcomes but does not render a Permission field
+- Account permissions are bound to the account and configured when the account is created / managed; Global Shell consumes authorization outcomes
+  but does not render a Permission field
 - 'Authenticated top-right order is exactly: Notification / To-do / Running / Language / Account'
 shell_boundary:
   owns:
@@ -52,8 +52,7 @@ geometry:
     radius: '0'
     left_logo_anchor: x≈30px
     right_padding: 16px
-    center_page_identity: REMOVED_FROM_GLOBAL_HEADER; page title belongs to Page Authority to prevent collision with account quick-status
-      cluster
+    center_page_identity: REMOVED_FROM_GLOBAL_HEADER; page title belongs to Page Authority to prevent collision with account quick-status cluster
   sidebar:
     resting_state: AUTO_COLLAPSED_ICON_ONLY_NO_PANEL
     collapsed_width: 64px interaction rail
@@ -83,8 +82,8 @@ geometry:
     bottom_inset: 16px
     sidebar_gutter: 14px
     header_gutter: 10px
-    rule: Workspace x remains 78px in both collapsed and temporary expanded-overlay states. Auto-expanded sidebar overlays the left edge
-      without shrinking/reflowing Page Authority content.
+    rule: Workspace x remains 78px in both collapsed and temporary expanded-overlay states. Auto-expanded sidebar overlays the left edge without
+      shrinking/reflowing Page Authority content.
     shell_outer_card: FORBIDDEN
     shell_padding: NONE
     shell_radius: NONE
@@ -106,15 +105,13 @@ visual:
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
   override: FORBIDDEN
   header_surface: rgba(5,5,20,0.94) + blur 14px; bottom edge 1px rgba(139,92,255,0.28)
-  sidebar_surface: 'COLLAPSED: NONE/transparent; EXPANDED OVERLAY ONLY: rgba(5,7,24,0.92) + blur 14px + right violet hairline / soft inner
-    glow'
+  sidebar_surface: 'COLLAPSED: NONE/transparent; EXPANDED OVERLAY ONLY: rgba(5,7,24,0.92) + blur 14px + right violet hairline / soft inner glow'
   nav_default: 'COLLAPSED: icon only, no row card/background. EXPANDED: transparent row with single-line L1 label.'
   nav_hover: Hover/focus activates expanded sidebar surface first; row hover may use subtle violet surface inside expanded overlay only.
-  nav_active: 'COLLAPSED: compact icon halo/active marker only; no sidebar panel. EXPANDED: violet glass gradient + border + soft glow +
-    white label.'
+  nav_active: 'COLLAPSED: compact icon halo/active marker only; no sidebar panel. EXPANDED: violet glass gradient + border + soft glow + white
+    label.'
   active_count: 0 or 1; never >1
-  quick_status: Compact clickable buttons for Notification / To-do / Running only; no Permission field. Counts/status come from real account
-    projections.
+  quick_status: Compact clickable buttons for Notification / To-do / Running only; no Permission field. Counts/status come from real account projections.
 auto_collapse_sidebar:
   component_uid: GHS-CMP-SIDEBAR-AUTO-REVEAL
   visual_uid: GHS-VIS-SIDEBAR-AUTO-REVEAL
@@ -133,16 +130,15 @@ auto_collapse_sidebar:
   keyboard: Tab focus expands sidebar so labels are visible; focus leaving entire sidebar collapses after 180ms
   collapsed_render: ONLY 8 canonical navigation icons visible. No visible sidebar panel, no vertical rail background, no frame, border, glow,
     row card, label, subtitle, or 221px expanded menu surface.
-  expanded_render: 221px menu surface appears ONLY at runtime after pointerenter/focusin. It is absent from the canonical collapsed-state
-    screenshot.
-  interaction_rail: Invisible/transparent 64px hit rail aligned left beneath Header; contains 44x44 icon hit targets. The rail itself must
-    not look like a sidebar panel.
+  expanded_render: 221px menu surface appears ONLY at runtime after pointerenter/focusin. It is absent from the canonical collapsed-state screenshot.
+  interaction_rail: Invisible/transparent 64px hit rail aligned left beneath Header; contains 44x44 icon hit targets. The rail itself must not
+    look like a sidebar panel.
   icon_hit_target: 44x44px per L1 item; icon 20px; Default icon-only has no enclosing row/card. Active icon may use compact active halo/highlight
     but not a full-height sidebar frame.
   surface_visibility: VISIBLE_ONLY_WHEN_EXPANDED_OVERLAY_ACTIVE
-  reference_visual_rule: The canonical collapsed-state reference image must show ONLY the 8 navigation icons. It must NOT draw the 221px
-    expanded menu surface anywhere in the same collapsed-state main screenshot. Expanded state may be documented only in text/spec or a separately
-    labeled secondary figure.
+  reference_visual_rule: The canonical collapsed-state reference image must show ONLY the 8 navigation icons. It must NOT draw the 221px expanded
+    menu surface anywhere in the same collapsed-state main screenshot. Expanded state may be documented only in text/spec or a separately labeled
+    secondary figure.
 brand:
   component_uid: GHS-CMP-BRAND
   visual_uid: GHS-VIS-BRAND
@@ -290,12 +286,12 @@ navigation:
     subtitle: FORBIDDEN
     chevron: FORBIDDEN
   dashboard_rule: 'NAV-01 儀表板 is a direct L1 leaf: no child menu, no submenu, no subtitle, no chevron; direct navigate only'
-  permission: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY + Canonical Navigation Authority. Permissions are configured on the account; Global Shell
-    only consumes the authorization result and never renders a Permission field.
+  permission: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY + Canonical Navigation Authority. Permissions are configured on the account; Global Shell only
+    consumes the authorization result and never renders a Permission field.
   unauthorized: HIDDEN; preserve order among visible items
   active: Resolve from canonical page ancestry; no URL text guessing
-  all_l1_flat_rule: ALL NAV-01..NAV-08 are direct L1 leaves in Global Sidebar. Sidebar child/submenu rendering is forbidden for every item.
-    Any lower-level page navigation belongs to the destination Page Authority, not Global Shell.
+  all_l1_flat_rule: ALL NAV-01..NAV-08 are direct L1 leaves in Global Sidebar. Sidebar child/submenu rendering is forbidden for every item. Any
+    lower-level page navigation belongs to the destination Page Authority, not Global Shell.
 quick_link_resolution:
   resolver: Canonical Quick Link / Navigation Authority
   route_in_shell: NONE
@@ -340,8 +336,7 @@ components:
 - component_uid: GHS-CMP-SIDEBAR-AUTO-REVEAL
   section_uid: GHS-SEC-03
   visual_uid: GHS-VIS-SIDEBAR-AUTO-REVEAL
-  responsibility: Reveal/hide actual sidebar surface automatically; collapsed state leaves only icons visible and never shows a persistent
-    frame
+  responsibility: Reveal/hide actual sidebar surface automatically; collapsed state leaves only icons visible and never shows a persistent frame
 - component_uid: GHS-CMP-NAV
   section_uid: GHS-SEC-03
   visual_uid: GHS-VIS-NAV
@@ -671,8 +666,8 @@ states:
 - state_uid: GHS-STATE-LOGGED-OUT
   meaning: Header right shows Language + Login only
 - state_uid: GHS-STATE-LOGGED-IN
-  meaning: Header right shows Notification + To-do + Running + Language + Account. Permissions remain account-bound authorization data and
-    are not rendered.
+  meaning: Header right shows Notification + To-do + Running + Language + Account. Permissions remain account-bound authorization data and are
+    not rendered.
 - state_uid: GHS-STATE-QUICK-LINK-GAP
   meaning: Displayed real status may remain; unresolved quick destination disabled + gap report
 - state_uid: GHS-STATE-PAGE-BLANK
@@ -802,8 +797,8 @@ acceptance:
   pass: One L1 剪輯配音 only; no separate Editing/Voice rows
 - uid: GHS-ACC-04
   item: All L1 Flat / No Subtitle
-  pass: NAV-01..NAV-08 are direct L1 leaves; no child/submenu, no second line, no chevron. Lower-level navigation belongs to destination
-    Page Authority.
+  pass: NAV-01..NAV-08 are direct L1 leaves; no child/submenu, no second line, no chevron. Lower-level navigation belongs to destination Page
+    Authority.
 - uid: GHS-ACC-05
   item: Auto Collapse
   pass: Resting state is transparent 64px icon-only interaction rail with no visible sidebar frame. Hover/focus renders 221px sidebar surface
@@ -819,8 +814,7 @@ acceptance:
   pass: Only Language + Login shown; no fake account quick data
 - uid: GHS-ACC-09
   item: Quick Status
-  pass: Notification + To-do + Running use real account projections and are clickable via canonical quick-link resolver; Permission is not
-    rendered
+  pass: Notification + To-do + Running use real account projections and are clickable via canonical quick-link resolver; Permission is not rendered
 - uid: GHS-ACC-10
   item: Language
   pass: Immediately left of Account; options zh-TW/zh-CN/en; UI locale only
@@ -848,8 +842,8 @@ acceptance:
     and no 221px expanded-menu demo is visible until actual hover/focus.
 - uid: GHS-ACC-18
   item: Permission Is Account-Bound, Not Header UI
-  pass: No Permission control/field/chip exists in Header. Permissions are configured by Account Creation/Management and consumed only as
-    authorization outcomes.
+  pass: No Permission control/field/chip exists in Header. Permissions are configured by Account Creation/Management and consumed only as authorization
+    outcomes.
 machine_validation:
   status: PASS
   nav_count: 8

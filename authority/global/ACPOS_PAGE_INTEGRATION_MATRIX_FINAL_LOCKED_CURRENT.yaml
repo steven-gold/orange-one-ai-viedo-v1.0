@@ -4,8 +4,8 @@ authority:
   status: FINAL_LOCKED
   current_only: true
   page_count: 18
-  system_authority: ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
-  navigation_permission_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+  system_authority: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  navigation_permission_authority: authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
   rule: Integrates current pages into ACPOS without replacing page UI/operation authority.
 pages:
 - page_uid: workspace:WB-01
@@ -313,9 +313,8 @@ pages:
   - fact usefulness
   decision_boundary: Fact/Inference/Recommendation separation mandatory; no direct Canon/Task/Budget/Release/Publish write.
   version_boundary: Source time/version and citation remain explicit.
-  navigation_note: Not a ninth V1.9 front L1; current entry/deep-link mapping to be normalized.
   shared_acquisition: RESEARCH_FACT_ACQUISITION_CONSUMER
-  navigation: SUPPORTING_PAGE_NOT_FRONT_L1
+  navigation: SUPPORTING_CONTEXTUAL_DEEP_LINK_NOT_FRONT_L1
   shared_context_object: ACPOSContextCandidate
 - page_uid: admin:SYS-01
   name_zh: 系統 AI 工作區
@@ -373,8 +372,7 @@ pages:
   - access-review/security incident patterns only; never auto-grant permission
   decision_boundary: Department membership/preset is not runtime authorization.
   version_boundary: Permission changes explicit and auditable.
-  knowledge_slot_rule: Reserved Knowledge backend module is NOT selectable until a Current Knowledge Page Authority exists.
-  permission_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+  permission_authority: authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
   admin_l1_bundle_count: 9
   knowledge_bundle: ADMIN-L1-KNOWLEDGE
 - page_uid: admin:DEV-01
@@ -527,8 +525,8 @@ pages:
   name_zh: 知識庫與 Experience 中心
   surface: ADMIN
   domain: KNOWLEDGE_EXPERIENCE_GOVERNANCE
-  acpos_role: 治理 Knowledge Source / Ingestion / Search-Citation / Context Candidate / Experience Replay / Learning Candidate / Knowledge
-    Review；作為 ACPOS Brain 的 Knowledge/Experience 治理面。
+  acpos_role: 治理 Knowledge Source / Ingestion / Search-Citation / Context Candidate / Experience Replay / Learning Candidate / Knowledge Review；作為
+    ACPOS Brain 的 Knowledge/Experience 治理面。
   consumes:
   - ACPOSStateProjection
   - ACPOSExperienceRecord
@@ -557,8 +555,8 @@ pages:
   - source quality/freshness
   - review rejection/return reason
   - learning candidate adoption result
-  decision_boundary: KB-01 cannot edit Canon/Blueprint, make formal Strategy Decision, select Provider/Model, perform media QA, or silently
-    update authority/policy.
+  decision_boundary: KB-01 cannot edit Canon/Blueprint, make formal Strategy Decision, select Provider/Model, perform media QA, or silently update
+    authority/policy.
   version_boundary: Knowledge Approved versions are immutable; updates create new version and preserve supersession history.
   system_object_reuse:
     context: ACPOSContextCandidate
@@ -571,7 +569,7 @@ pages:
     - KnowledgeExperienceService
   current_status: FINAL_LOCKED
   shared_acquisition: KNOWLEDGE_SOURCE_ACQUISITION_CONSUMER
-  page_authority: ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+  page_authority: authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
 global_rules:
 - Every current page is a governed Data Producer and/or Data Consumer.
 - Page UI/controls remain owned by its Current Page Authority.

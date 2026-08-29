@@ -3,85 +3,38 @@ authority:
   page_uid: admin:SYS-01
   page_name_zh: 系統 AI 工作區
   canonical_role: Unified System Lifecycle AI Workbench
-  status: FINAL_DESIGN_LOCKED
+  status: FINAL_LOCKED
   implementation_status: NOT_EXECUTED
-  master_merge_status: NOT_MERGED
-  truthful_status_rule: YAML design encoding produced; application code, runtime, sandbox, regression, E2E and production
-    deployment are not executed by this file.
+  truthful_status_rule: YAML design encoding produced; application code, runtime, sandbox, regression, E2E and production deployment are not executed
+    by this file.
   render_mode: SYSTEM_CONTEXT_CONVERSATION_WORKBENCH
   owner_refs:
   - SystemChangeService
   - AISystemMaintenanceAssistantService
   - ACPOS AI Conversation Core
   source_precedence:
-  - ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL.yaml
-  - SYS-01_系統生命週期AI_完整收斂權威規格_FINAL_DESIGN_LOCKED.docx
-  - ACPOS_SYSTEM_LIFECYCLE_AI_AUTHORITY_COMPLETE_DETAIL(1).docx
-  - Existing CORE/STR Single-AI + Multi-AI Conversation patterns
+  - ACPOS_SYSTEM_AUTHORITY@V1.0
+  - This SYS-01 Current Page Authority
+  - ACPOS AI Conversation Core
+  - Current registered service/runtime/operation authorities
   no_parallel_system_rule: true
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 inheritance:
   global_shell: INHERIT_CURRENT_GLOBAL_SHELL
   global_visual: INHERIT_CURRENT_GLOBAL_VISUAL_AUTHORITY
   authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
-  provider_routing: SYSTEM_OWNED_AI_API_ROUTER
-  provider_model_profile_owner: admin:AIAPI-06#provider_model_profiles
+  provider_routing: ACPOS AI Execution / current AI API Router
+  provider_model_profile_owner: admin:AIAPI-01#provider_model_profiles
   manual_provider_picker: FORBIDDEN
   direct_provider_sdk_or_secret_editor: FORBIDDEN
   conversation_core: REUSE_ACPOS_AI_CONVERSATION_CORE
   execution_runtime: REUSE_EXISTING_ACPOS_EXECUTION_RUNTIME
-existing_master_contract_preserved:
-  canonical_section_count: 8
-  canonical_sections:
-  - section_id: SEC-ADMIN-SYS-01-SYSTEM-CONTEXT
-    section_key: system_context
-    order: 1
-  - section_id: SEC-ADMIN-SYS-01-CONVERSATION
-    section_key: conversation
-    order: 2
-  - section_id: SEC-ADMIN-SYS-01-CANDIDATE-CHANGE
-    section_key: candidate_change
-    order: 3
-  - section_id: SEC-ADMIN-SYS-01-SOURCE-REFS
-    section_key: source_refs
-    order: 4
-  - section_id: SEC-ADMIN-SYS-01-IMPACT-PREVIEW
-    section_key: impact_preview
-    order: 5
-  - section_id: SEC-ADMIN-SYS-01-AUDIT
-    section_key: audit
-    order: 6
-  - section_id: SEC-ADMIN-SYS-01-ACTION-DOCK
-    section_key: action_dock
-    order: 7
-  - section_id: SEC-ADMIN-SYS-01-EXECUTION-PANEL
-    section_key: execution_panel
-    order: 8
-  existing_registered_control_count_before_this_design_extension: 25
-  existing_allowed_action_ids:
-  - ACT-CANDIDATE-CREATE
-  - ACT-CR-CREATE
-  - ACT-NAV-OPEN
-  existing_page_permission: system.change.propose
-  existing_service_permissions:
-  - system.ai.use
-  - ops.read
-  - system.test.execute
-  - core.change.create
-  existing_service_operations:
-  - createCandidate
-  - createChangeRequest
-  - runSandboxTest
-  - executeSystemRelease
-  existing_forbidden:
-  - direct_code_deploy
-  - direct_production_change
-  existing_ai_scope_boundary:
-    SYS-01_to_SYS-05: AI_SYSTEM_MAINTENANCE allowed only within explicit permissions/scopes/gates
-    SYS-06: EXPLICIT_SCOPE_EXCLUSION for AI/service identity by default; human-governed release only with explicit authority
 workspace_composition:
-  rule: The six user-facing work areas are composition groups over the existing eight canonical sections; they are not six
-    new page registries.
+  rule: The six user-facing work areas are composition groups over the existing eight canonical sections; they are not six new page registries.
   areas:
   - workspace_key: maintenance_inbox
     maps_to_sections:
@@ -186,8 +139,8 @@ system_continuity_context_contract:
   - resolve_confirmed_decisions
   - resolve_existing_authorities_and_owners
   - recompute_context_fingerprint
-  missing_required_context_behavior: BLOCK_DESIGN_MUTATION; preserve conversation draft; request exact missing decision/source
-    only when truly non-resolvable.
+  missing_required_context_behavior: BLOCK_DESIGN_MUTATION; preserve conversation draft; request exact missing decision/source only when truly
+    non-resolvable.
 single_change_context_contract:
   primary_key: SYSTEM_CHANGE_ID
   one_change_contains:
@@ -221,16 +174,14 @@ multi_ai_design_council_contract:
   - B
   - C
   participant_alias_semantics: session labels only; not permanent jobs or fixed providers
-  response_reference_policy: '#AI exact response refs are reusable for review/compare/revise/branch; shorthand only if unique
-    and stored canonically.'
+  response_reference_policy: '#AI exact response refs are reusable for review/compare/revise/branch; shorthand only if unique and stored canonically.'
   discussion_mode:
-    behavior: 'Iterative cross-review under the same SYSTEM_CHANGE_ID: propose -> review -> compare -> revise -> synthesize
-      -> decision questions.'
+    behavior: 'Iterative cross-review under the same SYSTEM_CHANGE_ID: propose -> review -> compare -> revise -> synthesize -> decision questions.'
     cross_ai_loop_allowed: true
     other_ai_response_is_source_fact: false
   parallel_mode:
-    behavior: First-round independent answers use the same original user question, same System Continuity Context and same
-      exact evidence/source refs.
+    behavior: First-round independent answers use the same original user question, same System Continuity Context and same exact evidence/source
+      refs.
     independent_first_round: true
     synthesis_after_round: true
   design_perspectives:
@@ -244,8 +195,8 @@ multi_ai_design_council_contract:
   - REDUNDANCY_REVIEWER
   no_new_agent_backend: true
 multi_ai_ui_control_correction:
-  purpose: 'Correct prior document ambiguity: Single AI / Multi AI and Discussion / Parallel must be real segmented controls
-    in the Design Conversation header, not headings or decorative labels.'
+  purpose: 'Correct prior document ambiguity: Single AI / Multi AI and Discussion / Parallel must be real segmented controls in the Design Conversation
+    header, not headings or decorative labels.'
   section_id: SEC-ADMIN-SYS-01-CONVERSATION
   component_uid: SYS-01-CMP-DESIGN-CONVERSATION-HEADER
   visual_uid: SYS-01-VIS-DESIGN-CONVERSATION-HEADER
@@ -296,16 +247,16 @@ multi_ai_ui_control_correction:
       binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
       api_required: false
     state_effect: ai_mode=SINGLE_AI
-    success_contract: Switch presentation to Single AI without changing SYSTEM_CHANGE_ID, conversation_id, thread_id, Decision
-      Ledger or System Continuity Context.
+    success_contract: Switch presentation to Single AI without changing SYSTEM_CHANGE_ID, conversation_id, thread_id, Decision Ledger or System
+      Continuity Context.
   - action_uid: SYS-01-ACT-AI-MODE-MULTI
     effect_type: UI_CONTEXT_STATE
     runtime_binding:
       binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
       api_required: false
     state_effect: ai_mode=MULTI_AI; council_mode=DISCUSSION unless existing valid council mode is restored
-    success_contract: Enable Multi-AI presentation using shared Conversation Core and system-owned assigned AI set/route;
-      do not create a new thread/system/change.
+    success_contract: Enable Multi-AI presentation using shared Conversation Core and system-owned assigned AI set/route; do not create a new
+      thread/system/change.
   - action_uid: SYS-01-ACT-COUNCIL-MODE-DISCUSSION
     effect_type: UI_CONTEXT_STATE
     runtime_binding:
@@ -319,8 +270,7 @@ multi_ai_ui_control_correction:
       binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
       api_required: false
     state_effect: council_mode=PARALLEL
-    success_contract: Use same-question/same-context independent first-round responses, then synthesize without changing the
-      underlying change/context.
+    success_contract: Use same-question/same-context independent first-round responses, then synthesize without changing the underlying change/context.
   gates:
   - gate_uid: SYS-01-GATE-AI-MODE
     requires:
@@ -428,7 +378,7 @@ functional_necessity_visual_priority_contract:
   - always_zero_counter
   - persistent_low_frequency_danger_action
 provider_api_update_watch_contract:
-  integration_rule: EXTEND existing AIAPI-06 / system-owned Provider routing; do not create a second provider registry/router/adapter.
+  integration_rule: EXTEND existing AIAPI-01 / system-owned Provider routing; do not create a second provider registry/router/adapter.
   watch_dimensions:
   - provider
   - model
@@ -504,8 +454,7 @@ continuous_implementation_contract:
   forbidden_stop_reasons:
   - NORMAL_SUBSTEP_COMPLETED
   - INTERNAL_PHASE_COMPLETED
-  phase_rule: Phases may be recommended but remain under the same SYSTEM_CHANGE_ID and continue automatically unless an allowed
-    stop reason occurs.
+  phase_rule: Phases may be recommended but remain under the same SYSTEM_CHANGE_ID and continue automatically unless an allowed stop reason occurs.
   pre_step_resolve:
   - current_system_truth
   - frozen_design
@@ -531,8 +480,8 @@ multi_pass_closure_validation_contract:
     name: MACHINE_SCHEMA_SYNTAX
   - pass: 7
     name: REVERSE_E2E_AND_FULL_RESCAN
-  repair_rule: If a defect is safely self-fixable, fix it in the same implementation cycle and rerun affected validation plus
-    final full Pass 1-7.
+  repair_rule: If a defect is safely self-fixable, fix it in the same implementation cycle and rerun affected validation plus final full Pass
+    1-7.
   final_zero_counters:
   - MISSING_REQUIREMENT
   - UNRESOLVED_REFERENCE
@@ -565,8 +514,8 @@ deployment_boundary_contract:
   ai_autonomous_approval: FORBIDDEN
   ai_autonomous_production_deploy: FORBIDDEN
   human_operated_deploy_from_SYS01: DESIGN_ALLOWED_ONLY_AFTER_EXPLICIT_REGISTERED_SYS06_RELEASE_ACTION_PERMISSION_GATE_BINDING
-  current_machine_binding_status: NOT_BOUND_IN_THIS_FILE because exact current SYS-06 release control/action/permission UID
-    is not sourced here; do not invent.
+  current_machine_binding_status: NOT_BOUND_IN_THIS_FILE because exact current SYS-06 release control/action/permission UID is not sourced here;
+    do not invent.
   required_gate_before_enable:
   - candidate_ready
   - validation_pass
@@ -599,8 +548,7 @@ truthful_execution_reporting_contract:
     PARTIAL: Real output exists but known gaps remain.
     BLOCKED: Explicit hard blocker prevents safe continuation.
     VALIDATING: Implementation exists but multi-pass validation is incomplete.
-    COMPLETED: Implementation + testing + repair + full rescan + regression/E2E all passed with evidence and no known structural
-      gap.
+    COMPLETED: Implementation + testing + repair + full rescan + regression/E2E all passed with evidence and no known structural gap.
   forbidden_claims_without_evidence:
   - completed
   - fixed
@@ -617,15 +565,15 @@ acceptance:
   condition: Discussion and Parallel are actual segmented controls visible only in MULTI_AI.
 - acceptance_uid: SYS-01-ACC-MAI-03
   item: Context Preservation
-  condition: Switching AI/Council mode preserves SYSTEM_CHANGE_ID, conversation/thread, Decision Ledger, System Continuity
-    Context, draft and source refs.
+  condition: Switching AI/Council mode preserves SYSTEM_CHANGE_ID, conversation/thread, Decision Ledger, System Continuity Context, draft and
+    source refs.
 - acceptance_uid: SYS-01-ACC-MAI-04
   item: Shared Conversation Core
   condition: No new Multi-AI engine/agent backend/provider picker; uses existing Conversation Core and system-owned routing.
 - acceptance_uid: SYS-01-ACC-LIFE-01
   item: Single Lifecycle
-  condition: New feature, maintenance, incident, provider update and experience improvement use one System Lifecycle AI and
-    one Change Context model.
+  condition: New feature, maintenance, incident, provider update and experience improvement use one System Lifecycle AI and one Change Context
+    model.
 - acceptance_uid: SYS-01-ACC-LIFE-02
   item: Requirement Convergence
   condition: P0/P1 decision questions must converge before Design Freeze; P2/P3 reuse existing authority/defaults.
@@ -648,16 +596,13 @@ hard_locks:
 - Only one admin:SYS-01 Unified System Lifecycle AI; no parallel Design/Maintenance/Provider-Watch/UX AI system.
 - Single AI / Multi AI must be interactive segmented controls in the Design Conversation header.
 - Discussion / Parallel must be interactive segmented controls visible only in Multi AI.
-- AI mode changes are presentation/context state only and never create a new System Change, conversation, thread or provider
-  route.
+- AI mode changes are presentation/context state only and never create a new System Change, conversation, thread or provider route.
 - Provider/model selection remains system-owned; manual provider/model picker is forbidden.
 - Current System Truth + Active Change + Confirmed Decisions + Existing Authorities must resolve before new system design.
 - Existing first, extension second, new system last; CREATE_NEW requires Existing-System Gap Proof.
 - No UI element without necessity/business-effect/context proof; redundant/out-of-scope content is removed.
-- Design Freeze is blocked while P0/P1, authority conflict, duplicate risk, required contract or visual-priority violations
-  remain.
-- Unless explicitly scope-limited or truly blocked, implementation continues through all planned steps without waiting after
-  ordinary substeps.
+- Design Freeze is blocked while P0/P1, authority conflict, duplicate risk, required contract or visual-priority violations remain.
+- Unless explicitly scope-limited or truly blocked, implementation continues through all planned steps without waiting after ordinary substeps.
 - Provider/API update watch extends existing provider management; no second provider registry/router/adapter.
 - No fake Runtime/Test/Provider/Health/Evidence/Audit data.
 - No completion claim without actual implementation and validation evidence.
@@ -696,5 +641,54 @@ derived_validation:
     Truthful reporting distinguishes design from system completion: true
     Deploy machine binding truthfully unresolved instead of invented: true
     No duplicate new UIDs across control/action/gate/error sets: true
-  runtime_disclaimer: PASS here validates this YAML design encoding structure only. It does not prove application implementation,
-    master merge, sandbox, regression, E2E or production deployment.
+  runtime_disclaimer: PASS here validates this YAML design encoding structure only. It does not prove application implementation, master merge,
+    sandbox, regression, E2E or production deployment.
+current_page_contract_preserved:
+  canonical_section_count: 8
+  canonical_sections:
+  - section_id: SEC-ADMIN-SYS-01-SYSTEM-CONTEXT
+    section_key: system_context
+    order: 1
+  - section_id: SEC-ADMIN-SYS-01-CONVERSATION
+    section_key: conversation
+    order: 2
+  - section_id: SEC-ADMIN-SYS-01-CANDIDATE-CHANGE
+    section_key: candidate_change
+    order: 3
+  - section_id: SEC-ADMIN-SYS-01-SOURCE-REFS
+    section_key: source_refs
+    order: 4
+  - section_id: SEC-ADMIN-SYS-01-IMPACT-PREVIEW
+    section_key: impact_preview
+    order: 5
+  - section_id: SEC-ADMIN-SYS-01-AUDIT
+    section_key: audit
+    order: 6
+  - section_id: SEC-ADMIN-SYS-01-ACTION-DOCK
+    section_key: action_dock
+    order: 7
+  - section_id: SEC-ADMIN-SYS-01-EXECUTION-PANEL
+    section_key: execution_panel
+    order: 8
+  existing_registered_control_count_before_this_design_extension: 25
+  existing_allowed_action_ids:
+  - ACT-CANDIDATE-CREATE
+  - ACT-CR-CREATE
+  - ACT-NAV-OPEN
+  existing_page_permission: system.change.propose
+  existing_service_permissions:
+  - system.ai.use
+  - ops.read
+  - system.test.execute
+  - core.change.create
+  existing_service_operations:
+  - createCandidate
+  - createChangeRequest
+  - runSandboxTest
+  - executeSystemRelease
+  existing_forbidden:
+  - direct_code_deploy
+  - direct_production_change
+  existing_ai_scope_boundary:
+    SYS-01_to_SYS-05: AI_SYSTEM_MAINTENANCE allowed only within explicit permissions/scopes/gates
+    SYS-06: EXPLICIT_SCOPE_EXCLUSION for AI/service identity by default; human-governed release only with explicit authority

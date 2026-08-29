@@ -8,41 +8,19 @@ authority:
   current_only: true
   file_spec_status: FILE_SPEC_COMPLETE
   system_implementation_status: NOT_EXECUTED
-  master_merge_status: NOT_MERGED
   single_page_workspace: true
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
   backend_l1_key: erp_finance
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
-  purpose: One current ERP workspace that consolidates the existing R9 ERP Connector/Snapshot and Finance/Capacity Guardrail
-    page capabilities into one same-page administration workspace without creating a second ERP service, finance service,
-    connector registry, sync engine, snapshot store, finance store, export service or authorization system.
-  truthful_status_rule: This file completes current ERP page design/encoding only. Application code, R9 master merge, external
-    ERP connector execution, runtime, Sandbox, Regression, E2E, restart persistence and production deployment are NOT_EXECUTED.
-source_alignment:
-  primary_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL.yaml / R9 ERP
-  source_pages:
-  - page_uid: admin:ERP-01
-    role: ERP Connector / Snapshot
-    owner: ERPConnectorService
-    source_control_count: 17
-    purpose: Connector, read-only scope, snapshot, freshness, currency/timezone, completeness, failure, audit and sync operations.
-  - page_uid: admin:ERP-02
-    role: Finance / Capacity Guardrail
-    owner: FinanceGuardrailService
-    source_control_count: 12
-    purpose: Cost, revenue, cashflow, capacity, forecast, guardrails, recommendation boundary and export/read operations.
-  single_page_consolidation:
-    current_ui_page_uid: admin:ERP-01
-    standalone_navigation_surfaces_superseded:
-    - admin:ERP-02
-    supersession_scope: UI navigation/page surface only
-    preserved_service_operation_contracts: true
-    preserved_source_controls: 29
-  r9_active_vs_archive_rule: Current construction uses R9 master only. Historical handbook revenue/expense/manual accounting
-    examples are not promoted into executable current controls because the active R9 operation registry does not expose those
-    write operations.
+  purpose: One current ERP workspace that consolidates the existing current registered authority ERP Connector/Snapshot and Finance/Capacity Guardrail
+    page capabilities into one same-page administration workspace without creating a second ERP service, finance service, connector registry,
+    sync engine, snapshot store, finance store, export service or authorization system.
+  truthful_status_rule: This file completes current ERP page design/encoding only. Application code, current registered authority master merge,
+    external ERP connector execution, runtime, Sandbox, Regression, E2E, restart persistence and production deployment are NOT_EXECUTED.
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 single_system_contract:
   current_ui_owner: admin:ERP-01
   service_owners:
@@ -60,12 +38,11 @@ single_system_contract:
   - page-local secret store
   - page-local RBAC/permission system
   - page-local provider/API-key system
-  external_erp_writeback: FORBIDDEN by R9 ERP_write_from_ACPOS boundary
+  external_erp_writeback: FORBIDDEN by current registered authority ERP_write_from_ACPOS boundary
   missing_value_behavior: Render — / incomplete / actual state; missing_value_as_zero is forbidden.
 page_composition:
   canonical_user_flow: Finance Overview <-> ERP Connection <-> Sync & Data Quality; Audit/details secondary drawer
-  view_switch_rule: Three main views are same-page UI context only; switching views does not mutate business state and does
-    not create new routes.
+  view_switch_rule: Three main views are same-page UI context only; switching views does not mutate business state and does not create new routes.
   default_view: finance_overview
   main_views:
   - view_uid: ERP-01-VIEW-FINANCE
@@ -139,8 +116,8 @@ layout:
   fake_chart_or_kpi: FORBIDDEN
 finance_contract:
   read_only: true
-  amount_visibility: Raw finance/provider cost values require explicit finance.read/provider.cost.read as applicable; otherwise
-    masked/non-amount status only.
+  amount_visibility: Raw finance/provider cost values require explicit finance.read/provider.cost.read as applicable; otherwise masked/non-amount
+    status only.
   visible_groups:
   - cost
   - revenue
@@ -161,8 +138,8 @@ finance_contract:
   - budget approval/reallocation execution
   - manual accounting journal
   - external ERP writeback
-  reason: No such executable current ERP operation is registered in the active R9 ERP page authority; do not import archive
-    handbook examples as runtime authority.
+  reason: No such executable current ERP operation is registered in the active current registered authority ERP page authority; do not import
+    archive handbook examples as runtime authority.
 connector_contract:
   read_fields:
   - FIELD-ADMIN-ERP-01-CONNECTOR-ID
@@ -215,13 +192,13 @@ form_contracts:
     additionalProperties: false
     ui_rule: Schema-driven modal. No page-union fields; no client-authored runtime state; no raw secret value field.
   UpdateERPConnectorRequest:
-    rule: Use exact existing R9 UpdateERPConnectorRequest. Do not union/infer fields from page.
+    rule: Use exact existing current registered authority UpdateERPConnectorRequest. Do not union/infer fields from page.
   ValidateERPConnectorRequest:
-    rule: Use exact existing R9 ValidateERPConnectorRequest by operation binding.
+    rule: Use exact existing current registered authority ValidateERPConnectorRequest by operation binding.
   ValidateERPMappingRequest:
-    rule: Use exact existing R9 business payload schema by operation_id.
+    rule: Use exact existing current registered authority business payload schema by operation_id.
   RefreshERPSnapshotRequest:
-    rule: Use exact existing R9 business payload schema by operation_id.
+    rule: Use exact existing current registered authority business payload schema by operation_id.
   CreateERPSyncJobRequest:
     known_business_fields_from_R9:
     - erp_connector_id
@@ -233,17 +210,17 @@ form_contracts:
     - completeness
     - external_result_verified
     - external_evidence_refs
-    ui_rule: Use exact R9 schema. Do not turn test fixture/example values into defaults.
+    ui_rule: Use exact current registered authority schema. Do not turn test fixture/example values into defaults.
   RetryERPSyncRequest:
-    rule: Use exact existing R9 business payload schema by operation_id.
+    rule: Use exact existing current registered authority business payload schema by operation_id.
   ExportProjectionRequest:
-    rule: Use exact existing R9 business payload schema by operation_id.
+    rule: Use exact existing current registered authority business payload schema by operation_id.
 operation_registry_refs:
 - operation_id: getUiProjection
   method: GET
   path: /v1/ui-projections/{pageUid}
   owner: Projection / source page read owner
-  permission: SOURCE_R9_PAGE_SECTION_FIELD_ACCOUNT_AUTHORIZATION
+  permission: SOURCE_REGISTERED_PAGE_SECTION_FIELD_ACCOUNT_AUTHORIZATION
   request_contract: N/A_READ
 - operation_id: createERPConnector
   method: POST
@@ -273,14 +250,14 @@ operation_registry_refs:
   path: /v1/erp/mappings/{id}/validate
   owner: ERPConnectorService
   permission: erp.mapping.validate
-  request_contract: USE_SOURCE_R9_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
   event: erp.mapping.validation_failed
 - operation_id: refreshERPSnapshot
   method: POST
   path: /v1/erp/snapshots/refresh
   owner: ERPConnectorService
   permission: erp.snapshot.read / source exact operation permission
-  request_contract: USE_SOURCE_R9_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
   event: erp.snapshot.refresh_requested
 - operation_id: createERPSyncJob
   method: POST
@@ -300,7 +277,7 @@ operation_registry_refs:
   path: /v1/erp/sync-jobs/{id}/retry
   owner: ERPConnectorService
   permission: erp.sync.retry
-  request_contract: USE_SOURCE_R9_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
   event: erp.sync.retry_requested
 - operation_id: getERPFailure
   method: GET
@@ -330,8 +307,8 @@ operation_registry_refs:
   method: POST
   path: /v1/exports
   owner: Existing Projection/Export owner
-  permission: SOURCE_R9_OPERATION_PERMISSION_BY_OPERATION_ID
-  request_contract: USE_SOURCE_R9_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
+  permission: SOURCE_REGISTERED_OPERATION_PERMISSION_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
   event: export.requested
 source_control_coverage:
   admin:ERP-01:
@@ -367,8 +344,8 @@ source_control_coverage:
   - CTRL-ADMIN-ERP-02-ACT-05-ACT-NAV-OPEN
   source_nav_alias:
     CTRL-ADMIN-ERP-02-ACT-05-ACT-NAV-OPEN: ERP-01-BTN-DETAIL
-  coverage_rule: All 29 source controls remain accounted for as source operation/read bindings. Current presentation may consolidate
-    technical section-open/nav-open behavior but may not drop underlying capability or invent a second backend action.
+  coverage_rule: All 29 source controls remain accounted for as source operation/read bindings. Current presentation may consolidate technical
+    section-open/nav-open behavior but may not drop underlying capability or invent a second backend action.
 registries:
   sections:
   - section_uid: ERP-01-SEC-01
@@ -379,7 +356,7 @@ registries:
     responsibility: Finance / Connector / Sync view switch only
   - section_uid: ERP-01-SEC-03
     name: Finance Overview
-    responsibility: Cost/revenue/cashflow/capacity/forecast/guardrail read models + R9 finance read/export operations
+    responsibility: Cost/revenue/cashflow/capacity/forecast/guardrail read models + current registered authority finance read/export operations
   - section_uid: ERP-01-SEC-04
     name: ERP Connector & Mapping
     responsibility: Connector projection + create/update/validate/mapping validate
@@ -835,36 +812,32 @@ actions:
   effect: SECONDARY_DRAWER_ONLY
 gates:
 - gate_uid: ERP-01-GATE-PAGE
-  condition: identity + page:admin:ERP-01 VIEW + effective backend L1 erp_finance + explicit account permission + scope +
-    condition + classification mask where applicable + audit
+  condition: identity + page:admin:ERP-01 VIEW + effective backend L1 erp_finance + explicit account permission + scope + condition + classification
+    mask where applicable + audit
 - gate_uid: ERP-01-GATE-FINANCE
-  condition: page gate + finance.read for raw finance values/actions + exact authorized scope; otherwise mask/non-amount status
-    only
+  condition: page gate + finance.read for raw finance values/actions + exact authorized scope; otherwise mask/non-amount status only
 - gate_uid: ERP-01-GATE-CONNECTOR-READ
   condition: page gate + erp.connector.read + exact source field permission/mask
 - gate_uid: ERP-01-GATE-CONNECTOR-WRITE
-  condition: page gate + erp.connector.write + exact R9 schema + expected_version + idempotency + state_guard + audit
+  condition: page gate + erp.connector.write + exact current registered authority schema + expected_version + idempotency + state_guard + audit
 - gate_uid: ERP-01-GATE-CONNECTOR-VALIDATE
   condition: page gate + erp.connector.validate + exact connector/version + state_guard + expected_version/idempotency + audit
 - gate_uid: ERP-01-GATE-MAPPING-VALIDATE
-  condition: page gate + erp.mapping.validate + exact mapping/version/schema + state_guard + expected_version/idempotency
-    + audit
+  condition: page gate + erp.mapping.validate + exact mapping/version/schema + state_guard + expected_version/idempotency + audit
 - gate_uid: ERP-01-GATE-SYNC-READ
   condition: page gate + exact source read permission + exact sync/snapshot/failure reference
 - gate_uid: ERP-01-GATE-SNAPSHOT-REFRESH
   condition: page gate + exact refreshERPSnapshot permission + explicit scope/version + state_guard + idempotency + audit
 - gate_uid: ERP-01-GATE-SYNC-CREATE
-  condition: page gate + erp.sync.request + exact CreateERPSyncJobRequest + explicit connector/scope/version + idempotency
-    + audit
+  condition: page gate + erp.sync.request + exact CreateERPSyncJobRequest + explicit connector/scope/version + idempotency + audit
 - gate_uid: ERP-01-GATE-SYNC-RETRY
-  condition: page gate + erp.sync.retry + exact failed/retry-eligible sync job + state_guard + expected_version/idempotency
-    + audit
+  condition: page gate + erp.sync.retry + exact failed/retry-eligible sync job + state_guard + expected_version/idempotency + audit
 permission_contract:
   authorization_source: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
   role_name_authorization: FORBIDDEN
   department_membership_as_allow: FORBIDDEN
   frontend_hide_is_not_authorization: true
-  r9_page_permissions:
+  current_page_permissions:
   - erp.connector.read
   - erp.connector.write
   - erp.connector.validate
@@ -873,10 +846,9 @@ permission_contract:
   - erp.sync.retry
   - erp.snapshot.read
   - finance.read
-  server_guard: identity + exact account page/section/action/control/API/field permission + scope + condition + classification/mask
-    + state_guard + expected_version_when_write + idempotency_when_side_effect + audit
-  denied_behavior: Do not render denied control/value or expose masked amount/secret; direct URL/operation remains denied
-    server-side.
+  server_guard: identity + exact account page/section/action/control/API/field permission + scope + condition + classification/mask + state_guard
+    + expected_version_when_write + idempotency_when_side_effect + audit
+  denied_behavior: Do not render denied control/value or expose masked amount/secret; direct URL/operation remains denied server-side.
 state_model:
   common:
   - LOADING
@@ -919,13 +891,12 @@ errors:
   recovery: Keep exact state DEGRADED/FAILED as returned, show permitted failure reference, no fabricated READY.
 - error_uid: ERP-01-ERR-SYNC
   when: Sync/snapshot refresh fails or is partial
-  recovery: Keep SNAPSHOT_FAILED/DATA_INCOMPLETE/actual state; no COMPLETE/0 substitution; retry only registered retry-eligible
-    job.
+  recovery: Keep SNAPSHOT_FAILED/DATA_INCOMPLETE/actual state; no COMPLETE/0 substitution; retry only registered retry-eligible job.
 - error_uid: ERP-01-ERR-FINANCE
   when: Finance data missing, stale, incomplete or finance.read denied
   recovery: Show — / stale/incomplete/masked state; never synthesize amount or zero.
 - error_uid: ERP-01-ERR-UNREGISTERED-WRITE
-  when: Revenue/expense/ledger/budget/external ERP write action is requested without active R9 operation
+  when: Revenue/expense/ledger/budget/external ERP write action is requested without active current registered authority operation
   recovery: BLOCK + REPORT_AUTHORITY_GAP; do not import archive handbook operation or create second finance service.
 - error_uid: ERP-01-ERR-UNDEFINED
   when: Any unregistered field/operation/route/service requested
@@ -943,18 +914,16 @@ qa_runtime_closure:
   migration: 11_migrations/0013_erp_runtime_closure
   execution_status: NOT_EXECUTED by this artifact
 hard_locks:
-- Only admin:ERP-01 is the current ERP UI page in this authority; admin:ERP-02 standalone UI is superseded by same-page composition
-  only, while its owner/service/operations/data/permissions are preserved.
-- ERPConnectorService remains the sole connector/snapshot/sync owner; FinanceGuardrailService remains the sole finance/capacity/forecast
-  owner.
-- No current page writes revenue, expense, ledger, budget reallocation, statutory accounting data or external ERP data unless
-  a future active R9 operation explicitly authorizes it.
+- Only admin:ERP-01 is the current ERP UI page in this authority; admin:ERP-02 standalone UI is superseded by same-page composition only, while
+  its owner/service/operations/data/permissions are preserved.
+- ERPConnectorService remains the sole connector/snapshot/sync owner; FinanceGuardrailService remains the sole finance/capacity/forecast owner.
+- No current page writes revenue, expense, ledger, budget reallocation, statutory accounting data or external ERP data unless a future active
+  current registered authority operation explicitly authorizes it.
 - ERP_write_from_ACPOS is forbidden.
 - missing_value_as_zero is forbidden; missing/unavailable = — or exact incomplete/stale/error state.
-- Raw finance/provider cost values require explicit finance.read/provider.cost.read as applicable; otherwise masked/non-amount
-  status only.
+- Raw finance/provider cost values require explicit finance.read/provider.cost.read as applicable; otherwise masked/non-amount status only.
 - Secret values never render or embed; only Secret Reference ID is handled.
-- All 29 R9 ERP-01/ERP-02 source controls remain mapped/accounted for; no backend action is invented.
+- All 29 current registered authority ERP-01/ERP-02 source controls remain mapped/accounted for; no backend action is invented.
 - Finance / ERP Connection / Sync & Data Quality are same-page UI views only; no second route or parallel page family.
 - No fake KPI, chart, trend, connector health, finance value, snapshot status, completeness, freshness, failure or audit record.
 - Unknown authority -> BLOCK + REPORT_AUTHORITY_GAP.
@@ -964,14 +933,14 @@ acceptance:
   item: Single Current Page
   condition: Only admin:ERP-01 is current ERP UI; ERP-02 standalone navigation is not reconstructed.
 - uid: ERP-01-ACC-02
-  item: R9 Owner Reuse
+  item: current registered authority Owner Reuse
   condition: ERPConnectorService + FinanceGuardrailService reused; no second service/registry/store.
 - uid: ERP-01-ACC-03
   item: Source Control Coverage
   condition: 17 ERP-01 + 12 ERP-02 source controls = 29 accounted for.
 - uid: ERP-01-ACC-04
   item: Source Operation Coverage
-  condition: All 14 unique current R9 ERP operations are referenced; no invented backend operation.
+  condition: All 14 unique current current registered authority ERP operations are referenced; no invented backend operation.
 - uid: ERP-01-ACC-05
   item: Finance Boundary
   condition: Finance view is read/export only; no unregistered revenue/expense/ledger/budget write control.
@@ -998,10 +967,18 @@ acceptance:
   condition: No decorative KPI/charts/trend deltas/sample finance or connector values.
 - uid: ERP-01-ACC-13
   item: Form Authority
-  condition: Effectful requests use exact R9 schema or explicit source-by-operation schema binding; no page-union inference.
+  condition: Effectful requests use exact current registered authority schema or explicit source-by-operation schema binding; no page-union inference.
 - uid: ERP-01-ACC-14
   item: State Truth
-  condition: Connector/snapshot states use R9 state vocabulary; view switch does not fake business state.
+  condition: Connector/snapshot states use current registered authority state vocabulary; view switch does not fake business state.
 - uid: ERP-01-ACC-15
   item: Runtime Truthfulness
   condition: Spec is FILE_SPEC_COMPLETE only; source runtime closure tests remain NOT_EXECUTED here.
+current_operational_alignment:
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  single_page_uid: admin:ERP-01
+  reused_owners:
+  - ERPConnectorService
+  - FinanceGuardrailService
+  external_erp_writeback: FORBIDDEN unless future Current Authority registers it
+  parallel_erp_or_finance_system: FORBIDDEN

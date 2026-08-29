@@ -4,20 +4,14 @@ authority:
   status: FINAL_LOCKED
   current_only: true
   legacy_merge: FORBIDDEN
-  source_word: VIDEO_影片生產工作區_頁面設計權威封板_FINAL_LOCKED.docx
-  source_word_sha256: c03b354ec19c07e954ab6cc6a97e91d141b240023ad5b51ee7180647d77bd1f9
-  visual_reference: VIDEO-01_WORKSPACE_REFERENCE_FINAL.png
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   visual_override: FORBIDDEN
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
-  final_gap_closure_revision: 2026-08-28-BUTTON-RUNTIME-BINDING-CLOSURE
-  source_file_for_gap_closure: VIDEO_PAGE_VISUAL_AUTHORITY_FINAL(2)(1).yaml
-  final_dedup_revision: 2026-08-28-SINGLE-EXECUTABLE-AUTHORITY
   parallel_authority_for_same_page: FORBIDDEN
-  supersedes_gap_closed_file: VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_GAP_CLOSED.yaml
-  script_content_closure_revision: 2026-08-28-PRODUCTION-CORRECTION-PROVIDER-CONTENT
-  four_department_script_closure_revision: 2026-08-28-FOUR-DEPARTMENT-SCRIPT-FINAL
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  production_script_authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
 page_contract:
   model: SINGLE_PAGE_VIDEO_PRODUCTION_WORKSPACE
   department: VIDEO
@@ -25,7 +19,7 @@ page_contract:
   project_asset_picker: FORBIDDEN
   provider_model_picker: FORBIDDEN
   provider_translation_owner: ACPOS shared Canonical Script / Instruction Package / Provider Prompt Compiler + Core API Routing
-  canonical_flow: ASSET→VIDEO→EDITING→VOICE→QA
+  canonical_flow: ASSET→VIDEO→EDIT+VOICE→QA
 layout:
   sections:
   - section_uid: VIDEO-01-SEC-01
@@ -1427,22 +1421,22 @@ registries:
   permissions:
   - permission_uid: VIDEO_USE
     purpose: Enter page / basic projection
-    r9_scope: video.task.read
+    registered_scope: video.task.read
   - permission_uid: VIDEO_EXECUTE
     purpose: Execute/retry assigned VIDEO task
-    r9_scope: video.task.execute + department.task.execute
+    registered_scope: video.task.execute + department.task.execute
   - permission_uid: VIDEO_DECIDE
     purpose: Confirm/modify candidate
-    r9_scope: department.output.decide
+    registered_scope: department.output.decide
   - permission_uid: VIDEO_SCORE
     purpose: Persist VIDEO scorecard
-    r9_scope: video.score.write + department.score.write
+    registered_scope: video.score.write + department.score.write
   - permission_uid: VIDEO_CORRECT
     purpose: Create finding/correction
-    r9_scope: finding.write + correction.create
+    registered_scope: finding.write + correction.create
   - permission_uid: VIDEO_HANDOFF
     purpose: Create VIDEO→EDIT handoff
-    r9_scope: video.handoff.create + department.handoff.create
+    registered_scope: video.handoff.create + department.handoff.create
   errors:
   - error_uid: VIDEO-01-ERR-CONTEXT-001
     context: Project/Topic/Task context missing or stale
@@ -1540,7 +1534,8 @@ registries:
   script_roles:
   - script_role_uid: VIDEO-01-SCRIPT-ROLE-VIDEO
     view: VisualGenerationScriptView
-    required_content: '8-section field-level VIDEO production script contract: Shot/Input/Composition/Motion/Camera/Timing/Environment/Output Constraints'
+    required_content: '8-section field-level VIDEO production script contract: Shot/Input/Composition/Motion/Camera/Timing/Environment/Output
+      Constraints'
     hard_guard: Provider-neutral; first production read-only
     content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.VIDEO
   - script_role_uid: VIDEO-01-SCRIPT-ROLE-CORRECTION
@@ -1579,58 +1574,58 @@ registries:
   integration_ports:
   - port_uid: VIDEO-01-PORT-IN-ASSET-HANDOFF
     boundary: Inbound / Dependency Ready
-    r9_operation: createDepartmentHandoff
+    registered_operation: createDepartmentHandoff
     method_effective_path: POST /v1/handoffs
-    r9_permission: department.handoff.create
+    registered_permission: department.handoff.create
     state_event: Upstream HANDOFF_READY→HANDED_OFF; VIDEO WAITING_DEPENDENCY→READY | handoff.created
     video01_exposure: Created upstream; VIDEO validates exact AssetHandoff only.
   - port_uid: VIDEO-01-PORT-EXECUTE
     boundary: Generate
-    r9_operation: requestTaskExecution
+    registered_operation: requestTaskExecution
     method_effective_path: POST /v1/tasks/{taskId}/execute
-    r9_permission: department.task.execute
+    registered_permission: department.task.execute
     state_event: DepartmentTask:READY→ROUTING | provider.job.requested
     video01_exposure: VIDEO-01-ACT-FLOW-START; only after execute gates PASS.
   - port_uid: VIDEO-01-PORT-RETRY
     boundary: Retry
-    r9_operation: retryTaskExecution
+    registered_operation: retryTaskExecution
     method_effective_path: POST /v1/tasks/{taskId}/retry
-    r9_permission: department.task.execute
+    registered_permission: department.task.execute
     state_event: DepartmentTask:BLOCKED/FAILED→ROUTING | provider.job.requested
     video01_exposure: VIDEO-01-ACT-TASK-RETRY; policy eligible only.
   - port_uid: VIDEO-01-PORT-FINDING
     boundary: Evaluation Finding
-    r9_operation: createFinding
+    registered_operation: createFinding
     method_effective_path: POST /v1/findings
-    r9_permission: finding.write
+    registered_permission: finding.write
     state_event: IN_REVIEW→FINDING_OPEN | finding.created
     video01_exposure: VIDEO-01-ACT-FINDING-CREATE.
   - port_uid: VIDEO-01-PORT-CORRECTION
     boundary: Correction Request
-    r9_operation: createCorrectionRequest
+    registered_operation: createCorrectionRequest
     method_effective_path: POST /v1/correction-requests
-    r9_permission: correction.create
+    registered_permission: correction.create
     state_event: FINDING_OPEN→CORRECTION_REQUIRED | correction.requested
     video01_exposure: Correction request references affected_scope; execution still uses approved script/translation/route.
   - port_uid: VIDEO-01-PORT-DECISION
     boundary: Candidate Confirm
-    r9_operation: decideOutputCandidate
+    registered_operation: decideOutputCandidate
     method_effective_path: POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
-    r9_permission: department.output.decide
+    registered_permission: department.output.decide
     state_event: CANDIDATE_OUTPUT→SCORE_PENDING | output.decision_recorded
     video01_exposure: VIDEO-01-ACT-CANDIDATE-CONFIRM.
   - port_uid: VIDEO-01-PORT-SCORECARD
     boundary: Score Persist
-    r9_operation: submitScorecard
+    registered_operation: submitScorecard
     method_effective_path: POST /v1/scorecards
-    r9_permission: department.score.write
+    registered_permission: department.score.write
     state_event: SCORE_PENDING→BLOCKED or HANDOFF_READY | scorecard.submitted
     video01_exposure: Persist confirmed VIDEO evaluation with VIDEO criteria version.
   - port_uid: VIDEO-01-PORT-OUT-EDIT
     boundary: Outbound to EDIT
-    r9_operation: createDepartmentHandoff
+    registered_operation: createDepartmentHandoff
     method_effective_path: POST /v1/handoffs
-    r9_permission: department.handoff.create
+    registered_permission: department.handoff.create
     state_event: HANDOFF_READY→HANDED_OFF; EDIT WAITING_DEPENDENCY→READY | handoff.created
     video01_exposure: VIDEO-01-ACT-HANDOFF; exact locked manifest only.
 binding_chain:
@@ -2512,9 +2507,9 @@ final_gap_closure:
   parallel_control_runtime_registry_removed: true
   shared_operation_definition_location: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
   rule: Action owns one embedded runtime_binding. Shared service details are referenced by shared_operation_id only.
-script_content_authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT
+script_content_authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
 production_script_content_contract:
-  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.VIDEO
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#content_ownership.VIDEO
   existing_view: VisualGenerationScriptView
   section_uids:
   - VIDEO-SCRIPT-SEC-01-SHOT-INTENT
@@ -2526,16 +2521,17 @@ production_script_content_contract:
   - VIDEO-SCRIPT-SEC-07-ENVIRONMENT
   - VIDEO-SCRIPT-SEC-08-OUTPUT-CONSTRAINTS
 correction_script_content_contract:
-  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_correction_content.VIDEO
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#correction_contract
   existing_object: CorrectionScriptCandidate
 provider_adapter_contract:
-  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.1#provider_adapter_contract
-  profile_owner: admin:AIAPI-06#provider_model_profiles
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#provider_adapter
+  profile_owner: admin:AIAPI-01#provider_model_profiles
   department_provider_registry: FORBIDDEN
+  router_owner: ACPOS AI Execution / current AI API Router
 canonical_script_source_binding:
   owner: CORE Script System
   source_object_uid: CORE-01-REF-CANONICAL-SCRIPT
   required_binding: Exact project_id + topic_id + canonical_script_version + canonical_script_hash
-  rule: The department specialized production script must consume the exact CORE CanonicalProductionScriptRef. It may add only department-specific production
-    detail under its existing content contract.
+  rule: The department specialized production script must consume the exact CORE CanonicalProductionScriptRef. It may add only department-specific
+    production detail under its existing content contract.
   missing_or_mismatch: BLOCK + REPORT_AUTHORITY_GAP

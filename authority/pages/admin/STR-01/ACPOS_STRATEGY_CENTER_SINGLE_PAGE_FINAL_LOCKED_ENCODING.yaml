@@ -354,3 +354,12 @@ construction_gate:
   - E2E validation
   ai_instruction: Read this encoding first. Render one Strategy Center admin page only. Do not reorder the global sidebar or create parallel subpages.
     For each active View, use only registered Current sections/actions/operations. Unknown or missing binding => BLOCK + REPORT_AUTHORITY_GAP.
+shared_acquisition_binding:
+  runtime_ref: ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME
+  page_owns_runtime: false
+  mode: STRATEGIC_INTELLIGENCE_ACQUISITION
+  allowed_modes:
+  - SEARCH_DISCOVERY
+  - WEB_CRAWL
+  - WEB_FETCH
+  - SCHEDULED_RECRAWL

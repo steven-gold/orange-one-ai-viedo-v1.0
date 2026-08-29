@@ -44,7 +44,8 @@ runtime_truth:
   completion_claim_rule: FILE_SPEC_COMPLETE does not mean application/runtime/deployment complete.
 page_contract:
   role: SINGLE_PAGE_AI_API_MANAGEMENT
-  owner_boundary: Frontend management surface only; backend owners remain existing ProviderGovernanceService / InstructionCompiler / JobService / Secret owner services.
+  owner_boundary: Frontend management surface only; backend owners remain existing ProviderGovernanceService / InstructionCompiler / JobService
+    / Secret owner services.
   default_view_uid: AIAPI-01-VIEW-PROVIDER-API
   view_switching:
     same_page_only: true
@@ -174,23 +175,43 @@ provider_model_profile:
   field_groups:
   - group_uid: AIAPI-01-PROFILE-GRP-IDENTITY
     name: Identity
-    fields: [provider_id, provider_name, model_id, model_name]
+    fields:
+    - provider_id
+    - provider_name
+    - model_id
+    - model_name
   - group_uid: AIAPI-01-PROFILE-GRP-CONNECTION
     name: Connection
-    fields: [base_url, endpoint_path, http_method, timeout_seconds]
+    fields:
+    - base_url
+    - endpoint_path
+    - http_method
+    - timeout_seconds
   - group_uid: AIAPI-01-PROFILE-GRP-ADAPTER
     name: Adapter
-    fields: [adapter_type, request_template, response_text_path, prompt_template]
+    fields:
+    - adapter_type
+    - request_template
+    - response_text_path
+    - prompt_template
     prompt_template_required_token: '{{canonical_instruction}}'
   - group_uid: AIAPI-01-PROFILE-GRP-CAPABILITY
     name: Capability
-    fields: [capability_type, additional_capabilities, supports_references, rights_compatible]
+    fields:
+    - capability_type
+    - additional_capabilities
+    - supports_references
+    - rights_compatible
   - group_uid: AIAPI-01-PROFILE-GRP-DATA-CONTEXT
     name: Data / Context
-    fields: [data_classifications, preferred_language, max_context]
+    fields:
+    - data_classifications
+    - preferred_language
+    - max_context
   - group_uid: AIAPI-01-PROFILE-GRP-STATUS
     name: Status
-    fields: [enabled]
+    fields:
+    - enabled
     enable_gate: Provider policy + Capability + Server Gate
   endpoint_guessing: FORBIDDEN
   cross_domain_value_inference: FORBIDDEN
@@ -211,21 +232,51 @@ api_professional_description_panel:
   - Test Profile / Sandbox result
   - Registered documentation references
   fields:
-  - {uid: AIAPI-01-PRO-DESC-IDENTITY, label_zh: API / Model 身分, source: Provider / Model Profile}
-  - {uid: AIAPI-01-PRO-DESC-POSITIONING, label_zh: 功能定位, source: Capability Registry}
-  - {uid: AIAPI-01-PRO-DESC-ACPOS-SCOPE, label_zh: ACPOS 使用範圍, source: Route Policy + Capability + Permission}
-  - {uid: AIAPI-01-PRO-DESC-CAPABILITIES, label_zh: 支援能力, source: Capability Registry}
-  - {uid: AIAPI-01-PRO-DESC-INPUT, label_zh: 輸入要求, source: Adapter / Request Contract}
-  - {uid: AIAPI-01-PRO-DESC-OUTPUT, label_zh: 輸出內容, source: Response Contract / Adapter}
-  - {uid: AIAPI-01-PRO-DESC-LIMITS, label_zh: 限制, source: Registry / Provider Metadata}
-  - {uid: AIAPI-01-PRO-DESC-ENDPOINT, label_zh: Endpoint / Method, source: Model Profile}
-  - {uid: AIAPI-01-PRO-DESC-AUTH, label_zh: 認證, source: Credential status only}
-  - {uid: AIAPI-01-PRO-DESC-BILLING, label_zh: 計費基準, source: Registered Billing/Cost Metadata}
-  - {uid: AIAPI-01-PRO-DESC-HEALTH, label_zh: 健康狀態, source: Provider Health Projection}
-  - {uid: AIAPI-01-PRO-DESC-LAST-TEST, label_zh: 最近測試, source: Test Profile / Sandbox Result}
-  - {uid: AIAPI-01-PRO-DESC-RECOMMENDED-USE, label_zh: 推薦用途, source: Approved Capability + Route Policy only}
-  - {uid: AIAPI-01-PRO-DESC-RESTRICTIONS, label_zh: 不適用／限制, source: Policy + Capability + Rights}
-  - {uid: AIAPI-01-PRO-DESC-DOCS, label_zh: 官方／內部文件, source: Registered document reference only}
+  - uid: AIAPI-01-PRO-DESC-IDENTITY
+    label_zh: API / Model 身分
+    source: Provider / Model Profile
+  - uid: AIAPI-01-PRO-DESC-POSITIONING
+    label_zh: 功能定位
+    source: Capability Registry
+  - uid: AIAPI-01-PRO-DESC-ACPOS-SCOPE
+    label_zh: ACPOS 使用範圍
+    source: Route Policy + Capability + Permission
+  - uid: AIAPI-01-PRO-DESC-CAPABILITIES
+    label_zh: 支援能力
+    source: Capability Registry
+  - uid: AIAPI-01-PRO-DESC-INPUT
+    label_zh: 輸入要求
+    source: Adapter / Request Contract
+  - uid: AIAPI-01-PRO-DESC-OUTPUT
+    label_zh: 輸出內容
+    source: Response Contract / Adapter
+  - uid: AIAPI-01-PRO-DESC-LIMITS
+    label_zh: 限制
+    source: Registry / Provider Metadata
+  - uid: AIAPI-01-PRO-DESC-ENDPOINT
+    label_zh: Endpoint / Method
+    source: Model Profile
+  - uid: AIAPI-01-PRO-DESC-AUTH
+    label_zh: 認證
+    source: Credential status only
+  - uid: AIAPI-01-PRO-DESC-BILLING
+    label_zh: 計費基準
+    source: Registered Billing/Cost Metadata
+  - uid: AIAPI-01-PRO-DESC-HEALTH
+    label_zh: 健康狀態
+    source: Provider Health Projection
+  - uid: AIAPI-01-PRO-DESC-LAST-TEST
+    label_zh: 最近測試
+    source: Test Profile / Sandbox Result
+  - uid: AIAPI-01-PRO-DESC-RECOMMENDED-USE
+    label_zh: 推薦用途
+    source: Approved Capability + Route Policy only
+  - uid: AIAPI-01-PRO-DESC-RESTRICTIONS
+    label_zh: 不適用／限制
+    source: Policy + Capability + Rights
+  - uid: AIAPI-01-PRO-DESC-DOCS
+    label_zh: 官方／內部文件
+    source: Registered document reference only
   rules:
   - Unknown value = —
   - No AI-authored marketing recommendation
@@ -242,45 +293,119 @@ credential_contract:
   plaintext_audit: FORBIDDEN
   plaintext_database_persistence: FORBIDDEN
   show_api_key_eye_button: FORBIDDEN
-  allowed_status_display: [SET, NOT_SET, ROTATION_DUE, ERROR, Other registered credential states only]
+  allowed_status_display:
+  - SET
+  - NOT_SET
+  - ROTATION_DUE
+  - ERROR
+  - Other registered credential states only
   error_payload_rule: Must not contain secret/header/request-body plaintext.
 capability_governance:
   unapproved_capability_route: FORBIDDEN
   health_manual_green_override: FORBIDDEN
-  configure_fields: [resource_type, resource_id, config_patch_json, reason]
-  approve_fields: [resource_type, resource_id, rationale, expected_resource_version]
-  kill_switch_fields: [target_type, target_ref, enabled, reason]
+  configure_fields:
+  - resource_type
+  - resource_id
+  - config_patch_json
+  - reason
+  approve_fields:
+  - resource_type
+  - resource_id
+  - rationale
+  - expected_resource_version
+  kill_switch_fields:
+  - target_type
+  - target_ref
+  - enabled
+  - reason
   high_risk_confirmation: REQUIRED
   audit: REQUIRED
 routing_test_contract:
   candidate_group:
-    supports: [create group, add member, remove member, reorder member, set limits]
+    supports:
+    - create group
+    - add member
+    - remove member
+    - reorder member
+    - set limits
   preflight:
-    inputs: [use_case, required_capabilities, context_size, data_classification, rights_policy_ref, reference_count]
+    inputs:
+    - use_case
+    - required_capabilities
+    - context_size
+    - data_classification
+    - rights_policy_ref
+    - reference_count
     purpose: Validate route eligibility only.
-  sandbox: {production_secret_use: FORBIDDEN, production_output_write: FORBIDDEN, audit: REQUIRED}
+  sandbox:
+    production_secret_use: FORBIDDEN
+    production_output_write: FORBIDDEN
+    audit: REQUIRED
   route_simulation:
-    inputs: [canonical_instruction, scoped_context, candidate_group, cost_estimate, blueprint_ref, dna_refs]
+    inputs:
+    - canonical_instruction
+    - scoped_context
+    - candidate_group
+    - cost_estimate
+    - blueprint_ref
+    - dna_refs
     frontend_route_override: FORBIDDEN
-  quarantine_restore: {reason_required_when_registered_schema_requires: true, audit: REQUIRED, bypass: FORBIDDEN}
+  quarantine_restore:
+    reason_required_when_registered_schema_requires: true
+    audit: REQUIRED
+    bypass: FORBIDDEN
 instruction_compile_audit:
-  sections: [Instruction Package, Script View Ref, Compiler Version, Route Constraints, Adapter Audit / Diff, Prompt Template]
+  sections:
+  - Instruction Package
+  - Script View Ref
+  - Compiler Version
+  - Route Constraints
+  - Adapter Audit / Diff
+  - Prompt Template
   approved_instruction_frontend_rewrite: FORBIDDEN
   adapter_semantic_drift: FORBIDDEN
   version_traceability: REQUIRED
 job_attempt_contract:
-  job_fields: [job_id, capability, profile, status, created, finished]
-  attempt_fields: [attempt_id, provider, model, external_ref, retry, error]
-  callback_fields: [callback_status, verification, received_at]
-  artifact_fields: [artifact_ref, version, provider_output_ref]
-  cost_fields: [estimated_cost, actual_cost, currency]
+  job_fields:
+  - job_id
+  - capability
+  - profile
+  - status
+  - created
+  - finished
+  attempt_fields:
+  - attempt_id
+  - provider
+  - model
+  - external_ref
+  - retry
+  - error
+  callback_fields:
+  - callback_status
+  - verification
+  - received_at
+  artifact_fields:
+  - artifact_ref
+  - version
+  - provider_output_ref
+  cost_fields:
+  - estimated_cost
+  - actual_cost
+  - currency
   frontend_job_state_write: FORBIDDEN
   unverified_callback_success: FORBIDDEN
   retry_preserves_independent_attempt: true
   artifact_silent_overwrite: FORBIDDEN
   finance_unauthorized_behavior: MASK_OR_DENY
 budget_incident_contract:
-  sections: [Budget Summary, Cost Trend, Cap Policy, Degradation, Incident, Fallback Decision, Kill Switch]
+  sections:
+  - Budget Summary
+  - Cost Trend
+  - Cap Policy
+  - Degradation
+  - Incident
+  - Fallback Decision
+  - Kill Switch
   frontend_rate_guessing: FORBIDDEN
   task_contract_change_for_cost_saving: FORBIDDEN
   fallback_frontend_override: FORBIDDEN
@@ -288,7 +413,28 @@ budget_incident_contract:
 registered_operation_policy:
   source: current registered operation registry
   rule: Reuse existing registered operations; do not invent new API methods/paths/permissions in this encoding.
-  explicitly_referenced_operations: [getUiProjection, searchProjection, refreshProjection, exportProjection, createProviderModelProfile, updateProviderModelProfile, getProviderModelProfile, listProviderModelProfiles, testProviderModelProfile, retireProviderModelProfile, setProviderModelCredential, deleteProviderModelCredential, configureGovernedResource, approveGovernedResource, setKillSwitch, createProviderCandidateGroup, getProviderQuarantine, restoreProviderFromQuarantine, runSandboxTest, executeProviderRoute, getProviderRouteDecision]
+  explicitly_referenced_operations:
+  - getUiProjection
+  - searchProjection
+  - refreshProjection
+  - exportProjection
+  - createProviderModelProfile
+  - updateProviderModelProfile
+  - getProviderModelProfile
+  - listProviderModelProfiles
+  - testProviderModelProfile
+  - retireProviderModelProfile
+  - setProviderModelCredential
+  - deleteProviderModelCredential
+  - configureGovernedResource
+  - approveGovernedResource
+  - setKillSwitch
+  - createProviderCandidateGroup
+  - getProviderQuarantine
+  - restoreProviderFromQuarantine
+  - runSandboxTest
+  - executeProviderRoute
+  - getProviderRouteDecision
   unlisted_operation_behavior: DO_NOT_INFER; resolve from current registered registry or BLOCK
   current_ui_binding_status: REMAP_REQUIRED_NOT_EXECUTED
 state_error_contract:
@@ -302,7 +448,15 @@ state_error_contract:
     EXTERNAL_PENDING: Show pending; fake success forbidden.
     READ_ONLY: Read controls remain; effectful controls gated/hidden.
     ARCHIVED: Read-only; writes forbidden.
-  backend_gate_order: [identity, account_permission, scope, condition, state_guard, expected_version_when_write, idempotency_when_side_effect, audit]
+  backend_gate_order:
+  - identity
+  - account_permission
+  - scope
+  - condition
+  - state_guard
+  - expected_version_when_write
+  - idempotency_when_side_effect
+  - audit
 forbidden_matrix:
 - Second AI API Center
 - Standalone parallel AI API page/workspace/navigation
@@ -323,19 +477,51 @@ forbidden_matrix:
 - Hidden inferred click action
 - Unregistered API path/permission inference
 acceptance:
-- {uid: AIAPI-01-ACC-01, name: Single Current Page, condition: Only admin:AIAPI-01 renders as current frontend AI API page.}
-- {uid: AIAPI-01-ACC-02, name: Four Practical Views, condition: All four views exist inside the same page and do not create new navigation routes.}
-- {uid: AIAPI-01-ACC-03, name: Provider Profile, condition: Profile create/update/view/list/test/retire map only to registered operations.}
-- {uid: AIAPI-01-ACC-04, name: Credential, condition: Credential set/delete supported; raw secret never returned/displayed.}
-- {uid: AIAPI-01-ACC-05, name: Professional Description, condition: Each selected Provider/Model resolves the fixed professional description panel from registered metadata/projections; missing = —.}
-- {uid: AIAPI-01-ACC-06, name: Capability Governance, condition: Capability/configure/approve/enable policies remain governed.}
-- {uid: AIAPI-01-ACC-07, name: Route & Sandbox, condition: Candidate/limits/preflight/quarantine/sandbox/route decision functions are present without frontend override.}
-- {uid: AIAPI-01-ACC-08, name: Compile Audit, condition: Instruction/compiler/constraints/adapter/prompt-template audit functions are present.}
-- {uid: AIAPI-01-ACC-09, name: Job & Cost, condition: Job/attempt/callback/artifact/cost/budget/incident functions are represented.}
-- {uid: AIAPI-01-ACC-10, name: No Duplicate / No Legacy UI, condition: No parallel AI API Center and no retired standalone frontend page tokens in current encoding.}
-- {uid: AIAPI-01-ACC-11, name: Truthful Runtime, condition: Registry/permission/navigation remap remains NOT_EXECUTED until actual implementation/tests exist.}
+- uid: AIAPI-01-ACC-01
+  name: Single Current Page
+  condition: Only admin:AIAPI-01 renders as current frontend AI API page.
+- uid: AIAPI-01-ACC-02
+  name: Four Practical Views
+  condition: All four views exist inside the same page and do not create new navigation routes.
+- uid: AIAPI-01-ACC-03
+  name: Provider Profile
+  condition: Profile create/update/view/list/test/retire map only to registered operations.
+- uid: AIAPI-01-ACC-04
+  name: Credential
+  condition: Credential set/delete supported; raw secret never returned/displayed.
+- uid: AIAPI-01-ACC-05
+  name: Professional Description
+  condition: Each selected Provider/Model resolves the fixed professional description panel from registered metadata/projections; missing = —.
+- uid: AIAPI-01-ACC-06
+  name: Capability Governance
+  condition: Capability/configure/approve/enable policies remain governed.
+- uid: AIAPI-01-ACC-07
+  name: Route & Sandbox
+  condition: Candidate/limits/preflight/quarantine/sandbox/route decision functions are present without frontend override.
+- uid: AIAPI-01-ACC-08
+  name: Compile Audit
+  condition: Instruction/compiler/constraints/adapter/prompt-template audit functions are present.
+- uid: AIAPI-01-ACC-09
+  name: Job & Cost
+  condition: Job/attempt/callback/artifact/cost/budget/incident functions are represented.
+- uid: AIAPI-01-ACC-10
+  name: No Duplicate / No Legacy UI
+  condition: No parallel AI API Center and no retired standalone frontend page tokens in current encoding.
+- uid: AIAPI-01-ACC-11
+  name: Truthful Runtime
+  condition: Registry/permission/navigation remap remains NOT_EXECUTED until actual implementation/tests exist.
 construction_gate:
   static_ui_may_use_this_encoding: true
   effectful_runtime_enablement: BLOCK_UNTIL_REGISTRY_PERMISSION_NAVIGATION_REMAP_AND_TESTS
-  before_runtime_enablement_required: [Navigation Registry migration, Page/Section/Control resource remap, Permission resource remap, API binding verification, Runtime binding verification, Secret handling verification, Sandbox validation, Regression validation, E2E validation]
-  ai_instruction: Read this encoding first. Do not reconstruct retired multi-page AI API UI. Do not invent missing values or APIs. If any required binding is absent, BLOCK and REPORT_AUTHORITY_GAP.
+  before_runtime_enablement_required:
+  - Navigation Registry migration
+  - Page/Section/Control resource remap
+  - Permission resource remap
+  - API binding verification
+  - Runtime binding verification
+  - Secret handling verification
+  - Sandbox validation
+  - Regression validation
+  - E2E validation
+  ai_instruction: Read this encoding first. Do not reconstruct retired multi-page AI API UI. Do not invent missing values or APIs. If any required
+    binding is absent, BLOCK and REPORT_AUTHORITY_GAP.

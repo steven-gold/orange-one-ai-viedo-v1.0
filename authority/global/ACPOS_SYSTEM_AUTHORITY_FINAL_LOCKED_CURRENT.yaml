@@ -8,13 +8,13 @@ authority:
   page_usage_precedence: CURRENT_PAGE_AUTHORITY
   truth_rule: FILE_SPEC_FINAL_LOCKED does not mean application/runtime/deployment complete.
   references:
-    global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
-    global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
-    navigation_permission: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
-    production_script: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
-    page_integration_matrix: ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml
-    knowledge_page: ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
-    authority_manifest: ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+    global_shell: authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
+    global_visual: authority/global/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
+    navigation_permission: authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+    production_script: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+    page_integration_matrix: authority/global/ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml
+    knowledge_page: authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+    authority_manifest: authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
 core_identity:
   definition_zh: ACPOS 是 ORANGE ONE 全站中央大腦。所有 Current Page 都是 ACPOS 的生產、操作、觀測、資訊或治理介面；ACPOS 統一理解全站受治理狀態、Exact Version、Context、Memory、Decision、Handoff、AI
     Capability、Provider Execution、Experience 與 Audit，並在保留各 Domain Owner 的前提下協調跨頁流程與持續進化。
@@ -219,7 +219,7 @@ ai_api_provider_route:
     - identity/continuity quality when applicable
     experience_cannot_override_hard_gate: true
 production_script_integration:
-  authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+  authority: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
   CORE:
     capability:
     - TEXT_CHAT
@@ -250,9 +250,8 @@ shared_external_data_acquisition:
   service_key: ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME
   role: WHOLE_SITE_SHARED_INFRASTRUCTURE
   owner_boundary: WHOLE_SITE_SHARED_RUNTIME_NOT_OWNED_BY_ANY_PAGE
-  purpose: Provide one governed external data acquisition/crawler/search/fetch/ingestion runtime for multiple ACPOS pages. Pages declare
-    domain-specific acquisition intent/scope; shared runtime owns fetch execution, compliance, rate controls, snapshots, normalization,
-    evidence, retry and audit.
+  purpose: Provide one governed external data acquisition/crawler/search/fetch/ingestion runtime for multiple ACPOS pages. Pages declare domain-specific
+    acquisition intent/scope; shared runtime owns fetch execution, compliance, rate controls, snapshots, normalization, evidence, retry and audit.
   capabilities:
   - WEB_CRAWL
   - WEB_FETCH
@@ -403,11 +402,11 @@ shared_external_data_acquisition:
       - STRUCTURED_HTTP_JSON_FETCH
       output_target: Target discovery evidence / platform target directory
       page_owns_runtime: false
-      boundary: Official platform API/adapter remains preferred/required where platform policy demands; generic crawler cannot bypass
-        platform restrictions.
+      boundary: Official platform API/adapter remains preferred/required where platform policy demands; generic crawler cannot bypass platform
+        restrictions.
 knowledge_system:
   page_uid: admin:KB-01
-  page_authority: ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+  page_authority: authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
   current_services:
   - FactPackService
   - KnowledgeExperienceService

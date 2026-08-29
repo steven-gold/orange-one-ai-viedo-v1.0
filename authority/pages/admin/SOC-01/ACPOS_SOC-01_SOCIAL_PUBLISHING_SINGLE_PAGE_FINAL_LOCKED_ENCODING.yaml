@@ -9,33 +9,18 @@ authority:
   file_spec_status: FILE_SPEC_COMPLETE
   system_implementation_status: NOT_EXECUTED
   single_page_workspace: true
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
   backend_l1_key: social_publishing
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
-  purpose: One current Social Publishing workspace that composes existing platform capability, account/target, content package,
-    publishing policy/request, and results/history capabilities into one same-page workflow without creating parallel publishing
-    services, registries, databases, adapters, schedulers, analytics stores or provider/API-key systems.
-  truthful_status_rule: This file completes page design/encoding only. Application code, master merge, runtime, external platform
-    verification, Sandbox, Regression, E2E and production deployment are not executed by this file.
-source_alignment:
-  primary_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL.yaml / R9 Social Publishing capability set
-  source_capability_clusters:
-  - Platform registry / target-type capability / policy / health / enable-disable
-  - Social account binding / credential governance / target discovery / target directory / manual actions
-  - Release Candidate -> platform-specific Content Package / metadata / thumbnail / candidate review
-  - Target posting policy / cooldown / daily-weekly limits / scheduling / publish request / manual assist
-  - Post status / target history / metrics / interactions / callbacks / incidents / withdrawal history (read-only)
-  current_consolidation_rule: Historical segmented source pages are non-executable provenance. Current UI renders one admin:SOC-01
-    workspace only; source service/operation/data owners remain preserved and single.
-  business_development_policy_alignment:
-  - Master Message may produce platform-native variants; identical blind cross-platform copy is forbidden.
-  - Initial governed pattern is AI/draft assistance -> human Campaign/content approval -> scheduled publish, subject to current
-    policy authority.
-  - Mention/Tag a specific target company forces human approval.
-  - Auto mass commenting/tagging/cold outreach on other enterprise pages is forbidden.
-  - Direct Message is allowed only if official API/account permission/policy explicitly allows; no cold-DM assumption.
+  purpose: One current Social Publishing workspace that composes existing platform capability, account/target, content package, publishing policy/request,
+    and results/history capabilities into one same-page workflow without creating parallel publishing services, registries, databases, adapters,
+    schedulers, analytics stores or provider/API-key systems.
+  truthful_status_rule: This file completes page design/encoding only. Application code, master merge, runtime, external platform verification,
+    Sandbox, Regression, E2E and production deployment are not executed by this file.
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 single_system_contract:
   current_ui_owner: admin:SOC-01
   service_owners:
@@ -66,15 +51,15 @@ single_system_contract:
 workflow:
   canonical_user_flow: Platform & Capability -> Accounts & Targets -> Content Package -> Publish Plan -> Results & Records
   stage_navigation: Same-page UI context only; never routes to separate current social pages.
-  cross_stage_context: Carry exact authorized platform/account/target/content-package/policy/publish references forward; effectful
-    operations never resolve formal inputs via latest/current/default aliases.
+  cross_stage_context: Carry exact authorized platform/account/target/content-package/policy/publish references forward; effectful operations
+    never resolve formal inputs via latest/current/default aliases.
   stages:
   - stage_uid: SOC-01-STAGE-01-PLATFORM
     key: platform
     label: 平台能力
     owner: REUSE PublishingAdapterService + Governance owner
-    purpose: Inspect and govern real registered social platforms, target-type capabilities, policy/health and enable-disable
-      state without guessing platform support.
+    purpose: Inspect and govern real registered social platforms, target-type capabilities, policy/health and enable-disable state without guessing
+      platform support.
     actions:
     - SOC-01-ACT-PLATFORM-CONFIG
     - SOC-01-ACT-KILL-SWITCH
@@ -82,8 +67,8 @@ workflow:
     key: account_target
     label: 帳號與目標
     owner: REUSE PublishingAdapterService
-    purpose: Bind authorized social accounts, keep credentials masked, create governed social target discovery, use target
-      directory, request join/verification and complete manual actions.
+    purpose: Bind authorized social accounts, keep credentials masked, create governed social target discovery, use target directory, request
+      join/verification and complete manual actions.
     actions:
     - SOC-01-ACT-ACCOUNT-BIND
     - SOC-01-ACT-CREDENTIAL-REVEAL
@@ -96,8 +81,8 @@ workflow:
     key: content
     label: 內容包
     owner: REUSE PublishingService + existing Draft/Candidate owner
-    purpose: Bind an exact Release Candidate/source and create platform-native content package variants, metadata/thumbnail/policy
-      review and governed Draft/Candidate decision.
+    purpose: Bind an exact Release Candidate/source and create platform-native content package variants, metadata/thumbnail/policy review and
+      governed Draft/Candidate decision.
     actions:
     - SOC-01-ACT-CONTENT-SAVE
     - SOC-01-ACT-CANDIDATE-DECIDE
@@ -105,8 +90,8 @@ workflow:
     key: publish
     label: 發佈計畫
     owner: REUSE PublishingService
-    purpose: Configure exact target posting policy and create governed publish requests using bound content package/channel
-      account, schedule/cooldown/frequency/approval constraints.
+    purpose: Configure exact target posting policy and create governed publish requests using bound content package/channel account, schedule/cooldown/frequency/approval
+      constraints.
     actions:
     - SOC-01-ACT-POLICY-CONFIG
     - SOC-01-ACT-PUBLISH-REQUEST
@@ -114,8 +99,8 @@ workflow:
     key: records
     label: 結果與紀錄
     owner: REUSE PublishingAnalyticsService
-    purpose: Inspect real external status, target/frequency history, metrics/interactions, manual actions, callbacks/incidents
-      and withdrawal status/history without inventing mutation actions.
+    purpose: Inspect real external status, target/frequency history, metrics/interactions, manual actions, callbacks/incidents and withdrawal
+      status/history without inventing mutation actions.
     actions:
     - SOC-01-ACT-SEARCH
     - SOC-01-ACT-REFRESH
@@ -129,8 +114,7 @@ layout:
   stage_action_dock: 56px local bottom action row; only current legal stage actions; max one primary CTA per context
   main_workspace: height:auto; overflow-y:auto
   below_1280: min-width=1280px + horizontal scroll
-  visual_rule: Inherit Global Visual; no local palette/theme, no card-per-field layout, no fake charts/counters, no page-specific
-    global shell.
+  visual_rule: Inherit Global Visual; no local palette/theme, no card-per-field layout, no fake charts/counters, no page-specific global shell.
 sections:
 - section_uid: SOC-01-SEC-01
   name: Page Context / Social Publishing Status
@@ -226,10 +210,10 @@ permissions:
   scope: effective backend L1 social_publishing + exact current account permission assignments
   note: L1 is configuration UX only; runtime still validates exact source resources. Role/department never grants allow.
 - permission_uid: SOC-01-PERM-READ
-  scope: SOURCE_R9_PAGE_SECTION_FIELD_ACCOUNT_AUTHORIZATION
+  scope: SOURCE_REGISTERED_PAGE_SECTION_FIELD_ACCOUNT_AUTHORIZATION
   note: Read only within authorized scope/classification.
 - permission_uid: SOC-01-PERM-PLATFORM-CONFIG
-  scope: SOURCE_R9_OPERATION_PERMISSION_BY_OPERATION_ID:configureGovernedResource
+  scope: SOURCE_REGISTERED_OPERATION_PERMISSION_BY_OPERATION_ID:configureGovernedResource
   note: No permission code invented locally.
 - permission_uid: SOC-01-PERM-KILL
   scope: ops.kill_switch
@@ -249,7 +233,7 @@ permissions:
 - permission_uid: SOC-01-PERM-SEARCH
   scope: projection.search
 - permission_uid: SOC-01-PERM-DRAFT
-  scope: SOURCE_R9_OPERATION_PERMISSION_BY_OPERATION_ID:saveDraft
+  scope: SOURCE_REGISTERED_OPERATION_PERMISSION_BY_OPERATION_ID:saveDraft
   note: No permission code invented locally.
 - permission_uid: SOC-01-PERM-CANDIDATE-DECIDE
   scope: candidate.decide
@@ -261,45 +245,42 @@ permissions:
   scope: projection.refresh
 gates:
 - gate_uid: SOC-01-GATE-PAGE
-  condition: identity + effective backend L1 social_publishing + exact source account permissions + scope + condition + classification
-    + audit; frontend visibility is not authorization
+  condition: identity + effective backend L1 social_publishing + exact source account permissions + scope + condition + classification + audit;
+    frontend visibility is not authorization
 - gate_uid: SOC-01-GATE-READ
   condition: page gate + exact read permission + authorized scope + classification/mask
 - gate_uid: SOC-01-GATE-PLATFORM-CONFIG
-  condition: page gate + exact governed resource ref/version + configureGovernedResource authorization + state/policy + expected
-    version + idempotency where side-effect + audit
+  condition: page gate + exact governed resource ref/version + configureGovernedResource authorization + state/policy + expected version + idempotency
+    where side-effect + audit
 - gate_uid: SOC-01-GATE-KILL
-  condition: page gate + actual high-risk applicable operation + ops.kill_switch + exact target/scope/reason + confirmation
-    + audit
+  condition: page gate + actual high-risk applicable operation + ops.kill_switch + exact target/scope/reason + confirmation + audit
 - gate_uid: SOC-01-GATE-ACCOUNT
-  condition: page gate + exact account_id/platform + source operation authorization + expected version + idempotency + state
-    guard + audit
+  condition: page gate + exact account_id/platform + source operation authorization + expected version + idempotency + state guard + audit
 - gate_uid: SOC-01-GATE-CREDENTIAL
-  condition: page gate + social.credential.reveal + explicit governed request fields/reason from source schema + audit; raw
-    secret never in normal projection
+  condition: page gate + social.credential.reveal + explicit governed request fields/reason from source schema + audit; raw secret never in normal
+    projection
 - gate_uid: SOC-01-GATE-DISCOVERY
-  condition: page gate + social.target.discovery + exact CreateSocialTargetDiscoveryRequest + allowed platform/capability/policy
-    + expected version + idempotency + audit
+  condition: page gate + social.target.discovery + exact CreateSocialTargetDiscoveryRequest + allowed platform/capability/policy + expected version
+    + idempotency + audit
 - gate_uid: SOC-01-GATE-TARGET-JOIN
-  condition: page gate + exact target state DISCOVERED|READY_TO_JOIN + social.target.join + target capability result + expected
-    version + idempotency + audit
-- gate_uid: SOC-01-GATE-MANUAL
-  condition: page gate + actual MANUAL_ACTION_REQUIRED or PENDING_ADMIN_APPROVAL context + social.manual_action.complete +
-    exact action ref/version + audit
-- gate_uid: SOC-01-GATE-CONTENT
-  condition: page gate + exact Release Candidate/content draft/candidate refs + existing Draft/Candidate owner + source schema
+  condition: page gate + exact target state DISCOVERED|READY_TO_JOIN + social.target.join + target capability result + expected version + idempotency
     + audit
+- gate_uid: SOC-01-GATE-MANUAL
+  condition: page gate + actual MANUAL_ACTION_REQUIRED or PENDING_ADMIN_APPROVAL context + social.manual_action.complete + exact action ref/version
+    + audit
+- gate_uid: SOC-01-GATE-CONTENT
+  condition: page gate + exact Release Candidate/content draft/candidate refs + existing Draft/Candidate owner + source schema + audit
 - gate_uid: SOC-01-GATE-CANDIDATE
   condition: content gate + exact candidate id/version + candidate.decide + legal candidate state + audit
 - gate_uid: SOC-01-GATE-POLICY
-  condition: page gate + exact target_id JOINED/eligible + social.schedule.configure + ConfigureSocialTargetPolicyRequest
-    + expected version + idempotency + audit
+  condition: page gate + exact target_id JOINED/eligible + social.schedule.configure + ConfigureSocialTargetPolicyRequest + expected version +
+    idempotency + audit
 - gate_uid: SOC-01-GATE-PUBLISH
   condition: page gate + target READY_TO_POST + exact content package + bound channel account + rights/policy/approval + cooldown/frequency/time-window
     + social.publish.request + RequestSocialTargetPublishRequest + expected version + idempotency + audit
 - gate_uid: SOC-01-GATE-RECORDS
-  condition: page gate + authorized operational read/search/refresh; external result must come from recorded projection/callback,
-    never synthetic UI state
+  condition: page gate + authorized operational read/search/refresh; external result must come from recorded projection/callback, never synthetic
+    UI state
 actions:
 - action_uid: SOC-01-ACT-PROJECTION-READ
   label: 讀取目前頁面資料
@@ -986,8 +967,7 @@ controls:
   action_uid: SOC-01-ACT-PROJECTION-READ
   gate_uid: SOC-01-GATE-READ
   permission_uid: SOC-01-PERM-READ
-  rule: Read governed policy semantics only; editable only through exact existing governed-resource binding. No local auto_publish
-    request field.
+  rule: Read governed policy semantics only; editable only through exact existing governed-resource binding. No local auto_publish request field.
   default: —
 - control_uid: SOC-01-FLD-HUMAN-APPROVAL-POLICY
   section_uid: SOC-01-SEC-06
@@ -1042,8 +1022,7 @@ controls:
   action_uid: SOC-01-ACT-PUBLISH-REQUEST
   gate_uid: SOC-01-GATE-PUBLISH
   permission_uid: SOC-01-PERM-PUBLISH
-  rule: One exact target per registered request; no invented bulkSocialPublish endpoint. External success only after real
-    result/callback.
+  rule: One exact target per registered request; no invented bulkSocialPublish endpoint. External success only after real result/callback.
   default: —
 - control_uid: SOC-01-FLD-POSTS
   section_uid: SOC-01-SEC-07
@@ -1251,8 +1230,8 @@ form_contracts:
       enum:
       - CONTINUOUS
       - SINGLE_RUN
-    ui_rule: Required search conditions remain in the main form; optional market/language/minimum_scale/exclude_keywords may
-      live in Advanced Conditions drawer. No source/crawler fields invented.
+    ui_rule: Required search conditions remain in the main form; optional market/language/minimum_scale/exclude_keywords may live in Advanced
+      Conditions drawer. No source/crawler fields invented.
   ConfigureSocialTargetPolicyRequest:
     context_fields:
     - scope
@@ -1284,8 +1263,8 @@ form_contracts:
     - name: target_rule_notes
       required: false
       type: string
-    ui_rule: Do not add local auto_publish / human_approval request keys. Such policy semantics are read from current governed
-      projection and can be edited only when an exact existing governed resource binding is available.
+    ui_rule: Do not add local auto_publish / human_approval request keys. Such policy semantics are read from current governed projection and
+      can be edited only when an exact existing governed resource binding is available.
   RequestSocialTargetPublishRequest:
     context_fields:
     - scope
@@ -1306,28 +1285,27 @@ form_contracts:
       required: false
     - name: content_similarity_key
       required: false
-    ui_rule: Registered operation is target-scoped. Page must not invent bulkSocialPublish. If future UX permits multi-select,
-      it may only orchestrate independent exact existing requests with unique idempotency and truthful per-target partial
-      result; no new endpoint.
+    ui_rule: Registered operation is target-scoped. Page must not invent bulkSocialPublish. If future UX permits multi-select, it may only orchestrate
+      independent exact existing requests with unique idempotency and truthful per-target partial result; no new endpoint.
 operations:
 - operation_id: getUiProjection
   method: GET
   path: /v1/ui-projections/{pageUid}
   owner: Projection / source page read owner
-  permission: SOURCE_R9_PAGE_SECTION_FIELD_ACCOUNT_AUTHORIZATION
+  permission: SOURCE_REGISTERED_PAGE_SECTION_FIELD_ACCOUNT_AUTHORIZATION
   request_contract: N/A_READ
 - operation_id: configureGovernedResource
   method: PATCH
   path: /v1/governance/resources/{id}
   owner: Existing Governance/Policy owner
-  permission: SOURCE_R9_OPERATION_PERMISSION_BY_OPERATION_ID
-  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+  permission: SOURCE_REGISTERED_OPERATION_PERMISSION_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_REQUEST_CONTRACT_BY_OPERATION_ID
 - operation_id: setKillSwitch
   method: POST
   path: /v1/operations/kill-switch
   owner: Existing Operations Governance
   permission: ops.kill_switch
-  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_REQUEST_CONTRACT_BY_OPERATION_ID
 - operation_id: bindSocialAccount
   method: PUT
   path: /v1/social/accounts/{accountId}/binding
@@ -1345,7 +1323,7 @@ operations:
   path: /v1/social/accounts/{accountId}/unbind
   owner: PublishingAdapterService
   permission: social.account.unbind
-  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_REQUEST_CONTRACT_BY_OPERATION_ID
 - operation_id: createSocialTargetDiscovery
   method: POST
   path: /v1/social/target-discovery-jobs
@@ -1369,19 +1347,19 @@ operations:
   path: /v1/search
   owner: Projection/Search owner
   permission: projection.search
-  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_REQUEST_CONTRACT_BY_OPERATION_ID
 - operation_id: saveDraft
   method: POST
   path: /v1/drafts
   owner: Existing Draft/Candidate owner
-  permission: SOURCE_R9_OPERATION_PERMISSION_BY_OPERATION_ID
-  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+  permission: SOURCE_REGISTERED_OPERATION_PERMISSION_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_REQUEST_CONTRACT_BY_OPERATION_ID
 - operation_id: decideCandidate
   method: POST
   path: /v1/candidates/{id}/decision
   owner: Existing Candidate owner
   permission: candidate.decide
-  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_REQUEST_CONTRACT_BY_OPERATION_ID
 - operation_id: configureSocialTargetPolicy
   method: PUT
   path: /v1/social/targets/{targetId}/posting-policy
@@ -1399,7 +1377,7 @@ operations:
   path: /v1/projections/refresh
   owner: Projection owner
   permission: projection.refresh
-  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+  request_contract: USE_SOURCE_REGISTERED_REQUEST_CONTRACT_BY_OPERATION_ID
 state_model:
   common_ui_states:
   - LOADING
@@ -1428,35 +1406,32 @@ state_model:
   - COOLDOWN
   - UNAVAILABLE
   rules:
-  - Service-only verifySocialAccountBinding may transition CONFIGURED/REAUTH_REQUIRED to BOUND_LOCKED or REAUTH_REQUIRED;
-    SOC-01 exposes status only, no user Verify button.
-  - Service-only verifySocialTargetCapability may transition DISCOVERED to READY_TO_JOIN; SOC-01 exposes status only, no user
-    capability Verify button.
+  - Service-only verifySocialAccountBinding may transition CONFIGURED/REAUTH_REQUIRED to BOUND_LOCKED or REAUTH_REQUIRED; SOC-01 exposes status
+    only, no user Verify button.
+  - Service-only verifySocialTargetCapability may transition DISCOVERED to READY_TO_JOIN; SOC-01 exposes status only, no user capability Verify
+    button.
   - requestSocialTargetJoin from DISCOVERED/READY_TO_JOIN may become MANUAL_ACTION_REQUIRED or PENDING_EXTERNAL.
-  - completeSocialManualAction uses actual pending action context and may progress target according to source state machine;
-    page never chooses an impossible target state.
-  - configureSocialTargetPolicy operates on an eligible JOINED target and prepares READY_TO_POST according to source state
-    machine.
-  - requestSocialTargetPublish from READY_TO_POST creates a request that may become MANUAL_ACTION_REQUIRED or PENDING_EXTERNAL;
-    request completion is not equivalent to POSTED external success.
+  - completeSocialManualAction uses actual pending action context and may progress target according to source state machine; page never chooses
+    an impossible target state.
+  - configureSocialTargetPolicy operates on an eligible JOINED target and prepares READY_TO_POST according to source state machine.
+  - requestSocialTargetPublish from READY_TO_POST creates a request that may become MANUAL_ACTION_REQUIRED or PENDING_EXTERNAL; request completion
+    is not equivalent to POSTED external success.
   - Results/Records render only recorded real external status/callback/metrics; UI may not infer POSTED.
 policy_contract:
-  platform_native_variant_rule: One governed Master Message/source may produce platform-native variants, but blind identical
-    cross-platform copy is forbidden.
+  platform_native_variant_rule: One governed Master Message/source may produce platform-native variants, but blind identical cross-platform copy
+    is forbidden.
   specific_company_mention_tag: FORCE_HUMAN_APPROVAL
   mass_commenting_tagging_cold_outreach: FORBIDDEN
   direct_message: ONLY_WHEN_OFFICIAL_API_ACCOUNT_PERMISSION_AND_POLICY_EXPLICITLY_ALLOW
-  auto_publish_ui: READ_GOVERNED_POLICY; no invented local request field/toggle. If an exact existing governed-resource binding
-    is returned, edit through configureGovernedResource; otherwise read-only.
-  human_approval_ui: READ_GOVERNED_POLICY; no invented local request field/toggle; specific-company mention/tag remains forced
-    human approval.
+  auto_publish_ui: READ_GOVERNED_POLICY; no invented local request field/toggle. If an exact existing governed-resource binding is returned, edit
+    through configureGovernedResource; otherwise read-only.
+  human_approval_ui: READ_GOVERNED_POLICY; no invented local request field/toggle; specific-company mention/tag remains forced human approval.
   provider_model_picker: FORBIDDEN
   external_adapter_direct_sdk_call_from_page: FORBIDDEN
 errors:
 - error_uid: SOC-01-ERR-AUTH
   when: Page/action/API account permission, scope, condition or classification denied
-  recovery: Hide effectful control where required but rely on server DENY; preserve safe page context; show permitted reason
-    only.
+  recovery: Hide effectful control where required but rely on server DENY; preserve safe page context; show permitted reason only.
 - error_uid: SOC-01-ERR-SECRET
   when: Credential reveal/binding secret handling invalid or unauthorized
   recovery: Do not render/store raw secret in normal page state; keep masked status; require exact source operation and audit.
@@ -1490,30 +1465,24 @@ errors:
 hard_locks:
 - Only admin:SOC-01 is the current Social Publishing UI workspace in this authority.
 - The five workflow stages are composition areas inside one page; they are not five current navigation pages.
-- Existing PublishingAdapterService / PublishingService / PublishingAnalyticsService / EnterpriseSocialOutreachGovernance
-  / Governance owners are reused; no parallel system, registry, DB, adapter, scheduler, queue or analytics store.
-- Backend access is configured to the user as one L1 社群發布 choice; operation-level source permissions remain internal runtime
-  gates and are not exposed as a new fine-grained permission UI here.
+- Existing PublishingAdapterService / PublishingService / PublishingAnalyticsService / EnterpriseSocialOutreachGovernance / Governance owners
+  are reused; no parallel system, registry, DB, adapter, scheduler, queue or analytics store.
+- Backend access is configured to the user as one L1 社群發布 choice; operation-level source permissions remain internal runtime gates and are not
+  exposed as a new fine-grained permission UI here.
 - Role name or department membership never authorizes an operation.
 - Platform capability/health/policy and external status are real data only; missing=—/incomplete, never AI-filled.
 - Raw social credential is never shown by default; reveal is an existing high-risk audited operation only.
-- verifySocialAccountBinding and verifySocialTargetCapability remain service-runtime operations; no page user Verify button
-  is invented.
+- verifySocialAccountBinding and verifySocialTargetCapability remain service-runtime operations; no page user Verify button is invented.
 - Content package remains Draft/Candidate until governed decision; content approval does not itself publish.
 - Master Message is transformed into platform-native variants; blind identical copy to all platforms is forbidden.
 - Mention/Tag a specific target company requires human approval; automated mass commenting/tagging/cold outreach is forbidden.
-- Direct Message is not a default feature and is allowed only when official API/account permission/policy explicitly supports
-  it.
-- Auto Publish / Human Approval policy is read from current governed policy. No local auto_publish/human_approval request
-  field is invented.
+- Direct Message is not a default feature and is allowed only when official API/account permission/policy explicitly supports it.
+- Auto Publish / Human Approval policy is read from current governed policy. No local auto_publish/human_approval request field is invented.
 - Publish request uses exact existing target-scoped requestSocialTargetPublish. No new bulkSocialPublish endpoint/service.
 - requestSocialTargetPublish success means governed request accepted, not proof that the external post is POSTED.
-- Withdrawal in Results/Records is read-only because no current registered withdrawal mutation is sourced; no Withdraw button
-  is invented.
-- Low-frequency audit/evidence/history/credential/callback/incident detail stays in secondary rail/drawer; no duplicate permanent
-  cards.
-- No fake metrics, account status, target status, platform health, content approval, publish result, callback, incident or
-  audit data.
+- Withdrawal in Results/Records is read-only because no current registered withdrawal mutation is sourced; no Withdraw button is invented.
+- Low-frequency audit/evidence/history/credential/callback/incident detail stays in secondary rail/drawer; no duplicate permanent cards.
+- No fake metrics, account status, target status, platform health, content approval, publish result, callback, incident or audit data.
 - No invented endpoint, request field, platform capability, permission, route, provider syntax or external adapter call.
 - Unknown/missing authority -> BLOCK + REPORT_AUTHORITY_GAP.
 - FILE_SPEC_COMPLETE does not mean application/runtime/Sandbox/Regression/E2E/deployment completed.
@@ -1523,8 +1492,7 @@ acceptance:
   condition: Only admin:SOC-01 is current Social Publishing UI; historical segmented source UI is not reconstructed.
 - uid: SOC-01-ACC-02
   item: Source Owner Reuse
-  condition: Existing publishing adapter/service/analytics/governance owners and existing DBs/operations are reused; no second
-    backend.
+  condition: Existing publishing adapter/service/analytics/governance owners and existing DBs/operations are reused; no second backend.
 - uid: SOC-01-ACC-03
   item: Five-Stage Same-Page Flow
   condition: Platform -> Accounts/Targets -> Content -> Publish -> Records is one page context flow.
@@ -1542,15 +1510,13 @@ acceptance:
   condition: Master source may generate native platform variants; blind identical cross-platform copy forbidden.
 - uid: SOC-01-ACC-08
   item: Human Approval Policy
-  condition: Specific-company mention/tag forces human approval; Auto Publish/Human Approval semantics do not invent new request
-    fields.
+  condition: Specific-company mention/tag forces human approval; Auto Publish/Human Approval semantics do not invent new request fields.
 - uid: SOC-01-ACC-09
   item: Target Policy Contract
   condition: minimum_interval_hours/daily_limit/weekly_limit and registered optional cooldown/window/notes fields are exact.
 - uid: SOC-01-ACC-10
   item: Publish Request Contract
-  condition: content_package_id + channel_account_id required; schedule/hash/similarity optional; exact target-scoped operation
-    only.
+  condition: content_package_id + channel_account_id required; schedule/hash/similarity optional; exact target-scoped operation only.
 - uid: SOC-01-ACC-11
   item: Truthful External State
   condition: PENDING_EXTERNAL/MANUAL_ACTION_REQUIRED remain non-success; POSTED only from real recorded state.
@@ -1563,8 +1529,7 @@ acceptance:
     role/department bypass forbidden.
 - uid: SOC-01-ACC-14
   item: No Parallel System
-  condition: No second registry/account/target/content/publish/analytics/credential/provider system or invented bulk publish
-    endpoint.
+  condition: No second registry/account/target/content/publish/analytics/credential/provider system or invented bulk publish endpoint.
 - uid: SOC-01-ACC-15
   item: Global Shell/Visual
   condition: Global Shell V1.9 and Global Visual inherited; page does not redraw header/sidebar or local theme.
@@ -1596,3 +1561,16 @@ validation:
   external_platform_e2e: NOT_EXECUTED
   sandbox_regression: NOT_EXECUTED
   production_deployment: NOT_EXECUTED
+current_operational_alignment:
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  single_page_uid: admin:SOC-01
+  parallel_domain_system: FORBIDDEN
+shared_acquisition_binding:
+  runtime_ref: ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME
+  page_owns_runtime: false
+  mode: SOCIAL_TARGET_DISCOVERY
+  allowed_modes:
+  - SEARCH_DISCOVERY
+  - WEB_FETCH
+  - STRUCTURED_HTTP_JSON_FETCH
+  direct_effect_from_raw_acquisition: FORBIDDEN

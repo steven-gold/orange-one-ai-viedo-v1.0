@@ -10,27 +10,27 @@ authority:
   new_script_engine: false
   qa_in_scope: false
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
-  system_authority: ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  system_authority: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
   provider_profile_current_owner: admin:AIAPI-01#provider_model_profiles
 content_ownership:
   CORE:
-    page_authority: CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    page_authority: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
     role: Canonical Production Script authoring/revision
     capability: TEXT_CHAT
   ASSET:
-    page_authority: ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    page_authority: authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
     role: Asset production/correction script content
   VIDEO:
-    page_authority: VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    page_authority: authority/pages/workspace/VIDEO-01/VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
     role: Video production/correction script content
   EDIT_VOICE:
-    page_authority: ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    page_authority: authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
     role: Eight existing post-production script roles/correction content
   QA:
-    page_authority: ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+    page_authority: authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
     role: Validation/review only; no production-script authoring
   STRATEGY:
-    page_authority: ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+    page_authority: authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
     role: Strategic AI instruction/context binding; raw AI output is never formal decision
 shared_rules:
   canonical_language: zh-TW provider-neutral production instruction

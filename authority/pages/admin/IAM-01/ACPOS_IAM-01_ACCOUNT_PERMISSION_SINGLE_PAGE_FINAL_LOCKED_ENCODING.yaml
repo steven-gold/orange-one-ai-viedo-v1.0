@@ -8,120 +8,110 @@ authority:
   system_implementation_status: NOT_EXECUTED
   surface: ADMIN
   single_page_workspace: true
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
-  purpose: One current account-and-permission page that consolidates R9 IAM account list, account create/edit flow, explicit
-    account permission assignment, preview, audit and access-governance projections without creating a second IAM/RBAC system.
-  truthful_status_rule: This file completes the page design/encoding only. Application code, master merge, runtime, sandbox,
-    regression, E2E and production deployment are not executed by this file.
-source_alignment:
-  primary_runtime_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL.yaml / R9 IAM
-  r9_sources_reused:
-  - page_uid: admin:IAM-01
-    role: User List / search / status / identity source / MFA / risk / audit
-  - page_uid: admin:IAM-02
-    role: User Wizard / Identity Candidate / Organization Scope / Permission Preview / approval
-  - page_uid: admin:IAM-03
-    role: User Detail / membership / effective permission / session / privilege / access history / audit
-  - page_uid: admin:IAM-04
-    role: Organization / Department Scope / Scope Template / SoD / assignment impact
-  - page_uid: admin:IAM-05
-    role: Permission assignment / revoke / authorization impact / effective permission
-  - page_uid: admin:IAM-06
-    role: Access Review / finding / emergency privilege / MFA / expiry / revoke / audit
-  single_page_consolidation:
-    current_ui_page_uid: admin:IAM-01
-    standalone_navigation_surfaces_superseded:
-    - admin:IAM-02
-    - admin:IAM-03
-    - admin:IAM-04
-    - admin:IAM-05
-    - admin:IAM-06
-    supersession_scope: UI navigation/page surfaces only
-    preserved_service_operation_contracts: true
-    no_second_identity_service: true
-    no_second_policy_service: true
-    no_second_access_review_service: true
-    no_second_permission_registry: true
+  purpose: One current account-and-permission page that consolidates current registered authority IAM account list, account create/edit flow,
+    explicit account permission assignment, preview, audit and access-governance projections without creating a second IAM/RBAC system.
+  truthful_status_rule: This file completes the page design/encoding only. Application code, master merge, runtime, sandbox, regression, E2E and
+    production deployment are not executed by this file.
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 authorization_simplification:
   user_visible_permission_granularity: L1_ONLY
   frontend_permission_choices:
   - order: 1
+    bundle_key: FRONT-L1-01
     label: 儀表板
     canonical_page_uid: workspace:WB-01
   - order: 2
+    bundle_key: FRONT-L1-02
     label: 專案 / 專題
     canonical_page_uid: CORE-01
   - order: 3
+    bundle_key: FRONT-L1-03
     label: 素材
     canonical_page_uid: ASSET-01
   - order: 4
+    bundle_key: FRONT-L1-04
     label: 影片
     canonical_page_uid: VIDEO-01
   - order: 5
+    bundle_key: FRONT-L1-05
     label: 剪輯配音
     canonical_page_uid: EDIT-01
   - order: 6
+    bundle_key: FRONT-L1-06
     label: QA
     canonical_page_uid: QA-01
   - order: 7
+    bundle_key: FRONT-L1-07
     label: 資料庫
     canonical_page_uid: admin:DB-01
   - order: 8
+    bundle_key: FRONT-L1-08
     label: 戰略中心
     canonical_page_uid: workspace:STR-01
   backend_permission_choices:
   - order: 1
-    bundle_key: ADMIN-L1-SYSTEM-MAINTENANCE
+    bundle_key: ADMIN-L1-SYSTEM
     label: 系統維護
+    canonical_page_uid: admin:SYS-01
   - order: 2
-    bundle_key: ADMIN-L1-IDENTITY-ACCESS
+    bundle_key: ADMIN-L1-IAM
     label: 帳戶與權限
+    canonical_page_uid: admin:IAM-01
   - order: 3
-    bundle_key: ADMIN-L1-ENTERPRISE-DEVELOPMENT
+    bundle_key: ADMIN-L1-DEV
     label: 企業自動開發系統
+    canonical_page_uid: admin:DEV-01
   - order: 4
-    bundle_key: ADMIN-L1-SOCIAL-PUBLISHING
+    bundle_key: ADMIN-L1-SOCIAL
     label: 社群發布
+    canonical_page_uid: admin:SOC-01
   - order: 5
     bundle_key: ADMIN-L1-ERP
     label: ERP
+    canonical_page_uid: admin:ERP-01
   - order: 6
-    bundle_key: ADMIN-L1-AI-API
+    bundle_key: ADMIN-L1-AIAPI
     label: AI API
+    canonical_page_uid: admin:AIAPI-01
   - order: 7
-    bundle_key: ADMIN-L1-QA-SCORING
+    bundle_key: ADMIN-L1-QA-CRITERIA
     label: QA 評分項目
+    canonical_page_uid: admin:SG-02
   - order: 8
-    bundle_key: ADMIN-L1-STRATEGY-CENTER
+    bundle_key: ADMIN-L1-STRATEGY
     label: 戰略中心
+    canonical_page_uid: admin:STR-01
+  - order: 9
+    bundle_key: ADMIN-L1-KNOWLEDGE
+    label: 知識庫
+    canonical_page_uid: admin:KB-01
   backend_all_permission_control:
     label: 後台總權限
     behavior: UI_SELECT_ALL_ONLY
-    effect: Select all 8 backend L1 choices in the draft. It is not SUPER_ADMIN, not a role, and not a runtime authorization
-      bypass.
+    effect: Select all 9 backend L1 choices in draft only; no super-admin bypass.
   frontend_all_permission_control:
     label: 前台全部
     behavior: UI_SELECT_ALL_ONLY
     effect: Select all 8 frontend L1 choices in the draft only.
-  runtime_rule: L1 choices are configuration UX only. At save/apply time each selected L1 is deterministically expanded to
-    the exact current registered permission resources required by that L1 and persisted as explicit Account Permission Assignments.
-    Runtime parent/child inheritance remains forbidden.
-  new_resource_auto_grant: FORBIDDEN; resources added to an L1 after account assignment do not auto-grant to existing accounts.
-    Re-edit + preview + explicit apply is required.
+  runtime_rule: L1 choices are configuration UX only. At save/apply time each selected L1 is deterministically expanded to the exact current registered
+    permission resources required by that L1 and persisted as explicit Account Permission Assignments. Runtime parent/child inheritance remains
+    forbidden.
+  new_resource_auto_grant: FORBIDDEN; resources added to an L1 after account assignment do not auto-grant to existing accounts. Re-edit + preview
+    + explicit apply is required.
   role_name_authorization: FORBIDDEN
   department_membership_as_allow: FORBIDDEN
 department_permission_preset:
   ui_label: 預設部門權限
   type: CONFIGURATION_TIME_L1_SUGGESTION_PRESET
   authorization_source: NONE
-  rule: Selecting a department permission preset only pre-populates the proposed frontend/backend L1 selections. Admin may
-    add/remove L1 choices before preview. No permission becomes effective until explicit Account Permission Assignments are
-    applied.
-  department_scope_separation: Department/organization membership remains Scope metadata. It never silently grants or revokes
-    functional access.
+  rule: Selecting a department permission preset only pre-populates the proposed frontend/backend L1 selections. Admin may add/remove L1 choices
+    before preview. No permission becomes effective until explicit Account Permission Assignments are applied.
+  department_scope_separation: Department/organization membership remains Scope metadata. It never silently grants or revokes functional access.
   preset_storage_owner: REUSE PolicyService governed configuration; no new RBAC/role/preset engine.
   preset_values: RUNTIME_CONFIGURED; this file does not invent department names or permission combinations.
   empty_behavior: No configured preset => show 無預設 / 手動設定; do not fabricate permissions.
@@ -199,7 +189,7 @@ components:
   role: Same-page 3-step account create/edit workflow
 - component_uid: IAM-01-CMP-BASIC-DATA
   section_uid: IAM-01-SEC-04
-  role: Render exact registered R9 Identity Candidate / Organization Scope fields; this authority does not invent missing
+  role: Render exact registered current registered authority Identity Candidate / Organization Scope fields; this authority does not invent missing
     field schema
 - component_uid: IAM-01-CMP-PERMISSION-PRESET
   section_uid: IAM-01-SEC-04
@@ -307,7 +297,7 @@ actions:
   effect: READ
   operation: searchProjection
   method_path: POST /v1/search
-  source: R9 IAM-01
+  source: current registered authority IAM-01
 - action_uid: IAM-01-ACT-OPEN-CREATE
   effect: UI_ONLY
   operation: null
@@ -340,19 +330,19 @@ actions:
   effect: REGISTERED_COMMAND
   operation: saveDraft
   method_path: POST /v1/drafts
-  source: R9 IAM-02
+  source: current registered authority IAM-02
 - action_uid: IAM-01-ACT-VALIDATE-DRAFT
   effect: REGISTERED_COMMAND
   operation: validateDraft
   method_path: POST /v1/drafts/{id}/validate
-  source: R9 IAM-02
+  source: current registered authority IAM-02
 - action_uid: IAM-01-ACT-PREVIEW
   effect: REGISTERED_COMMAND
   operation: previewAuthorizationImpact
   method_path: POST /v1/iam/accounts/{accountId}/authorization-impact
-  source: R9 IAM-05
-  rule: Expand proposed L1 selections to exact current resource/action assignments, compute delta, show allow/deny/removed/unchanged
-    and blockers. No apply.
+  source: current registered authority IAM-05
+  rule: Expand proposed L1 selections to exact current resource/action assignments, compute delta, show allow/deny/removed/unchanged and blockers.
+    No apply.
 - action_uid: IAM-01-ACT-COMPLETE
   effect: ORCHESTRATED_EXISTING_OPERATIONS
   operations:
@@ -362,13 +352,13 @@ actions:
   - assignAccountPermission for additions
   - revokeAccountPermission for removals
   - approveGovernedResource when activation/approval is required
-  rule: No new endpoint. Execute only after exact preview + explicit confirmation. Any failure keeps account non-final/pending
-    and surfaces actual partial result; never claim completed unless all required operations succeed.
+  rule: No new endpoint. Execute only after exact preview + explicit confirmation. Any failure keeps account non-final/pending and surfaces actual
+    partial result; never claim completed unless all required operations succeed.
 - action_uid: IAM-01-ACT-AUDIT-OPEN
   effect: READ_UI
   operation: getUiProjection
   method_path: GET /v1/ui-projections/{pageUid}
-  source: R9 IAM projections
+  source: current registered authority IAM projections
 integration_ports:
 - port_uid: IAM-01-PORT-PROJECTION
   operation: getUiProjection
@@ -405,14 +395,13 @@ permission_materialization:
   - Diff against current explicit assignments for the target account.
   - Call previewAuthorizationImpact and render exact added/removed/unchanged/blocked impact.
   - Require explicit confirmation.
-  - Apply additions with assignAccountPermission and removals with revokeAccountPermission using exact resource/action/scope/condition
-    + version/correlation/idempotency/audit.
+  - Apply additions with assignAccountPermission and removals with revokeAccountPermission using exact resource/action/scope/condition + version/correlation/idempotency/audit.
   - Only after all required account data + permission operations + approval gates succeed may UI report complete.
   no_silent_inheritance: true
   no_automatic_department_grant: true
   no_role_bundle_authorization: true
-  partial_failure: Keep account in pending/non-final state, show actual successful/failed assignments, preserve audit/correlation,
-    allow idempotent retry. Never display completed.
+  partial_failure: Keep account in pending/non-final state, show actual successful/failed assignments, preserve audit/correlation, allow idempotent
+    retry. Never display completed.
 state_machine:
   states:
   - LIST
@@ -445,11 +434,11 @@ gates:
 - gate_uid: IAM-01-GATE-PREVIEW
   condition: draft valid + at least one intentional L1 selection state + exact expansion resolvable + preview permission
 - gate_uid: IAM-01-GATE-COMPLETE
-  condition: preview current + no blocking conflict + expected_version + idempotency + state_guard + all required account/permission
-    permissions + explicit confirmation + audit
+  condition: preview current + no blocking conflict + expected_version + idempotency + state_guard + all required account/permission permissions
+    + explicit confirmation + audit
 errors:
 - error_uid: IAM-01-ERR-IDENTITY-SCHEMA
-  when: Exact R9 Identity Candidate field/schema cannot be resolved
+  when: Exact current registered authority Identity Candidate field/schema cannot be resolved
   recovery: BLOCK current form section + REPORT_AUTHORITY_GAP; do not invent username/email/etc.
 - error_uid: IAM-01-ERR-PRESET
   when: Selected department preset not configured/resolvable
@@ -470,11 +459,10 @@ errors:
   when: Unregistered route/operation/control/field requested
   recovery: BLOCK + REPORT_AUTHORITY_GAP.
 account_detail_governance:
-  primary_page_clutter_rule: Status/MFA/Risk/session/access history/audit/access review are secondary detail, not permanent
-    oversized cards.
-  source: R9 IAM-01/IAM-03/IAM-06 projections
-  effectful_break_glass_rule: No new break-glass request/approve/revoke operation is invented by this file. Render only exact
-    registered operation if current authority later resolves it; otherwise read-only + gap.
+  primary_page_clutter_rule: Status/MFA/Risk/session/access history/audit/access review are secondary detail, not permanent oversized cards.
+  source: current registered authority IAM-01/IAM-03/IAM-06 projections
+  effectful_break_glass_rule: No new break-glass request/approve/revoke operation is invented by this file. Render only exact registered operation
+    if current authority later resolves it; otherwise read-only + gap.
 i18n:
   brand: ORANGE ONE fixed English
   locales:
@@ -506,10 +494,9 @@ i18n:
     - 戰略中心
 hard_locks:
 - Only admin:IAM-01 is the current Accounts & Permissions UI page in this authority.
-- IAM-02..IAM-06 standalone navigation surfaces are superseded by this single-page composition; their services/operations/data
-  contracts are reused, not duplicated.
-- User-visible permission configuration is L1 only. No Section/Control/Action/Field/API permission tree is shown to account
-  administrators.
+- IAM-02..IAM-06 standalone navigation surfaces are superseded by this single-page composition; their services/operations/data contracts are reused,
+  not duplicated.
+- User-visible permission configuration is L1 only. No Section/Control/Action/Field/API permission tree is shown to account administrators.
 - L1 selection does not create runtime inheritance. It must materialize explicit current permission assignments before activation.
 - Department / Job Title / Role Name never grants permission by itself.
 - Department Permission Preset only pre-fills draft L1 choices and is always editable before preview/apply.
@@ -524,11 +511,11 @@ acceptance:
   item: Single Page
   condition: Only admin:IAM-01 is current visible Accounts & Permissions page; no IAM-02..06 standalone navigation.
 - uid: IAM-01-ACC-02
-  item: R9 Reuse
-  condition: IdentityService/PolicyService/AccessReviewService and existing R9 operations are reused; no parallel IAM/RBAC.
+  item: current registered authority Reuse
+  condition: IdentityService/PolicyService/AccessReviewService and existing current registered authority operations are reused; no parallel IAM/RBAC.
 - uid: IAM-01-ACC-03
   item: Account Directory
-  condition: Search/list/status/identity source/MFA/risk/audit remain available from R9 IAM-01 projections.
+  condition: Search/list/status/identity source/MFA/risk/audit remain available from current registered authority IAM-01 projections.
 - uid: IAM-01-ACC-04
   item: Create/Edit Flow
   condition: Basic Data -> L1 Permission -> Preview/Complete in one page; Add/Edit do not navigate to another IAM page.
@@ -565,3 +552,12 @@ acceptance:
 - uid: IAM-01-ACC-15
   item: Global Visual
   condition: Global Shell V1.9 and Global Visual inherited; no second visual system.
+current_operational_alignment:
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_permission_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  single_page_uid: admin:IAM-01
+  reused_owners:
+  - IdentityService
+  - PolicyService
+  - AccessReviewService
+  parallel_iam_system: FORBIDDEN

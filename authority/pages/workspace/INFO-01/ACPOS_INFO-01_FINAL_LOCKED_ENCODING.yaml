@@ -5,23 +5,26 @@ authority:
   page_name_zh: 最新資訊工作區
   page_name_en: Latest Information Workspace
   surface: WORKSPACE
-  navigation_l1: 最新資訊
-  navigation_l2: Alert、Market / Knowledge / Fact Pack
   status: FINAL_LOCKED
   current_only: true
   single_page_workspace: true
   single_machine_authority: true
   parallel_latest_information_page: FORBIDDEN
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
   missing_value_display: —
   owner_boundary: FactPackService + KnowledgeExperienceService through registered operations only
-  purpose: Display authorized source health, freshness, alerts, research runs, fact packs, evidence, Fact/Inference separation, source metadata, completeness, confidence, citations and
-    governed Context Candidate review.
-  hard_boundary: Fact / Inference / Recommendation may create Context / Alert / Candidate / Review Request only. INFO-01 must never directly modify Canon, Lock, Priority, Budget, Task,
-    Release or Publish.
+  purpose: Display authorized source health, freshness, alerts, research runs, fact packs, evidence, Fact/Inference separation, source metadata,
+    completeness, confidence, citations and governed Context Candidate review.
+  hard_boundary: Fact / Inference / Recommendation may create Context / Alert / Candidate / Review Request only. INFO-01 must never directly modify
+    Canon, Lock, Priority, Budget, Task, Release or Publish.
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  navigation_mode: SUPPORTING_CONTEXTUAL_DEEP_LINK
+  global_l1: false
+  navigation_entry_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 layout:
   desktop_min_width: 1280px
   vertical_scroll: Main Workspace height:auto; overflow-y:auto; independent from Global Sidebar/Menu height
@@ -115,13 +118,14 @@ context_candidate_contract:
   - Candidate Preview
   - Adoption Review
   - Decision / Result
-  adoption_rule: Adopt Context records governed context adoption only. It does not directly rewrite Project/Topic Canon, Lock, Priority, Budget, Task, Release or Publish.
+  adoption_rule: Adopt Context records governed context adoption only. It does not directly rewrite Project/Topic Canon, Lock, Priority, Budget,
+    Task, Release or Publish.
   downstream_payload_boundary:
   - context_candidate
   - source_evidence
   - adoption_review_only
-  decision_rule: adoptContextCandidate and decideCandidate remain separate registered operations. INFO-01 does not invent a local sequence or merge their state machines; server/state
-    gates decide availability.
+  decision_rule: adoptContextCandidate and decideCandidate remain separate registered operations. INFO-01 does not invent a local sequence or
+    merge their state machines; server/state gates decide availability.
 action_payload_contracts:
   common_effectful_context:
   - scope
@@ -1384,7 +1388,8 @@ acceptance:
   condition: Validated Fact displays source + source_time + scope + completeness + confidence + classification/evidence
 - acceptance_uid: INFO-01-ACC-05
   item: Evidence / Citation
-  condition: Fact Pack provides exact Evidence / Source Metadata / Citation; missing refs stay broken/incomplete and block evidence-dependent adoption
+  condition: Fact Pack provides exact Evidence / Source Metadata / Citation; missing refs stay broken/incomplete and block evidence-dependent
+    adoption
 - acceptance_uid: INFO-01-ACC-06
   item: Research Boundary
   condition: Research Queue/Run is read-only unless a separate registered operation exists; INFO-01 creates no Start/Cancel Research action
@@ -1407,17 +1412,21 @@ acceptance:
   item: Machine Binding
   condition: Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted = BLOCK
 hard_locks:
-- Only workspace:INFO-01 is the current latest-information workspace defined by this authority; no parallel current latest-information page may be generated.
+- Only workspace:INFO-01 is the current latest-information workspace defined by this authority; no parallel current latest-information page may
+  be generated.
 - Global Header/Sidebar/Visual are inherited; INFO-01 must not redraw the global shell or create a page-local visual system.
-- All visible business data is REAL DATA ONLY; missing = —; loading = 載入中; no fake source, alert, fact, score, confidence, freshness, research status, candidate or citation.
+- All visible business data is REAL DATA ONLY; missing = —; loading = 載入中; no fake source, alert, fact, score, confidence, freshness, research
+  status, candidate or citation.
 - FACT and INFERENCE / RECOMMENDATION must remain visibly distinct.
 - A validated Fact requires source + source_time + scope + completeness + confidence + classification; missing data is incomplete, not AI-filled.
 - No page-local numeric threshold for Freshness / Completeness / Confidence may be invented.
 - Research Queue / Research Run is read-only here; no unregistered Start/Cancel/Retry Research action.
-- Fact / Inference / Recommendation may create Context / Alert / Candidate / Review Request only and cannot directly modify Canon, Lock, Priority, Budget, Task, Release or Publish.
+- Fact / Inference / Recommendation may create Context / Alert / Candidate / Review Request only and cannot directly modify Canon, Lock, Priority,
+  Budget, Task, Release or Publish.
 - Adopt Context is not Canon adoption and not production execution; it records governed Context adoption only.
 - adoptContextCandidate and decideCandidate remain separate registered operations; server/state gates determine which action is enabled.
-- Refresh/Search/Export/Adopt/Decide must use registered request schema, exact scope/version/correlation/idempotency and permission/audit gates; no free-form union payload.
+- Refresh/Search/Export/Adopt/Decide must use registered request schema, exact scope/version/correlation/idempotency and permission/audit gates;
+  no free-form union payload.
 - No unlisted Section/Component/Control/Action/State/Gate/Permission/Port/Business Sample Data.
 control_bindings:
 - control_uid: INFO-01-FLD-SCOPE
@@ -1904,3 +1913,11 @@ derived_validation:
     objects_refs: 10
     controls: 66
     integration_ports: 6
+shared_acquisition_binding:
+  runtime_ref: ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME
+  page_owns_runtime: false
+  mode: RESEARCH_AND_FACT_ACQUISITION
+  allowed_modes:
+  - SEARCH_DISCOVERY
+  - WEB_FETCH
+  - WEB_CRAWL

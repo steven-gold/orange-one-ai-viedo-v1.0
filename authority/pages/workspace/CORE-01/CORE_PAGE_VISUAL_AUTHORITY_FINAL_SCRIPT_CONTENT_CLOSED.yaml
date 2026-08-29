@@ -7,18 +7,16 @@ authority:
   legacy_merge: FORBIDDEN
   route: /core
   scope: CORE-01 Main Workspace only
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   vertical_length: UNBOUNDED; Main Workspace overflow-y:auto; sections extend downward by content
-  department_boundary: CORE owns Project Core + Topic Production Scope/Canonical Script source; ASSET/VIDEO/EDIT/VOICE internals are not defined here
-  final_gap_closure_revision: 2026-08-28-BUTTON-RUNTIME-BINDING-CLOSURE
-  source_file_for_gap_closure: CORE_PAGE_VISUAL_AUTHORITY_FINAL(2)(1).yaml
-  final_dedup_revision: 2026-08-28-SINGLE-EXECUTABLE-AUTHORITY
+  department_boundary: CORE owns Project Core + Topic Production Scope/Canonical Script source; ASSET/VIDEO/EDIT/VOICE internals are not defined
+    here
   parallel_authority_for_same_page: FORBIDDEN
-  supersedes_gap_closed_file: CORE_PAGE_VISUAL_AUTHORITY_FINAL_GAP_CLOSED.yaml
-  script_content_closure_revision: 2026-08-28-CORE-TOPIC-CANONICAL-SCRIPT-AUTHORING-BINDING
-  supersedes_file_for_script_authoring: CORE_PAGE_VISUAL_AUTHORITY_FINAL_DEDUP_CLEAN.yaml
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  production_script_authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
 system_filename_governance:
   authority: ACPOS_SYSTEM
   level: GLOBAL_SYSTEM_HIGHEST_RULE
@@ -36,8 +34,8 @@ system_filename_governance:
   - manual rename
   - filename parsing as business authority
   - department-local naming override
-  rule: Canonical filename / artifact identity / version / checksum naming governance belongs to ACPOS_SYSTEM. CORE only supplies upstream source identity
-    refs; downstream departments consume exact IDs/versions and system-issued canonical filenames.
+  rule: Canonical filename / artifact identity / version / checksum naming governance belongs to ACPOS_SYSTEM. CORE only supplies upstream source
+    identity refs; downstream departments consume exact IDs/versions and system-issued canonical filenames.
 layout:
   desktop_min_width: 1280px
   page_vertical: Main Workspace is NOT bound to Global Sidebar/Menu height; height:auto; overflow-y:auto; sections extend downward
@@ -179,7 +177,8 @@ registries:
   - visual_uid: CORE-01-VIS-CENTER-HEADER
     geometry: primary grid center top; min 720px
   - visual_uid: CORE-01-VIS-MESSAGES
-    geometry: center main; min-height 420px; grows with content; message history may internally scroll after configured max while page remains scrollable
+    geometry: center main; min-height 420px; grows with content; message history may internally scroll after configured max while page remains
+      scrollable
   - visual_uid: CORE-01-VIS-DECISION
     geometry: center below messages; full center width; content-height
   - visual_uid: CORE-01-VIS-RUNTIME
@@ -548,13 +547,14 @@ registries:
     owner: CORE Script System
     required_content: topic canonical production script exact version/hash; provider-neutral
     authoring_contract_ref: CORE-01-CONTRACT-TOPIC-CANONICAL-PRODUCTION-SCRIPT
-    binding_rule: Exact Topic + Project Blueprint + Topic Production Scope + source candidate lineage; formalized only after existing human candidate decision.
+    binding_rule: Exact Topic + Project Blueprint + Topic Production Scope + source candidate lineage; formalized only after existing human candidate
+      decision.
   - object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE
     entity: TopicProductionPackage
     owner: CORE Orchestration Boundary
     required_content: project lock + blueprint child lock + topic scope + canonical script + DNA refs + naming authority ref
-    canonical_script_binding_rule: Package must reference the exact confirmed CanonicalProductionScriptRef/version/hash for the Topic. Department script
-      views remain department-owned and consume this exact source.
+    canonical_script_binding_rule: Package must reference the exact confirmed CanonicalProductionScriptRef/version/hash for the Topic. Department
+      script views remain department-owned and consume this exact source.
   - object_uid: CORE-01-REF-NAMING
     entity: ACPOSNamingAuthorityRef
     owner: ACPOS_SYSTEM
@@ -761,7 +761,8 @@ registries:
     runtime_binding:
       binding_kind: PORT_WITH_PAYLOAD_MODE
       port_uid: CORE-01-PORT-MESSAGE-SEND
-      payload_rule: Use CORE-01-PORT-MESSAGE-SEND; exact conversation_id + source_message_id + analysis instruction; provider/model remains shared Router-resolved.
+      payload_rule: Use CORE-01-PORT-MESSAGE-SEND; exact conversation_id + source_message_id + analysis instruction; provider/model remains shared
+        Router-resolved.
       decision: SOURCE_DERIVED_CLOSURE
   - action_uid: CORE-01-ACT-MSG-DECISION
     label: 加入決策清單
@@ -787,8 +788,8 @@ registries:
     runtime_binding:
       binding_kind: PORT_WITH_RELATION_PAYLOAD
       port_uid: CORE-01-PORT-THREAD-CREATE
-      payload_rule: Use CORE-01-PORT-THREAD-CREATE with exact parent_thread/work_item/source_message branch relation; branch is conversation thread, NOT
-        production Topic.
+      payload_rule: Use CORE-01-PORT-THREAD-CREATE with exact parent_thread/work_item/source_message branch relation; branch is conversation thread,
+        NOT production Topic.
       decision: SOURCE_DERIVED_CLOSURE
   - action_uid: CORE-01-ACT-MSG-COPY
     label: 複製此訊息
@@ -1004,7 +1005,8 @@ registries:
     gate_uid: CORE-01-GATE-CANONICAL-SCRIPT
     effect_type: READ_ONLY
     owner: CORE-01
-    success_contract: getCanonicalScript exact Topic canonical script projection including exact Project/Blueprint/TopicScope/source-candidate lineage
+    success_contract: getCanonicalScript exact Topic canonical script projection including exact Project/Blueprint/TopicScope/source-candidate
+      lineage
     error_uid: CORE-01-ERR-CONTEXT-001
     state_effect: Read-only script view
     runtime_binding:
@@ -1677,7 +1679,8 @@ acceptance:
   condition: Only CORE-01; Global Shell/Visual inherited; no split Story/DNA/Blueprint/Script pages
 - acceptance_uid: CORE-01-ACC-02
   item: Current Project/Topic Logic
-  condition: Project builds Story/Chapter/World/DNA/Blueprint; Topic reads confirmed Project and defines production scope/script source; no TOPIC_CORE rebuild
+  condition: Project builds Story/Chapter/World/DNA/Blueprint; Topic reads confirmed Project and defines production scope/script source; no TOPIC_CORE
+    rebuild
 - acceptance_uid: CORE-01-ACC-03
   item: Conversation-first
   condition: Every editable CORE work item uses project-rooted conversation/thread context; cross-work-item history mixing=0
@@ -1692,7 +1695,8 @@ acceptance:
   condition: No overwrite; return modify preserves old candidate/version and later creates new candidate
 - acceptance_uid: CORE-01-ACC-07
   item: Project/Blueprint Lock
-  condition: Domain-specific request operations + exact gates; unresolved R9 LockReview contract stays BLOCK, never fabricated
+  condition: Domain-specific request operations + exact gates; unresolved current registered authority LockReview contract stays BLOCK, never
+    fabricated
 - acceptance_uid: CORE-01-ACC-08
   item: Topic Lineage
   condition: createTopic blocked unless valid lineage can satisfy canonical Topic requirements; no fake code/boundary/bridge
@@ -1709,8 +1713,8 @@ acceptance:
   item: Machine Binding
   condition: Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted=BLOCK
 hard_locks:
-- Only CORE-01 is the current executable CORE workspace page. Old CORE-02/03/04/06 page layouts are legacy references only and MUST NOT be recreated as
-  separate pages.
+- Only CORE-01 is the current executable CORE workspace page. Old CORE-02/03/04/06 page layouts are legacy references only and MUST NOT be recreated
+  as separate pages.
 - Old TOPIC_CORE semantics are FORBIDDEN. Topic does not recreate Story/Chapter/World/DNA/Blueprint.
 - Project mode editable items are STORY/CHAPTER/WORLD_SETTING/DNA/BLUEPRINT only; Production Script is Topic-production scope.
 - No Production Task selector/create control in CORE-01.
@@ -1718,7 +1722,8 @@ hard_locks:
 - Naming is ACPOS_SYSTEM global authority. No CORE-local filename formula, filename parser, manual filename input or rename.
 - Raw AI response never becomes formal data without human decision/candidate/version flow.
 - Existing candidate/confirmed version is immutable; revision creates a new candidate/version.
-- Lock/Freeze semantics not fully closed in R9 must remain explicit blocker; no invented state, evidence, reviewer or exception path.
+- Lock/Freeze semantics not fully closed in current registered authority must remain explicit blocker; no invented state, evidence, reviewer or
+  exception path.
 - Do not copy ASSET/VIDEO/EDIT/VOICE internal pages, controls, APIs, DB tables or runtimes into CORE. Only boundary readiness refs may be shown.
 - Global visual tokens are inherited; no CORE-local raw hex palette or conflicting control size.
 - Main Workspace vertical length is unbounded; do not force page height to Global Sidebar/Menu height.
@@ -1757,16 +1762,16 @@ canonical_production_script_authoring_contract:
   work_item: PRODUCTION_SCRIPT
   provider_neutral: true
   qa_in_scope: false
-  purpose: For the selected Topic, author one Canonical Production Script that stays inside the selected Project's locked/confirmed Blueprint and exact
-    Topic Production Scope. This Canonical Script is the single content source that downstream department scripts must reference.
+  purpose: For the selected Topic, author one Canonical Production Script that stays inside the selected Project's locked/confirmed Blueprint
+    and exact Topic Production Scope. This Canonical Script is the single content source that downstream department scripts must reference.
   required_source_bindings:
   - binding: project_ref
     rule: Exact current Project lineage selected in CORE; no cross-project substitution.
   - binding: topic_ref
     rule: Exact Topic under the selected Project.
   - binding: project_blueprint_ref
-    rule: Exact confirmed/locked BlueprintVersionRef available to the Topic from the Project canon. The authoring process may not invent or silently replace
-      Blueprint rules.
+    rule: Exact confirmed/locked BlueprintVersionRef available to the Topic from the Project canon. The authoring process may not invent or silently
+      replace Blueprint rules.
   - binding: topic_production_scope_ref
     rule: Exact current TOPIC_SCOPE work-item result; defines the only allowed content range for this Topic.
   - binding: project_canon_refs
@@ -1774,17 +1779,19 @@ canonical_production_script_authoring_contract:
   - binding: dna_refs
     rule: Exact required Character / Scene / Object DNA refs; unresolved required DNA blocks script finalization.
   - binding: previous_topic_continuity_ref_if_applicable
-    rule: When the Project sequence defines a previous Topic, use its confirmed ending/continuity state as read-only source. If no previous Topic is defined,
-      leave absent; do not fabricate continuity.
+    rule: When the Project sequence defines a previous Topic, use its confirmed ending/continuity state as read-only source. If no previous Topic
+      is defined, leave absent; do not fabricate continuity.
   - binding: naming_authority_ref
     rule: Use existing naming authority; script authoring must not create a parallel naming system.
   authoring_principles:
-  - 'Blueprint-first: every story event, character behavior, world rule and production intent must be explainable by an exact Blueprint/Canon/DNA source.'
-  - 'Topic-boundary-first: only write content inside the confirmed Topic Production Scope; do not consume future Topic content unless the scope explicitly
-    contains that bridge.'
+  - 'Blueprint-first: every story event, character behavior, world rule and production intent must be explainable by an exact Blueprint/Canon/DNA
+    source.'
+  - 'Topic-boundary-first: only write content inside the confirmed Topic Production Scope; do not consume future Topic content unless the scope
+    explicitly contains that bridge.'
   - 'Causality preserved: each major story beat declares cause, event and effect so downstream production cannot reinterpret the story order.'
   - 'Character continuity preserved: intent, behavior, dialogue and state changes must remain consistent with exact DNA and current story state.'
-  - 'Scene continuity preserved: location/world/time/object state must remain consistent with Blueprint/Canon unless the Topic explicitly changes that state.'
+  - 'Scene continuity preserved: location/world/time/object state must remain consistent with Blueprint/Canon unless the Topic explicitly changes
+    that state.'
   - 'Provider-neutral: no Kling/OpenAI/Runway/other provider syntax, model names, endpoint fields or vendor prompt grammar in the Canonical Script.'
   - 'Department-neutral at core level: Canonical Script states production meaning and constraints; ASSET/VIDEO/EDIT+VOICE own their detailed department
     script wording.'
@@ -1867,15 +1874,15 @@ canonical_production_script_authoring_contract:
       - required_on_screen_text_if_any
       - audio_or_voice_intent_if_story_required
       - must_not_be_reinterpreted
-      rule: These are semantic production requirements only. Shot-level camera/motion belongs to VIDEO; asset-generation detail belongs to ASSET; edit/voice
-        timing and mix detail belongs to EDIT+VOICE.
+      rule: These are semantic production requirements only. Shot-level camera/motion belongs to VIDEO; asset-generation detail belongs to ASSET;
+        edit/voice timing and mix detail belongs to EDIT+VOICE.
     department_source_requirements:
       required_fields:
       - asset_department_source_requirements
       - video_department_source_requirements
       - edit_voice_department_source_requirements
-      rule: Each field lists exact story/scene/character/object/dialogue/continuity requirements that the department script must consume. It is not a provider
-        prompt and not a duplicate department script.
+      rule: Each field lists exact story/scene/character/object/dialogue/continuity requirements that the department script must consume. It is
+        not a provider prompt and not a duplicate department script.
     finalization:
       required_fields:
       - human_confirmed_candidate_ref
@@ -1904,12 +1911,12 @@ canonical_production_script_authoring_contract:
     - Existing Canonical Script read action exposes the exact confirmed projection
     new_ui_action: false
     new_endpoint_in_this_authority: false
-    transport_rule: Canonical materialization is owned by the existing CORE Script System domain handler. If the deployment lacks a registered transport/domain
-      operation for accepted PRODUCTION_SCRIPT Candidate -> CanonicalProductionScriptRef, BLOCK deployment and register it in the System Operation Registry;
-      do not invent an endpoint in page code.
+    transport_rule: Canonical materialization is owned by the existing CORE Script System domain handler. If the deployment lacks a registered
+      transport/domain operation for accepted PRODUCTION_SCRIPT Candidate -> CanonicalProductionScriptRef, BLOCK deployment and register it in
+      the System Operation Registry; do not invent an endpoint in page code.
   downstream_department_script_binding:
-    rule: CORE owns only CanonicalProductionScriptRef. Each production department owns its existing specialized script view/section and must bind to the
-      exact Canonical Script version/hash for the selected Project/Topic.
+    rule: CORE owns only CanonicalProductionScriptRef. Each production department owns its existing specialized script view/section and must bind
+      to the exact Canonical Script version/hash for the selected Project/Topic.
     ASSET:
       target_existing_script_view: AssetProductionScriptViewRef
       department_owner: ASSET
@@ -1918,7 +1925,7 @@ canonical_production_script_authoring_contract:
       - Blueprint exact ref
       - DNA exact refs
       - AssetManifest / reference inputs as governed by ASSET
-      content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.ASSET
+      content_contract_ref: authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml#production_script_content_contract
     VIDEO:
       target_existing_script_view: VisualGenerationScriptViewRef
       department_owner: VIDEO
@@ -1927,7 +1934,7 @@ canonical_production_script_authoring_contract:
       - Blueprint exact ref
       - DNA exact refs
       - exact locked Asset refs
-      content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.VIDEO
+      content_contract_ref: authority/pages/workspace/VIDEO-01/VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml#production_script_content_contract
     EDIT_VOICE:
       target_existing_script_view: ProductionScriptSectionRef / existing 8 Script Roles
       department_owner: EDIT+VOICE
@@ -1937,14 +1944,14 @@ canonical_production_script_authoring_contract:
       - exact VIDEO output
       - exact Asset refs
       - existing stage dependencies
-      content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.EDIT_VOICE
-    first_production_behavior: 'No change: each department continues its existing behavior—after Project/Topic/Task resolution, the first production automatically
-      loads its exact specialized script and executes through the existing department runtime.'
+      content_contract_ref: authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml#production_script_content_contract
+    first_production_behavior: 'No change: each department continues its existing behavior—after Project/Topic/Task resolution, the first production
+      automatically loads its exact specialized script and executes through the existing department runtime.'
   provider_adapter_binding:
-    contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.1#normalized_instruction_contract.CORE
+    contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#provider_adapter
     required_capability: TEXT_CHAT
-    profile_owner: admin:AIAPI-06#provider_model_profiles
-    router_owner: EXISTING ACPOS AI API Router
+    profile_owner: admin:AIAPI-01#provider_model_profiles
+    router_owner: ACPOS AI Execution / current AI API Router
     department_or_core_local_provider_registry: FORBIDDEN
     provider_specific_syntax_in_canonical_script: FORBIDDEN
   hard_locks:

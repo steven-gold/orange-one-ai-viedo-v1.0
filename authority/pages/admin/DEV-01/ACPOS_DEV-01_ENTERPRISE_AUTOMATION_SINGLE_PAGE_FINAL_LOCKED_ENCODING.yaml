@@ -9,26 +9,18 @@ authority:
   file_spec_status: FILE_SPEC_COMPLETE
   system_implementation_status: NOT_EXECUTED
   single_page_workspace: true
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
   backend_l1_key: enterprise_development
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
-  purpose: One current Enterprise Automation workspace that reorganizes the existing R9 outreach capabilities into a five-stage
-    same-page workflow without creating parallel outreach services, registries, databases, campaign engines, message engines
-    or delivery engines.
-  truthful_status_rule: This file completes page design/encoding only. Application code, master merge, runtime, Sandbox, Regression,
-    E2E, external connector verification and production deployment are not executed by this file.
-source_alignment:
-  primary_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL.yaml / R9 Enterprise Social Outreach
-  source_capability_clusters:
-  - Company discovery jobs / allowed sources / rate-policy gates
-  - Company master directory / identity resolution / contact points / evidence / merge
-  - One-to-one outreach message Candidate / personalization / compliance / review
-  - Campaign / audience batch / suppression / approval
-  - Individual delivery / schedule / rate-quota / bounce-reply / kill switch
-  current_consolidation_rule: Historical source page segmentation is non-executable provenance for this page authority. Current
-    UI renders one admin:DEV-01 workspace only; preserved source services/operations/data remain single owners.
+  purpose: One current Enterprise Automation workspace that reorganizes the existing current registered authority outreach capabilities into a
+    five-stage same-page workflow without creating parallel outreach services, registries, databases, campaign engines, message engines or delivery
+    engines.
+  truthful_status_rule: This file completes page design/encoding only. Application code, master merge, runtime, Sandbox, Regression, E2E, external
+    connector verification and production deployment are not executed by this file.
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 single_system_contract:
   current_ui_owner: admin:DEV-01
   service_owners:
@@ -52,8 +44,8 @@ single_system_contract:
 workflow:
   canonical_user_flow: Discovery -> Company Directory -> Message Candidate -> Campaign / Audience Batch -> Individual Delivery
   stage_navigation: Same-page UI context only; never routes to separate current DEV pages.
-  cross_stage_context: Carry exact authorized Company/Candidate/Campaign/Delivery references forward; never resolve formal
-    actions from latest/current/default aliases.
+  cross_stage_context: Carry exact authorized Company/Candidate/Campaign/Delivery references forward; never resolve formal actions from latest/current/default
+    aliases.
   stages:
   - stage_uid: DEV-01-STAGE-01-DISCOVERY
     key: discovery
@@ -221,7 +213,7 @@ components:
   role: Run status, accumulated result summary, connector health
 - component_uid: DEV-01-CMP-DISCOVERY-ACTION
   section_uid: DEV-01-SEC-03
-  role: Start/Pause/Resume/Stop exact R9 operations, state-based
+  role: Start/Pause/Resume/Stop exact current registered authority operations, state-based
 - component_uid: DEV-01-CMP-DIRECTORY
   section_uid: DEV-01-SEC-04
   role: Company table, search/filter, identity/registration/alias/contact/source-evidence projection
@@ -436,268 +428,258 @@ actions:
   runtime_binding:
     binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
     api_required: false
-  success_contract: active_stage=discovery; preserve current page, authorized source data, filters and unsaved governed form
-    state where legal.
+  success_contract: active_stage=discovery; preserve current page, authorized source data, filters and unsaved governed form state where legal.
 - action_uid: DEV-01-ACT-STAGE-2-SELECT
   label: 企業資料庫
   effect_type: UI_CONTEXT_STATE
   runtime_binding:
     binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
     api_required: false
-  success_contract: active_stage=directory; preserve current page, authorized source data, filters and unsaved governed form
-    state where legal.
+  success_contract: active_stage=directory; preserve current page, authorized source data, filters and unsaved governed form state where legal.
 - action_uid: DEV-01-ACT-STAGE-3-SELECT
   label: 開發信內容
   effect_type: UI_CONTEXT_STATE
   runtime_binding:
     binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
     api_required: false
-  success_contract: active_stage=message; preserve current page, authorized source data, filters and unsaved governed form
-    state where legal.
+  success_contract: active_stage=message; preserve current page, authorized source data, filters and unsaved governed form state where legal.
 - action_uid: DEV-01-ACT-STAGE-4-SELECT
   label: Campaign / 受眾批次
   effect_type: UI_CONTEXT_STATE
   runtime_binding:
     binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
     api_required: false
-  success_contract: active_stage=campaign; preserve current page, authorized source data, filters and unsaved governed form
-    state where legal.
+  success_contract: active_stage=campaign; preserve current page, authorized source data, filters and unsaved governed form state where legal.
 - action_uid: DEV-01-ACT-STAGE-5-SELECT
   label: 一對一發送控制
   effect_type: UI_CONTEXT_STATE
   runtime_binding:
     binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
     api_required: false
-  success_contract: active_stage=delivery; preserve current page, authorized source data, filters and unsaved governed form
-    state where legal.
+  success_contract: active_stage=delivery; preserve current page, authorized source data, filters and unsaved governed form state where legal.
 - action_uid: DEV-01-ACT-DISCOVERY-START
   label: 開始搜集
   effect_type: REGISTERED_COMMAND
   operation: startCompanyDiscovery
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: startCompanyDiscovery
     method_path: POST /v1/outreach/discovery-jobs
     permission: outreach.discovery.configure
     event: outreach.discovery.started
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-DISCOVERY-PAUSE
   label: 暫停
   effect_type: REGISTERED_COMMAND
   operation: pauseCompanyDiscovery
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: pauseCompanyDiscovery
     method_path: POST /v1/outreach/discovery-jobs/{jobId}/pause
     permission: outreach.discovery.configure
     event: outreach.discovery.paused
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-DISCOVERY-RESUME
   label: 繼續
   effect_type: REGISTERED_COMMAND
   operation: resumeCompanyDiscovery
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: resumeCompanyDiscovery
     method_path: POST /v1/outreach/discovery-jobs/{jobId}/resume
     permission: outreach.discovery.configure
     event: outreach.discovery.resumed
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-DISCOVERY-STOP
   label: 停止
   effect_type: REGISTERED_COMMAND
   operation: stopCompanyDiscovery
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: stopCompanyDiscovery
     method_path: POST /v1/outreach/discovery-jobs/{jobId}/stop
     permission: outreach.discovery.configure
     event: outreach.discovery.stopped
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-DIRECTORY-SEARCH
   label: 搜尋企業
   effect_type: REGISTERED_COMMAND
   operation: searchProjection
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: searchProjection
     method_path: POST /v1/search
     permission: projection.search
     event: null
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-MERGE-PREVIEW
   label: 預覽合併
   effect_type: REGISTERED_COMMAND
   operation: previewCompanyMerge
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: previewCompanyMerge
     method_path: POST /v1/outreach/companies/merge-preview
     permission: outreach.directory.merge
     event: null
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-MERGE
   label: 合併企業
   effect_type: REGISTERED_COMMAND
   operation: mergeCompanyCandidate
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: mergeCompanyCandidate
     method_path: POST /v1/outreach/companies/{companyId}/merge
     permission: outreach.directory.merge
     event: outreach.company.merged
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-EXPORT
   label: 匯出授權資料
   effect_type: REGISTERED_COMMAND
   operation: exportProjection
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: exportProjection
     method_path: POST /v1/exports
     permission: projection.export
     event: export.requested
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-CANDIDATE-CREATE
   label: 建立內容 Candidate
   effect_type: REGISTERED_COMMAND
   operation: createCandidate
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: createCandidate
     method_path: POST /v1/candidates
     permission: candidate.create
     event: candidate.created
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-CANDIDATE-DECIDE
   label: 審查 Candidate
   effect_type: REGISTERED_COMMAND
   operation: decideCandidate
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: decideCandidate
     method_path: POST /v1/candidates/{id}/decision
     permission: candidate.decide
     event: candidate.decided
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-CR-CREATE
   label: 建立變更要求
   effect_type: REGISTERED_COMMAND
   operation: createChangeRequest
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: createChangeRequest
     method_path: POST /v1/change-requests
     permission: core.change.create
     event: change_request.created
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-CAMPAIGN-SEARCH
   label: 搜尋受眾
   effect_type: REGISTERED_COMMAND
   operation: searchProjection
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: searchProjection
     method_path: POST /v1/search
     permission: projection.search
     event: null
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-CAMPAIGN-CREATE
   label: 建立 Campaign
   effect_type: REGISTERED_COMMAND
   operation: createOutreachCampaign
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: createOutreachCampaign
     method_path: POST /v1/outreach/campaigns
     permission: outreach.batch.create
     event: outreach.campaign.created
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-CAMPAIGN-APPROVE
   label: 核准 Campaign
   effect_type: REGISTERED_COMMAND
   operation: approveOutreachCampaign
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: approveOutreachCampaign
     method_path: POST /v1/outreach/campaigns/{campaignId}/approve
     permission: outreach.batch.approve
     event: outreach.campaign.approved
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-EMAIL-DISPATCH
   label: 開始一對一發送
   effect_type: REGISTERED_COMMAND
   operation: dispatchOutreachCampaign
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: dispatchOutreachCampaign
     method_path: POST /v1/outreach/campaigns/{campaignId}/dispatch
     permission: outreach.send.dispatch
     event: outreach.campaign.dispatched
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-REFRESH
   label: 重新整理
   effect_type: REGISTERED_COMMAND
   operation: refreshProjection
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: refreshProjection
     method_path: POST /v1/projections/refresh
     permission: projection.refresh
     event: projection.refresh_requested
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 - action_uid: DEV-01-ACT-KILL-SWITCH
   label: 停止發送
   effect_type: HIGH_RISK_REGISTERED_COMMAND
   operation: setKillSwitch
   runtime_binding:
-    binding_kind: SOURCE_R9_OPERATION
+    binding_kind: SOURCE_REGISTERED_OPERATION
     operation: setKillSwitch
     method_path: POST /v1/operations/kill-switch
     permission: ops.kill_switch
     event: operations.kill_switch_changed
-    form_schema: USE_EXISTING_R9_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
+    form_schema: USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields
 gates:
 - gate_uid: DEV-01-GATE-PAGE
   condition: identity + page:admin:DEV-01 VIEW + enterprise_development effective backend L1 + scope + condition + audit
 - gate_uid: DEV-01-GATE-DISCOVERY-START
-  condition: page gate + outreach.discovery.configure + valid existing StartCompanyDiscoveryRequest + Allowed Source + Rate/Policy
-    pass + expected_version/idempotency where required
+  condition: page gate + outreach.discovery.configure + valid existing StartCompanyDiscoveryRequest + Allowed Source + Rate/Policy pass + expected_version/idempotency
+    where required
 - gate_uid: DEV-01-GATE-DISCOVERY-RUNNING
-  condition: page gate + outreach.discovery.configure + exact discovery job state RUNNING + state_guard + expected_version
-    + idempotency + audit
+  condition: page gate + outreach.discovery.configure + exact discovery job state RUNNING + state_guard + expected_version + idempotency + audit
 - gate_uid: DEV-01-GATE-DISCOVERY-PAUSED
-  condition: page gate + outreach.discovery.configure + exact discovery job state PAUSED + state_guard + expected_version
-    + idempotency + audit
+  condition: page gate + outreach.discovery.configure + exact discovery job state PAUSED + state_guard + expected_version + idempotency + audit
 - gate_uid: DEV-01-GATE-DIRECTORY-READ
   condition: page gate + outreach.directory.read + authorized scope
 - gate_uid: DEV-01-GATE-MERGE
-  condition: page gate + outreach.directory.merge + two or more identity-resolved candidate refs + source evidence + preview
-    operation available
+  condition: page gate + outreach.directory.merge + two or more identity-resolved candidate refs + source evidence + preview operation available
 - gate_uid: DEV-01-GATE-MERGE-CONFIRM
-  condition: merge preview is current + explicit confirmation + expected_version + idempotency + audit; destructive delete
-    forbidden
+  condition: merge preview is current + explicit confirmation + expected_version + idempotency + audit; destructive delete forbidden
 - gate_uid: DEV-01-GATE-EXPORT
   condition: page gate + exact export permission + classification/export policy + authorized scope
 - gate_uid: DEV-01-GATE-MESSAGE-WRITE
-  condition: page gate + outreach.message.write + exact audience/company context + governed candidate schema + personal-data
-    policy pass
+  condition: page gate + outreach.message.write + exact audience/company context + governed candidate schema + personal-data policy pass
 - gate_uid: DEV-01-GATE-MESSAGE-REVIEW
   condition: page gate + outreach.message.review + exact Candidate/version + policy result + current review context
 - gate_uid: DEV-01-GATE-CAMPAIGN
-  condition: page gate + outreach.batch.create + recipient source resolved + inclusion/exclusion + suppression check + existing
-    campaign payload schema
+  condition: page gate + outreach.batch.create + recipient source resolved + inclusion/exclusion + suppression check + existing campaign payload
+    schema
 - gate_uid: DEV-01-GATE-CAMPAIGN-APPROVAL
-  condition: page gate + outreach.batch.approve + exact Campaign state REVIEW + recipient preview + suppression + content
-    version + expected_version + idempotency + audit
+  condition: page gate + outreach.batch.approve + exact Campaign state REVIEW + recipient preview + suppression + content version + expected_version
+    + idempotency + audit
 - gate_uid: DEV-01-GATE-DELIVERY-READ
   condition: page gate + outreach.send.configure + authorized delivery projection
 - gate_uid: DEV-01-GATE-DISPATCH
-  condition: page gate + outreach.send.dispatch + exact Campaign state APPROVED + one-recipient-per-delivery contract + To
-    count=1 + CC/BCC empty + suppression pass + delivery policy/schedule/rate pass + expected_version + idempotency + audit
+  condition: page gate + outreach.send.dispatch + exact Campaign state APPROVED + one-recipient-per-delivery contract + To count=1 + CC/BCC empty
+    + suppression pass + delivery policy/schedule/rate pass + expected_version + idempotency + audit
 - gate_uid: DEV-01-GATE-KILL-SWITCH
-  condition: page gate + ops.kill_switch + explicit target scope + high-risk confirmation + reason + expected_version + idempotency
-    + state_guard + audit; only render when applicable
+  condition: page gate + ops.kill_switch + explicit target scope + high-risk confirmation + reason + expected_version + idempotency + state_guard
+    + audit; only render when applicable
 operation_registry_refs:
 - operation_id: getUiProjection
   method: GET
@@ -843,8 +825,7 @@ data_and_lineage:
   - delivery_status
   - bounce_reply
   no_new_database_table: true
-  company_identity_rule: Use registration/jurisdiction identity resolution as primary matching basis; company name alone is
-    never sufficient.
+  company_identity_rule: Use registration/jurisdiction identity resolution as primary matching basis; company name alone is never sufficient.
   contact_rule: Phone/email/address may be one-to-many and must retain source evidence; distinct contact points are not overwritten.
   merge_rule: Merge preserves lineage/source evidence; destructive duplicate delete is forbidden.
   delivery_rule: Each actual email delivery has exactly one To; CC/BCC empty; campaign batch is internal orchestration only.
@@ -861,7 +842,7 @@ permission_and_security:
   plain_secret_or_provider_payload: FORBIDDEN
 stage_presentation:
   discovery:
-    main: Setup + running job list/status; schema-driven inputs from existing R9 payload; no invented source list.
+    main: Setup + running job list/status; schema-driven inputs from existing current registered authority payload; no invented source list.
     secondary: Accumulation metrics and Connector Health as compact read-only status, not hero KPIs.
     action_order:
     - Start
@@ -917,8 +898,7 @@ errors:
   recovery: Do not merge; refresh exact candidate/version, rerun preview, require explicit confirmation.
 - error_uid: DEV-01-ERR-MESSAGE-POLICY
   when: Personalization/personal-data/compliance policy fails
-  recovery: BLOCK Candidate decision/campaign approval as applicable; create/route correction through existing candidate/change
-    workflow.
+  recovery: BLOCK Candidate decision/campaign approval as applicable; create/route correction through existing candidate/change workflow.
 - error_uid: DEV-01-ERR-SUPPRESSION
   when: Contact/recipient is suppressed
   recovery: Remove/block from outbound delivery; preserve suppression evidence; never send.
@@ -940,21 +920,18 @@ errors:
 hard_locks:
 - Only admin:DEV-01 is the current Enterprise Automation UI workspace in this authority.
 - The five workflow stages are composition areas inside one page; they are not five current navigation pages.
-- Existing R9 Discovery / Directory / Message / Batch / Delivery services, operations, databases, suppression and audit owners
-  are reused; no parallel system is created.
+- Existing current registered authority Discovery / Directory / Message / Batch / Delivery services, operations, databases, suppression and audit
+  owners are reused; no parallel system is created.
 - Discovery cannot run without Allowed Source / Rate / Policy / Authorization gates.
 - Company name alone never resolves identity; duplicate companies merge with evidence and lineage, never destructive delete.
 - One-to-one Email content remains Candidate until governed decision; Candidate never directly sends.
-- Campaign batch is internal orchestration/review/statistics; every actual outbound email contains exactly one To and empty
-  CC/BCC.
+- Campaign batch is internal orchestration/review/statistics; every actual outbound email contains exactly one To and empty CC/BCC.
 - Suppressed contact delivery is forbidden with no bypass.
 - Campaign approval is separate from dispatch; dispatch requires exact APPROVED Campaign and all delivery gates.
 - Kill Switch is a conditional high-risk control and uses the existing setKillSwitch operation only.
-- Low-frequency evidence, audit, history, connector details and suppression details stay secondary/drawer; do not create permanent
-  duplicate cards.
+- Low-frequency evidence, audit, history, connector details and suppression details stay secondary/drawer; do not create permanent duplicate cards.
 - No fake company metrics, connector health, campaign status, delivery result, bounce/reply, audit or external connector data.
-- No invented endpoint, request field, source list, company identity field, message schema, campaign schema, permission, route
-  or provider syntax.
+- No invented endpoint, request field, source list, company identity field, message schema, campaign schema, permission, route or provider syntax.
 - Unknown or missing authority -> BLOCK + REPORT_AUTHORITY_GAP, never create another outreach system.
 - This file is FILE_SPEC_COMPLETE only; application/runtime/Sandbox/E2E/deployment remain NOT_EXECUTED.
 acceptance:
@@ -962,35 +939,33 @@ acceptance:
   item: Single Current Page
   condition: Only admin:DEV-01 is the current Enterprise Automation UI workspace; no five-page current navigation is reconstructed.
 - uid: DEV-01-ACC-02
-  item: R9 Service Reuse
-  condition: Discovery/Directory/Message/Batch/Delivery existing owners and operations are reused; no second outreach backend,
-    registry or database is introduced.
+  item: current registered authority Service Reuse
+  condition: Discovery/Directory/Message/Batch/Delivery existing owners and operations are reused; no second outreach backend, registry or database
+    is introduced.
 - uid: DEV-01-ACC-03
   item: Five-Stage Workflow
-  condition: Discovery -> Directory -> Message Candidate -> Campaign -> Individual Delivery exists as same-page workflow context,
-    not five standalone pages.
+  condition: Discovery -> Directory -> Message Candidate -> Campaign -> Individual Delivery exists as same-page workflow context, not five standalone
+    pages.
 - uid: DEV-01-ACC-04
   item: Discovery Governance
-  condition: Single/continuous discovery cannot run without allowed source, rate, policy and authorization gates; pause/resume/stop
-    use exact R9 operations.
+  condition: Single/continuous discovery cannot run without allowed source, rate, policy and authorization gates; pause/resume/stop use exact
+    current registered authority operations.
 - uid: DEV-01-ACC-05
   item: Company Identity
-  condition: Registration/jurisdiction identity is primary; name-only identity and destructive duplicate delete are forbidden;
-    contacts preserve one-to-many source evidence.
+  condition: Registration/jurisdiction identity is primary; name-only identity and destructive duplicate delete are forbidden; contacts preserve
+    one-to-many source evidence.
 - uid: DEV-01-ACC-06
   item: Candidate Boundary
   condition: One-to-one email content is Candidate until governed decision; Candidate cannot directly send.
 - uid: DEV-01-ACC-07
   item: Batch Boundary
-  condition: Campaign/recipient batch is internal orchestration/review/statistics only; outbound delivery is always one recipient
-    per email.
+  condition: Campaign/recipient batch is internal orchestration/review/statistics only; outbound delivery is always one recipient per email.
 - uid: DEV-01-ACC-08
   item: One Recipient Per Email
   condition: Every outbound delivery has exactly one To; CC/BCC empty; no recipient-duplicate workaround.
 - uid: DEV-01-ACC-09
   item: Suppression
-  condition: Suppressed contacts cannot be sent; suppression is checked before campaign approval/dispatch and visible as a
-    blocker.
+  condition: Suppressed contacts cannot be sent; suppression is checked before campaign approval/dispatch and visible as a blocker.
 - uid: DEV-01-ACC-10
   item: Delivery Governance
   condition: Approved Campaign + schedule/rate/policy + exact state/version/idempotency/audit are required before dispatch.
@@ -999,17 +974,31 @@ acceptance:
   condition: Kill Switch is conditional and permission/state gated; it is not a permanently dominant page CTA.
 - uid: DEV-01-ACC-12
   item: No Parallel System
-  condition: No second Company DB, campaign engine, message engine, delivery engine, suppression registry or connector registry
-    is defined.
+  condition: No second Company DB, campaign engine, message engine, delivery engine, suppression registry or connector registry is defined.
 - uid: DEV-01-ACC-13
   item: Real Data Only
   condition: No fake company count, connector health, delivery status, reply/bounce, campaign result or audit data.
 - uid: DEV-01-ACC-14
   item: Exact Runtime Binding
-  condition: All effectful actions bind only to exact R9 operation/method/path or are blocked; no guessed endpoint.
+  condition: All effectful actions bind only to exact current registered authority operation/method/path or are blocked; no guessed endpoint.
 - uid: DEV-01-ACC-15
   item: Truthful Completion
   condition: File-spec completion is separate from application/runtime/Sandbox/E2E/deployment completion.
 - uid: DEV-01-ACC-16
   item: UI Necessity
   condition: Low-frequency evidence/history/audit/health detail is drawer/secondary content; no duplicate permanent card wall.
+current_operational_alignment:
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  single_page_uid: admin:DEV-01
+  parallel_domain_system: FORBIDDEN
+shared_acquisition_binding:
+  runtime_ref: ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME
+  page_owns_runtime: false
+  mode: COMPANY_DISCOVERY
+  allowed_modes:
+  - SEARCH_DISCOVERY
+  - WEB_CRAWL
+  - WEB_FETCH
+  - STRUCTURED_HTTP_JSON_FETCH
+  - CONTINUOUS_DISCOVERY_WHEN_POLICY_ALLOWS
+  direct_effect_from_raw_acquisition: FORBIDDEN

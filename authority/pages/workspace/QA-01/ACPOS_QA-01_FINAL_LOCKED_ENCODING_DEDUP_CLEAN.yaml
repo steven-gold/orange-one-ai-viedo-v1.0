@@ -14,25 +14,21 @@ authority:
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
   missing_value_display: —
-  department_boundary: QA owns exact-output validation, scorecard/evidence/finding/manual-review projection, correction request, recheck,
-    QA gate decision and release-candidate creation only. QA never edits upstream Script/Asset/Video/Edit outputs and never publishes directly.
+  department_boundary: QA owns exact-output validation, scorecard/evidence/finding/manual-review projection, correction request, recheck, QA gate
+    decision and release-candidate creation only. QA never edits upstream Script/Asset/Video/Edit outputs and never publishes directly.
   source_policy:
     old_QA_02_03_04_runtime_pages: RETIRED_AS_SEPARATE_CURRENT_PAGES
     functional_content_merge_target: QA-01 sections only
     parallel_QA_page_authority: FORBIDDEN
   revision: 2026-08-28-MANUAL-REVIEW-CORRECTION
-  revision_rule: 'System/AI scoring remains automatic. Human does not get generic result-confirm/result-modify controls. After scoring, only
-    when a governed ManualReviewCase is triggered, the Manual Review surface exposes exactly two functions: MODIFY and PASS.'
-  final_gap_closure_revision: 2026-08-28-BUTTON-RUNTIME-BINDING-CLOSURE
-  source_file_for_gap_closure: ACPOS_QA-01_FINAL_LOCKED_ENCODING_CORRECTED(1).yaml
-  final_dedup_revision: 2026-08-28-SINGLE-EXECUTABLE-AUTHORITY
+  revision_rule: 'System/AI scoring remains automatic. Human does not get generic result-confirm/result-modify controls. After scoring, only when
+    a governed ManualReviewCase is triggered, the Manual Review surface exposes exactly two functions: MODIFY and PASS.'
   parallel_authority_for_same_page: FORBIDDEN
-  supersedes_gap_closed_file: ACPOS_QA-01_FINAL_LOCKED_ENCODING_GAP_CLOSED.yaml
 system_filename_governance:
   authority: ACPOS_SYSTEM
   page_behavior: READ_ONLY_REFERENCE_ONLY
-  rule: QA does not rename or infer artifact identity from filenames. Review and release-candidate routing use exact output/artifact IDs,
-    exact versions, checksums and provenance.
+  rule: QA does not rename or infer artifact identity from filenames. Review and release-candidate routing use exact output/artifact IDs, exact
+    versions, checksums and provenance.
   forbidden:
   - manual rename
   - QA-local filename formula
@@ -67,20 +63,20 @@ layout:
     role: exact output viewer / validation / evidence
     priority: highest
     sticky_viewer_during_finding_capture: true
-    finding_capture: Finding quick-capture uses same-page panel while Exact Output Viewer remains visible. Manual Review appears only when
-      a governed ManualReviewCase is required/open.
+    finding_capture: Finding quick-capture uses same-page panel while Exact Output Viewer remains visible. Manual Review appears only when a governed
+      ManualReviewCase is required/open.
   right_rail:
     min_width: 300px
-    role: System/AI Generated Scorecard / Hard Block / QA Gate Result / Release Readiness. Scorecard area has no human decision buttons.
-      If ManualReviewCase is triggered, human functions appear only in Manual Review.
+    role: System/AI Generated Scorecard / Hard Block / QA Gate Result / Release Readiness. Scorecard area has no human decision buttons. If ManualReviewCase
+      is triggered, human functions appear only in Manual Review.
   lower_rows: Finding/Manual Review, Correction/Recheck, Release Candidate and Audit extend full width
   viewer:
     video_or_edit_output: 16:9 container; object-fit:contain; no crop/stretch
     image_output: preserve output-contract/original ratio; contain; no stretch
     audio_output: waveform + transport; no fake 16:9 visual content
     document_or_text_output: read-only document/text viewport
-    conditional_compare: Initial review = exact target output single 100%. During RECHECK, when a verified new exact output version exists,
-      optional Before/After compare = 50/50. No new version => B pane does not render.
+    conditional_compare: Initial review = exact target output single 100%. During RECHECK, when a verified new exact output version exists, optional
+      Before/After compare = 50/50. No new version => B pane does not render.
   tokens:
     control_height: 40px
     button_min_width: 88px
@@ -156,9 +152,8 @@ qa_contract:
   - auto_publish
   - auto_create_release_candidate_from_score_only
   handoff_out: QA PASS -> ReleaseService only
-  human_scoring_policy: 'System/AI performs QA scoring. Human has no scoring action and no post-score action in the Scorecard area. Only
-    when a governed ManualReviewCase is required/open after scoring does the Manual Review area expose exactly two human functions: 修改 /
-    通過.'
+  human_scoring_policy: 'System/AI performs QA scoring. Human has no scoring action and no post-score action in the Scorecard area. Only when
+    a governed ManualReviewCase is required/open after scoring does the Manual Review area expose exactly two human functions: 修改 / 通過.'
 scorecard_contract:
   source: Task-bound approved QA CriteriaVersion + QualityGatePolicyVersion
   ui_fields:
@@ -174,8 +169,8 @@ scorecard_contract:
   - gate_status
   hard_gate_rule: Evidence / Rights / Policy / Checksum / Provenance / Required Check failure overrides numeric score. QA-01 must not hard-code
     a second scoring scheme or a local numeric pass threshold.
-  pass_rule: Use bound CriteriaVersion/QualityGatePolicy. PASS additionally requires no unresolved hard block, all blocking findings closed
-    by verified new version/recheck, and required manual review closed.
+  pass_rule: Use bound CriteriaVersion/QualityGatePolicy. PASS additionally requires no unresolved hard block, all blocking findings closed by
+    verified new version/recheck, and required manual review closed.
   score_origin: SYSTEM_AI_GENERATED_FROM_BOUND_CRITERIA
   manual_scoring: FORBIDDEN
   human_review:
@@ -222,7 +217,7 @@ finding_correction_contract:
   - target_department
   - revalidation_requirements
   - created_by
-  root_cause_classification: &id001
+  root_cause_classification:
   - CANON
   - SCRIPT_VIEW
   - INSTRUCTION_PACKAGE
@@ -233,8 +228,8 @@ finding_correction_contract:
   - QUALITY_CRITERIA
   - EDITING
   - UNKNOWN
-  closure_rule: QA does not directly mark a failed finding CLOSED after an upstream edit. A verified new exact output version must arrive,
-    RECHECK must run, evidence/criteria must be re-evaluated, then the finding may close according to governed QA state.
+  closure_rule: QA does not directly mark a failed finding CLOSED after an upstream edit. A verified new exact output version must arrive, RECHECK
+    must run, evidence/criteria must be re-evaluated, then the finding may close according to governed QA state.
   finding_input_policy:
     severity: SELECT_FROM_REGISTERED_SEVERITY_ENUM; no free-text severity
     category: SELECT_FROM_REGISTERED_QA_ISSUE_CATEGORY; missing registry value => BLOCK + REPORT_AUTHORITY_GAP
@@ -321,9 +316,9 @@ workflow:
   - QA Gate evaluates bound criteria/policy + hard gates + manual review closed state
   - 'If PASS + release eligibility: Create Release Candidate/Package'
   - ReleaseService continues approval/release; QA does not publish
-  auto_behavior: AUTO reviews all authorized QA tasks in selected Topic sequentially, max active task=1. Only a below-threshold score emits
-    QA_LOW_SCORE_WARNING. Passing/non-low-score items continue without popup. Hard-block/rights/policy/evidence failures remain BLOCKED and
-    are never hidden by score. AUTO never publishes and never creates Release Candidate from score alone.
+  auto_behavior: AUTO reviews all authorized QA tasks in selected Topic sequentially, max active task=1. Only a below-threshold score emits QA_LOW_SCORE_WARNING.
+    Passing/non-low-score items continue without popup. Hard-block/rights/policy/evidence failures remain BLOCKED and are never hidden by score.
+    AUTO never publishes and never creates Release Candidate from score alone.
 registries:
   sections:
   - section_uid: QA-01-SEC-01
@@ -348,8 +343,8 @@ registries:
     visual_uid: QA-01-VIS-EVIDENCE
   - section_uid: QA-01-SEC-06
     name: Scorecard / QA Gate
-    responsibility: System-generated task-bound QA scorecard, hard blocks, QA gate result, release readiness. No human decision control in
-      Scorecard; conditional human actions belong to Manual Review.
+    responsibility: System-generated task-bound QA scorecard, hard blocks, QA gate result, release readiness. No human decision control in Scorecard;
+      conditional human actions belong to Manual Review.
     visual_uid: QA-01-VIS-RIGHT
   - section_uid: QA-01-SEC-07
     name: Finding / Manual Review
@@ -506,24 +501,22 @@ registries:
   - gate_uid: QA-01-GATE-RECHECK
     condition: CORRECTION_REQUIRED + verified NEW exact output version exists + correction request linkage valid
   - gate_uid: QA-01-GATE-PASS
-    condition: latest re/score evaluation satisfies bound criteria/policy + no hard block + blocking findings closed + manual review closed
-      if required + rights/policy valid
+    condition: latest re/score evaluation satisfies bound criteria/policy + no hard block + blocking findings closed + manual review closed if
+      required + rights/policy valid
   - gate_uid: QA-01-GATE-FAIL
     condition: active review/recheck + sufficient evidence for governed FAIL decision
   - gate_uid: QA-01-GATE-RELEASE
-    condition: QA PASS + all findings closed + manual review closed + rights valid + policy valid + exact output versions + release.create
-      permission
+    condition: QA PASS + all findings closed + manual review closed + rights valid + policy valid + exact output versions + release.create permission
   - gate_uid: QA-01-GATE-MANUAL
     condition: manual review required or existing ManualReviewCase ref; QA page is read/projection unless separately governed
   - gate_uid: QA-01-GATE-AUTO
-    condition: mode=AUTO + exact Project/Topic resolved + authorized Topic QA queue exists + QA_AUTO permission; each task still resolves
-      exact output/script/criteria/evidence
+    condition: mode=AUTO + exact Project/Topic resolved + authorized Topic QA queue exists + QA_AUTO permission; each task still resolves exact
+      output/script/criteria/evidence
   - gate_uid: QA-01-GATE-EVIDENCE-CAPTURE
     condition: active QA review + exact output/version/checksum/provenance + supported viewer position/range context
   - gate_uid: QA-01-GATE-MANUAL-DECISION
-    condition: Governed ManualReviewCase exists + required/open + exact QA review/output/scorecard context resolved + separately governed
-      Manual Review mutation authority resolved. If mutation authority is unresolved, controls are BLOCKED and frontend reports authority
-      gap.
+    condition: Governed ManualReviewCase exists + required/open + exact QA review/output/scorecard context resolved + separately governed Manual
+      Review mutation authority resolved. If mutation authority is unresolved, controls are BLOCKED and frontend reports authority gap.
   errors:
   - error_uid: QA-01-ERR-CONTEXT-001
     context: Project/Topic/QATask/TargetOutputVersion missing, stale or mismatched
@@ -575,8 +568,7 @@ registries:
     recovery: BLOCK capture only; preserve viewer; no manual Evidence ID fallback
   - error_uid: QA-01-ERR-MANUAL-ACTION-001
     context: Manual Review Modify/Pass requested but governed ManualReviewCase or mutation authority is missing/stale
-    recovery: BLOCK Manual Review action; preserve case/review context; resolve existing governed Manual Review authority; do not invent
-      API/permission
+    recovery: BLOCK Manual Review action; preserve case/review context; resolve existing governed Manual Review authority; do not invent API/permission
   page_states:
   - state_uid: QA-01-ST-NOT-STARTED
     display: NOT_STARTED
@@ -1154,8 +1146,7 @@ registries:
     gate_uid: QA-01-GATE-MANUAL-DECISION
     effect_type: MANUAL_REVIEW_MUTATION
     owner: ManualReviewService
-    success_contract: Pass/close current ManualReviewCase, then re-evaluate normal QA Gate; not direct QA Gate PASS and cannot override hard
-      gates
+    success_contract: Pass/close current ManualReviewCase, then re-evaluate normal QA Gate; not direct QA Gate PASS and cannot override hard gates
     error_uid: QA-01-ERR-MANUAL-ACTION-001
     operation: RESOLVE_FROM_EXISTING_GOVERNED_MANUAL_REVIEW_AUTHORITY
     method_path: SYSTEM_OPERATION_REGISTRY_REQUIRED; frontend MUST NOT invent URL
@@ -1336,9 +1327,8 @@ registries:
     gate_uid: QA-01-GATE-PAGE
     permission_uid: QA_USE
     default: —
-    note: 'MANUAL: selectable one-by-one and resolves exact context. AUTO: read-only sequential queue/progress; current item highlighted;
-      low-score items get NEEDS_ATTENTION warning badge. Items show exact review/output ID, source department, state, blocking finding count;
-      no fake duration/provider.'
+    note: 'MANUAL: selectable one-by-one and resolves exact context. AUTO: read-only sequential queue/progress; current item highlighted; low-score
+      items get NEEDS_ATTENTION warning badge. Items show exact review/output ID, source department, state, blocking finding count; no fake duration/provider.'
     mode_behavior:
       AUTO: selection cannot reorder scheduler; queue is orchestration status
       MANUAL: Human selects one authorized QA task/review at a time
@@ -1741,7 +1731,17 @@ registries:
     gate_uid: QA-01-GATE-CORRECTION
     permission_uid: QA_CORRECTION
     default: —
-    options: *id001
+    options:
+    - CANON
+    - SCRIPT_VIEW
+    - INSTRUCTION_PACKAGE
+    - INPUT_ASSET
+    - PROVIDER_ROUTE
+    - OUTPUT_ARTIFACT
+    - RIGHTS_POLICY
+    - QUALITY_CRITERIA
+    - EDITING
+    - UNKNOWN
   - control_uid: QA-01-INP-CORR-ACTION
     section_uid: QA-01-SEC-08
     component_uid: QA-01-CMP-CORRECTION
@@ -2251,25 +2251,24 @@ acceptance:
   condition: AUTO popup warning only when total score is below bound Criteria/Policy threshold; frontend has no hard-coded threshold
 - acceptance_uid: QA-01-ACC-16
   item: QA Localization / Evidence
-  condition: Video/Edit viewer supports ±1 frame, exact timecode and point/range evidence binding without upstream mutation/manual Evidence
-    ID
+  condition: Video/Edit viewer supports ±1 frame, exact timecode and point/range evidence binding without upstream mutation/manual Evidence ID
 - acceptance_uid: QA-01-ACC-17
   item: Exact Correction Binding
   condition: Finding/Scorecard/InstructionPackage/OriginalOwner refs auto-bound; Root Cause canonical enum; manual system-ID typing forbidden
 - acceptance_uid: QA-01-ACC-13
   item: System/AI Scoring Only
-  condition: Scorecard is System/AI generated. Scorecard area contains no human scoring/decision control. Human 修改/通過 exists only inside
-    a triggered governed ManualReviewCase.
+  condition: Scorecard is System/AI generated. Scorecard area contains no human scoring/decision control. Human 修改/通過 exists only inside a triggered
+    governed ManualReviewCase.
 - acceptance_uid: QA-01-ACC-18
   item: Conditional Manual Review
-  condition: 'Only when governed ManualReviewCase is required/open, exactly two human functions render: 修改 and 通過. Manual Review Pass is
-    not direct QA Gate PASS and cannot bypass hard gates.'
+  condition: 'Only when governed ManualReviewCase is required/open, exactly two human functions render: 修改 and 通過. Manual Review Pass is not direct
+    QA Gate PASS and cannot bypass hard gates.'
 hard_locks:
 - Only QA-01 is the current executable QA workspace page.
 - Old QA-02/QA-03/QA-04 functions are integrated into QA-01 sections; AI must not recreate them as separate current pages.
 - QA cannot edit Canonical Script, Asset Version, Video Version or Editing Version.
-- QA cannot directly execute upstream correction. QA creates CorrectionRequest to the original owner and later rechecks a verified NEW exact
-  output version.
+- QA cannot directly execute upstream correction. QA creates CorrectionRequest to the original owner and later rechecks a verified NEW exact output
+  version.
 - No direct Close Finding button without verified new version + recheck result.
 - No generic/default scorecard and no QA-local numeric threshold. Use bound approved QA CriteriaVersion and QualityGatePolicy.
 - Hard blocks override numeric score.
@@ -2281,15 +2280,15 @@ hard_locks:
 - No fake provider, score, evidence, version, runtime, checksum, rights or policy values; missing = —.
 - No unlisted Section/Component/Control/Action/State/Gate/Permission/Port/Business Sample Data.
 - 'AUTO is Topic-scoped sequential QA: existing authorized task order only, max active task=1, no AI reorder/create/skip.'
-- In AUTO, only a below-threshold total score emits QA_LOW_SCORE_WARNING. Hard-block/rights/policy/evidence problems remain BLOCKED and are
-  not mislabeled as low-score warnings.
+- In AUTO, only a below-threshold total score emits QA_LOW_SCORE_WARNING. Hard-block/rights/policy/evidence problems remain BLOCKED and are not
+  mislabeled as low-score warnings.
 - AUTO never publishes and never creates a Release Candidate from score alone.
 - Top Context Bar is read-only context chips; Project/Topic/QATask/TargetOutput/State are never input/select controls on QA-01.
 - Finding Evidence IDs and Correction system IDs/owner/lineage are auto-bound from exact context; manual system-ID typing is forbidden.
 - System/AI performs QA scoring. Scorecard area has no human action after scoring.
 - 'Only when a governed ManualReviewCase is required/open after scoring, the Human sees exactly two Manual Review functions: 修改 / 通過.'
-- Manual Review 通過 closes/passes the Manual Review requirement and returns to normal QA Gate evaluation; it is not direct QA Gate PASS and
-  cannot bypass Hard Gate/Rights/Policy/Evidence blockers.
+- Manual Review 通過 closes/passes the Manual Review requirement and returns to normal QA Gate evaluation; it is not direct QA Gate PASS and cannot
+  bypass Hard Gate/Rights/Policy/Evidence blockers.
 - Manual Review 修改 enters the governed modification flow for that ManualReviewCase/current evaluated item; it must not become a blank scoring
   form.
 derived_validation:
@@ -2390,8 +2389,8 @@ review_modes:
       - quality_gate_policy_version
       ui: Warning notification + Queue NEEDS_ATTENTION badge; frontend never hard-codes the threshold
     human_intervention: Passing/non-low-score items continue without popup. A score below the bound Criteria/Policy threshold emits the warning
-      defined by this page. Whether a ManualReviewCase is also required is decided by the governed QA/Manual Review policy. Only when Manual
-      Review is triggered does the Human see 修改 / 通過.
+      defined by this page. Whether a ManualReviewCase is also required is decided by the governed QA/Manual Review policy. Only when Manual Review
+      is triggered does the Human see 修改 / 通過.
     release_boundary: AUTO review never publishes. Release Candidate remains governed by existing QA release eligibility/action.
   MANUAL:
     scope: CURRENT_AUTHORIZED_QUEUE
@@ -2417,8 +2416,8 @@ manual_review_contract:
   pass:
     label_zh: 通過
     label_en: Pass
-    meaning: Pass/close the current ManualReviewCase and return to normal QA Gate evaluation. Not equivalent to direct QA Gate PASS; cannot
-      override Hard Gate/Rights/Policy/Evidence blockers.
+    meaning: Pass/close the current ManualReviewCase and return to normal QA Gate evaluation. Not equivalent to direct QA Gate PASS; cannot override
+      Hard Gate/Rights/Policy/Evidence blockers.
     backend_binding: RESOLVE_FROM_EXISTING_GOVERNED_MANUAL_REVIEW_AUTHORITY
     if_missing: BLOCK + REPORT_AUTHORITY_GAP; frontend must not invent endpoint or permission
   forbidden:

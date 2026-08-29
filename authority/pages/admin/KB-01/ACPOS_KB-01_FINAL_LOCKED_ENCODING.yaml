@@ -188,25 +188,33 @@ gate_registry:
   rows:
   - G:READ::REQ=account authenticated|knowledge.read|authorized scope::BLOCK=permission denied|classification mask denies object
   - G:SOURCE-WRITE::REQ=knowledge.source.configure|authorized scope::BLOCK=permission denied
-  - G:SOURCE-SAVE::REQ=knowledge.source.configure|source draft selected|scope valid|rights valid|classification set|expected_version matches::BLOCK=missing required source field|version conflict|invalid
-    rights/config
-  - G:SOURCE-PAUSE::REQ=knowledge.source.configure|source status ACTIVE|expected_version matches::BLOCK=source already paused/retired|version conflict
-  - G:SOURCE-RESUME::REQ=knowledge.source.configure|source status PAUSED|rights/config still valid|expected_version matches::BLOCK=source not paused|rights/config invalid|version conflict
+  - G:SOURCE-SAVE::REQ=knowledge.source.configure|source draft selected|scope valid|rights valid|classification set|expected_version matches::BLOCK=missing
+    required source field|version conflict|invalid rights/config
+  - G:SOURCE-PAUSE::REQ=knowledge.source.configure|source status ACTIVE|expected_version matches::BLOCK=source already paused/retired|version
+    conflict
+  - G:SOURCE-RESUME::REQ=knowledge.source.configure|source status PAUSED|rights/config still valid|expected_version matches::BLOCK=source not
+    paused|rights/config invalid|version conflict
   - G:SOURCE-RETIRE::REQ=knowledge.source.configure|source exists|expected_version matches::BLOCK=active non-cancelable run|version conflict
-  - G:INGEST-START::REQ=knowledge.ingestion.execute|source ACTIVE|rights/config valid|no prohibited duplicate active run::BLOCK=source paused/retired|rights invalid|duplicate active run|connector unavailable
-  - G:INGEST-RETRY::REQ=knowledge.ingestion.execute|run status FAILED|retry_eligible true::BLOCK=retry policy blocks|source retired|non-retryable failure
+  - G:INGEST-START::REQ=knowledge.ingestion.execute|source ACTIVE|rights/config valid|no prohibited duplicate active run::BLOCK=source paused/retired|rights
+    invalid|duplicate active run|connector unavailable
+  - G:INGEST-RETRY::REQ=knowledge.ingestion.execute|run status FAILED|retry_eligible true::BLOCK=retry policy blocks|source retired|non-retryable
+    failure
   - G:CONTEXT-DRAFT::REQ=knowledge.context.create|result authorized|source/evidence traceable::BLOCK=classification denied|untraceable result
-  - G:CONTEXT-CREATE::REQ=knowledge.context.create|selected_refs >= 1|scope set|purpose set|all selected refs authorized|all factual refs traceable::BLOCK=empty selection|missing scope/purpose|citation
-    missing|classification denied|conflicting exact versions unresolved
+  - G:CONTEXT-CREATE::REQ=knowledge.context.create|selected_refs >= 1|scope set|purpose set|all selected refs authorized|all factual refs traceable::BLOCK=empty
+    selection|missing scope/purpose|citation missing|classification denied|conflicting exact versions unresolved
   - G:EXPERIENCE-READ::REQ=knowledge.experience.read|experience authorized::BLOCK=scope denied
   - G:REPLAY-COMPARE::REQ=knowledge.experience.read|at least two comparable attempts/versions::BLOCK=insufficient comparable items
-  - G:LEARNING-CREATE::REQ=knowledge.learning.create|ACPOSExperienceRecord state OUTCOME_COMPLETE|root cause/pattern evidence exists::BLOCK=outcome pending|insufficient evidence|scope unresolved
+  - G:LEARNING-CREATE::REQ=knowledge.learning.create|ACPOSExperienceRecord state OUTCOME_COMPLETE|root cause/pattern evidence exists::BLOCK=outcome
+    pending|insufficient evidence|scope unresolved
   - G:DRAFT-FROM-EXP::REQ=knowledge.draft.write|experience outcome complete|trace lineage complete::BLOCK=outcome pending|lineage incomplete
-  - G:DRAFT-SAVE::REQ=knowledge.draft.write|draft selected|required fields valid|expected_version matches::BLOCK=version conflict|required field missing|classification invalid
-  - G:KNOWLEDGE-REVIEW::REQ=knowledge.review.approve|draft state REVIEW|review rationale present::BLOCK=permission denied|draft not in review|rationale missing
-  - G:KNOWLEDGE-APPROVE::REQ=knowledge.review.approve|draft state REVIEW|review rationale present|scope explicit|classification explicit|mandatory checks complete|factual claims have citation/source or
-    validated governed outcome|conflicts resolved or explicitly blocked|previous approved version preserved when superseding|expected_version matches::BLOCK=citation missing|outcome unvalidated|unsupported
-    factual generalization|authority conflict unresolved|mandatory check incomplete|version conflict
+  - G:DRAFT-SAVE::REQ=knowledge.draft.write|draft selected|required fields valid|expected_version matches::BLOCK=version conflict|required field
+    missing|classification invalid
+  - G:KNOWLEDGE-REVIEW::REQ=knowledge.review.approve|draft state REVIEW|review rationale present::BLOCK=permission denied|draft not in review|rationale
+    missing
+  - G:KNOWLEDGE-APPROVE::REQ=knowledge.review.approve|draft state REVIEW|review rationale present|scope explicit|classification explicit|mandatory
+    checks complete|factual claims have citation/source or validated governed outcome|conflicts resolved or explicitly blocked|previous approved
+    version preserved when superseding|expected_version matches::BLOCK=citation missing|outcome unvalidated|unsupported factual generalization|authority
+    conflict unresolved|mandatory check incomplete|version conflict
 error_registry:
   count: 14
   format: uid::code::message_zh::recovery

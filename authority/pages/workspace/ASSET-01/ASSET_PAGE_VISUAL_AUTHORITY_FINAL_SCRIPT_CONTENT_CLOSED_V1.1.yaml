@@ -5,19 +5,16 @@ authority:
   current_only: true
   legacy_merge: FORBIDDEN
   scope: ASSET Main Workspace only
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
   missing_value_display: —
   department_boundary: ASSET-only; no VIDEO/EDIT/VOICE/QA internal implementation
-  final_gap_closure_revision: 2026-08-28-BUTTON-RUNTIME-BINDING-CLOSURE
-  source_file_for_gap_closure: ASSET_PAGE_VISUAL_AUTHORITY_FINAL(3)(1).yaml
-  final_dedup_revision: 2026-08-28-SINGLE-EXECUTABLE-AUTHORITY
   parallel_authority_for_same_page: FORBIDDEN
-  supersedes_gap_closed_file: ASSET_PAGE_VISUAL_AUTHORITY_FINAL_GAP_CLOSED.yaml
-  script_content_closure_revision: 2026-08-28-PRODUCTION-CORRECTION-PROVIDER-CONTENT
-  four_department_script_closure_revision: 2026-08-28-FOUR-DEPARTMENT-SCRIPT-FINAL
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  production_script_authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
 system_filename_governance:
   authority: ACPOS_SYSTEM
   rule: ASSET、VIDEO、EDIT 的輸出檔名與 artifact identity 由 ACPOS_SYSTEM 統一治理；任何部門頁面不得自行產生、重新命名或覆寫 Canonical Filename。
@@ -36,8 +33,8 @@ system_filename_governance:
   - filename parsing as business authority
   - path guessing
   - reuse of stale filename without exact version/checksum
-  downstream_reference: 下游 Script/Manifest 必須引用 exact artifact/reference ID + Version + Canonical Filename + Checksum；實際業務身分與路由以 exact ID/ref 為準，不得解析 filename
-    字串推論。
+  downstream_reference: 下游 Script/Manifest 必須引用 exact artifact/reference ID + Version + Canonical Filename + Checksum；實際業務身分與路由以 exact ID/ref
+    為準，不得解析 filename 字串推論。
 layout:
   desktop_min_width: 1280px
   vertical_scroll: Main workspace independent from Global Menu/Sidebar height; overflow-y:auto
@@ -55,10 +52,10 @@ layout:
     content_padding: 16px
   visual_override: FORBIDDEN
 auto_manual:
-  shared_input_rule: AUTO and MANUAL both auto-resolve exact Blueprint/Script/DNA/Manifest/Naming/Instruction/Route. First production has no manual script
-    prompt.
-  AUTO: Execute current task/stage → candidate → ASSET evaluation → WAIT_CONFIRMATION → Confirm/Modify. Only after Confirm automatically advance to next
-    scheduled task.
+  shared_input_rule: AUTO and MANUAL both auto-resolve exact Blueprint/Script/DNA/Manifest/Naming/Instruction/Route. First production has no manual
+    script prompt.
+  AUTO: Execute current task/stage → candidate → ASSET evaluation → WAIT_CONFIRMATION → Confirm/Modify. Only after Confirm automatically advance
+    to next scheduled task.
   MANUAL: Same data and execution rules; after Confirm the next task requires user start.
   error: Queue/task stays on failing item; no skip/reorder/create by AI.
 asset_types:
@@ -544,7 +541,8 @@ registries:
     runtime_binding:
       binding_kind: COMPOSITE_TO_EXISTING_EXECUTE_PORT
       port_uid: ASSET-01-PORT-EXECUTE
-      pre_step: Shared compiler/adapter translates exact APPROVED correction candidate; Core/API Router resolves provider; revalidate exact input fingerprint.
+      pre_step: Shared compiler/adapter translates exact APPROVED correction candidate; Core/API Router resolves provider; revalidate exact input
+        fingerprint.
       payload_mode: CORRECTION; correction_context_ref + approved_candidate_ref + translated_instruction_ref + affected_scope + source_asset_version_id
       result: NEW candidate/version; never overwrite source version
       decision: SOURCE_DERIVED_CLOSURE
@@ -1776,135 +1774,135 @@ registries:
   integration_ports:
   - port_uid: ASSET-01-PORT-IN-CORE-HANDOFF
     boundary: Inbound / Task Ready
-    r9_operation: createDepartmentHandoff
+    registered_operation: createDepartmentHandoff
     method_effective_path: POST /v1/handoffs
-    r9_permission: department.handoff.create
+    registered_permission: department.handoff.create
     state_event: Upstream HANDOFF_READY→HANDED_OFF; ASSET WAITING_DEPENDENCY→READY | handoff.created
     exposure: Created upstream; ASSET validates exact task/blueprint/script/manifest refs only.
   - port_uid: ASSET-01-PORT-EXECUTE
     boundary: Execute Task
-    r9_operation: requestTaskExecution
+    registered_operation: requestTaskExecution
     method_effective_path: POST /v1/tasks/{taskId}/execute
-    r9_permission: department.task.execute
+    registered_permission: department.task.execute
     state_event: READY→ROUTING | provider.job.requested
     exposure: ASSET-01-ACT-FLOW-START after all execute gates PASS.
   - port_uid: ASSET-01-PORT-RETRY
     boundary: Retry Task
-    r9_operation: retryTaskExecution
+    registered_operation: retryTaskExecution
     method_effective_path: POST /v1/tasks/{taskId}/retry
-    r9_permission: department.task.execute
+    registered_permission: department.task.execute
     state_event: BLOCKED/FAILED→ROUTING | provider.job.requested
     exposure: ASSET-01-ACT-TASK-RETRY; policy eligible only.
   - port_uid: ASSET-01-PORT-FINDING
     boundary: Evaluation Finding
-    r9_operation: createFinding
+    registered_operation: createFinding
     method_effective_path: POST /v1/findings
-    r9_permission: finding.write
+    registered_permission: finding.write
     state_event: IN_REVIEW→FINDING_OPEN | finding.created
     exposure: ASSET-01-ACT-FINDING-CREATE.
   - port_uid: ASSET-01-PORT-CORRECTION
     boundary: Correction Request
-    r9_operation: createCorrectionRequest
+    registered_operation: createCorrectionRequest
     method_effective_path: POST /v1/correction-requests
-    r9_permission: correction.create
+    registered_permission: correction.create
     state_event: FINDING_OPEN→CORRECTION_REQUIRED | correction.requested
     exposure: Correction references exact asset/layer/region; shared translation remains system-level.
   - port_uid: ASSET-01-PORT-DECISION
     boundary: Candidate Confirm
-    r9_operation: decideOutputCandidate
+    registered_operation: decideOutputCandidate
     method_effective_path: POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
-    r9_permission: department.output.decide
+    registered_permission: department.output.decide
     state_event: CANDIDATE_OUTPUT→SCORE_PENDING | output.decision_recorded
     exposure: ASSET-01-ACT-CANDIDATE-CONFIRM.
   - port_uid: ASSET-01-PORT-SCORECARD
     boundary: Score Persist
-    r9_operation: submitScorecard
+    registered_operation: submitScorecard
     method_effective_path: POST /v1/scorecards
-    r9_permission: department.score.write
+    registered_permission: department.score.write
     state_event: SCORE_PENDING→BLOCKED or HANDOFF_READY | scorecard.submitted
     exposure: Persist bound ASSET criteria version; page never invents dimension schema.
   - port_uid: ASSET-01-PORT-OUT-VIDEO
     boundary: Outbound to VIDEO
-    r9_operation: createDepartmentHandoff
+    registered_operation: createDepartmentHandoff
     method_effective_path: POST /v1/handoffs
-    r9_permission: department.handoff.create
+    registered_permission: department.handoff.create
     state_event: HANDOFF_READY→HANDED_OFF; VIDEO dependency→READY | handoff.created
     exposure: ASSET-01-ACT-HANDOFF; exact locked manifest only.
   - port_uid: ASSET-01-PORT-LAYER-DOC-CREATE
     boundary: Layer Runtime
-    r9_operation: createLayerDocument
+    registered_operation: createLayerDocument
     method_effective_path: POST /v1/layer-documents
-    r9_permission: asset.layer.write
+    registered_permission: asset.layer.write
     state_event: DRAFT→ACTIVE | layer.document.created
     exposure: Image-compatible asset only.
   - port_uid: ASSET-01-PORT-LAYER-DOC-UPDATE
     boundary: Layer Runtime
-    r9_operation: updateLayerDocument
+    registered_operation: updateLayerDocument
     method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}
-    r9_permission: asset.layer.write
+    registered_permission: asset.layer.write
     state_event: ACTIVE→ACTIVE | layer.document.updated
     exposure: Versioned update only.
   - port_uid: ASSET-01-PORT-LAYER-ADD
     boundary: Layer Runtime
-    r9_operation: addLayer
+    registered_operation: addLayer
     method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers
-    r9_permission: asset.layer.write
+    registered_permission: asset.layer.write
     state_event: layer document version increments
     exposure: Add layer.
   - port_uid: ASSET-01-PORT-LAYER-DELETE
     boundary: Layer Runtime
-    r9_operation: deleteLayer
+    registered_operation: deleteLayer
     method_effective_path: DELETE /v1/layer-documents/{layerDocumentId}/layers/{layerId}
-    r9_permission: asset.layer.write
+    registered_permission: asset.layer.write
     state_event: layer document version increments
     exposure: Locked layer rejects destructive mutation.
   - port_uid: ASSET-01-PORT-LAYER-DUP
     boundary: Layer Runtime
-    r9_operation: duplicateLayer
+    registered_operation: duplicateLayer
     method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/duplicate
-    r9_permission: asset.layer.write
+    registered_permission: asset.layer.write
     state_event: layer document version increments
     exposure: Duplicate layer.
   - port_uid: ASSET-01-PORT-LAYER-REORDER
     boundary: Layer Runtime
-    r9_operation: reorderLayer
+    registered_operation: reorderLayer
     method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/reorder
-    r9_permission: asset.layer.write
+    registered_permission: asset.layer.write
     state_event: layer document version increments
     exposure: z_index remains unique/compact.
   - port_uid: ASSET-01-PORT-LAYER-PROPS
     boundary: Layer Runtime
-    r9_operation: updateLayerProperties
+    registered_operation: updateLayerProperties
     method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}
-    r9_permission: asset.layer.write
+    registered_permission: asset.layer.write
     state_event: layer document version increments
     exposure: Opacity/blend/transform etc.
   - port_uid: ASSET-01-PORT-LAYER-MASK
     boundary: Layer Runtime
-    r9_operation: updateLayerMask
+    registered_operation: updateLayerMask
     method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}/mask
-    r9_permission: asset.layer.write
+    registered_permission: asset.layer.write
     state_event: layer document version increments
     exposure: Mask/semantic region.
   - port_uid: ASSET-01-PORT-PATCH-CREATE
     boundary: Asset Patch
-    r9_operation: createAssetPatch
+    registered_operation: createAssetPatch
     method_effective_path: POST /v1/asset-patches
-    r9_permission: asset.layer.write
+    registered_permission: asset.layer.write
     state_event: asset.patch.created
     exposure: Exact source asset/layer/blueprint/DNA refs required.
   - port_uid: ASSET-01-PORT-PATCH-PREVIEW
     boundary: Asset Patch
-    r9_operation: previewAssetPatch
+    registered_operation: previewAssetPatch
     method_effective_path: POST /v1/asset-patches/{patchId}/preview
-    r9_permission: asset.layer.write
+    registered_permission: asset.layer.write
     state_event: Patch→PREVIEW_READY
     exposure: No output version created yet.
   - port_uid: ASSET-01-PORT-PATCH-DECIDE
     boundary: Asset Patch
-    r9_operation: decideAssetPatch
+    registered_operation: decideAssetPatch
     method_effective_path: POST /v1/asset-patches/{patchId}/decision
-    r9_permission: asset.patch.decide
+    registered_permission: asset.patch.decide
     state_event: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no output
     exposure: No non-ASSET patch operation may bind to this port.
 hard_locks:
@@ -1964,9 +1962,9 @@ final_gap_closure:
   parallel_control_runtime_registry_removed: true
   shared_operation_definition_location: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
   rule: Action owns one embedded runtime_binding. Shared service details are referenced by shared_operation_id only.
-script_content_authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT
+script_content_authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
 production_script_content_contract:
-  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.ASSET
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#content_ownership.ASSET
   existing_view: Asset_Production_Script_View
   section_uids:
   - ASSET-SCRIPT-SEC-01-REQUIREMENT
@@ -1978,16 +1976,17 @@ production_script_content_contract:
   - ASSET-SCRIPT-SEC-07-AUDIO
   - ASSET-SCRIPT-SEC-08-OUTPUT
 correction_script_content_contract:
-  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_correction_content.ASSET
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#correction_contract
   existing_object: CorrectionScriptCandidate
 provider_adapter_contract:
-  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.1#provider_adapter_contract
-  profile_owner: admin:AIAPI-06#provider_model_profiles
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#provider_adapter
+  profile_owner: admin:AIAPI-01#provider_model_profiles
   department_provider_registry: FORBIDDEN
+  router_owner: ACPOS AI Execution / current AI API Router
 canonical_script_source_binding:
   owner: CORE Script System
   source_object_uid: CORE-01-REF-CANONICAL-SCRIPT
   required_binding: Exact project_id + topic_id + canonical_script_version + canonical_script_hash
-  rule: The department specialized production script must consume the exact CORE CanonicalProductionScriptRef. It may add only department-specific production
-    detail under its existing content contract.
+  rule: The department specialized production script must consume the exact CORE CanonicalProductionScriptRef. It may add only department-specific
+    production detail under its existing content contract.
   missing_or_mismatch: BLOCK + REPORT_AUTHORITY_GAP

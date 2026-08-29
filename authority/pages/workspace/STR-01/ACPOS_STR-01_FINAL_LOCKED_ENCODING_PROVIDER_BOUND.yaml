@@ -10,17 +10,20 @@ authority:
   single_page_workspace: true
   single_machine_authority: true
   parallel_strategy_page: FORBIDDEN
-  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
   missing_value_display: —
   ai_role: Strategic Intelligence Assistant
   purpose: 企業策略情報整理、趨勢分析、方案比較、風險評估、資源建議與人工決策輔助。
-  hard_boundary: AI provides analysis/proposals only. Formal strategy decision is human-governed. Finance / Workflow / Governance / Production execution remains
-    in its owning module.
+  hard_boundary: AI provides analysis/proposals only. Formal strategy decision is human-governed. Finance / Workflow / Governance / Production
+    execution remains in its owning module.
   provider_adapter_binding_revision: 2026-08-28-STRATEGIC-TEXT-CHAT-PROVIDER-BINDING
-  provider_adapter_authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.2
+  provider_adapter_authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  production_script_authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
 strategic_context_contract:
   source_types:
   - 市場情報
@@ -1251,8 +1254,8 @@ acceptance:
   condition: Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted=BLOCK
 - acceptance_uid: STR-01-ACC-13
   item: Shared Provider Adapter Binding
-  condition: Single/Multi/Cross strategic AI resolves TEXT_CHAT through shared AIAPI-06 ProviderModelProfile + shared Provider Prompt Adapter; no local picker/router/compiler/provider
-    syntax.
+  condition: Single/Multi/Cross strategic AI resolves TEXT_CHAT through shared AIAPI-01 ProviderModelProfile + shared Provider Prompt Adapter;
+    no local picker/router/compiler/provider syntax.
 hard_locks:
 - Only workspace:STR-01 is the current executable Strategic Center workspace.
 - Strategic Center is a Strategic Intelligence and human decision-support workspace, not an automatic decision/execution system.
@@ -1299,10 +1302,10 @@ validation:
   provider_specific_strategic_prompt_count: 0
 shared_provider_adapter_binding:
   binding_uid: STR-01-BIND-SHARED-PROVIDER-ADAPTER
-  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.2#normalized_instruction_contract.STRATEGY_CENTER
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#strategy_contract
   owner: EXISTING ACPOS AI Conversation Core / API Capability Router / Provider Prompt Adapter
   required_capability: TEXT_CHAT
-  profile_owner: admin:AIAPI-06#provider_model_profiles
+  profile_owner: admin:AIAPI-01#provider_model_profiles
   page_local_provider_registry: FORBIDDEN
   page_local_provider_prompt_compiler: FORBIDDEN
   manual_provider_model_picker: FORBIDDEN
@@ -1310,8 +1313,8 @@ shared_provider_adapter_binding:
   existing_send_binding:
     port_uid: STR-01-PORT-SEND
     operation: sendConversationMessage
-    rule: No new STR send endpoint or action is created. Existing Conversation Core receives the message/context and invokes system-owned capability routing/translation
-      before external AI execution.
+    rule: No new STR send endpoint or action is created. Existing Conversation Core receives the message/context and invokes system-owned capability
+      routing/translation before external AI execution.
   instruction_building:
     source_contracts:
     - strategic_context_contract
@@ -1327,16 +1330,16 @@ shared_provider_adapter_binding:
     - CURRENT_USER_INSTRUCTION
     source_priority_ref: strategic_context_contract.priority
     missing_source_rule: Preserve —/incomplete or BLOCK dependent operation; AI must not invent source/finance/resource/risk/evidence values.
-    analysis_output_rule: Returned strategic analysis must satisfy strategy_analysis_contract mandatory fields and the selected strategy_output_contract type
-      when a structured output is requested.
+    analysis_output_rule: Returned strategic analysis must satisfy strategy_analysis_contract mandatory fields and the selected strategy_output_contract
+      type when a structured output is requested.
   mode_mapping:
     SINGLE_AI:
       capability: TEXT_CHAT
       compile: one canonical strategic instruction -> one system-resolved ProviderModelProfile
     MULTI_AI:
       capability: TEXT_CHAT
-      compile: same original question + same Strategic Context + same evidence basis -> separate compilation per selected AI participant route/profile; results
-        remain independent AI statements
+      compile: same original question + same Strategic Context + same evidence basis -> separate compilation per selected AI participant route/profile;
+        results remain independent AI statements
     CROSS_REVIEW:
       capability: TEXT_CHAT
       required:
@@ -1387,10 +1390,14 @@ shared_provider_adapter_binding:
   - All independent first-round participants receive the same original question and same shared strategic context/evidence basis.
   - Other AI responses remain AI statements, not SOURCE FACT.
   - Provider differences may affect expression but must not change governed context, evidence hierarchy, operation type, or required output contract.
-  assistant_boundary: AI Assistant remains the existing meeting secretary/record function. This binding does not route assistant output through the strategic
-    analyst contract or authorize independent strategic recommendations.
+  assistant_boundary: AI Assistant remains the existing meeting secretary/record function. This binding does not route assistant output through
+    the strategic analyst contract or authorize independent strategic recommendations.
   new_controls: 0
   new_actions: 0
   new_ports: 0
   new_gates: 0
   new_runtime_services: 0
+shared_acquisition_relation:
+  raw_crawl_execution: NOT_OWNED_BY_WORKSPACE_STRATEGY
+  default: consume governed strategic intelligence/evidence
+  direct_acquisition_only_when_registered: BLOCK + REPORT_AUTHORITY_GAP

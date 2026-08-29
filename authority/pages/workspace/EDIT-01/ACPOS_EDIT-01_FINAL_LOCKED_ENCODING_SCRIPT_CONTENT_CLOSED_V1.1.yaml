@@ -15,30 +15,32 @@ authority:
   visual_override: FORBIDDEN
   missing_value_display: —
   unlisted_definition_behavior: BLOCK; AI MUST NOT INFER OR CREATE
-  final_gap_closure_revision: 2026-08-28-BUTTON-RUNTIME-BINDING-CLOSURE
-  source_file_for_gap_closure: ACPOS_EDIT-01_FINAL_LOCKED_ENCODING(1).yaml
-  final_dedup_revision: 2026-08-28-SINGLE-EXECUTABLE-AUTHORITY
   parallel_authority_for_same_page: FORBIDDEN
-  supersedes_gap_closed_file: ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_GAP_CLOSED.yaml
-  script_content_closure_revision: 2026-08-28-PRODUCTION-CORRECTION-PROVIDER-CONTENT
-  four_department_script_closure_revision: 2026-08-28-FOUR-DEPARTMENT-SCRIPT-FINAL
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  production_script_authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+  department_boundary: EDIT+VOICE is one Current department/page; Voice/Music/SFX/Mix/LipSync/Subtitle are internal EDIT-01 stages; final handoff
+    is EDIT+VOICE→QA.
 intro_rules:
 - EDIT-01 整合後製剪輯工作台｜頁面設計與完整系統權威封板
 - FINAL_FROZEN_HARD_LOCK｜CURRENT ONLY｜GLOBAL VISUAL INHERIT｜BLUEPRINT DRIVEN｜AUTO/MANUAL ORCHESTRATION｜STANDALONE EXCEPTION
-- 本版唯一有效：圖 1 Final Layout / Layout Region / Section UID / Component UID / Control & Field UID / Action UID / Object UID / Stage UID / State UID / Transition
-  UID / Error UID / Permission UID / Gate UID。任何歷史切版、平行視覺圖或舊配置不得合併回填。
+- 本版唯一有效：圖 1 Final Layout / Layout Region / Section UID / Component UID / Control & Field UID / Action UID / Object UID / Stage UID / State UID
+  / Transition UID / Error UID / Permission UID / Gate UID。任何歷史切版、平行視覺圖或舊配置不得合併回填。
 - 圖 1｜EDIT-01 最終切版唯一視覺權威：功能區固定為 1 Context、2 Asset Binding、3 16:9 Preview、4 General Toolbar、5 Range/Marker、6 Multi-track Timeline、7 Semantic Correction、8
-  Manual Micro-Adjustment、9 Inspector、10 Compare、11 Execution/Output。色彩只繼承 GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY。圖中具體資料僅為視覺示意，不得作為 Business Data；Runtime Real
-  Data Only，缺值 = —。
+  Manual Micro-Adjustment、9 Inspector、10 Compare、11 Execution/Output。色彩只繼承 GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY。圖中具體資料僅為視覺示意，不得作為 Business Data；Runtime
+  Real Data Only，缺值 = —。
 - 圖像 UID 同步索引｜圖 1 的 1–11 區域必須與本文同版；任何區域位置、比例或責任變更都必須同步修改圖像與本文。
 contracts:
   authority_priority:
   - item: EDIT 範圍最高權威
     definition: 本文件為 EDIT-01 頁面、視覺、功能、UID、控制、狀態、流程與封板 Gate 的最高權威。
-  - item: R9 使用方式
-    definition: R9 只允許補充與本文不衝突的既有系統識別、底層服務或共用治理。任何與本文不同的 EDIT 規則不得套用。
+  - item: current registered authority 使用方式
+    definition: current registered authority 只允許補充與本文不衝突的既有系統識別、底層服務或共用治理。任何與本文不同的 EDIT 規則不得套用。
   - item: AI 白名單
-    definition: AI 只可建立本文明確列出的 Section / Component / Field / Control / Action / State / Error / Transition / Permission Scope。未列出者=FORBIDDEN，不是「請 AI 補齊」。
+    definition: AI 只可建立本文明確列出的 Section / Component / Field / Control / Action / State / Error / Transition / Permission Scope。未列出者=FORBIDDEN，不是「請
+      AI 補齊」。
   - item: 缺口處理
     definition: 本文封板後若工程發現必要資料在本文件無 UID/契約：直接 BLOCK_BUILD + REPORT_AUTHORITY_CONFLICT；禁止自行命名、推測、複製其他頁面模式。
   - item: 同步規則
@@ -70,7 +72,8 @@ contracts:
   - item: Layout Authority
     definition: 圖 1 為 EDIT-01 CURRENT ONLY 唯一切版權威。文字規格若與圖 1 的功能區位置／層級衝突，以本版圖 1 + 本表同步規則為準並立即修正文檔；禁止保留雙版本。
   - item: Top Context / Execution
-    definition: 全寬頂列：Project → Topic → Task → Stage → Status → AUTO/MANUAL → Start/Continue → View Blueprint/Package/Binding → Return Blueprint Correction。
+    definition: 全寬頂列：Project → Topic → Task → Stage → Status → AUTO/MANUAL → Start/Continue → View Blueprint/Package/Binding → Return Blueprint
+      Correction。
   - item: Primary Production Grid
     definition: Context 下方固定兩欄：左 Asset Binding 約 20%，右 Production Stack 約 80%；gap 使用 GLOBAL section_gap=16px。左欄可獨立捲動；右欄不得因左欄內容增長而改變 Preview 比例。
   - item: Asset Binding Column
@@ -80,28 +83,31 @@ contracts:
   - item: Preview
     definition: 唯一主 Preview；aspect-ratio 16/9；width:100%；高度優先；Transport 位於下方。不得為配合整頁高度壓縮成短條播放器。
   - item: Timeline
-    definition: Video / Overlay / Voice / Music / SFX / Subtitle / LipSync 固定 Track；Dialogue Binding Guard 與 Timeline 同區顯示；Track/Clip 增加時向下延伸或區內捲動，不壓縮 Preview。
+    definition: Video / Overlay / Voice / Music / SFX / Subtitle / LipSync 固定 Track；Dialogue Binding Guard 與 Timeline 同區顯示；Track/Clip 增加時向下延伸或區內捲動，不壓縮
+      Preview。
   - item: Adjustment Row
     definition: Timeline 下方雙欄：左約 38% Semantic Correction + Score/Issues；右約 62% Manual Micro-Adjustment；兩區可隨頁面捲動。
   - item: Bottom Operation Row
     definition: 最下層三欄：Inspector 約 34% / Version Compare 約 34% / Execution-Output 約 32%；依內容延伸，可隨頁面捲動；Inspector 只存在於 EDIT-01-VIS-INSPECTOR 指定位置。
   - item: Global Geometry
-    definition: Control h40、Button radius10、Panel radius12、Large container radius24、section gap16、content padding16；狀態／Focus／Hover／Disabled 完全繼承 GLOBAL。
+    definition: Control h40、Button radius10、Panel radius12、Large container radius24、section gap16、content padding16；狀態／Focus／Hover／Disabled 完全繼承
+      GLOBAL。
   - item: Responsive
-    definition: EDIT 內部只封板 Desktop Production Layout：viewport ≥1440px 使用 20/80、38/62、34/34/32 比例；1280–1439px 左欄固定 240px、右欄吃剩餘寬度，底部仍三欄；<1280px 不自行重排/Drawer/Stack，Main
-      Workspace min-width=1280px 並允許水平捲動。Global Shell 可調外框，但不得改 EDIT 內部 Section 順序。
+    definition: EDIT 內部只封板 Desktop Production Layout：viewport ≥1440px 使用 20/80、38/62、34/34/32 比例；1280–1439px 左欄固定 240px、右欄吃剩餘寬度，底部仍三欄；<1280px
+      不自行重排/Drawer/Stack，Main Workspace min-width=1280px 並允許水平捲動。Global Shell 可調外框，但不得改 EDIT 內部 Section 順序。
   - item: Image Sample Data
     definition: 圖 1 內具體 Project/Topic/Task/檔名/Score/Version/日期只作版面示意；Runtime Business Data 必須 Real Data Only；缺值 = —；Sample Data 禁止進入程式與資料庫。
   visual_uid_sync_index:
   - region: 1 專案／主題／任務情境（Context）
     section_visual_uid: EDIT-01-SEC-01 / EDIT-01-VIS-CONTEXT
     primary_component_uid: EDIT-01-CMP-SOURCE-BAR
-    immutable_rule: 頁面最上方全寬；Project / Topic / Task / Stage / Status / AUTO-MANUAL / Start-Continue / Blueprint-Package-Binding 狀態集中於此；PROJECT_TASK 首次生產不得手動輸入腳本或素材。
+    immutable_rule: 頁面最上方全寬；Project / Topic / Task / Stage / Status / AUTO-MANUAL / Start-Continue / Blueprint-Package-Binding 狀態集中於此；PROJECT_TASK
+      首次生產不得手動輸入腳本或素材。
   - region: 2 素材綁定區（可捲動）
     section_visual_uid: EDIT-01-SEC-02 / EDIT-01-VIS-ASSET-BIND
     primary_component_uid: EDIT-01-CMP-MEDIA-BIN
-    immutable_rule: 主工作區左欄約 20%；PROJECT_TASK 只顯示 Blueprint/Production Package 已綁定 Exact Asset ID/Version/Filename/Checksum，唯讀且可捲動；Standalone 才顯示上傳 Session
-      Media。
+    immutable_rule: 主工作區左欄約 20%；PROJECT_TASK 只顯示 Blueprint/Production Package 已綁定 Exact Asset ID/Version/Filename/Checksum，唯讀且可捲動；Standalone 才顯示上傳
+      Session Media。
   - region: 3 主預覽（16:9 優先）
     section_visual_uid: EDIT-01-SEC-03 / EDIT-01-VIS-PREVIEW
     primary_component_uid: EDIT-01-CMP-PREVIEW + EDIT-01-CMP-TRANSPORT
@@ -122,13 +128,13 @@ contracts:
   - region: 7 腳本／AI 語義修正
     section_visual_uid: EDIT-01-SEC-08 + SEC-13 / EDIT-01-VIS-SEMANTIC
     primary_component_uid: EDIT-01-CMP-API + EDIT-01-CMP-STAGE-EVALUATION
-    immutable_rule: Timeline 下方左區；系統自動帶入 Current Stage Script / Blueprint / DNA / Bound Asset / Issue-Evidence；使用者只輸入繁中修改要求；Candidate → Compare → Execute
-      Correction → Recheck。
+    immutable_rule: Timeline 下方左區；系統自動帶入 Current Stage Script / Blueprint / DNA / Bound Asset / Issue-Evidence；使用者只輸入繁中修改要求；Candidate → Compare
+      → Execute Correction → Recheck。
   - region: 8 人工時間軸微調
     section_visual_uid: EDIT-01-SEC-06 + SEC-07 / EDIT-01-VIS-MICRO
     primary_component_uid: EDIT-01-CMP-MICRO-ADJUSTMENT + EDIT-01-CMP-INSPECTOR
-    immutable_rule: Timeline 下方右區；Drag / Move / Trim / Snap / Frame-Timecode / Volume-Fade 等局部 Working Draft 微調；不得修改 Blueprint、正式 Script Authority 或 Project
-      Asset Binding。
+    immutable_rule: Timeline 下方右區；Drag / Move / Trim / Snap / Frame-Timecode / Volume-Fade 等局部 Working Draft 微調；不得修改 Blueprint、正式 Script Authority
+      或 Project Asset Binding。
   - region: 9 Inspector／屬性面板
     section_visual_uid: EDIT-01-SEC-07 + SEC-09~12 / EDIT-01-VIS-INSPECTOR
     primary_component_uid: EDIT-01-CMP-INSPECTOR
@@ -140,7 +146,8 @@ contracts:
   - region: 11 執行與輸出（Execution / Output）
     section_visual_uid: EDIT-01-SEC-15 + SEC-16 / EDIT-01-VIS-OUTPUT
     primary_component_uid: EDIT-01-CMP-OUTPUT + EDIT-01-CMP-STATUS + EDIT-01-CMP-STAGE-RAIL
-    immutable_rule: 底部右區；Generate/Correction Job、AUTO PASS→Next Stage、FAIL→Pause+Correction、Render/Output/Lock/Handoff Gate 集中於此；Blocking Error 必須 Disable。
+    immutable_rule: 底部右區；Generate/Correction Job、AUTO PASS→Next Stage、FAIL→Pause+Correction、Render/Output/Lock/Handoff Gate 集中於此；Blocking Error
+      必須 Disable。
   internal_layout_order:
   - section_visual_region: 1 / SEC-01
     fixed_order: Project → Topic → Task → Stage → Status → AUTO/MANUAL → Start/Continue → View Blueprint/Package/Binding → Return Blueprint Correction
@@ -161,8 +168,8 @@ contracts:
     fixed_order: Track Header → Ruler/Playhead → Video → Overlay → Voice → Music → SFX → Subtitle → LipSync → Dialogue Binding Guard
     size_rule: 主製作欄全寬；Timeline min-height 320px；Track 可增高/捲動；Binding Guard 固定在 Timeline 右側/下側 Context Panel，不另開頁。
   - section_visual_region: 7 / SEC-08 + SEC-13
-    fixed_order: Current Stage/Script/Bound Input → Correction Instruction → Generate Candidate → Compare → Execute Correction → Score/Issue/Evidence →
-      Recheck
+    fixed_order: Current Stage/Script/Bound Input → Correction Instruction → Generate Candidate → Compare → Execute Correction → Score/Issue/Evidence
+      → Recheck
     size_rule: Adjustment Row 左約38%；Textarea min120px；PROJECT_TASK 首次生產不顯示手動 Prompt。
   - section_visual_region: 8 / SEC-06 + SEC-07
     fixed_order: Range/Clip/Track Scope → Drag/Move/Trim/Snap → Frame/Timecode Nudge → Volume/Fade/Transition/Subtitle Offset → Apply Draft
@@ -304,7 +311,7 @@ contracts:
     rule_example: 任何閾值/容差必須引用 Policy Registry；禁止 AI 自訂數值
   - type: Integration Port UID
     format: EDIT-01-PORT-[BOUNDARY/STAGE]-[NAME]
-    rule_example: 只用於 R9 Operation/Endpoint boundary 映射；不得當作 Control/Action/Page UID，也不得自行建立未登錄 Port。
+    rule_example: 只用於 current registered authority Operation/Endpoint boundary 映射；不得當作 Control/Action/Page UID，也不得自行建立未登錄 Port。
   source_modes:
   - mode: PROJECT_TASK
     project: Required
@@ -505,8 +512,8 @@ contracts:
   - item: Inbound Task
     definition: 上游完成可供剪輯的任務後，EDIT 只接收「待辦/Handoff 邊界資料」並顯示待辦；本文件不定義上游部門如何產生該 Handoff。
   - item: Select Context
-    definition: 使用者只選 Project → Topic → Production Task。選定後系統自動 Resolve Locked Blueprint、Production Package、Stage Script Sections、DNA refs、Asset Binding
-      refs、VIDEO input refs。
+    definition: 使用者只選 Project → Topic → Production Task。選定後系統自動 Resolve Locked Blueprint、Production Package、Stage Script Sections、DNA refs、Asset
+      Binding refs、VIDEO input refs。
   - item: First Production
     definition: 禁止要求使用者重新輸入剪輯、配音、配樂、SFX、字幕、對嘴腳本；禁止讓使用者挑 Project 素材。
   - item: Single Package
@@ -537,21 +544,22 @@ contracts:
     hard_guard: 每次 Stage Execute 前重新驗證；跨 Project/Topic cache 禁止
   - step_uid: EDIT-01-BIND-08
     resolution_rule: Voice Dialogue Segment → DialogueTimingBinding → LipSync Target + Subtitle Segment
-    hard_guard: LipSync/Subtitle 必須共用 dialogue_segment_id + canonical timebase + binding fingerprint；Voice timing/version 變更立即標兩者 STALE，未重新同步不得 Stage PASS
+    hard_guard: LipSync/Subtitle 必須共用 dialogue_segment_id + canonical timebase + binding fingerprint；Voice timing/version 變更立即標兩者 STALE，未重新同步不得
+      Stage PASS
   auto_manual_orchestration:
   - stage_uid: EDIT-01-STAGE-01-ASSEMBLY
     auto: 自動載入 EDIT.ASSEMBLY Section + exact VIDEO refs → 影像碎片整合 → Stage Evaluation → WAIT_CONFIRMATION；使用者確認後才執行正式 Output Decision / Score Persistence
-      / Editing→Voice boundary，並自動啟動下一 Stage。
+      / EDIT+VOICE internal stage transition boundary，並自動啟動下一 Stage。
     manual: 載入/執行來源完全相同；Stage Evaluation 後等待「確認目前階段」或「修改目前階段」。確認只批准目前結果；下一 Stage 仍需人工按開始/繼續。
     stage_result_gate: Score≥95 + no Hard Block 才 PASS；FAIL 進 Correction
   - stage_uid: EDIT-01-STAGE-02-AUDIO
-    auto: 自動載入 Voice/Music/SFX/Mix sections + exact audio refs → 啟動既有 Voice Runtime → 完成 Audio Mix → Stage Evaluation → WAIT_CONFIRMATION；確認後 AUTO 才自動開始
-      SYNC。
+    auto: 自動載入 Voice/Music/SFX/Mix sections + exact audio refs → 啟動既有 Voice Runtime → 完成 Audio Mix → Stage Evaluation → WAIT_CONFIRMATION；確認後
+      AUTO 才自動開始 SYNC。
     manual: 同一 Blueprint/Package/Asset refs；完成 Audio Mix 後評分並等待確認/修改。確認後仍需人工按開始/繼續進入 SYNC；不得重選 Project Asset。
     stage_result_gate: 所有 Voice/Music/SFX 已由上游素材生產並入庫；本 Stage 只引用/混音
   - stage_uid: EDIT-01-STAGE-03-SYNC
-    auto: 自動載入 Subtitle/LipSync sections + exact Voice/Video refs → LipSync → Subtitle Sync → DialogueTimingBinding 一致性檢查 → Stage Evaluation → WAIT_CONFIRMATION；確認後只完成正式
-      Voice Output Decision / Score Persistence，接著 AUTO 自動進 FINALIZE。
+    auto: 自動載入 Subtitle/LipSync sections + exact Voice/Video refs → LipSync → Subtitle Sync → DialogueTimingBinding 一致性檢查 → Stage Evaluation →
+      WAIT_CONFIRMATION；確認後只完成正式 Voice Output Decision / Score Persistence，接著 AUTO 自動進 FINALIZE。
     manual: 同資料來源；可做細節人工調整，但 Subtitle timing 只能相對 Voice anchor 微調。完成 LipSync+Subtitle 後評分並等待確認/修改；確認後下一 Stage 仍需人工按開始/繼續。
     stage_result_gate: LipSync/Subtitle 共用 dialogue_segment_id/timebase/binding fingerprint；任一 stale/mismatch/drift > EDIT-01-POLICY-DIALOGUE-SYNC-TOLERANCE
       resolved value = FAIL/BLOCK
@@ -562,16 +570,18 @@ contracts:
   - stage_uid: EDIT-01-STAGE-05-QA-HANDOFF
     auto: Exact Version 已 Save/Render/Verify/Lock 後，使用者在同一 EDIT-01 執行最終 Handoff；後端唯一合法端口為 handoffVoiceToQA。頁面不跳轉至 VOICE，也不存在直接 Editing→QA。
     manual: 同；MANUAL 亦只能使用 handoffVoiceToQA。EDIT 只呈現自身 final handoff action，不定義 QA 內部實作。
-    stage_result_gate: EDIT-01-GATE-HANDOFF PASS + exact locked version/output/evidence + R9 voice.handoff.create authorization；direct EDIT→QA = FORBIDDEN
+    stage_result_gate: EDIT-01-GATE-HANDOFF PASS + exact locked version/output/evidence + current registered authority voice.handoff.create authorization；final
+      EDIT+VOICE→QA handoff is REQUIRED after integrated finalization
   project_correction:
   - type: 人工細節編輯
-    user_input: 不輸入腳本；直接在 Timeline 以拖曳 Range/Clip、Trim handle、Split/Razor、Move/Reorder、Transition、Speed、Volume/Fade、frame nudge、numeric timecode 等精準操作
+    user_input: 不輸入腳本；直接在 Timeline 以拖曳 Range/Clip、Trim handle、Split/Razor、Move/Reorder、Transition、Speed、Volume/Fade、frame nudge、numeric timecode
+      等精準操作
     system_auto_load: Current Working Draft + Selected Track/Clip/Range + exact bound refs；字幕 timing 另讀 DialogueTimingBinding
     allowed_result: 只改 Working Draft；不改 Blueprint/Production Package/Source binding。Voice timing 若被合法微調，系統必須把 LipSync+Subtitle 標 STALE 並要求重新同步
   - type: AI/語義修正
     user_input: 只輸入繁中「修改要求」；先在 Preview/Timeline 選 Target/Range（可不選則用 Issue Context），不直接手寫 Provider 語法或重寫完整正式腳本
-    system_auto_load: Current Stage + Current Script Section + Locked Blueprint + DNA/Asset refs + Current Result + Score + Issue/Evidence + target range；系統自動產生
-      Correction Script Candidate
+    system_auto_load: Current Stage + Current Script Section + Locked Blueprint + DNA/Asset refs + Current Result + Score + Issue/Evidence + target
+      range；系統自動產生 Correction Script Candidate
     allowed_result: 人工確認 Candidate → Provider/API translation/execute → Candidate Output → Apply → Stage Recheck；只有語義/內容要求走此路徑，純幾何/時間細節可直接人工微調
   - type: 需要新來源
     user_input: 不在 EDIT 直接輸入/挑選新 Project Asset
@@ -598,16 +608,17 @@ contracts:
   - item: 最後總串接
     definition: 五個部門全部封板後，再建立跨部門 Orchestration/Integration Authority，綁定 Handoff/Event/State/Retry/Return/E2E；不得回頭重寫各部門內部權威。
   - item: 底層 Operation Boundary
-    definition: EDIT 可以在同一頁編排 R9 已存在的 Editing/Voice Runtime operations，但只做 operation/path/permission/state/event boundary mapping；不得把 VOICE/QA service internals
-      複製成 EDIT-owned implementation。
+    definition: EDIT 可以在同一頁編排 current registered authority 已存在的 Editing/Voice Runtime operations，但只做 operation/path/permission/state/event boundary
+      mapping；不得把 VOICE/QA service internals 複製成 EDIT-owned implementation。
   - item: 單頁 UI ≠ Service Merge
-    definition: 使用者始終停留 EDIT-01；底層可依 R9 state machine 從 EditingExecutionService 進 Voice Runtime，再由 Voice→QA。UI 不導航至 VOICE 頁，也不得建立 direct Editing→QA endpoint。
+    definition: 使用者始終停留 EDIT-01；底層可依 current registered authority state machine 從 EditingExecutionService 進 Voice Runtime，再由 EDIT+VOICE→QA。UI
+      不導航至 VOICE 頁，也不得建立 direct Editing→QA endpoint。
   stage_evaluation:
   - item: Evaluator Action
     definition: EDIT-01-ACT-STAGE-EVALUATE；Stage Execute/Correction 完成後必須觸發；AUTO 自動觸發，MANUAL 可由 Recheck 觸發。
   - item: Input
-    definition: Current Stage result ref + exact Blueprint Production Package evaluation criteria + Current Script Role/Section + Input Fingerprint + Stage
-      Evidence。
+    definition: Current Stage result ref + exact Blueprint Production Package evaluation criteria + Current Script Role/Section + Input Fingerprint
+      + Stage Evidence。
   - item: Output
     definition: EDIT-01-OBJ-STAGE-EVALUATION + 0..N EDIT-01-OBJ-STAGE-EVIDENCE；overall_score / dimension_scores / hard_blocks / result / evaluator_version
       全部可追蹤。
@@ -615,18 +626,19 @@ contracts:
     definition: Stage PASS threshold = Production Package evaluation criteria；本版現行 authority=95。不得由 AI 自訂不同分數門檻。
   - item: Internal vs QA Department
     definition: 本頁只做 EDIT Stage Evaluation。真正 QA 部門只在 EDIT-01-STAGE-05-QA-HANDOFF boundary 之後；EDIT 不定義 QA 內部實作。
-  - item: R9 Score Persistence Sequence
-    definition: 本文 Stage Evaluation 可先產生可見評分供「確認/修改」決策；R9 submitScorecard 只能在對應 Candidate 已由 decideOutputCandidate 進入 SCORE_PENDING 後持久化。不得因 UI 先顯示分數而跳過正式
-      state transition。
+  - item: current registered authority Score Persistence Sequence
+    definition: 本文 Stage Evaluation 可先產生可見評分供「確認/修改」決策；current registered authority submitScorecard 只能在對應 Candidate 已由 decideOutputCandidate 進入
+      SCORE_PENDING 後持久化。不得因 UI 先顯示分數而跳過正式 state transition。
   image_responsive_hard_lock:
   - item: Runtime UI Regions
     definition: 圖 1 中 Context、Asset Binding、16:9 Preview、General Toolbar、Range/Marker、Timeline、Semantic Correction、Manual Micro-Adjustment、Inspector、Compare、Execution/Output
-      僅依 Visual/Section/Control Registry 實作。；Inspector 顯示文字「QA」僅是 EDIT 內部 Stage Evaluation 的短標籤，語義 UID 固定為 EDIT-01-TAB-EVALUATION；真正 QA 部門只存在於 EDIT-01-STAGE-05-QA-HANDOFF。
+      僅依 Visual/Section/Control Registry 實作。；Inspector 顯示文字「QA」僅是 EDIT 內部 Stage Evaluation 的短標籤，語義 UID 固定為 EDIT-01-TAB-EVALUATION；真正 QA 部門只存在於
+      EDIT-01-STAGE-05-QA-HANDOFF。
   - item: Documentation Overlay
     definition: 圖 1 的編號圓點、說明箭頭、示範卡、說明文字、FINAL LOCKED 徽章屬文件註解，不是 Runtime Component/Control，不建立 UID、API、DB。
   - item: Illustrative Business Values
-    definition: 圖 1 的 Project/Topic/Task/Score/Version/日期/檔名等具體內容全部是 Documentation Sample Value，不屬 Runtime Data Contract；程式禁止 seed/copy/建立 sample record。Runtime
-      只能讀實際 Context/Manifest/Result，缺值=—。
+    definition: 圖 1 的 Project/Topic/Task/Score/Version/日期/檔名等具體內容全部是 Documentation Sample Value，不屬 Runtime Data Contract；程式禁止 seed/copy/建立 sample
+      record。Runtime 只能讀實際 Context/Manifest/Result，缺值=—。
   - item: Stage Rail
     definition: 圖 1 的 Stage 1~5 是 EDIT-01-CMP-STAGE-RAIL 的只讀狀態顯示；不得點擊跳 Stage。Stage 前進只依 EDIT-01-STTR-01~05。
   - item: Micro Examples
@@ -639,8 +651,14 @@ contracts:
     definition: 不自行改 Drawer/Stack/新頁；Main Workspace min-width=1280px，允許水平捲動。
   - item: Vertical
     definition: Main Page Content 不綁 Global Menu/Sidebar 高度；整頁 overflow-y:auto；Section 依內容向下延伸。
-  integration_boundary_note: 本章只做 EDIT-01 與既有 R9 Runtime Operation 的「邊界引用映射」。它不建立第二套 Backend、不把 VOICE/QA 內部實作改成 EDIT 所有，也不改變單頁 UI。Operation ID、Effective
-    Path、Permission、State Transition、Event 以 R9 Operation Registry 為底層權威；EDIT-01 的頁面、Stage、Control/Action、視覺與使用流程仍以本文 CURRENT ONLY 為權威。
+  integration_boundary_note: 本章只做 EDIT-01 與既有 current registered authority Runtime Operation 的「邊界引用映射」。它不建立第二套 Backend、不把 VOICE/QA 內部實作改成 EDIT
+    所有，也不改變單頁 UI。Operation ID、Effective Path、Permission、State Transition、Event 以 current registered authority Operation Registry 為底層權威；EDIT-01
+    的頁面、Stage、Control/Action、視覺與使用流程仍以本文 CURRENT ONLY 為權威。
+  department_flow:
+    current_department: EDIT+VOICE
+    upstream: VIDEO-01 exact handoff
+    downstream: QA-01 exact handoff after integrated finalization
+    separate_voice_page: FORBIDDEN
 registries:
   sections:
   - section_uid: EDIT-01-SEC-01
@@ -2194,9 +2212,9 @@ registries:
     entity: ExecutionInputManifest
     mutability: Immutable runtime snapshot
     owner_service: EDITING/ORCHESTRATION
-    required_content: project/topic/task + blueprint/package/script role+section + DNA refs + asset bindings；每個 asset binding 必含 binding_id, asset_id, asset_version_id,
-      filename, checksum, purpose_binding, target_track_uid, sequence_order, timeline_anchor, cue_id/dialogue_segment_id, required_flag；video handoff ref
-      + fingerprint；Overlay 亦必須使用 target_track_uid=EDIT-01-TRACK-OVERLAY，禁止把 overlay 當未定義自由 Layer。
+    required_content: project/topic/task + blueprint/package/script role+section + DNA refs + asset bindings；每個 asset binding 必含 binding_id, asset_id,
+      asset_version_id, filename, checksum, purpose_binding, target_track_uid, sequence_order, timeline_anchor, cue_id/dialogue_segment_id, required_flag；video
+      handoff ref + fingerprint；Overlay 亦必須使用 target_track_uid=EDIT-01-TRACK-OVERLAY，禁止把 overlay 當未定義自由 Layer。
   - object_uid: EDIT-01-REF-ASSET-BINDING-MANIFEST
     entity: AssetBindingManifestRef
     mutability: Immutable Ref
@@ -2211,7 +2229,8 @@ registries:
     entity: CorrectionContext
     mutability: Mutable until accepted
     owner_service: EDITING/AI
-    required_content: current stage, issue/range, current script section, blueprint refs, asset refs, result/evidence, user Chinese request, candidate ref
+    required_content: current stage, issue/range, current script section, blueprint refs, asset refs, result/evidence, user Chinese request, candidate
+      ref
   - object_uid: EDIT-01-OBJ-STANDALONE-CONTEXT
     entity: StandaloneContext
     mutability: Owner scoped
@@ -2221,13 +2240,14 @@ registries:
     entity: DialogueTimingBinding
     mutability: Runtime/Working binding；derived from exact Voice/Script refs
     owner_service: EDITING orchestration boundary
-    required_content: dialogue_segment_id + voice_ref/version + canonical start/end + video frame range + subtitle offset + lipsync ref + binding fingerprint；LipSync/Subtitle
-      必須共用
+    required_content: dialogue_segment_id + voice_ref/version + canonical start/end + video frame range + subtitle offset + lipsync ref + binding
+      fingerprint；LipSync/Subtitle 必須共用
   - object_uid: EDIT-01-OBJ-STAGE-EVALUATION
     entity: StageEvaluation
     mutability: Immutable per evaluation run
     owner_service: EDITING/EVALUATION
-    required_content: stage_uid, evaluator_version, criteria_ref, dimension_scores, overall_score, pass_threshold, hard_blocks, evidence_refs, result, input_fingerprint
+    required_content: stage_uid, evaluator_version, criteria_ref, dimension_scores, overall_score, pass_threshold, hard_blocks, evidence_refs,
+      result, input_fingerprint
   - object_uid: EDIT-01-OBJ-STAGE-EVIDENCE
     entity: StageEvidence
     mutability: Append-only
@@ -2464,15 +2484,15 @@ registries:
     trigger_semantics: Handoff
     owner: OUTPUT/EDITING
     effect_type: HANDOFF
-    success_contract: 建立 Final Handoff Record；引用 Locked Exact Edit Version + OutputReference + Evidence/Manifest。PROJECT_TASK 的唯一 backend outbound operation
-      = handoffVoiceToQA；不得建立或呼叫 direct Editing→QA。STANDALONE 不建立任何 Project/Department Handoff。
+    success_contract: 建立 Final Handoff Record；引用 Locked Exact Edit Version + OutputReference + Evidence/Manifest。PROJECT_TASK 的唯一 backend outbound
+      operation = handoffVoiceToQA；不得建立或呼叫 direct Editing→QA。STANDALONE 不建立任何 Project/Department Handoff。
     error_contract: EDIT-01-ERR-RENDER-001 / EDIT-01-ERR-EVALUATION-001 / EDIT-01-ERR-VERSION-001 / EDIT-01-ERR-PERM-001
   - action_uid: EDIT-01-ACT-LIPSYNC-EXECUTE
     trigger_semantics: 執行對嘴同步
     owner: VOICE/AUDIO
     effect_type: JOB_START
-    success_contract: PROJECT_TASK：映射 R9 completeLipSync；只以有效 DialogueTimingBinding 執行，成功後進 SUBTITLE boundary。Voice timing 變更後舊結果 STALE。STANDALONE：只執行 owner-scoped
-      local/API job，不偽造 R9 Voice Runtime。
+    success_contract: PROJECT_TASK：映射 current registered authority completeLipSync；只以有效 DialogueTimingBinding 執行，成功後進 SUBTITLE boundary。Voice
+      timing 變更後舊結果 STALE。STANDALONE：只執行 owner-scoped local/API job，不偽造 current registered authority Voice Runtime。
     error_contract: EDIT-01-ERR-LIPSYNC-001 / EDIT-01-ERR-PERM-001
   - action_uid: EDIT-01-ACT-LIPSYNC-PREVIEW
     trigger_semantics: 預覽同步
@@ -2527,8 +2547,8 @@ registries:
     trigger_semantics: 完成音訊合音
     owner: VOICE/AUDIO
     effect_type: JOB_START
-    success_contract: PROJECT_TASK：映射 R9 completeAudioMix；完成 Audio Mix Result 並停在 LIP_SYNC-ready boundary，先進 Stage Evaluation/WAIT_CONFIRMATION，不得未確認就自動呼叫
-      completeLipSync。STANDALONE：只更新 owner-scoped Working Draft/Mix Result，不偽造 R9 Task/Run。
+    success_contract: PROJECT_TASK：映射 current registered authority completeAudioMix；完成 Audio Mix Result 並停在 LIP_SYNC-ready boundary，先進 Stage Evaluation/WAIT_CONFIRMATION，不得未確認就自動呼叫
+      completeLipSync。STANDALONE：只更新 owner-scoped Working Draft/Mix Result，不偽造 current registered authority Task/Run。
     error_contract: EDIT-01-ERR-MIX-001 / EDIT-01-ERR-TRACK-001 / EDIT-01-ERR-PERM-001
   - action_uid: EDIT-01-ACT-MIX-MASTER-LEVEL
     trigger_semantics: Master Level
@@ -2727,8 +2747,8 @@ registries:
     trigger_semantics: API 同步
     owner: EDITING
     effect_type: JOB_START
-    success_contract: PROJECT_TASK：映射 R9 completeSubtitle；必須以同一 DialogueTimingBinding 為 input，成功後形成 VOICE_OUTPUT_READY/CANDIDATE_OUTPUT，接著 Stage Evaluation/WAIT_CONFIRMATION。STANDALONE
-      不建立 R9 Voice Task。
+    success_contract: PROJECT_TASK：映射 current registered authority completeSubtitle；必須以同一 DialogueTimingBinding 為 input，成功後形成 VOICE_OUTPUT_READY/CANDIDATE_OUTPUT，接著
+      Stage Evaluation/WAIT_CONFIRMATION。STANDALONE 不建立 current registered authority Voice Task。
     error_contract: EDIT-01-ERR-API-001 / EDIT-01-ERR-API-002 / EDIT-01-ERR-API-003
   - action_uid: EDIT-01-ACT-SUB-CREATE
     trigger_semantics: 建立字幕
@@ -2981,8 +3001,8 @@ registries:
     owner: EDITING/ORCHESTRATION
     effect_type: JOB_START
     success_contract: Resolve Current Stage → Verify Input Fingerprint → Load exact Script Section/Assets → Execute。AUTO 只自動執行「目前 Stage + Evaluation」，之後進
-      WAIT_CONFIRMATION；Confirm 後才自動啟動下一 Stage。MANUAL 執行目前 Stage；Confirm 後下一 Stage 仍需再按開始/繼續。初始 PROJECT_TASK 以 R9 specialized createEditingRuntimeRun 啟動；不得使用
-      retired generic editing task execution。
+      WAIT_CONFIRMATION；Confirm 後才自動啟動下一 Stage。MANUAL 執行目前 Stage；Confirm 後下一 Stage 仍需再按開始/繼續。初始 PROJECT_TASK 以 current registered authority specialized
+      createEditingRuntimeRun 啟動；不得使用 retired generic editing task execution。
     error_contract: EDIT-01-ERR-BLUEPRINT-001 / EDIT-01-ERR-PACKAGE-001 / EDIT-01-ERR-SCRIPT-001 / EDIT-01-ERR-ASSET-BINDING-001 / EDIT-01-ERR-FILENAME-001
       / EDIT-01-ERR-CHECKSUM-001 / EDIT-01-ERR-STAGE-001 / EDIT-01-ERR-PERM-001
   - action_uid: EDIT-01-ACT-BLUEPRINT-VIEW
@@ -3007,8 +3027,8 @@ registries:
     trigger_semantics: 確認目前階段
     owner: EDITING/ORCHESTRATION
     effect_type: STATE_TRANSITION
-    success_contract: AUTO/MANUAL 共用的授權決策；僅 EDIT-01-GATE-STAGE-PASS PASS 時可執行。寫入 StageCheckpoint=CONFIRMED，並依 Current Stage 觸發 Port Registry 唯一允許的 R9 decision/score/handoff/next-runtime
-      行為；AUTO 隨後自動啟動下一 Stage，MANUAL 僅將下一 Stage 置為 Ready。
+    success_contract: AUTO/MANUAL 共用的授權決策；僅 EDIT-01-GATE-STAGE-PASS PASS 時可執行。寫入 StageCheckpoint=CONFIRMED，並依 Current Stage 觸發 Port Registry 唯一允許的
+      current registered authority decision/score/handoff/next-runtime 行為；AUTO 隨後自動啟動下一 Stage，MANUAL 僅將下一 Stage 置為 Ready。
     error_contract: EDIT-01-ERR-STAGE-001 / EDIT-01-ERR-EVALUATION-001 / EDIT-01-ERR-PERM-001
   - action_uid: EDIT-01-ACT-STAGE-MODIFY
     trigger_semantics: 修改目前階段
@@ -3032,7 +3052,8 @@ registries:
     trigger_semantics: 產生 Correction Script Candidate
     owner: EDITING/AI
     effect_type: JOB_START
-    success_contract: 只讀 CorrectionContext + Current Script Section + Blueprint/DNA/Asset refs；產生 EDIT-01-OBJ-CORRECTION-SCRIPT-CANDIDATE，不改 Working Draft
+    success_contract: 只讀 CorrectionContext + Current Script Section + Blueprint/DNA/Asset refs；產生 EDIT-01-OBJ-CORRECTION-SCRIPT-CANDIDATE，不改 Working
+      Draft
     error_contract: EDIT-01-ERR-CORRECTION-001 / EDIT-01-ERR-SCRIPT-001 / EDIT-01-ERR-PERM-001
   - action_uid: EDIT-01-ACT-CORRECTION-CANDIDATE-APPROVE
     trigger_semantics: 確認 Correction Script Candidate
@@ -3056,7 +3077,8 @@ registries:
     trigger_semantics: Current Stage 評分
     owner: EDITING/EVALUATION
     effect_type: JOB_START
-    success_contract: 以 Current Stage result + Blueprint Production Package evaluation criteria + input_fingerprint 建立 EDIT-01-OBJ-STAGE-EVALUATION / STAGE-EVIDENCE；不修改媒體
+    success_contract: 以 Current Stage result + Blueprint Production Package evaluation criteria + input_fingerprint 建立 EDIT-01-OBJ-STAGE-EVALUATION
+      / STAGE-EVIDENCE；不修改媒體
     error_contract: EDIT-01-ERR-EVALUATION-001 / EDIT-01-ERR-STAGE-001
   page_states:
   - state_uid: EDIT-01-ST-PAGE-EMPTY
@@ -3243,8 +3265,8 @@ registries:
     condition: 每個 Script Section 引用的 DNA/Asset ID/Version/filename/checksum 必須 exact match
     block_behavior: 禁止 Load/Execute 該 Stage；無 fallback
   - gate_uid: EDIT-01-GATE-STAGE-PASS
-    condition: Latest EDIT-01-OBJ-STAGE-EVALUATION.result=PASS + overall_score >= ProductionPackage evaluation threshold (current authority 95) + hard_blocks=0
-      + input_fingerprint match
+    condition: Latest EDIT-01-OBJ-STAGE-EVALUATION.result=PASS + overall_score >= ProductionPackage evaluation threshold (current authority 95)
+      + hard_blocks=0 + input_fingerprint match
     block_behavior: Stage Evaluation PASS 後解鎖「確認目前階段 / 修改目前階段」。AUTO 必須停在 WAIT_CONFIRMATION；確認後才由 Orchestrator 自動啟動下一 Stage。MANUAL 確認後仍需再按開始/繼續。FAIL/Hard
       Block 一律不得前進。
   - gate_uid: EDIT-01-GATE-PROJECT-SOURCE-MUTATION
@@ -3415,9 +3437,10 @@ registries:
     context: UI/Context 輸入非法、選項不在白名單、或 Context state 不允許修改
     recovery: 拒絕該輸入；保持原 Context/Working Draft；不得自動修正成其他值
   - error_uid: EDIT-01-ERR-VOICE-PROFILE-001
-    context: PROJECT_TASK 啟動 Editing Runtime 時找不到 exact immutable LOCKED voice_runtime_profile_id，或 ref/version/state 不符合 R9 prerequisite
-    recovery: 顯示 VOICE_RUNTIME_PROFILE_REQUIRED；BLOCK createEditingRuntimeRun/Stage Execute。EDIT 不得建立、覆寫、猜測或 default Voice Runtime Profile；由合法上游/既有正式 Profile
-      解決後重新 Resolve。
+    context: PROJECT_TASK 啟動 Editing Runtime 時找不到 exact immutable LOCKED voice_runtime_profile_id，或 ref/version/state 不符合 current registered authority
+      prerequisite
+    recovery: 顯示 VOICE_RUNTIME_PROFILE_REQUIRED；BLOCK createEditingRuntimeRun/Stage Execute。EDIT 不得建立、覆寫、猜測或 default Voice Runtime Profile；由合法上游/既有正式
+      Profile 解決後重新 Resolve。
   script_roles:
   - script_role_uid: EDIT-01-SCRIPTROLE-ASSEMBLY
     stage_uid: EDIT-01-STAGE-01-ASSEMBLY
@@ -3517,115 +3540,117 @@ registries:
     definition: LipSync issue/anchor；引用 DialogueTimingBinding
   - uid: EDIT-01-POLICY-DIALOGUE-SYNC-TOLERANCE
     type: Policy
-    definition: PROJECT_TASK 必須從 ProductionPackage.sync_policy 解析 max_lipsync_drift_ms / max_subtitle_drift_ms / timebase；STANDALONE 從 confirmed StandaloneContext.sync_policy
-      解析。缺任一值=EDIT-01-ERR-SYNC-POLICY-001；禁止 AI 使用預設 ms/frame。
+    definition: PROJECT_TASK 必須從 ProductionPackage.sync_policy 解析 max_lipsync_drift_ms / max_subtitle_drift_ms / timebase；STANDALONE 從 confirmed
+      StandaloneContext.sync_policy 解析。缺任一值=EDIT-01-ERR-SYNC-POLICY-001；禁止 AI 使用預設 ms/frame。
   integration_ports:
   - port_uid: EDIT-01-PORT-IN-VIDEO-HANDOFF
     boundary_stage: Inbound / Task Ready
-    r9_operation: createDepartmentHandoff
+    registered_operation: createDepartmentHandoff
     method_effective_path: POST /v1/handoffs
-    r9_permission: department.handoff.create
+    registered_permission: department.handoff.create
     state_transition_event: DepartmentTask:HANDOFF_READY→HANDED_OFF；dependent WAITING_DEPENDENCY→READY | handoff.created
     edit01_binding_exposure: 由 VIDEO/Orchestrator 建立；EDIT 只驗證 Approved Video Handoff + exact manifest/fingerprint。EDIT 無建立此 inbound handoff 的按鈕。
   - port_uid: EDIT-01-PORT-EDIT-RUN-CREATE
     boundary_stage: Bootstrap
-    r9_operation: createEditingRuntimeRun
+    registered_operation: createEditingRuntimeRun
     method_effective_path: POST /v1/editing-runtime-runs
-    r9_permission: editing.task.execute
+    registered_permission: editing.task.execute
     state_transition_event: No direct transition | editing.run.created
-    edit01_binding_exposure: EDIT-01-ACT-FLOW-START-CONTINUE 初始 PROJECT_TASK；必須 exact immutable LOCKED voice_runtime_profile_id；禁止 generic editing task
-      execution。
+    edit01_binding_exposure: EDIT-01-ACT-FLOW-START-CONTINUE 初始 PROJECT_TASK；必須 exact immutable LOCKED voice_runtime_profile_id；禁止 generic editing
+      task execution。
   - port_uid: EDIT-01-PORT-EDIT-RUN-READ
     boundary_stage: Status Read
-    r9_operation: getEditingRuntimeRun
+    registered_operation: getEditingRuntimeRun
     method_effective_path: GET /v1/editing-runtime-runs/{runId}
-    r9_permission: editing.task.read
+    registered_permission: editing.task.read
     state_transition_event: No transition | editing.run.viewed
     edit01_binding_exposure: 背景/SEC-16 read projection；不得因 API 存在而新增可見控制。
   - port_uid: EDIT-01-PORT-ASSEMBLY-COMPLETE
     boundary_stage: Stage 01 Execute
-    r9_operation: completeAssembly
+    registered_operation: completeAssembly
     method_effective_path: POST /v1/editing-runtime-runs/{runId}/assembly
-    r9_permission: editing.task.execute
+    registered_permission: editing.task.execute
     state_transition_event: DepartmentTask:RUNNING→CANDIDATE_OUTPUT；EditingVoiceRuntime:ASSEMBLY→EDITING_OUTPUT_READY | editing.assembly.completed
     edit01_binding_exposure: EDIT-01-ACT-FLOW-START-CONTINUE 的 ASSEMBLY 完成端口；需 explicit assembly evidence/manifest；完成後先 Stage Evaluation→WAIT_CONFIRMATION。
   - port_uid: EDIT-01-PORT-ASSEMBLY-DECISION
     boundary_stage: Stage 01 Confirm
-    r9_operation: decideOutputCandidate
+    registered_operation: decideOutputCandidate
     method_effective_path: POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
-    r9_permission: department.output.decide
+    registered_permission: department.output.decide
     state_transition_event: DepartmentTask:CANDIDATE_OUTPUT→SCORE_PENDING | output.decision_recorded
     edit01_binding_exposure: EDIT-01-ACT-STAGE-CONFIRM；只在 Stage 01 Evaluation PASS 且使用者 Confirm 後呼叫。Modify 不呼叫。
   - port_uid: EDIT-01-PORT-ASSEMBLY-SCORECARD
     boundary_stage: Stage 01 Score Persist
-    r9_operation: submitScorecard
+    registered_operation: submitScorecard
     method_effective_path: POST /v1/scorecards
-    r9_permission: department.score.write
+    registered_permission: department.score.write
     state_transition_event: DepartmentTask:SCORE_PENDING→BLOCKED or HANDOFF_READY | scorecard.submitted
     edit01_binding_exposure: 把已確認的 Stage Evaluation 結果正式持久化；不得在 CANDIDATE_OUTPUT 尚未 decision 時直接 submit。
   - port_uid: EDIT-01-PORT-EDIT-VOICE-HANDOFF
     boundary_stage: Stage 01→02 Boundary
-    r9_operation: handoffEditingToVoice
+    registered_operation: transitionEditingToVoiceStage
     method_effective_path: POST /v1/editing-runtime-runs/{runId}/voice-handoff
-    r9_permission: editing.handoff.create
-    state_transition_event: HANDOFF_READY→HANDED_OFF；dependent WAITING_DEPENDENCY→READY；EditingVoiceRuntime:EDITING_OUTPUT_READY→VOICE_HANDOFF_READY | editing.voice_handoff.created
+    registered_permission: editing.handoff.create
+    state_transition_event: HANDOFF_READY→HANDED_OFF；dependent WAITING_DEPENDENCY→READY；EditingVoiceRuntime:EDITING_OUTPUT_READY→VOICE_HANDOFF_READY
+      | editing.voice_handoff.created
     edit01_binding_exposure: Stage 01 Confirm + Score PASS 後由 Orchestrator 呼叫；同頁無導航，且 direct EDIT→QA 禁止。
   - port_uid: EDIT-01-PORT-VOICE-RUNTIME-START
     boundary_stage: Stage 02 Start
-    r9_operation: startVoiceRuntime
+    registered_operation: startVoiceRuntime
     method_effective_path: POST /v1/voice-runtime-runs/{runId}/start
-    r9_permission: voice.task.execute
+    registered_permission: voice.task.execute
     state_transition_event: EditingVoiceRuntime:VOICE_HANDOFF_READY→AUDIO_MIX | voice.runtime.started
     edit01_binding_exposure: 同一 EDIT-01 內啟動底層 Voice Runtime；不渲染/導航 VOICE 工作頁。
   - port_uid: EDIT-01-PORT-VOICE-RUNTIME-READ
     boundary_stage: Voice Status Read
-    r9_operation: getVoiceRuntimeRun
+    registered_operation: getVoiceRuntimeRun
     method_effective_path: GET /v1/voice-runtime-runs/{runId}
-    r9_permission: voice.task.read
+    registered_permission: voice.task.read
     state_transition_event: No transition | voice.runtime.viewed
     edit01_binding_exposure: 背景/SEC-16 read projection；不得額外建立 VOICE 頁控制。
   - port_uid: EDIT-01-PORT-AUDIO-MIX-COMPLETE
     boundary_stage: Stage 02 Execute
-    r9_operation: completeAudioMix
+    registered_operation: completeAudioMix
     method_effective_path: POST /v1/voice-runtime-runs/{runId}/audio-mix
-    r9_permission: voice.task.execute
+    registered_permission: voice.task.execute
     state_transition_event: EditingVoiceRuntime:AUDIO_MIX→LIP_SYNC | voice.audio_mix.completed
     edit01_binding_exposure: EDIT-01-ACT-MIX-EXECUTE；完成後停在 LIP_SYNC-ready boundary，Stage Evaluation→WAIT_CONFIRMATION；Confirm 前禁止 completeLipSync。
   - port_uid: EDIT-01-PORT-LIPSYNC-COMPLETE
     boundary_stage: Stage 03 LipSync
-    r9_operation: completeLipSync
+    registered_operation: completeLipSync
     method_effective_path: POST /v1/voice-runtime-runs/{runId}/lip-sync
-    r9_permission: voice.task.execute
+    registered_permission: voice.task.execute
     state_transition_event: EditingVoiceRuntime:LIP_SYNC→SUBTITLE | voice.lip_sync.completed
     edit01_binding_exposure: EDIT-01-ACT-LIPSYNC-EXECUTE；必須 DialogueTimingBinding / sync policy PASS。
   - port_uid: EDIT-01-PORT-SUBTITLE-COMPLETE
     boundary_stage: Stage 03 Subtitle
-    r9_operation: completeSubtitle
+    registered_operation: completeSubtitle
     method_effective_path: POST /v1/voice-runtime-runs/{runId}/subtitle
-    r9_permission: voice.task.execute
+    registered_permission: voice.task.execute
     state_transition_event: DepartmentTask:RUNNING→CANDIDATE_OUTPUT；EditingVoiceRuntime:SUBTITLE→VOICE_OUTPUT_READY | voice.subtitle.completed
     edit01_binding_exposure: EDIT-01-ACT-SUB-API-SYNC；完成後 Stage Evaluation→WAIT_CONFIRMATION。
   - port_uid: EDIT-01-PORT-VOICE-DECISION
     boundary_stage: Stage 03 Confirm
-    r9_operation: decideOutputCandidate
+    registered_operation: decideOutputCandidate
     method_effective_path: POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
-    r9_permission: department.output.decide
+    registered_permission: department.output.decide
     state_transition_event: DepartmentTask:CANDIDATE_OUTPUT→SCORE_PENDING | output.decision_recorded
     edit01_binding_exposure: EDIT-01-ACT-STAGE-CONFIRM；只在 Stage 03 Evaluation + Dialogue Sync PASS 後呼叫。
   - port_uid: EDIT-01-PORT-VOICE-SCORECARD
     boundary_stage: Stage 03 Score Persist
-    r9_operation: submitScorecard
+    registered_operation: submitScorecard
     method_effective_path: POST /v1/scorecards
-    r9_permission: department.score.write
+    registered_permission: department.score.write
     state_transition_event: DepartmentTask:SCORE_PENDING→BLOCKED or HANDOFF_READY | scorecard.submitted
     edit01_binding_exposure: 持久化已確認的 Stage 03 Evaluation；PASS 後可進 FINALIZE，但不得提前 handoffVoiceToQA。
   - port_uid: EDIT-01-PORT-VOICE-QA-HANDOFF
     boundary_stage: Final Outbound
-    r9_operation: handoffVoiceToQA
+    registered_operation: handoffVoiceToQA
     method_effective_path: POST /v1/voice-runtime-runs/{runId}/qa-handoff
-    r9_permission: voice.handoff.create
+    registered_permission: voice.handoff.create
     state_transition_event: HANDOFF_READY→HANDED_OFF；dependent WAITING_DEPENDENCY→READY；EditingVoiceRuntime:VOICE_OUTPUT_READY→QA_READY | voice.qa_handoff.created
-    edit01_binding_exposure: EDIT-01-ACT-HANDOFF 唯一 PROJECT_TASK final outbound；必須 Stage 04 Save→Render→Verify→Lock 完成。這是 Voice→QA backend boundary，不是 Editing→QA。
+    edit01_binding_exposure: EDIT-01-ACT-HANDOFF 唯一 PROJECT_TASK final outbound；必須 Stage 04 Save→Render→Verify→Lock 完成。這是 EDIT+VOICE→QA backend
+      boundary，不是 Editing→QA。
   integration_port_hard_guards:
   - rule_uid: EDIT-01-PORT-RULE-VOICE-PROFILE
     hard_guard: createEditingRuntimeRun 只消費 exact immutable LOCKED voice_runtime_profile_id。EDIT 不得呼叫 createVoiceRuntimeProfile、不得 overwrite/default/guess
@@ -3635,28 +3660,29 @@ registries:
     hard_guard: PROJECT_TASK 不存在 direct Editing→QA endpoint/control。最終 outbound 僅 handoffVoiceToQA。
     block_recovery: 任何 direct EDIT→QA request/control/route = BUILD_BLOCKED。
   - rule_uid: EDIT-01-PORT-RULE-NO-PAGE-SPLIT
-    hard_guard: Editing→Voice 與 Voice Runtime operations 都在同一 EDIT-01 UI orchestration 中執行；service owner 可以不同，頁面不可因此跳到 VOICE 或新增子頁。
+    hard_guard: EDIT+VOICE internal stage transition 與 Voice Runtime operations 都在同一 EDIT-01 UI orchestration 中執行；service owner 可以不同，頁面不可因此跳到
+      VOICE 或新增子頁。
     block_recovery: 若 AI 生成 VOICE navigation/second workspace = BLOCK_VISUAL/BOUNDARY CONTRACT。
   - rule_uid: EDIT-01-PORT-RULE-SPECIALIZED-RUNTIME
     hard_guard: PROJECT_TASK EDIT 不使用 generic requestTaskExecution 作為正式剪輯執行；必須 specialized createEditingRuntimeRun + completeAssembly。
     block_recovery: generic editing task execution = REJECT / 不 Render 對應控制。
   - rule_uid: EDIT-01-PORT-RULE-AUTH-GATES
-    hard_guard: 所有 side-effect R9 operation 都必須重新驗證 identity + account permission/service capability + scope + condition + state_guard + expected_version
-      + idempotency + audit；Role Name 授權禁止。
+    hard_guard: 所有 side-effect current registered authority operation 都必須重新驗證 identity + account permission/service capability + scope + condition
+      + state_guard + expected_version + idempotency + audit；Role Name 授權禁止。
     block_recovery: 任何 Gate/Permission/Version/Idempotency 缺失 = backend BLOCK；前端 Disabled 不等於授權。
   - rule_uid: EDIT-01-PORT-RULE-EVIDENCE
-    hard_guard: completeAssembly / handoff 必須使用 explicit evidence ref + deterministic manifest/checksum；不得自動生成或偽造 Evidence Ref，也不得把 human assembly 偽裝 Provider
-      Callback。
+    hard_guard: completeAssembly / handoff 必須使用 explicit evidence ref + deterministic manifest/checksum；不得自動生成或偽造 Evidence Ref，也不得把 human assembly
+      偽裝 Provider Callback。
     block_recovery: Evidence/Checksum/Manifest 不可驗證 → BLOCK downstream；保留 last good state。
   - rule_uid: EDIT-01-PORT-RULE-TIMELINE-SCHEMA
-    hard_guard: R9 尚未提供完整 Track/Clip/Shot JSON internal schema 時，只驗證本文 typed IDs、scope、timecode/frame range、lineage/fingerprint；不得宣稱不存在的內部 schema validator
-      已完成。
+    hard_guard: current registered authority 尚未提供完整 Track/Clip/Shot JSON internal schema 時，只驗證本文 typed IDs、scope、timecode/frame range、lineage/fingerprint；不得宣稱不存在的內部
+      schema validator 已完成。
     block_recovery: 未知 internal schema 不得由 AI 自創；需保持最小影響範圍並 BLOCK 不可驗證 mutation。
   - rule_uid: EDIT-01-PORT-RULE-STANDALONE
     hard_guard: STANDALONE_UPLOAD 不存在 Project Task/Handoff lineage，不得呼叫上述 Department handoff/Voice task operations，也不得 fabricated project_id/task_id/run_id。
     block_recovery: Standalone 只走 owner-scoped upload/edit/API/render/export；若未正式轉成 governed Project Task，不得進五部門 Handoff。
   - rule_uid: EDIT-01-PORT-RULE-BOUNDARY-ONLY
-    hard_guard: 本章只引用其他 owner 已存在的 R9 public operation contract；不在 EDIT 定義 VIDEO/VOICE/QA 資料表、worker、queue、service internals。
+    hard_guard: 本章只引用其他 owner 已存在的 current registered authority public operation contract；不在 EDIT 定義 VIDEO/VOICE/QA 資料表、worker、queue、service internals。
     block_recovery: 任何跨部門 internal implementation 出現在 EDIT authority = AUTHORITY_BOUNDARY_VIOLATION。
 binding_matrices:
   control_to_section_component_visual_gate_permission:
@@ -5196,8 +5222,9 @@ governance:
     item: PROJECT_TASK 首次生產 AUTO/MANUAL 都零腳本手動輸入；MANUAL 只控制 Stage 前進/確認
     condition: 必須 PASS
   - acceptance_uid: EDIT-01-ACC-16
-    item: AUTO 固定依 Assembly → Evaluation → Confirm/Modify → Audio(Voice/Music/SFX/Mix) → Evaluation → Confirm/Modify → LipSync/Subtitle → Evaluation → Confirm/Modify
-      → Finalize(Save Version→Render→Output Verify→Lock) → handoffVoiceToQA。AUTO 只在「確認」後自動啟動下一 Stage；不得跳過任何 Human Confirm/Modify decision point。
+    item: AUTO 固定依 Assembly → Evaluation → Confirm/Modify → Audio(Voice/Music/SFX/Mix) → Evaluation → Confirm/Modify → LipSync/Subtitle → Evaluation
+      → Confirm/Modify → Finalize(Save Version→Render→Output Verify→Lock) → handoffVoiceToQA。AUTO 只在「確認」後自動啟動下一 Stage；不得跳過任何 Human Confirm/Modify
+      decision point。
     condition: 必須 PASS
   - acceptance_uid: EDIT-01-ACC-17
     item: 每個 Stage 只讀同一 Production Package 內對應 Script Section，不建立多份平行權威腳本
@@ -5218,9 +5245,9 @@ governance:
     item: EDIT 文件不包含 VIDEO/ASSET/QA 內部實作；只定義 EDIT 自身行為與邊界所需 refs
     condition: 必須 PASS
   - acceptance_uid: EDIT-01-ACC-23
-    item: 切版為 CURRENT ONLY：Context 全寬 → Primary Grid 左 Asset Binding 約20% / 右 Production Stack 約80% → Preview 16:9 → General Toolbar → Range/Marker → Multi-track
-      Timeline → Adjustment Row 38% Semantic Correction / 62% Manual Micro-Adjustment → Bottom Row 34% Inspector / 34% Compare / 32% Execution-Output；全頁可捲動且不受
-      Global Menu/Sidebar 高度限制
+    item: 切版為 CURRENT ONLY：Context 全寬 → Primary Grid 左 Asset Binding 約20% / 右 Production Stack 約80% → Preview 16:9 → General Toolbar → Range/Marker
+      → Multi-track Timeline → Adjustment Row 38% Semantic Correction / 62% Manual Micro-Adjustment → Bottom Row 34% Inspector / 34% Compare /
+      32% Execution-Output；全頁可捲動且不受 Global Menu/Sidebar 高度限制
     condition: 必須 PASS
   - acceptance_uid: EDIT-01-ACC-24
     item: 腳本/AI 語義修正與人工 Timeline 微調責任分離：前者改 Correction Script Candidate；後者只直接操作 Working Draft 的範圍/Clip/Timecode
@@ -5229,8 +5256,9 @@ governance:
     item: Voice / LipSync / Subtitle 共用 DialogueTimingBinding；Voice timing 改變自動使 LipSync+Subtitle STALE；Binding mismatch 必須阻擋 SYNC PASS/Render/Lock
     condition: 必須 PASS
   - acceptance_uid: EDIT-01-ACC-26
-    item: R9 Integration Port Registry：15 個 Port Binding / 13 個 unique R9 Operation 全部具 exact endpoint、permission、state/event 與 EDIT action/stage mapping；direct
-      Editing→QA=0；EDIT-created VoiceRuntimeProfile=0；generic editing task execution=0
+    item: current registered authority Integration Port Registry：15 個 Port Binding / 13 個 unique current registered authority Operation 全部具 exact
+      endpoint、permission、state/event 與 EDIT action/stage mapping；direct Editing→QA=0；EDIT-created VoiceRuntimeProfile=0；generic editing task
+      execution=0
     condition: 必須 PASS
   source_machine_integrity_matrix:
   - integrity_uid: EDIT-01-INTEGRITY-01
@@ -5247,15 +5275,15 @@ governance:
     condition: 所有非 READ_ONLY 可執行控制都必須綁已列 Action；新增 Stage/Return/Standalone actions 必須存在
   - integrity_uid: EDIT-01-INTEGRITY-05
     check: Object/Ref UID count = 29
-    condition: 包含 LockedBlueprintRef / ProductionPackage / ExecutionInputManifest / AssetBindingManifestRef / StageCheckpoint / CorrectionContext / StandaloneContext
-      / DialogueTimingBinding
+    condition: 包含 LockedBlueprintRef / ProductionPackage / ExecutionInputManifest / AssetBindingManifestRef / StageCheckpoint / CorrectionContext
+      / StandaloneContext / DialogueTimingBinding
   - integrity_uid: EDIT-01-INTEGRITY-06
     check: Page State count = 10；Job State count = 6
     condition: Transition 只能引用已列 State
   - integrity_uid: EDIT-01-INTEGRITY-07
     check: Error UID count = 34
-    condition: 包含 Blueprint/Package/Script/Asset/Filename/Checksum/Stage/BlueprintUpdateRequired/DialogueSyncBinding/VoiceRuntimeProfileRequired 錯誤；未列 Error
-      UID 禁止
+    condition: 包含 Blueprint/Package/Script/Asset/Filename/Checksum/Stage/BlueprintUpdateRequired/DialogueSyncBinding/VoiceRuntimeProfileRequired
+      錯誤；未列 Error UID 禁止
   - integrity_uid: EDIT-01-INTEGRITY-08
     check: Runtime UI region/controls = Word Registry；Documentation Overlay / illustrative business values 依 Image Semantics Contract 排除
     condition: 任何 Runtime Control label/region/UID 不一致=BLOCK_VISUAL_CONTRACT；註解/示意值不得 seed runtime
@@ -5263,26 +5291,26 @@ governance:
     check: Unlisted UID count = 0
     condition: AI 不得補建、猜名、複製其他頁 UID
   - integrity_uid: EDIT-01-INTEGRITY-10
-    check: Stage UID count = 5；Binding Step UID count = 8；Gate UID count = 25；Permission UID count = 9；Effect Type count = 13；Stage Transition UID count
-      = 5；Script Role UID count = 8
+    check: Stage UID count = 5；Binding Step UID count = 8；Gate UID count = 25；Permission UID count = 9；Effect Type count = 13；Stage Transition
+      UID count = 5；Script Role UID count = 8
     condition: AUTO/MANUAL 只能依 Stage Registry 與 Binding Chain 執行；不得自行新增 Stage 或跳過 Binding/Dialogue Sync
   - integrity_uid: EDIT-01-INTEGRITY-11
     check: 0 duplicate Control/Action/Object UID；0 missing Action ref；0 undeclared Effect；0 Control without exact Gate；0 Matrix Gate/Permission/Section/Component/Visual
       miss；0 shorthand State/Error UID；0 unregistered ScriptRole/StageTransition/Policy/Marker UID
     condition: 任一非 0 = BLOCK_FINAL_LOCK
   - integrity_uid: EDIT-01-INTEGRITY-12
-    check: Integration Port Binding count = 15；unique R9 operation count = 13；unresolved operation/path/permission/state/event = 0；direct EDIT→QA = 0；EDIT-created
-      VoiceRuntimeProfile = 0；generic editing task execution = 0
+    check: Integration Port Binding count = 15；unique current registered authority operation count = 13；unresolved operation/path/permission/state/event
+      = 0；direct EDIT→QA = 0；EDIT-created VoiceRuntimeProfile = 0；generic editing task execution = 0
     condition: 任一非 0 = BLOCK_FINAL_LOCK
   final_hard_lock: 封板宣告：本文件為 EDIT-01 唯一 CURRENT ONLY 權威。所有 Runtime UI 必須同時存在於 Section/Component/Control/Action/Gate/Permission/State/Stage/Transition/Object/Error
-    Registry；圖 1 的 Documentation Overlay 與 illustrative business values 不得生成程式資料。PROJECT_TASK 唯一來源鏈為 Task → Locked Blueprint → Production Package → Script
-    Role/Section → DNA/Asset Binding → Exact Asset ID/Version/Filename/Checksum/Placement → Execution Input Manifest；禁止 Asset Picker、相似素材 fallback、首次腳本手動輸入。AUTO/MANUAL
-    共用同一 Blueprint/Package/Binding；AUTO=執行目前 Stage→Evaluation→WAIT_CONFIRMATION，使用者 Confirm 後才自動啟動下一 Stage；MANUAL=Confirm 後仍需人工啟動下一 Stage。任何 Stage 都不可跳過
-    Confirm/Modify decision。PROJECT_TASK 底層端口只使用本文件 34 章列出的 R9 Operation Registry：專用 Editing Runtime → Editing→Voice → Voice Runtime(AudioMix→LipSync→Subtitle)
-    → Voice→QA；單頁 UI 不等於 service merge，direct Editing→QA、generic editing task execution、EDIT-created VoiceRuntimeProfile 全部 FORBIDDEN。Correction 必須 Candidate
-    Generate → Human Approve → Translation → Execute → Compare/Apply → Re-Evaluate。Stage 04 FINALIZE 必須 Save Version → Render → Output Verify → Lock 後才可
-    Stage 05 final Handoff。需要變更 Script/DNA/Asset binding 唯一合法路徑為 Return Blueprint Correction。任何未列 UID/Effect/Gate/Permission/Policy/Port/Recovery 一律 BLOCK，不得由
-    AI 自行補洞。
+    Registry；圖 1 的 Documentation Overlay 與 illustrative business values 不得生成程式資料。PROJECT_TASK 唯一來源鏈為 Task → Locked Blueprint → Production Package
+    → Script Role/Section → DNA/Asset Binding → Exact Asset ID/Version/Filename/Checksum/Placement → Execution Input Manifest；禁止 Asset Picker、相似素材
+    fallback、首次腳本手動輸入。AUTO/MANUAL 共用同一 Blueprint/Package/Binding；AUTO=執行目前 Stage→Evaluation→WAIT_CONFIRMATION，使用者 Confirm 後才自動啟動下一 Stage；MANUAL=Confirm
+    後仍需人工啟動下一 Stage。任何 Stage 都不可跳過 Confirm/Modify decision。PROJECT_TASK 底層端口只使用本文件 34 章列出的 current registered authority Operation Registry：專用
+    Editing Runtime → EDIT+VOICE internal stage transition → Voice Runtime(AudioMix→LipSync→Subtitle) → EDIT+VOICE→QA；單頁 UI 不等於 service merge，direct
+    Editing→QA、generic editing task execution、EDIT-created VoiceRuntimeProfile 全部 FORBIDDEN。Correction 必須 Candidate Generate → Human Approve →
+    Translation → Execute → Compare/Apply → Re-Evaluate。Stage 04 FINALIZE 必須 Save Version → Render → Output Verify → Lock 後才可 Stage 05 final Handoff。需要變更
+    Script/DNA/Asset binding 唯一合法路徑為 Return Blueprint Correction。任何未列 UID/Effect/Gate/Permission/Policy/Port/Recovery 一律 BLOCK，不得由 AI 自行補洞。
 derived_validation:
   status: PASS
   generated_at_utc: '2026-08-27T15:01:29.295213+00:00'
@@ -5344,13 +5372,13 @@ derived_validation:
     - decideOutputCandidate
     - getEditingRuntimeRun
     - getVoiceRuntimeRun
-    - handoffEditingToVoice
+    - transitionEditingToVoiceStage
     - handoffVoiceToQA
     - startVoiceRuntime
     - submitScorecard
   validation_errors: []
-  source_selector_policy: Selectors such as 'ANY NON-LOCKED PAGE STATE', 'ANY STAGE', and 'SAME STAGE' are preserved verbatim from the FINAL_LOCKED Word;
-    encoding does not invent narrower semantics.
+  source_selector_policy: Selectors such as 'ANY NON-LOCKED PAGE STATE', 'ANY STAGE', and 'SAME STAGE' are preserved verbatim from the FINAL_LOCKED
+    Word; encoding does not invent narrower semantics.
   final_gap_closure:
     status: FINAL_GAP_CLOSED
     source_action_count: 124
@@ -5374,9 +5402,9 @@ final_gap_closure:
   duplicate_action_runtime_matrix_removed: true
   duplicate_control_runtime_matrix_removed: true
   rule: Do not recreate action_runtime_bindings/control_runtime_bindings for EDIT. Existing source binding_matrices are the sole binding authority.
-script_content_authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT
+script_content_authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
 production_script_content_contract:
-  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.EDIT_VOICE
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#content_ownership.EDIT_VOICE
   existing_role_count: 8
   role_schema_refs:
     EDIT-01-SCRIPTROLE-ASSEMBLY: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.EDIT_VOICE.role_field_schemas.EDIT-01-SCRIPTROLE-ASSEMBLY
@@ -5388,19 +5416,20 @@ production_script_content_contract:
     EDIT-01-SCRIPTROLE-SUBTITLE: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.EDIT_VOICE.role_field_schemas.EDIT-01-SCRIPTROLE-SUBTITLE
     EDIT-01-SCRIPTROLE-FINALIZE: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.EDIT_VOICE.role_field_schemas.EDIT-01-SCRIPTROLE-FINALIZE
 correction_script_content_contract:
-  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_correction_content.EDIT_VOICE
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#correction_contract
   existing_objects:
   - EDIT-01-OBJ-CORRECTION-CONTEXT
   - EDIT-01-OBJ-CORRECTION-SCRIPT
   - EDIT-01-OBJ-CORRECTION-TRANSLATION
 provider_adapter_contract:
-  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.1#provider_adapter_contract
-  profile_owner: admin:AIAPI-06#provider_model_profiles
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#provider_adapter
+  profile_owner: admin:AIAPI-01#provider_model_profiles
   department_provider_registry: FORBIDDEN
+  router_owner: ACPOS AI Execution / current AI API Router
 canonical_script_source_binding:
   owner: CORE Script System
   source_object_uid: CORE-01-REF-CANONICAL-SCRIPT
   required_binding: Exact project_id + topic_id + canonical_script_version + canonical_script_hash
-  rule: The department specialized production script must consume the exact CORE CanonicalProductionScriptRef. It may add only department-specific production
-    detail under its existing content contract.
+  rule: The department specialized production script must consume the exact CORE CanonicalProductionScriptRef. It may add only department-specific
+    production detail under its existing content contract.
   missing_or_mismatch: BLOCK + REPORT_AUTHORITY_GAP
