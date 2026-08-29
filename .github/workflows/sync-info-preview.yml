@@ -1,0 +1,28 @@
+name: Sync INFO NAV-09 Preview
+on:
+  push:
+    branches:
+      - acpos-live-preview
+    paths:
+      - .github/workflows/sync-info-preview.yml
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+          fetch-depth: 0
+      - name: Build and validate INFO preview
+        run: python3 scripts/sync_info_preview.py
+      - name: Commit exact preview changes and self-clean
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add preview/index.html preview/edit.html preview/qa.html preview/db.html preview/strategy.html preview/info.html
+          git commit -m "feat(preview): add NAV-09 latest information"
+          git rm .github/workflows/sync-info-preview.yml scripts/sync_info_preview.py
+          git commit -m "chore(preview): remove INFO sync tools"
+          git push origin HEAD:acpos-live-preview
