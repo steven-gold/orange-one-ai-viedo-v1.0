@@ -1,0 +1,1956 @@
+authority:
+  id: CORE_PAGE_VISUAL_AUTHORITY_FINAL
+  page_uid: CORE-01
+  version: V2.0
+  status: FINAL_LOCKED
+  current_only: true
+  legacy_merge: FORBIDDEN
+  route: /core
+  scope: CORE-01 Main Workspace only
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  vertical_length: UNBOUNDED; Main Workspace overflow-y:auto; sections extend downward by content
+  department_boundary: CORE owns Project Core + Topic Production Scope/Canonical Script source; ASSET/VIDEO/EDIT/VOICE internals are not defined here
+  final_gap_closure_revision: 2026-08-28-BUTTON-RUNTIME-BINDING-CLOSURE
+  source_file_for_gap_closure: CORE_PAGE_VISUAL_AUTHORITY_FINAL(2)(1).yaml
+  final_dedup_revision: 2026-08-28-SINGLE-EXECUTABLE-AUTHORITY
+  parallel_authority_for_same_page: FORBIDDEN
+  supersedes_gap_closed_file: CORE_PAGE_VISUAL_AUTHORITY_FINAL_GAP_CLOSED.yaml
+  script_content_closure_revision: 2026-08-28-CORE-TOPIC-CANONICAL-SCRIPT-AUTHORING-BINDING
+  supersedes_file_for_script_authoring: CORE_PAGE_VISUAL_AUTHORITY_FINAL_DEDUP_CLEAN.yaml
+system_filename_governance:
+  authority: ACPOS_SYSTEM
+  level: GLOBAL_SYSTEM_HIGHEST_RULE
+  core_page_behavior: READ_ONLY_REFERENCE_ONLY
+  core_supplies:
+  - project_id / project_version_ref
+  - topic_id / topic_version_ref
+  - blueprint_version_ref
+  - dna_refs
+  - canonical_script_ref
+  - production_package_ref
+  forbidden:
+  - CORE-local filename formula
+  - manual filename input
+  - manual rename
+  - filename parsing as business authority
+  - department-local naming override
+  rule: Canonical filename / artifact identity / version / checksum naming governance belongs to ACPOS_SYSTEM. CORE only supplies upstream source identity
+    refs; downstream departments consume exact IDs/versions and system-issued canonical filenames.
+layout:
+  desktop_min_width: 1280px
+  page_vertical: Main Workspace is NOT bound to Global Sidebar/Menu height; height:auto; overflow-y:auto; sections extend downward
+  below_min_width: Keep min-width=1280px and allow horizontal scroll; do not invent alternate page/drawer/mobile workflow
+  context_bar:
+    height: 56px
+    width: 100%
+  primary_grid:
+    columns: minmax(260px,1fr) minmax(720px,3fr) minmax(300px,1fr)
+    approx: 20% / 60% / 20%
+    gap: 16px
+    align: start
+  left_rail:
+    min_width: 260px
+    position: top-aligned
+    thread_list_internal_scroll: only when list content > 520px
+  center:
+    min_width: 720px
+    priority: conversation-first
+  right_rail:
+    min_width: 300px
+    position: top-aligned
+  tokens:
+    control_height: 40px
+    button_min_width: 88px
+    primary_button_min_width: 120px
+    button_radius: 10px
+    panel_radius: 12px
+    large_container_radius: 24px
+    section_gap: 16px
+    content_padding: 16px
+    field_min_width: 120px
+    textarea_min_height: 96px
+    status_badge_height: 28px
+    action_gap: 8px
+    touch_target_min: 44px × 44px
+    at_popup_width: 250px
+    at_popup_row_height: 36px
+  visual_override: FORBIDDEN; inherit Global Visual tokens only
+page_modes:
+  PROJECT_CORE:
+    enter_when: Project selected; Topic not selected
+    purpose: 建立/討論/修正/確認 Project Core
+    editable_work_items:
+    - STORY
+    - CHAPTER
+    - WORLD_SETTING
+    - DNA
+    - BLUEPRINT
+    read_only_context:
+    - Project metadata
+    - Current confirmed versions
+    - Naming Authority Ref
+    topic_rule: Create Topic is enabled only after Project has the required confirmed/locked source state; Topic does not recreate Story/World/DNA/Blueprint.
+  TOPIC_PRODUCTION:
+    enter_when: Locked/confirmed Project + valid Topic selected
+    purpose: 讀取 Project Canon/Blueprint，設定 Topic production scope，建立/確認 Canonical Production Script source/package readiness
+    editable_work_items:
+    - TOPIC_SCOPE
+    - PRODUCTION_SCRIPT
+    read_only_upstream:
+    - STORY
+    - CHAPTER
+    - WORLD_SETTING
+    - DNA
+    - BLUEPRINT
+    production_task_selector: FORBIDDEN in CORE page
+    downstream_rule: Expose read-only ASSET / VIDEO / EDIT boundary readiness only; no downstream execution controls or internals.
+conversation_policy:
+  single_multi_same_context: true
+  assistant_is_third_mode: false
+  provider_model_picker: FORBIDDEN
+  assigned_ai_set: Resolved by ACPOS shared AI Router/Capability Assignment; page read-only
+  right_click_message_actions:
+  - 引用此訊息
+  - 繼續討論此主題
+  - 分析此內容
+  - 加入決策清單
+  - 建立分支討論
+  - 複製此訊息
+  hover_message_toolbar: FORBIDDEN
+  branch_discussion_is_production_topic: false
+decision_flow:
+- AI_RESPONSES
+- ASSISTANT_SUMMARY
+- CORE_EVALUATION
+- HUMAN_DECISION
+- ASSISTANT_STRUCTURED_DECISION
+- CANDIDATE_CREATE
+- CANDIDATE_DECISION
+- DOMAIN_REVIEW_REQUEST_IF_APPLICABLE
+registries:
+  sections:
+  - section_uid: CORE-01-SEC-01
+    name: Context Bar
+    responsibility: Project / Topic exact context; create/select; page mode derived; naming authority read-only ref
+    visual_uid: CORE-01-VIS-CONTEXT
+  - section_uid: CORE-01-SEC-02
+    name: Work Item / Thread Navigation
+    responsibility: Current mode work items, thread list, new thread; cross-work-item mixing forbidden
+    visual_uid: CORE-01-VIS-LEFT
+  - section_uid: CORE-01-SEC-03
+    name: Conversation Header
+    responsibility: Current work item, Single/Multi AI, Assigned AI Set read-only, Assistant Record
+    visual_uid: CORE-01-VIS-CENTER-HEADER
+  - section_uid: CORE-01-SEC-04
+    name: Message Workspace
+    responsibility: User/AI/System/Assistant messages; right-click message operation menu
+    visual_uid: CORE-01-VIS-MESSAGES
+  - section_uid: CORE-01-SEC-05
+    name: Evaluation / Human Decision
+    responsibility: Assistant Summary, approved CORE evaluation, human decision, structured decision, candidate decision
+    visual_uid: CORE-01-VIS-DECISION
+  - section_uid: CORE-01-SEC-06
+    name: Runtime Stage Strip
+    responsibility: Current conversational decision stage only; domain lock remains right-rail governed
+    visual_uid: CORE-01-VIS-RUNTIME
+  - section_uid: CORE-01-SEC-07
+    name: Input Composer
+    responsibility: Attachment/reference/message/@ parser/send; no page-level provider/model picker
+    visual_uid: CORE-01-VIS-COMPOSER
+  - section_uid: CORE-01-SEC-08
+    name: Project Core / Blueprint State Rail
+    responsibility: Read model + permitted Project/DNA/Blueprint review actions
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+  - section_uid: CORE-01-SEC-09
+    name: Topic Production Package / Downstream Readiness
+    responsibility: Topic scope, Canonical Script, naming authority ref, ASSET/VIDEO/EDIT readiness read-only
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+  - section_uid: CORE-01-SEC-10
+    name: Version / Lock Review State Rail
+    responsibility: Candidate/version compare state, immutable version refs, project/topic lock review status
+    visual_uid: CORE-01-VIS-RIGHT-VERSION
+  visuals:
+  - visual_uid: CORE-01-VIS-CONTEXT
+    geometry: top full width; h=56px
+  - visual_uid: CORE-01-VIS-LEFT
+    geometry: primary grid left ~20%; min 260px; content-height; thread list may internally scroll >520px
+  - visual_uid: CORE-01-VIS-CENTER-HEADER
+    geometry: primary grid center top; min 720px
+  - visual_uid: CORE-01-VIS-MESSAGES
+    geometry: center main; min-height 420px; grows with content; message history may internally scroll after configured max while page remains scrollable
+  - visual_uid: CORE-01-VIS-DECISION
+    geometry: center below messages; full center width; content-height
+  - visual_uid: CORE-01-VIS-RUNTIME
+    geometry: center below decision; h=40px; horizontal stage strip
+  - visual_uid: CORE-01-VIS-COMPOSER
+    geometry: center below runtime; min-height 104px; content-height
+  - visual_uid: CORE-01-VIS-RIGHT-CORE
+    geometry: primary grid right top ~20%; min 300px
+  - visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    geometry: right rail below Project Core/Blueprint; content-height
+  - visual_uid: CORE-01-VIS-RIGHT-VERSION
+    geometry: right rail below Topic package; content-height
+  components:
+  - component_uid: CORE-01-CMP-CONTEXT
+    section_uid: CORE-01-SEC-01
+    name: Project/Topic Context Controls
+  - component_uid: CORE-01-CMP-NAV
+    section_uid: CORE-01-SEC-02
+    name: Mode-aware Work Item Navigation
+  - component_uid: CORE-01-CMP-THREADS
+    section_uid: CORE-01-SEC-02
+    name: Conversation Thread History
+  - component_uid: CORE-01-CMP-CONV-HEADER
+    section_uid: CORE-01-SEC-03
+    name: Conversation Header / AI Mode
+  - component_uid: CORE-01-CMP-MESSAGES
+    section_uid: CORE-01-SEC-04
+    name: Message Stream
+  - component_uid: CORE-01-CMP-MESSAGE-MENU
+    section_uid: CORE-01-SEC-04
+    name: Right-click Message Operation Menu
+  - component_uid: CORE-01-CMP-SUMMARY
+    section_uid: CORE-01-SEC-05
+    name: Assistant Summary
+  - component_uid: CORE-01-CMP-EVALUATION
+    section_uid: CORE-01-SEC-05
+    name: CORE Evaluation
+  - component_uid: CORE-01-CMP-HUMAN-DECISION
+    section_uid: CORE-01-SEC-05
+    name: Human Decision / Structured Decision
+  - component_uid: CORE-01-CMP-RUNTIME
+    section_uid: CORE-01-SEC-06
+    name: Runtime Stage Strip
+  - component_uid: CORE-01-CMP-COMPOSER
+    section_uid: CORE-01-SEC-07
+    name: Message Composer
+  - component_uid: CORE-01-CMP-PROJECT-STATE
+    section_uid: CORE-01-SEC-08
+    name: Project Core State Card
+  - component_uid: CORE-01-CMP-BLUEPRINT-STATE
+    section_uid: CORE-01-SEC-08
+    name: Blueprint State Card
+  - component_uid: CORE-01-CMP-TOPIC-PACKAGE
+    section_uid: CORE-01-SEC-09
+    name: Topic Production Package Card
+  - component_uid: CORE-01-CMP-DOWNSTREAM
+    section_uid: CORE-01-SEC-09
+    name: ASSET/VIDEO/EDIT Boundary Readiness
+  - component_uid: CORE-01-CMP-VERSION
+    section_uid: CORE-01-SEC-10
+    name: Candidate / Version Compare Card
+  - component_uid: CORE-01-CMP-LOCK-REVIEW
+    section_uid: CORE-01-SEC-10
+    name: Lock Review Status / Request Controls
+  permissions:
+  - permission_uid: CORE_USE
+    backend_scope: page.view
+    purpose: Enter CORE-01 / read projection
+  - permission_uid: CORE_CONVERSATION
+    backend_scope: conversation.write
+    purpose: Create thread/send message
+  - permission_uid: CORE_CANDIDATE_CREATE
+    backend_scope: candidate.create
+    purpose: Create candidate from confirmed decision context
+  - permission_uid: CORE_CANDIDATE_DECIDE
+    backend_scope: candidate.decide
+    purpose: Accept/reject immutable candidate
+  - permission_uid: CORE_PROJECT_WRITE
+    backend_scope: entity.write + core.project.write
+    purpose: Create/validate Project draft; submit core review
+  - permission_uid: CORE_PROJECT_CONFIRM
+    backend_scope: core.project.confirm
+    purpose: Confirm Project draft into core modeling
+  - permission_uid: CORE_STORY_WRITE
+    backend_scope: core.story.write
+    purpose: Create Story Candidate Set
+  - permission_uid: CORE_DNA_LOCK
+    backend_scope: dna.lock.request
+    purpose: Request DNA lock review
+  - permission_uid: CORE_BLUEPRINT_WRITE
+    backend_scope: core.blueprint.write
+    purpose: Create/modify Blueprint through registered operations
+  - permission_uid: CORE_BLUEPRINT_REVIEW
+    backend_scope: core.blueprint.review
+    purpose: Validate Blueprint
+  - permission_uid: CORE_BLUEPRINT_APPROVE
+    backend_scope: core.blueprint.approve
+    purpose: Approve Blueprint to child-review readiness
+  - permission_uid: CORE_LOCK_REQUEST
+    backend_scope: core.lock.request
+    purpose: Request Mother/Child lock review
+  - permission_uid: CORE_TOPIC_WRITE
+    backend_scope: entity.write
+    purpose: Create Topic from valid Project/Topic draft lineage
+  - permission_uid: CORE_SCRIPT_READ
+    backend_scope: core.script.read
+    purpose: Read Canonical Production Script
+  gates:
+  - gate_uid: CORE-01-GATE-PAGE
+    condition: Authorized CORE-01 page + exact user/project scope
+  - gate_uid: CORE-01-GATE-PROJECT-CONTEXT
+    condition: Exact Project ref/version resolved; no stale context
+  - gate_uid: CORE-01-GATE-PROJECT-DRAFT
+    condition: Project draft fields satisfy registered createProjectDraft contract
+  - gate_uid: CORE-01-GATE-PROJECT-CONFIRM
+    condition: Validated Project Draft + exact adopt refs + expected_version pass
+  - gate_uid: CORE-01-GATE-PROJECT-CORE-READY
+    condition: Project Core required Story/Chapter/World/DNA/Blueprint refs are confirmed per current authority; no unresolved hard block
+  - gate_uid: CORE-01-GATE-PROJECT-LOCK-READY
+    condition: Project is eligible for registered Mother Lock request; unresolved LockReview evidence/reviewer-path contract stays BLOCKED
+  - gate_uid: CORE-01-GATE-TOPIC-CREATE
+    condition: Project source is confirmed/locked as required + valid Topic draft/contract lineage exists; no fake topic_code/boundary/bridge
+  - gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    condition: Exact Topic belongs to current Project and is not stale
+  - gate_uid: CORE-01-GATE-WORK-ITEM
+    condition: Selected work item is allowed by current mode; cross-mode edit forbidden
+  - gate_uid: CORE-01-GATE-THREAD
+    condition: Project + mode work item resolved; thread scope matches current context
+  - gate_uid: CORE-01-GATE-MESSAGE
+    condition: Active thread + non-empty message + conversation permission; provider/model manual selection absent
+  - gate_uid: CORE-01-GATE-MULTI-AI
+    condition: Assigned AI Set / capability route resolved by ACPOS shared Router; page cannot assign provider/model
+  - gate_uid: CORE-01-GATE-SUMMARY
+    condition: AI response set belongs to current context/thread and is complete enough for Assistant Summary
+  - gate_uid: CORE-01-GATE-EVALUATION
+    condition: Approved CORE Criteria Version resolved for current target + evidence refs valid
+  - gate_uid: CORE-01-GATE-HUMAN-DECISION
+    condition: Summary + evaluation ready; no stale candidate/context
+  - gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+    condition: Structured human decision confirmed + exact source refs + immutable parent/version lineage
+  - gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    condition: Current immutable Candidate exists + decision reason/evidence valid
+  - gate_uid: CORE-01-GATE-STORY
+    condition: Project mode + exact project version + story candidate request valid
+  - gate_uid: CORE-01-GATE-DNA-LOCK
+    condition: Project mode + exact DNA Candidate Version eligible for registered lock request
+  - gate_uid: CORE-01-GATE-BLUEPRINT-CREATE
+    condition: Current Topic/Project source satisfies registered createBlueprint precondition; no legacy page inference
+  - gate_uid: CORE-01-GATE-BLUEPRINT-VALIDATE
+    condition: Exact Blueprint Version in BLUEPRINT_DRAFT and review permission
+  - gate_uid: CORE-01-GATE-BLUEPRINT-APPROVE
+    condition: Exact Blueprint Version in BLUEPRINT_REVIEW and approval permission
+  - gate_uid: CORE-01-GATE-CHILD-LOCK
+    condition: Exact Blueprint/Topic package eligible for Child Lock request; unresolved lock review contract stays BLOCKED
+  - gate_uid: CORE-01-GATE-CORE-REVIEW
+    condition: Project Core candidate refs complete for submitCoreReview
+  - gate_uid: CORE-01-GATE-CANONICAL-SCRIPT
+    condition: Topic mode + exact Topic ref + canonical script exists; read-only
+  - gate_uid: CORE-01-GATE-NAMING
+    condition: ACPOS_SYSTEM Naming Authority Ref resolvable; page cannot invent filename
+  errors:
+  - error_uid: CORE-01-ERR-CONTEXT-001
+    context: Project/Topic context missing, mismatched or stale
+    recovery: Reset to exact Project; disable mutations until context resolves
+  - error_uid: CORE-01-ERR-TOPIC-LINEAGE-001
+    context: createTopic canonical lineage incomplete
+    recovery: BLOCK Topic create; do not fabricate topic_code/boundary/bridge
+  - error_uid: CORE-01-ERR-WORK-ITEM-001
+    context: Work item not valid for current mode
+    recovery: BLOCK edit; switch to permitted Project/Topic work item
+  - error_uid: CORE-01-ERR-THREAD-001
+    context: Thread belongs to another work item/context
+    recovery: Do not mix history; load matching thread or create new thread
+  - error_uid: CORE-01-ERR-AI-ROUTE-001
+    context: Assigned AI Set/capability route unavailable
+    recovery: BLOCK send/multi execution that needs route; wait system Router
+  - error_uid: CORE-01-ERR-CONVERSATION-001
+    context: Conversation write/generation failed
+    recovery: Preserve thread/draft; show real error/retry eligibility
+  - error_uid: CORE-01-ERR-CRITERIA-001
+    context: CORE criteria version missing/not approved
+    recovery: BLOCK evaluation; no generic score schema fallback
+  - error_uid: CORE-01-ERR-DECISION-001
+    context: Human decision missing/invalid/stale
+    recovery: Return to decision; do not create/decide Candidate
+  - error_uid: CORE-01-ERR-CANDIDATE-001
+    context: Candidate source refs/version lineage invalid
+    recovery: BLOCK decision/lock; create a new valid Candidate only
+  - error_uid: CORE-01-ERR-VERSION-001
+    context: Attempt to overwrite confirmed/immutable version
+    recovery: BLOCK overwrite; append new Candidate/Version only
+  - error_uid: CORE-01-ERR-DNA-LOCK-001
+    context: DNA lock precondition/permission invalid
+    recovery: Disable request + show exact blocker
+  - error_uid: CORE-01-ERR-BLUEPRINT-001
+    context: Blueprint operation state/ref invalid
+    recovery: BLOCK operation; preserve last valid Blueprint Version
+  - error_uid: CORE-01-ERR-LOCK-CONTRACT-001
+    context: LockReview required evidence/reviewer-path/expected hash cannot be resolved
+    recovery: BLOCK lock request/decision; do not fabricate IDs or reviewer
+  - error_uid: CORE-01-ERR-NAMING-001
+    context: ACPOS_SYSTEM Naming Authority Ref unavailable
+    recovery: BLOCK downstream package readiness; no CORE-local filename fallback
+  - error_uid: CORE-01-ERR-PERM-001
+    context: Permission/scope denied
+    recovery: Disable control + show actual permission reason
+  - error_uid: CORE-01-ERR-UNDEFINED-001
+    context: Unlisted Section/Component/Control/Action/Gate/State/Port requested
+    recovery: BLOCK + REPORT_AUTHORITY_GAP; AI may not fill gap
+  page_states:
+  - state_uid: CORE-01-ST-EMPTY
+    display: EMPTY
+    definition: No Project selected
+  - state_uid: CORE-01-ST-READY
+    display: READY
+    definition: Exact Project/Topic/work item/thread context ready
+  - state_uid: CORE-01-ST-RESPONDING
+    display: RESPONDING
+    definition: Conversation request/AI response active
+  - state_uid: CORE-01-ST-EVALUATING
+    display: EVALUATING
+    definition: Assistant summary / CORE evaluation processing
+  - state_uid: CORE-01-ST-WAIT-HUMAN
+    display: WAIT_HUMAN_DECISION
+    definition: Summary/evaluation ready; waiting human decision
+  - state_uid: CORE-01-ST-CANDIDATE
+    display: CANDIDATE_READY
+    definition: Immutable candidate exists and awaits/has decision
+  - state_uid: CORE-01-ST-REVIEW
+    display: REVIEW_PENDING
+    definition: Project/DNA/Blueprint/Topic package lock review requested
+  - state_uid: CORE-01-ST-LOCKED
+    display: LOCKED
+    definition: Current domain object projection reports authoritative lock/confirmed immutable state
+  - state_uid: CORE-01-ST-ERROR
+    display: ERROR/BLOCKED
+    definition: Real contract/runtime/permission error
+  stages:
+  - stage_uid: CORE-01-STAGE-01-CONTEXT
+    name: Resolve Context
+    flow: Resolve Project/Topic/work item/thread + assigned AI route refs; no provider picker.
+  - stage_uid: CORE-01-STAGE-02-CONVERSE
+    name: Converse / Analyze
+    flow: User input → shared AI routing → Single/Multi responses; no formal data write from raw AI response.
+  - stage_uid: CORE-01-STAGE-03-SUMMARY-EVAL
+    name: Assistant Summary / CORE Evaluation
+    flow: Assistant summary + task-bound approved CORE criteria/evidence.
+  - stage_uid: CORE-01-STAGE-04-HUMAN-DECIDE
+    name: Human Decision
+    flow: Human decision → Assistant structured decision → final confirm or return modify.
+  - stage_uid: CORE-01-STAGE-05-CANDIDATE
+    name: Candidate / Domain Review Ready
+    flow: Create/decide immutable Candidate; domain-specific Project/DNA/Blueprint/Topic lock request remains gated by its registered action.
+  events:
+  - event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    event: context.resolved
+  - event_uid: CORE-01-EVT-CONVERSATION-SENT
+    event: conversation.message.sent
+  - event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    event: ai.responses.ready
+  - event_uid: CORE-01-EVT-EVALUATION-READY
+    event: core.evaluation.ready
+  - event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    event: human.decision.confirmed
+  - event_uid: CORE-01-EVT-CANDIDATE-CREATED
+    event: candidate.created
+  - event_uid: CORE-01-EVT-CANDIDATE-DECIDED
+    event: candidate.decided
+  stage_transitions:
+  - transition_uid: CORE-01-STTR-01
+    from_stage: CORE-01-STAGE-01-CONTEXT
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    gate_uid: CORE-01-GATE-WORK-ITEM
+  - transition_uid: CORE-01-STTR-02
+    from_stage: CORE-01-STAGE-02-CONVERSE
+    to_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    trigger_event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    gate_uid: CORE-01-GATE-SUMMARY
+  - transition_uid: CORE-01-STTR-03
+    from_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    to_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    trigger_event_uid: CORE-01-EVT-EVALUATION-READY
+    gate_uid: CORE-01-GATE-EVALUATION
+  - transition_uid: CORE-01-STTR-04
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-HUMAN-DECISION
+  - transition_uid: CORE-01-STTR-05
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-05-CANDIDATE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+  objects_refs:
+  - object_uid: CORE-01-REF-PROJECT
+    entity: ProjectRef
+    owner: ACPOS Project
+    required_content: exact project id/version/status/source hash
+  - object_uid: CORE-01-REF-TOPIC
+    entity: TopicRef
+    owner: ACPOS Topic
+    required_content: exact topic id/version/project lineage/contract refs
+  - object_uid: CORE-01-OBJ-THREAD
+    entity: ConversationThread
+    owner: AI Conversation Core
+    required_content: project/topic/work_item/thread id + history scope
+  - object_uid: CORE-01-OBJ-MESSAGE
+    entity: ConversationMessage
+    owner: AI Conversation Core
+    required_content: message id/type/thread/source refs/version
+  - object_uid: CORE-01-OBJ-CONTEXT
+    entity: RelevantContextPackage
+    owner: Context Resolver
+    required_content: confirmed relevant refs only; no wrong version
+  - object_uid: CORE-01-REF-AI-SET
+    entity: AssignedAISetRef
+    owner: ACPOS AI Router
+    required_content: capability-resolved AI/provider assignment snapshot; read-only
+  - object_uid: CORE-01-OBJ-SUMMARY
+    entity: AssistantSummary
+    owner: AI Assistant
+    required_content: source response ids + summary + context hash
+  - object_uid: CORE-01-OBJ-EVALUATION
+    entity: CoreEvaluation
+    owner: CORE Evaluation
+    required_content: criteria version + dimensions from authority + evidence + hard blocks + result
+  - object_uid: CORE-01-OBJ-HUMAN-DECISION
+    entity: HumanDecision
+    owner: Human
+    required_content: target ref + decision + reason + evidence refs
+  - object_uid: CORE-01-OBJ-STRUCTURED-DECISION
+    entity: StructuredDecision
+    owner: AI Assistant
+    required_content: structured restatement of human decision; cannot self-approve
+  - object_uid: CORE-01-OBJ-CANDIDATE
+    entity: CandidateVersion
+    owner: Candidate Service
+    required_content: immutable candidate + parent/source refs + version lineage
+  - object_uid: CORE-01-OBJ-PROJECT-DRAFT
+    entity: ProjectDraftVersion
+    owner: Project Service
+    required_content: registered create/validate/confirm Project draft fields
+  - object_uid: CORE-01-OBJ-STORY-CANDIDATE-SET
+    entity: StoryCandidateSet
+    owner: CORE Story
+    required_content: project ref + candidates + preserve canon refs
+  - object_uid: CORE-01-REF-CANON
+    entity: ProjectCanonComponentRef
+    owner: CORE
+    required_content: type=Story/Chapter/World; exact confirmed version/hash
+  - object_uid: CORE-01-REF-DNA
+    entity: DNAVersionRef
+    owner: CORE DNA
+    required_content: exact candidate/confirmed DNA version/hash/lock status
+  - object_uid: CORE-01-REF-BLUEPRINT
+    entity: BlueprintVersionRef
+    owner: CORE Blueprint
+    required_content: exact topic/project lineage + blueprint version/hash/state
+  - object_uid: CORE-01-OBJ-TOPIC-SCOPE
+    entity: TopicProductionScope
+    owner: CORE Topic
+    required_content: scope/boundary/bridge/product type/delivery unit refs from valid contract lineage
+  - object_uid: CORE-01-REF-CANONICAL-SCRIPT
+    entity: CanonicalProductionScriptRef
+    owner: CORE Script System
+    required_content: topic canonical production script exact version/hash; provider-neutral
+    authoring_contract_ref: CORE-01-CONTRACT-TOPIC-CANONICAL-PRODUCTION-SCRIPT
+    binding_rule: Exact Topic + Project Blueprint + Topic Production Scope + source candidate lineage; formalized only after existing human candidate decision.
+  - object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE
+    entity: TopicProductionPackage
+    owner: CORE Orchestration Boundary
+    required_content: project lock + blueprint child lock + topic scope + canonical script + DNA refs + naming authority ref
+    canonical_script_binding_rule: Package must reference the exact confirmed CanonicalProductionScriptRef/version/hash for the Topic. Department script
+      views remain department-owned and consume this exact source.
+  - object_uid: CORE-01-REF-NAMING
+    entity: ACPOSNamingAuthorityRef
+    owner: ACPOS_SYSTEM
+    required_content: global naming policy/version ref only; no filename formula in CORE
+  - object_uid: CORE-01-OBJ-DOWNSTREAM-READINESS
+    entity: DownstreamProjectionReadiness
+    owner: ACPOS Orchestration
+    required_content: read-only ASSET/VIDEO/EDIT boundary status + required refs; no downstream internals
+  - object_uid: CORE-01-OBJ-LOCK-REVIEW
+    entity: LockReviewRef
+    owner: VersionLockService boundary
+    required_content: target ref/hash + review status + resolvable evidence/reviewer path; unresolved contract remains blocker
+  action_effect_types:
+  - effect_type: READ_ONLY
+    allowed_change: Read projection only
+    forbidden: No domain mutation
+  - effect_type: UI_ONLY
+    allowed_change: Local layout/menu/copy state only
+    forbidden: No domain mutation
+  - effect_type: CONTEXT_STATE
+    allowed_change: Change selected Project/Topic/work item/thread in UI
+    forbidden: No cross-project implicit fallback
+  - effect_type: CONVERSATION_WRITE
+    allowed_change: Create thread/send message
+    forbidden: Cannot formalize AI output directly
+  - effect_type: CANDIDATE_CREATE
+    allowed_change: Create immutable candidate
+    forbidden: Cannot overwrite existing candidate/version
+  - effect_type: CANDIDATE_DECISION
+    allowed_change: Record candidate decision
+    forbidden: Cannot auto-lock by score
+  - effect_type: PROJECT_MUTATION
+    allowed_change: Registered Project draft/review operation
+    forbidden: No production fields outside registered contract
+  - effect_type: DNA_LOCK_REQUEST
+    allowed_change: Request DNA lock review
+    forbidden: No direct hidden approval
+  - effect_type: BLUEPRINT_MUTATION
+    allowed_change: Registered Blueprint operation
+    forbidden: No unregistered freeze/state invention
+  - effect_type: LOCK_REQUEST
+    allowed_change: Request Mother/Child lock review
+    forbidden: No fabricated evidence/reviewer/exception
+  - effect_type: TOPIC_MUTATION
+    allowed_change: Create Topic from valid lineage
+    forbidden: No fake canonical fields
+  actions:
+  - action_uid: CORE-01-ACT-PROJECT-SELECT
+    label: Select Project
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Resolve exact Project projection; clear Topic/work item/thread dependent state
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: CORE context reset
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-PROJECT-CREATE
+    label: Create Project Draft
+    permission_uid: CORE_PROJECT_WRITE
+    gate_uid: CORE-01-GATE-PROJECT-DRAFT
+    effect_type: PROJECT_MUTATION
+    owner: CORE-01
+    success_contract: createProjectDraft returns exact ProjectDraftVersion ref
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Project draft created
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-PROJECT-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-TOPIC-SELECT
+    label: Select Topic
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Load exact Topic under current Project; switch to TOPIC_PRODUCTION mode
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Topic context loaded
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-TOPIC-CREATE
+    label: Create Topic
+    permission_uid: CORE_TOPIC_WRITE
+    gate_uid: CORE-01-GATE-TOPIC-CREATE
+    effect_type: TOPIC_MUTATION
+    owner: CORE-01
+    success_contract: createTopic only from valid Project/Topic lineage; returns exact Topic ref
+    error_uid: CORE-01-ERR-TOPIC-LINEAGE-001
+    state_effect: Topic created
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-TOPIC-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-WORK-ITEM-SELECT
+    label: Select Work Item
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-WORK-ITEM
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Load only current-mode work item and its threads
+    error_uid: CORE-01-ERR-WORK-ITEM-001
+    state_effect: Work item context loaded
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-THREAD-CREATE
+    label: New Conversation Thread
+    permission_uid: CORE_CONVERSATION
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONVERSATION_WRITE
+    owner: CORE-01
+    success_contract: Create thread bound to current Project/Topic/work item
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: New thread current
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-THREAD-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-THREAD-SELECT
+    label: Select Thread
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Load exact matching thread history
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Thread current
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-AI-MODE-SINGLE
+    label: Single AI
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-WORK-ITEM
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Set conversation presentation to Single AI; routing remains system-owned
+    error_uid: CORE-01-ERR-AI-ROUTE-001
+    state_effect: AI mode=SINGLE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-AI-MODE-MULTI
+    label: Multi AI
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-MULTI-AI
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Set Multi AI presentation using system AssignedAISetRef
+    error_uid: CORE-01-ERR-AI-ROUTE-001
+    state_effect: AI mode=MULTI
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-ASSISTANT-RECORD
+    label: Open Assistant Record
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Open in-page overlay/drawer with recorded summaries/structured decisions
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Overlay open
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-MSG-QUOTE
+    label: 引用此訊息
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Insert quoted message ref into composer
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Composer ref updated
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-MSG-CONTINUE
+    label: 繼續討論此主題
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Focus composer with current thread topic context
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Composer focused
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-MSG-ANALYZE
+    label: 分析此內容
+    permission_uid: CORE_CONVERSATION
+    gate_uid: CORE-01-GATE-MESSAGE
+    effect_type: CONVERSATION_WRITE
+    owner: CORE-01
+    success_contract: Send analysis instruction referencing exact message id
+    error_uid: CORE-01-ERR-CONVERSATION-001
+    state_effect: New analysis response request
+    runtime_binding:
+      binding_kind: PORT_WITH_PAYLOAD_MODE
+      port_uid: CORE-01-PORT-MESSAGE-SEND
+      payload_rule: Use CORE-01-PORT-MESSAGE-SEND; exact conversation_id + source_message_id + analysis instruction; provider/model remains shared Router-resolved.
+      decision: SOURCE_DERIVED_CLOSURE
+  - action_uid: CORE-01-ACT-MSG-DECISION
+    label: 加入決策清單
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Add exact message ref to current Human Decision evidence draft
+    error_uid: CORE-01-ERR-DECISION-001
+    state_effect: Decision evidence updated
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-MSG-BRANCH
+    label: 建立分支討論
+    permission_uid: CORE_CONVERSATION
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONVERSATION_WRITE
+    owner: CORE-01
+    success_contract: Create branch thread under current work item; NOT a production Topic
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Branch thread created
+    runtime_binding:
+      binding_kind: PORT_WITH_RELATION_PAYLOAD
+      port_uid: CORE-01-PORT-THREAD-CREATE
+      payload_rule: Use CORE-01-PORT-THREAD-CREATE with exact parent_thread/work_item/source_message branch relation; branch is conversation thread, NOT
+        production Topic.
+      decision: SOURCE_DERIVED_CLOSURE
+  - action_uid: CORE-01-ACT-MSG-COPY
+    label: 複製此訊息
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Copy visible message text locally
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Clipboard only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-SEND
+    label: Send Message
+    permission_uid: CORE_CONVERSATION
+    gate_uid: CORE-01-GATE-MESSAGE
+    effect_type: CONVERSATION_WRITE
+    owner: CORE-01
+    success_contract: sendConversationMessage; provider/model resolved by ACPOS shared Router
+    error_uid: CORE-01-ERR-CONVERSATION-001
+    state_effect: Conversation responding
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-MESSAGE-SEND
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    label: Create Candidate
+    permission_uid: CORE_CANDIDATE_CREATE
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+    effect_type: CANDIDATE_CREATE
+    owner: CORE-01
+    success_contract: Create immutable candidate from confirmed structured human decision
+    error_uid: CORE-01-ERR-CANDIDATE-001
+    state_effect: Candidate ready
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CANDIDATE-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CANDIDATE-ACCEPT
+    label: Confirm Candidate
+    permission_uid: CORE_CANDIDATE_DECIDE
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    effect_type: CANDIDATE_DECISION
+    owner: CORE-01
+    success_contract: Record ACCEPTED candidate decision with reason/evidence
+    error_uid: CORE-01-ERR-DECISION-001
+    state_effect: Candidate accepted
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CANDIDATE-DECIDE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CANDIDATE-RETURN
+    label: Return to Modify
+    permission_uid: CORE_CANDIDATE_DECIDE
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    effect_type: CANDIDATE_DECISION
+    owner: CORE-01
+    success_contract: Record revision/reject decision; preserve candidate and return discussion
+    error_uid: CORE-01-ERR-DECISION-001
+    state_effect: Return conversation; new candidate required later
+    runtime_binding:
+      binding_kind: PORT_WITH_DECISION_VALUE
+      port_uid: CORE-01-PORT-CANDIDATE-DECIDE
+      payload_rule: Use CORE-01-PORT-CANDIDATE-DECIDE with RETURN/return-to-modify decision; do not create a second candidate endpoint.
+      decision: SOURCE_DERIVED_CLOSURE
+  - action_uid: CORE-01-ACT-CANDIDATE-COMPARE
+    label: Compare Candidates
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    effect_type: READ_ONLY
+    owner: CORE-01
+    success_contract: Read comparison only; no version mutation
+    error_uid: CORE-01-ERR-CANDIDATE-001
+    state_effect: Compare overlay/read model
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CANDIDATE-COMPARE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-PROJECT-VALIDATE
+    label: Validate Project Draft
+    permission_uid: CORE_PROJECT_WRITE
+    gate_uid: CORE-01-GATE-PROJECT-DRAFT
+    effect_type: PROJECT_MUTATION
+    owner: CORE-01
+    success_contract: validateProjectDraft completes without inventing fields
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Project draft validation refreshed
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-PROJECT-VALIDATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-PROJECT-CONFIRM
+    label: Confirm Project Draft
+    permission_uid: CORE_PROJECT_CONFIRM
+    gate_uid: CORE-01-GATE-PROJECT-CONFIRM
+    effect_type: PROJECT_MUTATION
+    owner: CORE-01
+    success_contract: confirmProjectDraft uses exact adopt refs/version; event timing follows runtime authority
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Project enters core modeling
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-PROJECT-CONFIRM
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-STORY-CANDIDATE
+    label: Generate Story Candidate Set
+    permission_uid: CORE_STORY_WRITE
+    gate_uid: CORE-01-GATE-STORY
+    effect_type: CANDIDATE_CREATE
+    owner: CORE-01
+    success_contract: createStoryCandidateSet for current Project only
+    error_uid: CORE-01-ERR-CANDIDATE-001
+    state_effect: Story candidate set created
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-STORY-CANDIDATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+    label: Request DNA Lock
+    permission_uid: CORE_DNA_LOCK
+    gate_uid: CORE-01-GATE-DNA-LOCK
+    effect_type: DNA_LOCK_REQUEST
+    owner: CORE-01
+    success_contract: requestDNALock creates review request only
+    error_uid: CORE-01-ERR-DNA-LOCK-001
+    state_effect: DNA review pending
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-DNA-LOCK
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+    label: Submit Project Core Review
+    permission_uid: CORE_PROJECT_WRITE
+    gate_uid: CORE-01-GATE-CORE-REVIEW
+    effect_type: PROJECT_MUTATION
+    owner: CORE-01
+    success_contract: submitCoreReview with exact ProjectVersion
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Project core review pending
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CORE-REVIEW
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+    label: Request Project Lock
+    permission_uid: CORE_LOCK_REQUEST
+    gate_uid: CORE-01-GATE-PROJECT-LOCK-READY
+    effect_type: LOCK_REQUEST
+    owner: CORE-01
+    success_contract: requestMotherLock only when review contract resolvable
+    error_uid: CORE-01-ERR-LOCK-CONTRACT-001
+    state_effect: Mother lock review pending
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-MOTHER-LOCK
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-BLUEPRINT-CREATE
+    label: Create Blueprint
+    permission_uid: CORE_BLUEPRINT_WRITE
+    gate_uid: CORE-01-GATE-BLUEPRINT-CREATE
+    effect_type: BLUEPRINT_MUTATION
+    owner: CORE-01
+    success_contract: createBlueprint returns exact BlueprintVersion ref
+    error_uid: CORE-01-ERR-BLUEPRINT-001
+    state_effect: Blueprint draft created
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-BLUEPRINT-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+    label: Validate Blueprint
+    permission_uid: CORE_BLUEPRINT_REVIEW
+    gate_uid: CORE-01-GATE-BLUEPRINT-VALIDATE
+    effect_type: BLUEPRINT_MUTATION
+    owner: CORE-01
+    success_contract: validateBlueprint transitions exact version to review
+    error_uid: CORE-01-ERR-BLUEPRINT-001
+    state_effect: Blueprint review
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-BLUEPRINT-VALIDATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-BLUEPRINT-APPROVE
+    label: Approve Blueprint
+    permission_uid: CORE_BLUEPRINT_APPROVE
+    gate_uid: CORE-01-GATE-BLUEPRINT-APPROVE
+    effect_type: BLUEPRINT_MUTATION
+    owner: CORE-01
+    success_contract: approveBlueprint transitions exact version to child-review readiness
+    error_uid: CORE-01-ERR-BLUEPRINT-001
+    state_effect: Blueprint child-review ready
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-BLUEPRINT-APPROVE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+    label: Request Child Lock
+    permission_uid: CORE_LOCK_REQUEST
+    gate_uid: CORE-01-GATE-CHILD-LOCK
+    effect_type: LOCK_REQUEST
+    owner: CORE-01
+    success_contract: requestChildLock review request only; no fabricated evidence/reviewer
+    error_uid: CORE-01-ERR-LOCK-CONTRACT-001
+    state_effect: Child lock review pending
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CHILD-LOCK
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+    label: View Canonical Production Script
+    permission_uid: CORE_SCRIPT_READ
+    gate_uid: CORE-01-GATE-CANONICAL-SCRIPT
+    effect_type: READ_ONLY
+    owner: CORE-01
+    success_contract: getCanonicalScript exact Topic canonical script projection including exact Project/Blueprint/TopicScope/source-candidate lineage
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Read-only script view
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CANONICAL-SCRIPT
+      decision: SOURCE_DERIVED
+    source_contract_ref: CORE-01-CONTRACT-TOPIC-CANONICAL-PRODUCTION-SCRIPT
+  - action_uid: CORE-01-ACT-ATTACHMENT
+    label: Attach File Reference
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Open global attachment/reference boundary and append returned attachment_ref to composer; CORE owns no upload backend
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Composer attachment_refs updated
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-REFERENCE-ATTACH
+    label: Attach Data / Reference
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Open allowed reference selector and append exact reference ref to composer
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Composer reference refs updated
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  controls:
+  - control_uid: CORE-01-CTL-PROJECT
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: SELECT
+    label: Project
+    action_uid: CORE-01-ACT-PROJECT-SELECT
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-PROJECT-CREATE
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: PRIMARY_BUTTON
+    label: 建立 Project
+    action_uid: CORE-01-ACT-PROJECT-CREATE
+    gate_uid: CORE-01-GATE-PROJECT-DRAFT
+    permission_uid: CORE_PROJECT_WRITE
+    default: —
+  - control_uid: CORE-01-CTL-TOPIC
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: SELECT
+    label: Topic
+    action_uid: CORE-01-ACT-TOPIC-SELECT
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-TOPIC-CREATE
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: PRIMARY_BUTTON
+    label: 建立 Topic
+    action_uid: CORE-01-ACT-TOPIC-CREATE
+    gate_uid: CORE-01-GATE-TOPIC-CREATE
+    permission_uid: CORE_TOPIC_WRITE
+    default: —
+  - control_uid: CORE-01-FLD-PAGE-MODE
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: READONLY
+    label: 'Mode: PROJECT_CORE / TOPIC_PRODUCTION'
+    action_uid: CORE-01-ACT-PROJECT-SELECT
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-NAMING-AUTHORITY
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: READONLY
+    label: Naming Authority = ACPOS_SYSTEM
+    action_uid: CORE-01-ACT-PROJECT-SELECT
+    gate_uid: CORE-01-GATE-NAMING
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-LST-WORK-ITEMS
+    section_uid: CORE-01-SEC-02
+    component_uid: CORE-01-CMP-NAV
+    visual_uid: CORE-01-VIS-LEFT
+    type: LIST
+    label: Work Items
+    action_uid: CORE-01-ACT-WORK-ITEM-SELECT
+    gate_uid: CORE-01-GATE-WORK-ITEM
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-NEW-THREAD
+    section_uid: CORE-01-SEC-02
+    component_uid: CORE-01-CMP-THREADS
+    visual_uid: CORE-01-VIS-LEFT
+    type: BUTTON
+    label: ＋ 新增對話
+    action_uid: CORE-01-ACT-THREAD-CREATE
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_CONVERSATION
+    default: —
+  - control_uid: CORE-01-LST-THREADS
+    section_uid: CORE-01-SEC-02
+    component_uid: CORE-01-CMP-THREADS
+    visual_uid: CORE-01-VIS-LEFT
+    type: LIST
+    label: Conversation Threads
+    action_uid: CORE-01-ACT-THREAD-SELECT
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-SINGLE-AI
+    section_uid: CORE-01-SEC-03
+    component_uid: CORE-01-CMP-CONV-HEADER
+    visual_uid: CORE-01-VIS-CENTER-HEADER
+    type: SEGMENT_BUTTON
+    label: SINGLE AI
+    action_uid: CORE-01-ACT-AI-MODE-SINGLE
+    gate_uid: CORE-01-GATE-WORK-ITEM
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-MULTI-AI
+    section_uid: CORE-01-SEC-03
+    component_uid: CORE-01-CMP-CONV-HEADER
+    visual_uid: CORE-01-VIS-CENTER-HEADER
+    type: SEGMENT_BUTTON
+    label: MULTI AI
+    action_uid: CORE-01-ACT-AI-MODE-MULTI
+    gate_uid: CORE-01-GATE-MULTI-AI
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-ASSIGNED-AI
+    section_uid: CORE-01-SEC-03
+    component_uid: CORE-01-CMP-CONV-HEADER
+    visual_uid: CORE-01-VIS-CENTER-HEADER
+    type: READONLY
+    label: Assigned AI Set / Route
+    action_uid: CORE-01-ACT-ASSISTANT-RECORD
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-ASSISTANT-RECORD
+    section_uid: CORE-01-SEC-03
+    component_uid: CORE-01-CMP-CONV-HEADER
+    visual_uid: CORE-01-VIS-CENTER-HEADER
+    type: BUTTON
+    label: Assistant Record
+    action_uid: CORE-01-ACT-ASSISTANT-RECORD
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-MENU-QUOTE
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 引用此訊息
+    action_uid: CORE-01-ACT-MSG-QUOTE
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-MENU-CONTINUE
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 繼續討論此主題
+    action_uid: CORE-01-ACT-MSG-CONTINUE
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-MENU-ANALYZE
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 分析此內容
+    action_uid: CORE-01-ACT-MSG-ANALYZE
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_CONVERSATION
+    default: —
+  - control_uid: CORE-01-MENU-DECISION
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 加入決策清單
+    action_uid: CORE-01-ACT-MSG-DECISION
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-MENU-BRANCH
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 建立分支討論
+    action_uid: CORE-01-ACT-MSG-BRANCH
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_CONVERSATION
+    default: —
+  - control_uid: CORE-01-MENU-COPY
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 複製此訊息
+    action_uid: CORE-01-ACT-MSG-COPY
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-ASSISTANT-SUMMARY
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-SUMMARY
+    visual_uid: CORE-01-VIS-DECISION
+    type: READONLY
+    label: Assistant Summary
+    action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    gate_uid: CORE-01-GATE-SUMMARY
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-EVALUATION
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-EVALUATION
+    visual_uid: CORE-01-VIS-DECISION
+    type: READONLY
+    label: CORE Evaluation / Criteria Version / Evidence
+    action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    gate_uid: CORE-01-GATE-EVALUATION
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-HUMAN-DECISION
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-HUMAN-DECISION
+    visual_uid: CORE-01-VIS-DECISION
+    type: TEXTAREA
+    label: Human Decision
+    action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    gate_uid: CORE-01-GATE-HUMAN-DECISION
+    permission_uid: CORE_CANDIDATE_CREATE
+    default: —
+  - control_uid: CORE-01-FLD-STRUCTURED-DECISION
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-HUMAN-DECISION
+    visual_uid: CORE-01-VIS-DECISION
+    type: READONLY
+    label: Assistant Structured Decision
+    action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    gate_uid: CORE-01-GATE-HUMAN-DECISION
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-CANDIDATE-CREATE
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-HUMAN-DECISION
+    visual_uid: CORE-01-VIS-DECISION
+    type: PRIMARY_BUTTON
+    label: 建立 Candidate
+    action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+    permission_uid: CORE_CANDIDATE_CREATE
+    default: —
+  - control_uid: CORE-01-BTN-CANDIDATE-CONFIRM
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-HUMAN-DECISION
+    visual_uid: CORE-01-VIS-DECISION
+    type: PRIMARY_BUTTON
+    label: 確認 Candidate
+    action_uid: CORE-01-ACT-CANDIDATE-ACCEPT
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    permission_uid: CORE_CANDIDATE_DECIDE
+    default: —
+  - control_uid: CORE-01-BTN-RETURN-MODIFY
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-HUMAN-DECISION
+    visual_uid: CORE-01-VIS-DECISION
+    type: SECONDARY_BUTTON
+    label: 返回修改
+    action_uid: CORE-01-ACT-CANDIDATE-RETURN
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    permission_uid: CORE_CANDIDATE_DECIDE
+    default: —
+  - control_uid: CORE-01-FLD-RUNTIME-STAGE
+    section_uid: CORE-01-SEC-06
+    component_uid: CORE-01-CMP-RUNTIME
+    visual_uid: CORE-01-VIS-RUNTIME
+    type: READONLY
+    label: Current Runtime Stage
+    action_uid: CORE-01-ACT-PROJECT-SELECT
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-ATTACHMENT
+    section_uid: CORE-01-SEC-07
+    component_uid: CORE-01-CMP-COMPOSER
+    visual_uid: CORE-01-VIS-COMPOSER
+    type: ICON_BUTTON
+    label: 附件
+    action_uid: CORE-01-ACT-ATTACHMENT
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-REFERENCE
+    section_uid: CORE-01-SEC-07
+    component_uid: CORE-01-CMP-COMPOSER
+    visual_uid: CORE-01-VIS-COMPOSER
+    type: ICON_BUTTON
+    label: 參考資料
+    action_uid: CORE-01-ACT-REFERENCE-ATTACH
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-MESSAGE
+    section_uid: CORE-01-SEC-07
+    component_uid: CORE-01-CMP-COMPOSER
+    visual_uid: CORE-01-VIS-COMPOSER
+    type: MULTILINE_INPUT
+    label: 輸入訊息；@ 叫用 AI / Data / Reference / Assistant
+    action_uid: CORE-01-ACT-SEND
+    gate_uid: CORE-01-GATE-MESSAGE
+    permission_uid: CORE_CONVERSATION
+    default: —
+  - control_uid: CORE-01-BTN-SEND
+    section_uid: CORE-01-SEC-07
+    component_uid: CORE-01-CMP-COMPOSER
+    visual_uid: CORE-01-VIS-COMPOSER
+    type: PRIMARY_BUTTON
+    label: 傳送
+    action_uid: CORE-01-ACT-SEND
+    gate_uid: CORE-01-GATE-MESSAGE
+    permission_uid: CORE_CONVERSATION
+    default: —
+  - control_uid: CORE-01-BTN-PROJECT-VALIDATE
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 驗證 Project Draft
+    action_uid: CORE-01-ACT-PROJECT-VALIDATE
+    gate_uid: CORE-01-GATE-PROJECT-DRAFT
+    permission_uid: CORE_PROJECT_WRITE
+    default: —
+  - control_uid: CORE-01-BTN-PROJECT-CONFIRM
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 確認 Project Draft
+    action_uid: CORE-01-ACT-PROJECT-CONFIRM
+    gate_uid: CORE-01-GATE-PROJECT-CONFIRM
+    permission_uid: CORE_PROJECT_CONFIRM
+    default: —
+  - control_uid: CORE-01-BTN-STORY-CANDIDATE
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 產生 Story Candidate Set
+    action_uid: CORE-01-ACT-STORY-CANDIDATE
+    gate_uid: CORE-01-GATE-STORY
+    permission_uid: CORE_STORY_WRITE
+    default: —
+  - control_uid: CORE-01-BTN-DNA-LOCK
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 要求 DNA Lock
+    action_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+    gate_uid: CORE-01-GATE-DNA-LOCK
+    permission_uid: CORE_DNA_LOCK
+    default: —
+  - control_uid: CORE-01-BTN-CORE-REVIEW
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 送出 Project Core Review
+    action_uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+    gate_uid: CORE-01-GATE-CORE-REVIEW
+    permission_uid: CORE_PROJECT_WRITE
+    default: —
+  - control_uid: CORE-01-BTN-PROJECT-LOCK
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 提出 Project Lock
+    action_uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+    gate_uid: CORE-01-GATE-PROJECT-LOCK-READY
+    permission_uid: CORE_LOCK_REQUEST
+    default: —
+  - control_uid: CORE-01-BTN-BLUEPRINT-CREATE
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-BLUEPRINT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 建立 Blueprint
+    action_uid: CORE-01-ACT-BLUEPRINT-CREATE
+    gate_uid: CORE-01-GATE-BLUEPRINT-CREATE
+    permission_uid: CORE_BLUEPRINT_WRITE
+    default: —
+  - control_uid: CORE-01-BTN-BLUEPRINT-VALIDATE
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-BLUEPRINT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 驗證 Blueprint
+    action_uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+    gate_uid: CORE-01-GATE-BLUEPRINT-VALIDATE
+    permission_uid: CORE_BLUEPRINT_REVIEW
+    default: —
+  - control_uid: CORE-01-BTN-BLUEPRINT-APPROVE
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-BLUEPRINT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 核准 Blueprint
+    action_uid: CORE-01-ACT-BLUEPRINT-APPROVE
+    gate_uid: CORE-01-GATE-BLUEPRINT-APPROVE
+    permission_uid: CORE_BLUEPRINT_APPROVE
+    default: —
+  - control_uid: CORE-01-BTN-CHILD-LOCK
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-BLUEPRINT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 提出 Child Lock
+    action_uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+    gate_uid: CORE-01-GATE-CHILD-LOCK
+    permission_uid: CORE_LOCK_REQUEST
+    default: —
+  - control_uid: CORE-01-FLD-TOPIC-SCOPE
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-TOPIC-PACKAGE
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: READONLY
+    label: Topic Production Scope / Contract Refs
+    action_uid: CORE-01-ACT-TOPIC-SELECT
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-CANONICAL-SCRIPT
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-TOPIC-PACKAGE
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: BUTTON
+    label: 查看 Canonical Production Script
+    action_uid: CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+    gate_uid: CORE-01-GATE-CANONICAL-SCRIPT
+    permission_uid: CORE_SCRIPT_READ
+    default: —
+  - control_uid: CORE-01-FLD-PACKAGE
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-TOPIC-PACKAGE
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: READONLY
+    label: Production Package / Blueprint / DNA / Script refs
+    action_uid: CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-DOWNSTREAM-ASSET
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-DOWNSTREAM
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: READONLY
+    label: ASSET Boundary Readiness
+    action_uid: CORE-01-ACT-PROJECT-SELECT
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-DOWNSTREAM-VIDEO
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-DOWNSTREAM
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: READONLY
+    label: VIDEO Boundary Readiness
+    action_uid: CORE-01-ACT-PROJECT-SELECT
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-DOWNSTREAM-EDIT
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-DOWNSTREAM
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: READONLY
+    label: EDIT Boundary Readiness
+    action_uid: CORE-01-ACT-PROJECT-SELECT
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-CANDIDATE-COMPARE
+    section_uid: CORE-01-SEC-10
+    component_uid: CORE-01-CMP-VERSION
+    visual_uid: CORE-01-VIS-RIGHT-VERSION
+    type: BUTTON
+    label: 比較 Candidate
+    action_uid: CORE-01-ACT-CANDIDATE-COMPARE
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-VERSION-STATE
+    section_uid: CORE-01-SEC-10
+    component_uid: CORE-01-CMP-VERSION
+    visual_uid: CORE-01-VIS-RIGHT-VERSION
+    type: READONLY
+    label: Current Candidate / Confirmed Version
+    action_uid: CORE-01-ACT-CANDIDATE-COMPARE
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-LOCK-REVIEW
+    section_uid: CORE-01-SEC-10
+    component_uid: CORE-01-CMP-LOCK-REVIEW
+    visual_uid: CORE-01-VIS-RIGHT-VERSION
+    type: READONLY
+    label: Lock Review Status / Block Reason
+    action_uid: CORE-01-ACT-PROJECT-SELECT
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  integration_ports:
+  - port_uid: CORE-01-PORT-PROJECTION
+    boundary: Read Page Projection
+    operation: getUiProjection
+    method_path: GET /v1/ui-projections/{pageUid}
+    permission: page.view
+    state_event: read only
+    exposure: All page state/read cards; no invented data
+  - port_uid: CORE-01-PORT-PROJECT-CREATE
+    boundary: Project Draft
+    operation: createProjectDraft
+    method_path: POST /v1/projects/drafts
+    permission: entity.write
+    state_event: NONE | event none
+    exposure: CORE-01-ACT-PROJECT-CREATE
+  - port_uid: CORE-01-PORT-PROJECT-VALIDATE
+    boundary: Project Draft
+    operation: validateProjectDraft
+    method_path: POST /v1/projects/drafts/{projectVersionId}/validate
+    permission: core.project.read
+    state_event: DRAFT→DRAFT
+    exposure: CORE-01-ACT-PROJECT-VALIDATE
+  - port_uid: CORE-01-PORT-PROJECT-CONFIRM
+    boundary: Project Draft
+    operation: confirmProjectDraft
+    method_path: POST /v1/projects/drafts/{id}/confirm
+    permission: core.project.confirm
+    state_event: DRAFT→CORE_MODELING | project.created timing governed by runtime/pending decision
+    exposure: CORE-01-ACT-PROJECT-CONFIRM; do not duplicate event
+  - port_uid: CORE-01-PORT-STORY-CANDIDATE
+    boundary: Story
+    operation: createStoryCandidateSet
+    method_path: POST /v1/projects/{projectId}/story-candidate-sets
+    permission: core.story.write
+    state_event: DRAFT→GENERATING | story.candidate_set.created
+    exposure: CORE-01-ACT-STORY-CANDIDATE
+  - port_uid: CORE-01-PORT-THREAD-CREATE
+    boundary: Conversation
+    operation: createConversationThread
+    method_path: POST /v1/projects/{projectId}/conversations
+    permission: conversation.write
+    state_event: NONE→DRAFT | conversation.thread.created
+    exposure: CORE-01-ACT-THREAD-CREATE
+  - port_uid: CORE-01-PORT-MESSAGE-SEND
+    boundary: Conversation
+    operation: sendConversationMessage
+    method_path: POST /v1/conversations/{conversationId}/messages
+    permission: conversation.write
+    state_event: Conversation ACTIVE→ACTIVE; Core DRAFT→RUNNING | conversation.message.sent
+    exposure: CORE-01-ACT-SEND
+  - port_uid: CORE-01-PORT-CANDIDATE-CREATE
+    boundary: Candidate
+    operation: createCandidate
+    method_path: POST /v1/candidates
+    permission: candidate.create
+    state_event: '*→CANDIDATE | candidate.created'
+    exposure: CORE-01-ACT-CANDIDATE-CREATE
+  - port_uid: CORE-01-PORT-CANDIDATE-COMPARE
+    boundary: Candidate
+    operation: compareCandidates
+    method_path: GET /v1/candidates/compare
+    permission: candidate.read
+    state_event: read only
+    exposure: CORE-01-ACT-CANDIDATE-COMPARE
+  - port_uid: CORE-01-PORT-CANDIDATE-DECIDE
+    boundary: Candidate
+    operation: decideCandidate
+    method_path: POST /v1/candidates/{id}/decision
+    permission: candidate.decide
+    state_event: CANDIDATE→ACCEPTED/REJECTED | candidate.decided
+    exposure: CORE-01-ACT-CANDIDATE-ACCEPT / RETURN
+  - port_uid: CORE-01-PORT-DNA-LOCK
+    boundary: DNA Lock Review
+    operation: requestDNALock
+    method_path: POST /v1/state-commands/dnaversion/requestdnalock
+    permission: dna.lock.request
+    state_event: CANDIDATE→REVIEW_REQUIRED | dna.lock.requested
+    exposure: CORE-01-ACT-DNA-LOCK-REQUEST
+  - port_uid: CORE-01-PORT-CORE-REVIEW
+    boundary: Project Core Review
+    operation: submitCoreReview
+    method_path: POST /v1/state-commands/projectversion/submitcorereview
+    permission: core.project.write
+    state_event: CORE_MODELING→CORE_REVIEW | project.core_review_submitted
+    exposure: CORE-01-ACT-CORE-REVIEW-SUBMIT
+  - port_uid: CORE-01-PORT-MOTHER-LOCK
+    boundary: Project Lock Review
+    operation: requestMotherLock
+    method_path: POST /v1/locks/mother-requests
+    permission: core.lock.request
+    state_event: READY_FOR_MOTHER_REVIEW→IN_REVIEW | lock.review_requested
+    exposure: CORE-01-ACT-MOTHER-LOCK-REQUEST; unresolved LockReview evidence/reviewer contract = BLOCK
+  - port_uid: CORE-01-PORT-TOPIC-CREATE
+    boundary: Topic
+    operation: createTopic
+    method_path: POST /v1/projects/{projectId}/topics
+    permission: entity.write
+    state_event: business action; no canonical transition/event
+    exposure: CORE-01-ACT-TOPIC-CREATE; valid Topic draft lineage required; no fabricated fields
+  - port_uid: CORE-01-PORT-BLUEPRINT-CREATE
+    boundary: Blueprint
+    operation: createBlueprint
+    method_path: POST /v1/topics/{id}/blueprints
+    permission: core.blueprint.write
+    state_event: READY_FOR_BLUEPRINT→BLUEPRINT_DRAFT
+    exposure: CORE-01-ACT-BLUEPRINT-CREATE
+  - port_uid: CORE-01-PORT-BLUEPRINT-VALIDATE
+    boundary: Blueprint
+    operation: validateBlueprint
+    method_path: POST /v1/blueprints/{id}/validate
+    permission: core.blueprint.review
+    state_event: BLUEPRINT_DRAFT→BLUEPRINT_REVIEW | blueprint.validated
+    exposure: CORE-01-ACT-BLUEPRINT-VALIDATE
+  - port_uid: CORE-01-PORT-BLUEPRINT-APPROVE
+    boundary: Blueprint
+    operation: approveBlueprint
+    method_path: POST /v1/blueprints/{id}/approve
+    permission: core.blueprint.approve
+    state_event: BLUEPRINT_REVIEW→READY_FOR_CHILD_REVIEW | blueprint.approved
+    exposure: CORE-01-ACT-BLUEPRINT-APPROVE
+  - port_uid: CORE-01-PORT-CHILD-LOCK
+    boundary: Blueprint/Topic Package Lock Review
+    operation: requestChildLock
+    method_path: POST /v1/locks/child-requests
+    permission: core.lock.request
+    state_event: READY_FOR_CHILD_REVIEW→IN_REVIEW | lock.review_requested
+    exposure: CORE-01-ACT-CHILD-LOCK-REQUEST; no hidden reviewer/exception
+  - port_uid: CORE-01-PORT-CANONICAL-SCRIPT
+    boundary: Canonical Production Script
+    operation: getCanonicalScript
+    method_path: GET /v1/topics/{id}/scripts/canonical
+    permission: core.script.read
+    state_event: read only
+    exposure: CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+acceptance:
+- acceptance_uid: CORE-01-ACC-01
+  item: Single Page / Global Visual
+  condition: Only CORE-01; Global Shell/Visual inherited; no split Story/DNA/Blueprint/Script pages
+- acceptance_uid: CORE-01-ACC-02
+  item: Current Project/Topic Logic
+  condition: Project builds Story/Chapter/World/DNA/Blueprint; Topic reads confirmed Project and defines production scope/script source; no TOPIC_CORE rebuild
+- acceptance_uid: CORE-01-ACC-03
+  item: Conversation-first
+  condition: Every editable CORE work item uses project-rooted conversation/thread context; cross-work-item history mixing=0
+- acceptance_uid: CORE-01-ACC-04
+  item: Single/Multi AI
+  condition: No provider/model picker; Assigned AI Set comes from shared ACPOS Router; Assistant is not third mode
+- acceptance_uid: CORE-01-ACC-05
+  item: Decision Safety
+  condition: AI output→Assistant Summary→CORE Evaluation→Human Decision→Structured Decision→Candidate; score alone never locks
+- acceptance_uid: CORE-01-ACC-06
+  item: Immutable Version
+  condition: No overwrite; return modify preserves old candidate/version and later creates new candidate
+- acceptance_uid: CORE-01-ACC-07
+  item: Project/Blueprint Lock
+  condition: Domain-specific request operations + exact gates; unresolved R9 LockReview contract stays BLOCK, never fabricated
+- acceptance_uid: CORE-01-ACC-08
+  item: Topic Lineage
+  condition: createTopic blocked unless valid lineage can satisfy canonical Topic requirements; no fake code/boundary/bridge
+- acceptance_uid: CORE-01-ACC-09
+  item: ACPOS Naming
+  condition: Naming Authority = ACPOS_SYSTEM; CORE has no naming formula/manual filename/rename; only exact authority ref
+- acceptance_uid: CORE-01-ACC-10
+  item: Downstream Relationship
+  condition: ASSET/VIDEO/EDIT shown only as read-only boundary readiness; no downstream internal Control/API/Runtime copied into CORE
+- acceptance_uid: CORE-01-ACC-11
+  item: Scrollable Page
+  condition: Main Workspace height:auto and overflow-y:auto; not bound to Global Sidebar/Menu height; sections may extend downward
+- acceptance_uid: CORE-01-ACC-12
+  item: Machine Binding
+  condition: Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted=BLOCK
+hard_locks:
+- Only CORE-01 is the current executable CORE workspace page. Old CORE-02/03/04/06 page layouts are legacy references only and MUST NOT be recreated as
+  separate pages.
+- Old TOPIC_CORE semantics are FORBIDDEN. Topic does not recreate Story/Chapter/World/DNA/Blueprint.
+- Project mode editable items are STORY/CHAPTER/WORLD_SETTING/DNA/BLUEPRINT only; Production Script is Topic-production scope.
+- No Production Task selector/create control in CORE-01.
+- No page-level Provider/Model picker or provider-specific prompt compiler; use ACPOS shared AI Routing/Instruction/Translation architecture.
+- Naming is ACPOS_SYSTEM global authority. No CORE-local filename formula, filename parser, manual filename input or rename.
+- Raw AI response never becomes formal data without human decision/candidate/version flow.
+- Existing candidate/confirmed version is immutable; revision creates a new candidate/version.
+- Lock/Freeze semantics not fully closed in R9 must remain explicit blocker; no invented state, evidence, reviewer or exception path.
+- Do not copy ASSET/VIDEO/EDIT/VOICE internal pages, controls, APIs, DB tables or runtimes into CORE. Only boundary readiness refs may be shown.
+- Global visual tokens are inherited; no CORE-local raw hex palette or conflicting control size.
+- Main Workspace vertical length is unbounded; do not force page height to Global Sidebar/Menu height.
+- No unlisted Section/Component/Control/Action/State/Gate/Permission/Port/Business Sample Data.
+final_gap_closure:
+  status: FINAL_GAP_CLOSED_DEDUP_CLEAN
+  single_action_owner: registries.actions
+  single_control_owner: registries.controls
+  runtime_binding_location: registries.actions[*].runtime_binding
+  action_runtime_binding_count: 34
+  control_count: 50
+  parallel_action_runtime_registry_removed: true
+  parallel_control_runtime_registry_removed: true
+  shared_operation_definition_location: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  rule: Action owns one embedded runtime_binding. Shared service details are referenced by shared_operation_id only.
+derived_validation:
+  final_gap_closure:
+    status: FINAL_GAP_CLOSED
+    source_action_count: 34
+    source_control_count: 50
+    action_runtime_binding_coverage: 34/34
+    control_runtime_binding_coverage: 50/50
+    unresolved_control_action_refs: 0
+    unbound_actions: 0
+    shared_delegations_are_explicit: true
+    frontend_route_inference_required: false
+  final_dedup_cleanup:
+    status: PASS
+    action_runtime_embedded_in_single_action_registry: true
+    parallel_action_runtime_registry: 0
+    parallel_control_binding_registry: 0
+canonical_production_script_authoring_contract:
+  contract_uid: CORE-01-CONTRACT-TOPIC-CANONICAL-PRODUCTION-SCRIPT
+  owner: CORE Script System
+  page_mode: TOPIC_PRODUCTION
+  work_item: PRODUCTION_SCRIPT
+  provider_neutral: true
+  qa_in_scope: false
+  purpose: For the selected Topic, author one Canonical Production Script that stays inside the selected Project's locked/confirmed Blueprint and exact
+    Topic Production Scope. This Canonical Script is the single content source that downstream department scripts must reference.
+  required_source_bindings:
+  - binding: project_ref
+    rule: Exact current Project lineage selected in CORE; no cross-project substitution.
+  - binding: topic_ref
+    rule: Exact Topic under the selected Project.
+  - binding: project_blueprint_ref
+    rule: Exact confirmed/locked BlueprintVersionRef available to the Topic from the Project canon. The authoring process may not invent or silently replace
+      Blueprint rules.
+  - binding: topic_production_scope_ref
+    rule: Exact current TOPIC_SCOPE work-item result; defines the only allowed content range for this Topic.
+  - binding: project_canon_refs
+    rule: Exact Story / Chapter / World Setting refs required by the current Blueprint/Topic context.
+  - binding: dna_refs
+    rule: Exact required Character / Scene / Object DNA refs; unresolved required DNA blocks script finalization.
+  - binding: previous_topic_continuity_ref_if_applicable
+    rule: When the Project sequence defines a previous Topic, use its confirmed ending/continuity state as read-only source. If no previous Topic is defined,
+      leave absent; do not fabricate continuity.
+  - binding: naming_authority_ref
+    rule: Use existing naming authority; script authoring must not create a parallel naming system.
+  authoring_principles:
+  - 'Blueprint-first: every story event, character behavior, world rule and production intent must be explainable by an exact Blueprint/Canon/DNA source.'
+  - 'Topic-boundary-first: only write content inside the confirmed Topic Production Scope; do not consume future Topic content unless the scope explicitly
+    contains that bridge.'
+  - 'Causality preserved: each major story beat declares cause, event and effect so downstream production cannot reinterpret the story order.'
+  - 'Character continuity preserved: intent, behavior, dialogue and state changes must remain consistent with exact DNA and current story state.'
+  - 'Scene continuity preserved: location/world/time/object state must remain consistent with Blueprint/Canon unless the Topic explicitly changes that state.'
+  - 'Provider-neutral: no Kling/OpenAI/Runway/other provider syntax, model names, endpoint fields or vendor prompt grammar in the Canonical Script.'
+  - 'Department-neutral at core level: Canonical Script states production meaning and constraints; ASSET/VIDEO/EDIT+VOICE own their detailed department
+    script wording.'
+  - Undefined required authority data is BLOCK + REPORT_AUTHORITY_GAP; AI must not fill the gap by inference.
+  canonical_script_schema:
+    identity_and_lineage:
+      required_fields:
+      - canonical_script_id
+      - canonical_script_version
+      - project_id
+      - topic_id
+      - project_blueprint_ref
+      - topic_production_scope_ref
+      - project_canon_refs
+      - dna_refs
+      - source_candidate_ref
+      - canonical_script_hash
+    topic_boundary:
+      required_fields:
+      - topic_start_state
+      - topic_end_state
+      - topic_objective
+      - topic_conflict_or_problem
+      - topic_payoff_or_resolution
+      - allowed_story_range
+      - forbidden_out_of_scope_content
+    continuity_bridge:
+      required_fields:
+      - previous_topic_state_if_applicable
+      - current_topic_entry_state
+      - current_topic_exit_state
+      - next_topic_bridge_if_defined_by_scope
+      - continuity_preserve_requirements
+    story_beats:
+      type: ordered_array
+      required_item_fields:
+      - beat_id
+      - order
+      - purpose
+      - cause
+      - event
+      - effect
+      - character_state_before
+      - character_state_after
+      - scene_refs
+      - must_preserve
+    scenes:
+      type: ordered_array
+      required_item_fields:
+      - scene_id
+      - order
+      - story_beat_refs
+      - scene_goal
+      - location_or_scene_dna_ref
+      - time_or_world_state
+      - character_refs
+      - object_refs
+      - entry_state
+      - event_sequence
+      - exit_state
+      - continuity_constraints
+    character_action_and_dialogue:
+      required_item_fields:
+      - character_ref
+      - scene_id
+      - intent
+      - action
+      - emotion_or_state
+      - dialogue_or_speech_content_if_any
+      - dialogue_purpose_if_any
+      - interaction_target_if_any
+      - preserve_constraints
+    production_meaning:
+      required_fields:
+      - visual_intent
+      - emotion_and_atmosphere
+      - pacing_intent
+      - critical_story_emphasis
+      - required_reveals_or_information
+      - required_on_screen_text_if_any
+      - audio_or_voice_intent_if_story_required
+      - must_not_be_reinterpreted
+      rule: These are semantic production requirements only. Shot-level camera/motion belongs to VIDEO; asset-generation detail belongs to ASSET; edit/voice
+        timing and mix detail belongs to EDIT+VOICE.
+    department_source_requirements:
+      required_fields:
+      - asset_department_source_requirements
+      - video_department_source_requirements
+      - edit_voice_department_source_requirements
+      rule: Each field lists exact story/scene/character/object/dialogue/continuity requirements that the department script must consume. It is not a provider
+        prompt and not a duplicate department script.
+    finalization:
+      required_fields:
+      - human_confirmed_candidate_ref
+      - confirmed_at
+      - confirmed_by
+      - canonical_script_hash
+      - source_binding_fingerprint
+      - status
+      allowed_status:
+      - CANDIDATE
+      - CONFIRMED
+      - LOCKED_OR_CONFIRMED_AS_GOVERNED_BY_EXISTING_CORE_STATE
+  candidate_and_materialization_binding:
+    existing_candidate_create_action: CORE-01-ACT-CANDIDATE-CREATE
+    existing_candidate_decision_action: CORE-01-ACT-CANDIDATE-ACCEPT
+    existing_candidate_create_port: CORE-01-PORT-CANDIDATE-CREATE
+    existing_candidate_decision_port: CORE-01-PORT-CANDIDATE-DECIDE
+    work_item_discriminator: PRODUCTION_SCRIPT
+    raw_ai_output_formalization: FORBIDDEN
+    required_flow:
+    - TOPIC_PRODUCTION mode resolves exact source bindings
+    - AI/human discussion produces structured PRODUCTION_SCRIPT decision
+    - Existing Create Candidate creates immutable PRODUCTION_SCRIPT Candidate
+    - Existing Confirm Candidate records human ACCEPTED decision
+    - Existing CORE Script System materializes the accepted candidate as the Topic CanonicalProductionScriptRef/version/hash
+    - Existing Canonical Script read action exposes the exact confirmed projection
+    new_ui_action: false
+    new_endpoint_in_this_authority: false
+    transport_rule: Canonical materialization is owned by the existing CORE Script System domain handler. If the deployment lacks a registered transport/domain
+      operation for accepted PRODUCTION_SCRIPT Candidate -> CanonicalProductionScriptRef, BLOCK deployment and register it in the System Operation Registry;
+      do not invent an endpoint in page code.
+  downstream_department_script_binding:
+    rule: CORE owns only CanonicalProductionScriptRef. Each production department owns its existing specialized script view/section and must bind to the
+      exact Canonical Script version/hash for the selected Project/Topic.
+    ASSET:
+      target_existing_script_view: AssetProductionScriptViewRef
+      department_owner: ASSET
+      required_source: CORE-01-REF-CANONICAL-SCRIPT exact version/hash
+      additional_existing_sources:
+      - Blueprint exact ref
+      - DNA exact refs
+      - AssetManifest / reference inputs as governed by ASSET
+      content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.ASSET
+    VIDEO:
+      target_existing_script_view: VisualGenerationScriptViewRef
+      department_owner: VIDEO
+      required_source: CORE-01-REF-CANONICAL-SCRIPT exact version/hash
+      additional_existing_sources:
+      - Blueprint exact ref
+      - DNA exact refs
+      - exact locked Asset refs
+      content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.VIDEO
+    EDIT_VOICE:
+      target_existing_script_view: ProductionScriptSectionRef / existing 8 Script Roles
+      department_owner: EDIT+VOICE
+      required_source: CORE-01-REF-CANONICAL-SCRIPT exact version/hash
+      additional_existing_sources:
+      - Blueprint exact ref
+      - exact VIDEO output
+      - exact Asset refs
+      - existing stage dependencies
+      content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.EDIT_VOICE
+    first_production_behavior: 'No change: each department continues its existing behavior—after Project/Topic/Task resolution, the first production automatically
+      loads its exact specialized script and executes through the existing department runtime.'
+  provider_adapter_binding:
+    contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.1#normalized_instruction_contract.CORE
+    required_capability: TEXT_CHAT
+    profile_owner: admin:AIAPI-06#provider_model_profiles
+    router_owner: EXISTING ACPOS AI API Router
+    department_or_core_local_provider_registry: FORBIDDEN
+    provider_specific_syntax_in_canonical_script: FORBIDDEN
+  hard_locks:
+  - Only one Canonical Production Script source may be active for the exact Topic/version context.
+  - Canonical Script cannot be created from raw AI output without the existing Candidate + Human Decision flow.
+  - Canonical Script cannot silently switch Project, Topic, Blueprint, Scope, Canon or DNA refs.
+  - Department specialized scripts must reference the exact Canonical Script version/hash; they may not become an independent story authority.
+  - CORE Canonical Script may not contain provider/model-specific request syntax.
+  - No QA production-script authoring contract is created.

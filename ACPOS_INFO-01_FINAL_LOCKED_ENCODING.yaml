@@ -1,0 +1,1906 @@
+authority:
+  id: ACPOS_INFO-01_FINAL_LOCKED_ENCODING
+  page_uid: workspace:INFO-01
+  control_prefix: INFO-01
+  page_name_zh: 最新資訊工作區
+  page_name_en: Latest Information Workspace
+  surface: WORKSPACE
+  navigation_l1: 最新資訊
+  navigation_l2: Alert、Market / Knowledge / Fact Pack
+  status: FINAL_LOCKED
+  current_only: true
+  single_page_workspace: true
+  single_machine_authority: true
+  parallel_latest_information_page: FORBIDDEN
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  real_data_only: true
+  missing_value_display: —
+  owner_boundary: FactPackService + KnowledgeExperienceService through registered operations only
+  purpose: Display authorized source health, freshness, alerts, research runs, fact packs, evidence, Fact/Inference separation, source metadata, completeness, confidence, citations and
+    governed Context Candidate review.
+  hard_boundary: Fact / Inference / Recommendation may create Context / Alert / Candidate / Review Request only. INFO-01 must never directly modify Canon, Lock, Priority, Budget, Task,
+    Release or Publish.
+layout:
+  desktop_min_width: 1280px
+  vertical_scroll: Main Workspace height:auto; overflow-y:auto; independent from Global Sidebar/Menu height
+  below_min_width: Keep min-width=1280px; allow horizontal scroll; do not invent alternate mobile page/workflow
+  context_bar:
+    width: 100%
+    height: 56px
+  primary_grid:
+    columns: minmax(280px,1fr) minmax(720px,3fr) minmax(300px,1fr)
+    approx: 20% / 60% / 20%
+    gap: 16px
+    align: start
+  left_rail:
+    min_width: 280px
+    role: Scope / Source Health / Alert Feed
+  center:
+    min_width: 720px
+    role: Fact Pack / Fact-Inference / Evidence / Source Detail
+    priority: highest
+  right_rail:
+    min_width: 300px
+    role: Freshness / Completeness / Confidence / Research Queue
+  lower_rows: Context Candidate Review / Citation / Action Dock / Audit may extend full width
+  tokens:
+    control_height: 40px
+    button_min_width: 88px
+    primary_button_min_width: 120px
+    button_radius: 10px
+    panel_radius: 12px
+    large_container_radius: 24px
+    section_gap: 16px
+    content_padding: 16px
+    field_min_width: 120px
+    status_badge_height: 28px
+    action_gap: 8px
+    touch_target_min: 44px × 44px
+  visual_override: FORBIDDEN; inherit Global Visual tokens only
+information_contract:
+  knowledge_firewall_workflow: WF-KNOW-01
+  canonical_states:
+  - SOURCE_REGISTERED
+  - INGESTION_PENDING
+  - NORMALIZED
+  - FACT_PACK
+  - CONTEXT_CANDIDATE
+  - REVIEW_REQUIRED
+  - ADOPTED
+  - REJECTED
+  - RETIRED
+  fact_minimum_contract:
+  - source
+  - source_time
+  - scope
+  - completeness
+  - confidence
+  - classification
+  fact_inference_rules:
+  - FACT and INFERENCE must be visibly separated; inference/recommendation must never be rendered as a fact.
+  - A fact requires traceable source/evidence and source time in the authorized read model.
+  - Stale information remains visibly STALE; it is not relabeled as a current fact.
+  - Missing/incomplete source data remains incomplete; AI must not fabricate values.
+  - No page-local numeric freshness/confidence/completeness threshold may be invented; render governed read-model/policy values.
+  source_health_rules:
+  - Source health is read-only operational data.
+  - Authorization uses explicit Account Permission Assignment + scope + condition + classification masking + audit.
+  - Provider secrets and unregistered owner database reads are never rendered.
+  research_rules:
+  - Research Queue / Research Run is visible as read-model status only.
+  - INFO-01 does not invent a Start Research / Cancel Research action without a registered operation.
+  - Research result must enter the evidence/fact/context-candidate governance path before it can be adopted.
+fact_pack_contract:
+  required_view_blocks:
+  - Fact Pack identity/reference
+  - FACT list
+  - INFERENCE / Recommendation list when present
+  - Evidence list
+  - Source Metadata
+  - Freshness
+  - Completeness
+  - Confidence
+  - Citation
+  selection_rule: In-page selection only; no parallel current fact-pack page is required.
+  export_rule: Export uses registered exportProjection and authorized exact scope/projection request only.
+  no_fake_metrics: true
+context_candidate_contract:
+  meaning: Evidence-backed external information packaged as a governed Context Candidate for review/adoption.
+  visible_blocks:
+  - Context Scope
+  - Fact Selection
+  - Citation Check
+  - Candidate Preview
+  - Adoption Review
+  - Decision / Result
+  adoption_rule: Adopt Context records governed context adoption only. It does not directly rewrite Project/Topic Canon, Lock, Priority, Budget, Task, Release or Publish.
+  downstream_payload_boundary:
+  - context_candidate
+  - source_evidence
+  - adoption_review_only
+  decision_rule: adoptContextCandidate and decideCandidate remain separate registered operations. INFO-01 does not invent a local sequence or merge their state machines; server/state
+    gates decide availability.
+action_payload_contracts:
+  common_effectful_context:
+  - scope
+  - expected_version
+  - correlation_id
+  - idempotency_key
+  refreshProjection:
+    schema: RefreshProjectionRequest
+    additional_fields: Use registered Business Payload Registry only; do not infer page-union fields.
+  searchProjection:
+    schema: SearchProjectionRequest
+    additional_fields: Use registered Business Payload Registry only; do not invent search parameters.
+  exportProjection:
+    schema: ExportProjectionRequest
+    additional_fields:
+    - projection_type
+    - scope_ref
+    - format
+  adoptContextCandidate:
+    schema: AdoptContextCandidateRequest
+    additional_fields:
+    - context_candidate_id
+    - decision_reason
+  decideCandidate:
+    schema: DecideCandidateRequest
+    additional_fields:
+    - candidate_id
+    - decision
+registries:
+  sections:
+  - section_uid: INFO-01-SEC-01
+    name: Context / Projection Control
+    responsibility: Authorized scope, projection version, page status, refresh/search
+    visual_uid: INFO-01-VIS-CONTEXT
+  - section_uid: INFO-01-SEC-02
+    name: Scope / Source Health
+    responsibility: Scope filter, authorized sources, source-health projection
+    visual_uid: INFO-01-VIS-LEFT-SOURCE
+  - section_uid: INFO-01-SEC-03
+    name: Alert Feed
+    responsibility: Authorized alert feed and exact alert selection
+    visual_uid: INFO-01-VIS-LEFT-ALERT
+  - section_uid: INFO-01-SEC-04
+    name: Fact Pack Explorer
+    responsibility: Recent Fact Packs and exact in-page selection
+    visual_uid: INFO-01-VIS-FACTPACK
+  - section_uid: INFO-01-SEC-05
+    name: Fact / Inference Detail
+    responsibility: Explicit FACT versus INFERENCE / Recommendation separation
+    visual_uid: INFO-01-VIS-FACT
+  - section_uid: INFO-01-SEC-06
+    name: Evidence / Source Metadata
+    responsibility: Evidence refs, source metadata, source time, scope/classification
+    visual_uid: INFO-01-VIS-EVIDENCE
+  - section_uid: INFO-01-SEC-07
+    name: Freshness / Completeness / Confidence
+    responsibility: Governed read-model quality/freshness indicators; no local threshold
+    visual_uid: INFO-01-VIS-RIGHT-QUALITY
+  - section_uid: INFO-01-SEC-08
+    name: Research Queue / Runs
+    responsibility: Read-only research queue/run status
+    visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+  - section_uid: INFO-01-SEC-09
+    name: Context Candidate Review
+    responsibility: Context scope, fact selection, citation check, preview, adoption review
+    visual_uid: INFO-01-VIS-CANDIDATE
+  - section_uid: INFO-01-SEC-10
+    name: Citation Drawer
+    responsibility: Exact citation/evidence/source references
+    visual_uid: INFO-01-VIS-CITATION
+  - section_uid: INFO-01-SEC-11
+    name: Action Dock
+    responsibility: Export, Adopt Context, Candidate Decision; only registered operations
+    visual_uid: INFO-01-VIS-ACTION
+  - section_uid: INFO-01-SEC-12
+    name: Audit / Status
+    responsibility: Correlation, source sync, errors, disabled reason, firewall status
+    visual_uid: INFO-01-VIS-STATUS
+  visuals:
+  - visual_uid: INFO-01-VIS-CONTEXT
+    geometry: top full width; h>=56px
+  - visual_uid: INFO-01-VIS-LEFT-SOURCE
+    geometry: primary grid left upper; 20%; min 280px
+  - visual_uid: INFO-01-VIS-LEFT-ALERT
+    geometry: primary grid left lower; 20%; min 280px
+  - visual_uid: INFO-01-VIS-FACTPACK
+    geometry: primary grid center upper; 60%; min 720px
+  - visual_uid: INFO-01-VIS-FACT
+    geometry: primary grid center middle; 60%; min 720px
+  - visual_uid: INFO-01-VIS-EVIDENCE
+    geometry: primary grid center lower; 60%; min 720px
+  - visual_uid: INFO-01-VIS-RIGHT-QUALITY
+    geometry: primary grid right upper; 20%; min 300px
+  - visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+    geometry: primary grid right lower; 20%; min 300px
+  - visual_uid: INFO-01-VIS-CANDIDATE
+    geometry: lower full-width candidate review region
+  - visual_uid: INFO-01-VIS-CITATION
+    geometry: drawer / lower detail; exact citation only
+  - visual_uid: INFO-01-VIS-ACTION
+    geometry: lower full-width action dock
+  - visual_uid: INFO-01-VIS-STATUS
+    geometry: bottom full-width status/audit strip
+  components:
+  - component_uid: INFO-01-CMP-CONTEXT
+    section_uid: INFO-01-SEC-01
+    name: Projection Context Bar
+  - component_uid: INFO-01-CMP-SCOPE
+    section_uid: INFO-01-SEC-02
+    name: Scope Filter
+  - component_uid: INFO-01-CMP-SOURCE-HEALTH
+    section_uid: INFO-01-SEC-02
+    name: Source Health List / Detail
+  - component_uid: INFO-01-CMP-ALERT
+    section_uid: INFO-01-SEC-03
+    name: Alert Feed / Detail
+  - component_uid: INFO-01-CMP-FACTPACK-LIST
+    section_uid: INFO-01-SEC-04
+    name: Recent Fact Pack List
+  - component_uid: INFO-01-CMP-FACTPACK-HEADER
+    section_uid: INFO-01-SEC-04
+    name: Selected Fact Pack Header
+  - component_uid: INFO-01-CMP-FACT
+    section_uid: INFO-01-SEC-05
+    name: FACT List / Detail
+  - component_uid: INFO-01-CMP-INFERENCE
+    section_uid: INFO-01-SEC-05
+    name: INFERENCE / Recommendation List / Detail
+  - component_uid: INFO-01-CMP-EVIDENCE
+    section_uid: INFO-01-SEC-06
+    name: Evidence List
+  - component_uid: INFO-01-CMP-SOURCE-META
+    section_uid: INFO-01-SEC-06
+    name: Source Metadata
+  - component_uid: INFO-01-CMP-QUALITY
+    section_uid: INFO-01-SEC-07
+    name: Freshness / Completeness / Confidence
+  - component_uid: INFO-01-CMP-RESEARCH
+    section_uid: INFO-01-SEC-08
+    name: Research Queue / Runs
+  - component_uid: INFO-01-CMP-CANDIDATE-SCOPE
+    section_uid: INFO-01-SEC-09
+    name: Context Scope
+  - component_uid: INFO-01-CMP-CANDIDATE-FACTS
+    section_uid: INFO-01-SEC-09
+    name: Fact Selection
+  - component_uid: INFO-01-CMP-CANDIDATE-CITATION
+    section_uid: INFO-01-SEC-09
+    name: Citation Check
+  - component_uid: INFO-01-CMP-CANDIDATE-PREVIEW
+    section_uid: INFO-01-SEC-09
+    name: Context Candidate Preview
+  - component_uid: INFO-01-CMP-ADOPTION-REVIEW
+    section_uid: INFO-01-SEC-09
+    name: Adoption Review
+  - component_uid: INFO-01-CMP-CITATION
+    section_uid: INFO-01-SEC-10
+    name: Citation Drawer
+  - component_uid: INFO-01-CMP-ACTIONS
+    section_uid: INFO-01-SEC-11
+    name: Latest Information Action Dock
+  - component_uid: INFO-01-CMP-STATUS
+    section_uid: INFO-01-SEC-12
+    name: Audit / Status / Firewall
+  permissions:
+  - permission_uid: INFO_PAGE_VIEW
+    backend_scope: page.view
+    purpose: View authorized latest-information page/sections
+  - permission_uid: INFO_READ
+    backend_scope: information.read
+    purpose: Read authorized source/fact/evidence/research projection
+  - permission_uid: INFO_REFRESH
+    backend_scope: projection.refresh
+    purpose: Refresh registered projection
+  - permission_uid: INFO_SEARCH
+    backend_scope: projection.search
+    purpose: Search registered projection
+  - permission_uid: INFO_EXPORT
+    backend_scope: projection.export
+    purpose: Export authorized projection
+  - permission_uid: INFO_CONTEXT_ADOPT
+    backend_scope: knowledge.candidate.create
+    purpose: Adopt governed Context Candidate
+  - permission_uid: INFO_CANDIDATE_DECIDE
+    backend_scope: candidate.decide
+    purpose: Decide registered Candidate
+  gates:
+  - gate_uid: INFO-01-GATE-PAGE
+    condition: explicit account page permission + scope + condition + classification mask + audit
+  - gate_uid: INFO-01-GATE-READ
+    condition: authorized scope + information.read + read_model_version available
+  - gate_uid: INFO-01-GATE-FACTPACK
+    condition: selected exact Fact Pack exists in authorized projection
+  - gate_uid: INFO-01-GATE-EVIDENCE
+    condition: selected exact Fact/Evidence/Citation ref exists and is authorized
+  - gate_uid: INFO-01-GATE-REFRESH
+    condition: projection.refresh permission + registered RefreshProjectionRequest + server state/idempotency/audit gates
+  - gate_uid: INFO-01-GATE-SEARCH
+    condition: projection.search permission + registered SearchProjectionRequest + server state/idempotency/audit gates
+  - gate_uid: INFO-01-GATE-EXPORT
+    condition: projection.export permission + exact scope/projection + ExportProjectionRequest + server gates
+  - gate_uid: INFO-01-GATE-CANDIDATE
+    condition: exact evidence-backed Context Candidate + authorized target scope + citation/adoption-review projection
+  - gate_uid: INFO-01-GATE-ADOPT
+    condition: knowledge.candidate.create + exact context_candidate_id + decision_reason + server state/version/idempotency/audit gates
+  - gate_uid: INFO-01-GATE-DECIDE
+    condition: candidate.decide + exact candidate_id + registered decision + server state/version/idempotency/audit gates
+  errors:
+  - error_uid: INFO-01-ERR-CONTEXT-001
+    context: Authorized scope/read model unavailable or version mismatch
+    recovery: BLOCK dependent panels; show actual server reason
+  - error_uid: INFO-01-ERR-SOURCE-001
+    context: Source health/source metadata unavailable or unauthorized
+    recovery: Show unavailable/masked state; never fabricate source
+  - error_uid: INFO-01-ERR-FRESHNESS-001
+    context: Freshness/source_time missing, stale or inconsistent
+    recovery: Show STALE/INCOMPLETE as returned; never relabel current
+  - error_uid: INFO-01-ERR-FACTPACK-001
+    context: Fact Pack missing, inaccessible or invalid exact ref
+    recovery: BLOCK detail; preserve list/context
+  - error_uid: INFO-01-ERR-FACT-001
+    context: FACT lacks required source/source_time/scope/completeness/confidence/classification
+    recovery: Do not present as validated FACT; surface missing contract
+  - error_uid: INFO-01-ERR-EVIDENCE-001
+    context: Evidence/citation ref missing or invalid
+    recovery: Show broken evidence state; block evidence-dependent adoption
+  - error_uid: INFO-01-ERR-RESEARCH-001
+    context: Research run/queue projection missing or failed
+    recovery: Show actual status/error; do not create local retry/start action
+  - error_uid: INFO-01-ERR-SEARCH-001
+    context: Search request invalid/denied/stale
+    recovery: Show registered error + retry eligibility
+  - error_uid: INFO-01-ERR-EXPORT-001
+    context: Export request invalid/denied/stale
+    recovery: Show registered error; no local file fabrication
+  - error_uid: INFO-01-ERR-CANDIDATE-001
+    context: Context Candidate scope/evidence/citation/adoption-review invalid
+    recovery: BLOCK candidate action; preserve candidate projection
+  - error_uid: INFO-01-ERR-PERM-001
+    context: Permission/scope/classification denied
+    recovery: Hide/disable/mask according to registered permission result
+  - error_uid: INFO-01-ERR-UNDEFINED-001
+    context: Unlisted Section/Component/Control/Action/Gate/Permission/Port requested
+    recovery: BLOCK + REPORT_AUTHORITY_GAP
+  page_states:
+  - state_uid: INFO-01-ST-LOADING
+    display: LOADING
+    definition: Loading authorized projection
+  - state_uid: INFO-01-ST-READY
+    display: READY
+    definition: Authorized information projection ready
+  - state_uid: INFO-01-ST-EMPTY
+    display: EMPTY
+    definition: Authorized projection has no result
+  - state_uid: INFO-01-ST-STALE
+    display: STALE
+    definition: Source/fact projection is stale according to governed freshness data
+  - state_uid: INFO-01-ST-INCOMPLETE
+    display: INCOMPLETE
+    definition: Required source/evidence/completeness data is missing
+  - state_uid: INFO-01-ST-ERROR
+    display: ERROR
+    definition: Registered read/action error
+  - state_uid: INFO-01-ST-POLICY
+    display: POLICY_BLOCKED
+    definition: Permission/classification/scope policy blocks access/action
+  - state_uid: INFO-01-ST-CANDIDATE
+    display: CONTEXT_CANDIDATE
+    definition: Evidence-backed Context Candidate available for governed review
+  workflow_states:
+  - workflow_state: SOURCE_REGISTERED
+    owner: WF-KNOW-01 / server authority
+  - workflow_state: INGESTION_PENDING
+    owner: WF-KNOW-01 / server authority
+  - workflow_state: NORMALIZED
+    owner: WF-KNOW-01 / server authority
+  - workflow_state: FACT_PACK
+    owner: WF-KNOW-01 / server authority
+  - workflow_state: CONTEXT_CANDIDATE
+    owner: WF-KNOW-01 / server authority
+  - workflow_state: REVIEW_REQUIRED
+    owner: WF-KNOW-01 / server authority
+  - workflow_state: ADOPTED
+    owner: WF-KNOW-01 / server authority
+  - workflow_state: REJECTED
+    owner: WF-KNOW-01 / server authority
+  - workflow_state: RETIRED
+    owner: WF-KNOW-01 / server authority
+  actions:
+  - action_uid: INFO-01-ACT-NOOP
+    label: Read display
+    permission_uid: INFO_READ
+    gate_uid: INFO-01-GATE-READ
+    effect_type: READ_ONLY
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: No mutation
+    error_uid: INFO-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-FILTER
+    label: Filter current projection
+    permission_uid: INFO_READ
+    gate_uid: INFO-01-GATE-READ
+    effect_type: UI_ONLY
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Filter authorized in-memory projection only
+    error_uid: INFO-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-SOURCE-SELECT
+    label: Select source
+    permission_uid: INFO_READ
+    gate_uid: INFO-01-GATE-READ
+    effect_type: CONTEXT_STATE
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Load selected exact source context already present in projection
+    error_uid: INFO-01-ERR-SOURCE-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-ALERT-SELECT
+    label: Select alert
+    permission_uid: INFO_READ
+    gate_uid: INFO-01-GATE-READ
+    effect_type: CONTEXT_STATE
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Load exact alert detail in current page
+    error_uid: INFO-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-FACTPACK-SELECT
+    label: Select Fact Pack
+    permission_uid: INFO_READ
+    gate_uid: INFO-01-GATE-FACTPACK
+    effect_type: CONTEXT_STATE
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Load exact Fact Pack detail in current page
+    error_uid: INFO-01-ERR-FACTPACK-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-FACT-TYPE
+    label: FACT / INFERENCE view
+    permission_uid: INFO_READ
+    gate_uid: INFO-01-GATE-FACTPACK
+    effect_type: UI_ONLY
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Switch presentation only; classification remains source-owned
+    error_uid: INFO-01-ERR-FACT-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-EVIDENCE-SELECT
+    label: Open evidence
+    permission_uid: INFO_READ
+    gate_uid: INFO-01-GATE-EVIDENCE
+    effect_type: CONTEXT_STATE
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Open exact evidence/source/citation reference
+    error_uid: INFO-01-ERR-EVIDENCE-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-RESEARCH-SELECT
+    label: Open research run
+    permission_uid: INFO_READ
+    gate_uid: INFO-01-GATE-READ
+    effect_type: CONTEXT_STATE
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Open read-only research run status
+    error_uid: INFO-01-ERR-RESEARCH-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-CANDIDATE-SELECT
+    label: Open Context Candidate
+    permission_uid: INFO_READ
+    gate_uid: INFO-01-GATE-CANDIDATE
+    effect_type: CONTEXT_STATE
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Load exact candidate review projection
+    error_uid: INFO-01-ERR-CANDIDATE-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-CITATION-OPEN
+    label: Open Citation
+    permission_uid: INFO_READ
+    gate_uid: INFO-01-GATE-EVIDENCE
+    effect_type: UI_ONLY
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Open citation drawer with exact registered evidence/source ref
+    error_uid: INFO-01-ERR-EVIDENCE-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-REFRESH
+    label: 重新整理 / Refresh
+    permission_uid: INFO_REFRESH
+    gate_uid: INFO-01-GATE-REFRESH
+    effect_type: REGISTERED_COMMAND
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Refresh registered projection and preserve page context
+    error_uid: INFO-01-ERR-CONTEXT-001
+    operation: refreshProjection
+    method_path: POST /v1/projections/refresh
+    state_event: NONE | projection.refresh_requested
+    form_schema: RefreshProjectionRequest
+  - action_uid: INFO-01-ACT-SEARCH
+    label: 搜尋資訊 / Search
+    permission_uid: INFO_SEARCH
+    gate_uid: INFO-01-GATE-SEARCH
+    effect_type: REGISTERED_COMMAND
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Return authorized registered projection search results
+    error_uid: INFO-01-ERR-SEARCH-001
+    operation: searchProjection
+    method_path: POST /v1/search
+    state_event: NONE
+    form_schema: SearchProjectionRequest
+  - action_uid: INFO-01-ACT-PROJECTION-READ
+    label: Read UI projection
+    permission_uid: INFO_PAGE_VIEW
+    gate_uid: INFO-01-GATE-PAGE
+    effect_type: READ_MODEL_QUERY
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Return authorized INFO-01 UI projection
+    error_uid: INFO-01-ERR-CONTEXT-001
+    operation: getUiProjection
+    method_path: GET /v1/ui-projections/{pageUid}
+    state_event: NONE
+    form_schema: null
+  - action_uid: INFO-01-ACT-EXPORT
+    label: 匯出 Fact Pack / Projection
+    permission_uid: INFO_EXPORT
+    gate_uid: INFO-01-GATE-EXPORT
+    effect_type: REGISTERED_COMMAND
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Create authorized export result from exact projection request
+    error_uid: INFO-01-ERR-EXPORT-001
+    operation: exportProjection
+    method_path: POST /v1/exports
+    state_event: NONE | export.requested
+    form_schema: ExportProjectionRequest
+  - action_uid: INFO-01-ACT-ADOPT-CONTEXT
+    label: 採用 Context
+    permission_uid: INFO_CONTEXT_ADOPT
+    gate_uid: INFO-01-GATE-ADOPT
+    effect_type: CANDIDATE_ADOPTION
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Record governed Context adoption; no direct Canon/Lock/Task/Publish mutation
+    error_uid: INFO-01-ERR-CANDIDATE-001
+    operation: adoptContextCandidate
+    method_path: POST /v1/context-candidates/{id}/adopt
+    state_event: CANDIDATE→ADOPTED | context.adoption_requested
+    form_schema: AdoptContextCandidateRequest
+  - action_uid: INFO-01-ACT-CANDIDATE-DECIDE
+    label: 候選決策 / Candidate Decision
+    permission_uid: INFO_CANDIDATE_DECIDE
+    gate_uid: INFO-01-GATE-DECIDE
+    effect_type: CANDIDATE_DECISION
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Record registered candidate decision only
+    error_uid: INFO-01-ERR-CANDIDATE-001
+    operation: decideCandidate
+    method_path: POST /v1/candidates/{id}/decision
+    state_event: CANDIDATE→ACCEPTED|REJECTED | candidate.decided
+    form_schema: DecideCandidateRequest
+  - action_uid: INFO-01-ACT-AUDIT-OPEN
+    label: 查看 Audit / Correlation
+    permission_uid: INFO_PAGE_VIEW
+    gate_uid: INFO-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: INFO-01 registered information/knowledge boundary
+    success_contract: Open inherited CMP-AUDIT-DRAWER for authorized current context
+    error_uid: INFO-01-ERR-PERM-001
+    operation: null
+    method_path: null
+    state_event: NONE
+    form_schema: null
+  objects_refs:
+  - object_uid: INFO-01-OBJ-SOURCE-HEALTH
+    entity: SourceHealthProjection
+    owner: FactPackService
+    required_content: authorized source ref + health/readiness/status + audit/version binding
+  - object_uid: INFO-01-OBJ-ALERT
+    entity: InformationAlert
+    owner: FactPackService
+    required_content: alert exact ref + target/scope + source/evidence + status when present
+  - object_uid: INFO-01-OBJ-RESEARCH
+    entity: ResearchRunProjection
+    owner: FactPackService
+    required_content: research run exact ref + state/status + source/result refs when present
+  - object_uid: INFO-01-OBJ-FACTPACK
+    entity: FactPack
+    owner: FactPackService
+    required_content: exact ref/version + facts/inferences + evidence + source metadata + freshness/completeness/confidence
+  - object_uid: INFO-01-OBJ-FACT
+    entity: Fact
+    owner: FactPackService
+    required_content: source + source_time + scope + completeness + confidence + classification + evidence refs
+  - object_uid: INFO-01-OBJ-INFERENCE
+    entity: Inference / Recommendation
+    owner: FactPackService
+    required_content: explicit non-FACT classification + supporting fact/evidence refs + scope
+  - object_uid: INFO-01-OBJ-EVIDENCE
+    entity: EvidenceRef
+    owner: Source / FactPack authority
+    required_content: exact evidence/source ref + metadata/time/classification/citation when available
+  - object_uid: INFO-01-OBJ-CITATION
+    entity: CitationRef
+    owner: FactPackService
+    required_content: exact source/evidence binding; never fabricated
+  - object_uid: INFO-01-OBJ-CONTEXT-CANDIDATE
+    entity: ContextCandidate
+    owner: KnowledgeExperienceService
+    required_content: context_candidate_id + target scope + facts + citations + adoption-review projection + exact evidence
+  - object_uid: INFO-01-OBJ-AUDIT
+    entity: Audit/Correlation
+    owner: Governance
+    required_content: actor + operation/event + correlation/idempotency + scope + timestamp/result
+  controls:
+  - control_uid: INFO-01-FLD-SCOPE
+    section_uid: INFO-01-SEC-01
+    component_uid: INFO-01-CMP-CONTEXT
+    visual_uid: INFO-01-VIS-CONTEXT
+    type: READONLY
+    label: Authorized Scope
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-PROJECTION-VERSION
+    section_uid: INFO-01-SEC-01
+    component_uid: INFO-01-CMP-CONTEXT
+    visual_uid: INFO-01-VIS-CONTEXT
+    type: READONLY
+    label: Projection Version
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-PAGE-STATE
+    section_uid: INFO-01-SEC-01
+    component_uid: INFO-01-CMP-CONTEXT
+    visual_uid: INFO-01-VIS-CONTEXT
+    type: READONLY
+    label: Page State
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-LAST-REFRESH
+    section_uid: INFO-01-SEC-01
+    component_uid: INFO-01-CMP-CONTEXT
+    visual_uid: INFO-01-VIS-CONTEXT
+    type: READONLY
+    label: Last Refresh
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-BTN-REFRESH
+    section_uid: INFO-01-SEC-01
+    component_uid: INFO-01-CMP-CONTEXT
+    visual_uid: INFO-01-VIS-CONTEXT
+    type: PRIMARY_BUTTON
+    label: 重新整理 / Refresh
+    action_uid: INFO-01-ACT-REFRESH
+    gate_uid: INFO-01-GATE-REFRESH
+    permission_uid: INFO_REFRESH
+    default: —
+  - control_uid: INFO-01-BTN-SEARCH
+    section_uid: INFO-01-SEC-01
+    component_uid: INFO-01-CMP-CONTEXT
+    visual_uid: INFO-01-VIS-CONTEXT
+    type: BUTTON
+    label: 搜尋資訊 / Search
+    action_uid: INFO-01-ACT-SEARCH
+    gate_uid: INFO-01-GATE-SEARCH
+    permission_uid: INFO_SEARCH
+    default: —
+  - control_uid: INFO-01-SEL-SCOPE
+    section_uid: INFO-01-SEC-02
+    component_uid: INFO-01-CMP-SCOPE
+    visual_uid: INFO-01-VIS-LEFT-SOURCE
+    type: FILTER
+    label: 範圍篩選 / Scope Filter
+    action_uid: INFO-01-ACT-FILTER
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+    note: Filters only authorized projection; no implicit project/topic/current selection.
+  - control_uid: INFO-01-LST-SOURCES
+    section_uid: INFO-01-SEC-02
+    component_uid: INFO-01-CMP-SOURCE-HEALTH
+    visual_uid: INFO-01-VIS-LEFT-SOURCE
+    type: LIST
+    label: 來源健康狀態 / Source Health
+    action_uid: INFO-01-ACT-SOURCE-SELECT
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-SOURCE-REF
+    section_uid: INFO-01-SEC-02
+    component_uid: INFO-01-CMP-SOURCE-HEALTH
+    visual_uid: INFO-01-VIS-LEFT-SOURCE
+    type: READONLY
+    label: Source Ref
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-SOURCE-HEALTH
+    section_uid: INFO-01-SEC-02
+    component_uid: INFO-01-CMP-SOURCE-HEALTH
+    visual_uid: INFO-01-VIS-LEFT-SOURCE
+    type: READONLY
+    label: Health
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-SOURCE-TIME
+    section_uid: INFO-01-SEC-02
+    component_uid: INFO-01-CMP-SOURCE-HEALTH
+    visual_uid: INFO-01-VIS-LEFT-SOURCE
+    type: READONLY
+    label: Source Time
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-SOURCE-CLASS
+    section_uid: INFO-01-SEC-02
+    component_uid: INFO-01-CMP-SOURCE-HEALTH
+    visual_uid: INFO-01-VIS-LEFT-SOURCE
+    type: READONLY
+    label: Classification
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-LST-ALERTS
+    section_uid: INFO-01-SEC-03
+    component_uid: INFO-01-CMP-ALERT
+    visual_uid: INFO-01-VIS-LEFT-ALERT
+    type: LIST
+    label: 警示資訊流 / Alert Feed
+    action_uid: INFO-01-ACT-ALERT-SELECT
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-ALERT-REF
+    section_uid: INFO-01-SEC-03
+    component_uid: INFO-01-CMP-ALERT
+    visual_uid: INFO-01-VIS-LEFT-ALERT
+    type: READONLY
+    label: Alert Ref
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-ALERT-SCOPE
+    section_uid: INFO-01-SEC-03
+    component_uid: INFO-01-CMP-ALERT
+    visual_uid: INFO-01-VIS-LEFT-ALERT
+    type: READONLY
+    label: Target Scope
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-ALERT-SOURCE
+    section_uid: INFO-01-SEC-03
+    component_uid: INFO-01-CMP-ALERT
+    visual_uid: INFO-01-VIS-LEFT-ALERT
+    type: READONLY
+    label: Source / Evidence
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-ALERT-STATUS
+    section_uid: INFO-01-SEC-03
+    component_uid: INFO-01-CMP-ALERT
+    visual_uid: INFO-01-VIS-LEFT-ALERT
+    type: READONLY
+    label: Status
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-LST-FACTPACKS
+    section_uid: INFO-01-SEC-04
+    component_uid: INFO-01-CMP-FACTPACK-LIST
+    visual_uid: INFO-01-VIS-FACTPACK
+    type: LIST
+    label: 最近 Fact Packs
+    action_uid: INFO-01-ACT-FACTPACK-SELECT
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-FACTPACK-REF
+    section_uid: INFO-01-SEC-04
+    component_uid: INFO-01-CMP-FACTPACK-HEADER
+    visual_uid: INFO-01-VIS-FACTPACK
+    type: READONLY
+    label: Fact Pack Ref / Version
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+    note: Source Coverage renders governed read-model content only; no fabricated numeric count.
+  - control_uid: INFO-01-FLD-FACTPACK-SCOPE
+    section_uid: INFO-01-SEC-04
+    component_uid: INFO-01-CMP-FACTPACK-HEADER
+    visual_uid: INFO-01-VIS-FACTPACK
+    type: READONLY
+    label: Scope
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+    note: Source Coverage renders governed read-model content only; no fabricated numeric count.
+  - control_uid: INFO-01-FLD-FACTPACK-STATE
+    section_uid: INFO-01-SEC-04
+    component_uid: INFO-01-CMP-FACTPACK-HEADER
+    visual_uid: INFO-01-VIS-FACTPACK
+    type: READONLY
+    label: State
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+    note: Source Coverage renders governed read-model content only; no fabricated numeric count.
+  - control_uid: INFO-01-FLD-FACTPACK-SOURCE-COUNT
+    section_uid: INFO-01-SEC-04
+    component_uid: INFO-01-CMP-FACTPACK-HEADER
+    visual_uid: INFO-01-VIS-FACTPACK
+    type: READONLY
+    label: Source Coverage
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+    note: Source Coverage renders governed read-model content only; no fabricated numeric count.
+  - control_uid: INFO-01-TAB-FACT
+    section_uid: INFO-01-SEC-05
+    component_uid: INFO-01-CMP-FACT
+    visual_uid: INFO-01-VIS-FACT
+    type: TAB
+    label: FACT
+    action_uid: INFO-01-ACT-FACT-TYPE
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-TAB-INFERENCE
+    section_uid: INFO-01-SEC-05
+    component_uid: INFO-01-CMP-INFERENCE
+    visual_uid: INFO-01-VIS-FACT
+    type: TAB
+    label: INFERENCE / RECOMMENDATION
+    action_uid: INFO-01-ACT-FACT-TYPE
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-LST-FACTS
+    section_uid: INFO-01-SEC-05
+    component_uid: INFO-01-CMP-FACT
+    visual_uid: INFO-01-VIS-FACT
+    type: LIST
+    label: Facts
+    action_uid: INFO-01-ACT-EVIDENCE-SELECT
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-LST-INFERENCES
+    section_uid: INFO-01-SEC-05
+    component_uid: INFO-01-CMP-INFERENCE
+    visual_uid: INFO-01-VIS-FACT
+    type: LIST
+    label: Inferences / Recommendations
+    action_uid: INFO-01-ACT-EVIDENCE-SELECT
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-ITEM-CLASS
+    section_uid: INFO-01-SEC-05
+    component_uid: INFO-01-CMP-FACT
+    visual_uid: INFO-01-VIS-FACT
+    type: READONLY
+    label: Classification
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-ITEM-SCOPE
+    section_uid: INFO-01-SEC-05
+    component_uid: INFO-01-CMP-FACT
+    visual_uid: INFO-01-VIS-FACT
+    type: READONLY
+    label: Scope
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-ITEM-SOURCE-TIME
+    section_uid: INFO-01-SEC-05
+    component_uid: INFO-01-CMP-FACT
+    visual_uid: INFO-01-VIS-FACT
+    type: READONLY
+    label: Source Time
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-ITEM-EVIDENCE
+    section_uid: INFO-01-SEC-05
+    component_uid: INFO-01-CMP-FACT
+    visual_uid: INFO-01-VIS-FACT
+    type: READONLY
+    label: Evidence Refs
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-FACTPACK
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-LST-EVIDENCE
+    section_uid: INFO-01-SEC-06
+    component_uid: INFO-01-CMP-EVIDENCE
+    visual_uid: INFO-01-VIS-EVIDENCE
+    type: LIST
+    label: Evidence List
+    action_uid: INFO-01-ACT-EVIDENCE-SELECT
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-EVIDENCE-REF
+    section_uid: INFO-01-SEC-06
+    component_uid: INFO-01-CMP-SOURCE-META
+    visual_uid: INFO-01-VIS-EVIDENCE
+    type: READONLY
+    label: Evidence Ref
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-EVIDENCE-SOURCE
+    section_uid: INFO-01-SEC-06
+    component_uid: INFO-01-CMP-SOURCE-META
+    visual_uid: INFO-01-VIS-EVIDENCE
+    type: READONLY
+    label: Source
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-EVIDENCE-TIME
+    section_uid: INFO-01-SEC-06
+    component_uid: INFO-01-CMP-SOURCE-META
+    visual_uid: INFO-01-VIS-EVIDENCE
+    type: READONLY
+    label: Source / Collected Time
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-EVIDENCE-SCOPE
+    section_uid: INFO-01-SEC-06
+    component_uid: INFO-01-CMP-SOURCE-META
+    visual_uid: INFO-01-VIS-EVIDENCE
+    type: READONLY
+    label: Scope
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-EVIDENCE-CLASS
+    section_uid: INFO-01-SEC-06
+    component_uid: INFO-01-CMP-SOURCE-META
+    visual_uid: INFO-01-VIS-EVIDENCE
+    type: READONLY
+    label: Classification
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-BTN-CITATION
+    section_uid: INFO-01-SEC-06
+    component_uid: INFO-01-CMP-EVIDENCE
+    visual_uid: INFO-01-VIS-EVIDENCE
+    type: BUTTON
+    label: 查看 Citation
+    action_uid: INFO-01-ACT-CITATION-OPEN
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-FRESHNESS
+    section_uid: INFO-01-SEC-07
+    component_uid: INFO-01-CMP-QUALITY
+    visual_uid: INFO-01-VIS-RIGHT-QUALITY
+    type: READONLY
+    label: Freshness
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+    note: No page-local threshold; display governed read-model/policy result.
+  - control_uid: INFO-01-FLD-COMPLETENESS
+    section_uid: INFO-01-SEC-07
+    component_uid: INFO-01-CMP-QUALITY
+    visual_uid: INFO-01-VIS-RIGHT-QUALITY
+    type: READONLY
+    label: Completeness
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+    note: No page-local threshold; display governed read-model/policy result.
+  - control_uid: INFO-01-FLD-CONFIDENCE
+    section_uid: INFO-01-SEC-07
+    component_uid: INFO-01-CMP-QUALITY
+    visual_uid: INFO-01-VIS-RIGHT-QUALITY
+    type: READONLY
+    label: Confidence
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+    note: No page-local threshold; display governed read-model/policy result.
+  - control_uid: INFO-01-FLD-VERIFICATION-TIME
+    section_uid: INFO-01-SEC-07
+    component_uid: INFO-01-CMP-QUALITY
+    visual_uid: INFO-01-VIS-RIGHT-QUALITY
+    type: READONLY
+    label: Last Verified
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+    note: No page-local threshold; display governed read-model/policy result.
+  - control_uid: INFO-01-LST-RESEARCH
+    section_uid: INFO-01-SEC-08
+    component_uid: INFO-01-CMP-RESEARCH
+    visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+    type: LIST
+    label: 研究佇列 / Research Queue
+    action_uid: INFO-01-ACT-RESEARCH-SELECT
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-RESEARCH-REF
+    section_uid: INFO-01-SEC-08
+    component_uid: INFO-01-CMP-RESEARCH
+    visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+    type: READONLY
+    label: Research Run Ref
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-RESEARCH-STATE
+    section_uid: INFO-01-SEC-08
+    component_uid: INFO-01-CMP-RESEARCH
+    visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+    type: READONLY
+    label: State
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-RESEARCH-SCOPE
+    section_uid: INFO-01-SEC-08
+    component_uid: INFO-01-CMP-RESEARCH
+    visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+    type: READONLY
+    label: Scope
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-RESEARCH-RESULT
+    section_uid: INFO-01-SEC-08
+    component_uid: INFO-01-CMP-RESEARCH
+    visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+    type: READONLY
+    label: Result / Fact Pack Ref
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CANDIDATE-ID
+    section_uid: INFO-01-SEC-09
+    component_uid: INFO-01-CMP-CANDIDATE-PREVIEW
+    visual_uid: INFO-01-VIS-CANDIDATE
+    type: READONLY
+    label: Context Candidate ID
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-CANDIDATE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CANDIDATE-SCOPE
+    section_uid: INFO-01-SEC-09
+    component_uid: INFO-01-CMP-CANDIDATE-SCOPE
+    visual_uid: INFO-01-VIS-CANDIDATE
+    type: READONLY
+    label: Context Scope
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-CANDIDATE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CANDIDATE-FACTS
+    section_uid: INFO-01-SEC-09
+    component_uid: INFO-01-CMP-CANDIDATE-FACTS
+    visual_uid: INFO-01-VIS-CANDIDATE
+    type: READONLY
+    label: Selected Facts
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-CANDIDATE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CANDIDATE-CITATIONS
+    section_uid: INFO-01-SEC-09
+    component_uid: INFO-01-CMP-CANDIDATE-CITATION
+    visual_uid: INFO-01-VIS-CANDIDATE
+    type: READONLY
+    label: Citation Check
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-CANDIDATE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CANDIDATE-PREVIEW
+    section_uid: INFO-01-SEC-09
+    component_uid: INFO-01-CMP-CANDIDATE-PREVIEW
+    visual_uid: INFO-01-VIS-CANDIDATE
+    type: READONLY
+    label: Candidate Preview
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-CANDIDATE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-ADOPTION-REVIEW
+    section_uid: INFO-01-SEC-09
+    component_uid: INFO-01-CMP-ADOPTION-REVIEW
+    visual_uid: INFO-01-VIS-CANDIDATE
+    type: READONLY
+    label: Adoption Review
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-CANDIDATE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CANDIDATE-STATE
+    section_uid: INFO-01-SEC-09
+    component_uid: INFO-01-CMP-ADOPTION-REVIEW
+    visual_uid: INFO-01-VIS-CANDIDATE
+    type: READONLY
+    label: Candidate State
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-CANDIDATE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-LST-CANDIDATES
+    section_uid: INFO-01-SEC-09
+    component_uid: INFO-01-CMP-CANDIDATE-PREVIEW
+    visual_uid: INFO-01-VIS-CANDIDATE
+    type: LIST
+    label: Context Candidates
+    action_uid: INFO-01-ACT-CANDIDATE-SELECT
+    gate_uid: INFO-01-GATE-CANDIDATE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CITATION-REF
+    section_uid: INFO-01-SEC-10
+    component_uid: INFO-01-CMP-CITATION
+    visual_uid: INFO-01-VIS-CITATION
+    type: READONLY
+    label: Citation Ref
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CITATION-SOURCE
+    section_uid: INFO-01-SEC-10
+    component_uid: INFO-01-CMP-CITATION
+    visual_uid: INFO-01-VIS-CITATION
+    type: READONLY
+    label: Source Ref
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CITATION-EVIDENCE
+    section_uid: INFO-01-SEC-10
+    component_uid: INFO-01-CMP-CITATION
+    visual_uid: INFO-01-VIS-CITATION
+    type: READONLY
+    label: Evidence Ref
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CITATION-TIME
+    section_uid: INFO-01-SEC-10
+    component_uid: INFO-01-CMP-CITATION
+    visual_uid: INFO-01-VIS-CITATION
+    type: READONLY
+    label: Source Time
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-EVIDENCE
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-BTN-EXPORT
+    section_uid: INFO-01-SEC-11
+    component_uid: INFO-01-CMP-ACTIONS
+    visual_uid: INFO-01-VIS-ACTION
+    type: BUTTON
+    label: 匯出 Fact Pack / Projection
+    action_uid: INFO-01-ACT-EXPORT
+    gate_uid: INFO-01-GATE-EXPORT
+    permission_uid: INFO_EXPORT
+    default: —
+  - control_uid: INFO-01-BTN-ADOPT-CONTEXT
+    section_uid: INFO-01-SEC-11
+    component_uid: INFO-01-CMP-ACTIONS
+    visual_uid: INFO-01-VIS-ACTION
+    type: PRIMARY_BUTTON
+    label: 採用 Context
+    action_uid: INFO-01-ACT-ADOPT-CONTEXT
+    gate_uid: INFO-01-GATE-ADOPT
+    permission_uid: INFO_CONTEXT_ADOPT
+    default: —
+  - control_uid: INFO-01-BTN-CANDIDATE-DECIDE
+    section_uid: INFO-01-SEC-11
+    component_uid: INFO-01-CMP-ACTIONS
+    visual_uid: INFO-01-VIS-ACTION
+    type: BUTTON
+    label: 候選決策 / Candidate Decision
+    action_uid: INFO-01-ACT-CANDIDATE-DECIDE
+    gate_uid: INFO-01-GATE-DECIDE
+    permission_uid: INFO_CANDIDATE_DECIDE
+    default: —
+  - control_uid: INFO-01-FLD-SOURCE-SYNC
+    section_uid: INFO-01-SEC-12
+    component_uid: INFO-01-CMP-STATUS
+    visual_uid: INFO-01-VIS-STATUS
+    type: READONLY
+    label: Source / Last Sync
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-DISABLED
+    section_uid: INFO-01-SEC-12
+    component_uid: INFO-01-CMP-STATUS
+    visual_uid: INFO-01-VIS-STATUS
+    type: READONLY
+    label: Disabled Reason
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-CORRELATION
+    section_uid: INFO-01-SEC-12
+    component_uid: INFO-01-CMP-STATUS
+    visual_uid: INFO-01-VIS-STATUS
+    type: READONLY
+    label: Correlation / Result Ref
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-FLD-FIREWALL
+    section_uid: INFO-01-SEC-12
+    component_uid: INFO-01-CMP-STATUS
+    visual_uid: INFO-01-VIS-STATUS
+    type: READONLY
+    label: Knowledge Firewall
+    action_uid: INFO-01-ACT-NOOP
+    gate_uid: INFO-01-GATE-READ
+    permission_uid: INFO_READ
+    default: —
+  - control_uid: INFO-01-BTN-AUDIT
+    section_uid: INFO-01-SEC-12
+    component_uid: INFO-01-CMP-STATUS
+    visual_uid: INFO-01-VIS-STATUS
+    type: BUTTON
+    label: 查看 Audit / Correlation
+    action_uid: INFO-01-ACT-AUDIT-OPEN
+    gate_uid: INFO-01-GATE-PAGE
+    permission_uid: INFO_PAGE_VIEW
+    default: —
+  integration_ports:
+  - port_uid: INFO-01-PORT-PROJECTION
+    boundary: Latest Information UI Projection
+    operation: getUiProjection
+    method_path: GET /v1/ui-projections/{pageUid}
+    permission: page.view
+    state_event: READ_ONLY
+    exposure: INFO-01-ACT-PROJECTION-READ
+  - port_uid: INFO-01-PORT-REFRESH
+    boundary: Projection Refresh
+    operation: refreshProjection
+    method_path: POST /v1/projections/refresh
+    permission: projection.refresh
+    state_event: NONE | projection.refresh_requested
+    exposure: INFO-01-ACT-REFRESH
+  - port_uid: INFO-01-PORT-SEARCH
+    boundary: Projection Search
+    operation: searchProjection
+    method_path: POST /v1/search
+    permission: projection.search
+    state_event: NONE
+    exposure: INFO-01-ACT-SEARCH
+  - port_uid: INFO-01-PORT-EXPORT
+    boundary: Fact Pack / Projection Export
+    operation: exportProjection
+    method_path: POST /v1/exports
+    permission: projection.export
+    state_event: NONE | export.requested
+    exposure: INFO-01-ACT-EXPORT
+  - port_uid: INFO-01-PORT-CONTEXT-ADOPT
+    boundary: Context Candidate Adoption
+    operation: adoptContextCandidate
+    method_path: POST /v1/context-candidates/{id}/adopt
+    permission: knowledge.candidate.create
+    state_event: CANDIDATE→ADOPTED | context.adoption_requested
+    exposure: INFO-01-ACT-ADOPT-CONTEXT
+  - port_uid: INFO-01-PORT-CANDIDATE-DECIDE
+    boundary: Candidate Decision
+    operation: decideCandidate
+    method_path: POST /v1/candidates/{id}/decision
+    permission: candidate.decide
+    state_event: CANDIDATE→ACCEPTED|REJECTED | candidate.decided
+    exposure: INFO-01-ACT-CANDIDATE-DECIDE
+acceptance:
+- acceptance_uid: INFO-01-ACC-01
+  item: Single Page + Global Visual
+  condition: Only workspace:INFO-01 is current latest-information workspace; no parallel current subpage; Global Shell/Visual inherited
+- acceptance_uid: INFO-01-ACC-02
+  item: Source Health / Freshness
+  condition: Authorized source health and freshness are visible; stale/incomplete remain explicit; no fake values
+- acceptance_uid: INFO-01-ACC-03
+  item: FACT vs INFERENCE
+  condition: FACT and INFERENCE/RECOMMENDATION are visibly separated and classification cannot be changed by UI
+- acceptance_uid: INFO-01-ACC-04
+  item: Fact Minimum Contract
+  condition: Validated Fact displays source + source_time + scope + completeness + confidence + classification/evidence
+- acceptance_uid: INFO-01-ACC-05
+  item: Evidence / Citation
+  condition: Fact Pack provides exact Evidence / Source Metadata / Citation; missing refs stay broken/incomplete and block evidence-dependent adoption
+- acceptance_uid: INFO-01-ACC-06
+  item: Research Boundary
+  condition: Research Queue/Run is read-only unless a separate registered operation exists; INFO-01 creates no Start/Cancel Research action
+- acceptance_uid: INFO-01-ACC-07
+  item: Knowledge Firewall
+  condition: Fact/Inference/Recommendation cannot directly write Canon/Lock/Priority/Budget/Task/Release/Publish
+- acceptance_uid: INFO-01-ACC-08
+  item: Context Candidate
+  condition: Candidate review includes exact scope/facts/citations/adoption review; Adopt Context remains governance context adoption only
+- acceptance_uid: INFO-01-ACC-09
+  item: Registered Actions
+  condition: Refresh/Search/Export/Adopt/Decide bind only to their canonical registered operations, schemas, permissions and server gates
+- acceptance_uid: INFO-01-ACC-10
+  item: Authorization
+  condition: Account Permission Assignment + scope + condition + classification + audit; role-name authorization forbidden
+- acceptance_uid: INFO-01-ACC-11
+  item: Scrollable Page
+  condition: Main Workspace height:auto; overflow-y:auto; not tied to Global Sidebar/Menu height
+- acceptance_uid: INFO-01-ACC-12
+  item: Machine Binding
+  condition: Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted = BLOCK
+hard_locks:
+- Only workspace:INFO-01 is the current latest-information workspace defined by this authority; no parallel current latest-information page may be generated.
+- Global Header/Sidebar/Visual are inherited; INFO-01 must not redraw the global shell or create a page-local visual system.
+- All visible business data is REAL DATA ONLY; missing = —; loading = 載入中; no fake source, alert, fact, score, confidence, freshness, research status, candidate or citation.
+- FACT and INFERENCE / RECOMMENDATION must remain visibly distinct.
+- A validated Fact requires source + source_time + scope + completeness + confidence + classification; missing data is incomplete, not AI-filled.
+- No page-local numeric threshold for Freshness / Completeness / Confidence may be invented.
+- Research Queue / Research Run is read-only here; no unregistered Start/Cancel/Retry Research action.
+- Fact / Inference / Recommendation may create Context / Alert / Candidate / Review Request only and cannot directly modify Canon, Lock, Priority, Budget, Task, Release or Publish.
+- Adopt Context is not Canon adoption and not production execution; it records governed Context adoption only.
+- adoptContextCandidate and decideCandidate remain separate registered operations; server/state gates determine which action is enabled.
+- Refresh/Search/Export/Adopt/Decide must use registered request schema, exact scope/version/correlation/idempotency and permission/audit gates; no free-form union payload.
+- No unlisted Section/Component/Control/Action/State/Gate/Permission/Port/Business Sample Data.
+control_bindings:
+- control_uid: INFO-01-FLD-SCOPE
+  section_uid: INFO-01-SEC-01
+  component_uid: INFO-01-CMP-CONTEXT
+  visual_uid: INFO-01-VIS-CONTEXT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-PROJECTION-VERSION
+  section_uid: INFO-01-SEC-01
+  component_uid: INFO-01-CMP-CONTEXT
+  visual_uid: INFO-01-VIS-CONTEXT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-PAGE-STATE
+  section_uid: INFO-01-SEC-01
+  component_uid: INFO-01-CMP-CONTEXT
+  visual_uid: INFO-01-VIS-CONTEXT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-LAST-REFRESH
+  section_uid: INFO-01-SEC-01
+  component_uid: INFO-01-CMP-CONTEXT
+  visual_uid: INFO-01-VIS-CONTEXT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-BTN-REFRESH
+  section_uid: INFO-01-SEC-01
+  component_uid: INFO-01-CMP-CONTEXT
+  visual_uid: INFO-01-VIS-CONTEXT
+  action_uid: INFO-01-ACT-REFRESH
+  gate_uid: INFO-01-GATE-REFRESH
+  permission_uid: INFO_REFRESH
+- control_uid: INFO-01-BTN-SEARCH
+  section_uid: INFO-01-SEC-01
+  component_uid: INFO-01-CMP-CONTEXT
+  visual_uid: INFO-01-VIS-CONTEXT
+  action_uid: INFO-01-ACT-SEARCH
+  gate_uid: INFO-01-GATE-SEARCH
+  permission_uid: INFO_SEARCH
+- control_uid: INFO-01-SEL-SCOPE
+  section_uid: INFO-01-SEC-02
+  component_uid: INFO-01-CMP-SCOPE
+  visual_uid: INFO-01-VIS-LEFT-SOURCE
+  action_uid: INFO-01-ACT-FILTER
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-LST-SOURCES
+  section_uid: INFO-01-SEC-02
+  component_uid: INFO-01-CMP-SOURCE-HEALTH
+  visual_uid: INFO-01-VIS-LEFT-SOURCE
+  action_uid: INFO-01-ACT-SOURCE-SELECT
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-SOURCE-REF
+  section_uid: INFO-01-SEC-02
+  component_uid: INFO-01-CMP-SOURCE-HEALTH
+  visual_uid: INFO-01-VIS-LEFT-SOURCE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-SOURCE-HEALTH
+  section_uid: INFO-01-SEC-02
+  component_uid: INFO-01-CMP-SOURCE-HEALTH
+  visual_uid: INFO-01-VIS-LEFT-SOURCE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-SOURCE-TIME
+  section_uid: INFO-01-SEC-02
+  component_uid: INFO-01-CMP-SOURCE-HEALTH
+  visual_uid: INFO-01-VIS-LEFT-SOURCE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-SOURCE-CLASS
+  section_uid: INFO-01-SEC-02
+  component_uid: INFO-01-CMP-SOURCE-HEALTH
+  visual_uid: INFO-01-VIS-LEFT-SOURCE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-LST-ALERTS
+  section_uid: INFO-01-SEC-03
+  component_uid: INFO-01-CMP-ALERT
+  visual_uid: INFO-01-VIS-LEFT-ALERT
+  action_uid: INFO-01-ACT-ALERT-SELECT
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-ALERT-REF
+  section_uid: INFO-01-SEC-03
+  component_uid: INFO-01-CMP-ALERT
+  visual_uid: INFO-01-VIS-LEFT-ALERT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-ALERT-SCOPE
+  section_uid: INFO-01-SEC-03
+  component_uid: INFO-01-CMP-ALERT
+  visual_uid: INFO-01-VIS-LEFT-ALERT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-ALERT-SOURCE
+  section_uid: INFO-01-SEC-03
+  component_uid: INFO-01-CMP-ALERT
+  visual_uid: INFO-01-VIS-LEFT-ALERT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-ALERT-STATUS
+  section_uid: INFO-01-SEC-03
+  component_uid: INFO-01-CMP-ALERT
+  visual_uid: INFO-01-VIS-LEFT-ALERT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-LST-FACTPACKS
+  section_uid: INFO-01-SEC-04
+  component_uid: INFO-01-CMP-FACTPACK-LIST
+  visual_uid: INFO-01-VIS-FACTPACK
+  action_uid: INFO-01-ACT-FACTPACK-SELECT
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-FACTPACK-REF
+  section_uid: INFO-01-SEC-04
+  component_uid: INFO-01-CMP-FACTPACK-HEADER
+  visual_uid: INFO-01-VIS-FACTPACK
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-FACTPACK-SCOPE
+  section_uid: INFO-01-SEC-04
+  component_uid: INFO-01-CMP-FACTPACK-HEADER
+  visual_uid: INFO-01-VIS-FACTPACK
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-FACTPACK-STATE
+  section_uid: INFO-01-SEC-04
+  component_uid: INFO-01-CMP-FACTPACK-HEADER
+  visual_uid: INFO-01-VIS-FACTPACK
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-FACTPACK-SOURCE-COUNT
+  section_uid: INFO-01-SEC-04
+  component_uid: INFO-01-CMP-FACTPACK-HEADER
+  visual_uid: INFO-01-VIS-FACTPACK
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-TAB-FACT
+  section_uid: INFO-01-SEC-05
+  component_uid: INFO-01-CMP-FACT
+  visual_uid: INFO-01-VIS-FACT
+  action_uid: INFO-01-ACT-FACT-TYPE
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-TAB-INFERENCE
+  section_uid: INFO-01-SEC-05
+  component_uid: INFO-01-CMP-INFERENCE
+  visual_uid: INFO-01-VIS-FACT
+  action_uid: INFO-01-ACT-FACT-TYPE
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-LST-FACTS
+  section_uid: INFO-01-SEC-05
+  component_uid: INFO-01-CMP-FACT
+  visual_uid: INFO-01-VIS-FACT
+  action_uid: INFO-01-ACT-EVIDENCE-SELECT
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-LST-INFERENCES
+  section_uid: INFO-01-SEC-05
+  component_uid: INFO-01-CMP-INFERENCE
+  visual_uid: INFO-01-VIS-FACT
+  action_uid: INFO-01-ACT-EVIDENCE-SELECT
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-ITEM-CLASS
+  section_uid: INFO-01-SEC-05
+  component_uid: INFO-01-CMP-FACT
+  visual_uid: INFO-01-VIS-FACT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-ITEM-SCOPE
+  section_uid: INFO-01-SEC-05
+  component_uid: INFO-01-CMP-FACT
+  visual_uid: INFO-01-VIS-FACT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-ITEM-SOURCE-TIME
+  section_uid: INFO-01-SEC-05
+  component_uid: INFO-01-CMP-FACT
+  visual_uid: INFO-01-VIS-FACT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-ITEM-EVIDENCE
+  section_uid: INFO-01-SEC-05
+  component_uid: INFO-01-CMP-FACT
+  visual_uid: INFO-01-VIS-FACT
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-FACTPACK
+  permission_uid: INFO_READ
+- control_uid: INFO-01-LST-EVIDENCE
+  section_uid: INFO-01-SEC-06
+  component_uid: INFO-01-CMP-EVIDENCE
+  visual_uid: INFO-01-VIS-EVIDENCE
+  action_uid: INFO-01-ACT-EVIDENCE-SELECT
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-EVIDENCE-REF
+  section_uid: INFO-01-SEC-06
+  component_uid: INFO-01-CMP-SOURCE-META
+  visual_uid: INFO-01-VIS-EVIDENCE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-EVIDENCE-SOURCE
+  section_uid: INFO-01-SEC-06
+  component_uid: INFO-01-CMP-SOURCE-META
+  visual_uid: INFO-01-VIS-EVIDENCE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-EVIDENCE-TIME
+  section_uid: INFO-01-SEC-06
+  component_uid: INFO-01-CMP-SOURCE-META
+  visual_uid: INFO-01-VIS-EVIDENCE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-EVIDENCE-SCOPE
+  section_uid: INFO-01-SEC-06
+  component_uid: INFO-01-CMP-SOURCE-META
+  visual_uid: INFO-01-VIS-EVIDENCE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-EVIDENCE-CLASS
+  section_uid: INFO-01-SEC-06
+  component_uid: INFO-01-CMP-SOURCE-META
+  visual_uid: INFO-01-VIS-EVIDENCE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-BTN-CITATION
+  section_uid: INFO-01-SEC-06
+  component_uid: INFO-01-CMP-EVIDENCE
+  visual_uid: INFO-01-VIS-EVIDENCE
+  action_uid: INFO-01-ACT-CITATION-OPEN
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-FRESHNESS
+  section_uid: INFO-01-SEC-07
+  component_uid: INFO-01-CMP-QUALITY
+  visual_uid: INFO-01-VIS-RIGHT-QUALITY
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-COMPLETENESS
+  section_uid: INFO-01-SEC-07
+  component_uid: INFO-01-CMP-QUALITY
+  visual_uid: INFO-01-VIS-RIGHT-QUALITY
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CONFIDENCE
+  section_uid: INFO-01-SEC-07
+  component_uid: INFO-01-CMP-QUALITY
+  visual_uid: INFO-01-VIS-RIGHT-QUALITY
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-VERIFICATION-TIME
+  section_uid: INFO-01-SEC-07
+  component_uid: INFO-01-CMP-QUALITY
+  visual_uid: INFO-01-VIS-RIGHT-QUALITY
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-LST-RESEARCH
+  section_uid: INFO-01-SEC-08
+  component_uid: INFO-01-CMP-RESEARCH
+  visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+  action_uid: INFO-01-ACT-RESEARCH-SELECT
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-RESEARCH-REF
+  section_uid: INFO-01-SEC-08
+  component_uid: INFO-01-CMP-RESEARCH
+  visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-RESEARCH-STATE
+  section_uid: INFO-01-SEC-08
+  component_uid: INFO-01-CMP-RESEARCH
+  visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-RESEARCH-SCOPE
+  section_uid: INFO-01-SEC-08
+  component_uid: INFO-01-CMP-RESEARCH
+  visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-RESEARCH-RESULT
+  section_uid: INFO-01-SEC-08
+  component_uid: INFO-01-CMP-RESEARCH
+  visual_uid: INFO-01-VIS-RIGHT-RESEARCH
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CANDIDATE-ID
+  section_uid: INFO-01-SEC-09
+  component_uid: INFO-01-CMP-CANDIDATE-PREVIEW
+  visual_uid: INFO-01-VIS-CANDIDATE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-CANDIDATE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CANDIDATE-SCOPE
+  section_uid: INFO-01-SEC-09
+  component_uid: INFO-01-CMP-CANDIDATE-SCOPE
+  visual_uid: INFO-01-VIS-CANDIDATE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-CANDIDATE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CANDIDATE-FACTS
+  section_uid: INFO-01-SEC-09
+  component_uid: INFO-01-CMP-CANDIDATE-FACTS
+  visual_uid: INFO-01-VIS-CANDIDATE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-CANDIDATE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CANDIDATE-CITATIONS
+  section_uid: INFO-01-SEC-09
+  component_uid: INFO-01-CMP-CANDIDATE-CITATION
+  visual_uid: INFO-01-VIS-CANDIDATE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-CANDIDATE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CANDIDATE-PREVIEW
+  section_uid: INFO-01-SEC-09
+  component_uid: INFO-01-CMP-CANDIDATE-PREVIEW
+  visual_uid: INFO-01-VIS-CANDIDATE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-CANDIDATE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-ADOPTION-REVIEW
+  section_uid: INFO-01-SEC-09
+  component_uid: INFO-01-CMP-ADOPTION-REVIEW
+  visual_uid: INFO-01-VIS-CANDIDATE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-CANDIDATE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CANDIDATE-STATE
+  section_uid: INFO-01-SEC-09
+  component_uid: INFO-01-CMP-ADOPTION-REVIEW
+  visual_uid: INFO-01-VIS-CANDIDATE
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-CANDIDATE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-LST-CANDIDATES
+  section_uid: INFO-01-SEC-09
+  component_uid: INFO-01-CMP-CANDIDATE-PREVIEW
+  visual_uid: INFO-01-VIS-CANDIDATE
+  action_uid: INFO-01-ACT-CANDIDATE-SELECT
+  gate_uid: INFO-01-GATE-CANDIDATE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CITATION-REF
+  section_uid: INFO-01-SEC-10
+  component_uid: INFO-01-CMP-CITATION
+  visual_uid: INFO-01-VIS-CITATION
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CITATION-SOURCE
+  section_uid: INFO-01-SEC-10
+  component_uid: INFO-01-CMP-CITATION
+  visual_uid: INFO-01-VIS-CITATION
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CITATION-EVIDENCE
+  section_uid: INFO-01-SEC-10
+  component_uid: INFO-01-CMP-CITATION
+  visual_uid: INFO-01-VIS-CITATION
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CITATION-TIME
+  section_uid: INFO-01-SEC-10
+  component_uid: INFO-01-CMP-CITATION
+  visual_uid: INFO-01-VIS-CITATION
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-EVIDENCE
+  permission_uid: INFO_READ
+- control_uid: INFO-01-BTN-EXPORT
+  section_uid: INFO-01-SEC-11
+  component_uid: INFO-01-CMP-ACTIONS
+  visual_uid: INFO-01-VIS-ACTION
+  action_uid: INFO-01-ACT-EXPORT
+  gate_uid: INFO-01-GATE-EXPORT
+  permission_uid: INFO_EXPORT
+- control_uid: INFO-01-BTN-ADOPT-CONTEXT
+  section_uid: INFO-01-SEC-11
+  component_uid: INFO-01-CMP-ACTIONS
+  visual_uid: INFO-01-VIS-ACTION
+  action_uid: INFO-01-ACT-ADOPT-CONTEXT
+  gate_uid: INFO-01-GATE-ADOPT
+  permission_uid: INFO_CONTEXT_ADOPT
+- control_uid: INFO-01-BTN-CANDIDATE-DECIDE
+  section_uid: INFO-01-SEC-11
+  component_uid: INFO-01-CMP-ACTIONS
+  visual_uid: INFO-01-VIS-ACTION
+  action_uid: INFO-01-ACT-CANDIDATE-DECIDE
+  gate_uid: INFO-01-GATE-DECIDE
+  permission_uid: INFO_CANDIDATE_DECIDE
+- control_uid: INFO-01-FLD-SOURCE-SYNC
+  section_uid: INFO-01-SEC-12
+  component_uid: INFO-01-CMP-STATUS
+  visual_uid: INFO-01-VIS-STATUS
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-DISABLED
+  section_uid: INFO-01-SEC-12
+  component_uid: INFO-01-CMP-STATUS
+  visual_uid: INFO-01-VIS-STATUS
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-CORRELATION
+  section_uid: INFO-01-SEC-12
+  component_uid: INFO-01-CMP-STATUS
+  visual_uid: INFO-01-VIS-STATUS
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-FLD-FIREWALL
+  section_uid: INFO-01-SEC-12
+  component_uid: INFO-01-CMP-STATUS
+  visual_uid: INFO-01-VIS-STATUS
+  action_uid: INFO-01-ACT-NOOP
+  gate_uid: INFO-01-GATE-READ
+  permission_uid: INFO_READ
+- control_uid: INFO-01-BTN-AUDIT
+  section_uid: INFO-01-SEC-12
+  component_uid: INFO-01-CMP-STATUS
+  visual_uid: INFO-01-VIS-STATUS
+  action_uid: INFO-01-ACT-AUDIT-OPEN
+  gate_uid: INFO-01-GATE-PAGE
+  permission_uid: INFO_PAGE_VIEW
+derived_validation:
+  status: PASS
+  reference_errors: []
+  current_page_count: 1
+  parallel_current_page_count: 0
+  research_execute_control_count: 0
+  direct_canon_lock_task_budget_release_publish_control_count: 0
+  fact_inference_separation: PASS
+  registered_effectful_ports: 5
+  counts:
+    sections: 12
+    visuals: 12
+    components: 20
+    permissions: 7
+    gates: 10
+    errors: 12
+    page_states: 8
+    workflow_states: 9
+    actions: 17
+    objects_refs: 10
+    controls: 66
+    integration_ports: 6

@@ -1,0 +1,491 @@
+authority:
+  id: ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING
+  encoding_schema: ACPOS_SG02_QA_REVIEW_STANDARD_FINAL_LOCKED_V1
+  page_uid: admin:SG-02
+  page_id: SG-02
+  page_name_zh: QA 審查項目名單
+  r9_name_zh: Quality Criteria / Gate Policy
+  surface: admin
+  navigation_path:
+    l1_key: scoring_qa
+    l1_label_zh: 評分與 QA
+    l2_key: script_and_quality_governance
+    l2_label_zh: 腳本／品質治理
+  owner: QualityGovernance
+  status: FINAL_LOCKED
+  current_only: true
+  single_page: true
+  global_shell: admin_shell / GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  real_data_only: true
+  missing_value_display: —
+  source_of_truth:
+    docx_filename: SG-02_QA審查項目名單_後台單頁展示_FINAL_LOCKED.docx
+    docx_sha256: 0b57d728aaaedc0f64c119438a9ed2de7d21913fb67c52acc76d2eef4fcf2c8e
+    docx_size_bytes: 165616
+    r9_page_uid: admin:SG-02
+    generated_from: Current FINAL_LOCKED one-page authority + R9 registered SG-02 contract only
+document_validation:
+  render_verified: true
+  render_page_count: 1
+  visual_qa: PASS
+  clipping: NONE_DETECTED
+  overlap: NONE_DETECTED
+  second_page: NONE
+page_contract:
+  purpose: 管理 Criteria Version、Dimension、Threshold、Department Applicability、Required Check、Gate Policy 與 Approval；作為後台 Review
+    Standard / QA 審查項目治理面，不是專案 pending QA queue。
+  review_standard_semantics:
+    is_project_pending_queue: false
+    is_runtime_qa_workspace: false
+    governs_review_standards: true
+    historical_review_criteria_must_remain_reproducible: true
+  data_bindings:
+  - criteria_versions
+  - dimensions
+  - policies
+  - mappings
+  - approvals
+  allowed_action_ids:
+  - ACT-CONFIGURE
+  - ACT-APPROVE
+  - ACT-NAV-OPEN
+  page_permissions:
+  - quality.criteria.configure
+  - quality.criteria.approve
+  expected_control_count: 11
+quality_governance_contract:
+  owner: QualityGovernance
+  objects:
+  - quality_criteria_version
+  - quality_gate_policy
+  - dimension_library
+  - required_check
+  - threshold
+  - department_mapping
+  lifecycle:
+  - DRAFT
+  - REVIEW
+  - APPROVED
+  - ACTIVE
+  - SUPERSEDED
+  - RETIRED
+  hard_rule: 品質門檻不可硬編碼；任何變動需版本、Impact、Approval 與受影響任務 Revalidation。
+  criteria_version_policy:
+    active_criteria_immutable: true
+    criteria_change_requires_approved_new_version: true
+    historical_result_retains_original_criteria_version: true
+layout_contract:
+  page_count: 1
+  main_surface: criteria_table
+  main_title: QA 審查項目名單
+  main_table_binding:
+  - criteria_versions
+  - dimensions
+  - policies
+  - mappings
+  - approvals
+  secondary_sections:
+  - dimension_library
+  - thresholds
+  - department_mapping
+  - required_checks
+  - gate_policy
+  - approval
+  - impact
+  secondary_section_interaction: registered SECTION_OPEN -> DRAWER only
+  action_dock:
+  - ACT-CONFIGURE
+  - ACT-APPROVE
+  - ACT-NAV-OPEN
+  sample_business_data: FORBIDDEN
+  unregistered_search_filter_export: FORBIDDEN
+sections:
+- section_id: SEC-ADMIN-SG-02-CRITERIA-TABLE
+  section_key: criteria_table
+  read_control_id: CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN
+  order: 1
+  permission_resource_key: section:admin:SG-02:criteria_table
+  permission_action: VIEW
+  section_kind: BUSINESS_OR_READ_SECTION
+- section_id: SEC-ADMIN-SG-02-DIMENSION-LIBRARY
+  section_key: dimension_library
+  read_control_id: CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN
+  order: 2
+  permission_resource_key: section:admin:SG-02:dimension_library
+  permission_action: VIEW
+  section_kind: BUSINESS_OR_READ_SECTION
+- section_id: SEC-ADMIN-SG-02-THRESHOLDS
+  section_key: thresholds
+  read_control_id: CTRL-ADMIN-SG-02-THRESHOLDS-OPEN
+  order: 3
+  permission_resource_key: section:admin:SG-02:thresholds
+  permission_action: VIEW
+  section_kind: BUSINESS_OR_READ_SECTION
+- section_id: SEC-ADMIN-SG-02-DEPARTMENT-MAPPING
+  section_key: department_mapping
+  read_control_id: CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN
+  order: 4
+  permission_resource_key: section:admin:SG-02:department_mapping
+  permission_action: VIEW
+  section_kind: BUSINESS_OR_READ_SECTION
+- section_id: SEC-ADMIN-SG-02-REQUIRED-CHECKS
+  section_key: required_checks
+  read_control_id: CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN
+  order: 5
+  permission_resource_key: section:admin:SG-02:required_checks
+  permission_action: VIEW
+  section_kind: BUSINESS_OR_READ_SECTION
+- section_id: SEC-ADMIN-SG-02-GATE-POLICY
+  section_key: gate_policy
+  read_control_id: CTRL-ADMIN-SG-02-GATE-POLICY-OPEN
+  order: 6
+  permission_resource_key: section:admin:SG-02:gate_policy
+  permission_action: VIEW
+  section_kind: BUSINESS_OR_READ_SECTION
+- section_id: SEC-ADMIN-SG-02-APPROVAL
+  section_key: approval
+  read_control_id: CTRL-ADMIN-SG-02-APPROVAL-OPEN
+  order: 7
+  permission_resource_key: section:admin:SG-02:approval
+  permission_action: VIEW
+  section_kind: BUSINESS_OR_READ_SECTION
+- section_id: SEC-ADMIN-SG-02-IMPACT
+  section_key: impact
+  read_control_id: CTRL-ADMIN-SG-02-IMPACT-OPEN
+  order: 8
+  permission_resource_key: section:admin:SG-02:impact
+  permission_action: VIEW
+  section_kind: BUSINESS_OR_READ_SECTION
+- section_id: SEC-ADMIN-SG-02-ACTION-DOCK
+  section_key: action_dock
+  read_control_id: null
+  order: 9
+  permission_resource_key: section:admin:SG-02:action_dock
+  permission_action: VIEW
+  section_kind: TECHNICAL_ACTION_DOCK
+fields:
+- field_id: FIELD-ADMIN-SG-02-CRITERIA-VERSIONS
+  section_key: criteria_table
+  field_key: criteria_versions
+  type: read_model_object
+  data_binding: criteria_versions.criteria_versions
+  required: true
+  data_classification: OPERATIONAL
+  read_permission: quality.criteria.configure
+  write_permission: null
+  read_only_when:
+  - ALWAYS
+  visibility: authorized_scope_only
+  version_binding: read_model_version
+  audit: true
+  manual_input: FORBIDDEN_UNLESS_REGISTERED_BY_EFFECTFUL_ACTION_SCHEMA
+- field_id: FIELD-ADMIN-SG-02-DIMENSIONS
+  section_key: criteria_table
+  field_key: dimensions
+  type: read_model_object
+  data_binding: dimensions.dimensions
+  required: true
+  data_classification: OPERATIONAL
+  read_permission: quality.criteria.configure
+  write_permission: null
+  read_only_when:
+  - ALWAYS
+  visibility: authorized_scope_only
+  version_binding: read_model_version
+  audit: true
+  manual_input: FORBIDDEN_UNLESS_REGISTERED_BY_EFFECTFUL_ACTION_SCHEMA
+- field_id: FIELD-ADMIN-SG-02-POLICIES
+  section_key: criteria_table
+  field_key: policies
+  type: read_model_object
+  data_binding: policies.policies
+  required: true
+  data_classification: OPERATIONAL
+  read_permission: quality.criteria.configure
+  write_permission: null
+  read_only_when:
+  - ALWAYS
+  visibility: authorized_scope_only
+  version_binding: read_model_version
+  audit: true
+  manual_input: FORBIDDEN_UNLESS_REGISTERED_BY_EFFECTFUL_ACTION_SCHEMA
+- field_id: FIELD-ADMIN-SG-02-MAPPINGS
+  section_key: criteria_table
+  field_key: mappings
+  type: read_model_object
+  data_binding: mappings.mappings
+  required: true
+  data_classification: OPERATIONAL
+  read_permission: quality.criteria.configure
+  write_permission: null
+  read_only_when:
+  - ALWAYS
+  visibility: authorized_scope_only
+  version_binding: read_model_version
+  audit: true
+  manual_input: FORBIDDEN_UNLESS_REGISTERED_BY_EFFECTFUL_ACTION_SCHEMA
+- field_id: FIELD-ADMIN-SG-02-APPROVALS
+  section_key: criteria_table
+  field_key: approvals
+  type: read_model_object
+  data_binding: approvals.approvals
+  required: true
+  data_classification: OPERATIONAL
+  read_permission: quality.criteria.configure
+  write_permission: null
+  read_only_when:
+  - ALWAYS
+  visibility: authorized_scope_only
+  version_binding: read_model_version
+  audit: true
+  manual_input: FORBIDDEN_UNLESS_REGISTERED_BY_EFFECTFUL_ACTION_SCHEMA
+input_behavior:
+  existing_read_model_data: AUTO_PROJECT_DO_NOT_RETYPE
+  context_data: AUTO_CARRY_FORWARD_WHEN_AVAILABLE
+  manual_input_default: FORBIDDEN_UNLESS_REGISTERED_BY_EFFECTFUL_ACTION_SCHEMA
+  editable_input_source:
+  - 07_ui/interaction_registry.yaml#controls.form_schema
+  - 03_api/business_payload_registry.yaml#registered business payload schema
+controls:
+- control_id: CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN
+  section_key: criteria_table
+  control_type: SECTION_OPEN
+  label: 開啟區塊
+  operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  workflow: READ_ONLY
+  state_transition: NONE
+  interaction_type: DRAWER
+  permission_action: VIEW
+- control_id: CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN
+  section_key: dimension_library
+  control_type: SECTION_OPEN
+  label: 開啟區塊
+  operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  workflow: READ_ONLY
+  state_transition: NONE
+  interaction_type: DRAWER
+  permission_action: VIEW
+- control_id: CTRL-ADMIN-SG-02-THRESHOLDS-OPEN
+  section_key: thresholds
+  control_type: SECTION_OPEN
+  label: 開啟區塊
+  operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  workflow: READ_ONLY
+  state_transition: NONE
+  interaction_type: DRAWER
+  permission_action: VIEW
+- control_id: CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN
+  section_key: department_mapping
+  control_type: SECTION_OPEN
+  label: 開啟區塊
+  operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  workflow: READ_ONLY
+  state_transition: NONE
+  interaction_type: DRAWER
+  permission_action: VIEW
+- control_id: CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN
+  section_key: required_checks
+  control_type: SECTION_OPEN
+  label: 開啟區塊
+  operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  workflow: READ_ONLY
+  state_transition: NONE
+  interaction_type: DRAWER
+  permission_action: VIEW
+- control_id: CTRL-ADMIN-SG-02-GATE-POLICY-OPEN
+  section_key: gate_policy
+  control_type: SECTION_OPEN
+  label: 開啟區塊
+  operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  workflow: READ_ONLY
+  state_transition: NONE
+  interaction_type: DRAWER
+  permission_action: VIEW
+- control_id: CTRL-ADMIN-SG-02-APPROVAL-OPEN
+  section_key: approval
+  control_type: SECTION_OPEN
+  label: 開啟區塊
+  operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  workflow: READ_ONLY
+  state_transition: NONE
+  interaction_type: DRAWER
+  permission_action: VIEW
+- control_id: CTRL-ADMIN-SG-02-IMPACT-OPEN
+  section_key: impact
+  control_type: SECTION_OPEN
+  label: 開啟區塊
+  operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  workflow: READ_ONLY
+  state_transition: NONE
+  interaction_type: DRAWER
+  permission_action: VIEW
+- control_id: CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE
+  section_key: action_dock
+  control_type: BUSINESS_ACTION
+  source_action_id: ACT-CONFIGURE
+  operation_id: configureGovernedResource
+  method: PATCH
+  path: /v1/governance/resources/{id}
+  permission: governance.configure
+  interaction_type: FORM_MODAL
+  form_schema: ConfigureGovernedResourceRequest
+  state_transition: DRAFT->DRAFT
+  event: governance.configured
+- control_id: CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE
+  section_key: action_dock
+  control_type: BUSINESS_ACTION
+  source_action_id: ACT-APPROVE
+  operation_id: approveGovernedResource
+  method: POST
+  path: /v1/governance/resources/{id}/approve
+  permission: governance.approve
+  interaction_type: FORM_MODAL
+  form_schema: ApproveGovernedResourceRequest
+  state_transition: REVIEW->APPROVED
+  event: governance.approved
+- control_id: CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN
+  section_key: action_dock
+  control_type: BUSINESS_ACTION
+  source_action_id: ACT-NAV-OPEN
+  operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  permission: page.view
+  interaction_type: DRAWER
+  form_schema: null
+  state_transition: NONE
+  event: null
+configure_action:
+  operation_id: configureGovernedResource
+  form_schema: ConfigureGovernedResourceRequest
+  fields:
+  - field_name: resource_type
+    type: string
+    required: true
+  - field_name: resource_id
+    type: reference
+    required: true
+  - field_name: config_patch_json
+    type: json
+    required: true
+  - field_name: reason
+    type: text
+    required: true
+  business_rule: cross-domain page-union inference is forbidden
+approve_action:
+  operation_id: approveGovernedResource
+  form_schema: ApproveGovernedResourceRequest
+  fields:
+  - field_name: resource_type
+    type: string
+    required: true
+  - field_name: resource_id
+    type: reference
+    required: true
+  - field_name: rationale
+    type: text
+    required: true
+  - field_name: expected_resource_version
+    type: string
+    required: false
+  business_rule: Approval must satisfy state/version/permission/audit gates
+api_operations:
+- operation_id: approveGovernedResource
+  method: POST
+  path: /v1/governance/resources/{id}/approve
+- operation_id: configureGovernedResource
+  method: PATCH
+  path: /v1/governance/resources/{id}
+- operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+events:
+- governance.approved
+- governance.configured
+state_contract:
+  allowed_states:
+  - LOADING
+  - READY
+  - EMPTY
+  - ERROR
+  - POLICY_BLOCKED
+  - VERSION_CONFLICT
+  - REVIEW_REQUIRED
+  - EXTERNAL_PENDING
+  - READ_ONLY
+  - ARCHIVED
+  transitions:
+  - LOADING -> EMPTY|READY|ERROR|POLICY_BLOCKED
+  - READY -> EXTERNAL_PENDING|VERSION_CONFLICT|REVIEW_REQUIRED|READ_ONLY|ARCHIVED
+authorization:
+  model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
+  page_resource_key: page:admin:SG-02
+  required_page_action: VIEW
+  required_backend_gates:
+  - identity
+  - account_permission
+  - scope
+  - condition
+  - state_guard
+  - idempotency_when_side_effect
+  - audit
+  role_name_authorization: FORBIDDEN
+forbidden:
+- hardcoded_threshold
+- change_policy_without_impact
+- unregistered_search_control
+- unregistered_filter_control
+- unregistered_export_control
+- manual_retype_of_read_model_data
+- unregistered_write
+- direct_owner_database_read
+- sample_or_mock_criteria_data
+- overwrite_historical_review_criteria_version
+- invented_section_component_control_action_api_permission
+qa_acceptance:
+  expected_control_count: 11
+  pass_rule: ALL
+  control_test_ids:
+  - FUNC-CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN
+  - FUNC-CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN
+  - FUNC-CTRL-ADMIN-SG-02-THRESHOLDS-OPEN
+  - FUNC-CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN
+  - FUNC-CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN
+  - FUNC-CTRL-ADMIN-SG-02-GATE-POLICY-OPEN
+  - FUNC-CTRL-ADMIN-SG-02-APPROVAL-OPEN
+  - FUNC-CTRL-ADMIN-SG-02-IMPACT-OPEN
+  - FUNC-CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE
+  - FUNC-CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE
+  - FUNC-CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN
+runtime_truth:
+  file_spec: COMPLETE
+  encoding_file: COMPLETE
+  application_implementation: NOT_EXECUTED
+  runtime_binding_validation: NOT_EXECUTED
+  functional_tests: NOT_EXECUTED
+  sandbox_validation: NOT_EXECUTED
+  e2e_validation: NOT_EXECUTED
+  production_deployment: NOT_EXECUTED
+construction_gate:
+  ai_instruction: Use only admin:SG-02 definitions in this encoding. Do not add Search/Filter/Export or any other control.
+    Do not hardcode thresholds. Do not retype read-model fields. Unknown/unregistered behavior => BLOCK + REPORT_AUTHORITY_GAP.
+  static_ui_spec_ready: true
+  effectful_runtime_ready: false

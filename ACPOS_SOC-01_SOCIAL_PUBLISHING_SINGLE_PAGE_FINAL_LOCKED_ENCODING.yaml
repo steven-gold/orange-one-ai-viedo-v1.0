@@ -1,0 +1,1598 @@
+authority:
+  id: ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_AUTHORITY
+  page_uid: admin:SOC-01
+  page_name_zh: 社群發布
+  page_name_en: Social Publishing
+  surface: ADMIN
+  status: FINAL_LOCKED
+  current_only: true
+  file_spec_status: FILE_SPEC_COMPLETE
+  system_implementation_status: NOT_EXECUTED
+  single_page_workspace: true
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
+  backend_l1_key: social_publishing
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  purpose: One current Social Publishing workspace that composes existing platform capability, account/target, content package,
+    publishing policy/request, and results/history capabilities into one same-page workflow without creating parallel publishing
+    services, registries, databases, adapters, schedulers, analytics stores or provider/API-key systems.
+  truthful_status_rule: This file completes page design/encoding only. Application code, master merge, runtime, external platform
+    verification, Sandbox, Regression, E2E and production deployment are not executed by this file.
+source_alignment:
+  primary_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL.yaml / R9 Social Publishing capability set
+  source_capability_clusters:
+  - Platform registry / target-type capability / policy / health / enable-disable
+  - Social account binding / credential governance / target discovery / target directory / manual actions
+  - Release Candidate -> platform-specific Content Package / metadata / thumbnail / candidate review
+  - Target posting policy / cooldown / daily-weekly limits / scheduling / publish request / manual assist
+  - Post status / target history / metrics / interactions / callbacks / incidents / withdrawal history (read-only)
+  current_consolidation_rule: Historical segmented source pages are non-executable provenance. Current UI renders one admin:SOC-01
+    workspace only; source service/operation/data owners remain preserved and single.
+  business_development_policy_alignment:
+  - Master Message may produce platform-native variants; identical blind cross-platform copy is forbidden.
+  - Initial governed pattern is AI/draft assistance -> human Campaign/content approval -> scheduled publish, subject to current
+    policy authority.
+  - Mention/Tag a specific target company forces human approval.
+  - Auto mass commenting/tagging/cold outreach on other enterprise pages is forbidden.
+  - Direct Message is allowed only if official API/account permission/policy explicitly allows; no cold-DM assumption.
+single_system_contract:
+  current_ui_owner: admin:SOC-01
+  service_owners:
+  - REUSE PublishingAdapterService
+  - REUSE PublishingService
+  - REUSE PublishingAnalyticsService
+  - REUSE EnterpriseSocialOutreachGovernance
+  - REUSE existing Governance/Policy/Projection owners
+  existing_data_owners:
+  - social_account_bindings
+  - social_target_discovery_jobs
+  - social_market_targets
+  - social_manual_actions
+  - existing publishing/content/candidate/audit projections
+  forbidden_parallel_components:
+  - second social publishing system
+  - second social platform registry
+  - second social account registry
+  - second social target directory/database
+  - second credential store
+  - second publishing adapter/router
+  - second content package engine
+  - second publish scheduler/queue
+  - second publishing analytics database
+  - second manual action system
+  - page-local provider/API-key system
+  - bulkSocialPublish endpoint/service invented by page
+workflow:
+  canonical_user_flow: Platform & Capability -> Accounts & Targets -> Content Package -> Publish Plan -> Results & Records
+  stage_navigation: Same-page UI context only; never routes to separate current social pages.
+  cross_stage_context: Carry exact authorized platform/account/target/content-package/policy/publish references forward; effectful
+    operations never resolve formal inputs via latest/current/default aliases.
+  stages:
+  - stage_uid: SOC-01-STAGE-01-PLATFORM
+    key: platform
+    label: 平台能力
+    owner: REUSE PublishingAdapterService + Governance owner
+    purpose: Inspect and govern real registered social platforms, target-type capabilities, policy/health and enable-disable
+      state without guessing platform support.
+    actions:
+    - SOC-01-ACT-PLATFORM-CONFIG
+    - SOC-01-ACT-KILL-SWITCH
+  - stage_uid: SOC-01-STAGE-02-ACCOUNT-TARGET
+    key: account_target
+    label: 帳號與目標
+    owner: REUSE PublishingAdapterService
+    purpose: Bind authorized social accounts, keep credentials masked, create governed social target discovery, use target
+      directory, request join/verification and complete manual actions.
+    actions:
+    - SOC-01-ACT-ACCOUNT-BIND
+    - SOC-01-ACT-CREDENTIAL-REVEAL
+    - SOC-01-ACT-ACCOUNT-UNBIND
+    - SOC-01-ACT-TARGET-DISCOVERY
+    - SOC-01-ACT-TARGET-JOIN
+    - SOC-01-ACT-MANUAL-COMPLETE
+    - SOC-01-ACT-SEARCH
+  - stage_uid: SOC-01-STAGE-03-CONTENT
+    key: content
+    label: 內容包
+    owner: REUSE PublishingService + existing Draft/Candidate owner
+    purpose: Bind an exact Release Candidate/source and create platform-native content package variants, metadata/thumbnail/policy
+      review and governed Draft/Candidate decision.
+    actions:
+    - SOC-01-ACT-CONTENT-SAVE
+    - SOC-01-ACT-CANDIDATE-DECIDE
+  - stage_uid: SOC-01-STAGE-04-PUBLISH
+    key: publish
+    label: 發佈計畫
+    owner: REUSE PublishingService
+    purpose: Configure exact target posting policy and create governed publish requests using bound content package/channel
+      account, schedule/cooldown/frequency/approval constraints.
+    actions:
+    - SOC-01-ACT-POLICY-CONFIG
+    - SOC-01-ACT-PUBLISH-REQUEST
+  - stage_uid: SOC-01-STAGE-05-RECORDS
+    key: records
+    label: 結果與紀錄
+    owner: REUSE PublishingAnalyticsService
+    purpose: Inspect real external status, target/frequency history, metrics/interactions, manual actions, callbacks/incidents
+      and withdrawal status/history without inventing mutation actions.
+    actions:
+    - SOC-01-ACT-SEARCH
+    - SOC-01-ACT-REFRESH
+layout:
+  desktop_min_width: 1280
+  page_context_bar: 100% x 56px
+  workflow_stage_bar: 100% x 52px; five compact segmented stages
+  primary_workspace: 72% width; active stage only
+  governance_rail: 28% width; current-stage blockers/readiness only
+  detail_drawer: 480-560px; evidence/history/audit/credential access/callback/incident details only
+  stage_action_dock: 56px local bottom action row; only current legal stage actions; max one primary CTA per context
+  main_workspace: height:auto; overflow-y:auto
+  below_1280: min-width=1280px + horizontal scroll
+  visual_rule: Inherit Global Visual; no local palette/theme, no card-per-field layout, no fake charts/counters, no page-specific
+    global shell.
+sections:
+- section_uid: SOC-01-SEC-01
+  name: Page Context / Social Publishing Status
+  priority: CORE_REQUIRED
+  component_uid: SOC-01-CMP-CONTEXT
+  visual_uid: SOC-01-VIS-CONTEXT
+- section_uid: SOC-01-SEC-02
+  name: Five-Stage Workflow Navigator
+  priority: CORE_REQUIRED
+  component_uid: SOC-01-CMP-STAGES
+  visual_uid: SOC-01-VIS-STAGES
+- section_uid: SOC-01-SEC-03
+  name: Platform & Capability Workspace
+  priority: CORE_REQUIRED
+  component_uid: SOC-01-CMP-PLATFORM
+  visual_uid: SOC-01-VIS-MAIN
+- section_uid: SOC-01-SEC-04
+  name: Accounts & Targets Workspace
+  priority: CORE_REQUIRED
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+- section_uid: SOC-01-SEC-05
+  name: Content Package Workspace
+  priority: CORE_REQUIRED
+  component_uid: SOC-01-CMP-CONTENT
+  visual_uid: SOC-01-VIS-MAIN
+- section_uid: SOC-01-SEC-06
+  name: Publish Plan Workspace
+  priority: CORE_REQUIRED
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+- section_uid: SOC-01-SEC-07
+  name: Results & Records Workspace
+  priority: CORE_REQUIRED
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+- section_uid: SOC-01-SEC-08
+  name: Governance Rail / Detail Drawer
+  priority: PRIMARY_SUPPORT
+  component_uid: SOC-01-CMP-GOVERNANCE
+  visual_uid: SOC-01-VIS-RAIL
+- section_uid: SOC-01-SEC-09
+  name: Current Stage Action Dock
+  priority: CORE_REQUIRED
+  component_uid: SOC-01-CMP-ACTION-DOCK
+  visual_uid: SOC-01-VIS-ACTION-DOCK
+components:
+- component_uid: SOC-01-CMP-CONTEXT
+  section_uid: SOC-01-SEC-01
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- component_uid: SOC-01-CMP-STAGES
+  section_uid: SOC-01-SEC-02
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- component_uid: SOC-01-CMP-PLATFORM
+  section_uid: SOC-01-SEC-03
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  section_uid: SOC-01-SEC-04
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- component_uid: SOC-01-CMP-CONTENT
+  section_uid: SOC-01-SEC-05
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- component_uid: SOC-01-CMP-PUBLISH
+  section_uid: SOC-01-SEC-06
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- component_uid: SOC-01-CMP-RECORDS
+  section_uid: SOC-01-SEC-07
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- component_uid: SOC-01-CMP-GOVERNANCE
+  section_uid: SOC-01-SEC-08
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- component_uid: SOC-01-CMP-ACTION-DOCK
+  section_uid: SOC-01-SEC-09
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+visuals:
+- visual_uid: SOC-01-VIS-CONTEXT
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  geometry: 56px compact context row
+- visual_uid: SOC-01-VIS-STAGES
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  geometry: 52px compact five-stage segmented row
+- visual_uid: SOC-01-VIS-MAIN
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  geometry: active-stage 72% main workspace; dense table/form/list composition
+- visual_uid: SOC-01-VIS-RAIL
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  geometry: 28% governance rail + 480-560px detail drawer
+- visual_uid: SOC-01-VIS-ACTION-DOCK
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  geometry: 56px local action dock; one primary CTA max
+permissions:
+- permission_uid: SOC-01-PERM-PAGE
+  scope: effective backend L1 social_publishing + exact current account permission assignments
+  note: L1 is configuration UX only; runtime still validates exact source resources. Role/department never grants allow.
+- permission_uid: SOC-01-PERM-READ
+  scope: SOURCE_R9_PAGE_SECTION_FIELD_ACCOUNT_AUTHORIZATION
+  note: Read only within authorized scope/classification.
+- permission_uid: SOC-01-PERM-PLATFORM-CONFIG
+  scope: SOURCE_R9_OPERATION_PERMISSION_BY_OPERATION_ID:configureGovernedResource
+  note: No permission code invented locally.
+- permission_uid: SOC-01-PERM-KILL
+  scope: ops.kill_switch
+  note: High-risk and conditional only.
+- permission_uid: SOC-01-PERM-ACCOUNT-CONFIG
+  scope: social.account.configure
+- permission_uid: SOC-01-PERM-CREDENTIAL-REVEAL
+  scope: social.credential.reveal
+- permission_uid: SOC-01-PERM-ACCOUNT-UNBIND
+  scope: social.account.unbind
+- permission_uid: SOC-01-PERM-TARGET-DISCOVERY
+  scope: social.target.discovery
+- permission_uid: SOC-01-PERM-TARGET-JOIN
+  scope: social.target.join
+- permission_uid: SOC-01-PERM-MANUAL-ACTION
+  scope: social.manual_action.complete
+- permission_uid: SOC-01-PERM-SEARCH
+  scope: projection.search
+- permission_uid: SOC-01-PERM-DRAFT
+  scope: SOURCE_R9_OPERATION_PERMISSION_BY_OPERATION_ID:saveDraft
+  note: No permission code invented locally.
+- permission_uid: SOC-01-PERM-CANDIDATE-DECIDE
+  scope: candidate.decide
+- permission_uid: SOC-01-PERM-SCHEDULE
+  scope: social.schedule.configure
+- permission_uid: SOC-01-PERM-PUBLISH
+  scope: social.publish.request
+- permission_uid: SOC-01-PERM-REFRESH
+  scope: projection.refresh
+gates:
+- gate_uid: SOC-01-GATE-PAGE
+  condition: identity + effective backend L1 social_publishing + exact source account permissions + scope + condition + classification
+    + audit; frontend visibility is not authorization
+- gate_uid: SOC-01-GATE-READ
+  condition: page gate + exact read permission + authorized scope + classification/mask
+- gate_uid: SOC-01-GATE-PLATFORM-CONFIG
+  condition: page gate + exact governed resource ref/version + configureGovernedResource authorization + state/policy + expected
+    version + idempotency where side-effect + audit
+- gate_uid: SOC-01-GATE-KILL
+  condition: page gate + actual high-risk applicable operation + ops.kill_switch + exact target/scope/reason + confirmation
+    + audit
+- gate_uid: SOC-01-GATE-ACCOUNT
+  condition: page gate + exact account_id/platform + source operation authorization + expected version + idempotency + state
+    guard + audit
+- gate_uid: SOC-01-GATE-CREDENTIAL
+  condition: page gate + social.credential.reveal + explicit governed request fields/reason from source schema + audit; raw
+    secret never in normal projection
+- gate_uid: SOC-01-GATE-DISCOVERY
+  condition: page gate + social.target.discovery + exact CreateSocialTargetDiscoveryRequest + allowed platform/capability/policy
+    + expected version + idempotency + audit
+- gate_uid: SOC-01-GATE-TARGET-JOIN
+  condition: page gate + exact target state DISCOVERED|READY_TO_JOIN + social.target.join + target capability result + expected
+    version + idempotency + audit
+- gate_uid: SOC-01-GATE-MANUAL
+  condition: page gate + actual MANUAL_ACTION_REQUIRED or PENDING_ADMIN_APPROVAL context + social.manual_action.complete +
+    exact action ref/version + audit
+- gate_uid: SOC-01-GATE-CONTENT
+  condition: page gate + exact Release Candidate/content draft/candidate refs + existing Draft/Candidate owner + source schema
+    + audit
+- gate_uid: SOC-01-GATE-CANDIDATE
+  condition: content gate + exact candidate id/version + candidate.decide + legal candidate state + audit
+- gate_uid: SOC-01-GATE-POLICY
+  condition: page gate + exact target_id JOINED/eligible + social.schedule.configure + ConfigureSocialTargetPolicyRequest
+    + expected version + idempotency + audit
+- gate_uid: SOC-01-GATE-PUBLISH
+  condition: page gate + target READY_TO_POST + exact content package + bound channel account + rights/policy/approval + cooldown/frequency/time-window
+    + social.publish.request + RequestSocialTargetPublishRequest + expected version + idempotency + audit
+- gate_uid: SOC-01-GATE-RECORDS
+  condition: page gate + authorized operational read/search/refresh; external result must come from recorded projection/callback,
+    never synthetic UI state
+actions:
+- action_uid: SOC-01-ACT-PROJECTION-READ
+  label: 讀取目前頁面資料
+  effect_type: REGISTERED_READ
+  operation: getUiProjection
+  method_path: GET /v1/ui-projections/{pageUid}
+  permission_uid: SOC-01-PERM-READ
+  gate_uid: SOC-01-GATE-READ
+- action_uid: SOC-01-ACT-STAGE-1-SELECT
+  label: 平台能力
+  effect_type: UI_CONTEXT_STATE
+  operation: null
+  method_path: NONE
+  permission_uid: SOC-01-PERM-PAGE
+  gate_uid: SOC-01-GATE-PAGE
+- action_uid: SOC-01-ACT-STAGE-2-SELECT
+  label: 帳號與目標
+  effect_type: UI_CONTEXT_STATE
+  operation: null
+  method_path: NONE
+  permission_uid: SOC-01-PERM-PAGE
+  gate_uid: SOC-01-GATE-PAGE
+- action_uid: SOC-01-ACT-STAGE-3-SELECT
+  label: 內容包
+  effect_type: UI_CONTEXT_STATE
+  operation: null
+  method_path: NONE
+  permission_uid: SOC-01-PERM-PAGE
+  gate_uid: SOC-01-GATE-PAGE
+- action_uid: SOC-01-ACT-STAGE-4-SELECT
+  label: 發佈計畫
+  effect_type: UI_CONTEXT_STATE
+  operation: null
+  method_path: NONE
+  permission_uid: SOC-01-PERM-PAGE
+  gate_uid: SOC-01-GATE-PAGE
+- action_uid: SOC-01-ACT-STAGE-5-SELECT
+  label: 結果與紀錄
+  effect_type: UI_CONTEXT_STATE
+  operation: null
+  method_path: NONE
+  permission_uid: SOC-01-PERM-PAGE
+  gate_uid: SOC-01-GATE-PAGE
+- action_uid: SOC-01-ACT-DETAIL-OPEN
+  label: 查看詳細資料
+  effect_type: UI_ONLY
+  operation: null
+  method_path: NONE
+  permission_uid: SOC-01-PERM-READ
+  gate_uid: SOC-01-GATE-READ
+- action_uid: SOC-01-ACT-PLATFORM-CONFIG
+  label: 設定平台治理資源
+  effect_type: REGISTERED_COMMAND
+  operation: configureGovernedResource
+  method_path: PATCH /v1/governance/resources/{id}
+  permission_uid: SOC-01-PERM-PLATFORM-CONFIG
+  gate_uid: SOC-01-GATE-PLATFORM-CONFIG
+- action_uid: SOC-01-ACT-KILL-SWITCH
+  label: 停止高風險操作
+  effect_type: HIGH_RISK_REGISTERED_COMMAND
+  operation: setKillSwitch
+  method_path: POST /v1/operations/kill-switch
+  permission_uid: SOC-01-PERM-KILL
+  gate_uid: SOC-01-GATE-KILL
+- action_uid: SOC-01-ACT-ACCOUNT-BIND
+  label: 設定帳號並綁定
+  effect_type: REGISTERED_COMMAND
+  operation: bindSocialAccount
+  method_path: PUT /v1/social/accounts/{accountId}/binding
+  permission_uid: SOC-01-PERM-ACCOUNT-CONFIG
+  gate_uid: SOC-01-GATE-ACCOUNT
+- action_uid: SOC-01-ACT-CREDENTIAL-REVEAL
+  label: 顯示憑證
+  effect_type: HIGH_RISK_REGISTERED_COMMAND
+  operation: revealSocialCredential
+  method_path: POST /v1/social/accounts/{accountId}/credential/reveal
+  permission_uid: SOC-01-PERM-CREDENTIAL-REVEAL
+  gate_uid: SOC-01-GATE-CREDENTIAL
+- action_uid: SOC-01-ACT-ACCOUNT-UNBIND
+  label: 解除綁定
+  effect_type: REGISTERED_COMMAND
+  operation: unbindSocialAccount
+  method_path: POST /v1/social/accounts/{accountId}/unbind
+  permission_uid: SOC-01-PERM-ACCOUNT-UNBIND
+  gate_uid: SOC-01-GATE-ACCOUNT
+- action_uid: SOC-01-ACT-TARGET-DISCOVERY
+  label: 建立目標搜尋
+  effect_type: REGISTERED_COMMAND
+  operation: createSocialTargetDiscovery
+  method_path: POST /v1/social/target-discovery-jobs
+  permission_uid: SOC-01-PERM-TARGET-DISCOVERY
+  gate_uid: SOC-01-GATE-DISCOVERY
+- action_uid: SOC-01-ACT-TARGET-JOIN
+  label: 要求加入／驗證目標
+  effect_type: REGISTERED_COMMAND
+  operation: requestSocialTargetJoin
+  method_path: POST /v1/social/targets/{targetId}/join
+  permission_uid: SOC-01-PERM-TARGET-JOIN
+  gate_uid: SOC-01-GATE-TARGET-JOIN
+- action_uid: SOC-01-ACT-MANUAL-COMPLETE
+  label: 完成人工處理
+  effect_type: REGISTERED_COMMAND
+  operation: completeSocialManualAction
+  method_path: POST /v1/social/manual-actions/{actionId}/complete
+  permission_uid: SOC-01-PERM-MANUAL-ACTION
+  gate_uid: SOC-01-GATE-MANUAL
+- action_uid: SOC-01-ACT-SEARCH
+  label: 搜尋
+  effect_type: REGISTERED_READ_COMMAND
+  operation: searchProjection
+  method_path: POST /v1/search
+  permission_uid: SOC-01-PERM-SEARCH
+  gate_uid: SOC-01-GATE-READ
+- action_uid: SOC-01-ACT-CONTENT-SAVE
+  label: 儲存內容 Draft
+  effect_type: REGISTERED_COMMAND
+  operation: saveDraft
+  method_path: POST /v1/drafts
+  permission_uid: SOC-01-PERM-DRAFT
+  gate_uid: SOC-01-GATE-CONTENT
+- action_uid: SOC-01-ACT-CANDIDATE-DECIDE
+  label: 審查內容 Candidate
+  effect_type: REGISTERED_COMMAND
+  operation: decideCandidate
+  method_path: POST /v1/candidates/{id}/decision
+  permission_uid: SOC-01-PERM-CANDIDATE-DECIDE
+  gate_uid: SOC-01-GATE-CANDIDATE
+- action_uid: SOC-01-ACT-POLICY-CONFIG
+  label: 儲存發佈政策
+  effect_type: REGISTERED_COMMAND
+  operation: configureSocialTargetPolicy
+  method_path: PUT /v1/social/targets/{targetId}/posting-policy
+  permission_uid: SOC-01-PERM-SCHEDULE
+  gate_uid: SOC-01-GATE-POLICY
+- action_uid: SOC-01-ACT-PUBLISH-REQUEST
+  label: 建立發佈要求
+  effect_type: REGISTERED_COMMAND
+  operation: requestSocialTargetPublish
+  method_path: POST /v1/social/targets/{targetId}/publish
+  permission_uid: SOC-01-PERM-PUBLISH
+  gate_uid: SOC-01-GATE-PUBLISH
+- action_uid: SOC-01-ACT-REFRESH
+  label: 重新整理紀錄
+  effect_type: REGISTERED_COMMAND
+  operation: refreshProjection
+  method_path: POST /v1/projections/refresh
+  permission_uid: SOC-01-PERM-REFRESH
+  gate_uid: SOC-01-GATE-RECORDS
+controls:
+- control_uid: SOC-01-FLD-CONTEXT
+  section_uid: SOC-01-SEC-01
+  component_uid: SOC-01-CMP-CONTEXT
+  visual_uid: SOC-01-VIS-CONTEXT
+  type: READONLY
+  label: Scope / Version / Correlation
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact authorized context only; no latest/current/default alias in effectful operation.
+  default: —
+- control_uid: SOC-01-FLD-CURRENT-STATE
+  section_uid: SOC-01-SEC-01
+  component_uid: SOC-01-CMP-CONTEXT
+  visual_uid: SOC-01-VIS-CONTEXT
+  type: READONLY
+  label: 目前狀態
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Real projection only; missing=—.
+  default: —
+- control_uid: SOC-01-TAB-STAGE-1
+  section_uid: SOC-01-SEC-02
+  component_uid: SOC-01-CMP-STAGES
+  visual_uid: SOC-01-VIS-STAGES
+  type: SEGMENT
+  label: 平台能力
+  action_uid: SOC-01-ACT-STAGE-1-SELECT
+  gate_uid: SOC-01-GATE-PAGE
+  permission_uid: SOC-01-PERM-PAGE
+  rule: Same-page UI context only; preserve legal exact refs.
+  default: —
+- control_uid: SOC-01-TAB-STAGE-2
+  section_uid: SOC-01-SEC-02
+  component_uid: SOC-01-CMP-STAGES
+  visual_uid: SOC-01-VIS-STAGES
+  type: SEGMENT
+  label: 帳號與目標
+  action_uid: SOC-01-ACT-STAGE-2-SELECT
+  gate_uid: SOC-01-GATE-PAGE
+  permission_uid: SOC-01-PERM-PAGE
+  rule: Same-page UI context only; preserve legal exact refs.
+  default: —
+- control_uid: SOC-01-TAB-STAGE-3
+  section_uid: SOC-01-SEC-02
+  component_uid: SOC-01-CMP-STAGES
+  visual_uid: SOC-01-VIS-STAGES
+  type: SEGMENT
+  label: 內容包
+  action_uid: SOC-01-ACT-STAGE-3-SELECT
+  gate_uid: SOC-01-GATE-PAGE
+  permission_uid: SOC-01-PERM-PAGE
+  rule: Same-page UI context only; preserve legal exact refs.
+  default: —
+- control_uid: SOC-01-TAB-STAGE-4
+  section_uid: SOC-01-SEC-02
+  component_uid: SOC-01-CMP-STAGES
+  visual_uid: SOC-01-VIS-STAGES
+  type: SEGMENT
+  label: 發佈計畫
+  action_uid: SOC-01-ACT-STAGE-4-SELECT
+  gate_uid: SOC-01-GATE-PAGE
+  permission_uid: SOC-01-PERM-PAGE
+  rule: Same-page UI context only; preserve legal exact refs.
+  default: —
+- control_uid: SOC-01-TAB-STAGE-5
+  section_uid: SOC-01-SEC-02
+  component_uid: SOC-01-CMP-STAGES
+  visual_uid: SOC-01-VIS-STAGES
+  type: SEGMENT
+  label: 結果與紀錄
+  action_uid: SOC-01-ACT-STAGE-5-SELECT
+  gate_uid: SOC-01-GATE-PAGE
+  permission_uid: SOC-01-PERM-PAGE
+  rule: Same-page UI context only; preserve legal exact refs.
+  default: —
+- control_uid: SOC-01-FLD-PLATFORM-LIST
+  section_uid: SOC-01-SEC-03
+  component_uid: SOC-01-CMP-PLATFORM
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 平台清單
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Source projection only; capability/health must never be guessed.
+  default: —
+- control_uid: SOC-01-FLD-CAPABILITY
+  section_uid: SOC-01-SEC-03
+  component_uid: SOC-01-CMP-PLATFORM
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Target Type Capability
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Source projection only; capability/health must never be guessed.
+  default: —
+- control_uid: SOC-01-FLD-POLICY
+  section_uid: SOC-01-SEC-03
+  component_uid: SOC-01-CMP-PLATFORM
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 平台政策
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Source projection only; capability/health must never be guessed.
+  default: —
+- control_uid: SOC-01-FLD-HEALTH
+  section_uid: SOC-01-SEC-03
+  component_uid: SOC-01-CMP-PLATFORM
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 平台 Health
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Source projection only; capability/health must never be guessed.
+  default: —
+- control_uid: SOC-01-FLD-ENABLE-STATE
+  section_uid: SOC-01-SEC-03
+  component_uid: SOC-01-CMP-PLATFORM
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 啟用／停用狀態
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Source projection only; capability/health must never be guessed.
+  default: —
+- control_uid: SOC-01-BTN-PLATFORM-CONFIG
+  section_uid: SOC-01-SEC-03
+  component_uid: SOC-01-CMP-PLATFORM
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 設定平台治理資源
+  action_uid: SOC-01-ACT-PLATFORM-CONFIG
+  gate_uid: SOC-01-GATE-PLATFORM-CONFIG
+  permission_uid: SOC-01-PERM-PLATFORM-CONFIG
+  rule: Render only when exact governed resource binding exists.
+  default: —
+- control_uid: SOC-01-BTN-KILL
+  section_uid: SOC-01-SEC-03
+  component_uid: SOC-01-CMP-PLATFORM
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 停止高風險操作
+  action_uid: SOC-01-ACT-KILL-SWITCH
+  gate_uid: SOC-01-GATE-KILL
+  permission_uid: SOC-01-PERM-KILL
+  rule: Conditional high-risk only; never permanent primary CTA.
+  default: —
+- control_uid: SOC-01-FLD-ACCOUNT-LIST
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 社群帳號
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Bound/unbound/reauth state from source projection.
+  default: —
+- control_uid: SOC-01-FLD-CREDENTIAL-STATUS
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 憑證狀態
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Masked status only; raw secret forbidden.
+  default: —
+- control_uid: SOC-01-FLD-BINDING-VERIFY
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 綁定驗證狀態
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Service-runtime result read-only; no user Verify button.
+  default: —
+- control_uid: SOC-01-FLD-TARGET-DIRECTORY
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Target Directory
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Market groups/pages/targets from existing social target directory only.
+  default: —
+- control_uid: SOC-01-FLD-TARGET-CAPABILITY
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Target Capability
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Service verification result read-only; no user Verify capability button.
+  default: —
+- control_uid: SOC-01-FLD-MANUAL-QUEUE
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Manual Action Queue
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Only real pending actions; no fabricated task.
+  default: —
+- control_uid: SOC-01-BTN-ACCOUNT-BIND
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 設定帳號並綁定
+  action_uid: SOC-01-ACT-ACCOUNT-BIND
+  gate_uid: SOC-01-GATE-ACCOUNT
+  permission_uid: SOC-01-PERM-ACCOUNT-CONFIG
+  rule: Uses BindSocialAccountRequest exact source schema.
+  default: —
+- control_uid: SOC-01-BTN-CREDENTIAL-REVEAL
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 顯示憑證
+  action_uid: SOC-01-ACT-CREDENTIAL-REVEAL
+  gate_uid: SOC-01-GATE-CREDENTIAL
+  permission_uid: SOC-01-PERM-CREDENTIAL-REVEAL
+  rule: High-risk conditional drawer; never normal page text.
+  default: —
+- control_uid: SOC-01-BTN-ACCOUNT-UNBIND
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 解除綁定
+  action_uid: SOC-01-ACT-ACCOUNT-UNBIND
+  gate_uid: SOC-01-GATE-ACCOUNT
+  permission_uid: SOC-01-PERM-ACCOUNT-UNBIND
+  rule: Exact account/state + source request contract.
+  default: —
+- control_uid: SOC-01-BTN-TARGET-DISCOVERY
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 建立目標搜尋
+  action_uid: SOC-01-ACT-TARGET-DISCOVERY
+  gate_uid: SOC-01-GATE-DISCOVERY
+  permission_uid: SOC-01-PERM-TARGET-DISCOVERY
+  rule: Uses exact CreateSocialTargetDiscoveryRequest.
+  default: —
+- control_uid: SOC-01-BTN-TARGET-JOIN
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 要求加入／驗證目標
+  action_uid: SOC-01-ACT-TARGET-JOIN
+  gate_uid: SOC-01-GATE-TARGET-JOIN
+  permission_uid: SOC-01-PERM-TARGET-JOIN
+  rule: Only legal source state; may result in MANUAL_ACTION_REQUIRED/PENDING_EXTERNAL.
+  default: —
+- control_uid: SOC-01-BTN-MANUAL-COMPLETE
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 完成人工處理
+  action_uid: SOC-01-ACT-MANUAL-COMPLETE
+  gate_uid: SOC-01-GATE-MANUAL
+  permission_uid: SOC-01-PERM-MANUAL-ACTION
+  rule: Exact manual action only.
+  default: —
+- control_uid: SOC-01-INP-TARGET-SEARCH
+  section_uid: SOC-01-SEC-04
+  component_uid: SOC-01-CMP-ACCOUNT-TARGET
+  visual_uid: SOC-01-VIS-MAIN
+  type: SEARCH
+  label: 搜尋 Target Directory
+  action_uid: SOC-01-ACT-SEARCH
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-SEARCH
+  rule: Search projection only; no second target database.
+  default: —
+- control_uid: SOC-01-FLD-RELEASE-SOURCE
+  section_uid: SOC-01-SEC-05
+  component_uid: SOC-01-CMP-CONTENT
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Release Candidate Source
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact source ref; no implicit latest.
+  default: —
+- control_uid: SOC-01-FLD-PLATFORM-VARIANTS
+  section_uid: SOC-01-SEC-05
+  component_uid: SOC-01-CMP-CONTENT
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 平台內容版本
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Dynamic from actual enabled/bound platform capability; no hard-coded fake platform tiles.
+  default: —
+- control_uid: SOC-01-FLD-METADATA
+  section_uid: SOC-01-SEC-05
+  component_uid: SOC-01-CMP-CONTENT
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Metadata
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Current content package draft/projection.
+  default: —
+- control_uid: SOC-01-FLD-THUMBNAIL
+  section_uid: SOC-01-SEC-05
+  component_uid: SOC-01-CMP-CONTENT
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Thumbnail
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Current content package draft/projection.
+  default: —
+- control_uid: SOC-01-FLD-POLICY-CHECK
+  section_uid: SOC-01-SEC-05
+  component_uid: SOC-01-CMP-CONTENT
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Policy Check
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Real result only; missing=incomplete/—.
+  default: —
+- control_uid: SOC-01-FLD-APPROVAL
+  section_uid: SOC-01-SEC-05
+  component_uid: SOC-01-CMP-CONTENT
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 審查狀態
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Candidate/draft approval state only.
+  default: —
+- control_uid: SOC-01-FLD-VERSION-HISTORY
+  section_uid: SOC-01-SEC-05
+  component_uid: SOC-01-CMP-CONTENT
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 版本紀錄
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Append-only/current source history.
+  default: —
+- control_uid: SOC-01-BTN-CONTENT-SAVE
+  section_uid: SOC-01-SEC-05
+  component_uid: SOC-01-CMP-CONTENT
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 儲存內容 Draft
+  action_uid: SOC-01-ACT-CONTENT-SAVE
+  gate_uid: SOC-01-GATE-CONTENT
+  permission_uid: SOC-01-PERM-DRAFT
+  rule: Uses source saveDraft schema; content remains Draft/Candidate.
+  default: —
+- control_uid: SOC-01-BTN-CANDIDATE-DECIDE
+  section_uid: SOC-01-SEC-05
+  component_uid: SOC-01-CMP-CONTENT
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 審查內容 Candidate
+  action_uid: SOC-01-ACT-CANDIDATE-DECIDE
+  gate_uid: SOC-01-GATE-CANDIDATE
+  permission_uid: SOC-01-PERM-CANDIDATE-DECIDE
+  rule: Approval does not itself publish.
+  default: —
+- control_uid: SOC-01-FLD-TARGET-SELECTOR
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 發佈 Target
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact SocialMarketTarget ref.
+  default: —
+- control_uid: SOC-01-FLD-TARGET-CAPABILITY-STATUS
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Target Capability / Account Binding
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Must be ready; projection only.
+  default: —
+- control_uid: SOC-01-FLD-MIN-INTERVAL
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: minimum_interval_hours
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact required policy field.
+  default: —
+- control_uid: SOC-01-FLD-DAILY-LIMIT
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: daily_limit
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact required policy field.
+  default: —
+- control_uid: SOC-01-FLD-WEEKLY-LIMIT
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: weekly_limit
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact required policy field.
+  default: —
+- control_uid: SOC-01-FLD-SAME-COOLDOWN
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: same_content_cooldown_hours
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact optional policy field.
+  default: —
+- control_uid: SOC-01-FLD-SIMILAR-COOLDOWN
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: similar_content_cooldown_hours
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact optional policy field.
+  default: —
+- control_uid: SOC-01-FLD-ALLOWED-WINDOW
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: allowed_time_window
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact optional policy field.
+  default: —
+- control_uid: SOC-01-FLD-TARGET-RULE-NOTES
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: target_rule_notes
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact optional policy field.
+  default: —
+- control_uid: SOC-01-FLD-CONTENT-PACKAGE
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: content_package_id
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact required publish field.
+  default: —
+- control_uid: SOC-01-FLD-CHANNEL-ACCOUNT
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: channel_account_id
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact required publish field.
+  default: —
+- control_uid: SOC-01-FLD-SCHEDULE-AT
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: schedule_at
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Exact optional publish field.
+  default: —
+- control_uid: SOC-01-FLD-AUTO-PUBLISH-POLICY
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Auto Publish Policy
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Read governed policy semantics only; editable only through exact existing governed-resource binding. No local auto_publish
+    request field.
+  default: —
+- control_uid: SOC-01-FLD-HUMAN-APPROVAL-POLICY
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Human Approval Requirement
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Read governed policy semantics only. Mention/Tag specific company forces human approval.
+  default: —
+- control_uid: SOC-01-FLD-PUBLISH-QUEUE
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Publish Queue
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Request state only; request is not external success.
+  default: —
+- control_uid: SOC-01-FLD-MANUAL-ASSIST-QUEUE
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Manual Assist Queue
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Shows MANUAL_ACTION_REQUIRED only when real.
+  default: —
+- control_uid: SOC-01-BTN-POLICY-CONFIG
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 儲存發佈政策
+  action_uid: SOC-01-ACT-POLICY-CONFIG
+  gate_uid: SOC-01-GATE-POLICY
+  permission_uid: SOC-01-PERM-SCHEDULE
+  rule: Uses exact ConfigureSocialTargetPolicyRequest fields only.
+  default: —
+- control_uid: SOC-01-BTN-PUBLISH
+  section_uid: SOC-01-SEC-06
+  component_uid: SOC-01-CMP-PUBLISH
+  visual_uid: SOC-01-VIS-MAIN
+  type: PRIMARY_BUTTON
+  label: 建立發佈要求
+  action_uid: SOC-01-ACT-PUBLISH-REQUEST
+  gate_uid: SOC-01-GATE-PUBLISH
+  permission_uid: SOC-01-PERM-PUBLISH
+  rule: One exact target per registered request; no invented bulkSocialPublish endpoint. External success only after real
+    result/callback.
+  default: —
+- control_uid: SOC-01-FLD-POSTS
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 貼文紀錄
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-READ
+  rule: Read-only operational projection.
+  default: —
+- control_uid: SOC-01-FLD-TARGET-HISTORY
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Target / 頻率紀錄
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-READ
+  rule: Read-only operational projection.
+  default: —
+- control_uid: SOC-01-FLD-POST-STATUS
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 外部狀態
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-READ
+  rule: Only recorded external status.
+  default: —
+- control_uid: SOC-01-FLD-METRICS
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Metrics
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-READ
+  rule: Real metrics only; no fake or client-derived totals.
+  default: —
+- control_uid: SOC-01-FLD-INTERACTIONS
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 互動紀錄
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-READ
+  rule: Read-only/current source projection.
+  default: —
+- control_uid: SOC-01-FLD-MANUAL-HISTORY
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Manual Action History
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-READ
+  rule: Read-only history.
+  default: —
+- control_uid: SOC-01-FLD-CALLBACKS
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Callback
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-READ
+  rule: Read-only exact callback record.
+  default: —
+- control_uid: SOC-01-FLD-INCIDENTS
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: Incident
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-READ
+  rule: Read-only exact incident record.
+  default: —
+- control_uid: SOC-01-FLD-WITHDRAWAL
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: READONLY
+  label: 撤回狀態／紀錄
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-READ
+  rule: Read-only. No registered withdrawal mutation exists in current source, so no Withdraw button.
+  default: —
+- control_uid: SOC-01-INP-RECORD-SEARCH
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: SEARCH
+  label: 搜尋紀錄
+  action_uid: SOC-01-ACT-SEARCH
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-SEARCH
+  rule: Uses existing searchProjection only.
+  default: —
+- control_uid: SOC-01-BTN-REFRESH
+  section_uid: SOC-01-SEC-07
+  component_uid: SOC-01-CMP-RECORDS
+  visual_uid: SOC-01-VIS-MAIN
+  type: BUTTON
+  label: 重新整理
+  action_uid: SOC-01-ACT-REFRESH
+  gate_uid: SOC-01-GATE-RECORDS
+  permission_uid: SOC-01-PERM-REFRESH
+  rule: Refresh existing projection only.
+  default: —
+- control_uid: SOC-01-BTN-DETAIL
+  section_uid: SOC-01-SEC-08
+  component_uid: SOC-01-CMP-GOVERNANCE
+  visual_uid: SOC-01-VIS-RAIL
+  type: BUTTON
+  label: 查看證據／Audit／歷史
+  action_uid: SOC-01-ACT-DETAIL-OPEN
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Secondary drawer only; no duplicated permanent cards.
+  default: —
+- control_uid: SOC-01-FLD-BLOCKERS
+  section_uid: SOC-01-SEC-08
+  component_uid: SOC-01-CMP-GOVERNANCE
+  visual_uid: SOC-01-VIS-RAIL
+  type: READONLY
+  label: 目前 Blockers / Readiness
+  action_uid: SOC-01-ACT-PROJECTION-READ
+  gate_uid: SOC-01-GATE-READ
+  permission_uid: SOC-01-PERM-READ
+  rule: Only actual state blockers; no decorative KPI.
+  default: —
+form_contracts:
+  BindSocialAccountRequest:
+    context_fields:
+    - scope
+    - expected_version
+    - correlation_id
+    - idempotency_key
+    business_fields:
+    - name: platform_key
+      required: true
+    - name: display_name
+      required: true
+    - name: login_identifier
+      required: true
+    - name: auth_mode
+      required: true
+      enum:
+      - OFFICIAL_OAUTH_OR_TOKEN
+      - MANUAL_BROWSER_CREDENTIAL
+      - CUSTOM_SECRET
+    - name: credential_value
+      required: true
+      type: secret
+    - name: credential_username
+      required: false
+    - name: external_account_ref
+      required: false
+    ui_rule: credential_value is input-only secret and never re-rendered as normal field value.
+  CreateSocialTargetDiscoveryRequest:
+    context_fields:
+    - scope
+    - expected_version
+    - correlation_id
+    - idempotency_key
+    business_fields:
+    - name: job_name
+      required: true
+    - name: platform_key
+      required: true
+    - name: target_types
+      required: true
+      type: string_list
+    - name: categories
+      required: true
+      type: string_list
+    - name: keywords
+      required: true
+      type: string_list
+    - name: market
+      required: false
+    - name: language
+      required: false
+    - name: minimum_scale
+      required: false
+      type: integer
+    - name: exclude_keywords
+      required: false
+      type: string_list
+    - name: mode
+      required: true
+      enum:
+      - CONTINUOUS
+      - SINGLE_RUN
+    ui_rule: Required search conditions remain in the main form; optional market/language/minimum_scale/exclude_keywords may
+      live in Advanced Conditions drawer. No source/crawler fields invented.
+  ConfigureSocialTargetPolicyRequest:
+    context_fields:
+    - scope
+    - expected_version
+    - correlation_id
+    - idempotency_key
+    business_fields:
+    - name: target_id
+      required: false
+      rule: URL path id canonical; optional body copy must match path
+    - name: minimum_interval_hours
+      required: true
+      type: integer
+    - name: daily_limit
+      required: true
+      type: integer
+    - name: weekly_limit
+      required: true
+      type: integer
+    - name: same_content_cooldown_hours
+      required: false
+      type: integer
+    - name: similar_content_cooldown_hours
+      required: false
+      type: integer
+    - name: allowed_time_window
+      required: false
+      type: json/object
+    - name: target_rule_notes
+      required: false
+      type: string
+    ui_rule: Do not add local auto_publish / human_approval request keys. Such policy semantics are read from current governed
+      projection and can be edited only when an exact existing governed resource binding is available.
+  RequestSocialTargetPublishRequest:
+    context_fields:
+    - scope
+    - expected_version
+    - correlation_id
+    - idempotency_key
+    business_fields:
+    - name: target_id
+      required: false
+      rule: URL path id canonical; optional body copy must match path
+    - name: content_package_id
+      required: true
+    - name: channel_account_id
+      required: true
+    - name: schedule_at
+      required: false
+    - name: content_hash
+      required: false
+    - name: content_similarity_key
+      required: false
+    ui_rule: Registered operation is target-scoped. Page must not invent bulkSocialPublish. If future UX permits multi-select,
+      it may only orchestrate independent exact existing requests with unique idempotency and truthful per-target partial
+      result; no new endpoint.
+operations:
+- operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  owner: Projection / source page read owner
+  permission: SOURCE_R9_PAGE_SECTION_FIELD_ACCOUNT_AUTHORIZATION
+  request_contract: N/A_READ
+- operation_id: configureGovernedResource
+  method: PATCH
+  path: /v1/governance/resources/{id}
+  owner: Existing Governance/Policy owner
+  permission: SOURCE_R9_OPERATION_PERMISSION_BY_OPERATION_ID
+  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+- operation_id: setKillSwitch
+  method: POST
+  path: /v1/operations/kill-switch
+  owner: Existing Operations Governance
+  permission: ops.kill_switch
+  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+- operation_id: bindSocialAccount
+  method: PUT
+  path: /v1/social/accounts/{accountId}/binding
+  owner: PublishingAdapterService
+  permission: social.account.configure
+  request_contract: BindSocialAccountRequest
+- operation_id: revealSocialCredential
+  method: POST
+  path: /v1/social/accounts/{accountId}/credential/reveal
+  owner: PublishingAdapterService
+  permission: social.credential.reveal
+  request_contract: RevealSocialCredentialRequest
+- operation_id: unbindSocialAccount
+  method: POST
+  path: /v1/social/accounts/{accountId}/unbind
+  owner: PublishingAdapterService
+  permission: social.account.unbind
+  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+- operation_id: createSocialTargetDiscovery
+  method: POST
+  path: /v1/social/target-discovery-jobs
+  owner: PublishingAdapterService
+  permission: social.target.discovery
+  request_contract: CreateSocialTargetDiscoveryRequest
+- operation_id: requestSocialTargetJoin
+  method: POST
+  path: /v1/social/targets/{targetId}/join
+  owner: PublishingAdapterService
+  permission: social.target.join
+  request_contract: RequestSocialTargetJoinRequest
+- operation_id: completeSocialManualAction
+  method: POST
+  path: /v1/social/manual-actions/{actionId}/complete
+  owner: PublishingAdapterService
+  permission: social.manual_action.complete
+  request_contract: CompleteSocialManualActionRequest
+- operation_id: searchProjection
+  method: POST
+  path: /v1/search
+  owner: Projection/Search owner
+  permission: projection.search
+  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+- operation_id: saveDraft
+  method: POST
+  path: /v1/drafts
+  owner: Existing Draft/Candidate owner
+  permission: SOURCE_R9_OPERATION_PERMISSION_BY_OPERATION_ID
+  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+- operation_id: decideCandidate
+  method: POST
+  path: /v1/candidates/{id}/decision
+  owner: Existing Candidate owner
+  permission: candidate.decide
+  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+- operation_id: configureSocialTargetPolicy
+  method: PUT
+  path: /v1/social/targets/{targetId}/posting-policy
+  owner: PublishingService
+  permission: social.schedule.configure
+  request_contract: ConfigureSocialTargetPolicyRequest
+- operation_id: requestSocialTargetPublish
+  method: POST
+  path: /v1/social/targets/{targetId}/publish
+  owner: PublishingService
+  permission: social.publish.request
+  request_contract: RequestSocialTargetPublishRequest
+- operation_id: refreshProjection
+  method: POST
+  path: /v1/projections/refresh
+  owner: Projection owner
+  permission: projection.refresh
+  request_contract: USE_SOURCE_R9_REQUEST_CONTRACT_BY_OPERATION_ID
+state_model:
+  common_ui_states:
+  - LOADING
+  - READY
+  - EMPTY
+  - ERROR
+  - POLICY_BLOCKED
+  - VERSION_CONFLICT
+  - EXTERNAL_PENDING
+  - READ_ONLY
+  - BLOCKED
+  social_account_states:
+  - UNBOUND
+  - CONFIGURED
+  - BOUND_LOCKED
+  - REAUTH_REQUIRED
+  social_target_states:
+  - DISCOVERED
+  - READY_TO_JOIN
+  - MANUAL_ACTION_REQUIRED
+  - PENDING_ADMIN_APPROVAL
+  - JOINED
+  - READY_TO_POST
+  - PENDING_EXTERNAL
+  - POSTED
+  - COOLDOWN
+  - UNAVAILABLE
+  rules:
+  - Service-only verifySocialAccountBinding may transition CONFIGURED/REAUTH_REQUIRED to BOUND_LOCKED or REAUTH_REQUIRED;
+    SOC-01 exposes status only, no user Verify button.
+  - Service-only verifySocialTargetCapability may transition DISCOVERED to READY_TO_JOIN; SOC-01 exposes status only, no user
+    capability Verify button.
+  - requestSocialTargetJoin from DISCOVERED/READY_TO_JOIN may become MANUAL_ACTION_REQUIRED or PENDING_EXTERNAL.
+  - completeSocialManualAction uses actual pending action context and may progress target according to source state machine;
+    page never chooses an impossible target state.
+  - configureSocialTargetPolicy operates on an eligible JOINED target and prepares READY_TO_POST according to source state
+    machine.
+  - requestSocialTargetPublish from READY_TO_POST creates a request that may become MANUAL_ACTION_REQUIRED or PENDING_EXTERNAL;
+    request completion is not equivalent to POSTED external success.
+  - Results/Records render only recorded real external status/callback/metrics; UI may not infer POSTED.
+policy_contract:
+  platform_native_variant_rule: One governed Master Message/source may produce platform-native variants, but blind identical
+    cross-platform copy is forbidden.
+  specific_company_mention_tag: FORCE_HUMAN_APPROVAL
+  mass_commenting_tagging_cold_outreach: FORBIDDEN
+  direct_message: ONLY_WHEN_OFFICIAL_API_ACCOUNT_PERMISSION_AND_POLICY_EXPLICITLY_ALLOW
+  auto_publish_ui: READ_GOVERNED_POLICY; no invented local request field/toggle. If an exact existing governed-resource binding
+    is returned, edit through configureGovernedResource; otherwise read-only.
+  human_approval_ui: READ_GOVERNED_POLICY; no invented local request field/toggle; specific-company mention/tag remains forced
+    human approval.
+  provider_model_picker: FORBIDDEN
+  external_adapter_direct_sdk_call_from_page: FORBIDDEN
+errors:
+- error_uid: SOC-01-ERR-AUTH
+  when: Page/action/API account permission, scope, condition or classification denied
+  recovery: Hide effectful control where required but rely on server DENY; preserve safe page context; show permitted reason
+    only.
+- error_uid: SOC-01-ERR-SECRET
+  when: Credential reveal/binding secret handling invalid or unauthorized
+  recovery: Do not render/store raw secret in normal page state; keep masked status; require exact source operation and audit.
+- error_uid: SOC-01-ERR-ACCOUNT
+  when: Account binding version/state/platform mismatch or external verification fails
+  recovery: Preserve configured data; show CONFIGURED/REAUTH_REQUIRED/actual error; never fabricate BOUND_LOCKED.
+- error_uid: SOC-01-ERR-DISCOVERY
+  when: Target discovery request invalid, platform/capability/policy unavailable or external discovery fails
+  recovery: BLOCK start/result adoption; preserve form; show actual source/policy/external state; no synthetic targets.
+- error_uid: SOC-01-ERR-TARGET
+  when: Target state/capability does not allow join/publish
+  recovery: Disable legal action and show actual blocker; no client bypass.
+- error_uid: SOC-01-ERR-CONTENT
+  when: Release source/content package/candidate version missing, stale, invalid or policy blocked
+  recovery: Keep Draft/Candidate; require exact source/version and governed review; never publish directly.
+- error_uid: SOC-01-ERR-POLICY
+  when: Frequency/cooldown/time-window/policy request invalid or stale
+  recovery: Do not mark READY_TO_POST; reload exact target/version and correct registered fields only.
+- error_uid: SOC-01-ERR-PUBLISH
+  when: Publish target/content/channel account/approval/policy/version/idempotency invalid
+  recovery: BLOCK request; do not create external-success UI; preserve correlation/evidence.
+- error_uid: SOC-01-ERR-EXTERNAL
+  when: Publish/join requires manual action or external platform is pending/unavailable
+  recovery: Represent MANUAL_ACTION_REQUIRED/PENDING_EXTERNAL/UNAVAILABLE truthfully; do not auto-convert to success.
+- error_uid: SOC-01-ERR-PARTIAL
+  when: Composite page orchestration or future multi-target UX partially succeeds
+  recovery: Never report COMPLETE; show exact succeeded/blocked/failed items; retry idempotently only for missing legal work.
+- error_uid: SOC-01-ERR-UNDEFINED
+  when: Unregistered field/operation/route/service/permission/provider behavior requested
+  recovery: BLOCK + REPORT_AUTHORITY_GAP; never create a parallel social publishing system.
+hard_locks:
+- Only admin:SOC-01 is the current Social Publishing UI workspace in this authority.
+- The five workflow stages are composition areas inside one page; they are not five current navigation pages.
+- Existing PublishingAdapterService / PublishingService / PublishingAnalyticsService / EnterpriseSocialOutreachGovernance
+  / Governance owners are reused; no parallel system, registry, DB, adapter, scheduler, queue or analytics store.
+- Backend access is configured to the user as one L1 社群發布 choice; operation-level source permissions remain internal runtime
+  gates and are not exposed as a new fine-grained permission UI here.
+- Role name or department membership never authorizes an operation.
+- Platform capability/health/policy and external status are real data only; missing=—/incomplete, never AI-filled.
+- Raw social credential is never shown by default; reveal is an existing high-risk audited operation only.
+- verifySocialAccountBinding and verifySocialTargetCapability remain service-runtime operations; no page user Verify button
+  is invented.
+- Content package remains Draft/Candidate until governed decision; content approval does not itself publish.
+- Master Message is transformed into platform-native variants; blind identical copy to all platforms is forbidden.
+- Mention/Tag a specific target company requires human approval; automated mass commenting/tagging/cold outreach is forbidden.
+- Direct Message is not a default feature and is allowed only when official API/account permission/policy explicitly supports
+  it.
+- Auto Publish / Human Approval policy is read from current governed policy. No local auto_publish/human_approval request
+  field is invented.
+- Publish request uses exact existing target-scoped requestSocialTargetPublish. No new bulkSocialPublish endpoint/service.
+- requestSocialTargetPublish success means governed request accepted, not proof that the external post is POSTED.
+- Withdrawal in Results/Records is read-only because no current registered withdrawal mutation is sourced; no Withdraw button
+  is invented.
+- Low-frequency audit/evidence/history/credential/callback/incident detail stays in secondary rail/drawer; no duplicate permanent
+  cards.
+- No fake metrics, account status, target status, platform health, content approval, publish result, callback, incident or
+  audit data.
+- No invented endpoint, request field, platform capability, permission, route, provider syntax or external adapter call.
+- Unknown/missing authority -> BLOCK + REPORT_AUTHORITY_GAP.
+- FILE_SPEC_COMPLETE does not mean application/runtime/Sandbox/Regression/E2E/deployment completed.
+acceptance:
+- uid: SOC-01-ACC-01
+  item: Single Current Page
+  condition: Only admin:SOC-01 is current Social Publishing UI; historical segmented source UI is not reconstructed.
+- uid: SOC-01-ACC-02
+  item: Source Owner Reuse
+  condition: Existing publishing adapter/service/analytics/governance owners and existing DBs/operations are reused; no second
+    backend.
+- uid: SOC-01-ACC-03
+  item: Five-Stage Same-Page Flow
+  condition: Platform -> Accounts/Targets -> Content -> Publish -> Records is one page context flow.
+- uid: SOC-01-ACC-04
+  item: Account & Secret Safety
+  condition: Bind/reveal/unbind use existing operations; raw credential never normal-rendered; service verify remains backend-only.
+- uid: SOC-01-ACC-05
+  item: Target Discovery
+  condition: Discovery uses exact source fields including mode CONTINUOUS/SINGLE_RUN; no second crawler/directory.
+- uid: SOC-01-ACC-06
+  item: Content Candidate Boundary
+  condition: Release source/platform variants/content draft/candidate review are separated from publish execution.
+- uid: SOC-01-ACC-07
+  item: Platform-Native Content
+  condition: Master source may generate native platform variants; blind identical cross-platform copy forbidden.
+- uid: SOC-01-ACC-08
+  item: Human Approval Policy
+  condition: Specific-company mention/tag forces human approval; Auto Publish/Human Approval semantics do not invent new request
+    fields.
+- uid: SOC-01-ACC-09
+  item: Target Policy Contract
+  condition: minimum_interval_hours/daily_limit/weekly_limit and registered optional cooldown/window/notes fields are exact.
+- uid: SOC-01-ACC-10
+  item: Publish Request Contract
+  condition: content_package_id + channel_account_id required; schedule/hash/similarity optional; exact target-scoped operation
+    only.
+- uid: SOC-01-ACC-11
+  item: Truthful External State
+  condition: PENDING_EXTERNAL/MANUAL_ACTION_REQUIRED remain non-success; POSTED only from real recorded state.
+- uid: SOC-01-ACC-12
+  item: Records Boundary
+  condition: Search/refresh/read only; withdrawal has no invented mutation button.
+- uid: SOC-01-ACC-13
+  item: Authorization
+  condition: User sees backend L1 social_publishing; runtime enforces exact source account permissions/scope/state/version/idempotency/audit;
+    role/department bypass forbidden.
+- uid: SOC-01-ACC-14
+  item: No Parallel System
+  condition: No second registry/account/target/content/publish/analytics/credential/provider system or invented bulk publish
+    endpoint.
+- uid: SOC-01-ACC-15
+  item: Global Shell/Visual
+  condition: Global Shell V1.9 and Global Visual inherited; page does not redraw header/sidebar or local theme.
+- uid: SOC-01-ACC-16
+  item: UI Necessity
+  condition: Active stage only; low-frequency details in drawer; max one primary CTA; fake/decorative KPI/chart forbidden.
+- uid: SOC-01-ACC-17
+  item: Machine Binding
+  condition: Every visible control resolves Section/Component/Visual/Action/Gate/Permission; zero unresolved internal refs.
+- uid: SOC-01-ACC-18
+  item: Truthful Completion
+  condition: File may be FILE_SPEC_COMPLETE while application/runtime/external/Sandbox/Regression/E2E/deployment remain NOT_EXECUTED.
+validation:
+  status: PASS_FILE_SPEC_COMPLETE
+  validation_checks: 219/219 PASS
+  validation_mode: 7-pass authority/source/logic-state/duplicate-system/UI-necessity/machine-binding/security-edge/reverse-closure
+  known_internal_design_gaps: 0
+  parallel_system_conflicts: 0
+  legacy_active_page_residuals: 0
+  unresolved_internal_references: 0
+  registered_ui_operation_count: 15
+  section_count: 9
+  control_count: 67
+  action_count: 21
+  gate_count: 14
+  permission_count: 16
+  word_render_validation: PASS_9_OF_9_PAGES_VISUALLY_INSPECTED
+  application_implementation: NOT_EXECUTED
+  external_platform_e2e: NOT_EXECUTED
+  sandbox_regression: NOT_EXECUTED
+  production_deployment: NOT_EXECUTED

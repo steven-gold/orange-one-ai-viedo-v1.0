@@ -1,0 +1,700 @@
+authority:
+  authority_id: ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING
+  page_uid: admin:SYS-01
+  page_name_zh: 系統 AI 工作區
+  canonical_role: Unified System Lifecycle AI Workbench
+  status: FINAL_DESIGN_LOCKED
+  implementation_status: NOT_EXECUTED
+  master_merge_status: NOT_MERGED
+  truthful_status_rule: YAML design encoding produced; application code, runtime, sandbox, regression, E2E and production
+    deployment are not executed by this file.
+  render_mode: SYSTEM_CONTEXT_CONVERSATION_WORKBENCH
+  owner_refs:
+  - SystemChangeService
+  - AISystemMaintenanceAssistantService
+  - ACPOS AI Conversation Core
+  source_precedence:
+  - ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL.yaml
+  - SYS-01_系統生命週期AI_完整收斂權威規格_FINAL_DESIGN_LOCKED.docx
+  - ACPOS_SYSTEM_LIFECYCLE_AI_AUTHORITY_COMPLETE_DETAIL(1).docx
+  - Existing CORE/STR Single-AI + Multi-AI Conversation patterns
+  no_parallel_system_rule: true
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+inheritance:
+  global_shell: INHERIT_CURRENT_GLOBAL_SHELL
+  global_visual: INHERIT_CURRENT_GLOBAL_VISUAL_AUTHORITY
+  authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
+  provider_routing: SYSTEM_OWNED_AI_API_ROUTER
+  provider_model_profile_owner: admin:AIAPI-06#provider_model_profiles
+  manual_provider_picker: FORBIDDEN
+  direct_provider_sdk_or_secret_editor: FORBIDDEN
+  conversation_core: REUSE_ACPOS_AI_CONVERSATION_CORE
+  execution_runtime: REUSE_EXISTING_ACPOS_EXECUTION_RUNTIME
+existing_master_contract_preserved:
+  canonical_section_count: 8
+  canonical_sections:
+  - section_id: SEC-ADMIN-SYS-01-SYSTEM-CONTEXT
+    section_key: system_context
+    order: 1
+  - section_id: SEC-ADMIN-SYS-01-CONVERSATION
+    section_key: conversation
+    order: 2
+  - section_id: SEC-ADMIN-SYS-01-CANDIDATE-CHANGE
+    section_key: candidate_change
+    order: 3
+  - section_id: SEC-ADMIN-SYS-01-SOURCE-REFS
+    section_key: source_refs
+    order: 4
+  - section_id: SEC-ADMIN-SYS-01-IMPACT-PREVIEW
+    section_key: impact_preview
+    order: 5
+  - section_id: SEC-ADMIN-SYS-01-AUDIT
+    section_key: audit
+    order: 6
+  - section_id: SEC-ADMIN-SYS-01-ACTION-DOCK
+    section_key: action_dock
+    order: 7
+  - section_id: SEC-ADMIN-SYS-01-EXECUTION-PANEL
+    section_key: execution_panel
+    order: 8
+  existing_registered_control_count_before_this_design_extension: 25
+  existing_allowed_action_ids:
+  - ACT-CANDIDATE-CREATE
+  - ACT-CR-CREATE
+  - ACT-NAV-OPEN
+  existing_page_permission: system.change.propose
+  existing_service_permissions:
+  - system.ai.use
+  - ops.read
+  - system.test.execute
+  - core.change.create
+  existing_service_operations:
+  - createCandidate
+  - createChangeRequest
+  - runSandboxTest
+  - executeSystemRelease
+  existing_forbidden:
+  - direct_code_deploy
+  - direct_production_change
+  existing_ai_scope_boundary:
+    SYS-01_to_SYS-05: AI_SYSTEM_MAINTENANCE allowed only within explicit permissions/scopes/gates
+    SYS-06: EXPLICIT_SCOPE_EXCLUSION for AI/service identity by default; human-governed release only with explicit authority
+workspace_composition:
+  rule: The six user-facing work areas are composition groups over the existing eight canonical sections; they are not six
+    new page registries.
+  areas:
+  - workspace_key: maintenance_inbox
+    maps_to_sections:
+    - system_context
+    - source_refs
+    priority: CONDITIONAL_PRIMARY
+    persistent_tab: false
+  - workspace_key: system_context
+    maps_to_sections:
+    - system_context
+    - source_refs
+    priority: CORE_REQUIRED
+    persistent_tab: true
+  - workspace_key: design_conversation
+    maps_to_sections:
+    - conversation
+    priority: CORE_REQUIRED
+    persistent_tab: true
+  - workspace_key: change_workspace
+    maps_to_sections:
+    - candidate_change
+    - impact_preview
+    - action_dock
+    priority: CORE_REQUIRED
+    persistent_tab: true
+  - workspace_key: validation_workspace
+    maps_to_sections:
+    - execution_panel
+    - source_refs
+    - audit
+    priority: PRIMARY_SUPPORT
+    persistent_tab: true
+  - workspace_key: lifecycle_control
+    maps_to_sections:
+    - action_dock
+    - execution_panel
+    - audit
+    priority: CONDITIONAL
+    persistent_tab: false
+  secondary_views:
+  - history
+  - raw_logs
+  - provider_detail
+  - dependency_graph_detail
+  - supersession_detail
+  - audit_detail
+system_continuity_context_contract:
+  required_groups:
+    system_truth:
+    - current_system_version
+    - active_authorities
+    - active_services
+    - runtime_refs
+    - provider_profile_refs
+    - dependency_graph_ref
+    active_change:
+    - system_change_id
+    - current_goal
+    - scope
+    - candidate_ref
+    - completed_step_refs
+    - blocked_item_refs
+    conversation:
+    - conversation_id
+    - thread_id
+    - branch_id
+    - context_snapshot_ref
+    - source_refs
+    decisions:
+    - confirmed_decision_refs
+    - rejected_decision_refs
+    - open_p0_refs
+    - open_p1_refs
+    - superseded_decision_refs
+    affected_scope:
+    - page_refs
+    - control_refs
+    - action_refs
+    - api_refs
+    - data_refs
+    - runtime_refs
+    - permission_refs
+    - provider_refs
+    - file_refs
+    validation:
+    - sandbox_refs
+    - test_refs
+    - regression_refs
+    - evidence_refs
+    - unresolved_failure_refs
+    deployment:
+    - candidate_version_ref
+    - approval_ref
+    - deployment_ref
+    - health_ref
+    - rollback_eligibility_ref
+    fingerprint:
+    - latest_context_fingerprint
+  pre_response_gate:
+  - resolve_current_system_truth
+  - resolve_active_change_context
+  - resolve_confirmed_decisions
+  - resolve_existing_authorities_and_owners
+  - recompute_context_fingerprint
+  missing_required_context_behavior: BLOCK_DESIGN_MUTATION; preserve conversation draft; request exact missing decision/source
+    only when truly non-resolvable.
+single_change_context_contract:
+  primary_key: SYSTEM_CHANGE_ID
+  one_change_contains:
+  - discussion
+  - requirement
+  - decision
+  - design
+  - authority_changes
+  - implementation
+  - validation
+  - approval_and_deploy
+  - closure
+  new_issue_routing:
+    same_change_subproblem: ATTACH_TO_CURRENT_SYSTEM_CHANGE_ID
+    independent_change: CREATE_NEW_SYSTEM_CHANGE_ID_BUT_REUSE_CURRENT_SYSTEM_TRUTH
+  parallel_system_creation: FORBIDDEN
+multi_ai_design_council_contract:
+  shared_core: ACPOS AI Conversation Core
+  same_change_context_required: true
+  same_system_continuity_context_required: true
+  default_ai_mode: SINGLE_AI
+  multi_ai_mode: MULTI_AI
+  council_modes:
+  - DISCUSSION
+  - PARALLEL
+  default_council_mode_when_multi: DISCUSSION
+  provider_selection: SYSTEM_OWNED
+  provider_picker: FORBIDDEN
+  participant_aliases:
+  - A
+  - B
+  - C
+  participant_alias_semantics: session labels only; not permanent jobs or fixed providers
+  response_reference_policy: '#AI exact response refs are reusable for review/compare/revise/branch; shorthand only if unique
+    and stored canonically.'
+  discussion_mode:
+    behavior: 'Iterative cross-review under the same SYSTEM_CHANGE_ID: propose -> review -> compare -> revise -> synthesize
+      -> decision questions.'
+    cross_ai_loop_allowed: true
+    other_ai_response_is_source_fact: false
+  parallel_mode:
+    behavior: First-round independent answers use the same original user question, same System Continuity Context and same
+      exact evidence/source refs.
+    independent_first_round: true
+    synthesis_after_round: true
+  design_perspectives:
+  - PRODUCT_SYSTEM_DESIGNER
+  - UX_UI_DESIGNER
+  - SYSTEM_ARCHITECT
+  - RUNTIME_API_REVIEWER
+  - DATA_PERMISSION_REVIEWER
+  - VALIDATION_REVIEWER
+  - SIMPLIFICATION_REVIEWER
+  - REDUNDANCY_REVIEWER
+  no_new_agent_backend: true
+multi_ai_ui_control_correction:
+  purpose: 'Correct prior document ambiguity: Single AI / Multi AI and Discussion / Parallel must be real segmented controls
+    in the Design Conversation header, not headings or decorative labels.'
+  section_id: SEC-ADMIN-SYS-01-CONVERSATION
+  component_uid: SYS-01-CMP-DESIGN-CONVERSATION-HEADER
+  visual_uid: SYS-01-VIS-DESIGN-CONVERSATION-HEADER
+  placement: Design Conversation header; compact horizontal segmented controls; never rendered as large CTA cards.
+  controls:
+  - control_uid: SYS-01-BTN-SINGLE-AI
+    type: SEGMENT_BUTTON
+    label: Single AI
+    action_uid: SYS-01-ACT-AI-MODE-SINGLE
+    gate_uid: SYS-01-GATE-AI-MODE
+    permission_uid: system.ai.use
+    selected_when: ai_mode == SINGLE_AI
+    visual_priority: PRIMARY_SUPPORT
+    api_required: false
+  - control_uid: SYS-01-BTN-MULTI-AI
+    type: SEGMENT_BUTTON
+    label: Multi AI
+    action_uid: SYS-01-ACT-AI-MODE-MULTI
+    gate_uid: SYS-01-GATE-MULTI-AI
+    permission_uid: system.ai.use
+    selected_when: ai_mode == MULTI_AI
+    visual_priority: PRIMARY_SUPPORT
+    api_required: false
+  - control_uid: SYS-01-BTN-COUNCIL-DISCUSSION
+    type: SEGMENT_BUTTON
+    label: Discussion
+    action_uid: SYS-01-ACT-COUNCIL-MODE-DISCUSSION
+    gate_uid: SYS-01-GATE-COUNCIL-MODE
+    permission_uid: system.ai.use
+    visible_when: ai_mode == MULTI_AI
+    selected_when: council_mode == DISCUSSION
+    visual_priority: SECONDARY
+    api_required: false
+  - control_uid: SYS-01-BTN-COUNCIL-PARALLEL
+    type: SEGMENT_BUTTON
+    label: Parallel
+    action_uid: SYS-01-ACT-COUNCIL-MODE-PARALLEL
+    gate_uid: SYS-01-GATE-COUNCIL-MODE
+    permission_uid: system.ai.use
+    visible_when: ai_mode == MULTI_AI
+    selected_when: council_mode == PARALLEL
+    visual_priority: SECONDARY
+    api_required: false
+  actions:
+  - action_uid: SYS-01-ACT-AI-MODE-SINGLE
+    effect_type: UI_CONTEXT_STATE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+    state_effect: ai_mode=SINGLE_AI
+    success_contract: Switch presentation to Single AI without changing SYSTEM_CHANGE_ID, conversation_id, thread_id, Decision
+      Ledger or System Continuity Context.
+  - action_uid: SYS-01-ACT-AI-MODE-MULTI
+    effect_type: UI_CONTEXT_STATE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+    state_effect: ai_mode=MULTI_AI; council_mode=DISCUSSION unless existing valid council mode is restored
+    success_contract: Enable Multi-AI presentation using shared Conversation Core and system-owned assigned AI set/route;
+      do not create a new thread/system/change.
+  - action_uid: SYS-01-ACT-COUNCIL-MODE-DISCUSSION
+    effect_type: UI_CONTEXT_STATE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+    state_effect: council_mode=DISCUSSION
+    success_contract: Use iterative cross-review timeline under the same change/context.
+  - action_uid: SYS-01-ACT-COUNCIL-MODE-PARALLEL
+    effect_type: UI_CONTEXT_STATE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+    state_effect: council_mode=PARALLEL
+    success_contract: Use same-question/same-context independent first-round responses, then synthesize without changing the
+      underlying change/context.
+  gates:
+  - gate_uid: SYS-01-GATE-AI-MODE
+    requires:
+    - page:admin:SYS-01 VIEW
+    - section:admin:SYS-01:conversation VIEW
+    - system.ai.use
+    - system_context_resolved
+    - active_conversation_context_resolved
+    failure_behavior: Keep current valid mode; show policy/context error; do not clear draft or conversation state.
+  - gate_uid: SYS-01-GATE-MULTI-AI
+    requires:
+    - SYS-01-GATE-AI-MODE
+    - shared_conversation_core_multi_ai_capability_available
+    - system_owned_ai_route_resolvable
+    failure_behavior: Remain SINGLE_AI; expose reason; no provider picker or manual route workaround.
+  - gate_uid: SYS-01-GATE-COUNCIL-MODE
+    requires:
+    - ai_mode == MULTI_AI
+    - SYS-01-GATE-MULTI-AI
+    failure_behavior: Hide/disable Council mode control; preserve MULTI_AI context safely.
+  errors:
+  - error_uid: SYS-01-ERR-AI-MODE-CONTEXT
+    condition: required system/conversation context unresolved
+    recovery: resolve exact context; preserve draft/state
+  - error_uid: SYS-01-ERR-MULTI-AI-ROUTE
+    condition: shared multi-AI route/capability unavailable
+    recovery: stay Single AI; report real reason; do not invent provider route
+  - error_uid: SYS-01-ERR-COUNCIL-MODE
+    condition: council mode requested outside MULTI_AI
+    recovery: reject invalid transition; keep current state
+  state_invariants:
+  - mode_switch_must_not_change_SYSTEM_CHANGE_ID
+  - mode_switch_must_not_create_new_conversation_or_thread
+  - mode_switch_must_not_reset_Decision_Ledger
+  - mode_switch_must_not_reset_System_Continuity_Context
+  - mode_switch_must_preserve_draft_and_source_refs
+  - provider_model_selection_remains_system_owned
+requirement_convergence_contract:
+  question_priority:
+    P0: Required when unanswered issue prevents architecture/legal/safe construction; Design Freeze blocked.
+    P1: Required when answer changes main workflow/data/permission/runtime/deploy behavior; Design Freeze blocked.
+    P2: Resolve from existing authority/system; do not ask user again.
+    P3: Use existing safe standard/default; record assumption in Change Package.
+  ai_behavior:
+  - do_not_just_execute_user_statement_without_review
+  - identify_dependencies_conflicts_missing_information_risks_and_alternatives
+  - ask only true P0/P1 decisions in coherent batches
+  - persist answered decisions into Decision Ledger immediately
+decision_ledger_contract:
+  states:
+  - CONFIRMED
+  - REJECTED
+  - OPEN_P0
+  - OPEN_P1
+  - SUPERSEDED
+  consistency_check_inputs:
+  - current_proposal
+  - confirmed_decisions
+  - current_authority
+  - supersession_registry
+  - active_change
+  conflict_behavior: BLOCK_CONFLICTING_PROPOSAL until decision is explicitly reopened/superseded by authorized human decision.
+existing_system_resolution_contract:
+  check_order:
+  - PAGE_UI
+  - SERVICE_RUNTIME
+  - API_OPERATION
+  - DATABASE_DATA_OWNER
+  - PROVIDER_PROFILE_ADAPTER
+  - PERMISSION_AUTHORITY
+  - WORKFLOW_LIFECYCLE
+  - AUTHORITY_VERSION
+  decision_order:
+  - REUSE
+  - EXTEND
+  - MODIFY
+  - REPLACE
+  - CREATE_NEW
+  create_new_gate: EXISTING_SYSTEM_GAP_PROOF_REQUIRED
+  duplicate_system_result: BLOCK_CREATE_PARALLEL_SYSTEM
+functional_necessity_visual_priority_contract:
+  necessity_levels:
+    CORE_REQUIRED: main workspace / primary flow
+    PRIMARY_SUPPORT: visible but subordinate to main task
+    CONDITIONAL: render only when state/context requires
+    SECONDARY: compact/menu/drawer
+    REFERENCE_ONLY: read-only; never oversized CTA/card
+    REDUNDANT: REMOVE
+    OUT_OF_SCOPE: FORBIDDEN
+  required_proof_before_ui_add:
+  - page_purpose
+  - workflow_role
+  - business_effect
+  - context_necessity
+  - usage_frequency
+  - risk_level
+  - duplicate_control_scan
+  visual_weight_rule: visual_weight must not exceed actual functional priority/context relevance.
+  ui_waste_forbidden:
+  - decorative_kpi
+  - fake_progress
+  - chart_without_data_contract
+  - duplicate_status
+  - oversized_readonly_card
+  - always_zero_counter
+  - persistent_low_frequency_danger_action
+provider_api_update_watch_contract:
+  integration_rule: EXTEND existing AIAPI-06 / system-owned Provider routing; do not create a second provider registry/router/adapter.
+  watch_dimensions:
+  - provider
+  - model
+  - api_version
+  - endpoint
+  - request_schema
+  - response_schema
+  - authentication
+  - capability
+  - reference_support
+  - rate_limit
+  - deprecation
+  - model_availability
+  - sdk_protocol
+  - policy_requirement
+  detection_flow:
+  - PROVIDER_CHANGE_DETECTED
+  - COMPATIBILITY_DIFF
+  - IMPACT_ANALYSIS
+  - MAINTENANCE_ALERT
+  - SYSTEM_CHANGE_CANDIDATE
+  - SANDBOX
+  - TEST
+  - HUMAN_APPROVAL
+  - UPDATE
+  - HEALTH_CHECK
+  automatic_allowed:
+  - detect
+  - diff
+  - impact_analysis
+  - maintenance_notification
+  - candidate_draft
+  automatic_forbidden:
+  - direct_production_mutation
+  - human_approval_substitution
+  - silent_provider_profile_change
+  actual_schedule_and_external_fetch_operation: SYSTEM_OPERATION_REGISTRY_REQUIRED_IF_NOT_ALREADY_REGISTERED
+design_freeze_contract:
+  required_zero_counters:
+  - UNRESOLVED_P0
+  - UNRESOLVED_P1
+  - AUTHORITY_CONFLICT
+  - DECISION_CONFLICT
+  - DUPLICATE_SYSTEM_RISK
+  - UNNECESSARY_FUNCTION
+  - VISUAL_PRIORITY_VIOLATION
+  - MISSING_REQUIRED_CONTRACT
+  - UNDEFINED_OWNER_OR_RUNTIME
+  implementation_before_freeze: FORBIDDEN
+complete_implementation_package_contract:
+  required_groups:
+  - requirement
+  - decision
+  - ui
+  - architecture
+  - api
+  - data
+  - runtime
+  - permission
+  - provider
+  - validation
+  - deployment
+  - audit
+  missing_required_contract_behavior: IMPLEMENTATION_GATE_BLOCKED
+continuous_implementation_contract:
+  default: CONTINUE_UNTIL_CHANGE_PACKAGE_IMPLEMENTATION_COMPLETE_OR_HARD_BLOCK
+  allowed_stop_reasons:
+  - USER_EXPLICIT_SCOPE_LIMIT
+  - NEW_TRUE_P0_DECISION
+  - PERMISSION_SECRET_EXTERNAL_HARD_BLOCK
+  - REQUIRED_TEST_FAIL_NO_LEGAL_SELF_REPAIR
+  - AUTHORITY_CONFLICT_REQUIRES_HUMAN
+  forbidden_stop_reasons:
+  - NORMAL_SUBSTEP_COMPLETED
+  - INTERNAL_PHASE_COMPLETED
+  phase_rule: Phases may be recommended but remain under the same SYSTEM_CHANGE_ID and continue automatically unless an allowed
+    stop reason occurs.
+  pre_step_resolve:
+  - current_system_truth
+  - frozen_design
+  - decision_ledger
+  - change_package
+  - completed_steps
+  - changed_files
+  - dependency_graph
+  - supersession_registry
+multi_pass_closure_validation_contract:
+  passes:
+  - pass: 1
+    name: AUTHORITY_REQUIREMENT_COVERAGE
+  - pass: 2
+    name: LOGIC_STATE_RUNTIME
+  - pass: 3
+    name: DEPENDENCY_DUPLICATE_CONSISTENCY
+  - pass: 4
+    name: UI_NECESSITY_VISUAL_PRIORITY
+  - pass: 5
+    name: ERROR_EDGE_PERMISSION_PROVIDER
+  - pass: 6
+    name: MACHINE_SCHEMA_SYNTAX
+  - pass: 7
+    name: REVERSE_E2E_AND_FULL_RESCAN
+  repair_rule: If a defect is safely self-fixable, fix it in the same implementation cycle and rerun affected validation plus
+    final full Pass 1-7.
+  final_zero_counters:
+  - MISSING_REQUIREMENT
+  - UNRESOLVED_REFERENCE
+  - DUPLICATE_SYSTEM
+  - LOGIC_BREAK
+  - STATE_DEAD_END
+  - UNBOUND_CONTROL_ACTION
+  - UNDEFINED_RUNTIME
+  - AUTHORITY_CONFLICT
+  - DECISION_CONFLICT
+  - VISUAL_PRIORITY_VIOLATION
+  - REGRESSION_FAILURE
+  - INVALID_SCHEMA_OR_SYNTAX
+  hard_block_rule: HARD_BLOCK must be zero for COMPLETED, or the truthful overall state is BLOCKED.
+sandbox_test_e2e_contract:
+  dimensions:
+  - functional
+  - ui
+  - api
+  - database
+  - runtime
+  - permission
+  - provider
+  - cross_system
+  - regression
+  - end_to_end
+  e2e_path: Requirement -> Candidate -> Sandbox -> Validation -> Human Approval -> Deploy -> Health Check -> Audit
+  fake_pass_or_fake_evidence: FORBIDDEN
+deployment_boundary_contract:
+  ai_autonomous_approval: FORBIDDEN
+  ai_autonomous_production_deploy: FORBIDDEN
+  human_operated_deploy_from_SYS01: DESIGN_ALLOWED_ONLY_AFTER_EXPLICIT_REGISTERED_SYS06_RELEASE_ACTION_PERMISSION_GATE_BINDING
+  current_machine_binding_status: NOT_BOUND_IN_THIS_FILE because exact current SYS-06 release control/action/permission UID
+    is not sourced here; do not invent.
+  required_gate_before_enable:
+  - candidate_ready
+  - validation_pass
+  - human_approval_approved
+  - dependency_ready
+  - explicit_deploy_permission
+  post_deploy:
+  - health_check
+  - observation
+  - audit
+  - change_closure
+  - update_current_system_truth
+supersession_dependency_contract:
+  statuses:
+  - ACTIVE
+  - SUPERSEDED
+  - FORBIDDEN_TO_LOAD
+  required_fields:
+  - authority_ref
+  - version
+  - dependents
+  - supersession_reason
+  - decision_ref
+  - change_ref
+  validation_scope: Changed authority plus upstream/downstream dependents; never current page only.
+truthful_execution_reporting_contract:
+  states:
+    NOT_EXECUTED: No actual implementation/tool/test evidence.
+    IN_PROGRESS: Implementation started but full workflow incomplete.
+    PARTIAL: Real output exists but known gaps remain.
+    BLOCKED: Explicit hard blocker prevents safe continuation.
+    VALIDATING: Implementation exists but multi-pass validation is incomplete.
+    COMPLETED: Implementation + testing + repair + full rescan + regression/E2E all passed with evidence and no known structural
+      gap.
+  forbidden_claims_without_evidence:
+  - completed
+  - fixed
+  - tested
+  - deployed
+  - final_runtime_closed
+  document_output_not_equal_system_completion: true
+acceptance:
+- acceptance_uid: SYS-01-ACC-MAI-01
+  item: Real AI Mode Control
+  condition: Single AI and Multi AI are actual segmented controls in Design Conversation header, not headings/labels.
+- acceptance_uid: SYS-01-ACC-MAI-02
+  item: Real Council Mode Control
+  condition: Discussion and Parallel are actual segmented controls visible only in MULTI_AI.
+- acceptance_uid: SYS-01-ACC-MAI-03
+  item: Context Preservation
+  condition: Switching AI/Council mode preserves SYSTEM_CHANGE_ID, conversation/thread, Decision Ledger, System Continuity
+    Context, draft and source refs.
+- acceptance_uid: SYS-01-ACC-MAI-04
+  item: Shared Conversation Core
+  condition: No new Multi-AI engine/agent backend/provider picker; uses existing Conversation Core and system-owned routing.
+- acceptance_uid: SYS-01-ACC-LIFE-01
+  item: Single Lifecycle
+  condition: New feature, maintenance, incident, provider update and experience improvement use one System Lifecycle AI and
+    one Change Context model.
+- acceptance_uid: SYS-01-ACC-LIFE-02
+  item: Requirement Convergence
+  condition: P0/P1 decision questions must converge before Design Freeze; P2/P3 reuse existing authority/defaults.
+- acceptance_uid: SYS-01-ACC-LIFE-03
+  item: No Duplicate System
+  condition: Existing-system resolution precedes new creation; duplicate page/service/runtime/registry/adapter is blocked.
+- acceptance_uid: SYS-01-ACC-LIFE-04
+  item: Necessity and Visual Priority
+  condition: Unnecessary/redundant/out-of-scope controls are removed; visual weight follows actual functional priority.
+- acceptance_uid: SYS-01-ACC-LIFE-05
+  item: Continuous Implementation
+  condition: Normal substep completion never pauses the implementation loop.
+- acceptance_uid: SYS-01-ACC-LIFE-06
+  item: Multi-pass Closure
+  condition: Final delivery requires repeated coverage/logic/dependency/UI/error/schema/E2E validation and full rescan.
+- acceptance_uid: SYS-01-ACC-LIFE-07
+  item: Truthful Reporting
+  condition: No evidence means no completion claim; design/file completion is distinct from runtime/system completion.
+hard_locks:
+- Only one admin:SYS-01 Unified System Lifecycle AI; no parallel Design/Maintenance/Provider-Watch/UX AI system.
+- Single AI / Multi AI must be interactive segmented controls in the Design Conversation header.
+- Discussion / Parallel must be interactive segmented controls visible only in Multi AI.
+- AI mode changes are presentation/context state only and never create a new System Change, conversation, thread or provider
+  route.
+- Provider/model selection remains system-owned; manual provider/model picker is forbidden.
+- Current System Truth + Active Change + Confirmed Decisions + Existing Authorities must resolve before new system design.
+- Existing first, extension second, new system last; CREATE_NEW requires Existing-System Gap Proof.
+- No UI element without necessity/business-effect/context proof; redundant/out-of-scope content is removed.
+- Design Freeze is blocked while P0/P1, authority conflict, duplicate risk, required contract or visual-priority violations
+  remain.
+- Unless explicitly scope-limited or truly blocked, implementation continues through all planned steps without waiting after
+  ordinary substeps.
+- Provider/API update watch extends existing provider management; no second provider registry/router/adapter.
+- No fake Runtime/Test/Provider/Health/Evidence/Audit data.
+- No completion claim without actual implementation and validation evidence.
+- This YAML does not itself execute application code, sandbox tests, E2E or deployment.
+derived_validation:
+  status: PASS_DESIGN_ENCODING_ONLY
+  generated_at_utc: '2026-08-28T15:41:04.905906+00:00'
+  counts:
+    preserved_master_sections: 8
+    existing_master_controls_referenced: 25
+    new_multi_ai_controls: 4
+    new_multi_ai_actions: 4
+    new_multi_ai_gates: 3
+    new_multi_ai_errors: 3
+    validation_passes_defined: 7
+    acceptance_items: 11
+  checks:
+    YAML has page_uid admin:SYS-01: true
+    Status is design-locked not falsely runtime-complete: true
+    Preserves 8 current master sections: true
+    4 explicit Multi-AI segmented controls: true
+    4 explicit Multi-AI UI-only actions: true
+    All Multi-AI controls have actions: true
+    All Multi-AI controls have gates: true
+    All mode actions require no API: true
+    Multi-AI uses shared Conversation Core: true
+    No manual provider picker: true
+    No new Agent backend: true
+    AI mode preserves change/context: true
+    Requirement convergence has P0-P3: true
+    Existing-system decision order is reuse-first: true
+    Necessity levels include REDUNDANT and OUT_OF_SCOPE: true
+    Provider watch does not create second provider system: true
+    Continuous implementation cannot stop on normal substep: true
+    Multi-pass validation has 7 passes: true
+    Truthful reporting distinguishes design from system completion: true
+    Deploy machine binding truthfully unresolved instead of invented: true
+    No duplicate new UIDs across control/action/gate/error sets: true
+  runtime_disclaimer: PASS here validates this YAML design encoding structure only. It does not prove application implementation,
+    master merge, sandbox, regression, E2E or production deployment.

@@ -1,0 +1,893 @@
+authority:
+  id: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
+  version: V1.9
+  status: FINAL_LOCKED_COMPLETE
+  current_only: true
+  supersedes:
+  - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.8 and earlier shell/menu variants
+  scope: GLOBAL_FIXED_HEADER_AUTO_COLLAPSE_SIDEBAR_QUICK_STATUS_LANGUAGE_ACCOUNT_WORKSPACE_SLOT_ONLY
+  undefined: BLOCK + REPORT_AUTHORITY_GAP
+  real_data_only: true
+  revision: 2026-08-28-REMOVE-HEADER-PERMISSION-FIELD
+user_decisions_2026_08_28:
+- Delete AI Workspace from L1 navigation
+- 'Merge Editing and Voice into one L1 item: 剪輯配音'
+- 'L1 navigation is exactly: 儀表板 / 專案/專題 / 素材 / 影片 / 剪輯配音 / QA / 資料庫 / 戰略中心'
+- Dashboard L1 has no child/sub-title
+- Top-left = canonical ORANGE ONE logo
+- Top-right = account login/account information
+- Immediately left of account = language selector
+- Sidebar auto-collapses by default to maximize workspace visual width
+- All eight navigation items are direct first-level L1 entries; no child menu, no submenu, no subtitle/secondary line for any L1 item
+- Collapsed sidebar has no visible sidebar panel/frame/background; only the eight icons remain visible
+- Expanded menu surface/frame appears only while pointer/focus activates the navigation rail
+- Remove Permission from the top-right header cluster
+- Account permissions are bound to the account and configured when the account is created / managed; Global Shell consumes authorization
+  outcomes but does not render a Permission field
+- 'Authenticated top-right order is exactly: Notification / To-do / Running / Language / Account'
+shell_boundary:
+  owns:
+  - fixed_header
+  - canonical_brand
+  - account_quick_status_cluster
+  - language_selector
+  - account_entry
+  - auto_collapse_sidebar
+  - l1_navigation
+  - page_content_slot_boundary
+  does_not_own:
+  - dashboard_business_content
+  - department_page_content
+  - page_specific_header
+  - page_specific_sidebar
+  - page_runtime
+  - page_forms
+  - business_data_inside_quick_destination
+  workspace_without_page_authority: BLANK_BY_DESIGN
+geometry:
+  header:
+    height: 58px
+    position: fixed top
+    width: 100%
+    radius: '0'
+    left_logo_anchor: x≈30px
+    right_padding: 16px
+    center_page_identity: REMOVED_FROM_GLOBAL_HEADER; page title belongs to Page Authority to prevent collision with account quick-status
+      cluster
+  sidebar:
+    resting_state: AUTO_COLLAPSED_ICON_ONLY_NO_PANEL
+    collapsed_width: 64px interaction rail
+    expanded_overlay_width: 221px
+    top: 58px
+    bottom: '0'
+    position: fixed left
+    padding_top: 16px
+    padding_horizontal_collapsed: 10px
+    padding_horizontal_expanded: 15px
+    menu_row_height: 44px
+    menu_gap: 8px
+    row_radius: 10px
+    icon_size: 20px
+    label_size: 16px
+    workspace_reflow_on_auto_expand: false
+    collapsed_surface: TRANSPARENT_NONE
+    collapsed_border: NONE
+    collapsed_shadow: NONE
+    collapsed_glow: NONE
+    collapsed_visible_elements: NAV ICONS ONLY; no full-height sidebar frame/panel/background
+    expanded_surface: Render standard Global Sidebar surface only while expanded overlay is active
+  workspace_slot:
+    origin_x: 78px
+    origin_y: 68px
+    right_inset: 16px
+    bottom_inset: 16px
+    sidebar_gutter: 14px
+    header_gutter: 10px
+    rule: Workspace x remains 78px in both collapsed and temporary expanded-overlay states. Auto-expanded sidebar overlays the left edge
+      without shrinking/reflowing Page Authority content.
+    shell_outer_card: FORBIDDEN
+    shell_padding: NONE
+    shell_radius: NONE
+  header_right_cluster:
+    order_left_to_right:
+    - Notification
+    - To-do
+    - Running
+    - Language
+    - Account
+    item_height: 36px
+    gap: 8px
+    counter_min_width: 52px
+    language_width: 72px
+    account_min_width: 132px
+    account_max_width: 220px
+    overflow: Account display name ellipsis; quick counters never wrap; no second header row
+visual:
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  override: FORBIDDEN
+  header_surface: rgba(5,5,20,0.94) + blur 14px; bottom edge 1px rgba(139,92,255,0.28)
+  sidebar_surface: 'COLLAPSED: NONE/transparent; EXPANDED OVERLAY ONLY: rgba(5,7,24,0.92) + blur 14px + right violet hairline / soft inner
+    glow'
+  nav_default: 'COLLAPSED: icon only, no row card/background. EXPANDED: transparent row with single-line L1 label.'
+  nav_hover: Hover/focus activates expanded sidebar surface first; row hover may use subtle violet surface inside expanded overlay only.
+  nav_active: 'COLLAPSED: compact icon halo/active marker only; no sidebar panel. EXPANDED: violet glass gradient + border + soft glow +
+    white label.'
+  active_count: 0 or 1; never >1
+  quick_status: Compact clickable buttons for Notification / To-do / Running only; no Permission field. Counts/status come from real account
+    projections.
+auto_collapse_sidebar:
+  component_uid: GHS-CMP-SIDEBAR-AUTO-REVEAL
+  visual_uid: GHS-VIS-SIDEBAR-AUTO-REVEAL
+  default_state: COLLAPSED_ICON_ONLY_NO_PANEL
+  expanded_state: EXPANDED_OVERLAY_221_WITH_SURFACE
+  manual_pin_toggle: FORBIDDEN
+  expand_triggers:
+  - pointerenter sidebar
+  - keyboard focusin on any sidebar nav item
+  collapse_triggers:
+  - pointerleave sidebar AND focus not inside -> collapse after 180ms
+  - route/navigation completed -> collapse immediately
+  - Escape while sidebar expanded and focus not required -> collapse
+  no_reflow: true
+  workspace_origin_during_both_states: x=78px
+  keyboard: Tab focus expands sidebar so labels are visible; focus leaving entire sidebar collapses after 180ms
+  collapsed_render: ONLY 8 canonical navigation icons visible. No visible sidebar panel, no vertical rail background, no frame, border, glow,
+    row card, label, subtitle, or 221px expanded menu surface.
+  expanded_render: 221px menu surface appears ONLY at runtime after pointerenter/focusin. It is absent from the canonical collapsed-state
+    screenshot.
+  interaction_rail: Invisible/transparent 64px hit rail aligned left beneath Header; contains 44x44 icon hit targets. The rail itself must
+    not look like a sidebar panel.
+  icon_hit_target: 44x44px per L1 item; icon 20px; Default icon-only has no enclosing row/card. Active icon may use compact active halo/highlight
+    but not a full-height sidebar frame.
+  surface_visibility: VISIBLE_ONLY_WHEN_EXPANDED_OVERLAY_ACTIVE
+  reference_visual_rule: The canonical collapsed-state reference image must show ONLY the 8 navigation icons. It must NOT draw the 221px
+    expanded menu surface anywhere in the same collapsed-state main screenshot. Expanded state may be documented only in text/spec or a separately
+    labeled secondary figure.
+brand:
+  component_uid: GHS-CMP-BRAND
+  visual_uid: GHS-VIS-BRAND
+  position: top-left header
+  asset: canonical ORANGE ONE logo only
+  text: ORANGE ONE if canonical brand lockup includes text
+  click_action: NONE
+  forbidden:
+  - redraw
+  - recolor
+  - stretch
+  - generated replacement
+header_account_cluster:
+  component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
+  visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
+  authenticated_order:
+  - Notification
+  - To-do
+  - Running
+  - Language
+  - Account
+  unauthenticated_order:
+  - Language
+  - Login
+  notification:
+    display: real unread/attention count or 0
+    click: Quick navigate ACCOUNT_NOTIFICATION_CENTER
+  todo:
+    display: real pending to-do count or 0
+    click: Quick navigate ACCOUNT_TODO_QUEUE
+  running:
+    display: real running/in-progress count or 0
+    click: Quick navigate ACCOUNT_RUNNING_QUEUE
+  language:
+    display: current locale code/label
+    options:
+    - zh-TW
+    - zh-CN
+    - en
+    click: Open language selector
+    business_mutation: false
+  account:
+    logged_out: 顯示登入 / Login；click OPEN_LOGIN
+    logged_in: 顯示 canonical avatar + display name/account info + caret；click OPEN_ACCOUNT_MENU
+    fake_identity: FORBIDDEN
+  permission_model:
+    render_in_header: false
+    source: Account-bound authorization configured at account creation/account management
+    shell_usage: Consume authorization outcome only for navigation/control visibility and access gates
+    configuration_owner: Account Creation / Account Management Authority
+    forbidden: Do not render a Permission chip/field/count in Global Header
+navigation:
+  component_uid: GHS-CMP-NAV
+  visual_uid: GHS-VIS-NAV
+  count: 8
+  order_fixed: true
+  secondary_subtitle_line: FORBIDDEN_FOR_ALL_L1_ROWS
+  items:
+  - nav_id: NAV-01
+    label:
+      zh-TW: 儀表板
+      zh-CN: 仪表板
+      en: Dashboard
+    child_policy: NO_CHILD_MENU
+    control_uid: GHS-CTL-NAV-01
+    target: Resolve from Canonical Navigation Authority by nav_id; frontend must not invent route
+    submenu: FORBIDDEN
+    subtitle: FORBIDDEN
+    chevron: FORBIDDEN
+  - nav_id: NAV-02
+    label:
+      zh-TW: 專案 / 專題
+      zh-CN: 项目 / 专题
+      en: Project / Topic
+    child_policy: NO_CHILD_MENU
+    control_uid: GHS-CTL-NAV-02
+    target: Resolve from Canonical Navigation Authority by nav_id; frontend must not invent route
+    submenu: FORBIDDEN
+    subtitle: FORBIDDEN
+    chevron: FORBIDDEN
+  - nav_id: NAV-03
+    label:
+      zh-TW: 素材
+      zh-CN: 素材
+      en: Assets
+    child_policy: NO_CHILD_MENU
+    control_uid: GHS-CTL-NAV-03
+    target: Resolve from Canonical Navigation Authority by nav_id; frontend must not invent route
+    submenu: FORBIDDEN
+    subtitle: FORBIDDEN
+    chevron: FORBIDDEN
+  - nav_id: NAV-04
+    label:
+      zh-TW: 影片
+      zh-CN: 影片
+      en: Video
+    child_policy: NO_CHILD_MENU
+    control_uid: GHS-CTL-NAV-04
+    target: Resolve from Canonical Navigation Authority by nav_id; frontend must not invent route
+    submenu: FORBIDDEN
+    subtitle: FORBIDDEN
+    chevron: FORBIDDEN
+  - nav_id: NAV-05
+    label:
+      zh-TW: 剪輯配音
+      zh-CN: 剪辑配音
+      en: Editing & Voice
+    child_policy: NO_CHILD_MENU
+    control_uid: GHS-CTL-NAV-05
+    target: Resolve from Canonical Navigation Authority by nav_id; frontend must not invent route
+    submenu: FORBIDDEN
+    subtitle: FORBIDDEN
+    chevron: FORBIDDEN
+  - nav_id: NAV-06
+    label:
+      zh-TW: QA
+      zh-CN: QA
+      en: QA
+    child_policy: NO_CHILD_MENU
+    control_uid: GHS-CTL-NAV-06
+    target: Resolve from Canonical Navigation Authority by nav_id; frontend must not invent route
+    submenu: FORBIDDEN
+    subtitle: FORBIDDEN
+    chevron: FORBIDDEN
+  - nav_id: NAV-07
+    label:
+      zh-TW: 資料庫
+      zh-CN: 数据库
+      en: Database
+    child_policy: NO_CHILD_MENU
+    control_uid: GHS-CTL-NAV-07
+    target: Resolve from Canonical Navigation Authority by nav_id; frontend must not invent route
+    submenu: FORBIDDEN
+    subtitle: FORBIDDEN
+    chevron: FORBIDDEN
+  - nav_id: NAV-08
+    label:
+      zh-TW: 戰略中心
+      zh-CN: 战略中心
+      en: Strategy Center
+    child_policy: NO_CHILD_MENU
+    control_uid: GHS-CTL-NAV-08
+    target: Resolve from Canonical Navigation Authority by nav_id; frontend must not invent route
+    submenu: FORBIDDEN
+    subtitle: FORBIDDEN
+    chevron: FORBIDDEN
+  dashboard_rule: 'NAV-01 儀表板 is a direct L1 leaf: no child menu, no submenu, no subtitle, no chevron; direct navigate only'
+  permission: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY + Canonical Navigation Authority. Permissions are configured on the account; Global Shell
+    only consumes the authorization result and never renders a Permission field.
+  unauthorized: HIDDEN; preserve order among visible items
+  active: Resolve from canonical page ancestry; no URL text guessing
+  all_l1_flat_rule: ALL NAV-01..NAV-08 are direct L1 leaves in Global Sidebar. Sidebar child/submenu rendering is forbidden for every item.
+    Any lower-level page navigation belongs to the destination Page Authority, not Global Shell.
+quick_link_resolution:
+  resolver: Canonical Quick Link / Navigation Authority
+  route_in_shell: NONE
+  frontend_must_not_invent_route: true
+  semantic_targets:
+    NOTIFICATION: ACCOUNT_NOTIFICATION_CENTER
+    TODO: ACCOUNT_TODO_QUEUE
+    RUNNING: ACCOUNT_RUNNING_QUEUE
+  failure: Disable that quick jump + REPORT_AUTHORITY_GAP; keep real displayed status if allowed
+sections:
+- section_uid: GHS-SEC-01
+  name: Header Brand
+  components:
+  - GHS-CMP-BRAND
+- section_uid: GHS-SEC-02
+  name: Header Account Quick Status / Language / Account
+  components:
+  - GHS-CMP-ACCOUNT-QUICK-CLUSTER
+- section_uid: GHS-SEC-03
+  name: Auto-Collapse Sidebar / Navigation
+  components:
+  - GHS-CMP-SIDEBAR
+  - GHS-CMP-SIDEBAR-AUTO-REVEAL
+  - GHS-CMP-NAV
+- section_uid: GHS-SEC-04
+  name: Page Content Slot Boundary
+  components:
+  - GHS-CMP-WORKSPACE-SLOT
+components:
+- component_uid: GHS-CMP-BRAND
+  section_uid: GHS-SEC-01
+  visual_uid: GHS-VIS-BRAND
+  responsibility: Canonical top-left ORANGE ONE brand
+- component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
+  section_uid: GHS-SEC-02
+  visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
+  responsibility: Notification / To-do / Running / Language / Account. Account permissions are authorization-only and are not rendered here.
+- component_uid: GHS-CMP-SIDEBAR
+  section_uid: GHS-SEC-03
+  visual_uid: GHS-VIS-SIDEBAR
+  responsibility: Transparent 64px icon interaction rail at rest; 221px sidebar surface exists only in temporary expanded overlay state
+- component_uid: GHS-CMP-SIDEBAR-AUTO-REVEAL
+  section_uid: GHS-SEC-03
+  visual_uid: GHS-VIS-SIDEBAR-AUTO-REVEAL
+  responsibility: Reveal/hide actual sidebar surface automatically; collapsed state leaves only icons visible and never shows a persistent
+    frame
+- component_uid: GHS-CMP-NAV
+  section_uid: GHS-SEC-03
+  visual_uid: GHS-VIS-NAV
+  responsibility: Eight direct flat L1 navigation icons/labels; no child/submenu/subtitle
+- component_uid: GHS-CMP-WORKSPACE-SLOT
+  section_uid: GHS-SEC-04
+  visual_uid: GHS-VIS-WORKSPACE-SLOT
+  responsibility: Blank Page Authority mount area beginning x78/y68
+visuals:
+- visual_uid: GHS-VIS-BRAND
+  geometry: Header x≈30; canonical asset intrinsic ratio
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
+  geometry: Header right; order Notification→To-do→Running→Language→Account; h36; gap8
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- visual_uid: GHS-VIS-SIDEBAR
+  geometry: 'rest: transparent 64px icon rail with NO visible panel/frame; active overlay: 221px sidebar surface top58/bottom0'
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- visual_uid: GHS-VIS-SIDEBAR-AUTO-REVEAL
+  geometry: collapsed surface hidden; pointer/focus shows 221px surface; 180ms collapse delay; no workspace reflow
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- visual_uid: GHS-VIS-NAV
+  geometry: 44px icon hit targets; collapsed icon-only/no row frame; expanded single-line L1 labels; no child/subtitle/chevron
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+- visual_uid: GHS-VIS-WORKSPACE-SLOT
+  geometry: x78 y68 right16 bottom16; no shell surface/radius/padding
+  inherits: NONE
+fields:
+- field_uid: GHS-FLD-NOTIFICATION-COUNT
+  source: Authorized account Notification Projection
+  type: READONLY_INTEGER
+  missing: 0 or — according to source contract
+- field_uid: GHS-FLD-TODO-COUNT
+  source: Authorized account To-do Projection
+  type: READONLY_INTEGER
+  missing: 0 or — according to source contract
+- field_uid: GHS-FLD-RUNNING-COUNT
+  source: Authorized account Running Projection
+  type: READONLY_INTEGER
+  missing: 0 or — according to source contract
+- field_uid: GHS-FLD-LANGUAGE
+  source: Current UI locale
+  type: LOCAL_PREFERENCE
+  values:
+  - zh-TW
+  - zh-CN
+  - en
+- field_uid: GHS-FLD-ACCOUNT
+  source: Identity/Account Authority
+  type: READONLY_IDENTITY
+  fake: FORBIDDEN
+permissions:
+- permission_uid: GHS-PERM-SHELL
+  scope: global.shell.view
+- permission_uid: GHS-PERM-NAV
+  scope: canonical.navigation.view
+- permission_uid: GHS-PERM-NOTIFICATION
+  scope: account.notification.summary.view
+- permission_uid: GHS-PERM-TODO
+  scope: account.todo.summary.view
+- permission_uid: GHS-PERM-RUNNING
+  scope: account.running.summary.view
+- permission_uid: GHS-PERM-ACCOUNT
+  scope: identity/account session authority
+gates:
+- gate_uid: GHS-GATE-SHELL
+  condition: Shell authorized to render
+- gate_uid: GHS-GATE-NAV
+  condition: nav_id exists + account can view target + target resolves
+- gate_uid: GHS-GATE-NOTIFICATION
+  condition: authenticated + notification projection authorized
+- gate_uid: GHS-GATE-TODO
+  condition: authenticated + to-do projection authorized
+- gate_uid: GHS-GATE-RUNNING
+  condition: authenticated + running projection authorized
+- gate_uid: GHS-GATE-LANGUAGE
+  condition: Shell visible; locale options fixed zh-TW/zh-CN/en
+- gate_uid: GHS-GATE-ACCOUNT
+  condition: identity/session authority resolvable
+actions:
+- action_uid: GHS-ACT-NAVIGATE
+  effect: NAVIGATION
+  runtime: Resolve canonical nav target by nav_id; no invented route
+- action_uid: GHS-ACT-OPEN-NOTIFICATION
+  effect: QUICK_NAVIGATION
+  runtime: Resolve semantic target ACCOUNT_NOTIFICATION_CENTER
+- action_uid: GHS-ACT-OPEN-TODO
+  effect: QUICK_NAVIGATION
+  runtime: Resolve semantic target ACCOUNT_TODO_QUEUE
+- action_uid: GHS-ACT-OPEN-RUNNING
+  effect: QUICK_NAVIGATION
+  runtime: Resolve semantic target ACCOUNT_RUNNING_QUEUE
+- action_uid: GHS-ACT-SET-LANGUAGE
+  effect: UI_LOCALE_ONLY
+  runtime: Set zh-TW/zh-CN/en locale; rerender registered i18n; no business mutation
+- action_uid: GHS-ACT-OPEN-ACCOUNT
+  effect: IDENTITY_UI
+  runtime: Logged out -> OPEN_LOGIN; logged in -> OPEN_ACCOUNT_MENU
+controls:
+- control_uid: GHS-CTL-NAV-01
+  section_uid: GHS-SEC-03
+  component_uid: GHS-CMP-NAV
+  visual_uid: GHS-VIS-NAV
+  type: NAV_ITEM
+  label:
+    zh-TW: 儀表板
+    zh-CN: 仪表板
+    en: Dashboard
+  nav_id: NAV-01
+  child_policy: NO_CHILD_MENU
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  collapsed: ICON_ONLY_WITH_ACCESSIBLE_NAME
+  expanded: ICON_PLUS_SINGLE_LINE_L1_LABEL_ONLY
+  subtitle: FORBIDDEN
+  submenu: FORBIDDEN
+  chevron: FORBIDDEN
+- control_uid: GHS-CTL-NAV-02
+  section_uid: GHS-SEC-03
+  component_uid: GHS-CMP-NAV
+  visual_uid: GHS-VIS-NAV
+  type: NAV_ITEM
+  label:
+    zh-TW: 專案 / 專題
+    zh-CN: 项目 / 专题
+    en: Project / Topic
+  nav_id: NAV-02
+  child_policy: NO_CHILD_MENU
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  collapsed: ICON_ONLY_WITH_ACCESSIBLE_NAME
+  expanded: ICON_PLUS_SINGLE_LINE_L1_LABEL_ONLY
+  subtitle: FORBIDDEN
+  submenu: FORBIDDEN
+  chevron: FORBIDDEN
+- control_uid: GHS-CTL-NAV-03
+  section_uid: GHS-SEC-03
+  component_uid: GHS-CMP-NAV
+  visual_uid: GHS-VIS-NAV
+  type: NAV_ITEM
+  label:
+    zh-TW: 素材
+    zh-CN: 素材
+    en: Assets
+  nav_id: NAV-03
+  child_policy: NO_CHILD_MENU
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  collapsed: ICON_ONLY_WITH_ACCESSIBLE_NAME
+  expanded: ICON_PLUS_SINGLE_LINE_L1_LABEL_ONLY
+  subtitle: FORBIDDEN
+  submenu: FORBIDDEN
+  chevron: FORBIDDEN
+- control_uid: GHS-CTL-NAV-04
+  section_uid: GHS-SEC-03
+  component_uid: GHS-CMP-NAV
+  visual_uid: GHS-VIS-NAV
+  type: NAV_ITEM
+  label:
+    zh-TW: 影片
+    zh-CN: 影片
+    en: Video
+  nav_id: NAV-04
+  child_policy: NO_CHILD_MENU
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  collapsed: ICON_ONLY_WITH_ACCESSIBLE_NAME
+  expanded: ICON_PLUS_SINGLE_LINE_L1_LABEL_ONLY
+  subtitle: FORBIDDEN
+  submenu: FORBIDDEN
+  chevron: FORBIDDEN
+- control_uid: GHS-CTL-NAV-05
+  section_uid: GHS-SEC-03
+  component_uid: GHS-CMP-NAV
+  visual_uid: GHS-VIS-NAV
+  type: NAV_ITEM
+  label:
+    zh-TW: 剪輯配音
+    zh-CN: 剪辑配音
+    en: Editing & Voice
+  nav_id: NAV-05
+  child_policy: NO_CHILD_MENU
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  collapsed: ICON_ONLY_WITH_ACCESSIBLE_NAME
+  expanded: ICON_PLUS_SINGLE_LINE_L1_LABEL_ONLY
+  subtitle: FORBIDDEN
+  submenu: FORBIDDEN
+  chevron: FORBIDDEN
+- control_uid: GHS-CTL-NAV-06
+  section_uid: GHS-SEC-03
+  component_uid: GHS-CMP-NAV
+  visual_uid: GHS-VIS-NAV
+  type: NAV_ITEM
+  label:
+    zh-TW: QA
+    zh-CN: QA
+    en: QA
+  nav_id: NAV-06
+  child_policy: NO_CHILD_MENU
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  collapsed: ICON_ONLY_WITH_ACCESSIBLE_NAME
+  expanded: ICON_PLUS_SINGLE_LINE_L1_LABEL_ONLY
+  subtitle: FORBIDDEN
+  submenu: FORBIDDEN
+  chevron: FORBIDDEN
+- control_uid: GHS-CTL-NAV-07
+  section_uid: GHS-SEC-03
+  component_uid: GHS-CMP-NAV
+  visual_uid: GHS-VIS-NAV
+  type: NAV_ITEM
+  label:
+    zh-TW: 資料庫
+    zh-CN: 数据库
+    en: Database
+  nav_id: NAV-07
+  child_policy: NO_CHILD_MENU
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  collapsed: ICON_ONLY_WITH_ACCESSIBLE_NAME
+  expanded: ICON_PLUS_SINGLE_LINE_L1_LABEL_ONLY
+  subtitle: FORBIDDEN
+  submenu: FORBIDDEN
+  chevron: FORBIDDEN
+- control_uid: GHS-CTL-NAV-08
+  section_uid: GHS-SEC-03
+  component_uid: GHS-CMP-NAV
+  visual_uid: GHS-VIS-NAV
+  type: NAV_ITEM
+  label:
+    zh-TW: 戰略中心
+    zh-CN: 战略中心
+    en: Strategy Center
+  nav_id: NAV-08
+  child_policy: NO_CHILD_MENU
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  collapsed: ICON_ONLY_WITH_ACCESSIBLE_NAME
+  expanded: ICON_PLUS_SINGLE_LINE_L1_LABEL_ONLY
+  subtitle: FORBIDDEN
+  submenu: FORBIDDEN
+  chevron: FORBIDDEN
+- control_uid: GHS-CTL-NOTIFICATION
+  section_uid: GHS-SEC-02
+  component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
+  visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
+  type: QUICK_STATUS_BUTTON
+  label:
+    zh-TW: 通知
+    zh-CN: 通知
+    en: Notifications
+  action_uid: GHS-ACT-OPEN-NOTIFICATION
+  gate_uid: GHS-GATE-NOTIFICATION
+  permission_uid: GHS-PERM-NOTIFICATION
+  semantic_target: ACCOUNT_NOTIFICATION_CENTER
+  visibility: AUTHENTICATED_ONLY
+- control_uid: GHS-CTL-TODO
+  section_uid: GHS-SEC-02
+  component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
+  visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
+  type: QUICK_STATUS_BUTTON
+  label:
+    zh-TW: 待辦
+    zh-CN: 待办
+    en: To-do
+  action_uid: GHS-ACT-OPEN-TODO
+  gate_uid: GHS-GATE-TODO
+  permission_uid: GHS-PERM-TODO
+  semantic_target: ACCOUNT_TODO_QUEUE
+  visibility: AUTHENTICATED_ONLY
+- control_uid: GHS-CTL-RUNNING
+  section_uid: GHS-SEC-02
+  component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
+  visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
+  type: QUICK_STATUS_BUTTON
+  label:
+    zh-TW: 執行中
+    zh-CN: 执行中
+    en: Running
+  action_uid: GHS-ACT-OPEN-RUNNING
+  gate_uid: GHS-GATE-RUNNING
+  permission_uid: GHS-PERM-RUNNING
+  semantic_target: ACCOUNT_RUNNING_QUEUE
+  visibility: AUTHENTICATED_ONLY
+- control_uid: GHS-CTL-LANGUAGE
+  section_uid: GHS-SEC-02
+  component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
+  visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
+  type: LANGUAGE_SELECT
+  label:
+    zh-TW: 語言
+    zh-CN: 语言
+    en: Language
+  options:
+  - zh-TW
+  - zh-CN
+  - en
+  action_uid: GHS-ACT-SET-LANGUAGE
+  gate_uid: GHS-GATE-LANGUAGE
+  permission_uid: GHS-PERM-SHELL
+  visibility: ALWAYS_WHEN_SHELL_VISIBLE
+- control_uid: GHS-CTL-ACCOUNT
+  section_uid: GHS-SEC-02
+  component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
+  visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
+  type: ACCOUNT_BUTTON
+  label: LOGIN_OR_ACCOUNT_INFO
+  action_uid: GHS-ACT-OPEN-ACCOUNT
+  gate_uid: GHS-GATE-ACCOUNT
+  permission_uid: GHS-PERM-ACCOUNT
+  visibility: ALWAYS_WHEN_SHELL_VISIBLE
+states:
+- state_uid: GHS-STATE-SIDEBAR-COLLAPSED
+  meaning: 'Resting state: transparent 64px interaction rail; only 8 nav icons visible; no full-height sidebar panel/frame/background; workspace
+    x78'
+- state_uid: GHS-STATE-SIDEBAR-EXPANDED-OVERLAY
+  meaning: Temporary 221px sidebar surface/frame visible with icon + single-line L1 labels; workspace remains x78; no child/submenu
+- state_uid: GHS-STATE-LOGGED-OUT
+  meaning: Header right shows Language + Login only
+- state_uid: GHS-STATE-LOGGED-IN
+  meaning: Header right shows Notification + To-do + Running + Language + Account. Permissions remain account-bound authorization data and
+    are not rendered.
+- state_uid: GHS-STATE-QUICK-LINK-GAP
+  meaning: Displayed real status may remain; unresolved quick destination disabled + gap report
+- state_uid: GHS-STATE-PAGE-BLANK
+  meaning: No Page Authority loaded; workspace remains visually blank
+state_transitions:
+- SIDEBAR_COLLAPSED_ICON_ONLY -- pointerenter/focusin interaction rail --> SIDEBAR_EXPANDED_OVERLAY_WITH_SURFACE
+- SIDEBAR_EXPANDED_OVERLAY_WITH_SURFACE -- pointerleave + no focus inside for 180ms --> SIDEBAR_COLLAPSED_ICON_ONLY and remove sidebar surface/frame
+- SIDEBAR_EXPANDED_OVERLAY_WITH_SURFACE -- navigation complete --> SIDEBAR_COLLAPSED_ICON_ONLY immediately and remove sidebar surface/frame
+- LOGGED_OUT -- authenticated session established --> LOGGED_IN
+- LOGGED_IN -- session ended --> LOGGED_OUT
+errors:
+- error_uid: GHS-ERR-NAV-001
+  context: nav target unresolved
+  recovery: Block click; report gap; do not invent route
+- error_uid: GHS-ERR-QUICK-001
+  context: quick destination unresolved
+  recovery: Disable that quick jump; retain authorized displayed value if available; report gap
+- error_uid: GHS-ERR-IDENTITY-001
+  context: account identity unresolved
+  recovery: Do not fake name/avatar; show canonical generic user icon/login state allowed by identity authority
+- error_uid: GHS-ERR-UNDEFINED-001
+  context: unregistered header/sidebar/menu/status requested
+  recovery: BLOCK + REPORT_AUTHORITY_GAP
+ports:
+- port_uid: GHS-PORT-NAV
+  operation: resolveCanonicalNavigation
+  path: SYSTEM_OPERATION_REGISTRY_REQUIRED
+- port_uid: GHS-PORT-QUICK
+  operation: resolveCanonicalQuickLink
+  path: SYSTEM_OPERATION_REGISTRY_REQUIRED
+- port_uid: GHS-PORT-ACCOUNT-SUMMARY
+  operation: resolveAccountQuickStatusProjection
+  path: SYSTEM_OPERATION_REGISTRY_REQUIRED
+- port_uid: GHS-PORT-IDENTITY
+  operation: resolveIdentityAccountAuthority
+  path: SYSTEM_OPERATION_REGISTRY_REQUIRED
+i18n:
+  nav:
+    NAV-01:
+      zh-TW: 儀表板
+      zh-CN: 仪表板
+      en: Dashboard
+    NAV-02:
+      zh-TW: 專案 / 專題
+      zh-CN: 项目 / 专题
+      en: Project / Topic
+    NAV-03:
+      zh-TW: 素材
+      zh-CN: 素材
+      en: Assets
+    NAV-04:
+      zh-TW: 影片
+      zh-CN: 影片
+      en: Video
+    NAV-05:
+      zh-TW: 剪輯配音
+      zh-CN: 剪辑配音
+      en: Editing & Voice
+    NAV-06:
+      zh-TW: QA
+      zh-CN: QA
+      en: QA
+    NAV-07:
+      zh-TW: 資料庫
+      zh-CN: 数据库
+      en: Database
+    NAV-08:
+      zh-TW: 戰略中心
+      zh-CN: 战略中心
+      en: Strategy Center
+  quick:
+    NOTIFICATION:
+      zh-TW: 通知
+      zh-CN: 通知
+      en: Notifications
+    TODO:
+      zh-TW: 待辦
+      zh-CN: 待办
+      en: To-do
+    RUNNING:
+      zh-TW: 執行中
+      zh-CN: 执行中
+      en: Running
+  language_options:
+  - zh-TW
+  - zh-CN
+  - en
+  brand: ORANGE ONE fixed English
+accessibility:
+  collapsed_nav: Every icon keeps canonical accessible name; no subtitle
+  auto_expand: keyboard focusin expands label layer; focusout collapses after delay
+  quick_status: Each chip has accessible name including label and current authorized value/count
+  language: Keyboard-selectable; current locale announced
+  account: Account/Login button accessible name reflects actual session state
+  active_nav: aria-current or selected semantics; not color-only
+forbidden:
+- AI Workspace L1 item
+- separate Editing L1 and Voice L1
+- System Admin L1 item in place of Database/Strategy Center
+- more or fewer than 8 L1 items unless authority is revised
+- Dashboard child menu/subtitle/chevron
+- two-line L1 menu subtitles
+- manual sidebar pin/collapse toggle
+- workspace reflow when sidebar temporarily expands
+- header page identity center title
+- Help/Settings/Search/System Status/Provider Health as global header controls
+- fake permission/notification/todo/running/account data
+- invented quick-link routes
+- generated logo
+- shell KPI/business cards
+- mobile alternate shell under 1280
+- any L1 child menu/submenu/accordion/chevron/secondary subtitle line
+- persistent visible 64px sidebar background/frame/border/glow while collapsed
+- glass/card row containers around collapsed icons
+- collapsed sidebar label text; collapsed state is ICON ONLY
+- Permission chip/field/summary in Global Header
+- rendering account permission list/role summary as a header quick-status item
+acceptance:
+- uid: GHS-ACC-01
+  item: L1 Menu Exactness
+  pass: Exactly 8 direct flat L1 items in exact order; every item has no child menu/submenu/subtitle/chevron
+- uid: GHS-ACC-02
+  item: No AI Workspace
+  pass: AI Workspace absent from navigation/control/i18n
+- uid: GHS-ACC-03
+  item: Editing + Voice Merge
+  pass: One L1 剪輯配音 only; no separate Editing/Voice rows
+- uid: GHS-ACC-04
+  item: All L1 Flat / No Subtitle
+  pass: NAV-01..NAV-08 are direct L1 leaves; no child/submenu, no second line, no chevron. Lower-level navigation belongs to destination
+    Page Authority.
+- uid: GHS-ACC-05
+  item: Auto Collapse
+  pass: Resting state is transparent 64px icon-only interaction rail with no visible sidebar frame. Hover/focus renders 221px sidebar surface
+    overlay; collapse after 180ms; no manual pin; workspace always x78.
+- uid: GHS-ACC-06
+  item: Header Left
+  pass: Canonical ORANGE ONE logo only
+- uid: GHS-ACC-07
+  item: Header Right Order
+  pass: Authenticated order exactly Notification → To-do → Running → Language → Account
+- uid: GHS-ACC-08
+  item: Logged-out Header
+  pass: Only Language + Login shown; no fake account quick data
+- uid: GHS-ACC-09
+  item: Quick Status
+  pass: Notification + To-do + Running use real account projections and are clickable via canonical quick-link resolver; Permission is not
+    rendered
+- uid: GHS-ACC-10
+  item: Language
+  pass: Immediately left of Account; options zh-TW/zh-CN/en; UI locale only
+- uid: GHS-ACC-11
+  item: Workspace Width
+  pass: Content slot begins x78/y68 and does not reflow when menu auto-expands
+- uid: GHS-ACC-12
+  item: No Header Extras
+  pass: No Help/Settings/Search/System Status/center Page Identity/Quick Create
+- uid: GHS-ACC-13
+  item: Real Data
+  pass: No fake quick counts/permission/account identity
+- uid: GHS-ACC-14
+  item: No Route Inference
+  pass: Navigation and quick destinations resolve from canonical authorities; unresolved = block/report gap
+- uid: GHS-ACC-15
+  item: Page Boundary
+  pass: Global Shell never injects dashboard/department business content
+- uid: GHS-ACC-16
+  item: Machine Closure
+  pass: All control UIDs resolve action/gate/permission/component/visual; zero unresolved internal refs
+- uid: GHS-ACC-17
+  item: Collapsed Icon-Only Visual
+  pass: Canonical collapsed-state reference and runtime rest state show only 8 icons. No full-height sidebar surface/frame/background/border/glow
+    and no 221px expanded-menu demo is visible until actual hover/focus.
+- uid: GHS-ACC-18
+  item: Permission Is Account-Bound, Not Header UI
+  pass: No Permission control/field/chip exists in Header. Permissions are configured by Account Creation/Management and consumed only as
+    authorization outcomes.
+machine_validation:
+  status: PASS
+  nav_count: 8
+  control_count: 13
+  section_count: 4
+  component_count: 6
+  visual_count: 6
+  action_count: 6
+  gate_count: 7
+  permission_count: 6
+  error_count: 4
+  unresolved_internal_references: 0
+  auto_collapse_default: true
+  workspace_origin_x: 78px
+  header_right_order_exact: true
+  implementation_ready: true
+  all_l1_direct_flat: true
+  l1_child_menu_count: 0
+  l1_subtitle_count: 0
+  collapsed_sidebar_panel_visible: false
+  collapsed_icons_only: true
+  expanded_surface_hover_focus_only: true
+  canonical_reference_expanded_menu_visible: false
+  header_right_order:
+  - Notification
+  - To-do
+  - Running
+  - Language
+  - Account
+  header_permission_control_count: 0
+  header_permission_field_count: 0
+  header_permission_action_count: 0
+  header_permission_gate_count: 0
+  permission_rendered_in_header: false
+  account_bound_permission_model: true
+canonical_reference_state:
+  state: SIDEBAR_COLLAPSED_ICON_ONLY
+  sidebar_surface_visible: false
+  expanded_menu_surface_visible: false
+  visible_nav_elements: 8 ICONS ONLY
+  workspace_origin: x=78px y=68px

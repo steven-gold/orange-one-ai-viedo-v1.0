@@ -1,0 +1,1574 @@
+authority:
+  id: ACPOS_DB-01_FINAL_LOCKED_ENCODING
+  page_uid: admin:DB-01
+  control_prefix: DB-01
+  page_name_zh: 資料模型與追溯工作區
+  page_name_en: Data Model & Traceability Workspace
+  surface: ADMIN
+  status: FINAL_LOCKED
+  current_only: true
+  single_page_workspace: true
+  single_machine_authority: true
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  real_data_only: true
+  missing_value_display: —
+  purpose: 管理/Debug Viewer for ACPOS canonical data model, exact version lineage, relationships, traceability, schema/migration history, integrity findings and audit.
+  boundary: DB-01 is not a generic CRUD table editor and never bypasses Domain Service, Permission, Audit, Version, Change Management or Migration governance.
+layout:
+  desktop_min_width: 1280px
+  vertical_scroll: Main Workspace height:auto; overflow-y:auto; independent from Global Sidebar/Menu height
+  below_min_width: Keep min-width=1280px; allow horizontal scroll; no alternate unregistered mobile page
+  context_bar:
+    width: 100%
+    height: 56px
+  primary_grid:
+    columns: minmax(280px,1fr) minmax(760px,3fr) minmax(300px,1fr)
+    approx: 20% / 60% / 20%
+    gap: 16px
+    align: start
+  left_rail:
+    min_width: 280px
+    role: Entity/Table/Domain explorer
+  center:
+    min_width: 760px
+    role: Schema inspector / Relation graph / Trace detail
+    priority: highest
+  right_rail:
+    min_width: 300px
+    role: Integrity / Version / Migration / Scope summary
+  lower_rows: Lineage Trace, Migration History, Integrity Findings and Audit may extend full width
+  tokens:
+    control_height: 40px
+    button_min_width: 88px
+    primary_button_min_width: 120px
+    button_radius: 10px
+    panel_radius: 12px
+    large_container_radius: 24px
+    section_gap: 16px
+    content_padding: 16px
+    status_badge_height: 28px
+    action_gap: 8px
+    touch_target_min: 44px × 44px
+  visual_override: FORBIDDEN; inherit Global Visual tokens only
+database_contract:
+  positioning: The data layer is Project -> Mother Structure Versions -> Production Topics -> Child Blueprint Versions; all Task/Job/Asset/Review/Decision/Release records must be traceable
+    through explicit exact refs.
+  required_trace_keys:
+  - project_id
+  - mother_structure_version_id
+  - topic_id
+  - child_blueprint_version_id
+  - boundary_id
+  - continuity_bridge_id
+  core_entity_groups:
+    CANON:
+    - Project
+    - ProjectStructureVersion / Mother Structure Version
+    - StoryCoreVersion
+    - WorldBibleVersion
+    - ChapterArchitectureVersion
+    - DNAVersion
+    TOPIC_PRODUCTION:
+    - ProductionTopic
+    - TopicBlueprintVersion / Child Blueprint Version
+    - Boundary
+    - ContinuityBridge
+    - CanonicalScriptVersion
+    RUNTIME:
+    - WorkPackage
+    - DepartmentTask
+    - ProviderJob
+    - AssetOutputVersion
+    - VideoOutputVersion
+    - EditingOutputVersion
+    - QAReviewRun
+    GOVERNANCE:
+    - DecisionAtom
+    - Scorecard
+    - Finding
+    - CorrectionRequest
+    - ManualReviewCase
+    - QAGateDecision
+    - ReleasePackage
+    - AuditEvent
+    SYSTEM:
+    - AccountPermissionAssignment
+    - SchemaMigrationHistory
+    - Outbox/Inbox
+    - Experience / Strategic Context refs
+  immutability_rules:
+  - Any version update creates a new record/version; prior canonical snapshot is not overwritten.
+  - Published/locked based_on/source refs are immutable.
+  - No physical delete of locked history.
+  - Formal execution uses explicit version IDs/hashes; no latest/current/default resolution.
+  referential_integrity:
+  - FK/reference existence
+  - version immutability
+  - published based_on immutability
+  - no orphan task/job/asset/review
+  - tenant/project/department/server-side scope validation
+  - traceability completeness is P0
+  data_code_language: Database / API / Schema code remains English; UI labels follow i18n.
+traceability_contract:
+  input_types:
+  - Task
+  - Job
+  - Asset
+  - Review
+  - Finding
+  - Decision
+  - Release
+  - Any registered entity/version
+  output: 'Exact clickable lineage: Source Entity -> Project -> Mother Structure Version -> Topic -> Child Blueprint Version -> Boundary -> Continuity Bridge -> Script/DNA/Input -> Task/Job/Output
+    -> QA/Decision/Release.'
+  rules:
+  - Version must be a clickable exact entity/ref, not only a display string such as M1/C1.
+  - Trace uses canonical IDs/refs/checksums, never filename guessing.
+  - Broken/orphan refs are shown as explicit integrity findings; UI must not silently repair.
+  - Historical source and published refs remain visible for audit.
+schema_contract:
+  viewer_sections:
+  - Entity metadata
+  - Table / Aggregate
+  - Columns / Field types
+  - Primary / Foreign Keys
+  - Constraints
+  - Indexes
+  - Relations
+  - Version rules
+  - Data classification
+  - Owner / Service
+  - Migration provenance
+  page_editing_policy: READ_ONLY_INSPECTION
+  manual_sql: FORBIDDEN
+  row_data_editor: FORBIDDEN
+  schema_direct_write: FORBIDDEN
+migration_contract:
+  page_scope: READ_ONLY_MIGRATION_HISTORY_AND_STATUS
+  visible_fields:
+  - migration_id
+  - checksum
+  - approval_ref
+  - bootstrap/dependency state
+  - applied_by
+  - applied_at
+  - status
+  - rollback_point/change_request_ref when available
+  rules:
+  - Migration checksum must be non-zero and verifiable.
+  - Migration execution order/dependencies are explicit.
+  - Destructive/high-risk DB migrations require System Lifecycle / Change Management / Sandbox / Human Approval.
+  - DB-01 does not execute migration, rollback, raw DDL or Production write.
+integrity_contract:
+  checks:
+  - Exact reference exists
+  - FK/typed reference valid
+  - Required lineage complete
+  - Version/source snapshot immutable
+  - No orphan Task/Job/Asset/Review
+  - No superseded source used as current execution authority
+  - Scope/tenant/project/department access valid
+  - Migration history/checksum consistent
+  - Audit/correlation trace exists for effectful writes
+  finding_behavior: DB-01 surfaces integrity findings and affected refs. Repair is routed to the owning Domain/System Lifecycle workflow; DB-01 does not mutate production data to hide
+    the error.
+system_lifecycle_boundary:
+  db01_can:
+  - inspect
+  - search/filter
+  - trace exact lineage
+  - view entity/schema/column/relation/index/constraint metadata
+  - view migration history and status
+  - view integrity findings
+  - view audit/correlation refs
+  db01_cannot:
+  - run arbitrary SQL
+  - edit production row directly
+  - alter table/column/index directly
+  - execute migration
+  - rollback migration
+  - restore backup
+  - bypass Domain Service validation
+  - bypass account permission or scope
+  mutation_owner: System Lifecycle / Change Management / Sandbox / governed Domain Service
+registries:
+  sections:
+  - section_uid: DB-01-SEC-01
+    name: Context / Schema Head
+    responsibility: Environment, schema/migration head, selected scope and data health
+    visual_uid: DB-01-VIS-CONTEXT
+  - section_uid: DB-01-SEC-02
+    name: Entity Explorer
+    responsibility: Domain/Entity/Table search, filter and exact selection
+    visual_uid: DB-01-VIS-LEFT
+  - section_uid: DB-01-SEC-03
+    name: Schema Inspector
+    responsibility: Entity/table/aggregate metadata, columns, constraints and indexes
+    visual_uid: DB-01-VIS-SCHEMA
+  - section_uid: DB-01-SEC-04
+    name: Relation Graph
+    responsibility: FK/typed refs, parent-child/version relations and exact clickable nodes
+    visual_uid: DB-01-VIS-RELATION
+  - section_uid: DB-01-SEC-05
+    name: Traceability Path
+    responsibility: Mother/Child/Topic/Boundary/Bridge/Source lineage from any registered object
+    visual_uid: DB-01-VIS-TRACE
+  - section_uid: DB-01-SEC-06
+    name: Integrity Status
+    responsibility: Reference/version/orphan/scope/checksum integrity summary
+    visual_uid: DB-01-VIS-RIGHT
+  - section_uid: DB-01-SEC-07
+    name: Migration History
+    responsibility: Migration ID/checksum/approval/dependency/status; read-only
+    visual_uid: DB-01-VIS-MIGRATION
+  - section_uid: DB-01-SEC-08
+    name: Integrity Findings
+    responsibility: Broken/orphan/mismatch findings and affected exact refs
+    visual_uid: DB-01-VIS-FINDING
+  - section_uid: DB-01-SEC-09
+    name: Audit / Correlation
+    responsibility: Actor/event/correlation/causation/change lineage
+    visual_uid: DB-01-VIS-AUDIT
+  - section_uid: DB-01-SEC-10
+    name: Status / Boundary
+    responsibility: Page state, disabled reason, source sync, System Lifecycle route
+    visual_uid: DB-01-VIS-STATUS
+  visuals:
+  - visual_uid: DB-01-VIS-CONTEXT
+    geometry: top full width; h>=56px
+  - visual_uid: DB-01-VIS-LEFT
+    geometry: primary grid left 20%; min 280px
+  - visual_uid: DB-01-VIS-SCHEMA
+    geometry: primary grid center upper; min 760px
+  - visual_uid: DB-01-VIS-RELATION
+    geometry: primary grid center lower; graph/list toggle within center only
+  - visual_uid: DB-01-VIS-TRACE
+    geometry: lower full-width trace strip / cards
+  - visual_uid: DB-01-VIS-RIGHT
+    geometry: primary grid right 20%; min 300px
+  - visual_uid: DB-01-VIS-MIGRATION
+    geometry: lower full-width table/card region
+  - visual_uid: DB-01-VIS-FINDING
+    geometry: lower full-width findings region
+  - visual_uid: DB-01-VIS-AUDIT
+    geometry: lower full-width audit trace region
+  - visual_uid: DB-01-VIS-STATUS
+    geometry: bottom full-width status/boundary row
+  components:
+  - component_uid: DB-01-CMP-CONTEXT
+    section_uid: DB-01-SEC-01
+    name: Database Context / Schema Head
+  - component_uid: DB-01-CMP-EXPLORER
+    section_uid: DB-01-SEC-02
+    name: Domain / Entity Explorer
+  - component_uid: DB-01-CMP-SCHEMA
+    section_uid: DB-01-SEC-03
+    name: Schema Metadata Inspector
+  - component_uid: DB-01-CMP-COLUMNS
+    section_uid: DB-01-SEC-03
+    name: Columns / Constraints / Indexes
+  - component_uid: DB-01-CMP-RELATIONS
+    section_uid: DB-01-SEC-04
+    name: Relations / Reference Graph
+  - component_uid: DB-01-CMP-TRACE-INPUT
+    section_uid: DB-01-SEC-05
+    name: Trace Source Selector
+  - component_uid: DB-01-CMP-TRACE-PATH
+    section_uid: DB-01-SEC-05
+    name: Exact Lineage Path Viewer
+  - component_uid: DB-01-CMP-INTEGRITY
+    section_uid: DB-01-SEC-06
+    name: Integrity / Version Summary
+  - component_uid: DB-01-CMP-MIGRATION
+    section_uid: DB-01-SEC-07
+    name: Migration History
+  - component_uid: DB-01-CMP-FINDINGS
+    section_uid: DB-01-SEC-08
+    name: Integrity Finding List / Detail
+  - component_uid: DB-01-CMP-AUDIT
+    section_uid: DB-01-SEC-09
+    name: Audit / Correlation Trace
+  - component_uid: DB-01-CMP-STATUS
+    section_uid: DB-01-SEC-10
+    name: Page Status / System Lifecycle Boundary
+  permissions:
+  - permission_uid: DB_READ
+    backend_scope: database.metadata.read
+    purpose: Read database/entity/schema/relation/version metadata
+  - permission_uid: DB_TRACE
+    backend_scope: database.trace.read
+    purpose: Resolve exact registered lineage and relation trace
+  - permission_uid: DB_MIGRATION_READ
+    backend_scope: database.migration.read
+    purpose: Read migration/checksum/dependency/status history
+  - permission_uid: DB_INTEGRITY_READ
+    backend_scope: database.integrity.read
+    purpose: Read integrity checks/findings
+  - permission_uid: DB_AUDIT_READ
+    backend_scope: audit.read
+    purpose: Read permitted audit/correlation trace
+  gates:
+  - gate_uid: DB-01-GATE-PAGE
+    condition: explicit account page permission + scope + condition + audit
+  - gate_uid: DB-01-GATE-CONTEXT
+    condition: environment/schema head resolved + authorized scope; no implicit tenant/project fallback
+  - gate_uid: DB-01-GATE-ENTITY
+    condition: selected entity/table is registered and permitted for current scope
+  - gate_uid: DB-01-GATE-SCHEMA
+    condition: selected entity has authoritative schema/entity/column/relation metadata
+  - gate_uid: DB-01-GATE-RELATION
+    condition: selected exact entity/ref has registered typed relations; no inferred relation from naming
+  - gate_uid: DB-01-GATE-TRACE
+    condition: source_type + exact source_id/version are present and authorized
+  - gate_uid: DB-01-GATE-MIGRATION
+    condition: migration history permission + registered migration/checksum manifest available
+  - gate_uid: DB-01-GATE-INTEGRITY
+    condition: integrity read source available for selected scope/entity/version
+  - gate_uid: DB-01-GATE-AUDIT
+    condition: audit read permission + exact correlation/entity/version scope
+  errors:
+  - error_uid: DB-01-ERR-CONTEXT-001
+    context: Database context/environment/schema head unavailable or scope mismatch
+    recovery: BLOCK data panels; resolve authorized context
+  - error_uid: DB-01-ERR-ENTITY-001
+    context: Entity/table not registered or outside allowed scope
+    recovery: BLOCK selection; no database-name guessing
+  - error_uid: DB-01-ERR-SCHEMA-001
+    context: Schema/column/relation metadata missing or inconsistent
+    recovery: Show explicit authority gap/integrity finding; do not synthesize schema
+  - error_uid: DB-01-ERR-TRACE-001
+    context: Trace source ref missing/orphan/mismatched
+    recovery: Show broken path; do not silently repair or jump to latest
+  - error_uid: DB-01-ERR-VERSION-001
+    context: Version/source snapshot immutable lineage conflict
+    recovery: BLOCK any governed downstream use and surface exact conflict
+  - error_uid: DB-01-ERR-MIGRATION-001
+    context: Migration/checksum/dependency history invalid or incomplete
+    recovery: Show migration integrity blocker; route change to System Lifecycle
+  - error_uid: DB-01-ERR-INTEGRITY-001
+    context: FK/reference/orphan/scope/checksum integrity failure
+    recovery: Show finding and affected exact refs; no direct production repair
+  - error_uid: DB-01-ERR-AUDIT-001
+    context: Audit/correlation trace unavailable or unauthorized
+    recovery: Show read restriction / missing audit evidence
+  - error_uid: DB-01-ERR-PERM-001
+    context: Permission/scope denied
+    recovery: Disable access/action and show actual reason
+  - error_uid: DB-01-ERR-UNDEFINED-001
+    context: Unlisted control/action/relation/mutation requested
+    recovery: BLOCK + REPORT_AUTHORITY_GAP
+  page_states:
+  - state_uid: DB-01-ST-LOADING
+    display: LOADING
+    definition: Loading authorized Database Read Model
+  - state_uid: DB-01-ST-READY
+    display: READY
+    definition: Database metadata/read model ready
+  - state_uid: DB-01-ST-EMPTY
+    display: EMPTY
+    definition: Authorized query has no registered result
+  - state_uid: DB-01-ST-ERROR
+    display: ERROR
+    definition: Real read/contract/integrity error
+  - state_uid: DB-01-ST-POLICY
+    display: POLICY_BLOCKED
+    definition: Permission/data classification/scope blocks read
+  - state_uid: DB-01-ST-CONFLICT
+    display: VERSION_CONFLICT
+    definition: Schema/version/source lineage mismatch
+  - state_uid: DB-01-ST-READONLY
+    display: READ_ONLY
+    definition: Normal DB-01 operating mode; no production mutation
+  - state_uid: DB-01-ST-ARCHIVED
+    display: ARCHIVED
+    definition: Historical schema/entity/migration/version context
+  stages:
+  - stage_uid: DB-01-STAGE-01-CONTEXT
+    name: Resolve Context
+    flow: Resolve environment/schema head/authorized scope
+  - stage_uid: DB-01-STAGE-02-INSPECT
+    name: Inspect Schema
+    flow: Select registered entity -> schema/columns/constraints/indexes/relations
+  - stage_uid: DB-01-STAGE-03-TRACE
+    name: Trace Lineage
+    flow: Exact source -> Mother/Topic/Child/Boundary/Bridge/Input/Output/QA/Audit path
+  - stage_uid: DB-01-STAGE-04-INTEGRITY
+    name: Integrity / Migration
+    flow: Read integrity finding + migration history/checksum/dependencies
+  - stage_uid: DB-01-STAGE-05-AUDIT
+    name: Audit / Route Change
+    flow: Read audit/correlation; mutation requests route to System Lifecycle / Change Management
+  stage_transitions:
+  - transition_uid: DB-01-STTR-01
+    from_stage: DB-01-STAGE-01-CONTEXT
+    to_stage: DB-01-STAGE-02-INSPECT
+    trigger: select registered entity
+    gate_uid: DB-01-GATE-ENTITY
+  - transition_uid: DB-01-STTR-02
+    from_stage: DB-01-STAGE-02-INSPECT
+    to_stage: DB-01-STAGE-03-TRACE
+    trigger: trace source selected
+    gate_uid: DB-01-GATE-TRACE
+  - transition_uid: DB-01-STTR-03
+    from_stage: DB-01-STAGE-03-TRACE
+    to_stage: DB-01-STAGE-04-INTEGRITY
+    trigger: trace/integrity context resolved
+    gate_uid: DB-01-GATE-INTEGRITY
+  - transition_uid: DB-01-STTR-04
+    from_stage: DB-01-STAGE-04-INTEGRITY
+    to_stage: DB-01-STAGE-05-AUDIT
+    trigger: audit/correlation ref selected
+    gate_uid: DB-01-GATE-AUDIT
+  action_effect_types:
+  - effect_type: UI_ONLY
+    allowed: filter/toggle/local display state
+    forbidden: no DB/domain mutation
+  - effect_type: CONTEXT_STATE
+    allowed: select current registered entity/trace source/migration/finding
+    forbidden: no implicit latest/default
+  - effect_type: READ_MODEL_QUERY
+    allowed: authorized schema/relation/trace/migration/integrity/audit query
+    forbidden: no raw DB write/DDL/SQL
+  actions:
+  - action_uid: DB-01-ACT-NOOP
+    label: Read display
+    permission_uid: DB_READ
+    gate_uid: DB-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: Database Read Model / DB-01
+    success_contract: No business mutation
+    error_uid: DB-01-ERR-CONTEXT-001
+    query_contract: null
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-CONTEXT
+    label: Set DB context
+    permission_uid: DB_READ
+    gate_uid: DB-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+    owner: Database Read Model / DB-01
+    success_contract: Authorized context selected; dependent selections cleared
+    error_uid: DB-01-ERR-CONTEXT-001
+    query_contract: null
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-SEARCH
+    label: Search entity/table
+    permission_uid: DB_READ
+    gate_uid: DB-01-GATE-PAGE
+    effect_type: READ_MODEL_QUERY
+    owner: Database Read Model / DB-01
+    success_contract: Return only authorized registered entities/tables
+    error_uid: DB-01-ERR-ENTITY-001
+    query_contract: DatabaseReadModel.list_entities
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-FILTER
+    label: Filter domain/type/state
+    permission_uid: DB_READ
+    gate_uid: DB-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: Database Read Model / DB-01
+    success_contract: Filter current authorized entity list only
+    error_uid: DB-01-ERR-ENTITY-001
+    query_contract: null
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-ENTITY-SELECT
+    label: Open entity schema
+    permission_uid: DB_READ
+    gate_uid: DB-01-GATE-ENTITY
+    effect_type: CONTEXT_STATE
+    owner: Database Read Model / DB-01
+    success_contract: Load exact registered entity/table metadata
+    error_uid: DB-01-ERR-ENTITY-001
+    query_contract: null
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-SCHEMA-REFRESH
+    label: Refresh schema metadata
+    permission_uid: DB_READ
+    gate_uid: DB-01-GATE-SCHEMA
+    effect_type: READ_MODEL_QUERY
+    owner: Database Read Model / DB-01
+    success_contract: Refresh authoritative schema/column/index/constraint projection
+    error_uid: DB-01-ERR-SCHEMA-001
+    query_contract: DatabaseReadModel.get_entity_schema
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-RELATION-OPEN
+    label: Open exact relation
+    permission_uid: DB_TRACE
+    gate_uid: DB-01-GATE-RELATION
+    effect_type: CONTEXT_STATE
+    owner: Database Read Model / DB-01
+    success_contract: Navigate to exact related entity/version/ref
+    error_uid: DB-01-ERR-TRACE-001
+    query_contract: null
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-RELATION-MODE
+    label: Graph / List view
+    permission_uid: DB_READ
+    gate_uid: DB-01-GATE-SCHEMA
+    effect_type: UI_ONLY
+    owner: Database Read Model / DB-01
+    success_contract: Change relation presentation only
+    error_uid: DB-01-ERR-SCHEMA-001
+    query_contract: null
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-TRACE
+    label: Trace exact lineage
+    permission_uid: DB_TRACE
+    gate_uid: DB-01-GATE-TRACE
+    effect_type: READ_MODEL_QUERY
+    owner: Database Read Model / DB-01
+    success_contract: Return exact canonical lineage and broken refs explicitly
+    error_uid: DB-01-ERR-TRACE-001
+    query_contract: TraceabilityReadModel.trace_entity_lineage
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-MIGRATION-SELECT
+    label: Open migration detail
+    permission_uid: DB_MIGRATION_READ
+    gate_uid: DB-01-GATE-MIGRATION
+    effect_type: CONTEXT_STATE
+    owner: Database Read Model / DB-01
+    success_contract: Load exact migration/checksum/dependency/status
+    error_uid: DB-01-ERR-MIGRATION-001
+    query_contract: null
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-MIGRATION-REFRESH
+    label: Refresh migration history
+    permission_uid: DB_MIGRATION_READ
+    gate_uid: DB-01-GATE-MIGRATION
+    effect_type: READ_MODEL_QUERY
+    owner: Database Read Model / DB-01
+    success_contract: Refresh migration/checksum manifest read model
+    error_uid: DB-01-ERR-MIGRATION-001
+    query_contract: MigrationReadModel.list_history
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-FINDING-SELECT
+    label: Open integrity finding
+    permission_uid: DB_INTEGRITY_READ
+    gate_uid: DB-01-GATE-INTEGRITY
+    effect_type: CONTEXT_STATE
+    owner: Database Read Model / DB-01
+    success_contract: Load exact affected refs and check result
+    error_uid: DB-01-ERR-INTEGRITY-001
+    query_contract: null
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-INTEGRITY-REFRESH
+    label: Refresh integrity status
+    permission_uid: DB_INTEGRITY_READ
+    gate_uid: DB-01-GATE-INTEGRITY
+    effect_type: READ_MODEL_QUERY
+    owner: Database Read Model / DB-01
+    success_contract: Refresh governed integrity/readiness checks; no automatic repair
+    error_uid: DB-01-ERR-INTEGRITY-001
+    query_contract: DatabaseIntegrityReadModel.list_findings
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-AUDIT-OPEN
+    label: Open audit/correlation trace
+    permission_uid: DB_AUDIT_READ
+    gate_uid: DB-01-GATE-AUDIT
+    effect_type: READ_MODEL_QUERY
+    owner: Database Read Model / DB-01
+    success_contract: Return authorized audit/correlation event lineage
+    error_uid: DB-01-ERR-AUDIT-001
+    query_contract: AuditReadModel.trace
+    state_effect: Read/UI state only
+  - action_uid: DB-01-ACT-SYSTEM-LIFECYCLE
+    label: Open System Lifecycle change route
+    permission_uid: DB_READ
+    gate_uid: DB-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: Database Read Model / DB-01
+    success_contract: Navigate to governed System Lifecycle/Change Management route; no DB mutation from DB-01
+    error_uid: DB-01-ERR-CONTEXT-001
+    query_contract: null
+    state_effect: Read/UI state only
+  objects_refs:
+  - object_uid: DB-01-OBJ-ENTITY
+    entity: DatabaseEntityRef
+    owner: Database Registry
+    required_content: entity_id/name + owner_service + aggregate/table + classification + current schema ref
+  - object_uid: DB-01-OBJ-SCHEMA
+    entity: SchemaMetadata
+    owner: Database Registry
+    required_content: table/aggregate + columns + PK/FK + constraints + indexes + version rules
+  - object_uid: DB-01-OBJ-RELATION
+    entity: RelationRef
+    owner: Database Registry
+    required_content: source entity/ref + relation type + exact target entity/ref + FK/typed ref metadata
+  - object_uid: DB-01-OBJ-VERSION
+    entity: VersionLineageRef
+    owner: Domain owner
+    required_content: version_id/status + source_version_ref + hash/checksum + actor/reason/review/audit
+  - object_uid: DB-01-OBJ-TRACE
+    entity: TraceabilityPath
+    owner: Traceability Read Model
+    required_content: Project/Mother/Topic/Child/Boundary/Bridge/source/task/job/output/QA/release exact refs
+  - object_uid: DB-01-OBJ-MIGRATION
+    entity: SchemaMigrationHistory
+    owner: System Lifecycle / Migration Authority
+    required_content: migration_id + checksum + approval_ref + dependency/bootstrap + applied_by/at + status
+  - object_uid: DB-01-OBJ-INTEGRITY
+    entity: DatabaseIntegrityFinding
+    owner: Database Integrity / QA
+    required_content: check_id/type + affected exact refs + severity/status + reason + evidence + owner route
+  - object_uid: DB-01-OBJ-AUDIT
+    entity: AuditCorrelationTrace
+    owner: Governance
+    required_content: actor + event + correlation/causation + entity/version + before/after ref + timestamp
+  controls:
+  - control_uid: DB-01-FLD-ENV
+    section_uid: DB-01-SEC-01
+    component_uid: DB-01-CMP-CONTEXT
+    visual_uid: DB-01-VIS-CONTEXT
+    type: READONLY
+    label: Environment
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-SCHEMA-HEAD
+    section_uid: DB-01-SEC-01
+    component_uid: DB-01-CMP-CONTEXT
+    visual_uid: DB-01-VIS-CONTEXT
+    type: READONLY
+    label: Schema Head
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-MIGRATION-HEAD
+    section_uid: DB-01-SEC-01
+    component_uid: DB-01-CMP-CONTEXT
+    visual_uid: DB-01-VIS-CONTEXT
+    type: READONLY
+    label: Migration Head
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-SCOPE
+    section_uid: DB-01-SEC-01
+    component_uid: DB-01-CMP-CONTEXT
+    visual_uid: DB-01-VIS-CONTEXT
+    type: READONLY
+    label: Authorized Scope
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-HEALTH
+    section_uid: DB-01-SEC-01
+    component_uid: DB-01-CMP-CONTEXT
+    visual_uid: DB-01-VIS-CONTEXT
+    type: READONLY
+    label: Data Integrity
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-BTN-REFRESH
+    section_uid: DB-01-SEC-01
+    component_uid: DB-01-CMP-CONTEXT
+    visual_uid: DB-01-VIS-CONTEXT
+    type: BUTTON
+    label: 重新整理 / Refresh
+    action_uid: DB-01-ACT-SCHEMA-REFRESH
+    gate_uid: DB-01-GATE-CONTEXT
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-INP-SEARCH
+    section_uid: DB-01-SEC-02
+    component_uid: DB-01-CMP-EXPLORER
+    visual_uid: DB-01-VIS-LEFT
+    type: SEARCH
+    label: 搜尋 Entity / Table
+    action_uid: DB-01-ACT-SEARCH
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-SEL-DOMAIN
+    section_uid: DB-01-SEC-02
+    component_uid: DB-01-CMP-EXPLORER
+    visual_uid: DB-01-VIS-LEFT
+    type: SELECT
+    label: Domain
+    action_uid: DB-01-ACT-FILTER
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-SEL-ENTITY-TYPE
+    section_uid: DB-01-SEC-02
+    component_uid: DB-01-CMP-EXPLORER
+    visual_uid: DB-01-VIS-LEFT
+    type: SELECT
+    label: Entity Type
+    action_uid: DB-01-ACT-FILTER
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-LIST-ENTITIES
+    section_uid: DB-01-SEC-02
+    component_uid: DB-01-CMP-EXPLORER
+    visual_uid: DB-01-VIS-LEFT
+    type: LIST
+    label: Entity / Table Explorer
+    action_uid: DB-01-ACT-ENTITY-SELECT
+    gate_uid: DB-01-GATE-ENTITY
+    permission_uid: DB_READ
+    default: —
+    note: Display exact entity/table/owner/schema ref; no fake row count.
+  - control_uid: DB-01-FLD-ENTITY
+    section_uid: DB-01-SEC-03
+    component_uid: DB-01-CMP-SCHEMA
+    visual_uid: DB-01-VIS-SCHEMA
+    type: READONLY
+    label: Entity / Aggregate
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-SCHEMA
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-TABLE
+    section_uid: DB-01-SEC-03
+    component_uid: DB-01-CMP-SCHEMA
+    visual_uid: DB-01-VIS-SCHEMA
+    type: READONLY
+    label: Table
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-SCHEMA
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-OWNER
+    section_uid: DB-01-SEC-03
+    component_uid: DB-01-CMP-SCHEMA
+    visual_uid: DB-01-VIS-SCHEMA
+    type: READONLY
+    label: Owner Service
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-SCHEMA
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-CLASSIFICATION
+    section_uid: DB-01-SEC-03
+    component_uid: DB-01-CMP-SCHEMA
+    visual_uid: DB-01-VIS-SCHEMA
+    type: READONLY
+    label: Data Classification
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-SCHEMA
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-PK
+    section_uid: DB-01-SEC-03
+    component_uid: DB-01-CMP-SCHEMA
+    visual_uid: DB-01-VIS-SCHEMA
+    type: READONLY
+    label: Primary Key
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-SCHEMA
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-VERSION-RULE
+    section_uid: DB-01-SEC-03
+    component_uid: DB-01-CMP-SCHEMA
+    visual_uid: DB-01-VIS-SCHEMA
+    type: READONLY
+    label: Version Rule
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-SCHEMA
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-TBL-COLUMNS
+    section_uid: DB-01-SEC-03
+    component_uid: DB-01-CMP-COLUMNS
+    visual_uid: DB-01-VIS-SCHEMA
+    type: TABLE
+    label: Columns / Type / Nullable / Default
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-SCHEMA
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-TBL-CONSTRAINTS
+    section_uid: DB-01-SEC-03
+    component_uid: DB-01-CMP-COLUMNS
+    visual_uid: DB-01-VIS-SCHEMA
+    type: TABLE
+    label: Constraints / Indexes
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-SCHEMA
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-BTN-SCHEMA-REFRESH
+    section_uid: DB-01-SEC-03
+    component_uid: DB-01-CMP-SCHEMA
+    visual_uid: DB-01-VIS-SCHEMA
+    type: BUTTON
+    label: 重新讀取 Schema
+    action_uid: DB-01-ACT-SCHEMA-REFRESH
+    gate_uid: DB-01-GATE-SCHEMA
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-TOGGLE-RELATION-VIEW
+    section_uid: DB-01-SEC-04
+    component_uid: DB-01-CMP-RELATIONS
+    visual_uid: DB-01-VIS-RELATION
+    type: TOGGLE
+    label: Graph / List
+    action_uid: DB-01-ACT-RELATION-MODE
+    gate_uid: DB-01-GATE-SCHEMA
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-GRAPH-RELATIONS
+    section_uid: DB-01-SEC-04
+    component_uid: DB-01-CMP-RELATIONS
+    visual_uid: DB-01-VIS-RELATION
+    type: GRAPH
+    label: Exact Relation Graph
+    action_uid: DB-01-ACT-RELATION-OPEN
+    gate_uid: DB-01-GATE-RELATION
+    permission_uid: DB_TRACE
+    default: —
+  - control_uid: DB-01-LIST-RELATIONS
+    section_uid: DB-01-SEC-04
+    component_uid: DB-01-CMP-RELATIONS
+    visual_uid: DB-01-VIS-RELATION
+    type: LIST
+    label: Relation List
+    action_uid: DB-01-ACT-RELATION-OPEN
+    gate_uid: DB-01-GATE-RELATION
+    permission_uid: DB_TRACE
+    default: —
+  - control_uid: DB-01-SEL-TRACE-TYPE
+    section_uid: DB-01-SEC-05
+    component_uid: DB-01-CMP-TRACE-INPUT
+    visual_uid: DB-01-VIS-TRACE
+    type: SELECT
+    label: Trace Source Type
+    action_uid: DB-01-ACT-CONTEXT
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_TRACE
+    default: —
+  - control_uid: DB-01-INP-TRACE-ID
+    section_uid: DB-01-SEC-05
+    component_uid: DB-01-CMP-TRACE-INPUT
+    visual_uid: DB-01-VIS-TRACE
+    type: REFERENCE
+    label: Exact Source ID / Version
+    action_uid: DB-01-ACT-CONTEXT
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_TRACE
+    default: —
+  - control_uid: DB-01-BTN-TRACE
+    section_uid: DB-01-SEC-05
+    component_uid: DB-01-CMP-TRACE-INPUT
+    visual_uid: DB-01-VIS-TRACE
+    type: PRIMARY_BUTTON
+    label: 追溯 / Trace
+    action_uid: DB-01-ACT-TRACE
+    gate_uid: DB-01-GATE-TRACE
+    permission_uid: DB_TRACE
+    default: —
+  - control_uid: DB-01-VIEW-TRACE-PATH
+    section_uid: DB-01-SEC-05
+    component_uid: DB-01-CMP-TRACE-PATH
+    visual_uid: DB-01-VIS-TRACE
+    type: TRACE_VIEW
+    label: Exact Lineage Path
+    action_uid: DB-01-ACT-RELATION-OPEN
+    gate_uid: DB-01-GATE-TRACE
+    permission_uid: DB_TRACE
+    default: —
+  - control_uid: DB-01-FLD-REF-INTEGRITY
+    section_uid: DB-01-SEC-06
+    component_uid: DB-01-CMP-INTEGRITY
+    visual_uid: DB-01-VIS-RIGHT
+    type: READONLY
+    label: Reference Integrity
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-FLD-ORPHAN
+    section_uid: DB-01-SEC-06
+    component_uid: DB-01-CMP-INTEGRITY
+    visual_uid: DB-01-VIS-RIGHT
+    type: READONLY
+    label: Orphan Status
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-FLD-IMMUTABLE
+    section_uid: DB-01-SEC-06
+    component_uid: DB-01-CMP-INTEGRITY
+    visual_uid: DB-01-VIS-RIGHT
+    type: READONLY
+    label: Version Immutability
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-FLD-TRACE-COMPLETE
+    section_uid: DB-01-SEC-06
+    component_uid: DB-01-CMP-INTEGRITY
+    visual_uid: DB-01-VIS-RIGHT
+    type: READONLY
+    label: Trace Completeness
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-FLD-MIGRATION-INTEGRITY
+    section_uid: DB-01-SEC-06
+    component_uid: DB-01-CMP-INTEGRITY
+    visual_uid: DB-01-VIS-RIGHT
+    type: READONLY
+    label: Migration / Checksum
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-BTN-INTEGRITY-REFRESH
+    section_uid: DB-01-SEC-06
+    component_uid: DB-01-CMP-INTEGRITY
+    visual_uid: DB-01-VIS-RIGHT
+    type: BUTTON
+    label: 重新整理完整性
+    action_uid: DB-01-ACT-INTEGRITY-REFRESH
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-INP-MIGRATION-SEARCH
+    section_uid: DB-01-SEC-07
+    component_uid: DB-01-CMP-MIGRATION
+    visual_uid: DB-01-VIS-MIGRATION
+    type: SEARCH
+    label: Migration ID
+    action_uid: DB-01-ACT-MIGRATION-REFRESH
+    gate_uid: DB-01-GATE-MIGRATION
+    permission_uid: DB_MIGRATION_READ
+    default: —
+  - control_uid: DB-01-TBL-MIGRATIONS
+    section_uid: DB-01-SEC-07
+    component_uid: DB-01-CMP-MIGRATION
+    visual_uid: DB-01-VIS-MIGRATION
+    type: TABLE
+    label: Migration History
+    action_uid: DB-01-ACT-MIGRATION-SELECT
+    gate_uid: DB-01-GATE-MIGRATION
+    permission_uid: DB_MIGRATION_READ
+    default: —
+  - control_uid: DB-01-BTN-MIGRATION-REFRESH
+    section_uid: DB-01-SEC-07
+    component_uid: DB-01-CMP-MIGRATION
+    visual_uid: DB-01-VIS-MIGRATION
+    type: BUTTON
+    label: 重新整理 Migration
+    action_uid: DB-01-ACT-MIGRATION-REFRESH
+    gate_uid: DB-01-GATE-MIGRATION
+    permission_uid: DB_MIGRATION_READ
+    default: —
+  - control_uid: DB-01-SEL-FINDING-TYPE
+    section_uid: DB-01-SEC-08
+    component_uid: DB-01-CMP-FINDINGS
+    visual_uid: DB-01-VIS-FINDING
+    type: SELECT
+    label: Integrity Finding Type
+    action_uid: DB-01-ACT-FILTER
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-LIST-FINDINGS
+    section_uid: DB-01-SEC-08
+    component_uid: DB-01-CMP-FINDINGS
+    visual_uid: DB-01-VIS-FINDING
+    type: LIST
+    label: Integrity Findings
+    action_uid: DB-01-ACT-FINDING-SELECT
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-FLD-FINDING-REASON
+    section_uid: DB-01-SEC-08
+    component_uid: DB-01-CMP-FINDINGS
+    visual_uid: DB-01-VIS-FINDING
+    type: READONLY
+    label: Reason
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-FLD-FINDING-AFFECTED
+    section_uid: DB-01-SEC-08
+    component_uid: DB-01-CMP-FINDINGS
+    visual_uid: DB-01-VIS-FINDING
+    type: READONLY
+    label: Affected Exact Refs
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-FLD-FINDING-EVIDENCE
+    section_uid: DB-01-SEC-08
+    component_uid: DB-01-CMP-FINDINGS
+    visual_uid: DB-01-VIS-FINDING
+    type: READONLY
+    label: Evidence
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-FLD-FINDING-OWNER
+    section_uid: DB-01-SEC-08
+    component_uid: DB-01-CMP-FINDINGS
+    visual_uid: DB-01-VIS-FINDING
+    type: READONLY
+    label: Owner / Repair Route
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-INTEGRITY
+    permission_uid: DB_INTEGRITY_READ
+    default: —
+  - control_uid: DB-01-INP-AUDIT-ID
+    section_uid: DB-01-SEC-09
+    component_uid: DB-01-CMP-AUDIT
+    visual_uid: DB-01-VIS-AUDIT
+    type: REFERENCE
+    label: Correlation / Entity / Version Ref
+    action_uid: DB-01-ACT-CONTEXT
+    gate_uid: DB-01-GATE-AUDIT
+    permission_uid: DB_AUDIT_READ
+    default: —
+  - control_uid: DB-01-BTN-AUDIT
+    section_uid: DB-01-SEC-09
+    component_uid: DB-01-CMP-AUDIT
+    visual_uid: DB-01-VIS-AUDIT
+    type: BUTTON
+    label: 查看 Audit Trace
+    action_uid: DB-01-ACT-AUDIT-OPEN
+    gate_uid: DB-01-GATE-AUDIT
+    permission_uid: DB_AUDIT_READ
+    default: —
+  - control_uid: DB-01-VIEW-AUDIT
+    section_uid: DB-01-SEC-09
+    component_uid: DB-01-CMP-AUDIT
+    visual_uid: DB-01-VIS-AUDIT
+    type: TRACE_VIEW
+    label: Audit / Correlation
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-AUDIT
+    permission_uid: DB_AUDIT_READ
+    default: —
+  - control_uid: DB-01-FLD-PAGE-STATE
+    section_uid: DB-01-SEC-10
+    component_uid: DB-01-CMP-STATUS
+    visual_uid: DB-01-VIS-STATUS
+    type: READONLY
+    label: Page State
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-SOURCE-SYNC
+    section_uid: DB-01-SEC-10
+    component_uid: DB-01-CMP-STATUS
+    visual_uid: DB-01-VIS-STATUS
+    type: READONLY
+    label: Source / Last Sync
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-DISABLED
+    section_uid: DB-01-SEC-10
+    component_uid: DB-01-CMP-STATUS
+    visual_uid: DB-01-VIS-STATUS
+    type: READONLY
+    label: Disabled Reason
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-FLD-CHANGE-OWNER
+    section_uid: DB-01-SEC-10
+    component_uid: DB-01-CMP-STATUS
+    visual_uid: DB-01-VIS-STATUS
+    type: READONLY
+    label: Schema Change Owner
+    action_uid: DB-01-ACT-NOOP
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  - control_uid: DB-01-BTN-SYSTEM-LIFECYCLE
+    section_uid: DB-01-SEC-10
+    component_uid: DB-01-CMP-STATUS
+    visual_uid: DB-01-VIS-STATUS
+    type: BUTTON
+    label: 開啟 System Lifecycle / Change Management
+    action_uid: DB-01-ACT-SYSTEM-LIFECYCLE
+    gate_uid: DB-01-GATE-PAGE
+    permission_uid: DB_READ
+    default: —
+  integration_ports:
+  - port_uid: DB-01-PORT-ENTITY-LIST
+    boundary: Database metadata read model
+    operation: DatabaseReadModel.list_entities
+    method_path: READ_MODEL_QUERY
+    permission: database.metadata.read
+    state_event: READ_ONLY
+    exposure: DB-01-ACT-SEARCH
+  - port_uid: DB-01-PORT-SCHEMA
+    boundary: Entity schema projection
+    operation: DatabaseReadModel.get_entity_schema
+    method_path: READ_MODEL_QUERY
+    permission: database.metadata.read
+    state_event: READ_ONLY
+    exposure: DB-01-ACT-SCHEMA-REFRESH
+  - port_uid: DB-01-PORT-TRACE
+    boundary: Traceability read model
+    operation: TraceabilityReadModel.trace_entity_lineage
+    method_path: READ_MODEL_QUERY
+    permission: database.trace.read
+    state_event: READ_ONLY
+    exposure: DB-01-ACT-TRACE
+  - port_uid: DB-01-PORT-MIGRATION
+    boundary: Migration history read model
+    operation: MigrationReadModel.list_history
+    method_path: READ_MODEL_QUERY
+    permission: database.migration.read
+    state_event: READ_ONLY
+    exposure: DB-01-ACT-MIGRATION-REFRESH / SELECT
+  - port_uid: DB-01-PORT-INTEGRITY
+    boundary: Database integrity read model
+    operation: DatabaseIntegrityReadModel.list_findings
+    method_path: READ_MODEL_QUERY
+    permission: database.integrity.read
+    state_event: READ_ONLY
+    exposure: DB-01-ACT-INTEGRITY-REFRESH / FINDING-SELECT
+  - port_uid: DB-01-PORT-AUDIT
+    boundary: Audit trace read model
+    operation: AuditReadModel.trace
+    method_path: READ_MODEL_QUERY
+    permission: audit.read
+    state_event: READ_ONLY
+    exposure: DB-01-ACT-AUDIT-OPEN
+  - port_uid: DB-01-PORT-SYSTEM-LIFECYCLE
+    boundary: Schema mutation/change route
+    operation: NAVIGATE_TO_SYSTEM_LIFECYCLE
+    method_path: UI_NAVIGATION_ONLY
+    permission: database.metadata.read
+    state_event: NO_DB_MUTATION
+    exposure: DB-01-ACT-SYSTEM-LIFECYCLE
+acceptance:
+- acceptance_uid: DB-01-ACC-01
+  item: Single Page / Global Visual
+  condition: Only admin:DB-01 current database page; Global Shell/Visual inherited
+- acceptance_uid: DB-01-ACC-02
+  item: Read-only Data Model Viewer
+  condition: No raw SQL, row editor, direct DDL or production data mutation control exists
+- acceptance_uid: DB-01-ACC-03
+  item: Exact Traceability
+  condition: Task/Job/Asset/Review/Decision/Release can trace exact Project/Mother/Topic/Child/Boundary/Bridge/source refs
+- acceptance_uid: DB-01-ACC-04
+  item: Clickable Versions
+  condition: Version/refs are exact selectable entities, not display-only M1/C1 aliases
+- acceptance_uid: DB-01-ACC-05
+  item: Immutable History
+  condition: Prior canonical/published/locked versions are not updated or physically deleted
+- acceptance_uid: DB-01-ACC-06
+  item: Integrity
+  condition: FK/ref existence, no orphan, version immutability, trace completeness and scope validation are visible
+- acceptance_uid: DB-01-ACC-07
+  item: Migration
+  condition: Migration ID/checksum/approval/dependency/status are inspectable; execution/rollback absent from DB-01
+- acceptance_uid: DB-01-ACC-08
+  item: System Lifecycle Boundary
+  condition: Schema/Production DB mutation routes to governed System Lifecycle / Change Management / Sandbox
+- acceptance_uid: DB-01-ACC-09
+  item: No Silent Repair
+  condition: Broken/orphan refs become explicit findings; UI never rewrites refs or falls back to latest
+- acceptance_uid: DB-01-ACC-10
+  item: Permission / Classification
+  condition: Read access uses explicit account permission/scope/classification; no role-name inference
+- acceptance_uid: DB-01-ACC-11
+  item: Scrollable Page
+  condition: Main Workspace height:auto; overflow-y:auto; not tied to sidebar height
+- acceptance_uid: DB-01-ACC-12
+  item: Machine Binding
+  condition: Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted=BLOCK
+hard_locks:
+- Only admin:DB-01 is the current database/data-model/traceability page defined by this authority.
+- DB-01 is a governed read/debug workspace, not a generic CRUD database editor.
+- No manual SQL console, raw row editor, direct DDL, direct Production DB write, migration execute or rollback button.
+- Any schema/data mutation must use its owning Domain Service or System Lifecycle / Change Management / Sandbox path.
+- All formal refs use exact IDs/versions/hashes/checksums; no latest/current/default or filename-based inference.
+- Locked/published/history records are immutable; no physical delete of locked history.
+- Broken/orphan/mismatched refs are shown explicitly; DB-01 must not silently repair them.
+- Database/API/Schema code remains English; UI labels use ACPOS i18n resources.
+- No fake table count, fake row count, fake migration status, fake checksum, fake health or fake integrity result; missing = —.
+- No unlisted Section/Component/Control/Action/State/Gate/Permission/Port/Business Sample Data.
+control_bindings:
+- control_uid: DB-01-FLD-ENV
+  section_uid: DB-01-SEC-01
+  component_uid: DB-01-CMP-CONTEXT
+  visual_uid: DB-01-VIS-CONTEXT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-SCHEMA-HEAD
+  section_uid: DB-01-SEC-01
+  component_uid: DB-01-CMP-CONTEXT
+  visual_uid: DB-01-VIS-CONTEXT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-MIGRATION-HEAD
+  section_uid: DB-01-SEC-01
+  component_uid: DB-01-CMP-CONTEXT
+  visual_uid: DB-01-VIS-CONTEXT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-SCOPE
+  section_uid: DB-01-SEC-01
+  component_uid: DB-01-CMP-CONTEXT
+  visual_uid: DB-01-VIS-CONTEXT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-HEALTH
+  section_uid: DB-01-SEC-01
+  component_uid: DB-01-CMP-CONTEXT
+  visual_uid: DB-01-VIS-CONTEXT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-BTN-REFRESH
+  section_uid: DB-01-SEC-01
+  component_uid: DB-01-CMP-CONTEXT
+  visual_uid: DB-01-VIS-CONTEXT
+  action_uid: DB-01-ACT-SCHEMA-REFRESH
+  gate_uid: DB-01-GATE-CONTEXT
+  permission_uid: DB_READ
+- control_uid: DB-01-INP-SEARCH
+  section_uid: DB-01-SEC-02
+  component_uid: DB-01-CMP-EXPLORER
+  visual_uid: DB-01-VIS-LEFT
+  action_uid: DB-01-ACT-SEARCH
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-SEL-DOMAIN
+  section_uid: DB-01-SEC-02
+  component_uid: DB-01-CMP-EXPLORER
+  visual_uid: DB-01-VIS-LEFT
+  action_uid: DB-01-ACT-FILTER
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-SEL-ENTITY-TYPE
+  section_uid: DB-01-SEC-02
+  component_uid: DB-01-CMP-EXPLORER
+  visual_uid: DB-01-VIS-LEFT
+  action_uid: DB-01-ACT-FILTER
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-LIST-ENTITIES
+  section_uid: DB-01-SEC-02
+  component_uid: DB-01-CMP-EXPLORER
+  visual_uid: DB-01-VIS-LEFT
+  action_uid: DB-01-ACT-ENTITY-SELECT
+  gate_uid: DB-01-GATE-ENTITY
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-ENTITY
+  section_uid: DB-01-SEC-03
+  component_uid: DB-01-CMP-SCHEMA
+  visual_uid: DB-01-VIS-SCHEMA
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-SCHEMA
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-TABLE
+  section_uid: DB-01-SEC-03
+  component_uid: DB-01-CMP-SCHEMA
+  visual_uid: DB-01-VIS-SCHEMA
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-SCHEMA
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-OWNER
+  section_uid: DB-01-SEC-03
+  component_uid: DB-01-CMP-SCHEMA
+  visual_uid: DB-01-VIS-SCHEMA
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-SCHEMA
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-CLASSIFICATION
+  section_uid: DB-01-SEC-03
+  component_uid: DB-01-CMP-SCHEMA
+  visual_uid: DB-01-VIS-SCHEMA
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-SCHEMA
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-PK
+  section_uid: DB-01-SEC-03
+  component_uid: DB-01-CMP-SCHEMA
+  visual_uid: DB-01-VIS-SCHEMA
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-SCHEMA
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-VERSION-RULE
+  section_uid: DB-01-SEC-03
+  component_uid: DB-01-CMP-SCHEMA
+  visual_uid: DB-01-VIS-SCHEMA
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-SCHEMA
+  permission_uid: DB_READ
+- control_uid: DB-01-TBL-COLUMNS
+  section_uid: DB-01-SEC-03
+  component_uid: DB-01-CMP-COLUMNS
+  visual_uid: DB-01-VIS-SCHEMA
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-SCHEMA
+  permission_uid: DB_READ
+- control_uid: DB-01-TBL-CONSTRAINTS
+  section_uid: DB-01-SEC-03
+  component_uid: DB-01-CMP-COLUMNS
+  visual_uid: DB-01-VIS-SCHEMA
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-SCHEMA
+  permission_uid: DB_READ
+- control_uid: DB-01-BTN-SCHEMA-REFRESH
+  section_uid: DB-01-SEC-03
+  component_uid: DB-01-CMP-SCHEMA
+  visual_uid: DB-01-VIS-SCHEMA
+  action_uid: DB-01-ACT-SCHEMA-REFRESH
+  gate_uid: DB-01-GATE-SCHEMA
+  permission_uid: DB_READ
+- control_uid: DB-01-TOGGLE-RELATION-VIEW
+  section_uid: DB-01-SEC-04
+  component_uid: DB-01-CMP-RELATIONS
+  visual_uid: DB-01-VIS-RELATION
+  action_uid: DB-01-ACT-RELATION-MODE
+  gate_uid: DB-01-GATE-SCHEMA
+  permission_uid: DB_READ
+- control_uid: DB-01-GRAPH-RELATIONS
+  section_uid: DB-01-SEC-04
+  component_uid: DB-01-CMP-RELATIONS
+  visual_uid: DB-01-VIS-RELATION
+  action_uid: DB-01-ACT-RELATION-OPEN
+  gate_uid: DB-01-GATE-RELATION
+  permission_uid: DB_TRACE
+- control_uid: DB-01-LIST-RELATIONS
+  section_uid: DB-01-SEC-04
+  component_uid: DB-01-CMP-RELATIONS
+  visual_uid: DB-01-VIS-RELATION
+  action_uid: DB-01-ACT-RELATION-OPEN
+  gate_uid: DB-01-GATE-RELATION
+  permission_uid: DB_TRACE
+- control_uid: DB-01-SEL-TRACE-TYPE
+  section_uid: DB-01-SEC-05
+  component_uid: DB-01-CMP-TRACE-INPUT
+  visual_uid: DB-01-VIS-TRACE
+  action_uid: DB-01-ACT-CONTEXT
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_TRACE
+- control_uid: DB-01-INP-TRACE-ID
+  section_uid: DB-01-SEC-05
+  component_uid: DB-01-CMP-TRACE-INPUT
+  visual_uid: DB-01-VIS-TRACE
+  action_uid: DB-01-ACT-CONTEXT
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_TRACE
+- control_uid: DB-01-BTN-TRACE
+  section_uid: DB-01-SEC-05
+  component_uid: DB-01-CMP-TRACE-INPUT
+  visual_uid: DB-01-VIS-TRACE
+  action_uid: DB-01-ACT-TRACE
+  gate_uid: DB-01-GATE-TRACE
+  permission_uid: DB_TRACE
+- control_uid: DB-01-VIEW-TRACE-PATH
+  section_uid: DB-01-SEC-05
+  component_uid: DB-01-CMP-TRACE-PATH
+  visual_uid: DB-01-VIS-TRACE
+  action_uid: DB-01-ACT-RELATION-OPEN
+  gate_uid: DB-01-GATE-TRACE
+  permission_uid: DB_TRACE
+- control_uid: DB-01-FLD-REF-INTEGRITY
+  section_uid: DB-01-SEC-06
+  component_uid: DB-01-CMP-INTEGRITY
+  visual_uid: DB-01-VIS-RIGHT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-FLD-ORPHAN
+  section_uid: DB-01-SEC-06
+  component_uid: DB-01-CMP-INTEGRITY
+  visual_uid: DB-01-VIS-RIGHT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-FLD-IMMUTABLE
+  section_uid: DB-01-SEC-06
+  component_uid: DB-01-CMP-INTEGRITY
+  visual_uid: DB-01-VIS-RIGHT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-FLD-TRACE-COMPLETE
+  section_uid: DB-01-SEC-06
+  component_uid: DB-01-CMP-INTEGRITY
+  visual_uid: DB-01-VIS-RIGHT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-FLD-MIGRATION-INTEGRITY
+  section_uid: DB-01-SEC-06
+  component_uid: DB-01-CMP-INTEGRITY
+  visual_uid: DB-01-VIS-RIGHT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-BTN-INTEGRITY-REFRESH
+  section_uid: DB-01-SEC-06
+  component_uid: DB-01-CMP-INTEGRITY
+  visual_uid: DB-01-VIS-RIGHT
+  action_uid: DB-01-ACT-INTEGRITY-REFRESH
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-INP-MIGRATION-SEARCH
+  section_uid: DB-01-SEC-07
+  component_uid: DB-01-CMP-MIGRATION
+  visual_uid: DB-01-VIS-MIGRATION
+  action_uid: DB-01-ACT-MIGRATION-REFRESH
+  gate_uid: DB-01-GATE-MIGRATION
+  permission_uid: DB_MIGRATION_READ
+- control_uid: DB-01-TBL-MIGRATIONS
+  section_uid: DB-01-SEC-07
+  component_uid: DB-01-CMP-MIGRATION
+  visual_uid: DB-01-VIS-MIGRATION
+  action_uid: DB-01-ACT-MIGRATION-SELECT
+  gate_uid: DB-01-GATE-MIGRATION
+  permission_uid: DB_MIGRATION_READ
+- control_uid: DB-01-BTN-MIGRATION-REFRESH
+  section_uid: DB-01-SEC-07
+  component_uid: DB-01-CMP-MIGRATION
+  visual_uid: DB-01-VIS-MIGRATION
+  action_uid: DB-01-ACT-MIGRATION-REFRESH
+  gate_uid: DB-01-GATE-MIGRATION
+  permission_uid: DB_MIGRATION_READ
+- control_uid: DB-01-SEL-FINDING-TYPE
+  section_uid: DB-01-SEC-08
+  component_uid: DB-01-CMP-FINDINGS
+  visual_uid: DB-01-VIS-FINDING
+  action_uid: DB-01-ACT-FILTER
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-LIST-FINDINGS
+  section_uid: DB-01-SEC-08
+  component_uid: DB-01-CMP-FINDINGS
+  visual_uid: DB-01-VIS-FINDING
+  action_uid: DB-01-ACT-FINDING-SELECT
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-FLD-FINDING-REASON
+  section_uid: DB-01-SEC-08
+  component_uid: DB-01-CMP-FINDINGS
+  visual_uid: DB-01-VIS-FINDING
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-FLD-FINDING-AFFECTED
+  section_uid: DB-01-SEC-08
+  component_uid: DB-01-CMP-FINDINGS
+  visual_uid: DB-01-VIS-FINDING
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-FLD-FINDING-EVIDENCE
+  section_uid: DB-01-SEC-08
+  component_uid: DB-01-CMP-FINDINGS
+  visual_uid: DB-01-VIS-FINDING
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-FLD-FINDING-OWNER
+  section_uid: DB-01-SEC-08
+  component_uid: DB-01-CMP-FINDINGS
+  visual_uid: DB-01-VIS-FINDING
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-INTEGRITY
+  permission_uid: DB_INTEGRITY_READ
+- control_uid: DB-01-INP-AUDIT-ID
+  section_uid: DB-01-SEC-09
+  component_uid: DB-01-CMP-AUDIT
+  visual_uid: DB-01-VIS-AUDIT
+  action_uid: DB-01-ACT-CONTEXT
+  gate_uid: DB-01-GATE-AUDIT
+  permission_uid: DB_AUDIT_READ
+- control_uid: DB-01-BTN-AUDIT
+  section_uid: DB-01-SEC-09
+  component_uid: DB-01-CMP-AUDIT
+  visual_uid: DB-01-VIS-AUDIT
+  action_uid: DB-01-ACT-AUDIT-OPEN
+  gate_uid: DB-01-GATE-AUDIT
+  permission_uid: DB_AUDIT_READ
+- control_uid: DB-01-VIEW-AUDIT
+  section_uid: DB-01-SEC-09
+  component_uid: DB-01-CMP-AUDIT
+  visual_uid: DB-01-VIS-AUDIT
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-AUDIT
+  permission_uid: DB_AUDIT_READ
+- control_uid: DB-01-FLD-PAGE-STATE
+  section_uid: DB-01-SEC-10
+  component_uid: DB-01-CMP-STATUS
+  visual_uid: DB-01-VIS-STATUS
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-SOURCE-SYNC
+  section_uid: DB-01-SEC-10
+  component_uid: DB-01-CMP-STATUS
+  visual_uid: DB-01-VIS-STATUS
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-DISABLED
+  section_uid: DB-01-SEC-10
+  component_uid: DB-01-CMP-STATUS
+  visual_uid: DB-01-VIS-STATUS
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-FLD-CHANGE-OWNER
+  section_uid: DB-01-SEC-10
+  component_uid: DB-01-CMP-STATUS
+  visual_uid: DB-01-VIS-STATUS
+  action_uid: DB-01-ACT-NOOP
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+- control_uid: DB-01-BTN-SYSTEM-LIFECYCLE
+  section_uid: DB-01-SEC-10
+  component_uid: DB-01-CMP-STATUS
+  visual_uid: DB-01-VIS-STATUS
+  action_uid: DB-01-ACT-SYSTEM-LIFECYCLE
+  gate_uid: DB-01-GATE-PAGE
+  permission_uid: DB_READ
+derived_validation:
+  status: PASS
+  reference_errors: []
+  current_page_count: 1
+  direct_db_mutation_control_count: 0
+  migration_execute_control_count: 0
+  manual_sql_control_count: 0
+  unlisted_registry_reference_count: 0
+  counts:
+    sections: 10
+    visuals: 10
+    components: 12
+    permissions: 5
+    gates: 9
+    errors: 10
+    page_states: 8
+    stages: 5
+    stage_transitions: 4
+    action_effect_types: 3
+    actions: 15
+    objects_refs: 8
+    controls: 49
+    integration_ports: 7

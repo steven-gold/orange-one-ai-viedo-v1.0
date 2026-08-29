@@ -1,0 +1,2541 @@
+authority:
+  id: VIDEO_PAGE_VISUAL_AUTHORITY_FINAL
+  page_uid: VIDEO-01
+  status: FINAL_LOCKED
+  current_only: true
+  legacy_merge: FORBIDDEN
+  source_word: VIDEO_影片生產工作區_頁面設計權威封板_FINAL_LOCKED.docx
+  source_word_sha256: c03b354ec19c07e954ab6cc6a97e91d141b240023ad5b51ee7180647d77bd1f9
+  visual_reference: VIDEO-01_WORKSPACE_REFERENCE_FINAL.png
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  final_gap_closure_revision: 2026-08-28-BUTTON-RUNTIME-BINDING-CLOSURE
+  source_file_for_gap_closure: VIDEO_PAGE_VISUAL_AUTHORITY_FINAL(2)(1).yaml
+  final_dedup_revision: 2026-08-28-SINGLE-EXECUTABLE-AUTHORITY
+  parallel_authority_for_same_page: FORBIDDEN
+  supersedes_gap_closed_file: VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_GAP_CLOSED.yaml
+  script_content_closure_revision: 2026-08-28-PRODUCTION-CORRECTION-PROVIDER-CONTENT
+  four_department_script_closure_revision: 2026-08-28-FOUR-DEPARTMENT-SCRIPT-FINAL
+page_contract:
+  model: SINGLE_PAGE_VIDEO_PRODUCTION_WORKSPACE
+  department: VIDEO
+  first_production_manual_prompt: FORBIDDEN
+  project_asset_picker: FORBIDDEN
+  provider_model_picker: FORBIDDEN
+  provider_translation_owner: ACPOS shared Canonical Script / Instruction Package / Provider Prompt Compiler + Core API Routing
+  canonical_flow: ASSET→VIDEO→EDITING→VOICE→QA
+layout:
+  sections:
+  - section_uid: VIDEO-01-SEC-01
+    name: Context / Execution
+    responsibility: Project / Topic / Task / Status / AUTO-MANUAL / Execute
+    position: Top 100%
+  - section_uid: VIDEO-01-SEC-02
+    name: Production List & Bound Input
+    responsibility: Scene/Shot list + Blueprint/Script/DNA/Asset exact refs read-only
+    position: Primary left 20%
+  - section_uid: VIDEO-01-SEC-03
+    name: Main Preview / Compare
+    responsibility: Single 16:9 primary preview; conditional A/B compare
+    position: Primary center 60%
+  - section_uid: VIDEO-01-SEC-04
+    name: Version / Score / Decision
+    responsibility: Current/Candidate version, VIDEO criteria score, Confirm/Modify
+    position: Primary right 20%
+  - section_uid: VIDEO-01-SEC-05
+    name: Correction Scope
+    responsibility: Scene/Shot/Start-End Time/Object/Layer local correction target
+    position: Below primary full width
+  - section_uid: VIDEO-01-SEC-06
+    name: AI Semantic Correction
+    responsibility: Traditional Chinese correction request + candidate script lifecycle
+    position: Below correction scope left/center
+  - section_uid: VIDEO-01-SEC-07
+    name: Provider Runtime
+    responsibility: Approved Route read-only + provider job/retry status
+    position: Below correction scope right
+  - section_uid: VIDEO-01-SEC-08
+    name: Stage Evaluation / Issue
+    responsibility: VIDEO-specific multidimensional evaluation, Finding/Evidence/Recheck
+    position: Lower full width
+  - section_uid: VIDEO-01-SEC-09
+    name: Exact Output Manifest / Lock / Handoff
+    responsibility: Exact version lineage + lock + VIDEO→EDIT handoff
+    position: Bottom full width
+  - section_uid: VIDEO-01-SEC-10
+    name: State / Error / Audit
+    responsibility: Runtime state, blocking reason, correlation/audit trace
+    position: Background/read projection
+  visual_regions:
+  - visual_uid: VIDEO-01-VIS-CONTEXT
+    position_size: Top 100%; content-driven; h≥56
+    overflow: Normal page flow
+    hard_lock: One Context/Execution bar only.
+  - visual_uid: VIDEO-01-VIS-LEFT
+    position_size: Primary row left 20%; min 260px
+    overflow: Section internal vertical scroll
+    hard_lock: Scene/Shot + exact bound input read-only; no project asset picker.
+  - visual_uid: VIDEO-01-VIS-PREVIEW
+    position_size: Primary row center 60%; 16:9
+    overflow: Viewer priority
+    hard_lock: Current only=100%; Candidate Compare=50/50 only when enabled.
+  - visual_uid: VIDEO-01-VIS-RIGHT
+    position_size: Primary row right 20%; min 280px
+    overflow: Section internal vertical scroll
+    hard_lock: Version/Score/Decision only; no Provider picker.
+  - visual_uid: VIDEO-01-VIS-CORRECTION
+    position_size: Below primary; 100%
+    overflow: Normal page flow
+    hard_lock: Shot/Layer/Time/Object scope; not EDIT Timeline.
+  - visual_uid: VIDEO-01-VIS-AI-REVISION
+    position_size: Below correction; about 64%
+    overflow: Normal page flow
+    hard_lock: Correction-only Chinese input; hidden/disabled on first production.
+  - visual_uid: VIDEO-01-VIS-RUNTIME
+    position_size: Below correction; about 36%
+    overflow: Normal page flow
+    hard_lock: Provider route/job read-only; Retry only if policy eligible.
+  - visual_uid: VIDEO-01-VIS-EVAL
+    position_size: Lower 100%
+    overflow: Normal page flow
+    hard_lock: VIDEO evaluation/Issue; QA department internals not defined.
+  - visual_uid: VIDEO-01-VIS-OUTPUT
+    position_size: Bottom 100%
+    overflow: Normal page flow
+    hard_lock: Exact manifest/lock/handoff; trace complement, not extra department stage.
+registries:
+  components:
+  - component_uid: VIDEO-01-CMP-CONTEXT
+    section_uid: VIDEO-01-SEC-01
+    component: ContextExecutionBar
+    responsibility: Project/Topic/Task/Status/Mode/Execute
+  - component_uid: VIDEO-01-CMP-PRODUCTION-LIST
+    section_uid: VIDEO-01-SEC-02
+    component: SceneShotList
+    responsibility: Scene/Shot task navigation and filter
+  - component_uid: VIDEO-01-CMP-BLUEPRINT-BIND
+    section_uid: VIDEO-01-SEC-02
+    component: BlueprintBindingCard
+    responsibility: Exact Locked Blueprint/ChildLock/InputFingerprint read-only
+  - component_uid: VIDEO-01-CMP-SCRIPT-BIND
+    section_uid: VIDEO-01-SEC-02
+    component: VideoScriptRoleCard
+    responsibility: Canonical VIDEO Script View/Section read-only
+  - component_uid: VIDEO-01-CMP-DNA-BIND
+    section_uid: VIDEO-01-SEC-02
+    component: DNABindingCard
+    responsibility: Exact Character/Scene/Object/Continuity refs read-only
+  - component_uid: VIDEO-01-CMP-ASSET-BIND
+    section_uid: VIDEO-01-SEC-02
+    component: ApprovedAssetBindingCard
+    responsibility: Approved Asset Handoff exact ID/version/filename/checksum/purpose
+  - component_uid: VIDEO-01-CMP-PREVIEW
+    section_uid: VIDEO-01-SEC-03
+    component: MainVideoPreview
+    responsibility: 16:9 current video viewer and transport
+  - component_uid: VIDEO-01-CMP-COMPARE
+    section_uid: VIDEO-01-SEC-03
+    component: ConditionalCompare
+    responsibility: A/B only when Candidate exists and Compare enabled
+  - component_uid: VIDEO-01-CMP-VERSION
+    section_uid: VIDEO-01-SEC-04
+    component: VideoVersionCard
+    responsibility: Current/Candidate exact video version info
+  - component_uid: VIDEO-01-CMP-SCORE
+    section_uid: VIDEO-01-SEC-04
+    component: VideoScoreCard
+    responsibility: VIDEO-specific score dimensions and hard blocks
+  - component_uid: VIDEO-01-CMP-DECISION
+    section_uid: VIDEO-01-SEC-04
+    component: DecisionPanel
+    responsibility: Confirm/Modify/Lock/Handoff state-based controls
+  - component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    section_uid: VIDEO-01-SEC-05
+    component: VideoCorrectionScope
+    responsibility: Scene/Shot/time/object/layer correction scope
+  - component_uid: VIDEO-01-CMP-AI-REVISION
+    section_uid: VIDEO-01-SEC-06
+    component: VideoCorrectionConversation
+    responsibility: Correction-only zh-TW semantic revision
+  - component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    section_uid: VIDEO-01-SEC-07
+    component: ProviderRuntimeCard
+    responsibility: Approved route/provider/model/job status read-only
+  - component_uid: VIDEO-01-CMP-EVALUATION
+    section_uid: VIDEO-01-SEC-08
+    component: VideoStageEvaluation
+    responsibility: VIDEO dimensions, score, evidence, finding/recheck
+  - component_uid: VIDEO-01-CMP-MANIFEST
+    section_uid: VIDEO-01-SEC-09
+    component: ExactOutputManifest
+    responsibility: Exact lineage/checksum/score/evidence/handoff payload
+  - component_uid: VIDEO-01-CMP-STATUS
+    section_uid: VIDEO-01-SEC-10
+    component: RuntimeStatusErrorAudit
+    responsibility: State, error, trace, disabled reason
+  controls_fields:
+  - control_uid: VIDEO-01-FLD-PROJECT
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    type: SELECT
+    label: Project
+    action_uid: VIDEO-01-ACT-PROJECT-SET
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-TOPIC
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    type: SELECT
+    label: Topic
+    action_uid: VIDEO-01-ACT-TOPIC-SET
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-TASK
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    type: SELECT
+    label: Production Task
+    action_uid: VIDEO-01-ACT-TASK-SET
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-STATUS
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    type: STATUS
+    label: Task Status
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-CTL-MODE
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    type: SEGMENTED
+    label: AUTO / MANUAL
+    action_uid: VIDEO-01-ACT-MODE-SET
+    gate_uid: VIDEO-01-GATE-TASK-READY
+    permission_uid: VIDEO_USE
+    default: AUTO
+  - control_uid: VIDEO-01-BTN-EXECUTE
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    type: BUTTON
+    label: 執行 / Execute
+    action_uid: VIDEO-01-ACT-FLOW-START
+    gate_uid: VIDEO-01-GATE-EXECUTE
+    permission_uid: VIDEO_EXECUTE
+    default: —
+  - control_uid: VIDEO-01-BTN-BLUEPRINT
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    type: BUTTON
+    label: 查看 Blueprint
+    action_uid: VIDEO-01-ACT-BLUEPRINT-VIEW
+    gate_uid: VIDEO-01-GATE-CHILD-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-BTN-PACKAGE
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    type: BUTTON
+    label: 查看 VIDEO Script / Instruction
+    action_uid: VIDEO-01-ACT-SCRIPT-VIEW
+    gate_uid: VIDEO-01-GATE-SCRIPT
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SEARCH
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-PRODUCTION-LIST
+    type: CONTROL
+    label: 搜尋 Scene / Shot
+    action_uid: VIDEO-01-ACT-LIST-SEARCH
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-CTL-FILTER
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-PRODUCTION-LIST
+    type: CONTROL
+    label: Filter
+    action_uid: VIDEO-01-ACT-LIST-FILTER
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-CTL-SHOT-SELECT
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-PRODUCTION-LIST
+    type: CONTROL
+    label: Scene / Shot Item
+    action_uid: VIDEO-01-ACT-SHOT-SELECT
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-BLUEPRINT-REF
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    type: READONLY
+    label: Blueprint / ChildLock Ref
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-INPUT-FINGERPRINT
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    type: READONLY
+    label: Input Fingerprint
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCRIPT-SECTION
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    type: READONLY
+    label: VIDEO Script Role / Section / Hash
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-DNA-REFS
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    type: READONLY
+    label: DNA / Continuity Refs
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-ASSET-REFS
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    type: READONLY
+    label: Approved Asset IDs / Versions
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-ASSET-BIND
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-FILENAME-CHECKSUM
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    type: READONLY
+    label: Filename / Checksum / Purpose Binding
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-ASSET-BIND
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-RIGHTS
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    type: READONLY
+    label: Rights / Policy
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-INSTRUCTION
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    type: READONLY
+    label: Approved Instruction Package
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-BTN-PLAY
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-PREVIEW
+    type: CONTROL
+    label: Play/Pause
+    action_uid: VIDEO-01-ACT-PREVIEW-PLAY
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-CTL-SEEK
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-PREVIEW
+    type: CONTROL
+    label: Seek
+    action_uid: VIDEO-01-ACT-PREVIEW-SEEK
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-TIMECODE
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-PREVIEW
+    type: CONTROL
+    label: Timecode
+    action_uid: VIDEO-01-ACT-PREVIEW-SEEK
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-BTN-VOLUME
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-PREVIEW
+    type: CONTROL
+    label: Volume/Mute
+    action_uid: VIDEO-01-ACT-PREVIEW-VOLUME
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-BTN-FULLSCREEN
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-PREVIEW
+    type: CONTROL
+    label: Fullscreen
+    action_uid: VIDEO-01-ACT-PREVIEW-FULLSCREEN
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-CTL-COMPARE
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-COMPARE
+    type: CONTROL
+    label: Compare
+    action_uid: VIDEO-01-ACT-COMPARE-TOGGLE
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-CTL-VERSION-A
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-COMPARE
+    type: CONTROL
+    label: Version A / Current
+    action_uid: VIDEO-01-ACT-COMPARE-A
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-CTL-VERSION-B
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-COMPARE
+    type: CONTROL
+    label: Version B / Candidate
+    action_uid: VIDEO-01-ACT-COMPARE-B
+    gate_uid: VIDEO-01-GATE-CANDIDATE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-CURRENT-VERSION
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-VERSION
+    type: READONLY
+    label: Current Exact Video Version
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-CANDIDATE-VERSION
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-VERSION
+    type: READONLY
+    label: Candidate Version
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-OVERALL-SCORE
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-SCORE
+    type: READONLY
+    label: Overall Score
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-ISSUE-SUMMARY
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-SCORE
+    type: READONLY
+    label: Issue Summary
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-CRITERIA-VERSION
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-VERSION
+    type: READONLY
+    label: VIDEO Criteria Version
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-BTN-SCORE-DETAIL
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-DECISION
+    type: BUTTON
+    label: 查看 VIDEO 評分
+    action_uid: VIDEO-01-ACT-EVALUATION-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-BTN-CONFIRM
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-DECISION
+    type: BUTTON
+    label: 確認版本
+    action_uid: VIDEO-01-ACT-CANDIDATE-CONFIRM
+    gate_uid: VIDEO-01-GATE-CONFIRM
+    permission_uid: VIDEO_DECIDE
+    default: —
+  - control_uid: VIDEO-01-BTN-MODIFY
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-DECISION
+    type: BUTTON
+    label: 修改
+    action_uid: VIDEO-01-ACT-CORRECTION-OPEN
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-BTN-LOCK
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-DECISION
+    type: BUTTON
+    label: Lock
+    action_uid: VIDEO-01-ACT-VERSION-LOCK
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_DECIDE
+    default: —
+  - control_uid: VIDEO-01-BTN-HANDOFF
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-DECISION
+    type: BUTTON
+    label: Handoff → EDIT
+    action_uid: VIDEO-01-ACT-HANDOFF
+    gate_uid: VIDEO-01-GATE-HANDOFF
+    permission_uid: VIDEO_HANDOFF
+    default: —
+  - control_uid: VIDEO-01-FLD-SCENE
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    type: FIELD
+    label: Scene
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-FLD-SHOT
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    type: FIELD
+    label: Shot
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-FLD-START-TC
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    type: FIELD
+    label: Start Timecode
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-FLD-END-TC
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    type: FIELD
+    label: End Timecode
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-FLD-TARGET-OBJECT
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    type: FIELD
+    label: Target Object
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-FLD-TARGET-LAYER
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    type: FIELD
+    label: Target Layer
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-FLD-ISSUE-REF
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    type: FIELD
+    label: Issue / Finding / Evidence
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-BTN-CONTEXT-BUILD
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    type: BUTTON
+    label: 建立修正 Context
+    action_uid: VIDEO-01-ACT-CORRECTION-CONTEXT
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-TXT-CORRECTION
+    section_uid: VIDEO-01-SEC-06
+    component_uid: VIDEO-01-CMP-AI-REVISION
+    type: TEXTAREA
+    label: 繁中修改要求
+    action_uid: VIDEO-01-ACT-CORRECTION-REQUEST-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-BTN-GEN-CORRECTION
+    section_uid: VIDEO-01-SEC-06
+    component_uid: VIDEO-01-CMP-AI-REVISION
+    type: BUTTON
+    label: 產生修正腳本
+    action_uid: VIDEO-01-ACT-CORRECTION-GENERATE
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-BTN-APPROVE-CORRECTION
+    section_uid: VIDEO-01-SEC-06
+    component_uid: VIDEO-01-CMP-AI-REVISION
+    type: BUTTON
+    label: 核准修正腳本
+    action_uid: VIDEO-01-ACT-CORRECTION-APPROVE
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-BTN-EXEC-CORRECTION
+    section_uid: VIDEO-01-SEC-06
+    component_uid: VIDEO-01-CMP-AI-REVISION
+    type: BUTTON
+    label: 執行修正
+    action_uid: VIDEO-01-ACT-CORRECTION-EXECUTE
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-BTN-COMPARE-CORRECTION
+    section_uid: VIDEO-01-SEC-06
+    component_uid: VIDEO-01-CMP-AI-REVISION
+    type: BUTTON
+    label: 比較結果
+    action_uid: VIDEO-01-ACT-COMPARE-TOGGLE
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-FLD-ROUTE
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    type: READONLY
+    label: Approved Route / Capability
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-PROVIDER
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    type: READONLY
+    label: Provider Brand / Model
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-JOB-STATE
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    type: READONLY
+    label: Provider Job State
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-ATTEMPT
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    type: READONLY
+    label: Attempt / Callback
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-RETRY
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    type: READONLY
+    label: Retry Eligibility
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-CORRELATION
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    type: READONLY
+    label: Correlation / Trace
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-BTN-RETRY
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    type: BUTTON
+    label: Retry
+    action_uid: VIDEO-01-ACT-TASK-RETRY
+    gate_uid: VIDEO-01-GATE-RETRY
+    permission_uid: VIDEO_EXECUTE
+    default: —
+  - control_uid: VIDEO-01-BTN-RUNTIME-DETAIL
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    type: BUTTON
+    label: 查看 Runtime 詳情
+    action_uid: VIDEO-01-ACT-RUNTIME-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCORE-SCRIPT
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: READONLY
+    label: VIDEO-01-SCORE-SCRIPT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCORE-IDENTITY
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: READONLY
+    label: VIDEO-01-SCORE-IDENTITY
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCORE-MOTION
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: READONLY
+    label: VIDEO-01-SCORE-MOTION
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCORE-CAMERA
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: READONLY
+    label: VIDEO-01-SCORE-CAMERA
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCORE-SCENE
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: READONLY
+    label: VIDEO-01-SCORE-SCENE
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCORE-TIMING
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: READONLY
+    label: VIDEO-01-SCORE-TIMING
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCORE-TECH
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: READONLY
+    label: VIDEO-01-SCORE-TECH
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCORE-ASSET
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: READONLY
+    label: VIDEO-01-SCORE-ASSET
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCORE-RIGHTS
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: READONLY
+    label: VIDEO-01-SCORE-RIGHTS
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-BTN-EVALUATE
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: BUTTON
+    label: 重新評分
+    action_uid: VIDEO-01-ACT-EVALUATE
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_SCORE
+    default: —
+  - control_uid: VIDEO-01-BTN-FINDING
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: BUTTON
+    label: 建立 Finding
+    action_uid: VIDEO-01-ACT-FINDING-CREATE
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_CORRECT
+    default: —
+  - control_uid: VIDEO-01-BTN-ISSUE-OPEN
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    type: BUTTON
+    label: 開啟 Issue
+    action_uid: VIDEO-01-ACT-ISSUE-OPEN
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-VIDEO-VERSION
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    type: READONLY
+    label: Exact Video Version ID
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SHOT-VERSIONS
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    type: READONLY
+    label: Shot Version refs
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-LAYER-VERSIONS
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    type: READONLY
+    label: Layer Version refs
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCRIPT-HASH
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    type: READONLY
+    label: Script Section Hash
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-ASSET-FINGERPRINT
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    type: READONLY
+    label: Asset Dependency Fingerprint
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-OUTPUT-URI
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    type: READONLY
+    label: Output URI / Composite Ref
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-CHECKSUM
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    type: READONLY
+    label: Checksum
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-SCORECARD
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    type: READONLY
+    label: Scorecard / Criteria Ref
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-EVIDENCE
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    type: READONLY
+    label: Evidence refs
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-HANDOFF-CONTRACT
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    type: READONLY
+    label: Handoff Contract Hash
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-PAGE-STATE
+    section_uid: VIDEO-01-SEC-10
+    component_uid: VIDEO-01-CMP-STATUS
+    type: READONLY
+    label: Page State
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-TASK-STATE
+    section_uid: VIDEO-01-SEC-10
+    component_uid: VIDEO-01-CMP-STATUS
+    type: READONLY
+    label: DepartmentTask State
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-ERROR
+    section_uid: VIDEO-01-SEC-10
+    component_uid: VIDEO-01-CMP-STATUS
+    type: READONLY
+    label: Error UID / Reason
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-DISABLED-REASON
+    section_uid: VIDEO-01-SEC-10
+    component_uid: VIDEO-01-CMP-STATUS
+    type: READONLY
+    label: Disabled Reason
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  - control_uid: VIDEO-01-FLD-AUDIT
+    section_uid: VIDEO-01-SEC-10
+    component_uid: VIDEO-01-CMP-STATUS
+    type: READONLY
+    label: Audit / Trace
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+    default: —
+  actions:
+  - action_uid: VIDEO-01-ACT-NOOP-VIEW
+    trigger_semantics: Read/display only
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: No business mutation
+    error_contract: VIDEO-01-ERR-CONTEXT-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-PROJECT-SET
+    trigger_semantics: Select Project
+    owner: CLIENT/ORCH
+    effect_type: CONTEXT_STATE
+    success_contract: Reset dependent Topic/Task/current data then resolve
+    error_contract: VIDEO-01-ERR-CONTEXT-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-TOPIC-SET
+    trigger_semantics: Select Topic
+    owner: CLIENT/ORCH
+    effect_type: CONTEXT_STATE
+    success_contract: Reset Task/current data then resolve
+    error_contract: VIDEO-01-ERR-CONTEXT-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-TASK-SET
+    trigger_semantics: Select assigned Production Task
+    owner: CLIENT/ORCH
+    effect_type: CONTEXT_STATE
+    success_contract: Resolve exact inputs; no manual script entry
+    error_contract: VIDEO-01-ERR-CONTEXT-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-MODE-SET
+    trigger_semantics: AUTO/MANUAL
+    owner: CLIENT/ORCH
+    effect_type: CONTEXT_STATE
+    success_contract: Only changes next-stage scheduling; data source identical
+    error_contract: VIDEO-01-ERR-CONTEXT-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-FLOW-START
+    trigger_semantics: Execute current VIDEO stage/task
+    owner: VIDEO/RUNTIME
+    effect_type: JOB_START
+    success_contract: Verify execute gates then requestTaskExecution; AUTO stops after evaluation in WAIT_CONFIRMATION
+    error_contract: VIDEO-01-ERR-INSTRUCTION-001 / VIDEO-01-ERR-ROUTE-001
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: VIDEO-01-PORT-EXECUTE
+      decision: SOURCE_DERIVED
+  - action_uid: VIDEO-01-ACT-BLUEPRINT-VIEW
+    trigger_semantics: View Locked Blueprint
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Read current exact Blueprint/ChildLock only
+    error_contract: VIDEO-01-ERR-BLUEPRINT-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-SCRIPT-VIEW
+    trigger_semantics: View VIDEO Script/Instruction
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Read provider-neutral script view/instruction refs only
+    error_contract: VIDEO-01-ERR-SCRIPT-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-LIST-SEARCH
+    trigger_semantics: Search Scene/Shot
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Filter current VIDEO task list only
+    error_contract: VIDEO-01-ERR-CONTEXT-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-LIST-FILTER
+    trigger_semantics: Filter Scene/Shot status
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Filter only
+    error_contract: VIDEO-01-ERR-CONTEXT-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-SHOT-SELECT
+    trigger_semantics: Select Scene/Shot
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Update current shot context; no source mutation
+    error_contract: VIDEO-01-ERR-CONTEXT-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-PREVIEW-PLAY
+    trigger_semantics: Preview play/pause
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Preview state only
+    error_contract: VIDEO-01-ERR-CANDIDATE-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-PREVIEW-SEEK
+    trigger_semantics: Preview seek/timecode
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Preview position only; not correction time until explicitly applied to scope
+    error_contract: VIDEO-01-ERR-CANDIDATE-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-PREVIEW-VOLUME
+    trigger_semantics: Preview volume/mute
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Preview state only
+    error_contract: VIDEO-01-ERR-CANDIDATE-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-PREVIEW-FULLSCREEN
+    trigger_semantics: Fullscreen
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Viewer state only
+    error_contract: VIDEO-01-ERR-CANDIDATE-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-COMPARE-TOGGLE
+    trigger_semantics: Toggle Compare
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: 'Candidate exists: 50/50; otherwise 100% current; no version deletion'
+    error_contract: VIDEO-01-ERR-CANDIDATE-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-COMPARE-A
+    trigger_semantics: Select baseline/current
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Viewer selection only
+    error_contract: VIDEO-01-ERR-CANDIDATE-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-COMPARE-B
+    trigger_semantics: Select candidate
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Viewer selection only
+    error_contract: VIDEO-01-ERR-CANDIDATE-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-EVALUATION-VIEW
+    trigger_semantics: View VIDEO score details
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Display dedicated VIDEO criteria/evidence only
+    error_contract: VIDEO-01-ERR-CRITERIA-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-EVALUATE
+    trigger_semantics: Run/re-run VIDEO evaluation
+    owner: VIDEO/EVALUATION
+    effect_type: SCORE_MUTATION
+    success_contract: Use exact approved VIDEO criteria version; create immutable evaluation/evidence
+    error_contract: VIDEO-01-ERR-CRITERIA-001
+    runtime_binding:
+      binding_kind: EVALUATION_COMPOSITE
+      persist_via_port_uid: VIDEO-01-PORT-SCORECARD
+      evaluation_rule: Run approved VIDEO criteria/evidence engine with dedicated VIDEO dimensions/hard blocks.
+  - action_uid: VIDEO-01-ACT-CANDIDATE-CONFIRM
+    trigger_semantics: Confirm selected candidate
+    owner: VIDEO/DECISION
+    effect_type: DECISION_MUTATION
+    success_contract: decideOutputCandidate; then persist scorecard; AUTO may load next task only after confirmation/handoff conditions
+    error_contract: VIDEO-01-ERR-CANDIDATE-001
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: VIDEO-01-PORT-DECISION
+      decision: SOURCE_DERIVED
+  - action_uid: VIDEO-01-ACT-CORRECTION-OPEN
+    trigger_semantics: Open correction mode
+    owner: CLIENT/VIDEO
+    effect_type: CONTEXT_STATE
+    success_contract: Load current issue/scope/script/blueprint/DNA/assets; no first-production prompt
+    error_contract: VIDEO-01-ERR-CORRECTION-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    trigger_semantics: Set local VIDEO correction scope
+    owner: CLIENT/VIDEO
+    effect_type: CONTEXT_STATE
+    success_contract: Only Scene/Shot/time/object/layer within current task
+    error_contract: VIDEO-01-ERR-SCOPE-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-CORRECTION-CONTEXT
+    trigger_semantics: Build correction context
+    owner: VIDEO/AI
+    effect_type: CONTEXT_STATE
+    success_contract: Resolve exact current refs/evidence for correction
+    error_contract: VIDEO-01-ERR-CORRECTION-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-CORRECTION-REQUEST-SET
+    trigger_semantics: Set zh-TW correction requirement
+    owner: CLIENT
+    effect_type: CONTEXT_STATE
+    success_contract: Correction only; preserve provider-neutral Chinese intent
+    error_contract: VIDEO-01-ERR-CORRECTION-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-CORRECTION-GENERATE
+    trigger_semantics: Generate correction script candidate
+    owner: VIDEO/AI
+    effect_type: CANDIDATE_CREATE
+    success_contract: Create provider-neutral Chinese CorrectionScriptCandidate; no provider syntax
+    error_contract: VIDEO-01-ERR-CORRECTION-001
+    runtime_binding:
+      binding_kind: SHARED_OPERATION_REFERENCE
+      shared_authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+      shared_operation_id: generateCorrectionScriptCandidate
+  - action_uid: VIDEO-01-ACT-CORRECTION-APPROVE
+    trigger_semantics: Approve correction script candidate
+    owner: VIDEO/HUMAN
+    effect_type: DECISION_MUTATION
+    success_contract: Freeze approved candidate ref for shared Instruction/Translation layer
+    error_contract: VIDEO-01-ERR-CORRECTION-001
+    runtime_binding:
+      binding_kind: SHARED_OPERATION_REFERENCE
+      shared_authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+      shared_operation_id: approveCorrectionScriptCandidate
+  - action_uid: VIDEO-01-ACT-CORRECTION-EXECUTE
+    trigger_semantics: Execute approved correction
+    owner: VIDEO/RUNTIME
+    effect_type: JOB_START
+    success_contract: Shared Compiler/Adapter translates approved candidate; Core route selects Provider; execute only target scope; new version
+    error_contract: VIDEO-01-ERR-TRANSLATION-001 / VIDEO-01-ERR-ROUTE-001
+    runtime_binding:
+      binding_kind: COMPOSITE_TO_EXISTING_EXECUTE_PORT
+      port_uid: VIDEO-01-PORT-EXECUTE
+      pre_step: Shared Compiler/Adapter translates approved candidate; Core Route resolves Provider; revalidate VIDEO input fingerprint.
+      payload_mode: CORRECTION; exact task/shot/time/object/layer + source_video_version_id + approved candidate + translated instruction ref
+      result: NEW Video Candidate/Version; no overwrite
+      decision: SOURCE_DERIVED_CLOSURE
+  - action_uid: VIDEO-01-ACT-TASK-RETRY
+    trigger_semantics: Retry failed task/job
+    owner: VIDEO/RUNTIME
+    effect_type: JOB_START
+    success_contract: retryTaskExecution only when policy eligible; preserve previous version/output
+    error_contract: VIDEO-01-ERR-PROVIDER-001
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: VIDEO-01-PORT-RETRY
+      decision: SOURCE_DERIVED
+  - action_uid: VIDEO-01-ACT-RUNTIME-VIEW
+    trigger_semantics: View Provider runtime
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Read route/job/correlation/attempt only; no provider selector
+    error_contract: VIDEO-01-ERR-PROVIDER-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-FINDING-CREATE
+    trigger_semantics: Create VIDEO finding
+    owner: VIDEO/EVALUATION
+    effect_type: FINDING_CREATE
+    success_contract: createFinding with exact task/output/evidence refs
+    error_contract: VIDEO-01-ERR-CRITERIA-001
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: VIDEO-01-PORT-FINDING
+      decision: SOURCE_DERIVED
+  - action_uid: VIDEO-01-ACT-ISSUE-OPEN
+    trigger_semantics: Open issue/evidence
+    owner: CLIENT
+    effect_type: UI_ONLY
+    success_contract: Set current finding/evidence context only
+    error_contract: VIDEO-01-ERR-CRITERIA-001
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: VIDEO-01-ACT-VERSION-LOCK
+    trigger_semantics: Lock exact Video Version
+    owner: VIDEO/VERSION
+    effect_type: VERSION_LOCK
+    success_contract: Lock exact confirmed output manifest; immutable
+    error_contract: VIDEO-01-ERR-MANIFEST-001
+    runtime_binding:
+      binding_kind: SHARED_OPERATION_REFERENCE
+      shared_authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+      shared_operation_id: lockVideoVersion
+  - action_uid: VIDEO-01-ACT-HANDOFF
+    trigger_semantics: Handoff locked Video to EDIT
+    owner: VIDEO/HANDOFF
+    effect_type: HANDOFF_CREATE
+    success_contract: createDepartmentHandoff with exact approved output/score/contract hash
+    error_contract: VIDEO-01-ERR-HANDOFF-001
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: VIDEO-01-PORT-OUT-EDIT
+      decision: SOURCE_DERIVED
+  action_effect_types:
+  - effect_type: UI_ONLY
+    allowed: Viewer/selection/read state only
+    forbidden: No business mutation
+  - effect_type: CONTEXT_STATE
+    allowed: Page context/scope/current selection
+    forbidden: No immutable version mutation
+  - effect_type: JOB_START
+    allowed: Start approved runtime/retry/correction execution
+    forbidden: Requires Gate+Permission+idempotency
+  - effect_type: SCORE_MUTATION
+    allowed: Create immutable VIDEO evaluation/score evidence
+    forbidden: Must use approved VIDEO criteria
+  - effect_type: DECISION_MUTATION
+    allowed: Human/policy candidate decision
+    forbidden: Cannot overwrite source version
+  - effect_type: CANDIDATE_CREATE
+    allowed: Create provider-neutral correction candidate
+    forbidden: Cannot execute provider directly
+  - effect_type: FINDING_CREATE
+    allowed: Create finding/evidence link
+    forbidden: No output mutation
+  - effect_type: VERSION_LOCK
+    allowed: Create immutable exact version lock
+    forbidden: No fuzzy current pointer
+  - effect_type: HANDOFF_CREATE
+    allowed: Create immutable boundary handoff
+    forbidden: Target=EDIT only for canonical flow
+  objects_refs:
+  - object_uid: VIDEO-01-REF-BLUEPRINT
+    entity: LockedBlueprintRef
+    mutability: Immutable Ref
+    owner: CORE/BLUEPRINT
+    required_content: project/topic/task + child_blueprint_version_id + hash + lock_state
+  - object_uid: VIDEO-01-REF-VIDEO-SCRIPT
+    entity: VisualGenerationScriptViewRef
+    mutability: Immutable Ref
+    owner: CORE/SCRIPT
+    required_content: package/script view/section/version/hash; provider-neutral
+  - object_uid: VIDEO-01-REF-INSTRUCTION
+    entity: InstructionPackageRef
+    mutability: Immutable Ref
+    owner: InstructionCompiler
+    required_content: same task/manifest; APPROVED_FOR_EXECUTION
+  - object_uid: VIDEO-01-REF-DNA
+    entity: DNABindingRef
+    mutability: Immutable Ref
+    owner: CORE/BLUEPRINT
+    required_content: character/scene/object/continuity IDs/versions/hashes
+  - object_uid: VIDEO-01-REF-ASSET-HANDOFF
+    entity: ApprovedAssetHandoffRef
+    mutability: Immutable Ref
+    owner: ASSET boundary
+    required_content: exact asset IDs/versions/filename/checksum/purpose/rights
+  - object_uid: VIDEO-01-OBJ-INPUT-MANIFEST
+    entity: VideoExecutionInputManifest
+    mutability: Immutable snapshot
+    owner: VIDEO/ORCH
+    required_content: task + blueprint + script + asset + instruction + route refs + fingerprint
+  - object_uid: VIDEO-01-OBJ-PROVIDER-JOB
+    entity: ProviderJobRef
+    mutability: Runtime
+    owner: MediaExecutionService
+    required_content: route/provider/model/job/attempt/callback/correlation/status
+  - object_uid: VIDEO-01-OBJ-VIDEO-CANDIDATE
+    entity: VideoCandidateOutput
+    mutability: Immutable candidate
+    owner: VIDEO
+    required_content: task/shot refs + output URI + checksum + provenance + version
+  - object_uid: VIDEO-01-OBJ-EVALUATION
+    entity: VideoStageEvaluation
+    mutability: Immutable per run
+    owner: VIDEO/EVALUATION
+    required_content: criteria version + dimension scores + overall + hard blocks + evidence
+  - object_uid: VIDEO-01-OBJ-FINDING
+    entity: VideoFinding
+    mutability: Append-only
+    owner: VIDEO/EVALUATION
+    required_content: issue type + shot/time/object/layer + evidence refs
+  - object_uid: VIDEO-01-OBJ-CORRECTION-CONTEXT
+    entity: VideoCorrectionContext
+    mutability: Mutable until accepted
+    owner: VIDEO/AI
+    required_content: current exact refs + affected_scope + finding/evidence + zh-TW requirement
+  - object_uid: VIDEO-01-OBJ-CORRECTION-SCRIPT
+    entity: CorrectionScriptCandidate
+    mutability: Immutable candidate
+    owner: VIDEO/AI
+    required_content: source script ref/hash + target scope + Chinese delta + candidate hash + approval state
+  - object_uid: VIDEO-01-OBJ-CORRECTION-TRANSLATION
+    entity: CorrectionTranslationRef
+    mutability: Immutable execution ref
+    owner: Shared Instruction/Provider layer
+    required_content: approved candidate + instruction/compiler/adapter refs + translated payload hash
+  - object_uid: VIDEO-01-OBJ-VIDEO-VERSION
+    entity: ExactVideoVersion
+    mutability: Immutable
+    owner: VIDEO
+    required_content: candidate/confirmed state + output ref + lineage
+  - object_uid: VIDEO-01-OBJ-OUTPUT-MANIFEST
+    entity: VideoOutputManifest
+    mutability: Immutable trace record
+    owner: VIDEO boundary
+    required_content: exact Video/Shot/Layer versions + script hash + asset fingerprint + URI/checksum + score/evidence/rights
+  - object_uid: VIDEO-01-OBJ-VERSION-LOCK
+    entity: VideoVersionLock
+    mutability: Immutable
+    owner: VIDEO
+    required_content: exact video_version_id + manifest hash + lock actor/time
+  - object_uid: VIDEO-01-OBJ-HANDOFF
+    entity: VideoEditingHandoff
+    mutability: Append-only
+    owner: VIDEO boundary
+    required_content: locked exact output + manifest/checksum + scorecard + contract hash + target EDIT
+  gates:
+  - gate_uid: VIDEO-01-GATE-PAGE
+    condition: Authorized page + project/task scope
+    block_behavior: BLOCK + permission reason
+  - gate_uid: VIDEO-01-GATE-TASK-READY
+    condition: Assigned VIDEO task READY and dependency Handoff complete
+    block_behavior: BLOCK execute
+  - gate_uid: VIDEO-01-GATE-CHILD-LOCK
+    condition: Exact ChildLock/Blueprint version+hash valid
+    block_behavior: BLOCK execute
+  - gate_uid: VIDEO-01-GATE-SCRIPT
+    condition: Exact VIDEO Script View/Section + hash resolved
+    block_behavior: BLOCK; no free prompt fallback
+  - gate_uid: VIDEO-01-GATE-ASSET-BIND
+    condition: Approved asset refs exact ID/version/filename/checksum/purpose match
+    block_behavior: BLOCK; return upstream correction
+  - gate_uid: VIDEO-01-GATE-INSTRUCTION
+    condition: Approved Instruction Package resolvable for same task/manifest
+    block_behavior: BLOCK; INSTRUCTION_PACKAGE_REQUIRED
+  - gate_uid: VIDEO-01-GATE-ROUTE
+    condition: Core-approved Provider Candidate Group/Capability/rights/budget policy PASS
+    block_behavior: BLOCK; no local Provider selection
+  - gate_uid: VIDEO-01-GATE-EXECUTE
+    condition: TASK_READY + CHILD_LOCK + SCRIPT + ASSET_BIND + INSTRUCTION + ROUTE
+    block_behavior: Execute/retry enabled only on PASS
+  - gate_uid: VIDEO-01-GATE-CANDIDATE
+    condition: Verified provider result materialized as Candidate with provenance/checksum
+    block_behavior: BLOCK compare/decision
+  - gate_uid: VIDEO-01-GATE-EVALUATION
+    condition: Approved VIDEO criteria version + all required dimensions/evidence
+    block_behavior: BLOCK decision
+  - gate_uid: VIDEO-01-GATE-CONFIRM
+    condition: VIDEO score ≥95 + no hard block + human selection
+    block_behavior: Confirm enabled
+  - gate_uid: VIDEO-01-GATE-CORRECTION
+    condition: Finding + affected_scope + current exact refs + correction reason
+    block_behavior: Correction enabled
+  - gate_uid: VIDEO-01-GATE-RETRY
+    condition: Runtime BLOCKED/FAILED + retry policy eligible
+    block_behavior: Retry enabled; otherwise disabled reason
+  - gate_uid: VIDEO-01-GATE-LOCK
+    condition: Confirmed exact Video Version + scorecard + exact output manifest complete
+    block_behavior: Lock enabled
+  - gate_uid: VIDEO-01-GATE-HANDOFF
+    condition: Locked exact Video Version + handoff manifest/contract hash PASS
+    block_behavior: VIDEO→EDIT handoff enabled
+  - gate_uid: VIDEO-01-GATE-COMPARE
+    condition: Candidate exists + Current exists + user enables Compare
+    block_behavior: Render A/B 50/50; otherwise single 100%
+  permissions:
+  - permission_uid: VIDEO_USE
+    purpose: Enter page / basic projection
+    r9_scope: video.task.read
+  - permission_uid: VIDEO_EXECUTE
+    purpose: Execute/retry assigned VIDEO task
+    r9_scope: video.task.execute + department.task.execute
+  - permission_uid: VIDEO_DECIDE
+    purpose: Confirm/modify candidate
+    r9_scope: department.output.decide
+  - permission_uid: VIDEO_SCORE
+    purpose: Persist VIDEO scorecard
+    r9_scope: video.score.write + department.score.write
+  - permission_uid: VIDEO_CORRECT
+    purpose: Create finding/correction
+    r9_scope: finding.write + correction.create
+  - permission_uid: VIDEO_HANDOFF
+    purpose: Create VIDEO→EDIT handoff
+    r9_scope: video.handoff.create + department.handoff.create
+  errors:
+  - error_uid: VIDEO-01-ERR-CONTEXT-001
+    context: Project/Topic/Task context missing or stale
+    recovery: Reset context and resolve current task
+  - error_uid: VIDEO-01-ERR-BLUEPRINT-001
+    context: Locked Blueprint/ChildLock missing/mismatch
+    recovery: BLOCK; return Core/Blueprint owner
+  - error_uid: VIDEO-01-ERR-SCRIPT-001
+    context: VIDEO Script Role/Section missing/hash mismatch
+    recovery: BLOCK; do not generate prompt locally
+  - error_uid: VIDEO-01-ERR-ASSET-001
+    context: Approved Asset binding ID/version/filename/checksum/purpose mismatch
+    recovery: BLOCK; return Blueprint→Asset regeneration/update path
+  - error_uid: VIDEO-01-ERR-INSTRUCTION-001
+    context: Approved Instruction Package unavailable
+    recovery: BLOCK; INSTRUCTION_PACKAGE_REQUIRED
+  - error_uid: VIDEO-01-ERR-ROUTE-001
+    context: Provider capability/rights/budget route unavailable
+    recovery: BLOCK; wait Core/API routing resolution
+  - error_uid: VIDEO-01-ERR-PROVIDER-001
+    context: Provider job failed/callback invalid
+    recovery: Preserve task/current output; show retry eligibility
+  - error_uid: VIDEO-01-ERR-CALLBACK-001
+    context: Callback pending/invalid/duplicate/hash mismatch
+    recovery: No domain mutation for invalid result; audit
+  - error_uid: VIDEO-01-ERR-CANDIDATE-001
+    context: Candidate output/provenance/checksum invalid
+    recovery: BLOCK decision/score
+  - error_uid: VIDEO-01-ERR-CRITERIA-001
+    context: VIDEO criteria version missing/not approved/wrong department
+    recovery: BLOCK evaluation; no generic default criteria
+  - error_uid: VIDEO-01-ERR-SCOPE-001
+    context: Correction scope missing or outside current Shot/object/layer/time range
+    recovery: BLOCK correction
+  - error_uid: VIDEO-01-ERR-CORRECTION-001
+    context: Correction candidate not approved or source context stale
+    recovery: Return correction discussion; no execute
+  - error_uid: VIDEO-01-ERR-TRANSLATION-001
+    context: Shared translation/compiler failed or mismatched candidate
+    recovery: BLOCK provider execution; preserve Chinese candidate
+  - error_uid: VIDEO-01-ERR-VERSION-001
+    context: Attempt to overwrite or use non-exact version
+    recovery: BLOCK; create new immutable version only
+  - error_uid: VIDEO-01-ERR-MANIFEST-001
+    context: Output manifest/checksum/lineage incomplete
+    recovery: BLOCK Lock/Handoff
+  - error_uid: VIDEO-01-ERR-PERM-001
+    context: Permission/scope denied
+    recovery: Disable action + show real reason
+  - error_uid: VIDEO-01-ERR-HANDOFF-001
+    context: Handoff dependency/contract/hash invalid
+    recovery: BLOCK Handoff; preserve locked version
+  stages:
+  - stage_uid: VIDEO-01-STAGE-01-RESOLVE
+    name: Resolve Inputs
+    flow: Resolve exact Blueprint→VIDEO Script→DNA/Asset→Instruction Package→Core Route; no manual prompt.
+  - stage_uid: VIDEO-01-STAGE-02-GENERATE
+    name: Generate / Regenerate
+    flow: requestTaskExecution or approved correction/retry path; Provider routing/backend materializes candidate.
+  - stage_uid: VIDEO-01-STAGE-03-EVALUATE
+    name: VIDEO Evaluation
+    flow: Run VIDEO criteria, findings/evidence, overall score; enter WAIT_CONFIRMATION.
+  - stage_uid: VIDEO-01-STAGE-04-DECIDE
+    name: Confirm / Modify
+    flow: Confirm candidate or open correction loop. AUTO only advances after Confirm.
+  - stage_uid: VIDEO-01-STAGE-05-FINALIZE
+    name: Lock / Handoff
+    flow: Seal exact output manifest, lock exact Video Version, handoff to EDIT.
+  stage_transitions:
+  - transition_uid: VIDEO-01-STTR-01
+    from_stage: VIDEO-01-STAGE-01-RESOLVE
+    to_stage: VIDEO-01-STAGE-02-GENERATE
+    trigger: VIDEO-01-ACT-FLOW-START
+    gate: All input/route gates PASS
+  - transition_uid: VIDEO-01-STTR-02
+    from_stage: VIDEO-01-STAGE-02-GENERATE
+    to_stage: VIDEO-01-STAGE-03-EVALUATE
+    trigger: Verified Candidate Output
+    gate: Candidate provenance/checksum PASS
+  - transition_uid: VIDEO-01-STTR-03
+    from_stage: VIDEO-01-STAGE-03-EVALUATE
+    to_stage: VIDEO-01-STAGE-04-DECIDE
+    trigger: VIDEO-01-ACT-EVALUATE
+    gate: Criteria/evidence completed
+  - transition_uid: VIDEO-01-STTR-04
+    from_stage: VIDEO-01-STAGE-04-DECIDE
+    to_stage: VIDEO-01-STAGE-02-GENERATE
+    trigger: VIDEO-01-ACT-CORRECTION-EXECUTE
+    gate: Modify path; new candidate only
+  - transition_uid: VIDEO-01-STTR-05
+    from_stage: VIDEO-01-STAGE-04-DECIDE
+    to_stage: VIDEO-01-STAGE-05-FINALIZE
+    trigger: VIDEO-01-ACT-CANDIDATE-CONFIRM
+    gate: Score≥95 + no hard block + human confirm
+  script_roles:
+  - script_role_uid: VIDEO-01-SCRIPT-ROLE-VIDEO
+    view: VisualGenerationScriptView
+    required_content: '8-section field-level VIDEO production script contract: Shot/Input/Composition/Motion/Camera/Timing/Environment/Output Constraints'
+    hard_guard: Provider-neutral; first production read-only
+    content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.VIDEO
+  - script_role_uid: VIDEO-01-SCRIPT-ROLE-CORRECTION
+    view: CorrectionScriptCandidate
+    required_content: Only target scope delta/instruction derived from current VIDEO script + issue
+    hard_guard: Exists only during Correction; must be human approved before shared translation
+    content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_correction_content.VIDEO
+  video_score_dimensions:
+  - score_uid: VIDEO-01-SCORE-SCRIPT
+    dimension: Script Compliance
+    definition: Matches Blueprint/VIDEO Script intent and required shot beats
+  - score_uid: VIDEO-01-SCORE-IDENTITY
+    dimension: Character / Identity Stability
+    definition: Character face/body/clothing/DNA consistency
+  - score_uid: VIDEO-01-SCORE-MOTION
+    dimension: Motion / Body Continuity
+    definition: Movement continuity and physical plausibility
+  - score_uid: VIDEO-01-SCORE-CAMERA
+    dimension: Camera / Gaze
+    definition: Camera instruction, framing, gaze/action direction
+  - score_uid: VIDEO-01-SCORE-SCENE
+    dimension: Scene / Continuity
+    definition: Scene/world continuity, bridge/setting consistency
+  - score_uid: VIDEO-01-SCORE-TIMING
+    dimension: Timing / Duration
+    definition: Shot duration, beats, temporal progression
+  - score_uid: VIDEO-01-SCORE-TECH
+    dimension: Technical Quality
+    definition: Resolution, flicker/artifacts, anatomy/physics, visual defects
+  - score_uid: VIDEO-01-SCORE-ASSET
+    dimension: Asset / DNA Fidelity
+    definition: Exact bound assets/DNA visually respected
+  - score_uid: VIDEO-01-SCORE-RIGHTS
+    dimension: Rights / Policy
+    definition: Hard block; PASS required regardless of numeric score
+  integration_ports:
+  - port_uid: VIDEO-01-PORT-IN-ASSET-HANDOFF
+    boundary: Inbound / Dependency Ready
+    r9_operation: createDepartmentHandoff
+    method_effective_path: POST /v1/handoffs
+    r9_permission: department.handoff.create
+    state_event: Upstream HANDOFF_READY→HANDED_OFF; VIDEO WAITING_DEPENDENCY→READY | handoff.created
+    video01_exposure: Created upstream; VIDEO validates exact AssetHandoff only.
+  - port_uid: VIDEO-01-PORT-EXECUTE
+    boundary: Generate
+    r9_operation: requestTaskExecution
+    method_effective_path: POST /v1/tasks/{taskId}/execute
+    r9_permission: department.task.execute
+    state_event: DepartmentTask:READY→ROUTING | provider.job.requested
+    video01_exposure: VIDEO-01-ACT-FLOW-START; only after execute gates PASS.
+  - port_uid: VIDEO-01-PORT-RETRY
+    boundary: Retry
+    r9_operation: retryTaskExecution
+    method_effective_path: POST /v1/tasks/{taskId}/retry
+    r9_permission: department.task.execute
+    state_event: DepartmentTask:BLOCKED/FAILED→ROUTING | provider.job.requested
+    video01_exposure: VIDEO-01-ACT-TASK-RETRY; policy eligible only.
+  - port_uid: VIDEO-01-PORT-FINDING
+    boundary: Evaluation Finding
+    r9_operation: createFinding
+    method_effective_path: POST /v1/findings
+    r9_permission: finding.write
+    state_event: IN_REVIEW→FINDING_OPEN | finding.created
+    video01_exposure: VIDEO-01-ACT-FINDING-CREATE.
+  - port_uid: VIDEO-01-PORT-CORRECTION
+    boundary: Correction Request
+    r9_operation: createCorrectionRequest
+    method_effective_path: POST /v1/correction-requests
+    r9_permission: correction.create
+    state_event: FINDING_OPEN→CORRECTION_REQUIRED | correction.requested
+    video01_exposure: Correction request references affected_scope; execution still uses approved script/translation/route.
+  - port_uid: VIDEO-01-PORT-DECISION
+    boundary: Candidate Confirm
+    r9_operation: decideOutputCandidate
+    method_effective_path: POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
+    r9_permission: department.output.decide
+    state_event: CANDIDATE_OUTPUT→SCORE_PENDING | output.decision_recorded
+    video01_exposure: VIDEO-01-ACT-CANDIDATE-CONFIRM.
+  - port_uid: VIDEO-01-PORT-SCORECARD
+    boundary: Score Persist
+    r9_operation: submitScorecard
+    method_effective_path: POST /v1/scorecards
+    r9_permission: department.score.write
+    state_event: SCORE_PENDING→BLOCKED or HANDOFF_READY | scorecard.submitted
+    video01_exposure: Persist confirmed VIDEO evaluation with VIDEO criteria version.
+  - port_uid: VIDEO-01-PORT-OUT-EDIT
+    boundary: Outbound to EDIT
+    r9_operation: createDepartmentHandoff
+    method_effective_path: POST /v1/handoffs
+    r9_permission: department.handoff.create
+    state_event: HANDOFF_READY→HANDED_OFF; EDIT WAITING_DEPENDENCY→READY | handoff.created
+    video01_exposure: VIDEO-01-ACT-HANDOFF; exact locked manifest only.
+binding_chain:
+- step_uid: VIDEO-01-BIND-01
+  resolution_rule: Current Task → exact Child Lock / Blueprint
+  hard_guard: version_id + lock_state + hash 一致；不可讀 latest。
+- step_uid: VIDEO-01-BIND-02
+  resolution_rule: Blueprint → VisualGenerationScriptView / VIDEO Script Role
+  hard_guard: section/version/hash 必須存在；首次生產不得 AI 自建。
+- step_uid: VIDEO-01-BIND-03
+  resolution_rule: VIDEO Script → DNA / Continuity / Asset requirement refs
+  hard_guard: 只接受 Script/Blueprint 明確引用。
+- step_uid: VIDEO-01-BIND-04
+  resolution_rule: AssetHandoff → exact Asset ID + Version + Filename + Checksum + Purpose Binding
+  hard_guard: 任一 mismatch=BLOCK；要改素材必須回 Blueprint→ASSET 更新。
+- step_uid: VIDEO-01-BIND-05
+  resolution_rule: Task/Manifest → Approved Instruction Package
+  hard_guard: 同 Task/Manifest、APPROVED_FOR_EXECUTION；缺失=BLOCK。
+- step_uid: VIDEO-01-BIND-06
+  resolution_rule: Instruction/Capability → Core API Routing
+  hard_guard: VIDEO 只宣告能力需求；Provider/Model由 Core Router 決定。
+- step_uid: VIDEO-01-BIND-07
+  resolution_rule: Execute 前 → VideoExecutionInputManifest / input fingerprint
+  hard_guard: 每次 execute/retry/correction 前重新驗證。
+- step_uid: VIDEO-01-BIND-08
+  resolution_rule: Candidate → exact output lineage/checksum/provenance
+  hard_guard: 未驗證 callback/結果不得進 Candidate/Decision。
+correction_lifecycle:
+- step_uid: VIDEO-01-CORR-01
+  flow: Open Finding / manual correction request
+  hard_guard: Resolve Current Task/Shot/Video Version/Script/DNA/Assets/Score/Evidence
+- step_uid: VIDEO-01-CORR-02
+  flow: Set affected_scope
+  hard_guard: Scene/Shot/time/object/layer 必須合法
+- step_uid: VIDEO-01-CORR-03
+  flow: User zh-TW requirement
+  hard_guard: 只描述修改要求，不輸入 Provider syntax
+- step_uid: VIDEO-01-CORR-04
+  flow: Generate CorrectionScriptCandidate
+  hard_guard: Provider-neutral Chinese scoped candidate
+- step_uid: VIDEO-01-CORR-05
+  flow: Human Approve Candidate
+  hard_guard: 未核准不得 Translation/Execute
+- step_uid: VIDEO-01-CORR-06
+  flow: Shared Instruction/Provider Translation
+  hard_guard: 由共用 Compiler/Adapter 轉換，不由 VIDEO 定義 Provider 語法
+- step_uid: VIDEO-01-CORR-07
+  flow: Execute correction target scope
+  hard_guard: Core Route 指定 Provider；產生 New Candidate，不覆蓋舊版
+- step_uid: VIDEO-01-CORR-08
+  flow: Re-score / Compare / Confirm or Modify again
+  hard_guard: 直到 Confirm 後才能進 Finalize/Handoff
+binding_matrices:
+  control_matrix:
+  - control_uid: VIDEO-01-FLD-PROJECT
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    visual_uid: VIDEO-01-VIS-CONTEXT
+    action_uid: VIDEO-01-ACT-PROJECT-SET
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-TOPIC
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    visual_uid: VIDEO-01-VIS-CONTEXT
+    action_uid: VIDEO-01-ACT-TOPIC-SET
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-TASK
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    visual_uid: VIDEO-01-VIS-CONTEXT
+    action_uid: VIDEO-01-ACT-TASK-SET
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-STATUS
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    visual_uid: VIDEO-01-VIS-CONTEXT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-CTL-MODE
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    visual_uid: VIDEO-01-VIS-CONTEXT
+    action_uid: VIDEO-01-ACT-MODE-SET
+    gate_uid: VIDEO-01-GATE-TASK-READY
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-BTN-EXECUTE
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    visual_uid: VIDEO-01-VIS-CONTEXT
+    action_uid: VIDEO-01-ACT-FLOW-START
+    gate_uid: VIDEO-01-GATE-EXECUTE
+    permission_uid: VIDEO_EXECUTE
+  - control_uid: VIDEO-01-BTN-BLUEPRINT
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    visual_uid: VIDEO-01-VIS-CONTEXT
+    action_uid: VIDEO-01-ACT-BLUEPRINT-VIEW
+    gate_uid: VIDEO-01-GATE-CHILD-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-BTN-PACKAGE
+    section_uid: VIDEO-01-SEC-01
+    component_uid: VIDEO-01-CMP-CONTEXT
+    visual_uid: VIDEO-01-VIS-CONTEXT
+    action_uid: VIDEO-01-ACT-SCRIPT-VIEW
+    gate_uid: VIDEO-01-GATE-SCRIPT
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SEARCH
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-PRODUCTION-LIST
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-LIST-SEARCH
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-CTL-FILTER
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-PRODUCTION-LIST
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-LIST-FILTER
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-CTL-SHOT-SELECT
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-PRODUCTION-LIST
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-SHOT-SELECT
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-BLUEPRINT-REF
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-INPUT-FINGERPRINT
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCRIPT-SECTION
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-DNA-REFS
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-ASSET-REFS
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-ASSET-BIND
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-FILENAME-CHECKSUM
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-ASSET-BIND
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-RIGHTS
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-INSTRUCTION
+    section_uid: VIDEO-01-SEC-02
+    component_uid: VIDEO-01-CMP-ASSET-BIND
+    visual_uid: VIDEO-01-VIS-LEFT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-BTN-PLAY
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-PREVIEW
+    visual_uid: VIDEO-01-VIS-PREVIEW
+    action_uid: VIDEO-01-ACT-PREVIEW-PLAY
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-CTL-SEEK
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-PREVIEW
+    visual_uid: VIDEO-01-VIS-PREVIEW
+    action_uid: VIDEO-01-ACT-PREVIEW-SEEK
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-TIMECODE
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-PREVIEW
+    visual_uid: VIDEO-01-VIS-PREVIEW
+    action_uid: VIDEO-01-ACT-PREVIEW-SEEK
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-BTN-VOLUME
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-PREVIEW
+    visual_uid: VIDEO-01-VIS-PREVIEW
+    action_uid: VIDEO-01-ACT-PREVIEW-VOLUME
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-BTN-FULLSCREEN
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-PREVIEW
+    visual_uid: VIDEO-01-VIS-PREVIEW
+    action_uid: VIDEO-01-ACT-PREVIEW-FULLSCREEN
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-CTL-COMPARE
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-COMPARE
+    visual_uid: VIDEO-01-VIS-PREVIEW
+    action_uid: VIDEO-01-ACT-COMPARE-TOGGLE
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-CTL-VERSION-A
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-COMPARE
+    visual_uid: VIDEO-01-VIS-PREVIEW
+    action_uid: VIDEO-01-ACT-COMPARE-A
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-CTL-VERSION-B
+    section_uid: VIDEO-01-SEC-03
+    component_uid: VIDEO-01-CMP-COMPARE
+    visual_uid: VIDEO-01-VIS-PREVIEW
+    action_uid: VIDEO-01-ACT-COMPARE-B
+    gate_uid: VIDEO-01-GATE-CANDIDATE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-CURRENT-VERSION
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-VERSION
+    visual_uid: VIDEO-01-VIS-RIGHT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-CANDIDATE-VERSION
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-VERSION
+    visual_uid: VIDEO-01-VIS-RIGHT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-OVERALL-SCORE
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-SCORE
+    visual_uid: VIDEO-01-VIS-RIGHT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-ISSUE-SUMMARY
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-SCORE
+    visual_uid: VIDEO-01-VIS-RIGHT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-CRITERIA-VERSION
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-VERSION
+    visual_uid: VIDEO-01-VIS-RIGHT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-BTN-SCORE-DETAIL
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-DECISION
+    visual_uid: VIDEO-01-VIS-RIGHT
+    action_uid: VIDEO-01-ACT-EVALUATION-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-BTN-CONFIRM
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-DECISION
+    visual_uid: VIDEO-01-VIS-RIGHT
+    action_uid: VIDEO-01-ACT-CANDIDATE-CONFIRM
+    gate_uid: VIDEO-01-GATE-CONFIRM
+    permission_uid: VIDEO_DECIDE
+  - control_uid: VIDEO-01-BTN-MODIFY
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-DECISION
+    visual_uid: VIDEO-01-VIS-RIGHT
+    action_uid: VIDEO-01-ACT-CORRECTION-OPEN
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-BTN-LOCK
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-DECISION
+    visual_uid: VIDEO-01-VIS-RIGHT
+    action_uid: VIDEO-01-ACT-VERSION-LOCK
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_DECIDE
+  - control_uid: VIDEO-01-BTN-HANDOFF
+    section_uid: VIDEO-01-SEC-04
+    component_uid: VIDEO-01-CMP-DECISION
+    visual_uid: VIDEO-01-VIS-RIGHT
+    action_uid: VIDEO-01-ACT-HANDOFF
+    gate_uid: VIDEO-01-GATE-HANDOFF
+    permission_uid: VIDEO_HANDOFF
+  - control_uid: VIDEO-01-FLD-SCENE
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    visual_uid: VIDEO-01-VIS-CORRECTION
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-FLD-SHOT
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    visual_uid: VIDEO-01-VIS-CORRECTION
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-FLD-START-TC
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    visual_uid: VIDEO-01-VIS-CORRECTION
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-FLD-END-TC
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    visual_uid: VIDEO-01-VIS-CORRECTION
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-FLD-TARGET-OBJECT
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    visual_uid: VIDEO-01-VIS-CORRECTION
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-FLD-TARGET-LAYER
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    visual_uid: VIDEO-01-VIS-CORRECTION
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-FLD-ISSUE-REF
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    visual_uid: VIDEO-01-VIS-CORRECTION
+    action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-BTN-CONTEXT-BUILD
+    section_uid: VIDEO-01-SEC-05
+    component_uid: VIDEO-01-CMP-CORRECTION-SCOPE
+    visual_uid: VIDEO-01-VIS-CORRECTION
+    action_uid: VIDEO-01-ACT-CORRECTION-CONTEXT
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-TXT-CORRECTION
+    section_uid: VIDEO-01-SEC-06
+    component_uid: VIDEO-01-CMP-AI-REVISION
+    visual_uid: VIDEO-01-VIS-AI-REVISION
+    action_uid: VIDEO-01-ACT-CORRECTION-REQUEST-SET
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-BTN-GEN-CORRECTION
+    section_uid: VIDEO-01-SEC-06
+    component_uid: VIDEO-01-CMP-AI-REVISION
+    visual_uid: VIDEO-01-VIS-AI-REVISION
+    action_uid: VIDEO-01-ACT-CORRECTION-GENERATE
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-BTN-APPROVE-CORRECTION
+    section_uid: VIDEO-01-SEC-06
+    component_uid: VIDEO-01-CMP-AI-REVISION
+    visual_uid: VIDEO-01-VIS-AI-REVISION
+    action_uid: VIDEO-01-ACT-CORRECTION-APPROVE
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-BTN-EXEC-CORRECTION
+    section_uid: VIDEO-01-SEC-06
+    component_uid: VIDEO-01-CMP-AI-REVISION
+    visual_uid: VIDEO-01-VIS-AI-REVISION
+    action_uid: VIDEO-01-ACT-CORRECTION-EXECUTE
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-BTN-COMPARE-CORRECTION
+    section_uid: VIDEO-01-SEC-06
+    component_uid: VIDEO-01-CMP-AI-REVISION
+    visual_uid: VIDEO-01-VIS-AI-REVISION
+    action_uid: VIDEO-01-ACT-COMPARE-TOGGLE
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-FLD-ROUTE
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    visual_uid: VIDEO-01-VIS-RUNTIME
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-PROVIDER
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    visual_uid: VIDEO-01-VIS-RUNTIME
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-JOB-STATE
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    visual_uid: VIDEO-01-VIS-RUNTIME
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-ATTEMPT
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    visual_uid: VIDEO-01-VIS-RUNTIME
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-RETRY
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    visual_uid: VIDEO-01-VIS-RUNTIME
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-CORRELATION
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    visual_uid: VIDEO-01-VIS-RUNTIME
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-BTN-RETRY
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    visual_uid: VIDEO-01-VIS-RUNTIME
+    action_uid: VIDEO-01-ACT-TASK-RETRY
+    gate_uid: VIDEO-01-GATE-RETRY
+    permission_uid: VIDEO_EXECUTE
+  - control_uid: VIDEO-01-BTN-RUNTIME-DETAIL
+    section_uid: VIDEO-01-SEC-07
+    component_uid: VIDEO-01-CMP-PROVIDER-RUNTIME
+    visual_uid: VIDEO-01-VIS-RUNTIME
+    action_uid: VIDEO-01-ACT-RUNTIME-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCORE-SCRIPT
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCORE-IDENTITY
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCORE-MOTION
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCORE-CAMERA
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCORE-SCENE
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCORE-TIMING
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCORE-TECH
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCORE-ASSET
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCORE-RIGHTS
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-BTN-EVALUATE
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-EVALUATE
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_SCORE
+  - control_uid: VIDEO-01-BTN-FINDING
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-FINDING-CREATE
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_CORRECT
+  - control_uid: VIDEO-01-BTN-ISSUE-OPEN
+    section_uid: VIDEO-01-SEC-08
+    component_uid: VIDEO-01-CMP-EVALUATION
+    visual_uid: VIDEO-01-VIS-EVAL
+    action_uid: VIDEO-01-ACT-ISSUE-OPEN
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-VIDEO-VERSION
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SHOT-VERSIONS
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-LAYER-VERSIONS
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCRIPT-HASH
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-ASSET-FINGERPRINT
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-OUTPUT-URI
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-CHECKSUM
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-SCORECARD
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-EVIDENCE
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-HANDOFF-CONTRACT
+    section_uid: VIDEO-01-SEC-09
+    component_uid: VIDEO-01-CMP-MANIFEST
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-LOCK
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-PAGE-STATE
+    section_uid: VIDEO-01-SEC-10
+    component_uid: VIDEO-01-CMP-STATUS
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-TASK-STATE
+    section_uid: VIDEO-01-SEC-10
+    component_uid: VIDEO-01-CMP-STATUS
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-ERROR
+    section_uid: VIDEO-01-SEC-10
+    component_uid: VIDEO-01-CMP-STATUS
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-DISABLED-REASON
+    section_uid: VIDEO-01-SEC-10
+    component_uid: VIDEO-01-CMP-STATUS
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  - control_uid: VIDEO-01-FLD-AUDIT
+    section_uid: VIDEO-01-SEC-10
+    component_uid: VIDEO-01-CMP-STATUS
+    visual_uid: VIDEO-01-VIS-OUTPUT
+    action_uid: VIDEO-01-ACT-NOOP-VIEW
+    gate_uid: VIDEO-01-GATE-PAGE
+    permission_uid: VIDEO_USE
+  action_governance:
+  - action_uid: VIDEO-01-ACT-NOOP-VIEW
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-PAGE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-PROJECT-SET
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+  - action_uid: VIDEO-01-ACT-TOPIC-SET
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+  - action_uid: VIDEO-01-ACT-TASK-SET
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+  - action_uid: VIDEO-01-ACT-MODE-SET
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-TASK-READY
+    effect_type: CONTEXT_STATE
+  - action_uid: VIDEO-01-ACT-FLOW-START
+    permission_uid: VIDEO_EXECUTE
+    gate_uid: VIDEO-01-GATE-EXECUTE
+    effect_type: JOB_START
+  - action_uid: VIDEO-01-ACT-BLUEPRINT-VIEW
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-CHILD-LOCK
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-SCRIPT-VIEW
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-SCRIPT
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-LIST-SEARCH
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-PAGE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-LIST-FILTER
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-PAGE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-SHOT-SELECT
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-PAGE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-PREVIEW-PLAY
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-CANDIDATE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-PREVIEW-SEEK
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-CANDIDATE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-PREVIEW-VOLUME
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-CANDIDATE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-PREVIEW-FULLSCREEN
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-CANDIDATE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-COMPARE-TOGGLE
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-COMPARE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-COMPARE-A
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-COMPARE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-COMPARE-B
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-COMPARE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-EVALUATION-VIEW
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-EVALUATE
+    permission_uid: VIDEO_SCORE
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    effect_type: SCORE_MUTATION
+  - action_uid: VIDEO-01-ACT-CANDIDATE-CONFIRM
+    permission_uid: VIDEO_DECIDE
+    gate_uid: VIDEO-01-GATE-CONFIRM
+    effect_type: DECISION_MUTATION
+  - action_uid: VIDEO-01-ACT-CORRECTION-OPEN
+    permission_uid: VIDEO_CORRECT
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    effect_type: CONTEXT_STATE
+  - action_uid: VIDEO-01-ACT-CORRECTION-SCOPE-SET
+    permission_uid: VIDEO_CORRECT
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    effect_type: CONTEXT_STATE
+  - action_uid: VIDEO-01-ACT-CORRECTION-CONTEXT
+    permission_uid: VIDEO_CORRECT
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    effect_type: CONTEXT_STATE
+  - action_uid: VIDEO-01-ACT-CORRECTION-REQUEST-SET
+    permission_uid: VIDEO_CORRECT
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    effect_type: CONTEXT_STATE
+  - action_uid: VIDEO-01-ACT-CORRECTION-GENERATE
+    permission_uid: VIDEO_CORRECT
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    effect_type: CANDIDATE_CREATE
+  - action_uid: VIDEO-01-ACT-CORRECTION-APPROVE
+    permission_uid: VIDEO_CORRECT
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    effect_type: DECISION_MUTATION
+  - action_uid: VIDEO-01-ACT-CORRECTION-EXECUTE
+    permission_uid: VIDEO_EXECUTE
+    gate_uid: VIDEO-01-GATE-CORRECTION
+    effect_type: JOB_START
+  - action_uid: VIDEO-01-ACT-TASK-RETRY
+    permission_uid: VIDEO_EXECUTE
+    gate_uid: VIDEO-01-GATE-RETRY
+    effect_type: JOB_START
+  - action_uid: VIDEO-01-ACT-RUNTIME-VIEW
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-PAGE
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-FINDING-CREATE
+    permission_uid: VIDEO_CORRECT
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    effect_type: FINDING_CREATE
+  - action_uid: VIDEO-01-ACT-ISSUE-OPEN
+    permission_uid: VIDEO_USE
+    gate_uid: VIDEO-01-GATE-EVALUATION
+    effect_type: UI_ONLY
+  - action_uid: VIDEO-01-ACT-VERSION-LOCK
+    permission_uid: VIDEO_DECIDE
+    gate_uid: VIDEO-01-GATE-LOCK
+    effect_type: VERSION_LOCK
+  - action_uid: VIDEO-01-ACT-HANDOFF
+    permission_uid: VIDEO_HANDOFF
+    gate_uid: VIDEO-01-GATE-HANDOFF
+    effect_type: HANDOFF_CREATE
+forbidden:
+- 禁止初次生產顯示自由 Prompt / 手動腳本輸入。
+- 禁止 VIDEO 人工挑 Project Asset / DNA / Provider / Model。
+- 禁止直接以 Provider syntax 作為核心 Script；中文製作腳本/Provider-neutral intent 才是 Authority。
+- 禁止永久渲染兩個播放器；沒有 Candidate 時 B 完全不存在。
+- 禁止把 EDIT Timeline/Clip/Subtitle/Audio Mixing/Final Render 功能加入 VIDEO。
+- 禁止把 ASSET Layer Editor / AssetPatch 操作加入 VIDEO。
+- 禁止修改 Blueprint/DNA/Asset binding；需變更時退回 Blueprint→Asset 更新再 Resolve。
+- 禁止 generic/default 評分；必須是 VIDEO approved criteria。
+- 禁止覆寫 Video Version；Correction/Retry 建立 New Version。
+- 禁止 direct VIDEO→QA 或 release；canonical Handoff target = EDIT。
+- 禁止假 Provider/Score/Version/Duration/Runtime；缺值顯示 —。
+- 未列 Section/Component/Control/Action/State/Gate/Error/Port = BLOCK。
+acceptance:
+- acceptance_uid: VIDEO-01-ACC-01
+  item: Single Page + Global Visual
+  condition: 只有 VIDEO Main Workspace；Global Shell/Visual 不覆寫
+- acceptance_uid: VIDEO-01-ACC-02
+  item: First Production Zero Prompt
+  condition: PROJECT_TASK 首次執行不顯示自由 Prompt/Provider Picker/Asset Picker
+- acceptance_uid: VIDEO-01-ACC-03
+  item: Exact Input Binding
+  condition: Blueprint/Script/DNA/Assets/Instruction/Route 全可追溯且 fingerprint PASS
+- acceptance_uid: VIDEO-01-ACC-04
+  item: 16:9 Viewer
+  condition: Current only Single 100%；Compare conditional 50/50
+- acceptance_uid: VIDEO-01-ACC-05
+  item: VIDEO-only Correction
+  condition: Scene/Shot/time/object/layer；不混 EDIT/ASSET 功能
+- acceptance_uid: VIDEO-01-ACC-06
+  item: Shared Translation
+  condition: Correction Chinese candidate → shared compiler/adapter → Core route
+- acceptance_uid: VIDEO-01-ACC-07
+  item: VIDEO Scoring
+  condition: Approved VIDEO criteria + dedicated dimensions + hard blocks
+- acceptance_uid: VIDEO-01-ACC-08
+  item: AUTO/MANUAL
+  condition: 兩模式同資料來源；AUTO Confirm 後才自動下一 Task
+- acceptance_uid: VIDEO-01-ACC-09
+  item: Version Immutable
+  condition: New Candidate/Version append-only；Confirm exact version
+- acceptance_uid: VIDEO-01-ACC-10
+  item: Manifest
+  condition: Exact manifest complete; no fuzzy/latest refs
+- acceptance_uid: VIDEO-01-ACC-11
+  item: Handoff
+  condition: Only VIDEO→EDIT using locked exact output + score/contract hash
+- acceptance_uid: VIDEO-01-ACC-12
+  item: Machine Binding
+  condition: Control/Action/Gate/Permission/Port references all resolved; no duplicate UID
+derived_validation:
+  status: PASS
+  errors: []
+  counts:
+    Section: 10
+    Visual: 9
+    Component: 17
+    Control/Field: 85
+    Action: 34
+    Object/Ref: 17
+    Gate: 16
+    Permission: 6
+    Error: 17
+    Stage: 5
+    Stage Transition: 5
+    Script Role: 2
+    Score Dimension: 9
+    Integration Port: 8
+  duplicate_or_missing_registry_reference: 0
+  final_gap_closure:
+    status: FINAL_GAP_CLOSED
+    source_action_count: 34
+    source_control_count: 85
+    action_runtime_binding_coverage: 34/34
+    control_runtime_binding_coverage: 85/85
+    unresolved_control_action_refs: 0
+    unbound_actions: 0
+    shared_delegations_are_explicit: true
+    frontend_route_inference_required: false
+  final_dedup_cleanup:
+    status: PASS
+    action_runtime_embedded_in_single_action_registry: true
+    parallel_action_runtime_registry: 0
+    parallel_control_binding_registry: 0
+final_gap_closure:
+  status: FINAL_GAP_CLOSED_DEDUP_CLEAN
+  single_action_owner: registries.actions
+  single_control_owner: registries.controls
+  runtime_binding_location: registries.actions[*].runtime_binding
+  action_runtime_binding_count: 34
+  control_count: 85
+  parallel_action_runtime_registry_removed: true
+  parallel_control_runtime_registry_removed: true
+  shared_operation_definition_location: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  rule: Action owns one embedded runtime_binding. Shared service details are referenced by shared_operation_id only.
+script_content_authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT
+production_script_content_contract:
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.VIDEO
+  existing_view: VisualGenerationScriptView
+  section_uids:
+  - VIDEO-SCRIPT-SEC-01-SHOT-INTENT
+  - VIDEO-SCRIPT-SEC-02-INPUT-BINDING
+  - VIDEO-SCRIPT-SEC-03-COMPOSITION
+  - VIDEO-SCRIPT-SEC-04-ACTION-MOTION
+  - VIDEO-SCRIPT-SEC-05-CAMERA
+  - VIDEO-SCRIPT-SEC-06-TIMING
+  - VIDEO-SCRIPT-SEC-07-ENVIRONMENT
+  - VIDEO-SCRIPT-SEC-08-OUTPUT-CONSTRAINTS
+correction_script_content_contract:
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_correction_content.VIDEO
+  existing_object: CorrectionScriptCandidate
+provider_adapter_contract:
+  contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.1#provider_adapter_contract
+  profile_owner: admin:AIAPI-06#provider_model_profiles
+  department_provider_registry: FORBIDDEN
+canonical_script_source_binding:
+  owner: CORE Script System
+  source_object_uid: CORE-01-REF-CANONICAL-SCRIPT
+  required_binding: Exact project_id + topic_id + canonical_script_version + canonical_script_hash
+  rule: The department specialized production script must consume the exact CORE CanonicalProductionScriptRef. It may add only department-specific production
+    detail under its existing content contract.
+  missing_or_mismatch: BLOCK + REPORT_AUTHORITY_GAP

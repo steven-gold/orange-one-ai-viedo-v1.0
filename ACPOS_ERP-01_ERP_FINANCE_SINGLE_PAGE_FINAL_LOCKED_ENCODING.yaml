@@ -1,0 +1,1007 @@
+authority:
+  id: ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_AUTHORITY
+  page_uid: admin:ERP-01
+  page_name_zh: ERP
+  page_name_en: ERP & Finance
+  surface: ADMIN
+  status: FINAL_LOCKED
+  current_only: true
+  file_spec_status: FILE_SPEC_COMPLETE
+  system_implementation_status: NOT_EXECUTED
+  master_merge_status: NOT_MERGED
+  single_page_workspace: true
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
+  backend_l1_key: erp_finance
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  purpose: One current ERP workspace that consolidates the existing R9 ERP Connector/Snapshot and Finance/Capacity Guardrail
+    page capabilities into one same-page administration workspace without creating a second ERP service, finance service,
+    connector registry, sync engine, snapshot store, finance store, export service or authorization system.
+  truthful_status_rule: This file completes current ERP page design/encoding only. Application code, R9 master merge, external
+    ERP connector execution, runtime, Sandbox, Regression, E2E, restart persistence and production deployment are NOT_EXECUTED.
+source_alignment:
+  primary_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL.yaml / R9 ERP
+  source_pages:
+  - page_uid: admin:ERP-01
+    role: ERP Connector / Snapshot
+    owner: ERPConnectorService
+    source_control_count: 17
+    purpose: Connector, read-only scope, snapshot, freshness, currency/timezone, completeness, failure, audit and sync operations.
+  - page_uid: admin:ERP-02
+    role: Finance / Capacity Guardrail
+    owner: FinanceGuardrailService
+    source_control_count: 12
+    purpose: Cost, revenue, cashflow, capacity, forecast, guardrails, recommendation boundary and export/read operations.
+  single_page_consolidation:
+    current_ui_page_uid: admin:ERP-01
+    standalone_navigation_surfaces_superseded:
+    - admin:ERP-02
+    supersession_scope: UI navigation/page surface only
+    preserved_service_operation_contracts: true
+    preserved_source_controls: 29
+  r9_active_vs_archive_rule: Current construction uses R9 master only. Historical handbook revenue/expense/manual accounting
+    examples are not promoted into executable current controls because the active R9 operation registry does not expose those
+    write operations.
+single_system_contract:
+  current_ui_owner: admin:ERP-01
+  service_owners:
+  - REUSE ERPConnectorService
+  - REUSE FinanceGuardrailService
+  - REUSE existing Projection/Export/Audit owners
+  forbidden_parallel_components:
+  - second ERP system
+  - second ERP connector registry
+  - second finance/ledger service
+  - second snapshot store
+  - second ERP sync engine
+  - second finance/capacity guardrail engine
+  - second export service
+  - page-local secret store
+  - page-local RBAC/permission system
+  - page-local provider/API-key system
+  external_erp_writeback: FORBIDDEN by R9 ERP_write_from_ACPOS boundary
+  missing_value_behavior: Render — / incomplete / actual state; missing_value_as_zero is forbidden.
+page_composition:
+  canonical_user_flow: Finance Overview <-> ERP Connection <-> Sync & Data Quality; Audit/details secondary drawer
+  view_switch_rule: Three main views are same-page UI context only; switching views does not mutate business state and does
+    not create new routes.
+  default_view: finance_overview
+  main_views:
+  - view_uid: ERP-01-VIEW-FINANCE
+    key: finance_overview
+    label: 財務概況
+    owner: REUSE FinanceGuardrailService
+    content:
+    - Cost
+    - Revenue
+    - Cashflow
+    - Capacity
+    - Forecast
+    - Guardrails
+    - Recommendation Boundary
+    - Fact Pack / Export
+  - view_uid: ERP-01-VIEW-CONNECTOR
+    key: connector_mapping
+    label: ERP 連接
+    owner: REUSE ERPConnectorService
+    content:
+    - Connector identity
+    - Provider/Adapter key
+    - Secret Reference ID
+    - Entity Scope
+    - Connection Status
+    - Mapping Version
+    - Create/Update/Validate/Mapping Validate
+  - view_uid: ERP-01-VIEW-SYNC
+    key: sync_quality
+    label: 同步與資料品質
+    owner: REUSE ERPConnectorService
+    content:
+    - Snapshot
+    - Freshness
+    - Currency/Timezone
+    - Completeness
+    - Last Sync Status
+    - Failure
+    - Refresh/Create Sync/Status/Retry
+  secondary_drawer:
+    width: 480-560px
+    content:
+    - Exact source projection detail
+    - Failure detail
+    - Audit ref
+    - Version/correlation reference
+    - Allowed error/retry eligibility
+    no_duplicate_permanent_cards: true
+layout:
+  desktop_min_width: 1280px
+  below_min_width: Keep min-width=1280px + horizontal scroll; no alternate mobile workflow
+  vertical_scroll: Main workspace height:auto; overflow-y:auto
+  context_bar:
+    height: 56px
+    width: 100%
+  view_bar:
+    height: 52px
+    width: 100%
+    type: compact segmented tabs
+  primary_grid:
+    columns: minmax(0,72fr) minmax(300px,28fr)
+    approx: 72% / 28%
+    gap: 16px
+    align: start
+  primary_workspace: Current selected ERP view; finance/connector/sync details
+  governance_rail: Readiness, connector/snapshot state, freshness/completeness, permission/data blockers, detail drawer trigger
+  local_action_dock:
+    height: 56px
+    rule: Only actions valid for current view + current state + permission; one dominant action maximum.
+  visual_override: FORBIDDEN; inherit Global Visual tokens only
+  fake_chart_or_kpi: FORBIDDEN
+finance_contract:
+  read_only: true
+  amount_visibility: Raw finance/provider cost values require explicit finance.read/provider.cost.read as applicable; otherwise
+    masked/non-amount status only.
+  visible_groups:
+  - cost
+  - revenue
+  - cashflow
+  - capacity
+  - forecast
+  - guardrails
+  - recommendation_boundary
+  actions:
+  - getERPFinanceFactPack
+  - getERPCapacityGuardrails
+  - getERPForecast
+  - exportProjection
+  forbidden_current_actions:
+  - create revenue
+  - create expense
+  - edit ledger
+  - budget approval/reallocation execution
+  - manual accounting journal
+  - external ERP writeback
+  reason: No such executable current ERP operation is registered in the active R9 ERP page authority; do not import archive
+    handbook examples as runtime authority.
+connector_contract:
+  read_fields:
+  - FIELD-ADMIN-ERP-01-CONNECTOR-ID
+  - FIELD-ADMIN-ERP-01-PROVIDER-KEY
+  - FIELD-ADMIN-ERP-01-ADAPTER-KEY
+  - FIELD-ADMIN-ERP-01-SECRET-REFERENCE-ID
+  - FIELD-ADMIN-ERP-01-ENTITY-SCOPE
+  - FIELD-ADMIN-ERP-01-CONNECTION-STATUS
+  - FIELD-ADMIN-ERP-01-MAPPING-VERSION
+  secret_rule: Only secret_reference_id is stored/rendered; secret values are never embedded or displayed.
+  actions:
+  - createERPConnector
+  - updateERPConnector
+  - validateERPConnector
+  - validateERPMapping
+sync_quality_contract:
+  read_fields:
+  - FIELD-ADMIN-ERP-01-SNAPSHOT-ID
+  - FIELD-ADMIN-ERP-01-FRESHNESS-AT
+  - FIELD-ADMIN-ERP-01-COMPLETENESS
+  - FIELD-ADMIN-ERP-01-LAST-SYNC-STATUS
+  - FIELD-ADMIN-ERP-01-FAILURE-ID
+  - FIELD-ADMIN-ERP-01-AUDIT-REF
+  currency_timezone_source_section: admin:ERP-01:currency_timezone
+  actions:
+  - refreshERPSnapshot
+  - createERPSyncJob
+  - getERPSyncStatus
+  - retryERPSync
+  - getERPFailure
+  data_truth_rule: No fake connector health, no fake financial values, no synthetic completeness/freshness, no missing-as-zero.
+form_contracts:
+  common_effectful_context:
+  - scope
+  - expected_version
+  - correlation_id
+  - idempotency_key
+  CreateERPConnectorRequest:
+    business_fields:
+    - provider_key
+    - adapter_key
+    - secret_reference_id
+    - entity_scope
+    - mapping_version
+    - mapping_entity_name
+    - mapping_source_schema
+    - mapping_target_schema
+    - mapping_transform_spec
+    - data_classification
+    additionalProperties: false
+    ui_rule: Schema-driven modal. No page-union fields; no client-authored runtime state; no raw secret value field.
+  UpdateERPConnectorRequest:
+    rule: Use exact existing R9 UpdateERPConnectorRequest. Do not union/infer fields from page.
+  ValidateERPConnectorRequest:
+    rule: Use exact existing R9 ValidateERPConnectorRequest by operation binding.
+  ValidateERPMappingRequest:
+    rule: Use exact existing R9 business payload schema by operation_id.
+  RefreshERPSnapshotRequest:
+    rule: Use exact existing R9 business payload schema by operation_id.
+  CreateERPSyncJobRequest:
+    known_business_fields_from_R9:
+    - erp_connector_id
+    - requested_scope
+    - data_classification
+    - records_payload
+    - snapshot_type
+    - snapshot_document
+    - completeness
+    - external_result_verified
+    - external_evidence_refs
+    ui_rule: Use exact R9 schema. Do not turn test fixture/example values into defaults.
+  RetryERPSyncRequest:
+    rule: Use exact existing R9 business payload schema by operation_id.
+  ExportProjectionRequest:
+    rule: Use exact existing R9 business payload schema by operation_id.
+operation_registry_refs:
+- operation_id: getUiProjection
+  method: GET
+  path: /v1/ui-projections/{pageUid}
+  owner: Projection / source page read owner
+  permission: SOURCE_R9_PAGE_SECTION_FIELD_ACCOUNT_AUTHORIZATION
+  request_contract: N/A_READ
+- operation_id: createERPConnector
+  method: POST
+  path: /v1/erp/connectors
+  owner: ERPConnectorService
+  permission: erp.connector.write
+  request_contract: CreateERPConnectorRequest
+  event: erp.connector.created
+- operation_id: updateERPConnector
+  method: PATCH
+  path: /v1/erp/connectors/{id}
+  owner: ERPConnectorService
+  permission: erp.connector.write
+  request_contract: UpdateERPConnectorRequest
+  event: erp.connector.updated
+- operation_id: validateERPConnector
+  method: POST
+  path: /v1/erp/connectors/{id}/validate
+  owner: ERPConnectorService
+  permission: erp.connector.validate
+  request_contract: ValidateERPConnectorRequest
+  events:
+  - erp.connector.validation_requested
+  - erp.connector.validation_failed
+- operation_id: validateERPMapping
+  method: POST
+  path: /v1/erp/mappings/{id}/validate
+  owner: ERPConnectorService
+  permission: erp.mapping.validate
+  request_contract: USE_SOURCE_R9_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
+  event: erp.mapping.validation_failed
+- operation_id: refreshERPSnapshot
+  method: POST
+  path: /v1/erp/snapshots/refresh
+  owner: ERPConnectorService
+  permission: erp.snapshot.read / source exact operation permission
+  request_contract: USE_SOURCE_R9_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
+  event: erp.snapshot.refresh_requested
+- operation_id: createERPSyncJob
+  method: POST
+  path: /v1/erp/sync-jobs
+  owner: ERPConnectorService
+  permission: erp.sync.request
+  request_contract: CreateERPSyncJobRequest
+  event: erp.sync.requested
+- operation_id: getERPSyncStatus
+  method: GET
+  path: /v1/erp/sync-jobs/{id}
+  owner: ERPConnectorService
+  permission: erp.connector.read / source exact operation permission
+  request_contract: N/A_READ
+- operation_id: retryERPSync
+  method: POST
+  path: /v1/erp/sync-jobs/{id}/retry
+  owner: ERPConnectorService
+  permission: erp.sync.retry
+  request_contract: USE_SOURCE_R9_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
+  event: erp.sync.retry_requested
+- operation_id: getERPFailure
+  method: GET
+  path: /v1/erp/failures/{id}
+  owner: ERPConnectorService
+  permission: erp.connector.read / source exact operation permission
+  request_contract: N/A_READ
+- operation_id: getERPFinanceFactPack
+  method: GET
+  path: /v1/erp/finance/fact-pack
+  owner: FinanceGuardrailService
+  permission: finance.read
+  request_contract: N/A_READ
+- operation_id: getERPCapacityGuardrails
+  method: GET
+  path: /v1/erp/capacity/guardrails
+  owner: FinanceGuardrailService
+  permission: finance.read
+  request_contract: N/A_READ
+- operation_id: getERPForecast
+  method: GET
+  path: /v1/erp/forecasts
+  owner: FinanceGuardrailService
+  permission: finance.read
+  request_contract: N/A_READ
+- operation_id: exportProjection
+  method: POST
+  path: /v1/exports
+  owner: Existing Projection/Export owner
+  permission: SOURCE_R9_OPERATION_PERMISSION_BY_OPERATION_ID
+  request_contract: USE_SOURCE_R9_BUSINESS_PAYLOAD_SCHEMA_BY_OPERATION_ID
+  event: export.requested
+source_control_coverage:
+  admin:ERP-01:
+  - CTRL-ADMIN-ERP-01-CONNECTOR-OPEN
+  - CTRL-ADMIN-ERP-01-SNAPSHOT-OPEN
+  - CTRL-ADMIN-ERP-01-FRESHNESS-OPEN
+  - CTRL-ADMIN-ERP-01-CURRENCY-TIMEZONE-OPEN
+  - CTRL-ADMIN-ERP-01-COMPLETENESS-OPEN
+  - CTRL-ADMIN-ERP-01-FAILURE-OPEN
+  - CTRL-ADMIN-ERP-01-AUDIT-OPEN
+  - CTRL-ADMIN-ERP-01-ACT-01-ERP-CONNECTOR-CREATE
+  - CTRL-ADMIN-ERP-01-ACT-02-ERP-CONNECTOR-UPDATE
+  - CTRL-ADMIN-ERP-01-ACT-03-ERP-CONNECTOR-VALIDATE
+  - CTRL-ADMIN-ERP-01-ACT-04-ERP-MAPPING-VALIDATE
+  - CTRL-ADMIN-ERP-01-ACT-05-ERP-SNAPSHOT-REFRESH
+  - CTRL-ADMIN-ERP-01-ACT-06-ERP-SYNC-CREATE
+  - CTRL-ADMIN-ERP-01-ACT-07-ERP-SYNC-STATUS
+  - CTRL-ADMIN-ERP-01-ACT-08-ERP-SYNC-RETRY
+  - CTRL-ADMIN-ERP-01-ACT-09-ERP-FAILURE-GET
+  - CTRL-ADMIN-ERP-01-ACT-10-ACT-NAV-OPEN
+  admin:ERP-02:
+  - CTRL-ADMIN-ERP-02-COST-OPEN
+  - CTRL-ADMIN-ERP-02-REVENUE-OPEN
+  - CTRL-ADMIN-ERP-02-CASHFLOW-OPEN
+  - CTRL-ADMIN-ERP-02-CAPACITY-OPEN
+  - CTRL-ADMIN-ERP-02-FORECAST-OPEN
+  - CTRL-ADMIN-ERP-02-GUARDRAILS-OPEN
+  - CTRL-ADMIN-ERP-02-RECOMMENDATION-BOUNDARY-OPEN
+  - CTRL-ADMIN-ERP-02-ACT-01-ERP-FINANCE-GET-FACTPACK
+  - CTRL-ADMIN-ERP-02-ACT-02-ERP-CAPACITY-GET-GUARDRAILS
+  - CTRL-ADMIN-ERP-02-ACT-03-ERP-FORECAST-GET
+  - CTRL-ADMIN-ERP-02-ACT-04-ACT-EXPORT
+  - CTRL-ADMIN-ERP-02-ACT-05-ACT-NAV-OPEN
+  source_nav_alias:
+    CTRL-ADMIN-ERP-02-ACT-05-ACT-NAV-OPEN: ERP-01-BTN-DETAIL
+  coverage_rule: All 29 source controls remain accounted for as source operation/read bindings. Current presentation may consolidate
+    technical section-open/nav-open behavior but may not drop underlying capability or invent a second backend action.
+registries:
+  sections:
+  - section_uid: ERP-01-SEC-01
+    name: ERP Context Bar
+    responsibility: Authorized scope, snapshot, freshness, current system status
+  - section_uid: ERP-01-SEC-02
+    name: Same-page View Bar
+    responsibility: Finance / Connector / Sync view switch only
+  - section_uid: ERP-01-SEC-03
+    name: Finance Overview
+    responsibility: Cost/revenue/cashflow/capacity/forecast/guardrail read models + R9 finance read/export operations
+  - section_uid: ERP-01-SEC-04
+    name: ERP Connector & Mapping
+    responsibility: Connector projection + create/update/validate/mapping validate
+  - section_uid: ERP-01-SEC-05
+    name: Snapshot / Sync / Data Quality
+    responsibility: Snapshot/freshness/currency-timezone/completeness/sync/failure
+  - section_uid: ERP-01-SEC-06
+    name: Governance Rail
+    responsibility: Readiness/blocker status + audit/detail drawer trigger
+  - section_uid: ERP-01-SEC-07
+    name: Local Action Dock
+    responsibility: Current-view state/permission-valid actions only
+  - section_uid: ERP-01-SEC-08
+    name: Detail Drawer
+    responsibility: Low-frequency details, failure, audit, correlation/version references
+  controls:
+  - control_uid: ERP-01-FLD-SCOPE
+    section_uid: ERP-01-SEC-01
+    type: READONLY
+    label: ERP Scope
+    action_uid: ERP-01-ACT-READ
+    gate_uid: ERP-01-GATE-PAGE
+    permission_uid: ERP-01-PERM-READ
+    default: —
+    rule: Exact authorized scope only; no implicit global scope.
+  - control_uid: ERP-01-FLD-SNAPSHOT
+    section_uid: ERP-01-SEC-01
+    type: READONLY
+    label: Snapshot ID
+    action_uid: ERP-01-ACT-READ
+    gate_uid: ERP-01-GATE-PAGE
+    permission_uid: ERP-01-PERM-READ
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-SNAPSHOT-OPEN
+  - control_uid: ERP-01-FLD-FRESHNESS
+    section_uid: ERP-01-SEC-01
+    type: READONLY
+    label: 資料時間 / Freshness
+    action_uid: ERP-01-ACT-READ
+    gate_uid: ERP-01-GATE-PAGE
+    permission_uid: ERP-01-PERM-READ
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-FRESHNESS-OPEN
+  - control_uid: ERP-01-BTN-TAB-FINANCE
+    section_uid: ERP-01-SEC-02
+    type: TAB
+    label: 財務概況
+    action_uid: ERP-01-ACT-VIEW-FINANCE
+    gate_uid: ERP-01-GATE-PAGE
+    permission_uid: ERP-01-PERM-READ
+    default: —
+    rule: Same-page view context only; no route/business-state mutation.
+  - control_uid: ERP-01-BTN-TAB-CONNECTOR
+    section_uid: ERP-01-SEC-02
+    type: TAB
+    label: ERP 連接
+    action_uid: ERP-01-ACT-VIEW-CONNECTOR
+    gate_uid: ERP-01-GATE-PAGE
+    permission_uid: ERP-01-PERM-READ
+    default: —
+    rule: Same-page view context only; no route/business-state mutation.
+  - control_uid: ERP-01-BTN-TAB-SYNC
+    section_uid: ERP-01-SEC-02
+    type: TAB
+    label: 同步與資料品質
+    action_uid: ERP-01-ACT-VIEW-SYNC
+    gate_uid: ERP-01-GATE-PAGE
+    permission_uid: ERP-01-PERM-READ
+    default: —
+    rule: Same-page view context only; no route/business-state mutation.
+  - control_uid: ERP-01-FLD-FIN-COST
+    section_uid: ERP-01-SEC-03
+    type: READONLY
+    label: 成本
+    action_uid: ERP-01-ACT-READ-FINANCE
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-COST-OPEN
+    rule: Render exact authorized read-model value; missing/unavailable = —; no client-side derived finance metric.
+  - control_uid: ERP-01-FLD-FIN-REVENUE
+    section_uid: ERP-01-SEC-03
+    type: READONLY
+    label: 收益
+    action_uid: ERP-01-ACT-READ-FINANCE
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-REVENUE-OPEN
+    rule: Render exact authorized read-model value; missing/unavailable = —; no client-side derived finance metric.
+  - control_uid: ERP-01-FLD-FIN-CASHFLOW
+    section_uid: ERP-01-SEC-03
+    type: READONLY
+    label: 現金流
+    action_uid: ERP-01-ACT-READ-FINANCE
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-CASHFLOW-OPEN
+    rule: Render exact authorized read-model value; missing/unavailable = —; no client-side derived finance metric.
+  - control_uid: ERP-01-FLD-FIN-CAPACITY
+    section_uid: ERP-01-SEC-03
+    type: READONLY
+    label: 產能
+    action_uid: ERP-01-ACT-READ-FINANCE
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-CAPACITY-OPEN
+    rule: Render exact authorized read-model value; missing/unavailable = —; no client-side derived finance metric.
+  - control_uid: ERP-01-FLD-FIN-FORECAST
+    section_uid: ERP-01-SEC-03
+    type: READONLY
+    label: Forecast
+    action_uid: ERP-01-ACT-READ-FINANCE
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-FORECAST-OPEN
+    rule: Render exact authorized read-model value; missing/unavailable = —; no client-side derived finance metric.
+  - control_uid: ERP-01-FLD-FIN-GUARDRAILS
+    section_uid: ERP-01-SEC-03
+    type: READONLY
+    label: Guardrails
+    action_uid: ERP-01-ACT-READ-FINANCE
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-GUARDRAILS-OPEN
+    rule: Render exact authorized read-model value; missing/unavailable = —; no client-side derived finance metric.
+  - control_uid: ERP-01-FLD-FIN-RECOMMENDATION-BOUNDARY
+    section_uid: ERP-01-SEC-03
+    type: READONLY
+    label: 建議邊界
+    action_uid: ERP-01-ACT-READ-FINANCE
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-RECOMMENDATION-BOUNDARY-OPEN
+    rule: Render exact authorized read-model value; missing/unavailable = —; no client-side derived finance metric.
+  - control_uid: ERP-01-BTN-FACTPACK
+    section_uid: ERP-01-SEC-03
+    type: BUTTON
+    label: 取得 Fact Pack
+    action_uid: ERP-01-ACT-FACTPACK
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-ACT-01-ERP-FINANCE-GET-FACTPACK
+  - control_uid: ERP-01-BTN-GUARDRAILS
+    section_uid: ERP-01-SEC-03
+    type: BUTTON
+    label: 取得產能 Guardrails
+    action_uid: ERP-01-ACT-GUARDRAILS
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-ACT-02-ERP-CAPACITY-GET-GUARDRAILS
+  - control_uid: ERP-01-BTN-FORECAST
+    section_uid: ERP-01-SEC-03
+    type: BUTTON
+    label: 取得 Forecast
+    action_uid: ERP-01-ACT-FORECAST
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-ACT-03-ERP-FORECAST-GET
+  - control_uid: ERP-01-BTN-EXPORT
+    section_uid: ERP-01-SEC-03
+    type: BUTTON
+    label: 匯出目前投影
+    action_uid: ERP-01-ACT-EXPORT
+    gate_uid: ERP-01-GATE-FINANCE
+    permission_uid: ERP-01-PERM-FINANCE
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-02-ACT-04-ACT-EXPORT
+  - control_uid: ERP-01-FLD-CONN-CONNECTOR-ID
+    section_uid: ERP-01-SEC-04
+    type: READONLY
+    label: Connector ID
+    action_uid: ERP-01-ACT-READ-CONNECTOR
+    gate_uid: ERP-01-GATE-CONNECTOR-READ
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-CONNECTOR-OPEN
+    rule: Exact source projection only.
+  - control_uid: ERP-01-FLD-CONN-PROVIDER-KEY
+    section_uid: ERP-01-SEC-04
+    type: READONLY
+    label: Provider Key
+    action_uid: ERP-01-ACT-READ-CONNECTOR
+    gate_uid: ERP-01-GATE-CONNECTOR-READ
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-CONNECTOR-OPEN
+    rule: Exact source projection only.
+  - control_uid: ERP-01-FLD-CONN-ADAPTER-KEY
+    section_uid: ERP-01-SEC-04
+    type: READONLY
+    label: Adapter Key
+    action_uid: ERP-01-ACT-READ-CONNECTOR
+    gate_uid: ERP-01-GATE-CONNECTOR-READ
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-CONNECTOR-OPEN
+    rule: Exact source projection only.
+  - control_uid: ERP-01-FLD-CONN-SECRET-REFERENCE-ID
+    section_uid: ERP-01-SEC-04
+    type: READONLY
+    label: Secret Reference ID
+    action_uid: ERP-01-ACT-READ-CONNECTOR
+    gate_uid: ERP-01-GATE-CONNECTOR-READ
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-CONNECTOR-OPEN
+    rule: Secret value is never rendered; Secret Reference ID only.
+  - control_uid: ERP-01-FLD-CONN-ENTITY-SCOPE
+    section_uid: ERP-01-SEC-04
+    type: READONLY
+    label: Entity Scope
+    action_uid: ERP-01-ACT-READ-CONNECTOR
+    gate_uid: ERP-01-GATE-CONNECTOR-READ
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-CONNECTOR-OPEN
+    rule: Exact source projection only.
+  - control_uid: ERP-01-FLD-CONN-CONNECTION-STATUS
+    section_uid: ERP-01-SEC-04
+    type: READONLY
+    label: Connection Status
+    action_uid: ERP-01-ACT-READ-CONNECTOR
+    gate_uid: ERP-01-GATE-CONNECTOR-READ
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-CONNECTOR-OPEN
+    rule: Exact source projection only.
+  - control_uid: ERP-01-FLD-CONN-MAPPING-VERSION
+    section_uid: ERP-01-SEC-04
+    type: READONLY
+    label: Mapping Version
+    action_uid: ERP-01-ACT-READ-CONNECTOR
+    gate_uid: ERP-01-GATE-CONNECTOR-READ
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-CONNECTOR-OPEN
+    rule: Exact source projection only.
+  - control_uid: ERP-01-BTN-CONNECTOR-CREATE
+    section_uid: ERP-01-SEC-04
+    type: BUTTON
+    label: 新增 ERP 連接
+    action_uid: ERP-01-ACT-CONNECTOR-CREATE
+    gate_uid: ERP-01-GATE-CONNECTOR-WRITE
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-ACT-01-ERP-CONNECTOR-CREATE
+  - control_uid: ERP-01-BTN-CONNECTOR-UPDATE
+    section_uid: ERP-01-SEC-04
+    type: BUTTON
+    label: 更新 ERP 連接
+    action_uid: ERP-01-ACT-CONNECTOR-UPDATE
+    gate_uid: ERP-01-GATE-CONNECTOR-WRITE
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-ACT-02-ERP-CONNECTOR-UPDATE
+  - control_uid: ERP-01-BTN-CONNECTOR-VALIDATE
+    section_uid: ERP-01-SEC-04
+    type: BUTTON
+    label: 驗證 ERP 連接
+    action_uid: ERP-01-ACT-CONNECTOR-VALIDATE
+    gate_uid: ERP-01-GATE-CONNECTOR-VALIDATE
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-ACT-03-ERP-CONNECTOR-VALIDATE
+  - control_uid: ERP-01-BTN-MAPPING-VALIDATE
+    section_uid: ERP-01-SEC-04
+    type: BUTTON
+    label: 驗證 Mapping
+    action_uid: ERP-01-ACT-MAPPING-VALIDATE
+    gate_uid: ERP-01-GATE-MAPPING-VALIDATE
+    permission_uid: ERP-01-PERM-CONNECTOR
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-ACT-04-ERP-MAPPING-VALIDATE
+  - control_uid: ERP-01-FLD-SYNC-SNAPSHOT-ID
+    section_uid: ERP-01-SEC-05
+    type: READONLY
+    label: Snapshot ID
+    action_uid: ERP-01-ACT-READ-SYNC
+    gate_uid: ERP-01-GATE-SYNC-READ
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-SNAPSHOT-OPEN
+    rule: Missing value = —; never coerce to 0/success.
+  - control_uid: ERP-01-FLD-SYNC-FRESHNESS-AT
+    section_uid: ERP-01-SEC-05
+    type: READONLY
+    label: Freshness At
+    action_uid: ERP-01-ACT-READ-SYNC
+    gate_uid: ERP-01-GATE-SYNC-READ
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-FRESHNESS-OPEN
+    rule: Missing value = —; never coerce to 0/success.
+  - control_uid: ERP-01-FLD-SYNC-CURRENCY-TIMEZONE
+    section_uid: ERP-01-SEC-05
+    type: READONLY
+    label: 幣別 / 時區
+    action_uid: ERP-01-ACT-READ-SYNC
+    gate_uid: ERP-01-GATE-SYNC-READ
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-CURRENCY-TIMEZONE-OPEN
+    rule: Missing value = —; never coerce to 0/success.
+  - control_uid: ERP-01-FLD-SYNC-COMPLETENESS
+    section_uid: ERP-01-SEC-05
+    type: READONLY
+    label: 完整度
+    action_uid: ERP-01-ACT-READ-SYNC
+    gate_uid: ERP-01-GATE-SYNC-READ
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-COMPLETENESS-OPEN
+    rule: Missing value = —; never coerce to 0/success.
+  - control_uid: ERP-01-FLD-SYNC-LAST-SYNC-STATUS
+    section_uid: ERP-01-SEC-05
+    type: READONLY
+    label: Last Sync Status
+    action_uid: ERP-01-ACT-READ-SYNC
+    gate_uid: ERP-01-GATE-SYNC-READ
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-SNAPSHOT-OPEN
+    rule: Missing value = —; never coerce to 0/success.
+  - control_uid: ERP-01-FLD-SYNC-FAILURE-ID
+    section_uid: ERP-01-SEC-05
+    type: READONLY
+    label: Failure ID
+    action_uid: ERP-01-ACT-READ-SYNC
+    gate_uid: ERP-01-GATE-SYNC-READ
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-FAILURE-OPEN
+    rule: Missing value = —; never coerce to 0/success.
+  - control_uid: ERP-01-BTN-SNAPSHOT-REFRESH
+    section_uid: ERP-01-SEC-05
+    type: BUTTON
+    label: 更新 Snapshot
+    action_uid: ERP-01-ACT-SNAPSHOT-REFRESH
+    gate_uid: ERP-01-GATE-SNAPSHOT-REFRESH
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-ACT-05-ERP-SNAPSHOT-REFRESH
+  - control_uid: ERP-01-BTN-SYNC-CREATE
+    section_uid: ERP-01-SEC-05
+    type: BUTTON
+    label: 建立同步工作
+    action_uid: ERP-01-ACT-SYNC-CREATE
+    gate_uid: ERP-01-GATE-SYNC-CREATE
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-ACT-06-ERP-SYNC-CREATE
+  - control_uid: ERP-01-BTN-SYNC-STATUS
+    section_uid: ERP-01-SEC-05
+    type: BUTTON
+    label: 查看同步狀態
+    action_uid: ERP-01-ACT-SYNC-STATUS
+    gate_uid: ERP-01-GATE-SYNC-READ
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-ACT-07-ERP-SYNC-STATUS
+  - control_uid: ERP-01-BTN-SYNC-RETRY
+    section_uid: ERP-01-SEC-05
+    type: BUTTON
+    label: 重試失敗同步
+    action_uid: ERP-01-ACT-SYNC-RETRY
+    gate_uid: ERP-01-GATE-SYNC-RETRY
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-ACT-08-ERP-SYNC-RETRY
+  - control_uid: ERP-01-BTN-FAILURE-GET
+    section_uid: ERP-01-SEC-05
+    type: BUTTON
+    label: 查看失敗原因
+    action_uid: ERP-01-ACT-FAILURE-GET
+    gate_uid: ERP-01-GATE-SYNC-READ
+    permission_uid: ERP-01-PERM-SYNC
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-ACT-09-ERP-FAILURE-GET
+  - control_uid: ERP-01-FLD-READINESS
+    section_uid: ERP-01-SEC-06
+    type: READONLY
+    label: 目前狀態 / Blockers
+    action_uid: ERP-01-ACT-READ
+    gate_uid: ERP-01-GATE-PAGE
+    permission_uid: ERP-01-PERM-READ
+    default: —
+    rule: Only actual connector/snapshot/data/permission blockers; no decorative KPI.
+  - control_uid: ERP-01-FLD-AUDIT-REF
+    section_uid: ERP-01-SEC-06
+    type: READONLY
+    label: Audit Ref
+    action_uid: ERP-01-ACT-READ
+    gate_uid: ERP-01-GATE-PAGE
+    permission_uid: ERP-01-PERM-READ
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-AUDIT-OPEN
+  - control_uid: ERP-01-BTN-DETAIL
+    section_uid: ERP-01-SEC-06
+    type: BUTTON
+    label: 查看詳細資料 / Audit
+    action_uid: ERP-01-ACT-DETAIL-OPEN
+    gate_uid: ERP-01-GATE-PAGE
+    permission_uid: ERP-01-PERM-READ
+    default: —
+    source_control_id: CTRL-ADMIN-ERP-01-ACT-10-ACT-NAV-OPEN
+    rule: Open secondary detail drawer only.
+actions:
+- action_uid: ERP-01-ACT-READ
+  effect: READ_ONLY projection
+- action_uid: ERP-01-ACT-VIEW-FINANCE
+  effect: UI_CONTEXT_ONLY
+- action_uid: ERP-01-ACT-VIEW-CONNECTOR
+  effect: UI_CONTEXT_ONLY
+- action_uid: ERP-01-ACT-VIEW-SYNC
+  effect: UI_CONTEXT_ONLY
+- action_uid: ERP-01-ACT-FACTPACK
+  operation: getERPFinanceFactPack
+- action_uid: ERP-01-ACT-GUARDRAILS
+  operation: getERPCapacityGuardrails
+- action_uid: ERP-01-ACT-FORECAST
+  operation: getERPForecast
+- action_uid: ERP-01-ACT-EXPORT
+  operation: exportProjection
+- action_uid: ERP-01-ACT-CONNECTOR-CREATE
+  operation: createERPConnector
+- action_uid: ERP-01-ACT-CONNECTOR-UPDATE
+  operation: updateERPConnector
+- action_uid: ERP-01-ACT-CONNECTOR-VALIDATE
+  operation: validateERPConnector
+- action_uid: ERP-01-ACT-MAPPING-VALIDATE
+  operation: validateERPMapping
+- action_uid: ERP-01-ACT-SNAPSHOT-REFRESH
+  operation: refreshERPSnapshot
+- action_uid: ERP-01-ACT-SYNC-CREATE
+  operation: createERPSyncJob
+- action_uid: ERP-01-ACT-SYNC-STATUS
+  operation: getERPSyncStatus
+- action_uid: ERP-01-ACT-SYNC-RETRY
+  operation: retryERPSync
+- action_uid: ERP-01-ACT-FAILURE-GET
+  operation: getERPFailure
+- action_uid: ERP-01-ACT-DETAIL-OPEN
+  operation: getUiProjection
+  effect: SECONDARY_DRAWER_ONLY
+gates:
+- gate_uid: ERP-01-GATE-PAGE
+  condition: identity + page:admin:ERP-01 VIEW + effective backend L1 erp_finance + explicit account permission + scope +
+    condition + classification mask where applicable + audit
+- gate_uid: ERP-01-GATE-FINANCE
+  condition: page gate + finance.read for raw finance values/actions + exact authorized scope; otherwise mask/non-amount status
+    only
+- gate_uid: ERP-01-GATE-CONNECTOR-READ
+  condition: page gate + erp.connector.read + exact source field permission/mask
+- gate_uid: ERP-01-GATE-CONNECTOR-WRITE
+  condition: page gate + erp.connector.write + exact R9 schema + expected_version + idempotency + state_guard + audit
+- gate_uid: ERP-01-GATE-CONNECTOR-VALIDATE
+  condition: page gate + erp.connector.validate + exact connector/version + state_guard + expected_version/idempotency + audit
+- gate_uid: ERP-01-GATE-MAPPING-VALIDATE
+  condition: page gate + erp.mapping.validate + exact mapping/version/schema + state_guard + expected_version/idempotency
+    + audit
+- gate_uid: ERP-01-GATE-SYNC-READ
+  condition: page gate + exact source read permission + exact sync/snapshot/failure reference
+- gate_uid: ERP-01-GATE-SNAPSHOT-REFRESH
+  condition: page gate + exact refreshERPSnapshot permission + explicit scope/version + state_guard + idempotency + audit
+- gate_uid: ERP-01-GATE-SYNC-CREATE
+  condition: page gate + erp.sync.request + exact CreateERPSyncJobRequest + explicit connector/scope/version + idempotency
+    + audit
+- gate_uid: ERP-01-GATE-SYNC-RETRY
+  condition: page gate + erp.sync.retry + exact failed/retry-eligible sync job + state_guard + expected_version/idempotency
+    + audit
+permission_contract:
+  authorization_source: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
+  role_name_authorization: FORBIDDEN
+  department_membership_as_allow: FORBIDDEN
+  frontend_hide_is_not_authorization: true
+  r9_page_permissions:
+  - erp.connector.read
+  - erp.connector.write
+  - erp.connector.validate
+  - erp.mapping.validate
+  - erp.sync.request
+  - erp.sync.retry
+  - erp.snapshot.read
+  - finance.read
+  server_guard: identity + exact account page/section/action/control/API/field permission + scope + condition + classification/mask
+    + state_guard + expected_version_when_write + idempotency_when_side_effect + audit
+  denied_behavior: Do not render denied control/value or expose masked amount/secret; direct URL/operation remains denied
+    server-side.
+state_model:
+  common:
+  - LOADING
+  - READY
+  - EMPTY
+  - ERROR
+  - POLICY_BLOCKED
+  - VERSION_CONFLICT
+  - REVIEW_REQUIRED
+  - EXTERNAL_PENDING
+  - READ_ONLY
+  - ARCHIVED
+  erp_specific:
+  - CONNECTOR_UNCONFIGURED
+  - CONNECTOR_CONFIGURING
+  - CONNECTOR_VALIDATING
+  - CONNECTOR_READY
+  - CONNECTOR_DEGRADED
+  - SNAPSHOT_STALE
+  - SNAPSHOT_SYNCING
+  - SNAPSHOT_FAILED
+  - DATA_INCOMPLETE
+  source_transition_examples:
+  - 'createERPConnector: UNCONFIGURED -> CONFIGURING'
+  - 'updateERPConnector: CONFIGURING -> VALIDATING'
+  - 'validateERPConnector: VALIDATING -> READY | DEGRADED | FAILED'
+  ui_rule: View tab switch never mutates these business states.
+errors:
+- error_uid: ERP-01-ERR-AUTH
+  when: Any exact page/section/control/API/field permission, scope, condition or mask gate denies
+  recovery: Hide/deny protected surface; preserve actual server reason allowed by policy; never infer allow.
+- error_uid: ERP-01-ERR-SECRET
+  when: Secret value would be rendered/stored in page authority
+  recovery: BLOCK; use secret_reference_id only.
+- error_uid: ERP-01-ERR-VERSION
+  when: Expected version or exact source reference is stale/missing
+  recovery: Return VERSION_CONFLICT; reload exact projection; do not use latest/current/default alias for write.
+- error_uid: ERP-01-ERR-CONNECTOR
+  when: Connector or mapping validation fails
+  recovery: Keep exact state DEGRADED/FAILED as returned, show permitted failure reference, no fabricated READY.
+- error_uid: ERP-01-ERR-SYNC
+  when: Sync/snapshot refresh fails or is partial
+  recovery: Keep SNAPSHOT_FAILED/DATA_INCOMPLETE/actual state; no COMPLETE/0 substitution; retry only registered retry-eligible
+    job.
+- error_uid: ERP-01-ERR-FINANCE
+  when: Finance data missing, stale, incomplete or finance.read denied
+  recovery: Show — / stale/incomplete/masked state; never synthesize amount or zero.
+- error_uid: ERP-01-ERR-UNREGISTERED-WRITE
+  when: Revenue/expense/ledger/budget/external ERP write action is requested without active R9 operation
+  recovery: BLOCK + REPORT_AUTHORITY_GAP; do not import archive handbook operation or create second finance service.
+- error_uid: ERP-01-ERR-UNDEFINED
+  when: Any unregistered field/operation/route/service requested
+  recovery: BLOCK + REPORT_AUTHORITY_GAP.
+qa_runtime_closure:
+  source_completion_tests:
+  - UT-ERP-SECRET-BOUNDARY
+  - UT-ERP-RETRY-BOUND
+  - E2E-ERP-CONNECTOR-MAPPING-SNAPSHOT-SYNC
+  - E2E-ERP-FINANCE-PERMISSION
+  - E2E-ERP-RESTART-PERSISTENCE
+  source_handoff_out:
+  - FinanceCapacityProjection
+  runtime_closure_validator: 14_acceptance/erp_runtime_closure.py
+  migration: 11_migrations/0013_erp_runtime_closure
+  execution_status: NOT_EXECUTED by this artifact
+hard_locks:
+- Only admin:ERP-01 is the current ERP UI page in this authority; admin:ERP-02 standalone UI is superseded by same-page composition
+  only, while its owner/service/operations/data/permissions are preserved.
+- ERPConnectorService remains the sole connector/snapshot/sync owner; FinanceGuardrailService remains the sole finance/capacity/forecast
+  owner.
+- No current page writes revenue, expense, ledger, budget reallocation, statutory accounting data or external ERP data unless
+  a future active R9 operation explicitly authorizes it.
+- ERP_write_from_ACPOS is forbidden.
+- missing_value_as_zero is forbidden; missing/unavailable = — or exact incomplete/stale/error state.
+- Raw finance/provider cost values require explicit finance.read/provider.cost.read as applicable; otherwise masked/non-amount
+  status only.
+- Secret values never render or embed; only Secret Reference ID is handled.
+- All 29 R9 ERP-01/ERP-02 source controls remain mapped/accounted for; no backend action is invented.
+- Finance / ERP Connection / Sync & Data Quality are same-page UI views only; no second route or parallel page family.
+- No fake KPI, chart, trend, connector health, finance value, snapshot status, completeness, freshness, failure or audit record.
+- Unknown authority -> BLOCK + REPORT_AUTHORITY_GAP.
+- FILE_SPEC_COMPLETE does not mean runtime/system implementation; Sandbox/Regression/E2E/deployment remain NOT_EXECUTED.
+acceptance:
+- uid: ERP-01-ACC-01
+  item: Single Current Page
+  condition: Only admin:ERP-01 is current ERP UI; ERP-02 standalone navigation is not reconstructed.
+- uid: ERP-01-ACC-02
+  item: R9 Owner Reuse
+  condition: ERPConnectorService + FinanceGuardrailService reused; no second service/registry/store.
+- uid: ERP-01-ACC-03
+  item: Source Control Coverage
+  condition: 17 ERP-01 + 12 ERP-02 source controls = 29 accounted for.
+- uid: ERP-01-ACC-04
+  item: Source Operation Coverage
+  condition: All 14 unique current R9 ERP operations are referenced; no invented backend operation.
+- uid: ERP-01-ACC-05
+  item: Finance Boundary
+  condition: Finance view is read/export only; no unregistered revenue/expense/ledger/budget write control.
+- uid: ERP-01-ACC-06
+  item: External ERP Boundary
+  condition: No ERP_write_from_ACPOS control/path.
+- uid: ERP-01-ACC-07
+  item: Secret Boundary
+  condition: Only secret_reference_id; no raw secret render/storage in page authority.
+- uid: ERP-01-ACC-08
+  item: Data Truth
+  condition: Missing = — / exact stale/incomplete/error state; no zero substitution or fake values.
+- uid: ERP-01-ACC-09
+  item: Authorization
+  condition: Account permission + scope/condition/state/version/idempotency/audit remain server-side gates.
+- uid: ERP-01-ACC-10
+  item: Same-page UX
+  condition: Finance / Connector / Sync tabs are UI context only; audit/details secondary drawer; no route fragmentation.
+- uid: ERP-01-ACC-11
+  item: Layout
+  condition: 56px context + 52px view bar + 72/28 workspace + 480-560px detail drawer + 56px action dock.
+- uid: ERP-01-ACC-12
+  item: No Fake UI
+  condition: No decorative KPI/charts/trend deltas/sample finance or connector values.
+- uid: ERP-01-ACC-13
+  item: Form Authority
+  condition: Effectful requests use exact R9 schema or explicit source-by-operation schema binding; no page-union inference.
+- uid: ERP-01-ACC-14
+  item: State Truth
+  condition: Connector/snapshot states use R9 state vocabulary; view switch does not fake business state.
+- uid: ERP-01-ACC-15
+  item: Runtime Truthfulness
+  condition: Spec is FILE_SPEC_COMPLETE only; source runtime closure tests remain NOT_EXECUTED here.

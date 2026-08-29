@@ -1,0 +1,1396 @@
+authority:
+  id: ACPOS_STR-01_FINAL_LOCKED_ENCODING
+  page_uid: workspace:STR-01
+  control_prefix: STR-01
+  page_name_zh: 戰略中心工作區
+  page_name_en: Strategic Center Workspace
+  surface: WORKSPACE
+  status: FINAL_LOCKED
+  current_only: true
+  single_page_workspace: true
+  single_machine_authority: true
+  parallel_strategy_page: FORBIDDEN
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  real_data_only: true
+  missing_value_display: —
+  ai_role: Strategic Intelligence Assistant
+  purpose: 企業策略情報整理、趨勢分析、方案比較、風險評估、資源建議與人工決策輔助。
+  hard_boundary: AI provides analysis/proposals only. Formal strategy decision is human-governed. Finance / Workflow / Governance / Production execution remains
+    in its owning module.
+  provider_adapter_binding_revision: 2026-08-28-STRATEGIC-TEXT-CHAT-PROVIDER-BINDING
+  provider_adapter_authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.2
+strategic_context_contract:
+  source_types:
+  - 市場情報
+  - 產業資料
+  - 競爭資訊
+  - 企業內部資料
+  - 資源能力
+  - 成本資訊
+  - 風險資訊
+  - Governance 條件
+  priority:
+  - P0 Current Human Instruction
+  - P1 Confirmed Decision
+  - P2 Current Valid Internal Data
+  - P3 Historical Strategic Analysis / Baseline / Experience
+  - P4 External Intelligence
+  required_metadata:
+  - source_ref
+  - source_type
+  - source_time_or_version
+  - scope
+  - confidence_or_quality_state
+  rules:
+  - External intelligence cannot overwrite confirmed decisions/current governed internal truth.
+  - Context must expose source and confidence/quality state.
+  - Missing source/financial/resource/risk values are never AI-filled.
+  - Strategic Context is analysis input, not a formal decision by itself.
+conversation_contract:
+  shared_core: ACPOS AI Conversation Core
+  strategy_context_extension: STRATEGIC_CENTER_EXTENSION
+  modes:
+  - SINGLE_AI
+  - MULTI_AI
+  multi_ai_semantics: Same question + same Strategic Context -> multiple independent complete viewpoints; Assistant synthesizes after responses.
+  assistant_fixed: true
+  assistant_is_mode: false
+  provider_picker: FORBIDDEN
+  provider_display: Provider brand only on response; full technical model/capability data belongs to API Management.
+  input_support:
+  - Traditional Chinese instruction
+  - file attachment
+  - image reference
+  - '@Strategy'
+  - '@Alert'
+  - '@Knowledge'
+  - '@Decision'
+  - quoted message / response ref
+  generation_rule: Raw AI response never becomes a formal strategy decision automatically.
+  visible_record:
+  - User instruction
+  - AI viewpoints
+  - Assistant summary
+  - analysis basis
+  - assumptions
+  - risks
+  - uncertainty
+  - human decision record
+strategy_analysis_contract:
+  flow:
+  - 資料收集
+  - 分類整理
+  - Pattern / Baseline 分析
+  - 趨勢 / Forecast 判斷
+  - Strategic Need / Opportunity / Risk / Priority
+  - 方案比較
+  - 策略建議
+  - Human Review
+  mandatory_output_fields:
+  - analysis_basis
+  - assumptions
+  - opportunities
+  - risks
+  - uncertainties
+  - option_comparison
+  - recommendation_reason
+  - evidence_refs
+  option_comparison_fields:
+  - candidate_id
+  - option_title
+  - expected_benefit
+  - cost_or_resource_impact
+  - risk
+  - time_horizon
+  - dependency
+  - evidence
+  - uncertainty
+  - AI_recommendation_state
+  rule: No strategy recommendation may hide its assumptions, risk or uncertainty.
+strategy_output_contract:
+  types:
+    STRATEGY_RECOMMENDATION:
+      label: Strategy Recommendation / 策略建議
+      required:
+      - summary
+      - basis
+      - recommended_path
+      - reason
+      - risk
+      - uncertainty
+      - evidence_refs
+    STRATEGY_ALERT:
+      label: Strategy Alert / 風險與機會提醒
+      required:
+      - alert_type
+      - scope
+      - reason
+      - evidence_refs
+      - urgency_or_priority_state
+      - recommended_response
+    RESOURCE_PROPOSAL:
+      label: Resource Proposal / 資源配置建議
+      required:
+      - target
+      - resource_need
+      - reason
+      - expected_effect
+      - cost_or_capacity_impact
+      - risk
+      - dependency
+      boundary: Proposal only; actual budget/resource approval belongs to Finance/Workflow/Governance owner.
+    DECISION_BRIEF:
+      label: Decision Brief / 決策摘要
+      required:
+      - issue
+      - context
+      - candidate_options
+      - recommended_option
+      - rejected_or_less_preferred_options
+      - key_risks
+      - unknowns
+      - decision_needed
+  version_rule: Generated strategic outputs/candidates are append-only; revision creates a new version and preserves prior versions.
+decision_ledger_contract:
+  required_fields:
+  - decision_id
+  - strategy_topic_id
+  - strategy_candidate_ref
+  - proposal_summary
+  - analysis_source_refs
+  - risk_assessment
+  - approval_level
+  - decision_result
+  - decision_reason
+  - decided_by
+  - decided_at
+  - execution_status
+  - execution_ref
+  - audit_ref
+  separation_rule: Strategy recommendation/candidate is not the formal Decision Ledger result.
+  human_gate: true
+  page_owned_registered_actions:
+  - submitStrategyReview
+  - adoptAsContextCandidate
+  cross_module_decisions:
+    budget_reallocation: A10 ERP & Finance
+    production_priority_or_pause_resume_cancel: A04 Workflow & Runtime
+    account/channel_governance: A08 Governance / Project owner
+    production_execution: Core / Department Workflow
+  cross_module_rule: STR-01 may show proposal/readiness/status and navigate to owner; it does not duplicate owner-module approval/execution action.
+strategic_memory_contract:
+  stores:
+  - Strategy Pattern
+  - Strategy Case
+  - Historical Strategy
+  - Execution Result
+  - Success Case
+  - Failure Case
+  - Experiment Record
+  - Baseline History
+  - KPI Change
+  - Expected vs Actual
+  - Learning Result
+  version_rule: History is versioned and never overwritten.
+  knowledge_boundary: Conversation alone is not validated knowledge; execution/performance feedback and review feed Strategic Experience / Knowledge.
+feedback_loop_contract:
+  flow:
+  - Approved/Adopted Strategy Context
+  - Owner Module Execution
+  - Execution Result
+  - Performance / Revenue / Cost / KPI
+  - Expected vs Actual
+  - Difference Analysis
+  - Learning
+  - Strategic Experience Update
+  - Next Strategy Analysis
+  page_role: Display feedback and strategic learning; do not execute downstream owner actions.
+layout:
+  desktop_min_width: 1280px
+  vertical_scroll: Main Workspace height:auto; overflow-y:auto; independent from Global Sidebar/Menu height
+  below_min_width: Keep min-width=1280px; allow horizontal scroll; no alternate unregistered mobile workflow
+  context_bar:
+    height: 56px
+    width: 100%
+  primary_grid:
+    columns: minmax(280px,1fr) minmax(720px,3fr) minmax(320px,1.12fr)
+    approx: 19% / 59% / 22%
+    gap: 16px
+    align: start
+  left_rail:
+    min_width: 280px
+    role: Strategy topics / Context Sources / Alerts / Memory quick access
+  center:
+    min_width: 720px
+    role: Strategic AI Conversation + Analysis / Option Comparison
+    priority: highest
+  right_rail:
+    min_width: 320px
+    role: Strategy Outputs / Human Review / Decision Ledger state
+  lower_rows: Option comparison, Decision Ledger, Strategic Memory, Feedback Loop and Audit extend downward
+  tokens:
+    control_height: 40px
+    button_min_width: 88px
+    primary_button_min_width: 120px
+    button_radius: 10px
+    panel_radius: 12px
+    large_container_radius: 24px
+    section_gap: 16px
+    content_padding: 16px
+    status_badge_height: 28px
+    action_gap: 8px
+    touch_target_min: 44px × 44px
+  visual_override: FORBIDDEN; inherit Global Visual tokens only
+registries:
+  sections:
+  - section_uid: STR-01-SEC-01
+    name: Strategy Context Bar
+    responsibility: Strategy Topic, scope, horizon, mode, state, current decision status
+    visual_uid: STR-01-VIS-CONTEXT
+  - section_uid: STR-01-SEC-02
+    name: Strategy Topics / History
+    responsibility: Strategy topic list, search, current topic selection, previous discussions
+    visual_uid: STR-01-VIS-LEFT-TOPIC
+  - section_uid: STR-01-SEC-03
+    name: Strategic Context
+    responsibility: Market/industry/competition/internal/resource/cost/risk/governance sources and confidence
+    visual_uid: STR-01-VIS-LEFT-CONTEXT
+  - section_uid: STR-01-SEC-04
+    name: Strategic Alerts / Open Questions
+    responsibility: Relevant opportunity/risk alerts and missing-information questions
+    visual_uid: STR-01-VIS-LEFT-ALERT
+  - section_uid: STR-01-SEC-05
+    name: Strategic AI Conversation
+    responsibility: Single/Multi AI conversation, attachment/image/reference, assistant summary
+    visual_uid: STR-01-VIS-CONVERSATION
+  - section_uid: STR-01-SEC-06
+    name: Strategy Analysis
+    responsibility: Basis, assumptions, opportunity, risk, uncertainty, pattern/baseline/forecast
+    visual_uid: STR-01-VIS-ANALYSIS
+  - section_uid: STR-01-SEC-07
+    name: Option Comparison
+    responsibility: Compare strategy candidates/options without deleting prior versions
+    visual_uid: STR-01-VIS-COMPARE
+  - section_uid: STR-01-SEC-08
+    name: Strategy Outputs
+    responsibility: Recommendation, Alert, Resource Proposal, Decision Brief
+    visual_uid: STR-01-VIS-RIGHT-OUTPUT
+  - section_uid: STR-01-SEC-09
+    name: Human Review / Decision Ledger
+    responsibility: Review status, candidate status, human decision record, execution status
+    visual_uid: STR-01-VIS-RIGHT-DECISION
+  - section_uid: STR-01-SEC-10
+    name: Strategic Memory / Experience
+    responsibility: Patterns, cases, experiments, baselines, KPI changes and learning
+    visual_uid: STR-01-VIS-MEMORY
+  - section_uid: STR-01-SEC-11
+    name: Feedback Loop
+    responsibility: Expected vs Actual, difference, learning, owner execution feedback
+    visual_uid: STR-01-VIS-FEEDBACK
+  - section_uid: STR-01-SEC-12
+    name: Audit / Boundary
+    responsibility: Source trace, provider brand, correlation, permission, owner handoff boundary
+    visual_uid: STR-01-VIS-STATUS
+  visuals:
+  - visual_uid: STR-01-VIS-CONTEXT
+    geometry: top full width; h>=56px
+  - visual_uid: STR-01-VIS-LEFT-TOPIC
+    geometry: primary left upper; ~19%; min 280px
+  - visual_uid: STR-01-VIS-LEFT-CONTEXT
+    geometry: primary left middle; ~19%; min 280px
+  - visual_uid: STR-01-VIS-LEFT-ALERT
+    geometry: primary left lower; ~19%; min 280px
+  - visual_uid: STR-01-VIS-CONVERSATION
+    geometry: primary center upper; ~59%; min 720px; dominant
+  - visual_uid: STR-01-VIS-ANALYSIS
+    geometry: center lower; collapsible/stacked strategic analysis
+  - visual_uid: STR-01-VIS-COMPARE
+    geometry: lower full-width comparison table/cards
+  - visual_uid: STR-01-VIS-RIGHT-OUTPUT
+    geometry: primary right upper; ~22%; min 320px
+  - visual_uid: STR-01-VIS-RIGHT-DECISION
+    geometry: primary right lower; ~22%; min 320px
+  - visual_uid: STR-01-VIS-MEMORY
+    geometry: lower full-width/2-column memory region
+  - visual_uid: STR-01-VIS-FEEDBACK
+    geometry: lower full-width/2-column feedback region
+  - visual_uid: STR-01-VIS-STATUS
+    geometry: bottom full-width audit/boundary strip
+  components:
+  - component_uid: STR-01-CMP-CONTEXT
+    section_uid: STR-01-SEC-01
+    name: Strategic Context Bar
+  - component_uid: STR-01-CMP-TOPICS
+    section_uid: STR-01-SEC-02
+    name: Strategy Topic List / History
+  - component_uid: STR-01-CMP-SOURCE-STACK
+    section_uid: STR-01-SEC-03
+    name: Strategic Context Source Stack
+  - component_uid: STR-01-CMP-ALERTS
+    section_uid: STR-01-SEC-04
+    name: Strategy Alerts / Open Questions
+  - component_uid: STR-01-CMP-CONVERSATION
+    section_uid: STR-01-SEC-05
+    name: AI Conversation Workspace
+  - component_uid: STR-01-CMP-MODE
+    section_uid: STR-01-SEC-05
+    name: Single / Multi AI Mode
+  - component_uid: STR-01-CMP-COMPOSER
+    section_uid: STR-01-SEC-05
+    name: Conversation Composer
+  - component_uid: STR-01-CMP-ASSISTANT
+    section_uid: STR-01-SEC-05
+    name: Assistant Summary / Meeting Record
+  - component_uid: STR-01-CMP-ANALYSIS
+    section_uid: STR-01-SEC-06
+    name: Strategy Analysis Result
+  - component_uid: STR-01-CMP-COMPARE
+    section_uid: STR-01-SEC-07
+    name: Option Comparison
+  - component_uid: STR-01-CMP-OUTPUTS
+    section_uid: STR-01-SEC-08
+    name: Strategic Output Cards
+  - component_uid: STR-01-CMP-REVIEW
+    section_uid: STR-01-SEC-09
+    name: Human Review
+  - component_uid: STR-01-CMP-LEDGER
+    section_uid: STR-01-SEC-09
+    name: Decision Ledger
+  - component_uid: STR-01-CMP-MEMORY
+    section_uid: STR-01-SEC-10
+    name: Strategic Memory / Experience
+  - component_uid: STR-01-CMP-FEEDBACK
+    section_uid: STR-01-SEC-11
+    name: Expected vs Actual / Learning
+  - component_uid: STR-01-CMP-STATUS
+    section_uid: STR-01-SEC-12
+    name: Audit / Boundary / Handoff Status
+  permissions:
+  - permission_uid: STR_VIEW
+    backend_scope: strategy.read
+    purpose: Read Strategic Center projection/context/output/decision/memory
+  - permission_uid: STR_CONVERSATION
+    backend_scope: conversation.write
+    purpose: Send Strategic Center conversation message
+  - permission_uid: STR_COMPARE
+    backend_scope: candidate.read
+    purpose: Compare strategy candidates/options
+  - permission_uid: STR_REVIEW
+    backend_scope: strategy.decision.propose
+    purpose: Submit strategy candidate for human review
+  - permission_uid: STR_ADOPT
+    backend_scope: strategy.decision.approve
+    purpose: Adopt reviewed strategy candidate as governed context
+  gates:
+  - gate_uid: STR-01-GATE-PAGE
+    condition: explicit Account Permission Assignment + scope + condition + audit
+  - gate_uid: STR-01-GATE-TOPIC
+    condition: exact Strategy Topic / discussion context is selected and active
+  - gate_uid: STR-01-GATE-CONTEXT
+    condition: Strategic Context sources have exact refs/version/time + authorization + confidence/quality state
+  - gate_uid: STR-01-GATE-MESSAGE
+    condition: active conversation + strategy topic + context ready + non-empty message + conversation.write
+  - gate_uid: STR-01-GATE-MULTI
+    condition: mode=MULTI_AI + assigned AI route/group available from shared ACPOS Router; no manual Provider/Model picker
+  - gate_uid: STR-01-GATE-ANALYSIS
+    condition: AI response(s) + Assistant Summary + source/evidence refs available
+  - gate_uid: STR-01-GATE-COMPARE
+    condition: at least 2 exact strategy candidate refs/version refs available
+  - gate_uid: STR-01-GATE-REVIEW
+    condition: exact Strategy Candidate state=CANDIDATE + analysis basis/risk/uncertainty/evidence + expected version + strategy.decision.propose
+  - gate_uid: STR-01-GATE-ADOPT
+    condition: exact Strategy Candidate state=REVIEW_REQUIRED + human review decision/reason + evidence refs + strategy.decision.approve
+  - gate_uid: STR-01-GATE-MEMORY
+    condition: authorized strategic memory/experience projection available
+  - gate_uid: STR-01-GATE-FEEDBACK
+    condition: execution/performance result refs available; read-only in STR-01
+  errors:
+  - error_uid: STR-01-ERR-CONTEXT-001
+    context: Strategic Context source/ref/time/version unavailable or stale
+    recovery: BLOCK dependent analysis; show exact missing source; do not AI-fill
+  - error_uid: STR-01-ERR-CONVERSATION-001
+    context: Conversation/session/message/attachment/mode invalid
+    recovery: Preserve topic/context; show registered error/retry eligibility
+  - error_uid: STR-01-ERR-CANDIDATE-001
+    context: Strategy candidate/version/evidence invalid or stale
+    recovery: BLOCK compare/review/adoption
+  - error_uid: STR-01-ERR-REVIEW-001
+    context: Review prerequisites/permission/expected version invalid
+    recovery: BLOCK submit review; preserve candidate
+  - error_uid: STR-01-ERR-ADOPT-001
+    context: Adoption prerequisites/human decision/evidence/version invalid
+    recovery: BLOCK adoption; no auto-approval
+  - error_uid: STR-01-ERR-MEMORY-001
+    context: Strategic Memory/Experience projection unavailable
+    recovery: Show unavailable state; do not substitute unvalidated conversation
+  - error_uid: STR-01-ERR-FEEDBACK-001
+    context: Execution result / KPI / Expected-vs-Actual refs missing
+    recovery: Show pending/incomplete feedback; do not fabricate performance
+  - error_uid: STR-01-ERR-PERM-001
+    context: Permission/scope denied
+    recovery: Hide/disable according to actual server result
+  - error_uid: STR-01-ERR-UNDEFINED-001
+    context: Unlisted Section/Component/Control/Action/Gate/Permission/Port requested
+    recovery: BLOCK + REPORT_AUTHORITY_GAP
+  page_states:
+  - state_uid: STR-01-ST-EMPTY
+    display: EMPTY
+    definition: No Strategy Topic/discussion selected
+  - state_uid: STR-01-ST-READY
+    display: READY
+    definition: Strategy Topic + context ready
+  - state_uid: STR-01-ST-RESPONDING
+    display: RESPONDING
+    definition: Single/Multi AI response active
+  - state_uid: STR-01-ST-ANALYZING
+    display: ANALYZING
+    definition: Assistant synthesis / strategy analysis active
+  - state_uid: STR-01-ST-CANDIDATE
+    display: CANDIDATE_READY
+    definition: Strategy candidate/output ready
+  - state_uid: STR-01-ST-REVIEW
+    display: REVIEW_REQUIRED
+    definition: Human strategy review required
+  - state_uid: STR-01-ST-ADOPTED
+    display: ADOPTED_CONTEXT
+    definition: Human-reviewed strategy context adopted; owner execution still separate
+  - state_uid: STR-01-ST-FEEDBACK
+    display: FEEDBACK_AVAILABLE
+    definition: Execution/performance feedback available
+  - state_uid: STR-01-ST-ERROR
+    display: ERROR/BLOCKED
+    definition: Real permission/context/runtime/error blocker
+  stages:
+  - stage_uid: STR-01-STAGE-01-CONTEXT
+    name: Resolve Strategic Context
+    flow: Topic + sources + confirmed decisions + current internal data + historical experience + external intelligence
+  - stage_uid: STR-01-STAGE-02-CONVERSE
+    name: Strategic Conversation
+    flow: Single/Multi AI same issue/context -> independent views -> Assistant record
+  - stage_uid: STR-01-STAGE-03-ANALYZE
+    name: Analyze / Compare
+    flow: Pattern/Baseline/Forecast -> Need/Opportunity/Risk/Priority -> Option comparison
+  - stage_uid: STR-01-STAGE-04-OUTPUT
+    name: Strategic Outputs
+    flow: Recommendation / Alert / Resource Proposal / Decision Brief candidate outputs
+  - stage_uid: STR-01-STAGE-05-HUMAN
+    name: Human Review / Decision
+    flow: Submit strategy review -> human decision -> governed strategy context adoption when approved
+  - stage_uid: STR-01-STAGE-06-FEEDBACK
+    name: Execution Feedback / Learning
+    flow: Owner execution result -> Expected vs Actual -> Learning -> Strategic Experience
+  actions:
+  - action_uid: STR-01-ACT-NOOP
+    label: Read display
+    permission_uid: STR_VIEW
+    gate_uid: STR-01-GATE-PAGE
+    effect_type: READ_ONLY
+    owner: STR-01 / shared registered service
+    success_contract: Render real authorized strategic projection only
+    error_uid: STR-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_event: NONE
+  - action_uid: STR-01-ACT-TOPIC-SELECT
+    label: Select Strategy Topic
+    permission_uid: STR_VIEW
+    gate_uid: STR-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+    owner: STR-01 / shared registered service
+    success_contract: Load exact strategy topic/discussion and clear stale dependent state
+    error_uid: STR-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_event: NONE
+  - action_uid: STR-01-ACT-FILTER
+    label: Filter current strategic projection
+    permission_uid: STR_VIEW
+    gate_uid: STR-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: STR-01 / shared registered service
+    success_contract: Filter topic/context/ledger/memory view only
+    error_uid: STR-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_event: NONE
+  - action_uid: STR-01-ACT-MODE
+    label: Single / Multi AI mode
+    permission_uid: STR_VIEW
+    gate_uid: STR-01-GATE-TOPIC
+    effect_type: UI_ONLY
+    owner: STR-01 / shared registered service
+    success_contract: Switch conversation mode; Provider/Model remain router-owned
+    error_uid: STR-01-ERR-CONVERSATION-001
+    operation: null
+    method_path: null
+    state_event: NONE
+  - action_uid: STR-01-ACT-SEND
+    label: Send Strategic Message
+    permission_uid: STR_CONVERSATION
+    gate_uid: STR-01-GATE-MESSAGE
+    effect_type: CONVERSATION_WRITE
+    owner: STR-01 / shared registered service
+    success_contract: Send message to shared AI Conversation Core; raw response is not formal strategy decision
+    error_uid: STR-01-ERR-CONVERSATION-001
+    operation: sendConversationMessage
+    method_path: POST /v1/conversations/{conversationId}/messages
+    state_event: conversation.message.sent
+  - action_uid: STR-01-ACT-STOP
+    label: Stop Current Generation
+    permission_uid: STR_CONVERSATION
+    gate_uid: STR-01-GATE-MESSAGE
+    effect_type: CONVERSATION_CONTROL
+    owner: STR-01 / shared registered service
+    success_contract: Stop active conversation generation only
+    error_uid: STR-01-ERR-CONVERSATION-001
+    operation: stopConversationGeneration
+    method_path: POST /v1/conversations/{conversationId}/generation/stop
+    state_event: NONE
+  - action_uid: STR-01-ACT-COMPARE
+    label: Compare Strategy Candidates
+    permission_uid: STR_COMPARE
+    gate_uid: STR-01-GATE-COMPARE
+    effect_type: READ_MODEL_QUERY
+    owner: STR-01 / shared registered service
+    success_contract: Compare exact candidate refs without mutation/deletion
+    error_uid: STR-01-ERR-CANDIDATE-001
+    operation: compareCandidates
+    method_path: GET /v1/candidates/compare
+    state_event: READ_ONLY
+  - action_uid: STR-01-ACT-REVIEW
+    label: Submit Strategy Review
+    permission_uid: STR_REVIEW
+    gate_uid: STR-01-GATE-REVIEW
+    effect_type: STRATEGY_REVIEW_REQUEST
+    owner: STR-01 / shared registered service
+    success_contract: Move exact StrategyCandidate CANDIDATE -> REVIEW_REQUIRED; human review required
+    error_uid: STR-01-ERR-REVIEW-001
+    operation: submitStrategyReview
+    method_path: POST /v1/state-commands/strategycandidate/submitstrategyreview
+    state_event: ai.strategy.review_requested
+  - action_uid: STR-01-ACT-ADOPT
+    label: Adopt Reviewed Strategy Context
+    permission_uid: STR_ADOPT
+    gate_uid: STR-01-GATE-ADOPT
+    effect_type: STRATEGY_CONTEXT_ADOPTION
+    owner: STR-01 / shared registered service
+    success_contract: Move exact reviewed StrategyCandidate REVIEW_REQUIRED -> ADOPTED; does not execute Finance/Workflow/Production
+    error_uid: STR-01-ERR-ADOPT-001
+    operation: adoptAsContextCandidate
+    method_path: POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+    state_event: ai.strategy.context_adopted
+  - action_uid: STR-01-ACT-OPEN-OWNER
+    label: Open Execution Owner Module
+    permission_uid: STR_VIEW
+    gate_uid: STR-01-GATE-PAGE
+    effect_type: UI_NAVIGATION
+    owner: STR-01 / shared registered service
+    success_contract: Navigate to actual owner module for budget/workflow/governance/production action; no duplicate execution
+    error_uid: STR-01-ERR-PERM-001
+    operation: null
+    method_path: null
+    state_event: NONE
+  - action_uid: STR-01-ACT-AUDIT
+    label: Open Audit / Trace
+    permission_uid: STR_VIEW
+    gate_uid: STR-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: STR-01 / shared registered service
+    success_contract: Open inherited audit/trace drawer
+    error_uid: STR-01-ERR-PERM-001
+    operation: null
+    method_path: null
+    state_event: NONE
+  objects_refs:
+  - object_uid: STR-01-OBJ-TOPIC
+    entity: StrategyTopicRef
+    owner: Strategic Center
+    required_content: strategy_topic_id + title + scope + objective + status + conversation/thread refs
+  - object_uid: STR-01-OBJ-CONTEXT
+    entity: StrategicContextBundle
+    owner: Strategy Context / Intelligence
+    required_content: market/industry/competition/internal/resource/cost/risk/governance refs + priority + source_time/version + confidence
+  - object_uid: STR-01-OBJ-CONVERSATION
+    entity: StrategicConversationRef
+    owner: ACPOS AI Conversation Core
+    required_content: conversation_id + topic ref + mode + message refs + context fingerprint + audit
+  - object_uid: STR-01-OBJ-ANALYSIS
+    entity: StrategyAnalysisResult
+    owner: Strategic Intelligence
+    required_content: basis + assumptions + opportunity + risk + uncertainty + pattern/baseline/forecast + evidence
+  - object_uid: STR-01-OBJ-CANDIDATE
+    entity: StrategyCandidate
+    owner: Strategic Intelligence
+    required_content: candidate_id/version + output type + proposal + analysis refs + risk + uncertainty + evidence + state
+  - object_uid: STR-01-OBJ-RECOMMENDATION
+    entity: StrategyRecommendation
+    owner: Strategic Intelligence
+    required_content: summary + basis + recommended path + reason + risk + uncertainty + evidence
+  - object_uid: STR-01-OBJ-ALERT
+    entity: StrategyAlert
+    owner: Strategic Intelligence
+    required_content: alert type + scope + reason + evidence + urgency/priority + recommended response
+  - object_uid: STR-01-OBJ-RESOURCE
+    entity: ResourceProposal
+    owner: Strategic Intelligence
+    required_content: target + need + reason + expected effect + cost/capacity impact + risk + dependency
+  - object_uid: STR-01-OBJ-BRIEF
+    entity: DecisionBrief
+    owner: Strategic Intelligence
+    required_content: issue + context + options + recommendation + alternatives + risks + unknowns + decision needed
+  - object_uid: STR-01-OBJ-LEDGER
+    entity: StrategyDecisionLedgerEntry
+    owner: Decision/Audit
+    required_content: decision_id + candidate + sources + risk + approval level + result + reason + actor/time + execution status/ref
+  - object_uid: STR-01-OBJ-MEMORY
+    entity: StrategicExperienceRef
+    owner: A11 Knowledge / Experience
+    required_content: pattern/case/experiment/baseline/result/KPI/expected-vs-actual/learning + immutable history
+  - object_uid: STR-01-OBJ-FEEDBACK
+    entity: StrategyExecutionFeedback
+    owner: Owner Module / Experience
+    required_content: execution ref + actual result + KPI/revenue/cost/performance + expected-vs-actual + learning
+  controls:
+  - control_uid: STR-01-FLD-TOPIC
+    section_uid: STR-01-SEC-01
+    component_uid: STR-01-CMP-CONTEXT
+    visual_uid: STR-01-VIS-CONTEXT
+    type: READONLY
+    label: Strategy Topic
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-SCOPE
+    section_uid: STR-01-SEC-01
+    component_uid: STR-01-CMP-CONTEXT
+    visual_uid: STR-01-VIS-CONTEXT
+    type: READONLY
+    label: Strategy Scope
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-HORIZON
+    section_uid: STR-01-SEC-01
+    component_uid: STR-01-CMP-CONTEXT
+    visual_uid: STR-01-VIS-CONTEXT
+    type: READONLY
+    label: Time Horizon
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-STATE
+    section_uid: STR-01-SEC-01
+    component_uid: STR-01-CMP-CONTEXT
+    visual_uid: STR-01-VIS-CONTEXT
+    type: READONLY
+    label: Strategy State
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-DECISION-STATE
+    section_uid: STR-01-SEC-01
+    component_uid: STR-01-CMP-CONTEXT
+    visual_uid: STR-01-VIS-CONTEXT
+    type: READONLY
+    label: Decision Status
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-TGL-MODE
+    section_uid: STR-01-SEC-01
+    component_uid: STR-01-CMP-CONTEXT
+    visual_uid: STR-01-VIS-CONTEXT
+    type: TOGGLE
+    label: Single AI / Multi AI
+    action_uid: STR-01-ACT-MODE
+    gate_uid: STR-01-GATE-TOPIC
+    permission_uid: STR_VIEW
+    note: Assistant always exists; Multi AI uses same question/context and assigned router group.
+  - control_uid: STR-01-INP-TOPIC-SEARCH
+    section_uid: STR-01-SEC-02
+    component_uid: STR-01-CMP-TOPICS
+    visual_uid: STR-01-VIS-LEFT-TOPIC
+    type: SEARCH
+    label: 搜尋策略議題
+    action_uid: STR-01-ACT-FILTER
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-LST-TOPICS
+    section_uid: STR-01-SEC-02
+    component_uid: STR-01-CMP-TOPICS
+    visual_uid: STR-01-VIS-LEFT-TOPIC
+    type: LIST
+    label: Strategy Topics / History
+    action_uid: STR-01-ACT-TOPIC-SELECT
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-LST-CONTEXT
+    section_uid: STR-01-SEC-03
+    component_uid: STR-01-CMP-SOURCE-STACK
+    visual_uid: STR-01-VIS-LEFT-CONTEXT
+    type: LIST
+    label: Strategic Context Sources
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-CONTEXT
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-CONTEXT-PRIORITY
+    section_uid: STR-01-SEC-03
+    component_uid: STR-01-CMP-SOURCE-STACK
+    visual_uid: STR-01-VIS-LEFT-CONTEXT
+    type: READONLY
+    label: Context Priority
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-CONTEXT
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-CONTEXT-SOURCE
+    section_uid: STR-01-SEC-03
+    component_uid: STR-01-CMP-SOURCE-STACK
+    visual_uid: STR-01-VIS-LEFT-CONTEXT
+    type: READONLY
+    label: Source / Ref
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-CONTEXT
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-CONTEXT-TIME
+    section_uid: STR-01-SEC-03
+    component_uid: STR-01-CMP-SOURCE-STACK
+    visual_uid: STR-01-VIS-LEFT-CONTEXT
+    type: READONLY
+    label: Source Time / Version
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-CONTEXT
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-CONTEXT-CONFIDENCE
+    section_uid: STR-01-SEC-03
+    component_uid: STR-01-CMP-SOURCE-STACK
+    visual_uid: STR-01-VIS-LEFT-CONTEXT
+    type: READONLY
+    label: Confidence / Quality
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-CONTEXT
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-LST-ALERTS
+    section_uid: STR-01-SEC-04
+    component_uid: STR-01-CMP-ALERTS
+    visual_uid: STR-01-VIS-LEFT-ALERT
+    type: LIST
+    label: Strategy Alerts / Open Questions
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-VIEW-CONVERSATION
+    section_uid: STR-01-SEC-05
+    component_uid: STR-01-CMP-CONVERSATION
+    visual_uid: STR-01-VIS-CONVERSATION
+    type: CONVERSATION
+    label: Strategic AI Conversation
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-TOPIC
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-BTN-ATTACH
+    section_uid: STR-01-SEC-05
+    component_uid: STR-01-CMP-COMPOSER
+    visual_uid: STR-01-VIS-CONVERSATION
+    type: ATTACHMENT
+    label: 附件 / 圖片
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-TOPIC
+    permission_uid: STR_VIEW
+    note: Attachment refs are sent through sendConversationMessage; page does not upload to provider directly.
+  - control_uid: STR-01-INP-MESSAGE
+    section_uid: STR-01-SEC-05
+    component_uid: STR-01-CMP-COMPOSER
+    visual_uid: STR-01-VIS-CONVERSATION
+    type: TEXTAREA
+    label: 輸入策略議題、問題或分析要求
+    action_uid: STR-01-ACT-SEND
+    gate_uid: STR-01-GATE-MESSAGE
+    permission_uid: STR_CONVERSATION
+  - control_uid: STR-01-BTN-SEND
+    section_uid: STR-01-SEC-05
+    component_uid: STR-01-CMP-COMPOSER
+    visual_uid: STR-01-VIS-CONVERSATION
+    type: PRIMARY_BUTTON
+    label: 送出
+    action_uid: STR-01-ACT-SEND
+    gate_uid: STR-01-GATE-MESSAGE
+    permission_uid: STR_CONVERSATION
+  - control_uid: STR-01-BTN-STOP
+    section_uid: STR-01-SEC-05
+    component_uid: STR-01-CMP-COMPOSER
+    visual_uid: STR-01-VIS-CONVERSATION
+    type: BUTTON
+    label: 停止生成
+    action_uid: STR-01-ACT-STOP
+    gate_uid: STR-01-GATE-MESSAGE
+    permission_uid: STR_CONVERSATION
+  - control_uid: STR-01-FLD-ASSISTANT-SUMMARY
+    section_uid: STR-01-SEC-05
+    component_uid: STR-01-CMP-ASSISTANT
+    visual_uid: STR-01-VIS-CONVERSATION
+    type: READONLY
+    label: Assistant Summary
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-OPEN-QUESTIONS
+    section_uid: STR-01-SEC-05
+    component_uid: STR-01-CMP-ASSISTANT
+    visual_uid: STR-01-VIS-CONVERSATION
+    type: READONLY
+    label: Open Questions
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-MEETING-RECORD
+    section_uid: STR-01-SEC-05
+    component_uid: STR-01-CMP-ASSISTANT
+    visual_uid: STR-01-VIS-CONVERSATION
+    type: READONLY
+    label: Meeting / Discussion Record
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-BASIS
+    section_uid: STR-01-SEC-06
+    component_uid: STR-01-CMP-ANALYSIS
+    visual_uid: STR-01-VIS-ANALYSIS
+    type: READONLY
+    label: 分析依據 / Basis
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-ASSUMPTIONS
+    section_uid: STR-01-SEC-06
+    component_uid: STR-01-CMP-ANALYSIS
+    visual_uid: STR-01-VIS-ANALYSIS
+    type: READONLY
+    label: 假設 / Assumptions
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-OPPORTUNITIES
+    section_uid: STR-01-SEC-06
+    component_uid: STR-01-CMP-ANALYSIS
+    visual_uid: STR-01-VIS-ANALYSIS
+    type: READONLY
+    label: 機會 / Opportunities
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-RISKS
+    section_uid: STR-01-SEC-06
+    component_uid: STR-01-CMP-ANALYSIS
+    visual_uid: STR-01-VIS-ANALYSIS
+    type: READONLY
+    label: 風險 / Risks
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-UNCERTAINTY
+    section_uid: STR-01-SEC-06
+    component_uid: STR-01-CMP-ANALYSIS
+    visual_uid: STR-01-VIS-ANALYSIS
+    type: READONLY
+    label: 不確定性 / Uncertainty
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-PATTERN
+    section_uid: STR-01-SEC-06
+    component_uid: STR-01-CMP-ANALYSIS
+    visual_uid: STR-01-VIS-ANALYSIS
+    type: READONLY
+    label: Pattern / Baseline / Forecast
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-TBL-COMPARE
+    section_uid: STR-01-SEC-07
+    component_uid: STR-01-CMP-COMPARE
+    visual_uid: STR-01-VIS-COMPARE
+    type: TABLE
+    label: Strategy Option Comparison
+    action_uid: STR-01-ACT-COMPARE
+    gate_uid: STR-01-GATE-COMPARE
+    permission_uid: STR_COMPARE
+  - control_uid: STR-01-BTN-COMPARE
+    section_uid: STR-01-SEC-07
+    component_uid: STR-01-CMP-COMPARE
+    visual_uid: STR-01-VIS-COMPARE
+    type: BUTTON
+    label: 比較方案
+    action_uid: STR-01-ACT-COMPARE
+    gate_uid: STR-01-GATE-COMPARE
+    permission_uid: STR_COMPARE
+  - control_uid: STR-01-CARD-RECOMMENDATION
+    section_uid: STR-01-SEC-08
+    component_uid: STR-01-CMP-OUTPUTS
+    visual_uid: STR-01-VIS-RIGHT-OUTPUT
+    type: READONLY_CARD
+    label: Strategy Recommendation
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-CARD-ALERT
+    section_uid: STR-01-SEC-08
+    component_uid: STR-01-CMP-OUTPUTS
+    visual_uid: STR-01-VIS-RIGHT-OUTPUT
+    type: READONLY_CARD
+    label: Strategy Alert
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-CARD-RESOURCE
+    section_uid: STR-01-SEC-08
+    component_uid: STR-01-CMP-OUTPUTS
+    visual_uid: STR-01-VIS-RIGHT-OUTPUT
+    type: READONLY_CARD
+    label: Resource Proposal
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-CARD-BRIEF
+    section_uid: STR-01-SEC-08
+    component_uid: STR-01-CMP-OUTPUTS
+    visual_uid: STR-01-VIS-RIGHT-OUTPUT
+    type: READONLY_CARD
+    label: Decision Brief
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-ANALYSIS
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-CANDIDATE-REF
+    section_uid: STR-01-SEC-09
+    component_uid: STR-01-CMP-LEDGER
+    visual_uid: STR-01-VIS-RIGHT-DECISION
+    type: READONLY
+    label: Strategy Candidate
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-REVIEW-STATE
+    section_uid: STR-01-SEC-09
+    component_uid: STR-01-CMP-LEDGER
+    visual_uid: STR-01-VIS-RIGHT-DECISION
+    type: READONLY
+    label: Review State
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-DECISION-ID
+    section_uid: STR-01-SEC-09
+    component_uid: STR-01-CMP-LEDGER
+    visual_uid: STR-01-VIS-RIGHT-DECISION
+    type: READONLY
+    label: Decision ID
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-DECISION-RESULT
+    section_uid: STR-01-SEC-09
+    component_uid: STR-01-CMP-LEDGER
+    visual_uid: STR-01-VIS-RIGHT-DECISION
+    type: READONLY
+    label: Decision Result
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-DECISION-REASON
+    section_uid: STR-01-SEC-09
+    component_uid: STR-01-CMP-LEDGER
+    visual_uid: STR-01-VIS-RIGHT-DECISION
+    type: READONLY
+    label: Decision Reason
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-EXECUTION-STATE
+    section_uid: STR-01-SEC-09
+    component_uid: STR-01-CMP-LEDGER
+    visual_uid: STR-01-VIS-RIGHT-DECISION
+    type: READONLY
+    label: Execution Status / Ref
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-BTN-SUBMIT-REVIEW
+    section_uid: STR-01-SEC-09
+    component_uid: STR-01-CMP-REVIEW
+    visual_uid: STR-01-VIS-RIGHT-DECISION
+    type: PRIMARY_BUTTON
+    label: 送出策略審查
+    action_uid: STR-01-ACT-REVIEW
+    gate_uid: STR-01-GATE-REVIEW
+    permission_uid: STR_REVIEW
+  - control_uid: STR-01-BTN-ADOPT
+    section_uid: STR-01-SEC-09
+    component_uid: STR-01-CMP-REVIEW
+    visual_uid: STR-01-VIS-RIGHT-DECISION
+    type: PRIMARY_BUTTON
+    label: 採用策略 Context
+    action_uid: STR-01-ACT-ADOPT
+    gate_uid: STR-01-GATE-ADOPT
+    permission_uid: STR_ADOPT
+    note: Human-reviewed adoption only; not budget/workflow/production execution.
+  - control_uid: STR-01-BTN-OPEN-OWNER
+    section_uid: STR-01-SEC-09
+    component_uid: STR-01-CMP-REVIEW
+    visual_uid: STR-01-VIS-RIGHT-DECISION
+    type: BUTTON
+    label: 開啟執行責任模組
+    action_uid: STR-01-ACT-OPEN-OWNER
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-LST-PATTERNS
+    section_uid: STR-01-SEC-10
+    component_uid: STR-01-CMP-MEMORY
+    visual_uid: STR-01-VIS-MEMORY
+    type: LIST
+    label: Strategy Pattern / Cases
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-MEMORY
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-LST-EXPERIMENTS
+    section_uid: STR-01-SEC-10
+    component_uid: STR-01-CMP-MEMORY
+    visual_uid: STR-01-VIS-MEMORY
+    type: LIST
+    label: Experiment Records
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-MEMORY
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-LST-BASELINES
+    section_uid: STR-01-SEC-10
+    component_uid: STR-01-CMP-MEMORY
+    visual_uid: STR-01-VIS-MEMORY
+    type: LIST
+    label: Baseline History
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-MEMORY
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-LST-LEARNING
+    section_uid: STR-01-SEC-10
+    component_uid: STR-01-CMP-MEMORY
+    visual_uid: STR-01-VIS-MEMORY
+    type: LIST
+    label: Learning Results
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-MEMORY
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-EXPECTED
+    section_uid: STR-01-SEC-11
+    component_uid: STR-01-CMP-FEEDBACK
+    visual_uid: STR-01-VIS-FEEDBACK
+    type: READONLY
+    label: Expected
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-FEEDBACK
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-ACTUAL
+    section_uid: STR-01-SEC-11
+    component_uid: STR-01-CMP-FEEDBACK
+    visual_uid: STR-01-VIS-FEEDBACK
+    type: READONLY
+    label: Actual
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-FEEDBACK
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-DIFFERENCE
+    section_uid: STR-01-SEC-11
+    component_uid: STR-01-CMP-FEEDBACK
+    visual_uid: STR-01-VIS-FEEDBACK
+    type: READONLY
+    label: Difference Analysis
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-FEEDBACK
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-KPI
+    section_uid: STR-01-SEC-11
+    component_uid: STR-01-CMP-FEEDBACK
+    visual_uid: STR-01-VIS-FEEDBACK
+    type: READONLY
+    label: KPI / Performance Change
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-FEEDBACK
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-LEARNING
+    section_uid: STR-01-SEC-11
+    component_uid: STR-01-CMP-FEEDBACK
+    visual_uid: STR-01-VIS-FEEDBACK
+    type: READONLY
+    label: Learning
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-FEEDBACK
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-PROVIDER-BRAND
+    section_uid: STR-01-SEC-12
+    component_uid: STR-01-CMP-STATUS
+    visual_uid: STR-01-VIS-STATUS
+    type: READONLY
+    label: Provider Brand
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-CORRELATION
+    section_uid: STR-01-SEC-12
+    component_uid: STR-01-CMP-STATUS
+    visual_uid: STR-01-VIS-STATUS
+    type: READONLY
+    label: Correlation / Audit Ref
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-DISABLED
+    section_uid: STR-01-SEC-12
+    component_uid: STR-01-CMP-STATUS
+    visual_uid: STR-01-VIS-STATUS
+    type: READONLY
+    label: Disabled Reason
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-FLD-OWNER-BOUNDARY
+    section_uid: STR-01-SEC-12
+    component_uid: STR-01-CMP-STATUS
+    visual_uid: STR-01-VIS-STATUS
+    type: READONLY
+    label: Execution Owner Boundary
+    action_uid: STR-01-ACT-NOOP
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  - control_uid: STR-01-BTN-AUDIT
+    section_uid: STR-01-SEC-12
+    component_uid: STR-01-CMP-STATUS
+    visual_uid: STR-01-VIS-STATUS
+    type: BUTTON
+    label: 查看 Audit / Trace
+    action_uid: STR-01-ACT-AUDIT
+    gate_uid: STR-01-GATE-PAGE
+    permission_uid: STR_VIEW
+  integration_ports:
+  - port_uid: STR-01-PORT-PROJECTION
+    boundary: Strategic Center Projection
+    operation: getUiProjection
+    method_path: GET /v1/ui-projections/{pageUid}
+    permission: page/strategy read
+    state_event: READ_ONLY
+    exposure: all read-only strategic page data
+  - port_uid: STR-01-PORT-CONVERSATION
+    boundary: Strategic Conversation
+    operation: sendConversationMessage
+    method_path: POST /v1/conversations/{conversationId}/messages
+    permission: conversation.write
+    state_event: Conversation ACTIVE→ACTIVE | conversation.message.sent
+    exposure: Single/Multi AI through shared conversation core; provider mode/router remains system-owned
+  - port_uid: STR-01-PORT-STOP
+    boundary: Conversation Control
+    operation: stopConversationGeneration
+    method_path: POST /v1/conversations/{conversationId}/generation/stop
+    permission: conversation.write
+    state_event: stop current generation only
+    exposure: current conversation only
+  - port_uid: STR-01-PORT-COMPARE
+    boundary: Strategy Candidate Compare
+    operation: compareCandidates
+    method_path: GET /v1/candidates/compare
+    permission: candidate.read
+    state_event: READ_ONLY
+    exposure: exact candidate refs only
+  - port_uid: STR-01-PORT-REVIEW
+    boundary: Strategy Review
+    operation: submitStrategyReview
+    method_path: POST /v1/state-commands/strategycandidate/submitstrategyreview
+    permission: strategy.decision.propose
+    state_event: StrategyCandidate:CANDIDATE→REVIEW_REQUIRED | ai.strategy.review_requested
+    exposure: human review request; no auto approval
+  - port_uid: STR-01-PORT-ADOPT
+    boundary: Strategy Context Adoption
+    operation: adoptAsContextCandidate
+    method_path: POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+    permission: strategy.decision.approve
+    state_event: StrategyCandidate:REVIEW_REQUIRED→ADOPTED | ai.strategy.context_adopted
+    exposure: governed context adoption only; owner module executes later
+acceptance:
+- acceptance_uid: STR-01-ACC-01
+  item: Single Page / Global Visual
+  condition: Only workspace:STR-01; Global Shell/Visual inherited; no parallel Strategic Center page
+- acceptance_uid: STR-01-ACC-02
+  item: Strategic Context
+  condition: Market/industry/competition/internal/resource/cost/risk/governance sources expose exact ref/time/version/confidence; no AI fill
+- acceptance_uid: STR-01-ACC-03
+  item: Single / Multi AI
+  condition: Same conversation template; same issue/context in Multi AI; no manual Provider/Model picker; Assistant always exists
+- acceptance_uid: STR-01-ACC-04
+  item: Analysis Transparency
+  condition: Basis/assumptions/opportunities/risks/uncertainty/evidence and option comparison are visible before review
+- acceptance_uid: STR-01-ACC-05
+  item: Four Outputs
+  condition: Strategy Recommendation / Strategy Alert / Resource Proposal / Decision Brief remain distinct structured outputs
+- acceptance_uid: STR-01-ACC-06
+  item: Human Decision
+  condition: AI result is never formal company decision; submitStrategyReview then human-reviewed adoptAsContextCandidate when authorized
+- acceptance_uid: STR-01-ACC-07
+  item: Cross-module Boundary
+  condition: Budget/Workflow/Governance/Production approvals/actions remain in owner module; STR-01 only proposes, displays status and navigates
+- acceptance_uid: STR-01-ACC-08
+  item: Decision Ledger
+  condition: Decision ID/candidate/source/risk/approval/result/reason/actor/time/execution status/ref/audit are traceable
+- acceptance_uid: STR-01-ACC-09
+  item: Immutable History
+  condition: Strategy candidate/output/memory/history versions are not overwritten
+- acceptance_uid: STR-01-ACC-10
+  item: Feedback Loop
+  condition: Execution result -> Expected vs Actual -> Learning -> Strategic Experience is displayable and traceable
+- acceptance_uid: STR-01-ACC-11
+  item: Scrollable Page
+  condition: height:auto + overflow-y:auto; content grows downward
+- acceptance_uid: STR-01-ACC-12
+  item: Machine Binding
+  condition: Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted=BLOCK
+- acceptance_uid: STR-01-ACC-13
+  item: Shared Provider Adapter Binding
+  condition: Single/Multi/Cross strategic AI resolves TEXT_CHAT through shared AIAPI-06 ProviderModelProfile + shared Provider Prompt Adapter; no local picker/router/compiler/provider
+    syntax.
+hard_locks:
+- Only workspace:STR-01 is the current executable Strategic Center workspace.
+- Strategic Center is a Strategic Intelligence and human decision-support workspace, not an automatic decision/execution system.
+- No raw AI response can directly become formal strategy decision, budget approval, workflow change, task, production action, release or publish.
+- External intelligence cannot silently overwrite confirmed decisions/current governed internal truth.
+- Single AI and Multi AI share the ACPOS AI Conversation Core; Multi AI asks the same question using the same Strategic Context.
+- No manual Provider/Model picker; routing is handled by ACPOS API/Capability Router.
+- Provider display in conversation is brand only; full technical API details remain in API Management.
+- Strategy Recommendation, Strategy Alert, Resource Proposal and Decision Brief remain distinct outputs.
+- Resource Proposal is a recommendation only; budget/capacity approval belongs to its owner module.
+- Cross-module actions remain in A10 Finance / A04 Workflow / A08 Governance / Core or department owner; STR-01 must not duplicate them.
+- Candidate/output/memory/history versions are immutable; revisions append new versions.
+- Missing source, confidence, finance, capacity, KPI, risk, evidence or execution values remain —/incomplete; AI may not invent them.
+- No unlisted Section/Component/Control/Action/State/Gate/Permission/Port/Business Sample Data.
+- STR-01 strategic AI instructions are provider-neutral and bind only to the shared ACPOS Provider Adapter Authority V1.2.
+- STR-01 must not store or author provider-specific prompt syntax, request JSON keys, model endpoint paths or secrets.
+- SINGLE/MULTI/CROSS AI provider execution must resolve through the system-owned TEXT_CHAT ProviderModelProfile route.
+- Provider fallback must recompile from canonical Strategic Context/Instruction; cross-provider compiled-prompt reuse is FORBIDDEN.
+validation:
+  status: PASS
+  current_page_count: 1
+  parallel_strategy_page_count: 0
+  missing_registry_reference_count: 0
+  manual_provider_picker_count: 0
+  direct_budget_workflow_production_publish_control_count: 0
+  registered_effectful_ports: 4
+  counts:
+    sections: 12
+    visuals: 12
+    components: 16
+    permissions: 5
+    gates: 11
+    errors: 9
+    page_states: 9
+    stages: 6
+    actions: 11
+    objects_refs: 12
+    controls: 57
+    integration_ports: 6
+  shared_provider_adapter_binding: PASS
+  provider_adapter_authority_version: V1.2
+  local_provider_registry_count: 0
+  local_prompt_compiler_count: 0
+  provider_specific_strategic_prompt_count: 0
+shared_provider_adapter_binding:
+  binding_uid: STR-01-BIND-SHARED-PROVIDER-ADAPTER
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.2#normalized_instruction_contract.STRATEGY_CENTER
+  owner: EXISTING ACPOS AI Conversation Core / API Capability Router / Provider Prompt Adapter
+  required_capability: TEXT_CHAT
+  profile_owner: admin:AIAPI-06#provider_model_profiles
+  page_local_provider_registry: FORBIDDEN
+  page_local_provider_prompt_compiler: FORBIDDEN
+  manual_provider_model_picker: FORBIDDEN
+  provider_specific_prompt_in_strategic_content: FORBIDDEN
+  existing_send_binding:
+    port_uid: STR-01-PORT-SEND
+    operation: sendConversationMessage
+    rule: No new STR send endpoint or action is created. Existing Conversation Core receives the message/context and invokes system-owned capability routing/translation
+      before external AI execution.
+  instruction_building:
+    source_contracts:
+    - strategic_context_contract
+    - conversation_contract
+    - strategy_analysis_contract
+    - strategy_output_contract
+    required_canonical_context:
+    - ORIGINAL_USER_QUESTION
+    - SHARED_STRATEGIC_CONTEXT
+    - EXACT_SOURCE_FACTS_AND_EVIDENCE
+    - TARGET_RESPONSE_REFS
+    - REQUIRED_ANCESTRY_ONLY
+    - CURRENT_USER_INSTRUCTION
+    source_priority_ref: strategic_context_contract.priority
+    missing_source_rule: Preserve —/incomplete or BLOCK dependent operation; AI must not invent source/finance/resource/risk/evidence values.
+    analysis_output_rule: Returned strategic analysis must satisfy strategy_analysis_contract mandatory fields and the selected strategy_output_contract type
+      when a structured output is requested.
+  mode_mapping:
+    SINGLE_AI:
+      capability: TEXT_CHAT
+      compile: one canonical strategic instruction -> one system-resolved ProviderModelProfile
+    MULTI_AI:
+      capability: TEXT_CHAT
+      compile: same original question + same Strategic Context + same evidence basis -> separate compilation per selected AI participant route/profile; results
+        remain independent AI statements
+    CROSS_REVIEW:
+      capability: TEXT_CHAT
+      required:
+      - ORIGINAL_USER_QUESTION
+      - SHARED_STRATEGIC_CONTEXT
+      - EXACT_SOURCE_FACTS_AND_EVIDENCE
+      - TARGET_RESPONSE_REFS
+      - CURRENT_USER_INSTRUCTION
+    CROSS_COMPARISON:
+      capability: TEXT_CHAT
+      required:
+      - ORIGINAL_USER_QUESTION
+      - SHARED_STRATEGIC_CONTEXT
+      - EXACT_SOURCE_FACTS_AND_EVIDENCE
+      - TARGET_RESPONSE_REFS
+      - CURRENT_USER_INSTRUCTION
+    REVISION:
+      capability: TEXT_CHAT
+      required:
+      - ORIGINAL_USER_QUESTION
+      - SHARED_STRATEGIC_CONTEXT
+      - EXACT_SOURCE_FACTS_AND_EVIDENCE
+      - TARGET_RESPONSE_REFS
+      - CURRENT_USER_INSTRUCTION
+    EVIDENCE_CHECK:
+      capability: TEXT_CHAT
+      required:
+      - ORIGINAL_USER_QUESTION
+      - SHARED_STRATEGIC_CONTEXT
+      - EXACT_SOURCE_FACTS_AND_EVIDENCE
+      - TARGET_RESPONSE_REFS
+      - CURRENT_USER_INSTRUCTION
+  provider_conversion:
+    pipeline:
+    - Resolve exact STR conversation + references + governed Strategic Context
+    - Build provider-neutral canonical strategic instruction
+    - Resolve TEXT_CHAT capability
+    - Existing Router selects eligible enabled Provider+Model profile
+    - Existing Provider Prompt Adapter renders that profile's prompt_template
+    - Existing payload compiler renders request_template / adapter schema
+    - Existing ProviderGateway executes with secret_env_ref
+    - Normalize response into STR conversation/analysis/output contracts
+    - Persist provider brand + response ref + lineage/audit metadata under existing conversation/runtime authority
+    fallback: Recompile from canonical strategic meaning for the fallback Provider+Model profile; never reuse another provider's compiled prompt.
+  multi_ai_consistency_lock:
+  - A/B/C aliases are session participant aliases, not permanent provider roles.
+  - Provider/Model selection remains ACPOS system-owned.
+  - All independent first-round participants receive the same original question and same shared strategic context/evidence basis.
+  - Other AI responses remain AI statements, not SOURCE FACT.
+  - Provider differences may affect expression but must not change governed context, evidence hierarchy, operation type, or required output contract.
+  assistant_boundary: AI Assistant remains the existing meeting secretary/record function. This binding does not route assistant output through the strategic
+    analyst contract or authorize independent strategic recommendations.
+  new_controls: 0
+  new_actions: 0
+  new_ports: 0
+  new_gates: 0
+  new_runtime_services: 0

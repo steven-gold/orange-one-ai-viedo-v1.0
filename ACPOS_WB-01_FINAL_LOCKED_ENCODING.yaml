@@ -1,0 +1,1333 @@
+authority:
+  id: ACPOS_WB-01_FINAL_LOCKED_ENCODING
+  page_uid: workspace:WB-01
+  page_id: WB-01
+  page_name:
+    zh-TW: 儀表板
+    zh-CN: 仪表板
+    en: Dashboard
+  surface: WORKSPACE
+  owner: CompanyDashboardProjection
+  layout_template: dashboard_shell
+  status: FINAL_LOCKED
+  current_only: true
+  final_lock: true
+  single_page_authority: true
+  single_machine_authority: true
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  real_data_only: true
+  missing_value_display: —
+  page_permission: workspace.dashboard.view
+  allowed_action_ids: []
+  completion_basis: USER_APPROVED_PAGE_AUTHORITY_COMPLETION_2026-08-28
+  completion_scope: Adds WB-01 presentation/component/visual/render-schema decisions only; does not add canonical business
+    Section/Field/Control/Action/API objects.
+source_binding:
+  primary: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL.yaml
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL.yaml
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  supersedes:
+  - WB-01_儀表板_頁面設計權威規格_REVIEW_CANDIDATE.docx
+  - ACPOS_WB-01_REVIEW_CANDIDATE_ENCODING.yaml
+  legacy_dashboard_images: VISUAL_REFERENCE_ONLY_NON_EXECUTABLE
+  source_precedence:
+  - canonical master Page/Section/Field/Control/API/Permission
+  - this WB-01 FINAL_LOCKED page completion for presentation/render ambiguity closure
+  - Global Shell / Global Visual
+  - historical visual references (non-executable)
+  ai_inference_for_missing_definition: FORBIDDEN
+purpose: 全公司首頁總覽；以卡片摘要顯示公司專案、進度、Topic 總作業時間、待處理／待審查、生產、通知、公司公告、AI／產業新聞、系統狀態與近期完成。各部門細節必須回各自部門頁查看。
+authority_decisions:
+- decision_uid: WB-01-DECISION-001-CORRECTION-RATE
+  subject: Correction Rate conflict
+  decision: DO_NOT_RENDER
+  reason: The page-specific 14 Section/Field/Control registry and UT-R9-DASH-003 require exactly six KPI cards and contain
+    no correction-rate field/control. A seventh KPI is forbidden until canonically registered.
+- decision_uid: WB-01-DECISION-002-HEADER
+  subject: Dashboard page-local header/context bar ambiguity
+  decision: NO_PAGE_LOCAL_HEADER
+  reason: Global Shell owns header/page identity and explicitly forbids page_specific_header. CMP-CONTEXT-BAR may exist as
+    shell infrastructure but WB-01 shall not render a 15th visible business section.
+- decision_uid: WB-01-DECISION-003-TRIGGER
+  subject: Section open trigger surface
+  decision: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  reason: Each canonical SECTION_OPEN control has exactly one visible trigger. Cards and list rows are not clickable.
+- decision_uid: WB-01-DECISION-004-POLICY
+  subject: Hidden vs disabled
+  decision: PERMISSION_DENIED=HIDDEN; STATE_TEMPORARILY_UNAVAILABLE=DISABLED
+  reason: Permission does not render unauthorized content/control. Disabled is reserved for authorized controls blocked by
+    current UI/read state.
+- decision_uid: WB-01-DECISION-005-RETRY
+  subject: Error retry
+  decision: NO_NEW_RETRY_CONTROL
+  reason: No Retry control is registered. A user may invoke the same registered 查看/SECTION_OPEN control again after an error;
+    label and identity remain unchanged.
+layout:
+  main_workspace:
+    display: CSS_GRID
+    columns: repeat(12, minmax(0, 1fr))
+    gap: 16px
+    align_items: start
+    height: auto
+    overflow_y: auto
+    min_width: 1280px
+    content_padding: 16px
+    no_page_local_header: true
+  desktop_ge_1440:
+    kpi: 6 cards, each span 2, one row
+    project_progress: span 8
+    company_progress: span 4
+    production_summary: span 8
+    notifications: span 4
+    announcements_news_status: each span 4
+    recent_completions: span 12
+  desktop_1280_1439:
+    kpi: 3 + 3, each span 4, exact canonical order
+    remaining_sections: same 8/4, 4/4/4, 12/12 spans as >=1440; no 'where possible' discretion
+  below_1280: Keep Main Workspace min-width=1280px and horizontal scroll. No alternate mobile workflow, stacking, drawer conversion
+    or section reordering.
+  visibility_reflow: Within each row group, authorized visible sections pack left-to-right in canonical order without changing
+    each section's span. Never migrate a section to a different row group and never stretch to fill a denied sibling.
+  card_common:
+    panel_style: GLOBAL_VISUAL_PANEL_ONLY
+    padding: 16px
+    inner_gap: 12px
+    header_height: 40px
+    view_button_height: 40px
+    view_button_min_width: 88px
+    section_icon: NONE
+    decorative_asset: NONE
+    loading_empty_error_preserve_geometry: true
+  section_slots:
+    1: &id001
+      group: kpi
+      ge1440: col 1-2
+      w1280_1439: row 1 col 1-4
+      height: 136px
+    2: &id002
+      group: kpi
+      ge1440: col 3-4
+      w1280_1439: row 1 col 5-8
+      height: 136px
+    3: &id003
+      group: kpi
+      ge1440: col 5-6
+      w1280_1439: row 1 col 9-12
+      height: 136px
+    4: &id004
+      group: kpi
+      ge1440: col 7-8
+      w1280_1439: row 2 col 1-4
+      height: 136px
+    5: &id005
+      group: kpi
+      ge1440: col 9-10
+      w1280_1439: row 2 col 5-8
+      height: 136px
+    6: &id006
+      group: kpi
+      ge1440: col 11-12
+      w1280_1439: row 2 col 9-12
+      height: 136px
+    7: &id007
+      group: progress
+      ge1440: col 1-8
+      w1280_1439: col 1-8
+      height: 320px
+    8: &id008
+      group: progress
+      ge1440: col 9-12
+      w1280_1439: col 9-12
+      height: 320px
+    9: &id009
+      group: production
+      ge1440: col 1-8
+      w1280_1439: col 1-8
+      height: 280px
+    10: &id010
+      group: production
+      ge1440: col 9-12
+      w1280_1439: col 9-12
+      height: 280px
+    11: &id011
+      group: information
+      ge1440: col 1-4
+      w1280_1439: col 1-4
+      height: 240px
+    12: &id012
+      group: information
+      ge1440: col 5-8
+      w1280_1439: col 5-8
+      height: 240px
+    13: &id013
+      group: information
+      ge1440: col 9-12
+      w1280_1439: col 9-12
+      height: 240px
+    14: &id014
+      group: recent
+      ge1440: col 1-12
+      w1280_1439: col 1-12
+      height: 220px
+canonical_sections:
+- order: 1
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT
+  section_key: company_project_count
+  labels:
+    zh-TW: 專案總數
+    zh-CN: 专案总数
+    en: Company Project Count
+  field_id: FIELD-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT
+  field_type: integer
+  data_binding: company_project_count.company_project_count
+  component_uid: WB-01-CMP-KPI-PROJECT-COUNT
+  visual_uid: WB-01-VIS-KPI-01
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-01
+  control_id: CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN
+  control_labels:
+    zh-TW: 查看專案總數
+    zh-CN: 查看专案总数
+    en: View Project Count
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id001
+- order: 2
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT
+  section_key: company_running_project_count
+  labels:
+    zh-TW: 執行中
+    zh-CN: 执行中
+    en: Running Projects
+  field_id: FIELD-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT
+  field_type: integer
+  data_binding: company_running_project_count.company_running_project_count
+  component_uid: WB-01-CMP-KPI-RUNNING
+  visual_uid: WB-01-VIS-KPI-02
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-02
+  control_id: CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN
+  control_labels:
+    zh-TW: 查看執行中
+    zh-CN: 查看执行中
+    en: View Running Projects
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id002
+- order: 3
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT
+  section_key: company_pending_action_count
+  labels:
+    zh-TW: 待處理
+    zh-CN: 待处理
+    en: Pending Actions
+  field_id: FIELD-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT
+  field_type: integer
+  data_binding: company_pending_action_count.company_pending_action_count
+  component_uid: WB-01-CMP-KPI-PENDING-ACTION
+  visual_uid: WB-01-VIS-KPI-03
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-03
+  control_id: CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN
+  control_labels:
+    zh-TW: 查看待處理
+    zh-CN: 查看待处理
+    en: View Pending Actions
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id003
+- order: 4
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT
+  section_key: company_pending_review_count
+  labels:
+    zh-TW: 待審查
+    zh-CN: 待审查
+    en: Pending Reviews
+  field_id: FIELD-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT
+  field_type: integer
+  data_binding: company_pending_review_count.company_pending_review_count
+  component_uid: WB-01-CMP-KPI-PENDING-REVIEW
+  visual_uid: WB-01-VIS-KPI-04
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-04
+  control_id: CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN
+  control_labels:
+    zh-TW: 查看待審查
+    zh-CN: 查看待审查
+    en: View Pending Reviews
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id004
+- order: 5
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT
+  section_key: company_completed_project_count
+  labels:
+    zh-TW: 已完成
+    zh-CN: 已完成
+    en: Completed Projects
+  field_id: FIELD-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT
+  field_type: integer
+  data_binding: company_completed_project_count.company_completed_project_count
+  component_uid: WB-01-CMP-KPI-COMPLETED
+  visual_uid: WB-01-VIS-KPI-05
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-05
+  control_id: CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN
+  control_labels:
+    zh-TW: 查看已完成
+    zh-CN: 查看已完成
+    en: View Completed Projects
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id005
+- order: 6
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS
+  section_key: company_average_progress
+  labels:
+    zh-TW: 平均進度
+    zh-CN: 平均进度
+    en: Average Progress
+  field_id: FIELD-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS
+  field_type: percentage
+  data_binding: company_average_progress.company_average_progress
+  component_uid: WB-01-CMP-KPI-AVERAGE-PROGRESS
+  visual_uid: WB-01-VIS-KPI-06
+  render_schema_uid: WB-01-SCHEMA-KPI-PERCENT-01
+  control_id: CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN
+  control_labels:
+    zh-TW: 查看平均進度
+    zh-CN: 查看平均进度
+    en: View Average Progress
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id006
+- order: 7
+  section_id: SEC-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW
+  section_key: project_progress_overview
+  labels:
+    zh-TW: 專案進度
+    zh-CN: 专案进度
+    en: Project Progress
+  field_id: FIELD-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW
+  field_type: read_model_object
+  data_binding: project_progress_overview.project_progress_overview
+  component_uid: WB-01-CMP-PROJECT-PROGRESS
+  visual_uid: WB-01-VIS-PROJECT-PROGRESS
+  render_schema_uid: WB-01-SCHEMA-PROJECT-TOPIC-TASK-01
+  control_id: CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN
+  control_labels:
+    zh-TW: 查看專案進度
+    zh-CN: 查看专案进度
+    en: View Project Progress
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id007
+- order: 8
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY
+  section_key: company_progress_summary
+  labels:
+    zh-TW: 公司整體進度
+    zh-CN: 公司整体进度
+    en: Company Progress
+  field_id: FIELD-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY
+  field_type: read_model_object
+  data_binding: company_progress_summary.company_progress_summary
+  component_uid: WB-01-CMP-COMPANY-PROGRESS
+  visual_uid: WB-01-VIS-COMPANY-PROGRESS
+  render_schema_uid: WB-01-SCHEMA-COMPANY-PROGRESS-01
+  control_id: CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN
+  control_labels:
+    zh-TW: 查看公司整體進度
+    zh-CN: 查看公司整体进度
+    en: View Company Progress
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id008
+- order: 9
+  section_id: SEC-WORKSPACE-WB-01-PRODUCTION-SUMMARY
+  section_key: production_summary
+  labels:
+    zh-TW: 生產總覽
+    zh-CN: 生产总览
+    en: Production Summary
+  field_id: FIELD-WORKSPACE-WB-01-PRODUCTION-SUMMARY
+  field_type: read_model_object
+  data_binding: production_summary.production_summary
+  component_uid: WB-01-CMP-PRODUCTION-SUMMARY
+  visual_uid: WB-01-VIS-PRODUCTION
+  render_schema_uid: WB-01-SCHEMA-PRODUCTION-SUMMARY-01
+  control_id: CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN
+  control_labels:
+    zh-TW: 查看生產總覽
+    zh-CN: 查看生产总览
+    en: View Production Summary
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id009
+- order: 10
+  section_id: SEC-WORKSPACE-WB-01-NOTIFICATIONS
+  section_key: notifications
+  labels:
+    zh-TW: 通知
+    zh-CN: 通知
+    en: Notifications
+  field_id: FIELD-WORKSPACE-WB-01-NOTIFICATIONS
+  field_type: read_model_object
+  data_binding: notifications.notifications
+  component_uid: WB-01-CMP-NOTIFICATIONS
+  visual_uid: WB-01-VIS-NOTIFICATIONS
+  render_schema_uid: WB-01-SCHEMA-NOTIFICATIONS-01
+  control_id: CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN
+  control_labels:
+    zh-TW: 查看通知
+    zh-CN: 查看通知
+    en: View Notifications
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id010
+- order: 11
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS
+  section_key: company_announcements
+  labels:
+    zh-TW: 公司公告
+    zh-CN: 公司公告
+    en: Company Announcements
+  field_id: FIELD-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS
+  field_type: read_model_object
+  data_binding: company_announcements.company_announcements
+  component_uid: WB-01-CMP-ANNOUNCEMENTS
+  visual_uid: WB-01-VIS-ANNOUNCEMENTS
+  render_schema_uid: WB-01-SCHEMA-ANNOUNCEMENTS-01
+  control_id: CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN
+  control_labels:
+    zh-TW: 查看公司公告
+    zh-CN: 查看公司公告
+    en: View Company Announcements
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id011
+- order: 12
+  section_id: SEC-WORKSPACE-WB-01-INDUSTRY-NEWS
+  section_key: industry_news
+  labels:
+    zh-TW: AI / 產業新聞
+    zh-CN: AI / 产业新闻
+    en: AI / Industry News
+  field_id: FIELD-WORKSPACE-WB-01-INDUSTRY-NEWS
+  field_type: read_model_object
+  data_binding: industry_news.industry_news
+  component_uid: WB-01-CMP-INDUSTRY-NEWS
+  visual_uid: WB-01-VIS-INDUSTRY-NEWS
+  render_schema_uid: WB-01-SCHEMA-INDUSTRY-NEWS-01
+  control_id: CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN
+  control_labels:
+    zh-TW: 查看 AI / 產業新聞
+    zh-CN: 查看 AI / 产业新闻
+    en: View AI / Industry News
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id012
+- order: 13
+  section_id: SEC-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY
+  section_key: system_status_summary
+  labels:
+    zh-TW: 系統狀態
+    zh-CN: 系统状态
+    en: System Status
+  field_id: FIELD-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY
+  field_type: read_model_object
+  data_binding: system_status_summary.system_status_summary
+  component_uid: WB-01-CMP-SYSTEM-STATUS
+  visual_uid: WB-01-VIS-SYSTEM-STATUS
+  render_schema_uid: WB-01-SCHEMA-SYSTEM-STATUS-01
+  control_id: CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN
+  control_labels:
+    zh-TW: 查看系統狀態
+    zh-CN: 查看系统状态
+    en: View System Status
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id013
+- order: 14
+  section_id: SEC-WORKSPACE-WB-01-RECENT-COMPLETIONS
+  section_key: recent_completions
+  labels:
+    zh-TW: 近期完成
+    zh-CN: 近期完成
+    en: Recent Completions
+  field_id: FIELD-WORKSPACE-WB-01-RECENT-COMPLETIONS
+  field_type: read_model_object
+  data_binding: recent_completions.recent_completions
+  component_uid: WB-01-CMP-RECENT-COMPLETIONS
+  visual_uid: WB-01-VIS-RECENT-COMPLETIONS
+  render_schema_uid: WB-01-SCHEMA-RECENT-COMPLETIONS-01
+  control_id: CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN
+  control_labels:
+    zh-TW: 查看近期完成
+    zh-CN: 查看近期完成
+    en: View Recent Completions
+  trigger_surface: HEADER_TRAILING_VIEW_BUTTON_ONLY
+  card_body_clickable: false
+  row_clickable: false
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  permission: workspace.dashboard.view
+  field_permission:
+    read_permission: workspace.dashboard.view
+    write_permission: null
+    visibility: authorized_scope_only
+    classification: OPERATIONAL
+    version_binding: read_model_version
+  geometry: *id014
+component_registry:
+- component_uid: WB-01-CMP-KPI-PROJECT-COUNT
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT
+  role: company_project_count
+  visual_uid: WB-01-VIS-KPI-01
+- component_uid: WB-01-CMP-KPI-RUNNING
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT
+  role: company_running_project_count
+  visual_uid: WB-01-VIS-KPI-02
+- component_uid: WB-01-CMP-KPI-PENDING-ACTION
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT
+  role: company_pending_action_count
+  visual_uid: WB-01-VIS-KPI-03
+- component_uid: WB-01-CMP-KPI-PENDING-REVIEW
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT
+  role: company_pending_review_count
+  visual_uid: WB-01-VIS-KPI-04
+- component_uid: WB-01-CMP-KPI-COMPLETED
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT
+  role: company_completed_project_count
+  visual_uid: WB-01-VIS-KPI-05
+- component_uid: WB-01-CMP-KPI-AVERAGE-PROGRESS
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS
+  role: company_average_progress
+  visual_uid: WB-01-VIS-KPI-06
+- component_uid: WB-01-CMP-PROJECT-PROGRESS
+  section_id: SEC-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW
+  role: project_progress_overview
+  visual_uid: WB-01-VIS-PROJECT-PROGRESS
+- component_uid: WB-01-CMP-COMPANY-PROGRESS
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY
+  role: company_progress_summary
+  visual_uid: WB-01-VIS-COMPANY-PROGRESS
+- component_uid: WB-01-CMP-PRODUCTION-SUMMARY
+  section_id: SEC-WORKSPACE-WB-01-PRODUCTION-SUMMARY
+  role: production_summary
+  visual_uid: WB-01-VIS-PRODUCTION
+- component_uid: WB-01-CMP-NOTIFICATIONS
+  section_id: SEC-WORKSPACE-WB-01-NOTIFICATIONS
+  role: notifications
+  visual_uid: WB-01-VIS-NOTIFICATIONS
+- component_uid: WB-01-CMP-ANNOUNCEMENTS
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS
+  role: company_announcements
+  visual_uid: WB-01-VIS-ANNOUNCEMENTS
+- component_uid: WB-01-CMP-INDUSTRY-NEWS
+  section_id: SEC-WORKSPACE-WB-01-INDUSTRY-NEWS
+  role: industry_news
+  visual_uid: WB-01-VIS-INDUSTRY-NEWS
+- component_uid: WB-01-CMP-SYSTEM-STATUS
+  section_id: SEC-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY
+  role: system_status_summary
+  visual_uid: WB-01-VIS-SYSTEM-STATUS
+- component_uid: WB-01-CMP-RECENT-COMPLETIONS
+  section_id: SEC-WORKSPACE-WB-01-RECENT-COMPLETIONS
+  role: recent_completions
+  visual_uid: WB-01-VIS-RECENT-COMPLETIONS
+- component_uid: WB-01-CMP-DRAWER-PROJECTION
+  section_id: GLOBAL_DRAWER_SLOT
+  role: Read-only section projection for 14 canonical SECTION_OPEN controls
+  visual_uid: WB-01-VIS-DRAWER-PROJECTION
+visual_registry:
+- visual_uid: WB-01-VIS-KPI-01
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT
+  geometry: *id001
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-KPI-02
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT
+  geometry: *id002
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-KPI-03
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT
+  geometry: *id003
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-KPI-04
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT
+  geometry: *id004
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-KPI-05
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT
+  geometry: *id005
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-KPI-06
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS
+  geometry: *id006
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-PROJECT-PROGRESS
+  section_id: SEC-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW
+  geometry: *id007
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-COMPANY-PROGRESS
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY
+  geometry: *id008
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-PRODUCTION
+  section_id: SEC-WORKSPACE-WB-01-PRODUCTION-SUMMARY
+  geometry: *id009
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-NOTIFICATIONS
+  section_id: SEC-WORKSPACE-WB-01-NOTIFICATIONS
+  geometry: *id010
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-ANNOUNCEMENTS
+  section_id: SEC-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS
+  geometry: *id011
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-INDUSTRY-NEWS
+  section_id: SEC-WORKSPACE-WB-01-INDUSTRY-NEWS
+  geometry: *id012
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-SYSTEM-STATUS
+  section_id: SEC-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY
+  geometry: *id013
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-RECENT-COMPLETIONS
+  section_id: SEC-WORKSPACE-WB-01-RECENT-COMPLETIONS
+  geometry: *id014
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+- visual_uid: WB-01-VIS-DRAWER-PROJECTION
+  section_id: GLOBAL_DRAWER_SLOT
+  geometry: Use Global Drawer geometry; content is WB-01 section projection only; focus trap + Escape + Close inherited
+  inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  visual_override: FORBIDDEN
+render_schema_registry:
+  company_project_count:
+    schema_uid: WB-01-SCHEMA-KPI-INTEGER-01
+    type: scalar
+    allowed_keys:
+    - value
+    visible_fields:
+    - value
+    constraints: integer >= 0 or null; null displays —; no secondary metadata
+  company_running_project_count:
+    schema_uid: WB-01-SCHEMA-KPI-INTEGER-02
+    type: scalar
+    allowed_keys:
+    - value
+    visible_fields:
+    - value
+    constraints: integer >= 0 or null; null displays —; no secondary metadata
+  company_pending_action_count:
+    schema_uid: WB-01-SCHEMA-KPI-INTEGER-03
+    type: scalar
+    allowed_keys:
+    - value
+    visible_fields:
+    - value
+    constraints: integer >= 0 or null; null displays —; no secondary metadata
+  company_pending_review_count:
+    schema_uid: WB-01-SCHEMA-KPI-INTEGER-04
+    type: scalar
+    allowed_keys:
+    - value
+    visible_fields:
+    - value
+    constraints: integer >= 0 or null; null displays —; no secondary metadata
+  company_completed_project_count:
+    schema_uid: WB-01-SCHEMA-KPI-INTEGER-05
+    type: scalar
+    allowed_keys:
+    - value
+    visible_fields:
+    - value
+    constraints: integer >= 0 or null; null displays —; no secondary metadata
+  company_average_progress:
+    schema_uid: WB-01-SCHEMA-KPI-PERCENT-01
+    type: scalar
+    allowed_keys:
+    - value
+    visible_fields:
+    - value
+    - linear_progress
+    constraints: number 0..100 or null; null displays — and neutral empty track; circular/donut forbidden
+  project_progress_overview:
+    schema_uid: WB-01-SCHEMA-PROJECT-TOPIC-TASK-01
+    type: object
+    allowed_keys:
+    - projects
+    visible_fields:
+    - projects[].display_name
+    - projects[].status
+    - projects[].progress_percentage
+    - projects[].topics[].display_name
+    - projects[].topics[].status
+    - projects[].topics[].progress_percentage
+    - projects[].topics[].total_operation_time_seconds
+    - projects[].topics[].tasks[].display_name
+    - projects[].topics[].tasks[].task_state
+    hidden_trace_fields:
+    - project_id
+    - topic_id
+    - task_id
+    fallback_name_order: label > code > id; only existing returned values; never synthesize names
+    duration_format: total_operation_time_seconds -> HHH:MM:SS; null -> —; never compute from visible rows
+    ordering: API response order only; no client sort
+    overflow: fixed card body vertical scroll; render all returned authorized rows; no pagination control
+  company_progress_summary:
+    schema_uid: WB-01-SCHEMA-COMPANY-PROGRESS-01
+    type: object
+    allowed_keys:
+    - overall_progress_percentage
+    - running_count
+    - pending_action_count
+    - pending_review_count
+    - completed_count
+    visible_fields:
+    - overall_progress_percentage
+    - running_count
+    - pending_action_count
+    - pending_review_count
+    - completed_count
+    constraints: only returned aggregate keys; missing nested key -> —; no chart/donut
+  production_summary:
+    schema_uid: WB-01-SCHEMA-PRODUCTION-SUMMARY-01
+    type: object
+    allowed_keys:
+    - units
+    visible_fields:
+    - units[].unit_label
+    - units[].state
+    - units[].running_count
+    - units[].pending_count
+    - units[].review_count
+    - units[].completed_count
+    hidden_trace_fields:
+    - units[].unit_key
+    ordering: API response order only
+    constraints: company-level aggregate only; no provider/model/secret/job payload/deep task detail
+    overflow: internal vertical scroll; render all returned authorized rows
+  notifications:
+    schema_uid: WB-01-SCHEMA-NOTIFICATIONS-01
+    type: object
+    allowed_keys:
+    - items
+    visible_fields:
+    - items[].title
+    - items[].category
+    - items[].created_at
+    - items[].read_state
+    hidden_trace_fields:
+    - items[].notification_id
+    ordering: API response order only
+    row_interaction: NONE; row not clickable
+    overflow: internal vertical scroll; no client pagination/search/filter/sort
+  company_announcements:
+    schema_uid: WB-01-SCHEMA-ANNOUNCEMENTS-01
+    type: object
+    allowed_keys:
+    - items
+    visible_fields:
+    - items[].title
+    - items[].summary
+    - items[].published_at
+    hidden_trace_fields:
+    - items[].announcement_id
+    ordering: API response order only
+    row_interaction: NONE; row not clickable
+    overflow: internal vertical scroll
+  industry_news:
+    schema_uid: WB-01-SCHEMA-INDUSTRY-NEWS-01
+    type: object
+    allowed_keys:
+    - items
+    visible_fields:
+    - items[].title
+    - items[].source_name
+    - items[].summary
+    - items[].published_at
+    hidden_trace_fields:
+    - items[].news_id
+    ordering: API response order only
+    row_interaction: NONE; no external navigation without registered control/action
+    overflow: internal vertical scroll
+  system_status_summary:
+    schema_uid: WB-01-SCHEMA-SYSTEM-STATUS-01
+    type: object
+    allowed_keys:
+    - overall_status
+    - summary
+    - checked_at
+    visible_fields:
+    - overall_status
+    - summary
+    - checked_at
+    constraints: secondary summary only; no health percentage, provider health, model health, finance or secret
+  recent_completions:
+    schema_uid: WB-01-SCHEMA-RECENT-COMPLETIONS-01
+    type: object
+    allowed_keys:
+    - items
+    visible_fields:
+    - items[].project_label
+    - items[].topic_label
+    - items[].item_label
+    - items[].completion_kind
+    - items[].completed_at
+    hidden_trace_fields:
+    - items[].completion_id
+    ordering: API response order only
+    row_interaction: NONE; row not clickable
+    overflow: internal vertical scroll
+render_rules:
+  cards_only: true
+  compact_card_requirement: true
+  chart_policy:
+    allowed:
+    - linear_progress_bar_for_average_progress
+    - linear_progress_bar_for_project_or_topic_progress_when_value_exists
+    forbidden:
+    - line_chart
+    - bar_chart
+    - area_chart
+    - pie_chart
+    - donut_chart
+    - radar_chart
+    - sparkline
+    - trend_arrow
+    - delta_badge
+    - week_over_week
+    - month_over_month
+  secondary_metadata_policy: FORBIDDEN unless an allowed field exists in the section render schema
+  fake_data_policy: FORBIDDEN; null or unavailable = —
+  sorting: API response order only; no client sorting
+  search_filter_pagination: FORBIDDEN in WB-01 Main Workspace and Drawer because no registered controls exist
+  refresh_polling: Initial page load fetch once; each registered SECTION_OPEN may read again. No auto polling, timer, auto
+    refresh or new Refresh control.
+  external_links: FORBIDDEN unless a future registered control/action explicitly authorizes navigation
+  topic_total_operation_time:
+    required_location: Section 7 Project Progress -> each Topic row
+    field: total_operation_time_seconds
+    format: HHH:MM:SS
+    missing: — + runtime/data-contract gap; never compute or guess
+  progress_semantics: Business completion percentage only. Never use EDIT timeline/seek/playhead semantics.
+control_contract:
+  control_type: SECTION_OPEN
+  operation_id: getDashboardReadModel
+  method: GET
+  path: /v1/dashboard/read-model
+  workflow: READ_ONLY
+  state_transition: NONE
+  event: null
+  authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
+  server_guards:
+  - identity
+  - account_page_permission
+  - account_section_permission
+  - account_control_permission
+  - scope
+  - condition
+  - classification_mask
+  - audit
+  trigger_surface: Each card header trailing 查看 button only
+  card_body_clickable: false
+  row_clickable: false
+  drawer:
+    component_uid: WB-01-CMP-DRAWER-PROJECTION
+    visual_uid: WB-01-VIS-DRAWER-PROJECTION
+    data_scope: the corresponding section render schema only; never expose unrelated dashboard/deep department payload
+    fields: EXACTLY render_schema_registry[section_key].visible_fields plus permitted trace metadata; no empty fields[] ambiguity
+    common_footer_metadata:
+    - read_model_version
+    - correlation_id
+    footer_actions:
+    - 關閉 / 关闭 / Close
+    loading: skeleton preserving drawer geometry
+    empty: empty state; no mock rows
+    error: actual error code + permitted reason; no fabricated success
+    focus_management: required
+    escape_close_backdrop: inherit Global Visual
+    audit_event: ui.interaction.audited
+permission_and_render_gates:
+  page_gate_uid: WB-01-GATE-PAGE-READ
+  page_gate: identity + page:workspace:WB-01 VIEW + workspace.dashboard.view + scope + condition + classification + audit
+  section_gate_uid: WB-01-GATE-SECTION-READ
+  section_render_requires: page gate + exact section VIEW + exact field READ/MASK outcome
+  control_gate_uid: WB-01-GATE-CONTROL-READ
+  control_render_requires: visible section + exact control VIEW
+  permission_denied_behavior: HIDDEN; do not render disabled unauthorized card/control
+  field_mask_behavior: MASK using backend-provided mask; do not infer hidden value
+  state_disabled_behavior: Only an authorized existing control may be Disabled while LOADING or temporarily unavailable by
+    state; permission denial never uses Disabled.
+  role_name_authorization: FORBIDDEN
+states:
+  LOADING: Use skeleton in exact card geometry; value must not temporarily display 0.
+  EMPTY: Preserve exact geometry; show — / empty text only; no sample rows.
+  ERROR: Preserve exact geometry; show real error state. Same registered 查看 control may be invoked again; do not create Retry
+    button.
+  POLICY_BLOCKED: If permission denied, hide. If an already-authorized resource receives a discloseable policy block from
+    backend, show only permitted blocked reason.
+  VERSION_CONFLICT: Show stale/conflict status; no write-resolution. User may invoke same read control again.
+  REVIEW_REQUIRED: Display returned read-only review status/count only; no approve action.
+  EXTERNAL_PENDING: Display returned Pending state only; never promote to Completed locally.
+  READ_ONLY: Normal loaded mode; no edit/create/delete/approve/lock/publish controls.
+  ARCHIVED: Mark historical data as Archived only when returned by Read Model; never treat as current.
+state_transitions:
+- INITIAL -> LOADING on page read
+- LOADING -> READ_ONLY on successful authorized projection
+- LOADING -> EMPTY on successful projection with no visible authorized data
+- LOADING -> ERROR on read failure
+- READ_ONLY/EMPTY/ERROR/VERSION_CONFLICT -> LOADING only when user invokes an existing registered SECTION_OPEN control or
+  page is explicitly re-entered
+- Any displayed section may present REVIEW_REQUIRED / EXTERNAL_PENDING / ARCHIVED only when those states are returned by the
+  read model; these are presentation states, not WB-01 business mutations
+- Permission loss -> HIDDEN/POLICY_BLOCKED according to backend disclosure policy; no client-side authorization inference
+error_registry:
+- error_uid: WB-01-ERR-READ-001
+  context: Dashboard read failed
+  recovery: Preserve geometry; show actual reason; allow re-invocation of same registered read control
+- error_uid: WB-01-ERR-POLICY-001
+  context: Permission/scope/classification/policy blocked
+  recovery: Hide unauthorized content/control or show only discloseable blocked state
+- error_uid: WB-01-ERR-SCHEMA-001
+  context: Returned section object contains unsupported shape/key required for rendering
+  recovery: Do not invent field; render defined keys only and report data-contract gap
+- error_uid: WB-01-ERR-UNDEFINED-001
+  context: Unregistered card/control/chart/action/field/navigation requested
+  recovery: BLOCK + REPORT_AUTHORITY_GAP
+i18n:
+  policy: All visible WB-01 section/control/state text resolves from this explicit page dictionary or canonical global resources.
+    Brand/global fixed English remains unchanged.
+  sections:
+    company_project_count:
+      zh-TW: 專案總數
+      zh-CN: 专案总数
+      en: Company Project Count
+    company_running_project_count:
+      zh-TW: 執行中
+      zh-CN: 执行中
+      en: Running Projects
+    company_pending_action_count:
+      zh-TW: 待處理
+      zh-CN: 待处理
+      en: Pending Actions
+    company_pending_review_count:
+      zh-TW: 待審查
+      zh-CN: 待审查
+      en: Pending Reviews
+    company_completed_project_count:
+      zh-TW: 已完成
+      zh-CN: 已完成
+      en: Completed Projects
+    company_average_progress:
+      zh-TW: 平均進度
+      zh-CN: 平均进度
+      en: Average Progress
+    project_progress_overview:
+      zh-TW: 專案進度
+      zh-CN: 专案进度
+      en: Project Progress
+    company_progress_summary:
+      zh-TW: 公司整體進度
+      zh-CN: 公司整体进度
+      en: Company Progress
+    production_summary:
+      zh-TW: 生產總覽
+      zh-CN: 生产总览
+      en: Production Summary
+    notifications:
+      zh-TW: 通知
+      zh-CN: 通知
+      en: Notifications
+    company_announcements:
+      zh-TW: 公司公告
+      zh-CN: 公司公告
+      en: Company Announcements
+    industry_news:
+      zh-TW: AI / 產業新聞
+      zh-CN: AI / 产业新闻
+      en: AI / Industry News
+    system_status_summary:
+      zh-TW: 系統狀態
+      zh-CN: 系统状态
+      en: System Status
+    recent_completions:
+      zh-TW: 近期完成
+      zh-CN: 近期完成
+      en: Recent Completions
+  controls:
+    CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN:
+      zh-TW: 查看專案總數
+      zh-CN: 查看专案总数
+      en: View Project Count
+    CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN:
+      zh-TW: 查看執行中
+      zh-CN: 查看执行中
+      en: View Running Projects
+    CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN:
+      zh-TW: 查看待處理
+      zh-CN: 查看待处理
+      en: View Pending Actions
+    CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN:
+      zh-TW: 查看待審查
+      zh-CN: 查看待审查
+      en: View Pending Reviews
+    CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN:
+      zh-TW: 查看已完成
+      zh-CN: 查看已完成
+      en: View Completed Projects
+    CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN:
+      zh-TW: 查看平均進度
+      zh-CN: 查看平均进度
+      en: View Average Progress
+    CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN:
+      zh-TW: 查看專案進度
+      zh-CN: 查看专案进度
+      en: View Project Progress
+    CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN:
+      zh-TW: 查看公司整體進度
+      zh-CN: 查看公司整体进度
+      en: View Company Progress
+    CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN:
+      zh-TW: 查看生產總覽
+      zh-CN: 查看生产总览
+      en: View Production Summary
+    CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN:
+      zh-TW: 查看通知
+      zh-CN: 查看通知
+      en: View Notifications
+    CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN:
+      zh-TW: 查看公司公告
+      zh-CN: 查看公司公告
+      en: View Company Announcements
+    CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN:
+      zh-TW: 查看 AI / 產業新聞
+      zh-CN: 查看 AI / 产业新闻
+      en: View AI / Industry News
+    CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN:
+      zh-TW: 查看系統狀態
+      zh-CN: 查看系统状态
+      en: View System Status
+    CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN:
+      zh-TW: 查看近期完成
+      zh-CN: 查看近期完成
+      en: View Recent Completions
+  common:
+    view:
+      zh-TW: 查看
+      zh-CN: 查看
+      en: View
+    close:
+      zh-TW: 關閉
+      zh-CN: 关闭
+      en: Close
+    loading:
+      zh-TW: 載入中
+      zh-CN: 载入中
+      en: Loading
+    no_data:
+      zh-TW: 目前無資料
+      zh-CN: 目前无数据
+      en: No data
+    read_only:
+      zh-TW: 唯讀
+      zh-CN: 只读
+      en: Read-only
+accessibility:
+  keyboard: Every 查看 button is keyboard reachable; Enter/Space activates; Drawer focus trap/Escape/Close inherited
+  status_semantics: Risk/status/error cannot rely on color only; use text (and global icon only if already defined)
+  accessible_name: Use explicit control label for aria-label/accessibility name
+  text_expansion: Card label may wrap to max 2 lines inside fixed 136px KPI card; no truncation that changes meaning
+  touch_target_min: 44px x 44px inherited/global
+forbidden:
+- page_specific_header
+- page_specific_sidebar
+- parallel_navigation
+- logo_hero
+- Provider Health main card
+- system health main KPI
+- correction rate KPI/card/field/control until canonically registered
+- monthly spend
+- raw cost trend
+- raw finance
+- 素材總數 / asset total legacy KPI
+- 影片產出數 / video output legacy KPI
+- quick create/upload/generate/voice actions
+- unregistered search/filter/sort/pagination/refresh controls
+- auto polling / timers
+- line/pie/donut/bar/area/radar/sparkline charts
+- trend arrow / comparison delta / '較上週' metadata
+- decorative section icons or illustrations without registered global asset
+- fake KPI/project/topic/task/user/provider/version/status/time/date
+- department task detail
+- shot/layer detail
+- handoff payload detail
+- correction script detail
+- QA matrix detail
+- provider secret render
+- direct provider call
+- clickable card body
+- clickable list rows
+- external news link without registered control/action
+- client-side synthetic total_operation_time
+- client-side synthetic aggregation or derived metric not in render schema
+- mobile redesign below 1280
+- new business action IDs
+acceptance_matrix:
+- uid: WB-01-ACC-01
+  name: Canonical Registry
+  pass: 14/14 Section + 14/14 Field + 14/14 Control exact IDs, no addition/deletion/reorder
+- uid: WB-01-ACC-02
+  name: Component Binding
+  pass: 15/15 page presentation components resolved (14 cards + 1 drawer projection), zero null
+- uid: WB-01-ACC-03
+  name: Visual Binding
+  pass: 15/15 visual refs resolved, zero null, all inherit Global Visual
+- uid: WB-01-ACC-04
+  name: Object Schema
+  pass: 14/14 section render schemas explicit; 8 read_model_object fields no longer ambiguous
+- uid: WB-01-ACC-05
+  name: Topic Operation Time
+  pass: Every Topic row renders total_operation_time_seconds as HHH:MM:SS or —; no synthesized value
+- uid: WB-01-ACC-06
+  name: KPI Exactness
+  pass: Exactly six canonical KPI cards; correction rate and legacy mock KPIs absent
+- uid: WB-01-ACC-07
+  name: Trigger Uniqueness
+  pass: 'Exactly one visible trigger per section: header trailing 查看; card body/list rows non-clickable'
+- uid: WB-01-ACC-08
+  name: Drawer Contract
+  pass: Drawer content = corresponding explicit render schema; no empty fields[]
+- uid: WB-01-ACC-09
+  name: Permission Semantics
+  pass: Denied=hidden; state-blocked existing authorized control may be disabled; role-name auth forbidden
+- uid: WB-01-ACC-10
+  name: No New Retry
+  pass: No retry control; same SECTION_OPEN may be re-invoked after read error
+- uid: WB-01-ACC-11
+  name: Exact Geometry
+  pass: '>=1440 and 1280-1439 spans/heights exact; <1280 min-width scroll only; no ''where possible'''
+- uid: WB-01-ACC-12
+  name: No AI UI Inference
+  pass: No charts/icons/trends/polling/search/filter/sort/pagination/external links unless registered
+- uid: WB-01-ACC-13
+  name: Real Data Only
+  pass: Missing = —; no sample/mock/fake values
+- uid: WB-01-ACC-14
+  name: Global Shell
+  pass: No page-local header/sidebar/nav; Global Header owns page identity
+- uid: WB-01-ACC-15
+  name: Functional Controls
+  pass: Master 14/14 functional control tests PASS
+- uid: WB-01-ACC-16
+  name: R9 Dashboard Test
+  pass: UT-R9-DASH-003 PASS including compact cards and Topic total operation time
+- uid: WB-01-ACC-17
+  name: Machine Closure
+  pass: No unresolved component_uid/visual_uid/render_schema_uid/trigger/layout ambiguity in this page authority
+machine_validation:
+  expected_sections: 14
+  expected_fields: 14
+  expected_controls: 14
+  expected_business_write_actions: 0
+  expected_page_components: 15
+  expected_page_visuals: 15
+  expected_render_schemas: 14
+  unresolved_component_refs: 0
+  unresolved_visual_refs: 0
+  unresolved_render_schema_refs: 0
+  unresolved_trigger_surfaces: 0
+  final_status: FINAL_LOCKED
+  implementation_ready_for_wb01_page_presentation: true
+ai_execution_gate:
+  rule: For workspace:WB-01, construction AI must implement exactly this page authority plus inherited Global Shell/Visual.
+    No product/UI decision is delegated to AI.
+  on_unknown: DO_NOT_IMPLEMENT_UNKNOWN; REPORT_AUTHORITY_GAP
+  on_conflict: Use exact page-specific canonical Section/Field/Control registry and this completion decision ledger; never
+    revive legacy mock dashboard.
+  completion_claim: AI may claim WB-01 presentation complete only when all acceptance_matrix items pass with zero unresolved
+    refs.

@@ -1,0 +1,2439 @@
+authority:
+  id: ACPOS_QA-01_FINAL_LOCKED_ENCODING
+  page_uid: QA-01
+  page_name_zh: QA 審查工作區
+  page_name_en: QA Review Workspace
+  status: FINAL_LOCKED
+  current_only: true
+  single_page_workspace: true
+  single_machine_authority: true
+  legacy_merge: FORBIDDEN
+  scope: QA-01 Main Workspace only
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  real_data_only: true
+  missing_value_display: —
+  department_boundary: QA owns exact-output validation, scorecard/evidence/finding/manual-review projection, correction request, recheck,
+    QA gate decision and release-candidate creation only. QA never edits upstream Script/Asset/Video/Edit outputs and never publishes directly.
+  source_policy:
+    old_QA_02_03_04_runtime_pages: RETIRED_AS_SEPARATE_CURRENT_PAGES
+    functional_content_merge_target: QA-01 sections only
+    parallel_QA_page_authority: FORBIDDEN
+  revision: 2026-08-28-MANUAL-REVIEW-CORRECTION
+  revision_rule: 'System/AI scoring remains automatic. Human does not get generic result-confirm/result-modify controls. After scoring, only
+    when a governed ManualReviewCase is triggered, the Manual Review surface exposes exactly two functions: MODIFY and PASS.'
+  final_gap_closure_revision: 2026-08-28-BUTTON-RUNTIME-BINDING-CLOSURE
+  source_file_for_gap_closure: ACPOS_QA-01_FINAL_LOCKED_ENCODING_CORRECTED(1).yaml
+  final_dedup_revision: 2026-08-28-SINGLE-EXECUTABLE-AUTHORITY
+  parallel_authority_for_same_page: FORBIDDEN
+  supersedes_gap_closed_file: ACPOS_QA-01_FINAL_LOCKED_ENCODING_GAP_CLOSED.yaml
+system_filename_governance:
+  authority: ACPOS_SYSTEM
+  page_behavior: READ_ONLY_REFERENCE_ONLY
+  rule: QA does not rename or infer artifact identity from filenames. Review and release-candidate routing use exact output/artifact IDs,
+    exact versions, checksums and provenance.
+  forbidden:
+  - manual rename
+  - QA-local filename formula
+  - filename parsing as business authority
+  - latest/current/default implicit output resolution
+layout:
+  desktop_min_width: 1280px
+  vertical_scroll: Main Workspace height:auto; overflow-y:auto; independent from Global Sidebar/Menu height
+  below_min_width: Keep min-width=1280px; allow horizontal scroll; do not invent mobile page/drawer workflow
+  context_bar:
+    height: 56px
+    width: 100%
+    render_mode: READONLY_CONTEXT_CHIPS
+    fields:
+    - Project
+    - Topic
+    - QA Task
+    - Target Output Version
+    - QA Review State
+    interactive_fields_forbidden: true
+    only_action: Start Review in MANUAL mode; AUTO is started from QA Review Queue mode control
+  primary_grid:
+    columns: minmax(260px,1fr) minmax(720px,3fr) minmax(300px,1fr)
+    approx: 20% / 60% / 20%
+    gap: 16px
+    align: start
+  left_rail:
+    min_width: 260px
+    role: AUTO/MANUAL review mode + QA review queue + auto-run progress + search + state/severity/source-department filters
+  center:
+    min_width: 720px
+    role: exact output viewer / validation / evidence
+    priority: highest
+    sticky_viewer_during_finding_capture: true
+    finding_capture: Finding quick-capture uses same-page panel while Exact Output Viewer remains visible. Manual Review appears only when
+      a governed ManualReviewCase is required/open.
+  right_rail:
+    min_width: 300px
+    role: System/AI Generated Scorecard / Hard Block / QA Gate Result / Release Readiness. Scorecard area has no human decision buttons.
+      If ManualReviewCase is triggered, human functions appear only in Manual Review.
+  lower_rows: Finding/Manual Review, Correction/Recheck, Release Candidate and Audit extend full width
+  viewer:
+    video_or_edit_output: 16:9 container; object-fit:contain; no crop/stretch
+    image_output: preserve output-contract/original ratio; contain; no stretch
+    audio_output: waveform + transport; no fake 16:9 visual content
+    document_or_text_output: read-only document/text viewport
+    conditional_compare: Initial review = exact target output single 100%. During RECHECK, when a verified new exact output version exists,
+      optional Before/After compare = 50/50. No new version => B pane does not render.
+  tokens:
+    control_height: 40px
+    button_min_width: 88px
+    primary_button_min_width: 120px
+    button_radius: 10px
+    panel_radius: 12px
+    large_container_radius: 24px
+    section_gap: 16px
+    content_padding: 16px
+    status_badge_height: 28px
+    action_gap: 8px
+    touch_target_min: 44px × 44px
+  visual_override: FORBIDDEN; inherit Global Visual tokens only
+qa_contract:
+  receives:
+  - QAHandoff
+  - QATask
+  - TargetOutputVersion / ExactOutputVersion
+  - QAValidationScriptView
+  - ScorecardRefs
+  - CriteriaVersion
+  - Evidence
+  - RightsPolicy
+  - ChannelPolicy
+  produces:
+  - QAScorecard
+  - Finding
+  - ManualReviewCase
+  - CorrectionRequest
+  - QAGateDecision
+  - ReleaseCandidate / ReleasePackage
+  ai_actions:
+  - generate_scorecard
+  - sequential_topic_review
+  - evidence_assistance
+  - consistency_check
+  - policy_check_assistance
+  - candidate_comparison
+  human_actions:
+  - manual_review_modify_when_required
+  - manual_review_pass_when_required
+  - request_correction
+  - start_recheck
+  - create_release_candidate
+  mandatory_checks:
+  - target_version_explicit
+  - criteria_version_approved
+  - evidence_complete
+  - required_checks_complete
+  - checksum_and_provenance_valid
+  - rights_valid
+  - policy_valid
+  - manual_review_closed_when_required
+  - channel_account_scope_valid_for_release_candidate
+  can:
+  - evaluate
+  - auto_review_topic_tasks_sequentially
+  - create_finding
+  - request_correction
+  - block
+  - pass_or_fail_gate_by_bound_policy
+  - create_release_candidate
+  cannot:
+  - edit_script
+  - edit_asset
+  - edit_video
+  - edit_editing_output
+  - bypass_hard_gate
+  - close_finding_without_verified_new_version
+  - publish_directly
+  - blank_manual_scoring
+  - human_create_unbound_score_dimension
+  - auto_publish
+  - auto_create_release_candidate_from_score_only
+  handoff_out: QA PASS -> ReleaseService only
+  human_scoring_policy: 'System/AI performs QA scoring. Human has no scoring action and no post-score action in the Scorecard area. Only
+    when a governed ManualReviewCase is required/open after scoring does the Manual Review area expose exactly two human functions: 修改 /
+    通過.'
+scorecard_contract:
+  source: Task-bound approved QA CriteriaVersion + QualityGatePolicyVersion
+  ui_fields:
+  - criteria_version_id
+  - quality_gate_policy_version
+  - dimension_uid
+  - label
+  - weight
+  - score
+  - hard_block
+  - evidence_refs
+  - total_score
+  - gate_status
+  hard_gate_rule: Evidence / Rights / Policy / Checksum / Provenance / Required Check failure overrides numeric score. QA-01 must not hard-code
+    a second scoring scheme or a local numeric pass threshold.
+  pass_rule: Use bound CriteriaVersion/QualityGatePolicy. PASS additionally requires no unresolved hard block, all blocking findings closed
+    by verified new version/recheck, and required manual review closed.
+  score_origin: SYSTEM_AI_GENERATED_FROM_BOUND_CRITERIA
+  manual_scoring: FORBIDDEN
+  human_review:
+    generic_post_score_confirmation: NONE
+    generic_post_score_modification: NONE
+    trigger: Only when governed ManualReviewCase is required/open after scoring
+    allowed_actions_when_triggered:
+    - MODIFY
+    - PASS
+    pass_semantics: Pass the Manual Review requirement for the current case; then re-evaluate the normal QA Gate. It is not the same as direct
+      QA Gate PASS and cannot bypass hard gates.
+    modify_semantics: Open the governed manual-review modification surface for the current case. It is not a blank scoring form.
+    audit: All Manual Review actions follow the governed Manual Review authority/audit.
+  ui_fields_behavior:
+    criteria_version_id: READONLY
+    quality_gate_policy_version: READONLY
+    dimension_uid: READONLY
+    label: READONLY
+    weight: READONLY
+    score: SYSTEM_AI_GENERATED; no general human score input
+    hard_block: READONLY_SYSTEM_RESULT
+    evidence_refs: READONLY_AUTO_BOUND
+    total_score: READONLY_DERIVED
+    gate_status: READONLY_SYSTEM_RESULT; Manual Review, if required, is handled in the Manual Review section
+finding_correction_contract:
+  finding_required_fields:
+  - finding_id
+  - source_type
+  - source_id
+  - severity
+  - category
+  - affected_scope
+  - evidence_refs
+  - detected_by
+  - status
+  correction_required_fields:
+  - correction_request_id
+  - finding_ids
+  - source_scorecard_ids
+  - source_instruction_package_id
+  - affected_scope
+  - root_cause_classification
+  - required_action
+  - target_department
+  - revalidation_requirements
+  - created_by
+  root_cause_classification: &id001
+  - CANON
+  - SCRIPT_VIEW
+  - INSTRUCTION_PACKAGE
+  - INPUT_ASSET
+  - PROVIDER_ROUTE
+  - OUTPUT_ARTIFACT
+  - RIGHTS_POLICY
+  - QUALITY_CRITERIA
+  - EDITING
+  - UNKNOWN
+  closure_rule: QA does not directly mark a failed finding CLOSED after an upstream edit. A verified new exact output version must arrive,
+    RECHECK must run, evidence/criteria must be re-evaluated, then the finding may close according to governed QA state.
+  finding_input_policy:
+    severity: SELECT_FROM_REGISTERED_SEVERITY_ENUM; no free-text severity
+    category: SELECT_FROM_REGISTERED_QA_ISSUE_CATEGORY; missing registry value => BLOCK + REPORT_AUTHORITY_GAP
+    affected_scope: PREFILLED from viewer current context/range; Human may narrow it without changing exact output identity
+    evidence_refs: AUTO_BOUND from exact output/version/checksum + current timecode/frame/range; manual Evidence ID typing forbidden
+  viewer_evidence_capture:
+    video_edit:
+    - current_timecode
+    - previous_frame
+    - next_frame
+    - set_finding_point
+    - set_range_in
+    - set_range_out
+    image:
+    - zoom
+    - fit
+    - capture governed region if supported
+    audio:
+    - current_timecode
+    - set_range_in
+    - set_range_out
+    document_text:
+    - capture current selection/page/section ref if supported
+    rule: Evidence capture never edits upstream output; it only binds QA evidence context.
+  correction_binding_policy:
+    finding_ids: READONLY_AUTO_BOUND_FROM_CURRENT_FINDING_CONTEXT
+    source_scorecard_ids: READONLY_AUTO_BOUND_FROM_CURRENT_REVIEW
+    source_instruction_package_id: READONLY_AUTO_BOUND_FROM_UPSTREAM_LINEAGE
+    target_department: READONLY_AUTO_RESOLVED_ORIGINAL_OWNER
+    affected_scope: PREFILLED_FROM_FINDING; Human may narrow with governed scope selector
+    root_cause_classification: SELECT_CANONICAL_ENUM_ONLY
+    required_action: TEXTAREA_HUMAN_REQUIRED
+    revalidation_requirements: PREFILLED_REQUIRED_CHECKS; additions must be registered checks
+release_candidate_contract:
+  meaning: QA creates a ReleasePackage/Release Candidate; this is not Publish and not final Release approval.
+  eligibility:
+  - QA PASS
+  - all findings closed
+  - manual review closed
+  - rights valid
+  - policy valid
+  - exact output versions
+  - qa_gate_ref valid
+  - rights_gate_ref valid
+  - channel/account scope valid when applicable
+  create_operation_fields:
+  - scope
+  - expected_version
+  - correlation_id
+  - idempotency_key
+  - project_id
+  - topic_id
+  - output_version_ids
+  - qa_gate_ref
+  - rights_gate_ref
+  - channel (optional)
+  forbidden:
+  - approveRelease button without explicit release-approval permission mapping
+  - publish button
+  - direct external channel call
+workflow:
+  canonical_states:
+  - NOT_STARTED
+  - IN_REVIEW
+  - FINDING_OPEN
+  - CORRECTION_REQUIRED
+  - RECHECK
+  - BLOCKED
+  - PASS
+  - FAIL
+  - SUPERSEDED
+  sequence:
+  - Select AUTO or MANUAL review mode
+  - Resolve exact Project + Topic QA scope
+  - 'AUTO: sequentially resolve each Topic QA task | MANUAL: select one QA task/review'
+  - Resolve exact target output + QAValidationScriptView + approved Criteria + Evidence + Rights/Policy
+  - System/AI generates and persists QA Scorecard / Required Checks / hard-gate result
+  - 'AUTO: low score emits warning only; otherwise continue automatically according to bound policy'
+  - 'If governed ManualReviewCase is required/open after scoring: show Manual Review with exactly 修改 / 通過'
+  - 'Manual Review 修改: enter governed modification flow for current case; not a blank scoring form'
+  - 'Manual Review 通過: close/pass current manual review requirement and re-evaluate normal QA Gate; hard gates still apply'
+  - Create Finding(s) / CorrectionRequest when required
+  - Original owner produces NEW exact version -> start Recheck -> re-score / re-validate
+  - QA Gate evaluates bound criteria/policy + hard gates + manual review closed state
+  - 'If PASS + release eligibility: Create Release Candidate/Package'
+  - ReleaseService continues approval/release; QA does not publish
+  auto_behavior: AUTO reviews all authorized QA tasks in selected Topic sequentially, max active task=1. Only a below-threshold score emits
+    QA_LOW_SCORE_WARNING. Passing/non-low-score items continue without popup. Hard-block/rights/policy/evidence failures remain BLOCKED and
+    are never hidden by score. AUTO never publishes and never creates Release Candidate from score alone.
+registries:
+  sections:
+  - section_uid: QA-01-SEC-01
+    name: Context / Review Start
+    responsibility: Project/Topic/QATask/Target Output/Review State/Start Review
+    visual_uid: QA-01-VIS-CONTEXT
+  - section_uid: QA-01-SEC-02
+    name: QA Review Queue
+    responsibility: AUTO/MANUAL mode; Topic-scoped sequential auto review or manual one-by-one queue selection; search/filter; no task creation
+    visual_uid: QA-01-VIS-LEFT
+  - section_uid: QA-01-SEC-03
+    name: Exact Output Viewer
+    responsibility: Read-only exact target output, frame/time/range QA localization, evidence binding, conditional recheck compare
+    visual_uid: QA-01-VIS-VIEWER
+  - section_uid: QA-01-SEC-04
+    name: QA Script / Criteria
+    responsibility: QAValidationScriptView + approved CriteriaVersion + policy refs
+    visual_uid: QA-01-VIS-SCRIPT
+  - section_uid: QA-01-SEC-05
+    name: Evidence / Required Checks
+    responsibility: Evidence, checksum, provenance, rights/policy and required checks
+    visual_uid: QA-01-VIS-EVIDENCE
+  - section_uid: QA-01-SEC-06
+    name: Scorecard / QA Gate
+    responsibility: System-generated task-bound QA scorecard, hard blocks, QA gate result, release readiness. No human decision control in
+      Scorecard; conditional human actions belong to Manual Review.
+    visual_uid: QA-01-VIS-RIGHT
+  - section_uid: QA-01-SEC-07
+    name: Finding / Manual Review
+    responsibility: Finding detail, severity/category/scope/evidence, manual-review projection
+    visual_uid: QA-01-VIS-FINDING
+  - section_uid: QA-01-SEC-08
+    name: Correction / Recheck
+    responsibility: CorrectionRequest to original owner; verified new output; recheck
+    visual_uid: QA-01-VIS-RECHECK
+  - section_uid: QA-01-SEC-09
+    name: Release Candidate
+    responsibility: QA pass + rights/policy/manual review readiness -> ReleasePackage candidate
+    visual_uid: QA-01-VIS-RELEASE
+  - section_uid: QA-01-SEC-10
+    name: Status / Audit
+    responsibility: Current state, errors, disabled reason, audit/correlation/trace
+    visual_uid: QA-01-VIS-STATUS
+  visuals:
+  - visual_uid: QA-01-VIS-CONTEXT
+    geometry: top full width; h>=56px
+  - visual_uid: QA-01-VIS-LEFT
+    geometry: primary grid left 20%; min 260px
+  - visual_uid: QA-01-VIS-VIEWER
+    geometry: primary grid center 60%; viewer highest priority; video/edit 16:9
+  - visual_uid: QA-01-VIS-SCRIPT
+    geometry: center below viewer; compact collapsible read-only contract
+  - visual_uid: QA-01-VIS-EVIDENCE
+    geometry: center below script; evidence/check matrix
+  - visual_uid: QA-01-VIS-RIGHT
+    geometry: primary grid right 20%; min 300px
+  - visual_uid: QA-01-VIS-FINDING
+    geometry: lower full-width row; 3-card responsive within min page width
+  - visual_uid: QA-01-VIS-RECHECK
+    geometry: lower full-width row; correction + before/after compare + recheck
+  - visual_uid: QA-01-VIS-RELEASE
+    geometry: lower full-width row; release readiness + package preview
+  - visual_uid: QA-01-VIS-STATUS
+    geometry: bottom full-width trace/status row
+  components:
+  - component_uid: QA-01-CMP-CONTEXT
+    section_uid: QA-01-SEC-01
+    name: QA Context / Start Review
+  - component_uid: QA-01-CMP-QUEUE
+    section_uid: QA-01-SEC-02
+    name: QA Review Queue
+  - component_uid: QA-01-CMP-VIEWER
+    section_uid: QA-01-SEC-03
+    name: Exact Output Viewer
+  - component_uid: QA-01-CMP-COMPARE
+    section_uid: QA-01-SEC-03
+    name: Conditional Before / After Compare
+  - component_uid: QA-01-CMP-SCRIPT
+    section_uid: QA-01-SEC-04
+    name: QA Validation Script
+  - component_uid: QA-01-CMP-CRITERIA
+    section_uid: QA-01-SEC-04
+    name: Approved QA Criteria / Gate Policy
+  - component_uid: QA-01-CMP-EVIDENCE
+    section_uid: QA-01-SEC-05
+    name: Evidence / Required Checks
+  - component_uid: QA-01-CMP-SCORE
+    section_uid: QA-01-SEC-06
+    name: QA Scorecard
+  - component_uid: QA-01-CMP-GATE
+    section_uid: QA-01-SEC-06
+    name: QA Gate Decision
+  - component_uid: QA-01-CMP-FINDING-LIST
+    section_uid: QA-01-SEC-07
+    name: Finding List / Filter
+  - component_uid: QA-01-CMP-FINDING-FORM
+    section_uid: QA-01-SEC-07
+    name: Finding Create / Detail
+  - component_uid: QA-01-CMP-MANUAL
+    section_uid: QA-01-SEC-07
+    name: Manual Review Projection
+  - component_uid: QA-01-CMP-CORRECTION
+    section_uid: QA-01-SEC-08
+    name: Correction Request
+  - component_uid: QA-01-CMP-RECHECK
+    section_uid: QA-01-SEC-08
+    name: Verified New Version / Recheck
+  - component_uid: QA-01-CMP-RELEASE-READY
+    section_uid: QA-01-SEC-09
+    name: Release Eligibility
+  - component_uid: QA-01-CMP-RELEASE
+    section_uid: QA-01-SEC-09
+    name: Release Candidate / Package
+  - component_uid: QA-01-CMP-STATUS
+    section_uid: QA-01-SEC-10
+    name: Status / Error / Audit
+  - component_uid: QA-01-CMP-REVIEW-MODE
+    section_uid: QA-01-SEC-02
+    name: AUTO / MANUAL QA Review Mode
+  - component_uid: QA-01-CMP-AUTO-PROGRESS
+    section_uid: QA-01-SEC-02
+    name: AUTO Topic Review Progress / Warning State
+  - component_uid: QA-01-CMP-EVIDENCE-CAPTURE
+    section_uid: QA-01-SEC-03
+    name: Viewer QA Localization / Evidence Capture
+  - component_uid: QA-01-CMP-MANUAL-DECISION
+    section_uid: QA-01-SEC-07
+    name: Manual Review Modify / Pass Decision
+  permissions:
+  - permission_uid: QA_USE
+    backend_codes:
+    - qa.task.read
+    purpose: Enter/read QA page, task/review/output/script/evidence projections
+  - permission_uid: QA_SCORE
+    backend_codes:
+    - qa.score.write
+    purpose: Persist QA scorecard
+  - permission_uid: QA_GATE
+    backend_codes:
+    - qa.gate.decide
+    purpose: Start recheck / decide QA PASS or FAIL where authorized
+  - permission_uid: QA_FINDING
+    backend_codes:
+    - finding.write
+    purpose: Create QA finding
+  - permission_uid: QA_CORRECTION
+    backend_codes:
+    - correction.create
+    purpose: Create correction request to original owner
+  - permission_uid: QA_RELEASE
+    backend_codes:
+    - release.create
+    purpose: Create release candidate/package only
+  - permission_uid: QA_AUTO
+    backend: qa.auto.review
+    purpose: Start/operate Topic-scoped sequential AUTO QA review; no publish/release-approval authority
+  gates:
+  - gate_uid: QA-01-GATE-PAGE
+    condition: authorized QA page/task scope + exact account permission
+  - gate_uid: QA-01-GATE-CONTEXT
+    condition: exact Project + Topic + QATask + TargetOutputVersion resolved; no latest/default alias
+  - gate_uid: QA-01-GATE-START
+    condition: context PASS + output_version_ids explicit + qa_profile_id resolved + not superseded
+  - gate_uid: QA-01-GATE-VIEWER
+    condition: exact output artifact/checksum/provenance resolvable for current QA review
+  - gate_uid: QA-01-GATE-COMPARE
+    condition: state=RECHECK + original failed exact version + verified new exact version both resolvable
+  - gate_uid: QA-01-GATE-SCRIPT
+    condition: QAValidationScriptView exact id/version/hash + department=QA
+  - gate_uid: QA-01-GATE-CRITERIA
+    condition: approved QA CriteriaVersion + QualityGatePolicyVersion for exact target output
+  - gate_uid: QA-01-GATE-EVIDENCE
+    condition: evidence refs, checksum, provenance, required checks, rights/policy refs resolved
+  - gate_uid: QA-01-GATE-SCORE
+    condition: IN_REVIEW or RECHECK + target version explicit + criteria + evidence + required checks
+  - gate_uid: QA-01-GATE-FINDING
+    condition: active QA review + exact source/output/evidence + severity/category/affected_scope valid
+  - gate_uid: QA-01-GATE-CORRECTION
+    condition: finding_or_scorecard + failed version + affected_scope + original_owner + source_instruction_package + revalidation_requirements
+  - gate_uid: QA-01-GATE-RECHECK
+    condition: CORRECTION_REQUIRED + verified NEW exact output version exists + correction request linkage valid
+  - gate_uid: QA-01-GATE-PASS
+    condition: latest re/score evaluation satisfies bound criteria/policy + no hard block + blocking findings closed + manual review closed
+      if required + rights/policy valid
+  - gate_uid: QA-01-GATE-FAIL
+    condition: active review/recheck + sufficient evidence for governed FAIL decision
+  - gate_uid: QA-01-GATE-RELEASE
+    condition: QA PASS + all findings closed + manual review closed + rights valid + policy valid + exact output versions + release.create
+      permission
+  - gate_uid: QA-01-GATE-MANUAL
+    condition: manual review required or existing ManualReviewCase ref; QA page is read/projection unless separately governed
+  - gate_uid: QA-01-GATE-AUTO
+    condition: mode=AUTO + exact Project/Topic resolved + authorized Topic QA queue exists + QA_AUTO permission; each task still resolves
+      exact output/script/criteria/evidence
+  - gate_uid: QA-01-GATE-EVIDENCE-CAPTURE
+    condition: active QA review + exact output/version/checksum/provenance + supported viewer position/range context
+  - gate_uid: QA-01-GATE-MANUAL-DECISION
+    condition: Governed ManualReviewCase exists + required/open + exact QA review/output/scorecard context resolved + separately governed
+      Manual Review mutation authority resolved. If mutation authority is unresolved, controls are BLOCKED and frontend reports authority
+      gap.
+  errors:
+  - error_uid: QA-01-ERR-CONTEXT-001
+    context: Project/Topic/QATask/TargetOutputVersion missing, stale or mismatched
+    recovery: BLOCK review; resolve exact context; no implicit latest/default
+  - error_uid: QA-01-ERR-OUTPUT-001
+    context: Output artifact/version/checksum/provenance invalid
+    recovery: BLOCK viewer/score/gate; preserve review context
+  - error_uid: QA-01-ERR-SCRIPT-001
+    context: QAValidationScriptView missing/hash/department mismatch
+    recovery: BLOCK scoring; no generic QA script fallback
+  - error_uid: QA-01-ERR-CRITERIA-001
+    context: QA CriteriaVersion/QualityGatePolicy missing or unapproved
+    recovery: BLOCK scoring/gate; no local default threshold
+  - error_uid: QA-01-ERR-EVIDENCE-001
+    context: Required evidence/checksum/provenance/check missing
+    recovery: BLOCK gate/release; show exact missing evidence
+  - error_uid: QA-01-ERR-RIGHTS-001
+    context: Rights/Policy invalid or unavailable
+    recovery: HARD BLOCK; numeric score cannot override
+  - error_uid: QA-01-ERR-FINDING-001
+    context: Finding payload/source/scope/evidence invalid
+    recovery: BLOCK finding create; preserve current review
+  - error_uid: QA-01-ERR-CORRECTION-001
+    context: Correction request lacks failed version/original owner/source instruction/revalidation scope
+    recovery: BLOCK request; do not execute upstream edit in QA
+  - error_uid: QA-01-ERR-RECHECK-001
+    context: New output absent, same as failed version, or correction linkage invalid
+    recovery: BLOCK recheck; wait verified new exact version
+  - error_uid: QA-01-ERR-GATE-001
+    context: PASS/FAIL decision prerequisites invalid or stale
+    recovery: BLOCK decision; refresh exact review state
+  - error_uid: QA-01-ERR-MANUAL-001
+    context: Required ManualReviewCase unresolved/open
+    recovery: BLOCK PASS/Release; show manual review blocker
+  - error_uid: QA-01-ERR-RELEASE-001
+    context: Release candidate eligibility refs invalid
+    recovery: BLOCK package creation; no publish fallback
+  - error_uid: QA-01-ERR-PERM-001
+    context: Permission/scope denied
+    recovery: Disable action + show actual reason
+  - error_uid: QA-01-ERR-UNDEFINED-001
+    context: Unlisted Section/Component/Control/Action/Gate/Permission/Port requested
+    recovery: BLOCK + REPORT_AUTHORITY_GAP
+  - error_uid: QA-01-ERR-AUTO-001
+    context: AUTO cannot resolve Topic QA queue / exact next-task context
+    recovery: BLOCK AUTO current item; preserve queue; no reorder/create/skip; report exact missing ref
+  - error_uid: QA-01-ERR-EVIDENCE-CAPTURE-001
+    context: Evidence capture lacks exact output/version/checksum/provenance or valid point/range
+    recovery: BLOCK capture only; preserve viewer; no manual Evidence ID fallback
+  - error_uid: QA-01-ERR-MANUAL-ACTION-001
+    context: Manual Review Modify/Pass requested but governed ManualReviewCase or mutation authority is missing/stale
+    recovery: BLOCK Manual Review action; preserve case/review context; resolve existing governed Manual Review authority; do not invent
+      API/permission
+  page_states:
+  - state_uid: QA-01-ST-NOT-STARTED
+    display: NOT_STARTED
+    definition: Exact QA task/output may be resolved; review not started
+  - state_uid: QA-01-ST-IN-REVIEW
+    display: IN_REVIEW
+    definition: QA review active
+  - state_uid: QA-01-ST-FINDING
+    display: FINDING_OPEN
+    definition: One or more findings open
+  - state_uid: QA-01-ST-CORRECTION
+    display: CORRECTION_REQUIRED
+    definition: Correction requested to original owner
+  - state_uid: QA-01-ST-RECHECK
+    display: RECHECK
+    definition: Verified new version under recheck
+  - state_uid: QA-01-ST-BLOCKED
+    display: BLOCKED
+    definition: Hard gate / rights / policy / evidence / manual review blocker
+  - state_uid: QA-01-ST-PASS
+    display: PASS
+    definition: Governed QA PASS
+  - state_uid: QA-01-ST-FAIL
+    display: FAIL
+    definition: Governed QA FAIL
+  - state_uid: QA-01-ST-SUPERSEDED
+    display: SUPERSEDED
+    definition: Review/version superseded; read-only trace
+  - state_uid: QA-01-ST-ERROR
+    display: ERROR
+    definition: Real runtime/contract/permission error
+  stages:
+  - stage_uid: QA-01-STAGE-01-RESOLVE
+    name: Resolve / Start Review
+    flow: Validate QAHandoff/QATask/exact output/script/criteria/rights/policy -> startQaReview
+  - stage_uid: QA-01-STAGE-02-VALIDATE
+    name: Score / Evidence
+    flow: Review exact output -> required checks -> evidence -> QA scorecard
+  - stage_uid: QA-01-STAGE-03-FINDING
+    name: Finding / Manual Review
+    flow: Create findings; surface ManualReviewCase when required; QA does not edit upstream
+  - stage_uid: QA-01-STAGE-04-RECHECK
+    name: Correction / Recheck
+    flow: CreateCorrectionRequest -> original owner creates NEW output -> startRecheck -> re-score
+  - stage_uid: QA-01-STAGE-05-GATE
+    name: QA Gate / Release Candidate
+    flow: decide PASS/FAIL; if eligible createReleasePackage candidate -> ReleaseService
+  stage_transitions:
+  - transition_uid: QA-01-STTR-01
+    from_stage: QA-01-STAGE-01-RESOLVE
+    to_stage: QA-01-STAGE-02-VALIDATE
+    trigger: QA-01-ACT-START-REVIEW
+    gate_uid: QA-01-GATE-START
+  - transition_uid: QA-01-STTR-02
+    from_stage: QA-01-STAGE-02-VALIDATE
+    to_stage: QA-01-STAGE-03-FINDING
+    trigger: Finding/manual review needed
+    gate_uid: QA-01-GATE-FINDING
+  - transition_uid: QA-01-STTR-03
+    from_stage: QA-01-STAGE-03-FINDING
+    to_stage: QA-01-STAGE-04-RECHECK
+    trigger: QA-01-ACT-CORRECTION-REQUEST then verified new output
+    gate_uid: QA-01-GATE-RECHECK
+  - transition_uid: QA-01-STTR-04
+    from_stage: QA-01-STAGE-04-RECHECK
+    to_stage: QA-01-STAGE-05-GATE
+    trigger: Recheck score/evidence completed
+    gate_uid: QA-01-GATE-SCORE
+  - transition_uid: QA-01-STTR-05
+    from_stage: QA-01-STAGE-02-VALIDATE
+    to_stage: QA-01-STAGE-05-GATE
+    trigger: No correction/manual blocker and scoring complete
+    gate_uid: QA-01-GATE-PASS
+  - transition_uid: QA-01-STTR-06
+    from_stage: QA-01-STAGE-05-GATE
+    to_stage: QA-01-STAGE-05-GATE
+    trigger: PASS -> QA-01-ACT-RELEASE-CREATE
+    gate_uid: QA-01-GATE-RELEASE
+  action_effect_types:
+  - effect_type: UI_ONLY
+    allowed: Viewer/filter/drawer/local state
+    forbidden: No business mutation
+  - effect_type: CONTEXT_STATE
+    allowed: Change current exact review/finding selection
+    forbidden: No implicit cross-project fallback
+  - effect_type: QA_REVIEW_START
+    allowed: Create QAReviewRun via registered operation
+    forbidden: No invented output/criteria refs
+  - effect_type: SCORE_MUTATION
+    allowed: Persist immutable QA scorecard
+    forbidden: No local scoring schema/threshold
+  - effect_type: FINDING_CREATE
+    allowed: Create append-only QA finding
+    forbidden: No upstream output mutation
+  - effect_type: CORRECTION_CREATE
+    allowed: Create correction request to original owner
+    forbidden: QA cannot execute upstream edit
+  - effect_type: QA_RECHECK_START
+    allowed: Start recheck after verified new output
+    forbidden: Cannot close finding without new version/recheck
+  - effect_type: QA_GATE_DECISION
+    allowed: Authorized PASS/FAIL decision
+    forbidden: No hard-gate bypass
+  - effect_type: RELEASE_CANDIDATE_CREATE
+    allowed: Create release package candidate
+    forbidden: No release approval or publish
+  - effect_type: AUTO_QA_ORCHESTRATION
+    allow: Sequential Topic QA using exact refs and existing QA operations
+    forbid: Parallel/reorder/create/skip; score-only release/publish
+  - effect_type: EVIDENCE_CONTEXT
+    allow: Bind exact viewer point/frame/range to Finding/Evidence draft
+    forbid: Upstream mutation or manual unverified Evidence ID
+  - effect_type: MANUAL_REVIEW_MUTATION
+    allow: Modify or Pass an existing governed ManualReviewCase when required
+    forbid: Blank scoring, direct QA Gate bypass, invented Manual Review endpoint/permission
+  actions:
+  - action_uid: QA-01-ACT-NOOP-VIEW
+    label: Read / display only
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: No business mutation
+    error_uid: QA-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-CONTEXT-SET
+    label: Select exact QA context
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+    owner: CLIENT/QA
+    success_contract: Clear dependent review state and resolve exact refs
+    error_uid: QA-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-START-REVIEW
+    label: Start QA Review
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-START
+    effect_type: QA_REVIEW_START
+    owner: QAService
+    success_contract: Create QAReviewRun for explicit output version(s) + qa_profile
+    error_uid: QA-01-ERR-CONTEXT-001
+    operation: startQaReview
+    method_path: POST /v1/qa/reviews
+    state_effect: NOT_STARTED→IN_REVIEW
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: QA-01-PORT-START
+      decision: SOURCE_DERIVED
+  - action_uid: QA-01-ACT-QUEUE-SEARCH
+    label: Search QA queue
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Filter current authorized queue only
+    error_uid: QA-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-QUEUE-FILTER
+    label: Filter QA queue
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Filter by current QA state/severity/source department only
+    error_uid: QA-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-REVIEW-SELECT
+    label: Select QA review
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+    owner: CLIENT
+    success_contract: Load exact QAReviewRun and clear stale target/compare state
+    error_uid: QA-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-VIEWER-PLAY
+    label: Play/Pause exact media
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-VIEWER
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Playback only
+    error_uid: QA-01-ERR-OUTPUT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-VIEWER-SEEK
+    label: Seek / time position
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-VIEWER
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Viewer position only
+    error_uid: QA-01-ERR-OUTPUT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-VIEWER-VOLUME
+    label: Volume / mute
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-VIEWER
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Local playback only
+    error_uid: QA-01-ERR-OUTPUT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-VIEWER-FULLSCREEN
+    label: Fullscreen
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-VIEWER
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Viewer display only
+    error_uid: QA-01-ERR-OUTPUT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-COMPARE-TOGGLE
+    label: Toggle Before/After compare
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-COMPARE
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: 50/50 exact failed vs verified new version; no mutation
+    error_uid: QA-01-ERR-RECHECK-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-SCRIPT-VIEW
+    label: Open QA Validation Script
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-SCRIPT
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Read exact QAValidationScriptView only
+    error_uid: QA-01-ERR-SCRIPT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-EVIDENCE-VIEW
+    label: Open Evidence / Check detail
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-EVIDENCE
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Read exact evidence/check refs
+    error_uid: QA-01-ERR-EVIDENCE-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-SCORECARD-SUBMIT
+    label: Persist System/AI Generated QA Scorecard
+    permission_uid: QA_SCORE
+    gate_uid: QA-01-GATE-SCORE
+    effect_type: SCORE_MUTATION
+    owner: QAService
+    success_contract: Persist task-bound System/AI generated scorecard; no generic human confirmation step
+    error_uid: QA-01-ERR-CRITERIA-001
+    operation: submitScorecard
+    method_path: POST /v1/scorecards
+    state_effect: IN_REVIEW/RECHECK→review state according to gate policy
+    ui_exposure: INTERNAL_SYSTEM_ONLY; no human Scorecard action
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: QA-01-PORT-SCORECARD
+      decision: SOURCE_DERIVED
+  - action_uid: QA-01-ACT-FINDING-CREATE
+    label: Create Finding
+    permission_uid: QA_FINDING
+    gate_uid: QA-01-GATE-FINDING
+    effect_type: FINDING_CREATE
+    owner: QA/ManualReviewService
+    success_contract: Create append-only finding with exact source/scope/evidence
+    error_uid: QA-01-ERR-FINDING-001
+    operation: createFinding
+    method_path: POST /v1/findings
+    state_effect: IN_REVIEW→FINDING_OPEN
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: QA-01-PORT-FINDING
+      decision: SOURCE_DERIVED
+  - action_uid: QA-01-ACT-FINDING-SELECT
+    label: Open Finding
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+    owner: CLIENT
+    success_contract: Set current finding/evidence context only
+    error_uid: QA-01-ERR-FINDING-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-MANUAL-VIEW
+    label: Open Manual Review context
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-MANUAL
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Read governed ManualReviewCase / owner / blocker / decision history
+    error_uid: QA-01-ERR-MANUAL-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-CORRECTION-REQUEST
+    label: Request Correction
+    permission_uid: QA_CORRECTION
+    gate_uid: QA-01-GATE-CORRECTION
+    effect_type: CORRECTION_CREATE
+    owner: QA/ManualReviewService
+    success_contract: Create CorrectionRequest routed to original owner; QA performs no upstream mutation
+    error_uid: QA-01-ERR-CORRECTION-001
+    operation: createCorrectionRequest
+    method_path: POST /v1/correction-requests
+    state_effect: FINDING_OPEN→CORRECTION_REQUIRED
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: QA-01-PORT-CORRECTION
+      decision: SOURCE_DERIVED
+  - action_uid: QA-01-ACT-RECHECK-START
+    label: Start Recheck
+    permission_uid: QA_GATE
+    gate_uid: QA-01-GATE-RECHECK
+    effect_type: QA_RECHECK_START
+    owner: QAService
+    success_contract: Start recheck only after verified new exact output version is present
+    error_uid: QA-01-ERR-RECHECK-001
+    operation: startRecheck
+    method_path: POST /v1/state-commands/qareview/startrecheck
+    state_effect: CORRECTION_REQUIRED→RECHECK
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: QA-01-PORT-RECHECK
+      decision: SOURCE_DERIVED
+  - action_uid: QA-01-ACT-GATE-PASS
+    label: Decide PASS
+    permission_uid: QA_GATE
+    gate_uid: QA-01-GATE-PASS
+    effect_type: QA_GATE_DECISION
+    owner: QAService
+    success_contract: Create governed QA PASS decision; numeric score alone cannot pass hard gates
+    error_uid: QA-01-ERR-GATE-001
+    operation: decidePass
+    method_path: POST /v1/state-commands/qareview/decidepass
+    state_effect: IN_REVIEW/RECHECK→PASS
+    ui_exposure: INTERNAL_GOVERNED_QA_GATE_ONLY; not Manual Review buttons
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: QA-01-PORT-PASS
+      decision: SOURCE_DERIVED
+  - action_uid: QA-01-ACT-GATE-FAIL
+    label: Decide FAIL
+    permission_uid: QA_GATE
+    gate_uid: QA-01-GATE-FAIL
+    effect_type: QA_GATE_DECISION
+    owner: QAService
+    success_contract: Create governed QA FAIL decision with evidence/reason
+    error_uid: QA-01-ERR-GATE-001
+    operation: decideFail
+    method_path: POST /v1/state-commands/qareview/decidefail
+    state_effect: IN_REVIEW/RECHECK→FAIL
+    ui_exposure: INTERNAL_GOVERNED_QA_GATE_ONLY; not Manual Review buttons
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: QA-01-PORT-FAIL
+      decision: SOURCE_DERIVED
+  - action_uid: QA-01-ACT-RELEASE-CREATE
+    label: Create Release Candidate
+    permission_uid: QA_RELEASE
+    gate_uid: QA-01-GATE-RELEASE
+    effect_type: RELEASE_CANDIDATE_CREATE
+    owner: ReleaseService
+    success_contract: Create ReleasePackage candidate from exact QA PASS/rights/output refs; not publish/approval
+    error_uid: QA-01-ERR-RELEASE-001
+    operation: createReleasePackage
+    method_path: POST /v1/release-packages
+    state_effect: PASS→Release candidate available
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: QA-01-PORT-RELEASE
+      decision: SOURCE_DERIVED
+  - action_uid: QA-01-ACT-AUDIT-VIEW
+    label: View Audit / Trace
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Read correlation/version/audit refs only
+    error_uid: QA-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_effect: UI/read state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-REVIEW-MODE-SET
+    label: Set QA Review Mode AUTO / MANUAL
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Switch scheduling mode only; preserve exact Project/Topic and results
+    error_uid: QA-01-ERR-CONTEXT-001
+    operation: null
+    method_path: null
+    state_effect: UI state only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-AUTO-START
+    label: Start AUTO Topic QA Review
+    permission_uid: QA_AUTO
+    gate_uid: QA-01-GATE-AUTO
+    effect_type: AUTO_QA_ORCHESTRATION
+    owner: QAService
+    success_contract: Sequentially review all authorized QA tasks in current Topic, max active=1; low score warns; no auto publish
+    error_uid: QA-01-ERR-AUTO-001
+    operation: startAutoTopicQaReview
+    method_path: SYSTEM_OPERATION_REGISTRY_REQUIRED; frontend MUST NOT invent URL
+    state_effect: Topic AUTO run active; each task uses canonical QA states
+    runtime_binding:
+      binding_kind: ORCHESTRATOR_COMPOSITE_NO_NEW_HTTP
+      operation: AUTO_TOPIC_QA_COMPOSITE
+      steps:
+      - Resolve current Topic authorized QA tasks in canonical existing order
+      - For each task use QA-01-PORT-START
+      - System/AI score via bound criteria and persist via QA-01-PORT-SCORECARD
+      - Governed result uses existing QA-01-PORT-PASS / QA-01-PORT-FAIL when applicable
+      - Only below-bound-threshold score emits QA_LOW_SCORE_WARNING
+      - max_active_task=1; no reorder/create/skip; no auto publish
+      new_http_endpoint: FORBIDDEN
+  - action_uid: QA-01-ACT-VIEWER-PREV-FRAME
+    label: Previous Frame
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-VIEWER
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Move exact viewer -1 frame using source/project timebase; no mutation
+    error_uid: QA-01-ERR-OUTPUT-001
+    operation: null
+    method_path: null
+    state_effect: Viewer position only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-VIEWER-NEXT-FRAME
+    label: Next Frame
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-VIEWER
+    effect_type: UI_ONLY
+    owner: CLIENT
+    success_contract: Move exact viewer +1 frame using source/project timebase; no mutation
+    error_uid: QA-01-ERR-OUTPUT-001
+    operation: null
+    method_path: null
+    state_effect: Viewer position only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-EVIDENCE-POINT
+    label: Set Finding Point
+    permission_uid: QA_FINDING
+    gate_uid: QA-01-GATE-EVIDENCE-CAPTURE
+    effect_type: EVIDENCE_CONTEXT
+    owner: CLIENT/QA
+    success_contract: Bind current exact frame/time + output/version/checksum/provenance to Finding evidence draft
+    error_uid: QA-01-ERR-EVIDENCE-CAPTURE-001
+    operation: null
+    method_path: null
+    state_effect: Finding draft evidence context
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-EVIDENCE-RANGE-IN
+    label: Set Evidence Range In
+    permission_uid: QA_FINDING
+    gate_uid: QA-01-GATE-EVIDENCE-CAPTURE
+    effect_type: EVIDENCE_CONTEXT
+    owner: CLIENT/QA
+    success_contract: Set governed evidence range start
+    error_uid: QA-01-ERR-EVIDENCE-CAPTURE-001
+    operation: null
+    method_path: null
+    state_effect: Evidence range draft
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-EVIDENCE-RANGE-OUT
+    label: Set Evidence Range Out
+    permission_uid: QA_FINDING
+    gate_uid: QA-01-GATE-EVIDENCE-CAPTURE
+    effect_type: EVIDENCE_CONTEXT
+    owner: CLIENT/QA
+    success_contract: Set governed evidence range end
+    error_uid: QA-01-ERR-EVIDENCE-CAPTURE-001
+    operation: null
+    method_path: null
+    state_effect: Evidence range draft
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: QA-01-ACT-MANUAL-MODIFY
+    label: 修改 / Modify
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-MANUAL-DECISION
+    effect_type: MANUAL_REVIEW_MUTATION
+    owner: ManualReviewService
+    success_contract: Enter the governed modification flow for the current ManualReviewCase/current evaluated item; never open a blank scoring
+      form
+    error_uid: QA-01-ERR-MANUAL-ACTION-001
+    operation: RESOLVE_FROM_EXISTING_GOVERNED_MANUAL_REVIEW_AUTHORITY
+    method_path: SYSTEM_OPERATION_REGISTRY_REQUIRED; frontend MUST NOT invent URL
+    state_effect: Manual Review remains OPEN while modification is in progress
+    runtime_binding:
+      binding_kind: SHARED_OPERATION_REFERENCE
+      shared_authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+      shared_operation_id: manualReview.modify
+  - action_uid: QA-01-ACT-MANUAL-PASS
+    label: 通過 / Pass
+    permission_uid: QA_USE
+    gate_uid: QA-01-GATE-MANUAL-DECISION
+    effect_type: MANUAL_REVIEW_MUTATION
+    owner: ManualReviewService
+    success_contract: Pass/close current ManualReviewCase, then re-evaluate normal QA Gate; not direct QA Gate PASS and cannot override hard
+      gates
+    error_uid: QA-01-ERR-MANUAL-ACTION-001
+    operation: RESOLVE_FROM_EXISTING_GOVERNED_MANUAL_REVIEW_AUTHORITY
+    method_path: SYSTEM_OPERATION_REGISTRY_REQUIRED; frontend MUST NOT invent URL
+    state_effect: ManualReviewCase OPEN→PASSED/CLOSED according to governed authority; QA Gate re-evaluates
+    runtime_binding:
+      binding_kind: SHARED_OPERATION_REFERENCE
+      shared_authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+      shared_operation_id: manualReview.pass
+  objects_refs:
+  - object_uid: QA-01-REF-HANDOFF
+    entity: QAHandoffRef
+    owner: Upstream boundary
+    required_content: exact handoff/task/output/script/score/evidence refs + hashes
+  - object_uid: QA-01-REF-TASK
+    entity: QATaskRef
+    owner: QA Orchestration
+    required_content: workspace/project/topic/task + exact scope/state
+  - object_uid: QA-01-REF-OUTPUT
+    entity: ExactOutputVersionRef
+    owner: Upstream output owner
+    required_content: output_version_id + artifact refs + checksum + provenance + output contract hash
+  - object_uid: QA-01-REF-SCRIPT
+    entity: QAValidationScriptViewRef
+    owner: InstructionCompiler
+    required_content: script_view_id + canonical version + included/excluded refs + constraints + view_hash
+  - object_uid: QA-01-REF-CRITERIA
+    entity: QACriteriaVersionRef
+    owner: ScoringService
+    required_content: approved criteria_version_id + quality_gate_policy_version + dimensions/hard gates
+  - object_uid: QA-01-REF-RIGHTS
+    entity: RightsPolicyRef
+    owner: Rights/Policy
+    required_content: exact rights policy version + gate state
+  - object_uid: QA-01-REF-CHANNEL
+    entity: ChannelPolicyRef
+    owner: Release/Channel Policy
+    required_content: exact policy/account scope ref when applicable
+  - object_uid: QA-01-OBJ-REVIEW
+    entity: QAReviewRun
+    owner: QAService
+    required_content: target output + contract/goal/hash + script/criteria/policy/score/finding/evidence/reviewer + gate_status
+  - object_uid: QA-01-OBJ-SCORECARD
+    entity: QAScorecard
+    owner: ScoringService
+    required_content: exact target + criteria + dimensions + evidence + total + hard gate + scorer
+  - object_uid: QA-01-OBJ-FINDING
+    entity: Finding
+    owner: ManualReviewService
+    required_content: source + severity + category + affected_scope + evidence + detected_by + status
+  - object_uid: QA-01-OBJ-MANUAL
+    entity: ManualReviewCase
+    owner: ManualReviewService
+    required_content: case ref + owner + reason + blocker + governed decision/status/history
+  - object_uid: QA-01-OBJ-CORRECTION
+    entity: CorrectionRequest
+    owner: ManualReviewService
+    required_content: finding/score/source instruction/failed version/affected_scope/root cause/target department/revalidation
+  - object_uid: QA-01-OBJ-RECHECK
+    entity: QARecheckContext
+    owner: QAService
+    required_content: qa_review_id + correction refs + failed output ref + verified new exact output ref
+  - object_uid: QA-01-OBJ-GATE
+    entity: QAGateDecision
+    owner: QAService
+    required_content: qa_review_id + PASS/FAIL/BLOCK state + reason/evidence + actor + version
+  - object_uid: QA-01-OBJ-RELEASE
+    entity: ReleasePackageCandidate
+    owner: ReleaseService
+    required_content: exact output refs + qa_gate_ref + rights_gate_ref + evidence + channel optional + immutable lineage
+  - object_uid: QA-01-REF-AUDIT
+    entity: AuditTraceRef
+    owner: Governance
+    required_content: correlation_id + causation/idempotency refs + audit events + version trace
+  controls:
+  - control_uid: QA-01-FLD-PROJECT
+    section_uid: QA-01-SEC-01
+    component_uid: QA-01-CMP-CONTEXT
+    visual_uid: QA-01-VIS-CONTEXT
+    type: READONLY
+    label: Project
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+    render: READONLY_CONTEXT_CHIP; never INPUT/SELECT
+  - control_uid: QA-01-FLD-TOPIC
+    section_uid: QA-01-SEC-01
+    component_uid: QA-01-CMP-CONTEXT
+    visual_uid: QA-01-VIS-CONTEXT
+    type: READONLY
+    label: Topic
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+    render: READONLY_CONTEXT_CHIP; never INPUT/SELECT
+  - control_uid: QA-01-FLD-QA-TASK
+    section_uid: QA-01-SEC-01
+    component_uid: QA-01-CMP-CONTEXT
+    visual_uid: QA-01-VIS-CONTEXT
+    type: READONLY
+    label: QA Task
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+    render: READONLY_CONTEXT_CHIP; never INPUT/SELECT
+  - control_uid: QA-01-FLD-TARGET-OUTPUT
+    section_uid: QA-01-SEC-01
+    component_uid: QA-01-CMP-CONTEXT
+    visual_uid: QA-01-VIS-CONTEXT
+    type: READONLY
+    label: Target Output Version
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+    render: READONLY_CONTEXT_CHIP; never INPUT/SELECT
+  - control_uid: QA-01-FLD-REVIEW-STATE
+    section_uid: QA-01-SEC-01
+    component_uid: QA-01-CMP-CONTEXT
+    visual_uid: QA-01-VIS-CONTEXT
+    type: READONLY
+    label: QA Review State
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+    render: READONLY_CONTEXT_CHIP; never INPUT/SELECT
+  - control_uid: QA-01-BTN-START-REVIEW
+    section_uid: QA-01-SEC-01
+    component_uid: QA-01-CMP-CONTEXT
+    visual_uid: QA-01-VIS-CONTEXT
+    type: BUTTON
+    label: 開始審查 / Start Review
+    action_uid: QA-01-ACT-START-REVIEW
+    gate_uid: QA-01-GATE-START
+    permission_uid: QA_USE
+    default: —
+    visibility_condition: mode=MANUAL
+  - control_uid: QA-01-INP-QUEUE-SEARCH
+    section_uid: QA-01-SEC-02
+    component_uid: QA-01-CMP-QUEUE
+    visual_uid: QA-01-VIS-LEFT
+    type: SEARCH
+    label: 搜尋 QA Task / Output / Finding
+    action_uid: QA-01-ACT-QUEUE-SEARCH
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-SEL-QUEUE-STATE
+    section_uid: QA-01-SEC-02
+    component_uid: QA-01-CMP-QUEUE
+    visual_uid: QA-01-VIS-LEFT
+    type: SELECT
+    label: 狀態篩選
+    action_uid: QA-01-ACT-QUEUE-FILTER
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-SEL-QUEUE-SEVERITY
+    section_uid: QA-01-SEC-02
+    component_uid: QA-01-CMP-QUEUE
+    visual_uid: QA-01-VIS-LEFT
+    type: SELECT
+    label: Severity
+    action_uid: QA-01-ACT-QUEUE-FILTER
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-LIST-REVIEWS
+    section_uid: QA-01-SEC-02
+    component_uid: QA-01-CMP-QUEUE
+    visual_uid: QA-01-VIS-LEFT
+    type: LIST
+    label: QA Review Queue
+    action_uid: QA-01-ACT-REVIEW-SELECT
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+    note: 'MANUAL: selectable one-by-one and resolves exact context. AUTO: read-only sequential queue/progress; current item highlighted;
+      low-score items get NEEDS_ATTENTION warning badge. Items show exact review/output ID, source department, state, blocking finding count;
+      no fake duration/provider.'
+    mode_behavior:
+      AUTO: selection cannot reorder scheduler; queue is orchestration status
+      MANUAL: Human selects one authorized QA task/review at a time
+  - control_uid: QA-01-VIEW-OUTPUT
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-VIEWER
+    visual_uid: QA-01-VIS-VIEWER
+    type: VIEWER
+    label: Exact Output Viewer
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-VIEWER
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-BTN-PLAY
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-VIEWER
+    visual_uid: QA-01-VIS-VIEWER
+    type: BUTTON
+    label: Play / Pause
+    action_uid: QA-01-ACT-VIEWER-PLAY
+    gate_uid: QA-01-GATE-VIEWER
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-CTL-SEEK
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-VIEWER
+    visual_uid: QA-01-VIS-VIEWER
+    type: RANGE
+    label: Seek / Timecode
+    action_uid: QA-01-ACT-VIEWER-SEEK
+    gate_uid: QA-01-GATE-VIEWER
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-BTN-VOLUME
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-VIEWER
+    visual_uid: QA-01-VIS-VIEWER
+    type: BUTTON
+    label: Volume / Mute
+    action_uid: QA-01-ACT-VIEWER-VOLUME
+    gate_uid: QA-01-GATE-VIEWER
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-BTN-FULLSCREEN
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-VIEWER
+    visual_uid: QA-01-VIS-VIEWER
+    type: BUTTON
+    label: Fullscreen
+    action_uid: QA-01-ACT-VIEWER-FULLSCREEN
+    gate_uid: QA-01-GATE-VIEWER
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-BTN-COMPARE
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-COMPARE
+    visual_uid: QA-01-VIS-VIEWER
+    type: BUTTON
+    label: Before / After Compare
+    action_uid: QA-01-ACT-COMPARE-TOGGLE
+    gate_uid: QA-01-GATE-COMPARE
+    permission_uid: QA_USE
+    default: —
+    note: Only visible/enabled in RECHECK with verified new version.
+  - control_uid: QA-01-FLD-QA-SCRIPT
+    section_uid: QA-01-SEC-04
+    component_uid: QA-01-CMP-SCRIPT
+    visual_uid: QA-01-VIS-SCRIPT
+    type: READONLY
+    label: QA Validation Script View
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-SCRIPT
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-SCRIPT-HASH
+    section_uid: QA-01-SEC-04
+    component_uid: QA-01-CMP-SCRIPT
+    visual_uid: QA-01-VIS-SCRIPT
+    type: READONLY
+    label: Script View Hash
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-SCRIPT
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-CRITERIA-VERSION
+    section_uid: QA-01-SEC-04
+    component_uid: QA-01-CMP-CRITERIA
+    visual_uid: QA-01-VIS-SCRIPT
+    type: READONLY
+    label: Criteria Version
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-CRITERIA
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-GATE-POLICY
+    section_uid: QA-01-SEC-04
+    component_uid: QA-01-CMP-CRITERIA
+    visual_uid: QA-01-VIS-SCRIPT
+    type: READONLY
+    label: Quality Gate Policy Version
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-CRITERIA
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-BTN-SCRIPT-VIEW
+    section_uid: QA-01-SEC-04
+    component_uid: QA-01-CMP-SCRIPT
+    visual_uid: QA-01-VIS-SCRIPT
+    type: BUTTON
+    label: 查看 QA 驗證腳本
+    action_uid: QA-01-ACT-SCRIPT-VIEW
+    gate_uid: QA-01-GATE-SCRIPT
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-EVIDENCE
+    section_uid: QA-01-SEC-05
+    component_uid: QA-01-CMP-EVIDENCE
+    visual_uid: QA-01-VIS-EVIDENCE
+    type: READONLY
+    label: Evidence Refs
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-EVIDENCE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-CHECKSUM
+    section_uid: QA-01-SEC-05
+    component_uid: QA-01-CMP-EVIDENCE
+    visual_uid: QA-01-VIS-EVIDENCE
+    type: READONLY
+    label: Artifact Checksum
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-EVIDENCE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-PROVENANCE
+    section_uid: QA-01-SEC-05
+    component_uid: QA-01-CMP-EVIDENCE
+    visual_uid: QA-01-VIS-EVIDENCE
+    type: READONLY
+    label: Provenance
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-EVIDENCE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-REQUIRED-CHECKS
+    section_uid: QA-01-SEC-05
+    component_uid: QA-01-CMP-EVIDENCE
+    visual_uid: QA-01-VIS-EVIDENCE
+    type: READONLY
+    label: Required Checks
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-EVIDENCE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-RIGHTS
+    section_uid: QA-01-SEC-05
+    component_uid: QA-01-CMP-EVIDENCE
+    visual_uid: QA-01-VIS-EVIDENCE
+    type: READONLY
+    label: Rights Gate
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-EVIDENCE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-POLICY
+    section_uid: QA-01-SEC-05
+    component_uid: QA-01-CMP-EVIDENCE
+    visual_uid: QA-01-VIS-EVIDENCE
+    type: READONLY
+    label: Policy Gate
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-EVIDENCE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-BTN-EVIDENCE
+    section_uid: QA-01-SEC-05
+    component_uid: QA-01-CMP-EVIDENCE
+    visual_uid: QA-01-VIS-EVIDENCE
+    type: BUTTON
+    label: 查看 Evidence / Checks
+    action_uid: QA-01-ACT-EVIDENCE-VIEW
+    gate_uid: QA-01-GATE-EVIDENCE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-TOTAL-SCORE
+    section_uid: QA-01-SEC-06
+    component_uid: QA-01-CMP-SCORE
+    visual_uid: QA-01-VIS-RIGHT
+    type: READONLY
+    label: Total Score
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-HARD-BLOCK
+    section_uid: QA-01-SEC-06
+    component_uid: QA-01-CMP-SCORE
+    visual_uid: QA-01-VIS-RIGHT
+    type: READONLY
+    label: Hard Block
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-GATE-STATUS
+    section_uid: QA-01-SEC-06
+    component_uid: QA-01-CMP-GATE
+    visual_uid: QA-01-VIS-RIGHT
+    type: READONLY
+    label: QA Gate Result
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+    note: System/governed QA gate projection. Manual Review Pass is a separate ManualReviewCase action and is not direct QA Gate PASS.
+  - control_uid: QA-01-FLD-OPEN-FINDINGS
+    section_uid: QA-01-SEC-06
+    component_uid: QA-01-CMP-GATE
+    visual_uid: QA-01-VIS-RIGHT
+    type: READONLY
+    label: Open Blocking Findings
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-MANUAL-STATE
+    section_uid: QA-01-SEC-06
+    component_uid: QA-01-CMP-GATE
+    visual_uid: QA-01-VIS-RIGHT
+    type: READONLY
+    label: Manual Review
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-LIST-FINDINGS
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-FINDING-LIST
+    visual_uid: QA-01-VIS-FINDING
+    type: LIST
+    label: Finding List
+    action_uid: QA-01-ACT-FINDING-SELECT
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-INP-FINDING-SEVERITY
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-FINDING-FORM
+    visual_uid: QA-01-VIS-FINDING
+    type: SELECT
+    label: Severity（registered enum）
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-FINDING
+    permission_uid: QA_FINDING
+    default: —
+  - control_uid: QA-01-INP-FINDING-CATEGORY
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-FINDING-FORM
+    visual_uid: QA-01-VIS-FINDING
+    type: SELECT
+    label: Category（registered QA issue category）
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-FINDING
+    permission_uid: QA_FINDING
+    default: —
+  - control_uid: QA-01-INP-FINDING-SCOPE
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-FINDING-FORM
+    visual_uid: QA-01-VIS-FINDING
+    type: PREFILLED_SCOPE_INPUT
+    label: Affected Scope
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-FINDING
+    permission_uid: QA_FINDING
+    default: —
+    note: Prefill from current viewer point/range and exact output; Human may narrow scope only.
+  - control_uid: QA-01-INP-FINDING-EVIDENCE
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-FINDING-FORM
+    visual_uid: QA-01-VIS-FINDING
+    type: READONLY
+    label: Evidence Refs（auto-bound）
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-FINDING
+    permission_uid: QA_FINDING
+    default: —
+    note: Auto-bind exact output/version/checksum/provenance + viewer point/range. Manual Evidence ID typing forbidden.
+  - control_uid: QA-01-BTN-FINDING-CREATE
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-FINDING-FORM
+    visual_uid: QA-01-VIS-FINDING
+    type: PRIMARY_BUTTON
+    label: 建立 Finding
+    action_uid: QA-01-ACT-FINDING-CREATE
+    gate_uid: QA-01-GATE-FINDING
+    permission_uid: QA_FINDING
+    default: —
+  - control_uid: QA-01-FLD-MANUAL-CASE
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-MANUAL
+    visual_uid: QA-01-VIS-FINDING
+    type: READONLY
+    label: Manual Review Case
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-MANUAL
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-MANUAL-OWNER
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-MANUAL
+    visual_uid: QA-01-VIS-FINDING
+    type: READONLY
+    label: Owner
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-MANUAL
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-MANUAL-BLOCKER
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-MANUAL
+    visual_uid: QA-01-VIS-FINDING
+    type: READONLY
+    label: Blocking Reason
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-MANUAL
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-MANUAL-DECISION
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-MANUAL
+    visual_uid: QA-01-VIS-FINDING
+    type: READONLY
+    label: Decision / History
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-MANUAL
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-BTN-MANUAL-VIEW
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-MANUAL
+    visual_uid: QA-01-VIS-FINDING
+    type: BUTTON
+    label: 查看人工審查 / View Manual Review
+    action_uid: QA-01-ACT-MANUAL-VIEW
+    gate_uid: QA-01-GATE-MANUAL
+    permission_uid: QA_USE
+    default: —
+    note: Opens/expands current governed ManualReviewCase context. Modify/Pass appear only when case is required/open.
+  - control_uid: QA-01-INP-CORR-FINDINGS
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-CORRECTION
+    visual_uid: QA-01-VIS-RECHECK
+    type: READONLY
+    label: Finding IDs
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-CORRECTION
+    permission_uid: QA_CORRECTION
+    default: —
+    note: Auto-bound from current review/finding/upstream lineage; manual ID/owner entry forbidden.
+  - control_uid: QA-01-INP-CORR-SCORECARDS
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-CORRECTION
+    visual_uid: QA-01-VIS-RECHECK
+    type: READONLY
+    label: Source Scorecard IDs
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-CORRECTION
+    permission_uid: QA_CORRECTION
+    default: —
+    note: Auto-bound from current review/finding/upstream lineage; manual ID/owner entry forbidden.
+  - control_uid: QA-01-INP-CORR-INSTRUCTION
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-CORRECTION
+    visual_uid: QA-01-VIS-RECHECK
+    type: READONLY
+    label: Source Instruction Package
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-CORRECTION
+    permission_uid: QA_CORRECTION
+    default: —
+    note: Auto-bound from current review/finding/upstream lineage; manual ID/owner entry forbidden.
+  - control_uid: QA-01-INP-CORR-SCOPE
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-CORRECTION
+    visual_uid: QA-01-VIS-RECHECK
+    type: PREFILLED_SCOPE_INPUT
+    label: Affected Scope
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-CORRECTION
+    permission_uid: QA_CORRECTION
+    default: —
+    note: Prefilled from Finding affected_scope; Human may narrow governed scope.
+  - control_uid: QA-01-INP-CORR-ROOT
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-CORRECTION
+    visual_uid: QA-01-VIS-RECHECK
+    type: SELECT
+    label: Root Cause（canonical enum）
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-CORRECTION
+    permission_uid: QA_CORRECTION
+    default: —
+    options: *id001
+  - control_uid: QA-01-INP-CORR-ACTION
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-CORRECTION
+    visual_uid: QA-01-VIS-RECHECK
+    type: TEXTAREA
+    label: Required Action
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-CORRECTION
+    permission_uid: QA_CORRECTION
+    default: —
+  - control_uid: QA-01-INP-CORR-TARGET
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-CORRECTION
+    visual_uid: QA-01-VIS-RECHECK
+    type: READONLY
+    label: Target Department / Original Owner
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-CORRECTION
+    permission_uid: QA_CORRECTION
+    default: —
+    note: Auto-bound from current review/finding/upstream lineage; manual ID/owner entry forbidden.
+  - control_uid: QA-01-INP-CORR-REVALIDATE
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-CORRECTION
+    visual_uid: QA-01-VIS-RECHECK
+    type: MULTISELECT
+    label: Revalidation Requirements
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-CORRECTION
+    permission_uid: QA_CORRECTION
+    default: —
+    note: Prefilled from required checks; additional values must use registered check registry.
+  - control_uid: QA-01-BTN-CORRECTION
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-CORRECTION
+    visual_uid: QA-01-VIS-RECHECK
+    type: PRIMARY_BUTTON
+    label: 要求修正 / Request Correction
+    action_uid: QA-01-ACT-CORRECTION-REQUEST
+    gate_uid: QA-01-GATE-CORRECTION
+    permission_uid: QA_CORRECTION
+    default: —
+  - control_uid: QA-01-FLD-FAILED-VERSION
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-RECHECK
+    visual_uid: QA-01-VIS-RECHECK
+    type: READONLY
+    label: Failed Output Version
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-RECHECK
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-NEW-VERSION
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-RECHECK
+    visual_uid: QA-01-VIS-RECHECK
+    type: READONLY
+    label: Verified New Output Version
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-RECHECK
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-RECHECK-STATUS
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-RECHECK
+    visual_uid: QA-01-VIS-RECHECK
+    type: READONLY
+    label: Recheck Status
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-RECHECK
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-BTN-RECHECK
+    section_uid: QA-01-SEC-08
+    component_uid: QA-01-CMP-RECHECK
+    visual_uid: QA-01-VIS-RECHECK
+    type: PRIMARY_BUTTON
+    label: 開始 Recheck
+    action_uid: QA-01-ACT-RECHECK-START
+    gate_uid: QA-01-GATE-RECHECK
+    permission_uid: QA_GATE
+    default: —
+  - control_uid: QA-01-FLD-REL-QA-PASS
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE-READY
+    visual_uid: QA-01-VIS-RELEASE
+    type: READONLY
+    label: QA PASS
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-REL-FINDINGS
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE-READY
+    visual_uid: QA-01-VIS-RELEASE
+    type: READONLY
+    label: All Findings Closed
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-REL-MANUAL
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE-READY
+    visual_uid: QA-01-VIS-RELEASE
+    type: READONLY
+    label: Manual Review Closed
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-REL-RIGHTS
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE-READY
+    visual_uid: QA-01-VIS-RELEASE
+    type: READONLY
+    label: Rights Valid
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-REL-POLICY
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE-READY
+    visual_uid: QA-01-VIS-RELEASE
+    type: READONLY
+    label: Policy Valid
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-REL-CHANNEL
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE-READY
+    visual_uid: QA-01-VIS-RELEASE
+    type: READONLY
+    label: Channel / Account Scope
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-REL-PACKAGE
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE
+    visual_uid: QA-01-VIS-RELEASE
+    type: READONLY
+    label: Release Package Candidate
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-RELEASE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-REL-OUTPUTS
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE
+    visual_uid: QA-01-VIS-RELEASE
+    type: READONLY
+    label: Exact Output Version IDs
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-RELEASE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-REL-QA-GATE
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE
+    visual_uid: QA-01-VIS-RELEASE
+    type: READONLY
+    label: QA Gate Ref
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-RELEASE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-REL-RIGHTS-GATE
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE
+    visual_uid: QA-01-VIS-RELEASE
+    type: READONLY
+    label: Rights Gate Ref
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-RELEASE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-BTN-RELEASE-CREATE
+    section_uid: QA-01-SEC-09
+    component_uid: QA-01-CMP-RELEASE
+    visual_uid: QA-01-VIS-RELEASE
+    type: PRIMARY_BUTTON
+    label: 建立 Release Candidate
+    action_uid: QA-01-ACT-RELEASE-CREATE
+    gate_uid: QA-01-GATE-RELEASE
+    permission_uid: QA_RELEASE
+    default: —
+    note: Creates ReleasePackage candidate only. No approveRelease / Publish control.
+  - control_uid: QA-01-FLD-PAGE-STATE
+    section_uid: QA-01-SEC-10
+    component_uid: QA-01-CMP-STATUS
+    visual_uid: QA-01-VIS-STATUS
+    type: READONLY
+    label: Page / QA State
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-ERROR
+    section_uid: QA-01-SEC-10
+    component_uid: QA-01-CMP-STATUS
+    visual_uid: QA-01-VIS-STATUS
+    type: READONLY
+    label: Error UID / Reason
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-DISABLED
+    section_uid: QA-01-SEC-10
+    component_uid: QA-01-CMP-STATUS
+    visual_uid: QA-01-VIS-STATUS
+    type: READONLY
+    label: Disabled Reason
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-CORRELATION
+    section_uid: QA-01-SEC-10
+    component_uid: QA-01-CMP-STATUS
+    visual_uid: QA-01-VIS-STATUS
+    type: READONLY
+    label: Correlation / Idempotency
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-FLD-AUDIT
+    section_uid: QA-01-SEC-10
+    component_uid: QA-01-CMP-STATUS
+    visual_uid: QA-01-VIS-STATUS
+    type: READONLY
+    label: Audit / Trace
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-BTN-AUDIT
+    section_uid: QA-01-SEC-10
+    component_uid: QA-01-CMP-STATUS
+    visual_uid: QA-01-VIS-STATUS
+    type: BUTTON
+    label: 查看 Audit / Trace
+    action_uid: QA-01-ACT-AUDIT-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    default: —
+  - control_uid: QA-01-SEG-REVIEW-MODE
+    section_uid: QA-01-SEC-02
+    component_uid: QA-01-CMP-REVIEW-MODE
+    visual_uid: QA-01-VIS-LEFT
+    type: SEGMENTED_CONTROL
+    label: 審查模式 / Review Mode
+    options:
+    - AUTO
+    - MANUAL
+    default: AUTO
+    action_uid: QA-01-ACT-REVIEW-MODE-SET
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+  - control_uid: QA-01-BTN-AUTO-START
+    section_uid: QA-01-SEC-02
+    component_uid: QA-01-CMP-REVIEW-MODE
+    visual_uid: QA-01-VIS-LEFT
+    type: PRIMARY_BUTTON
+    label: 開始自動審查 / Start AUTO Review
+    default: —
+    action_uid: QA-01-ACT-AUTO-START
+    gate_uid: QA-01-GATE-AUTO
+    permission_uid: QA_AUTO
+    visibility_condition: mode=AUTO
+  - control_uid: QA-01-FLD-AUTO-PROGRESS
+    section_uid: QA-01-SEC-02
+    component_uid: QA-01-CMP-AUTO-PROGRESS
+    visual_uid: QA-01-VIS-LEFT
+    type: READONLY
+    label: AUTO Progress
+    default: —
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+    note: current_index / total_topic_qa_tasks / current task state; no fake duration/ETA
+  - control_uid: QA-01-SEL-QUEUE-SOURCE-DEPT
+    section_uid: QA-01-SEC-02
+    component_uid: QA-01-CMP-QUEUE
+    visual_uid: QA-01-VIS-LEFT
+    type: SELECT
+    label: 來源部門 / Source Department
+    default: ALL
+    action_uid: QA-01-ACT-QUEUE-FILTER
+    gate_uid: QA-01-GATE-PAGE
+    permission_uid: QA_USE
+  - control_uid: QA-01-BTN-PREV-FRAME
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-EVIDENCE-CAPTURE
+    visual_uid: QA-01-VIS-VIEWER
+    type: BUTTON
+    label: 上一幀 / Previous Frame
+    default: —
+    action_uid: QA-01-ACT-VIEWER-PREV-FRAME
+    gate_uid: QA-01-GATE-VIEWER
+    permission_uid: QA_USE
+    visibility_condition: VIDEO_OR_EDIT_OUTPUT
+  - control_uid: QA-01-BTN-NEXT-FRAME
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-EVIDENCE-CAPTURE
+    visual_uid: QA-01-VIS-VIEWER
+    type: BUTTON
+    label: 下一幀 / Next Frame
+    default: —
+    action_uid: QA-01-ACT-VIEWER-NEXT-FRAME
+    gate_uid: QA-01-GATE-VIEWER
+    permission_uid: QA_USE
+    visibility_condition: VIDEO_OR_EDIT_OUTPUT
+  - control_uid: QA-01-FLD-CURRENT-TIMECODE
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-EVIDENCE-CAPTURE
+    visual_uid: QA-01-VIS-VIEWER
+    type: READONLY
+    label: Current Timecode
+    default: —
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-VIEWER
+    permission_uid: QA_USE
+  - control_uid: QA-01-BTN-FINDING-POINT
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-EVIDENCE-CAPTURE
+    visual_uid: QA-01-VIS-VIEWER
+    type: BUTTON
+    label: 標記 Finding 位置 / Set Finding Point
+    default: —
+    action_uid: QA-01-ACT-EVIDENCE-POINT
+    gate_uid: QA-01-GATE-EVIDENCE-CAPTURE
+    permission_uid: QA_FINDING
+  - control_uid: QA-01-BTN-EVIDENCE-IN
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-EVIDENCE-CAPTURE
+    visual_uid: QA-01-VIS-VIEWER
+    type: BUTTON
+    label: Evidence In
+    default: —
+    action_uid: QA-01-ACT-EVIDENCE-RANGE-IN
+    gate_uid: QA-01-GATE-EVIDENCE-CAPTURE
+    permission_uid: QA_FINDING
+  - control_uid: QA-01-BTN-EVIDENCE-OUT
+    section_uid: QA-01-SEC-03
+    component_uid: QA-01-CMP-EVIDENCE-CAPTURE
+    visual_uid: QA-01-VIS-VIEWER
+    type: BUTTON
+    label: Evidence Out
+    default: —
+    action_uid: QA-01-ACT-EVIDENCE-RANGE-OUT
+    gate_uid: QA-01-GATE-EVIDENCE-CAPTURE
+    permission_uid: QA_FINDING
+  - control_uid: QA-01-LIST-SCORE-DIMENSIONS
+    section_uid: QA-01-SEC-06
+    component_uid: QA-01-CMP-SCORE
+    visual_uid: QA-01-VIS-RIGHT
+    type: GENERATED_SCORECARD_TABLE
+    label: Generated Criteria Dimensions
+    default: —
+    action_uid: QA-01-ACT-NOOP-VIEW
+    gate_uid: QA-01-GATE-SCORE
+    permission_uid: QA_USE
+    note: System/AI generated, read-only. No human action exists in Scorecard.
+  - control_uid: QA-01-BTN-MANUAL-MODIFY
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-MANUAL-DECISION
+    visual_uid: QA-01-VIS-FINDING
+    type: BUTTON
+    label: 修改 / Modify
+    default: —
+    action_uid: QA-01-ACT-MANUAL-MODIFY
+    gate_uid: QA-01-GATE-MANUAL-DECISION
+    permission_uid: QA_USE
+    visibility_condition: ManualReviewCase required/open
+  - control_uid: QA-01-BTN-MANUAL-PASS
+    section_uid: QA-01-SEC-07
+    component_uid: QA-01-CMP-MANUAL-DECISION
+    visual_uid: QA-01-VIS-FINDING
+    type: PRIMARY_BUTTON
+    label: 通過 / Pass
+    default: —
+    action_uid: QA-01-ACT-MANUAL-PASS
+    gate_uid: QA-01-GATE-MANUAL-DECISION
+    permission_uid: QA_USE
+    visibility_condition: ManualReviewCase required/open
+  integration_ports:
+  - port_uid: QA-01-PORT-PROJECTION
+    boundary: Read page projection
+    operation: getUiProjection
+    method_path: GET /v1/ui-projections/{pageUid}
+    permission: page/control account authorization + qa.task.read
+    state_event: read only
+    exposure: All read-only page projections; no invented data
+  - port_uid: QA-01-PORT-START
+    boundary: Start QA Review
+    operation: startQaReview
+    method_path: POST /v1/qa/reviews
+    permission: api:startQaReview + account authorization
+    state_event: NOT_STARTED→IN_REVIEW; event name resolved by system operation registry
+    exposure: QA-01-ACT-START-REVIEW; exact project/topic/output_version_ids/qa_profile_id
+  - port_uid: QA-01-PORT-SCORECARD
+    boundary: QA Scorecard
+    operation: submitScorecard
+    method_path: POST /v1/scorecards
+    permission: qa.score.write
+    state_event: scorecard.submitted; gate state follows QA policy
+    exposure: SYSTEM/AI generated scorecard persistence only; no human Scorecard action
+  - port_uid: QA-01-PORT-FINDING
+    boundary: Finding
+    operation: createFinding
+    method_path: POST /v1/findings
+    permission: finding.write
+    state_event: IN_REVIEW→FINDING_OPEN | finding.created
+    exposure: QA-01-ACT-FINDING-CREATE
+  - port_uid: QA-01-PORT-CORRECTION
+    boundary: Correction Request
+    operation: createCorrectionRequest
+    method_path: POST /v1/correction-requests
+    permission: correction.create
+    state_event: FINDING_OPEN→CORRECTION_REQUIRED | correction.requested
+    exposure: QA-01-ACT-CORRECTION-REQUEST; target original owner; QA does not execute edit
+  - port_uid: QA-01-PORT-RECHECK
+    boundary: Recheck
+    operation: startRecheck
+    method_path: POST /v1/state-commands/qareview/startrecheck
+    permission: api:startRecheck + qa.gate.decide
+    state_event: CORRECTION_REQUIRED→RECHECK; event name resolved by system operation registry
+    exposure: QA-01-ACT-RECHECK-START; verified new version required
+  - port_uid: QA-01-PORT-PASS
+    boundary: QA PASS
+    operation: decidePass
+    method_path: POST /v1/state-commands/qareview/decidepass
+    permission: qa.gate.decide
+    state_event: IN_REVIEW/RECHECK→PASS; event name resolved by system operation registry
+    exposure: Internal dispatch after generated result confirmation or governed AUTO flow; no direct PASS UI
+  - port_uid: QA-01-PORT-FAIL
+    boundary: QA FAIL
+    operation: decideFail
+    method_path: POST /v1/state-commands/qareview/decidefail
+    permission: qa.gate.decide
+    state_event: IN_REVIEW/RECHECK→FAIL; event name resolved by system operation registry
+    exposure: Internal dispatch after generated result confirmation or governed AUTO flow; no direct FAIL UI
+  - port_uid: QA-01-PORT-RELEASE
+    boundary: Release Candidate
+    operation: createReleasePackage
+    method_path: POST /v1/release-packages
+    permission: release.create
+    state_event: PASS→ReleasePackage candidate available; ReleaseService owns later approval/release
+    exposure: QA-01-ACT-RELEASE-CREATE; no approveRelease/publish control
+  - port_uid: QA-01-PORT-AUTO-TOPIC
+    boundary: AUTO Topic QA Orchestration
+    operation: startAutoTopicQaReview
+    method_path: SYSTEM_OPERATION_REGISTRY_REQUIRED; frontend MUST NOT invent URL
+    permission: qa.auto.review + exact account/topic scope authorization
+    state_event: Sequential per-task canonical QA states; QA_LOW_SCORE_WARNING only for below-threshold total score
+    exposure: QA-01-ACT-AUTO-START; max active=1; no reorder/create/skip; no auto publish
+acceptance:
+- acceptance_uid: QA-01-ACC-01
+  item: Single Page + Global Visual
+  condition: Only QA-01 executable current QA workspace; old split QA functions merged as sections; Global Shell/Visual inherited
+- acceptance_uid: QA-01-ACC-02
+  item: Exact Output
+  condition: Review always binds explicit output version/artifact/checksum/provenance; no latest/current/default
+- acceptance_uid: QA-01-ACC-03
+  item: QA Is Judge, Not Editor
+  condition: No Script/Asset/Video/Edit mutation control exists; correction routes to original owner
+- acceptance_uid: QA-01-ACC-04
+  item: Approved QA Criteria
+  condition: Scorecard renders task-bound approved CriteriaVersion/QualityGatePolicy; no local threshold or generic schema
+- acceptance_uid: QA-01-ACC-05
+  item: Hard Gate
+  condition: Evidence/Rights/Policy/Checksum/Provenance/Required Check failure overrides numeric score
+- acceptance_uid: QA-01-ACC-06
+  item: Finding Closure
+  condition: No direct Close Finding action; verified new exact version + Recheck required
+- acceptance_uid: QA-01-ACC-07
+  item: Manual Review
+  condition: Required/open ManualReviewCase blocks PASS/Release; page does not fabricate case approval operation
+- acceptance_uid: QA-01-ACC-08
+  item: Recheck Compare
+  condition: Before/After only when verified new exact version exists; otherwise single viewer 100% and no empty B pane
+- acceptance_uid: QA-01-ACC-09
+  item: Release Boundary
+  condition: QA creates ReleasePackage candidate only; no approveRelease or Publish control
+- acceptance_uid: QA-01-ACC-10
+  item: Permission
+  condition: Effectful action uses only registered QA/finding/correction/release permissions plus API account authorization
+- acceptance_uid: QA-01-ACC-11
+  item: Scrollable Page
+  condition: Main Workspace height:auto; overflow-y:auto; not tied to global sidebar height
+- acceptance_uid: QA-01-ACC-12
+  item: Machine Binding
+  condition: Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted=BLOCK
+- acceptance_uid: QA-01-ACC-14
+  item: AUTO / MANUAL Review Modes
+  condition: AUTO reviews all authorized QA tasks in current Topic sequentially with max active=1; MANUAL selects one item at a time
+- acceptance_uid: QA-01-ACC-15
+  item: Low Score Warning
+  condition: AUTO popup warning only when total score is below bound Criteria/Policy threshold; frontend has no hard-coded threshold
+- acceptance_uid: QA-01-ACC-16
+  item: QA Localization / Evidence
+  condition: Video/Edit viewer supports ±1 frame, exact timecode and point/range evidence binding without upstream mutation/manual Evidence
+    ID
+- acceptance_uid: QA-01-ACC-17
+  item: Exact Correction Binding
+  condition: Finding/Scorecard/InstructionPackage/OriginalOwner refs auto-bound; Root Cause canonical enum; manual system-ID typing forbidden
+- acceptance_uid: QA-01-ACC-13
+  item: System/AI Scoring Only
+  condition: Scorecard is System/AI generated. Scorecard area contains no human scoring/decision control. Human 修改/通過 exists only inside
+    a triggered governed ManualReviewCase.
+- acceptance_uid: QA-01-ACC-18
+  item: Conditional Manual Review
+  condition: 'Only when governed ManualReviewCase is required/open, exactly two human functions render: 修改 and 通過. Manual Review Pass is
+    not direct QA Gate PASS and cannot bypass hard gates.'
+hard_locks:
+- Only QA-01 is the current executable QA workspace page.
+- Old QA-02/QA-03/QA-04 functions are integrated into QA-01 sections; AI must not recreate them as separate current pages.
+- QA cannot edit Canonical Script, Asset Version, Video Version or Editing Version.
+- QA cannot directly execute upstream correction. QA creates CorrectionRequest to the original owner and later rechecks a verified NEW exact
+  output version.
+- No direct Close Finding button without verified new version + recheck result.
+- No generic/default scorecard and no QA-local numeric threshold. Use bound approved QA CriteriaVersion and QualityGatePolicy.
+- Hard blocks override numeric score.
+- QA PASS does not equal Publish.
+- Create Release Candidate/Package is the last QA-owned visible release action; ReleaseService owns later approval/release and PublishingService
+  owns publish.
+- No approveRelease or Publish button in QA-01 without a separate explicit current permission/control authority.
+- No manual filename input/rename and no filename parsing as authority.
+- No fake provider, score, evidence, version, runtime, checksum, rights or policy values; missing = —.
+- No unlisted Section/Component/Control/Action/State/Gate/Permission/Port/Business Sample Data.
+- 'AUTO is Topic-scoped sequential QA: existing authorized task order only, max active task=1, no AI reorder/create/skip.'
+- In AUTO, only a below-threshold total score emits QA_LOW_SCORE_WARNING. Hard-block/rights/policy/evidence problems remain BLOCKED and are
+  not mislabeled as low-score warnings.
+- AUTO never publishes and never creates a Release Candidate from score alone.
+- Top Context Bar is read-only context chips; Project/Topic/QATask/TargetOutput/State are never input/select controls on QA-01.
+- Finding Evidence IDs and Correction system IDs/owner/lineage are auto-bound from exact context; manual system-ID typing is forbidden.
+- System/AI performs QA scoring. Scorecard area has no human action after scoring.
+- 'Only when a governed ManualReviewCase is required/open after scoring, the Human sees exactly two Manual Review functions: 修改 / 通過.'
+- Manual Review 通過 closes/passes the Manual Review requirement and returns to normal QA Gate evaluation; it is not direct QA Gate PASS and
+  cannot bypass Hard Gate/Rights/Policy/Evidence blockers.
+- Manual Review 修改 enters the governed modification flow for that ManualReviewCase/current evaluated item; it must not become a blank scoring
+  form.
+derived_validation:
+  status: PASS
+  reference_errors: []
+  current_executable_page_count: 1
+  parallel_QA_page_count: 0
+  direct_QA_upstream_mutation_control_count: 0
+  direct_publish_control_count: 0
+  approve_release_control_count: 0
+  unlisted_control_reference_count: 0
+  counts:
+    sections: 10
+    visuals: 10
+    components: 21
+    permissions: 7
+    gates: 19
+    errors: 17
+    page_states: 10
+    stages: 5
+    stage_transitions: 6
+    action_effect_types: 12
+    actions: 32
+    objects_refs: 16
+    controls: 87
+    integration_ports: 10
+  direct_PASS_FAIL_visible_control_count: 0
+  blank_manual_score_control_count: 0
+  review_modes:
+  - AUTO
+  - MANUAL
+  auto_low_score_warning_only: true
+  generic_post_score_result_control_count: 0
+  conditional_manual_review_button_count: 2
+  manual_review_buttons:
+  - QA-01-BTN-MANUAL-MODIFY
+  - QA-01-BTN-MANUAL-PASS
+  manual_review_pass_is_direct_qa_gate_pass: false
+  final_gap_closure:
+    status: FINAL_GAP_CLOSED
+    source_action_count: 32
+    source_control_count: 87
+    action_runtime_binding_coverage: 32/32
+    control_runtime_binding_coverage: 87/87
+    unresolved_control_action_refs: 0
+    unbound_actions: 0
+    shared_delegations_are_explicit: true
+    frontend_route_inference_required: false
+  final_dedup_cleanup:
+    status: PASS
+    action_runtime_embedded_in_single_action_registry: true
+    parallel_action_runtime_registry: 0
+    parallel_control_binding_registry: 0
+review_modes:
+  default: AUTO
+  control:
+    type: SEGMENTED_CONTROL
+    options:
+    - AUTO
+    - MANUAL
+    location: QA Review Queue header / left rail
+    mode_switch_rule: Changing mode never changes Project/Topic identity and never deletes existing review results.
+  AUTO:
+    scope: CURRENT_EXACT_PROJECT_AND_TOPIC
+    task_source: All authorized QA tasks belonging to selected Topic in canonical existing order
+    task_order: KEEP_EXISTING_ORDER
+    ai_may_reorder: false
+    ai_may_create_task: false
+    ai_may_skip_pending_task: false
+    parallel: FORBIDDEN
+    max_active_task: 1
+    completed_task: Do not auto-rerun governed completed QA result unless verified NEW output requires RECHECK.
+    sequence:
+    - Resolve next QA task under current Topic
+    - Resolve exact TargetOutputVersion; no latest/current/default alias
+    - Load QAValidationScriptView + approved CriteriaVersion + QualityGatePolicy + Evidence + Rights/Policy
+    - Start/continue QA review using registered runtime authority
+    - System/AI generates Scorecard + required checks + evidence/hard-gate result
+    - Persist governed review result
+    - 'If total score is below bound CriteriaVersion/QualityGatePolicy threshold: emit QA_LOW_SCORE_WARNING and mark NEEDS_ATTENTION'
+    - 'If score is not below threshold and no hard block: no warning popup; continue automatically'
+    - Hard block / rights / policy / evidence failure remains BLOCKED in queue/status and is not mislabeled as low-score warning
+    - Release current slot
+    - Load next Topic QA task until queue exhausted
+    low_score_warning_only: true
+    warning_contract:
+      event: QA_LOW_SCORE_WARNING
+      trigger: total_score below bound task criteria/policy threshold
+      payload:
+      - project_id
+      - topic_id
+      - qa_task_id
+      - qa_review_id
+      - target_output_version_id
+      - scorecard_id
+      - total_score
+      - criteria_version_id
+      - quality_gate_policy_version
+      ui: Warning notification + Queue NEEDS_ATTENTION badge; frontend never hard-codes the threshold
+    human_intervention: Passing/non-low-score items continue without popup. A score below the bound Criteria/Policy threshold emits the warning
+      defined by this page. Whether a ManualReviewCase is also required is decided by the governed QA/Manual Review policy. Only when Manual
+      Review is triggered does the Human see 修改 / 通過.
+    release_boundary: AUTO review never publishes. Release Candidate remains governed by existing QA release eligibility/action.
+  MANUAL:
+    scope: CURRENT_AUTHORIZED_QUEUE
+    selection: Human selects one QA task/review at a time from QA Review Queue.
+    context: Selection resolves exact Project / Topic / QATask / TargetOutputVersion into read-only Context Bar.
+    start: Start Review visible/enabled only for NOT_STARTED selected item with QA-01-GATE-START PASS.
+    evaluation: System/AI generates Scorecard first.
+    human_interaction: System/AI scores the selected task. Scorecard area remains read-only. Only if a governed ManualReviewCase is triggered
+      does the Manual Review area show 修改 / 通過.
+    next_task: No automatic next-task start after confirmation; Human selects/starts the next item.
+manual_review_contract:
+  trigger: Existing governed ManualReviewCase required/open after System/AI scoring
+  visibility: HIDDEN when no ManualReviewCase is required/open
+  human_functions:
+  - 修改
+  - 通過
+  modify:
+    label_zh: 修改
+    label_en: Modify
+    meaning: Enter governed modification flow for the current ManualReviewCase/current evaluated item. Never open a blank scoring form.
+    backend_binding: RESOLVE_FROM_EXISTING_GOVERNED_MANUAL_REVIEW_AUTHORITY
+    if_missing: BLOCK + REPORT_AUTHORITY_GAP; frontend must not invent endpoint or permission
+  pass:
+    label_zh: 通過
+    label_en: Pass
+    meaning: Pass/close the current ManualReviewCase and return to normal QA Gate evaluation. Not equivalent to direct QA Gate PASS; cannot
+      override Hard Gate/Rights/Policy/Evidence blockers.
+    backend_binding: RESOLVE_FROM_EXISTING_GOVERNED_MANUAL_REVIEW_AUTHORITY
+    if_missing: BLOCK + REPORT_AUTHORITY_GAP; frontend must not invent endpoint or permission
+  forbidden:
+  - human action in Scorecard area
+  - blank manual score entry
+  - direct manual QA Gate PASS button as substitute for Manual Review Pass
+  - Manual Review buttons when no ManualReviewCase is required/open
+final_gap_closure:
+  status: FINAL_GAP_CLOSED_DEDUP_CLEAN
+  single_action_owner: registries.actions
+  single_control_owner: registries.controls
+  runtime_binding_location: registries.actions[*].runtime_binding
+  action_runtime_binding_count: 32
+  control_count: 87
+  parallel_action_runtime_registry_removed: true
+  parallel_control_runtime_registry_removed: true
+  shared_operation_definition_location: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  rule: Action owns one embedded runtime_binding. Shared service details are referenced by shared_operation_id only.
