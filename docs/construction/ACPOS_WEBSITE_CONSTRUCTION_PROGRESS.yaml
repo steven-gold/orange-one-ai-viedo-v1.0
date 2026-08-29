@@ -189,11 +189,10 @@ phase_1_visual_positioning:
     page_uid: workspace:INFO-01
     name: 最新資訊工作區
     status: NOT_STARTED
-    note: Supporting contextual/deep-link page; not a ninth Front L1.
   - id: VIS-10
     group: ADMIN
     page_uid: admin:SYS-01
-    name: 系統維護 / 系統 AI 工作區
+    name: 系統維護
     status: NOT_STARTED
   - id: VIS-11
     group: ADMIN
@@ -213,7 +212,7 @@ phase_1_visual_positioning:
   - id: VIS-14
     group: ADMIN
     page_uid: admin:ERP-01
-    name: ERP / 財務
+    name: ERP
     status: NOT_STARTED
   - id: VIS-15
     group: ADMIN
@@ -228,200 +227,25 @@ phase_1_visual_positioning:
   - id: VIS-17
     group: ADMIN
     page_uid: admin:STR-01
-    name: 戰略中心管理
+    name: 戰略中心後台
     status: NOT_STARTED
   - id: VIS-18
     group: ADMIN
     page_uid: admin:KB-01
-    name: 知識庫 / Knowledge & Experience
+    name: 知識庫
     status: NOT_STARTED
-phase_2_logic_and_runtime:
-  entry_gate: ALL_VISUAL_COMPLETE
-  execution_mode: DEPENDENCY_ORDER_AFTER_FRONTEND_AS_PLANNED_BY_ACPOS
-  rationale: Logic order follows dependency and system ownership rather than menu order so downstream pages do not bind to unfinished
-    foundations.
-  shared_foundation:
-  - id: LOG-F00
-    name: Canonical route/page registry + AppShell + i18n + shared UI state/error/audit plumbing
-    status: BLOCKED
-  - id: LOG-F01
-    name: Exact object/version/ref resolver + correlation/audit envelope
-    status: BLOCKED
-  - id: LOG-F02
-    name: Permission enforcement foundation
-    status: BLOCKED
-  - id: LOG-F03
-    name: Shared state/event integration foundation
-    status: BLOCKED
-  - id: LOG-F04
-    name: AI execution/router/provider-profile foundation
-    owner_page: admin:AIAPI-01
-    status: BLOCKED
-  - id: LOG-F05
-    name: ACPOS Shared External Data Acquisition Runtime
-    status: BLOCKED
-    consumers:
-    - admin:KB-01
-    - workspace:INFO-01
-    - admin:STR-01
-    - admin:DEV-01
-    - admin:SOC-01
-  page_logic_order:
-  - order: 1
-    id: LOG-01
-    page_uid: admin:IAM-01
-    reason: Permission enforcement must exist before effectful page actions.
-    status: BLOCKED
-  - order: 2
-    id: LOG-02
-    page_uid: admin:DB-01
-    reason: Exact data/traceability projections and relationship visibility support later integration/debug.
-    status: BLOCKED
-  - order: 3
-    id: LOG-03
-    page_uid: admin:AIAPI-01
-    reason: ProviderModelProfile governance/routing is shared by AI-enabled domains.
-    status: BLOCKED
-  - order: 4
-    id: LOG-04
-    page_uid: admin:SG-02
-    reason: QA criteria/gate policy must be governed before final QA runtime closure.
-    status: BLOCKED
-  - order: 5
-    id: LOG-05
-    page_uid: admin:KB-01
-    reason: Knowledge/Experience lifecycle consumes shared acquisition/context/experience foundations.
-    status: BLOCKED
-  - order: 6
-    id: LOG-06
-    page_uid: workspace:INFO-01
-    reason: Fact/Evidence/Context Candidate flow reuses current knowledge/context services and shared acquisition.
-    status: BLOCKED
-  - order: 7
-    id: LOG-07
-    page_uid: admin:SYS-01
-    reason: System AI workbench binds ACPOS Brain/system truth after shared foundations exist.
-    status: BLOCKED
-  - order: 8
-    id: LOG-08
-    page_uid: CORE-01
-    reason: Starts canonical production domain chain and project/topic/blueprint/conversation logic.
-    status: BLOCKED
-  - order: 9
-    id: LOG-09
-    page_uid: ASSET-01
-    reason: Consumes exact CORE production package.
-    status: BLOCKED
-  - order: 10
-    id: LOG-10
-    page_uid: VIDEO-01
-    reason: Consumes exact ASSET versions and governed script/context.
-    status: BLOCKED
-  - order: 11
-    id: LOG-11
-    page_uid: EDIT-01
-    reason: Consumes VIDEO output and performs integrated Editing+Voice runtime.
-    status: BLOCKED
-  - order: 12
-    id: LOG-12
-    page_uid: QA-01
-    reason: Requires exact completed post-production output plus SG-02 governed criteria.
-    status: BLOCKED
-  - order: 13
-    id: LOG-13
-    page_uid: admin:STR-01
-    reason: Strategy administration governs sources/watchlists/trends/decision lab after knowledge/info foundations.
-    status: BLOCKED
-  - order: 14
-    id: LOG-14
-    page_uid: workspace:STR-01
-    reason: Strategy AI workspace consumes governed strategic intelligence/context.
-    status: BLOCKED
-  - order: 15
-    id: LOG-15
-    page_uid: workspace:WB-01
-    reason: Dashboard logic is projection-heavy and should bind after upstream page states exist; visual remains first, logic is late.
-    status: BLOCKED
-  - order: 16
-    id: LOG-16
-    page_uid: admin:DEV-01
-    reason: Enterprise discovery/outreach uses permission, acquisition, AI routing and audit foundations.
-    status: BLOCKED
-  - order: 17
-    id: LOG-17
-    page_uid: admin:SOC-01
-    reason: Social target/publish workflow uses governed release/target/acquisition/platform constraints.
-    status: BLOCKED
-  - order: 18
-    id: LOG-18
-    page_uid: admin:ERP-01
-    reason: Finance projection/cost visibility closes after production/provider/outreach cost sources are available.
-    status: BLOCKED
+phase_2_logic_construction:
+  status: BLOCKED_BY_ALL_VISUAL_COMPLETE_GATE
+  rule: Do not start until VIS-00 through VIS-18 are all COMPLETE.
 phase_3_cross_page_closure:
-  entry_gate: ALL_PAGE_LOGIC_COMPLETE
-  steps:
-  - id: INT-01
-    name: CORE -> ASSET exact handoff E2E
-    status: BLOCKED
-  - id: INT-02
-    name: ASSET -> VIDEO exact handoff E2E
-    status: BLOCKED
-  - id: INT-03
-    name: VIDEO -> EDIT+VOICE exact handoff E2E
-    status: BLOCKED
-  - id: INT-04
-    name: EDIT+VOICE -> QA exact handoff E2E
-    status: BLOCKED
-  - id: INT-05
-    name: QA correction -> original owner -> recheck E2E
-    status: BLOCKED
-  - id: INT-06
-    name: Approved Knowledge / INFO Context Candidate / Strategy governed consumption
-    status: BLOCKED
-  - id: INT-07
-    name: ACPOS Experience -> Learning Candidate -> governed adoption loop
-    status: BLOCKED
-  - id: INT-08
-    name: Shared Acquisition consumers and source/rights/rate/audit boundaries
-    status: BLOCKED
-  - id: INT-09
-    name: IAM visibility/action enforcement across Front/Admin
-    status: BLOCKED
-  - id: INT-10
-    name: AI routing/provider fallback/trace lineage
-    status: BLOCKED
-phase_4_final_validation:
-  steps:
-  - id: VAL-01
-    name: Visual regression all pages
-    status: BLOCKED
-  - id: VAL-02
-    name: 18-page Control/Action/Gate/Permission/State validation
-    status: BLOCKED
-  - id: VAL-03
-    name: API binding validation
-    status: BLOCKED
-  - id: VAL-04
-    name: Database binding validation
-    status: BLOCKED
-  - id: VAL-05
-    name: Runtime/error/retry/rollback validation
-    status: BLOCKED
-  - id: VAL-06
-    name: zh-TW / zh-CN / en i18n validation
-    status: BLOCKED
-  - id: VAL-07
-    name: E2E and deployment-readiness validation
-    status: BLOCKED
-progress_summary:
+  status: BLOCKED_BY_PHASE_2
+final_validation:
+  status: NOT_STARTED
+metrics:
   visual_steps_total: 19
   visual_steps_complete: 2
-  page_logic_steps_total: 18
-  page_logic_steps_complete: 0
-  shared_foundation_steps_total: 6
-  shared_foundation_steps_complete: 0
-  cross_page_steps_total: 10
+  visual_steps_in_progress: 0
+  logic_steps_complete: 0
+  shared_runtime_steps_complete: 0
   cross_page_steps_complete: 0
-  final_validation_steps_total: 7
-  final_validation_steps_complete: 0
   truthful_progress_note: VIS-00 Global Shell and VIS-01 WB-01 visual positioning are implemented and verified. VIS-01 evidence includes TypeScript/Next build, production-server Chromium validation, 1440/1366/1200 layout checks, 520px Drawer behavior, zh-TW/zh-CN/en switching with zero business requests, canonical uploaded ORANGE ONE logo with user-approved white monochrome dark-header adaptation, persisted render evidence, and manual visual inspection. VIS-02 CORE-01 is current. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
