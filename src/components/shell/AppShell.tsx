@@ -27,7 +27,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { id: "NAV-05", labelKey: "global.nav.edit_voice", icon: "edit", href: "/edit" },
   { id: "NAV-06", labelKey: "global.nav.qa", icon: "qa", href: "/qa" },
   { id: "NAV-07", labelKey: "global.nav.database", icon: "database", href: "/database" },
-  { id: "NAV-08", labelKey: "global.nav.strategy", icon: "strategy" },
+  { id: "NAV-08", labelKey: "global.nav.strategy", icon: "strategy", href: "/strategy" },
 ] as const;
 
 function Icon({ name }: { name: NavItem["icon"] }) {
