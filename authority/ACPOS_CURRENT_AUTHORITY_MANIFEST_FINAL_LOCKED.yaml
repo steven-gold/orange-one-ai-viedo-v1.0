@@ -1,12 +1,14 @@
 authority:
   id: ACPOS_CURRENT_AUTHORITY_MANIFEST
-  version: V1.1
+  version: V1.2
   status: FINAL_LOCKED
   current_only: true
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
   global:
+  - authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
+  - authority/global/ACPOS_I18N_TRANSLATION_ENCODING_FINAL_LOCKED_V1.0.yaml
   - authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
   - authority/global/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
   - authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
@@ -34,6 +36,8 @@ current_authority_set:
   - authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
 precedence:
 - ACPOS_CURRENT_AUTHORITY_MANIFEST
+- ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE within website-construction scope only
+- ACPOS_I18N_TRANSLATION_ENCODING within UI translation scope only
 - ACPOS_SYSTEM_AUTHORITY within cross-page/system scope
 - ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY within navigation/IAM-L1 scope
 - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 within shell scope
@@ -49,6 +53,8 @@ repository_layout:
   pages: authority/pages/
   reference_docs: docs/reference/
 single_source_rules:
+- No second website construction governance authority.
+- No second i18n translation authority.
 - No second ACPOS System authority.
 - No second Global Visual authority.
 - No second Navigation/IAM L1 authority.
