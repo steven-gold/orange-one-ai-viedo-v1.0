@@ -1,0 +1,63 @@
+name: ACPOS VIS-03 validation
+
+on:
+  push:
+    branches:
+      - acpos-vis03-staging
+    paths-ignore:
+      - 'docs/construction/evidence/VIS-03/**'
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis03-staging
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Install browser harness without changing lockfile
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start production server
+        run: |
+          npm run start -- -p 3000 > /tmp/acpos-vis03.log 2>&1 &
+          echo $! > /tmp/acpos-vis03.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:3000/assets >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/acpos-vis03.log
+          exit 1
+      - name: Render and validate VIS-03
+        run: node scripts/capture-vis03.mjs
+      - name: Upload VIS-03 render evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-vis03-render-evidence
+          path: artifacts/vis03
+          if-no-files-found: error
+      - name: Persist VIS-03 evidence
+        run: |
+          mkdir -p docs/construction/evidence/VIS-03
+          cp artifacts/vis03/* docs/construction/evidence/VIS-03/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/construction/evidence/VIS-03
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'test: persist VIS-03 render evidence'
+          git push origin HEAD:acpos-vis03-staging
