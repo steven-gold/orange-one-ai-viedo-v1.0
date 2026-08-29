@@ -22,7 +22,7 @@ type AppShellProps = {
 const NAV_ITEMS: readonly NavItem[] = [
   { id: "NAV-01", labelKey: "global.nav.dashboard", icon: "dashboard", href: "/" },
   { id: "NAV-02", labelKey: "global.nav.project_topic", icon: "project", href: "/core" },
-  { id: "NAV-03", labelKey: "global.nav.asset", icon: "asset" },
+  { id: "NAV-03", labelKey: "global.nav.asset", icon: "asset", href: "/assets" },
   { id: "NAV-04", labelKey: "global.nav.video", icon: "video" },
   { id: "NAV-05", labelKey: "global.nav.edit_voice", icon: "edit" },
   { id: "NAV-06", labelKey: "global.nav.qa", icon: "qa" },
