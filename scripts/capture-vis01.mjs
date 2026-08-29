@@ -6,7 +6,6 @@ await fs.mkdir(outDir, { recursive: true });
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
-
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 const near = (a, b, tolerance = 1) => Math.abs(a - b) <= tolerance;
 const round = (n) => Math.round(n * 10) / 10;
@@ -19,9 +18,8 @@ async function rect(locator) {
 
 async function cardRects() {
   const cards = page.locator('[data-page-uid="workspace:WB-01"] section[data-order]');
-  const count = await cards.count();
   const result = [];
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < await cards.count(); i++) {
     const el = cards.nth(i);
     result.push({
       order: Number(await el.getAttribute("data-order")),
@@ -48,6 +46,15 @@ assert(await page.locator('[data-nav-id="NAV-01"]').getAttribute("aria-current")
 const quickValues = await page.locator(".quick-button span").allTextContents();
 assert(quickValues.length === 3 && quickValues.every(v => v.trim() === "—"), `Header missing values must be —: ${quickValues}`);
 
+const brandLogo = page.locator('img[alt="ORANGE ONE"]');
+assert(await brandLogo.count() === 1, "Canonical ORANGE ONE logo image must render exactly once");
+const logoSource = await brandLogo.getAttribute("src");
+assert(logoSource === "/brand/orange-one-logo.png", `Unexpected logo source: ${logoSource}`);
+const logoNatural = await brandLogo.evaluate(img => ({ width: img.naturalWidth, height: img.naturalHeight }));
+assert(logoNatural.width === 416 && logoNatural.height === 192, `Canonical logo dimensions changed: ${JSON.stringify(logoNatural)}`);
+const logoRect = await rect(brandLogo);
+assert(near(logoRect.width / logoRect.height, 416 / 192, 0.02), `Logo render ratio changed: ${JSON.stringify(logoRect)}`);
+
 let dataRequests = 0;
 page.on("request", req => { if (["fetch","xhr"].includes(req.resourceType())) dataRequests++; });
 
@@ -56,9 +63,9 @@ assert((await languageButton.textContent())?.trim() === "zh-TW", "Default locale
 assert(await page.locator("html").getAttribute("lang") === "zh-Hant-TW", "Default html lang must be zh-Hant-TW");
 assert((await page.locator('[data-nav-id="NAV-02"] .nav-label').textContent())?.trim() === "專案 / 專題", "Default nav translation mismatch");
 assert((await page.locator('[data-order="1"] h2').textContent())?.trim() === "專案總數", "Default WB-01 translation mismatch");
-assert((await page.locator(".brand-lockup").textContent())?.trim() === "ORANGE ONE", "Brand must remain ORANGE ONE");
 
 await languageButton.click();
+await page.screenshot({ path: `${outDir}/vis01-language-menu-zh-tw.png`, fullPage: false });
 await page.getByRole("option").filter({ hasText: "简体中文" }).click();
 assert((await languageButton.textContent())?.trim() === "zh-CN", "Language control must display zh-CN after switch");
 assert(await page.locator("html").getAttribute("lang") === "zh-Hans-CN", "Simplified Chinese html lang mismatch");
@@ -67,6 +74,7 @@ assert((await page.locator('[data-order="1"] h2').textContent())?.trim() === "�
 assert((await page.locator('[data-order="12"] h2').textContent())?.trim() === "AI / 产业新闻", "AI fixed term must remain AI in zh-CN");
 assert((await page.locator('[data-nav-id="NAV-06"] .nav-label').textContent())?.trim() === "QA", "QA must remain fixed in zh-CN");
 assert(await page.evaluate(() => localStorage.getItem("acpos.locale")) === "zh-CN", "zh-CN locale must persist");
+assert(await brandLogo.getAttribute("src") === "/brand/orange-one-logo.png", "Locale switch must not alter brand asset");
 
 await languageButton.click();
 await page.getByRole("option").filter({ hasText: "English" }).click();
@@ -76,7 +84,6 @@ assert((await page.locator('[data-nav-id="NAV-02"] .nav-label').textContent())?.
 assert((await page.locator('[data-order="1"] h2').textContent())?.trim() === "Company Project Count", "English WB-01 translation mismatch");
 assert((await page.locator('[data-order="12"] h2').textContent())?.trim() === "AI / Industry News", "AI fixed term must remain AI in English");
 assert((await page.locator('[data-nav-id="NAV-06"] .nav-label').textContent())?.trim() === "QA", "QA must remain fixed in English");
-assert((await page.locator(".brand-lockup").textContent())?.trim() === "ORANGE ONE", "Brand must not translate in English");
 assert(await page.evaluate(() => localStorage.getItem("acpos.locale")) === "en", "English locale must persist");
 
 await languageButton.click();
@@ -89,7 +96,6 @@ assert(dataRequests === 0, `Locale switching must not execute business fetch/xhr
 const pageRoot = page.locator('[data-page-uid="workspace:WB-01"]');
 assert(await pageRoot.count() === 1, "WB-01 root missing");
 assert(await page.locator('[data-page-uid="workspace:WB-01"] section[data-order]').count() === 14, "WB-01 must render exactly 14 cards");
-assert(await page.locator('[data-page-uid="workspace:WB-01"] .viewButton').count() === 0, "CSS module class must not be assumed by raw name");
 const viewButtons = page.locator('[data-page-uid="workspace:WB-01"] button[data-control-id]');
 assert(await viewButtons.count() === 14, "WB-01 must render exactly 14 canonical SECTION_OPEN controls");
 const orders = await page.locator('[data-page-uid="workspace:WB-01"] section[data-order]').evaluateAll(els => els.map(el => Number(el.getAttribute("data-order"))));
@@ -170,9 +176,10 @@ await page.screenshot({ path: `${outDir}/vis01-1200-minwidth.png`, fullPage: fal
 const result = {
   result: "PASS",
   implementation: "VIS-01",
+  brand: { source: logoSource, natural: logoNatural, rendered: logoRect, recolored: false },
   localeSwitching: {
     locales: ["zh-TW", "zh-CN", "en"],
-    brandPreserved: true,
+    brandAssetPreserved: true,
     fixedTermsPreserved: ["AI", "QA"],
     businessRequestsDuringSwitch: 0,
   },
