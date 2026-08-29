@@ -1,0 +1,78 @@
+.control {
+  position: relative;
+  width: 72px;
+  height: 36px;
+  flex: 0 0 72px;
+}
+
+.button {
+  width: 72px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--button-radius);
+  background: rgba(17, 25, 54, 0.72);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.button:hover,
+.button:focus-visible {
+  color: var(--text-primary);
+  border-color: var(--border-normal);
+  background: var(--purple-hover);
+}
+
+.menu {
+  position: absolute;
+  z-index: 140;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 196px;
+  padding: 6px;
+  border: 1px solid var(--border-normal);
+  border-radius: 12px;
+  background: rgba(11, 16, 39, 0.98);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.option {
+  width: 100%;
+  height: 40px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.option:hover,
+.option:focus-visible {
+  color: var(--text-primary);
+  background: var(--purple-hover);
+  border-color: var(--border-subtle);
+}
+
+.selected {
+  color: var(--text-primary);
+  background: var(--purple-active);
+  border-color: var(--border-active);
+}
+
+.code {
+  color: var(--text-muted);
+  font-size: 11px;
+}
