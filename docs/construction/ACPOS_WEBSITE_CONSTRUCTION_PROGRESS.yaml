@@ -69,8 +69,8 @@ current_state:
   shared_runtime_construction: BLOCKED_BY_ALL_VISUAL_COMPLETE_GATE
   e2e: NOT_STARTED
   deployment: NOT_STARTED
-  current_task: VIS-04_FRONT_VIDEO-01_VISUAL_POSITIONING
-  last_completed_task: VIS-03_FRONT_ASSET-01_VISUAL_POSITIONING
+  current_task: VIS-05_FRONT_EDIT-01_VISUAL_POSITIONING
+  last_completed_task: VIS-04_FRONT_VIDEO-01_VISUAL_POSITIONING
 phase_1_visual_positioning:
   objective: Finish all page visual/layout positioning before business logic construction.
   execution_mode: STRICT_SEQUENTIAL
@@ -253,7 +253,56 @@ phase_1_visual_positioning:
     group: FRONT
     page_uid: VIDEO-01
     name: 影片
-    status: NOT_STARTED
+    status: COMPLETE
+    scope: 20/60/20 VIDEO production workspace with exact bound Scene/Shot input, single 16:9 Current Viewer, Candidate-only compare, Version/Score/Decision, conditional VIDEO correction scope and semantic correction, read-only Provider Runtime, VIDEO evaluation, Exact Output Manifest, and State/Error/Audit; no business API/DB/provider execution.
+    evidence:
+      implementation_commit: cd179c1add377ef65edccd636f2656f6dddda657
+      final_validation_run_id: 33259667143
+      final_evidence_artifact_id: 9716886662
+      artifact_sha256: 6717915f1fd0212a6c07a281383e8b6db508c2d6c54ae1f5e00582e65c9bd358
+      typecheck: PASS
+      next_build: PASS
+      production_server: PASS
+      chromium_render_and_geometry: PASS
+      locale_switch_runtime: PASS
+      locale_sequence: zh-TW -> zh-CN -> en -> zh-TW
+      business_requests_during_validation: 0
+      manual_visual_inspection: PASS
+      manual_visual_inspection_basis: All five persisted screenshots were inspected. The single Current Viewer preserves a measured 16:9 ratio, no unintended overlap or clipping was found at 1440px, and the 1200px viewport intentionally preserves the registered 1280px minimum width with horizontal scrolling.
+      render_evidence:
+      - docs/construction/evidence/VIS-04/vis04-1440-top.png
+      - docs/construction/evidence/VIS-04/vis04-1440-middle.png
+      - docs/construction/evidence/VIS-04/vis04-1440-bottom.png
+      - docs/construction/evidence/VIS-04/vis04-language-en.png
+      - docs/construction/evidence/VIS-04/vis04-1200-minwidth.png
+      - docs/construction/evidence/VIS-04/vis04-validation.json
+      verified_contract:
+        route: /video
+        sections: 10
+        components: 17
+        controls: 85
+        visible_empty_state_controls: 71
+        conditional_controls: 14
+        current_viewer_count_without_candidate: 1
+        candidate_version_b_rendered_without_candidate: false
+        correction_controls_rendered_before_correction: 0
+        viewer_width: 708px
+        viewer_height: 398.3px
+        viewer_ratio: 1.7775546070800903
+        context_bar_min_height: 56px
+        left_rail_min_width: 260px
+        center_min_width: 720px
+        right_rail_min_width: 280px
+        page_min_width: 1280px
+        fake_business_data: false
+        enabled_business_controls: 0
+        business_fetch_xhr: 0
+        global_nav_count: 8
+        active_nav: NAV-04
+        sidebar_collapsed_width: 64px
+        sidebar_expanded_width: 221px
+        workspace_reflow_on_expand: false
+        supported_locales: zh-TW/zh-CN/en
   - id: VIS-05
     group: FRONT
     page_uid: EDIT-01
@@ -334,9 +383,9 @@ final_validation:
   status: NOT_STARTED
 metrics:
   visual_steps_total: 19
-  visual_steps_complete: 4
+  visual_steps_complete: 5
   visual_steps_in_progress: 0
   logic_steps_complete: 0
   shared_runtime_steps_complete: 0
   cross_page_steps_complete: 0
-  truthful_progress_note: VIS-00 Global Shell, VIS-01 WB-01, VIS-02 CORE-01, and VIS-03 ASSET-01 visual positioning are implemented and verified. VIS-03 evidence includes TypeScript/Next build, production-server Chromium validation, exact 10-section/16-component/85-control registry closure, 67 empty-state visible controls plus 18 condition-gated Correction/Layer/Patch controls, 260/720/280 minimum three-column geometry, preview-first surface, read-only Provider/Model, zero business requests, zh-TW/zh-CN/en switching, 1280px minimum-width behavior, sidebar no-reflow verification, persisted render evidence, and manual visual inspection. VIS-04 VIDEO-01 is current. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
+  truthful_progress_note: VIS-00 Global Shell, VIS-01 WB-01, VIS-02 CORE-01, VIS-03 ASSET-01, and VIS-04 VIDEO-01 visual positioning are implemented and verified. VIS-04 evidence includes TypeScript/Next build, production-server Chromium validation, exact 10-section/17-component/85-control registry closure, 71 empty-state visible controls plus 14 condition-gated controls, one measured 16:9 Current Viewer with no Candidate B, no premature correction controls, 260/720/280 minimum three-column geometry, read-only Provider Runtime, zero business requests, zh-TW/zh-CN/en switching, 1280px minimum-width behavior, sidebar no-reflow verification, persisted render evidence, and manual visual inspection. VIS-05 EDIT-01 is current. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
