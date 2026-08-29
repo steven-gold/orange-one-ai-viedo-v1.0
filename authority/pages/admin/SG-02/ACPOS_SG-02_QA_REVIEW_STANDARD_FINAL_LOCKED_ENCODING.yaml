@@ -4,38 +4,22 @@ authority:
   page_uid: admin:SG-02
   page_id: SG-02
   page_name_zh: QA 審查項目名單
-  r9_name_zh: Quality Criteria / Gate Policy
+  current_name_zh: Quality Criteria / Gate Policy
   surface: admin
-  navigation_path:
-    l1_key: scoring_qa
-    l1_label_zh: 評分與 QA
-    l2_key: script_and_quality_governance
-    l2_label_zh: 腳本／品質治理
   owner: QualityGovernance
   status: FINAL_LOCKED
   current_only: true
   single_page: true
-  global_shell: admin_shell / GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
   missing_value_display: —
-  source_of_truth:
-    docx_filename: SG-02_QA審查項目名單_後台單頁展示_FINAL_LOCKED.docx
-    docx_sha256: 0b57d728aaaedc0f64c119438a9ed2de7d21913fb67c52acc76d2eef4fcf2c8e
-    docx_size_bytes: 165616
-    r9_page_uid: admin:SG-02
-    generated_from: Current FINAL_LOCKED one-page authority + R9 registered SG-02 contract only
-document_validation:
-  render_verified: true
-  render_page_count: 1
-  visual_qa: PASS
-  clipping: NONE_DETECTED
-  overlap: NONE_DETECTED
-  second_page: NONE
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  admin_l1_key: ADMIN-L1-QA-CRITERIA
 page_contract:
-  purpose: 管理 Criteria Version、Dimension、Threshold、Department Applicability、Required Check、Gate Policy 與 Approval；作為後台 Review
-    Standard / QA 審查項目治理面，不是專案 pending QA queue。
+  purpose: 管理 Criteria Version、Dimension、Threshold、Department Applicability、Required Check、Gate Policy 與 Approval；作為後台 Review Standard / QA 審查項目治理面，不是專案
+    pending QA queue。
   review_standard_semantics:
     is_project_pending_queue: false
     is_runtime_qa_workspace: false
@@ -485,7 +469,7 @@ runtime_truth:
   e2e_validation: NOT_EXECUTED
   production_deployment: NOT_EXECUTED
 construction_gate:
-  ai_instruction: Use only admin:SG-02 definitions in this encoding. Do not add Search/Filter/Export or any other control.
-    Do not hardcode thresholds. Do not retype read-model fields. Unknown/unregistered behavior => BLOCK + REPORT_AUTHORITY_GAP.
+  ai_instruction: Use only admin:SG-02 definitions in this encoding. Do not add Search/Filter/Export or any other control. Do not hardcode thresholds.
+    Do not retype read-model fields. Unknown/unregistered behavior => BLOCK + REPORT_AUTHORITY_GAP.
   static_ui_spec_ready: true
   effectful_runtime_ready: false

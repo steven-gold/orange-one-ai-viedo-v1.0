@@ -10,24 +10,14 @@ authority:
   current_only: true
   single_page_workspace: true
   single_machine_authority: true
-  global_shell: admin_shell / GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY
-  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
   visual_override: FORBIDDEN
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
   missing_value_display: —
-  source_of_truth:
-    docx_filename: STR-01_戰略中心後台_單頁整合展示_PRELOCK.docx
-    docx_sha256: 4c49539cbe511ade27a257bc6bde99b504b5cb2056b51c9e4ebc00630a51eb85
-    docx_size_bytes: 182301
-    r9_source_pages:
-    - admin:STR-01
-    - admin:STR-02
-    - admin:STR-03
-    - admin:STR-04
-    - admin:STR-05
-    - admin:STR-06
-    generated_from: Current single-page Strategy Center PRELOCK visual authority + R9 registered STR-01~06 contracts
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 global_navigation_guard:
   page_owns_global_menu_order: false
   sidebar_in_reference_image: ILLUSTRATIVE_ONLY
@@ -44,8 +34,7 @@ global_navigation_guard:
   - insert_after
   duplicate_navigation_target: BLOCK
   menu_reorder_by_page_file: FORBIDDEN
-  rule: The Strategy Center page may identify itself as strategy_center but cannot move ERP, QA, Social, System Maintenance,
-    or any sibling menu.
+  rule: The Strategy Center page may identify itself as strategy_center but cannot move ERP, QA, Social, System Maintenance, or any sibling menu.
 current_page_policy:
   frontend_page_count: 1
   canonical_frontend_page_uid: admin:STR-01
@@ -54,13 +43,6 @@ current_page_policy:
   new_route_per_view: false
   standalone_parallel_strategy_pages: FORBIDDEN
   legacy_page_navigation_render: FORBIDDEN
-  legacy_source_page_uids:
-  - admin:STR-02
-  - admin:STR-03
-  - admin:STR-04
-  - admin:STR-05
-  - admin:STR-06
-  legacy_source_role: REGISTRY_AND_OPERATION_TRACE_ONLY_NOT_FRONTEND_NAVIGATION
   navigation_rule: Only one current Strategy Center navigation target may render.
   route_inference: FORBIDDEN
 runtime_truth:
@@ -97,8 +79,6 @@ page_contract:
   - view_uid: STR-CURRENT-VIEW-OVERVIEW
     label_zh: 戰略總覽
     position: 1
-    source_page_uids:
-    - admin:STR-01
     responsibility:
     - Intelligence Summary
     - Source Health
@@ -113,9 +93,6 @@ page_contract:
   - view_uid: STR-CURRENT-VIEW-INTELLIGENCE-FACT
     label_zh: 情報與 Fact
     position: 2
-    source_page_uids:
-    - admin:STR-02
-    - admin:STR-04
     responsibility:
     - Source Registry
     - Watchlist
@@ -138,8 +115,6 @@ page_contract:
   - view_uid: STR-CURRENT-VIEW-PLAYBOOK
     label_zh: 平台 Playbook
     position: 3
-    source_page_uids:
-    - admin:STR-03
     responsibility:
     - Platform Profile
     - Account Scope
@@ -155,8 +130,6 @@ page_contract:
   - view_uid: STR-CURRENT-VIEW-OPPORTUNITY
     label_zh: 趨勢與機會
     position: 4
-    source_page_uids:
-    - admin:STR-05
     responsibility:
     - Trend Engine
     - Momentum Engine
@@ -172,8 +145,6 @@ page_contract:
   - view_uid: STR-CURRENT-VIEW-DECISION
     label_zh: 決策實驗室
     position: 5
-    source_page_uids:
-    - admin:STR-06
     responsibility:
     - Decision Context
     - Option Comparison
@@ -187,190 +158,6 @@ page_contract:
     - ACT-CANDIDATE-DECIDE
     - ACT-ADOPT-CONTEXT
     - ACT-NAV-OPEN
-source_page_registry:
-- page_uid: admin:STR-01
-  page_id: STR-01
-  name_zh: Intelligence Dashboard
-  owner: StrategyService
-  navigation_l2: external_intelligence
-  purpose: 後台層級檢視情報來源、Fact Quality、Watchlist、Risk 與戰略候選。
-  sections:
-  - intelligence_summary
-  - source_health
-  - fact_quality
-  - watchlist
-  - risk_alert
-  - candidate_queue
-  data_bindings:
-  - facts
-  - sources
-  - watchlists
-  - alerts
-  - candidates
-  allowed_action_ids:
-  - ACT-SEARCH
-  - ACT-REFRESH
-  - ACT-NAV-OPEN
-  page_permissions:
-  - strategy.admin.read
-  forbidden:
-  - direct_operational_write
-  expected_control_count: 9
-- page_uid: admin:STR-02
-  page_id: STR-02
-  name_zh: Strategy Source / Watchlist
-  owner: StrategyService
-  navigation_l2: external_intelligence
-  purpose: 管理策略資料來源、Watchlist、權利、資料時間、完整度與蒐集範圍。
-  sections:
-  - source_registry
-  - watchlist
-  - scope_policy
-  - source_quality
-  - retention
-  - audit
-  data_bindings:
-  - sources
-  - watchlists
-  - policies
-  - quality
-  - retention
-  - audit
-  allowed_action_ids:
-  - ACT-CONFIGURE
-  - ACT-APPROVE
-  - ACT-NAV-OPEN
-  page_permissions:
-  - strategy.admin.read
-  forbidden: []
-  expected_control_count: 9
-- page_uid: admin:STR-03
-  page_id: STR-03
-  name_zh: Platform / Account Playbook
-  owner: StrategyService
-  navigation_l2: platform_strategy_and_opportunity
-  purpose: 維護平台/帳號 Playbook、Hypothesis、Evidence、適用範圍與版本。
-  sections:
-  - platform_profile
-  - account_scope
-  - playbook
-  - hypothesis
-  - evidence
-  - version_history
-  - approval
-  data_bindings:
-  - profiles
-  - playbooks
-  - evidence
-  - approvals
-  allowed_action_ids:
-  - ACT-DRAFT-SAVE
-  - ACT-APPROVE
-  - ACT-NAV-OPEN
-  page_permissions:
-  - strategy.playbook.write
-  - strategy.playbook.approve
-  forbidden:
-  - use_playbook_as_direct_publish_command
-  expected_control_count: 10
-- page_uid: admin:STR-04
-  page_id: STR-04
-  name_zh: Fact / Cohort
-  owner: StrategyFactPackService
-  navigation_l2: external_intelligence
-  purpose: 管理策略 Fact Pack、Cohort、資料時間、比較方法與市場地圖。
-  sections:
-  - fact_registry
-  - cohort_builder
-  - market_map
-  - completeness
-  - confidence
-  - citation
-  data_bindings:
-  - fact_packs
-  - cohorts
-  - maps
-  - citations
-  allowed_action_ids:
-  - ACT-SEARCH
-  - ACT-NAV-OPEN
-  - ACT-EXPORT
-  page_permissions:
-  - strategy.admin.read
-  forbidden:
-  - present_inference_as_fact
-  expected_control_count: 9
-- page_uid: admin:STR-05
-  page_id: STR-05
-  name_zh: Trend / Opportunity
-  owner: StrategyService
-  navigation_l2: platform_strategy_and_opportunity
-  purpose: 管理 Trend、Momentum、Forecast、Opportunity Candidate、Confidence 與 Review。
-  sections:
-  - trend_engine
-  - momentum_engine
-  - forecast_engine
-  - opportunity_queue
-  - confidence
-  - evidence
-  - review
-  data_bindings:
-  - trends
-  - forecasts
-  - opportunities
-  - evidence
-  allowed_action_ids:
-  - ACT-CANDIDATE-CREATE
-  - ACT-APPROVE
-  - ACT-NAV-OPEN
-  page_permissions:
-  - strategy.opportunity.write
-  - strategy.opportunity.review
-  forbidden:
-  - automatic_project_or_budget_change
-  expected_control_count: 10
-- page_uid: admin:STR-06
-  page_id: STR-06
-  name_zh: Strategy Decision Lab
-  owner: StrategyService
-  navigation_l2: platform_strategy_and_opportunity
-  purpose: 多方案比較、主管決策、採用/拒絕與受控 Core Review Handoff。
-  sections:
-  - decision_context
-  - option_comparison
-  - evidence
-  - risk_cost_capacity
-  - decision_gate
-  - core_review_handoff
-  - audit
-  data_bindings:
-  - candidates
-  - facts
-  - cost_capacity
-  - decision
-  - handoff
-  allowed_action_ids:
-  - ACT-CANDIDATE-COMPARE
-  - ACT-CANDIDATE-DECIDE
-  - ACT-ADOPT-CONTEXT
-  - ACT-NAV-OPEN
-  page_permissions:
-  - strategy.decision.propose
-  - strategy.decision.approve
-  forbidden:
-  - direct_canon_lock_task_budget_publish_write
-  expected_control_count: 11
-source_control_accounting:
-  original_source_page_control_counts:
-    admin:STR-01: 9
-    admin:STR-02: 9
-    admin:STR-03: 10
-    admin:STR-04: 9
-    admin:STR-05: 10
-    admin:STR-06: 11
-  total_registered_source_controls: 58
-  meaning: 58 is the R9 source whitelist total, not a claim that 58 remapped current-page controls have already been implemented.
-  current_control_remap_status: NOT_EXECUTED
 layout_contract:
   single_main_workspace: true
   secondary_tabs:
@@ -400,77 +187,72 @@ layout_contract:
     behavior: Follow Global responsive authority; reflow within the same current page.
 view_action_binding_rules:
   general:
-  - Render only action IDs registered for the active source page and authorized by Account Permission + State/Server Gate.
-  - Do not create a universal action payload by merging different source-page schemas.
-  - When a View contains multiple source pages, action invocation must retain source_page_uid and source operation/schema
-    owner.
-  - ACT-NAV-OPEN inside a View opens registered detail/drawer/context only; it must not recreate legacy standalone navigation.
+  - Render only action IDs registered for the active Current View and authorized by Account Permission + State/Server Gate.
+  - Do not create a universal action payload by merging incompatible schemas.
+  - Action invocation must retain the registered service/operation/schema owner for the selected business object.
+  - ACT-NAV-OPEN opens registered detail/drawer/context only; it must not create a standalone subpage.
   overview:
-    source_page_uid: admin:STR-01
+    view_uid: STR-CURRENT-VIEW-OVERVIEW
     actions:
     - ACT-SEARCH
     - ACT-REFRESH
     - ACT-NAV-OPEN
   intelligence_fact:
-    source_page_action_sets:
-      admin:STR-02:
-      - ACT-CONFIGURE
-      - ACT-APPROVE
-      - ACT-NAV-OPEN
-      admin:STR-04:
-      - ACT-SEARCH
-      - ACT-NAV-OPEN
-      - ACT-EXPORT
+    view_uid: STR-CURRENT-VIEW-INTELLIGENCE-FACT
+    actions:
+    - ACT-CONFIGURE
+    - ACT-APPROVE
+    - ACT-SEARCH
+    - ACT-EXPORT
+    - ACT-NAV-OPEN
   playbook:
-    source_page_uid: admin:STR-03
+    view_uid: STR-CURRENT-VIEW-PLAYBOOK
     actions:
     - ACT-DRAFT-SAVE
     - ACT-APPROVE
     - ACT-NAV-OPEN
   opportunity:
-    source_page_uid: admin:STR-05
+    view_uid: STR-CURRENT-VIEW-OPPORTUNITY
     actions:
     - ACT-CANDIDATE-CREATE
     - ACT-APPROVE
     - ACT-NAV-OPEN
   decision:
-    source_page_uid: admin:STR-06
+    view_uid: STR-CURRENT-VIEW-DECISION
     actions:
     - ACT-CANDIDATE-COMPARE
     - ACT-CANDIDATE-DECIDE
     - ACT-ADOPT-CONTEXT
     - ACT-NAV-OPEN
 operation_policy:
-  source: R9 registered operation registry
+  source: current registered operation registry
   reuse_existing_operations: true
   invent_new_operation: FORBIDDEN
-  known_operations_by_source:
-    admin:STR-01:
+  known_operations_by_view:
+    STR-CURRENT-VIEW-OVERVIEW:
     - getUiProjection
     - refreshProjection
     - searchProjection
-    admin:STR-02:
+    STR-CURRENT-VIEW-INTELLIGENCE-FACT:
     - approveGovernedResource
     - configureGovernedResource
-    - getUiProjection
-    admin:STR-03:
-    - approveGovernedResource
-    - getUiProjection
-    - saveDraft
-    admin:STR-04:
     - exportProjection
     - getUiProjection
     - searchProjection
-    admin:STR-05:
+    STR-CURRENT-VIEW-PLAYBOOK:
+    - approveGovernedResource
+    - getUiProjection
+    - saveDraft
+    STR-CURRENT-VIEW-OPPORTUNITY:
     - approveGovernedResource
     - createCandidate
     - getUiProjection
-    admin:STR-06:
+    STR-CURRENT-VIEW-DECISION:
     - adoptAsContextCandidate
     - compareCandidates
     - getUiProjection
     - rejectStrategyCandidate
-  unresolved_operation: DO_NOT_INFER; resolve from R9 registry or BLOCK
+  unresolved_operation: DO_NOT_INFER; resolve from current registered operation registry or BLOCK
 input_behavior:
   existing_read_model_data: AUTO_PROJECT_DO_NOT_RETYPE
   context_data: AUTO_CARRY_FORWARD_WHEN_AVAILABLE
@@ -517,15 +299,9 @@ state_contract:
 forbidden_matrix:
 - Page-owned global sidebar ordering
 - Page-owned sibling menu ordering
-- Recreate STR-02 as standalone current frontend page
-- Recreate STR-03 as standalone current frontend page
-- Recreate STR-04 as standalone current frontend page
-- Recreate STR-05 as standalone current frontend page
-- Recreate STR-06 as standalone current frontend page
 - Second Strategy Center
 - Second StrategyService
 - Second StrategyFactPackService
-- Direct operational write from STR-01
 - Present inference as fact
 - Use playbook as direct publish command
 - Automatic project or budget change from opportunity
@@ -535,6 +311,7 @@ forbidden_matrix:
 - Unregistered API/path/permission inference
 - Mock/fake strategy data
 - Cross-source payload union inference
+- Standalone parallel Strategy Center subpages
 acceptance:
 - uid: STR-CURRENT-ACC-01
   name: Single Current Page
@@ -543,18 +320,17 @@ acceptance:
   name: Five Current Views
   condition: 戰略總覽 / 情報與 Fact / 平台 Playbook / 趨勢與機會 / 決策實驗室 all exist inside the same current page.
 - uid: STR-CURRENT-ACC-03
-  name: R9 Source Coverage
-  condition: STR-01~STR-06 source responsibilities, owners, sections, actions and prohibitions remain traceable.
+  name: Current View Coverage
+  condition: All five Current View responsibilities, owners, actions and prohibitions remain traceable inside admin:STR-01.
 - uid: STR-CURRENT-ACC-04
   name: No Menu Order Collision
   condition: Page files do not define global/sibling sidebar order; only Global Navigation Authority may order L1/L2 items.
 - uid: STR-CURRENT-ACC-05
-  name: No Legacy Standalone Navigation
-  condition: STR-02~STR-06 are source aliases/registry references only and cannot render standalone current frontend navigation.
+  name: No Parallel Strategy Pages
+  condition: All Strategy administration functions remain inside admin:STR-01 same-page views.
 - uid: STR-CURRENT-ACC-06
   name: Action Source Isolation
-  condition: Actions in combined views retain their originating page/service/schema binding and are never merged into guessed
-    payloads.
+  condition: Actions in combined views retain their originating page/service/schema binding and are never merged into guessed payloads.
 - uid: STR-CURRENT-ACC-07
   name: Truthful Strategy Data
   condition: No inference-as-fact, fake confidence, mock candidates, fake health, or invented cost/capacity data.
@@ -563,21 +339,18 @@ acceptance:
   condition: Decision Lab cannot directly write canon lock, task, budget or publish state; handoff remains governed.
 - uid: STR-CURRENT-ACC-09
   name: Truthful Runtime
-  condition: Navigation/control/permission remap and runtime/E2E remain NOT_EXECUTED until actual implementation and tests
-    exist.
+  condition: Navigation/control/permission remap and runtime/E2E remain NOT_EXECUTED until actual implementation and tests exist.
 construction_gate:
   static_ui_spec_ready: true
   effectful_runtime_ready: false
   before_runtime_enablement_required:
-  - Global Navigation Registry update for one current Strategy Center target
-  - Legacy STR-02~06 frontend navigation retirement
+  - Global Navigation Registry binding for the current Strategy Center target
   - Page/Section/Control resource remap
   - Permission resource remap
-  - View-to-source operation binding verification
+  - View-to-operation binding verification
   - State/server gate verification
-  - Functional regression for all 58 R9 source controls
+  - Functional regression for all Current Strategy Center controls
   - Sandbox validation
   - E2E validation
-  ai_instruction: Read this encoding first. Render one Strategy Center admin page only. Do not reorder the global sidebar.
-    Do not recreate STR-02~06 as pages. For each active View, use only the registered source-page sections/actions/operations.
-    Unknown or missing binding => BLOCK + REPORT_AUTHORITY_GAP.
+  ai_instruction: Read this encoding first. Render one Strategy Center admin page only. Do not reorder the global sidebar or create parallel subpages.
+    For each active View, use only registered Current sections/actions/operations. Unknown or missing binding => BLOCK + REPORT_AUTHORITY_GAP.

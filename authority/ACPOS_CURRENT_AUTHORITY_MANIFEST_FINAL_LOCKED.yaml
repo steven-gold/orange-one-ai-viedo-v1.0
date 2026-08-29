@@ -1,37 +1,37 @@
 authority:
   id: ACPOS_CURRENT_AUTHORITY_MANIFEST
-  version: V1.0
+  version: V1.1
   status: FINAL_LOCKED
   current_only: true
-  load_rule: Load only files in current_authority_set for current construction.
+  load_rule: Load this manifest first, then load only the repository paths listed in current_authority_set for Current construction.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
   global:
-  - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
-  - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
-  - ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
-  - ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
-  - ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml
-  - ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+  - authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
+  - authority/global/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
+  - authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+  - authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  - authority/global/ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml
+  - authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
   pages:
-  - ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml
-  - CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
-  - ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
-  - VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
-  - ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
-  - ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
-  - ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml
-  - ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
-  - ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml
-  - ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml
-  - ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
-  - ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
-  - ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
-  - ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
-  - ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
-  - ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml
-  - ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
-  - ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/workspace/WB-01/ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  - authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  - authority/pages/workspace/VIDEO-01/VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  - authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  - authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+  - authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+  - authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml
+  - authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+  - authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
 precedence:
 - ACPOS_CURRENT_AUTHORITY_MANIFEST
 - ACPOS_SYSTEM_AUTHORITY within cross-page/system scope
@@ -43,6 +43,11 @@ precedence:
 current_page_count: 18
 front_l1_count: 8
 admin_l1_count: 9
+repository_layout:
+  authority_root: authority/
+  global_authority_root: authority/global/
+  page_authority_root: authority/pages/
+  reference_document_root: docs/reference/
 single_source_rules:
 - No second ACPOS System authority.
 - No second Global Visual authority.
@@ -51,7 +56,9 @@ single_source_rules:
 - No second external data acquisition/crawler runtime.
 - No second AI API/provider router.
 - No second shared Context/Experience/Learning/Event subsystem.
+- Superseded Production Script V1.2 is not present in the Current branch tree.
 load_policy:
   only_listed_files_are_current_authority: true
   unlisted_authority_or_spec_file: DO_NOT_LOAD_FOR_CURRENT_CONSTRUCTION
   duplicate_active_authority: BLOCK
+  root_level_authority_yaml: FORBIDDEN_AFTER_REORGANIZATION
