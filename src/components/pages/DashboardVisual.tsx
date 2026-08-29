@@ -67,7 +67,7 @@ export function DashboardVisual() {
   const [drawerSection, setDrawerSection] = useState<DashboardSection | null>(null);
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
-  const state: VisualState = "EMPTY";
+  const state = "EMPTY" as VisualState;
 
   const closeDrawer = () => {
     setDrawerSection(null);
