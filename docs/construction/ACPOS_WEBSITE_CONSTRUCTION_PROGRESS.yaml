@@ -69,8 +69,8 @@ current_state:
   shared_runtime_construction: BLOCKED_BY_ALL_VISUAL_COMPLETE_GATE
   e2e: NOT_STARTED
   deployment: NOT_STARTED
-  current_task: VIS-02_FRONT_CORE-01_VISUAL_POSITIONING
-  last_completed_task: VIS-01_HOME_WB-01_VISUAL_POSITIONING
+  current_task: VIS-03_FRONT_ASSET-01_VISUAL_POSITIONING
+  last_completed_task: VIS-02_FRONT_CORE-01_VISUAL_POSITIONING
 phase_1_visual_positioning:
   objective: Finish all page visual/layout positioning before business logic construction.
   execution_mode: STRICT_SEQUENTIAL
@@ -152,7 +152,52 @@ phase_1_visual_positioning:
     group: FRONT
     page_uid: CORE-01
     name: 專案 / 專題
-    status: NOT_STARTED
+    status: COMPLETE
+    scope: 56px context bar, 20/60/20 three-column CORE workstation, conversation-first center workspace, right-side Project Core/Blueprint/Topic Package/Version and Lock state projections, exact registered controls, shared language selector, and empty/disabled presentation only; no business API/DB/provider/crawler logic.
+    evidence:
+      implementation_commit: 1e779b33ac2760e35245901fd73b54f5c5b41234
+      final_validation_run_id: 33258180111
+      final_evidence_artifact_id: 9716463233
+      artifact_sha256: 899a7d5d3a9b8f274b354f824732f2241f3eb0d7ee697f97826db90dce5cd6ba
+      typecheck: PASS
+      next_build: PASS
+      production_server: PASS
+      chromium_render_and_geometry: PASS
+      locale_switch_runtime: PASS
+      locale_sequence: zh-TW -> zh-CN -> en -> zh-TW
+      business_requests_during_validation: 0
+      manual_visual_inspection: PASS
+      manual_visual_inspection_basis: All six final screenshots were inspected after the English left-rail compression correction; no unintended overlap or clipping found. The 1200px viewport intentionally preserves the registered 1280px page min-width with horizontal scrolling.
+      render_evidence:
+      - docs/construction/evidence/VIS-02/vis02-1440-top.png
+      - docs/construction/evidence/VIS-02/vis02-1440-context-menu.png
+      - docs/construction/evidence/VIS-02/vis02-1440-middle.png
+      - docs/construction/evidence/VIS-02/vis02-1440-bottom.png
+      - docs/construction/evidence/VIS-02/vis02-language-en.png
+      - docs/construction/evidence/VIS-02/vis02-1200-minwidth.png
+      - docs/construction/evidence/VIS-02/vis02-validation.json
+      verified_contract:
+        route: /core
+        sections: 10
+        components: 17
+        controls: 50
+        context_bar_height: 56px
+        left_rail_min_width: 260px
+        center_min_width: 720px
+        right_rail_min_width: 300px
+        message_workspace_min_height: 420px
+        runtime_strip_height: 40px
+        composer_min_height: 104px
+        page_min_width: 1280px
+        fake_business_data: false
+        enabled_business_controls: 0
+        business_fetch_xhr: 0
+        global_nav_count: 8
+        active_nav: NAV-02
+        sidebar_collapsed_width: 64px
+        sidebar_expanded_width: 221px
+        workspace_reflow_on_expand: false
+        supported_locales: zh-TW/zh-CN/en
   - id: VIS-03
     group: FRONT
     page_uid: ASSET-01
@@ -243,9 +288,9 @@ final_validation:
   status: NOT_STARTED
 metrics:
   visual_steps_total: 19
-  visual_steps_complete: 2
+  visual_steps_complete: 3
   visual_steps_in_progress: 0
   logic_steps_complete: 0
   shared_runtime_steps_complete: 0
   cross_page_steps_complete: 0
-  truthful_progress_note: VIS-00 Global Shell and VIS-01 WB-01 visual positioning are implemented and verified. VIS-01 evidence includes TypeScript/Next build, production-server Chromium validation, 1440/1366/1200 layout checks, 520px Drawer behavior, zh-TW/zh-CN/en switching with zero business requests, canonical uploaded ORANGE ONE logo with user-approved white monochrome dark-header adaptation, persisted render evidence, and manual visual inspection. VIS-02 CORE-01 is current. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
+  truthful_progress_note: VIS-00 Global Shell, VIS-01 WB-01, and VIS-02 CORE-01 visual positioning are implemented and verified. VIS-02 evidence includes TypeScript/Next build, production-server Chromium validation, exact 10-section/17-component/50-control positioning, 56px context bar, 260/720/300 minimum three-column geometry, empty/disabled no-fake-data state, message context menu, zh-TW/zh-CN/en switching, zero business requests, 1280px minimum-width behavior, sidebar no-reflow verification, persisted render evidence, and final manual visual inspection. VIS-03 ASSET-01 is current. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
