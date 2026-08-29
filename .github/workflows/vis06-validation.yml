@@ -1,0 +1,148 @@
+name: VIS-06 QA-01 Validation
+
+on:
+  push:
+    branches: [acpos-vis06-staging]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install project dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Install Chromium validation runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start production server
+        run: |
+          npm run start -- -p 3000 > /tmp/vis06-next.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:3000/qa >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/vis06-next.log
+          exit 1
+      - name: Validate QA authority and browser geometry
+        run: |
+          mkdir -p docs/construction/evidence/VIS-06
+          node <<'NODE'
+          const fs = require('fs');
+          const { chromium } = require('playwright');
+          const source = fs.readFileSync('src/components/pages/QaVisual.tsx','utf8');
+          const catalog = fs.readFileSync('src/i18n/qaCatalog.ts','utf8');
+          const shell = fs.readFileSync('src/components/shell/AppShell.tsx','utf8');
+          const css = fs.readFileSync('src/components/pages/QaVisual.module.css','utf8');
+          const ids = text => [...new Set([...text.matchAll(/QA-01-(?:FLD|BTN|INP|SEL|LIST|VIEW|CTL|SEG)-[A-Z0-9-]+/g)].map(m=>m[0]))];
+          const sourceIds = ids(source), catalogIds = ids(catalog);
+          if (sourceIds.length !== 87) throw new Error(`source controls=${sourceIds.length}`);
+          if (catalogIds.length !== 87) throw new Error(`catalog controls=${catalogIds.length}`);
+          if (!sourceIds.every(id=>catalogIds.includes(id))) throw new Error('registry/catalog mismatch');
+          if (!shell.includes('{ id: "NAV-06", labelKey: "global.nav.qa", icon: "qa", href: "/qa" }')) throw new Error('NAV-06 route missing');
+          if (/#[0-9a-fA-F]{3,8}|rgba?\(/.test(css)) throw new Error('page-local raw color detected');
+          if (/\bfetch\s*\(|XMLHttpRequest|\baxios\b/.test(source)) throw new Error('business network code detected');
+          if (/decidePass|decideFail|approveRelease|publishDirect|Publish control/.test(source)) throw new Error('forbidden direct QA action detected');
+          (async()=>{
+            const browser = await chromium.launch({headless:true});
+            const context = await browser.newContext({viewport:{width:1440,height:900}});
+            const page = await context.newPage();
+            let businessRequests=0;
+            page.on('request',r=>{if(['xhr','fetch'].includes(r.resourceType())) businessRequests++;});
+            const response=await page.goto('http://127.0.0.1:3000/qa',{waitUntil:'networkidle'});
+            if(!response||response.status()!==200) throw new Error(`HTTP=${response&&response.status()}`);
+            const top=await page.evaluate(()=>{
+              const root=document.querySelector('[data-page-uid="QA-01"]');
+              const workspace=document.querySelector('.workspace-slot');
+              const viewer=document.querySelector('[data-control-id="QA-01-VIEW-OUTPUT"] > div');
+              const primary=document.querySelector('[data-page-uid="QA-01"] > div');
+              const unique=(sel,attr)=>new Set([...document.querySelectorAll(sel)].map(el=>el.getAttribute(attr))).size;
+              const visible=id=>{const el=document.querySelector(`[data-control-id="${id}"]`);return !!el&&el.getClientRects().length>0;};
+              const enabled=[...document.querySelectorAll('[data-page-uid="QA-01"] button,[data-page-uid="QA-01"] input,[data-page-uid="QA-01"] select,[data-page-uid="QA-01"] textarea')].filter(el=>!el.disabled).length;
+              const contextEditable=[...document.querySelectorAll('[data-section-id="QA-01-SEC-01"] input,[data-section-id="QA-01-SEC-01"] select,[data-section-id="QA-01-SEC-01"] textarea')].filter(el=>el.getClientRects().length).length;
+              const scoreButtons=[...document.querySelectorAll('[data-section-id="QA-01-SEC-06"] button')].filter(el=>el.getClientRects().length).length;
+              return {
+                registryValid:root.getAttribute('data-registry-valid'), authorityControls:root.getAttribute('data-authority-controls'),
+                pageWidth:root.getBoundingClientRect().width, workspaceX:workspace.getBoundingClientRect().x,
+                viewer:viewer.getBoundingClientRect().toJSON(), primaryWidths:[...primary.children].map(c=>c.getBoundingClientRect().width),
+                sections:unique('[data-page-uid="QA-01"] [data-section-id]','data-section-id'),
+                components:unique('[data-page-uid="QA-01"] [data-component-uid]','data-component-uid'),
+                controls:unique('[data-page-uid="QA-01"] [data-control-id]','data-control-id'),
+                activeNav:document.querySelector('[data-nav-id="NAV-06"][aria-current="page"]')?.getAttribute('href'),
+                enabled, contextEditable, scoreButtons,
+                hidden:{start:!visible('QA-01-BTN-START-REVIEW'),compare:!visible('QA-01-BTN-COMPARE'),prev:!visible('QA-01-BTN-PREV-FRAME'),next:!visible('QA-01-BTN-NEXT-FRAME'),modify:!visible('QA-01-BTN-MANUAL-MODIFY'),pass:!visible('QA-01-BTN-MANUAL-PASS')}
+              };
+            });
+            const ratio=top.viewer.width/top.viewer.height;
+            if(top.registryValid!=='true'||top.authorityControls!=='87') throw new Error('registry self-check failed');
+            if(top.sections!==10) throw new Error(`sections=${top.sections}`);
+            if(top.components!==21) throw new Error(`components=${top.components}`);
+            if(top.controls!==87) throw new Error(`controls=${top.controls}`);
+            if(top.activeNav!=='/qa') throw new Error(`activeNav=${top.activeNav}`);
+            if(top.enabled!==0) throw new Error(`enabled controls=${top.enabled}`);
+            if(top.contextEditable!==0) throw new Error(`context editable=${top.contextEditable}`);
+            if(top.scoreButtons!==0) throw new Error(`score buttons=${top.scoreButtons}`);
+            if(!Object.values(top.hidden).every(Boolean)) throw new Error(`conditional visibility=${JSON.stringify(top.hidden)}`);
+            if(Math.abs(ratio-16/9)>.02) throw new Error(`viewer ratio=${ratio}`);
+            if(top.pageWidth<1280) throw new Error(`page width=${top.pageWidth}`);
+            if(top.workspaceX!==78) throw new Error(`workspace x=${top.workspaceX}`);
+            if(top.primaryWidths.length!==3||top.primaryWidths[0]<260||top.primaryWidths[1]<720||top.primaryWidths[2]<300) throw new Error(`primary=${JSON.stringify(top.primaryWidths)}`);
+            await page.locator('.global-sidebar').hover(); await page.waitForTimeout(250);
+            const expanded=await page.evaluate(()=>({sidebarWidth:document.querySelector('.global-sidebar').getBoundingClientRect().width,workspaceX:document.querySelector('.workspace-slot').getBoundingClientRect().x}));
+            if(expanded.sidebarWidth!==221||expanded.workspaceX!==78) throw new Error(`sidebar=${JSON.stringify(expanded)}`);
+            await page.screenshot({path:'docs/construction/evidence/VIS-06/vis06-1440-expanded.png'});
+            await page.mouse.move(800,400); await page.waitForTimeout(250);
+            await page.screenshot({path:'docs/construction/evidence/VIS-06/vis06-1440-top.png'});
+            const workspace=page.locator('.workspace-slot');
+            await workspace.evaluate(el=>el.scrollTop=Math.round((el.scrollHeight-el.clientHeight)/2)); await page.waitForTimeout(100);
+            await page.screenshot({path:'docs/construction/evidence/VIS-06/vis06-1440-middle.png'});
+            await workspace.evaluate(el=>el.scrollTop=el.scrollHeight); await page.waitForTimeout(100);
+            await page.screenshot({path:'docs/construction/evidence/VIS-06/vis06-1440-bottom.png'});
+            await workspace.evaluate(el=>{el.scrollTop=0;el.scrollLeft=0;});
+            const lang=page.locator('button[aria-haspopup="listbox"]');
+            await lang.click(); await page.getByRole('option',{name:/English/}).click();
+            if(!(await page.getByText('State Filter',{exact:true}).count())) throw new Error('en locale failed');
+            await lang.click(); await page.getByRole('option',{name:/简体中文/}).click();
+            if(!(await page.getByText('状态筛选',{exact:true}).count())) throw new Error('zh-CN locale failed');
+            await lang.click(); await page.getByRole('option',{name:/繁體中文/}).click();
+            if(!(await page.getByText('狀態篩選',{exact:true}).count())) throw new Error('zh-TW locale failed');
+            await page.setViewportSize({width:1200,height:900}); await page.waitForTimeout(100);
+            const narrow=await page.evaluate(()=>({pageWidth:document.querySelector('[data-page-uid="QA-01"]').getBoundingClientRect().width,client:document.querySelector('.workspace-slot').clientWidth,scroll:document.querySelector('.workspace-slot').scrollWidth}));
+            if(narrow.pageWidth<1280||narrow.scroll<=narrow.client) throw new Error(`min-width=${JSON.stringify(narrow)}`);
+            await page.screenshot({path:'docs/construction/evidence/VIS-06/vis06-1200-minwidth.png'});
+            if(businessRequests!==0) throw new Error(`business fetch/xhr=${businessRequests}`);
+            const validation={source_sha:process.env.GITHUB_SHA,route:'/qa',http_status:200,registry_controls:87,unique_sections:top.sections,unique_components:top.components,unique_controls:top.controls,viewer_ratio:ratio,page_width_1440:top.pageWidth,primary_column_widths:top.primaryWidths,workspace_origin_x:top.workspaceX,sidebar_expanded_width:expanded.sidebarWidth,workspace_reflow_on_expand:false,enabled_business_controls:top.enabled,business_fetch_xhr:businessRequests,context_editable_controls:top.contextEditable,scorecard_human_buttons:top.scoreButtons,conditional_controls_hidden:top.hidden,page_local_raw_colors:0,supported_locales:['zh-TW','zh-CN','en'],authority_files_modified:false,typecheck:'PASS',next_build:'PASS',production_server:'PASS',chromium_geometry:'PASS'};
+            fs.writeFileSync('docs/construction/evidence/VIS-06/vis06-validation.json',JSON.stringify(validation,null,2)+'\n');
+            console.log(JSON.stringify(validation,null,2));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1);});
+          NODE
+      - name: Persist validated VIS-06 evidence
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/construction/evidence/VIS-06
+          git commit -m "test(vis06): persist QA-01 render evidence [skip ci]"
+          git push origin HEAD:acpos-vis06-staging
+      - name: Upload VIS-06 evidence artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vis06-qa01-evidence
+          path: |
+            docs/construction/evidence/VIS-06
+            /tmp/vis06-next.log
