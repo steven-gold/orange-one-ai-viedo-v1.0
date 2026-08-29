@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { LocaleProvider } from "@/i18n/LocaleProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="zh-TW">
-      <body>{children}</body>
+    <html lang="zh-Hant-TW">
+      <body><LocaleProvider>{children}</LocaleProvider></body>
     </html>
   );
 }
