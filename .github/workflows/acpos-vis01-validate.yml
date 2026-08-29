@@ -166,6 +166,7 @@ jobs:
           git config user.name 'steven-gold'
           git config user.email 'proorangeone@gmail.com'
           git add docs/construction/evidence/VIS-01 docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
-          git rm .github/workflows/acpos-vis01-validate.yml scripts/capture-vis01.mjs
+          git rm .github/workflows/acpos-vis01-validate.yml
+          git rm -f scripts/capture-vis01.mjs
           git commit -m 'construction: complete VIS-01 and advance to VIS-02'
           git push origin HEAD:acpos-vis01-staging
