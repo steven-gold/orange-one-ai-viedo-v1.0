@@ -163,10 +163,15 @@
 
 .threadHeader {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   gap: 8px;
   margin-bottom: 12px;
+}
+
+.threadHeader .button {
+  width: 100%;
+  white-space: nowrap;
 }
 
 .threadListScroll {
