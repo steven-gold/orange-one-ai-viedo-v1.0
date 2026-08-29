@@ -1,0 +1,37 @@
+name: Sync VIS-07 Preview Navigation
+on:
+  push:
+    branches: [acpos-live-preview]
+    paths: ['.github/workflows/sync-vis07-preview-nav.yml']
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+      - name: Enable NAV-07 in existing preview pages
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          files=['preview/index.html','preview/edit.html','preview/qa.html','preview/strategy.html']
+          for f in files:
+            p=Path(f); lines=p.read_text().splitlines(); changed=False; out=[]
+            for line in lines:
+              if '<button disabled>' in line and '◉' in line and ('資料庫' in line or 'Database' in line):
+                line=line.replace('<button disabled>','<a href="db.html">',1).replace('</button>','</a>',1)
+                changed=True
+              out.append(line)
+            if not changed: raise SystemExit(f'NAV-07 pattern not found in {f}')
+            p.write_text('\n'.join(out)+'\n')
+          PY
+      - name: Commit exact preview nav changes and remove workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add preview/index.html preview/edit.html preview/qa.html preview/strategy.html
+          git rm .github/workflows/sync-vis07-preview-nav.yml
+          git commit -m 'preview(vis07): enable Database navigation across preview shell [skip ci]'
+          git push origin HEAD:acpos-live-preview
