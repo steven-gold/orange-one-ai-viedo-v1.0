@@ -8,13 +8,14 @@ authority:
   scope: GLOBAL_FIXED_HEADER_AUTO_COLLAPSE_SIDEBAR_QUICK_STATUS_LANGUAGE_ACCOUNT_WORKSPACE_SLOT_ONLY
   undefined: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
-  revision: 2026-08-28-REMOVE-HEADER-PERMISSION-FIELD
+  revision: 2026-08-29-USER-APPROVED-LOGO-COLOR-ADAPTATION
 user_decisions_2026_08_28:
 - Delete AI Workspace from L1 navigation
 - 'Merge Editing and Voice into one L1 item: 剪輯配音'
 - 'L1 navigation is exactly: 儀表板 / 專案/專題 / 素材 / 影片 / 剪輯配音 / QA / 資料庫 / 戰略中心'
 - Dashboard L1 has no child/sub-title
 - Top-left = canonical ORANGE ONE logo
+- Logo color may be adapted for background contrast when explicitly approved by the user; artwork content, geometry, typography, crop, and intrinsic aspect ratio remain unchanged
 - Top-right = account login/account information
 - Immediately left of account = language selector
 - Sidebar auto-collapses by default to maximize workspace visual width
@@ -146,11 +147,15 @@ brand:
   asset: canonical ORANGE ONE logo only
   text: ORANGE ONE if canonical brand lockup includes text
   click_action: NONE
+  color_policy:
+    user_approved_color_adaptation: true
+    current_dark_header: WHITE_MONOCHROME
+    rule: Color may change only for approved background contrast; artwork content, geometry, typography, crop, and intrinsic aspect ratio must remain unchanged.
   forbidden:
   - redraw
-  - recolor
   - stretch
   - generated replacement
+  - recolor outside explicit user approval
 header_account_cluster:
   component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
   visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
