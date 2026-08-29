@@ -83,6 +83,11 @@ brand_asset_lock:
   logo_source: USER_SUPPLIED_CANONICAL_ARTWORK
   allowed_image_preparation:
     - remove background to transparency
+    - user-approved monochrome recolor for background contrast while preserving every artwork pixel relationship and intrinsic aspect ratio
+  current_color_application:
+    dark_header: WHITE_MONOCHROME
+    light_header: ORIGINAL_OR_USER_APPROVED_CONTRAST_COLOR
+    color_change_requires_user_approval: true
   forbidden_logo_changes:
     - redraw
     - regenerate artwork
@@ -92,7 +97,7 @@ brand_asset_lock:
     - crop away artwork
     - change typography
     - alter symbol geometry
-    - recolor artwork without explicit user approval
+    - recolor outside explicit user approval
     - add effects
     - add shadow
     - add glow
