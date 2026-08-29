@@ -69,8 +69,8 @@ current_state:
   shared_runtime_construction: BLOCKED_BY_ALL_VISUAL_COMPLETE_GATE
   e2e: NOT_STARTED
   deployment: NOT_STARTED
-  current_task: VIS-01_HOME_WB-01_VISUAL_POSITIONING
-  last_completed_task: VIS-00_GLOBAL_SHELL_VISUAL_BASELINE
+  current_task: VIS-02_FRONT_CORE-01_VISUAL_POSITIONING
+  last_completed_task: VIS-01_HOME_WB-01_VISUAL_POSITIONING
 phase_1_visual_positioning:
   objective: Finish all page visual/layout positioning before business logic construction.
   execution_mode: STRICT_SEQUENTIAL
@@ -104,12 +104,50 @@ phase_1_visual_positioning:
         workspace_reflow_on_expand: false
         nav_count: 8
         nav_hit_target: 44x44
-      brand_lockup_note: ORANGE ONE text lockup rendered; no generated/recolored substitute logo asset was introduced.
+      brand_lockup_note: Superseded during VIS-01 by the canonical user-supplied transparent logo asset; dark-header render uses the user-approved white monochrome color adaptation while preserving artwork content, geometry, and intrinsic aspect ratio.
   - id: VIS-01
     group: HOME
     page_uid: workspace:WB-01
     name: 儀表板 / Dashboard
-    status: NOT_STARTED
+    status: COMPLETE
+    scope: 14 canonical dashboard sections, 14 SECTION_OPEN controls, fixed empty/loading/error presentation, 520px projection drawer, shared Global Header language selector, and canonical ORANGE ONE logo only; no business API/DB/provider/crawler logic.
+    evidence:
+      implementation_commit: b7e2a180d410ac376cb8fd6327c95b837b1aadaf
+      final_validation_run_id: 33253370713
+      typecheck: PASS
+      next_build: PASS
+      production_server: PASS
+      chromium_render_and_geometry: PASS
+      locale_switch_runtime: PASS
+      locale_sequence: zh-TW -> zh-CN -> en -> zh-TW
+      business_requests_during_locale_switch: 0
+      manual_visual_inspection: PASS
+      manual_visual_inspection_basis: All seven persisted screenshots from the same visual implementation were inspected; no unintended clipping, overlap, logo distortion, or shell reflow found. 1200px intentionally preserves the registered 1280px dashboard min-width with horizontal scrolling.
+      render_evidence:
+      - docs/construction/evidence/VIS-01/vis01-1440-top.png
+      - docs/construction/evidence/VIS-01/vis01-1440-middle.png
+      - docs/construction/evidence/VIS-01/vis01-1440-bottom.png
+      - docs/construction/evidence/VIS-01/vis01-1440-drawer.png
+      - docs/construction/evidence/VIS-01/vis01-language-menu-zh-tw.png
+      - docs/construction/evidence/VIS-01/vis01-1366-top.png
+      - docs/construction/evidence/VIS-01/vis01-1200-minwidth.png
+      - docs/construction/evidence/VIS-01/vis01-validation.json
+      verified_contract:
+        sections: 14
+        section_open_controls: 14
+        kpi_count: 6
+        drawer_width: 520px
+        fake_business_data: false
+        business_fetch_xhr: 0
+        global_nav_count: 8
+        header_height: 58px
+        workspace_origin: x=78,y=68
+        logo_asset: public/brand/orange-one-logo.png
+        logo_source_dimensions: 416x192
+        logo_render_dimensions: 104x48
+        logo_aspect_ratio_preserved: true
+        logo_color_application: USER_APPROVED_WHITE_MONOCHROME_FOR_DARK_HEADER
+        supported_locales: zh-TW/zh-CN/en
   - id: VIS-02
     group: FRONT
     page_uid: CORE-01
@@ -377,7 +415,7 @@ phase_4_final_validation:
     status: BLOCKED
 progress_summary:
   visual_steps_total: 19
-  visual_steps_complete: 1
+  visual_steps_complete: 2
   page_logic_steps_total: 18
   page_logic_steps_complete: 0
   shared_foundation_steps_total: 6
@@ -386,6 +424,4 @@ progress_summary:
   cross_page_steps_complete: 0
   final_validation_steps_total: 7
   final_validation_steps_complete: 0
-  truthful_progress_note: VIS-00 Global Shell + Global Visual baseline is implemented and verified by TypeScript, Next build, production-server
-    Chromium geometry checks, persisted render evidence, and manual visual inspection. VIS-01 WB-01 visual positioning is next. Page
-    business/runtime logic remains blocked until all visual steps complete.
+  truthful_progress_note: VIS-00 Global Shell and VIS-01 WB-01 visual positioning are implemented and verified. VIS-01 evidence includes TypeScript/Next build, production-server Chromium validation, 1440/1366/1200 layout checks, 520px Drawer behavior, zh-TW/zh-CN/en switching with zero business requests, canonical uploaded ORANGE ONE logo with user-approved white monochrome dark-header adaptation, persisted render evidence, and manual visual inspection. VIS-02 CORE-01 is current. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
