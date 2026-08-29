@@ -2,10 +2,12 @@
 
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
+import { LOCALES, LOCALE_LABELS, type TranslationKey } from "@/i18n/catalog";
+import { useI18n } from "@/i18n/LocaleProvider";
 
 type NavItem = {
   id: string;
-  label: string;
+  labelKey: TranslationKey;
   icon: "dashboard" | "project" | "asset" | "video" | "edit" | "qa" | "database" | "strategy";
 };
 
@@ -15,14 +17,14 @@ type AppShellProps = {
 };
 
 const NAV_ITEMS: readonly NavItem[] = [
-  { id: "NAV-01", label: "儀表板", icon: "dashboard" },
-  { id: "NAV-02", label: "專案 / 專題", icon: "project" },
-  { id: "NAV-03", label: "素材", icon: "asset" },
-  { id: "NAV-04", label: "影片", icon: "video" },
-  { id: "NAV-05", label: "剪輯配音", icon: "edit" },
-  { id: "NAV-06", label: "QA", icon: "qa" },
-  { id: "NAV-07", label: "資料庫", icon: "database" },
-  { id: "NAV-08", label: "戰略中心", icon: "strategy" },
+  { id: "NAV-01", labelKey: "global.nav.dashboard", icon: "dashboard" },
+  { id: "NAV-02", labelKey: "global.nav.project_topic", icon: "project" },
+  { id: "NAV-03", labelKey: "global.nav.asset", icon: "asset" },
+  { id: "NAV-04", labelKey: "global.nav.video", icon: "video" },
+  { id: "NAV-05", labelKey: "global.nav.edit_voice", icon: "edit" },
+  { id: "NAV-06", labelKey: "global.nav.qa", icon: "qa" },
+  { id: "NAV-07", labelKey: "global.nav.database", icon: "database" },
+  { id: "NAV-08", labelKey: "global.nav.strategy", icon: "strategy" },
 ] as const;
 
 function Icon({ name }: { name: NavItem["icon"] }) {
@@ -76,9 +78,12 @@ function HeaderIcon({ kind }: { kind: "bell" | "todo" | "running" }) {
 }
 
 export function AppShell({ children, activeNavId }: AppShellProps) {
+  const { locale, setLocale, t } = useI18n();
   const [expanded, setExpanded] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
   const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sidebarRef = useRef<HTMLElement | null>(null);
+  const languageRef = useRef<HTMLDivElement | null>(null);
 
   const cancelCollapse = () => {
     if (collapseTimer.current) {
@@ -101,27 +106,66 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && expanded && !sidebarRef.current?.contains(document.activeElement)) {
-        setExpanded(false);
+      if (event.key === "Escape") {
+        if (languageOpen) setLanguageOpen(false);
+        if (expanded && !sidebarRef.current?.contains(document.activeElement)) setExpanded(false);
+      }
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (languageOpen && languageRef.current && !languageRef.current.contains(event.target as Node)) {
+        setLanguageOpen(false);
       }
     };
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("pointerdown", onPointerDown);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointerdown", onPointerDown);
       cancelCollapse();
     };
-  }, [expanded]);
+  }, [expanded, languageOpen]);
 
   return (
     <div className="acpos-shell" data-vis-step="VIS-00">
       <header className="global-header" aria-label="Global Header">
-        <div className="brand-lockup" aria-label="ORANGE ONE">ORANGE ONE</div>
+        <div className="brand-lockup" aria-label="ORANGE ONE">{t("global.brand.name")}</div>
         <div className="header-cluster">
-          <button className="quick-button" type="button" aria-label="通知"><HeaderIcon kind="bell"/><span>—</span></button>
-          <button className="quick-button" type="button" aria-label="待辦"><HeaderIcon kind="todo"/><span>—</span></button>
-          <button className="quick-button" type="button" aria-label="執行中"><HeaderIcon kind="running"/><span>—</span></button>
-          <button className="language-button" type="button" aria-label="語言">zh-TW</button>
-          <button className="account-button" type="button" aria-label="帳戶登入"><span className="avatar-placeholder" aria-hidden="true"/><span className="account-label">—</span><span className="caret" aria-hidden="true">⌄</span></button>
+          <button className="quick-button" type="button" aria-label={t("global.header.notifications")}><HeaderIcon kind="bell"/><span>—</span></button>
+          <button className="quick-button" type="button" aria-label={t("global.header.todo")}><HeaderIcon kind="todo"/><span>—</span></button>
+          <button className="quick-button" type="button" aria-label={t("global.header.running")}><HeaderIcon kind="running"/><span>—</span></button>
+          <div className="language-control" ref={languageRef}>
+            <button
+              className="language-button"
+              type="button"
+              aria-label={t("global.header.language")}
+              aria-haspopup="listbox"
+              aria-expanded={languageOpen}
+              onClick={() => setLanguageOpen((open) => !open)}
+            >
+              {locale}
+            </button>
+            {languageOpen && (
+              <div className="language-menu" role="listbox" aria-label={t("global.header.language")}>
+                {LOCALES.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    role="option"
+                    aria-selected={locale === option}
+                    className={locale === option ? "language-option is-selected" : "language-option"}
+                    onClick={() => {
+                      setLocale(option);
+                      setLanguageOpen(false);
+                    }}
+                  >
+                    <span>{LOCALE_LABELS[option]}</span>
+                    <span className="language-code">{option}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <button className="account-button" type="button" aria-label={t("global.header.account")}><span className="avatar-placeholder" aria-hidden="true"/><span className="account-label">—</span><span className="caret" aria-hidden="true">⌄</span></button>
         </div>
       </header>
 
@@ -138,17 +182,18 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
         <nav className="nav-list">
           {NAV_ITEMS.map((item) => {
             const isActive = item.id === activeNavId;
+            const label = t(item.labelKey);
             return (
               <button
                 key={item.id}
                 type="button"
                 className={isActive ? "nav-item is-active" : "nav-item"}
-                aria-label={item.label}
+                aria-label={label}
                 aria-current={isActive ? "page" : undefined}
                 data-nav-id={item.id}
               >
                 <span className="nav-icon"><Icon name={item.icon}/></span>
-                <span className="nav-label" aria-hidden={!expanded}>{item.label}</span>
+                <span className="nav-label" aria-hidden={!expanded}>{label}</span>
               </button>
             );
           })}
