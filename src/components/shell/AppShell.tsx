@@ -26,7 +26,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { id: "NAV-04", labelKey: "global.nav.video", icon: "video", href: "/video" },
   { id: "NAV-05", labelKey: "global.nav.edit_voice", icon: "edit", href: "/edit" },
   { id: "NAV-06", labelKey: "global.nav.qa", icon: "qa", href: "/qa" },
-  { id: "NAV-07", labelKey: "global.nav.database", icon: "database" },
+  { id: "NAV-07", labelKey: "global.nav.database", icon: "database", href: "/database" },
   { id: "NAV-08", labelKey: "global.nav.strategy", icon: "strategy" },
 ] as const;
 
