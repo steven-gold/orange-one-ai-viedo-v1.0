@@ -7,358 +7,377 @@ authority:
   source_of_truth: authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
   purpose: Track actual website construction progress without becoming a second system/page authority.
   construction_truth_rule: Only mark a step COMPLETE when the corresponding files, render/test evidence, and validation actually exist.
-
 program_rules:
   sequence_lock:
-    - Complete visual positioning for all pages before page business/runtime logic construction.
-    - Visual construction order is Home -> Front Workspace -> Supporting Workspace -> Admin.
-    - After Front visual completion, remaining visual/logic/runtime order is dependency-planned by ACPOS construction sequencing.
-    - No page may invent sections, controls, routes, permissions, provider pickers, or business data outside Current Authority.
+  - Complete visual positioning for all pages before page business/runtime logic construction.
+  - Visual construction order is Home -> Front Workspace -> Supporting Workspace -> Admin.
+  - After Front visual completion, remaining visual/logic/runtime order is dependency-planned by ACPOS construction sequencing.
+  - No page may invent sections, controls, routes, permissions, provider pickers, or business data outside Current Authority.
   visual_phase_boundary:
     allowed:
-      - App shell rendering
-      - Exact section/component/control placement
-      - Page-local visual tabs/drawers/modals using local presentation state only
-      - Responsive layout behavior
-      - Loading/empty/error/disabled presentation states
-      - Real-data placeholders using authority missing-value rules
+    - App shell rendering
+    - Exact section/component/control placement
+    - Page-local visual tabs/drawers/modals using local presentation state only
+    - Responsive layout behavior
+    - Loading/empty/error/disabled presentation states
+    - Real-data placeholders using authority missing-value rules
     forbidden_until_logic_phase:
-      - Business API mutation
-      - Database mutation
-      - Provider execution
-      - Crawler execution
-      - Cross-page business handoff execution
-      - Fake business records or fabricated KPI/project/provider/version values
+    - Business API mutation
+    - Database mutation
+    - Provider execution
+    - Crawler execution
+    - Cross-page business handoff execution
+    - Fake business records or fabricated KPI/project/provider/version values
   page_visual_complete_gate:
-    - Current Page Authority loaded and page UID matched
-    - All registered visible sections/components/controls positioned
-    - Global Shell V1.9 and Global Visual inherited without page-local theme override
-    - No extra menu/page/header/control invented
-    - No clipping/overlap at desktop target widths
-    - Expanded/collapsed sidebar does not break workspace geometry
-    - Loading/empty/error/disabled states have defined visual treatment
-    - Render evidence captured and inspected
-    - Visual validation PASS
+  - Current Page Authority loaded and page UID matched
+  - All registered visible sections/components/controls positioned
+  - Global Shell V1.9 and Global Visual inherited without page-local theme override
+  - No extra menu/page/header/control invented
+  - No clipping/overlap at desktop target widths
+  - Expanded/collapsed sidebar does not break workspace geometry
+  - Loading/empty/error/disabled states have defined visual treatment
+  - Render evidence captured and inspected
+  - Visual validation PASS
   all_visual_complete_gate:
-    - VIS-00 through VIS-18 are COMPLETE
-    - No page business logic has been prematurely implemented
-    - Cross-page visual consistency audit PASS
-    - Navigation route-to-page visual audit PASS
+  - VIS-00 through VIS-18 are COMPLETE
+  - No page business logic has been prematurely implemented
+  - Cross-page visual consistency audit PASS
+  - Navigation route-to-page visual audit PASS
   page_logic_complete_gate:
-    - Required Control -> Action -> Gate -> Permission -> State/Transition path implemented
-    - API/DB/runtime binding implemented only where authority requires it
-    - Registered errors and recovery paths implemented
-    - Exact version/reference rules enforced
-    - Audit/correlation evidence exists
-    - Unit/integration validation PASS
+  - Required Control -> Action -> Gate -> Permission -> State/Transition path implemented
+  - API/DB/runtime binding implemented only where authority requires it
+  - Registered errors and recovery paths implemented
+  - Exact version/reference rules enforced
+  - Audit/correlation evidence exists
+  - Unit/integration validation PASS
   final_close_gate:
-    - All page logic steps COMPLETE
-    - Shared runtimes COMPLETE
-    - Five-department handoff E2E PASS
-    - Permission/IAM E2E PASS
-    - AI routing/provider E2E PASS where external environment is available
-    - Shared acquisition E2E PASS where external environment is available
-    - i18n PASS
-    - Runtime/error/rollback PASS
-    - No known P0/P1 construction gap
-
+  - All page logic steps COMPLETE
+  - Shared runtimes COMPLETE
+  - Five-department handoff E2E PASS
+  - Permission/IAM E2E PASS
+  - AI routing/provider E2E PASS where external environment is available
+  - Shared acquisition E2E PASS where external environment is available
+  - i18n PASS
+  - Runtime/error/rollback PASS
+  - No known P0/P1 construction gap
 current_state:
   program: ACTIVE
   authority_baseline: COMPLETE
   authority_file_positioning: COMPLETE
-  visual_construction: READY_TO_START
+  visual_construction: IN_PROGRESS
   page_logic_construction: BLOCKED_BY_ALL_VISUAL_COMPLETE_GATE
   shared_runtime_construction: BLOCKED_BY_ALL_VISUAL_COMPLETE_GATE
   e2e: NOT_STARTED
   deployment: NOT_STARTED
-  current_task: VIS-00_GLOBAL_SHELL_VISUAL_BASELINE
-
+  current_task: VIS-01_HOME_WB-01_VISUAL_POSITIONING
+  last_completed_task: VIS-00_GLOBAL_SHELL_VISUAL_BASELINE
 phase_1_visual_positioning:
   objective: Finish all page visual/layout positioning before business logic construction.
   execution_mode: STRICT_SEQUENTIAL
   steps:
-    - id: VIS-00
-      group: GLOBAL
-      page_uid: GLOBAL_SHELL_VISUAL
-      name: Global Shell + Global Visual implementation baseline
-      status: NOT_STARTED
-      scope: Header, sidebar, content slot, global typography/surface/button/input/state tokens only.
-    - id: VIS-01
-      group: HOME
-      page_uid: workspace:WB-01
-      name: 儀表板 / Dashboard
-      status: NOT_STARTED
-    - id: VIS-02
-      group: FRONT
-      page_uid: CORE-01
-      name: 專案 / 專題
-      status: NOT_STARTED
-    - id: VIS-03
-      group: FRONT
-      page_uid: ASSET-01
-      name: 素材
-      status: NOT_STARTED
-    - id: VIS-04
-      group: FRONT
-      page_uid: VIDEO-01
-      name: 影片
-      status: NOT_STARTED
-    - id: VIS-05
-      group: FRONT
-      page_uid: EDIT-01
-      name: 剪輯配音
-      status: NOT_STARTED
-    - id: VIS-06
-      group: FRONT
-      page_uid: QA-01
-      name: QA
-      status: NOT_STARTED
-    - id: VIS-07
-      group: FRONT
-      page_uid: admin:DB-01
-      name: 資料庫
-      status: NOT_STARTED
-      note: Page UID is ADMIN but canonical Front L1 navigation exposes it as the Database workspace entry.
-    - id: VIS-08
-      group: FRONT
-      page_uid: workspace:STR-01
-      name: 戰略中心
-      status: NOT_STARTED
-    - id: VIS-09
-      group: SUPPORTING_WORKSPACE
-      page_uid: workspace:INFO-01
-      name: 最新資訊工作區
-      status: NOT_STARTED
-      note: Supporting contextual/deep-link page; not a ninth Front L1.
-    - id: VIS-10
-      group: ADMIN
-      page_uid: admin:SYS-01
-      name: 系統維護 / 系統 AI 工作區
-      status: NOT_STARTED
-    - id: VIS-11
-      group: ADMIN
-      page_uid: admin:IAM-01
-      name: 帳戶與權限
-      status: NOT_STARTED
-    - id: VIS-12
-      group: ADMIN
-      page_uid: admin:DEV-01
-      name: 企業自動開發系統
-      status: NOT_STARTED
-    - id: VIS-13
-      group: ADMIN
-      page_uid: admin:SOC-01
-      name: 社群發布
-      status: NOT_STARTED
-    - id: VIS-14
-      group: ADMIN
-      page_uid: admin:ERP-01
-      name: ERP / 財務
-      status: NOT_STARTED
-    - id: VIS-15
-      group: ADMIN
-      page_uid: admin:AIAPI-01
-      name: AI API
-      status: NOT_STARTED
-    - id: VIS-16
-      group: ADMIN
-      page_uid: admin:SG-02
-      name: QA 評分項目
-      status: NOT_STARTED
-    - id: VIS-17
-      group: ADMIN
-      page_uid: admin:STR-01
-      name: 戰略中心管理
-      status: NOT_STARTED
-    - id: VIS-18
-      group: ADMIN
-      page_uid: admin:KB-01
-      name: 知識庫 / Knowledge & Experience
-      status: NOT_STARTED
-
+  - id: VIS-00
+    group: GLOBAL
+    page_uid: GLOBAL_SHELL_VISUAL
+    name: Global Shell + Global Visual implementation baseline
+    status: COMPLETE
+    scope: Header, sidebar, content slot, global typography/surface/button/input/state tokens only.
+    evidence:
+      implementation_commit: f9bb2f4635f985ddf180ac511f605ae4f29b31ba
+      final_validation_run_id: 33251062067
+      final_evidence_artifact_id: 9714380396
+      artifact_sha256: f35bb5d63e8cf3aec5969828870cbb6a38ba552c9f98fbb4e845f9b466122ef9
+      typecheck: PASS
+      next_build: PASS
+      production_server: PASS
+      chromium_geometry: PASS
+      manual_visual_inspection: PASS
+      viewport: 1440x900
+      render_evidence:
+      - docs/construction/evidence/VIS-00/vis00-collapsed-1440x900.png
+      - docs/construction/evidence/VIS-00/vis00-expanded-1440x900.png
+      - docs/construction/evidence/VIS-00/vis00-geometry.json
+      verified_geometry:
+        header_height: 58
+        sidebar_collapsed_width: 64
+        sidebar_expanded_width: 221
+        workspace_origin: x=78,y=68
+        workspace_reflow_on_expand: false
+        nav_count: 8
+        nav_hit_target: 44x44
+      brand_lockup_note: ORANGE ONE text lockup rendered; no generated/recolored substitute logo asset was introduced.
+  - id: VIS-01
+    group: HOME
+    page_uid: workspace:WB-01
+    name: 儀表板 / Dashboard
+    status: NOT_STARTED
+  - id: VIS-02
+    group: FRONT
+    page_uid: CORE-01
+    name: 專案 / 專題
+    status: NOT_STARTED
+  - id: VIS-03
+    group: FRONT
+    page_uid: ASSET-01
+    name: 素材
+    status: NOT_STARTED
+  - id: VIS-04
+    group: FRONT
+    page_uid: VIDEO-01
+    name: 影片
+    status: NOT_STARTED
+  - id: VIS-05
+    group: FRONT
+    page_uid: EDIT-01
+    name: 剪輯配音
+    status: NOT_STARTED
+  - id: VIS-06
+    group: FRONT
+    page_uid: QA-01
+    name: QA
+    status: NOT_STARTED
+  - id: VIS-07
+    group: FRONT
+    page_uid: admin:DB-01
+    name: 資料庫
+    status: NOT_STARTED
+    note: Page UID is ADMIN but canonical Front L1 navigation exposes it as the Database workspace entry.
+  - id: VIS-08
+    group: FRONT
+    page_uid: workspace:STR-01
+    name: 戰略中心
+    status: NOT_STARTED
+  - id: VIS-09
+    group: SUPPORTING_WORKSPACE
+    page_uid: workspace:INFO-01
+    name: 最新資訊工作區
+    status: NOT_STARTED
+    note: Supporting contextual/deep-link page; not a ninth Front L1.
+  - id: VIS-10
+    group: ADMIN
+    page_uid: admin:SYS-01
+    name: 系統維護 / 系統 AI 工作區
+    status: NOT_STARTED
+  - id: VIS-11
+    group: ADMIN
+    page_uid: admin:IAM-01
+    name: 帳戶與權限
+    status: NOT_STARTED
+  - id: VIS-12
+    group: ADMIN
+    page_uid: admin:DEV-01
+    name: 企業自動開發系統
+    status: NOT_STARTED
+  - id: VIS-13
+    group: ADMIN
+    page_uid: admin:SOC-01
+    name: 社群發布
+    status: NOT_STARTED
+  - id: VIS-14
+    group: ADMIN
+    page_uid: admin:ERP-01
+    name: ERP / 財務
+    status: NOT_STARTED
+  - id: VIS-15
+    group: ADMIN
+    page_uid: admin:AIAPI-01
+    name: AI API
+    status: NOT_STARTED
+  - id: VIS-16
+    group: ADMIN
+    page_uid: admin:SG-02
+    name: QA 評分項目
+    status: NOT_STARTED
+  - id: VIS-17
+    group: ADMIN
+    page_uid: admin:STR-01
+    name: 戰略中心管理
+    status: NOT_STARTED
+  - id: VIS-18
+    group: ADMIN
+    page_uid: admin:KB-01
+    name: 知識庫 / Knowledge & Experience
+    status: NOT_STARTED
 phase_2_logic_and_runtime:
   entry_gate: ALL_VISUAL_COMPLETE
   execution_mode: DEPENDENCY_ORDER_AFTER_FRONTEND_AS_PLANNED_BY_ACPOS
-  rationale: Logic order follows dependency and system ownership rather than menu order so downstream pages do not bind to unfinished foundations.
+  rationale: Logic order follows dependency and system ownership rather than menu order so downstream pages do not bind to unfinished
+    foundations.
   shared_foundation:
-    - id: LOG-F00
-      name: Canonical route/page registry + AppShell + i18n + shared UI state/error/audit plumbing
-      status: BLOCKED
-    - id: LOG-F01
-      name: Exact object/version/ref resolver + correlation/audit envelope
-      status: BLOCKED
-    - id: LOG-F02
-      name: Permission enforcement foundation
-      status: BLOCKED
-    - id: LOG-F03
-      name: Shared state/event integration foundation
-      status: BLOCKED
-    - id: LOG-F04
-      name: AI execution/router/provider-profile foundation
-      owner_page: admin:AIAPI-01
-      status: BLOCKED
-    - id: LOG-F05
-      name: ACPOS Shared External Data Acquisition Runtime
-      status: BLOCKED
-      consumers:
-        - admin:KB-01
-        - workspace:INFO-01
-        - admin:STR-01
-        - admin:DEV-01
-        - admin:SOC-01
+  - id: LOG-F00
+    name: Canonical route/page registry + AppShell + i18n + shared UI state/error/audit plumbing
+    status: BLOCKED
+  - id: LOG-F01
+    name: Exact object/version/ref resolver + correlation/audit envelope
+    status: BLOCKED
+  - id: LOG-F02
+    name: Permission enforcement foundation
+    status: BLOCKED
+  - id: LOG-F03
+    name: Shared state/event integration foundation
+    status: BLOCKED
+  - id: LOG-F04
+    name: AI execution/router/provider-profile foundation
+    owner_page: admin:AIAPI-01
+    status: BLOCKED
+  - id: LOG-F05
+    name: ACPOS Shared External Data Acquisition Runtime
+    status: BLOCKED
+    consumers:
+    - admin:KB-01
+    - workspace:INFO-01
+    - admin:STR-01
+    - admin:DEV-01
+    - admin:SOC-01
   page_logic_order:
-    - order: 1
-      id: LOG-01
-      page_uid: admin:IAM-01
-      reason: Permission enforcement must exist before effectful page actions.
-      status: BLOCKED
-    - order: 2
-      id: LOG-02
-      page_uid: admin:DB-01
-      reason: Exact data/traceability projections and relationship visibility support later integration/debug.
-      status: BLOCKED
-    - order: 3
-      id: LOG-03
-      page_uid: admin:AIAPI-01
-      reason: ProviderModelProfile governance/routing is shared by AI-enabled domains.
-      status: BLOCKED
-    - order: 4
-      id: LOG-04
-      page_uid: admin:SG-02
-      reason: QA criteria/gate policy must be governed before final QA runtime closure.
-      status: BLOCKED
-    - order: 5
-      id: LOG-05
-      page_uid: admin:KB-01
-      reason: Knowledge/Experience lifecycle consumes shared acquisition/context/experience foundations.
-      status: BLOCKED
-    - order: 6
-      id: LOG-06
-      page_uid: workspace:INFO-01
-      reason: Fact/Evidence/Context Candidate flow reuses current knowledge/context services and shared acquisition.
-      status: BLOCKED
-    - order: 7
-      id: LOG-07
-      page_uid: admin:SYS-01
-      reason: System AI workbench binds ACPOS Brain/system truth after shared foundations exist.
-      status: BLOCKED
-    - order: 8
-      id: LOG-08
-      page_uid: CORE-01
-      reason: Starts canonical production domain chain and project/topic/blueprint/conversation logic.
-      status: BLOCKED
-    - order: 9
-      id: LOG-09
-      page_uid: ASSET-01
-      reason: Consumes exact CORE production package.
-      status: BLOCKED
-    - order: 10
-      id: LOG-10
-      page_uid: VIDEO-01
-      reason: Consumes exact ASSET versions and governed script/context.
-      status: BLOCKED
-    - order: 11
-      id: LOG-11
-      page_uid: EDIT-01
-      reason: Consumes VIDEO output and performs integrated Editing+Voice runtime.
-      status: BLOCKED
-    - order: 12
-      id: LOG-12
-      page_uid: QA-01
-      reason: Requires exact completed post-production output plus SG-02 governed criteria.
-      status: BLOCKED
-    - order: 13
-      id: LOG-13
-      page_uid: admin:STR-01
-      reason: Strategy administration governs sources/watchlists/trends/decision lab after knowledge/info foundations.
-      status: BLOCKED
-    - order: 14
-      id: LOG-14
-      page_uid: workspace:STR-01
-      reason: Strategy AI workspace consumes governed strategic intelligence/context.
-      status: BLOCKED
-    - order: 15
-      id: LOG-15
-      page_uid: workspace:WB-01
-      reason: Dashboard logic is projection-heavy and should bind after upstream page states exist; visual remains first, logic is late.
-      status: BLOCKED
-    - order: 16
-      id: LOG-16
-      page_uid: admin:DEV-01
-      reason: Enterprise discovery/outreach uses permission, acquisition, AI routing and audit foundations.
-      status: BLOCKED
-    - order: 17
-      id: LOG-17
-      page_uid: admin:SOC-01
-      reason: Social target/publish workflow uses governed release/target/acquisition/platform constraints.
-      status: BLOCKED
-    - order: 18
-      id: LOG-18
-      page_uid: admin:ERP-01
-      reason: Finance projection/cost visibility closes after production/provider/outreach cost sources are available.
-      status: BLOCKED
-
+  - order: 1
+    id: LOG-01
+    page_uid: admin:IAM-01
+    reason: Permission enforcement must exist before effectful page actions.
+    status: BLOCKED
+  - order: 2
+    id: LOG-02
+    page_uid: admin:DB-01
+    reason: Exact data/traceability projections and relationship visibility support later integration/debug.
+    status: BLOCKED
+  - order: 3
+    id: LOG-03
+    page_uid: admin:AIAPI-01
+    reason: ProviderModelProfile governance/routing is shared by AI-enabled domains.
+    status: BLOCKED
+  - order: 4
+    id: LOG-04
+    page_uid: admin:SG-02
+    reason: QA criteria/gate policy must be governed before final QA runtime closure.
+    status: BLOCKED
+  - order: 5
+    id: LOG-05
+    page_uid: admin:KB-01
+    reason: Knowledge/Experience lifecycle consumes shared acquisition/context/experience foundations.
+    status: BLOCKED
+  - order: 6
+    id: LOG-06
+    page_uid: workspace:INFO-01
+    reason: Fact/Evidence/Context Candidate flow reuses current knowledge/context services and shared acquisition.
+    status: BLOCKED
+  - order: 7
+    id: LOG-07
+    page_uid: admin:SYS-01
+    reason: System AI workbench binds ACPOS Brain/system truth after shared foundations exist.
+    status: BLOCKED
+  - order: 8
+    id: LOG-08
+    page_uid: CORE-01
+    reason: Starts canonical production domain chain and project/topic/blueprint/conversation logic.
+    status: BLOCKED
+  - order: 9
+    id: LOG-09
+    page_uid: ASSET-01
+    reason: Consumes exact CORE production package.
+    status: BLOCKED
+  - order: 10
+    id: LOG-10
+    page_uid: VIDEO-01
+    reason: Consumes exact ASSET versions and governed script/context.
+    status: BLOCKED
+  - order: 11
+    id: LOG-11
+    page_uid: EDIT-01
+    reason: Consumes VIDEO output and performs integrated Editing+Voice runtime.
+    status: BLOCKED
+  - order: 12
+    id: LOG-12
+    page_uid: QA-01
+    reason: Requires exact completed post-production output plus SG-02 governed criteria.
+    status: BLOCKED
+  - order: 13
+    id: LOG-13
+    page_uid: admin:STR-01
+    reason: Strategy administration governs sources/watchlists/trends/decision lab after knowledge/info foundations.
+    status: BLOCKED
+  - order: 14
+    id: LOG-14
+    page_uid: workspace:STR-01
+    reason: Strategy AI workspace consumes governed strategic intelligence/context.
+    status: BLOCKED
+  - order: 15
+    id: LOG-15
+    page_uid: workspace:WB-01
+    reason: Dashboard logic is projection-heavy and should bind after upstream page states exist; visual remains first, logic is late.
+    status: BLOCKED
+  - order: 16
+    id: LOG-16
+    page_uid: admin:DEV-01
+    reason: Enterprise discovery/outreach uses permission, acquisition, AI routing and audit foundations.
+    status: BLOCKED
+  - order: 17
+    id: LOG-17
+    page_uid: admin:SOC-01
+    reason: Social target/publish workflow uses governed release/target/acquisition/platform constraints.
+    status: BLOCKED
+  - order: 18
+    id: LOG-18
+    page_uid: admin:ERP-01
+    reason: Finance projection/cost visibility closes after production/provider/outreach cost sources are available.
+    status: BLOCKED
 phase_3_cross_page_closure:
   entry_gate: ALL_PAGE_LOGIC_COMPLETE
   steps:
-    - id: INT-01
-      name: CORE -> ASSET exact handoff E2E
-      status: BLOCKED
-    - id: INT-02
-      name: ASSET -> VIDEO exact handoff E2E
-      status: BLOCKED
-    - id: INT-03
-      name: VIDEO -> EDIT+VOICE exact handoff E2E
-      status: BLOCKED
-    - id: INT-04
-      name: EDIT+VOICE -> QA exact handoff E2E
-      status: BLOCKED
-    - id: INT-05
-      name: QA correction -> original owner -> recheck E2E
-      status: BLOCKED
-    - id: INT-06
-      name: Approved Knowledge / INFO Context Candidate / Strategy governed consumption
-      status: BLOCKED
-    - id: INT-07
-      name: ACPOS Experience -> Learning Candidate -> governed adoption loop
-      status: BLOCKED
-    - id: INT-08
-      name: Shared Acquisition consumers and source/rights/rate/audit boundaries
-      status: BLOCKED
-    - id: INT-09
-      name: IAM visibility/action enforcement across Front/Admin
-      status: BLOCKED
-    - id: INT-10
-      name: AI routing/provider fallback/trace lineage
-      status: BLOCKED
-
+  - id: INT-01
+    name: CORE -> ASSET exact handoff E2E
+    status: BLOCKED
+  - id: INT-02
+    name: ASSET -> VIDEO exact handoff E2E
+    status: BLOCKED
+  - id: INT-03
+    name: VIDEO -> EDIT+VOICE exact handoff E2E
+    status: BLOCKED
+  - id: INT-04
+    name: EDIT+VOICE -> QA exact handoff E2E
+    status: BLOCKED
+  - id: INT-05
+    name: QA correction -> original owner -> recheck E2E
+    status: BLOCKED
+  - id: INT-06
+    name: Approved Knowledge / INFO Context Candidate / Strategy governed consumption
+    status: BLOCKED
+  - id: INT-07
+    name: ACPOS Experience -> Learning Candidate -> governed adoption loop
+    status: BLOCKED
+  - id: INT-08
+    name: Shared Acquisition consumers and source/rights/rate/audit boundaries
+    status: BLOCKED
+  - id: INT-09
+    name: IAM visibility/action enforcement across Front/Admin
+    status: BLOCKED
+  - id: INT-10
+    name: AI routing/provider fallback/trace lineage
+    status: BLOCKED
 phase_4_final_validation:
   steps:
-    - id: VAL-01
-      name: Visual regression all pages
-      status: BLOCKED
-    - id: VAL-02
-      name: 18-page Control/Action/Gate/Permission/State validation
-      status: BLOCKED
-    - id: VAL-03
-      name: API binding validation
-      status: BLOCKED
-    - id: VAL-04
-      name: Database binding validation
-      status: BLOCKED
-    - id: VAL-05
-      name: Runtime/error/retry/rollback validation
-      status: BLOCKED
-    - id: VAL-06
-      name: zh-TW / zh-CN / en i18n validation
-      status: BLOCKED
-    - id: VAL-07
-      name: E2E and deployment-readiness validation
-      status: BLOCKED
-
+  - id: VAL-01
+    name: Visual regression all pages
+    status: BLOCKED
+  - id: VAL-02
+    name: 18-page Control/Action/Gate/Permission/State validation
+    status: BLOCKED
+  - id: VAL-03
+    name: API binding validation
+    status: BLOCKED
+  - id: VAL-04
+    name: Database binding validation
+    status: BLOCKED
+  - id: VAL-05
+    name: Runtime/error/retry/rollback validation
+    status: BLOCKED
+  - id: VAL-06
+    name: zh-TW / zh-CN / en i18n validation
+    status: BLOCKED
+  - id: VAL-07
+    name: E2E and deployment-readiness validation
+    status: BLOCKED
 progress_summary:
   visual_steps_total: 19
-  visual_steps_complete: 0
+  visual_steps_complete: 1
   page_logic_steps_total: 18
   page_logic_steps_complete: 0
   shared_foundation_steps_total: 6
@@ -367,4 +386,6 @@ progress_summary:
   cross_page_steps_complete: 0
   final_validation_steps_total: 7
   final_validation_steps_complete: 0
-  truthful_progress_note: Authority baseline is complete. Website visual implementation has not yet been executed at creation of this progress file.
+  truthful_progress_note: VIS-00 Global Shell + Global Visual baseline is implemented and verified by TypeScript, Next build, production-server
+    Chromium geometry checks, persisted render evidence, and manual visual inspection. VIS-01 WB-01 visual positioning is next. Page
+    business/runtime logic remains blocked until all visual steps complete.
