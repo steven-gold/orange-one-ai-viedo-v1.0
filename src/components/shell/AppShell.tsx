@@ -11,6 +11,7 @@ type NavItem = {
   id: string;
   labelKey: TranslationKey;
   icon: "dashboard" | "project" | "asset" | "video" | "edit" | "qa" | "database" | "strategy";
+  href?: string;
 };
 
 type AppShellProps = {
@@ -19,8 +20,8 @@ type AppShellProps = {
 };
 
 const NAV_ITEMS: readonly NavItem[] = [
-  { id: "NAV-01", labelKey: "global.nav.dashboard", icon: "dashboard" },
-  { id: "NAV-02", labelKey: "global.nav.project_topic", icon: "project" },
+  { id: "NAV-01", labelKey: "global.nav.dashboard", icon: "dashboard", href: "/" },
+  { id: "NAV-02", labelKey: "global.nav.project_topic", icon: "project", href: "/core" },
   { id: "NAV-03", labelKey: "global.nav.asset", icon: "asset" },
   { id: "NAV-04", labelKey: "global.nav.video", icon: "video" },
   { id: "NAV-05", labelKey: "global.nav.edit_voice", icon: "edit" },
@@ -187,6 +188,26 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
           {NAV_ITEMS.map((item) => {
             const isActive = item.id === activeNavId;
             const label = t(item.labelKey);
+            const content = (
+              <>
+                <span className="nav-icon"><Icon name={item.icon}/></span>
+                <span className="nav-label" aria-hidden={!expanded}>{label}</span>
+              </>
+            );
+            if (item.href) {
+              return (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  className={isActive ? "nav-item is-active" : "nav-item"}
+                  aria-label={label}
+                  aria-current={isActive ? "page" : undefined}
+                  data-nav-id={item.id}
+                >
+                  {content}
+                </a>
+              );
+            }
             return (
               <button
                 key={item.id}
@@ -196,8 +217,7 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
                 aria-current={isActive ? "page" : undefined}
                 data-nav-id={item.id}
               >
-                <span className="nav-icon"><Icon name={item.icon}/></span>
-                <span className="nav-label" aria-hidden={!expanded}>{label}</span>
+                {content}
               </button>
             );
           })}
