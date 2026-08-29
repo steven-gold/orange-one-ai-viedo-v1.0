@@ -51,7 +51,7 @@ jobs:
           path: artifacts/vis01
           if-no-files-found: error
       - name: Sync user-approved logo color policy into Current Shell Authority
-        if: github.event.head_commit.message != 'authority: sync user-approved logo color policy'
+        if: "github.event.head_commit.message != 'authority: sync user-approved logo color policy'"
         run: |
           python - <<'PY'
           from pathlib import Path
