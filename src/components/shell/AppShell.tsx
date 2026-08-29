@@ -25,7 +25,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { id: "NAV-03", labelKey: "global.nav.asset", icon: "asset", href: "/assets" },
   { id: "NAV-04", labelKey: "global.nav.video", icon: "video", href: "/video" },
   { id: "NAV-05", labelKey: "global.nav.edit_voice", icon: "edit", href: "/edit" },
-  { id: "NAV-06", labelKey: "global.nav.qa", icon: "qa" },
+  { id: "NAV-06", labelKey: "global.nav.qa", icon: "qa", href: "/qa" },
   { id: "NAV-07", labelKey: "global.nav.database", icon: "database" },
   { id: "NAV-08", labelKey: "global.nav.strategy", icon: "strategy" },
 ] as const;
@@ -139,32 +139,12 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
           <button className="quick-button" type="button" aria-label={t("global.header.todo")}><HeaderIcon kind="todo"/><span>—</span></button>
           <button className="quick-button" type="button" aria-label={t("global.header.running")}><HeaderIcon kind="running"/><span>—</span></button>
           <div className={languageStyles.control} ref={languageRef}>
-            <button
-              className={languageStyles.button}
-              type="button"
-              aria-label={t("global.header.language")}
-              aria-haspopup="listbox"
-              aria-expanded={languageOpen}
-              onClick={() => setLanguageOpen((open) => !open)}
-            >
-              {locale}
-            </button>
+            <button className={languageStyles.button} type="button" aria-label={t("global.header.language")} aria-haspopup="listbox" aria-expanded={languageOpen} onClick={() => setLanguageOpen((open) => !open)}>{locale}</button>
             {languageOpen && (
               <div className={languageStyles.menu} role="listbox" aria-label={t("global.header.language")}>
                 {LOCALES.map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    role="option"
-                    aria-selected={locale === option}
-                    className={`${languageStyles.option} ${locale === option ? languageStyles.selected : ""}`}
-                    onClick={() => {
-                      setLocale(option);
-                      setLanguageOpen(false);
-                    }}
-                  >
-                    <span>{LOCALE_LABELS[option]}</span>
-                    <span className={languageStyles.code}>{option}</span>
+                  <button key={option} type="button" role="option" aria-selected={locale === option} className={`${languageStyles.option} ${locale === option ? languageStyles.selected : ""}`} onClick={() => { setLocale(option); setLanguageOpen(false); }}>
+                    <span>{LOCALE_LABELS[option]}</span><span className={languageStyles.code}>{option}</span>
                   </button>
                 ))}
               </div>
@@ -174,52 +154,15 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
         </div>
       </header>
 
-      <aside
-        ref={sidebarRef}
-        className={expanded ? "global-sidebar is-expanded" : "global-sidebar"}
-        aria-label="Primary Navigation"
-        onPointerEnter={openSidebar}
-        onPointerLeave={scheduleCollapse}
-        onFocusCapture={openSidebar}
-        onBlurCapture={scheduleCollapse}
-      >
+      <aside ref={sidebarRef} className={expanded ? "global-sidebar is-expanded" : "global-sidebar"} aria-label="Primary Navigation" onPointerEnter={openSidebar} onPointerLeave={scheduleCollapse} onFocusCapture={openSidebar} onBlurCapture={scheduleCollapse}>
         <div className="sidebar-surface" aria-hidden={!expanded} />
         <nav className="nav-list">
           {NAV_ITEMS.map((item) => {
             const isActive = item.id === activeNavId;
             const label = t(item.labelKey);
-            const content = (
-              <>
-                <span className="nav-icon"><Icon name={item.icon}/></span>
-                <span className="nav-label" aria-hidden={!expanded}>{label}</span>
-              </>
-            );
-            if (item.href) {
-              return (
-                <a
-                  key={item.id}
-                  href={item.href}
-                  className={isActive ? "nav-item is-active" : "nav-item"}
-                  aria-label={label}
-                  aria-current={isActive ? "page" : undefined}
-                  data-nav-id={item.id}
-                >
-                  {content}
-                </a>
-              );
-            }
-            return (
-              <button
-                key={item.id}
-                type="button"
-                className={isActive ? "nav-item is-active" : "nav-item"}
-                aria-label={label}
-                aria-current={isActive ? "page" : undefined}
-                data-nav-id={item.id}
-              >
-                {content}
-              </button>
-            );
+            const content = <><span className="nav-icon"><Icon name={item.icon}/></span><span className="nav-label" aria-hidden={!expanded}>{label}</span></>;
+            if (item.href) return <a key={item.id} href={item.href} className={isActive ? "nav-item is-active" : "nav-item"} aria-label={label} aria-current={isActive ? "page" : undefined} data-nav-id={item.id}>{content}</a>;
+            return <button key={item.id} type="button" className={isActive ? "nav-item is-active" : "nav-item"} aria-label={label} aria-current={isActive ? "page" : undefined} data-nav-id={item.id}>{content}</button>;
           })}
         </nav>
       </aside>
