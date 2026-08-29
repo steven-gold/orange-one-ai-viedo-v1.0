@@ -1,0 +1,305 @@
+.page {
+  min-width: 1280px;
+  min-height: 100%;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.contextBar,
+.panel {
+  min-width: 0;
+  border: 1px solid var(--border-normal);
+  border-radius: var(--panel-radius);
+  background: var(--surface-l1);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.015);
+}
+
+.contextBar {
+  min-height: 72px;
+  overflow: hidden;
+}
+
+.contextGrid {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: minmax(120px,1fr) minmax(120px,1fr) minmax(130px,1.05fr) minmax(105px,.8fr) 154px 102px minmax(112px,.9fr) minmax(150px,1.2fr);
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+.primaryGrid {
+  display: grid;
+  grid-template-columns: minmax(260px,1fr) minmax(720px,3fr) minmax(280px,1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.panel {
+  padding: 16px;
+}
+
+.sectionTitle {
+  margin: 0 0 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 650;
+}
+
+.stack,
+.boundGroups > div,
+.runtimeGrid {
+  display: grid;
+  gap: 8px;
+}
+
+.readonly,
+.inputControl,
+.listControl,
+.rangeControl {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.readonly {
+  min-height: 54px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: rgba(10,15,36,.72);
+}
+
+.readonly span,
+.inputControl span,
+.listControl > span,
+.rangeControl span {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.readonly strong {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.inputControl select,
+.inputControl input {
+  width: 100%;
+  height: 40px;
+  min-width: 0;
+  padding: 0 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--button-radius);
+  background: var(--surface-input);
+  color: var(--text-secondary);
+}
+
+.button,
+.segmented button {
+  min-height: 40px;
+  min-width: 0;
+  padding: 0 11px;
+  border: 1px solid var(--border-normal);
+  border-radius: var(--button-radius);
+  background: var(--surface-l2);
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.primary {
+  background: linear-gradient(135deg,var(--purple-secondary),var(--purple-primary));
+  color: var(--text-primary);
+}
+
+.button:disabled,
+.segmented button:disabled,
+.inputControl select:disabled,
+.inputControl input:disabled,
+.rangeControl input:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.segmented button {
+  min-height: 36px;
+  padding: 0 7px;
+}
+
+.segmented .activeSegment {
+  border-color: var(--border-active);
+  background: var(--active-bg);
+  color: var(--text-primary);
+}
+
+.listEmpty {
+  min-height: 146px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 10px;
+  background: rgba(5,8,22,.45);
+  color: var(--text-muted);
+}
+
+.divider {
+  height: 1px;
+  margin: 14px 0;
+  background: var(--border-subtle);
+}
+
+.boundGroups {
+  display: grid;
+  gap: 8px;
+}
+
+.boundGroups > div:not(:empty) {
+  display: grid;
+  gap: 8px;
+}
+
+.previewPanel {
+  min-height: 560px;
+}
+
+.titleRow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.compareControls {
+  min-width: 0;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.compareControls .button,
+.compareControls .inputControl {
+  min-width: 110px;
+}
+
+.candidateNote {
+  flex-basis: 100%;
+  text-align: right;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.previewComponent {
+  margin-top: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.viewerScreen {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 405px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  background: #050816;
+  color: var(--text-muted);
+}
+
+.transport {
+  display: grid;
+  grid-template-columns: auto minmax(180px,1fr) minmax(92px,auto) auto auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.rangeControl input {
+  width: 100%;
+  height: 40px;
+}
+
+.rightPanel .button {
+  width: 100%;
+}
+
+.conditional {
+  min-height: 96px;
+}
+
+.conditionNotice {
+  min-height: 54px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.correctionRuntimeGrid {
+  display: grid;
+  grid-template-columns: minmax(0,1.78fr) minmax(320px,1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.runtimeGrid {
+  grid-template-columns: repeat(2,minmax(0,1fr));
+}
+
+.runtimeGrid .button {
+  width: 100%;
+}
+
+.evaluationGrid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 8px;
+  align-items: end;
+}
+
+.manifestGrid {
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  gap: 8px;
+}
+
+.statusPanel {
+  background: rgba(12,16,38,.76);
+}
+
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  gap: 8px;
+}
+
+@media (max-width: 1439px) {
+  .contextGrid {
+    grid-template-columns: 118px 118px 126px 104px 148px 96px 110px 148px;
+  }
+
+  .evaluationGrid {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+  }
+
+  .manifestGrid,
+  .statusGrid {
+    grid-template-columns: repeat(4,minmax(0,1fr));
+  }
+}
