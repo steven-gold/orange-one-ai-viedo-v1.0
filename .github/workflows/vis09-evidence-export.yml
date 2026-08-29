@@ -1,0 +1,28 @@
+name: VIS-09 evidence export
+on:
+  push:
+    branches:
+      - acpos-vis09-staging
+    paths:
+      - .github/workflows/vis09-evidence-export.yml
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis09-staging
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vis09-manual-evidence
+          path: docs/construction/evidence/VIS-09/
+          if-no-files-found: error
+      - name: Remove export workflow
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git rm .github/workflows/vis09-evidence-export.yml
+          git commit -m "chore(vis09): remove evidence export workflow"
+          git push origin HEAD:acpos-vis09-staging
