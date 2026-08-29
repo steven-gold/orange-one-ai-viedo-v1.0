@@ -1,11 +1,17 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
 type NavItem = {
   id: string;
   label: string;
   icon: "dashboard" | "project" | "asset" | "video" | "edit" | "qa" | "database" | "strategy";
+};
+
+type AppShellProps = {
+  children?: ReactNode;
+  activeNavId?: string;
 };
 
 const NAV_ITEMS: readonly NavItem[] = [
@@ -69,7 +75,7 @@ function HeaderIcon({ kind }: { kind: "bell" | "todo" | "running" }) {
   return <svg {...common}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>;
 }
 
-export function AppShell() {
+export function AppShell({ children, activeNavId }: AppShellProps) {
   const [expanded, setExpanded] = useState(false);
   const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sidebarRef = useRef<HTMLElement | null>(null);
@@ -111,9 +117,9 @@ export function AppShell() {
       <header className="global-header" aria-label="Global Header">
         <div className="brand-lockup" aria-label="ORANGE ONE">ORANGE ONE</div>
         <div className="header-cluster">
-          <button className="quick-button" type="button" aria-label="通知"><HeaderIcon kind="bell"/><span>0</span></button>
-          <button className="quick-button" type="button" aria-label="待辦"><HeaderIcon kind="todo"/><span>0</span></button>
-          <button className="quick-button" type="button" aria-label="執行中"><HeaderIcon kind="running"/><span>0</span></button>
+          <button className="quick-button" type="button" aria-label="通知"><HeaderIcon kind="bell"/><span>—</span></button>
+          <button className="quick-button" type="button" aria-label="待辦"><HeaderIcon kind="todo"/><span>—</span></button>
+          <button className="quick-button" type="button" aria-label="執行中"><HeaderIcon kind="running"/><span>—</span></button>
           <button className="language-button" type="button" aria-label="語言">zh-TW</button>
           <button className="account-button" type="button" aria-label="帳戶登入"><span className="avatar-placeholder" aria-hidden="true"/><span className="account-label">—</span><span className="caret" aria-hidden="true">⌄</span></button>
         </div>
@@ -130,22 +136,26 @@ export function AppShell() {
       >
         <div className="sidebar-surface" aria-hidden={!expanded} />
         <nav className="nav-list">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className="nav-item"
-              aria-label={item.label}
-              data-nav-id={item.id}
-            >
-              <span className="nav-icon"><Icon name={item.icon}/></span>
-              <span className="nav-label" aria-hidden={!expanded}>{item.label}</span>
-            </button>
-          ))}
+          {NAV_ITEMS.map((item) => {
+            const isActive = item.id === activeNavId;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={isActive ? "nav-item is-active" : "nav-item"}
+                aria-label={item.label}
+                aria-current={isActive ? "page" : undefined}
+                data-nav-id={item.id}
+              >
+                <span className="nav-icon"><Icon name={item.icon}/></span>
+                <span className="nav-label" aria-hidden={!expanded}>{item.label}</span>
+              </button>
+            );
+          })}
         </nav>
       </aside>
 
-      <main className="workspace-slot" aria-label="Page Content Slot" />
+      <main className="workspace-slot" aria-label="Page Content Slot">{children}</main>
     </div>
   );
 }

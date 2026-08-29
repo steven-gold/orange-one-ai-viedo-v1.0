@@ -1,0 +1,244 @@
+.page {
+  min-width: 1280px;
+  min-height: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+  min-width: 1280px;
+  padding: 16px;
+}
+
+.card {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border-normal);
+  border-radius: var(--panel-radius);
+  background: var(--surface-l1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.015);
+  overflow: hidden;
+}
+
+.kpiCard {
+  grid-column: span 2;
+  height: 136px;
+}
+
+.project,
+.production {
+  grid-column: span 8;
+}
+
+.project { height: 320px; }
+.production { height: 280px; }
+
+.company-progress,
+.notifications {
+  grid-column: span 4;
+}
+
+.company-progress { height: 320px; }
+.notifications { height: 280px; }
+
+.information {
+  grid-column: span 4;
+  height: 240px;
+}
+
+.recent {
+  grid-column: span 12;
+  height: 220px;
+}
+
+.cardHeader {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardTitle {
+  min-width: 0;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
+}
+
+.viewButton,
+.closeButton {
+  height: 40px;
+  min-width: 88px;
+  flex: 0 0 auto;
+  padding: 0 14px;
+  border: 1px solid var(--border-normal);
+  border-radius: var(--button-radius);
+  background: var(--surface-l2);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+}
+
+.viewButton:hover,
+.closeButton:hover {
+  color: var(--text-primary);
+  border-color: var(--border-active);
+  background: var(--purple-hover);
+}
+
+.viewButton:disabled,
+.closeButton:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.cardBody {
+  height: calc(100% - 52px);
+  margin-top: 12px;
+  min-height: 0;
+  overflow: auto;
+}
+
+.kpiValue {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  color: var(--text-primary);
+  font-size: 32px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.kpiProgressBody {
+  display: grid;
+  grid-template-rows: 1fr 6px;
+  gap: 10px;
+  height: 100%;
+}
+
+.progressTrack {
+  height: 6px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(174, 183, 217, 0.14);
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--purple-secondary), var(--purple-primary));
+}
+
+.emptyState,
+.errorState {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.errorState { color: var(--status-error); }
+
+.loadingKpi,
+.loadingBody {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.skeletonLine,
+.skeletonLineShort {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(174, 183, 217, 0.12);
+}
+
+.skeletonLine { width: 72%; }
+.skeletonLineShort { width: 42%; }
+
+.drawerLayer {
+  position: fixed;
+  z-index: 140;
+  inset: 0;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 58px 0 0;
+  width: 100%;
+  border: 0;
+  background: rgba(2, 4, 12, 0.56);
+  cursor: default;
+}
+
+.drawer {
+  position: absolute;
+  z-index: 1;
+  top: 58px;
+  right: 0;
+  bottom: 0;
+  width: 520px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: var(--surface-popup);
+  border-left: 1px solid var(--border-normal);
+  box-shadow: -18px 0 40px rgba(0, 0, 0, 0.34);
+}
+
+.drawerHeader {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.drawerTitle {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.drawerBody {
+  min-height: 0;
+  overflow: auto;
+  padding: 16px;
+}
+
+.drawerFooter {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px 16px;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+:global(.nav-item.is-active) {
+  color: var(--text-primary);
+  background: var(--purple-active);
+  border-color: var(--border-active);
+}
+
+@media (max-width: 1439px) {
+  .kpiCard { grid-column: span 4; }
+}
