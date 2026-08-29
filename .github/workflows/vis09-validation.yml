@@ -1,0 +1,140 @@
+name: VIS-09 INFO validation
+on:
+  push:
+    branches:
+      - acpos-vis09-staging
+    paths:
+      - .github/workflows/vis09-validation.yml
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis09-staging
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Validate touched YAML
+        run: |
+          ruby -e 'require "yaml"; ARGV.each{|f| YAML.load_file(f); puts "YAML PASS #{f}"}' \
+            authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml \
+            authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml \
+            authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml \
+            authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml \
+            authority/global/ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml \
+            authority/global/ACPOS_I18N_TRANSLATION_ENCODING_FINAL_LOCKED_V1.0.yaml
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start production server
+        run: |
+          npm run start -- -p 3000 > /tmp/vis09-server.log 2>&1 &
+          echo $! > /tmp/vis09-server.pid
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3000/info >/dev/null && exit 0; sleep 1; done
+          cat /tmp/vis09-server.log
+          exit 1
+      - name: Chromium authority and shell regression
+        run: |
+          cat > .vis09-check.mjs <<'NODE'
+          import { chromium } from 'playwright';
+          import fs from 'fs';
+          const browser=await chromium.launch({headless:true});
+          const page=await browser.newPage({viewport:{width:1600,height:900}});
+          const routes=['/','/core','/assets','/video','/edit','/qa','/database','/strategy','/info'];
+          const results={routes:{},info:{},businessRequests:0};
+          page.on('request',r=>{if(['fetch','xhr'].includes(r.resourceType()) && !r.url().includes('/_next/')) results.businessRequests++;});
+          for(const route of routes){
+            await page.goto('http://127.0.0.1:3000'+route,{waitUntil:'networkidle'});
+            const data=await page.evaluate(()=>({
+              navCount:document.querySelectorAll('[data-nav-id]').length,
+              navIds:[...document.querySelectorAll('[data-nav-id]')].map(x=>x.getAttribute('data-nav-id')),
+              active:[...document.querySelectorAll('[aria-current="page"]')].map(x=>x.getAttribute('data-nav-id')),
+              workspaceX:document.querySelector('.workspace-slot')?.getBoundingClientRect().x
+            }));
+            if(data.navCount!==9) throw new Error(`${route} navCount ${data.navCount}`);
+            if(data.navIds.join(',')!=='NAV-01,NAV-02,NAV-03,NAV-04,NAV-05,NAV-06,NAV-07,NAV-08,NAV-09') throw new Error(`${route} nav order ${data.navIds}`);
+            if(data.workspaceX!==78) throw new Error(`${route} workspaceX ${data.workspaceX}`);
+            if(data.active.length>1) throw new Error(`${route} multiple active nav ${data.active}`);
+            results.routes[route]=data;
+          }
+          async function measure(width){
+            await page.setViewportSize({width,height:900});
+            await page.goto('http://127.0.0.1:3000/info',{waitUntil:'networkidle'});
+            return await page.evaluate(()=>{
+              const root=document.querySelector('[data-page-uid="workspace:INFO-01"]');
+              const slot=document.querySelector('.workspace-slot');
+              const side=document.querySelector('.global-sidebar');
+              const controls=[...document.querySelectorAll('[data-control-id^="INFO-01-"]')];
+              const sections=[...document.querySelectorAll('[data-section-id^="INFO-01-SEC-"]')];
+              return {
+                registry:root?.getAttribute('data-registry-valid'),
+                controls:new Set(controls.map(x=>x.getAttribute('data-control-id'))).size,
+                sections:new Set(sections.map(x=>x.getAttribute('data-section-id'))).size,
+                components:new Set(controls.map(x=>x.getAttribute('data-component-uid'))).size,
+                visuals:new Set(controls.map(x=>x.getAttribute('data-visual-uid'))).size,
+                client:slot?.clientWidth,scroll:slot?.scrollWidth,workspaceX:slot?.getBoundingClientRect().x,
+                sidebar:side?.getBoundingClientRect().width,
+                factText:document.body.innerText.includes('FACT'),inferenceText:document.body.innerText.includes('INFERENCE / RECOMMENDATION'),
+                forbiddenResearch:/Start Research|Cancel Research/.test(document.body.innerText),
+                active:document.querySelector('[data-nav-id="NAV-09"]')?.getAttribute('aria-current')
+              };
+            });
+          }
+          results.info.w1600=await measure(1600);
+          if(results.info.w1600.controls!==66||results.info.w1600.sections!==12||results.info.w1600.components!==20||results.info.w1600.visuals!==12||results.info.w1600.registry!=='true') throw new Error('INFO registry mismatch '+JSON.stringify(results.info.w1600));
+          if(results.info.w1600.client!==results.info.w1600.scroll) throw new Error('1600 overflow '+JSON.stringify(results.info.w1600));
+          if(!results.info.w1600.factText||!results.info.w1600.inferenceText||results.info.w1600.forbiddenResearch) throw new Error('INFO knowledge boundary mismatch');
+          if(results.info.w1600.active!=='page') throw new Error('NAV-09 not active');
+          await page.screenshot({path:'docs/construction/evidence/VIS-09/vis09-1600-top.png',fullPage:false});
+          const side=page.locator('.global-sidebar');
+          await side.hover(); await page.waitForTimeout(100);
+          const expanded=await page.evaluate(()=>({sidebar:document.querySelector('.global-sidebar')?.getBoundingClientRect().width,x:document.querySelector('.workspace-slot')?.getBoundingClientRect().x}));
+          if(expanded.sidebar!==221||expanded.x!==78) throw new Error('sidebar overlay mismatch '+JSON.stringify(expanded));
+          results.info.expanded=expanded;
+          await page.screenshot({path:'docs/construction/evidence/VIS-09/vis09-1600-expanded.png',fullPage:false});
+          await page.mouse.move(800,100); await page.waitForTimeout(220);
+          results.info.w1440=await measure(1440);
+          if(results.info.w1440.client!==results.info.w1440.scroll) throw new Error('1440 overflow '+JSON.stringify(results.info.w1440));
+          await page.screenshot({path:'docs/construction/evidence/VIS-09/vis09-1440-top.png',fullPage:false});
+          await page.evaluate(()=>document.querySelector('.workspace-slot')?.scrollTo(0,10000)); await page.waitForTimeout(100);
+          await page.screenshot({path:'docs/construction/evidence/VIS-09/vis09-1440-bottom.png',fullPage:false});
+          results.info.w1200=await measure(1200);
+          if(!(results.info.w1200.scroll>results.info.w1200.client)) throw new Error('1200 should preserve min-width horizontal scroll '+JSON.stringify(results.info.w1200));
+          await page.screenshot({path:'docs/construction/evidence/VIS-09/vis09-1200-minwidth.png',fullPage:false});
+          await page.setViewportSize({width:1440,height:900}); await page.goto('http://127.0.0.1:3000/info',{waitUntil:'networkidle'});
+          const lang=page.locator('button[aria-haspopup="listbox"]');
+          await lang.click(); await page.getByRole('option',{name:/简体中文|Simplified Chinese/}).click();
+          await lang.click(); await page.getByRole('option',{name:/English/}).click();
+          const enLabel=await page.locator('[data-nav-id="NAV-09"] .nav-label').textContent();
+          if(!enLabel?.includes('Latest Information')) throw new Error('English NAV-09 translation missing '+enLabel);
+          await lang.click(); await page.getByRole('option',{name:/繁體中文|Traditional Chinese/}).click();
+          fs.writeFileSync('docs/construction/evidence/VIS-09/vis09-validation.json',JSON.stringify(results,null,2));
+          await browser.close();
+          NODE
+          mkdir -p docs/construction/evidence/VIS-09
+          node .vis09-check.mjs
+          rm .vis09-check.mjs
+      - name: Commit evidence and remove workflow
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add docs/construction/evidence/VIS-09/vis09-1600-top.png
+          git add docs/construction/evidence/VIS-09/vis09-1600-expanded.png
+          git add docs/construction/evidence/VIS-09/vis09-1440-top.png
+          git add docs/construction/evidence/VIS-09/vis09-1440-bottom.png
+          git add docs/construction/evidence/VIS-09/vis09-1200-minwidth.png
+          git add docs/construction/evidence/VIS-09/vis09-validation.json
+          git commit -m "test(vis09): add INFO and NAV-09 render evidence"
+          git rm .github/workflows/vis09-validation.yml
+          git commit -m "chore(vis09): remove temporary validation workflow"
+          git push origin HEAD:acpos-vis09-staging
