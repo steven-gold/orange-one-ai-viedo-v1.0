@@ -1,4 +1,4 @@
-name: ACPOS VIS-00 validation
+name: ACPOS VIS-00 final validation
 
 on:
   push:
@@ -6,26 +6,30 @@ on:
       - acpos-vis00-staging
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  validate:
+  validate-and-freeze-evidence:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install project dependencies
+      - name: Install project dependencies and create lockfile
         run: npm install
       - name: Typecheck
         run: npm run typecheck
       - name: Build
         run: npm run build
-      - name: Install browser harness
+      - name: Restore build-mutated config
+        run: git restore tsconfig.json
+      - name: Install browser harness without changing lockfile
         run: |
-          npm install --no-save playwright@1.55.0
+          npm install --no-save --package-lock=false playwright@1.55.0
           npx playwright install --with-deps chromium
       - name: Start production server
         run: |
@@ -39,10 +43,24 @@ jobs:
           exit 1
       - name: Render and validate VIS-00
         run: node scripts/capture-vis00.mjs
+      - name: Freeze render evidence into repository
+        run: |
+          mkdir -p docs/construction/evidence/VIS-00
+          cp artifacts/vis00/vis00-collapsed-1440x900.png docs/construction/evidence/VIS-00/
+          cp artifacts/vis00/vis00-expanded-1440x900.png docs/construction/evidence/VIS-00/
+          cp artifacts/vis00/vis00-geometry.json docs/construction/evidence/VIS-00/
       - name: Upload VIS-00 render evidence
-        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: acpos-vis00-render-evidence
-          path: artifacts/vis00
+          name: acpos-vis00-final-render-evidence
+          path: docs/construction/evidence/VIS-00
           if-no-files-found: error
+      - name: Remove temporary VIS-00 validator and commit evidence
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/acpos-vis00-validate.yml scripts/capture-vis00.mjs
+          git add package-lock.json docs/construction/evidence/VIS-00
+          git diff --check
+          git commit -m "test: freeze VIS-00 render evidence [vis00-evidence-frozen]"
+          git push origin HEAD:acpos-vis00-staging
