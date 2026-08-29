@@ -16,16 +16,14 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
           files=['preview/index.html','preview/edit.html','preview/qa.html']
-          variants=[
-            ('<button disabled><span class="ico">◎</span><span class="nav-label" data-i="strategy">戰略中心</span></button>', '<a href="strategy.html"><span class="ico">◎</span><span class="nav-label" data-i="strategy">戰略中心</span></a>'),
-            ('<button disabled><span class="ico">◎</span><span class="nav-label" data-tw="戰略中心" data-cn="战略中心" data-en="Strategy Center">戰略中心</span></button>', '<a href="strategy.html"><span class="ico">◎</span><span class="nav-label" data-tw="戰略中心" data-cn="战略中心" data-en="Strategy Center">戰略中心</span></a>')
-          ]
+          pattern=re.compile(r'<button disabled>(?P<body><span class="ico">◎</span><span class="nav-label"[^>]*>.*?戰略中心.*?</span>)</button>')
           for f in files:
-            p=Path(f); s=p.read_text(); before=s
-            for old,new in variants: s=s.replace(old,new)
-            if s==before: raise SystemExit(f'NAV-08 pattern not found in {f}')
-            p.write_text(s)
+            p=Path(f); s=p.read_text();
+            s2,n=pattern.subn(r'<a href="strategy.html">\g<body></a>',s,count=1)
+            if n!=1: raise SystemExit(f'NAV-08 replacement count={n} in {f}')
+            p.write_text(s2)
           PY
       - name: Commit exact preview nav changes and remove workflow
         run: |
