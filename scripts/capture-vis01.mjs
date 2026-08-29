@@ -48,6 +48,44 @@ assert(await page.locator('[data-nav-id="NAV-01"]').getAttribute("aria-current")
 const quickValues = await page.locator(".quick-button span").allTextContents();
 assert(quickValues.length === 3 && quickValues.every(v => v.trim() === "—"), `Header missing values must be —: ${quickValues}`);
 
+let dataRequests = 0;
+page.on("request", req => { if (["fetch","xhr"].includes(req.resourceType())) dataRequests++; });
+
+const languageButton = page.locator('button[aria-haspopup="listbox"]');
+assert((await languageButton.textContent())?.trim() === "zh-TW", "Default locale control must display zh-TW");
+assert(await page.locator("html").getAttribute("lang") === "zh-Hant-TW", "Default html lang must be zh-Hant-TW");
+assert((await page.locator('[data-nav-id="NAV-02"] .nav-label').textContent())?.trim() === "專案 / 專題", "Default nav translation mismatch");
+assert((await page.locator('[data-order="1"] h2').textContent())?.trim() === "專案總數", "Default WB-01 translation mismatch");
+assert((await page.locator(".brand-lockup").textContent())?.trim() === "ORANGE ONE", "Brand must remain ORANGE ONE");
+
+await languageButton.click();
+await page.getByRole("option").filter({ hasText: "简体中文" }).click();
+assert((await languageButton.textContent())?.trim() === "zh-CN", "Language control must display zh-CN after switch");
+assert(await page.locator("html").getAttribute("lang") === "zh-Hans-CN", "Simplified Chinese html lang mismatch");
+assert((await page.locator('[data-nav-id="NAV-02"] .nav-label').textContent())?.trim() === "项目 / 专题", "zh-CN nav translation mismatch");
+assert((await page.locator('[data-order="1"] h2').textContent())?.trim() === "专案总数", "zh-CN WB-01 translation mismatch");
+assert((await page.locator('[data-order="12"] h2').textContent())?.trim() === "AI / 产业新闻", "AI fixed term must remain AI in zh-CN");
+assert((await page.locator('[data-nav-id="NAV-06"] .nav-label').textContent())?.trim() === "QA", "QA must remain fixed in zh-CN");
+assert(await page.evaluate(() => localStorage.getItem("acpos.locale")) === "zh-CN", "zh-CN locale must persist");
+
+await languageButton.click();
+await page.getByRole("option").filter({ hasText: "English" }).click();
+assert((await languageButton.textContent())?.trim() === "en", "Language control must display en after switch");
+assert(await page.locator("html").getAttribute("lang") === "en", "English html lang mismatch");
+assert((await page.locator('[data-nav-id="NAV-02"] .nav-label').textContent())?.trim() === "Project / Topic", "English nav translation mismatch");
+assert((await page.locator('[data-order="1"] h2').textContent())?.trim() === "Company Project Count", "English WB-01 translation mismatch");
+assert((await page.locator('[data-order="12"] h2').textContent())?.trim() === "AI / Industry News", "AI fixed term must remain AI in English");
+assert((await page.locator('[data-nav-id="NAV-06"] .nav-label').textContent())?.trim() === "QA", "QA must remain fixed in English");
+assert((await page.locator(".brand-lockup").textContent())?.trim() === "ORANGE ONE", "Brand must not translate in English");
+assert(await page.evaluate(() => localStorage.getItem("acpos.locale")) === "en", "English locale must persist");
+
+await languageButton.click();
+await page.getByRole("option").filter({ hasText: "繁體中文" }).click();
+assert((await languageButton.textContent())?.trim() === "zh-TW", "Language control must return to zh-TW");
+assert(await page.locator("html").getAttribute("lang") === "zh-Hant-TW", "Traditional Chinese html lang mismatch after return");
+assert((await page.locator('[data-nav-id="NAV-02"] .nav-label').textContent())?.trim() === "專案 / 專題", "zh-TW nav translation mismatch after return");
+assert(dataRequests === 0, `Locale switching must not execute business fetch/xhr; got ${dataRequests}`);
+
 const pageRoot = page.locator('[data-page-uid="workspace:WB-01"]');
 assert(await pageRoot.count() === 1, "WB-01 root missing");
 assert(await page.locator('[data-page-uid="workspace:WB-01"] section[data-order]').count() === 14, "WB-01 must render exactly 14 cards");
@@ -90,8 +128,6 @@ await page.waitForTimeout(50);
 await page.screenshot({ path: `${outDir}/vis01-1440-bottom.png`, fullPage: false });
 await page.locator(".workspace-slot").evaluate(el => { el.scrollTop = 0; });
 
-let dataRequests = 0;
-page.on("request", req => { if (["fetch","xhr"].includes(req.resourceType())) dataRequests++; });
 const firstTrigger = viewButtons.first();
 await firstTrigger.click();
 await page.waitForTimeout(50);
@@ -134,6 +170,12 @@ await page.screenshot({ path: `${outDir}/vis01-1200-minwidth.png`, fullPage: fal
 const result = {
   result: "PASS",
   implementation: "VIS-01",
+  localeSwitching: {
+    locales: ["zh-TW", "zh-CN", "en"],
+    brandPreserved: true,
+    fixedTermsPreserved: ["AI", "QA"],
+    businessRequestsDuringSwitch: 0,
+  },
   shell,
   quickValues,
   sections: 14,
