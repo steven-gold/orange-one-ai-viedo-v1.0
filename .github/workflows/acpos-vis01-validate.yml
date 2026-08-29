@@ -1,0 +1,49 @@
+name: ACPOS VIS-01 validation
+
+on:
+  push:
+    branches:
+      - acpos-vis01-staging
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Install browser harness without changing lockfile
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start production server
+        run: |
+          npm run start -- -p 3000 > /tmp/acpos-vis01.log 2>&1 &
+          echo $! > /tmp/acpos-vis01.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:3000 >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/acpos-vis01.log
+          exit 1
+      - name: Render and validate VIS-01
+        run: node scripts/capture-vis01.mjs
+      - name: Upload VIS-01 render evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-vis01-render-evidence
+          path: artifacts/vis01
+          if-no-files-found: error
