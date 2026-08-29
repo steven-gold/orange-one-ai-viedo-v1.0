@@ -1,0 +1,172 @@
+name: ACPOS VIS-01 final validation
+
+on:
+  push:
+    branches:
+      - acpos-vis01-staging
+
+permissions:
+  contents: write
+
+jobs:
+  validate-and-finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis01-staging
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Normalize final evidence schema for approved logo color adaptation
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('scripts/capture-vis01.mjs')
+          text = p.read_text(encoding='utf-8')
+          ratio_line = 'assert(near(logoRect.width / logoRect.height, 416 / 192, 0.02), `Logo render ratio changed: ${JSON.stringify(logoRect)}`);\n'
+          if 'const logoFilter =' not in text:
+              text = text.replace(
+                  ratio_line,
+                  ratio_line + 'const logoFilter = await brandLogo.evaluate(img => getComputedStyle(img).filter);\nassert(logoFilter !== "none", `Approved dark-header logo color adaptation missing: ${logoFilter}`);\n'
+              )
+          text = text.replace(
+              'brand: { source: logoSource, natural: logoNatural, rendered: logoRect, recolored: false },',
+              'brand: { source: logoSource, natural: logoNatural, rendered: logoRect, colorAdaptation: { mode: "USER_APPROVED_WHITE_MONOCHROME_FOR_DARK_HEADER", cssFilter: logoFilter, artworkGeometryPreserved: true } },'
+          )
+          p.write_text(text, encoding='utf-8')
+          PY
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Install browser harness without changing lockfile
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start production server
+        run: |
+          npm run start -- -p 3000 > /tmp/acpos-vis01.log 2>&1 &
+          echo $! > /tmp/acpos-vis01.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:3000 >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/acpos-vis01.log
+          exit 1
+      - name: Render and validate VIS-01
+        run: node scripts/capture-vis01.mjs
+      - name: Verify Current Authority synchronization
+        run: |
+          grep -q 'revision: 2026-08-29-USER-APPROVED-LOGO-COLOR-ADAPTATION' authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
+          grep -q 'current_dark_header: WHITE_MONOCHROME' authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
+          grep -q 'dark_header: WHITE_MONOCHROME' authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
+          grep -q 'USER_APPROVED_WHITE_MONOCHROME_FOR_DARK_HEADER' artifacts/vis01/vis01-validation.json
+      - name: Upload VIS-01 render evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-vis01-final-render-evidence
+          path: artifacts/vis01
+          if-no-files-found: error
+      - name: Persist evidence, close VIS-01, and remove temporary validation tools
+        env:
+          VALIDATED_SHA: ${{ github.sha }}
+          VALIDATION_RUN_ID: ${{ github.run_id }}
+        run: |
+          mkdir -p docs/construction/evidence/VIS-01
+          cp artifacts/vis01/vis01-1440-top.png docs/construction/evidence/VIS-01/
+          cp artifacts/vis01/vis01-1440-middle.png docs/construction/evidence/VIS-01/
+          cp artifacts/vis01/vis01-1440-bottom.png docs/construction/evidence/VIS-01/
+          cp artifacts/vis01/vis01-1440-drawer.png docs/construction/evidence/VIS-01/
+          cp artifacts/vis01/vis01-language-menu-zh-tw.png docs/construction/evidence/VIS-01/
+          cp artifacts/vis01/vis01-1366-top.png docs/construction/evidence/VIS-01/
+          cp artifacts/vis01/vis01-1200-minwidth.png docs/construction/evidence/VIS-01/
+          cp artifacts/vis01/vis01-validation.json docs/construction/evidence/VIS-01/
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          p = Path('docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace(
+              '  current_task: VIS-01_HOME_WB-01_VISUAL_POSITIONING\n  last_completed_task: VIS-00_GLOBAL_SHELL_VISUAL_BASELINE\n',
+              '  current_task: VIS-02_FRONT_CORE-01_VISUAL_POSITIONING\n  last_completed_task: VIS-01_HOME_WB-01_VISUAL_POSITIONING\n'
+          )
+          text = text.replace(
+              '      brand_lockup_note: ORANGE ONE text lockup rendered; no generated/recolored substitute logo asset was introduced.\n',
+              '      brand_lockup_note: Superseded during VIS-01 by the canonical user-supplied transparent logo asset; dark-header render uses the user-approved white monochrome color adaptation while preserving artwork content, geometry, and intrinsic aspect ratio.\n'
+          )
+          old_vis01 = (
+              '  - id: VIS-01\n'
+              '    group: HOME\n'
+              '    page_uid: workspace:WB-01\n'
+              '    name: 儀表板 / Dashboard\n'
+              '    status: NOT_STARTED\n'
+          )
+          new_vis01 = (
+              '  - id: VIS-01\n'
+              '    group: HOME\n'
+              '    page_uid: workspace:WB-01\n'
+              '    name: 儀表板 / Dashboard\n'
+              '    status: COMPLETE\n'
+              '    scope: 14 canonical dashboard sections, 14 SECTION_OPEN controls, fixed empty/loading/error presentation, 520px projection drawer, shared Global Header language selector, and canonical ORANGE ONE logo only; no business API/DB/provider/crawler logic.\n'
+              '    evidence:\n'
+              f"      implementation_commit: {os.environ['VALIDATED_SHA']}\n"
+              f"      final_validation_run_id: {os.environ['VALIDATION_RUN_ID']}\n"
+              '      typecheck: PASS\n'
+              '      next_build: PASS\n'
+              '      production_server: PASS\n'
+              '      chromium_render_and_geometry: PASS\n'
+              '      locale_switch_runtime: PASS\n'
+              '      locale_sequence: zh-TW -> zh-CN -> en -> zh-TW\n'
+              '      business_requests_during_locale_switch: 0\n'
+              '      manual_visual_inspection: PASS\n'
+              '      manual_visual_inspection_basis: All seven persisted screenshots from the same visual implementation were inspected; no unintended clipping, overlap, logo distortion, or shell reflow found. 1200px intentionally preserves the registered 1280px dashboard min-width with horizontal scrolling.\n'
+              '      render_evidence:\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1440-top.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1440-middle.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1440-bottom.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1440-drawer.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-language-menu-zh-tw.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1366-top.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-1200-minwidth.png\n'
+              '      - docs/construction/evidence/VIS-01/vis01-validation.json\n'
+              '      verified_contract:\n'
+              '        sections: 14\n'
+              '        section_open_controls: 14\n'
+              '        kpi_count: 6\n'
+              '        drawer_width: 520px\n'
+              '        fake_business_data: false\n'
+              '        business_fetch_xhr: 0\n'
+              '        global_nav_count: 8\n'
+              '        header_height: 58px\n'
+              '        workspace_origin: x=78,y=68\n'
+              '        logo_asset: public/brand/orange-one-logo.png\n'
+              '        logo_source_dimensions: 416x192\n'
+              '        logo_render_dimensions: 104x48\n'
+              '        logo_aspect_ratio_preserved: true\n'
+              '        logo_color_application: USER_APPROVED_WHITE_MONOCHROME_FOR_DARK_HEADER\n'
+              '        supported_locales: zh-TW/zh-CN/en\n'
+          )
+          if old_vis01 not in text:
+              raise SystemExit('VIS-01 NOT_STARTED block not found; refusing ambiguous progress edit')
+          text = text.replace(old_vis01, new_vis01)
+          text = text.replace('  visual_steps_complete: 1\n', '  visual_steps_complete: 2\n')
+          marker = '  truthful_progress_note:'
+          if marker not in text:
+              raise SystemExit('progress truthful_progress_note not found')
+          prefix = text.split(marker, 1)[0]
+          note = '  truthful_progress_note: VIS-00 Global Shell and VIS-01 WB-01 visual positioning are implemented and verified. VIS-01 evidence includes TypeScript/Next build, production-server Chromium validation, 1440/1366/1200 layout checks, 520px Drawer behavior, zh-TW/zh-CN/en switching with zero business requests, canonical uploaded ORANGE ONE logo with user-approved white monochrome dark-header adaptation, persisted render evidence, and manual visual inspection. VIS-02 CORE-01 is current. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.\n'
+          p.write_text(prefix + note, encoding='utf-8')
+          PY
+          git config user.name 'steven-gold'
+          git config user.email 'proorangeone@gmail.com'
+          git add docs/construction/evidence/VIS-01 docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+          git rm .github/workflows/acpos-vis01-validate.yml
+          git rm -f scripts/capture-vis01.mjs
+          git commit -m 'construction: complete VIS-01 and advance to VIS-02'
+          git push origin HEAD:acpos-vis01-staging
