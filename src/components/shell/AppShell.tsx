@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { LOCALES, LOCALE_LABELS, type TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
+import languageStyles from "./LanguageSelector.module.css";
 
 type NavItem = {
   id: string;
@@ -133,9 +134,9 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
           <button className="quick-button" type="button" aria-label={t("global.header.notifications")}><HeaderIcon kind="bell"/><span>—</span></button>
           <button className="quick-button" type="button" aria-label={t("global.header.todo")}><HeaderIcon kind="todo"/><span>—</span></button>
           <button className="quick-button" type="button" aria-label={t("global.header.running")}><HeaderIcon kind="running"/><span>—</span></button>
-          <div className="language-control" ref={languageRef}>
+          <div className={languageStyles.control} ref={languageRef}>
             <button
-              className="language-button"
+              className={languageStyles.button}
               type="button"
               aria-label={t("global.header.language")}
               aria-haspopup="listbox"
@@ -145,21 +146,21 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
               {locale}
             </button>
             {languageOpen && (
-              <div className="language-menu" role="listbox" aria-label={t("global.header.language")}>
+              <div className={languageStyles.menu} role="listbox" aria-label={t("global.header.language")}>
                 {LOCALES.map((option) => (
                   <button
                     key={option}
                     type="button"
                     role="option"
                     aria-selected={locale === option}
-                    className={locale === option ? "language-option is-selected" : "language-option"}
+                    className={`${languageStyles.option} ${locale === option ? languageStyles.selected : ""}`}
                     onClick={() => {
                       setLocale(option);
                       setLanguageOpen(false);
                     }}
                   >
                     <span>{LOCALE_LABELS[option]}</span>
-                    <span className="language-code">{option}</span>
+                    <span className={languageStyles.code}>{option}</span>
                   </button>
                 ))}
               </div>
