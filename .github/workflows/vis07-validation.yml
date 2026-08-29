@@ -1,0 +1,60 @@
+name: VIS-07 DB-01 Validation
+on:
+  push:
+    branches: [acpos-vis07-staging]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: 20, cache: npm}
+      - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start production server
+        run: |
+          npm run start -- -p 3000 > /tmp/vis07-next.log 2>&1 &
+          for i in $(seq 1 40); do if curl -fsS http://127.0.0.1:3000/database >/dev/null; then exit 0; fi; sleep 1; done
+          cat /tmp/vis07-next.log; exit 1
+      - name: Validate DB authority and geometry
+        run: |
+          mkdir -p docs/construction/evidence/VIS-07
+          node <<'NODE'
+          const fs=require('fs'); const {chromium}=require('playwright');
+          const source=fs.readFileSync('src/components/pages/DbVisual.tsx','utf8');
+          const catalog=fs.readFileSync('src/i18n/dbCatalog.ts','utf8');
+          const shell=fs.readFileSync('src/components/shell/AppShell.tsx','utf8');
+          const css=fs.readFileSync('src/components/pages/DbVisual.module.css','utf8');
+          const ids=t=>[...new Set([...t.matchAll(/DB-01-(?:FLD|BTN|INP|SEL|LIST|TBL|TOGGLE|GRAPH|VIEW)-[A-Z0-9-]+/g)].map(m=>m[0]))];
+          const a=ids(source),b=ids(catalog); if(a.length!==49)throw Error(`source controls=${a.length}`);if(b.length!==49)throw Error(`catalog controls=${b.length}`);if(!a.every(id=>b.includes(id)))throw Error('registry mismatch');
+          if(!shell.includes('{ id: "NAV-07", labelKey: "global.nav.database", icon: "database", href: "/database" }'))throw Error('NAV-07 missing');
+          if(/#[0-9a-fA-F]{3,8}|rgba?\(/.test(css))throw Error('page-local raw color');if(/\bfetch\s*\(|XMLHttpRequest|\baxios\b/.test(source))throw Error('network code');
+          (async()=>{const browser=await chromium.launch({headless:true});const context=await browser.newContext({viewport:{width:1600,height:900}});const page=await context.newPage();let business=0;page.on('request',r=>{if(['xhr','fetch'].includes(r.resourceType()))business++});
+            let response=await page.goto('http://127.0.0.1:3000/database',{waitUntil:'networkidle'});if(!response||response.status()!==200)throw Error(`HTTP=${response&&response.status()}`);
+            const measure=async()=>page.evaluate(()=>{const root=document.querySelector('[data-page-uid="admin:DB-01"]'),ws=document.querySelector('.workspace-slot'),primary=document.querySelector('[data-page-uid="admin:DB-01"] > div');const unique=(s,a)=>new Set([...document.querySelectorAll(s)].map(e=>e.getAttribute(a))).size;const visible=id=>{const e=document.querySelector(`[data-control-id="${id}"]`);return !!e&&e.getClientRects().length>0};return{registry:root.getAttribute('data-registry-valid'),controlsAttr:root.getAttribute('data-authority-controls'),sections:unique('[data-page-uid="admin:DB-01"] [data-section-id]','data-section-id'),components:unique('[data-page-uid="admin:DB-01"] [data-component-uid]','data-component-uid'),controls:unique('[data-page-uid="admin:DB-01"] [data-control-id]','data-control-id'),pageWidth:root.getBoundingClientRect().width,wsClient:ws.clientWidth,wsScroll:ws.scrollWidth,workspaceX:ws.getBoundingClientRect().x,primary:[...primary.children].map(c=>c.getBoundingClientRect().width),enabled:[...root.querySelectorAll('button,input,select,textarea')].filter(e=>!e.disabled).length,textarea:root.querySelectorAll('textarea').length,relationGraph:visible('DB-01-GRAPH-RELATIONS'),relationList:visible('DB-01-LIST-RELATIONS'),activeNav:document.querySelector('[data-nav-id="NAV-07"][aria-current="page"]')?.getAttribute('href'),buttonLabels:[...root.querySelectorAll('button')].filter(e=>e.getClientRects().length).map(e=>e.textContent||'')};});
+            const wide=await measure();if(wide.registry!=='true'||wide.controlsAttr!=='49'||wide.sections!==10||wide.components!==12||wide.controls!==49)throw Error(`registry=${JSON.stringify(wide)}`);if(wide.activeNav!=='/database')throw Error(`activeNav=${wide.activeNav}`);if(wide.enabled!==0||wide.textarea!==0)throw Error('editable DB controls detected');if(!wide.relationGraph||wide.relationList)throw Error('relation toggle presentation invalid');if(wide.primary.length!==3||wide.primary[0]<280||wide.primary[1]<760||wide.primary[2]<300)throw Error(`primary1600=${JSON.stringify(wide.primary)}`);if(wide.buttonLabels.some(x=>/SQL|DDL|Rollback|Execute Migration|Row Editor/i.test(x)))throw Error(`forbidden button=${wide.buttonLabels}`);if(wide.workspaceX!==78)throw Error(`workspaceX=${wide.workspaceX}`);
+            await page.screenshot({path:'docs/construction/evidence/VIS-07/vis07-1600-top.png'});await page.locator('.global-sidebar').hover();await page.waitForTimeout(250);const exp=await page.evaluate(()=>({w:document.querySelector('.global-sidebar').getBoundingClientRect().width,x:document.querySelector('.workspace-slot').getBoundingClientRect().x}));if(exp.w!==221||exp.x!==78)throw Error(`sidebar=${JSON.stringify(exp)}`);await page.screenshot({path:'docs/construction/evidence/VIS-07/vis07-1600-expanded.png'});await page.mouse.move(900,400);
+            await page.setViewportSize({width:1440,height:900});await page.waitForTimeout(100);const mid=await measure();await page.screenshot({path:'docs/construction/evidence/VIS-07/vis07-1440-top.png'});
+            const ws=page.locator('.workspace-slot');await ws.evaluate(e=>e.scrollTop=Math.round((e.scrollHeight-e.clientHeight)/2));await page.screenshot({path:'docs/construction/evidence/VIS-07/vis07-1440-middle.png'});await ws.evaluate(e=>e.scrollTop=e.scrollHeight);await page.screenshot({path:'docs/construction/evidence/VIS-07/vis07-1440-bottom.png'});await ws.evaluate(e=>{e.scrollTop=0;e.scrollLeft=0});
+            const lang=page.locator('button[aria-haspopup="listbox"]');await lang.click();await page.getByRole('option',{name:/English/}).click();if(!(await page.getByText('Search Entity / Table',{exact:true}).count()))throw Error('en locale');await lang.click();await page.getByRole('option',{name:/简体中文/}).click();if(!(await page.getByText('搜索 Entity / Table',{exact:true}).count()))throw Error('zh-CN locale');await lang.click();await page.getByRole('option',{name:/繁體中文/}).click();if(!(await page.getByText('搜尋 Entity / Table',{exact:true}).count()))throw Error('zh-TW locale');
+            await page.setViewportSize({width:1200,height:900});await page.waitForTimeout(100);const narrow=await measure();if(narrow.pageWidth<1280||narrow.wsScroll<=narrow.wsClient)throw Error(`1200=${JSON.stringify(narrow)}`);await page.screenshot({path:'docs/construction/evidence/VIS-07/vis07-1200-minwidth.png'});if(business!==0)throw Error(`business xhr=${business}`);
+            const result={source_sha:process.env.GITHUB_SHA,route:'/database',http_status:200,registry_controls:49,sections:wide.sections,components:wide.components,controls:wide.controls,primary_1600:wide.primary,workspace_1600:{client:wide.wsClient,scroll:wide.wsScroll},workspace_1440:{client:mid.wsClient,scroll:mid.wsScroll,page:mid.pageWidth,primary:mid.primary},workspace_1200:{client:narrow.wsClient,scroll:narrow.wsScroll,page:narrow.pageWidth},workspace_origin_x:wide.workspaceX,sidebar_expanded_width:exp.w,workspace_reflow_on_expand:false,enabled_controls:wide.enabled,business_fetch_xhr:business,relation_graph_visible:true,relation_list_hidden:true,page_local_raw_colors:0,authority_files_modified:false,supported_locales:['zh-TW','zh-CN','en'],typecheck:'PASS',next_build:'PASS',production_server:'PASS',chromium_geometry:'PASS'};fs.writeFileSync('docs/construction/evidence/VIS-07/vis07-validation.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));await browser.close();})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - name: Persist evidence
+        run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/construction/evidence/VIS-07; git commit -m "test(vis07): persist DB-01 render evidence [skip ci]"; git push origin HEAD:acpos-vis07-staging
+      - uses: actions/upload-artifact@v4
+        with: {name: vis07-db01-evidence, path: "docs/construction/evidence/VIS-07"}
