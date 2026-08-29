@@ -1,0 +1,116 @@
+authority:
+  id: ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE
+  version: V1.0
+  status: FINAL_LOCKED
+  current_only: true
+  scope: WEBSITE_CONSTRUCTION_ONLY
+  purpose: Govern website construction behavior without redefining page, system, navigation, runtime, or business authority.
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+
+source_precedence:
+  - ACPOS_CURRENT_AUTHORITY_MANIFEST
+  - Exact Current Global/Page Authority for the construction target
+  - ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE within construction-execution scope only
+
+construction_scope_integrity_lock:
+  rule: Construction may implement only content explicitly required by Current Authority or explicitly added by the user as a new Current requirement.
+  forbidden_without_current_authority:
+    - unrelated data
+    - sample data
+    - mock business data
+    - fabricated KPI or statistics
+    - extra field
+    - extra card
+    - extra section
+    - extra button or control
+    - extra menu or route
+    - extra workflow or stage
+    - extra permission
+    - extra provider or model selector
+    - extra chart or visualization
+    - extra status
+    - extra explanatory business copy
+    - decorative information not registered by authority
+    - inferred business behavior
+    - inferred external link
+    - inferred page or subsystem
+  on_missing_definition: DO_NOT_IMPLEMENT_UNKNOWN
+  on_requested_unregistered_content: BLOCK + REPORT_AUTHORITY_GAP
+  no_helpful_filler_rule: AI SHALL NOT add plausible or helpful-looking content merely to make a page appear complete.
+  no_template_filler_rule: Generic dashboard, admin, SaaS, analytics, CRM, ERP, AI-workspace, or design-system filler is forbidden unless current authority explicitly requires it.
+  data_truth_rule:
+    real_data_only: true
+    missing_value: Use exact page/global missing-value authority.
+    zero_is_data: true
+    zero_must_not_be_used_as_placeholder: true
+    fake_success_state: FORBIDDEN
+
+construction_sequence_lock:
+  visual_before_business_logic: true
+  current_visual_sequence_source: docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+  page_business_logic_before_all_visual_complete: FORBIDDEN
+  exception: Local presentation state strictly required to validate visual controls such as tab, drawer, modal, focus, empty/loading/error display.
+  local_presentation_state_must_not:
+    - call business API
+    - mutate database
+    - execute provider
+    - execute crawler
+    - create business object
+    - create fake business record
+    - perform cross-page handoff
+
+authority_exactness:
+  ids: Preserve exact registered Page/Section/Component/Control/Action/Gate/Permission IDs when they exist.
+  labels: Use current i18n authority or exact page authority labels; do not paraphrase visible UI text.
+  ordering: Preserve canonical order unless exact authority defines responsive reflow.
+  geometry: Preserve exact geometry where authority specifies it.
+  unknown_reference: BLOCK
+  duplicate_authority: FORBIDDEN
+  superseded_content_revival: FORBIDDEN
+
+i18n_construction_lock:
+  translation_authority: ACPOS_I18N_TRANSLATION_ENCODING@V1.0
+  supported_locales:
+    - zh-TW
+    - zh-CN
+    - en
+  hardcoded_parallel_translation: FORBIDDEN
+  missing_translation_key: BLOCK + REPORT_AUTHORITY_GAP
+  brand_or_registered_international_shared_term_translation: FORBIDDEN
+
+brand_asset_lock:
+  canonical_brand_name: ORANGE ONE
+  logo_source: USER_SUPPLIED_CANONICAL_ARTWORK
+  allowed_image_preparation:
+    - remove background to transparency
+  forbidden_logo_changes:
+    - redraw
+    - regenerate artwork
+    - change aspect ratio
+    - stretch
+    - squash
+    - crop away artwork
+    - change typography
+    - alter symbol geometry
+    - recolor artwork without explicit user approval
+    - add effects
+    - add shadow
+    - add glow
+    - add background plate
+    - replace with text-only substitute once canonical asset is available
+  sizing_rule: Scale uniformly with object-fit contain; preserve intrinsic aspect ratio and full artwork.
+  target_asset_path: public/brand/orange-one-logo.png
+  activation_gate: Canonical transparent-background asset must physically exist and pass visual inspection before replacing the temporary text lockup.
+
+completion_truth:
+  implementation_claim_requires: Actual repository change.
+  validation_claim_requires: Actual executed validation evidence.
+  visual_complete_requires:
+    - implementation exists
+    - build/typecheck pass
+    - render evidence exists
+    - required target widths validated
+    - manual visual inspection pass
+    - no known authority deviation
+  runtime_complete_requires: Actual runtime implementation and executed runtime validation.
+  no_evidence_no_complete: true
