@@ -1,0 +1,318 @@
+.page {
+  min-width: 1280px;
+  min-height: 100%;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.contextBar,
+.panel {
+  min-width: 0;
+  border: 1px solid var(--border-normal);
+  border-radius: var(--panel-radius);
+  background: var(--surface-l1);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.015);
+}
+
+.contextBar {
+  min-height: 72px;
+  overflow: hidden;
+}
+
+.contextGrid {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: minmax(125px,1fr) minmax(125px,1fr) minmax(140px,1.1fr) minmax(110px,.85fr) 160px 104px minmax(130px,1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+}
+
+.primaryGrid {
+  display: grid;
+  grid-template-columns: minmax(260px,1fr) minmax(720px,3fr) minmax(280px,1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.leftColumn,
+.centerColumn,
+.rightColumn {
+  min-width: 0;
+}
+
+.centerColumn {
+  display: grid;
+  gap: 16px;
+}
+
+.panel {
+  padding: 16px;
+}
+
+.sectionTitle {
+  margin: 0 0 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 650;
+}
+
+.stack {
+  display: grid;
+  gap: 8px;
+}
+
+.readonly,
+.inputControl,
+.listControl {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.readonly {
+  min-height: 54px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: rgba(10,15,36,.72);
+}
+
+.readonly span,
+.inputControl span,
+.listControl > span {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.readonly strong {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.inputControl select,
+.inputControl input {
+  width: 100%;
+  height: 40px;
+  min-width: 0;
+  padding: 0 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--button-radius);
+  background: var(--surface-input);
+  color: var(--text-secondary);
+}
+
+.button,
+.segmented button {
+  min-height: 40px;
+  min-width: 0;
+  padding: 0 11px;
+  border: 1px solid var(--border-normal);
+  border-radius: var(--button-radius);
+  background: var(--surface-l2);
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.primary {
+  background: linear-gradient(135deg,var(--purple-secondary),var(--purple-primary));
+  color: var(--text-primary);
+}
+
+.button:disabled,
+.segmented button:disabled,
+.inputControl select:disabled,
+.inputControl input:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.segmented button {
+  min-height: 36px;
+  padding: 0 8px;
+}
+
+.segmented .segmentActive {
+  border-color: var(--border-active);
+  background: var(--active-bg);
+  color: var(--text-primary);
+}
+
+.emptyBox {
+  min-height: 176px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 10px;
+  background: rgba(5,8,22,.45);
+  color: var(--text-muted);
+}
+
+.bindingGrid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 8px;
+}
+
+.bindingGrid .button {
+  width: 100%;
+}
+
+.componentBridge {
+  margin-top: 8px;
+}
+
+.componentBridge .button {
+  width: 100%;
+}
+
+.previewPanel {
+  min-height: 500px;
+}
+
+.titleRow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.compareToolbar {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.compareToolbar .button {
+  min-height: 32px;
+  padding-inline: 9px;
+}
+
+.previewSurface {
+  min-height: 430px;
+  margin-top: 8px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  background: var(--surface-input);
+}
+
+.previewEmpty {
+  min-height: 342px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 14px;
+  color: var(--text-muted);
+}
+
+.previewFooter {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.previewFooter .emptyBox {
+  min-height: 52px;
+}
+
+.reuseGrid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 8px;
+}
+
+.conditionalPanel {
+  padding-bottom: 14px;
+}
+
+.conditionNotice {
+  min-height: 54px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.layerCondition {
+  position: relative;
+}
+
+.layerCondition > [data-component-uid]:empty {
+  display: none;
+}
+
+.rightColumn .panel {
+  position: sticky;
+  top: 0;
+}
+
+.rightColumn .button {
+  width: 100%;
+}
+
+.divider {
+  height: 1px;
+  margin: 14px 0;
+  background: var(--border-subtle);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.runtimeGrid {
+  display: grid;
+  grid-template-columns: repeat(7,minmax(0,1fr)) auto auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.runtimeGrid .button {
+  min-width: 112px;
+}
+
+.handoffGrid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 8px;
+  align-items: end;
+}
+
+.handoffGrid .primary {
+  width: 100%;
+}
+
+@media (max-width: 1439px) {
+  .contextGrid {
+    grid-template-columns: 125px 125px 140px 110px 150px 96px 130px;
+  }
+
+  .bindingGrid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+
+  .runtimeGrid {
+    grid-template-columns: repeat(5,minmax(0,1fr));
+  }
+}
