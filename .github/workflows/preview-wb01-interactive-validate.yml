@@ -30,17 +30,29 @@ jobs:
           grep -q '<script src="preview-runtime.js"></script>' preview/index.html
           grep -q 'data-control-id="CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN"' preview/index.html
           grep -q 'aria-haspopup="listbox"' preview/index.html
-      - name: Install browser
+      - name: Install isolated browser test harness
+        shell: bash
         run: |
           set -euo pipefail
-          npx --yes playwright@1.55.0 install chromium --with-deps
+          rm -rf /tmp/acpos-preview-pw
+          mkdir -p /tmp/acpos-preview-pw
+          cd /tmp/acpos-preview-pw
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund @playwright/test@1.55.0
+          npx playwright install chromium --with-deps
       - name: Browser interaction validation
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m http.server 8000 --directory preview >/tmp/preview-http.log 2>&1 &
-          for i in $(seq 1 40); do curl -fsS http://127.0.0.1:8000/index.html >/dev/null && break; sleep 1; done
-          cat > .preview-wb01.spec.js <<'JS'
+          REPO_DIR="$PWD"
+          python3 -m http.server 8000 --directory "$REPO_DIR/preview" >/tmp/preview-http.log 2>&1 &
+          ready=0
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:8000/index.html >/dev/null; then ready=1; break; fi
+            sleep 1
+          done
+          test "$ready" = "1"
+          cat > /tmp/acpos-preview-pw/preview-wb01.spec.js <<'JS'
           const { test, expect } = require('@playwright/test');
           test('homepage language and view controls are interactive without fake data', async ({ page }) => {
             const errors=[];
@@ -77,13 +89,13 @@ jobs:
             if (errors.length) throw new Error('page errors: '+JSON.stringify(errors));
           });
           JS
-          npx --yes playwright@1.55.0 test .preview-wb01.spec.js --browser=chromium --reporter=line
+          cd /tmp/acpos-preview-pw
+          npx playwright test preview-wb01.spec.js --browser=chromium --reporter=line
       - name: Self-clean and commit validated preview
         if: success()
         shell: bash
         run: |
           set -euo pipefail
-          rm -f .preview-wb01.spec.js
           rm -f .github/workflows/preview-wb01-interactive-validate.yml
           rmdir .github/workflows 2>/dev/null || true
           rmdir .github 2>/dev/null || true
