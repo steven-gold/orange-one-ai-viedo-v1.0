@@ -62,6 +62,8 @@ jobs:
             assert(union.size===60,'default visible control union '+union.size);
             for(const id of hiddenConditional)assert(!union.has(id),'conditional rendered '+id);
             assert(await p.locator('button[data-control-id="SOC-01-FLD-WITHDRAWAL"]').count()===0,'withdraw button invented');
+            await p.locator('[data-control-id="SOC-01-TAB-STAGE-4"]').click();
+            await p.waitForTimeout(80);
             assert(await p.locator('[data-control-id="SOC-01-BTN-PUBLISH"]').isDisabled(),'publish enabled');
             assert(await p.locator('[data-control-id="SOC-01-BTN-POLICY-CONFIG"]').isDisabled(),'policy enabled');
             await p.locator('.global-sidebar').hover(); await p.waitForTimeout(180);
