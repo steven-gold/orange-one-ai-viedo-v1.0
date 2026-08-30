@@ -615,19 +615,38 @@ phase_1_visual_positioning:
     group: ADMIN
     page_uid: admin:KB-01
     name: 知識庫
-    status: NOT_STARTED
+    status: COMPLETE
+    scope: Single-page Knowledge & Experience governance visual at /admin/knowledge with five authority-defined Views, exact 16 sections / 22 components / 127 fields / 27 controls, real-data-only empty projections, and no parallel crawler/context/experience/learning implementation.
+    evidence:
+      final_validation_run_id: 33314938473
+      evidence_directory: docs/construction/evidence/VIS-18
+      validation_record: docs/construction/evidence/VIS-18/vis18-validation.json
+      typecheck: PASS
+      next_build: PASS
+      production_server: PASS
+      chromium_render_and_geometry: PASS
+      locale_switch_runtime: PASS
+      business_requests_during_validation: 0
+      sections: 16
+      components: 22
+      fields: 127
+      controls: 27
+      actions: 21
+      gates: 17
+      errors: 14
+      effectful_runtime_ready: false
 phase_2_logic_construction:
-  status: BLOCKED_BY_ALL_VISUAL_COMPLETE_GATE
-  rule: Do not start until VIS-00 through VIS-18 are all COMPLETE.
+  status: NOT_STARTED
+  rule: VIS-00 through VIS-18 visual gate is complete; logic construction may begin only under current authority and explicit execution scope.
 phase_3_cross_page_closure:
   status: BLOCKED_BY_PHASE_2
 final_validation:
   status: NOT_STARTED
 metrics:
   visual_steps_total: 19
-  visual_steps_complete: 18
+  visual_steps_complete: 19
   visual_steps_in_progress: 0
   logic_steps_complete: 0
   shared_runtime_steps_complete: 0
   cross_page_steps_complete: 0
-  truthful_progress_note: VIS-00 through VIS-16 visual positioning are implemented and verified. VIS-16 implements admin:SG-02 at /admin/qa-criteria as the QA review-standard governance page, with 9 sections, exactly 11 registered controls, registered SECTION_OPEN drawers, and no invented Search/Filter/Export or hardcoded threshold/sample criteria data. Configure/Approve runtime remains disabled in visual phase. Historical evidence is not rewritten. VIS-17 admin:STR-01 is implemented and verified at /admin/strategy as one page with five Current Views. Governed business actions remain disabled until control/permission/runtime remap. VIS-18 KB-01 is next and has not started. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
+  truthful_progress_note: VIS-00 through VIS-16 visual positioning are implemented and verified. VIS-16 implements admin:SG-02 at /admin/qa-criteria as the QA review-standard governance page, with 9 sections, exactly 11 registered controls, registered SECTION_OPEN drawers, and no invented Search/Filter/Export or hardcoded threshold/sample criteria data. Configure/Approve runtime remains disabled in visual phase. Historical evidence is not rewritten. VIS-17 admin:STR-01 is implemented and verified at /admin/strategy as one page with five Current Views. Governed business actions remain disabled until control/permission/runtime remap. VIS-18 admin:KB-01 is implemented and verified at /admin/knowledge as one page with five Views and exact authority registry counts. VIS-00 through VIS-18 visual positioning is now complete. Phase 2 logic construction is NOT_STARTED; KB runtime/API/DB/crawler/E2E/deploy remain NOT_EXECUTED.

@@ -41,7 +41,7 @@ const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { id: "ADMIN-NAV-06", labelKey: "global.admin.aiapi", icon: "video", href: "/admin/aiapi" },
   { id: "ADMIN-NAV-07", labelKey: "global.admin.qa_criteria", icon: "qa", href: "/admin/qa-criteria" },
   { id: "ADMIN-NAV-08", labelKey: "global.admin.strategy", icon: "strategy", href: "/admin/strategy" },
-  { id: "ADMIN-NAV-09", labelKey: "global.admin.knowledge", icon: "asset" },
+  { id: "ADMIN-NAV-09", labelKey: "global.admin.knowledge", icon: "asset", href: "/admin/knowledge" },
 ] as const;
 
 function Icon({ name }: { name: NavItem["icon"] }) {
