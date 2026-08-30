@@ -1,0 +1,53 @@
+name: VIS-10 SYS-01 validation retry2
+on:
+  push:
+    branches:
+      - acpos-vis10-staging
+    paths:
+      - .github/workflows/vis10-validation-retry2.yml
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis10-staging
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Next build
+        run: npm run build
+      - name: Install Playwright locally
+        run: |
+          npm install --no-save playwright@1.62.1
+          npx playwright install chromium --with-deps
+      - name: Start production server
+        run: |
+          npm run start -- -p 3000 > /tmp/vis10-next.log 2>&1 &
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:3000/admin/system >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/vis10-next.log
+          exit 1
+      - name: Chromium authority and geometry validation
+        run: |
+          mkdir -p docs/construction/evidence/VIS-10
+          node .acpos-temp/vis10-validate.cjs
+      - name: Commit evidence and self-clean
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add docs/construction/evidence/VIS-10/vis10-1600-top.png \
+                  docs/construction/evidence/VIS-10/vis10-1440-top.png \
+                  docs/construction/evidence/VIS-10/vis10-1440-bottom.png \
+                  docs/construction/evidence/VIS-10/vis10-1200-top.png \
+                  docs/construction/evidence/VIS-10/vis10-front-admin-entry.png \
+                  docs/construction/evidence/VIS-10/vis10-validation.json
+          git commit -m "test(vis10): persist SYS-01 visual evidence"
+          git rm .github/workflows/vis10-validation.yml .github/workflows/vis10-validation-retry.yml .github/workflows/vis10-validation-retry2.yml .acpos-temp/vis10-validate.cjs
+          git commit -m "chore(vis10): remove temporary validation tools"
+          git push origin HEAD:acpos-vis10-staging
