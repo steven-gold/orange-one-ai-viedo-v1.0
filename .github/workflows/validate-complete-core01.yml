@@ -1,0 +1,157 @@
+name: Validate Complete CORE-01
+on:
+  push:
+    branches: [acpos-live-preview]
+    paths: [.github/workflows/validate-complete-core01.yml]
+permissions:
+  contents: write
+jobs:
+  core01:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+          fetch-depth: 0
+      - name: Preserve current complete preview
+        run: |
+          rm -rf /tmp/preview-preserved
+          cp -a preview /tmp/preview-preserved
+      - name: Checkout new
+        run: git checkout new
+      - name: Install dependencies
+        run: npm ci
+      - name: TypeScript
+        run: npm run typecheck
+      - name: Authority and visual audit
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('src/components/pages/CoreVisual.tsx').read_text()
+          css=Path('src/components/pages/CoreVisual.module.css').read_text()
+          assert s.count('"CORE-01-') >= 50
+          assert 'CONTROL_ACTION_UID' in s
+          assert 'runControl' in s and 'runServerAction' in s
+          assert 'provider' not in s.lower()
+          assert 'model picker' not in s.lower()
+          assert 'preview-runtime' not in s.lower()
+          assert '#acpos-preview-drawer' not in s
+          assert 'GLOBAL_ATTACHMENT_SELECTOR_NOT_BOUND' in s
+          assert 'GLOBAL_REFERENCE_SELECTOR_NOT_BOUND' in s
+          assert 'REQUIRED_PROJECT_REF_MISSING' in s
+          assert 'REQUIRED_THREAD_REF_MISSING' in s
+          assert 'EXACT_CANDIDATE_REF_REQUIRED' in s
+          assert css
+          PY
+      - name: Configure preview asset prefix
+        run: |
+          cp next.config.ts /tmp/next.config.ts.original
+          cat > next.config.ts <<'EOF'
+          import type { NextConfig } from "next";
+          const nextConfig: NextConfig = {
+            assetPrefix: "https://rawcdn.githack.com/steven-gold/orange-one-ai-viedo-v1.0/acpos-live-preview/preview",
+          };
+          export default nextConfig;
+          EOF
+      - name: Build
+        run: npm run build
+      - name: Start production server
+        run: |
+          (npm start > /tmp/core01-server.log 2>&1 & echo $! > /tmp/core01-server.pid)
+          for i in $(seq 1 40); do curl -fsS http://127.0.0.1:3000/core >/dev/null && exit 0; sleep 1; done
+          cat /tmp/core01-server.log
+          exit 1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Chromium functional validation
+        run: |
+          cat > core01-browser-check.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({headless:true});
+          const page = await browser.newPage({viewport:{width:1600,height:1100}});
+          await page.goto('http://127.0.0.1:3000/core', {waitUntil:'networkidle'});
+          const root = page.locator('[data-page-uid="CORE-01"]');
+          await root.waitFor();
+          const buttons = page.locator('[data-page-uid="CORE-01"] button[data-control-id]');
+          const count = await buttons.count();
+          if (count < 20) throw new Error(`too few CORE controls: ${count}`);
+          const disabled = await buttons.evaluateAll(xs => xs.filter(x => x.disabled).length);
+          if (disabled !== 0) throw new Error(`dead buttons remain: ${disabled}`);
+          const stage = page.locator('[data-control-id="CORE-01-FLD-RUNTIME-STAGE"] strong');
+          await page.locator('[data-control-id="CORE-01-BTN-PROJECT-CREATE"]').click();
+          await page.waitForTimeout(250);
+          const projectReason = await stage.textContent();
+          if (!projectReason || projectReason === '—') throw new Error('project create produced no governed result');
+          await page.locator('[data-control-id="CORE-01-BTN-TOPIC-CREATE"]').click();
+          if (!(await stage.textContent())?.includes('REQUIRED_PROJECT_REF_MISSING')) throw new Error('topic gate not enforced');
+          await page.locator('[data-control-id="CORE-01-BTN-SINGLE-AI"]').click();
+          if (!(await stage.textContent())?.includes('REQUIRED_WORK_ITEM_MISSING')) throw new Error('AI work-item gate not enforced');
+          await page.locator('[data-control-id="CORE-01-BTN-ASSISTANT-RECORD"]').click();
+          if ((await stage.textContent()) !== 'ASSISTANT_RECORD_OPEN') throw new Error('assistant client action not working');
+          await page.locator('[data-control-id="CORE-01-FLD-MESSAGE"]').fill('validation message');
+          await page.locator('[data-control-id="CORE-01-BTN-SEND"]').click();
+          if (!(await stage.textContent())?.includes('REQUIRED_THREAD_REF_MISSING')) throw new Error('send gate not enforced');
+          await page.locator('[data-control-id="CORE-01-FLD-HUMAN-DECISION"]').fill('validation decision');
+          await page.locator('[data-control-id="CORE-01-BTN-CANDIDATE-CONFIRM"]').click();
+          if (!(await stage.textContent())?.includes('EXACT_CANDIDATE_REF_REQUIRED')) throw new Error('candidate gate not enforced');
+          await page.locator('[data-control-id="CORE-01-BTN-BLUEPRINT-VALIDATE"]').click();
+          if (!(await stage.textContent())?.includes('EXACT_BLUEPRINT_VERSION_REF_REQUIRED')) throw new Error('blueprint gate not enforced');
+          await page.locator('[data-control-id="CORE-01-BTN-PROJECT-LOCK"]').click();
+          if (!(await stage.textContent())?.includes('REQUIRED_PROJECT_REF_MISSING')) throw new Error('lock gate not enforced');
+          await browser.close();
+          EOF
+          node core01-browser-check.mjs
+      - name: Materialize CORE-01 only
+        run: |
+          rm -rf preview
+          cp -a /tmp/preview-preserved preview
+          curl -fsS http://127.0.0.1:3000/core > preview/core.html
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('preview/core.html')
+          s=p.read_text()
+          repl={
+            'href="/"':'href="index.html"',
+            'href="/core"':'href="core.html"',
+            'href="/assets"':'href="assets.html"',
+            'href="/video"':'href="video.html"',
+            'href="/edit"':'href="edit.html"',
+            'href="/qa"':'href="qa.html"',
+            'href="/database"':'href="db.html"',
+            'href="/strategy"':'href="strategy.html"',
+            'href="/info"':'href="info.html"',
+            'href="/admin/system"':'href="system.html"',
+          }
+          for a,b in repl.items(): s=s.replace(a,b)
+          p.write_text(s)
+          assert 'href="assets.html"' in s and 'href="index.html"' in s
+          assert 'data-page-uid="CORE-01"' in s
+          assert 'preview-runtime' not in s
+          PY
+          mkdir -p preview/_next/static
+          cp -a .next/static/. preview/_next/static/
+      - name: Publish and self-clean
+        run: |
+          git checkout acpos-live-preview
+          rm -rf preview
+          cp -a /tmp/preview-preserved preview
+          git checkout new -- /dev/null 2>/dev/null || true
+          cp -a /tmp/preview-preserved/. preview/
+          git checkout -- . 2>/dev/null || true
+          git checkout new -- src/components/pages/CoreVisual.tsx 2>/dev/null || true
+          git reset --hard HEAD
+          rm -rf preview
+          cp -a /tmp/preview-preserved preview
+          git show new:src/components/pages/CoreVisual.tsx >/dev/null
+          git checkout new -- . >/dev/null 2>&1 || true
+          # return to preview branch while retaining generated preview from workspace copy
+          cp -a preview /tmp/generated-preview
+          git checkout -f acpos-live-preview
+          rm -rf preview
+          cp -a /tmp/generated-preview preview
+          rm -f .github/workflows/validate-complete-core01.yml
+          git config user.name "ACPOS Preview Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A preview .github/workflows/validate-complete-core01.yml
+          git commit -m "feat(preview): deploy completed CORE-01 governed interactions"
+          git push origin acpos-live-preview
