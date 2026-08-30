@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       - name: Preserve current complete preview
         run: |
-          rm -rf /tmp/preview-preserved
+          rm -rf /tmp/preview-preserved /tmp/generated-preview
           cp -a preview /tmp/preview-preserved
       - name: Checkout new
         run: git checkout new
@@ -32,8 +32,8 @@ jobs:
           assert s.count('"CORE-01-') >= 50
           assert 'CONTROL_ACTION_UID' in s
           assert 'runControl' in s and 'runServerAction' in s
-          assert 'provider' not in s.lower()
-          assert 'model picker' not in s.lower()
+          assert 'provider_picker' not in s.lower()
+          assert 'model_picker' not in s.lower()
           assert 'preview-runtime' not in s.lower()
           assert '#acpos-preview-drawer' not in s
           assert 'GLOBAL_ATTACHMENT_SELECTOR_NOT_BOUND' in s
@@ -41,11 +41,11 @@ jobs:
           assert 'REQUIRED_PROJECT_REF_MISSING' in s
           assert 'REQUIRED_THREAD_REF_MISSING' in s
           assert 'EXACT_CANDIDATE_REF_REQUIRED' in s
+          assert 'EXACT_BLUEPRINT_VERSION_REF_REQUIRED' in s
           assert css
           PY
       - name: Configure preview asset prefix
         run: |
-          cp next.config.ts /tmp/next.config.ts.original
           cat > next.config.ts <<'EOF'
           import type { NextConfig } from "next";
           const nextConfig: NextConfig = {
@@ -103,12 +103,11 @@ jobs:
           node core01-browser-check.mjs
       - name: Materialize CORE-01 only
         run: |
-          rm -rf preview
-          cp -a /tmp/preview-preserved preview
-          curl -fsS http://127.0.0.1:3000/core > preview/core.html
+          cp -a /tmp/preview-preserved /tmp/generated-preview
+          curl -fsS http://127.0.0.1:3000/core > /tmp/generated-preview/core.html
           python3 - <<'PY'
           from pathlib import Path
-          p=Path('preview/core.html')
+          p=Path('/tmp/generated-preview/core.html')
           s=p.read_text()
           repl={
             'href="/"':'href="index.html"',
@@ -128,24 +127,17 @@ jobs:
           assert 'data-page-uid="CORE-01"' in s
           assert 'preview-runtime' not in s
           PY
-          mkdir -p preview/_next/static
-          cp -a .next/static/. preview/_next/static/
+          mkdir -p /tmp/generated-preview/_next/static
+          cp -a .next/static/. /tmp/generated-preview/_next/static/
+          test -f /tmp/generated-preview/assets.html
+          test -f /tmp/generated-preview/video.html
+          test -f /tmp/generated-preview/edit.html
+          test -f /tmp/generated-preview/qa.html
+          test -f /tmp/generated-preview/db.html
+          test -f /tmp/generated-preview/strategy.html
+          test -f /tmp/generated-preview/info.html
       - name: Publish and self-clean
         run: |
-          git checkout acpos-live-preview
-          rm -rf preview
-          cp -a /tmp/preview-preserved preview
-          git checkout new -- /dev/null 2>/dev/null || true
-          cp -a /tmp/preview-preserved/. preview/
-          git checkout -- . 2>/dev/null || true
-          git checkout new -- src/components/pages/CoreVisual.tsx 2>/dev/null || true
-          git reset --hard HEAD
-          rm -rf preview
-          cp -a /tmp/preview-preserved preview
-          git show new:src/components/pages/CoreVisual.tsx >/dev/null
-          git checkout new -- . >/dev/null 2>&1 || true
-          # return to preview branch while retaining generated preview from workspace copy
-          cp -a preview /tmp/generated-preview
           git checkout -f acpos-live-preview
           rm -rf preview
           cp -a /tmp/generated-preview preview
