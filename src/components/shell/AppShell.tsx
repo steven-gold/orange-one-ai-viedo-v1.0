@@ -188,8 +188,22 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
             )}
           </div>
           <div className="surface-switch-group" aria-label={`${t("global.header.frontend")} / ${t("global.header.admin")}`}>
-            <a className="surface-switch-button" href="/" aria-label={t("global.header.frontend")} aria-current={surface === "front" ? "page" : undefined}>{t("global.header.frontend")}</a>
-            <a className="surface-switch-button" href="/admin/system" aria-label={t("global.header.admin")} aria-current={surface === "admin" ? "page" : undefined}>{t("global.header.admin")}</a>
+            <a
+              className="surface-switch-button"
+              href="/"
+              aria-label={t("global.header.frontend")}
+              aria-current={surface === "front" ? "page" : undefined}
+            >
+              {t("global.header.frontend")}
+            </a>
+            <a
+              className="surface-switch-button"
+              href="/admin/system"
+              aria-label={t("global.header.admin")}
+              aria-current={surface === "admin" ? "page" : undefined}
+            >
+              {t("global.header.admin")}
+            </a>
           </div>
           <div className="account-menu">
             <button className="account-button" type="button" aria-label={t("global.header.account")}>
@@ -201,17 +215,52 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
         </div>
       </header>
 
-      <aside ref={sidebarRef} className={expanded ? "global-sidebar is-expanded" : "global-sidebar"} aria-label="Primary Navigation" onPointerEnter={openSidebar} onPointerLeave={scheduleCollapse} onFocusCapture={openSidebar} onBlurCapture={scheduleCollapse}>
+      <aside
+        ref={sidebarRef}
+        className={expanded ? "global-sidebar is-expanded" : "global-sidebar"}
+        aria-label="Primary Navigation"
+        onPointerEnter={openSidebar}
+        onPointerLeave={scheduleCollapse}
+        onFocusCapture={openSidebar}
+        onBlurCapture={scheduleCollapse}
+      >
         <div className="sidebar-surface" aria-hidden={!expanded} />
         <nav className="nav-list">
           {navItems.map((item) => {
             const isActive = item.id === activeNavId;
             const label = t(item.labelKey);
-            const content = <><span className="nav-icon"><Icon name={item.icon}/></span><span className="nav-label" aria-hidden={!expanded}>{label}</span></>;
+            const content = (
+              <>
+                <span className="nav-icon"><Icon name={item.icon}/></span>
+                <span className="nav-label" aria-hidden={!expanded}>{label}</span>
+              </>
+            );
             if (item.href) {
-              return <a key={item.id} href={item.href} className={isActive ? "nav-item is-active" : "nav-item"} aria-label={label} aria-current={isActive ? "page" : undefined} data-nav-id={item.id}>{content}</a>;
+              return (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  className={isActive ? "nav-item is-active" : "nav-item"}
+                  aria-label={label}
+                  aria-current={isActive ? "page" : undefined}
+                  data-nav-id={item.id}
+                >
+                  {content}
+                </a>
+              );
             }
-            return <button key={item.id} type="button" className={isActive ? "nav-item is-active" : "nav-item"} aria-label={label} aria-current={isActive ? "page" : undefined} data-nav-id={item.id}>{content}</button>;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={isActive ? "nav-item is-active" : "nav-item"}
+                aria-label={label}
+                aria-current={isActive ? "page" : undefined}
+                data-nav-id={item.id}
+              >
+                {content}
+              </button>
+            );
           })}
         </nav>
       </aside>
