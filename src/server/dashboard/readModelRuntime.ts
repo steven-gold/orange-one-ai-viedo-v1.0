@@ -2,13 +2,11 @@ import {
   type DashboardReadError,
   type DashboardReadModel,
   type DashboardReadResult,
-  type DashboardSectionKey,
   validateDashboardReadModel,
 } from "@/domain/dashboard/readModelContract";
 
 export type DashboardAccessRequest = {
   correlation_id: string;
-  section_key?: DashboardSectionKey;
 };
 
 export type DashboardAuthorizationDecision =
@@ -20,7 +18,6 @@ export type DashboardRuntimeBindings = {
   readProjection: (request: DashboardAccessRequest) => Promise<unknown>;
   audit: (entry: {
     correlation_id: string;
-    section_key?: DashboardSectionKey;
     outcome: "ALLOWED" | "DENIED" | "READ_ERROR" | "SCHEMA_ERROR" | "SUCCESS";
     reason_code?: string;
   }) => Promise<void>;
