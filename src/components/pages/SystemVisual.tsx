@@ -46,39 +46,19 @@ export function SystemVisual() {
       </header>
 
       <div className={styles.primaryGrid}>
-        <div className={styles.leftColumn}>
-          <Section id="SEC-ADMIN-SYS-01-SYSTEM-CONTEXT" title={t("systemContext")}>
-            <div className={styles.subheading}>{t("currentTruth")}</div>
-            <DataRow label={t("systemVersion")} />
-            <DataRow label={t("authority")} />
-            <DataRow label={t("services")} />
-            <DataRow label={t("runtime")} />
-            <div className={styles.divider} />
-            <div className={styles.subheading}>{t("activeChange")}</div>
-            <DataRow label={t("systemChangeId")} />
-            <DataRow label={t("goal")} />
-            <DataRow label={t("scope")} />
-            <DataRow label={t("candidateRef")} />
-          </Section>
-
-          <Section id="SEC-ADMIN-SYS-01-SOURCE-REFS" title={t("sourceRefs")}>
-            <div className={styles.referenceBox}>
-              <span>{t("sourceTypes")}</span>
-              <strong>{DASH}</strong>
-            </div>
-            <button
-              id="SYS-01-BTN-NAV-OPEN"
-              data-control-id="SYS-01-BTN-NAV-OPEN"
-              data-component-uid="SYS-01-CMP-SOURCE-REFS"
-              data-visual-uid="SYS-01-VIS-SOURCE-REFS"
-              className={styles.secondaryButton}
-              type="button"
-              disabled
-            >
-              {t("openReference")}
-            </button>
-          </Section>
-        </div>
+        <Section id="SEC-ADMIN-SYS-01-SYSTEM-CONTEXT" title={t("systemContext")}>
+          <div className={styles.subheading}>{t("currentTruth")}</div>
+          <DataRow label={t("systemVersion")} />
+          <DataRow label={t("authority")} />
+          <DataRow label={t("services")} />
+          <DataRow label={t("runtime")} />
+          <div className={styles.divider} />
+          <div className={styles.subheading}>{t("activeChange")}</div>
+          <DataRow label={t("systemChangeId")} />
+          <DataRow label={t("goal")} />
+          <DataRow label={t("scope")} />
+          <DataRow label={t("candidateRef")} />
+        </Section>
 
         <Section id="SEC-ADMIN-SYS-01-CONVERSATION" title={t("conversation")} className={styles.conversationPanel}>
           <div className={styles.modeHeader} data-component-uid="SYS-01-CMP-DESIGN-CONVERSATION-HEADER" data-visual-uid="SYS-01-VIS-DESIGN-CONVERSATION-HEADER">
@@ -119,6 +99,24 @@ export function SystemVisual() {
           <DataRow label="implementation" />
         </Section>
 
+        <Section id="SEC-ADMIN-SYS-01-SOURCE-REFS" title={t("sourceRefs")}>
+          <div className={styles.referenceBox}>
+            <span>{t("sourceTypes")}</span>
+            <strong>{DASH}</strong>
+          </div>
+          <button
+            id="SYS-01-BTN-NAV-OPEN"
+            data-control-id="SYS-01-BTN-NAV-OPEN"
+            data-component-uid="SYS-01-CMP-SOURCE-REFS"
+            data-visual-uid="SYS-01-VIS-SOURCE-REFS"
+            className={styles.secondaryButton}
+            type="button"
+            disabled
+          >
+            {t("openReference")}
+          </button>
+        </Section>
+
         <Section id="SEC-ADMIN-SYS-01-IMPACT-PREVIEW" title={t("impactPreview")}>
           <div className={styles.referenceBox}>
             <span>{t("affectedTypes")}</span>
@@ -127,7 +125,9 @@ export function SystemVisual() {
           <DataRow label="dependency_graph_ref" />
           <DataRow label="latest_context_fingerprint" />
         </Section>
+      </div>
 
+      <div className={styles.bottomGrid}>
         <Section id="SEC-ADMIN-SYS-01-AUDIT" title={t("audit")}>
           <div className={styles.referenceBox}>
             <span>{t("auditTrail")}</span>
@@ -136,9 +136,7 @@ export function SystemVisual() {
           <DataRow label="confirmed_decision_refs" />
           <DataRow label="unresolved_failure_refs" />
         </Section>
-      </div>
 
-      <div className={styles.bottomGrid}>
         <Section id="SEC-ADMIN-SYS-01-ACTION-DOCK" title={t("actionDock")}>
           <div className={styles.actionRow} data-component-uid="SYS-01-CMP-ACTION-DOCK" data-visual-uid="SYS-01-VIS-ACTION-DOCK">
             <button id="SYS-01-BTN-CANDIDATE-CREATE" data-control-id="SYS-01-BTN-CANDIDATE-CREATE" className={styles.primaryButton} type="button" disabled>{t("candidateCreate")}</button>
