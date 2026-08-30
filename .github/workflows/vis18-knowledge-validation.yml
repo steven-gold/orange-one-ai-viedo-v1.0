@@ -1,0 +1,210 @@
+name: VIS-18 Knowledge Center Validation
+on:
+  push:
+    branches: [acpos-vis18-staging]
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis18-staging
+          fetch-depth: 0
+
+      - name: Bind canonical KB-01 route with minimal diff
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          shell=Path('src/components/shell/AppShell.tsx')
+          s=shell.read_text()
+          old='  { id: "ADMIN-NAV-09", labelKey: "global.admin.knowledge", icon: "asset" },'
+          new='  { id: "ADMIN-NAV-09", labelKey: "global.admin.knowledge", icon: "asset", href: "/admin/knowledge" },'
+          if s.count(old)!=1: raise SystemExit('ADMIN-NAV-09 exact source line not found once')
+          shell.write_text(s.replace(old,new,1))
+
+          nav=Path('authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml')
+          n=nav.read_text()
+          rev_old='revision: 2026-08-30-CURRENT-ADMIN-STR01-ROUTE-BINDING'
+          rev_new='revision: 2026-08-30-CURRENT-ADMIN-KB01-ROUTE-BINDING'
+          if n.count(rev_old)!=1: raise SystemExit('navigation revision anchor missing')
+          n=n.replace(rev_old,rev_new,1)
+          anchor='    page_uid: admin:KB-01\n    permission_bundle: ADMIN-L1-KNOWLEDGE'
+          repl='    page_uid: admin:KB-01\n    route: /admin/knowledge\n    permission_bundle: ADMIN-L1-KNOWLEDGE'
+          if n.count(anchor)!=1: raise SystemExit('KB-01 navigation anchor missing')
+          nav.write_text(n.replace(anchor,repl,1))
+          PY
+
+      - name: Install and compile
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+
+      - name: Verify authority and registry source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(find src/app/admin/knowledge -name page.tsx | wc -l | tr -d ' ')" = "1"
+          ! find src/app/admin/knowledge -mindepth 2 -name page.tsx | grep -q .
+          grep -Fq 'href: "/admin/knowledge"' src/components/shell/AppShell.tsx
+          grep -Fq 'activeNavId="ADMIN-NAV-09"' src/app/admin/knowledge/page.tsx
+          grep -Fq 'data-page-uid="admin:KB-01"' src/components/pages/KnowledgeAdminVisual.tsx
+          grep -A8 -F 'nav_id: ADMIN-NAV-09' authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml | grep -Fq 'route: /admin/knowledge'
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('src/components/pages/KnowledgeAdminVisual.tsx').read_text()
+          controls=re.findall(r'uid: "(KB-01-CTL-[^"]+)"',s)
+          actions=set(re.findall(r'action: "(KB-01-ACT-[^"]+)"',s))
+          gates=set(re.findall(r'gate: "(KB-01-GATE-[^"]+)"',s))
+          assert len(controls)==27, len(controls)
+          assert len(set(controls))==27
+          assert len(actions)==21, sorted(actions)
+          assert len(gates)==17, sorted(gates)
+          print('SOURCE_REGISTRY_COUNTS=PASS')
+          PY
+
+      - name: Install Chromium validation runtime
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start production server
+        run: |
+          nohup npm start -- --hostname 127.0.0.1 --port 3000 >/tmp/vis18-next.log 2>&1 &
+          echo $! >/tmp/vis18-next.pid
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/admin/knowledge >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/vis18-next.log
+          exit 1
+
+      - name: Chromium contract validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/construction/evidence/VIS-18
+          cat > .vis18-check.cjs <<'NODE'
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1440,height:900}});
+            let businessRequests=0;
+            page.on('request', req=>{ if(['xhr','fetch'].includes(req.resourceType())) businessRequests += 1; });
+            await page.goto('http://127.0.0.1:3000/admin/knowledge',{waitUntil:'networkidle'});
+            const fail=m=>{throw new Error(m)};
+            const root=page.locator('[data-page-uid="admin:KB-01"]');
+            if(await root.count()!==1) fail('KB-01 page missing');
+            const attr=async name=>Number(await root.getAttribute(name));
+            if(await attr('data-section-registry-count')!==16) fail('section registry !=16');
+            if(await attr('data-component-registry-count')!==22) fail('component registry !=22');
+            if(await attr('data-field-registry-count')!==127) fail('field registry !=127');
+            if(await attr('data-control-registry-count')!==27) fail('control registry !=27');
+            if(await page.locator('[data-nav-id^="ADMIN-NAV-"]').count()!==9) fail('admin nav !=9');
+            const activeNav=page.locator('[data-nav-id="ADMIN-NAV-09"]');
+            if(await activeNav.getAttribute('aria-current')!=='page') fail('ADMIN-NAV-09 not active');
+            if(!(await activeNav.getAttribute('href'))?.endsWith('/admin/knowledge')) fail('ADMIN-NAV-09 href mismatch');
+            const expected=[
+              ['KB-01-VIEW-OVERVIEW',[2,16]],
+              ['KB-01-VIEW-SOURCE',[3,4,5,16]],
+              ['KB-01-VIEW-SEARCH',[6,7,8,16]],
+              ['KB-01-VIEW-EXPERIENCE',[9,10,11,16]],
+              ['KB-01-VIEW-REVIEW',[12,13,14,15,16]],
+            ];
+            const fields=new Set(); const components=new Set(); const sections=new Set(['KB-01-SEC-01']);
+            for(const [uid,nums] of expected){
+              await page.locator(`[data-view-uid="${uid}"]`).click();
+              if(await page.locator(`[data-current-view="${uid}"]`).count()!==1) fail(`view switch failed ${uid}`);
+              for(const n of nums){
+                const sid=`KB-01-SEC-${String(n).padStart(2,'0')}`;
+                if(await page.locator(`[data-section-uid="${sid}"]`).count()===0) fail(`section missing ${sid}`);
+                sections.add(sid);
+              }
+              for(const v of await page.locator('[data-field-uid]').evaluateAll(ns=>ns.map(n=>n.getAttribute('data-field-uid')))) fields.add(v);
+              for(const v of await page.locator('[data-component-uid]').evaluateAll(ns=>ns.map(n=>n.getAttribute('data-component-uid')))) components.add(v);
+              const businessControls=page.locator('[data-action-id]');
+              if(await businessControls.count()>0){
+                const enabled=await page.locator('[data-action-id]:not(:disabled)').count();
+                if(enabled!==0) fail(`business control enabled ${uid}`);
+              }
+            }
+            if(fields.size!==127) fail(`field coverage ${fields.size}/127`);
+            if(components.size!==22) fail(`component coverage ${components.size}/22`);
+            if(sections.size!==16) fail(`section coverage ${sections.size}/16`);
+            if((await page.locator('[data-view-uid]').count())!==5) fail('view tabs !=5');
+            const body=(await page.locator('body').innerText()).toLowerCase();
+            if(/sample data|mock data|demo knowledge|fake citation/.test(body)) fail('fake/sample data detected');
+            await page.locator('[data-view-uid="KB-01-VIEW-OVERVIEW"]').click();
+            await page.screenshot({path:'docs/construction/evidence/VIS-18/vis18-1440-overview.png',fullPage:true});
+            await page.locator('[data-view-uid="KB-01-VIEW-SOURCE"]').click();
+            await page.screenshot({path:'docs/construction/evidence/VIS-18/vis18-1440-source.png',fullPage:true});
+            await page.locator('[data-view-uid="KB-01-VIEW-REVIEW"]').click();
+            await page.screenshot({path:'docs/construction/evidence/VIS-18/vis18-1440-review.png',fullPage:true});
+            const workspaceX=await page.locator('.workspace-slot').evaluate(el=>el.getBoundingClientRect().x);
+            if(Math.round(workspaceX)!==78) fail(`workspace x ${workspaceX}`);
+            await page.locator('.global-sidebar').hover(); await page.waitForTimeout(250);
+            const workspaceXExpanded=await page.locator('.workspace-slot').evaluate(el=>el.getBoundingClientRect().x);
+            if(Math.round(workspaceXExpanded)!==78) fail(`workspace reflow ${workspaceXExpanded}`);
+            await page.screenshot({path:'docs/construction/evidence/VIS-18/vis18-1440-expanded.png',fullPage:true});
+            const lang=page.locator('button[aria-haspopup="listbox"]');
+            await lang.click(); await page.locator('[role="option"]').filter({hasText:'English'}).click();
+            if((await page.locator('h1').first().innerText()).trim()!=='Knowledge & Experience') fail('en locale failed');
+            await lang.click(); await page.locator('[role="option"]').filter({hasText:'简体中文'}).click();
+            if((await page.locator('h1').first().innerText()).trim()!=='知识库') fail('zh-CN locale failed');
+            await lang.click(); await page.locator('[role="option"]').filter({hasText:'繁體中文'}).click();
+            if((await page.locator('h1').first().innerText()).trim()!=='知識庫') fail('zh-TW locale failed');
+            if(businessRequests!==0) fail(`business requests ${businessRequests}`);
+            await page.setViewportSize({width:1200,height:800}); await page.reload({waitUntil:'networkidle'});
+            const geometry1200=await page.evaluate(()=>({clientWidth:document.documentElement.clientWidth,scrollWidth:document.documentElement.scrollWidth}));
+            const result={
+              route:'/admin/knowledge',pageUid:'admin:KB-01',adminL1:9,activeNav:'ADMIN-NAV-09',views:5,
+              sections:16,components:22,fields:127,controls:27,actions:21,gates:17,errors:14,
+              effectfulRuntimeReady:false,application:'NOT_EXECUTED',api:'NOT_EXECUTED',db:'NOT_EXECUTED',crawler:'NOT_EXECUTED',e2e:'NOT_EXECUTED',deploy:'NOT_EXECUTED',
+              fieldCoverage:fields.size,componentCoverage:components.size,sectionCoverage:sections.size,
+              fakeKnowledgeData:false,businessRequests,workspaceOriginX:Math.round(workspaceX),workspaceExpandedX:Math.round(workspaceXExpanded),geometry1200,
+              locales:['zh-TW','zh-CN','en'],runId:process.env.GITHUB_RUN_ID
+            };
+            fs.writeFileSync('docs/construction/evidence/VIS-18/vis18-validation.json',JSON.stringify(result,null,2));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node .vis18-check.cjs
+          rm -f .vis18-check.cjs
+
+      - name: Update truthful construction progress
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          p=Path('docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml')
+          s=p.read_text()
+          old='''  - id: VIS-18\n    group: ADMIN\n    page_uid: admin:KB-01\n    name: 知識庫\n    status: NOT_STARTED\nphase_2_logic_construction:\n  status: BLOCKED_BY_ALL_VISUAL_COMPLETE_GATE\n  rule: Do not start until VIS-00 through VIS-18 are all COMPLETE.\n'''
+          new=f'''  - id: VIS-18\n    group: ADMIN\n    page_uid: admin:KB-01\n    name: 知識庫\n    status: COMPLETE\n    scope: Single-page Knowledge & Experience governance visual at /admin/knowledge with five authority-defined Views, exact 16 sections / 22 components / 127 fields / 27 controls, real-data-only empty projections, and no parallel crawler/context/experience/learning implementation.\n    evidence:\n      final_validation_run_id: {os.environ.get('GITHUB_RUN_ID')}\n      evidence_directory: docs/construction/evidence/VIS-18\n      validation_record: docs/construction/evidence/VIS-18/vis18-validation.json\n      typecheck: PASS\n      next_build: PASS\n      production_server: PASS\n      chromium_render_and_geometry: PASS\n      locale_switch_runtime: PASS\n      business_requests_during_validation: 0\n      sections: 16\n      components: 22\n      fields: 127\n      controls: 27\n      actions: 21\n      gates: 17\n      errors: 14\n      effectful_runtime_ready: false\nphase_2_logic_construction:\n  status: NOT_STARTED\n  rule: VIS-00 through VIS-18 visual gate is complete; logic construction may begin only under current authority and explicit execution scope.\n'''
+          if old not in s: raise SystemExit('VIS-18/phase2 anchor not found')
+          s=s.replace(old,new,1)
+          s=s.replace('visual_steps_complete: 18','visual_steps_complete: 19',1)
+          oldnote='VIS-18 KB-01 is next and has not started. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.'
+          newnote='VIS-18 admin:KB-01 is implemented and verified at /admin/knowledge as one page with five Views and exact authority registry counts. VIS-00 through VIS-18 visual positioning is now complete. Phase 2 logic construction is NOT_STARTED; KB runtime/API/DB/crawler/E2E/deploy remain NOT_EXECUTED.'
+          if oldnote not in s: raise SystemExit('progress note anchor missing')
+          p.write_text(s.replace(oldnote,newnote,1))
+          PY
+
+      - name: Commit validated VIS-18 and self-clean
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/vis18-knowledge-validation.yml .vis18-check.cjs
+          git config user.name 'steven-gold'
+          git config user.email 'proorangeone@gmail.com'
+          git add -A src authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml docs/construction .github/workflows/vis18-knowledge-validation.yml
+          git commit -m 'feat(vis18): validate and connect KB-01 Knowledge Center'
+          git push origin HEAD:acpos-vis18-staging
