@@ -1,0 +1,91 @@
+name: Validate Deploy CORE-01
+on:
+  push:
+    branches: [acpos-live-preview]
+    paths: ['.github/workflows/validate-deploy-core01.yml']
+permissions:
+  contents: write
+jobs:
+  core01:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: acpos-live-preview
+      - name: Preserve full preview
+        run: cp -R preview /tmp/preview-full
+      - name: Checkout new
+        run: |
+          git fetch origin new
+          git switch --detach origin/new
+      - name: Install and typecheck
+        run: |
+          npm ci
+          npm run typecheck
+      - name: Authority/source audit
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const auth=fs.readFileSync('authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml','utf8');
+          const visual=fs.readFileSync('src/components/pages/CoreVisual.tsx','utf8');
+          const contract=fs.readFileSync('src/domain/core/coreRuntimeContract.ts','utf8');
+          const controls=[...auth.matchAll(/^  - control_uid: (CORE-01-[^\n]+)/gm)].map(m=>m[1].trim());
+          const actions=[...auth.matchAll(/^  - action_uid: (CORE-01-ACT-[^\n]+)/gm)].map(m=>m[1].trim());
+          const ports=[...auth.matchAll(/^  - port_uid: (CORE-01-PORT-[^\n]+)/gm)].map(m=>m[1].trim());
+          if(controls.length!==50) throw new Error('authority controls '+controls.length);
+          if(actions.length!==34) throw new Error('authority actions '+actions.length);
+          if(ports.length!==19) throw new Error('authority ports '+ports.length);
+          const mapBlock=visual.match(/const CONTROL_ACTION_UID:[\s\S]*?= \{([\s\S]*?)\n\};/);
+          if(!mapBlock) throw new Error('control action map missing');
+          const mapped=[...mapBlock[1].matchAll(/"(CORE-01-[^"]+)": "(CORE-01-ACT-[^"]+)"/g)];
+          if(mapped.length!==50) throw new Error('mapped controls '+mapped.length);
+          const mappedIds=new Set(mapped.map(m=>m[1]));
+          for(const id of controls) if(!mappedIds.has(id)) throw new Error('unmapped '+id);
+          const actionArray=contract.match(/CORE_ACTION_UIDS = \[([\s\S]*?)\] as const/)[1];
+          const portArray=contract.match(/CORE_PORT_UIDS = \[([\s\S]*?)\] as const/)[1];
+          const contractActions=[...actionArray.matchAll(/"(CORE-01-ACT-[^"]+)"/g)].map(m=>m[1]);
+          const contractPorts=[...portArray.matchAll(/"(CORE-01-PORT-[^"]+)"/g)].map(m=>m[1]);
+          if(new Set(contractActions).size!==34) throw new Error('contract actions mismatch');
+          if(new Set(contractPorts).size!==19) throw new Error('contract ports mismatch');
+          for(const forbidden of ['provider picker','model picker','Production Task selector','CORE-local filename']) if(visual.includes(forbidden)) throw new Error('forbidden visual content '+forbidden);
+          NODE
+          test "$(git hash-object src/components/pages/CoreVisual.module.css)" = "c9b0215dc2d174b77c558e617125e6ec2ecd9fbd"
+          grep -q 'x-core-action-uid' src/domain/core/coreClientPort.ts
+          grep -q 'projectVersionId: params.id' src/server/core/coreRouteFactory.ts
+      - name: Configure preview asset prefix
+        run: |
+          cat > next.config.ts <<'EOF'
+          import type { NextConfig } from "next";
+          const nextConfig: NextConfig = { reactStrictMode:true, poweredByHeader:false, assetPrefix:"https://rawcdn.githack.com/steven-gold/orange-one-ai-viedo-v1.0/acpos-live-preview/preview" };
+          export default nextConfig;
+          EOF
+      - name: Build and start
+        run: |
+          npm run build
+          npm run start > /tmp/core-next.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:3000/core >/dev/null && break; sleep 1; done
+          curl -fsS http://127.0.0.1:3000/core >/tmp/core.html
+          code=$(curl -s -o /tmp/proj.json -w '%{http_code}' http://127.0.0.1:3000/v1/ui-projections/CORE-01)
+          test "$code" = "503"
+          grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/proj.json
+      - name: Overlay CORE-01 into preserved preview
+        run: |
+          cp /tmp/core.html /tmp/preview-full/core.html
+          mkdir -p /tmp/preview-full/_next
+          cp -R .next/static /tmp/preview-full/_next/
+          grep -q 'data-page-uid="CORE-01"' /tmp/preview-full/core.html
+          test "$(grep -o 'data-section-id="CORE-01-SEC-[0-9][0-9]"' /tmp/preview-full/core.html | sort -u | wc -l)" -eq 10
+          grep -q '<script' /tmp/preview-full/core.html
+          ! grep -q 'acpos-preview-drawer' /tmp/preview-full/core.html
+      - name: Publish and self-clean
+        run: |
+          git switch acpos-live-preview
+          rm -rf preview
+          cp -R /tmp/preview-full preview
+          rm -f .github/workflows/validate-deploy-core01.yml
+          git config user.name 'ACPOS Preview Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A preview .github/workflows/validate-deploy-core01.yml
+          git commit -m 'feat(preview): deploy audited CORE-01 logic binding'
+          git push origin acpos-live-preview
