@@ -71,6 +71,8 @@ jobs:
           import { chromium } from 'playwright';
           const browser = await chromium.launch({headless:true});
           const page = await browser.newPage({viewport:{width:1600,height:1100}});
+          const requests=[];
+          page.on('request', r => { if (r.url().includes('/v1/')) requests.push(`${r.method()} ${r.url()}`); });
           await page.goto('http://127.0.0.1:3000/core', {waitUntil:'networkidle'});
           const root = page.locator('[data-page-uid="CORE-01"]');
           await root.waitFor();
@@ -80,26 +82,36 @@ jobs:
           const disabled = await buttons.evaluateAll(xs => xs.filter(x => x.disabled).length);
           if (disabled !== 0) throw new Error(`dead buttons remain: ${disabled}`);
           const stage = page.locator('[data-control-id="CORE-01-FLD-RUNTIME-STAGE"] strong');
+          async function waitStage(test, label) {
+            await page.waitForFunction(({selector,test}) => {
+              const el=document.querySelector(selector);
+              const text=el?.textContent?.trim() ?? '';
+              return test === 'nonempty' ? !!text && text !== '—' : text.includes(test);
+            }, {selector:'[data-control-id="CORE-01-FLD-RUNTIME-STAGE"] strong',test}, {timeout:5000});
+            const value=(await stage.textContent())?.trim() ?? '';
+            console.log(`${label}: ${value}`);
+            return value;
+          }
           await page.locator('[data-control-id="CORE-01-BTN-PROJECT-CREATE"]').click();
-          await page.waitForTimeout(250);
-          const projectReason = await stage.textContent();
-          if (!projectReason || projectReason === '—') throw new Error('project create produced no governed result');
+          const projectReason = await waitStage('nonempty','project-create');
+          if (!requests.some(r => r.includes('POST http://127.0.0.1:3000/v1/projects/drafts'))) throw new Error(`project create request missing: ${requests.join(' | ')}`);
+          if (!projectReason) throw new Error('project create produced no governed result');
           await page.locator('[data-control-id="CORE-01-BTN-TOPIC-CREATE"]').click();
-          if (!(await stage.textContent())?.includes('REQUIRED_PROJECT_REF_MISSING')) throw new Error('topic gate not enforced');
+          await waitStage('REQUIRED_PROJECT_REF_MISSING','topic-create-block');
           await page.locator('[data-control-id="CORE-01-BTN-SINGLE-AI"]').click();
-          if (!(await stage.textContent())?.includes('REQUIRED_WORK_ITEM_MISSING')) throw new Error('AI work-item gate not enforced');
+          await waitStage('REQUIRED_WORK_ITEM_MISSING','single-ai-block');
           await page.locator('[data-control-id="CORE-01-BTN-ASSISTANT-RECORD"]').click();
-          if ((await stage.textContent()) !== 'ASSISTANT_RECORD_OPEN') throw new Error('assistant client action not working');
+          await waitStage('ASSISTANT_RECORD_OPEN','assistant-record');
           await page.locator('[data-control-id="CORE-01-FLD-MESSAGE"]').fill('validation message');
           await page.locator('[data-control-id="CORE-01-BTN-SEND"]').click();
-          if (!(await stage.textContent())?.includes('REQUIRED_THREAD_REF_MISSING')) throw new Error('send gate not enforced');
+          await waitStage('REQUIRED_THREAD_REF_MISSING','send-block');
           await page.locator('[data-control-id="CORE-01-FLD-HUMAN-DECISION"]').fill('validation decision');
           await page.locator('[data-control-id="CORE-01-BTN-CANDIDATE-CONFIRM"]').click();
-          if (!(await stage.textContent())?.includes('EXACT_CANDIDATE_REF_REQUIRED')) throw new Error('candidate gate not enforced');
+          await waitStage('EXACT_CANDIDATE_REF_REQUIRED','candidate-block');
           await page.locator('[data-control-id="CORE-01-BTN-BLUEPRINT-VALIDATE"]').click();
-          if (!(await stage.textContent())?.includes('EXACT_BLUEPRINT_VERSION_REF_REQUIRED')) throw new Error('blueprint gate not enforced');
+          await waitStage('EXACT_BLUEPRINT_VERSION_REF_REQUIRED','blueprint-block');
           await page.locator('[data-control-id="CORE-01-BTN-PROJECT-LOCK"]').click();
-          if (!(await stage.textContent())?.includes('REQUIRED_PROJECT_REF_MISSING')) throw new Error('lock gate not enforced');
+          await waitStage('REQUIRED_PROJECT_REF_MISSING','project-lock-block');
           await browser.close();
           EOF
           node core01-browser-check.mjs
