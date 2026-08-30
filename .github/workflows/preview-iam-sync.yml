@@ -1,0 +1,93 @@
+name: Preview IAM-01 sync
+on:
+  push:
+    branches: [acpos-live-preview]
+    paths: [.github/workflows/preview-iam-sync.yml]
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+      - name: Link SYS-01 to IAM-01
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('preview/system.html')
+          s=p.read_text()
+          old='<button data-nav-id="ADMIN-NAV-02"><span class="ico">▰</span><span class="nav-label"><span class="tw">帳戶與權限</span><span class="cn">账户与权限</span><span class="en">IAM</span></span></button>'
+          new='<a href="accounts.html" data-nav-id="ADMIN-NAV-02"><span class="ico">▰</span><span class="nav-label"><span class="tw">帳戶與權限</span><span class="cn">账户与权限</span><span class="en">IAM</span></span></a>'
+          assert s.count(old)==1
+          p.write_text(s.replace(old,new))
+          PY
+      - name: Validate static contract
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          a=Path('preview/accounts.html').read_text()
+          s=Path('preview/system.html').read_text()
+          assert a.count('data-page-uid="admin:IAM-01"')==1
+          assert len(re.findall(r'data-section-id="',a))==6
+          assert len(re.findall(r'data-component-id="',a))==10
+          controls=re.findall(r'data-control-id="([^"]+)"',a)
+          assert len(controls)==14 and len(set(controls))==14, controls
+          assert len(re.findall(r'data-nav-id="ADMIN-NAV-',a))==9
+          assert 'FRONT-L1-09' in a and 'ADMIN-L1-KNOWLEDGE' in a
+          assert '姓名' in a and '禁止自行建立' in a
+          assert 'href="accounts.html" data-nav-id="ADMIN-NAV-02"' in s
+          assert 'href="system.html" data-nav-id="ADMIN-NAV-01"' in a
+          for forbidden in ['Production Deploy','Provider / Model Picker','admin:*']:
+            assert forbidden not in a
+          print('IAM preview static contract PASS')
+          PY
+      - name: Browser preview validation
+        run: |
+          mkdir -p /tmp/pw && cd /tmp/pw
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.62.1 >/dev/null 2>&1
+          npx playwright install chromium --with-deps >/dev/null 2>&1
+          cd "$GITHUB_WORKSPACE"
+          python3 -m http.server 8000 --directory preview >/tmp/iam-preview-http.log 2>&1 &
+          for i in {1..20}; do curl -fsS http://127.0.0.1:8000/accounts.html >/dev/null && break; sleep 1; done
+          cat > /tmp/iam-preview-check.cjs <<'NODE'
+          const {chromium}=require('playwright');
+          const assert=(v,m)=>{if(!v)throw new Error(m)};
+          (async()=>{const b=await chromium.launch({headless:true});
+            const p=await b.newPage({viewport:{width:1440,height:900}});
+            await p.goto('http://127.0.0.1:8000/accounts.html',{waitUntil:'networkidle'});
+            assert(await p.locator('[data-page-uid="admin:IAM-01"]').count()===1,'page');
+            assert(await p.locator('[data-section-id]').count()===6,'sections');
+            assert(await p.locator('[data-component-id]').count()===10,'components');
+            assert(await p.locator('[data-control-id]').count()===14,'controls');
+            assert(await p.locator('[data-nav-id]').count()===9,'admin nav');
+            assert(await p.locator('.nav .active').getAttribute('data-nav-id')==='ADMIN-NAV-02','active');
+            const g=await p.evaluate(()=>{const w=document.querySelector('.workspace');return{x:Math.round(w.getBoundingClientRect().x),client:w.clientWidth,scroll:w.scrollWidth}});
+            assert(g.x===78&&g.client===g.scroll,'1440 geometry '+JSON.stringify(g));
+            await p.locator('#add').click();
+            assert(await p.locator('[data-page-state="CREATE_BASIC_BLOCKED"]').count()===1,'local add state');
+            const s=await b.newPage({viewport:{width:1440,height:900}});
+            await s.goto('http://127.0.0.1:8000/system.html',{waitUntil:'networkidle'});
+            await s.locator('a[data-nav-id="ADMIN-NAV-02"]').click();
+            await s.waitForURL(/accounts\.html$/);
+            assert(await s.locator('[data-page-uid="admin:IAM-01"]').count()===1,'system to iam');
+            const r=await b.newPage({viewport:{width:1440,height:900}});
+            await r.goto('http://127.0.0.1:8000/accounts.html',{waitUntil:'networkidle'});
+            await r.locator('.account').click();
+            await r.waitForURL(/index\.html$/);
+            await b.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          NODE_PATH=/tmp/pw/node_modules node /tmp/iam-preview-check.cjs
+      - name: Commit exact preview patch and self-clean
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add preview/system.html
+          git commit -m "feat(preview): link SYS-01 to IAM-01 preview"
+          git rm .github/workflows/preview-iam-sync.yml
+          git commit -m "chore(preview): remove IAM sync workflow"
+          git push origin HEAD:acpos-live-preview
