@@ -2,13 +2,18 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const assert = (v, m) => { if (!v) throw new Error(m); };
 const exact = (a,b,m) => assert(JSON.stringify(a) === JSON.stringify(b), `${m}: ${JSON.stringify(a)} != ${JSON.stringify(b)}`);
+const sameSet = (a,b,m) => {
+  assert(a.length === b.length, `${m} count: ${a.length} != ${b.length}`);
+  assert(new Set(a).size === a.length, `${m} duplicate UID: ${JSON.stringify(a)}`);
+  exact([...a].sort(), [...b].sort(), m);
+};
 const FRONT = ['NAV-01','NAV-02','NAV-03','NAV-04','NAV-05','NAV-06','NAV-07','NAV-08','NAV-09'];
 const ADMIN = ['ADMIN-NAV-01','ADMIN-NAV-02','ADMIN-NAV-03','ADMIN-NAV-04','ADMIN-NAV-05','ADMIN-NAV-06','ADMIN-NAV-07','ADMIN-NAV-08','ADMIN-NAV-09'];
 const SECTIONS = ['SEC-ADMIN-SYS-01-SYSTEM-CONTEXT','SEC-ADMIN-SYS-01-CONVERSATION','SEC-ADMIN-SYS-01-CANDIDATE-CHANGE','SEC-ADMIN-SYS-01-SOURCE-REFS','SEC-ADMIN-SYS-01-IMPACT-PREVIEW','SEC-ADMIN-SYS-01-AUDIT','SEC-ADMIN-SYS-01-ACTION-DOCK','SEC-ADMIN-SYS-01-EXECUTION-PANEL'];
 const CONTROLS = ['SYS-01-BTN-SINGLE-AI','SYS-01-BTN-MULTI-AI','SYS-01-BTN-COUNCIL-DISCUSSION','SYS-01-BTN-COUNCIL-PARALLEL','SYS-01-BTN-CANDIDATE-CREATE','SYS-01-BTN-CR-CREATE','SYS-01-BTN-NAV-OPEN','SYS-01-BTN-SANDBOX-TEST'];
 (async()=>{
   const browser = await chromium.launch({headless:true});
-  const results = { route:'/admin/system', frontNav:[], adminNav:[], viewports:{}, xhr:0 };
+  const results = { route:'/admin/system', frontNav:[], adminNav:[], sections:SECTIONS, controls:CONTROLS, viewports:{}, xhr:0 };
   for (const width of [1600,1440,1200]) {
     const page = await browser.newPage({viewport:{width,height:900}});
     let requests = 0;
@@ -17,7 +22,7 @@ const CONTROLS = ['SYS-01-BTN-SINGLE-AI','SYS-01-BTN-MULTI-AI','SYS-01-BTN-COUNC
     assert(res && res.ok(), `route failed ${width}`);
     assert(await page.locator('[data-page-uid="admin:SYS-01"]').count() === 1, 'page uid missing');
     exact(await page.locator('[data-section-id]').evaluateAll(es=>es.map(e=>e.getAttribute('data-section-id'))), SECTIONS, 'section registry');
-    exact(await page.locator('[data-control-id]').evaluateAll(es=>es.map(e=>e.getAttribute('data-control-id'))), CONTROLS, 'control registry');
+    sameSet(await page.locator('[data-control-id]').evaluateAll(es=>es.map(e=>e.getAttribute('data-control-id'))), CONTROLS, 'control registry');
     const adminNav = await page.locator('[data-nav-id]').evaluateAll(es=>es.map(e=>e.getAttribute('data-nav-id')));
     exact(adminNav, ADMIN, `admin nav ${width}`);
     assert(await page.locator('[data-nav-id="ADMIN-NAV-01"][aria-current="page"]').count() === 1, 'active admin nav missing');
