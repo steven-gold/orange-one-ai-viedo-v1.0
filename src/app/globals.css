@@ -240,6 +240,17 @@ a:focus-visible {
   background: var(--purple-hover);
   border-color: var(--border-subtle);
 }
+.nav-item.is-active .nav-icon {
+  color: var(--text-primary);
+  border-radius: 6px;
+  box-shadow: 0 0 0 6px rgba(139, 92, 255, 0.24), 0 0 16px rgba(139, 92, 255, 0.22);
+}
+.global-sidebar.is-expanded .nav-item.is-active {
+  color: var(--text-primary);
+  background: linear-gradient(90deg, rgba(139, 92, 255, 0.30), rgba(92, 62, 190, 0.20));
+  border-color: var(--border-active);
+  box-shadow: inset 0 0 18px rgba(139, 92, 255, 0.08), 0 0 14px rgba(139, 92, 255, 0.12);
+}
 .nav-icon {
   width: 20px;
   height: 20px;
