@@ -1,0 +1,52 @@
+name: Fix frontend admin labels
+on:
+  push:
+    branches: [new]
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+      - name: Patch surface labels
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/i18n/catalog.ts')
+          s=p.read_text()
+          replacements={
+            '"zh-TW": "進入後台"':'"zh-TW": "後台"',
+            '"zh-CN": "进入后台"':'"zh-CN": "后台"',
+            'en: "Open Admin"':'en: "Admin"',
+            '"zh-TW": "返回前台"':'"zh-TW": "前台"',
+            '"zh-CN": "返回前台"':'"zh-CN": "前台"',
+            'en: "Back to Front"':'en: "Frontend"',
+          }
+          for old,new in replacements.items():
+            if s.count(old)!=1: raise SystemExit(f'{old}: count={s.count(old)}')
+            s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+      - name: Verify labels and build
+        run: |
+          set -euo pipefail
+          grep -Fq '"zh-TW": "後台"' src/i18n/catalog.ts
+          grep -Fq '"zh-TW": "前台"' src/i18n/catalog.ts
+          grep -Fq 'en: "Admin"' src/i18n/catalog.ts
+          grep -Fq 'en: "Frontend"' src/i18n/catalog.ts
+          npm ci
+          npm run build
+      - name: Commit and self-clean
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/fix-surface-labels.yml
+          git config user.name 'steven-gold'
+          git config user.email 'proorangeone@gmail.com'
+          git add src/i18n/catalog.ts .github/workflows/fix-surface-labels.yml
+          git commit -m 'fix(i18n): label persistent surface links as frontend and admin'
+          git push origin HEAD:new
