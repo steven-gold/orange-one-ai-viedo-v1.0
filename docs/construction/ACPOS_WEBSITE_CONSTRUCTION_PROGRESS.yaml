@@ -69,12 +69,12 @@ current_state:
   shared_runtime_construction: BLOCKED_BY_ALL_VISUAL_COMPLETE_GATE
   e2e: NOT_STARTED
   deployment: NOT_STARTED
-  current_task: VIS-11_ADMIN_IAM-01_VISUAL_POSITIONING
+  current_task: VIS-12_ADMIN_DEV-01_VISUAL_POSITIONING
   current_task_state: NOT_STARTED
   current_task_blockers: []
-  last_completed_task: VIS-10_ADMIN_SYS-01_VISUAL_POSITIONING
+  last_completed_task: VIS-11_ADMIN_IAM-01_VISUAL_POSITIONING
   current_front_l1_count: 9
-  navigation_revision: 2026-08-30-USER-APPROVED-INFO-NAV09
+  navigation_revision: 2026-08-30-CURRENT-ADMIN-ROUTES-SYS01-IAM01
   navigation_history_note: VIS-00 through VIS-08 retain their historical render evidence. VIS-09 regression supersedes the current Global Shell navigation count from 8 to 9 without rewriting prior evidence.
 phase_1_visual_positioning:
   objective: Finish all page visual/layout positioning before business logic construction.
@@ -454,7 +454,55 @@ phase_1_visual_positioning:
     group: ADMIN
     page_uid: admin:IAM-01
     name: 帳戶與權限
-    status: NOT_STARTED
+    status: COMPLETE
+    scope: Single-page Accounts & Permissions visual implementation at /admin/accounts with exact 6 sections / 10 components / 14 registered controls; current 9 frontend + 9 admin L1 permission configuration, empty real-data projections, blocked unresolved Identity Candidate schema, and no business mutation runtime.
+    authority_closure:
+      route: /admin/accounts
+      front_l1_count: 9
+      admin_l1_count: 9
+      info_front_bundle: FRONT-L1-09
+      knowledge_admin_bundle: ADMIN-L1-KNOWLEDGE
+      role_or_department_implicit_authorization: FORBIDDEN
+      status: CLOSED
+      validation_run_id: 33296561011
+    evidence:
+      implementation_commit: 7f2b81c8c4df8f91ab1c2482702207d625ad5769
+      final_validation_run_id: 33296725383
+      manual_evidence_export_run_id: 33296797489
+      manual_evidence_artifact_id: 9727662200
+      manual_evidence_artifact_sha256: f949bba3633b248f6d805be6f64916199e64acb43326a04a39e8d2e54d977b47
+      corrected_bottom_evidence_run_id: 33296878270
+      corrected_bottom_evidence_artifact_id: 9727696289
+      corrected_bottom_evidence_sha256: 8eca65fbd1df85930d3857113f4753099c5ebc106d2cb23eca5c6a06afec6a55
+      evidence_directory: docs/construction/evidence/VIS-11
+      validation_record: docs/construction/evidence/VIS-11/vis11-validation.json
+      typecheck: PASS
+      next_build: PASS
+      production_server: PASS
+      chromium_render_and_geometry: PASS
+      locale_switch_runtime: PASS
+      business_requests_during_validation: 0
+      manual_visual_inspection: PASS
+      manual_visual_inspection_basis: 1440 top, expanded sidebar, corrected workspace bottom, 1600 and 1200 evidence were inspected; no unintended clipping, overlap or workspace reflow. The first bottom screenshot scrolled window instead of workspace and was deleted as superseded evidence.
+      verified_contract:
+        route: /admin/accounts
+        active_admin_nav: ADMIN-NAV-02
+        sections: 6
+        components: 10
+        controls: 14
+        front_l1_permission_choices: 9
+        admin_l1_permission_choices: 9
+        exact_identity_schema_resolved: false
+        invented_identity_fields: false
+        add_account_business_mutation: false
+        enabled_effectful_business_controls: 0
+        workspace_origin_x: 78px
+        sidebar_collapsed_width: 64px
+        sidebar_expanded_width: 221px
+        workspace_reflow_on_expand: false
+        desktop_1600_horizontal_overflow: false
+        desktop_1440_horizontal_overflow: false
+        below_1280_horizontal_scroll: true
   - id: VIS-12
     group: ADMIN
     page_uid: admin:DEV-01
@@ -499,9 +547,9 @@ final_validation:
   status: NOT_STARTED
 metrics:
   visual_steps_total: 19
-  visual_steps_complete: 11
+  visual_steps_complete: 12
   visual_steps_in_progress: 0
   logic_steps_complete: 0
   shared_runtime_steps_complete: 0
   cross_page_steps_complete: 0
-  truthful_progress_note: VIS-00 through VIS-10 visual positioning are implemented and verified. VIS-09 promoted the existing workspace:INFO-01 to front NAV-09 最新資訊. VIS-10 established the shared Admin surface entry under Account, implemented admin:SYS-01 at /admin/system, and revalidated all nine front routes plus SYS-01 after restoring the Global Shell active navigation state. Historical evidence is not rewritten. VIS-11 IAM-01 is next but has not started. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
+  truthful_progress_note: VIS-00 through VIS-11 visual positioning are implemented and verified. VIS-09 promoted workspace:INFO-01 to front NAV-09 最新資訊. VIS-10 established the shared Admin surface and SYS-01. VIS-11 aligned IAM-01 to the current 9 frontend + 9 admin L1 navigation, implemented admin:IAM-01 at /admin/accounts, and preserved the unresolved exact Identity Candidate schema as a visible BLOCK rather than inventing fields. Historical evidence is not rewritten. VIS-12 DEV-01 is next and has not started. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
