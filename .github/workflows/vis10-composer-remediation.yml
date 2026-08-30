@@ -1,0 +1,97 @@
+name: VIS-10 composer remediation
+on:
+  push:
+    branches: [acpos-vis10-composer-remediation]
+    paths:
+      - .github/workflows/vis10-composer-remediation.yml
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis10-composer-remediation
+      - name: Apply exact SYS-01 composer closure
+        run: python .acpos-temp/vis10_composer_remediation.py
+      - name: Validate authority closure
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          p=Path('authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml')
+          d=yaml.safe_load(p.read_text())
+          reg=d['current_control_registry']
+          assert reg['count']==12
+          ids=[]
+          ids += [x['control_uid'] for x in reg['explicit_mode_controls']]
+          ids += [x['control_uid'] for x in reg['conversation_composer_controls']]
+          ids += [x['control_uid'] for x in reg['current_action_controls']]
+          assert len(ids)==12 and len(set(ids))==12
+          assert {'SYS-01-INP-MESSAGE','SYS-01-BTN-ATTACH','SYS-01-BTN-SEND','SYS-01-BTN-STOP'} <= set(ids)
+          cc=d['conversation_composer_contract']
+          assert cc['component_uid']=='SYS-01-CMP-CONVERSATION-COMPOSER'
+          assert cc['sizing']['textarea_vertical_resize']=='ALLOWED'
+          assert d['derived_validation']['counts']['current_registered_controls']==12
+          print('SYS-01 composer authority PASS')
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Next build
+        run: npm run build
+      - name: Install Chromium validation runtime
+        run: |
+          npm install --no-save playwright@1.62.1 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+      - name: Start production server
+        run: |
+          npm start -- -p 3000 > /tmp/vis10-server.log 2>&1 &
+          echo $! > /tmp/vis10-server.pid
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:3000/admin/system >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/vis10-server.log
+          exit 1
+      - name: Chromium composer and shared shell regression
+        run: node .acpos-temp/vis10_composer_validate.cjs
+      - name: Finalize truthful tracker
+        env:
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: python .acpos-temp/vis10_composer_finalize.py
+      - name: Validate tracker
+        run: |
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          d=yaml.safe_load(Path('docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml').read_text())
+          steps={x['id']:x for x in d['phase_1_visual_positioning']['steps']}
+          v=steps['VIS-10']
+          assert v['status']=='COMPLETE'
+          assert v['authority_closure']['current_registered_controls']==12
+          r=v['evidence']['verified_contract']['conversation_composer_remediation']
+          assert r['current_registered_controls']==12
+          assert r['message_input_resizable'] is True
+          assert r['business_requests_during_validation']==0
+          print('VIS-10 tracker composer remediation PASS')
+          PY
+      - name: Commit exact remediation and evidence
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml
+          git add src/components/pages/SystemVisual.tsx src/components/pages/SystemVisual.module.css src/i18n/systemCatalog.ts
+          git add docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+          git add docs/construction/evidence/VIS-10/vis10-composer-validation.json
+          git add docs/construction/evidence/VIS-10/vis10-composer-1440-top.png docs/construction/evidence/VIS-10/vis10-composer-1440-expanded.png docs/construction/evidence/VIS-10/vis10-composer-1440-bottom.png
+          git commit -m "fix(vis10): add SYS-01 conversation composer"
+      - name: Self-clean remediation tools
+        run: |
+          git rm .github/workflows/vis10-composer-remediation.yml
+          git rm .acpos-temp/vis10_composer_remediation.py .acpos-temp/vis10_composer_validate.cjs .acpos-temp/vis10_composer_finalize.py
+          git commit -m "chore(vis10): remove composer remediation tools"
+          git push origin HEAD:acpos-vis10-composer-remediation
