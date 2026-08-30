@@ -162,7 +162,7 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
               aria-label={t("global.header.language")}
               aria-haspopup="listbox"
               aria-expanded={languageOpen}
-              onClick={() => setLanguageOpen((open) => !open}
+              onClick={() => setLanguageOpen((open) => !open)}
             >
               {locale}
             </button>
