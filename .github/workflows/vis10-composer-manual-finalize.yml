@@ -1,0 +1,40 @@
+name: VIS-10 composer manual finalize
+on:
+  push:
+    branches: [acpos-vis10-composer-remediation]
+    paths:
+      - .github/workflows/vis10-composer-manual-finalize.yml
+permissions:
+  contents: write
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis10-composer-remediation
+      - name: Apply manual evidence truth
+        run: python .acpos-temp/vis10_composer_manual_finalize.py
+      - name: Validate tracker
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          d=yaml.safe_load(Path('docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml').read_text())
+          v={x['id']:x for x in d['phase_1_visual_positioning']['steps']}['VIS-10']
+          r=v['evidence']['verified_contract']['conversation_composer_remediation']
+          assert r['manual_visual_inspection']=='PASS'
+          assert r['manual_evidence_artifact_id']==9728086389
+          assert r['current_registered_controls']==12
+          print('VIS-10 composer manual evidence PASS')
+          PY
+      - name: Commit tracker and self-clean
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+          git commit -m "docs(vis10): finalize composer manual inspection"
+          git rm .github/workflows/vis10-composer-manual-finalize.yml .acpos-temp/vis10_composer_manual_finalize.py
+          git commit -m "chore(vis10): remove composer manual finalize tools"
+          git push origin HEAD:acpos-vis10-composer-remediation
