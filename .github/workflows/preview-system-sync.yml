@@ -31,28 +31,29 @@ jobs:
           s=Path('preview/system.html').read_text()
           assert s.count('data-page-uid="admin:SYS-01"')==1
           sections=re.findall(r'data-section-id="([^"]+)"',s)
-          expected_sections=[
-            'SEC-ADMIN-SYS-01-SYSTEM-CONTEXT','SEC-ADMIN-SYS-01-CONVERSATION','SEC-ADMIN-SYS-01-CANDIDATE-CHANGE','SEC-ADMIN-SYS-01-SOURCE-REFS',
-            'SEC-ADMIN-SYS-01-IMPACT-PREVIEW','SEC-ADMIN-SYS-01-AUDIT','SEC-ADMIN-SYS-01-ACTION-DOCK','SEC-ADMIN-SYS-01-EXECUTION-PANEL']
+          expected_sections=['SEC-ADMIN-SYS-01-SYSTEM-CONTEXT','SEC-ADMIN-SYS-01-CONVERSATION','SEC-ADMIN-SYS-01-CANDIDATE-CHANGE','SEC-ADMIN-SYS-01-SOURCE-REFS','SEC-ADMIN-SYS-01-IMPACT-PREVIEW','SEC-ADMIN-SYS-01-AUDIT','SEC-ADMIN-SYS-01-ACTION-DOCK','SEC-ADMIN-SYS-01-EXECUTION-PANEL']
           assert sections==expected_sections, sections
           controls=re.findall(r'data-control-id="([^"]+)"',s)
-          expected_controls={
-            'SYS-01-BTN-SINGLE-AI','SYS-01-BTN-MULTI-AI','SYS-01-BTN-COUNCIL-DISCUSSION','SYS-01-BTN-COUNCIL-PARALLEL',
-            'SYS-01-BTN-CANDIDATE-CREATE','SYS-01-BTN-CR-CREATE','SYS-01-BTN-NAV-OPEN','SYS-01-BTN-SANDBOX-TEST'}
+          expected_controls={'SYS-01-BTN-SINGLE-AI','SYS-01-BTN-MULTI-AI','SYS-01-BTN-COUNCIL-DISCUSSION','SYS-01-BTN-COUNCIL-PARALLEL','SYS-01-BTN-CANDIDATE-CREATE','SYS-01-BTN-CR-CREATE','SYS-01-BTN-NAV-OPEN','SYS-01-BTN-SANDBOX-TEST'}
           assert set(controls)==expected_controls and len(controls)==8, controls
           assert '<div class="segments" hidden>' in s
-          assert 'Provider / Model' not in s
-          assert 'Production Deploy' not in s
+          assert 'Provider / Model' not in s and 'Production Deploy' not in s
           idx=Path('preview/index.html').read_text()
           assert "onclick=\"location.href='system.html'\"" in idx
           PY
       - name: Browser preview validation
         run: |
-          npm install --no-save playwright@1.62.1 >/dev/null 2>&1
-          npx playwright install chromium --with-deps >/dev/null 2>&1
+          mkdir -p /tmp/pw
+          npm install --prefix /tmp/pw playwright@1.62.1 >/dev/null 2>&1
+          /tmp/pw/node_modules/.bin/playwright install chromium --with-deps >/dev/null 2>&1
           python3 -m http.server 8000 --directory preview >/tmp/preview-http.log 2>&1 &
-          for i in {1..20}; do curl -fsS http://127.0.0.1:8000/system.html >/dev/null && break; sleep 1; done
-          cat > /tmp/check.cjs <<'NODE'
+          READY=0
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:8000/system.html >/dev/null; then READY=1; break; fi
+            sleep 1
+          done
+          if [ "$READY" != "1" ]; then cat /tmp/preview-http.log; exit 1; fi
+          cat > /tmp/pw/check.cjs <<'NODE'
           const { chromium }=require('playwright');
           const assert=(v,m)=>{if(!v)throw new Error(m)};
           (async()=>{const b=await chromium.launch({headless:true});
@@ -72,7 +73,7 @@ jobs:
             assert(await f.locator('[data-page-uid="admin:SYS-01"]').count()===1,'account entry');
             await b.close();})();
           NODE
-          node /tmp/check.cjs
+          (cd /tmp/pw && node check.cjs)
       - name: Commit exact preview patch and self-clean
         run: |
           git config user.name "steven-gold"
