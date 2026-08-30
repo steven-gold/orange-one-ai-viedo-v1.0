@@ -1,2 +1,1 @@
-import { assetPost } from "@/server/asset/assetRouteFactory";
-export const POST=assetPost("ASSET-01-PORT-OUT-VIDEO");
+import{departmentPost}from"@/server/shared/departmentRouteFactory";export const POST=departmentPost("createDepartmentHandoff");
