@@ -1,0 +1,1 @@
+import{createIamPostRoute}from"@/server/iam/iamRouteFactory";export const POST=createIamPostRoute("saveDraft");
