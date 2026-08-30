@@ -69,12 +69,12 @@ current_state:
   shared_runtime_construction: BLOCKED_BY_ALL_VISUAL_COMPLETE_GATE
   e2e: NOT_STARTED
   deployment: NOT_STARTED
-  current_task: VIS-14_ADMIN_ERP-01_VISUAL_POSITIONING
+  current_task: VIS-15_ADMIN_AIAPI-01_VISUAL_POSITIONING
   current_task_state: NOT_STARTED
   current_task_blockers: []
-  last_completed_task: VIS-13_ADMIN_SOC-01_VISUAL_POSITIONING
+  last_completed_task: VIS-14_ADMIN_ERP-01_VISUAL_POSITIONING
   current_front_l1_count: 9
-  navigation_revision: 2026-08-30-CURRENT-ADMIN-ROUTES-SYS01-IAM01-DEV01-SOC01
+  navigation_revision: 2026-08-30-CURRENT-ADMIN-ROUTES-SYS01-IAM01-DEV01-SOC01-ERP01
   navigation_history_note: VIS-00 through VIS-08 retain their historical render evidence. VIS-09 regression supersedes the current Global Shell navigation count from 8 to 9 without rewriting prior evidence.
 phase_1_visual_positioning:
   objective: Finish all page visual/layout positioning before business logic construction.
@@ -551,7 +551,16 @@ phase_1_visual_positioning:
     group: ADMIN
     page_uid: admin:ERP-01
     name: ERP
-    status: NOT_STARTED
+    status: COMPLETE
+    evidence:
+      final_validation_run_id: 33303301159
+      evidence_directory: docs/construction/evidence/VIS-14
+      typecheck: PASS
+      next_build: PASS
+      production_server: PASS
+      chromium_render_and_geometry: PASS
+      locale_switch_runtime: PASS
+      business_requests_during_validation: 0
   - id: VIS-15
     group: ADMIN
     page_uid: admin:AIAPI-01
@@ -581,9 +590,9 @@ final_validation:
   status: NOT_STARTED
 metrics:
   visual_steps_total: 19
-  visual_steps_complete: 14
+  visual_steps_complete: 15
   visual_steps_in_progress: 0
   logic_steps_complete: 0
   shared_runtime_steps_complete: 0
   cross_page_steps_complete: 0
-  truthful_progress_note: VIS-00 through VIS-13 visual positioning are implemented and verified. VIS-12 implements admin:DEV-01 at /admin/dev with evidence; VIS-13 implements admin:SOC-01 at /admin/social with exact same-page five-stage authority binding and evidence. Historical evidence is not rewritten. VIS-14 ERP-01 is next and has not started. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
+  truthful_progress_note: VIS-00 through VIS-14 visual positioning are implemented and verified. VIS-14 implements the single current admin:ERP-01 at /admin/erp with Finance / ERP Connection / Sync & Data Quality same-page views, preserving read/export-only finance, no ERP writeback, secret-reference-only and missing-value truth boundaries. Historical evidence is not rewritten. VIS-15 AIAPI-01 is next and has not started. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
