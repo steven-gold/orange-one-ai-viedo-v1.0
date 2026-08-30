@@ -2,7 +2,7 @@ authority:
   id: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY
   version: V1.0
   status: FINAL_LOCKED
-  revision: 2026-08-30-CURRENT-ADMIN-ROUTES-SYS01-IAM01
+  revision: 2026-08-30-CURRENT-ADMIN-STR01-ROUTE-BINDING
   current_only: true
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
@@ -152,6 +152,7 @@ admin_navigation:
       zh-TW: 戰略中心
       en: Strategy Administration
     page_uid: admin:STR-01
+    route: /admin/strategy
     permission_bundle: ADMIN-L1-STRATEGY
     unauthorized: HIDDEN
   - order: 9
