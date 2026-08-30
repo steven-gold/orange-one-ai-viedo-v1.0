@@ -73,6 +73,7 @@ jobs:
           v=steps['VIS-10']
           assert v['status']=='COMPLETE'
           assert v['authority_closure']['current_registered_controls']==12
+          assert v['evidence']['verified_contract']['controls']==12
           r=v['evidence']['verified_contract']['conversation_composer_remediation']
           assert r['current_registered_controls']==12
           assert r['message_input_resizable'] is True
@@ -95,3 +96,4 @@ jobs:
           git rm .acpos-temp/vis10_composer_remediation.py .acpos-temp/vis10_composer_validate.cjs .acpos-temp/vis10_composer_finalize.py
           git commit -m "chore(vis10): remove composer remediation tools"
           git push origin HEAD:acpos-vis10-composer-remediation
+# retry-2
