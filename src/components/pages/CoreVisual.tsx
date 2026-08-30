@@ -1,11 +1,14 @@
 "use client";
 
-import { useState, type MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
+import { readCoreProjection } from "@/domain/core/coreClientPort";
+import type { CoreActionUid } from "@/domain/core/coreRuntimeContract";
 import styles from "./CoreVisual.module.css";
 
 type LabelKey = TranslationKey;
+type PageState = "LOADING" | "READY" | "ERROR";
 
 type ControlProps = {
   id: string;
@@ -14,6 +17,63 @@ type ControlProps = {
   compact?: boolean;
 };
 
+const CONTROL_ACTION_UID: Record<string, CoreActionUid> = {
+  "CORE-01-CTL-PROJECT": "CORE-01-ACT-PROJECT-SELECT",
+  "CORE-01-BTN-PROJECT-CREATE": "CORE-01-ACT-PROJECT-CREATE",
+  "CORE-01-CTL-TOPIC": "CORE-01-ACT-TOPIC-SELECT",
+  "CORE-01-BTN-TOPIC-CREATE": "CORE-01-ACT-TOPIC-CREATE",
+  "CORE-01-FLD-PAGE-MODE": "CORE-01-ACT-PROJECT-SELECT",
+  "CORE-01-FLD-NAMING-AUTHORITY": "CORE-01-ACT-PROJECT-SELECT",
+  "CORE-01-LST-WORK-ITEMS": "CORE-01-ACT-WORK-ITEM-SELECT",
+  "CORE-01-BTN-NEW-THREAD": "CORE-01-ACT-THREAD-CREATE",
+  "CORE-01-LST-THREADS": "CORE-01-ACT-THREAD-SELECT",
+  "CORE-01-BTN-SINGLE-AI": "CORE-01-ACT-AI-MODE-SINGLE",
+  "CORE-01-BTN-MULTI-AI": "CORE-01-ACT-AI-MODE-MULTI",
+  "CORE-01-FLD-ASSIGNED-AI": "CORE-01-ACT-ASSISTANT-RECORD",
+  "CORE-01-BTN-ASSISTANT-RECORD": "CORE-01-ACT-ASSISTANT-RECORD",
+  "CORE-01-MENU-QUOTE": "CORE-01-ACT-MSG-QUOTE",
+  "CORE-01-MENU-CONTINUE": "CORE-01-ACT-MSG-CONTINUE",
+  "CORE-01-MENU-ANALYZE": "CORE-01-ACT-MSG-ANALYZE",
+  "CORE-01-MENU-DECISION": "CORE-01-ACT-MSG-DECISION",
+  "CORE-01-MENU-BRANCH": "CORE-01-ACT-MSG-BRANCH",
+  "CORE-01-MENU-COPY": "CORE-01-ACT-MSG-COPY",
+  "CORE-01-FLD-ASSISTANT-SUMMARY": "CORE-01-ACT-CANDIDATE-CREATE",
+  "CORE-01-FLD-EVALUATION": "CORE-01-ACT-CANDIDATE-CREATE",
+  "CORE-01-FLD-HUMAN-DECISION": "CORE-01-ACT-CANDIDATE-CREATE",
+  "CORE-01-FLD-STRUCTURED-DECISION": "CORE-01-ACT-CANDIDATE-CREATE",
+  "CORE-01-BTN-CANDIDATE-CREATE": "CORE-01-ACT-CANDIDATE-CREATE",
+  "CORE-01-BTN-CANDIDATE-CONFIRM": "CORE-01-ACT-CANDIDATE-ACCEPT",
+  "CORE-01-BTN-RETURN-MODIFY": "CORE-01-ACT-CANDIDATE-RETURN",
+  "CORE-01-FLD-RUNTIME-STAGE": "CORE-01-ACT-PROJECT-SELECT",
+  "CORE-01-BTN-ATTACHMENT": "CORE-01-ACT-ATTACHMENT",
+  "CORE-01-BTN-REFERENCE": "CORE-01-ACT-REFERENCE-ATTACH",
+  "CORE-01-FLD-MESSAGE": "CORE-01-ACT-SEND",
+  "CORE-01-BTN-SEND": "CORE-01-ACT-SEND",
+  "CORE-01-BTN-PROJECT-VALIDATE": "CORE-01-ACT-PROJECT-VALIDATE",
+  "CORE-01-BTN-PROJECT-CONFIRM": "CORE-01-ACT-PROJECT-CONFIRM",
+  "CORE-01-BTN-STORY-CANDIDATE": "CORE-01-ACT-STORY-CANDIDATE",
+  "CORE-01-BTN-DNA-LOCK": "CORE-01-ACT-DNA-LOCK-REQUEST",
+  "CORE-01-BTN-CORE-REVIEW": "CORE-01-ACT-CORE-REVIEW-SUBMIT",
+  "CORE-01-BTN-PROJECT-LOCK": "CORE-01-ACT-MOTHER-LOCK-REQUEST",
+  "CORE-01-BTN-BLUEPRINT-CREATE": "CORE-01-ACT-BLUEPRINT-CREATE",
+  "CORE-01-BTN-BLUEPRINT-VALIDATE": "CORE-01-ACT-BLUEPRINT-VALIDATE",
+  "CORE-01-BTN-BLUEPRINT-APPROVE": "CORE-01-ACT-BLUEPRINT-APPROVE",
+  "CORE-01-BTN-CHILD-LOCK": "CORE-01-ACT-CHILD-LOCK-REQUEST",
+  "CORE-01-FLD-TOPIC-SCOPE": "CORE-01-ACT-TOPIC-SELECT",
+  "CORE-01-BTN-CANONICAL-SCRIPT": "CORE-01-ACT-CANONICAL-SCRIPT-VIEW",
+  "CORE-01-FLD-PACKAGE": "CORE-01-ACT-CANONICAL-SCRIPT-VIEW",
+  "CORE-01-FLD-DOWNSTREAM-ASSET": "CORE-01-ACT-PROJECT-SELECT",
+  "CORE-01-FLD-DOWNSTREAM-VIDEO": "CORE-01-ACT-PROJECT-SELECT",
+  "CORE-01-FLD-DOWNSTREAM-EDIT": "CORE-01-ACT-PROJECT-SELECT",
+  "CORE-01-BTN-CANDIDATE-COMPARE": "CORE-01-ACT-CANDIDATE-COMPARE",
+  "CORE-01-FLD-VERSION-STATE": "CORE-01-ACT-CANDIDATE-COMPARE",
+  "CORE-01-FLD-LOCK-REVIEW": "CORE-01-ACT-PROJECT-SELECT",
+};
+
+function actionUid(id: string): CoreActionUid {
+  return CONTROL_ACTION_UID[id];
+}
+
 function DisabledButton({ id, labelKey, primary = false, compact = false }: ControlProps) {
   const { t } = useI18n();
   return (
@@ -21,6 +81,8 @@ function DisabledButton({ id, labelKey, primary = false, compact = false }: Cont
       type="button"
       disabled
       data-control-id={id}
+      data-action-uid={actionUid(id)}
+      data-runtime-binding="BLOCKED_UNTIL_AUTHORIZED_CONTEXT"
       className={`${styles.button} ${primary ? styles.primaryButton : ""} ${compact ? styles.compactButton : ""}`}
     >
       {t(labelKey)}
@@ -31,7 +93,7 @@ function DisabledButton({ id, labelKey, primary = false, compact = false }: Cont
 function ReadonlyField({ id, labelKey }: ControlProps) {
   const { t } = useI18n();
   return (
-    <div className={styles.readonlyField} data-control-id={id}>
+    <div className={styles.readonlyField} data-control-id={id} data-action-uid={actionUid(id)}>
       <span className={styles.fieldLabel}>{t(labelKey)}</span>
       <span className={styles.fieldValue}>—</span>
     </div>
@@ -41,7 +103,7 @@ function ReadonlyField({ id, labelKey }: ControlProps) {
 function EmptyList({ id, labelKey }: ControlProps) {
   const { t } = useI18n();
   return (
-    <div className={styles.listControl} data-control-id={id}>
+    <div className={styles.listControl} data-control-id={id} data-action-uid={actionUid(id)}>
       <div className={styles.subheading}>{t(labelKey)}</div>
       <div className={styles.emptyValue}>—</div>
     </div>
@@ -65,6 +127,23 @@ const MESSAGE_MENU: readonly { id: string; key: LabelKey }[] = [
 export function CoreVisual() {
   const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pageState, setPageState] = useState<PageState>("LOADING");
+  const [runtimeReason, setRuntimeReason] = useState<string | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void readCoreProjection(controller.signal).then((result) => {
+      if (controller.signal.aborted) return;
+      if (result.ok) {
+        setPageState("READY");
+        setRuntimeReason(null);
+      } else {
+        setPageState("ERROR");
+        setRuntimeReason(result.reason_code);
+      }
+    });
+    return () => controller.abort();
+  }, []);
 
   const openContextMenu = (event: ReactMouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -76,19 +155,20 @@ export function CoreVisual() {
       className={styles.page}
       data-page-uid="CORE-01"
       data-vis-step="VIS-02"
-      data-page-state="EMPTY"
+      data-page-state={pageState}
+      data-runtime-reason={runtimeReason ?? undefined}
       onClick={() => menuOpen && setMenuOpen(false)}
     >
       <section className={styles.contextBar} data-section-id="CORE-01-SEC-01" data-visual-id="CORE-01-VIS-CONTEXT">
         <div className={styles.contextComponent} data-component-uid="CORE-01-CMP-CONTEXT">
           <label className={styles.selectField}>
             <span>{t("core01.control.project")}</span>
-            <select disabled data-control-id="CORE-01-CTL-PROJECT" aria-label={t("core01.control.project")}><option>—</option></select>
+            <select disabled data-control-id="CORE-01-CTL-PROJECT" data-action-uid={actionUid("CORE-01-CTL-PROJECT")} aria-label={t("core01.control.project")}><option>—</option></select>
           </label>
           <DisabledButton id="CORE-01-BTN-PROJECT-CREATE" labelKey="core01.control.create_project" primary />
           <label className={styles.selectField}>
             <span>{t("core01.control.topic")}</span>
-            <select disabled data-control-id="CORE-01-CTL-TOPIC" aria-label={t("core01.control.topic")}><option>—</option></select>
+            <select disabled data-control-id="CORE-01-CTL-TOPIC" data-action-uid={actionUid("CORE-01-CTL-TOPIC")} aria-label={t("core01.control.topic")}><option>—</option></select>
           </label>
           <DisabledButton id="CORE-01-BTN-TOPIC-CREATE" labelKey="core01.control.create_topic" primary />
           <ReadonlyField id="CORE-01-FLD-PAGE-MODE" labelKey="core01.control.page_mode" />
@@ -99,18 +179,14 @@ export function CoreVisual() {
       <div className={styles.primaryGrid} data-layout="CORE-01-PRIMARY-GRID">
         <aside className={styles.leftRail}>
           <section className={styles.panel} data-section-id="CORE-01-SEC-02" data-visual-id="CORE-01-VIS-LEFT">
-            <div data-component-uid="CORE-01-CMP-NAV">
-              <EmptyList id="CORE-01-LST-WORK-ITEMS" labelKey="core01.control.work_items" />
-            </div>
+            <div data-component-uid="CORE-01-CMP-NAV"><EmptyList id="CORE-01-LST-WORK-ITEMS" labelKey="core01.control.work_items" /></div>
             <div className={styles.divider} />
             <div data-component-uid="CORE-01-CMP-THREADS">
               <div className={styles.threadHeader}>
                 <PanelTitle labelKey="core01.group.conversation_threads" />
                 <DisabledButton id="CORE-01-BTN-NEW-THREAD" labelKey="core01.control.new_thread" compact />
               </div>
-              <div className={styles.threadListScroll}>
-                <EmptyList id="CORE-01-LST-THREADS" labelKey="core01.control.threads" />
-              </div>
+              <div className={styles.threadListScroll}><EmptyList id="CORE-01-LST-THREADS" labelKey="core01.control.threads" /></div>
             </div>
           </section>
         </aside>
@@ -135,7 +211,7 @@ export function CoreVisual() {
               {menuOpen && (
                 <div className={styles.contextMenu} data-component-uid="CORE-01-CMP-MESSAGE-MENU" onClick={(event) => event.stopPropagation()}>
                   {MESSAGE_MENU.map((item) => (
-                    <button key={item.id} type="button" disabled className={styles.contextMenuItem} data-control-id={item.id}>
+                    <button key={item.id} type="button" disabled className={styles.contextMenuItem} data-control-id={item.id} data-action-uid={actionUid(item.id)} data-runtime-binding="BLOCKED_WITHOUT_EXACT_MESSAGE_REF">
                       {t(item.key)}
                     </button>
                   ))}
@@ -153,7 +229,7 @@ export function CoreVisual() {
               <div className={styles.humanDecision} data-component-uid="CORE-01-CMP-HUMAN-DECISION">
                 <label className={styles.textareaField}>
                   <span>{t("core01.control.human_decision")}</span>
-                  <textarea disabled data-control-id="CORE-01-FLD-HUMAN-DECISION" value="" readOnly aria-label={t("core01.control.human_decision")} />
+                  <textarea disabled data-control-id="CORE-01-FLD-HUMAN-DECISION" data-action-uid={actionUid("CORE-01-FLD-HUMAN-DECISION")} value="" readOnly aria-label={t("core01.control.human_decision")} />
                 </label>
                 <ReadonlyField id="CORE-01-FLD-STRUCTURED-DECISION" labelKey="core01.control.structured_decision" />
                 <div className={styles.actionRow}>
@@ -166,7 +242,7 @@ export function CoreVisual() {
           </section>
 
           <section className={styles.runtimeStrip} data-section-id="CORE-01-SEC-06" data-visual-id="CORE-01-VIS-RUNTIME">
-            <div className={styles.runtimeComponent} data-component-uid="CORE-01-CMP-RUNTIME" data-control-id="CORE-01-FLD-RUNTIME-STAGE">
+            <div className={styles.runtimeComponent} data-component-uid="CORE-01-CMP-RUNTIME" data-control-id="CORE-01-FLD-RUNTIME-STAGE" data-action-uid={actionUid("CORE-01-FLD-RUNTIME-STAGE")}>
               <span>{t("core01.control.runtime_stage")}</span><strong>—</strong>
             </div>
           </section>
@@ -177,7 +253,7 @@ export function CoreVisual() {
                 <DisabledButton id="CORE-01-BTN-ATTACHMENT" labelKey="core01.control.attachment" compact />
                 <DisabledButton id="CORE-01-BTN-REFERENCE" labelKey="core01.control.reference" compact />
               </div>
-              <textarea disabled data-control-id="CORE-01-FLD-MESSAGE" aria-label={t("core01.control.message")} placeholder={t("core01.control.message")} />
+              <textarea disabled data-control-id="CORE-01-FLD-MESSAGE" data-action-uid={actionUid("CORE-01-FLD-MESSAGE")} aria-label={t("core01.control.message")} placeholder={t("core01.control.message")} />
               <DisabledButton id="CORE-01-BTN-SEND" labelKey="core01.control.send" primary />
             </div>
           </section>
