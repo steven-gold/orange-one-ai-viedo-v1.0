@@ -2,7 +2,7 @@ authority:
   id: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY
   version: V1.0
   status: FINAL_LOCKED
-  revision: 2026-08-30-CURRENT-ADMIN-KB01-ROUTE-BINDING
+  revision: 2026-08-30-PHASE1-CLOSURE-FRONT9-ADMIN9-ALL-ROUTES
   current_only: true
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
@@ -18,6 +18,7 @@ front_workspace_navigation:
       zh-TW: 儀表板
       en: Dashboard
     page_uid: workspace:WB-01
+    route: /
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
   - order: 2
@@ -26,6 +27,7 @@ front_workspace_navigation:
       zh-TW: 專案 / 專題
       en: Project / Topic
     page_uid: CORE-01
+    route: /core
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
   - order: 3
@@ -34,6 +36,7 @@ front_workspace_navigation:
       zh-TW: 素材
       en: Assets
     page_uid: ASSET-01
+    route: /assets
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
   - order: 4
@@ -42,6 +45,7 @@ front_workspace_navigation:
       zh-TW: 影片
       en: Video
     page_uid: VIDEO-01
+    route: /video
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
   - order: 5
@@ -50,6 +54,7 @@ front_workspace_navigation:
       zh-TW: 剪輯配音
       en: Editing & Voice
     page_uid: EDIT-01
+    route: /edit
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
   - order: 6
@@ -58,6 +63,7 @@ front_workspace_navigation:
       zh-TW: QA
       en: QA
     page_uid: QA-01
+    route: /qa
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
   - order: 7
@@ -66,6 +72,7 @@ front_workspace_navigation:
       zh-TW: 資料庫
       en: Database
     page_uid: admin:DB-01
+    route: /database
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
   - order: 8
@@ -74,6 +81,7 @@ front_workspace_navigation:
       zh-TW: 戰略中心
       en: Strategy Center
     page_uid: workspace:STR-01
+    route: /strategy
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
   - order: 9
@@ -82,6 +90,7 @@ front_workspace_navigation:
       zh-TW: 最新資訊
       en: Latest Information
     page_uid: workspace:INFO-01
+    route: /info
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
 admin_navigation:
@@ -112,6 +121,7 @@ admin_navigation:
       zh-TW: 企業自動開發系統
       en: Enterprise Automation
     page_uid: admin:DEV-01
+    route: /admin/dev
     permission_bundle: ADMIN-L1-DEV
     unauthorized: HIDDEN
   - order: 4
@@ -120,6 +130,7 @@ admin_navigation:
       zh-TW: 社群發布
       en: Social Publishing
     page_uid: admin:SOC-01
+    route: /admin/social
     permission_bundle: ADMIN-L1-SOCIAL
     unauthorized: HIDDEN
   - order: 5
@@ -128,6 +139,7 @@ admin_navigation:
       zh-TW: ERP
       en: ERP & Finance
     page_uid: admin:ERP-01
+    route: /admin/erp
     permission_bundle: ADMIN-L1-ERP
     unauthorized: HIDDEN
   - order: 6
@@ -136,6 +148,7 @@ admin_navigation:
       zh-TW: AI API
       en: AI API
     page_uid: admin:AIAPI-01
+    route: /admin/aiapi
     permission_bundle: ADMIN-L1-AIAPI
     unauthorized: HIDDEN
   - order: 7
@@ -144,6 +157,7 @@ admin_navigation:
       zh-TW: QA 評分項目
       en: QA Review Criteria
     page_uid: admin:SG-02
+    route: /admin/qa-criteria
     permission_bundle: ADMIN-L1-QA-CRITERIA
     unauthorized: HIDDEN
   - order: 8

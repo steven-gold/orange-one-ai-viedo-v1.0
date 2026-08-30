@@ -2,7 +2,7 @@ authority:
   id: ACPOS_SYSTEM_AUTHORITY
   version: V1.0
   status: FINAL_LOCKED
-  revision: 2026-08-30-USER-APPROVED-INFO-NAV09
+  revision: 2026-08-30-PHASE1-CLOSURE-VISUAL-APPLICATION-ALIGNED
   current_only: true
   scope: ORANGE_ONE_WHOLE_SITE_CENTRAL_BRAIN_AND_CROSS_PAGE_INTEGRATION_AUTHORITY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
@@ -513,7 +513,7 @@ implementation_truth:
   navigation_permission_spec: FINAL_LOCKED
   knowledge_page_spec: FINAL_LOCKED
   production_script_contract: FINAL_LOCKED
-  application_code: NOT_EXECUTED
+  application_code: VISUAL_PHASE_EXECUTED_BUSINESS_LOGIC_NOT_EXECUTED
   api_binding: NOT_EXECUTED
   database_binding: NOT_EXECUTED
   shared_crawler_runtime_execution: NOT_EXECUTED
@@ -521,9 +521,9 @@ implementation_truth:
   deployment: NOT_EXECUTED
 acceptance:
 - 18 unique current page authorities are represented in the Page Integration Matrix.
-- Front workspace navigation has exactly 8 L1 items.
+- Front workspace navigation has exactly 9 L1 items.
 - Admin navigation has exactly 9 L1 items including Knowledge.
-- INFO-01 is not a ninth front L1.
+- INFO-01 is the ninth front L1.
 - All department Provider/Model binding resolves through admin:AIAPI-01 and the shared router.
 - QA is review/correction-request/recheck/pass, not production-script authoring.
 - KB reuses FactPackService + KnowledgeExperienceService and shared ACPOS objects.

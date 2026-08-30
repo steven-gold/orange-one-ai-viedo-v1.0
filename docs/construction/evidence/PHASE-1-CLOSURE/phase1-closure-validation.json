@@ -1,0 +1,52 @@
+{
+  "phase": "PHASE-1-GLOBAL-CLOSURE",
+  "status": "PASS",
+  "final_validation_run_id": 33316469705,
+  "source_validation_sha": "7321f776d49d43a00b9a89a145f087c7f9b70118",
+  "visual_steps_complete": 19,
+  "current_page_count": 18,
+  "front_l1_count": 9,
+  "admin_l1_count": 9,
+  "route_count": 18,
+  "viewports": [
+    1440,
+    1366,
+    1280
+  ],
+  "total_route_viewport_checks": 54,
+  "cross_page_visual_consistency_audit": "PASS",
+  "navigation_route_to_page_visual_audit": "PASS",
+  "runtime_findings": 0,
+  "business_requests_during_validation": 0,
+  "static_findings_after_remediation": 0,
+  "authority_conflicts_corrected": [
+    "Manifest front_l1_count 8 -> 9",
+    "SYS-01 explicit current_only=true",
+    "Canonical Navigation Authority all 18 L1 route bindings",
+    "Global Shell Frontend/Admin Surface Switch registration and control count 14 -> 16",
+    "Global I18N Surface Switch and Admin L1 translation keys",
+    "System Authority stale front=8/INFO-not-ninth acceptance and visual application truth",
+    "Construction Progress stale VIS-17/VIS-16/all-visual-blocked current state"
+  ],
+  "residual_preview_vercel_test_syntax": "NONE_FOUND",
+  "premature_business_runtime": "NONE_FOUND",
+  "typecheck": "PASS",
+  "next_build": "PASS",
+  "production_server": "PASS",
+  "dependency_audit": {
+    "scope": "KNOWN_NOT_PHASE1_CLOSURE_GATE",
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 3,
+      "critical": 0,
+      "total": 3
+    },
+    "note": "Dependency vulnerabilities are recorded, not silently fixed or claimed closed in Phase 1."
+  },
+  "phase_2_logic_construction": "NOT_STARTED",
+  "shared_runtime_construction": "NOT_STARTED",
+  "e2e": "NOT_STARTED",
+  "deployment": "NOT_STARTED"
+}

@@ -5,10 +5,10 @@ authority:
   current_only: true
   supersedes:
   - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.8 and earlier shell/menu variants
-  scope: GLOBAL_FIXED_HEADER_AUTO_COLLAPSE_SIDEBAR_QUICK_STATUS_LANGUAGE_ACCOUNT_WORKSPACE_SLOT_ONLY
+  scope: GLOBAL_FIXED_HEADER_AUTO_COLLAPSE_SIDEBAR_QUICK_STATUS_LANGUAGE_SURFACE_SWITCH_ACCOUNT_WORKSPACE_SLOT_ONLY
   undefined: BLOCK + REPORT_AUTHORITY_GAP
   real_data_only: true
-  revision: 2026-08-30-USER-APPROVED-INFO-NAV09
+  revision: 2026-08-30-PHASE1-CLOSURE-SURFACE-SWITCH-FRONT9-ADMIN9
 user_decisions_2026_08_28:
 - Delete AI Workspace from L1 navigation
 - 'Merge Editing and Voice into one L1 item: 剪輯配音'
@@ -17,7 +17,7 @@ user_decisions_2026_08_28:
 - Top-left = canonical ORANGE ONE logo
 - Logo color may be adapted for background contrast when explicitly approved by the user; artwork content, geometry, typography, crop, and intrinsic aspect ratio remain unchanged
 - Top-right = account login/account information
-- Immediately left of account = language selector
+- Fixed Frontend / Admin Surface Switch is immediately left of Account; Language is immediately left of the Surface Switch
 - Sidebar auto-collapses by default to maximize workspace visual width
 - All nine navigation items are direct first-level L1 entries; no child menu, no submenu, no subtitle/secondary line for any L1 item
 - Collapsed sidebar has no visible sidebar panel/frame/background; only the nine icons remain visible
@@ -25,13 +25,14 @@ user_decisions_2026_08_28:
 - Remove Permission from the top-right header cluster
 - Account permissions are bound to the account and configured when the account is created / managed; Global Shell consumes authorization outcomes
   but does not render a Permission field
-- 'Authenticated top-right order is exactly: Notification / To-do / Running / Language / Account'
+- 'Authenticated top-right order is exactly: Notification / To-do / Running / Language / Surface Switch / Account'
 shell_boundary:
   owns:
   - fixed_header
   - canonical_brand
   - account_quick_status_cluster
   - language_selector
+  - surface_switch
   - account_entry
   - auto_collapse_sidebar
   - l1_navigation
@@ -94,11 +95,15 @@ geometry:
     - To-do
     - Running
     - Language
+    - Surface Switch
     - Account
     item_height: 36px
     gap: 8px
     counter_min_width: 52px
     language_width: 72px
+    surface_switch_height: 36px
+    surface_switch_button_min_width: 62px
+    surface_switch_gap: 4px
     account_min_width: 132px
     account_max_width: 220px
     overflow: Account display name ellipsis; quick counters never wrap; no second header row
@@ -164,9 +169,11 @@ header_account_cluster:
   - To-do
   - Running
   - Language
+  - Surface Switch
   - Account
   unauthenticated_order:
   - Language
+  - Surface Switch
   - Login
   notification:
     display: real unread/attention count or 0
@@ -184,6 +191,14 @@ header_account_cluster:
     - zh-CN
     - en
     click: Open language selector
+    business_mutation: false
+  surface_switch:
+    display: Fixed Frontend / Admin destination controls
+    frontend_target_nav_id: NAV-01
+    frontend_target_page_uid: workspace:WB-01
+    admin_target_nav_id: ADMIN-NAV-01
+    admin_target_page_uid: admin:SYS-01
+    route_source: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY
     business_mutation: false
   account:
     logged_out: 顯示登入 / Login；click OPEN_LOGIN
@@ -323,7 +338,7 @@ sections:
   components:
   - GHS-CMP-BRAND
 - section_uid: GHS-SEC-02
-  name: Header Account Quick Status / Language / Account
+  name: Header Account Quick Status / Language / Surface Switch / Account
   components:
   - GHS-CMP-ACCOUNT-QUICK-CLUSTER
 - section_uid: GHS-SEC-03
@@ -344,7 +359,7 @@ components:
 - component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
   section_uid: GHS-SEC-02
   visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
-  responsibility: Notification / To-do / Running / Language / Account. Account permissions are authorization-only and are not rendered here.
+  responsibility: Notification / To-do / Running / Language / Frontend-Admin Surface Switch / Account. Account permissions are authorization-only and are not rendered here.
 - component_uid: GHS-CMP-SIDEBAR
   section_uid: GHS-SEC-03
   visual_uid: GHS-VIS-SIDEBAR
@@ -366,7 +381,7 @@ visuals:
   geometry: Header x≈30; canonical asset intrinsic ratio
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
 - visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
-  geometry: Header right; order Notification→To-do→Running→Language→Account; h36; gap8
+  geometry: Header right; order Notification→To-do→Running→Language→Surface Switch→Account; h36; outer gap8; Surface Switch inner gap4
   inherits: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
 - visual_uid: GHS-VIS-SIDEBAR
   geometry: 'rest: transparent 64px icon rail with NO visible panel/frame; active overlay: 221px sidebar surface top58/bottom0'
@@ -682,6 +697,36 @@ controls:
   gate_uid: GHS-GATE-LANGUAGE
   permission_uid: GHS-PERM-SHELL
   visibility: ALWAYS_WHEN_SHELL_VISIBLE
+- control_uid: GHS-CTL-SURFACE-FRONT
+  section_uid: GHS-SEC-02
+  component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
+  visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
+  type: SURFACE_NAV
+  label:
+    zh-TW: 前台
+    zh-CN: 前台
+    en: Frontend
+  nav_id: NAV-01
+  target_page_uid: workspace:WB-01
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  visibility: ALWAYS_WHEN_SHELL_VISIBLE
+- control_uid: GHS-CTL-SURFACE-ADMIN
+  section_uid: GHS-SEC-02
+  component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
+  visual_uid: GHS-VIS-ACCOUNT-QUICK-CLUSTER
+  type: SURFACE_NAV
+  label:
+    zh-TW: 後台
+    zh-CN: 后台
+    en: Admin
+  nav_id: ADMIN-NAV-01
+  target_page_uid: admin:SYS-01
+  action_uid: GHS-ACT-NAVIGATE
+  gate_uid: GHS-GATE-NAV
+  permission_uid: GHS-PERM-NAV
+  visibility: ALWAYS_WHEN_SHELL_VISIBLE
 - control_uid: GHS-CTL-ACCOUNT
   section_uid: GHS-SEC-02
   component_uid: GHS-CMP-ACCOUNT-QUICK-CLUSTER
@@ -699,9 +744,9 @@ states:
 - state_uid: GHS-STATE-SIDEBAR-EXPANDED-OVERLAY
   meaning: Temporary 221px sidebar surface/frame visible with icon + single-line L1 labels; workspace remains x78; no child/submenu
 - state_uid: GHS-STATE-LOGGED-OUT
-  meaning: Header right shows Language + Login only
+  meaning: Header right shows Language + Frontend/Admin Surface Switch + Login
 - state_uid: GHS-STATE-LOGGED-IN
-  meaning: Header right shows Notification + To-do + Running + Language + Account. Permissions remain account-bound authorization data and are
+  meaning: Header right shows Notification + To-do + Running + Language + Frontend/Admin Surface Switch + Account. Permissions remain account-bound authorization data and are
     not rendered.
 - state_uid: GHS-STATE-QUICK-LINK-GAP
   meaning: Displayed real status may remain; unresolved quick destination disabled + gap report
@@ -781,7 +826,7 @@ i18n:
     NOTIFICATION:
       zh-TW: 通知
       zh-CN: 通知
-      en: Notifications
+      en: Notification
     TODO:
       zh-TW: 待辦
       zh-CN: 待办
@@ -790,6 +835,15 @@ i18n:
       zh-TW: 執行中
       zh-CN: 执行中
       en: Running
+  surface:
+    FRONTEND:
+      zh-TW: 前台
+      zh-CN: 前台
+      en: Frontend
+    ADMIN:
+      zh-TW: 後台
+      zh-CN: 后台
+      en: Admin
   language_options:
   - zh-TW
   - zh-CN
@@ -800,6 +854,7 @@ accessibility:
   auto_expand: keyboard focusin expands label layer; focusout collapses after delay
   quick_status: Each chip has accessible name including label and current authorized value/count
   language: Keyboard-selectable; current locale announced
+  surface_switch: Two fixed keyboard-accessible links expose Frontend and Admin destinations with current-surface semantics
   account: Account/Login button accessible name reflects actual session state
   active_nav: aria-current or selected semantics; not color-only
 forbidden:
@@ -847,16 +902,16 @@ acceptance:
   pass: Canonical ORANGE ONE logo only
 - uid: GHS-ACC-07
   item: Header Right Order
-  pass: Authenticated order exactly Notification → To-do → Running → Language → Account
+  pass: Authenticated order exactly Notification → To-do → Running → Language → Surface Switch → Account
 - uid: GHS-ACC-08
   item: Logged-out Header
-  pass: Only Language + Login shown; no fake account quick data
+  pass: Language + Surface Switch + Login shown; no fake account quick data
 - uid: GHS-ACC-09
   item: Quick Status
   pass: Notification + To-do + Running use real account projections and are clickable via canonical quick-link resolver; Permission is not rendered
 - uid: GHS-ACC-10
   item: Language
-  pass: Immediately left of Account; options zh-TW/zh-CN/en; UI locale only
+  pass: Language is immediately left of Surface Switch; Surface Switch is immediately left of Account; options zh-TW/zh-CN/en; UI locale only
 - uid: GHS-ACC-11
   item: Workspace Width
   pass: Content slot begins x78/y68 and does not reflow when menu auto-expands
@@ -886,7 +941,7 @@ acceptance:
 machine_validation:
   status: PASS
   nav_count: 9
-  control_count: 14
+  control_count: 16
   section_count: 4
   component_count: 6
   visual_count: 6
@@ -911,6 +966,7 @@ machine_validation:
   - To-do
   - Running
   - Language
+  - Surface Switch
   - Account
   header_permission_control_count: 0
   header_permission_field_count: 0

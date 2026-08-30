@@ -191,6 +191,9 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
             <a
               className="surface-switch-button"
               href="/"
+              data-control-uid="GHS-CTL-SURFACE-FRONT"
+              data-target-page-uid="workspace:WB-01"
+              data-canonical-nav-id="NAV-01"
               aria-label={t("global.header.frontend")}
               aria-current={surface === "front" ? "page" : undefined}
             >
@@ -199,6 +202,9 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
             <a
               className="surface-switch-button"
               href="/admin/system"
+              data-control-uid="GHS-CTL-SURFACE-ADMIN"
+              data-target-page-uid="admin:SYS-01"
+              data-canonical-nav-id="ADMIN-NAV-01"
               aria-label={t("global.header.admin")}
               aria-current={surface === "admin" ? "page" : undefined}
             >
