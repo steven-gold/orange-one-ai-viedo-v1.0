@@ -48,14 +48,14 @@ const catalog = {
     en: "Account",
   },
   "global.header.admin": {
-    "zh-TW": "進入後台",
-    "zh-CN": "进入后台",
-    en: "Open Admin",
+    "zh-TW": "後台",
+    "zh-CN": "后台",
+    en: "Admin",
   },
   "global.header.frontend": {
-    "zh-TW": "返回前台",
-    "zh-CN": "返回前台",
-    en: "Back to Front",
+    "zh-TW": "前台",
+    "zh-CN": "前台",
+    en: "Frontend",
   },
   "global.admin.system": {
     "zh-TW": "系統維護",
