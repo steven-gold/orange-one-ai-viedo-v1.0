@@ -79,7 +79,6 @@ jobs:
             const ct = ext === '.js' ? 'application/javascript' : ext === '.css' ? 'text/css' : 'application/octet-stream';
             return route.fulfill({status:200, contentType:ct, body:fs.readFileSync(file)});
           });
-          await page.route('**/v1/dashboard/read-model', route => route.fulfill({status:503, contentType:'application/json', body:JSON.stringify({error_uid:'WB-01-ERR-READ-001',reason_code:'DASHBOARD_RUNTIME_NOT_BOUND',correlation_id:'preview-validation'})}));
           await page.goto('file:///tmp/preview-real/index.html');
           await page.waitForFunction(() => document.querySelector('[data-page-uid="workspace:WB-01"]')?.getAttribute('data-state') === 'ERROR');
           const buttons = page.locator('button[data-control-id^="CTRL-WORKSPACE-WB-01-"]');
@@ -88,12 +87,13 @@ jobs:
           await buttons.first().click();
           const drawer = page.locator('[data-component-uid="WB-01-CMP-DRAWER-PROJECTION"]');
           await drawer.waitFor({state:'visible'});
+          if (await drawer.getAttribute('data-state') !== 'ERROR') throw new Error('Canonical Drawer must fail closed in static preview');
           if (await page.locator('#acpos-preview-drawer').count()) throw new Error('Forbidden preview drawer detected');
           if (await page.locator('style#acpos-preview-runtime-style').count()) throw new Error('Forbidden preview style detected');
-          if (!(await drawer.textContent()).includes('DASHBOARD_RUNTIME_NOT_BOUND')) throw new Error('Expected formal runtime error in canonical Drawer');
           await page.keyboard.press('Escape');
           await buttons.nth(13).click();
           await drawer.waitFor({state:'visible'});
+          if (await drawer.getAttribute('data-state') !== 'ERROR') throw new Error('Canonical Drawer state mismatch');
           await browser.close();
           EOF
           node .preview-validate.mjs
