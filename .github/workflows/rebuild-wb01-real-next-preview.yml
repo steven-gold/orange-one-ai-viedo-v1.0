@@ -1,0 +1,108 @@
+name: Rebuild WB-01 Real Next Preview
+on:
+  push:
+    branches: [acpos-live-preview]
+    paths: ['.github/workflows/rebuild-wb01-real-next-preview.yml']
+permissions:
+  contents: write
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout preview branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: acpos-live-preview
+      - name: Checkout new source
+        run: |
+          git fetch origin new
+          git switch --detach origin/new
+      - name: Install
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Configure preview-only asset prefix
+        run: |
+          cat > next.config.ts <<'EOF'
+          import type { NextConfig } from "next";
+          const nextConfig: NextConfig = {
+            reactStrictMode: true,
+            poweredByHeader: false,
+            assetPrefix: "https://rawcdn.githack.com/steven-gold/orange-one-ai-viedo-v1.0/acpos-live-preview/preview",
+          };
+          export default nextConfig;
+          EOF
+      - name: Build
+        run: npm run build
+      - name: Start production server
+        run: |
+          npm run start > /tmp/acpos-next.log 2>&1 &
+          echo $! > /tmp/acpos-next.pid
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/acpos-next.log
+          exit 1
+      - name: Materialize real hydrated preview
+        run: |
+          rm -rf /tmp/preview-real
+          mkdir -p /tmp/preview-real/_next
+          curl -fsS http://127.0.0.1:3000/ -o /tmp/preview-real/index.html
+          cp -R .next/static /tmp/preview-real/_next/static
+          cp -R public/* /tmp/preview-real/ 2>/dev/null || true
+          grep -q '<script' /tmp/preview-real/index.html
+          grep -q 'workspace:WB-01' /tmp/preview-real/index.html
+          test "$(grep -o 'data-control-id="CTRL-WORKSPACE-WB-01-[^"]*"' /tmp/preview-real/index.html | wc -l)" -eq 14
+          if grep -q 'wb01-preview-runtime' /tmp/preview-real/index.html; then exit 1; fi
+      - name: Install Chromium harness
+        run: npm install --no-save playwright@1.55.0
+      - name: Validate formal React hydration and Drawer
+        run: |
+          cat > /tmp/validate.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          import fs from 'node:fs';
+          import path from 'node:path';
+          const browser = await chromium.launch({headless:true});
+          const page = await browser.newPage({viewport:{width:1440,height:900}});
+          const root = '/tmp/preview-real';
+          await page.route('https://rawcdn.githack.com/steven-gold/orange-one-ai-viedo-v1.0/acpos-live-preview/preview/**', async route => {
+            const u = new URL(route.request().url());
+            const marker = '/acpos-live-preview/preview/';
+            const rel = decodeURIComponent(u.pathname.split(marker)[1] || '');
+            const file = path.join(root, rel);
+            if (!file.startsWith(root) || !fs.existsSync(file)) return route.abort();
+            const ext = path.extname(file);
+            const ct = ext === '.js' ? 'application/javascript' : ext === '.css' ? 'text/css' : 'application/octet-stream';
+            return route.fulfill({status:200, contentType:ct, body:fs.readFileSync(file)});
+          });
+          await page.route('**/v1/dashboard/read-model', route => route.fulfill({status:503, contentType:'application/json', body:JSON.stringify({error_uid:'WB-01-ERR-READ-001',reason_code:'DASHBOARD_RUNTIME_NOT_BOUND',correlation_id:'preview-validation'})}));
+          await page.goto('file:///tmp/preview-real/index.html');
+          await page.waitForFunction(() => document.querySelector('[data-page-uid="workspace:WB-01"]')?.getAttribute('data-state') === 'ERROR');
+          const buttons = page.locator('button[data-control-id^="CTRL-WORKSPACE-WB-01-"]');
+          if (await buttons.count() !== 14) throw new Error('Expected 14 WB-01 controls');
+          for (let i=0;i<14;i++) if (await buttons.nth(i).isDisabled()) throw new Error(`Control ${i+1} disabled after hydration`);
+          await buttons.first().click();
+          const drawer = page.locator('[data-component-uid="WB-01-CMP-DRAWER-PROJECTION"]');
+          await drawer.waitFor({state:'visible'});
+          if (await page.locator('#acpos-preview-drawer').count()) throw new Error('Forbidden preview drawer detected');
+          if (await page.locator('style#acpos-preview-runtime-style').count()) throw new Error('Forbidden preview style detected');
+          if (!(await drawer.textContent()).includes('DASHBOARD_RUNTIME_NOT_BOUND')) throw new Error('Expected formal runtime error in canonical Drawer');
+          await page.keyboard.press('Escape');
+          await buttons.nth(13).click();
+          await drawer.waitFor({state:'visible'});
+          await browser.close();
+          EOF
+          node /tmp/validate.mjs
+      - name: Publish preview and self-clean
+        run: |
+          git switch acpos-live-preview
+          rm -rf preview
+          cp -R /tmp/preview-real preview
+          rm -f .github/workflows/rebuild-wb01-real-next-preview.yml
+          git config user.name 'ACPOS Preview Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A preview .github/workflows/rebuild-wb01-real-next-preview.yml
+          git commit -m 'fix(preview): use canonical WB-01 Next hydration'
+          git push origin acpos-live-preview
