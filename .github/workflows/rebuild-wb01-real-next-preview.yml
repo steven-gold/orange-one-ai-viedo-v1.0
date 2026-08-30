@@ -57,7 +57,9 @@ jobs:
           test "$(grep -o 'data-control-id="CTRL-WORKSPACE-WB-01-[^"]*"' /tmp/preview-real/index.html | wc -l)" -eq 14
           if grep -q 'wb01-preview-runtime' /tmp/preview-real/index.html; then exit 1; fi
       - name: Install Chromium harness
-        run: npm install --no-save playwright@1.55.0
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
       - name: Validate formal React hydration and Drawer
         run: |
           cat > .preview-validate.mjs <<'EOF'
