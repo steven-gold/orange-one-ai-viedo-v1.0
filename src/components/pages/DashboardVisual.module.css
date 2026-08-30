@@ -171,6 +171,98 @@
 .skeletonLine { width: 72%; }
 .skeletonLineShort { width: 42%; }
 
+.dataList {
+  display: grid;
+  gap: 10px;
+}
+
+.dataGroup,
+.dataNested,
+.dataRow,
+.metricStrip {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--button-radius);
+  background: var(--surface-l2);
+}
+
+.dataGroup {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+}
+
+.dataNested {
+  display: grid;
+  gap: 6px;
+  padding: 8px 10px;
+  margin-top: 4px;
+}
+
+.dataRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.dataPrimary {
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.dataSecondary {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.dataMeta {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.dataTask {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.dataCounts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(24px, auto));
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-align: right;
+}
+
+.metricStrip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+}
+
+.metricStrip > span {
+  display: grid;
+  min-height: 72px;
+  place-items: center;
+  background: var(--surface-l1);
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 650;
+}
+
 .drawerLayer {
   position: fixed;
   z-index: 140;
