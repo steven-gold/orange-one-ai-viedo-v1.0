@@ -87,6 +87,26 @@ export function SystemVisual() {
             <DataRow label="branch_id" />
             <DataRow label="context_snapshot_ref" />
           </div>
+
+          <div
+            className={styles.composer}
+            data-component-uid="SYS-01-CMP-CONVERSATION-COMPOSER"
+            data-visual-uid="SYS-01-VIS-CONVERSATION-COMPOSER"
+          >
+            <textarea
+              id="SYS-01-INP-MESSAGE"
+              data-control-id="SYS-01-INP-MESSAGE"
+              className={styles.composerInput}
+              aria-label={t("messageInput")}
+              placeholder={t("messagePlaceholder")}
+              rows={3}
+            />
+            <div className={styles.composerActions}>
+              <button id="SYS-01-BTN-ATTACH" data-control-id="SYS-01-BTN-ATTACH" className={styles.composerButton} type="button" disabled>{t("attach")}</button>
+              <button id="SYS-01-BTN-STOP" data-control-id="SYS-01-BTN-STOP" className={styles.composerButton} type="button" disabled>{t("stop")}</button>
+              <button id="SYS-01-BTN-SEND" data-control-id="SYS-01-BTN-SEND" className={`${styles.composerButton} ${styles.composerSend}`} type="button" disabled>{t("send")}</button>
+            </div>
+          </div>
         </Section>
       </div>
 

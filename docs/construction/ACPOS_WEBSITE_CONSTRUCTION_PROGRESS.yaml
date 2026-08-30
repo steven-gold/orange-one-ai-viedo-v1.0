@@ -405,11 +405,11 @@ phase_1_visual_positioning:
     page_uid: admin:SYS-01
     name: 系統維護
     status: COMPLETE
-    scope: Current-only SYS-01 visual implementation at /admin/system with one shared Global Shell, frontend Account -> Admin entry, nine-item Admin navigation, exact eight canonical sections and eight registered controls; visual/empty/disabled presentation only, no business runtime mutation.
+    scope: Current-only SYS-01 visual implementation at /admin/system with one shared Global Shell, frontend Account -> Admin entry, nine-item Admin navigation, exact eight canonical sections and twelve registered controls including the user-approved conversation composer; visual/empty/disabled presentation only, no business runtime mutation.
     authority_closure:
       route: /admin/system
       legacy_25_control_count: REMOVED_AS_MIGRATION_RESIDUE
-      current_registered_controls: 8
+      current_registered_controls: 12
       current_sections: 8
       rule: Current-only SYS-01 controls are defined from current functional contracts; no R9/master count padding.
       status: CLOSED
@@ -436,7 +436,7 @@ phase_1_visual_positioning:
         active_admin_nav: ADMIN-NAV-01
         front_l1_count_preserved: 9
         sections: 8
-        controls: 8
+        controls: 12
         council_controls_hidden_in_single_ai: true
         enabled_business_controls_in_visual_phase: 0
         production_deploy_control_rendered: false
@@ -450,6 +450,18 @@ phase_1_visual_positioning:
         account_front_to_admin_entry: PASS
         account_admin_to_front_return: PASS
         global_active_nav_state: PASS
+        conversation_composer_remediation:
+          user_decision_ref: 2026-08-30-USER-APPROVED-SYS01-CONVERSATION-COMPOSER
+          validation_run_id: 33298153408
+          controls_added: 4
+          current_registered_controls: 12
+          message_input_resizable: true
+          conversation_panel_enlarged: true
+          visual_phase_message_typing: LOCAL_DRAFT_ONLY
+          attach_send_stop_business_execution: BLOCKED_UNTIL_LOGIC_PHASE_EXACT_CONVERSATION_CORE_BINDING
+          shared_shell_regression: PASS
+          business_requests_during_validation: 0
+          manual_visual_inspection: PENDING_ARTIFACT_REVIEW_BEFORE_MERGE
   - id: VIS-11
     group: ADMIN
     page_uid: admin:IAM-01

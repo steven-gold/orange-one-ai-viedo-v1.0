@@ -308,6 +308,108 @@ multi_ai_ui_control_correction:
   - mode_switch_must_not_reset_System_Continuity_Context
   - mode_switch_must_preserve_draft_and_source_refs
   - provider_model_selection_remains_system_owned
+conversation_composer_contract:
+  purpose: Close the missing user-input surface required by the existing ACPOS AI Conversation Core contract; this is not a new AI backend or parallel conversation system.
+  user_decision_ref: 2026-08-30-USER-APPROVED-SYS01-CONVERSATION-COMPOSER
+  section_id: SEC-ADMIN-SYS-01-CONVERSATION
+  component_uid: SYS-01-CMP-CONVERSATION-COMPOSER
+  visual_uid: SYS-01-VIS-CONVERSATION-COMPOSER
+  placement: Bottom of Design Conversation panel after the conversation timeline/context strip; composer remains visually attached to the same conversation/thread/change context.
+  sizing:
+    conversation_panel_priority: DOMINANT
+    conversation_body_min_height_px: 360
+    composer_min_height_px: 96
+    textarea_min_height_px: 82
+    textarea_vertical_resize: ALLOWED
+  controls:
+  - control_uid: SYS-01-INP-MESSAGE
+    type: TEXTAREA
+    label_zh: 訊息輸入
+    action_uid: SYS-01-ACT-MESSAGE-DRAFT
+    gate_uid: SYS-01-GATE-CONVERSATION-COMPOSER
+    permission_uid: system.ai.use
+    enabled_in_visual_phase: true
+    runtime_binding:
+      binding_kind: LOCAL_DRAFT_STATE_ONLY_IN_VISUAL_PHASE
+      api_required: false
+    rule: Edit the draft bound to the current SYSTEM_CHANGE_ID/conversation/thread context; typing alone never sends or mutates business state.
+  - control_uid: SYS-01-BTN-ATTACH
+    type: COMPACT_BUTTON
+    label_zh: 附件 / 引用
+    action_uid: SYS-01-ACT-CONVERSATION-ATTACH
+    gate_uid: SYS-01-GATE-CONVERSATION-COMPOSER
+    permission_uid: system.ai.use
+    enabled_in_visual_phase: false
+    runtime_binding:
+      binding_kind: REUSE_ACPOS_AI_CONVERSATION_CORE_ATTACHMENT
+      exact_operation_uid: RESOLVE_FROM_CURRENT_CONVERSATION_CORE_DURING_LOGIC_PHASE
+      api_required_in_visual_phase: false
+    rule: Reuse current Conversation Core source/file/reference attachment capability; do not invent a second uploader, storage owner or endpoint.
+  - control_uid: SYS-01-BTN-SEND
+    type: PRIMARY_BUTTON
+    label_zh: 送出
+    action_uid: SYS-01-ACT-CONVERSATION-SEND
+    gate_uid: SYS-01-GATE-CONVERSATION-SEND
+    permission_uid: system.ai.use
+    enabled_in_visual_phase: false
+    runtime_binding:
+      binding_kind: REUSE_ACPOS_AI_CONVERSATION_CORE_MESSAGE_SUBMIT
+      exact_operation_uid: RESOLVE_FROM_CURRENT_CONVERSATION_CORE_DURING_LOGIC_PHASE
+      api_required_in_visual_phase: false
+    rule: Submit only through the shared Conversation Core under the same SYSTEM_CHANGE_ID/conversation/thread/context; no direct provider call.
+  - control_uid: SYS-01-BTN-STOP
+    type: SECONDARY_BUTTON
+    label_zh: 停止
+    action_uid: SYS-01-ACT-CONVERSATION-STOP
+    gate_uid: SYS-01-GATE-CONVERSATION-STOP
+    permission_uid: system.ai.use
+    enabled_in_visual_phase: false
+    runtime_binding:
+      binding_kind: REUSE_ACPOS_AI_CONVERSATION_CORE_GENERATION_STOP
+      exact_operation_uid: RESOLVE_FROM_CURRENT_CONVERSATION_CORE_DURING_LOGIC_PHASE
+      api_required_in_visual_phase: false
+    rule: Stop only the current generation; never delete/reset SYSTEM_CHANGE_ID, conversation, thread, Decision Ledger, draft or source refs.
+  actions:
+  - action_uid: SYS-01-ACT-MESSAGE-DRAFT
+    effect_type: UI_DRAFT_STATE
+    api_required: false
+    state_effect: update conversation draft only
+  - action_uid: SYS-01-ACT-CONVERSATION-ATTACH
+    effect_type: SHARED_CONVERSATION_CORE_OPERATION
+    visual_phase_execution: FORBIDDEN
+  - action_uid: SYS-01-ACT-CONVERSATION-SEND
+    effect_type: SHARED_CONVERSATION_CORE_OPERATION
+    visual_phase_execution: FORBIDDEN
+  - action_uid: SYS-01-ACT-CONVERSATION-STOP
+    effect_type: SHARED_CONVERSATION_CORE_OPERATION
+    visual_phase_execution: FORBIDDEN
+  gates:
+  - gate_uid: SYS-01-GATE-CONVERSATION-COMPOSER
+    requires:
+    - page:admin:SYS-01 VIEW
+    - section:admin:SYS-01:conversation VIEW
+    - system.ai.use
+    failure_behavior: Preserve local draft and show actual context/permission state; do not fabricate runtime readiness.
+  - gate_uid: SYS-01-GATE-CONVERSATION-SEND
+    requires:
+    - SYS-01-GATE-CONVERSATION-COMPOSER
+    - system_context_resolved
+    - active_conversation_context_resolved
+    - non_empty_message
+    - shared_conversation_core_submit_binding_resolved
+    failure_behavior: Keep draft unsent and surface the exact blocker.
+  - gate_uid: SYS-01-GATE-CONVERSATION-STOP
+    requires:
+    - SYS-01-GATE-CONVERSATION-COMPOSER
+    - generation_in_progress
+    - shared_conversation_core_stop_binding_resolved
+    failure_behavior: Keep current valid state; never clear conversation context.
+  invariants:
+  - composer_must_not_create_parallel_conversation_backend
+  - composer_send_must_not_call_provider_directly
+  - composer_must_preserve_SYSTEM_CHANGE_ID_conversation_thread_branch_context
+  - visual_phase_typing_is_local_draft_only
+  - attachment_send_stop_business_execution_remains_blocked_until_logic_phase_exact_binding
 requirement_convergence_contract:
   question_priority:
     P0: Required when unanswered issue prevents architecture/legal/safe construction; Design Freeze blocked.
@@ -570,6 +672,9 @@ acceptance:
 - acceptance_uid: SYS-01-ACC-MAI-04
   item: Shared Conversation Core
   condition: No new Multi-AI engine/agent backend/provider picker; uses existing Conversation Core and system-owned routing.
+- acceptance_uid: SYS-01-ACC-CONV-01
+  item: Real Conversation Composer
+  condition: Design Conversation includes a multi-line message input plus Attach / Send / Stop controls bound to the existing ACPOS AI Conversation Core; input can resize vertically and no direct provider/backend path is invented.
 - acceptance_uid: SYS-01-ACC-LIFE-01
   item: Single Lifecycle
   condition: New feature, maintenance, incident, provider update and experience improvement use one System Lifecycle AI and one Change Context
@@ -595,6 +700,7 @@ acceptance:
 hard_locks:
 - Only one admin:SYS-01 Unified System Lifecycle AI; no parallel Design/Maintenance/Provider-Watch/UX AI system.
 - Single AI / Multi AI must be interactive segmented controls in the Design Conversation header.
+- Design Conversation must include a real resizable text composer with Attach / Send / Stop controls that reuse the existing ACPOS AI Conversation Core.
 - Discussion / Parallel must be interactive segmented controls visible only in Multi AI.
 - AI mode changes are presentation/context state only and never create a new System Change, conversation, thread or provider route.
 - Provider/model selection remains system-owned; manual provider/model picker is forbidden.
@@ -611,7 +717,7 @@ current_control_registry:
   authority_closure: 2026-08-30-USER-APPROVED-CURRENT-ONLY
   legacy_25_control_count_policy: REMOVED_AS_MIGRATION_RESIDUE_NOT_A_CURRENT_COUNT_CONSTRAINT
   rule: Register only controls required by the Current SYS-01 functional contract. Do not reconstruct or pad to a legacy R9/master count. Read-only truth/ref/impact/audit projections are components, not business controls unless an explicit interaction is required.
-  count: 8
+  count: 12
   explicit_mode_controls:
   - control_uid: SYS-01-BTN-SINGLE-AI
     source: multi_ai_ui_control_correction.controls
@@ -621,6 +727,15 @@ current_control_registry:
     source: multi_ai_ui_control_correction.controls
   - control_uid: SYS-01-BTN-COUNCIL-PARALLEL
     source: multi_ai_ui_control_correction.controls
+  conversation_composer_controls:
+  - control_uid: SYS-01-INP-MESSAGE
+    source: conversation_composer_contract.controls
+  - control_uid: SYS-01-BTN-ATTACH
+    source: conversation_composer_contract.controls
+  - control_uid: SYS-01-BTN-SEND
+    source: conversation_composer_contract.controls
+  - control_uid: SYS-01-BTN-STOP
+    source: conversation_composer_contract.controls
   current_action_controls:
   - control_uid: SYS-01-BTN-CANDIDATE-CREATE
     type: BUTTON
@@ -679,20 +794,21 @@ derived_validation:
   generated_at_utc: '2026-08-28T15:41:04.905906+00:00'
   counts:
     current_page_sections: 8
-    current_registered_controls: 8
+    current_registered_controls: 12
     legacy_25_control_count_preservation: REMOVED
     new_multi_ai_controls: 4
     new_multi_ai_actions: 4
     new_multi_ai_gates: 3
     new_multi_ai_errors: 3
     validation_passes_defined: 7
-    acceptance_items: 11
+    acceptance_items: 12
   checks:
     YAML has page_uid admin:SYS-01: true
     Status is design-locked not falsely runtime-complete: true
     Preserves 8 current page sections: true
     Legacy 25-control count is not a current count constraint: true
     Current registry is exact and current-only: true
+    Conversation composer has exact 4-control current registry: true
     4 explicit Multi-AI segmented controls: true
     4 explicit Multi-AI UI-only actions: true
     All Multi-AI controls have actions: true

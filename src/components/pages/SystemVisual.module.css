@@ -56,7 +56,7 @@
 
 .primaryGrid {
   display: grid;
-  grid-template-columns: minmax(310px, 0.92fr) minmax(820px, 2.4fr);
+  grid-template-columns: minmax(290px, 0.72fr) minmax(880px, 2.7fr);
   gap: 16px;
   align-items: stretch;
 }
@@ -139,7 +139,7 @@
 .referenceBox strong { color: var(--text-primary); font-size: 13px; }
 
 .conversationPanel {
-  min-height: 490px;
+  min-height: 610px;
   display: flex;
   flex-direction: column;
 }
@@ -182,7 +182,7 @@
 
 .conversationBody {
   flex: 1 1 auto;
-  min-height: 330px;
+  min-height: 360px;
   position: relative;
   display: grid;
   place-items: center;
@@ -229,6 +229,65 @@
   padding: 0 9px;
   background: var(--surface-input);
 }
+
+.composer {
+  min-height: 112px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--border-normal);
+  border-radius: 10px;
+  background: rgba(7, 11, 29, 0.94);
+}
+
+.composerInput {
+  width: 100%;
+  min-height: 82px;
+  max-height: 220px;
+  resize: vertical;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--surface-input);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  outline: none;
+}
+
+.composerInput::placeholder { color: var(--text-muted); }
+.composerInput:focus { border-color: var(--border-active); box-shadow: 0 0 0 2px rgba(139, 92, 255, 0.12); }
+
+.composerActions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-bottom: 1px;
+}
+
+.composerButton {
+  min-height: 40px;
+  min-width: 64px;
+  padding: 0 11px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--surface-input);
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.composerSend {
+  min-width: 76px;
+  border-color: var(--border-active);
+  background: var(--purple-active);
+  color: var(--text-primary);
+}
+
+.composerButton:disabled { opacity: 0.58; cursor: not-allowed; }
 
 .secondaryGrid,
 .bottomGrid {
@@ -292,6 +351,6 @@
 }
 
 @media (max-width: 1439px) {
-  .primaryGrid { grid-template-columns: 310px minmax(0, 1fr); }
+  .primaryGrid { grid-template-columns: 290px minmax(0, 1fr); }
   .contextStrip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
