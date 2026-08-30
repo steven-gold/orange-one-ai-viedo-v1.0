@@ -1,0 +1,1 @@
+import{createIamPostRoute,createIamDeleteRoute}from"@/server/iam/iamRouteFactory";export const POST=createIamPostRoute("assignAccountPermission");export const DELETE=createIamDeleteRoute("revokeAccountPermission");
