@@ -10,18 +10,28 @@ type StageKey = "discovery" | "directory" | "message" | "campaign" | "delivery";
 type StageDefinition = {
   key: StageKey;
   controlId: string;
-  sectionId: string;
   labelKey: DevTranslationKey;
   code: string;
 };
 
 const STAGES: readonly StageDefinition[] = [
-  { key: "discovery", controlId: "DEV-01-BTN-STAGE-1", sectionId: "DEV-01-SEC-03", labelKey: "discovery", code: "01" },
-  { key: "directory", controlId: "DEV-01-BTN-STAGE-2", sectionId: "DEV-01-SEC-04", labelKey: "directory", code: "02" },
-  { key: "message", controlId: "DEV-01-BTN-STAGE-3", sectionId: "DEV-01-SEC-05", labelKey: "message", code: "03" },
-  { key: "campaign", controlId: "DEV-01-BTN-STAGE-4", sectionId: "DEV-01-SEC-06", labelKey: "campaign", code: "04" },
-  { key: "delivery", controlId: "DEV-01-BTN-STAGE-5", sectionId: "DEV-01-SEC-07", labelKey: "delivery", code: "05" },
+  { key: "discovery", controlId: "DEV-01-BTN-STAGE-1", labelKey: "discovery", code: "01" },
+  { key: "directory", controlId: "DEV-01-BTN-STAGE-2", labelKey: "directory", code: "02" },
+  { key: "message", controlId: "DEV-01-BTN-STAGE-3", labelKey: "message", code: "03" },
+  { key: "campaign", controlId: "DEV-01-BTN-STAGE-4", labelKey: "campaign", code: "04" },
+  { key: "delivery", controlId: "DEV-01-BTN-STAGE-5", labelKey: "delivery", code: "05" },
 ] as const;
+
+const EMPTY_VISUAL_STATE = {
+  discoveryRunning: false,
+  discoveryPaused: false,
+  mergePreviewAvailable: false,
+  mergeConfirmAvailable: false,
+  candidateReviewAvailable: false,
+  campaignApprovalAvailable: false,
+  approvedCampaignAvailable: false,
+  killSwitchApplicable: false,
+} as const;
 
 function ProjectionCell({ label, wide = false }: { label: string; wide?: boolean }) {
   return <div className={`${styles.projectionCell} ${wide ? styles.wideCell : ""}`}><span>{label}</span><strong>—</strong></div>;
@@ -33,7 +43,58 @@ export function DevVisual() {
   const t = (key: DevTranslationKey) => devText(locale, key);
   const stage = STAGES.find((item) => item.key === activeStage) ?? STAGES[0];
 
-  const renderStageWorkspace = () => {
+  function renderActionDock(key: StageKey) {
+    return (
+      <div className={styles.actionDock} data-component-id={key === "discovery" ? "DEV-01-CMP-DISCOVERY-ACTION" : undefined}>
+        <div className={styles.dockLabel}><span>{t("currentStage")}</span><strong>{t(stage.labelKey)}</strong></div>
+        <div className={styles.dockActions}>
+          {key === "discovery" && (
+            <>
+              <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-DISCOVERY-START" disabled>{t("start")}</button>
+              {EMPTY_VISUAL_STATE.discoveryRunning && <button className={styles.button} type="button" data-control-id="DEV-01-BTN-DISCOVERY-PAUSE" disabled>{t("pause")}</button>}
+              {EMPTY_VISUAL_STATE.discoveryPaused && <button className={styles.button} type="button" data-control-id="DEV-01-BTN-DISCOVERY-RESUME" disabled>{t("resume")}</button>}
+              {EMPTY_VISUAL_STATE.discoveryRunning && <button className={styles.dangerButton} type="button" data-control-id="DEV-01-BTN-DISCOVERY-STOP" disabled>{t("stop")}</button>}
+            </>
+          )}
+          {key === "directory" && (
+            <>
+              <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-DIRECTORY-SEARCH" disabled>{t("searchCompany")}</button>
+              {EMPTY_VISUAL_STATE.mergePreviewAvailable && <button className={styles.button} type="button" data-control-id="DEV-01-BTN-MERGE-PREVIEW" disabled>{t("previewMerge")}</button>}
+              {EMPTY_VISUAL_STATE.mergeConfirmAvailable && <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-MERGE" disabled>{t("confirmMerge")}</button>}
+              <button className={styles.button} type="button" data-control-id="DEV-01-BTN-EXPORT" disabled>{t("export")}</button>
+            </>
+          )}
+          {key === "message" && (
+            <>
+              <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-CANDIDATE-CREATE" disabled>{t("createCandidate")}</button>
+              {EMPTY_VISUAL_STATE.candidateReviewAvailable && <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-CANDIDATE-DECIDE" disabled>{t("reviewCandidate")}</button>}
+              {EMPTY_VISUAL_STATE.candidateReviewAvailable && <button className={styles.button} type="button" data-control-id="DEV-01-BTN-CR-CREATE" disabled>{t("requestChange")}</button>}
+            </>
+          )}
+          {key === "campaign" && (
+            <>
+              <button className={styles.button} type="button" data-control-id="DEV-01-BTN-CAMPAIGN-SEARCH" disabled>{t("searchAudience")}</button>
+              <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-CAMPAIGN-CREATE" disabled>{t("createCampaign")}</button>
+              {EMPTY_VISUAL_STATE.campaignApprovalAvailable && <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-CAMPAIGN-APPROVE" disabled>{t("approveCampaign")}</button>}
+            </>
+          )}
+          {key === "delivery" && (
+            <>
+              {EMPTY_VISUAL_STATE.approvedCampaignAvailable && <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-EMAIL-DISPATCH" disabled>{t("dispatch")}</button>}
+              <button className={styles.button} type="button" data-control-id="DEV-01-BTN-REFRESH" disabled>{t("refresh")}</button>
+              {EMPTY_VISUAL_STATE.killSwitchApplicable && (
+                <span data-component-id="DEV-01-CMP-KILL-SWITCH">
+                  <button className={styles.dangerButton} type="button" data-control-id="DEV-01-BTN-KILL-SWITCH" disabled>{t("killSwitch")}</button>
+                </span>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  function renderStageWorkspace() {
     if (activeStage === "discovery") {
       return (
         <section className={styles.panel} data-section-id="DEV-01-SEC-03" data-component-id="DEV-01-CMP-DISCOVERY-SETUP">
@@ -127,9 +188,9 @@ export function DevVisual() {
         {renderActionDock("delivery")}
       </section>
     );
-  };
+  }
 
-  const renderGovernance = () => {
+  function renderGovernance() {
     const stageSpecific = activeStage === "discovery" ? t("connectorHealth") : activeStage === "campaign" || activeStage === "delivery" ? t("approvalState") : t("policyGate");
     return (
       <aside className={styles.rail} data-section-id="DEV-01-SEC-08" data-component-id="DEV-01-CMP-GOVERNANCE">
@@ -143,21 +204,6 @@ export function DevVisual() {
         <p className={styles.railNote}>{t("noRealData")}</p>
         <p className={styles.phaseNote}>{t("visualPhase")}</p>
       </aside>
-    );
-  };
-
-  function renderActionDock(key: StageKey) {
-    return (
-      <div className={styles.actionDock} data-component-id={key === "discovery" ? "DEV-01-CMP-DISCOVERY-ACTION" : undefined}>
-        <div className={styles.dockLabel}><span>STAGE ACTION DOCK</span><strong>{t(stage.labelKey)}</strong></div>
-        <div className={styles.dockActions}>
-          {key === "discovery" && <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-DISCOVERY-START" disabled>{t("start")}</button>}
-          {key === "directory" && <><button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-DIRECTORY-SEARCH" disabled>{t("searchCompany")}</button><button className={styles.button} type="button" data-control-id="DEV-01-BTN-EXPORT" disabled>{t("export")}</button></>}
-          {key === "message" && <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-CANDIDATE-CREATE" disabled>{t("createCandidate")}</button>}
-          {key === "campaign" && <><button className={styles.button} type="button" data-control-id="DEV-01-BTN-CAMPAIGN-SEARCH" disabled>{t("searchAudience")}</button><button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-CAMPAIGN-CREATE" disabled>{t("createCampaign")}</button></>}
-          {key === "delivery" && <button className={styles.button} type="button" data-control-id="DEV-01-BTN-REFRESH" disabled>{t("refresh")}</button>}
-        </div>
-      </div>
     );
   }
 
