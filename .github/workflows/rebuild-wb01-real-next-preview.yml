@@ -60,7 +60,7 @@ jobs:
         run: npm install --no-save playwright@1.55.0
       - name: Validate formal React hydration and Drawer
         run: |
-          cat > /tmp/validate.mjs <<'EOF'
+          cat > .preview-validate.mjs <<'EOF'
           import { chromium } from 'playwright';
           import fs from 'node:fs';
           import path from 'node:path';
@@ -94,7 +94,8 @@ jobs:
           await drawer.waitFor({state:'visible'});
           await browser.close();
           EOF
-          node /tmp/validate.mjs
+          node .preview-validate.mjs
+          rm -f .preview-validate.mjs
       - name: Publish preview and self-clean
         run: |
           git switch acpos-live-preview
