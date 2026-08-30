@@ -44,16 +44,7 @@ jobs:
           assert 'EXACT_BLUEPRINT_VERSION_REF_REQUIRED' in s
           assert css
           PY
-      - name: Configure preview asset prefix
-        run: |
-          cat > next.config.ts <<'EOF'
-          import type { NextConfig } from "next";
-          const nextConfig: NextConfig = {
-            assetPrefix: "https://rawcdn.githack.com/steven-gold/orange-one-ai-viedo-v1.0/acpos-live-preview/preview",
-          };
-          export default nextConfig;
-          EOF
-      - name: Build
+      - name: Build production source
         run: npm run build
       - name: Start production server
         run: |
@@ -115,10 +106,27 @@ jobs:
           await browser.close();
           EOF
           node core01-browser-check.mjs
+      - name: Stop local validation server
+        run: kill $(cat /tmp/core01-server.pid) || true
+      - name: Build preview hydration bundle
+        run: |
+          cat > next.config.ts <<'EOF'
+          import type { NextConfig } from "next";
+          const nextConfig: NextConfig = {
+            assetPrefix: "https://rawcdn.githack.com/steven-gold/orange-one-ai-viedo-v1.0/acpos-live-preview/preview",
+          };
+          export default nextConfig;
+          EOF
+          rm -rf .next
+          npm run build
+          (PORT=3001 npm start > /tmp/core01-preview-server.log 2>&1 & echo $! > /tmp/core01-preview-server.pid)
+          for i in $(seq 1 40); do curl -fsS http://127.0.0.1:3001/core >/dev/null && exit 0; sleep 1; done
+          cat /tmp/core01-preview-server.log
+          exit 1
       - name: Materialize CORE-01 only
         run: |
           cp -a /tmp/preview-preserved /tmp/generated-preview
-          curl -fsS http://127.0.0.1:3000/core > /tmp/generated-preview/core.html
+          curl -fsS http://127.0.0.1:3001/core > /tmp/generated-preview/core.html
           python3 - <<'PY'
           from pathlib import Path
           p=Path('/tmp/generated-preview/core.html')
@@ -140,16 +148,11 @@ jobs:
           assert 'href="assets.html"' in s and 'href="index.html"' in s
           assert 'data-page-uid="CORE-01"' in s
           assert 'preview-runtime' not in s
+          assert 'acpos-preview-drawer' not in s
           PY
           mkdir -p /tmp/generated-preview/_next/static
           cp -a .next/static/. /tmp/generated-preview/_next/static/
-          test -f /tmp/generated-preview/assets.html
-          test -f /tmp/generated-preview/video.html
-          test -f /tmp/generated-preview/edit.html
-          test -f /tmp/generated-preview/qa.html
-          test -f /tmp/generated-preview/db.html
-          test -f /tmp/generated-preview/strategy.html
-          test -f /tmp/generated-preview/info.html
+          for f in assets.html video.html edit.html qa.html db.html strategy.html info.html index.html; do test -f /tmp/generated-preview/$f; done
       - name: Publish and self-clean
         run: |
           git checkout -f acpos-live-preview
