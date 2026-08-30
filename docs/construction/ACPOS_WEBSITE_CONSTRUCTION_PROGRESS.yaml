@@ -461,7 +461,11 @@ phase_1_visual_positioning:
           attach_send_stop_business_execution: BLOCKED_UNTIL_LOGIC_PHASE_EXACT_CONVERSATION_CORE_BINDING
           shared_shell_regression: PASS
           business_requests_during_validation: 0
-          manual_visual_inspection: PENDING_ARTIFACT_REVIEW_BEFORE_MERGE
+          manual_visual_inspection: PASS
+          manual_evidence_pack_run_id: 33298242805
+          manual_evidence_artifact_id: 9728086389
+          manual_evidence_sha256: f8364aead388ca8e0539a8d435bafaa2332c1e81c51f6c2d5ede58a50c208346
+          manual_visual_inspection_basis: Composer top, expanded overlay, and corrected workspace-bottom screenshots were directly inspected; textarea/action alignment, panel sizing, sidebar overlay, and lower sections had no unintended clipping, overlap, or reflow.
   - id: VIS-11
     group: ADMIN
     page_uid: admin:IAM-01
