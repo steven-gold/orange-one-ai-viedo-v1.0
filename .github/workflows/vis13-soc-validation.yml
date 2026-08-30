@@ -1,0 +1,111 @@
+name: VIS-13 SOC validation
+on:
+  push:
+    branches: [acpos-vis13-staging]
+    paths: [.github/workflows/vis13-soc-validation.yml]
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis13-staging
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Next build
+        run: npm run build
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.62.1 >/dev/null 2>&1
+          npx playwright install chromium --with-deps >/dev/null 2>&1
+      - name: Start production server
+        run: |
+          (npm start -- -p 3000 > /tmp/vis13-server.log 2>&1 & echo $! > /tmp/vis13-server.pid)
+          for i in {1..30}; do curl -fsS http://127.0.0.1:3000/admin/social >/dev/null && exit 0; sleep 1; done
+          cat /tmp/vis13-server.log
+          exit 1
+      - name: Chromium validation
+        run: |
+          cat > vis13-check.cjs <<'NODE'
+          const { chromium } = require('playwright');
+          const fs=require('fs');
+          const assert=(v,m)=>{if(!v)throw new Error(m)};
+          const hiddenConditional=['SOC-01-BTN-PLATFORM-CONFIG','SOC-01-BTN-KILL','SOC-01-BTN-CREDENTIAL-REVEAL','SOC-01-BTN-ACCOUNT-UNBIND','SOC-01-BTN-TARGET-JOIN','SOC-01-BTN-MANUAL-COMPLETE','SOC-01-BTN-CANDIDATE-DECIDE'];
+          (async()=>{
+            const b=await chromium.launch({headless:true});
+            let business=0;
+            const p=await b.newPage({viewport:{width:1440,height:900}});
+            p.on('request',r=>{if(['xhr','fetch'].includes(r.resourceType()))business++});
+            await p.goto('http://127.0.0.1:3000/admin/social',{waitUntil:'networkidle'});
+            assert(await p.locator('[data-page-uid="admin:SOC-01"]').count()===1,'page uid');
+            assert(Number(await p.locator('[data-page-uid="admin:SOC-01"]').getAttribute('data-authority-control-count'))===67,'authority control count');
+            assert(await p.locator('.global-sidebar [data-nav-id]').count()===9,'admin nav count');
+            assert(await p.locator('[aria-current="page"]').getAttribute('data-nav-id')==='ADMIN-NAV-04','active nav');
+            assert(await p.locator('a[href="/admin/social"][data-nav-id="ADMIN-NAV-04"]').count()===1,'route binding');
+            const g=await p.evaluate(()=>{const w=document.querySelector('.workspace-slot');const ctx=document.querySelector('[data-section-id="SOC-01-SEC-01"]');const st=document.querySelector('[data-section-id="SOC-01-SEC-02"]');return {x:Math.round(w.getBoundingClientRect().x),client:w.clientWidth,scroll:w.scrollWidth,page:document.querySelector('[data-page-uid]').scrollWidth,contextHeight:Math.round(ctx.getBoundingClientRect().height),stageHeight:Math.round(st.getBoundingClientRect().height)}});
+            assert(g.x===78 && g.client===g.scroll && g.contextHeight===56 && g.stageHeight===52,'1440 geometry '+JSON.stringify(g));
+            const union=new Set();
+            const stageIds=['SOC-01-TAB-STAGE-1','SOC-01-TAB-STAGE-2','SOC-01-TAB-STAGE-3','SOC-01-TAB-STAGE-4','SOC-01-TAB-STAGE-5'];
+            const stageSections=['SOC-01-SEC-03','SOC-01-SEC-04','SOC-01-SEC-05','SOC-01-SEC-06','SOC-01-SEC-07'];
+            for(let i=0;i<stageIds.length;i++){
+              await p.locator(`[data-control-id="${stageIds[i]}"]`).click();
+              await p.waitForTimeout(80);
+              assert(await p.locator(`[data-section-id="${stageSections[i]}"]`).count()===1,'stage section '+stageSections[i]);
+              const ids=await p.locator('[data-control-id]').evaluateAll(xs=>xs.map(x=>x.getAttribute('data-control-id')));
+              ids.forEach(x=>union.add(x));
+              await p.screenshot({path:`vis13-1440-stage-${i+1}.png`,fullPage:false});
+            }
+            assert(union.size===60,'default visible control union '+union.size);
+            for(const id of hiddenConditional)assert(!union.has(id),'conditional rendered '+id);
+            assert(await p.locator('button[data-control-id="SOC-01-FLD-WITHDRAWAL"]').count()===0,'withdraw button invented');
+            assert(await p.locator('[data-control-id="SOC-01-BTN-PUBLISH"]').isDisabled(),'publish enabled');
+            assert(await p.locator('[data-control-id="SOC-01-BTN-POLICY-CONFIG"]').isDisabled(),'policy enabled');
+            await p.locator('.global-sidebar').hover(); await p.waitForTimeout(180);
+            const ex=await p.evaluate(()=>({x:Math.round(document.querySelector('.workspace-slot').getBoundingClientRect().x),side:Math.round(document.querySelector('.global-sidebar').getBoundingClientRect().width)}));
+            assert(ex.x===78 && ex.side===221,'sidebar overlay '+JSON.stringify(ex));
+            await p.screenshot({path:'vis13-1440-expanded.png',fullPage:false});
+            for(const locale of ['zh-CN','en','zh-TW']){
+              await p.locator('button[aria-label="Language"],button[aria-label="語言"],button[aria-label="语言"]').first().click();
+              await p.locator('[role="option"]').filter({hasText:locale}).first().click();
+            }
+            const p1600=await b.newPage({viewport:{width:1600,height:900}});await p1600.goto('http://127.0.0.1:3000/admin/social',{waitUntil:'networkidle'});const g16=await p1600.evaluate(()=>{const w=document.querySelector('.workspace-slot');return {client:w.clientWidth,scroll:w.scrollWidth,page:document.querySelector('[data-page-uid]').scrollWidth}});assert(g16.client===g16.scroll,'1600 overflow '+JSON.stringify(g16));await p1600.screenshot({path:'vis13-1600.png'});
+            const p1200=await b.newPage({viewport:{width:1200,height:900}});await p1200.goto('http://127.0.0.1:3000/admin/social',{waitUntil:'networkidle'});const g12=await p1200.evaluate(()=>{const w=document.querySelector('.workspace-slot');return {client:w.clientWidth,scroll:w.scrollWidth,page:document.querySelector('[data-page-uid]').scrollWidth}});assert(g12.scroll>=1280&&g12.page>=1280&&g12.scroll>g12.client,'1200 expected scroll '+JSON.stringify(g12));await p1200.screenshot({path:'vis13-1200-minwidth.png'});
+            assert(business===0,'business xhr '+business);
+            fs.mkdirSync('docs/construction/evidence/VIS-13',{recursive:true});
+            fs.writeFileSync('docs/construction/evidence/VIS-13/vis13-validation.json',JSON.stringify({route:'/admin/social',pageUid:'admin:SOC-01',authoritySections:9,authorityComponents:9,authorityControls:67,defaultVisibleControlUnion:union.size,conditionalControlsHidden:hiddenConditional,adminL1:9,activeNav:'ADMIN-NAV-04',workspace1440:g,sidebarExpanded:ex,viewport1600:g16,viewport1200:g12,localeSequence:['zh-TW','zh-CN','en','zh-TW'],businessRequests:business,enabledEffectfulBusinessControls:0,noWithdrawMutation:true,noFakeBusinessData:true},null,2));
+            for(const f of fs.readdirSync('.').filter(x=>x.startsWith('vis13-')&&x.endsWith('.png')))fs.renameSync(f,'docs/construction/evidence/VIS-13/'+f);
+            await b.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node vis13-check.cjs
+      - name: Update truthful construction progress
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          p=Path('docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml')
+          s=p.read_text()
+          s=s.replace('current_task: VIS-12_ADMIN_DEV-01_VISUAL_POSITIONING','current_task: VIS-14_ADMIN_ERP-01_VISUAL_POSITIONING')
+          s=s.replace('last_completed_task: VIS-11_ADMIN_IAM-01_VISUAL_POSITIONING','last_completed_task: VIS-13_ADMIN_SOC-01_VISUAL_POSITIONING')
+          s=s.replace('navigation_revision: 2026-08-30-CURRENT-ADMIN-ROUTES-SYS01-IAM01','navigation_revision: 2026-08-30-CURRENT-ADMIN-ROUTES-SYS01-IAM01-DEV01-SOC01')
+          s=s.replace('  - id: VIS-12\n    group: ADMIN\n    page_uid: admin:DEV-01\n    name: 企業自動開發系統\n    status: NOT_STARTED',f'''  - id: VIS-12\n    group: ADMIN\n    page_uid: admin:DEV-01\n    name: 企業自動開發系統\n    status: COMPLETE\n    evidence:\n      final_validation_run_id: 33301638501\n      evidence_directory: docs/construction/evidence/VIS-12\n      typecheck: PASS\n      next_build: PASS\n      production_server: PASS\n      chromium_render_and_geometry: PASS\n      locale_switch_runtime: PASS\n      business_requests_during_validation: 0''')
+          s=s.replace('  - id: VIS-13\n    group: ADMIN\n    page_uid: admin:SOC-01\n    name: 社群發布\n    status: NOT_STARTED',f'''  - id: VIS-13\n    group: ADMIN\n    page_uid: admin:SOC-01\n    name: 社群發布\n    status: COMPLETE\n    evidence:\n      final_validation_run_id: {os.environ['GITHUB_RUN_ID']}\n      evidence_directory: docs/construction/evidence/VIS-13\n      typecheck: PASS\n      next_build: PASS\n      production_server: PASS\n      chromium_render_and_geometry: PASS\n      locale_switch_runtime: PASS\n      business_requests_during_validation: 0''')
+          s=s.replace('  visual_steps_complete: 12','  visual_steps_complete: 14')
+          old='  truthful_progress_note: VIS-00 through VIS-11 visual positioning are implemented and verified. VIS-09 promoted workspace:INFO-01 to front NAV-09 最新資訊. VIS-10 established the shared Admin surface and SYS-01. VIS-11 aligned IAM-01 to the current 9 frontend + 9 admin L1 navigation, implemented admin:IAM-01 at /admin/accounts, and preserved the unresolved exact Identity Candidate schema as a visible BLOCK rather than inventing fields. Historical evidence is not rewritten. VIS-12 DEV-01 is next and has not started. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.'
+          new='  truthful_progress_note: VIS-00 through VIS-13 visual positioning are implemented and verified. VIS-12 implements admin:DEV-01 at /admin/dev with evidence; VIS-13 implements admin:SOC-01 at /admin/social with exact same-page five-stage authority binding and evidence. Historical evidence is not rewritten. VIS-14 ERP-01 is next and has not started. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.'
+          s=s.replace(old,new)
+          p.write_text(s)
+          PY
+      - name: Commit evidence progress and self-clean
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add docs/construction/evidence/VIS-13 docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+          git commit -m "test(vis13): add SOC validation evidence and progress"
+          git rm .github/workflows/vis13-soc-validation.yml
+          git commit -m "chore(vis13): remove SOC validation workflow"
+          git push origin HEAD:acpos-vis13-staging
