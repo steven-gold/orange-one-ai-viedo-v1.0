@@ -1,0 +1,33 @@
+name: VIS-10 tracker finalize
+on:
+  push:
+    branches:
+      - acpos-vis10-staging
+    paths:
+      - .github/workflows/vis10-tracker-finalize.yml
+permissions:
+  contents: write
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis10-staging
+      - name: Apply truthful tracker update
+        run: python3 .acpos-temp/vis10-tracker.py
+      - name: Validate tracker YAML
+        run: |
+          ruby -e 'require "yaml"; YAML.load_file("docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml"); puts "TRACKER YAML PASS"'
+          grep -q 'last_completed_task: VIS-10_ADMIN_SYS-01_VISUAL_POSITIONING' docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+          grep -q 'current_task: VIS-11_ADMIN_IAM-01_VISUAL_POSITIONING' docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+          grep -q 'final_validation_run_id: 33284782877' docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+      - name: Commit exact tracker and self-clean
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+          git commit -m "docs(vis10): mark SYS-01 visual complete with final evidence"
+          git rm .github/workflows/vis10-tracker-finalize.yml .acpos-temp/vis10-tracker.py
+          git commit -m "chore(vis10): remove temporary tracker finalizer"
+          git push origin HEAD:acpos-vis10-staging
