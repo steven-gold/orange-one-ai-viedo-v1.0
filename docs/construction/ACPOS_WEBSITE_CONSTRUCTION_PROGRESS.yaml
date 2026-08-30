@@ -70,9 +70,8 @@ current_state:
   e2e: NOT_STARTED
   deployment: NOT_STARTED
   current_task: VIS-10_ADMIN_SYS-01_VISUAL_POSITIONING
-  current_task_state: BLOCKED_BY_AUTHORITY_GAP
-  current_task_blockers:
-  - PRESERVED_25_CONTROL_REGISTRY_UID_SOURCE_MISSING
+  current_task_state: AUTHORITY_CLOSED_READY_FOR_VISUAL_IMPLEMENTATION
+  current_task_blockers: []
   last_completed_task: VIS-09_FRONT_INFO-01_VISUAL_POSITIONING
   current_front_l1_count: 9
   navigation_revision: 2026-08-30-USER-APPROVED-INFO-NAV09
@@ -405,28 +404,14 @@ phase_1_visual_positioning:
     group: ADMIN
     page_uid: admin:SYS-01
     name: 系統維護
-    status: BLOCKED_BY_AUTHORITY_GAP
-    blocker_detail:
-      canonical_route_resolver:
-        state: RESOLVED
-        route: /admin/system
-        finding: Same-repository main architecture defines system_maintenance routePrefix /admin/system; user confirmed SYS-01 is entered through the frontend Admin/Backend entry and then the admin menu.
-        source_ref: main@3554d8b679199c118ed8872cdf1f3893ce9427ee:src/config/navigation.ts
-      preserved_control_registry:
-        state: MISSING
-        finding: SYS-01 Current Page Authority declares 25 existing registered controls must be preserved, but their exact control UIDs are not present in the Current Authority repository text; only the 4 explicit Multi-AI controls are enumerated.
-        rule: Do not invent or semantically reconstruct the missing 25 control UIDs.
-    discovery_evidence:
-      registry_scan_run_id: 33282112752
-      registry_scan_artifact_id: 9723286489
-      registry_scan_result: No separate exact 25-control SYS-01 UID registry found in current repository.
-      route_scan_run_id: 33282172518
-      route_scan_artifact_id: 9723304445
-      route_scan_result: No literal SYS-01 route/path/href resolver found in current repository.
-      pre_blocker_sync_staging_diff_vs_new: ZERO_FILES
-    resume_gate:
-    - Publish/identify exact authoritative UID registry for the preserved 25 SYS-01 controls, including section/action/component/visual bindings where required.
-    - Then restart VIS-10 from Current Authority without inferring missing definitions.
+    status: NOT_STARTED
+    authority_closure:
+      route: /admin/system
+      legacy_25_control_count: REMOVED_AS_MIGRATION_RESIDUE
+      current_registered_controls: 8
+      current_sections: 8
+      rule: Current-only SYS-01 controls are defined from current functional contracts; no R9/master count padding.
+      status: READY_FOR_VISUAL_IMPLEMENTATION
   - id: VIS-11
     group: ADMIN
     page_uid: admin:IAM-01

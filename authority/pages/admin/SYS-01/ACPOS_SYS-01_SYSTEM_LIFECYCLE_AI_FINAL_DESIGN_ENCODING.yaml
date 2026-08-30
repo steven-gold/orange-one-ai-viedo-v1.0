@@ -607,12 +607,80 @@ hard_locks:
 - No fake Runtime/Test/Provider/Health/Evidence/Audit data.
 - No completion claim without actual implementation and validation evidence.
 - This YAML does not itself execute application code, sandbox tests, E2E or deployment.
+current_control_registry:
+  authority_closure: 2026-08-30-USER-APPROVED-CURRENT-ONLY
+  legacy_25_control_count_policy: REMOVED_AS_MIGRATION_RESIDUE_NOT_A_CURRENT_COUNT_CONSTRAINT
+  rule: Register only controls required by the Current SYS-01 functional contract. Do not reconstruct or pad to a legacy R9/master count. Read-only truth/ref/impact/audit projections are components, not business controls unless an explicit interaction is required.
+  count: 8
+  explicit_mode_controls:
+  - control_uid: SYS-01-BTN-SINGLE-AI
+    source: multi_ai_ui_control_correction.controls
+  - control_uid: SYS-01-BTN-MULTI-AI
+    source: multi_ai_ui_control_correction.controls
+  - control_uid: SYS-01-BTN-COUNCIL-DISCUSSION
+    source: multi_ai_ui_control_correction.controls
+  - control_uid: SYS-01-BTN-COUNCIL-PARALLEL
+    source: multi_ai_ui_control_correction.controls
+  current_action_controls:
+  - control_uid: SYS-01-BTN-CANDIDATE-CREATE
+    type: BUTTON
+    label_zh: 建立變更候選
+    section_id: SEC-ADMIN-SYS-01-ACTION-DOCK
+    component_uid: SYS-01-CMP-ACTION-DOCK
+    visual_uid: SYS-01-VIS-ACTION-DOCK
+    action_uid: ACT-CANDIDATE-CREATE
+    permission_uid: system.change.propose
+    service_operation: createCandidate
+    enabled_in_visual_phase: false
+  - control_uid: SYS-01-BTN-CR-CREATE
+    type: BUTTON
+    label_zh: 建立變更請求
+    section_id: SEC-ADMIN-SYS-01-ACTION-DOCK
+    component_uid: SYS-01-CMP-ACTION-DOCK
+    visual_uid: SYS-01-VIS-ACTION-DOCK
+    action_uid: ACT-CR-CREATE
+    permission_uid: core.change.create
+    service_operation: createChangeRequest
+    enabled_in_visual_phase: false
+  - control_uid: SYS-01-BTN-NAV-OPEN
+    type: BUTTON
+    label_zh: 開啟引用項目
+    section_id: SEC-ADMIN-SYS-01-SOURCE-REFS
+    component_uid: SYS-01-CMP-SOURCE-REFS
+    visual_uid: SYS-01-VIS-SOURCE-REFS
+    action_uid: ACT-NAV-OPEN
+    permission_uid: ops.read
+    service_operation: null
+    enabled_in_visual_phase: false
+  - control_uid: SYS-01-BTN-SANDBOX-TEST
+    type: BUTTON
+    label_zh: Sandbox 測試
+    section_id: SEC-ADMIN-SYS-01-EXECUTION-PANEL
+    component_uid: SYS-01-CMP-EXECUTION-PANEL
+    visual_uid: SYS-01-VIS-EXECUTION-PANEL
+    action_uid: SYS-01-ACT-SANDBOX-TEST
+    permission_uid: system.test.execute
+    service_operation: runSandboxTest
+    enabled_in_visual_phase: false
+  excluded_controls:
+  - production_deploy_button: NOT_REGISTERED_BECAUSE_EXPLICIT_SYS06_RELEASE_ACTION_PERMISSION_GATE_BINDING_IS_UNRESOLVED
+  - provider_model_picker: FORBIDDEN
+  - direct_code_deploy: FORBIDDEN
+  - direct_production_change: FORBIDDEN
+  supplemental_actions:
+  - action_uid: SYS-01-ACT-SANDBOX-TEST
+    effect_type: SERVICE_OPERATION
+    service_operation: runSandboxTest
+    permission_uid: system.test.execute
+    visual_phase_execution: FORBIDDEN
+
 derived_validation:
   status: PASS_DESIGN_ENCODING_ONLY
   generated_at_utc: '2026-08-28T15:41:04.905906+00:00'
   counts:
-    preserved_master_sections: 8
-    existing_master_controls_referenced: 25
+    current_page_sections: 8
+    current_registered_controls: 8
+    legacy_25_control_count_preservation: REMOVED
     new_multi_ai_controls: 4
     new_multi_ai_actions: 4
     new_multi_ai_gates: 3
@@ -622,7 +690,9 @@ derived_validation:
   checks:
     YAML has page_uid admin:SYS-01: true
     Status is design-locked not falsely runtime-complete: true
-    Preserves 8 current master sections: true
+    Preserves 8 current page sections: true
+    Legacy 25-control count is not a current count constraint: true
+    Current registry is exact and current-only: true
     4 explicit Multi-AI segmented controls: true
     4 explicit Multi-AI UI-only actions: true
     All Multi-AI controls have actions: true
@@ -643,7 +713,7 @@ derived_validation:
     No duplicate new UIDs across control/action/gate/error sets: true
   runtime_disclaimer: PASS here validates this YAML design encoding structure only. It does not prove application implementation, master merge,
     sandbox, regression, E2E or production deployment.
-current_page_contract_preserved:
+current_page_function_contract:
   canonical_section_count: 8
   canonical_sections:
   - section_id: SEC-ADMIN-SYS-01-SYSTEM-CONTEXT
@@ -670,25 +740,24 @@ current_page_contract_preserved:
   - section_id: SEC-ADMIN-SYS-01-EXECUTION-PANEL
     section_key: execution_panel
     order: 8
-  existing_registered_control_count_before_this_design_extension: 25
-  existing_allowed_action_ids:
+  current_allowed_action_ids:
   - ACT-CANDIDATE-CREATE
   - ACT-CR-CREATE
   - ACT-NAV-OPEN
-  existing_page_permission: system.change.propose
-  existing_service_permissions:
+  current_page_permission: system.change.propose
+  current_service_permissions:
   - system.ai.use
   - ops.read
   - system.test.execute
   - core.change.create
-  existing_service_operations:
+  current_service_operations:
   - createCandidate
   - createChangeRequest
   - runSandboxTest
   - executeSystemRelease
-  existing_forbidden:
+  current_forbidden:
   - direct_code_deploy
   - direct_production_change
-  existing_ai_scope_boundary:
+  current_ai_scope_boundary:
     SYS-01_to_SYS-05: AI_SYSTEM_MAINTENANCE allowed only within explicit permissions/scopes/gates
     SYS-06: EXPLICIT_SCOPE_EXCLUSION for AI/service identity by default; human-governed release only with explicit authority
