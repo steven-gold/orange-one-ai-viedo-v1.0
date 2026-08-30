@@ -1,0 +1,116 @@
+name: Sync VIS-18 Live Preview
+on:
+  push:
+    branches: [acpos-live-preview]
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout clean preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+          fetch-depth: 0
+      - name: Checkout current construction source
+        uses: actions/checkout@v4
+        with:
+          ref: new
+          path: .source
+      - name: Build current new branch
+        working-directory: .source
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run typecheck
+          npm run build
+      - name: Start production server
+        working-directory: .source
+        run: |
+          set -euo pipefail
+          nohup npm start -- --hostname 127.0.0.1 --port 3000 >/tmp/acpos-preview-next.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -fsS http://127.0.0.1:3000/admin/knowledge >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/acpos-preview-next.log
+          exit 1
+      - name: Materialize current routes into existing preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf preview
+          mkdir -p preview/_next preview/brand
+          cp -R .source/.next/static preview/_next/static
+          cp .source/public/brand/orange-one-logo.png preview/brand/orange-one-logo.png
+          python3 - <<'PY'
+          import re, urllib.request
+          from pathlib import Path
+          routes = {
+              '/': 'index.html', '/core': 'core.html', '/assets': 'assets.html', '/video': 'video.html',
+              '/edit': 'edit.html', '/qa': 'qa.html', '/database': 'db.html', '/strategy': 'strategy.html', '/info': 'info.html',
+              '/admin/system': 'system.html', '/admin/accounts': 'accounts.html', '/admin/dev': 'dev.html',
+              '/admin/social': 'social.html', '/admin/erp': 'erp.html', '/admin/aiapi': 'aiapi.html',
+              '/admin/qa-criteria': 'qa-criteria.html', '/admin/strategy': 'strategy-admin.html', '/admin/knowledge': 'knowledge-admin.html',
+          }
+          preview=Path('preview')
+          route_links=sorted(routes.items(), key=lambda kv: len(kv[0]), reverse=True)
+          static_css='''<style data-preview-static-shell>\n.global-sidebar:hover,.global-sidebar:focus-within{width:221px;padding-left:15px;padding-right:15px}.global-sidebar:hover .sidebar-surface,.global-sidebar:focus-within .sidebar-surface{opacity:1}.global-sidebar:hover .nav-list,.global-sidebar:focus-within .nav-list{width:191px}.global-sidebar:hover .nav-item,.global-sidebar:focus-within .nav-item{width:191px}.global-sidebar:hover .nav-label,.global-sidebar:focus-within .nav-label{opacity:1;transform:none}.language-button{cursor:default}\n</style>'''
+          for route,filename in routes.items():
+              with urllib.request.urlopen('http://127.0.0.1:3000'+route,timeout=15) as response:
+                  html=response.read().decode('utf-8')
+                  if response.status!=200: raise RuntimeError(f'{route}: HTTP {response.status}')
+              html=re.sub(r'<script\b[^>]*>.*?</script>','',html,flags=re.I|re.S)
+              html=re.sub(r'<link\b(?=[^>]*\bas=["\']script["\'])[^>]*>','',html,flags=re.I)
+              html=html.replace('href="/_next/','href="_next/').replace("href='/_next/","href='_next/")
+              html=html.replace('src="/_next/','src="_next/').replace("src='/_next/","src='_next/")
+              html=html.replace('src="/brand/','src="brand/').replace("src='/brand/","src='brand/")
+              html=html.replace('href="/brand/','href="brand/').replace("href='/brand/","href='brand/")
+              for href,target in route_links:
+                  html=html.replace(f'href="{href}"',f'href="{target}"').replace(f"href='{href}'",f"href='{target}'")
+              html=html.replace('</head>',static_css+'</head>',1)
+              preview.joinpath(filename).write_text(html,encoding='utf-8')
+          PY
+      - name: Validate clean preview chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(find preview -maxdepth 1 -name '*.html' | wc -l | tr -d ' ')" = "18"
+          grep -Fq 'data-page-uid="admin:SYS-01"' preview/system.html
+          grep -Fq 'data-page-uid="admin:IAM-01"' preview/accounts.html
+          grep -Fq 'data-page-uid="admin:DEV-01"' preview/dev.html
+          grep -Fq 'data-page-uid="admin:SOC-01"' preview/social.html
+          grep -Fq 'data-page-uid="admin:ERP-01"' preview/erp.html
+          grep -Fq 'data-page-uid="admin:AIAPI-01"' preview/aiapi.html
+          grep -Fq 'data-page-uid="admin:SG-02"' preview/qa-criteria.html
+          grep -Fq 'data-page-uid="admin:STR-01"' preview/strategy-admin.html
+          grep -Fq 'data-page-uid="admin:KB-01"' preview/knowledge-admin.html
+          grep -Fq 'data-section-registry-count="16"' preview/knowledge-admin.html
+          grep -Fq 'data-component-registry-count="22"' preview/knowledge-admin.html
+          grep -Fq 'data-field-registry-count="127"' preview/knowledge-admin.html
+          grep -Fq 'data-control-registry-count="27"' preview/knowledge-admin.html
+          for file in system accounts dev social erp aiapi qa-criteria strategy-admin knowledge-admin; do
+            grep -Fq 'href="knowledge-admin.html"' "preview/$file.html"
+          done
+          grep -Fq 'href="index.html"' preview/knowledge-admin.html
+          grep -Fq 'href="system.html"' preview/knowledge-admin.html
+          ! grep -R 'raw.githack.com' preview/*.html
+          ! grep -R 'admin-page-chain-verified' preview .github || true
+          ! grep -R 'href="/_next/' preview/*.html
+          ! grep -R 'src="/_next/' preview/*.html
+          ! grep -R '<script' preview/*.html
+          test -s preview/brand/orange-one-logo.png
+          test -d preview/_next/static
+          echo 'VIS18_LIVE_PREVIEW_SYNC=PASS'
+      - name: Commit synchronized preview and self-clean
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/sync-vis18-live-preview.yml
+          git config user.name 'steven-gold'
+          git config user.email 'proorangeone@gmail.com'
+          git add -A preview .github/workflows/sync-vis18-live-preview.yml
+          git commit -m 'feat(preview): connect admin Knowledge Center to live preview'
+          git push origin HEAD:acpos-live-preview
