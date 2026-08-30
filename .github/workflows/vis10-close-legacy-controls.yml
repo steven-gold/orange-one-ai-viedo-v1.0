@@ -1,0 +1,44 @@
+name: VIS-10 close legacy control residue
+on:
+  push:
+    branches:
+      - acpos-vis10-staging
+    paths:
+      - .github/workflows/vis10-close-legacy-controls.yml
+permissions:
+  contents: write
+jobs:
+  close:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis10-staging
+      - name: Close SYS-01 legacy control residue
+        run: |
+          python -m pip install pyyaml >/dev/null
+          python .acpos-temp/vis10-close-legacy-controls.py
+      - name: Validate closure
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          p=Path('authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml')
+          d=yaml.safe_load(p.read_text())
+          r=d['current_control_registry']
+          assert r['count']==8
+          assert d['derived_validation']['counts']['current_registered_controls']==8
+          assert d['derived_validation']['counts']['legacy_25_control_count_preservation']=='REMOVED'
+          assert 'existing_registered_control_count_before_this_design_extension' not in p.read_text()
+          assert d['current_page_function_contract']['canonical_section_count']==8
+          print('CURRENT SYS-01 CONTROL AUTHORITY PASS')
+          PY
+      - name: Commit exact authority closure and self-clean
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
+          git commit -m "fix(vis10): close SYS-01 legacy control residue"
+          git rm .acpos-temp/vis10-close-legacy-controls.py .github/workflows/vis10-close-legacy-controls.yml
+          git commit -m "chore(vis10): remove temporary authority closure tools"
+          git push origin HEAD:acpos-vis10-staging
