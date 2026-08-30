@@ -72,7 +72,6 @@ current_state:
   current_task: VIS-10_ADMIN_SYS-01_VISUAL_POSITIONING
   current_task_state: BLOCKED_BY_AUTHORITY_GAP
   current_task_blockers:
-  - CANONICAL_ROUTE_RESOLVER_MISSING
   - PRESERVED_25_CONTROL_REGISTRY_UID_SOURCE_MISSING
   last_completed_task: VIS-09_FRONT_INFO-01_VISUAL_POSITIONING
   current_front_l1_count: 9
@@ -409,9 +408,10 @@ phase_1_visual_positioning:
     status: BLOCKED_BY_AUTHORITY_GAP
     blocker_detail:
       canonical_route_resolver:
-        state: MISSING
-        finding: ADMIN-NAV-01 binds admin:SYS-01, but Current Authority/repo contains no literal route/path/href/URL resolver for this page.
-        rule: Do not invent /admin/system or any other route.
+        state: RESOLVED
+        route: /admin/system
+        finding: Same-repository main architecture defines system_maintenance routePrefix /admin/system; user confirmed SYS-01 is entered through the frontend Admin/Backend entry and then the admin menu.
+        source_ref: main@3554d8b679199c118ed8872cdf1f3893ce9427ee:src/config/navigation.ts
       preserved_control_registry:
         state: MISSING
         finding: SYS-01 Current Page Authority declares 25 existing registered controls must be preserved, but their exact control UIDs are not present in the Current Authority repository text; only the 4 explicit Multi-AI controls are enumerated.
@@ -425,7 +425,6 @@ phase_1_visual_positioning:
       route_scan_result: No literal SYS-01 route/path/href resolver found in current repository.
       pre_blocker_sync_staging_diff_vs_new: ZERO_FILES
     resume_gate:
-    - Publish/identify canonical literal route resolver for admin:SYS-01 / ADMIN-NAV-01.
     - Publish/identify exact authoritative UID registry for the preserved 25 SYS-01 controls, including section/action/component/visual bindings where required.
     - Then restart VIS-10 from Current Authority without inferring missing definitions.
   - id: VIS-11
