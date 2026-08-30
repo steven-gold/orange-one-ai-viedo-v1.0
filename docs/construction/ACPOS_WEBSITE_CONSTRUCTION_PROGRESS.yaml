@@ -596,7 +596,21 @@ phase_1_visual_positioning:
     group: ADMIN
     page_uid: admin:STR-01
     name: 戰略中心後台
-    status: NOT_STARTED
+    status: COMPLETE
+    scope: Single-page Strategy Center administration visual at /admin/strategy with five authority-defined Current Views, real-data-only empty projections, registered action/operation traceability, no parallel subpages, and all governed business actions disabled until resource/runtime remap.
+    evidence:
+      final_validation_run_id: 33313441132
+      evidence_directory: docs/construction/evidence/VIS-17
+      validation_record: docs/construction/evidence/VIS-17/vis17-validation.json
+      typecheck: PASS
+      next_build: PASS
+      production_server: PASS
+      chromium_render_and_geometry: PASS
+      locale_switch_runtime: PASS
+      business_requests_during_validation: 0
+      current_views: 5
+      control_resource_remap: NOT_EXECUTED
+      effectful_runtime_ready: false
   - id: VIS-18
     group: ADMIN
     page_uid: admin:KB-01
@@ -611,9 +625,9 @@ final_validation:
   status: NOT_STARTED
 metrics:
   visual_steps_total: 19
-  visual_steps_complete: 17
+  visual_steps_complete: 18
   visual_steps_in_progress: 0
   logic_steps_complete: 0
   shared_runtime_steps_complete: 0
   cross_page_steps_complete: 0
-  truthful_progress_note: VIS-00 through VIS-16 visual positioning are implemented and verified. VIS-16 implements admin:SG-02 at /admin/qa-criteria as the QA review-standard governance page, with 9 sections, exactly 11 registered controls, registered SECTION_OPEN drawers, and no invented Search/Filter/Export or hardcoded threshold/sample criteria data. Configure/Approve runtime remains disabled in visual phase. Historical evidence is not rewritten. VIS-17 STR-01 is next and has not started. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
+  truthful_progress_note: VIS-00 through VIS-16 visual positioning are implemented and verified. VIS-16 implements admin:SG-02 at /admin/qa-criteria as the QA review-standard governance page, with 9 sections, exactly 11 registered controls, registered SECTION_OPEN drawers, and no invented Search/Filter/Export or hardcoded threshold/sample criteria data. Configure/Approve runtime remains disabled in visual phase. Historical evidence is not rewritten. VIS-17 admin:STR-01 is implemented and verified at /admin/strategy as one page with five Current Views. Governed business actions remain disabled until control/permission/runtime remap. VIS-18 KB-01 is next and has not started. Page business/runtime logic remains blocked until VIS-00 through VIS-18 are complete.
