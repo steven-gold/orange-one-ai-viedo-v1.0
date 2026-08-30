@@ -1,2 +1,1 @@
-import { createCorePostRoute } from "@/server/core/coreRouteFactory";
-export const POST = createCorePostRoute("CORE-01-PORT-MESSAGE-SEND");
+import{conversationPost}from"@/server/shared/conversationRouteFactory";export const POST=conversationPost("sendConversationMessage");
