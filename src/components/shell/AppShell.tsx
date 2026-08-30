@@ -38,7 +38,7 @@ const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { id: "ADMIN-NAV-03", labelKey: "global.admin.dev", icon: "video", href: "/admin/dev" },
   { id: "ADMIN-NAV-04", labelKey: "global.admin.social", icon: "info", href: "/admin/social" },
   { id: "ADMIN-NAV-05", labelKey: "global.admin.erp", icon: "database", href: "/admin/erp" },
-  { id: "ADMIN-NAV-06", labelKey: "global.admin.aiapi", icon: "video" },
+  { id: "ADMIN-NAV-06", labelKey: "global.admin.aiapi", icon: "video", href: "/admin/aiapi" },
   { id: "ADMIN-NAV-07", labelKey: "global.admin.qa_criteria", icon: "qa" },
   { id: "ADMIN-NAV-08", labelKey: "global.admin.strategy", icon: "strategy" },
   { id: "ADMIN-NAV-09", labelKey: "global.admin.knowledge", icon: "asset" },
