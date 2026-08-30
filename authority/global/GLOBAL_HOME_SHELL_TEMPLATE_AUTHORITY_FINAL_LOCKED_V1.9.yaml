@@ -773,6 +773,10 @@ i18n:
       zh-TW: 戰略中心
       zh-CN: 战略中心
       en: Strategy Center
+    NAV-09:
+      zh-TW: 最新資訊
+      zh-CN: 最新资讯
+      en: Latest Information
   quick:
     NOTIFICATION:
       zh-TW: 通知
@@ -802,7 +806,7 @@ forbidden:
 - AI Workspace L1 item
 - separate Editing L1 and Voice L1
 - System Admin L1 item in place of Database/Strategy Center
-- more or fewer than 8 L1 items unless authority is revised
+- more or fewer than 9 L1 items unless authority is revised
 - Dashboard child menu/subtitle/chevron
 - two-line L1 menu subtitles
 - manual sidebar pin/collapse toggle
@@ -823,7 +827,7 @@ forbidden:
 acceptance:
 - uid: GHS-ACC-01
   item: L1 Menu Exactness
-  pass: Exactly 8 direct flat L1 items in exact order; every item has no child menu/submenu/subtitle/chevron
+  pass: Exactly 9 direct flat L1 items in exact order; every item has no child menu/submenu/subtitle/chevron
 - uid: GHS-ACC-02
   item: No AI Workspace
   pass: AI Workspace absent from navigation/control/i18n
@@ -832,7 +836,7 @@ acceptance:
   pass: One L1 剪輯配音 only; no separate Editing/Voice rows
 - uid: GHS-ACC-04
   item: All L1 Flat / No Subtitle
-  pass: NAV-01..NAV-08 are direct L1 leaves; no child/submenu, no second line, no chevron. Lower-level navigation belongs to destination Page
+  pass: NAV-01..NAV-09 are direct L1 leaves; no child/submenu, no second line, no chevron. Lower-level navigation belongs to destination Page
     Authority.
 - uid: GHS-ACC-05
   item: Auto Collapse
@@ -873,7 +877,7 @@ acceptance:
   pass: All control UIDs resolve action/gate/permission/component/visual; zero unresolved internal refs
 - uid: GHS-ACC-17
   item: Collapsed Icon-Only Visual
-  pass: Canonical collapsed-state reference and runtime rest state show only 8 icons. No full-height sidebar surface/frame/background/border/glow
+  pass: Canonical collapsed-state reference and runtime rest state show only 9 icons. No full-height sidebar surface/frame/background/border/glow
     and no 221px expanded-menu demo is visible until actual hover/focus.
 - uid: GHS-ACC-18
   item: Permission Is Account-Bound, Not Header UI
@@ -881,8 +885,8 @@ acceptance:
     outcomes.
 machine_validation:
   status: PASS
-  nav_count: 8
-  control_count: 13
+  nav_count: 9
+  control_count: 14
   section_count: 4
   component_count: 6
   visual_count: 6
@@ -918,5 +922,5 @@ canonical_reference_state:
   state: SIDEBAR_COLLAPSED_ICON_ONLY
   sidebar_surface_visible: false
   expanded_menu_surface_visible: false
-  visible_nav_elements: 8 ICONS ONLY
+  visible_nav_elements: 9 ICONS ONLY
   workspace_origin: x=78px y=68px
