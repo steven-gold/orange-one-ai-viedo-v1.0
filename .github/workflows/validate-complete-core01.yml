@@ -62,7 +62,9 @@ jobs:
           cat /tmp/core01-server.log
           exit 1
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: |
+          npm install --no-save playwright@1.62.1
+          npx playwright install --with-deps chromium
       - name: Chromium functional validation
         run: |
           cat > core01-browser-check.mjs <<'EOF'
