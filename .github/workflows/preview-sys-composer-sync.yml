@@ -1,0 +1,72 @@
+name: Preview SYS composer sync
+on:
+  push:
+    branches: [acpos-live-preview]
+    paths:
+      - .github/workflows/preview-sys-composer-sync.yml
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+      - name: Apply SYS composer preview patch
+        run: python .acpos-temp/preview_sys_composer_patch.py
+      - name: Validate static contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('preview/system.html').read_text()
+          ids=['SYS-01-INP-MESSAGE','SYS-01-BTN-ATTACH','SYS-01-BTN-SEND','SYS-01-BTN-STOP']
+          assert all(s.count(f'data-control-id="{x}"')==1 for x in ids)
+          assert s.count('data-control-id="SYS-01-')==12
+          assert 'resize:vertical' in s
+          assert 'min-height:610px' in s
+          assert 'accounts.html' in s
+          print('preview SYS composer static PASS')
+          PY
+      - name: Browser validation
+        run: |
+          python3 -m http.server 8000 --directory preview >/tmp/preview-http.log 2>&1 &
+          mkdir -p /tmp/pw && cd /tmp/pw
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.62.1 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          cat > check.cjs <<'JS'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const b=await chromium.launch({headless:true});
+            const p=await b.newPage({viewport:{width:1440,height:900}});
+            await p.goto('http://127.0.0.1:8000/system.html',{waitUntil:'networkidle'});
+            const r=await p.evaluate(()=>{
+              const c=[...document.querySelectorAll('[data-control-id]')];
+              const ta=document.getElementById('SYS-01-INP-MESSAGE');
+              const w=document.querySelector('.workspace');
+              return {controls:c.length, unique:new Set(c.map(x=>x.getAttribute('data-control-id'))).size, resize:getComputedStyle(ta).resize, disabled:ta.disabled, client:w.clientWidth, scroll:w.scrollWidth, page:document.querySelector('[data-page-uid="admin:SYS-01"]').scrollWidth, nav:document.querySelectorAll('[data-nav-id^="ADMIN-NAV-"]').length};
+            });
+            if(r.controls!==12||r.unique!==12||r.resize!=='vertical'||r.disabled||r.client!==r.scroll||r.nav!==9) throw new Error(JSON.stringify(r));
+            await p.locator('#SYS-01-INP-MESSAGE').fill('preview local draft');
+            if(await p.locator('#SYS-01-INP-MESSAGE').inputValue()!=='preview local draft') throw new Error('typing failed');
+            if(!(await p.locator('[data-control-id="SYS-01-BTN-ATTACH"]').isDisabled())) throw new Error('attach enabled');
+            if(!(await p.locator('[data-control-id="SYS-01-BTN-SEND"]').isDisabled())) throw new Error('send enabled');
+            if(!(await p.locator('[data-control-id="SYS-01-BTN-STOP"]').isDisabled())) throw new Error('stop enabled');
+            await p.goto('http://127.0.0.1:8000/accounts.html',{waitUntil:'domcontentloaded'});
+            if((await p.locator('[data-page-uid="admin:IAM-01"]').count())!==1) throw new Error('IAM preview regression');
+            await b.close();
+            console.log('preview SYS composer browser PASS',r);
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          node check.cjs
+      - name: Commit exact preview and self-clean
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add preview/system.html
+          git commit -m "fix(preview): add SYS-01 conversation composer"
+          git rm .github/workflows/preview-sys-composer-sync.yml .acpos-temp/preview_sys_composer_patch.py
+          git commit -m "chore(preview): remove SYS composer sync tools"
+          git push origin HEAD:acpos-live-preview
