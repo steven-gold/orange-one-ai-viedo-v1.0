@@ -2,7 +2,7 @@ authority:
   id: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY
   version: V1.0
   status: FINAL_LOCKED
-  revision: 2026-08-30-USER-APPROVED-SYS01-ADMIN-ROUTE
+  revision: 2026-08-30-CURRENT-ADMIN-ROUTES-SYS01-IAM01
   current_only: true
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
@@ -103,6 +103,7 @@ admin_navigation:
       zh-TW: 帳戶與權限
       en: Account & Permission
     page_uid: admin:IAM-01
+    route: /admin/accounts
     permission_bundle: ADMIN-L1-IAM
     unauthorized: HIDDEN
   - order: 3

@@ -4,6 +4,7 @@ authority:
   page_name_zh: 帳戶與權限
   status: FINAL_LOCKED
   current_only: true
+  revision: 2026-08-30-CURRENT-NAV-9X9-ALIGNMENT
   file_spec_status: FILE_SPEC_COMPLETE
   system_implementation_status: NOT_EXECUTED
   surface: ADMIN
@@ -53,6 +54,10 @@ authorization_simplification:
     bundle_key: FRONT-L1-08
     label: 戰略中心
     canonical_page_uid: workspace:STR-01
+  - order: 9
+    bundle_key: FRONT-L1-09
+    label: 最新資訊
+    canonical_page_uid: workspace:INFO-01
   backend_permission_choices:
   - order: 1
     bundle_key: ADMIN-L1-SYSTEM
@@ -97,7 +102,7 @@ authorization_simplification:
   frontend_all_permission_control:
     label: 前台全部
     behavior: UI_SELECT_ALL_ONLY
-    effect: Select all 8 frontend L1 choices in the draft only.
+    effect: Select all 9 frontend L1 choices in the draft only.
   runtime_rule: L1 choices are configuration UX only. At save/apply time each selected L1 is deterministically expanded to the exact current registered
     permission resources required by that L1 and persisted as explicit Account Permission Assignments. Runtime parent/child inheritance remains
     forbidden.
@@ -196,10 +201,10 @@ components:
   role: Department permission preset selection; proposal only
 - component_uid: IAM-01-CMP-FRONT-L1
   section_uid: IAM-01-SEC-04
-  role: Eight frontend L1 permission choices only
+  role: Nine frontend L1 permission choices only
 - component_uid: IAM-01-CMP-BACK-L1
   section_uid: IAM-01-SEC-04
-  role: Eight backend L1 permission choices only
+  role: Nine backend L1 permission choices only
 - component_uid: IAM-01-CMP-PREVIEW
   section_uid: IAM-01-SEC-05
   role: Authorization impact/effective permission preview before apply
@@ -246,7 +251,7 @@ controls:
   permission: iam.permission.configure
 - control_uid: IAM-01-GRP-FRONT-L1
   type: CHECKBOX_GROUP
-  label: 前台 8 L1
+  label: 前台 9 L1
   action_uid: IAM-01-ACT-L1-DRAFT-SET
   gate_uid: IAM-01-GATE-DRAFT
   permission: iam.permission.configure
@@ -258,7 +263,7 @@ controls:
   permission: iam.permission.configure
 - control_uid: IAM-01-GRP-BACK-L1
   type: CHECKBOX_GROUP
-  label: 後台 8 L1
+  label: 後台 9 L1
   action_uid: IAM-01-ACT-L1-DRAFT-SET
   gate_uid: IAM-01-GATE-DRAFT
   permission: iam.permission.configure
@@ -317,11 +322,11 @@ actions:
 - action_uid: IAM-01-ACT-FRONT-ALL-DRAFT
   effect: DRAFT_UI
   operation: null
-  rule: Select/deselect all eight frontend L1 draft choices.
+  rule: Select/deselect all nine frontend L1 draft choices.
 - action_uid: IAM-01-ACT-BACK-ALL-DRAFT
   effect: DRAFT_UI
   operation: null
-  rule: Select/deselect all eight backend L1 draft choices; not super-admin.
+  rule: Select/deselect all nine backend L1 draft choices; not super-admin.
 - action_uid: IAM-01-ACT-L1-DRAFT-SET
   effect: DRAFT_UI
   operation: null
@@ -483,6 +488,7 @@ i18n:
     - QA
     - 資料庫
     - 戰略中心
+    - 最新資訊
     backend:
     - 系統維護
     - 帳戶與權限
@@ -492,6 +498,7 @@ i18n:
     - AI API
     - QA 評分項目
     - 戰略中心
+    - 知識庫
 hard_locks:
 - Only admin:IAM-01 is the current Accounts & Permissions UI page in this authority.
 - IAM-02..IAM-06 standalone navigation surfaces are superseded by this single-page composition; their services/operations/data contracts are reused,
@@ -521,10 +528,10 @@ acceptance:
   condition: Basic Data -> L1 Permission -> Preview/Complete in one page; Add/Edit do not navigate to another IAM page.
 - uid: IAM-01-ACC-05
   item: Frontend L1
-  condition: Exactly 8 current frontend permission choices in exact order.
+  condition: Exactly 9 current frontend permission choices in exact order.
 - uid: IAM-01-ACC-06
   item: Backend L1
-  condition: Exactly 8 confirmed backend permission choices in exact order.
+  condition: Exactly 9 confirmed backend permission choices in exact order.
 - uid: IAM-01-ACC-07
   item: Department Preset
   condition: Preset only pre-fills L1 draft; Department itself never grants access.
