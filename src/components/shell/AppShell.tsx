@@ -17,6 +17,7 @@ type NavItem = {
 type AppShellProps = {
   children?: ReactNode;
   activeNavId?: string;
+  surface?: "front" | "admin";
 };
 
 const NAV_ITEMS: readonly NavItem[] = [
@@ -29,6 +30,18 @@ const NAV_ITEMS: readonly NavItem[] = [
   { id: "NAV-07", labelKey: "global.nav.database", icon: "database", href: "/database" },
   { id: "NAV-08", labelKey: "global.nav.strategy", icon: "strategy", href: "/strategy" },
   { id: "NAV-09", labelKey: "global.nav.latest_information", icon: "info", href: "/info" },
+ ] as const;
+
+const ADMIN_NAV_ITEMS: readonly NavItem[] = [
+  { id: "ADMIN-NAV-01", labelKey: "global.admin.system", icon: "strategy", href: "/admin/system" },
+  { id: "ADMIN-NAV-02", labelKey: "global.admin.iam", icon: "project" },
+  { id: "ADMIN-NAV-03", labelKey: "global.admin.dev", icon: "video" },
+  { id: "ADMIN-NAV-04", labelKey: "global.admin.social", icon: "info" },
+  { id: "ADMIN-NAV-05", labelKey: "global.admin.erp", icon: "database" },
+  { id: "ADMIN-NAV-06", labelKey: "global.admin.aiapi", icon: "video" },
+  { id: "ADMIN-NAV-07", labelKey: "global.admin.qa_criteria", icon: "qa" },
+  { id: "ADMIN-NAV-08", labelKey: "global.admin.strategy", icon: "strategy" },
+  { id: "ADMIN-NAV-09", labelKey: "global.admin.knowledge", icon: "asset" },
 ] as const;
 
 function Icon({ name }: { name: NavItem["icon"] }) {
@@ -83,13 +96,16 @@ function HeaderIcon({ kind }: { kind: "bell" | "todo" | "running" }) {
   return <svg {...common}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>;
 }
 
-export function AppShell({ children, activeNavId }: AppShellProps) {
+export function AppShell({ children, activeNavId, surface = "front" }: AppShellProps) {
   const { locale, setLocale, t } = useI18n();
   const [expanded, setExpanded] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sidebarRef = useRef<HTMLElement | null>(null);
   const languageRef = useRef<HTMLDivElement | null>(null);
+  const accountRef = useRef<HTMLDivElement | null>(null);
+  const navItems = surface === "admin" ? ADMIN_NAV_ITEMS : NAV_ITEMS;
 
   const cancelCollapse = () => {
     if (collapseTimer.current) {
@@ -114,12 +130,16 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         if (languageOpen) setLanguageOpen(false);
+        if (accountOpen) setAccountOpen(false);
         if (expanded && !sidebarRef.current?.contains(document.activeElement)) setExpanded(false);
       }
     };
     const onPointerDown = (event: PointerEvent) => {
       if (languageOpen && languageRef.current && !languageRef.current.contains(event.target as Node)) {
         setLanguageOpen(false);
+      }
+      if (accountOpen && accountRef.current && !accountRef.current.contains(event.target as Node)) {
+        setAccountOpen(false);
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -129,7 +149,7 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
       window.removeEventListener("pointerdown", onPointerDown);
       cancelCollapse();
     };
-  }, [expanded, languageOpen]);
+  }, [expanded, languageOpen, accountOpen]);
 
   return (
     <div className="acpos-shell" data-vis-step="VIS-00">
@@ -173,7 +193,27 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
               </div>
             )}
           </div>
-          <button className="account-button" type="button" aria-label={t("global.header.account")}><span className="avatar-placeholder" aria-hidden="true"/><span className="account-label">—</span><span className="caret" aria-hidden="true">⌄</span></button>
+          <div className="account-menu" ref={accountRef}>
+            <button
+              className="account-button"
+              type="button"
+              aria-label={t("global.header.account")}
+              aria-haspopup="menu"
+              aria-expanded={accountOpen}
+              onClick={() => setAccountOpen((open) => !open)}
+            >
+              <span className="avatar-placeholder" aria-hidden="true"/>
+              <span className="account-label">—</span>
+              <span className="caret" aria-hidden="true">⌄</span>
+            </button>
+            {accountOpen && (
+              <div className="account-popover" role="menu">
+                <a className="account-popover-link" role="menuitem" href={surface === "admin" ? "/" : "/admin/system"}>
+                  {surface === "admin" ? t("global.header.frontend") : t("global.header.admin")}
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -188,7 +228,7 @@ export function AppShell({ children, activeNavId }: AppShellProps) {
       >
         <div className="sidebar-surface" aria-hidden={!expanded} />
         <nav className="nav-list">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const isActive = item.id === activeNavId;
             const label = t(item.labelKey);
             const content = (

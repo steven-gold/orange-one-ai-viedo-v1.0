@@ -146,6 +146,35 @@ a:focus-visible {
   font-size: 13px;
 }
 .caret { color: var(--text-muted); font-size: 14px; }
+.account-menu { position: relative; }
+.account-button { cursor: pointer; }
+.account-popover {
+  position: absolute;
+  z-index: 140;
+  top: 42px;
+  right: 0;
+  min-width: 164px;
+  padding: 6px;
+  border: 1px solid var(--border-normal);
+  border-radius: 10px;
+  background: var(--surface-popup);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+}
+.account-popover-link {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 12px;
+}
+.account-popover-link:hover,
+.account-popover-link:focus-visible {
+  color: var(--text-primary);
+  background: var(--purple-hover);
+}
 
 .global-sidebar {
   position: fixed;

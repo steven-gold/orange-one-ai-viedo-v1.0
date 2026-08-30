@@ -47,6 +47,61 @@ const catalog = {
     "zh-CN": "账户",
     en: "Account",
   },
+  "global.header.admin": {
+    "zh-TW": "進入後台",
+    "zh-CN": "进入后台",
+    en: "Open Admin",
+  },
+  "global.header.frontend": {
+    "zh-TW": "返回前台",
+    "zh-CN": "返回前台",
+    en: "Back to Front",
+  },
+  "global.admin.system": {
+    "zh-TW": "系統維護",
+    "zh-CN": "系统维护",
+    en: "System Maintenance",
+  },
+  "global.admin.iam": {
+    "zh-TW": "帳戶與權限",
+    "zh-CN": "账户与权限",
+    en: "Account & Permission",
+  },
+  "global.admin.dev": {
+    "zh-TW": "企業自動開發系統",
+    "zh-CN": "企业自动开发系统",
+    en: "Enterprise Automation",
+  },
+  "global.admin.social": {
+    "zh-TW": "社群發布",
+    "zh-CN": "社群发布",
+    en: "Social Publishing",
+  },
+  "global.admin.erp": {
+    "zh-TW": "ERP",
+    "zh-CN": "ERP",
+    en: "ERP & Finance",
+  },
+  "global.admin.aiapi": {
+    "zh-TW": "AI API",
+    "zh-CN": "AI API",
+    en: "AI API",
+  },
+  "global.admin.qa_criteria": {
+    "zh-TW": "QA 評分項目",
+    "zh-CN": "QA 评分项目",
+    en: "QA Review Criteria",
+  },
+  "global.admin.strategy": {
+    "zh-TW": "戰略中心",
+    "zh-CN": "战略中心",
+    en: "Strategy Administration",
+  },
+  "global.admin.knowledge": {
+    "zh-TW": "知識庫",
+    "zh-CN": "知识库",
+    en: "Knowledge & Experience",
+  },
   "global.nav.dashboard": {
     "zh-TW": "儀表板",
     "zh-CN": "仪表板",
