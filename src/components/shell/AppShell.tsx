@@ -187,13 +187,24 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
               </div>
             )}
           </div>
-          <a
-            className="surface-switch-button"
-            href={surface === "admin" ? "/" : "/admin/system"}
-            aria-label={surface === "admin" ? t("global.header.frontend") : t("global.header.admin")}
-          >
-            {surface === "admin" ? t("global.header.frontend") : t("global.header.admin")}
-          </a>
+          <div className="surface-switch-group" aria-label={`${t("global.header.frontend")} / ${t("global.header.admin")}`}>
+            <a
+              className="surface-switch-button"
+              href="/"
+              aria-label={t("global.header.frontend")}
+              aria-current={surface === "front" ? "page" : undefined}
+            >
+              {t("global.header.frontend")}
+            </a>
+            <a
+              className="surface-switch-button"
+              href="/admin/system"
+              aria-label={t("global.header.admin")}
+              aria-current={surface === "admin" ? "page" : undefined}
+            >
+              {t("global.header.admin")}
+            </a>
+          </div>
           <div className="account-menu">
             <button className="account-button" type="button" aria-label={t("global.header.account")}>
               <span className="avatar-placeholder" aria-hidden="true"/>

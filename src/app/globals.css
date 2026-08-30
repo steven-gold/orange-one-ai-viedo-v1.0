@@ -136,6 +136,29 @@ a:focus-visible {
   background: rgba(139, 92, 255, 0.14);
   border-color: rgba(179, 140, 255, 0.34);
 }
+.surface-switch-group {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--button-radius);
+  background: rgba(17, 25, 54, 0.52);
+}
+.surface-switch-group .surface-switch-button {
+  min-width: 62px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  background: transparent;
+}
+.surface-switch-group .surface-switch-button[aria-current="page"] {
+  color: var(--text-primary);
+  background: var(--purple-active);
+  border-color: var(--border-active);
+}
+
 .account-button {
   min-width: 132px;
   max-width: 220px;
