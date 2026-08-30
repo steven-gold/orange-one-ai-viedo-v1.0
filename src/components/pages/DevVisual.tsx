@@ -98,7 +98,7 @@ export function DevVisual() {
     if (activeStage === "discovery") {
       return (
         <section className={styles.panel} data-section-id="DEV-01-SEC-03" data-component-id="DEV-01-CMP-DISCOVERY-SETUP">
-          <div className={styles.panelHeader}><h2>{t("discoverySetup")}</h2><span>DISCOVERY · CURRENT STAGE</span></div>
+          <div className={styles.panelHeader}><h2>{t("discoverySetup")}</h2><span>{stage.code} · {t("currentStage")}</span></div>
           <div className={styles.workspaceBody}>
             <div className={styles.projectionGrid}>
               <ProjectionCell label={t("mode")} />
@@ -116,7 +116,7 @@ export function DevVisual() {
     if (activeStage === "directory") {
       return (
         <section className={styles.panel} data-section-id="DEV-01-SEC-04" data-component-id="DEV-01-CMP-DIRECTORY">
-          <div className={styles.panelHeader}><h2>{t("companyList")}</h2><span>DIRECTORY · CURRENT STAGE</span></div>
+          <div className={styles.panelHeader}><h2>{t("companyList")}</h2><span>{stage.code} · {t("currentStage")}</span></div>
           <div className={styles.workspaceBody}>
             <div className={styles.projectionGrid}>
               <ProjectionCell label={t("directorySearch")} wide />
@@ -136,7 +136,7 @@ export function DevVisual() {
     if (activeStage === "message") {
       return (
         <section className={styles.panel} data-section-id="DEV-01-SEC-05" data-component-id="DEV-01-CMP-MESSAGE">
-          <div className={styles.panelHeader}><h2>{t("messageCandidate")}</h2><span>MESSAGE · CURRENT STAGE</span></div>
+          <div className={styles.panelHeader}><h2>{t("messageCandidate")}</h2><span>{stage.code} · {t("currentStage")}</span></div>
           <div className={styles.workspaceBody}>
             <div className={styles.projectionGrid}>
               <ProjectionCell label={t("audienceContext")} wide />
@@ -156,7 +156,7 @@ export function DevVisual() {
     if (activeStage === "campaign") {
       return (
         <section className={styles.panel} data-section-id="DEV-01-SEC-06" data-component-id="DEV-01-CMP-CAMPAIGN">
-          <div className={styles.panelHeader}><h2>{t("campaign")}</h2><span>CAMPAIGN · CURRENT STAGE</span></div>
+          <div className={styles.panelHeader}><h2>{t("campaign")}</h2><span>{stage.code} · {t("currentStage")}</span></div>
           <div className={styles.workspaceBody}>
             <div className={styles.projectionGrid}>
               <ProjectionCell label={t("audienceFilter")} />
@@ -174,7 +174,7 @@ export function DevVisual() {
 
     return (
       <section className={styles.panel} data-section-id="DEV-01-SEC-07" data-component-id="DEV-01-CMP-DELIVERY">
-        <div className={styles.panelHeader}><h2>{t("delivery")}</h2><span>DELIVERY · CURRENT STAGE</span></div>
+        <div className={styles.panelHeader}><h2>{t("delivery")}</h2><span>{stage.code} · {t("currentStage")}</span></div>
         <div className={styles.workspaceBody}>
           <div className={styles.projectionGrid}>
             <ProjectionCell label={t("deliveryPolicy")} />
@@ -208,10 +208,10 @@ export function DevVisual() {
   }
 
   return (
-    <div className={styles.page} data-page-uid="admin:DEV-01" data-vis-step="VIS-12" data-route-status="BLOCKED_AUTHORITY_GAP" data-page-state="VISUAL_ONLY_NO_BUSINESS_DATA">
+    <div className={styles.page} data-page-uid="admin:DEV-01" data-vis-step="VIS-12" data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE" data-page-state="VISUAL_ONLY_NO_BUSINESS_DATA">
       <section className={styles.contextBar} data-section-id="DEV-01-SEC-01" data-component-id="DEV-01-CMP-CONTEXT">
         <div className={styles.contextIdentity}>
-          <div className={styles.eyebrow}>DEV-01 · ENTERPRISE AUTOMATION</div>
+          <div className={styles.eyebrow}>DEV-01 · {t("pageName")}</div>
           <h1>{t("pageName")}</h1>
           <p>{t("pageRole")}</p>
         </div>
@@ -222,7 +222,7 @@ export function DevVisual() {
         </div>
       </section>
 
-      <section className={styles.stageBar} data-section-id="DEV-01-SEC-02" data-component-id="DEV-01-CMP-STAGE-NAV" aria-label="Enterprise Automation Workflow">
+      <section className={styles.stageBar} data-section-id="DEV-01-SEC-02" data-component-id="DEV-01-CMP-STAGE-NAV" aria-label={t("pageName")}>
         {STAGES.map((item) => (
           <button
             key={item.key}
@@ -246,10 +246,10 @@ export function DevVisual() {
         <h2>{t("detailDrawer")}</h2>
         <p>{t("noRealData")}</p>
         <div className={styles.drawerGrid}>
-          <div className={styles.drawerCell}><span>Evidence</span><strong>—</strong></div>
-          <div className={styles.drawerCell}><span>Audit</span><strong>—</strong></div>
-          <div className={styles.drawerCell}><span>Version</span><strong>—</strong></div>
-          <div className={styles.drawerCell}><span>Error / Correlation</span><strong>—</strong></div>
+          <div className={styles.drawerCell}><span>{t("evidence")}</span><strong>—</strong></div>
+          <div className={styles.drawerCell}><span>{t("audit")}</span><strong>—</strong></div>
+          <div className={styles.drawerCell}><span>{t("version")}</span><strong>—</strong></div>
+          <div className={styles.drawerCell}><span>{t("errorCorrelation")}</span><strong>—</strong></div>
         </div>
       </aside>
     </div>
