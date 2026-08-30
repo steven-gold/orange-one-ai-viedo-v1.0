@@ -1,0 +1,41 @@
+name: VIS-11 bottom evidence
+on:
+  push:
+    branches: [acpos-vis11-staging]
+    paths: [.github/workflows/vis11-bottom-evidence.yml]
+permissions:
+  contents: write
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-vis11-staging
+      - run: npm ci
+      - run: npm run build
+      - run: |
+          npm install --no-save playwright@1.62.1 >/dev/null 2>&1
+          npx playwright install chromium --with-deps >/dev/null 2>&1
+          npm start -- -p 3000 >/tmp/vis11-bottom.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:3000/admin/accounts >/dev/null && break; sleep 1; done
+          cat > vis11-bottom.cjs <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{const b=await chromium.launch({headless:true});const p=await b.newPage({viewport:{width:1440,height:900}});await p.goto('http://127.0.0.1:3000/admin/accounts',{waitUntil:'networkidle'});await p.evaluate(()=>{const w=document.querySelector('.workspace-slot');w.scrollTo(0,w.scrollHeight)});await p.waitForTimeout(150);await p.screenshot({path:'vis11-1440-bottom-final.png'});await b.close()})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node vis11-bottom.cjs
+          mkdir -p docs/construction/evidence/VIS-11
+          mv vis11-1440-bottom-final.png docs/construction/evidence/VIS-11/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vis11-bottom-final
+          path: docs/construction/evidence/VIS-11/vis11-1440-bottom-final.png
+      - name: Commit exact evidence and self-clean
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add docs/construction/evidence/VIS-11/vis11-1440-bottom-final.png
+          git commit -m "test(vis11): add correct workspace bottom evidence"
+          git rm .github/workflows/vis11-bottom-evidence.yml
+          git commit -m "chore(vis11): remove bottom evidence workflow"
+          git push origin HEAD:acpos-vis11-staging
