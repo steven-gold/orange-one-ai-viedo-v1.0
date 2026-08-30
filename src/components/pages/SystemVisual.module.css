@@ -61,12 +61,6 @@
   align-items: stretch;
 }
 
-.leftColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
 .panel {
   min-width: 0;
   border: 1px solid var(--border-normal);
@@ -234,15 +228,10 @@
   background: var(--surface-input);
 }
 
-.secondaryGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
+.secondaryGrid,
 .bottomGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
