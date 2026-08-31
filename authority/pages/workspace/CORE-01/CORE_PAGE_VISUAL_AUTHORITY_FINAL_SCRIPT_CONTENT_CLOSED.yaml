@@ -14,6 +14,27 @@ authority:
   department_boundary: CORE owns Project Core + Topic Production Scope/Canonical Script source; ASSET/VIDEO/EDIT/VOICE internals are not defined
     here
   parallel_authority_for_same_page: FORBIDDEN
+creation_authorization_policy:
+  source: USER_CURRENT_REQUIREMENT_2026-08-31
+  scope:
+  - CORE-01-ACT-PROJECT-CREATE
+  - CORE-01-ACT-TOPIC-CREATE
+  account_identity_source: Authenticated current account resolved by IAM-01 / account permission runtime
+  required_permissions:
+    CORE-01-ACT-PROJECT-CREATE: CORE_PROJECT_WRITE
+    CORE-01-ACT-TOPIC-CREATE: CORE_TOPIC_WRITE
+  authorization_order: Resolve authenticated account -> resolve exact registered permission -> only then open registered draft form/schema -> gate -> mutation
+  iam_not_ready_behavior: BLOCK
+  unauthenticated_behavior: BLOCK
+  missing_permission_behavior: BLOCK
+  test_only_permission_bypass: FORBIDDEN
+  control_behavior_when_denied: Control remains clickable for permission evaluation; creation mutation is forbidden; show denial in existing Runtime Stage Strip.
+  denial_reason_codes:
+  - AUTHENTICATED_ACCOUNT_REQUIRED
+  - IAM_ACCOUNT_PERMISSION_RUNTIME_NOT_BOUND
+  - REQUIRED_PERMISSION_MISSING
+  denial_notice_zh_tw: 建立功能已拒絕：必須由已登入帳號通過帳號權限驗證；帳號權限系統尚未完成或目前帳號缺少所需權限。
+  security_rule: Client denial is UX only; server authorization is mandatory and direct API bypass must also be denied.
   system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
   navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
   production_script_authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
@@ -384,7 +405,7 @@ registries:
     recovery: BLOCK downstream package readiness; no CORE-local filename fallback
   - error_uid: CORE-01-ERR-PERM-001
     context: Permission/scope denied
-    recovery: Disable control + show actual permission reason
+    recovery: For Project/Topic creation keep the control clickable for permission evaluation, block mutation, and show the actual permission reason in the existing Runtime Stage Strip; other controls follow registered permission behavior.
   - error_uid: CORE-01-ERR-UNDEFINED-001
     context: Unlisted Section/Component/Control/Action/Gate/State/Port requested
     recovery: BLOCK + REPORT_AUTHORITY_GAP; AI may not fill gap

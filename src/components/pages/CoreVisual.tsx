@@ -5,6 +5,7 @@ import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { invokeCoreAction, readCoreProjection } from "@/domain/core/coreClientPort";
 import { requestCoreDraftFormPayload } from "@/domain/core/coreDraftFormAdapter";
+import { requestCoreCreationPermission } from "@/domain/core/coreCreationPermissionAdapter";
 import { requestCoreMessageSendPayload, requestCoreThreadCreatePayload } from "@/domain/core/coreConversationPayloadAdapter";
 import { requestCoreCandidateCreatePayload, requestCoreCandidateDecisionPayload } from "@/domain/core/coreCandidatePayloadAdapter";
 import { requestCoreLockCommandPayload, type CoreLockCommandKind } from "@/domain/core/coreLockCommandPayloadAdapter";
@@ -206,6 +207,11 @@ export function CoreVisual() {
 
   const runDraftCreate = async (kind: "PROJECT" | "TOPIC") => {
     const action: CoreActionUid = kind === "PROJECT" ? "CORE-01-ACT-PROJECT-CREATE" : "CORE-01-ACT-TOPIC-CREATE";
+    const permission = await requestCoreCreationPermission({ kind });
+    if (!permission.allowed) {
+      reportBlock(`CORE-01-ERR-PERM-001:${permission.reason_code}:${permission.required_permission_uid}`);
+      return;
+    }
     const projectId = kind === "TOPIC" ? requireProjectId() : null;
     if (kind === "TOPIC" && !projectId) return;
     const form = await requestCoreDraftFormPayload(kind === "PROJECT" ? { kind } : { kind, project_id: projectId! });
@@ -434,7 +440,7 @@ export function CoreVisual() {
     }
   };
 
-  const runtimeDisplay = runtimeReason ?? display("runtime_stage");
+  const runtimeDisplay = runtimeReason?.startsWith("CORE-01-ERR-PERM-001:") ? `${t("core01.notice.creation_permission_denied")} (${runtimeReason.split(":").slice(1).join(":")})` : runtimeReason ?? display("runtime_stage");
   const isBusy = busyAction !== null;
 
   return (

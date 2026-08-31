@@ -498,7 +498,12 @@ export function isControlledCoreServerTestMode(): boolean {
 
 export function getControlledCoreTestRuntimeBindings(): CoreRuntimeBindings {
   return {
-    authorize: async () => ({ allowed: true }),
+    authorize: async (request) => {
+      if (request.port_uid === "CORE-01-PORT-PROJECT-CREATE" || request.port_uid === "CORE-01-PORT-TOPIC-CREATE") {
+        return { allowed: false, reason_code: "IAM_ACCOUNT_PERMISSION_RUNTIME_NOT_BOUND" };
+      }
+      return { allowed: true };
+    },
     execute,
     audit: async (entry) => {
       state.audit.push({ ...entry, data_classification: "TEST_ONLY", recorded_at: new Date().toISOString() });

@@ -17,7 +17,12 @@ async function audit(runtime: CoreRuntimeBindings, entry: Parameters<CoreRuntime
 
 export async function executeCorePort(request: CoreRuntimeRequest): Promise<CoreRuntimeResult> {
   const runtime = bindings ?? (isControlledCoreServerTestMode() ? getControlledCoreTestRuntimeBindings() : null);
-  if (!runtime) return { ok: false, error_uid: "CORE-01-ERR-CONTEXT-001", reason_code: "CORE_RUNTIME_NOT_BOUND", correlation_id: request.correlation_id, status: 503 };
+  if (!runtime) {
+    if (request.port_uid === "CORE-01-PORT-PROJECT-CREATE" || request.port_uid === "CORE-01-PORT-TOPIC-CREATE") {
+      return { ok: false, error_uid: "CORE-01-ERR-PERM-001", reason_code: "IAM_ACCOUNT_PERMISSION_RUNTIME_NOT_BOUND", correlation_id: request.correlation_id, status: 403 };
+    }
+    return { ok: false, error_uid: "CORE-01-ERR-CONTEXT-001", reason_code: "CORE_RUNTIME_NOT_BOUND", correlation_id: request.correlation_id, status: 503 };
+  }
   let decision: Awaited<ReturnType<CoreRuntimeBindings["authorize"]>>;
   try { decision = await runtime.authorize(request); }
   catch {
