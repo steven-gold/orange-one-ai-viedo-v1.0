@@ -22,7 +22,7 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Run QA-01 real browser flows
         run: |
-          cat > /tmp/qa01-e2e.cjs <<'NODE'
+          cat > qa01-e2e.cjs <<'NODE'
           const { chromium } = require('playwright');
           const { spawn } = require('child_process');
 
@@ -75,7 +75,6 @@ jobs:
           (async()=>{
             const browser=await chromium.launch({headless:true});
             try{
-              // Scenario 1: MANUAL correction -> verified new exact output -> recheck -> PASS -> release candidate.
               let srv=await startServer(3101,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'CORRECTION'});
               await withPage(browser,srv.url,async p=>{
                 let s=await snapshot(p,'STATE_EMPTY');
@@ -108,7 +107,6 @@ jobs:
               });
               await stopServer(srv.child);
 
-              // Scenario 2: governed ManualReviewCase exposes exactly Modify / Pass mutations.
               srv=await startServer(3102,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'MANUAL_REQUIRED'});
               await withPage(browser,srv.url,async p=>{
                 await p.getByRole('button',{name:'MANUAL',exact:true}).click();
@@ -130,7 +128,6 @@ jobs:
               });
               await stopServer(srv.child);
 
-              // Scenario 3: AUTO runs topic queue sequentially and never exposes manual start/publish.
               srv=await startServer(3103,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'AUTO'});
               await withPage(browser,srv.url,async p=>{
                 assert(await root(p).getAttribute('data-review-mode')==='AUTO','AUTO should be default');
@@ -146,7 +143,6 @@ jobs:
               });
               await stopServer(srv.child);
 
-              // Scenario 4: production remains fail-closed with no test runtime fallback.
               srv=await startServer(3104,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'PRODUCTION',ACPOS_QA_TEST_SCENARIO:'CORRECTION'});
               await withPage(browser,srv.url,async p=>{
                 await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-ERROR"] strong')?.textContent?.includes('UI_PROJECTION_RUNTIME_NOT_BOUND'));
@@ -163,4 +159,4 @@ jobs:
             } finally { await browser.close(); }
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
-          node /tmp/qa01-e2e.cjs
+          node qa01-e2e.cjs
