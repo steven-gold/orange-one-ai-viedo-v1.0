@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { iamText } from "@/i18n/iamCatalog";
+import { IamGovernedButton, IamRuntimeProvider, setIamAdminL1, setIamFrontL1, useIamGate, useIamRuntimeState } from "./IamControlRuntime";
 import styles from "./IamVisual.module.css";
 
 const FRONT_L1 = [
@@ -35,13 +36,17 @@ function label(locale: string, item: readonly [string, string, string, string]) 
   return item[1];
 }
 
-export function IamVisual() {
+function IamVisualBody() {
   const { locale } = useI18n();
-  const [createMode, setCreateMode] = useState(false);
+  const runtime = useIamRuntimeState();
+  const { client, projection, runtimeError } = runtime;
+  const draftAllowed = useIamGate("IAM-01-GATE-DRAFT");
+  const [search, setSearch] = useState("");
+  const createMode = client.mode === "CREATE";
   const t = (key: Parameters<typeof iamText>[1]) => iamText(locale, key);
 
   return (
-    <div className={styles.page} data-page-uid="admin:IAM-01" data-vis-step="VIS-11" data-page-state={createMode ? "CREATE_BASIC_BLOCKED" : "LIST_EMPTY"}>
+    <div className={styles.page} data-page-uid="admin:IAM-01" data-vis-step="VIS-11" data-page-state={runtimeError?"ERROR":projection?.page_state??client.flow}>
       <section className={styles.contextBar} data-section-id="IAM-01-SEC-01" data-component-id="IAM-01-CMP-CONTEXT">
         <div>
           <div className={styles.eyebrow}>IAM-01 · ACCOUNT PERMISSION ASSIGNMENT</div>
@@ -50,7 +55,7 @@ export function IamVisual() {
         </div>
         <div className={styles.contextActions}>
           <div className={styles.countBox}><span>{t("authorizedCount")}</span><strong>—</strong></div>
-          <button className={styles.primaryButton} type="button" data-control-id="IAM-01-BTN-ADD" onClick={() => setCreateMode(true)}>{t("addAccount")}</button>
+          <IamGovernedButton className={styles.primaryButton} controlId="IAM-01-BTN-ADD">{t("addAccount")}</IamGovernedButton>
         </div>
       </section>
 
@@ -58,12 +63,12 @@ export function IamVisual() {
         <div className={styles.leftStack}>
           <section className={styles.panel} data-section-id="IAM-01-SEC-02" data-component-id="IAM-01-CMP-ACCOUNT-LIST">
             <div className={styles.panelHeader}><h2>{t("directory")}</h2><span>64% · READ PROJECTION</span></div>
-            <label className={styles.control}><span>{t("search")}</span><input data-control-id="IAM-01-CTL-SEARCH" disabled placeholder="—" /></label>
+            <label className={styles.control}><span>{t("search")}</span><input data-control-id="IAM-01-CTL-SEARCH" value={search} onChange={(e)=>setSearch(e.currentTarget.value)} disabled={!useIamGate("IAM-01-GATE-PAGE")} placeholder="—" /></label>
             <div className={styles.directoryEmpty}><div className={styles.emptyIcon}>◎</div><strong>{t("noAccounts")}</strong><span>IdentityService / IAM projection</span></div>
           </section>
 
           <section className={styles.panel} data-section-id="IAM-01-SEC-03" data-component-id="IAM-01-CMP-ACCOUNT-DETAIL">
-            <div className={styles.panelHeader}><h2>{t("accountDetail")}</h2><button className={styles.compactButton} data-control-id="IAM-01-BTN-EDIT" disabled>{t("edit")}</button></div>
+            <div className={styles.panelHeader}><h2>{t("accountDetail")}</h2><IamGovernedButton className={styles.compactButton} controlId="IAM-01-BTN-EDIT" selectedAccountId={client.account_id}>{t("edit")}</IamGovernedButton></div>
             <div className={styles.detailGrid}>
               {[t("identitySource"), t("membership"), t("mfa"), t("risk"), t("session"), t("effective")].map((name) => (
                 <div className={styles.detailCell} key={name}><span>{name}</span><strong>—</strong></div>
@@ -80,32 +85,32 @@ export function IamVisual() {
             <div className={styles.step}>{t("step3")}</div>
           </div>
           <div className={styles.blockedForm} data-component-id="IAM-01-CMP-BASIC-DATA" data-control-id="IAM-01-CTL-BASIC-DATA"><div className={styles.blockedTitle}>BLOCK · IDENTITY SCHEMA</div><p>{t("schemaBlocked")}</p></div>
-          <label className={styles.control} data-component-id="IAM-01-CMP-PERMISSION-PRESET"><span>{t("preset")}</span><select data-control-id="IAM-01-SEL-DEPT-PRESET" disabled><option>{t("noPreset")}</option></select></label>
+          <label className={styles.control} data-component-id="IAM-01-CMP-PERMISSION-PRESET"><span>{t("preset")}</span><select data-control-id="IAM-01-SEL-DEPT-PRESET" disabled={!draftAllowed}><option>{t("noPreset")}</option></select></label>
 
           <div className={styles.permissionColumns}>
             <div className={styles.permissionGroup} data-component-id="IAM-01-CMP-FRONT-L1">
-              <label className={styles.groupHeader}><input type="checkbox" data-control-id="IAM-01-CHK-FRONT-ALL" disabled /><span>{t("frontAll")}</span></label>
+              <label className={styles.groupHeader}><input type="checkbox" data-control-id="IAM-01-CHK-FRONT-ALL" checked={client.front_l1.length===9} disabled={!draftAllowed} onChange={()=>runtime.setClient(client.front_l1.length===9?{...client,front_l1:[]}:{...client,front_l1:FRONT_L1.map(x=>x[0])})}/><span>{t("frontAll")}</span></label>
               <div className={styles.groupBody} data-control-id="IAM-01-GRP-FRONT-L1">
                 <div className={styles.groupTitle}>{t("frontL1")}</div>
-                {FRONT_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" disabled /><span>{label(locale, item)}</span><code>{item[0]}</code></label>)}
+                {FRONT_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" checked={client.front_l1.includes(item[0])} disabled={!draftAllowed} onChange={(e)=>setIamFrontL1(runtime,item[0],e.currentTarget.checked)}/><span>{label(locale, item)}</span><code>{item[0]}</code></label>)}
               </div>
             </div>
             <div className={styles.permissionGroup} data-component-id="IAM-01-CMP-BACK-L1">
-              <label className={styles.groupHeader}><input type="checkbox" data-control-id="IAM-01-CHK-BACK-ALL" disabled /><span>{t("backAll")}</span></label>
+              <label className={styles.groupHeader}><input type="checkbox" data-control-id="IAM-01-CHK-BACK-ALL" checked={client.admin_l1.length===9} disabled={!draftAllowed} onChange={()=>runtime.setClient(client.admin_l1.length===9?{...client,admin_l1:[]}:{...client,admin_l1:ADMIN_L1.map(x=>x[0])})}/><span>{t("backAll")}</span></label>
               <div className={styles.groupBody} data-control-id="IAM-01-GRP-BACK-L1">
                 <div className={styles.groupTitle}>{t("backL1")}</div>
-                {ADMIN_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" disabled /><span>{label(locale, item)}</span><code>{item[0]}</code></label>)}
+                {ADMIN_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" checked={client.admin_l1.includes(item[0])} disabled={!draftAllowed} onChange={(e)=>setIamAdminL1(runtime,item[0],e.currentTarget.checked)}/><span>{label(locale, item)}</span><code>{item[0]}</code></label>)}
               </div>
             </div>
           </div>
 
           <div className={styles.actionRow}>
-            <button data-control-id="IAM-01-BTN-SAVE-DRAFT" disabled>{t("saveDraft")}</button>
-            <button data-control-id="IAM-01-BTN-VALIDATE" disabled>{t("validate")}</button>
-            <button data-control-id="IAM-01-BTN-PREVIEW" disabled>{t("previewButton")}</button>
-            <button className={styles.primaryButton} data-control-id="IAM-01-BTN-COMPLETE" disabled>{t("complete")}</button>
+            <IamGovernedButton controlId="IAM-01-BTN-SAVE-DRAFT">{t("saveDraft")}</IamGovernedButton>
+            <IamGovernedButton controlId="IAM-01-BTN-VALIDATE">{t("validate")}</IamGovernedButton>
+            <IamGovernedButton controlId="IAM-01-BTN-PREVIEW">{t("previewButton")}</IamGovernedButton>
+            <IamGovernedButton className={styles.primaryButton} controlId="IAM-01-BTN-COMPLETE">{t("complete")}</IamGovernedButton>
           </div>
-          <div className={styles.phaseNote}>{t("visualPhase")}</div>
+          <div className={styles.phaseNote}>{runtimeError??projection?.page_state??client.flow}</div>
         </section>
       </div>
 
@@ -116,9 +121,11 @@ export function IamVisual() {
       </section>
 
       <section className={styles.panel} data-section-id="IAM-01-SEC-06" data-component-id="IAM-01-CMP-AUDIT">
-        <div className={styles.panelHeader}><h2>{t("audit")}</h2><button className={styles.compactButton} data-control-id="IAM-01-BTN-AUDIT" disabled>{t("audit")}</button></div>
+        <div className={styles.panelHeader}><h2>{t("audit")}</h2><IamGovernedButton className={styles.compactButton} controlId="IAM-01-BTN-AUDIT">{t("audit")}</IamGovernedButton></div>
         <div className={styles.auditEmpty}><span>{t("auditEmpty")}</span><code>correlation · version · scope · condition · access review</code></div>
       </section>
     </div>
   );
 }
+
+export function IamVisual(){return <IamRuntimeProvider><IamVisualBody/></IamRuntimeProvider>}
