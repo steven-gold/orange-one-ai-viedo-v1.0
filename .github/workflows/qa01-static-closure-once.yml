@@ -1,0 +1,44 @@
+name: QA01 Static Closure Once
+
+on:
+  push:
+    branches: [qa01-functional-staging]
+    paths:
+      - '.github/workflows/qa01-static-closure-once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      BASE_SHA: 3d46f48ee08c2e21f0c43f7d0de3fda54bd4f3d2
+      QA_AUTHORITY: authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+      QA_CSS: src/components/pages/QaVisual.module.css
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Authority and visual lock
+        run: |
+          git diff --exit-code "$BASE_SHA"..HEAD -- "$QA_AUTHORITY" "$QA_CSS"
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          import os, yaml
+          with open(os.environ['QA_AUTHORITY'], encoding='utf-8') as f:
+              d=yaml.safe_load(f)
+          r=d['registries']
+          assert len(r['controls']) == 87, len(r['controls'])
+          assert len(r['actions']) == 32, len(r['actions'])
+          assert len(r['integration_ports']) == 10, len(r['integration_ports'])
+          print('QA01_AUTHORITY_LOCK_PASS controls=87 actions=32 ports=10')
+          PY
+      - name: Install committed dependencies
+        run: npm ci
+      - name: Audit committed dependencies
+        run: npm audit --audit-level=high
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
