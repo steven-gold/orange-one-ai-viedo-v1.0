@@ -238,7 +238,18 @@ export function DashboardVisual() {
   const loading = t("global.state.loading");
   const view = t("global.common.view");
   const close = t("global.common.close");
-  const visibleSections = state === "LOADING" || state === "ERROR" || !model ? SECTIONS : SECTIONS.filter((section) => hasOwn(model, section.key));
+
+  if (state === "LOADING" || !model) {
+    return (
+      <div className={styles.page} data-page-uid="workspace:WB-01" data-vis-step="VIS-01" data-state={state} aria-label={t("wb01.page.name")}>
+        <div className={state === "ERROR" ? styles.errorState : styles.emptyState}>
+          {state === "ERROR" ? (error ? `${error.error_uid}: ${error.reason_code}` : "—") : loading}
+        </div>
+      </div>
+    );
+  }
+
+  const visibleSections = SECTIONS.filter((section) => hasOwn(model, section.key));
 
   return (
     <div className={styles.page} data-page-uid="workspace:WB-01" data-vis-step="VIS-01" data-state={state} aria-label={t("wb01.page.name")}>
@@ -249,9 +260,9 @@ export function DashboardVisual() {
             <section key={section.sectionId} className={[styles.card, section.kind === "kpi" || section.kind === "kpi-progress" ? styles.kpiCard : styles[section.kind]].join(" ")} data-order={section.order} data-section-id={section.sectionId} data-component-uid={section.componentUid} data-state={state}>
               <header className={styles.cardHeader}>
                 <h2 className={styles.cardTitle}>{t(section.titleKey)}</h2>
-                <button type="button" className={styles.viewButton} aria-label={t(section.controlKey)} data-control-id={section.controlId} disabled={state === "LOADING"} onClick={(event) => void openDrawer(section, event.currentTarget)}>{view}</button>
+                <button type="button" className={styles.viewButton} aria-label={t(section.controlKey)} data-control-id={section.controlId} onClick={(event) => void openDrawer(section, event.currentTarget)}>{view}</button>
               </header>
-              <div className={styles.cardBody}>{state === "LOADING" ? <LoadingBody kind={section.kind} loading={loading} /> : state === "ERROR" ? <ErrorBody error={error} /> : <SectionBody section={section} value={sectionValue} t={t} />}</div>
+              <div className={styles.cardBody}>{state === "ERROR" ? <ErrorBody error={error} /> : <SectionBody section={section} value={sectionValue} t={t} />}</div>
             </section>
           );
         })}
