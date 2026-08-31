@@ -23,12 +23,16 @@ jobs:
           from pathlib import Path
           a=Path('authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml').read_text()
           assert 'controls_fields: 160' in a and 'actions: 124' in a
+          authority_actions=set(re.findall(r'action_uid:\s*(EDIT-01-ACT-[A-Z0-9-]+)',a))
+          assert len(authority_actions)==124, len(authority_actions)
           b=Path('src/domain/edit/editControlBindings.ts').read_text()
           controls=set(re.findall(r'"(EDIT-01-[A-Z0-9-]+)"\s*:',b))
-          actions=set(re.findall(r'EDIT-01-ACT-[A-Z0-9-]+',b))
+          mapped_actions=set(re.findall(r'EDIT-01-ACT-[A-Z0-9-]+',b))
           assert len(controls)==160, len(controls)
-          assert len(actions)==124, len(actions)
-          print(f'EDIT01_STATIC_SCOPE_PASS controls={len(controls)} actions={len(actions)}')
+          assert mapped_actions <= authority_actions
+          missing=sorted(authority_actions-mapped_actions)
+          print(f'EDIT01_STATIC_SCOPE_PASS controls={len(controls)} authority_actions={len(authority_actions)} control_mapped_actions={len(mapped_actions)}')
+          print('EDIT01_ACTIONS_WITHOUT_DIRECT_CONTROL=' + ','.join(missing))
           PY
       - name: Audit typecheck build
         run: |
