@@ -1,4 +1,5 @@
 import { CORE_ACTION_PORT, CORE_PORT_METHOD_PATH, type CoreActionUid, type CoreRuntimeErrorUid } from "./coreRuntimeContract";
+import { parseCoreProjectionEnvelope, type CoreProjectionEnvelope } from "./coreProjectionContract";
 
 export type CoreClientInvokeInput = {
   action_uid: CoreActionUid;
@@ -13,7 +14,7 @@ export type CoreClientInvokeResult =
   | { ok: false; error_uid: CoreRuntimeErrorUid; reason_code: string; correlation_id: string };
 
 export type CoreProjectionReadResult =
-  | { ok: true; value: unknown; correlation_id: string }
+  | { ok: true; value: CoreProjectionEnvelope; correlation_id: string }
   | { ok: false; error_uid: CoreRuntimeErrorUid; reason_code: string; correlation_id: string };
 
 function resolvePath(template: string, params: Record<string, string>): string | null {
@@ -45,7 +46,16 @@ export async function readCoreProjection(signal?: AbortSignal): Promise<CoreProj
         correlation_id: error?.correlation_id ?? correlation_id,
       };
     }
-    return { ok: true, value, correlation_id };
+    const projection = parseCoreProjectionEnvelope(value);
+    if (!projection) {
+      return {
+        ok: false,
+        error_uid: "CORE-01-ERR-CONTEXT-001",
+        reason_code: "CORE_PROJECTION_EXACT_REF_CONTRACT_INVALID",
+        correlation_id,
+      };
+    }
+    return { ok: true, value: projection, correlation_id };
   } catch {
     return { ok: false, error_uid: "CORE-01-ERR-CONTEXT-001", reason_code: "CORE_PROJECTION_REQUEST_FAILED", correlation_id: "unresolved" };
   }
