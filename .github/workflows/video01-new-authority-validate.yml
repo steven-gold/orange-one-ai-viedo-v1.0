@@ -1,0 +1,110 @@
+name: VIDEO01 New Authority Validate
+on:
+  push:
+    branches: [new]
+    paths: ['.github/workflows/video01-new-authority-validate.yml']
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - name: Exact authority product and visual scope
+        run: |
+          set -euo pipefail
+          BASE=5b43cc643f6515bf1b4ef1f59ab8d3670a94fda0
+          PRODUCT=0208cdb6789539ca567ba2fc792d1015b1164faf
+          git diff --quiet "$PRODUCT" HEAD^
+          test "$(git hash-object src/components/pages/VideoVisual.module.css)" = "7772cb072a1cae1c6b71ace0e93afc4a92731060"
+          test "$(git hash-object src/components/pages/CoreVisual.module.css)" = "c9b0215dc2d174b77c558e617125e6ec2ecd9fbd"
+          test "$(git hash-object src/components/pages/DashboardVisual.tsx)" = "aa3a8a9472ee6c471503d8990654233a6ee02edd"
+          git diff --exit-code "$BASE" "$PRODUCT" -- authority/
+          python3 - <<'PY'
+          import re, subprocess
+          from pathlib import Path
+          a=Path('authority/pages/workspace/VIDEO-01/VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml').read_text()
+          assert 'Control/Field: 85' in a and 'Action: 34' in a and 'Integration Port: 8' in a
+          assert 'action_runtime_binding_coverage: 34/34' in a and 'control_runtime_binding_coverage: 85/85' in a
+          b=Path('src/domain/video/videoControlRuntime.ts').read_text(); controls=set(re.findall(r'"(VIDEO-01-(?:FLD|CTL|BTN|TXT)-[A-Z0-9-]+)"\s*:', b))
+          c=Path('src/domain/video/videoRuntimeContract.ts').read_text(); actions=set(re.findall(r'VIDEO-01-ACT-[A-Z0-9-]+', c))
+          assert len(controls)==85, len(controls); assert len(actions)==34, len(actions)
+          expected={'src/components/pages/VideoVisual.tsx','src/domain/video/controlledVideoClientTestRuntime.ts','src/domain/video/videoClientPort.ts','src/domain/video/videoClientState.ts','src/domain/video/videoProjectionPort.ts','src/domain/video/videoRuntimeContract.ts','src/server/shared/departmentRouteFactory.ts','src/server/shared/uiProjectionRuntime.ts','src/server/testing/controlledVideoTestRuntime.ts','src/server/video/videoRuntime.ts'}
+          actual=set(subprocess.check_output(['git','diff','--name-only','5b43cc643f6515bf1b4ef1f59ab8d3670a94fda0','0208cdb6789539ca567ba2fc792d1015b1164faf'],text=True).splitlines())
+          assert actual==expected, (expected-actual,actual-expected)
+          temporary=set(subprocess.check_output(['git','diff','--name-only','0208cdb6789539ca567ba2fc792d1015b1164faf','HEAD'],text=True).splitlines())
+          assert temporary=={'.github/workflows/video01-new-authority-validate.yml'}, temporary
+          print('VIDEO01_EXACT_SCOPE_PASS controls=85 actions=34 ports=8 product_files=10')
+          PY
+      - name: Audit typecheck and TEST build
+        run: |
+          set -euo pipefail
+          npm ci
+          npm audit
+          npm run typecheck
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=TEST npm run build
+      - name: Install Chromium and write exact browser test
+        run: |
+          set -euo pipefail
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+          cat > .video01-authority-e2e.mjs <<'JS'
+          import { chromium } from 'playwright'; import assert from 'node:assert/strict';
+          const browser=await chromium.launch({headless:true}); const page=await browser.newPage(); const pageErrors=[]; const failed=[]; const controls=new Set(); const actions=new Set();
+          page.on('pageerror',e=>pageErrors.push(String(e))); page.on('response',r=>{if(r.url().startsWith('http://127.0.0.1:3000/')&&r.status()>=400)failed.push(`${r.status()} ${r.url()}`)});
+          const s=id=>`[data-control-id="${id}"]`; const root=()=>page.locator('[data-page-uid="VIDEO-01"]');
+          async function snapshot(tag){const rows=await page.locator('[data-control-id]').evaluateAll(ns=>ns.map(n=>[n.getAttribute('data-control-id'),n.getAttribute('data-action-uid')]));for(const[c,a]of rows){if(c)controls.add(c);if(a)actions.add(a)}console.log(`SNAPSHOT ${tag} controls=${controls.size} actions=${actions.size} state=${await root().getAttribute('data-page-state')}`)}
+          async function waitState(state){await page.waitForFunction(x=>document.querySelector('[data-page-uid="VIDEO-01"]')?.getAttribute('data-page-state')===x,state,{timeout:10000})}
+          async function selectFirst(id){await page.locator(s(id)).selectOption({index:1})} async function click(id){const x=page.locator(s(id));await x.scrollIntoViewIfNeeded();assert.equal(await x.isDisabled(),false,`${id} unexpectedly disabled`);await x.click()} async function strong(id){return(await page.locator(`${s(id)} strong`).textContent())??''}
+          await page.goto('http://127.0.0.1:3000/video',{waitUntil:'networkidle'}); await waitState('READY'); assert.equal(await root().getAttribute('data-registry-valid'),'true'); await snapshot('READY');
+          await selectFirst('VIDEO-01-FLD-PROJECT'); await selectFirst('VIDEO-01-FLD-TOPIC'); await selectFirst('VIDEO-01-FLD-TASK'); const mode=page.locator(s('VIDEO-01-CTL-MODE')); await mode.getByRole('button',{name:'MANUAL'}).click(); await mode.getByRole('button',{name:'AUTO'}).click();
+          await click('VIDEO-01-BTN-BLUEPRINT');assert.match(await strong('VIDEO-01-FLD-AUDIT'),/^BLUEPRINT:/); await click('VIDEO-01-BTN-PACKAGE');assert.match(await strong('VIDEO-01-FLD-AUDIT'),/^VIDEO_SCRIPT:/); await page.locator(s('VIDEO-01-FLD-SEARCH')).fill('Shot'); await selectFirst('VIDEO-01-CTL-FILTER'); await page.locator(`${s('VIDEO-01-CTL-SHOT-SELECT')} button`).first().click(); await click('VIDEO-01-BTN-RUNTIME-DETAIL');assert.match(await strong('VIDEO-01-FLD-AUDIT'),/^RUNTIME:/); assert.equal(await page.locator(s('VIDEO-01-BTN-RETRY')).isDisabled(),true);
+          await click('VIDEO-01-BTN-EXECUTE'); await waitState('CANDIDATE_OUTPUT'); await snapshot('CANDIDATE'); assert.equal(await strong('VIDEO-01-FLD-PROVIDER'),'SIMULATED_EXTERNAL'); await page.locator(s('VIDEO-01-CTL-SEEK')).fill('50');assert.equal(await strong('VIDEO-01-FLD-TIMECODE'),'50%'); await click('VIDEO-01-BTN-VOLUME');assert.equal(await page.locator('[data-component-uid="VIDEO-01-CMP-PREVIEW"] [data-muted]').getAttribute('data-muted'),'true'); await click('VIDEO-01-BTN-PLAY');await page.waitForTimeout(150);await click('VIDEO-01-BTN-PLAY'); await click('VIDEO-01-BTN-FULLSCREEN');await page.waitForTimeout(100); await click('VIDEO-01-BTN-SCORE-DETAIL');assert.match(await strong('VIDEO-01-FLD-AUDIT'),/^VIDEO_SCORE:/);
+          await click('VIDEO-01-BTN-EVALUATE');await waitState('WAIT_CONFIRMATION');assert.equal(await strong('VIDEO-01-FLD-OVERALL-SCORE'),'92'); await click('VIDEO-01-BTN-FINDING');await page.waitForTimeout(100);assert.notEqual(await strong('VIDEO-01-FLD-ISSUE-REF'),'—'); await click('VIDEO-01-BTN-ISSUE-OPEN');assert.match(await strong('VIDEO-01-FLD-AUDIT'),/^ISSUE:/); await click('VIDEO-01-BTN-MODIFY');await snapshot('CORRECTION_OPEN'); await selectFirst('VIDEO-01-FLD-SCENE');await selectFirst('VIDEO-01-FLD-SHOT');await page.locator(s('VIDEO-01-FLD-START-TC')).fill('00:00:00.000');await page.locator(s('VIDEO-01-FLD-END-TC')).fill('00:00:01.000');await selectFirst('VIDEO-01-FLD-TARGET-OBJECT');await selectFirst('VIDEO-01-FLD-TARGET-LAYER'); await click('VIDEO-01-BTN-CONTEXT-BUILD');assert.match(await strong('VIDEO-01-FLD-AUDIT'),/^CORRECTION_CONTEXT:/);
+          await page.locator(s('VIDEO-01-TXT-CORRECTION')).fill('修正 Shot 001 動作連續性，維持已鎖定角色與場景一致性。'); await click('VIDEO-01-BTN-GEN-CORRECTION');await page.waitForTimeout(100);await click('VIDEO-01-BTN-APPROVE-CORRECTION');await page.waitForTimeout(100);await click('VIDEO-01-BTN-EXEC-CORRECTION');await waitState('CANDIDATE_OUTPUT'); await click('VIDEO-01-CTL-COMPARE');await page.waitForFunction(()=>document.querySelector('[data-component-uid="VIDEO-01-CMP-PREVIEW"] [data-viewer-count]')?.getAttribute('data-viewer-count')==='2');await snapshot('COMPARE');await selectFirst('VIDEO-01-CTL-VERSION-A');await selectFirst('VIDEO-01-CTL-VERSION-B'); await click('VIDEO-01-BTN-EVALUATE');await waitState('WAIT_CONFIRMATION');assert.equal(await strong('VIDEO-01-FLD-OVERALL-SCORE'),'98'); await click('VIDEO-01-BTN-CONFIRM');await waitState('CONFIRMED');await click('VIDEO-01-BTN-LOCK');await waitState('LOCKED');await click('VIDEO-01-BTN-HANDOFF');await waitState('HANDOFF');await snapshot('HANDOFF');
+          assert.equal(controls.size,85,`control union ${controls.size}`);assert.equal(actions.size,34,`action union ${actions.size}`);assert.equal(pageErrors.length,0,`page errors ${pageErrors}`);assert.equal(failed.length,0,`failed responses ${failed}`);assert.match(await strong('VIDEO-01-FLD-AUDIT'),/TEST-VIDEO-TO-EDIT-HANDOFF-001/); console.log(`VIDEO01_BROWSER_FLOW_PASS controls=${controls.size} actions=${actions.size} final=HANDOFF score=98 provider=SIMULATED_EXTERNAL ui_only_effects=PASS`); await browser.close();
+          JS
+      - name: Controlled Browser E2E
+        run: |
+          set -euo pipefail
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=TEST npm run start -- -H 127.0.0.1 -p 3000 >/tmp/video01-test.log 2>&1 &
+          echo $! >/tmp/video01-test.pid
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3000/video >/dev/null && break; sleep 1; done
+          node .video01-authority-e2e.mjs
+          kill $(cat /tmp/video01-test.pid) || true
+      - name: Production fail closed
+        run: |
+          set -euo pipefail
+          rm -rf .next
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PRODUCTION npm run build
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PRODUCTION npm run start -- -H 127.0.0.1 -p 3001 >/tmp/video01-prod.log 2>&1 &
+          echo $! >/tmp/video01-prod.pid
+          for i in $(seq 1 60); do curl -sS http://127.0.0.1:3001/video >/dev/null && break; sleep 1; done
+          code=$(curl -sS -o /tmp/video-proj.json -w '%{http_code}' http://127.0.0.1:3001/v1/ui-projections/VIDEO-01);test "$code" = "503";grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/video-proj.json
+          code=$(curl -sS -o /tmp/video-exec.json -w '%{http_code}' -X POST -H 'content-type: application/json' -H 'x-video-action-uid: VIDEO-01-ACT-FLOW-START' --data '{}' http://127.0.0.1:3001/v1/tasks/TEST-VIDEO-TASK-001/execute);test "$code" = "503";grep -q 'VIDEO_RUNTIME_NOT_BOUND' /tmp/video-exec.json
+          kill $(cat /tmp/video01-prod.pid) || true; echo VIDEO01_PRODUCTION_FAIL_CLOSED_PASS
+      - name: Residual forbidden and clean audit
+        run: |
+          set -euo pipefail
+          npm ci
+          npm audit
+          rm -f .video01-authority-e2e.mjs
+          git restore --source=HEAD --worktree -- next-env.d.ts tsconfig.json
+          test "$(git hash-object src/components/pages/VideoVisual.module.css)" = "7772cb072a1cae1c6b71ace0e93afc4a92731060"
+          git diff --exit-code 5b43cc643f6515bf1b4ef1f59ab8d3670a94fda0 0208cdb6789539ca567ba2fc792d1015b1164faf -- authority/
+          if grep -RniE 'TODO|FIXME|HACK|XXX|STUB|NOOP_HANDLER|NOT_IMPLEMENTED|IMPLEMENT_ME|@ts-ignore|@ts-nocheck|debugger|console\.debug' src/domain/video src/server/video src/server/testing/controlledVideoTestRuntime.ts src/components/pages/VideoVisual.tsx;then exit 1;fi
+          if grep -RniE 'manual[_ -]?prompt|prompt[_ -]?textarea|provider[_ -]?picker|model[_ -]?picker' src/components/pages/VideoVisual.tsx src/domain/video;then exit 1;fi
+          test -z "$(git status --porcelain -- next-env.d.ts tsconfig.json .video01-authority-e2e.mjs)"; echo VIDEO01_RESIDUAL_PASS
+      - name: Self-clean validation workflow
+        if: always()
+        run: |
+          set -euo pipefail
+          git reset --hard "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/video01-new-authority-validate.yml
+          git commit -m 'chore(video): remove VIDEO-01 authority validation workflow'
+          git push origin HEAD:new
