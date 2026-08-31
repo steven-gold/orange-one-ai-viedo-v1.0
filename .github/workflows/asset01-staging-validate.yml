@@ -1,0 +1,75 @@
+name: ASSET01 Staging Validate
+on:
+  push:
+    branches: [asset01-functional-staging]
+    paths: ['.github/workflows/asset01-staging-validate.yml']
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: asset01-functional-staging
+          fetch-depth: 0
+      - name: Authority and visual locks
+        run: |
+          set -euo pipefail
+          test "$(git hash-object src/components/pages/AssetVisual.module.css)" = "80220b164df59a3a4d03ee3ac6886b844d785552"
+          test "$(git hash-object src/components/pages/CoreVisual.module.css)" = "c9b0215dc2d174b77c558e617125e6ec2ecd9fbd"
+          test "$(git hash-object src/components/pages/DashboardVisual.tsx)" = "aa3a8a9472ee6c471503d8990654233a6ee02edd"
+          git diff --exit-code 3924f6594cde11f5439aaeddf6b6bdc33faa58d5 -- authority/
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          a=Path('authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml').read_text()
+          assert 'controls: 85' in a and 'actions: 44' in a and 'ports: 19' in a
+          b=Path('src/domain/asset/assetControlBindings.ts').read_text()
+          assert len(set(re.findall(r'"(ASSET-01-(?:CTL|FLD|LST|BTN|TXT)-[A-Z0-9-]+)"\s*:',b)))==85
+          print('ASSET01_AUTHORITY_LOCK_PASS')
+          PY
+      - name: Install and compile
+        run: |
+          set -euo pipefail
+          npm ci
+          npm audit
+          npm run typecheck
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=TEST npm run build
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled browser E2E
+        run: |
+          set -euo pipefail
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=TEST npm run start -- -H 127.0.0.1 -p 3000 >/tmp/asset-next.log 2>&1 &
+          echo $! >/tmp/asset-next.pid
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3000/assets >/dev/null && break; sleep 1; done
+          node scripts/asset01-staging-e2e.mjs
+          kill $(cat /tmp/asset-next.pid) || true
+      - name: Production fail closed
+        run: |
+          set -euo pipefail
+          rm -rf .next
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PRODUCTION npm run build
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PRODUCTION npm run start -- -H 127.0.0.1 -p 3001 >/tmp/asset-prod.log 2>&1 &
+          echo $! >/tmp/asset-prod.pid
+          for i in $(seq 1 60); do curl -sS http://127.0.0.1:3001/assets >/dev/null && break; sleep 1; done
+          code=$(curl -sS -o /tmp/proj.json -w '%{http_code}' http://127.0.0.1:3001/v1/ui-projections/ASSET-01)
+          test "$code" = "503"
+          grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/proj.json
+          code=$(curl -sS -o /tmp/exec.json -w '%{http_code}' -X POST -H 'content-type: application/json' -H 'x-asset-action-uid: ASSET-01-ACT-FLOW-START' --data '{}' http://127.0.0.1:3001/v1/tasks/TEST-ASSET-TASK-001/execute)
+          test "$code" = "503"
+          grep -q 'ASSET_RUNTIME_NOT_BOUND' /tmp/exec.json
+          kill $(cat /tmp/asset-prod.pid) || true
+          echo ASSET01_PRODUCTION_FAIL_CLOSED_PASS
+      - name: Residual and scope audit
+        run: |
+          set -euo pipefail
+          test "$(git hash-object src/components/pages/AssetVisual.module.css)" = "80220b164df59a3a4d03ee3ac6886b844d785552"
+          git diff --exit-code 3924f6594cde11f5439aaeddf6b6bdc33faa58d5 -- authority/
+          bad=$(git diff --name-only 3924f6594cde11f5439aaeddf6b6bdc33faa58d5 | grep -Ev '^(src/(components/pages/AssetVisual.tsx|components/pages/AssetControlRuntime.tsx|domain/asset/|server/asset/assetRuntime.ts|server/shared/(uiProjectionRuntime|departmentRouteFactory)\.ts|server/testing/controlledAssetTestRuntime.ts)|scripts/asset01-staging-e2e.mjs|\.github/workflows/asset01-staging-validate.yml)$' || true)
+          test -z "$bad" || { echo "$bad"; exit 1; }
+          if grep -RniE 'TODO|FIXME|HACK|XXX|STUB|NOOP|NOT_IMPLEMENTED|IMPLEMENT_ME|@ts-ignore|@ts-nocheck|debugger|console\.debug' src/domain/asset src/server/asset src/server/testing/controlledAssetTestRuntime.ts src/components/pages/AssetControlRuntime.tsx src/components/pages/AssetVisual.tsx; then exit 1; fi
+          echo ASSET01_RESIDUAL_SCOPE_PASS
