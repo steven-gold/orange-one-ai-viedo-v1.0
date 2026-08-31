@@ -17,12 +17,22 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Build production source
+      - name: Validate source then build preview with relative Next asset prefix
         run: |
           npm ci
           npm run typecheck
+          cp next.config.ts /tmp/next.config.production.ts
+          cat > next.config.ts <<'CFG'
+          import type { NextConfig } from "next";
+          const nextConfig: NextConfig = {
+            reactStrictMode: true,
+            poweredByHeader: false,
+            assetPrefix: ".",
+          };
+          export default nextConfig;
+          CFG
           npm run build
-      - name: Start production server
+      - name: Start production server for materialization
         run: |
           (npm run start -- -p 3000 > /tmp/acpos-next.log 2>&1 & echo $! > /tmp/acpos-next.pid)
           for i in $(seq 1 60); do
@@ -31,7 +41,7 @@ jobs:
           done
           cat /tmp/acpos-next.log
           exit 1
-      - name: Materialize all 18 pages from one build
+      - name: Materialize all 18 pages from one preview build
         run: |
           rm -rf /tmp/static-site
           mkdir -p /tmp/static-site/preview
@@ -46,23 +56,21 @@ jobs:
           PY
           cp -R .next/static /tmp/static-site/preview/_next
           cp -R public/brand /tmp/static-site/preview/brand
-      - name: Rewrite canonical static paths including embedded Next flight data
+      - name: Rewrite only canonical navigation and public brand paths
         run: |
           python - <<'PY'
           from pathlib import Path
           nav={'/':'index.html','/core':'core.html','/assets':'assets.html','/video':'video.html','/edit':'edit.html','/qa':'qa.html','/database':'db.html','/strategy':'strategy.html','/info':'info.html','/admin/system':'system.html','/admin/accounts':'accounts.html','/admin/dev':'dev.html','/admin/social':'social.html','/admin/erp':'erp.html','/admin/aiapi':'aiapi.html','/admin/qa-criteria':'qa-criteria.html','/admin/strategy':'strategy-admin.html','/admin/knowledge':'knowledge-admin.html'}
           ordered=sorted(nav.items(),key=lambda item:len(item[0]),reverse=True)
           for p in Path('/tmp/static-site/preview').glob('*.html'):
-              s=p.read_text()
-              s=s.replace('/_next/','_next/')
-              s=s.replace('/brand/','brand/')
+              s=p.read_text().replace('/brand/','brand/')
               for route,target in ordered:
                   s=s.replace(f'href="{route}"',f'href="{target}"')
               p.write_text(s)
           PY
           test $(find /tmp/static-site/preview -maxdepth 1 -name '*.html' | wc -l) -eq 18
-          ! grep -R '/_next/' /tmp/static-site/preview/*.html
           ! grep -R 'wb01-preview-runtime\|acpos-preview-drawer' /tmp/static-site/preview/*.html
+          grep -q '\./_next/' /tmp/static-site/preview/index.html
       - name: Run real Chromium against static preview
         run: |
           npm install --no-save playwright
@@ -74,19 +82,21 @@ jobs:
           (async()=>{
             const browser=await chromium.launch({headless:true});
             const page=await browser.newPage();
-            const errors=[];
-            page.on('pageerror',e=>errors.push(String(e)));
+            const pageErrors=[];
+            const failed=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('requestfailed',r=>failed.push(`${r.url()} :: ${r.failure()?.errorText}`));
             await page.goto('http://127.0.0.1:4173/preview/index.html',{waitUntil:'networkidle'});
             await page.waitForSelector('[data-page-uid="workspace:WB-01"]');
             const sections=await page.locator('[data-section-id^="SEC-WORKSPACE-WB-01-"]').count();
-            if(sections!==14) throw new Error(`expected 14 dashboard sections, got ${sections}`);
             const buttons=page.locator('[data-control-id^="CTRL-WORKSPACE-WB-01-"]');
             const count=await buttons.count();
-            if(count!==14) throw new Error(`expected 14 dashboard controls, got ${count}`);
+            if(sections!==14||count!==14) throw new Error(`dashboard registry mismatch sections=${sections} controls=${count}`);
             for(let i=0;i<count;i++){
               await buttons.nth(i).click();
               const drawer=page.locator('[data-component-uid="WB-01-CMP-DRAWER-PROJECTION"]');
-              await drawer.waitFor({state:'visible'});
+              try { await drawer.waitFor({state:'visible',timeout:5000}); }
+              catch(e){ console.error('PAGE_ERRORS',pageErrors); console.error('FAILED_REQUESTS',failed); throw e; }
               const dstate=await drawer.getAttribute('data-state');
               if(!['LOADING','ERROR','READ_ONLY'].includes(dstate)) throw new Error(`invalid drawer state ${dstate}`);
               if(await page.locator('#acpos-preview-drawer').count()) throw new Error('forbidden preview drawer detected');
@@ -96,7 +106,8 @@ jobs:
             const navHref=await page.locator('a[data-nav-id="NAV-02"]').getAttribute('href');
             if(navHref!=='core.html') throw new Error(`bad preview nav ${navHref}`);
             console.log('STATIC_HYDRATION_PASS sections=14 controls=14 drawer=14/14');
-            if(errors.length) console.log('PAGE_ERRORS',errors);
+            console.log('PAGE_ERRORS',pageErrors);
+            console.log('FAILED_REQUESTS',failed);
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
@@ -112,7 +123,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add preview
-          git commit -m 'fix(preview): restore real Next hydration for all static pages'
+          git commit -m 'fix(preview): publish fully hydrated static build'
           git push origin HEAD:acpos-live-preview
       - name: Verify pushed branch
         run: |
@@ -121,13 +132,14 @@ jobs:
           echo PREVIEW_SHA=$PREVIEW_SHA
           test $(git ls-tree -r --name-only origin/acpos-live-preview preview | grep -E '^preview/[^/]+\.html$' | wc -l) -eq 18
           git show origin/acpos-live-preview:preview/index.html | grep -q 'WB-01-CMP-DRAWER-PROJECTION'
-          ! git show origin/acpos-live-preview:preview/index.html | grep -q '/_next/'
-      - name: Self clean
+          git show origin/acpos-live-preview:preview/index.html | grep -q '\./_next/'
+      - name: Self clean and restore source config
         run: |
           git worktree remove /tmp/acpos-preview --force || true
+          cp /tmp/next.config.production.ts next.config.ts
           rm -f .github/workflows/fix-preview-hydration-once.yml static-hydration-check.cjs
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/workflows/fix-preview-hydration-once.yml
-          git commit -m 'chore(preview): remove hydration verification workflow'
+          git add next.config.ts .github/workflows/fix-preview-hydration-once.yml
+          git commit -m 'chore(preview): remove static hydration workflow'
           git push origin HEAD:new
