@@ -2,6 +2,7 @@ import { EDIT_PORT_METHOD_PATH, type EditIntegrationPortUid } from "./editRuntim
 
 export type EditPortInvokeInput = {
   port_uid: EditIntegrationPortUid;
+  action_uid?: string;
   path_params?: Record<string, string>;
   payload?: unknown;
   signal?: AbortSignal;
@@ -44,11 +45,14 @@ export async function invokeEditIntegrationPort(input: EditPortInvokeInput): Pro
   }
 
   try {
+    const headers: Record<string,string> = {};
+    if (contract.method === "POST") headers["content-type"] = "application/json";
+    if (input.action_uid) headers["x-edit-action-uid"] = input.action_uid;
     const response = await fetch(path, {
       method: contract.method,
       cache: "no-store",
       signal: input.signal,
-      headers: contract.method === "POST" ? { "content-type": "application/json" } : undefined,
+      headers: Object.keys(headers).length ? headers : undefined,
       body: contract.method === "POST" ? JSON.stringify(input.payload ?? null) : undefined,
     });
     const correlation_id = response.headers.get("x-correlation-id") ?? "unresolved";
