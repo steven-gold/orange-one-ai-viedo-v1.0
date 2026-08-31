@@ -10,6 +10,7 @@ import styles from "./CoreVisual.module.css";
 
 type LabelKey = TranslationKey;
 type PageState = "LOADING" | "READY" | "ERROR";
+type ConversationUiMessage = { id: string; role: "USER" | "STATUS"; text: string };
 type ControlProps = { id: string; labelKey: LabelKey; primary?: boolean; compact?: boolean; disabled?: boolean; onClick?: () => void };
 
 const CONTROL_ACTION_UID: Record<string, CoreActionUid> = {
@@ -93,6 +94,7 @@ export function CoreVisual() {
   const [runtimeReason, setRuntimeReason] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<CoreActionUid | null>(null);
   const [message, setMessage] = useState("");
+  const [conversationMessages, setConversationMessages] = useState<ConversationUiMessage[]>([]);
   const [humanDecision, setHumanDecision] = useState("");
   const [clientState, dispatchClient] = useReducer(reduceCoreClientState, INITIAL_CORE_CLIENT_STATE);
 
@@ -107,13 +109,17 @@ export function CoreVisual() {
   }, []);
 
   const reportBlock = (reason: string) => { setPageState("ERROR"); setRuntimeReason(reason); };
+  const appendConversationMessage = (role: ConversationUiMessage["role"], text: string) => {
+    setConversationMessages((current) => [...current, { id: crypto.randomUUID(), role, text }]);
+  };
   const runServerAction = async (action_uid: CoreActionUid, options: { path_params?: Record<string, string>; query?: Record<string, string>; payload?: unknown } = {}) => {
-    if (busyAction) return;
+    if (busyAction) return null;
     setBusyAction(action_uid);
     const result = await invokeCoreAction({ action_uid, ...options });
     setBusyAction(null);
     if (result.ok) { setPageState("READY"); setRuntimeReason(null); }
-    else { setPageState("ERROR"); setRuntimeReason(result.reason_code); }
+    else { setPageState("ERROR"); setRuntimeReason(`${result.error_uid}:${result.reason_code}`); }
+    return result;
   };
 
   const requireProjectId = () => clientState.project_id || (reportBlock("CORE-01-ERR-CONTEXT-001:REQUIRED_PROJECT_ID_MISSING"), null);
@@ -129,13 +135,27 @@ export function CoreVisual() {
     switch (action) {
       case "CORE-01-ACT-PROJECT-CREATE": void runServerAction(action); return;
       case "CORE-01-ACT-TOPIC-CREATE": { const projectId = requireProjectId(); if (projectId) void runServerAction(action, { path_params: { projectId } }); return; }
-      case "CORE-01-ACT-THREAD-CREATE": { const projectId = requireProjectId(); const work_item = requireWorkItem(); if (projectId && work_item) void runServerAction(action, { path_params: { projectId }, payload: { work_item, ai_mode: clientState.ai_mode } }); return; }
+      case "CORE-01-ACT-THREAD-CREATE": { const projectId = requireProjectId(); if (!projectId) return; const work_item = requireWorkItem(); if (!work_item) return; void runServerAction(action, { path_params: { projectId }, payload: { work_item, ai_mode: clientState.ai_mode } }); return; }
       case "CORE-01-ACT-AI-MODE-SINGLE": case "CORE-01-ACT-AI-MODE-MULTI": if (!requireWorkItem()) return; dispatchClient({ action_uid: action }); setPageState("READY"); setRuntimeReason(null); return;
       case "CORE-01-ACT-ASSISTANT-RECORD": dispatchClient({ action_uid: action, open: !clientState.assistant_record_open }); setPageState("READY"); setRuntimeReason(null); return;
       case "CORE-01-ACT-SEND": {
-        const conversationId = requireConversationId(); if (!conversationId) return;
-        if (!message.trim()) { reportBlock("CORE-01-ERR-CONVERSATION-001:MESSAGE_REQUIRED"); return; }
-        void runServerAction(action, { path_params: { conversationId }, payload: { message: message.trim(), ai_mode: clientState.ai_mode, attachment_refs: clientState.attachment_refs, reference_refs: clientState.reference_refs } }); return;
+        const submitted = message.trim();
+        if (!submitted) { reportBlock("CORE-01-ERR-CONVERSATION-001:MESSAGE_REQUIRED"); return; }
+        appendConversationMessage("USER", submitted);
+        setMessage("");
+        const conversationId = clientState.conversation_id;
+        if (!conversationId) {
+          const reason = "CORE-01-ERR-THREAD-001:REQUIRED_CONVERSATION_ID_MISSING";
+          reportBlock(reason);
+          appendConversationMessage("STATUS", reason);
+          return;
+        }
+        void (async () => {
+          const result = await runServerAction(action, { path_params: { conversationId }, payload: { message: submitted, ai_mode: clientState.ai_mode, attachment_refs: clientState.attachment_refs, reference_refs: clientState.reference_refs } });
+          if (!result) return;
+          appendConversationMessage("STATUS", result.ok ? `MESSAGE_ACCEPTED:${result.correlation_id}` : `${result.error_uid}:${result.reason_code}`);
+        })();
+        return;
       }
       case "CORE-01-ACT-CANDIDATE-CREATE": if (!humanDecision.trim()) { reportBlock("CORE-01-ERR-DECISION-001:HUMAN_DECISION_REQUIRED"); return; } void runServerAction(action, { payload: { human_decision: humanDecision.trim(), evidence_refs: clientState.decision_evidence_refs } }); return;
       case "CORE-01-ACT-CANDIDATE-ACCEPT": case "CORE-01-ACT-CANDIDATE-RETURN": { const candidateRef = requireCandidateRef(); if (candidateRef) void runServerAction(action, { path_params: { id: candidateRef } }); return; }
@@ -177,7 +197,7 @@ export function CoreVisual() {
 
         <main className={styles.centerColumn}>
           <section className={`${styles.panel} ${styles.conversationHeader}`} data-section-id="CORE-01-SEC-03" data-visual-id="CORE-01-VIS-CENTER-HEADER"><div className={styles.conversationHeaderInner} data-component-uid="CORE-01-CMP-CONV-HEADER"><PanelTitle labelKey="core01.group.conversation" /><div className={styles.aiModeGroup}><ActionButton id="CORE-01-BTN-SINGLE-AI" labelKey="core01.control.single_ai" compact disabled={isBusy} onClick={() => runControl("CORE-01-BTN-SINGLE-AI")} /><ActionButton id="CORE-01-BTN-MULTI-AI" labelKey="core01.control.multi_ai" compact disabled={isBusy} onClick={() => runControl("CORE-01-BTN-MULTI-AI")} /></div><ReadonlyField id="CORE-01-FLD-ASSIGNED-AI" labelKey="core01.control.assigned_ai" /><ActionButton id="CORE-01-BTN-ASSISTANT-RECORD" labelKey="core01.control.assistant_record" compact disabled={isBusy} onClick={() => runControl("CORE-01-BTN-ASSISTANT-RECORD")} /></div></section>
-          <section className={`${styles.panel} ${styles.messagesPanel}`} data-section-id="CORE-01-SEC-04" data-visual-id="CORE-01-VIS-MESSAGES"><div className={styles.messageWorkspace} data-component-uid="CORE-01-CMP-MESSAGES" onContextMenu={openContextMenu}><PanelTitle labelKey="core01.group.message_workspace" /><div className={styles.messageEmpty}>—</div>{menuOpen && <div className={styles.contextMenu} data-component-uid="CORE-01-CMP-MESSAGE-MENU" onClick={(event) => event.stopPropagation()}>{MESSAGE_MENU.map((item) => <button key={item.id} type="button" className={styles.contextMenuItem} data-control-id={item.id} data-action-uid={actionUid(item.id)} data-runtime-binding="ACTION_BOUND" onClick={() => runMessageMenu(item.id)}>{t(item.key)}</button>)}</div>}{!menuOpen && <div className={styles.menuComponentSentinel} data-component-uid="CORE-01-CMP-MESSAGE-MENU" aria-hidden="true" />}</div></section>
+          <section className={`${styles.panel} ${styles.messagesPanel}`} data-section-id="CORE-01-SEC-04" data-visual-id="CORE-01-VIS-MESSAGES"><div className={styles.messageWorkspace} data-component-uid="CORE-01-CMP-MESSAGES" onContextMenu={openContextMenu}><PanelTitle labelKey="core01.group.message_workspace" />{conversationMessages.length ? <div data-conversation-local-log="true">{conversationMessages.map((entry) => <div key={entry.id} className={styles.readonlyField} data-message-role={entry.role} aria-label={entry.role}><span className={styles.fieldValue}>{entry.text}</span></div>)}</div> : <div className={styles.messageEmpty}>—</div>}{menuOpen && <div className={styles.contextMenu} data-component-uid="CORE-01-CMP-MESSAGE-MENU" onClick={(event) => event.stopPropagation()}>{MESSAGE_MENU.map((item) => <button key={item.id} type="button" className={styles.contextMenuItem} data-control-id={item.id} data-action-uid={actionUid(item.id)} data-runtime-binding="ACTION_BOUND" onClick={() => runMessageMenu(item.id)}>{t(item.key)}</button>)}</div>}{!menuOpen && <div className={styles.menuComponentSentinel} data-component-uid="CORE-01-CMP-MESSAGE-MENU" aria-hidden="true" />}</div></section>
           <section className={`${styles.panel} ${styles.decisionPanel}`} data-section-id="CORE-01-SEC-05" data-visual-id="CORE-01-VIS-DECISION"><PanelTitle labelKey="core01.group.decision" /><div className={styles.decisionGrid}><div data-component-uid="CORE-01-CMP-SUMMARY"><ReadonlyField id="CORE-01-FLD-ASSISTANT-SUMMARY" labelKey="core01.control.assistant_summary" /></div><div data-component-uid="CORE-01-CMP-EVALUATION"><ReadonlyField id="CORE-01-FLD-EVALUATION" labelKey="core01.control.evaluation" /></div><div className={styles.humanDecision} data-component-uid="CORE-01-CMP-HUMAN-DECISION"><label className={styles.textareaField}><span>{t("core01.control.human_decision")}</span><textarea data-control-id="CORE-01-FLD-HUMAN-DECISION" data-action-uid={actionUid("CORE-01-FLD-HUMAN-DECISION")} value={humanDecision} onChange={(event) => setHumanDecision(event.target.value)} aria-label={t("core01.control.human_decision")} /></label><ReadonlyField id="CORE-01-FLD-STRUCTURED-DECISION" labelKey="core01.control.structured_decision" /><div className={styles.actionRow}><ActionButton id="CORE-01-BTN-CANDIDATE-CREATE" labelKey="core01.control.create_candidate" primary disabled={isBusy} onClick={() => runControl("CORE-01-BTN-CANDIDATE-CREATE")} /><ActionButton id="CORE-01-BTN-CANDIDATE-CONFIRM" labelKey="core01.control.confirm_candidate" primary disabled={isBusy} onClick={() => runControl("CORE-01-BTN-CANDIDATE-CONFIRM")} /><ActionButton id="CORE-01-BTN-RETURN-MODIFY" labelKey="core01.control.return_modify" disabled={isBusy} onClick={() => runControl("CORE-01-BTN-RETURN-MODIFY")} /></div></div></div></section>
           <section className={styles.runtimeStrip} data-section-id="CORE-01-SEC-06" data-visual-id="CORE-01-VIS-RUNTIME"><div className={styles.runtimeComponent} data-component-uid="CORE-01-CMP-RUNTIME" data-control-id="CORE-01-FLD-RUNTIME-STAGE" data-action-uid={actionUid("CORE-01-FLD-RUNTIME-STAGE")}><span>{t("core01.control.runtime_stage")}</span><strong>{runtimeDisplay}</strong></div></section>
           <section className={`${styles.panel} ${styles.composerPanel}`} data-section-id="CORE-01-SEC-07" data-visual-id="CORE-01-VIS-COMPOSER"><div className={styles.composer} data-component-uid="CORE-01-CMP-COMPOSER"><div className={styles.composerTools}><ActionButton id="CORE-01-BTN-ATTACHMENT" labelKey="core01.control.attachment" compact disabled={isBusy} onClick={() => runControl("CORE-01-BTN-ATTACHMENT")} /><ActionButton id="CORE-01-BTN-REFERENCE" labelKey="core01.control.reference" compact disabled={isBusy} onClick={() => runControl("CORE-01-BTN-REFERENCE")} /></div><textarea data-control-id="CORE-01-FLD-MESSAGE" data-action-uid={actionUid("CORE-01-FLD-MESSAGE")} aria-label={t("core01.control.message")} placeholder={t("core01.control.message")} value={message} onChange={(event) => setMessage(event.target.value)} /><ActionButton id="CORE-01-BTN-SEND" labelKey="core01.control.send" primary disabled={isBusy} onClick={() => runControl("CORE-01-BTN-SEND")} /></div></section>
