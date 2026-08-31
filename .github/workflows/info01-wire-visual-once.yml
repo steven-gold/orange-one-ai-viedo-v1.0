@@ -45,7 +45,8 @@ jobs:
           const fs=require('fs');
           const v=fs.readFileSync('src/components/pages/InfoVisual.tsx','utf8');
           const r=fs.readFileSync('src/components/pages/InfoControlRuntime.tsx','utf8');
-          if(!v.includes('InfoRuntimeProvider')||!v.includes('InfoRuntimeControl'))throw new Error('runtime renderer missing');
+          if(!v.includes('InfoRuntimeProvider')||!v.includes('InfoRuntimeControl')||!v.includes('useInfoRuntimeState'))throw new Error('runtime renderer missing');
+          if(!r.includes('export function useInfoRuntimeState'))throw new Error('runtime state hook not exported');
           if(v.includes('Gate not satisfied'))throw new Error('legacy gate shell remains');
           for(const bad of ['Start Research','Cancel Research','Retry Research'])if(v.includes(bad)||r.includes(bad))throw new Error('forbidden research action '+bad);
           NODE
