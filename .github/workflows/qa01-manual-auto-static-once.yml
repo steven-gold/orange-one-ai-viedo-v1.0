@@ -1,0 +1,24 @@
+name: QA01 Manual Auto Static Once
+
+on:
+  push:
+    branches: [qa01-functional-staging]
+    paths:
+      - '.github/workflows/qa01-manual-auto-static-once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert Authority and CSS unchanged from new
+        run: |
+          git fetch origin new --depth=1
+          git diff --exit-code origin/new -- authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml src/components/pages/QaVisual.module.css
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npm run typecheck
+      - run: npm run build
