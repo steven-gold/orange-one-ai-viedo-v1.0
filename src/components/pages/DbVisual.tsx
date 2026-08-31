@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { DB_CONTROL_TEXT, dbText, dbUiText } from "@/i18n/dbCatalog";
+import { DbRuntimeControl, DbRuntimeProvider, useDbRuntimeState } from "./DbControlRuntime";
 import styles from "./DbVisual.module.css";
 
 type Kind="readonly"|"button"|"primary"|"search"|"select"|"list"|"table"|"toggle"|"graph"|"reference"|"trace";
@@ -21,24 +22,14 @@ const AUDIT=[s("DB-01-INP-AUDIT-ID","reference"),s("DB-01-BTN-AUDIT","button"),s
 const STATUS=[s("DB-01-FLD-PAGE-STATE","readonly"),s("DB-01-FLD-SOURCE-SYNC","readonly"),s("DB-01-FLD-DISABLED","readonly"),s("DB-01-FLD-CHANGE-OWNER","readonly"),s("DB-01-BTN-SYSTEM-LIFECYCLE","button")];
 const ALL=[...CONTEXT,...EXPLORER,...SCHEMA,...RELATIONS,...TRACE,...INTEGRITY,...MIGRATION,...FINDINGS,...AUDIT,...STATUS];
 
-function Control({spec}:{spec:Spec}){
-  const {locale}=useI18n(); const label=dbText(locale,spec.id); const common={"data-control-id":spec.id,"data-disabled-reason":"Gate not satisfied"};
-  if(spec.kind==="readonly") return <div className={styles.readonly} {...common}><span>{label}</span><strong>—</strong></div>;
-  if(spec.kind==="list") return <div className={styles.listControl} {...common}><span>{label}</span><div className={styles.emptyView}>—</div></div>;
-  if(spec.kind==="table") return <div className={styles.tableControl} {...common}><span>{label}</span><div className={styles.tableView}>—</div></div>;
-  if(spec.kind==="graph") return <div className={styles.graphControl} {...common}><span>{label}</span><div className={styles.graphView}>—</div></div>;
-  if(spec.kind==="trace") return <div className={styles.traceControl} {...common}><span>{label}</span><div className={styles.traceView}>—</div></div>;
-  if(spec.kind==="toggle") return <div className={styles.segmented} {...common}><span>{label}</span><div><button type="button" disabled>Graph</button><button type="button" disabled>List</button></div></div>;
-  if(spec.kind==="select") return <label className={styles.fieldControl}><span>{label}</span><select {...common} disabled defaultValue=""><option value="">—</option></select></label>;
-  if(spec.kind==="search"||spec.kind==="reference") return <label className={styles.fieldControl}><span>{label}</span><input {...common} disabled placeholder="—" /></label>;
-  return <button type="button" disabled className={`${styles.button} ${spec.kind==="primary"?styles.primary:""}`} {...common}>{label}</button>;
-}
+function Control({spec}:{spec:Spec}){return <DbRuntimeControl id={spec.id} kind={spec.kind}/>;}
 function Title({text,meta}:{text:string;meta?:string}){return <div className={styles.titleRow}><h2>{text}</h2>{meta?<span>{meta}</span>:null}</div>}
 
-export function DbVisual(){
+function DbVisualBody(){
   const {locale}=useI18n();
+  const {projection}=useDbRuntimeState();
   const registryValid=useMemo(()=>{const ids=new Set(ALL.map(x=>x.id));return ids.size===49&&Object.keys(DB_CONTROL_TEXT).length===49&&[...ids].every(id=>id in DB_CONTROL_TEXT)},[]);
-  return <div className={styles.page} data-page-uid="admin:DB-01" data-vis-step="VIS-07" data-page-state="READ_ONLY" data-authority-controls="49" data-registry-valid={registryValid?"true":"false"}>
+  return <div className={styles.page} data-page-uid="admin:DB-01" data-vis-step="VIS-07" data-page-state={projection?.page_state??"READ_ONLY"} data-authority-controls="49" data-registry-valid={registryValid?"true":"false"}>
     <section className={styles.contextBar} data-section-id="DB-01-SEC-01" data-visual-uid="DB-01-VIS-CONTEXT" data-component-uid="DB-01-CMP-CONTEXT"><div className={styles.contextGrid}>{CONTEXT.slice(0,5).map(x=><Control key={x.id} spec={x}/>)}</div><Control spec={CONTEXT[5]}/></section>
     <div className={styles.primaryGrid}>
       <aside className={`${styles.panel} ${styles.explorerPanel}`} data-section-id="DB-01-SEC-02" data-visual-uid="DB-01-VIS-LEFT" data-component-uid="DB-01-CMP-EXPLORER"><Title text={dbUiText(locale,"explorer")} meta="20% / min 280px"/><div className={styles.stack}>{EXPLORER.slice(0,3).map(x=><Control key={x.id} spec={x}/>)}</div><Control spec={EXPLORER[3]}/><div className={styles.notice}>{dbUiText(locale,"readOnly")}</div></aside>
@@ -55,3 +46,4 @@ export function DbVisual(){
     <section className={styles.lowerPanel} data-section-id="DB-01-SEC-10" data-visual-uid="DB-01-VIS-STATUS" data-component-uid="DB-01-CMP-STATUS"><Title text={dbUiText(locale,"status")}/><div className={styles.statusGrid}>{STATUS.map(x=><Control key={x.id} spec={x}/>)}</div></section>
   </div>;
 }
+export function DbVisual(){return <DbRuntimeProvider><DbVisualBody/></DbRuntimeProvider>;}
