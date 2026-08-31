@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useReducer, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useReducer, useState, type Dispatch, type ReactNode } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { editText } from "@/i18n/editCatalog";
 import { EDIT_CONTROL_BINDINGS, type EditControlUid } from "@/domain/edit/editControlBindings";
@@ -13,7 +13,7 @@ export type EditControlKind = "readonly"|"button"|"primary"|"select"|"search"|"s
 
 type RuntimeContext = {
   state: EditClientState;
-  dispatch: React.Dispatch<Parameters<typeof reduceEditClientState>[1]>;
+  dispatch: Dispatch<Parameters<typeof reduceEditClientState>[1]>;
   runtimeError: string|null;
   setRuntimeError: (value:string|null)=>void;
 };
@@ -98,6 +98,7 @@ export function EditRuntimeControl({controlId,kind,compact=false}:{controlId:str
   };
 
   const localClick=()=>{
+    setRuntimeError(null);
     switch(controlId){
       case"EDIT-01-BTN-PLAY":dispatch({type:"PLAY"});return true;
       case"EDIT-01-BTN-PAUSE":dispatch({type:"PAUSE"});return true;
@@ -117,7 +118,7 @@ export function EditRuntimeControl({controlId,kind,compact=false}:{controlId:str
   };
 
   const click=()=>{
-    if(localClick()){setRuntimeError(null);return;}
+    if(localClick())return;
     if(local){setRuntimeError("EDIT-01-ERR-CONTEXT-001: LOCAL_CONTROL_REQUIRES_RESOLVED_SELECTION");return;}
     void invokeFormalAction(id,state,setRuntimeError);
   };

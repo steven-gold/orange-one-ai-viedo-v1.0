@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { EDIT_CONTROL_TEXT, editText, editUiText } from "@/i18n/editCatalog";
+import { EditRuntimeControl, EditRuntimeProvider } from "./EditControlRuntime";
 import styles from "./EditVisual.module.css";
 
 type Kind =
@@ -249,23 +250,7 @@ const STAGES = ["EDIT-01-STAGE-01-ASSEMBLY", "EDIT-01-STAGE-02-AUDIO", "EDIT-01-
 function specById(id: string) { return ALL.find((spec) => spec.id === id); }
 
 function Control({ spec, compact = false }: { spec: Spec; compact?: boolean }) {
-  const { locale } = useI18n();
-  const label = editText(locale, spec.id);
-  const common = { "data-control-id": spec.id, "data-disabled-reason": "Gate not satisfied" };
-
-  if (spec.kind === "readonly" || spec.kind === "overview") return <div className={`${styles.readonly} ${compact ? styles.compact : ""}`} {...common}><span>{label}</span><strong>—</strong></div>;
-  if (spec.kind === "list") return <div className={styles.listControl} {...common}><span>{label}</span><div className={styles.listEmpty}>—</div></div>;
-  if (spec.kind === "preview") return <div className={styles.previewControl} {...common}><span>{label}</span><div>—</div></div>;
-  if (spec.kind === "segmented") {
-    const options = spec.id === "EDIT-01-CTL-SOURCE-MODE" ? ["PROJECT_TASK", "STANDALONE_UPLOAD"] : ["AUTO", "MANUAL"];
-    return <div className={styles.segmentedControl} {...common} aria-label={label}><span>{label}</span><div className={styles.segmentedButtons}>{options.map((option) => <button key={option} type="button" disabled>{option}</button>)}</div></div>;
-  }
-  if (spec.kind === "tab") return <button className={`${styles.tab} ${spec.id === "EDIT-01-TAB-CLIP" ? styles.selectedTab : ""}`} type="button" disabled {...common}>{label}</button>;
-  if (spec.kind === "textarea") return <label className={styles.fieldControl}><span>{label}</span><textarea {...common} disabled placeholder="—" /></label>;
-  if (spec.kind === "select") return <label className={styles.fieldControl}><span>{label}</span><select {...common} disabled defaultValue=""><option value="">—</option></select></label>;
-  if (spec.kind === "search" || spec.kind === "timecode" || spec.kind === "number") return <label className={styles.fieldControl}><span>{label}</span><input {...common} disabled placeholder="—" inputMode={spec.kind === "number" ? "decimal" : undefined} /></label>;
-  if (spec.kind === "range") return <label className={styles.rangeControl}><span>{label}</span><input {...common} disabled type="range" min="0" max="100" value="0" readOnly /></label>;
-  return <button className={`${styles.button} ${spec.kind === "primary" ? styles.primary : ""}`} type="button" disabled {...common}>{label}</button>;
+  return <EditRuntimeControl controlId={spec.id} kind={spec.kind} compact={compact} />;
 }
 
 function Title({ text, meta }: { text: string; meta?: string }) {
@@ -289,7 +274,7 @@ export function EditVisual() {
   const apiVisible = API.filter((spec) => ["EDIT-01-LBL-CURRENT-SCRIPT-SECTION", "EDIT-01-LBL-BINDING-FINGERPRINT"].includes(spec.id));
   const apiConditional = API.filter((spec) => !apiVisible.includes(spec));
 
-  return <div className={styles.page} data-page-uid="EDIT-01" data-vis-step="VIS-05" data-page-state="EMPTY" data-authority-controls="160" data-registry-valid={registryValid ? "true" : "false"}>
+  return <EditRuntimeProvider><div className={styles.page} data-page-uid="EDIT-01" data-vis-step="VIS-05" data-page-state="EMPTY" data-authority-controls="160" data-registry-valid={registryValid ? "true" : "false"}>
     <section className={styles.contextBar} data-section-id="EDIT-01-SEC-01" data-visual-uid="EDIT-01-VIS-CONTEXT" data-component-uid="EDIT-01-CMP-SOURCE-BAR">
       <div className={styles.contextGrid}>{contextMain.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
       <div className={styles.contextStatus}>{contextStatus.map((spec) => <Control key={spec.id} spec={spec} compact />)}</div>
@@ -377,5 +362,5 @@ export function EditVisual() {
         <div className={styles.statusRail} data-component-uid="EDIT-01-CMP-STATUS">{STATUS.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
       </section>
     </div>
-  </div>;
+  </div></EditRuntimeProvider>;
 }
