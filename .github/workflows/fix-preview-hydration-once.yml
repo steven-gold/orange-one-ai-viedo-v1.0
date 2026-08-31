@@ -1,0 +1,135 @@
+name: Fix static preview hydration once
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-preview-hydration-once.yml'
+permissions:
+  contents: write
+jobs:
+  verify-and-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Build production source
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+      - name: Start production server
+        run: |
+          (npm run start -- -p 3000 > /tmp/acpos-next.log 2>&1 & echo $! > /tmp/acpos-next.pid)
+          for i in $(seq 1 60); do
+            curl -fsS http://127.0.0.1:3000/ >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/acpos-next.log
+          exit 1
+      - name: Materialize all 18 pages from one build
+        run: |
+          rm -rf /tmp/static-site
+          mkdir -p /tmp/static-site/preview
+          python - <<'PY'
+          import subprocess
+          from pathlib import Path
+          routes={'/':'index.html','/core':'core.html','/assets':'assets.html','/video':'video.html','/edit':'edit.html','/qa':'qa.html','/database':'db.html','/strategy':'strategy.html','/info':'info.html','/admin/system':'system.html','/admin/accounts':'accounts.html','/admin/dev':'dev.html','/admin/social':'social.html','/admin/erp':'erp.html','/admin/aiapi':'aiapi.html','/admin/qa-criteria':'qa-criteria.html','/admin/strategy':'strategy-admin.html','/admin/knowledge':'knowledge-admin.html'}
+          root=Path('/tmp/static-site/preview')
+          for route,name in routes.items():
+              html=subprocess.check_output(['curl','-fsS','http://127.0.0.1:3000'+route],text=True)
+              (root/name).write_text(html)
+          PY
+          cp -R .next/static /tmp/static-site/preview/_next
+          cp -R public/brand /tmp/static-site/preview/brand
+      - name: Rewrite canonical static paths including embedded Next flight data
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          nav={'/':'index.html','/core':'core.html','/assets':'assets.html','/video':'video.html','/edit':'edit.html','/qa':'qa.html','/database':'db.html','/strategy':'strategy.html','/info':'info.html','/admin/system':'system.html','/admin/accounts':'accounts.html','/admin/dev':'dev.html','/admin/social':'social.html','/admin/erp':'erp.html','/admin/aiapi':'aiapi.html','/admin/qa-criteria':'qa-criteria.html','/admin/strategy':'strategy-admin.html','/admin/knowledge':'knowledge-admin.html'}
+          ordered=sorted(nav.items(),key=lambda item:len(item[0]),reverse=True)
+          for p in Path('/tmp/static-site/preview').glob('*.html'):
+              s=p.read_text()
+              # Critical: rewrite every Next asset reference, including escaped references inside RSC/Flight payloads.
+              s=s.replace('/_next/','_next/')
+              s=s.replace('/brand/','brand/')
+              for route,target in ordered:
+                  s=s.replace(f'href="{route}"',f'href="{target}"')
+              p.write_text(s)
+          PY
+          test $(find /tmp/static-site/preview -maxdepth 1 -name '*.html' | wc -l) -eq 18
+          ! grep -R '/_next/' /tmp/static-site/preview/*.html
+          ! grep -R 'wb01-preview-runtime\|acpos-preview-drawer' /tmp/static-site/preview/*.html
+      - name: Run real Chromium against static preview
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+          (python3 -m http.server 4173 --directory /tmp/static-site > /tmp/static-http.log 2>&1 & echo $! > /tmp/static-http.pid)
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/preview/index.html >/dev/null && break; sleep 1; done
+          cat > /tmp/static-hydration-check.cjs <<'NODE'
+          const { chromium } = require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage();
+            const errors=[];
+            page.on('pageerror',e=>errors.push(String(e)));
+            await page.goto('http://127.0.0.1:4173/preview/index.html',{waitUntil:'networkidle'});
+            await page.waitForSelector('[data-page-uid="workspace:WB-01"]');
+            const sections=await page.locator('[data-section-id^="SEC-WORKSPACE-WB-01-"]').count();
+            if(sections!==14) throw new Error(`expected 14 dashboard sections, got ${sections}`);
+            const buttons=page.locator('[data-control-id^="CTRL-WORKSPACE-WB-01-"]');
+            const count=await buttons.count();
+            if(count!==14) throw new Error(`expected 14 dashboard controls, got ${count}`);
+            for(let i=0;i<count;i++){
+              await buttons.nth(i).click();
+              const drawer=page.locator('[data-component-uid="WB-01-CMP-DRAWER-PROJECTION"]');
+              await drawer.waitFor({state:'visible'});
+              const dstate=await drawer.getAttribute('data-state');
+              if(!['LOADING','ERROR','READ_ONLY'].includes(dstate)) throw new Error(`invalid drawer state ${dstate}`);
+              if(await page.locator('#acpos-preview-drawer').count()) throw new Error('forbidden preview drawer detected');
+              await drawer.locator('button').filter({hasText:/關閉|Close|关闭/}).click().catch(async()=>{
+                await page.keyboard.press('Escape');
+              });
+              await drawer.waitFor({state:'detached'});
+            }
+            const navHref=await page.locator('a[data-nav-id="NAV-02"]').getAttribute('href');
+            if(navHref!=='core.html') throw new Error(`bad preview nav ${navHref}`);
+            console.log('STATIC_HYDRATION_PASS sections=14 controls=14 drawer=14/14');
+            if(errors.length) console.log('PAGE_ERRORS',errors);
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node /tmp/static-hydration-check.cjs
+      - name: Sync entire matching build to original preview branch
+        run: |
+          git fetch origin acpos-live-preview
+          git worktree add -B acpos-live-preview /tmp/acpos-preview origin/acpos-live-preview
+          rm -rf /tmp/acpos-preview/preview
+          cp -R /tmp/static-site/preview /tmp/acpos-preview/preview
+          cd /tmp/acpos-preview
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add preview
+          git commit -m 'fix(preview): restore real Next hydration for all static pages'
+          git push origin HEAD:acpos-live-preview
+      - name: Verify pushed branch
+        run: |
+          git fetch origin acpos-live-preview
+          PREVIEW_SHA=$(git rev-parse origin/acpos-live-preview)
+          echo PREVIEW_SHA=$PREVIEW_SHA
+          test $(git ls-tree -r --name-only origin/acpos-live-preview preview | grep -E '^preview/[^/]+\.html$' | wc -l) -eq 18
+          git show origin/acpos-live-preview:preview/index.html | grep -q 'WB-01-CMP-DRAWER-PROJECTION'
+          ! git show origin/acpos-live-preview:preview/index.html | grep -q '/_next/'
+      - name: Self clean
+        run: |
+          git worktree remove /tmp/acpos-preview --force || true
+          rm -f .github/workflows/fix-preview-hydration-once.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/fix-preview-hydration-once.yml
+          git commit -m 'chore(preview): remove hydration verification workflow'
+          git push origin HEAD:new
