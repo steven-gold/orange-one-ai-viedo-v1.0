@@ -37,8 +37,10 @@ jobs:
           if(!v.includes('if (state === "LOADING" || !model)'))throw new Error('permission-first loading guard missing');
           if(!v.includes('const visibleSections = SECTIONS.filter((section) => hasOwn(model, section.key));'))throw new Error('server-key section filtering missing');
           if(v.includes('state === "LOADING" || state === "ERROR" || !model ? SECTIONS'))throw new Error('pre-authorization section disclosure remains');
-          const ids=(v.match(/WB-01-CTL-[A-Z0-9-]+/g)||[]);
-          if(new Set(ids).size!==14)throw new Error(`expected 14 registered section-open controls, got ${new Set(ids).size}`);
+          const ids=[...v.matchAll(/controlId:\s*"(CTRL-WORKSPACE-WB-01-[^"]+)"/g)].map(m=>m[1]);
+          const keys=[...v.matchAll(/controlKey:\s*"(wb01\.control\.[^"]+)"/g)].map(m=>m[1]);
+          if(ids.length!==14||new Set(ids).size!==14)throw new Error(`expected 14 unique section-open controls, got ${ids.length}/${new Set(ids).size}`);
+          if(keys.length!==14||new Set(keys).size!==14)throw new Error(`expected 14 unique control keys, got ${keys.length}/${new Set(keys).size}`);
           for(const forbidden of ['Refresh','Search','Correction Rate'])if(v.includes(forbidden))throw new Error(`forbidden dashboard control ${forbidden}`);
           NODE
           test "$(git hash-object src/components/pages/DashboardVisual.module.css)" = "4f2656bf7db9fdbbf0531730b181215606b3120e"
