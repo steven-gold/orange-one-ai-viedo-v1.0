@@ -8,6 +8,7 @@ import { requestCoreDraftFormPayload } from "@/domain/core/coreDraftFormAdapter"
 import { requestCoreMessageSendPayload, requestCoreThreadCreatePayload } from "@/domain/core/coreConversationPayloadAdapter";
 import { requestCoreCandidateCreatePayload, requestCoreCandidateDecisionPayload } from "@/domain/core/coreCandidatePayloadAdapter";
 import { requestCoreLockCommandPayload, type CoreLockCommandKind } from "@/domain/core/coreLockCommandPayloadAdapter";
+import { resolveCoreProjection, type CoreNormalizedProjection } from "@/domain/core/coreProjectionAdapter";
 import { INITIAL_CORE_CLIENT_STATE, reduceCoreClientState } from "@/domain/core/coreClientState";
 import type { CoreActionUid } from "@/domain/core/coreRuntimeContract";
 import styles from "./CoreVisual.module.css";
@@ -79,9 +80,9 @@ function ReadonlyField({ id, labelKey, value = "—" }: ControlProps & { value?:
   const { t } = useI18n();
   return <div className={styles.readonlyField} data-control-id={id} data-action-uid={actionUid(id)}><span className={styles.fieldLabel}>{t(labelKey)}</span><span className={styles.fieldValue}>{value}</span></div>;
 }
-function EmptyList({ id, labelKey }: ControlProps) {
+function SelectionList({ id, labelKey, value, options, onChange }: ControlProps & { value: string; options: readonly { value: string; label: string }[]; onChange: (value: string) => void }) {
   const { t } = useI18n();
-  return <div className={styles.listControl} data-control-id={id} data-action-uid={actionUid(id)}><div className={styles.subheading}>{t(labelKey)}</div><div className={styles.emptyValue}>—</div></div>;
+  return <label className={styles.listControl} data-control-id={id} data-action-uid={actionUid(id)}><div className={styles.subheading}>{t(labelKey)}</div><select value={value} onChange={(event) => onChange(event.target.value)} aria-label={t(labelKey)}><option value="">—</option>{options.map((item) => <option key={`${item.value}:${item.label}`} value={item.value}>{item.label}</option>)}</select></label>;
 }
 function PanelTitle({ labelKey }: { labelKey: LabelKey }) { const { t } = useI18n(); return <h2 className={styles.panelTitle}>{t(labelKey)}</h2>; }
 
@@ -101,13 +102,29 @@ export function CoreVisual() {
   const [conversationMessages, setConversationMessages] = useState<ConversationUiMessage[]>([]);
   const [humanDecision, setHumanDecision] = useState("");
   const [clientState, dispatchClient] = useReducer(reduceCoreClientState, INITIAL_CORE_CLIENT_STATE);
+  const [projection, setProjection] = useState<CoreNormalizedProjection | null>(null);
+
+  const applyRawProjection = async (rawProjection: unknown) => {
+    const resolved = await resolveCoreProjection(rawProjection);
+    if (!resolved.ok) {
+      setProjection(null);
+      setPageState("ERROR");
+      setRuntimeReason(`CORE-01-ERR-CONTEXT-001:${resolved.reason_code}`);
+      return false;
+    }
+    setProjection(resolved.projection);
+    dispatchClient({ type: "CORE_INTERNAL_PROJECTION_SYNC", refs: resolved.projection.refs, work_item: resolved.projection.work_item });
+    setPageState("READY");
+    setRuntimeReason(null);
+    return true;
+  };
 
   useEffect(() => {
     const controller = new AbortController();
-    void readCoreProjection(controller.signal).then((result) => {
+    void readCoreProjection(controller.signal).then(async (result) => {
       if (controller.signal.aborted) return;
-      if (result.ok) { setPageState("READY"); setRuntimeReason(null); }
-      else { setPageState("ERROR"); setRuntimeReason(result.reason_code); }
+      if (!result.ok) { setProjection(null); setPageState("ERROR"); setRuntimeReason(`${result.error_uid}:${result.reason_code}`); return; }
+      await applyRawProjection(result.value);
     });
     return () => controller.abort();
   }, []);
@@ -148,8 +165,9 @@ export function CoreVisual() {
       ? { payload: form.payload }
       : { path_params: { projectId: projectId! }, payload: form.payload });
     if (result?.ok) {
-      const projection = await readCoreProjection();
-      if (!projection.ok) reportBlock(`${projection.error_uid}:${projection.reason_code}`);
+      const projectionResult = await readCoreProjection();
+      if (!projectionResult.ok) reportBlock(`${projectionResult.error_uid}:${projectionResult.reason_code}`);
+      else await applyRawProjection(projectionResult.value);
     }
   };
 
@@ -231,6 +249,21 @@ export function CoreVisual() {
     }
   };
 
+  const selectProject = (projectId: string) => {
+    if (!projectId) { dispatchClient({ action_uid: "CORE-01-ACT-PROJECT-SELECT", project_ref: null, project_id: null, project_version_ref: null }); return; }
+    const matches = projection?.projects.filter((item) => item.project_id === projectId) ?? [];
+    if (matches.length !== 1) { reportBlock("CORE-01-ERR-CONTEXT-001:PROJECT_PROJECTION_SELECTION_AMBIGUOUS"); return; }
+    const selected = matches[0];
+    dispatchClient({ action_uid: "CORE-01-ACT-PROJECT-SELECT", project_ref: selected.project_id, project_id: selected.project_id, project_version_ref: selected.project_version_ref });
+  };
+  const selectTopic = (topicId: string) => {
+    if (!topicId) { dispatchClient({ action_uid: "CORE-01-ACT-TOPIC-SELECT", topic_ref: null, topic_id: null, topic_version_ref: null }); return; }
+    const matches = projection?.topics.filter((item) => item.topic_id === topicId) ?? [];
+    if (matches.length !== 1) { reportBlock("CORE-01-ERR-TOPIC-LINEAGE-001:TOPIC_PROJECTION_SELECTION_AMBIGUOUS"); return; }
+    const selected = matches[0];
+    dispatchClient({ action_uid: "CORE-01-ACT-TOPIC-SELECT", topic_ref: selected.topic_id, topic_id: selected.topic_id, topic_version_ref: selected.topic_version_ref });
+  };
+
   const openContextMenu = (event: ReactMouseEvent<HTMLDivElement>) => { event.preventDefault(); setMenuOpen(true); };
   const runMessageMenu = (id: string) => { const action = actionUid(id); if (!clientState.conversation_id) { reportBlock("CORE-01-ERR-THREAD-001:REQUIRED_CONVERSATION_ID_MISSING"); return; } reportBlock(`${action}:EXACT_MESSAGE_REF_REQUIRED`); };
   const runtimeDisplay = runtimeReason ?? (clientState.assistant_record_open ? "ASSISTANT_RECORD_OPEN" : "—");
@@ -239,17 +272,17 @@ export function CoreVisual() {
   return (
     <div className={styles.page} data-page-uid="CORE-01" data-vis-step="VIS-02" data-page-state={pageState} data-runtime-reason={runtimeReason ?? undefined} onClick={() => menuOpen && setMenuOpen(false)}>
       <section className={styles.contextBar} data-section-id="CORE-01-SEC-01" data-visual-id="CORE-01-VIS-CONTEXT"><div className={styles.contextComponent} data-component-uid="CORE-01-CMP-CONTEXT">
-        <label className={styles.selectField}><span>{t("core01.control.project")}</span><select value={clientState.project_id ?? ""} onChange={(event) => dispatchClient({ action_uid: "CORE-01-ACT-PROJECT-SELECT", project_ref: event.target.value || null, project_id: event.target.value || null })} data-control-id="CORE-01-CTL-PROJECT" data-action-uid={actionUid("CORE-01-CTL-PROJECT")} aria-label={t("core01.control.project")}><option value="">—</option></select></label>
+        <label className={styles.selectField}><span>{t("core01.control.project")}</span><select value={clientState.project_id ?? ""} onChange={(event) => selectProject(event.target.value)} data-control-id="CORE-01-CTL-PROJECT" data-action-uid={actionUid("CORE-01-CTL-PROJECT")} aria-label={t("core01.control.project")}><option value="">—</option>{(projection?.projects ?? []).map((item) => <option key={`${item.project_id}:${item.project_version_ref ?? ""}`} value={item.project_id}>{item.label}</option>)}</select></label>
         <ActionButton id="CORE-01-BTN-PROJECT-CREATE" labelKey="core01.control.create_project" primary disabled={isBusy} onClick={() => runControl("CORE-01-BTN-PROJECT-CREATE")} />
-        <label className={styles.selectField}><span>{t("core01.control.topic")}</span><select value={clientState.topic_id ?? ""} onChange={(event) => dispatchClient({ action_uid: "CORE-01-ACT-TOPIC-SELECT", topic_ref: event.target.value || null, topic_id: event.target.value || null })} data-control-id="CORE-01-CTL-TOPIC" data-action-uid={actionUid("CORE-01-CTL-TOPIC")} aria-label={t("core01.control.topic")}><option value="">—</option></select></label>
+        <label className={styles.selectField}><span>{t("core01.control.topic")}</span><select value={clientState.topic_id ?? ""} onChange={(event) => selectTopic(event.target.value)} data-control-id="CORE-01-CTL-TOPIC" data-action-uid={actionUid("CORE-01-CTL-TOPIC")} aria-label={t("core01.control.topic")}><option value="">—</option>{(projection?.topics ?? []).map((item) => <option key={`${item.topic_id}:${item.topic_version_ref ?? ""}`} value={item.topic_id}>{item.label}</option>)}</select></label>
         <ActionButton id="CORE-01-BTN-TOPIC-CREATE" labelKey="core01.control.create_topic" primary disabled={isBusy} onClick={() => runControl("CORE-01-BTN-TOPIC-CREATE")} />
         <ReadonlyField id="CORE-01-FLD-PAGE-MODE" labelKey="core01.control.page_mode" /><ReadonlyField id="CORE-01-FLD-NAMING-AUTHORITY" labelKey="core01.control.naming_authority" value="ACPOS_SYSTEM" />
       </div></section>
 
       <div className={styles.primaryGrid} data-layout="CORE-01-PRIMARY-GRID">
         <aside className={styles.leftRail}><section className={styles.panel} data-section-id="CORE-01-SEC-02" data-visual-id="CORE-01-VIS-LEFT">
-          <div data-component-uid="CORE-01-CMP-NAV"><EmptyList id="CORE-01-LST-WORK-ITEMS" labelKey="core01.control.work_items" /></div><div className={styles.divider} />
-          <div data-component-uid="CORE-01-CMP-THREADS"><div className={styles.threadHeader}><PanelTitle labelKey="core01.group.conversation_threads" /><ActionButton id="CORE-01-BTN-NEW-THREAD" labelKey="core01.control.new_thread" compact disabled={isBusy} onClick={() => runControl("CORE-01-BTN-NEW-THREAD")} /></div><div className={styles.threadListScroll}><EmptyList id="CORE-01-LST-THREADS" labelKey="core01.control.threads" /></div></div>
+          <div data-component-uid="CORE-01-CMP-NAV"><SelectionList id="CORE-01-LST-WORK-ITEMS" labelKey="core01.control.work_items" value={clientState.work_item ?? ""} options={(projection?.work_items ?? []).map((item) => ({ value: item.work_item, label: item.label }))} onChange={(value) => dispatchClient({ action_uid: "CORE-01-ACT-WORK-ITEM-SELECT", work_item: value || null })} /></div><div className={styles.divider} />
+          <div data-component-uid="CORE-01-CMP-THREADS"><div className={styles.threadHeader}><PanelTitle labelKey="core01.group.conversation_threads" /><ActionButton id="CORE-01-BTN-NEW-THREAD" labelKey="core01.control.new_thread" compact disabled={isBusy} onClick={() => runControl("CORE-01-BTN-NEW-THREAD")} /></div><div className={styles.threadListScroll}><SelectionList id="CORE-01-LST-THREADS" labelKey="core01.control.threads" value={clientState.conversation_id ?? ""} options={(projection?.threads ?? []).map((item) => ({ value: item.conversation_id, label: item.label }))} onChange={(value) => dispatchClient({ action_uid: "CORE-01-ACT-THREAD-SELECT", thread_ref: value || null, conversation_id: value || null })} /></div></div>
         </section></aside>
 
         <main className={styles.centerColumn}>

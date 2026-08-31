@@ -81,7 +81,7 @@ export function mergeCoreExactRefs(state: CoreClientState, refs: Partial<CoreExa
 }
 
 export function reduceCoreClientState(state: CoreClientState, action: CoreClientAction): CoreClientState {
-  if ("type" in action && action.type === "CORE_INTERNAL_PROJECTION_SYNC") {
+  if ("type" in action) {
     const next = mergeCoreExactRefs(state, action.refs);
     if (action.work_item !== undefined) next.work_item = action.work_item;
     return next;
@@ -140,6 +140,7 @@ export function reduceCoreClientState(state: CoreClientState, action: CoreClient
     case "CORE-01-ACT-ATTACHMENT": return { ...state, attachment_refs: appendUnique(state.attachment_refs, action.attachment_ref) };
     case "CORE-01-ACT-REFERENCE-ATTACH": return { ...state, reference_refs: appendUnique(state.reference_refs, action.reference_ref) };
   }
+  return state;
 }
 
 export const CORE_CLIENT_STATE_ACTIONS: readonly CoreActionUid[] = [
