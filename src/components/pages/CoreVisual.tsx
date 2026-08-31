@@ -7,6 +7,7 @@ import { invokeCoreAction, readCoreProjection } from "@/domain/core/coreClientPo
 import { requestCoreDraftFormPayload } from "@/domain/core/coreDraftFormAdapter";
 import { requestCoreMessageSendPayload, requestCoreThreadCreatePayload } from "@/domain/core/coreConversationPayloadAdapter";
 import { requestCoreCandidateCreatePayload, requestCoreCandidateDecisionPayload } from "@/domain/core/coreCandidatePayloadAdapter";
+import { requestCoreLockCommandPayload, type CoreLockCommandKind } from "@/domain/core/coreLockCommandPayloadAdapter";
 import { INITIAL_CORE_CLIENT_STATE, reduceCoreClientState } from "@/domain/core/coreClientState";
 import type { CoreActionUid } from "@/domain/core/coreRuntimeContract";
 import styles from "./CoreVisual.module.css";
@@ -130,6 +131,7 @@ export function CoreVisual() {
   const requireTopicId = () => clientState.topic_id || (reportBlock("CORE-01-ERR-TOPIC-LINEAGE-001:REQUIRED_TOPIC_ID_MISSING"), null);
   const requireConversationId = () => clientState.conversation_id || (reportBlock("CORE-01-ERR-THREAD-001:REQUIRED_CONVERSATION_ID_MISSING"), null);
   const requireBlueprintVersionRef = () => clientState.blueprint_version_ref || (reportBlock("CORE-01-ERR-BLUEPRINT-001:EXACT_BLUEPRINT_VERSION_REF_REQUIRED"), null);
+  const requireDnaVersionRef = () => clientState.dna_version_ref || (reportBlock("CORE-01-ERR-DNA-LOCK-001:EXACT_DNA_VERSION_REF_REQUIRED"), null);
   const requireCandidateRef = () => clientState.candidate_ref || (reportBlock("CORE-01-ERR-CANDIDATE-001:EXACT_CANDIDATE_REF_REQUIRED"), null);
   const requireWorkItem = () => clientState.work_item || (reportBlock("CORE-01-ERR-WORK-ITEM-001:REQUIRED_WORK_ITEM_MISSING"), null);
 
@@ -149,6 +151,19 @@ export function CoreVisual() {
       const projection = await readCoreProjection();
       if (!projection.ok) reportBlock(`${projection.error_uid}:${projection.reason_code}`);
     }
+  };
+
+  const runLockCommand = async (action: CoreActionUid, kind: CoreLockCommandKind) => {
+    if (kind === "DNA_LOCK" && !requireDnaVersionRef()) return;
+    if ((kind === "CORE_REVIEW" || kind === "MOTHER_LOCK") && !requireProjectVersionRef()) return;
+    if (kind === "CHILD_LOCK" && !requireBlueprintVersionRef()) return;
+    const payload = await requestCoreLockCommandPayload({ kind, project_id: clientState.project_id, project_version_ref: clientState.project_version_ref, dna_version_ref: clientState.dna_version_ref, blueprint_version_ref: clientState.blueprint_version_ref, topic_id: clientState.topic_id, evidence_refs: clientState.decision_evidence_refs });
+    if (!payload.ok) {
+      const error = kind === "DNA_LOCK" ? "CORE-01-ERR-DNA-LOCK-001" : kind === "CORE_REVIEW" ? "CORE-01-ERR-CONTEXT-001" : "CORE-01-ERR-LOCK-CONTRACT-001";
+      reportBlock(`${error}:${payload.reason_code}`);
+      return;
+    }
+    await runServerAction(action, { payload: payload.payload });
   };
 
   const runControl = (id: string) => {
@@ -203,8 +218,10 @@ export function CoreVisual() {
       case "CORE-01-ACT-PROJECT-VALIDATE": { const projectVersionId = requireProjectVersionRef(); if (projectVersionId) void runServerAction(action, { path_params: { projectVersionId } }); return; }
       case "CORE-01-ACT-PROJECT-CONFIRM": { const projectVersionRef = requireProjectVersionRef(); if (projectVersionRef) void runServerAction(action, { path_params: { id: projectVersionRef } }); return; }
       case "CORE-01-ACT-STORY-CANDIDATE": { const projectId = requireProjectId(); if (projectId) void runServerAction(action, { path_params: { projectId } }); return; }
-      case "CORE-01-ACT-DNA-LOCK-REQUEST": case "CORE-01-ACT-CORE-REVIEW-SUBMIT": case "CORE-01-ACT-MOTHER-LOCK-REQUEST": if (!requireProjectId()) return; void runServerAction(action); return;
-      case "CORE-01-ACT-CHILD-LOCK-REQUEST": if (!requireBlueprintVersionRef()) return; void runServerAction(action); return;
+      case "CORE-01-ACT-DNA-LOCK-REQUEST": void runLockCommand(action,"DNA_LOCK"); return;
+      case "CORE-01-ACT-CORE-REVIEW-SUBMIT": void runLockCommand(action,"CORE_REVIEW"); return;
+      case "CORE-01-ACT-MOTHER-LOCK-REQUEST": void runLockCommand(action,"MOTHER_LOCK"); return;
+      case "CORE-01-ACT-CHILD-LOCK-REQUEST": void runLockCommand(action,"CHILD_LOCK"); return;
       case "CORE-01-ACT-BLUEPRINT-CREATE": { const topicId = requireTopicId(); if (topicId) void runServerAction(action, { path_params: { id: topicId } }); return; }
       case "CORE-01-ACT-BLUEPRINT-VALIDATE": case "CORE-01-ACT-BLUEPRINT-APPROVE": { const blueprintVersionRef = requireBlueprintVersionRef(); if (blueprintVersionRef) void runServerAction(action, { path_params: { id: blueprintVersionRef } }); return; }
       case "CORE-01-ACT-CANONICAL-SCRIPT-VIEW": { const topicId = requireTopicId(); if (topicId) void runServerAction(action, { path_params: { id: topicId } }); return; }
