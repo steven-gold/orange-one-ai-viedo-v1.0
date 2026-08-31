@@ -1,0 +1,95 @@
+name: CORE01 Project Topic closure once
+on:
+  push:
+    paths:
+      - '.github/workflows/core01-project-topic-closure-once.yml'
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Patch CORE Project Topic create flow to registered schema adapter
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/CoreVisual.tsx')
+          s=p.read_text()
+          old='import { invokeCoreAction, readCoreProjection } from "@/domain/core/coreClientPort";'
+          new=old+'\nimport { requestCoreDraftFormPayload } from "@/domain/core/coreDraftFormAdapter";'
+          assert old in s and 'coreDraftFormAdapter' not in s
+          s=s.replace(old,new,1)
+          anchor='''  const requireWorkItem = () => clientState.work_item || (reportBlock("CORE-01-ERR-WORK-ITEM-001:REQUIRED_WORK_ITEM_MISSING"), null);\n\n'''
+          helper='''  const requireWorkItem = () => clientState.work_item || (reportBlock("CORE-01-ERR-WORK-ITEM-001:REQUIRED_WORK_ITEM_MISSING"), null);\n\n  const runDraftCreate = async (kind: "PROJECT" | "TOPIC") => {\n    const action: CoreActionUid = kind === "PROJECT" ? "CORE-01-ACT-PROJECT-CREATE" : "CORE-01-ACT-TOPIC-CREATE";\n    const projectId = kind === "TOPIC" ? requireProjectId() : null;\n    if (kind === "TOPIC" && !projectId) return;\n    const form = await requestCoreDraftFormPayload(kind === "PROJECT" ? { kind } : { kind, project_id: projectId! });\n    if (!form.ok) {\n      reportBlock(`${kind === "PROJECT" ? "CORE-01-ERR-CONTEXT-001" : "CORE-01-ERR-TOPIC-LINEAGE-001"}:${form.reason_code}`);\n      return;\n    }\n    const result = await runServerAction(action, kind === "PROJECT"\n      ? { payload: form.payload }\n      : { path_params: { projectId: projectId! }, payload: form.payload });\n    if (result?.ok) {\n      const projection = await readCoreProjection();\n      if (!projection.ok) reportBlock(`${projection.error_uid}:${projection.reason_code}`);\n    }\n  };\n\n'''
+          assert anchor in s
+          s=s.replace(anchor,helper,1)
+          oldcases='''      case "CORE-01-ACT-PROJECT-CREATE": void runServerAction(action); return;\n      case "CORE-01-ACT-TOPIC-CREATE": { const projectId = requireProjectId(); if (projectId) void runServerAction(action, { path_params: { projectId } }); return; }'''
+          newcases='''      case "CORE-01-ACT-PROJECT-CREATE": void runDraftCreate("PROJECT"); return;\n      case "CORE-01-ACT-TOPIC-CREATE": void runDraftCreate("TOPIC"); return;'''
+          assert oldcases in s
+          s=s.replace(oldcases,newcases,1)
+          p.write_text(s)
+          PY
+      - name: Contract and lock checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const core=fs.readFileSync('src/components/pages/CoreVisual.tsx','utf8');
+          const port=fs.readFileSync('src/domain/core/coreClientPort.ts','utf8');
+          const adapter=fs.readFileSync('src/domain/core/coreDraftFormAdapter.ts','utf8');
+          if(core.includes('case "CORE-01-ACT-PROJECT-CREATE": void runServerAction(action)')) throw new Error('unsafe empty project call remains');
+          if(!core.includes('runDraftCreate("PROJECT")')||!core.includes('runDraftCreate("TOPIC")')) throw new Error('draft adapter not wired');
+          if(!adapter.includes('PROJECT_DRAFT_REGISTERED_SCHEMA_ADAPTER_NOT_BOUND')||!adapter.includes('TOPIC_DRAFT_REGISTERED_SCHEMA_ADAPTER_NOT_BOUND')) throw new Error('schema fail-closed missing');
+          if(!port.includes('PROJECT_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED')||!port.includes('TOPIC_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED')) throw new Error('client port empty payload guard missing');
+          for(const forbidden of ['project_name:', 'topic_name:', '/v1/project-form-schema', '/v1/topic-form-schema']){
+            if(core.includes(forbidden)||adapter.includes(forbidden)) throw new Error('invented schema '+forbidden);
+          }
+          NODE
+          test "$(git hash-object src/components/pages/CoreVisual.module.css)" = "c9b0215dc2d174b77c558e617125e6ec2ecd9fbd"
+          test "$(git hash-object src/app/page.tsx)" = "95e88cd0171721f3cb21459f42a6f39e4a322ead"
+          test "$(git hash-object src/components/pages/DashboardVisual.tsx)" = "aa3a8a9472ee6c471503d8990654233a6ee02edd"
+          test "$(git hash-object src/components/pages/DashboardVisual.module.css)" = "4f2656bf7db9fdbbf0531730b181215606b3120e"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Real Chromium verifies no malformed Project Topic POST
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+          (npm run start -- -p 3000 > /tmp/core-next.log 2>&1 & echo $! > /tmp/core-next.pid)
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3000/core >/dev/null && break; sleep 1; done
+          cat > core01-check.cjs <<'NODE'
+          const { chromium }=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage();
+            const mutations=[];
+            page.on('request',r=>{ if(r.method()==='POST' && (r.url().includes('/v1/projects/drafts')||r.url().includes('/topics'))) mutations.push(r.url()); });
+            await page.goto('http://127.0.0.1:3000/core',{waitUntil:'networkidle'});
+            await page.locator('[data-control-id="CORE-01-BTN-PROJECT-CREATE"]').click();
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="CORE-01"]')?.getAttribute('data-runtime-reason')?.includes('PROJECT_DRAFT_REGISTERED_SCHEMA_ADAPTER_NOT_BOUND'));
+            if(mutations.length) throw new Error('Project create emitted malformed POST '+mutations.join(','));
+            await page.locator('[data-control-id="CORE-01-BTN-TOPIC-CREATE"]').click();
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="CORE-01"]')?.getAttribute('data-runtime-reason')?.includes('REQUIRED_PROJECT_ID_MISSING'));
+            if(mutations.length) throw new Error('Topic create emitted malformed POST '+mutations.join(','));
+            console.log('CORE01_PROJECT_TOPIC_FAIL_CLOSED_PASS malformed_posts=0');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node core01-check.cjs
+          rm core01-check.cjs
+      - name: Commit validated CORE changes and self clean
+        run: |
+          rm -f .github/workflows/core01-project-topic-closure-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/pages/CoreVisual.tsx .github/workflows/core01-project-topic-closure-once.yml
+          git commit -m "fix(core): close Project Topic draft schema boundary"
+          git push origin HEAD:new
