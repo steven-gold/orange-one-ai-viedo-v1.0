@@ -1,0 +1,37 @@
+name: DB-01 Static Closure
+on:
+  push:
+    branches: [db-01-runtime-closure]
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: DB-01 authority/runtime contract audit
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const a=fs.readFileSync('authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml','utf8');
+          const section=(start,end)=>a.split(start)[1].split(end)[0];
+          const actions=(section('\n  actions:\n','\n  objects_refs:\n').match(/\n  - action_uid:/g)||[]).length;
+          const controls=(section('\n  controls:\n','\n  integration_ports:\n').match(/\n  - control_uid:/g)||[]).length;
+          const ports=(section('\n  integration_ports:\n','\nacceptance:\n').match(/\n  - port_uid:/g)||[]).length;
+          if(actions!==15||controls!==49||ports!==7)throw new Error(`Authority drift actions=${actions} controls=${controls} ports=${ports}`);
+          const visual=fs.readFileSync('src/components/pages/DbVisual.tsx','utf8');
+          const runtime=fs.readFileSync('src/components/pages/DbControlRuntime.tsx','utf8');
+          const client=fs.readFileSync('src/domain/database/dbClientPort.ts','utf8');
+          const route=fs.readFileSync('src/app/v1/database/read-model/route.ts','utf8');
+          if(!visual.includes('ids.size===49'))throw new Error('DB control registry guard missing');
+          if(!runtime.includes('data-exact-ref'))throw new Error('Exact-ref interaction evidence missing');
+          if(!client.includes('/v1/ui-projections/DB-01')||!client.includes('/v1/database/read-model'))throw new Error('Browser transport incomplete');
+          if(!route.includes('executeDbRead'))throw new Error('Server read-model adapter incomplete');
+          console.log(`DB01_STATIC_CONTRACT_PASS actions=${actions} controls=${controls} ports=${ports}`);
+          NODE
