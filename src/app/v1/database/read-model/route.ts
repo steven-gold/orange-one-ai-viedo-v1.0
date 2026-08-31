@@ -1,0 +1,8 @@
+import{NextRequest,NextResponse}from"next/server";
+import{DB_READ_OPERATIONS,type DbReadPortUid}from"@/domain/database/dbRuntimeContract";
+import{executeDbRead}from"@/server/database/dbReadModelRuntime";
+function cid(r:NextRequest){const v=r.headers.get("x-correlation-id");return v&&v.trim()?v:crypto.randomUUID();}
+function error(correlation_id:string,status:number,error_uid:string,reason_code:string){return NextResponse.json({error_uid,reason_code,correlation_id},{status,headers:{"x-correlation-id":correlation_id,"cache-control":"no-store"}});}
+function isPort(v:unknown):v is DbReadPortUid{return typeof v==="string"&&Object.prototype.hasOwnProperty.call(DB_READ_OPERATIONS,v);}
+function statusOf(error_uid:string,reason_code:string){if(error_uid==="DB-01-ERR-PERM-001")return 403;if(reason_code==="DB_READ_MODEL_RUNTIME_NOT_BOUND")return 503;if(error_uid==="DB-01-ERR-UNDEFINED-001")return 400;return 503;}
+export async function POST(r:NextRequest){const correlation_id=cid(r);let body:unknown;try{body=await r.json();}catch{return error(correlation_id,400,"DB-01-ERR-CONTEXT-001","INVALID_JSON_PAYLOAD");}if(!body||typeof body!=="object")return error(correlation_id,400,"DB-01-ERR-CONTEXT-001","INVALID_DB_READ_REQUEST");const input=body as Record<string,unknown>;if(!isPort(input.port_uid))return error(correlation_id,400,"DB-01-ERR-UNDEFINED-001","UNREGISTERED_DB_PORT");const result=await executeDbRead(input.port_uid,{correlation_id,scope:input.scope,query:input.query});if(!result.ok)return error(correlation_id,statusOf(result.error_uid,result.reason_code),result.error_uid,result.reason_code);return NextResponse.json(result.value,{status:200,headers:{"x-correlation-id":correlation_id,"cache-control":"no-store"}});}
