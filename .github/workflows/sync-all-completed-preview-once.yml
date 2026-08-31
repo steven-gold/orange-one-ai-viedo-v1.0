@@ -22,6 +22,8 @@ jobs:
           npm ci
           npm run typecheck
           npm run build
+          grep -q 'AUTHORITY_BINDING_UNRESOLVED' src/components/pages/StrategyAdminVisual.tsx
+          grep -q "actionId==='ACT-CANDIDATE-DECIDE'" src/components/pages/StrategyAdminRuntime.tsx
       - name: Start production server
         run: |
           (npm run start -- -p 3000 > /tmp/acpos-next.log 2>&1 & echo $! > /tmp/acpos-next.pid)
@@ -37,87 +39,40 @@ jobs:
           mkdir -p /tmp/materialized
           python - <<'PY'
           import subprocess
-          routes = {
-            '/':'index.html',
-            '/core':'core.html',
-            '/assets':'assets.html',
-            '/video':'video.html',
-            '/edit':'edit.html',
-            '/qa':'qa.html',
-            '/database':'db.html',
-            '/strategy':'strategy.html',
-            '/info':'info.html',
-            '/admin/system':'system.html',
-            '/admin/accounts':'accounts.html',
-            '/admin/dev':'dev.html',
-            '/admin/social':'social.html',
-            '/admin/erp':'erp.html',
-            '/admin/aiapi':'aiapi.html',
-            '/admin/qa-criteria':'qa-criteria.html',
-            '/admin/strategy':'strategy-admin.html',
-            '/admin/knowledge':'knowledge-admin.html',
-          }
+          routes={'/':'index.html','/core':'core.html','/assets':'assets.html','/video':'video.html','/edit':'edit.html','/qa':'qa.html','/database':'db.html','/strategy':'strategy.html','/info':'info.html','/admin/system':'system.html','/admin/accounts':'accounts.html','/admin/dev':'dev.html','/admin/social':'social.html','/admin/erp':'erp.html','/admin/aiapi':'aiapi.html','/admin/qa-criteria':'qa-criteria.html','/admin/strategy':'strategy-admin.html','/admin/knowledge':'knowledge-admin.html'}
           for route,name in routes.items():
-            data=subprocess.check_output(['curl','-fsS','http://127.0.0.1:3000'+route], text=True)
+            data=subprocess.check_output(['curl','-fsS','http://127.0.0.1:3000'+route],text=True)
             open('/tmp/materialized/'+name,'w').write(data)
           PY
       - name: Rewrite only static preview paths and canonical navigation
         run: |
           python - <<'PY'
           from pathlib import Path
-          nav = {
-            '/':'index.html',
-            '/core':'core.html',
-            '/assets':'assets.html',
-            '/video':'video.html',
-            '/edit':'edit.html',
-            '/qa':'qa.html',
-            '/database':'db.html',
-            '/strategy':'strategy.html',
-            '/info':'info.html',
-            '/admin/system':'system.html',
-            '/admin/accounts':'accounts.html',
-            '/admin/dev':'dev.html',
-            '/admin/social':'social.html',
-            '/admin/erp':'erp.html',
-            '/admin/aiapi':'aiapi.html',
-            '/admin/qa-criteria':'qa-criteria.html',
-            '/admin/strategy':'strategy-admin.html',
-            '/admin/knowledge':'knowledge-admin.html',
-          }
-          # Longest paths first so '/' is only replaced as an exact href.
-          ordered=sorted(nav.items(), key=lambda x: len(x[0]), reverse=True)
+          nav={'/':'index.html','/core':'core.html','/assets':'assets.html','/video':'video.html','/edit':'edit.html','/qa':'qa.html','/database':'db.html','/strategy':'strategy.html','/info':'info.html','/admin/system':'system.html','/admin/accounts':'accounts.html','/admin/dev':'dev.html','/admin/social':'social.html','/admin/erp':'erp.html','/admin/aiapi':'aiapi.html','/admin/qa-criteria':'qa-criteria.html','/admin/strategy':'strategy-admin.html','/admin/knowledge':'knowledge-admin.html'}
+          ordered=sorted(nav.items(),key=lambda x:len(x[0]),reverse=True)
           for p in Path('/tmp/materialized').glob('*.html'):
             s=p.read_text()
             s=s.replace('href="/_next/','href="_next/').replace('src="/_next/','src="_next/')
             s=s.replace('href="/brand/','href="brand/').replace('src="/brand/','src="brand/')
-            for route,target in ordered:
-              s=s.replace(f'href="{route}"', f'href="{target}"')
+            for route,target in ordered:s=s.replace(f'href="{route}"',f'href="{target}"')
             p.write_text(s)
           PY
       - name: Validate page identities and preview navigation
         run: |
           python - <<'PY'
           from pathlib import Path
-          expected={
-            'index.html':'workspace:WB-01','core.html':'CORE-01','assets.html':'ASSET-01','video.html':'VIDEO-01','edit.html':'EDIT-01','qa.html':'QA-01',
-            'db.html':'admin:DB-01','strategy.html':'workspace:STR-01','info.html':'workspace:INFO-01','system.html':'admin:SYS-01','accounts.html':'admin:IAM-01',
-            'dev.html':'admin:DEV-01','social.html':'admin:SOC-01','erp.html':'admin:ERP-01','aiapi.html':'admin:AIAPI-01','qa-criteria.html':'admin:SG-02',
-            'strategy-admin.html':'admin:STR-01','knowledge-admin.html':'admin:KB-01',
-          }
+          expected={'index.html':'workspace:WB-01','core.html':'CORE-01','assets.html':'ASSET-01','video.html':'VIDEO-01','edit.html':'EDIT-01','qa.html':'QA-01','db.html':'admin:DB-01','strategy.html':'workspace:STR-01','info.html':'workspace:INFO-01','system.html':'admin:SYS-01','accounts.html':'admin:IAM-01','dev.html':'admin:DEV-01','social.html':'admin:SOC-01','erp.html':'admin:ERP-01','aiapi.html':'admin:AIAPI-01','qa-criteria.html':'admin:SG-02','strategy-admin.html':'admin:STR-01','knowledge-admin.html':'admin:KB-01'}
           root=Path('/tmp/materialized')
           assert len(list(root.glob('*.html')))==18
           for name,uid in expected.items():
             s=(root/name).read_text()
-            assert f'data-page-uid="{uid}"' in s, (name,uid)
-            assert 'href="/_next/' not in s and 'src="/_next/' not in s, name
-            assert 'href="/core"' not in s and 'href="/admin/system"' not in s, name
-            assert 'wb01-preview-runtime' not in s and 'acpos-preview-drawer' not in s, name
-          # Current STR admin test wiring must be included in this synchronization.
+            assert f'data-page-uid="{uid}"' in s,(name,uid)
+            assert 'href="/_next/' not in s and 'src="/_next/' not in s,name
+            assert 'href="/core"' not in s and 'href="/admin/system"' not in s,name
+            assert 'wb01-preview-runtime' not in s and 'acpos-preview-drawer' not in s,name
           strategy=(root/'strategy-admin.html').read_text()
-          assert 'data-runtime-state=' in strategy
-          assert 'AUTHORITY_BINDING_UNRESOLVED' in strategy
-          # Current SG-02 governance wiring must also be present.
+          assert 'data-page-state=' in strategy
+          assert 'data-effectful-runtime-ready=' in strategy
           criteria=(root/'qa-criteria.html').read_text()
           assert 'configureGovernedResource' in criteria
           assert 'approveGovernedResource' in criteria
