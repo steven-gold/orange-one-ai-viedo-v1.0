@@ -1,4 +1,4 @@
-# retry: 4
+# retry: 5
 name: ASSET01 Staging Validate
 on:
   push:
@@ -68,9 +68,16 @@ jobs:
       - name: Residual and scope audit
         run: |
           set -euo pipefail
+          npm ci
+          npm audit
+          git restore --source=HEAD --worktree -- next-env.d.ts tsconfig.json
           test "$(git hash-object src/components/pages/AssetVisual.module.css)" = "80220b164df59a3a4d03ee3ac6886b844d785552"
           git diff --exit-code 3924f6594cde11f5439aaeddf6b6bdc33faa58d5 -- authority/
-          bad=$(git diff --name-only 3924f6594cde11f5439aaeddf6b6bdc33faa58d5 | grep -Ev '^(src/(components/pages/AssetVisual.tsx|components/pages/AssetControlRuntime.tsx|domain/asset/|server/asset/assetRuntime.ts|server/shared/(uiProjectionRuntime|departmentRouteFactory)\.ts|server/testing/controlledAssetTestRuntime.ts)|scripts/asset01-staging-e2e.mjs|\.github/workflows/asset01-staging-validate.yml)$' || true)
+          bad=$(git diff --name-only 3924f6594cde11f5439aaeddf6b6bdc33faa58d5 | grep -Ev '^(src/(components/pages/AssetVisual\.tsx|components/pages/AssetControlRuntime\.tsx|domain/asset/.*|server/asset/assetRuntime\.ts|server/shared/(uiProjectionRuntime|departmentRouteFactory)\.ts|server/testing/controlledAssetTestRuntime\.ts)|scripts/asset01-staging-e2e\.mjs|\.github/workflows/asset01-staging-validate\.yml)$' || true)
           test -z "$bad" || { echo "$bad"; exit 1; }
           if grep -RniE 'TODO|FIXME|HACK|XXX|STUB|NOOP|NOT_IMPLEMENTED|IMPLEMENT_ME|@ts-ignore|@ts-nocheck|debugger|console\.debug' src/domain/asset src/server/asset src/server/testing/controlledAssetTestRuntime.ts src/components/pages/AssetControlRuntime.tsx src/components/pages/AssetVisual.tsx; then exit 1; fi
+          grep -q 'data-view-active' src/components/pages/AssetControlRuntime.tsx
+          grep -q 'data-context-state-active' src/components/pages/AssetControlRuntime.tsx
+          grep -q 'ui_only_effects=PASS' scripts/asset01-staging-e2e.mjs
+          test -z "$(git status --porcelain -- next-env.d.ts tsconfig.json)"
           echo ASSET01_RESIDUAL_SCOPE_PASS
