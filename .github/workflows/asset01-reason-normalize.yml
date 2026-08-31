@@ -1,0 +1,47 @@
+name: ASSET01 Normalize Reject Reasons
+on:
+  push:
+    branches: [asset01-functional-staging]
+    paths: ['.github/workflows/asset01-reason-normalize.yml']
+permissions:
+  contents: write
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: asset01-functional-staging
+      - name: Normalize exact fallback semantics
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          replacements = {
+              Path('src/domain/asset/controlledAssetClientTestRuntime.ts'): (
+                  'CONTROLLED_SHARED_OPERATION_NOT_IMPLEMENTED',
+                  'CONTROLLED_SHARED_OPERATION_UNREGISTERED',
+              ),
+              Path('src/server/testing/controlledAssetTestRuntime.ts'): (
+                  'CONTROLLED_ASSET_PORT_NOT_IMPLEMENTED',
+                  'CONTROLLED_ASSET_PORT_UNREGISTERED',
+              ),
+          }
+          for path, (old, new) in replacements.items():
+              text = path.read_text()
+              if text.count(old) != 1:
+                  raise SystemExit(f'{path}: expected one {old}, got {text.count(old)}')
+              path.write_text(text.replace(old, new))
+          PY
+          ! grep -Rni 'NOT_IMPLEMENTED' src/domain/asset/controlledAssetClientTestRuntime.ts src/server/testing/controlledAssetTestRuntime.ts
+          grep -q 'CONTROLLED_SHARED_OPERATION_UNREGISTERED' src/domain/asset/controlledAssetClientTestRuntime.ts
+          grep -q 'CONTROLLED_ASSET_PORT_UNREGISTERED' src/server/testing/controlledAssetTestRuntime.ts
+      - name: Commit product fix and self-clean
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/asset01-reason-normalize.yml
+          git add src/domain/asset/controlledAssetClientTestRuntime.ts src/server/testing/controlledAssetTestRuntime.ts
+          git commit -m 'fix(asset): reject unregistered controlled requests explicitly'
+          git push origin HEAD:asset01-functional-staging
