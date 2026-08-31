@@ -1,0 +1,95 @@
+name: CORE01 conversation boundary once
+on:
+  push:
+    paths:
+      - '.github/workflows/core01-conversation-boundary-once.yml'
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Patch CORE conversation payload use
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/CoreVisual.tsx')
+          s=p.read_text()
+          anchor='import { requestCoreDraftFormPayload } from "@/domain/core/coreDraftFormAdapter";'
+          add=anchor+'\nimport { requestCoreMessageSendPayload, requestCoreThreadCreatePayload } from "@/domain/core/coreConversationPayloadAdapter";'
+          assert anchor in s and 'coreConversationPayloadAdapter' not in s
+          s=s.replace(anchor,add,1)
+          old_thread='''      case "CORE-01-ACT-THREAD-CREATE": { const projectId = requireProjectId(); if (!projectId) return; const work_item = requireWorkItem(); if (!work_item) return; void runServerAction(action, { path_params: { projectId }, payload: { work_item, ai_mode: clientState.ai_mode } }); return; }'''
+          new_thread='''      case "CORE-01-ACT-THREAD-CREATE": {\n        const projectId = requireProjectId(); if (!projectId) return;\n        const work_item = requireWorkItem(); if (!work_item) return;\n        void (async()=>{\n          const payload = await requestCoreThreadCreatePayload({ project_id: projectId, topic_id: clientState.topic_id, work_item, ai_mode: clientState.ai_mode });\n          if (!payload.ok) { reportBlock(`CORE-01-ERR-THREAD-001:${payload.reason_code}`); return; }\n          await runServerAction(action, { path_params: { projectId }, payload: payload.payload });\n        })();\n        return;\n      }'''
+          assert old_thread in s
+          s=s.replace(old_thread,new_thread,1)
+          old_send='''      case "CORE-01-ACT-SEND": {\n        const submitted = message.trim();\n        if (!submitted) { reportBlock("CORE-01-ERR-CONVERSATION-001:MESSAGE_REQUIRED"); return; }\n        appendConversationMessage("USER", submitted);\n        setMessage("");\n        const conversationId = clientState.conversation_id;\n        if (!conversationId) {\n          const reason = "CORE-01-ERR-THREAD-001:REQUIRED_CONVERSATION_ID_MISSING";\n          reportBlock(reason);\n          appendConversationMessage("STATUS", reason);\n          return;\n        }\n        void (async () => {\n          const result = await runServerAction(action, { path_params: { conversationId }, payload: { message: submitted, ai_mode: clientState.ai_mode, attachment_refs: clientState.attachment_refs, reference_refs: clientState.reference_refs } });\n          if (!result) return;\n          appendConversationMessage("STATUS", result.ok ? `MESSAGE_ACCEPTED:${result.correlation_id}` : `${result.error_uid}:${result.reason_code}`);\n        })();\n        return;\n      }'''
+          new_send='''      case "CORE-01-ACT-SEND": {\n        const submitted = message.trim();\n        if (!submitted) { reportBlock("CORE-01-ERR-CONVERSATION-001:MESSAGE_REQUIRED"); return; }\n        const conversationId = clientState.conversation_id;\n        if (!conversationId) { reportBlock("CORE-01-ERR-THREAD-001:REQUIRED_CONVERSATION_ID_MISSING"); return; }\n        void (async () => {\n          const payload = await requestCoreMessageSendPayload({ conversation_id: conversationId, message: submitted, ai_mode: clientState.ai_mode, attachment_refs: clientState.attachment_refs, reference_refs: clientState.reference_refs });\n          if (!payload.ok) { reportBlock(`CORE-01-ERR-CONVERSATION-001:${payload.reason_code}`); return; }\n          const result = await runServerAction(action, { path_params: { conversationId }, payload: payload.payload });\n          if (!result) return;\n          if (result.ok) { appendConversationMessage("USER", submitted); setMessage(""); }\n          appendConversationMessage("STATUS", result.ok ? `MESSAGE_ACCEPTED:${result.correlation_id}` : `${result.error_uid}:${result.reason_code}`);\n        })();\n        return;\n      }'''
+          assert old_send in s
+          s=s.replace(old_send,new_send,1)
+          p.write_text(s)
+          PY
+      - name: Contract and homepage locks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const core=fs.readFileSync('src/components/pages/CoreVisual.tsx','utf8');
+          const adapter=fs.readFileSync('src/domain/core/coreConversationPayloadAdapter.ts','utf8');
+          const port=fs.readFileSync('src/domain/core/coreClientPort.ts','utf8');
+          if(core.includes('payload: { work_item, ai_mode: clientState.ai_mode }')) throw new Error('guessed thread payload remains');
+          if(core.includes('payload: { message: submitted')) throw new Error('guessed message payload remains');
+          if(!core.includes('requestCoreThreadCreatePayload')||!core.includes('requestCoreMessageSendPayload')) throw new Error('conversation adapters not wired');
+          if(!adapter.includes('CONVERSATION_THREAD_CREATE_REGISTERED_SCHEMA_ADAPTER_NOT_BOUND')||!adapter.includes('CONVERSATION_MESSAGE_SEND_REGISTERED_SCHEMA_ADAPTER_NOT_BOUND')) throw new Error('adapter fail-closed missing');
+          if(!port.includes('CONVERSATION_THREAD_REGISTERED_SCHEMA_PAYLOAD_REQUIRED')||!port.includes('CONVERSATION_MESSAGE_REGISTERED_SCHEMA_PAYLOAD_REQUIRED')) throw new Error('port payload guards missing');
+          NODE
+          test "$(git hash-object src/components/pages/CoreVisual.module.css)" = "c9b0215dc2d174b77c558e617125e6ec2ecd9fbd"
+          test "$(git hash-object src/app/page.tsx)" = "95e88cd0171721f3cb21459f42a6f39e4a322ead"
+          test "$(git hash-object src/components/pages/DashboardVisual.tsx)" = "aa3a8a9472ee6c471503d8990654233a6ee02edd"
+          test "$(git hash-object src/components/pages/DashboardVisual.module.css)" = "4f2656bf7db9fdbbf0531730b181215606b3120e"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Chromium preserves unsent draft and emits no guessed conversation mutation
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+          (npm run start -- -p 3000 > /tmp/core-conv-next.log 2>&1 &)
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3000/core >/dev/null && break; sleep 1; done
+          cat > core-conv-check.cjs <<'NODE'
+          const { chromium }=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage();
+            const posts=[]; page.on('request',r=>{ if(r.method()==='POST'&&(r.url().includes('/conversations')||r.url().includes('/messages'))) posts.push(r.url()); });
+            await page.goto('http://127.0.0.1:3000/core',{waitUntil:'networkidle'});
+            const composer=page.locator('[data-control-id="CORE-01-FLD-MESSAGE"]');
+            await composer.fill('draft-preserve-check');
+            await page.locator('[data-control-id="CORE-01-BTN-SEND"]').click();
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="CORE-01"]')?.getAttribute('data-runtime-reason')?.includes('REQUIRED_CONVERSATION_ID_MISSING'));
+            if(await composer.inputValue()!=='draft-preserve-check') throw new Error('draft cleared on blocked send');
+            if(posts.length) throw new Error('blocked send emitted POST');
+            await page.locator('[data-control-id="CORE-01-BTN-NEW-THREAD"]').click();
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="CORE-01"]')?.getAttribute('data-runtime-reason')?.includes('REQUIRED_PROJECT_ID_MISSING'));
+            if(posts.length) throw new Error('blocked thread create emitted POST');
+            console.log('CORE01_CONVERSATION_BOUNDARY_PASS posts=0 draft=preserved');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node core-conv-check.cjs
+          rm core-conv-check.cjs
+      - name: Commit validated conversation closure and self clean
+        run: |
+          rm -f .github/workflows/core01-conversation-boundary-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/pages/CoreVisual.tsx .github/workflows/core01-conversation-boundary-once.yml
+          git commit -m "fix(core): close shared conversation payload boundary"
+          git push origin HEAD:new
