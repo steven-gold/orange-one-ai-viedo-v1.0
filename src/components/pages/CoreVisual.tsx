@@ -4,6 +4,7 @@ import { useEffect, useReducer, useState, type MouseEvent as ReactMouseEvent } f
 import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { invokeCoreAction, readCoreProjection } from "@/domain/core/coreClientPort";
+import { requestCoreDraftFormPayload } from "@/domain/core/coreDraftFormAdapter";
 import { INITIAL_CORE_CLIENT_STATE, reduceCoreClientState } from "@/domain/core/coreClientState";
 import type { CoreActionUid } from "@/domain/core/coreRuntimeContract";
 import styles from "./CoreVisual.module.css";
@@ -130,11 +131,29 @@ export function CoreVisual() {
   const requireCandidateRef = () => clientState.candidate_ref || (reportBlock("CORE-01-ERR-CANDIDATE-001:EXACT_CANDIDATE_REF_REQUIRED"), null);
   const requireWorkItem = () => clientState.work_item || (reportBlock("CORE-01-ERR-WORK-ITEM-001:REQUIRED_WORK_ITEM_MISSING"), null);
 
+  const runDraftCreate = async (kind: "PROJECT" | "TOPIC") => {
+    const action: CoreActionUid = kind === "PROJECT" ? "CORE-01-ACT-PROJECT-CREATE" : "CORE-01-ACT-TOPIC-CREATE";
+    const projectId = kind === "TOPIC" ? requireProjectId() : null;
+    if (kind === "TOPIC" && !projectId) return;
+    const form = await requestCoreDraftFormPayload(kind === "PROJECT" ? { kind } : { kind, project_id: projectId! });
+    if (!form.ok) {
+      reportBlock(`${kind === "PROJECT" ? "CORE-01-ERR-CONTEXT-001" : "CORE-01-ERR-TOPIC-LINEAGE-001"}:${form.reason_code}`);
+      return;
+    }
+    const result = await runServerAction(action, kind === "PROJECT"
+      ? { payload: form.payload }
+      : { path_params: { projectId: projectId! }, payload: form.payload });
+    if (result?.ok) {
+      const projection = await readCoreProjection();
+      if (!projection.ok) reportBlock(`${projection.error_uid}:${projection.reason_code}`);
+    }
+  };
+
   const runControl = (id: string) => {
     const action = actionUid(id);
     switch (action) {
-      case "CORE-01-ACT-PROJECT-CREATE": void runServerAction(action); return;
-      case "CORE-01-ACT-TOPIC-CREATE": { const projectId = requireProjectId(); if (projectId) void runServerAction(action, { path_params: { projectId } }); return; }
+      case "CORE-01-ACT-PROJECT-CREATE": void runDraftCreate("PROJECT"); return;
+      case "CORE-01-ACT-TOPIC-CREATE": void runDraftCreate("TOPIC"); return;
       case "CORE-01-ACT-THREAD-CREATE": { const projectId = requireProjectId(); if (!projectId) return; const work_item = requireWorkItem(); if (!work_item) return; void runServerAction(action, { path_params: { projectId }, payload: { work_item, ai_mode: clientState.ai_mode } }); return; }
       case "CORE-01-ACT-AI-MODE-SINGLE": case "CORE-01-ACT-AI-MODE-MULTI": if (!requireWorkItem()) return; dispatchClient({ action_uid: action }); setPageState("READY"); setRuntimeReason(null); return;
       case "CORE-01-ACT-ASSISTANT-RECORD": dispatchClient({ action_uid: action, open: !clientState.assistant_record_open }); setPageState("READY"); setRuntimeReason(null); return;
