@@ -1,0 +1,32 @@
+name: QA01 Current Head Browser Closure Once
+
+on:
+  push:
+    branches: [qa01-functional-staging]
+    paths:
+      - '.github/workflows/qa01-current-head-browser-closure-once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Execute canonical QA browser harness from current head
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('.github/workflows/qa01-browser-closure-retry-once.yml').read_text()
+          start="cat > qa01-retry.cjs <<'NODE'\n"
+          i=s.index(start)+len(start)
+          j=s.index('\n          NODE',i)
+          body='\n'.join(line[10:] if line.startswith('          ') else line for line in s[i:j].splitlines())+'\n'
+          Path('qa01-retry.cjs').write_text(body)
+          PY
+          node qa01-retry.cjs
