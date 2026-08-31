@@ -7,6 +7,7 @@ export type CoreExactRefs = {
   project_version_ref: string | null;
   topic_id: string | null;
   topic_version_ref: string | null;
+  dna_version_ref: string | null;
   blueprint_version_ref: string | null;
   conversation_id: string | null;
   candidate_ref: string | null;
@@ -32,6 +33,7 @@ export const EMPTY_CORE_EXACT_REFS: CoreExactRefs = {
   project_version_ref: null,
   topic_id: null,
   topic_version_ref: null,
+  dna_version_ref: null,
   blueprint_version_ref: null,
   conversation_id: null,
   candidate_ref: null,
@@ -89,6 +91,7 @@ export function reduceCoreClientState(state: CoreClientState, action: CoreClient
         topic_id: null,
         topic_version_ref: null,
         topic_ref: null,
+        dna_version_ref: null,
         blueprint_version_ref: null,
         work_item: null,
         conversation_id: null,
@@ -105,6 +108,7 @@ export function reduceCoreClientState(state: CoreClientState, action: CoreClient
         topic_id,
         topic_version_ref: action.topic_version_ref ?? null,
         topic_ref: topic_id,
+        dna_version_ref: null,
         blueprint_version_ref: null,
         work_item: null,
         conversation_id: null,
