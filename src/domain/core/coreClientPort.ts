@@ -23,7 +23,7 @@ function resolvePath(template: string, params: Record<string, string>): string |
   return path;
 }
 
-function hasRegisteredDraftPayload(value: unknown): value is Record<string, unknown> {
+function hasRegisteredPayload(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value) && Object.keys(value).length > 0;
 }
 
@@ -57,15 +57,15 @@ export async function invokeCoreAction(input: CoreClientInvokeInput): Promise<Co
     return { ok: false, error_uid: "CORE-01-ERR-UNDEFINED-001", reason_code: "ACTION_HAS_NO_SERVER_PORT", correlation_id: "unresolved" };
   }
 
-  if ((input.action_uid === "CORE-01-ACT-PROJECT-CREATE" || input.action_uid === "CORE-01-ACT-TOPIC-CREATE") && !hasRegisteredDraftPayload(input.payload)) {
-    return {
-      ok: false,
-      error_uid: input.action_uid === "CORE-01-ACT-TOPIC-CREATE" ? "CORE-01-ERR-TOPIC-LINEAGE-001" : "CORE-01-ERR-CONTEXT-001",
-      reason_code: input.action_uid === "CORE-01-ACT-TOPIC-CREATE"
-        ? "TOPIC_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED"
-        : "PROJECT_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED",
-      correlation_id: "unresolved",
-    };
+  const payloadRequiredReason: Partial<Record<CoreActionUid, { error_uid: CoreRuntimeErrorUid; reason_code: string }>> = {
+    "CORE-01-ACT-PROJECT-CREATE": { error_uid: "CORE-01-ERR-CONTEXT-001", reason_code: "PROJECT_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED" },
+    "CORE-01-ACT-TOPIC-CREATE": { error_uid: "CORE-01-ERR-TOPIC-LINEAGE-001", reason_code: "TOPIC_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED" },
+    "CORE-01-ACT-THREAD-CREATE": { error_uid: "CORE-01-ERR-THREAD-001", reason_code: "CONVERSATION_THREAD_REGISTERED_SCHEMA_PAYLOAD_REQUIRED" },
+    "CORE-01-ACT-SEND": { error_uid: "CORE-01-ERR-CONVERSATION-001", reason_code: "CONVERSATION_MESSAGE_REGISTERED_SCHEMA_PAYLOAD_REQUIRED" },
+  };
+  const required = payloadRequiredReason[input.action_uid];
+  if (required && !hasRegisteredPayload(input.payload)) {
+    return { ok: false, ...required, correlation_id: "unresolved" };
   }
 
   const contract = CORE_PORT_METHOD_PATH[port_uid];
