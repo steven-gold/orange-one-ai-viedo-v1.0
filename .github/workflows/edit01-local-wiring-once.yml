@@ -1,4 +1,4 @@
-name: EDIT01 authority wiring once
+name: EDIT01 authority binding validation
 on:
   push:
     paths:
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: write
 jobs:
-  wire-and-validate:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,199 +17,63 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Materialize EDIT control bindings from authority
+      - name: Materialize EDIT control bindings from FINAL_LOCKED authority
         run: |
           python -m pip install --quiet pyyaml
-          python <<'PY'
+          python - <<'PY'
           from pathlib import Path
           import json, yaml
-          authority=Path('authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml')
-          data=yaml.safe_load(authority.read_text())
+          path=Path('authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml')
+          data=yaml.safe_load(path.read_text())
           controls=data['registries']['controls_fields']
           actions=data['registries']['actions']
           control_matrix={x['control_uid']:x for x in data['binding_matrices']['control_to_section_component_visual_gate_permission']}
           action_matrix={x['action_uid']:x for x in data['binding_matrices']['action_to_permission_gate_effect']}
-          assert len(controls)==160, len(controls)
-          assert len(actions)==124, len(actions)
+          assert len(controls)==160
+          assert len(actions)==124
           out={}
-          for c in controls:
-            uid=c['control_uid']
-            m=control_matrix[uid]
-            action=c.get('action_uid')
-            effect=action_matrix[action]['effect_type'] if action in action_matrix else None
-            out[uid]={
-              'action_uid':action,
-              'gate_uid':m.get('gate_uid'),
-              'permission_uid':m.get('permission_uid'),
-              'effect_type':effect,
-            }
+          for control in controls:
+              uid=control['control_uid']
+              mapping=control_matrix[uid]
+              action=control.get('action_uid')
+              out[uid]={
+                  'action_uid':action,
+                  'gate_uid':mapping.get('gate_uid'),
+                  'permission_uid':mapping.get('permission_uid'),
+                  'effect_type':action_matrix[action]['effect_type'] if action in action_matrix else None,
+              }
           assert len(out)==160
-          assert sum(1 for v in out.values() if v['action_uid'])==124
-          text='// GENERATED FROM EDIT-01 FINAL_LOCKED AUTHORITY. DO NOT HAND-EDIT.\n'
-          text+='export const EDIT_CONTROL_BINDINGS = '+json.dumps(out,ensure_ascii=False,separators=(',',':'))+' as const;\n'
-          text+='export type EditControlUid = keyof typeof EDIT_CONTROL_BINDINGS;\n'
-          text+='export const EDIT_MATERIALIZED_CONTROL_COUNT = 160 as const;\n'
-          text+='export const EDIT_MATERIALIZED_ACTION_COUNT = 124 as const;\n'
-          Path('src/domain/edit/editControlBindings.ts').write_text(text)
+          assert sum(1 for item in out.values() if item['action_uid'])==124
+          target=Path('src/domain/edit/editControlBindings.ts')
+          target.write_text(
+              '// GENERATED FROM EDIT-01 FINAL_LOCKED AUTHORITY. DO NOT HAND-EDIT.\n'
+              +'export const EDIT_CONTROL_BINDINGS = '+json.dumps(out,ensure_ascii=False,separators=(',',':'))+' as const;\n'
+              +'export type EditControlUid = keyof typeof EDIT_CONTROL_BINDINGS;\n'
+              +'export const EDIT_MATERIALIZED_CONTROL_COUNT = 160 as const;\n'
+              +'export const EDIT_MATERIALIZED_ACTION_COUNT = 124 as const;\n'
+          )
           PY
-      - name: Wire governed local EDIT controls without changing layout
-        run: |
-          python <<'PY'
-          from pathlib import Path
-          import re
-          p=Path('src/components/pages/EditVisual.tsx')
-          s=p.read_text()
-          s=s.replace('import { useMemo } from "react";', 'import { createContext, useContext, useEffect, useMemo, useReducer, useState, type Dispatch } from "react";')
-          marker='import { EDIT_CONTROL_TEXT, editText, editUiText } from "@/i18n/editCatalog";'
-          addition='''import { EDIT_CONTROL_TEXT, editText, editUiText } from "@/i18n/editCatalog";\nimport { EDIT_CONTROL_BINDINGS } from "@/domain/edit/editControlBindings";\nimport { INITIAL_EDIT_CLIENT_STATE, reduceEditClientState, type EditClientAction, type EditClientState, type EditInspectorTab, type EditSourceMode, type EditExecutionMode } from "@/domain/edit/editClientState";\nimport { readEditProjection } from "@/domain/edit/editProjectionPort";'''
-          s=s.replace(marker,addition)
-          start=s.index('function Control(')
-          end=s.index('\nfunction Title(',start)
-          new_control=r'''type EditUiContextValue = {
-  state: EditClientState;
-  dispatch: Dispatch<EditClientAction>;
-  runtimeError: string | null;
-  setRuntimeError: (value: string | null) => void;
-};
-const EditUiContext = createContext<EditUiContextValue | null>(null);
-
-const TAB_BY_CONTROL: Record<string, EditInspectorTab> = {
-  "EDIT-01-TAB-CLIP":"CLIP","EDIT-01-TAB-API":"API","EDIT-01-TAB-VOICE":"VOICE","EDIT-01-TAB-AUDIO":"AUDIO","EDIT-01-TAB-LIPSYNC":"LIPSYNC",
-  "EDIT-01-TAB-SUBTITLE":"SUBTITLE","EDIT-01-TAB-EVALUATION":"EVALUATION","EDIT-01-TAB-VERSION":"VERSION","EDIT-01-TAB-OUTPUT":"OUTPUT",
-};
-
-function gatePass(state: EditClientState, gateUid: string | null | undefined) {
-  if (!gateUid) return false;
-  if (gateUid === "EDIT-01-GATE-CONTEXT-MUTABLE") return true;
-  return state.resolved.gate_state[gateUid] === true;
-}
-
-function displayValue(id: string, state: EditClientState, runtimeError: string | null): string {
-  if (id === "EDIT-01-LBL-PAGE-STATE") return state.resolved.page_state_uid ?? "—";
-  if (id === "EDIT-01-LBL-CURRENT-STAGE") return state.resolved.current_stage_uid ?? "—";
-  if (id === "EDIT-01-LBL-STAGE-SCORE") return state.resolved.current_stage_score === null ? "—" : String(state.resolved.current_stage_score);
-  if (id === "EDIT-01-LBL-ERROR-STATE") return state.resolved.current_error_uid ?? runtimeError ?? "—";
-  if (id === "EDIT-01-FLD-PROJECT") return state.resolved.project_id ?? "—";
-  if (id === "EDIT-01-FLD-TOPIC") return state.resolved.topic_id ?? "—";
-  if (id === "EDIT-01-FLD-TASK") return state.resolved.task_id ?? "—";
-  if (id === "EDIT-01-FLD-TIMECODE") return state.playhead === null ? "—" : String(state.playhead);
-  if (id === "EDIT-01-LBL-BINDING-FINGERPRINT") return state.resolved.input_fingerprint ?? "—";
-  if (id === "EDIT-01-LBL-LIPSYNC-SYNC-BINDING" || id === "EDIT-01-LBL-SUB-SYNC-BINDING") return state.resolved.dialogue_timing_binding_ref ?? "—";
-  return "—";
-}
-
-function Control({ spec, compact = false }: { spec: Spec; compact?: boolean }) {
-  const { locale } = useI18n();
-  const ui = useContext(EditUiContext);
-  if (!ui) throw new Error("EDIT_UI_CONTEXT_NOT_BOUND");
-  const {state,dispatch,runtimeError,setRuntimeError}=ui;
-  const label=editText(locale,spec.id);
-  const binding=EDIT_CONTROL_BINDINGS[spec.id as keyof typeof EDIT_CONTROL_BINDINGS];
-  const localEffect=binding?.effect_type === "UI_ONLY" || binding?.effect_type === "CONTEXT_STATE";
-  const allowed=Boolean(binding?.action_uid) && localEffect && gatePass(state,binding?.gate_uid);
-  const disabledReason=!binding?.action_uid?"READ_ONLY":!gatePass(state,binding.gate_uid)?binding.gate_uid:!localEffect?"FORMAL_RUNTIME_REQUIRED":undefined;
-  const common={
-    "data-control-id":spec.id,
-    "data-action-uid":binding?.action_uid ?? undefined,
-    "data-gate-uid":binding?.gate_uid ?? undefined,
-    "data-permission-uid":binding?.permission_uid ?? undefined,
-    "data-effect-type":binding?.effect_type ?? undefined,
-    "data-disabled-reason":disabledReason,
-  };
-  const block=(reason:string)=>setRuntimeError(`EDIT-01-ERR-CONTEXT-001: ${reason}`);
-  const click=()=>{
-    switch(spec.id){
-      case"EDIT-01-BTN-PLAY":dispatch({type:"PLAY"});return;
-      case"EDIT-01-BTN-PAUSE":dispatch({type:"PAUSE"});return;
-      case"EDIT-01-BTN-CLEAR-RANGE":dispatch({type:"RANGE_CLEAR"});return;
-      case"EDIT-01-CTL-SNAP":dispatch({type:"SNAP"});return;
-      case"EDIT-01-BTN-ZOOM-IN":dispatch({type:"ZOOM_IN"});return;
-      case"EDIT-01-BTN-ZOOM-OUT":dispatch({type:"ZOOM_OUT"});return;
-      case"EDIT-01-BTN-ZOOM-FIT":dispatch({type:"ZOOM_FIT"});return;
-      case"EDIT-01-BTN-MUTE":dispatch({type:"MUTE"});return;
-      case"EDIT-01-CTL-LOOP":dispatch({type:"LOOP"});return;
-      case"EDIT-01-BTN-SET-IN":if(state.playhead!==null){dispatch({type:"RANGE_IN",value:state.playhead});return;}block("CANONICAL_PLAYHEAD_REQUIRED");return;
-      case"EDIT-01-BTN-SET-OUT":if(state.playhead!==null){dispatch({type:"RANGE_OUT",value:state.playhead});return;}block("CANONICAL_PLAYHEAD_REQUIRED");return;
-      case"EDIT-01-BTN-PREV-FRAME":case"EDIT-01-BTN-NEXT-FRAME":block("CANONICAL_TIMEBASE_REQUIRED");return;
-      case"EDIT-01-BTN-FULLSCREEN":{
-        const el=document.querySelector('[data-component-uid="EDIT-01-CMP-PREVIEW"]');
-        if(el instanceof HTMLElement && el.requestFullscreen){void el.requestFullscreen().catch(()=>block("FULLSCREEN_REQUEST_FAILED"));return;}
-        block("FULLSCREEN_UNAVAILABLE");return;
-      }
-      case"EDIT-01-CTL-SUBTITLE-TOGGLE":dispatch({type:"SUBTITLE_TOGGLE"});return;
-      case"EDIT-01-BTN-API-COMPARE":case"EDIT-01-BTN-VOICE-COMPARE":case"EDIT-01-BTN-VERSION-COMPARE":return;
-      case"EDIT-01-BTN-VOICE-PREVIEW":case"EDIT-01-BTN-MIX-PREVIEW":case"EDIT-01-BTN-LIPSYNC-PREVIEW":return;
-      default:block("LOCAL_HANDLER_REQUIRES_RESOLVED_CONTEXT");
-    }
-  };
-
-  if(spec.kind==="readonly"||spec.kind==="overview")return <div className={`${styles.readonly} ${compact?styles.compact:""}`} {...common}><span>{label}</span><strong>{displayValue(spec.id,state,runtimeError)}</strong></div>;
-  if(spec.kind==="list")return <div className={styles.listControl} {...common}><span>{label}</span><div className={styles.listEmpty}>—</div></div>;
-  if(spec.kind==="preview")return <div className={styles.previewControl} {...common}><span>{label}</span><div>—</div></div>;
-  if(spec.kind==="segmented"){
-    const source=spec.id==="EDIT-01-CTL-SOURCE-MODE";
-    const options=source?["PROJECT_TASK","STANDALONE_UPLOAD"]:["AUTO","MANUAL"];
-    return <div className={styles.segmentedControl} {...common} aria-label={label}><span>{label}</span><div className={styles.segmentedButtons}>{options.map(option=>{
-      const selected=source?state.source_mode===option:state.execution_mode===option;
-      return <button key={option} type="button" disabled={!allowed} aria-pressed={selected} onClick={()=>source?dispatch({type:"SOURCE_MODE",value:option as EditSourceMode}):dispatch({type:"EXECUTION_MODE",value:option as EditExecutionMode})}>{option}</button>;
-    })}</div></div>;
-  }
-  if(spec.kind==="tab"){
-    const tab=TAB_BY_CONTROL[spec.id];
-    return <button className={`${styles.tab} ${state.inspector_tab===tab?styles.selectedTab:""}`} type="button" disabled={!allowed} onClick={()=>tab&&dispatch({type:"INSPECTOR_TAB",value:tab})} {...common}>{label}</button>;
-  }
-  if(spec.kind==="textarea"){
-    const correction=spec.id==="EDIT-01-FLD-API-INSTRUCTION";
-    return <label className={styles.fieldControl}><span>{label}</span><textarea {...common} disabled={!allowed} value={correction?state.correction_instruction:""} onChange={e=>correction&&dispatch({type:"CORRECTION_INSTRUCTION",value:e.target.value})} placeholder="—" /></label>;
-  }
-  if(spec.kind==="select"){
-    if(spec.id==="EDIT-01-CTL-PLAYBACK-RATE")return <label className={styles.fieldControl}><span>{label}</span><select {...common} disabled={!allowed} value={state.playback_rate} onChange={e=>dispatch({type:"RATE",value:Number(e.target.value) as EditClientState["playback_rate"]})}>{[0.25,0.5,1,1.5,2].map(v=><option key={v} value={v}>{v}x</option>)}</select></label>;
-    return <label className={styles.fieldControl}><span>{label}</span><select {...common} disabled defaultValue=""><option value="">—</option></select></label>;
-  }
-  if(spec.kind==="search"||spec.kind==="timecode"||spec.kind==="number"){
-    const media=spec.id==="EDIT-01-FLD-MEDIA-SEARCH";
-    const time=spec.id==="EDIT-01-FLD-TIMECODE";
-    const value=media?state.media_search:time?(state.playhead===null?"":String(state.playhead)):"";
-    return <label className={styles.fieldControl}><span>{label}</span><input {...common} disabled={!allowed} value={value} onChange={e=>media?dispatch({type:"MEDIA_SEARCH",value:e.target.value}):time?dispatch({type:"SEEK",value:e.target.value}):undefined} placeholder="—" inputMode={spec.kind==="number"?"decimal":undefined}/></label>;
-  }
-  if(spec.kind==="range"){
-    const volume=spec.id==="EDIT-01-CTL-VOLUME";
-    const value=volume?Math.round(state.preview_volume*100):0;
-    return <label className={styles.rangeControl}><span>{label}</span><input {...common} disabled={!allowed} type="range" min="0" max="100" value={value} onChange={e=>volume&&dispatch({type:"PREVIEW_VOLUME",value:Number(e.target.value)/100})}/></label>;
-  }
-  return <button className={`${styles.button} ${spec.kind==="primary"?styles.primary:""}`} type="button" disabled={!allowed} onClick={click} {...common}>{label}</button>;
-}'''
-          s=s[:start]+new_control+s[end:]
-          needle='export function EditVisual() {\n  const { locale } = useI18n();\n'
-          replacement='''export function EditVisual() {\n  const { locale } = useI18n();\n  const [state,dispatch]=useReducer(reduceEditClientState,INITIAL_EDIT_CLIENT_STATE);\n  const [runtimeError,setRuntimeError]=useState<string|null>(null);\n  useEffect(()=>{\n    const controller=new AbortController();\n    void readEditProjection(controller.signal).then(result=>{\n      if(result.ok){dispatch({type:"BIND_RESOLVED_CONTEXT",value:result.context});setRuntimeError(null);}\n      else setRuntimeError(`${result.error_uid}: ${result.reason_code}`);\n    });\n    return()=>controller.abort();\n  },[]);\n'''
-          assert needle in s
-          s=s.replace(needle,replacement,1)
-          s=s.replace('return <div className={styles.page} data-page-uid="EDIT-01"', 'return <EditUiContext.Provider value={{state,dispatch,runtimeError,setRuntimeError}}><div className={styles.page} data-page-uid="EDIT-01"',1)
-          ending='  </div>;\n}'
-          assert s.endswith(ending)
-          s=s[:-len(ending)]+'  </div></EditUiContext.Provider>;\n}'
-          p.write_text(s)
-          PY
-      - name: Verify authority counts and visual CSS untouched
+      - name: Verify authority and forbidden implementation drift
         run: |
           node - <<'NODE'
           const fs=require('fs');
-          const s=fs.readFileSync('src/domain/edit/editControlBindings.ts','utf8');
-          if(!s.includes('EDIT_MATERIALIZED_CONTROL_COUNT = 160'))throw new Error('control count missing');
-          if(!s.includes('EDIT_MATERIALIZED_ACTION_COUNT = 124'))throw new Error('action count missing');
-          const v=fs.readFileSync('src/components/pages/EditVisual.tsx','utf8');
-          for(const bad of ['/v1/edit/actions','requestTaskExecution','createVoiceRuntimeProfile'])if(v.includes(bad))throw new Error('forbidden '+bad);
+          const b=fs.readFileSync('src/domain/edit/editControlBindings.ts','utf8');
+          if(!b.includes('EDIT_MATERIALIZED_CONTROL_COUNT = 160')) throw new Error('EDIT control count mismatch');
+          if(!b.includes('EDIT_MATERIALIZED_ACTION_COUNT = 124')) throw new Error('EDIT action count mismatch');
+          for(const file of ['src/domain/edit/editClientPort.ts','src/domain/edit/editProjectionPort.ts','src/domain/edit/editClientState.ts']){
+            const s=fs.readFileSync(file,'utf8');
+            for(const bad of ['/v1/edit/actions','requestTaskExecution','createVoiceRuntimeProfile']) if(s.includes(bad)) throw new Error(file+' contains forbidden '+bad);
+          }
           NODE
           test "$(git hash-object src/components/pages/EditVisual.module.css)" = "6ec980b81fb6930a019d2b9ee6168e9d0f6f1d4e"
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
-      - name: Commit validated wiring and self-clean workflow
+      - name: Commit validated registry and self-clean
         run: |
           rm -f .github/workflows/edit01-local-wiring-once.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/domain/edit/editControlBindings.ts src/components/pages/EditVisual.tsx .github/workflows/edit01-local-wiring-once.yml
-          git diff --cached --quiet && exit 0
-          git commit -m "wire(edit): materialize authority bindings and local gated controls"
+          git add src/domain/edit/editControlBindings.ts .github/workflows/edit01-local-wiring-once.yml
+          git commit -m "materialize(edit): bind 160 controls to FINAL_LOCKED authority"
           git push origin HEAD:new
