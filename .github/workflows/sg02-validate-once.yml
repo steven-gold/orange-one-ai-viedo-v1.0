@@ -1,0 +1,48 @@
+name: SG02 governed validation
+on:
+  push:
+    paths:
+      - '.github/workflows/sg02-validate-once.yml'
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: SG02 contract checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const v=fs.readFileSync('src/components/pages/QaCriteriaVisual.tsx','utf8');
+          const p=fs.readFileSync('src/domain/qaCriteria/qaCriteriaRuntimePort.ts','utf8');
+          const ids=[...v.matchAll(/data-control-id=(?:\{|)"([^"]+)"/g)].map(x=>x[1]);
+          const expected=[
+            'CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN','CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN','CTRL-ADMIN-SG-02-THRESHOLDS-OPEN','CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN','CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN','CTRL-ADMIN-SG-02-GATE-POLICY-OPEN','CTRL-ADMIN-SG-02-APPROVAL-OPEN','CTRL-ADMIN-SG-02-IMPACT-OPEN','CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE','CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE','CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN'];
+          for(const id of expected)if(!v.includes(id))throw new Error('missing SG02 control '+id);
+          if(expected.length!==11)throw new Error('SG02 control authority mismatch');
+          for(const forbidden of ['hardcoded_threshold','sample_or_mock_criteria_data','bulkSocialPublish'])if(v.includes(forbidden))throw new Error('forbidden SG02 content '+forbidden);
+          if(!v.includes('ConfigureGovernedResourceRequest')||!v.includes('ApproveGovernedResourceRequest'))throw new Error('registered forms missing');
+          if(!p.includes("/v1/governance/resources/${id}")||!p.includes("/v1/governance/resources/${id}/approve"))throw new Error('registered governance routes missing');
+          if(!v.includes('control_enabled')||!v.includes('disabled={!enabled(CONFIGURE_ID)}')||!v.includes('disabled={!enabled(APPROVE_ID)}'))throw new Error('effectful gates are not fail-closed');
+          if(v.includes('VISUAL_ONLY_NO_BUSINESS_DATA'))throw new Error('visual-only fixed state remains');
+          NODE
+          test "$(git hash-object src/components/pages/QaCriteriaVisual.module.css)" = "eb139e898597512d388f99bd76eb5b4a6c0980b2"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Self clean
+        run: |
+          rm -f .github/workflows/sg02-validate-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/sg02-validate-once.yml
+          git commit -m "chore(sg02): remove one-shot validation workflow"
+          git push origin HEAD:new
