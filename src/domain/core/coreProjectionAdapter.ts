@@ -1,4 +1,5 @@
 import type { CoreExactRefs } from "./coreClientState";
+import { isControlledTestMode } from "../testing/controlledTestData";
 
 export type CoreProjectOption = { project_id: string; project_version_ref: string | null; label: string };
 export type CoreTopicOption = { topic_id: string; topic_version_ref: string | null; label: string };
@@ -54,9 +55,19 @@ function validateProjection(value: CoreNormalizedProjection): boolean {
   return true;
 }
 
+function controlledTestProjection(rawProjection: unknown): CoreProjectionResolveResult {
+  if (!rawProjection || typeof rawProjection !== "object") return { ok: false, reason_code: "CORE_TEST_PROJECTION_INVALID" };
+  const projection = rawProjection as CoreNormalizedProjection;
+  if (!validateProjection(projection)) return { ok: false, reason_code: "CORE_TEST_PROJECTION_SCHEMA_REJECTED" };
+  return { ok: true, projection };
+}
+
 export async function resolveCoreProjection(rawProjection: unknown): Promise<CoreProjectionResolveResult> {
   const current = resolver;
-  if (!current) return { ok: false, reason_code: "CORE_PROJECTION_SCHEMA_ADAPTER_NOT_BOUND" };
+  if (!current) {
+    if (isControlledTestMode()) return controlledTestProjection(rawProjection);
+    return { ok: false, reason_code: "CORE_PROJECTION_SCHEMA_ADAPTER_NOT_BOUND" };
+  }
   try {
     const projection = await current.resolve(rawProjection);
     if (!validateProjection(projection)) return { ok: false, reason_code: "CORE_PROJECTION_SCHEMA_ADAPTER_REJECTED" };
