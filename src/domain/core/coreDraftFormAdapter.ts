@@ -1,3 +1,5 @@
+import { createControlledTestFixtureLabel, createControlledTestMetadata, isControlledTestMode } from "../testing/controlledTestData";
+
 export type CoreDraftFormKind = "PROJECT" | "TOPIC";
 
 export type CoreDraftFormContext = {
@@ -27,9 +29,23 @@ function isNonEmptyObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value) && Object.keys(value).length > 0;
 }
 
+function controlledTestPayload(context: CoreDraftFormContext): CoreDraftFormResult {
+  const metadata = createControlledTestMetadata(`CORE-${context.kind}`);
+  return {
+    ok: true,
+    payload: {
+      ...metadata,
+      fixture_kind: context.kind,
+      fixture_label: createControlledTestFixtureLabel(context.kind === "PROJECT" ? "Project" : "Topic"),
+      ...(context.project_id ? { project_id: context.project_id } : {}),
+    },
+  };
+}
+
 export async function requestCoreDraftFormPayload(context: CoreDraftFormContext): Promise<CoreDraftFormResult> {
   const current = adapter;
   if (!current) {
+    if (isControlledTestMode()) return controlledTestPayload(context);
     return {
       ok: false,
       reason_code: context.kind === "PROJECT"
