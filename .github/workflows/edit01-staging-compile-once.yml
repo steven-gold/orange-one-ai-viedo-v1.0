@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: edit01-functional-staging
+          fetch-depth: 0
       - name: Locks and counts
         run: |
           set -euo pipefail
