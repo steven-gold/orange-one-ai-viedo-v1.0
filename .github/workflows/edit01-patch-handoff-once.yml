@@ -1,0 +1,33 @@
+name: EDIT01 Patch Handoff Once
+on:
+  push:
+    branches: [edit01-functional-staging]
+    paths: ['.github/workflows/edit01-patch-handoff-once.yml']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: edit01-functional-staging
+          fetch-depth: 0
+      - name: Patch exact TEST_ONLY handoff validation and self-clean
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/server/testing/controlledEditTestRuntime.ts')
+          s=p.read_text()
+          old='case"handoffVoiceToQA":if(state.page_state_uid!=="EDIT-01-ST-PAGE-LOCKED"||!state.saved_edit_version_id||!state.output_version_id)return fail(request.correlation_id,"EDIT-01-ERR-STAGE-001","LOCKED_OUTPUT_REQUIRED");state.handoff_ref="TEST-EDIT-VOICE-QA-HANDOFF-001";state.page_state_uid="EDIT-01-ST-PAGE-HANDED_OFF";state.stage_uid="EDIT-01-STAGE-05-QA-HANDOFF";state.stage_phase="COMPLETED";return ok(request.correlation_id,{handoff_ref:state.handoff_ref});'
+          new='case"handoffVoiceToQA":{const payload=request.payload&&typeof request.payload==="object"?request.payload as Record<string,unknown>:{};const saved=typeof payload.saved_edit_version_id==="string"&&payload.saved_edit_version_id?payload.saved_edit_version_id:null;const output=typeof payload.output_version_id==="string"&&payload.output_version_id?payload.output_version_id:null;const locked=typeof payload.locked_version_ref==="string"&&payload.locked_version_ref?payload.locked_version_ref:null;if(!saved||!output||!locked)return fail(request.correlation_id,"EDIT-01-ERR-STAGE-001","LOCKED_OUTPUT_REQUIRED");state.saved_edit_version_id=saved;state.output_version_id=output;state.handoff_ref="TEST-EDIT-VOICE-QA-HANDOFF-001";state.page_state_uid="EDIT-01-ST-PAGE-HANDED_OFF";state.stage_uid="EDIT-01-STAGE-05-QA-HANDOFF";state.stage_phase="COMPLETED";return ok(request.correlation_id,{handoff_ref:state.handoff_ref,locked_version_ref:locked});}'
+          if old not in s: raise SystemExit('TARGET_NOT_FOUND')
+          p.write_text(s.replace(old,new))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/edit01-patch-handoff-once.yml
+          git add src/server/testing/controlledEditTestRuntime.ts
+          git commit -m 'fix(edit): validate exact refs for controlled QA handoff'
+          git push origin HEAD:edit01-functional-staging
