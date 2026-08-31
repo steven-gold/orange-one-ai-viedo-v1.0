@@ -1,0 +1,56 @@
+name: ASSET01 authority bindings
+on:
+  push:
+    paths:
+      - '.github/workflows/asset01-bindings-once.yml'
+permissions:
+  contents: write
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Generate ASSET bindings
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import json,yaml
+          p=Path('authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml')
+          d=yaml.safe_load(p.read_text())
+          controls=d['registries']['controls']; actions={x['action_uid']:x for x in d['registries']['actions']}
+          assert len(controls)==85 and len(actions)==44
+          out={}
+          for c in controls:
+              a=actions[c['action_uid']]
+              rb=a.get('runtime_binding') or {}
+              out[c['control_uid']]={'action_uid':c['action_uid'],'gate_uid':c['gate_uid'],'permission_uid':c['permission_uid'],'effect_type':a['effect_type'],'binding_kind':rb.get('binding_kind'),'port_uid':rb.get('port_uid'),'shared_operation_id':rb.get('shared_operation_id')}
+          assert len(out)==85
+          Path('src/domain/asset/assetControlBindings.ts').write_text('// GENERATED FROM ASSET-01 FINAL_LOCKED AUTHORITY. DO NOT HAND-EDIT.\nexport const ASSET_CONTROL_BINDINGS = '+json.dumps(out,ensure_ascii=False,separators=(',',':'))+' as const;\nexport type AssetControlUid = keyof typeof ASSET_CONTROL_BINDINGS;\nexport const ASSET_MATERIALIZED_CONTROL_COUNT = 85 as const;\nexport const ASSET_MATERIALIZED_ACTION_COUNT = 44 as const;\n')
+          PY
+      - name: Validate authority and CSS lock
+        run: |
+          node - <<'NODE'
+          const s=require('fs').readFileSync('src/domain/asset/assetControlBindings.ts','utf8');
+          for(const x of ['ASSET-01-ACT-FLOW-START','ASSET-01-ACT-CORRECTION-EXECUTE','ASSET-01-ACT-LAYER-DOC-CREATE','ASSET-01-ACT-PATCH-ACCEPT','ASSET-01-ACT-HANDOFF'])if(!s.includes(x))throw new Error('missing '+x);
+          if(!s.includes('ASSET_MATERIALIZED_CONTROL_COUNT = 85'))throw new Error('control count');
+          NODE
+          test "$(git hash-object src/components/pages/AssetVisual.module.css)" = "80220b164df59a3a4d03ee3ac6886b844d785552"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Commit and self-clean
+        run: |
+          rm -f .github/workflows/asset01-bindings-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/domain/asset/assetControlBindings.ts .github/workflows/asset01-bindings-once.yml
+          git commit -m "materialize(asset): bind 85 controls to FINAL_LOCKED authority"
+          git push origin HEAD:new
