@@ -1,4 +1,4 @@
-import { ASSET_ACTION_PORT, type AssetPortUid, type AssetRuntimeRequest, type AssetRuntimeResult } from "@/domain/asset/assetRuntimeContract";
+import { ASSET_ACTION_PORT, type AssetPortUid, type AssetRuntimeErrorUid, type AssetRuntimeRequest, type AssetRuntimeResult } from "@/domain/asset/assetRuntimeContract";
 import type { AssetNormalizedProjection, AssetProjectionCandidateVersion } from "@/domain/asset/assetProjectionPort";
 import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 
@@ -71,7 +71,7 @@ function canonicalFilename(version: number) { return `TEST_ASSET_CHARACTER_V${St
 function record(value: unknown): Record<string, unknown> { return value && typeof value === "object" ? value as Record<string, unknown> : {}; }
 function text(value: unknown) { return typeof value === "string" && value.trim() ? value : null; }
 
-function fail(request: AssetRuntimeRequest, error_uid: AssetRuntimeResult extends { ok: false; error_uid: infer E } ? E : never, reason_code: string, status: number): AssetRuntimeResult {
+function fail(request: AssetRuntimeRequest, error_uid: AssetRuntimeErrorUid, reason_code: string, status: number): AssetRuntimeResult {
   return { ok: false, error_uid, reason_code, correlation_id: request.correlation_id, status };
 }
 
