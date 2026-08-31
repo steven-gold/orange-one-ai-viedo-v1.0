@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { EDIT_CONTROL_TEXT, editText, editUiText } from "@/i18n/editCatalog";
-import { EditRuntimeControl, EditRuntimeProvider } from "./EditControlRuntime";
+import { EditRuntimeControl, EditRuntimeProvider, useEditRuntimeState } from "./EditControlRuntime";
 import styles from "./EditVisual.module.css";
 
 type Kind =
@@ -257,7 +257,10 @@ function Title({ text, meta }: { text: string; meta?: string }) {
   return <div className={styles.titleRow}><h2>{text}</h2>{meta ? <span>{meta}</span> : null}</div>;
 }
 
-export function EditVisual() {
+export function EditVisual() { return <EditRuntimeProvider><EditVisualBody /></EditRuntimeProvider>; }
+
+function EditVisualBody() {
+  const { state } = useEditRuntimeState();
   const { locale } = useI18n();
   const registryValid = useMemo(() => {
     const ids = new Set(ALL.map((spec) => spec.id));
@@ -274,7 +277,7 @@ export function EditVisual() {
   const apiVisible = API.filter((spec) => ["EDIT-01-LBL-CURRENT-SCRIPT-SECTION", "EDIT-01-LBL-BINDING-FINGERPRINT"].includes(spec.id));
   const apiConditional = API.filter((spec) => !apiVisible.includes(spec));
 
-  return <EditRuntimeProvider><div className={styles.page} data-page-uid="EDIT-01" data-vis-step="VIS-05" data-page-state="EMPTY" data-authority-controls="160" data-registry-valid={registryValid ? "true" : "false"}>
+  return <div className={styles.page} data-page-uid="EDIT-01" data-vis-step="VIS-05" data-page-state={state.resolved.page_state_uid ?? "EDIT-01-ST-PAGE-EMPTY"} data-current-stage={state.resolved.current_stage_uid ?? undefined} data-stage-phase={state.resolved.current_stage_phase ?? undefined} data-authority-controls="160" data-registry-valid={registryValid ? "true" : "false"}>
     <section className={styles.contextBar} data-section-id="EDIT-01-SEC-01" data-visual-uid="EDIT-01-VIS-CONTEXT" data-component-uid="EDIT-01-CMP-SOURCE-BAR">
       <div className={styles.contextGrid}>{contextMain.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
       <div className={styles.contextStatus}>{contextStatus.map((spec) => <Control key={spec.id} spec={spec} compact />)}</div>
@@ -284,15 +287,15 @@ export function EditVisual() {
       <section className={`${styles.panel} ${styles.assetPanel}`} data-section-id="EDIT-01-SEC-02" data-visual-uid="EDIT-01-VIS-ASSET-BIND" data-component-uid="EDIT-01-CMP-MEDIA-BIN">
         <Title text={editUiText(locale, "assetBinding")} meta="20%" />
         <div className={styles.stack}>{mediaVisible.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <div className={styles.bindingCards}>{["Blueprint / Script", "DNA", "Asset ID / Version", "Filename / Checksum", "Binding Status"].map((label) => <div className={styles.bindingCard} key={label}><span>{label}</span><strong>—</strong></div>)}</div>
+        <div className={styles.bindingCards}><div className={styles.bindingCard}><span>Blueprint</span><strong>{state.resolved.locked_blueprint_ref ?? "—"}</strong></div><div className={styles.bindingCard}><span>Production Package</span><strong>{state.resolved.production_package_ref ?? "—"}</strong></div><div className={styles.bindingCard}><span>Input Manifest</span><strong>{state.resolved.input_manifest_ref ?? "—"}</strong></div><div className={styles.bindingCard}><span>Input Fingerprint</span><strong>{state.resolved.input_fingerprint ?? "—"}</strong></div><div className={styles.bindingCard}><span>Binding Status</span><strong>{state.resolved.gate_state["EDIT-01-GATE-BINDING-INTEGRITY"] ? "BOUND" : "—"}</strong></div></div>
         <div className={styles.emptyNote}>{editUiText(locale, "noBoundInput")}</div>
-        <div className={styles.hiddenRegistry} aria-hidden="true">{mediaConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+        <div className={state.source_mode === "STANDALONE_UPLOAD" ? styles.stack : styles.hiddenRegistry} aria-hidden={state.source_mode === "STANDALONE_UPLOAD" ? undefined : "true"}>{mediaConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
       </section>
 
       <div className={styles.productionStack}>
         <section className={`${styles.panel} ${styles.previewPanel}`} data-section-id="EDIT-01-SEC-03" data-visual-uid="EDIT-01-VIS-PREVIEW">
           <Title text={editUiText(locale, "preview")} meta="16:9" />
-          <div className={styles.viewer} data-component-uid="EDIT-01-CMP-PREVIEW">—</div>
+          <div className={styles.viewer} data-component-uid="EDIT-01-CMP-PREVIEW" data-preview-ref={state.resolved.preview_uri ?? undefined}>{state.resolved.preview_uri ?? "—"}</div>
           <div className={styles.transport} data-component-uid="EDIT-01-CMP-TRANSPORT">{PREVIEW.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
         </section>
 
@@ -326,8 +329,8 @@ export function EditVisual() {
       <section className={`${styles.panel} ${styles.semanticPanel}`} data-section-id="EDIT-01-SEC-08" data-visual-uid="EDIT-01-VIS-SEMANTIC" data-component-uid="EDIT-01-CMP-API">
         <Title text={editUiText(locale, "semantic")} meta="38%" />
         <div className={styles.semanticContext}>{apiVisible.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <div className={styles.conditionNotice}>{editUiText(locale, "correctionUnavailable")}</div>
-        <div className={styles.hiddenRegistry} aria-hidden="true">{apiConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+        {state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? null : <div className={styles.conditionNotice}>{editUiText(locale, "correctionUnavailable")}</div>}
+        <div className={state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? styles.stack : styles.hiddenRegistry} aria-hidden={state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? undefined : "true"}>{apiConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
         <div className={styles.evaluationBox} data-section-id="EDIT-01-SEC-13" data-component-uid="EDIT-01-CMP-STAGE-EVALUATION"><div data-component-uid="EDIT-01-CMP-QA">{EVALUATION.map((spec) => <Control key={spec.id} spec={spec} />)}</div></div>
       </section>
 
@@ -343,12 +346,10 @@ export function EditVisual() {
         <Title text={editUiText(locale, "inspector")} meta="34%" />
         <div className={styles.tabs}>{inspectorTabs.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
         <div className={styles.inspectorGrid}>{inspectorFields.slice(0, 3).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <div className={styles.hiddenRegistry} aria-hidden="true">
-          <section data-section-id="EDIT-01-SEC-09" data-component-uid="EDIT-01-CMP-VOICE">{VOICE.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
-          <section data-section-id="EDIT-01-SEC-10" data-component-uid="EDIT-01-CMP-AUDIO">{AUDIO.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
-          <section data-section-id="EDIT-01-SEC-11" data-component-uid="EDIT-01-CMP-LIPSYNC">{LIPSYNC.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
-          <section data-section-id="EDIT-01-SEC-12" data-component-uid="EDIT-01-CMP-SUBTITLE">{SUBTITLE.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
-        </div>
+        <section className={state.inspector_tab === "VOICE" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "VOICE" ? undefined : "true"} data-section-id="EDIT-01-SEC-09" data-component-uid="EDIT-01-CMP-VOICE">{VOICE.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
+        <section className={state.inspector_tab === "AUDIO" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "AUDIO" ? undefined : "true"} data-section-id="EDIT-01-SEC-10" data-component-uid="EDIT-01-CMP-AUDIO">{AUDIO.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
+        <section className={state.inspector_tab === "LIPSYNC" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "LIPSYNC" ? undefined : "true"} data-section-id="EDIT-01-SEC-11" data-component-uid="EDIT-01-CMP-LIPSYNC">{LIPSYNC.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
+        <section className={state.inspector_tab === "SUBTITLE" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "SUBTITLE" ? undefined : "true"} data-section-id="EDIT-01-SEC-12" data-component-uid="EDIT-01-CMP-SUBTITLE">{SUBTITLE.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
       </section>
 
       <section className={`${styles.panel} ${styles.comparePanel}`} data-section-id="EDIT-01-SEC-14" data-visual-uid="EDIT-01-VIS-COMPARE" data-component-uid="EDIT-01-CMP-VERSION">
@@ -358,9 +359,9 @@ export function EditVisual() {
       <section className={`${styles.panel} ${styles.outputPanel}`} data-section-id="EDIT-01-SEC-15" data-visual-uid="EDIT-01-VIS-OUTPUT" data-component-uid="EDIT-01-CMP-OUTPUT">
         <Title text={editUiText(locale, "output")} meta="32%" />
         <div className={styles.outputGrid}>{OUTPUT.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <div className={styles.stageRail} data-section-id="EDIT-01-SEC-16" data-component-uid="EDIT-01-CMP-STAGE-RAIL">{STAGES.map((stage, index) => <div key={stage} data-stage-uid={stage}><span>{index + 1}</span><strong>{stage.replace("EDIT-01-STAGE-", "")}</strong><em>—</em></div>)}</div>
+        <div className={styles.stageRail} data-section-id="EDIT-01-SEC-16" data-component-uid="EDIT-01-CMP-STAGE-RAIL">{STAGES.map((stage, index) => <div key={stage} data-stage-uid={stage} data-stage-active={state.resolved.current_stage_uid === stage ? "true" : undefined}><span>{index + 1}</span><strong>{stage.replace("EDIT-01-STAGE-", "")}</strong><em>{state.resolved.current_stage_uid === stage ? state.resolved.current_stage_phase ?? "—" : "—"}</em></div>)}</div>
         <div className={styles.statusRail} data-component-uid="EDIT-01-CMP-STATUS">{STATUS.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
       </section>
     </div>
-  </div></EditRuntimeProvider>;
+  </div>;
 }
