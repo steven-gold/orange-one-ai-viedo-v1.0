@@ -1,0 +1,117 @@
+name: VIDEO01 interaction closure
+on:
+  push:
+    paths:
+      - '.github/workflows/video01-interaction-closure-once.yml'
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Patch VIDEO01 projection and interaction closure
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/VideoVisual.tsx')
+          s=p.read_text()
+          s=s.replace('import { useMemo, useReducer, useState } from "react";','import { useEffect, useMemo, useReducer, useRef, useState } from "react";',1)
+          s=s.replace('import type { VideoActionUid } from "@/domain/video/videoRuntimeContract";','import type { VideoActionUid } from "@/domain/video/videoRuntimeContract";\nimport { readVideoProjection, type VideoListItem, type VideoNormalizedProjection } from "@/domain/video/videoProjectionPort";',1)
+          s=s.replace('type ControlProps={spec:Spec;value?:string|number;mode?:VideoMode;disabled?:boolean;onAction:(id:string)=>void;onValue:(id:string,value:string)=>void};','type ControlProps={spec:Spec;value?:string|number;mode?:VideoMode;disabled?:boolean;options?:readonly VideoListItem[];onAction:(id:string)=>void;onValue:(id:string,value:string)=>void};',1)
+          s=s.replace('function Control({spec,value="",mode="AUTO",disabled=false,onAction,onValue}:ControlProps) {','function Control({spec,value="",mode="AUTO",disabled=false,options=[],onAction,onValue}:ControlProps) {',1)
+          s=s.replace('if(spec.kind==="list") return <div className={styles.listControl} data-control-id={spec.id} data-action-uid={action}><span>{label}</span><div className={styles.listEmpty}>—</div></div>;','if(spec.kind==="list") return <div className={styles.listControl} data-control-id={spec.id} data-action-uid={action}><span>{label}</span><div className={styles.listEmpty}>{options.length?options.map(item=><button key={item.ref} type="button" disabled={disabled} onClick={()=>onValue(spec.id,item.ref)}>{item.label}</button>):"—"}</div></div>;',1)
+          s=s.replace('if(spec.kind==="select") return <label className={styles.inputControl}><span>{label}</span><select data-control-id={spec.id} data-action-uid={action} value={String(value)} disabled={disabled} onChange={e=>onValue(spec.id,e.target.value)}><option value="">—</option></select></label>;','if(spec.kind==="select") return <label className={styles.inputControl}><span>{label}</span><select data-control-id={spec.id} data-action-uid={action} value={String(value)} disabled={disabled} onChange={e=>onValue(spec.id,e.target.value)}><option value="">—</option>{options.map(item=><option key={item.ref} value={item.ref}>{item.label}</option>)}</select></label>;',1)
+          needle='''  const [state,dispatch]=useReducer(reduceVideoClientState,INITIAL_VIDEO_CLIENT_STATE);\n  const [pageState,setPageState]=useState<PageState>("READY");'''
+          repl='''  const [state,dispatch]=useReducer(reduceVideoClientState,INITIAL_VIDEO_CLIENT_STATE);\n  const [projection,setProjection]=useState<VideoNormalizedProjection|null>(null);\n  const videoRef=useRef<HTMLVideoElement|null>(null);\n  const [pageState,setPageState]=useState<PageState>("READY");'''
+          assert needle in s
+          s=s.replace(needle,repl,1)
+          needle='''  const [busy,setBusy]=useState<VideoActionUid|null>(null);\n  const block=(reason:string)=>{setPageState("ERROR");setRuntimeReason(reason);};'''
+          repl='''  const [busy,setBusy]=useState<VideoActionUid|null>(null);\n  const block=(reason:string)=>{setPageState("ERROR");setRuntimeReason(reason);};\n  useEffect(()=>{const c=new AbortController();void readVideoProjection(c.signal).then(result=>{if(result.ok){setProjection(result.projection);setPageState("READY");setRuntimeReason(null);}else{setProjection(null);setPageState("ERROR");setRuntimeReason(`${result.error_uid}:${result.reason_code}`);}});return()=>c.abort();},[]);\n  const mediaUri=projection?.values["VIDEO-01-FLD-OUTPUT-URI"]??"";\n  const candidateReady=projection?.gate_state["VIDEO-01-GATE-CANDIDATE"]===true&&Boolean(mediaUri);\n  const requireMedia=()=>candidateReady||(block("VIDEO-01-ERR-CANDIDATE-001:VERIFIED_VIDEO_OUTPUT_REQUIRED"),false);'''
+          assert needle in s
+          s=s.replace(needle,repl,1)
+          s=s.replace('setRuntimeReason(result.reason_code);','setRuntimeReason(`${result.error_uid}:${result.reason_code}`);',1)
+          old='''    case"VIDEO-01-ACT-PREVIEW-SEEK":dispatch({action_uid:"VIDEO-01-ACT-PREVIEW-SEEK",seek:Number(value)||0});break;'''
+          new='''    case"VIDEO-01-ACT-PREVIEW-SEEK":{if(!requireMedia())break;const seek=Number(value)||0;dispatch({action_uid:"VIDEO-01-ACT-PREVIEW-SEEK",seek});if(videoRef.current)videoRef.current.currentTime=seek;break;}'''
+          assert old in s
+          s=s.replace(old,new,1)
+          s=s.replace('''    case"VIDEO-01-ACT-PREVIEW-PLAY":dispatch({action_uid:action});return;\n    case"VIDEO-01-ACT-PREVIEW-VOLUME":dispatch({action_uid:action});return;\n    case"VIDEO-01-ACT-PREVIEW-FULLSCREEN":dispatch({action_uid:action,fullscreen:!state.fullscreen});return;''','''    case"VIDEO-01-ACT-PREVIEW-PLAY":{if(!requireMedia())return;const el=videoRef.current;if(!el){block("VIDEO-01-ERR-CANDIDATE-001:VIDEO_ELEMENT_UNAVAILABLE");return;}if(el.paused){void el.play().then(()=>{dispatch({action_uid:action});setPageState("READY");setRuntimeReason(null);}).catch(()=>block("VIDEO-01-ERR-CANDIDATE-001:PLAYBACK_START_FAILED"));}else{el.pause();dispatch({action_uid:action});setPageState("READY");setRuntimeReason(null);}return;}\n    case"VIDEO-01-ACT-PREVIEW-VOLUME":{if(!requireMedia())return;const el=videoRef.current;if(!el){block("VIDEO-01-ERR-CANDIDATE-001:VIDEO_ELEMENT_UNAVAILABLE");return;}el.muted=!el.muted;dispatch({action_uid:action});setPageState("READY");setRuntimeReason(null);return;}\n    case"VIDEO-01-ACT-PREVIEW-FULLSCREEN":{if(!requireMedia())return;const el=videoRef.current;if(!el||!el.requestFullscreen){block("VIDEO-01-ERR-CANDIDATE-001:FULLSCREEN_UNAVAILABLE");return;}void el.requestFullscreen().then(()=>{dispatch({action_uid:action,fullscreen:true});setPageState("READY");setRuntimeReason(null);}).catch(()=>block("VIDEO-01-ERR-CANDIDATE-001:FULLSCREEN_REQUEST_FAILED"));return;}''',1)
+          s=s.replace('''    case"VIDEO-01-ACT-COMPARE-TOGGLE":dispatch({action_uid:action});return;''','''    case"VIDEO-01-ACT-COMPARE-TOGGLE":dispatch({action_uid:action});setPageState("READY");setRuntimeReason(null);return;''',1)
+          s=s.replace('''    case"VIDEO-01-ACT-CORRECTION-OPEN":dispatch({action_uid:action});return;''','''    case"VIDEO-01-ACT-CORRECTION-OPEN":dispatch({action_uid:action});setPageState("READY");setRuntimeReason(null);return;''',1)
+          # projection-backed values before default
+          s=s.replace('''    case"VIDEO-01-FLD-PAGE-STATE":return pageState;case"VIDEO-01-FLD-ERROR":return runtimeReason??"";case"VIDEO-01-FLD-DISABLED-REASON":return runtimeReason??"";case"VIDEO-01-FLD-STATUS":return busy??pageState;\n    default:return"";''','''    case"VIDEO-01-FLD-PAGE-STATE":return pageState;case"VIDEO-01-FLD-ERROR":return runtimeReason??"";case"VIDEO-01-FLD-DISABLED-REASON":return runtimeReason??"";case"VIDEO-01-FLD-STATUS":return busy??projection?.page_state??pageState;case"VIDEO-01-FLD-AUDIT":return projection?.values[id]??"";\n    default:return projection?.values[id]??"";''',1)
+          s=s.replace('''  const control=(spec:Spec)=><Control key={spec.id} spec={spec} value={valueFor(spec.id)} mode={state.mode} disabled={busy!==null} onAction={onAction} onValue={onValue}/>;''','''  const optionsFor=(id:string)=>projection?.lists[id]??[];\n  const control=(spec:Spec)=><Control key={spec.id} spec={spec} value={valueFor(spec.id)} mode={state.mode} options={optionsFor(spec.id)} disabled={busy!==null} onAction={onAction} onValue={onValue}/>;''',1)
+          old_view='<div className={styles.viewerScreen} data-viewer-count={state.compare?"2":"1"}>—</div>'
+          new_view='<div className={styles.viewerScreen} data-viewer-count={state.compare?"2":"1"}>{candidateReady?<video ref={videoRef} src={mediaUri} preload="metadata" data-video-output-bound="true"/>:<span data-video-output-bound="false">—</span>}</div>'
+          assert old_view in s
+          s=s.replace(old_view,new_view,1)
+          p.write_text(s)
+          PY
+      - name: Contract and pollution checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');const s=fs.readFileSync('src/components/pages/VideoVisual.tsx','utf8');
+          if(!s.includes('readVideoProjection'))throw new Error('projection read missing');
+          if(!s.includes('VIDEO-01-GATE-CANDIDATE'))throw new Error('candidate gate missing');
+          if(!s.includes('VERIFIED_VIDEO_OUTPUT_REQUIRED'))throw new Error('visible media blocker missing');
+          if(!s.includes('data-video-output-bound="true"'))throw new Error('real output player binding missing');
+          if(!s.includes('`${result.error_uid}:${result.reason_code}`'))throw new Error('formal runtime error uid not visible');
+          if(s.includes('providerPicker')||s.includes('modelPicker')||s.includes('fakeVideo')||s.includes('/v1/video/actions'))throw new Error('unregistered video implementation introduced');
+          const ids=[...s.matchAll(/\{id:"(VIDEO-01-[^"]+)"/g)].map(m=>m[1]);if(new Set(ids).size!==85)throw new Error('VIDEO authority control count drift');
+          NODE
+          test "$(git hash-object src/components/pages/VideoVisual.module.css)" = "7772cb072a1cae1c6b71ace0e93afc4a92731060"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run production server
+        run: |
+          npm start -- -H 127.0.0.1 -p 3000 > /tmp/video-server.log 2>&1 &
+          for i in $(seq 1 60); do if curl -fsS http://127.0.0.1:3000/video >/dev/null; then exit 0; fi; sleep 1; done
+          cat /tmp/video-server.log
+          exit 1
+      - name: Chromium interaction closure
+        run: |
+          cat > video01-check.cjs <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{const b=await chromium.launch({headless:true}),p=await b.newPage();await p.goto('http://127.0.0.1:3000/video',{waitUntil:'networkidle'});
+            const reason=()=>p.locator('[data-control-id="VIDEO-01-FLD-ERROR"] strong');
+            await p.waitForFunction(()=>document.querySelector('[data-control-id="VIDEO-01-FLD-ERROR"] strong')?.textContent?.includes('UI_PROJECTION_RUNTIME_NOT_BOUND'));
+            async function clickReason(id,expected){const el=p.locator(`[data-control-id="${id}"]`);if(await el.isDisabled())throw new Error(id+' disabled');await el.click();await p.waitForFunction((expected)=>document.querySelector('[data-control-id="VIDEO-01-FLD-ERROR"] strong')?.textContent?.includes(expected),expected);}
+            await clickReason('VIDEO-01-BTN-PLAY','VERIFIED_VIDEO_OUTPUT_REQUIRED');
+            await clickReason('VIDEO-01-BTN-VOLUME','VERIFIED_VIDEO_OUTPUT_REQUIRED');
+            await clickReason('VIDEO-01-BTN-FULLSCREEN','VERIFIED_VIDEO_OUTPUT_REQUIRED');
+            const seek=p.locator('[data-control-id="VIDEO-01-CTL-SEEK"]');if(await seek.isDisabled())throw new Error('seek disabled');await seek.fill('25');await p.waitForFunction(()=>document.querySelector('[data-control-id="VIDEO-01-FLD-ERROR"] strong')?.textContent?.includes('VERIFIED_VIDEO_OUTPUT_REQUIRED'));
+            const compare=p.locator('[data-control-id="VIDEO-01-CTL-COMPARE"]');await compare.click();if(await p.locator('[data-control-id="VIDEO-01-CTL-VERSION-A"]').count()!==1)throw new Error('compare did not render version A');
+            const correction=p.locator('[data-control-id="VIDEO-01-BTN-MODIFY"]');await correction.click();if(await p.locator('[data-control-id="VIDEO-01-TXT-CORRECTION"]').count()!==1)throw new Error('correction panel did not render');
+            await clickReason('VIDEO-01-BTN-EXECUTE','REQUIRED_TASK_REF_MISSING');
+            await clickReason('VIDEO-01-BTN-RETRY','REQUIRED_TASK_REF_MISSING');
+            await clickReason('VIDEO-01-BTN-EVALUATE','REQUIRED_TASK_REF_MISSING');
+            await clickReason('VIDEO-01-BTN-CONFIRM','EXACT_OUTPUT_VERSION_ID_REQUIRED');
+            await clickReason('VIDEO-01-BTN-FINDING','EXACT_FINDING_PAYLOAD_REQUIRED');
+            await clickReason('VIDEO-01-BTN-LOCK','EXACT_VIDEO_VERSION_REQUIRED');
+            await clickReason('VIDEO-01-BTN-HANDOFF','EXACT_HANDOFF_PAYLOAD_REQUIRED');
+            if(await p.locator('[data-control-id]').count()<85)throw new Error('VIDEO controls missing');
+            await b.close();})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node video01-check.cjs
+          rm video01-check.cjs
+      - name: Commit validated VIDEO closure and self-clean
+        run: |
+          rm -f .github/workflows/video01-interaction-closure-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/pages/VideoVisual.tsx .github/workflows/video01-interaction-closure-once.yml
+          git commit -m "fix(video01): close projection and preview interactions"
+          git pull --rebase origin new
+          git push origin HEAD:new
