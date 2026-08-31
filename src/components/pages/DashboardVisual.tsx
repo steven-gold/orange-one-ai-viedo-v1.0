@@ -168,7 +168,13 @@ export function DashboardVisual() {
   const openerRef = useRef<HTMLButtonElement | null>(null);
 
   const readDashboard = useCallback(async (): Promise<DashboardReadModel | null> => {
-    const response = await fetch("/v1/dashboard/read-model", { method: "GET", cache: "no-store" });
+    let response: Response;
+    try {
+      response = await fetch("/v1/dashboard/read-model", { method: "GET", cache: "no-store" });
+    } catch {
+      setError({ error_uid: "WB-01-ERR-READ-001", reason_code: "DASHBOARD_READ_FAILED", correlation_id: "unresolved" });
+      return null;
+    }
     const payload: unknown = await response.json().catch(() => null);
     if (!response.ok) {
       const readError = asRecord(payload);
@@ -239,17 +245,19 @@ export function DashboardVisual() {
   const view = t("global.common.view");
   const close = t("global.common.close");
 
-  if (state === "LOADING" || !model) {
+  if (state === "LOADING") {
     return (
       <div className={styles.page} data-page-uid="workspace:WB-01" data-vis-step="VIS-01" data-state={state} aria-label={t("wb01.page.name")}>
-        <div className={state === "ERROR" ? styles.errorState : styles.emptyState}>
-          {state === "ERROR" ? (error ? `${error.error_uid}: ${error.reason_code}` : "—") : loading}
-        </div>
+        <div className={styles.emptyState}>{loading}</div>
       </div>
     );
   }
 
-  const visibleSections = SECTIONS.filter((section) => hasOwn(model, section.key));
+  const visibleSections = model
+    ? SECTIONS.filter((section) => hasOwn(model, section.key))
+    : state === "ERROR"
+      ? SECTIONS
+      : [];
 
   return (
     <div className={styles.page} data-page-uid="workspace:WB-01" data-vis-step="VIS-01" data-state={state} aria-label={t("wb01.page.name")}>
