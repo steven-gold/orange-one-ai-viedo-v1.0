@@ -1,0 +1,161 @@
+name: DB-01 Browser Closure
+on:
+  push:
+    branches: [db-01-runtime-closure]
+  workflow_dispatch:
+jobs:
+  browser-closure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Install browser harness
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Build controlled TEST_ONLY runtime
+        run: NEXT_PUBLIC_ACPOS_RUNTIME_MODE=TEST_ONLY npm run build
+      - name: Start controlled TEST_ONLY runtime
+        run: |
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=TEST_ONLY PORT=3000 npm start > /tmp/db01-test-server.log 2>&1 &
+          echo $! > /tmp/db01-test-server.pid
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/database >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/db01-test-server.log
+          exit 1
+      - name: DB-01 browser and port closure
+        run: |
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          const assert=(ok,msg)=>{if(!ok)throw new Error(msg)};
+          const base='http://127.0.0.1:3000';
+          async function json(url,init){const r=await fetch(base+url,init);let body=null;try{body=await r.json()}catch{}return{r,body}}
+          (async()=>{
+            const projection=await json('/v1/ui-projections/DB-01');
+            assert(projection.r.status===200,'TEST_ONLY DB projection must return 200');
+            assert(projection.body?.test_metadata?.data_classification==='TEST_ONLY','projection must be TEST_ONLY');
+            assert(projection.body?.test_metadata?.production_eligible===false,'TEST_ONLY projection must be production-ineligible');
+            const ports=['DB-01-PORT-ENTITY-LIST','DB-01-PORT-SCHEMA','DB-01-PORT-TRACE','DB-01-PORT-MIGRATION','DB-01-PORT-INTEGRITY','DB-01-PORT-AUDIT'];
+            for(const port_uid of ports){
+              const x=await json('/v1/database/read-model',{method:'POST',headers:{'content-type':'application/json','x-correlation-id':`DIRECT-${port_uid}`},body:JSON.stringify({port_uid,query:{client_state:{entity_ref:'TEST-ENTITY-PROJECT',trace_ref:'TEST-ASSET-001@V1',audit_ref:'TEST-AUDIT-001'}}})});
+              assert(x.r.status===200,`${port_uid} expected 200 got ${x.r.status}`);
+              assert(x.body?.test_metadata?.data_classification==='TEST_ONLY',`${port_uid} missing TEST_ONLY metadata`);
+              assert(x.body?.test_metadata?.production_eligible===false,`${port_uid} must be production-ineligible`);
+            }
+            const invalid=await json('/v1/database/read-model',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({port_uid:'DB-01-PORT-UNREGISTERED'})});
+            assert(invalid.r.status===400,'unregistered DB port must return 400');
+            assert(invalid.body?.error_uid==='DB-01-ERR-UNDEFINED-001','unregistered DB port must fail with undefined authority error');
+
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1440,height:1100}});
+            const apiWrites=[];
+            page.on('request',req=>{const u=new URL(req.url());if(u.origin===base&&u.pathname.startsWith('/v1/')&&req.method()!=='GET')apiWrites.push(`${req.method()} ${u.pathname}`)});
+            await page.goto(base+'/database',{waitUntil:'networkidle'});
+            await page.locator('[data-page-uid="admin:DB-01"]').waitFor();
+            assert(await page.locator('[data-control-id]').count()===49,'browser must render exactly 49 DB controls');
+            assert(await page.locator('[data-page-uid="admin:DB-01"]').getAttribute('data-registry-valid')==='true','DB control registry must be valid');
+            await page.locator('[data-control-id="DB-01-FLD-ENV"] strong').waitFor();
+            assert((await page.locator('[data-control-id="DB-01-FLD-ENV"] strong').innerText()).includes('TEST_ONLY'),'controlled projection did not render');
+
+            const entities=page.locator('[data-control-id="DB-01-LIST-ENTITIES"] button');
+            assert(await entities.count()===2,'controlled entity list expected 2 rows');
+            await page.locator('[data-control-id="DB-01-INP-SEARCH"]').fill('Asset');
+            await page.waitForFunction(()=>document.querySelectorAll('[data-control-id="DB-01-LIST-ENTITIES"] button').length===1);
+            assert((await entities.first().innerText()).includes('AssetOutputVersion'),'search must filter authorized read model');
+            await page.locator('[data-control-id="DB-01-INP-SEARCH"]').fill('');
+            await page.waitForFunction(()=>document.querySelectorAll('[data-control-id="DB-01-LIST-ENTITIES"] button').length===2);
+            await page.locator('[data-control-id="DB-01-SEL-DOMAIN"]').selectOption('CANON');
+            await page.waitForFunction(()=>document.querySelectorAll('[data-control-id="DB-01-LIST-ENTITIES"] button').length===1);
+            assert((await entities.first().innerText()).includes('Project'),'domain UI_ONLY filter must apply locally');
+            await page.locator('[data-control-id="DB-01-SEL-DOMAIN"]').selectOption('');
+            await page.locator('[data-control-id="DB-01-LIST-ENTITIES"] button[data-exact-ref="TEST-ENTITY-ASSET"]').click();
+            await page.waitForTimeout(50);
+            await page.locator('[data-control-id="DB-01-BTN-SCHEMA-REFRESH"]').click();
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="DB-01-FLD-ENTITY"] strong')?.textContent?.includes('TEST-ENTITY-ASSET'));
+
+            const relationRef=page.locator('[data-control-id="DB-01-GRAPH-RELATIONS"] button[data-exact-ref]').first();
+            assert(await relationRef.count()===1,'relation graph must expose clickable exact refs');
+            await relationRef.click();
+
+            await page.locator('[data-control-id="DB-01-SEL-TRACE-TYPE"]').selectOption('Asset');
+            await page.locator('[data-control-id="DB-01-INP-TRACE-ID"]').fill('TEST-ASSET-CUSTOM@V2');
+            await page.locator('[data-control-id="DB-01-BTN-TRACE"]').click();
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="DB-01-VIEW-TRACE-PATH"]')?.textContent?.includes('TEST-ASSET-CUSTOM@V2'));
+            assert(await page.locator('[data-control-id="DB-01-VIEW-TRACE-PATH"] button[data-exact-ref="TEST-ASSET-CUSTOM@V2"]').count()===1,'trace result must expose exact clickable source ref');
+
+            await page.locator('[data-control-id="DB-01-INP-MIGRATION-SEARCH"]').fill('002');
+            await page.waitForFunction(()=>document.querySelectorAll('[data-control-id="DB-01-TBL-MIGRATIONS"] button[data-exact-ref]').length===1);
+            const migration=page.locator('[data-control-id="DB-01-TBL-MIGRATIONS"] button[data-exact-ref="TEST-MIGRATION-002"]');
+            assert(await migration.count()===1,'migration history must expose exact selectable ref');
+            await migration.click();
+            await page.locator('[data-control-id="DB-01-BTN-INTEGRITY-REFRESH"]').click();
+            await page.locator('[data-control-id="DB-01-SEL-FINDING-TYPE"]').selectOption('REFERENCE');
+            const finding=page.locator('[data-control-id="DB-01-LIST-FINDINGS"] button[data-exact-ref="TEST-FINDING-001"]');
+            assert(await finding.count()===1,'finding must expose exact selectable ref');
+            await finding.click();
+
+            await page.locator('[data-control-id="DB-01-INP-AUDIT-ID"]').fill('TEST-AUDIT-CUSTOM-777');
+            await page.locator('[data-control-id="DB-01-BTN-AUDIT"]').click();
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="DB-01-VIEW-AUDIT"]')?.textContent?.includes('TEST-AUDIT-CUSTOM-777'));
+
+            const nonReadWrites=apiWrites.filter(x=>x!=='POST /v1/database/read-model');
+            assert(nonReadWrites.length===0,`DB-01 emitted unlisted/non-read API writes: ${nonReadWrites.join(',')}`);
+            await Promise.all([
+              page.waitForURL('**/admin/system'),
+              page.locator('[data-control-id="DB-01-BTN-SYSTEM-LIFECYCLE"]').click()
+            ]);
+            assert(new URL(page.url()).pathname==='/admin/system','System Lifecycle must route to authoritative /admin/system');
+            await browser.close();
+            console.log(`DB01_BROWSER_TEST_ONLY_PASS controls=49 read_ports=${ports.length} exact_refs=PASS system_lifecycle=/admin/system unlisted_port=BLOCK`);
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - name: Stop TEST_ONLY runtime
+        if: always()
+        run: |
+          if [ -f /tmp/db01-test-server.pid ]; then kill $(cat /tmp/db01-test-server.pid) || true; fi
+      - name: Build Production projection
+        run: |
+          rm -rf .next
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PRODUCTION npm run build
+      - name: Start Production projection
+        run: |
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PRODUCTION PORT=3001 npm start > /tmp/db01-production-server.log 2>&1 &
+          echo $! > /tmp/db01-production-server.pid
+          for i in $(seq 1 60); do
+            if curl -sS http://127.0.0.1:3001/database >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/db01-production-server.log
+          exit 1
+      - name: DB-01 Production fail-closed closure
+        run: |
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          const assert=(ok,msg)=>{if(!ok)throw new Error(msg)};
+          const base='http://127.0.0.1:3001';
+          (async()=>{
+            const p=await fetch(base+'/v1/ui-projections/DB-01');const pb=await p.json();
+            assert(p.status===503,`Production projection expected 503 got ${p.status}`);
+            assert(pb.reason_code==='UI_PROJECTION_RUNTIME_NOT_BOUND',`unexpected projection reason ${pb.reason_code}`);
+            const r=await fetch(base+'/v1/database/read-model',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({port_uid:'DB-01-PORT-ENTITY-LIST',query:{}})});const rb=await r.json();
+            assert(r.status===503,`Production read model expected 503 got ${r.status}`);
+            assert(rb.reason_code==='DB_READ_MODEL_RUNTIME_NOT_BOUND',`unexpected read reason ${rb.reason_code}`);
+            const browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1440,height:900}});
+            await page.goto(base+'/database',{waitUntil:'networkidle'});
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="DB-01-FLD-DISABLED"] strong')?.textContent?.includes('UI_PROJECTION_RUNTIME_NOT_BOUND'));
+            assert(await page.locator('[data-control-id="DB-01-BTN-SCHEMA-REFRESH"]').isDisabled(),'Production read action must remain disabled when projection/runtime unbound');
+            assert(!(await page.content()).includes('TEST-SCHEMA-HEAD-001'),'Production page must not expose TEST_ONLY dataset');
+            await browser.close();
+            console.log('DB01_PRODUCTION_FAIL_CLOSED_PASS projection=503 read_model=503 test_data=0');
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - name: Stop Production projection
+        if: always()
+        run: |
+          if [ -f /tmp/db01-production-server.pid ]; then kill $(cat /tmp/db01-production-server.pid) || true; fi
