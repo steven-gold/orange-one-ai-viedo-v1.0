@@ -1,6 +1,69 @@
-export type UiProjectionRequest={page_uid:string;correlation_id:string};
-export type UiProjectionBindings={authorize:(request:UiProjectionRequest)=>Promise<{allowed:true}|{allowed:false;reason_code?:string}>;read:(request:UiProjectionRequest)=>Promise<unknown>;audit:(entry:UiProjectionRequest&{outcome:"ALLOWED"|"DENIED"|"SUCCESS"|"ERROR";reason_code?:string})=>Promise<void>};
-let bindings:UiProjectionBindings|null=null;
-export function configureUiProjectionRuntime(next:UiProjectionBindings){bindings=next;}
-async function audit(r:UiProjectionBindings,e:Parameters<UiProjectionBindings["audit"]>[0]){try{await r.audit(e);}catch{/* fail closed */}}
-export async function getUiProjection(request:UiProjectionRequest){const r=bindings;if(!r)return{ok:false as const,status:503,reason_code:"UI_PROJECTION_RUNTIME_NOT_BOUND",correlation_id:request.correlation_id};let d:Awaited<ReturnType<UiProjectionBindings["authorize"]>>;try{d=await r.authorize(request);}catch{return{ok:false as const,status:403,reason_code:"AUTHORIZATION_EVALUATION_FAILED",correlation_id:request.correlation_id};}if(!d.allowed){const reason_code=d.reason_code??"PERMISSION_OR_SCOPE_DENIED";await audit(r,{...request,outcome:"DENIED",reason_code});return{ok:false as const,status:403,reason_code,correlation_id:request.correlation_id};}await audit(r,{...request,outcome:"ALLOWED"});try{const value=await r.read(request);await audit(r,{...request,outcome:"SUCCESS"});return{ok:true as const,value,correlation_id:request.correlation_id};}catch{await audit(r,{...request,outcome:"ERROR",reason_code:"UI_PROJECTION_READ_FAILED"});return{ok:false as const,status:503,reason_code:"UI_PROJECTION_READ_FAILED",correlation_id:request.correlation_id};}}
+import { executeCorePort } from "@/server/core/coreRuntime";
+import { isControlledCoreServerTestMode } from "@/server/testing/controlledCoreTestRuntime";
+
+export type UiProjectionRequest = { page_uid: string; correlation_id: string };
+export type UiProjectionBindings = {
+  authorize: (request: UiProjectionRequest) => Promise<{ allowed: true } | { allowed: false; reason_code?: string }>;
+  read: (request: UiProjectionRequest) => Promise<unknown>;
+  audit: (entry: UiProjectionRequest & { outcome: "ALLOWED" | "DENIED" | "SUCCESS" | "ERROR"; reason_code?: string }) => Promise<void>;
+};
+
+let bindings: UiProjectionBindings | null = null;
+
+export function configureUiProjectionRuntime(next: UiProjectionBindings) {
+  bindings = next;
+}
+
+async function audit(runtime: UiProjectionBindings, entry: Parameters<UiProjectionBindings["audit"]>[0]) {
+  try { await runtime.audit(entry); } catch { /* fail closed */ }
+}
+
+async function controlledCoreProjection(request: UiProjectionRequest) {
+  if (request.page_uid !== "CORE-01" || !isControlledCoreServerTestMode()) return null;
+  const result = await executeCorePort({
+    port_uid: "CORE-01-PORT-PROJECTION",
+    correlation_id: request.correlation_id,
+    path_params: { pageUid: request.page_uid },
+  });
+  if (!result.ok) {
+    return {
+      ok: false as const,
+      status: result.status,
+      reason_code: result.reason_code,
+      correlation_id: request.correlation_id,
+    };
+  }
+  return { ok: true as const, value: result.value, correlation_id: request.correlation_id };
+}
+
+export async function getUiProjection(request: UiProjectionRequest) {
+  const runtime = bindings;
+  if (!runtime) {
+    const testProjection = await controlledCoreProjection(request);
+    if (testProjection) return testProjection;
+    return { ok: false as const, status: 503, reason_code: "UI_PROJECTION_RUNTIME_NOT_BOUND", correlation_id: request.correlation_id };
+  }
+
+  let decision: Awaited<ReturnType<UiProjectionBindings["authorize"]>>;
+  try {
+    decision = await runtime.authorize(request);
+  } catch {
+    return { ok: false as const, status: 403, reason_code: "AUTHORIZATION_EVALUATION_FAILED", correlation_id: request.correlation_id };
+  }
+
+  if (!decision.allowed) {
+    const reason_code = decision.reason_code ?? "PERMISSION_OR_SCOPE_DENIED";
+    await audit(runtime, { ...request, outcome: "DENIED", reason_code });
+    return { ok: false as const, status: 403, reason_code, correlation_id: request.correlation_id };
+  }
+
+  await audit(runtime, { ...request, outcome: "ALLOWED" });
+  try {
+    const value = await runtime.read(request);
+    await audit(runtime, { ...request, outcome: "SUCCESS" });
+    return { ok: true as const, value, correlation_id: request.correlation_id };
+  } catch {
+    await audit(runtime, { ...request, outcome: "ERROR", reason_code: "UI_PROJECTION_READ_FAILED" });
+    return { ok: false as const, status: 503, reason_code: "UI_PROJECTION_READ_FAILED", correlation_id: request.correlation_id };
+  }
+}
