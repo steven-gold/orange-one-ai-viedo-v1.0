@@ -25,138 +25,32 @@ jobs:
           cat > qa01-e2e.cjs <<'NODE'
           const { chromium } = require('playwright');
           const { spawn } = require('child_process');
-
           const repo = process.cwd();
           const sleep = ms => new Promise(r => setTimeout(r, ms));
           async function startServer(port, extraEnv={}) {
-            const child = spawn('npm', ['run','dev','--','-p',String(port)], {
-              cwd: repo,
-              env: {...process.env, ...extraEnv},
-              stdio: ['ignore','pipe','pipe']
-            });
-            let log='';
-            child.stdout.on('data', d => { log += d.toString(); process.stdout.write(d); });
-            child.stderr.on('data', d => { log += d.toString(); process.stderr.write(d); });
-            const url=`http://127.0.0.1:${port}/qa`;
-            for(let i=0;i<120;i++){
-              if(child.exitCode!==null) throw new Error(`server exited ${child.exitCode}\n${log}`);
-              try{ const r=await fetch(url); if(r.status<500) return {child,url,log:()=>log}; }catch{}
-              await sleep(500);
-            }
-            child.kill('SIGTERM');
-            throw new Error(`server not ready\n${log}`);
+            const child = spawn('npm', ['run','dev','--','-p',String(port)], {cwd:repo,env:{...process.env,...extraEnv},stdio:['ignore','pipe','pipe']});
+            let log=''; child.stdout.on('data',d=>{log+=d.toString();process.stdout.write(d)}); child.stderr.on('data',d=>{log+=d.toString();process.stderr.write(d)});
+            const url=`http://localhost:${port}/qa`;
+            for(let i=0;i<120;i++){if(child.exitCode!==null)throw new Error(`server exited ${child.exitCode}\n${log}`);try{const r=await fetch(url);if(r.status<500)return{child,url}}catch{}await sleep(500)}
+            child.kill('SIGTERM'); throw new Error(`server not ready\n${log}`);
           }
-          async function stopServer(child){ if(child.exitCode===null){ child.kill('SIGTERM'); for(let i=0;i<20&&child.exitCode===null;i++)await sleep(100); if(child.exitCode===null)child.kill('SIGKILL'); } }
-          async function withPage(browser,url,fn){
-            const context=await browser.newContext({viewport:{width:1600,height:1200}});
-            const page=await context.newPage();
-            const errors=[]; const failed=[];
-            page.on('pageerror', e=>errors.push(String(e)));
-            page.on('requestfailed', r=>failed.push(`${r.method()} ${r.url()} ${r.failure()?.errorText||''}`));
-            await page.goto(url,{waitUntil:'networkidle'});
-            await page.waitForSelector('[data-page-uid="QA-01"]');
-            try{await fn(page);}finally{
-              if(errors.length) throw new Error(`page errors: ${errors.join(' | ')}`);
-              if(failed.length) throw new Error(`failed requests: ${failed.join(' | ')}`);
-              await context.close();
-            }
-          }
-          const root=p=>p.locator('[data-page-uid="QA-01"]');
-          const ctl=(p,id)=>p.locator(`[data-control-id="${id}"]`);
-          const value=async(p,id)=>((await ctl(p,id).locator('strong').textContent())||'').trim();
-          async function clickReady(p,id){ const x=ctl(p,id); await x.waitFor({state:'visible'}); await x.waitFor({state:'attached'}); await p.waitForFunction(id=>{const e=document.querySelector(`[data-control-id="${id}"]`);return e instanceof HTMLButtonElement&&!e.disabled;},id); await x.click(); }
-          async function stateIs(p,v){await p.waitForFunction(v=>document.querySelector('[data-page-uid="QA-01"]')?.getAttribute('data-page-state')===v,v,{timeout:15000});}
-          function assert(c,m){if(!c)throw new Error(m);}
-          async function snapshot(p,name){
-            const s=await root(p).evaluate(el=>({state:el.getAttribute('data-page-state'),stage:el.getAttribute('data-current-stage'),mode:el.getAttribute('data-review-mode'),controls:[...el.querySelectorAll('[data-control-id]')].map(x=>({id:x.getAttribute('data-control-id'),action:x.getAttribute('data-action-uid'),disabled:x instanceof HTMLButtonElement||x instanceof HTMLInputElement||x instanceof HTMLSelectElement||x instanceof HTMLTextAreaElement?x.disabled:null,reason:x.getAttribute('data-disabled-reason')}))}));
-            console.log(name,JSON.stringify(s)); return s;
-          }
-
-          (async()=>{
-            const browser=await chromium.launch({headless:true});
-            try{
-              let srv=await startServer(3101,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'CORRECTION'});
-              await withPage(browser,srv.url,async p=>{
-                let s=await snapshot(p,'STATE_EMPTY');
-                assert(s.state==='QA-01-ST-NOT-STARTED','initial state mismatch');
-                assert(await root(p).getAttribute('data-registry-valid')==='true','registry invalid');
-                await p.getByRole('button',{name:'MANUAL',exact:true}).click();
-                await clickReady(p,'QA-01-BTN-START-REVIEW');
-                await stateIs(p,'QA-01-ST-FAIL');
-                assert(await value(p,'QA-01-FLD-TOTAL-SCORE')==='82','expected system score 82');
-                assert(await value(p,'QA-01-FLD-GATE-STATUS')==='FAIL','expected governed FAIL');
-                const finding=ctl(p,'QA-01-BTN-FINDING-CREATE');
-                assert(await finding.isDisabled(),'Finding create must block without category registry');
-                assert((await finding.getAttribute('data-disabled-reason'))==='AUTHORITY_GAP_QA_ISSUE_CATEGORY_REGISTRY','Finding authority gap reason mismatch');
-                await ctl(p,'QA-01-INP-CORR-ACTION').fill('[TEST] Correct exact failed output through original owner');
-                await clickReady(p,'QA-01-BTN-CORRECTION');
-                await stateIs(p,'QA-01-ST-CORRECTION');
-                assert(await value(p,'QA-01-FLD-FAILED-VERSION')==='TEST-EDIT-OUTPUT-001','failed exact version mismatch');
-                assert(await value(p,'QA-01-FLD-NEW-VERSION')==='TEST-EDIT-OUTPUT-002','verified new exact version mismatch');
-                await clickReady(p,'QA-01-BTN-RECHECK');
-                await stateIs(p,'QA-01-ST-PASS');
-                assert(await value(p,'QA-01-FLD-TOTAL-SCORE')==='98','expected recheck score 98');
-                assert(await value(p,'QA-01-FLD-GATE-STATUS')==='PASS','expected governed PASS');
-                await clickReady(p,'QA-01-BTN-RELEASE-CREATE');
-                await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-REL-PACKAGE"] strong')?.textContent?.includes('TEST-RELEASE-CANDIDATE-001'));
-                assert(await value(p,'QA-01-FLD-REL-PACKAGE')==='TEST-RELEASE-CANDIDATE-001','release candidate missing');
-                assert(await p.locator('[data-action-uid="QA-01-ACT-GATE-PASS"]').count()===0,'direct PASS UI must not exist');
-                assert(await p.locator('[data-action-uid="QA-01-ACT-GATE-FAIL"]').count()===0,'direct FAIL UI must not exist');
-                assert(await p.locator('[data-control-id*="PUBLISH"],[data-action-uid*="PUBLISH"]').count()===0,'publish control forbidden');
-                await snapshot(p,'STATE_RELEASE_CANDIDATE');
-              });
-              await stopServer(srv.child);
-
-              srv=await startServer(3102,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'MANUAL_REQUIRED'});
-              await withPage(browser,srv.url,async p=>{
-                await p.getByRole('button',{name:'MANUAL',exact:true}).click();
-                await clickReady(p,'QA-01-BTN-START-REVIEW');
-                await p.waitForFunction(()=>document.querySelector('[data-component-uid="QA-01-CMP-MANUAL-DECISION"]'));
-                assert(await value(p,'QA-01-FLD-TOTAL-SCORE')==='97','manual scenario score mismatch');
-                assert(await value(p,'QA-01-FLD-GATE-STATUS')==='MANUAL_REVIEW_REQUIRED','manual review gate status mismatch');
-                const mutationButtons=p.locator('[data-component-uid="QA-01-CMP-MANUAL-DECISION"] button');
-                assert(await mutationButtons.count()===2,'Manual Review must expose exactly two mutation buttons');
-                const acts=await mutationButtons.evaluateAll(xs=>xs.map(x=>x.getAttribute('data-action-uid')).sort());
-                assert(JSON.stringify(acts)===JSON.stringify(['QA-01-ACT-MANUAL-MODIFY','QA-01-ACT-MANUAL-PASS'].sort()),`manual actions mismatch ${JSON.stringify(acts)}`);
-                assert(await p.locator('[data-component-uid="QA-01-CMP-SCORE"] input,[data-component-uid="QA-01-CMP-SCORE"] select,[data-component-uid="QA-01-CMP-SCORE"] textarea,[data-component-uid="QA-01-CMP-SCORE"] button').count()===0,'human score input/action forbidden');
-                await clickReady(p,'QA-01-BTN-MANUAL-MODIFY');
-                await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-BTN-MANUAL-MODIFY"]')?.getAttribute('data-last-action')==='true');
-                await clickReady(p,'QA-01-BTN-MANUAL-PASS');
-                await stateIs(p,'QA-01-ST-PASS');
-                assert(await value(p,'QA-01-FLD-GATE-STATUS')==='PASS','manual pass must re-evaluate normal QA gate');
-                await snapshot(p,'STATE_MANUAL_REVIEW_PASSED');
-              });
-              await stopServer(srv.child);
-
-              srv=await startServer(3103,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'AUTO'});
-              await withPage(browser,srv.url,async p=>{
-                assert(await root(p).getAttribute('data-review-mode')==='AUTO','AUTO should be default');
-                assert(await ctl(p,'QA-01-BTN-START-REVIEW').count()===0,'manual Start Review must be hidden in AUTO');
-                const queueButtons=p.locator('[data-control-id="QA-01-LIST-REVIEWS"] [data-item-ref]');
-                assert(await queueButtons.count()===2,'AUTO queue size mismatch');
-                for(let i=0;i<await queueButtons.count();i++)assert(await queueButtons.nth(i).isDisabled(),'AUTO queue cannot manually reorder/select');
-                await clickReady(p,'QA-01-BTN-AUTO-START');
-                await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-AUTO-PROGRESS"] strong')?.textContent?.includes('2/2'),null,{timeout:15000});
-                assert(await value(p,'QA-01-FLD-AUTO-PROGRESS')==='2/2','AUTO progress mismatch');
-                assert(await p.locator('[data-control-id*="PUBLISH"],[data-action-uid*="PUBLISH"]').count()===0,'AUTO publish control forbidden');
-                await snapshot(p,'STATE_AUTO_COMPLETE');
-              });
-              await stopServer(srv.child);
-
-              srv=await startServer(3104,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'PRODUCTION',ACPOS_QA_TEST_SCENARIO:'CORRECTION'});
-              await withPage(browser,srv.url,async p=>{
-                await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-ERROR"] strong')?.textContent?.includes('UI_PROJECTION_RUNTIME_NOT_BOUND'));
-                const err=await value(p,'QA-01-FLD-ERROR');
-                assert(err.includes('UI_PROJECTION_RUNTIME_NOT_BOUND'),`production projection did not fail closed: ${err}`);
-                const r=await p.request.post('http://127.0.0.1:3104/v1/qa/reviews',{data:{project_id:'X',topic_id:'Y',output_version_id:'Z',qa_profile_id:'Q'}});
-                assert(r.status()===503,`production direct QA create expected 503, got ${r.status()}`);
-                const body=await r.json();
-                assert(body.reason_code==='QA_RUNTIME_NOT_BOUND',`unexpected production reason ${JSON.stringify(body)}`);
-                await snapshot(p,'STATE_PRODUCTION_FAIL_CLOSED');
-              });
-              await stopServer(srv.child);
-              console.log('QA01_BROWSER_CLOSURE_PASS authority_controls=87 authority_actions=32 ports=10 direct_pass_fail_controls=0 publish_controls=0');
-            } finally { await browser.close(); }
-          })().catch(e=>{console.error(e);process.exit(1)});
+          async function stopServer(child){if(child.exitCode===null){child.kill('SIGTERM');for(let i=0;i<20&&child.exitCode===null;i++)await sleep(100);if(child.exitCode===null)child.kill('SIGKILL')}}
+          async function withPage(browser,url,fn){const context=await browser.newContext({viewport:{width:1600,height:1200}});const page=await context.newPage();const errors=[],failed=[];page.on('pageerror',e=>errors.push(String(e)));page.on('requestfailed',r=>failed.push(`${r.method()} ${r.url()} ${r.failure()?.errorText||''}`));await page.goto(url,{waitUntil:'networkidle'});await page.waitForSelector('[data-page-uid="QA-01"]');try{await fn(page)}finally{if(errors.length)throw new Error(`page errors: ${errors.join(' | ')}`);if(failed.length)throw new Error(`failed requests: ${failed.join(' | ')}`);await context.close()}}
+          const root=p=>p.locator('[data-page-uid="QA-01"]'); const ctl=(p,id)=>p.locator(`[data-control-id="${id}"]`); const value=async(p,id)=>((await ctl(p,id).locator('strong').textContent())||'').trim();
+          async function clickReady(p,id){const x=ctl(p,id);await x.waitFor({state:'visible'});await p.waitForFunction(id=>{const e=document.querySelector(`[data-control-id="${id}"]`);return e instanceof HTMLButtonElement&&!e.disabled},id);await x.click()}
+          async function stateIs(p,v){await p.waitForFunction(v=>document.querySelector('[data-page-uid="QA-01"]')?.getAttribute('data-page-state')===v,v,{timeout:15000})}
+          function assert(c,m){if(!c)throw new Error(m)}
+          async function snapshot(p,name){const s=await root(p).evaluate(el=>({state:el.getAttribute('data-page-state'),stage:el.getAttribute('data-current-stage'),mode:el.getAttribute('data-review-mode'),controls:[...el.querySelectorAll('[data-control-id]')].map(x=>({id:x.getAttribute('data-control-id'),action:x.getAttribute('data-action-uid'),disabled:x instanceof HTMLButtonElement||x instanceof HTMLInputElement||x instanceof HTMLSelectElement||x instanceof HTMLTextAreaElement?x.disabled:null,reason:x.getAttribute('data-disabled-reason')}))}));console.log(name,JSON.stringify(s));return s}
+          (async()=>{const browser=await chromium.launch({headless:true});try{
+            let srv=await startServer(3101,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'CORRECTION'});
+            await withPage(browser,srv.url,async p=>{await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-BTN-AUTO-START"]') instanceof HTMLButtonElement&&!document.querySelector('[data-control-id="QA-01-BTN-AUTO-START"]').disabled);let s=await snapshot(p,'STATE_EMPTY');assert(s.state==='QA-01-ST-NOT-STARTED','initial state mismatch');assert(await root(p).getAttribute('data-registry-valid')==='true','registry invalid');await p.getByRole('button',{name:'MANUAL',exact:true}).click();await clickReady(p,'QA-01-BTN-START-REVIEW');await stateIs(p,'QA-01-ST-FAIL');assert(await value(p,'QA-01-FLD-TOTAL-SCORE')==='82','expected system score 82');assert(await value(p,'QA-01-FLD-GATE-STATUS')==='FAIL','expected governed FAIL');const finding=ctl(p,'QA-01-BTN-FINDING-CREATE');assert(await finding.isDisabled(),'Finding create must block without category registry');assert((await finding.getAttribute('data-disabled-reason'))==='AUTHORITY_GAP_QA_ISSUE_CATEGORY_REGISTRY','Finding authority gap reason mismatch');await ctl(p,'QA-01-INP-CORR-ACTION').fill('[TEST] Correct exact failed output through original owner');await clickReady(p,'QA-01-BTN-CORRECTION');await stateIs(p,'QA-01-ST-CORRECTION');assert(await value(p,'QA-01-FLD-FAILED-VERSION')==='TEST-EDIT-OUTPUT-001','failed exact version mismatch');assert(await value(p,'QA-01-FLD-NEW-VERSION')==='TEST-EDIT-OUTPUT-002','verified new exact version mismatch');await clickReady(p,'QA-01-BTN-RECHECK');await stateIs(p,'QA-01-ST-PASS');assert(await value(p,'QA-01-FLD-TOTAL-SCORE')==='98','expected recheck score 98');assert(await value(p,'QA-01-FLD-GATE-STATUS')==='PASS','expected governed PASS');await clickReady(p,'QA-01-BTN-RELEASE-CREATE');await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-REL-PACKAGE"] strong')?.textContent?.includes('TEST-RELEASE-CANDIDATE-001'));assert(await value(p,'QA-01-FLD-REL-PACKAGE')==='TEST-RELEASE-CANDIDATE-001','release candidate missing');assert(await p.locator('[data-action-uid="QA-01-ACT-GATE-PASS"]').count()===0,'direct PASS UI must not exist');assert(await p.locator('[data-action-uid="QA-01-ACT-GATE-FAIL"]').count()===0,'direct FAIL UI must not exist');assert(await p.locator('[data-control-id*="PUBLISH"],[data-action-uid*="PUBLISH"]').count()===0,'publish control forbidden');await snapshot(p,'STATE_RELEASE_CANDIDATE')}); await stopServer(srv.child);
+            srv=await startServer(3102,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'MANUAL_REQUIRED'});
+            await withPage(browser,srv.url,async p=>{await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-BTN-AUTO-START"]') instanceof HTMLButtonElement&&!document.querySelector('[data-control-id="QA-01-BTN-AUTO-START"]').disabled);await p.getByRole('button',{name:'MANUAL',exact:true}).click();await clickReady(p,'QA-01-BTN-START-REVIEW');await p.waitForFunction(()=>document.querySelector('[data-component-uid="QA-01-CMP-MANUAL-DECISION"]'));assert(await value(p,'QA-01-FLD-TOTAL-SCORE')==='97','manual scenario score mismatch');assert(await value(p,'QA-01-FLD-GATE-STATUS')==='MANUAL_REVIEW_REQUIRED','manual review gate status mismatch');const mutationButtons=p.locator('[data-component-uid="QA-01-CMP-MANUAL-DECISION"] button');assert(await mutationButtons.count()===2,'Manual Review must expose exactly two mutation buttons');const acts=await mutationButtons.evaluateAll(xs=>xs.map(x=>x.getAttribute('data-action-uid')).sort());assert(JSON.stringify(acts)===JSON.stringify(['QA-01-ACT-MANUAL-MODIFY','QA-01-ACT-MANUAL-PASS'].sort()),`manual actions mismatch ${JSON.stringify(acts)}`);assert(await p.locator('[data-component-uid="QA-01-CMP-SCORE"] input,[data-component-uid="QA-01-CMP-SCORE"] select,[data-component-uid="QA-01-CMP-SCORE"] textarea,[data-component-uid="QA-01-CMP-SCORE"] button').count()===0,'human score input/action forbidden');await clickReady(p,'QA-01-BTN-MANUAL-MODIFY');await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-BTN-MANUAL-MODIFY"]')?.getAttribute('data-last-action')==='true');await clickReady(p,'QA-01-BTN-MANUAL-PASS');await stateIs(p,'QA-01-ST-PASS');assert(await value(p,'QA-01-FLD-GATE-STATUS')==='PASS','manual pass must re-evaluate normal QA gate');await snapshot(p,'STATE_MANUAL_REVIEW_PASSED')}); await stopServer(srv.child);
+            srv=await startServer(3103,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'AUTO'});
+            await withPage(browser,srv.url,async p=>{await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-BTN-AUTO-START"]') instanceof HTMLButtonElement&&!document.querySelector('[data-control-id="QA-01-BTN-AUTO-START"]').disabled);assert(await root(p).getAttribute('data-review-mode')==='AUTO','AUTO should be default');assert(await ctl(p,'QA-01-BTN-START-REVIEW').count()===0,'manual Start Review must be hidden in AUTO');const queueButtons=p.locator('[data-control-id="QA-01-LIST-REVIEWS"] [data-item-ref]');assert(await queueButtons.count()===2,'AUTO queue size mismatch');for(let i=0;i<await queueButtons.count();i++)assert(await queueButtons.nth(i).isDisabled(),'AUTO queue cannot manually reorder/select');await clickReady(p,'QA-01-BTN-AUTO-START');await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-AUTO-PROGRESS"] strong')?.textContent?.includes('2/2'),null,{timeout:15000});assert(await value(p,'QA-01-FLD-AUTO-PROGRESS')==='2/2','AUTO progress mismatch');assert(await p.locator('[data-control-id*="PUBLISH"],[data-action-uid*="PUBLISH"]').count()===0,'AUTO publish control forbidden');await snapshot(p,'STATE_AUTO_COMPLETE')}); await stopServer(srv.child);
+            srv=await startServer(3104,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'PRODUCTION',ACPOS_QA_TEST_SCENARIO:'CORRECTION'});
+            await withPage(browser,srv.url,async p=>{await p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-ERROR"] strong')?.textContent?.includes('UI_PROJECTION_RUNTIME_NOT_BOUND'));const err=await value(p,'QA-01-FLD-ERROR');assert(err.includes('UI_PROJECTION_RUNTIME_NOT_BOUND'),`production projection did not fail closed: ${err}`);const r=await p.request.post('http://localhost:3104/v1/qa/reviews',{data:{project_id:'X',topic_id:'Y',output_version_id:'Z',qa_profile_id:'Q'}});assert(r.status()===503,`production direct QA create expected 503, got ${r.status()}`);const body=await r.json();assert(body.reason_code==='QA_RUNTIME_NOT_BOUND',`unexpected production reason ${JSON.stringify(body)}`);await snapshot(p,'STATE_PRODUCTION_FAIL_CLOSED')}); await stopServer(srv.child);
+            console.log('QA01_BROWSER_CLOSURE_PASS authority_controls=87 authority_actions=32 ports=10 direct_pass_fail_controls=0 publish_controls=0');
+          }finally{await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});
           NODE
           node qa01-e2e.cjs
