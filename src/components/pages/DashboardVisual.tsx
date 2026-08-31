@@ -159,7 +159,7 @@ function ErrorBody({ error }: { error: DashboardReadError | null }) {
 export function DashboardVisual() {
   const { t } = useI18n();
   const [model, setModel] = useState<DashboardReadModel | null>(null);
-  const [state, setState] = useState<VisualState>("LOADING");
+  const [state, setState] = useState<VisualState>("EMPTY");
   const [error, setError] = useState<DashboardReadError | null>(null);
   const [pageDenied, setPageDenied] = useState(false);
   const [drawerSection, setDrawerSection] = useState<DashboardSection | null>(null);
@@ -255,7 +255,7 @@ export function DashboardVisual() {
 
   const visibleSections = model
     ? SECTIONS.filter((section) => hasOwn(model, section.key))
-    : state === "ERROR"
+    : state === "ERROR" || state === "EMPTY"
       ? SECTIONS
       : [];
 
