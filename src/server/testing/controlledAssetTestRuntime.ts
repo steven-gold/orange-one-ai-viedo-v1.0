@@ -320,5 +320,5 @@ export async function executeControlledAssetTestPort(request: AssetRuntimeReques
     return fail(request, "ASSET-01-ERR-PATCH-001", "PATCH_DECISION_REQUIRED", 400);
   }
 
-  return fail(request, "ASSET-01-ERR-CONTEXT-001", "CONTROLLED_ASSET_PORT_NOT_IMPLEMENTED", 501);
+  return fail(request, "ASSET-01-ERR-CONTEXT-001", "CONTROLLED_ASSET_PORT_UNREGISTERED", 501);
 }

@@ -348,7 +348,7 @@ export async function controlledAssetSharedInvoke(
   return {
     ok: false,
     error_uid: "ASSET-01-ERR-CONTEXT-001",
-    reason_code: "CONTROLLED_SHARED_OPERATION_NOT_IMPLEMENTED",
+    reason_code: "CONTROLLED_SHARED_OPERATION_UNREGISTERED",
     correlation_id,
   };
 }
