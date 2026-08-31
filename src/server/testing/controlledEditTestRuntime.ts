@@ -104,7 +104,7 @@ export async function executeControlledEditDepartmentOperation(request:Departmen
   if(!isControlledEditServerTestMode())return fail(request.correlation_id,"EDIT-01-ERR-CONTEXT-001","EDIT_TEST_RUNTIME_DISABLED",503);
   if(request.operation_id==="submitScorecard"){
     const score=state.stage_uid==="EDIT-01-STAGE-01-ASSEMBLY"?96:state.stage_uid==="EDIT-01-STAGE-02-AUDIO"?97:98;
-    state.stage_score=score;state.page_state_uid="EDIT-01-ST-PAGE-EVAL_PASS";state.stage_phase="WAIT_CONFIRMATION";return ok(request.correlation_id,{scorecard_ref:`TEST-EDIT-SCORECARD-${score}`,overall_score:score,hard_block:false});
+    state.stage_score=score;state.page_state_uid="EDIT-01-ST-PAGE-EVAL_PASS";state.stage_phase="WAIT_CONFIRMATION";return ok(request.correlation_id,{scorecard_ref:`TEST-EDIT-SCORECARD-${score}`,overall_score:score,hard_block:false,internal_action_uid:"EDIT-01-ACT-STAGE-EVALUATE"});
   }
   if(request.operation_id==="decideOutputCandidate"){
     if(state.page_state_uid!=="EDIT-01-ST-PAGE-EVAL_PASS"||state.stage_phase!=="WAIT_CONFIRMATION")return fail(request.correlation_id,"EDIT-01-ERR-STAGE-001","STAGE_PASS_REQUIRED");
