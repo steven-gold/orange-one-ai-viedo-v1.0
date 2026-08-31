@@ -1,0 +1,55 @@
+name: EDIT01 Fix Correction UIDs Once
+on:
+  push:
+    branches: [edit01-functional-staging]
+    paths: ['.github/workflows/edit01-fix-correction-uids-once.yml']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: edit01-functional-staging
+          fetch-depth: 0
+      - name: Patch exact Authority UIDs and internal action evidence
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/domain/edit/controlledEditClientTestRuntime.ts')
+          s=p.read_text()
+          replacements={
+            'EDIT-01-ACT-CORR-GENERATE':'EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE',
+            'EDIT-01-ACT-CORR-APPROVE':'EDIT-01-ACT-CORRECTION-CANDIDATE-APPROVE',
+            'EDIT-01-ACT-CORR-EXECUTE':'EDIT-01-ACT-CORRECTION-EXECUTE',
+          }
+          for old,new in replacements.items():
+              if old not in s: raise SystemExit('MISSING '+old)
+              s=s.replace(old,new)
+          old='if(input.action_uid==="EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE"){correctionCandidateRef=ref("EDIT-CORRECTION-CANDIDATE");correctionApprovedRef=null;next.values={...next.values,"EDIT-01-LBL-API-JOB":correctionCandidateRef};return ok(next,input.action_uid,{candidate_ref:correctionCandidateRef});}'
+          new='if(input.action_uid==="EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE"){correctionCandidateRef=ref("EDIT-CORRECTION-CANDIDATE");correctionApprovedRef=null;next.values={...next.values,"EDIT-01-LBL-API-JOB":correctionCandidateRef,"EDIT-01-TEST-INTERNAL-CORRECTION-ACTION":"EDIT-01-ACT-CORRECTION-TRANSLATE"};return ok(next,input.action_uid,{candidate_ref:correctionCandidateRef,internal_action_uid:"EDIT-01-ACT-CORRECTION-TRANSLATE"});}'
+          if old not in s: raise SystemExit('GENERATE_BRANCH_NOT_FOUND')
+          p.write_text(s.replace(old,new,1))
+
+          p=Path('src/components/pages/EditControlRuntime.tsx')
+          s=p.read_text()
+          old='const FORMAL_MUTATION_ACTIONS=new Set(["EDIT-01-ACT-CORR-EXECUTE","EDIT-01-ACT-API-APPLY"]);'
+          new='const FORMAL_MUTATION_ACTIONS=new Set(["EDIT-01-ACT-CORRECTION-EXECUTE","EDIT-01-ACT-API-APPLY"]);'
+          if old not in s: raise SystemExit('FORMAL_SET_NOT_FOUND')
+          p.write_text(s.replace(old,new,1))
+
+          p=Path('src/server/testing/controlledEditTestRuntime.ts')
+          s=p.read_text()
+          old='state.stage_score=score;state.page_state_uid="EDIT-01-ST-PAGE-EVAL_PASS";state.stage_phase="WAIT_CONFIRMATION";return ok(request.correlation_id,{scorecard_ref:`TEST-EDIT-SCORECARD-${score}`,overall_score:score,hard_block:false});'
+          new='state.stage_score=score;state.page_state_uid="EDIT-01-ST-PAGE-EVAL_PASS";state.stage_phase="WAIT_CONFIRMATION";return ok(request.correlation_id,{scorecard_ref:`TEST-EDIT-SCORECARD-${score}`,overall_score:score,hard_block:false,internal_action_uid:"EDIT-01-ACT-STAGE-EVALUATE"});'
+          if old not in s: raise SystemExit('SCORE_BRANCH_NOT_FOUND')
+          p.write_text(s.replace(old,new,1))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/edit01-fix-correction-uids-once.yml
+          git add src/domain/edit/controlledEditClientTestRuntime.ts src/components/pages/EditControlRuntime.tsx src/server/testing/controlledEditTestRuntime.ts
+          git commit -m 'fix(edit): align governed correction lifecycle with exact Authority UIDs'
+          git push origin HEAD:edit01-functional-staging
