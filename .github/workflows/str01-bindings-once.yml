@@ -1,0 +1,55 @@
+name: STR01 authority bindings
+on:
+  push:
+    paths:
+      - '.github/workflows/str01-bindings-once.yml'
+permissions:
+  contents: write
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Generate STR bindings
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import json,yaml
+          p=Path('authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml')
+          d=yaml.safe_load(p.read_text())
+          controls=d['registries']['controls']; actions={x['action_uid']:x for x in d['registries']['actions']}
+          assert len(controls)==57 and len(actions)==11
+          out={}
+          for c in controls:
+              action=c['action_uid']; assert action in actions; a=actions[action]
+              out[c['control_uid']]={'action_uid':action,'gate_uid':c['gate_uid'],'permission_uid':c['permission_uid'],'effect_type':a['effect_type'],'operation':a.get('operation'),'method_path':a.get('method_path'),'error_uid':a['error_uid']}
+          assert len(out)==57
+          Path('src/domain/strategy/strategyControlBindings.ts').write_text('// GENERATED FROM STR-01 FINAL_LOCKED AUTHORITY. DO NOT HAND-EDIT.\nexport const STRATEGY_CONTROL_BINDINGS = '+json.dumps(out,ensure_ascii=False,separators=(',',':'))+' as const;\nexport type StrategyControlUid = keyof typeof STRATEGY_CONTROL_BINDINGS;\nexport const STRATEGY_MATERIALIZED_CONTROL_COUNT = 57 as const;\nexport const STRATEGY_MATERIALIZED_ACTION_COUNT = 11 as const;\n')
+          PY
+      - name: Validate binding and CSS lock
+        run: |
+          node - <<'NODE'
+          const s=require('fs').readFileSync('src/domain/strategy/strategyControlBindings.ts','utf8');
+          for(const x of ['STR-01-ACT-SEND','STR-01-ACT-STOP','STR-01-ACT-COMPARE','STR-01-ACT-REVIEW','STR-01-ACT-ADOPT','STR-01-ACT-OPEN-OWNER'])if(!s.includes(x))throw new Error('missing '+x);
+          if(!s.includes('STRATEGY_MATERIALIZED_CONTROL_COUNT = 57'))throw new Error('control count');
+          NODE
+          test "$(git hash-object src/components/pages/StrategyVisual.module.css)" = "7bd15572bbb3a594033b39470bf95cc050ddddf9"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Commit and self-clean
+        run: |
+          rm -f .github/workflows/str01-bindings-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/domain/strategy/strategyControlBindings.ts .github/workflows/str01-bindings-once.yml
+          git commit -m "materialize(strategy): bind 57 controls to FINAL_LOCKED authority"
+          git push origin HEAD:new
