@@ -51,7 +51,8 @@ jobs:
           if(!v.includes('AssetRuntimeProvider')||!v.includes('AssetRuntimeControl'))throw new Error('runtime renderer missing');
           if((v.match(/CORRECTION\.map/g)||[]).length!==1)throw new Error('correction controls not rendered');
           if(!v.includes('LAYER.slice(0,8).map')||!v.includes('LAYER.slice(8).map'))throw new Error('layer/patch controls not rendered');
-          if(!/ASSET_CONTROL_BINDING_COUNT\s*=\s*85/.test(b))throw new Error('85 binding count missing');
+          const entries=b.match(/"ASSET-01-[^"]+":\{"action_uid"/g)||[];
+          if(entries.length!==85)throw new Error(`expected 85 control bindings, got ${entries.length}`);
           if(r.includes('manual rename')||r.includes('Provider/Model picker'))throw new Error('forbidden local authority added');
           NODE
           test "$(git hash-object src/components/pages/AssetVisual.module.css)" = "80220b164df59a3a4d03ee3ac6886b844d785552"
