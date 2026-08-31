@@ -1,0 +1,72 @@
+name: ASSET01 preview sync
+on:
+  push:
+    paths:
+      - '.github/workflows/asset01-preview-sync-once.yml'
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          path: app
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+          path: live
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Build validated new branch
+        working-directory: app
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+          npm start -- -H 127.0.0.1 -p 3000 > /tmp/asset-preview-server.log 2>&1 &
+          for i in $(seq 1 60); do if curl -fsS http://127.0.0.1:3000/assets >/dev/null; then exit 0; fi; sleep 1; done
+          cat /tmp/asset-preview-server.log
+          exit 1
+      - name: Overlay ASSET only and preserve existing pages
+        run: |
+          curl -fsS http://127.0.0.1:3000/assets > /tmp/assets.html
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('/tmp/assets.html');s=p.read_text()
+          s=s.replace('href="/_next/','href="_next/').replace('src="/_next/','src="_next/')
+          s=s.replace('href="/brand/','href="brand/').replace('src="/brand/','src="brand/')
+          routes={'/core':'core.html','/assets':'assets.html','/video':'video.html','/edit':'edit.html','/qa':'qa.html','/database':'db.html','/strategy':'strategy.html','/info':'info.html','/system':'system.html','/':'index.html'}
+          for route,target in sorted(routes.items(),key=lambda x:-len(x[0])): s=s.replace(f'href="{route}"',f'href="{target}"')
+          p.write_text(s)
+          PY
+          mkdir -p live/preview/_next/static
+          cp -a app/.next/static/. live/preview/_next/static/
+          cp /tmp/assets.html live/preview/assets.html
+          for f in index.html core.html video.html edit.html qa.html db.html strategy.html info.html; do test -f "live/preview/$f"; done
+          grep -q 'data-page-uid="ASSET-01"' live/preview/assets.html
+          grep -q 'core.html' live/preview/assets.html
+          ! grep -q 'preview-runtime' live/preview/assets.html
+      - name: Commit preview overlay
+        working-directory: live
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add preview/assets.html preview/_next/static
+          git commit -m "sync(preview): update validated interactive ASSET-01" || true
+          git push origin HEAD:acpos-live-preview
+      - name: Self clean
+        working-directory: app
+        run: |
+          rm -f .github/workflows/asset01-preview-sync-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/asset01-preview-sync-once.yml
+          git commit -m "chore(asset01): remove preview sync workflow"
+          git push origin HEAD:new
