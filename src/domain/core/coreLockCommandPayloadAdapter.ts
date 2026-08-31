@@ -1,3 +1,5 @@
+import { createControlledTestMetadata, isControlledTestMode } from "../testing/controlledTestData";
+
 export type CoreLockCommandKind = "DNA_LOCK" | "CORE_REVIEW" | "MOTHER_LOCK" | "CHILD_LOCK";
 
 export type CoreLockCommandContext = {
@@ -28,9 +30,22 @@ function valid(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value) && Object.keys(value).length > 0;
 }
 
+function controlledTestPayload(context: CoreLockCommandContext): CoreLockCommandPayloadResult {
+  return {
+    ok: true,
+    payload: {
+      ...createControlledTestMetadata(`CORE-${context.kind}`),
+      ...context,
+    },
+  };
+}
+
 export async function requestCoreLockCommandPayload(context: CoreLockCommandContext): Promise<CoreLockCommandPayloadResult> {
   const current = adapter;
-  if (!current) return { ok: false, reason_code: `${context.kind}_REGISTERED_COMMAND_SCHEMA_ADAPTER_NOT_BOUND` };
+  if (!current) {
+    if (isControlledTestMode()) return controlledTestPayload(context);
+    return { ok: false, reason_code: `${context.kind}_REGISTERED_COMMAND_SCHEMA_ADAPTER_NOT_BOUND` };
+  }
   try {
     const result = await current.buildPayload(context);
     if (!result.ok) return result;
