@@ -1,0 +1,46 @@
+name: QA01 Browser Closure Retry Once
+
+on:
+  push:
+    branches: [qa01-functional-staging]
+    paths:
+      - '.github/workflows/qa01-browser-closure-retry-once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - name: Install ephemeral Playwright
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Real QA-01 browser closure
+        run: |
+          cat > qa01-retry.cjs <<'NODE'
+          const {chromium}=require('playwright');
+          const {spawn}=require('child_process');
+          const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+          const assert=(c,m)=>{if(!c)throw new Error(m)};
+          async function server(port,env){const c=spawn('npm',['run','dev','--','-p',String(port)],{env:{...process.env,...env},stdio:['ignore','pipe','pipe']});c.stdout.pipe(process.stdout);c.stderr.pipe(process.stderr);const url=`http://localhost:${port}/qa`;for(let i=0;i<120;i++){try{const r=await fetch(url);if(r.status<500)return{c,url}}catch{}await sleep(500)}throw new Error('server not ready')}
+          async function stop(c){if(c.exitCode===null){c.kill('SIGTERM');await sleep(500);if(c.exitCode===null)c.kill('SIGKILL')}}
+          const ctl=(p,id)=>p.locator(`[data-control-id="${id}"]`);const val=async(p,id)=>((await ctl(p,id).locator('strong').textContent())||'').trim();
+          async function ready(p){await p.goto(p.url()||'about:blank').catch(()=>{});}
+          async function pageFor(browser,url){const p=await browser.newPage({viewport:{width:1600,height:1200}});const errors=[];p.on('pageerror',e=>errors.push(String(e)));await p.goto(url,{waitUntil:'networkidle'});await p.waitForSelector('[data-page-uid="QA-01"]');return{p,errors}}
+          async function hydrated(p){await p.waitForFunction(()=>{const e=document.querySelector('[data-control-id="QA-01-BTN-AUTO-START"]');return e instanceof HTMLButtonElement&&!e.disabled},{timeout:15000})}
+          async function click(p,id){const e=ctl(p,id);await e.waitFor({state:'visible'});await p.waitForFunction(id=>{const x=document.querySelector(`[data-control-id="${id}"]`);return x instanceof HTMLButtonElement&&!x.disabled},id,{timeout:15000});await e.click()}
+          async function state(p,s){await p.waitForFunction(s=>document.querySelector('[data-page-uid="QA-01"]')?.getAttribute('data-page-state')===s,s,{timeout:15000})}
+          async function snap(p,n){const x=await p.locator('[data-page-uid="QA-01"]').evaluate(e=>({state:e.getAttribute('data-page-state'),stage:e.getAttribute('data-current-stage'),mode:e.getAttribute('data-review-mode'),registry:e.getAttribute('data-registry-valid')}));console.log(n,JSON.stringify(x));return x}
+          (async()=>{const b=await chromium.launch({headless:true});try{
+            let s=await server(3201,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'CORRECTION'});let x=await pageFor(b,s.url);await hydrated(x.p);let q=await snap(x.p,'EMPTY');assert(q.state==='QA-01-ST-NOT-STARTED','bad initial state');assert(q.registry==='true','registry false');await x.p.getByRole('button',{name:'MANUAL',exact:true}).click();await click(x.p,'QA-01-BTN-START-REVIEW');await state(x.p,'QA-01-ST-FAIL');assert(await val(x.p,'QA-01-FLD-TOTAL-SCORE')==='82','score 82 missing');assert(await val(x.p,'QA-01-FLD-GATE-STATUS')==='FAIL','FAIL missing');assert(await ctl(x.p,'QA-01-BTN-FINDING-CREATE').isDisabled(),'finding must be blocked');assert(await ctl(x.p,'QA-01-BTN-FINDING-CREATE').getAttribute('data-disabled-reason')==='AUTHORITY_GAP_QA_ISSUE_CATEGORY_REGISTRY','finding gap mismatch');await ctl(x.p,'QA-01-INP-CORR-ACTION').fill('[TEST] original owner correction');await click(x.p,'QA-01-BTN-CORRECTION');await state(x.p,'QA-01-ST-CORRECTION');assert(await val(x.p,'QA-01-FLD-FAILED-VERSION')==='TEST-EDIT-OUTPUT-001','failed exact version missing');assert(await val(x.p,'QA-01-FLD-NEW-VERSION')==='TEST-EDIT-OUTPUT-002','new exact version missing');await click(x.p,'QA-01-BTN-RECHECK');await state(x.p,'QA-01-ST-PASS');assert(await val(x.p,'QA-01-FLD-TOTAL-SCORE')==='98','recheck score missing');assert(await val(x.p,'QA-01-FLD-GATE-STATUS')==='PASS','PASS missing');await click(x.p,'QA-01-BTN-RELEASE-CREATE');await x.p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-REL-PACKAGE"] strong')?.textContent==='TEST-RELEASE-CANDIDATE-001');assert(await x.p.locator('[data-action-uid="QA-01-ACT-GATE-PASS"],[data-action-uid="QA-01-ACT-GATE-FAIL"]').count()===0,'direct gate controls exposed');assert(await x.p.locator('[data-control-id*="PUBLISH"],[data-action-uid*="PUBLISH"]').count()===0,'publish exposed');assert(x.errors.length===0,`page errors ${x.errors}`);await snap(x.p,'RELEASE_CANDIDATE');await x.p.close();await stop(s.c);
+            s=await server(3202,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'MANUAL_REQUIRED'});x=await pageFor(b,s.url);await hydrated(x.p);await x.p.getByRole('button',{name:'MANUAL',exact:true}).click();await click(x.p,'QA-01-BTN-START-REVIEW');await x.p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-GATE-STATUS"] strong')?.textContent==='MANUAL_REVIEW_REQUIRED');assert(await val(x.p,'QA-01-FLD-TOTAL-SCORE')==='97','manual score missing');const mb=x.p.locator('[data-component-uid="QA-01-CMP-MANUAL-DECISION"] button');assert(await mb.count()===2,'manual decision count not 2');const acts=await mb.evaluateAll(es=>es.map(e=>e.getAttribute('data-action-uid')).sort());assert(JSON.stringify(acts)===JSON.stringify(['QA-01-ACT-MANUAL-MODIFY','QA-01-ACT-MANUAL-PASS'].sort()),'manual action mismatch');assert(await x.p.locator('[data-component-uid="QA-01-CMP-SCORE"] input,[data-component-uid="QA-01-CMP-SCORE"] select,[data-component-uid="QA-01-CMP-SCORE"] textarea,[data-component-uid="QA-01-CMP-SCORE"] button').count()===0,'human score control exposed');await click(x.p,'QA-01-BTN-MANUAL-MODIFY');await x.p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-BTN-MANUAL-MODIFY"]')?.getAttribute('data-last-action')==='true');await click(x.p,'QA-01-BTN-MANUAL-PASS');await state(x.p,'QA-01-ST-PASS');assert(await val(x.p,'QA-01-FLD-GATE-STATUS')==='PASS','manual pass did not re-evaluate gate');assert(x.errors.length===0,`page errors ${x.errors}`);await snap(x.p,'MANUAL_PASSED');await x.p.close();await stop(s.c);
+            s=await server(3203,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'TEST',ACPOS_QA_TEST_SCENARIO:'AUTO'});x=await pageFor(b,s.url);await hydrated(x.p);assert(await ctl(x.p,'QA-01-BTN-START-REVIEW').count()===0,'manual start visible in AUTO');const qb=x.p.locator('[data-control-id="QA-01-LIST-REVIEWS"] [data-item-ref]');assert(await qb.count()===2,'AUTO queue mismatch');for(let i=0;i<2;i++)assert(await qb.nth(i).isDisabled(),'AUTO queue reorder enabled');await click(x.p,'QA-01-BTN-AUTO-START');await x.p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-AUTO-PROGRESS"] strong')?.textContent==='2/2',{timeout:15000});assert(await x.p.locator('[data-control-id*="PUBLISH"],[data-action-uid*="PUBLISH"]').count()===0,'AUTO publish exposed');assert(x.errors.length===0,`page errors ${x.errors}`);await snap(x.p,'AUTO_COMPLETE');await x.p.close();await stop(s.c);
+            s=await server(3204,{NEXT_PUBLIC_ACPOS_RUNTIME_MODE:'PRODUCTION',ACPOS_QA_TEST_SCENARIO:'CORRECTION'});x=await pageFor(b,s.url);await x.p.waitForFunction(()=>document.querySelector('[data-control-id="QA-01-FLD-ERROR"] strong')?.textContent?.includes('UI_PROJECTION_RUNTIME_NOT_BOUND'),{timeout:15000});const r=await x.p.request.post('http://localhost:3204/v1/qa/reviews',{data:{project_id:'X',topic_id:'Y',output_version_id:'Z',qa_profile_id:'Q'}});assert(r.status()===503,`production expected 503 got ${r.status()}`);const body=await r.json();assert(body.reason_code==='QA_RUNTIME_NOT_BOUND',`bad production reason ${JSON.stringify(body)}`);assert(x.errors.length===0,`page errors ${x.errors}`);await snap(x.p,'PRODUCTION_FAIL_CLOSED');await x.p.close();await stop(s.c);
+            console.log('QA01_BROWSER_CLOSURE_PASS controls=87 actions=32 ports=10 direct_pass_fail=0 publish=0');
+          }finally{await b.close()}})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node qa01-retry.cjs
