@@ -1,0 +1,103 @@
+name: WB01 interaction closure
+on:
+  push:
+    paths:
+      - '.github/workflows/wb01-interaction-closure-once.yml'
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Patch WB01 interaction fallback without changing authority layout
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/DashboardVisual.tsx')
+          s=p.read_text()
+          old='''  const readDashboard = useCallback(async (): Promise<DashboardReadModel | null> => {\n    const response = await fetch("/v1/dashboard/read-model", { method: "GET", cache: "no-store" });\n    const payload: unknown = await response.json().catch(() => null);'''
+          new='''  const readDashboard = useCallback(async (): Promise<DashboardReadModel | null> => {\n    let response: Response;\n    try {\n      response = await fetch("/v1/dashboard/read-model", { method: "GET", cache: "no-store" });\n    } catch {\n      setError({ error_uid: "WB-01-ERR-READ-001", reason_code: "DASHBOARD_READ_FAILED", correlation_id: "unresolved" });\n      return null;\n    }\n    const payload: unknown = await response.json().catch(() => null);'''
+          assert old in s
+          s=s.replace(old,new,1)
+          old2='''  if (state === "LOADING" || !model) {\n    return (\n      <div className={styles.page} data-page-uid="workspace:WB-01" data-vis-step="VIS-01" data-state={state} aria-label={t("wb01.page.name")}>\n        <div className={state === "ERROR" ? styles.errorState : styles.emptyState}>\n          {state === "ERROR" ? (error ? `${error.error_uid}: ${error.reason_code}` : "—") : loading}\n        </div>\n      </div>\n    );\n  }\n\n  const visibleSections = SECTIONS.filter((section) => hasOwn(model, section.key));'''
+          new2='''  if (state === "LOADING") {\n    return (\n      <div className={styles.page} data-page-uid="workspace:WB-01" data-vis-step="VIS-01" data-state={state} aria-label={t("wb01.page.name")}>\n        <div className={styles.emptyState}>{loading}</div>\n      </div>\n    );\n  }\n\n  const visibleSections = model\n    ? SECTIONS.filter((section) => hasOwn(model, section.key))\n    : state === "ERROR"\n      ? SECTIONS\n      : [];'''
+          assert old2 in s
+          s=s.replace(old2,new2,1)
+          p.write_text(s)
+          PY
+      - name: Authority and pollution checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const s=fs.readFileSync('src/components/pages/DashboardVisual.tsx','utf8');
+          const ids=[...s.matchAll(/controlId:\s*"(CTRL-WORKSPACE-WB-01-[^"]+)"/g)].map(m=>m[1]);
+          if(ids.length!==14||new Set(ids).size!==14)throw new Error('WB01 must keep exactly 14 SECTION_OPEN controls');
+          if(!s.includes('state === "ERROR"\n      ? SECTIONS'))throw new Error('runtime-error interaction fallback missing');
+          if(s.includes('Retry')||s.includes('refreshDashboard')||s.includes('correction_rate'))throw new Error('unregistered WB01 control/field introduced');
+          if(!s.includes('WB-01-CMP-DRAWER-PROJECTION'))throw new Error('canonical drawer missing');
+          NODE
+          test "$(git hash-object src/components/pages/DashboardVisual.module.css)" = "4f2656bf7db9fdbbf0531730b181215606b3120e"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Install Chromium interaction harness
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run production server
+        run: |
+          npm start -- -H 127.0.0.1 -p 3000 > /tmp/wb01-server.log 2>&1 &
+          echo $! > /tmp/wb01-server.pid
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/wb01-server.log
+          exit 1
+      - name: Chromium click closure
+        run: |
+          cat > wb01-interaction-check.cjs <<'NODE'
+          const { chromium } = require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage();
+            await page.goto('http://127.0.0.1:3000/',{waitUntil:'networkidle'});
+            await page.waitForSelector('[data-page-uid="workspace:WB-01"][data-state="ERROR"]');
+            const buttons=page.locator('button[data-control-id^="CTRL-WORKSPACE-WB-01-"]');
+            if(await buttons.count()!==14)throw new Error('expected 14 visible dashboard controls');
+            for(let i=0;i<14;i++)if(await buttons.nth(i).isDisabled())throw new Error(`dashboard control ${i+1} disabled`);
+            await buttons.nth(0).click();
+            const drawer=page.locator('[data-component-uid="WB-01-CMP-DRAWER-PROJECTION"]');
+            await drawer.waitFor({state:'visible'});
+            await page.waitForFunction(()=>document.querySelector('[data-component-uid="WB-01-CMP-DRAWER-PROJECTION"]')?.getAttribute('data-state')==='ERROR');
+            const body=await drawer.innerText();
+            if(!body.includes('WB-01-ERR-READ-001')||!body.includes('DASHBOARD_RUNTIME_NOT_BOUND'))throw new Error('drawer missing governed runtime failure reason');
+            if(!body.includes('correlation_id'))throw new Error('drawer missing correlation id');
+            await page.keyboard.press('Escape');
+            if(await drawer.isVisible())throw new Error('Escape did not close drawer');
+            await buttons.nth(13).click();
+            await drawer.waitFor({state:'visible'});
+            await page.locator('button[aria-label]').filter({hasText:''}).first();
+            const close=drawer.getByRole('button').filter({hasText:/close|關閉|关闭/i}).first();
+            if(await close.count())await close.click(); else await page.keyboard.press('Escape');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node wb01-interaction-check.cjs
+          rm -f wb01-interaction-check.cjs
+      - name: Commit validated homepage closure and self-clean
+        run: |
+          rm -f .github/workflows/wb01-interaction-closure-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/pages/DashboardVisual.tsx .github/workflows/wb01-interaction-closure-once.yml
+          git commit -m "fix(wb01): close homepage interaction failure states"
+          git push origin HEAD:new
