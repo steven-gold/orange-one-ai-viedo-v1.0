@@ -2,7 +2,7 @@ import{invokeAssetAction,type AssetInvokeResult}from'./assetClientPort';
 import type{AssetActionUid}from'./assetRuntimeContract';
 import type{AssetClientState}from'./assetClientState';
 import type{AssetNormalizedProjection}from'./assetProjectionPort';
-export type AssetRequestBuildInput={action_uid:AssetActionUid;state:Readonly<AssetClientState>;projection:AssetNormalizedProjection|null;correction_request:string};
+export type AssetRequestBuildInput={action_uid:AssetActionUid;control_uid:string;control_value?:unknown;state:Readonly<AssetClientState>;projection:AssetNormalizedProjection|null;correction_request:string};
 export type AssetRequestBuilder={build:(input:AssetRequestBuildInput)=>Promise<{path_params?:Record<string,string>;payload?:unknown}>|{path_params?:Record<string,string>;payload?:unknown}};
 let builder:AssetRequestBuilder|null=null;
 export function configureAssetRequestBuilder(next:AssetRequestBuilder){builder=next;}
