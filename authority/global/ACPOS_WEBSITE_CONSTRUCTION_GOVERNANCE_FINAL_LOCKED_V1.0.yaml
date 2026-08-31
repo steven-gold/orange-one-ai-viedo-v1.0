@@ -3,6 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
+  revision: 2026-08-31-CONTROLLED-TEST-DATA-AND-BUTTON-RUNTIME-VALIDATION
   scope: WEBSITE_CONSTRUCTION_ONLY
   purpose: Govern website construction behavior without redefining page, system, navigation, runtime, or business authority.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
@@ -16,9 +17,9 @@ construction_scope_integrity_lock:
   rule: Construction may implement only content explicitly required by Current Authority or explicitly added by the user as a new Current requirement.
   forbidden_without_current_authority:
     - unrelated data
-    - sample data
-    - mock business data
-    - fabricated KPI or statistics
+    - uncontrolled sample data
+    - uncontrolled mock business data
+    - fabricated production KPI or statistics
     - extra field
     - extra card
     - extra section
@@ -39,25 +40,131 @@ construction_scope_integrity_lock:
   no_helpful_filler_rule: AI SHALL NOT add plausible or helpful-looking content merely to make a page appear complete.
   no_template_filler_rule: Generic dashboard, admin, SaaS, analytics, CRM, ERP, AI-workspace, or design-system filler is forbidden unless current authority explicitly requires it.
   data_truth_rule:
-    real_data_only: true
+    production_data_must_be_real: true
+    controlled_test_data_allowed: true
     missing_value: Use exact page/global missing-value authority.
     zero_is_data: true
     zero_must_not_be_used_as_placeholder: true
-    fake_success_state: FORBIDDEN
+    fake_production_success_state: FORBIDDEN
+    test_success_must_be_explicitly_classified: true
+
+controlled_test_data_policy:
+  purpose: Allow internal controls, actions, state transitions, validation, audit, version, lineage, and cross-page internal handoff logic to be exercised before production deployment or external integration is available.
+  allowed_environments:
+    - LOCAL
+    - DEVELOPMENT
+    - TEST
+    - PREVIEW
+  production_environment: PRODUCTION
+  production_creation_of_test_data: FORBIDDEN
+  mandatory_classification:
+    data_classification: TEST_ONLY
+    synthetic: true
+    test_dataset_id: REQUIRED
+    test_run_id: REQUIRED
+    created_for_validation: true
+    production_eligible: false
+  recommended_identity_prefixes:
+    project_code: TEST-
+    topic_code: TEST-
+    object_display_name: '[TEST] '
+  storage_separation:
+    rule: TEST_ONLY records must be queryable and purgeable independently from production records.
+    acceptable_mechanisms:
+      - dedicated test database or schema
+      - dedicated namespace or tenant
+      - mandatory TEST_ONLY classification column with enforced query scope
+    silent_mixing_with_production_records: FORBIDDEN
+  lineage_and_audit:
+    required: true
+    preserve_exact_action_uid: true
+    preserve_exact_control_uid_when_available: true
+    preserve_exact_test_run_id: true
+    preserve_correlation_id: true
+    test_record_must_not_be_reclassified_as_production: true
+  generation_rules:
+    internal_required_fields_may_use_synthetic_values: true
+    synthetic_values_must_satisfy_registered_schema: true
+    unknown_business_fields_may_not_be_invented: true
+    registered_default_or_test_fixture_may_be_used: true
+    production_business_claims_from_test_values: FORBIDDEN
+  ui_truth:
+    test_data_must_be_visibly_distinguishable_when_rendered: true
+    production_success_label_for_test_execution: FORBIDDEN
+    test_execution_label_or_badge_required_where_status_is_visible: true
+  external_side_effect_boundary:
+    real_email_send: FORBIDDEN_IN_TEST_ONLY
+    real_social_publish: FORBIDDEN_IN_TEST_ONLY
+    real_payment_or_financial_posting: FORBIDDEN_IN_TEST_ONLY
+    real_provider_charge: FORBIDDEN_UNLESS_EXPLICIT_EXTERNAL_E2E_TEST
+    real_crawler_or_external_fetch: FORBIDDEN_UNLESS_EXPLICIT_EXTERNAL_E2E_TEST
+    real_account_or_permission_change_outside_test_scope: FORBIDDEN
+    simulated_external_result_allowed: true
+    simulation_must_be_labeled: SIMULATED_EXTERNAL
+    simulated_external_result_cannot_satisfy_production_e2e_gate: true
+  cleanup_policy:
+    purge_capability_required_before_production: true
+    purge_selector: data_classification=TEST_ONLY OR test_dataset_id/test_run_id
+    cleanup_is_destructive_only_for_test_records: true
+    production_record_delete_by_test_cleanup: FORBIDDEN
+    cleanup_audit_required: true
+    production_cutover_requires_test_record_count_zero: true
+    production_cutover_requires_simulation_disabled: true
+    production_cutover_requires_test_adapter_disabled: true
+
+button_functionality_policy:
+  objective: Every registered interactive control must have a deterministic, authority-aligned behavior before construction closure.
+  internal_controls:
+    requirement: Implement and validate now using real internal runtime or CONTROLLED TEST_ONLY runtime when production infrastructure is not yet available.
+    must_not_wait_for_production_deployment: true
+    required_layers:
+      - Control event binding
+      - Action UID dispatch
+      - Gate evaluation
+      - Permission evaluation
+      - Registered input/schema validation
+      - State transition or read behavior
+      - Error/recovery behavior
+      - Audit/correlation behavior
+      - Projection/UI refresh where applicable
+  external_or_real_signal_controls:
+    requirement: Implement the internal request/adapter boundary now; defer only the true external side effect or external signal verification when unavailable.
+    simulation_allowed_for_internal_path_validation: true
+    production_e2e_remains_pending_until_real_external_test: true
+  non_business_presentation_controls:
+    requirement: Must operate immediately through client/view state when page authority marks no API required.
+  forbidden_closure_states:
+    - visible button with no event handler
+    - registered action silently returning no-op
+    - fabricated success without state evidence
+    - external simulation reported as real external success
+    - missing registered error path hidden from UI
 
 construction_sequence_lock:
   visual_before_business_logic: true
   current_visual_sequence_source: docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml
   page_business_logic_before_all_visual_complete: FORBIDDEN
+  logic_phase_after_all_visual_complete: REQUIRED
   exception: Local presentation state strictly required to validate visual controls such as tab, drawer, modal, focus, empty/loading/error display.
   local_presentation_state_must_not:
-    - call business API
-    - mutate database
-    - execute provider
-    - execute crawler
-    - create business object
-    - create fake business record
-    - perform cross-page handoff
+    - call business API before logic phase starts
+    - mutate database before logic phase starts
+    - execute provider before logic phase starts
+    - execute crawler before logic phase starts
+    - create business object before logic phase starts
+    - perform cross-page handoff before logic phase starts
+  logic_phase_test_exception:
+    condition: All visual construction gates are COMPLETE and current program state has entered page logic construction.
+    allows:
+      - controlled TEST_ONLY business objects
+      - internal API mutation against test-scoped runtime
+      - test-scoped state transition
+      - test-scoped version/lineage creation
+      - test-scoped cross-page internal handoff
+    does_not_allow:
+      - unlabeled fake production records
+      - real external side effects unless explicit E2E test
+      - production cutover with TEST_ONLY residue
 
 authority_exactness:
   ids: Preserve exact registered Page/Section/Component/Control/Action/Gate/Permission IDs when they exist.
@@ -117,5 +224,17 @@ completion_truth:
     - required target widths validated
     - manual visual inspection pass
     - no known authority deviation
+  button_complete_requires:
+    - registered control event binding exists
+    - action/gate/permission path exists where required
+    - deterministic test or real runtime behavior exists
+    - registered errors are surfaced
+    - audit/correlation evidence exists where required
+    - no silent no-op
   runtime_complete_requires: Actual runtime implementation and executed runtime validation.
+  production_ready_requires:
+    - TEST_ONLY record count is zero
+    - simulated external adapters are disabled
+    - test runtime adapters are disabled
+    - required real external E2E gates are PASS or explicitly recorded as deployment blocker
   no_evidence_no_complete: true
