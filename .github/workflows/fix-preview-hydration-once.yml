@@ -54,7 +54,6 @@ jobs:
           ordered=sorted(nav.items(),key=lambda item:len(item[0]),reverse=True)
           for p in Path('/tmp/static-site/preview').glob('*.html'):
               s=p.read_text()
-              # Critical: rewrite every Next asset reference, including escaped references inside RSC/Flight payloads.
               s=s.replace('/_next/','_next/')
               s=s.replace('/brand/','brand/')
               for route,target in ordered:
@@ -70,7 +69,7 @@ jobs:
           npx playwright install --with-deps chromium
           (python3 -m http.server 4173 --directory /tmp/static-site > /tmp/static-http.log 2>&1 & echo $! > /tmp/static-http.pid)
           for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/preview/index.html >/dev/null && break; sleep 1; done
-          cat > /tmp/static-hydration-check.cjs <<'NODE'
+          cat > static-hydration-check.cjs <<'NODE'
           const { chromium } = require('playwright');
           (async()=>{
             const browser=await chromium.launch({headless:true});
@@ -91,9 +90,7 @@ jobs:
               const dstate=await drawer.getAttribute('data-state');
               if(!['LOADING','ERROR','READ_ONLY'].includes(dstate)) throw new Error(`invalid drawer state ${dstate}`);
               if(await page.locator('#acpos-preview-drawer').count()) throw new Error('forbidden preview drawer detected');
-              await drawer.locator('button').filter({hasText:/關閉|Close|关闭/}).click().catch(async()=>{
-                await page.keyboard.press('Escape');
-              });
+              await page.keyboard.press('Escape');
               await drawer.waitFor({state:'detached'});
             }
             const navHref=await page.locator('a[data-nav-id="NAV-02"]').getAttribute('href');
@@ -103,7 +100,8 @@ jobs:
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
-          node /tmp/static-hydration-check.cjs
+          node static-hydration-check.cjs
+          rm -f static-hydration-check.cjs
       - name: Sync entire matching build to original preview branch
         run: |
           git fetch origin acpos-live-preview
@@ -127,7 +125,7 @@ jobs:
       - name: Self clean
         run: |
           git worktree remove /tmp/acpos-preview --force || true
-          rm -f .github/workflows/fix-preview-hydration-once.yml
+          rm -f .github/workflows/fix-preview-hydration-once.yml static-hydration-check.cjs
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add .github/workflows/fix-preview-hydration-once.yml
