@@ -6,6 +6,7 @@ import { useI18n } from "@/i18n/LocaleProvider";
 import { invokeCoreAction, readCoreProjection } from "@/domain/core/coreClientPort";
 import { requestCoreDraftFormPayload } from "@/domain/core/coreDraftFormAdapter";
 import { requestCoreMessageSendPayload, requestCoreThreadCreatePayload } from "@/domain/core/coreConversationPayloadAdapter";
+import { requestCoreCandidateCreatePayload, requestCoreCandidateDecisionPayload } from "@/domain/core/coreCandidatePayloadAdapter";
 import { INITIAL_CORE_CLIENT_STATE, reduceCoreClientState } from "@/domain/core/coreClientState";
 import type { CoreActionUid } from "@/domain/core/coreRuntimeContract";
 import styles from "./CoreVisual.module.css";
@@ -180,8 +181,24 @@ export function CoreVisual() {
           appendConversationMessage("STATUS", result.ok ? `MESSAGE_ACCEPTED:${result.correlation_id}` : `${result.error_uid}:${result.reason_code}`);
         })(); return;
       }
-      case "CORE-01-ACT-CANDIDATE-CREATE": if (!humanDecision.trim()) { reportBlock("CORE-01-ERR-DECISION-001:HUMAN_DECISION_REQUIRED"); return; } void runServerAction(action, { payload: { human_decision: humanDecision.trim(), evidence_refs: clientState.decision_evidence_refs } }); return;
-      case "CORE-01-ACT-CANDIDATE-ACCEPT": case "CORE-01-ACT-CANDIDATE-RETURN": { const candidateRef = requireCandidateRef(); if (candidateRef) void runServerAction(action, { path_params: { id: candidateRef } }); return; }
+      case "CORE-01-ACT-CANDIDATE-CREATE": {
+        const decisionText=humanDecision.trim();
+        if (!decisionText) { reportBlock("CORE-01-ERR-DECISION-001:HUMAN_DECISION_REQUIRED"); return; }
+        void (async()=>{
+          const payload=await requestCoreCandidateCreatePayload({ human_decision:decisionText, evidence_refs:clientState.decision_evidence_refs, project_id:clientState.project_id, topic_id:clientState.topic_id, work_item:clientState.work_item });
+          if(!payload.ok){ reportBlock(`CORE-01-ERR-CANDIDATE-001:${payload.reason_code}`); return; }
+          await runServerAction(action,{payload:payload.payload});
+        })(); return;
+      }
+      case "CORE-01-ACT-CANDIDATE-ACCEPT": case "CORE-01-ACT-CANDIDATE-RETURN": {
+        const candidateRef=requireCandidateRef(); if(!candidateRef)return;
+        const decisionText=humanDecision.trim();
+        void (async()=>{
+          const payload=await requestCoreCandidateDecisionPayload({ candidate_ref:candidateRef, decision:action==="CORE-01-ACT-CANDIDATE-ACCEPT"?"ACCEPT":"RETURN", reason_text:decisionText, evidence_refs:clientState.decision_evidence_refs });
+          if(!payload.ok){ reportBlock(`CORE-01-ERR-DECISION-001:${payload.reason_code}`); return; }
+          await runServerAction(action,{path_params:{id:candidateRef},payload:payload.payload});
+        })(); return;
+      }
       case "CORE-01-ACT-CANDIDATE-COMPARE": reportBlock("CORE-01-ERR-CANDIDATE-001:EXACT_CANDIDATE_SET_REQUIRED"); return;
       case "CORE-01-ACT-PROJECT-VALIDATE": { const projectVersionId = requireProjectVersionRef(); if (projectVersionId) void runServerAction(action, { path_params: { projectVersionId } }); return; }
       case "CORE-01-ACT-PROJECT-CONFIRM": { const projectVersionRef = requireProjectVersionRef(); if (projectVersionRef) void runServerAction(action, { path_params: { id: projectVersionRef } }); return; }
