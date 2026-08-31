@@ -1,0 +1,68 @@
+name: ASSET01 wire governed controls
+on:
+  push:
+    paths:
+      - '.github/workflows/asset01-wire-visual-once.yml'
+permissions:
+  contents: write
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Wire ASSET visual without layout drift
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/AssetVisual.tsx');s=p.read_text()
+          anchor='import { assetText, ASSET_CONTROL_TEXT } from "@/i18n/assetCatalog";\n'
+          ins='import { AssetRuntimeControl, AssetRuntimeProvider, useAssetRuntimeState } from "./AssetControlRuntime";\n'
+          if ins not in s:s=s.replace(anchor,anchor+ins,1)
+          start=s.index('function EmptyField(')
+          end=s.index('function SectionTitle(',start)
+          s=s[:start]+'function Control({ spec }: { spec: ControlSpec }) { return <AssetRuntimeControl id={spec.id} kind={spec.kind} />; }\n\n'+s[end:]
+          s=s.replace('export function AssetVisual() {\n  const { locale } = useI18n();','function AssetVisualBody() {\n  const { locale } = useI18n();\n  const { state } = useAssetRuntimeState();',1)
+          s=s.replace('data-page-state="EMPTY"','data-page-state={state.projection?.page_state ?? "EMPTY"}',1)
+          old='''<div data-component-uid="ASSET-01-CMP-CORRECTION" data-conditional-controls={CORRECTION.length}>\n              <div className={styles.conditionNotice}>{assetText(locale, "conditionalModify")}</div>\n            </div>'''
+          new='''<div data-component-uid="ASSET-01-CMP-CORRECTION" data-conditional-controls={CORRECTION.length}>\n              <div className={styles.stack}>{CORRECTION.map((spec) => <Control key={spec.id} spec={spec} />)}</div>\n              <div className={styles.conditionNotice}>{assetText(locale, "conditionalModify")}</div>\n            </div>'''
+          if old not in s:raise SystemExit('correction anchor missing')
+          s=s.replace(old,new,1)
+          old='''<div className={styles.layerCondition}>\n              <div data-component-uid="ASSET-01-CMP-LAYER-STACK" />\n              <div data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR" data-conditional-controls="8" />\n              <div data-component-uid="ASSET-01-CMP-PATCH" data-conditional-controls="5" />\n              <div className={styles.conditionNotice}>{assetText(locale, "conditionalLayer")}</div>\n            </div>'''
+          new='''<div className={styles.layerCondition}>\n              <div data-component-uid="ASSET-01-CMP-LAYER-STACK" />\n              <div className={styles.stack} data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR" data-conditional-controls="8">{LAYER.slice(0,8).map((spec) => <Control key={spec.id} spec={spec} />)}</div>\n              <div className={styles.stack} data-component-uid="ASSET-01-CMP-PATCH" data-conditional-controls="5">{LAYER.slice(8).map((spec) => <Control key={spec.id} spec={spec} />)}</div>\n              <div className={styles.conditionNotice}>{assetText(locale, "conditionalLayer")}</div>\n            </div>'''
+          if old not in s:raise SystemExit('layer anchor missing')
+          s=s.replace(old,new,1)
+          s=s.rstrip()+'''\nexport function AssetVisual(){return <AssetRuntimeProvider><AssetVisualBody/></AssetRuntimeProvider>;}\n'''
+          p.write_text(s)
+          PY
+      - name: Contract checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const v=fs.readFileSync('src/components/pages/AssetVisual.tsx','utf8');
+          const r=fs.readFileSync('src/components/pages/AssetControlRuntime.tsx','utf8');
+          const b=fs.readFileSync('src/domain/asset/assetControlBindings.ts','utf8');
+          if(!v.includes('AssetRuntimeProvider')||!v.includes('AssetRuntimeControl'))throw new Error('runtime renderer missing');
+          if((v.match(/CORRECTION\.map/g)||[]).length!==1)throw new Error('correction controls not rendered');
+          if(!v.includes('LAYER.slice(0,8).map')||!v.includes('LAYER.slice(8).map'))throw new Error('layer/patch controls not rendered');
+          if(!b.includes('ASSET_CONTROL_BINDING_COUNT = 85'))throw new Error('85 binding count missing');
+          if(r.includes('manual rename')||r.includes('Provider/Model picker'))throw new Error('forbidden local authority added');
+          NODE
+          test "$(git hash-object src/components/pages/AssetVisual.module.css)" = "80220b164df59a3a4d03ee3ac6886b844d785552"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Commit and self-clean
+        run: |
+          rm -f .github/workflows/asset01-wire-visual-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/pages/AssetVisual.tsx src/components/pages/AssetControlRuntime.tsx src/domain/asset/assetRequestAdapter.ts .github/workflows/asset01-wire-visual-once.yml
+          git commit -m "wire(asset): connect 85 governed controls and conditional panels"
+          git push origin HEAD:new
