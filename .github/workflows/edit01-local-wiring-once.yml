@@ -27,15 +27,21 @@ jobs:
           data=yaml.safe_load(path.read_text())
           controls=data['registries']['controls_fields']
           actions=data['registries']['actions']
+          action_ids={x['action_uid'] for x in actions}
           control_matrix={x['control_uid']:x for x in data['binding_matrices']['control_to_section_component_visual_gate_permission']}
           action_matrix={x['action_uid']:x for x in data['binding_matrices']['action_to_permission_gate_effect']}
           assert len(controls)==160
-          assert len(actions)==124
+          assert len(action_ids)==124
+          assert len(control_matrix)==160
+          assert len(action_matrix)==124
           out={}
           for control in controls:
               uid=control['control_uid']
               mapping=control_matrix[uid]
               action=control.get('action_uid')
+              if action is not None:
+                  assert action in action_ids
+                  assert action in action_matrix
               out[uid]={
                   'action_uid':action,
                   'gate_uid':mapping.get('gate_uid'),
@@ -43,7 +49,6 @@ jobs:
                   'effect_type':action_matrix[action]['effect_type'] if action in action_matrix else None,
               }
           assert len(out)==160
-          assert sum(1 for item in out.values() if item['action_uid'])==124
           target=Path('src/domain/edit/editControlBindings.ts')
           target.write_text(
               '// GENERATED FROM EDIT-01 FINAL_LOCKED AUTHORITY. DO NOT HAND-EDIT.\n'
@@ -52,6 +57,7 @@ jobs:
               +'export const EDIT_MATERIALIZED_CONTROL_COUNT = 160 as const;\n'
               +'export const EDIT_MATERIALIZED_ACTION_COUNT = 124 as const;\n'
           )
+          print('controls',len(out),'actions',len(action_ids),'control_actions',sum(1 for x in out.values() if x['action_uid']))
           PY
       - name: Verify authority and forbidden implementation drift
         run: |
