@@ -1,0 +1,189 @@
+name: CORE01 Residual Logic Audit Once
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/core01-residual-logic-audit-once.yml'
+permissions:
+  contents: write
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+
+      - name: Authority and lock integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object src/app/page.tsx)" = "95e88cd0171721f3cb21459f42a6f39e4a322ead"
+          test "$(git hash-object src/components/pages/DashboardVisual.tsx)" = "aa3a8a9472ee6c471503d8990654233a6ee02edd"
+          test "$(git hash-object src/components/pages/DashboardVisual.module.css)" = "4f2656bf7db9fdbbf0531730b181215606b3120e"
+          test "$(git hash-object src/components/pages/CoreVisual.module.css)" = "c9b0215dc2d174b77c558e617125e6ec2ecd9fbd"
+          test "$(grep -c '^  - control_uid: CORE-01-' authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml)" = "50"
+          test "$(grep -c '^  - action_uid: CORE-01-ACT-' authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml)" = "34"
+          EXTRA_ONCE="$(find .github/workflows -maxdepth 1 -type f -name '*-once.yml' ! -name 'core01-residual-logic-audit-once.yml' -print)"
+          if [ -n "$EXTRA_ONCE" ]; then echo "STALE_ONCE_WORKFLOWS"; echo "$EXTRA_ONCE"; exit 1; fi
+          if grep -q 'assetPrefix' next.config.ts; then echo 'PRODUCTION_ASSET_PREFIX_RESIDUAL'; exit 1; fi
+          echo AUTHORITY_LOCK_INTEGRITY_PASS
+
+      - name: Compile regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run typecheck
+          npm run build
+          echo CORE_COMPILE_REGRESSION_PASS
+
+      - name: CORE residual static audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+          import re, sys
+
+          root = Path('.')
+          product_files = [
+              Path('src/app/core/page.tsx'),
+              Path('src/components/pages/CoreVisual.tsx'),
+              *sorted(Path('src/domain/core').glob('*.ts')),
+              *sorted(Path('src/server/core').glob('*.ts')),
+              Path('src/app/v1/ui-projections/[pageUid]/route.ts'),
+              Path('src/app/v1/projects/drafts/route.ts'),
+              Path('src/app/v1/projects/drafts/[id]/validate/route.ts'),
+              Path('src/app/v1/projects/drafts/[id]/confirm/route.ts'),
+              Path('src/app/v1/projects/[projectId]/story-candidate-sets/route.ts'),
+              Path('src/app/v1/projects/[projectId]/conversations/route.ts'),
+              Path('src/app/v1/conversations/[conversationId]/messages/route.ts'),
+              Path('src/app/v1/candidates/route.ts'),
+              Path('src/app/v1/candidates/compare/route.ts'),
+              Path('src/app/v1/candidates/[id]/decision/route.ts'),
+              Path('src/app/v1/state-commands/dnaversion/requestdnalock/route.ts'),
+              Path('src/app/v1/state-commands/projectversion/submitcorereview/route.ts'),
+              Path('src/app/v1/locks/mother-requests/route.ts'),
+              Path('src/app/v1/projects/[projectId]/topics/route.ts'),
+              Path('src/app/v1/topics/[id]/blueprints/route.ts'),
+              Path('src/app/v1/blueprints/[id]/validate/route.ts'),
+              Path('src/app/v1/blueprints/[id]/approve/route.ts'),
+              Path('src/app/v1/locks/child-requests/route.ts'),
+              Path('src/app/v1/topics/[id]/scripts/canonical/route.ts'),
+          ]
+          missing=[str(p) for p in product_files if not p.exists()]
+          if missing:
+              print('MISSING_CORE_FILES', *missing, sep='\n')
+              sys.exit(1)
+
+          forbidden = {
+              'TODO/FIXME/HACK/XXX': re.compile(r'\b(?:TODO|FIXME|HACK|XXX)\b', re.I),
+              'PLACEHOLDER/STUB/NOOP': re.compile(r'\b(?:PLACEHOLDER|STUB|NOOP|NOT_IMPLEMENTED|IMPLEMENT_ME)\b', re.I),
+              'TS_SUPPRESSION': re.compile(r'@ts-(?:ignore|nocheck|expect-error)'),
+              'DEBUGGER': re.compile(r'\bdebugger\s*;'),
+              'CONSOLE_DEBUG': re.compile(r'console\.(?:log|debug)\s*\('),
+          }
+          findings=[]
+          for p in product_files:
+              text=p.read_text(encoding='utf-8')
+              for name,pat in forbidden.items():
+                  for m in pat.finditer(text):
+                      line=text.count('\n',0,m.start())+1
+                      findings.append((str(p),line,name,m.group(0)))
+
+          # Preview/provider-host hacks are forbidden in production source.
+          preview_tokens=['wb01-preview-runtime','acpos-preview-drawer','rawcdn.githack','raw.githack','preview/_next/']
+          for p in Path('src').rglob('*'):
+              if not p.is_file() or p.suffix not in {'.ts','.tsx','.js','.jsx','.css'}: continue
+              text=p.read_text(encoding='utf-8',errors='ignore')
+              for tok in preview_tokens:
+                  if tok in text:
+                      findings.append((str(p),1,'PREVIEW_HACK_TOKEN',tok))
+
+          cv=Path('src/components/pages/CoreVisual.tsx').read_text(encoding='utf-8')
+          obsolete=[
+              'ATTACHMENT_SELECTOR_NOT_BOUND','REFERENCE_SELECTOR_NOT_BOUND','CANDIDATE_COMPARE_NOT_BOUND',
+              'CORE_SELECTOR_NOT_BOUND','FORM_ADAPTER_NOT_BOUND','wb01-preview-runtime','acpos-preview-drawer'
+          ]
+          for tok in obsolete:
+              if tok in cv: findings.append(('src/components/pages/CoreVisual.tsx',1,'OBSOLETE_BLOCKER',tok))
+
+          # Raw projection must only cross the formal resolver boundary in CoreVisual.
+          raw_guess_patterns=[r'rawProjection\s*\[', r'rawProjection\.[A-Za-z_]', r'asRecord\s*\(\s*rawProjection\s*\)']
+          for pat in raw_guess_patterns:
+              if re.search(pat,cv): findings.append(('src/components/pages/CoreVisual.tsx',1,'RAW_PROJECTION_GUESS',pat))
+          if 'resolveCoreProjection(rawProjection)' not in cv:
+              findings.append(('src/components/pages/CoreVisual.tsx',1,'RESOLVER_BOUNDARY_MISSING','resolveCoreProjection(rawProjection)'))
+
+          # Shared endpoints may coexist, but CORE actions must explicitly dispatch before fallback.
+          route_expect = {
+            'src/app/v1/conversations/[conversationId]/messages/route.ts': ['CORE-01-ACT-SEND','CORE-01-ACT-MSG-ANALYZE','createCorePostRoute'],
+            'src/app/v1/candidates/compare/route.ts': ['CORE-01-ACT-CANDIDATE-COMPARE','createCoreGetRoute'],
+            'src/app/v1/candidates/[id]/decision/route.ts': ['CORE-01-ACT-CANDIDATE-ACCEPT','CORE-01-ACT-CANDIDATE-RETURN','createCorePostRoute'],
+          }
+          for path,tokens in route_expect.items():
+              text=Path(path).read_text(encoding='utf-8')
+              for tok in tokens:
+                  if tok not in text: findings.append((path,1,'CORE_SHARED_DISPATCH_MISSING',tok))
+
+          # CORE test runtime is legal only behind explicit non-production gate.
+          runtime=Path('src/server/core/coreRuntime.ts').read_text(encoding='utf-8')
+          test_runtime=Path('src/server/testing/controlledCoreTestRuntime.ts').read_text(encoding='utf-8')
+          test_data=Path('src/domain/testing/controlledTestData.ts').read_text(encoding='utf-8')
+          if 'isControlledCoreServerTestMode()' not in runtime:
+              findings.append(('src/server/core/coreRuntime.ts',1,'TEST_GATE_MISSING','isControlledCoreServerTestMode'))
+          if 'process.env.ACPOS_RUNTIME_MODE !== "PRODUCTION"' not in test_runtime:
+              findings.append(('src/server/testing/controlledCoreTestRuntime.ts',1,'PRODUCTION_TEST_GATE_MISSING','ACPOS_RUNTIME_MODE'))
+          if 'production_eligible: false' not in test_data:
+              findings.append(('src/domain/testing/controlledTestData.ts',1,'TEST_DATA_PRODUCTION_FLAG_MISSING','production_eligible: false'))
+          if 'final_lock_granted: false' not in test_runtime:
+              findings.append(('src/server/testing/controlledCoreTestRuntime.ts',1,'FINAL_LOCK_GUARD_MISSING','final_lock_granted: false'))
+
+          # No duplicate action/port UIDs in the formal contract.
+          contract=Path('src/domain/core/coreRuntimeContract.ts').read_text(encoding='utf-8')
+          actions=re.findall(r'"(CORE-01-ACT-[A-Z0-9-]+)"',contract.split('export const CORE_PORT_UIDS')[0])
+          ports=re.findall(r'"(CORE-01-PORT-[A-Z0-9-]+)"',contract.split('export const CORE_PORT_UIDS')[1].split('export type CorePortUid')[0])
+          if len(actions)!=34 or len(set(actions))!=34: findings.append(('src/domain/core/coreRuntimeContract.ts',1,'ACTION_CONTRACT_DUPLICATE_OR_COUNT',f'{len(actions)}/{len(set(actions))}'))
+          if len(ports)!=19 or len(set(ports))!=19: findings.append(('src/domain/core/coreRuntimeContract.ts',1,'PORT_CONTRACT_DUPLICATE_OR_COUNT',f'{len(ports)}/{len(set(ports))}'))
+
+          # Detect orphan CORE domain modules: each must be referenced somewhere outside itself.
+          all_src='\n'.join(p.read_text(encoding='utf-8',errors='ignore') for p in Path('src').rglob('*') if p.is_file() and p.suffix in {'.ts','.tsx'})
+          for p in sorted(Path('src/domain/core').glob('*.ts')):
+              module='@/domain/core/'+p.stem
+              if all_src.count(module)==0:
+                  findings.append((str(p),1,'ORPHAN_CORE_MODULE',module))
+
+          if findings:
+              print('CORE_RESIDUAL_AUDIT_FAIL')
+              for f in findings: print(' | '.join(map(str,f)))
+              sys.exit(1)
+          print(f'CORE_RESIDUAL_STATIC_PASS files={len(product_files)} actions={len(set(actions))} ports={len(set(ports))}')
+          PY
+
+      - name: Repository residual grep
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '--- CORE references to shared runtimes (review surface) ---'
+          git grep -n -E 'conversationPost\(|compareCandidates\(|decideCandidate\(' -- 'src/app/v1/**' || true
+          echo '--- CORE related test/simulation markers (must be governed) ---'
+          git grep -n -E 'SIMULATED_EXTERNAL|TEST-CORE-|production_eligible|final_lock_granted' -- src/domain/core src/server/core src/server/testing src/domain/testing src/components/pages/CoreVisual.tsx || true
+          echo '--- once workflow inventory ---'
+          find .github/workflows -maxdepth 1 -type f -name '*-once.yml' -print
+          echo REPOSITORY_RESIDUAL_GREP_COMPLETE
+
+      - name: Self clean
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin new
+          git checkout new
+          git reset --hard origin/new
+          git rm -f .github/workflows/core01-residual-logic-audit-once.yml
+          git commit -m "chore: remove CORE01 residual logic audit workflow"
+          git push origin new
