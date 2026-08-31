@@ -1,0 +1,63 @@
+name: INFO01 wire governed controls
+on:
+  push:
+    paths:
+      - '.github/workflows/info01-wire-visual-once.yml'
+permissions:
+  contents: write
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Replace legacy control renderer only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/InfoVisual.tsx');s=p.read_text()
+          s=s.replace('import { useMemo, useReducer, type Dispatch, type ReactNode } from "react";','import { useMemo, type ReactNode } from "react";')
+          s=s.replace('import { INITIAL_INFO_CLIENT_STATE, reduceInfoClientState, type InfoClientAction, type InfoClientState } from "@/domain/info/infoClientState";\n','')
+          anchor='import styles from "./InfoVisual.module.css";\n'
+          s=s.replace(anchor,'import { InfoRuntimeControl, InfoRuntimeProvider, useInfoRuntimeState } from "./InfoControlRuntime";\n'+anchor,1)
+          start=s.index('type ControlProps=')
+          end=s.index('\nfunction Panel(',start)
+          s=s[:start]+'function Control({item}:{item:InfoControlSpec}){return <InfoRuntimeControl item={item}/>;}\n'+s[end:]
+          old='export function InfoVisual(){\n  const {locale}=useI18n();const[state,dispatch]=useReducer(reduceInfoClientState,INITIAL_INFO_CLIENT_STATE);'
+          new='function InfoVisualBody(){\n  const {locale}=useI18n();const{state}=useInfoRuntimeState();'
+          if old not in s: raise SystemExit('InfoVisual state anchor missing')
+          s=s.replace(old,new,1)
+          s=s.replace('  const C=({item}:{item:InfoControlSpec})=><Control item={item} state={state} dispatch={dispatch}/>;','  const C=({item}:{item:InfoControlSpec})=><Control item={item}/>;',1)
+          s=s.rstrip()
+          if not s.endswith('}'): raise SystemExit('InfoVisual ending missing')
+          s=s+'\nexport function InfoVisual(){return <InfoRuntimeProvider><InfoVisualBody/></InfoRuntimeProvider>;}\n'
+          p.write_text(s)
+          PY
+      - name: Contract checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const v=fs.readFileSync('src/components/pages/InfoVisual.tsx','utf8');
+          const r=fs.readFileSync('src/components/pages/InfoControlRuntime.tsx','utf8');
+          if(!v.includes('InfoRuntimeProvider')||!v.includes('InfoRuntimeControl'))throw new Error('runtime renderer missing');
+          if(v.includes('Gate not satisfied'))throw new Error('legacy gate shell remains');
+          for(const bad of ['Start Research','Cancel Research','Retry Research'])if(v.includes(bad)||r.includes(bad))throw new Error('forbidden research action '+bad);
+          NODE
+          test "$(git hash-object src/components/pages/InfoVisual.module.css)" = "3c25f9160a804c9ba536529202154cd638996078"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Commit and self-clean
+        run: |
+          rm -f .github/workflows/info01-wire-visual-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/pages/InfoVisual.tsx src/components/pages/InfoControlRuntime.tsx .github/workflows/info01-wire-visual-once.yml
+          git commit -m "wire(info): connect 66 governed controls without layout drift"
+          git push origin HEAD:new
