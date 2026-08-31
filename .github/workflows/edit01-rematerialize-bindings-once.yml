@@ -1,0 +1,94 @@
+name: EDIT01 rematerialize control bindings
+on:
+  push:
+    paths:
+      - '.github/workflows/edit01-rematerialize-bindings-once.yml'
+permissions:
+  contents: write
+jobs:
+  rematerialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Generate exact control bindings
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import json,re,yaml
+          source=Path('authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml')
+          data=yaml.safe_load(source.read_text())
+          controls=data['registries']['controls_fields']
+          actions=data['registries']['actions']
+          action_ids={a['action_uid'] for a in actions}
+          action_matrix={a['action_uid']:a for a in data['binding_matrices']['action_to_permission_gate_effect']}
+          control_matrix={c['control_uid']:c for c in data['binding_matrices']['control_to_section_component_visual_gate_permission']}
+          assert len(controls)==160 and len(action_ids)==124 and len(action_matrix)==124 and len(control_matrix)==160
+          out={}
+          executable=0
+          unresolved=[]
+          for c in controls:
+              uid=c['control_uid']
+              behavior=str(c.get('action_or_behavior',''))
+              match=re.search(r'EDIT-01-ACT-[A-Z0-9-]+',behavior)
+              action_uid=match.group(0) if match else None
+              if action_uid:
+                  executable+=1
+                  if action_uid not in action_ids or action_uid not in action_matrix:
+                      unresolved.append((uid,action_uid))
+              mapping=control_matrix[uid]
+              action_meta=action_matrix.get(action_uid) if action_uid else None
+              out[uid]={
+                'action_uid':action_uid,
+                'gate_uid':mapping['gate_uid'],
+                'permission_uid':mapping['permission_uid'],
+                'effect_type':action_meta['effect_type'] if action_meta else None,
+                'action_gate_uid':action_meta['gate_uid'] if action_meta else None,
+                'action_permission_uid':action_meta['permission_uid'] if action_meta else None,
+              }
+          assert not unresolved, unresolved
+          assert len(out)==160
+          assert executable>0
+          read_only=sum(1 for x in out.values() if x['action_uid'] is None)
+          assert executable+read_only==160
+          target=Path('src/domain/edit/editControlBindings.ts')
+          target.write_text(
+            '// GENERATED FROM EDIT-01 FINAL_LOCKED AUTHORITY. DO NOT HAND-EDIT.\n'
+            +'export const EDIT_CONTROL_BINDINGS = '+json.dumps(out,ensure_ascii=False,separators=(',',':'))+' as const;\n'
+            +'export type EditControlUid = keyof typeof EDIT_CONTROL_BINDINGS;\n'
+            +'export const EDIT_MATERIALIZED_CONTROL_COUNT = 160 as const;\n'
+            +'export const EDIT_MATERIALIZED_ACTION_COUNT = 124 as const;\n'
+            +f'export const EDIT_EXECUTABLE_CONTROL_COUNT = {executable} as const;\n'
+            +f'export const EDIT_READ_ONLY_CONTROL_COUNT = {read_only} as const;\n'
+          )
+          print('controls=',len(out),'actions=',len(action_ids),'executable_controls=',executable,'read_only=',read_only)
+          PY
+      - name: Validate generated bindings
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const s=fs.readFileSync('src/domain/edit/editControlBindings.ts','utf8');
+          if(s.includes('"EDIT-01-BTN-PLAY":{"action_uid":null')) throw new Error('PLAY action unresolved');
+          if(!s.includes('EDIT-01-ACT-PLAY')) throw new Error('PLAY action missing');
+          if(!s.includes('EDIT-01-ACT-HANDOFF')) throw new Error('HANDOFF action missing');
+          if(!s.includes('EDIT-01-ACT-STAGE-CONFIRM')) throw new Error('STAGE_CONFIRM action missing');
+          NODE
+          test "$(git hash-object src/components/pages/EditVisual.module.css)" = "6ec980b81fb6930a019d2b9ee6168e9d0f6f1d4e"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Commit and self-clean
+        run: |
+          rm -f .github/workflows/edit01-rematerialize-bindings-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/domain/edit/editControlBindings.ts .github/workflows/edit01-rematerialize-bindings-once.yml
+          git commit -m "fix(edit): materialize exact control action bindings"
+          git push origin HEAD:new
