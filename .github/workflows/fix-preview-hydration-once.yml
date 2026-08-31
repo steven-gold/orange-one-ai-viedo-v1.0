@@ -44,7 +44,7 @@ jobs:
       - name: Materialize all 18 pages from one preview build
         run: |
           rm -rf /tmp/static-site
-          mkdir -p /tmp/static-site/preview
+          mkdir -p /tmp/static-site/preview/_next
           python - <<'PY'
           import subprocess
           from pathlib import Path
@@ -54,7 +54,7 @@ jobs:
               html=subprocess.check_output(['curl','-fsS','http://127.0.0.1:3000'+route],text=True)
               (root/name).write_text(html)
           PY
-          cp -R .next/static /tmp/static-site/preview/_next
+          cp -R .next/static /tmp/static-site/preview/_next/static
           cp -R public/brand /tmp/static-site/preview/brand
       - name: Rewrite only canonical navigation and public brand paths
         run: |
@@ -69,8 +69,9 @@ jobs:
               p.write_text(s)
           PY
           test $(find /tmp/static-site/preview -maxdepth 1 -name '*.html' | wc -l) -eq 18
+          test -d /tmp/static-site/preview/_next/static/chunks
           ! grep -R 'wb01-preview-runtime\|acpos-preview-drawer' /tmp/static-site/preview/*.html
-          grep -q '\./_next/' /tmp/static-site/preview/index.html
+          grep -q '\./_next/static/' /tmp/static-site/preview/index.html
       - name: Run real Chromium against static preview
         run: |
           npm install --no-save playwright
@@ -132,7 +133,7 @@ jobs:
           echo PREVIEW_SHA=$PREVIEW_SHA
           test $(git ls-tree -r --name-only origin/acpos-live-preview preview | grep -E '^preview/[^/]+\.html$' | wc -l) -eq 18
           git show origin/acpos-live-preview:preview/index.html | grep -q 'WB-01-CMP-DRAWER-PROJECTION'
-          git show origin/acpos-live-preview:preview/index.html | grep -q '\./_next/'
+          git show origin/acpos-live-preview:preview/index.html | grep -q '\./_next/static/'
       - name: Self clean and restore source config
         run: |
           git worktree remove /tmp/acpos-preview --force || true
