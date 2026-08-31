@@ -16,11 +16,17 @@ export type EditResolvedContext = {
   saved_edit_version_id: string|null;
   output_version_id: string|null;
   dialogue_timing_binding_ref: string|null;
+  page_state_uid: string|null;
+  current_stage_uid: string|null;
+  current_stage_score: number|null;
+  current_error_uid: string|null;
+  gate_state: Readonly<Record<string, boolean>>;
 };
 
 export const EMPTY_EDIT_RESOLVED_CONTEXT: EditResolvedContext = {
   project_id:null,topic_id:null,task_id:null,locked_blueprint_ref:null,production_package_ref:null,input_manifest_ref:null,input_fingerprint:null,
   working_draft_ref:null,editing_run_id:null,voice_run_id:null,saved_edit_version_id:null,output_version_id:null,dialogue_timing_binding_ref:null,
+  page_state_uid:null,current_stage_uid:null,current_stage_score:null,current_error_uid:null,gate_state:{},
 };
 
 export type EditClientState = {
@@ -69,10 +75,8 @@ export type EditClientAction =
 
 function clearTransient(state: EditClientState): EditClientState {
   return {
-    ...state,
-    resolved:{...EMPTY_EDIT_RESOLVED_CONTEXT},
-    playhead:null,range_in:null,range_out:null,playing:false,selected_media_ref:null,selected_issue_ref:null,selected_version_ref:null,
-    correction_scope:null,correction_instruction:"",
+    ...state,resolved:{...EMPTY_EDIT_RESOLVED_CONTEXT},playhead:null,range_in:null,range_out:null,playing:false,selected_media_ref:null,
+    selected_issue_ref:null,selected_version_ref:null,correction_scope:null,correction_instruction:"",
   };
 }
 
@@ -80,31 +84,16 @@ export function reduceEditClientState(state: EditClientState, action: EditClient
   switch(action.type){
     case"SOURCE_MODE":return{...clearTransient(state),source_mode:action.value};
     case"EXECUTION_MODE":return{...state,execution_mode:action.value};
-    case"BIND_RESOLVED_CONTEXT":return{...state,resolved:{...action.value}};
+    case"BIND_RESOLVED_CONTEXT":return{...state,resolved:{...action.value,gate_state:{...action.value.gate_state}}};
     case"CLEAR_RESOLVED_CONTEXT":return{...state,resolved:{...EMPTY_EDIT_RESOLVED_CONTEXT},playing:false,range_in:null,range_out:null};
-    case"PLAY":return{...state,playing:true};
-    case"PAUSE":return{...state,playing:false};
-    case"SEEK":return{...state,playhead:action.value};
-    case"RANGE_IN":return{...state,range_in:action.value};
-    case"RANGE_OUT":return{...state,range_out:action.value};
-    case"RANGE_CLEAR":return{...state,range_in:null,range_out:null,loop:false};
-    case"RATE":return{...state,playback_rate:action.value};
-    case"LOOP":return{...state,loop:!state.loop};
-    case"MUTE":return{...state,preview_muted:!state.preview_muted};
-    case"PREVIEW_VOLUME":return{...state,preview_volume:Math.max(0,Math.min(1,action.value))};
-    case"SNAP":return{...state,snap:!state.snap};
-    case"ZOOM_IN":return{...state,zoom:Math.min(16,state.zoom*1.25)};
-    case"ZOOM_OUT":return{...state,zoom:Math.max(.125,state.zoom/1.25)};
-    case"ZOOM_FIT":return{...state,zoom:1};
-    case"INSPECTOR_TAB":return{...state,inspector_tab:action.value};
-    case"MEDIA_SEARCH":return{...state,media_search:action.value};
-    case"MEDIA_FILTER":return{...state,media_type_filter:action.value};
-    case"MEDIA_SELECT":return{...state,selected_media_ref:action.value};
-    case"ISSUE_SELECT":return{...state,selected_issue_ref:action.value};
-    case"VERSION_SELECT":return{...state,selected_version_ref:action.value};
-    case"CORRECTION_SCOPE":return{...state,correction_scope:action.value};
-    case"CORRECTION_INSTRUCTION":return{...state,correction_instruction:action.value};
-    case"SUBTITLE_TOGGLE":return{...state,subtitles_visible:!state.subtitles_visible};
-    case"AUDIO_MONITOR":return{...state,audio_monitor:action.value};
+    case"PLAY":return{...state,playing:true};case"PAUSE":return{...state,playing:false};case"SEEK":return{...state,playhead:action.value};
+    case"RANGE_IN":return{...state,range_in:action.value};case"RANGE_OUT":return{...state,range_out:action.value};case"RANGE_CLEAR":return{...state,range_in:null,range_out:null,loop:false};
+    case"RATE":return{...state,playback_rate:action.value};case"LOOP":return{...state,loop:!state.loop};case"MUTE":return{...state,preview_muted:!state.preview_muted};
+    case"PREVIEW_VOLUME":return{...state,preview_volume:Math.max(0,Math.min(1,action.value))};case"SNAP":return{...state,snap:!state.snap};
+    case"ZOOM_IN":return{...state,zoom:Math.min(16,state.zoom*1.25)};case"ZOOM_OUT":return{...state,zoom:Math.max(.125,state.zoom/1.25)};case"ZOOM_FIT":return{...state,zoom:1};
+    case"INSPECTOR_TAB":return{...state,inspector_tab:action.value};case"MEDIA_SEARCH":return{...state,media_search:action.value};case"MEDIA_FILTER":return{...state,media_type_filter:action.value};
+    case"MEDIA_SELECT":return{...state,selected_media_ref:action.value};case"ISSUE_SELECT":return{...state,selected_issue_ref:action.value};case"VERSION_SELECT":return{...state,selected_version_ref:action.value};
+    case"CORRECTION_SCOPE":return{...state,correction_scope:action.value};case"CORRECTION_INSTRUCTION":return{...state,correction_instruction:action.value};
+    case"SUBTITLE_TOGGLE":return{...state,subtitles_visible:!state.subtitles_visible};case"AUDIO_MONITOR":return{...state,audio_monitor:action.value};
   }
 }
