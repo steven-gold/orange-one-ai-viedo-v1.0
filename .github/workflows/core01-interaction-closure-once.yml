@@ -36,6 +36,10 @@ jobs:
           repl3='''    if (result.ok) { setPageState("READY"); setRuntimeReason(null); }\n    else { setPageState("ERROR"); setRuntimeReason(`${result.error_uid}:${result.reason_code}`); }\n    return result;\n  };'''
           assert needle3 in s
           s=s.replace(needle3,repl3,1)
+          old_thread='''      case "CORE-01-ACT-THREAD-CREATE": { const projectId = requireProjectId(); const work_item = requireWorkItem(); if (projectId && work_item) void runServerAction(action, { path_params: { projectId }, payload: { work_item, ai_mode: clientState.ai_mode } }); return; }'''
+          new_thread='''      case "CORE-01-ACT-THREAD-CREATE": { const projectId = requireProjectId(); if (!projectId) return; const work_item = requireWorkItem(); if (!work_item) return; void runServerAction(action, { path_params: { projectId }, payload: { work_item, ai_mode: clientState.ai_mode } }); return; }'''
+          assert old_thread in s
+          s=s.replace(old_thread,new_thread,1)
           old_send='''      case "CORE-01-ACT-SEND": {\n        const conversationId = requireConversationId(); if (!conversationId) return;\n        if (!message.trim()) { reportBlock("CORE-01-ERR-CONVERSATION-001:MESSAGE_REQUIRED"); return; }\n        void runServerAction(action, { path_params: { conversationId }, payload: { message: message.trim(), ai_mode: clientState.ai_mode, attachment_refs: clientState.attachment_refs, reference_refs: clientState.reference_refs } }); return;\n      }'''
           new_send='''      case "CORE-01-ACT-SEND": {\n        const submitted = message.trim();\n        if (!submitted) { reportBlock("CORE-01-ERR-CONVERSATION-001:MESSAGE_REQUIRED"); return; }\n        appendConversationMessage("USER", submitted);\n        setMessage("");\n        const conversationId = clientState.conversation_id;\n        if (!conversationId) {\n          const reason = "CORE-01-ERR-THREAD-001:REQUIRED_CONVERSATION_ID_MISSING";\n          reportBlock(reason);\n          appendConversationMessage("STATUS", reason);\n          return;\n        }\n        void (async () => {\n          const result = await runServerAction(action, { path_params: { conversationId }, payload: { message: submitted, ai_mode: clientState.ai_mode, attachment_refs: clientState.attachment_refs, reference_refs: clientState.reference_refs } });\n          if (!result) return;\n          appendConversationMessage("STATUS", result.ok ? `MESSAGE_ACCEPTED:${result.correlation_id}` : `${result.error_uid}:${result.reason_code}`);\n        })();\n        return;\n      }'''
           assert old_send in s
@@ -54,8 +58,8 @@ jobs:
           if(!s.includes('data-conversation-local-log="true"'))throw new Error('conversation feedback log missing');
           if(!s.includes('appendConversationMessage("USER", submitted)'))throw new Error('user message is not appended before runtime');
           if(!s.includes('appendConversationMessage("STATUS", reason)'))throw new Error('blocked send lacks visible status');
-          if(!s.includes('DASHBOARD_RUNTIME_NOT_BOUND') && s.includes('fake_ai_response'))throw new Error('fake runtime text detected');
-          if(s.includes('/v1/core/actions')||s.includes('providerPicker')||s.includes('modelPicker'))throw new Error('unregistered CORE implementation introduced');
+          if(!s.includes('if (!projectId) return; const work_item = requireWorkItem(); if (!work_item) return;'))throw new Error('thread prerequisites are not deterministic');
+          if(s.includes('fake_ai_response')||s.includes('/v1/core/actions')||s.includes('providerPicker')||s.includes('modelPicker'))throw new Error('unregistered CORE implementation introduced');
           const ids=[...s.matchAll(/"(CORE-01-(?:BTN|MENU)-[A-Z0-9-]+)"/g)].map(m=>m[1]);
           if(new Set(ids).size<25)throw new Error('CORE actionable control coverage unexpectedly low');
           NODE
@@ -80,14 +84,15 @@ jobs:
           (async()=>{
             const b=await chromium.launch({headless:true});const p=await b.newPage();
             await p.goto('http://127.0.0.1:3000/core',{waitUntil:'networkidle'});
-            const runtime=p.locator('[data-component-uid="CORE-01-CMP-RUNTIME"] strong');
-            async function clickReason(id, expected){const btn=p.locator(`[data-control-id="${id}"]`);if(await btn.isDisabled())throw new Error(id+' disabled');await btn.click();await p.waitForFunction(([id,expected])=>{const el=document.querySelector(`[data-control-id="CORE-01-FLD-RUNTIME-STAGE"] strong`);return !!el&&el.textContent?.includes(expected)},[id,expected]);}
+            async function clickReason(id, expected){const btn=p.locator(`[data-control-id="${id}"]`);if(await btn.isDisabled())throw new Error(id+' disabled');await btn.click();await p.waitForFunction((expected)=>document.querySelector('[data-control-id="CORE-01-FLD-RUNTIME-STAGE"] strong')?.textContent?.includes(expected),expected);}
             await clickReason('CORE-01-BTN-TOPIC-CREATE','REQUIRED_PROJECT_ID_MISSING');
             await clickReason('CORE-01-BTN-NEW-THREAD','REQUIRED_PROJECT_ID_MISSING');
             await clickReason('CORE-01-BTN-SINGLE-AI','REQUIRED_WORK_ITEM_MISSING');
             await p.locator('[data-control-id="CORE-01-BTN-ASSISTANT-RECORD"]').click();
             await p.waitForFunction(()=>document.querySelector('[data-control-id="CORE-01-FLD-RUNTIME-STAGE"] strong')?.textContent?.includes('ASSISTANT_RECORD_OPEN'));
-            const composer=p.locator('textarea[data-control-id="CORE-01-FLD-MESSAGE"]');await composer.fill('測試訊息：沒有正式 AI Runtime 時仍應留在對話欄');await p.locator('[data-control-id="CORE-01-BTN-SEND"]').click();
+            const composer=p.locator('textarea[data-control-id="CORE-01-FLD-MESSAGE"]');
+            await composer.fill('測試訊息：沒有正式 AI Runtime 時仍應留在對話欄');
+            await p.locator('[data-control-id="CORE-01-BTN-SEND"]').click();
             const log=p.locator('[data-conversation-local-log="true"]');await log.waitFor();const logText=await log.innerText();
             if(!logText.includes('測試訊息：沒有正式 AI Runtime 時仍應留在對話欄'))throw new Error('user message missing from conversation');
             if(!logText.includes('REQUIRED_CONVERSATION_ID_MISSING'))throw new Error('visible AI/system failure status missing');
