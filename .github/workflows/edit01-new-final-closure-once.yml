@@ -1,0 +1,106 @@
+name: EDIT01 New Final Closure Once
+on:
+  push:
+    branches: [new]
+    paths: ['.github/workflows/edit01-new-final-closure-once.yml']
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - name: Authority visual and registry
+        run: |
+          set -euo pipefail
+          BASE=64896ace91173a3161e06b30932bd327017745c8
+          git diff --exit-code "$BASE" HEAD -- authority/
+          test "$(git hash-object src/components/pages/EditVisual.module.css)" = "6ec980b81fb6930a019d2b9ee6168e9d0f6f1d4e"
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          a=Path('authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml').read_text()
+          aa=set(re.findall(r'action_uid:\s*(EDIT-01-ACT-[A-Z0-9-]+)',a))
+          b=Path('src/domain/edit/editControlBindings.ts').read_text()
+          controls=set(re.findall(r'"(EDIT-01-[A-Z0-9-]+)"\s*:',b)); mapped=set(re.findall(r'EDIT-01-ACT-[A-Z0-9-]+',b))
+          assert len(controls)==160 and len(aa)==124 and len(mapped)==122
+          assert aa-mapped=={'EDIT-01-ACT-CORRECTION-TRANSLATE','EDIT-01-ACT-STAGE-EVALUATE'}
+          assert 'action_runtime_binding_coverage: 124/124' in a and 'control_runtime_binding_coverage: 160/160' in a
+          print('EDIT01_NEW_AUTHORITY_PASS controls=160 actions=124 direct_actions=122 internal_actions=2 ports=15')
+          PY
+      - name: Audit typecheck TEST build
+        run: |
+          set -euo pipefail
+          npm ci
+          npm audit
+          npm run typecheck
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=TEST npm run build
+      - name: Install Chromium and write E2E
+        run: |
+          set -euo pipefail
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+          cat > .edit01-new-e2e.mjs <<'JS'
+          import {chromium} from 'playwright';import assert from 'node:assert/strict';
+          const browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1440,height:900}});const errors=[];const failed=[];const controls=new Set();const actions=new Set();
+          page.on('pageerror',e=>errors.push(String(e)));page.on('response',r=>{if(r.url().startsWith('http://127.0.0.1:3000/')&&r.status()>=400)failed.push(`${r.status()} ${r.url()}`)});
+          const s=id=>`[data-control-id="${id}"]`;const root=()=>page.locator('[data-page-uid="EDIT-01"]');
+          async function collect(tag){const rows=await page.locator('[data-control-id]').evaluateAll(ns=>ns.map(n=>[n.getAttribute('data-control-id'),n.getAttribute('data-action-uid')]));for(const[c,a]of rows){if(c)controls.add(c);if(a)actions.add(a)}console.log(`SNAPSHOT ${tag} state=${await root().getAttribute('data-page-state')} stage=${await root().getAttribute('data-current-stage')} phase=${await root().getAttribute('data-stage-phase')} controls=${controls.size} direct_actions=${actions.size}`)}
+          async function state(v){await page.waitForFunction(x=>document.querySelector('[data-page-uid="EDIT-01"]')?.getAttribute('data-page-state')===x,v,{timeout:15000})}
+          async function stage(v){await page.waitForFunction(x=>document.querySelector('[data-page-uid="EDIT-01"]')?.getAttribute('data-current-stage')===x,v,{timeout:15000})}
+          async function click(id){const x=page.locator(s(id));await x.scrollIntoViewIfNeeded();await page.waitForFunction(sel=>{const e=document.querySelector(sel);return e instanceof HTMLButtonElement&&!e.disabled},s(id),{timeout:15000});await x.click();}
+          async function strong(id){return((await page.locator(`${s(id)} strong`).textContent())??'').trim()}
+          await page.goto('http://127.0.0.1:3000/edit',{waitUntil:'networkidle'});await state('EDIT-01-ST-PAGE-SOURCE_READY');await collect('SOURCE_READY');
+          assert.equal(await page.locator(s('EDIT-01-FLD-PROJECT')).inputValue(),'TEST-EDIT-PROJECT-001');assert.equal(await page.locator(s('EDIT-01-FLD-TOPIC')).inputValue(),'TEST-EDIT-TOPIC-001');assert.equal(await page.locator(s('EDIT-01-FLD-TASK')).inputValue(),'TEST-EDIT-TASK-001');
+          assert.equal((await page.locator('[data-component-uid="EDIT-01-CMP-MEDIA-BIN"] strong').allTextContents()).includes('TEST-LOCKED-BLUEPRINT-001'),true);
+          await click('EDIT-01-BTN-BLUEPRINT-VIEW');assert.equal(await page.locator(s('EDIT-01-BTN-BLUEPRINT-VIEW')).getAttribute('data-view-active'),'true');
+          const mode=page.locator(s('EDIT-01-CTL-EXECUTION-MODE'));await mode.getByRole('button',{name:'MANUAL'}).click();assert.equal(await mode.getByRole('button',{name:'MANUAL'}).getAttribute('aria-pressed'),'true');await mode.getByRole('button',{name:'AUTO'}).click();
+          await click('EDIT-01-BTN-FLOW-START');await state('EDIT-01-ST-PAGE-EVAL_REQUIRED');assert.equal(await root().getAttribute('data-current-stage'),'EDIT-01-STAGE-01-ASSEMBLY');assert.notEqual(await page.locator('[data-component-uid="EDIT-01-CMP-PREVIEW"]').getAttribute('data-preview-ref'),null);await collect('ASSEMBLY_EVAL_REQUIRED');
+          await click('EDIT-01-BTN-EVAL-RECHECK-FULL');await state('EDIT-01-ST-PAGE-EVAL_PASS');assert.equal(await strong('EDIT-01-LBL-STAGE-SCORE'),'96');await click('EDIT-01-BTN-STAGE-CONFIRM');await stage('EDIT-01-STAGE-02-AUDIO');
+          await click('EDIT-01-TAB-VOICE');assert.equal(await page.locator('[data-component-uid="EDIT-01-CMP-VOICE"]').getAttribute('aria-hidden'),null);await click('EDIT-01-BTN-FLOW-START');await state('EDIT-01-ST-PAGE-EVAL_REQUIRED');assert.equal(await strong('EDIT-01-FLD-VOICE-PROVIDER'),'SIMULATED_EXTERNAL');await collect('AUDIO_EVAL_REQUIRED');
+          await click('EDIT-01-BTN-EVAL-RECHECK-FULL');await state('EDIT-01-ST-PAGE-EVAL_PASS');assert.equal(await strong('EDIT-01-LBL-STAGE-SCORE'),'97');await click('EDIT-01-BTN-STAGE-CONFIRM');await stage('EDIT-01-STAGE-03-SYNC');
+          await click('EDIT-01-TAB-LIPSYNC');assert.equal(await page.locator('[data-component-uid="EDIT-01-CMP-LIPSYNC"]').getAttribute('aria-hidden'),null);await click('EDIT-01-BTN-FLOW-START');await state('EDIT-01-ST-PAGE-EVAL_REQUIRED');await click('EDIT-01-TAB-SUBTITLE');assert.equal(await page.locator('[data-component-uid="EDIT-01-CMP-SUBTITLE"]').getAttribute('aria-hidden'),null);await collect('SYNC_EVAL_REQUIRED');
+          await click('EDIT-01-BTN-EVAL-RECHECK-FULL');await state('EDIT-01-ST-PAGE-EVAL_PASS');assert.equal(await strong('EDIT-01-LBL-STAGE-SCORE'),'98');await click('EDIT-01-BTN-STAGE-CONFIRM');await stage('EDIT-01-STAGE-04-FINALIZE');await state('EDIT-01-ST-PAGE-EVAL_PASS');
+          await click('EDIT-01-BTN-SPLIT');await state('EDIT-01-ST-PAGE-EVAL_REQUIRED');assert.equal(await page.locator(s('EDIT-01-BTN-SPLIT')).getAttribute('data-last-action'),'true');await click('EDIT-01-BTN-EVAL-RECHECK-FULL');await state('EDIT-01-ST-PAGE-EVAL_PASS');
+          await page.locator(s('EDIT-01-FLD-API-INSTRUCTION')).fill('修正剪輯節奏與聲畫同步，維持 Locked Blueprint、Script、DNA 與 Asset Binding。');await click('EDIT-01-BTN-CORR-GENERATE');await click('EDIT-01-BTN-CORR-APPROVE');await click('EDIT-01-BTN-CORR-EXECUTE');await state('EDIT-01-ST-PAGE-EVAL_REQUIRED');await click('EDIT-01-BTN-EVAL-RECHECK-FULL');await state('EDIT-01-ST-PAGE-EVAL_PASS');
+          await click('EDIT-01-BTN-VERSION-SAVE');await state('EDIT-01-ST-PAGE-VERSION_SAVED');assert.equal(await page.locator(`${s('EDIT-01-LST-VERSION-HISTORY')} button`).count(),1);await collect('VERSION_SAVED');
+          await click('EDIT-01-BTN-RENDER-EXECUTE');await state('EDIT-01-ST-PAGE-OUTPUT_READY');assert.notEqual(await page.locator(`${s('EDIT-01-PNL-FINAL-PREVIEW')} [data-preview-ref]`).getAttribute('data-preview-ref'),null);assert.match(await strong('EDIT-01-LBL-RENDER-JOB'),/COMPLETED/);await click('EDIT-01-BTN-OUTPUT-SAVE');await click('EDIT-01-BTN-DOWNLOAD');
+          await click('EDIT-01-BTN-VERSION-LOCK');await state('EDIT-01-ST-PAGE-LOCKED');await click('EDIT-01-BTN-HANDOFF-2');await state('EDIT-01-ST-PAGE-HANDED_OFF');await collect('HANDED_OFF');
+          assert.equal(controls.size,160);assert.equal(actions.size,122);assert.equal(errors.length,0,`page errors ${errors}`);assert.equal(failed.length,0,`failed responses ${failed}`);assert.equal(await root().getAttribute('data-current-stage'),'EDIT-01-STAGE-05-QA-HANDOFF');
+          console.log('EDIT01_NEW_BROWSER_PASS controls=160 direct_actions=122 internal_actions=2 authority_actions=124 final=HANDED_OFF scores=96,97,98 provider=SIMULATED_EXTERNAL exact_handoff=PASS');await browser.close();
+          JS
+      - name: Controlled browser flow
+        run: |
+          set -euo pipefail
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=TEST npm run start -- -H 127.0.0.1 -p 3000 >/tmp/edit01-new-test.log 2>&1 &
+          echo $! >/tmp/edit01-new.pid
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3000/edit >/dev/null && break; sleep 1; done
+          node .edit01-new-e2e.mjs
+          kill $(cat /tmp/edit01-new.pid) || true
+      - name: Production fail closed
+        run: |
+          set -euo pipefail
+          git checkout -- tsconfig.json next-env.d.ts || true
+          rm -rf .next
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PRODUCTION npm run build
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PRODUCTION npm run start -- -H 127.0.0.1 -p 3001 >/tmp/edit01-new-prod.log 2>&1 &
+          echo $! >/tmp/edit01-new-prod.pid
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3001/edit >/dev/null && break; sleep 1; done
+          code=$(curl -sS -o /tmp/proj.json -w '%{http_code}' http://127.0.0.1:3001/v1/ui-projections/EDIT-01); test "$code" = 503; grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/proj.json
+          code=$(curl -sS -o /tmp/run.json -w '%{http_code}' -H 'content-type: application/json' -d '{"task_id":"PROD-PROBE"}' http://127.0.0.1:3001/v1/editing-runtime-runs); test "$code" = 503; grep -q 'EDIT_VOICE_RUNTIME_NOT_BOUND' /tmp/run.json
+          kill $(cat /tmp/edit01-new-prod.pid) || true
+          echo EDIT01_NEW_PRODUCTION_FAIL_CLOSED_PASS
+      - name: Residual clean audit
+        run: |
+          set -euo pipefail
+          git checkout -- tsconfig.json next-env.d.ts || true
+          rm -f .edit01-new-e2e.mjs
+          npm ci
+          npm audit
+          test "$(git hash-object src/components/pages/EditVisual.module.css)" = "6ec980b81fb6930a019d2b9ee6168e9d0f6f1d4e"
+          git diff --exit-code 64896ace91173a3161e06b30932bd327017745c8 HEAD -- authority/
+          ! grep -RInE 'TODO|FIXME|HACK|XXX|STUB|NOOP|NOT_IMPLEMENTED|IMPLEMENT_ME|@ts-ignore|@ts-nocheck|debugger' src/components/pages/EditControlRuntime.tsx src/domain/edit src/server/edit src/server/testing/controlledEditTestRuntime.ts src/server/shared/uiProjectionRuntime.ts src/server/shared/departmentRouteFactory.ts
+          echo EDIT01_NEW_RESIDUAL_PASS
