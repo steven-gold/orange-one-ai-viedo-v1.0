@@ -257,6 +257,9 @@ export function AssetRuntimeControl({ id, kind }: { id: string; kind: AssetVisua
     "data-permission-uid": binding?.permission_uid,
     "data-effect-type": binding?.effect_type,
     "data-binding-kind": binding?.binding_kind,
+    "data-view-active": action && state.active_view_action === action ? "true" : undefined,
+    "data-context-state-active":
+      action === "ASSET-01-ACT-PATCH-REVISE" && state.patch_revision_requested ? "true" : undefined,
     "data-busy-action": state.busy_action ?? undefined,
     "data-disabled-reason":
       !binding || !action
