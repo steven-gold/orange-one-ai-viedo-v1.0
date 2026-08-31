@@ -1,0 +1,44 @@
+name: Strategy Admin test wiring validation
+on:
+  push:
+    paths:
+      - '.github/workflows/strategy-admin-test-wiring-once.yml'
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Contract checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const v=fs.readFileSync('src/components/pages/StrategyAdminVisual.tsx','utf8');
+          const p=fs.readFileSync('src/domain/strategyAdmin/strategyAdminRuntimePort.ts','utf8');
+          if(!v.includes('admin:STR-01'))throw new Error('wrong page uid');
+          if(!v.includes('ACT-CANDIDATE-DECIDE'))throw new Error('decision action missing');
+          if(!v.includes('AUTHORITY_BINDING_UNRESOLVED'))throw new Error('ambiguous decision action must remain blocked');
+          if(v.includes('data-control-resource-remap="NOT_EXECUTED"'))throw new Error('stale visual-only remap marker');
+          for(const op of ['refreshProjection','searchProjection','configureGovernedResource','approveGovernedResource','exportProjection','saveDraft','createCandidate','compareCandidates','adoptAsContextCandidate'])if(!p.includes(op))throw new Error('missing mapped operation '+op);
+          for(const bad of ['/v1/strategy-admin','rejectStrategyCandidate\',\'ACT-CANDIDATE-DECIDE'])if(p.includes(bad))throw new Error('invented or ambiguous binding '+bad);
+          NODE
+          test "$(git hash-object src/components/pages/StrategyAdminVisual.module.css)" = "b41f8b3f1cc2547476969bf7a6a6c8198754a6d2"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Self clean
+        run: |
+          rm -f .github/workflows/strategy-admin-test-wiring-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/strategy-admin-test-wiring-once.yml
+          git commit -m "chore(strategy-admin): remove one-shot test workflow"
+          git push origin HEAD:new
