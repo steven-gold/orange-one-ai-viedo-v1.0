@@ -2,6 +2,7 @@
 
 import { useI18n } from "@/i18n/LocaleProvider";
 import { socControlLabel, socText } from "@/i18n/socCatalog";
+import { SocGovernedButton, SocRuntimeProvider, SocValue, useSocGate, useSocRuntimeState } from "./SocControlRuntime";
 import styles from "./SocVisual.module.css";
 import { useState } from "react";
 
@@ -76,18 +77,10 @@ export const SOC_CONTROL_REGISTRY = [
   "SOC-01-FLD-BLOCKERS",
 ] as const;
 
-const EMPTY_VISUAL_STATE = {
-  exactGovernedPlatformBinding: false,
-  highRiskOperationApplicable: false,
-  accountBound: false,
-  credentialRevealApplicable: false,
-  targetJoinApplicable: false,
-  manualActionPending: false,
-  candidateReviewAvailable: false,
-} as const;
 
-export function SocVisual() {
+function SocVisualBody() {
   const { locale } = useI18n();
+  const { projection, runtimeError } = useSocRuntimeState();
   const [activeStage, setActiveStage] = useState<StageKey>("platform");
   const stage = STAGES.find((item) => item.key === activeStage) ?? STAGES[0];
   const label = (id: string) => socControlLabel(locale, id);
@@ -95,18 +88,21 @@ export function SocVisual() {
 
   const actionVisible = (action: ActionDef) => {
     if (!action.conditional) return true;
-    if (action.id === "SOC-01-BTN-PLATFORM-CONFIG") return EMPTY_VISUAL_STATE.exactGovernedPlatformBinding;
-    if (action.id === "SOC-01-BTN-KILL") return EMPTY_VISUAL_STATE.highRiskOperationApplicable;
-    if (action.id === "SOC-01-BTN-CREDENTIAL-REVEAL") return EMPTY_VISUAL_STATE.credentialRevealApplicable;
-    if (action.id === "SOC-01-BTN-ACCOUNT-UNBIND") return EMPTY_VISUAL_STATE.accountBound;
-    if (action.id === "SOC-01-BTN-TARGET-JOIN") return EMPTY_VISUAL_STATE.targetJoinApplicable;
-    if (action.id === "SOC-01-BTN-MANUAL-COMPLETE") return EMPTY_VISUAL_STATE.manualActionPending;
-    if (action.id === "SOC-01-BTN-CANDIDATE-DECIDE") return EMPTY_VISUAL_STATE.candidateReviewAvailable;
-    return false;
+    const gateByControl: Record<string,string> = {
+      "SOC-01-BTN-PLATFORM-CONFIG":"SOC-01-GATE-PLATFORM-CONFIG",
+      "SOC-01-BTN-KILL":"SOC-01-GATE-KILL",
+      "SOC-01-BTN-CREDENTIAL-REVEAL":"SOC-01-GATE-CREDENTIAL",
+      "SOC-01-BTN-ACCOUNT-UNBIND":"SOC-01-GATE-ACCOUNT",
+      "SOC-01-BTN-TARGET-JOIN":"SOC-01-GATE-TARGET-JOIN",
+      "SOC-01-BTN-MANUAL-COMPLETE":"SOC-01-GATE-MANUAL",
+      "SOC-01-BTN-CANDIDATE-DECIDE":"SOC-01-GATE-CANDIDATE",
+    };
+    const gate = gateByControl[action.id];
+    return gate ? projection?.gate_state[gate] === true : false;
   };
 
   return (
-    <div className={styles.page} data-page-uid="admin:SOC-01" data-vis-step="VIS-13" data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE" data-page-state="VISUAL_ONLY_NO_BUSINESS_DATA" data-authority-control-count={SOC_CONTROL_REGISTRY.length}>
+    <div className={styles.page} data-page-uid="admin:SOC-01" data-vis-step="VIS-13" data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE" data-page-state={runtimeError?"ERROR":projection?.page_state??"READ_ONLY"} data-authority-control-count={SOC_CONTROL_REGISTRY.length}>
       <section className={styles.contextBar} data-section-id="SOC-01-SEC-01" data-component-id="SOC-01-CMP-CONTEXT">
         <div className={styles.identity}>
           <div className={styles.eyebrow}>SOC-01 · {t("pageName")}</div>
@@ -114,16 +110,16 @@ export function SocVisual() {
           <p>{t("pageRole")}</p>
         </div>
         <div className={styles.contextData}>
-          <div className={styles.contextCell} data-control-id="SOC-01-FLD-CONTEXT"><span>{label("SOC-01-FLD-CONTEXT")}</span><strong>—</strong></div>
-          <div className={styles.contextCell} data-control-id="SOC-01-FLD-CURRENT-STATE"><span>{label("SOC-01-FLD-CURRENT-STATE")}</span><strong>—</strong></div>
+          <div className={styles.contextCell} data-control-id="SOC-01-FLD-CONTEXT"><span>{label("SOC-01-FLD-CONTEXT")}</span><strong><SocValue controlId="SOC-01-FLD-CONTEXT"/></strong></div>
+          <div className={styles.contextCell} data-control-id="SOC-01-FLD-CURRENT-STATE"><span>{label("SOC-01-FLD-CURRENT-STATE")}</span><strong><SocValue controlId="SOC-01-FLD-CURRENT-STATE"/></strong></div>
         </div>
       </section>
 
       <section className={styles.stageBar} data-section-id="SOC-01-SEC-02" data-component-id="SOC-01-CMP-STAGES" aria-label={t("pageName")}>
         {STAGES.map((item) => (
-          <button key={item.key} type="button" className={`${styles.stageButton} ${activeStage === item.key ? styles.stageActive : ""}`} data-control-id={item.tabId} aria-pressed={activeStage === item.key} onClick={() => setActiveStage(item.key)}>
+          <SocGovernedButton key={item.key} className={`${styles.stageButton} ${activeStage === item.key ? styles.stageActive : ""}`} controlId={item.tabId} onUiClick={() => setActiveStage(item.key)}>
             {item.code} · {label(item.tabId)}
-          </button>
+          </SocGovernedButton>
         ))}
       </section>
 
@@ -134,14 +130,14 @@ export function SocVisual() {
             {stage.searchId && (
               <div className={styles.searchRow}>
                 <label htmlFor={stage.searchId}>{label(stage.searchId)}</label>
-                <input id={stage.searchId} className={styles.searchInput} data-control-id={stage.searchId} placeholder={t("searchPlaceholder")} disabled />
+                <input id={stage.searchId} className={styles.searchInput} data-control-id={stage.searchId} placeholder={t("searchPlaceholder")} disabled={!useSocGate(stage.key === "records" ? "SOC-01-GATE-RECORDS" : "SOC-01-GATE-READ")} />
               </div>
             )}
             <div className={styles.table}>
               {stage.fields.map((controlId) => (
                 <div className={styles.row} key={controlId} data-control-id={controlId}>
                   <div className={styles.label}>{label(controlId)}</div>
-                  <div className={styles.value}>—</div>
+                  <div className={styles.value}><SocValue controlId={controlId}/></div>
                 </div>
               ))}
             </div>
@@ -150,9 +146,9 @@ export function SocVisual() {
               <div className={styles.dockLabel}><span>{t("actionDock")}</span><strong>{label(stage.tabId)}</strong></div>
               <div className={styles.dockActions}>
                 {stage.actions.filter(actionVisible).map((action) => (
-                  <button key={action.id} type="button" data-control-id={action.id} className={action.primary ? styles.primaryButton : action.danger ? styles.dangerButton : styles.secondaryButton} disabled>
+                  <SocGovernedButton key={action.id} controlId={action.id} className={action.primary ? styles.primaryButton : action.danger ? styles.dangerButton : styles.secondaryButton}>
                     {label(action.id)}
-                  </button>
+                  </SocGovernedButton>
                 ))}
                 {stage.actions.some((action) => action.conditional && !actionVisible(action)) && <span className={styles.conditionalNote}>{t("conditionalUnavailable")}</span>}
               </div>
@@ -163,11 +159,11 @@ export function SocVisual() {
         <aside className={styles.rail} data-section-id="SOC-01-SEC-08" data-component-id="SOC-01-CMP-GOVERNANCE">
           <div className={styles.railHeader}><h2>{t("governance")}</h2><span>{stage.code}</span></div>
           <div className={styles.railTable}>
-            <div className={styles.railRow} data-control-id="SOC-01-FLD-BLOCKERS"><span>{label("SOC-01-FLD-BLOCKERS")}</span><strong>—</strong></div>
+            <div className={styles.railRow} data-control-id="SOC-01-FLD-BLOCKERS"><span>{label("SOC-01-FLD-BLOCKERS")}</span><strong><SocValue controlId="SOC-01-FLD-BLOCKERS"/></strong></div>
             <div className={styles.railRow}><span>{t("currentStage")}</span><strong>{label(stage.tabId)}</strong></div>
           </div>
-          <button className={`${styles.secondaryButton} ${styles.detailButton}`} type="button" data-control-id="SOC-01-BTN-DETAIL" disabled>{label("SOC-01-BTN-DETAIL")}</button>
-          <p className={styles.railNote}>{t("visualPhase")}</p>
+          <SocGovernedButton className={`${styles.secondaryButton} ${styles.detailButton}`} controlId="SOC-01-BTN-DETAIL">{label("SOC-01-BTN-DETAIL")}</SocGovernedButton>
+          <p className={styles.railNote}>{runtimeError??projection?.page_state??t("noRealData")}</p>
           <aside className={styles.detailDrawer} aria-hidden="true" data-state="CLOSED_EMPTY">
             <h2>{t("detail")}</h2><p>{t("noRealData")}</p>
           </aside>
@@ -176,3 +172,5 @@ export function SocVisual() {
     </div>
   );
 }
+
+export function SocVisual(){return <SocRuntimeProvider><SocVisualBody/></SocRuntimeProvider>}
