@@ -1,0 +1,92 @@
+name: DB01 wire governed read model
+on:
+  push:
+    paths:
+      - '.github/workflows/db01-wire-governed-once.yml'
+permissions:
+  contents: write
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Materialize 49 authority bindings
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, json
+          src=Path('authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml').read_text()
+          block=src.split('\ncontrol_bindings:\n',1)[1].split('\nderived_validation:\n',1)[0]
+          rows=[]; cur=None
+          for line in block.splitlines():
+              m=re.match(r'- control_uid:\s*(\S+)',line)
+              if m:
+                  if cur: rows.append(cur)
+                  cur={'control_uid':m.group(1)}; continue
+              if cur:
+                  m=re.match(r'\s{2}(action_uid|gate_uid|permission_uid):\s*(\S+)',line)
+                  if m: cur[m.group(1)]=m.group(2)
+          if cur: rows.append(cur)
+          if len(rows)!=49: raise SystemExit(f'expected 49 controls, got {len(rows)}')
+          if len({r['control_uid'] for r in rows})!=49: raise SystemExit('duplicate control uid')
+          for r in rows:
+              for k in ('action_uid','gate_uid','permission_uid'):
+                  if k not in r: raise SystemExit(f'missing {k} for {r}')
+          out='export type DbControlBinding={action_uid:string;gate_uid:string;permission_uid:string};\n'
+          out+='export const DB_CONTROL_BINDINGS = '+json.dumps({r['control_uid']:{k:r[k] for k in ('action_uid','gate_uid','permission_uid')} for r in rows},ensure_ascii=False,separators=(',',':'))+' as const satisfies Record<string,DbControlBinding>;\n'
+          out+='export type DbControlUid=keyof typeof DB_CONTROL_BINDINGS;\nexport const DB_CONTROL_BINDING_COUNT=Object.keys(DB_CONTROL_BINDINGS).length;\n'
+          Path('src/domain/database/dbControlBindings.ts').write_text(out)
+          PY
+      - name: Wire existing visual only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/DbVisual.tsx');s=p.read_text()
+          anchor='import { DB_CONTROL_TEXT, dbText, dbUiText } from "@/i18n/dbCatalog";\n'
+          ins='import { DbRuntimeControl, DbRuntimeProvider, useDbRuntimeState } from "./DbControlRuntime";\n'
+          if ins not in s:s=s.replace(anchor,anchor+ins,1)
+          start=s.index('function Control({spec}:{spec:Spec}){')
+          end=s.index('function Title(',start)
+          s=s[:start]+'function Control({spec}:{spec:Spec}){return <DbRuntimeControl id={spec.id} kind={spec.kind}/>;}\n'+s[end:]
+          old='export function DbVisual(){\n  const {locale}=useI18n();'
+          new='function DbVisualBody(){\n  const {locale}=useI18n();\n  const {projection}=useDbRuntimeState();'
+          if old not in s: raise SystemExit('DbVisual function anchor missing')
+          s=s.replace(old,new,1)
+          s=s.replace('data-page-state="READ_ONLY"','data-page-state={projection?.page_state??"READ_ONLY"}',1)
+          s=s.rstrip()+'\nexport function DbVisual(){return <DbRuntimeProvider><DbVisualBody/></DbRuntimeProvider>;}\n'
+          p.write_text(s)
+          PY
+      - name: Contract checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const b=fs.readFileSync('src/domain/database/dbControlBindings.ts','utf8');
+          const v=fs.readFileSync('src/components/pages/DbVisual.tsx','utf8');
+          const r=fs.readFileSync('src/components/pages/DbControlRuntime.tsx','utf8');
+          const entries=b.match(/"DB-01-[^"]+":\{"action_uid"/g)||[];
+          if(entries.length!==49)throw new Error(`expected 49 bindings got ${entries.length}`);
+          if(!v.includes('DbRuntimeProvider')||!v.includes('DbRuntimeControl'))throw new Error('runtime wiring missing');
+          if(v.includes('Gate not satisfied'))throw new Error('legacy disabled shell remains');
+          for(const forbidden of ['manual SQL','ALTER TABLE','DROP TABLE','migration execute','rollback migration'])if(r.toLowerCase().includes(forbidden.toLowerCase()))throw new Error(`forbidden DB mutation surface ${forbidden}`);
+          const readPorts=['DB-01-PORT-ENTITY-LIST','DB-01-PORT-SCHEMA','DB-01-PORT-TRACE','DB-01-PORT-MIGRATION','DB-01-PORT-INTEGRITY','DB-01-PORT-AUDIT'];
+          for(const p of readPorts)if(!r.includes(p))throw new Error(`missing governed read port ${p}`);
+          NODE
+          test "$(git hash-object src/components/pages/DbVisual.module.css)" = "ee1b9506cfa6e54f1e4dbf6993c81690f5a01043"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Commit and self-clean
+        run: |
+          rm -f .github/workflows/db01-wire-governed-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/domain/database/dbControlBindings.ts src/domain/database/dbClientPort.ts src/components/pages/DbControlRuntime.tsx src/components/pages/DbVisual.tsx .github/workflows/db01-wire-governed-once.yml
+          git commit -m "wire(db): connect 49 governed read-model controls"
+          git push origin HEAD:new
