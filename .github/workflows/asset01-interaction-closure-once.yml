@@ -1,0 +1,90 @@
+name: ASSET01 interaction closure
+on:
+  push:
+    paths:
+      - '.github/workflows/asset01-interaction-closure-once.yml'
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Patch ASSET01 visible blocker feedback
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/AssetControlRuntime.tsx')
+          s=p.read_text()
+          s=s.replace('''function displayValue(id:string,state:AssetClientState){if(id==="ASSET-01-FLD-TRACE")return state.correlation_id??"—";if(id==="ASSET-01-FLD-TASK")return state.projection?.task_id??"—";if(id==="ASSET-01-FLD-OUTPUT-ID")return state.projection?.output_version_id??"—";return state.projection?.values[id]??"—";}''','''function displayValue(id:string,state:AssetClientState){if(id==="ASSET-01-FLD-TRACE")return state.runtime_error??state.correlation_id??"—";if(id==="ASSET-01-FLD-TASK")return state.projection?.task_id??"—";if(id==="ASSET-01-FLD-OUTPUT-ID")return state.projection?.output_version_id??"—";return state.projection?.values[id]??"—";}''',1)
+          old='''export function AssetRuntimeControl({id,kind}:{id:string;kind:AssetVisualControlKind}){const{state,dispatch}=useAssetRuntimeState(),{locale}=useI18n(),binding=ASSET_CONTROL_BINDINGS[id as AssetControlUid],label=assetText(locale,id),allowed=Boolean(binding)&&gate(state,binding.gate_uid),action=binding?.action_uid as AssetActionUid|undefined,local=Boolean(action&&LOCAL.has(action)),formal=Boolean(action&&!LOCAL.has(action)),enabled=allowed&&(local||!formal||isAssetRequestBuilderBound()),common={"data-control-id":id,"data-action-uid":binding?.action_uid,"data-gate-uid":binding?.gate_uid,"data-permission-uid":binding?.permission_uid,"data-effect-type":binding?.effect_type,"data-binding-kind":binding?.binding_kind,"data-disabled-reason":!allowed?binding?.gate_uid:formal&&!isAssetRequestBuilderBound()?"ASSET_REQUEST_ADAPTER_NOT_BOUND":undefined};
+const act=(value?:unknown)=>{if(!action)return;if(local){localDispatch(action,value,state,dispatch);return;}void formalInvoke(id,action,value,state,dispatch);};'''
+          new='''export function AssetRuntimeControl({id,kind}:{id:string;kind:AssetVisualControlKind}){const{state,dispatch}=useAssetRuntimeState(),{locale}=useI18n(),binding=ASSET_CONTROL_BINDINGS[id as AssetControlUid],label=assetText(locale,id),allowed=Boolean(binding)&&gate(state,binding.gate_uid),action=binding?.action_uid as AssetActionUid|undefined,local=Boolean(action&&LOCAL.has(action)),formal=Boolean(action&&!LOCAL.has(action)),builderReady=!formal||isAssetRequestBuilderBound(),enabled=Boolean(binding&&action),common={"data-control-id":id,"data-action-uid":binding?.action_uid,"data-gate-uid":binding?.gate_uid,"data-permission-uid":binding?.permission_uid,"data-effect-type":binding?.effect_type,"data-binding-kind":binding?.binding_kind,"data-disabled-reason":!binding||!action?"NO_ACTION_BINDING":!allowed?binding.gate_uid:!builderReady?"ASSET_REQUEST_ADAPTER_NOT_BOUND":undefined};
+const block=(reason:string)=>dispatch({action_uid:"RUNTIME-ERROR",value:`ASSET-01-ERR-CONTEXT-001: ${reason}`});
+const act=(value?:unknown)=>{if(!binding||!action){block("ACTION_BINDING_MISSING");return;}if(!allowed){block(state.runtime_error??`${binding.gate_uid}:NOT_SATISFIED`);return;}if(formal&&!builderReady){block("ASSET_REQUEST_ADAPTER_NOT_BOUND");return;}if(local){localDispatch(action,value,state,dispatch);dispatch({action_uid:"RUNTIME-ERROR",value:null});return;}void formalInvoke(id,action,value,state,dispatch);};'''
+          assert old in s
+          s=s.replace(old,new,1)
+          s=s.replace('''if(kind==="search"){const correction=id==="ASSET-01-TXT-CORRECTION-REQUEST",value=correction?state.correction_request:state.search;return <label className={styles.inputControl}><span>{label}</span><input {...common} disabled={!allowed} value={value} onChange={e=>correction?dispatch({action_uid:"LOCAL-CORRECTION-REQUEST",value:e.target.value}):act(e.target.value)} placeholder="—"/></label>}''','''if(kind==="search"){const correction=id==="ASSET-01-TXT-CORRECTION-REQUEST",value=correction?state.correction_request:state.search;return <label className={styles.inputControl}><span>{label}</span><input {...common} disabled={!enabled} value={value} onChange={e=>{if(!allowed){block(state.runtime_error??`${binding?.gate_uid??"GATE"}:NOT_SATISFIED`);return;}correction?dispatch({action_uid:"LOCAL-CORRECTION-REQUEST",value:e.target.value}):act(e.target.value)}} placeholder="—"/></label>}''',1)
+          s=s.replace('''if(kind==="select"){const items=filterItems(id,state),value=id==="ASSET-01-CTL-PROJECT"?(state.project_ref??""):id==="ASSET-01-CTL-TOPIC"?(state.topic_ref??""):id==="ASSET-01-CTL-FILTER"?(state.filter??""):"";return <label className={styles.inputControl}><span>{label}</span><select {...common} disabled={!enabled} value={value} onChange={e=>act(e.target.value)}><option value="">—</option>{items.map(item=><option key={item.ref} value={item.ref}>{item.label}</option>)}</select></label>}''','''if(kind==="select"){const items=filterItems(id,state),value=id==="ASSET-01-CTL-PROJECT"?(state.project_ref??""):id==="ASSET-01-CTL-TOPIC"?(state.topic_ref??""):id==="ASSET-01-CTL-FILTER"?(state.filter??""):"";return <label className={styles.inputControl}><span>{label}</span><select {...common} disabled={!enabled} value={value} onClick={()=>!allowed&&block(state.runtime_error??`${binding?.gate_uid??"GATE"}:NOT_SATISFIED`)} onChange={e=>act(e.target.value)}><option value="">—</option>{items.map(item=><option key={item.ref} value={item.ref}>{item.label}</option>)}</select></label>}''',1)
+          p.write_text(s)
+          PY
+      - name: Contract and pollution checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');const s=fs.readFileSync('src/components/pages/AssetControlRuntime.tsx','utf8');
+          if(!s.includes('state.runtime_error??state.correlation_id'))throw new Error('runtime error is not visible through canonical trace field');
+          if(!s.includes('ASSET_REQUEST_ADAPTER_NOT_BOUND'))throw new Error('adapter blocker missing');
+          if(!s.includes('NOT_SATISFIED'))throw new Error('gate blocker feedback missing');
+          if(s.includes('/v1/asset/actions')||s.includes('fake')||s.includes('mock'))throw new Error('unregistered asset implementation introduced');
+          NODE
+          test "$(git hash-object src/components/pages/AssetVisual.module.css)" = "80220b164df59a3a4d03ee3ac6886b844d785552"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run production server
+        run: |
+          npm start -- -H 127.0.0.1 -p 3000 > /tmp/asset-server.log 2>&1 &
+          for i in $(seq 1 60); do if curl -fsS http://127.0.0.1:3000/assets >/dev/null; then exit 0; fi; sleep 1; done
+          cat /tmp/asset-server.log
+          exit 1
+      - name: Chromium interaction closure
+        run: |
+          cat > asset01-check.cjs <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{const b=await chromium.launch({headless:true}),p=await b.newPage();await p.goto('http://127.0.0.1:3000/assets',{waitUntil:'networkidle'});
+            const trace=p.locator('[data-control-id="ASSET-01-FLD-TRACE"] strong');
+            await p.waitForFunction(()=>{const e=document.querySelector('[data-control-id="ASSET-01-FLD-TRACE"] strong');return !!e&&e.textContent&&e.textContent!=='—'});
+            async function react(id,expected){const el=p.locator(`[data-control-id="${id}"]`);if(await el.isDisabled())throw new Error(id+' is dead-disabled');await el.click();await p.waitForFunction((expected)=>document.querySelector('[data-control-id="ASSET-01-FLD-TRACE"] strong')?.textContent?.includes(expected),expected);}
+            await react('ASSET-01-BTN-EXECUTE','UI_PROJECTION_RUNTIME_NOT_BOUND');
+            await react('ASSET-01-BTN-SINGLE','UI_PROJECTION_RUNTIME_NOT_BOUND');
+            await react('ASSET-01-BTN-CORRECTION-OPEN','UI_PROJECTION_RUNTIME_NOT_BOUND');
+            await react('ASSET-01-BTN-LAYER-DOC-CREATE','UI_PROJECTION_RUNTIME_NOT_BOUND');
+            await react('ASSET-01-BTN-PATCH-CREATE','UI_PROJECTION_RUNTIME_NOT_BOUND');
+            await react('ASSET-01-BTN-RETRY','UI_PROJECTION_RUNTIME_NOT_BOUND');
+            await react('ASSET-01-BTN-EVALUATE','UI_PROJECTION_RUNTIME_NOT_BOUND');
+            await react('ASSET-01-BTN-HANDOFF','UI_PROJECTION_RUNTIME_NOT_BOUND');
+            const search=p.locator('[data-control-id="ASSET-01-FLD-SEARCH"]');if(await search.isDisabled())throw new Error('search is dead-disabled');await search.fill('abc');await p.waitForFunction(()=>document.querySelector('[data-control-id="ASSET-01-FLD-TRACE"] strong')?.textContent?.includes('UI_PROJECTION_RUNTIME_NOT_BOUND'));
+            if(await p.locator('[data-control-id]').count()<85)throw new Error('not all authority controls render');
+            await b.close();})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node asset01-check.cjs
+          rm asset01-check.cjs
+      - name: Commit validated ASSET closure and self-clean
+        run: |
+          rm -f .github/workflows/asset01-interaction-closure-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/pages/AssetControlRuntime.tsx .github/workflows/asset01-interaction-closure-once.yml
+          git commit -m "fix(asset01): make blocked controls visibly responsive"
+          git push origin HEAD:new
