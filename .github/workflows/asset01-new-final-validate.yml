@@ -16,13 +16,16 @@ jobs:
       - name: Verify clean product parent and scope
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "9fe74297643db4a5cbc33f65a0e68cd3c5724720"
           test "$(git hash-object src/components/pages/AssetVisual.module.css)" = "80220b164df59a3a4d03ee3ac6886b844d785552"
           test "$(git hash-object src/components/pages/CoreVisual.module.css)" = "c9b0215dc2d174b77c558e617125e6ec2ecd9fbd"
           test "$(git hash-object src/components/pages/DashboardVisual.tsx)" = "aa3a8a9472ee6c471503d8990654233a6ee02edd"
           git diff --exit-code 3924f6594cde11f5439aaeddf6b6bdc33faa58d5 9fe74297643db4a5cbc33f65a0e68cd3c5724720 -- authority/
           python3 - <<'PY'
           import subprocess
+          product = '9fe74297643db4a5cbc33f65a0e68cd3c5724720'
+          workflow = '.github/workflows/asset01-new-final-validate.yml'
+          temporary = set(subprocess.check_output(['git','diff','--name-only',product,'HEAD'], text=True).splitlines())
+          assert temporary == {workflow}, f'new contains unexpected post-product files: {temporary}'
           expected = {
             'src/components/pages/AssetControlRuntime.tsx',
             'src/components/pages/AssetVisual.tsx',
@@ -38,11 +41,10 @@ jobs:
           }
           actual = set(subprocess.check_output([
             'git','diff','--name-only',
-            '3924f6594cde11f5439aaeddf6b6bdc33faa58d5',
-            '9fe74297643db4a5cbc33f65a0e68cd3c5724720'
+            '3924f6594cde11f5439aaeddf6b6bdc33faa58d5', product
           ], text=True).splitlines())
           assert actual == expected, f'scope mismatch: missing={expected-actual}, extra={actual-expected}'
-          print('ASSET01_NEW_CLEAN_SCOPE_PASS files=11')
+          print('ASSET01_NEW_CLEAN_SCOPE_PASS files=11 temporary=workflow_only')
           PY
       - name: Install audit typecheck and TEST build
         run: |
@@ -55,6 +57,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch origin b94ebe63d7285eac2fdd3715f6cccad43dbbaa76
+          mkdir -p scripts
           git show b94ebe63d7285eac2fdd3715f6cccad43dbbaa76:scripts/asset01-staging-e2e.mjs > scripts/.asset01-new-e2e.mjs
           test "$(git hash-object scripts/.asset01-new-e2e.mjs)" = "0a4360fff51e3a47233cbdb6b77e59ec6103671d"
           npm install --no-save --package-lock=false playwright@1.55.0
@@ -89,11 +92,12 @@ jobs:
           npm ci
           npm audit
           rm -f scripts/.asset01-new-e2e.mjs
+          rmdir scripts 2>/dev/null || true
           git restore --source=HEAD --worktree -- next-env.d.ts tsconfig.json
           test "$(git hash-object src/components/pages/AssetVisual.module.css)" = "80220b164df59a3a4d03ee3ac6886b844d785552"
           git diff --exit-code 3924f6594cde11f5439aaeddf6b6bdc33faa58d5 9fe74297643db4a5cbc33f65a0e68cd3c5724720 -- authority/
           if grep -RniE 'TODO|FIXME|HACK|XXX|STUB|NOOP|NOT_IMPLEMENTED|IMPLEMENT_ME|@ts-ignore|@ts-nocheck|debugger|console\.debug' src/domain/asset src/server/asset src/server/testing/controlledAssetTestRuntime.ts src/components/pages/AssetControlRuntime.tsx src/components/pages/AssetVisual.tsx; then exit 1; fi
-          test -z "$(git status --porcelain -- next-env.d.ts tsconfig.json scripts/.asset01-new-e2e.mjs)"
+          test -z "$(git status --porcelain -- next-env.d.ts tsconfig.json scripts)"
           echo ASSET01_NEW_RESIDUAL_PASS
       - name: Self-clean validation workflow
         run: |
