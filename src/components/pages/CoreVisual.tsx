@@ -5,6 +5,7 @@ import type { TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { invokeCoreAction, readCoreProjection } from "@/domain/core/coreClientPort";
 import { requestCoreDraftFormPayload } from "@/domain/core/coreDraftFormAdapter";
+import { requestCoreMessageSendPayload, requestCoreThreadCreatePayload } from "@/domain/core/coreConversationPayloadAdapter";
 import { INITIAL_CORE_CLIENT_STATE, reduceCoreClientState } from "@/domain/core/coreClientState";
 import type { CoreActionUid } from "@/domain/core/coreRuntimeContract";
 import styles from "./CoreVisual.module.css";
@@ -154,27 +155,30 @@ export function CoreVisual() {
     switch (action) {
       case "CORE-01-ACT-PROJECT-CREATE": void runDraftCreate("PROJECT"); return;
       case "CORE-01-ACT-TOPIC-CREATE": void runDraftCreate("TOPIC"); return;
-      case "CORE-01-ACT-THREAD-CREATE": { const projectId = requireProjectId(); if (!projectId) return; const work_item = requireWorkItem(); if (!work_item) return; void runServerAction(action, { path_params: { projectId }, payload: { work_item, ai_mode: clientState.ai_mode } }); return; }
+      case "CORE-01-ACT-THREAD-CREATE": {
+        const projectId = requireProjectId(); if (!projectId) return;
+        const work_item = requireWorkItem(); if (!work_item) return;
+        void (async()=>{
+          const payload = await requestCoreThreadCreatePayload({ project_id: projectId, topic_id: clientState.topic_id, work_item, ai_mode: clientState.ai_mode });
+          if (!payload.ok) { reportBlock(`CORE-01-ERR-THREAD-001:${payload.reason_code}`); return; }
+          await runServerAction(action, { path_params: { projectId }, payload: payload.payload });
+        })(); return;
+      }
       case "CORE-01-ACT-AI-MODE-SINGLE": case "CORE-01-ACT-AI-MODE-MULTI": if (!requireWorkItem()) return; dispatchClient({ action_uid: action }); setPageState("READY"); setRuntimeReason(null); return;
       case "CORE-01-ACT-ASSISTANT-RECORD": dispatchClient({ action_uid: action, open: !clientState.assistant_record_open }); setPageState("READY"); setRuntimeReason(null); return;
       case "CORE-01-ACT-SEND": {
         const submitted = message.trim();
         if (!submitted) { reportBlock("CORE-01-ERR-CONVERSATION-001:MESSAGE_REQUIRED"); return; }
-        appendConversationMessage("USER", submitted);
-        setMessage("");
         const conversationId = clientState.conversation_id;
-        if (!conversationId) {
-          const reason = "CORE-01-ERR-THREAD-001:REQUIRED_CONVERSATION_ID_MISSING";
-          reportBlock(reason);
-          appendConversationMessage("STATUS", reason);
-          return;
-        }
+        if (!conversationId) { reportBlock("CORE-01-ERR-THREAD-001:REQUIRED_CONVERSATION_ID_MISSING"); return; }
         void (async () => {
-          const result = await runServerAction(action, { path_params: { conversationId }, payload: { message: submitted, ai_mode: clientState.ai_mode, attachment_refs: clientState.attachment_refs, reference_refs: clientState.reference_refs } });
+          const payload = await requestCoreMessageSendPayload({ conversation_id: conversationId, message: submitted, ai_mode: clientState.ai_mode, attachment_refs: clientState.attachment_refs, reference_refs: clientState.reference_refs });
+          if (!payload.ok) { reportBlock(`CORE-01-ERR-CONVERSATION-001:${payload.reason_code}`); return; }
+          const result = await runServerAction(action, { path_params: { conversationId }, payload: payload.payload });
           if (!result) return;
+          if (result.ok) { appendConversationMessage("USER", submitted); setMessage(""); }
           appendConversationMessage("STATUS", result.ok ? `MESSAGE_ACCEPTED:${result.correlation_id}` : `${result.error_uid}:${result.reason_code}`);
-        })();
-        return;
+        })(); return;
       }
       case "CORE-01-ACT-CANDIDATE-CREATE": if (!humanDecision.trim()) { reportBlock("CORE-01-ERR-DECISION-001:HUMAN_DECISION_REQUIRED"); return; } void runServerAction(action, { payload: { human_decision: humanDecision.trim(), evidence_refs: clientState.decision_evidence_refs } }); return;
       case "CORE-01-ACT-CANDIDATE-ACCEPT": case "CORE-01-ACT-CANDIDATE-RETURN": { const candidateRef = requireCandidateRef(); if (candidateRef) void runServerAction(action, { path_params: { id: candidateRef } }); return; }
