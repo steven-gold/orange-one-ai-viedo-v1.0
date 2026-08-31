@@ -26,10 +26,9 @@ jobs:
           const {spawn}=require('child_process');
           const sleep=ms=>new Promise(r=>setTimeout(r,ms));
           const assert=(c,m)=>{if(!c)throw new Error(m)};
-          async function server(port,env){const c=spawn('npm',['run','dev','--','-p',String(port)],{env:{...process.env,...env},stdio:['ignore','pipe','pipe']});c.stdout.pipe(process.stdout);c.stderr.pipe(process.stderr);const url=`http://localhost:${port}/qa`;for(let i=0;i<120;i++){try{const r=await fetch(url);if(r.status<500)return{c,url}}catch{}await sleep(500)}throw new Error('server not ready')}
-          async function stop(c){if(c.exitCode===null){c.kill('SIGTERM');await sleep(500);if(c.exitCode===null)c.kill('SIGKILL')}}
+          async function server(port,env){const c=spawn('npm',['run','dev','--','-p',String(port)],{env:{...process.env,...env},stdio:['ignore','pipe','pipe'],detached:true});c.stdout.pipe(process.stdout);c.stderr.pipe(process.stderr);const url=`http://localhost:${port}/qa`;for(let i=0;i<120;i++){if(c.exitCode!==null)throw new Error(`server exited ${c.exitCode}`);try{const r=await fetch(url);if(r.status<500)return{c,url}}catch{}await sleep(500)}throw new Error('server not ready')}
+          async function stop(c){try{process.kill(-c.pid,'SIGTERM')}catch{}for(let i=0;i<30;i++){try{process.kill(-c.pid,0);await sleep(100)}catch{return}}try{process.kill(-c.pid,'SIGKILL')}catch{}await sleep(300)}
           const ctl=(p,id)=>p.locator(`[data-control-id="${id}"]`);const val=async(p,id)=>((await ctl(p,id).locator('strong').textContent())||'').trim();
-          async function ready(p){await p.goto(p.url()||'about:blank').catch(()=>{});}
           async function pageFor(browser,url){const p=await browser.newPage({viewport:{width:1600,height:1200}});const errors=[];p.on('pageerror',e=>errors.push(String(e)));await p.goto(url,{waitUntil:'networkidle'});await p.waitForSelector('[data-page-uid="QA-01"]');return{p,errors}}
           async function hydrated(p){await p.waitForFunction(()=>{const e=document.querySelector('[data-control-id="QA-01-BTN-AUTO-START"]');return e instanceof HTMLButtonElement&&!e.disabled},{timeout:15000})}
           async function click(p,id){const e=ctl(p,id);await e.waitFor({state:'visible'});await p.waitForFunction(id=>{const x=document.querySelector(`[data-control-id="${id}"]`);return x instanceof HTMLButtonElement&&!x.disabled},id,{timeout:15000});await e.click()}
