@@ -1,0 +1,71 @@
+name: rawcdn browser diagnostic once
+on:
+  push:
+    paths:
+      - '.github/workflows/rawcdn-browser-diagnostic-once.yml'
+permissions:
+  contents: write
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Diagnose rawcdn response in real Chromium
+        run: |
+          npm ci
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+          cat > rawcdn-browser-diagnostic.cjs <<'NODE'
+          const { chromium } = require('playwright');
+          const urls = [
+            ['OLD','https://rawcdn.githack.com/steven-gold/orange-one-ai-viedo-v1.0/ff7ec14aa121fce5ca2f334cc373c0f9158e8fbc/preview/index.html'],
+            ['NEW','https://rawcdn.githack.com/steven-gold/orange-one-ai-viedo-v1.0/a265264b7738be1778e6b94c4e1819dae3ef83e9/preview/index.html']
+          ];
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            for (const [label,url] of urls) {
+              for (const mode of ['default','browserUA']) {
+                const context=await browser.newContext(mode==='browserUA'?{userAgent:'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36'}:{});
+                const page=await context.newPage();
+                const failed=[]; page.on('requestfailed',r=>failed.push(`${r.url()} :: ${r.failure()?.errorText}`));
+                let response=null, navError=null;
+                try { response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000}); } catch(e) { navError=String(e); }
+                const html=await page.content().catch(()=>'<CONTENT_ERROR>');
+                const rootCount=await page.locator('[data-page-uid="workspace:WB-01"]').count().catch(()=>-1);
+                console.log(`===== ${label} ${mode} =====`);
+                console.log('requested_url',url);
+                console.log('final_url',page.url());
+                console.log('nav_error',navError);
+                console.log('status',response?.status() ?? null);
+                console.log('content_type',response?.headers()['content-type'] ?? null);
+                console.log('server',response?.headers()['server'] ?? null);
+                console.log('cf_ray',response?.headers()['cf-ray'] ?? null);
+                console.log('title',await page.title().catch(()=>'<TITLE_ERROR>'));
+                console.log('root_count',rootCount);
+                console.log('html_length',html.length);
+                console.log('html_head',html.slice(0,700).replace(/\s+/g,' '));
+                console.log('body_text_head',(await page.locator('body').innerText().catch(()=>'<BODY_ERROR>')).slice(0,700).replace(/\s+/g,' '));
+                console.log('failed_requests',JSON.stringify(failed));
+                await context.close();
+              }
+            }
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(0)});
+          NODE
+          node rawcdn-browser-diagnostic.cjs
+      - name: Self clean
+        if: always()
+        run: |
+          rm -f .github/workflows/rawcdn-browser-diagnostic-once.yml rawcdn-browser-diagnostic.cjs
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/rawcdn-browser-diagnostic-once.yml
+          git commit -m 'chore(preview): remove rawcdn browser diagnostic'
+          git push origin HEAD:new
