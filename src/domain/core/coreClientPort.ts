@@ -62,6 +62,9 @@ export async function invokeCoreAction(input: CoreClientInvokeInput): Promise<Co
     "CORE-01-ACT-TOPIC-CREATE": { error_uid: "CORE-01-ERR-TOPIC-LINEAGE-001", reason_code: "TOPIC_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED" },
     "CORE-01-ACT-THREAD-CREATE": { error_uid: "CORE-01-ERR-THREAD-001", reason_code: "CONVERSATION_THREAD_REGISTERED_SCHEMA_PAYLOAD_REQUIRED" },
     "CORE-01-ACT-SEND": { error_uid: "CORE-01-ERR-CONVERSATION-001", reason_code: "CONVERSATION_MESSAGE_REGISTERED_SCHEMA_PAYLOAD_REQUIRED" },
+    "CORE-01-ACT-CANDIDATE-CREATE": { error_uid: "CORE-01-ERR-CANDIDATE-001", reason_code: "CANDIDATE_CREATE_REGISTERED_SCHEMA_PAYLOAD_REQUIRED" },
+    "CORE-01-ACT-CANDIDATE-ACCEPT": { error_uid: "CORE-01-ERR-DECISION-001", reason_code: "CANDIDATE_DECISION_REGISTERED_SCHEMA_PAYLOAD_REQUIRED" },
+    "CORE-01-ACT-CANDIDATE-RETURN": { error_uid: "CORE-01-ERR-DECISION-001", reason_code: "CANDIDATE_DECISION_REGISTERED_SCHEMA_PAYLOAD_REQUIRED" },
   };
   const required = payloadRequiredReason[input.action_uid];
   if (required && !hasRegisteredPayload(input.payload)) {
