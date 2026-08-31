@@ -21,9 +21,10 @@ jobs:
           const fs=require('fs');
           const a=fs.readFileSync('authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml','utf8');
           const section=(start,end)=>a.split(start)[1].split(end)[0];
-          const actions=(section('\n  actions:\n','\n  objects_refs:\n').match(/\n  - action_uid:/g)||[]).length;
-          const controls=(section('\n  controls:\n','\n  integration_ports:\n').match(/\n  - control_uid:/g)||[]).length;
-          const ports=(section('\n  integration_ports:\n','\nacceptance:\n').match(/\n  - port_uid:/g)||[]).length;
+          const count=(text,key)=>(text.match(new RegExp(`(?:^|\\n)  - ${key}:`,'g'))||[]).length;
+          const actions=count(section('\n  actions:\n','\n  objects_refs:\n'),'action_uid');
+          const controls=count(section('\n  controls:\n','\n  integration_ports:\n'),'control_uid');
+          const ports=count(section('\n  integration_ports:\n','\nacceptance:\n'),'port_uid');
           if(actions!==15||controls!==49||ports!==7)throw new Error(`Authority drift actions=${actions} controls=${controls} ports=${ports}`);
           const visual=fs.readFileSync('src/components/pages/DbVisual.tsx','utf8');
           const runtime=fs.readFileSync('src/components/pages/DbControlRuntime.tsx','utf8');
