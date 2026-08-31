@@ -1,120 +1,49 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useReducer } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { STRATEGY_CONTROL_TEXT, strategyText, strategyUiText } from "@/i18n/strategyCatalog";
+import { INITIAL_STRATEGY_CLIENT_STATE, reduceStrategyClientState, type StrategyClientAction, type StrategyClientState } from "@/domain/strategy/strategyClientState";
 import styles from "./StrategyVisual.module.css";
 
 type Kind = "readonly" | "button" | "primary" | "search" | "list" | "conversation" | "attachment" | "textarea" | "table" | "card" | "toggle";
 type Spec = { id: string; kind: Kind };
 const s = (id: string, kind: Kind): Spec => ({ id, kind });
 
-const CONTEXT = [
-  s("STR-01-FLD-TOPIC","readonly"), s("STR-01-FLD-SCOPE","readonly"), s("STR-01-FLD-HORIZON","readonly"),
-  s("STR-01-FLD-STATE","readonly"), s("STR-01-FLD-DECISION-STATE","readonly"), s("STR-01-TGL-MODE","toggle"),
-];
-const TOPICS = [s("STR-01-INP-TOPIC-SEARCH","search"), s("STR-01-LST-TOPICS","list")];
-const SOURCE = [
-  s("STR-01-LST-CONTEXT","list"), s("STR-01-FLD-CONTEXT-PRIORITY","readonly"), s("STR-01-FLD-CONTEXT-SOURCE","readonly"),
-  s("STR-01-FLD-CONTEXT-TIME","readonly"), s("STR-01-FLD-CONTEXT-CONFIDENCE","readonly"),
-];
-const ALERTS = [s("STR-01-LST-ALERTS","list")];
-const CONVERSATION = [s("STR-01-VIEW-CONVERSATION","conversation")];
-const COMPOSER = [
-  s("STR-01-BTN-ATTACH","attachment"), s("STR-01-INP-MESSAGE","textarea"), s("STR-01-BTN-SEND","primary"), s("STR-01-BTN-STOP","button"),
-];
-const ASSISTANT = [
-  s("STR-01-FLD-ASSISTANT-SUMMARY","readonly"), s("STR-01-FLD-OPEN-QUESTIONS","readonly"), s("STR-01-FLD-MEETING-RECORD","readonly"),
-];
-const ANALYSIS = [
-  s("STR-01-FLD-BASIS","readonly"), s("STR-01-FLD-ASSUMPTIONS","readonly"), s("STR-01-FLD-OPPORTUNITIES","readonly"),
-  s("STR-01-FLD-RISKS","readonly"), s("STR-01-FLD-UNCERTAINTY","readonly"), s("STR-01-FLD-PATTERN","readonly"),
-];
-const COMPARE = [s("STR-01-TBL-COMPARE","table"), s("STR-01-BTN-COMPARE","button")];
-const OUTPUTS = [
-  s("STR-01-CARD-RECOMMENDATION","card"), s("STR-01-CARD-ALERT","card"), s("STR-01-CARD-RESOURCE","card"), s("STR-01-CARD-BRIEF","card"),
-];
-const LEDGER = [
-  s("STR-01-FLD-CANDIDATE-REF","readonly"), s("STR-01-FLD-REVIEW-STATE","readonly"), s("STR-01-FLD-DECISION-ID","readonly"),
-  s("STR-01-FLD-DECISION-RESULT","readonly"), s("STR-01-FLD-DECISION-REASON","readonly"), s("STR-01-FLD-EXECUTION-STATE","readonly"),
-];
-const REVIEW = [
-  s("STR-01-BTN-SUBMIT-REVIEW","primary"), s("STR-01-BTN-ADOPT","primary"), s("STR-01-BTN-OPEN-OWNER","button"),
-];
-const MEMORY = [
-  s("STR-01-LST-PATTERNS","list"), s("STR-01-LST-EXPERIMENTS","list"), s("STR-01-LST-BASELINES","list"), s("STR-01-LST-LEARNING","list"),
-];
-const FEEDBACK = [
-  s("STR-01-FLD-EXPECTED","readonly"), s("STR-01-FLD-ACTUAL","readonly"), s("STR-01-FLD-DIFFERENCE","readonly"),
-  s("STR-01-FLD-KPI","readonly"), s("STR-01-FLD-LEARNING","readonly"),
-];
-const STATUS = [
-  s("STR-01-FLD-PROVIDER-BRAND","readonly"), s("STR-01-FLD-CORRELATION","readonly"), s("STR-01-FLD-DISABLED","readonly"),
-  s("STR-01-FLD-OWNER-BOUNDARY","readonly"), s("STR-01-BTN-AUDIT","button"),
-];
-const ALL = [...CONTEXT,...TOPICS,...SOURCE,...ALERTS,...CONVERSATION,...COMPOSER,...ASSISTANT,...ANALYSIS,...COMPARE,...OUTPUTS,...LEDGER,...REVIEW,...MEMORY,...FEEDBACK,...STATUS];
+const CONTEXT = [s("STR-01-FLD-TOPIC","readonly"),s("STR-01-FLD-SCOPE","readonly"),s("STR-01-FLD-HORIZON","readonly"),s("STR-01-FLD-STATE","readonly"),s("STR-01-FLD-DECISION-STATE","readonly"),s("STR-01-TGL-MODE","toggle")];
+const TOPICS=[s("STR-01-INP-TOPIC-SEARCH","search"),s("STR-01-LST-TOPICS","list")];
+const SOURCE=[s("STR-01-LST-CONTEXT","list"),s("STR-01-FLD-CONTEXT-PRIORITY","readonly"),s("STR-01-FLD-CONTEXT-SOURCE","readonly"),s("STR-01-FLD-CONTEXT-TIME","readonly"),s("STR-01-FLD-CONTEXT-CONFIDENCE","readonly")];
+const ALERTS=[s("STR-01-LST-ALERTS","list")];const CONVERSATION=[s("STR-01-VIEW-CONVERSATION","conversation")];
+const COMPOSER=[s("STR-01-BTN-ATTACH","attachment"),s("STR-01-INP-MESSAGE","textarea"),s("STR-01-BTN-SEND","primary"),s("STR-01-BTN-STOP","button")];
+const ASSISTANT=[s("STR-01-FLD-ASSISTANT-SUMMARY","readonly"),s("STR-01-FLD-OPEN-QUESTIONS","readonly"),s("STR-01-FLD-MEETING-RECORD","readonly")];
+const ANALYSIS=[s("STR-01-FLD-BASIS","readonly"),s("STR-01-FLD-ASSUMPTIONS","readonly"),s("STR-01-FLD-OPPORTUNITIES","readonly"),s("STR-01-FLD-RISKS","readonly"),s("STR-01-FLD-UNCERTAINTY","readonly"),s("STR-01-FLD-PATTERN","readonly")];
+const COMPARE=[s("STR-01-TBL-COMPARE","table"),s("STR-01-BTN-COMPARE","button")];
+const OUTPUTS=[s("STR-01-CARD-RECOMMENDATION","card"),s("STR-01-CARD-ALERT","card"),s("STR-01-CARD-RESOURCE","card"),s("STR-01-CARD-BRIEF","card")];
+const LEDGER=[s("STR-01-FLD-CANDIDATE-REF","readonly"),s("STR-01-FLD-REVIEW-STATE","readonly"),s("STR-01-FLD-DECISION-ID","readonly"),s("STR-01-FLD-DECISION-RESULT","readonly"),s("STR-01-FLD-DECISION-REASON","readonly"),s("STR-01-FLD-EXECUTION-STATE","readonly")];
+const REVIEW=[s("STR-01-BTN-SUBMIT-REVIEW","primary"),s("STR-01-BTN-ADOPT","primary"),s("STR-01-BTN-OPEN-OWNER","button")];
+const MEMORY=[s("STR-01-LST-PATTERNS","list"),s("STR-01-LST-EXPERIMENTS","list"),s("STR-01-LST-BASELINES","list"),s("STR-01-LST-LEARNING","list")];
+const FEEDBACK=[s("STR-01-FLD-EXPECTED","readonly"),s("STR-01-FLD-ACTUAL","readonly"),s("STR-01-FLD-DIFFERENCE","readonly"),s("STR-01-FLD-KPI","readonly"),s("STR-01-FLD-LEARNING","readonly")];
+const STATUS=[s("STR-01-FLD-PROVIDER-BRAND","readonly"),s("STR-01-FLD-CORRELATION","readonly"),s("STR-01-FLD-DISABLED","readonly"),s("STR-01-FLD-OWNER-BOUNDARY","readonly"),s("STR-01-BTN-AUDIT","button")];
+const ALL=[...CONTEXT,...TOPICS,...SOURCE,...ALERTS,...CONVERSATION,...COMPOSER,...ASSISTANT,...ANALYSIS,...COMPARE,...OUTPUTS,...LEDGER,...REVIEW,...MEMORY,...FEEDBACK,...STATUS];
 
-function Control({ spec }: { spec: Spec }) {
-  const { locale } = useI18n();
-  const label = strategyText(locale, spec.id);
-  const common = { "data-control-id": spec.id, "data-disabled-reason": "Gate not satisfied" };
-
-  if (spec.kind === "readonly") return <div className={styles.readonly} {...common}><span>{label}</span><strong>—</strong></div>;
-  if (spec.kind === "list") return <div className={styles.listControl} {...common}><span>{label}</span><div className={styles.listView}>—</div></div>;
-  if (spec.kind === "conversation") return <div className={styles.conversationControl} {...common}><span>{label}</span><div className={styles.conversationView}>—</div></div>;
-  if (spec.kind === "table") return <div className={styles.tableControl} {...common}><span>{label}</span><div className={styles.tableView}>—</div></div>;
-  if (spec.kind === "card") return <div className={styles.outputCard} {...common}><span>{label}</span><div>—</div></div>;
-  if (spec.kind === "toggle") return <div className={styles.segmented} {...common}><span>{label}</span><div><button type="button" disabled>Single AI</button><button type="button" disabled>Multi AI</button></div></div>;
-  if (spec.kind === "search") return <label className={styles.fieldControl}><span>{label}</span><input {...common} disabled placeholder="—" /></label>;
-  if (spec.kind === "textarea") return <label className={styles.textareaControl}><span>{label}</span><textarea {...common} disabled placeholder="—" /></label>;
-  return <button type="button" disabled className={`${styles.button} ${spec.kind === "primary" ? styles.primary : ""}`} {...common}>{label}</button>;
+type ControlProps={spec:Spec;state:StrategyClientState;dispatch:React.Dispatch<StrategyClientAction>};
+function Control({spec,state,dispatch}:ControlProps){const{locale}=useI18n();const label=strategyText(locale,spec.id);const local=spec.id==="STR-01-INP-TOPIC-SEARCH"||spec.id==="STR-01-TGL-MODE"||spec.id==="STR-01-INP-MESSAGE"||spec.id==="STR-01-BTN-AUDIT";const common={"data-control-id":spec.id,"data-disabled-reason":local?undefined:"Gate not satisfied"};
+ if(spec.kind==="readonly")return <div className={styles.readonly}{...common}><span>{label}</span><strong>{spec.id==="STR-01-FLD-TOPIC"?(state.topic_ref??"—"):"—"}</strong></div>;
+ if(spec.kind==="list")return <div className={styles.listControl}{...common}><span>{label}</span><div className={styles.listView}>—</div></div>;
+ if(spec.kind==="conversation")return <div className={styles.conversationControl}{...common}><span>{label}</span><div className={styles.conversationView}>—</div></div>;
+ if(spec.kind==="table")return <div className={styles.tableControl}{...common}><span>{label}</span><div className={styles.tableView}>—</div></div>;
+ if(spec.kind==="card")return <div className={styles.outputCard}{...common}><span>{label}</span><div>—</div></div>;
+ if(spec.kind==="toggle")return <div className={styles.segmented}{...common}><span>{label}</span><div><button type="button" onClick={()=>dispatch({type:"MODE",value:"SINGLE_AI"})} aria-pressed={state.mode==="SINGLE_AI"}>Single AI</button><button type="button" onClick={()=>dispatch({type:"MODE",value:"MULTI_AI"})} aria-pressed={state.mode==="MULTI_AI"}>Multi AI</button></div></div>;
+ if(spec.kind==="search")return <label className={styles.fieldControl}><span>{label}</span><input {...common} value={state.topic_search} onChange={e=>dispatch({type:"SEARCH",value:e.target.value})} placeholder="—"/></label>;
+ if(spec.kind==="textarea")return <label className={styles.textareaControl}><span>{label}</span><textarea {...common} value={state.message} onChange={e=>dispatch({type:"MESSAGE",value:e.target.value})} placeholder="—"/></label>;
+ const audit=spec.id==="STR-01-BTN-AUDIT";return <button type="button" disabled={!audit} onClick={audit?()=>dispatch({type:"AUDIT",value:!state.audit_open}):undefined} className={`${styles.button} ${spec.kind==="primary"?styles.primary:""}`} {...common}>{label}</button>;
 }
-
-function Title({ text, meta }: { text: string; meta?: string }) {
-  return <div className={styles.titleRow}><h2>{text}</h2>{meta ? <span>{meta}</span> : null}</div>;
-}
-
-export function StrategyVisual() {
-  const { locale } = useI18n();
-  const registryValid = useMemo(() => {
-    const ids = new Set(ALL.map((item) => item.id));
-    return ids.size === 57 && Object.keys(STRATEGY_CONTROL_TEXT).length === 57 && [...ids].every((id) => id in STRATEGY_CONTROL_TEXT);
-  }, []);
-
-  return (
-    <div className={styles.page} data-page-uid="workspace:STR-01" data-vis-step="VIS-08" data-page-state="EMPTY" data-authority-sections="12" data-authority-visuals="12" data-authority-components="16" data-authority-controls="57" data-registry-valid={registryValid ? "true" : "false"}>
-      <section className={styles.contextBar} data-section-id="STR-01-SEC-01" data-visual-uid="STR-01-VIS-CONTEXT" data-component-uid="STR-01-CMP-CONTEXT">
-        <div className={styles.contextGrid}>{CONTEXT.slice(0,5).map((item) => <Control key={item.id} spec={item}/>)}</div><Control spec={CONTEXT[5]}/>
-      </section>
-
-      <div className={styles.primaryGrid}>
-        <aside className={styles.leftStack}>
-          <section className={styles.panel} data-section-id="STR-01-SEC-02" data-visual-uid="STR-01-VIS-LEFT-TOPIC" data-component-uid="STR-01-CMP-TOPICS"><Title text={strategyUiText(locale,"topics")} meta="~19%"/><div className={styles.stack}>{TOPICS.map((item) => <Control key={item.id} spec={item}/>)}</div></section>
-          <section className={styles.panel} data-section-id="STR-01-SEC-03" data-visual-uid="STR-01-VIS-LEFT-CONTEXT" data-component-uid="STR-01-CMP-SOURCE-STACK"><Title text={strategyUiText(locale,"context")}/><div className={styles.stack}>{SOURCE.map((item) => <Control key={item.id} spec={item}/>)}</div></section>
-          <section className={styles.panel} data-section-id="STR-01-SEC-04" data-visual-uid="STR-01-VIS-LEFT-ALERT" data-component-uid="STR-01-CMP-ALERTS"><Title text={strategyUiText(locale,"alerts")}/><Control spec={ALERTS[0]}/></section>
-        </aside>
-
-        <main className={styles.centerStack}>
-          <section className={styles.panel} data-section-id="STR-01-SEC-05" data-visual-uid="STR-01-VIS-CONVERSATION">
-            <Title text={strategyUiText(locale,"conversation")} meta="~59% / dominant"/>
-            <div data-component-uid="STR-01-CMP-MODE" className={styles.modeContract}>{strategyUiText(locale,"mode")}</div>
-            <div data-component-uid="STR-01-CMP-CONVERSATION"><Control spec={CONVERSATION[0]}/></div>
-            <div data-component-uid="STR-01-CMP-COMPOSER" className={styles.composer}><Control spec={COMPOSER[0]}/><Control spec={COMPOSER[1]}/><div className={styles.composerActions}><Control spec={COMPOSER[2]}/><Control spec={COMPOSER[3]}/></div></div>
-            <div data-component-uid="STR-01-CMP-ASSISTANT" className={styles.assistantBlock}><div className={styles.subTitle}>{strategyUiText(locale,"assistant")}</div><div className={styles.stack}>{ASSISTANT.map((item) => <Control key={item.id} spec={item}/>)}</div></div>
-          </section>
-          <section className={styles.panel} data-section-id="STR-01-SEC-06" data-visual-uid="STR-01-VIS-ANALYSIS" data-component-uid="STR-01-CMP-ANALYSIS"><Title text={strategyUiText(locale,"analysis")}/><div className={styles.analysisGrid}>{ANALYSIS.map((item) => <Control key={item.id} spec={item}/>)}</div></section>
-        </main>
-
-        <aside className={styles.rightStack}>
-          <section className={styles.panel} data-section-id="STR-01-SEC-08" data-visual-uid="STR-01-VIS-RIGHT-OUTPUT" data-component-uid="STR-01-CMP-OUTPUTS"><Title text={strategyUiText(locale,"outputs")} meta="~22%"/><div className={styles.stack}>{OUTPUTS.map((item) => <Control key={item.id} spec={item}/>)}</div></section>
-          <section className={styles.panel} data-section-id="STR-01-SEC-09" data-visual-uid="STR-01-VIS-RIGHT-DECISION"><Title text={strategyUiText(locale,"decision")}/><div data-component-uid="STR-01-CMP-LEDGER" className={styles.stack}>{LEDGER.map((item) => <Control key={item.id} spec={item}/>)}</div><div data-component-uid="STR-01-CMP-REVIEW" className={styles.reviewActions}>{REVIEW.map((item) => <Control key={item.id} spec={item}/>)}</div></section>
-        </aside>
-      </div>
-
-      <section className={styles.lowerPanel} data-section-id="STR-01-SEC-07" data-visual-uid="STR-01-VIS-COMPARE" data-component-uid="STR-01-CMP-COMPARE"><Title text={strategyUiText(locale,"compare")}/><div className={styles.compareTools}><Control spec={COMPARE[1]}/></div><Control spec={COMPARE[0]}/></section>
-      <section className={styles.lowerPanel} data-section-id="STR-01-SEC-10" data-visual-uid="STR-01-VIS-MEMORY" data-component-uid="STR-01-CMP-MEMORY"><Title text={strategyUiText(locale,"memory")}/><div className={styles.memoryGrid}>{MEMORY.map((item) => <Control key={item.id} spec={item}/>)}</div></section>
-      <section className={styles.lowerPanel} data-section-id="STR-01-SEC-11" data-visual-uid="STR-01-VIS-FEEDBACK" data-component-uid="STR-01-CMP-FEEDBACK"><Title text={strategyUiText(locale,"feedback")}/><div className={styles.feedbackGrid}>{FEEDBACK.map((item) => <Control key={item.id} spec={item}/>)}</div></section>
-      <section className={styles.lowerPanel} data-section-id="STR-01-SEC-12" data-visual-uid="STR-01-VIS-STATUS" data-component-uid="STR-01-CMP-STATUS"><Title text={strategyUiText(locale,"status")}/><div className={styles.statusGrid}>{STATUS.map((item) => <Control key={item.id} spec={item}/>)}</div><div className={styles.boundaryNote}>{strategyUiText(locale,"boundary")}</div></section>
-    </div>
-  );
+function Title({text,meta}:{text:string;meta?:string}){return <div className={styles.titleRow}><h2>{text}</h2>{meta?<span>{meta}</span>:null}</div>;}
+export function StrategyVisual(){const{locale}=useI18n();const[state,dispatch]=useReducer(reduceStrategyClientState,INITIAL_STRATEGY_CLIENT_STATE);const registryValid=useMemo(()=>{const ids=new Set(ALL.map(item=>item.id));return ids.size===57&&Object.keys(STRATEGY_CONTROL_TEXT).length===57&&[...ids].every(id=>id in STRATEGY_CONTROL_TEXT);},[]);const C=({spec}:{spec:Spec})=><Control spec={spec} state={state} dispatch={dispatch}/>;
+ return <div className={styles.page} data-page-uid="workspace:STR-01" data-vis-step="VIS-08" data-page-state="EMPTY" data-authority-sections="12" data-authority-visuals="12" data-authority-components="16" data-authority-controls="57" data-registry-valid={registryValid?"true":"false"} data-strategy-mode={state.mode} data-audit-open={state.audit_open?"true":"false"}>
+ <section className={styles.contextBar} data-section-id="STR-01-SEC-01" data-visual-uid="STR-01-VIS-CONTEXT" data-component-uid="STR-01-CMP-CONTEXT"><div className={styles.contextGrid}>{CONTEXT.slice(0,5).map(item=><C key={item.id} spec={item}/>)}</div><C spec={CONTEXT[5]}/></section>
+ <div className={styles.primaryGrid}><aside className={styles.leftStack}><section className={styles.panel} data-section-id="STR-01-SEC-02" data-visual-uid="STR-01-VIS-LEFT-TOPIC" data-component-uid="STR-01-CMP-TOPICS"><Title text={strategyUiText(locale,"topics")} meta="~19%"/><div className={styles.stack}>{TOPICS.map(item=><C key={item.id} spec={item}/>)}</div></section><section className={styles.panel} data-section-id="STR-01-SEC-03" data-visual-uid="STR-01-VIS-LEFT-CONTEXT" data-component-uid="STR-01-CMP-SOURCE-STACK"><Title text={strategyUiText(locale,"context")}/><div className={styles.stack}>{SOURCE.map(item=><C key={item.id} spec={item}/>)}</div></section><section className={styles.panel} data-section-id="STR-01-SEC-04" data-visual-uid="STR-01-VIS-LEFT-ALERT" data-component-uid="STR-01-CMP-ALERTS"><Title text={strategyUiText(locale,"alerts")}/><C spec={ALERTS[0]}/></section></aside>
+ <main className={styles.centerStack}><section className={styles.panel} data-section-id="STR-01-SEC-05" data-visual-uid="STR-01-VIS-CONVERSATION"><Title text={strategyUiText(locale,"conversation")} meta="~59% / dominant"/><div data-component-uid="STR-01-CMP-MODE" className={styles.modeContract}>{strategyUiText(locale,"mode")}</div><div data-component-uid="STR-01-CMP-CONVERSATION"><C spec={CONVERSATION[0]}/></div><div data-component-uid="STR-01-CMP-COMPOSER" className={styles.composer}><C spec={COMPOSER[0]}/><C spec={COMPOSER[1]}/><div className={styles.composerActions}><C spec={COMPOSER[2]}/><C spec={COMPOSER[3]}/></div></div><div data-component-uid="STR-01-CMP-ASSISTANT" className={styles.assistantBlock}><div className={styles.subTitle}>{strategyUiText(locale,"assistant")}</div><div className={styles.stack}>{ASSISTANT.map(item=><C key={item.id} spec={item}/>)}</div></div></section><section className={styles.panel} data-section-id="STR-01-SEC-06" data-visual-uid="STR-01-VIS-ANALYSIS" data-component-uid="STR-01-CMP-ANALYSIS"><Title text={strategyUiText(locale,"analysis")}/><div className={styles.analysisGrid}>{ANALYSIS.map(item=><C key={item.id} spec={item}/>)}</div></section></main>
+ <aside className={styles.rightStack}><section className={styles.panel} data-section-id="STR-01-SEC-08" data-visual-uid="STR-01-VIS-RIGHT-OUTPUT" data-component-uid="STR-01-CMP-OUTPUTS"><Title text={strategyUiText(locale,"outputs")} meta="~22%"/><div className={styles.stack}>{OUTPUTS.map(item=><C key={item.id} spec={item}/>)}</div></section><section className={styles.panel} data-section-id="STR-01-SEC-09" data-visual-uid="STR-01-VIS-RIGHT-DECISION"><Title text={strategyUiText(locale,"decision")}/><div data-component-uid="STR-01-CMP-LEDGER" className={styles.stack}>{LEDGER.map(item=><C key={item.id} spec={item}/>)}</div><div data-component-uid="STR-01-CMP-REVIEW" className={styles.reviewActions}>{REVIEW.map(item=><C key={item.id} spec={item}/>)}</div></section></aside></div>
+ <section className={styles.lowerPanel} data-section-id="STR-01-SEC-07" data-visual-uid="STR-01-VIS-COMPARE" data-component-uid="STR-01-CMP-COMPARE"><Title text={strategyUiText(locale,"compare")}/><div className={styles.compareTools}><C spec={COMPARE[1]}/></div><C spec={COMPARE[0]}/></section><section className={styles.lowerPanel} data-section-id="STR-01-SEC-10" data-visual-uid="STR-01-VIS-MEMORY" data-component-uid="STR-01-CMP-MEMORY"><Title text={strategyUiText(locale,"memory")}/><div className={styles.memoryGrid}>{MEMORY.map(item=><C key={item.id} spec={item}/>)}</div></section><section className={styles.lowerPanel} data-section-id="STR-01-SEC-11" data-visual-uid="STR-01-VIS-FEEDBACK" data-component-uid="STR-01-CMP-FEEDBACK"><Title text={strategyUiText(locale,"feedback")}/><div className={styles.feedbackGrid}>{FEEDBACK.map(item=><C key={item.id} spec={item}/>)}</div></section><section className={styles.lowerPanel} data-section-id="STR-01-SEC-12" data-visual-uid="STR-01-VIS-STATUS" data-component-uid="STR-01-CMP-STATUS"><Title text={strategyUiText(locale,"status")}/><div className={styles.statusGrid}>{STATUS.map(item=><C key={item.id} spec={item}/>)}</div><div className={styles.boundaryNote}>{strategyUiText(locale,"boundary")}</div></section></div>;
 }
