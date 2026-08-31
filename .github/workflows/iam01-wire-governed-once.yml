@@ -1,0 +1,107 @@
+name: IAM01 governed wiring
+on:
+  push:
+    paths:
+      - '.github/workflows/iam01-wire-governed-once.yml'
+permissions:
+  contents: write
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Materialize 14 authority bindings
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re,json
+          src=Path('authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml').read_text()
+          block=src.split('\ncontrols:\n',1)[1].split('\nactions:\n',1)[0]
+          rows=[];cur=None
+          for line in block.splitlines():
+              m=re.match(r'- control_uid:\s*(\S+)',line)
+              if m:
+                  if cur: rows.append(cur)
+                  cur={'control_uid':m.group(1)};continue
+              if cur:
+                  m=re.match(r'  (action_uid|gate_uid|permission):\s*(.+)',line)
+                  if m:cur[m.group(1)]=m.group(2).strip()
+          if cur:rows.append(cur)
+          if len(rows)!=14:raise SystemExit(f'expected 14 controls got {len(rows)}')
+          ui={'IAM-01-ACT-OPEN-CREATE','IAM-01-ACT-OPEN-EDIT'}
+          draft={'IAM-01-ACT-BASIC-DATA-EDIT','IAM-01-ACT-PRESET-APPLY-TO-DRAFT','IAM-01-ACT-FRONT-ALL-DRAFT','IAM-01-ACT-BACK-ALL-DRAFT','IAM-01-ACT-L1-DRAFT-SET'}
+          for r in rows:
+              for k in ('action_uid','gate_uid','permission'):
+                  if k not in r:raise SystemExit(f'missing {k}: {r}')
+              r['effect_type']='UI_ONLY' if r['action_uid'] in ui else 'DRAFT_UI' if r['action_uid'] in draft else 'REGISTERED'
+          out='export type IamControlBinding={action_uid:string;gate_uid:string;permission:string;effect_type:"UI_ONLY"|"DRAFT_UI"|"REGISTERED"};\n'
+          out+='export const IAM_CONTROL_BINDINGS='+json.dumps({r['control_uid']:{k:r[k] for k in ('action_uid','gate_uid','permission','effect_type')} for r in rows},ensure_ascii=False,separators=(',',':'))+' as const satisfies Record<string,IamControlBinding>;\n'
+          out+='export type IamControlUid=keyof typeof IAM_CONTROL_BINDINGS;\nexport const IAM_CONTROL_BINDING_COUNT=Object.keys(IAM_CONTROL_BINDINGS).length;\n'
+          Path('src/domain/iam/iamControlBindings.ts').write_text(out)
+          PY
+      - name: Wire IAM visual
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/IamVisual.tsx');s=p.read_text()
+          anchor='import { iamText } from "@/i18n/iamCatalog";\n'
+          ins='import { IamGovernedButton, IamRuntimeProvider, setIamAdminL1, setIamFrontL1, useIamGate, useIamRuntimeState } from "./IamControlRuntime";\n'
+          if ins not in s:s=s.replace(anchor,anchor+ins,1)
+          s=s.replace('export function IamVisual() {','function IamVisualBody() {',1)
+          old='''  const { locale } = useI18n();\n  const [createMode, setCreateMode] = useState(false);'''
+          new='''  const { locale } = useI18n();\n  const runtime = useIamRuntimeState();\n  const { client, projection, runtimeError } = runtime;\n  const draftAllowed = useIamGate("IAM-01-GATE-DRAFT");\n  const [search, setSearch] = useState("");\n  const createMode = client.mode === "CREATE";'''
+          if old not in s:raise SystemExit('IAM hook anchor missing')
+          s=s.replace(old,new,1)
+          s=s.replace('data-page-state={createMode ? "CREATE_BASIC_BLOCKED" : "LIST_EMPTY"}','data-page-state={runtimeError?"ERROR":projection?.page_state??client.flow}',1)
+          s=s.replace('<button className={styles.primaryButton} type="button" data-control-id="IAM-01-BTN-ADD" onClick={() => setCreateMode(true)}>{t("addAccount")}</button>','<IamGovernedButton className={styles.primaryButton} controlId="IAM-01-BTN-ADD">{t("addAccount")}</IamGovernedButton>',1)
+          s=s.replace('<label className={styles.control}><span>{t("search")}</span><input data-control-id="IAM-01-CTL-SEARCH" disabled placeholder="—" /></label>','<label className={styles.control}><span>{t("search")}</span><input data-control-id="IAM-01-CTL-SEARCH" value={search} onChange={(e)=>setSearch(e.currentTarget.value)} disabled={!useIamGate("IAM-01-GATE-PAGE")} placeholder="—" /></label>',1)
+          s=s.replace('<div className={styles.panelHeader}><h2>{t("accountDetail")}</h2><button className={styles.compactButton} data-control-id="IAM-01-BTN-EDIT" disabled>{t("edit")}</button></div>','<div className={styles.panelHeader}><h2>{t("accountDetail")}</h2><IamGovernedButton className={styles.compactButton} controlId="IAM-01-BTN-EDIT" selectedAccountId={client.account_id}>{t("edit")}</IamGovernedButton></div>',1)
+          s=s.replace('<label className={styles.control} data-component-id="IAM-01-CMP-PERMISSION-PRESET"><span>{t("preset")}</span><select data-control-id="IAM-01-SEL-DEPT-PRESET" disabled><option>{t("noPreset")}</option></select></label>','<label className={styles.control} data-component-id="IAM-01-CMP-PERMISSION-PRESET"><span>{t("preset")}</span><select data-control-id="IAM-01-SEL-DEPT-PRESET" disabled={!draftAllowed}><option>{t("noPreset")}</option></select></label>',1)
+          s=s.replace('<label className={styles.groupHeader}><input type="checkbox" data-control-id="IAM-01-CHK-FRONT-ALL" disabled /><span>{t("frontAll")}</span></label>','<label className={styles.groupHeader}><input type="checkbox" data-control-id="IAM-01-CHK-FRONT-ALL" checked={client.front_l1.length===9} disabled={!draftAllowed} onChange={()=>runtime.setClient(client.front_l1.length===9?{...client,front_l1:[]}:{...client,front_l1:FRONT_L1.map(x=>x[0])})}/><span>{t("frontAll")}</span></label>',1)
+          s=s.replace('{FRONT_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" disabled /><span>{label(locale, item)}</span><code>{item[0]}</code></label>)}','{FRONT_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" checked={client.front_l1.includes(item[0])} disabled={!draftAllowed} onChange={(e)=>setIamFrontL1(runtime,item[0],e.currentTarget.checked)}/><span>{label(locale, item)}</span><code>{item[0]}</code></label>)}',1)
+          s=s.replace('<label className={styles.groupHeader}><input type="checkbox" data-control-id="IAM-01-CHK-BACK-ALL" disabled /><span>{t("backAll")}</span></label>','<label className={styles.groupHeader}><input type="checkbox" data-control-id="IAM-01-CHK-BACK-ALL" checked={client.admin_l1.length===9} disabled={!draftAllowed} onChange={()=>runtime.setClient(client.admin_l1.length===9?{...client,admin_l1:[]}:{...client,admin_l1:ADMIN_L1.map(x=>x[0])})}/><span>{t("backAll")}</span></label>',1)
+          s=s.replace('{ADMIN_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" disabled /><span>{label(locale, item)}</span><code>{item[0]}</code></label>)}','{ADMIN_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" checked={client.admin_l1.includes(item[0])} disabled={!draftAllowed} onChange={(e)=>setIamAdminL1(runtime,item[0],e.currentTarget.checked)}/><span>{label(locale, item)}</span><code>{item[0]}</code></label>)}',1)
+          actions={
+          '<button data-control-id="IAM-01-BTN-SAVE-DRAFT" disabled>{t("saveDraft")}</button>':'<IamGovernedButton controlId="IAM-01-BTN-SAVE-DRAFT">{t("saveDraft")}</IamGovernedButton>',
+          '<button data-control-id="IAM-01-BTN-VALIDATE" disabled>{t("validate")}</button>':'<IamGovernedButton controlId="IAM-01-BTN-VALIDATE">{t("validate")}</IamGovernedButton>',
+          '<button data-control-id="IAM-01-BTN-PREVIEW" disabled>{t("previewButton")}</button>':'<IamGovernedButton controlId="IAM-01-BTN-PREVIEW">{t("previewButton")}</IamGovernedButton>',
+          '<button className={styles.primaryButton} data-control-id="IAM-01-BTN-COMPLETE" disabled>{t("complete")}</button>':'<IamGovernedButton className={styles.primaryButton} controlId="IAM-01-BTN-COMPLETE">{t("complete")}</IamGovernedButton>',
+          '<button className={styles.compactButton} data-control-id="IAM-01-BTN-AUDIT" disabled>{t("audit")}</button>':'<IamGovernedButton className={styles.compactButton} controlId="IAM-01-BTN-AUDIT">{t("audit")}</IamGovernedButton>'}
+          for a,b in actions.items():
+              if a not in s:raise SystemExit('IAM action anchor missing')
+              s=s.replace(a,b,1)
+          s=s.replace('<div className={styles.phaseNote}>{t("visualPhase")}</div>','<div className={styles.phaseNote}>{runtimeError??projection?.page_state??client.flow}</div>',1)
+          if 'export function IamVisual(){return <IamRuntimeProvider><IamVisualBody/></IamRuntimeProvider>}' not in s:s=s.rstrip()+'\n\nexport function IamVisual(){return <IamRuntimeProvider><IamVisualBody/></IamRuntimeProvider>}\n'
+          p.write_text(s)
+          PY
+      - name: Contract checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');const b=fs.readFileSync('src/domain/iam/iamControlBindings.ts','utf8'),v=fs.readFileSync('src/components/pages/IamVisual.tsx','utf8'),r=fs.readFileSync('src/components/pages/IamControlRuntime.tsx','utf8');
+          const ids=[...b.matchAll(/"(IAM-01-[^"]+)":\{/g)].map(x=>x[1]);if(ids.length!==14||new Set(ids).size!==14)throw new Error(`expected 14 controls got ${ids.length}/${new Set(ids).size}`);
+          if((v.match(/FRONT-L1-0[1-9]/g)||[]).length!==9)throw new Error('front L1 count changed');
+          if((v.match(/ADMIN-L1-/g)||[]).length!==9)throw new Error('admin L1 count changed');
+          if(!v.includes('BLOCK · IDENTITY SCHEMA'))throw new Error('basic identity schema must remain blocked until exact schema exists');
+          if(v.includes('super-admin')||v.includes('role inheritance'))throw new Error('forbidden authorization shortcut');
+          if(!r.includes('IAM_CLIENT_COMMAND_RUNTIME_NOT_BOUND'))throw new Error('fail-closed command adapter missing');
+          if(r.includes('/v1/iam/')||r.includes('/v1/drafts'))throw new Error('client runtime must not invent/directly bind endpoint');
+          NODE
+          test "$(git hash-object src/components/pages/IamVisual.module.css)" = "dd3c9f7a78252d5da5aa3e1a2cc4dbd30129624c"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Commit and self-clean
+        run: |
+          rm -f .github/workflows/iam01-wire-governed-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/domain/iam src/components/pages/IamControlRuntime.tsx src/components/pages/IamVisual.tsx .github/workflows/iam01-wire-governed-once.yml
+          git commit -m "wire(iam): connect 14 governed account permission controls"
+          git push origin HEAD:new
