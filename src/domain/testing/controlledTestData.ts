@@ -35,3 +35,8 @@ export function createControlledTestMetadata(scope: string): ControlledTestMetad
 export function createControlledTestFixtureLabel(kind: string): string {
   return `[TEST] ${kind} ${new Date().toISOString()}`;
 }
+
+export function createControlledTestRef(kind: string): string {
+  const normalized = kind.trim().toUpperCase().replace(/[^A-Z0-9]+/g, "-") || "REF";
+  return `TEST-${normalized}-${randomToken()}`;
+}
