@@ -5,6 +5,9 @@ export type CoreThreadPayloadContext = {
   topic_id: string | null;
   work_item: string;
   ai_mode: "SINGLE" | "MULTI";
+  parent_conversation_id?: string;
+  source_message_id?: string;
+  relation_kind?: "BRANCH";
 };
 
 export type CoreMessagePayloadContext = {
@@ -13,6 +16,9 @@ export type CoreMessagePayloadContext = {
   ai_mode: "SINGLE" | "MULTI";
   attachment_refs: readonly string[];
   reference_refs: readonly string[];
+  source_message_id?: string;
+  instruction_kind?: "ANALYZE";
+  mention_tokens?: readonly string[];
 };
 
 export type CoreConversationPayloadResult =
