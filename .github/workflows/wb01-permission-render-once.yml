@@ -26,7 +26,12 @@ jobs:
           old='''  if (pageDenied) return null;\n\n  const loading = t("global.state.loading");\n  const view = t("global.common.view");\n  const close = t("global.common.close");\n  const visibleSections = state === "LOADING" || state === "ERROR" || !model ? SECTIONS : SECTIONS.filter((section) => hasOwn(model, section.key));\n\n  return ('''
           new='''  if (pageDenied) return null;\n\n  const loading = t("global.state.loading");\n  const view = t("global.common.view");\n  const close = t("global.common.close");\n\n  if (state === "LOADING" || !model) {\n    return (\n      <div className={styles.page} data-page-uid="workspace:WB-01" data-vis-step="VIS-01" data-state={state} aria-label={t("wb01.page.name")}>\n        <div className={state === "ERROR" ? styles.errorState : styles.emptyState}>\n          {state === "ERROR" ? (error ? `${error.error_uid}: ${error.reason_code}` : "—") : loading}\n        </div>\n      </div>\n    );\n  }\n\n  const visibleSections = SECTIONS.filter((section) => hasOwn(model, section.key));\n\n  return ('''
           if old not in s: raise SystemExit('WB permission render anchor missing')
-          p.write_text(s.replace(old,new,1))
+          s=s.replace(old,new,1)
+          s=s.replace(' disabled={state === "LOADING"} onClick=', ' onClick=', 1)
+          old_body='{state === "LOADING" ? <LoadingBody kind={section.kind} loading={loading} /> : state === "ERROR" ? <ErrorBody error={error} /> : <SectionBody section={section} value={sectionValue} t={t} />}'
+          new_body='{state === "ERROR" ? <ErrorBody error={error} /> : <SectionBody section={section} value={sectionValue} t={t} />}'
+          if old_body not in s: raise SystemExit('WB post-auth card body anchor missing')
+          p.write_text(s.replace(old_body,new_body,1))
           PY
       - name: Contract checks
         run: |
@@ -37,6 +42,7 @@ jobs:
           if(!v.includes('if (state === "LOADING" || !model)'))throw new Error('permission-first loading guard missing');
           if(!v.includes('const visibleSections = SECTIONS.filter((section) => hasOwn(model, section.key));'))throw new Error('server-key section filtering missing');
           if(v.includes('state === "LOADING" || state === "ERROR" || !model ? SECTIONS'))throw new Error('pre-authorization section disclosure remains');
+          if(v.includes('disabled={state === "LOADING"}'))throw new Error('unreachable post-auth loading disable remains');
           const ids=[...v.matchAll(/controlId:\s*"(CTRL-WORKSPACE-WB-01-[^"]+)"/g)].map(m=>m[1]);
           const keys=[...v.matchAll(/controlKey:\s*"(wb01\.control\.[^"]+)"/g)].map(m=>m[1]);
           if(ids.length!==14||new Set(ids).size!==14)throw new Error(`expected 14 unique section-open controls, got ${ids.length}/${new Set(ids).size}`);
