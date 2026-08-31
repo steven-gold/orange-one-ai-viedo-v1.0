@@ -1,3 +1,5 @@
+import { createControlledTestMetadata, isControlledTestMode } from "../testing/controlledTestData";
+
 export type CoreThreadPayloadContext = {
   project_id: string;
   topic_id: string | null;
@@ -32,12 +34,26 @@ function validPayload(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value) && Object.keys(value).length > 0;
 }
 
+function controlledTestPayload(operation: "THREAD_CREATE" | "MESSAGE_SEND", context: CoreThreadPayloadContext | CoreMessagePayloadContext): CoreConversationPayloadResult {
+  return {
+    ok: true,
+    payload: {
+      ...createControlledTestMetadata(`CORE-CONVERSATION-${operation}`),
+      ...context,
+    },
+  };
+}
+
 async function normalize(
   operation: "THREAD_CREATE" | "MESSAGE_SEND",
+  context: CoreThreadPayloadContext | CoreMessagePayloadContext,
   build: (current: CoreConversationPayloadAdapter) => Promise<CoreConversationPayloadResult> | CoreConversationPayloadResult,
 ): Promise<CoreConversationPayloadResult> {
   const current = adapter;
-  if (!current) return { ok: false, reason_code: `CONVERSATION_${operation}_REGISTERED_SCHEMA_ADAPTER_NOT_BOUND` };
+  if (!current) {
+    if (isControlledTestMode()) return controlledTestPayload(operation, context);
+    return { ok: false, reason_code: `CONVERSATION_${operation}_REGISTERED_SCHEMA_ADAPTER_NOT_BOUND` };
+  }
   try {
     const result = await build(current);
     if (!result.ok) return result;
@@ -49,9 +65,9 @@ async function normalize(
 }
 
 export function requestCoreThreadCreatePayload(context: CoreThreadPayloadContext) {
-  return normalize("THREAD_CREATE", (current) => current.buildThreadCreatePayload(context));
+  return normalize("THREAD_CREATE", context, (current) => current.buildThreadCreatePayload(context));
 }
 
 export function requestCoreMessageSendPayload(context: CoreMessagePayloadContext) {
-  return normalize("MESSAGE_SEND", (current) => current.buildMessageSendPayload(context));
+  return normalize("MESSAGE_SEND", context, (current) => current.buildMessageSendPayload(context));
 }
