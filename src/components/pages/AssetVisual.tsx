@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { assetText, ASSET_CONTROL_TEXT } from "@/i18n/assetCatalog";
+import { AssetRuntimeControl, AssetRuntimeProvider, useAssetRuntimeState } from "./AssetControlRuntime";
 import styles from "./AssetVisual.module.css";
 
 type ControlKind = "readonly" | "button" | "primary" | "select" | "search" | "segmented" | "list";
@@ -128,27 +129,15 @@ const ALL_CONTROL_SPECS = [
   ...CONTEXT, ...ASSET_LIST, ...REUSE, ...BINDING, ...PREVIEW, ...CORRECTION, ...LAYER, ...RUNTIME, ...DECISION, ...HANDOFF,
 ] as const;
 
-function EmptyField({ id, label }: { id: string; label: string }) {
-  return <div className={styles.readonly} data-control-id={id}><span>{label}</span><strong>—</strong></div>;
-}
-
-function Control({ spec }: { spec: ControlSpec }) {
-  const { locale } = useI18n();
-  const label = assetText(locale, spec.id);
-  if (spec.kind === "readonly") return <EmptyField id={spec.id} label={label} />;
-  if (spec.kind === "list") return <div className={styles.listControl} data-control-id={spec.id}><span>{label}</span><div className={styles.emptyBox}>—</div></div>;
-  if (spec.kind === "select") return <label className={styles.inputControl}><span>{label}</span><select data-control-id={spec.id} disabled defaultValue=""><option value="">—</option></select></label>;
-  if (spec.kind === "search") return <label className={styles.inputControl}><span>{label}</span><input data-control-id={spec.id} disabled placeholder="—" /></label>;
-  if (spec.kind === "segmented") return <div className={styles.segmented} data-control-id={spec.id} aria-label={label}><button type="button" disabled className={styles.segmentActive}>AUTO</button><button type="button" disabled>MANUAL</button></div>;
-  return <button data-control-id={spec.id} type="button" disabled className={`${styles.button} ${spec.kind === "primary" ? styles.primary : ""}`}>{label}</button>;
-}
+function Control({ spec }: { spec: ControlSpec }) { return <AssetRuntimeControl id={spec.id} kind={spec.kind} />; }
 
 function SectionTitle({ text }: { text: string }) {
   return <h2 className={styles.sectionTitle}>{text}</h2>;
 }
 
-export function AssetVisual() {
+function AssetVisualBody() {
   const { locale } = useI18n();
+  const { state } = useAssetRuntimeState();
   const registry = useMemo(() => new Set(ALL_CONTROL_SPECS.map((item) => item.id)), []);
   const catalogCount = Object.keys(ASSET_CONTROL_TEXT).length;
   const registryValid = registry.size === 85 && catalogCount === 85 && [...registry].every((id) => id in ASSET_CONTROL_TEXT);
@@ -158,7 +147,7 @@ export function AssetVisual() {
       className={styles.page}
       data-page-uid="ASSET-01"
       data-vis-step="VIS-03"
-      data-page-state="EMPTY"
+      data-page-state={state.projection?.page_state ?? "EMPTY"}
       data-authority-sections="10"
       data-authority-components="16"
       data-authority-controls="85"
@@ -214,6 +203,7 @@ export function AssetVisual() {
           <section className={`${styles.panel} ${styles.conditionalPanel}`} data-section-id="ASSET-01-SEC-06" data-visual-uid="ASSET-01-VIS-CORRECTION">
             <SectionTitle text={assetText(locale, "correction")} />
             <div data-component-uid="ASSET-01-CMP-CORRECTION" data-conditional-controls={CORRECTION.length}>
+              <div className={styles.stack}>{CORRECTION.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
               <div className={styles.conditionNotice}>{assetText(locale, "conditionalModify")}</div>
             </div>
           </section>
@@ -222,8 +212,8 @@ export function AssetVisual() {
             <SectionTitle text={assetText(locale, "layer")} />
             <div className={styles.layerCondition}>
               <div data-component-uid="ASSET-01-CMP-LAYER-STACK" />
-              <div data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR" data-conditional-controls="8" />
-              <div data-component-uid="ASSET-01-CMP-PATCH" data-conditional-controls="5" />
+              <div className={styles.stack} data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR" data-conditional-controls="8">{LAYER.slice(0,8).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+              <div className={styles.stack} data-component-uid="ASSET-01-CMP-PATCH" data-conditional-controls="5">{LAYER.slice(8).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
               <div className={styles.conditionNotice}>{assetText(locale, "conditionalLayer")}</div>
             </div>
           </section>
@@ -264,3 +254,4 @@ export function AssetVisual() {
     </div>
   );
 }
+export function AssetVisual(){return <AssetRuntimeProvider><AssetVisualBody/></AssetRuntimeProvider>;}
