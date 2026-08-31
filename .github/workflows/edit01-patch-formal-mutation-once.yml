@@ -1,0 +1,36 @@
+name: EDIT01 Patch Formal Mutation Once
+on:
+  push:
+    branches: [edit01-functional-staging]
+    paths: ['.github/workflows/edit01-patch-formal-mutation-once.yml']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: edit01-functional-staging
+      - name: Keep candidate-governed draft mutations on ActionPort
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/EditControlRuntime.tsx')
+          s=p.read_text()
+          old='function isLocalEffect(effect:string|null|undefined){return effect==="UI_ONLY"||effect==="CONTEXT_STATE"||effect==="DRAFT_MUTATION";}'
+          new='const FORMAL_MUTATION_ACTIONS=new Set(["EDIT-01-ACT-CORR-EXECUTE","EDIT-01-ACT-API-APPLY"]);\nfunction isLocalEffect(effect:string|null|undefined){return effect==="UI_ONLY"||effect==="CONTEXT_STATE"||effect==="DRAFT_MUTATION";}'
+          if old not in s: raise SystemExit('LOCAL_EFFECT_TARGET_NOT_FOUND')
+          s=s.replace(old,new,1)
+          old2='const local=Boolean(binding&&isLocalEffect(binding.effect_type));const formal=executable&&!local;'
+          new2='const local=Boolean(binding&&isLocalEffect(binding.effect_type)&&!FORMAL_MUTATION_ACTIONS.has(binding.action_uid??""));const formal=executable&&!local;'
+          if old2 not in s: raise SystemExit('LOCAL_CLASS_TARGET_NOT_FOUND')
+          p.write_text(s.replace(old2,new2,1))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/edit01-patch-formal-mutation-once.yml
+          git add src/components/pages/EditControlRuntime.tsx
+          git commit -m 'fix(edit): route governed correction mutations through ActionPort'
+          git push origin HEAD:edit01-functional-staging
