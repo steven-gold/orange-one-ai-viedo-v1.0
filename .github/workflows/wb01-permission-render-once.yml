@@ -1,0 +1,55 @@
+name: WB01 permission-first render
+on:
+  push:
+    paths:
+      - '.github/workflows/wb01-permission-render-once.yml'
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Hide sections until authorized projection exists
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('src/components/pages/DashboardVisual.tsx')
+          s=p.read_text()
+          old='''  if (pageDenied) return null;\n\n  const loading = t("global.state.loading");\n  const view = t("global.common.view");\n  const close = t("global.common.close");\n  const visibleSections = state === "LOADING" || state === "ERROR" || !model ? SECTIONS : SECTIONS.filter((section) => hasOwn(model, section.key));\n\n  return ('''
+          new='''  if (pageDenied) return null;\n\n  const loading = t("global.state.loading");\n  const view = t("global.common.view");\n  const close = t("global.common.close");\n\n  if (state === "LOADING" || !model) {\n    return (\n      <div className={styles.page} data-page-uid="workspace:WB-01" data-vis-step="VIS-01" data-state={state} aria-label={t("wb01.page.name")}>\n        <div className={state === "ERROR" ? styles.errorState : styles.emptyState}>\n          {state === "ERROR" ? (error ? `${error.error_uid}: ${error.reason_code}` : "—") : loading}\n        </div>\n      </div>\n    );\n  }\n\n  const visibleSections = SECTIONS.filter((section) => hasOwn(model, section.key));\n\n  return ('''
+          if old not in s: raise SystemExit('WB permission render anchor missing')
+          p.write_text(s.replace(old,new,1))
+          PY
+      - name: Contract checks
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const v=fs.readFileSync('src/components/pages/DashboardVisual.tsx','utf8');
+          if(!v.includes('if (pageDenied) return null;'))throw new Error('page denial fail-closed missing');
+          if(!v.includes('if (state === "LOADING" || !model)'))throw new Error('permission-first loading guard missing');
+          if(!v.includes('const visibleSections = SECTIONS.filter((section) => hasOwn(model, section.key));'))throw new Error('server-key section filtering missing');
+          if(v.includes('state === "LOADING" || state === "ERROR" || !model ? SECTIONS'))throw new Error('pre-authorization section disclosure remains');
+          const ids=(v.match(/WB-01-CTL-[A-Z0-9-]+/g)||[]);
+          if(new Set(ids).size!==14)throw new Error(`expected 14 registered section-open controls, got ${new Set(ids).size}`);
+          for(const forbidden of ['Refresh','Search','Correction Rate'])if(v.includes(forbidden))throw new Error(`forbidden dashboard control ${forbidden}`);
+          NODE
+          test "$(git hash-object src/components/pages/DashboardVisual.module.css)" = "4f2656bf7db9fdbbf0531730b181215606b3120e"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Commit and self-clean
+        run: |
+          rm -f .github/workflows/wb01-permission-render-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/pages/DashboardVisual.tsx .github/workflows/wb01-permission-render-once.yml
+          git commit -m "fix(wb): hide dashboard sections until authorized projection"
+          git push origin HEAD:new
