@@ -7,7 +7,6 @@ import { AssetRuntimeControl, AssetRuntimeProvider, useAssetRuntimeState } from 
 import styles from "./AssetVisual.module.css";
 
 type ControlKind = "readonly" | "button" | "primary" | "select" | "search" | "segmented" | "list";
-
 type ControlSpec = { id: string; kind: ControlKind };
 
 const CONTEXT: readonly ControlSpec[] = [
@@ -126,13 +125,74 @@ const HANDOFF: readonly ControlSpec[] = [
 ] as const;
 
 const ALL_CONTROL_SPECS = [
-  ...CONTEXT, ...ASSET_LIST, ...REUSE, ...BINDING, ...PREVIEW, ...CORRECTION, ...LAYER, ...RUNTIME, ...DECISION, ...HANDOFF,
+  ...CONTEXT,
+  ...ASSET_LIST,
+  ...REUSE,
+  ...BINDING,
+  ...PREVIEW,
+  ...CORRECTION,
+  ...LAYER,
+  ...RUNTIME,
+  ...DECISION,
+  ...HANDOFF,
 ] as const;
 
-function Control({ spec }: { spec: ControlSpec }) { return <AssetRuntimeControl id={spec.id} kind={spec.kind} />; }
+function Control({ spec }: { spec: ControlSpec }) {
+  return <AssetRuntimeControl id={spec.id} kind={spec.kind} />;
+}
 
 function SectionTitle({ text }: { text: string }) {
   return <h2 className={styles.sectionTitle}>{text}</h2>;
+}
+
+function PreviewSurface() {
+  const { state } = useAssetRuntimeState();
+  const versions = state.projection?.candidate_versions ?? [];
+  const count = state.compare_mode === "ABC" ? 3 : state.compare_mode === "AB" ? 2 : 1;
+  const shown = versions.slice(0, count);
+
+  if (!shown.length) {
+    return <div className={styles.previewEmpty}>—</div>;
+  }
+
+  return (
+    <div
+      className={styles.previewEmpty}
+      data-preview-count={shown.length}
+      data-compare-mode={state.compare_mode}
+      data-reference-overlay={state.reference_overlay ? "true" : "false"}
+      style={{ gridTemplateColumns: `repeat(${shown.length}, minmax(0,1fr))`, gap: 8, overflow: "hidden" }}
+    >
+      {shown.map((version) => {
+        if (version.media_kind === "IMAGE") {
+          return (
+            <img
+              key={version.ref}
+              data-asset-version-ref={version.ref}
+              src={version.uri}
+              alt={version.label}
+              style={{
+                maxWidth: "100%",
+                maxHeight: 342,
+                objectFit: "contain",
+                transform: `scale(${state.zoom})`,
+                transformOrigin: "center",
+              }}
+            />
+          );
+        }
+        if (version.media_kind === "AUDIO") {
+          return <audio key={version.ref} data-asset-version-ref={version.ref} controls src={version.uri} />;
+        }
+        return <div key={version.ref}>{version.label}</div>;
+      })}
+      {state.reference_overlay ? (
+        <div data-reference-overlay-panel="true">
+          {state.projection?.values["ASSET-01-FLD-DNA"] ?? "—"}
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 function AssetVisualBody() {
@@ -141,6 +201,8 @@ function AssetVisualBody() {
   const registry = useMemo(() => new Set(ALL_CONTROL_SPECS.map((item) => item.id)), []);
   const catalogCount = Object.keys(ASSET_CONTROL_TEXT).length;
   const registryValid = registry.size === 85 && catalogCount === 85 && [...registry].every((id) => id in ASSET_CONTROL_TEXT);
+  const correctionVisible = state.correction_open || state.projection?.page_state === "CORRECTION_REQUIRED";
+  const layerVisible = state.projection?.gate_state["ASSET-01-GATE-LAYER-ELIGIBLE"] === true;
 
   return (
     <div
@@ -188,8 +250,10 @@ function AssetVisualBody() {
               </div>
             </div>
             <div className={styles.previewSurface} data-component-uid="ASSET-01-CMP-PREVIEW">
-              <div className={styles.previewEmpty}>—</div>
-              <div className={styles.previewFooter}>{PREVIEW.slice(7).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+              <PreviewSurface />
+              <div className={styles.previewFooter}>
+                {PREVIEW.slice(7).map((spec) => <Control key={spec.id} spec={spec} />)}
+              </div>
             </div>
           </section>
 
@@ -202,19 +266,33 @@ function AssetVisualBody() {
 
           <section className={`${styles.panel} ${styles.conditionalPanel}`} data-section-id="ASSET-01-SEC-06" data-visual-uid="ASSET-01-VIS-CORRECTION">
             <SectionTitle text={assetText(locale, "correction")} />
-            <div data-component-uid="ASSET-01-CMP-CORRECTION" data-conditional-controls={CORRECTION.length}>
-              <div className={styles.stack}>{CORRECTION.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-              <div className={styles.conditionNotice}>{assetText(locale, "conditionalModify")}</div>
+            <div data-component-uid="ASSET-01-CMP-CORRECTION" data-conditional-controls={correctionVisible ? CORRECTION.length : 0}>
+              {correctionVisible ? (
+                <div className={styles.stack}>
+                  {CORRECTION.map((spec) => <Control key={spec.id} spec={spec} />)}
+                </div>
+              ) : (
+                <div className={styles.conditionNotice}>{assetText(locale, "conditionalModify")}</div>
+              )}
             </div>
           </section>
 
           <section className={`${styles.panel} ${styles.conditionalPanel}`} data-section-id="ASSET-01-SEC-07" data-visual-uid="ASSET-01-VIS-LAYER">
             <SectionTitle text={assetText(locale, "layer")} />
             <div className={styles.layerCondition}>
-              <div data-component-uid="ASSET-01-CMP-LAYER-STACK" />
-              <div className={styles.stack} data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR" data-conditional-controls="8">{LAYER.slice(0,8).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-              <div className={styles.stack} data-component-uid="ASSET-01-CMP-PATCH" data-conditional-controls="5">{LAYER.slice(8).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-              <div className={styles.conditionNotice}>{assetText(locale, "conditionalLayer")}</div>
+              {layerVisible ? (
+                <div data-layer-runtime-visible="true">
+                  <div data-component-uid="ASSET-01-CMP-LAYER-STACK" />
+                  <div className={styles.stack} data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR" data-conditional-controls="8">
+                    {LAYER.slice(0, 8).map((spec) => <Control key={spec.id} spec={spec} />)}
+                  </div>
+                  <div className={styles.stack} data-component-uid="ASSET-01-CMP-PATCH" data-conditional-controls="5">
+                    {LAYER.slice(8).map((spec) => <Control key={spec.id} spec={spec} />)}
+                  </div>
+                </div>
+              ) : (
+                <div className={styles.conditionNotice}>{assetText(locale, "conditionalLayer")}</div>
+              )}
             </div>
           </section>
         </div>
@@ -254,4 +332,11 @@ function AssetVisualBody() {
     </div>
   );
 }
-export function AssetVisual(){return <AssetRuntimeProvider><AssetVisualBody/></AssetRuntimeProvider>;}
+
+export function AssetVisual() {
+  return (
+    <AssetRuntimeProvider>
+      <AssetVisualBody />
+    </AssetRuntimeProvider>
+  );
+}
