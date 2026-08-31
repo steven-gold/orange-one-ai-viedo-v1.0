@@ -38,7 +38,9 @@ jobs:
           import_line='import { EditRuntimeControl, EditRuntimeProvider } from "./EditControlRuntime";\n'
           anchor='import styles from "./EditVisual.module.css";\n'
           if import_line not in s:
-              s=s.replace(anchor,import_line+anchor)
+              if anchor not in s:
+                  raise SystemExit('EDIT visual CSS import anchor not found')
+              s=s.replace(anchor,import_line+anchor,1)
           start=s.index('function Control(')
           end=s.index('\nfunction Title(',start)
           replacement='''function Control({ spec, compact = false }: { spec: Spec; compact?: boolean }) {\n  return <EditRuntimeControl controlId={spec.id} kind={spec.kind} compact={compact} />;\n}\n'''
@@ -47,10 +49,10 @@ jobs:
           if needle not in s:
               raise SystemExit('EDIT page root not found')
           s=s.replace(needle,'  return <EditRuntimeProvider><div className={styles.page} data-page-uid="EDIT-01"',1)
-          ending='  </div>;\n}'
-          if not s.endswith(ending):
-              raise SystemExit('EDIT page ending not found')
-          s=s[:-len(ending)]+'  </div></EditRuntimeProvider>;\n}'
+          idx=s.rfind('  </div>;')
+          if idx < 0:
+              raise SystemExit('EDIT page root closing div not found')
+          s=s[:idx]+'  </div></EditRuntimeProvider>;'+s[idx+len('  </div>;'):]
           p.write_text(s)
           PY
       - name: Contract checks
@@ -63,7 +65,7 @@ jobs:
           if(!visual.includes('<EditRuntimeProvider>'))throw new Error('provider not wired');
           if(!visual.includes('EditRuntimeControl'))throw new Error('runtime control not wired');
           if(visual.includes('data-disabled-reason": "Gate not satisfied"'))throw new Error('legacy always-disabled control remains');
-          if(!bindings.includes('EDIT-01-ACT-PLAY')||!bindings.includes('EDIT-01-ACT-HANDOFF'))throw new Error('authority actions missing');
+          if(!bindings.includes('EDIT-01-ACT-PLAY')||!bindings.includes('EDIT-01-ACT-HANDOFF')||!bindings.includes('EDIT-01-ACT-STAGE-CONFIRM'))throw new Error('authority actions missing');
           for(const bad of ['/v1/edit/actions','requestTaskExecution','createVoiceRuntimeProfile']){
             if(visual.includes(bad)||runtime.includes(bad))throw new Error('forbidden implementation '+bad);
           }
