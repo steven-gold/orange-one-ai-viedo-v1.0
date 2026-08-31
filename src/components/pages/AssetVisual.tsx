@@ -32,9 +32,20 @@ function Control({ spec }: { spec: ControlSpec }) { return <AssetRuntimeControl 
 function SectionTitle({ text }: { text: string }) { return <h2 className={styles.sectionTitle}>{text}</h2>; }
 
 function PreviewSurface(){
- const{state}=useAssetRuntimeState(),versions=state.projection?.candidate_versions??[],count=state.compare_mode==="ABC"?3:state.compare_mode==="AB"?2:1,shown=versions.slice(0,count);
- if(!shown.length)return <div className={styles.previewEmpty}>—</div>;
- return <div className={styles.previewEmpty} data-preview-count={shown.length} data-compare-mode={state.compare_mode} style={{gridTemplateColumns:`repeat(${shown.length}, minmax(0,1fr))`,gap:8,overflow:"hidden"}}>{shown.map(version=>version.media_kind==="IMAGE"?<img key={version.ref} data-asset-version-ref={version.ref} src={version.uri} alt={version.label} style={{maxWidth:"100%",maxHeight:342,objectFit:"contain",transform:`scale(${state.zoom})`,transformOrigin:"center"}}/>:version.media_kind==="AUDIO"?<audio key={version.ref} data-asset-version-ref={version.ref} controls src={version.uri}/>:<div key={version.ref}>{version.label}</div>)}</div>;
+  const {state}=useAssetRuntimeState();
+  const versions=state.projection?.candidate_versions??[];
+  const count=state.compare_mode==="ABC"?3:state.compare_mode==="AB"?2:1;
+  const shown=versions.slice(0,count);
+  if(!shown.length)return <div className={styles.previewEmpty}>—</div>;
+  return (
+    <div className={styles.previewEmpty} data-preview-count={shown.length} data-compare-mode={state.compare_mode} style={{gridTemplateColumns:`repeat(${shown.length}, minmax(0,1fr))`,gap:8,overflow:"hidden"}}>
+      {shown.map((version)=>{
+        if(version.media_kind==="IMAGE")return <img key={version.ref} data-asset-version-ref={version.ref} src={version.uri} alt={version.label} style={{maxWidth:"100%",maxHeight:342,objectFit:"contain",transform:`scale(${state.zoom})`,transformOrigin:"center"}}/>;
+        if(version.media_kind==="AUDIO")return <audio key={version.ref} data-asset-version-ref={version.ref} controls src={version.uri}/>;
+        return <div key={version.ref}>{version.label}</div>;
+      })}
+    </div>
+  );
 }
 
 function AssetVisualBody() {
