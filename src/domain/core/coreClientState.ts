@@ -54,6 +54,7 @@ export const INITIAL_CORE_CLIENT_STATE: CoreClientState = {
 };
 
 export type CoreClientAction =
+  | { type: "CORE_INTERNAL_PROJECTION_SYNC"; refs: Partial<CoreExactRefs>; work_item?: string | null }
   | { action_uid: "CORE-01-ACT-PROJECT-SELECT"; project_ref: string | null; project_id?: string | null; project_version_ref?: string | null }
   | { action_uid: "CORE-01-ACT-TOPIC-SELECT"; topic_ref: string | null; topic_id?: string | null; topic_version_ref?: string | null }
   | { action_uid: "CORE-01-ACT-WORK-ITEM-SELECT"; work_item: string | null }
@@ -80,6 +81,12 @@ export function mergeCoreExactRefs(state: CoreClientState, refs: Partial<CoreExa
 }
 
 export function reduceCoreClientState(state: CoreClientState, action: CoreClientAction): CoreClientState {
+  if ("type" in action && action.type === "CORE_INTERNAL_PROJECTION_SYNC") {
+    const next = mergeCoreExactRefs(state, action.refs);
+    if (action.work_item !== undefined) next.work_item = action.work_item;
+    return next;
+  }
+
   switch (action.action_uid) {
     case "CORE-01-ACT-PROJECT-SELECT": {
       const project_id = action.project_id ?? action.project_ref;
