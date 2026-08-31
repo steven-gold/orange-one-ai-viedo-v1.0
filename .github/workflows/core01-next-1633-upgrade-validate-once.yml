@@ -1,0 +1,137 @@
+name: CORE01 Next 16.3.3 Upgrade Validate Once
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/core01-next-1633-upgrade-validate-once.yml'
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+
+      - name: Authority and visual locks
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object src/app/page.tsx)" = "95e88cd0171721f3cb21459f42a6f39e4a322ead"
+          test "$(git hash-object src/components/pages/DashboardVisual.tsx)" = "aa3a8a9472ee6c471503d8990654233a6ee02edd"
+          test "$(git hash-object src/components/pages/DashboardVisual.module.css)" = "4f2656bf7db9fdbbf0531730b181215606b3120e"
+          test "$(git hash-object src/components/pages/CoreVisual.module.css)" = "c9b0215dc2d174b77c558e617125e6ec2ecd9fbd"
+          test "$(grep -c '^  - control_uid: CORE-01-' authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml)" = "50"
+          test "$(grep -c '^  - action_uid: CORE-01-ACT-' authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml)" = "34"
+          echo LOCKS_PASS
+
+      - name: Install security patch and require clean audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npm install --save-exact next@16.3.3
+          test "$(node -p "require('./node_modules/next/package.json').version")" = "16.3.3"
+          npm audit --json >/tmp/audit-all.json || true
+          npm audit --omit=dev --json >/tmp/audit-prod.json || true
+          python3 <<'PY'
+          import json,sys
+          for label,path in [('ALL','/tmp/audit-all.json'),('PROD','/tmp/audit-prod.json')]:
+              d=json.load(open(path)); v=d.get('metadata',{}).get('vulnerabilities',{})
+              print(f'{label}_COUNTS={json.dumps(v,sort_keys=True)}')
+              if v.get('total',0):
+                  for n,x in sorted(d.get('vulnerabilities',{}).items()): print(label,n,x.get('severity'),x.get('range'),x.get('fixAvailable'))
+                  sys.exit(2)
+          print('NPM_AUDIT_ZERO_PASS')
+          PY
+          npm run typecheck
+          npm run build
+          echo NEXT_1633_COMPILE_PASS
+
+      - name: Chromium install
+        shell: bash
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start real Next server
+        shell: bash
+        run: |
+          nohup npm run start -- -p 3000 >/tmp/core01-next.log 2>&1 &
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3000/core >/dev/null && exit 0; sleep 1; done
+          cat /tmp/core01-next.log; exit 1
+
+      - name: Full CORE 50 controls 34 actions validation
+        shell: bash
+        run: |
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const A=(v,m)=>{if(!v)throw new Error(m)}, b=await chromium.launch({headless:true}), c=await b.newContext({permissions:['clipboard-read','clipboard-write']}), p=await c.newPage();
+            const errors=[],fails=[],controls=new Set(),actions=new Set(); p.on('pageerror',e=>errors.push(String(e))); p.on('requestfailed',r=>fails.push(`${r.method()} ${r.url()} ${r.failure()?.errorText||''}`));
+            const cap=async()=>{for(const x of await p.locator('[data-control-id]').evaluateAll(ns=>ns.map(n=>n.getAttribute('data-control-id')).filter(Boolean)))controls.add(x);for(const x of await p.locator('[data-action-uid]').evaluateAll(ns=>ns.map(n=>n.getAttribute('data-action-uid')).filter(Boolean)))actions.add(x)};
+            const click=async id=>{const n=p.locator(`[data-control-id="${id}"]`).first();await n.waitFor({state:'visible'});await n.click()};
+            const text=async(s,t)=>p.waitForFunction(([a,b])=>(document.querySelector(a)?.textContent||'').includes(b),[s,t]);
+            const reason=async x=>p.waitForFunction(v=>(document.querySelector('[data-page-uid="CORE-01"]')?.getAttribute('data-runtime-reason')||'').startsWith(v),x);
+            const menu=async()=>{const n=p.locator('[data-message-role="USER"]').first();await n.waitFor({state:'visible'});await n.click({button:'right'});await p.locator('[data-component-uid="CORE-01-CMP-MESSAGE-MENU"] [data-control-id="CORE-01-MENU-QUOTE"]').waitFor({state:'visible'});await cap()};
+            await p.goto('http://127.0.0.1:3000/core',{waitUntil:'networkidle'});await p.locator('[data-page-uid="CORE-01"][data-page-state="READY"]').waitFor();await cap();
+            A(await p.locator('[data-control-id="CORE-01-CTL-PROJECT"] option').count()===1,'initial project options not empty');
+            await click('CORE-01-BTN-PROJECT-CREATE');await p.waitForFunction(()=>document.querySelectorAll('[data-control-id="CORE-01-CTL-PROJECT"] option').length>1);A((await p.locator('[data-control-id="CORE-01-CTL-PROJECT"]').inputValue()).startsWith('TEST-PROJ-'),'project exact ref missing');await text('[data-component-uid="CORE-01-CMP-PROJECT-STATE"]','[TEST] DRAFT');
+            await click('CORE-01-BTN-PROJECT-VALIDATE');await text('[data-component-uid="CORE-01-CMP-PROJECT-STATE"]','VALIDATED');await click('CORE-01-BTN-PROJECT-CONFIRM');await text('[data-component-uid="CORE-01-CMP-PROJECT-STATE"]','CORE_MODELING');await click('CORE-01-BTN-STORY-CANDIDATE');await text('[data-component-uid="CORE-01-CMP-PROJECT-STATE"]','TEST-STORY-SET-');
+            await click('CORE-01-BTN-NEW-THREAD');await p.waitForFunction(()=>document.querySelectorAll('[data-control-id="CORE-01-LST-THREADS"] select option').length>1);A((await p.locator('[data-control-id="CORE-01-LST-THREADS"] select').inputValue()).startsWith('TEST-CONV-'),'thread exact ref missing');await click('CORE-01-BTN-MULTI-AI');await reason('AI_MODE=MULTI');await click('CORE-01-BTN-SINGLE-AI');await reason('AI_MODE=SINGLE');await click('CORE-01-BTN-ASSISTANT-RECORD');await p.locator('[data-assistant-record-overlay="true"]').waitFor();await click('CORE-01-BTN-ASSISTANT-RECORD');
+            await click('CORE-01-BTN-ATTACHMENT');await reason('ATTACHMENT_ATTACHED:TEST-CORE-ATTACHMENT-');await click('CORE-01-BTN-REFERENCE');await reason('REFERENCE_ATTACHED:TEST-CORE-REFERENCE-');
+            await p.locator('[data-control-id="CORE-01-FLD-MESSAGE"]').fill('@Assistant CORE closure');await click('CORE-01-BTN-SEND');await p.locator('[data-message-role="USER"]').waitFor();await p.locator('[data-message-role="SIMULATED_AI"]').waitFor();await text('[data-control-id="CORE-01-FLD-ASSISTANT-SUMMARY"]','SIMULATED_EXTERNAL');await text('[data-control-id="CORE-01-FLD-EVALUATION"]','[TEST] CORE evaluation fixture');
+            await menu();await click('CORE-01-MENU-QUOTE');await reason('MESSAGE_QUOTED:TEST-MSG-');await menu();await click('CORE-01-MENU-CONTINUE');await reason('MESSAGE_CONTEXT_CONTINUED:TEST-MSG-');await menu();await click('CORE-01-MENU-DECISION');await reason('DECISION_EVIDENCE_ADDED:TEST-MSG-');await menu();await click('CORE-01-MENU-COPY');await reason('MESSAGE_COPIED:TEST-MSG-');await menu();let n=await p.locator('[data-message-role="SIMULATED_AI"]').count();await click('CORE-01-MENU-ANALYZE');await p.waitForFunction(x=>document.querySelectorAll('[data-message-role="SIMULATED_AI"]').length>x,n);await menu();await click('CORE-01-MENU-BRANCH');await p.waitForFunction(()=>document.querySelectorAll('[data-control-id="CORE-01-LST-THREADS"] select option').length>=3);A(await p.locator('[data-message-role]').count()===0,'branch history leak');
+            await p.locator('[data-control-id="CORE-01-FLD-HUMAN-DECISION"]').fill('TEST decision');await click('CORE-01-BTN-CANDIDATE-CREATE');await text('[data-control-id="CORE-01-FLD-VERSION-STATE"]','CANDIDATE');await click('CORE-01-BTN-CANDIDATE-COMPARE');await text('[data-candidate-compare-read-model="true"]','[TEST] Compared 1 exact candidate');await click('CORE-01-BTN-RETURN-MODIFY');await text('[data-control-id="CORE-01-FLD-VERSION-STATE"]','RETURNED');await click('CORE-01-BTN-CANDIDATE-CREATE');await text('[data-control-id="CORE-01-FLD-VERSION-STATE"]','CANDIDATE');await click('CORE-01-BTN-CANDIDATE-CONFIRM');await text('[data-control-id="CORE-01-FLD-VERSION-STATE"]','ACCEPTED');
+            await click('CORE-01-BTN-DNA-LOCK');await text('[data-control-id="CORE-01-FLD-LOCK-REVIEW"]','DNA_LOCK_REVIEW_REQUESTED');await click('CORE-01-BTN-CORE-REVIEW');await text('[data-control-id="CORE-01-FLD-LOCK-REVIEW"]','CORE_REVIEW_REQUESTED');await click('CORE-01-BTN-PROJECT-LOCK');await text('[data-control-id="CORE-01-FLD-LOCK-REVIEW"]','MOTHER_LOCK_REVIEW_REQUESTED');A(!(await p.locator('[data-control-id="CORE-01-FLD-LOCK-REVIEW"]').textContent()).includes('LOCKED'),'fake final lock');
+            await click('CORE-01-BTN-TOPIC-CREATE');await p.waitForFunction(()=>document.querySelectorAll('[data-control-id="CORE-01-CTL-TOPIC"] option').length>1);A((await p.locator('[data-control-id="CORE-01-CTL-TOPIC"]').inputValue()).startsWith('TEST-TOPIC-'),'topic exact ref missing');await text('[data-control-id="CORE-01-FLD-PAGE-MODE"]','TOPIC_PRODUCTION');await click('CORE-01-BTN-BLUEPRINT-CREATE');await text('[data-component-uid="CORE-01-CMP-BLUEPRINT-STATE"]','BLUEPRINT_DRAFT');await click('CORE-01-BTN-BLUEPRINT-VALIDATE');await text('[data-component-uid="CORE-01-CMP-BLUEPRINT-STATE"]','BLUEPRINT_REVIEW');await click('CORE-01-BTN-BLUEPRINT-APPROVE');await text('[data-component-uid="CORE-01-CMP-BLUEPRINT-STATE"]','READY_FOR_CHILD_REVIEW');await click('CORE-01-BTN-CHILD-LOCK');await text('[data-control-id="CORE-01-FLD-LOCK-REVIEW"]','CHILD_LOCK_REVIEW_REQUESTED');await click('CORE-01-BTN-CANONICAL-SCRIPT');await text('[data-control-id="CORE-01-FLD-PACKAGE"]','[TEST] Canonical Script Bound');await text('[data-control-id="CORE-01-FLD-DOWNSTREAM-ASSET"]','REVIEW_PENDING — NOT PRODUCTION READY');
+            await cap();A(controls.size===50,`controls ${controls.size}/50`);A(actions.size===34,`actions ${actions.size}/34`);A(errors.length===0,`page errors ${errors}`);A(fails.length===0,`request failures ${fails}`);console.log(`CORE01_NEXT1633_FULL_PASS controls=${controls.size} actions=${actions.size}`);await b.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+
+      - name: Production gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'process.env.ACPOS_RUNTIME_MODE !== "PRODUCTION"' src/server/testing/controlledCoreTestRuntime.ts
+          grep -q 'production_eligible: false' src/domain/testing/controlledTestData.ts
+          grep -q 'final_lock_granted: false' src/server/testing/controlledCoreTestRuntime.ts
+          grep -q 'SIMULATED_EXTERNAL' src/server/testing/controlledCoreTestRuntime.ts
+          echo PRODUCTION_FAIL_CLOSED_PASS
+
+      - name: Commit validated dependency patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -- next-env.d.ts tsconfig.json 2>/dev/null || true
+          git add package.json package-lock.json
+          git diff --cached --quiet && { echo EXPECTED_DEPENDENCY_DIFF_MISSING; exit 1; }
+          git diff --cached --name-only | grep -qx 'package-lock.json'
+          git diff --cached --name-only | grep -qx 'package.json'
+          test "$(git diff --cached --name-only | wc -l)" -eq 2
+          git commit -m "fix(deps): update Next to 16.3.3"
+          git push origin new
+          echo VALIDATED_DEPENDENCY_PATCH_COMMITTED
+
+      - name: Failure log
+        if: failure()
+        run: cat /tmp/core01-next.log || true
+
+      - name: Self clean
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin new
+          git checkout new
+          git reset --hard origin/new
+          git rm -f .github/workflows/core01-next-1633-upgrade-validate-once.yml
+          git commit -m "chore: remove CORE01 Next upgrade validation workflow"
+          git push origin new
