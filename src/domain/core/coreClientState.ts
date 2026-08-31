@@ -65,10 +65,6 @@ export type CoreClientAction =
   | { action_uid: "CORE-01-ACT-ATTACHMENT"; attachment_ref: string }
   | { action_uid: "CORE-01-ACT-REFERENCE-ATTACH"; reference_ref: string };
 
-export type CoreClientReducerAction =
-  | CoreClientAction
-  | { type: "CORE_PROJECTION_SYNC"; exact_refs: CoreExactRefs };
-
 function appendUnique(values: string[], value: string): string[] {
   return values.includes(value) ? values : [...values, value];
 }
@@ -81,10 +77,7 @@ export function mergeCoreExactRefs(state: CoreClientState, refs: Partial<CoreExa
   return next;
 }
 
-export function reduceCoreClientState(state: CoreClientState, action: CoreClientReducerAction): CoreClientState {
-  if ("type" in action) {
-    return mergeCoreExactRefs(state, action.exact_refs);
-  }
+export function reduceCoreClientState(state: CoreClientState, action: CoreClientAction): CoreClientState {
   switch (action.action_uid) {
     case "CORE-01-ACT-PROJECT-SELECT": {
       const project_id = action.project_id ?? action.project_ref;
