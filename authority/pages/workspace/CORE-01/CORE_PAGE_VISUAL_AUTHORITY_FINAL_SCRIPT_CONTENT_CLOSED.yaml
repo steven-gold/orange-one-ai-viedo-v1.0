@@ -14,6 +14,9 @@ authority:
   department_boundary: CORE owns Project Core + Topic Production Scope/Canonical Script source; ASSET/VIDEO/EDIT/VOICE internals are not defined
     here
   parallel_authority_for_same_page: FORBIDDEN
+  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  production_script_authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
 creation_authorization_policy:
   source: USER_CURRENT_REQUIREMENT_2026-08-31
   scope:
@@ -35,9 +38,6 @@ creation_authorization_policy:
   - REQUIRED_PERMISSION_MISSING
   denial_notice_zh_tw: 建立功能已拒絕：必須由已登入帳號通過帳號權限驗證；帳號權限系統尚未完成或目前帳號缺少所需權限。
   security_rule: Client denial is UX only; server authorization is mandatory and direct API bypass must also be denied.
-  system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
-  navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
-  production_script_authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
 system_filename_governance:
   authority: ACPOS_SYSTEM
   level: GLOBAL_SYSTEM_HIGHEST_RULE
