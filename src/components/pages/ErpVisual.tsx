@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { erpControlLabel, erpText } from "@/i18n/erpCatalog";
+import { ErpGovernedButton, ErpRuntimeProvider, ErpValue, useErpRuntimeState } from "./ErpControlRuntime";
 import styles from "./ErpVisual.module.css";
 
 type ViewKey = "finance" | "connector" | "sync";
@@ -36,8 +37,9 @@ export const ERP_CONTROL_REGISTRY = [
   "ERP-01-FLD-READINESS", "ERP-01-FLD-AUDIT-REF", "ERP-01-BTN-DETAIL",
 ] as const;
 
-export function ErpVisual() {
+function ErpVisualBody() {
   const { locale } = useI18n();
+  const { projection, runtimeError } = useErpRuntimeState();
   const [activeView, setActiveView] = useState<ViewKey>("finance");
   const view = VIEWS.find((item) => item.key === activeView) ?? VIEWS[0];
   const label = (id: string) => erpControlLabel(locale, id);
@@ -45,19 +47,19 @@ export function ErpVisual() {
   const boundary = activeView === "finance" ? t("financeBoundary") : activeView === "connector" ? t("secretBoundary") : t("missingBoundary");
 
   return (
-    <div className={styles.page} data-page-uid="admin:ERP-01" data-vis-step="VIS-14" data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE" data-page-state="VISUAL_ONLY_NO_BUSINESS_DATA" data-authority-control-count={ERP_CONTROL_REGISTRY.length}>
+    <div className={styles.page} data-page-uid="admin:ERP-01" data-vis-step="VIS-14" data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE" data-page-state={projection?.page_state??"READ_ONLY"} data-authority-control-count={ERP_CONTROL_REGISTRY.length}>
       <section className={styles.contextBar} data-section-id="ERP-01-SEC-01">
         <div className={styles.identity}>
           <div className={styles.eyebrow}>ERP-01 · {t("pageName")}</div>
           <h1>{t("pageName")}</h1><p>{t("pageRole")}</p>
         </div>
         <div className={styles.contextData}>
-          {CONTEXT.map((id) => <div key={id} className={styles.contextCell} data-control-id={id}><span>{label(id)}</span><strong>—</strong></div>)}
+          {CONTEXT.map((id) => <div key={id} className={styles.contextCell} data-control-id={id}><span>{label(id)}</span><strong><ErpValue controlId={id}/></strong></div>)}
         </div>
       </section>
 
       <section className={styles.viewBar} data-section-id="ERP-01-SEC-02" aria-label={t("pageName")}>
-        {VIEWS.map((item) => <button key={item.key} type="button" className={`${styles.viewButton} ${activeView === item.key ? styles.viewActive : ""}`} data-control-id={item.tabId} aria-pressed={activeView === item.key} onClick={() => setActiveView(item.key)}>{label(item.tabId)}</button>)}
+        {VIEWS.map((item) => <ErpGovernedButton key={item.key} className={`${styles.viewButton} ${activeView === item.key ? styles.viewActive : ""}`} controlId={item.tabId} onUiClick={() => setActiveView(item.key)}>{label(item.tabId)}</ErpGovernedButton>)}
       </section>
 
       <div className={styles.workspaceGrid}>
@@ -65,14 +67,14 @@ export function ErpVisual() {
           <section className={styles.panel} data-section-id={view.sectionId}>
             <div className={styles.panelHeader}><h2>{label(view.tabId)}</h2><span>{t("currentView")}</span></div>
             <div className={styles.table}>
-              {view.fields.map((id) => <div key={id} className={styles.row} data-control-id={id}><div className={styles.label}>{label(id)}</div><div className={styles.value}>—</div></div>)}
+              {view.fields.map((id) => <div key={id} className={styles.row} data-control-id={id}><div className={styles.label}>{label(id)}</div><div className={styles.value}><ErpValue controlId={id}/></div></div>)}
             </div>
             <div className={styles.boundary}>{boundary}</div>
             <div className={styles.emptyNote}>{t("noRealData")}</div>
             <section className={styles.actionDock} data-section-id="ERP-01-SEC-07">
               <div className={styles.dockLabel}><span>{t("actionDock")}</span><strong>{label(view.tabId)}</strong></div>
               <div className={styles.dockActions}>
-                {view.actions.map((id) => <button key={id} type="button" data-control-id={id} className={id === view.primary ? styles.primaryButton : styles.button} disabled>{label(id)}</button>)}
+                {view.actions.map((id) => <ErpGovernedButton key={id} controlId={id} className={id === view.primary ? styles.primaryButton : styles.button}>{label(id)}</ErpGovernedButton>)}
               </div>
             </section>
           </section>
@@ -81,14 +83,16 @@ export function ErpVisual() {
         <aside className={styles.rail} data-section-id="ERP-01-SEC-06">
           <div className={styles.railHeader}><h2>{t("governance")}</h2><span>{label(view.tabId)}</span></div>
           <div className={styles.railTable}>
-            <div className={styles.railRow} data-control-id="ERP-01-FLD-READINESS"><span>{label("ERP-01-FLD-READINESS")}</span><strong>—</strong></div>
-            <div className={styles.railRow} data-control-id="ERP-01-FLD-AUDIT-REF"><span>{label("ERP-01-FLD-AUDIT-REF")}</span><strong>—</strong></div>
+            <div className={styles.railRow} data-control-id="ERP-01-FLD-READINESS"><span>{label("ERP-01-FLD-READINESS")}</span><strong><ErpValue controlId="ERP-01-FLD-READINESS"/></strong></div>
+            <div className={styles.railRow} data-control-id="ERP-01-FLD-AUDIT-REF"><span>{label("ERP-01-FLD-AUDIT-REF")}</span><strong><ErpValue controlId="ERP-01-FLD-AUDIT-REF"/></strong></div>
           </div>
-          <button type="button" className={`${styles.button} ${styles.detailButton}`} data-control-id="ERP-01-BTN-DETAIL" disabled>{label("ERP-01-BTN-DETAIL")}</button>
-          <p className={styles.railNote}>{t("visualPhase")}</p>
+          <ErpGovernedButton className={`${styles.button} ${styles.detailButton}`} controlId="ERP-01-BTN-DETAIL">{label("ERP-01-BTN-DETAIL")}</ErpGovernedButton>
+          <p className={styles.railNote}>{runtimeError??projection?.page_state??t("noRealData")}</p>
           <aside className={styles.detailDrawer} data-section-id="ERP-01-SEC-08" data-state="CLOSED_EMPTY" aria-hidden="true"><h2>{t("detail")}</h2><p>{t("noRealData")}</p></aside>
         </aside>
       </div>
     </div>
   );
 }
+
+export function ErpVisual(){return <ErpRuntimeProvider><ErpVisualBody/></ErpRuntimeProvider>}
