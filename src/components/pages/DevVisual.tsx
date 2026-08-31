@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { devText, type DevTranslationKey } from "@/i18n/devCatalog";
+import { DevGovernedButton, DevRuntimeProvider, useDevGate, useDevRuntimeState } from "./DevControlRuntime";
 import styles from "./DevVisual.module.css";
 
 type StageKey = "discovery" | "directory" | "message" | "campaign" | "delivery";
@@ -22,23 +23,22 @@ const STAGES: readonly StageDefinition[] = [
   { key: "delivery", controlId: "DEV-01-BTN-STAGE-5", labelKey: "delivery", code: "05" },
 ] as const;
 
-const EMPTY_VISUAL_STATE = {
-  discoveryRunning: false,
-  discoveryPaused: false,
-  mergePreviewAvailable: false,
-  mergeConfirmAvailable: false,
-  candidateReviewAvailable: false,
-  campaignApprovalAvailable: false,
-  approvedCampaignAvailable: false,
-  killSwitchApplicable: false,
-} as const;
 
 function ProjectionCell({ label, wide = false }: { label: string; wide?: boolean }) {
   return <div className={`${styles.projectionCell} ${wide ? styles.wideCell : ""}`}><span>{label}</span><strong>—</strong></div>;
 }
 
-export function DevVisual() {
+function DevVisualBody() {
   const { locale } = useI18n();
+  const { projection, runtimeError } = useDevRuntimeState();
+  const discoveryRunning = useDevGate("DEV-01-GATE-DISCOVERY-RUNNING");
+  const discoveryPaused = useDevGate("DEV-01-GATE-DISCOVERY-PAUSED");
+  const mergePreviewAvailable = useDevGate("DEV-01-GATE-MERGE");
+  const mergeConfirmAvailable = useDevGate("DEV-01-GATE-MERGE-CONFIRM");
+  const candidateReviewAvailable = useDevGate("DEV-01-GATE-MESSAGE-REVIEW");
+  const campaignApprovalAvailable = useDevGate("DEV-01-GATE-CAMPAIGN-APPROVAL");
+  const approvedCampaignAvailable = useDevGate("DEV-01-GATE-DISPATCH");
+  const killSwitchApplicable = useDevGate("DEV-01-GATE-KILL-SWITCH");
   const [activeStage, setActiveStage] = useState<StageKey>("discovery");
   const t = (key: DevTranslationKey) => devText(locale, key);
   const stage = STAGES.find((item) => item.key === activeStage) ?? STAGES[0];
@@ -50,41 +50,41 @@ export function DevVisual() {
         <div className={styles.dockActions}>
           {key === "discovery" && (
             <>
-              <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-DISCOVERY-START" disabled>{t("start")}</button>
-              {EMPTY_VISUAL_STATE.discoveryRunning && <button className={styles.button} type="button" data-control-id="DEV-01-BTN-DISCOVERY-PAUSE" disabled>{t("pause")}</button>}
-              {EMPTY_VISUAL_STATE.discoveryPaused && <button className={styles.button} type="button" data-control-id="DEV-01-BTN-DISCOVERY-RESUME" disabled>{t("resume")}</button>}
-              {EMPTY_VISUAL_STATE.discoveryRunning && <button className={styles.dangerButton} type="button" data-control-id="DEV-01-BTN-DISCOVERY-STOP" disabled>{t("stop")}</button>}
+              <DevGovernedButton className={styles.primaryButton} controlId="DEV-01-BTN-DISCOVERY-START">{t("start")}</DevGovernedButton>
+              {discoveryRunning && <DevGovernedButton className={styles.button} controlId="DEV-01-BTN-DISCOVERY-PAUSE">{t("pause")}</DevGovernedButton>}
+              {discoveryPaused && <DevGovernedButton className={styles.button} controlId="DEV-01-BTN-DISCOVERY-RESUME">{t("resume")}</DevGovernedButton>}
+              {discoveryRunning && <DevGovernedButton className={styles.dangerButton} controlId="DEV-01-BTN-DISCOVERY-STOP">{t("stop")}</DevGovernedButton>}
             </>
           )}
           {key === "directory" && (
             <>
-              <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-DIRECTORY-SEARCH" disabled>{t("searchCompany")}</button>
-              {EMPTY_VISUAL_STATE.mergePreviewAvailable && <button className={styles.button} type="button" data-control-id="DEV-01-BTN-MERGE-PREVIEW" disabled>{t("previewMerge")}</button>}
-              {EMPTY_VISUAL_STATE.mergeConfirmAvailable && <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-MERGE" disabled>{t("confirmMerge")}</button>}
-              <button className={styles.button} type="button" data-control-id="DEV-01-BTN-EXPORT" disabled>{t("export")}</button>
+              <DevGovernedButton className={styles.primaryButton} controlId="DEV-01-BTN-DIRECTORY-SEARCH">{t("searchCompany")}</DevGovernedButton>
+              {mergePreviewAvailable && <DevGovernedButton className={styles.button} controlId="DEV-01-BTN-MERGE-PREVIEW">{t("previewMerge")}</DevGovernedButton>}
+              {mergeConfirmAvailable && <DevGovernedButton className={styles.primaryButton} controlId="DEV-01-BTN-MERGE">{t("confirmMerge")}</DevGovernedButton>}
+              <DevGovernedButton className={styles.button} controlId="DEV-01-BTN-EXPORT">{t("export")}</DevGovernedButton>
             </>
           )}
           {key === "message" && (
             <>
-              <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-CANDIDATE-CREATE" disabled>{t("createCandidate")}</button>
-              {EMPTY_VISUAL_STATE.candidateReviewAvailable && <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-CANDIDATE-DECIDE" disabled>{t("reviewCandidate")}</button>}
-              {EMPTY_VISUAL_STATE.candidateReviewAvailable && <button className={styles.button} type="button" data-control-id="DEV-01-BTN-CR-CREATE" disabled>{t("requestChange")}</button>}
+              <DevGovernedButton className={styles.primaryButton} controlId="DEV-01-BTN-CANDIDATE-CREATE">{t("createCandidate")}</DevGovernedButton>
+              {candidateReviewAvailable && <DevGovernedButton className={styles.primaryButton} controlId="DEV-01-BTN-CANDIDATE-DECIDE">{t("reviewCandidate")}</DevGovernedButton>}
+              {candidateReviewAvailable && <DevGovernedButton className={styles.button} controlId="DEV-01-BTN-CR-CREATE">{t("requestChange")}</DevGovernedButton>}
             </>
           )}
           {key === "campaign" && (
             <>
-              <button className={styles.button} type="button" data-control-id="DEV-01-BTN-CAMPAIGN-SEARCH" disabled>{t("searchAudience")}</button>
-              <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-CAMPAIGN-CREATE" disabled>{t("createCampaign")}</button>
-              {EMPTY_VISUAL_STATE.campaignApprovalAvailable && <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-CAMPAIGN-APPROVE" disabled>{t("approveCampaign")}</button>}
+              <DevGovernedButton className={styles.button} controlId="DEV-01-BTN-CAMPAIGN-SEARCH">{t("searchAudience")}</DevGovernedButton>
+              <DevGovernedButton className={styles.primaryButton} controlId="DEV-01-BTN-CAMPAIGN-CREATE">{t("createCampaign")}</DevGovernedButton>
+              {campaignApprovalAvailable && <DevGovernedButton className={styles.primaryButton} controlId="DEV-01-BTN-CAMPAIGN-APPROVE">{t("approveCampaign")}</DevGovernedButton>}
             </>
           )}
           {key === "delivery" && (
             <>
-              {EMPTY_VISUAL_STATE.approvedCampaignAvailable && <button className={styles.primaryButton} type="button" data-control-id="DEV-01-BTN-EMAIL-DISPATCH" disabled>{t("dispatch")}</button>}
-              <button className={styles.button} type="button" data-control-id="DEV-01-BTN-REFRESH" disabled>{t("refresh")}</button>
-              {EMPTY_VISUAL_STATE.killSwitchApplicable && (
+              {approvedCampaignAvailable && <DevGovernedButton className={styles.primaryButton} controlId="DEV-01-BTN-EMAIL-DISPATCH">{t("dispatch")}</DevGovernedButton>}
+              <DevGovernedButton className={styles.button} controlId="DEV-01-BTN-REFRESH">{t("refresh")}</DevGovernedButton>
+              {killSwitchApplicable && (
                 <span data-component-id="DEV-01-CMP-KILL-SWITCH">
-                  <button className={styles.dangerButton} type="button" data-control-id="DEV-01-BTN-KILL-SWITCH" disabled>{t("killSwitch")}</button>
+                  <DevGovernedButton className={styles.dangerButton} controlId="DEV-01-BTN-KILL-SWITCH">{t("killSwitch")}</DevGovernedButton>
                 </span>
               )}
             </>
@@ -202,13 +202,13 @@ export function DevVisual() {
           <div className={styles.railItem}><span>{t("blockerStatus")}</span><strong>—</strong></div>
         </div>
         <p className={styles.railNote}>{t("noRealData")}</p>
-        <p className={styles.phaseNote}>{t("visualPhase")}</p>
+        <p className={styles.phaseNote}>{runtimeError??projection?.page_state??t("noRealData")}</p>
       </aside>
     );
   }
 
   return (
-    <div className={styles.page} data-page-uid="admin:DEV-01" data-vis-step="VIS-12" data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE" data-page-state="VISUAL_ONLY_NO_BUSINESS_DATA">
+    <div className={styles.page} data-page-uid="admin:DEV-01" data-vis-step="VIS-12" data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE" data-page-state={projection?.page_state??"READ_ONLY"}>
       <section className={styles.contextBar} data-section-id="DEV-01-SEC-01" data-component-id="DEV-01-CMP-CONTEXT">
         <div className={styles.contextIdentity}>
           <div className={styles.eyebrow}>DEV-01 · {t("pageName")}</div>
@@ -217,23 +217,21 @@ export function DevVisual() {
         </div>
         <div className={styles.contextStatus}>
           <div className={styles.statusCell}><span>{t("currentStage")}</span><strong>{t(stage.labelKey)}</strong></div>
-          <div className={styles.statusCell}><span>{t("authorizedScope")}</span><strong>—</strong></div>
-          <div className={styles.statusCell}><span>{t("runStatus")}</span><strong>—</strong></div>
+          <div className={styles.statusCell}><span>{t("authorizedScope")}</span><strong>{projection?.authorized_scope??"—"}</strong></div>
+          <div className={styles.statusCell}><span>{t("runStatus")}</span><strong>{runtimeError??projection?.run_status??"—"}</strong></div>
         </div>
       </section>
 
       <section className={styles.stageBar} data-section-id="DEV-01-SEC-02" data-component-id="DEV-01-CMP-STAGE-NAV" aria-label={t("pageName")}>
         {STAGES.map((item) => (
-          <button
+          <DevGovernedButton
             key={item.key}
-            type="button"
             className={`${styles.stageButton} ${activeStage === item.key ? styles.stageButtonActive : ""}`}
-            data-control-id={item.controlId}
-            aria-pressed={activeStage === item.key}
-            onClick={() => setActiveStage(item.key)}
+            controlId={item.controlId}
+            onUiClick={() => setActiveStage(item.key)}
           >
             {item.code} · {t(item.labelKey)}
-          </button>
+          </DevGovernedButton>
         ))}
       </section>
 
@@ -255,3 +253,5 @@ export function DevVisual() {
     </div>
   );
 }
+
+export function DevVisual(){return <DevRuntimeProvider><DevVisualBody/></DevRuntimeProvider>}
