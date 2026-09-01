@@ -24,17 +24,17 @@ jobs:
           from pathlib import Path
           root=Path('.validation/aiapi-01')
           files=[root/'AIAPI-01-VIEW-OVERVIEW.png',root/'AIAPI-01-VIEW-PROVIDER-API.png',root/'AIAPI-01-VIEW-ROUTING-TEST.png',root/'AIAPI-01-VIEW-OPERATIONS.png']
-          sheet=Image.new('L',(240,180),255)
+          sheet=Image.new('L',(480,360),255)
           for i,path in enumerate(files):
             im=Image.open(path).convert('L')
-            im.thumbnail((118,88))
-            x=(i%2)*120+(120-im.width)//2
-            y=(i//2)*90+(90-im.height)//2
+            im.thumbnail((236,176))
+            x=(i%2)*240+(240-im.width)//2
+            y=(i//2)*180+(180-im.height)//2
             sheet.paste(im,(x,y))
-          sheet.save(root/'AIAPI-01-CONTACT-MICRO.jpg',quality=5,optimize=True)
+          sheet.save(root/'AIAPI-01-CONTACT-ARTIFACT.jpg',quality=12,optimize=True)
           PY
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add .validation/aiapi-01/AIAPI-01-CONTACT-MICRO.jpg
-          git commit -m 'validation-artifacts: AIAPI-01 micro contact sheet'
-          git push origin HEAD:aiapi-01-current-authority-runtime
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aiapi-01-visual-contact
+          path: .validation/aiapi-01/AIAPI-01-CONTACT-ARTIFACT.jpg
+          if-no-files-found: error
