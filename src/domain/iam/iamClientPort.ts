@@ -24,6 +24,10 @@ function projectionErrorUid(status?: number) {
   return status === 401 || status === 403 ? "IAM-01-ERR-AUTH-DENIED" : "IAM-01-ERR-UNDEFINED";
 }
 
+function projectionStateIsValid(projection: IamNormalizedProjection) {
+  return projection.page_state === null || isIamPageState(projection.page_state);
+}
+
 export async function readIamProjection(signal?: AbortSignal) {
   let response: Response;
   try {
@@ -67,7 +71,7 @@ export async function readIamProjection(signal?: AbortSignal) {
 
   try {
     const projection = await resolver.resolve(raw);
-    if (projection.page_state !== null && !isIamPageState(projection.page_state)) {
+    if (!projectionStateIsValid(projection)) {
       return {
         ok: false as const,
         error_uid: "IAM-01-ERR-UNDEFINED",
@@ -128,7 +132,16 @@ export async function invokeIamClientCommand(
     };
   }
   try {
-    return await commandAdapter.invoke(input);
+    const result = await commandAdapter.invoke(input);
+    if (result.ok && !projectionStateIsValid(result.projection)) {
+      return {
+        ok: false,
+        error_uid: "IAM-01-ERR-UNDEFINED",
+        reason_code: "IAM_CLIENT_COMMAND_ADAPTER_REJECTED",
+        correlation_id: result.correlation_id,
+      };
+    }
+    return result;
   } catch {
     return {
       ok: false,
