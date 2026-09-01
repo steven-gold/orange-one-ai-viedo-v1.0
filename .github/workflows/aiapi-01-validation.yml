@@ -1,0 +1,47 @@
+name: AIAPI-01 Current Authority Validation
+
+on:
+  push:
+    branches:
+      - aiapi-01-current-authority-runtime
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
+      - name: Authority-safe source checks
+        run: |
+          set -euo pipefail
+          test -f src/domain/aiApi/aiApiRuntimePort.ts
+          grep -q '/v1/ui-projections/admin%3AAIAPI-01' src/domain/aiApi/aiApiRuntimePort.ts
+          grep -q 'data-page-uid="admin:AIAPI-01"' src/components/pages/AiApiVisual.tsx
+          ! grep -q 'STATIC_UI_REMAP_BLOCKED' src/components/pages/AiApiVisual.tsx
+          ! grep -R -E 'show_api_key|reveal.*api.*key|plaintext.*api.*key' src/components/pages/AiApiVisual.tsx src/domain/aiApi src/i18n/aiApiCatalog.ts
+          ! grep -R -E 'createProviderModelProfile|updateProviderModelProfile|setProviderModelCredential|deleteProviderModelCredential|executeProviderRoute|runSandboxTest' src/domain/aiApi src/components/pages/AiApiVisual.tsx
+      - name: Production route and fail-closed checks
+        run: |
+          set -euo pipefail
+          npm run start -- -p 3000 > /tmp/aiapi-next.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true; cat /tmp/aiapi-next.log' EXIT
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:3000/admin/aiapi >/tmp/aiapi.html; then break; fi
+            sleep 1
+          done
+          grep -q 'data-page-uid="admin:AIAPI-01"' /tmp/aiapi.html
+          grep -q 'AIAPI-01-VIEW-PROVIDER-API' /tmp/aiapi.html
+          STATUS=$(curl -sS -o /tmp/projection.json -w '%{http_code}' 'http://127.0.0.1:3000/v1/ui-projections/admin%3AAIAPI-01')
+          test "$STATUS" = "503"
+          grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/projection.json
+          grep -q 'correlation_id' /tmp/projection.json
