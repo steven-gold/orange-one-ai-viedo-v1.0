@@ -1,0 +1,154 @@
+name: DEV-01 preview seal once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/dev01-preview-seal-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout product source
+        uses: actions/checkout@v4
+        with:
+          ref: new
+          path: source
+          fetch-depth: 0
+      - name: Checkout cumulative preview
+        uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+          path: previewrepo
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: source/package-lock.json
+      - name: Guard source and previous preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=b2b443e7235bba1e042a88a072d652f8671a595b
+          PREV=2669481980437d3c0264e495aa8a5cce43b70cc3
+          test "$(git -C previewrepo rev-parse HEAD)" = "$PREV"
+          test "$(sha256sum source/src/components/pages/DevVisual.module.css | awk '{print $1}')" = 9308ec244ffe6936d8b05a55d1373dc215fe2309e216bb5e58c3e7caf248eb2f
+          bad=$(git -C source diff --name-only "$BASE"...HEAD | grep -Ev '^(src/components/pages/DevControlRuntime.tsx|src/components/pages/DevVisual.tsx|src/domain/dev/devProjectionPort.ts|src/domain/dev/devControlBindings.ts|src/domain/dev/devRuntimeContract.ts|.github/workflows/dev01-preview-seal-once.yml)$' || true)
+          test -z "$bad" || { echo "$bad"; exit 1; }
+          echo DEV01_PREVIEW_SOURCE_GUARD_PASS
+      - name: Build exact product source
+        working-directory: source
+        run: |
+          npm ci
+          npm audit
+          npm run typecheck
+          npm run build
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+          test -z "$(git status --porcelain package.json package-lock.json)"
+      - name: Capture truthful DEV-01 DOM
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd source
+          npm run start -- -p 4173 > /tmp/dev01-preview-next.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid || true; cat /tmp/dev01-preview-next.log || true' EXIT
+          for i in $(seq 1 40); do if curl -fsS http://127.0.0.1:4173/admin/dev >/dev/null; then break; fi; sleep 1; done
+          node <<'NODE'
+          const {chromium}=require('playwright'); const assert=require('assert'); const fs=require('fs'); const path=require('path');
+          (async()=>{
+            const browser=await chromium.launch({headless:true}); const page=await browser.newPage({viewport:{width:1440,height:900}});
+            const errors=[]; const failed=[]; page.on('pageerror',e=>errors.push(String(e))); page.on('requestfailed',r=>failed.push(`${r.method()} ${r.url()}`));
+            await page.goto('http://127.0.0.1:4173/admin/dev',{waitUntil:'networkidle'});
+            const root=page.locator('[data-page-uid="admin:DEV-01"]'); await root.waitFor({state:'attached'});
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:DEV-01"]')?.getAttribute('data-projection-status')==='BLOCKED');
+            assert.equal(await root.getAttribute('data-page-state'),'ERROR');
+            assert.equal(await root.getAttribute('data-projection-reason'),'UI_PROJECTION_RUNTIME_NOT_BOUND');
+            assert.equal(await root.getAttribute('data-runtime-error-uid'),'DEV-01-ERR-UNDEFINED');
+            assert.equal(await root.getAttribute('data-authority-sections'),'9');
+            assert.equal(await root.getAttribute('data-authority-components'),'15');
+            assert.equal(await root.getAttribute('data-authority-controls'),'22');
+            assert.equal(await root.getAttribute('data-authority-actions'),'22');
+            assert.equal(await root.getAttribute('data-authority-gates'),'15');
+            assert.equal(await root.getAttribute('data-authority-errors'),'12');
+            assert.equal(await root.getAttribute('data-implementation-status'),'NOT_EXECUTED');
+            assert.equal(await root.getAttribute('data-active-stage'),'discovery');
+            assert.deepEqual(errors,[]); assert.deepEqual(failed,[]);
+            const cssHrefs=await page.locator('link[rel="stylesheet"]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('href')).filter(Boolean)); assert(cssHrefs.length>0);
+            await page.evaluate(()=>{
+              document.documentElement.setAttribute('data-dev01-preview-mode','SEALED_STATIC_FAIL_CLOSED');
+              document.querySelectorAll('script').forEach(n=>n.remove());
+              document.querySelectorAll('link[rel="preload"][as="script"],link[rel="modulepreload"]').forEach(n=>n.remove());
+              const navMap={'/':'index.html','/core':'core.html','/assets':'assets.html','/video':'video.html','/edit':'edit.html','/qa':'qa.html','/database':'db.html','/strategy':'strategy.html','/info':'info.html','/admin/system':'system.html','/admin/accounts':'accounts.html','/admin/dev':'dev.html','/admin/social':'social.html','/admin/erp':'erp.html','/admin/aiapi':'aiapi.html','/admin/qa-criteria':'qa-criteria.html','/admin/strategy':'strategy-admin.html','/admin/knowledge':'knowledge-admin.html'};
+              document.querySelectorAll('a[href]').forEach(a=>{const h=a.getAttribute('href');if(h&&navMap[h])a.setAttribute('href',navMap[h]);});
+              document.querySelectorAll('img[src]').forEach(img=>{if(img.getAttribute('src')==='/brand/orange-one-logo.png')img.setAttribute('src','brand/orange-one-logo.png');});
+              document.querySelectorAll('link[rel="preload"][as="image"]').forEach(link=>{if(link.getAttribute('href')==='/brand/orange-one-logo.png')link.setAttribute('href','brand/orange-one-logo.png');});
+              document.querySelectorAll('link[rel="stylesheet"]').forEach(link=>{const h=link.getAttribute('href');if(h&&h.includes('/_next/static/chunks/'))link.setAttribute('href','dev01-assets/_next/static/chunks/'+h.split('/').pop());});
+            });
+            const html='<!DOCTYPE html>'+await page.locator('html').evaluate(el=>el.outerHTML);
+            fs.rmSync('/tmp/dev01-stage',{recursive:true,force:true}); fs.mkdirSync('/tmp/dev01-stage/dev01-assets/_next/static/chunks',{recursive:true}); fs.writeFileSync('/tmp/dev01-stage/dev.html',html);
+            for(const href of cssHrefs){const u=new URL(href,'http://127.0.0.1:4173');const name=path.basename(u.pathname);const src=path.join(process.cwd(),'.next/static/chunks',name);assert(fs.existsSync(src));fs.copyFileSync(src,path.join('/tmp/dev01-stage/dev01-assets/_next/static/chunks',name));}
+            console.log('DEV01_CAPTURE_CSS',cssHrefs.map(h=>path.basename(new URL(h,'http://x').pathname)).join(',')); console.log('DEV01_CAPTURE_PASS'); await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - name: Stage isolated cumulative preview update
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f previewrepo/preview/dev.html
+          rm -rf previewrepo/preview/dev01-assets
+          cp /tmp/dev01-stage/dev.html previewrepo/preview/dev.html
+          cp -R /tmp/dev01-stage/dev01-assets previewrepo/preview/dev01-assets
+          cd previewrepo
+          changed=$(git status --porcelain | awk '{print $2}')
+          echo "$changed"
+          bad=$(printf '%s\n' "$changed" | grep -Ev '^(preview/dev.html|preview/dev01-assets/)' || true)
+          test -z "$bad" || { echo "Preview pollution: $bad" >&2; exit 1; }
+          test -n "$changed"
+      - name: Validate staged standalone preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd previewrepo/preview
+          python3 -m http.server 4174 > /tmp/dev01-static.log 2>&1 &
+          static_pid=$!
+          trap 'kill $static_pid || true; cat /tmp/dev01-static.log || true' EXIT
+          for i in $(seq 1 30); do if curl -fsS http://127.0.0.1:4174/dev.html >/dev/null; then break; fi; sleep 1; done
+          cd ../../source
+          node <<'NODE'
+          const {chromium}=require('playwright'); const assert=require('assert');
+          (async()=>{
+            const browser=await chromium.launch({headless:true}); const page=await browser.newPage({viewport:{width:1280,height:900}});
+            const errors=[]; const failed=[]; const runtime=[]; const scripts=[];
+            page.on('pageerror',e=>errors.push(String(e))); page.on('requestfailed',r=>failed.push(`${r.method()} ${r.url()}`)); page.on('request',r=>{const u=new URL(r.url());if(u.pathname.startsWith('/v1/'))runtime.push(`${r.method()} ${u.pathname}`);if(r.resourceType()==='script')scripts.push(u.pathname);});
+            await page.goto('http://127.0.0.1:4174/dev.html',{waitUntil:'networkidle'});
+            const root=page.locator('[data-page-uid="admin:DEV-01"]'); await root.waitFor({state:'attached'});
+            assert.equal(await page.locator('html').getAttribute('data-dev01-preview-mode'),'SEALED_STATIC_FAIL_CLOSED');
+            const expected={'data-authority-status':'FINAL_LOCKED','data-authority-sections':'9','data-authority-components':'15','data-authority-controls':'22','data-authority-actions':'22','data-authority-gates':'15','data-authority-errors':'12','data-implementation-status':'NOT_EXECUTED','data-page-state':'ERROR','data-projection-status':'BLOCKED','data-projection-reason':'UI_PROJECTION_RUNTIME_NOT_BOUND','data-runtime-error-uid':'DEV-01-ERR-UNDEFINED','data-projection-adapter-ready':'false','data-command-adapter-ready':'false','data-effectful-runtime-ready':'false','data-page-gate-ready':'false','data-active-stage':'discovery'};
+            for(const [k,v] of Object.entries(expected))assert.equal(await root.getAttribute(k),v,k);
+            assert.equal(await page.locator('[data-control-id^="DEV-01-"]').count(),6);
+            for(const id of ['DEV-01-BTN-STAGE-1','DEV-01-BTN-STAGE-2','DEV-01-BTN-STAGE-3','DEV-01-BTN-STAGE-4','DEV-01-BTN-STAGE-5','DEV-01-BTN-DISCOVERY-START']) assert.equal(await page.locator(`[data-control-id="${id}"]`).isDisabled(),true,id);
+            assert.equal(await page.locator('script').count(),0); assert.deepEqual(runtime,[]); assert.deepEqual(scripts,[]);
+            assert.equal(await page.locator('[data-nav-id="ADMIN-NAV-03"]').getAttribute('href'),'dev.html');
+            for(const width of [1280,1440,1920]){await page.setViewportSize({width,height:900});const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);console.log('DEV01_STATIC_WIDTH',width,'OVERFLOW',overflow);assert(overflow<=0);}
+            assert.deepEqual(errors,[]); assert.deepEqual(failed,[]); console.log('DEV01_STATIC_PREVIEW_PASS'); await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - name: Commit and push sealed DEV-01 preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd previewrepo
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add preview/dev.html preview/dev01-assets
+          git commit -m 'sync(preview): seal isolated DEV-01 page'
+          git push origin HEAD:acpos-live-preview
+          echo "DEV01_PREVIEW_HEAD=$(git rev-parse HEAD)"
