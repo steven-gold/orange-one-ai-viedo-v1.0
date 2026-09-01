@@ -1,0 +1,46 @@
+name: STR-01 Final Current Pollution Scan
+
+on:
+  push:
+    branches:
+      - str-01-current-authority-closure
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Current-only STR token and pollution scan
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const path=require('path');
+          const authorityPath='authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml';
+          const authority=fs.readFileSync(authorityPath,'utf8');
+          const authorityTokens=new Set([...authority.matchAll(/STR-01-[A-Z0-9-]+/g)].map(m=>m[0]));
+          const roots=['src/app/strategy','src/components/pages','src/domain/strategy','src/server/strategy','src/i18n'];
+          const files=[];
+          function walk(p){if(!fs.existsSync(p))return;const stat=fs.statSync(p);if(stat.isFile()){const n=path.basename(p).toLowerCase();if(p.includes('/strategy/')||n.includes('strategy'))files.push(p);return;}for(const e of fs.readdirSync(p))walk(path.join(p,e));}
+          roots.forEach(walk);
+          const strategyTesting=[];
+          if(fs.existsSync('src/server/testing'))for(const f of fs.readdirSync('src/server/testing'))if(/strategy/i.test(f))strategyTesting.push(f);
+          if(strategyTesting.length)throw new Error(`unexpected strategy testing runtime: ${strategyTesting.join(',')}`);
+          const texts=files.map(f=>[f,fs.readFileSync(f,'utf8')]);
+          const unknown=[];
+          for(const [f,text] of texts){for(const token of new Set([...text.matchAll(/STR-01-[A-Z0-9-]+/g)].map(m=>m[0])))if(!authorityTokens.has(token))unknown.push(`${f}:${token}`);}
+          if(unknown.length)throw new Error(`unregistered STR tokens:\n${unknown.join('\n')}`);
+          const forbidden=[/STR-01-TEST/i,/STR-01-PORT-SEND/,/\bR9\b/i,/\bMOTHER\b/i,/\bLEGACY\b/i,/provider_picker/i,/ProviderModelProfile/,/ProviderGateway/];
+          const pollution=[];
+          for(const [f,text] of texts)for(const pattern of forbidden)if(pattern.test(text))pollution.push(`${f}:${pattern}`);
+          if(pollution.length)throw new Error(`confirmed pollution:\n${pollution.join('\n')}`);
+          const methodPaths=[...authority.matchAll(/method_path:\s*"?((?:GET|POST|PATCH|PUT|DELETE)\s+\/v1\/[^"\n]+)"?/g)].map(m=>m[1].trim());
+          const routeLiterals=[];
+          for(const [f,text] of texts)for(const m of text.matchAll(/['"](\/v1\/[^'"]+)['"]/g))routeLiterals.push([f,m[1]]);
+          const allowed=new Set(methodPaths.map(v=>v.replace(/^(GET|POST|PATCH|PUT|DELETE)\s+/,'')));
+          allowed.add('/v1/ui-projections/workspace%3ASTR-01');
+          const unknownRoutes=routeLiterals.filter(([,r])=>!allowed.has(r));
+          if(unknownRoutes.length)throw new Error(`unregistered route literals:\n${unknownRoutes.map(x=>x.join(':')).join('\n')}`);
+          console.log(`STR_FINAL_CURRENT_POLLUTION_ZERO files=${files.length} authority_tokens=${authorityTokens.size} code_tokens=${new Set(texts.flatMap(([,t])=>[...t.matchAll(/STR-01-[A-Z0-9-]+/g)].map(m=>m[0]))).size} route_literals=${routeLiterals.length}`);
+          console.log(`STR_AUTHORITY_INTERNAL_CONFLICT=${authority.includes('STR-01-PORT-SEND')&&!authority.match(/^\s*- port_uid:\s*STR-01-PORT-SEND\s*$/m)?'STR-01-PORT-SEND_UNREGISTERED':'none'}`);
+          NODE
