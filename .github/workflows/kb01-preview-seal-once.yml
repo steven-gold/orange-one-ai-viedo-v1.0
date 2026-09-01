@@ -96,6 +96,8 @@ jobs:
             await page.waitForFunction(() => document.querySelector('[data-current-view]')?.getAttribute('data-current-view') === 'KB-01-VIEW-OVERVIEW');
             const activeClass = await page.locator('[data-view-uid="KB-01-VIEW-OVERVIEW"]').getAttribute('class');
             const inactiveClass = await page.locator('[data-view-uid="KB-01-VIEW-SOURCE"]').getAttribute('class');
+            assert.deepEqual(pageErrors,[]);
+            assert.deepEqual(failed,[]);
 
             await page.evaluate(({fragments,activeClass,inactiveClass}) => {
               document.querySelectorAll('script').forEach(node => node.remove());
@@ -124,8 +126,6 @@ jobs:
 
             fs.writeFileSync('/tmp/knowledge-admin.html', await page.content());
             fs.writeFileSync('/tmp/kb01-static-paths.txt',[...staticPaths].sort().join('\n')+'\n');
-            assert.deepEqual(pageErrors,[]);
-            assert.deepEqual(failed,[]);
             await browser.close();
           })().catch(error=>{console.error(error);process.exit(1);});
           NODE
