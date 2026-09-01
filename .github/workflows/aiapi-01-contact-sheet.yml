@@ -1,0 +1,48 @@
+name: AIAPI-01 Contact Sheet
+
+on:
+  push:
+    branches:
+      - aiapi-01-current-authority-runtime
+
+permissions:
+  contents: write
+
+jobs:
+  contact:
+    if: ${{ contains(github.event.head_commit.message, 'add contact sheet generator') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: aiapi-01-current-authority-runtime
+      - run: python3 -m pip install --quiet pillow
+      - name: Build compact visual contact sheet
+        run: |
+          python3 <<'PY'
+          from PIL import Image, ImageOps, ImageDraw
+          from pathlib import Path
+          root=Path('.validation/aiapi-01')
+          files=[
+            ('OVERVIEW',root/'AIAPI-01-VIEW-OVERVIEW.png'),
+            ('PROVIDER',root/'AIAPI-01-VIEW-PROVIDER-API.png'),
+            ('ROUTING',root/'AIAPI-01-VIEW-ROUTING-TEST.png'),
+            ('OPERATIONS',root/'AIAPI-01-VIEW-OPERATIONS.png'),
+          ]
+          cells=[]
+          for label,path in files:
+            im=Image.open(path).convert('RGB')
+            im.thumbnail((620,500))
+            cell=Image.new('RGB',(640,540),'white')
+            cell.paste(im,((640-im.width)//2,30))
+            ImageDraw.Draw(cell).text((12,8),label,fill='black')
+            cells.append(cell)
+          sheet=Image.new('RGB',(1280,1080),'white')
+          for i,cell in enumerate(cells): sheet.paste(cell,((i%2)*640,(i//2)*540))
+          sheet.save(root/'AIAPI-01-CONTACT.jpg',quality=32,optimize=True)
+          PY
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .validation/aiapi-01/AIAPI-01-CONTACT.jpg
+          git commit -m 'validation-artifacts: AIAPI-01 compact contact sheet'
+          git push origin HEAD:aiapi-01-current-authority-runtime
