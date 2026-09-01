@@ -49,6 +49,10 @@ jobs:
           s=s.replace("$('#DB-01-SEL-ENTITY-TYPE')?.value||'ALL'", "$('[data-control-id=\"DB-01-SEL-ENTITY-TYPE\"] select',root)?.value||'ALL'")
           s=s.replace("if(a.includes('VIEW')||a.includes('DETAIL')||a.includes('OPEN')&&!a.includes('CORRECTION'))", "if(a.endsWith('-VIEW')||a.includes('-VIEW-')||a.endsWith('-DETAIL')||a.includes('-DETAIL-')||(a.includes('-OPEN')&&!a.includes('CORRECTION')&&!a.includes('OPEN-OWNER')&&!a.includes('AUDIT')))" )
           s=s.replace("$('[data-control-id=\"STR-01-INP-MESSAGE\"] textarea,[data-control-id=\"STR-01-INP-MESSAGE\"] input',root)", "$('textarea[data-control-id=\"STR-01-INP-MESSAGE\"],input[data-control-id=\"STR-01-INP-MESSAGE\"]',root)")
+          old_tail="}document.documentElement.dataset.previewRuntime='READY';}"
+          new_tail="}for(const node of $$('[data-gate-uid]',root)){const g=node.getAttribute('data-gate-uid');const open=!!g&&state.gates[g]===true;node.setAttribute('data-preview-gate-state',open?'true':'false');if(open)node.removeAttribute('data-disabled-reason');else if(g)node.setAttribute('data-disabled-reason',g);}document.documentElement.dataset.previewRuntime='READY';}"
+          if old_tail not in s: raise SystemExit('applyGates tail patch target missing')
+          s=s.replace(old_tail,new_tail,1)
           old="if(a.includes('MODE')||a.includes('TOGGLE')||a.includes('TOOL-')){setActiveButton(el);status(`${a} 已切換`);return true;}"
           new="if(a.includes('MODE')||a.includes('TOGGLE')||a.includes('TOOL-')){setActiveButton(el);if(uid==='workspace:STR-01'&&a.includes('MODE'))state.mode=(el.textContent||'').toUpperCase().includes('MULTI')?'MULTI_AI':'SINGLE_AI';if(uid==='QA-01'&&a.includes('MODE'))state.mode=(el.textContent||'').toUpperCase().includes('MANUAL')?'MANUAL':'AUTO';status(`${a} 已切換`);return true;}"
           if old not in s: raise SystemExit('MODE patch target missing')
@@ -98,8 +102,8 @@ jobs:
           }
           for page,g in expected.items():
               t=Path(f'/tmp/acpos-preview-v2-dom/{page}.html').read_text(errors='ignore')
-              wrapper_pattern=rf'data-gate-uid="{re.escape(g)}"[^>]*data-preview-disabled-reason'
-              if re.search(wrapper_pattern,t,re.I): raise SystemExit(f'{page}: downstream gate {g} still marked disabled')
+              gate_open_pattern=rf'data-gate-uid="{re.escape(g)}"[^>]*data-preview-gate-state="true"'
+              if not re.search(gate_open_pattern,t,re.I): raise SystemExit(f'{page}: downstream gate {g} did not expose OPEN state')
               print(f'PREVIEW_V2_GATE_UNLOCK_PASS page={page} gate={g}')
           st=Path('/tmp/acpos-preview-v2-dom/strategy.html').read_text(errors='ignore')
           if 'SHARED_ATTACHMENT_FLOW_NOT_BOUND_IN_STATIC_PREVIEW' not in st: raise SystemExit('strategy attachment gap was incorrectly unlocked')
