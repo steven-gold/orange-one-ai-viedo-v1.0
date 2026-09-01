@@ -19,7 +19,7 @@ const TEST_METADATA = {
   data_classification: "TEST_ONLY",
   synthetic: true,
   test_dataset_id: "TEST-ASSET-01",
-  test_run_id: "TEST-RUN-ASSET-01-CONTROLLED",
+  test_run_id: "TEST-RUN-ASSET-CONTROLLED-01",
   created_for_validation: true,
   production_eligible: false,
 } as const;
@@ -126,7 +126,6 @@ export function isControlledAssetServerTestMode() { return isControlledTestMode(
 export function readControlledAssetTestProjection(): AssetNormalizedProjection {
   const current = state.candidates.find(item => item.ref === state.output_version_id) ?? state.candidates[0] ?? null;
   const versionNumber = state.version_counter || 1;
-  const lockedRef = state.output_version_id ? `TEST-ASSET-LOCK-${state.output_version_id}` : "—";
   return {
     page_state: state.page_state,
     task_id: TASK_ID,
@@ -177,8 +176,7 @@ export function readControlledAssetTestProjection(): AssetNormalizedProjection {
       "ASSET-01-FLD-HANDOFF-SCORECARD": state.evaluation_complete ? CRITERIA_REF : "—",
       "ASSET-01-FLD-HANDOFF-RIGHTS": RIGHTS_REF,
       "ASSET-01-FLD-HANDOFF-CONTRACT-HASH": "TEST-ASSET-HANDOFF-CONTRACT-001",
-      "ASSET-01-TEST-LOCK-REF": lockedRef,
-      "ASSET-01-TEST-HANDOFF-REF": state.handoff_ref ?? "—",
+      "ASSET-01-FLD-TRACE": state.handoff_ref ?? (state.job_counter ? `TEST-ASSET-TRACE-${state.job_counter}` : "—"),
     },
     lists: {
       "ASSET-01-CTL-PROJECT": [{ ref: PROJECT_REF, label: "[TEST] ORANGE ONE Project" }],

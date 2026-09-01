@@ -27,6 +27,7 @@ type MutableAssetProjection = Omit<
 let lastProjection: AssetNormalizedProjection | null = null;
 let correctionCandidateRef: string | null = null;
 let approvedCorrectionRef: string | null = null;
+let lockedVersionRef: string | null = null;
 
 export function isControlledAssetClientTestMode() {
   return isControlledTestMode();
@@ -116,7 +117,7 @@ export function buildControlledAssetRequest(input: {
       return {
         payload: {
           ...common,
-          locked_version_ref: projection.values["ASSET-01-TEST-LOCK-REF"],
+          locked_version_ref: lockedVersionRef,
           asset_version_id: outputVersionId,
           blueprint_ref: projection.values["ASSET-01-FLD-HANDOFF-BLUEPRINT"],
           script_hash: projection.values["ASSET-01-FLD-HANDOFF-SCRIPT-HASH"],
@@ -300,6 +301,7 @@ export async function controlledAssetSharedInvoke(
       media_kind: current?.media_kind ?? projection.candidate_media_kind ?? "IMAGE",
     };
 
+    lockedVersionRef = null;
     next.output_version_id = restoredVersionRef;
     next.page_state = "CANDIDATE_OUTPUT";
     next.candidate_uri = candidate.uri;
@@ -331,9 +333,9 @@ export async function controlledAssetSharedInvoke(
 
     const next = cloneProjection(projection);
     const lockRef = `TEST-ASSET-LOCK-${projection.output_version_id}`;
+    lockedVersionRef = lockRef;
     next.page_state = "LOCKED";
     next.values["ASSET-01-FLD-TASK-STATUS"] = "LOCKED";
-    next.values["ASSET-01-TEST-LOCK-REF"] = lockRef;
     next.gate_state["ASSET-01-GATE-LOCK"] = false;
     next.gate_state["ASSET-01-GATE-HANDOFF"] = true;
     rememberControlledAssetProjection(next);
