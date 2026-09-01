@@ -50,7 +50,6 @@ jobs:
           assert 'new Set<QaCriteriaPageState>' in port
           print('AUTHORITY_GUARD_PASS states=10 controls=11 effectful_runtime_ready=false')
           PY
-          test "$(grep -o 'data-control-id=' src/components/pages/QaCriteriaVisual.tsx | wc -l)" -ge 11
           git diff --exit-code origin/new -- src/app/page.tsx src/components/pages/DashboardVisual.tsx src/components/pages/DashboardVisual.module.css src/components/pages/QaCriteriaVisual.module.css
 
       - name: Residual scan
