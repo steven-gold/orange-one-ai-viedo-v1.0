@@ -12,7 +12,7 @@ export const AIAPI_TEXT = {
   noData: { "zh-TW": "目前沒有可顯示的真實資料", "zh-CN": "目前没有可显示的真实数据", en: "No real data is available to display" },
   remapBlocked: { "zh-TW": "目前 Control / Permission / Navigation remap 尚未完成；effectful runtime 維持阻擋。", "zh-CN": "当前 Control / Permission / Navigation remap 尚未完成；effectful runtime 维持阻挡。", en: "Control / Permission / Navigation remap is not complete; effectful runtime remains blocked." },
   loading: { "zh-TW": "正在讀取受治理的 AI API 投影", "zh-CN": "正在读取受治理的 AI API 投影", en: "Loading the governed AI API projection" },
-  projectionBound: { "zh-TW": "已接上 getUiProjection 讀取路徑", "zh-CN": "已接入 getUiProjection 读取路径", en: "getUiProjection read path is bound" },
+  projectionBound: { "zh-TW": "getUiProjection 已回傳受治理投影；不代表 remap 已完成", "zh-CN": "getUiProjection 已返回受治理投影；不代表 remap 已完成", en: "getUiProjection returned a governed projection; this does not mean remap is complete" },
   effectfulBlocked: { "zh-TW": "寫入／測試操作尚無 Current exact HTTP binding，依 Authority 維持阻擋。", "zh-CN": "写入／测试操作尚无 Current exact HTTP binding，依 Authority 保持阻挡。", en: "Effectful write/test operations have no Current exact HTTP binding and remain blocked by Authority." },
   correlation: { "zh-TW": "關聯 ID", "zh-CN": "关联 ID", en: "Correlation ID" },
   professional: { "zh-TW": "API 功能專業說明", "zh-CN": "API 功能专业说明", en: "API Professional Description" },
