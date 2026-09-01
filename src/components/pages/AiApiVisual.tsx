@@ -55,7 +55,7 @@ export function AiApiVisual() {
     ? t("loading")
     : runtimeError
       ? `${runtimeError} · ${t("effectfulBlocked")}`
-      : `${projection?.page_state ?? "READ_ONLY"} · ${t("projectionBound")}`;
+      : `${projection?.page_state ?? "READ_ONLY"} · ${t("projectionBound")} · ${t("remapBlocked")}`;
 
   const renderMain = () => {
     if (activeView === "overview") return (
@@ -97,7 +97,7 @@ export function AiApiVisual() {
 
   const providerSplit = activeView === "provider";
   return (
-    <div className={styles.page} data-page-uid="admin:AIAPI-01" data-vis-step="VIS-15" data-route-status="RESOLVED_CURRENT_ADMIN_ROUTE" data-page-state={pageState} data-current-ui-binding-status="READ_PROJECTION_BOUND_EFFECTFUL_REMAP_BLOCKED">
+    <div className={styles.page} data-page-uid="admin:AIAPI-01" data-vis-step="VIS-15" data-route-status="RESOLVED_CURRENT_ADMIN_ROUTE" data-page-state={pageState} data-current-ui-binding-status="REMAP_REQUIRED_NOT_EXECUTED">
       <section className={styles.contextBar}>
         <div className={styles.identity}><div className={styles.eyebrow}>AIAPI-01 · {t("pageName")}</div><h1>{t("pageName")}</h1><p>{t("pageRole")}</p></div>
         <div className={styles.status} data-operation-id="getUiProjection"><strong>{statusText}</strong><span>{t("correlation")}: {correlationId ?? "—"}</span></div>
