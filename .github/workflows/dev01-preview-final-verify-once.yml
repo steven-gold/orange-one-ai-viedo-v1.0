@@ -1,0 +1,115 @@
+name: DEV-01 preview final verify once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/dev01-preview-final-verify-once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout source for browser tooling
+        uses: actions/checkout@v4
+        with:
+          ref: new
+          path: source
+      - name: Checkout final preview
+        uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+          path: previewrepo
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: source/package-lock.json
+      - name: Verify exact preview and unified URLs
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED=a6e50691f5b084378b6005c45e188d17c833aacb
+          test "$(git -C previewrepo rev-parse HEAD)" = "$EXPECTED"
+          test -f previewrepo/preview/dev.html
+          test -f previewrepo/preview/dev01-assets/_next/static/chunks/2-yi9nccot1u4.css
+          test -f previewrepo/preview/dev01-assets/_next/static/chunks/0837kap0r0242.css
+          test "$(find previewrepo/preview/dev01-assets -type f | wc -l | tr -d ' ')" = 2
+          if find previewrepo/preview/dev01-assets -type f ! -name '*.css' | grep -q .; then exit 1; fi
+          BASE="https://rawcdn.githack.com/steven-gold/orange-one-ai-viedo-v1.0/${EXPECTED}/preview"
+          pages=(index.html core.html assets.html video.html edit.html qa.html db.html strategy.html info.html system.html accounts.html dev.html social.html erp.html aiapi.html qa-criteria.html strategy-admin.html knowledge-admin.html)
+          test "${#pages[@]}" = 18
+          for p in "${pages[@]}"; do
+            code=$(curl -L --retry 4 --retry-delay 2 --connect-timeout 20 --max-time 60 -sS -o "/tmp/$p" -w '%{http_code}' "$BASE/$p")
+            echo "DEV01_UNIFIED_URL $p HTTP $code"
+            test "$code" = 200
+            test -s "/tmp/$p"
+          done
+          grep -q 'data-dev01-preview-mode="SEALED_STATIC_FAIL_CLOSED"' /tmp/dev.html
+          grep -q 'data-page-state="ERROR"' /tmp/dev.html
+          grep -q 'data-projection-status="BLOCKED"' /tmp/dev.html
+          grep -q 'data-projection-reason="UI_PROJECTION_RUNTIME_NOT_BOUND"' /tmp/dev.html
+          grep -q 'data-runtime-error-uid="DEV-01-ERR-UNDEFINED"' /tmp/dev.html
+          ! grep -q '<script' /tmp/dev.html
+          echo DEV01_UNIFIED_18_URLS_PASS
+      - name: Install isolated browser tooling
+        working-directory: source
+        run: |
+          npm ci
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+          test -z "$(git status --porcelain package.json package-lock.json)"
+      - name: Validate exact final DEV-01 preview in Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd previewrepo/preview
+          python3 -m http.server 4175 > /tmp/dev01-final-static.log 2>&1 &
+          static_pid=$!
+          trap 'kill $static_pid || true; cat /tmp/dev01-final-static.log || true' EXIT
+          for i in $(seq 1 30); do if curl -fsS http://127.0.0.1:4175/dev.html >/dev/null; then break; fi; sleep 1; done
+          cd ../../source
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          const assert=require('assert');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1280,height:900}});
+            const errors=[]; const failed=[]; const runtime=[]; const scripts=[];
+            page.on('pageerror',e=>errors.push(String(e)));
+            page.on('requestfailed',r=>failed.push(`${r.method()} ${r.url()} ${r.failure()?.errorText||''}`));
+            page.on('request',r=>{const u=new URL(r.url());if(u.pathname.startsWith('/v1/'))runtime.push(`${r.method()} ${u.pathname}`);if(r.resourceType()==='script')scripts.push(u.pathname);});
+            await page.goto('http://127.0.0.1:4175/dev.html',{waitUntil:'networkidle'});
+            const root=page.locator('[data-page-uid="admin:DEV-01"]');
+            await root.waitFor({state:'attached',timeout:15000});
+            assert.equal(await page.locator('html').getAttribute('data-dev01-preview-mode'),'SEALED_STATIC_FAIL_CLOSED');
+            const expected={
+              'data-authority-status':'FINAL_LOCKED','data-authority-sections':'9','data-authority-components':'15','data-authority-controls':'22',
+              'data-authority-actions':'22','data-authority-gates':'15','data-authority-errors':'12','data-implementation-status':'NOT_EXECUTED',
+              'data-single-page-workflow':'true','data-control-registry-valid':'true','data-page-state':'ERROR','data-projection-status':'BLOCKED',
+              'data-projection-reason':'UI_PROJECTION_RUNTIME_NOT_BOUND','data-runtime-error-uid':'DEV-01-ERR-UNDEFINED',
+              'data-projection-adapter-ready':'false','data-command-adapter-ready':'false','data-effectful-runtime-ready':'false','data-page-gate-ready':'false','data-active-stage':'discovery'
+            };
+            for(const [k,v] of Object.entries(expected)) assert.equal(await root.getAttribute(k),v,k);
+            assert.equal(await page.locator('[data-control-id^="DEV-01-"]').count(),6);
+            for(const id of ['DEV-01-BTN-STAGE-1','DEV-01-BTN-STAGE-2','DEV-01-BTN-STAGE-3','DEV-01-BTN-STAGE-4','DEV-01-BTN-STAGE-5','DEV-01-BTN-DISCOVERY-START']) assert.equal(await page.locator(`[data-control-id="${id}"]`).isDisabled(),true,id);
+            assert.equal(await page.locator('script').count(),0);
+            assert.deepEqual(runtime,[]);
+            assert.deepEqual(scripts,[]);
+            assert.equal(await page.locator('[data-nav-id="ADMIN-NAV-03"]').getAttribute('href'),'dev.html');
+            for(const width of [1280,1440,1920]){
+              await page.setViewportSize({width,height:900});
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+              console.log('DEV01_FINAL_WIDTH',width,'OVERFLOW',overflow);
+              assert(overflow<=0,`overflow ${width}: ${overflow}`);
+            }
+            assert.deepEqual(errors,[]);
+            assert.deepEqual(failed,[]);
+            console.log('DEV01_FINAL_SEALED_PREVIEW_PASS');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
