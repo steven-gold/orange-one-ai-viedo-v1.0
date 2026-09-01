@@ -25,6 +25,12 @@
 .feedbackGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .statusGrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;align-items:end}
 .boundaryNote{margin-top:var(--inner-gap);padding:12px;border:1px solid var(--border-subtle);border-radius:var(--button-radius);background:var(--surface-input);color:var(--text-muted);font-size:12px;line-height:1.5}
+.drawerLayer{position:fixed;inset:58px 0 0;z-index:80;pointer-events:none}
+.auditDrawer{position:absolute;top:16px;right:16px;width:520px;max-width:calc(100vw - 32px);max-height:calc(100vh - 90px);overflow:auto;pointer-events:auto;padding:var(--content-padding);border:1px solid var(--border-normal);border-radius:var(--panel-radius);background:var(--surface-popup);box-shadow:0 0 28px var(--purple-glow);color:var(--text-primary);outline:none}
+.auditDrawer:focus-visible{outline:2px solid var(--border-active);outline-offset:2px}
+.auditDrawerTitle{font-size:14px;font-weight:720;line-height:1.2;margin-bottom:var(--inner-gap)}
+.auditDrawerGrid{display:grid;gap:8px}
+.auditDrawerRow{display:grid;gap:6px}.auditDrawerRow span{color:var(--text-muted);font-size:10px;line-height:1.2}.auditDrawerRow strong{min-height:var(--control-height);display:flex;align-items:center;padding:8px 10px;border:1px solid var(--border-subtle);border-radius:var(--button-radius);background:var(--surface-input);color:var(--text-secondary);font-size:12px;font-weight:600;overflow-wrap:anywhere}
 @media(max-width:1599px){.primaryGrid{grid-template-columns:minmax(280px,1fr) minmax(0,3fr) minmax(320px,1.12fr)}}
 @media(max-width:1279px){.primaryGrid{grid-template-columns:minmax(280px,1fr) minmax(720px,3fr) minmax(320px,1.12fr)}}
 @media(prefers-reduced-motion:reduce){.page *{transition:none!important}}
