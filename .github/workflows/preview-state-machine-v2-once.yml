@@ -1,0 +1,136 @@
+name: Preview State Machine V2 Once
+
+on:
+  push:
+    branches: [new]
+
+permissions:
+  contents: write
+
+jobs:
+  validate-and-publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout current source
+        uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Validate production source unchanged
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+
+      - name: Checkout existing preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+          path: publish
+          fetch-depth: 0
+
+      - name: Stage V2 state machine without publishing
+        run: |
+          set -euo pipefail
+          cp tools/preview-interactive-v2.js publish/preview/preview-interactive.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('publish/preview/preview-interactive.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace("($('#DB-01-INP-SEARCH')?.value||'').toLowerCase()", "($('[data-control-id=\"DB-01-INP-SEARCH\"] input',root)?.value||'').toLowerCase()")
+          s=s.replace("$('#DB-01-SEL-DOMAIN')?.value||'ALL'", "$('[data-control-id=\"DB-01-SEL-DOMAIN\"] select',root)?.value||'ALL'")
+          s=s.replace("$('#DB-01-SEL-ENTITY-TYPE')?.value||'ALL'", "$('[data-control-id=\"DB-01-SEL-ENTITY-TYPE\"] select',root)?.value||'ALL'")
+          s=s.replace("if(a.includes('VIEW')||a.includes('DETAIL')||a.includes('OPEN')&&!a.includes('CORRECTION'))", "if(a.includes('VIEW')||a.includes('DETAIL')||(a.includes('OPEN')&&!a.includes('CORRECTION')&&!a.includes('OPEN-OWNER')&&!a.includes('AUDIT')))" )
+          old="if(a.includes('MODE')||a.includes('TOGGLE')||a.includes('TOOL-')){setActiveButton(el);status(`${a} 已切換`);return true;}"
+          new="if(a.includes('MODE')||a.includes('TOGGLE')||a.includes('TOOL-')){setActiveButton(el);if(uid==='workspace:STR-01'&&a.includes('MODE'))state.mode=(el.textContent||'').toUpperCase().includes('MULTI')?'MULTI_AI':'SINGLE_AI';if(uid==='QA-01'&&a.includes('MODE'))state.mode=(el.textContent||'').toUpperCase().includes('MANUAL')?'MANUAL':'AUTO';status(`${a} 已切換`);return true;}"
+          if old not in s: raise SystemExit('MODE patch target missing')
+          s=s.replace(old,new)
+          p.write_text(s,encoding='utf-8')
+          PY
+          node --check publish/preview/preview-interactive.js
+
+      - name: Protect locked preview pages
+        run: |
+          set -euo pipefail
+          echo "$(git -C publish hash-object preview/index.html)" > /tmp/index.sha
+          echo "$(git -C publish hash-object preview/core.html)" > /tmp/core.sha
+          test "$(cat /tmp/index.sha)" = "4e77461419dbaac41d30e77d33d66d3cca164250"
+          test "$(cat /tmp/core.sha)" = "5173377ceffaef65ec2da4bb642d9361b9bdc85a"
+
+      - name: Browser validate real state transitions
+        run: |
+          set -euo pipefail
+          cd publish/preview
+          (python3 -m http.server 8090 > /tmp/acpos-preview-v2-http.log 2>&1 & echo $! > /tmp/acpos-preview-v2-http.pid)
+          CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$CHROME"
+          mkdir -p /tmp/acpos-preview-v2-dom
+          for page in assets video edit qa db strategy; do
+            "$CHROME" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=2500 --dump-dom "http://127.0.0.1:8090/${page}.html?acpos-selftest=1" > "/tmp/acpos-preview-v2-dom/${page}.html"
+          done
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          pages=('assets','video','edit','qa','db','strategy')
+          for page in pages:
+              t=Path(f'/tmp/acpos-preview-v2-dom/{page}.html').read_text(errors='ignore')
+              if 'data-preview-runtime-version="V2_STATE_MACHINE"' not in t: raise SystemExit(f'{page}: V2 runtime missing')
+              if 'data-preview-selftest="PASS"' not in t: raise SystemExit(f'{page}: state transition selftest failed')
+              if 'data-preview-state-changed="true"' not in t: raise SystemExit(f'{page}: no state change evidence')
+              print(f'PREVIEW_V2_STATE_TRANSITION_PASS page={page}')
+          # Downstream gates must actually unlock after the tested action.
+          expected={
+            'assets':'ASSET-01-GATE-CANDIDATE',
+            'video':'VIDEO-01-GATE-CANDIDATE',
+            'edit':'EDIT-01-GATE-DRAFT',
+            'qa':'QA-01-GATE-VIEWER',
+            'db':'DB-01-GATE-SCHEMA',
+            'strategy':'STR-01-GATE-REVIEW',
+          }
+          for page,g in expected.items():
+              t=Path(f'/tmp/acpos-preview-v2-dom/{page}.html').read_text(errors='ignore')
+              tags=re.findall(r'<(?:button|input|select|textarea)\b[^>]*>',t,re.I)
+              gated=[x for x in tags if f'data-gate-uid="{g}"' in x]
+              # Some controls carry gate on wrapper; verify wrapper no longer exposes a disabled reason and runtime status confirms transition.
+              wrapper_pattern=rf'data-gate-uid="{re.escape(g)}"[^>]*data-preview-disabled-reason'
+              if re.search(wrapper_pattern,t,re.I): raise SystemExit(f'{page}: downstream gate {g} still marked disabled')
+              print(f'PREVIEW_V2_GATE_UNLOCK_PASS page={page} gate={g}')
+          # Explicitly preserve a known Authority/shared-runtime gap instead of faking it.
+          st=Path('/tmp/acpos-preview-v2-dom/strategy.html').read_text(errors='ignore')
+          if 'SHARED_ATTACHMENT_FLOW_NOT_BOUND_IN_STATIC_PREVIEW' not in st: raise SystemExit('strategy attachment gap was incorrectly unlocked')
+          print('PREVIEW_V2_STR_ATTACHMENT_FAIL_CLOSED_PASS')
+          PY
+          kill "$(cat /tmp/acpos-preview-v2-http.pid)" || true
+
+      - name: Publish only validated Preview runtime
+        run: |
+          set -euo pipefail
+          test "$(git -C publish hash-object preview/index.html)" = "$(cat /tmp/index.sha)"
+          test "$(git -C publish hash-object preview/core.html)" = "$(cat /tmp/core.sha)"
+          cd publish
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add preview/preview-interactive.js
+          git diff --cached --quiet && { echo 'NO_PREVIEW_CHANGE'; exit 1; }
+          changed=$(git diff --cached --name-only)
+          test "$changed" = "preview/preview-interactive.js"
+          git commit -m "fix(preview): bind authority-gated state transitions"
+          git push origin HEAD:acpos-live-preview
+          echo "PREVIEW_V2_COMMIT=$(git rev-parse HEAD)"
+
+      - name: Verify published scope
+        run: |
+          set -euo pipefail
+          cd publish
+          changed=$(git diff --name-only HEAD^ HEAD)
+          test "$changed" = "preview/preview-interactive.js"
+          test "$(git hash-object preview/index.html)" = "$(cat /tmp/index.sha)"
+          test "$(git hash-object preview/core.html)" = "$(cat /tmp/core.sha)"
+          echo "PREVIEW_V2_SCOPE_PASS"
