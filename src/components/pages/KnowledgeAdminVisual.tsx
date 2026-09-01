@@ -1,19 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getKnowledgeActionTrace, readKnowledgeProjection, type KnowledgeProjection } from "@/domain/knowledge/knowledgeRuntimePort";
 import { useI18n } from "@/i18n/LocaleProvider";
-import {
-  knowledgeControlLabel,
-  knowledgeText,
-  knowledgeViewLabel,
-  type KnowledgeViewKey,
-} from "@/i18n/knowledgeAdminCatalog";
+import { knowledgeControlLabel, knowledgeText, knowledgeViewLabel, type KnowledgeViewKey } from "@/i18n/knowledgeAdminCatalog";
 import styles from "./KnowledgeAdminVisual.module.css";
 
 type FieldGroup = { section: number; component: string; object: string; fields: readonly string[] };
 type ComponentSpec = { suffix: string; name: string };
 type SectionSpec = { section: number; name: string; view: KnowledgeViewKey | "global"; components: readonly ComponentSpec[] };
-type ControlSpec = { uid: string; suffix: string; view: KnowledgeViewKey | "global"; action?: string; gate?: string; permission: string; visible: "always" | "view" | "sourceSelected" | "sourceActive" | "sourcePaused" | "retry" | "resultSelected" | "contextItem" | "experienceSelected" | "comparable" | "outcomeComplete" | "draftEditable" | "previousVersion" | "draftReview" };
+type VisibilityRule = "always" | "view" | "sourceSelected" | "sourceActive" | "sourcePaused" | "retry" | "resultSelected" | "contextItem" | "experienceSelected" | "comparable" | "outcomeComplete" | "draftEditable" | "previousVersion" | "draftReview";
+type ControlSpec = { uid: string; suffix: string; view: KnowledgeViewKey | "global"; action?: string; gate?: string; permission: string; visible: VisibilityRule };
 
 const VIEWS: readonly { key: KnowledgeViewKey; uid: string; sections: readonly number[] }[] = [
   { key: "overview", uid: "KB-01-VIEW-OVERVIEW", sections: [2, 16] },
@@ -90,160 +87,109 @@ const CONTROLS: readonly ControlSpec[] = [
 ] as const;
 
 const FIELD_COUNT = FIELD_GROUPS.reduce((sum, group) => sum + group.fields.length, 0);
+const EFFECTFUL_RUNTIME_READY = false;
 
-function fieldsFor(section: number, component: string) {
-  return FIELD_GROUPS.filter((group) => group.section === section && group.component === component);
-}
-
-function isVisible(control: ControlSpec, active: KnowledgeViewKey) {
+function fieldsFor(section: number, component: string) { return FIELD_GROUPS.filter((group) => group.section === section && group.component === component); }
+function projectionValue(projection: KnowledgeProjection | null, suffix: string) { return projection?.values[`KB-01-FLD-${suffix}`] ?? projection?.values[suffix] ?? "—"; }
+function hasProjectionValue(projection: KnowledgeProjection | null, suffix: string) { const value = projectionValue(projection, suffix); return value !== "—" && value.trim() !== ""; }
+function isVisible(control: ControlSpec, active: KnowledgeViewKey, projection: KnowledgeProjection | null) {
   if (control.visible === "always") return true;
   if (control.visible === "view") return control.view === active;
+  if (control.view !== active) return false;
+  if (control.visible === "sourceSelected") return hasProjectionValue(projection, "SOURCE-ID");
+  if (control.visible === "sourceActive") return projectionValue(projection, "SOURCE-STATUS") === "ACTIVE";
+  if (control.visible === "sourcePaused") return projectionValue(projection, "SOURCE-STATUS") === "PAUSED";
+  if (control.visible === "retry") return projectionValue(projection, "RUN-STATUS") === "RETRY_ELIGIBLE" || projectionValue(projection, "RUN-RETRY") === "true";
+  if (control.visible === "resultSelected") return hasProjectionValue(projection, "RESULT-ID");
+  if (control.visible === "contextItem") return hasProjectionValue(projection, "CTX-CAND-ITEMS");
+  if (control.visible === "experienceSelected") return hasProjectionValue(projection, "EXP-ID");
+  if (control.visible === "comparable") return projection?.control_enabled[control.uid] === true;
+  if (control.visible === "outcomeComplete") return projectionValue(projection, "EXP-STATE") === "OUTCOME_COMPLETE";
+  if (control.visible === "draftEditable") return projectionValue(projection, "KN-STATE") === "DRAFT";
+  if (control.visible === "previousVersion") return hasProjectionValue(projection, "REV-PREV");
+  if (control.visible === "draftReview") return projectionValue(projection, "KN-STATE") === "REVIEW";
   return false;
 }
 
 export function KnowledgeAdminVisual() {
   const { locale } = useI18n();
   const [active, setActive] = useState<KnowledgeViewKey>("overview");
-  const activeView = VIEWS.find((view) => view.key === active) || VIEWS[0];
+  const [projection, setProjection] = useState<KnowledgeProjection | null>(null);
+  const [runtimeError, setRuntimeError] = useState<string | null>(null);
+  const [correlationId, setCorrelationId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void readKnowledgeProjection(controller.signal).then((result) => {
+      setCorrelationId(result.correlation_id);
+      if (result.ok) { setProjection(result.projection); setRuntimeError(null); }
+      else { setProjection(null); setRuntimeError(result.reason_code); }
+      setLoading(false);
+    });
+    return () => controller.abort();
+  }, []);
+
+  const activeView = VIEWS.find((view) => view.key === active) ?? VIEWS[0];
   const activeSections = useMemo(() => SECTIONS.filter((section) => section.view === active || (section.view === "global" && section.section === 16)), [active]);
-  const visibleControls = CONTROLS.filter((control) => control.action && isVisible(control, active));
+  const visibleControls = CONTROLS.filter((control) => control.action && isVisible(control, active, projection));
+  const pageState = loading ? "LOADING" : runtimeError ? "ERROR" : projection?.page_state ?? "READ_ONLY";
+  const blockedReason = loading ? "PROJECTION_LOADING" : runtimeError ?? "RUNTIME_NOT_EXECUTED";
+  const fieldValue = (suffix: string) => projectionValue(projection, suffix);
+
+  const actionButton = (control: ControlSpec) => {
+    const trace = getKnowledgeActionTrace(control.action);
+    const projectionEnabled = projection?.control_enabled[control.uid] === true;
+    const disabled = !EFFECTFUL_RUNTIME_READY || !projectionEnabled;
+    return (
+      <button key={control.uid} type="button" data-control-uid={control.uid} data-action-id={control.action} data-gate-uid={control.gate} data-permission={control.permission}
+        data-action-owner={trace?.owner ?? "UNRESOLVED"} data-action-operation={trace?.operation ?? "UNRESOLVED"} data-action-method={trace?.method ?? "UNRESOLVED"}
+        data-action-path={trace?.path ?? "UNRESOLVED"} data-action-errors={trace?.errors.join(",") ?? "UNRESOLVED"} data-audit-event={trace?.audit_event ?? "UNRESOLVED"}
+        data-runtime-binding="NOT_EXECUTED" data-required-context={control.visible} data-required-permission={control.permission} data-current-state={pageState}
+        data-blocked-reason={disabled ? blockedReason : ""} data-control-enabled-from-projection={String(projectionEnabled)} disabled={disabled}>
+        <span>{knowledgeControlLabel(locale, control.suffix)}</span><small>{control.action}</small>
+      </button>
+    );
+  };
 
   return (
-    <div
-      className={styles.page}
-      data-page-uid="admin:KB-01"
-      data-vis-step="VIS-18"
-      data-page-model="SINGLE_PAGE_5_VIEW"
-      data-section-registry-count={SECTIONS.length}
-      data-component-registry-count={SECTIONS.reduce((sum, section) => sum + section.components.length, 0)}
-      data-field-registry-count={FIELD_COUNT}
-      data-control-registry-count={CONTROLS.length}
-      data-effectful-runtime-ready="false"
-      data-page-state="VISUAL_ONLY_REAL_DATA_EMPTY"
-    >
+    <div className={styles.page} data-page-uid="admin:KB-01" data-vis-step="VIS-18" data-page-model="SINGLE_PAGE_5_VIEW"
+      data-section-registry-count={SECTIONS.length} data-component-registry-count={SECTIONS.reduce((sum, section) => sum + section.components.length, 0)}
+      data-field-registry-count={FIELD_COUNT} data-control-registry-count={CONTROLS.length} data-action-registry-count="21"
+      data-effectful-runtime-ready={String(EFFECTFUL_RUNTIME_READY)} data-page-state={pageState} data-projection-status={loading ? "LOADING" : runtimeError ? "BLOCKED" : "BOUND"}>
       <section className={styles.contextBar} data-section-uid="KB-01-SEC-01">
         <div className={styles.identity} data-component-uid="KB-01-CMP-CONTEXT">
-          <div className={styles.eyebrow}>ADMIN · KB-01 · KNOWLEDGE & EXPERIENCE GOVERNANCE</div>
-          <h1>{knowledgeText(locale, "pageName")}</h1>
-          <p>{knowledgeText(locale, "pageRole")}</p>
-          <div className={styles.contextMeta}>
-            <span data-field-uid="KB-01-FLD-PAGE-TITLE">KB-01</span>
-            <span data-field-uid="KB-01-FLD-ACTIVE-VIEW">{activeView.uid}</span>
-            <span data-field-uid="KB-01-FLD-SCOPE">{knowledgeText(locale, "authorizedScope")}: —</span>
-          </div>
+          <div className={styles.eyebrow}>ADMIN · KB-01 · KNOWLEDGE & EXPERIENCE GOVERNANCE</div><h1>{knowledgeText(locale, "pageName")}</h1><p>{knowledgeText(locale, "pageRole")}</p>
+          <div className={styles.contextMeta}><span data-field-uid="KB-01-FLD-PAGE-TITLE">KB-01</span><span data-field-uid="KB-01-FLD-ACTIVE-VIEW">{activeView.uid}</span><span data-field-uid="KB-01-FLD-SCOPE">{knowledgeText(locale, "authorizedScope")}: {fieldValue("SCOPE")}</span></div>
         </div>
-        <div className={styles.globalSearch} role="search">
-          <input aria-label={knowledgeControlLabel(locale, "SEARCH-GLOBAL")} placeholder={knowledgeControlLabel(locale, "SEARCH-GLOBAL")} disabled />
-          <button
-            type="button"
-            data-control-uid="KB-01-CTL-SEARCH-GLOBAL"
-            data-action-id="KB-01-ACT-SEARCH"
-            data-gate-uid="KB-01-GATE-READ"
-            disabled
-          >
-            {knowledgeControlLabel(locale, "SEARCH-GLOBAL")}
-          </button>
-        </div>
+        <div className={styles.globalSearch} role="search"><input aria-label={knowledgeControlLabel(locale, "SEARCH-GLOBAL")} placeholder={knowledgeControlLabel(locale, "SEARCH-GLOBAL")} disabled />{actionButton(CONTROLS.find((control) => control.uid === "KB-01-CTL-SEARCH-GLOBAL")!)}</div>
       </section>
 
       <nav className={styles.tabs} data-component-uid="KB-01-CMP-VIEW-TABS" aria-label={knowledgeText(locale, "currentView")}>
-        {VIEWS.map((view) => {
-          const selected = view.key === active;
-          const control = CONTROLS.find((item) => item.view === view.key && item.suffix.startsWith("VIEW-"));
-          return (
-            <button
-              key={view.uid}
-              type="button"
-              className={`${styles.tab} ${selected ? styles.tabActive : ""}`}
-              data-view-uid={view.uid}
-              data-control-uid={control?.uid}
-              aria-pressed={selected}
-              onClick={() => setActive(view.key)}
-            >
-              {knowledgeViewLabel(locale, view.key)}
-            </button>
-          );
-        })}
+        {VIEWS.map((view) => { const selected = view.key === active; const control = CONTROLS.find((item) => item.view === view.key && item.suffix.startsWith("VIEW-")); return <button key={view.uid} type="button" className={`${styles.tab} ${selected ? styles.tabActive : ""}`} data-view-uid={view.uid} data-control-uid={control?.uid} aria-pressed={selected} onClick={() => setActive(view.key)}>{knowledgeViewLabel(locale, view.key)}</button>; })}
       </nav>
 
-      <section className={styles.kpis} aria-label={`${knowledgeViewLabel(locale, active)} Summary`}>
-        {["Source", "Ingestion", "Experience", "Review", "Approved Knowledge"].map((label) => (
-          <article className={styles.kpi} key={label}><span>{label}</span><strong>—</strong></article>
-        ))}
-      </section>
+      <section className={styles.kpis} aria-label={`${knowledgeViewLabel(locale, active)} Summary`}>{["Source", "Ingestion", "Experience", "Review", "Approved Knowledge"].map((label) => <article className={styles.kpi} key={label}><span>{label}</span><strong>{projection?.values[label] ?? "—"}</strong></article>)}</section>
 
       <div className={styles.workspace} data-current-view={activeView.uid}>
         <main className={styles.sectionStack}>
-          {activeSections.map((section) => (
-            <section key={section.section} className={styles.sectionCard} data-section-uid={`KB-01-SEC-${String(section.section).padStart(2, "0")}`}>
-              <div className={styles.sectionHead}>
-                <div><span>S:{String(section.section).padStart(2, "0")}</span><h2>{section.name}</h2></div>
-                <span className={styles.emptyState}>{knowledgeText(locale, "noData")}</span>
-              </div>
-              <div className={styles.componentGrid}>
-                {section.components.map((component) => {
-                  const groups = fieldsFor(section.section, component.suffix);
-                  return (
-                    <article key={component.suffix} className={styles.component} data-component-uid={`KB-01-CMP-${component.suffix}`}>
-                      <div className={styles.componentHead}><strong>{component.name}</strong><span>{groups.reduce((sum, group) => sum + group.fields.length, 0)} fields</span></div>
-                      {groups.length === 0 ? (
-                        <div className={styles.noProjection}>—</div>
-                      ) : groups.map((group) => (
-                        <div key={group.object} className={styles.fieldGroup}>
-                          <div className={styles.objectName}>{group.object}</div>
-                          <div className={styles.fieldGrid}>
-                            {group.fields.map((field) => (
-                              <div className={styles.field} key={field} data-field-uid={`KB-01-FLD-${field}`}>
-                                <span>{field}</span><strong>—</strong>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
+          {activeSections.map((section) => <section key={section.section} className={styles.sectionCard} data-section-uid={`KB-01-SEC-${String(section.section).padStart(2, "0")}`}>
+            <div className={styles.sectionHead}><div><span>S:{String(section.section).padStart(2, "0")}</span><h2>{section.name}</h2></div><span className={styles.emptyState}>{projection ? pageState : runtimeError ?? knowledgeText(locale, "noData")}</span></div>
+            <div className={styles.componentGrid}>{section.components.map((component) => { const groups = fieldsFor(section.section, component.suffix); return <article key={component.suffix} className={styles.component} data-component-uid={`KB-01-CMP-${component.suffix}`}>
+              <div className={styles.componentHead}><strong>{component.name}</strong><span>{groups.reduce((sum, group) => sum + group.fields.length, 0)} fields</span></div>
+              {groups.length === 0 ? <div className={styles.noProjection}>—</div> : groups.map((group) => <div key={group.object} className={styles.fieldGroup}><div className={styles.objectName}>{group.object}</div><div className={styles.fieldGrid}>{group.fields.map((field) => <div className={styles.field} key={field} data-field-uid={`KB-01-FLD-${field}`}><span>{field}</span><strong>{fieldValue(field)}</strong></div>)}</div></div>)}
+            </article>; })}</div>
+          </section>)}
         </main>
 
         <aside className={styles.rail}>
-          <section className={styles.railCard}>
-            <h2>{knowledgeText(locale, "controls")}</h2>
-            <p>{knowledgeText(locale, "runtimeBlocked")}</p>
-            <div className={styles.actionList}>
-              {visibleControls.map((control) => (
-                <button
-                  key={control.uid}
-                  type="button"
-                  data-control-uid={control.uid}
-                  data-action-id={control.action}
-                  data-gate-uid={control.gate}
-                  data-permission={control.permission}
-                  disabled
-                >
-                  <span>{knowledgeControlLabel(locale, control.suffix)}</span>
-                  <small>{control.action}</small>
-                </button>
-              ))}
-            </div>
-            <div className={styles.registryNote}>27 Controls · 21 Actions · 17 Gates · 14 Errors</div>
-          </section>
-
-          <section className={styles.railCard} data-section-uid="KB-01-SEC-16" data-component-uid="KB-01-CMP-STATUS">
-            <h2>{knowledgeText(locale, "status")}</h2>
-            <dl className={styles.statusList}>
-              <div><dt>Authority</dt><dd>FINAL_LOCKED</dd></div>
-              <div><dt>Application</dt><dd>NOT_EXECUTED</dd></div>
-              <div><dt>API / DB</dt><dd>NOT_EXECUTED</dd></div>
-              <div><dt>Crawler / E2E</dt><dd>NOT_EXECUTED</dd></div>
-              <div><dt>Deploy</dt><dd>NOT_EXECUTED</dd></div>
-            </dl>
-          </section>
+          <section className={styles.railCard}><h2>{knowledgeText(locale, "controls")}</h2><p>{knowledgeText(locale, "runtimeBlocked")}</p><div className={styles.actionList}>{visibleControls.filter((control) => control.uid !== "KB-01-CTL-SEARCH-GLOBAL").map(actionButton)}</div><div className={styles.registryNote}>27 Controls · 21 Actions · 17 Gates · 14 Errors</div></section>
+          <section className={styles.railCard} data-section-uid="KB-01-SEC-16" data-component-uid="KB-01-CMP-STATUS"><h2>{knowledgeText(locale, "status")}</h2><dl className={styles.statusList}>
+            <div><dt>Authority</dt><dd>FINAL_LOCKED</dd></div><div><dt>Application</dt><dd>NOT_EXECUTED</dd></div><div><dt>API / DB</dt><dd>NOT_EXECUTED</dd></div><div><dt>Crawler / E2E</dt><dd>NOT_EXECUTED</dd></div><div><dt>Deploy</dt><dd>NOT_EXECUTED</dd></div>
+            <div><dt>Projection</dt><dd>{loading ? "LOADING" : runtimeError ?? "BOUND"}</dd></div><div><dt>Correlation</dt><dd>{correlationId ?? "—"}</dd></div><div><dt>State / Disabled Reason</dt><dd>{pageState} / {blockedReason}</dd></div><div><dt>Audit</dt><dd>—</dd></div>
+          </dl></section>
         </aside>
       </div>
-
       <footer className={styles.truthBar}>{knowledgeText(locale, "realDataOnly")}</footer>
     </div>
   );
