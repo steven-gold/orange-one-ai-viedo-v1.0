@@ -44,6 +44,8 @@ jobs:
           from pathlib import Path
           p=Path('publish/preview/preview-interactive.js')
           s=p.read_text(encoding='utf-8')
+          s=s.replace('"DB-01":[','"admin:DB-01":[')
+          s=s.replace("uid==='DB-01'","uid==='admin:DB-01'")
           s=s.replace("($('#DB-01-INP-SEARCH')?.value||'').toLowerCase()", "($('[data-control-id=\"DB-01-INP-SEARCH\"] input',root)?.value||'').toLowerCase()")
           s=s.replace("$('#DB-01-SEL-DOMAIN')?.value||'ALL'", "$('[data-control-id=\"DB-01-SEL-DOMAIN\"] select',root)?.value||'ALL'")
           s=s.replace("$('#DB-01-SEL-ENTITY-TYPE')?.value||'ALL'", "$('[data-control-id=\"DB-01-SEL-ENTITY-TYPE\"] select',root)?.value||'ALL'")
@@ -84,14 +86,17 @@ jobs:
           import re
           from pathlib import Path
           pages=('assets','video','edit','qa','db','strategy')
+          expected_uid={'assets':'ASSET-01','video':'VIDEO-01','edit':'EDIT-01','qa':'QA-01','db':'admin:DB-01','strategy':'workspace:STR-01'}
           for page in pages:
               t=Path(f'/tmp/acpos-preview-v2-dom/{page}.html').read_text(errors='ignore')
+              uid=expected_uid[page]
+              if f'data-page-uid="{uid}"' not in t: raise SystemExit(f'{page}: unexpected Page UID, expected {uid}')
               if 'data-preview-runtime-version="V2_STATE_MACHINE"' not in t: raise SystemExit(f'{page}: V2 runtime missing')
               if 'data-preview-selftest="PASS"' not in t:
                   m=re.search(r'data-preview-selftest-error="([^"]*)"',t)
                   raise SystemExit(f'{page}: state transition selftest failed: {m.group(1) if m else "no error marker"}')
               if 'data-preview-state-changed="true"' not in t: raise SystemExit(f'{page}: no state change evidence')
-              print(f'PREVIEW_V2_STATE_TRANSITION_PASS page={page}')
+              print(f'PREVIEW_V2_STATE_TRANSITION_PASS page={page} uid={uid}')
           expected={
             'assets':'ASSET-01-GATE-CANDIDATE',
             'video':'VIDEO-01-GATE-CANDIDATE',
