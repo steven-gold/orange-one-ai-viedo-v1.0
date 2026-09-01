@@ -7,10 +7,10 @@ export type ControlledTestMetadata = {
   production_eligible: false;
 };
 
-const TEST_MODE_DISABLED_VALUE = "PRODUCTION";
+const CONTROLLED_TEST_MODE_VALUE = "CONTROLLED_TEST";
 
 export function isControlledTestMode(): boolean {
-  return process.env.NEXT_PUBLIC_ACPOS_RUNTIME_MODE !== TEST_MODE_DISABLED_VALUE;
+  return process.env.NEXT_PUBLIC_ACPOS_RUNTIME_MODE === CONTROLLED_TEST_MODE_VALUE;
 }
 
 function randomToken(): string {
