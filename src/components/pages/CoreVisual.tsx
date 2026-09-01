@@ -453,7 +453,7 @@ export function CoreVisual() {
         <ReadonlyField id="CORE-01-FLD-PAGE-MODE" labelKey="core01.control.page_mode" value={display("page_mode")} /><ReadonlyField id="CORE-01-FLD-NAMING-AUTHORITY" labelKey="core01.control.naming_authority" value="ACPOS_SYSTEM" />
       </div></section>
 
-      <div className={styles.primaryGrid} data-layout="CORE-01-PRIMARY-GRID">
+      <div className={styles.primaryGrid} data-layout="primary-grid">
         <aside className={styles.leftRail}><section className={styles.panel} data-section-id="CORE-01-SEC-02" data-visual-id="CORE-01-VIS-LEFT">
           <div data-component-uid="CORE-01-CMP-NAV"><SelectionList id="CORE-01-LST-WORK-ITEMS" labelKey="core01.control.work_items" value={clientState.work_item ?? ""} options={(projection?.work_items ?? []).map((item) => ({ value: item.work_item, label: item.label }))} onChange={selectWorkItem} /></div><div className={styles.divider} />
           <div data-component-uid="CORE-01-CMP-THREADS"><div className={styles.threadHeader}><PanelTitle labelKey="core01.group.conversation_threads" /><ActionButton id="CORE-01-BTN-NEW-THREAD" labelKey="core01.control.new_thread" compact disabled={isBusy} onClick={() => runControl("CORE-01-BTN-NEW-THREAD")} /></div><div className={styles.threadListScroll}><SelectionList id="CORE-01-LST-THREADS" labelKey="core01.control.threads" value={clientState.conversation_id ?? ""} options={(projection?.threads ?? []).map((item) => ({ value: item.conversation_id, label: item.label }))} onChange={selectThread} /></div></div>

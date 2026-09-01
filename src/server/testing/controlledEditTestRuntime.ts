@@ -5,7 +5,7 @@ import type { DepartmentOperationRequest } from "@/server/shared/departmentOpera
 import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 
 const TEST_METADATA = {
-  data_classification:"TEST_ONLY",synthetic:true,test_dataset_id:"TEST-EDIT-01",test_run_id:"TEST-RUN-EDIT-01-CONTROLLED",created_for_validation:true,production_eligible:false,
+  data_classification:"TEST_ONLY",synthetic:true,test_dataset_id:"TEST-EDIT-01",test_run_id:"TEST-RUN-EDIT-CONTROLLED-01",created_for_validation:true,production_eligible:false,
 } as const;
 const PROJECT_ID="TEST-EDIT-PROJECT-001";
 const TOPIC_ID="TEST-EDIT-TOPIC-001";
@@ -63,7 +63,6 @@ function values(){return{
   "EDIT-01-LBL-RENDER-JOB":state.job_ref??"—",
   "EDIT-01-LBL-PAGE-STATE":state.page_state_uid,
   "EDIT-01-LBL-ERROR-STATE":"—",
-  "EDIT-01-TEST-HANDOFF-REF":state.handoff_ref??"—",
 };}
 export function isControlledEditServerTestMode(){return isControlledTestMode();}
 export function readControlledEditTestProjection():EditResolvedContext{return{
