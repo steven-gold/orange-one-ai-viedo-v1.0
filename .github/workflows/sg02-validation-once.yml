@@ -48,7 +48,9 @@ jobs:
               assert f'"{state}"' in port, state
           assert 'SG02_PROJECTION_STATE_UNREGISTERED' in port
           assert 'new Set<QaCriteriaPageState>' in port
-          print('AUTHORITY_GUARD_PASS states=10 controls=11 effectful_runtime_ready=false')
+          assert 'const syncProjection=async' in visual
+          assert 'const projectionSynced=await syncProjection()' in visual
+          print('AUTHORITY_GUARD_PASS states=10 controls=11 projection_refresh=required effectful_runtime_ready=false')
           PY
           git diff --exit-code origin/new -- src/app/page.tsx src/components/pages/DashboardVisual.tsx src/components/pages/DashboardVisual.module.css src/components/pages/QaCriteriaVisual.module.css
 
@@ -172,5 +174,6 @@ jobs:
           changed=$(git diff --name-only origin/new...HEAD | sort)
           echo "$changed"
           echo "$changed" | grep -qx '.github/workflows/sg02-validation-once.yml'
+          echo "$changed" | grep -qx 'src/components/pages/QaCriteriaVisual.tsx'
           echo "$changed" | grep -qx 'src/domain/qaCriteria/qaCriteriaRuntimePort.ts'
-          test "$(echo "$changed" | sed '/^$/d' | wc -l)" = "2"
+          test "$(echo "$changed" | sed '/^$/d' | wc -l)" = "3"
