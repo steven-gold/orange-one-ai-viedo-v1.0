@@ -3,7 +3,23 @@
 import { useState } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { devText, type DevTranslationKey } from "@/i18n/devCatalog";
-import { DevGovernedButton, DevRuntimeProvider, useDevGate, useDevRuntimeState } from "./DevControlRuntime";
+import {
+  DEV_ACTION_COUNT,
+  DEV_AUTHORITY_STATUS,
+  DEV_COMPONENT_COUNT,
+  DEV_CONTROL_COUNT,
+  DEV_ERROR_COUNT,
+  DEV_GATE_COUNT,
+  DEV_SECTION_COUNT,
+  DEV_SYSTEM_IMPLEMENTATION_STATUS,
+} from "@/domain/dev/devRuntimeContract";
+import { DEV_CONTROL_BINDING_COUNT } from "@/domain/dev/devControlBindings";
+import {
+  DevGovernedButton,
+  DevRuntimeProvider,
+  useDevGate,
+  useDevRuntimeState,
+} from "./DevControlRuntime";
 import styles from "./DevVisual.module.css";
 
 type StageKey = "discovery" | "directory" | "message" | "campaign" | "delivery";
@@ -23,14 +39,28 @@ const STAGES: readonly StageDefinition[] = [
   { key: "delivery", controlId: "DEV-01-BTN-STAGE-5", labelKey: "delivery", code: "05" },
 ] as const;
 
-
 function ProjectionCell({ label, wide = false }: { label: string; wide?: boolean }) {
-  return <div className={`${styles.projectionCell} ${wide ? styles.wideCell : ""}`}><span>{label}</span><strong>—</strong></div>;
+  return (
+    <div className={`${styles.projectionCell} ${wide ? styles.wideCell : ""}`}>
+      <span>{label}</span>
+      <strong>—</strong>
+    </div>
+  );
 }
 
 function DevVisualBody() {
   const { locale } = useI18n();
-  const { projection, runtimeError } = useDevRuntimeState();
+  const {
+    projection,
+    projectionStatus,
+    runtimeErrorUid,
+    runtimeReason,
+    correlationId,
+    projectionAdapterReady,
+    commandAdapterReady,
+    effectfulRuntimeReady,
+  } = useDevRuntimeState();
+  const pageGateReady = useDevGate("DEV-01-GATE-PAGE");
   const discoveryRunning = useDevGate("DEV-01-GATE-DISCOVERY-RUNNING");
   const discoveryPaused = useDevGate("DEV-01-GATE-DISCOVERY-PAUSED");
   const mergePreviewAvailable = useDevGate("DEV-01-GATE-MERGE");
@@ -42,11 +72,17 @@ function DevVisualBody() {
   const [activeStage, setActiveStage] = useState<StageKey>("discovery");
   const t = (key: DevTranslationKey) => devText(locale, key);
   const stage = STAGES.find((item) => item.key === activeStage) ?? STAGES[0];
+  const pageState = projectionStatus === "LOADING" ? "LOADING" : projectionStatus === "BLOCKED" ? "ERROR" : projection?.page_state ?? "ERROR";
+  const runtimeDisplay = runtimeReason ?? projection?.run_status ?? "—";
+  const phaseDisplay = runtimeErrorUid && runtimeReason ? `${runtimeErrorUid}: ${runtimeReason}` : projection?.page_state ?? t("noRealData");
 
   function renderActionDock(key: StageKey) {
     return (
       <div className={styles.actionDock} data-component-id={key === "discovery" ? "DEV-01-CMP-DISCOVERY-ACTION" : undefined}>
-        <div className={styles.dockLabel}><span>{t("currentStage")}</span><strong>{t(stage.labelKey)}</strong></div>
+        <div className={styles.dockLabel}>
+          <span>{t("currentStage")}</span>
+          <strong>{t(stage.labelKey)}</strong>
+        </div>
         <div className={styles.dockActions}>
           {key === "discovery" && (
             <>
@@ -196,19 +232,44 @@ function DevVisualBody() {
       <aside className={styles.rail} data-section-id="DEV-01-SEC-08" data-component-id="DEV-01-CMP-GOVERNANCE">
         <div className={styles.railHeader}><h2>{t("governance")}</h2><span>{stage.code}</span></div>
         <div className={styles.railList}>
-          <div className={styles.railItem}><span>{t("permissionGate")}</span><strong>—</strong></div>
+          <div className={styles.railItem}><span>{t("permissionGate")}</span><strong>{pageGateReady ? "READY" : "—"}</strong></div>
           <div className={styles.railItem}><span>{t("policyGate")}</span><strong>—</strong></div>
           <div className={styles.railItem}><span>{stageSpecific}</span><strong>—</strong></div>
-          <div className={styles.railItem}><span>{t("blockerStatus")}</span><strong>—</strong></div>
+          <div className={styles.railItem}><span>{t("blockerStatus")}</span><strong>{runtimeReason ?? "—"}</strong></div>
         </div>
         <p className={styles.railNote}>{t("noRealData")}</p>
-        <p className={styles.phaseNote}>{runtimeError??projection?.page_state??t("noRealData")}</p>
+        <p className={styles.phaseNote}>{phaseDisplay}</p>
       </aside>
     );
   }
 
   return (
-    <div className={styles.page} data-page-uid="admin:DEV-01" data-vis-step="VIS-12" data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE" data-page-state={projection?.page_state??"READ_ONLY"}>
+    <div
+      className={styles.page}
+      data-page-uid="admin:DEV-01"
+      data-vis-step="VIS-12"
+      data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE"
+      data-authority-status={DEV_AUTHORITY_STATUS}
+      data-authority-sections={DEV_SECTION_COUNT}
+      data-authority-components={DEV_COMPONENT_COUNT}
+      data-authority-controls={DEV_CONTROL_COUNT}
+      data-authority-actions={DEV_ACTION_COUNT}
+      data-authority-gates={DEV_GATE_COUNT}
+      data-authority-errors={DEV_ERROR_COUNT}
+      data-implementation-status={DEV_SYSTEM_IMPLEMENTATION_STATUS}
+      data-single-page-workflow="true"
+      data-control-registry-valid={String(DEV_CONTROL_BINDING_COUNT === DEV_CONTROL_COUNT)}
+      data-page-state={pageState}
+      data-projection-status={projectionStatus}
+      data-projection-reason={runtimeReason ?? undefined}
+      data-runtime-error-uid={runtimeErrorUid ?? undefined}
+      data-correlation-id={correlationId ?? undefined}
+      data-projection-adapter-ready={String(projectionAdapterReady)}
+      data-command-adapter-ready={String(commandAdapterReady)}
+      data-effectful-runtime-ready={String(effectfulRuntimeReady)}
+      data-page-gate-ready={String(pageGateReady)}
+      data-active-stage={activeStage}
+    >
       <section className={styles.contextBar} data-section-id="DEV-01-SEC-01" data-component-id="DEV-01-CMP-CONTEXT">
         <div className={styles.contextIdentity}>
           <div className={styles.eyebrow}>DEV-01 · {t("pageName")}</div>
@@ -217,8 +278,8 @@ function DevVisualBody() {
         </div>
         <div className={styles.contextStatus}>
           <div className={styles.statusCell}><span>{t("currentStage")}</span><strong>{t(stage.labelKey)}</strong></div>
-          <div className={styles.statusCell}><span>{t("authorizedScope")}</span><strong>{projection?.authorized_scope??"—"}</strong></div>
-          <div className={styles.statusCell}><span>{t("runStatus")}</span><strong>{runtimeError??projection?.run_status??"—"}</strong></div>
+          <div className={styles.statusCell}><span>{t("authorizedScope")}</span><strong>{projection?.authorized_scope ?? "—"}</strong></div>
+          <div className={styles.statusCell}><span>{t("runStatus")}</span><strong>{runtimeDisplay}</strong></div>
         </div>
       </section>
 
@@ -247,11 +308,17 @@ function DevVisualBody() {
           <div className={styles.drawerCell}><span>{t("evidence")}</span><strong>—</strong></div>
           <div className={styles.drawerCell}><span>{t("audit")}</span><strong>—</strong></div>
           <div className={styles.drawerCell}><span>{t("version")}</span><strong>—</strong></div>
-          <div className={styles.drawerCell}><span>{t("errorCorrelation")}</span><strong>—</strong></div>
+          <div className={styles.drawerCell}><span>{t("errorCorrelation")}</span><strong>{correlationId ?? "—"}</strong></div>
         </div>
       </aside>
     </div>
   );
 }
 
-export function DevVisual(){return <DevRuntimeProvider><DevVisualBody/></DevRuntimeProvider>}
+export function DevVisual() {
+  return (
+    <DevRuntimeProvider>
+      <DevVisualBody />
+    </DevRuntimeProvider>
+  );
+}
