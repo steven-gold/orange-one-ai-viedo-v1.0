@@ -23,171 +23,116 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install
-        run: npm ci
-
-      - name: Build baseline controlled runtime
+      - name: Build current source
         run: |
+          npm ci
           npm run typecheck
           npm run build
 
-      - name: Start baseline server and capture existing TEST_ONLY projections
+      - name: Render current pages and capture existing TEST_ONLY projections
         run: |
           set -euo pipefail
-          (npm run start -- -p 3010 > /tmp/acpos-baseline.log 2>&1 & echo $! > /tmp/acpos-baseline.pid)
+          (npm run start -- -p 3010 > /tmp/acpos-preview-source.log 2>&1 & echo $! > /tmp/acpos-preview-source.pid)
           for i in $(seq 1 60); do
             if curl -fsS http://127.0.0.1:3010/ >/dev/null; then break; fi
             sleep 1
           done
-          mkdir -p /tmp/acpos-fixtures
+          mkdir -p /tmp/acpos-static-preview/_next/static/chunks /tmp/acpos-static-preview/brand /tmp/acpos-fixtures
+          cp -a public/brand/. /tmp/acpos-static-preview/brand/
+          find .next/static/chunks -maxdepth 1 -type f -name '*.css' -exec cp {} /tmp/acpos-static-preview/_next/static/chunks/ \;
+
+          curl -fsS http://127.0.0.1:3010/assets   -o /tmp/acpos-static-preview/assets.html
+          curl -fsS http://127.0.0.1:3010/video    -o /tmp/acpos-static-preview/video.html
+          curl -fsS http://127.0.0.1:3010/edit     -o /tmp/acpos-static-preview/edit.html
+          curl -fsS http://127.0.0.1:3010/qa       -o /tmp/acpos-static-preview/qa.html
+          curl -fsS http://127.0.0.1:3010/database -o /tmp/acpos-static-preview/db.html
+          curl -fsS http://127.0.0.1:3010/strategy -o /tmp/acpos-static-preview/strategy.html
+
           curl -fsS http://127.0.0.1:3010/v1/ui-projections/ASSET-01 -o /tmp/acpos-fixtures/asset.json
           curl -fsS http://127.0.0.1:3010/v1/ui-projections/VIDEO-01 -o /tmp/acpos-fixtures/video.json
           curl -fsS http://127.0.0.1:3010/v1/ui-projections/EDIT-01  -o /tmp/acpos-fixtures/edit.json
           curl -fsS http://127.0.0.1:3010/v1/ui-projections/QA-01    -o /tmp/acpos-fixtures/qa.json
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          for name in ('asset','video','edit','qa'):
-              p=Path(f'/tmp/acpos-fixtures/{name}.json')
-              v=json.loads(p.read_text())
-              if not isinstance(v,dict): raise SystemExit(f'{name}: projection is not object')
-              print(f'PREVIEW_FIXTURE_CAPTURED {name} keys={len(v)}')
-          PY
-          kill "$(cat /tmp/acpos-baseline.pid)" || true
+          kill "$(cat /tmp/acpos-preview-source.pid)" || true
 
-      - name: Inject temporary preview-only client bridge
+      - name: Convert six pages to self-contained TEST_ONLY interactive static preview
         run: |
           set -euo pipefail
-          mkdir -p src/components/preview
           python3 - <<'PY'
-          import json
+          import json,re
           from pathlib import Path
+
+          stage=Path('/tmp/acpos-static-preview')
           fixtures={
             'ASSET-01':json.loads(Path('/tmp/acpos-fixtures/asset.json').read_text()),
             'VIDEO-01':json.loads(Path('/tmp/acpos-fixtures/video.json').read_text()),
             'EDIT-01':json.loads(Path('/tmp/acpos-fixtures/edit.json').read_text()),
             'QA-01':json.loads(Path('/tmp/acpos-fixtures/qa.json').read_text()),
           }
-          fixture_literal=json.dumps(fixtures,separators=(',',':'),ensure_ascii=False)
-          template=r'''"use client";
-          import { useLayoutEffect } from "react";
-          import { configureDbClientRuntime, type DbNormalizedProjection } from "@/domain/database/dbClientPort";
-          import { DB_CONTROL_BINDINGS } from "@/domain/database/dbControlBindings";
-          import { configureStrategyRequestBuilder } from "@/domain/strategy/strategyCommandPort";
-          import { configureStrategyOwnerNavigationResolver } from "@/domain/strategy/strategyOwnerNavigationPort";
-          import { STRATEGY_CONTROL_BINDINGS } from "@/domain/strategy/strategyControlBindings";
+          for name,value in fixtures.items():
+              if not isinstance(value,dict): raise SystemExit(f'{name}: invalid TEST_ONLY projection')
+              print(f'PREVIEW_FIXTURE_CAPTURED page={name} keys={len(value)}')
 
-          const FIXTURES: Record<string, unknown> = __FIXTURES__;
-          const TEST_META = {data_classification:"TEST_ONLY",synthetic:true,test_dataset_id:"TEST-STATIC-PREVIEW",test_run_id:"TEST-STATIC-PREVIEW-INTERACTIVE",created_for_validation:true,production_eligible:false} as const;
-          const dbGates = Object.fromEntries(Object.values(DB_CONTROL_BINDINGS).map(binding => [binding.gate_uid, true]));
-          const DB_PROJECTION: DbNormalizedProjection = {page_state:"READY",values:{},lists:{},tables:{},gates:dbGates,filters:{},graph:[],trace:[],audit:[],source_sync:"TEST_ONLY_STATIC_PREVIEW"};
-          const strategyGates = Object.fromEntries(Object.values(STRATEGY_CONTROL_BINDINGS).map(binding => [binding.gate_uid, true]));
-          const strategyLists: Record<string, {ref:string;label:string}[]> = {};
-          for (const [controlUid,binding] of Object.entries(STRATEGY_CONTROL_BINDINGS)) {
-            if (binding.action_uid === "STR-01-ACT-TOPIC-SELECT") strategyLists[controlUid] = [{ref:"TEST-PREVIEW-STR-TOPIC-001",label:"[TEST] Strategy Topic"}];
-          }
-          const STRATEGY_PROJECTION = {page_state:"READY",conversation_id:"TEST-PREVIEW-STR-CONVERSATION-001",candidate_ref:"TEST-PREVIEW-STR-CANDIDATE-001",candidate_version_ref:"TEST-PREVIEW-STR-CANDIDATE-VERSION-001",values:{"STR-01-FLD-TOPIC":"[TEST] Strategy Topic","STR-01-FLD-SCOPE":"TEST_ONLY","STR-01-FLD-HORIZON":"PREVIEW","STR-01-FLD-STATE":"READY","STR-01-FLD-DECISION-STATE":"PREVIEW_ONLY","STR-01-FLD-OWNER-BOUNDARY":"ERP/Finance owner · Preview navigation only"},lists:strategyLists,blocks:{},gate_state:strategyGates,owner_type:"ERP/Finance",owner_context_ref:"TEST-PREVIEW-ERP-CONTEXT-001"};
+          js='''(() => {\n"use strict";\nconst FIXTURES=__FIXTURES__;\nconst PAGE_MAP={"ASSET-01":"ASSET-01","VIDEO-01":"VIDEO-01","EDIT-01":"EDIT-01","QA-01":"QA-01","DB-01":"DB-01","workspace:STR-01":"workspace:STR-01"};\nconst $=(s,r=document)=>r.querySelector(s);\nconst $$=(s,r=document)=>Array.from(r.querySelectorAll(s));\nfunction listFor(f,id){return (f&&f.filters&&f.filters[id])||(f&&f.lists&&f.lists[id])||[];}\nfunction display(v){if(v===null||v===undefined||v==='')return '—';if(typeof v==='object'){try{return JSON.stringify(v)}catch{return '—'}}return String(v);}\nfunction toast(msg){let n=document.getElementById('acpos-static-preview-toast');if(!n){n=document.createElement('div');n.id='acpos-static-preview-toast';Object.assign(n.style,{position:'fixed',right:'18px',bottom:'18px',zIndex:'2147483647',padding:'10px 14px',border:'1px solid rgba(255,255,255,.25)',borderRadius:'8px',background:'rgba(12,18,28,.94)',color:'#fff',font:'12px/1.4 system-ui,sans-serif',boxShadow:'0 8px 28px rgba(0,0,0,.28)',maxWidth:'420px'});document.body.appendChild(n);}n.textContent=msg;n.style.display='block';return n;}\nfunction controlId(el){const own=el.getAttribute&&el.getAttribute('data-control-id');if(own)return own;const p=el.closest&&el.closest('[data-control-id]');return p?p.getAttribute('data-control-id'):'PREVIEW-CONTROL';}\nfunction fixtureFor(pageUid){return FIXTURES[PAGE_MAP[pageUid]]||null;}\nfunction hydrateValues(root,f){if(!f)return;for(const box of $$('[data-control-id]',root)){const id=box.getAttribute('data-control-id');if(!id)continue;let v=f.values&&Object.prototype.hasOwnProperty.call(f.values,id)?f.values[id]:undefined;if(v===undefined){const direct={"ASSET-01-FLD-TASK":f.task_id,"ASSET-01-FLD-OUTPUT-ID":f.output_version_id,"EDIT-01-FLD-PROJECT":f.project_id,"EDIT-01-FLD-TOPIC":f.topic_id,"EDIT-01-FLD-TASK":f.task_id,"QA-01-FLD-REVIEW-STATE":f.page_state_uid}[id];v=direct;}if(v!==undefined){const strong=$('strong',box);if(strong&&(!strong.textContent||strong.textContent.trim()==='—'))strong.textContent=display(v);}const items=listFor(f,id);if(items&&items.length){const sel=box.matches('select')?box:$('select',box);if(sel){const old=sel.value;for(const item of items){if(!item||typeof item.ref!=='string'||Array.from(sel.options).some(o=>o.value===item.ref))continue;const o=document.createElement('option');o.value=item.ref;o.textContent=item.label||item.ref;sel.appendChild(o);}if(old)sel.value=old;}else if(!box.matches('button,input,textarea')&&!$('button',box)){const target=Array.from(box.children).find(x=>x.tagName==='DIV')||box;for(const item of items.slice(0,5)){if(!item||typeof item.ref!=='string')continue;const b=document.createElement('button');b.type='button';b.textContent=item.label||item.ref;b.setAttribute('data-preview-item-ref',item.ref);target.appendChild(b);}}}}}\nfunction enableControls(root){for(const el of $$('button,input,select,textarea',root)){el.disabled=false;el.removeAttribute('disabled');el.setAttribute('data-preview-interactive','true');const owner=el.closest('[data-disabled-reason]');if(owner)owner.setAttribute('data-disabled-reason','TEST_ONLY_STATIC_PREVIEW');if(el.tagName==='SELECT'&&el.options.length<=1){const o=document.createElement('option');o.value='TEST_ONLY_PREVIEW';o.textContent='[TEST_ONLY] Preview option';el.appendChild(o);}}}\nfunction wire(root){root.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!root.contains(b)||b.disabled)return;const id=controlId(b);b.setAttribute('data-preview-clicked','true');const group=b.parentElement;if(group&&group.querySelectorAll('button').length>1){for(const x of group.querySelectorAll('button'))x.setAttribute('aria-pressed',x===b?'true':'false');}toast('TEST_ONLY Preview · '+id+' · click received');});root.addEventListener('input',e=>{const el=e.target;if(!(el instanceof HTMLInputElement||el instanceof HTMLTextAreaElement||el instanceof HTMLSelectElement))return;el.setAttribute('data-preview-edited','true');toast('TEST_ONLY Preview · '+controlId(el)+' · value changed');});root.addEventListener('change',e=>{const el=e.target;if(!(el instanceof HTMLInputElement||el instanceof HTMLTextAreaElement||el instanceof HTMLSelectElement))return;el.setAttribute('data-preview-edited','true');toast('TEST_ONLY Preview · '+controlId(el)+' · selection changed');});}\nfunction selfTest(root){const b=$('button[data-preview-interactive="true"]',root)||$('button',root);let clickPass=false;if(b){b.click();clickPass=b.getAttribute('data-preview-clicked')==='true';b.removeAttribute('data-preview-clicked');}const field=$('textarea[data-preview-interactive="true"],input[data-preview-interactive="true"]',root);let fieldPass=true;if(field){const old=field.value;field.value='TEST_ONLY_SELFTEST';field.dispatchEvent(new Event('input',{bubbles:true}));fieldPass=field.getAttribute('data-preview-edited')==='true'&&field.value==='TEST_ONLY_SELFTEST';field.value=old;field.removeAttribute('data-preview-edited');}const enabled=$$('button,input,select,textarea',root).filter(x=>!x.disabled).length;document.documentElement.dataset.previewRuntime='READY';document.documentElement.dataset.previewEnabledCount=String(enabled);document.documentElement.dataset.previewSelftest=(clickPass&&fieldPass&&enabled>0)?'PASS':'FAIL';const n=document.getElementById('acpos-static-preview-toast');if(n)n.style.display='none';}\nfunction boot(){const root=$('main.workspace-slot');if(!root)return;const page=$('[data-page-uid]',root);const uid=page?page.getAttribute('data-page-uid'):'';hydrateValues(root,fixtureFor(uid));enableControls(root);wire(root);selfTest(root);}\nif(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();\n})();'''.replace('__FIXTURES__',json.dumps(fixtures,separators=(',',':'),ensure_ascii=False))
+          (stage/'preview-interactive.js').write_text(js,encoding='utf-8')
 
-          function jsonResponse(value: unknown, status = 200) {
-            return new Response(JSON.stringify(value), {status, headers:{"content-type":"application/json","cache-control":"no-store","x-correlation-id":"TEST-PREVIEW-CORRELATION"}});
-          }
-          function pathOf(input: RequestInfo | URL) {
-            const raw = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-            try { return new URL(raw, window.location.href).pathname; } catch { return raw; }
-          }
-
-          export function StaticPreviewBridge() {
-            useLayoutEffect(() => {
-              configureDbClientRuntime({
-                async readProjection(){return {ok:true,projection:DB_PROJECTION,correlation_id:"TEST-PREVIEW-DB"};},
-                async read(){return {ok:true,projection:DB_PROJECTION,correlation_id:"TEST-PREVIEW-DB"};},
-                async resolveSystemLifecycle(){return {ok:true,href:"system.html"};},
-              });
-              configureStrategyRequestBuilder({build(input){
-                if(input.action_uid === "STR-01-ACT-SEND" || input.action_uid === "STR-01-ACT-STOP") return {path_params:{conversationId:input.conversation_id ?? "TEST-PREVIEW-STR-CONVERSATION-001"}};
-                return {};
-              }});
-              configureStrategyOwnerNavigationResolver({resolve:async()=>({ok:true,href:"erp.html"})});
-
-              const nativeFetch = window.fetch.bind(window);
-              window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-                const pathname = pathOf(input);
-                if (!pathname.startsWith("/v1/")) return nativeFetch(input, init);
-                const method=(init?.method ?? (typeof Request !== "undefined" && input instanceof Request ? input.method : "GET")).toUpperCase();
-                if(method === "GET" && pathname.startsWith("/v1/ui-projections/")){
-                  const uid=decodeURIComponent(pathname.slice("/v1/ui-projections/".length));
-                  if(uid === "workspace:STR-01") return jsonResponse(STRATEGY_PROJECTION);
-                  if(uid in FIXTURES) return jsonResponse(FIXTURES[uid]);
-                }
-                return jsonResponse({ok:true,preview_only:true,test_metadata:TEST_META});
-              };
-              document.documentElement.dataset.previewRuntime="READY";
-              return () => { window.fetch = nativeFetch; delete document.documentElement.dataset.previewRuntime; };
-            }, []);
-            return null;
-          }
-          '''
-          Path('src/components/preview/StaticPreviewBridge.tsx').write_text(template.replace('__FIXTURES__',fixture_literal),encoding='utf-8')
-
-          layout=Path('src/app/layout.tsx')
-          text=layout.read_text(encoding='utf-8')
-          text=text.replace('import { LocaleProvider } from "@/i18n/LocaleProvider";','import { LocaleProvider } from "@/i18n/LocaleProvider";\nimport { StaticPreviewBridge } from "@/components/preview/StaticPreviewBridge";')
-          text=text.replace('<body><LocaleProvider>{children}</LocaleProvider></body>','<body><LocaleProvider><StaticPreviewBridge />{children}</LocaleProvider></body>')
-          layout.write_text(text,encoding='utf-8')
-
-          strategy=Path('src/components/pages/StrategyControlRuntime.tsx')
-          s=strategy.read_text(encoding='utf-8')
-          old="if(kind==='attachment')return <button type=\"button\" disabled title=\"Attachment refs must be supplied by registered conversation attachment flow\" className={styles.button}{...common}>{label}</button>;"
-          new="if(kind==='attachment')return <button type=\"button\" onClick={()=>dispatch({type:'ATTACH',value:`TEST-PREVIEW-ATTACHMENT-${Date.now()}`})} title=\"TEST_ONLY preview attachment reference\" className={styles.button}{...common}>{label}</button>;"
-          if old not in s: raise SystemExit('STR attachment preview patch target not found')
-          strategy.write_text(s.replace(old,new),encoding='utf-8')
+          route_map={'/admin/qa-criteria':'qa-criteria.html','/admin/strategy':'strategy-admin.html','/admin/knowledge':'knowledge-admin.html','/admin/accounts':'accounts.html','/admin/system':'system.html','/admin/social':'social.html','/admin/aiapi':'aiapi.html','/admin/dev':'dev.html','/admin/erp':'erp.html','/database':'db.html','/strategy':'strategy.html','/assets':'assets.html','/video':'video.html','/edit':'edit.html','/core':'core.html','/info':'info.html','/qa':'qa.html','/':'index.html'}
+          for page in ('assets','video','edit','qa','db','strategy'):
+              p=stage/f'{page}.html'
+              text=p.read_text(encoding='utf-8')
+              text=re.sub(r'<script\b[^>]*>.*?</script>','',text,flags=re.I|re.S)
+              text=re.sub(r'<link\b[^>]*\bas=["\']script["\'][^>]*>','',text,flags=re.I)
+              text=text.replace('href="/_next/','href="./_next/').replace('src="/_next/','src="./_next/').replace('href="/brand/','href="brand/').replace('src="/brand/','src="brand/')
+              for route,target in sorted(route_map.items(),key=lambda item:len(item[0]),reverse=True): text=text.replace(f'href="{route}"',f'href="{target}"')
+              text=text.replace('</body>','<script src="preview-interactive.js" defer></script></body>')
+              p.write_text(text,encoding='utf-8')
           PY
-          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PREVIEW NEXT_PUBLIC_ACPOS_STATIC_PREVIEW=1 npm run typecheck
-          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PREVIEW NEXT_PUBLIC_ACPOS_STATIC_PREVIEW=1 npm run build
 
-      - name: Render repaired current pages
+      - name: Validate static browser interactivity before publish
         run: |
           set -euo pipefail
-          (NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PREVIEW NEXT_PUBLIC_ACPOS_STATIC_PREVIEW=1 npm run start -- -p 3011 > /tmp/acpos-preview.log 2>&1 & echo $! > /tmp/acpos-preview.pid)
-          for i in $(seq 1 60); do
-            if curl -fsS http://127.0.0.1:3011/ >/dev/null; then break; fi
-            sleep 1
+          cd /tmp/acpos-static-preview
+          (python3 -m http.server 8090 > /tmp/http-preview.log 2>&1 & echo $! > /tmp/http-preview.pid)
+          CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$CHROME"
+          mkdir -p /tmp/dom
+          for page in assets video edit qa db strategy; do
+            "$CHROME" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=2500 --dump-dom "http://127.0.0.1:8090/${page}.html" > "/tmp/dom/${page}.html"
           done
-          rm -rf /tmp/acpos-preview-stage
-          mkdir -p /tmp/acpos-preview-stage/_next/static /tmp/acpos-preview-stage/brand
-          cp -a .next/static/. /tmp/acpos-preview-stage/_next/static/
-          cp -a public/brand/. /tmp/acpos-preview-stage/brand/
-          curl -fsS http://127.0.0.1:3011/assets   -o /tmp/acpos-preview-stage/assets.html
-          curl -fsS http://127.0.0.1:3011/video    -o /tmp/acpos-preview-stage/video.html
-          curl -fsS http://127.0.0.1:3011/edit     -o /tmp/acpos-preview-stage/edit.html
-          curl -fsS http://127.0.0.1:3011/qa       -o /tmp/acpos-preview-stage/qa.html
-          curl -fsS http://127.0.0.1:3011/database -o /tmp/acpos-preview-stage/db.html
-          curl -fsS http://127.0.0.1:3011/strategy -o /tmp/acpos-preview-stage/strategy.html
           python3 - <<'PY'
+          import re
           from pathlib import Path
-          route_map={'/admin/qa-criteria':'qa-criteria.html','/admin/strategy':'strategy-admin.html','/admin/knowledge':'knowledge-admin.html','/admin/accounts':'accounts.html','/admin/system':'system.html','/admin/social':'social.html','/admin/aiapi':'aiapi.html','/admin/dev':'dev.html','/admin/erp':'erp.html','/database':'db.html','/strategy':'strategy.html','/assets':'assets.html','/video':'video.html','/edit':'edit.html','/core':'core.html','/info':'info.html','/qa':'qa.html','/':'index.html'}
-          for path in Path('/tmp/acpos-preview-stage').glob('*.html'):
-              text=path.read_text(encoding='utf-8').replace('href="/_next/','href="./_next/').replace('src="/_next/','src="./_next/').replace('href="/brand/','href="brand/').replace('src="/brand/','src="brand/')
-              for route,target in sorted(route_map.items(),key=lambda item:len(item[0]),reverse=True): text=text.replace(f'href="{route}"',f'href="{target}"')
-              path.write_text(text,encoding='utf-8')
+          for page in ('assets','video','edit','qa','db','strategy'):
+              text=Path(f'/tmp/dom/{page}.html').read_text(errors='ignore')
+              if 'data-preview-runtime="READY"' not in text: raise SystemExit(f'{page}: static preview controller did not run')
+              if 'data-preview-selftest="PASS"' not in text: raise SystemExit(f'{page}: click/input selftest failed')
+              m=re.search(r'data-preview-enabled-count="(\d+)"',text)
+              if not m or int(m.group(1))<1: raise SystemExit(f'{page}: no enabled controls')
+              main=text.split('<main class="workspace-slot"',1)[-1]
+              disabled=len(re.findall(r'<(?:button|input|select|textarea)\b[^>]*\bdisabled(?:=|\s|>)',main,re.I))
+              if disabled: raise SystemExit(f'{page}: {disabled} interactive controls still disabled')
+              print(f'PREVIEW_STATIC_INTERACTIVE_PASS page={page} enabled={m.group(1)} disabled=0 selftest=PASS')
+          strategy=Path('/tmp/dom/strategy.html').read_text(errors='ignore')
+          if not re.search(r'<textarea\b[^>]*data-preview-interactive="true"',strategy,re.I): raise SystemExit('strategy textarea not interactive')
+          print('PREVIEW_STRATEGY_INPUT_PASS')
           PY
-          kill "$(cat /tmp/acpos-preview.pid)" || true
+          kill "$(cat /tmp/http-preview.pid)" || true
 
-      - name: Publish into existing correct preview branch only
+      - name: Checkout existing correct preview branch
         uses: actions/checkout@v4
         with:
           ref: acpos-live-preview
           path: publish
           fetch-depth: 0
 
-      - name: Replace six repaired pages and their new chunks
+      - name: Publish validated six pages only
         run: |
           set -euo pipefail
           before_index=$(git -C publish hash-object preview/index.html)
           before_core=$(git -C publish hash-object preview/core.html)
-          for page in assets video edit qa db strategy; do cp "/tmp/acpos-preview-stage/${page}.html" "publish/preview/${page}.html"; done
-          mkdir -p publish/preview/_next/static
-          cp -a /tmp/acpos-preview-stage/_next/static/. publish/preview/_next/static/
+          for page in assets video edit qa db strategy; do cp "/tmp/acpos-static-preview/${page}.html" "publish/preview/${page}.html"; done
+          cp /tmp/acpos-static-preview/preview-interactive.js publish/preview/preview-interactive.js
+          mkdir -p publish/preview/_next/static/chunks
+          cp -a /tmp/acpos-static-preview/_next/static/chunks/. publish/preview/_next/static/chunks/
           after_index=$(git -C publish hash-object preview/index.html)
           after_core=$(git -C publish hash-object preview/core.html)
           test "$before_index" = "$after_index"
@@ -196,45 +141,18 @@ jobs:
           cd publish
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add preview/assets.html preview/video.html preview/edit.html preview/qa.html preview/db.html preview/strategy.html preview/_next/static
-          git commit -m "fix(preview): restore interactive controlled runtime for current pages"
+          git add preview/assets.html preview/video.html preview/edit.html preview/qa.html preview/db.html preview/strategy.html preview/preview-interactive.js preview/_next/static/chunks
+          git commit -m "fix(preview): make current static pages directly interactive"
           git push origin HEAD:acpos-live-preview
-          echo "INTERACTIVE_PREVIEW_COMMIT=$(git rev-parse HEAD)"
-
-      - name: Browser hydration and enabled-control validation
-        run: |
-          set -euo pipefail
-          cd publish/preview
-          (python3 -m http.server 8090 > /tmp/http-preview.log 2>&1 & echo $! > /tmp/http-preview.pid)
-          CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
-          test -n "$CHROME"
-          mkdir -p /tmp/dom
-          for page in assets video edit qa db strategy; do
-            "$CHROME" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "http://127.0.0.1:8090/${page}.html" > "/tmp/dom/${page}.html"
-          done
-          python3 - <<'PY'
-          import re
-          from pathlib import Path
-          for page in ('assets','video','edit','qa','db','strategy'):
-              text=Path(f'/tmp/dom/{page}.html').read_text(errors='ignore')
-              if 'data-preview-runtime="READY"' not in text:
-                  raise SystemExit(f'{page}: preview bridge did not hydrate')
-              tags=re.findall(r'<(button|input|select|textarea)\b([^>]*)>',text,re.I)
-              enabled=[(t,a) for t,a in tags if not re.search(r'\bdisabled(?:=|\s|>)',a,re.I)]
-              if not enabled: raise SystemExit(f'{page}: no enabled interactive controls after hydration')
-              print(f'PREVIEW_INTERACTIVE_PASS page={page} controls={len(tags)} enabled={len(enabled)} disabled={len(tags)-len(enabled)}')
-          strategy=Path('/tmp/dom/strategy.html').read_text(errors='ignore')
-          if re.search(r'<textarea\b[^>]*\bdisabled',strategy,re.I): raise SystemExit('strategy composer textarea still disabled')
-          print('PREVIEW_STRATEGY_COMPOSER_PASS')
-          PY
-          kill "$(cat /tmp/http-preview.pid)" || true
+          echo "STATIC_INTERACTIVE_PREVIEW_COMMIT=$(git rev-parse HEAD)"
 
       - name: Verify published scope
         run: |
           set -euo pipefail
           cd publish
-          git fetch origin acpos-live-preview
           changed=$(git diff --name-only HEAD^ HEAD)
           echo "$changed"
           if echo "$changed" | grep -Eq '^preview/index\.html$|^preview/core\.html$'; then exit 1; fi
-          echo "PREVIEW_INTERACTIVE_SCOPE_PASS"
+          for page in assets video edit qa db strategy; do echo "$changed" | grep -qx "preview/${page}.html"; done
+          echo "$changed" | grep -qx 'preview/preview-interactive.js'
+          echo "PREVIEW_STATIC_INTERACTIVE_SCOPE_PASS"
