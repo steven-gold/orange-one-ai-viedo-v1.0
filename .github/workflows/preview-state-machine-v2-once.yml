@@ -47,7 +47,7 @@ jobs:
           s=s.replace("($('#DB-01-INP-SEARCH')?.value||'').toLowerCase()", "($('[data-control-id=\"DB-01-INP-SEARCH\"] input',root)?.value||'').toLowerCase()")
           s=s.replace("$('#DB-01-SEL-DOMAIN')?.value||'ALL'", "$('[data-control-id=\"DB-01-SEL-DOMAIN\"] select',root)?.value||'ALL'")
           s=s.replace("$('#DB-01-SEL-ENTITY-TYPE')?.value||'ALL'", "$('[data-control-id=\"DB-01-SEL-ENTITY-TYPE\"] select',root)?.value||'ALL'")
-          s=s.replace("if(a.includes('VIEW')||a.includes('DETAIL')||a.includes('OPEN')&&!a.includes('CORRECTION'))", "if(a.includes('VIEW')||a.includes('DETAIL')||(a.includes('OPEN')&&!a.includes('CORRECTION')&&!a.includes('OPEN-OWNER')&&!a.includes('AUDIT')))" )
+          s=s.replace("if(a.includes('VIEW')||a.includes('DETAIL')||a.includes('OPEN')&&!a.includes('CORRECTION'))", "if(a.endsWith('-VIEW')||a.includes('-VIEW-')||a.endsWith('-DETAIL')||a.includes('-DETAIL-')||(a.includes('-OPEN')&&!a.includes('CORRECTION')&&!a.includes('OPEN-OWNER')&&!a.includes('AUDIT')))" )
           old="if(a.includes('MODE')||a.includes('TOGGLE')||a.includes('TOOL-')){setActiveButton(el);status(`${a} 已切換`);return true;}"
           new="if(a.includes('MODE')||a.includes('TOGGLE')||a.includes('TOOL-')){setActiveButton(el);if(uid==='workspace:STR-01'&&a.includes('MODE'))state.mode=(el.textContent||'').toUpperCase().includes('MULTI')?'MULTI_AI':'SINGLE_AI';if(uid==='QA-01'&&a.includes('MODE'))state.mode=(el.textContent||'').toUpperCase().includes('MANUAL')?'MANUAL':'AUTO';status(`${a} 已切換`);return true;}"
           if old not in s: raise SystemExit('MODE patch target missing')
@@ -82,10 +82,11 @@ jobs:
           for page in pages:
               t=Path(f'/tmp/acpos-preview-v2-dom/{page}.html').read_text(errors='ignore')
               if 'data-preview-runtime-version="V2_STATE_MACHINE"' not in t: raise SystemExit(f'{page}: V2 runtime missing')
-              if 'data-preview-selftest="PASS"' not in t: raise SystemExit(f'{page}: state transition selftest failed')
+              if 'data-preview-selftest="PASS"' not in t:
+                  m=re.search(r'data-preview-selftest-error="([^"]*)"',t)
+                  raise SystemExit(f'{page}: state transition selftest failed: {m.group(1) if m else "no error marker"}')
               if 'data-preview-state-changed="true"' not in t: raise SystemExit(f'{page}: no state change evidence')
               print(f'PREVIEW_V2_STATE_TRANSITION_PASS page={page}')
-          # Downstream gates must actually unlock after the tested action.
           expected={
             'assets':'ASSET-01-GATE-CANDIDATE',
             'video':'VIDEO-01-GATE-CANDIDATE',
@@ -96,13 +97,9 @@ jobs:
           }
           for page,g in expected.items():
               t=Path(f'/tmp/acpos-preview-v2-dom/{page}.html').read_text(errors='ignore')
-              tags=re.findall(r'<(?:button|input|select|textarea)\b[^>]*>',t,re.I)
-              gated=[x for x in tags if f'data-gate-uid="{g}"' in x]
-              # Some controls carry gate on wrapper; verify wrapper no longer exposes a disabled reason and runtime status confirms transition.
               wrapper_pattern=rf'data-gate-uid="{re.escape(g)}"[^>]*data-preview-disabled-reason'
               if re.search(wrapper_pattern,t,re.I): raise SystemExit(f'{page}: downstream gate {g} still marked disabled')
               print(f'PREVIEW_V2_GATE_UNLOCK_PASS page={page} gate={g}')
-          # Explicitly preserve a known Authority/shared-runtime gap instead of faking it.
           st=Path('/tmp/acpos-preview-v2-dom/strategy.html').read_text(errors='ignore')
           if 'SHARED_ATTACHMENT_FLOW_NOT_BOUND_IN_STATIC_PREVIEW' not in st: raise SystemExit('strategy attachment gap was incorrectly unlocked')
           print('PREVIEW_V2_STR_ATTACHMENT_FAIL_CLOSED_PASS')
