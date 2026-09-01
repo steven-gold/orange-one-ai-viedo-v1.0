@@ -1,5 +1,16 @@
+export type AiApiPageState =
+  | "LOADING"
+  | "READY"
+  | "EMPTY"
+  | "ERROR"
+  | "POLICY_BLOCKED"
+  | "VERSION_CONFLICT"
+  | "EXTERNAL_PENDING"
+  | "READ_ONLY"
+  | "ARCHIVED";
+
 export type AiApiProjection = {
-  page_state: string | null;
+  page_state: AiApiPageState | null;
   values: Readonly<Record<string, string>>;
   control_enabled: Readonly<Record<string, boolean>>;
 };
@@ -7,6 +18,18 @@ export type AiApiProjection = {
 export type AiApiProjectionResolver = {
   resolve: (raw: unknown) => AiApiProjection | Promise<AiApiProjection>;
 };
+
+const ALLOWED_PAGE_STATES = new Set<AiApiPageState>([
+  "LOADING",
+  "READY",
+  "EMPTY",
+  "ERROR",
+  "POLICY_BLOCKED",
+  "VERSION_CONFLICT",
+  "EXTERNAL_PENDING",
+  "READ_ONLY",
+  "ARCHIVED",
+]);
 
 let resolver: AiApiProjectionResolver | null = null;
 
@@ -36,10 +59,13 @@ function normalize(raw: unknown): AiApiProjection {
     if (typeof value === "boolean") control_enabled[key] = value;
   }
 
-  const page_state =
-    record.page_state === null || typeof record.page_state === "string"
-      ? (record.page_state as string | null)
-      : null;
+  let page_state: AiApiPageState | null = null;
+  if (record.page_state !== null && record.page_state !== undefined) {
+    if (typeof record.page_state !== "string" || !ALLOWED_PAGE_STATES.has(record.page_state as AiApiPageState)) {
+      throw new Error("AIAPI01_PROJECTION_STATE_UNREGISTERED");
+    }
+    page_state = record.page_state as AiApiPageState;
+  }
 
   return { page_state, values, control_enabled };
 }
