@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: new
+          fetch-depth: 0
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -118,13 +119,7 @@ jobs:
               assert(await node.getAttribute('data-current-state'));
               assert(await node.getAttribute('data-runtime-binding'));
             }
-            assert.equal(await page.locator('#IAM-01-BTN-ADD').isDisabled(),true);
-            assert.equal(await page.locator('#IAM-01-BTN-EDIT').isDisabled(),true);
-            assert.equal(await page.locator('#IAM-01-BTN-SAVE-DRAFT').isDisabled(),true);
-            assert.equal(await page.locator('#IAM-01-BTN-VALIDATE').isDisabled(),true);
-            assert.equal(await page.locator('#IAM-01-BTN-PREVIEW').isDisabled(),true);
-            assert.equal(await page.locator('#IAM-01-BTN-COMPLETE').isDisabled(),true);
-            assert.equal(await page.locator('#IAM-01-BTN-AUDIT').isDisabled(),true);
+            for(const id of ['IAM-01-BTN-ADD','IAM-01-BTN-EDIT','IAM-01-BTN-SAVE-DRAFT','IAM-01-BTN-VALIDATE','IAM-01-BTN-PREVIEW','IAM-01-BTN-COMPLETE','IAM-01-BTN-AUDIT']) assert.equal(await page.locator(`#${id}`).isDisabled(),true);
             assert.equal(await page.locator('[data-control-id="IAM-01-CTL-SEARCH"]').isDisabled(),true);
             assert.equal(await page.locator('[data-control-id="IAM-01-SEL-DEPT-PRESET"]').isDisabled(),true);
             assert.equal(await page.locator('[data-control-id="IAM-01-CHK-FRONT-ALL"]').isDisabled(),true);
