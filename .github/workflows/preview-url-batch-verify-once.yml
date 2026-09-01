@@ -1,0 +1,36 @@
+name: Preview URL batch verify once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/preview-url-batch-verify-once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify unified preview URLs
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHA=7ff504c9ae939bdbdf23521242a095e7aa5462b7
+          BASE="https://rawcdn.githack.com/steven-gold/orange-one-ai-viedo-v1.0/${SHA}/preview"
+          pages=(
+            index.html core.html assets.html video.html edit.html qa.html db.html strategy.html info.html
+            system.html accounts.html dev.html social.html erp.html aiapi.html qa-criteria.html strategy-admin.html knowledge-admin.html
+          )
+          test "${#pages[@]}" = "18"
+          for page in "${pages[@]}"; do
+            url="$BASE/$page"
+            code=$(curl -L --retry 4 --retry-delay 2 --connect-timeout 20 --max-time 60 -sS -o "/tmp/$page" -w '%{http_code}' "$url")
+            echo "$page HTTP $code"
+            test "$code" = "200"
+            test -s "/tmp/$page"
+            grep -q 'ORANGE ONE' "/tmp/$page"
+          done
+          echo "UNIFIED_PREVIEW_18_URLS_PASS"
+          echo "UNIFIED_PREVIEW_BASE=$BASE"
