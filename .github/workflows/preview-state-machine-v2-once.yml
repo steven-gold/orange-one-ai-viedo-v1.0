@@ -48,6 +48,7 @@ jobs:
           s=s.replace("$('#DB-01-SEL-DOMAIN')?.value||'ALL'", "$('[data-control-id=\"DB-01-SEL-DOMAIN\"] select',root)?.value||'ALL'")
           s=s.replace("$('#DB-01-SEL-ENTITY-TYPE')?.value||'ALL'", "$('[data-control-id=\"DB-01-SEL-ENTITY-TYPE\"] select',root)?.value||'ALL'")
           s=s.replace("if(a.includes('VIEW')||a.includes('DETAIL')||a.includes('OPEN')&&!a.includes('CORRECTION'))", "if(a.endsWith('-VIEW')||a.includes('-VIEW-')||a.endsWith('-DETAIL')||a.includes('-DETAIL-')||(a.includes('-OPEN')&&!a.includes('CORRECTION')&&!a.includes('OPEN-OWNER')&&!a.includes('AUDIT')))" )
+          s=s.replace("$('[data-control-id=\"STR-01-INP-MESSAGE\"] textarea,[data-control-id=\"STR-01-INP-MESSAGE\"] input',root)", "$('textarea[data-control-id=\"STR-01-INP-MESSAGE\"],input[data-control-id=\"STR-01-INP-MESSAGE\"]',root)")
           old="if(a.includes('MODE')||a.includes('TOGGLE')||a.includes('TOOL-')){setActiveButton(el);status(`${a} 已切換`);return true;}"
           new="if(a.includes('MODE')||a.includes('TOGGLE')||a.includes('TOOL-')){setActiveButton(el);if(uid==='workspace:STR-01'&&a.includes('MODE'))state.mode=(el.textContent||'').toUpperCase().includes('MULTI')?'MULTI_AI':'SINGLE_AI';if(uid==='QA-01'&&a.includes('MODE'))state.mode=(el.textContent||'').toUpperCase().includes('MANUAL')?'MANUAL':'AUTO';status(`${a} 已切換`);return true;}"
           if old not in s: raise SystemExit('MODE patch target missing')
