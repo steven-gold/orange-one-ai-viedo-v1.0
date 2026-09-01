@@ -1,0 +1,223 @@
+name: INFO-01 preview seal once
+
+on:
+  push:
+    branches: [new]
+
+permissions:
+  contents: write
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout current new
+        uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+          path: source
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: source/package-lock.json
+
+      - name: Build exact current source
+        working-directory: source
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+
+      - name: Install temporary Chromium tooling
+        working-directory: source
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+          test -z "$(git status --porcelain package.json package-lock.json)"
+
+      - name: Capture INFO-01 sealed fail-closed snapshot
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run start > /tmp/info01-preview-next.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid || true; cat /tmp/info01-preview-next.log || true' EXIT
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/info >/dev/null; then break; fi
+            sleep 1
+          done
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          const fs=require('fs');
+          const assert=require('assert');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1280,height:900}});
+            const pageErrors=[];
+            const failed=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('requestfailed',r=>failed.push(`${r.method()} ${r.url()} ${r.failure()?.errorText||''}`));
+            await page.goto('http://127.0.0.1:3000/info',{waitUntil:'networkidle'});
+            const root=page.locator('[data-page-uid="workspace:INFO-01"]');
+            await root.waitFor({state:'attached',timeout:15000});
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:INFO-01"]')?.getAttribute('data-page-state')==='ERROR',{timeout:15000});
+            assert.equal(await root.getAttribute('data-projection-reason'),'UI_PROJECTION_RUNTIME_NOT_BOUND');
+            assert.equal(await root.getAttribute('data-authority-sections'),'12');
+            assert.equal(await root.getAttribute('data-authority-components'),'20');
+            assert.equal(await root.getAttribute('data-authority-controls'),'66');
+            assert.equal(await root.getAttribute('data-authority-actions'),'17');
+            assert.equal(await root.getAttribute('data-effectful-runtime-ready'),'false');
+            assert.deepEqual(pageErrors,[]);
+            assert.deepEqual(failed,[]);
+            const cssPaths=await page.locator('link[rel="stylesheet"]').evaluateAll(nodes=>nodes.map(node=>new URL(node.href).pathname).filter(path=>path.startsWith('/_next/static/')));
+            assert(cssPaths.length>0);
+            await page.evaluate(()=>{
+              document.querySelectorAll('script').forEach(node=>node.remove());
+              document.querySelectorAll('link[rel="modulepreload"],link[rel="preload"][as="script"]').forEach(node=>node.remove());
+              document.querySelectorAll('link[rel="stylesheet"][href^="/_next/static/"]').forEach(node=>{
+                const value=node.getAttribute('href');
+                if(value)node.setAttribute('href',`./info01-assets${value}`);
+              });
+              document.querySelectorAll('[href^="/brand/"]').forEach(node=>{const value=node.getAttribute('href');if(value)node.setAttribute('href',`.${value}`);});
+              document.querySelectorAll('[src^="/brand/"]').forEach(node=>{const value=node.getAttribute('src');if(value)node.setAttribute('src',`.${value}`);});
+              const map={
+                '/':'index.html','/core':'core.html','/assets':'assets.html','/video':'video.html','/edit':'edit.html','/qa':'qa.html','/database':'db.html','/strategy':'strategy.html','/info':'info.html',
+                '/admin/system':'system.html','/admin/accounts':'accounts.html','/admin/dev':'dev.html','/admin/social':'social.html','/admin/erp':'erp.html','/admin/aiapi':'aiapi.html','/admin/qa-criteria':'qa-criteria.html','/admin/strategy':'strategy-admin.html','/admin/knowledge':'knowledge-admin.html'
+              };
+              document.querySelectorAll('a[href]').forEach(node=>{const href=node.getAttribute('href');if(href&&map[href])node.setAttribute('href',map[href]);});
+              document.documentElement.dataset.info01PreviewMode='SEALED_STATIC_FAIL_CLOSED';
+            });
+            fs.writeFileSync('/tmp/info.html',await page.content());
+            fs.writeFileSync('/tmp/info01-css-paths.txt',[...new Set(cssPaths)].sort().join('\n')+'\n');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1);});
+          NODE
+          rm -rf /tmp/info01-assets
+          mkdir -p /tmp/info01-assets
+          while IFS= read -r p; do
+            test -n "$p" || continue
+            src=".next${p#/_next}"
+            dst="/tmp/info01-assets${p}"
+            test -f "$src" || { echo "missing static asset: $src" >&2; exit 1; }
+            mkdir -p "$(dirname "$dst")"
+            cp "$src" "$dst"
+          done < /tmp/info01-css-paths.txt
+          test "$(find /tmp/info01-assets -type f | wc -l | tr -d ' ')" -gt 0
+          if find /tmp/info01-assets -type f ! -name '*.css' | grep -q .; then
+            echo 'Unexpected INFO-01 runtime asset captured' >&2
+            exit 1
+          fi
+
+      - name: Checkout cumulative preview
+        uses: actions/checkout@v4
+        with:
+          ref: acpos-live-preview
+          fetch-depth: 0
+          path: previewrepo
+
+      - name: Stage only isolated INFO-01 preview files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf previewrepo/preview/info01-assets
+          mkdir -p previewrepo/preview/info01-assets
+          cp /tmp/info.html previewrepo/preview/info.html
+          cp -R /tmp/info01-assets/. previewrepo/preview/info01-assets/
+          cd previewrepo
+          changed=$(git status --porcelain | awk '{print $2}')
+          echo "$changed"
+          test -n "$changed"
+          if echo "$changed" | grep -Ev '^(preview/info\.html|preview/info01-assets/)'; then
+            echo 'Preview pollution outside INFO-01 detected' >&2
+            exit 1
+          fi
+
+      - name: Validate staged INFO-01 static preview in Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd previewrepo/preview
+          python3 -m http.server 4173 > /tmp/info01-static.log 2>&1 &
+          static_pid=$!
+          trap 'kill $static_pid || true; cat /tmp/info01-static.log || true' EXIT
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/info.html >/dev/null; then break; fi
+            sleep 1
+          done
+          cd ../../source
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          const assert=require('assert');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1280,height:900}});
+            const pageErrors=[];
+            const failed=[];
+            const runtimeRequests=[];
+            const scriptRequests=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            page.on('requestfailed',r=>failed.push(`${r.method()} ${r.url()} ${r.failure()?.errorText||''}`));
+            page.on('request',r=>{const u=new URL(r.url());if(u.pathname.startsWith('/v1/'))runtimeRequests.push(`${r.method()} ${u.pathname}`);if(r.resourceType()==='script')scriptRequests.push(u.pathname);});
+            await page.goto('http://127.0.0.1:4173/info.html',{waitUntil:'networkidle'});
+            const root=page.locator('[data-page-uid="workspace:INFO-01"]');
+            await root.waitFor({state:'attached',timeout:15000});
+            assert.equal(await page.locator('html').getAttribute('data-info01-preview-mode'),'SEALED_STATIC_FAIL_CLOSED');
+            assert.equal(await root.getAttribute('data-page-state'),'ERROR');
+            assert.equal(await root.getAttribute('data-projection-status'),'BLOCKED');
+            assert.equal(await root.getAttribute('data-projection-reason'),'UI_PROJECTION_RUNTIME_NOT_BOUND');
+            assert.equal(await root.getAttribute('data-authority-sections'),'12');
+            assert.equal(await root.getAttribute('data-authority-components'),'20');
+            assert.equal(await root.getAttribute('data-authority-controls'),'66');
+            assert.equal(await root.getAttribute('data-authority-actions'),'17');
+            assert.equal(await root.getAttribute('data-effectful-runtime-ready'),'false');
+            assert.equal(await root.getAttribute('data-registry-valid'),'true');
+            assert((await page.locator('body').innerText()).includes('UI_PROJECTION_RUNTIME_NOT_BOUND'));
+            assert.equal(await page.locator('script').count(),0);
+            assert.deepEqual(runtimeRequests,[]);
+            assert.deepEqual(scriptRequests,[]);
+            const formal=page.locator('[data-runtime-binding="NOT_EXECUTED"]');
+            assert((await formal.count())>=5);
+            for(let i=0;i<await formal.count();i++){
+              const node=formal.nth(i);
+              assert(await node.getAttribute('data-action-uid'));
+              assert(await node.getAttribute('data-gate-uid'));
+              assert(await node.getAttribute('data-permission-uid'));
+              assert(await node.getAttribute('data-operation'));
+              assert(await node.getAttribute('data-method-path'));
+              assert(await node.getAttribute('data-error-uid'));
+              assert.equal(await node.getAttribute('data-current-state'),'ERROR');
+            }
+            assert.equal(await page.locator('a[data-nav-id="NAV-09"]').getAttribute('href'),'info.html');
+            for(const width of [1280,1440,1920]){
+              await page.setViewportSize({width,height:900});
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+              assert(overflow<=0,`overflow ${width}: ${overflow}`);
+            }
+            assert.deepEqual(pageErrors,[]);
+            assert.deepEqual(failed,[]);
+            console.log('INFO01_STATIC_PREVIEW_PASS');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1);});
+          NODE
+
+      - name: Commit cumulative INFO-01 preview seal
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd previewrepo
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add preview/info.html preview/info01-assets
+          git commit -m 'sync(preview): seal isolated INFO-01 page'
+          parent=$(git rev-parse HEAD^)
+          if git diff --name-only "$parent" HEAD | grep -Ev '^(preview/info\.html|preview/info01-assets/)'; then
+            echo 'Committed preview pollution outside INFO-01 detected' >&2
+            exit 1
+          fi
+          git push origin HEAD:acpos-live-preview
