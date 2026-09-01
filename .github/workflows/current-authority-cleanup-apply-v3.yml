@@ -1,0 +1,29 @@
+name: Apply Current Authority Pollution Cleanup V3
+on:
+  push:
+    branches: [current-authority-pollution-cleanup]
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    if: github.event.head_commit.message != 'cleanup-pollution-fixes'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply cleanup patch
+        run: python3 .github/current_authority_cleanup.py
+      - name: Validate cleanup
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+      - name: Commit cleanup
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add -A
+          git diff --cached --check
+          git commit -m "cleanup-pollution-fixes"
+          git push origin HEAD:current-authority-pollution-cleanup
