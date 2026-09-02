@@ -24,7 +24,13 @@ if (process.env.ACPOS_E2E_SKIP_BUILD !== "1") {
 
 const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-p", port], {
   stdio: ["ignore", "inherit", "inherit"],
-  env: { ...process.env, NODE_ENV: "production", NEXT_PUBLIC_ACPOS_RUNTIME_MODE: "" },
+  env: {
+    ...process.env,
+    NODE_ENV: "production",
+    NEXT_PUBLIC_ACPOS_RUNTIME_MODE: "",
+    ACPOS_RATE_LIMIT_MAX: "3",
+    ACPOS_RATE_LIMIT_WINDOW_MS: "60000",
+  },
 });
 
 async function waitForServer() {
@@ -72,9 +78,27 @@ try {
     if (projection.status === 503) assert(/RUNTIME_NOT_BOUND|NOT_BOUND|NOT_CONFIGURED/.test(text), `UNTRUTHFUL_503_${uid}`);
   }
 
+  let limitedResponse = null;
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
+    const response = await fetch(`${base}/v1/conversations/release-rate-limit/messages`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    });
+    if (attempt <= 3) assert(response.status !== 429, `RATE_LIMIT_EARLY_HTTP_${response.status}_ATTEMPT_${attempt}`);
+    else limitedResponse = response;
+  }
+  assert(limitedResponse?.status === 429, `RATE_LIMIT_HTTP_${limitedResponse?.status ?? "missing"}`);
+  const limitedBody = await limitedResponse.json();
+  assert(limitedBody.reason_code === "RATE_LIMITED", "RATE_LIMIT_REASON_CODE_MISSING");
+  assert(Boolean(limitedBody.correlation_id), "RATE_LIMIT_CORRELATION_ID_MISSING");
+  assert(Boolean(limitedResponse.headers.get("retry-after")), "RATE_LIMIT_RETRY_AFTER_MISSING");
+  assert(limitedResponse.headers.get("x-ratelimit-limit") === "3", "RATE_LIMIT_LIMIT_HEADER_INVALID");
+  assert(limitedResponse.headers.get("x-ratelimit-remaining") === "0", "RATE_LIMIT_REMAINING_HEADER_INVALID");
+
   const missing = await fetch(`${base}/this-route-must-not-exist`, { redirect: "manual" });
   assert(missing.status === 404, `NOT_FOUND_HTTP_${missing.status}`);
-  process.stdout.write(`RELEASE_HTTP_E2E_PASS ready=${ready.status}\n`);
+  process.stdout.write(`RELEASE_HTTP_E2E_PASS ready=${ready.status} rate_limit=429\n`);
 } finally {
   server.kill("SIGTERM");
 }
