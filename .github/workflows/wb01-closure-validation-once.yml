@@ -1,0 +1,170 @@
+name: WB-01 closure validation
+
+on:
+  push:
+    branches: [acpos-wb01-closure-20260902]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install audit and typecheck
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+      - name: WB authority and source coverage
+        shell: python
+        run: |
+          from pathlib import Path
+          import re,sys
+          auth=Path('authority/pages/workspace/WB-01/ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml').read_text()
+          visual=Path('src/components/pages/DashboardVisual.tsx').read_text()
+          contract=Path('src/domain/dashboard/readModelContract.ts').read_text()
+          runtime=Path('src/server/dashboard/readModelRuntime.ts').read_text()
+          controlled=Path('src/server/testing/controlledDashboardTestRuntime.ts').read_text()
+          sections=set(re.findall(r'^\s*section_id:\s*(SEC-WORKSPACE-WB-01-[A-Z0-9-]+)',auth,re.M))
+          fields=set(re.findall(r'^\s*field_id:\s*(FIELD-WORKSPACE-WB-01-[A-Z0-9-]+)',auth,re.M))
+          controls=set(re.findall(r'^\s*control_id:\s*(CTRL-WORKSPACE-WB-01-[A-Z0-9-]+)',auth,re.M))
+          components=set(re.findall(r'^- component_uid:\s*(WB-01-CMP-[A-Z0-9-]+)',auth,re.M))
+          visuals=set(re.findall(r'^- visual_uid:\s*(WB-01-VIS-[A-Z0-9-]+)',auth,re.M))
+          errors=set(re.findall(r'^- error_uid:\s*(WB-01-ERR-[A-Z0-9-]+)',auth,re.M))
+          expected={'sections':14,'fields':14,'controls':14,'components':15,'visuals':15,'errors':4}
+          actual={'sections':len(sections),'fields':len(fields),'controls':len(controls),'components':len(components),'visuals':len(visuals),'errors':len(errors)}
+          print('WB_AUTHORITY_COUNTS',actual)
+          if actual!=expected: print('WB_COUNT_MISMATCH',expected);sys.exit(1)
+          if any(x not in visual for x in sections|controls): print('WB_VISUAL_UID_GAP');sys.exit(1)
+          if any(x not in contract+runtime for x in errors): print('WB_ERROR_UID_GAP');sys.exit(1)
+          if 'const state = "EMPTY"' in visual: print('WB_HARDCODED_EMPTY_RESIDUAL');sys.exit(1)
+          required=['/v1/dashboard/read-model','getDashboardReadModel','data-operation-id="getDashboardReadModel"','total_operation_time_seconds','TEST_ONLY','production_eligible: false']
+          if any(x not in visual+runtime+controlled for x in required): print('WB_RUNTIME_BINDING_GAP');sys.exit(1)
+          if 'test_metadata' in contract: print('WB_AUTHORITY_SCHEMA_WIDENED_FOR_TEST');sys.exit(1)
+          print('WB_AUTHORITY_SOURCE_COVERAGE_PASS')
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+        run: npm run build
+      - name: Production dashboard must fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3141 NEXT_PUBLIC_ACPOS_RUNTIME_MODE= npm run start >/tmp/wb-prod.log 2>&1 &
+          pid=$!; trap 'cat /tmp/wb-prod.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3141/ >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/wb-prod.json -w '%{http_code}' http://127.0.0.1:3141/v1/dashboard/read-model)
+          cat /tmp/wb-prod.json
+          test "$code" = "503"
+          grep -q 'WB-01-ERR-READ-001' /tmp/wb-prod.json
+          grep -q 'DASHBOARD_RUNTIME_NOT_BOUND' /tmp/wb-prod.json
+          ! grep -q 'TEST_ONLY' /tmp/wb-prod.json
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Controlled dashboard direct read
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3142 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/wb-controlled.log 2>&1 &
+          pid=$!; trap 'cat /tmp/wb-controlled.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3142/ >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/wb-controlled.json -w '%{http_code}' http://127.0.0.1:3142/v1/dashboard/read-model)
+          test "$code" = "200"
+          python <<'PY'
+          import json
+          d=json.load(open('/tmp/wb-controlled.json'))
+          assert d['read_model_version']=='TEST_ONLY-WB01-RM-001'
+          assert len([k for k in d if k not in ('read_model_version','correlation_id')])==14
+          t=d['project_progress_overview']['project_progress_overview']['projects'][0]['topics'][0]
+          assert t['total_operation_time_seconds']==93784
+          assert d['company_project_count']['company_project_count']['value']==8
+          assert '[TEST]' in d['industry_news']['industry_news']['items'][0]['title']
+          assert 'test_metadata' not in d
+          print('WB_CONTROLLED_READ_PASS')
+          PY
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Install Chromium test dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled dashboard browser interactions
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3143 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/wb-browser.log 2>&1 &
+          pid=$!; trap 'cat /tmp/wb-browser.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3143/ >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const errors=[];
+            for(const width of [1280,1440,1920]){
+              const page=await browser.newPage({viewport:{width,height:1100}});
+              page.on('pageerror',e=>errors.push(`pageerror:${width}:${e.message}`));
+              page.on('console',m=>{if(m.type()==='error')errors.push(`console:${width}:${m.text()}`)});
+              const responses=[];
+              page.on('response',r=>{if(r.url().endsWith('/v1/dashboard/read-model'))responses.push(r.status())});
+              const res=await page.goto('http://127.0.0.1:3143/',{waitUntil:'networkidle'});
+              if(!res||res.status()!==200)throw new Error(`WB route ${res&&res.status()} ${width}`);
+              await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:WB-01"]')?.getAttribute('data-page-state')==='READ_ONLY');
+              if(responses.length!==1||responses[0]!==200)throw new Error(`WB initial read count/status ${responses}`);
+              const root=page.locator('[data-page-uid="workspace:WB-01"]');
+              if(await root.getAttribute('data-authority-section-count')!=='14'||await root.getAttribute('data-authority-control-count')!=='14')throw new Error('WB registry metadata mismatch');
+              const sections=page.locator('[data-section-id^="SEC-WORKSPACE-WB-01-"]');
+              const controls=page.locator('[data-control-id^="CTRL-WORKSPACE-WB-01-"]');
+              if(await sections.count()!==14||await controls.count()!==14)throw new Error(`WB visible registry ${await sections.count()}/${await controls.count()}`);
+              const unique=await controls.evaluateAll(ns=>new Set(ns.map(n=>n.getAttribute('data-control-id'))).size);
+              if(unique!==14)throw new Error('WB duplicate control ids');
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+              if(width>=1280&&overflow>0)throw new Error(`WB horizontal overflow ${overflow} ${width}`);
+              const body=(await page.locator('body').textContent())||'';
+              for(const text of ['[TEST] ORANGE ONE Demo Project','[TEST] Editing','[TEST] Review required','[TEST] AI industry update','026:03:04']) if(!body.includes(text))throw new Error(`WB missing visible ${text}`);
+              if(body.includes('Correction Rate')||body.includes('Start Research'))throw new Error('WB forbidden residual visible');
+              await page.close();
+            }
+            const page=await browser.newPage({viewport:{width:1440,height:1100}});
+            page.on('pageerror',e=>errors.push(`pageerror:flow:${e.message}`));
+            page.on('console',m=>{if(m.type()==='error')errors.push(`console:flow:${m.text()}`)});
+            let readCount=0;page.on('response',r=>{if(r.url().endsWith('/v1/dashboard/read-model')&&r.status()===200)readCount++});
+            await page.goto('http://127.0.0.1:3143/',{waitUntil:'networkidle'});
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:WB-01"]')?.getAttribute('data-page-state')==='READ_ONLY');
+            if(readCount!==1)throw new Error(`WB initial flow read ${readCount}`);
+            const control=page.locator('[data-control-id="CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN"]');
+            if(await control.getAttribute('data-operation-id')!=='getDashboardReadModel')throw new Error('WB operation id binding missing');
+            await control.click();
+            await page.waitForFunction(()=>document.querySelector('[data-drawer-section-key="project_progress_overview"]')?.getAttribute('data-drawer-state')==='READ_ONLY');
+            if(readCount!==2)throw new Error(`WB section open did not re-read exactly once ${readCount}`);
+            const drawer=page.locator('[data-drawer-section-key="project_progress_overview"]');
+            const text=(await drawer.textContent())||'';
+            if(!text.includes('[TEST] ORANGE ONE Demo Project')||!text.includes('026:03:04')||!text.includes('read_model_version: TEST_ONLY-WB01-RM-001'))throw new Error('WB drawer projection incomplete');
+            if((await drawer.locator('button').count())!==1)throw new Error('WB drawer has unregistered action');
+            await page.keyboard.press('Escape');
+            await page.waitForFunction(()=>!document.querySelector('[data-drawer-section-key]'));
+            if(!(await control.evaluate(el=>el===document.activeElement)))throw new Error('WB focus not returned to opener');
+            if(errors.length)throw new Error(errors.join('\n'));
+            console.log('WB_BROWSER_INTERACTION_PASS');
+            await page.close();await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Residual and dirty-tree guard
+        run: |
+          set -euo pipefail
+          ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/domain/dashboard src/server/dashboard src/server/testing/controlledDashboardTestRuntime.ts src/components/pages/DashboardVisual.tsx
+          test ! -e .github/workflows/wb01-patch-once.yml
+          git diff --exit-code
