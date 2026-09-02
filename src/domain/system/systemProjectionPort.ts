@@ -1,26 +1,8 @@
-export type SystemProjectionResult =
-  | { ok: true; value: unknown; correlation_id: string | null }
-  | { ok: false; status: number; reason_code: string; correlation_id: string | null };
-
-export async function readSystemProjection(signal?: AbortSignal): Promise<SystemProjectionResult> {
-  try {
-    const response = await fetch("/v1/ui-projections/admin%3ASYS-01", {
-      method: "GET",
-      cache: "no-store",
-      signal,
-      headers: { accept: "application/json" },
-    });
-    const correlation_id = response.headers.get("x-correlation-id");
-    const value: unknown = await response.json().catch(() => null);
-    if (!response.ok) {
-      const reason_code =
-        value && typeof value === "object" && "reason_code" in value && typeof value.reason_code === "string"
-          ? value.reason_code
-          : "UI_PROJECTION_READ_FAILED";
-      return { ok: false, status: response.status, reason_code, correlation_id };
-    }
-    return { ok: true, value, correlation_id };
-  } catch {
-    return { ok: false, status: 503, reason_code: "UI_PROJECTION_READ_FAILED", correlation_id: null };
-  }
-}
+import{isControlledTestMode}from"@/domain/testing/controlledTestData";
+export type SystemProjectionTestMetadata={data_classification:"TEST_ONLY";synthetic:true;test_dataset_id:string;test_run_id:string;created_for_validation:true;production_eligible:false};
+export type SystemNormalizedProjection={page_state:"READY"|"EMPTY"|"ERROR/BLOCKED";system_change_id:string|null;conversation_id:string|null;thread_id:string|null;branch_id:string|null;multi_ai_route_available:boolean;values:Record<string,string>;test_metadata?:SystemProjectionTestMetadata};
+export type SystemProjectionResult=|{ok:true;projection:SystemNormalizedProjection;correlation_id:string|null}|{ok:false;status:number;reason_code:string;correlation_id:string|null};
+function rec(v:unknown):Record<string,unknown>|null{return v&&typeof v==="object"&&!Array.isArray(v)?v as Record<string,unknown>:null;}
+function nullable(v:unknown){return v===null||typeof v==="string";}
+function normalize(raw:unknown):SystemNormalizedProjection|null{const r=rec(raw);if(!r)return null;if(!(r.page_state==="READY"||r.page_state==="EMPTY"||r.page_state==="ERROR/BLOCKED")||!nullable(r.system_change_id)||!nullable(r.conversation_id)||!nullable(r.thread_id)||!nullable(r.branch_id)||typeof r.multi_ai_route_available!=="boolean")return null;const values=rec(r.values);if(!values||!Object.values(values).every(x=>typeof x==="string"))return null;let test_metadata:SystemProjectionTestMetadata|undefined;if(r.test_metadata!==undefined){const m=rec(r.test_metadata);if(!m||m.data_classification!=="TEST_ONLY"||m.synthetic!==true||typeof m.test_dataset_id!=="string"||typeof m.test_run_id!=="string"||m.created_for_validation!==true||m.production_eligible!==false||!isControlledTestMode())return null;test_metadata=m as unknown as SystemProjectionTestMetadata;}return{page_state:r.page_state,system_change_id:r.system_change_id as string|null,conversation_id:r.conversation_id as string|null,thread_id:r.thread_id as string|null,branch_id:r.branch_id as string|null,multi_ai_route_available:r.multi_ai_route_available,values:values as Record<string,string>,test_metadata};}
+export async function readSystemProjection(signal?:AbortSignal):Promise<SystemProjectionResult>{try{const response=await fetch("/v1/ui-projections/admin%3ASYS-01",{method:"GET",cache:"no-store",signal,headers:{accept:"application/json"}}),correlation_id=response.headers.get("x-correlation-id"),raw:unknown=await response.json().catch(()=>null);if(!response.ok){const body=rec(raw);return{ok:false,status:response.status,reason_code:typeof body?.reason_code==="string"?body.reason_code:"UI_PROJECTION_READ_FAILED",correlation_id};}const projection=normalize(raw);return projection?{ok:true,projection,correlation_id}:{ok:false,status:503,reason_code:"SYS_PROJECTION_CONTRACT_REJECTED",correlation_id};}catch{return{ok:false,status:503,reason_code:"UI_PROJECTION_READ_FAILED",correlation_id:null};}}

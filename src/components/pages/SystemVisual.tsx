@@ -11,15 +11,15 @@ import {
   SYS_SECTION_COUNT,
   getSystemControlTrace,
 } from "@/domain/system/systemRuntimeContract";
-import { readSystemProjection } from "@/domain/system/systemProjectionPort";
+import { readSystemProjection, type SystemNormalizedProjection } from "@/domain/system/systemProjectionPort";
 import styles from "./SystemVisual.module.css";
 
 const DASH = "—";
 
 type ProjectionState =
-  | { status: "LOADING"; reason_code: null; correlation_id: null }
-  | { status: "READY"; reason_code: null; correlation_id: string | null }
-  | { status: "BLOCKED"; reason_code: string; correlation_id: string | null };
+  | { status: "LOADING"; reason_code: null; correlation_id: null; value:null }
+  | { status: "READY"; reason_code: null; correlation_id: string | null; value:SystemNormalizedProjection }
+  | { status: "BLOCKED"; reason_code: string; correlation_id: string | null; value:null };
 
 function DataRow({ label, value = DASH }: { label: string; value?: string }) {
   return (
@@ -59,7 +59,7 @@ export function SystemVisual() {
   const { locale } = useI18n();
   const t = (key: Parameters<typeof systemText>[1]) => systemText(locale, key);
   const [state, dispatch] = useReducer(reduceSystemClientState, INITIAL_SYSTEM_CLIENT_STATE);
-  const [projection, setProjection] = useState<ProjectionState>({ status: "LOADING", reason_code: null, correlation_id: null });
+  const [projection, setProjection] = useState<ProjectionState>({ status: "LOADING", reason_code: null, correlation_id: null, value:null });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -67,10 +67,11 @@ export function SystemVisual() {
     void readSystemProjection(controller.signal).then((result) => {
       if (!active) return;
       if (result.ok) {
-        setProjection({ status: "READY", reason_code: null, correlation_id: result.correlation_id });
+        dispatch({type:"BIND_CONTEXT",system_change_id:result.projection.system_change_id,conversation_id:result.projection.conversation_id,thread_id:result.projection.thread_id,branch_id:result.projection.branch_id});
+        setProjection({ status: "READY", reason_code: null, correlation_id: result.correlation_id, value:result.projection });
         return;
       }
-      setProjection({ status: "BLOCKED", reason_code: result.reason_code, correlation_id: result.correlation_id });
+      setProjection({ status: "BLOCKED", reason_code: result.reason_code, correlation_id: result.correlation_id, value:null });
     });
     return () => {
       active = false;
@@ -82,7 +83,7 @@ export function SystemVisual() {
   const systemContextResolved = projection.status === "READY" && Boolean(state.system_change_id);
   const activeConversationContextResolved = systemContextResolved && Boolean(state.conversation_id);
   const modeGateReady = systemContextResolved && activeConversationContextResolved;
-  const multiAiRouteReady = false;
+  const multiAiRouteReady = projection.status === "READY" && projection.value.multi_ai_route_available;
   const multiAiGateReady = modeGateReady && multiAiRouteReady;
   const councilGateReady = multi && multiAiGateReady;
   const projectionReason = projection.reason_code ?? (projection.status === "READY" ? "READY" : "LOADING");
@@ -92,7 +93,7 @@ export function SystemVisual() {
       className={styles.page}
       data-page-uid="admin:SYS-01"
       data-vis-step="VIS-10"
-      data-page-state="EMPTY"
+      data-page-state={projection.status === "READY" ? projection.value.page_state : projection.status === "BLOCKED" ? "ERROR/BLOCKED" : "EMPTY"}
       data-ai-mode={state.ai_mode}
       data-council-mode={state.council_mode}
       data-authority-status={SYS_AUTHORITY_STATUS}
@@ -107,6 +108,8 @@ export function SystemVisual() {
       data-mode-gate-ready={String(modeGateReady)}
       data-multi-ai-route-ready={String(multiAiRouteReady)}
       data-effectful-runtime-ready="false"
+      data-data-classification={projection.status === "READY" ? projection.value.test_metadata?.data_classification : undefined}
+      data-production-eligible={projection.status === "READY" && projection.value.test_metadata ? String(projection.value.test_metadata.production_eligible) : undefined}
     >
       <header className={styles.contextBar}>
         <div>
@@ -123,16 +126,16 @@ export function SystemVisual() {
       <div className={styles.primaryGrid}>
         <Section id="SEC-ADMIN-SYS-01-SYSTEM-CONTEXT" title={t("systemContext")}>
           <div className={styles.subheading}>{t("currentTruth")}</div>
-          <DataRow label={t("systemVersion")} />
+          <DataRow label={t("systemVersion")} value={projection.status === "READY" ? projection.value.values.current_system_version ?? DASH : DASH} />
           <DataRow label={t("authority")} value={SYS_AUTHORITY_STATUS} />
           <DataRow label={t("services")} value={SYS_IMPLEMENTATION_STATUS} />
           <DataRow label={t("runtime")} value={projectionReason} />
           <div className={styles.divider} />
           <div className={styles.subheading}>{t("activeChange")}</div>
           <DataRow label={t("systemChangeId")} value={state.system_change_id ?? DASH} />
-          <DataRow label={t("goal")} />
-          <DataRow label={t("scope")} />
-          <DataRow label={t("candidateRef")} />
+          <DataRow label={t("goal")} value={projection.status === "READY" ? projection.value.values.current_goal ?? DASH : DASH} />
+          <DataRow label={t("scope")} value={projection.status === "READY" ? projection.value.values.scope ?? DASH : DASH} />
+          <DataRow label={t("candidateRef")} value={projection.status === "READY" ? projection.value.values.candidate_ref ?? DASH : DASH} />
         </Section>
 
         <Section id="SEC-ADMIN-SYS-01-CONVERSATION" title={t("conversation")} className={styles.conversationPanel}>
@@ -207,7 +210,7 @@ export function SystemVisual() {
             <DataRow label="conversation_id" value={state.conversation_id ?? DASH} />
             <DataRow label="thread_id" value={state.thread_id ?? DASH} />
             <DataRow label="branch_id" value={state.branch_id ?? DASH} />
-            <DataRow label="context_snapshot_ref" />
+            <DataRow label="context_snapshot_ref" value={projection.status === "READY" ? projection.value.values.context_snapshot_ref ?? DASH : DASH} />
           </div>
 
           <div className={styles.composer} data-component-uid="SYS-01-CMP-CONVERSATION-COMPOSER" data-visual-uid="SYS-01-VIS-CONVERSATION-COMPOSER">
@@ -266,8 +269,8 @@ export function SystemVisual() {
             <span>{t("affectedTypes")}</span>
             <strong>{DASH}</strong>
           </div>
-          <DataRow label="dependency_graph_ref" />
-          <DataRow label="latest_context_fingerprint" />
+          <DataRow label="dependency_graph_ref" value={projection.status === "READY" ? projection.value.values.dependency_graph_ref ?? DASH : DASH} />
+          <DataRow label="latest_context_fingerprint" value={projection.status === "READY" ? projection.value.values.latest_context_fingerprint ?? DASH : DASH} />
         </Section>
       </div>
 
