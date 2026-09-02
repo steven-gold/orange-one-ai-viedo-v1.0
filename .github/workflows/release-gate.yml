@@ -2,9 +2,9 @@ name: ACPOS Release Gate
 
 on:
   pull_request:
-    branches: [new]
+    branches: [new, main]
   push:
-    branches: [new]
+    branches: [new, main]
   workflow_dispatch:
 
 permissions:
