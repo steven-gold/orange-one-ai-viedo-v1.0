@@ -1,0 +1,41 @@
+name: WB-01 guarded type fix once
+
+on:
+  push:
+    branches:
+      - acpos-wb01-closure-20260902
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-wb01-closure-20260902
+      - name: Guard trigger commit
+        id: guard
+        run: |
+          msg=$(git log -1 --format=%s)
+          if [ "$msg" = "chore(wb01): add guarded one-time type fix" ]; then echo "run=yes" >> "$GITHUB_OUTPUT"; else echo "run=no" >> "$GITHUB_OUTPUT"; fi
+      - name: Fix dashboard read success type
+        if: steps.guard.outputs.run == 'yes'
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('src/components/pages/DashboardVisual.tsx')
+          s=p.read_text()
+          old='const read = async (): Promise<DashboardReadModel | null> => {'
+          new='const read = async (): Promise<DashboardReadModel> => {'
+          assert old in s
+          p.write_text(s.replace(old,new,1))
+      - name: Commit product fix
+        if: steps.guard.outputs.run == 'yes'
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add src/components/pages/DashboardVisual.tsx
+          git commit -m "fix(wb01): narrow dashboard read success type"
+          git push origin HEAD:acpos-wb01-closure-20260902
