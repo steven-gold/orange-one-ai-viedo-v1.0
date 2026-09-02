@@ -1,5 +1,5 @@
 import type { CoreRuntimeRequest, CoreRuntimeResult } from "@/domain/core/coreRuntimeContract";
-import { getControlledCoreTestRuntimeBindings, isControlledCoreServerTestMode } from "@/server/testing/controlledCoreTestRuntime";
+import { getControlledCoreTestRuntimeBindings } from "@/server/testing/controlledCoreTestRuntime";
 
 export type CoreRuntimeBindings = {
   authorize: (request: CoreRuntimeRequest) => Promise<{ allowed: true } | { allowed: false; reason_code?: string }>;
@@ -11,12 +11,16 @@ let bindings: CoreRuntimeBindings | null = null;
 
 export function configureCoreRuntime(next: CoreRuntimeBindings): void { bindings = next; }
 
+function isExplicitControlledCoreTestMode(): boolean {
+  return process.env.NEXT_PUBLIC_ACPOS_RUNTIME_MODE === "CONTROLLED_TEST";
+}
+
 async function audit(runtime: CoreRuntimeBindings, entry: Parameters<CoreRuntimeBindings["audit"]>[0]): Promise<void> {
   try { await runtime.audit(entry); } catch { /* audit failure never fabricates success */ }
 }
 
 export async function executeCorePort(request: CoreRuntimeRequest): Promise<CoreRuntimeResult> {
-  const runtime = bindings ?? (isControlledCoreServerTestMode() ? getControlledCoreTestRuntimeBindings() : null);
+  const runtime = bindings ?? (isExplicitControlledCoreTestMode() ? getControlledCoreTestRuntimeBindings() : null);
   if (!runtime) {
     if (request.port_uid === "CORE-01-PORT-PROJECT-CREATE" || request.port_uid === "CORE-01-PORT-TOPIC-CREATE") {
       return { ok: false, error_uid: "CORE-01-ERR-PERM-001", reason_code: "IAM_ACCOUNT_PERMISSION_RUNTIME_NOT_BOUND", correlation_id: request.correlation_id, status: 403 };
