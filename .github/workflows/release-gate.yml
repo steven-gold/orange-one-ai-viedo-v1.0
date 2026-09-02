@@ -1,0 +1,76 @@
+name: ACPOS Release Gate
+
+on:
+  pull_request:
+    branches: [new]
+  push:
+    branches: [new]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install product dependencies
+        run: npm ci
+
+      - name: Source lint
+        run: npm run lint
+
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Release unit tests
+        run: npm test
+
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+          ACPOS_DEPLOYMENT_ENV: ci
+          ACPOS_RELEASE_SHA: ${{ github.sha }}
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
+
+      - name: Production HTTP E2E
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+          ACPOS_DEPLOYMENT_ENV: ci
+          ACPOS_RELEASE_SHA: ${{ github.sha }}
+          ACPOS_E2E_SKIP_BUILD: "1"
+          ACPOS_EXPECT_READY: "0"
+        run: npm run test:e2e
+
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
+
+      - name: Install current browser audit dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+
+      - name: Supported-viewport browser E2E
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run test:browser
+
+      - name: Standalone Docker build
+        run: docker build -t orange-one-acpos:${{ github.sha }} .
+
+      - name: Dirty tree guard
+        run: git diff --exit-code
