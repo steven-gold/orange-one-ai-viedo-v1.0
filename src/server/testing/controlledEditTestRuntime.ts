@@ -69,7 +69,7 @@ function values(){return{
   "EDIT-01-LBL-ERROR-STATE":"—",
 };}
 export function isControlledEditServerTestMode(){return isControlledTestMode();}
-export function readControlledEditTestProjection():EditResolvedContext{return{
+export function readControlledEditTestProjection():EditResolvedContext&{test_metadata:typeof TEST_METADATA}{return{
   project_id:PROJECT_ID,topic_id:TOPIC_ID,task_id:TASK_ID,locked_blueprint_ref:BLUEPRINT_REF,production_package_ref:PACKAGE_REF,input_manifest_ref:MANIFEST_REF,input_fingerprint:INPUT_FINGERPRINT,
   working_draft_ref:state.working_draft_ref,editing_run_id:state.editing_run_id,voice_run_id:state.voice_run_id,saved_edit_version_id:state.saved_edit_version_id,output_version_id:state.output_version_id,
   dialogue_timing_binding_ref:DIALOGUE_BINDING,page_state_uid:state.page_state_uid,current_stage_uid:state.stage_uid,current_stage_phase:state.stage_phase,current_stage_score:state.stage_score,current_error_uid:null,
@@ -84,7 +84,7 @@ export function readControlledEditTestProjection():EditResolvedContext{return{
     "EDIT-01-CTL-MEDIA-TYPE-FILTER":list("TEST-MEDIA-VIDEO","[TEST] Video"),"EDIT-01-FLD-INSPECTOR-SPEED":list("1","[TEST] 1x"),"EDIT-01-FLD-INSPECTOR-TRANSITION":list("TEST-CUT","[TEST] Cut"),
     "EDIT-01-FLD-API-SCOPE":list("TEST-RANGE","[TEST] Selected Range"),"EDIT-01-FLD-LIPSYNC-TARGET":list("TEST-DIALOGUE-001","[TEST] Dialogue Target"),"EDIT-01-FLD-SUB-LANG":list("zh-TW","[TEST] zh-TW"),"EDIT-01-FLD-SUB-FORMAT":list("SRT","[TEST] SRT"),"EDIT-01-CTL-AUDIO-MONITOR":list("MASTER","[TEST] Master"),
     "EDIT-01-FLD-API-PROVIDER":list("TEST-PROVIDER","[TEST] Provider"),"EDIT-01-FLD-API-MODEL":list("TEST-MODEL","[TEST] Model"),"EDIT-01-FLD-VOICE-SCRIPT":list("TEST-VOICE-SCRIPT-001","[TEST] Voice Script"),"EDIT-01-FLD-VOICE-ASSET":list("TEST-VOICE-ASSET-001","[TEST] Voice Asset"),"EDIT-01-FLD-VOICE-PROVIDER":list("TEST-VOICE-PROVIDER","[TEST] Voice Provider"),"EDIT-01-FLD-VOICE-MODEL":list("TEST-VOICE-MODEL","[TEST] Voice Model"),"EDIT-01-FLD-MUSIC-ASSET":list("TEST-MUSIC-ASSET-001","[TEST] Music Asset"),"EDIT-01-FLD-SFX-ASSET":list("TEST-SFX-ASSET-001","[TEST] SFX Asset"),
-  },gate_state:allGates(),
+  },gate_state:allGates(),test_metadata:TEST_METADATA,
 };}
 
 function ok(correlation_id:string,value:Record<string,unknown>={}){return{ok:true as const,value:{...value,projection:readControlledEditTestProjection(),test_metadata:TEST_METADATA},correlation_id};}
@@ -113,14 +113,17 @@ export async function executeControlledEditDepartmentOperation(request:Departmen
     state.stage_score=score;state.page_state_uid="EDIT-01-ST-PAGE-EVAL_PASS";state.stage_phase="WAIT_CONFIRMATION";return ok(request.correlation_id,{scorecard_ref:`TEST-EDIT-SCORECARD-${score}`,overall_score:score,hard_block:false,internal_action_uid:"EDIT-01-ACT-STAGE-EVALUATE"});
   }
   if(request.operation_id==="decideOutputCandidate"){
-    if(state.page_state_uid!=="EDIT-01-ST-PAGE-EVAL_PASS"||state.stage_phase!=="WAIT_CONFIRMATION")return fail(request.correlation_id,"EDIT-01-ERR-STAGE-001","STAGE_PASS_REQUIRED");
-    if(state.stage_uid==="EDIT-01-STAGE-01-ASSEMBLY"){state.stage_uid="EDIT-01-STAGE-02-AUDIO";state.stage_phase="READY";state.page_state_uid="EDIT-01-ST-PAGE-WORKING";state.stage_score=null;}
-    else if(state.stage_uid==="EDIT-01-STAGE-02-AUDIO"){state.stage_uid="EDIT-01-STAGE-03-SYNC";state.stage_phase="READY";state.page_state_uid="EDIT-01-ST-PAGE-WORKING";state.stage_score=null;}
-    else if(state.stage_uid==="EDIT-01-STAGE-03-SYNC"){state.stage_uid="EDIT-01-STAGE-04-FINALIZE";state.stage_phase="READY";state.page_state_uid="EDIT-01-ST-PAGE-EVAL_PASS";state.stage_score=98;}
-    return ok(request.correlation_id,{decision:"CONFIRM"});
+    const payload=request.payload&&typeof request.payload==="object"?request.payload as Record<string,unknown>:{};
+    const decision=payload.decision;
+    if(decision!=="CONFIRM")return fail(request.correlation_id,"EDIT-01-ERR-STAGE-001","CONTROLLED_TEST_ONLY_CONFIRM_SUPPORTED");
+    if(state.page_state_uid!=="EDIT-01-ST-PAGE-EVAL_PASS"||state.stage_phase!=="WAIT_CONFIRMATION")return fail(request.correlation_id,"EDIT-01-ERR-STAGE-001","EVALUATION_PASS_REQUIRED");
+    if(state.stage_uid==="EDIT-01-STAGE-01-ASSEMBLY"){state.stage_uid="EDIT-01-STAGE-02-AUDIO";state.stage_phase="READY";state.page_state_uid="EDIT-01-ST-PAGE-WORKING";}
+    else if(state.stage_uid==="EDIT-01-STAGE-02-AUDIO"){state.stage_uid="EDIT-01-STAGE-03-SYNC";state.stage_phase="READY";state.page_state_uid="EDIT-01-ST-PAGE-WORKING";}
+    else if(state.stage_uid==="EDIT-01-STAGE-03-SYNC"){state.stage_uid="EDIT-01-STAGE-04-FINALIZE";state.stage_phase="READY";state.page_state_uid="EDIT-01-ST-PAGE-WORKING";}
+    return ok(request.correlation_id,{decision:"CONFIRM",stage_uid:state.stage_uid});
   }
-  if(request.operation_id==="createDepartmentHandoff")return ok(request.correlation_id,{accepted:true});
-  return fail(request.correlation_id,"EDIT-01-ERR-CONTEXT-001","CONTROLLED_EDIT_DEPARTMENT_OPERATION_UNREGISTERED",400);
+  if(request.operation_id==="consumeVideoHandoff")return ok(request.correlation_id,{source_handoff_ref:"TEST-VIDEO-EDIT-HANDOFF-001"});
+  if(request.operation_id==="returnBlueprintCorrection")return ok(request.correlation_id,{return_ref:"TEST-EDIT-BLUEPRINT-RETURN-001"});
+  if(request.operation_id==="createProjectSnapshot")return ok(request.correlation_id,{snapshot_ref:"TEST-EDIT-SNAPSHOT-001"});
+  return fail(request.correlation_id,"EDIT-01-ERR-STAGE-001","CONTROLLED_EDIT_OPERATION_NOT_SUPPORTED");
 }
-
-export function applyControlledEditInternalProjection(next:Partial<Pick<State,"page_state_uid"|"stage_uid"|"stage_phase"|"stage_score"|"saved_edit_version_id"|"output_version_id"|"job_ref">>){Object.assign(state,next);return readControlledEditTestProjection();}
