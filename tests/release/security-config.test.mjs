@@ -17,8 +17,8 @@ test("production security headers are declared", () => {
   ]) assert.match(nextConfig, new RegExp(token));
 });
 
-test("standalone production output is enabled", () => {
-  assert.match(nextConfig, /output:\s*"standalone"/);
+test("standalone output is enabled for self-hosted builds and disabled on Vercel", () => {
+  assert.match(nextConfig, /output:\s*process\.env\.VERCEL\s*\?\s*undefined\s*:\s*"standalone"/);
 });
 
 test("environment and private-key files are ignored while example remains tracked", () => {
