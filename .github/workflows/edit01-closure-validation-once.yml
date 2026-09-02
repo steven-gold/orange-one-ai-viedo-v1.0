@@ -165,13 +165,16 @@ jobs:
             const add=q('EDIT-01-BTN-ADD-MEDIA');
             if(await add.isDisabled()) throw new Error('Standalone add media stayed disabled');
             await add.click();
-            await page.waitForFunction(()=>document.body.textContent?.includes('TEST-STANDALONE-MEDIA-001'));
+            await page.waitForFunction(()=>document.body.textContent?.includes('[TEST] Session Media 001'));
+            await page.waitForFunction(()=>document.body.textContent?.includes('[TEST] Import completed'));
             const start=q('EDIT-01-BTN-FLOW-START');
             if(await start.isDisabled()) throw new Error('Standalone Start/Continue stayed disabled after media import');
             await start.click();
             await page.waitForFunction(()=>document.body.textContent?.includes('EDIT-01-ST-PAGE-WORKING'));
             const mediaList=q('EDIT-01-LST-MEDIA');
-            await mediaList.getByRole('button').first().click();
+            const mediaButton=mediaList.getByRole('button',{name:'[TEST] Session Media 001'});
+            if(await mediaButton.count()!==1) throw new Error('Standalone media row not materialized exactly once');
+            await mediaButton.click();
             const drop=q('EDIT-01-CTL-DROP-TIMELINE');
             if(await drop.isDisabled()) throw new Error('Timeline drop remained disabled');
             await drop.click();
