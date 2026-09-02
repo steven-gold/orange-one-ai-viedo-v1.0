@@ -80,6 +80,9 @@ export const INITIAL_EDIT_CLIENT_STATE: EditClientState = {
 export type EditClientAction =
   |{type:"SOURCE_MODE";value:EditSourceMode}
   |{type:"EXECUTION_MODE";value:EditExecutionMode}
+  |{type:"CONTEXT_PROJECT_SET";value:string|null}
+  |{type:"CONTEXT_TOPIC_SET";value:string|null}
+  |{type:"CONTEXT_TASK_SET";value:string|null}
   |{type:"BIND_RESOLVED_CONTEXT";value:EditResolvedContext}
   |{type:"CLEAR_RESOLVED_CONTEXT"}
   |{type:"PLAY"}|{type:"PAUSE"}|{type:"SEEK";value:unknown}|{type:"RANGE_IN";value:unknown}|{type:"RANGE_OUT";value:unknown}|{type:"RANGE_CLEAR"}|{type:"RATE";value:EditClientState["playback_rate"]}
@@ -102,6 +105,9 @@ export function reduceEditClientState(state: EditClientState, action: EditClient
   switch(action.type){
     case"SOURCE_MODE":{const next=clearTransient(state);return action.value==="STANDALONE_UPLOAD"?{...next,source_mode:action.value,resolved:{...EMPTY_EDIT_RESOLVED_CONTEXT,page_state_uid:"EDIT-01-ST-PAGE-EMPTY",gate_state:{"EDIT-01-GATE-STANDALONE":true,"EDIT-01-GATE-CONTEXT-MUTABLE":true}}}:{...next,source_mode:action.value};}
     case"EXECUTION_MODE":return{...state,execution_mode:action.value,last_action_uid:"EDIT-01-ACT-EXECUTION-MODE-SET"};
+    case"CONTEXT_PROJECT_SET":{const changed=state.resolved.project_id!==action.value;return{...state,resolved:{...state.resolved,project_id:action.value,topic_id:changed?null:state.resolved.topic_id,task_id:changed?null:state.resolved.task_id},last_action_uid:"EDIT-01-ACT-CONTEXT-PROJECT-SET",last_runtime_result:`CONTEXT_PROJECT:${action.value??"—"}`};}
+    case"CONTEXT_TOPIC_SET":{const changed=state.resolved.topic_id!==action.value;return{...state,resolved:{...state.resolved,topic_id:action.value,task_id:changed?null:state.resolved.task_id},last_action_uid:"EDIT-01-ACT-CONTEXT-TOPIC-SET",last_runtime_result:`CONTEXT_TOPIC:${action.value??"—"}`};}
+    case"CONTEXT_TASK_SET":return{...state,resolved:{...state.resolved,task_id:action.value},last_action_uid:"EDIT-01-ACT-CONTEXT-TASK-SET",last_runtime_result:`CONTEXT_TASK:${action.value??"—"}`};
     case"BIND_RESOLVED_CONTEXT":return{...state,resolved:{...action.value,values:{...action.value.values},lists:{...action.value.lists},gate_state:{...action.value.gate_state}},draft_dirty:action.value.page_state_uid==="EDIT-01-ST-PAGE-EVAL_REQUIRED"};
     case"CLEAR_RESOLVED_CONTEXT":return{...state,resolved:{...EMPTY_EDIT_RESOLVED_CONTEXT},playing:false,range_in:null,range_out:null};
     case"PLAY":return{...state,playing:true,last_action_uid:"EDIT-01-ACT-PLAY"};case"PAUSE":return{...state,playing:false,last_action_uid:"EDIT-01-ACT-PAUSE"};case"SEEK":return{...state,playhead:action.value,last_action_uid:"EDIT-01-ACT-SEEK-TIMECODE"};
