@@ -34,3 +34,9 @@ test("observability is vendor-neutral and instrumentation-bound", async () => {
   assert.match(instrumentation, /emitObservability/);
   assert.match(instrumentation, /UNCAUGHT_SERVER_REQUEST_ERROR/);
 });
+
+test("release gate covers both construction and production branches", async () => {
+  const workflow = await read(".github/workflows/release-gate.yml");
+  assert.match(workflow, /pull_request:[\s\S]*branches:\s*\[new, main\]/);
+  assert.match(workflow, /push:[\s\S]*branches:\s*\[new, main\]/);
+});
