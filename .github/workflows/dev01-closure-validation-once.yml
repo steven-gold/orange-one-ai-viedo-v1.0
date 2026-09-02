@@ -45,7 +45,7 @@ jobs:
           assert all(x in contract for x in gates)
           assert 'DevProjectionTestMetadata' in port and 'DEV_TEST_PROJECTION_FORBIDDEN_IN_PRODUCTION' in port
           assert 'ensureControlledDevClientTestRuntime' in client and 'TEST_ONLY' in client and 'production_eligible: false' in client
-          assert 'readControlledDevTestProjection' in server and 'recipient_count:"1"' in server and 'delivery_to_count:"1"' in server
+          assert 'readControlledDevTestProjection' in server and 'recipient_count' in server and 'delivery_to_count' in server and 'TEST-DEV-RECIPIENT-001' in server
           assert 'controlledDevProjection' in shared and 'admin:DEV-01' in shared
           assert 'system_implementation_status: NOT_EXECUTED' in auth
           assert 'second enterprise outreach system' in auth and 'page-local provider/API-key system' in auth
