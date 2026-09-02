@@ -1,0 +1,199 @@
+name: STR-01 workspace closure validation
+
+on:
+  push:
+    branches:
+      - acpos-strategy-workspace-closure-20260902
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install audit and typecheck
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+      - name: STR authority and source coverage
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          auth=Path('authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml').read_text()
+          visual=Path('src/components/pages/StrategyVisual.tsx').read_text()
+          runtime=Path('src/components/pages/StrategyControlRuntime.tsx').read_text()
+          bindings=Path('src/domain/strategy/strategyControlBindings.ts').read_text()
+          contract=Path('src/domain/strategy/strategyRuntimeContract.ts').read_text()
+          projection=Path('src/domain/strategy/strategyProjectionPort.ts').read_text()
+          controlled=Path('src/server/testing/controlledStrategyWorkspaceTestRuntime.ts').read_text()
+          sections=set(re.findall(r'section_uid:\s*(STR-01-SEC-[0-9]+)',auth))
+          controls=set(re.findall(r'control_uid:\s*(STR-01-[A-Z0-9-]+)',auth))
+          actions=set(re.findall(r'action_uid:\s*(STR-01-ACT-[A-Z0-9-]+)',auth))
+          errors=set(re.findall(r'error_uid:\s*(STR-01-ERR-[A-Z0-9-]+)',auth))
+          gates=set(re.findall(r'gate_uid:\s*(STR-01-GATE-[A-Z0-9-]+)',auth))
+          print('STR_AUTHORITY_COUNTS',{'sections':len(sections),'controls':len(controls),'actions':len(actions),'errors':len(errors),'gates':len(gates)})
+          assert len(sections)==12
+          assert len(controls)==57
+          assert len(errors)==9
+          assert all(x in visual for x in controls),sorted(x for x in controls if x not in visual)
+          assert all(x in contract for x in errors),sorted(x for x in errors if x not in contract)
+          bind_controls=set(re.findall(r'"(STR-01-[A-Z0-9-]+)":\{"action_uid"',bindings))
+          assert bind_controls==controls,(sorted(controls-bind_controls),sorted(bind_controls-controls))
+          assert 'StrategyProjectionTestMetadata' in projection
+          assert 'production_eligible!==false' in projection
+          assert 'test_metadata:TEST_METADATA' in controlled
+          assert 'data-data-classification={state.projection?.test_metadata?.data_classification}' in visual
+          assert 'STRATEGY_REQUEST_ADAPTER_NOT_BOUND' in runtime
+          assert 'STRATEGY_OWNER_ROUTE_NOT_BOUND' in runtime
+          assert 'STRATEGY_ATTACHMENT_FLOW_NOT_BOUND' in runtime
+          assert 'parallel_strategy_page: FORBIDDEN' in auth
+          print('STR_AUTHORITY_SOURCE_COVERAGE_PASS')
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+        run: npm run build
+      - name: Production STR must fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3191 NEXT_PUBLIC_ACPOS_RUNTIME_MODE= npm run start >/tmp/str-prod.log 2>&1 &
+          pid=$!; trap 'cat /tmp/str-prod.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3191/strategy >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/str-prod-proj.json -w '%{http_code}' 'http://127.0.0.1:3191/v1/ui-projections/workspace%3ASTR-01')
+          cat /tmp/str-prod-proj.json
+          test "$code" = "503"
+          grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/str-prod-proj.json
+          ! grep -q 'TEST_ONLY' /tmp/str-prod-proj.json
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Controlled STR projection classification
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3192 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/str-controlled.log 2>&1 &
+          pid=$!; trap 'cat /tmp/str-controlled.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3192/strategy >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/str-controlled-proj.json -w '%{http_code}' 'http://127.0.0.1:3192/v1/ui-projections/workspace%3ASTR-01')
+          test "$code" = "200"
+          python <<'PY'
+          import json
+          d=json.load(open('/tmp/str-controlled-proj.json'))
+          m=d['test_metadata']
+          assert m['data_classification']=='TEST_ONLY'
+          assert m['synthetic'] is True
+          assert m['production_eligible'] is False
+          assert d['page_state']=='READY'
+          assert len(d['gate_state'])==11
+          assert d['owner_type']=='ERP'
+          print('STR_CONTROLLED_PROJECTION_PASS')
+          PY
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Install Chromium test dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled STR browser flow
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3193 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/str-browser.log 2>&1 &
+          pid=$!; trap 'cat /tmp/str-browser.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3193/strategy >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const errors=[];
+            for(const width of [1280,1440,1920]){
+              const page=await browser.newPage({viewport:{width,height:1300}});
+              page.on('pageerror',e=>errors.push(`pageerror:${width}:${e.message}`));
+              page.on('console',m=>{if(m.type()==='error')errors.push(`console:${width}:${m.text()}`)});
+              const res=await page.goto('http://127.0.0.1:3193/strategy',{waitUntil:'networkidle'});
+              if(!res||res.status()!==200)throw new Error(`STR route ${res&&res.status()} ${width}`);
+              await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:STR-01"]')?.getAttribute('data-page-state')==='READY');
+              const root=page.locator('[data-page-uid="workspace:STR-01"]');
+              if(await root.getAttribute('data-authority-controls')!=='57'||await root.getAttribute('data-registry-valid')!=='true')throw new Error('STR registry mismatch');
+              if(await root.getAttribute('data-data-classification')!=='TEST_ONLY'||await root.getAttribute('data-production-eligible')!=='false')throw new Error('STR classification missing');
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+              if(overflow>0)throw new Error(`STR horizontal overflow ${overflow} ${width}`);
+              await page.close();
+            }
+            const page=await browser.newPage({viewport:{width:1440,height:1500}});
+            page.on('pageerror',e=>errors.push(`pageerror:flow:${e.message}`));
+            page.on('console',m=>{if(m.type()==='error')errors.push(`console:flow:${m.text()}`)});
+            await page.goto('http://127.0.0.1:3193/strategy',{waitUntil:'networkidle'});
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:STR-01"]')?.getAttribute('data-page-state')==='READY');
+            const q=id=>page.locator(`[data-control-id="${id}"]`).first();
+            const attach=q('STR-01-BTN-ATTACH');
+            if(!(await attach.isDisabled()))throw new Error('STR attachment must stay disabled until registered flow exists');
+            if(await attach.getAttribute('data-disabled-reason')!=='STRATEGY_ATTACHMENT_FLOW_NOT_BOUND')throw new Error('STR attachment disabled reason missing');
+            await q('STR-01-INP-TOPIC-SEARCH').fill('Market');
+            const topics=page.locator('[data-control-id="STR-01-LST-TOPICS"] button');
+            if(await topics.count()!==1)throw new Error(`STR topic filter count ${await topics.count()}`);
+            await topics.first().click();
+            await q('STR-01-TGL-MODE').getByRole('button',{name:'Multi AI'}).click();
+            const root=page.locator('[data-page-uid="workspace:STR-01"]');
+            if(await root.getAttribute('data-strategy-mode')!=='MULTI_AI')throw new Error('STR multi-ai mode failed');
+            await q('STR-01-INP-MESSAGE').fill('請比較兩個策略候選並保留風險與不確定性。');
+            const send=page.waitForResponse(r=>r.url().includes('/v1/conversations/TEST-STR-CONVERSATION-001/messages')&&r.request().method()==='POST');
+            await q('STR-01-BTN-SEND').click();
+            if((await send).status()!==200)throw new Error('STR send failed');
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:STR-01"]')?.getAttribute('data-page-state')==='RESPONDING');
+            const conv=(await q('STR-01-VIEW-CONVERSATION').textContent())||'';
+            if(!conv.includes('[TEST USER]')||!conv.includes('[TEST AI]'))throw new Error('STR conversation response missing');
+            if(await q('STR-01-BTN-STOP').isDisabled())throw new Error('STR stop disabled during response');
+            const stop=page.waitForResponse(r=>r.url().includes('/generation/stop')&&r.request().method()==='POST');
+            await q('STR-01-BTN-STOP').click();
+            if((await stop).status()!==200)throw new Error('STR stop failed');
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:STR-01"]')?.getAttribute('data-page-state')==='READY');
+            const compare=page.waitForResponse(r=>r.url().includes('/v1/candidates/compare')&&r.request().method()==='GET');
+            await q('STR-01-BTN-COMPARE').click();
+            if((await compare).status()!==200)throw new Error('STR compare failed');
+            if(await q('STR-01-BTN-SUBMIT-REVIEW').isDisabled())throw new Error('STR submit review disabled');
+            const review=page.waitForResponse(r=>r.url().includes('/submitstrategyreview')&&r.request().method()==='POST');
+            await q('STR-01-BTN-SUBMIT-REVIEW').click();
+            if((await review).status()!==200)throw new Error('STR review failed');
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:STR-01"]')?.getAttribute('data-page-state')==='REVIEW_REQUIRED');
+            if(await q('STR-01-BTN-ADOPT').isDisabled())throw new Error('STR adopt disabled after human review gate');
+            const adopt=page.waitForResponse(r=>r.url().includes('/adoptascontextcandidate')&&r.request().method()==='POST');
+            await q('STR-01-BTN-ADOPT').click();
+            if((await adopt).status()!==200)throw new Error('STR adopt failed');
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:STR-01"]')?.getAttribute('data-page-state')==='ADOPTED_CONTEXT');
+            const exec=(await q('STR-01-FLD-EXECUTION-STATE').textContent())||'';
+            if(!exec.includes('OWNER_EXECUTION_NOT_PERFORMED'))throw new Error('STR owner execution boundary lost');
+            const audit=q('STR-01-BTN-AUDIT');
+            await audit.click();
+            if(await root.getAttribute('data-audit-open')!=='true')throw new Error('STR audit drawer not opened');
+            await page.keyboard.press('Escape');
+            if(await root.getAttribute('data-audit-open')!=='false')throw new Error('STR audit drawer not closed');
+            const owner=q('STR-01-BTN-OPEN-OWNER');
+            if(await owner.isDisabled())throw new Error('STR owner navigation disabled');
+            await Promise.all([page.waitForURL('**/admin/erp'),owner.click()]);
+            if(!page.url().endsWith('/admin/erp'))throw new Error('STR owner navigation mismatch');
+            if(errors.length)throw new Error(errors.join('\n'));
+            console.log('STR_BROWSER_INTERACTION_PASS');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Residual and dirty-tree guard
+        run: |
+          set -euo pipefail
+          ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/domain/strategy src/server/testing/controlledStrategyWorkspaceTestRuntime.ts src/components/pages/StrategyControlRuntime.tsx src/components/pages/StrategyVisual.tsx
+          git diff --exit-code
