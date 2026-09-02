@@ -1,0 +1,34 @@
+name: SYS-01 authority audit
+on:
+  push:
+    branches: [acpos-sys01-audit-20260903]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npm run typecheck
+      - name: Verify truthful SYS state
+        shell: python
+        run: |
+          from pathlib import Path
+          a=Path('authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml').read_text()
+          v=Path('src/components/pages/SystemVisual.tsx').read_text()
+          c=Path('src/domain/system/systemRuntimeContract.ts').read_text()
+          u=Path('src/server/shared/uiProjectionRuntime.ts').read_text()
+          assert 'implementation_status: NOT_EXECUTED' in a
+          assert 'visual_phase_execution: FORBIDDEN' in a
+          assert 'RESOLVE_FROM_CURRENT_CONVERSATION_CORE_DURING_LOGIC_PHASE' in a
+          assert 'SYS_IMPLEMENTATION_STATUS = "NOT_EXECUTED"' in c
+          assert 'const multiAiRouteReady = false' in v
+          assert 'data-effectful-runtime-ready="false"' in v
+          assert 'admin:SYS-01' not in u
+          print('SYS01_AUTHORITY_BLOCKER_CONFIRMED')
