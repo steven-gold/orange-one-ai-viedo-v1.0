@@ -18,12 +18,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Install
-        run: npm ci
-      - name: Dependency audit
-        run: npm audit --audit-level=high
-      - name: Typecheck
-        run: npm run typecheck
+      - name: Install and audit
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
       - name: INFO authority and source coverage
         shell: python
         run: |
@@ -32,8 +31,8 @@ jobs:
           auth=Path('authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml').read_text()
           src='\n'.join(p.read_text(errors='ignore') for p in Path('src').rglob('*') if p.is_file())
           bindings=Path('src/domain/info/infoControlBindings.ts').read_text()
-          contract=Path('src/domain/info/infoRuntimeContract.ts').read_text()
           catalog=Path('src/i18n/infoCatalog.ts').read_text()
+          contract=Path('src/domain/info/infoRuntimeContract.ts').read_text()
           pats={
             'sections':r'^\s*-?\s*section_uid:\s*(INFO-01-SEC-[A-Z0-9-]+)',
             'visuals':r'^\s*-?\s*visual_uid:\s*(INFO-01-VIS-[A-Z0-9-]+)',
@@ -47,25 +46,21 @@ jobs:
             'ports':r'^\s*-?\s*port_uid:\s*(INFO-01-PORT-[A-Z0-9-]+)',
           }
           expected={'sections':12,'visuals':12,'components':20,'permissions':7,'gates':10,'errors':12,'states':8,'actions':17,'controls':66,'ports':6}
-          failed=False
-          ids={k:set(re.findall(p,auth,re.M)) for k,p in pats.items()}
+          ids={k:set(re.findall(p,auth,re.M)) for k,p in pats.items()}; failed=False
           for k,v in ids.items():
-            print(k,len(v),sorted(v))
-            if len(v)!=expected[k]: print('COUNT_MISMATCH',k,len(v),expected[k]);failed=True
-          for k in ('sections','visuals','components','permissions','gates','errors','states','actions','controls','ports'):
-            missing=sorted(x for x in ids[k] if x not in src)
+            print(k,len(v))
+            if len(v)!=expected[k]: print('COUNT_MISMATCH',k,len(v),expected[k]); failed=True
+            missing=sorted(x for x in v if x not in src)
             print('source_missing',k,len(missing),missing)
             if missing: failed=True
           controls=set(re.findall(r'"(INFO-01-[A-Z0-9-]+)":\{"action_uid"',bindings))
-          print('binding_controls',len(controls))
-          if controls!=ids['controls']: print('CONTROL_BINDING_SET_MISMATCH',sorted(ids['controls']-controls),sorted(controls-ids['controls']));failed=True
+          if controls!=ids['controls']: print('CONTROL_BINDING_SET_MISMATCH',sorted(ids['controls']-controls),sorted(controls-ids['controls'])); failed=True
           for uid in ids['controls']:
-            if uid not in catalog: print('CATALOG_CONTROL_MISSING',uid);failed=True
+            if uid not in catalog: print('CATALOG_CONTROL_MISSING',uid); failed=True
           for token in ['INFO-01-ACT-PROJECTION-READ','INFO-01-ERR-FRESHNESS-001','INFO-01-ERR-UNDEFINED-001']:
-            if token not in contract: print('FORMAL_REGISTRY_MISSING',token);failed=True
-          forbidden=['INFO-01-ACT-RESEARCH-START','INFO-01-ACT-RESEARCH-CANCEL']
-          for token in forbidden:
-            if token in bindings or token in catalog: print('FORBIDDEN_RESEARCH_ACTION_PRESENT',token);failed=True
+            if token not in contract: print('FORMAL_REGISTRY_MISSING',token); failed=True
+          for token in ['INFO-01-ACT-RESEARCH-START','INFO-01-ACT-RESEARCH-CANCEL']:
+            if token in bindings or token in catalog: print('FORBIDDEN_RESEARCH_ACTION_PRESENT',token); failed=True
           if failed: sys.exit(1)
       - name: Production build
         env:
@@ -126,40 +121,45 @@ jobs:
             page.on('pageerror',e=>errors.push(`pageerror:flow:${e.message}`));
             page.on('console',m=>{if(m.type()==='error')errors.push(`console:flow:${m.text()}`)});
             await page.goto('http://127.0.0.1:3112/info',{waitUntil:'networkidle'});
+            const root=page.locator('[data-page-uid="workspace:INFO-01"]');
             const q=id=>page.locator(`[data-control-id="${id}"]`).first();
             await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:INFO-01"]')?.getAttribute('data-projection-status')==='READY');
-            if((await page.locator('[data-page-uid="workspace:INFO-01"]').getAttribute('data-page-state'))!=='STALE')throw new Error('STALE page state not preserved');
+            if((await root.getAttribute('data-page-state'))!=='STALE')throw new Error('STALE page state not preserved');
             if(!(await q('INFO-01-FLD-FRESHNESS').textContent())?.includes('STALE'))throw new Error('Freshness STALE not visible');
             if(!(await q('INFO-01-FLD-COMPLETENESS').textContent())?.includes('INCOMPLETE'))throw new Error('Incomplete source state not visible');
-            if((await q('INFO-01-FLD-RESEARCH-RESULT').textContent())?.trim().endsWith('—')!==true)throw new Error('Missing research result must remain —');
-            const sourceText=await page.locator('body').textContent();
-            if(/Start Research|Cancel Research/i.test(sourceText||''))throw new Error('Forbidden research start/cancel UI present');
+            if((await q('INFO-01-FLD-RESEARCH-RESULT').locator('strong').textContent())!=='—')throw new Error('Missing research result must remain —');
+            if(/Start Research|Cancel Research/i.test((await page.locator('body').textContent())||''))throw new Error('Forbidden research start/cancel UI present');
             const scope=q('INFO-01-SEL-SCOPE');if(await scope.isDisabled())throw new Error('Scope filter disabled');await scope.selectOption('TEST-PROJECT-001');
             const clickList=async(id,name)=>{const b=q(id).getByRole('button',{name});if(await b.count()!==1)throw new Error(`${id} item missing`);if(await b.isDisabled())throw new Error(`${id} item disabled`);await b.click();};
             await clickList('INFO-01-LST-SOURCES','[TEST] Registered source · STALE');
             await clickList('INFO-01-LST-ALERTS','[TEST] Information alert');
             await clickList('INFO-01-LST-FACTPACKS','[TEST] Fact Pack v1');
             await q('INFO-01-TAB-INFERENCE').click();
-            if((await page.locator('[data-page-uid="workspace:INFO-01"]').getAttribute('data-fact-view'))!=='INFERENCE')throw new Error('Inference tab did not switch view');
+            if((await root.getAttribute('data-fact-view'))!=='INFERENCE')throw new Error('Inference tab did not switch view');
             await q('INFO-01-TAB-FACT').click();
             await clickList('INFO-01-LST-FACTS','[TEST] FACT · evidence-backed');
             await clickList('INFO-01-LST-EVIDENCE','[TEST] Evidence ref');
             await clickList('INFO-01-LST-RESEARCH','[TEST] Research Run · RUNNING · READ_ONLY');
+            const drawer=page.locator('[data-citation-drawer-open]');
+            if(await drawer.isVisible())throw new Error('Citation drawer must be closed before Citation/Open');
             const citation=q('INFO-01-BTN-CITATION');if(await citation.isDisabled())throw new Error('Citation control disabled with exact evidence');await citation.click();
+            if((await root.getAttribute('data-citation-open'))!=='true'||(await drawer.getAttribute('data-citation-drawer-open'))!=='true'||!(await drawer.isVisible()))throw new Error('Citation/Open did not open visible drawer');
             const audit=q('INFO-01-BTN-AUDIT');if(await audit.isDisabled())throw new Error('Audit control disabled');await audit.click();
-            if((await page.locator('[data-page-uid="workspace:INFO-01"]').getAttribute('data-audit-open'))!=='true')throw new Error('Audit state did not open');
-            const candidate=q('INFO-01-LST-CANDIDATES').getByRole('button',{name:/Context Candidate/});
-            if(await candidate.count()!==1)throw new Error('Context candidate missing');await candidate.click();
+            if((await root.getAttribute('data-audit-open'))!=='true')throw new Error('Audit state did not open');
+            const candidate=q('INFO-01-LST-CANDIDATES').getByRole('button',{name:/Context Candidate/});if(await candidate.count()!==1)throw new Error('Context candidate missing');await candidate.click();
             for(const id of ['INFO-01-BTN-ADOPT-CONTEXT','INFO-01-BTN-CANDIDATE-DECIDE'])if(await q(id).isDisabled())throw new Error(`${id} stayed disabled after exact candidate selection`);
-            const command=async(id,pathPart)=>{const wait=page.waitForResponse(r=>r.url().includes(pathPart)&&r.request().method()==='POST');await q(id).click();const r=await wait;if(r.status()!==200)throw new Error(`${id} HTTP ${r.status()}`);const body=await r.json();if(body.test_metadata?.data_classification!=='TEST_ONLY'||body.test_metadata?.production_eligible!==false)throw new Error(`${id} missing TEST_ONLY response classification`);};
-            const versionBefore=await q('INFO-01-FLD-PROJECTION-VERSION').textContent();
-            await command('INFO-01-BTN-REFRESH','/v1/projections/refresh');
-            await page.waitForFunction(v=>!document.querySelector('[data-control-id="INFO-01-FLD-PROJECTION-VERSION"]')?.textContent?.includes(v),versionBefore||'');
+            const command=async(id,pathPart)=>{const wait=page.waitForResponse(r=>r.url().includes(pathPart)&&r.request().method()==='POST');await q(id).click();const r=await wait;if(r.status()!==200)throw new Error(`${id} HTTP ${r.status()}`);const body=await r.json();if(body.test_metadata?.data_classification!=='TEST_ONLY'||body.test_metadata?.production_eligible!==false)throw new Error(`${id} missing TEST_ONLY response classification`);return body;};
+            const versionBefore=await q('INFO-01-FLD-PROJECTION-VERSION').locator('strong').textContent();
+            const refreshBody=await command('INFO-01-BTN-REFRESH','/v1/projections/refresh');
+            if(refreshBody.projection_version!=='TEST-INFO-PROJECTION-v2')throw new Error(`Refresh server version ${refreshBody.projection_version}`);
+            await page.waitForFunction(old=>document.querySelector('[data-control-id="INFO-01-FLD-PROJECTION-VERSION"] strong')?.textContent!==old,versionBefore);
+            const versionAfter=await q('INFO-01-FLD-PROJECTION-VERSION').locator('strong').textContent();
+            if(versionAfter!==refreshBody.projection_version)throw new Error(`Refresh UI version ${versionAfter} != server ${refreshBody.projection_version}`);
             await command('INFO-01-BTN-SEARCH','/v1/search');
             await command('INFO-01-BTN-EXPORT','/v1/exports');
             await command('INFO-01-BTN-CANDIDATE-DECIDE','/v1/candidates/');
             await command('INFO-01-BTN-ADOPT-CONTEXT','/v1/context-candidates/');
-            await page.waitForFunction(()=>document.querySelector('[data-control-id="INFO-01-FLD-CANDIDATE-STATE"]')?.textContent?.includes('ADOPTED'));
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="INFO-01-FLD-CANDIDATE-STATE"] strong')?.textContent==='ADOPTED');
             if(!(await q('INFO-01-BTN-ADOPT-CONTEXT').isDisabled()))throw new Error('Adopt must close after governed adoption');
             if(errors.length)throw new Error(errors.join('\n'));
             console.log('INFO_BROWSER_INTERACTION_PASS');
