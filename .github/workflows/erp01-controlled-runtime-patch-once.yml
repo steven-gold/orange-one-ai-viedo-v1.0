@@ -1,0 +1,67 @@
+name: ERP-01 controlled runtime patch once
+
+on:
+  push:
+    branches: [acpos-erp01-closure-20260902]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, 'align controlled runtime with authority') }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-erp01-closure-20260902
+      - name: Patch controlled ERP runtime
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('src/server/testing/controlledErpTestRuntime.ts')
+          s=p.read_text()
+          def rep(old,new):
+              global s
+              if old not in s:
+                  raise SystemExit('PATCH_TARGET_MISSING:\n'+old[:180])
+              s=s.replace(old,new,1)
+
+          rep('type SnapshotState = "SNAPSHOT_STALE" | "SNAPSHOT_SYNCING" | "SNAPSHOT_FAILED" | "SNAPSHOT_FRESH";', 'type SnapshotState = "SNAPSHOT_STALE" | "SNAPSHOT_SYNCING" | "SNAPSHOT_FAILED";')
+
+          marker='''} as const;\n\ntype ConnectorState'''
+          schemas='''} as const;\n\nconst CONTROLLED_FORM_SCHEMAS = {\n  "ERP-01-BTN-CONNECTOR-CREATE": [\n    { key: "provider_key", type: "text", required: true },\n    { key: "adapter_key", type: "text", required: true },\n    { key: "secret_reference_id", type: "text", required: true },\n    { key: "entity_scope", type: "text", required: true },\n    { key: "mapping_version", type: "number", required: true },\n    { key: "mapping_entity_name", type: "text", required: true },\n    { key: "mapping_source_schema", type: "text", required: true },\n    { key: "mapping_target_schema", type: "text", required: true },\n    { key: "mapping_transform_spec", type: "text", required: true },\n    { key: "data_classification", type: "text", required: true },\n  ],\n  "ERP-01-BTN-CONNECTOR-UPDATE": [\n    { key: "entity_scope", type: "text", required: false },\n    { key: "mapping_entity_name", type: "text", required: false },\n    { key: "mapping_source_schema", type: "text", required: false },\n    { key: "mapping_target_schema", type: "text", required: false },\n    { key: "mapping_transform_spec", type: "text", required: false },\n    { key: "data_classification", type: "text", required: false },\n  ],\n  "ERP-01-BTN-SNAPSHOT-REFRESH": [\n    { key: "requested_scope", type: "text", required: true },\n  ],\n  "ERP-01-BTN-SYNC-CREATE": [\n    { key: "requested_scope", type: "text", required: true },\n    { key: "data_classification", type: "text", required: true },\n    { key: "records_payload", type: "text", required: true },\n    { key: "snapshot_type", type: "select", required: true, options: ["delta", "full"] },\n    { key: "snapshot_document", type: "text", required: true },\n    { key: "completeness", type: "text", required: true },\n    { key: "external_result_verified", type: "select", required: true, options: ["false", "true"] },\n    { key: "external_evidence_refs", type: "text", required: true },\n  ],\n  "ERP-01-BTN-EXPORT": [\n    { key: "scope", type: "text", required: true },\n  ],\n} as const;\n\ntype ConnectorState'''
+          rep(marker, schemas)
+
+          s=s.replace('cost: "authorized provider cost status · masked quote on record"','cost: "[TEST] authorized provider cost status · masked quote on record"')
+          s=s.replace('revenue: "provider revenue · read-only status"','revenue: "[TEST] provider revenue · read-only status"')
+          s=s.replace('cashflow: "cashflow status · read-only projection"','cashflow: "[TEST] cashflow status · read-only projection"')
+          s=s.replace('capacity: "capacity guardrail · within governed bound"','capacity: "[TEST] capacity guardrail · within governed bound"')
+          s=s.replace('forecast: "next period forecast · read model ready"','forecast: "[TEST] next period forecast · read model ready"')
+          s=s.replace('guardrails: "governed finance guardrails · read-only"','guardrails: "[TEST] governed finance guardrails · read-only"')
+          s=s.replace('recommendation_boundary: "recommendation boundary · read-only"','recommendation_boundary: "[TEST] recommendation boundary · read-only"')
+
+          rep('''      requested_scope: connector?.entity_scope ?? "finance-ledger",\n      data_classification: connector?.mapping.data_classification ?? "internal",\n    },\n    test_metadata: TEST_METADATA,''','''      requested_scope: connector?.entity_scope ?? "finance-ledger",\n      data_classification: connector?.mapping.data_classification ?? "internal",\n    },\n    form_schemas: CONTROLLED_FORM_SCHEMAS,\n    test_metadata: TEST_METADATA,''')
+
+          rep('''  const connector = state.connector;\n  switch (operation) {''','''  const connector = state.connector;\n  for (const forbidden of ["secret","secret_value","raw_secret","credential_value","api_key"]) {\n    if (Object.prototype.hasOwnProperty.call(payload, forbidden)) return fail("ERP01_SECRET_VALUE_FORBIDDEN", 400);\n  }\n  switch (operation) {''')
+
+          rep('''    case "updateERPConnector": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;''','''    case "updateERPConnector": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;\n      const extra = additionalPropertiesGuard(payload, ["entity_scope","mapping_entity_name","mapping_source_schema","mapping_target_schema","mapping_transform_spec","data_classification","scope","expected_version","idempotency_key"]); if (extra) return extra;''')
+          rep('''    case "validateERPConnector": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;''','''    case "validateERPConnector": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;\n      const extra = additionalPropertiesGuard(payload, ["scope","expected_version","idempotency_key"]); if (extra) return extra;''')
+          rep('''    case "validateERPMapping": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;''','''    case "validateERPMapping": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;\n      const extra = additionalPropertiesGuard(payload, ["scope","expected_version","idempotency_key"]); if (extra) return extra;''')
+          rep('''    case "refreshERPSnapshot": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;''','''    case "refreshERPSnapshot": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;\n      const extra = additionalPropertiesGuard(payload, ["requested_scope","scope","expected_version","idempotency_key"]); if (extra) return extra;''')
+          rep('''    case "createERPSyncJob": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;''','''    case "createERPSyncJob": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;\n      const extra = additionalPropertiesGuard(payload, ["erp_connector_id","requested_scope","data_classification","records_payload","snapshot_type","snapshot_document","completeness","external_result_verified","external_evidence_refs","scope","expected_version","idempotency_key"]); if (extra) return extra;''')
+          rep('''    case "retryERPSync": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;''','''    case "retryERPSync": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;\n      const extra = additionalPropertiesGuard(payload, ["scope","expected_version","idempotency_key"]); if (extra) return extra;''')
+          rep('''    case "exportProjection": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;''','''    case "exportProjection": {\n      const idem = idempotencyGuard(payload); if (idem) return idem;\n      const extra = additionalPropertiesGuard(payload, ["page_uid","scope","idempotency_key"]); if (extra) return extra;''')
+
+          s=s.replace('connector_version: connector ? String(connector.version) : "1"','connector_version: connector ? String(connector.version) : "0"')
+          s=s.replace('mapping_version: connector ? String(connector.mapping_version) : "1"','mapping_version: connector ? String(connector.mapping_version) : "0"')
+          s=s.replace('snapshot_version: snapshot ? String(snapshot.version) : "1"','snapshot_version: snapshot ? String(snapshot.version) : "0"')
+          p.write_text(s)
+      - name: Commit product patch and remove one-time workflow
+        run: |
+          rm .github/workflows/erp01-controlled-runtime-patch-once.yml
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add src/server/testing/controlledErpTestRuntime.ts .github/workflows/erp01-controlled-runtime-patch-once.yml
+          git commit -m "fix(erp): align controlled runtime with authority"
+          git push origin HEAD:acpos-erp01-closure-20260902
