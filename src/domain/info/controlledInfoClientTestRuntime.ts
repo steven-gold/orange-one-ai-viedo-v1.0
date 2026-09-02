@@ -11,9 +11,9 @@ function boolMap(v:unknown){const out:Record<string,boolean>={};for(const[key,va
 function stringMap(v:unknown){const out:Record<string,string>={};for(const[key,value]of Object.entries(rec(v)))if(typeof value==="string")out[key]=value;return out;}
 function resolveControlled(raw:unknown):InfoNormalizedProjection{
   const r=rec(raw),metadata=rec(r.test_metadata);
-  if(metadata.data_classification!=="TEST_ONLY"||metadata.synthetic!==true||metadata.production_eligible!==false)throw new Error("INFO_CONTROLLED_TEST_METADATA_REQUIRED");
+  if(metadata.data_classification!=="TEST_ONLY"||metadata.synthetic!==true||metadata.created_for_validation!==true||metadata.production_eligible!==false||typeof metadata.test_dataset_id!=="string"||typeof metadata.test_run_id!=="string")throw new Error("INFO_CONTROLLED_TEST_METADATA_REQUIRED");
   const pageState=r.page_state;if(!isInfoPageState(pageState))throw new Error("INFO_CONTROLLED_PAGE_STATE_INVALID");
-  return{page_state:pageState,projection_version:text(r.projection_version),authorized_scope:text(r.authorized_scope),last_refresh:text(r.last_refresh),values:stringMap(r.values),lists:listMap(r.lists),filters:listMap(r.filters),gate_state:boolMap(r.gate_state)};
+  return{page_state:pageState,projection_version:text(r.projection_version),authorized_scope:text(r.authorized_scope),last_refresh:text(r.last_refresh),values:stringMap(r.values),lists:listMap(r.lists),filters:listMap(r.filters),gate_state:boolMap(r.gate_state),test_metadata:metadata as InfoNormalizedProjection["test_metadata"]};
 }
 function payload(action_uid:InfoCommandAction,input:{candidate_ref:string|null;scope_filter:string|null;projection_version:string|null;authorized_scope:string|null}){
   const base={page_uid:"workspace:INFO-01",projection_version:input.projection_version,authorized_scope:input.authorized_scope,scope_filter:input.scope_filter,test_metadata:TEST_METADATA};
