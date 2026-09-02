@@ -1,57 +1,8 @@
-import { IAM_ADMIN_L1, IAM_FRONT_L1, type IamPageState } from "@/domain/iam/iamRuntimeContract";
-
-export type IamFlowState = IamPageState;
-
-export type IamClientState = {
-  flow: IamFlowState;
-  mode: "CREATE" | "EDIT" | null;
-  account_id: string | null;
-  draft_id: string | null;
-  front_l1: string[];
-  admin_l1: string[];
-  department_preset_ref: string | null;
-  preview_ref: string | null;
-  correlation_id: string | null;
-};
-
-export const INITIAL_IAM_CLIENT_STATE: IamClientState = {
-  flow: "LIST",
-  mode: null,
-  account_id: null,
-  draft_id: null,
-  front_l1: [],
-  admin_l1: [],
-  department_preset_ref: null,
-  preview_ref: null,
-  correlation_id: null,
-};
-
-export function selectAllFront(state: IamClientState, on: boolean): IamClientState {
-  return { ...state, front_l1: on ? [...IAM_FRONT_L1] : [] };
-}
-
-export function selectAllAdmin(state: IamClientState, on: boolean): IamClientState {
-  return { ...state, admin_l1: on ? [...IAM_ADMIN_L1] : [] };
-}
-
-export function openIamCreate(state: IamClientState): IamClientState {
-  return {
-    ...state,
-    flow: "CREATE_BASIC",
-    mode: "CREATE",
-    account_id: null,
-    draft_id: null,
-    preview_ref: null,
-  };
-}
-
-export function openIamEdit(state: IamClientState, account_id: string): IamClientState {
-  return {
-    ...state,
-    flow: "EDIT_BASIC",
-    mode: "EDIT",
-    account_id,
-    draft_id: null,
-    preview_ref: null,
-  };
-}
+import{IAM_ADMIN_L1,IAM_FRONT_L1,type IamPageState}from"@/domain/iam/iamRuntimeContract";
+export type IamFlowState=IamPageState;
+export type IamClientState={flow:IamFlowState;mode:"CREATE"|"EDIT"|null;account_id:string|null;draft_id:string|null;front_l1:string[];admin_l1:string[];department_preset_ref:string|null;preview_ref:string|null;correlation_id:string|null;search_query:string;basic_data:Record<string,string>;audit_open:boolean;};
+export const INITIAL_IAM_CLIENT_STATE:IamClientState={flow:"LIST",mode:null,account_id:null,draft_id:null,front_l1:[],admin_l1:[],department_preset_ref:null,preview_ref:null,correlation_id:null,search_query:"",basic_data:{},audit_open:false};
+export function selectAllFront(state:IamClientState,on:boolean):IamClientState{return{...state,front_l1:on?[...IAM_FRONT_L1]:[]};}
+export function selectAllAdmin(state:IamClientState,on:boolean):IamClientState{return{...state,admin_l1:on?[...IAM_ADMIN_L1]:[]};}
+export function openIamCreate(state:IamClientState):IamClientState{return{...state,flow:"CREATE_BASIC",mode:"CREATE",account_id:null,draft_id:null,front_l1:[],admin_l1:[],department_preset_ref:null,preview_ref:null,basic_data:{},audit_open:false};}
+export function openIamEdit(state:IamClientState,account_id:string,input?:{front_l1?:readonly string[];admin_l1?:readonly string[]}):IamClientState{return{...state,flow:"EDIT_BASIC",mode:"EDIT",account_id,draft_id:null,front_l1:[...(input?.front_l1??[])],admin_l1:[...(input?.admin_l1??[])],department_preset_ref:null,preview_ref:null,basic_data:{},audit_open:false};}
