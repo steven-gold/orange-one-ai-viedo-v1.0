@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
-import { DB_CONTROL_TEXT, dbText, dbUiText } from "@/i18n/dbCatalog";
+import { DB_CONTROL_TEXT, dbUiText } from "@/i18n/dbCatalog";
 import { DbRuntimeControl, DbRuntimeProvider, useDbRuntimeState } from "./DbControlRuntime";
 import styles from "./DbVisual.module.css";
 
@@ -29,7 +29,7 @@ function DbVisualBody(){
   const {locale}=useI18n();
   const {projection,runtimeError}=useDbRuntimeState();
   const registryValid=useMemo(()=>{const ids=new Set(ALL.map(x=>x.id));return ids.size===49&&Object.keys(DB_CONTROL_TEXT).length===49&&[...ids].every(id=>id in DB_CONTROL_TEXT)},[]);
-  return <div className={styles.page} data-page-uid="admin:DB-01" data-vis-step="VIS-07" data-page-state={runtimeError?"ERROR":projection?.page_state??"LOADING"} data-runtime-reason={runtimeError??undefined} data-authority-controls="49" data-registry-valid={registryValid?"true":"false"}>
+  return <div className={styles.page} data-page-uid="admin:DB-01" data-vis-step="VIS-07" data-page-state={runtimeError?"ERROR":projection?.page_state??"LOADING"} data-runtime-reason={runtimeError??undefined} data-authority-controls="49" data-registry-valid={registryValid?"true":"false"} data-data-classification={projection?.test_metadata?.data_classification} data-production-eligible={projection?.test_metadata?String(projection.test_metadata.production_eligible):undefined}>
     <section className={styles.contextBar} data-section-id="DB-01-SEC-01" data-visual-uid="DB-01-VIS-CONTEXT" data-component-uid="DB-01-CMP-CONTEXT"><div className={styles.contextGrid}>{CONTEXT.slice(0,5).map(x=><Control key={x.id} spec={x}/>)}</div><Control spec={CONTEXT[5]}/></section>
     <div className={styles.primaryGrid}>
       <aside className={`${styles.panel} ${styles.explorerPanel}`} data-section-id="DB-01-SEC-02" data-visual-uid="DB-01-VIS-LEFT" data-component-uid="DB-01-CMP-EXPLORER"><Title text={dbUiText(locale,"explorer")} meta="20% / min 280px"/><div className={styles.stack}>{EXPLORER.slice(0,3).map(x=><Control key={x.id} spec={x}/>)}</div><Control spec={EXPLORER[3]}/><div className={styles.notice}>{dbUiText(locale,"readOnly")}</div></aside>
