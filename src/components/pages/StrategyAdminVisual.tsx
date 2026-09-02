@@ -150,6 +150,18 @@ function StrategyAdminContent() {
       data-vis-step="VIS-17"
       data-static-ui-spec-ready="true"
       data-effectful-runtime-ready="false"
+      data-remap-state="IMPLEMENTATION_REQUIRED_NOT_EXECUTED"
+      data-application-implementation="NOT_EXECUTED"
+      data-runtime-binding-validation="NOT_EXECUTED"
+      data-e2e-validation="NOT_EXECUTED"
+      data-data-classification={
+        projection?.test_metadata?.data_classification ?? "—"
+      }
+      data-production-eligible={
+        projection?.test_metadata
+          ? String(projection.test_metadata.production_eligible)
+          : "—"
+      }
       data-page-state={
         projection?.page_state ?? (runtimeError ? "ERROR" : "LOADING")
       }
@@ -294,7 +306,7 @@ function StrategyAdminContent() {
                 ? "AUTHORITY_BINDING_UNRESOLVED"
                 : enabled
                   ? "REGISTERED_OPERATION_ADAPTER"
-                  : "BLOCKED";
+                  : "IMPLEMENTATION_REQUIRED_NOT_EXECUTED";
             const title = unresolved
               ? strategyText(locale, "bindingUnresolved")
               : navOnly
@@ -310,6 +322,7 @@ function StrategyAdminContent() {
                 className={`${styles.action} ${index === 0 ? styles.actionPrimary : ""}`}
                 data-action-id={actionId}
                 data-operation-binding={bindingState}
+                data-disabled-reason={!enabled ? bindingState : undefined}
                 disabled={!enabled}
                 title={title}
                 onClick={() => void invoke(actionId, active.key)}
