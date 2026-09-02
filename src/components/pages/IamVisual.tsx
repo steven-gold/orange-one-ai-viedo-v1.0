@@ -95,6 +95,8 @@ function IamVisualBody() {
       data-projection-adapter-ready={projectionRuntimeReady ? "true" : "false"}
       data-effectful-runtime-ready={effectfulRuntimeReady ? "true" : "false"}
       data-formal-runtime-status={effectfulRuntimeReady ? "BOUND" : "NOT_EXECUTED"}
+      data-data-classification={projection?.test_metadata?.data_classification}
+      data-production-eligible={projection?.test_metadata ? String(projection.test_metadata.production_eligible) : undefined}
     >
       <section className={styles.contextBar} data-section-id="IAM-01-SEC-01" data-component-id="IAM-01-CMP-CONTEXT">
         <div>
