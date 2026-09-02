@@ -11,29 +11,12 @@ const TEST_METADATA = {
 
 type CredentialStatus = "SET" | "NOT_SET" | "ROTATION_DUE" | "ERROR";
 type ProviderProfileState = "ENABLED" | "DISABLED" | "RETIRED";
-
 type ProviderProfile = {
-  provider_id: string;
-  provider_name: string;
-  model_id: string;
-  model_name: string;
-  capability: string;
-  adapter_type: string;
-  base_url_ref: string;
-  endpoint_path: string;
-  timeout_seconds: number;
-  state: ProviderProfileState;
-  credential_status: CredentialStatus;
-  last_test_ref: string | null;
-  version: number;
+  provider_id: string; provider_name: string; model_id: string; model_name: string; capability: string; adapter_type: string;
+  base_url_ref: string; endpoint_path: string; timeout_seconds: number; state: ProviderProfileState; credential_status: CredentialStatus;
+  last_test_ref: string | null; version: number;
 };
-
-type ControlledState = {
-  profiles: ProviderProfile[];
-  audit_counter: number;
-  last_audit_ref: string | null;
-};
-
+type ControlledState = { profiles: ProviderProfile[]; audit_counter: number; last_audit_ref: string | null };
 const state: ControlledState = { profiles: [], audit_counter: 0, last_audit_ref: null };
 
 function seedFixture() {
@@ -44,13 +27,8 @@ function seedFixture() {
   );
 }
 
-export function isControlledAiApiServerTestMode() {
-  return isControlledTestMode();
-}
-
-function profileSummary(): string {
-  return state.profiles.map((item) => `${item.provider_id}/${item.model_id} v${item.version} ${item.state} · credential ${item.credential_status}`).join(" | ");
-}
+export function isControlledAiApiServerTestMode() { return isControlledTestMode(); }
+function profileSummary(): string { return state.profiles.map((item) => `${item.provider_id}/${item.model_id} v${item.version} ${item.state} · credential ${item.credential_status}`).join(" | "); }
 
 const VIEW_VALUES: Readonly<Record<string, string>> = {
   "Route summary": "No candidate groups registered · routing requires a registered operation",
@@ -88,7 +66,7 @@ const PRO_DESC_VALUES: Readonly<Record<string, string>> = {
   "AIAPI-01-PRO-DESC-OUTPUT": "Registered response text path",
   "AIAPI-01-PRO-DESC-LIMITS": "30 second timeout · limits from registered metadata",
   "AIAPI-01-PRO-DESC-ENDPOINT": "POST /v1/test/chat · base URL TEST-AIAPI-BASEURL-001",
-  "AIAPI-01-PRO-DESC-AUTH": "Credential stored as reference · plaintext never displayed",
+  "AIAPI-01-PRO-DESC-AUTH": "Credential status SET · plaintext never displayed",
   "AIAPI-01-PRO-DESC-BILLING": "Billing from registered metadata · pricing not guessed",
   "AIAPI-01-PRO-DESC-HEALTH": "Health derived from projection · manual green override disabled",
   "AIAPI-01-PRO-DESC-LAST-TEST": "No tests recorded yet",
@@ -103,35 +81,31 @@ export function readControlledAiApiTestProjection() {
   return {
     page_state: "READY",
     values: {
-      ...VIEW_VALUES,
-      "Provider summary": profileSummary(),
-      ...PRO_DESC_VALUES,
-      "provider.profile": profileSummary(),
-      "provider.selected": `${primary.provider_id}/${primary.model_id}`,
+      ...VIEW_VALUES, "Provider summary": profileSummary(), ...PRO_DESC_VALUES,
+      "provider.profile": profileSummary(), "provider.selected": `${primary.provider_id}/${primary.model_id}`,
     } as Readonly<Record<string, string>>,
+    provider_rows: state.profiles.map((item) => ({
+      provider_id: item.provider_id,
+      provider_name: item.provider_name,
+      model_id: item.model_id,
+      model_name: item.model_name,
+      capability: item.capability,
+      adapter: item.adapter_type,
+      base_url: item.base_url_ref,
+      endpoint: item.endpoint_path,
+      timeout: `${item.timeout_seconds}s`,
+      enabled: item.state,
+      credential_status: item.credential_status,
+      last_test: item.last_test_ref ?? "—",
+    })),
     evidence: Object.fromEntries(Object.keys({ ...VIEW_VALUES, ...PRO_DESC_VALUES }).map((key) => [key, "projection_bound · TEST_ONLY"])),
     states: Object.fromEntries(Object.keys({ ...VIEW_VALUES, ...PRO_DESC_VALUES }).map((key) => [key, "READY"])),
     action_enabled: {
-      "ACT-REFRESH": true,
-      "ACT-SEARCH": true,
-      "ACT-EXPORT": true,
-      "ACT-CONFIGURE": true,
-      "ACT-APPROVE": true,
-      createProviderModelProfile: true,
-      updateProviderModelProfile: true,
-      getProviderModelProfile: true,
-      listProviderModelProfiles: true,
-      testProviderModelProfile: true,
-      retireProviderModelProfile: true,
-      setProviderModelCredential: true,
-      deleteProviderModelCredential: true,
-      setKillSwitch: true,
-      createProviderCandidateGroup: true,
-      getProviderQuarantine: true,
-      restoreProviderFromQuarantine: true,
-      runSandboxTest: true,
-      executeProviderRoute: true,
-      getProviderRouteDecision: true,
+      "ACT-REFRESH": true, "ACT-SEARCH": true, "ACT-EXPORT": true, "ACT-CONFIGURE": true, "ACT-APPROVE": true,
+      createProviderModelProfile: true, updateProviderModelProfile: true, getProviderModelProfile: true, listProviderModelProfiles: true,
+      testProviderModelProfile: true, retireProviderModelProfile: true, setProviderModelCredential: true, deleteProviderModelCredential: true,
+      setKillSwitch: true, createProviderCandidateGroup: true, getProviderQuarantine: true, restoreProviderFromQuarantine: true,
+      runSandboxTest: true, executeProviderRoute: true, getProviderRouteDecision: true,
     } as Readonly<Record<string, boolean>>,
     selected_resource_id: primary.provider_id,
     test_metadata: TEST_METADATA,
