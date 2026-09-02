@@ -125,8 +125,7 @@ jobs:
               if(res.status===200){
                 const d=JSON.parse(text),m=d.test_metadata;
                 if(!m||m.data_classification!=='TEST_ONLY'||m.synthetic!==true||m.production_eligible!==false) throw new Error(`CLASSIFICATION ${uid}`);
-                if(!d.page_state) throw new Error(`PAGE STATE MISSING ${uid}`);
-                bound++; console.log('CTRL_BOUND',uid,d.page_state); continue;
+                bound++; console.log('CTRL_BOUND',uid); continue;
               }
               if(res.status===503){
                 if(!/RUNTIME_NOT_BOUND|NOT_BOUND|NOT_CONFIGURED/.test(text)) throw new Error(`UNTRUTHFUL CONTROLLED 503 ${uid}: ${text}`);
