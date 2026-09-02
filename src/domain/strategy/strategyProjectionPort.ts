@@ -16,13 +16,14 @@ let resolver:StrategyProjectionResolver|null=null;
 export function configureStrategyProjectionResolver(next:StrategyProjectionResolver){resolver=next;}
 function object(value:unknown):value is Record<string,unknown>{return Boolean(value)&&typeof value==='object'&&!Array.isArray(value);}
 function nullableString(value:unknown){return value===null||typeof value==='string';}
+const STRATEGY_PAGE_STATES=new Set(['EMPTY','READY','RESPONDING','ANALYZING','CANDIDATE_READY','REVIEW_REQUIRED','ADOPTED_CONTEXT','FEEDBACK_AVAILABLE','ERROR/BLOCKED']);
 function stringRecord(value:unknown){return object(value)&&Object.values(value).every(item=>typeof item==='string');}
 function booleanRecord(value:unknown){return object(value)&&Object.values(value).every(item=>typeof item==='boolean');}
 function listRecord(value:unknown){return object(value)&&Object.values(value).every(items=>Array.isArray(items)&&items.every(item=>object(item)&&typeof item.ref==='string'&&item.ref.trim().length>0&&typeof item.label==='string'));}
 function normalizeStrategyProjection(raw:unknown):StrategyNormalizedProjection|null{
   const candidate=object(raw)&&object(raw.projection)?raw.projection:raw;
   if(!object(candidate))return null;
-  if(!nullableString(candidate.page_state)||!nullableString(candidate.conversation_id)||!nullableString(candidate.candidate_ref)||!nullableString(candidate.candidate_version_ref)||!nullableString(candidate.owner_type)||!nullableString(candidate.owner_context_ref))return null;
+  if(typeof candidate.page_state!=='string'||!STRATEGY_PAGE_STATES.has(candidate.page_state)||!nullableString(candidate.conversation_id)||!nullableString(candidate.candidate_ref)||!nullableString(candidate.candidate_version_ref)||!nullableString(candidate.owner_type)||!nullableString(candidate.owner_context_ref))return null;
   if(!stringRecord(candidate.values)||!listRecord(candidate.lists)||!stringRecord(candidate.blocks)||!booleanRecord(candidate.gate_state))return null;
   return candidate as StrategyNormalizedProjection;
 }
