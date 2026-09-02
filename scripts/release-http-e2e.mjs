@@ -1,0 +1,80 @@
+import { spawn, spawnSync } from "node:child_process";
+
+const port = process.env.ACPOS_E2E_PORT ?? "3499";
+const base = `http://127.0.0.1:${port}`;
+const expectReady = process.env.ACPOS_EXPECT_READY === "1";
+
+const routes = [
+  ["/", "workspace:WB-01"], ["/core", "CORE-01"], ["/assets", "ASSET-01"], ["/video", "VIDEO-01"],
+  ["/edit", "EDIT-01"], ["/qa", "QA-01"], ["/database", "admin:DB-01"], ["/strategy", "workspace:STR-01"],
+  ["/info", "workspace:INFO-01"], ["/admin/system", "admin:SYS-01"], ["/admin/accounts", "admin:IAM-01"],
+  ["/admin/dev", "admin:DEV-01"], ["/admin/social", "admin:SOC-01"], ["/admin/erp", "admin:ERP-01"],
+  ["/admin/aiapi", "admin:AIAPI-01"], ["/admin/qa-criteria", "admin:SG-02"], ["/admin/strategy", "admin:STR-01"],
+  ["/admin/knowledge", "admin:KB-01"],
+];
+
+function run(command, args, env = process.env) {
+  const result = spawnSync(command, args, { stdio: "inherit", env });
+  if (result.status !== 0) process.exit(result.status ?? 1);
+}
+
+if (process.env.ACPOS_E2E_SKIP_BUILD !== "1") {
+  run("npm", ["run", "build"], { ...process.env, NEXT_PUBLIC_ACPOS_RUNTIME_MODE: "" });
+}
+
+const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-p", port], {
+  stdio: ["ignore", "inherit", "inherit"],
+  env: { ...process.env, NODE_ENV: "production", NEXT_PUBLIC_ACPOS_RUNTIME_MODE: "" },
+});
+
+async function waitForServer() {
+  const deadline = Date.now() + 60_000;
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`${base}/health`, { cache: "no-store" });
+      if (response.ok) return;
+    } catch {}
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+  throw new Error("SERVER_START_TIMEOUT");
+}
+
+function assert(condition, message) {
+  if (!condition) throw new Error(message);
+}
+
+try {
+  await waitForServer();
+
+  const health = await fetch(`${base}/health`, { cache: "no-store" });
+  assert(health.status === 200, `HEALTH_HTTP_${health.status}`);
+  const security = {
+    csp: health.headers.get("content-security-policy"),
+    hsts: health.headers.get("strict-transport-security"),
+    nosniff: health.headers.get("x-content-type-options"),
+    referrer: health.headers.get("referrer-policy"),
+    permissions: health.headers.get("permissions-policy"),
+    frame: health.headers.get("x-frame-options"),
+  };
+  for (const [name, value] of Object.entries(security)) assert(Boolean(value), `SECURITY_HEADER_MISSING_${name}`);
+
+  const ready = await fetch(`${base}/health/ready`, { cache: "no-store" });
+  if (expectReady) assert(ready.status === 200, `PRODUCTION_NOT_READY_HTTP_${ready.status}`);
+  else assert([200, 503].includes(ready.status), `READINESS_HTTP_${ready.status}`);
+
+  for (const [route, uid] of routes) {
+    const page = await fetch(`${base}${route}`, { cache: "no-store" });
+    assert(page.status === 200, `PAGE_${route}_HTTP_${page.status}`);
+    const projection = await fetch(`${base}/v1/ui-projections/${encodeURIComponent(uid)}`, { cache: "no-store" });
+    const text = await projection.text();
+    assert([200, 503].includes(projection.status), `PROJECTION_${uid}_HTTP_${projection.status}`);
+    assert(!/TEST_ONLY|TEST-RUN-|"synthetic"\s*:\s*true/.test(text), `PRODUCTION_TEST_DATA_LEAK_${uid}`);
+    if (projection.status === 503) assert(/RUNTIME_NOT_BOUND|NOT_BOUND|NOT_CONFIGURED/.test(text), `UNTRUTHFUL_503_${uid}`);
+  }
+
+  const missing = await fetch(`${base}/this-route-must-not-exist`, { redirect: "manual" });
+  assert(missing.status === 404, `NOT_FOUND_HTTP_${missing.status}`);
+  process.stdout.write(`RELEASE_HTTP_E2E_PASS ready=${ready.status}\n`);
+} finally {
+  server.kill("SIGTERM");
+}
