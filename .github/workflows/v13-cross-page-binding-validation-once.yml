@@ -1,0 +1,133 @@
+name: V1.3 ACPOS cross-page binding validation
+on:
+  push:
+    branches: [acpos-v13-cross-page-binding-20260903]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Product audit and typecheck
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+      - name: V1.3 authority binding and conflict guard
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          manifest_path=Path('authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml')
+          system_path=Path('authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml')
+          v13_path=Path('authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml')
+          matrix_path=Path('authority/global/ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml')
+          manifest=manifest_path.read_text()
+          system=system_path.read_text()
+          v13=v13_path.read_text()
+          matrix=matrix_path.read_text()
+
+          assert 'version: V1.3' in manifest
+          assert 'revision: 2026-09-03-PRODUCTION-SCRIPT-V1.3-CROSS-PAGE-BINDING' in manifest
+          assert 'production_script_v1_3:' in manifest
+          assert 'scope: INSTRUCTION_PROVIDER_ADAPTER_ONLY' in manifest
+          assert 'provider_profile_owner: admin:AIAPI-01#provider_model_profiles' in manifest
+          assert 'creates_new_page: false' in manifest
+          assert 'creates_new_runtime_service: false' in manifest
+          assert 'creates_new_provider_registry: false' in manifest
+          assert 'creates_new_script_engine: false' in manifest
+
+          assert 'version: V1.3' in v13
+          assert 'new_page: false' in v13
+          assert 'new_runtime_service: false' in v13
+          assert 'new_provider_registry: false' in v13
+          assert 'new_script_engine: false' in v13
+          assert 'qa_in_scope: false' in v13
+          assert 'provider_profile_current_owner: admin:AIAPI-01#provider_model_profiles' in v13
+          assert 'manual_provider_model_picker: FORBIDDEN' in v13
+          assert 'provider_specific_keys: FORBIDDEN' in v13
+          assert 'SECRET_REFERENCE_ONLY' in v13
+
+          assert 'production_script: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml' in system
+          assert 'authority: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml' in system
+          assert 'current_admin_page: admin:AIAPI-01' in system
+          assert 'provider_profile_owner: admin:AIAPI-01#provider_model_profiles' in system
+          assert 'department_provider_picker: FORBIDDEN' in system
+          assert 'production_script_authoring: false' in system
+
+          page_specs={
+            'CORE-01':'authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml',
+            'ASSET-01':'authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml',
+            'VIDEO-01':'authority/pages/workspace/VIDEO-01/VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml',
+            'EDIT-01':'authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml',
+            'QA-01':'authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml',
+            'workspace:STR-01':'authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml',
+          }
+          for uid,path in page_specs.items():
+            assert path in manifest, (uid,'manifest')
+            assert path in v13, (uid,'v13 ownership')
+            assert uid in matrix, (uid,'matrix')
+
+          for uid in ['CORE-01','ASSET-01','VIDEO-01','EDIT-01','workspace:STR-01']:
+            text=Path(page_specs[uid]).read_text()
+            assert 'ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3' in text, (uid,'reverse V1.3 binding')
+            assert 'provider_model_picker: ALLOWED' not in text
+            assert 'provider_picker: ALLOWED' not in text
+
+          qa=Path(page_specs['QA-01']).read_text()
+          assert 'QAValidationScriptView' in qa
+          assert 'edit_script' in qa
+          assert 'VALIDATION_REVIEW_ONLY' in manifest
+          assert 'production_script_authoring: false' in manifest
+          assert 'production_script_authoring: false' in system
+
+          current_pages=re.findall(r'^  - authority/pages/[^\n]+$',manifest,re.M)
+          assert len(current_pages)==18, len(current_pages)
+          assert not any('AIAPI-06' in p for p in current_pages)
+
+          prod_contracts=list(Path('authority/global').glob('*PRODUCTION_SCRIPT*'))
+          assert len(prod_contracts)==1, [str(p) for p in prod_contracts]
+          assert prod_contracts[0].name=='ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml'
+          assert not list(Path('authority').rglob('*PRODUCTION_SCRIPT*V1.2*'))
+
+          global_shell=Path('authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml').read_text()
+          assert 'version: V1.9' in global_shell
+          assert 'GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 within shell scope' in manifest
+          assert 'V1.3 Global Shell/visual source documents are provenance only' in manifest
+
+          assert 'No second production script engine/provider adapter authority.' in manifest
+          assert 'Legacy admin:AIAPI-06 is not a Current frontend owner' in manifest
+          assert 'No second AI API/provider router.' in manifest
+
+          print('V13_BINDING_CONFLICT_GUARD_PASS')
+      - name: Source construction-scope residual guard
+        shell: python
+        run: |
+          from pathlib import Path
+          forbidden=[]
+          for p in Path('authority').rglob('*'):
+            if not p.is_file():
+              continue
+            name=p.name.upper()
+            if 'PRODUCTION_SCRIPT' in name and 'V1.3' not in name:
+              forbidden.append(str(p))
+          assert not forbidden, forbidden
+          root_yaml=[str(p) for p in Path('.').glob('*.yaml')]+[str(p) for p in Path('.').glob('*.yml')]
+          assert not root_yaml, root_yaml
+          print('CONSTRUCTION_SCOPE_RESIDUAL_GUARD_PASS')
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ''
+        run: npm run build
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Dirty-tree guard
+        run: git diff --exit-code
