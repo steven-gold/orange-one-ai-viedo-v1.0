@@ -22,6 +22,7 @@ import {
   type DevControlBinding,
   type DevControlUid,
 } from "@/domain/dev/devControlBindings";
+import { ensureControlledDevClientTestRuntime } from "@/domain/dev/controlledDevClientTestRuntime";
 import type { DevGateUid } from "@/domain/dev/devRuntimeContract";
 
 type ProjectionStatus = "LOADING" | "READY" | "BLOCKED";
@@ -43,6 +44,7 @@ type Runtime = {
 const Ctx = createContext<Runtime | null>(null);
 
 export function DevRuntimeProvider({ children }: { children: ReactNode }) {
+  ensureControlledDevClientTestRuntime();
   const [projection, setProjection] = useState<DevNormalizedProjection | null>(null);
   const [projectionStatus, setProjectionStatus] = useState<ProjectionStatus>("LOADING");
   const [runtimeErrorUid, setRuntimeErrorUid] = useState<string | null>(null);
