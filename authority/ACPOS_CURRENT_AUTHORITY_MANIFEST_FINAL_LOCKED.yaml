@@ -1,8 +1,9 @@
 authority:
   id: ACPOS_CURRENT_AUTHORITY_MANIFEST
-  version: V1.2
+  version: V1.3
   status: FINAL_LOCKED
   current_only: true
+  revision: 2026-09-03-PRODUCTION-SCRIPT-V1.3-CROSS-PAGE-BINDING
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -44,6 +45,53 @@ precedence:
 - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY within visual scope
 - Current Page Authority within page UX/business scope
 - Production Script V1.3 within instruction/provider-adapter scope
+cross_authority_bindings:
+  production_script_v1_3:
+    authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+    system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+    integration_matrix_path: authority/global/ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml
+    scope: INSTRUCTION_PROVIDER_ADAPTER_ONLY
+    creates_new_page: false
+    creates_new_runtime_service: false
+    creates_new_provider_registry: false
+    creates_new_script_engine: false
+    provider_profile_owner: admin:AIAPI-01#provider_model_profiles
+    page_bindings:
+      CORE-01:
+        page_authority: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+        role: CANONICAL_PRODUCTION_SCRIPT_AUTHORING_REVISION
+        reverse_binding_required: true
+      ASSET-01:
+        page_authority: authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+        role: PRODUCTION_AND_CORRECTION_SCRIPT_CONTENT
+        reverse_binding_required: true
+      VIDEO-01:
+        page_authority: authority/pages/workspace/VIDEO-01/VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+        role: PRODUCTION_AND_CORRECTION_SCRIPT_CONTENT
+        reverse_binding_required: true
+      EDIT-01:
+        page_authority: authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+        role: POST_PRODUCTION_SCRIPT_AND_CORRECTION_CONTENT
+        reverse_binding_required: true
+      QA-01:
+        page_authority: authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+        role: VALIDATION_REVIEW_ONLY
+        production_script_authoring: false
+        reverse_binding_required: false
+        required_view: QAValidationScriptView
+      workspace:STR-01:
+        page_authority: authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+        role: STRATEGIC_TEXT_CHAT_INSTRUCTION_CONTEXT_BINDING
+        reverse_binding_required: true
+    hard_boundaries:
+    - Current Page Authority remains owner of page UX/business rules.
+    - ACPOS System Authority remains owner of cross-page orchestration and AI execution governance.
+    - Production Script V1.3 does not create or own a page, second router, second provider registry, second script engine or second runtime service.
+    - QA-01 consumes QAValidationScriptView for validation/review only and never becomes production-script authoring.
+    - Provider/model selection remains centralized under admin:AIAPI-01; department-level Provider/Model picker is forbidden.
+    - Provider-specific syntax is forbidden inside department scripts; conversion occurs only in the shared provider adapter/gateway path.
+    - V1.3 Global Shell/visual source documents are provenance only when superseded by Current GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 or Current Global Visual Authority.
+    - Any V1.2 Production Script or legacy admin:AIAPI-06 current-page binding is superseded and forbidden for current construction.
 current_page_count: 18
 front_l1_count: 9
 admin_l1_count: 9
@@ -62,7 +110,9 @@ single_source_rules:
 - No second external data acquisition/crawler runtime.
 - No second AI API/provider router.
 - No second shared Context/Experience/Learning/Event subsystem.
+- No second production script engine/provider adapter authority.
 - Superseded Production Script V1.2 is not present in the Current branch tree.
+- Legacy admin:AIAPI-06 is not a Current frontend owner; current provider-profile owner is admin:AIAPI-01.
 load_policy:
   only_listed_files_are_current_authority: true
   unlisted_authority_or_spec_file: DO_NOT_LOAD_FOR_CURRENT_CONSTRUCTION
