@@ -1,60 +1,23 @@
-export const IAM_CONTROL_COUNT = 14;
-export const IAM_SECTION_COUNT = 6;
+export const IAM_SECTION_UIDS=["IAM-01-SEC-01","IAM-01-SEC-02","IAM-01-SEC-03","IAM-01-SEC-04","IAM-01-SEC-05","IAM-01-SEC-06"]as const;
+export const IAM_COMPONENT_UIDS=["IAM-01-CMP-CONTEXT","IAM-01-CMP-ACCOUNT-LIST","IAM-01-CMP-ACCOUNT-DETAIL","IAM-01-CMP-STEPPER","IAM-01-CMP-BASIC-DATA","IAM-01-CMP-PERMISSION-PRESET","IAM-01-CMP-FRONT-L1","IAM-01-CMP-BACK-L1","IAM-01-CMP-PREVIEW","IAM-01-CMP-AUDIT"]as const;
+export const IAM_ACTION_UIDS=["IAM-01-ACT-SEARCH","IAM-01-ACT-OPEN-CREATE","IAM-01-ACT-OPEN-EDIT","IAM-01-ACT-BASIC-DATA-EDIT","IAM-01-ACT-PRESET-APPLY-TO-DRAFT","IAM-01-ACT-FRONT-ALL-DRAFT","IAM-01-ACT-BACK-ALL-DRAFT","IAM-01-ACT-L1-DRAFT-SET","IAM-01-ACT-SAVE-DRAFT","IAM-01-ACT-VALIDATE-DRAFT","IAM-01-ACT-PREVIEW","IAM-01-ACT-COMPLETE","IAM-01-ACT-AUDIT-OPEN"]as const;
+export const IAM_GATE_UIDS=["IAM-01-GATE-PAGE","IAM-01-GATE-MANAGE","IAM-01-GATE-DRAFT","IAM-01-GATE-PREVIEW","IAM-01-GATE-COMPLETE"]as const;
+export const IAM_ERROR_UIDS=["IAM-01-ERR-IDENTITY-SCHEMA","IAM-01-ERR-PRESET","IAM-01-ERR-L1-EXPANSION","IAM-01-ERR-AUTH-DENIED","IAM-01-ERR-VERSION","IAM-01-ERR-PARTIAL-APPLY","IAM-01-ERR-UNDEFINED"]as const;
+export const IAM_PORT_UIDS=["IAM-01-PORT-PROJECTION","IAM-01-PORT-SEARCH","IAM-01-PORT-DRAFT-SAVE","IAM-01-PORT-DRAFT-VALIDATE","IAM-01-PORT-CONFIGURE","IAM-01-PORT-AUTH-PREVIEW","IAM-01-PORT-PERM-ASSIGN","IAM-01-PORT-PERM-REVOKE","IAM-01-PORT-APPROVE"]as const;
+export const IAM_CONTROL_COUNT=14;
+export const IAM_SECTION_COUNT=IAM_SECTION_UIDS.length;
+export const IAM_COMPONENT_COUNT=IAM_COMPONENT_UIDS.length;
+export const IAM_ACTION_COUNT=IAM_ACTION_UIDS.length;
+export const IAM_GATE_COUNT=IAM_GATE_UIDS.length;
+export const IAM_ERROR_COUNT=IAM_ERROR_UIDS.length;
+export const IAM_PORT_COUNT=IAM_PORT_UIDS.length;
 
-export const IAM_PORTS = [
-  "getUiProjection",
-  "searchProjection",
-  "saveDraft",
-  "validateDraft",
-  "configureGovernedResource",
-  "previewAuthorizationImpact",
-  "assignAccountPermission",
-  "revokeAccountPermission",
-  "approveGovernedResource",
-] as const;
+export const IAM_PORTS=["getUiProjection","searchProjection","saveDraft","validateDraft","configureGovernedResource","previewAuthorizationImpact","assignAccountPermission","revokeAccountPermission","approveGovernedResource"]as const;
+export type IamOperation=(typeof IAM_PORTS)[number];
 
-export type IamOperation = (typeof IAM_PORTS)[number];
+export const IAM_PAGE_STATES=["LIST","CREATE_BASIC","CREATE_PERMISSION","CREATE_PREVIEW","EDIT_BASIC","EDIT_PERMISSION","EDIT_PREVIEW","APPLYING","COMPLETE","BLOCKED","ERROR"]as const;
+export type IamPageState=(typeof IAM_PAGE_STATES)[number];
+export function isIamPageState(value:unknown):value is IamPageState{return typeof value==="string"&&(IAM_PAGE_STATES as readonly string[]).includes(value);}
 
-export const IAM_PAGE_STATES = [
-  "LIST",
-  "CREATE_BASIC",
-  "CREATE_PERMISSION",
-  "CREATE_PREVIEW",
-  "EDIT_BASIC",
-  "EDIT_PERMISSION",
-  "EDIT_PREVIEW",
-  "APPLYING",
-  "COMPLETE",
-  "BLOCKED",
-  "ERROR",
-] as const;
-
-export type IamPageState = (typeof IAM_PAGE_STATES)[number];
-
-export function isIamPageState(value: unknown): value is IamPageState {
-  return typeof value === "string" && (IAM_PAGE_STATES as readonly string[]).includes(value);
-}
-
-export const IAM_FRONT_L1 = [
-  "FRONT-L1-01",
-  "FRONT-L1-02",
-  "FRONT-L1-03",
-  "FRONT-L1-04",
-  "FRONT-L1-05",
-  "FRONT-L1-06",
-  "FRONT-L1-07",
-  "FRONT-L1-08",
-  "FRONT-L1-09",
-] as const;
-
-export const IAM_ADMIN_L1 = [
-  "ADMIN-L1-SYSTEM",
-  "ADMIN-L1-IAM",
-  "ADMIN-L1-DEV",
-  "ADMIN-L1-SOCIAL",
-  "ADMIN-L1-ERP",
-  "ADMIN-L1-AIAPI",
-  "ADMIN-L1-QA-CRITERIA",
-  "ADMIN-L1-STRATEGY",
-  "ADMIN-L1-KNOWLEDGE",
-] as const;
+export const IAM_FRONT_L1=["FRONT-L1-01","FRONT-L1-02","FRONT-L1-03","FRONT-L1-04","FRONT-L1-05","FRONT-L1-06","FRONT-L1-07","FRONT-L1-08","FRONT-L1-09"]as const;
+export const IAM_ADMIN_L1=["ADMIN-L1-SYSTEM","ADMIN-L1-IAM","ADMIN-L1-DEV","ADMIN-L1-SOCIAL","ADMIN-L1-ERP","ADMIN-L1-AIAPI","ADMIN-L1-QA-CRITERIA","ADMIN-L1-STRATEGY","ADMIN-L1-KNOWLEDGE"]as const;
