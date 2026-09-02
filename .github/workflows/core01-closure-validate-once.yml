@@ -26,10 +26,10 @@ jobs:
           expected={'section_uid':10,'control_uid':50,'action_uid':34,'gate_uid':26,'permission_uid':14,'error_uid':16}
           registry={}
           for key,count in expected.items():
-            vals=set()
-            prefix=key+':'
+            vals=set(); prefix=key+':'
             for line in auth.splitlines():
               s=line.strip()
+              if s.startswith('- '): s=s[2:].strip()
               if s.startswith(prefix): vals.add(s[len(prefix):].strip().strip('"\''))
             missing=sorted(v for v in vals if v not in src)
             print(f'CORE_AUTH_COVERAGE|{key}|{len(vals)-len(missing)}/{len(vals)}|missing={missing}')
