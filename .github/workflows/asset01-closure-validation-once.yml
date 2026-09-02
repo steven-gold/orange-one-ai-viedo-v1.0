@@ -33,6 +33,7 @@ jobs:
           runtime=Path('src/components/pages/AssetControlRuntime.tsx').read_text()
           bindings=Path('src/domain/asset/assetControlBindings.ts').read_text()
           contract=Path('src/domain/asset/assetRuntimeContract.ts').read_text()
+          asset_server=Path('src/server/asset/assetRuntime.ts').read_text()
           projection=Path('src/domain/asset/assetProjectionPort.ts').read_text()
           controlled=Path('src/server/testing/controlledAssetTestRuntime.ts').read_text()
           sections=set(re.findall(r'section_uid:\s*(ASSET-01-SEC-[0-9]+)',auth))
@@ -54,6 +55,7 @@ jobs:
           contract_errors=set(re.findall(r'"(ASSET-01-ERR-[A-Z0-9-]+)"',contract))
           if not errors.issubset(contract_errors): print('ASSET_ERROR_CONTRACT_GAP',sorted(errors-contract_errors));sys.exit(1)
           if 'const enabled = Boolean(binding && action && allowed && builderReady);' not in runtime: print('ASSET_FAIL_CLOSED_CONTROL_GAP');sys.exit(1)
+          if 'ASSET_RUNTIME_NOT_BOUND' not in asset_server: print('ASSET_SERVER_FAIL_CLOSED_GAP');sys.exit(1)
           required=['test_metadata?:AssetProjectionTestMetadata','data_classification:"TEST_ONLY"','production_eligible:false','if(p.test_metadata!==undefined){if(!isControlledTestMode()','test_metadata: TEST_METADATA']
           if any(x not in projection+controlled for x in required): print('ASSET_TEST_CLASSIFICATION_GAP');sys.exit(1)
           if 'data-data-classification={state.projection?.test_metadata?.data_classification}' not in visual: print('ASSET_UI_TEST_CLASSIFICATION_GAP');sys.exit(1)
@@ -77,7 +79,7 @@ jobs:
           ccode=$(curl -sS -o /tmp/asset-prod-command.json -w '%{http_code}' -H 'content-type: application/json' -X POST 'http://127.0.0.1:3151/v1/tasks/TEST-ASSET-TASK-001/execute' --data '{}')
           cat /tmp/asset-prod-command.json
           test "$ccode" = "503"
-          grep -q 'ASSET_RUNTIME_NOT_BOUND' /tmp/asset-prod-command.json
+          grep -q 'DEPARTMENT_OPERATION_RUNTIME_NOT_BOUND' /tmp/asset-prod-command.json
           ! grep -q 'TEST_ONLY' /tmp/asset-prod-command.json
           kill $pid; wait $pid || true; trap - EXIT
       - name: Controlled build
