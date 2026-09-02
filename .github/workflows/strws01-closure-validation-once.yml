@@ -49,12 +49,17 @@ jobs:
           }
           expected={'sections':12,'visuals':12,'components':16,'permissions':5,'gates':11,'errors':9,'states':9,'stages':6,'actions':11,'objects':12,'controls':57,'ports':6}
           ids={k:set(re.findall(p,auth,re.M)) for k,p in pats.items()}; failed=False
+          provider_send_alias='STR-01-PORT-SEND'
+          if provider_send_alias in ids['ports']:
+            ids['ports'].remove(provider_send_alias)
           for k,v in ids.items():
             print(k,len(v),sorted(v))
             if len(v)!=expected[k]: print('COUNT_MISMATCH',k,len(v),expected[k]); failed=True
             missing=sorted(x for x in v if x not in src)
             print('source_missing',k,len(missing),missing)
             if missing: failed=True
+          print('provider_send_alias',provider_send_alias,provider_send_alias in src)
+          if provider_send_alias not in src: failed=True
           controls=set(re.findall(r'"(STR-01-[A-Z0-9-]+)":\{"action_uid"',bindings))
           print('binding_controls',len(controls))
           if controls!=ids['controls']:
@@ -63,6 +68,7 @@ jobs:
             if uid not in catalog: print('CATALOG_CONTROL_MISSING',uid); failed=True
           if 'provider_picker: FORBIDDEN' not in auth: print('PROVIDER_PICKER_BOUNDARY_MISSING'); failed=True
           if 'new_controls: 0' not in auth or 'new_actions: 0' not in auth or 'new_ports: 0' not in auth: print('PROVIDER_BINDING_ADDED_SURFACE'); failed=True
+          if 'STRATEGY_PORT_COUNT=STRATEGY_PORT_UIDS.length' not in contract: print('FORMAL_PORT_COUNT_CONTRACT_MISSING'); failed=True
           if failed: sys.exit(1)
       - name: Production build
         env:
@@ -133,6 +139,13 @@ jobs:
             if((await q('STR-01-FLD-EXECUTION-STATE').locator('strong').textContent())!=='OWNER_EXECUTION_NOT_PERFORMED')throw new Error('Owner execution truth missing');
             const body=(await page.locator('body').textContent())||'';
             if(/provider\s*(picker|select)|model\s*(picker|select)/i.test(body))throw new Error('Forbidden provider/model picker present');
+            const attachment=q('STR-01-BTN-ATTACH');
+            if(!(await attachment.isDisabled()))throw new Error('Attachment must fail closed without registered shared attachment binding');
+            if((await attachment.getAttribute('data-disabled-reason'))!=='STRATEGY_ATTACHMENT_FLOW_NOT_BOUND')throw new Error('Attachment missing explicit fail-closed reason');
+            const search=q('STR-01-INP-TOPIC-SEARCH');await search.fill('Capacity');
+            if(await q('STR-01-LST-TOPICS').getByRole('button',{name:'[TEST] Market expansion strategy'}).count())throw new Error('Topic search did not filter non-matching topic');
+            if(await q('STR-01-LST-TOPICS').getByRole('button',{name:'[TEST] Capacity risk strategy'}).count()!==1)throw new Error('Topic search removed matching topic');
+            await search.fill('');
             const topic=q('STR-01-LST-TOPICS').getByRole('button',{name:'[TEST] Market expansion strategy'});
             if(await topic.count()!==1||await topic.isDisabled())throw new Error('Topic selection unavailable');
             await topic.click();
@@ -148,9 +161,12 @@ jobs:
             await send.click();const sendRes=await sendWait;if(sendRes.status()!==200)throw new Error(`Send HTTP ${sendRes.status()}`);
             const sendBody=await sendRes.json();if(sendBody.test_metadata?.data_classification!=='TEST_ONLY'||sendBody.test_metadata?.production_eligible!==false)throw new Error('Send response not TEST_ONLY');
             await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:STR-01"]')?.getAttribute('data-page-state')==='RESPONDING');
+            if(await msg.inputValue()!=='TEST strategic question')throw new Error('Send cleared message before active generation could be stopped');
+            if(!(await q('STR-01-VIEW-CONVERSATION').textContent())?.includes('[TEST AI] Controlled strategic response'))throw new Error('Conversation projection did not refresh after Send');
             const stop=q('STR-01-BTN-STOP');if(await stop.isDisabled())throw new Error('Stop disabled while generation active');
             const stopWait=page.waitForResponse(r=>r.url().includes('/generation/stop')&&r.request().method()==='POST');await stop.click();const stopRes=await stopWait;if(stopRes.status()!==200)throw new Error(`Stop HTTP ${stopRes.status()}`);
             await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:STR-01"]')?.getAttribute('data-page-state')==='READY');
+            if(await msg.inputValue()!=='')throw new Error('Stop did not clear completed composer message');
             const compare=q('STR-01-BTN-COMPARE');if(await compare.isDisabled())throw new Error('Compare disabled with two governed exact refs');
             const compareWait=page.waitForResponse(r=>r.url().includes('/v1/candidates/compare')&&r.request().method()==='GET');await compare.click();const compareRes=await compareWait;if(compareRes.status()!==200)throw new Error(`Compare HTTP ${compareRes.status()}`);
             const review=q('STR-01-BTN-SUBMIT-REVIEW');if(await review.isDisabled())throw new Error('Review disabled for candidate ready');
@@ -160,7 +176,8 @@ jobs:
             const adoptWait=page.waitForResponse(r=>r.url().includes('/adoptascontextcandidate')&&r.request().method()==='POST');await adopt.click();const adoptRes=await adoptWait;if(adoptRes.status()!==200)throw new Error(`Adopt HTTP ${adoptRes.status()}`);
             await page.waitForFunction(()=>document.querySelector('[data-control-id="STR-01-FLD-REVIEW-STATE"] strong')?.textContent==='ADOPTED_CONTEXT');
             if((await q('STR-01-FLD-EXECUTION-STATE').locator('strong').textContent())!=='OWNER_EXECUTION_NOT_PERFORMED')throw new Error('STR performed owner execution illegally');
-            const audit=q('STR-01-BTN-AUDIT');if(await audit.isDisabled())throw new Error('Audit disabled');await audit.click();if(!(await page.locator('[data-audit-trace-drawer="true"]').isVisible()))throw new Error('Audit drawer did not open');
+            const audit=q('STR-01-BTN-AUDIT');if(await audit.isDisabled())throw new Error('Audit disabled');await audit.click();if(!(await page.locator('[data-audit-trace-drawer="true"]').isVisible()))throw new Error('Audit drawer did not open');await page.keyboard.press('Escape');
+            const owner=q('STR-01-BTN-OPEN-OWNER');if(await owner.isDisabled())throw new Error('Open Owner disabled in controlled registered route');await owner.click();await page.waitForURL('**/admin/erp');
             if(errors.length)throw new Error(errors.join('\n'));
             console.log('STR_BROWSER_INTERACTION_PASS');
             await page.close();await browser.close();
