@@ -21,7 +21,10 @@ type Kind =
   | "tab"
   | "number"
   | "textarea"
-  | "preview";
+  | "preview"
+  | "dropzone"
+  | "mode-select"
+  | "timeline";
 
 type Spec = { id: string; kind: Kind };
 
@@ -49,7 +52,7 @@ const MEDIA: readonly Spec[] = [
   { id: "EDIT-01-BTN-ADD-MEDIA", kind: "button" },
   { id: "EDIT-01-LST-IMPORT-QUEUE", kind: "list" },
   { id: "EDIT-01-LST-MEDIA", kind: "list" },
-  { id: "EDIT-01-CTL-DROP-TIMELINE", kind: "readonly" },
+  { id: "EDIT-01-CTL-DROP-TIMELINE", kind: "dropzone" },
   { id: "EDIT-01-BTN-UPLOAD-SPEC", kind: "button" },
 ] as const;
 
@@ -75,11 +78,11 @@ const RANGE: readonly Spec[] = [
   { id: "EDIT-01-BTN-ZOOM-OUT", kind: "button" },
   { id: "EDIT-01-BTN-ZOOM-IN", kind: "button" },
   { id: "EDIT-01-BTN-ZOOM-FIT", kind: "button" },
-  { id: "EDIT-01-CTL-MINI-TIMELINE", kind: "overview" },
-  { id: "EDIT-01-CTL-RULER", kind: "overview" },
-  { id: "EDIT-01-CTL-PLAYHEAD", kind: "overview" },
+  { id: "EDIT-01-CTL-MINI-TIMELINE", kind: "timeline" },
+  { id: "EDIT-01-CTL-RULER", kind: "timeline" },
+  { id: "EDIT-01-CTL-PLAYHEAD", kind: "timeline" },
   { id: "EDIT-01-CTL-IN-OUT", kind: "range" },
-  { id: "EDIT-01-CTL-MARKER-RAIL", kind: "overview" },
+  { id: "EDIT-01-CTL-MARKER-RAIL", kind: "timeline" },
 ] as const;
 
 const TRACK: readonly Spec[] = [
@@ -133,8 +136,8 @@ const INSPECTOR: readonly Spec[] = [
 ] as const;
 
 const API: readonly Spec[] = [
-  { id: "EDIT-01-FLD-API-PROVIDER", kind: "readonly" },
-  { id: "EDIT-01-FLD-API-MODEL", kind: "readonly" },
+  { id: "EDIT-01-FLD-API-PROVIDER", kind: "mode-select" },
+  { id: "EDIT-01-FLD-API-MODEL", kind: "mode-select" },
   { id: "EDIT-01-FLD-API-SCOPE", kind: "select" },
   { id: "EDIT-01-FLD-API-INSTRUCTION", kind: "textarea" },
   { id: "EDIT-01-BTN-API-CANCEL", kind: "button" },
@@ -151,10 +154,10 @@ const API: readonly Spec[] = [
 ] as const;
 
 const VOICE: readonly Spec[] = [
-  { id: "EDIT-01-FLD-VOICE-SCRIPT", kind: "readonly" },
-  { id: "EDIT-01-FLD-VOICE-ASSET", kind: "readonly" },
-  { id: "EDIT-01-FLD-VOICE-PROVIDER", kind: "readonly" },
-  { id: "EDIT-01-FLD-VOICE-MODEL", kind: "readonly" },
+  { id: "EDIT-01-FLD-VOICE-SCRIPT", kind: "mode-select" },
+  { id: "EDIT-01-FLD-VOICE-ASSET", kind: "mode-select" },
+  { id: "EDIT-01-FLD-VOICE-PROVIDER", kind: "mode-select" },
+  { id: "EDIT-01-FLD-VOICE-MODEL", kind: "mode-select" },
   { id: "EDIT-01-BTN-VOICE-GENERATE", kind: "primary" },
   { id: "EDIT-01-LST-VOICE-TAKES", kind: "list" },
   { id: "EDIT-01-BTN-VOICE-PREVIEW", kind: "button" },
@@ -163,9 +166,9 @@ const VOICE: readonly Spec[] = [
 ] as const;
 
 const AUDIO: readonly Spec[] = [
-  { id: "EDIT-01-FLD-MUSIC-ASSET", kind: "readonly" },
+  { id: "EDIT-01-FLD-MUSIC-ASSET", kind: "mode-select" },
   { id: "EDIT-01-BTN-MUSIC-ADD", kind: "button" },
-  { id: "EDIT-01-FLD-SFX-ASSET", kind: "readonly" },
+  { id: "EDIT-01-FLD-SFX-ASSET", kind: "mode-select" },
   { id: "EDIT-01-BTN-SFX-ADD", kind: "button" },
   { id: "EDIT-01-CTL-TRACK-LEVEL", kind: "range" },
   { id: "EDIT-01-CTL-MASTER-LEVEL", kind: "range" },
@@ -249,8 +252,8 @@ const STAGES = ["EDIT-01-STAGE-01-ASSEMBLY", "EDIT-01-STAGE-02-AUDIO", "EDIT-01-
 
 function specById(id: string) { return ALL.find((spec) => spec.id === id); }
 
-function Control({ spec, compact = false }: { spec: Spec; compact?: boolean }) {
-  return <EditRuntimeControl controlId={spec.id} kind={spec.kind} compact={compact} />;
+function Control({ spec, compact = false, scopeRef }: { spec: Spec; compact?: boolean; scopeRef?: string }) {
+  return <EditRuntimeControl controlId={spec.id} kind={spec.kind} compact={compact} scopeRef={scopeRef} />;
 }
 
 function Title({ text, meta }: { text: string; meta?: string }) {
@@ -319,7 +322,7 @@ function EditVisualBody() {
         <section className={`${styles.panel} ${styles.timelinePanel}`} data-section-id="EDIT-01-SEC-05" data-visual-uid="EDIT-01-VIS-TIMELINE" data-component-uid="EDIT-01-CMP-TIMELINE">
           <Title text={editUiText(locale, "timeline")} meta="min-height 320px" />
           <div className={styles.timelineRuler}><span>00:00:00:00</span><span>—</span><span>00:00:00:00</span></div>
-          <div className={styles.trackStack}>{TRACKS.map((track) => <div className={styles.trackRow} key={track.uid} data-track-type-uid={track.uid}><div className={styles.trackHeader}><strong>{track.label}</strong><div className={styles.trackControls}>{track.controls.map((id) => { const spec = specById(id); return spec ? <Control key={`${track.uid}-${id}`} spec={spec} compact /> : null; })}</div></div><div className={styles.trackLane}>—</div></div>)}</div>
+          <div className={styles.trackStack}>{TRACKS.map((track) => <div className={styles.trackRow} key={track.uid} data-track-type-uid={track.uid}><div className={styles.trackHeader}><strong>{track.label}</strong><div className={styles.trackControls}>{track.controls.map((id) => { const spec = specById(id); return spec ? <Control key={`${track.uid}-${id}`} spec={spec} compact scopeRef={track.uid} /> : null; })}</div></div><div className={styles.trackLane}>—</div></div>)}</div>
           <div className={styles.dialogueGuard} data-section-id="EDIT-01-SEC-11" data-component-uid="EDIT-01-CMP-DIALOGUE-BINDING"><span>{editUiText(locale, "dialogueGuard")}</span><strong>—</strong></div>
         </section>
       </div>

@@ -100,7 +100,7 @@ function clearTransient(state: EditClientState): EditClientState {
 
 export function reduceEditClientState(state: EditClientState, action: EditClientAction): EditClientState {
   switch(action.type){
-    case"SOURCE_MODE":return{...clearTransient(state),source_mode:action.value};
+    case"SOURCE_MODE":{const next=clearTransient(state);return action.value==="STANDALONE_UPLOAD"?{...next,source_mode:action.value,resolved:{...EMPTY_EDIT_RESOLVED_CONTEXT,page_state_uid:"EDIT-01-ST-PAGE-EMPTY",gate_state:{"EDIT-01-GATE-STANDALONE":true,"EDIT-01-GATE-CONTEXT-MUTABLE":true}}}:{...next,source_mode:action.value};}
     case"EXECUTION_MODE":return{...state,execution_mode:action.value,last_action_uid:"EDIT-01-ACT-EXECUTION-MODE-SET"};
     case"BIND_RESOLVED_CONTEXT":return{...state,resolved:{...action.value,values:{...action.value.values},lists:{...action.value.lists},gate_state:{...action.value.gate_state}},draft_dirty:action.value.page_state_uid==="EDIT-01-ST-PAGE-EVAL_REQUIRED"};
     case"CLEAR_RESOLVED_CONTEXT":return{...state,resolved:{...EMPTY_EDIT_RESOLVED_CONTEXT},playing:false,range_in:null,range_out:null};

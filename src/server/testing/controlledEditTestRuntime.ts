@@ -30,6 +30,10 @@ function allGates(){
   gates["EDIT-01-GATE-CONTEXT-INTEGRITY"]=true;
   gates["EDIT-01-GATE-BINDING-INTEGRITY"]=true;
   gates["EDIT-01-GATE-STANDALONE"]=false;
+  gates["EDIT-01-GATE-LIPSYNC"]=state.stage_uid==="EDIT-01-STAGE-03-SYNC";
+  gates["EDIT-01-GATE-SUBTITLE"]=state.stage_uid==="EDIT-01-STAGE-03-SYNC";
+  gates["EDIT-01-GATE-PROJECT-SOURCE-MUTATION"]=false;
+  gates["EDIT-01-GATE-SYNC-POLICY"]=true;
   gates["EDIT-01-GATE-PREVIEW"]=Boolean(state.working_draft_ref||state.editing_run_id);
   gates["EDIT-01-GATE-DRAFT"]=working;
   gates["EDIT-01-GATE-TRACK-SELECTION"]=working;
@@ -77,6 +81,9 @@ export function readControlledEditTestProjection():EditResolvedContext{return{
     "EDIT-01-LST-VERSION-HISTORY":state.saved_edit_version_id?list(state.saved_edit_version_id,"[TEST] Immutable Edit Version"):[],
     "EDIT-01-LST-JOB-STATUS":state.job_ref?list(state.job_ref,state.stage_phase):[],
     "EDIT-01-FLD-PROJECT":list(PROJECT_ID,"[TEST] ORANGE ONE Project"),"EDIT-01-FLD-TOPIC":list(TOPIC_ID,"[TEST] Topic 001"),"EDIT-01-FLD-TASK":list(TASK_ID,"[TEST] EDIT Task 001"),
+    "EDIT-01-CTL-MEDIA-TYPE-FILTER":list("TEST-MEDIA-VIDEO","[TEST] Video"),"EDIT-01-FLD-INSPECTOR-SPEED":list("1","[TEST] 1x"),"EDIT-01-FLD-INSPECTOR-TRANSITION":list("TEST-CUT","[TEST] Cut"),
+    "EDIT-01-FLD-API-SCOPE":list("TEST-RANGE","[TEST] Selected Range"),"EDIT-01-FLD-LIPSYNC-TARGET":list("TEST-DIALOGUE-001","[TEST] Dialogue Target"),"EDIT-01-FLD-SUB-LANG":list("zh-TW","[TEST] zh-TW"),"EDIT-01-FLD-SUB-FORMAT":list("SRT","[TEST] SRT"),"EDIT-01-CTL-AUDIO-MONITOR":list("MASTER","[TEST] Master"),
+    "EDIT-01-FLD-API-PROVIDER":list("TEST-PROVIDER","[TEST] Provider"),"EDIT-01-FLD-API-MODEL":list("TEST-MODEL","[TEST] Model"),"EDIT-01-FLD-VOICE-SCRIPT":list("TEST-VOICE-SCRIPT-001","[TEST] Voice Script"),"EDIT-01-FLD-VOICE-ASSET":list("TEST-VOICE-ASSET-001","[TEST] Voice Asset"),"EDIT-01-FLD-VOICE-PROVIDER":list("TEST-VOICE-PROVIDER","[TEST] Voice Provider"),"EDIT-01-FLD-VOICE-MODEL":list("TEST-VOICE-MODEL","[TEST] Voice Model"),"EDIT-01-FLD-MUSIC-ASSET":list("TEST-MUSIC-ASSET-001","[TEST] Music Asset"),"EDIT-01-FLD-SFX-ASSET":list("TEST-SFX-ASSET-001","[TEST] SFX Asset"),
   },gate_state:allGates(),
 };}
 
