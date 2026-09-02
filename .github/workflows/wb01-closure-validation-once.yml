@@ -152,7 +152,8 @@ jobs:
             const drawer=page.locator('[data-drawer-section-key="project_progress_overview"]');
             const text=(await drawer.textContent())||'';
             if(!text.includes('[TEST] ORANGE ONE Demo Project')||!text.includes('026:03:04')||!text.includes('read_model_version: TEST_ONLY-WB01-RM-001'))throw new Error('WB drawer projection incomplete');
-            if((await drawer.locator('button').count())!==1)throw new Error('WB drawer has unregistered action');
+            if((await drawer.locator('aside[role="dialog"] button').count())!==1)throw new Error('WB drawer close action mismatch');
+            if((await drawer.locator('[data-control-id],[data-operation-id]').count())!==0)throw new Error('WB drawer contains business control');
             await page.keyboard.press('Escape');
             await page.waitForFunction(()=>!document.querySelector('[data-drawer-section-key]'));
             if(!(await control.evaluate(el=>el===document.activeElement)))throw new Error('WB focus not returned to opener');
@@ -166,5 +167,7 @@ jobs:
         run: |
           set -euo pipefail
           ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/domain/dashboard src/server/dashboard src/server/testing/controlledDashboardTestRuntime.ts src/components/pages/DashboardVisual.tsx
+          test ! -e .github/workflows/wb01-type-fix-once.yml
+          test ! -e .github/workflows/wb01-type-fix2-once.yml
           test ! -e .github/workflows/wb01-patch-once.yml
           git diff --exit-code
