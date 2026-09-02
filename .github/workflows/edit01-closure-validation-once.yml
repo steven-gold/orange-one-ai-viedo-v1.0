@@ -159,6 +159,9 @@ jobs:
             const source=q('EDIT-01-CTL-SOURCE-MODE');
             await source.getByRole('button',{name:'STANDALONE_UPLOAD'}).click();
             await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-CTL-SOURCE-MODE"] button[aria-pressed="true"]')?.textContent?.includes('STANDALONE_UPLOAD'));
+            const execution=q('EDIT-01-CTL-EXECUTION-MODE');
+            await execution.getByRole('button',{name:'MANUAL'}).click();
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-CTL-EXECUTION-MODE"] button[aria-pressed="true"]')?.textContent?.includes('MANUAL'));
             for(const [id] of contextControls){
               if(await page.locator(`[data-control-id="${id}"]`).count()) throw new Error(`${id} must be hidden in STANDALONE_UPLOAD`);
             }
@@ -182,20 +185,54 @@ jobs:
             for(const id of ['EDIT-01-CTL-MINI-TIMELINE','EDIT-01-CTL-RULER','EDIT-01-CTL-PLAYHEAD','EDIT-01-CTL-MARKER-RAIL']){
               const el=q(id); await el.waitFor();
               if(await el.isDisabled()) throw new Error(`${id} disabled in working draft`);
-              const tag=await el.evaluate(n=>n.tagName);
-              if(tag==='INPUT') await el.fill('240'); else await el.click({position:{x:Math.max(2,(await el.boundingBox())?.width/2||2),y:4}});
+              await el.evaluate((node)=>{if(node instanceof HTMLInputElement){node.value='240';node.dispatchEvent(new Event('input',{bubbles:true}));node.dispatchEvent(new Event('change',{bubbles:true}));}else if(node instanceof HTMLElement){node.click();}});
             }
-            for(const id of ['EDIT-01-FLD-API-PROVIDER','EDIT-01-FLD-API-MODEL','EDIT-01-FLD-VOICE-SCRIPT','EDIT-01-FLD-VOICE-ASSET','EDIT-01-FLD-VOICE-PROVIDER','EDIT-01-FLD-VOICE-MODEL','EDIT-01-FLD-MUSIC-ASSET','EDIT-01-FLD-SFX-ASSET']){
+            for(const id of ['EDIT-01-FLD-API-PROVIDER','EDIT-01-FLD-API-MODEL']){
               const el=q(id); await el.waitFor();
-              const tag=await el.evaluate(n=>n.tagName);
-              if(tag!=='SELECT') throw new Error(`${id} must be selectable in standalone controlled mode; got ${tag}`);
-              if(await el.isDisabled()) throw new Error(`${id} disabled in standalone controlled mode`);
+              if((await el.evaluate(n=>n.tagName))!=='SELECT') throw new Error(`${id} must be selectable in Standalone correction context`);
+              if(await el.isDisabled()) throw new Error(`${id} disabled while correction gate is open`);
               const options=await el.locator('option').evaluateAll(os=>os.map(o=>o.value).filter(Boolean));
               if(!options.length) throw new Error(`${id} has no selectable runtime options`);
               await el.selectOption(options[0]);
             }
-            const flowState=await q('EDIT-01-LBL-PAGE-STATE').textContent();
-            if(!flowState?.includes('EDIT-01-ST-PAGE-WORKING')) throw new Error(`unexpected flow state ${flowState}`);
+            await q('EDIT-01-TAB-VOICE').click();
+            const voiceBefore=q('EDIT-01-FLD-VOICE-SCRIPT');
+            await voiceBefore.waitFor({state:'visible'});
+            if(!(await voiceBefore.isDisabled())) throw new Error('Voice Script must stay disabled before AUDIO gate');
+            if((await voiceBefore.getAttribute('data-disabled-reason'))!=='EDIT-01-GATE-AUDIO') throw new Error('Voice Script missing AUDIO disabled reason before Stage 02');
+            const evalFull=q('EDIT-01-BTN-EVAL-RECHECK-FULL');
+            if(await evalFull.isDisabled()) throw new Error('Stage evaluation is disabled despite Working Draft ready');
+            await evalFull.click();
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-LBL-PAGE-STATE"]')?.textContent?.includes('EDIT-01-ST-PAGE-EVAL_PASS'));
+            const score=await q('EDIT-01-LBL-STAGE-SCORE').textContent();
+            if(!score?.includes('96')) throw new Error(`Standalone evaluation score missing: ${score}`);
+            const confirm=q('EDIT-01-BTN-STAGE-CONFIRM');
+            if(await confirm.isDisabled()) throw new Error('Stage Confirm stayed disabled after evaluation PASS');
+            await confirm.click();
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-LBL-CURRENT-STAGE"]')?.textContent?.includes('EDIT-01-STAGE-02-AUDIO'));
+            const phaseBeforeStart=await page.locator('[data-page-uid="EDIT-01"]').getAttribute('data-stage-phase');
+            if(phaseBeforeStart!=='READY') throw new Error(`Manual Stage 02 must wait READY; got ${phaseBeforeStart}`);
+            if(await start.isDisabled()) throw new Error('Start/Continue disabled at manual Stage 02');
+            await start.click();
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="EDIT-01"]')?.getAttribute('data-current-stage')==='EDIT-01-STAGE-02-AUDIO'&&document.querySelector('[data-page-uid="EDIT-01"]')?.getAttribute('data-stage-phase')==='RUNNING');
+            await q('EDIT-01-TAB-VOICE').click();
+            for(const id of ['EDIT-01-FLD-VOICE-SCRIPT','EDIT-01-FLD-VOICE-ASSET','EDIT-01-FLD-VOICE-PROVIDER','EDIT-01-FLD-VOICE-MODEL']){
+              const el=q(id); await el.waitFor({state:'visible'});
+              if((await el.evaluate(n=>n.tagName))!=='SELECT') throw new Error(`${id} must be selectable in Standalone Audio stage`);
+              if(await el.isDisabled()) throw new Error(`${id} disabled after AUDIO gate opened`);
+              const options=await el.locator('option').evaluateAll(os=>os.map(o=>o.value).filter(Boolean));
+              if(!options.length) throw new Error(`${id} has no Audio-stage runtime options`);
+              await el.selectOption(options[0]);
+            }
+            await q('EDIT-01-TAB-AUDIO').click();
+            for(const id of ['EDIT-01-FLD-MUSIC-ASSET','EDIT-01-FLD-SFX-ASSET']){
+              const el=q(id); await el.waitFor({state:'visible'});
+              if((await el.evaluate(n=>n.tagName))!=='SELECT') throw new Error(`${id} must be selectable in Standalone Audio stage`);
+              if(await el.isDisabled()) throw new Error(`${id} disabled after AUDIO gate opened`);
+              const options=await el.locator('option').evaluateAll(os=>os.map(o=>o.value).filter(Boolean));
+              if(options.length!==1||options[0]!=='TEST-STANDALONE-MEDIA-001') throw new Error(`${id} must be limited to Session Media; got ${options}`);
+              await el.selectOption(options[0]);
+            }
             await source.getByRole('button',{name:'PROJECT_TASK'}).click();
             await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-CTL-SOURCE-MODE"] button[aria-pressed="true"]')?.textContent?.includes('PROJECT_TASK'));
             await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-FLD-PROJECT"]') instanceof HTMLSelectElement&&document.querySelector('[data-control-id="EDIT-01-FLD-PROJECT"]').value==='TEST-EDIT-PROJECT-001');
