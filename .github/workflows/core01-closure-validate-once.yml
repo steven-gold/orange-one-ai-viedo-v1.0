@@ -1,0 +1,116 @@
+name: CORE-01 closure validation once
+on:
+  push:
+    branches: [core01-closure-20260902]
+    paths:
+      - 'src/server/core/coreRuntime.ts'
+      - 'src/domain/core/coreRuntimeContract.ts'
+      - '.github/workflows/core01-closure-validate-once.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scope and authority guard
+        run: |
+          set -euo pipefail
+          test "$(git diff --name-only origin/new...HEAD | grep -v '^.github/workflows/core01-closure-validate-once.yml$' | sort | tr '\n' ' ')" = "src/domain/core/coreRuntimeContract.ts src/server/core/coreRuntime.ts "
+          test "$(grep -c '"CORE-01-GATE-' src/domain/core/coreRuntimeContract.ts)" -ge 26
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          auth=Path('authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml').read_text()
+          src='\n'.join(p.read_text(errors='ignore') for p in Path('src').rglob('*') if p.is_file() and p.suffix in {'.ts','.tsx','.js','.jsx'})
+          for key,expected in [('section_uid',10),('control_uid',50),('action_uid',34),('gate_uid',26),('permission_uid',14),('error_uid',16)]:
+            vals=sorted(set(re.findall(rf'\\b{key}\\s*:\\s*["\\\']?([^\\s#,"\\\']+)',auth)))
+            missing=[v for v in vals if v not in src]
+            print(f'CORE_AUTH_COVERAGE|{key}|{len(vals)-len(missing)}/{len(vals)}|missing={missing}')
+            if len(vals)!=expected or missing: raise SystemExit(1)
+          visual=Path('src/components/pages/CoreVisual.tsx').read_text()
+          controls=sorted(set(re.findall(r'CORE-01-(?:CTL|BTN|FLD|LST|MENU)-[A-Z0-9-]+',auth)))
+          missing=[v for v in controls if v not in visual]
+          print(f'CORE_VISUAL_CONTROL_SOURCE|{len(controls)-len(missing)}/{len(controls)}|missing={missing}')
+          if len(controls)!=50 or missing: raise SystemExit(1)
+          PY
+          git diff --exit-code origin/new...HEAD -- src/app/page.tsx src/components/pages/DashboardVisual.tsx src/components/pages/DashboardVisual.module.css
+          echo CORE01_SCOPE_AUTHORITY_PASS
+      - name: Install and compile
+        run: |
+          set -euo pipefail
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+          npm install --no-save playwright@1.55.0 >/tmp/pw-install.log 2>&1
+          npx playwright install chromium >/tmp/pw-browser.log 2>&1
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PRODUCTION npm run build
+          echo CORE01_BUILD_PASS
+      - name: Production fail-closed and browser
+        run: |
+          set -euo pipefail
+          PORT=3250 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=PRODUCTION npm start >/tmp/core-prod.log 2>&1 & P=$!; trap 'kill $P 2>/dev/null || true' EXIT
+          for i in $(seq 1 80); do curl -fsS http://127.0.0.1:3250/core >/dev/null && break || sleep 1; done
+          node - <<'JS'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const r=await fetch('http://127.0.0.1:3250/v1/ui-projections/CORE-01');
+            const body=await r.text();
+            console.log(`CORE_PROD_PROJECTION|http=${r.status}|body=${body}`);
+            if(r.status!==503) throw new Error(`Expected production CORE projection 503, got ${r.status}`);
+            if(/TEST_ONLY|CONTROLLED_TEST_RUNTIME|\[TEST\]/.test(body)) throw new Error('TEST_ONLY leaked in production projection');
+            const b=await chromium.launch({headless:true});
+            for(const w of [1280,1440,1920]){
+              const p=await b.newPage({viewport:{width:w,height:900}}),errs=[];p.on('pageerror',e=>errs.push(String(e)));
+              const res=await p.goto('http://127.0.0.1:3250/core',{waitUntil:'networkidle'});
+              const root=p.locator('[data-page-uid="CORE-01"]');
+              if(await root.count()!==1) throw new Error('CORE root missing');
+              if((await root.getAttribute('data-page-state'))!=='ERROR') throw new Error('CORE must show ERROR when runtime unbound');
+              const ov=await p.evaluate(()=>Math.max(0,document.documentElement.scrollWidth-document.documentElement.clientWidth));
+              const text=await p.locator('body').innerText();
+              if(/TEST_ONLY|CONTROLLED_TEST_RUNTIME|\[TEST\]/.test(text)) throw new Error('TEST_ONLY leaked into production DOM');
+              if(!res||res.status()!==200||ov!==0||errs.length) throw new Error(`browser failure w=${w} status=${res?.status()} ov=${ov} errors=${errs.length}`);
+              const human=p.locator('[data-control-id="CORE-01-FLD-HUMAN-DECISION"]');
+              await human.fill('browser validation decision');
+              if(await human.inputValue()!=='browser validation decision') throw new Error('Human Decision field not editable');
+              const msg=p.locator('[data-control-id="CORE-01-FLD-MESSAGE"]');
+              await msg.fill('browser validation message');
+              if(await msg.inputValue()!=='browser validation message') throw new Error('Message field not editable');
+              const buttons=await p.locator('button[data-control-id]').count();
+              if(buttons<19) throw new Error(`Expected actionable CORE buttons, got ${buttons}`);
+              console.log(`CORE_BROWSER_PROD|w=${w}|buttons=${buttons}|overflow=${ov}|errors=${errs.length}`);
+              await p.close();
+            }
+            await b.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          kill $P; wait $P || true; trap - EXIT
+          echo CORE01_PRODUCTION_FAIL_CLOSED_PASS
+      - name: Controlled test boundary
+        run: |
+          set -euo pipefail
+          rm -rf .next
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run build >/tmp/core-controlled-build.log 2>&1
+          PORT=3251 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm start >/tmp/core-controlled.log 2>&1 & P=$!; trap 'kill $P 2>/dev/null || true' EXIT
+          for i in $(seq 1 80); do curl -fsS http://127.0.0.1:3251/core >/dev/null && break || sleep 1; done
+          node - <<'JS'
+          (async()=>{
+            const r=await fetch('http://127.0.0.1:3251/v1/ui-projections/CORE-01');
+            const body=await r.text();
+            console.log(`CORE_CONTROLLED_PROJECTION|http=${r.status}|body=${body.slice(0,240)}`);
+            if(r.status!==200||!/TEST_ONLY/.test(body)||!/CONTROLLED_TEST_RUNTIME/.test(body)) throw new Error('Controlled CORE runtime did not bind explicitly');
+            const create=await fetch('http://127.0.0.1:3251/v1/projects/drafts',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({data_classification:'TEST_ONLY',synthetic:true,production_eligible:false,fixture_label:'should-deny-without-iam'})});
+            const createBody=await create.text();
+            console.log(`CORE_CONTROLLED_CREATE_AUTH|http=${create.status}|body=${createBody}`);
+            if(create.status!==403||!/IAM_ACCOUNT_PERMISSION_RUNTIME_NOT_BOUND/.test(createBody)) throw new Error('Project create must fail closed without IAM runtime');
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          kill $P; wait $P || true; trap - EXIT
+          echo CORE01_CONTROLLED_BOUNDARY_PASS
+      - name: Residual scan
+        run: |
+          set -euo pipefail
+          ! grep -REn 'TODO|FIXME|HACK|XXX|STUB|NOT_IMPLEMENTED|IMPLEMENT_ME|@ts-ignore|console\.(log|debug)' src/domain/core src/server/core src/components/pages/CoreVisual.tsx --include='*.ts' --include='*.tsx'
+          echo CORE01_RESIDUE_PASS
