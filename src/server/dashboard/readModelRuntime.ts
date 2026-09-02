@@ -4,6 +4,10 @@ import {
   type DashboardReadResult,
   validateDashboardReadModel,
 } from "@/domain/dashboard/readModelContract";
+import {
+  isControlledDashboardServerTestMode,
+  readControlledDashboardTestProjection,
+} from "@/server/testing/controlledDashboardTestRuntime";
 
 export type DashboardAccessRequest = {
   correlation_id: string;
@@ -47,6 +51,11 @@ async function safeAudit(
 export async function getDashboardReadModel(request: DashboardAccessRequest): Promise<DashboardReadResult> {
   const runtime = bindings;
   if (!runtime) {
+    if (isControlledDashboardServerTestMode()) {
+      const controlled = readControlledDashboardTestProjection(request.correlation_id);
+      const validated = validateDashboardReadModel(controlled, request.correlation_id);
+      return validated.ok ? { ok: true, value: validated.value } : validated;
+    }
     return error("WB-01-ERR-READ-001", "DASHBOARD_RUNTIME_NOT_BOUND", request.correlation_id);
   }
 
