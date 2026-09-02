@@ -1,0 +1,73 @@
+name: EDIT-01 controlled standalone patch once
+on:
+  push:
+    branches: [acpos-sequential-closure-20260902]
+    paths: ['.github/workflows/edit01-controlled-standalone-patch-once.yml']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Patch controlled standalone path
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/server/testing/controlledEditTestRuntime.ts'); s=p.read_text()
+          old='export function readControlledEditTestProjection():EditResolvedContext{return{'
+          new='export function readControlledEditTestProjection():EditResolvedContext&{test_metadata:typeof TEST_METADATA}{return{'
+          if old not in s: raise SystemExit('projection signature token missing')
+          s=s.replace(old,new)
+          old='  },gate_state:allGates(),\n};}'
+          new='  },gate_state:allGates(),test_metadata:TEST_METADATA,\n};}'
+          if old not in s: raise SystemExit('projection metadata token missing')
+          s=s.replace(old,new)
+          p.write_text(s)
+
+          p=Path('src/domain/edit/controlledEditClientTestRuntime.ts'); s=p.read_text()
+          anchor='  if(input.action_uid==="EDIT-01-ACT-CORRECTION-CANDIDATE-GENERATE"){'
+          insert='''  if(input.source_mode==="STANDALONE_UPLOAD"&&input.action_uid==="EDIT-01-ACT-MEDIA-IMPORT"){
+    next.project_id=null;next.topic_id=null;next.task_id=null;next.locked_blueprint_ref=null;next.production_package_ref=null;next.input_manifest_ref=null;next.input_fingerprint=null;
+    next.page_state_uid="EDIT-01-ST-PAGE-SOURCE_READY";next.current_stage_uid="EDIT-01-STAGE-01-ASSEMBLY";next.current_stage_phase="READY";
+    next.lists={...next.lists,
+      "EDIT-01-LST-MEDIA":[{ref:"TEST-STANDALONE-MEDIA-001",label:"[TEST] Session Media 001"}],
+      "EDIT-01-CTL-MEDIA-TYPE-FILTER":[{ref:"VIDEO",label:"[TEST] Video"}],
+      "EDIT-01-FLD-INSPECTOR-SPEED":[{ref:"1",label:"[TEST] 1x"}],
+      "EDIT-01-FLD-INSPECTOR-TRANSITION":[{ref:"CUT",label:"[TEST] Cut"}],
+      "EDIT-01-FLD-API-SCOPE":[{ref:"SELECTED_RANGE",label:"[TEST] Selected Range"}],
+      "EDIT-01-FLD-LIPSYNC-TARGET":[{ref:"TEST-DIALOGUE-001",label:"[TEST] Dialogue Target"}],
+      "EDIT-01-FLD-SUB-LANG":[{ref:"zh-TW",label:"[TEST] zh-TW"}],
+      "EDIT-01-FLD-SUB-FORMAT":[{ref:"SRT",label:"[TEST] SRT"}],
+      "EDIT-01-CTL-AUDIO-MONITOR":[{ref:"MASTER",label:"[TEST] Master"}],
+      "EDIT-01-FLD-API-PROVIDER":[{ref:"TEST-PROVIDER",label:"[TEST] Provider"}],"EDIT-01-FLD-API-MODEL":[{ref:"TEST-MODEL",label:"[TEST] Model"}],
+      "EDIT-01-FLD-VOICE-SCRIPT":[{ref:"TEST-VOICE-SCRIPT-001",label:"[TEST] Voice Script"}],"EDIT-01-FLD-VOICE-ASSET":[{ref:"TEST-VOICE-ASSET-001",label:"[TEST] Voice Asset"}],
+      "EDIT-01-FLD-VOICE-PROVIDER":[{ref:"TEST-VOICE-PROVIDER",label:"[TEST] Voice Provider"}],"EDIT-01-FLD-VOICE-MODEL":[{ref:"TEST-VOICE-MODEL",label:"[TEST] Voice Model"}],
+      "EDIT-01-FLD-MUSIC-ASSET":[{ref:"TEST-MUSIC-ASSET-001",label:"[TEST] Music Asset"}],"EDIT-01-FLD-SFX-ASSET":[{ref:"TEST-SFX-ASSET-001",label:"[TEST] SFX Asset"}],
+    };
+    setGate(next,"EDIT-01-GATE-STANDALONE",true);setGate(next,"EDIT-01-GATE-SOURCE",true);setGate(next,"EDIT-01-GATE-CONTEXT-INTEGRITY",true);setGate(next,"EDIT-01-GATE-CONTEXT-MUTABLE",true);
+    return ok(next,input.action_uid,{session_media_ref:"TEST-STANDALONE-MEDIA-001"});
+  }
+  if(input.source_mode==="STANDALONE_UPLOAD"&&input.action_uid==="EDIT-01-ACT-STANDALONE-SPEC-IMPORT"){
+    next.values={...next.values,"EDIT-01-LBL-PENDING-TASK":"Standalone session spec loaded"};setGate(next,"EDIT-01-GATE-STANDALONE",true);return ok(next,input.action_uid,{session_spec_ref:ref("EDIT-STANDALONE-SPEC")});
+  }
+  if(input.source_mode==="STANDALONE_UPLOAD"&&input.action_uid==="EDIT-01-ACT-FLOW-START-CONTINUE"){
+    const media=(next.lists["EDIT-01-LST-MEDIA"]??[])[0];if(!media)return fail("STANDALONE_MEDIA_REQUIRED","EDIT-01-ERR-MEDIA-001");
+    next.working_draft_ref=ref("EDIT-STANDALONE-WORKING-DRAFT");next.page_state_uid="EDIT-01-ST-PAGE-WORKING";next.current_stage_uid="EDIT-01-STAGE-01-ASSEMBLY";next.current_stage_phase="RUNNING";next.preview_uri="TEST-STANDALONE-PREVIEW-001";
+    for(const gate of ["EDIT-01-GATE-SOURCE","EDIT-01-GATE-DRAFT","EDIT-01-GATE-PREVIEW","EDIT-01-GATE-TRACK-SELECTION","EDIT-01-GATE-CORRECTION","EDIT-01-GATE-EVALUATION","EDIT-01-GATE-STANDALONE"])setGate(next,gate,true);
+    return ok(next,input.action_uid,{working_draft_ref:next.working_draft_ref});
+  }
+'''+anchor
+          if anchor not in s: raise SystemExit('internalAction anchor missing')
+          s=s.replace(anchor,insert)
+          p.write_text(s)
+          PY
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/server/testing/controlledEditTestRuntime.ts src/domain/edit/controlledEditClientTestRuntime.ts
+          git commit -m 'fix(edit): make standalone controlled path stateful and explicit test-only'
+          git push origin HEAD:acpos-sequential-closure-20260902
+          echo EDIT01_CONTROLLED_STANDALONE_PATCH_PASS
