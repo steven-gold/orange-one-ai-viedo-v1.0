@@ -1,5 +1,5 @@
 import{isIamPageState,type IamPageState}from"@/domain/iam/iamRuntimeContract";
-export type IamAccountProjection={account_id:string;label:string;status:string;identity_source:string;organization_scope:string;mfa:string;risk:string;session:string;front_l1:readonly string[];admin_l1:readonly string[]};
+export type IamAccountProjection={account_id:string;label:string;status:string;identity_source:string;organization_scope:string;mfa:string;risk:string;session:string;front_l1:readonly string[];admin_l1:readonly string[];basic_data:Readonly<Record<string,string>>};
 export type IamIdentitySchemaField={field_uid:string;label:string;type:"TEXT";required:boolean};
 export type IamDepartmentPreset={ref:string;label:string;front_l1:readonly string[];admin_l1:readonly string[]};
 export type IamImpactPreview={preview_ref:string;account_id:string;added:readonly string[];removed:readonly string[];unchanged:readonly string[];blocked:readonly string[];approval_required:boolean};
