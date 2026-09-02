@@ -1,5 +1,5 @@
 import type{ErpNormalizedProjection}from'./erpProjectionPort';
-export type ErpCommandInput={action_uid:string;control_uid:string;projection:ErpNormalizedProjection|null};
+export type ErpCommandInput={action_uid:string;control_uid:string;projection:ErpNormalizedProjection|null;form?:Readonly<Record<string,unknown>>};
 export type ErpCommandResult={ok:true;projection:ErpNormalizedProjection;correlation_id:string}|{ok:false;error_uid:string;reason_code:string;correlation_id:string};
 export type ErpCommandAdapter={invoke:(input:ErpCommandInput)=>Promise<ErpCommandResult>};
 let adapter:ErpCommandAdapter|null=null;
