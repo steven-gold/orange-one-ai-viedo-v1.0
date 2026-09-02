@@ -1,0 +1,97 @@
+name: SG-02 closure validation
+on:
+  push:
+    branches: [acpos-sg02-closure-20260903]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Product audit and typecheck
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+      - name: SG authority and source coverage
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          a=Path('authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml').read_text()
+          v=Path('src/components/pages/QaCriteriaVisual.tsx').read_text(); p=Path('src/domain/qaCriteria/qaCriteriaRuntimePort.ts').read_text(); s=Path('src/server/testing/controlledQaCriteriaTestRuntime.ts').read_text()
+          controls=set(re.findall(r'control_id:\s*(CTRL-ADMIN-SG-02-[A-Z0-9-]+)',a)); sections=set(re.findall(r'section_id:\s*(SEC-ADMIN-SG-02-[A-Z0-9-]+)',a))
+          print('SG02_AUTHORITY_COUNTS',len(controls),len(sections)); assert len(controls)==11 and len(sections)==9; assert all(x in v for x in controls)
+          assert 'configureGovernedResource' in a and 'approveGovernedResource' in a
+          assert 'PATCH /v1/governance/resources/{id}' in v and 'POST /v1/governance/resources/{id}/approve' in v
+          assert 'QaCriteriaProjectionTestMetadata' in p and 'SG02_TEST_PROJECTION_FORBIDDEN_IN_PRODUCTION' in p
+          assert 'TEST_ONLY' in s and 'production_eligible: false' in s
+          assert 'sample_business_data: FORBIDDEN' in a and 'hardcoded_threshold' in a
+          print('SG02_AUTHORITY_SOURCE_COVERAGE_PASS')
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ''
+        run: npm run build
+      - name: Production SG must fail closed
+        run: |
+          set -euo pipefail
+          PORT=3261 NEXT_PUBLIC_ACPOS_RUNTIME_MODE= npm run start >/tmp/sg-prod.log 2>&1 & pid=$!; trap 'cat /tmp/sg-prod.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3261/admin/qa-criteria >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/sg-prod.json -w '%{http_code}' 'http://127.0.0.1:3261/v1/ui-projections/admin%3ASG-02'); cat /tmp/sg-prod.json
+          test "$code" = "503"; grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/sg-prod.json; ! grep -q 'TEST_ONLY' /tmp/sg-prod.json
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Controlled SG projection truth
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3262 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/sg-api.log 2>&1 & pid=$!; trap 'cat /tmp/sg-api.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3262/admin/qa-criteria >/dev/null && break || sleep 1; done
+          curl -fsS 'http://127.0.0.1:3262/v1/ui-projections/admin%3ASG-02' >/tmp/sg.json
+          python <<'PY'
+          import json
+          d=json.load(open('/tmp/sg.json'));m=d['test_metadata']
+          assert m['data_classification']=='TEST_ONLY' and m['synthetic'] is True and m['production_eligible'] is False
+          assert d['page_state']=='READY' and len(d['control_enabled'])==11
+          assert d['control_enabled']['CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE'] is True
+          assert d['control_enabled']['CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE'] is True
+          print('SG02_CONTROLLED_PROJECTION_PASS')
+          PY
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled SG browser flow
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3263 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/sg-browser.log 2>&1 & pid=$!; trap 'cat /tmp/sg-browser.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3263/admin/qa-criteria >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const{chromium}=require('playwright');
+          (async()=>{const b=await chromium.launch({headless:true}),errors=[];
+          for(const width of [1280,1440,1920]){const p=await b.newPage({viewport:{width,height:1500}});p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error')errors.push(m.text())});await p.goto('http://127.0.0.1:3263/admin/qa-criteria',{waitUntil:'networkidle'});await p.waitForFunction(()=>document.querySelector('[data-page-uid="admin:SG-02"]')?.getAttribute('data-page-state')==='READY');const o=await p.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);if(o>0)throw new Error(`overflow ${width}:${o}`);await p.close()}
+          const p=await b.newPage({viewport:{width:1440,height:1600}});await p.goto('http://127.0.0.1:3263/admin/qa-criteria',{waitUntil:'networkidle'});await p.waitForFunction(()=>document.querySelector('[data-page-uid="admin:SG-02"]')?.getAttribute('data-page-state')==='READY');const q=id=>p.locator(`[data-control-id="${id}"]`).first();const close=()=>p.locator('button[aria-label="Close"]').click();
+          const sectionIds=['CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN','CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN','CTRL-ADMIN-SG-02-THRESHOLDS-OPEN','CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN','CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN','CTRL-ADMIN-SG-02-GATE-POLICY-OPEN','CTRL-ADMIN-SG-02-APPROVAL-OPEN','CTRL-ADMIN-SG-02-IMPACT-OPEN'];
+          for(const id of sectionIds){await q(id).click();if(!await p.locator('[data-detail-drawer="SG-02"]').isVisible())throw new Error(`drawer ${id}`);await close()}
+          await q('CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE').click();let d=p.locator('[data-detail-drawer="SG-02"]');await d.locator('input').nth(0).fill('quality_criteria_version');await d.locator('input').nth(1).fill('TEST-CRITERIA-DRAFT-001');await d.locator('textarea').nth(0).fill('{"threshold_ref":"TEST-THRESHOLD-001"}');await d.locator('textarea').nth(1).fill('controlled configuration validation');await d.locator('button').filter({hasText:/設定|配置|Configure/i}).last().click();await p.waitForFunction(()=>document.body.textContent?.includes('TEST-SG02-AUDIT-'));await close();
+          await q('CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE').click();d=p.locator('[data-detail-drawer="SG-02"]');await d.locator('input').nth(0).fill('quality_criteria_version');await d.locator('input').nth(1).fill('TEST-CRITERIA-REVIEW-001');await d.locator('textarea').fill('controlled approval validation');await d.locator('input').nth(2).fill('3');await d.locator('button').filter({hasText:/核准|批准|Approve/i}).last().click();await p.waitForFunction(()=>document.body.textContent?.includes('1 approval recorded · TEST-CRITERIA-REVIEW-001')&&document.body.textContent?.includes('TEST-SG02-AUDIT-002'));await close();
+          await q('CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN').click();if(!await p.locator('[data-detail-drawer="SG-02"]').isVisible())throw new Error('nav drawer');
+          if(errors.length)throw new Error(errors.join('\n'));console.log('SG02_BROWSER_INTERACTION_PASS');await b.close()})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Residual and dirty-tree guard
+        run: |
+          ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/domain/qaCriteria src/components/pages/QaCriteriaVisual.tsx src/server/testing/controlledQaCriteriaTestRuntime.ts
+          git diff --exit-code
