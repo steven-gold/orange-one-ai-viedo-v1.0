@@ -1,0 +1,45 @@
+name: SOC-01 visual interaction patch
+on:
+  push:
+    branches: [acpos-soc01-closure-20260903]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: github.event.head_commit.message == 'chore(soc): add one-time visual interaction patch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-soc01-closure-20260903
+      - name: Patch SOC visual interactions
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('src/components/pages/SocVisual.tsx')
+          s=p.read_text()
+          s=s.replace('import { SocGovernedButton, SocRuntimeProvider, SocValue, useSocGate, useSocRuntimeState } from "./SocControlRuntime";','import { SocGovernedButton, SocRuntimeProvider, SocSearchInput, SocValue, useSocGate, useSocRuntimeState } from "./SocControlRuntime";')
+          old='''  const [activeStage, setActiveStage] = useState<StageKey>("platform");\n'''
+          new='''  const [activeStage, setActiveStage] = useState<StageKey>("platform");\n  const [detailOpen, setDetailOpen] = useState(false);\n'''
+          assert old in s
+          s=s.replace(old,new,1)
+          old='''                <input id={stage.searchId} className={styles.searchInput} data-control-id={stage.searchId} placeholder={t("searchPlaceholder")} disabled={!(stage.key === "records" ? recordsGateAllowed : readGateAllowed)} />\n'''
+          new='''                <SocSearchInput controlId={stage.searchId} className={styles.searchInput} placeholder={t("searchPlaceholder")} />\n'''
+          assert old in s
+          s=s.replace(old,new,1)
+          old='''          <SocGovernedButton className={`${styles.secondaryButton} ${styles.detailButton}`} controlId="SOC-01-BTN-DETAIL">{label("SOC-01-BTN-DETAIL")}</SocGovernedButton>\n          <p className={styles.railNote}>{runtimeError??projection?.page_state??t("noRealData")}</p>\n          <aside className={styles.detailDrawer} aria-hidden="true" data-state="CLOSED_EMPTY">\n            <h2>{t("detail")}</h2><p>{t("noRealData")}</p>\n          </aside>\n'''
+          new='''          <SocGovernedButton className={`${styles.secondaryButton} ${styles.detailButton}`} controlId="SOC-01-BTN-DETAIL" onUiClick={() => setDetailOpen((value) => !value)}>{label("SOC-01-BTN-DETAIL")}</SocGovernedButton>\n          <p className={styles.railNote}>{runtimeError??projection?.page_state??t("noRealData")}</p>\n          <aside className={styles.detailDrawer} aria-hidden={!detailOpen} data-state={detailOpen ? "OPEN" : "CLOSED"}>\n            <h2>{t("detail")}</h2><p>{detailOpen ? (projection?.values["SOC-01-FLD-BLOCKERS"] ?? t("noRealData")) : t("noRealData")}</p>\n          </aside>\n'''
+          assert old in s
+          s=s.replace(old,new,1)
+          old='''data-authority-operation-count="15">'''
+          new='''data-authority-operation-count="15" data-data-classification={projection?.test_metadata?.data_classification} data-production-eligible={projection?.test_metadata ? String(projection.test_metadata.production_eligible) : undefined} data-detail-open={String(detailOpen)}>'''
+          assert old in s
+          s=s.replace(old,new,1)
+          p.write_text(s)
+      - name: Commit product patch
+        run: |
+          git config user.name steven-gold
+          git config user.email proorangeone@gmail.com
+          git add src/components/pages/SocVisual.tsx
+          git commit -m 'fix(soc): close search and detail interactions'
+          git push origin HEAD:acpos-soc01-closure-20260903
