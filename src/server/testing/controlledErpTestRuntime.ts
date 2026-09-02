@@ -10,8 +10,47 @@ const TEST_METADATA = {
   production_eligible: false,
 } as const;
 
+const CONTROLLED_FORM_SCHEMAS = {
+  "ERP-01-BTN-CONNECTOR-CREATE": [
+    { key: "provider_key", type: "text", required: true },
+    { key: "adapter_key", type: "text", required: true },
+    { key: "secret_reference_id", type: "text", required: true },
+    { key: "entity_scope", type: "text", required: true },
+    { key: "mapping_version", type: "number", required: true },
+    { key: "mapping_entity_name", type: "text", required: true },
+    { key: "mapping_source_schema", type: "text", required: true },
+    { key: "mapping_target_schema", type: "text", required: true },
+    { key: "mapping_transform_spec", type: "text", required: true },
+    { key: "data_classification", type: "text", required: true },
+  ],
+  "ERP-01-BTN-CONNECTOR-UPDATE": [
+    { key: "entity_scope", type: "text", required: false },
+    { key: "mapping_entity_name", type: "text", required: false },
+    { key: "mapping_source_schema", type: "text", required: false },
+    { key: "mapping_target_schema", type: "text", required: false },
+    { key: "mapping_transform_spec", type: "text", required: false },
+    { key: "data_classification", type: "text", required: false },
+  ],
+  "ERP-01-BTN-SNAPSHOT-REFRESH": [
+    { key: "requested_scope", type: "text", required: true },
+  ],
+  "ERP-01-BTN-SYNC-CREATE": [
+    { key: "requested_scope", type: "text", required: true },
+    { key: "data_classification", type: "text", required: true },
+    { key: "records_payload", type: "text", required: true },
+    { key: "snapshot_type", type: "select", required: true, options: ["delta", "full"] },
+    { key: "snapshot_document", type: "text", required: true },
+    { key: "completeness", type: "text", required: true },
+    { key: "external_result_verified", type: "select", required: true, options: ["false", "true"] },
+    { key: "external_evidence_refs", type: "text", required: true },
+  ],
+  "ERP-01-BTN-EXPORT": [
+    { key: "scope", type: "text", required: true },
+  ],
+} as const;
+
 type ConnectorState = "UNCONFIGURED" | "CONFIGURING" | "VALIDATING" | "READY" | "DEGRADED";
-type SnapshotState = "SNAPSHOT_STALE" | "SNAPSHOT_SYNCING" | "SNAPSHOT_FAILED" | "SNAPSHOT_FRESH";
+type SnapshotState = "SNAPSHOT_STALE" | "SNAPSHOT_SYNCING" | "SNAPSHOT_FAILED";
 type SyncJobState = "PENDING" | "RUNNING" | "COMPLETED" | "FAILED";
 
 type Mapping = {
@@ -105,13 +144,13 @@ const state: ControlledState = {
   sync_jobs: [],
   failures: [],
   finance: {
-    cost: "authorized provider cost status · masked quote on record",
-    revenue: "provider revenue · read-only status",
-    cashflow: "cashflow status · read-only projection",
-    capacity: "capacity guardrail · within governed bound",
-    forecast: "next period forecast · read model ready",
-    guardrails: "governed finance guardrails · read-only",
-    recommendation_boundary: "recommendation boundary · read-only",
+    cost: "[TEST] authorized provider cost status · masked quote on record",
+    revenue: "[TEST] provider revenue · read-only status",
+    cashflow: "[TEST] cashflow status · read-only projection",
+    capacity: "[TEST] capacity guardrail · within governed bound",
+    forecast: "[TEST] next period forecast · read model ready",
+    guardrails: "[TEST] governed finance guardrails · read-only",
+    recommendation_boundary: "[TEST] recommendation boundary · read-only",
   },
   audits: [],
   audit_counter: 0,
@@ -295,9 +334,9 @@ export function readControlledErpTestProjection() {
     gate_state: gateState(),
     selected: {
       connector_id: connector?.connector_id ?? "",
-      connector_version: connector ? String(connector.version) : "1",
-      mapping_version: connector ? String(connector.mapping_version) : "1",
-      snapshot_version: snapshot ? String(snapshot.version) : "1",
+      connector_version: connector ? String(connector.version) : "0",
+      mapping_version: connector ? String(connector.mapping_version) : "0",
+      snapshot_version: snapshot ? String(snapshot.version) : "0",
       sync_job_id: job?.job_id ?? "",
       sync_job_version: job ? String(job.version) : "1",
       failure_id: failure?.failure_id ?? "",
@@ -305,6 +344,7 @@ export function readControlledErpTestProjection() {
       requested_scope: connector?.entity_scope ?? "finance-ledger",
       data_classification: connector?.mapping.data_classification ?? "internal",
     },
+    form_schemas: CONTROLLED_FORM_SCHEMAS,
     test_metadata: TEST_METADATA,
   };
 }
@@ -363,6 +403,9 @@ function evaluateGates(operation: ErpCommandOperation, request: ErpRuntimeReques
   const payload = record(request.payload);
   const pathId = text(request.path_params?.id) ?? text(request.path_params?.jobId) ?? text(request.path_params?.failureId) ?? null;
   const connector = state.connector;
+  for (const forbidden of ["secret","secret_value","raw_secret","credential_value","api_key"]) {
+    if (Object.prototype.hasOwnProperty.call(payload, forbidden)) return fail("ERP01_SECRET_VALUE_FORBIDDEN", 400);
+  }
   switch (operation) {
     case "createERPConnector": {
       const idem = idempotencyGuard(payload); if (idem) return idem;
@@ -375,6 +418,7 @@ function evaluateGates(operation: ErpCommandOperation, request: ErpRuntimeReques
     }
     case "updateERPConnector": {
       const idem = idempotencyGuard(payload); if (idem) return idem;
+      const extra = additionalPropertiesGuard(payload, ["entity_scope","mapping_entity_name","mapping_source_schema","mapping_target_schema","mapping_transform_spec","data_classification","scope","expected_version","idempotency_key"]); if (extra) return extra;
       const target = pathId === null ? connector : (state.connector && state.connector.connector_id === pathId ? state.connector : null);
       if (!target) return fail("ERP01_CONNECTOR_NOT_FOUND");
       const guard = versionGuard(payload, target.version); if (guard) return guard;
@@ -383,6 +427,7 @@ function evaluateGates(operation: ErpCommandOperation, request: ErpRuntimeReques
     }
     case "validateERPConnector": {
       const idem = idempotencyGuard(payload); if (idem) return idem;
+      const extra = additionalPropertiesGuard(payload, ["scope","expected_version","idempotency_key"]); if (extra) return extra;
       const target = pathId === null ? connector : (state.connector && state.connector.connector_id === pathId ? state.connector : null);
       if (!target) return fail("ERP01_CONNECTOR_NOT_FOUND");
       const guard = versionGuard(payload, target.version); if (guard) return guard;
@@ -391,12 +436,14 @@ function evaluateGates(operation: ErpCommandOperation, request: ErpRuntimeReques
     }
     case "validateERPMapping": {
       const idem = idempotencyGuard(payload); if (idem) return idem;
+      const extra = additionalPropertiesGuard(payload, ["scope","expected_version","idempotency_key"]); if (extra) return extra;
       if (!connector) return fail("ERP01_CONNECTOR_NOT_FOUND");
       const guard = versionGuard(payload, connector.mapping_version); if (guard) return guard;
       return null;
     }
     case "refreshERPSnapshot": {
       const idem = idempotencyGuard(payload); if (idem) return idem;
+      const extra = additionalPropertiesGuard(payload, ["requested_scope","scope","expected_version","idempotency_key"]); if (extra) return extra;
       if (!connector) return fail("ERP01_CONNECTOR_NOT_FOUND");
       if (!state.snapshot) return fail("ERP01_SNAPSHOT_NOT_FOUND");
       if (!text(payload.requested_scope) || !text(payload.scope)) return fail("ERP01_REQUIRED_SNAPSHOT_SCOPE_MISSING", 400);
@@ -406,6 +453,7 @@ function evaluateGates(operation: ErpCommandOperation, request: ErpRuntimeReques
     }
     case "createERPSyncJob": {
       const idem = idempotencyGuard(payload); if (idem) return idem;
+      const extra = additionalPropertiesGuard(payload, ["erp_connector_id","requested_scope","data_classification","records_payload","snapshot_type","snapshot_document","completeness","external_result_verified","external_evidence_refs","scope","expected_version","idempotency_key"]); if (extra) return extra;
       const connectorRef = text(payload.erp_connector_id);
       if (!connectorRef || (connector && connector.connector_id !== connectorRef && connectorRef !== "TEST-ERP-CONNECTOR-001")) return fail("ERP01_CONNECTOR_NOT_FOUND");
       const guard = versionGuard(payload, connector?.version ?? null); if (guard) return guard;
@@ -421,6 +469,7 @@ function evaluateGates(operation: ErpCommandOperation, request: ErpRuntimeReques
     }
     case "retryERPSync": {
       const idem = idempotencyGuard(payload); if (idem) return idem;
+      const extra = additionalPropertiesGuard(payload, ["scope","expected_version","idempotency_key"]); if (extra) return extra;
       const job = findSyncJob(pathId);
       if (!job) return fail("ERP01_SYNC_JOB_NOT_FOUND");
       const guard = versionGuard(payload, job.version); if (guard) return guard;
@@ -439,6 +488,7 @@ function evaluateGates(operation: ErpCommandOperation, request: ErpRuntimeReques
       return null;
     case "exportProjection": {
       const idem = idempotencyGuard(payload); if (idem) return idem;
+      const extra = additionalPropertiesGuard(payload, ["page_uid","scope","idempotency_key"]); if (extra) return extra;
       if (!text(payload.scope)) return fail("ERP01_EXPORT_SCOPE_REQUIRED", 400);
       return null;
     }
@@ -637,13 +687,13 @@ export function resetControlledErpStateForTest() {
   state.sync_jobs = [];
   state.failures = [];
   state.finance = {
-    cost: "authorized provider cost status · masked quote on record",
-    revenue: "provider revenue · read-only status",
-    cashflow: "cashflow status · read-only projection",
-    capacity: "capacity guardrail · within governed bound",
-    forecast: "next period forecast · read model ready",
-    guardrails: "governed finance guardrails · read-only",
-    recommendation_boundary: "recommendation boundary · read-only",
+    cost: "[TEST] authorized provider cost status · masked quote on record",
+    revenue: "[TEST] provider revenue · read-only status",
+    cashflow: "[TEST] cashflow status · read-only projection",
+    capacity: "[TEST] capacity guardrail · within governed bound",
+    forecast: "[TEST] next period forecast · read model ready",
+    guardrails: "[TEST] governed finance guardrails · read-only",
+    recommendation_boundary: "[TEST] recommendation boundary · read-only",
   };
   state.audits = [];
   state.audit_counter = 0;
