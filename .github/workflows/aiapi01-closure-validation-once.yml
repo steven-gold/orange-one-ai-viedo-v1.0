@@ -1,0 +1,103 @@
+name: AIAPI-01 closure validation
+on:
+  push:
+    branches: [acpos-aiapi01-closure-20260903]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Product audit and typecheck
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+      - name: AIAPI authority and source coverage
+        shell: python
+        run: |
+          from pathlib import Path
+          a=Path('authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml').read_text()
+          v=Path('src/components/pages/AiApiVisual.tsx').read_text(); p=Path('src/domain/aiApi/aiApiRuntimePort.ts').read_text(); s=Path('src/server/testing/controlledAiApiTestRuntime.ts').read_text(); u=Path('src/server/shared/uiProjectionRuntime.ts').read_text()
+          for uid in ['AIAPI-01-VIEW-OVERVIEW','AIAPI-01-VIEW-PROVIDER-API','AIAPI-01-VIEW-ROUTING-TEST','AIAPI-01-VIEW-OPERATIONS']:
+            assert uid in a and uid in v
+          for uid in [f'AIAPI-01-ACC-{n:02d}' for n in range(1,12)]: assert uid in a
+          ops=['getUiProjection','createProviderModelProfile','updateProviderModelProfile','getProviderModelProfile','testProviderModelProfile','retireProviderModelProfile','setProviderModelCredential','deleteProviderModelCredential','configureGovernedResource','approveGovernedResource','setKillSwitch','createProviderCandidateGroup','getProviderQuarantine','restoreProviderFromQuarantine','runSandboxTest','executeProviderRoute','getProviderRouteDecision']
+          for op in ops: assert op in a and (op in v or op=='getUiProjection')
+          assert 'current_ui_binding_status: REMAP_REQUIRED_NOT_EXECUTED' in a
+          assert 'effectful_runtime_enablement: BLOCK_UNTIL_REGISTRY_PERMISSION_NAVIGATION_REMAP_AND_TESTS' in a
+          assert 'show_api_key_eye_button: FORBIDDEN' in a and 'plaintext_reveal: FORBIDDEN' in a
+          assert 'AiApiProjectionTestMetadata' in p and 'AIAPI01_TEST_PROJECTION_FORBIDDEN_IN_PRODUCTION' in p
+          assert 'provider_rows' in p and 'provider_rows' in s
+          assert 'TEST_ONLY' in s and 'production_eligible: false' in s
+          assert 'admin:AIAPI-01' in u and 'readControlledAiApiTestProjection' in u
+          assert 'REMAP_REQUIRED_NOT_EXECUTED' in v and 'data-disabled-reason' in v
+          print('AIAPI_AUTHORITY_SOURCE_COVERAGE_PASS')
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ''
+        run: npm run build
+      - name: Production AIAPI must fail closed
+        run: |
+          set -euo pipefail
+          PORT=3251 NEXT_PUBLIC_ACPOS_RUNTIME_MODE= npm run start >/tmp/aiapi-prod.log 2>&1 & pid=$!; trap 'cat /tmp/aiapi-prod.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3251/admin/aiapi >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/aiapi-prod.json -w '%{http_code}' 'http://127.0.0.1:3251/v1/ui-projections/admin%3AAIAPI-01'); cat /tmp/aiapi-prod.json
+          test "$code" = "503"
+          grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/aiapi-prod.json
+          ! grep -q 'TEST_ONLY' /tmp/aiapi-prod.json
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Controlled AIAPI projection truth
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3252 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/aiapi-api.log 2>&1 & pid=$!; trap 'cat /tmp/aiapi-api.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3252/admin/aiapi >/dev/null && break || sleep 1; done
+          curl -fsS 'http://127.0.0.1:3252/v1/ui-projections/admin%3AAIAPI-01' >/tmp/aiapi.json
+          python <<'PY'
+          import json,re
+          d=json.load(open('/tmp/aiapi.json')); m=d['test_metadata']
+          assert m['data_classification']=='TEST_ONLY' and m['synthetic'] is True and m['production_eligible'] is False
+          assert d['page_state']=='READY' and len(d['provider_rows'])==2
+          assert {r['credential_status'] for r in d['provider_rows']}=={'SET','NOT_SET'}
+          text=json.dumps(d,ensure_ascii=False)
+          assert not re.search(r'\bsk-[A-Za-z0-9_-]{8,}',text)
+          assert 'raw_secret' not in text and 'credential_value' not in text
+          print('AIAPI_CONTROLLED_PROJECTION_PASS')
+          PY
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled AIAPI browser flow
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3253 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/aiapi-browser.log 2>&1 & pid=$!; trap 'cat /tmp/aiapi-browser.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3253/admin/aiapi >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{const b=await chromium.launch({headless:true}),errors=[];
+          for(const width of [1280,1440,1920]){const p=await b.newPage({viewport:{width,height:1500}});p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error')errors.push(m.text())});await p.goto('http://127.0.0.1:3253/admin/aiapi',{waitUntil:'networkidle'});await p.waitForFunction(()=>document.querySelector('[data-page-uid="admin:AIAPI-01"]')?.getAttribute('data-page-state')==='READY');const root=p.locator('[data-page-uid="admin:AIAPI-01"]');if(await root.getAttribute('data-data-classification')!=='TEST_ONLY'||await root.getAttribute('data-production-eligible')!=='false')throw new Error('classification');if(await root.getAttribute('data-current-ui-binding-status')!=='REMAP_REQUIRED_NOT_EXECUTED')throw new Error('binding truth');const overflow=await p.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);if(overflow>0)throw new Error(`overflow ${width}:${overflow}`);await p.close()}
+          const p=await b.newPage({viewport:{width:1440,height:1600}});await p.goto('http://127.0.0.1:3253/admin/aiapi',{waitUntil:'networkidle'});await p.waitForFunction(()=>document.querySelectorAll('[data-provider-id]').length===2);const rows=p.locator('[data-provider-id]');if(await rows.count()!==2)throw new Error('provider rows');if(!(await rows.nth(0).getAttribute('data-provider-id')).startsWith('TEST-AIAPI-PROVIDER-'))throw new Error('test provider ref');const body=(await p.locator('body').textContent())||'';if(/\bsk-[A-Za-z0-9_-]{8,}/.test(body)||body.includes('raw_secret'))throw new Error('secret exposure');
+          const effectful=p.locator('[data-disabled-reason="REMAP_REQUIRED_NOT_EXECUTED"]');if(await effectful.count()<10)throw new Error('blocked operation coverage');for(let i=0;i<await effectful.count();i++){if(!(await effectful.nth(i).isDisabled()))throw new Error('effectful operation enabled')}
+          for(const uid of ['AIAPI-01-VIEW-OVERVIEW','AIAPI-01-VIEW-PROVIDER-API','AIAPI-01-VIEW-ROUTING-TEST','AIAPI-01-VIEW-OPERATIONS']){await p.locator(`[data-view-switch="${uid}"]`).click();if(!await p.locator(`[data-view-uid="${uid}"]`).isVisible())throw new Error(`view ${uid}`);if(!p.url().endsWith('/admin/aiapi'))throw new Error('view created route')}
+          await p.locator('[data-view-switch="AIAPI-01-VIEW-PROVIDER-API"]').click();if(await p.locator('[data-pro-field-uid]').count()!==15)throw new Error('professional fields');if(errors.length)throw new Error(errors.join('\n'));console.log('AIAPI_BROWSER_INTERACTION_PASS');await b.close()})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Residual and dirty-tree guard
+        run: |
+          ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/domain/aiApi src/components/pages/AiApiVisual.tsx src/server/testing/controlledAiApiTestRuntime.ts
+          git diff --exit-code
