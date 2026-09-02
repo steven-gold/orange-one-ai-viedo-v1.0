@@ -1,0 +1,209 @@
+name: IAM-01 closure validation
+
+on:
+  push:
+    branches:
+      - acpos-iam01-closure-20260903
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install audit and typecheck
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+      - name: IAM authority and source coverage
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          auth=Path('authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml').read_text()
+          visual=Path('src/components/pages/IamVisual.tsx').read_text()
+          runtime=Path('src/components/pages/IamControlRuntime.tsx').read_text()
+          contract=Path('src/domain/iam/iamRuntimeContract.ts').read_text()
+          bindings=Path('src/domain/iam/iamControlBindings.ts').read_text()
+          port=Path('src/domain/iam/iamClientPort.ts').read_text()
+          clienttest=Path('src/domain/iam/controlledIamClientTestRuntime.ts').read_text()
+          servertest=Path('src/server/testing/controlledIamTestRuntime.ts').read_text()
+          controls=set(re.findall(r'control_uid:\s*(IAM-01-[A-Z0-9-]+)',auth))
+          sections=set(re.findall(r'section_uid:\s*(IAM-01-SEC-[0-9]+)',auth))
+          components=set(re.findall(r'component_uid:\s*(IAM-01-CMP-[A-Z0-9-]+)',auth))
+          actions=set(re.findall(r'action_uid:\s*(IAM-01-ACT-[A-Z0-9-]+)',auth))
+          errors=set(re.findall(r'error_uid:\s*(IAM-01-ERR-[A-Z0-9-]+)',auth))
+          print('IAM_AUTHORITY_COUNTS',{'controls':len(controls),'sections':len(sections),'components':len(components),'actions':len(actions),'errors':len(errors)})
+          assert len(controls)==14
+          assert len(sections)==6
+          assert len(components)==10
+          assert len(errors)==7
+          assert 'IAM_CONTROL_COUNT=14' in contract
+          assert 'IAM_SECTION_UIDS' in contract and 'IAM_COMPONENT_UIDS' in contract
+          assert all(x in visual for x in controls), sorted(x for x in controls if x not in visual)
+          assert all(x in contract for x in errors), sorted(x for x in errors if x not in contract)
+          assert 'IamProjectionTestMetadata' in port
+          assert 'IAM_TEST_PROJECTION_FORBIDDEN_IN_PRODUCTION' in port
+          assert 'test_metadata:TEST_METADATA' in clienttest
+          assert 'data-data-classification={projection?.test_metadata?.data_classification}' in visual
+          assert 'authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY' in auth
+          assert 'role_name_authorization: FORBIDDEN' in auth
+          assert 'department_membership_as_allow: FORBIDDEN' in auth
+          assert 'new_resource_auto_grant: FORBIDDEN' in auth
+          assert 'explicit_confirmation' in clienttest and 'previewAuthorizationImpact' in clienttest
+          assert 'IAM-01-ERR-PARTIAL-APPLY' in servertest
+          assert 'IAM_CLIENT_COMMAND_RUNTIME_NOT_BOUND' in port
+          print('IAM_AUTHORITY_SOURCE_COVERAGE_PASS')
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+        run: npm run build
+      - name: Production IAM must fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3211 NEXT_PUBLIC_ACPOS_RUNTIME_MODE= npm run start >/tmp/iam-prod.log 2>&1 &
+          pid=$!; trap 'cat /tmp/iam-prod.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3211/admin/accounts >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/iam-prod-proj.json -w '%{http_code}' 'http://127.0.0.1:3211/v1/ui-projections/admin%3AIAM-01')
+          cat /tmp/iam-prod-proj.json
+          test "$code" = "503"
+          grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/iam-prod-proj.json
+          ! grep -q 'TEST_ONLY' /tmp/iam-prod-proj.json
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Controlled IAM projection classification
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3212 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/iam-controlled.log 2>&1 &
+          pid=$!; trap 'cat /tmp/iam-controlled.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3212/admin/accounts >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/iam-controlled-proj.json -w '%{http_code}' 'http://127.0.0.1:3212/v1/ui-projections/admin%3AIAM-01')
+          test "$code" = "200"
+          python <<'PY'
+          import json
+          d=json.load(open('/tmp/iam-controlled-proj.json'))
+          m=d['test_metadata']
+          assert m['data_classification']=='TEST_ONLY'
+          assert m['synthetic'] is True
+          assert m['production_eligible'] is False
+          assert d['page_state']=='LIST'
+          assert d['authorized_account_count']==2
+          assert len(d['identity_schema'])==2
+          assert len(d['department_presets'])==1
+          assert len(d['gate_state'])==5
+          print('IAM_CONTROLLED_PROJECTION_PASS')
+          PY
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Install Chromium test dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled IAM browser flow
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3213 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/iam-browser.log 2>&1 &
+          pid=$!; trap 'cat /tmp/iam-browser.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3213/admin/accounts >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const errors=[];
+            for(const width of [1280,1440,1920]){
+              const page=await browser.newPage({viewport:{width,height:1400}});
+              page.on('pageerror',e=>errors.push(`pageerror:${width}:${e.message}`));
+              page.on('console',m=>{if(m.type()==='error')errors.push(`console:${width}:${m.text()}`)});
+              const res=await page.goto('http://127.0.0.1:3213/admin/accounts',{waitUntil:'networkidle'});
+              if(!res||res.status()!==200)throw new Error(`IAM route ${res&&res.status()} ${width}`);
+              await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='LIST');
+              const root=page.locator('[data-page-uid="admin:IAM-01"]');
+              if(await root.getAttribute('data-authority-controls')!=='14'||await root.getAttribute('data-control-registry-valid')!=='true')throw new Error('IAM registry mismatch');
+              if(await root.getAttribute('data-data-classification')!=='TEST_ONLY'||await root.getAttribute('data-production-eligible')!=='false')throw new Error('IAM classification missing');
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+              if(overflow>0)throw new Error(`IAM horizontal overflow ${overflow} ${width}`);
+              await page.close();
+            }
+            const page=await browser.newPage({viewport:{width:1440,height:1600}});
+            page.on('dialog',d=>d.accept());
+            page.on('pageerror',e=>errors.push(`pageerror:flow:${e.message}`));
+            page.on('console',m=>{if(m.type()==='error')errors.push(`console:flow:${m.text()}`)});
+            await page.goto('http://127.0.0.1:3213/admin/accounts',{waitUntil:'networkidle'});
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='LIST');
+            const root=page.locator('[data-page-uid="admin:IAM-01"]');
+            const q=id=>page.locator(`[data-control-id="${id}"]`).first();
+            await q('IAM-01-CTL-SEARCH').fill('operator A');
+            const search=page.waitForResponse(r=>r.url().endsWith('/v1/search')&&r.request().method()==='POST');
+            await q('IAM-01-CTL-SEARCH').press('Enter');
+            if((await search).status()!==200)throw new Error('IAM search failed');
+            await page.waitForTimeout(150);
+            const rows=page.locator('[data-account-id]');
+            if(await rows.count()!==1)throw new Error(`IAM search rows ${await rows.count()}`);
+            await q('IAM-01-CTL-SEARCH').fill('');
+            const searchAll=page.waitForResponse(r=>r.url().endsWith('/v1/search')&&r.request().method()==='POST');
+            await q('IAM-01-CTL-SEARCH').press('Enter');
+            if((await searchAll).status()!==200)throw new Error('IAM clear search failed');
+            await page.waitForTimeout(150);
+            await q('IAM-01-BTN-ADD').click();
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='CREATE_BASIC');
+            const schema=page.locator('[data-control-id="IAM-01-CTL-BASIC-DATA"]');
+            if(await schema.getAttribute('data-schema-status')!=='BOUND')throw new Error('IAM exact schema not bound');
+            await page.locator('[data-field-uid="TEST-IAM-FIELD-IDENTITY-CANDIDATE"]').fill('TEST-IDENTITY-CANDIDATE-NEW-001');
+            await page.locator('[data-field-uid="TEST-IAM-FIELD-ORG-SCOPE"]').fill('TEST-ORG-SCOPE-NEW');
+            await q('IAM-01-SEL-DEPT-PRESET').selectOption('TEST-IAM-PRESET-EDITING');
+            const frontChecked=await page.locator('[data-control-id="IAM-01-GRP-FRONT-L1"] input:checked').count();
+            if(frontChecked!==2)throw new Error(`IAM preset front L1 ${frontChecked}`);
+            const save=page.waitForResponse(r=>r.url().endsWith('/v1/drafts')&&r.request().method()==='POST');
+            await q('IAM-01-BTN-SAVE-DRAFT').click();
+            if((await save).status()!==200)throw new Error('IAM save draft failed');
+            if(await q('IAM-01-BTN-VALIDATE').isDisabled())throw new Error('IAM validate disabled after draft save');
+            const validate=page.waitForResponse(r=>r.url().includes('/v1/drafts/TEST-IAM-DRAFT-001/validate')&&r.request().method()==='POST');
+            await q('IAM-01-BTN-VALIDATE').click();
+            if((await validate).status()!==200)throw new Error('IAM validate failed');
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='CREATE_PERMISSION');
+            if(await q('IAM-01-BTN-PREVIEW').isDisabled())throw new Error('IAM preview disabled');
+            const preview=page.waitForResponse(r=>r.url().includes('/authorization-impact')&&r.request().method()==='POST');
+            await q('IAM-01-BTN-PREVIEW').click();
+            if((await preview).status()!==200)throw new Error('IAM preview failed');
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='CREATE_PREVIEW');
+            const bodyPreview=(await page.locator('body').textContent())||'';
+            if(!bodyPreview.includes('TEST-IAM-PREVIEW-001'))throw new Error('IAM preview ref missing');
+            if(await q('IAM-01-BTN-COMPLETE').isDisabled())throw new Error('IAM complete disabled after preview');
+            const approve=page.waitForResponse(r=>r.url().includes('/governance/resources/TEST-IAM-ACCOUNT-NEW-001/approve')&&r.request().method()==='POST');
+            await q('IAM-01-BTN-COMPLETE').click();
+            if((await approve).status()!==200)throw new Error('IAM governed approval failed');
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='COMPLETE');
+            const bodyComplete=(await page.locator('body').textContent())||'';
+            if(!bodyComplete.includes('TEST-IAM-ACCOUNT-NEW-001'))throw new Error('IAM governed account missing after complete');
+            if(await root.getAttribute('data-formal-runtime-status')!=='BOUND')throw new Error('IAM controlled command adapter not bound');
+            const allText=(await page.locator('body').textContent())||'';
+            if(/role-based authorization|super-admin bypass/i.test(allText))throw new Error('IAM forbidden authorization model surfaced');
+            if(errors.length)throw new Error(errors.join('\n'));
+            console.log('IAM_BROWSER_INTERACTION_PASS');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Residual and dirty-tree guard
+        run: |
+          set -euo pipefail
+          ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/domain/iam src/server/iam src/server/testing/controlledIamTestRuntime.ts src/components/pages/IamControlRuntime.tsx src/components/pages/IamVisual.tsx
+          test ! -e .github/workflows/iam01-runtime-fix-once.yml
+          git diff --exit-code
