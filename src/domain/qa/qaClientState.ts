@@ -1,9 +1,10 @@
 export type QaReviewMode="AUTO"|"MANUAL";
 export type QaListItem={ref:string;label:string;meta?:Record<string,string|number|boolean|null>};
+export type QaTestMetadata={data_classification:"TEST_ONLY";synthetic:true;test_dataset_id:string;test_run_id:string;created_for_validation:true;production_eligible:false};
 export type QaResolvedContext={
   page_state_uid:string;current_stage_uid:string;project_id:string|null;topic_id:string|null;qa_task_ref:string|null;target_output_version_id:string|null;qa_review_ref:string|null;
   viewer_uri:string|null;failed_output_version_id:string|null;verified_new_output_version_id:string|null;manual_review_case_ref:string|null;scorecard_ref:string|null;release_package_ref:string|null;
-  values:Record<string,string|number|boolean|null>;lists:Record<string,QaListItem[]>;gate_state:Record<string,boolean>;correlation_id:string|null;audit_ref:string|null;
+  values:Record<string,string|number|boolean|null>;lists:Record<string,QaListItem[]>;gate_state:Record<string,boolean>;correlation_id:string|null;audit_ref:string|null;test_metadata?:QaTestMetadata;
 };
 export const EMPTY_QA_RESOLVED_CONTEXT:QaResolvedContext={page_state_uid:"QA-01-ST-NOT-STARTED",current_stage_uid:"QA-01-STAGE-01-RESOLVE",project_id:null,topic_id:null,qa_task_ref:null,target_output_version_id:null,qa_review_ref:null,viewer_uri:null,failed_output_version_id:null,verified_new_output_version_id:null,manual_review_case_ref:null,scorecard_ref:null,release_package_ref:null,values:{},lists:{},gate_state:{},correlation_id:null,audit_ref:null};
 export type QaClientState={
