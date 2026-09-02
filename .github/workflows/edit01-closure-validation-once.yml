@@ -31,13 +31,14 @@ jobs:
           import re, sys
           auth = Path('authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml').read_text()
           bindings = Path('src/domain/edit/editControlBindings.ts').read_text()
+          contract = Path('src/domain/edit/editRuntimeContract.ts').read_text()
           src = '\n'.join(p.read_text(errors='ignore') for p in Path('src').rglob('*') if p.is_file())
           ids = {
             'sections': set(re.findall(r'EDIT-01-SEC-[0-9]+', auth)),
             'controls': set(re.findall(r'"(EDIT-01-[A-Z0-9-]+)":\{"action_uid"', bindings)),
             'actions': set(re.findall(r'EDIT-01-ACT-[A-Z0-9-]+', auth)),
             'gates': set(re.findall(r'EDIT-01-GATE-[A-Z0-9-]+', auth)),
-            'permissions': set(re.findall(r'EDITING_[A-Z0-9_]+', auth)),
+            'permissions': set(re.findall(r'"(EDITING_[A-Z0-9_]+)"', contract)),
             'errors': set(re.findall(r'EDIT-01-ERR-[A-Z0-9-]+', auth)),
           }
           expected = {'sections':16,'controls':160,'actions':124,'gates':25,'permissions':9,'errors':34}
@@ -55,6 +56,10 @@ jobs:
             missing = sorted(x for x in ids[k] if x not in src)
             print('source_missing', k, len(missing), missing[:50])
             if missing:
+              failed = True
+          for permission in ids['permissions']:
+            if permission not in auth:
+              print('AUTHORITY_PERMISSION_MISSING', permission)
               failed = True
           for token in ['PROJECT_TASK','STANDALONE_UPLOAD','Runtime Business Data','缺值 = —','未列出者=FORBIDDEN']:
             if token not in auth:
