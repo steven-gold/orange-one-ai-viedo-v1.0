@@ -1,0 +1,34 @@
+name: WB-01 type fix once
+
+on:
+  push:
+    branches: [acpos-wb01-closure-20260902]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.event.head_commit.message == 'chore(wb01): add one-time type fix'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-wb01-closure-20260902
+      - name: Fix dashboard read success type
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('src/components/pages/DashboardVisual.tsx')
+          s=p.read_text()
+          old='const read = async (): Promise<DashboardReadModel | null> => {'
+          new='const read = async (): Promise<DashboardReadModel> => {'
+          assert old in s
+          p.write_text(s.replace(old,new,1))
+      - name: Commit product fix
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add src/components/pages/DashboardVisual.tsx
+          git commit -m "fix(wb01): narrow dashboard read success type"
+          git push origin HEAD:acpos-wb01-closure-20260902
