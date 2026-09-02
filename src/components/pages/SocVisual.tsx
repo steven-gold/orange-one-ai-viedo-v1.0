@@ -81,6 +81,10 @@ export const SOC_CONTROL_REGISTRY = [
 function SocVisualBody() {
   const { locale } = useI18n();
   const { projection, runtimeError } = useSocRuntimeState();
+  const readGateAllowed = useSocGate("SOC-01-GATE-READ");
+  const recordsGateAllowed = useSocGate("SOC-01-GATE-RECORDS");
+  const pageState = runtimeError ? "ERROR" : projection?.page_state ?? "LOADING";
+  const projectionStatus = runtimeError ? "BLOCKED" : projection ? "BOUND" : "LOADING";
   const [activeStage, setActiveStage] = useState<StageKey>("platform");
   const stage = STAGES.find((item) => item.key === activeStage) ?? STAGES[0];
   const label = (id: string) => socControlLabel(locale, id);
@@ -102,7 +106,7 @@ function SocVisualBody() {
   };
 
   return (
-    <div className={styles.page} data-page-uid="admin:SOC-01" data-vis-step="VIS-13" data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE" data-page-state={runtimeError?"ERROR":projection?.page_state??"READ_ONLY"} data-authority-control-count={SOC_CONTROL_REGISTRY.length}>
+    <div className={styles.page} data-page-uid="admin:SOC-01" data-vis-step="VIS-13" data-route-status="RESOLVED_USER_APPROVED_ADMIN_ROUTE" data-page-state={pageState} data-projection-status={projectionStatus} data-authority-status="FINAL_LOCKED" data-system-implementation-status="NOT_EXECUTED" data-authority-section-count="9" data-authority-control-count={SOC_CONTROL_REGISTRY.length} data-authority-action-count="21" data-authority-gate-count="14" data-authority-permission-count="16" data-authority-operation-count="15">
       <section className={styles.contextBar} data-section-id="SOC-01-SEC-01" data-component-id="SOC-01-CMP-CONTEXT">
         <div className={styles.identity}>
           <div className={styles.eyebrow}>SOC-01 · {t("pageName")}</div>
@@ -130,7 +134,7 @@ function SocVisualBody() {
             {stage.searchId && (
               <div className={styles.searchRow}>
                 <label htmlFor={stage.searchId}>{label(stage.searchId)}</label>
-                <input id={stage.searchId} className={styles.searchInput} data-control-id={stage.searchId} placeholder={t("searchPlaceholder")} disabled={!useSocGate(stage.key === "records" ? "SOC-01-GATE-RECORDS" : "SOC-01-GATE-READ")} />
+                <input id={stage.searchId} className={styles.searchInput} data-control-id={stage.searchId} placeholder={t("searchPlaceholder")} disabled={!(stage.key === "records" ? recordsGateAllowed : readGateAllowed)} />
               </div>
             )}
             <div className={styles.table}>
@@ -141,7 +145,7 @@ function SocVisualBody() {
                 </div>
               ))}
             </div>
-            <div className={styles.emptyNote}>{t("noRealData")}</div>
+            {projection?.page_state === "EMPTY" && <div className={styles.emptyNote}>{t("noRealData")}</div>}
             <section className={styles.actionDock} data-section-id="SOC-01-SEC-09" data-component-id="SOC-01-CMP-ACTION-DOCK">
               <div className={styles.dockLabel}><span>{t("actionDock")}</span><strong>{label(stage.tabId)}</strong></div>
               <div className={styles.dockActions}>
