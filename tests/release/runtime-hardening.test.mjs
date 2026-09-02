@@ -40,3 +40,10 @@ test("release gate covers both construction and production branches", async () =
   assert.match(workflow, /pull_request:[\s\S]*branches:\s*\[new, main\]/);
   assert.match(workflow, /push:[\s\S]*branches:\s*\[new, main\]/);
 });
+
+test("Vercel build disables standalone while Docker keeps standalone output", async () => {
+  const nextConfig = await read("next.config.ts");
+  const dockerfile = await read("Dockerfile");
+  assert.match(nextConfig, /output:\s*process\.env\.VERCEL\s*\?\s*undefined\s*:\s*"standalone"/);
+  assert.match(dockerfile, /\.next\/standalone/);
+});
