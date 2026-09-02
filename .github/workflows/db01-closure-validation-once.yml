@@ -1,0 +1,185 @@
+name: DB-01 closure validation
+
+on:
+  push:
+    branches:
+      - acpos-db01-closure-20260902
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install audit and typecheck
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+      - name: DB authority and source coverage
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          auth=Path('authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml').read_text()
+          visual=Path('src/components/pages/DbVisual.tsx').read_text()
+          runtime=Path('src/components/pages/DbControlRuntime.tsx').read_text()
+          bindings=Path('src/domain/database/dbControlBindings.ts').read_text()
+          port=Path('src/domain/database/dbClientPort.ts').read_text()
+          controlled=Path('src/server/testing/controlledDbTestRuntime.ts').read_text()
+          sections=set(re.findall(r'section_uid:\s*(DB-01-SEC-[0-9]+)',auth))
+          controls=set(re.findall(r'control_uid:\s*(DB-01-[A-Z0-9-]+)',auth))
+          actions=set(re.findall(r'action_uid:\s*(DB-01-ACT-[A-Z0-9-]+)',auth))
+          gates=set(re.findall(r'gate_uid:\s*(DB-01-GATE-[A-Z0-9-]+)',auth))
+          perms=set(re.findall(r'permission_uid:\s*(DB_[A-Z0-9_]+)',auth))
+          errors=set(re.findall(r'error_uid:\s*(DB-01-ERR-[A-Z0-9-]+)',auth))
+          print('DB_AUTHORITY_COUNTS',{'sections':len(sections),'controls':len(controls),'actions':len(actions),'gates':len(gates),'permissions':len(perms),'errors':len(errors)})
+          assert len(sections)==10
+          assert len(controls)==49
+          bind_controls=set(re.findall(r'"(DB-01-[A-Z0-9-]+)":\{"action_uid"',bindings))
+          assert bind_controls==controls,(sorted(controls-bind_controls),sorted(bind_controls-controls))
+          assert all(x in visual for x in controls),sorted(x for x in controls if x not in visual)
+          assert 'page_editing_policy: READ_ONLY_INSPECTION' in auth
+          assert 'manual_sql: FORBIDDEN' in auth and 'row_data_editor: FORBIDDEN' in auth and 'schema_direct_write: FORBIDDEN' in auth
+          assert 'DbProjectionTestMetadata' in port
+          assert 'DB_TEST_PROJECTION_FORBIDDEN_IN_PRODUCTION' in port
+          assert 'test_metadata:TEST_METADATA' in controlled
+          assert 'data-data-classification={projection?.test_metadata?.data_classification}' in visual
+          assert 'DB_READ_MODEL_RUNTIME_NOT_BOUND' in port
+          assert 'readonly' in runtime
+          print('DB_AUTHORITY_SOURCE_COVERAGE_PASS')
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+        run: npm run build
+      - name: Production DB must fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3181 NEXT_PUBLIC_ACPOS_RUNTIME_MODE= npm run start >/tmp/db-prod.log 2>&1 &
+          pid=$!; trap 'cat /tmp/db-prod.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3181/database >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/db-prod-proj.json -w '%{http_code}' 'http://127.0.0.1:3181/v1/ui-projections/admin%3ADB-01')
+          cat /tmp/db-prod-proj.json
+          test "$code" = "503"
+          grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/db-prod-proj.json
+          ! grep -q 'TEST_ONLY' /tmp/db-prod-proj.json
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Controlled DB projection classification
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3182 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/db-controlled.log 2>&1 &
+          pid=$!; trap 'cat /tmp/db-controlled.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3182/database >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/db-controlled-proj.json -w '%{http_code}' 'http://127.0.0.1:3182/v1/ui-projections/admin%3ADB-01')
+          test "$code" = "200"
+          python <<'PY'
+          import json
+          d=json.load(open('/tmp/db-controlled-proj.json'))
+          m=d['test_metadata']
+          assert m['data_classification']=='TEST_ONLY'
+          assert m['synthetic'] is True
+          assert m['production_eligible'] is False
+          assert d['page_state']=='READ_ONLY'
+          assert len(d['gates'])==9
+          assert d['values']['DB-01-FLD-ENV'].startswith('TEST_ONLY')
+          print('DB_CONTROLLED_PROJECTION_PASS')
+          PY
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Install Chromium test dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled DB browser interactions
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3183 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/db-browser.log 2>&1 &
+          pid=$!; trap 'cat /tmp/db-browser.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3183/database >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const errors=[];
+            for(const width of [1280,1440,1920]){
+              const page=await browser.newPage({viewport:{width,height:1200}});
+              page.on('pageerror',e=>errors.push(`pageerror:${width}:${e.message}`));
+              page.on('console',m=>{if(m.type()==='error')errors.push(`console:${width}:${m.text()}`)});
+              const res=await page.goto('http://127.0.0.1:3183/database',{waitUntil:'networkidle'});
+              if(!res||res.status()!==200)throw new Error(`DB route ${res&&res.status()} ${width}`);
+              await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:DB-01"]')?.getAttribute('data-page-state')==='READ_ONLY');
+              const root=page.locator('[data-page-uid="admin:DB-01"]');
+              if(await root.getAttribute('data-authority-controls')!=='49'||await root.getAttribute('data-registry-valid')!=='true')throw new Error('DB registry mismatch');
+              if(await root.getAttribute('data-data-classification')!=='TEST_ONLY'||await root.getAttribute('data-production-eligible')!=='false')throw new Error('DB classification missing');
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+              if(overflow>0)throw new Error(`DB horizontal overflow at supported width ${width}: ${overflow}`);
+              const ids=await page.locator('[data-control-id]').evaluateAll(ns=>ns.map(n=>n.getAttribute('data-control-id')));
+              if(ids.length!==49||new Set(ids).size!==49)throw new Error(`DB control registry DOM mismatch ${ids.length}/${new Set(ids).size}`);
+              await page.close();
+            }
+            const page=await browser.newPage({viewport:{width:1440,height:1400}});
+            page.on('pageerror',e=>errors.push(`pageerror:flow:${e.message}`));
+            page.on('console',m=>{if(m.type()==='error')errors.push(`console:flow:${m.text()}`)});
+            await page.goto('http://127.0.0.1:3183/database',{waitUntil:'networkidle'});
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:DB-01"]')?.getAttribute('data-page-state')==='READ_ONLY');
+            const q=id=>page.locator(`[data-control-id="${id}"]`).first();
+            const forbidden=await page.locator('textarea, input[type="sql"], [data-action*="MIGRATION-EXECUTE"], [data-action*="ROLLBACK"], [data-action*="DELETE"] ').count();
+            if(forbidden)throw new Error(`DB forbidden write surface found ${forbidden}`);
+            await q('DB-01-SEL-DOMAIN').selectOption('CANON');
+            await q('DB-01-SEL-ENTITY-TYPE').selectOption('Version');
+            const entities=page.locator('[data-control-id="DB-01-LIST-ENTITIES"] button');
+            if(await entities.count()!==1)throw new Error(`DB filtered entity count ${await entities.count()}`);
+            await entities.first().click();
+            await q('DB-01-TOGGLE-RELATION-VIEW').getByRole('button',{name:'List'}).click();
+            if(await q('DB-01-TOGGLE-RELATION-VIEW').getByRole('button',{name:'List'}).getAttribute('aria-pressed')!=='true')throw new Error('DB relation list mode failed');
+            await q('DB-01-SEL-TRACE-TYPE').selectOption('Asset');
+            await q('DB-01-INP-TRACE-ID').fill('TEST-ASSET-VERSION-001');
+            await q('DB-01-BTN-TRACE').click();
+            await page.waitForFunction(()=>((document.querySelector('[data-control-id="DB-01-VIEW-TRACE-PATH"]')?.textContent)||'').includes('Child Blueprint Version'));
+            await q('DB-01-BTN-INTEGRITY-REFRESH').click();
+            await q('DB-01-INP-MIGRATION-SEARCH').fill('TEST-MIGRATION-001');
+            await q('DB-01-BTN-MIGRATION-REFRESH').click();
+            const migrationText=(await q('DB-01-TBL-MIGRATIONS').textContent())||'';
+            if(!migrationText.includes('TEST-SHA256-MIGRATION-001'))throw new Error('DB migration checksum missing');
+            await q('DB-01-SEL-FINDING-TYPE').selectOption('ORPHAN_REF');
+            const finding=page.locator('[data-control-id="DB-01-LIST-FINDINGS"] button').first();
+            if(!((await finding.textContent())||'').includes('orphan'))throw new Error('DB integrity finding missing');
+            await finding.click();
+            const owner=(await q('DB-01-FLD-FINDING-OWNER').textContent())||'';
+            if(!owner.includes('System Lifecycle'))throw new Error('DB repair owner boundary missing');
+            await q('DB-01-INP-AUDIT-ID').fill('TEST-AUDIT-DB-001');
+            await q('DB-01-BTN-AUDIT').click();
+            const audit=(await q('DB-01-VIEW-AUDIT').textContent())||'';
+            if(!audit.includes('TEST-CORR-DB-001'))throw new Error('DB audit correlation missing');
+            const lifecycle=q('DB-01-BTN-SYSTEM-LIFECYCLE');
+            if(await lifecycle.isDisabled())throw new Error('DB System Lifecycle route disabled');
+            await Promise.all([page.waitForURL('**/admin/system'),lifecycle.click()]);
+            if(!page.url().endsWith('/admin/system'))throw new Error('DB System Lifecycle route mismatch');
+            if(errors.length)throw new Error(errors.join('\n'));
+            console.log('DB_BROWSER_INTERACTION_PASS');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Residual and dirty-tree guard
+        run: |
+          set -euo pipefail
+          ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/domain/database src/server/testing/controlledDbTestRuntime.ts src/components/pages/DbControlRuntime.tsx src/components/pages/DbVisual.tsx
+          git diff --exit-code
