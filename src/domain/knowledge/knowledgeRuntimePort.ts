@@ -1,3 +1,5 @@
+import { isControlledTestMode } from "@/domain/testing/controlledTestData";
+
 export type KnowledgePageState =
   | "LOADING"
   | "READY"
@@ -9,10 +11,20 @@ export type KnowledgePageState =
   | "READ_ONLY"
   | "ARCHIVED";
 
+export type KnowledgeProjectionTestMetadata = {
+  data_classification: "TEST_ONLY";
+  synthetic: true;
+  test_dataset_id: string;
+  test_run_id: string;
+  created_for_validation: true;
+  production_eligible: false;
+};
+
 export type KnowledgeProjection = {
   page_state: KnowledgePageState | null;
   values: Readonly<Record<string, string>>;
   control_enabled: Readonly<Record<string, boolean>>;
+  test_metadata?: KnowledgeProjectionTestMetadata;
 };
 
 export type KnowledgeActionTrace = {
@@ -71,6 +83,21 @@ function asRecord(value: unknown): Record<string, unknown> | null {
     : null;
 }
 
+function normalizeTestMetadata(value: unknown): KnowledgeProjectionTestMetadata | undefined {
+  const metadata = asRecord(value);
+  if (!metadata) return undefined;
+  if (!isControlledTestMode()) throw new Error("KB01_TEST_PROJECTION_FORBIDDEN_IN_PRODUCTION");
+  if (
+    metadata.data_classification !== "TEST_ONLY" ||
+    metadata.synthetic !== true ||
+    metadata.created_for_validation !== true ||
+    metadata.production_eligible !== false ||
+    typeof metadata.test_dataset_id !== "string" ||
+    typeof metadata.test_run_id !== "string"
+  ) throw new Error("KB01_TEST_PROJECTION_METADATA_INVALID");
+  return metadata as unknown as KnowledgeProjectionTestMetadata;
+}
+
 function normalizeKnowledgeProjection(raw: unknown): KnowledgeProjection {
   const record = asRecord(raw);
   if (!record) throw new Error("KB01_PROJECTION_NOT_OBJECT");
@@ -91,7 +118,12 @@ function normalizeKnowledgeProjection(raw: unknown): KnowledgeProjection {
     page_state = record.page_state as KnowledgePageState;
   }
 
-  return { page_state, values, control_enabled };
+  return {
+    page_state,
+    values,
+    control_enabled,
+    ...(record.test_metadata ? { test_metadata: normalizeTestMetadata(record.test_metadata) } : {}),
+  };
 }
 
 export function getKnowledgeActionTrace(actionUid?: string): KnowledgeActionTrace | null {
