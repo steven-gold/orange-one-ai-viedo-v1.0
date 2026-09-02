@@ -1,0 +1,127 @@
+name: ACPOS release hardening validation
+
+on:
+  push:
+    branches: [acpos-release-hardening-20260903]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Product install audit lint typecheck tests
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run lint
+          npm run typecheck
+          npm test
+
+      - name: Hardening source contract
+        shell: python
+        run: |
+          from pathlib import Path
+          cfg=Path('next.config.ts').read_text()
+          for token in ['Content-Security-Policy','Strict-Transport-Security','X-Content-Type-Options','X-Frame-Options','Referrer-Policy','Permissions-Policy']:
+            assert token in cfg, token
+          assert 'output: "standalone"' in cfg
+          assert Path('src/app/health/route.ts').is_file()
+          assert Path('src/app/health/ready/route.ts').is_file()
+          assert Path('src/app/error.tsx').is_file()
+          assert Path('src/app/global-error.tsx').is_file()
+          assert Path('src/app/not-found.tsx').is_file()
+          assert Path('src/app/loading.tsx').is_file()
+          assert Path('src/instrumentation.ts').is_file()
+          assert Path('.env.example').is_file()
+          assert Path('Dockerfile').is_file()
+          assert Path('.dockerignore').is_file()
+          assert Path('.github/workflows/release-gate.yml').is_file()
+          print('RELEASE_HARDENING_SOURCE_CONTRACT_PASS')
+
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+          ACPOS_DEPLOYMENT_ENV: ci
+          ACPOS_RELEASE_SHA: ${{ github.sha }}
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
+
+      - name: Production HTTP release E2E
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+          ACPOS_DEPLOYMENT_ENV: ci
+          ACPOS_RELEASE_SHA: ${{ github.sha }}
+          ACPOS_E2E_SKIP_BUILD: "1"
+          ACPOS_EXPECT_READY: "0"
+        run: npm run test:e2e
+
+      - name: Verify runtime headers and readiness truth
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+          ACPOS_DEPLOYMENT_ENV: ci
+          ACPOS_RELEASE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          PORT=3510 npm run start >/tmp/release-hardening.log 2>&1 & pid=$!
+          trap 'cat /tmp/release-hardening.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3510/health >/dev/null && break || sleep 1; done
+          curl -fsSI http://127.0.0.1:3510/ | tee /tmp/headers
+          grep -qi '^content-security-policy:' /tmp/headers
+          grep -qi '^strict-transport-security:' /tmp/headers
+          grep -qi '^x-content-type-options: nosniff' /tmp/headers
+          grep -qi '^x-frame-options: DENY' /tmp/headers
+          grep -qi '^referrer-policy:' /tmp/headers
+          grep -qi '^permissions-policy:' /tmp/headers
+          test "$(curl -sS -o /tmp/ready.json -w '%{http_code}' http://127.0.0.1:3510/health/ready)" = "503"
+          grep -q 'RUNTIME_NOT_BOUND\|NOT_BOUND\|NOT_CONFIGURED' /tmp/ready.json
+          kill $pid; wait $pid || true; trap - EXIT
+
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
+
+      - name: Install current browser audit dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+
+      - name: Supported-viewport browser E2E
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run test:browser
+
+      - name: Standalone Docker build
+        run: docker build -t orange-one-acpos:release-hardening .
+
+      - name: Final secret and dirty-tree guard
+        shell: python
+        run: |
+          from pathlib import Path
+          import re,subprocess
+          patterns=[
+            re.compile(r'\bsk-[A-Za-z0-9_-]{20,}\b'),
+            re.compile(r'\bgsk_[A-Za-z0-9_-]{20,}\b'),
+            re.compile(r'\bAIza[A-Za-z0-9_-]{20,}\b'),
+            re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'),
+          ]
+          findings=[]
+          for p in Path('.').rglob('*'):
+            if not p.is_file() or any(x in p.parts for x in ['.git','node_modules','.next']): continue
+            if p.suffix.lower() in {'.png','.jpg','.jpeg','.webp','.ico','.woff','.woff2','.ttf'}: continue
+            text=p.read_text(errors='ignore')
+            if any(x.search(text) for x in patterns): findings.append(str(p))
+          assert not findings, findings
+          subprocess.run(['git','diff','--exit-code'],check=True)
+          print('RELEASE_HARDENING_FINAL_GUARD_PASS')
