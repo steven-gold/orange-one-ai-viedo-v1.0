@@ -1,0 +1,70 @@
+name: QA-01 projection classification patch once
+
+on:
+  push:
+    branches:
+      - acpos-qa01-closure-20260902
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-qa01-closure-20260902
+      - name: Guard trigger
+        id: guard
+        run: |
+          msg=$(git log -1 --format=%s)
+          if [ "$msg" = "chore(qa): add one-time projection classification patch" ]; then echo "run=yes" >> "$GITHUB_OUTPUT"; else echo "run=no" >> "$GITHUB_OUTPUT"; fi
+      - name: Patch controlled projection classification
+        if: steps.guard.outputs.run == 'yes'
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p=Path('src/domain/qa/qaClientState.ts')
+          s=p.read_text()
+          needle='export type QaResolvedContext={\n'
+          assert needle in s
+          s=s.replace(needle,'export type QaTestMetadata={data_classification:"TEST_ONLY";synthetic:true;test_dataset_id:string;test_run_id:string;created_for_validation:true;production_eligible:false};\nexport type QaResolvedContext={\n',1)
+          needle='  values:Record<string,string|number|boolean|null>;lists:Record<string,QaListItem[]>;gate_state:Record<string,boolean>;correlation_id:string|null;audit_ref:string|null;\n};'
+          assert needle in s
+          s=s.replace(needle,'  values:Record<string,string|number|boolean|null>;lists:Record<string,QaListItem[]>;gate_state:Record<string,boolean>;correlation_id:string|null;audit_ref:string|null;test_metadata?:QaTestMetadata;\n};',1)
+          p.write_text(s)
+
+          p=Path('src/domain/qa/qaProjectionPort.ts')
+          s=p.read_text()
+          if 'isControlledTestMode' not in s:
+            s='import{isControlledTestMode}from"@/domain/testing/controlledTestData";\n'+s
+          needle='function normalize(v:unknown):QaResolvedContext|null{if(!v||typeof v!=="object")return null;const x=v as Partial<QaResolvedContext>;if(typeof x.page_state_uid!=="string"||typeof x.current_stage_uid!=="string"||!x.values||!x.lists||!x.gate_state)return null;return x as QaResolvedContext;}'
+          repl='function normalize(v:unknown):QaResolvedContext|null{if(!v||typeof v!=="object")return null;const x=v as Partial<QaResolvedContext>;if(typeof x.page_state_uid!=="string"||typeof x.current_stage_uid!=="string"||!x.values||!x.lists||!x.gate_state)return null;if(x.test_metadata!==undefined){if(!isControlledTestMode()||x.test_metadata.data_classification!=="TEST_ONLY"||x.test_metadata.synthetic!==true||x.test_metadata.created_for_validation!==true||x.test_metadata.production_eligible!==false)return null;}return x as QaResolvedContext;}'
+          assert needle in s
+          s=s.replace(needle,repl,1)
+          p.write_text(s)
+
+          p=Path('src/server/testing/controlledQaTestRuntime.ts')
+          s=p.read_text()
+          needle='function clone():QaResolvedContext{const state=currentState();return{...state,values:{...state.values},gate_state:{...state.gate_state},lists:Object.fromEntries(Object.entries(state.lists).map(([k,v])=>[k,v.map(x=>({...x,meta:x.meta?{...x.meta}:undefined}))]))};}'
+          repl='function clone():QaResolvedContext{const state=currentState();return{...state,values:{...state.values},gate_state:{...state.gate_state},lists:Object.fromEntries(Object.entries(state.lists).map(([k,v])=>[k,v.map(x=>({...x,meta:x.meta?{...x.meta}:undefined}))])),test_metadata:{data_classification:"TEST_ONLY",synthetic:true,test_dataset_id:"TEST-QA-01",test_run_id:`TEST-QA-${scenario()}`,created_for_validation:true,production_eligible:false}};}'
+          assert needle in s
+          s=s.replace(needle,repl,1)
+          p.write_text(s)
+
+          p=Path('src/components/pages/QaVisual.tsx')
+          s=p.read_text()
+          needle='data-review-mode={state.mode} data-review-bound={state.resolved.qa_review_ref?"true":"false"}'
+          assert needle in s
+          s=s.replace(needle,'data-review-mode={state.mode} data-review-bound={state.resolved.qa_review_ref?"true":"false"} data-data-classification={state.resolved.test_metadata?.data_classification} data-production-eligible={state.resolved.test_metadata?String(state.resolved.test_metadata.production_eligible):undefined}',1)
+          p.write_text(s)
+      - name: Commit product patch
+        if: steps.guard.outputs.run == 'yes'
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add src/domain/qa/qaClientState.ts src/domain/qa/qaProjectionPort.ts src/server/testing/controlledQaTestRuntime.ts src/components/pages/QaVisual.tsx
+          git commit -m "fix(qa): isolate controlled projection metadata"
+          git push origin HEAD:acpos-qa01-closure-20260902
