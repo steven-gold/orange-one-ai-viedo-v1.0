@@ -1,0 +1,189 @@
+name: INFO-01 closure validation
+
+on:
+  push:
+    branches:
+      - acpos-info01-closure-20260903
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install audit and typecheck
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+      - name: INFO authority and source coverage
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          auth=Path('authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml').read_text()
+          visual=Path('src/components/pages/InfoVisual.tsx').read_text()
+          runtime=Path('src/components/pages/InfoControlRuntime.tsx').read_text()
+          catalog=Path('src/i18n/infoCatalog.ts').read_text()
+          bindings=Path('src/domain/info/infoControlBindings.ts').read_text()
+          contract=Path('src/domain/info/infoRuntimeContract.ts').read_text()
+          projection=Path('src/domain/info/infoProjectionPort.ts').read_text()
+          client=Path('src/domain/info/controlledInfoClientTestRuntime.ts').read_text()
+          controlled=Path('src/server/testing/controlledInfoTestRuntime.ts').read_text()
+          sections=set(re.findall(r'section_uid:\s*(INFO-01-SEC-[0-9]+)',auth))
+          controls=set(re.findall(r'control_uid:\s*(INFO-01-[A-Z0-9-]+)',auth))
+          actions=set(re.findall(r'action_uid:\s*(INFO-01-ACT-[A-Z0-9-]+)',auth))
+          gates=set(re.findall(r'gate_uid:\s*(INFO-01-GATE-[A-Z0-9-]+)',auth))
+          errors=set(re.findall(r'error_uid:\s*(INFO-01-ERR-[A-Z0-9-]+)',auth))
+          states=set(re.findall(r'state_uid:\s*(INFO-01-ST-[A-Z0-9-]+)',auth))
+          ports=set(re.findall(r'port_uid:\s*(INFO-01-PORT-[A-Z0-9-]+)',auth))
+          print('INFO_AUTHORITY_COUNTS',{'sections':len(sections),'controls':len(controls),'actions':len(actions),'gates':len(gates),'errors':len(errors),'states':len(states),'ports':len(ports)})
+          assert (len(sections),len(controls),len(actions),len(gates),len(errors),len(states),len(ports))==(12,66,17,10,12,8,6)
+          bind_controls=set(re.findall(r'"(INFO-01-[A-Z0-9-]+)":\{"action_uid"',bindings))
+          assert bind_controls==controls,(sorted(controls-bind_controls),sorted(bind_controls-controls))
+          assert all(f'"id": "{x}"' in catalog for x in controls),sorted(x for x in controls if f'"id": "{x}"' not in catalog)
+          assert all(x in contract for x in actions|errors|states|ports)
+          assert 'INFO_CONTROLS' in visual and 'INFO_CONTROL_COUNT===66' in visual
+          assert 'InfoProjectionTestMetadata' in projection and 'INFO_TEST_PROJECTION_FORBIDDEN_IN_PRODUCTION' in projection
+          assert 'test_metadata:metadata as InfoNormalizedProjection["test_metadata"]' in client
+          assert 'data_classification:"TEST_ONLY"' in controlled and 'production_eligible:false' in controlled
+          assert 'Start Research' not in visual and 'Cancel Research' not in visual
+          assert 'INFO-01-ACT-CITATION-OPEN' in runtime and "dispatch({type:'CITATION',value:true})" in runtime
+          print('INFO_AUTHORITY_SOURCE_COVERAGE_PASS')
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+        run: npm run build
+      - name: Production INFO must fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3201 NEXT_PUBLIC_ACPOS_RUNTIME_MODE= npm run start >/tmp/info-prod.log 2>&1 &
+          pid=$!; trap 'cat /tmp/info-prod.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3201/info >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/info-prod-proj.json -w '%{http_code}' 'http://127.0.0.1:3201/v1/ui-projections/workspace%3AINFO-01')
+          cat /tmp/info-prod-proj.json
+          test "$code" = "503"
+          grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/info-prod-proj.json
+          ! grep -q 'TEST_ONLY' /tmp/info-prod-proj.json
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Controlled INFO projection classification
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3202 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/info-controlled.log 2>&1 &
+          pid=$!; trap 'cat /tmp/info-controlled.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3202/info >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/info-controlled-proj.json -w '%{http_code}' 'http://127.0.0.1:3202/v1/ui-projections/workspace%3AINFO-01')
+          test "$code" = "200"
+          python <<'PY'
+          import json
+          d=json.load(open('/tmp/info-controlled-proj.json'))
+          m=d['test_metadata']
+          assert m['data_classification']=='TEST_ONLY' and m['synthetic'] is True and m['created_for_validation'] is True and m['production_eligible'] is False
+          assert d['page_state']=='STALE'
+          assert d['values']['INFO-01-FLD-FRESHNESS']=='STALE'
+          assert 'INCOMPLETE' in d['values']['INFO-01-FLD-COMPLETENESS']
+          assert d['values']['INFO-01-FLD-RESEARCH-RESULT']=='—'
+          print('INFO_CONTROLLED_PROJECTION_PASS')
+          PY
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Install Chromium test dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled INFO browser flow
+        shell: bash
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3203 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/info-browser.log 2>&1 &
+          pid=$!; trap 'cat /tmp/info-browser.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3203/info >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const errors=[];
+            for(const width of [1280,1440,1920]){
+              const page=await browser.newPage({viewport:{width,height:1250}});
+              page.on('pageerror',e=>errors.push(`pageerror:${width}:${e.message}`));
+              page.on('console',m=>{if(m.type()==='error')errors.push(`console:${width}:${m.text()}`)});
+              const res=await page.goto('http://127.0.0.1:3203/info',{waitUntil:'networkidle'});
+              if(!res||res.status()!==200)throw new Error(`INFO route ${res&&res.status()} ${width}`);
+              await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:INFO-01"]')?.getAttribute('data-projection-status')==='READY');
+              const root=page.locator('[data-page-uid="workspace:INFO-01"]');
+              if(await root.getAttribute('data-page-state')!=='STALE'||await root.getAttribute('data-authority-controls')!=='66'||await root.getAttribute('data-authority-actions')!=='17'||await root.getAttribute('data-registry-valid')!=='true')throw new Error('INFO registry/state mismatch');
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+              if(overflow>0)throw new Error(`INFO horizontal overflow ${overflow} ${width}`);
+              await page.close();
+            }
+            const page=await browser.newPage({viewport:{width:1440,height:1500}});
+            page.on('pageerror',e=>errors.push(`pageerror:flow:${e.message}`));
+            page.on('console',m=>{if(m.type()==='error')errors.push(`console:flow:${m.text()}`)});
+            await page.goto('http://127.0.0.1:3203/info',{waitUntil:'networkidle'});
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:INFO-01"]')?.getAttribute('data-projection-status')==='READY');
+            const root=page.locator('[data-page-uid="workspace:INFO-01"]');
+            const q=id=>page.locator(`[data-control-id="${id}"]`).first();
+            const body0=(await page.locator('body').textContent())||'';
+            if(body0.includes('Start Research')||body0.includes('Cancel Research'))throw new Error('INFO invented research actions visible');
+            if(!((await q('INFO-01-FLD-FRESHNESS').textContent())||'').includes('STALE'))throw new Error('INFO STALE not visible');
+            if(!((await q('INFO-01-FLD-COMPLETENESS').textContent())||'').includes('INCOMPLETE'))throw new Error('INFO INCOMPLETE not visible');
+            if(!((await q('INFO-01-FLD-RESEARCH-RESULT').textContent())||'').includes('—'))throw new Error('INFO missing research result not dash');
+            const filter=q('INFO-01-SEL-SCOPE');
+            if(await filter.locator('option').count()<2)throw new Error('INFO scope filter empty');
+            await filter.selectOption({index:1});
+            for(const id of ['INFO-01-LST-SOURCES','INFO-01-LST-ALERTS','INFO-01-LST-FACTPACKS','INFO-01-LST-EVIDENCE','INFO-01-LST-RESEARCH','INFO-01-LST-CANDIDATES']){
+              const b=page.locator(`[data-control-id="${id}"] button`).first();
+              if(await b.count()!==1||await b.isDisabled())throw new Error(`${id} selection unavailable`);
+              await b.click();
+            }
+            await q('INFO-01-TAB-INFERENCE').click(); if(await root.getAttribute('data-fact-view')!=='INFERENCE')throw new Error('INFO inference tab failed');
+            await q('INFO-01-TAB-FACT').click(); if(await root.getAttribute('data-fact-view')!=='FACT')throw new Error('INFO fact tab failed');
+            const citation=q('INFO-01-BTN-CITATION');
+            if(await citation.isDisabled())throw new Error('INFO citation disabled after evidence selection');
+            if(await page.locator('[data-citation-drawer-open="true"]').count()!==0)throw new Error('INFO citation drawer initially open');
+            await citation.click();
+            await page.waitForFunction(()=>document.querySelector('[data-page-uid="workspace:INFO-01"]')?.getAttribute('data-citation-open')==='true');
+            if(await page.locator('[data-citation-drawer-open="true"]').count()!==1)throw new Error('INFO citation drawer failed');
+            await q('INFO-01-BTN-AUDIT').click(); if(await root.getAttribute('data-audit-open')!=='true')throw new Error('INFO audit toggle failed');
+            const initialVersion=(await q('INFO-01-FLD-PROJECTION-VERSION').textContent())||'';
+            let response=page.waitForResponse(r=>r.url().endsWith('/v1/projections/refresh')&&r.request().method()==='POST');
+            await q('INFO-01-BTN-REFRESH').click(); if((await response).status()!==200)throw new Error('INFO refresh failed');
+            await page.waitForFunction(v=>((document.querySelector('[data-control-id="INFO-01-FLD-PROJECTION-VERSION"]')?.textContent)||'')!==v,initialVersion);
+            response=page.waitForResponse(r=>r.url().endsWith('/v1/search')&&r.request().method()==='POST');
+            await q('INFO-01-BTN-SEARCH').click(); if((await response).status()!==200)throw new Error('INFO search failed');
+            response=page.waitForResponse(r=>r.url().endsWith('/v1/exports')&&r.request().method()==='POST');
+            await q('INFO-01-BTN-EXPORT').click(); if((await response).status()!==200)throw new Error('INFO export failed');
+            if(await q('INFO-01-BTN-CANDIDATE-DECIDE').isDisabled()||await q('INFO-01-BTN-ADOPT-CONTEXT').isDisabled())throw new Error('INFO candidate actions not enabled');
+            response=page.waitForResponse(r=>r.url().includes('/v1/candidates/')&&r.url().endsWith('/decision')&&r.request().method()==='POST');
+            await q('INFO-01-BTN-CANDIDATE-DECIDE').click(); if((await response).status()!==200)throw new Error('INFO candidate decision failed');
+            response=page.waitForResponse(r=>r.url().includes('/v1/context-candidates/')&&r.url().endsWith('/adopt')&&r.request().method()==='POST');
+            await q('INFO-01-BTN-ADOPT-CONTEXT').click(); if((await response).status()!==200)throw new Error('INFO context adoption failed');
+            await page.waitForFunction(()=>((document.querySelector('[data-control-id="INFO-01-FLD-CANDIDATE-STATE"]')?.textContent)||'').includes('ADOPTED'));
+            if(!(await q('INFO-01-BTN-ADOPT-CONTEXT').isDisabled()))throw new Error('INFO adopt remains enabled after adoption');
+            if(errors.length)throw new Error(errors.join('\n'));
+            console.log('INFO_BROWSER_INTERACTION_PASS');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Residual and dirty-tree guard
+        run: |
+          set -euo pipefail
+          ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/domain/info src/server/info src/server/testing/controlledInfoTestRuntime.ts src/components/pages/InfoControlRuntime.tsx src/components/pages/InfoVisual.tsx
+          git diff --exit-code
