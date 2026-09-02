@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "node scripts/release-source-lint.mjs",
+    "test": "node --test tests/release/*.test.mjs",
+    "test:e2e": "node scripts/release-http-e2e.mjs",
+    "verify": "npm run lint && npm run typecheck && npm test && npm audit --audit-level=high && npm run build",
+    "release:verify": "npm run verify && npm run test:e2e"
   },
   "dependencies": {
     "next": "16.3.3",
