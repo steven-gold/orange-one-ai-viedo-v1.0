@@ -129,16 +129,29 @@ jobs:
             }
             const page=await browser.newPage({viewport:{width:1440,height:900}});
             page.on('pageerror',e=>errors.push(`pageerror:flow:${e.message}`));
+            page.on('console',m=>{if(m.type()==='error') errors.push(`console:flow:${m.text()}`)});
             await page.goto('http://127.0.0.1:3102/edit',{waitUntil:'networkidle'});
             const q=id=>page.locator(`[data-control-id="${id}"]`).first();
-            for(const id of ['EDIT-01-FLD-PROJECT','EDIT-01-FLD-TOPIC','EDIT-01-FLD-TASK']){
+            const contextControls=[
+              ['EDIT-01-FLD-PROJECT','EDIT-01-ACT-CONTEXT-PROJECT-SET','TEST-EDIT-PROJECT-001'],
+              ['EDIT-01-FLD-TOPIC','EDIT-01-ACT-CONTEXT-TOPIC-SET','TEST-EDIT-TOPIC-001'],
+              ['EDIT-01-FLD-TASK','EDIT-01-ACT-CONTEXT-TASK-SET','TEST-EDIT-TASK-001'],
+            ];
+            for(const [id,action,value] of contextControls){
               const el=q(id); await el.waitFor();
-              if((await el.evaluate(n=>n.tagName))!=='DIV') throw new Error(`${id} must be readonly in PROJECT_TASK`);
-              if(await el.locator('input,select,textarea').count()) throw new Error(`${id} exposes editable input in PROJECT_TASK`);
+              if((await el.evaluate(n=>n.tagName))!=='SELECT') throw new Error(`${id} must be a PROJECT_TASK select`);
+              if(await el.isDisabled()) throw new Error(`${id} unexpectedly disabled in PROJECT_TASK`);
+              if((await el.inputValue())!==value) throw new Error(`${id} exact binding mismatch: ${await el.inputValue()}`);
+              if((await el.getAttribute('data-action-uid'))!==action) throw new Error(`${id} action binding mismatch`);
+              const placeholder=el.locator('option[value=""]');
+              if(await placeholder.count() && !(await placeholder.isDisabled())) throw new Error(`${id} required placeholder is selectable`);
             }
             const source=q('EDIT-01-CTL-SOURCE-MODE');
             await source.getByRole('button',{name:'STANDALONE_UPLOAD'}).click();
             await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-CTL-SOURCE-MODE"] button[aria-pressed="true"]')?.textContent?.includes('STANDALONE_UPLOAD'));
+            for(const [id] of contextControls){
+              if(await page.locator(`[data-control-id="${id}"]`).count()) throw new Error(`${id} must be hidden in STANDALONE_UPLOAD`);
+            }
             const add=q('EDIT-01-BTN-ADD-MEDIA');
             if(await add.isDisabled()) throw new Error('Standalone add media stayed disabled');
             await add.click();
@@ -170,6 +183,13 @@ jobs:
             }
             const flowState=await q('EDIT-01-LBL-PAGE-STATE').textContent();
             if(!flowState?.includes('EDIT-01-ST-PAGE-WORKING')) throw new Error(`unexpected flow state ${flowState}`);
+            await source.getByRole('button',{name:'PROJECT_TASK'}).click();
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-CTL-SOURCE-MODE"] button[aria-pressed="true"]')?.textContent?.includes('PROJECT_TASK'));
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-FLD-PROJECT"]')?.getAttribute('value')==='TEST-EDIT-PROJECT-001'||(document.querySelector('[data-control-id="EDIT-01-FLD-PROJECT"]') instanceof HTMLSelectElement&&document.querySelector('[data-control-id="EDIT-01-FLD-PROJECT"]').value==='TEST-EDIT-PROJECT-001'));
+            for(const [id,,value] of contextControls){
+              const el=q(id); await el.waitFor();
+              if((await el.inputValue())!==value) throw new Error(`${id} did not restore governed PROJECT_TASK context`);
+            }
             await page.close();
             await browser.close();
             if(errors.length) throw new Error(errors.join('\n'));
