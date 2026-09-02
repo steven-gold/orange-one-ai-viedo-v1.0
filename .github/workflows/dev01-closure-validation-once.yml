@@ -1,0 +1,145 @@
+name: DEV-01 closure validation
+on:
+  push:
+    branches:
+      - acpos-dev01-closure-20260903
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install audit and typecheck
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+      - name: DEV authority and source coverage
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          auth=Path('authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml').read_text()
+          visual=Path('src/components/pages/DevVisual.tsx').read_text()
+          contract=Path('src/domain/dev/devRuntimeContract.ts').read_text()
+          bindings=Path('src/domain/dev/devControlBindings.ts').read_text()
+          port=Path('src/domain/dev/devProjectionPort.ts').read_text()
+          client=Path('src/domain/dev/controlledDevClientTestRuntime.ts').read_text()
+          server=Path('src/server/testing/controlledDevTestRuntime.ts').read_text()
+          shared=Path('src/server/shared/uiProjectionRuntime.ts').read_text()
+          controls=set(re.findall(r'control_uid:\s*(DEV-01-[A-Z0-9-]+)',auth))
+          sections=set(re.findall(r'section_uid:\s*(DEV-01-SEC-[0-9]+)',auth))
+          components=set(re.findall(r'component_uid:\s*(DEV-01-CMP-[A-Z0-9-]+)',auth))
+          actions=set(re.findall(r'action_uid:\s*(DEV-01-ACT-[A-Z0-9-]+)',auth))
+          errors=set(re.findall(r'error_uid:\s*(DEV-01-ERR-[A-Z0-9-]+)',auth))
+          gates=set(re.findall(r'gate_uid:\s*(DEV-01-GATE-[A-Z0-9-]+)',auth))
+          print('DEV_AUTHORITY_COUNTS',{'controls':len(controls),'sections':len(sections),'components':len(components),'actions':len(actions),'errors':len(errors),'gates':len(gates)})
+          assert len(controls)==22 and len(sections)==9 and len(components)==15 and len(actions)==22 and len(errors)==12 and len(gates)==15
+          assert all(x in visual or x in bindings for x in controls)
+          assert all(x in contract for x in errors)
+          assert all(x in contract for x in gates)
+          assert 'DevProjectionTestMetadata' in port and 'DEV_TEST_PROJECTION_FORBIDDEN_IN_PRODUCTION' in port
+          assert 'ensureControlledDevClientTestRuntime' in client and 'TEST_ONLY' in client and 'production_eligible: false' in client
+          assert 'readControlledDevTestProjection' in server and 'recipient_count:"1"' in server and 'delivery_to_count:"1"' in server
+          assert 'controlledDevProjection' in shared and 'admin:DEV-01' in shared
+          assert 'system_implementation_status: NOT_EXECUTED' in auth
+          assert 'second enterprise outreach system' in auth and 'page-local provider/API-key system' in auth
+          print('DEV_AUTHORITY_SOURCE_COVERAGE_PASS')
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ''
+        run: npm run build
+      - name: Production DEV must fail closed
+        run: |
+          set -euo pipefail
+          PORT=3221 NEXT_PUBLIC_ACPOS_RUNTIME_MODE= npm run start >/tmp/dev-prod.log 2>&1 &
+          pid=$!; trap 'cat /tmp/dev-prod.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3221/admin/dev >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/dev-prod.json -w '%{http_code}' 'http://127.0.0.1:3221/v1/ui-projections/admin%3ADEV-01')
+          cat /tmp/dev-prod.json
+          test "$code" = "503"
+          grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/dev-prod.json
+          ! grep -q 'TEST_ONLY' /tmp/dev-prod.json
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Controlled DEV projection classification
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3222 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/dev-controlled.log 2>&1 &
+          pid=$!; trap 'cat /tmp/dev-controlled.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3222/admin/dev >/dev/null && break || sleep 1; done
+          curl -fsS 'http://127.0.0.1:3222/v1/ui-projections/admin%3ADEV-01' >/tmp/dev-controlled.json
+          python <<'PY'
+          import json
+          d=json.load(open('/tmp/dev-controlled.json')); m=d['test_metadata']
+          assert m['data_classification']=='TEST_ONLY' and m['synthetic'] is True and m['production_eligible'] is False
+          assert d['page_state']=='READY' and d['authorized_scope']=='TEST-ORG-SCOPE-001' and d['run_status']=='STOPPED'
+          assert d['values']['recipient_count']=='1' and d['values']['delivery_to_count']=='1'
+          assert len(d['gate_state'])==15
+          print('DEV_CONTROLLED_PROJECTION_PASS')
+          PY
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled DEV browser flow
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3223 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/dev-browser.log 2>&1 &
+          pid=$!; trap 'cat /tmp/dev-browser.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3223/admin/dev >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const {chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true}); const errors=[];
+            for(const width of [1280,1440,1920]){
+              const page=await browser.newPage({viewport:{width,height:1400}});
+              page.on('pageerror',e=>errors.push(`pageerror:${width}:${e.message}`)); page.on('console',m=>{if(m.type()==='error')errors.push(`console:${width}:${m.text()}`)});
+              const res=await page.goto('http://127.0.0.1:3223/admin/dev',{waitUntil:'networkidle'}); if(!res||res.status()!==200)throw new Error(`route ${width}`);
+              await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:DEV-01"]')?.getAttribute('data-page-state')==='READY');
+              const root=page.locator('[data-page-uid="admin:DEV-01"]');
+              if(await root.getAttribute('data-authority-controls')!=='22'||await root.getAttribute('data-control-registry-valid')!=='true')throw new Error('registry');
+              if(await root.getAttribute('data-projection-adapter-ready')!=='true'||await root.getAttribute('data-command-adapter-ready')!=='true')throw new Error('adapter');
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth); if(overflow>0)throw new Error(`overflow ${width}:${overflow}`);
+              await page.close();
+            }
+            const page=await browser.newPage({viewport:{width:1440,height:1600}});
+            page.on('pageerror',e=>errors.push(`pageerror:flow:${e.message}`)); page.on('console',m=>{if(m.type()==='error')errors.push(`console:flow:${m.text()}`)});
+            await page.goto('http://127.0.0.1:3223/admin/dev',{waitUntil:'networkidle'}); await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:DEV-01"]')?.getAttribute('data-page-state')==='READY');
+            const root=page.locator('[data-page-uid="admin:DEV-01"]'), q=id=>page.locator(`[data-control-id="${id}"]`).first();
+            if(!((await page.locator('body').textContent())||'').includes('TEST-ORG-SCOPE-001'))throw new Error('scope truth');
+            await q('DEV-01-BTN-DISCOVERY-START').click(); await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:DEV-01"]')?.textContent?.includes('RUNNING'));
+            await q('DEV-01-BTN-DISCOVERY-PAUSE').click(); await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:DEV-01"]')?.textContent?.includes('PAUSED'));
+            await q('DEV-01-BTN-DISCOVERY-RESUME').click(); await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:DEV-01"]')?.textContent?.includes('RUNNING'));
+            await q('DEV-01-BTN-DISCOVERY-STOP').click(); await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:DEV-01"]')?.textContent?.includes('STOPPED'));
+            await q('DEV-01-BTN-STAGE-2').click(); if(await root.getAttribute('data-active-stage')!=='directory')throw new Error('directory stage');
+            await q('DEV-01-BTN-DIRECTORY-SEARCH').click(); await q('DEV-01-BTN-MERGE-PREVIEW').click(); await page.waitForFunction(()=>document.querySelector('[data-control-id="DEV-01-BTN-MERGE"]')!==null); await q('DEV-01-BTN-MERGE').click(); await q('DEV-01-BTN-EXPORT').click();
+            await q('DEV-01-BTN-STAGE-3').click(); if(await root.getAttribute('data-active-stage')!=='message')throw new Error('message stage');
+            await q('DEV-01-BTN-CANDIDATE-CREATE').click(); await page.waitForFunction(()=>document.querySelector('[data-control-id="DEV-01-BTN-CANDIDATE-DECIDE"]')!==null); await q('DEV-01-BTN-CR-CREATE').click(); await q('DEV-01-BTN-CANDIDATE-DECIDE').click();
+            await q('DEV-01-BTN-STAGE-4').click(); if(await root.getAttribute('data-active-stage')!=='campaign')throw new Error('campaign stage');
+            await q('DEV-01-BTN-CAMPAIGN-SEARCH').click(); await q('DEV-01-BTN-CAMPAIGN-CREATE').click(); await page.waitForFunction(()=>document.querySelector('[data-control-id="DEV-01-BTN-CAMPAIGN-APPROVE"]')!==null); await q('DEV-01-BTN-CAMPAIGN-APPROVE').click();
+            await q('DEV-01-BTN-STAGE-5').click(); if(await root.getAttribute('data-active-stage')!=='delivery')throw new Error('delivery stage');
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="DEV-01-BTN-EMAIL-DISPATCH"]')!==null); await q('DEV-01-BTN-EMAIL-DISPATCH').click(); await q('DEV-01-BTN-REFRESH').click(); await page.waitForFunction(()=>document.querySelector('[data-control-id="DEV-01-BTN-KILL-SWITCH"]')!==null); await q('DEV-01-BTN-KILL-SWITCH').click();
+            if(await root.getAttribute('data-effectful-runtime-ready')!=='true')throw new Error('runtime');
+            if(errors.length)throw new Error(errors.join('\n')); console.log('DEV_BROWSER_INTERACTION_PASS'); await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Residual and dirty-tree guard
+        run: |
+          set -euo pipefail
+          ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/domain/dev src/server/testing/controlledDevTestRuntime.ts src/components/pages/DevControlRuntime.tsx src/components/pages/DevVisual.tsx
+          git diff --exit-code
