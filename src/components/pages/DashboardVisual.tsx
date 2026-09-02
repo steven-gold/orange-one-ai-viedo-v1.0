@@ -85,7 +85,7 @@ export function DashboardVisual() {
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const openerRef = useRef<HTMLButtonElement | null>(null);
 
-  const read = async (): Promise<DashboardReadModel | null> => {
+  const read = async (): Promise<DashboardReadModel> => {
     const response = await fetch("/v1/dashboard/read-model", { cache: "no-store" });
     const body = await response.json() as DashboardReadModel | DashboardReadError;
     if (!response.ok) throw body;
