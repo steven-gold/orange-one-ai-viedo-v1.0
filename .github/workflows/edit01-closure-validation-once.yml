@@ -32,6 +32,7 @@ jobs:
           auth = Path('authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml').read_text()
           bindings = Path('src/domain/edit/editControlBindings.ts').read_text()
           contract = Path('src/domain/edit/editRuntimeContract.ts').read_text()
+          visual = Path('src/components/pages/EditVisual.tsx').read_text()
           src = '\n'.join(p.read_text(errors='ignore') for p in Path('src').rglob('*') if p.is_file())
           ids = {
             'sections': set(re.findall(r'EDIT-01-SEC-[0-9]+', auth)),
@@ -57,6 +58,10 @@ jobs:
             print('source_missing', k, len(missing), missing[:50])
             if missing:
               failed = True
+          missing_render = sorted(x for x in ids['controls'] if x not in visual)
+          print('visual_control_missing', len(missing_render), missing_render[:50])
+          if missing_render:
+            failed = True
           for permission in ids['permissions']:
             if permission not in auth:
               print('AUTHORITY_PERMISSION_MISSING', permission)
@@ -132,6 +137,8 @@ jobs:
             page.on('console',m=>{if(m.type()==='error') errors.push(`console:flow:${m.text()}`)});
             await page.goto('http://127.0.0.1:3102/edit',{waitUntil:'networkidle'});
             const q=id=>page.locator(`[data-control-id="${id}"]`).first();
+            const uniqueProjectControls=await page.locator('[data-control-id]').evaluateAll(ns=>[...new Set(ns.map(n=>n.getAttribute('data-control-id')).filter(Boolean))]);
+            if(uniqueProjectControls.length!==160) throw new Error(`PROJECT_TASK rendered unique controls ${uniqueProjectControls.length}, expected 160`);
             const contextControls=[
               ['EDIT-01-FLD-PROJECT','EDIT-01-ACT-CONTEXT-PROJECT-SET','TEST-EDIT-PROJECT-001'],
               ['EDIT-01-FLD-TOPIC','EDIT-01-ACT-CONTEXT-TOPIC-SET','TEST-EDIT-TOPIC-001'],
@@ -144,7 +151,10 @@ jobs:
               if((await el.inputValue())!==value) throw new Error(`${id} exact binding mismatch: ${await el.inputValue()}`);
               if((await el.getAttribute('data-action-uid'))!==action) throw new Error(`${id} action binding mismatch`);
               const placeholder=el.locator('option[value=""]');
-              if(await placeholder.count() && !(await placeholder.isDisabled())) throw new Error(`${id} required placeholder is selectable`);
+              if(await placeholder.count()){
+                const placeholderDisabled=await placeholder.evaluate(o=>o instanceof HTMLOptionElement&&o.disabled);
+                if(!placeholderDisabled) throw new Error(`${id} required placeholder is selectable`);
+              }
             }
             const source=q('EDIT-01-CTL-SOURCE-MODE');
             await source.getByRole('button',{name:'STANDALONE_UPLOAD'}).click();
@@ -185,7 +195,7 @@ jobs:
             if(!flowState?.includes('EDIT-01-ST-PAGE-WORKING')) throw new Error(`unexpected flow state ${flowState}`);
             await source.getByRole('button',{name:'PROJECT_TASK'}).click();
             await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-CTL-SOURCE-MODE"] button[aria-pressed="true"]')?.textContent?.includes('PROJECT_TASK'));
-            await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-FLD-PROJECT"]')?.getAttribute('value')==='TEST-EDIT-PROJECT-001'||(document.querySelector('[data-control-id="EDIT-01-FLD-PROJECT"]') instanceof HTMLSelectElement&&document.querySelector('[data-control-id="EDIT-01-FLD-PROJECT"]').value==='TEST-EDIT-PROJECT-001'));
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-FLD-PROJECT"]') instanceof HTMLSelectElement&&document.querySelector('[data-control-id="EDIT-01-FLD-PROJECT"]').value==='TEST-EDIT-PROJECT-001');
             for(const [id,,value] of contextControls){
               const el=q(id); await el.waitFor();
               if((await el.inputValue())!==value) throw new Error(`${id} did not restore governed PROJECT_TASK context`);
