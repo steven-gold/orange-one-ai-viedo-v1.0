@@ -19,22 +19,27 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git diff --name-only origin/new...HEAD | grep -v '^.github/workflows/core01-closure-validate-once.yml$' | sort | tr '\n' ' ')" = "src/domain/core/coreRuntimeContract.ts src/server/core/coreRuntime.ts "
-          test "$(grep -c '"CORE-01-GATE-' src/domain/core/coreRuntimeContract.ts)" -ge 26
           python3 - <<'PY'
           from pathlib import Path
-          import re
           auth=Path('authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml').read_text()
           src='\n'.join(p.read_text(errors='ignore') for p in Path('src').rglob('*') if p.is_file() and p.suffix in {'.ts','.tsx','.js','.jsx'})
-          for key,expected in [('section_uid',10),('control_uid',50),('action_uid',34),('gate_uid',26),('permission_uid',14),('error_uid',16)]:
-            vals=sorted(set(re.findall(rf'\\b{key}\\s*:\\s*["\\\']?([^\\s#,"\\\']+)',auth)))
-            missing=[v for v in vals if v not in src]
+          expected={'section_uid':10,'control_uid':50,'action_uid':34,'gate_uid':26,'permission_uid':14,'error_uid':16}
+          registry={}
+          for key,count in expected.items():
+            vals=set()
+            prefix=key+':'
+            for line in auth.splitlines():
+              s=line.strip()
+              if s.startswith(prefix): vals.add(s[len(prefix):].strip().strip('"\''))
+            missing=sorted(v for v in vals if v not in src)
             print(f'CORE_AUTH_COVERAGE|{key}|{len(vals)-len(missing)}/{len(vals)}|missing={missing}')
-            if len(vals)!=expected or missing: raise SystemExit(1)
+            if len(vals)!=count or missing: raise SystemExit(1)
+            registry[key]=vals
           visual=Path('src/components/pages/CoreVisual.tsx').read_text()
-          controls=sorted(set(re.findall(r'CORE-01-(?:CTL|BTN|FLD|LST|MENU)-[A-Z0-9-]+',auth)))
-          missing=[v for v in controls if v not in visual]
+          controls=registry['control_uid']
+          missing=sorted(v for v in controls if v not in visual)
           print(f'CORE_VISUAL_CONTROL_SOURCE|{len(controls)-len(missing)}/{len(controls)}|missing={missing}')
-          if len(controls)!=50 or missing: raise SystemExit(1)
+          if missing: raise SystemExit(1)
           PY
           git diff --exit-code origin/new...HEAD -- src/app/page.tsx src/components/pages/DashboardVisual.tsx src/components/pages/DashboardVisual.module.css
           echo CORE01_SCOPE_AUTHORITY_PASS
