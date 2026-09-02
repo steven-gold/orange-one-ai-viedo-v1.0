@@ -1,0 +1,113 @@
+name: ACPOS 18-page global seal validation
+on:
+  push:
+    branches: [acpos-global-18page-seal-20260903]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Product audit and typecheck
+        run: |
+          npm ci
+          npm audit --audit-level=high
+          npm run typecheck
+      - name: Global source and workflow hygiene
+        shell: python
+        run: |
+          from pathlib import Path
+          routes={
+            '/':'workspace:WB-01',
+            '/core':'workspace:CORE-01',
+            '/assets':'workspace:ASSET-01',
+            '/video':'workspace:VIDEO-01',
+            '/edit':'workspace:EDIT-01',
+            '/qa':'workspace:QA-01',
+            '/database':'workspace:DB-01',
+            '/strategy':'workspace:STR-01',
+            '/info':'workspace:INFO-01',
+            '/admin/system':'admin:SYS-01',
+            '/admin/accounts':'admin:IAM-01',
+            '/admin/dev':'admin:DEV-01',
+            '/admin/social':'admin:SOC-01',
+            '/admin/erp':'admin:ERP-01',
+            '/admin/aiapi':'admin:AIAPI-01',
+            '/admin/qa-criteria':'admin:SG-02',
+            '/admin/strategy':'admin:STR-01',
+            '/admin/knowledge':'admin:KB-01',
+          }
+          assert len(routes)==18 and len(set(routes.values()))==18
+          source='\n'.join(p.read_text(errors='ignore') for p in Path('src').rglob('*.tsx'))
+          missing=[uid for uid in routes.values() if uid not in source]
+          assert not missing, missing
+          stale=[str(p) for p in Path('.github/workflows').glob('*closure-validation-once.yml')]
+          assert not stale, stale
+          for p in Path('src').rglob('*'):
+            if p.is_file() and p.suffix in {'.ts','.tsx'}:
+              t=p.read_text(errors='ignore')
+              assert '<script' not in t.lower(), f'script tag in {p}'
+          print('GLOBAL_SOURCE_HYGIENE_PASS',len(routes))
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ''
+        run: npm run build
+      - name: Production 18-page runtime truth
+        run: |
+          set -euo pipefail
+          PORT=3291 NEXT_PUBLIC_ACPOS_RUNTIME_MODE= npm run start >/tmp/global-prod.log 2>&1 & pid=$!; trap 'cat /tmp/global-prod.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3291/ >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const routes=[
+            ['/', 'workspace:WB-01'],['/core','workspace:CORE-01'],['/assets','workspace:ASSET-01'],['/video','workspace:VIDEO-01'],['/edit','workspace:EDIT-01'],['/qa','workspace:QA-01'],['/database','workspace:DB-01'],['/strategy','workspace:STR-01'],['/info','workspace:INFO-01'],
+            ['/admin/system','admin:SYS-01'],['/admin/accounts','admin:IAM-01'],['/admin/dev','admin:DEV-01'],['/admin/social','admin:SOC-01'],['/admin/erp','admin:ERP-01'],['/admin/aiapi','admin:AIAPI-01'],['/admin/qa-criteria','admin:SG-02'],['/admin/strategy','admin:STR-01'],['/admin/knowledge','admin:KB-01']
+          ];
+          (async()=>{for(const [route,uid] of routes){const page=await fetch('http://127.0.0.1:3291'+route);if(!page.ok)throw new Error(`production page ${route} ${page.status}`);const res=await fetch('http://127.0.0.1:3291/v1/ui-projections/'+encodeURIComponent(uid));const text=await res.text();if(![200,503].includes(res.status))throw new Error(`production projection ${uid} ${res.status} ${text}`);if(text.includes('"data_classification":"TEST_ONLY"')||text.includes('"synthetic":true')||text.includes('TEST-RUN-'))throw new Error(`TEST_ONLY leaked to production ${uid}`);if(res.status===503&&!text.includes('UI_PROJECTION_RUNTIME_NOT_BOUND'))throw new Error(`unexpected production 503 ${uid}:${text}`);console.log('PROD',uid,res.status)}console.log('GLOBAL_PRODUCTION_TRUTH_PASS')})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Controlled 18-page projection classification
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3292 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/global-controlled-api.log 2>&1 & pid=$!; trap 'cat /tmp/global-controlled-api.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3292/ >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const uids=['workspace:WB-01','workspace:CORE-01','workspace:ASSET-01','workspace:VIDEO-01','workspace:EDIT-01','workspace:QA-01','workspace:DB-01','workspace:STR-01','workspace:INFO-01','admin:SYS-01','admin:IAM-01','admin:DEV-01','admin:SOC-01','admin:ERP-01','admin:AIAPI-01','admin:SG-02','admin:STR-01','admin:KB-01'];
+          (async()=>{for(const uid of uids){const res=await fetch('http://127.0.0.1:3292/v1/ui-projections/'+encodeURIComponent(uid));const text=await res.text();if(res.status!==200)throw new Error(`controlled ${uid} ${res.status} ${text}`);let d;try{d=JSON.parse(text)}catch{throw new Error(`controlled non-json ${uid}`)}const m=d.test_metadata;if(!m||m.data_classification!=='TEST_ONLY'||m.synthetic!==true||m.production_eligible!==false)throw new Error(`controlled classification ${uid}`);console.log('CONTROLLED',uid,d.page_state)}console.log('GLOBAL_CONTROLLED_CLASSIFICATION_PASS')})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled 18-page browser E2E
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: |
+          set -euo pipefail
+          PORT=3293 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/global-browser.log 2>&1 & pid=$!; trap 'cat /tmp/global-browser.log || true; kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3293/ >/dev/null && break || sleep 1; done
+          node <<'NODE'
+          const{chromium}=require('playwright');
+          const routes=[
+            ['/', 'workspace:WB-01'],['/core','workspace:CORE-01'],['/assets','workspace:ASSET-01'],['/video','workspace:VIDEO-01'],['/edit','workspace:EDIT-01'],['/qa','workspace:QA-01'],['/database','workspace:DB-01'],['/strategy','workspace:STR-01'],['/info','workspace:INFO-01'],
+            ['/admin/system','admin:SYS-01'],['/admin/accounts','admin:IAM-01'],['/admin/dev','admin:DEV-01'],['/admin/social','admin:SOC-01'],['/admin/erp','admin:ERP-01'],['/admin/aiapi','admin:AIAPI-01'],['/admin/qa-criteria','admin:SG-02'],['/admin/strategy','admin:STR-01'],['/admin/knowledge','admin:KB-01']
+          ];
+          (async()=>{const b=await chromium.launch({headless:true});for(const width of [1280,1440,1920]){for(const [route,uid] of routes){const p=await b.newPage({viewport:{width,height:1700}});const errors=[];p.on('pageerror',e=>errors.push('pageerror:'+e.message));p.on('console',m=>{if(m.type()==='error')errors.push('console:'+m.text())});await p.goto('http://127.0.0.1:3293'+route,{waitUntil:'networkidle',timeout:45000});await p.waitForSelector(`[data-page-uid="${uid}"]`,{timeout:15000});const state=await p.locator(`[data-page-uid="${uid}"]`).getAttribute('data-page-state');if(state==='LOADING'||state==='ERROR'||state===null)throw new Error(`state ${uid}:${state}`);const overflow=await p.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);if(overflow>0)throw new Error(`overflow ${uid} ${width}:${overflow}`);const body=(await p.locator('body').textContent())||'';if(body.includes('"use client"')||body.includes('function KnowledgeAdminVisual')||body.includes('const CONTROLS'))throw new Error(`source rendered ${uid}`);if(errors.length)throw new Error(`${uid} ${width} ${errors.join('\n')}`);console.log('BROWSER',width,uid,state);await p.close()}}await b.close();console.log('GLOBAL_18PAGE_BROWSER_PASS')})().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid; wait $pid || true; trap - EXIT
+      - name: Final residual and dirty-tree guard
+        run: |
+          ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/components/pages src/domain src/server/testing
+          test -z "$(find .github/workflows -maxdepth 1 -type f -name '*closure-validation-once.yml' -print)"
+          git diff --exit-code
