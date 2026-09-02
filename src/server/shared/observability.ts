@@ -11,6 +11,11 @@ export type ObservabilityEvent = {
   reason_code?: string;
   operation_id?: string;
   outcome?: ObservabilityOutcome;
+  digest?: string;
+  route_path?: string;
+  route_type?: string;
+  router_kind?: string;
+  release_sha?: string;
 };
 
 export type ObservabilityEntry = Readonly<ObservabilityEvent & {
@@ -29,7 +34,8 @@ export function configureObservabilitySink(next: ObservabilitySink | null) {
 function fallbackWrite(entry: ObservabilityEntry) {
   const line = JSON.stringify(entry);
   if (entry.level === "error") console.error(line);
-  else console.warn(line);
+  else if (entry.level === "warn") console.warn(line);
+  else console.info(line);
 }
 
 export async function emitObservability(level: ObservabilityLevel, event: ObservabilityEvent) {
