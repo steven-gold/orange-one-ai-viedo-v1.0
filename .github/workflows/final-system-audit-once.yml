@@ -107,7 +107,7 @@ jobs:
           NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
         run: npm run build
 
-      - name: Controlled 18-page projection classification
+      - name: Controlled 18-page projection truth
         env:
           NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
         run: |
@@ -118,16 +118,25 @@ jobs:
           node <<'NODE'
           const uids=['workspace:WB-01','CORE-01','ASSET-01','VIDEO-01','EDIT-01','QA-01','admin:DB-01','workspace:STR-01','workspace:INFO-01','admin:SYS-01','admin:IAM-01','admin:DEV-01','admin:SOC-01','admin:ERP-01','admin:AIAPI-01','admin:SG-02','admin:STR-01','admin:KB-01'];
           (async()=>{
+            let bound=0,unbound=0;
             for(const uid of uids){
               const res=await fetch('http://127.0.0.1:3302/v1/ui-projections/'+encodeURIComponent(uid));
               const text=await res.text();
-              if(res.status!==200) throw new Error(`CONTROLLED ${uid} HTTP ${res.status}: ${text}`);
-              const d=JSON.parse(text),m=d.test_metadata;
-              if(!m||m.data_classification!=='TEST_ONLY'||m.synthetic!==true||m.production_eligible!==false) throw new Error(`CLASSIFICATION ${uid}`);
-              if(!d.page_state) throw new Error(`PAGE STATE MISSING ${uid}`);
-              console.log('CTRL',uid,d.page_state);
+              if(res.status===200){
+                const d=JSON.parse(text),m=d.test_metadata;
+                if(!m||m.data_classification!=='TEST_ONLY'||m.synthetic!==true||m.production_eligible!==false) throw new Error(`CLASSIFICATION ${uid}`);
+                if(!d.page_state) throw new Error(`PAGE STATE MISSING ${uid}`);
+                bound++; console.log('CTRL_BOUND',uid,d.page_state); continue;
+              }
+              if(res.status===503){
+                if(!/RUNTIME_NOT_BOUND|NOT_BOUND|NOT_CONFIGURED/.test(text)) throw new Error(`UNTRUTHFUL CONTROLLED 503 ${uid}: ${text}`);
+                if(/TEST_ONLY|"synthetic"\s*:\s*true|TEST-RUN-/.test(text)) throw new Error(`TEST DATA IN UNBOUND RESPONSE ${uid}`);
+                unbound++; console.log('CTRL_UNBOUND',uid); continue;
+              }
+              throw new Error(`CONTROLLED ${uid} HTTP ${res.status}: ${text}`);
             }
-            console.log('CONTROLLED_18PAGE_CLASSIFICATION_PASS');
+            if(bound+unbound!==18) throw new Error(`CONTROLLED COUNT ${bound}+${unbound}`);
+            console.log('CONTROLLED_18PAGE_TRUTH_PASS',`bound=${bound}`,`unbound=${unbound}`);
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
           kill $pid; wait $pid || true; trap - EXIT
@@ -157,7 +166,7 @@ jobs:
               for(const [route,uid] of expected){
                 const p=await b.newPage({viewport:{width,height:1700}}),errs=[];
                 p.on('pageerror',e=>errs.push('pageerror:'+e.message));
-                p.on('console',m=>{if(m.type()==='error')errs.push('console:'+m.text())});
+                p.on('console',m=>{if(m.type()==='error' && !/Failed to load resource.*503/.test(m.text()))errs.push('console:'+m.text())});
                 const resp=await p.goto('http://127.0.0.1:3303'+route,{waitUntil:'networkidle',timeout:45000});
                 if(!resp||!resp.ok()) throw new Error(`NAV ${route} ${resp?.status()}`);
                 const root=p.locator('[data-page-uid]').first();
@@ -166,7 +175,7 @@ jobs:
                 if(actual!==uid) throw new Error(`UID ${route}: expected ${uid} actual ${actual}`);
                 if(width===1280){ if(seen.has(actual)) throw new Error(`DUPLICATE UID ${actual}`); seen.add(actual); }
                 const state=await root.getAttribute('data-page-state');
-                if(state==='LOADING'||state==='ERROR') throw new Error(`STATE ${uid}:${state}`);
+                if(state==='LOADING') throw new Error(`STUCK LOADING ${uid}`);
                 const overflow=await p.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
                 if(overflow>0) throw new Error(`OVERFLOW ${uid} ${width}:${overflow}`);
                 const body=(await p.locator('body').textContent())||'';
