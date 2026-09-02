@@ -1,0 +1,53 @@
+name: ASSET-01 runtime closure patch once
+
+on:
+  push:
+    branches:
+      - acpos-asset01-closure-20260902
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-asset01-closure-20260902
+      - name: Guard trigger
+        id: guard
+        run: |
+          msg=$(git log -1 --format=%s)
+          if [ "$msg" = "chore(asset): add one-time runtime closure patch" ]; then echo "run=yes" >> "$GITHUB_OUTPUT"; else echo "run=no" >> "$GITHUB_OUTPUT"; fi
+      - name: Patch controlled classification and fail-closed controls
+        if: steps.guard.outputs.run == 'yes'
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('src/server/testing/controlledAssetTestRuntime.ts')
+          s=p.read_text()
+          needle='    gate_state: gates(),\n  };'
+          assert needle in s
+          s=s.replace(needle,'    gate_state: gates(),\n    test_metadata: TEST_METADATA,\n  };',1)
+          p.write_text(s)
+
+          p=Path('src/components/pages/AssetControlRuntime.tsx')
+          s=p.read_text()
+          s=s.replace('  const enabled = Boolean(binding && action);','  const enabled = Boolean(binding && action && allowed && builderReady);',1)
+          p.write_text(s)
+
+          p=Path('src/components/pages/AssetVisual.tsx')
+          s=p.read_text()
+          needle='      data-registry-valid={registryValid ? "true" : "false"}\n'
+          assert needle in s
+          s=s.replace(needle, needle+'      data-data-classification={state.projection?.test_metadata?.data_classification}\n      data-production-eligible={state.projection?.test_metadata ? String(state.projection.test_metadata.production_eligible) : undefined}\n',1)
+          p.write_text(s)
+      - name: Commit product patch
+        if: steps.guard.outputs.run == 'yes'
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add src/server/testing/controlledAssetTestRuntime.ts src/components/pages/AssetControlRuntime.tsx src/components/pages/AssetVisual.tsx
+          git commit -m "fix(asset): close controlled classification and gate states"
+          git push origin HEAD:acpos-asset01-closure-20260902
