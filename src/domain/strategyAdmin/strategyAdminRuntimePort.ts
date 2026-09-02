@@ -1,3 +1,5 @@
+import { isControlledTestMode } from "@/domain/testing/controlledTestData";
+
 export type StrategyAdminView =
   | "overview"
   | "intelligence"
@@ -17,6 +19,15 @@ export type StrategyAdminPageState =
   | "READ_ONLY"
   | "ARCHIVED";
 
+export type StrategyAdminProjectionTestMetadata = {
+  data_classification: "TEST_ONLY";
+  synthetic: true;
+  test_dataset_id: string;
+  test_run_id: string;
+  created_for_validation: true;
+  production_eligible: false;
+};
+
 export type StrategyAdminProjection = {
   page_state: StrategyAdminPageState | null;
   values: Readonly<Record<string, string>>;
@@ -24,6 +35,7 @@ export type StrategyAdminProjection = {
   states: Readonly<Record<string, string>>;
   action_enabled: Readonly<Record<string, boolean>>;
   selected_resource_id: string | null;
+  test_metadata?: StrategyAdminProjectionTestMetadata;
 };
 
 export type StrategyAdminProjectionResolver = {
@@ -77,6 +89,27 @@ function booleansOnly(value: unknown): Record<string, boolean> {
   return result;
 }
 
+function normalizeTestMetadata(
+  value: unknown,
+): StrategyAdminProjectionTestMetadata | undefined {
+  const metadata = asRecord(value);
+  if (!metadata) return undefined;
+  if (!isControlledTestMode()) {
+    throw new Error("STR_ADMIN_TEST_PROJECTION_FORBIDDEN_IN_PRODUCTION");
+  }
+  if (
+    metadata.data_classification !== "TEST_ONLY" ||
+    metadata.synthetic !== true ||
+    metadata.created_for_validation !== true ||
+    metadata.production_eligible !== false ||
+    typeof metadata.test_dataset_id !== "string" ||
+    typeof metadata.test_run_id !== "string"
+  ) {
+    throw new Error("STR_ADMIN_TEST_PROJECTION_METADATA_INVALID");
+  }
+  return metadata as unknown as StrategyAdminProjectionTestMetadata;
+}
+
 function normalizeStrategyAdminProjection(raw: unknown): StrategyAdminProjection {
   const record = asRecord(raw);
   if (!record) throw new Error("STR_ADMIN_PROJECTION_NOT_OBJECT");
@@ -102,6 +135,9 @@ function normalizeStrategyAdminProjection(raw: unknown): StrategyAdminProjection
       typeof record.selected_resource_id === "string"
         ? record.selected_resource_id
         : null,
+    ...(record.test_metadata
+      ? { test_metadata: normalizeTestMetadata(record.test_metadata) }
+      : {}),
   };
 }
 
