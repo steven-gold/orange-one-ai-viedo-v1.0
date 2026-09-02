@@ -10,7 +10,7 @@ import{isControlledStrategyServerTestMode,readControlledStrategyTestProjection}f
 import{isControlledAiApiServerTestMode,readControlledAiApiTestProjection}from"@/server/testing/controlledAiApiTestRuntime";
 import{isControlledSocServerTestMode,readControlledSocTestProjection}from"@/server/testing/controlledSocTestRuntime";
 import{isControlledErpServerTestMode,readControlledErpTestProjection}from"@/server/testing/controlledErpTestRuntime";
-import{isControlledDbServerTestMode,readControlledDbTestProjection}from"@/server/testing/controlledDbTestTestRuntime";
+import{isControlledDbServerTestMode,readControlledDbTestProjection}from"@/server/testing/controlledDbTestRuntime";
 import{isControlledStrategyWorkspaceServerTestMode,readControlledStrategyWorkspaceProjection}from"@/server/testing/controlledStrategyWorkspaceTestRuntime";
 import{isControlledInfoServerTestMode,readControlledInfoTestProjection}from"@/server/testing/controlledInfoTestRuntime";
 import{isControlledIamServerTestMode,readControlledIamTestProjection}from"@/server/testing/controlledIamTestRuntime";
