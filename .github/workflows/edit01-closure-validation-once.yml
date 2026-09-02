@@ -1,0 +1,178 @@
+name: EDIT-01 closure validation
+
+on:
+  push:
+    branches: [acpos-sequential-closure-20260902]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Authority and source coverage
+        shell: python
+        run: |
+          from pathlib import Path
+          import re, sys
+          auth = Path('authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml').read_text()
+          bindings = Path('src/domain/edit/editControlBindings.ts').read_text()
+          src = '\n'.join(p.read_text(errors='ignore') for p in Path('src').rglob('*') if p.is_file())
+          ids = {
+            'sections': set(re.findall(r'EDIT-01-SEC-[0-9]+', auth)),
+            'controls': set(re.findall(r'"(EDIT-01-[A-Z0-9-]+)":\{"action_uid"', bindings)),
+            'actions': set(re.findall(r'"action_uid":"(EDIT-01-ACT-[A-Z0-9-]+)"', bindings)),
+            'gates': set(re.findall(r'"(?:gate_uid|action_gate_uid)":"(EDIT-01-GATE-[A-Z0-9-]+)"', bindings)),
+            'permissions': set(re.findall(r'"(?:permission_uid|action_permission_uid)":"([A-Z][A-Z0-9_]+)"', bindings)),
+            'errors': set(re.findall(r'EDIT-01-ERR-[A-Z0-9-]+', auth)),
+          }
+          expected = {'sections':16,'controls':160,'actions':124,'gates':25,'permissions':9,'errors':34}
+          failed = False
+          for k,v in ids.items():
+            print(k, len(v))
+            if len(v) != expected[k]:
+              print('COUNT_MISMATCH', k, len(v), expected[k])
+              failed = True
+          for k in ('sections','controls','actions','gates','errors'):
+            missing = sorted(x for x in ids[k] if x not in src)
+            print('source_missing', k, len(missing), missing[:50])
+            if missing:
+              failed = True
+          for token in ['PROJECT_TASK','STANDALONE_UPLOAD','Runtime Business Data','缺值 = —','未列出者=FORBIDDEN']:
+            if token not in auth:
+              print('AUTHORITY_HARD_RULE_MISSING', token)
+              failed = True
+          if failed:
+            sys.exit(1)
+      - name: Production build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
+        run: npm run build
+      - name: Production projection must fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3101 NEXT_PUBLIC_ACPOS_RUNTIME_MODE= npm run start > /tmp/edit-prod.log 2>&1 &
+          pid=$!
+          trap 'kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3101/edit >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/edit-prod-projection.json -w '%{http_code}' http://127.0.0.1:3101/v1/ui-projections/EDIT-01)
+          cat /tmp/edit-prod-projection.json
+          test "$code" = "503"
+          grep -q 'UI_PROJECTION_RUNTIME_NOT_BOUND' /tmp/edit-prod-projection.json
+          ! grep -q 'TEST_ONLY' /tmp/edit-prod-projection.json
+          ! grep -q 'production_eligible' /tmp/edit-prod-projection.json
+          kill $pid
+          wait $pid || true
+          trap - EXIT
+      - name: Controlled build
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: npm run build
+      - name: Install browser test dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Controlled API and browser interactions
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3102 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start > /tmp/edit-controlled.log 2>&1 &
+          pid=$!
+          trap 'kill $pid || true' EXIT
+          for i in {1..60}; do curl -fsS http://127.0.0.1:3102/edit >/dev/null && break || sleep 1; done
+          code=$(curl -sS -o /tmp/edit-controlled-projection.json -w '%{http_code}' http://127.0.0.1:3102/v1/ui-projections/EDIT-01)
+          cat /tmp/edit-controlled-projection.json
+          test "$code" = "200"
+          grep -q '"data_classification":"TEST_ONLY"' /tmp/edit-controlled-projection.json
+          grep -q '"production_eligible":false' /tmp/edit-controlled-projection.json
+          node <<'NODE'
+          const { chromium } = require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const errors=[];
+            const widths=[1280,1440,1920];
+            for(const width of widths){
+              const page=await browser.newPage({viewport:{width,height:900}});
+              page.on('pageerror',e=>errors.push(`pageerror:${width}:${e.message}`));
+              page.on('console',m=>{if(m.type()==='error') errors.push(`console:${width}:${m.text()}`)});
+              const res=await page.goto('http://127.0.0.1:3102/edit',{waitUntil:'networkidle'});
+              if(!res||res.status()!==200) throw new Error(`EDIT route status ${res&&res.status()} at ${width}`);
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+              if(overflow>0) throw new Error(`horizontal overflow ${overflow} at ${width}`);
+              await page.close();
+            }
+            const page=await browser.newPage({viewport:{width:1440,height:900}});
+            page.on('pageerror',e=>errors.push(`pageerror:flow:${e.message}`));
+            await page.goto('http://127.0.0.1:3102/edit',{waitUntil:'networkidle'});
+            const q=id=>page.locator(`[data-control-id="${id}"]`).first();
+            for(const id of ['EDIT-01-FLD-PROJECT','EDIT-01-FLD-TOPIC','EDIT-01-FLD-TASK']){
+              const el=q(id); await el.waitFor();
+              if((await el.evaluate(n=>n.tagName))!=='DIV') throw new Error(`${id} must be readonly in PROJECT_TASK`);
+              if(await el.locator('input,select,textarea').count()) throw new Error(`${id} exposes editable input in PROJECT_TASK`);
+            }
+            const source=q('EDIT-01-CTL-SOURCE-MODE');
+            await source.getByRole('button',{name:'STANDALONE_UPLOAD'}).click();
+            await page.waitForFunction(()=>document.querySelector('[data-control-id="EDIT-01-CTL-SOURCE-MODE"] button[aria-pressed="true"]')?.textContent?.includes('STANDALONE_UPLOAD'));
+            const add=q('EDIT-01-BTN-ADD-MEDIA');
+            if(await add.isDisabled()) throw new Error('Standalone add media stayed disabled');
+            await add.click();
+            await page.waitForFunction(()=>document.body.textContent?.includes('TEST-STANDALONE-MEDIA-001'));
+            const start=q('EDIT-01-BTN-FLOW-START');
+            if(await start.isDisabled()) throw new Error('Standalone Start/Continue stayed disabled after media import');
+            await start.click();
+            await page.waitForFunction(()=>document.body.textContent?.includes('EDIT-01-ST-PAGE-WORKING'));
+            const mediaList=q('EDIT-01-LST-MEDIA');
+            await mediaList.getByRole('button').first().click();
+            const drop=q('EDIT-01-CTL-DROP-TIMELINE');
+            if(await drop.isDisabled()) throw new Error('Timeline drop remained disabled');
+            await drop.click();
+            if((await drop.getAttribute('data-last-action'))!=='true') throw new Error('Timeline drop did not execute action');
+            for(const id of ['EDIT-01-CTL-MINI-TIMELINE','EDIT-01-CTL-RULER','EDIT-01-CTL-PLAYHEAD','EDIT-01-CTL-MARKER-RAIL']){
+              const el=q(id); await el.waitFor();
+              if(await el.isDisabled()) throw new Error(`${id} disabled in working draft`);
+              const tag=await el.evaluate(n=>n.tagName);
+              if(tag==='INPUT') await el.fill('240'); else await el.click({position:{x:Math.max(2,(await el.boundingBox())?.width/2||2),y:4}});
+            }
+            for(const id of ['EDIT-01-FLD-API-PROVIDER','EDIT-01-FLD-API-MODEL','EDIT-01-FLD-VOICE-SCRIPT','EDIT-01-FLD-VOICE-ASSET','EDIT-01-FLD-VOICE-PROVIDER','EDIT-01-FLD-VOICE-MODEL','EDIT-01-FLD-MUSIC-ASSET','EDIT-01-FLD-SFX-ASSET']){
+              const el=q(id); await el.waitFor();
+              const tag=await el.evaluate(n=>n.tagName);
+              if(tag!=='SELECT') throw new Error(`${id} must be selectable in standalone controlled mode; got ${tag}`);
+              if(await el.isDisabled()) throw new Error(`${id} disabled in standalone controlled mode`);
+              const options=await el.locator('option').evaluateAll(os=>os.map(o=>o.value).filter(Boolean));
+              if(!options.length) throw new Error(`${id} has no selectable runtime options`);
+              await el.selectOption(options[0]);
+            }
+            const flowState=await q('EDIT-01-LBL-PAGE-STATE').textContent();
+            if(!flowState?.includes('EDIT-01-ST-PAGE-WORKING')) throw new Error(`unexpected flow state ${flowState}`);
+            await page.close();
+            await browser.close();
+            if(errors.length) throw new Error(errors.join('\n'));
+            console.log('EDIT_BROWSER_INTERACTION_PASS');
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          kill $pid
+          wait $pid || true
+          trap - EXIT
+      - name: Residual and dirty-tree guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -RInE '\b(TODO|FIXME|HACK|STUB)\b|console\.(log|debug)\(' src/domain/edit src/server/testing/controlledEditTestRuntime.ts src/components/pages/EditControlRuntime.tsx
+          git diff --exit-code
