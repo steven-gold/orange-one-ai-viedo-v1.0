@@ -29,7 +29,9 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  output: "standalone",
+  // Next 16.3.x + Vercel's build adapter currently conflicts with standalone output tracing.
+  // Vercel does not consume .next/standalone; keep standalone enabled for Docker/self-hosted builds only.
+  output: process.env.VERCEL ? undefined : "standalone",
   async headers() {
     return [
       {
