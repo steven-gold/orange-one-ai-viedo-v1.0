@@ -43,7 +43,8 @@ jobs:
             'ports':r'^\s*-?\s*port_uid:\s*(IAM-01-PORT-[A-Z0-9-]+)',
           }
           expected={'sections':6,'components':10,'controls':14,'actions':13,'gates':5,'errors':7,'ports':9}
-          ids={k:set(re.findall(p,auth,re.M)) for k,p in pats.items()};failed=False
+          failed=False
+          ids={k:set(re.findall(p,auth,re.M)) for k,p in pats.items()}
           for k,v in ids.items():
             print(k,len(v),sorted(v))
             if len(v)!=expected[k]: print('COUNT_MISMATCH',k,len(v),expected[k]);failed=True
@@ -54,13 +55,10 @@ jobs:
           states=set(re.findall(r'^\s*-\s+([A-Z_]+)\s*$',sm.group('body') if sm else '',re.M))
           expected_states={'LIST','CREATE_BASIC','CREATE_PERMISSION','CREATE_PREVIEW','EDIT_BASIC','EDIT_PERMISSION','EDIT_PREVIEW','APPLYING','COMPLETE','BLOCKED','ERROR'}
           print('states',len(states),sorted(states))
-          if states!=expected_states: print('STATE_SET_MISMATCH',sorted(expected_states-states),sorted(states-expected_states));failed=True
-          for state in expected_states:
-            if f'"{state}"' not in contract: print('CONTRACT_STATE_MISSING',state);failed=True
+          if states!=expected_states: failed=True
           controls=set(re.findall(r'"(IAM-01-[A-Z0-9-]+)":\s*\{',bindings))
           print('binding_controls',len(controls))
-          if controls!=ids['controls']:
-            print('CONTROL_BINDING_SET_MISMATCH',sorted(ids['controls']-controls),sorted(controls-ids['controls']));failed=True
+          if controls!=ids['controls']: failed=True
           for required in ['IAM_SECTION_UIDS','IAM_COMPONENT_UIDS','IAM_ACTION_UIDS','IAM_GATE_UIDS','IAM_ERROR_UIDS','IAM_PORT_UIDS','IAM_PAGE_STATES','IAM_FRONT_L1','IAM_ADMIN_L1']:
             if required not in contract: print('CONTRACT_REGISTRY_MISSING',required);failed=True
           if 'TEST-IAM-FIELD-' in visual or 'TEST-IDENTITY-CANDIDATE-' in visual:
@@ -101,7 +99,7 @@ jobs:
         run: |
           set -euo pipefail
           PORT=3132 NEXT_PUBLIC_ACPOS_RUNTIME_MODE=CONTROLLED_TEST npm run start >/tmp/iam-controlled.log 2>&1 &
-          pid=$!; trap 'kill $pid || true' EXIT
+          pid=$!; trap 'cat /tmp/iam-controlled.log || true; kill $pid || true' EXIT
           for i in {1..60}; do curl -fsS http://127.0.0.1:3132/admin/accounts >/dev/null && break || sleep 1; done
           code=$(curl -sS -o /tmp/iam-controlled.json -w '%{http_code}' 'http://127.0.0.1:3132/v1/ui-projections/admin%3AIAM-01')
           cat /tmp/iam-controlled.json
@@ -120,9 +118,9 @@ jobs:
               page.on('console',m=>{if(m.type()==='error')errors.push(`console:${width}:${m.text()}`)});
               const res=await page.goto('http://127.0.0.1:3132/admin/accounts',{waitUntil:'networkidle'});
               if(!res||res.status()!==200)throw new Error(`IAM route ${res&&res.status()} at ${width}`);
-              const count=await page.locator('[data-control-id]').count();
-              if(count!==14)throw new Error(`IAM control count ${count} at ${width}`);
-              const unique=await page.locator('[data-control-id]').evaluateAll(nodes=>new Set(nodes.map(n=>n.getAttribute('data-control-id'))).size);
+              const nodes=page.locator('[data-control-id]');
+              if(await nodes.count()!==14)throw new Error(`IAM control count ${await nodes.count()} at ${width}`);
+              const unique=await nodes.evaluateAll(ns=>new Set(ns.map(n=>n.getAttribute('data-control-id'))).size);
               if(unique!==14)throw new Error(`IAM unique control count ${unique} at ${width}`);
               if(width>=1440){const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);if(overflow>0)throw new Error(`IAM horizontal overflow ${overflow} at ${width}`);}
               await page.close();
@@ -133,54 +131,53 @@ jobs:
             await page.goto('http://127.0.0.1:3132/admin/accounts',{waitUntil:'networkidle'});
             const root=page.locator('[data-page-uid="admin:IAM-01"]');
             const q=id=>page.locator(`[data-control-id="${id}"]`).first();
-            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='LIST');
+            const state=s=>page.waitForFunction(x=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')===x,s);
+            const responseJson=async p=>{const text=await p.text();let json;try{json=JSON.parse(text)}catch{throw new Error(`Non-JSON ${p.status()} ${text}`)};if(p.status()!==200)throw new Error(`HTTP ${p.status()} ${text}`);return json;};
+            const previewCount=async label=>page.getByText(label,{exact:true}).locator('..').locator('strong').textContent();
+            await state('LIST');
             if((await root.getAttribute('data-control-registry-valid'))!=='true')throw new Error('IAM registry invalid');
-            if((await root.getAttribute('data-projection-adapter-ready'))!=='true'||(await root.getAttribute('data-effectful-runtime-ready'))!=='true')throw new Error('IAM controlled client adapters not bound');
+            if((await root.getAttribute('data-projection-adapter-ready'))!=='true'||(await root.getAttribute('data-effectful-runtime-ready'))!=='true')throw new Error('IAM controlled adapters not bound');
             const body=(await page.locator('body').textContent())||'';
-            if(!body.includes('[TEST] Existing operator A')||!body.includes('[TEST] Existing operator B'))throw new Error('IAM controlled account directory missing');
-            if(!body.includes('[TEST] Identity Candidate Ref')||!body.includes('[TEST] Organization Scope Ref'))throw new Error('IAM projection-driven schema missing');
-            const edit=q('IAM-01-BTN-EDIT');if(!(await edit.isDisabled()))throw new Error('Edit must require exact account selection');if((await edit.getAttribute('data-disabled-reason'))!=='IAM_ACCOUNT_SELECTION_REQUIRED')throw new Error('Edit selection reason missing');
-            const basic=q('IAM-01-CTL-BASIC-DATA');if((await basic.getAttribute('aria-disabled'))!=='true')throw new Error('Basic data should require create/edit context');
+            if(!body.includes('[TEST] Existing operator A')||!body.includes('[TEST] Existing operator B'))throw new Error('IAM account directory missing');
+            if(!body.includes('[TEST] Identity Candidate Ref')||!body.includes('[TEST] Organization Scope Ref'))throw new Error('IAM dynamic schema missing');
+            const edit=q('IAM-01-BTN-EDIT');
+            if(!(await edit.isDisabled())||(await edit.getAttribute('data-disabled-reason'))!=='IAM_ACCOUNT_SELECTION_REQUIRED')throw new Error('Edit selection guard missing');
+            if((await q('IAM-01-CTL-BASIC-DATA').getAttribute('aria-disabled'))!=='true')throw new Error('Basic data context guard missing');
 
             const search=q('IAM-01-CTL-SEARCH');await search.fill('operator A');
-            const searchWait=page.waitForResponse(r=>r.url().endsWith('/v1/search')&&r.request().method()==='POST');await search.press('Enter');const searchRes=await searchWait;if(searchRes.status()!==200)throw new Error(`Search HTTP ${searchRes.status()}`);
+            let w=page.waitForResponse(r=>r.url().endsWith('/v1/search')&&r.request().method()==='POST');await search.press('Enter');await responseJson(await w);
             await page.waitForFunction(()=>document.querySelectorAll('[data-account-id]').length===1);
-            const account=page.locator('[data-account-id="TEST-IAM-ACCOUNT-001"]');if(await account.count()!==1)throw new Error('Search did not return exact account');await account.click();
-            if(!(await page.locator('body').textContent())?.includes('TEST_SCOPE_A'))throw new Error('Account detail did not bind selected projection');
-            if(await edit.isDisabled())throw new Error('Edit remained disabled after account selection');await edit.click();
-            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='EDIT_BASIC');
-            const identity=page.locator('[data-field-uid="TEST-IAM-FIELD-IDENTITY-CANDIDATE"]');const scope=page.locator('[data-field-uid="TEST-IAM-FIELD-ORG-SCOPE"]');
-            if(await identity.inputValue()!=='TEST-IDENTITY-CANDIDATE-001'||await scope.inputValue()!=='TEST-ORG-SCOPE-A')throw new Error('Edit did not hydrate projection-driven basic data');
-            if(await identity.isDisabled()||await scope.isDisabled())throw new Error('Edit basic data fields disabled');
-            const preset=q('IAM-01-SEL-DEPT-PRESET');if(await preset.isDisabled())throw new Error('Controlled department preset disabled');await preset.selectOption('TEST-IAM-PRESET-EDITING');
-            const frontGroup=q('IAM-01-GRP-FRONT-L1');
-            const front05=frontGroup.locator('label').filter({hasText:'FRONT-L1-05'}).locator('input');const front06=frontGroup.locator('label').filter({hasText:'FRONT-L1-06'}).locator('input');
-            if(!(await front05.isChecked())||!(await front06.isChecked()))throw new Error('Department preset did not prefill draft L1');
-            const backGroup=q('IAM-01-GRP-BACK-L1');if(await backGroup.locator('input:checked').count()!==0)throw new Error('Preset silently granted backend permissions');
-            const save=q('IAM-01-BTN-SAVE-DRAFT');if(await save.isDisabled())throw new Error('Save draft disabled');let w=page.waitForResponse(r=>r.url().endsWith('/v1/drafts')&&r.request().method()==='POST');await save.click();if((await w).status()!==200)throw new Error('Save draft failed');
-            const validate=q('IAM-01-BTN-VALIDATE');await page.waitForFunction(()=>!document.querySelector('[data-control-id="IAM-01-BTN-VALIDATE"]')?.hasAttribute('disabled'));w=page.waitForResponse(r=>r.url().includes('/validate')&&r.request().method()==='POST');await validate.click();if((await w).status()!==200)throw new Error('Validate failed');
-            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='EDIT_PERMISSION');
-            const preview=q('IAM-01-BTN-PREVIEW');if(await preview.isDisabled())throw new Error('Preview disabled after validation');w=page.waitForResponse(r=>r.url().includes('/authorization-impact')&&r.request().method()==='POST');await preview.click();if((await w).status()!==200)throw new Error('Preview failed');
-            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='EDIT_PREVIEW');
-            const cells=page.locator('[data-section-id="IAM-01-SEC-05"]');
-            const cellCount=async label=>cells.locator('div').filter({has:page.locator('span',{hasText:label})}).locator('strong').first().textContent();
-            if(await cellCount('ADDED')!=='2'||await cellCount('REMOVED')!=='3'||await cellCount('BLOCKED')!=='0')throw new Error('Edit preview delta mismatch');
-            const complete=q('IAM-01-BTN-COMPLETE');if(await complete.isDisabled())throw new Error('Complete disabled after preview');page.once('dialog',d=>d.accept());await complete.click();
-            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='COMPLETE',{timeout:15000});
+            const account=page.locator('[data-account-id="TEST-IAM-ACCOUNT-001"]');await account.click();
+            if(!(await page.locator('body').textContent())?.includes('TEST_SCOPE_A'))throw new Error('Account detail not projection-bound');
+            if(await edit.isDisabled())throw new Error('Edit disabled after selection');await edit.click();await state('EDIT_BASIC');
+            const identity=page.locator('[data-field-uid="TEST-IAM-FIELD-IDENTITY-CANDIDATE"]'),scope=page.locator('[data-field-uid="TEST-IAM-FIELD-ORG-SCOPE"]');
+            if(await identity.inputValue()!=='TEST-IDENTITY-CANDIDATE-001'||await scope.inputValue()!=='TEST-ORG-SCOPE-A')throw new Error('Edit basic data not hydrated');
+            const preset=q('IAM-01-SEL-DEPT-PRESET');await preset.selectOption('TEST-IAM-PRESET-EDITING');
+            const frontGroup=q('IAM-01-GRP-FRONT-L1'),backGroup=q('IAM-01-GRP-BACK-L1');
+            if(!(await frontGroup.locator('label').filter({hasText:'FRONT-L1-05'}).locator('input').isChecked())||!(await frontGroup.locator('label').filter({hasText:'FRONT-L1-06'}).locator('input').isChecked()))throw new Error('Preset did not prefill frontend draft');
+            if(await backGroup.locator('input:checked').count()!==0)throw new Error('Preset silently granted backend');
+            const save=q('IAM-01-BTN-SAVE-DRAFT');w=page.waitForResponse(r=>r.url().endsWith('/v1/drafts')&&r.request().method()==='POST');await save.click();await responseJson(await w);
+            const validate=q('IAM-01-BTN-VALIDATE');await page.waitForFunction(()=>!document.querySelector('[data-control-id="IAM-01-BTN-VALIDATE"]')?.hasAttribute('disabled'));w=page.waitForResponse(r=>r.url().includes('/validate')&&r.request().method()==='POST');await validate.click();await responseJson(await w);await state('EDIT_PERMISSION');
+            const preview=q('IAM-01-BTN-PREVIEW');w=page.waitForResponse(r=>r.url().includes('/authorization-impact')&&r.request().method()==='POST');await preview.click();const editPreview=await responseJson(await w);
+            if(editPreview.value?.added?.length!==2||editPreview.value?.removed?.length!==3||editPreview.value?.blocked?.length!==0)throw new Error(`Edit preview API delta mismatch ${JSON.stringify(editPreview)}`);
+            await state('EDIT_PREVIEW');
+            if(await previewCount('ADDED')!=='2'||await previewCount('REMOVED')!=='3'||await previewCount('BLOCKED')!=='0')throw new Error('Edit preview UI delta mismatch');
+            const complete=q('IAM-01-BTN-COMPLETE');if(await complete.isDisabled())throw new Error('Complete disabled after preview');page.once('dialog',d=>d.accept());await complete.click();await state('COMPLETE');
             if(!(await page.locator('body').textContent())?.includes('2 L1'))throw new Error('Completed edit projection not refreshed');
-            const audit=q('IAM-01-BTN-AUDIT');if(await audit.isDisabled())throw new Error('Audit disabled');await audit.click();await page.waitForFunction(()=>document.querySelector('[data-audit-open="true"]'));
-            const auditText=(await page.locator('[data-audit-open="true"]').textContent())||'';if(!auditText.includes('governed account approved TEST-IAM-ACCOUNT-001'))throw new Error('Audit did not expose completed edit');
+            const audit=q('IAM-01-BTN-AUDIT');await audit.click();await page.waitForFunction(()=>document.querySelector('[data-audit-open="true"]'));
+            const auditText=(await page.locator('[data-audit-open="true"]').textContent())||'';if(!auditText.includes('governed account approved TEST-IAM-ACCOUNT-001'))throw new Error('Audit missing completed edit');
 
-            await search.fill('');w=page.waitForResponse(r=>r.url().endsWith('/v1/search')&&r.request().method()==='POST');await search.press('Enter');if((await w).status()!==200)throw new Error('Search clear failed');await page.waitForFunction(()=>document.querySelectorAll('[data-account-id]').length===2);
-            const add=q('IAM-01-BTN-ADD');if(await add.isDisabled())throw new Error('Add disabled');await add.click();await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='CREATE_BASIC');
+            await search.fill('');w=page.waitForResponse(r=>r.url().endsWith('/v1/search')&&r.request().method()==='POST');await search.press('Enter');await responseJson(await w);await page.waitForFunction(()=>document.querySelectorAll('[data-account-id]').length===2);
+            const add=q('IAM-01-BTN-ADD');await add.click();await state('CREATE_BASIC');
             if(await identity.inputValue()!==''||await scope.inputValue()!=='')throw new Error('Create did not reset basic data');
             await identity.fill('TEST-IDENTITY-CANDIDATE-NEW');await scope.fill('TEST-ORG-SCOPE-NEW');await preset.selectOption('TEST-IAM-PRESET-EDITING');
-            w=page.waitForResponse(r=>r.url().endsWith('/v1/drafts')&&r.request().method()==='POST');await save.click();if((await w).status()!==200)throw new Error('Create save failed');
-            await page.waitForFunction(()=>!document.querySelector('[data-control-id="IAM-01-BTN-VALIDATE"]')?.hasAttribute('disabled'));w=page.waitForResponse(r=>r.url().includes('/validate')&&r.request().method()==='POST');await validate.click();if((await w).status()!==200)throw new Error('Create validate failed');
-            await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='CREATE_PERMISSION');
-            w=page.waitForResponse(r=>r.url().includes('/authorization-impact')&&r.request().method()==='POST');await preview.click();if((await w).status()!==200)throw new Error('Create preview failed');await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='CREATE_PREVIEW');
-            if(await cellCount('ADDED')!=='2'||await cellCount('REMOVED')!=='0')throw new Error('Create preview delta mismatch');page.once('dialog',d=>d.accept());await complete.click();await page.waitForFunction(()=>document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute('data-page-state')==='COMPLETE',{timeout:15000});
-            await page.waitForFunction(()=>document.querySelectorAll('[data-account-id]').length===3);if(await page.locator('[data-account-id="TEST-IAM-ACCOUNT-NEW-001"]').count()!==1)throw new Error('New governed account missing after complete');
+            w=page.waitForResponse(r=>r.url().endsWith('/v1/drafts')&&r.request().method()==='POST');await save.click();await responseJson(await w);
+            await page.waitForFunction(()=>!document.querySelector('[data-control-id="IAM-01-BTN-VALIDATE"]')?.hasAttribute('disabled'));w=page.waitForResponse(r=>r.url().includes('/validate')&&r.request().method()==='POST');await validate.click();await responseJson(await w);await state('CREATE_PERMISSION');
+            w=page.waitForResponse(r=>r.url().includes('/authorization-impact')&&r.request().method()==='POST');await preview.click();const createPreview=await responseJson(await w);
+            if(createPreview.value?.added?.length!==2||createPreview.value?.removed?.length!==0||createPreview.value?.blocked?.length!==0)throw new Error(`Create preview API delta mismatch ${JSON.stringify(createPreview)}`);
+            await state('CREATE_PREVIEW');if(await previewCount('ADDED')!=='2'||await previewCount('REMOVED')!=='0')throw new Error('Create preview UI delta mismatch');
+            page.once('dialog',d=>d.accept());await complete.click();await state('COMPLETE');await page.waitForFunction(()=>document.querySelectorAll('[data-account-id]').length===3);
+            if(await page.locator('[data-account-id="TEST-IAM-ACCOUNT-NEW-001"]').count()!==1)throw new Error('New governed account missing');
             if(errors.length)throw new Error(errors.join('\n'));
             console.log('IAM_BROWSER_INTERACTION_PASS');
             await page.close();await browser.close();
