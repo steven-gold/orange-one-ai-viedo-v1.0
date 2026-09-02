@@ -1,8 +1,19 @@
+import { isControlledTestMode } from "@/domain/testing/controlledTestData";
+
 export type ErpFormField = {
   key: string;
   type: "text" | "number" | "select";
   required: boolean;
   options?: readonly string[];
+};
+
+export type ErpProjectionTestMetadata = {
+  data_classification: "TEST_ONLY";
+  synthetic: true;
+  test_dataset_id: string;
+  test_run_id: string;
+  created_for_validation: true;
+  production_eligible: false;
 };
 
 export type ErpNormalizedProjection = {
@@ -11,11 +22,13 @@ export type ErpNormalizedProjection = {
   gate_state: Readonly<Record<string,boolean>>;
   selected: Readonly<Record<string,string>>;
   form_schemas: Readonly<Record<string,readonly ErpFormField[]>>;
+  test_metadata?: ErpProjectionTestMetadata;
 };
 
 export type ErpProjectionResolver = { resolve: (raw: unknown) => ErpNormalizedProjection | Promise<ErpNormalizedProjection> };
 let resolver: ErpProjectionResolver | null = null;
 export function configureErpProjectionResolver(next: ErpProjectionResolver){ resolver = next; }
+export function isErpProjectionResolverBound(){ return resolver !== null; }
 
 function asRecord(value: unknown): Record<string,unknown> | null {
   return typeof value === "object" && value !== null && !Array.isArray(value) ? value as Record<string,unknown> : null;
@@ -40,6 +53,18 @@ function normalizeFormSchemas(value: unknown): Record<string,readonly ErpFormFie
   return result;
 }
 
+function normalizeTestMetadata(value: unknown): ErpProjectionTestMetadata | undefined {
+  const metadata = asRecord(value);
+  if (!metadata) return undefined;
+  if (metadata.data_classification !== "TEST_ONLY") throw new Error("ERP_PROJECTION_CLASSIFICATION_INVALID");
+  if (!isControlledTestMode()) throw new Error("ERP_TEST_PROJECTION_FORBIDDEN_IN_PRODUCTION");
+  if (
+    metadata.synthetic !== true || metadata.created_for_validation !== true || metadata.production_eligible !== false ||
+    typeof metadata.test_dataset_id !== "string" || typeof metadata.test_run_id !== "string"
+  ) throw new Error("ERP_TEST_PROJECTION_METADATA_INVALID");
+  return metadata as unknown as ErpProjectionTestMetadata;
+}
+
 export function normalizeErpProjection(raw: unknown): ErpNormalizedProjection {
   let root = asRecord(raw) ?? {};
   const nested = asRecord(root.value);
@@ -53,12 +78,14 @@ export function normalizeErpProjection(raw: unknown): ErpNormalizedProjection {
   for (const [key,value] of Object.entries(valuesRaw)) if (typeof value === "string") values[key] = value;
   for (const [key,value] of Object.entries(gatesRaw)) if (typeof value === "boolean") gate_state[key] = value;
   for (const [key,value] of Object.entries(selectedRaw)) if (typeof value === "string") selected[key] = value;
+  const test_metadata = normalizeTestMetadata(root.test_metadata);
   return {
     page_state: typeof root.page_state === "string" ? root.page_state : null,
     values,
     gate_state,
     selected,
     form_schemas: normalizeFormSchemas(root.form_schemas),
+    ...(test_metadata ? { test_metadata } : {}),
   };
 }
 
