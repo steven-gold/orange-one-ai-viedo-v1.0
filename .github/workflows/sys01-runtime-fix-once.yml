@@ -1,0 +1,79 @@
+name: SYS-01 controlled projection closure patch
+
+on:
+  push:
+    branches:
+      - acpos-sys01-closure-20260903
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: acpos-sys01-closure-20260903
+      - name: Guard
+        id: guard
+        run: |
+          msg=$(git log -1 --format=%s)
+          if [ "$msg" = "chore(sys): add one-time controlled projection closure patch" ]; then echo "run=yes" >> "$GITHUB_OUTPUT"; else echo "run=no" >> "$GITHUB_OUTPUT"; fi
+      - name: Patch SYS controlled runtime
+        if: steps.guard.outputs.run == 'yes'
+        shell: python
+        run: |
+          from pathlib import Path
+
+          Path('src/server/testing/controlledSystemTestRuntime.ts').write_text('''import{isControlledTestMode}from"@/domain/testing/controlledTestData";\nimport type{SystemNormalizedProjection}from"@/domain/system/systemProjectionPort";\nconst TEST_METADATA={data_classification:"TEST_ONLY",synthetic:true,test_dataset_id:"TEST-SYS-01",test_run_id:"TEST-RUN-SYS-CONTROLLED-01",created_for_validation:true,production_eligible:false}as const;\nexport function isControlledSystemServerTestMode(){return isControlledTestMode();}\nexport function readControlledSystemTestProjection():SystemNormalizedProjection{\n return{page_state:"READY",system_change_id:"TEST-SYS-CHANGE-001",conversation_id:"TEST-SYS-CONVERSATION-001",thread_id:"TEST-SYS-THREAD-001",branch_id:"TEST-SYS-BRANCH-001",multi_ai_route_available:true,values:{current_system_version:"ACPOS_v1.0.x · TEST_ONLY",current_goal:"Validate SYS-01 controlled presentation",scope:"admin:SYS-01",candidate_ref:"—",context_snapshot_ref:"TEST-SYS-CONTEXT-SNAPSHOT-001",dependency_graph_ref:"TEST-SYS-DEPENDENCY-GRAPH-001",latest_context_fingerprint:"TEST-SHA256-SYS-CONTEXT-001"},test_metadata:TEST_METADATA};\n}\n''')
+
+          p=Path('src/domain/system/systemProjectionPort.ts')
+          p.write_text('''import{isControlledTestMode}from"@/domain/testing/controlledTestData";\nexport type SystemProjectionTestMetadata={data_classification:"TEST_ONLY";synthetic:true;test_dataset_id:string;test_run_id:string;created_for_validation:true;production_eligible:false};\nexport type SystemNormalizedProjection={page_state:"READY"|"EMPTY"|"ERROR/BLOCKED";system_change_id:string|null;conversation_id:string|null;thread_id:string|null;branch_id:string|null;multi_ai_route_available:boolean;values:Record<string,string>;test_metadata?:SystemProjectionTestMetadata};\nexport type SystemProjectionResult=|{ok:true;projection:SystemNormalizedProjection;correlation_id:string|null}|{ok:false;status:number;reason_code:string;correlation_id:string|null};\nfunction rec(v:unknown):Record<string,unknown>|null{return v&&typeof v==="object"&&!Array.isArray(v)?v as Record<string,unknown>:null;}\nfunction nullable(v:unknown){return v===null||typeof v==="string";}\nfunction normalize(raw:unknown):SystemNormalizedProjection|null{const r=rec(raw);if(!r)return null;if(!(r.page_state==="READY"||r.page_state==="EMPTY"||r.page_state==="ERROR/BLOCKED")||!nullable(r.system_change_id)||!nullable(r.conversation_id)||!nullable(r.thread_id)||!nullable(r.branch_id)||typeof r.multi_ai_route_available!=="boolean")return null;const values=rec(r.values);if(!values||!Object.values(values).every(x=>typeof x==="string"))return null;let test_metadata:SystemProjectionTestMetadata|undefined;if(r.test_metadata!==undefined){const m=rec(r.test_metadata);if(!m||m.data_classification!=="TEST_ONLY"||m.synthetic!==true||typeof m.test_dataset_id!=="string"||typeof m.test_run_id!=="string"||m.created_for_validation!==true||m.production_eligible!==false||!isControlledTestMode())return null;test_metadata=m as unknown as SystemProjectionTestMetadata;}return{page_state:r.page_state,system_change_id:r.system_change_id as string|null,conversation_id:r.conversation_id as string|null,thread_id:r.thread_id as string|null,branch_id:r.branch_id as string|null,multi_ai_route_available:r.multi_ai_route_available,values:values as Record<string,string>,test_metadata};}\nexport async function readSystemProjection(signal?:AbortSignal):Promise<SystemProjectionResult>{try{const response=await fetch("/v1/ui-projections/admin%3ASYS-01",{method:"GET",cache:"no-store",signal,headers:{accept:"application/json"}}),correlation_id=response.headers.get("x-correlation-id"),raw:unknown=await response.json().catch(()=>null);if(!response.ok){const body=rec(raw);return{ok:false,status:response.status,reason_code:typeof body?.reason_code==="string"?body.reason_code:"UI_PROJECTION_READ_FAILED",correlation_id};}const projection=normalize(raw);return projection?{ok:true,projection,correlation_id}:{ok:false,status:503,reason_code:"SYS_PROJECTION_CONTRACT_REJECTED",correlation_id};}catch{return{ok:false,status:503,reason_code:"UI_PROJECTION_READ_FAILED",correlation_id:null};}}\n''')
+
+          p=Path('src/server/shared/uiProjectionRuntime.ts')
+          s=p.read_text()
+          needle='import{isControlledIamServerTestMode,readControlledIamTestProjection}from"@/server/testing/controlledIamTestRuntime";'
+          assert needle in s
+          s=s.replace(needle,needle+'\nimport{isControlledSystemServerTestMode,readControlledSystemTestProjection}from"@/server/testing/controlledSystemTestRuntime";',1)
+          needle='function controlledIamProjection(r:UiProjectionRequest){if(r.page_uid!=="admin:IAM-01"||!isControlledIamServerTestMode())return null;return{ok:true as const,value:readControlledIamTestProjection(),correlation_id:r.correlation_id};}'
+          assert needle in s
+          s=s.replace(needle,needle+'\nfunction controlledSystemProjection(r:UiProjectionRequest){if(r.page_uid!=="admin:SYS-01"||!isControlledSystemServerTestMode())return null;return{ok:true as const,value:readControlledSystemTestProjection(),correlation_id:r.correlation_id};}',1)
+          needle='const iam=controlledIamProjection(request);if(iam)return iam;return{ok:false as const,status:503,reason_code:"UI_PROJECTION_RUNTIME_NOT_BOUND",correlation_id:request.correlation_id};'
+          assert needle in s
+          s=s.replace(needle,'const iam=controlledIamProjection(request);if(iam)return iam;const sys=controlledSystemProjection(request);if(sys)return sys;return{ok:false as const,status:503,reason_code:"UI_PROJECTION_RUNTIME_NOT_BOUND",correlation_id:request.correlation_id};',1)
+          p.write_text(s)
+
+          p=Path('src/components/pages/SystemVisual.tsx')
+          s=p.read_text()
+          s=s.replace('import { readSystemProjection } from "@/domain/system/systemProjectionPort";','import { readSystemProjection, type SystemNormalizedProjection } from "@/domain/system/systemProjectionPort";',1)
+          old='''type ProjectionState =\n  | { status: "LOADING"; reason_code: null; correlation_id: null }\n  | { status: "READY"; reason_code: null; correlation_id: string | null }\n  | { status: "BLOCKED"; reason_code: string; correlation_id: string | null };'''
+          new='''type ProjectionState =\n  | { status: "LOADING"; reason_code: null; correlation_id: null; value:null }\n  | { status: "READY"; reason_code: null; correlation_id: string | null; value:SystemNormalizedProjection }\n  | { status: "BLOCKED"; reason_code: string; correlation_id: string | null; value:null };'''
+          assert old in s
+          s=s.replace(old,new,1)
+          s=s.replace('useState<ProjectionState>({ status: "LOADING", reason_code: null, correlation_id: null })','useState<ProjectionState>({ status: "LOADING", reason_code: null, correlation_id: null, value:null })',1)
+          old='''      if (result.ok) {\n        setProjection({ status: "READY", reason_code: null, correlation_id: result.correlation_id });\n        return;\n      }\n      setProjection({ status: "BLOCKED", reason_code: result.reason_code, correlation_id: result.correlation_id });'''
+          new='''      if (result.ok) {\n        dispatch({type:"BIND_CONTEXT",system_change_id:result.projection.system_change_id,conversation_id:result.projection.conversation_id,thread_id:result.projection.thread_id,branch_id:result.projection.branch_id});\n        setProjection({ status: "READY", reason_code: null, correlation_id: result.correlation_id, value:result.projection });\n        return;\n      }\n      setProjection({ status: "BLOCKED", reason_code: result.reason_code, correlation_id: result.correlation_id, value:null });'''
+          assert old in s
+          s=s.replace(old,new,1)
+          s=s.replace('const multiAiRouteReady = false;','const multiAiRouteReady = projection.status === "READY" && projection.value.multi_ai_route_available;',1)
+          s=s.replace('data-page-state="EMPTY"','data-page-state={projection.status === "READY" ? projection.value.page_state : projection.status === "BLOCKED" ? "ERROR/BLOCKED" : "EMPTY"}',1)
+          needle='data-effectful-runtime-ready="false"'
+          assert needle in s
+          s=s.replace(needle,'data-effectful-runtime-ready="false"\n      data-data-classification={projection.status === "READY" ? projection.value.test_metadata?.data_classification : undefined}\n      data-production-eligible={projection.status === "READY" && projection.value.test_metadata ? String(projection.value.test_metadata.production_eligible) : undefined}',1)
+          s=s.replace('<DataRow label={t("systemVersion")} />','<DataRow label={t("systemVersion")} value={projection.status === "READY" ? projection.value.values.current_system_version ?? DASH : DASH} />',1)
+          s=s.replace('<DataRow label={t("goal")} />','<DataRow label={t("goal")} value={projection.status === "READY" ? projection.value.values.current_goal ?? DASH : DASH} />',1)
+          s=s.replace('<DataRow label={t("scope")} />','<DataRow label={t("scope")} value={projection.status === "READY" ? projection.value.values.scope ?? DASH : DASH} />',1)
+          s=s.replace('<DataRow label={t("candidateRef")} />','<DataRow label={t("candidateRef")} value={projection.status === "READY" ? projection.value.values.candidate_ref ?? DASH : DASH} />',1)
+          s=s.replace('<DataRow label="context_snapshot_ref" />','<DataRow label="context_snapshot_ref" value={projection.status === "READY" ? projection.value.values.context_snapshot_ref ?? DASH : DASH} />',1)
+          s=s.replace('<DataRow label="dependency_graph_ref" />','<DataRow label="dependency_graph_ref" value={projection.status === "READY" ? projection.value.values.dependency_graph_ref ?? DASH : DASH} />',1)
+          s=s.replace('<DataRow label="latest_context_fingerprint" />','<DataRow label="latest_context_fingerprint" value={projection.status === "READY" ? projection.value.values.latest_context_fingerprint ?? DASH : DASH} />',1)
+          p.write_text(s)
+      - name: Commit patch
+        if: steps.guard.outputs.run == 'yes'
+        run: |
+          git config user.name "steven-gold"
+          git config user.email "proorangeone@gmail.com"
+          git add src/server/testing/controlledSystemTestRuntime.ts src/domain/system/systemProjectionPort.ts src/server/shared/uiProjectionRuntime.ts src/components/pages/SystemVisual.tsx
+          git commit -m "fix(sys): close controlled projection context binding"
+          git push origin HEAD:acpos-sys01-closure-20260903
