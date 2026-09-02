@@ -214,6 +214,8 @@ function AssetVisualBody() {
       data-authority-components="16"
       data-authority-controls="85"
       data-registry-valid={registryValid ? "true" : "false"}
+      data-data-classification={state.projection?.test_metadata?.data_classification}
+      data-production-eligible={state.projection?.test_metadata ? String(state.projection.test_metadata.production_eligible) : undefined}
     >
       <section className={styles.contextBar} data-section-id="ASSET-01-SEC-01" data-visual-uid="ASSET-01-VIS-CONTEXT">
         <div className={styles.contextGrid} data-component-uid="ASSET-01-CMP-CONTEXT">

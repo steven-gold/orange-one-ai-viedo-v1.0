@@ -203,6 +203,7 @@ export function readControlledAssetTestProjection(): AssetNormalizedProjection {
       ],
     },
     gate_state: gates(),
+    test_metadata: TEST_METADATA,
   };
 }
 

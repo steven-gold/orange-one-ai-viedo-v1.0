@@ -248,7 +248,7 @@ export function AssetRuntimeControl({ id, kind }: { id: string; kind: AssetVisua
   const local = Boolean(action && LOCAL.has(action));
   const formal = Boolean(action && !LOCAL.has(action));
   const builderReady = !formal || isAssetRequestBuilderBound();
-  const enabled = Boolean(binding && action);
+  const enabled = Boolean(binding && action && allowed && builderReady);
   const busy = state.busy_action !== null;
   const common = {
     "data-control-id": id,
