@@ -24,7 +24,7 @@ function transition(input: DevCommandInput): DevNormalizedProjection | null {
   if (!binding || binding.action_uid !== input.action_uid || current.gate_state[binding.gate_uid as keyof typeof current.gate_state] !== true) return null;
   const next = clone(current);
   const gates = { ...next.gate_state };
-  const values = { ...next.values, last_action_uid: input.action_uid };
+  const values: Record<string, string> = { ...next.values, last_action_uid: input.action_uid };
   switch (input.action_uid) {
     case "DEV-01-ACT-DISCOVERY-START": next.run_status = "RUNNING"; gates["DEV-01-GATE-DISCOVERY-START"] = false; gates["DEV-01-GATE-DISCOVERY-RUNNING"] = true; gates["DEV-01-GATE-DISCOVERY-PAUSED"] = false; break;
     case "DEV-01-ACT-DISCOVERY-PAUSE": next.run_status = "PAUSED"; gates["DEV-01-GATE-DISCOVERY-RUNNING"] = false; gates["DEV-01-GATE-DISCOVERY-PAUSED"] = true; break;
