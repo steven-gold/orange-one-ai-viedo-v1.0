@@ -122,8 +122,11 @@ export async function executeControlledEditDepartmentOperation(request:Departmen
     else if(state.stage_uid==="EDIT-01-STAGE-03-SYNC"){state.stage_uid="EDIT-01-STAGE-04-FINALIZE";state.stage_phase="READY";state.page_state_uid="EDIT-01-ST-PAGE-WORKING";}
     return ok(request.correlation_id,{decision:"CONFIRM",stage_uid:state.stage_uid});
   }
-  if(request.operation_id==="consumeVideoHandoff")return ok(request.correlation_id,{source_handoff_ref:"TEST-VIDEO-EDIT-HANDOFF-001"});
-  if(request.operation_id==="returnBlueprintCorrection")return ok(request.correlation_id,{return_ref:"TEST-EDIT-BLUEPRINT-RETURN-001"});
-  if(request.operation_id==="createProjectSnapshot")return ok(request.correlation_id,{snapshot_ref:"TEST-EDIT-SNAPSHOT-001"});
+  if(request.operation_id==="createDepartmentHandoff"){
+    const payload=request.payload&&typeof request.payload==="object"?request.payload as Record<string,unknown>:{};
+    const direction=payload.direction;
+    if(direction==="RETURN_BLUEPRINT_CORRECTION")return ok(request.correlation_id,{handoff_ref:"TEST-EDIT-BLUEPRINT-RETURN-001",direction});
+    return ok(request.correlation_id,{handoff_ref:"TEST-VIDEO-EDIT-HANDOFF-001",direction:typeof direction==="string"?direction:"VIDEO_TO_EDIT"});
+  }
   return fail(request.correlation_id,"EDIT-01-ERR-STAGE-001","CONTROLLED_EDIT_OPERATION_NOT_SUPPORTED");
 }
