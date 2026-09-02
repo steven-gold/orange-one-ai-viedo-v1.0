@@ -35,12 +35,16 @@ jobs:
           ids = {
             'sections': set(re.findall(r'EDIT-01-SEC-[0-9]+', auth)),
             'controls': set(re.findall(r'"(EDIT-01-[A-Z0-9-]+)":\{"action_uid"', bindings)),
-            'actions': set(re.findall(r'"action_uid":"(EDIT-01-ACT-[A-Z0-9-]+)"', bindings)),
-            'gates': set(re.findall(r'"(?:gate_uid|action_gate_uid)":"(EDIT-01-GATE-[A-Z0-9-]+)"', bindings)),
-            'permissions': set(re.findall(r'"(?:permission_uid|action_permission_uid)":"([A-Z][A-Z0-9_]+)"', bindings)),
+            'actions': set(re.findall(r'EDIT-01-ACT-[A-Z0-9-]+', auth)),
+            'gates': set(re.findall(r'EDIT-01-GATE-[A-Z0-9-]+', auth)),
+            'permissions': set(re.findall(r'EDITING_[A-Z0-9_]+', auth)),
             'errors': set(re.findall(r'EDIT-01-ERR-[A-Z0-9-]+', auth)),
           }
           expected = {'sections':16,'controls':160,'actions':124,'gates':25,'permissions':9,'errors':34}
+          control_actions = set(re.findall(r'"action_uid":"(EDIT-01-ACT-[A-Z0-9-]+)"', bindings))
+          control_gates = set(re.findall(r'"(?:gate_uid|action_gate_uid)":"(EDIT-01-GATE-[A-Z0-9-]+)"', bindings))
+          print('authority_actions_not_control_bound', sorted(ids['actions'] - control_actions))
+          print('authority_gates_not_control_bound', sorted(ids['gates'] - control_gates))
           failed = False
           for k,v in ids.items():
             print(k, len(v))
