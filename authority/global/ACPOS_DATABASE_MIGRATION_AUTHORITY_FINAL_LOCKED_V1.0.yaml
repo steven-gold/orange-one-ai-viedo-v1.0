@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0010-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0012-APPLIED-VERIFIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -887,6 +887,34 @@ staging_0010_verification:
   blank_layer_names: 0
   layer_name_nullable: false
   unvalidated_constraints: 0
+staging_0011_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0011_correction_runtime_closure.sql
+  payload_sha256: fd40c4f92763cb80e5ba909c6d492298909c4d74c79cfaf03c35460c7be76e4f
+  approval_ref: CR-R9-0011
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  execution_mode: SINGLE_TRANSACTION_5_STATEMENTS
+  migration_history_rows: 1
+  runtime_rows_total: 0
+  unvalidated_constraints: 0
+  clean_schema_diff_against_batch_baseline: EMPTY
+staging_0012_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0012_editing_voice_runtime_closure.sql
+  payload_sha256: b13a7142399c6308b0be4c393f758d4523594ceb427d05d067815a6c21f26e7d
+  approval_ref: CR-R9-0012
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  execution_mode: SINGLE_TRANSACTION_4_STATEMENTS
+  migration_history_rows: 1
+  runtime_rows_total: 0
+  unvalidated_constraints: 0
+  clean_schema_diff_against_batch_baseline: EMPTY
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -919,7 +947,13 @@ execution_gates:
   0010_state: APPLIED_VERIFIED
   0010_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
   0010_staging_execution: COMPLETE_VERIFIED
-  0011_state: PENDING_0011_OWN_GATES
+  0011_state: APPLIED_VERIFIED
+  0011_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0011_staging_execution: COMPLETE_VERIFIED
+  0012_state: APPLIED_VERIFIED
+  0012_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0012_staging_execution: COMPLETE_VERIFIED
+  0013_state: PENDING_0013_OWN_GATES
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
