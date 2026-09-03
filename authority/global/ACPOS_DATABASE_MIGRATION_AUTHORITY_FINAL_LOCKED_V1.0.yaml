@@ -781,6 +781,26 @@ staging_0008_verification:
   unvalidated_constraints: 0
   clean_schema_diff_against_restore_point: EMPTY
   unexpected_schema_drift: 0
+batch_remaining_migrations_approval:
+  status: APPROVED_CONDITIONAL_ON_OWN_GATE_PASS
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  scope:
+  - CR-R9-0009
+  - CR-R9-0010
+  - CR-R9-0011
+  - CR-R9-0012
+  - CR-R9-0013
+  - CR-R9-0014
+  - CR-R9-0015
+  rule: each migration may apply to staging only after its own checksum, preflight and temporary validation PASS; stop immediately on any failure
+cr_r9_0009_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-R9-0009
+  approved_scope: APPLY_VALIDATED_0009_TO_STAGING_ONLY
+  pre_0009_restore_branch_id: br-empty-cake-b3bdnb47
 staging_0009_preflight:
   status: PASS_PENDING_HUMAN_APPROVAL
   verified_on: '2026-09-04'
@@ -856,9 +876,9 @@ execution_gates:
   0008_state: APPLIED_VERIFIED
   0008_temporary_execution: PASS
   0008_staging_execution: COMPLETE_VERIFIED
-  0009_state: TEMP_VALIDATION_PASS_PENDING_CR_R9_0009_STAGING_APPROVAL
+  0009_state: STAGING_APPROVED_PENDING_EXECUTION
   0009_temporary_execution: PASS
-  0009_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_CR_R9_0009_STAGING_APPROVAL
+  0009_staging_execution: APPROVED_PENDING_EXECUTION
   0010_state: BLOCKED_PENDING_0009
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
