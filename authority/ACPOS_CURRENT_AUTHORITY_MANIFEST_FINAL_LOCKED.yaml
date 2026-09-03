@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0002-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0003-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -17,6 +17,8 @@ current_authority_set:
   - authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml
   - authority/global/ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml
   - authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+  permission:
+  - 06_permission/account_permission_catalog.yaml
   pages:
   - authority/pages/workspace/WB-01/ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml
   - authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
@@ -65,7 +67,14 @@ cross_authority_bindings:
     0002_approval_ref: CR-SCHEMA-0002
     0002_restore_branch_id: br-restless-forest-b37es1u4
     0002_validation_branch_id: br-green-water-b3is6ygq
-    0003_gate: BLOCKED_PENDING_0003_OWN_GATES
+    0003_gate: TEMP_VALIDATION_PASS_PENDING_CR_AUTH_0003_STAGING_APPROVAL
+    0003_payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+    0003_catalog_path: 06_permission/account_permission_catalog.yaml
+    0003_catalog_git_blob_sha: bf9081eae472785d260bddeb3860d2f0f0c38b9d
+    0003_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
+    0003_validation_branch_id: br-rapid-cherry-b325q8fm
+    0003_validation_projection_sha256: 745b716a814be0c55a2851dd82c5b3eaaf9dc07534cfcb03abc357d45d94b98c
+    0003_staging_execution: NOT_EXECUTED_REQUIRES_EXPLICIT_HUMAN_APPROVAL
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
@@ -121,6 +130,7 @@ repository_layout:
   pages: authority/pages/
   reference_docs: docs/reference/
   migrations: database/migrations/
+  permission: 06_permission/
 single_source_rules:
 - No second website construction governance authority.
 - No second i18n translation authority.
@@ -128,6 +138,7 @@ single_source_rules:
 - No second database migration authority, migration directory or checksum manifest.
 - No second Global Visual authority.
 - No second Navigation/IAM L1 authority.
+- No second Account Permission Catalog; Current catalog path is 06_permission/account_permission_catalog.yaml.
 - No second Knowledge page.
 - No second external data acquisition/crawler runtime.
 - No second AI API/provider router.

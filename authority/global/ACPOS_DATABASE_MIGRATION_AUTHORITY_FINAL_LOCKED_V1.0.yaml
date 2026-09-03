@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0003-CORRECTION-CODED-PENDING-CATALOG-MATERIALIZATION-AND-TEMP-VALIDATION
+  revision: 2026-09-04-DATABASE-MIGRATION-0003-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -38,7 +38,11 @@ artifact_bindings:
   bootstrap_migration: database/migrations/0001_canonical_schema.sql
   checksum_manifest: database/migrations/migration_checksum_manifest.yaml
   account_permission_catalog_target: 06_permission/account_permission_catalog.yaml
-  account_permission_catalog_repository_status: PENDING_MATERIALIZATION
+  account_permission_catalog_repository_status: MATERIALIZED_VERIFIED
+  account_permission_catalog_git_blob_sha: bf9081eae472785d260bddeb3860d2f0f0c38b9d
+  account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
+  account_permission_catalog_bytes: 2762474
+  account_permission_catalog_lines: 79399
   materialized_migration_count: 15
 correction_evidence:
   diagnostic_environment: Neon PostgreSQL 15.19 temporary branch
@@ -152,8 +156,8 @@ staging_0002_verification:
   migration_history_checksum: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
   migration_history_approval_ref: CR-SCHEMA-0002
   schema_diff_against_restore_point: only expected 0002 trigger functions and triggers; no unexpected drift
-staging_0003_preflight:
-  status: BLOCKED_AUTHORITY_CORRECTION_REQUIRED
+staging_0003_pre_correction_preflight:
+  status: HISTORICAL_BLOCKER_RESOLVED_BY_APPROVED_0003_MINIMAL_CORRECTION
   verified_on: '2026-09-04'
   migration_id: 0003_account_permission_authorization
   payload_sha256: 14dbb9540b01ccb33e2f6be3a1e8eac3c8fde5b0216604c86be25ef57dbd6471
@@ -246,10 +250,14 @@ account_permission_catalog_materialization:
   local_materialized_yaml_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   resource_total: 3650
   semantic_roundtrip_equal_to_source: true
-  repository_materialization_status: PENDING
+  repository_materialization_status: PASS
+  repository_git_blob_sha: bf9081eae472785d260bddeb3860d2f0f0c38b9d
+  repository_byte_size: 2762474
+  repository_line_count: 79399
+  repository_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   staging_import_status: NOT_EXECUTED
 0003_preimport_artifact:
-  status: GENERATED_CHECKSUM_VERIFIED_NOT_EXECUTED
+  status: TEMPORARY_VALIDATION_PASS
   source_catalog_contract_id: ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
   row_count: 3648
   excluded_resource_type: SENSITIVE_PERMISSION
@@ -257,7 +265,43 @@ account_permission_catalog_materialization:
   sql_byte_size: 815589
   sql_sha256: 0d5348e568c6179bdfa450a599eb13cace5352983572ffb8c5682add71ddb3f0
   target: TEMPORARY_VALIDATION_BRANCH_ONLY_BEFORE_0003
-  database_execution_status: NOT_EXECUTED
+  database_execution_status: TEMPORARY_VALIDATION_PASS
+temporary_0003_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0003-account-permission-validate-20260904
+  temporary_branch_id: br-rapid-cherry-b325q8fm
+  database_name: acpos_staging
+  source_migration: database/migrations/0003_account_permission_authorization.sql
+  payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  execution_mode: PREIMPORT_THEN_SINGLE_TRANSACTION_35_STATEMENTS
+  preimport_rows: 3648
+  sensitive_rows_added_by_0003: 2
+  final_permission_resource_rows: 3650
+  unique_resource_ids: 3650
+  unique_resource_keys: 3650
+  missing_parent_resource_keys: 0
+  projection_payload_bytes: 572915
+  projection_sha256: 745b716a814be0c55a2851dd82c5b3eaaf9dc07534cfcb03abc357d45d94b98c
+  migration_history_rows: 1
+  migration_history_checksum: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  migration_history_approval_ref: CR-AUTH-0003
+  approval_function_present: true
+  approval_trigger_present: true
+  legacy_role_tables_present: false
+  helper_cleanup:
+    approved_by: HUMAN_USER
+    transport_table_present: false
+    cipher_table_present: false
+    uuid_ossp_present: false
+    status: PASS
+  clean_schema_diff_against_staging:
+  - permission_resources_resource_type_check adds SENSITIVE_PERMISSION
+  - memberships_user_department_unique added
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -265,9 +309,9 @@ execution_gates:
   staging_0001_state: APPLIED_VERIFIED
   0002_state: APPLIED_VERIFIED
   0002_staging_execution: COMPLETE_VERIFIED
-  0003_state: CORRECTION_CODED_PENDING_CATALOG_MATERIALIZATION_AND_TEMP_VALIDATION
-  0003_temporary_execution: NOT_EXECUTED_REQUIRES_EXPLICIT_APPROVAL
-  0003_staging_execution: FORBIDDEN_PENDING_TEMP_VALIDATION_AND_SEPARATE_CR_AUTH_0003_APPROVAL
+  0003_state: TEMP_VALIDATION_PASS_PENDING_CR_AUTH_0003_STAGING_APPROVAL
+  0003_temporary_execution: PASS
+  0003_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_CR_AUTH_0003_STAGING_APPROVAL
   0003_destructive_legacy_cleanup: NOT_EXECUTED
   0004_state: BLOCKED_PENDING_0003
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
