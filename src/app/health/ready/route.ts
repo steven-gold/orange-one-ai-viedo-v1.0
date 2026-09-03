@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getUiProjection } from "@/server/shared/uiProjectionRuntime";
+import { getDeploymentMetadata } from "@/server/shared/deploymentMetadata";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -47,12 +48,13 @@ export async function GET() {
     );
   }
 
+  const metadata = getDeploymentMetadata();
   return NextResponse.json(
     {
       status: "ready",
       service: "ORANGE ONE ACPOS",
-      environment: process.env.ACPOS_DEPLOYMENT_ENV ?? "unspecified",
-      release_sha: process.env.ACPOS_RELEASE_SHA ?? "unresolved",
+      environment: metadata.environment,
+      release_sha: metadata.release_sha,
       correlation_id,
     },
     {
