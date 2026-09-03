@@ -173,6 +173,47 @@ test("current QA integration ports remain reachable through their authority-boun
   assert.equal(contractPorts.length, 9, `expected 9 HTTP QA integration ports, found ${contractPorts.length}`);
 });
 
+test("SYS-01 keeps undefined lifecycle operations fail-closed while shared conversation routes remain reachable", async () => {
+  const authority = await read("authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml");
+  const contract = await read("src/domain/system/systemRuntimeContract.ts");
+  const lifecycleRuntime = await read("src/server/system/systemLifecycleRuntime.ts");
+  const projectionPort = await read("src/domain/system/systemProjectionPort.ts");
+  const conversationBindings = await read("src/server/system/systemConversationBindings.ts");
+  const conversationRuntime = await read("src/server/shared/conversationRuntime.ts");
+  const messageRoute = await read("src/app/v1/conversations/[conversationId]/messages/route.ts");
+  const stopRoute = await read("src/app/v1/conversations/[conversationId]/generation/stop/route.ts");
+  const visual = await read("src/components/pages/SystemVisual.tsx");
+
+  assert.match(authority, /implementation_status:\s*NOT_EXECUTED/);
+  assert.doesNotMatch(authority, /\/v1\//);
+  assert.match(contract, /SYS_IMPLEMENTATION_STATUS\s*=\s*["']NOT_EXECUTED["']/);
+  assert.match(contract, /SYS_SERVICE_OPERATIONS\s*=\s*\[["']createCandidate["'],\s*["']createChangeRequest["'],\s*["']runSandboxTest["']\]/);
+  assert.doesNotMatch(contract, /PORT_METHOD_PATH|api_path/i);
+  assert.match(lifecycleRuntime, /SYS01_RUNTIME_NOT_BOUND/);
+  assert.match(lifecycleRuntime, /SYSTEM_CONTINUITY_CONTEXT_UNRESOLVED/);
+  assert.match(lifecycleRuntime, /AUTHORIZATION_EVALUATION_FAILED/);
+  assert.match(projectionPort, /\/v1\/ui-projections\/admin%3ASYS-01/);
+
+  assert.match(conversationBindings, /\/v1\/conversations\/\$\{encodeURIComponent\(input\.conversation_id\)\}\/messages/);
+  assert.match(conversationBindings, /\/v1\/conversations\/\$\{encodeURIComponent\(input\.conversation_id\)\}\/generation\/stop/);
+  assert.match(messageRoute, /conversationPost\(["']sendConversationMessage["']\)/);
+  assert.match(stopRoute, /conversationPost\(["']stopConversationGeneration["']\)/);
+  assert.match(conversationRuntime, /CONVERSATION_RUNTIME_NOT_BOUND/);
+  assert.match(conversationRuntime, /status:503/);
+
+  assert.match(visual, /data-effectful-runtime-ready=["']false["']/);
+  for (const controlId of [
+    "SYS-01-BTN-ATTACH",
+    "SYS-01-BTN-SEND",
+    "SYS-01-BTN-STOP",
+    "SYS-01-BTN-CANDIDATE-CREATE",
+    "SYS-01-BTN-CR-CREATE",
+    "SYS-01-BTN-SANDBOX-TEST",
+  ]) {
+    assert.match(visual, new RegExp(`id=["']${controlId}["'][\\s\\S]{0,300}?\\bdisabled\\b`), `${controlId} must remain disabled until its exact runtime binding is authority-resolved`);
+  }
+});
+
 test("release gate covers both construction and production branches", async () => {
   const workflow = await read(".github/workflows/release-gate.yml");
   assert.match(workflow, /pull_request:[\s\S]*branches:\s*\[new, main\]/);
