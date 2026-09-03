@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0012-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0013-APPLIED-VERIFIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -915,6 +915,26 @@ staging_0012_verification:
   runtime_rows_total: 0
   unvalidated_constraints: 0
   clean_schema_diff_against_batch_baseline: EMPTY
+staging_0013_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0013_erp_runtime_closure.sql
+  payload_sha256: 013a0c7e815b0efd398dfe60869d03cc4abeb3afd045bc3f8325d3c5bb04a100
+  approval_ref: CR-R9-0013
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  execution_mode: SINGLE_TRANSACTION_12_STATEMENTS
+  migration_history_rows: 1
+  erp_rows_total: 0
+  erp_status_constraint_exact: true
+  indexes_added:
+  - idx_erp_sync_jobs_connector_status
+  - idx_erp_snapshots_connector_created
+  - idx_erp_failures_job
+  expected_schema_delta_count: 3
+  unexpected_schema_drift: 0
+  unvalidated_constraints: 0
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -953,7 +973,10 @@ execution_gates:
   0012_state: APPLIED_VERIFIED
   0012_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
   0012_staging_execution: COMPLETE_VERIFIED
-  0013_state: PENDING_0013_OWN_GATES
+  0013_state: APPLIED_VERIFIED
+  0013_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0013_staging_execution: COMPLETE_VERIFIED
+  0014_state: PENDING_0014_OWN_GATES
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
