@@ -36,6 +36,8 @@ assert(health.status === 200, `HEALTH_HTTP_${health.status}`);
 const healthBody = await health.json();
 assert(healthBody?.status === "ok", "HEALTH_STATUS_NOT_OK");
 assert(healthBody?.service === "ORANGE ONE ACPOS", "HEALTH_SERVICE_INVALID");
+assert(typeof healthBody?.environment === "string" && healthBody.environment !== "unspecified", "HEALTH_ENVIRONMENT_UNRESOLVED");
+assert(typeof healthBody?.release_sha === "string" && /^[0-9a-f]{40}$/i.test(healthBody.release_sha), "HEALTH_RELEASE_SHA_UNRESOLVED");
 
 for (const header of ["content-security-policy", "strict-transport-security", "x-content-type-options", "referrer-policy", "permissions-policy", "x-frame-options"]) {
   assert(Boolean(health.headers.get(header)), `SECURITY_HEADER_MISSING_${header}`);
@@ -61,4 +63,4 @@ for (const [route, uid] of routes) {
   }
 }
 
-process.stdout.write(`POST_DEPLOY_SMOKE_PASS base=${base} ready=${ready.status} environment=${healthBody.environment ?? "missing"} release_sha=${healthBody.release_sha ?? "missing"} projections=${routes.length}\n`);
+process.stdout.write(`POST_DEPLOY_SMOKE_PASS base=${base} ready=${ready.status} environment=${healthBody.environment} release_sha=${healthBody.release_sha} projections=${routes.length}\n`);
