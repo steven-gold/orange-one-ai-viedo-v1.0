@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0004-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0005-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -418,6 +418,74 @@ staging_0004_verification:
   unvalidated_constraints: 0
   clean_schema_diff_against_restore_point: EMPTY
   unexpected_schema_drift: 0
+          staging_0005_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0005_r9_final_correction
+  migration_path: database/migrations/0005_r9_final_correction.sql
+  payload_sha256: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
+  required_approval_ref: CR-R9-0005
+  checksum_verification: PASS
+  prior_migration_0004_exact: true
+  migration_0005_history_rows_on_staging: 0
+  target_create_tables: 20
+  target_create_tables_already_present: 20
+  target_meeting_columns: 12
+  target_meeting_columns_already_present: 12
+  fk_meetings_context_snapshot_present_before_0005: false
+  meeting_participant_role_present_before_0005: false
+  meeting_function_present_before_0005: true
+  business_data_blockers: 0
+  relevant_target_tables_empty: true
+  unvalidated_constraints: 0
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0005-r9-final-correction
+    branch_id: br-wispy-water-b3mbb2se
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    parent_lsn: 0/26565F8
+    source_database: acpos_staging
+    source_database_mutated: false
+    auxiliary_database_present: acpos_validation_admin
+    auxiliary_database_usage: UNUSED_ADMIN_HELPER_ONLY
+    clone_database_created: false
+    note: Neon branch quota prevented a new validation branch; direct database clone was not performed because Neon proxy reported source database in use.
+temporary_0005_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  validation_branch_reused: true
+  reused_branch_name: r9-0004-finalization-validate-20260904
+  reused_branch_id: br-frosty-art-b3z5ujpv
+  reuse_reason: Neon branch quota exceeded; branch was proven schema/data/history equivalent to Current staging before 0005 execution.
+  baseline_equivalence:
+    schema_diff_against_staging: EMPTY
+    migration_0001_exact: true
+    migration_0002_exact: true
+    migration_0003_exact: true
+    migration_0004_exact: true
+    migration_0005_rows: 0
+    permission_resource_rows: 3650
+    projects_rows: 0
+  database_name: acpos_staging
+  source_migration: database/migrations/0005_r9_final_correction.sql
+  payload_sha256: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
+  execution_mode: SINGLE_TRANSACTION_26_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
+  migration_history_approval_ref: CR-R9-0005
+  prior_migration_0004_exact: true
+  target_tables_checked: 20
+  target_table_rows_after_validation: 0
+  fk_meetings_context_snapshot_present: true
+  meeting_function_comment: NON_AUTHORIZATION_METADATA: meeting function/perspective only; never an Authorization Role.
+  unvalidated_constraints: 0
+  permission_resource_rows_preserved: 3650
+  schema_diff_against_staging:
+  - meeting_participants.meeting_function comment added
+  - meetings.fk_meetings_context_snapshot foreign key added
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -432,7 +500,10 @@ execution_gates:
   0004_state: APPLIED_VERIFIED
   0004_temporary_execution: PASS
   0004_staging_execution: COMPLETE_VERIFIED
-  0005_state: PENDING_0005_OWN_GATES
+  0005_state: TEMP_VALIDATION_PASS_PENDING_CR_R9_0005_STAGING_APPROVAL
+    0005_temporary_execution: PASS
+    0005_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_CR_R9_0005_STAGING_APPROVAL
+    0006_state: BLOCKED_PENDING_0005
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
