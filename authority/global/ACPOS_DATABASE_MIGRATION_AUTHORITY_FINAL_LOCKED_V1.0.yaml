@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0002-SANDBOX-VALIDATED
+  revision: 2026-09-04-DATABASE-MIGRATION-0002-HUMAN-APPROVED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -83,7 +83,7 @@ staging_0001_verification:
   - citext=1.6
   - pgcrypto=1.3
 staging_0002_preflight:
-  status: PASS_PENDING_HUMAN_APPROVAL
+  status: PASS
   verified_on: '2026-09-04'
   migration_id: 0002_topic_contract_constraints
   payload_sha256: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
@@ -115,13 +115,20 @@ temporary_0002_validation:
   migration_history_approval_ref: CR-SCHEMA-0002
   schema_diff_summary: only expected 0002 trigger functions and triggers; NOT NULL targets were already hardened by 0001 final target
   prepare_database_migration_parser_note: Neon helper parser rejected dollar-quoted PL/pgSQL; validation used explicit PostgreSQL statement boundaries on a temporary branch instead. No staging mutation occurred from the failed helper attempt.
+cr_schema_0002_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-SCHEMA-0002
+  approved_scope: APPLY_VALIDATED_0002_TO_STAGING_ONLY
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
   clean_temporary_branch_revalidation: PASS
   staging_0001_state: APPLIED_VERIFIED
-  0002_state: PENDING_CR_SCHEMA_0002_HUMAN_APPROVAL
-  0002_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_HUMAN_APPROVAL
+  0002_state: APPROVED_READY_FOR_STAGING
+  0002_staging_execution: AUTHORIZED_BY_CR_SCHEMA_0002
+  0003_state: BLOCKED_PENDING_0003_OWN_GATES
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
