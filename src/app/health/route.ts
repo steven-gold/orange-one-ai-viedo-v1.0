@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
+import { getDeploymentMetadata } from "@/server/shared/deploymentMetadata";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET() {
   const correlation_id = crypto.randomUUID();
+  const metadata = getDeploymentMetadata();
   return NextResponse.json(
     {
       status: "ok",
       service: "ORANGE ONE ACPOS",
-      environment: process.env.ACPOS_DEPLOYMENT_ENV ?? "unspecified",
-      release_sha: process.env.ACPOS_RELEASE_SHA ?? "unresolved",
+      environment: metadata.environment,
+      release_sha: metadata.release_sha,
       timestamp: new Date().toISOString(),
     },
     {
