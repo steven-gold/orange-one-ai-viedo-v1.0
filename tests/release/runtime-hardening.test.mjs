@@ -56,6 +56,14 @@ test("core controlled runtime is gated by the shared production-safe guard", asy
   assert.doesNotMatch(coreRuntime, /NEXT_PUBLIC_ACPOS_RUNTIME_MODE\s*===\s*["']CONTROLLED_TEST["']/);
 });
 
+test("production projection HTTP boundary blocks controlled-mode misconfiguration", async () => {
+  const route = await read("src/app/v1/ui-projections/[pageUid]/route.ts");
+  assert.match(route, /ACPOS_DEPLOYMENT_ENV/);
+  assert.match(route, /NEXT_PUBLIC_ACPOS_RUNTIME_MODE\s*===\s*["']CONTROLLED_TEST["']/);
+  assert.match(route, /UI_PROJECTION_RUNTIME_NOT_BOUND/);
+  assert.match(route, /status:\s*503/);
+});
+
 test("production readiness remains fail-closed for controlled mode and unbound UI runtime", async () => {
   const readiness = await read("src/app/health/ready/route.ts");
   const uiRuntime = await read("src/server/shared/uiProjectionRuntime.ts");
