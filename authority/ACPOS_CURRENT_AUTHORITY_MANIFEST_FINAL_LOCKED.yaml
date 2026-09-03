@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0005-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0006-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -96,7 +96,13 @@ cross_authority_bindings:
     0005_staging_history_checksum: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
     0005_staging_schema_diff: EXPECTED_TWO_ITEM_DELTA
     0005_approval_ref: CR-R9-0005
-    0006_gate: PENDING_0006_OWN_GATES
+    0006_gate: TEMP_VALIDATION_PASS_PENDING_CR_R9_0006_STAGING_APPROVAL
+    0006_payload_sha256: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
+    0006_restore_branch_id: br-super-smoke-b3gy5j7q
+    0006_validation_branch_id: br-super-frog-b3bcp18i
+    0006_staging_execution: NOT_EXECUTED_REQUIRES_EXPLICIT_HUMAN_APPROVAL
+    0005_helper_cleanup: COMPLETE
+    0007_gate: BLOCKED_PENDING_0006
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
