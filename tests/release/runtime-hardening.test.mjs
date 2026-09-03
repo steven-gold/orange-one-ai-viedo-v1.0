@@ -56,6 +56,13 @@ test("core controlled runtime is gated by the shared production-safe guard", asy
   assert.doesNotMatch(coreRuntime, /NEXT_PUBLIC_ACPOS_RUNTIME_MODE\s*===\s*["']CONTROLLED_TEST["']/);
 });
 
+test("core controlled server helper cannot bypass the shared production-safe guard", async () => {
+  const coreTestRuntime = await read("src/server/testing/controlledCoreTestRuntime.ts");
+  assert.match(coreTestRuntime, /from\s+["']@\/domain\/testing\/controlledTestData["']/);
+  assert.match(coreTestRuntime, /isControlledCoreServerTestMode\(\):\s*boolean\s*\{\s*return\s+isControlledTestMode\(\);\s*\}/s);
+  assert.doesNotMatch(coreTestRuntime, /process\.env\.ACPOS_RUNTIME_MODE/);
+});
+
 test("production projection HTTP boundary blocks controlled-mode misconfiguration", async () => {
   const route = await read("src/app/v1/ui-projections/[pageUid]/route.ts");
   assert.match(route, /ACPOS_DEPLOYMENT_ENV/);
