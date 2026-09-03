@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0003-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0004-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -344,6 +344,50 @@ staging_0003_verification:
   prior_migration_history_preserved:
     0001_exact: true
     0002_exact: true
+staging_0004_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0004_r9_finalization
+  migration_path: database/migrations/0004_r9_finalization.sql
+  payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+  required_approval_ref: CR-R9-0004
+  checksum_verification: PASS
+  checksum_boundary: terminal schema_migration_history registration excluded together with one separator newline; payload final newline preserved
+  prior_migration_0003_exact: true
+  migration_0004_history_rows_on_staging: 0
+  target_create_tables: 27
+  target_create_tables_already_present: 27
+  target_lineage_columns: 46
+  target_lineage_columns_already_present: 46
+  business_data_blockers: 0
+  relevant_business_tables_empty: true
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0004-r9-finalization
+    branch_id: br-wild-unit-b3ydro9g
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    parent_lsn: 0/264EC18
+    no_compute: true
+temporary_0004_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0004-finalization-validate-20260904
+  temporary_branch_id: br-frosty-art-b3z5ujpv
+  database_name: acpos_staging
+  source_migration: database/migrations/0004_r9_finalization.sql
+  payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+  execution_mode: SINGLE_TRANSACTION_37_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+  migration_history_approval_ref: CR-R9-0004
+  prior_migration_0003_exact: true
+  unvalidated_constraints: 0
+  schema_diff_against_staging: EMPTY
+  schema_drift_reason: corrected 0001 already materialized all 27 target tables and 46 lineage columns; 0004 is idempotent on Current staging schema
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -355,7 +399,10 @@ execution_gates:
   0003_temporary_execution: PASS
   0003_staging_execution: COMPLETE_VERIFIED
   0003_destructive_legacy_cleanup: NOT_REQUIRED_LEGACY_TABLES_ABSENT
-  0004_state: PENDING_0004_OWN_GATES
+  0004_state: TEMP_VALIDATION_PASS_PENDING_CR_R9_0004_STAGING_APPROVAL
+  0004_temporary_execution: PASS
+  0004_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_CR_R9_0004_STAGING_APPROVAL
+  0005_state: BLOCKED_PENDING_0004
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
