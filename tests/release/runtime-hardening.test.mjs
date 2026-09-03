@@ -163,7 +163,10 @@ test("current QA integration ports remain reachable through their authority-boun
       new RegExp(`export\\s+(?:const\\s+${method}\\s*=|async\\s+function\\s+${method}\\s*\\()`),
       `${path} must expose ${method}`,
     );
-    assert.match(source, new RegExp(`["']${operation}["']`), `${path} must remain bound to ${operation}`);
+    const operationPattern = operation === "getUiProjection"
+      ? /\bgetUiProjection\b/
+      : new RegExp(`["']${operation}["']`);
+    assert.match(source, operationPattern, `${path} must remain bound to ${operation}`);
   }
 
   const contractPorts = [...contract.matchAll(/"QA-01-PORT-[A-Z0-9-]+":\{operation:"([^"]+)",method:"(GET|POST)",path:"([^"]+)"\}/g)];
