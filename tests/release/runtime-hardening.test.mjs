@@ -138,6 +138,38 @@ test("current EDIT integration ports remain reachable through their authority-bo
   assert.equal(contractPorts.length, 15, `expected 15 current EDIT integration ports, found ${contractPorts.length}`);
 });
 
+test("current QA integration ports remain reachable through their authority-bound routes", async () => {
+  const contract = await read("src/domain/qa/qaRuntimeContract.ts");
+  assert.match(contract, /QA_INTEGRATION_PORT_COUNT\s*=\s*QA_INTEGRATION_PORT_UIDS\.length/);
+  assert.match(contract, /QA-01-PORT-AUTO-TOPIC/);
+  assert.doesNotMatch(contract, /"QA-01-PORT-AUTO-TOPIC":\{operation:/);
+
+  const routeBindings = [
+    ["src/app/v1/ui-projections/[pageUid]/route.ts", "GET", "getUiProjection"],
+    ["src/app/v1/qa/reviews/route.ts", "POST", "startQaReview"],
+    ["src/app/v1/scorecards/route.ts", "POST", "submitScorecard"],
+    ["src/app/v1/findings/route.ts", "POST", "createFinding"],
+    ["src/app/v1/correction-requests/route.ts", "POST", "createCorrectionRequest"],
+    ["src/app/v1/state-commands/qareview/startrecheck/route.ts", "POST", "startRecheck"],
+    ["src/app/v1/state-commands/qareview/decidepass/route.ts", "POST", "decidePass"],
+    ["src/app/v1/state-commands/qareview/decidefail/route.ts", "POST", "decideFail"],
+    ["src/app/v1/release-packages/route.ts", "POST", "createReleasePackage"],
+  ];
+
+  for (const [path, method, operation] of routeBindings) {
+    const source = await read(path);
+    assert.match(
+      source,
+      new RegExp(`export\\s+(?:const\\s+${method}\\s*=|async\\s+function\\s+${method}\\s*\\()`),
+      `${path} must expose ${method}`,
+    );
+    assert.match(source, new RegExp(`["']${operation}["']`), `${path} must remain bound to ${operation}`);
+  }
+
+  const contractPorts = [...contract.matchAll(/"QA-01-PORT-[A-Z0-9-]+":\{operation:"([^"]+)",method:"(GET|POST)",path:"([^"]+)"\}/g)];
+  assert.equal(contractPorts.length, 9, `expected 9 HTTP QA integration ports, found ${contractPorts.length}`);
+});
+
 test("release gate covers both construction and production branches", async () => {
   const workflow = await read(".github/workflows/release-gate.yml");
   assert.match(workflow, /pull_request:[\s\S]*branches:\s*\[new, main\]/);
