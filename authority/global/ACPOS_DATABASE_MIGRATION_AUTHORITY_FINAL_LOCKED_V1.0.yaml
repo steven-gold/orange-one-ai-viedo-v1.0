@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0003-CATALOG-GATE-BLOCKED
+  revision: 2026-09-04-DATABASE-MIGRATION-0003-CORRECTION-CODED-PENDING-CATALOG-MATERIALIZATION-AND-TEMP-VALIDATION
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -14,16 +14,31 @@ approval:
   - 0001 install btree_gist
   - acpos_status add COMPILE_REQUESTED
   - acpos_status add APPROVED
+cr_auth_0003_minimal_correction_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-AUTH-0003-CORRECTION
+  approved_scope:
+  - Allow SENSITIVE_PERMISSION in permission_resources resource_type.
+  - Define deterministic canonical Account Permission Catalog resource_id to database UUID mapping.
+  - Materialize and validate the exact 3650-resource Account Permission Catalog without omission.
+  - Replace unsafe static legacy-table guard reads with existence-safe fail-closed checks.
+  staging_apply_approval: NOT_GRANTED
 source_lineage:
   source_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_AI_SEQUENCED_FINAL.yaml
   old_0001_payload_sha256: cb622dc4ae9d0cd5533348e5fdcda6d624ff0c5799bf7e20a94aa853451ea98f
   current_0001_payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
-  unchanged_migrations: 0002-0015 payloads preserved byte-for-byte from verified R9 Authority source
-  source_checksum_verification: 15/15 PASS before correction; 0002-0015 remain identical
+  old_0003_payload_sha256: 14dbb9540b01ccb33e2f6be3a1e8eac3c8fde5b0216604c86be25ef57dbd6471
+  current_0003_payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  unchanged_migrations: 0002 and 0004-0015 payloads preserved byte-for-byte from verified R9 Authority source
+  source_checksum_verification: Original 15/15 source payloads verified before approved corrections; only 0001 and 0003 are Current corrected payloads.
 artifact_bindings:
   migration_root: database/migrations/
   bootstrap_migration: database/migrations/0001_canonical_schema.sql
   checksum_manifest: database/migrations/migration_checksum_manifest.yaml
+  account_permission_catalog_target: 06_permission/account_permission_catalog.yaml
+  account_permission_catalog_repository_status: PENDING_MATERIALIZATION
   materialized_migration_count: 15
 correction_evidence:
   diagnostic_environment: Neon PostgreSQL 15.19 temporary branch
@@ -191,11 +206,58 @@ staging_0003_preflight:
     - permission:provider.cost.read
   proven_authority_gaps:
   - code: CATALOG_RESOURCE_TYPE_NOT_ACCEPTED
-    detail: 0003 permission_resources CHECK adds SURFACE but still omits SENSITIVE_PERMISSION, while the authoritative 3650-resource catalog contains two SENSITIVE_PERMISSION resources.
+    detail: Original 0003 permission_resources CHECK added SURFACE but omitted SENSITIVE_PERMISSION while the authoritative catalog contained two SENSITIVE_PERMISSION resources.
   - code: CATALOG_IDENTITY_MAPPING_UNDEFINED
-    detail: Catalog resource_id and parent_resource_id are stable PERM-* text identifiers, while permission_resources.resource_id is UUID and parent_resource_key is text; no deterministic import/mapping rule was found in Single Authority.
+    detail: Original authority did not define deterministic mapping from canonical PERM-* resource_id to UUID permission_resources.resource_id.
   - code: VALIDATED_CATALOG_IMPORT_NOT_MATERIALIZED
-    detail: Current staging permission_resources has 0 rows and Current repository has no materialized Account Permission Catalog import artifact; Authority prose alone is not treated as an imported catalog.
+    detail: Staging permission_resources remains 0 rows and the formal repository Account Permission Catalog artifact is still pending materialization.
+0003_minimal_correction:
+  status: CODED_CHECKSUM_VERIFIED
+  corrected_on: '2026-09-04'
+  repository_commit: 7a8cdb4c0e3372f3bba5c0c5fd5370d2ac26f10e
+  migration_path: database/migrations/0003_account_permission_authorization.sql
+  original_payload_sha256: 14dbb9540b01ccb33e2f6be3a1e8eac3c8fde5b0216604c86be25ef57dbd6471
+  current_payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  manifest_contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.2
+  corrected_gaps:
+  - SENSITIVE_PERMISSION added to resource_type CHECK.
+  - Canonical PERM-* resource_id remains authority identity; DB UUID is deterministic UUIDv5 surrogate.
+  - Corrected 0003 requires 3648-resource governed pre-import, inserts exactly two HIGH-risk sensitive resources after CHECK widening, and requires final count 3650.
+  - Legacy-table preflight uses to_regclass plus dynamic row count only when each relation exists; nonzero legacy rows remain fail-closed.
+  identity_mapping:
+    algorithm: RFC_9562_UUIDV5
+    namespace_seed: urn:acpos:permission-catalog:ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
+    namespace_uuid: a5cde652-06f2-521b-933a-785801354eca
+    canonical_name_input: account_permission_catalog.resources[].resource_id
+    canonical_identity_preserved: true
+    derived_uuid_count: 3650
+    uuid_collision_count: 0
+    parent_graph_nodes: 3650
+    missing_parent_count: 0
+    cycle_count: 0
+  sensitive_resource_database_ids:
+    permission:finance.read: fe759359-0395-530c-a88d-4142cf609b59
+    permission:provider.cost.read: c3393e94-4e79-53d8-a082-6501c0ad7d7b
+account_permission_catalog_materialization:
+  source: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_AI_SEQUENCED_FINAL.yaml#permission_authority.account_permission_catalog
+  contract_id: ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
+  formal_repository_path: 06_permission/account_permission_catalog.yaml
+  exact_source_subtree_verified: true
+  local_materialized_yaml_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
+  resource_total: 3650
+  semantic_roundtrip_equal_to_source: true
+  repository_materialization_status: PENDING
+  staging_import_status: NOT_EXECUTED
+0003_preimport_artifact:
+  status: GENERATED_CHECKSUM_VERIFIED_NOT_EXECUTED
+  source_catalog_contract_id: ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
+  row_count: 3648
+  excluded_resource_type: SENSITIVE_PERMISSION
+  excluded_count: 2
+  sql_byte_size: 815589
+  sql_sha256: 0d5348e568c6179bdfa450a599eb13cace5352983572ffb8c5682add71ddb3f0
+  target: TEMPORARY_VALIDATION_BRANCH_ONLY_BEFORE_0003
+  database_execution_status: NOT_EXECUTED
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -203,8 +265,9 @@ execution_gates:
   staging_0001_state: APPLIED_VERIFIED
   0002_state: APPLIED_VERIFIED
   0002_staging_execution: COMPLETE_VERIFIED
-  0003_state: BLOCKED_AUTHORITY_CORRECTION_REQUIRED
-  0003_staging_execution: FORBIDDEN
+  0003_state: CORRECTION_CODED_PENDING_CATALOG_MATERIALIZATION_AND_TEMP_VALIDATION
+  0003_temporary_execution: NOT_EXECUTED_REQUIRES_EXPLICIT_APPROVAL
+  0003_staging_execution: FORBIDDEN_PENDING_TEMP_VALIDATION_AND_SEPARATE_CR_AUTH_0003_APPROVAL
   0003_destructive_legacy_cleanup: NOT_EXECUTED
   0004_state: BLOCKED_PENDING_0003
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
@@ -212,5 +275,6 @@ execution_gates:
 single_source_rules:
 - This authority is the only Current database migration authority in the website construction repository.
 - Do not load the old cb622dc4... 0001 payload as Current.
+- Do not load the old 14dbb954... 0003 payload as Current.
 - Do not create a second checksum manifest or parallel migration directory.
 - DB-01 remains read-only; migration execution belongs to governed System Lifecycle / migration runner.
