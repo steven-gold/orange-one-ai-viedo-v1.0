@@ -1,0 +1,192 @@
+name: temp-db-authority-materialize
+on:
+  push:
+    branches:
+      - temp-db-authority-correction-20260903
+permissions:
+  contents: write
+jobs:
+  materialize:
+    if: ${{ !contains(github.event.head_commit.message, '[materialized-db-authority]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: temp-db-authority-correction-20260903
+          fetch-depth: 0
+      - name: Materialize canonical migrations and current authority binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --quiet pyyaml
+          curl -L --fail --silent --show-error \
+            'https://raw.githubusercontent.com/steven-gold/ORANGE_ONE_ACPOS_v1.0.x/develop/ACPOS_AI_SEQUENCED_SINGLE_AUTHORITY_CONSTRUCTION_PACKAGE.zip' \
+            -o /tmp/r9-authority.zip
+          rm -rf /tmp/r9-authority
+          mkdir -p /tmp/r9-authority
+          unzip -q /tmp/r9-authority.zip -d /tmp/r9-authority
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import yaml
+
+          OLD = 'cb622dc4ae9d0cd5533348e5fdcda6d624ff0c5799bf7e20a94aa853451ea98f'
+          NEW = '77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1'
+          REV = '2026-09-03-DATABASE-MIGRATION-0001-CORRECTION'
+          authority_files = list(Path('/tmp/r9-authority').rglob('ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_AI_SEQUENCED_FINAL.yaml'))
+          assert len(authority_files) == 1, authority_files
+          source = yaml.safe_load(authority_files[0].read_text(encoding='utf-8'))
+          migrations = source['database_authority']['migrations']
+          manifest = source['database_authority']['migration_checksum_manifest']
+          expected = {m['migration_id']: m['payload_sha256'] for m in manifest['migrations']}
+
+          def payload_sha(sql: str) -> str:
+              marker = '\nINSERT INTO schema_migration_history('
+              pos = sql.rfind(marker)
+              assert pos >= 0, 'terminal schema_migration_history registration missing'
+              payload = sql[:pos]
+              return hashlib.sha256(payload.encode('utf-8')).hexdigest()
+
+          assert len(migrations) == 15
+          for m in migrations:
+              mid = m['name'][:4] + '_' + m['name'][5:-4] if False else m['name'][:-4]
+              assert expected[mid] == payload_sha(m['sql']), (mid, expected[mid], payload_sha(m['sql']))
+
+          out = Path('database/migrations')
+          out.mkdir(parents=True, exist_ok=True)
+          materialized = []
+          for m in migrations:
+              sql = m['sql']
+              if m['name'] == '0001_canonical_schema.sql':
+                  old_ext = 'CREATE EXTENSION IF NOT EXISTS pgcrypto;\nCREATE EXTENSION IF NOT EXISTS citext;\n\nCREATE TYPE acpos_status AS ENUM '
+                  new_ext = 'CREATE EXTENSION IF NOT EXISTS pgcrypto;\nCREATE EXTENSION IF NOT EXISTS citext;\nCREATE EXTENSION IF NOT EXISTS btree_gist;\n\nCREATE TYPE acpos_status AS ENUM '
+                  assert sql.count(old_ext) == 1
+                  sql = sql.replace(old_ext, new_ext, 1)
+                  old_enum = "('DRAFT','CORE_MODELING','CORE_REVIEW','READY_FOR_MOTHER_REVIEW','MOTHER_LOCKED','CONTRACT_VALIDATING','CANON_CHECK','BLUEPRINT_DRAFT','BLUEPRINT_REVIEW','READY_FOR_CHILD_REVIEW','CHILD_LOCKED','COMPILED','WAITING_DEPENDENCY','READY','ROUTING','RUNNING','CALLBACK_PENDING','CANDIDATE_OUTPUT','SCORE_PENDING','HANDOFF_READY','HANDED_OFF','IN_REVIEW','FINDING_OPEN','CORRECTION_REQUIRED','RECHECK','PASS','FAIL','PENDING_APPROVAL','PENDING_EXTERNAL','PUBLISHED','FAILED','WITHDRAWN','BLOCKED','REJECTED','SUPERSEDED','ARCHIVED')"
+                  new_enum = "('DRAFT','CORE_MODELING','CORE_REVIEW','READY_FOR_MOTHER_REVIEW','MOTHER_LOCKED','CONTRACT_VALIDATING','CANON_CHECK','BLUEPRINT_DRAFT','BLUEPRINT_REVIEW','READY_FOR_CHILD_REVIEW','CHILD_LOCKED','COMPILED','COMPILE_REQUESTED','WAITING_DEPENDENCY','READY','ROUTING','RUNNING','CALLBACK_PENDING','CANDIDATE_OUTPUT','SCORE_PENDING','HANDOFF_READY','HANDED_OFF','IN_REVIEW','FINDING_OPEN','CORRECTION_REQUIRED','RECHECK','PASS','FAIL','PENDING_APPROVAL','PENDING_EXTERNAL','PUBLISHED','FAILED','WITHDRAWN','BLOCKED','REJECTED','APPROVED','SUPERSEDED','ARCHIVED')"
+                  assert sql.count(old_enum) == 1
+                  sql = sql.replace(old_enum, new_enum, 1)
+                  assert sql.count(OLD) == 1
+                  sql = sql.replace(OLD, NEW, 1)
+                  assert payload_sha(sql) == NEW, payload_sha(sql)
+              else:
+                  mid = m['name'][:-4]
+                  assert payload_sha(sql) == expected[mid]
+              (out / m['name']).write_text(sql, encoding='utf-8')
+              materialized.append(m['name'])
+
+          manifest['contract_meta']['contract_id'] = 'ACPOS-MIGRATION-CHECKSUM-1.0.1'
+          manifest['contract_meta']['authority_revision'] = REV
+          manifest['contract_meta']['0001_correction'] = 'USER_APPROVED_MINIMAL_BOOTSTRAP_CORRECTION'
+          for row in manifest['migrations']:
+              if row['migration_id'] == '0001_canonical_schema':
+                  assert row['payload_sha256'] == OLD
+                  row['payload_sha256'] = NEW
+          (out / 'migration_checksum_manifest.yaml').write_text(
+              yaml.safe_dump(manifest, sort_keys=False, allow_unicode=True, width=140), encoding='utf-8'
+          )
+
+          migration_authority = {
+              'authority': {
+                  'id': 'ACPOS_DATABASE_MIGRATION_AUTHORITY',
+                  'version': 'V1.0',
+                  'status': 'FINAL_LOCKED',
+                  'current_only': True,
+                  'revision': REV,
+                  'scope': 'DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE',
+                  'undefined_behavior': 'BLOCK + REPORT_AUTHORITY_GAP',
+              },
+              'approval': {
+                  'user_approved': True,
+                  'approved_on': '2026-09-03',
+                  'approval_ref': 'CR-SCHEMA-0001',
+                  'approved_change_scope': [
+                      '0001 install btree_gist',
+                      'acpos_status add COMPILE_REQUESTED',
+                      'acpos_status add APPROVED',
+                  ],
+              },
+              'source_lineage': {
+                  'source_authority': 'ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_AI_SEQUENCED_FINAL.yaml',
+                  'old_0001_payload_sha256': OLD,
+                  'current_0001_payload_sha256': NEW,
+                  'unchanged_migrations': '0002-0015 payloads preserved byte-for-byte from verified R9 Authority source',
+                  'source_checksum_verification': '15/15 PASS before correction; 0002-0015 remain identical',
+              },
+              'artifact_bindings': {
+                  'migration_root': 'database/migrations/',
+                  'bootstrap_migration': 'database/migrations/0001_canonical_schema.sql',
+                  'checksum_manifest': 'database/migrations/migration_checksum_manifest.yaml',
+                  'materialized_migration_count': 15,
+              },
+              'correction_evidence': {
+                  'diagnostic_environment': 'Neon PostgreSQL 15.19 temporary branch',
+                  'proven_blockers': [
+                      'acpos_status omitted APPROVED while 17 acpos_status columns defaulted to APPROVED',
+                      'acpos_status omitted COMPILE_REQUESTED while work_packages.status defaulted to COMPILE_REQUESTED',
+                      'continuity_checkpoints UUID GiST exclusion required btree_gist but bootstrap did not install it',
+                  ],
+                  'corrected_diagnostic_result': {
+                      'payload_statements_executed': 600,
+                      'unique_tables': 194,
+                      'public_tables': 152,
+                      'acpos_runtime_tables': 42,
+                      'validated_foreign_keys': 343,
+                      'unvalidated_constraints': 0,
+                  },
+              },
+              'execution_gates': {
+                  'payload_checksum_rule': 'SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline',
+                  '0001_order': 'MUST_EXECUTE_FIRST',
+                  'clean_temporary_branch_revalidation': 'REQUIRED_BEFORE_STAGING',
+                  'staging_0001_state': 'BLOCKED_PENDING_CLEAN_TEMP_REVALIDATION',
+                  'later_migrations': 'Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates',
+                  'manual_sql_from_DB_01': 'FORBIDDEN',
+              },
+              'single_source_rules': [
+                  'This authority is the only Current database migration authority in the website construction repository.',
+                  'Do not load the old cb622dc4... 0001 payload as Current.',
+                  'Do not create a second checksum manifest or parallel migration directory.',
+                  'DB-01 remains read-only; migration execution belongs to governed System Lifecycle / migration runner.',
+              ],
+          }
+          auth_path = Path('authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml')
+          auth_path.write_text(yaml.safe_dump(migration_authority, sort_keys=False, allow_unicode=True, width=140), encoding='utf-8')
+
+          manifest_path = Path('authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml')
+          text = manifest_path.read_text(encoding='utf-8')
+          replacements = [
+              ('  version: V1.3\n', '  version: V1.4\n'),
+              ('  revision: 2026-09-03-PRODUCTION-SCRIPT-V1.3-CROSS-PAGE-BINDING\n', f'  revision: {REV}\n'),
+              ('  - authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml\n', '  - authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml\n  - authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml\n'),
+              ('- ACPOS_SYSTEM_AUTHORITY within cross-page/system scope\n', '- ACPOS_SYSTEM_AUTHORITY within cross-page/system scope\n- ACPOS_DATABASE_MIGRATION_AUTHORITY within database migration/bootstrap/checksum scope only\n'),
+              ('cross_authority_bindings:\n  production_script_v1_3:\n', "cross_authority_bindings:\n  database_migration_v1_0:\n    authority_path: authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml\n    migration_root: database/migrations/\n    checksum_manifest: database/migrations/migration_checksum_manifest.yaml\n    current_0001_payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1\n    old_0001_payload_sha256: cb622dc4ae9d0cd5533348e5fdcda6d624ff0c5799bf7e20a94aa853451ea98f\n    old_0001_status: SUPERSEDED_DO_NOT_EXECUTE\n    staging_gate: BLOCKED_PENDING_CLEAN_TEMP_REVALIDATION\n  production_script_v1_3:\n"),
+              ('  reference_docs: docs/reference/\n', '  reference_docs: docs/reference/\n  migrations: database/migrations/\n'),
+              ('- No second ACPOS System authority.\n', '- No second ACPOS System authority.\n- No second database migration authority, migration directory or checksum manifest.\n'),
+          ]
+          for old, new in replacements:
+              assert text.count(old) == 1, (old, text.count(old))
+              text = text.replace(old, new, 1)
+          manifest_path.write_text(text, encoding='utf-8')
+
+          # Final repository-level verification.
+          reloaded = yaml.safe_load((out / 'migration_checksum_manifest.yaml').read_text(encoding='utf-8'))
+          exp2 = {m['migration_id']: m['payload_sha256'] for m in reloaded['migrations']}
+          for p in sorted(out.glob('*.sql')):
+              mid = p.stem
+              got = payload_sha(p.read_text(encoding='utf-8'))
+              assert got == exp2[mid], (mid, got, exp2[mid])
+          assert exp2['0001_canonical_schema'] == NEW
+          assert len(list(out.glob('*.sql'))) == 15
+          yaml.safe_load(auth_path.read_text(encoding='utf-8'))
+          yaml.safe_load(manifest_path.read_text(encoding='utf-8'))
+          print('MATERIALIZATION_PASS migrations=15 checksum=15/15 current_0001=' + NEW)
+          PY
+          git config user.name 'ORANGE ONE ACPOS Authority Bot'
+          git config user.email 'proorangeone@gmail.com'
+          git add authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml \
+                  authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml \
+                  database/migrations
+          git diff --cached --check
+          git commit -m '[materialized-db-authority] feat(db): add corrected canonical migration authority'
+          git push origin HEAD:temp-db-authority-correction-20260903
