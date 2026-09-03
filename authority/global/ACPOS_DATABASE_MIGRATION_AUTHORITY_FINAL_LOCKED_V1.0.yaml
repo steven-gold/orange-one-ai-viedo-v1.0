@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0009-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
+  revision: 2026-09-04-DATABASE-MIGRATION-0009-APPLIED-VERIFIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -850,6 +850,27 @@ temporary_0009_validation:
   schema_diff_against_staging: EMPTY
   unexpected_schema_drift: 0
   staging_mutation_performed: false
+staging_0009_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source_migration: database/migrations/0009_layer_runtime_closure.sql
+  payload_sha256: 4813cb8b052898e66e6d0d2090dead04785f7f264f97c799614cf4751cb00746
+  approval_ref: CR-R9-0009
+  pre_0009_restore_branch_id: br-empty-cake-b3bdnb47
+  execution_mode: SINGLE_TRANSACTION_4_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 4813cb8b052898e66e6d0d2090dead04785f7f264f97c799614cf4751cb00746
+  migration_history_approval_ref: CR-R9-0009
+  prior_migration_0008_exact: true
+  layer_rows: 0
+  blank_layer_names: 0
+  layer_name_nullable: false
+  unvalidated_constraints: 0
+  clean_schema_diff_against_restore_point: EMPTY
+  unexpected_schema_drift: 0
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -876,10 +897,10 @@ execution_gates:
   0008_state: APPLIED_VERIFIED
   0008_temporary_execution: PASS
   0008_staging_execution: COMPLETE_VERIFIED
-  0009_state: STAGING_APPROVED_PENDING_EXECUTION
+  0009_state: APPLIED_VERIFIED
   0009_temporary_execution: PASS
-  0009_staging_execution: APPROVED_PENDING_EXECUTION
-  0010_state: BLOCKED_PENDING_0009
+  0009_staging_execution: COMPLETE_VERIFIED
+  0010_state: PENDING_0010_OWN_GATES
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
