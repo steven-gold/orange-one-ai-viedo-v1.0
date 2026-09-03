@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0013-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0014-APPLIED-VERIFIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -935,6 +935,22 @@ staging_0013_verification:
   expected_schema_delta_count: 3
   unexpected_schema_drift: 0
   unvalidated_constraints: 0
+staging_0014_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0014_production_goal_routing_closure.sql
+  payload_sha256: f6ece41036e85611231688cda4d1106cf7b2a29086dea1a173ea42fed9abcea8
+  approval_ref: CR-R9-0014
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  execution_mode: SINGLE_TRANSACTION_5_STATEMENTS
+  migration_history_rows: 1
+  topic_production_goal_rows: 0
+  production_type_constraint_exact: true
+  inherited_expected_schema_delta: THREE_ERP_INDEXES_FROM_0013_ONLY
+  unexpected_schema_drift: 0
+  unvalidated_constraints: 0
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -976,7 +992,10 @@ execution_gates:
   0013_state: APPLIED_VERIFIED
   0013_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
   0013_staging_execution: COMPLETE_VERIFIED
-  0014_state: PENDING_0014_OWN_GATES
+  0014_state: APPLIED_VERIFIED
+  0014_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0014_staging_execution: COMPLETE_VERIFIED
+  0015_state: PENDING_0015_OWN_GATES
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
