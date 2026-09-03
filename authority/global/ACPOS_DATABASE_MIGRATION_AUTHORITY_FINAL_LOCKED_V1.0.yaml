@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0015-CHAIN-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-CHAIN-0001-0015-FINAL-VERIFIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -977,11 +977,25 @@ migration_chain_0001_0015_verification:
   status: COMPLETE_APPLIED_VERIFIED
   verified_on: '2026-09-04'
   total_migrations: 15
+  exact_migrations: 15
+  chain_history_rows: 15
+  checksum_mismatches: 0
+  approval_mismatches: 0
   first_migration: 0001_canonical_schema
   last_migration: 0015_enterprise_social_outreach_closure
   remaining_migrations: 0
   staging_branch_id: br-bitter-poetry-b3p6t5ub
   database_name: acpos_staging
+  unvalidated_constraints: 0
+  permission_resource_rows: 3650
+  runtime_blank_layer_names: 0
+  canonical_blank_layer_names: 0
+  final_schema_delta_against_batch_baseline:
+  - idx_erp_sync_jobs_connector_status
+  - idx_erp_snapshots_connector_created
+  - idx_erp_failures_job
+  unexpected_schema_drift: 0
+  temporary_github_workflows: 0
   batch_0009_0015_approval_consumed: true
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
