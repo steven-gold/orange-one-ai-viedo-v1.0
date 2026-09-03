@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0001-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0002-APPLIED-VERIFIED
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -60,7 +60,12 @@ cross_authority_bindings:
     staging_gate: APPLIED_VERIFIED
     staging_branch_id: br-bitter-poetry-b3p6t5ub
     staging_migration_history_checksum: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
-    0002_gate: BLOCKED_PENDING_0002_OWN_GATES
+    0002_gate: APPLIED_VERIFIED
+    0002_payload_sha256: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
+    0002_approval_ref: CR-SCHEMA-0002
+    0002_restore_branch_id: br-restless-forest-b37es1u4
+    0002_validation_branch_id: br-green-water-b3is6ygq
+    0003_gate: BLOCKED_PENDING_0003_OWN_GATES
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
