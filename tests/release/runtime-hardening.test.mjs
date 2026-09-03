@@ -49,6 +49,13 @@ test("controlled test mode is hard-disabled for production deployment", async ()
   assert.match(controlledTestData, /deploymentEnvironment\s*!==\s*PRODUCTION_ENVIRONMENT_VALUE/);
 });
 
+test("core controlled runtime is gated by the shared production-safe guard", async () => {
+  const coreRuntime = await read("src/server/core/coreRuntime.ts");
+  assert.match(coreRuntime, /from\s+["']@\/domain\/testing\/controlledTestData["']/);
+  assert.match(coreRuntime, /isControlledTestMode\(\)\s*\?\s*getControlledCoreTestRuntimeBindings\(\)\s*:\s*null/);
+  assert.doesNotMatch(coreRuntime, /NEXT_PUBLIC_ACPOS_RUNTIME_MODE\s*===\s*["']CONTROLLED_TEST["']/);
+});
+
 test("production readiness remains fail-closed for controlled mode and unbound UI runtime", async () => {
   const readiness = await read("src/app/health/ready/route.ts");
   const uiRuntime = await read("src/server/shared/uiProjectionRuntime.ts");
