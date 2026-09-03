@@ -41,6 +41,14 @@ test("production instrumentation does not import controlled test runtimes", asyn
   assert.doesNotMatch(instrumentation, /import\s*\(["']@\/server\/testing\//);
 });
 
+test("controlled test mode is hard-disabled for production deployment", async () => {
+  const controlledTestData = await read("src/domain/testing/controlledTestData.ts");
+  assert.match(controlledTestData, /ACPOS_DEPLOYMENT_ENV/);
+  assert.match(controlledTestData, /PRODUCTION_ENVIRONMENT_VALUE\s*=\s*["']production["']/);
+  assert.match(controlledTestData, /trim\(\)\.toLowerCase\(\)/);
+  assert.match(controlledTestData, /deploymentEnvironment\s*!==\s*PRODUCTION_ENVIRONMENT_VALUE/);
+});
+
 test("production readiness remains fail-closed for controlled mode and unbound UI runtime", async () => {
   const readiness = await read("src/app/health/ready/route.ts");
   const uiRuntime = await read("src/server/shared/uiProjectionRuntime.ts");
