@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0001-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0002-SANDBOX-VALIDATED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -82,12 +82,46 @@ staging_0001_verification:
   - btree_gist=1.7
   - citext=1.6
   - pgcrypto=1.3
+staging_0002_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0002_topic_contract_constraints
+  payload_sha256: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
+  required_approval_ref: CR-SCHEMA-0002
+  migration_0001_verified: true
+  orphan_null_scan_targets: 14
+  orphan_null_blockers: 0
+  target_columns_already_not_null_after_0001: 14
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0002-topic-contract
+    branch_id: br-restless-forest-b37es1u4
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    no_compute: true
+    reason: Neon manual snapshot quota is occupied by pre-r9-bootstrap-empty; existing rollback snapshot was preserved.
+temporary_0002_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  branch_name: r9-0002-topic-contract-validate
+  branch_id: br-green-water-b3is6ygq
+  parent_branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  execution_mode: SINGLE_TRANSACTION_STATEMENT_BOUNDARY_PRESERVED
+  not_null_targets_verified: 14
+  trigger_functions_present: 3
+  triggers_present: 5
+  migration_history_rows: 1
+  migration_history_checksum: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
+  migration_history_approval_ref: CR-SCHEMA-0002
+  schema_diff_summary: only expected 0002 trigger functions and triggers; NOT NULL targets were already hardened by 0001 final target
+  prepare_database_migration_parser_note: Neon helper parser rejected dollar-quoted PL/pgSQL; validation used explicit PostgreSQL statement boundaries on a temporary branch instead. No staging mutation occurred from the failed helper attempt.
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
   clean_temporary_branch_revalidation: PASS
   staging_0001_state: APPLIED_VERIFIED
-  0002_state: BLOCKED_PENDING_0002_OWN_GATES
+  0002_state: PENDING_CR_SCHEMA_0002_HUMAN_APPROVAL
+  0002_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_HUMAN_APPROVAL
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
