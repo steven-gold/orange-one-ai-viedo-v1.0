@@ -8,9 +8,12 @@ export type ControlledTestMetadata = {
 };
 
 const CONTROLLED_TEST_MODE_VALUE = "CONTROLLED_TEST";
+const PRODUCTION_ENVIRONMENT_VALUE = "production";
 
 export function isControlledTestMode(): boolean {
-  return process.env.NEXT_PUBLIC_ACPOS_RUNTIME_MODE === CONTROLLED_TEST_MODE_VALUE;
+  const runtimeMode = process.env.NEXT_PUBLIC_ACPOS_RUNTIME_MODE;
+  const deploymentEnvironment = (process.env.ACPOS_DEPLOYMENT_ENV ?? "").trim().toLowerCase();
+  return runtimeMode === CONTROLLED_TEST_MODE_VALUE && deploymentEnvironment !== PRODUCTION_ENVIRONMENT_VALUE;
 }
 
 function randomToken(): string {
