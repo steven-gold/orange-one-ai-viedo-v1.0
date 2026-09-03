@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-03-DATABASE-MIGRATION-0001-CORRECTION
+  revision: 2026-09-04-DATABASE-MIGRATION-0001-CLEAN-REVALIDATED
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -55,7 +55,9 @@ cross_authority_bindings:
     current_0001_payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
     old_0001_payload_sha256: cb622dc4ae9d0cd5533348e5fdcda6d624ff0c5799bf7e20a94aa853451ea98f
     old_0001_status: SUPERSEDED_DO_NOT_EXECUTE
-    staging_gate: BLOCKED_PENDING_CLEAN_TEMP_REVALIDATION
+    clean_temporary_revalidation: PASS
+    clean_temporary_branch_id: br-little-leaf-b3qaagp0
+    staging_gate: READY_FOR_STAGING_0001
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
