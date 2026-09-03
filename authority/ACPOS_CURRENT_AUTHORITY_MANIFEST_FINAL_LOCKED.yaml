@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0005-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
+  revision: 2026-09-04-DATABASE-MIGRATION-0005-STAGING-APPROVED-PENDING-EXECUTION
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -87,12 +87,13 @@ cross_authority_bindings:
     0004_staging_history_checksum: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
     0004_staging_schema_diff: EMPTY
     0004_approval_ref: CR-R9-0004
-    0005_gate: TEMP_VALIDATION_PASS_PENDING_CR_R9_0005_STAGING_APPROVAL
+    0005_gate: STAGING_APPROVED_PENDING_EXECUTION
     0005_payload_sha256: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
     0005_restore_branch_id: br-wispy-water-b3mbb2se
     0005_validation_branch_id: br-frosty-art-b3z5ujpv
     0005_validation_branch_reused: true
-    0005_staging_execution: NOT_EXECUTED_REQUIRES_EXPLICIT_HUMAN_APPROVAL
+    0005_staging_execution: APPROVED_PENDING_EXECUTION
+    0005_approval_ref: CR-R9-0005
     0006_gate: BLOCKED_PENDING_0005
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml

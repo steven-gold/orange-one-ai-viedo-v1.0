@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0005-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
+  revision: 2026-09-04-DATABASE-MIGRATION-0005-STAGING-APPROVED-PENDING-EXECUTION
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -418,7 +418,14 @@ staging_0004_verification:
   unvalidated_constraints: 0
   clean_schema_diff_against_restore_point: EMPTY
   unexpected_schema_drift: 0
-          staging_0005_preflight:
+cr_r9_0005_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-R9-0005
+  approved_scope: APPLY_VALIDATED_0005_TO_STAGING_ONLY
+  pre_0005_restore_branch_id: br-wispy-water-b3mbb2se
+staging_0005_preflight:
   status: PASS_PENDING_HUMAN_APPROVAL
   verified_on: '2026-09-04'
   migration_id: 0005_r9_final_correction
@@ -500,10 +507,10 @@ execution_gates:
   0004_state: APPLIED_VERIFIED
   0004_temporary_execution: PASS
   0004_staging_execution: COMPLETE_VERIFIED
-  0005_state: TEMP_VALIDATION_PASS_PENDING_CR_R9_0005_STAGING_APPROVAL
-    0005_temporary_execution: PASS
-    0005_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_CR_R9_0005_STAGING_APPROVAL
-    0006_state: BLOCKED_PENDING_0005
+  0005_state: STAGING_APPROVED_PENDING_EXECUTION
+  0005_temporary_execution: PASS
+  0005_staging_execution: APPROVED_PENDING_EXECUTION
+  0006_state: BLOCKED_PENDING_0005
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
