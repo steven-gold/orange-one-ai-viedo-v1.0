@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0006-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0007-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -616,6 +616,57 @@ staging_0006_verification:
   unvalidated_constraints: 0
   clean_schema_diff_against_restore_point: EMPTY
   unexpected_schema_drift: 0
+staging_0007_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0007_runtime_operational_schema
+  migration_path: database/migrations/0007_runtime_operational_schema.sql
+  payload_sha256: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
+  required_approval_ref: CR-R9-0007
+  checksum_verification: PASS
+  prior_migration_0006_exact: true
+  migration_0007_history_rows_on_staging: 0
+  runtime_schema_present: true
+  target_runtime_tables: 36
+  target_runtime_tables_already_present: 36
+  runtime_rows_total: 0
+  unvalidated_constraints: 0
+  permission_resource_rows: 3650
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0007-runtime-operational-schema
+    branch_id: br-damp-recipe-b3omapws
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    parent_lsn: 0/267AB48
+    no_compute: true
+temporary_0007_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0007-runtime-operational-validate-20260904
+  temporary_branch_id: br-tiny-tooth-b358vhge
+  database_name: acpos_staging
+  baseline_schema_diff_against_staging: EMPTY
+  baseline_migration_0006_exact: true
+  baseline_migration_0007_rows: 0
+  baseline_permission_resource_rows: 3650
+  baseline_unvalidated_constraints: 0
+  source_migration: database/migrations/0007_runtime_operational_schema.sql
+  payload_sha256: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
+  execution_mode: SINGLE_TRANSACTION_38_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
+  migration_history_approval_ref: CR-R9-0007
+  prior_migration_0006_exact: true
+  target_runtime_tables: 36
+  target_runtime_tables_present: 36
+  runtime_rows_total: 0
+  unvalidated_constraints: 0
+  permission_resource_rows_preserved: 3650
+  schema_diff_against_staging: EMPTY
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -636,7 +687,10 @@ execution_gates:
   0006_state: APPLIED_VERIFIED
   0006_temporary_execution: PASS
   0006_staging_execution: COMPLETE_VERIFIED
-  0007_state: PENDING_0007_OWN_GATES
+  0007_state: TEMP_VALIDATION_PASS_PENDING_CR_R9_0007_STAGING_APPROVAL
+  0007_temporary_execution: PASS
+  0007_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_CR_R9_0007_STAGING_APPROVAL
+  0008_state: BLOCKED_PENDING_0007
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
