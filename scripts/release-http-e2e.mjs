@@ -3,6 +3,8 @@ import { spawn, spawnSync } from "node:child_process";
 const port = process.env.ACPOS_E2E_PORT ?? "3499";
 const base = `http://127.0.0.1:${port}`;
 const expectReady = process.env.ACPOS_EXPECT_READY === "1";
+const expectControlledBlock = process.env.ACPOS_EXPECT_CONTROLLED_BLOCK === "1";
+const runtimeMode = process.env.ACPOS_E2E_RUNTIME_MODE ?? "";
 
 const routes = [
   ["/", "workspace:WB-01"], ["/core", "CORE-01"], ["/assets", "ASSET-01"], ["/video", "VIDEO-01"],
@@ -19,7 +21,7 @@ function run(command, args, env = process.env) {
 }
 
 if (process.env.ACPOS_E2E_SKIP_BUILD !== "1") {
-  run("npm", ["run", "build"], { ...process.env, NEXT_PUBLIC_ACPOS_RUNTIME_MODE: "" });
+  run("npm", ["run", "build"], { ...process.env, NEXT_PUBLIC_ACPOS_RUNTIME_MODE: runtimeMode });
 }
 
 const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-p", port], {
@@ -27,7 +29,7 @@ const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "star
   env: {
     ...process.env,
     NODE_ENV: "production",
-    NEXT_PUBLIC_ACPOS_RUNTIME_MODE: "",
+    NEXT_PUBLIC_ACPOS_RUNTIME_MODE: runtimeMode,
     ACPOS_RATE_LIMIT_MAX: "3",
     ACPOS_RATE_LIMIT_WINDOW_MS: "60000",
   },
@@ -65,17 +67,29 @@ try {
   for (const [name, value] of Object.entries(security)) assert(Boolean(value), `SECURITY_HEADER_MISSING_${name}`);
 
   const ready = await fetch(`${base}/health/ready`, { cache: "no-store" });
-  if (expectReady) assert(ready.status === 200, `PRODUCTION_NOT_READY_HTTP_${ready.status}`);
-  else assert([200, 503].includes(ready.status), `READINESS_HTTP_${ready.status}`);
+  const readyText = await ready.text();
+  if (expectControlledBlock) {
+    assert(ready.status === 503, `CONTROLLED_PRODUCTION_READINESS_HTTP_${ready.status}`);
+    assert(/CONTROLLED_TEST_NOT_PRODUCTION_READY/.test(readyText), "CONTROLLED_PRODUCTION_READINESS_REASON_MISSING");
+  } else if (expectReady) {
+    assert(ready.status === 200, `PRODUCTION_NOT_READY_HTTP_${ready.status}`);
+  } else {
+    assert([200, 503].includes(ready.status), `READINESS_HTTP_${ready.status}`);
+  }
 
   for (const [route, uid] of routes) {
     const page = await fetch(`${base}${route}`, { cache: "no-store" });
     assert(page.status === 200, `PAGE_${route}_HTTP_${page.status}`);
     const projection = await fetch(`${base}/v1/ui-projections/${encodeURIComponent(uid)}`, { cache: "no-store" });
     const text = await projection.text();
-    assert([200, 503].includes(projection.status), `PROJECTION_${uid}_HTTP_${projection.status}`);
     assert(!/TEST_ONLY|TEST-RUN-|"synthetic"\s*:\s*true/.test(text), `PRODUCTION_TEST_DATA_LEAK_${uid}`);
-    if (projection.status === 503) assert(/RUNTIME_NOT_BOUND|NOT_BOUND|NOT_CONFIGURED/.test(text), `UNTRUTHFUL_503_${uid}`);
+    if (expectControlledBlock) {
+      assert(projection.status === 503, `CONTROLLED_PRODUCTION_PROJECTION_${uid}_HTTP_${projection.status}`);
+      assert(/UI_PROJECTION_RUNTIME_NOT_BOUND/.test(text), `CONTROLLED_PRODUCTION_PROJECTION_REASON_${uid}`);
+    } else {
+      assert([200, 503].includes(projection.status), `PROJECTION_${uid}_HTTP_${projection.status}`);
+      if (projection.status === 503) assert(/RUNTIME_NOT_BOUND|NOT_BOUND|NOT_CONFIGURED/.test(text), `UNTRUTHFUL_503_${uid}`);
+    }
   }
 
   let limitedResponse = null;
@@ -98,7 +112,7 @@ try {
 
   const missing = await fetch(`${base}/this-route-must-not-exist`, { redirect: "manual" });
   assert(missing.status === 404, `NOT_FOUND_HTTP_${missing.status}`);
-  process.stdout.write(`RELEASE_HTTP_E2E_PASS ready=${ready.status} rate_limit=429\n`);
+  process.stdout.write(`RELEASE_HTTP_E2E_PASS ready=${ready.status} rate_limit=429 controlled_block=${expectControlledBlock ? "1" : "0"}\n`);
 } finally {
   server.kill("SIGTERM");
 }
