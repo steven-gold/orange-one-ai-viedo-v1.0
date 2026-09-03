@@ -35,6 +35,27 @@ test("observability is vendor-neutral and instrumentation-bound", async () => {
   assert.match(instrumentation, /UNCAUGHT_SERVER_REQUEST_ERROR/);
 });
 
+test("production instrumentation does not import controlled test runtimes", async () => {
+  const instrumentation = await read("src/instrumentation.ts");
+  assert.doesNotMatch(instrumentation, /from\s+["']@\/server\/testing\//);
+  assert.doesNotMatch(instrumentation, /import\s*\(["']@\/server\/testing\//);
+});
+
+test("production readiness remains fail-closed for controlled mode and unbound UI runtime", async () => {
+  const readiness = await read("src/app/health/ready/route.ts");
+  const uiRuntime = await read("src/server/shared/uiProjectionRuntime.ts");
+
+  assert.match(readiness, /NEXT_PUBLIC_ACPOS_RUNTIME_MODE\s*===\s*["']CONTROLLED_TEST["']/);
+  assert.match(readiness, /CONTROLLED_TEST_NOT_PRODUCTION_READY/);
+  assert.match(readiness, /status:\s*503/);
+  assert.match(readiness, /getUiProjection/);
+  assert.match(readiness, /if\s*\(!probe\.ok\)/);
+
+  assert.match(uiRuntime, /if\s*\(!runtime\)/);
+  assert.match(uiRuntime, /UI_PROJECTION_RUNTIME_NOT_BOUND/);
+  assert.match(uiRuntime, /status:\s*503/);
+});
+
 test("release gate covers both construction and production branches", async () => {
   const workflow = await read(".github/workflows/release-gate.yml");
   assert.match(workflow, /pull_request:[\s\S]*branches:\s*\[new, main\]/);
