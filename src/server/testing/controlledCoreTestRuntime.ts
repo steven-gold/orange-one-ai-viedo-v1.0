@@ -1,5 +1,6 @@
 import type { CoreRuntimeBindings } from "@/server/core/coreRuntime";
 import type { CoreRuntimeRequest } from "@/domain/core/coreRuntimeContract";
+import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 
 type TestProject = {
   project_id: string;
@@ -493,7 +494,7 @@ async function execute(request: CoreRuntimeRequest): Promise<unknown> {
 }
 
 export function isControlledCoreServerTestMode(): boolean {
-  return process.env.ACPOS_RUNTIME_MODE !== "PRODUCTION";
+  return isControlledTestMode();
 }
 
 export function getControlledCoreTestRuntimeBindings(): CoreRuntimeBindings {
