@@ -67,14 +67,16 @@ cross_authority_bindings:
     0002_approval_ref: CR-SCHEMA-0002
     0002_restore_branch_id: br-restless-forest-b37es1u4
     0002_validation_branch_id: br-green-water-b3is6ygq
-    0003_gate: TEMP_VALIDATION_PASS_PENDING_CR_AUTH_0003_STAGING_APPROVAL
+    0003_gate: STAGING_APPROVED_PENDING_EXECUTION
     0003_payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
     0003_catalog_path: 06_permission/account_permission_catalog.yaml
     0003_catalog_git_blob_sha: bf9081eae472785d260bddeb3860d2f0f0c38b9d
     0003_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
     0003_validation_branch_id: br-rapid-cherry-b325q8fm
     0003_validation_projection_sha256: 745b716a814be0c55a2851dd82c5b3eaaf9dc07534cfcb03abc357d45d94b98c
-    0003_staging_execution: NOT_EXECUTED_REQUIRES_EXPLICIT_HUMAN_APPROVAL
+    0003_staging_execution: APPROVED_PENDING_EXECUTION
+    0003_staging_approval_ref: CR-AUTH-0003
+    0003_restore_branch_id: br-icy-field-b383fiso
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml

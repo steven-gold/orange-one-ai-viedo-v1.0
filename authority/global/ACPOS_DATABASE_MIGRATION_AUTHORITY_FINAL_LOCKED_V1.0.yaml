@@ -24,7 +24,12 @@ cr_auth_0003_minimal_correction_approval:
   - Define deterministic canonical Account Permission Catalog resource_id to database UUID mapping.
   - Materialize and validate the exact 3650-resource Account Permission Catalog without omission.
   - Replace unsafe static legacy-table guard reads with existence-safe fail-closed checks.
-  staging_apply_approval: NOT_GRANTED
+  staging_apply_approval: APPROVED
+  staging_apply_approved_on: '2026-09-04'
+  staging_apply_approved_by: HUMAN_USER
+  staging_apply_approval_ref: CR-AUTH-0003
+  staging_apply_scope: APPLY_VALIDATED_0003_TO_STAGING_ONLY
+  pre_0003_restore_branch_id: br-icy-field-b383fiso
 source_lineage:
   source_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_AI_SEQUENCED_FINAL.yaml
   old_0001_payload_sha256: cb622dc4ae9d0cd5533348e5fdcda6d624ff0c5799bf7e20a94aa853451ea98f
@@ -309,9 +314,9 @@ execution_gates:
   staging_0001_state: APPLIED_VERIFIED
   0002_state: APPLIED_VERIFIED
   0002_staging_execution: COMPLETE_VERIFIED
-  0003_state: TEMP_VALIDATION_PASS_PENDING_CR_AUTH_0003_STAGING_APPROVAL
+  0003_state: STAGING_APPROVED_PENDING_EXECUTION
   0003_temporary_execution: PASS
-  0003_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_CR_AUTH_0003_STAGING_APPROVAL
+  0003_staging_execution: APPROVED_PENDING_EXECUTION
   0003_destructive_legacy_cleanup: NOT_EXECUTED
   0004_state: BLOCKED_PENDING_0003
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
