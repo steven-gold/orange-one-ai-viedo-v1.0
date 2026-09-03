@@ -1,4 +1,5 @@
 import type { DashboardReadModel } from "@/domain/dashboard/readModelContract";
+import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 
 export const CONTROLLED_DASHBOARD_TEST_METADATA = Object.freeze({
   data_classification: "TEST_ONLY" as const,
@@ -10,7 +11,7 @@ export const CONTROLLED_DASHBOARD_TEST_METADATA = Object.freeze({
 });
 
 export function isControlledDashboardServerTestMode(): boolean {
-  return process.env.NEXT_PUBLIC_ACPOS_RUNTIME_MODE === "CONTROLLED_TEST";
+  return isControlledTestMode();
 }
 
 export function readControlledDashboardTestProjection(correlation_id: string): DashboardReadModel {
