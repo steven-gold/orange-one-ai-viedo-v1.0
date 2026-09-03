@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0013-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0014-APPLIED-VERIFIED
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -142,7 +142,10 @@ cross_authority_bindings:
     0013_staging_execution: COMPLETE_VERIFIED
     0013_staging_history_checksum: 013a0c7e815b0efd398dfe60869d03cc4abeb3afd045bc3f8325d3c5bb04a100
     0013_staging_schema_delta: EXPECTED_THREE_ERP_INDEXES
-    0014_gate: PENDING_0014_OWN_GATES
+    0014_gate: APPLIED_VERIFIED
+    0014_staging_execution: COMPLETE_VERIFIED
+    0014_staging_history_checksum: f6ece41036e85611231688cda4d1106cf7b2a29086dea1a173ea42fed9abcea8
+    0015_gate: PENDING_0015_OWN_GATES
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
