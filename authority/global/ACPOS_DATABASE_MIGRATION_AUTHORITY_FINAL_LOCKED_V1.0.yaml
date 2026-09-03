@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0008-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
+  revision: 2026-09-04-DATABASE-MIGRATION-0008-STAGING-APPROVED-PENDING-EXECUTION
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -696,6 +696,13 @@ staging_0007_verification:
   unvalidated_constraints: 0
   clean_schema_diff_against_restore_point: EMPTY
   unexpected_schema_drift: 0
+cr_r9_0008_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-R9-0008
+  approved_scope: APPLY_VALIDATED_0008_TO_STAGING_ONLY
+  pre_0008_restore_branch_id: br-holy-sunset-b3kxgk9c
 staging_0008_preflight:
   status: PASS_PENDING_HUMAN_APPROVAL
   verified_on: '2026-09-04'
@@ -773,9 +780,9 @@ execution_gates:
   0007_state: APPLIED_VERIFIED
   0007_temporary_execution: PASS
   0007_staging_execution: COMPLETE_VERIFIED
-  0008_state: TEMP_VALIDATION_PASS_PENDING_CR_R9_0008_STAGING_APPROVAL
+  0008_state: STAGING_APPROVED_PENDING_EXECUTION
   0008_temporary_execution: PASS
-  0008_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_CR_R9_0008_STAGING_APPROVAL
+  0008_staging_execution: APPROVED_PENDING_EXECUTION
   0009_state: BLOCKED_PENDING_0008
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
