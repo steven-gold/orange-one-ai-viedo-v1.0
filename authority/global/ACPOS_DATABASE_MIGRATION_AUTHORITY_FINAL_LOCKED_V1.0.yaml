@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0005-STAGING-APPROVED-PENDING-EXECUTION
+  revision: 2026-09-04-DATABASE-MIGRATION-0005-APPLIED-VERIFIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -493,6 +493,35 @@ temporary_0005_validation:
   - meetings.fk_meetings_context_snapshot foreign key added
   unexpected_schema_drift: 0
   staging_mutation_performed: false
+staging_0005_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source_migration: database/migrations/0005_r9_final_correction.sql
+  payload_sha256: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
+  approval_ref: CR-R9-0005
+  pre_0005_restore_branch_id: br-wispy-water-b3mbb2se
+  execution_mode: SINGLE_TRANSACTION_26_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
+  migration_history_approval_ref: CR-R9-0005
+  prior_migration_0004_exact: true
+  target_tables_checked: 20
+  target_table_rows_after_staging_execution: 0
+  fk_meetings_context_snapshot_present: true
+  meeting_function_comment: NON_AUTHORIZATION_METADATA: meeting function/perspective only; never an Authorization Role.
+  permission_resource_rows_preserved: 3650
+  unvalidated_constraints: 0
+  clean_schema_diff_against_restore_point:
+  - meeting_participants.meeting_function comment added
+  - meetings.fk_meetings_context_snapshot foreign key added
+  unexpected_schema_drift: 0
+  restore_branch_auxiliary_database:
+    name: acpos_validation_admin
+    status: PRESENT_UNUSED
+    cleanup_state: PENDING_EXPLICIT_CLEANUP_APPROVAL
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -507,10 +536,10 @@ execution_gates:
   0004_state: APPLIED_VERIFIED
   0004_temporary_execution: PASS
   0004_staging_execution: COMPLETE_VERIFIED
-  0005_state: STAGING_APPROVED_PENDING_EXECUTION
+  0005_state: APPLIED_VERIFIED
   0005_temporary_execution: PASS
-  0005_staging_execution: APPROVED_PENDING_EXECUTION
-  0006_state: BLOCKED_PENDING_0005
+  0005_staging_execution: COMPLETE_VERIFIED
+  0006_state: PENDING_0006_OWN_GATES
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
