@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0009-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0010-APPLIED-VERIFIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -871,6 +871,22 @@ staging_0009_verification:
   unvalidated_constraints: 0
   clean_schema_diff_against_restore_point: EMPTY
   unexpected_schema_drift: 0
+staging_0010_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0010_layer_canonical_closure.sql
+  payload_sha256: ec2efe83b42fe135f9dac81f058876c6e90291b760106a2a7e3c08a47ffc267b
+  approval_ref: CR-R9-0010
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  batch_restore_replay_chain_starts_at: 0009_layer_runtime_closure
+  execution_mode: SINGLE_TRANSACTION_4_STATEMENTS
+  migration_history_rows: 1
+  layer_rows: 0
+  blank_layer_names: 0
+  layer_name_nullable: false
+  unvalidated_constraints: 0
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -900,7 +916,10 @@ execution_gates:
   0009_state: APPLIED_VERIFIED
   0009_temporary_execution: PASS
   0009_staging_execution: COMPLETE_VERIFIED
-  0010_state: PENDING_0010_OWN_GATES
+  0010_state: APPLIED_VERIFIED
+  0010_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0010_staging_execution: COMPLETE_VERIFIED
+  0011_state: PENDING_0011_OWN_GATES
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
