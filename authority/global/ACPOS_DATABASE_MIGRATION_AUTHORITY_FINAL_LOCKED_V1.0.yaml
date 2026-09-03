@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0005-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0006-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -520,8 +520,71 @@ staging_0005_verification:
   unexpected_schema_drift: 0
   restore_branch_auxiliary_database:
     name: acpos_validation_admin
-    status: PRESENT_UNUSED
-    cleanup_state: PENDING_EXPLICIT_CLEANUP_APPROVAL
+    status: REMOVED
+    cleanup_state: COMPLETE
+    removed_on: '2026-09-04'
+    helper_compute_endpoint_id: ep-soft-star-b38tbphf
+    helper_compute_endpoint_status: REMOVED
+staging_0006_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0006_deployment_ready_closure
+  migration_path: database/migrations/0006_deployment_ready_closure.sql
+  payload_sha256: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
+  required_approval_ref: CR-R9-0006
+  checksum_verification: PASS
+  prior_migration_0005_exact: true
+  migration_0006_history_rows_on_staging: 0
+  target_add_columns: 136
+  target_add_columns_already_present: 136
+  legacy_data_gate_tables: 15
+  legacy_data_gate_rows: 0
+  retired_column_world_bible_versions_production_type: ABSENT
+  retired_column_meeting_participants_participant_role: ABSENT
+  unvalidated_constraints: 0
+  permission_resource_rows: 3650
+  cleanup_before_0006:
+    helper_database_acpos_validation_admin: REMOVED
+    helper_compute_endpoint_ep_soft_star_b38tbphf: REMOVED
+    old_temp_branch_br_green_water_b3is6ygq: REMOVED
+    old_temp_branch_br_rapid_cherry_b325q8fm: REMOVED
+    restore_branches_preserved: true
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0006-deployment-ready-closure
+    branch_id: br-super-smoke-b3gy5j7q
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    parent_lsn: 0/26792B0
+    no_compute: true
+temporary_0006_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0006-deployment-ready-validate-20260904
+  temporary_branch_id: br-super-frog-b3bcp18i
+  database_name: acpos_staging
+  baseline_schema_diff_against_staging: EMPTY
+  baseline_migration_0005_exact: true
+  baseline_migration_0006_rows: 0
+  baseline_permission_resource_rows: 3650
+  baseline_unvalidated_constraints: 0
+  source_migration: database/migrations/0006_deployment_ready_closure.sql
+  payload_sha256: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
+  execution_mode: SINGLE_TRANSACTION_142_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
+  migration_history_approval_ref: CR-R9-0006
+  prior_migration_0005_exact: true
+  target_add_columns: 136
+  target_add_columns_present: 136
+  legacy_data_gate_rows: 0
+  retired_columns_absent: true
+  unvalidated_constraints: 0
+  permission_resource_rows_preserved: 3650
+  schema_diff_against_staging: EMPTY
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -539,7 +602,10 @@ execution_gates:
   0005_state: APPLIED_VERIFIED
   0005_temporary_execution: PASS
   0005_staging_execution: COMPLETE_VERIFIED
-  0006_state: PENDING_0006_OWN_GATES
+  0006_state: TEMP_VALIDATION_PASS_PENDING_CR_R9_0006_STAGING_APPROVAL
+  0006_temporary_execution: PASS
+  0006_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_CR_R9_0006_STAGING_APPROVAL
+  0007_state: BLOCKED_PENDING_0006
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
