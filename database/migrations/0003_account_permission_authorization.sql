@@ -4,11 +4,58 @@ ALTER TYPE actor_type ADD VALUE IF NOT EXISTS 'SERVICE_IDENTITY';
 ALTER TYPE classification_level ADD VALUE IF NOT EXISTS 'RESTRICTED_FINANCE';
 
 ALTER TABLE permission_resources DROP CONSTRAINT IF EXISTS permission_resources_resource_type_check;
-ALTER TABLE permission_resources ADD CONSTRAINT permission_resources_resource_type_check CHECK(resource_type IN ('SURFACE','L1','L2','L3','PAGE','SECTION','CONTROL','ACTION','FIELD','API','DECISION'));
+ALTER TABLE permission_resources ADD CONSTRAINT permission_resources_resource_type_check CHECK(resource_type IN ('SURFACE','L1','L2','L3','PAGE','SECTION','CONTROL','ACTION','FIELD','API','DECISION','SENSITIVE_PERMISSION'));
 ALTER TABLE permission_resources ADD COLUMN IF NOT EXISTS allowed_actions jsonb NOT NULL DEFAULT '[]'::jsonb;
 ALTER TABLE permission_resources ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;
 ALTER TABLE permission_resources ADD COLUMN IF NOT EXISTS created_at timestamptz NOT NULL DEFAULT now();
 ALTER TABLE permission_resources ADD COLUMN IF NOT EXISTS risk_tier text NOT NULL DEFAULT 'STANDARD' CHECK(risk_tier IN ('STANDARD','HIGH'));
+
+-- Account Permission Catalog database identity mapping (approved 0003 minimal correction):
+-- canonical identity remains catalog resource_id (PERM-* text).
+-- UUID namespace seed: urn:acpos:permission-catalog:ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
+-- UUID namespace: a5cde652-06f2-521b-933a-785801354eca
+-- database permission_resources.resource_id = RFC 9562 UUIDv5(namespace, canonical resource_id).
+-- parent_resource_key is resolved from the canonical parent_resource_id through the same catalog.
+-- The pre-0003 governed catalog import materializes the 3,648 non-SENSITIVE_PERMISSION resources;
+-- 0003 widens the resource_type constraint, inserts the two authoritative HIGH-risk sensitive resources,
+-- then validates the full 3,650-resource database projection.
+DO $$
+DECLARE
+  pre_count bigint;
+BEGIN
+  SELECT count(*) INTO pre_count FROM permission_resources;
+  IF pre_count <> 3648 THEN
+    RAISE EXCEPTION 'ACCOUNT_PERMISSION_CATALOG_PREIMPORT_COUNT_MISMATCH: %', pre_count;
+  END IF;
+  IF EXISTS (SELECT 1 FROM permission_resources WHERE resource_type = 'SENSITIVE_PERMISSION') THEN
+    RAISE EXCEPTION 'ACCOUNT_PERMISSION_SENSITIVE_RESOURCE_PREMATURELY_PRESENT';
+  END IF;
+END;
+$$;
+
+INSERT INTO permission_resources(
+  resource_id, resource_key, resource_type, parent_resource_key, classification, allowed_actions, active, risk_tier
+)
+VALUES
+  ('fe759359-0395-530c-a88d-4142cf609b59'::uuid, 'permission:finance.read', 'SENSITIVE_PERMISSION', 'section:admin:IAM-02:sensitive_permission', 'RESTRICTED_FINANCE'::classification_level, '["READ"]'::jsonb, true, 'HIGH'),
+  ('c3393e94-4e79-53d8-a082-6501c0ad7d7b'::uuid, 'permission:provider.cost.read', 'SENSITIVE_PERMISSION', 'section:admin:IAM-02:sensitive_permission', 'RESTRICTED_FINANCE'::classification_level, '["READ"]'::jsonb, true, 'HIGH');
+
+DO $$
+DECLARE
+  total_count bigint;
+  sensitive_count bigint;
+BEGIN
+  SELECT count(*) INTO total_count FROM permission_resources;
+  SELECT count(*) INTO sensitive_count FROM permission_resources WHERE resource_type = 'SENSITIVE_PERMISSION';
+  IF total_count <> 3650 THEN
+    RAISE EXCEPTION 'ACCOUNT_PERMISSION_CATALOG_COUNT_MISMATCH: %', total_count;
+  END IF;
+  IF sensitive_count <> 2 THEN
+    RAISE EXCEPTION 'ACCOUNT_PERMISSION_SENSITIVE_RESOURCE_COUNT_MISMATCH: %', sensitive_count;
+  END IF;
+END;
+$$;
+
 
 CREATE TABLE IF NOT EXISTS account_permission_assignments (
   account_permission_assignment_id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL REFERENCES app_users(user_id), resource_id uuid NOT NULL REFERENCES permission_resources(resource_id), action text NOT NULL,
@@ -64,9 +111,22 @@ END $$;
 COMMENT ON COLUMN project_memberships.collaboration_label IS 'NON_AUTHORIZATION_METADATA: collaboration label only; never an Authorization Source.';
 
 -- No AI or migration default may map a Role Bundle to a human account permission assignment.
-DO $$ BEGIN
-  IF EXISTS (SELECT 1 FROM user_role_assignments) OR EXISTS (SELECT 1 FROM permission_policies) THEN
-    RAISE EXCEPTION 'ACCOUNT_PERMISSION_MIGRATION_MAPPING_REQUIRED';
+-- Legacy authorization tables are optional in corrected canonical bootstrap; inspect them only when the relation exists.
+DO $$
+DECLARE
+  legacy_rows bigint;
+BEGIN
+  IF to_regclass('public.user_role_assignments') IS NOT NULL THEN
+    EXECUTE 'SELECT count(*) FROM public.user_role_assignments' INTO legacy_rows;
+    IF legacy_rows > 0 THEN
+      RAISE EXCEPTION 'ACCOUNT_PERMISSION_MIGRATION_MAPPING_REQUIRED';
+    END IF;
+  END IF;
+  IF to_regclass('public.permission_policies') IS NOT NULL THEN
+    EXECUTE 'SELECT count(*) FROM public.permission_policies' INTO legacy_rows;
+    IF legacy_rows > 0 THEN
+      RAISE EXCEPTION 'ACCOUNT_PERMISSION_MIGRATION_MAPPING_REQUIRED';
+    END IF;
   END IF;
 END $$;
 DROP TABLE IF EXISTS user_role_assignments;
@@ -74,5 +134,5 @@ DROP TABLE IF EXISTS permission_policies;
 DROP TABLE IF EXISTS role_bundles;
 
 INSERT INTO schema_migration_history(migration_id, checksum, applied_by, approval_ref)
-VALUES ('0003_account_permission_authorization', '14dbb9540b01ccb33e2f6be3a1e8eac3c8fde5b0216604c86be25ef57dbd6471', 'migration-runner', 'CR-AUTH-0003')
+VALUES ('0003_account_permission_authorization', '3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790', 'migration-runner', 'CR-AUTH-0003')
 ON CONFLICT (migration_id) DO NOTHING;

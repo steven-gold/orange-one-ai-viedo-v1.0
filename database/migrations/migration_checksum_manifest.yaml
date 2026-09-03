@@ -1,9 +1,10 @@
 contract_meta:
-  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.1
+  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.2
   rule: checksum is calculated from migration payload excluding the terminal schema_migration_history registration statement; zero value is forbidden.
   bootstrap_rule: 0001 is self-contained and must be executed before all later migrations.
-  authority_revision: 2026-09-03-DATABASE-MIGRATION-0001-CORRECTION
+  authority_revision: 2026-09-04-DATABASE-MIGRATION-0003-MINIMAL-CORRECTION
   0001_correction: USER_APPROVED_MINIMAL_BOOTSTRAP_CORRECTION
+  0003_correction: USER_APPROVED_MINIMAL_ACCOUNT_PERMISSION_CORRECTION
 migrations:
 - migration_id: 0001_canonical_schema
   payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
@@ -14,7 +15,7 @@ migrations:
   approval_ref: CR-SCHEMA-0002
   bootstrap: REQUIRES_PRIOR_MIGRATION
 - migration_id: 0003_account_permission_authorization
-  payload_sha256: 14dbb9540b01ccb33e2f6be3a1e8eac3c8fde5b0216604c86be25ef57dbd6471
+  payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
   approval_ref: CR-AUTH-0003
   bootstrap: REQUIRES_PRIOR_MIGRATION
 - migration_id: 0004_r9_finalization
