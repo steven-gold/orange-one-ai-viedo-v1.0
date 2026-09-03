@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0002-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0003-CATALOG-GATE-BLOCKED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -137,6 +137,65 @@ staging_0002_verification:
   migration_history_checksum: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
   migration_history_approval_ref: CR-SCHEMA-0002
   schema_diff_against_restore_point: only expected 0002 trigger functions and triggers; no unexpected drift
+staging_0003_preflight:
+  status: BLOCKED_AUTHORITY_CORRECTION_REQUIRED
+  verified_on: '2026-09-04'
+  migration_id: 0003_account_permission_authorization
+  payload_sha256: 14dbb9540b01ccb33e2f6be3a1e8eac3c8fde5b0216604c86be25ef57dbd6471
+  checksum_verification: PASS
+  required_approval_ref: CR-AUTH-0003
+  prior_migrations_verified:
+  - 0001_canonical_schema
+  - 0002_topic_contract_constraints
+  migration_0003_history_rows: 0
+  destructive_execution_performed: false
+  pre_0003_restore_point_created: false
+  legacy_authorization:
+    role_bundles_table_present: false
+    user_role_assignments_table_present: false
+    permission_policies_table_present: false
+    legacy_role_data_rows: 0
+    explicit_user_by_user_mapping_required_for_existing_rows: false
+  staging_data_counts:
+    app_users: 0
+    permission_resources: 0
+    account_permission_assignments: 0
+    service_identities: 0
+    service_identity_capability_assignments: 0
+    decision_requests: 0
+    memberships: 0
+    access_reviews: 0
+    project_memberships: 0
+    membership_duplicates: 0
+  account_permission_catalog_validation:
+    source: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_AI_SEQUENCED_FINAL.yaml#permission_authority.account_permission_catalog
+    contract_id: ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
+    resource_total: 3650
+    duplicate_resource_ids: 0
+    duplicate_resource_keys: 0
+    missing_parent_resource_ids: 0
+    resource_type_counts:
+      SURFACE: 2
+      L1: 18
+      L2: 29
+      L3: 92
+      PAGE: 92
+      SECTION: 741
+      CONTROL: 1141
+      ACTION: 312
+      FIELD: 979
+      API: 242
+      SENSITIVE_PERMISSION: 2
+    sensitive_permission_resources:
+    - permission:finance.read
+    - permission:provider.cost.read
+  proven_authority_gaps:
+  - code: CATALOG_RESOURCE_TYPE_NOT_ACCEPTED
+    detail: 0003 permission_resources CHECK adds SURFACE but still omits SENSITIVE_PERMISSION, while the authoritative 3650-resource catalog contains two SENSITIVE_PERMISSION resources.
+  - code: CATALOG_IDENTITY_MAPPING_UNDEFINED
+    detail: Catalog resource_id and parent_resource_id are stable PERM-* text identifiers, while permission_resources.resource_id is UUID and parent_resource_key is text; no deterministic import/mapping rule was found in Single Authority.
+  - code: VALIDATED_CATALOG_IMPORT_NOT_MATERIALIZED
+    detail: Current staging permission_resources has 0 rows and Current repository has no materialized Account Permission Catalog import artifact; Authority prose alone is not treated as an imported catalog.
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -144,7 +203,10 @@ execution_gates:
   staging_0001_state: APPLIED_VERIFIED
   0002_state: APPLIED_VERIFIED
   0002_staging_execution: COMPLETE_VERIFIED
-  0003_state: BLOCKED_PENDING_0003_OWN_GATES
+  0003_state: BLOCKED_AUTHORITY_CORRECTION_REQUIRED
+  0003_staging_execution: FORBIDDEN
+  0003_destructive_legacy_cleanup: NOT_EXECUTED
+  0004_state: BLOCKED_PENDING_0003
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
