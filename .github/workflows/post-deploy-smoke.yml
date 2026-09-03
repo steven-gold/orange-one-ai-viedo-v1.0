@@ -17,7 +17,7 @@ jobs:
       (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.ref == 'main') ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 20
     env:
       ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
       ACPOS_EXPECT_READY: "0"
@@ -29,6 +29,14 @@ jobs:
         with:
           node-version: 22
       - name: Validate remote smoke script syntax
-        run: node --check scripts/post-deploy-smoke.mjs
-      - name: Run deployed ACPOS smoke
+        run: |
+          node --check scripts/post-deploy-smoke.mjs
+          node --check scripts/post-deploy-browser-smoke.mjs
+      - name: Run deployed ACPOS HTTP smoke
         run: node scripts/post-deploy-smoke.mjs
+      - name: Install current browser audit dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Run deployed ACPOS browser smoke
+        run: node scripts/post-deploy-browser-smoke.mjs
