@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0003-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
+  revision: 2026-09-04-DATABASE-MIGRATION-0003-APPLIED-VERIFIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -260,9 +260,9 @@ account_permission_catalog_materialization:
   repository_byte_size: 2762474
   repository_line_count: 79399
   repository_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
-  staging_import_status: NOT_EXECUTED
+  staging_import_status: APPLIED_VERIFIED
 0003_preimport_artifact:
-  status: TEMPORARY_VALIDATION_PASS
+  status: STAGING_APPLIED_VERIFIED
   source_catalog_contract_id: ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
   row_count: 3648
   excluded_resource_type: SENSITIVE_PERMISSION
@@ -270,7 +270,7 @@ account_permission_catalog_materialization:
   sql_byte_size: 815589
   sql_sha256: 0d5348e568c6179bdfa450a599eb13cace5352983572ffb8c5682add71ddb3f0
   target: TEMPORARY_VALIDATION_BRANCH_ONLY_BEFORE_0003
-  database_execution_status: TEMPORARY_VALIDATION_PASS
+  database_execution_status: STAGING_APPLIED_VERIFIED
 temporary_0003_validation:
   status: PASS
   verified_on: '2026-09-04'
@@ -307,6 +307,43 @@ temporary_0003_validation:
   - memberships_user_department_unique added
   unexpected_schema_drift: 0
   staging_mutation_performed: false
+staging_0003_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source_migration: database/migrations/0003_account_permission_authorization.sql
+  payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  approval_ref: CR-AUTH-0003
+  pre_0003_restore_branch_id: br-icy-field-b383fiso
+  execution_mode: PREIMPORT_THEN_SINGLE_TRANSACTION_35_STATEMENTS
+  preimport_rows: 3648
+  sensitive_rows_added_by_0003: 2
+  final_permission_resource_rows: 3650
+  unique_resource_ids: 3650
+  unique_resource_keys: 3650
+  missing_parent_resource_keys: 0
+  projection_payload_bytes: 572915
+  projection_sha256: 745b716a814be0c55a2851dd82c5b3eaaf9dc07534cfcb03abc357d45d94b98c
+  migration_history_rows: 1
+  migration_history_checksum: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  migration_history_approval_ref: CR-AUTH-0003
+  approval_function_present: true
+  approval_trigger_present: true
+  legacy_role_tables_present: false
+  helper_cleanup:
+    transport_table_present: false
+    uuid_ossp_present: false
+    status: PASS
+  clean_schema_diff_against_restore_point:
+  - permission_resources_resource_type_check adds SENSITIVE_PERMISSION
+  - memberships_user_department_unique added
+  unexpected_schema_drift: 0
+  unvalidated_constraints: 0
+  prior_migration_history_preserved:
+    0001_exact: true
+    0002_exact: true
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -314,11 +351,11 @@ execution_gates:
   staging_0001_state: APPLIED_VERIFIED
   0002_state: APPLIED_VERIFIED
   0002_staging_execution: COMPLETE_VERIFIED
-  0003_state: STAGING_APPROVED_PENDING_EXECUTION
+  0003_state: APPLIED_VERIFIED
   0003_temporary_execution: PASS
-  0003_staging_execution: APPROVED_PENDING_EXECUTION
-  0003_destructive_legacy_cleanup: NOT_EXECUTED
-  0004_state: BLOCKED_PENDING_0003
+  0003_staging_execution: COMPLETE_VERIFIED
+  0003_destructive_legacy_cleanup: NOT_REQUIRED_LEGACY_TABLES_ABSENT
+  0004_state: PENDING_0004_OWN_GATES
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
