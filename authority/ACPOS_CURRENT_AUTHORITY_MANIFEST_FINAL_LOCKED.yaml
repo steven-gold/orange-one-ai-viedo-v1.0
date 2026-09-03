@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0006-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0007-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -105,7 +105,12 @@ cross_authority_bindings:
     0006_staging_schema_diff: EMPTY
     0006_approval_ref: CR-R9-0006
     0005_helper_cleanup: COMPLETE
-    0007_gate: PENDING_0007_OWN_GATES
+    0007_gate: TEMP_VALIDATION_PASS_PENDING_CR_R9_0007_STAGING_APPROVAL
+    0007_payload_sha256: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
+    0007_restore_branch_id: br-damp-recipe-b3omapws
+    0007_validation_branch_id: br-tiny-tooth-b358vhge
+    0007_staging_execution: NOT_EXECUTED_REQUIRES_EXPLICIT_HUMAN_APPROVAL
+    0008_gate: BLOCKED_PENDING_0007
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
