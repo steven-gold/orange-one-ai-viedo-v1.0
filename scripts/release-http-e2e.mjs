@@ -15,6 +15,16 @@ const routes = [
   ["/admin/knowledge", "admin:KB-01"],
 ];
 
+const productionUnboundRuntimeProbes = [
+  { method: "GET", path: "/v1/dashboard/read-model", reason: "DASHBOARD_RUNTIME_NOT_BOUND", client: "198.51.100.10" },
+  { method: "POST", path: "/v1/editing-runtime-runs", reason: "EDIT_VOICE_RUNTIME_NOT_BOUND", client: "198.51.100.11" },
+  { method: "POST", path: "/v1/qa/reviews", reason: "QA_RUNTIME_NOT_BOUND", client: "198.51.100.12" },
+  { method: "POST", path: "/v1/iam/accounts/RELEASE-E2E/authorization-impact", reason: "IAM01_RUNTIME_NOT_BOUND", client: "198.51.100.13" },
+  { method: "POST", path: "/v1/erp/connectors", reason: "ERP_COMMAND_RUNTIME_NOT_BOUND", client: "198.51.100.14" },
+  { method: "POST", path: "/v1/social/target-discovery-jobs", reason: "SOC_COMMAND_RUNTIME_NOT_BOUND", client: "198.51.100.15" },
+  { method: "POST", path: "/v1/knowledge/search", reason: "KB_RUNTIME_NOT_BOUND", client: "198.51.100.16" },
+];
+
 function run(command, args, env = process.env) {
   const result = spawnSync(command, args, { stdio: "inherit", env });
   if (result.status !== 0) process.exit(result.status ?? 1);
@@ -92,6 +102,23 @@ try {
     }
   }
 
+  for (const probe of productionUnboundRuntimeProbes) {
+    const init = {
+      method: probe.method,
+      headers: {
+        "x-forwarded-for": probe.client,
+        ...(probe.method === "POST" ? { "content-type": "application/json" } : {}),
+      },
+      ...(probe.method === "POST" ? { body: "{}" } : {}),
+    };
+    const response = await fetch(`${base}${probe.path}`, init);
+    const text = await response.text();
+    assert(response.status === 503, `PRODUCTION_RUNTIME_FAIL_CLOSED_${probe.path}_HTTP_${response.status}`);
+    assert(text.includes(probe.reason), `PRODUCTION_RUNTIME_FAIL_CLOSED_REASON_${probe.path}`);
+    assert(!/TEST_ONLY|TEST-RUN-|"synthetic"\s*:\s*true/.test(text), `PRODUCTION_RUNTIME_TEST_DATA_LEAK_${probe.path}`);
+    assert(Boolean(response.headers.get("x-correlation-id")), `PRODUCTION_RUNTIME_CORRELATION_ID_MISSING_${probe.path}`);
+  }
+
   let limitedResponse = null;
   for (let attempt = 1; attempt <= 4; attempt += 1) {
     const response = await fetch(`${base}/v1/conversations/release-rate-limit/messages`, {
@@ -112,7 +139,7 @@ try {
 
   const missing = await fetch(`${base}/this-route-must-not-exist`, { redirect: "manual" });
   assert(missing.status === 404, `NOT_FOUND_HTTP_${missing.status}`);
-  process.stdout.write(`RELEASE_HTTP_E2E_PASS ready=${ready.status} rate_limit=429 controlled_block=${expectControlledBlock ? "1" : "0"}\n`);
+  process.stdout.write(`RELEASE_HTTP_E2E_PASS ready=${ready.status} runtime_fail_closed=${productionUnboundRuntimeProbes.length} rate_limit=429 controlled_block=${expectControlledBlock ? "1" : "0"}\n`);
 } finally {
   server.kill("SIGTERM");
 }
