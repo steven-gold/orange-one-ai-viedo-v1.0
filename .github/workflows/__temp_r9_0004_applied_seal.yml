@@ -1,0 +1,108 @@
+name: TEMP R9 0004 Applied Seal
+
+on:
+  push:
+    branches: [r9-0004-applied-seal-20260904]
+
+permissions:
+  contents: write
+
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: r9-0004-applied-seal-20260904
+          fetch-depth: 1
+      - name: Seal 0004 applied verified
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          ap = Path('authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml')
+          mp = Path('authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml')
+          a = ap.read_text(encoding='utf-8')
+          m = mp.read_text(encoding='utf-8')
+
+          def replace_once(text, old, new, label):
+              n = text.count(old)
+              if n != 1:
+                  raise SystemExit(f'{label}: expected 1 match, got {n}')
+              return text.replace(old, new, 1)
+
+          a = replace_once(
+              a,
+              '  revision: 2026-09-04-DATABASE-MIGRATION-0004-STAGING-APPROVED-PENDING-EXECUTION',
+              '  revision: 2026-09-04-DATABASE-MIGRATION-0004-APPLIED-VERIFIED',
+              'authority revision'
+          )
+
+          block = """staging_0004_verification:
+            status: APPLIED_VERIFIED
+            verified_on: '2026-09-04'
+            neon_project_id: tiny-dust-89825424
+            branch_id: br-bitter-poetry-b3p6t5ub
+            database_name: acpos_staging
+            source_migration: database/migrations/0004_r9_finalization.sql
+            payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+            approval_ref: CR-R9-0004
+            pre_0004_restore_branch_id: br-wild-unit-b3ydro9g
+            execution_mode: SINGLE_TRANSACTION_37_STATEMENTS
+            migration_history_rows: 1
+            migration_history_checksum: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+            migration_history_approval_ref: CR-R9-0004
+            prior_migration_0003_exact: true
+            target_create_tables: 27
+            target_create_tables_present: 27
+            target_lineage_columns: 46
+            target_lineage_columns_present: 46
+            permission_resource_rows_preserved: 3650
+            unvalidated_constraints: 0
+            clean_schema_diff_against_restore_point: EMPTY
+            unexpected_schema_drift: 0
+          """
+          import textwrap
+          block = textwrap.dedent(block)
+          a = replace_once(a, 'execution_gates:', block + 'execution_gates:', 'insert verification')
+          a = replace_once(
+              a,
+              """  0004_state: STAGING_APPROVED_PENDING_EXECUTION
+            0004_temporary_execution: PASS
+            0004_staging_execution: APPROVED_PENDING_EXECUTION
+            0005_state: BLOCKED_PENDING_0004""".replace('\n            ','\n  '),
+              """  0004_state: APPLIED_VERIFIED
+            0004_temporary_execution: PASS
+            0004_staging_execution: COMPLETE_VERIFIED
+            0005_state: PENDING_0005_OWN_GATES""".replace('\n            ','\n  '),
+              'authority gates'
+          )
+
+          m = replace_once(
+              m,
+              '  revision: 2026-09-04-DATABASE-MIGRATION-0004-STAGING-APPROVED-PENDING-EXECUTION',
+              '  revision: 2026-09-04-DATABASE-MIGRATION-0004-APPLIED-VERIFIED',
+              'manifest revision'
+          )
+          m = replace_once(m, '    0004_gate: STAGING_APPROVED_PENDING_EXECUTION', '    0004_gate: APPLIED_VERIFIED', 'manifest 0004 gate')
+          m = replace_once(
+              m,
+              '    0004_staging_execution: APPROVED_PENDING_EXECUTION',
+              """    0004_staging_execution: COMPLETE_VERIFIED
+              0004_staging_history_checksum: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+              0004_staging_schema_diff: EMPTY""".replace('\n              ','\n    '),
+              'manifest staging'
+          )
+          m = replace_once(m, '    0005_gate: BLOCKED_PENDING_0004', '    0005_gate: PENDING_0005_OWN_GATES', 'manifest 0005 gate')
+
+          ap.write_text(a, encoding='utf-8')
+          mp.write_text(m, encoding='utf-8')
+          PY
+
+          git diff --check
+          git config user.name "acpos-authority-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+          git commit -m "docs(authority): seal 0004 staging applied verified"
+          git push origin HEAD:r9-0004-applied-seal-20260904
