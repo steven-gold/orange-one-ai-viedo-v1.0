@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0004-STAGING-APPROVED-PENDING-EXECUTION
+  revision: 2026-09-04-DATABASE-MIGRATION-0004-APPLIED-VERIFIED
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -79,13 +79,15 @@ cross_authority_bindings:
     0003_restore_branch_id: br-icy-field-b383fiso
     0003_staging_projection_sha256: 745b716a814be0c55a2851dd82c5b3eaaf9dc07534cfcb03abc357d45d94b98c
     0003_staging_history_checksum: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
-    0004_gate: STAGING_APPROVED_PENDING_EXECUTION
+    0004_gate: APPLIED_VERIFIED
     0004_payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
     0004_restore_branch_id: br-wild-unit-b3ydro9g
     0004_validation_branch_id: br-frosty-art-b3z5ujpv
-    0004_staging_execution: APPROVED_PENDING_EXECUTION
+    0004_staging_execution: COMPLETE_VERIFIED
+    0004_staging_history_checksum: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+    0004_staging_schema_diff: EMPTY
     0004_approval_ref: CR-R9-0004
-    0005_gate: BLOCKED_PENDING_0004
+    0005_gate: PENDING_0005_OWN_GATES
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
