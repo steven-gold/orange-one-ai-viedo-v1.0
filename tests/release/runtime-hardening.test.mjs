@@ -107,6 +107,37 @@ test("production readiness remains fail-closed for controlled mode and unbound U
   assert.match(uiRuntime, /status:\s*503/);
 });
 
+test("current EDIT integration ports remain reachable through their authority-bound routes", async () => {
+  const contract = await read("src/domain/edit/editRuntimeContract.ts");
+  assert.match(contract, /EDIT_INTEGRATION_PORT_COUNT\s*=\s*EDIT_INTEGRATION_PORT_UIDS\.length/);
+  assert.match(contract, /EDIT-01-PORT-VOICE-QA-HANDOFF/);
+
+  const routeBindings = [
+    ["src/app/v1/handoffs/route.ts", "POST", "createDepartmentHandoff"],
+    ["src/app/v1/editing-runtime-runs/route.ts", "POST", "createEditingRuntimeRun"],
+    ["src/app/v1/editing-runtime-runs/[runId]/route.ts", "GET", "getEditingRuntimeRun"],
+    ["src/app/v1/editing-runtime-runs/[runId]/assembly/route.ts", "POST", "completeAssembly"],
+    ["src/app/v1/tasks/[taskId]/outputs/[outputVersionId]/decision/route.ts", "POST", "decideOutputCandidate"],
+    ["src/app/v1/scorecards/route.ts", "POST", "submitScorecard"],
+    ["src/app/v1/editing-runtime-runs/[runId]/voice-handoff/route.ts", "POST", "transitionEditingToVoiceStage"],
+    ["src/app/v1/voice-runtime-runs/[runId]/start/route.ts", "POST", "startVoiceRuntime"],
+    ["src/app/v1/voice-runtime-runs/[runId]/route.ts", "GET", "getVoiceRuntimeRun"],
+    ["src/app/v1/voice-runtime-runs/[runId]/audio-mix/route.ts", "POST", "completeAudioMix"],
+    ["src/app/v1/voice-runtime-runs/[runId]/lip-sync/route.ts", "POST", "completeLipSync"],
+    ["src/app/v1/voice-runtime-runs/[runId]/subtitle/route.ts", "POST", "completeSubtitle"],
+    ["src/app/v1/voice-runtime-runs/[runId]/qa-handoff/route.ts", "POST", "handoffVoiceToQA"],
+  ];
+
+  for (const [path, method, operation] of routeBindings) {
+    const source = await read(path);
+    assert.match(source, new RegExp(`export\\s+const\\s+${method}\\s*=`), `${path} must expose ${method}`);
+    assert.match(source, new RegExp(`["']${operation}["']`), `${path} must remain bound to ${operation}`);
+  }
+
+  const contractPorts = [...contract.matchAll(/"EDIT-01-PORT-[A-Z0-9-]+":\{operation:"([^"]+)",method:"(GET|POST)",path:"([^"]+)"\}/g)];
+  assert.equal(contractPorts.length, 15, `expected 15 current EDIT integration ports, found ${contractPorts.length}`);
+});
+
 test("release gate covers both construction and production branches", async () => {
   const workflow = await read(".github/workflows/release-gate.yml");
   assert.match(workflow, /pull_request:[\s\S]*branches:\s*\[new, main\]/);
