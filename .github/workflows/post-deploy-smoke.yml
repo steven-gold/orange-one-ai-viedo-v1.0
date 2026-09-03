@@ -1,0 +1,30 @@
+name: ACPOS Post Deploy Smoke
+
+on:
+  deployment_status:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' && github.event.deployment.ref == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
+      ACPOS_EXPECT_READY: "0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate remote smoke script syntax
+        run: node --check scripts/post-deploy-smoke.mjs
+      - name: Run deployed ACPOS smoke
+        run: node scripts/post-deploy-smoke.mjs
