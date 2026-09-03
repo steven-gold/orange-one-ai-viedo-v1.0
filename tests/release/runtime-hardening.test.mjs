@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 
 const read = (path) => readFile(path, "utf8");
 
@@ -61,6 +61,27 @@ test("core controlled server helper cannot bypass the shared production-safe gua
   assert.match(coreTestRuntime, /from\s+["']@\/domain\/testing\/controlledTestData["']/);
   assert.match(coreTestRuntime, /isControlledCoreServerTestMode\(\):\s*boolean\s*\{\s*return\s+isControlledTestMode\(\);\s*\}/s);
   assert.doesNotMatch(coreTestRuntime, /process\.env\.ACPOS_RUNTIME_MODE/);
+});
+
+test("all controlled server test helpers use the shared production-safe runtime-mode guard", async () => {
+  const files = (await readdir("src/server/testing"))
+    .filter((name) => /^controlled.*TestRuntime\.ts$/.test(name));
+  assert.ok(files.length >= 18, `expected controlled runtime inventory, found ${files.length}`);
+
+  for (const name of files) {
+    const source = await read(`src/server/testing/${name}`);
+    assert.doesNotMatch(
+      source,
+      /process\.env\.(?:NEXT_PUBLIC_ACPOS_RUNTIME_MODE|ACPOS_RUNTIME_MODE)/,
+      `${name} must not bypass the shared runtime-mode guard`,
+    );
+
+    const helpers = [...source.matchAll(/export\s+function\s+(isControlled\w+ServerTestMode)\([^)]*\)(?::\s*boolean)?\s*\{([^}]*)\}/g)];
+    for (const [, helperName, body] of helpers) {
+      assert.match(source, /@\/domain\/testing\/controlledTestData/, `${name} must import the shared guard`);
+      assert.match(body, /return\s+isControlledTestMode\(\)\s*;/, `${helperName} in ${name} must delegate to the shared guard`);
+    }
+  }
 });
 
 test("production projection HTTP boundary blocks controlled-mode misconfiguration", async () => {
