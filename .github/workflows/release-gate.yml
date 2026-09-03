@@ -59,6 +59,15 @@ jobs:
           NEXT_TELEMETRY_DISABLED: "1"
         run: npm run build
 
+      - name: Production controlled-mode misconfiguration HTTP E2E
+        env:
+          ACPOS_DEPLOYMENT_ENV: production
+          ACPOS_RELEASE_SHA: ${{ github.sha }}
+          ACPOS_E2E_SKIP_BUILD: "1"
+          ACPOS_E2E_RUNTIME_MODE: CONTROLLED_TEST
+          ACPOS_EXPECT_CONTROLLED_BLOCK: "1"
+        run: npm run test:e2e
+
       - name: Install current browser audit dependency
         run: |
           npm install --no-save --package-lock=false playwright@1.62.1
