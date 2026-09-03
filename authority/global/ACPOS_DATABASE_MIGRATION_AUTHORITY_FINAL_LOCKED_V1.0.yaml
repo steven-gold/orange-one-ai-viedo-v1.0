@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0002-HUMAN-APPROVED
+  revision: 2026-09-04-DATABASE-MIGRATION-0002-APPLIED-VERIFIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -121,13 +121,29 @@ cr_schema_0002_approval:
   approved_by: HUMAN_USER
   approval_ref: CR-SCHEMA-0002
   approved_scope: APPLY_VALIDATED_0002_TO_STAGING_ONLY
+staging_0002_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source: CURRENT_AUTHORITY_0002
+  payload_sha256: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
+  execution_mode: SINGLE_TRANSACTION_STATEMENT_BOUNDARY_PRESERVED
+  not_null_targets_verified: 14
+  trigger_functions_present: 3
+  triggers_present: 5
+  migration_history_rows: 1
+  migration_history_checksum: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
+  migration_history_approval_ref: CR-SCHEMA-0002
+  schema_diff_against_restore_point: only expected 0002 trigger functions and triggers; no unexpected drift
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
   clean_temporary_branch_revalidation: PASS
   staging_0001_state: APPLIED_VERIFIED
-  0002_state: APPROVED_READY_FOR_STAGING
-  0002_staging_execution: AUTHORIZED_BY_CR_SCHEMA_0002
+  0002_state: APPLIED_VERIFIED
+  0002_staging_execution: COMPLETE_VERIFIED
   0003_state: BLOCKED_PENDING_0003_OWN_GATES
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
