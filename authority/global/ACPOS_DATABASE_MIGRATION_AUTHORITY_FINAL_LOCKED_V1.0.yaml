@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-0014-APPLIED-VERIFIED
+  revision: 2026-09-04-DATABASE-MIGRATION-0015-CHAIN-APPLIED-VERIFIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -951,6 +951,38 @@ staging_0014_verification:
   inherited_expected_schema_delta: THREE_ERP_INDEXES_FROM_0013_ONLY
   unexpected_schema_drift: 0
   unvalidated_constraints: 0
+staging_0015_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0015_enterprise_social_outreach_closure.sql
+  payload_sha256: 61ef9501826c3a9243ca7b8153061e981088d34e37c1e936009bf2e414745c3c
+  approval_ref: CR-R9-0015
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  batch_restore_replay_chain_starts_at: 0009_layer_runtime_closure
+  execution_mode: SINGLE_TRANSACTION_10_STATEMENTS
+  migration_history_rows: 1
+  enterprise_social_rows_total: 0
+  outreach_email_single_recipient_checks:
+    to_count_equals_one: true
+    cc_empty: true
+    bcc_empty: true
+  social_secret_reference_fk: true
+  permission_resource_rows_preserved: 3650
+  unvalidated_constraints: 0
+  inherited_expected_schema_delta: THREE_ERP_INDEXES_FROM_0013_ONLY
+  unexpected_schema_drift: 0
+migration_chain_0001_0015_verification:
+  status: COMPLETE_APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  total_migrations: 15
+  first_migration: 0001_canonical_schema
+  last_migration: 0015_enterprise_social_outreach_closure
+  remaining_migrations: 0
+  staging_branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  batch_0009_0015_approval_consumed: true
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
@@ -995,7 +1027,10 @@ execution_gates:
   0014_state: APPLIED_VERIFIED
   0014_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
   0014_staging_execution: COMPLETE_VERIFIED
-  0015_state: PENDING_0015_OWN_GATES
+  0015_state: APPLIED_VERIFIED
+  0015_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0015_staging_execution: COMPLETE_VERIFIED
+  migration_chain_0001_0015_state: COMPLETE_APPLIED_VERIFIED
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
