@@ -1,0 +1,141 @@
+name: TEMP R9 0004 Gate Seal
+
+on:
+  push:
+    branches: [r9-0004-gate-seal-20260904]
+
+permissions:
+  contents: write
+
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: r9-0004-gate-seal-20260904
+          fetch-depth: 1
+      - name: Seal 0004 temporary validation gate
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          ap = Path('authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml')
+          mp = Path('authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml')
+          a = ap.read_text(encoding='utf-8')
+          m = mp.read_text(encoding='utf-8')
+
+          new_revision = '2026-09-04-DATABASE-MIGRATION-0004-TEMP-VALIDATION-PASS-PENDING-STAGING-APPROVAL'
+          if new_revision in a and '0004_gate: TEMP_VALIDATION_PASS_PENDING_CR_R9_0004_STAGING_APPROVAL' in m:
+              print('ALREADY_SEALED')
+              raise SystemExit(0)
+
+          def replace_once(text, old, new, label):
+              n = text.count(old)
+              if n != 1:
+                  raise SystemExit(f'{label}: expected 1 match, got {n}')
+              return text.replace(old, new, 1)
+
+          a = replace_once(
+              a,
+              '  revision: 2026-09-04-DATABASE-MIGRATION-0003-APPLIED-VERIFIED',
+              f'  revision: {new_revision}',
+              'authority revision'
+          )
+
+          block = """staging_0004_preflight:
+            status: PASS_PENDING_HUMAN_APPROVAL
+            verified_on: '2026-09-04'
+            migration_id: 0004_r9_finalization
+            migration_path: database/migrations/0004_r9_finalization.sql
+            payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+            required_approval_ref: CR-R9-0004
+            checksum_verification: PASS
+            checksum_boundary: terminal schema_migration_history registration excluded together with one separator newline; payload final newline preserved
+            prior_migration_0003_exact: true
+            migration_0004_history_rows_on_staging: 0
+            target_create_tables: 27
+            target_create_tables_already_present: 27
+            target_lineage_columns: 46
+            target_lineage_columns_already_present: 46
+            business_data_blockers: 0
+            relevant_business_tables_empty: true
+            restore_point:
+              mode: NEON_BRANCH_AT_STAGING_HEAD
+              branch_name: restore-pre-0004-r9-finalization
+              branch_id: br-wild-unit-b3ydro9g
+              parent_branch_id: br-bitter-poetry-b3p6t5ub
+              parent_lsn: 0/264EC18
+              no_compute: true
+          temporary_0004_validation:
+            status: PASS
+            verified_on: '2026-09-04'
+            neon_project_id: tiny-dust-89825424
+            parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+            temporary_branch_name: r9-0004-finalization-validate-20260904
+            temporary_branch_id: br-frosty-art-b3z5ujpv
+            database_name: acpos_staging
+            source_migration: database/migrations/0004_r9_finalization.sql
+            payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+            execution_mode: SINGLE_TRANSACTION_37_STATEMENTS
+            migration_history_rows: 1
+            migration_history_checksum: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+            migration_history_approval_ref: CR-R9-0004
+            prior_migration_0003_exact: true
+            unvalidated_constraints: 0
+            schema_diff_against_staging: EMPTY
+            schema_drift_reason: corrected 0001 already materialized all 27 target tables and 46 lineage columns; 0004 is idempotent on Current staging schema
+            unexpected_schema_drift: 0
+            staging_mutation_performed: false
+          """
+          # normalize dedent from the Python source indentation
+          import textwrap
+          block = textwrap.dedent(block)
+          a = replace_once(a, 'execution_gates:', block + 'execution_gates:', 'insert 0004 blocks')
+          a = replace_once(
+              a,
+              '  0004_state: PENDING_0004_OWN_GATES',
+              """  0004_state: TEMP_VALIDATION_PASS_PENDING_CR_R9_0004_STAGING_APPROVAL
+            0004_temporary_execution: PASS
+            0004_staging_execution: FORBIDDEN_UNTIL_EXPLICIT_CR_R9_0004_STAGING_APPROVAL
+            0005_state: BLOCKED_PENDING_0004""",
+              'authority 0004 gate'
+          )
+          a = a.replace('\n            0004_temporary_execution:', '\n  0004_temporary_execution:')
+          a = a.replace('\n            0004_staging_execution:', '\n  0004_staging_execution:')
+          a = a.replace('\n            0005_state:', '\n  0005_state:')
+
+          m = replace_once(
+              m,
+              '  revision: 2026-09-04-DATABASE-MIGRATION-0003-APPLIED-VERIFIED',
+              f'  revision: {new_revision}',
+              'manifest revision'
+          )
+          m = replace_once(
+              m,
+              '    0004_gate: PENDING_0004_OWN_GATES',
+              """    0004_gate: TEMP_VALIDATION_PASS_PENDING_CR_R9_0004_STAGING_APPROVAL
+            0004_payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+            0004_restore_branch_id: br-wild-unit-b3ydro9g
+            0004_validation_branch_id: br-frosty-art-b3z5ujpv
+            0004_staging_execution: NOT_EXECUTED_REQUIRES_EXPLICIT_HUMAN_APPROVAL
+            0005_gate: BLOCKED_PENDING_0004""",
+              'manifest 0004 gate'
+          )
+          for key in ['0004_payload_sha256','0004_restore_branch_id','0004_validation_branch_id','0004_staging_execution','0005_gate']:
+              m = m.replace('\n            '+key+':', '\n    '+key+':')
+
+          ap.write_text(a, encoding='utf-8')
+          mp.write_text(m, encoding='utf-8')
+          PY
+          git diff --check
+          git config user.name "acpos-authority-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+          if git diff --cached --quiet; then
+            echo NO_CHANGE
+            exit 0
+          fi
+          git commit -m "docs(authority): record 0004 temporary validation gate"
+          git push origin HEAD:r9-0004-gate-seal-20260904
