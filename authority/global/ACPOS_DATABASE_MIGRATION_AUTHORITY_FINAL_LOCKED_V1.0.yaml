@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-03-DATABASE-MIGRATION-0001-CORRECTION
+  revision: 2026-09-04-DATABASE-MIGRATION-0001-CLEAN-REVALIDATED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -38,11 +38,35 @@ correction_evidence:
     acpos_runtime_tables: 42
     validated_foreign_keys: 343
     unvalidated_constraints: 0
+clean_temporary_revalidation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0001-clean-revalidate-20260903
+  temporary_branch_id: br-little-leaf-b3qaagp0
+  database_name: acpos_staging
+  source: CURRENT_AUTHORITY_0001
+  payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
+  payload_statements_executed: 601
+  registration_statements_executed: 1
+  migration_history_rows: 1
+  migration_history_checksum: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
+  migration_history_approval_ref: CR-SCHEMA-0001
+  public_tables: 152
+  acpos_runtime_tables: 42
+  unique_tables: 194
+  validated_foreign_keys: 343
+  unvalidated_constraints: 0
+  installed_extensions:
+  - btree_gist=1.7
+  - citext=1.6
+  - pgcrypto=1.3
 execution_gates:
   payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
   0001_order: MUST_EXECUTE_FIRST
-  clean_temporary_branch_revalidation: REQUIRED_BEFORE_STAGING
-  staging_0001_state: BLOCKED_PENDING_CLEAN_TEMP_REVALIDATION
+  clean_temporary_branch_revalidation: PASS
+  staging_0001_state: READY_FOR_STAGING_0001
   later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
   manual_sql_from_DB_01: FORBIDDEN
 single_source_rules:
