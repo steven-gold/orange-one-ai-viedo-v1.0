@@ -1,0 +1,112 @@
+name: TEMP R9 0005 Applied Seal
+
+on:
+  push:
+    branches: [r9-0005-applied-seal-20260904]
+
+permissions:
+  contents: write
+
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: r9-0005-applied-seal-20260904
+          fetch-depth: 1
+      - name: Seal 0005 applied verified
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          ap = Path('authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml')
+          mp = Path('authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml')
+          a = ap.read_text(encoding='utf-8')
+          m = mp.read_text(encoding='utf-8')
+
+          def rep(text, old, new, label):
+              n = text.count(old)
+              if n != 1:
+                  raise SystemExit(f'{label}: expected 1 match, got {n}')
+              return text.replace(old, new, 1)
+
+          a = rep(
+              a,
+              '  revision: 2026-09-04-DATABASE-MIGRATION-0005-STAGING-APPROVED-PENDING-EXECUTION',
+              '  revision: 2026-09-04-DATABASE-MIGRATION-0005-APPLIED-VERIFIED',
+              'authority revision'
+          )
+
+          verification = (
+              "staging_0005_verification:\n"
+              "  status: APPLIED_VERIFIED\n"
+              "  verified_on: '2026-09-04'\n"
+              "  neon_project_id: tiny-dust-89825424\n"
+              "  branch_id: br-bitter-poetry-b3p6t5ub\n"
+              "  database_name: acpos_staging\n"
+              "  source_migration: database/migrations/0005_r9_final_correction.sql\n"
+              "  payload_sha256: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b\n"
+              "  approval_ref: CR-R9-0005\n"
+              "  pre_0005_restore_branch_id: br-wispy-water-b3mbb2se\n"
+              "  execution_mode: SINGLE_TRANSACTION_26_STATEMENTS\n"
+              "  migration_history_rows: 1\n"
+              "  migration_history_checksum: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b\n"
+              "  migration_history_approval_ref: CR-R9-0005\n"
+              "  prior_migration_0004_exact: true\n"
+              "  target_tables_checked: 20\n"
+              "  target_table_rows_after_staging_execution: 0\n"
+              "  fk_meetings_context_snapshot_present: true\n"
+              "  meeting_function_comment: NON_AUTHORIZATION_METADATA: meeting function/perspective only; never an Authorization Role.\n"
+              "  permission_resource_rows_preserved: 3650\n"
+              "  unvalidated_constraints: 0\n"
+              "  clean_schema_diff_against_restore_point:\n"
+              "  - meeting_participants.meeting_function comment added\n"
+              "  - meetings.fk_meetings_context_snapshot foreign key added\n"
+              "  unexpected_schema_drift: 0\n"
+              "  restore_branch_auxiliary_database:\n"
+              "    name: acpos_validation_admin\n"
+              "    status: PRESENT_UNUSED\n"
+              "    cleanup_state: PENDING_EXPLICIT_CLEANUP_APPROVAL\n"
+          )
+          a = rep(a, 'execution_gates:', verification + 'execution_gates:', 'insert 0005 staging verification')
+          a = rep(
+              a,
+              "  0005_state: STAGING_APPROVED_PENDING_EXECUTION\n"
+              "  0005_temporary_execution: PASS\n"
+              "  0005_staging_execution: APPROVED_PENDING_EXECUTION\n"
+              "  0006_state: BLOCKED_PENDING_0005",
+              "  0005_state: APPLIED_VERIFIED\n"
+              "  0005_temporary_execution: PASS\n"
+              "  0005_staging_execution: COMPLETE_VERIFIED\n"
+              "  0006_state: PENDING_0006_OWN_GATES",
+              'authority 0005 gates'
+          )
+
+          m = rep(
+              m,
+              '  revision: 2026-09-04-DATABASE-MIGRATION-0005-STAGING-APPROVED-PENDING-EXECUTION',
+              '  revision: 2026-09-04-DATABASE-MIGRATION-0005-APPLIED-VERIFIED',
+              'manifest revision'
+          )
+          m = rep(m, '    0005_gate: STAGING_APPROVED_PENDING_EXECUTION', '    0005_gate: APPLIED_VERIFIED', 'manifest 0005 gate')
+          m = rep(
+              m,
+              '    0005_staging_execution: APPROVED_PENDING_EXECUTION',
+              "    0005_staging_execution: COMPLETE_VERIFIED\n"
+              "    0005_staging_history_checksum: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b\n"
+              "    0005_staging_schema_diff: EXPECTED_TWO_ITEM_DELTA",
+              'manifest staging execution'
+          )
+          m = rep(m, '    0006_gate: BLOCKED_PENDING_0005', '    0006_gate: PENDING_0006_OWN_GATES', 'manifest 0006 gate')
+
+          ap.write_text(a, encoding='utf-8')
+          mp.write_text(m, encoding='utf-8')
+          PY
+          git diff --check
+          git config user.name "acpos-authority-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+          git commit -m "docs(authority): seal 0005 staging applied verified"
+          git push origin HEAD:r9-0005-applied-seal-20260904
