@@ -1,0 +1,52 @@
+authority:
+  id: ACPOS_DATABASE_MIGRATION_AUTHORITY
+  version: V1.0
+  status: FINAL_LOCKED
+  current_only: true
+  revision: 2026-09-03-DATABASE-MIGRATION-0001-CORRECTION
+  scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+approval:
+  user_approved: true
+  approved_on: '2026-09-03'
+  approval_ref: CR-SCHEMA-0001
+  approved_change_scope:
+  - 0001 install btree_gist
+  - acpos_status add COMPILE_REQUESTED
+  - acpos_status add APPROVED
+source_lineage:
+  source_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_AI_SEQUENCED_FINAL.yaml
+  old_0001_payload_sha256: cb622dc4ae9d0cd5533348e5fdcda6d624ff0c5799bf7e20a94aa853451ea98f
+  current_0001_payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
+  unchanged_migrations: 0002-0015 payloads preserved byte-for-byte from verified R9 Authority source
+  source_checksum_verification: 15/15 PASS before correction; 0002-0015 remain identical
+artifact_bindings:
+  migration_root: database/migrations/
+  bootstrap_migration: database/migrations/0001_canonical_schema.sql
+  checksum_manifest: database/migrations/migration_checksum_manifest.yaml
+  materialized_migration_count: 15
+correction_evidence:
+  diagnostic_environment: Neon PostgreSQL 15.19 temporary branch
+  proven_blockers:
+  - acpos_status omitted APPROVED while 17 acpos_status columns defaulted to APPROVED
+  - acpos_status omitted COMPILE_REQUESTED while work_packages.status defaulted to COMPILE_REQUESTED
+  - continuity_checkpoints UUID GiST exclusion required btree_gist but bootstrap did not install it
+  corrected_diagnostic_result:
+    payload_statements_executed: 600
+    unique_tables: 194
+    public_tables: 152
+    acpos_runtime_tables: 42
+    validated_foreign_keys: 343
+    unvalidated_constraints: 0
+execution_gates:
+  payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
+  0001_order: MUST_EXECUTE_FIRST
+  clean_temporary_branch_revalidation: REQUIRED_BEFORE_STAGING
+  staging_0001_state: BLOCKED_PENDING_CLEAN_TEMP_REVALIDATION
+  later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
+  manual_sql_from_DB_01: FORBIDDEN
+single_source_rules:
+- This authority is the only Current database migration authority in the website construction repository.
+- Do not load the old cb622dc4... 0001 payload as Current.
+- Do not create a second checksum manifest or parallel migration directory.
+- DB-01 remains read-only; migration execution belongs to governed System Lifecycle / migration runner.

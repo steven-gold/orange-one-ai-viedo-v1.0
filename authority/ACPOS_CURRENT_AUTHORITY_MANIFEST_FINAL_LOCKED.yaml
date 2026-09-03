@@ -1,9 +1,9 @@
 authority:
   id: ACPOS_CURRENT_AUTHORITY_MANIFEST
-  version: V1.3
+  version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-03-PRODUCTION-SCRIPT-V1.3-CROSS-PAGE-BINDING
+  revision: 2026-09-03-DATABASE-MIGRATION-0001-CORRECTION
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -14,6 +14,7 @@ current_authority_set:
   - authority/global/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
   - authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
   - authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  - authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml
   - authority/global/ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml
   - authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
   pages:
@@ -40,12 +41,21 @@ precedence:
 - ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE within website-construction scope only
 - ACPOS_I18N_TRANSLATION_ENCODING within UI translation scope only
 - ACPOS_SYSTEM_AUTHORITY within cross-page/system scope
+- ACPOS_DATABASE_MIGRATION_AUTHORITY within database migration/bootstrap/checksum scope only
 - ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY within navigation/IAM-L1 scope
 - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 within shell scope
 - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY within visual scope
 - Current Page Authority within page UX/business scope
 - Production Script V1.3 within instruction/provider-adapter scope
 cross_authority_bindings:
+  database_migration_v1_0:
+    authority_path: authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml
+    migration_root: database/migrations/
+    checksum_manifest: database/migrations/migration_checksum_manifest.yaml
+    current_0001_payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
+    old_0001_payload_sha256: cb622dc4ae9d0cd5533348e5fdcda6d624ff0c5799bf7e20a94aa853451ea98f
+    old_0001_status: SUPERSEDED_DO_NOT_EXECUTE
+    staging_gate: BLOCKED_PENDING_CLEAN_TEMP_REVALIDATION
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
@@ -100,10 +110,12 @@ repository_layout:
   global: authority/global/
   pages: authority/pages/
   reference_docs: docs/reference/
+  migrations: database/migrations/
 single_source_rules:
 - No second website construction governance authority.
 - No second i18n translation authority.
 - No second ACPOS System authority.
+- No second database migration authority, migration directory or checksum manifest.
 - No second Global Visual authority.
 - No second Navigation/IAM L1 authority.
 - No second Knowledge page.
