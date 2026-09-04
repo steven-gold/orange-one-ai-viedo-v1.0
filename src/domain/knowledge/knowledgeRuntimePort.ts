@@ -22,7 +22,7 @@ export type KnowledgeProjectionTestMetadata = {
 
 export type KnowledgeProjection = {
   page_state: KnowledgePageState | null;
-  values: Readonly<Record<string, string>>;
+  values: Readonly<Record<string, unknown>>;
   control_enabled: Readonly<Record<string, boolean>>;
   test_metadata?: KnowledgeProjectionTestMetadata;
 };
@@ -104,10 +104,10 @@ function normalizeKnowledgeProjection(raw: unknown): KnowledgeProjection {
 
   const valuesRaw = asRecord(record.values) ?? {};
   const controlsRaw = asRecord(record.control_enabled) ?? {};
-  const values: Record<string, string> = {};
+  const values: Record<string, unknown> = {};
   const control_enabled: Record<string, boolean> = {};
 
-  for (const [key, value] of Object.entries(valuesRaw)) if (typeof value === "string") values[key] = value;
+  for (const [key, value] of Object.entries(valuesRaw)) values[key] = value;
   for (const [key, value] of Object.entries(controlsRaw)) if (typeof value === "boolean") control_enabled[key] = value;
 
   let page_state: KnowledgePageState | null = null;
