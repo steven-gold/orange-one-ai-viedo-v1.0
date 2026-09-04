@@ -148,5 +148,6 @@ test("QA-01 projection correlation trace remains attached to resolved successful
   assert.match(qaPage, /name:\s*Status \/ Audit/);
   assert.match(qaPage, /responsibility:\s*Current state, errors, disabled reason, audit\/correlation\/trace/);
   assert.match(qaProjectionPort, /const cid=r\.headers\.get\("x-correlation-id"\)/);
-  assert.match(qaProjectionPort, /return\{ok:true,context:\{\.\.\.context,correlation_id:context\.correlation_id\?\?cid\},correlation_id:cid\}/);
+  assert.match(qaProjectionPort, /const tracedContext=context\.correlation_id\?context:\{\.\.\.context,correlation_id:cid\}/);
+  assert.match(qaProjectionPort, /return\{ok:true,context:tracedContext,correlation_id:cid\}/);
 });
