@@ -112,8 +112,9 @@ test("EDIT-01 Final Preview renders the real resolved media URI instead of URI t
 });
 
 test("ASSET-01 context changes clear stale resolved business projection before re-resolution", () => {
-  assert.match(assetPage, /trigger_semantics: Select Project[\s\S]*?success_contract: Reset dependent Topic\/Task\/current data then resolve/);
-  assert.match(assetPage, /trigger_semantics: Select Topic[\s\S]*?success_contract: Reset Task\/current data then resolve/);
+  assert.match(assetPage, /action_uid: ASSET-01-ACT-PROJECT-SELECT[\s\S]*?label: Select Project[\s\S]*?effect_type: CONTEXT_STATE[\s\S]*?binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED[\s\S]*?api_required: false/);
+  assert.match(assetPage, /action_uid: ASSET-01-ACT-TOPIC-SELECT[\s\S]*?label: Select Topic[\s\S]*?effect_type: CONTEXT_STATE[\s\S]*?binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED[\s\S]*?api_required: false/);
+  assert.match(assetPage, /error_uid: ASSET-01-ERR-CONTEXT-001[\s\S]*?context: Project\/Topic\/Task context missing\/stale[\s\S]*?recovery: BLOCK; re-resolve exact task/);
   const project = assetClientState.match(/case "ASSET-01-ACT-PROJECT-SELECT":([\s\S]*?)(?=\n    case )/);
   const topic = assetClientState.match(/case "ASSET-01-ACT-TOPIC-SELECT":([\s\S]*?)(?=\n    case )/);
   assert.ok(project);
