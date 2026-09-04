@@ -6,6 +6,8 @@ const manifest = await readFile("authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINA
 const system = await readFile("authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml", "utf8");
 const sysPage = await readFile("authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml", "utf8");
 const sysClientState = await readFile("src/domain/system/systemClientState.ts", "utf8");
+const corePage = await readFile("authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml", "utf8");
+const coreClientState = await readFile("src/domain/core/coreClientState.ts", "utf8");
 const editPage = await readFile("authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml", "utf8");
 const editClientState = await readFile("src/domain/edit/editClientState.ts", "utf8");
 const editControlRuntime = await readFile("src/components/pages/EditControlRuntime.tsx", "utf8");
@@ -42,29 +44,21 @@ test("System implementation truth is not silently promoted", () => {
 });
 
 test("SYS-01 mode switching remains Authority-defined client state with continuity preservation", () => {
-  for (const controlId of [
-    "SYS-01-BTN-SINGLE-AI",
-    "SYS-01-BTN-MULTI-AI",
-    "SYS-01-BTN-COUNCIL-DISCUSSION",
-    "SYS-01-BTN-COUNCIL-PARALLEL",
-  ]) {
+  for (const controlId of ["SYS-01-BTN-SINGLE-AI","SYS-01-BTN-MULTI-AI","SYS-01-BTN-COUNCIL-DISCUSSION","SYS-01-BTN-COUNCIL-PARALLEL"]) {
     const control = sysPage.match(new RegExp(`- control_uid: ${controlId}([\\s\\S]*?)(?=\\n  - control_uid:|\\n  actions:)`));
     assert.ok(control, `${controlId} must remain in current SYS-01 Authority`);
     assert.match(control[1], /api_required:\s*false/);
   }
-
   assert.match(sysPage, /binding_kind:\s*CLIENT_STATE_OR_VIEW_NO_API_REQUIRED/);
   assert.match(sysPage, /mode_switch_must_not_change_SYSTEM_CHANGE_ID/);
   assert.match(sysPage, /mode_switch_must_not_create_new_conversation_or_thread/);
   assert.match(sysPage, /mode_switch_must_preserve_draft_and_source_refs/);
-
   for (const action of ["AI_MODE_SINGLE", "AI_MODE_MULTI", "COUNCIL_DISCUSSION", "COUNCIL_PARALLEL"]) {
     const branch = sysClientState.match(new RegExp(`case ["']${action}["']:\\s*([\\s\\S]*?)(?=\\n    case |\\n  \\})`));
     assert.ok(branch, `${action} reducer branch must remain materialized`);
     assert.match(branch[1], /\.\.\.state|return state/);
     assert.doesNotMatch(branch[1], /system_change_id\s*:|conversation_id\s*:|thread_id\s*:|branch_id\s*:|draft\s*:|attachment_refs\s*:|selected_reference_ref\s*:/);
   }
-
   assert.match(sysClientState, /case ["']COUNCIL_DISCUSSION["']:\s*return state\.ai_mode === ["']MULTI_AI["']/);
   assert.match(sysClientState, /case ["']COUNCIL_PARALLEL["']:\s*return state\.ai_mode === ["']MULTI_AI["']/);
 });
@@ -77,15 +71,26 @@ test("SYS-01 draft remains local-only state and mode changes do not clear it", (
   assert.match(sysClientState, /case ["']DRAFT["']:\s*return \{ \.\.\.state, draft: action\.value \};/);
 });
 
+test("CORE-01 context/thread switches cannot carry composer resources across scope", () => {
+  assert.match(corePage, /CORE-01-GATE-THREAD[\s\S]*?thread scope matches current context/);
+  assert.match(corePage, /CORE-01-ERR-THREAD-001[\s\S]*?Do not mix history; load matching thread or create new thread/);
+  assert.match(corePage, /CORE-01-ACT-PROJECT-SELECT[\s\S]*?clear Topic\/work item\/thread dependent state/);
+  for (const actionUid of ["CORE-01-ACT-PROJECT-SELECT","CORE-01-ACT-TOPIC-SELECT","CORE-01-ACT-WORK-ITEM-SELECT","CORE-01-ACT-THREAD-SELECT"]) {
+    const branch = coreClientState.match(new RegExp(`case ["']${actionUid}["']:[\\s\\S]*?(?=\\n    case |\\n  \\})`));
+    assert.ok(branch, `${actionUid} must remain materialized`);
+    assert.match(branch[0], /attachment_refs:\s*\[\]/);
+    assert.match(branch[0], /reference_refs:\s*\[\]/);
+    assert.match(branch[0], /composer_message_refs:\s*\[\]/);
+    assert.match(branch[0], /decision_evidence_refs:\s*\[\]/);
+  }
+});
+
 test("EDIT-01 UI-only actions remain client-only and cannot mutate governed production objects", () => {
   const uiOnly = editPage.match(/- effect_type: UI_ONLY([\s\S]*?)(?=\n  - effect_type:)/);
   assert.ok(uiOnly, "EDIT-01 UI_ONLY authority contract must remain present");
   assert.match(uiOnly[1], /allowed_changes:\s*Selection \/ Viewport \/ Playhead \/ Range \/ Preview \/ Compare/);
   assert.match(uiOnly[1], /forbidden:\s*不得修改 Working Draft、Version、Output、Evidence/);
-
-  for (const action of [
-    "PLAY","PAUSE","SEEK","RANGE_IN","RANGE_OUT","RANGE_CLEAR","RATE","LOOP","MUTE","PREVIEW_VOLUME","SNAP","ZOOM_IN","ZOOM_OUT","ZOOM_FIT","INSPECTOR_TAB","MEDIA_SEARCH","MEDIA_FILTER","MEDIA_SELECT","ISSUE_SELECT","VERSION_SELECT","TRACK_SELECT","CLIP_SELECT","SUBTITLE_TOGGLE","AUDIO_MONITOR","VIEW_ACTION",
-  ]) {
+  for (const action of ["PLAY","PAUSE","SEEK","RANGE_IN","RANGE_OUT","RANGE_CLEAR","RATE","LOOP","MUTE","PREVIEW_VOLUME","SNAP","ZOOM_IN","ZOOM_OUT","ZOOM_FIT","INSPECTOR_TAB","MEDIA_SEARCH","MEDIA_FILTER","MEDIA_SELECT","ISSUE_SELECT","VERSION_SELECT","TRACK_SELECT","CLIP_SELECT","SUBTITLE_TOGGLE","AUDIO_MONITOR","VIEW_ACTION"]) {
     const branch = editClientState.match(new RegExp(`case["']${action}["']:\\s*([\\s\\S]*?)(?=case["']|\\n  \\})`));
     assert.ok(branch, `${action} reducer branch must remain materialized`);
     assert.doesNotMatch(branch[1], /working_draft_ref\s*:|saved_edit_version_id\s*:|output_version_id\s*:|draft_dirty\s*:\s*true|page_state_uid\s*:\s*["']EDIT-01-ST-PAGE-EVAL_REQUIRED["']/);
@@ -117,13 +122,9 @@ test("ASSET-01 context changes clear stale resolved business projection before r
   assert.match(assetPage, /error_uid: ASSET-01-ERR-CONTEXT-001[\s\S]*?context: Project\/Topic\/Task context missing\/stale[\s\S]*?recovery: BLOCK; re-resolve exact task/);
   const project = assetClientState.match(/case "ASSET-01-ACT-PROJECT-SELECT":([\s\S]*?)(?=\n    case )/);
   const topic = assetClientState.match(/case "ASSET-01-ACT-TOPIC-SELECT":([\s\S]*?)(?=\n    case )/);
-  assert.ok(project);
-  assert.ok(topic);
-  assert.match(project[1], /topic_ref: null/);
-  assert.match(project[1], /asset_ref: null/);
-  assert.match(project[1], /projection: null/);
-  assert.match(topic[1], /asset_ref: null/);
-  assert.match(topic[1], /projection: null/);
+  assert.ok(project); assert.ok(topic);
+  assert.match(project[1], /topic_ref: null/); assert.match(project[1], /asset_ref: null/); assert.match(project[1], /projection: null/);
+  assert.match(topic[1], /asset_ref: null/); assert.match(topic[1], /projection: null/);
 });
 
 test("DEV-01 five-stage navigation remains Authority-defined client state with no API requirement", () => {
@@ -135,7 +136,6 @@ test("DEV-01 five-stage navigation remains Authority-defined client state with n
     assert.match(action[1], /binding_kind:\s*CLIENT_STATE_OR_VIEW_NO_API_REQUIRED/);
     assert.match(action[1], /api_required:\s*false/);
   }
-
   assert.match(devVisual, /const \[activeStage, setActiveStage\] = useState<StageKey>\("discovery"\)/);
   assert.match(devVisual, /onUiClick=\{\(\) => setActiveStage\(item\.key\)\}/);
   assert.match(devControlRuntime, /const formal = binding\?\.effect_type !== "UI_CONTEXT_STATE"/);
@@ -160,7 +160,6 @@ test("INFO-01 selection and presentation actions remain local read-only context 
     assert.match(action[1], /method_path:\s*null/);
     assert.match(action[1], /state_event:\s*NONE/);
   }
-
   for (const reducerAction of ["SCOPE", "SOURCE", "ALERT", "FACTPACK", "FACT_VIEW", "EVIDENCE", "RESEARCH", "CANDIDATE", "CITATION", "AUDIT"]) {
     const branch = infoClientState.match(new RegExp(`case['\"]${reducerAction}['\"]:\\s*([\\s\\S]*?)(?=case['\"]|\\n  \\})`));
     assert.ok(branch, `${reducerAction} reducer branch must remain materialized`);
