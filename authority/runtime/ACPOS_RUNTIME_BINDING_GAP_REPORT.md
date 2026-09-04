@@ -12,9 +12,10 @@ This document records runtime binding blockers after verified database migration
 - Migration chain 0001-0015: COMPLETE_APPLIED_VERIFIED
 - Release Gate baseline: SUCCESS
 - Production build validation baseline: PASS
-- Current `new` branch runtime audit continued through HEAD `447a577ab52fb8bb9bff953679ed3aa99f6fcdcc`
+- Current `new` branch runtime audit continued through HEAD `315d31f4e981ee2e8b3db54409a055f2ce45202c`
 - Current Neon staging schema inspected read-only on `br-bitter-poetry-b3p6t5ub` / `acpos_staging`
 - Formal application API routes for Dashboard and UI Projection are materialized and call the existing runtime ports rather than returning fabricated success
+- Current Authority set checked for a production application database runtime technical contract: Current Manifest, System Authority, DB-01, Page Integration Matrix, and Production Script V1.3 do not define a production DB driver choice, connection environment key contract, pooling/lifecycle contract, or server startup adapter injection contract
 
 ## Current Runtime Binding State
 
@@ -71,11 +72,22 @@ For these domains, API/runtime ports exist and relevant database structures are 
 
 ERP has canonical tables including `erp_connectors`, `erp_mappings`, `erp_snapshots`, `erp_sync_jobs`, and related audit/failure structures. Social has canonical tables including `social_account_bindings`, `social_market_targets`, `social_target_discovery_jobs`, and related publishing/manual-action structures. Their runtime command ports exist, but the production command-to-database/external-adapter implementation is not materialized.
 
-### D — Authority technical contract gap
+### D — Authority technical contract gap CONFIRMED
 
-The Current Database Migration Authority governs database migration/bootstrap/checksum/execution. It does not define the application runtime database client technology, production connection environment key contract, pooling/lifecycle implementation, or server adapter injection implementation.
+The Current Authority set was checked specifically for the missing production application database runtime technical contract.
 
-Accordingly, selecting `pg`, `postgres`, `@neondatabase/serverless`, `@vercel/postgres`, Prisma, Drizzle, or another runtime driver without a Current Authority definition would be an invented technical contract and is blocked.
+- Current Manifest explicitly records `production_server_runtime_bootstrap_call_sites: 0`, `database_driver_dependencies: 0`, `database_connection_env_keys_in_env_example: 0`, and `next_action: BLOCK_AND_REPORT_AUTHORITY_GAP_BEFORE_PRODUCTION_BINDING`.
+- System Authority defines ACPOS runtime/business/governance boundaries but does not select or specify the application database client implementation.
+- DB-01 Authority defines a read-only inspection business boundary and explicitly forbids raw/direct production mutation; it does not define the application DB driver, pool, connection env contract, or runtime bootstrap implementation.
+- Page Integration Matrix defines cross-page data/decision ownership and handoff boundaries, not application database transport/bootstrap technology.
+- Production Script V1.3 is scoped to provider-neutral instruction/provider adapters and explicitly creates no new runtime service; it does not define database runtime binding technology.
+- Database Migration Authority is scoped to migration/bootstrap/checksum/execution governance and cannot be extended into an application-runtime driver decision.
+
+Therefore the missing production database runtime technical contract is not recoverable from the Current Authority set. This is a confirmed Authority Gap. Selecting `pg`, `postgres`, `@neondatabase/serverless`, `@vercel/postgres`, Prisma, Drizzle, or another runtime driver would invent a technical contract and is forbidden.
+
+Required disposition:
+
+`BLOCK + REPORT_AUTHORITY_GAP`
 
 ### E — Leave real external execution to External/Production E2E Gate
 
@@ -130,9 +142,16 @@ No implementation may guess missing schema, fields, permissions, API behavior, d
 
 ## Next Allowed Construction Gate
 
-The next implementation batch may begin only after the production database runtime technical contract is present in Current Authority, or when another production adapter can be fully derived from existing Current Authority without inventing that contract.
+Production database binding may not proceed until a Current Authority revision materializes the missing database runtime technical contract.
 
-The read-only DB/Projection paths remain the preferred first binding candidates because their API routes, fail-closed runtime ports, canonical schema, and read-only DB-01 business boundary are already materialized. They are nevertheless blocked from real Neon binding until the technical database runtime contract is authority-defined.
+Until then, allowed work is limited to:
+
+- auditing non-DB production adapters that can be completely derived from Current Authority without inventing transport/bootstrap behavior;
+- preserving and testing existing fail-closed API/runtime behavior;
+- preparing exact Authority-gap evidence for System Lifecycle governance;
+- continuing external-gate classification without executing real external providers.
+
+The read-only DB/Projection paths remain the preferred first binding candidates once the missing technical contract becomes Authority-defined.
 
 ## Rules
 
