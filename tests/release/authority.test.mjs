@@ -8,6 +8,7 @@ const sysPage = await readFile("authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM
 const sysClientState = await readFile("src/domain/system/systemClientState.ts", "utf8");
 const editPage = await readFile("authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml", "utf8");
 const editClientState = await readFile("src/domain/edit/editClientState.ts", "utf8");
+const editControlRuntime = await readFile("src/components/pages/EditControlRuntime.tsx", "utf8");
 const devPage = await readFile("authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml", "utf8");
 const devVisual = await readFile("src/components/pages/DevVisual.tsx", "utf8");
 const devControlRuntime = await readFile("src/components/pages/DevControlRuntime.tsx", "utf8");
@@ -93,6 +94,19 @@ test("EDIT-01 UI-only reducer stays separated from draft mutation helper", () =>
   assert.match(editClientState, /case["']LOCAL_ACTION["'][\s\S]*?draft_dirty:action\.dirty\?true:state\.draft_dirty/);
   assert.match(editClientState, /action\.dirty\?\{\.\.\.state\.resolved,page_state_uid:["']EDIT-01-ST-PAGE-EVAL_REQUIRED["']\}:state\.resolved/);
   assert.doesNotMatch(editClientState, /case["'](?:PLAY|PAUSE|SEEK|RANGE_IN|RANGE_OUT|RANGE_CLEAR|RATE|LOOP|MUTE|PREVIEW_VOLUME|SNAP|ZOOM_IN|ZOOM_OUT|ZOOM_FIT)["'][\s\S]{0,240}?LOCAL_ACTION/);
+});
+
+test("EDIT-01 frame nudge must fail closed until Project or Source Timebase is materialized", () => {
+  assert.match(editPage, /Frame Nudge[\s\S]*?前\/後 1 frame 必須存在；長度與 FPS 由 Project\/Source Timebase 決定/);
+  assert.match(editPage, /Timecode[\s\S]*?必須驗證 Project Timebase/);
+  assert.match(editControlRuntime, /EDIT-01-BTN-PREV-FRAME[\s\S]*?EDIT-01-BTN-NEXT-FRAME[\s\S]*?PROJECT_OR_SOURCE_TIMEBASE_REQUIRED/);
+  assert.doesNotMatch(editControlRuntime, /BTN-PREV-FRAME[\s\S]{0,180}?playhead\?\?0\)-1/);
+  assert.doesNotMatch(editControlRuntime, /BTN-NEXT-FRAME[\s\S]{0,180}?playhead\?\?0\)\+1/);
+});
+
+test("EDIT-01 Final Preview renders the real resolved media URI instead of URI text", () => {
+  assert.match(editPage, /EDIT-01-PNL-FINAL-PREVIEW[\s\S]*?type: preview[\s\S]*?action_or_behavior: READ_ONLY/);
+  assert.match(editControlRuntime, /controlId==="EDIT-01-PNL-FINAL-PREVIEW"&&uri\?<video src=\{uri\}/);
 });
 
 test("DEV-01 five-stage navigation remains Authority-defined client state with no API requirement", () => {
