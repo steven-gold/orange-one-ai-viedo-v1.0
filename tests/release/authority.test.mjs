@@ -9,6 +9,8 @@ const sysClientState = await readFile("src/domain/system/systemClientState.ts", 
 const editPage = await readFile("authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml", "utf8");
 const editClientState = await readFile("src/domain/edit/editClientState.ts", "utf8");
 const editControlRuntime = await readFile("src/components/pages/EditControlRuntime.tsx", "utf8");
+const assetPage = await readFile("authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml", "utf8");
+const assetClientState = await readFile("src/domain/asset/assetClientState.ts", "utf8");
 const devPage = await readFile("authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml", "utf8");
 const devVisual = await readFile("src/components/pages/DevVisual.tsx", "utf8");
 const devControlRuntime = await readFile("src/components/pages/DevControlRuntime.tsx", "utf8");
@@ -107,6 +109,20 @@ test("EDIT-01 frame nudge must fail closed until Project or Source Timebase is m
 test("EDIT-01 Final Preview renders the real resolved media URI instead of URI text", () => {
   assert.match(editPage, /EDIT-01-PNL-FINAL-PREVIEW[\s\S]*?type: preview[\s\S]*?action_or_behavior: READ_ONLY/);
   assert.match(editControlRuntime, /controlId==="EDIT-01-PNL-FINAL-PREVIEW"&&uri\?<video src=\{uri\}/);
+});
+
+test("ASSET-01 context changes clear stale resolved business projection before re-resolution", () => {
+  assert.match(assetPage, /trigger_semantics: Select Project[\s\S]*?success_contract: Reset dependent Topic\/Task\/current data then resolve/);
+  assert.match(assetPage, /trigger_semantics: Select Topic[\s\S]*?success_contract: Reset Task\/current data then resolve/);
+  const project = assetClientState.match(/case "ASSET-01-ACT-PROJECT-SELECT":([\s\S]*?)(?=\n    case )/);
+  const topic = assetClientState.match(/case "ASSET-01-ACT-TOPIC-SELECT":([\s\S]*?)(?=\n    case )/);
+  assert.ok(project);
+  assert.ok(topic);
+  assert.match(project[1], /topic_ref: null/);
+  assert.match(project[1], /asset_ref: null/);
+  assert.match(project[1], /projection: null/);
+  assert.match(topic[1], /asset_ref: null/);
+  assert.match(topic[1], /projection: null/);
 });
 
 test("DEV-01 five-stage navigation remains Authority-defined client state with no API requirement", () => {
