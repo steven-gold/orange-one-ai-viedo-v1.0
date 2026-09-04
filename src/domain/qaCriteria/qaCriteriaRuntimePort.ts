@@ -23,7 +23,7 @@ export type QaCriteriaProjectionTestMetadata = {
 
 export type QaCriteriaProjection = {
   page_state: QaCriteriaPageState | null;
-  values: Readonly<Record<string, string>>;
+  values: Readonly<Record<string, unknown>>;
   control_enabled: Readonly<Record<string, boolean>>;
   test_metadata?: QaCriteriaProjectionTestMetadata;
 };
@@ -82,11 +82,11 @@ function normalize(raw: unknown): QaCriteriaProjection {
 
   const valuesRaw = asRecord(record.values) ?? {};
   const controlRaw = asRecord(record.control_enabled) ?? {};
-  const values: Record<string, string> = {};
+  const values: Record<string, unknown> = {};
   const control_enabled: Record<string, boolean> = {};
 
   for (const [key, value] of Object.entries(valuesRaw)) {
-    if (typeof value === "string") values[key] = value;
+    values[key] = value;
   }
   for (const [key, value] of Object.entries(controlRaw)) {
     if (typeof value === "boolean") control_enabled[key] = value;
