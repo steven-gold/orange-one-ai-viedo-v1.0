@@ -16,6 +16,8 @@ const controlledDevRuntime = await readFile("src/domain/dev/controlledDevClientT
 const infoPage = await readFile("authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml", "utf8");
 const infoClientState = await readFile("src/domain/info/infoClientState.ts", "utf8");
 const infoCommandPort = await readFile("src/domain/info/infoCommandPort.ts", "utf8");
+const qaPage = await readFile("authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml", "utf8");
+const qaProjectionPort = await readFile("src/domain/qa/qaProjectionPort.ts", "utf8");
 
 test("Current Authority contains exactly 18 unique page authorities", () => {
   const pages = [...manifest.matchAll(/^  - (authority\/pages\/[^\n]+)$/gm)].map((match) => match[1]);
@@ -79,31 +81,7 @@ test("EDIT-01 UI-only actions remain client-only and cannot mutate governed prod
   assert.match(uiOnly[1], /forbidden:\s*不得修改 Working Draft、Version、Output、Evidence/);
 
   for (const action of [
-    "PLAY",
-    "PAUSE",
-    "SEEK",
-    "RANGE_IN",
-    "RANGE_OUT",
-    "RANGE_CLEAR",
-    "RATE",
-    "LOOP",
-    "MUTE",
-    "PREVIEW_VOLUME",
-    "SNAP",
-    "ZOOM_IN",
-    "ZOOM_OUT",
-    "ZOOM_FIT",
-    "INSPECTOR_TAB",
-    "MEDIA_SEARCH",
-    "MEDIA_FILTER",
-    "MEDIA_SELECT",
-    "ISSUE_SELECT",
-    "VERSION_SELECT",
-    "TRACK_SELECT",
-    "CLIP_SELECT",
-    "SUBTITLE_TOGGLE",
-    "AUDIO_MONITOR",
-    "VIEW_ACTION",
+    "PLAY","PAUSE","SEEK","RANGE_IN","RANGE_OUT","RANGE_CLEAR","RATE","LOOP","MUTE","PREVIEW_VOLUME","SNAP","ZOOM_IN","ZOOM_OUT","ZOOM_FIT","INSPECTOR_TAB","MEDIA_SEARCH","MEDIA_FILTER","MEDIA_SELECT","ISSUE_SELECT","VERSION_SELECT","TRACK_SELECT","CLIP_SELECT","SUBTITLE_TOGGLE","AUDIO_MONITOR","VIEW_ACTION",
   ]) {
     const branch = editClientState.match(new RegExp(`case["']${action}["']:\\s*([\\s\\S]*?)(?=case["']|\\n  \\})`));
     assert.ok(branch, `${action} reducer branch must remain materialized`);
@@ -143,16 +121,7 @@ test("DEV-01 production commands remain fail-closed until a registered business-
 });
 
 test("INFO-01 selection and presentation actions remain local read-only context state", () => {
-  for (const actionUid of [
-    "INFO-01-ACT-FILTER",
-    "INFO-01-ACT-SOURCE-SELECT",
-    "INFO-01-ACT-ALERT-SELECT",
-    "INFO-01-ACT-FACTPACK-SELECT",
-    "INFO-01-ACT-FACT-TYPE",
-    "INFO-01-ACT-EVIDENCE-SELECT",
-    "INFO-01-ACT-RESEARCH-SELECT",
-    "INFO-01-ACT-CANDIDATE-SELECT",
-  ]) {
+  for (const actionUid of ["INFO-01-ACT-FILTER","INFO-01-ACT-SOURCE-SELECT","INFO-01-ACT-ALERT-SELECT","INFO-01-ACT-FACTPACK-SELECT","INFO-01-ACT-FACT-TYPE","INFO-01-ACT-EVIDENCE-SELECT","INFO-01-ACT-RESEARCH-SELECT","INFO-01-ACT-CANDIDATE-SELECT"]) {
     const action = infoPage.match(new RegExp(`- action_uid: ${actionUid}([\\s\\S]*?)(?=\\n  - action_uid:|\\nacceptance:|\\n  acceptance:)`));
     assert.ok(action, `${actionUid} must remain in current INFO-01 Authority`);
     assert.match(action[1], /effect_type:\s*(?:UI_ONLY|CONTEXT_STATE)/);
@@ -173,4 +142,11 @@ test("INFO-01 effectful commands stay payload-adapter gated and cannot infer gov
   assert.match(infoPage, /additional_fields:\s*Use registered Business Payload Registry only; do not invent search parameters/);
   assert.match(infoCommandPort, /let builder:InfoCommandPayloadBuilder\|null=null/);
   assert.match(infoCommandPort, /if\(!builder\)return\{ok:false as const,error_uid:errorUid\(input\.action_uid\),reason_code:'INFO_COMMAND_PAYLOAD_ADAPTER_NOT_BOUND'/);
+});
+
+test("QA-01 projection correlation trace remains attached to resolved successful context", () => {
+  assert.match(qaPage, /name:\s*Status \/ Audit/);
+  assert.match(qaPage, /responsibility:\s*Current state, errors, disabled reason, audit\/correlation\/trace/);
+  assert.match(qaProjectionPort, /const cid=r\.headers\.get\("x-correlation-id"\)/);
+  assert.match(qaProjectionPort, /return\{ok:true,context:\{\.\.\.context,correlation_id:context\.correlation_id\?\?cid\},correlation_id:cid\}/);
 });
