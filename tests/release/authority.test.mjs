@@ -23,6 +23,7 @@ const infoClientState = await readFile("src/domain/info/infoClientState.ts", "ut
 const infoCommandPort = await readFile("src/domain/info/infoCommandPort.ts", "utf8");
 const qaPage = await readFile("authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml", "utf8");
 const qaProjectionPort = await readFile("src/domain/qa/qaProjectionPort.ts", "utf8");
+const qaControlRuntime = await readFile("src/components/pages/QaControlRuntime.tsx", "utf8");
 
 test("Current Authority contains exactly 18 unique page authorities", () => {
   const pages = [...manifest.matchAll(/^  - (authority\/pages\/[^\n]+)$/gm)].map((match) => match[1]);
@@ -180,4 +181,12 @@ test("QA-01 projection correlation trace remains attached to resolved successful
   assert.match(qaProjectionPort, /const cid=r\.headers\.get\("x-correlation-id"\)/);
   assert.match(qaProjectionPort, /const tracedContext=context\.correlation_id\?context:\{\.\.\.context,correlation_id:cid\}/);
   assert.match(qaProjectionPort, /return\{ok:true,context:tracedContext,correlation_id:cid\}/);
+});
+
+test("QA-01 frame nudge fails closed until source/project timebase is materialized", () => {
+  assert.match(qaPage, /QA-01-ACT-VIEWER-PREV-FRAME[\s\S]*?Move exact viewer -1 frame using source\/project timebase/);
+  assert.match(qaPage, /QA-01-ACT-VIEWER-NEXT-FRAME[\s\S]*?Move exact viewer \+1 frame using source\/project timebase/);
+  assert.match(qaControlRuntime, /QA-01-BTN-PREV-FRAME"\|\|id==="QA-01-BTN-NEXT-FRAME"\)\{dispatch\(\{type:"RUNTIME_ERROR",value:"QA-01-ERR-OUTPUT-001:SOURCE_OR_PROJECT_TIMEBASE_REQUIRED"\}\);return;\}/);
+  assert.doesNotMatch(qaControlRuntime, /QA-01-BTN-PREV-FRAME[\s\S]{0,160}?current_timecode\?\?0\)-1/);
+  assert.doesNotMatch(qaControlRuntime, /QA-01-BTN-NEXT-FRAME[\s\S]{0,160}?current_timecode\?\?0\)\+1/);
 });
