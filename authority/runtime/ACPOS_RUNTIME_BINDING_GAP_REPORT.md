@@ -12,10 +12,11 @@ This document records runtime binding blockers after verified database migration
 - Migration chain 0001-0015: COMPLETE_APPLIED_VERIFIED
 - Release Gate baseline: SUCCESS
 - Production build validation baseline: PASS
-- Current `new` branch runtime audit continued through HEAD `315d31f4e981ee2e8b3db54409a055f2ce45202c`
+- Current `new` branch runtime audit continued through HEAD `9471dda5727a90822432227d35f28a4bf831ad5c`
 - Current Neon staging schema inspected read-only on `br-bitter-poetry-b3p6t5ub` / `acpos_staging`
 - Formal application API routes for Dashboard and UI Projection are materialized and call the existing runtime ports rather than returning fabricated success
 - Current Authority set checked for a production application database runtime technical contract: Current Manifest, System Authority, DB-01, Page Integration Matrix, and Production Script V1.3 do not define a production DB driver choice, connection environment key contract, pooling/lifecycle contract, or server startup adapter injection contract
+- AIAPI-01 production operation materialization audited against Current AIAPI-01 Authority, Production Script V1.3, frontend/domain ports, controlled runtime, and current repository route tree
 
 ## Current Runtime Binding State
 
@@ -23,10 +24,11 @@ The following items remain not executed:
 
 - Database production binding
 - Production server runtime adapter binding
+- AIAPI-01 effectful operation runtime binding
 - Runtime E2E against real database adapters
 - External production E2E
 
-The API HTTP surface itself is materially present for audited routes. This does not mean production runtime binding is complete because the underlying production runtime adapters remain unbound.
+The API HTTP surface itself is materially present for audited Dashboard/UI Projection routes. This does not mean production runtime binding is complete because the underlying production runtime adapters remain unbound.
 
 ## Existing API / Runtime Path Verified
 
@@ -72,6 +74,26 @@ For these domains, API/runtime ports exist and relevant database structures are 
 
 ERP has canonical tables including `erp_connectors`, `erp_mappings`, `erp_snapshots`, `erp_sync_jobs`, and related audit/failure structures. Social has canonical tables including `social_account_bindings`, `social_market_targets`, `social_target_discovery_jobs`, and related publishing/manual-action structures. Their runtime command ports exist, but the production command-to-database/external-adapter implementation is not materialized.
 
+### C/D — AIAPI registered operation names exist, application command port/handler is not materialized
+
+Current AIAPI-01 Authority explicitly references operations including `createProviderModelProfile`, `updateProviderModelProfile`, `testProviderModelProfile`, `setProviderModelCredential`, `runSandboxTest`, `executeProviderRoute`, and `getProviderRouteDecision`. It also requires reuse of the current registered operation registry and forbids inferring unregistered API methods/paths/permissions.
+
+Repository audit confirms:
+
+- `src/components/pages/AiApiVisual.tsx` renders these operation IDs but keeps all effectful controls disabled with `REMAP_REQUIRED_NOT_EXECUTED`.
+- `src/domain/aiApi/aiApiRuntimePort.ts` materializes only the read-only AIAPI projection client through `/v1/ui-projections/admin%3AAIAPI-01`; it contains no effectful AIAPI command port.
+- `src/server/testing/controlledAiApiTestRuntime.ts` is TEST_ONLY synthetic projection state and cannot satisfy production runtime binding.
+- `src/server/shared/uiProjectionRuntime.ts` only exposes AIAPI through the generic projection path; without production projection bindings it fails closed.
+- Current repository tree contains no dedicated AIAPI effectful `/v1` route family and no dedicated production AIAPI server runtime/gateway implementation path.
+
+Production Script V1.3 states that provider execution belongs to the existing Provider Prompt Adapter / AI API Router / ProviderGateway and creates no new runtime service. Because the current application does not materialize that existing effectful operation port/handler path and AIAPI-01 forbids route inference, a new API route or gateway architecture may not be invented from operation names alone.
+
+Required disposition:
+
+`BLOCK + REPORT_AUTHORITY_GAP`
+
+The missing materialization must be resolved from the current registered operation registry / governed System Lifecycle authority before ProviderGateway implementation or AIAPI effectful remap may proceed.
+
 ### D — Authority technical contract gap CONFIRMED
 
 The Current Authority set was checked specifically for the missing production application database runtime technical contract.
@@ -94,6 +116,7 @@ Required disposition:
 - ERP provider synchronization / connector execution
 - Social platform binding / discovery / publishing
 - Shared crawler / external acquisition
+- AI provider real external request execution
 
 These may not be treated as complete from local or controlled-test adapters.
 
@@ -129,20 +152,23 @@ The following production contracts are still absent from the application runtime
 2. Authority-defined production database connection environment contract
 3. Production runtime bootstrap call path (`src/instrumentation.ts` register is currently empty)
 4. Production server adapter implementations for the existing `configure*Runtime` ports
-5. Domain-specific command/read-model mappings where Authority does not already define exact behavior
-6. Real runtime E2E evidence after binding
+5. AIAPI effectful command port/handler mapping from the current registered operation registry
+6. Domain-specific command/read-model mappings where Authority does not already define exact behavior
+7. Real runtime E2E evidence after binding
 
 ## Authority Gap Rule
 
-Where Current Authority does not define an exact adapter/database mapping, operation behavior, permission mapping, technical driver/bootstrap contract, or external-provider boundary, the required disposition is:
+Where Current Authority does not define an exact adapter/database mapping, operation behavior, permission mapping, technical driver/bootstrap contract, API route/handler mapping, or external-provider boundary, the required disposition is:
 
 `BLOCK + REPORT_AUTHORITY_GAP`
 
-No implementation may guess missing schema, fields, permissions, API behavior, driver choice, connection contract, or production external behavior.
+No implementation may guess missing schema, fields, permissions, API behavior, driver choice, connection contract, route mapping, or production external behavior.
 
 ## Next Allowed Construction Gate
 
 Production database binding may not proceed until a Current Authority revision materializes the missing database runtime technical contract.
+
+AIAPI effectful production binding may not proceed until the current registered operation registry / governed System Lifecycle materializes the existing operation-to-command-port/handler mapping without route inference.
 
 Until then, allowed work is limited to:
 
@@ -151,12 +177,13 @@ Until then, allowed work is limited to:
 - preparing exact Authority-gap evidence for System Lifecycle governance;
 - continuing external-gate classification without executing real external providers.
 
-The read-only DB/Projection paths remain the preferred first binding candidates once the missing technical contract becomes Authority-defined.
+The read-only DB/Projection paths remain the preferred first database binding candidates once the missing technical contract becomes Authority-defined.
 
 ## Rules
 
 - Do not treat controlled runtime as production runtime.
 - Do not introduce schema changes from this report.
-- Do not infer missing Authority definitions from table names alone.
+- Do not infer missing Authority definitions from table names or registered operation names alone.
 - Do not select a database driver or connection contract by preference.
+- Do not invent AIAPI effectful API paths or ProviderGateway architecture where Current Authority requires reuse of an existing registered operation registry.
 - Do not claim runtime complete or production ready until implementation, commit, build/test, runtime validation, and E2E evidence all exist.
