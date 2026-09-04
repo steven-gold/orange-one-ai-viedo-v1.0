@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-CHAIN-0001-0015-FINAL-VERIFIED
+  revision: 2026-09-04-POST-MIGRATION-RELEASE-PASS-RUNTIME-BINDING-BLOCKED
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -158,6 +158,59 @@ cross_authority_bindings:
     final_expected_schema_delta: THREE_ERP_INDEXES_FROM_0013_ONLY
     unexpected_schema_drift: 0
     remaining_migrations: 0
+  post_migration_validation:
+    status: RELEASE_VALIDATED_RUNTIME_BINDING_BLOCKED
+    verified_on: '2026-09-04'
+    product_head_sha: 825a676396150db32f623f93485362d9cd83e3a2
+    migration_chain:
+      state: COMPLETE_APPLIED_VERIFIED
+      exact_migrations: 15
+      remaining_migrations: 0
+    release_gate:
+      workflow: .github/workflows/release-gate.yml
+      run_id: 33819571376
+      job_id: 100859087168
+      conclusion: SUCCESS
+      source_lint: PASS
+      dependency_audit_high: PASS
+      typecheck: PASS
+      release_unit_tests: PASS
+      production_build: PASS
+      production_http_e2e_fail_closed_contract: PASS
+      controlled_mode_fail_closed_e2e: PASS
+      supported_viewport_browser_e2e: PASS
+      standalone_docker_build: PASS
+      dirty_tree_guard: PASS
+    vercel_preview:
+      deployment_status: COMPLETED
+      preview_url: https://orange-one-acpos-test-git-new-gold5757.vercel.app
+      http_smoke: BLOCKED_BY_VERCEL_DEPLOYMENT_PROTECTION
+      browser_smoke: BLOCKED_BY_VERCEL_DEPLOYMENT_PROTECTION
+      application_failure_proven: false
+      blocker_evidence: response was Vercel protection/dashboard HTML instead of ORANGE ONE health/page content
+    runtime_binding_readiness:
+      status: BLOCKED
+      authority_api_binding: NOT_EXECUTED
+      authority_database_binding: NOT_EXECUTED
+      authority_e2e: NOT_EXECUTED
+      configure_entry_points_audited: 62
+      app_route_files_audited: 106
+      production_server_runtime_bootstrap_call_sites: 0
+      database_driver_dependencies: 0
+      database_connection_env_keys_in_env_example: 0
+      instrumentation_register: EMPTY
+      client_or_controlled_call_sites_do_not_satisfy_server_binding: true
+      blockers:
+      - PRODUCTION_DATABASE_DRIVER_CONTRACT_NOT_MATERIALIZED
+      - PRODUCTION_DATABASE_CONNECTION_ENV_CONTRACT_NOT_MATERIALIZED
+      - PRODUCTION_RUNTIME_BOOTSTRAP_NOT_MATERIALIZED
+      - PRODUCTION_SERVER_RUNTIME_ADAPTER_BINDINGS_NOT_EXECUTED
+      - VERCEL_PREVIEW_DEPLOYMENT_PROTECTION_BLOCKS_REMOTE_POST_DEPLOY_E2E
+      next_action: BLOCK_AND_REPORT_AUTHORITY_GAP_BEFORE_PRODUCTION_BINDING
+    truth_guard:
+      runtime_complete_claim_allowed: false
+      production_ready_claim_allowed: false
+      reason: migration and release validation are complete, but production API/database runtime binding and remote unprotected E2E are not executed
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
