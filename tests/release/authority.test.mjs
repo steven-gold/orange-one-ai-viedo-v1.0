@@ -13,6 +13,9 @@ const devVisual = await readFile("src/components/pages/DevVisual.tsx", "utf8");
 const devControlRuntime = await readFile("src/components/pages/DevControlRuntime.tsx", "utf8");
 const devCommandPort = await readFile("src/domain/dev/devCommandPort.ts", "utf8");
 const controlledDevRuntime = await readFile("src/domain/dev/controlledDevClientTestRuntime.ts", "utf8");
+const infoPage = await readFile("authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml", "utf8");
+const infoClientState = await readFile("src/domain/info/infoClientState.ts", "utf8");
+const infoCommandPort = await readFile("src/domain/info/infoCommandPort.ts", "utf8");
 
 test("Current Authority contains exactly 18 unique page authorities", () => {
   const pages = [...manifest.matchAll(/^  - (authority\/pages\/[^\n]+)$/gm)].map((match) => match[1]);
@@ -137,4 +140,37 @@ test("DEV-01 production commands remain fail-closed until a registered business-
   assert.doesNotMatch(devCommandPort, /fetch\s*\(/);
   assert.match(controlledDevRuntime, /if \(configured \|\| !isControlledTestMode\(\)\) return/);
   assert.match(controlledDevRuntime, /production_eligible: false/);
+});
+
+test("INFO-01 selection and presentation actions remain local read-only context state", () => {
+  for (const actionUid of [
+    "INFO-01-ACT-FILTER",
+    "INFO-01-ACT-SOURCE-SELECT",
+    "INFO-01-ACT-ALERT-SELECT",
+    "INFO-01-ACT-FACTPACK-SELECT",
+    "INFO-01-ACT-FACT-TYPE",
+    "INFO-01-ACT-EVIDENCE-SELECT",
+    "INFO-01-ACT-RESEARCH-SELECT",
+    "INFO-01-ACT-CANDIDATE-SELECT",
+  ]) {
+    const action = infoPage.match(new RegExp(`- action_uid: ${actionUid}([\\s\\S]*?)(?=\\n  - action_uid:|\\nacceptance:|\\n  acceptance:)`));
+    assert.ok(action, `${actionUid} must remain in current INFO-01 Authority`);
+    assert.match(action[1], /effect_type:\s*(?:UI_ONLY|CONTEXT_STATE)/);
+    assert.match(action[1], /operation:\s*null/);
+    assert.match(action[1], /method_path:\s*null/);
+    assert.match(action[1], /state_event:\s*NONE/);
+  }
+
+  for (const reducerAction of ["SCOPE", "SOURCE", "ALERT", "FACTPACK", "FACT_VIEW", "EVIDENCE", "RESEARCH", "CANDIDATE", "CITATION", "AUDIT"]) {
+    const branch = infoClientState.match(new RegExp(`case['\"]${reducerAction}['\"]:\\s*([\\s\\S]*?)(?=case['\"]|\\n  \\})`));
+    assert.ok(branch, `${reducerAction} reducer branch must remain materialized`);
+    assert.doesNotMatch(branch[1], /projection\s*:|correlation_id\s*:|runtime_error\s*:|runtime_error_uid\s*:|runtime_reason_code\s*:/);
+  }
+});
+
+test("INFO-01 effectful commands stay payload-adapter gated and cannot infer governed request fields", () => {
+  assert.match(infoPage, /additional_fields:\s*Use registered Business Payload Registry only; do not infer page-union fields/);
+  assert.match(infoPage, /additional_fields:\s*Use registered Business Payload Registry only; do not invent search parameters/);
+  assert.match(infoCommandPort, /let builder:InfoCommandPayloadBuilder\|null=null/);
+  assert.match(infoCommandPort, /if\(!builder\)return\{ok:false as const,error_uid:errorUid\(input\.action_uid\),reason_code:'INFO_COMMAND_PAYLOAD_ADAPTER_NOT_BOUND'/);
 });
