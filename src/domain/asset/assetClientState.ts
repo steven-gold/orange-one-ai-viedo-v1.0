@@ -85,7 +85,10 @@ export function reduceAssetClientState(state: AssetClientState, action: AssetCli
         topic_ref: null,
         asset_ref: null,
         active_view_action: null,
+        correction_open: false,
+        correction_request: "",
         patch_revision_requested: false,
+        projection: null,
       };
     case "ASSET-01-ACT-TOPIC-SELECT":
       return {
@@ -93,7 +96,10 @@ export function reduceAssetClientState(state: AssetClientState, action: AssetCli
         topic_ref: action.topic_ref,
         asset_ref: null,
         active_view_action: null,
+        correction_open: false,
+        correction_request: "",
         patch_revision_requested: false,
+        projection: null,
       };
     case "ASSET-01-ACT-MODE-SET":
       return { ...state, mode: action.mode };
