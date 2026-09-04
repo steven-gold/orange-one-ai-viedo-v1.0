@@ -27,6 +27,9 @@ const qaControlRuntime = await readFile("src/components/pages/QaControlRuntime.t
 const iamPage = await readFile("authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml", "utf8");
 const iamClientState = await readFile("src/domain/iam/iamClientState.ts", "utf8");
 const iamControlRuntime = await readFile("src/components/pages/IamControlRuntime.tsx", "utf8");
+const knowledgePage = await readFile("authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml", "utf8");
+const knowledgeRuntimePort = await readFile("src/domain/knowledge/knowledgeRuntimePort.ts", "utf8");
+const knowledgeVisual = await readFile("src/components/pages/KnowledgeAdminVisual.tsx", "utf8");
 
 test("Current Authority contains exactly 18 unique page authorities", () => {
   const pages = [...manifest.matchAll(/^  - (authority\/pages\/[^\n]+)$/gm)].map((match) => match[1]);
@@ -204,4 +207,16 @@ test("IAM-01 draft mutations invalidate authorization preview before Complete", 
   assert.match(iamControlRuntime, /setIamBasicField[\s\S]*?preview_ref:null/);
   assert.match(iamControlRuntime, /setIamDepartmentPreset[\s\S]*?preview_ref:null/);
   assert.match(iamControlRuntime, /IAM-01-BTN-COMPLETE[\s\S]*?!runtime\.client\.preview_ref/);
+});
+
+test("KB-01 typed projection values are preserved and rendered without string-only loss", () => {
+  assert.match(knowledgePage, /F:RUN-RETRY:retry_eligible:BOOLEAN/);
+  assert.match(knowledgePage, /F:EXP-OUTCOME:business_human_outcome:OBJECT/);
+  assert.match(knowledgePage, /F:REPLAY-ROOT:root_cause:OBJECT/);
+  assert.match(knowledgePage, /F:REV-CHECK:mandatory_check_results:OBJECT_LIST/);
+  assert.match(knowledgeRuntimePort, /values: Readonly<Record<string, unknown>>/);
+  assert.match(knowledgeRuntimePort, /for \(const \[key, value\] of Object\.entries\(valuesRaw\)\) values\[key\] = value/);
+  assert.doesNotMatch(knowledgeRuntimePort, /typeof value === "string"\) values\[key\] = value/);
+  assert.match(knowledgeVisual, /function displayProjectionValue\(value: unknown\)/);
+  assert.match(knowledgeVisual, /projectionValue\(projection, "RUN-RETRY"\) === true/);
 });
