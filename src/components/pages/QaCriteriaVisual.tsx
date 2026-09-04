@@ -21,6 +21,12 @@ const SECTION_CONTROLS: ReadonlyArray<{key:SectionKey;sectionId:string;controlId
 {key:"impact",sectionId:"SEC-ADMIN-SG-02-IMPACT",controlId:"CTRL-ADMIN-SG-02-IMPACT-OPEN"},
 ] as const;
 
+function displayProjectionValue(value: unknown): string {
+ if(value===null||value===undefined||value==="")return "—";
+ if(typeof value==="string"||typeof value==="number"||typeof value==="boolean")return String(value);
+ try{return JSON.stringify(value)}catch{return "—"}
+}
+
 export function QaCriteriaVisual(){
  const{locale}=useI18n();
  const[drawer,setDrawer]=useState<DrawerKey|null>(null);
@@ -36,7 +42,7 @@ export function QaCriteriaVisual(){
  const[busy,setBusy]=useState(false);
  const syncProjection=async(signal?:AbortSignal)=>{const r=await readQaCriteriaProjection(signal);setCorrelationId(r.correlation_id);if(r.ok){setProjection(r.projection);setRuntimeError(null);return true}setRuntimeError(r.reason_code);return false};
  useEffect(()=>{const c=new AbortController();void readQaCriteriaProjection(c.signal).then(r=>{setCorrelationId(r.correlation_id);if(r.ok){setProjection(r.projection);setRuntimeError(null)}else setRuntimeError(r.reason_code)});return()=>c.abort()},[]);
- const value=(key:string)=>projection?.values[key]??"—";
+ const value=(key:string)=>displayProjectionValue(projection?.values[key]);
  const enabled=(id:string)=>projection?.control_enabled[id]===true&&!busy;
  const pageState=runtimeError?"ERROR":projection?.page_state??"LOADING";
  const submitConfigure=async()=>{if(!enabled(CONFIGURE_ID)||!resourceType.trim()||!resourceId.trim()||!reason.trim()||!configPatch.trim())return;let parsed:unknown;try{parsed=JSON.parse(configPatch)}catch{setRuntimeError("SG02_CONFIG_PATCH_JSON_INVALID");return}setBusy(true);const r=await configureQaCriteriaResource({resource_type:resourceType.trim(),resource_id:resourceId.trim(),config_patch_json:parsed,reason:reason.trim()});setCorrelationId(r.correlation_id);if(!r.ok){setRuntimeError(r.reason_code);setBusy(false);return}const projectionSynced=await syncProjection();setBusy(false);if(projectionSynced)setDrawer("governance")};
