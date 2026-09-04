@@ -8,6 +8,11 @@ const sysPage = await readFile("authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM
 const sysClientState = await readFile("src/domain/system/systemClientState.ts", "utf8");
 const editPage = await readFile("authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml", "utf8");
 const editClientState = await readFile("src/domain/edit/editClientState.ts", "utf8");
+const devPage = await readFile("authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml", "utf8");
+const devVisual = await readFile("src/components/pages/DevVisual.tsx", "utf8");
+const devControlRuntime = await readFile("src/components/pages/DevControlRuntime.tsx", "utf8");
+const devCommandPort = await readFile("src/domain/dev/devCommandPort.ts", "utf8");
+const controlledDevRuntime = await readFile("src/domain/dev/controlledDevClientTestRuntime.ts", "utf8");
 
 test("Current Authority contains exactly 18 unique page authorities", () => {
   const pages = [...manifest.matchAll(/^  - (authority\/pages\/[^\n]+)$/gm)].map((match) => match[1]);
@@ -107,4 +112,29 @@ test("EDIT-01 UI-only reducer stays separated from draft mutation helper", () =>
   assert.match(editClientState, /case["']LOCAL_ACTION["'][\s\S]*?draft_dirty:action\.dirty\?true:state\.draft_dirty/);
   assert.match(editClientState, /action\.dirty\?\{\.\.\.state\.resolved,page_state_uid:["']EDIT-01-ST-PAGE-EVAL_REQUIRED["']\}:state\.resolved/);
   assert.doesNotMatch(editClientState, /case["'](?:PLAY|PAUSE|SEEK|RANGE_IN|RANGE_OUT|RANGE_CLEAR|RATE|LOOP|MUTE|PREVIEW_VOLUME|SNAP|ZOOM_IN|ZOOM_OUT|ZOOM_FIT)["'][\s\S]{0,240}?LOCAL_ACTION/);
+});
+
+test("DEV-01 five-stage navigation remains Authority-defined client state with no API requirement", () => {
+  for (const index of [1, 2, 3, 4, 5]) {
+    const actionUid = `DEV-01-ACT-STAGE-${index}-SELECT`;
+    const action = devPage.match(new RegExp(`- action_uid: ${actionUid}([\\s\\S]*?)(?=\\n- action_uid:)`));
+    assert.ok(action, `${actionUid} must remain in current DEV-01 Authority`);
+    assert.match(action[1], /effect_type:\s*UI_CONTEXT_STATE/);
+    assert.match(action[1], /binding_kind:\s*CLIENT_STATE_OR_VIEW_NO_API_REQUIRED/);
+    assert.match(action[1], /api_required:\s*false/);
+  }
+
+  assert.match(devVisual, /const \[activeStage, setActiveStage\] = useState<StageKey>\("discovery"\)/);
+  assert.match(devVisual, /onUiClick=\{\(\) => setActiveStage\(item\.key\)\}/);
+  assert.match(devControlRuntime, /const formal = binding\?\.effect_type !== "UI_CONTEXT_STATE"/);
+  assert.match(devControlRuntime, /if \(!formal\) \{\s*onUiClick\?\.\(\);\s*return;\s*\}/);
+});
+
+test("DEV-01 production commands remain fail-closed until a registered business-payload adapter is bound", () => {
+  assert.match(devPage, /form_schema:\s*USE_EXISTING_REGISTERED_BUSINESS_PAYLOAD_SCHEMA; do not union or invent fields/);
+  assert.match(devCommandPort, /let adapter:DevCommandAdapter\|null=null/);
+  assert.match(devCommandPort, /if\(!adapter\)return\{ok:false,error_uid:'DEV-01-ERR-UNDEFINED',reason_code:'DEV_COMMAND_RUNTIME_NOT_BOUND'/);
+  assert.doesNotMatch(devCommandPort, /fetch\s*\(/);
+  assert.match(controlledDevRuntime, /if \(configured \|\| !isControlledTestMode\(\)\) return/);
+  assert.match(controlledDevRuntime, /production_eligible: false/);
 });
