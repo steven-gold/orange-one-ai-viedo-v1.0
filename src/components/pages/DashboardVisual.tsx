@@ -134,7 +134,7 @@ export function DashboardVisual() {
         <button className={styles.backdrop} type="button" aria-label={close} onClick={closeDrawer}/>
         <aside className={styles.drawer} role="dialog" aria-modal="true" aria-labelledby="wb01-drawer-title"><header className={styles.drawerHeader}><h2 id="wb01-drawer-title" className={styles.drawerTitle}>{t(drawerSection.titleKey)}</h2><button ref={closeRef} className={styles.closeButton} type="button" onClick={closeDrawer}>{close}</button></header>
           <div className={styles.drawerBody}>{drawerState === "LOADING" ? <LoadingBody kind={drawerSection.kind} loading={loading}/> : drawerState === "ERROR" ? <div className={styles.errorState}>{errorText}</div> : <SectionData section={drawerSection} value={model ? selectDashboardSection(model,drawerSection.key):null}/>}</div>
-          <footer className={styles.drawerFooter}><span>read_model_version: {dash(model?.read_model_version)}</span><span>correlation_id: {dash(model?.correlation_id)}</span></footer>
+          <footer className={styles.drawerFooter}><span>read_model_version: {dash(model?.read_model_version)}</span><span>correlation_id: {dash(model?.correlation_id ?? error?.correlation_id)}</span></footer>
         </aside>
       </div>}
     </div>
