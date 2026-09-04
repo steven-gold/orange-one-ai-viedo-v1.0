@@ -24,6 +24,9 @@ const infoCommandPort = await readFile("src/domain/info/infoCommandPort.ts", "ut
 const qaPage = await readFile("authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml", "utf8");
 const qaProjectionPort = await readFile("src/domain/qa/qaProjectionPort.ts", "utf8");
 const qaControlRuntime = await readFile("src/components/pages/QaControlRuntime.tsx", "utf8");
+const iamPage = await readFile("authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml", "utf8");
+const iamClientState = await readFile("src/domain/iam/iamClientState.ts", "utf8");
+const iamControlRuntime = await readFile("src/components/pages/IamControlRuntime.tsx", "utf8");
 
 test("Current Authority contains exactly 18 unique page authorities", () => {
   const pages = [...manifest.matchAll(/^  - (authority\/pages\/[^\n]+)$/gm)].map((match) => match[1]);
@@ -189,4 +192,16 @@ test("QA-01 frame nudge fails closed until source/project timebase is materializ
   assert.match(qaControlRuntime, /QA-01-BTN-PREV-FRAME"\|\|id==="QA-01-BTN-NEXT-FRAME"\)\{dispatch\(\{type:"RUNTIME_ERROR",value:"QA-01-ERR-OUTPUT-001:SOURCE_OR_PROJECT_TIMEBASE_REQUIRED"\}\);return;\}/);
   assert.doesNotMatch(qaControlRuntime, /QA-01-BTN-PREV-FRAME[\s\S]{0,160}?current_timecode\?\?0\)-1/);
   assert.doesNotMatch(qaControlRuntime, /QA-01-BTN-NEXT-FRAME[\s\S]{0,160}?current_timecode\?\?0\)\+1/);
+});
+
+test("IAM-01 draft mutations invalidate authorization preview before Complete", () => {
+  assert.match(iamPage, /condition: preview current \+ no blocking conflict/);
+  assert.match(iamPage, /Require explicit confirmation/);
+  assert.match(iamClientState, /selectAllFront[\s\S]*?preview_ref:null/);
+  assert.match(iamClientState, /selectAllAdmin[\s\S]*?preview_ref:null/);
+  assert.match(iamControlRuntime, /setIamFrontL1[\s\S]*?preview_ref:null/);
+  assert.match(iamControlRuntime, /setIamAdminL1[\s\S]*?preview_ref:null/);
+  assert.match(iamControlRuntime, /setIamBasicField[\s\S]*?preview_ref:null/);
+  assert.match(iamControlRuntime, /setIamDepartmentPreset[\s\S]*?preview_ref:null/);
+  assert.match(iamControlRuntime, /IAM-01-BTN-COMPLETE[\s\S]*?!runtime\.client\.preview_ref/);
 });
