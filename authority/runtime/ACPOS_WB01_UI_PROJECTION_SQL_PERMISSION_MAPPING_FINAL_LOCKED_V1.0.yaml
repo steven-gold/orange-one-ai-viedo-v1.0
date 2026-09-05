@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-IDENTITY-COOKIE-SESSION-NAMED
+  revision: 2026-09-05-ASSIGNMENT-STATUS-APPROVED
   scope: WB-01_PAGE_GATE_AUTHORIZE_AND_EXPLICIT_READ_GAPS_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -14,6 +14,7 @@ approval:
   - Name authorize SQL tables and columns already present in 0001/0003
   - Record remaining identity, assignment-status, scope/condition, and read-SQL gaps
   - Point identity actor to ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT cookie session
+  - Lock page-gate assignment status predicate to APPROVED
   - Do not bind configureUiProjectionRuntime in this revision
   - Do not change /health/ready to 200
 source:
@@ -60,7 +61,7 @@ authorize:
     canonical_actor: NAMED
     identity_transport: INTERNAL_COOKIE_SESSION
     cookie_name: acpos_session
-    gap_reason: Cookie session can resolve app_users.user_id. Page-gate still needs assignment status, DENY/ALLOW, scope/condition, and read SQL.
+    gap_reason: Cookie session can resolve app_users.user_id. Page-gate still needs DENY/ALLOW, scope/condition, and read SQL.
     missing_identity_reason_code: IDENTITY_RUNTIME_NOT_BOUND
   page_assignment_probe:
     tables:
@@ -73,6 +74,7 @@ authorize:
     - account_permission_assignments.resource_id = permission_resources.resource_id
     - account_permission_assignments.user_id = actor user_id
     - account_permission_assignments.action = VIEW
+    - account_permission_assignments.status = APPROVED
     - account_permission_assignments.effective_from <= now()
     - account_permission_assignments.effective_to IS NULL OR account_permission_assignments.effective_to > now()
     sql: |
@@ -84,10 +86,10 @@ authorize:
         AND r.resource_type = 'PAGE'
         AND r.active = true
         AND a.action = 'VIEW'
+        AND a.status = 'APPROVED'
         AND a.effective_from <= now()
         AND (a.effective_to IS NULL OR a.effective_to > now())
     remaining_evaluation_gaps:
-    - assignment_status_predicate: account_permission_assignments.status uses acpos_status; IAM-01 does not name which values are an effective grant
     - deny_vs_allow_precedence: effect ALLOW and DENY may both exist; Current Authority does not name precedence
     - scope_evaluator: catalog requires explicit_account_scope_match; scope jsonb schema and matcher are not named for WB-01
     - condition_evaluator: catalog requires assignment_condition_evaluates_true; condition jsonb schema and matcher are not named for WB-01
@@ -144,7 +146,6 @@ forbidden:
   - Change official site /health/ready to 200
   - Claim production ready
 remaining_blockers:
-  - ASSIGNMENT_STATUS_PREDICATE_NOT_DEFINED
   - DENY_VS_ALLOW_PRECEDENCE_NOT_DEFINED
   - SCOPE_CONDITION_EVALUATOR_NOT_DEFINED
   - WB01_SECTION_READ_SQL_NOT_DEFINED
