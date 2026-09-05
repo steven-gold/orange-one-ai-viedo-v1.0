@@ -63,6 +63,10 @@ test("WB-01 UI projection mapping locks page-gate authorize and keeps adapter bi
   assert.match(mapping, /catalog_requirement: assignment_condition_evaluates_true/);
   assert.match(mapping, /matcher: CONSTRAINT_SUBSET/);
   assert.match(mapping, /payload_hash_algorithm: SHA-256/);
+  assert.match(mapping, /section:workspace:WB-01:company_project_count/);
+  assert.match(mapping, /control:CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN/);
+  assert.match(mapping, /field:FIELD-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT/);
+  assert.match(mapping, /AND r.resource_key = \$resource_key/);
   assert.match(mapping, /WB01_SECTION_READ_SQL_NOT_DEFINED/);
   assert.match(mapping, /Infer company_project_count from COUNT\(projects\)/);
 });
