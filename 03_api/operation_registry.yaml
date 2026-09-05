@@ -1,0 +1,29 @@
+operation_registry:
+  contract_meta:
+    contract_id: ACPOS-OPERATION-REGISTRY-IDENTITY-SESSION-1.0.0
+    status: FINAL_LOCKED
+    current_only: true
+    revision: 2026-09-05-IDENTITY-SESSION-ONLY
+    coverage: IDENTITY_SESSION_ONLY
+    undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+    note: This file registers the GHS identity port that already exists in src. It does not reconstruct the 242 catalog API operations.
+  operations:
+  - operation_id: resolveIdentityAccountAuthority
+    port_uid: GHS-PORT-IDENTITY
+    path: /v1/identity/session
+    methods:
+    - GET
+    - POST
+    - DELETE
+    workflow:
+      GET: READ_SESSION
+      POST: CREATE_SESSION
+      DELETE: END_SESSION
+    identity_transport: INTERNAL_COOKIE_SESSION
+    cookie_name: acpos_session
+    source:
+    - authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
+    - authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+    - src/app/v1/identity/session/route.ts
+    catalog_resource_key: NOT_IN_ACCOUNT_PERMISSION_CATALOG
+    unregistered_catalog_apis: REMAIN_UNREGISTERED

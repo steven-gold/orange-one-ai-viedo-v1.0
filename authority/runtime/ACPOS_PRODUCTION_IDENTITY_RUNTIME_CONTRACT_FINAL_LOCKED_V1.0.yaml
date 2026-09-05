@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-APP-USERS-DISABLED-AT-NULL
+  revision: 2026-09-05-IDENTITY-OPERATION-REGISTRY
   scope: PRODUCTION_REQUEST_TO_APP_USERS_ACTOR_CONTRACT_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -16,7 +16,7 @@ approval:
   - Lock email join from acpos_runtime.accounts to app_users
   - Lock scrypt password verify against acpos_runtime.accounts.password_hash
   - Materialize GET/POST/DELETE /v1/identity/session and OPEN_LOGIN /login
-  - Keep 03_api/operation_registry.yaml absent
+  - Register resolveIdentityAccountAuthority in 03_api/operation_registry.yaml
   - Lock app_users active predicate to disabled_at IS NULL
   - Do not bind configureUiProjectionRuntime in this revision
   - Do not change /health/ready to 200
@@ -79,8 +79,9 @@ shell_identity_port:
   logged_in_to_logged_out: session ended
   open_login_path: /login
   operation_registry_file: 03_api/operation_registry.yaml
-  operation_registry_file_in_app_repo: ABSENT
-  catalog_registration: NOT_PRESENT
+  operation_registry_file_in_app_repo: PRESENT
+  operation_registry_coverage: IDENTITY_SESSION_ONLY
+  catalog_registration: NOT_IN_ACCOUNT_PERMISSION_CATALOG
 current_http_surface:
   observed_request_headers:
   - x-correlation-id
@@ -134,8 +135,7 @@ health_ready:
   identity_required_for_page_gate: true
   unauthenticated_reason_code: IDENTITY_RUNTIME_NOT_BOUND
   keep_fail_closed: true
-remaining_blockers:
-  - IDENTITY_OPERATION_REGISTRY_ABSENT
+remaining_blockers: []
 adapter_bind_allowed: false
 production_ready_claim_allowed: false
 next_action: CLOSE_WB01_PROJECTION_MAPPING_GAPS
