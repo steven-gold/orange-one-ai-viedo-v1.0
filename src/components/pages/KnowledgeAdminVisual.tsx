@@ -90,8 +90,9 @@ const FIELD_COUNT = FIELD_GROUPS.reduce((sum, group) => sum + group.fields.lengt
 const EFFECTFUL_RUNTIME_READY = false;
 
 function fieldsFor(section: number, component: string) { return FIELD_GROUPS.filter((group) => group.section === section && group.component === component); }
-function projectionValue(projection: KnowledgeProjection | null, suffix: string) { return projection?.values[`KB-01-FLD-${suffix}`] ?? projection?.values[suffix] ?? "—"; }
-function hasProjectionValue(projection: KnowledgeProjection | null, suffix: string) { const value = projectionValue(projection, suffix); return value !== "—" && value.trim() !== ""; }
+function projectionValue(projection: KnowledgeProjection | null, suffix: string): unknown { return projection?.values[`KB-01-FLD-${suffix}`] ?? projection?.values[suffix] ?? null; }
+function displayProjectionValue(value: unknown) { if (value === null || value === undefined || value === "") return "—"; if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value); try { return JSON.stringify(value); } catch { return "—"; } }
+function hasProjectionValue(projection: KnowledgeProjection | null, suffix: string) { const value = projectionValue(projection, suffix); if (value === null || value === undefined) return false; if (typeof value === "string") return value.trim() !== "" && value !== "—"; if (Array.isArray(value)) return value.length > 0; if (typeof value === "object") return Object.keys(value as Record<string, unknown>).length > 0; return true; }
 function isVisible(control: ControlSpec, active: KnowledgeViewKey, projection: KnowledgeProjection | null) {
   if (control.visible === "always") return true;
   if (control.visible === "view") return control.view === active;
@@ -99,7 +100,7 @@ function isVisible(control: ControlSpec, active: KnowledgeViewKey, projection: K
   if (control.visible === "sourceSelected") return hasProjectionValue(projection, "SOURCE-ID");
   if (control.visible === "sourceActive") return projectionValue(projection, "SOURCE-STATUS") === "ACTIVE";
   if (control.visible === "sourcePaused") return projectionValue(projection, "SOURCE-STATUS") === "PAUSED";
-  if (control.visible === "retry") return projectionValue(projection, "RUN-STATUS") === "RETRY_ELIGIBLE" || projectionValue(projection, "RUN-RETRY") === "true";
+  if (control.visible === "retry") return projectionValue(projection, "RUN-STATUS") === "RETRY_ELIGIBLE" || projectionValue(projection, "RUN-RETRY") === true || projectionValue(projection, "RUN-RETRY") === "true";
   if (control.visible === "resultSelected") return hasProjectionValue(projection, "RESULT-ID");
   if (control.visible === "contextItem") return hasProjectionValue(projection, "CTX-CAND-ITEMS");
   if (control.visible === "experienceSelected") return hasProjectionValue(projection, "EXP-ID");
@@ -135,7 +136,7 @@ export function KnowledgeAdminVisual() {
   const visibleControls = CONTROLS.filter((control) => control.action && isVisible(control, active, projection));
   const pageState = loading ? "LOADING" : runtimeError ? "ERROR" : projection?.page_state ?? "READ_ONLY";
   const blockedReason = loading ? "PROJECTION_LOADING" : runtimeError ?? "RUNTIME_NOT_EXECUTED";
-  const fieldValue = (suffix: string) => projectionValue(projection, suffix);
+  const fieldValue = (suffix: string) => displayProjectionValue(projectionValue(projection, suffix));
 
   const actionButton = (control: ControlSpec) => {
     const trace = getKnowledgeActionTrace(control.action);
@@ -169,7 +170,7 @@ export function KnowledgeAdminVisual() {
         {VIEWS.map((view) => { const selected = view.key === active; const control = CONTROLS.find((item) => item.view === view.key && item.suffix.startsWith("VIEW-")); return <button key={view.uid} type="button" className={`${styles.tab} ${selected ? styles.tabActive : ""}`} data-view-uid={view.uid} data-control-uid={control?.uid} aria-pressed={selected} onClick={() => setActive(view.key)}>{knowledgeViewLabel(locale, view.key)}</button>; })}
       </nav>
 
-      <section className={styles.kpis} aria-label={`${knowledgeViewLabel(locale, active)} Summary`}>{["Source", "Ingestion", "Experience", "Review", "Approved Knowledge"].map((label) => <article className={styles.kpi} key={label}><span>{label}</span><strong>{projection?.values[label] ?? "—"}</strong></article>)}</section>
+      <section className={styles.kpis} aria-label={`${knowledgeViewLabel(locale, active)} Summary`}>{["Source", "Ingestion", "Experience", "Review", "Approved Knowledge"].map((label) => <article className={styles.kpi} key={label}><span>{label}</span><strong>{displayProjectionValue(projection?.values[label])}</strong></article>)}</section>
 
       <div className={styles.workspace} data-current-view={activeView.uid}>
         <main className={styles.sectionStack}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { EDIT_CONTROL_TEXT, editText, editUiText } from "@/i18n/editCatalog";
 import { EditRuntimeControl, EditRuntimeProvider, useEditRuntimeState } from "./EditControlRuntime";
@@ -263,12 +263,43 @@ function Title({ text, meta }: { text: string; meta?: string }) {
 export function EditVisual() { return <EditRuntimeProvider><EditVisualBody /></EditRuntimeProvider>; }
 
 function EditVisualBody() {
-  const { state } = useEditRuntimeState();
+  const { state, dispatch, setRuntimeError } = useEditRuntimeState();
   const { locale } = useI18n();
+  const previewRef = useRef<HTMLVideoElement|null>(null);
   const registryValid = useMemo(() => {
     const ids = new Set(ALL.map((spec) => spec.id));
     return ids.size === 160 && Object.keys(EDIT_CONTROL_TEXT).length === 160 && [...ids].every((id) => id in EDIT_CONTROL_TEXT);
   }, []);
+
+  useEffect(() => {
+    const video = previewRef.current;
+    if (!video) return;
+    video.playbackRate = state.playback_rate;
+    video.loop = state.loop;
+    video.muted = state.preview_muted;
+    video.volume = Math.max(0, Math.min(1, state.preview_volume));
+  }, [state.playback_rate, state.loop, state.preview_muted, state.preview_volume, state.resolved.preview_uri]);
+
+  useEffect(() => {
+    const video = previewRef.current;
+    if (!video) return;
+    if (state.playing) {
+      void video.play().catch(() => {
+        dispatch({ type: "PAUSE" });
+        setRuntimeError("EDIT-01-ERR-CONTEXT-001: PREVIEW_PLAYBACK_REJECTED");
+      });
+    } else {
+      video.pause();
+    }
+  }, [state.playing, state.resolved.preview_uri, dispatch, setRuntimeError]);
+
+  useEffect(() => {
+    const video = previewRef.current;
+    const next = typeof state.playhead === "number" ? state.playhead : Number(state.playhead);
+    if (!video || !Number.isFinite(next) || Math.abs(video.currentTime - next) < 0.05) return;
+    const bounded = Number.isFinite(video.duration) && video.duration > 0 ? Math.max(0, Math.min(video.duration, next)) : Math.max(0, next);
+    video.currentTime = bounded;
+  }, [state.playhead, state.resolved.preview_uri]);
 
   const contextMain = CONTEXT.slice(0, 12);
   const contextStatus = CONTEXT.slice(12);
@@ -298,7 +329,9 @@ function EditVisualBody() {
       <div className={styles.productionStack}>
         <section className={`${styles.panel} ${styles.previewPanel}`} data-section-id="EDIT-01-SEC-03" data-visual-uid="EDIT-01-VIS-PREVIEW">
           <Title text={editUiText(locale, "preview")} meta="16:9" />
-          <div className={styles.viewer} data-component-uid="EDIT-01-CMP-PREVIEW" data-preview-ref={state.resolved.preview_uri ?? undefined}>{state.resolved.preview_uri ?? "—"}</div>
+          <div className={styles.viewer} data-component-uid="EDIT-01-CMP-PREVIEW" data-preview-ref={state.resolved.preview_uri ?? undefined} data-playing={state.playing ? "true" : "false"} data-muted={state.preview_muted ? "true" : "false"} data-loop={state.loop ? "true" : "false"}>
+            {state.resolved.preview_uri ? <video ref={previewRef} src={state.resolved.preview_uri} playsInline preload="metadata" onTimeUpdate={event=>dispatch({type:"SEEK",value:event.currentTarget.currentTime})} onEnded={()=>dispatch({type:"PAUSE"})} style={{width:"100%",height:"100%",display:"block",objectFit:"contain",background:"#000"}} /> : "—"}
+          </div>
           <div className={styles.transport} data-component-uid="EDIT-01-CMP-TRANSPORT">{PREVIEW.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
         </section>
 

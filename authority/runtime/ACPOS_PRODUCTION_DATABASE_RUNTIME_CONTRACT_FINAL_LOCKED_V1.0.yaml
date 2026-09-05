@@ -1,0 +1,109 @@
+authority:
+  id: ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT
+  version: V1.0
+  status: FINAL_LOCKED
+  current_only: true
+  revision: 2026-09-05-LIVE-WILD-WAVE-DRIVER-AND-ENV-CONTRACT
+  scope: PRODUCTION_DATABASE_DRIVER_AND_CONNECTION_ENV_CONTRACT_ONLY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+approval:
+  user_approved: true
+  approved_on: '2026-09-05'
+  approved_scope:
+  - Set live Neon target to wild-wave-25661146
+  - Name production database driver and environment keys
+  - Do not bind register() or claim production ready
+  - Keep 0001-0015 as the required live schema and require wild-wave re-verification before binding
+source:
+  derived_from:
+  - Vercel project orange-one-acpos-test Neon integration environment key names
+  - Live Neon API project ORANGEONEACPOSStaging
+  - User confirmation that wild-wave is the authority target
+live_neon_target:
+  neon_project_id: wild-wave-25661146
+  neon_project_name: ORANGEONEACPOSStaging
+  region_id: aws-us-east-1
+  pg_version: 18
+  database_name: neondb
+  production_branch_name: main
+  production_branch_id: br-shy-cherry-auiol4oy
+  production_endpoint_id: ep-hidden-hat-auu8r1b0
+  git_new_preview_branch_name: preview/new
+  git_new_preview_branch_id: br-quiet-firefly-aumuvjht
+driver:
+  package: "@neondatabase/serverless"
+  reason: Existing Vercel Neon integration exposes DATABASE_URL for this Next.js serverless app
+  forbidden_until_new_authority:
+  - pg
+  - postgres
+  - "@vercel/postgres"
+  - prisma
+  - drizzle-orm
+connection_env:
+  DATABASE_URL:
+    required: true
+    usage: pooled application reads and writes after runtime binding
+    commit_value: false
+  DATABASE_URL_UNPOOLED:
+    required: true
+    usage: migrations and DDL only
+    commit_value: false
+  NEON_PROJECT_ID:
+    required: true
+    expected_value: wild-wave-25661146
+    usage: identity guard against connecting the superseded tiny-dust project
+platform_alias_keys_not_required_by_app:
+  - POSTGRES_URL
+  - POSTGRES_PRISMA_URL
+  - POSTGRES_URL_NON_POOLING
+  - POSTGRES_HOST
+  - POSTGRES_DATABASE
+  - POSTGRES_USER
+  - POSTGRES_PASSWORD
+  - PGHOST
+  - PGDATABASE
+  - PGUSER
+  - PGPASSWORD
+  - PGHOST_UNPOOLED
+  - POSTGRES_URL_NO_SSL
+  - NEON_AUTH_BASE_URL
+  - VITE_NEON_AUTH_URL
+bootstrap:
+  instrumentation_register: EMPTY_UNTIL_BINDING_PHASE
+  package_json_dependency: NOT_ADDED_IN_THIS_REVISION
+  production_ready_claim_allowed: false
+required_schema:
+  status: REQUIRED_CURRENT_AUTHORITY
+  chain: 0001-0015
+  exact_migrations: 15
+  files:
+  - database/migrations/0001_canonical_schema.sql
+  - database/migrations/0002_topic_contract_constraints.sql
+  - database/migrations/0003_account_permission_authorization.sql
+  - database/migrations/0004_r9_finalization.sql
+  - database/migrations/0005_r9_final_correction.sql
+  - database/migrations/0006_deployment_ready_closure.sql
+  - database/migrations/0007_runtime_operational_schema.sql
+  - database/migrations/0008_provider_router_runtime_closure.sql
+  - database/migrations/0009_layer_runtime_closure.sql
+  - database/migrations/0010_layer_canonical_closure.sql
+  - database/migrations/0011_correction_runtime_closure.sql
+  - database/migrations/0012_editing_voice_runtime_closure.sql
+  - database/migrations/0013_erp_runtime_closure.sql
+  - database/migrations/0014_production_goal_routing_closure.sql
+  - database/migrations/0015_enterprise_social_outreach_closure.sql
+  checksum_manifest: database/migrations/migration_checksum_manifest.yaml
+  target: wild-wave-25661146 / neondb / PG 18 / br-shy-cherry-auiol4oy
+  apply_or_verify_before: production register() database binding
+  tiny_dust_complete_record:
+    useful_as: historical proof that this exact 15-file chain existed and passed gates
+    inherit_as_applied_on_wild_wave: false
+    wild_wave_status: NOT_VERIFIED
+    required_next_gate: READ_ONLY_VERIFY_0001_0015_ON_WILD_WAVE_THEN_APPLY_MISSING
+forbidden:
+  - Commit DATABASE_URL or password values
+  - Connect production Neon from register() in this revision
+  - Treat CONTROLLED_TEST as production binding
+  - Change official site /health/ready to 200
+  - Drop or skip 0001-0015 because the tiny-dust project is gone
+  - Claim wild-wave schema complete from tiny-dust COMPLETE

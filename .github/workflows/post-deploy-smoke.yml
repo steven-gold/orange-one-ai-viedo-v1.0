@@ -6,6 +6,11 @@ on:
     workflows: ["ACPOS Release Gate"]
     types: [completed]
   workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: Deployment URL to smoke
+        required: false
+        default: https://orange-one-acpos-test.vercel.app
 
 permissions:
   contents: read
@@ -14,17 +19,18 @@ jobs:
   smoke:
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.ref == 'main') ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+      (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && (github.event.deployment.ref == 'main' || github.event.deployment.ref == 'new')) ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.head_branch == 'main' || github.event.workflow_run.head_branch == 'new'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
+      ACPOS_DEPLOYMENT_URL: ${{ github.event.inputs.deployment_url || github.event.deployment_status.environment_url || 'https://orange-one-acpos-test.vercel.app' }}
       ACPOS_EXPECT_READY: "0"
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event.deployment.ref || github.event.workflow_run.head_branch || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22

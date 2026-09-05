@@ -106,6 +106,8 @@ export function reduceCoreClientState(state: CoreClientState, action: CoreClient
         candidate_ref: null,
         composer_message_refs: [],
         decision_evidence_refs: [],
+        attachment_refs: [],
+        reference_refs: [],
       };
     }
     case "CORE-01-ACT-TOPIC-SELECT": {
@@ -123,13 +125,15 @@ export function reduceCoreClientState(state: CoreClientState, action: CoreClient
         candidate_ref: null,
         composer_message_refs: [],
         decision_evidence_refs: [],
+        attachment_refs: [],
+        reference_refs: [],
       };
     }
     case "CORE-01-ACT-WORK-ITEM-SELECT":
-      return { ...state, work_item: action.work_item, conversation_id: null, thread_ref: null, composer_message_refs: [], decision_evidence_refs: [] };
+      return { ...state, work_item: action.work_item, conversation_id: null, thread_ref: null, composer_message_refs: [], decision_evidence_refs: [], attachment_refs: [], reference_refs: [] };
     case "CORE-01-ACT-THREAD-SELECT": {
       const conversation_id = action.conversation_id ?? action.thread_ref;
-      return { ...state, conversation_id, thread_ref: conversation_id, composer_message_refs: [], decision_evidence_refs: [] };
+      return { ...state, conversation_id, thread_ref: conversation_id, composer_message_refs: [], decision_evidence_refs: [], attachment_refs: [], reference_refs: [] };
     }
     case "CORE-01-ACT-AI-MODE-SINGLE": return { ...state, ai_mode: "SINGLE" };
     case "CORE-01-ACT-AI-MODE-MULTI": return { ...state, ai_mode: "MULTI" };

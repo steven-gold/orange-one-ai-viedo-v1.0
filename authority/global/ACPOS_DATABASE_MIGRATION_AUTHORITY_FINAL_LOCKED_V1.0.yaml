@@ -1,0 +1,1080 @@
+authority:
+  id: ACPOS_DATABASE_MIGRATION_AUTHORITY
+  version: V1.0
+  status: FINAL_LOCKED
+  current_only: true
+  revision: 2026-09-05-LIVE-NEON-TARGET-WILD-WAVE
+  scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+live_neon_target:
+  status: CURRENT_AUTHORITY_TARGET
+  verified_on: '2026-09-05'
+  source: LIVE_NEON_API_AND_USER_CONFIRMATION_WILD_WAVE
+  neon_project_id: wild-wave-25661146
+  neon_project_name: ORANGEONEACPOSStaging
+  region_id: aws-us-east-1
+  pg_version: 18
+  database_name: neondb
+  production_branch_name: main
+  production_branch_id: br-shy-cherry-auiol4oy
+  production_endpoint_id: ep-hidden-hat-auu8r1b0
+  git_new_preview_branch_name: preview/new
+  git_new_preview_branch_id: br-quiet-firefly-aumuvjht
+  migration_chain_0001_0015_on_this_target: NOT_VERIFIED
+  required_schema_chain: 0001-0015
+  required_schema_rule: KEEP_AND_VERIFY_ON_WILD_WAVE
+  tiny_dust_complete_useful_as: HISTORICAL_CHAIN_PROOF_ONLY
+  superseded_recorded_target:
+    neon_project_id: tiny-dust-89825424
+    branch_id: br-bitter-poetry-b3p6t5ub
+    database_name: acpos_staging
+    pg_version: 15.19
+    api_status: NOT_FOUND
+    migration_chain_0001_0015: HISTORICAL_EVIDENCE_ONLY_DO_NOT_INHERIT
+approval:
+  user_approved: true
+  approved_on: '2026-09-03'
+  approval_ref: CR-SCHEMA-0001
+  approved_change_scope:
+  - 0001 install btree_gist
+  - acpos_status add COMPILE_REQUESTED
+  - acpos_status add APPROVED
+cr_auth_0003_minimal_correction_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-AUTH-0003-CORRECTION
+  approved_scope:
+  - Allow SENSITIVE_PERMISSION in permission_resources resource_type.
+  - Define deterministic canonical Account Permission Catalog resource_id to database UUID mapping.
+  - Materialize and validate the exact 3650-resource Account Permission Catalog without omission.
+  - Replace unsafe static legacy-table guard reads with existence-safe fail-closed checks.
+  staging_apply_approval: APPROVED
+  staging_apply_approved_on: '2026-09-04'
+  staging_apply_approved_by: HUMAN_USER
+  staging_apply_approval_ref: CR-AUTH-0003
+  staging_apply_scope: APPLY_VALIDATED_0003_TO_STAGING_ONLY
+  pre_0003_restore_branch_id: br-icy-field-b383fiso
+source_lineage:
+  source_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_AI_SEQUENCED_FINAL.yaml
+  old_0001_payload_sha256: cb622dc4ae9d0cd5533348e5fdcda6d624ff0c5799bf7e20a94aa853451ea98f
+  current_0001_payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
+  old_0003_payload_sha256: 14dbb9540b01ccb33e2f6be3a1e8eac3c8fde5b0216604c86be25ef57dbd6471
+  current_0003_payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  unchanged_migrations: 0002 and 0004-0015 payloads preserved byte-for-byte from verified R9 Authority source
+  source_checksum_verification: Original 15/15 source payloads verified before approved corrections; only 0001 and 0003 are Current corrected payloads.
+artifact_bindings:
+  migration_root: database/migrations/
+  bootstrap_migration: database/migrations/0001_canonical_schema.sql
+  checksum_manifest: database/migrations/migration_checksum_manifest.yaml
+  account_permission_catalog_target: 06_permission/account_permission_catalog.yaml
+  account_permission_catalog_repository_status: MATERIALIZED_VERIFIED
+  account_permission_catalog_git_blob_sha: bf9081eae472785d260bddeb3860d2f0f0c38b9d
+  account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
+  account_permission_catalog_bytes: 2762474
+  account_permission_catalog_lines: 79399
+  materialized_migration_count: 15
+correction_evidence:
+  diagnostic_environment: Neon PostgreSQL 15.19 temporary branch
+  proven_blockers:
+  - acpos_status omitted APPROVED while 17 acpos_status columns defaulted to APPROVED
+  - acpos_status omitted COMPILE_REQUESTED while work_packages.status defaulted to COMPILE_REQUESTED
+  - continuity_checkpoints UUID GiST exclusion required btree_gist but bootstrap did not install it
+  corrected_diagnostic_result:
+    payload_statements_executed: 600
+    unique_tables: 194
+    public_tables: 152
+    acpos_runtime_tables: 42
+    validated_foreign_keys: 343
+    unvalidated_constraints: 0
+clean_temporary_revalidation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0001-clean-revalidate-20260903
+  temporary_branch_id: br-little-leaf-b3qaagp0
+  database_name: acpos_staging
+  source: CURRENT_AUTHORITY_0001
+  payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
+  payload_statements_executed: 601
+  registration_statements_executed: 1
+  migration_history_rows: 1
+  migration_history_checksum: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
+  migration_history_approval_ref: CR-SCHEMA-0001
+  public_tables: 152
+  acpos_runtime_tables: 42
+  unique_tables: 194
+  validated_foreign_keys: 343
+  unvalidated_constraints: 0
+  installed_extensions:
+  - btree_gist=1.7
+  - citext=1.6
+  - pgcrypto=1.3
+staging_0001_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source: CURRENT_AUTHORITY_0001
+  payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
+  migration_history_rows: 1
+  migration_history_checksum: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
+  migration_history_approval_ref: CR-SCHEMA-0001
+  public_tables: 152
+  acpos_runtime_tables: 42
+  unique_tables: 194
+  validated_foreign_keys: 343
+  unvalidated_constraints: 0
+  installed_extensions:
+  - btree_gist=1.7
+  - citext=1.6
+  - pgcrypto=1.3
+staging_0002_preflight:
+  status: PASS
+  verified_on: '2026-09-04'
+  migration_id: 0002_topic_contract_constraints
+  payload_sha256: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
+  required_approval_ref: CR-SCHEMA-0002
+  migration_0001_verified: true
+  orphan_null_scan_targets: 14
+  orphan_null_blockers: 0
+  target_columns_already_not_null_after_0001: 14
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0002-topic-contract
+    branch_id: br-restless-forest-b37es1u4
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    no_compute: true
+    reason: Neon manual snapshot quota is occupied by pre-r9-bootstrap-empty; existing rollback snapshot was preserved.
+temporary_0002_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  branch_name: r9-0002-topic-contract-validate
+  branch_id: br-green-water-b3is6ygq
+  parent_branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  execution_mode: SINGLE_TRANSACTION_STATEMENT_BOUNDARY_PRESERVED
+  not_null_targets_verified: 14
+  trigger_functions_present: 3
+  triggers_present: 5
+  migration_history_rows: 1
+  migration_history_checksum: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
+  migration_history_approval_ref: CR-SCHEMA-0002
+  schema_diff_summary: only expected 0002 trigger functions and triggers; NOT NULL targets were already hardened by 0001 final target
+  prepare_database_migration_parser_note: Neon helper parser rejected dollar-quoted PL/pgSQL; validation used explicit PostgreSQL statement boundaries on a temporary branch instead. No staging mutation occurred from the failed helper attempt.
+cr_schema_0002_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-SCHEMA-0002
+  approved_scope: APPLY_VALIDATED_0002_TO_STAGING_ONLY
+staging_0002_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source: CURRENT_AUTHORITY_0002
+  payload_sha256: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
+  execution_mode: SINGLE_TRANSACTION_STATEMENT_BOUNDARY_PRESERVED
+  not_null_targets_verified: 14
+  trigger_functions_present: 3
+  triggers_present: 5
+  migration_history_rows: 1
+  migration_history_checksum: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
+  migration_history_approval_ref: CR-SCHEMA-0002
+  schema_diff_against_restore_point: only expected 0002 trigger functions and triggers; no unexpected drift
+staging_0003_pre_correction_preflight:
+  status: HISTORICAL_BLOCKER_RESOLVED_BY_APPROVED_0003_MINIMAL_CORRECTION
+  verified_on: '2026-09-04'
+  migration_id: 0003_account_permission_authorization
+  payload_sha256: 14dbb9540b01ccb33e2f6be3a1e8eac3c8fde5b0216604c86be25ef57dbd6471
+  checksum_verification: PASS
+  required_approval_ref: CR-AUTH-0003
+  prior_migrations_verified:
+  - 0001_canonical_schema
+  - 0002_topic_contract_constraints
+  migration_0003_history_rows: 0
+  destructive_execution_performed: false
+  pre_0003_restore_point_created: false
+  legacy_authorization:
+    role_bundles_table_present: false
+    user_role_assignments_table_present: false
+    permission_policies_table_present: false
+    legacy_role_data_rows: 0
+    explicit_user_by_user_mapping_required_for_existing_rows: false
+  staging_data_counts:
+    app_users: 0
+    permission_resources: 0
+    account_permission_assignments: 0
+    service_identities: 0
+    service_identity_capability_assignments: 0
+    decision_requests: 0
+    memberships: 0
+    access_reviews: 0
+    project_memberships: 0
+    membership_duplicates: 0
+  account_permission_catalog_validation:
+    source: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_AI_SEQUENCED_FINAL.yaml#permission_authority.account_permission_catalog
+    contract_id: ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
+    resource_total: 3650
+    duplicate_resource_ids: 0
+    duplicate_resource_keys: 0
+    missing_parent_resource_ids: 0
+    resource_type_counts:
+      SURFACE: 2
+      L1: 18
+      L2: 29
+      L3: 92
+      PAGE: 92
+      SECTION: 741
+      CONTROL: 1141
+      ACTION: 312
+      FIELD: 979
+      API: 242
+      SENSITIVE_PERMISSION: 2
+    sensitive_permission_resources:
+    - permission:finance.read
+    - permission:provider.cost.read
+  proven_authority_gaps:
+  - code: CATALOG_RESOURCE_TYPE_NOT_ACCEPTED
+    detail: Original 0003 permission_resources CHECK added SURFACE but omitted SENSITIVE_PERMISSION while the authoritative catalog contained two SENSITIVE_PERMISSION resources.
+  - code: CATALOG_IDENTITY_MAPPING_UNDEFINED
+    detail: Original authority did not define deterministic mapping from canonical PERM-* resource_id to UUID permission_resources.resource_id.
+  - code: VALIDATED_CATALOG_IMPORT_NOT_MATERIALIZED
+    detail: Staging permission_resources remains 0 rows and the formal repository Account Permission Catalog artifact is still pending materialization.
+0003_minimal_correction:
+  status: CODED_CHECKSUM_VERIFIED
+  corrected_on: '2026-09-04'
+  repository_commit: 7a8cdb4c0e3372f3bba5c0c5fd5370d2ac26f10e
+  migration_path: database/migrations/0003_account_permission_authorization.sql
+  original_payload_sha256: 14dbb9540b01ccb33e2f6be3a1e8eac3c8fde5b0216604c86be25ef57dbd6471
+  current_payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  manifest_contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.2
+  corrected_gaps:
+  - SENSITIVE_PERMISSION added to resource_type CHECK.
+  - Canonical PERM-* resource_id remains authority identity; DB UUID is deterministic UUIDv5 surrogate.
+  - Corrected 0003 requires 3648-resource governed pre-import, inserts exactly two HIGH-risk sensitive resources after CHECK widening, and requires final count 3650.
+  - Legacy-table preflight uses to_regclass plus dynamic row count only when each relation exists; nonzero legacy rows remain fail-closed.
+  identity_mapping:
+    algorithm: RFC_9562_UUIDV5
+    namespace_seed: urn:acpos:permission-catalog:ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
+    namespace_uuid: a5cde652-06f2-521b-933a-785801354eca
+    canonical_name_input: account_permission_catalog.resources[].resource_id
+    canonical_identity_preserved: true
+    derived_uuid_count: 3650
+    uuid_collision_count: 0
+    parent_graph_nodes: 3650
+    missing_parent_count: 0
+    cycle_count: 0
+  sensitive_resource_database_ids:
+    permission:finance.read: fe759359-0395-530c-a88d-4142cf609b59
+    permission:provider.cost.read: c3393e94-4e79-53d8-a082-6501c0ad7d7b
+account_permission_catalog_materialization:
+  source: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_AI_SEQUENCED_FINAL.yaml#permission_authority.account_permission_catalog
+  contract_id: ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
+  formal_repository_path: 06_permission/account_permission_catalog.yaml
+  exact_source_subtree_verified: true
+  local_materialized_yaml_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
+  resource_total: 3650
+  semantic_roundtrip_equal_to_source: true
+  repository_materialization_status: PASS
+  repository_git_blob_sha: bf9081eae472785d260bddeb3860d2f0f0c38b9d
+  repository_byte_size: 2762474
+  repository_line_count: 79399
+  repository_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
+  staging_import_status: APPLIED_VERIFIED
+0003_preimport_artifact:
+  status: STAGING_APPLIED_VERIFIED
+  source_catalog_contract_id: ACPOS-ACCOUNT-PERMISSION-CATALOG-1.0.0
+  row_count: 3648
+  excluded_resource_type: SENSITIVE_PERMISSION
+  excluded_count: 2
+  sql_byte_size: 815589
+  sql_sha256: 0d5348e568c6179bdfa450a599eb13cace5352983572ffb8c5682add71ddb3f0
+  target: TEMPORARY_VALIDATION_BRANCH_ONLY_BEFORE_0003
+  database_execution_status: STAGING_APPLIED_VERIFIED
+temporary_0003_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0003-account-permission-validate-20260904
+  temporary_branch_id: br-rapid-cherry-b325q8fm
+  database_name: acpos_staging
+  source_migration: database/migrations/0003_account_permission_authorization.sql
+  payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  execution_mode: PREIMPORT_THEN_SINGLE_TRANSACTION_35_STATEMENTS
+  preimport_rows: 3648
+  sensitive_rows_added_by_0003: 2
+  final_permission_resource_rows: 3650
+  unique_resource_ids: 3650
+  unique_resource_keys: 3650
+  missing_parent_resource_keys: 0
+  projection_payload_bytes: 572915
+  projection_sha256: 745b716a814be0c55a2851dd82c5b3eaaf9dc07534cfcb03abc357d45d94b98c
+  migration_history_rows: 1
+  migration_history_checksum: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  migration_history_approval_ref: CR-AUTH-0003
+  approval_function_present: true
+  approval_trigger_present: true
+  legacy_role_tables_present: false
+  helper_cleanup:
+    approved_by: HUMAN_USER
+    transport_table_present: false
+    cipher_table_present: false
+    uuid_ossp_present: false
+    status: PASS
+  clean_schema_diff_against_staging:
+  - permission_resources_resource_type_check adds SENSITIVE_PERMISSION
+  - memberships_user_department_unique added
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
+staging_0003_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source_migration: database/migrations/0003_account_permission_authorization.sql
+  payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  approval_ref: CR-AUTH-0003
+  pre_0003_restore_branch_id: br-icy-field-b383fiso
+  execution_mode: PREIMPORT_THEN_SINGLE_TRANSACTION_35_STATEMENTS
+  preimport_rows: 3648
+  sensitive_rows_added_by_0003: 2
+  final_permission_resource_rows: 3650
+  unique_resource_ids: 3650
+  unique_resource_keys: 3650
+  missing_parent_resource_keys: 0
+  projection_payload_bytes: 572915
+  projection_sha256: 745b716a814be0c55a2851dd82c5b3eaaf9dc07534cfcb03abc357d45d94b98c
+  migration_history_rows: 1
+  migration_history_checksum: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
+  migration_history_approval_ref: CR-AUTH-0003
+  approval_function_present: true
+  approval_trigger_present: true
+  legacy_role_tables_present: false
+  helper_cleanup:
+    transport_table_present: false
+    uuid_ossp_present: false
+    status: PASS
+  clean_schema_diff_against_restore_point:
+  - permission_resources_resource_type_check adds SENSITIVE_PERMISSION
+  - memberships_user_department_unique added
+  unexpected_schema_drift: 0
+  unvalidated_constraints: 0
+  prior_migration_history_preserved:
+    0001_exact: true
+    0002_exact: true
+cr_r9_0004_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-R9-0004
+  approved_scope: APPLY_VALIDATED_0004_TO_STAGING_ONLY
+  pre_0004_restore_branch_id: br-wild-unit-b3ydro9g
+staging_0004_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0004_r9_finalization
+  migration_path: database/migrations/0004_r9_finalization.sql
+  payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+  required_approval_ref: CR-R9-0004
+  checksum_verification: PASS
+  checksum_boundary: terminal schema_migration_history registration excluded together with one separator newline; payload final newline preserved
+  prior_migration_0003_exact: true
+  migration_0004_history_rows_on_staging: 0
+  target_create_tables: 27
+  target_create_tables_already_present: 27
+  target_lineage_columns: 46
+  target_lineage_columns_already_present: 46
+  business_data_blockers: 0
+  relevant_business_tables_empty: true
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0004-r9-finalization
+    branch_id: br-wild-unit-b3ydro9g
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    parent_lsn: 0/264EC18
+    no_compute: true
+temporary_0004_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0004-finalization-validate-20260904
+  temporary_branch_id: br-frosty-art-b3z5ujpv
+  database_name: acpos_staging
+  source_migration: database/migrations/0004_r9_finalization.sql
+  payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+  execution_mode: SINGLE_TRANSACTION_37_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+  migration_history_approval_ref: CR-R9-0004
+  prior_migration_0003_exact: true
+  unvalidated_constraints: 0
+  schema_diff_against_staging: EMPTY
+  schema_drift_reason: corrected 0001 already materialized all 27 target tables and 46 lineage columns; 0004 is idempotent on Current staging schema
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
+staging_0004_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source_migration: database/migrations/0004_r9_finalization.sql
+  payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+  approval_ref: CR-R9-0004
+  pre_0004_restore_branch_id: br-wild-unit-b3ydro9g
+  execution_mode: SINGLE_TRANSACTION_37_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
+  migration_history_approval_ref: CR-R9-0004
+  prior_migration_0003_exact: true
+  target_create_tables: 27
+  target_create_tables_present: 27
+  target_lineage_columns: 46
+  target_lineage_columns_present: 46
+  permission_resource_rows_preserved: 3650
+  unvalidated_constraints: 0
+  clean_schema_diff_against_restore_point: EMPTY
+  unexpected_schema_drift: 0
+cr_r9_0005_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-R9-0005
+  approved_scope: APPLY_VALIDATED_0005_TO_STAGING_ONLY
+  pre_0005_restore_branch_id: br-wispy-water-b3mbb2se
+staging_0005_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0005_r9_final_correction
+  migration_path: database/migrations/0005_r9_final_correction.sql
+  payload_sha256: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
+  required_approval_ref: CR-R9-0005
+  checksum_verification: PASS
+  prior_migration_0004_exact: true
+  migration_0005_history_rows_on_staging: 0
+  target_create_tables: 20
+  target_create_tables_already_present: 20
+  target_meeting_columns: 12
+  target_meeting_columns_already_present: 12
+  fk_meetings_context_snapshot_present_before_0005: false
+  meeting_participant_role_present_before_0005: false
+  meeting_function_present_before_0005: true
+  business_data_blockers: 0
+  relevant_target_tables_empty: true
+  unvalidated_constraints: 0
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0005-r9-final-correction
+    branch_id: br-wispy-water-b3mbb2se
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    parent_lsn: 0/26565F8
+    source_database: acpos_staging
+    source_database_mutated: false
+    auxiliary_database_present: acpos_validation_admin
+    auxiliary_database_usage: UNUSED_ADMIN_HELPER_ONLY
+    clone_database_created: false
+    note: Neon branch quota prevented a new validation branch; direct database clone was not performed because Neon proxy reported source database in use.
+temporary_0005_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  validation_branch_reused: true
+  reused_branch_name: r9-0004-finalization-validate-20260904
+  reused_branch_id: br-frosty-art-b3z5ujpv
+  reuse_reason: Neon branch quota exceeded; branch was proven schema/data/history equivalent to Current staging before 0005 execution.
+  baseline_equivalence:
+    schema_diff_against_staging: EMPTY
+    migration_0001_exact: true
+    migration_0002_exact: true
+    migration_0003_exact: true
+    migration_0004_exact: true
+    migration_0005_rows: 0
+    permission_resource_rows: 3650
+    projects_rows: 0
+  database_name: acpos_staging
+  source_migration: database/migrations/0005_r9_final_correction.sql
+  payload_sha256: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
+  execution_mode: SINGLE_TRANSACTION_26_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
+  migration_history_approval_ref: CR-R9-0005
+  prior_migration_0004_exact: true
+  target_tables_checked: 20
+  target_table_rows_after_validation: 0
+  fk_meetings_context_snapshot_present: true
+  meeting_function_comment: NON_AUTHORIZATION_METADATA: meeting function/perspective only; never an Authorization Role.
+  unvalidated_constraints: 0
+  permission_resource_rows_preserved: 3650
+  schema_diff_against_staging:
+  - meeting_participants.meeting_function comment added
+  - meetings.fk_meetings_context_snapshot foreign key added
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
+staging_0005_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source_migration: database/migrations/0005_r9_final_correction.sql
+  payload_sha256: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
+  approval_ref: CR-R9-0005
+  pre_0005_restore_branch_id: br-wispy-water-b3mbb2se
+  execution_mode: SINGLE_TRANSACTION_26_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
+  migration_history_approval_ref: CR-R9-0005
+  prior_migration_0004_exact: true
+  target_tables_checked: 20
+  target_table_rows_after_staging_execution: 0
+  fk_meetings_context_snapshot_present: true
+  meeting_function_comment: NON_AUTHORIZATION_METADATA: meeting function/perspective only; never an Authorization Role.
+  permission_resource_rows_preserved: 3650
+  unvalidated_constraints: 0
+  clean_schema_diff_against_restore_point:
+  - meeting_participants.meeting_function comment added
+  - meetings.fk_meetings_context_snapshot foreign key added
+  unexpected_schema_drift: 0
+  restore_branch_auxiliary_database:
+    name: acpos_validation_admin
+    status: REMOVED
+    cleanup_state: COMPLETE
+    removed_on: '2026-09-04'
+    helper_compute_endpoint_id: ep-soft-star-b38tbphf
+    helper_compute_endpoint_status: REMOVED
+cr_r9_0006_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-R9-0006
+  approved_scope: APPLY_VALIDATED_0006_TO_STAGING_ONLY
+  pre_0006_restore_branch_id: br-super-smoke-b3gy5j7q
+staging_0006_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0006_deployment_ready_closure
+  migration_path: database/migrations/0006_deployment_ready_closure.sql
+  payload_sha256: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
+  required_approval_ref: CR-R9-0006
+  checksum_verification: PASS
+  prior_migration_0005_exact: true
+  migration_0006_history_rows_on_staging: 0
+  target_add_columns: 136
+  target_add_columns_already_present: 136
+  legacy_data_gate_tables: 15
+  legacy_data_gate_rows: 0
+  retired_column_world_bible_versions_production_type: ABSENT
+  retired_column_meeting_participants_participant_role: ABSENT
+  unvalidated_constraints: 0
+  permission_resource_rows: 3650
+  cleanup_before_0006:
+    helper_database_acpos_validation_admin: REMOVED
+    helper_compute_endpoint_ep_soft_star_b38tbphf: REMOVED
+    old_temp_branch_br_green_water_b3is6ygq: REMOVED
+    old_temp_branch_br_rapid_cherry_b325q8fm: REMOVED
+    restore_branches_preserved: true
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0006-deployment-ready-closure
+    branch_id: br-super-smoke-b3gy5j7q
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    parent_lsn: 0/26792B0
+    no_compute: true
+temporary_0006_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0006-deployment-ready-validate-20260904
+  temporary_branch_id: br-super-frog-b3bcp18i
+  database_name: acpos_staging
+  baseline_schema_diff_against_staging: EMPTY
+  baseline_migration_0005_exact: true
+  baseline_migration_0006_rows: 0
+  baseline_permission_resource_rows: 3650
+  baseline_unvalidated_constraints: 0
+  source_migration: database/migrations/0006_deployment_ready_closure.sql
+  payload_sha256: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
+  execution_mode: SINGLE_TRANSACTION_142_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
+  migration_history_approval_ref: CR-R9-0006
+  prior_migration_0005_exact: true
+  target_add_columns: 136
+  target_add_columns_present: 136
+  legacy_data_gate_rows: 0
+  retired_columns_absent: true
+  unvalidated_constraints: 0
+  permission_resource_rows_preserved: 3650
+  schema_diff_against_staging: EMPTY
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
+staging_0006_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source_migration: database/migrations/0006_deployment_ready_closure.sql
+  payload_sha256: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
+  approval_ref: CR-R9-0006
+  pre_0006_restore_branch_id: br-super-smoke-b3gy5j7q
+  execution_mode: SINGLE_TRANSACTION_142_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
+  migration_history_approval_ref: CR-R9-0006
+  prior_migration_0005_exact: true
+  target_add_columns: 136
+  target_add_columns_present: 136
+  legacy_data_gate_tables: 15
+  legacy_data_gate_rows: 0
+  retired_columns_absent: true
+  permission_resource_rows_preserved: 3650
+  unvalidated_constraints: 0
+  clean_schema_diff_against_restore_point: EMPTY
+  unexpected_schema_drift: 0
+cr_r9_0007_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-R9-0007
+  approved_scope: APPLY_VALIDATED_0007_TO_STAGING_ONLY
+  pre_0007_restore_branch_id: br-damp-recipe-b3omapws
+staging_0007_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0007_runtime_operational_schema
+  migration_path: database/migrations/0007_runtime_operational_schema.sql
+  payload_sha256: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
+  required_approval_ref: CR-R9-0007
+  checksum_verification: PASS
+  prior_migration_0006_exact: true
+  migration_0007_history_rows_on_staging: 0
+  runtime_schema_present: true
+  target_runtime_tables: 36
+  target_runtime_tables_already_present: 36
+  runtime_rows_total: 0
+  unvalidated_constraints: 0
+  permission_resource_rows: 3650
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0007-runtime-operational-schema
+    branch_id: br-damp-recipe-b3omapws
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    parent_lsn: 0/267AB48
+    no_compute: true
+temporary_0007_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0007-runtime-operational-validate-20260904
+  temporary_branch_id: br-tiny-tooth-b358vhge
+  database_name: acpos_staging
+  baseline_schema_diff_against_staging: EMPTY
+  baseline_migration_0006_exact: true
+  baseline_migration_0007_rows: 0
+  baseline_permission_resource_rows: 3650
+  baseline_unvalidated_constraints: 0
+  source_migration: database/migrations/0007_runtime_operational_schema.sql
+  payload_sha256: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
+  execution_mode: SINGLE_TRANSACTION_38_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
+  migration_history_approval_ref: CR-R9-0007
+  prior_migration_0006_exact: true
+  target_runtime_tables: 36
+  target_runtime_tables_present: 36
+  runtime_rows_total: 0
+  unvalidated_constraints: 0
+  permission_resource_rows_preserved: 3650
+  schema_diff_against_staging: EMPTY
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
+staging_0007_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source_migration: database/migrations/0007_runtime_operational_schema.sql
+  payload_sha256: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
+  approval_ref: CR-R9-0007
+  pre_0007_restore_branch_id: br-damp-recipe-b3omapws
+  execution_mode: SINGLE_TRANSACTION_38_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
+  migration_history_approval_ref: CR-R9-0007
+  prior_migration_0006_exact: true
+  target_runtime_tables: 36
+  target_runtime_tables_present: 36
+  runtime_rows_total: 0
+  permission_resource_rows_preserved: 3650
+  unvalidated_constraints: 0
+  clean_schema_diff_against_restore_point: EMPTY
+  unexpected_schema_drift: 0
+cr_r9_0008_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-R9-0008
+  approved_scope: APPLY_VALIDATED_0008_TO_STAGING_ONLY
+  pre_0008_restore_branch_id: br-holy-sunset-b3kxgk9c
+staging_0008_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0008_provider_router_runtime_closure
+  migration_path: database/migrations/0008_provider_router_runtime_closure.sql
+  payload_sha256: 8f02fb981bc99fe89cba00ae0292c7fac8437ea4de812b3ad66967975422fbec
+  required_approval_ref: CR-R9-0008
+  checksum_verification: PASS
+  prior_migration_0007_exact: true
+  migration_0008_history_rows_on_staging: 0
+  target_runtime_tables: 6
+  target_runtime_tables_already_present: 6
+  target_indexes: 4
+  target_indexes_already_present: 4
+  runtime_rows_total: 0
+  unvalidated_constraints: 0
+  permission_resource_rows: 3650
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0008-provider-router-runtime
+    branch_id: br-holy-sunset-b3kxgk9c
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    parent_lsn: 0/267B620
+    no_compute: true
+temporary_0008_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0008-provider-router-validate-20260904
+  temporary_branch_id: br-icy-mouse-b3eume5r
+  database_name: acpos_staging
+  baseline_schema_diff_against_staging: EMPTY
+  baseline_migration_0007_exact: true
+  baseline_migration_0008_rows: 0
+  baseline_permission_resource_rows: 3650
+  baseline_unvalidated_constraints: 0
+  source_migration: database/migrations/0008_provider_router_runtime_closure.sql
+  payload_sha256: 8f02fb981bc99fe89cba00ae0292c7fac8437ea4de812b3ad66967975422fbec
+  execution_mode: SINGLE_TRANSACTION_11_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 8f02fb981bc99fe89cba00ae0292c7fac8437ea4de812b3ad66967975422fbec
+  migration_history_approval_ref: CR-R9-0008
+  prior_migration_0007_exact: true
+  target_runtime_tables: 6
+  target_runtime_tables_present: 6
+  target_indexes: 4
+  target_indexes_present: 4
+  runtime_rows_total: 0
+  unvalidated_constraints: 0
+  permission_resource_rows_preserved: 3650
+  schema_diff_against_staging: EMPTY
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
+staging_0008_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source_migration: database/migrations/0008_provider_router_runtime_closure.sql
+  payload_sha256: 8f02fb981bc99fe89cba00ae0292c7fac8437ea4de812b3ad66967975422fbec
+  approval_ref: CR-R9-0008
+  pre_0008_restore_branch_id: br-holy-sunset-b3kxgk9c
+  execution_mode: SINGLE_TRANSACTION_11_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 8f02fb981bc99fe89cba00ae0292c7fac8437ea4de812b3ad66967975422fbec
+  migration_history_approval_ref: CR-R9-0008
+  prior_migration_0007_exact: true
+  target_runtime_tables: 6
+  target_runtime_tables_present: 6
+  target_indexes: 4
+  target_indexes_present: 4
+  runtime_rows_total: 0
+  permission_resource_rows_preserved: 3650
+  unvalidated_constraints: 0
+  clean_schema_diff_against_restore_point: EMPTY
+  unexpected_schema_drift: 0
+batch_remaining_migrations_approval:
+  status: APPROVED_CONDITIONAL_ON_OWN_GATE_PASS
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  scope:
+  - CR-R9-0009
+  - CR-R9-0010
+  - CR-R9-0011
+  - CR-R9-0012
+  - CR-R9-0013
+  - CR-R9-0014
+  - CR-R9-0015
+  rule: each migration may apply to staging only after its own checksum, preflight and temporary validation PASS; stop immediately on any failure
+cr_r9_0009_approval:
+  status: APPROVED
+  approved_on: '2026-09-04'
+  approved_by: HUMAN_USER
+  approval_ref: CR-R9-0009
+  approved_scope: APPLY_VALIDATED_0009_TO_STAGING_ONLY
+  pre_0009_restore_branch_id: br-empty-cake-b3bdnb47
+staging_0009_preflight:
+  status: PASS_PENDING_HUMAN_APPROVAL
+  verified_on: '2026-09-04'
+  migration_id: 0009_layer_runtime_closure
+  migration_path: database/migrations/0009_layer_runtime_closure.sql
+  payload_sha256: 4813cb8b052898e66e6d0d2090dead04785f7f264f97c799614cf4751cb00746
+  required_approval_ref: CR-R9-0009
+  checksum_verification: PASS
+  prior_migration_0008_exact: true
+  migration_0009_history_rows_on_staging: 0
+  layer_rows: 0
+  blank_layer_names: 0
+  layer_name_type: text
+  layer_name_nullable: false
+  unvalidated_constraints: 0
+  restore_point:
+    mode: NEON_BRANCH_AT_STAGING_HEAD
+    branch_name: restore-pre-0009-layer-runtime-closure
+    branch_id: br-empty-cake-b3bdnb47
+    parent_branch_id: br-bitter-poetry-b3p6t5ub
+    parent_lsn: 0/267E930
+    no_compute: true
+temporary_0009_validation:
+  status: PASS
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  parent_staging_branch_id: br-bitter-poetry-b3p6t5ub
+  temporary_branch_name: r9-0009-layer-runtime-validate-20260904
+  temporary_branch_id: br-polished-frog-b34p0h3i
+  database_name: acpos_staging
+  baseline_schema_diff_against_staging: EMPTY
+  baseline_migration_0008_exact: true
+  baseline_migration_0009_rows: 0
+  baseline_layer_rows: 0
+  source_migration: database/migrations/0009_layer_runtime_closure.sql
+  payload_sha256: 4813cb8b052898e66e6d0d2090dead04785f7f264f97c799614cf4751cb00746
+  execution_mode: SINGLE_TRANSACTION_4_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 4813cb8b052898e66e6d0d2090dead04785f7f264f97c799614cf4751cb00746
+  migration_history_approval_ref: CR-R9-0009
+  prior_migration_0008_exact: true
+  layer_rows: 0
+  blank_layer_names: 0
+  layer_name_nullable: false
+  unvalidated_constraints: 0
+  permission_resource_rows_preserved: 3650
+  schema_diff_against_staging: EMPTY
+  unexpected_schema_drift: 0
+  staging_mutation_performed: false
+staging_0009_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  neon_project_id: tiny-dust-89825424
+  branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  source_migration: database/migrations/0009_layer_runtime_closure.sql
+  payload_sha256: 4813cb8b052898e66e6d0d2090dead04785f7f264f97c799614cf4751cb00746
+  approval_ref: CR-R9-0009
+  pre_0009_restore_branch_id: br-empty-cake-b3bdnb47
+  execution_mode: SINGLE_TRANSACTION_4_STATEMENTS
+  migration_history_rows: 1
+  migration_history_checksum: 4813cb8b052898e66e6d0d2090dead04785f7f264f97c799614cf4751cb00746
+  migration_history_approval_ref: CR-R9-0009
+  prior_migration_0008_exact: true
+  layer_rows: 0
+  blank_layer_names: 0
+  layer_name_nullable: false
+  unvalidated_constraints: 0
+  clean_schema_diff_against_restore_point: EMPTY
+  unexpected_schema_drift: 0
+staging_0010_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0010_layer_canonical_closure.sql
+  payload_sha256: ec2efe83b42fe135f9dac81f058876c6e90291b760106a2a7e3c08a47ffc267b
+  approval_ref: CR-R9-0010
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  batch_restore_replay_chain_starts_at: 0009_layer_runtime_closure
+  execution_mode: SINGLE_TRANSACTION_4_STATEMENTS
+  migration_history_rows: 1
+  layer_rows: 0
+  blank_layer_names: 0
+  layer_name_nullable: false
+  unvalidated_constraints: 0
+staging_0011_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0011_correction_runtime_closure.sql
+  payload_sha256: fd40c4f92763cb80e5ba909c6d492298909c4d74c79cfaf03c35460c7be76e4f
+  approval_ref: CR-R9-0011
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  execution_mode: SINGLE_TRANSACTION_5_STATEMENTS
+  migration_history_rows: 1
+  runtime_rows_total: 0
+  unvalidated_constraints: 0
+  clean_schema_diff_against_batch_baseline: EMPTY
+staging_0012_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0012_editing_voice_runtime_closure.sql
+  payload_sha256: b13a7142399c6308b0be4c393f758d4523594ceb427d05d067815a6c21f26e7d
+  approval_ref: CR-R9-0012
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  execution_mode: SINGLE_TRANSACTION_4_STATEMENTS
+  migration_history_rows: 1
+  runtime_rows_total: 0
+  unvalidated_constraints: 0
+  clean_schema_diff_against_batch_baseline: EMPTY
+staging_0013_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0013_erp_runtime_closure.sql
+  payload_sha256: 013a0c7e815b0efd398dfe60869d03cc4abeb3afd045bc3f8325d3c5bb04a100
+  approval_ref: CR-R9-0013
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  execution_mode: SINGLE_TRANSACTION_12_STATEMENTS
+  migration_history_rows: 1
+  erp_rows_total: 0
+  erp_status_constraint_exact: true
+  indexes_added:
+  - idx_erp_sync_jobs_connector_status
+  - idx_erp_snapshots_connector_created
+  - idx_erp_failures_job
+  expected_schema_delta_count: 3
+  unexpected_schema_drift: 0
+  unvalidated_constraints: 0
+staging_0014_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0014_production_goal_routing_closure.sql
+  payload_sha256: f6ece41036e85611231688cda4d1106cf7b2a29086dea1a173ea42fed9abcea8
+  approval_ref: CR-R9-0014
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  execution_mode: SINGLE_TRANSACTION_5_STATEMENTS
+  migration_history_rows: 1
+  topic_production_goal_rows: 0
+  production_type_constraint_exact: true
+  inherited_expected_schema_delta: THREE_ERP_INDEXES_FROM_0013_ONLY
+  unexpected_schema_drift: 0
+  unvalidated_constraints: 0
+staging_0015_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  source_migration: database/migrations/0015_enterprise_social_outreach_closure.sql
+  payload_sha256: 61ef9501826c3a9243ca7b8153061e981088d34e37c1e936009bf2e414745c3c
+  approval_ref: CR-R9-0015
+  validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  rollback_validation_sentinel: TEMP_VALIDATION_PASS_ROLLBACK
+  batch_restore_baseline_branch_id: br-empty-cake-b3bdnb47
+  batch_restore_replay_chain_starts_at: 0009_layer_runtime_closure
+  execution_mode: SINGLE_TRANSACTION_10_STATEMENTS
+  migration_history_rows: 1
+  enterprise_social_rows_total: 0
+  outreach_email_single_recipient_checks:
+    to_count_equals_one: true
+    cc_empty: true
+    bcc_empty: true
+  social_secret_reference_fk: true
+  permission_resource_rows_preserved: 3650
+  unvalidated_constraints: 0
+  inherited_expected_schema_delta: THREE_ERP_INDEXES_FROM_0013_ONLY
+  unexpected_schema_drift: 0
+migration_chain_0001_0015_verification:
+  status: COMPLETE_APPLIED_VERIFIED
+  verified_on: '2026-09-04'
+  total_migrations: 15
+  exact_migrations: 15
+  chain_history_rows: 15
+  checksum_mismatches: 0
+  approval_mismatches: 0
+  first_migration: 0001_canonical_schema
+  last_migration: 0015_enterprise_social_outreach_closure
+  remaining_migrations: 0
+  staging_branch_id: br-bitter-poetry-b3p6t5ub
+  database_name: acpos_staging
+  unvalidated_constraints: 0
+  permission_resource_rows: 3650
+  runtime_blank_layer_names: 0
+  canonical_blank_layer_names: 0
+  final_schema_delta_against_batch_baseline:
+  - idx_erp_sync_jobs_connector_status
+  - idx_erp_snapshots_connector_created
+  - idx_erp_failures_job
+  unexpected_schema_drift: 0
+  temporary_github_workflows: 0
+  batch_0009_0015_approval_consumed: true
+execution_gates:
+  payload_checksum_rule: SHA-256 excludes only terminal schema_migration_history registration statement and preserves payload final newline
+  0001_order: MUST_EXECUTE_FIRST
+  clean_temporary_branch_revalidation: PASS
+  staging_0001_state: APPLIED_VERIFIED
+  0002_state: APPLIED_VERIFIED
+  0002_staging_execution: COMPLETE_VERIFIED
+  0003_state: APPLIED_VERIFIED
+  0003_temporary_execution: PASS
+  0003_staging_execution: COMPLETE_VERIFIED
+  0003_destructive_legacy_cleanup: NOT_REQUIRED_LEGACY_TABLES_ABSENT
+  0004_state: APPLIED_VERIFIED
+  0004_temporary_execution: PASS
+  0004_staging_execution: COMPLETE_VERIFIED
+  0005_state: APPLIED_VERIFIED
+  0005_temporary_execution: PASS
+  0005_staging_execution: COMPLETE_VERIFIED
+  0006_state: APPLIED_VERIFIED
+  0006_temporary_execution: PASS
+  0006_staging_execution: COMPLETE_VERIFIED
+  0007_state: APPLIED_VERIFIED
+  0007_temporary_execution: PASS
+  0007_staging_execution: COMPLETE_VERIFIED
+  0008_state: APPLIED_VERIFIED
+  0008_temporary_execution: PASS
+  0008_staging_execution: COMPLETE_VERIFIED
+  0009_state: APPLIED_VERIFIED
+  0009_temporary_execution: PASS
+  0009_staging_execution: COMPLETE_VERIFIED
+  0010_state: APPLIED_VERIFIED
+  0010_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0010_staging_execution: COMPLETE_VERIFIED
+  0011_state: APPLIED_VERIFIED
+  0011_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0011_staging_execution: COMPLETE_VERIFIED
+  0012_state: APPLIED_VERIFIED
+  0012_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0012_staging_execution: COMPLETE_VERIFIED
+  0013_state: APPLIED_VERIFIED
+  0013_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0013_staging_execution: COMPLETE_VERIFIED
+  0014_state: APPLIED_VERIFIED
+  0014_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0014_staging_execution: COMPLETE_VERIFIED
+  0015_state: APPLIED_VERIFIED
+  0015_validation_mode: TRANSACTIONAL_ROLLBACK_ON_STAGING
+  0015_staging_execution: COMPLETE_VERIFIED
+  migration_chain_0001_0015_state: COMPLETE_APPLIED_VERIFIED
+  later_migrations: Each later migration remains governed by its own prior-migration/orphan/change-request/restore-point gates
+  manual_sql_from_DB_01: FORBIDDEN
+single_source_rules:
+- This authority is the only Current database migration authority in the website construction repository.
+- Do not load the old cb622dc4... 0001 payload as Current.
+- Do not load the old 14dbb954... 0003 payload as Current.
+- Do not create a second checksum manifest or parallel migration directory.
+- DB-01 remains read-only; migration execution belongs to governed System Lifecycle / migration runner.

@@ -1,0 +1,459 @@
+{
+  "audit_id": "POST-MIGRATION-RUNTIME-BINDING-READINESS-2026-09-04",
+  "status": "COMPLETE_AUDIT_RUNTIME_BINDING_BLOCKED",
+  "branch": "new",
+  "audited_head": "e001d7bd7a1fc56494da0895b5b4de1127c373cc",
+  "product_release_head": "825a676396150db32f623f93485362d9cd83e3a2",
+  "authority_manifest": "authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml",
+  "system_authority": "authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml",
+  "scope": "POST_MIGRATION_RUNTIME_BINDING_READINESS",
+  "classification_mode": "LAYERED_NONEXCLUSIVE",
+  "truth_guard": {
+    "migration_complete": true,
+    "release_gate_complete": true,
+    "runtime_complete": false,
+    "production_ready": false,
+    "controlled_test_runtime_is_production": false,
+    "undefined_behavior": "BLOCK + REPORT_AUTHORITY_GAP"
+  },
+  "repository_facts": {
+    "app_route_files_audited_by_current_manifest": 106,
+    "configure_entry_points_audited_by_current_manifest": 62,
+    "production_server_runtime_bootstrap_call_sites": 0,
+    "database_driver_dependencies": [],
+    "package_dependencies": [
+      "next",
+      "react",
+      "react-dom"
+    ],
+    "database_connection_env_keys_in_env_example": [],
+    "instrumentation_register": "EMPTY",
+    "production_postgresql_or_neon_adapter_materialized": false,
+    "schema_migrations_applied_verified": "0001-0015",
+    "schema_evidence": [
+      "database/migrations/0001_canonical_schema.sql",
+      "database/migrations/0007_runtime_operational_schema.sql",
+      "database/migrations/0012_editing_voice_runtime_closure.sql",
+      "database/migrations/0013_erp_runtime_closure.sql",
+      "database/migrations/0015_enterprise_social_outreach_closure.sql"
+    ]
+  },
+  "classification": {
+    "A": {
+      "title": "COMPLETE_PRODUCTION_ADAPTER_DIRECT_BINDING_READY",
+      "count": 0,
+      "items": [],
+      "conclusion": "NO_DOMAIN_MAY_BE_BOUND_DIRECTLY_TO_PRODUCTION_IN_CURRENT_STATE"
+    },
+    "B": {
+      "title": "DATABASE_SCHEMA_PRESENT_PRODUCTION_ADAPTER_OR_BOOTSTRAP_MISSING",
+      "items": [
+        {
+          "scope": "CANONICAL_CORE_DOMAIN_SCHEMA",
+          "evidence": [
+            "database/migrations/0001_canonical_schema.sql"
+          ],
+          "blocker": "PRODUCTION_ADAPTER_BOOTSTRAP_MISSING"
+        },
+        {
+          "scope": "ACPOS_RUNTIME_OPERATIONAL_SCHEMA",
+          "evidence": [
+            "database/migrations/0007_runtime_operational_schema.sql"
+          ],
+          "blocker": "PRODUCTION_ADAPTER_BOOTSTRAP_MISSING"
+        },
+        {
+          "scope": "EDITING_VOICE_RUNTIME_SCHEMA",
+          "evidence": [
+            "database/migrations/0012_editing_voice_runtime_closure.sql"
+          ],
+          "blocker": "PRODUCTION_ADAPTER_BOOTSTRAP_MISSING"
+        },
+        {
+          "scope": "ERP_RUNTIME_SCHEMA",
+          "evidence": [
+            "database/migrations/0013_erp_runtime_closure.sql"
+          ],
+          "blocker": "PRODUCTION_ADAPTER_BOOTSTRAP_MISSING"
+        },
+        {
+          "scope": "SOCIAL_OUTREACH_RUNTIME_SCHEMA",
+          "evidence": [
+            "database/migrations/0015_enterprise_social_outreach_closure.sql"
+          ],
+          "blocker": "PRODUCTION_ADAPTER_BOOTSTRAP_MISSING"
+        }
+      ]
+    },
+    "C": {
+      "title": "API_OR_RUNTIME_PORT_PRESENT_PRODUCTION_DATABASE_OR_SERVICE_MAPPING_NOT_MATERIALIZED",
+      "items": [
+        {
+          "scope": "workspace:WB-01",
+          "runtime": "configureDashboardRuntime",
+          "route": "/v1/dashboard/read-model"
+        },
+        {
+          "scope": "CORE-01",
+          "runtime": "configureCoreRuntime",
+          "route_family": "/v1/projects|topics|blueprints|candidates|conversations"
+        },
+        {
+          "scope": "ASSET-01",
+          "runtime": "configureAssetRuntime",
+          "route_family": "/v1/tasks|findings|correction-requests|layer-documents|asset-patches"
+        },
+        {
+          "scope": "VIDEO-01",
+          "runtime": "configureVideoRuntime",
+          "route_family": "/v1/tasks|findings|correction-requests|handoffs"
+        },
+        {
+          "scope": "EDIT-01",
+          "runtime_family": [
+            "configureEditActionRuntime",
+            "configureEditVoiceRuntime"
+          ],
+          "route_family": "/v1/editing-runtime-runs|voice-runtime-runs"
+        },
+        {
+          "scope": "QA-01",
+          "runtime": "configureQaRuntime",
+          "route_family": "/v1/qa|scorecards|findings|correction-requests|release-packages"
+        },
+        {
+          "scope": "admin:DB-01",
+          "runtime": "configureDbReadModelRuntime",
+          "operations": [
+            "DatabaseReadModel.list_entities",
+            "DatabaseReadModel.get_entity_schema",
+            "TraceabilityReadModel.trace_entity_lineage",
+            "MigrationReadModel.list_history",
+            "DatabaseIntegrityReadModel.list_findings",
+            "AuditReadModel.trace"
+          ]
+        },
+        {
+          "scope": "workspace:STR-01",
+          "runtime_family": [
+            "configureStrategyDecisionRuntime",
+            "configureConversationRuntime"
+          ],
+          "route_family": "/v1/conversations|candidates|state-commands/strategycandidate"
+        },
+        {
+          "scope": "workspace:INFO-01",
+          "runtime": "configureInfoCommandRuntime",
+          "route_family": "/v1/projections|search|exports|context-candidates|candidates"
+        },
+        {
+          "scope": "SHARED_UI_PROJECTION",
+          "runtime": "configureUiProjectionRuntime",
+          "route": "/v1/ui-projections/{pageUid}"
+        },
+        {
+          "scope": "admin:KB-01",
+          "runtime": "configureKnowledgeRuntime",
+          "route_family": "/v1/knowledge|acpos/context-candidates|acpos/experience|acpos/learning-candidates"
+        },
+        {
+          "scope": "admin:ERP-01",
+          "runtime": "configureErpCommandRuntime",
+          "route_family": "/v1/erp"
+        },
+        {
+          "scope": "admin:SOC-01",
+          "runtime": "configureSocCommandRuntime",
+          "route_family": "/v1/social"
+        },
+        {
+          "scope": "admin:IAM-01",
+          "runtime": "configureIamRuntime",
+          "route_family": "/v1/iam|governance/resources"
+        },
+        {
+          "scope": "SHARED_CONVERSATION_CANDIDATE_OPERATION_RUNTIME",
+          "runtime_family": [
+            "configureConversationRuntime",
+            "configureCandidateDecisionRuntime",
+            "configureCandidateCompareRuntime",
+            "configureDepartmentOperationRuntime"
+          ]
+        }
+      ],
+      "common_blockers": [
+        "PRODUCTION_DATABASE_DRIVER_CONTRACT_NOT_MATERIALIZED",
+        "PRODUCTION_DATABASE_CONNECTION_ENV_CONTRACT_NOT_MATERIALIZED",
+        "PRODUCTION_RUNTIME_BOOTSTRAP_NOT_MATERIALIZED",
+        "PRODUCTION_SERVER_RUNTIME_ADAPTER_BINDINGS_NOT_EXECUTED"
+      ]
+    },
+    "D": {
+      "title": "AUTHORITY_DEFINITION_OR_REQUIRED_SOURCE_BINDING_INSUFFICIENT_NO_GUESSING",
+      "items": [
+        {
+          "gap_id": "DB-DRIVER-CONTRACT",
+          "scope": "GLOBAL",
+          "missing": "Authority-defined production PostgreSQL/Neon driver/package choice",
+          "action": "BLOCK"
+        },
+        {
+          "gap_id": "DB-CONNECTION-ENV-CONTRACT",
+          "scope": "GLOBAL",
+          "missing": "Authority-defined production database connection env key, SSL/pooling/lifecycle contract",
+          "action": "BLOCK"
+        },
+        {
+          "gap_id": "RUNTIME-BOOTSTRAP-CONTRACT",
+          "scope": "GLOBAL",
+          "missing": "Authority-defined production bootstrap entry point, configure ordering and startup failure policy",
+          "action": "BLOCK"
+        },
+        {
+          "gap_id": "IAM-IDENTITY-CANDIDATE-SCHEMA",
+          "scope": "admin:IAM-01",
+          "missing": "Exact registered Identity Candidate / Organization Scope schema remains unresolved by Current Page Authority",
+          "action": "BLOCK"
+        },
+        {
+          "gap_id": "SYS-RELEASE-BINDING",
+          "scope": "admin:SYS-01",
+          "missing": "Exact current release control/action/permission/gate binding; Authority explicitly forbids inventing it",
+          "action": "BLOCK"
+        },
+        {
+          "gap_id": "CURRENT-REMAP-SOURCE-BINDINGS",
+          "scope": [
+            "admin:AIAPI-01",
+            "admin:STR-01",
+            "admin:DEV-01"
+          ],
+          "missing": "Current authorities explicitly require remap/source-operation/runtime resolution before effectful production binding; missing source/runtime behavior must not be inferred",
+          "action": "BLOCK_AND_REPORT_AUTHORITY_GAP"
+        }
+      ]
+    },
+    "E": {
+      "title": "EXTERNAL_PROVIDER_CRAWLER_ERP_SOCIAL_OR_REMOTE_PRODUCTION_E2E_GATE",
+      "items": [
+        {
+          "scope": "ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME",
+          "state": "NOT_EXECUTED"
+        },
+        {
+          "scope": "ERP_EXTERNAL_CONNECTOR_EXECUTION",
+          "state": "NOT_EXECUTED"
+        },
+        {
+          "scope": "SOCIAL_PLATFORM_DISCOVERY_JOIN_PUBLISH_CALLBACK",
+          "state": "NOT_EXECUTED"
+        },
+        {
+          "scope": "AI_PROVIDER_ROUTER_LIVE_PROVIDER_EXECUTION",
+          "state": "NOT_EXECUTED"
+        },
+        {
+          "scope": "DEV_OUTREACH_DISCOVERY_EMAIL_DELIVERY_EXTERNAL_EXECUTION",
+          "state": "NOT_EXECUTED"
+        },
+        {
+          "scope": "REMOTE_POST_DEPLOY_APPLICATION_E2E",
+          "state": "BLOCKED_BY_VERCEL_DEPLOYMENT_PROTECTION"
+        }
+      ]
+    }
+  },
+  "explicit_route_materialization_gaps": {
+    "scope": "admin:DEV-01",
+    "authority_defined_but_route_file_not_present": [
+      "/v1/outreach/discovery-jobs",
+      "/v1/outreach/discovery-jobs/{jobId}/pause",
+      "/v1/outreach/discovery-jobs/{jobId}/resume",
+      "/v1/outreach/discovery-jobs/{jobId}/stop",
+      "/v1/outreach/companies/merge-preview",
+      "/v1/outreach/companies/{companyId}/merge",
+      "/v1/change-requests",
+      "/v1/outreach/campaigns",
+      "/v1/outreach/campaigns/{campaignId}/approve",
+      "/v1/outreach/campaigns/{campaignId}/dispatch",
+      "/v1/operations/kill-switch"
+    ],
+    "do_not_infer_request_or_runtime_semantics": true
+  },
+  "domain_matrix": [
+    {
+      "page_uid": "workspace:WB-01",
+      "classes": [
+        "C"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "CORE-01",
+      "classes": [
+        "B",
+        "C"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "ASSET-01",
+      "classes": [
+        "B",
+        "C",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "VIDEO-01",
+      "classes": [
+        "B",
+        "C",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "EDIT-01",
+      "classes": [
+        "B",
+        "C",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "QA-01",
+      "classes": [
+        "B",
+        "C"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "admin:DB-01",
+      "classes": [
+        "B",
+        "C"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "workspace:STR-01",
+      "classes": [
+        "B",
+        "C",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "workspace:INFO-01",
+      "classes": [
+        "B",
+        "C",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "admin:SYS-01",
+      "classes": [
+        "C",
+        "D"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "admin:IAM-01",
+      "classes": [
+        "B",
+        "C",
+        "D"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "admin:DEV-01",
+      "classes": [
+        "B",
+        "D",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "admin:SOC-01",
+      "classes": [
+        "B",
+        "C",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "admin:ERP-01",
+      "classes": [
+        "B",
+        "C",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "admin:AIAPI-01",
+      "classes": [
+        "D",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "admin:SG-02",
+      "classes": [
+        "B",
+        "C"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "admin:STR-01",
+      "classes": [
+        "B",
+        "D",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    },
+    {
+      "page_uid": "admin:KB-01",
+      "classes": [
+        "B",
+        "C",
+        "E"
+      ],
+      "production_binding": "BLOCKED"
+    }
+  ],
+  "controlled_test_boundary": {
+    "path": "src/server/testing/",
+    "production_eligible": false,
+    "rule": "CONTROLLED_TEST_RUNTIME_MUST_NOT_BE_USED_AS_PRODUCTION_BINDING"
+  },
+  "next_gate": {
+    "status": "BLOCKED",
+    "required_before_any_production_db_binding": [
+      "Materialize Current Authority contract for production DB driver and connection environment",
+      "Materialize Current Authority contract for production server bootstrap and configure ordering",
+      "Resolve page-specific D-class authority gaps without guessing"
+    ],
+    "prohibited_until_resolved": [
+      "Add guessed pg/postgres/neon dependency",
+      "Invent DATABASE_URL or other connection env key",
+      "Bind controlled test adapters in production",
+      "Implement guessed SQL/table mapping",
+      "Claim runtime or production readiness complete"
+    ]
+  }
+}
