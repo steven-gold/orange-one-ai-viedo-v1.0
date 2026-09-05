@@ -85,6 +85,8 @@ test("Production identity runtime names app_users actor and internal cookie sess
   assert.match(identity, /operation_registry_file_in_app_repo: ABSENT/);
   assert.match(identity, /catalog_registration: NOT_PRESENT/);
   assert.match(identity, /reason_code: IDENTITY_RUNTIME_NOT_BOUND/);
+  assert.match(identity, /status_predicate: DISABLED_AT_IS_NULL/);
+  assert.match(identity, /status_predicate_sql: app_users.disabled_at IS NULL/);
   assert.match(identity, /CLOSE_WB01_PROJECTION_MAPPING_GAPS/);
 });
 
