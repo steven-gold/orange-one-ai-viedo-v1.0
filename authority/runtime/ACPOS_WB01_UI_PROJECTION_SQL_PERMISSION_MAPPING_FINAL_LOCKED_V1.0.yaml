@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-IDENTITY-ACTOR-NAMED-TRANSPORT-GAP
+  revision: 2026-09-05-AUDIT-PAYLOAD-SHA256
   scope: WB-01_PAGE_GATE_AUTHORIZE_AND_EXPLICIT_READ_GAPS_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -13,7 +13,11 @@ approval:
   - Lock WB-01 page-gate permission alias to catalog resource_key and VIEW action
   - Name authorize SQL tables and columns already present in 0001/0003
   - Record remaining identity, assignment-status, scope/condition, and read-SQL gaps
-  - Point identity actor to ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT; keep transport as Authority gap
+  - Point identity actor to ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT cookie session
+  - Lock page-gate assignment status predicate to APPROVED
+  - Lock page-gate effect precedence to DENY_WINS
+  - Lock page-gate scope/condition to empty-object match
+  - Lock audit payload_hash to SHA-256 hex
   - Do not bind configureUiProjectionRuntime in this revision
   - Do not change /health/ready to 200
 source:
@@ -58,8 +62,9 @@ authorize:
     actor_column: user_id
     identity_contract: authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
     canonical_actor: NAMED
-    identity_transport: AUTHORITY_GAP
-    gap_reason: Identity contract names app_users.user_id and GHS-PORT-IDENTITY. Current HTTP surface still carries only correlation_id.
+    identity_transport: INTERNAL_COOKIE_SESSION
+    cookie_name: acpos_session
+    gap_reason: Cookie session can resolve app_users.user_id. Page-gate still needs read SQL.
     missing_identity_reason_code: IDENTITY_RUNTIME_NOT_BOUND
   page_assignment_probe:
     tables:
@@ -72,6 +77,7 @@ authorize:
     - account_permission_assignments.resource_id = permission_resources.resource_id
     - account_permission_assignments.user_id = actor user_id
     - account_permission_assignments.action = VIEW
+    - account_permission_assignments.status = APPROVED
     - account_permission_assignments.effective_from <= now()
     - account_permission_assignments.effective_to IS NULL OR account_permission_assignments.effective_to > now()
     sql: |
@@ -83,13 +89,43 @@ authorize:
         AND r.resource_type = 'PAGE'
         AND r.active = true
         AND a.action = 'VIEW'
+        AND a.status = 'APPROVED'
         AND a.effective_from <= now()
         AND (a.effective_to IS NULL OR a.effective_to > now())
-    remaining_evaluation_gaps:
-    - assignment_status_predicate: account_permission_assignments.status uses acpos_status; IAM-01 does not name which values are an effective grant
-    - deny_vs_allow_precedence: effect ALLOW and DENY may both exist; Current Authority does not name precedence
-    - scope_evaluator: catalog requires explicit_account_scope_match; scope jsonb schema and matcher are not named for WB-01
-    - condition_evaluator: catalog requires assignment_condition_evaluates_true; condition jsonb schema and matcher are not named for WB-01
+    effect_evaluation:
+      precedence: DENY_WINS
+      deny_reason_code: PERMISSION_DENIED
+      missing_allow_reason_code: PERMISSION_OR_SCOPE_DENIED
+      steps:
+      - If any returned row has effect DENY, deny
+      - Else if any returned row has effect ALLOW, allow
+      - Else deny
+    evaluation_order:
+    - sql_probe
+    - scope_evaluation
+    - condition_evaluation
+    - effect_evaluation
+    scope_evaluation:
+      catalog_requirement: explicit_account_scope_match
+      request_scope: EMPTY_OBJECT
+      request_scope_reason: UiProjectionRequest names page_uid and correlation_id only. WB-01 page-gate does not name workspace_id or company_id.
+      matcher: CONSTRAINT_SUBSET
+      fail_reason_code: PERMISSION_OR_SCOPE_DENIED
+      rules:
+      - assignment.scope must be a JSON object
+      - Every key in assignment.scope must exist on request_scope with equal JSON value
+      - Empty object {} has no extra constraints and matches
+      - Invented request scope keys are forbidden
+    condition_evaluation:
+      catalog_requirement: assignment_condition_evaluates_true
+      empty_object: TRUE
+      empty_object_reason: condition jsonb defaults to empty object in 0001/0003
+      unknown_keys: FAIL_CLOSED
+      fail_reason_code: PERMISSION_OR_SCOPE_DENIED
+      rules:
+      - assignment.condition must be a JSON object
+      - Empty object {} evaluates true
+      - Any non-empty condition fails because Current Authority does not name operators or keys
   section_control_field_probes:
     inheritance_from_page: FORBIDDEN
     section_resource_key_pattern: 'section:workspace:WB-01:{section_key}'
@@ -98,7 +134,7 @@ authorize:
     control_action: VIEW
     field_action: READ
     bind_in_this_revision: false
-    gap_reason: page-gate authorize is the only probe locked here; section/control/field probes reuse the same assignment tables after identity and status/scope/condition gaps close
+    gap_reason: page-gate authorize is the only probe locked here; section/control/field probes reuse the same assignment tables after read SQL closes
 read:
   operation_id: getDashboardReadModel
   method_path: GET /v1/dashboard/read-model
@@ -132,7 +168,9 @@ audit:
   - correlation_id
   - occurred_at
   - payload_hash
-  payload_hash_algorithm: AUTHORITY_GAP
+  payload_hash_algorithm: SHA-256
+  payload_hash_encoding: hex
+  payload_hash_column_type: char(64)
   bind_in_this_revision: false
 forbidden:
   - Invent resource_key workspace.dashboard.view
@@ -143,12 +181,7 @@ forbidden:
   - Change official site /health/ready to 200
   - Claim production ready
 remaining_blockers:
-  - IDENTITY_TRANSPORT_NOT_DEFINED
-  - ASSIGNMENT_STATUS_PREDICATE_NOT_DEFINED
-  - DENY_VS_ALLOW_PRECEDENCE_NOT_DEFINED
-  - SCOPE_CONDITION_EVALUATOR_NOT_DEFINED
   - WB01_SECTION_READ_SQL_NOT_DEFINED
-  - AUDIT_PAYLOAD_HASH_ALGORITHM_NOT_DEFINED
 adapter_bind_allowed: false
 production_ready_claim_allowed: false
 next_action: CLOSE_WB01_PROJECTION_MAPPING_GAPS

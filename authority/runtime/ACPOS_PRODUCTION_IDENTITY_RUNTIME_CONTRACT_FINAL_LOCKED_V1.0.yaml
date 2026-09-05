@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-IDENTITY-ACTOR-NAMED-TRANSPORT-GAP
+  revision: 2026-09-05-INTERNAL-COOKIE-SESSION-TRANSPORT
   scope: PRODUCTION_REQUEST_TO_APP_USERS_ACTOR_CONTRACT_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -12,7 +12,11 @@ approval:
   approved_scope:
   - Name canonical production actor as app_users.user_id
   - Name GHS-PORT-IDENTITY / resolveIdentityAccountAuthority as the required identity port
-  - Record that HTTP transport and runtime-account mapping are still Authority gaps
+  - Lock internal cookie session transport named acpos_session
+  - Lock email join from acpos_runtime.accounts to app_users
+  - Lock scrypt password verify against acpos_runtime.accounts.password_hash
+  - Materialize GET/POST/DELETE /v1/identity/session and OPEN_LOGIN /login
+  - Keep 03_api/operation_registry.yaml absent
   - Do not bind configureUiProjectionRuntime in this revision
   - Do not change /health/ready to 200
 source:
@@ -37,16 +41,43 @@ canonical_actor:
     FROM app_users
     WHERE user_id = $actor_user_id
       AND disabled_at IS NULL
+  lookup_by_external_subject_sql: |
+    SELECT user_id, external_subject, email, display_name, status, disabled_at
+    FROM app_users
+    WHERE external_subject = $external_subject
+      AND disabled_at IS NULL
+  lookup_by_runtime_session_sql: |
+    SELECT u.user_id::text AS user_id,
+           a.id AS runtime_account_id,
+           u.email::text AS email,
+           u.display_name,
+           u.external_subject
+    FROM acpos_runtime.sessions s
+    JOIN acpos_runtime.accounts a ON a.id = s.account_id
+    JOIN app_users u ON lower(u.email::text) = lower(a.email)
+    WHERE s.token_hash = $session_token_sha256_hex
+      AND s.expires_at > now()
+      AND u.disabled_at IS NULL
+      AND a.status = 'READY'
+    LIMIT 1
+  external_subject_uniqueness: UNIQUE
+  external_subject_provider: INTERNAL_RUNTIME_ACCOUNT_EMAIL
   status_predicate: AUTHORITY_GAP
-  status_gap_reason: app_users.status uses acpos_status; Current Authority does not name which values are an active human actor
+  status_gap_reason: app_users.status uses acpos_status; Current Authority does not name which values are an active human actor. Session lookup uses disabled_at IS NULL only.
 shell_identity_port:
   port_uid: GHS-PORT-IDENTITY
   operation: resolveIdentityAccountAuthority
-  path: SYSTEM_OPERATION_REGISTRY_REQUIRED
+  path: /v1/identity/session
   logged_out_action: OPEN_LOGIN
   logged_in_action: OPEN_ACCOUNT_MENU
   unresolved_error: GHS-ERR-IDENTITY-001
   fake_name_or_avatar: FORBIDDEN
+  logged_out_to_logged_in: authenticated session established
+  logged_in_to_logged_out: session ended
+  open_login_path: /login
+  operation_registry_file: 03_api/operation_registry.yaml
+  operation_registry_file_in_app_repo: ABSENT
+  catalog_registration: NOT_PRESENT
 current_http_surface:
   observed_request_headers:
   - x-correlation-id
@@ -56,22 +87,44 @@ current_http_surface:
   - correlation_id
   dashboard_access_request_fields:
   - correlation_id
-  identity_transport: AUTHORITY_GAP
-  identity_transport_gap_reason: Current Authority names the identity port and canonical actor table. It does not name cookie, Authorization scheme, session token header, or IdP that fills app_users.external_subject.
+  identity_transport: INTERNAL_COOKIE_SESSION
+  cookie_name: acpos_session
+  cookie_http_only: true
+  cookie_same_site: Lax
+  cookie_path: /
+  cookie_max_age_seconds: 43200
+  token_hash_algorithm: SHA-256
+  token_hash_encoding: hex
+  session_methods:
+  - GET
+  - POST
+  - DELETE
+  missing_identity_fail_closed:
+    condition: request has no valid acpos_session cookie
+    reason_code: IDENTITY_RUNTIME_NOT_BOUND
+    bind_login_adapter: false
+  search_evidence:
+    login_route_in_src_app: src/app/login/page.tsx
+    session_route_in_src_app: src/app/v1/identity/session/route.ts
+    identity_runtime_in_src_app: src/server/identity/identityRuntime.ts
+    cookie_name_in_current_authority: acpos_session
+    authorization_scheme_in_current_authority: ABSENT
 runtime_account_store:
   schema: acpos_runtime
   accounts_table: acpos_runtime.accounts
   sessions_table: acpos_runtime.sessions
-  mapping_to_app_users: AUTHORITY_GAP
-  mapping_gap_reason: acpos_runtime.accounts.id is text and sessions.account_id references that table. WB-01 authorize requires app_users.user_id uuid. No Current Authority names equality or join between these stores.
-  password_hash_login: FORBIDDEN_UNTIL_NEW_AUTHORITY
+  mapping_to_app_users: EMAIL_JOIN
+  mapping_sql: lower(app_users.email::text) = lower(acpos_runtime.accounts.email)
+  runtime_account_active_status: READY
+  password_hash_login: scrypt$16384$8$1$salt_base64url$key_base64url
+  password_keylen: 32
 forbidden:
-  - Invent Authorization Bearer, cookie name, or session header
+  - Invent Authorization Bearer or an IdP header
   - Use NEON_AUTH_BASE_URL or VITE_NEON_AUTH_URL as application identity
-  - Treat acpos_runtime.sessions as app_users identity
+  - Treat acpos_runtime.sessions as app_users identity without the email join
   - Treat x-correlation-id as user identity
   - Create a health/ready service user to force ready 200
-  - Bind configureUiProjectionRuntime while identity transport remains AUTHORITY_GAP
+  - Bind configureUiProjectionRuntime while remaining_blockers is non-empty
   - Change official site /health/ready to 200
   - Claim production ready
 health_ready:
@@ -79,10 +132,8 @@ health_ready:
   unauthenticated_reason_code: IDENTITY_RUNTIME_NOT_BOUND
   keep_fail_closed: true
 remaining_blockers:
-  - IDENTITY_TRANSPORT_NOT_DEFINED
-  - IDENTITY_OPERATION_PATH_NOT_MATERIALIZED
+  - IDENTITY_OPERATION_REGISTRY_ABSENT
   - APP_USERS_STATUS_PREDICATE_NOT_DEFINED
-  - APP_USERS_TO_RUNTIME_ACCOUNTS_MAPPING_NOT_DEFINED
 adapter_bind_allowed: false
 production_ready_claim_allowed: false
-next_action: CLOSE_IDENTITY_TRANSPORT_AND_USER_MAPPING_GAPS
+next_action: CLOSE_WB01_PROJECTION_MAPPING_GAPS

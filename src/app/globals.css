@@ -164,7 +164,8 @@ a:focus-visible {
   max-width: 220px;
   padding: 0 12px;
   justify-content: flex-start;
-  cursor: default;
+  cursor: pointer;
+  text-decoration: none;
 }
 .avatar-placeholder {
   width: 22px;
@@ -211,6 +212,13 @@ a:focus-visible {
 .account-popover-link:focus-visible {
   color: var(--text-primary);
   background: var(--purple-hover);
+}
+
+button.account-popover-link {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
 }
 
 .global-sidebar {
@@ -328,4 +336,82 @@ a:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  padding: 32px 16px;
+  background:
+    radial-gradient(900px 480px at 18% -10%, rgba(139, 92, 255, 0.22), transparent 58%),
+    radial-gradient(720px 420px at 92% 110%, rgba(110, 53, 255, 0.16), transparent 52%),
+    var(--bg-page);
+}
+.login-card {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 14px;
+  padding: 28px;
+  border: 1px solid var(--border-normal);
+  border-radius: 16px;
+  background: rgba(12, 16, 38, 0.92);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+}
+.login-brand {
+  margin: 0;
+  letter-spacing: 0.22em;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--purple-highlight);
+}
+.login-card h1 {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 650;
+}
+.login-card label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.login-card input {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--surface-input);
+  color: var(--text-primary);
+}
+.login-card input:focus {
+  outline: 2px solid var(--purple-highlight);
+  outline-offset: 1px;
+}
+.login-error {
+  margin: 0;
+  color: var(--status-error);
+  font-size: 13px;
+}
+.login-card button[type="submit"] {
+  height: 42px;
+  margin-top: 4px;
+  border: 1px solid var(--border-active);
+  border-radius: 10px;
+  background: var(--purple-active);
+  color: var(--text-primary);
+  font-weight: 650;
+  cursor: pointer;
+}
+.login-card button[type="submit"]:hover:not(:disabled) {
+  background: rgba(139, 92, 255, 0.4);
+}
+.login-card button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+html:has(.login-page),
+body:has(.login-page) {
+  overflow: auto;
 }

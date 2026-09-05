@@ -57,6 +57,41 @@ const catalog = {
     "zh-CN": "前台",
     en: "Frontend",
   },
+  "global.header.login": {
+    "zh-TW": "登入",
+    "zh-CN": "登录",
+    en: "Login",
+  },
+  "global.header.logout": {
+    "zh-TW": "登出",
+    "zh-CN": "登出",
+    en: "Log out",
+  },
+  "global.login.title": {
+    "zh-TW": "內部登入",
+    "zh-CN": "内部登录",
+    en: "Internal login",
+  },
+  "global.login.email": {
+    "zh-TW": "電子郵件",
+    "zh-CN": "电子邮件",
+    en: "Email",
+  },
+  "global.login.password": {
+    "zh-TW": "密碼",
+    "zh-CN": "密码",
+    en: "Password",
+  },
+  "global.login.submit": {
+    "zh-TW": "登入",
+    "zh-CN": "登录",
+    en: "Sign in",
+  },
+  "global.login.failed": {
+    "zh-TW": "登入失敗",
+    "zh-CN": "登录失败",
+    en: "Sign-in failed",
+  },
   "global.admin.system": {
     "zh-TW": "系統維護",
     "zh-CN": "系统维护",
