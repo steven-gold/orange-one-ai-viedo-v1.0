@@ -1,5 +1,5 @@
 import { createHash, randomBytes, scrypt, timingSafeEqual } from "node:crypto";
-import { getProductionNeonSql } from "@/server/database/neonRuntime";
+import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
 
 function scryptAsync(
   password: string,
@@ -103,6 +103,7 @@ export async function resolveIdentityFromCookie(
 ): Promise<IdentitySuccess<{ actor: IdentityActor }> | IdentityFailure> {
   const token = cookieValue?.trim() ?? "";
   if (!token) return { ok: false, status: 401, reason_code: "IDENTITY_RUNTIME_NOT_BOUND" };
+  await ensureProductionNeonRuntime();
   const sql = getProductionNeonSql();
   if (!sql) return { ok: false, status: 503, reason_code: "DATABASE_RUNTIME_NOT_BOUND" };
   const hash = tokenHash(token);
@@ -137,6 +138,7 @@ export async function createIdentitySession(
 ): Promise<IdentitySuccess<{ token: string; actor: IdentityActor }> | IdentityFailure> {
   const email = emailInput.trim();
   if (!email || !password) return { ok: false, status: 400, reason_code: "IDENTITY_CREDENTIALS_REJECTED" };
+  await ensureProductionNeonRuntime();
   const sql = getProductionNeonSql();
   if (!sql) return { ok: false, status: 503, reason_code: "DATABASE_RUNTIME_NOT_BOUND" };
   try {
@@ -171,6 +173,7 @@ export async function createIdentitySession(
 export async function destroyIdentitySession(cookieValue: string | undefined): Promise<void> {
   const token = cookieValue?.trim() ?? "";
   if (!token) return;
+  await ensureProductionNeonRuntime();
   const sql = getProductionNeonSql();
   if (!sql) return;
   const hash = tokenHash(token);

@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { cookies } from "next/headers";
-import { getProductionNeonSql } from "@/server/database/neonRuntime";
+import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
 import {
   configureDashboardRuntime,
   type DashboardAccessRequest,
@@ -78,6 +78,7 @@ type GateDecision =
   | { allowed: false; reason_code: string };
 
 async function evaluateWb01PageGate(): Promise<GateDecision> {
+  await ensureProductionNeonRuntime();
   const sql = getProductionNeonSql();
   if (!sql) return { allowed: false, reason_code: "DATABASE_RUNTIME_NOT_BOUND" };
 
@@ -134,6 +135,7 @@ async function writeAudit(entry: {
   outcome: string;
   reason_code?: string;
 }): Promise<void> {
+  await ensureProductionNeonRuntime();
   const sql = getProductionNeonSql();
   let actor = entry.actor;
   if (!actor) {
@@ -207,6 +209,7 @@ async function countProjects(sql: SqlClient, statuses: readonly string[] | "ALL"
 }
 
 async function readDashboardProjection(request: DashboardAccessRequest): Promise<unknown> {
+  await ensureProductionNeonRuntime();
   const sql = getProductionNeonSql();
   if (!sql) throw new Error("DATABASE_RUNTIME_NOT_BOUND");
 

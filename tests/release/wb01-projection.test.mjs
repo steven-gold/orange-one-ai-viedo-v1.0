@@ -12,6 +12,7 @@ test("WB-01 production projection runtime names page-gate SQL and 14 section rea
   assert.match(instrumentation, /bindWb01ProjectionRuntime/);
   assert.match(runtime, /configureDashboardRuntime/);
   assert.match(runtime, /configureUiProjectionRuntime/);
+  assert.match(runtime, /ensureProductionNeonRuntime/);
   assert.match(runtime, /page:workspace:WB-01/);
   assert.match(runtime, /IDENTITY_COOKIE_NAME/);
   assert.match(runtime, /a.status = 'APPROVED'/);
