@@ -9,6 +9,7 @@ type NeonSql = NeonQueryFunction<false, false>;
 
 let boundSql: NeonSql | null = null;
 let bindReason: string = "DATABASE_RUNTIME_NOT_BOUND";
+let bindInFlight: Promise<void> | null = null;
 
 export function getProductionNeonSql(): NeonSql | null {
   return boundSql;
@@ -16,6 +17,22 @@ export function getProductionNeonSql(): NeonSql | null {
 
 export function getProductionNeonBindReason(): string {
   return bindReason;
+}
+
+export async function ensureProductionNeonRuntime(): Promise<void> {
+  if (boundSql) return;
+  if (!bindInFlight) {
+    bindInFlight = (async () => {
+      try {
+        await bindProductionNeonRuntime();
+      } catch {
+        // bindReason is already set by bindProductionNeonRuntime
+      }
+    })().finally(() => {
+      bindInFlight = null;
+    });
+  }
+  await bindInFlight;
 }
 
 function readEnv(name: string): string {

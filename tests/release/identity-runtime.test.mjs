@@ -18,6 +18,7 @@ test("internal cookie session identity is materialized and WB-01 projection bind
   assert.match(identity, /scrypt\$\$\{SCRYPT_N\}\$/);
   assert.match(identity, /JOIN app_users u ON lower\(u\.email::text\) = lower\(a\.email\)/);
   assert.match(identity, /a\.status = 'READY'/);
+  assert.match(identity, /ensureProductionNeonRuntime/);
   assert.doesNotMatch(identity, /u\.status = 'READY'/);
   assert.doesNotMatch(identity, /NEON_AUTH|Authorization Bearer|configureUiProjectionRuntime/);
 

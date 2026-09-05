@@ -49,6 +49,10 @@ async function safeAudit(
 }
 
 export async function getDashboardReadModel(request: DashboardAccessRequest): Promise<DashboardReadResult> {
+  if (!bindings) {
+    const { bindWb01ProjectionRuntime } = await import("@/server/dashboard/wb01ProjectionRuntime");
+    bindWb01ProjectionRuntime();
+  }
   const runtime = bindings;
   if (!runtime) {
     if (isControlledDashboardServerTestMode()) {

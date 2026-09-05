@@ -7,7 +7,11 @@ export async function register() {
   }
 
   const { bindProductionNeonRuntime } = await import("@/server/database/neonRuntime");
-  await bindProductionNeonRuntime();
+  try {
+    await bindProductionNeonRuntime();
+  } catch {
+    // Identity mismatch stays fail-closed; request-path ensure retries with the same reason.
+  }
   const { bindWb01ProjectionRuntime } = await import("@/server/dashboard/wb01ProjectionRuntime");
   bindWb01ProjectionRuntime();
 }

@@ -58,6 +58,12 @@ test("register() injects the authority Neon driver and WB-01 projection binding"
   assert.match(neonRuntime, /DATABASE_URL_UNPOOLED/);
   assert.match(neonRuntime, /schema_migration_history/);
   assert.doesNotMatch(neonRuntime, /configureUiProjectionRuntime/);
+  assert.match(neonRuntime, /ensureProductionNeonRuntime/);
+  const identity = await read("src/server/identity/identityRuntime.ts");
+  const dashboard = await read("src/server/dashboard/readModelRuntime.ts");
+  assert.match(identity, /ensureProductionNeonRuntime/);
+  assert.match(dashboard, /bindWb01ProjectionRuntime/);
+  assert.match(uiProjection, /bindWb01ProjectionRuntime/);
   assert.match(wb01, /configureUiProjectionRuntime/);
   assert.match(wb01, /configureDashboardRuntime/);
   assert.match(ready, /status:\s*503/);
