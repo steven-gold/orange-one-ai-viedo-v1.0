@@ -54,6 +54,7 @@ test("WB-01 UI projection mapping locks page-gate authorize and keeps adapter bi
   assert.match(mapping, /account_permission_assignments/);
   assert.match(mapping, /permission_resources/);
   assert.match(mapping, /section_sql_mapping: AUTHORITY_GAP/);
+  assert.match(mapping, /section_sql_deferred_until: CURRENT_AUTHORITY_NAMES_SELECT_FROM_WHERE/);
   assert.match(mapping, /adapter_bind_allowed: false/);
   assert.match(mapping, /identity_transport: INTERNAL_COOKIE_SESSION/);
   assert.match(mapping, /account_permission_assignments.status = APPROVED/);
@@ -69,6 +70,7 @@ test("WB-01 UI projection mapping locks page-gate authorize and keeps adapter bi
   assert.match(mapping, /AND r.resource_key = \$resource_key/);
   assert.match(mapping, /WB01_SECTION_READ_SQL_NOT_DEFINED/);
   assert.match(mapping, /Infer company_project_count from COUNT\(projects\)/);
+  assert.match(mapping, /KEEP-SECTION-READ-SQL-GAP/);
 });
 
 test("Production identity runtime names app_users actor and internal cookie session", async () => {
