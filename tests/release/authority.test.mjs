@@ -84,14 +84,18 @@ test("Production identity runtime names app_users actor and internal cookie sess
   assert.match(identity, /Use NEON_AUTH_BASE_URL or VITE_NEON_AUTH_URL as application identity/);
   assert.match(identity, /Treat acpos_runtime.sessions as app_users identity without the email join/);
   assert.match(identity, /adapter_bind_allowed: false/);
-  assert.match(identity, /IDENTITY_OPERATION_REGISTRY_ABSENT/);
   assert.match(identity, /lookup_by_external_subject_sql:/);
-  assert.match(identity, /operation_registry_file_in_app_repo: ABSENT/);
-  assert.match(identity, /catalog_registration: NOT_PRESENT/);
+  assert.match(identity, /operation_registry_file_in_app_repo: PRESENT/);
+  assert.match(identity, /operation_registry_coverage: IDENTITY_SESSION_ONLY/);
+  assert.match(identity, /catalog_registration: NOT_IN_ACCOUNT_PERMISSION_CATALOG/);
   assert.match(identity, /reason_code: IDENTITY_RUNTIME_NOT_BOUND/);
   assert.match(identity, /status_predicate: DISABLED_AT_IS_NULL/);
   assert.match(identity, /status_predicate_sql: app_users.disabled_at IS NULL/);
   assert.match(identity, /CLOSE_WB01_PROJECTION_MAPPING_GAPS/);
+  const registry = await readFile("03_api/operation_registry.yaml", "utf8");
+  assert.match(registry, /operation_id: resolveIdentityAccountAuthority/);
+  assert.match(registry, /path: \/v1\/identity\/session/);
+  assert.match(registry, /coverage: IDENTITY_SESSION_ONLY/);
 });
 
 test("System implementation truth is not silently promoted", () => {
