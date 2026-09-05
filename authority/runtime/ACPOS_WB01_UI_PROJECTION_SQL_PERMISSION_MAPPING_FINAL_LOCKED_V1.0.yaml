@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-AUDIT-PAYLOAD-SHA256
+  revision: 2026-09-05-SECTION-CONTROL-FIELD-AUTHORIZE
   scope: WB-01_PAGE_GATE_AUTHORIZE_AND_EXPLICIT_READ_GAPS_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -18,6 +18,7 @@ approval:
   - Lock page-gate effect precedence to DENY_WINS
   - Lock page-gate scope/condition to empty-object match
   - Lock audit payload_hash to SHA-256 hex
+  - Lock section/control/field authorize SQL on named catalog resource_keys
   - Do not bind configureUiProjectionRuntime in this revision
   - Do not change /health/ready to 200
 source:
@@ -64,7 +65,7 @@ authorize:
     canonical_actor: NAMED
     identity_transport: INTERNAL_COOKIE_SESSION
     cookie_name: acpos_session
-    gap_reason: Cookie session can resolve app_users.user_id. Page-gate still needs read SQL.
+    gap_reason: Cookie session can resolve app_users.user_id. Page-gate still needs dashboard read SQL.
     missing_identity_reason_code: IDENTITY_RUNTIME_NOT_BOUND
   page_assignment_probe:
     tables:
@@ -134,7 +135,66 @@ authorize:
     control_action: VIEW
     field_action: READ
     bind_in_this_revision: false
-    gap_reason: page-gate authorize is the only probe locked here; section/control/field probes reuse the same assignment tables after read SQL closes
+    reuse_page_assignment_evaluation: true
+    sql: |
+      SELECT a.account_permission_assignment_id, a.effect, a.status, a.scope, a.condition, a.gate_profile
+      FROM account_permission_assignments a
+      JOIN permission_resources r ON r.resource_id = a.resource_id
+      WHERE a.user_id = $actor_user_id
+        AND r.resource_key = $resource_key
+        AND r.resource_type = $resource_type
+        AND r.active = true
+        AND a.action = $action
+        AND a.status = 'APPROVED'
+        AND a.effective_from <= now()
+        AND (a.effective_to IS NULL OR a.effective_to > now())
+    section_resource_keys:
+    - section:workspace:WB-01:company_project_count
+    - section:workspace:WB-01:company_running_project_count
+    - section:workspace:WB-01:company_pending_action_count
+    - section:workspace:WB-01:company_pending_review_count
+    - section:workspace:WB-01:company_completed_project_count
+    - section:workspace:WB-01:company_average_progress
+    - section:workspace:WB-01:project_progress_overview
+    - section:workspace:WB-01:company_progress_summary
+    - section:workspace:WB-01:production_summary
+    - section:workspace:WB-01:notifications
+    - section:workspace:WB-01:company_announcements
+    - section:workspace:WB-01:industry_news
+    - section:workspace:WB-01:system_status_summary
+    - section:workspace:WB-01:recent_completions
+    control_resource_keys:
+    - control:CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN
+    - control:CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN
+    - control:CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN
+    - control:CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN
+    - control:CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN
+    - control:CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN
+    - control:CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN
+    - control:CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN
+    - control:CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN
+    - control:CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN
+    - control:CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN
+    - control:CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN
+    - control:CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN
+    - control:CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN
+    field_resource_keys:
+    - field:FIELD-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT
+    - field:FIELD-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT
+    - field:FIELD-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT
+    - field:FIELD-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT
+    - field:FIELD-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT
+    - field:FIELD-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS
+    - field:FIELD-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW
+    - field:FIELD-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY
+    - field:FIELD-WORKSPACE-WB-01-PRODUCTION-SUMMARY
+    - field:FIELD-WORKSPACE-WB-01-NOTIFICATIONS
+    - field:FIELD-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS
+    - field:FIELD-WORKSPACE-WB-01-INDUSTRY-NEWS
+    - field:FIELD-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY
+    - field:FIELD-WORKSPACE-WB-01-RECENT-COMPLETIONS
+    field_resource_key_pattern: 'field:FIELD-WORKSPACE-WB-01-{FIELD_SUFFIX}'
+    gap_reason: authorize SQL is named; dashboard read SQL is still an Authority gap
 read:
   operation_id: getDashboardReadModel
   method_path: GET /v1/dashboard/read-model
