@@ -41,14 +41,16 @@ test("production instrumentation does not import controlled test runtimes", asyn
   assert.doesNotMatch(instrumentation, /import\s*\(["']@\/server\/testing\//);
 });
 
-test("register() injects the authority Neon driver without UI projection binding", async () => {
+test("register() injects the authority Neon driver and WB-01 projection binding", async () => {
   const instrumentation = await read("src/instrumentation.ts");
   const neonRuntime = await read("src/server/database/neonRuntime.ts");
   const packageJson = await read("package.json");
   const ready = await read("src/app/health/ready/route.ts");
   const uiProjection = await read("src/server/shared/uiProjectionRuntime.ts");
+  const wb01 = await read("src/server/dashboard/wb01ProjectionRuntime.ts");
   assert.match(packageJson, /"@neondatabase\/serverless"/);
   assert.match(instrumentation, /bindProductionNeonRuntime/);
+  assert.match(instrumentation, /bindWb01ProjectionRuntime/);
   assert.match(instrumentation, /NEXT_RUNTIME === "edge"/);
   assert.match(neonRuntime, /@neondatabase\/serverless/);
   assert.match(neonRuntime, /wild-wave-25661146/);
@@ -56,7 +58,8 @@ test("register() injects the authority Neon driver without UI projection binding
   assert.match(neonRuntime, /DATABASE_URL_UNPOOLED/);
   assert.match(neonRuntime, /schema_migration_history/);
   assert.doesNotMatch(neonRuntime, /configureUiProjectionRuntime/);
-  assert.doesNotMatch(instrumentation, /configureUiProjectionRuntime/);
+  assert.match(wb01, /configureUiProjectionRuntime/);
+  assert.match(wb01, /configureDashboardRuntime/);
   assert.match(ready, /status:\s*503/);
   assert.match(ready, /getUiProjection/);
   assert.match(uiProjection, /UI_PROJECTION_RUNTIME_NOT_BOUND/);

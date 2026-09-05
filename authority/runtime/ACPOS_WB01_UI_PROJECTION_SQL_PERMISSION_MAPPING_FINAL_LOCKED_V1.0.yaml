@@ -3,8 +3,8 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-KEEP-SECTION-READ-SQL-GAP
-  scope: WB-01_PAGE_GATE_AUTHORIZE_AND_EXPLICIT_READ_GAPS_ONLY
+  revision: 2026-09-05-LOCK-SECTION-READ-SQL-AND-BIND
+  scope: WB-01_PAGE_GATE_AUTHORIZE_AND_NAMED_SECTION_READ_SQL
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
   user_approved: true
@@ -19,10 +19,10 @@ approval:
   - Lock page-gate scope/condition to empty-object match
   - Lock audit payload_hash to SHA-256 hex
   - Lock section/control/field authorize SQL on named catalog resource_keys
-  - Keep section read SQL unnamed until Current Authority names SELECT/FROM/WHERE
-  - Live operational rows do not authorize table-name inference
-  - Do not bind configureUiProjectionRuntime in this revision
-  - Do not change /health/ready to 200
+  - Lock 14 section SELECT/FROM/WHERE on 0001 tables
+  - Bind configureDashboardRuntime and configureUiProjectionRuntime for WB-01
+  - Keep official /health/ready fail-closed for unauthenticated probes
+  - Keep production_ready_claim_allowed false
 source:
   derived_from:
   - authority/pages/workspace/WB-01/ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml
@@ -33,6 +33,7 @@ source:
   - src/server/dashboard/readModelRuntime.ts
   - src/domain/dashboard/readModelContract.ts
   - authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+  - src/server/dashboard/wb01ProjectionRuntime.ts
 page:
   page_uid: workspace:WB-01
   page_permission_label: workspace.dashboard.view
@@ -51,7 +52,9 @@ ports:
   health_ready_probe:
     page_uid: workspace:WB-01
     route: GET /health/ready
-    current_fail_closed_reason: UI_PROJECTION_RUNTIME_NOT_BOUND
+    current_fail_closed_reason: IDENTITY_RUNTIME_NOT_BOUND
+    unauthenticated_probe: FAIL_CLOSED
+    production_ready_claim: FORBIDDEN
 authorize:
   required_guards:
   - identity
@@ -67,7 +70,7 @@ authorize:
     canonical_actor: NAMED
     identity_transport: INTERNAL_COOKIE_SESSION
     cookie_name: acpos_session
-    gap_reason: Cookie session can resolve app_users.user_id. Page-gate still needs dashboard read SQL.
+    gap_reason: Cookie session resolves app_users.user_id. Page-gate and section read SQL are named.
     missing_identity_reason_code: IDENTITY_RUNTIME_NOT_BOUND
   page_assignment_probe:
     tables:
@@ -129,6 +132,10 @@ authorize:
       - assignment.condition must be a JSON object
       - Empty object {} evaluates true
       - Any non-empty condition fails because Current Authority does not name operators or keys
+  classification:
+    evaluation: PASS_AFTER_PAGE_ALLOW
+    extra_sql: NONE
+    reason: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
   section_control_field_probes:
     inheritance_from_page: FORBIDDEN
     section_resource_key_pattern: 'section:workspace:WB-01:{section_key}'
@@ -196,30 +203,153 @@ authorize:
     - field:FIELD-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY
     - field:FIELD-WORKSPACE-WB-01-RECENT-COMPLETIONS
     field_resource_key_pattern: 'field:FIELD-WORKSPACE-WB-01-{FIELD_SUFFIX}'
-    gap_reason: authorize SQL is named; dashboard read SQL is still an Authority gap
+    gap_reason: authorize SQL is named; section/control/field assignment is unbound; PAGE VIEW reads all 14 named section SQLs
 read:
   operation_id: getDashboardReadModel
   method_path: GET /v1/dashboard/read-model
   contract: src/domain/dashboard/readModelContract.ts
   workflow: READ_ONLY
-  section_sql_mapping: AUTHORITY_GAP
-  section_sql_deferred_until: CURRENT_AUTHORITY_NAMES_SELECT_FROM_WHERE
-  sections_without_sql:
-  - company_project_count
-  - company_running_project_count
-  - company_pending_action_count
-  - company_pending_review_count
-  - company_completed_project_count
-  - company_average_progress
-  - project_progress_overview
-  - company_progress_summary
-  - production_summary
-  - notifications
-  - company_announcements
-  - industry_news
-  - system_status_summary
-  - recent_completions
-  gap_reason: WB-01 data_binding names read-model fields only. Section values appear after live operations. Current Authority does not name SELECT/FROM/WHERE. Table-name inference is forbidden. User 2026-09-05 kept this gap.
+  read_model_version: WB-01-READ-V1.0
+  section_sql_mapping: NAMED
+  page_view_reads_all_sections: true
+  workspace_filter: NONE
+  progress_percentage_column: ABSENT
+  progress_percentage_projection: NULL
+  announcements_table: ABSENT
+  industry_news_table: ABSENT
+  empty_items_when_table_absent: true
+  status_predicates:
+    project_active: archived_at IS NULL
+    running:
+    - RUNNING
+    pending_action:
+    - DRAFT
+    - WAITING_DEPENDENCY
+    - READY
+    - BLOCKED
+    - COMPILE_REQUESTED
+    - CORE_MODELING
+    pending_review:
+    - IN_REVIEW
+    - PENDING_APPROVAL
+    - RECHECK
+    - CORE_REVIEW
+    - BLUEPRINT_REVIEW
+    - READY_FOR_MOTHER_REVIEW
+    - READY_FOR_CHILD_REVIEW
+    - SCORE_PENDING
+    completed:
+    - PUBLISHED
+    - ARCHIVED
+    - HANDED_OFF
+    - PASS
+  sections:
+    company_project_count:
+      sql: |
+        SELECT count(*)::int AS value
+        FROM projects
+        WHERE archived_at IS NULL
+    company_running_project_count:
+      sql: |
+        SELECT count(*)::int AS value
+        FROM projects
+        WHERE archived_at IS NULL
+          AND status = 'RUNNING'
+    company_pending_action_count:
+      sql: |
+        SELECT count(*)::int AS value
+        FROM projects
+        WHERE archived_at IS NULL
+          AND status IN ('DRAFT','WAITING_DEPENDENCY','READY','BLOCKED','COMPILE_REQUESTED','CORE_MODELING')
+    company_pending_review_count:
+      sql: |
+        SELECT count(*)::int AS value
+        FROM projects
+        WHERE archived_at IS NULL
+          AND status IN ('IN_REVIEW','PENDING_APPROVAL','RECHECK','CORE_REVIEW','BLUEPRINT_REVIEW','READY_FOR_MOTHER_REVIEW','READY_FOR_CHILD_REVIEW','SCORE_PENDING')
+    company_completed_project_count:
+      sql: |
+        SELECT count(*)::int AS value
+        FROM projects
+        WHERE archived_at IS NULL
+          AND status IN ('PUBLISHED','ARCHIVED','HANDED_OFF','PASS')
+    company_average_progress:
+      sql: |
+        SELECT CAST(NULL AS numeric) AS value
+        WHERE false
+      projection: NULL
+    project_progress_overview:
+      projects_sql: |
+        SELECT project_id::text AS project_id, title AS display_name, title AS label, project_code AS code, status::text AS status
+        FROM projects
+        WHERE archived_at IS NULL
+        ORDER BY created_at ASC
+      topics_sql: |
+        SELECT topic_id::text AS topic_id, project_id::text AS project_id, title AS display_name, title AS label, topic_code AS code, status::text AS status
+        FROM topics
+        WHERE archived_at IS NULL
+        ORDER BY created_at ASC
+      tasks_sql: |
+        SELECT t.task_id::text AS task_id, cl.topic_id::text AS topic_id, t.task_id::text AS code, t.status::text AS task_state
+        FROM department_tasks t
+        JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
+        ORDER BY t.created_at ASC
+    company_progress_summary:
+      source: reuse KPI project status counts
+      overall_progress_percentage: NULL
+    production_summary:
+      sql: |
+        SELECT department::text AS unit_key, department::text AS unit_label,
+               CASE
+                 WHEN count(*) FILTER (WHERE status = 'RUNNING') > 0 THEN 'RUNNING'
+                 WHEN count(*) FILTER (WHERE status IN ('WAITING_DEPENDENCY','READY','BLOCKED')) > 0 THEN 'PENDING'
+                 WHEN count(*) FILTER (WHERE status IN ('IN_REVIEW','PENDING_APPROVAL','RECHECK')) > 0 THEN 'REVIEW'
+                 ELSE 'IDLE'
+               END AS state,
+               count(*) FILTER (WHERE status = 'RUNNING')::int AS running_count,
+               count(*) FILTER (WHERE status IN ('WAITING_DEPENDENCY','READY','BLOCKED'))::int AS pending_count,
+               count(*) FILTER (WHERE status IN ('IN_REVIEW','PENDING_APPROVAL','RECHECK'))::int AS review_count,
+               count(*) FILTER (WHERE completed_at IS NOT NULL)::int AS completed_count
+        FROM department_tasks
+        GROUP BY department
+        ORDER BY department::text
+    notifications:
+      sql: |
+        SELECT notification_id::text AS notification_id,
+               COALESCE(payload->>'title', notification_type) AS title,
+               COALESCE(payload->>'category', notification_type) AS category,
+               created_at::text AS created_at,
+               COALESCE(payload->>'read_state', CASE WHEN read_at IS NULL THEN 'UNREAD' ELSE 'READ' END) AS read_state
+        FROM notifications
+        WHERE recipient_user_id = $actor_user_id
+        ORDER BY created_at DESC
+    company_announcements:
+      sql: |
+        SELECT CAST(NULL AS uuid) AS announcement_id, CAST(NULL AS text) AS title, CAST(NULL AS text) AS summary, CAST(NULL AS timestamptz) AS published_at
+        WHERE false
+      projection: empty_items
+    industry_news:
+      sql: |
+        SELECT CAST(NULL AS uuid) AS news_id, CAST(NULL AS text) AS title, CAST(NULL AS text) AS source_name, CAST(NULL AS text) AS summary, CAST(NULL AS timestamptz) AS published_at
+        WHERE false
+      projection: empty_items
+    system_status_summary:
+      sql: |
+        SELECT CASE WHEN count(*) = 15 THEN 'READY' ELSE 'BLOCKED' END AS overall_status,
+               'schema_migration_history=' || count(*)::text AS summary,
+               now()::text AS checked_at
+        FROM schema_migration_history
+    recent_completions:
+      sql: |
+        SELECT t.task_id::text AS completion_id, p.title AS project_label, tp.title AS topic_label,
+               t.department::text AS item_label, t.status::text AS completion_kind, t.completed_at::text AS completed_at
+        FROM department_tasks t
+        JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
+        JOIN topics tp ON tp.topic_id = cl.topic_id
+        JOIN projects p ON p.project_id = tp.project_id
+        WHERE t.completed_at IS NOT NULL
+        ORDER BY t.completed_at DESC
+        LIMIT 20
 audit:
   table: audit_events
   required_columns:
@@ -234,17 +364,19 @@ audit:
   payload_hash_algorithm: SHA-256
   payload_hash_encoding: hex
   payload_hash_column_type: char(64)
-  bind_in_this_revision: false
+  bind_in_this_revision: true
+  action: getDashboardReadModel
+  entity_type: workspace:WB-01
 forbidden:
   - Invent resource_key workspace.dashboard.view
   - Derive PAGE VIEW from SURFACE/L1/L2/L3 parent VIEW
-  - Infer company_project_count from COUNT(projects)
+  - Invent a progress_percentage column
+  - Invent announcements or industry_news tables
   - Bind configureUiProjectionRuntime or configureDashboardRuntime while remaining_blockers is non-empty
   - Treat CONTROLLED_TEST dashboard projection as production read SQL
   - Change official site /health/ready to 200
   - Claim production ready
-remaining_blockers:
-  - WB01_SECTION_READ_SQL_NOT_DEFINED
-adapter_bind_allowed: false
+ remaining_blockers: []
+ adapter_bind_allowed: true
 production_ready_claim_allowed: false
-next_action: CLOSE_WB01_PROJECTION_MAPPING_GAPS
+next_action: KEEP_PRODUCTION_READY_CLAIM_CLOSED

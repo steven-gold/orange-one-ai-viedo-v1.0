@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(path, "utf8");
 
-test("internal cookie session identity is materialized without UI projection bind", async () => {
+test("internal cookie session identity is materialized and WB-01 projection bind is registered", async () => {
   const identity = await read("src/server/identity/identityRuntime.ts");
   const sessionRoute = await read("src/app/v1/identity/session/route.ts");
   const loginPage = await read("src/app/login/page.tsx");
@@ -31,6 +31,6 @@ test("internal cookie session identity is materialized without UI projection bin
   assert.match(shell, /data-port-uid="GHS-PORT-IDENTITY"/);
   assert.match(shell, /href="\/login"/);
 
-  assert.doesNotMatch(instrumentation, /configureUiProjectionRuntime/);
+  assert.match(instrumentation, /bindWb01ProjectionRuntime/);
   assert.match(ready, /status:\s*503/);
 });

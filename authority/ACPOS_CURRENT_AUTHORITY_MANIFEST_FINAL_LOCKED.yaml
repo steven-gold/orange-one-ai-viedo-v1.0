@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-IDENTITY-ACTOR-NAMED-TRANSPORT-GAP
+  revision: 2026-09-05-LOCK-SECTION-READ-SQL-AND-BIND
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -206,16 +206,15 @@ cross_authority_bindings:
       database_connection_env_keys_in_env_example: 3
       database_driver_package_named: "@neondatabase/serverless"
       live_neon_project_id: wild-wave-25661146
-      instrumentation_register: NEON_DRIVER_BOUND_UI_PROJECTION_NOT_BOUND
+      instrumentation_register: NEON_DRIVER_AND_WB01_PROJECTION_BOUND
       client_or_controlled_call_sites_do_not_satisfy_server_binding: true
       blockers:
       - PRODUCTION_SERVER_RUNTIME_ADAPTER_BINDINGS_NOT_EXECUTED
-      - WB01_SECTION_READ_SQL_NOT_DEFINED
-      next_action: CLOSE_WB01_PROJECTION_MAPPING_GAPS
+      next_action: KEEP_PRODUCTION_READY_CLAIM_CLOSED
     truth_guard:
       runtime_complete_claim_allowed: false
       production_ready_claim_allowed: false
-      reason: Neon driver is bound; WB-01 page-gate authorize mapping is locked; internal cookie session identity is named; assignment/read-SQL gaps keep UI projection unbound and ready fail-closed
+      reason: Neon driver and WB-01 projection are bound; unauthenticated /health/ready stays fail-closed; production ready claim stays forbidden
   live_neon_target:
     neon_project_id: wild-wave-25661146
     neon_project_name: ORANGEONEACPOSStaging
@@ -242,7 +241,7 @@ cross_authority_bindings:
     adapter_bind_allowed: false
   wb01_ui_projection_sql_permission_mapping:
     authority_path: authority/runtime/ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1.0.yaml
-    adapter_bind_allowed: false
+    adapter_bind_allowed: true
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml

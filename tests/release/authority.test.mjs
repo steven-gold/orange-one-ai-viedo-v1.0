@@ -44,7 +44,7 @@ test("Production Script V1.3 remains the current integration contract", () => {
   assert.doesNotMatch(manifest, /PRODUCTION_SCRIPT.*V1\.2/);
 });
 
-test("WB-01 UI projection mapping locks page-gate authorize and keeps adapter bind closed", async () => {
+test("WB-01 UI projection mapping locks page-gate authorize and named section read SQL", async () => {
   const mapping = await readFile("authority/runtime/ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1.0.yaml", "utf8");
   assert.match(manifest, /ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1\.0\.yaml/);
   assert.match(mapping, /page_permission_label: workspace\.dashboard\.view/);
@@ -53,9 +53,8 @@ test("WB-01 UI projection mapping locks page-gate authorize and keeps adapter bi
   assert.match(mapping, /inheritance: FORBIDDEN/);
   assert.match(mapping, /account_permission_assignments/);
   assert.match(mapping, /permission_resources/);
-  assert.match(mapping, /section_sql_mapping: AUTHORITY_GAP/);
-  assert.match(mapping, /section_sql_deferred_until: CURRENT_AUTHORITY_NAMES_SELECT_FROM_WHERE/);
-  assert.match(mapping, /adapter_bind_allowed: false/);
+  assert.match(mapping, /section_sql_mapping: NAMED/);
+  assert.match(mapping, /adapter_bind_allowed: true/);
   assert.match(mapping, /identity_transport: INTERNAL_COOKIE_SESSION/);
   assert.match(mapping, /account_permission_assignments.status = APPROVED/);
   assert.match(mapping, /AND a.status = 'APPROVED'/);
@@ -68,9 +67,11 @@ test("WB-01 UI projection mapping locks page-gate authorize and keeps adapter bi
   assert.match(mapping, /control:CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN/);
   assert.match(mapping, /field:FIELD-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT/);
   assert.match(mapping, /AND r.resource_key = \$resource_key/);
-  assert.match(mapping, /WB01_SECTION_READ_SQL_NOT_DEFINED/);
-  assert.match(mapping, /Infer company_project_count from COUNT\(projects\)/);
-  assert.match(mapping, /KEEP-SECTION-READ-SQL-GAP/);
+  assert.match(mapping, /FROM projects/);
+  assert.match(mapping, /FROM notifications/);
+  assert.match(mapping, /FROM department_tasks/);
+  assert.match(mapping, /LOCK-SECTION-READ-SQL-AND-BIND/);
+  assert.match(mapping, /KEEP_PRODUCTION_READY_CLAIM_CLOSED/);
 });
 
 test("Production identity runtime names app_users actor and internal cookie session", async () => {
@@ -93,7 +94,7 @@ test("Production identity runtime names app_users actor and internal cookie sess
   assert.match(identity, /reason_code: IDENTITY_RUNTIME_NOT_BOUND/);
   assert.match(identity, /status_predicate: DISABLED_AT_IS_NULL/);
   assert.match(identity, /status_predicate_sql: app_users.disabled_at IS NULL/);
-  assert.match(identity, /CLOSE_WB01_PROJECTION_MAPPING_GAPS/);
+  assert.match(identity, /KEEP_PRODUCTION_READY_CLAIM_CLOSED/);
   const registry = await readFile("03_api/operation_registry.yaml", "utf8");
   assert.match(registry, /operation_id: resolveIdentityAccountAuthority/);
   assert.match(registry, /path: \/v1\/identity\/session/);
