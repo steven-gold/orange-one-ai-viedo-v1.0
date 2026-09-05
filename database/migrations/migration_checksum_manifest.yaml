@@ -3,6 +3,12 @@ contract_meta:
   rule: checksum is calculated from migration payload excluding the terminal schema_migration_history registration statement; zero value is forbidden.
   bootstrap_rule: 0001 is self-contained and must be executed before all later migrations.
   authority_revision: 2026-09-04-DATABASE-MIGRATION-0003-MINIMAL-CORRECTION
+  live_target_revision: 2026-09-05-REQUIRED-ON-WILD-WAVE
+  live_neon_project_id: wild-wave-25661146
+  live_database_name: neondb
+  live_pg_version: 18
+  required_current_schema: true
+  tiny_dust_complete_inherit: false
   0001_correction: USER_APPROVED_MINIMAL_BOOTSTRAP_CORRECTION
   0003_correction: USER_APPROVED_MINIMAL_ACCOUNT_PERMISSION_CORRECTION
 migrations:
