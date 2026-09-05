@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-LIVE-WILD-WAVE-DRIVER-AND-ENV-CONTRACT
+  revision: 2026-09-05-WILD-WAVE-REGISTER-DRIVER-BIND
   scope: PRODUCTION_DATABASE_DRIVER_AND_CONNECTION_ENV_CONTRACT_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -12,8 +12,9 @@ approval:
   approved_scope:
   - Set live Neon target to wild-wave-25661146
   - Name production database driver and environment keys
-  - Do not bind register() or claim production ready
-  - Keep 0001-0015 as the required live schema and require wild-wave re-verification before binding
+  - Bind register() to @neondatabase/serverless against wild-wave after 0001-0015 applied
+  - Do not claim production ready and do not change /health/ready to 200
+  - Do not invent UI projection or IAM adapters
 source:
   derived_from:
   - Vercel project orange-one-acpos-test Neon integration environment key names
@@ -69,8 +70,10 @@ platform_alias_keys_not_required_by_app:
   - NEON_AUTH_BASE_URL
   - VITE_NEON_AUTH_URL
 bootstrap:
-  instrumentation_register: EMPTY_UNTIL_BINDING_PHASE
-  package_json_dependency: NOT_ADDED_IN_THIS_REVISION
+  instrumentation_register: NEON_DRIVER_BOUND_UI_PROJECTION_NOT_BOUND
+  package_json_dependency: ADDED
+  identity_guard: NEON_PROJECT_ID must equal wild-wave-25661146
+  schema_guard: schema_migration_history must contain 15 rows
   production_ready_claim_allowed: false
 required_schema:
   status: REQUIRED_CURRENT_AUTHORITY
@@ -98,11 +101,11 @@ required_schema:
   tiny_dust_complete_record:
     useful_as: historical proof that this exact 15-file chain existed and passed gates
     inherit_as_applied_on_wild_wave: false
-    wild_wave_status: NOT_VERIFIED
-    required_next_gate: READ_ONLY_VERIFY_0001_0015_ON_WILD_WAVE_THEN_APPLY_MISSING
+    wild_wave_status: APPLIED_ON_MAIN_2026-09-05
+    required_next_gate: BIND_CONFIGURE_RUNTIME_ADAPTERS_FROM_CURRENT_AUTHORITY
 forbidden:
   - Commit DATABASE_URL or password values
-  - Connect production Neon from register() in this revision
+  - Bind configureUiProjectionRuntime or other configure*Runtime adapters without Current Authority SQL/permission mapping
   - Treat CONTROLLED_TEST as production binding
   - Change official site /health/ready to 200
   - Drop or skip 0001-0015 because the tiny-dust project is gone
