@@ -210,13 +210,12 @@ cross_authority_bindings:
       client_or_controlled_call_sites_do_not_satisfy_server_binding: true
       blockers:
       - PRODUCTION_SERVER_RUNTIME_ADAPTER_BINDINGS_NOT_EXECUTED
-      - IDENTITY_TRANSPORT_NOT_DEFINED
       - WB01_SECTION_READ_SQL_NOT_DEFINED
-      next_action: CLOSE_IDENTITY_TRANSPORT_AND_USER_MAPPING_GAPS
+      next_action: CLOSE_WB01_PROJECTION_MAPPING_GAPS
     truth_guard:
       runtime_complete_claim_allowed: false
       production_ready_claim_allowed: false
-      reason: Neon driver is bound; WB-01 page-gate authorize mapping is locked; identity actor is named as app_users.user_id; identity transport and read-SQL gaps keep UI projection unbound and ready fail-closed
+      reason: Neon driver is bound; WB-01 page-gate authorize mapping is locked; internal cookie session identity is named; assignment/read-SQL gaps keep UI projection unbound and ready fail-closed
   live_neon_target:
     neon_project_id: wild-wave-25661146
     neon_project_name: ORANGEONEACPOSStaging
@@ -239,7 +238,7 @@ cross_authority_bindings:
     authority_path: authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
     canonical_actor_table: app_users
     canonical_actor_column: user_id
-    identity_transport: AUTHORITY_GAP
+    identity_transport: INTERNAL_COOKIE_SESSION
     adapter_bind_allowed: false
   wb01_ui_projection_sql_permission_mapping:
     authority_path: authority/runtime/ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1.0.yaml

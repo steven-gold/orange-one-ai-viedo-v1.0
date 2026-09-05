@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-IDENTITY-ACTOR-NAMED-TRANSPORT-GAP
+  revision: 2026-09-05-IDENTITY-COOKIE-SESSION-NAMED
   scope: WB-01_PAGE_GATE_AUTHORIZE_AND_EXPLICIT_READ_GAPS_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -13,7 +13,7 @@ approval:
   - Lock WB-01 page-gate permission alias to catalog resource_key and VIEW action
   - Name authorize SQL tables and columns already present in 0001/0003
   - Record remaining identity, assignment-status, scope/condition, and read-SQL gaps
-  - Point identity actor to ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT; keep transport as Authority gap
+  - Point identity actor to ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT cookie session
   - Do not bind configureUiProjectionRuntime in this revision
   - Do not change /health/ready to 200
 source:
@@ -58,8 +58,9 @@ authorize:
     actor_column: user_id
     identity_contract: authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
     canonical_actor: NAMED
-    identity_transport: AUTHORITY_GAP
-    gap_reason: Identity contract names app_users.user_id and GHS-PORT-IDENTITY. Current HTTP surface still carries only correlation_id.
+    identity_transport: INTERNAL_COOKIE_SESSION
+    cookie_name: acpos_session
+    gap_reason: Cookie session can resolve app_users.user_id. Page-gate still needs assignment status, DENY/ALLOW, scope/condition, and read SQL.
     missing_identity_reason_code: IDENTITY_RUNTIME_NOT_BOUND
   page_assignment_probe:
     tables:
@@ -143,7 +144,6 @@ forbidden:
   - Change official site /health/ready to 200
   - Claim production ready
 remaining_blockers:
-  - IDENTITY_TRANSPORT_NOT_DEFINED
   - ASSIGNMENT_STATUS_PREDICATE_NOT_DEFINED
   - DENY_VS_ALLOW_PRECEDENCE_NOT_DEFINED
   - SCOPE_CONDITION_EVALUATOR_NOT_DEFINED

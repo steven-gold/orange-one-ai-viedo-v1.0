@@ -100,9 +100,12 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
   const { locale, setLocale, t } = useI18n();
   const [expanded, setExpanded] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [identityLabel, setIdentityLabel] = useState<string | null>(null);
   const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sidebarRef = useRef<HTMLElement | null>(null);
   const languageRef = useRef<HTMLDivElement | null>(null);
+  const accountRef = useRef<HTMLDivElement | null>(null);
   const navItems = surface === "admin" ? ADMIN_NAV_ITEMS : NAV_ITEMS;
 
   const cancelCollapse = () => {
@@ -128,12 +131,16 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         if (languageOpen) setLanguageOpen(false);
+        if (accountOpen) setAccountOpen(false);
         if (expanded && !sidebarRef.current?.contains(document.activeElement)) setExpanded(false);
       }
     };
     const onPointerDown = (event: PointerEvent) => {
       if (languageOpen && languageRef.current && !languageRef.current.contains(event.target as Node)) {
         setLanguageOpen(false);
+      }
+      if (accountOpen && accountRef.current && !accountRef.current.contains(event.target as Node)) {
+        setAccountOpen(false);
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -143,7 +150,32 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
       window.removeEventListener("pointerdown", onPointerDown);
       cancelCollapse();
     };
-  }, [expanded, languageOpen]);
+  }, [expanded, languageOpen, accountOpen]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/v1/identity/session", { headers: { accept: "application/json" } })
+      .then((response) => response.json().catch(() => null))
+      .then((body: unknown) => {
+        if (cancelled) return;
+        const record = body && typeof body === "object" ? (body as Record<string, unknown>) : null;
+        const loggedIn = record?.ok === true && record.logged_in === true;
+        const displayName = typeof record?.display_name === "string" ? record.display_name.trim() : "";
+        setIdentityLabel(loggedIn && displayName ? displayName : "");
+      })
+      .catch(() => {
+        if (!cancelled) setIdentityLabel("");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const logout = async () => {
+    setAccountOpen(false);
+    await fetch("/v1/identity/session", { method: "DELETE", headers: { accept: "application/json" } }).catch(() => null);
+    window.location.assign("/login");
+  };
 
   return (
     <div className="acpos-shell" data-vis-step="VIS-00">
@@ -211,12 +243,36 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
               {t("global.header.admin")}
             </a>
           </div>
-          <div className="account-menu">
-            <button className="account-button" type="button" aria-label={t("global.header.account")}>
-              <span className="avatar-placeholder" aria-hidden="true"/>
-              <span className="account-label">—</span>
-              <span className="caret" aria-hidden="true">⌄</span>
-            </button>
+          <div className="account-menu" ref={accountRef} data-port-uid="GHS-PORT-IDENTITY">
+            {identityLabel ? (
+              <>
+                <button
+                  className="account-button"
+                  type="button"
+                  aria-label={t("global.header.account")}
+                  aria-haspopup="menu"
+                  aria-expanded={accountOpen}
+                  onClick={() => setAccountOpen((open) => !open)}
+                >
+                  <span className="avatar-placeholder" aria-hidden="true"/>
+                  <span className="account-label">{identityLabel}</span>
+                  <span className="caret" aria-hidden="true">⌄</span>
+                </button>
+                {accountOpen ? (
+                  <div className="account-popover" role="menu">
+                    <button className="account-popover-link" type="button" role="menuitem" onClick={() => void logout()}>
+                      {t("global.header.logout")}
+                    </button>
+                  </div>
+                ) : null}
+              </>
+            ) : (
+              <a className="account-button" href="/login" aria-label={t("global.header.login")}>
+                <span className="avatar-placeholder" aria-hidden="true"/>
+                <span className="account-label">{identityLabel === null ? "—" : t("global.header.login")}</span>
+                <span className="caret" aria-hidden="true">⌄</span>
+              </a>
+            )}
           </div>
         </div>
       </header>
