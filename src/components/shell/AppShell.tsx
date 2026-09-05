@@ -154,7 +154,7 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/v1/identity/session", { headers: { accept: "application/json" } })
+    fetch("/v1/identity/session", { headers: { accept: "application/json" }, credentials: "include" })
       .then((response) => response.json().catch(() => null))
       .then((body: unknown) => {
         if (cancelled) return;
@@ -173,7 +173,7 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
 
   const logout = async () => {
     setAccountOpen(false);
-    await fetch("/v1/identity/session", { method: "DELETE", headers: { accept: "application/json" } }).catch(() => null);
+    await fetch("/v1/identity/session", { method: "DELETE", headers: { accept: "application/json" }, credentials: "include" }).catch(() => null);
     window.location.assign("/login");
   };
 
