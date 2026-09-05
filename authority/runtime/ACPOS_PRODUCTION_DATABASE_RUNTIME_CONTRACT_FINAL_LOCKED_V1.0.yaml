@@ -102,7 +102,7 @@ required_schema:
     useful_as: historical proof that this exact 15-file chain existed and passed gates
     inherit_as_applied_on_wild_wave: false
     wild_wave_status: APPLIED_ON_MAIN_2026-09-05
-    required_next_gate: CLOSE_WB01_PROJECTION_MAPPING_GAPS
+    required_next_gate: KEEP_PRODUCTION_READY_CLAIM_CLOSED
 forbidden:
   - Commit DATABASE_URL or password values
   - Bind configureUiProjectionRuntime or other configure*Runtime adapters without Current Authority SQL/permission mapping
@@ -110,4 +110,3 @@ forbidden:
   - Change official site /health/ready to 200
   - Drop or skip 0001-0015 because the tiny-dust project is gone
   - Claim wild-wave schema complete from tiny-dust COMPLETE
-    required_next_gate: CLOSE_WB01_PROJECTION_MAPPING_GAPS

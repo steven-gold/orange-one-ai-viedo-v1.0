@@ -8,6 +8,8 @@ export async function register() {
 
   const { bindProductionNeonRuntime } = await import("@/server/database/neonRuntime");
   await bindProductionNeonRuntime();
+  const { bindWb01ProjectionRuntime } = await import("@/server/dashboard/wb01ProjectionRuntime");
+  bindWb01ProjectionRuntime();
 }
 
 export const onRequestError: Instrumentation.onRequestError = async (_error, request, context) => {
