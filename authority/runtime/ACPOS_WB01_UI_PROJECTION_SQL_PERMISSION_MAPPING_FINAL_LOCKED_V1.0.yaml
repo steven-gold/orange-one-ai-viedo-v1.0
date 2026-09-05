@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-SECTION-CONTROL-FIELD-AUTHORIZE
+  revision: 2026-09-05-KEEP-SECTION-READ-SQL-GAP
   scope: WB-01_PAGE_GATE_AUTHORIZE_AND_EXPLICIT_READ_GAPS_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -19,6 +19,8 @@ approval:
   - Lock page-gate scope/condition to empty-object match
   - Lock audit payload_hash to SHA-256 hex
   - Lock section/control/field authorize SQL on named catalog resource_keys
+  - Keep section read SQL unnamed until Current Authority names SELECT/FROM/WHERE
+  - Live operational rows do not authorize table-name inference
   - Do not bind configureUiProjectionRuntime in this revision
   - Do not change /health/ready to 200
 source:
@@ -201,6 +203,7 @@ read:
   contract: src/domain/dashboard/readModelContract.ts
   workflow: READ_ONLY
   section_sql_mapping: AUTHORITY_GAP
+  section_sql_deferred_until: CURRENT_AUTHORITY_NAMES_SELECT_FROM_WHERE
   sections_without_sql:
   - company_project_count
   - company_running_project_count
@@ -216,7 +219,7 @@ read:
   - industry_news
   - system_status_summary
   - recent_completions
-  gap_reason: WB-01 data_binding names read-model fields only. Current Authority does not name SELECT/FROM/WHERE for those fields. Table-name inference is forbidden.
+  gap_reason: WB-01 data_binding names read-model fields only. Section values appear after live operations. Current Authority does not name SELECT/FROM/WHERE. Table-name inference is forbidden. User 2026-09-05 kept this gap.
 audit:
   table: audit_events
   required_columns:
