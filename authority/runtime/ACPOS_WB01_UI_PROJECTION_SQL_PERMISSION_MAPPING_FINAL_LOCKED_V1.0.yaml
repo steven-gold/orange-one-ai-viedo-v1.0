@@ -1,0 +1,154 @@
+authority:
+  id: ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING
+  version: V1.0
+  status: FINAL_LOCKED
+  current_only: true
+  revision: 2026-09-05-IDENTITY-ACTOR-NAMED-TRANSPORT-GAP
+  scope: WB-01_PAGE_GATE_AUTHORIZE_AND_EXPLICIT_READ_GAPS_ONLY
+  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+approval:
+  user_approved: true
+  approved_on: '2026-09-05'
+  approved_scope:
+  - Lock WB-01 page-gate permission alias to catalog resource_key and VIEW action
+  - Name authorize SQL tables and columns already present in 0001/0003
+  - Record remaining identity, assignment-status, scope/condition, and read-SQL gaps
+  - Point identity actor to ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT; keep transport as Authority gap
+  - Do not bind configureUiProjectionRuntime in this revision
+  - Do not change /health/ready to 200
+source:
+  derived_from:
+  - authority/pages/workspace/WB-01/ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml
+  - 06_permission/account_permission_catalog.yaml
+  - database/migrations/0001_canonical_schema.sql
+  - database/migrations/0003_account_permission_authorization.sql
+  - src/server/shared/uiProjectionRuntime.ts
+  - src/server/dashboard/readModelRuntime.ts
+  - src/domain/dashboard/readModelContract.ts
+  - authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+page:
+  page_uid: workspace:WB-01
+  page_permission_label: workspace.dashboard.view
+  catalog_resource_id: PERM-PAGE-WORKSPACE-WB-01
+  catalog_resource_key: page:workspace:WB-01
+  catalog_resource_type: PAGE
+  required_action: VIEW
+  authorization_source: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
+  inheritance: FORBIDDEN
+  alias_rule: workspace.dashboard.view is the WB-01 page_permission label and maps only to page:workspace:WB-01 VIEW. It is not a catalog resource_key.
+  uuidv5_namespace: a5cde652-06f2-521b-933a-785801354eca
+  database_resource_id_rule: permission_resources.resource_id = UUIDv5(uuidv5_namespace, catalog_resource_id)
+ports:
+  ui_projection: configureUiProjectionRuntime
+  dashboard_read_model: configureDashboardRuntime
+  health_ready_probe:
+    page_uid: workspace:WB-01
+    route: GET /health/ready
+    current_fail_closed_reason: UI_PROJECTION_RUNTIME_NOT_BOUND
+authorize:
+  required_guards:
+  - identity
+  - account_page_permission
+  - scope
+  - condition
+  - classification
+  - audit
+  identity:
+    actor_table: app_users
+    actor_column: user_id
+    identity_contract: authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+    canonical_actor: NAMED
+    identity_transport: AUTHORITY_GAP
+    gap_reason: Identity contract names app_users.user_id and GHS-PORT-IDENTITY. Current HTTP surface still carries only correlation_id.
+    missing_identity_reason_code: IDENTITY_RUNTIME_NOT_BOUND
+  page_assignment_probe:
+    tables:
+    - permission_resources
+    - account_permission_assignments
+    locked_predicates:
+    - permission_resources.resource_key = page:workspace:WB-01
+    - permission_resources.resource_type = PAGE
+    - permission_resources.active = true
+    - account_permission_assignments.resource_id = permission_resources.resource_id
+    - account_permission_assignments.user_id = actor user_id
+    - account_permission_assignments.action = VIEW
+    - account_permission_assignments.effective_from <= now()
+    - account_permission_assignments.effective_to IS NULL OR account_permission_assignments.effective_to > now()
+    sql: |
+      SELECT a.account_permission_assignment_id, a.effect, a.status, a.scope, a.condition, a.gate_profile
+      FROM account_permission_assignments a
+      JOIN permission_resources r ON r.resource_id = a.resource_id
+      WHERE a.user_id = $actor_user_id
+        AND r.resource_key = 'page:workspace:WB-01'
+        AND r.resource_type = 'PAGE'
+        AND r.active = true
+        AND a.action = 'VIEW'
+        AND a.effective_from <= now()
+        AND (a.effective_to IS NULL OR a.effective_to > now())
+    remaining_evaluation_gaps:
+    - assignment_status_predicate: account_permission_assignments.status uses acpos_status; IAM-01 does not name which values are an effective grant
+    - deny_vs_allow_precedence: effect ALLOW and DENY may both exist; Current Authority does not name precedence
+    - scope_evaluator: catalog requires explicit_account_scope_match; scope jsonb schema and matcher are not named for WB-01
+    - condition_evaluator: catalog requires assignment_condition_evaluates_true; condition jsonb schema and matcher are not named for WB-01
+  section_control_field_probes:
+    inheritance_from_page: FORBIDDEN
+    section_resource_key_pattern: 'section:workspace:WB-01:{section_key}'
+    section_action: VIEW
+    control_resource_key_pattern: 'control:CTRL-WORKSPACE-WB-01-{CONTROL_SUFFIX}'
+    control_action: VIEW
+    field_action: READ
+    bind_in_this_revision: false
+    gap_reason: page-gate authorize is the only probe locked here; section/control/field probes reuse the same assignment tables after identity and status/scope/condition gaps close
+read:
+  operation_id: getDashboardReadModel
+  method_path: GET /v1/dashboard/read-model
+  contract: src/domain/dashboard/readModelContract.ts
+  workflow: READ_ONLY
+  section_sql_mapping: AUTHORITY_GAP
+  sections_without_sql:
+  - company_project_count
+  - company_running_project_count
+  - company_pending_action_count
+  - company_pending_review_count
+  - company_completed_project_count
+  - company_average_progress
+  - project_progress_overview
+  - company_progress_summary
+  - production_summary
+  - notifications
+  - company_announcements
+  - industry_news
+  - system_status_summary
+  - recent_completions
+  gap_reason: WB-01 data_binding names read-model fields only. Current Authority does not name SELECT/FROM/WHERE for those fields. Table-name inference is forbidden.
+audit:
+  table: audit_events
+  required_columns:
+  - action
+  - entity_type
+  - entity_id
+  - actor_id
+  - actor_type
+  - correlation_id
+  - occurred_at
+  - payload_hash
+  payload_hash_algorithm: AUTHORITY_GAP
+  bind_in_this_revision: false
+forbidden:
+  - Invent resource_key workspace.dashboard.view
+  - Derive PAGE VIEW from SURFACE/L1/L2/L3 parent VIEW
+  - Infer company_project_count from COUNT(projects)
+  - Bind configureUiProjectionRuntime or configureDashboardRuntime while remaining_blockers is non-empty
+  - Treat CONTROLLED_TEST dashboard projection as production read SQL
+  - Change official site /health/ready to 200
+  - Claim production ready
+remaining_blockers:
+  - IDENTITY_TRANSPORT_NOT_DEFINED
+  - ASSIGNMENT_STATUS_PREDICATE_NOT_DEFINED
+  - DENY_VS_ALLOW_PRECEDENCE_NOT_DEFINED
+  - SCOPE_CONDITION_EVALUATOR_NOT_DEFINED
+  - WB01_SECTION_READ_SQL_NOT_DEFINED
+  - AUDIT_PAYLOAD_HASH_ALGORITHM_NOT_DEFINED
+adapter_bind_allowed: false
+production_ready_claim_allowed: false
+next_action: CLOSE_WB01_PROJECTION_MAPPING_GAPS

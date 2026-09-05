@@ -44,6 +44,37 @@ test("Production Script V1.3 remains the current integration contract", () => {
   assert.doesNotMatch(manifest, /PRODUCTION_SCRIPT.*V1\.2/);
 });
 
+test("WB-01 UI projection mapping locks page-gate authorize and keeps adapter bind closed", async () => {
+  const mapping = await readFile("authority/runtime/ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1.0.yaml", "utf8");
+  assert.match(manifest, /ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1\.0\.yaml/);
+  assert.match(mapping, /page_permission_label: workspace\.dashboard\.view/);
+  assert.match(mapping, /catalog_resource_key: page:workspace:WB-01/);
+  assert.match(mapping, /required_action: VIEW/);
+  assert.match(mapping, /inheritance: FORBIDDEN/);
+  assert.match(mapping, /account_permission_assignments/);
+  assert.match(mapping, /permission_resources/);
+  assert.match(mapping, /section_sql_mapping: AUTHORITY_GAP/);
+  assert.match(mapping, /adapter_bind_allowed: false/);
+  assert.match(mapping, /IDENTITY_TRANSPORT_NOT_DEFINED/);
+  assert.match(mapping, /Infer company_project_count from COUNT\(projects\)/);
+});
+
+test("Production identity runtime names app_users actor and keeps transport closed", async () => {
+  const identity = await readFile("authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml", "utf8");
+  assert.match(manifest, /ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1\.0\.yaml/);
+  assert.match(identity, /table: app_users/);
+  assert.match(identity, /user_id_column: user_id/);
+  assert.match(identity, /port_uid: GHS-PORT-IDENTITY/);
+  assert.match(identity, /operation: resolveIdentityAccountAuthority/);
+  assert.match(identity, /identity_transport: AUTHORITY_GAP/);
+  assert.match(identity, /mapping_to_app_users: AUTHORITY_GAP/);
+  assert.match(identity, /Use NEON_AUTH_BASE_URL or VITE_NEON_AUTH_URL as application identity/);
+  assert.match(identity, /Treat acpos_runtime.sessions as app_users identity/);
+  assert.match(identity, /adapter_bind_allowed: false/);
+  assert.match(identity, /IDENTITY_TRANSPORT_NOT_DEFINED/);
+  assert.match(identity, /CLOSE_IDENTITY_TRANSPORT_AND_USER_MAPPING_GAPS/);
+});
+
 test("System implementation truth is not silently promoted", () => {
   assert.match(system, /api_binding:\s*NOT_EXECUTED/);
   assert.match(system, /database_binding:\s*NOT_EXECUTED/);
