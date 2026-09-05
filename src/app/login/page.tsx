@@ -43,7 +43,7 @@ export default function LoginPage() {
         <label>
           {t("global.login.email")}
           <input
-            type="email"
+            type="text"
             name="email"
             autoComplete="username"
             value={email}
