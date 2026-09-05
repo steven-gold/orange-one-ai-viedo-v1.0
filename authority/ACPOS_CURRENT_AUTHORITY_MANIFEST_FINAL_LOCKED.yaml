@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-WILD-WAVE-REGISTER-DRIVER-BIND
+  revision: 2026-09-05-IDENTITY-ACTOR-NAMED-TRANSPORT-GAP
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -19,6 +19,8 @@ current_authority_set:
   - authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
   runtime:
   - authority/runtime/ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+  - authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+  - authority/runtime/ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1.0.yaml
   permission:
   - 06_permission/account_permission_catalog.yaml
   pages:
@@ -51,7 +53,8 @@ precedence:
 - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY within visual scope
 - Current Page Authority within page UX/business scope
 - Production Script V1.3 within instruction/provider-adapter scope
-- ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT within production DB driver/env contract scope only
+  - ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT within production DB driver/env contract scope only
+  - ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT within production request-to-app_users actor scope only
 cross_authority_bindings:
   database_migration_v1_0:
     authority_path: authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml
@@ -207,11 +210,13 @@ cross_authority_bindings:
       client_or_controlled_call_sites_do_not_satisfy_server_binding: true
       blockers:
       - PRODUCTION_SERVER_RUNTIME_ADAPTER_BINDINGS_NOT_EXECUTED
-      next_action: BIND_CONFIGURE_RUNTIME_ADAPTERS_FROM_CURRENT_AUTHORITY
+      - IDENTITY_TRANSPORT_NOT_DEFINED
+      - WB01_SECTION_READ_SQL_NOT_DEFINED
+      next_action: CLOSE_IDENTITY_TRANSPORT_AND_USER_MAPPING_GAPS
     truth_guard:
       runtime_complete_claim_allowed: false
       production_ready_claim_allowed: false
-      reason: Neon driver is bound in register(); UI projection runtime remains unbound; ready stays fail-closed
+      reason: Neon driver is bound; WB-01 page-gate authorize mapping is locked; identity actor is named as app_users.user_id; identity transport and read-SQL gaps keep UI projection unbound and ready fail-closed
   live_neon_target:
     neon_project_id: wild-wave-25661146
     neon_project_name: ORANGEONEACPOSStaging
@@ -230,6 +235,15 @@ cross_authority_bindings:
     - DATABASE_URL
     - DATABASE_URL_UNPOOLED
     - NEON_PROJECT_ID
+  production_identity_runtime_contract:
+    authority_path: authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+    canonical_actor_table: app_users
+    canonical_actor_column: user_id
+    identity_transport: AUTHORITY_GAP
+    adapter_bind_allowed: false
+  wb01_ui_projection_sql_permission_mapping:
+    authority_path: authority/runtime/ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1.0.yaml
+    adapter_bind_allowed: false
   production_script_v1_3:
     authority_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
     system_authority_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
