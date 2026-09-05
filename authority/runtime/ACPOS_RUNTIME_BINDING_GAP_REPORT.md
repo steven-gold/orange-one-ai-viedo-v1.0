@@ -1,6 +1,6 @@
 # ACPOS Runtime Binding Gap Report
 
-Revision: 2026-09-04 POST-MIGRATION-RUNTIME-READINESS-AUDIT
+Revision: 2026-09-05 LIVE-WILD-WAVE-DB-CONTRACT
 Status: BLOCKED_BEFORE_PRODUCTION_BINDING
 
 ## Scope
@@ -13,9 +13,10 @@ This document records runtime binding blockers after verified database migration
 - Release Gate baseline: SUCCESS
 - Production build validation baseline: PASS
 - Current `new` branch runtime audit continued through HEAD `9471dda5727a90822432227d35f28a4bf831ad5c`
-- Current Neon staging schema inspected read-only on `br-bitter-poetry-b3p6t5ub` / `acpos_staging`
+- Historical Neon staging schema was inspected read-only on `br-bitter-poetry-b3p6t5ub` / `acpos_staging` / `tiny-dust-89825424`
+- Live authority target from 2026-09-05 is `wild-wave-25661146` / `neondb` / PG 18; 0001-0015 COMPLETE is not inherited onto this target
+- Production DB driver/env contract materialized in `authority/runtime/ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml`
 - Formal application API routes for Dashboard and UI Projection are materialized and call the existing runtime ports rather than returning fabricated success
-- Current Authority set checked for a production application database runtime technical contract: Current Manifest, System Authority, DB-01, Page Integration Matrix, and Production Script V1.3 do not define a production DB driver choice, connection environment key contract, pooling/lifecycle contract, or server startup adapter injection contract
 - AIAPI-01 production operation materialization audited against Current AIAPI-01 Authority, Production Script V1.3, frontend/domain ports, controlled runtime, and current repository route tree
 
 ## Current Runtime Binding State
@@ -94,22 +95,23 @@ Required disposition:
 
 The missing materialization must be resolved from the current registered operation registry / governed System Lifecycle authority before ProviderGateway implementation or AIAPI effectful remap may proceed.
 
-### D — Authority technical contract gap CONFIRMED
+### D — Driver/env contract named 2026-09-05; bootstrap still empty
 
-The Current Authority set was checked specifically for the missing production application database runtime technical contract.
+The live Neon target and application connection contract are now named. Bootstrap and adapter binding remain not executed.
 
-- Current Manifest explicitly records `production_server_runtime_bootstrap_call_sites: 0`, `database_driver_dependencies: 0`, `database_connection_env_keys_in_env_example: 0`, and `next_action: BLOCK_AND_REPORT_AUTHORITY_GAP_BEFORE_PRODUCTION_BINDING`.
+- Live target: `wild-wave-25661146` / `ORANGEONEACPOSStaging` / `neondb` / PG 18 / production branch `br-shy-cherry-auiol4oy`
+- Driver package: `@neondatabase/serverless`
+- Env keys in `.env.example`: `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `NEON_PROJECT_ID`
+- `package.json` still has no driver dependency
+- `src/instrumentation.ts` `register()` remains empty
+- 0001-0015 COMPLETE remains historical evidence on `tiny-dust-89825424` and must not be treated as applied on wild-wave
 - System Authority defines ACPOS runtime/business/governance boundaries but does not select or specify the application database client implementation.
 - DB-01 Authority defines a read-only inspection business boundary and explicitly forbids raw/direct production mutation; it does not define the application DB driver, pool, connection env contract, or runtime bootstrap implementation.
 - Page Integration Matrix defines cross-page data/decision ownership and handoff boundaries, not application database transport/bootstrap technology.
 - Production Script V1.3 is scoped to provider-neutral instruction/provider adapters and explicitly creates no new runtime service; it does not define database runtime binding technology.
 - Database Migration Authority is scoped to migration/bootstrap/checksum/execution governance and cannot be extended into an application-runtime driver decision.
 
-Therefore the missing production database runtime technical contract is not recoverable from the Current Authority set. This is a confirmed Authority Gap. Selecting `pg`, `postgres`, `@neondatabase/serverless`, `@vercel/postgres`, Prisma, Drizzle, or another runtime driver would invent a technical contract and is forbidden.
-
-Required disposition:
-
-`BLOCK + REPORT_AUTHORITY_GAP`
+Selecting a different driver (`pg`, `postgres`, `@vercel/postgres`, Prisma, Drizzle) still requires a new Authority revision.
 
 ### E — Leave real external execution to External/Production E2E Gate
 
@@ -139,7 +141,7 @@ This inspection does not modify schema and does not reopen migration work.
 Current repository evidence remains:
 
 - `package.json` contains Next/React dependencies only and no production PostgreSQL/Neon runtime driver
-- `.env.example` contains no database connection/runtime binding environment contract
+- `.env.example` now names `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, and `NEON_PROJECT_ID` with empty secret values
 - `src/instrumentation.ts` exports an empty `register()` and therefore performs no production server runtime adapter injection
 
 These facts are implementation evidence of the current block; they are not permission to invent the missing contract.
@@ -148,9 +150,9 @@ These facts are implementation evidence of the current block; they are not permi
 
 The following production contracts are still absent from the application runtime and must be materialized before a production binding can be truthfully claimed:
 
-1. Authority-defined production PostgreSQL/Neon driver and connection contract
-2. Authority-defined production database connection environment contract
-3. Production runtime bootstrap call path (`src/instrumentation.ts` register is currently empty)
+1. Authority-defined production PostgreSQL/Neon driver and connection contract — named `@neondatabase/serverless` / wild-wave
+2. Authority-defined production database connection environment contract — named in `.env.example`
+3. Production runtime bootstrap call path (`src/instrumentation.ts` register is currently empty) — still open
 4. Production server adapter implementations for the existing `configure*Runtime` ports
 5. AIAPI effectful command port/handler mapping from the current registered operation registry
 6. Domain-specific command/read-model mappings where Authority does not already define exact behavior
@@ -166,7 +168,7 @@ No implementation may guess missing schema, fields, permissions, API behavior, d
 
 ## Next Allowed Construction Gate
 
-Production database binding may not proceed until a Current Authority revision materializes the missing database runtime technical contract.
+Driver and env keys are named. Production database binding may not proceed until `register()` injects `@neondatabase/serverless` against wild-wave and 0001-0015 are re-verified on `neondb`.
 
 AIAPI effectful production binding may not proceed until the current registered operation registry / governed System Lifecycle materializes the existing operation-to-command-port/handler mapping without route inference.
 
@@ -184,6 +186,6 @@ The read-only DB/Projection paths remain the preferred first database binding ca
 - Do not treat controlled runtime as production runtime.
 - Do not introduce schema changes from this report.
 - Do not infer missing Authority definitions from table names or registered operation names alone.
-- Do not select a database driver or connection contract by preference.
+- Do not select a database driver other than `@neondatabase/serverless` without a new Authority revision.
 - Do not invent AIAPI effectful API paths or ProviderGateway architecture where Current Authority requires reuse of an existing registered operation registry.
 - Do not claim runtime complete or production ready until implementation, commit, build/test, runtime validation, and E2E evidence all exist.

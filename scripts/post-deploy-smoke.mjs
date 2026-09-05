@@ -1,6 +1,14 @@
 const base = (process.env.ACPOS_DEPLOYMENT_URL ?? "https://orange-one-acpos-test.vercel.app").replace(/\/$/, "");
 const expectReady = process.env.ACPOS_EXPECT_READY === "1";
 
+function protectionHeaders() {
+  const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  if (!secret) return {};
+  return {
+    "x-vercel-protection-bypass": secret,
+  };
+}
+
 const routes = [
   ["/", "workspace:WB-01"], ["/core", "CORE-01"], ["/assets", "ASSET-01"], ["/video", "VIDEO-01"],
   ["/edit", "EDIT-01"], ["/qa", "QA-01"], ["/database", "admin:DB-01"], ["/strategy", "workspace:STR-01"],
@@ -19,7 +27,11 @@ async function fetchWithRetry(path, init = {}) {
   let lastError;
   while (Date.now() < deadline) {
     try {
-      const response = await fetch(`${base}${path}`, { ...init, cache: "no-store" });
+      const response = await fetch(`${base}${path}`, {
+        ...init,
+        cache: "no-store",
+        headers: { ...protectionHeaders(), ...(init.headers ?? {}) },
+      });
       if (response.status !== 502 && response.status !== 503 && response.status !== 504) return response;
       if (path === "/health/ready" || path.startsWith("/v1/ui-projections/")) return response;
       lastError = new Error(`HTTP_${response.status}`);

@@ -2,6 +2,14 @@ import { chromium } from "playwright";
 
 const base = (process.env.ACPOS_DEPLOYMENT_URL ?? "https://orange-one-acpos-test.vercel.app").replace(/\/$/, "");
 
+function protectionHeaders() {
+  const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+  if (!secret) return {};
+  return {
+    "x-vercel-protection-bypass": secret,
+  };
+}
+
 const routes = [
   ["/", "workspace:WB-01"], ["/core", "CORE-01"], ["/assets", "ASSET-01"], ["/video", "VIDEO-01"],
   ["/edit", "EDIT-01"], ["/qa", "QA-01"], ["/database", "admin:DB-01"], ["/strategy", "workspace:STR-01"],
@@ -16,7 +24,10 @@ let cases = 0;
 try {
   for (const width of [1280, 1440, 1920]) {
     for (const [route, uid] of routes) {
-      const page = await browser.newPage({ viewport: { width, height: 1400 } });
+      const page = await browser.newPage({
+        viewport: { width, height: 1400 },
+        extraHTTPHeaders: protectionHeaders(),
+      });
       const errors = [];
       page.on("pageerror", (error) => errors.push(`pageerror:${error.message}`));
       page.on("console", (message) => {

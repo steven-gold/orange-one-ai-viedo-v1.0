@@ -3,9 +3,31 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-04-DATABASE-MIGRATION-CHAIN-0001-0015-FINAL-VERIFIED
+  revision: 2026-09-05-LIVE-NEON-TARGET-WILD-WAVE
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+live_neon_target:
+  status: CURRENT_AUTHORITY_TARGET
+  verified_on: '2026-09-05'
+  source: LIVE_NEON_API_AND_USER_CONFIRMATION_WILD_WAVE
+  neon_project_id: wild-wave-25661146
+  neon_project_name: ORANGEONEACPOSStaging
+  region_id: aws-us-east-1
+  pg_version: 18
+  database_name: neondb
+  production_branch_name: main
+  production_branch_id: br-shy-cherry-auiol4oy
+  production_endpoint_id: ep-hidden-hat-auu8r1b0
+  git_new_preview_branch_name: preview/new
+  git_new_preview_branch_id: br-quiet-firefly-aumuvjht
+  migration_chain_0001_0015_on_this_target: NOT_VERIFIED
+  superseded_recorded_target:
+    neon_project_id: tiny-dust-89825424
+    branch_id: br-bitter-poetry-b3p6t5ub
+    database_name: acpos_staging
+    pg_version: 15.19
+    api_status: NOT_FOUND
+    migration_chain_0001_0015: HISTORICAL_EVIDENCE_ONLY_DO_NOT_INHERIT
 approval:
   user_approved: true
   approved_on: '2026-09-03'
