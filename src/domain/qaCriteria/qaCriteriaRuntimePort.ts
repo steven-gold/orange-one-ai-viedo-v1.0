@@ -119,6 +119,7 @@ export async function readQaCriteriaProjection(signal?: AbortSignal) {
     response = await fetch("/v1/ui-projections/admin%3ASG-02", {
       method: "GET",
       cache: "no-store",
+      credentials: "include",
       signal,
     });
   } catch {

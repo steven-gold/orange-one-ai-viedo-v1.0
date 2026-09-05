@@ -133,7 +133,7 @@ export function getKnowledgeActionTrace(actionUid?: string): KnowledgeActionTrac
 export async function readKnowledgeProjection(signal?: AbortSignal) {
   let response: Response;
   try {
-    response = await fetch("/v1/ui-projections/admin%3AKB-01", { method: "GET", cache: "no-store", signal });
+    response = await fetch("/v1/ui-projections/admin%3AKB-01", { method: "GET", cache: "no-store", credentials: "include", signal });
   } catch {
     return { ok: false as const, reason_code: "KB01_PROJECTION_REQUEST_FAILED", correlation_id: "unresolved" };
   }

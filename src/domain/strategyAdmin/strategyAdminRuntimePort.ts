@@ -147,6 +147,7 @@ export async function readStrategyAdminProjection(signal?: AbortSignal) {
     response = await fetch("/v1/ui-projections/admin%3ASTR-01", {
       method: "GET",
       cache: "no-store",
+      credentials: "include",
       signal,
     });
   } catch {

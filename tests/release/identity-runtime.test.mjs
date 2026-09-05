@@ -33,10 +33,15 @@ test("internal cookie session identity is materialized and WB-01 projection bind
   assert.match(loginForm, /data-page-uid="identity:login"/);
   assert.match(loginForm, /action="\/identity\/login"/);
   assert.match(formLogin, /createIdentitySession/);
-  assert.match(formLogin, /NextResponse.redirect/);
+  assert.match(formLogin, /status:\s*303/);
+  assert.match(formLogin, /Location:\s*path/);
+  assert.match(formLogin, /seeOther\("\/"\)/);
+  assert.match(formLogin, /x-forwarded-proto/);
+  assert.doesNotMatch(formLogin, /request\.url/);
   assert.match(shell, /data-port-uid="GHS-PORT-IDENTITY"/);
   assert.match(shell, /href="\/login"/);
 
   assert.match(instrumentation, /bindWb01ProjectionRuntime/);
+  assert.match(instrumentation, /bindIdentityPageCommandRuntimes/);
   assert.match(ready, /status:\s*503/);
 });

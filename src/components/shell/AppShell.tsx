@@ -6,6 +6,7 @@ import { LOCALES, LOCALE_LABELS, type TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import brandStyles from "./BrandLogo.module.css";
 import languageStyles from "./LanguageSelector.module.css";
+import { bindIdentityClientProjectionAdapters } from "@/domain/catalog/identityClientProjectionAdapters";
 
 type NavItem = {
   id: string;
@@ -97,6 +98,7 @@ function HeaderIcon({ kind }: { kind: "bell" | "todo" | "running" }) {
 }
 
 export function AppShell({ children, activeNavId, surface = "front" }: AppShellProps) {
+  bindIdentityClientProjectionAdapters();
   const { locale, setLocale, t } = useI18n();
   const [expanded, setExpanded] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);

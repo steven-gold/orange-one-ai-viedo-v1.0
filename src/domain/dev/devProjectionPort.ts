@@ -68,7 +68,7 @@ function validateProjection(candidate: DevNormalizedProjection): DevNormalizedPr
 export async function readDevProjection(signal?: AbortSignal): Promise<DevProjectionResult> {
   let response: Response;
   try {
-    response = await fetch("/v1/ui-projections/admin%3ADEV-01", { method: "GET", cache: "no-store", signal });
+    response = await fetch("/v1/ui-projections/admin%3ADEV-01", { method: "GET", cache: "no-store", credentials: "include", signal });
   } catch {
     return { ok: false, error_uid: "DEV-01-ERR-UNDEFINED", reason_code: "DEV_PROJECTION_REQUEST_FAILED", correlation_id: "unresolved" };
   }

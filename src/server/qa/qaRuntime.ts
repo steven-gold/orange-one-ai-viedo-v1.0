@@ -1,3 +1,52 @@
-import{executeControlledQaTestOperation,isControlledQaServerTestMode}from"@/server/testing/controlledQaTestRuntime";
-export type QaOperationId="startQaReview"|"startRecheck"|"decidePass"|"decideFail"|"createReleasePackage";export type QaRequest={operation_id:QaOperationId;correlation_id:string;path_params:Record<string,string>;payload:unknown};export type QaBindings={authorize:(r:QaRequest)=>Promise<{allowed:true}|{allowed:false;reason_code?:string}>;execute:(r:QaRequest)=>Promise<unknown>;audit:(e:QaRequest&{outcome:"ALLOWED"|"DENIED"|"SUCCESS"|"ERROR";reason_code?:string})=>Promise<void>};let bindings:QaBindings|null=null;export function configureQaRuntime(n:QaBindings){bindings=n;}async function audit(r:QaBindings,e:Parameters<QaBindings["audit"]>[0]){try{await r.audit(e);}catch{}}
-export async function executeQaOperation(request:QaRequest){const r=bindings;if(!r){if(isControlledQaServerTestMode())return executeControlledQaTestOperation(request);return{ok:false as const,status:503,error_uid:"QA-01-ERR-CONTEXT-001",reason_code:"QA_RUNTIME_NOT_BOUND",correlation_id:request.correlation_id};}let d:Awaited<ReturnType<QaBindings["authorize"]>>;try{d=await r.authorize(request);}catch{return{ok:false as const,status:403,error_uid:"QA-01-ERR-PERM-001",reason_code:"AUTHORIZATION_EVALUATION_FAILED",correlation_id:request.correlation_id};}if(!d.allowed){const reason_code=d.reason_code??"PERMISSION_OR_SCOPE_DENIED";await audit(r,{...request,outcome:"DENIED",reason_code});return{ok:false as const,status:403,error_uid:"QA-01-ERR-PERM-001",reason_code,correlation_id:request.correlation_id};}await audit(r,{...request,outcome:"ALLOWED"});try{const value=await r.execute(request);await audit(r,{...request,outcome:"SUCCESS"});return{ok:true as const,value,correlation_id:request.correlation_id};}catch{await audit(r,{...request,outcome:"ERROR",reason_code:"QA_OPERATION_FAILED"});return{ok:false as const,status:503,error_uid:"QA-01-ERR-CONTEXT-001",reason_code:"QA_OPERATION_FAILED",correlation_id:request.correlation_id};}}
+import { executeControlledQaTestOperation, isControlledQaServerTestMode } from "@/server/testing/controlledQaTestRuntime";
+import { namedReason } from "@/server/shared/namedRuntimeError";
+
+export type QaOperationId = "startQaReview" | "startRecheck" | "decidePass" | "decideFail" | "createReleasePackage";
+export type QaRequest = { operation_id: QaOperationId; correlation_id: string; path_params: Record<string, string>; payload: unknown };
+export type QaBindings = {
+  authorize: (r: QaRequest) => Promise<{ allowed: true } | { allowed: false; reason_code?: string }>;
+  execute: (r: QaRequest) => Promise<unknown>;
+  audit: (e: QaRequest & { outcome: "ALLOWED" | "DENIED" | "SUCCESS" | "ERROR"; reason_code?: string }) => Promise<void>;
+};
+
+let bindings: QaBindings | null = null;
+
+export function configureQaRuntime(n: QaBindings) {
+  bindings = n;
+}
+
+async function audit(r: QaBindings, e: Parameters<QaBindings["audit"]>[0]) {
+  try { await r.audit(e); } catch { /* fail closed */ }
+}
+
+export async function executeQaOperation(request: QaRequest) {
+  if (!bindings) {
+    const { bindIdentityPageCommandRuntimes } = await import("@/server/shared/identityPageCommandRuntime");
+    bindIdentityPageCommandRuntimes();
+  }
+  const r = bindings;
+  if (!r) {
+    if (isControlledQaServerTestMode()) return executeControlledQaTestOperation(request);
+    return { ok: false as const, status: 503, error_uid: "QA-01-ERR-CONTEXT-001", reason_code: "QA_RUNTIME_NOT_BOUND", correlation_id: request.correlation_id };
+  }
+  let d: Awaited<ReturnType<QaBindings["authorize"]>>;
+  try { d = await r.authorize(request); }
+  catch {
+    return { ok: false as const, status: 403, error_uid: "QA-01-ERR-PERM-001", reason_code: "AUTHORIZATION_EVALUATION_FAILED", correlation_id: request.correlation_id };
+  }
+  if (!d.allowed) {
+    const reason_code = d.reason_code ?? "PERMISSION_OR_SCOPE_DENIED";
+    await audit(r, { ...request, outcome: "DENIED", reason_code });
+    return { ok: false as const, status: 403, error_uid: "QA-01-ERR-PERM-001", reason_code, correlation_id: request.correlation_id };
+  }
+  await audit(r, { ...request, outcome: "ALLOWED" });
+  try {
+    const value = await r.execute(request);
+    await audit(r, { ...request, outcome: "SUCCESS" });
+    return { ok: true as const, value, correlation_id: request.correlation_id };
+  } catch (error) {
+    const reason_code = namedReason(error, "QA_OPERATION_FAILED");
+    await audit(r, { ...request, outcome: "ERROR", reason_code });
+    return { ok: false as const, status: 503, error_uid: "QA-01-ERR-CONTEXT-001", reason_code, correlation_id: request.correlation_id };
+  }
+}

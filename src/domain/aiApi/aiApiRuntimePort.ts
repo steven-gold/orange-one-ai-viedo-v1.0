@@ -112,7 +112,7 @@ function normalize(raw: unknown): AiApiProjection {
 export async function readAiApiProjection(signal?: AbortSignal) {
   let response: Response;
   try {
-    response = await fetch("/v1/ui-projections/admin%3AAIAPI-01", { method: "GET", cache: "no-store", signal });
+    response = await fetch("/v1/ui-projections/admin%3AAIAPI-01", { method: "GET", cache: "no-store", credentials: "include", signal });
   } catch {
     return { ok: false as const, reason_code: "AIAPI01_PROJECTION_REQUEST_FAILED", correlation_id: "unresolved" };
   }

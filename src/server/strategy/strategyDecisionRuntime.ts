@@ -1,1 +1,49 @@
-import{executeControlledStrategyWorkspaceDecision}from"@/server/testing/controlledStrategyWorkspaceTestRuntime";export type StrategyDecisionOperation="submitStrategyReview"|"adoptAsContextCandidate";export type StrategyDecisionRequest={operation_id:StrategyDecisionOperation;correlation_id:string;payload:unknown};export type StrategyDecisionBindings={authorize:(r:StrategyDecisionRequest)=>Promise<{allowed:true}|{allowed:false;reason_code?:string}>;execute:(r:StrategyDecisionRequest)=>Promise<unknown>;audit:(e:StrategyDecisionRequest&{outcome:"ALLOWED"|"DENIED"|"SUCCESS"|"ERROR";reason_code?:string})=>Promise<void>};let binding:StrategyDecisionBindings|null=null;export function configureStrategyDecisionRuntime(n:StrategyDecisionBindings){binding=n;}async function audit(b:StrategyDecisionBindings,e:Parameters<StrategyDecisionBindings["audit"]>[0]){try{await b.audit(e);}catch{}}export async function executeStrategyDecision(r:StrategyDecisionRequest){const b=binding;if(!b){const controlled=await executeControlledStrategyWorkspaceDecision(r);if(controlled)return controlled;return{ok:false as const,status:503,reason_code:"STRATEGY_DECISION_RUNTIME_NOT_BOUND",correlation_id:r.correlation_id};}const a=await b.authorize(r).catch(()=>({allowed:false as const,reason_code:"AUTHORIZATION_EVALUATION_FAILED"}));if(!a.allowed){const reason_code=a.reason_code??"PERMISSION_OR_GATE_DENIED";await audit(b,{...r,outcome:"DENIED",reason_code});return{ok:false as const,status:403,reason_code,correlation_id:r.correlation_id};}await audit(b,{...r,outcome:"ALLOWED"});try{const value=await b.execute(r);await audit(b,{...r,outcome:"SUCCESS"});return{ok:true as const,value,correlation_id:r.correlation_id};}catch{await audit(b,{...r,outcome:"ERROR",reason_code:"STRATEGY_DECISION_OPERATION_FAILED"});return{ok:false as const,status:503,reason_code:"STRATEGY_DECISION_OPERATION_FAILED",correlation_id:r.correlation_id};}}
+import { executeControlledStrategyWorkspaceDecision } from "@/server/testing/controlledStrategyWorkspaceTestRuntime";
+import { namedReason } from "@/server/shared/namedRuntimeError";
+
+export type StrategyDecisionOperation = "submitStrategyReview" | "adoptAsContextCandidate";
+export type StrategyDecisionRequest = { operation_id: StrategyDecisionOperation; correlation_id: string; payload: unknown };
+export type StrategyDecisionBindings = {
+  authorize: (r: StrategyDecisionRequest) => Promise<{ allowed: true } | { allowed: false; reason_code?: string }>;
+  execute: (r: StrategyDecisionRequest) => Promise<unknown>;
+  audit: (e: StrategyDecisionRequest & { outcome: "ALLOWED" | "DENIED" | "SUCCESS" | "ERROR"; reason_code?: string }) => Promise<void>;
+};
+
+let binding: StrategyDecisionBindings | null = null;
+
+export function configureStrategyDecisionRuntime(n: StrategyDecisionBindings) {
+  binding = n;
+}
+
+async function audit(b: StrategyDecisionBindings, e: Parameters<StrategyDecisionBindings["audit"]>[0]) {
+  try { await b.audit(e); } catch { /* fail closed */ }
+}
+
+export async function executeStrategyDecision(r: StrategyDecisionRequest) {
+  if (!binding) {
+    const { bindIdentityPageCommandRuntimes } = await import("@/server/shared/identityPageCommandRuntime");
+    bindIdentityPageCommandRuntimes();
+  }
+  const b = binding;
+  if (!b) {
+    const controlled = await executeControlledStrategyWorkspaceDecision(r);
+    if (controlled) return controlled;
+    return { ok: false as const, status: 503, reason_code: "STRATEGY_DECISION_RUNTIME_NOT_BOUND", correlation_id: r.correlation_id };
+  }
+  const a = await b.authorize(r).catch(() => ({ allowed: false as const, reason_code: "AUTHORIZATION_EVALUATION_FAILED" }));
+  if (!a.allowed) {
+    const reason_code = a.reason_code ?? "PERMISSION_OR_GATE_DENIED";
+    await audit(b, { ...r, outcome: "DENIED", reason_code });
+    return { ok: false as const, status: 403, reason_code, correlation_id: r.correlation_id };
+  }
+  await audit(b, { ...r, outcome: "ALLOWED" });
+  try {
+    const value = await b.execute(r);
+    await audit(b, { ...r, outcome: "SUCCESS" });
+    return { ok: true as const, value, correlation_id: r.correlation_id };
+  } catch (error) {
+    const reason_code = namedReason(error, "STRATEGY_DECISION_OPERATION_FAILED");
+    await audit(b, { ...r, outcome: "ERROR", reason_code });
+    return { ok: false as const, status: 503, reason_code, correlation_id: r.correlation_id };
+  }
+}

@@ -1,5 +1,6 @@
 import type { KnowledgeRuntimeRequest, KnowledgeRuntimeResult } from "@/domain/knowledge/knowledgeRuntimeContract";
 import { executeControlledKnowledgePort, isControlledKnowledgeServerTestMode } from "@/server/testing/controlledKnowledgeTestRuntime";
+import { namedReason } from "@/server/shared/namedRuntimeError";
 
 export type KnowledgeRuntimeBindings = {
   authorize: (request: KnowledgeRuntimeRequest) => Promise<{ allowed: true } | { allowed: false; reason_code?: string }>;
@@ -12,6 +13,10 @@ let bindings: KnowledgeRuntimeBindings | null = null;
 export function configureKnowledgeRuntime(next: KnowledgeRuntimeBindings): void { bindings = next; }
 
 export async function executeKnowledgePort(request: KnowledgeRuntimeRequest): Promise<KnowledgeRuntimeResult> {
+  if (!bindings) {
+    const { bindIdentityPageCommandRuntimes } = await import("@/server/shared/identityPageCommandRuntime");
+    bindIdentityPageCommandRuntimes();
+  }
   const runtime = bindings;
   if (!runtime) {
     if (isControlledKnowledgeServerTestMode()) return executeControlledKnowledgePort(request);
@@ -33,8 +38,9 @@ export async function executeKnowledgePort(request: KnowledgeRuntimeRequest): Pr
     const value = await runtime.execute(request);
     await runtime.audit({ ...request, outcome: "SUCCESS" }).catch(() => undefined);
     return { ok: true, value, correlation_id: request.correlation_id };
-  } catch {
-    await runtime.audit({ ...request, outcome: "ERROR", reason_code: "KB_PORT_EXECUTION_FAILED" }).catch(() => undefined);
-    return { ok: false, error_uid: "KB-01-ERR-001", reason_code: "KB_PORT_EXECUTION_FAILED", correlation_id: request.correlation_id, status: 503 };
+  } catch (error) {
+    const reason_code = namedReason(error, "KB_PORT_EXECUTION_FAILED");
+    await runtime.audit({ ...request, outcome: "ERROR", reason_code }).catch(() => undefined);
+    return { ok: false, error_uid: "KB-01-ERR-001", reason_code, correlation_id: request.correlation_id, status: 503 };
   }
 }
