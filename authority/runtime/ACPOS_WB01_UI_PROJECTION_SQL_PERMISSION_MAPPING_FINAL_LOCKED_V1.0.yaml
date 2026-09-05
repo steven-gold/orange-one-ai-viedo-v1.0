@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-ASSIGNMENT-STATUS-APPROVED
+  revision: 2026-09-05-DENY-WINS-ALLOW
   scope: WB-01_PAGE_GATE_AUTHORIZE_AND_EXPLICIT_READ_GAPS_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -15,6 +15,7 @@ approval:
   - Record remaining identity, assignment-status, scope/condition, and read-SQL gaps
   - Point identity actor to ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT cookie session
   - Lock page-gate assignment status predicate to APPROVED
+  - Lock page-gate effect precedence to DENY_WINS
   - Do not bind configureUiProjectionRuntime in this revision
   - Do not change /health/ready to 200
 source:
@@ -61,7 +62,7 @@ authorize:
     canonical_actor: NAMED
     identity_transport: INTERNAL_COOKIE_SESSION
     cookie_name: acpos_session
-    gap_reason: Cookie session can resolve app_users.user_id. Page-gate still needs DENY/ALLOW, scope/condition, and read SQL.
+    gap_reason: Cookie session can resolve app_users.user_id. Page-gate still needs scope/condition and read SQL.
     missing_identity_reason_code: IDENTITY_RUNTIME_NOT_BOUND
   page_assignment_probe:
     tables:
@@ -89,8 +90,15 @@ authorize:
         AND a.status = 'APPROVED'
         AND a.effective_from <= now()
         AND (a.effective_to IS NULL OR a.effective_to > now())
+    effect_evaluation:
+      precedence: DENY_WINS
+      deny_reason_code: PERMISSION_DENIED
+      missing_allow_reason_code: PERMISSION_OR_SCOPE_DENIED
+      steps:
+      - If any returned row has effect DENY, deny
+      - Else if any returned row has effect ALLOW, allow
+      - Else deny
     remaining_evaluation_gaps:
-    - deny_vs_allow_precedence: effect ALLOW and DENY may both exist; Current Authority does not name precedence
     - scope_evaluator: catalog requires explicit_account_scope_match; scope jsonb schema and matcher are not named for WB-01
     - condition_evaluator: catalog requires assignment_condition_evaluates_true; condition jsonb schema and matcher are not named for WB-01
   section_control_field_probes:
@@ -146,7 +154,6 @@ forbidden:
   - Change official site /health/ready to 200
   - Claim production ready
 remaining_blockers:
-  - DENY_VS_ALLOW_PRECEDENCE_NOT_DEFINED
   - SCOPE_CONDITION_EVALUATOR_NOT_DEFINED
   - WB01_SECTION_READ_SQL_NOT_DEFINED
   - AUDIT_PAYLOAD_HASH_ALGORITHM_NOT_DEFINED

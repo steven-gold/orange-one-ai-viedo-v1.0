@@ -58,7 +58,8 @@ test("WB-01 UI projection mapping locks page-gate authorize and keeps adapter bi
   assert.match(mapping, /identity_transport: INTERNAL_COOKIE_SESSION/);
   assert.match(mapping, /account_permission_assignments.status = APPROVED/);
   assert.match(mapping, /AND a.status = 'APPROVED'/);
-  assert.match(mapping, /DENY_VS_ALLOW_PRECEDENCE_NOT_DEFINED/);
+  assert.match(mapping, /precedence: DENY_WINS/);
+  assert.match(mapping, /SCOPE_CONDITION_EVALUATOR_NOT_DEFINED/);
   assert.match(mapping, /Infer company_project_count from COUNT\(projects\)/);
 });
 
