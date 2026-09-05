@@ -1,7 +1,14 @@
 import type { Instrumentation } from "next";
 import { emitObservability } from "@/server/shared/observability";
 
-export function register() {}
+export async function register() {
+  if (process.env.NEXT_RUNTIME === "edge") {
+    return;
+  }
+
+  const { bindProductionNeonRuntime } = await import("@/server/database/neonRuntime");
+  await bindProductionNeonRuntime();
+}
 
 export const onRequestError: Instrumentation.onRequestError = async (_error, request, context) => {
   const errorRecord = typeof _error === "object" && _error !== null ? (_error as { digest?: unknown }) : {};

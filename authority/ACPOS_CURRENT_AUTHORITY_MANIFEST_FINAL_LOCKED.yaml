@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-LIVE-WILD-WAVE-DB-CONTRACT
+  revision: 2026-09-05-WILD-WAVE-REGISTER-DRIVER-BIND
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -198,21 +198,20 @@ cross_authority_bindings:
       authority_e2e: NOT_EXECUTED
       configure_entry_points_audited: 62
       app_route_files_audited: 106
-      production_server_runtime_bootstrap_call_sites: 0
-      database_driver_dependencies: 0
+      production_server_runtime_bootstrap_call_sites: 1
+      database_driver_dependencies: 1
       database_connection_env_keys_in_env_example: 3
       database_driver_package_named: "@neondatabase/serverless"
       live_neon_project_id: wild-wave-25661146
-      instrumentation_register: EMPTY
+      instrumentation_register: NEON_DRIVER_BOUND_UI_PROJECTION_NOT_BOUND
       client_or_controlled_call_sites_do_not_satisfy_server_binding: true
       blockers:
-      - PRODUCTION_RUNTIME_BOOTSTRAP_NOT_MATERIALIZED
       - PRODUCTION_SERVER_RUNTIME_ADAPTER_BINDINGS_NOT_EXECUTED
-      next_action: MERGE_NEW_FAIL_CLOSED_ALLOWED
+      next_action: BIND_CONFIGURE_RUNTIME_ADAPTERS_FROM_CURRENT_AUTHORITY
     truth_guard:
       runtime_complete_claim_allowed: false
       production_ready_claim_allowed: false
-      reason: live Neon identity and DB env contract are named; register() remains empty; 0001-0015 not inherited onto wild-wave
+      reason: Neon driver is bound in register(); UI projection runtime remains unbound; ready stays fail-closed
   live_neon_target:
     neon_project_id: wild-wave-25661146
     neon_project_name: ORANGEONEACPOSStaging
@@ -223,7 +222,7 @@ cross_authority_bindings:
     git_new_preview_branch_id: br-quiet-firefly-aumuvjht
     superseded_recorded_target: tiny-dust-89825424
     required_schema_chain: 0001-0015
-    wild_wave_schema_gate: READ_ONLY_VERIFY_THEN_APPLY_MISSING_BEFORE_BINDING
+    wild_wave_schema_gate: APPLIED_ON_MAIN_2026-09-05
   production_database_runtime_contract:
     authority_path: authority/runtime/ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
     driver_package: "@neondatabase/serverless"
