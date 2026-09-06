@@ -2,17 +2,16 @@
   "schema_version": "1.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "last_sync_at": "2026-09-06T21:55:00+08:00",
+  "last_sync_at": "2026-09-06T22:01:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "main_sha": "a7678265dc8dc914b3c9d8f4a7216c34226ca851",
-  "new_sha_basis": "f9e3afcd4ddd37f47f70bd76234c55f146bb6a2f",
+  "new_sha_basis": "8fdce20e5894224dacd9d7ef1b406c74bde0284e",
   "latest_release_gate": {
     "status": "PASS",
-    "run_number": 244,
-    "run_id": 34037237350,
-    "head_sha": "5160b70222e08512b98295fdd27a218c3bc8137c",
-    "conclusion": "success",
-    "note": "State-only HEAD 5160b702 passed full Release Gate before Production apply attempt; migration 0016 was then made Neon-compatible after Production ALTER ROLE permission denial."
+    "run_number": 248,
+    "run_id": 34037614152,
+    "head_sha": "8fdce20e5894224dacd9d7ef1b406c74bde0284e",
+    "conclusion": "success"
   },
   "latest_post_deploy_smoke": {
     "status": "NOT_REVERIFIED_THIS_SYNC",
@@ -36,14 +35,14 @@
     "current_role": "neondb_owner",
     "public_base_table_count": 152,
     "acpos_runtime_table_count": 42,
-    "rls_enabled_public_table_count": 0,
-    "public_policy_count": 0,
+    "rls_enabled_public_table_count": 10,
+    "public_policy_count": 21,
     "account_count": 2,
     "session_count": 48,
     "app_user_count": 2,
     "migration_repo_highest": 17,
-    "migration_applied_count": 15,
-    "migration_applied_range": "0001-0015",
+    "migration_applied_count": 17,
+    "migration_applied_range": "0001-0017",
     "permission_resource_count": 3651,
     "permission_resource_authority": "3650 sealed catalog + 1 current navigation delta page:admin:DB-01",
     "validated_fk_public": 301,
@@ -142,6 +141,36 @@
         "validation_branch_checksum_updated": true,
         "validation_role_flags_verified": "NOLOGIN/NOSUPERUSER/NOCREATEDB/NOCREATEROLE/NOINHERIT/NOBYPASSRLS"
       }
+    },
+    "production_rls_runtime_role": {
+      "name": "acpos_app_runtime",
+      "can_login": false,
+      "superuser": false,
+      "create_db": false,
+      "create_role": false,
+      "inherit": false,
+      "bypass_rls": false
+    },
+    "production_rls_verification": {
+      "migration_count": 17,
+      "public_tables": 152,
+      "acpos_runtime_tables": 42,
+      "permission_resources": 3651,
+      "acpos_validated_fk": 344,
+      "public_rls_tables": 10,
+      "public_policies": 21,
+      "migration_0016_checksum": "8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4",
+      "migration_0017_checksum": "6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551",
+      "unauthenticated_non_owner_deny": {
+        "actor_user_id": null,
+        "bootstrap_admin": false,
+        "assignments": 0,
+        "projects": 0,
+        "conversations": 0,
+        "mother_locks": 0,
+        "story_candidates": 0
+      },
+      "status": "PASS_DB_FOUNDATION"
     }
   },
   "current_gate_scores": {
@@ -150,8 +179,10 @@
       "score": "2/2"
     },
     "2_release_gate": {
-      "status": "IN_PROGRESS",
-      "reason": "Latest runtime migration compatibility commits after PASS #244 require their own Release Gate before Production re-apply."
+      "status": "PASS",
+      "score": "2/2",
+      "run_number": 248,
+      "head_sha": "8fdce20e5894224dacd9d7ef1b406c74bde0284e"
     },
     "3_vercel_deployment": {
       "status": "NOT_VERIFIED_THIS_SYNC"
@@ -177,18 +208,17 @@
     },
     "10_migrations": {
       "status": "PASS",
-      "score": "15/15_PRODUCTION",
-      "reason": "Production remains exact 0001-0015 before approved RLS production apply; repository/validation branch are prepared through 0017."
+      "score": "17/17",
+      "reason": "Production schema_migration_history verified through 0017 with exact current checksums."
     },
     "11_schema_integrity": {
       "status": "PASS",
       "score": "8/8",
-      "reason": "permission_resources 3651 matches current 3650+1 authority; ACPOS validated FKs 301 public + 43 acpos_runtime = 344; Neon auth 6 excluded"
+      "reason": "Production remains 152 public + 42 acpos_runtime tables, permission_resources 3651 and ACPOS validated FK 344 after migrations 0016-0017."
     },
     "12_postgresql_rls": {
-      "status": "BLOCKED",
-      "score": "0/PRODUCTION",
-      "reason": "First Production 0016 transaction rolled back on Neon ALTER ROLE restriction; Production verified unchanged at 15 migrations / 0 RLS / 0 policies. Remediated 0016 uses fail-closed existing-role guard and validation branch remains PASS; awaiting latest-head Release Gate then re-apply."
+      "status": "PARTIAL",
+      "reason": "Production DB foundation is live: 10 RLS tables / 21 policies / acpos_app_runtime NOLOGIN NOBYPASSRLS; unauthenticated production deny verified. Positive allow/cross-project behavior was validated on fresh Production-derived branch, but Production currently has 0 active sessions, so authenticated Production RLS E2E is not yet claimable."
     },
     "13_accounts": {
       "status": "PARTIAL",
@@ -197,11 +227,11 @@
     "14_login_session_e2e": {
       "status": "BLOCKED",
       "score": "0/4",
-      "reason": "all 48 recorded production sessions are expired and no plaintext production credential is available; branch-only test sessions were used only for RLS validation"
+      "reason": "Production active sessions=0 and no plaintext credential is available; no synthetic Production session was inserted."
     },
     "15_permission_e2e": {
       "status": "PARTIAL",
-      "reason": "Database allow/deny/cross-project isolation and both Production projection owners validated with actor-scoped RLS on the fresh Production-derived branch; authenticated Production UI visibility E2E still outstanding."
+      "reason": "Production RLS deny path and runtime role are live; validation branch proved user allow/bootstrap allow/cross-project deny. Authenticated Production UI visibility E2E remains blocked by lack of an authorized active/login credential."
     },
     "16_production_read_models": {
       "status": "NOT_REVERIFIED_THIS_SYNC"
@@ -256,7 +286,13 @@
     "Projection dependency query department_tasks/child_locks validated under acpos_app_runtime",
     "Release Gate #243 completed successfully for projection RLS wiring",
     "Production 0016 first attempt safely rolled back on Neon ALTER ROLE restriction and Production unchanged",
-    "Migration 0016 remediated for Neon Production with fail-closed existing-role security guard"
+    "Migration 0016 remediated for Neon Production with fail-closed existing-role security guard",
+    "Production migration 0016 PostgreSQL RLS runtime foundation applied successfully",
+    "Production migration 0017 Core story RLS closure applied successfully",
+    "Production verified at 17 migrations / 10 RLS tables / 21 policies",
+    "Production acpos_app_runtime verified NOLOGIN/NOBYPASSRLS with all privileged flags false",
+    "Production schema invariants preserved at 152 public tables / 42 runtime tables / 3651 permissions / 344 validated FK",
+    "Production unauthenticated non-owner RLS deny verified across permissions/projects/conversations/mother_locks/story_candidates"
   ],
   "in_progress_item": "LOGIN_SESSION_RLS_DEPENDENCY_CHAIN",
   "remaining_queue": [
@@ -301,8 +337,8 @@
       "exact_runtime": "Neon production non-owner runtime role",
       "expected_test": "deny/allow/cross-project isolation + authenticated runtime smoke",
       "expected_deploy_effect": "Apply 0016 then 0017 to Production; runtime uses SET LOCAL ROLE acpos_app_runtime with existing DB credential; then merge and deploy REQUIRED_MIGRATION_COUNT=17.",
-      "status": "REMEDIATED_AWAITING_LATEST_RELEASE_GATE",
-      "evidence": "Production first apply transaction rolled back at ALTER ROLE; Production unchanged. Neon-compatible 0016 now omits forbidden ALTER ROLE and fail-closes if an existing runtime role has unsafe flags. Validation branch checksum updated to 8c8ca99c...e7e3cd4 with role flags still all safe."
+      "status": "PRODUCTION_DB_APPLIED_RUNTIME_DEPLOY_PENDING",
+      "evidence": "Production verified: migrations 17, RLS 10 tables, 21 policies, acpos_app_runtime NOLOGIN/NOBYPASSRLS, checksums 0016=8c8ca99c...e7e3cd4 and 0017=6b2cc216...ac7551, unauthenticated non-owner deny all zero; schema invariants unchanged."
     },
     {
       "item_id": "READ-001",
@@ -342,11 +378,11 @@
     }
   ],
   "blockers": [
-    "Latest migration 0016 Neon-compatibility commits must pass their own Release Gate before Production re-apply.",
-    "No production plaintext login credential may be inferred from password hashes; all recorded sessions were expired at validation time, so positive Production Login/Session E2E remains blocked.",
-    "Vercel management-plane authority must be reverified after main merge."
+    "Runtime code with REQUIRED_MIGRATION_COUNT=17 and actor-scoped RLS is not yet merged/deployed to Production main.",
+    "Production has 0 active sessions and no authorized plaintext login credential is available, so positive Login/Session and authenticated Production RLS/UI visibility E2E remain blocked.",
+    "Vercel management-plane authority and post-merge deployment/readiness must be reverified."
   ],
-  "next_executable_item": "Wait for the latest new HEAD Release Gate; if PASS, re-apply Production migration 0016 using Neon-compatible fail-closed role guard, then 0017, verify 17/10/21 and schema invariants, merge new -> main, then verify deployment/readiness.",
-  "last_successful_commit": "f9e3afcd4ddd37f47f70bd76234c55f146bb6a2f",
+  "next_executable_item": "Run Release Gate for this Production-DB-updated state HEAD; if PASS, merge new -> main, observe/trigger Production deployment, verify release_sha, health/readiness, Post-Deploy HTTP/Browser smoke, then update Current State/Gates.",
+  "last_successful_commit": "8fdce20e5894224dacd9d7ef1b406c74bde0284e",
   "last_successful_deployment": "NOT_REVERIFIED_THIS_SYNC"
 }
