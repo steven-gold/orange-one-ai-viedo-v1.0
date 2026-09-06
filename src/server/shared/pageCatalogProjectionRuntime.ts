@@ -1221,7 +1221,11 @@ async function readSg02FromDb(
   };
 }
 
-async function readStrategyAdminFromDb(sql: SqlClient): Promise<unknown> {
+async function readStrategyAdminFromDb(
+  sql: SqlClient,
+  sessionTokenHash: string,
+  actorUserId: string,
+): Promise<unknown> {
   const candidates = await safeRows(() => sql`
     SELECT s.strategy_candidate_id::text AS ref, s.decision_status::text AS status, s.confidence::text AS confidence, s.freshness_at::text AS freshness_at
     FROM strategy_candidates s
@@ -1243,6 +1247,27 @@ async function readStrategyAdminFromDb(sql: SqlClient): Promise<unknown> {
     ORDER BY k.created_at DESC
   `);
   const first = candidates[0] ?? null;
+  const strategyActionResources = {
+    "admin:STR-01::ACT-SEARCH": "action:admin:STR-01:ACT-SEARCH",
+    "admin:STR-01::ACT-REFRESH": "action:admin:STR-01:ACT-REFRESH",
+    "admin:STR-02::ACT-CONFIGURE": "action:admin:STR-02:ACT-CONFIGURE",
+    "admin:STR-02::ACT-APPROVE": "action:admin:STR-02:ACT-APPROVE",
+    "admin:STR-03::ACT-DRAFT-SAVE": "action:admin:STR-03:ACT-DRAFT-SAVE",
+    "admin:STR-03::ACT-APPROVE": "action:admin:STR-03:ACT-APPROVE",
+    "admin:STR-04::ACT-SEARCH": "action:admin:STR-04:ACT-SEARCH",
+    "admin:STR-04::ACT-EXPORT": "action:admin:STR-04:ACT-EXPORT",
+    "admin:STR-05::ACT-CANDIDATE-CREATE": "action:admin:STR-05:ACT-CANDIDATE-CREATE",
+    "admin:STR-05::ACT-APPROVE": "action:admin:STR-05:ACT-APPROVE",
+    "admin:STR-06::ACT-CANDIDATE-COMPARE": "action:admin:STR-06:ACT-CANDIDATE-COMPARE",
+    "admin:STR-06::ACT-CANDIDATE-DECIDE": "action:admin:STR-06:ACT-CANDIDATE-DECIDE",
+    "admin:STR-06::ACT-ADOPT-CONTEXT": "action:admin:STR-06:ACT-ADOPT-CONTEXT",
+  } as const;
+  const actionEnabledEntries = await Promise.all(
+    Object.entries(strategyActionResources).map(async ([key, resourceKey]) => [
+      key,
+      await evaluateCatalogResourceAction(sql, sessionTokenHash, actorUserId, resourceKey, "INVOKE"),
+    ] as const),
+  );
   return {
     page_state: first || packs.length ? "READY" : "EMPTY",
     values: {
@@ -1262,7 +1287,7 @@ async function readStrategyAdminFromDb(sql: SqlClient): Promise<unknown> {
       candidate: asText(first?.status) ?? DASH,
       fact_pack: asText(packs[0]?.freshness_at) ?? DASH,
     },
-    action_enabled: {},
+    action_enabled: Object.fromEntries(actionEnabledEntries),
     selected_resource_id: asText(first?.ref) ?? null,
   };
 }
@@ -1348,7 +1373,7 @@ async function readPageValue(
     case "admin:SG-02":
       return readSg02FromDb(sql, sessionTokenHash, actorUserId);
     case "admin:STR-01":
-      return readStrategyAdminFromDb(sql);
+      return readStrategyAdminFromDb(sql, sessionTokenHash, actorUserId);
     case "admin:KB-01":
       return readKnowledgeFromDb(sql);
     default:
