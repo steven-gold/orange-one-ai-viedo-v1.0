@@ -49,11 +49,13 @@ topology:
       supported_event_types:
       - ACPOS_PROVIDER_EXECUTION_REQUESTED
       - ACPOS_QUEUE_RUNTIME_PROBE
-    execution_model: VERCEL_CRON_ONE_SHOT_DRAIN
+    execution_model: ON_DEMAND_AUTHENTICATED_DRAIN_PLUS_DAILY_RECOVERY_CRON
     cron_path: /v1/internal/queue/provider-execution/drain
-    cron_schedule: '*/5 * * * *'
+    cron_schedule: '0 0 * * *'
     auth: CRON_SECRET_BEARER
     max_batch: 10
+    hobby_plan_constraint: Native Vercel Cron is recovery-only because Hobby permits daily frequency only.
+    on_demand_rule: Effectful enqueue paths may invoke the same authenticated worker runtime immediately; cron remains restart/recovery safety net.
 
 outbox_delivery_extension:
   migration: 0019_async_queue_delivery_runtime
