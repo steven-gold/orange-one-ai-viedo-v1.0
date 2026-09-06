@@ -8,7 +8,8 @@ import { configureIamRuntime, type IamRuntimeRequest } from "@/server/iam/iamRun
 import { configureDepartmentOperationRuntime } from "@/server/shared/departmentOperationRuntime";
 import { configureInfoCommandRuntime, type InfoRequest } from "@/server/info/infoCommandRuntime";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
-import { IDENTITY_COOKIE_NAME, resolveIdentityFromCookie, type IdentityActor } from "@/server/identity/identityRuntime";
+import { runRlsActorQuery } from "@/server/database/rlsRuntime";
+import { hashSessionToken, IDENTITY_COOKIE_NAME, resolveIdentityFromCookie, type IdentityActor } from "@/server/identity/identityRuntime";
 import { CURRENT_PAGE_RESOURCE_KEYS } from "@/server/shared/pageCatalogProjectionRuntime";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 import { configureQaRuntime, type QaRequest } from "@/server/qa/qaRuntime";
@@ -76,11 +77,25 @@ async function readSessionCookie(): Promise<string | undefined> {
   }
 }
 
-async function requireActor(): Promise<IdentityActor> {
+type IdentityContext = {
+  actor: IdentityActor;
+  session_token_hash: string;
+};
+
+async function requireIdentityContext(): Promise<IdentityContext> {
   await ensureProductionNeonRuntime();
-  const identity = await resolveIdentityFromCookie(await readSessionCookie());
+  const cookieValue = await readSessionCookie();
+  const identity = await resolveIdentityFromCookie(cookieValue);
   if (!identity.ok) throw new NamedRuntimeError(identity.reason_code);
-  return identity.actor;
+  if (!cookieValue) throw new NamedRuntimeError("RLS_SESSION_CONTEXT_REQUIRED");
+  return {
+    actor: identity.actor,
+    session_token_hash: hashSessionToken(cookieValue),
+  };
+}
+
+async function requireActor(): Promise<IdentityActor> {
+  return (await requireIdentityContext()).actor;
 }
 
 async function requireSql(): Promise<SqlClient> {
@@ -97,22 +112,28 @@ async function evaluatePageView(resourceKey: string): Promise<{ allowed: true; a
   }
   const boundSql = getProductionNeonSql();
   if (!boundSql) return { allowed: false, reason_code: "DATABASE_RUNTIME_NOT_BOUND" };
-  const identity = await resolveIdentityFromCookie(await readSessionCookie());
+  const cookieValue = await readSessionCookie();
+  const identity = await resolveIdentityFromCookie(cookieValue);
   if (!identity.ok) return { allowed: false, reason_code: identity.reason_code };
+  if (!cookieValue) return { allowed: false, reason_code: "RLS_SESSION_CONTEXT_REQUIRED" };
   try {
-    const rows = await boundSql`
-      SELECT a.effect, a.scope, a.condition
-      FROM account_permission_assignments a
-      JOIN permission_resources r ON r.resource_id = a.resource_id
-      WHERE a.user_id = ${identity.actor.user_id}
-        AND r.resource_key = ${resourceKey}
-        AND r.resource_type = 'PAGE'
-        AND r.active = true
-        AND a.action = 'VIEW'
-        AND a.status = 'APPROVED'
-        AND a.effective_from <= now()
-        AND (a.effective_to IS NULL OR a.effective_to > now())
-    `;
+    const rows = await runRlsActorQuery(
+      boundSql,
+      hashSessionToken(cookieValue),
+      boundSql`
+        SELECT a.effect, a.scope, a.condition
+        FROM account_permission_assignments a
+        JOIN permission_resources r ON r.resource_id = a.resource_id
+        WHERE a.user_id = ${identity.actor.user_id}
+          AND r.resource_key = ${resourceKey}
+          AND r.resource_type = 'PAGE'
+          AND r.active = true
+          AND a.action = 'VIEW'
+          AND a.status = 'APPROVED'
+          AND a.effective_from <= now()
+          AND (a.effective_to IS NULL OR a.effective_to > now())
+      `,
+    );
     const requestScope = {} as Record<string, never>;
     const matched: string[] = [];
     for (const raw of Array.isArray(rows) ? rows : []) {
@@ -142,6 +163,24 @@ function payloadRecord(request: CoreRuntimeRequest): Record<string, unknown> {
   return asRecord(request.payload) ?? {};
 }
 
+function requirePayloadText(payload: Record<string, unknown>, key: string): string {
+  const value = asText(payload[key]);
+  if (!value) throw new NamedRuntimeError(`STORY_CANDIDATE_FIELD_REQUIRED:${key}`);
+  return value;
+}
+
+function requirePayloadJson(payload: Record<string, unknown>, key: string): string {
+  const value = payload[key];
+  if (value === undefined || value === null) {
+    throw new NamedRuntimeError(`STORY_CANDIDATE_FIELD_REQUIRED:${key}`);
+  }
+  try {
+    return JSON.stringify(value);
+  } catch {
+    throw new NamedRuntimeError(`STORY_CANDIDATE_FIELD_INVALID:${key}`);
+  }
+}
+
 function slugCode(title: string, prefix: string): string {
   const base = title.toUpperCase().replace(/[^A-Z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 20);
   return `${prefix}-${base || "ITEM"}-${Date.now().toString(36).toUpperCase()}`;
@@ -149,7 +188,8 @@ function slugCode(title: string, prefix: string): string {
 
 async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
   const sql = await requireSql();
-  const actor = await requireActor();
+  const identityContext = await requireIdentityContext();
+  const actor = identityContext.actor;
   const payload = payloadRecord(request);
 
   switch (request.port_uid) {
@@ -166,43 +206,59 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       `;
       const workspace_id = asText(firstRow(workspaceRows)?.workspace_id);
       if (!workspace_id) throw new NamedRuntimeError("WORKSPACE_NOT_READY");
-      const inserted = await sql`
-        INSERT INTO projects (workspace_id, project_code, title, owner_id, status)
-        VALUES (${workspace_id}::uuid, ${project_code}, ${title}, ${actor.user_id}::uuid, 'DRAFT')
-        RETURNING project_id::text AS project_id
-      `;
+      const inserted = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          INSERT INTO projects (workspace_id, project_code, title, owner_id, status)
+          VALUES (${workspace_id}::uuid, ${project_code}, ${title}, ${actor.user_id}::uuid, 'DRAFT')
+          RETURNING project_id::text AS project_id
+        `,
+      );
       const project_id = asText(firstRow(inserted)?.project_id);
       if (!project_id) throw new NamedRuntimeError("PROJECT_INSERT_FAILED");
       const content_hash = sha256(`project:${project_id}:v1:${title}:${project_code}`);
       const story_core = JSON.stringify({ title });
-      const versionRows = await sql`
-        INSERT INTO project_versions (
-          project_id, version_no, status, story_core, content_hash, created_by
-        ) VALUES (
-          ${project_id}::uuid, 1, 'DRAFT', ${story_core}::jsonb, ${content_hash}, ${actor.user_id}::uuid
-        )
-        RETURNING project_version_id::text AS project_version_ref
-      `;
+      const versionRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          INSERT INTO project_versions (
+            project_id, version_no, status, story_core, content_hash, created_by
+          ) VALUES (
+            ${project_id}::uuid, 1, 'DRAFT', ${story_core}::jsonb, ${content_hash}, ${actor.user_id}::uuid
+          )
+          RETURNING project_version_id::text AS project_version_ref
+        `,
+      );
       const project_version_ref = asText(firstRow(versionRows)?.project_version_ref);
       if (!project_version_ref) throw new NamedRuntimeError("PROJECT_VERSION_INSERT_FAILED");
-      await sql`
-        UPDATE projects
-        SET active_version_id = ${project_version_ref}::uuid
-        WHERE project_id = ${project_id}::uuid
-      `;
+      await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          UPDATE projects
+          SET active_version_id = ${project_version_ref}::uuid
+          WHERE project_id = ${project_id}::uuid
+        `,
+      );
       return { project_id, project_version_ref, project_code, title, state: "DRAFT" };
     }
 
     case "CORE-01-PORT-PROJECT-VALIDATE": {
       const projectVersionId = asText(request.path_params?.projectVersionId);
       if (!projectVersionId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:projectVersionId");
-      const rows = await sql`
-        UPDATE project_versions
-        SET decision_reason = 'VALIDATED'
-        WHERE project_version_id = ${projectVersionId}::uuid
-          AND status = 'DRAFT'
-        RETURNING project_version_id::text AS project_version_ref, project_id::text AS project_id
-      `;
+      const rows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          UPDATE project_versions
+          SET decision_reason = 'VALIDATED'
+          WHERE project_version_id = ${projectVersionId}::uuid
+            AND status = 'DRAFT'
+          RETURNING project_version_id::text AS project_version_ref, project_id::text AS project_id
+        `,
+      );
       const row = firstRow(rows);
       if (!row) throw new NamedRuntimeError("PROJECT_VERSION_NOT_IN_DRAFT");
       return { project_id: asText(row.project_id), project_version_ref: asText(row.project_version_ref), state: "VALIDATED" };
@@ -211,22 +267,30 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
     case "CORE-01-PORT-PROJECT-CONFIRM": {
       const id = asText(request.path_params?.id);
       if (!id) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:id");
-      const rows = await sql`
-        UPDATE project_versions
-        SET status = 'CORE_MODELING'
-        WHERE project_version_id = ${id}::uuid
-          AND status = 'DRAFT'
-          AND decision_reason = 'VALIDATED'
-        RETURNING project_version_id::text AS project_version_ref, project_id::text AS project_id
-      `;
+      const rows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          UPDATE project_versions
+          SET status = 'CORE_MODELING'
+          WHERE project_version_id = ${id}::uuid
+            AND status = 'DRAFT'
+            AND decision_reason = 'VALIDATED'
+          RETURNING project_version_id::text AS project_version_ref, project_id::text AS project_id
+        `,
+      );
       const row = firstRow(rows);
       if (!row) throw new NamedRuntimeError("PROJECT_VERSION_NOT_VALIDATED");
       const project_id = asText(row.project_id);
-      await sql`
-        UPDATE projects
-        SET status = 'CORE_MODELING', active_version_id = ${id}::uuid
-        WHERE project_id = ${project_id}::uuid
-      `;
+      await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          UPDATE projects
+          SET status = 'CORE_MODELING', active_version_id = ${id}::uuid
+          WHERE project_id = ${project_id}::uuid
+        `,
+      );
       return { project_id, project_version_ref: asText(row.project_version_ref), state: "CORE_MODELING" };
     }
 
@@ -236,23 +300,31 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       const title = asText(payload.title) ?? asText(payload.fixture_label);
       if (!title) throw new NamedRuntimeError("TOPIC_TITLE_REQUIRED");
       const topic_code = asText(payload.topic_code) ?? slugCode(title, "TPC");
-      const lockRows = await sql`
-        SELECT mother_lock_id::text AS mother_lock_id, project_version_id::text AS project_version_id
-        FROM mother_locks
-        WHERE project_id = ${projectId}::uuid
-          AND status = 'MOTHER_LOCKED'
-        ORDER BY lock_version DESC
-        LIMIT 1
-      `;
+      const lockRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          SELECT mother_lock_id::text AS mother_lock_id, project_version_id::text AS project_version_id
+          FROM mother_locks
+          WHERE project_id = ${projectId}::uuid
+            AND status = 'MOTHER_LOCKED'
+          ORDER BY lock_version DESC
+          LIMIT 1
+        `,
+      );
       const lock = firstRow(lockRows);
       const mother_lock_id = asText(lock?.mother_lock_id);
       const mother_project_version_id = asText(lock?.project_version_id);
       if (!mother_lock_id || !mother_project_version_id) throw new NamedRuntimeError("MOTHER_LOCK_REQUIRED");
-      const topicRows = await sql`
-        INSERT INTO topics (project_id, topic_code, title, mother_lock_id, status)
-        VALUES (${projectId}::uuid, ${topic_code}, ${title}, ${mother_lock_id}::uuid, 'DRAFT')
-        RETURNING topic_id::text AS topic_id
-      `;
+      const topicRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          INSERT INTO topics (project_id, topic_code, title, mother_lock_id, status)
+          VALUES (${projectId}::uuid, ${topic_code}, ${title}, ${mother_lock_id}::uuid, 'DRAFT')
+          RETURNING topic_id::text AS topic_id
+        `,
+      );
       const topic_id = asText(firstRow(topicRows)?.topic_id);
       if (!topic_id) throw new NamedRuntimeError("TOPIC_INSERT_FAILED");
       const content_hash = sha256(`topic:${topic_id}:v1:${title}`);
@@ -268,9 +340,13 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       `;
       const topic_version_ref = asText(firstRow(versionRows)?.topic_version_ref);
       if (!topic_version_ref) throw new NamedRuntimeError("TOPIC_VERSION_INSERT_FAILED");
-      await sql`
-        UPDATE topics SET active_version_id = ${topic_version_ref}::uuid WHERE topic_id = ${topic_id}::uuid
-      `;
+      await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          UPDATE topics SET active_version_id = ${topic_version_ref}::uuid WHERE topic_id = ${topic_id}::uuid
+        `,
+      );
       return { topic_id, topic_version_ref, project_id: projectId, title, state: "DRAFT" };
     }
 
@@ -281,26 +357,38 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       if (!work_item) throw new NamedRuntimeError("REQUIRED_WORK_ITEM_MISSING");
       const topic_id = asText(payload.topic_id);
       const title = `${work_item} / ${new Date().toISOString()}`;
-      const projectRows = await sql`
-        SELECT p.workspace_id::text AS workspace_id
-        FROM projects p
-        WHERE p.project_id = ${projectId}::uuid
-        LIMIT 1
-      `;
+      const projectRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          SELECT p.workspace_id::text AS workspace_id
+          FROM projects p
+          WHERE p.project_id = ${projectId}::uuid
+          LIMIT 1
+        `,
+      );
       const workspace_id = asText(firstRow(projectRows)?.workspace_id);
       if (!workspace_id) throw new NamedRuntimeError("PROJECT_NOT_FOUND");
       const conversation_id = crypto.randomUUID();
       const threadRows = topic_id
-        ? await sql`
-            INSERT INTO conversations (conversation_id, workspace_id, project_id, topic_id, title, created_by)
-            VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${topic_id}::uuid, ${title}, ${actor.user_id}::uuid)
-            RETURNING conversation_id::text AS conversation_id
-          `
-        : await sql`
-            INSERT INTO conversations (conversation_id, workspace_id, project_id, title, created_by)
-            VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${title}, ${actor.user_id}::uuid)
-            RETURNING conversation_id::text AS conversation_id
-          `;
+        ? await runRlsActorQuery(
+            sql,
+            identityContext.session_token_hash,
+            sql`
+              INSERT INTO conversations (conversation_id, workspace_id, project_id, topic_id, title, created_by)
+              VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${topic_id}::uuid, ${title}, ${actor.user_id}::uuid)
+              RETURNING conversation_id::text AS conversation_id
+            `,
+          )
+        : await runRlsActorQuery(
+            sql,
+            identityContext.session_token_hash,
+            sql`
+              INSERT INTO conversations (conversation_id, workspace_id, project_id, title, created_by)
+              VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${title}, ${actor.user_id}::uuid)
+              RETURNING conversation_id::text AS conversation_id
+            `,
+          );
       if (!asText(firstRow(threadRows)?.conversation_id)) throw new NamedRuntimeError("CONVERSATION_INSERT_FAILED");
       return { conversation_id, project_id: projectId, work_item, topic_id };
     }
@@ -310,22 +398,30 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       if (!conversationId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:conversationId");
       const message = asText(payload.message);
       if (!message) throw new NamedRuntimeError("MESSAGE_REQUIRED");
-      const seqRows = await sql`
-        SELECT COALESCE(MAX(sequence_no), 0)::int AS seq
-        FROM conversation_messages
-        WHERE conversation_id = ${conversationId}::uuid
-      `;
+      const seqRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          SELECT COALESCE(MAX(sequence_no), 0)::int AS seq
+          FROM conversation_messages
+          WHERE conversation_id = ${conversationId}::uuid
+        `,
+      );
       const seq = Number(firstRow(seqRows)?.seq ?? 0) + 1;
       const content = JSON.stringify({ text: message, instruction_kind: asText(payload.instruction_kind) ?? "MESSAGE" });
       const message_ref = crypto.randomUUID();
-      const msgRows = await sql`
-        INSERT INTO conversation_messages (
-          conversation_message_id, conversation_id, sequence_no, actor_type, actor_ref, message_content
-        ) VALUES (
-          ${message_ref}::uuid, ${conversationId}::uuid, ${seq}, 'USER', ${actor.user_id}, ${content}::jsonb
-        )
-        RETURNING conversation_message_id::text AS message_ref
-      `;
+      const msgRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          INSERT INTO conversation_messages (
+            conversation_message_id, conversation_id, sequence_no, actor_type, actor_ref, message_content
+          ) VALUES (
+            ${message_ref}::uuid, ${conversationId}::uuid, ${seq}, 'USER', ${actor.user_id}, ${content}::jsonb
+          )
+          RETURNING conversation_message_id::text AS message_ref
+        `,
+      );
       if (!asText(firstRow(msgRows)?.message_ref)) throw new NamedRuntimeError("MESSAGE_INSERT_FAILED");
       return { conversation_id: conversationId, message_ref, accepted: true };
     }
@@ -333,22 +429,50 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
     case "CORE-01-PORT-STORY-CANDIDATE": {
       const projectId = asText(request.path_params?.projectId);
       if (!projectId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:projectId");
-      const projectRows = await sql`
-        SELECT project_id::text AS project_id, status::text AS status
-        FROM projects
-        WHERE project_id = ${projectId}::uuid
-        LIMIT 1
-      `;
+      const projectRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          SELECT project_id::text AS project_id, status::text AS status
+          FROM projects
+          WHERE project_id = ${projectId}::uuid
+          LIMIT 1
+        `,
+      );
       const project = firstRow(projectRows);
       if (!project) throw new NamedRuntimeError("PROJECT_NOT_FOUND");
       if (asText(project.status) !== "CORE_MODELING") throw new NamedRuntimeError("PROJECT_NOT_CONFIRMED");
-      const candidate_key = `STORY-${Date.now().toString(36).toUpperCase()}`;
-      const content = JSON.stringify({ candidate_key, created_by: actor.user_id });
-      const storyRows = await sql`
-        INSERT INTO story_candidates (project_id, candidate_key, content, status)
-        VALUES (${projectId}::uuid, ${candidate_key}, ${content}::jsonb, 'CANDIDATE')
-        RETURNING story_candidate_id::text AS story_candidate_set_ref
-      `;
+      const candidate_key = asText(payload.candidate_key) ?? `STORY-${Date.now().toString(36).toUpperCase()}`;
+      const content = requirePayloadJson(payload, "content");
+      const strengths = requirePayloadJson(payload, "strengths");
+      const weaknesses = requirePayloadJson(payload, "weaknesses");
+      const market_positioning = requirePayloadText(payload, "market_positioning");
+      const character_space = requirePayloadText(payload, "character_space");
+      const long_form_extension = requirePayloadText(payload, "long_form_extension");
+      const foreshadowing_capacity = requirePayloadText(payload, "foreshadowing_capacity");
+      const production_cost = requirePayloadText(payload, "production_cost");
+      const production_risk = requirePayloadText(payload, "production_risk");
+      const recommendation = requirePayloadText(payload, "recommendation");
+      const wizard_session_id = asText(payload.wizard_session_id);
+      const storyRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          INSERT INTO story_candidates (
+            story_candidate_id, project_id, candidate_key, content, status, wizard_session_id,
+            strengths, weaknesses, market_positioning, character_space, long_form_extension,
+            foreshadowing_capacity, production_cost, production_risk, recommendation,
+            generated_by_subject_type
+          ) VALUES (
+            gen_random_uuid(), ${projectId}::uuid, ${candidate_key}, ${content}::jsonb, 'CANDIDATE',
+            ${wizard_session_id}::uuid, ${strengths}::jsonb, ${weaknesses}::jsonb,
+            ${market_positioning}, ${character_space}, ${long_form_extension},
+            ${foreshadowing_capacity}, ${production_cost}, ${production_risk},
+            ${recommendation}, 'USER'
+          )
+          RETURNING story_candidate_id::text AS story_candidate_set_ref
+        `,
+      );
       const story_candidate_set_ref = asText(firstRow(storyRows)?.story_candidate_set_ref);
       if (!story_candidate_set_ref) throw new NamedRuntimeError("STORY_CANDIDATE_INSERT_FAILED");
       return { story_candidate_set_ref, project_id: projectId };
@@ -358,13 +482,17 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       const project_id = asText(payload.project_id);
       const project_version_ref = asText(payload.project_version_ref);
       if (!project_id || !project_version_ref) throw new NamedRuntimeError("REQUIRED_PROJECT_VERSION_REF_MISSING");
-      const versionRows = await sql`
-        SELECT content_hash, status::text AS status
-        FROM project_versions
-        WHERE project_version_id = ${project_version_ref}::uuid
-          AND project_id = ${project_id}::uuid
-        LIMIT 1
-      `;
+      const versionRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          SELECT content_hash, status::text AS status
+          FROM project_versions
+          WHERE project_version_id = ${project_version_ref}::uuid
+            AND project_id = ${project_id}::uuid
+          LIMIT 1
+        `,
+      );
       const version = firstRow(versionRows);
       const content_hash = asText(version?.content_hash);
       if (!content_hash) throw new NamedRuntimeError("PROJECT_VERSION_NOT_FOUND");
@@ -538,16 +666,21 @@ async function executeInfo(request: InfoRequest): Promise<unknown> {
     throw new NamedRuntimeError("INFO_WRITE_RUNTIME_NOT_MATERIALIZED");
   }
   const sql = await requireSql();
+  const identityContext = await requireIdentityContext();
   const payload = asRecord(request.payload) ?? {};
   const q = `%${asText(payload.query) ?? ""}%`;
-  const rows = await sql`
-    SELECT p.project_id::text AS ref, p.title AS label
-    FROM projects p
-    WHERE p.archived_at IS NULL
-      AND (${q} = '%%' OR p.title ILIKE ${q} OR p.project_code ILIKE ${q})
-    ORDER BY p.created_at DESC
-    LIMIT 50
-  `;
+  const rows = await runRlsActorQuery(
+    sql,
+    identityContext.session_token_hash,
+    sql`
+      SELECT p.project_id::text AS ref, p.title AS label
+      FROM projects p
+      WHERE p.archived_at IS NULL
+        AND (${q} = '%%' OR p.title ILIKE ${q} OR p.project_code ILIKE ${q})
+      ORDER BY p.created_at DESC
+      LIMIT 50
+    `,
+  );
   const results = (Array.isArray(rows) ? rows : []).flatMap((raw) => {
     const row = asRecord(raw);
     const ref = asText(row?.ref);
@@ -616,35 +749,48 @@ async function executeConversation(request: ConversationRequest): Promise<unknow
     throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
   }
   const sql = await requireSql();
-  const actor = await requireActor();
+  const identityContext = await requireIdentityContext();
+  const actor = identityContext.actor;
   const payload = asRecord(request.payload) ?? {};
   const message = asText(payload.message);
   if (!message) throw new NamedRuntimeError("MESSAGE_REQUIRED");
   const conversationId = asText(request.conversation_id);
   if (!conversationId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:conversationId");
-  const exists = await sql`
-    SELECT conversation_id::text AS conversation_id
-    FROM conversations
-    WHERE conversation_id = ${conversationId}::uuid
-    LIMIT 1
-  `;
+  const exists = await runRlsActorQuery(
+    sql,
+    identityContext.session_token_hash,
+    sql`
+      SELECT conversation_id::text AS conversation_id
+      FROM conversations
+      WHERE conversation_id = ${conversationId}::uuid
+      LIMIT 1
+    `,
+  );
   if (!asText(firstRow(exists)?.conversation_id)) throw new NamedRuntimeError("CONVERSATION_NOT_FOUND");
-  const seqRows = await sql`
-    SELECT COALESCE(MAX(sequence_no), 0)::int AS seq
-    FROM conversation_messages
-    WHERE conversation_id = ${conversationId}::uuid
-  `;
+  const seqRows = await runRlsActorQuery(
+    sql,
+    identityContext.session_token_hash,
+    sql`
+      SELECT COALESCE(MAX(sequence_no), 0)::int AS seq
+      FROM conversation_messages
+      WHERE conversation_id = ${conversationId}::uuid
+    `,
+  );
   const seq = Number(firstRow(seqRows)?.seq ?? 0) + 1;
   const content = JSON.stringify({ text: message, instruction_kind: asText(payload.instruction_kind) ?? "MESSAGE" });
   const message_ref = crypto.randomUUID();
-  const msgRows = await sql`
-    INSERT INTO conversation_messages (
-      conversation_message_id, conversation_id, sequence_no, actor_type, actor_ref, message_content
-    ) VALUES (
-      ${message_ref}::uuid, ${conversationId}::uuid, ${seq}, 'USER', ${actor.user_id}, ${content}::jsonb
-    )
-    RETURNING conversation_message_id::text AS message_ref
-  `;
+  const msgRows = await runRlsActorQuery(
+    sql,
+    identityContext.session_token_hash,
+    sql`
+      INSERT INTO conversation_messages (
+        conversation_message_id, conversation_id, sequence_no, actor_type, actor_ref, message_content
+      ) VALUES (
+        ${message_ref}::uuid, ${conversationId}::uuid, ${seq}, 'USER', ${actor.user_id}, ${content}::jsonb
+      )
+      RETURNING conversation_message_id::text AS message_ref
+    `,
+  );
   if (!asText(firstRow(msgRows)?.message_ref)) throw new NamedRuntimeError("MESSAGE_INSERT_FAILED");
   return { conversation_id: conversationId, message_ref, accepted: true };
 }

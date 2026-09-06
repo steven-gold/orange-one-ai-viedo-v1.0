@@ -3,7 +3,7 @@ import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 import { emitObservability } from "@/server/shared/observability";
 
 export const AUTHORITY_NEON_PROJECT_ID = "wild-wave-25661146";
-export const REQUIRED_MIGRATION_COUNT = 15;
+export const REQUIRED_MIGRATION_COUNT = 17;
 
 type NeonSql = NeonQueryFunction<false, false>;
 

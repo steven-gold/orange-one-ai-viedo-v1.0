@@ -1,0 +1,388 @@
+{
+  "schema_version": "1.0",
+  "project": "ACPOS",
+  "repository": "steven-gold/orange-one-ai-viedo-v1.0",
+  "last_sync_at": "2026-09-06T22:01:00+08:00",
+  "evidence_policy": "CURRENT_EVIDENCE_ONLY",
+  "main_sha": "a7678265dc8dc914b3c9d8f4a7216c34226ca851",
+  "new_sha_basis": "8fdce20e5894224dacd9d7ef1b406c74bde0284e",
+  "latest_release_gate": {
+    "status": "PASS",
+    "run_number": 248,
+    "run_id": 34037614152,
+    "head_sha": "8fdce20e5894224dacd9d7ef1b406c74bde0284e",
+    "conclusion": "success"
+  },
+  "latest_post_deploy_smoke": {
+    "status": "NOT_REVERIFIED_THIS_SYNC",
+    "last_recorded": "PASS #374"
+  },
+  "vercel": {
+    "target": "orange-one-acpos-test",
+    "production_url": "https://orange-one-acpos-test.vercel.app",
+    "release_sha": "NOT_VERIFIED_THIS_SYNC",
+    "deployment_status": "NOT_VERIFIED_THIS_SYNC",
+    "management_authority": "NOT_VERIFIED",
+    "management_authority_reason": "Connected Vercel team currently returned zero visible projects and target lookup returned 404; do not infer environment authority from prior records.",
+    "readiness_http": "NOT_VERIFIED_THIS_SYNC",
+    "readiness_reason": "NOT_VERIFIED_THIS_SYNC"
+  },
+  "neon": {
+    "project": "wild-wave-25661146",
+    "branch": "main",
+    "branch_id": "br-shy-cherry-auiol4oy",
+    "database": "neondb",
+    "current_role": "neondb_owner",
+    "public_base_table_count": 152,
+    "acpos_runtime_table_count": 42,
+    "rls_enabled_public_table_count": 10,
+    "public_policy_count": 21,
+    "account_count": 2,
+    "session_count": 48,
+    "app_user_count": 2,
+    "migration_repo_highest": 17,
+    "migration_applied_count": 17,
+    "migration_applied_range": "0001-0017",
+    "permission_resource_count": 3651,
+    "permission_resource_authority": "3650 sealed catalog + 1 current navigation delta page:admin:DB-01",
+    "validated_fk_public": 301,
+    "validated_fk_acpos_runtime": 43,
+    "validated_fk_acpos_total": 344,
+    "validated_fk_neon_auth_excluded": 6,
+    "provider_capability_count": "NOT_VERIFIED_THIS_SYNC",
+    "provider_profile_count": "NOT_VERIFIED_THIS_SYNC",
+    "secret_reference_count": "NOT_VERIFIED_THIS_SYNC",
+    "queue_count": "NOT_VERIFIED_THIS_SYNC",
+    "worker_count": "NOT_VERIFIED_THIS_SYNC",
+    "dlq_count": "NOT_VERIFIED_THIS_SYNC",
+    "active_session_count": 0,
+    "rls_validation": {
+      "branch_name": "rls-0016-validate-20260906",
+      "branch_id": "br-orange-smoke-aut9pafw",
+      "parent_branch_id": "br-shy-cherry-auiol4oy",
+      "inherited_production_snapshot": {
+        "migrations": 15,
+        "public_tables": 152,
+        "acpos_runtime_tables": 42,
+        "permission_resources": 3651,
+        "acpos_validated_fk": 344
+      },
+      "migration_0016_registered": true,
+      "migration_0017_registered": true,
+      "migration_count_after_validation": 17,
+      "migration_0016_checksum": "8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4",
+      "migration_0017_checksum": "6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551",
+      "rls_enabled_public_tables": 10,
+      "public_policy_count": 21,
+      "runtime_role": {
+        "name": "acpos_app_runtime",
+        "can_login": false,
+        "bypass_rls": false,
+        "create_role": false,
+        "create_db": false
+      },
+      "row_isolation": {
+        "unauthenticated": {
+          "assignments": 0,
+          "projects": 0,
+          "conversations": 0,
+          "mother_locks": 0,
+          "story_candidates": 0
+        },
+        "runtime_test": {
+          "assignments": 1,
+          "projects": 1,
+          "visible_project_codes": [
+            "TEST-PRJ-001"
+          ],
+          "admin_project_rows": 0,
+          "own_mother_locks": 1,
+          "own_story_candidate_insert": "PASS",
+          "cross_project_story_candidate_insert": "RLS_VIOLATION_BLOCKED"
+        },
+        "bootstrap_admin": {
+          "assignments": 19,
+          "projects": 3,
+          "conversations": 3,
+          "messages": 1
+        },
+        "runtime_test_write_admin_project_rows": 0,
+        "runtime_test_write_own_project_rows": 1
+      },
+      "projection_validation": {
+        "server_typescript_files_scanned": 70,
+        "production_projection_bypass_paths_found": [
+          "src/server/dashboard/wb01ProjectionRuntime.ts",
+          "src/server/shared/pageCatalogProjectionRuntime.ts"
+        ],
+        "production_projection_bypass_paths_closed": 2,
+        "controlled_test_paths_excluded": true,
+        "systemConversationBindings_db_bypass": false,
+        "department_task_child_lock_projection_query_under_runtime_role": "PASS"
+      },
+      "release_gate": {
+        "run_number": 243,
+        "run_id": 34036973166,
+        "head_sha": "1f795eed2f95cfcc3d4ec6b7ac09cad82df44faa",
+        "status": "PASS"
+      },
+      "status": "PASS",
+      "production_compatibility": {
+        "first_apply_attempt": "ROLLED_BACK",
+        "failure_reason": "Neon Production denied redundant ALTER ROLE",
+        "rollback_verified": {
+          "migrations": 15,
+          "runtime_role_count": 0,
+          "rls_tables": 0,
+          "public_policies": 0
+        },
+        "rollback_safe_dry_run": "CREATE ROLE NOBYPASSRLS + GRANT succeeded; intentional division-by-zero rolled transaction back",
+        "migration_0016_remediation": "Removed ALTER ROLE; existing-role path now raises ACPOS_RUNTIME_ROLE_SECURITY_MISMATCH if security flags differ",
+        "validation_branch_checksum_updated": true,
+        "validation_role_flags_verified": "NOLOGIN/NOSUPERUSER/NOCREATEDB/NOCREATEROLE/NOINHERIT/NOBYPASSRLS"
+      }
+    },
+    "production_rls_runtime_role": {
+      "name": "acpos_app_runtime",
+      "can_login": false,
+      "superuser": false,
+      "create_db": false,
+      "create_role": false,
+      "inherit": false,
+      "bypass_rls": false
+    },
+    "production_rls_verification": {
+      "migration_count": 17,
+      "public_tables": 152,
+      "acpos_runtime_tables": 42,
+      "permission_resources": 3651,
+      "acpos_validated_fk": 344,
+      "public_rls_tables": 10,
+      "public_policies": 21,
+      "migration_0016_checksum": "8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4",
+      "migration_0017_checksum": "6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551",
+      "unauthenticated_non_owner_deny": {
+        "actor_user_id": null,
+        "bootstrap_admin": false,
+        "assignments": 0,
+        "projects": 0,
+        "conversations": 0,
+        "mother_locks": 0,
+        "story_candidates": 0
+      },
+      "status": "PASS_DB_FOUNDATION"
+    }
+  },
+  "current_gate_scores": {
+    "1_main_sha": {
+      "status": "PASS",
+      "score": "2/2"
+    },
+    "2_release_gate": {
+      "status": "PASS",
+      "score": "2/2",
+      "run_number": 248,
+      "head_sha": "8fdce20e5894224dacd9d7ef1b406c74bde0284e"
+    },
+    "3_vercel_deployment": {
+      "status": "NOT_VERIFIED_THIS_SYNC"
+    },
+    "4_health": {
+      "status": "NOT_VERIFIED_THIS_SYNC"
+    },
+    "5_readiness": {
+      "status": "NOT_VERIFIED_THIS_SYNC"
+    },
+    "6_remote_http_smoke": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "7_remote_browser_smoke": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "8_routes": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "9_production_authority": {
+      "status": "PARTIAL",
+      "reason": "Vercel management authority not currently readable"
+    },
+    "10_migrations": {
+      "status": "PASS",
+      "score": "17/17",
+      "reason": "Production schema_migration_history verified through 0017 with exact current checksums."
+    },
+    "11_schema_integrity": {
+      "status": "PASS",
+      "score": "8/8",
+      "reason": "Production remains 152 public + 42 acpos_runtime tables, permission_resources 3651 and ACPOS validated FK 344 after migrations 0016-0017."
+    },
+    "12_postgresql_rls": {
+      "status": "PARTIAL",
+      "reason": "Production DB foundation is live: 10 RLS tables / 21 policies / acpos_app_runtime NOLOGIN NOBYPASSRLS; unauthenticated production deny verified. Positive allow/cross-project behavior was validated on fresh Production-derived branch, but Production currently has 0 active sessions, so authenticated Production RLS E2E is not yet claimable."
+    },
+    "13_accounts": {
+      "status": "PARTIAL",
+      "reason": "2 runtime accounts and 2 app_users verified; full gate criteria not reverified"
+    },
+    "14_login_session_e2e": {
+      "status": "BLOCKED",
+      "score": "0/4",
+      "reason": "Production active sessions=0 and no plaintext credential is available; no synthetic Production session was inserted."
+    },
+    "15_permission_e2e": {
+      "status": "PARTIAL",
+      "reason": "Production RLS deny path and runtime role are live; validation branch proved user allow/bootstrap allow/cross-project deny. Authenticated Production UI visibility E2E remains blocked by lack of an authorized active/login credential."
+    },
+    "16_production_read_models": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "17_core_runtime": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "18_asset_runtime": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "19_video_runtime": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "20_edit_voice_runtime": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "21_qa_runtime": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "22_external_provider": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "23_queue_worker_dlq": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "24_admin_mutation": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    },
+    "25_full_page_button_acceptance": {
+      "status": "NOT_REVERIFIED_THIS_SYNC"
+    }
+  },
+  "production_ready_percentage": null,
+  "production_ready_percentage_reason": "25 gates were not fully re-audited in this sync; prior 50.0% must not be reused as Current.",
+  "completed_items": [
+    "Baseline current repo branch verification",
+    "Production Neon target verification",
+    "Identity/session runtime owner verification",
+    "Repository migration sequence verification through 0015",
+    "Production migration history exact 0001-0015 verification",
+    "Production schema/integrity reconciliation against Current Authority",
+    "Established unique Current Execution State",
+    "RLS validation branch recreated from current Production main after approved obsolete-branch cleanup",
+    "Migration 0016 PostgreSQL RLS runtime foundation materialized in repository",
+    "Non-login NOBYPASSRLS acpos_app_runtime role validated",
+    "Database-level unauthenticated deny, user row isolation, bootstrap admin allow, and cross-project write deny validated",
+    "Protected page permission and first Core/Info/Conversation query paths switched to actor-scoped RLS transactions",
+    "Migration 0017 Core story RLS closure validated at final checksum 6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551",
+    "WB01 projection switched to session-bound actor-scoped RLS",
+    "Page Catalog projection switched to session-bound actor-scoped RLS",
+    "70 src/server TypeScript files scanned for protected-table bypass; two real Production projection paths found and closed",
+    "Projection dependency query department_tasks/child_locks validated under acpos_app_runtime",
+    "Release Gate #243 completed successfully for projection RLS wiring",
+    "Production 0016 first attempt safely rolled back on Neon ALTER ROLE restriction and Production unchanged",
+    "Migration 0016 remediated for Neon Production with fail-closed existing-role security guard",
+    "Production migration 0016 PostgreSQL RLS runtime foundation applied successfully",
+    "Production migration 0017 Core story RLS closure applied successfully",
+    "Production verified at 17 migrations / 10 RLS tables / 21 policies",
+    "Production acpos_app_runtime verified NOLOGIN/NOBYPASSRLS with all privileged flags false",
+    "Production schema invariants preserved at 152 public tables / 42 runtime tables / 3651 permissions / 344 validated FK",
+    "Production unauthenticated non-owner RLS deny verified across permissions/projects/conversations/mother_locks/story_candidates"
+  ],
+  "in_progress_item": "LOGIN_SESSION_RLS_DEPENDENCY_CHAIN",
+  "remaining_queue": [
+    {
+      "item_id": "AUTH-001",
+      "affects_gate": [
+        14,
+        15
+      ],
+      "dependency": "existing acpos_runtime.accounts/sessions and app_users",
+      "exact_files": [
+        "src/server/identity/identityRuntime.ts",
+        "src/app/identity/login/route.ts",
+        "tests/release/identity-runtime.test.mjs"
+      ],
+      "exact_runtime": "Production identity/session",
+      "expected_test": "positive login -> Set-Cookie -> authenticated session -> permission-visible UI -> logout",
+      "expected_deploy_effect": "close production Login/Session E2E evidence",
+      "status": "BLOCKED_ON_PRODUCTION_TEST_CREDENTIAL_OR_EXISTING_SECURE_CI_SECRET",
+      "evidence": "2 runtime accounts and 2 app_users exist; all 48 recorded production sessions are expired; no plaintext credential was retrieved or inferred"
+    },
+    {
+      "item_id": "RLS-001",
+      "affects_gate": [
+        12,
+        15,
+        16
+      ],
+      "dependency": "runtime non-owner role + authority-aligned policy mapping + deployable DB credential binding",
+      "exact_files": [
+        "database/migrations/0016_postgresql_rls_runtime_foundation.sql",
+        "database/migrations/0017_core_story_rls_closure.sql",
+        "database/migrations/migration_checksum_manifest.yaml",
+        "src/server/database/neonRuntime.ts",
+        "src/server/database/rlsRuntime.ts",
+        "src/server/shared/identityPageCommandRuntime.ts",
+        "src/server/dashboard/wb01ProjectionRuntime.ts",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "src/domain/core/coreClientPort.ts",
+        "tests/release/rls-runtime.test.mjs"
+      ],
+      "exact_runtime": "Neon production non-owner runtime role",
+      "expected_test": "deny/allow/cross-project isolation + authenticated runtime smoke",
+      "expected_deploy_effect": "Apply 0016 then 0017 to Production; runtime uses SET LOCAL ROLE acpos_app_runtime with existing DB credential; then merge and deploy REQUIRED_MIGRATION_COUNT=17.",
+      "status": "PRODUCTION_DB_APPLIED_RUNTIME_DEPLOY_PENDING",
+      "evidence": "Production verified: migrations 17, RLS 10 tables, 21 policies, acpos_app_runtime NOLOGIN/NOBYPASSRLS, checksums 0016=8c8ca99c...e7e3cd4 and 0017=6b2cc216...ac7551, unauthenticated non-owner deny all zero; schema invariants unchanged."
+    },
+    {
+      "item_id": "READ-001",
+      "affects_gate": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "dependency": "AUTH-001 + RLS-001",
+      "status": "WAITING_DEPENDENCY"
+    },
+    {
+      "item_id": "PROVIDER-QUEUE-001",
+      "affects_gate": [
+        22,
+        23,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "dependency": "production authority and runtime security closure",
+      "status": "WAITING_DEPENDENCY"
+    },
+    {
+      "item_id": "MUTATION-ACCEPTANCE-001",
+      "affects_gate": [
+        24,
+        25
+      ],
+      "dependency": "runtime/read/provider/queue closures",
+      "status": "WAITING_DEPENDENCY"
+    }
+  ],
+  "blockers": [
+    "Runtime code with REQUIRED_MIGRATION_COUNT=17 and actor-scoped RLS is not yet merged/deployed to Production main.",
+    "Production has 0 active sessions and no authorized plaintext login credential is available, so positive Login/Session and authenticated Production RLS/UI visibility E2E remain blocked.",
+    "Vercel management-plane authority and post-merge deployment/readiness must be reverified."
+  ],
+  "next_executable_item": "Run Release Gate for this Production-DB-updated state HEAD; if PASS, merge new -> main, observe/trigger Production deployment, verify release_sha, health/readiness, Post-Deploy HTTP/Browser smoke, then update Current State/Gates.",
+  "last_successful_commit": "8fdce20e5894224dacd9d7ef1b406c74bde0284e",
+  "last_successful_deployment": "NOT_REVERIFIED_THIS_SYNC"
+}

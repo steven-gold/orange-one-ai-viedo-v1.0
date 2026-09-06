@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { cookies } from "next/headers";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
+import { runRlsActorQuery } from "@/server/database/rlsRuntime";
 import {
   configureDashboardRuntime,
   type DashboardAccessRequest,
@@ -8,6 +9,7 @@ import {
 } from "@/server/dashboard/readModelRuntime";
 import { configureUiProjectionRuntime, type UiProjectionRequest } from "@/server/shared/uiProjectionRuntime";
 import {
+  hashSessionToken,
   IDENTITY_COOKIE_NAME,
   resolveIdentityFromCookie,
   type IdentityActor,
@@ -82,12 +84,17 @@ async function evaluateWb01PageGate(): Promise<GateDecision> {
   const sql = getProductionNeonSql();
   if (!sql) return { allowed: false, reason_code: "DATABASE_RUNTIME_NOT_BOUND" };
 
-  const identity = await resolveIdentityFromCookie(await readSessionCookie());
+  const cookieValue = await readSessionCookie();
+  const identity = await resolveIdentityFromCookie(cookieValue);
   if (!identity.ok) return { allowed: false, reason_code: identity.reason_code };
+  if (!cookieValue) return { allowed: false, reason_code: "RLS_SESSION_CONTEXT_REQUIRED" };
 
   const actor = identity.actor;
   try {
-    const rows = await sql`
+    const rows = await runRlsActorQuery(
+      sql,
+      hashSessionToken(cookieValue),
+      sql`
       SELECT a.account_permission_assignment_id::text AS account_permission_assignment_id,
              a.effect,
              a.status,
@@ -104,7 +111,8 @@ async function evaluateWb01PageGate(): Promise<GateDecision> {
         AND a.status = 'APPROVED'
         AND a.effective_from <= now()
         AND (a.effective_to IS NULL OR a.effective_to > now())
-    `;
+      `,
+    );
     const list = Array.isArray(rows) ? rows : [];
     const requestScope = {} as Record<string, never>;
     const matched: Array<{ effect: string }> = [];
@@ -190,21 +198,29 @@ function scalar(value: number | null): { value: number | null } {
   return { value };
 }
 
-async function countProjects(sql: SqlClient, statuses: readonly string[] | "ALL"): Promise<number | null> {
+async function countProjects(sql: SqlClient, sessionTokenHash: string, statuses: readonly string[] | "ALL"): Promise<number | null> {
   if (statuses === "ALL") {
-    const rows = await sql`
+    const rows = await runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT count(*)::int AS value
+        FROM projects
+        WHERE archived_at IS NULL
+      `,
+    );
+    return asInt(asRecord(Array.isArray(rows) ? rows[0] : null)?.value);
+  }
+  const rows = await runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
       SELECT count(*)::int AS value
       FROM projects
       WHERE archived_at IS NULL
-    `;
-    return asInt(asRecord(Array.isArray(rows) ? rows[0] : null)?.value);
-  }
-  const rows = await sql`
-    SELECT count(*)::int AS value
-    FROM projects
-    WHERE archived_at IS NULL
-      AND status::text IN (${statuses[0]}, ${statuses[1] ?? statuses[0]}, ${statuses[2] ?? statuses[0]}, ${statuses[3] ?? statuses[0]}, ${statuses[4] ?? statuses[0]}, ${statuses[5] ?? statuses[0]}, ${statuses[6] ?? statuses[0]}, ${statuses[7] ?? statuses[0]})
-  `;
+        AND status::text IN (${statuses[0]}, ${statuses[1] ?? statuses[0]}, ${statuses[2] ?? statuses[0]}, ${statuses[3] ?? statuses[0]}, ${statuses[4] ?? statuses[0]}, ${statuses[5] ?? statuses[0]}, ${statuses[6] ?? statuses[0]}, ${statuses[7] ?? statuses[0]})
+    `,
+  );
   return asInt(asRecord(Array.isArray(rows) ? rows[0] : null)?.value);
 }
 
@@ -213,9 +229,12 @@ async function readDashboardProjection(request: DashboardAccessRequest): Promise
   const sql = getProductionNeonSql();
   if (!sql) throw new Error("DATABASE_RUNTIME_NOT_BOUND");
 
-  const identity = await resolveIdentityFromCookie(await readSessionCookie());
+  const cookieValue = await readSessionCookie();
+  const identity = await resolveIdentityFromCookie(cookieValue);
   if (!identity.ok) throw new Error(identity.reason_code);
+  if (!cookieValue) throw new Error("RLS_SESSION_CONTEXT_REQUIRED");
   const actor = identity.actor;
+  const sessionTokenHash = hashSessionToken(cookieValue);
 
   const [
     companyProjectCount,
@@ -231,58 +250,77 @@ async function readDashboardProjection(request: DashboardAccessRequest): Promise
     migrationRows,
     completionRows,
   ] = await Promise.all([
-    countProjects(sql, "ALL"),
-    countProjects(sql, ["RUNNING"]),
-    countProjects(sql, ["DRAFT", "WAITING_DEPENDENCY", "READY", "BLOCKED", "COMPILE_REQUESTED", "CORE_MODELING"]),
-    countProjects(sql, ["IN_REVIEW", "PENDING_APPROVAL", "RECHECK", "CORE_REVIEW", "BLUEPRINT_REVIEW", "READY_FOR_MOTHER_REVIEW", "READY_FOR_CHILD_REVIEW", "SCORE_PENDING"]),
-    countProjects(sql, ["PUBLISHED", "ARCHIVED", "HANDED_OFF", "PASS"]),
-    sql`
-      SELECT project_id::text AS project_id,
-             title AS display_name,
-             title AS label,
-             project_code AS code,
-             status::text AS status
-      FROM projects
-      WHERE archived_at IS NULL
-      ORDER BY created_at ASC
-    `,
-    sql`
-      SELECT topic_id::text AS topic_id,
-             project_id::text AS project_id,
-             title AS display_name,
-             title AS label,
-             topic_code AS code,
-             status::text AS status
-      FROM topics
-      WHERE archived_at IS NULL
-      ORDER BY created_at ASC
-    `,
-    sql`
-      SELECT t.task_id::text AS task_id,
-             cl.topic_id::text AS topic_id,
-             t.task_id::text AS code,
-             t.status::text AS task_state
-      FROM department_tasks t
-      JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
-      ORDER BY t.created_at ASC
-    `,
-    sql`
-      SELECT department::text AS unit_key,
-             department::text AS unit_label,
-             CASE
-               WHEN count(*) FILTER (WHERE status = 'RUNNING') > 0 THEN 'RUNNING'
-               WHEN count(*) FILTER (WHERE status IN ('WAITING_DEPENDENCY', 'READY', 'BLOCKED')) > 0 THEN 'PENDING'
-               WHEN count(*) FILTER (WHERE status IN ('IN_REVIEW', 'PENDING_APPROVAL', 'RECHECK')) > 0 THEN 'REVIEW'
-               ELSE 'IDLE'
-             END AS state,
-             count(*) FILTER (WHERE status = 'RUNNING')::int AS running_count,
-             count(*) FILTER (WHERE status IN ('WAITING_DEPENDENCY', 'READY', 'BLOCKED'))::int AS pending_count,
-             count(*) FILTER (WHERE status IN ('IN_REVIEW', 'PENDING_APPROVAL', 'RECHECK'))::int AS review_count,
-             count(*) FILTER (WHERE completed_at IS NOT NULL)::int AS completed_count
-      FROM department_tasks
-      GROUP BY department
-      ORDER BY department::text
-    `,
+    countProjects(sql, sessionTokenHash, "ALL"),
+    countProjects(sql, sessionTokenHash, ["RUNNING"]),
+    countProjects(sql, sessionTokenHash, ["DRAFT", "WAITING_DEPENDENCY", "READY", "BLOCKED", "COMPILE_REQUESTED", "CORE_MODELING"]),
+    countProjects(sql, sessionTokenHash, ["IN_REVIEW", "PENDING_APPROVAL", "RECHECK", "CORE_REVIEW", "BLUEPRINT_REVIEW", "READY_FOR_MOTHER_REVIEW", "READY_FOR_CHILD_REVIEW", "SCORE_PENDING"]),
+    countProjects(sql, sessionTokenHash, ["PUBLISHED", "ARCHIVED", "HANDED_OFF", "PASS"]),
+    runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT project_id::text AS project_id,
+               title AS display_name,
+               title AS label,
+               project_code AS code,
+               status::text AS status
+        FROM projects
+        WHERE archived_at IS NULL
+        ORDER BY created_at ASC
+      `,
+    ),
+    runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT topic_id::text AS topic_id,
+               project_id::text AS project_id,
+               title AS display_name,
+               title AS label,
+               topic_code AS code,
+               status::text AS status
+        FROM topics
+        WHERE archived_at IS NULL
+        ORDER BY created_at ASC
+      `,
+    ),
+    runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT t.task_id::text AS task_id,
+               cl.topic_id::text AS topic_id,
+               t.task_id::text AS code,
+               t.status::text AS task_state
+        FROM department_tasks t
+        JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
+        JOIN topics tp ON tp.topic_id = cl.topic_id
+        ORDER BY t.created_at ASC
+      `,
+    ),
+    runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT t.department::text AS unit_key,
+               t.department::text AS unit_label,
+               CASE
+                 WHEN count(*) FILTER (WHERE t.status = 'RUNNING') > 0 THEN 'RUNNING'
+                 WHEN count(*) FILTER (WHERE t.status IN ('WAITING_DEPENDENCY', 'READY', 'BLOCKED')) > 0 THEN 'PENDING'
+                 WHEN count(*) FILTER (WHERE t.status IN ('IN_REVIEW', 'PENDING_APPROVAL', 'RECHECK')) > 0 THEN 'REVIEW'
+                 ELSE 'IDLE'
+               END AS state,
+               count(*) FILTER (WHERE t.status = 'RUNNING')::int AS running_count,
+               count(*) FILTER (WHERE t.status IN ('WAITING_DEPENDENCY', 'READY', 'BLOCKED'))::int AS pending_count,
+               count(*) FILTER (WHERE t.status IN ('IN_REVIEW', 'PENDING_APPROVAL', 'RECHECK'))::int AS review_count,
+               count(*) FILTER (WHERE t.completed_at IS NOT NULL)::int AS completed_count
+        FROM department_tasks t
+        JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
+        JOIN topics tp ON tp.topic_id = cl.topic_id
+        GROUP BY t.department
+        ORDER BY t.department::text
+      `,
+    ),
     sql`
       SELECT notification_id::text AS notification_id,
              COALESCE(payload->>'title', notification_type) AS title,
@@ -300,21 +338,25 @@ async function readDashboardProjection(request: DashboardAccessRequest): Promise
       SELECT count(*)::int AS n, now()::text AS checked_at
       FROM schema_migration_history
     `,
-    sql`
-      SELECT t.task_id::text AS completion_id,
-             p.title AS project_label,
-             tp.title AS topic_label,
-             t.department::text AS item_label,
-             t.status::text AS completion_kind,
-             t.completed_at::text AS completed_at
-      FROM department_tasks t
-      JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
-      JOIN topics tp ON tp.topic_id = cl.topic_id
-      JOIN projects p ON p.project_id = tp.project_id
-      WHERE t.completed_at IS NOT NULL
-      ORDER BY t.completed_at DESC
-      LIMIT 20
-    `,
+    runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT t.task_id::text AS completion_id,
+               p.title AS project_label,
+               tp.title AS topic_label,
+               t.department::text AS item_label,
+               t.status::text AS completion_kind,
+               t.completed_at::text AS completed_at
+        FROM department_tasks t
+        JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
+        JOIN topics tp ON tp.topic_id = cl.topic_id
+        JOIN projects p ON p.project_id = tp.project_id
+        WHERE t.completed_at IS NOT NULL
+        ORDER BY t.completed_at DESC
+        LIMIT 20
+      `,
+    ),
   ]);
 
   const tasksByTopic = new Map<string, Array<Record<string, unknown>>>();
@@ -435,7 +477,7 @@ async function readDashboardProjection(request: DashboardAccessRequest): Promise
     industry_news: { industry_news: { items: [] } },
     system_status_summary: {
       system_status_summary: {
-        overall_status: migrationCount === 15 ? "READY" : "BLOCKED",
+        overall_status: migrationCount === 17 ? "READY" : "BLOCKED",
         summary: `schema_migration_history=${migrationCount ?? "unresolved"}`,
         checked_at: asText(migration?.checked_at),
       },

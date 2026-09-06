@@ -1,9 +1,9 @@
 authority:
   id: ACPOS_CURRENT_AUTHORITY_MANIFEST
-  version: V1.4
+  version: V1.5
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-06-CONTROL-PLANE-READINESS
+  revision: 2026-09-06-PRODUCTION-INTEGRITY-RECONCILIATION
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -215,6 +215,38 @@ cross_authority_bindings:
       runtime_complete_claim_allowed: false
       production_ready_claim_allowed: false
       reason: Database and identity control-plane readiness is separate from page authorization; unauthenticated projections remain fail-closed and full production acceptance stays forbidden
+  production_integrity_checklist:
+    authority_date: '2026-09-06'
+    neon_identity: wild-wave-25661146/main/br-shy-cherry-auiol4oy/neondb
+    required_check_count: 8
+    checks:
+      migration_history_rows: 15
+      checksum_mismatches: 0
+      approval_mismatches: 0
+      user_tables_public_plus_runtime: 194
+      validated_foreign_keys_after_0005: 344
+      unvalidated_constraints: 0
+      permission_resource_rows_current: 3651
+      permission_resource_graph:
+        duplicate_resource_keys: 0
+        orphan_parent_keys: 0
+        current_db_page_resource_rows: 1
+    permission_resource_reconciliation:
+      canonical_0003_catalog_rows: 3650
+      current_page_delta_rows: 1
+      current_page_delta_resource_key: page:admin:DB-01
+      current_page_delta_reason: Current Navigation Authority registers admin:DB-01, which is absent from the sealed 0003 catalog.
+      current_page_delta_contract:
+        resource_type: PAGE
+        allowed_actions:
+        - VIEW
+        parent_resource_key: null
+        active: true
+    foreign_key_reconciliation:
+      canonical_0001_foreign_keys: 343
+      0005_added_foreign_keys: 1
+      0005_added_constraint: meetings.fk_meetings_context_snapshot
+      current_validated_foreign_keys: 344
   live_neon_target:
     neon_project_id: wild-wave-25661146
     neon_project_name: ORANGEONEACPOSStaging
