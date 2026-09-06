@@ -1,6 +1,7 @@
 import type { CoreRuntimeRequest, CoreRuntimeResult } from "@/domain/core/coreRuntimeContract";
 import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 import { getControlledCoreTestRuntimeBindings } from "@/server/testing/controlledCoreTestRuntime";
+import { namedReason } from "@/server/shared/namedRuntimeError";
 
 export type CoreRuntimeBindings = {
   authorize: (request: CoreRuntimeRequest) => Promise<{ allowed: true } | { allowed: false; reason_code?: string }>;
@@ -17,6 +18,10 @@ async function audit(runtime: CoreRuntimeBindings, entry: Parameters<CoreRuntime
 }
 
 export async function executeCorePort(request: CoreRuntimeRequest): Promise<CoreRuntimeResult> {
+  if (!bindings && !isControlledTestMode()) {
+    const { bindIdentityPageCommandRuntimes } = await import("@/server/shared/identityPageCommandRuntime");
+    bindIdentityPageCommandRuntimes();
+  }
   const runtime = bindings ?? (isControlledTestMode() ? getControlledCoreTestRuntimeBindings() : null);
   if (!runtime) {
     if (request.port_uid === "CORE-01-PORT-PROJECT-CREATE" || request.port_uid === "CORE-01-PORT-TOPIC-CREATE") {
@@ -40,8 +45,9 @@ export async function executeCorePort(request: CoreRuntimeRequest): Promise<Core
     const value = await runtime.execute(request);
     await audit(runtime, { ...request, outcome: "SUCCESS" });
     return { ok: true, value, correlation_id: request.correlation_id };
-  } catch {
-    await audit(runtime, { ...request, outcome: "ERROR", reason_code: "CORE_PORT_EXECUTION_FAILED" });
-    return { ok: false, error_uid: "CORE-01-ERR-CONTEXT-001", reason_code: "CORE_PORT_EXECUTION_FAILED", correlation_id: request.correlation_id, status: 503 };
+  } catch (error) {
+    const reason_code = namedReason(error, "CORE_PORT_EXECUTION_FAILED");
+    await audit(runtime, { ...request, outcome: "ERROR", reason_code });
+    return { ok: false, error_uid: "CORE-01-ERR-CONTEXT-001", reason_code, correlation_id: request.correlation_id, status: 503 };
   }
 }

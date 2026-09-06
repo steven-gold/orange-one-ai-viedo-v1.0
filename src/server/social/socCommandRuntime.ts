@@ -1,4 +1,5 @@
 import { executeControlledSocCommand, isControlledSocServerTestMode, type SocCommandOperation, type SocRuntimeRequest } from "@/server/testing/controlledSocTestRuntime";
+import { namedReason } from "@/server/shared/namedRuntimeError";
 
 export type SocCommandResult =
   | { ok: true; value: unknown; correlation_id: string }
@@ -17,6 +18,10 @@ export function configureSocCommandRuntime(next: Binding) { binding = next; }
 async function audit(b: Binding, e: Parameters<Binding["audit"]>[0]) { try { await b.audit(e); } catch { /* fail closed */ } }
 
 export async function runSocCommand(request: SocRuntimeRequest): Promise<SocCommandResult> {
+  if (!binding) {
+    const { bindIdentityPageCommandRuntimes } = await import("@/server/shared/identityPageCommandRuntime");
+    bindIdentityPageCommandRuntimes();
+  }
   const b = binding;
   if (!b) {
     if (isControlledSocServerTestMode()) return executeControlledSocCommand(request);
@@ -32,9 +37,10 @@ export async function runSocCommand(request: SocRuntimeRequest): Promise<SocComm
     const value = await b.execute(request);
     await audit(b, { ...request, outcome: "SUCCESS" });
     return { ok: true as const, value, correlation_id: request.correlation_id };
-  } catch {
-    await audit(b, { ...request, outcome: "ERROR", reason_code: "SOC01_OPERATION_FAILED" });
-    return { ok: false as const, status: 503, reason_code: "SOC01_OPERATION_FAILED", correlation_id: request.correlation_id };
+  } catch (error) {
+    const reason_code = namedReason(error, "SOC01_OPERATION_FAILED");
+    await audit(b, { ...request, outcome: "ERROR", reason_code });
+    return { ok: false as const, status: 503, reason_code, correlation_id: request.correlation_id };
   }
 }
 

@@ -33,7 +33,7 @@ async function readJson(response: Response): Promise<unknown> {
 
 export async function readCoreProjection(signal?: AbortSignal): Promise<CoreClientInvokeResult> {
   try {
-    const response = await fetch("/v1/ui-projections/CORE-01", { method: "GET", cache: "no-store", signal });
+    const response = await fetch("/v1/ui-projections/CORE-01", { method: "GET", cache: "no-store", credentials: "include", signal });
     const correlation_id = response.headers.get("x-correlation-id") ?? "unresolved";
     const value = await readJson(response);
     if (!response.ok) {
@@ -90,6 +90,7 @@ export async function invokeCoreAction(input: CoreClientInvokeInput): Promise<Co
     const response = await fetch(url, {
       method: contract.method,
       cache: "no-store",
+      credentials: "include",
       signal: input.signal,
       headers,
       body: contract.method === "POST" ? JSON.stringify(input.payload ?? null) : undefined,

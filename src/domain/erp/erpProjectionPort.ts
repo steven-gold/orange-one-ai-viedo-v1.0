@@ -103,7 +103,7 @@ function errorUid(status: number, reason: string) {
 export async function readErpProjection(signal?: AbortSignal) {
   let response: Response;
   try {
-    response = await fetch("/v1/ui-projections/admin%3AERP-01", { method: "GET", cache: "no-store", signal });
+    response = await fetch("/v1/ui-projections/admin%3AERP-01", { method: "GET", cache: "no-store", credentials: "include", signal });
   } catch {
     return { ok: false as const, error_uid: "ERP-01-ERR-UNDEFINED", reason_code: "ERP_PROJECTION_REQUEST_FAILED", correlation_id: "unresolved" };
   }

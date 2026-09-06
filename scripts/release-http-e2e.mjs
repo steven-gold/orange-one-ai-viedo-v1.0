@@ -97,7 +97,8 @@ try {
       assert(projection.status === 503, `CONTROLLED_PRODUCTION_PROJECTION_${uid}_HTTP_${projection.status}`);
       assert(/UI_PROJECTION_RUNTIME_NOT_BOUND/.test(text), `CONTROLLED_PRODUCTION_PROJECTION_REASON_${uid}`);
     } else {
-      assert([200, 503].includes(projection.status), `PROJECTION_${uid}_HTTP_${projection.status}`);
+      assert([200, 403, 503].includes(projection.status), `PROJECTION_${uid}_HTTP_${projection.status}`);
+      if (projection.status === 403) assert(/AUTHORIZATION|PERMISSION|DENIED|POLICY|DATABASE_RUNTIME/.test(text), `UNTRUTHFUL_403_${uid}`);
       if (projection.status === 503) assert(/RUNTIME_NOT_BOUND|NOT_BOUND|NOT_CONFIGURED/.test(text), `UNTRUTHFUL_503_${uid}`);
     }
   }
@@ -113,8 +114,11 @@ try {
     };
     const response = await fetch(`${base}${probe.path}`, init);
     const text = await response.text();
-    assert(response.status === 503, `PRODUCTION_RUNTIME_FAIL_CLOSED_${probe.path}_HTTP_${response.status}`);
-    assert(text.includes(probe.reason), `PRODUCTION_RUNTIME_FAIL_CLOSED_REASON_${probe.path}`);
+    assert([403, 503].includes(response.status), `PRODUCTION_RUNTIME_FAIL_CLOSED_${probe.path}_HTTP_${response.status}`);
+    const hasExpectedReason = text.includes(probe.reason)
+      || text.includes("DATABASE_RUNTIME")
+      || /AUTHORIZATION|PERMISSION|DENIED|POLICY/.test(text);
+    assert(hasExpectedReason, `PRODUCTION_RUNTIME_FAIL_CLOSED_REASON_${probe.path}`);
     assert(!/TEST_ONLY|TEST-RUN-|"synthetic"\s*:\s*true/.test(text), `PRODUCTION_RUNTIME_TEST_DATA_LEAK_${probe.path}`);
     assert(Boolean(response.headers.get("x-correlation-id")), `PRODUCTION_RUNTIME_CORRELATION_ID_MISSING_${probe.path}`);
   }

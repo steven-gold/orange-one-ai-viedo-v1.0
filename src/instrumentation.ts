@@ -14,6 +14,8 @@ export async function register() {
   }
   const { bindWb01ProjectionRuntime } = await import("@/server/dashboard/wb01ProjectionRuntime");
   bindWb01ProjectionRuntime();
+  const { bindIdentityPageCommandRuntimes } = await import("@/server/shared/identityPageCommandRuntime");
+  bindIdentityPageCommandRuntimes();
 }
 
 export const onRequestError: Instrumentation.onRequestError = async (_error, request, context) => {

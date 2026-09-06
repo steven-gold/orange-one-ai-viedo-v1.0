@@ -229,7 +229,7 @@ test("SYS-01 keeps undefined lifecycle operations fail-closed while shared conve
   assert.match(messageRoute, /conversationPost\(["']sendConversationMessage["']\)/);
   assert.match(stopRoute, /conversationPost\(["']stopConversationGeneration["']\)/);
   assert.match(conversationRuntime, /CONVERSATION_RUNTIME_NOT_BOUND/);
-  assert.match(conversationRuntime, /status:503/);
+  assert.match(conversationRuntime, /status:\s*503/);
 
   assert.match(visual, /data-effectful-runtime-ready=["']false["']/);
   for (const controlId of [

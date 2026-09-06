@@ -35,7 +35,7 @@ function normalizeStrategyProjection(raw:unknown):StrategyNormalizedProjection|n
 export function isStrategyProjectionResolverBound(){return true;}
 export async function readStrategyProjection(signal?:AbortSignal){
   let response:Response;
-  try{response=await fetch('/v1/ui-projections/workspace%3ASTR-01',{method:'GET',cache:'no-store',signal});}
+  try{response=await fetch('/v1/ui-projections/workspace%3ASTR-01',{method:'GET',cache:'no-store',credentials:'include',signal});}
   catch{return{ok:false as const,error_uid:'STR-01-ERR-CONTEXT-001',reason_code:'STRATEGY_PROJECTION_REQUEST_FAILED',correlation_id:'unresolved'};}
   const correlation_id=response.headers.get('x-correlation-id')??'unresolved';
   const raw:unknown=await response.json().catch(()=>null);

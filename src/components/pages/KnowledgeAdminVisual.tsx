@@ -87,7 +87,7 @@ const CONTROLS: readonly ControlSpec[] = [
 ] as const;
 
 const FIELD_COUNT = FIELD_GROUPS.reduce((sum, group) => sum + group.fields.length, 0);
-const EFFECTFUL_RUNTIME_READY = false;
+const EFFECTFUL_RUNTIME_READY = true;
 
 function fieldsFor(section: number, component: string) { return FIELD_GROUPS.filter((group) => group.section === section && group.component === component); }
 function projectionValue(projection: KnowledgeProjection | null, suffix: string): unknown { return projection?.values[`KB-01-FLD-${suffix}`] ?? projection?.values[suffix] ?? null; }
@@ -119,6 +119,8 @@ export function KnowledgeAdminVisual() {
   const [runtimeError, setRuntimeError] = useState<string | null>(null);
   const [correlationId, setCorrelationId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -138,15 +140,48 @@ export function KnowledgeAdminVisual() {
   const blockedReason = loading ? "PROJECTION_LOADING" : runtimeError ?? "RUNTIME_NOT_EXECUTED";
   const fieldValue = (suffix: string) => displayProjectionValue(projectionValue(projection, suffix));
 
+  const runControl = async (control: ControlSpec) => {
+    if (busy) return;
+    const trace = getKnowledgeActionTrace(control.action);
+    if (!trace || trace.method === "LOCAL") return;
+    setBusy(true);
+    try {
+      if (trace.operation === "searchKnowledge") {
+        const response = await fetch("/v1/knowledge/search", {
+          method: "POST",
+          cache: "no-store",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ query: searchQuery }),
+        });
+        const correlation = response.headers.get("x-correlation-id");
+        if (correlation) setCorrelationId(correlation);
+        const raw: unknown = await response.json().catch(() => null);
+        const body = raw && typeof raw === "object" && !Array.isArray(raw) ? raw as Record<string, unknown> : null;
+        if (!response.ok) {
+          setRuntimeError(typeof body?.reason_code === "string" ? body.reason_code : "KB_SEARCH_FAILED");
+        } else {
+          setRuntimeError(null);
+        }
+        return;
+      }
+      setRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
+    } catch {
+      setRuntimeError("KB_PORT_REQUEST_FAILED");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const actionButton = (control: ControlSpec) => {
     const trace = getKnowledgeActionTrace(control.action);
     const projectionEnabled = projection?.control_enabled[control.uid] === true;
-    const disabled = !EFFECTFUL_RUNTIME_READY || !projectionEnabled;
+    const disabled = !EFFECTFUL_RUNTIME_READY || !projectionEnabled || busy;
     return (
-      <button key={control.uid} type="button" data-control-uid={control.uid} data-action-id={control.action} data-gate-uid={control.gate} data-permission={control.permission}
+      <button key={control.uid} type="button" onClick={() => { void runControl(control); }} data-control-uid={control.uid} data-action-id={control.action} data-gate-uid={control.gate} data-permission={control.permission}
         data-action-owner={trace?.owner ?? "UNRESOLVED"} data-action-operation={trace?.operation ?? "UNRESOLVED"} data-action-method={trace?.method ?? "UNRESOLVED"}
         data-action-path={trace?.path ?? "UNRESOLVED"} data-action-errors={trace?.errors.join(",") ?? "UNRESOLVED"} data-audit-event={trace?.audit_event ?? "UNRESOLVED"}
-        data-runtime-binding="NOT_EXECUTED" data-required-context={control.visible} data-required-permission={control.permission} data-current-state={pageState}
+        data-runtime-binding={EFFECTFUL_RUNTIME_READY ? "BOUND" : "NOT_EXECUTED"} data-required-context={control.visible} data-required-permission={control.permission} data-current-state={pageState}
         data-blocked-reason={disabled ? blockedReason : ""} data-control-enabled-from-projection={String(projectionEnabled)} disabled={disabled}>
         <span>{knowledgeControlLabel(locale, control.suffix)}</span><small>{control.action}</small>
       </button>
@@ -163,7 +198,7 @@ export function KnowledgeAdminVisual() {
           <div className={styles.eyebrow}>ADMIN · KB-01 · KNOWLEDGE & EXPERIENCE GOVERNANCE</div><h1>{knowledgeText(locale, "pageName")}</h1><p>{knowledgeText(locale, "pageRole")}</p>
           <div className={styles.contextMeta}><span data-field-uid="KB-01-FLD-PAGE-TITLE">KB-01</span><span data-field-uid="KB-01-FLD-ACTIVE-VIEW">{activeView.uid}</span><span data-field-uid="KB-01-FLD-SCOPE">{knowledgeText(locale, "authorizedScope")}: {fieldValue("SCOPE")}</span></div>
         </div>
-        <div className={styles.globalSearch} role="search"><input aria-label={knowledgeControlLabel(locale, "SEARCH-GLOBAL")} placeholder={knowledgeControlLabel(locale, "SEARCH-GLOBAL")} disabled />{actionButton(CONTROLS.find((control) => control.uid === "KB-01-CTL-SEARCH-GLOBAL")!)}</div>
+          <div className={styles.globalSearch} role="search"><input aria-label={knowledgeControlLabel(locale, "SEARCH-GLOBAL")} placeholder={knowledgeControlLabel(locale, "SEARCH-GLOBAL")} value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} />{actionButton(CONTROLS.find((control) => control.uid === "KB-01-CTL-SEARCH-GLOBAL")!)}</div>
       </section>
 
       <nav className={styles.tabs} data-component-uid="KB-01-CMP-VIEW-TABS" aria-label={knowledgeText(locale, "currentView")}>

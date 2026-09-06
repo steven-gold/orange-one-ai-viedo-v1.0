@@ -37,7 +37,7 @@ function validProjection(value: unknown): value is EditResolvedContext {
 export async function readEditProjection(signal?: AbortSignal): Promise<EditProjectionReadResult> {
   let response: Response;
   try {
-    response = await fetch("/v1/ui-projections/EDIT-01", { method: "GET", cache: "no-store", signal });
+    response = await fetch("/v1/ui-projections/EDIT-01", { method: "GET", cache: "no-store", credentials: "include", signal });
   } catch {
     return { ok:false, error_uid:"EDIT-01-ERR-CONTEXT-001", reason_code:"EDIT_PROJECTION_REQUEST_FAILED", correlation_id:"unresolved" };
   }

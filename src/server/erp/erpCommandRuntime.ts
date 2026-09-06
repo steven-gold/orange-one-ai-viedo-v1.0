@@ -1,4 +1,5 @@
 import { executeControlledErpCommand, isControlledErpServerTestMode, type ErpCommandOperation, type ErpRuntimeRequest } from "@/server/testing/controlledErpTestRuntime";
+import { namedReason } from "@/server/shared/namedRuntimeError";
 
 export type ErpCommandResult =
   | { ok: true; value: unknown; correlation_id: string }
@@ -17,6 +18,10 @@ export function configureErpCommandRuntime(next: Binding) { binding = next; }
 async function audit(b: Binding, e: Parameters<Binding["audit"]>[0]) { try { await b.audit(e); } catch { /* fail closed */ } }
 
 export async function runErpCommand(request: ErpRuntimeRequest): Promise<ErpCommandResult> {
+  if (!binding) {
+    const { bindIdentityPageCommandRuntimes } = await import("@/server/shared/identityPageCommandRuntime");
+    bindIdentityPageCommandRuntimes();
+  }
   const b = binding;
   if (!b) {
     if (isControlledErpServerTestMode()) return executeControlledErpCommand(request);
@@ -32,9 +37,10 @@ export async function runErpCommand(request: ErpRuntimeRequest): Promise<ErpComm
     const value = await b.execute(request);
     await audit(b, { ...request, outcome: "SUCCESS" });
     return { ok: true as const, value, correlation_id: request.correlation_id };
-  } catch {
-    await audit(b, { ...request, outcome: "ERROR", reason_code: "ERP01_OPERATION_FAILED" });
-    return { ok: false as const, status: 503, reason_code: "ERP01_OPERATION_FAILED", correlation_id: request.correlation_id };
+  } catch (error) {
+    const reason_code = namedReason(error, "ERP01_OPERATION_FAILED");
+    await audit(b, { ...request, outcome: "ERROR", reason_code });
+    return { ok: false as const, status: 503, reason_code, correlation_id: request.correlation_id };
   }
 }
 
