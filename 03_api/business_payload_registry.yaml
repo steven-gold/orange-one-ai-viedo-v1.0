@@ -1,0 +1,113 @@
+business_payload_registry:
+  contract_meta:
+    contract_id: ACPOS-CURRENT-STRATEGY-ADMIN-BUSINESS-PAYLOAD-RECOVERY-1.0.0
+    status: CURRENT_STRATEGY_ADMIN_RECOVERY
+    current_ui_owner: admin:STR-01
+    current_authority: authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    source_registry_provenance: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL
+    provenance_is_non_executable: true
+  rule:
+    - Only schemas explicitly retained by the Current Strategy single-page authority are materialized here.
+    - Each invocation preserves source_page_uid and the original operation/schema owner.
+    - Cross-source payload union inference is forbidden.
+    - This recovery file does not recreate STR-02..06 as frontend pages.
+  common_effectful_context:
+    required:
+      - scope
+      - expected_version
+      - correlation_id
+      - idempotency_key
+    rule: Exact context/version/idempotency remains server validated; UI omission never grants authority.
+  schemas:
+    - operation_id: searchProjection
+      request_schema_id: SearchProjectionRequest
+      source_page_uids: [admin:STR-01, admin:STR-04]
+      method: POST
+      path: /v1/search
+      fields:
+        - { name: query, type: text, required: true }
+        - { name: scope_ref, type: reference, required: true }
+        - { name: filters_json, type: json, required: false }
+    - operation_id: refreshProjection
+      request_schema_id: RefreshProjectionRequest
+      source_page_uids: [admin:STR-01]
+      method: POST
+      path: /v1/projections/refresh
+      fields:
+        - { name: projection_type, type: string, required: true }
+        - { name: scope_ref, type: reference, required: true }
+    - operation_id: configureGovernedResource
+      request_schema_id: ConfigureGovernedResourceRequest
+      source_page_uids: [admin:STR-02]
+      method: PATCH
+      path: /v1/governance/resources/{id}
+      fields:
+        - { name: resource_type, type: string, required: true }
+        - { name: resource_id, type: reference, required: true }
+        - { name: config_patch_json, type: json, required: true }
+        - { name: reason, type: text, required: true }
+    - operation_id: approveGovernedResource
+      request_schema_id: ApproveGovernedResourceRequest
+      source_page_uids: [admin:STR-02, admin:STR-03, admin:STR-05]
+      method: POST
+      path: /v1/governance/resources/{id}/approve
+      fields:
+        - { name: resource_type, type: string, required: true }
+        - { name: resource_id, type: reference, required: true }
+        - { name: rationale, type: text, required: true }
+        - { name: expected_resource_version, type: string, required: false }
+    - operation_id: saveDraft
+      request_schema_id: SaveDraftRequest
+      source_page_uids: [admin:STR-03]
+      method: POST
+      path: /v1/drafts
+      fields:
+        - { name: resource_type, type: string, required: true }
+        - { name: target_ref, type: reference, required: true }
+        - { name: content, type: text, required: true }
+        - { name: reference_ids, type: reference_list, required: false }
+    - operation_id: exportProjection
+      request_schema_id: ExportProjectionRequest
+      source_page_uids: [admin:STR-04]
+      method: POST
+      path: /v1/exports
+      fields:
+        - { name: projection_type, type: string, required: true }
+        - { name: scope_ref, type: reference, required: true }
+        - { name: format, type: string, required: true }
+    - operation_id: createCandidate
+      request_schema_id: CreateCandidateRequest
+      source_page_uids: [admin:STR-05]
+      method: POST
+      path: /v1/candidates
+      fields:
+        - { name: resource_type, type: string, required: true }
+        - { name: title, type: text, required: false }
+        - { name: source_ref, type: reference, required: false }
+        - { name: content, type: text, required: false }
+        - { name: reference_ids, type: reference_list, required: false }
+    - operation_id: rejectStrategyCandidate
+      request_schema_id: RejectStrategyCandidateRequest
+      source_page_uids: [admin:STR-06]
+      method: POST
+      path: /v1/ai/strategy/candidates/{strategyCandidateId}/reject
+      path_identifier: strategyCandidateId
+      fields:
+        - { name: strategy_candidate_id, type: reference, required: false, rule: "Optional body copy must equal canonical path identifier." }
+        - { name: decision_reason, type: text, required: true }
+        - { name: evidence_refs, type: reference_list, required: false }
+    - operation_id: adoptAsContextCandidate
+      request_schema_id: AdoptAsContextCandidateRequest
+      source_page_uids: [admin:STR-06]
+      method: POST
+      path: /v1/state-commands/strategycandidate/adoptascontextcandidate
+      fields:
+        - { name: strategy_candidate_id, type: reference, required: true }
+        - { name: decision_reason, type: text, required: true }
+        - { name: evidence_refs, type: reference_list, required: false }
+  no_form_operations:
+    - operation_id: compareCandidates
+      source_page_uids: [admin:STR-06]
+      method: GET
+      path: /v1/candidates/compare
+      interaction_type: DRAWER
