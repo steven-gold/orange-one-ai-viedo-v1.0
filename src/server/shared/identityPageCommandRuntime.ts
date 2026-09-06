@@ -155,6 +155,106 @@ async function evaluatePageView(resourceKey: string): Promise<{ allowed: true; a
   }
 }
 
+async function evaluateResourceAction(
+  resourceKey: string,
+  action: string,
+): Promise<{ allowed: true; actor: IdentityActor } | { allowed: false; reason_code: string }> {
+  if (!resourceKey || !action) return { allowed: false, reason_code: "OPERATION_PERMISSION_MAPPING_REQUIRED" };
+  if (!getProductionNeonSql()) await ensureProductionNeonRuntime();
+  const sql = getProductionNeonSql();
+  if (!sql) return { allowed: false, reason_code: "DATABASE_RUNTIME_NOT_BOUND" };
+  const cookieValue = await readSessionCookie();
+  const identity = await resolveIdentityFromCookie(cookieValue);
+  if (!identity.ok) return { allowed: false, reason_code: identity.reason_code };
+  if (!cookieValue) return { allowed: false, reason_code: "RLS_SESSION_CONTEXT_REQUIRED" };
+  try {
+    const result = await runRlsActorQuery(
+      sql,
+      hashSessionToken(cookieValue),
+      sql`
+        SELECT a.effect,a.scope,a.condition
+        FROM account_permission_assignments a
+        JOIN permission_resources r ON r.resource_id=a.resource_id
+        WHERE a.user_id=${identity.actor.user_id}
+          AND r.resource_key=${resourceKey}
+          AND r.resource_type IN ('ACTION','CONTROL','API','SENSITIVE_PERMISSION')
+          AND r.active=true
+          AND ${action}=ANY(
+            SELECT jsonb_array_elements_text(
+              CASE WHEN jsonb_typeof(r.allowed_actions)='array' THEN r.allowed_actions ELSE '[]'::jsonb END
+            )
+          )
+          AND a.action=${action}
+          AND a.status='APPROVED'
+          AND a.effective_from<=now()
+          AND (a.effective_to IS NULL OR a.effective_to>now())
+      `,
+    );
+    const requestScope={} as Record<string,never>;
+    const matched:string[]=[];
+    for(const raw of Array.isArray(result)?result:[]){
+      const row=asRecord(raw);
+      if(!row)continue;
+      if(!emptyObjectMatches(row.scope,requestScope))continue;
+      if(!conditionAllows(row.condition))continue;
+      const effect=asText(row.effect);
+      if(effect)matched.push(effect);
+    }
+    if(matched.includes("DENY"))return{allowed:false,reason_code:"PERMISSION_DENIED"};
+    if(matched.includes("ALLOW"))return{allowed:true,actor:identity.actor};
+    return{allowed:false,reason_code:"PERMISSION_OR_SCOPE_DENIED"};
+  } catch {
+    return{allowed:false,reason_code:"AUTHORIZATION_EVALUATION_FAILED"};
+  }
+}
+
+const IAM_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  searchProjection:{resource_key:"action:admin:IAM-01:ACT-SEARCH",action:"INVOKE"},
+  saveDraft:{resource_key:"action:admin:IAM-02:ACT-DRAFT-SAVE",action:"INVOKE"},
+  validateDraft:{resource_key:"action:admin:IAM-02:ACT-DRAFT-VALIDATE",action:"INVOKE"},
+  previewAuthorizationImpact:{resource_key:"action:admin:IAM-02:ACT-ACCOUNT-PERMISSION-PREVIEW",action:"INVOKE"},
+  assignAccountPermission:{resource_key:"action:admin:IAM-05:ACT-CONFIGURE",action:"INVOKE"},
+  revokeAccountPermission:{resource_key:"action:admin:IAM-05:ACT-CONFIGURE",action:"INVOKE"},
+};
+
+const GOVERNANCE_PERMISSION_CONTEXT: Readonly<Record<string,{
+  configure:{resource_key:string;action:string};
+  approve:{resource_key:string;action:string};
+}>> = {
+  "admin:IAM-01":{
+    configure:{resource_key:"action:admin:IAM-05:ACT-CONFIGURE",action:"INVOKE"},
+    approve:{resource_key:"action:admin:IAM-05:ACT-APPROVE",action:"INVOKE"},
+  },
+  "admin:AIAPI-01":{
+    configure:{resource_key:"action:admin:AIAPI-04:ACT-CONFIGURE",action:"INVOKE"},
+    approve:{resource_key:"action:admin:AIAPI-04:ACT-APPROVE",action:"INVOKE"},
+  },
+  "admin:SG-02":{
+    configure:{resource_key:"action:admin:SG-02:ACT-CONFIGURE",action:"INVOKE"},
+    approve:{resource_key:"action:admin:SG-02:ACT-APPROVE",action:"INVOKE"},
+  },
+};
+
+async function authorizeIam(request:IamRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:IAM-01"]);
+  if(!page.allowed)return page;
+  if(request.operation==="getUiProjection")return{allowed:true};
+  if(request.operation==="configureGovernedResource"||request.operation==="approveGovernedResource"){
+    const payload=asRecord(request.payload)??{};
+    const pageUid=asText(payload.page_uid);
+    if(!pageUid)return{allowed:false,reason_code:"IAM_OPERATION_PERMISSION_CONTEXT_REQUIRED"};
+    const context=GOVERNANCE_PERMISSION_CONTEXT[pageUid];
+    if(!context)return{allowed:false,reason_code:"IAM_OPERATION_PERMISSION_CONTEXT_UNREGISTERED"};
+    const permission=request.operation==="configureGovernedResource"?context.configure:context.approve;
+    const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+    return gate.allowed?{allowed:true}:gate;
+  }
+  const permission=IAM_OPERATION_PERMISSION[request.operation];
+  if(!permission)return{allowed:false,reason_code:"IAM_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
+}
+
 async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
   const gate = await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["CORE-01"]);
   if (!gate.allowed) return gate;
@@ -868,7 +968,7 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureIamRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:IAM-01"]),
+    authorize: authorizeIam,
     execute: executeIam,
     audit: async () => undefined,
   });
