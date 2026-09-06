@@ -1,9 +1,9 @@
 authority:
   id: ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT
-  version: V1.1
+  version: V1.2
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-06-CONTROL-PLANE-READINESS
+  revision: 2026-09-07-CURRENT-REGISTRY-SCOPE-CLARIFICATION
   scope: PRODUCTION_REQUEST_TO_APP_USERS_ACTOR_CONTRACT_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -81,7 +81,9 @@ shell_identity_port:
   open_login_path: /login
   operation_registry_file: 03_api/operation_registry.yaml
   operation_registry_file_in_app_repo: PRESENT
-  operation_registry_coverage: IDENTITY_SESSION_ONLY
+  identity_operation_coverage: IDENTITY_SESSION_ONLY
+  operation_registry_coverage: IDENTITY_SESSION_AND_AIAPI_PROVIDER_GOVERNED_OPERATIONS
+  registry_scope_rule: This identity contract owns only resolveIdentityAccountAuthority; broader registry entries do not extend identity semantics.
   catalog_registration: NOT_IN_ACCOUNT_PERMISSION_CATALOG
 current_http_surface:
   observed_request_headers:
