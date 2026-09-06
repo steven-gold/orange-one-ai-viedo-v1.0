@@ -3,7 +3,7 @@ authority:
   version: V1.4
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-LOCK-SECTION-READ-SQL-AND-BIND
+  revision: 2026-09-06-CONTROL-PLANE-READINESS
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -214,7 +214,7 @@ cross_authority_bindings:
     truth_guard:
       runtime_complete_claim_allowed: false
       production_ready_claim_allowed: false
-      reason: Neon driver and WB-01 projection are bound; unauthenticated /health/ready stays fail-closed; production ready claim stays forbidden
+      reason: Database and identity control-plane readiness is separate from page authorization; unauthenticated projections remain fail-closed and full production acceptance stays forbidden
   live_neon_target:
     neon_project_id: wild-wave-25661146
     neon_project_name: ORANGEONEACPOSStaging

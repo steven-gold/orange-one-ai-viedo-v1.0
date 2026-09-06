@@ -70,8 +70,9 @@ test("WB-01 UI projection mapping locks page-gate authorize and named section re
   assert.match(mapping, /FROM projects/);
   assert.match(mapping, /FROM notifications/);
   assert.match(mapping, /FROM department_tasks/);
-  assert.match(mapping, /LOCK-SECTION-READ-SQL-AND-BIND/);
-  assert.match(mapping, /KEEP_PRODUCTION_READY_CLAIM_CLOSED/);
+  assert.match(mapping, /SEPARATE-READINESS-FROM-PAGE-AUTHORIZATION/);
+  assert.match(mapping, /scope: DATABASE_AND_IDENTITY_CONTROL_PLANE/);
+  assert.match(mapping, /page_authorization_probe: FORBIDDEN/);
 });
 
 test("Production identity runtime names app_users actor and internal cookie session", async () => {
@@ -86,7 +87,7 @@ test("Production identity runtime names app_users actor and internal cookie sess
   assert.match(identity, /mapping_to_app_users: EMAIL_JOIN/);
   assert.match(identity, /Use NEON_AUTH_BASE_URL or VITE_NEON_AUTH_URL as application identity/);
   assert.match(identity, /Treat acpos_runtime.sessions as app_users identity without the email join/);
-  assert.match(identity, /adapter_bind_allowed: false/);
+  assert.match(identity, /adapter_bind_allowed: true/);
   assert.match(identity, /lookup_by_external_subject_sql:/);
   assert.match(identity, /operation_registry_file_in_app_repo: PRESENT/);
   assert.match(identity, /operation_registry_coverage: IDENTITY_SESSION_ONLY/);
@@ -94,7 +95,8 @@ test("Production identity runtime names app_users actor and internal cookie sess
   assert.match(identity, /reason_code: IDENTITY_RUNTIME_NOT_BOUND/);
   assert.match(identity, /status_predicate: DISABLED_AT_IS_NULL/);
   assert.match(identity, /status_predicate_sql: app_users.disabled_at IS NULL/);
-  assert.match(identity, /KEEP_PRODUCTION_READY_CLAIM_CLOSED/);
+  assert.match(identity, /scope: DATABASE_AND_IDENTITY_CONTROL_PLANE/);
+  assert.match(identity, /VERIFY_CONTROL_PLANE_READINESS/);
   const registry = await readFile("03_api/operation_registry.yaml", "utf8");
   assert.match(registry, /operation_id: resolveIdentityAccountAuthority/);
   assert.match(registry, /path: \/v1\/identity\/session/);

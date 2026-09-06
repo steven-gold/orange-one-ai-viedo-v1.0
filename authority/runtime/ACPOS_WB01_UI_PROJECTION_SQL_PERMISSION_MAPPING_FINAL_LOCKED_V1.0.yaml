@@ -1,9 +1,9 @@
 authority:
   id: ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING
-  version: V1.0
+  version: V1.1
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-LOCK-SECTION-READ-SQL-AND-BIND
+  revision: 2026-09-06-SEPARATE-READINESS-FROM-PAGE-AUTHORIZATION
   scope: WB-01_PAGE_GATE_AUTHORIZE_AND_NAMED_SECTION_READ_SQL
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -21,7 +21,7 @@ approval:
   - Lock section/control/field authorize SQL on named catalog resource_keys
   - Lock 14 section SELECT/FROM/WHERE on 0001 tables
   - Bind configureDashboardRuntime and configureUiProjectionRuntime for WB-01
-  - Keep official /health/ready fail-closed for unauthenticated probes
+  - Keep unauthenticated WB-01 projection fail-closed while separating service readiness from page authorization
   - Keep production_ready_claim_allowed false
 source:
   derived_from:
@@ -50,11 +50,12 @@ ports:
   ui_projection: configureUiProjectionRuntime
   dashboard_read_model: configureDashboardRuntime
   health_ready_probe:
-    page_uid: workspace:WB-01
     route: GET /health/ready
-    current_fail_closed_reason: IDENTITY_RUNTIME_NOT_BOUND
-    unauthenticated_probe: FAIL_CLOSED
-    production_ready_claim: FORBIDDEN
+    scope: DATABASE_AND_IDENTITY_CONTROL_PLANE
+    page_uid: NOT_APPLICABLE
+    page_authorization_probe: FORBIDDEN
+    unauthenticated_page_projection: FAIL_CLOSED
+    all_runtime_acceptance_claim: FORBIDDEN
 authorize:
   required_guards:
   - identity
@@ -374,9 +375,9 @@ forbidden:
   - Invent announcements or industry_news tables
   - Bind configureUiProjectionRuntime or configureDashboardRuntime while remaining_blockers is non-empty
   - Treat CONTROLLED_TEST dashboard projection as production read SQL
-  - Change official site /health/ready to 200
-  - Claim production ready
+  - Use /health/ready to bypass WB-01 identity or permission evaluation
+  - Claim all production runtimes or all-button acceptance from control-plane readiness
  remaining_blockers: []
  adapter_bind_allowed: true
 production_ready_claim_allowed: false
-next_action: KEEP_PRODUCTION_READY_CLAIM_CLOSED
+next_action: VERIFY_CONTROL_PLANE_READINESS_AND_KEEP_PAGE_AUTHORIZATION_FAIL_CLOSED

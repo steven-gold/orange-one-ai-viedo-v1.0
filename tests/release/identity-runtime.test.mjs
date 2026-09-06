@@ -43,5 +43,9 @@ test("internal cookie session identity is materialized and WB-01 projection bind
 
   assert.match(instrumentation, /bindWb01ProjectionRuntime/);
   assert.match(instrumentation, /bindIdentityPageCommandRuntimes/);
-  assert.match(ready, /status:\s*503/);
+  assert.match(identity, /probeIdentityRuntimeReadiness/);
+  assert.match(identity, /to_regclass\('acpos_runtime\.sessions'\)/);
+  assert.match(identity, /IDENTITY_READY_ACCOUNT_NOT_FOUND/);
+  assert.match(ready, /probeIdentityRuntimeReadiness/);
+  assert.match(ready, /DATABASE_AND_IDENTITY_CONTROL_PLANE/);
 });

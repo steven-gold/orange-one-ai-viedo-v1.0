@@ -70,7 +70,8 @@ for (const [route, uid] of routes) {
   assert(!/TEST_ONLY|TEST-RUN-|"synthetic"\s*:\s*true/.test(projectionText), `PRODUCTION_TEST_DATA_LEAK_${uid}`);
   assert([200, 403, 503].includes(projection.status), `PROJECTION_${uid}_HTTP_${projection.status}`);
   if (projection.status === 403) {
-    assert(/AUTHORIZATION|PERMISSION|DENIED|POLICY|DATABASE_RUNTIME/.test(projectionText), `UNTRUTHFUL_403_${uid}`);
+    assert(/AUTHORIZATION|PERMISSION|DENIED|POLICY|DATABASE_RUNTIME|IDENTITY_RUNTIME_NOT_BOUND/.test(projectionText), `UNTRUTHFUL_403_${uid}_${projectionText}`);
+    assert(Boolean(projection.headers.get("x-correlation-id")), `PROJECTION_CORRELATION_ID_MISSING_${uid}`);
   }
   if (projection.status === 503) {
     assert(/RUNTIME_NOT_BOUND|NOT_BOUND|NOT_CONFIGURED/.test(projectionText), `UNTRUTHFUL_503_${uid}_${projectionText}`);
