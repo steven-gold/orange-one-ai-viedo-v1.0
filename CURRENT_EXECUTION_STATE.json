@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T04:29:22+08:00",
+  "as_of": "2026-09-07T05:11:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
-    "new_sha_basis": "dff0e4bd9c64e0f51182077d45ab64e0be899dc5",
+    "new_sha_basis": "fe2ba1ff8692043caf90b5b8d0aa2a8b5ec81fda",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -26,6 +26,14 @@
       "run_number": 376,
       "run_id": 34056101124,
       "head_sha": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
+      "conclusion": "success"
+    },
+    "latest_provider_adapter_gate": {
+      "status": "PASS",
+      "run_number": 405,
+      "run_id": 34058647741,
+      "head_sha": "fb7e649ca791a8d81ec1f0e9b6c8233b033aaf1a",
+      "branch": "new",
       "conclusion": "success"
     }
   },
@@ -108,21 +116,23 @@
     "regression_validation": {
       "release_gate_384": "PASS",
       "release_gate_391": "PASS",
-      "release_gate_395": "PASS"
+      "release_gate_395": "PASS",
+      "release_gate_405": "PASS"
     },
     "production_deployment": "PENDING_SINGLE_MAIN_RELEASE",
-    "external_provider_execution": "BLOCKED_REAL_PROVIDER_CONFIGURATION_AND_EXTERNAL_ADAPTER_REQUIRED",
+    "external_provider_execution": "BLOCKED_REAL_PROVIDER_CONFIGURATION_REQUIRED",
     "provider_counts": {
       "capabilities": 0,
       "profiles": 0,
       "secret_references": 0,
       "groups": 0
-    }
+    },
+    "external_provider_adapter_runtime": "MATERIALIZED_CURRENT_ON_NEW"
   },
   "formal_truth": {
     "gate22_external_provider": {
-      "status": "BLOCKED",
-      "reason": "Production has no real provider capability/profile/secret/group configuration and external adapter execution remains intentionally fail-closed."
+      "status": "BLOCKED_EXTERNAL_CONFIGURATION",
+      "reason": "Provider HTTP adapter, queue execution and governed route lineage are materialized and Release Gate #405 passed on new. Production still has 0 approved capabilities, 0 provider profiles, 0 secret references and 0 provider groups, so no real external Provider E2E may be claimed."
     },
     "gate23_queue_worker_dlq": {
       "status": "PARTIAL_PENDING_FINAL_PRODUCTION_HTTP",
@@ -139,15 +149,16 @@
   },
   "blockers": [
     "Vercel Hobby build-rate-limit currently blocks the next single Production deployment of main.",
-    "Real external Provider capability/profile/secret values are absent and must not be fabricated.",
+    "Real external Provider capability/profile/secret/group configuration is absent; runtime is materialized but real values must not be fabricated.",
     "Vercel management connector can read the team but cannot read the project, so Production CRON_SECRET binding is not verified."
   ],
   "next_release_sequence": [
-    "Run ACPOS Release Gate on the exact Current State commit head.",
+    "Complete Current all-page interactive-control acceptance on new and close any actionable DOM gaps.",
+    "Run ACPOS Release Gate on the exact final new head.",
     "If PASS, create one PR new -> main and merge with exact expected head SHA.",
     "Allow exactly one Vercel Production deployment attempt for the resulting main SHA.",
     "If Vercel remains rate-limited, do not push retry commits; retain the exact main SHA and blocker.",
-    "If Vercel succeeds, require Post Deploy HTTP/auth/browser and FULL queue probe PASS for that exact main SHA.",
-    "Re-query Neon worker heartbeat and probe residual rows, then update Current State and Gate 23/24 truth."
+    "If Vercel succeeds, require Post Deploy HTTP/auth/browser, FULL queue probe, and Production control acceptance for that exact main SHA.",
+    "Re-query Neon worker heartbeat and Provider configuration counts, then update Current State and formal Gate truth."
   ]
 }
