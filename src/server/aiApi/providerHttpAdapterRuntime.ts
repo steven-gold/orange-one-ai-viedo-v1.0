@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
+import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
 
 export type ProviderHttpProfile = {
   profile_id: string;
@@ -223,4 +224,280 @@ export async function executeProviderHttpRequest(
   } finally {
     clearTimeout(timer);
   }
+}
+
+
+type RuntimeSql = NonNullable<ReturnType<typeof getProductionNeonSql>>;
+type RuntimeRow = Record<string, unknown>;
+
+function runtimeRows(value: unknown): RuntimeRow[] {
+  return Array.isArray(value)
+    ? value.filter((row): row is RuntimeRow => Boolean(row) && typeof row==="object" && !Array.isArray(row))
+    : [];
+}
+function runtimeFirst(value: unknown): RuntimeRow | null {
+  return runtimeRows(value)[0] ?? null;
+}
+function runtimeText(value: unknown): string | null {
+  if (typeof value!=="string") return null;
+  const trimmed=value.trim();
+  return trimmed || null;
+}
+function runtimeInt(value: unknown): number {
+  const parsed=typeof value==="number" ? value : Number(value);
+  return Number.isInteger(parsed) ? parsed : 0;
+}
+async function runtimeSql(): Promise<RuntimeSql> {
+  await ensureProductionNeonRuntime();
+  const sql=getProductionNeonSql();
+  if (!sql) throw new NamedRuntimeError("DATABASE_RUNTIME_NOT_BOUND");
+  return sql;
+}
+
+function profileFromRuntimeRow(row: RuntimeRow): ProviderHttpProfile {
+  const adapter=runtimeText(row.adapter_type);
+  const method=runtimeText(row.http_method);
+  const template=asRecord(row.request_template);
+  const profile_id=runtimeText(row.profile_id);
+  const provider_id=runtimeText(row.provider_id);
+  const model_id=runtimeText(row.model_id);
+  const capability_type=runtimeText(row.capability_type);
+  const base_url=runtimeText(row.base_url);
+  const endpoint_path=runtimeText(row.endpoint_path);
+  const secret_env_ref=runtimeText(row.secret_env_ref);
+  const response_text_path=runtimeText(row.response_text_path);
+  const version=runtimeInt(row.profile_version);
+  const timeout_seconds=runtimeInt(row.timeout_seconds);
+  if (
+    !profile_id || !provider_id || !model_id || !capability_type || !base_url || !endpoint_path ||
+    !secret_env_ref || !response_text_path || !template || !version || !timeout_seconds ||
+    (adapter!=="OPENAI_COMPATIBLE_CHAT" && adapter!=="GENERIC_JSON_HTTP") ||
+    (method!=="GET" && method!=="POST")
+  ) throw new NamedRuntimeError("PROVIDER_PROFILE_RUNTIME_INVALID");
+  return {
+    profile_id,
+    provider_id,
+    model_id,
+    capability_type,
+    adapter_type:adapter,
+    base_url,
+    endpoint_path,
+    http_method:method,
+    secret_env_ref,
+    timeout_seconds,
+    request_template:template,
+    response_text_path,
+    version,
+  };
+}
+
+export async function executeQueuedProviderRequest(payload: unknown): Promise<{
+  route_decision_id: string;
+  attempt_id: string;
+  provider_id: string;
+  model_id: string;
+  normalized_text: string;
+  result_hash: string;
+  latency_ms: number;
+  external_request_sent: true;
+}> {
+  const input=asRecord(payload);
+  const routeDecisionId=runtimeText(input?.route_decision_id);
+  const attemptId=runtimeText(input?.attempt_id);
+  const compiledPromptId=runtimeText(input?.compiled_prompt_id);
+  const profileId=runtimeText(input?.provider_profile_id);
+  if (!routeDecisionId || !attemptId || !compiledPromptId || !profileId) {
+    throw new NamedRuntimeError("PROVIDER_QUEUE_PAYLOAD_INVALID");
+  }
+
+  const sql=await runtimeSql();
+  const row=runtimeFirst(await sql`
+    SELECT a.id AS attempt_id,
+           a.route_decision_id,
+           a.preflight_id,
+           a.candidate_group_id,
+           a.member_id,
+           a.provider_profile_id AS profile_id,
+           a.attempt_no,
+           a.status AS attempt_status,
+           p.provider_id,
+           p.model_id,
+           p.capability_type,
+           p.adapter_type,
+           p.base_url,
+           p.endpoint_path,
+           p.http_method,
+           p.secret_env_ref,
+           p.timeout_seconds,
+           p.request_template,
+           p.response_text_path,
+           p.version AS profile_version,
+           cp.id AS compiled_prompt_id,
+           cp.api_request_payload,
+           cp.api_request_hash,
+           pf.use_case
+    FROM acpos_runtime.provider_route_attempts a
+    JOIN acpos_runtime.provider_profiles p ON p.id=a.provider_profile_id
+    JOIN acpos_runtime.provider_compiled_prompts cp ON cp.id=a.compiled_prompt_id
+    JOIN acpos_runtime.provider_route_preflights pf ON pf.id=a.preflight_id
+    WHERE a.id=${attemptId}
+      AND a.route_decision_id=${routeDecisionId}
+      AND a.provider_profile_id=${profileId}
+      AND cp.id=${compiledPromptId}
+    LIMIT 1
+  `);
+  if (!row) throw new NamedRuntimeError("PROVIDER_QUEUE_LINEAGE_NOT_FOUND");
+
+  const profile=profileFromRuntimeRow(row);
+  const requestPayload=asRecord(row.api_request_payload);
+  const apiRequestHash=runtimeText(row.api_request_hash);
+  if (!requestPayload || !apiRequestHash) throw new NamedRuntimeError("PROVIDER_COMPILED_REQUEST_INVALID");
+
+  const result=await executeProviderHttpRequest(profile,{
+    api_request_payload:requestPayload,
+    api_request_hash:apiRequestHash,
+  });
+  const normalizedForStorage=result.normalized_text.length>100_000
+    ? result.normalized_text.slice(0,100_000)
+    : result.normalized_text;
+  const evidence={
+    http_status:result.http_status,
+    latency_ms:result.latency_ms,
+    api_request_hash:result.api_request_hash,
+    result_hash:result.result_hash,
+    secret_persisted:false,
+    secret_logged:false,
+  };
+
+  await sql.transaction([
+    sql`
+      UPDATE acpos_runtime.provider_route_attempts
+      SET status='SUCCESS',
+          latency_ms=${result.latency_ms},
+          result_hash=${result.result_hash},
+          error_code=NULL,
+          evidence_json=${JSON.stringify(evidence)}::jsonb,
+          updated_at=now()
+      WHERE id=${attemptId}
+    `,
+    sql`
+      UPDATE acpos_runtime.provider_route_decisions
+      SET status='SUCCESS',
+          reason=NULL,
+          attempt_count=GREATEST(attempt_count,${runtimeInt(row.attempt_no)}),
+          payload=payload || ${JSON.stringify({
+            external_request_sent:true,
+            provider_profile_id:profile.profile_id,
+            profile_version:profile.version,
+            result_hash:result.result_hash,
+            normalized_result:normalizedForStorage,
+          })}::jsonb,
+          updated_at=now()
+      WHERE id=${routeDecisionId}
+    `,
+    sql`
+      UPDATE acpos_runtime.provider_profiles
+      SET health_status='HEALTHY',updated_at=now()
+      WHERE id=${profile.profile_id}
+    `,
+    sql`
+      INSERT INTO acpos_runtime.provider_quality_observations(
+        id,member_id,use_case,attempts,valid_results,invalid_results,errors,
+        success_rate,valid_result_rate,error_rate,last_latency_ms,last_error_code
+      ) VALUES(
+        ${crypto.randomUUID()},${runtimeText(row.member_id)},${runtimeText(row.use_case) ?? "UNSPECIFIED"},
+        1,1,0,0,1,1,0,${result.latency_ms},NULL
+      )
+      ON CONFLICT(member_id,use_case) DO UPDATE
+      SET attempts=acpos_runtime.provider_quality_observations.attempts+1,
+          valid_results=acpos_runtime.provider_quality_observations.valid_results+1,
+          success_rate=(acpos_runtime.provider_quality_observations.valid_results+1)::numeric /
+                       (acpos_runtime.provider_quality_observations.attempts+1),
+          valid_result_rate=(acpos_runtime.provider_quality_observations.valid_results+1)::numeric /
+                            (acpos_runtime.provider_quality_observations.attempts+1),
+          error_rate=acpos_runtime.provider_quality_observations.errors::numeric /
+                     (acpos_runtime.provider_quality_observations.attempts+1),
+          last_latency_ms=${result.latency_ms},
+          last_error_code=NULL,
+          updated_at=now()
+    `,
+  ]);
+
+  return {
+    route_decision_id:routeDecisionId,
+    attempt_id:attemptId,
+    provider_id:result.provider_id,
+    model_id:result.model_id,
+    normalized_text:result.normalized_text,
+    result_hash:result.result_hash,
+    latency_ms:result.latency_ms,
+    external_request_sent:true,
+  };
+}
+
+export async function recordQueuedProviderFailure(
+  payload: unknown,
+  reasonCode: string,
+  outcome: "RETRY" | "DLQ",
+): Promise<void> {
+  const input=asRecord(payload);
+  const routeDecisionId=runtimeText(input?.route_decision_id);
+  const attemptId=runtimeText(input?.attempt_id);
+  const profileId=runtimeText(input?.provider_profile_id);
+  if (!routeDecisionId || !attemptId || !profileId) return;
+  const sql=await runtimeSql();
+  const attempt=runtimeFirst(await sql`
+    SELECT a.member_id,pf.use_case
+    FROM acpos_runtime.provider_route_attempts a
+    JOIN acpos_runtime.provider_route_preflights pf ON pf.id=a.preflight_id
+    WHERE a.id=${attemptId}
+    LIMIT 1
+  `);
+  const attemptStatus=outcome==="DLQ" ? "FAILED" : "RETRY_PENDING";
+  const statements=[
+    sql`
+      UPDATE acpos_runtime.provider_route_attempts
+      SET status=${attemptStatus},
+          error_code=${reasonCode},
+          evidence_json=evidence_json || ${JSON.stringify({ external_request_failed:true,reason_code:reasonCode })}::jsonb,
+          updated_at=now()
+      WHERE id=${attemptId}
+    `,
+    sql`
+      UPDATE acpos_runtime.provider_profiles
+      SET health_status='DEGRADED',updated_at=now()
+      WHERE id=${profileId}
+    `,
+  ];
+  if (outcome==="DLQ") {
+    statements.push(sql`
+      UPDATE acpos_runtime.provider_route_decisions
+      SET status='FAILED',reason=${reasonCode},updated_at=now()
+      WHERE id=${routeDecisionId}
+    `);
+  }
+  const memberId=runtimeText(attempt?.member_id);
+  const useCase=runtimeText(attempt?.use_case);
+  if (memberId && useCase) {
+    statements.push(sql`
+      INSERT INTO acpos_runtime.provider_quality_observations(
+        id,member_id,use_case,attempts,valid_results,invalid_results,errors,
+        success_rate,valid_result_rate,error_rate,last_latency_ms,last_error_code
+      ) VALUES(
+        ${crypto.randomUUID()},${memberId},${useCase},1,0,0,1,0,0,1,NULL,${reasonCode}
+      )
+      ON CONFLICT(member_id,use_case) DO UPDATE
+      SET attempts=acpos_runtime.provider_quality_observations.attempts+1,
+          errors=acpos_runtime.provider_quality_observations.errors+1,
+          success_rate=acpos_runtime.provider_quality_observations.valid_results::numeric /
+                       (acpos_runtime.provider_quality_observations.attempts+1),
+          valid_result_rate=acpos_runtime.provider_quality_observations.valid_results::numeric /
+                            (acpos_runtime.provider_quality_observations.attempts+1),
+          error_rate=(acpos_runtime.provider_quality_observations.errors+1)::numeric /
+                     (acpos_runtime.provider_quality_observations.attempts+1),
+          last_error_code=${reasonCode},
+          updated_at=now()
+    `);
+  }
+  await sql.transaction(statements);
 }
