@@ -14,6 +14,7 @@ import {
   invokeStrategyAdminAction,
   readStrategyAdminProjection,
   type StrategyAdminMappedAction,
+  strategyAdminPermissionKey,
   type StrategyAdminProjection,
   type StrategyAdminView,
 } from "@/domain/strategyAdmin/strategyAdminRuntimePort";
@@ -22,7 +23,7 @@ type Runtime = {
   projection: StrategyAdminProjection | null;
   runtimeError: string | null;
   invoke: (actionId: string, view: StrategyAdminView) => Promise<void>;
-  canInvoke: (actionId: string) => boolean;
+  canInvoke: (actionId: string, view: StrategyAdminView) => boolean;
 };
 
 const Ctx = createContext<Runtime | null>(null);
@@ -61,12 +62,17 @@ export function StrategyAdminRuntimeProvider({ children }: { children: ReactNode
   }, [refreshProjection]);
 
   const canInvoke = useCallback(
-    (actionId: string) =>
-      Boolean(projection?.action_enabled[actionId]) &&
-      actionId !== "ACT-CANDIDATE-DECIDE" &&
-      actionId !== "ACT-NAV-OPEN" &&
-      actionId in ACTIONS &&
-      isStrategyAdminCommandAdapterBound(),
+    (actionId: string, view: StrategyAdminView) => {
+      const permissionKey = strategyAdminPermissionKey(view, actionId);
+      return Boolean(
+        permissionKey &&
+        projection?.action_enabled[permissionKey] &&
+        actionId !== "ACT-CANDIDATE-DECIDE" &&
+        actionId !== "ACT-NAV-OPEN" &&
+        actionId in ACTIONS &&
+        isStrategyAdminCommandAdapterBound()
+      );
+    },
     [projection],
   );
 
