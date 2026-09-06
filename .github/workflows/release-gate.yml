@@ -36,6 +36,12 @@ jobs:
       - name: Release unit tests
         run: npm test
 
+      - name: Validate deployment smoke syntax
+        run: |
+          node --check scripts/post-deploy-smoke.mjs
+          node --check scripts/post-deploy-browser-smoke.mjs
+          node --check scripts/post-deploy-auth-e2e.mjs
+
       - name: Production build
         env:
           NEXT_PUBLIC_ACPOS_RUNTIME_MODE: ""
