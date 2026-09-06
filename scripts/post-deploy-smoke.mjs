@@ -1,5 +1,6 @@
 const base = (process.env.ACPOS_DEPLOYMENT_URL ?? "https://orange-one-acpos-test.vercel.app").replace(/\/$/, "");
 const expectReady = process.env.ACPOS_EXPECT_READY === "1";
+const expectedReleaseSha = (process.env.ACPOS_EXPECT_RELEASE_SHA ?? "").trim();
 
 function protectionHeaders() {
   const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
@@ -43,13 +44,38 @@ async function fetchWithRetry(path, init = {}) {
   throw lastError ?? new Error(`REMOTE_FETCH_TIMEOUT_${path}`);
 }
 
-const health = await fetchWithRetry("/health");
+async function fetchExpectedHealth() {
+  const deadline = Date.now() + 120_000;
+  let lastError;
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`${base}/health`, {
+        cache: "no-store",
+        headers: protectionHeaders(),
+      });
+      if (response.status === 200) {
+        const body = await response.json();
+        if (!expectedReleaseSha || body?.release_sha === expectedReleaseSha) return { response, body };
+        lastError = new Error(`HEALTH_RELEASE_SHA_MISMATCH_${body?.release_sha ?? "UNRESOLVED"}_${expectedReleaseSha}`);
+      } else {
+        lastError = new Error(`HEALTH_HTTP_${response.status}`);
+      }
+    } catch (error) {
+      lastError = error;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+  }
+  throw lastError ?? new Error("HEALTH_RELEASE_SHA_TIMEOUT");
+}
+
+if (expectedReleaseSha) assert(/^[0-9a-f]{40}$/i.test(expectedReleaseSha), "EXPECTED_RELEASE_SHA_INVALID");
+const { response: health, body: healthBody } = await fetchExpectedHealth();
 assert(health.status === 200, `HEALTH_HTTP_${health.status}`);
-const healthBody = await health.json();
 assert(healthBody?.status === "ok", "HEALTH_STATUS_NOT_OK");
 assert(healthBody?.service === "ORANGE ONE ACPOS", "HEALTH_SERVICE_INVALID");
 assert(typeof healthBody?.environment === "string" && healthBody.environment !== "unspecified", "HEALTH_ENVIRONMENT_UNRESOLVED");
 assert(typeof healthBody?.release_sha === "string" && /^[0-9a-f]{40}$/i.test(healthBody.release_sha), "HEALTH_RELEASE_SHA_UNRESOLVED");
+if (expectedReleaseSha) assert(healthBody.release_sha === expectedReleaseSha, `HEALTH_RELEASE_SHA_MISMATCH_${healthBody.release_sha}_${expectedReleaseSha}`);
 
 for (const header of ["content-security-policy", "strict-transport-security", "x-content-type-options", "referrer-policy", "permissions-policy", "x-frame-options"]) {
   assert(Boolean(health.headers.get(header)), `SECURITY_HEADER_MISSING_${header}`);

@@ -253,6 +253,24 @@ test("release gate covers both construction and production branches", async () =
   assert.match(workflow, /push:[\s\S]*branches:\s*\[new, main\]/);
 });
 
+test("post-deploy acceptance is pinned to the exact production release SHA", async () => {
+  const workflow = await read(".github/workflows/post-deploy-smoke.yml");
+  const smoke = await read("scripts/post-deploy-smoke.mjs");
+  const governance = await read("authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml");
+
+  assert.match(workflow, /head_branch == 'main'/);
+  assert.doesNotMatch(workflow, /head_branch == 'new'/);
+  assert.match(workflow, /ACPOS_EXPECT_RELEASE_SHA/);
+  assert.match(workflow, /github\.event\.deployment\.sha/);
+  assert.match(workflow, /ref: \$\{\{ github\.event\.deployment\.sha/);
+  assert.match(smoke, /expectedReleaseSha/);
+  assert.match(smoke, /HEALTH_RELEASE_SHA_MISMATCH/);
+  assert.match(smoke, /HEALTH_RELEASE_SHA_TIMEOUT/);
+  assert.match(governance, /post_deploy_acceptance:/);
+  assert.match(governance, /health\.release_sha equals the triggering main deployment SHA/);
+  assert.match(governance, /Counting skipped browser cases as executed/);
+});
+
 test("Vercel build disables standalone while Docker keeps standalone output", async () => {
   const nextConfig = await read("next.config.ts");
   const dockerfile = await read("Dockerfile");
