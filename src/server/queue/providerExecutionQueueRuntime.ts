@@ -193,6 +193,42 @@ async function claimBatch(sql: SqlClient, limit: number): Promise<QueueRow[]> {
   return Array.isArray(result) ? result as QueueRow[] : [];
 }
 
+async function claimEventById(sql: SqlClient, eventId: string): Promise<QueueRow | null> {
+  const result=await sql`
+    WITH worker AS (
+      SELECT w.worker_id,w.queue_id
+      FROM workers w
+      JOIN queues q ON q.queue_id=w.queue_id
+      WHERE w.worker_key=${PROVIDER_EXECUTION_WORKER_KEY}
+        AND q.queue_key=${PROVIDER_EXECUTION_QUEUE_KEY}
+        AND w.status='READY'
+      LIMIT 1
+    )
+    UPDATE outbox_events o
+    SET claimed_by_worker_id=w.worker_id,
+        lease_until=now()+interval '120 seconds',
+        attempt_count=o.attempt_count+1
+    FROM worker w
+    WHERE o.event_id=${eventId}::uuid
+      AND o.queue_id=w.queue_id
+      AND o.published_at IS NULL
+      AND o.dead_lettered_at IS NULL
+      AND o.available_at<=now()
+      AND o.attempt_count<o.max_attempts
+      AND (o.claimed_by_worker_id IS NULL OR o.lease_until<now())
+    RETURNING
+      o.outbox_event_id::text,
+      o.event_id::text,
+      o.event_type,
+      o.payload,
+      o.payload_hash,
+      o.attempt_count,
+      o.max_attempts,
+      o.correlation_id::text
+  `;
+  return first(result);
+}
+
 async function completeEvent(sql: SqlClient, row: QueueRow, resultValue: Record<string, unknown>): Promise<void> {
   const eventId=asText(row.event_id);
   if (!eventId) throw new NamedRuntimeError("QUEUE_EVENT_ID_REQUIRED");
@@ -295,3 +331,99 @@ export async function drainProviderExecutionQueue(limit=10): Promise<{
   });
   return { claimed:claimed.length,succeeded,retried,dead_lettered:deadLettered };
 }
+
+export async function runProviderQueueRuntimeProbe(input: {
+  correlation_id: string;
+  idempotency_key?: string;
+}): Promise<{
+  status: "PASS";
+  event_id: string;
+  idempotent_enqueue: boolean;
+  claimed: number;
+  inbox_receipt: number;
+  published: number;
+  residual_probe_rows: number;
+  external_provider_call: false;
+}> {
+  const sql=await sqlClient();
+  const queued=await enqueueQueueRuntimeProbe(input);
+  await heartbeat(sql,"PROBING",{ event_id:queued.event_id });
+
+  const claimed=await claimEventById(sql,queued.event_id);
+  if (!claimed) {
+    const existing=first(await sql`
+      SELECT published_at,dead_lettered_at
+      FROM outbox_events
+      WHERE event_id=${queued.event_id}::uuid
+      LIMIT 1
+    `);
+    if (!existing || existing.published_at == null) {
+      throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_CLAIM_FAILED");
+    }
+  } else {
+    const value=await handleEvent(claimed);
+    await completeEvent(sql,claimed,value);
+  }
+
+  const evidence=first(await sql`
+    SELECT
+      (SELECT count(*)::int FROM inbox_events
+       WHERE consumer_name=${PROVIDER_EXECUTION_WORKER_KEY}
+         AND event_id=${queued.event_id}::uuid) AS inbox_receipt,
+      (SELECT count(*)::int FROM outbox_events
+       WHERE event_id=${queued.event_id}::uuid
+         AND published_at IS NOT NULL
+         AND dead_lettered_at IS NULL
+         AND claimed_by_worker_id IS NULL
+         AND lease_until IS NULL) AS published
+  `);
+  const inboxReceipt=asInt(evidence?.inbox_receipt);
+  const published=asInt(evidence?.published);
+  if (inboxReceipt !== 1 || published !== 1) {
+    throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_EVIDENCE_FAILED");
+  }
+
+  await heartbeat(sql,"HEALTHY",{
+    last_probe:"PRODUCTION_HTTP_RUNTIME_PASS",
+    external_provider_call:false,
+  });
+
+  await sql.transaction([
+    sql`
+      DELETE FROM inbox_events
+      WHERE consumer_name=${PROVIDER_EXECUTION_WORKER_KEY}
+        AND event_id=${queued.event_id}::uuid
+    `,
+    sql`
+      DELETE FROM dead_letters
+      WHERE event_id=${queued.event_id}::uuid
+    `,
+    sql`
+      DELETE FROM outbox_events
+      WHERE event_id=${queued.event_id}::uuid
+    `,
+  ]);
+
+  const residual=first(await sql`
+    SELECT
+      (
+        (SELECT count(*) FROM outbox_events WHERE event_id=${queued.event_id}::uuid)
+        +
+        (SELECT count(*) FROM inbox_events WHERE event_id=${queued.event_id}::uuid)
+        +
+        (SELECT count(*) FROM dead_letters WHERE event_id=${queued.event_id}::uuid)
+      )::int AS residual_probe_rows
+  `);
+
+  return {
+    status:"PASS",
+    event_id:queued.event_id,
+    idempotent_enqueue:!queued.enqueued,
+    claimed:claimed ? 1 : 0,
+    inbox_receipt:inboxReceipt,
+    published,
+    residual_probe_rows:asInt(residual?.residual_probe_rows),
+    external_provider_call:false,
+  };
+}
+
