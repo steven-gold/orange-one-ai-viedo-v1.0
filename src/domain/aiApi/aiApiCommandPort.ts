@@ -94,7 +94,13 @@ export async function invokeAiApiCommand(
         "content-type": "application/json",
         "x-correlation-id": correlation_id,
       },
-      body: route.method === "GET" || route.method === "DELETE" ? undefined : JSON.stringify(payload),
+      body: route.method === "GET" || route.method === "DELETE"
+        ? undefined
+        : JSON.stringify(
+            operation === "configureGovernedResource" || operation === "approveGovernedResource"
+              ? { ...(asRecord(payload) ?? {}), page_uid: "admin:AIAPI-01" }
+              : payload,
+          ),
     });
   } catch {
     return { ok: false, status: 503, reason_code: "AIAPI_COMMAND_REQUEST_FAILED", correlation_id };
