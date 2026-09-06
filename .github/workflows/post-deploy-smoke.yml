@@ -22,14 +22,15 @@ jobs:
       (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production') ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
+    environment: Production
     timeout-minutes: 20
     env:
       ACPOS_DEPLOYMENT_URL: ${{ github.event.inputs.deployment_url || 'https://orange-one-acpos-test.vercel.app' }}
       ACPOS_EXPECT_READY: "0"
       ACPOS_EXPECT_RELEASE_SHA: ${{ github.event.deployment.sha || github.event.workflow_run.head_sha || github.sha }}
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-      ACPOS_PRODUCTION_E2E_EMAIL: ${{ secrets.ACPOS_PRODUCTION_E2E_EMAIL }}
-      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ACPOS_PRODUCTION_E2E_PASSWORD }}
+      ACPOS_PRODUCTION_E2E_EMAIL: admin
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
     steps:
       - uses: actions/checkout@v4
         with:
