@@ -283,6 +283,45 @@ async function authorizeIam(request:IamRuntimeRequest):Promise<{allowed:true}|{a
   return gate.allowed?{allowed:true}:gate;
 }
 
+async function authorizeInfoCommand(request: InfoRequest): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
+  const payload = asRecord(request.payload) ?? {};
+  const currentPageUid = asText(payload.current_page_uid) ?? asText(payload.page_uid);
+  const sourcePageUid = asText(payload.source_page_uid);
+
+  if (currentPageUid === "admin:STR-01" || sourcePageUid?.startsWith("admin:STR-")) {
+    const pageGate = await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:STR-01"]);
+    if (!pageGate.allowed) return pageGate;
+
+    let resourceKey: string | null = null;
+    if (request.operation_id === "searchProjection") {
+      resourceKey = sourcePageUid === "admin:STR-04"
+        ? "action:admin:STR-04:ACT-SEARCH"
+        : sourcePageUid === "admin:STR-01"
+          ? "action:admin:STR-01:ACT-SEARCH"
+          : null;
+    } else if (request.operation_id === "refreshProjection" && sourcePageUid === "admin:STR-01") {
+      resourceKey = "action:admin:STR-01:ACT-REFRESH";
+    } else if (request.operation_id === "exportProjection" && sourcePageUid === "admin:STR-04") {
+      resourceKey = "action:admin:STR-04:ACT-EXPORT";
+    }
+    if (!resourceKey) return { allowed: false, reason_code: "STR_ADMIN_SOURCE_ACTION_CONTEXT_REQUIRED" };
+    const actionGate = await evaluateResourceAction(resourceKey, "INVOKE");
+    return actionGate.allowed ? { allowed: true } : actionGate;
+  }
+
+  if (currentPageUid === "admin:IAM-01") {
+    const pageGate = await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:IAM-01"]);
+    if (!pageGate.allowed) return pageGate;
+    if (request.operation_id !== "searchProjection") {
+      return { allowed: false, reason_code: "IAM_INFO_OPERATION_NOT_REGISTERED" };
+    }
+    const actionGate = await evaluateResourceAction("action:admin:IAM-01:ACT-SEARCH", "INVOKE");
+    return actionGate.allowed ? { allowed: true } : actionGate;
+  }
+
+  return authorizePage(CURRENT_PAGE_RESOURCE_KEYS["workspace:INFO-01"]);
+}
+
 async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
   const gate = await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["CORE-01"]);
   if (!gate.allowed) return gate;
@@ -770,16 +809,62 @@ async function executeIam(request: IamRuntimeRequest): Promise<unknown> {
 }
 
 async function executeInfo(request: InfoRequest): Promise<unknown> {
+  const payload = asRecord(request.payload) ?? {};
+  const pageUid = asText(payload.current_page_uid) ?? asText(payload.page_uid);
+  const sourcePageUid = asText(payload.source_page_uid);
+
   if (request.operation_id === "refreshProjection") {
-    return { refreshed: true };
+    return { refreshed: true, page_uid: pageUid, source_page_uid: sourcePageUid };
   }
   if (request.operation_id !== "searchProjection") {
     throw new NamedRuntimeError("INFO_WRITE_RUNTIME_NOT_MATERIALIZED");
   }
   const sql = await requireSql();
   const identityContext = await requireIdentityContext();
-  const payload = asRecord(request.payload) ?? {};
-  const pageUid = asText(payload.page_uid);
+  if (pageUid === "admin:STR-01" || sourcePageUid?.startsWith("admin:STR-")) {
+    const needle = (asText(payload.query) ?? "").toLowerCase();
+    const [candidateRows, factRows, sourceRows] = await Promise.all([
+      runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          SELECT strategy_candidate_id::text AS ref,
+                 decision_status::text AS label
+          FROM strategy_candidates
+          ORDER BY created_at DESC
+          LIMIT 50
+        `,
+      ),
+      runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          SELECT fact_pack_id::text AS ref,
+                 status::text AS label
+          FROM fact_packs
+          ORDER BY created_at DESC
+          LIMIT 50
+        `,
+      ),
+      runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          SELECT knowledge_source_id::text AS ref,
+                 source_key AS label
+          FROM knowledge_sources
+          ORDER BY created_at DESC
+          LIMIT 50
+        `,
+      ),
+    ]);
+    const results = [...refItems(candidateRows), ...refItems(factRows), ...refItems(sourceRows)].filter((item) => {
+      if (!needle) return true;
+      return item.ref.toLowerCase().includes(needle) || item.label.toLowerCase().includes(needle);
+    });
+    return { results, source_page_uid: sourcePageUid, page_uid: "admin:STR-01" };
+  }
+
   if (pageUid === "admin:IAM-01") {
     const needle = (asText(payload.query) ?? "").toLowerCase();
     const rows = await runRlsActorQuery(
@@ -1001,7 +1086,7 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureInfoCommandRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["workspace:INFO-01"]),
+    authorize: authorizeInfoCommand,
     execute: executeInfo,
     audit: async () => undefined,
   });
