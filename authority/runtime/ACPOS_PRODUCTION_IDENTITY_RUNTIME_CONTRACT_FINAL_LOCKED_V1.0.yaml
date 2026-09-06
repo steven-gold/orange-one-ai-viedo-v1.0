@@ -1,14 +1,14 @@
 authority:
   id: ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT
-  version: V1.0
+  version: V1.1
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-IDENTITY-OPERATION-REGISTRY
+  revision: 2026-09-06-CONTROL-PLANE-READINESS
   scope: PRODUCTION_REQUEST_TO_APP_USERS_ACTOR_CONTRACT_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
   user_approved: true
-  approved_on: '2026-09-05'
+  approved_on: '2026-09-06'
   approved_scope:
   - Name canonical production actor as app_users.user_id
   - Name GHS-PORT-IDENTITY / resolveIdentityAccountAuthority as the required identity port
@@ -19,7 +19,8 @@ approval:
   - Register resolveIdentityAccountAuthority in 03_api/operation_registry.yaml
   - Lock app_users active predicate to disabled_at IS NULL
   - WB-01 mapping authorizes configureUiProjectionRuntime bind
-  - Do not change /health/ready to 200
+  - Scope /health/ready to database and identity control-plane availability without page authorization
+  - Keep unauthenticated page projections fail-closed; readiness never creates or impersonates a user
 source:
   derived_from:
   - authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
@@ -127,15 +128,23 @@ forbidden:
   - Use NEON_AUTH_BASE_URL or VITE_NEON_AUTH_URL as application identity
   - Treat acpos_runtime.sessions as app_users identity without the email join
   - Treat x-correlation-id as user identity
-  - Create a health/ready service user to force ready 200
+  - Create a health/ready service user or session
   - Bind configureUiProjectionRuntime while remaining_blockers is non-empty
-  - Change official site /health/ready to 200
-  - Claim production ready
+  - Treat control-plane readiness as authorization to bypass page identity or permission checks
+  - Claim all production runtimes or all-button acceptance from control-plane readiness
 health_ready:
+  scope: DATABASE_AND_IDENTITY_CONTROL_PLANE
+  page_authorization_probe: FORBIDDEN
   identity_required_for_page_gate: true
-  unauthenticated_reason_code: IDENTITY_RUNTIME_NOT_BOUND
+  unauthenticated_page_reason_code: IDENTITY_RUNTIME_NOT_BOUND
+  required_checks:
+  - Production Neon runtime is bound to the Current Authority project and schema chain
+  - acpos_runtime.sessions relation exists
+  - At least one READY runtime account maps by email to a non-disabled app_users actor
+  success_http_status: 200
+  failure_http_status: 503
   keep_fail_closed: true
 remaining_blockers: []
-adapter_bind_allowed: false
+adapter_bind_allowed: true
 production_ready_claim_allowed: false
-next_action: KEEP_PRODUCTION_READY_CLAIM_CLOSED
+next_action: VERIFY_CONTROL_PLANE_READINESS_THEN_CONTINUE_REMAINING_PRODUCTION_GATES

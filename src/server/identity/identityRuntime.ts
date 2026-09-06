@@ -35,6 +35,10 @@ export type IdentityActor = {
 type IdentityFailure = { ok: false; status: number; reason_code: string };
 type IdentitySuccess<T> = { ok: true } & T;
 
+export type IdentityReadiness =
+  | IdentitySuccess<{ ready_account_count: number }>
+  | IdentityFailure;
+
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" ? (value as Record<string, unknown>) : null;
 }
@@ -129,6 +133,34 @@ export async function resolveIdentityFromCookie(
     return { ok: true, actor };
   } catch {
     return { ok: false, status: 503, reason_code: "IDENTITY_LOOKUP_FAILED" };
+  }
+}
+
+export async function probeIdentityRuntimeReadiness(): Promise<IdentityReadiness> {
+  await ensureProductionNeonRuntime();
+  const sql = getProductionNeonSql();
+  if (!sql) return { ok: false, status: 503, reason_code: "DATABASE_RUNTIME_NOT_BOUND" };
+
+  try {
+    const rows = await sql`
+      SELECT count(*)::int AS ready_account_count,
+             to_regclass('acpos_runtime.sessions') IS NOT NULL AS session_store_ready
+      FROM acpos_runtime.accounts a
+      JOIN app_users u ON lower(u.email::text) = lower(a.email)
+      WHERE a.status = 'READY'
+        AND u.disabled_at IS NULL
+    `;
+    const row = Array.isArray(rows) ? asRecord(rows[0]) : null;
+    const readyAccountCount = Number(row?.ready_account_count);
+    if (!row?.session_store_ready) {
+      return { ok: false, status: 503, reason_code: "IDENTITY_SESSION_STORE_NOT_READY" };
+    }
+    if (!Number.isSafeInteger(readyAccountCount) || readyAccountCount < 1) {
+      return { ok: false, status: 503, reason_code: "IDENTITY_READY_ACCOUNT_NOT_FOUND" };
+    }
+    return { ok: true, ready_account_count: readyAccountCount };
+  } catch {
+    return { ok: false, status: 503, reason_code: "IDENTITY_READINESS_PROBE_FAILED" };
   }
 }
 

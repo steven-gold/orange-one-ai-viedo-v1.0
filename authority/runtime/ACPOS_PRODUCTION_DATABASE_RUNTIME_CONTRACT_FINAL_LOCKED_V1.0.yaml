@@ -1,9 +1,9 @@
 authority:
   id: ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT
-  version: V1.0
+  version: V1.1
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-WILD-WAVE-REGISTER-DRIVER-BIND
+  revision: 2026-09-06-CONTROL-PLANE-READINESS
   scope: PRODUCTION_DATABASE_DRIVER_AND_CONNECTION_ENV_CONTRACT_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -13,7 +13,8 @@ approval:
   - Set live Neon target to wild-wave-25661146
   - Name production database driver and environment keys
   - Bind register() to @neondatabase/serverless against wild-wave after 0001-0015 applied
-  - Do not claim production ready and do not change /health/ready to 200
+  - Permit /health/ready 200 only after the database and identity control-plane checks pass
+  - Do not infer complete production runtime acceptance from control-plane readiness
   - Do not invent UI projection or IAM adapters
 source:
   derived_from:
@@ -107,6 +108,6 @@ forbidden:
   - Commit DATABASE_URL or password values
   - Bind configureUiProjectionRuntime or other configure*Runtime adapters without Current Authority SQL/permission mapping
   - Treat CONTROLLED_TEST as production binding
-  - Change official site /health/ready to 200
+  - Return control-plane ready while the database binding or identity readiness probe is failing
   - Drop or skip 0001-0015 because the tiny-dust project is gone
   - Claim wild-wave schema complete from tiny-dust COMPLETE

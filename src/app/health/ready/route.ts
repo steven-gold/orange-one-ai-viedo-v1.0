@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getUiProjection } from "@/server/shared/uiProjectionRuntime";
+import { probeIdentityRuntimeReadiness } from "@/server/identity/identityRuntime";
 import { getDeploymentMetadata } from "@/server/shared/deploymentMetadata";
 
 export const dynamic = "force-dynamic";
@@ -25,10 +25,7 @@ export async function GET() {
     );
   }
 
-  const probe = await getUiProjection({
-    page_uid: "workspace:WB-01",
-    correlation_id,
-  });
+  const probe = await probeIdentityRuntimeReadiness();
 
   if (!probe.ok) {
     return NextResponse.json(
@@ -55,6 +52,8 @@ export async function GET() {
       service: "ORANGE ONE ACPOS",
       environment: metadata.environment,
       release_sha: metadata.release_sha,
+      readiness_scope: "DATABASE_AND_IDENTITY_CONTROL_PLANE",
+      ready_account_count: probe.ready_account_count,
       correlation_id,
     },
     {

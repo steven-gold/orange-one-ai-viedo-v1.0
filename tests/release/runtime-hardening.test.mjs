@@ -66,8 +66,9 @@ test("register() injects the authority Neon driver and WB-01 projection binding"
   assert.match(uiProjection, /bindWb01ProjectionRuntime/);
   assert.match(wb01, /configureUiProjectionRuntime/);
   assert.match(wb01, /configureDashboardRuntime/);
-  assert.match(ready, /status:\s*503/);
-  assert.match(ready, /getUiProjection/);
+  assert.match(ready, /probeIdentityRuntimeReadiness/);
+  assert.match(ready, /readiness_scope:\s*"DATABASE_AND_IDENTITY_CONTROL_PLANE"/);
+  assert.doesNotMatch(ready, /getUiProjection/);
   assert.match(uiProjection, /UI_PROJECTION_RUNTIME_NOT_BOUND/);
 });
 
@@ -122,19 +123,21 @@ test("production projection HTTP boundary blocks controlled-mode misconfiguratio
   assert.match(route, /status:\s*503/);
 });
 
-test("production readiness remains fail-closed for controlled mode and unbound UI runtime", async () => {
+test("production readiness is control-plane scoped and remains fail-closed when identity is unavailable", async () => {
   const readiness = await read("src/app/health/ready/route.ts");
-  const uiRuntime = await read("src/server/shared/uiProjectionRuntime.ts");
+  const identity = await read("src/server/identity/identityRuntime.ts");
 
   assert.match(readiness, /NEXT_PUBLIC_ACPOS_RUNTIME_MODE\s*===\s*["']CONTROLLED_TEST["']/);
   assert.match(readiness, /CONTROLLED_TEST_NOT_PRODUCTION_READY/);
   assert.match(readiness, /status:\s*503/);
-  assert.match(readiness, /getUiProjection/);
+  assert.match(readiness, /probeIdentityRuntimeReadiness/);
   assert.match(readiness, /if\s*\(!probe\.ok\)/);
+  assert.match(readiness, /DATABASE_AND_IDENTITY_CONTROL_PLANE/);
+  assert.doesNotMatch(readiness, /getUiProjection/);
 
-  assert.match(uiRuntime, /if\s*\(!runtime\)/);
-  assert.match(uiRuntime, /UI_PROJECTION_RUNTIME_NOT_BOUND/);
-  assert.match(uiRuntime, /status:\s*503/);
+  assert.match(identity, /IDENTITY_SESSION_STORE_NOT_READY/);
+  assert.match(identity, /IDENTITY_READY_ACCOUNT_NOT_FOUND/);
+  assert.match(identity, /IDENTITY_READINESS_PROBE_FAILED/);
 });
 
 test("current EDIT integration ports remain reachable through their authority-bound routes", async () => {
