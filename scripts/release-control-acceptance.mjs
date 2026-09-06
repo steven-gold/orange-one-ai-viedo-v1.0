@@ -80,6 +80,7 @@ try {
           const gateUid = element.getAttribute("data-gate-uid") || owner?.getAttribute("data-gate-uid") || "";
           const allowed = element.getAttribute("data-allowed") || owner?.getAttribute("data-allowed") || "";
           const runtimeBinding = element.getAttribute("data-runtime-binding") || owner?.getAttribute("data-runtime-binding") || "";
+          const enabledInVisualPhase = element.getAttribute("data-enabled-in-visual-phase") || owner?.getAttribute("data-enabled-in-visual-phase") || "";
           const disabledReason =
             element.getAttribute("data-disabled-reason") ||
             element.getAttribute("data-blocked-reason") ||
@@ -89,6 +90,7 @@ try {
             owner?.getAttribute("data-blocked-error-uid") ||
             element.getAttribute("title") ||
             (disabled && allowed === "false" && gateUid ? `${gateUid}:NOT_SATISFIED` : "") ||
+            (disabled && enabledInVisualPhase === "false" ? "DISABLED_IN_VISUAL_PHASE" : "") ||
             (disabled && /^(NOT_EXECUTED|NOT_BOUND|BLOCKED|UNRESOLVED)/.test(runtimeBinding) ? runtimeBinding : "");
           const searchRegion = element.closest("[role='search']");
           const governedSearchPeer = Boolean(searchRegion?.querySelector("[data-control-id],[data-control-uid],[data-action-uid],[data-action-id],[data-operation-id]"));
