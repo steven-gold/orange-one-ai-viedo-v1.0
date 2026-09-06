@@ -620,16 +620,21 @@ async function executeInfo(request: InfoRequest): Promise<unknown> {
     throw new NamedRuntimeError("INFO_WRITE_RUNTIME_NOT_MATERIALIZED");
   }
   const sql = await requireSql();
+  const identityContext = await requireIdentityContext();
   const payload = asRecord(request.payload) ?? {};
   const q = `%${asText(payload.query) ?? ""}%`;
-  const rows = await sql`
-    SELECT p.project_id::text AS ref, p.title AS label
-    FROM projects p
-    WHERE p.archived_at IS NULL
-      AND (${q} = '%%' OR p.title ILIKE ${q} OR p.project_code ILIKE ${q})
-    ORDER BY p.created_at DESC
-    LIMIT 50
-  `;
+  const rows = await runRlsActorQuery(
+    sql,
+    identityContext.session_token_hash,
+    sql`
+      SELECT p.project_id::text AS ref, p.title AS label
+      FROM projects p
+      WHERE p.archived_at IS NULL
+        AND (${q} = '%%' OR p.title ILIKE ${q} OR p.project_code ILIKE ${q})
+      ORDER BY p.created_at DESC
+      LIMIT 50
+    `,
+  );
   const results = (Array.isArray(rows) ? rows : []).flatMap((raw) => {
     const row = asRecord(raw);
     const ref = asText(row?.ref);
@@ -698,35 +703,48 @@ async function executeConversation(request: ConversationRequest): Promise<unknow
     throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
   }
   const sql = await requireSql();
-  const actor = await requireActor();
+  const identityContext = await requireIdentityContext();
+  const actor = identityContext.actor;
   const payload = asRecord(request.payload) ?? {};
   const message = asText(payload.message);
   if (!message) throw new NamedRuntimeError("MESSAGE_REQUIRED");
   const conversationId = asText(request.conversation_id);
   if (!conversationId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:conversationId");
-  const exists = await sql`
-    SELECT conversation_id::text AS conversation_id
-    FROM conversations
-    WHERE conversation_id = ${conversationId}::uuid
-    LIMIT 1
-  `;
+  const exists = await runRlsActorQuery(
+    sql,
+    identityContext.session_token_hash,
+    sql`
+      SELECT conversation_id::text AS conversation_id
+      FROM conversations
+      WHERE conversation_id = ${conversationId}::uuid
+      LIMIT 1
+    `,
+  );
   if (!asText(firstRow(exists)?.conversation_id)) throw new NamedRuntimeError("CONVERSATION_NOT_FOUND");
-  const seqRows = await sql`
-    SELECT COALESCE(MAX(sequence_no), 0)::int AS seq
-    FROM conversation_messages
-    WHERE conversation_id = ${conversationId}::uuid
-  `;
+  const seqRows = await runRlsActorQuery(
+    sql,
+    identityContext.session_token_hash,
+    sql`
+      SELECT COALESCE(MAX(sequence_no), 0)::int AS seq
+      FROM conversation_messages
+      WHERE conversation_id = ${conversationId}::uuid
+    `,
+  );
   const seq = Number(firstRow(seqRows)?.seq ?? 0) + 1;
   const content = JSON.stringify({ text: message, instruction_kind: asText(payload.instruction_kind) ?? "MESSAGE" });
   const message_ref = crypto.randomUUID();
-  const msgRows = await sql`
-    INSERT INTO conversation_messages (
-      conversation_message_id, conversation_id, sequence_no, actor_type, actor_ref, message_content
-    ) VALUES (
-      ${message_ref}::uuid, ${conversationId}::uuid, ${seq}, 'USER', ${actor.user_id}, ${content}::jsonb
-    )
-    RETURNING conversation_message_id::text AS message_ref
-  `;
+  const msgRows = await runRlsActorQuery(
+    sql,
+    identityContext.session_token_hash,
+    sql`
+      INSERT INTO conversation_messages (
+        conversation_message_id, conversation_id, sequence_no, actor_type, actor_ref, message_content
+      ) VALUES (
+        ${message_ref}::uuid, ${conversationId}::uuid, ${seq}, 'USER', ${actor.user_id}, ${content}::jsonb
+      )
+      RETURNING conversation_message_id::text AS message_ref
+    `,
+  );
   if (!asText(firstRow(msgRows)?.message_ref)) throw new NamedRuntimeError("MESSAGE_INSERT_FAILED");
   return { conversation_id: conversationId, message_ref, accepted: true };
 }
