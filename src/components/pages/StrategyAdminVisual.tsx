@@ -300,7 +300,7 @@ function StrategyAdminContent() {
           {active.actions.map((actionId, index) => {
             const unresolved = actionId === "ACT-CANDIDATE-DECIDE";
             const navOnly = actionId === "ACT-NAV-OPEN";
-            const enabled = canInvoke(actionId);
+            const enabled = canInvoke(actionId, active.key);
             const bindingState =
               unresolved || navOnly
                 ? "AUTHORITY_BINDING_UNRESOLVED"
