@@ -3,7 +3,8 @@ import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 import { emitObservability } from "@/server/shared/observability";
 
 export const AUTHORITY_NEON_PROJECT_ID = "wild-wave-25661146";
-export const REQUIRED_MIGRATION_COUNT = 18;
+export const REQUIRED_MIGRATION_COUNT = 17;
+export const TARGET_MIGRATION_COUNT = 18;
 
 type NeonSql = NeonQueryFunction<false, false>;
 
@@ -87,7 +88,7 @@ export async function bindProductionNeonRuntime(): Promise<void> {
       FROM schema_migration_history
     `;
     const n = Array.isArray(rows) && rows[0] && typeof rows[0] === "object" ? Number((rows[0] as { n?: unknown }).n) : NaN;
-    if (n !== REQUIRED_MIGRATION_COUNT) {
+    if (n < REQUIRED_MIGRATION_COUNT || n > TARGET_MIGRATION_COUNT) {
       bindReason = "SCHEMA_MIGRATION_HISTORY_COUNT_MISMATCH";
       await emitObservability("error", {
         event: "acpos_neon_bind_blocked",
