@@ -3,6 +3,17 @@ import { chromium } from "playwright";
 
 const port = process.env.ACPOS_BROWSER_E2E_PORT ?? "3500";
 const base = `http://127.0.0.1:${port}`;
+const baseOrigin = new URL(base).origin;
+
+function isExpectedUnauthenticatedResponse(response) {
+  const url = new URL(response.url());
+  if (url.origin !== baseOrigin) return false;
+  if (url.pathname === "/v1/identity/session") return response.status() === 401;
+  if (url.pathname === "/v1/dashboard/read-model") return response.status() === 403;
+  if (url.pathname.startsWith("/v1/ui-projections/")) return [403, 503].includes(response.status());
+  return false;
+}
+
 const routes = [
   ["/", "workspace:WB-01"], ["/core", "CORE-01"], ["/assets", "ASSET-01"], ["/video", "VIDEO-01"],
   ["/edit", "EDIT-01"], ["/qa", "QA-01"], ["/database", "admin:DB-01"], ["/strategy", "workspace:STR-01"],
@@ -39,8 +50,13 @@ try {
         const page = await browser.newPage({ viewport: { width, height: 1400 } });
         const errors = [];
         page.on("pageerror", (error) => errors.push(`pageerror:${error.message}`));
+        page.on("response", (response) => {
+          if (response.status() >= 400 && !isExpectedUnauthenticatedResponse(response)) {
+            errors.push(`response:${response.status()}:${new URL(response.url()).pathname}`);
+          }
+        });
         page.on("console", (message) => {
-          if (message.type() === "error" && !/Failed to load resource.*(?:401|503)/.test(message.text())) errors.push(`console:${message.text()}`);
+          if (message.type() === "error" && !/Failed to load resource.*(?:401|403|503)/.test(message.text())) errors.push(`console:${message.text()}`);
         });
         const response = await page.goto(`${base}${route}`, { waitUntil: "networkidle", timeout: 45_000 });
         if (!response?.ok()) throw new Error(`NAV_${route}_${response?.status()}`);
