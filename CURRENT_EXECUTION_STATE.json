@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T06:57:20+08:00",
+  "as_of": "2026-09-07T07:09:32+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
-    "new_sha_basis": "ff619d722f2b68403cebb093315abee5c3b247db",
+    "new_sha_basis": "4b03ae589bd46f352b8791b696878428ce87602a",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -50,6 +50,20 @@
       "conclusion": "success",
       "browser_e2e": "PASS",
       "current_dom_control_acceptance": "PASS",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS"
+    },
+    "latest_remote_control_acceptance_gate": {
+      "status": "PASS",
+      "run_number": 443,
+      "run_id": 34065919692,
+      "head_sha": "4b03ae589bd46f352b8791b696878428ce87602a",
+      "branch": "new",
+      "conclusion": "success",
+      "browser_e2e": "PASS",
+      "current_dom_control_acceptance": "PASS_18_PAGES_358_VISIBLE_358_GOVERNED",
+      "remote_control_acceptance_script": "MATERIALIZED_ON_NEW",
+      "post_deploy_workflow_binding": "MATERIALIZED_ON_NEW_PENDING_NEXT_MAIN_RELEASE",
       "standalone_docker_build": "PASS",
       "dirty_tree_guard": "PASS"
     }
@@ -174,20 +188,20 @@
       "reason": "AIAPI governed UI/server mutation runtime is deployed and the authenticated queue mutation probe passes in Production, but no current evidence proves all 9 admin mutation acceptance targets end-to-end."
     },
     "gate25_full_page_button_acceptance": {
-      "status": "PARTIAL_PRODUCTION_REMOTE_CONTROL_ACCEPTANCE_NOT_RUN",
-      "reason": "Main Release Gate #439 passed Current DOM Control Acceptance for 18 pages (358 visible interactive controls, all 358 governed) and Browser E2E passed 72 cases / 448 visible interactions in controlled release mode. Production Post Deploy #696/#697 passed 54 browser cases and authenticated visibility, but the remote Production workflow does not execute release-control-acceptance.mjs and no full 1453-control Production acceptance has been rerun. Gate 25 must not be marked PASS."
+      "status": "PARTIAL_REMOTE_RUNNER_MATERIALIZED_PENDING_PRODUCTION_DEPLOYMENT_AND_DENOMINATOR_RECONCILIATION",
+      "reason": "Current Release Gate #443 passes 18-page Current DOM acceptance (358 visible / 358 governed) and validates the new remote Production control-acceptance script. The Post Deploy workflow on new now enforces that remote scanner after authenticated browser E2E, but this change is not yet deployed to main. The formal historical 1453-control denominator has not been reproduced from Current Authority; raw control_uid counting is invalid because several Current page authorities use deduplicated or compact encodings. Do not replace 1453 with 358 and do not mark Gate 25 PASS until the Authority denominator is reconciled and the remote Production run passes."
     }
   },
   "blockers": [
     "Real external Provider capability/profile/secret/group configuration is absent; runtime is deployed but real values must not be fabricated.",
     "Vercel management connector can see the Hobby team but project listing is empty / deployment listing is forbidden, so management-plane environment authority remains not directly readable through the connector.",
-    "Gate 25 still lacks a dedicated remote Production Current DOM Control Acceptance / full 1453-control acceptance run."
+    "Gate 25 remote Production control-acceptance runner is materialized and Release-validated on new, but it has not yet been included in the next single main deployment; formal Authority control denominator reconciliation is still required before PASS."
   ],
   "next_release_sequence": [
-    "Keep main fixed at deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671; do not create a retry deployment.",
-    "Materialize a dedicated remote Production control-acceptance runner on new without changing SYS business semantics or fabricating disabled reasons.",
-    "Reconcile the Current DOM visible-control acceptance scope with the formal 1453-control Gate 25 denominator before claiming Gate 25 PASS.",
-    "Do not claim External Provider PASS until real provider capability/profile/secret/group configuration is supplied and a real external request succeeds.",
-    "Continue remaining admin mutation and formal 25-Gate acceptance work on new; accumulate changes before the next integration deployment."
+    "Keep main fixed at deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671 while additional dependency-ready acceptance work is accumulated on new.",
+    "Continue Gate 24 admin mutation closure using only registered Current operations; do not mark pages with PROVIDER_GATEWAY_NOT_MATERIALIZED as mutation PASS.",
+    "Reconcile the formal Gate 25 Authority control denominator separately from the 358 visible Current DOM controls; duplicate/compact authority encodings must be normalized before counting.",
+    "At the next integration point, require a full Release Gate on the exact new head, then one new→main release and Post Deploy HTTP/auth/browser/remote-control acceptance.",
+    "Do not claim External Provider PASS until real provider capability/profile/secret/group configuration is supplied and a real external request succeeds."
   ]
 }
