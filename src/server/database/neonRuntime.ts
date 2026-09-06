@@ -3,7 +3,7 @@ import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 import { emitObservability } from "@/server/shared/observability";
 
 export const AUTHORITY_NEON_PROJECT_ID = "wild-wave-25661146";
-export const REQUIRED_MIGRATION_COUNT = 18;
+export const REQUIRED_MIGRATION_COUNT = 19;
 export const MAX_SUPPORTED_MIGRATION_COUNT = 19;
 
 export function isSupportedMigrationCount(value: number): boolean {
