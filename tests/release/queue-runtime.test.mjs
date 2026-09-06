@@ -53,6 +53,9 @@ test("provider queue runtime implements claim, lease recovery, retry, DLQ, idemp
   assert.match(runtime,/last_heartbeat_at=now\(\)/);
   assert.match(runtime,/PROVIDER_EXTERNAL_ADAPTER_EXECUTION_NOT_MATERIALIZED/);
   assert.match(runtime,/external_provider_call: false/);
+  assert.match(runtime,/runProviderQueueRuntimeProbe/);
+  assert.match(runtime,/residual_probe_rows/);
+  assert.match(runtime,/PRODUCTION_HTTP_RUNTIME_PASS/);
 });
 
 test("cron drain is secret-gated and Hobby-compatible recovery schedule is materialized",()=>{
