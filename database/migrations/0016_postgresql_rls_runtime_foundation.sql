@@ -2,15 +2,20 @@
 -- Change ref: CR-RLS-0016
 -- Scope: non-BYPASSRLS application role, session-bound actor context, and first protected project/permission tables.
 
-DO $$
+DO $
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'acpos_app_runtime') THEN
     CREATE ROLE acpos_app_runtime NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS;
+  ELSIF EXISTS (
+    SELECT 1
+    FROM pg_roles
+    WHERE rolname = 'acpos_app_runtime'
+      AND (rolcanlogin OR rolsuper OR rolcreatedb OR rolcreaterole OR rolinherit OR rolbypassrls)
+  ) THEN
+    RAISE EXCEPTION 'ACPOS_RUNTIME_ROLE_SECURITY_MISMATCH';
   END IF;
 END
-$$;
-
-ALTER ROLE acpos_app_runtime NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS;
+$;
 GRANT acpos_app_runtime TO neondb_owner;
 GRANT USAGE ON SCHEMA public, acpos_runtime TO acpos_app_runtime;
 
@@ -270,7 +275,7 @@ WITH CHECK (acpos_runtime.can_access_conversation(conversation_id));
 INSERT INTO schema_migration_history(migration_id, checksum, applied_by, approval_ref)
 VALUES (
   '0016_postgresql_rls_runtime_foundation',
-  '9695cf577be5ea4aab5cd1a309112bab4e96da8a9743453b1a9bbb67b82b347d',
+  '8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4',
   'migration-runner',
   'CR-RLS-0016'
 )
