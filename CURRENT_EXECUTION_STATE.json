@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T05:11:00+08:00",
+  "as_of": "2026-09-07T06:44:09+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
-    "new_sha_basis": "fe2ba1ff8692043caf90b5b8d0aa2a8b5ec81fda",
+    "new_sha_basis": "17804d7b6f3800b538674607bef3dc30a284994d",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -35,6 +35,18 @@
       "head_sha": "fb7e649ca791a8d81ec1f0e9b6c8233b033aaf1a",
       "branch": "new",
       "conclusion": "success"
+    },
+    "latest_control_acceptance_gate": {
+      "status": "PASS",
+      "run_number": 436,
+      "run_id": 34064727165,
+      "head_sha": "17804d7b6f3800b538674607bef3dc30a284994d",
+      "branch": "new",
+      "conclusion": "success",
+      "browser_e2e": "PASS",
+      "current_dom_control_acceptance": "PASS",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS"
     }
   },
   "production": {
@@ -143,8 +155,8 @@
       "reason": "AIAPI governed UI/server mutation binding is materialized and Release Gate validated on new; Production deployment/E2E is pending."
     },
     "gate25_full_page_button_acceptance": {
-      "status": "NOT_REAUDITED",
-      "reason": "No full 1453-control Production acceptance has been rerun in this closure batch."
+      "status": "CONSTRUCTION_CURRENT_DOM_PASS_PENDING_PRODUCTION_ACCEPTANCE",
+      "reason": "Current DOM Control Acceptance passed in ACPOS Release Gate #436 on new@17804d7b6f3800b538674607bef3dc30a284994d after exact SYS-01 restoration and governed visual-phase disabled-control scanner handling. Production full-page/full-button acceptance has not yet been rerun on the final main deployment, so Gate 25 is not yet PASS."
     }
   },
   "blockers": [
@@ -153,8 +165,7 @@
     "Vercel management connector can read the team but cannot read the project, so Production CRON_SECRET binding is not verified."
   ],
   "next_release_sequence": [
-    "Complete Current all-page interactive-control acceptance on new and close any actionable DOM gaps.",
-    "Run ACPOS Release Gate on the exact final new head.",
+    "Run ACPOS Release Gate on the exact final new head produced by this Current State update.",
     "If PASS, create one PR new -> main and merge with exact expected head SHA.",
     "Allow exactly one Vercel Production deployment attempt for the resulting main SHA.",
     "If Vercel remains rate-limited, do not push retry commits; retain the exact main SHA and blocker.",
