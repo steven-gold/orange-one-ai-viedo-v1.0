@@ -8,7 +8,8 @@ import { configureIamRuntime, type IamRuntimeRequest } from "@/server/iam/iamRun
 import { configureDepartmentOperationRuntime } from "@/server/shared/departmentOperationRuntime";
 import { configureInfoCommandRuntime, type InfoRequest } from "@/server/info/infoCommandRuntime";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
-import { IDENTITY_COOKIE_NAME, resolveIdentityFromCookie, type IdentityActor } from "@/server/identity/identityRuntime";
+import { runRlsActorQuery } from "@/server/database/rlsRuntime";
+import { hashSessionToken, IDENTITY_COOKIE_NAME, resolveIdentityFromCookie, type IdentityActor } from "@/server/identity/identityRuntime";
 import { CURRENT_PAGE_RESOURCE_KEYS } from "@/server/shared/pageCatalogProjectionRuntime";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 import { configureQaRuntime, type QaRequest } from "@/server/qa/qaRuntime";
@@ -76,11 +77,25 @@ async function readSessionCookie(): Promise<string | undefined> {
   }
 }
 
-async function requireActor(): Promise<IdentityActor> {
+type IdentityContext = {
+  actor: IdentityActor;
+  session_token_hash: string;
+};
+
+async function requireIdentityContext(): Promise<IdentityContext> {
   await ensureProductionNeonRuntime();
-  const identity = await resolveIdentityFromCookie(await readSessionCookie());
+  const cookieValue = await readSessionCookie();
+  const identity = await resolveIdentityFromCookie(cookieValue);
   if (!identity.ok) throw new NamedRuntimeError(identity.reason_code);
-  return identity.actor;
+  if (!cookieValue) throw new NamedRuntimeError("RLS_SESSION_CONTEXT_REQUIRED");
+  return {
+    actor: identity.actor,
+    session_token_hash: hashSessionToken(cookieValue),
+  };
+}
+
+async function requireActor(): Promise<IdentityActor> {
+  return (await requireIdentityContext()).actor;
 }
 
 async function requireSql(): Promise<SqlClient> {
@@ -97,22 +112,28 @@ async function evaluatePageView(resourceKey: string): Promise<{ allowed: true; a
   }
   const boundSql = getProductionNeonSql();
   if (!boundSql) return { allowed: false, reason_code: "DATABASE_RUNTIME_NOT_BOUND" };
-  const identity = await resolveIdentityFromCookie(await readSessionCookie());
+  const cookieValue = await readSessionCookie();
+  const identity = await resolveIdentityFromCookie(cookieValue);
   if (!identity.ok) return { allowed: false, reason_code: identity.reason_code };
+  if (!cookieValue) return { allowed: false, reason_code: "RLS_SESSION_CONTEXT_REQUIRED" };
   try {
-    const rows = await boundSql`
-      SELECT a.effect, a.scope, a.condition
-      FROM account_permission_assignments a
-      JOIN permission_resources r ON r.resource_id = a.resource_id
-      WHERE a.user_id = ${identity.actor.user_id}
-        AND r.resource_key = ${resourceKey}
-        AND r.resource_type = 'PAGE'
-        AND r.active = true
-        AND a.action = 'VIEW'
-        AND a.status = 'APPROVED'
-        AND a.effective_from <= now()
-        AND (a.effective_to IS NULL OR a.effective_to > now())
-    `;
+    const rows = await runRlsActorQuery(
+      boundSql,
+      hashSessionToken(cookieValue),
+      boundSql`
+        SELECT a.effect, a.scope, a.condition
+        FROM account_permission_assignments a
+        JOIN permission_resources r ON r.resource_id = a.resource_id
+        WHERE a.user_id = ${identity.actor.user_id}
+          AND r.resource_key = ${resourceKey}
+          AND r.resource_type = 'PAGE'
+          AND r.active = true
+          AND a.action = 'VIEW'
+          AND a.status = 'APPROVED'
+          AND a.effective_from <= now()
+          AND (a.effective_to IS NULL OR a.effective_to > now())
+      `,
+    );
     const requestScope = {} as Record<string, never>;
     const matched: string[] = [];
     for (const raw of Array.isArray(rows) ? rows : []) {
