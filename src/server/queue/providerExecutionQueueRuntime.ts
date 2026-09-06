@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
+import { executeQueuedProviderRequest, recordQueuedProviderFailure } from "@/server/aiApi/providerHttpAdapterRuntime";
 
 type SqlClient = NonNullable<ReturnType<typeof getProductionNeonSql>>;
 type QueueRow = Record<string, unknown>;
@@ -140,6 +141,47 @@ export async function enqueueQueueRuntimeProbe(input: {
   const existingId=asText(existing?.event_id);
   if (!existingId) throw new NamedRuntimeError("QUEUE_RUNTIME_NOT_MATERIALIZED");
   return { event_id: existingId, enqueued: false, idempotency_key: idempotency };
+}
+
+export async function enqueueProviderExecutionRequest(input: {
+  correlation_id: string;
+  route_decision_id: string;
+  payload: Record<string, unknown>;
+  idempotency_key?: string;
+}): Promise<{ event_id: string; enqueued: boolean; idempotency_key: string }> {
+  const sql=await sqlClient();
+  const eventId=crypto.randomUUID();
+  const correlation=/^[0-9a-f-]{36}$/i.test(input.correlation_id) ? input.correlation_id : crypto.randomUUID();
+  const idempotency=sha256(input.idempotency_key?.trim() || `provider-route:${input.route_decision_id}`);
+  const payload=JSON.stringify(input.payload);
+  const result=await sql`
+    INSERT INTO outbox_events(
+      event_id,event_type,event_version,aggregate_type,aggregate_id,aggregate_version,
+      correlation_id,payload,payload_hash,queue_id,idempotency_key,max_attempts
+    )
+    SELECT
+      ${eventId}::uuid,${PROVIDER_EXECUTION_EVENT},1,'PROVIDER_ROUTE_DECISION',
+      ${input.route_decision_id}::uuid,1,${correlation}::uuid,${payload}::jsonb,${sha256(payload)},
+      q.queue_id,${idempotency},3
+    FROM queues q
+    WHERE q.queue_key=${PROVIDER_EXECUTION_QUEUE_KEY}
+      AND q.status='READY'
+    ON CONFLICT DO NOTHING
+    RETURNING event_id::text AS event_id
+  `;
+  const inserted=first(result);
+  if (inserted) return { event_id:asText(inserted.event_id) ?? eventId,enqueued:true,idempotency_key:idempotency };
+  const existing=first(await sql`
+    SELECT o.event_id::text AS event_id
+    FROM outbox_events o
+    JOIN queues q ON q.queue_id=o.queue_id
+    WHERE q.queue_key=${PROVIDER_EXECUTION_QUEUE_KEY}
+      AND o.idempotency_key=${idempotency}
+    LIMIT 1
+  `);
+  const existingId=asText(existing?.event_id);
+  if (!existingId) throw new NamedRuntimeError("PROVIDER_EXECUTION_QUEUE_NOT_MATERIALIZED");
+  return { event_id:existingId,enqueued:false,idempotency_key:idempotency };
 }
 
 async function heartbeat(sql: SqlClient, state: string, detail: Record<string, unknown>): Promise<void> {
@@ -287,14 +329,25 @@ async function handleEvent(row: QueueRow): Promise<Record<string, unknown>> {
   const eventType=asText(row.event_type);
   if (eventType===QUEUE_RUNTIME_PROBE_EVENT) {
     return {
-      event_type: eventType,
-      probe: "PASS",
-      external_provider_call: false,
-      business_table_mutation: false,
+      event_type:eventType,
+      probe:"PASS",
+      external_provider_call:false,
+      business_table_mutation:false,
     };
   }
   if (eventType===PROVIDER_EXECUTION_EVENT) {
-    throw new NamedRuntimeError("PROVIDER_EXTERNAL_ADAPTER_EXECUTION_NOT_MATERIALIZED");
+    const result=await executeQueuedProviderRequest(row.payload);
+    return {
+      event_type:eventType,
+      route_decision_id:result.route_decision_id,
+      attempt_id:result.attempt_id,
+      provider_id:result.provider_id,
+      model_id:result.model_id,
+      result_hash:result.result_hash,
+      latency_ms:result.latency_ms,
+      normalized_text:result.normalized_text,
+      external_provider_call:true,
+    };
   }
   throw new NamedRuntimeError("QUEUE_EVENT_TYPE_NOT_REGISTERED");
 }
@@ -318,6 +371,13 @@ export async function drainProviderExecutionQueue(limit=10): Promise<{
     } catch (error) {
       const reason=error instanceof Error && error.message ? error.message : "QUEUE_HANDLER_FAILED";
       const outcome=await failEvent(sql,row,reason);
+      if (asText(row.event_type)===PROVIDER_EXECUTION_EVENT) {
+        try {
+          await recordQueuedProviderFailure(row.payload,reason,outcome);
+        } catch {
+          // Queue retry/DLQ remains authoritative even if secondary provider lineage update fails.
+        }
+      }
       if (outcome==="RETRY") retried+=1;
       else deadLettered+=1;
     }
