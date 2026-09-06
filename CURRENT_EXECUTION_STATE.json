@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T06:44:09+08:00",
+  "as_of": "2026-09-07T06:57:20+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
-    "main_sha": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
-    "new_sha_basis": "17804d7b6f3800b538674607bef3dc30a284994d",
+    "main_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
+    "new_sha_basis": "ff619d722f2b68403cebb093315abee5c3b247db",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -23,10 +23,15 @@
     },
     "current_main_release_gate": {
       "status": "PASS",
-      "run_number": 376,
-      "run_id": 34056101124,
-      "head_sha": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
-      "conclusion": "success"
+      "run_number": 439,
+      "run_id": 34065258943,
+      "head_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
+      "branch": "main",
+      "conclusion": "success",
+      "browser_e2e": "PASS_72_CASES_448_VISIBLE_INTERACTIONS",
+      "current_dom_control_acceptance": "PASS_18_PAGES_358_VISIBLE_358_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS"
     },
     "latest_provider_adapter_gate": {
       "status": "PASS",
@@ -52,21 +57,21 @@
   "production": {
     "target": "orange-one-acpos-test",
     "url": "https://orange-one-acpos-test.vercel.app",
-    "deployed_sha": "16d62a34852608dd703b0d1a50993d0d4061fe87",
-    "current_main_sha_not_deployed": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
-    "deployment_status": "LAST_VERIFIED_DEPLOYMENT_PASS_CURRENT_MAIN_DEPLOYMENT_BLOCKED",
-    "current_main_deployment_blocker": "VERCEL_HOBBY_BUILD_RATE_LIMIT",
+    "deployed_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
+    "deployment_status": "PASS_EXACT_MAIN_SHA",
     "latest_verified_post_deploy": {
       "status": "PASS",
-      "run_number": 614,
-      "run_id": 34055358391,
-      "head_sha": "16d62a34852608dd703b0d1a50993d0d4061fe87",
-      "http_smoke": "PASS",
-      "authenticated_e2e": "PASS",
-      "browser_smoke": "PASS",
-      "authenticated_browser_visibility": "PASS"
+      "deployment_trigger_run_number": 696,
+      "deployment_trigger_run_id": 34065289122,
+      "duplicate_workflow_run_number": 697,
+      "duplicate_workflow_run_id": 34065412653,
+      "head_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
+      "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_PROJECTIONS_18",
+      "authenticated_e2e": "PASS_LOGIN_SESSION_DASHBOARD_PROJECTIONS_18_QUEUE_PROBE_LOGOUT",
+      "browser_smoke": "PASS_54_CASES_18_PAGES_3_WIDTHS",
+      "authenticated_browser_visibility": "PASS_FRONT_NAV_9_ADMIN_NAV_9_VISIBLE_PAGES_18"
     },
-    "health_readiness_last_verified": "PASS_ON_DEPLOYED_SHA_16d62a34852608dd703b0d1a50993d0d4061fe87",
+    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_d434c9ea4a300daf6aad2b09a16beb415351f671",
     "database_migration_count": 19
   },
   "neon": {
@@ -79,7 +84,7 @@
     "migration_0019_checksum": "aea7ea811c826b255d3478e12e9715cb042444c5d2c6f8431f02b0189c0818cc",
     "canonical_queue_ready_count": 1,
     "canonical_worker_ready_count": 1,
-    "worker_last_heartbeat_at": "2026-09-06T19:38:54.130296Z",
+    "worker_last_heartbeat_at": "2026-09-06T22:53:09.811Z",
     "provider_capability_count": 0,
     "provider_profile_count": 0,
     "secret_reference_count": 0,
@@ -113,10 +118,24 @@
       "heartbeat",
       "probe_cleanup"
     ],
-    "production_full_http_probe": "PENDING_SINGLE_MAIN_DEPLOYMENT",
+    "production_full_http_probe": "PASS_ON_d434c9ea4a300daf6aad2b09a16beb415351f671",
     "external_provider_call_during_probe": false,
     "daily_recovery_cron": "MATERIALIZED_HOBBY_DAILY_UTC_0000",
-    "cron_secret": "NOT_VERIFIED_VERCEL_MANAGEMENT_SCOPE_MISMATCH"
+    "cron_secret": "NOT_VERIFIED_VERCEL_MANAGEMENT_SCOPE_MISMATCH",
+    "production_full_http_probe_evidence": {
+      "run_number": 696,
+      "run_id": 34065289122,
+      "authenticated_e2e": "PASS",
+      "idempotency": true,
+      "claim": true,
+      "inbox_receipt": true,
+      "publish": true,
+      "expired_lease_recovery": true,
+      "retry": true,
+      "dlq": true,
+      "cleanup_residual_zero": true,
+      "external_provider_call": false
+    }
   },
   "aiapi": {
     "operation_registry": "MATERIALIZED_CURRENT",
@@ -131,7 +150,7 @@
       "release_gate_395": "PASS",
       "release_gate_405": "PASS"
     },
-    "production_deployment": "PENDING_SINGLE_MAIN_RELEASE",
+    "production_deployment": "DEPLOYED_ON_d434c9ea4a300daf6aad2b09a16beb415351f671",
     "external_provider_execution": "BLOCKED_REAL_PROVIDER_CONFIGURATION_REQUIRED",
     "provider_counts": {
       "capabilities": 0,
@@ -144,32 +163,31 @@
   "formal_truth": {
     "gate22_external_provider": {
       "status": "BLOCKED_EXTERNAL_CONFIGURATION",
-      "reason": "Provider HTTP adapter, queue execution and governed route lineage are materialized and Release Gate #405 passed on new. Production still has 0 approved capabilities, 0 provider profiles, 0 secret references and 0 provider groups, so no real external Provider E2E may be claimed."
+      "reason": "Production runtime is deployed and queue execution is live, but current Neon Production still has 0 provider capabilities, 0 provider profiles, 0 secret references and 0 provider groups. Real external Provider E2E cannot be claimed or fabricated."
     },
     "gate23_queue_worker_dlq": {
-      "status": "PARTIAL_PENDING_FINAL_PRODUCTION_HTTP",
-      "reason": "Production data layer and DB probe pass; full authenticated HTTP worker acceptance is release-validated on new but not yet deployed."
+      "status": "PASS",
+      "reason": "Production queue and worker are READY (1/1 each), worker heartbeat is current, and Post Deploy authenticated E2E #696 passed the full queue probe including idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup on deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_PENDING_PRODUCTION_DEPLOYMENT",
-      "reason": "AIAPI governed UI/server mutation binding is materialized and Release Gate validated on new; Production deployment/E2E is pending."
+      "status": "PARTIAL_PRODUCTION_RUNTIME_DEPLOYED",
+      "reason": "AIAPI governed UI/server mutation runtime is deployed and the authenticated queue mutation probe passes in Production, but no current evidence proves all 9 admin mutation acceptance targets end-to-end."
     },
     "gate25_full_page_button_acceptance": {
-      "status": "CONSTRUCTION_CURRENT_DOM_PASS_PENDING_PRODUCTION_ACCEPTANCE",
-      "reason": "Current DOM Control Acceptance passed in ACPOS Release Gate #436 on new@17804d7b6f3800b538674607bef3dc30a284994d after exact SYS-01 restoration and governed visual-phase disabled-control scanner handling. Production full-page/full-button acceptance has not yet been rerun on the final main deployment, so Gate 25 is not yet PASS."
+      "status": "PARTIAL_PRODUCTION_REMOTE_CONTROL_ACCEPTANCE_NOT_RUN",
+      "reason": "Main Release Gate #439 passed Current DOM Control Acceptance for 18 pages (358 visible interactive controls, all 358 governed) and Browser E2E passed 72 cases / 448 visible interactions in controlled release mode. Production Post Deploy #696/#697 passed 54 browser cases and authenticated visibility, but the remote Production workflow does not execute release-control-acceptance.mjs and no full 1453-control Production acceptance has been rerun. Gate 25 must not be marked PASS."
     }
   },
   "blockers": [
-    "Vercel Hobby build-rate-limit currently blocks the next single Production deployment of main.",
-    "Real external Provider capability/profile/secret/group configuration is absent; runtime is materialized but real values must not be fabricated.",
-    "Vercel management connector can read the team but cannot read the project, so Production CRON_SECRET binding is not verified."
+    "Real external Provider capability/profile/secret/group configuration is absent; runtime is deployed but real values must not be fabricated.",
+    "Vercel management connector can see the Hobby team but project listing is empty / deployment listing is forbidden, so management-plane environment authority remains not directly readable through the connector.",
+    "Gate 25 still lacks a dedicated remote Production Current DOM Control Acceptance / full 1453-control acceptance run."
   ],
   "next_release_sequence": [
-    "Run ACPOS Release Gate on the exact final new head produced by this Current State update.",
-    "If PASS, create one PR new -> main and merge with exact expected head SHA.",
-    "Allow exactly one Vercel Production deployment attempt for the resulting main SHA.",
-    "If Vercel remains rate-limited, do not push retry commits; retain the exact main SHA and blocker.",
-    "If Vercel succeeds, require Post Deploy HTTP/auth/browser, FULL queue probe, and Production control acceptance for that exact main SHA.",
-    "Re-query Neon worker heartbeat and Provider configuration counts, then update Current State and formal Gate truth."
+    "Keep main fixed at deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671; do not create a retry deployment.",
+    "Materialize a dedicated remote Production control-acceptance runner on new without changing SYS business semantics or fabricating disabled reasons.",
+    "Reconcile the Current DOM visible-control acceptance scope with the formal 1453-control Gate 25 denominator before claiming Gate 25 PASS.",
+    "Do not claim External Provider PASS until real provider capability/profile/secret/group configuration is supplied and a real external request succeeds.",
+    "Continue remaining admin mutation and formal 25-Gate acceptance work on new; accumulate changes before the next integration deployment."
   ]
 }
