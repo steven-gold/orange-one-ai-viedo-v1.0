@@ -448,20 +448,24 @@ async function killSwitch(sql: SqlClient, payload: Row) {
   return { target_type: targetType, target_ref: targetRef, enabled };
 }
 
-async function routePreflight(sql: SqlClient, payload: Row) {
-  const groupId = requireText(payload, "candidate_group_id");
-  const requiredCapability = requireText(payload, "required_capability").toUpperCase();
-  const classification = (asText(payload.data_classification) ?? "INTERNAL").toUpperCase();
+async function routePreflight(sql: SqlClient, payload: Row, correlationId: string) {
+  const groupId=requireText(payload,"candidate_group_id");
+  const requiredCapability=requireText(payload,"required_capability").toUpperCase();
+  const classification=(asText(payload.data_classification) ?? "INTERNAL").toUpperCase();
+  const canonicalInstruction=requireText(payload,"canonical_instruction");
   if (!CAPABILITIES.has(requiredCapability)) throw new NamedRuntimeError("AIAPI_CAPABILITY_INVALID");
 
-  const members = rows(await sql`
-    SELECT m.id AS member_id,m.provider_id,m.model_id,m.enabled AS member_enabled,m.health_status,
-           p.id AS profile_id,p.capability_type,p.secret_env_ref,p.enabled AS profile_enabled,
+  const members=rows(await sql`
+    SELECT m.id AS member_id,m.provider_id,m.model_id,m.enabled AS member_enabled,m.health_status AS member_health_status,
+           p.id AS profile_id,p.capability_type,p.adapter_type,p.base_url,p.endpoint_path,p.http_method,
+           p.secret_env_ref,p.timeout_seconds,p.request_template,p.response_text_path,p.version,
+           p.enabled AS profile_enabled,p.health_status AS profile_health_status,
            g.enabled AS group_enabled,
            EXISTS(
              SELECT 1 FROM provider_capabilities c
              WHERE c.provider_key=m.provider_id
                AND c.model_key=m.model_id
+               AND c.capability_key=${requiredCapability}
                AND c.status='APPROVED'
                AND ${classification} = ANY(c.accepted_classifications::text[])
            ) AS governed_capability
@@ -473,66 +477,160 @@ async function routePreflight(sql: SqlClient, payload: Row) {
   `);
   if (!members.length) throw new NamedRuntimeError("AIAPI_PROVIDER_GROUP_NOT_FOUND");
 
-  const evaluated = members.map((m) => {
-    const reasons: string[] = [];
-    if (m.group_enabled !== true) reasons.push("GROUP_DISABLED");
-    if (m.member_enabled !== true) reasons.push("MEMBER_DISABLED");
-    if (m.profile_enabled !== true) reasons.push("PROFILE_DISABLED");
-    if (asText(m.capability_type) !== requiredCapability) reasons.push("CAPABILITY_MISMATCH");
-    if (m.governed_capability !== true) reasons.push("CAPABILITY_NOT_APPROVED_FOR_CLASSIFICATION");
-    if (credentialStatus(m.secret_env_ref) !== "SET") reasons.push("SECRET_REFERENCE_NOT_BOUND");
+  const evaluated=members.map((m) => {
+    const reasons: string[]=[];
+    if (m.group_enabled!==true) reasons.push("GROUP_DISABLED");
+    if (m.member_enabled!==true) reasons.push("MEMBER_DISABLED");
+    if (m.profile_enabled!==true) reasons.push("PROFILE_DISABLED");
+    if (asText(m.capability_type)!==requiredCapability) reasons.push("CAPABILITY_MISMATCH");
+    if (m.governed_capability!==true) reasons.push("CAPABILITY_NOT_APPROVED_FOR_CLASSIFICATION");
+    if (credentialStatus(m.secret_env_ref)!=="SET") reasons.push("SECRET_REFERENCE_NOT_BOUND");
+    if (asText(m.profile_health_status)!=="HEALTHY") reasons.push("PROFILE_HEALTH_TEST_REQUIRED");
     return {
-      member_id: asText(m.member_id),
-      profile_id: asText(m.profile_id),
-      provider_id: asText(m.provider_id),
-      model_id: asText(m.model_id),
-      eligible: reasons.length === 0,
+      member_id:asText(m.member_id),
+      profile_id:asText(m.profile_id),
+      provider_id:asText(m.provider_id),
+      model_id:asText(m.model_id),
+      eligible:reasons.length===0,
       reasons,
     };
   });
-  const eligible = evaluated.filter((m) => m.eligible);
-  const preflightId = crypto.randomUUID();
-  const status = eligible.length ? "READY" : "BLOCKED";
+  const eligible=evaluated.filter((m) => m.eligible);
+  const preflightId=crypto.randomUUID();
+  const preflightStatus=eligible.length ? "READY" : "BLOCKED";
   await sql`
     INSERT INTO acpos_runtime.provider_route_preflights(
       id,candidate_group_id,use_case,status,eligible_members,rejected_members,checks_json,reason
     ) VALUES(
-      ${preflightId},${groupId},${asText(payload.use_case) ?? "UNSPECIFIED"},${status},
+      ${preflightId},${groupId},${asText(payload.use_case) ?? "UNSPECIFIED"},${preflightStatus},
       ${JSON.stringify(eligible)}::jsonb,
       ${JSON.stringify(evaluated.filter((m) => !m.eligible))}::jsonb,
-      ${JSON.stringify({ required_capability: requiredCapability, data_classification: classification })}::jsonb,
+      ${JSON.stringify({
+        required_capability:requiredCapability,
+        data_classification:classification,
+        exact_capability_match:true,
+        secret_reference_required:true,
+        health_test_required:true,
+      })}::jsonb,
       ${eligible.length ? null : "NO_ELIGIBLE_PROVIDER_MEMBER"}
     )
   `;
 
-  const decisionId = crypto.randomUUID();
-  const selected = eligible[0] ?? null;
-  const decisionStatus = "BLOCKED";
-  const reason = selected ? "PROVIDER_EXTERNAL_ADAPTER_EXECUTION_NOT_MATERIALIZED" : "NO_ELIGIBLE_PROVIDER_MEMBER";
-  await sql`
-    INSERT INTO acpos_runtime.provider_route_decisions(
-      id,candidate_group_id,preflight_id,status,reason,selected_member_id,provider_id,model_id,payload
-    ) VALUES(
-      ${decisionId},${groupId},${preflightId},${decisionStatus},${reason},
-      ${selected?.member_id ?? null},${selected?.provider_id ?? null},${selected?.model_id ?? null},
-      ${JSON.stringify({
-        canonical_instruction_hash: createHash("sha256").update(requireText(payload, "canonical_instruction")).digest("hex"),
-        required_capability: requiredCapability,
-        data_classification: classification,
-        external_request_sent: false,
-      })}::jsonb
-    )
-  `;
+  const decisionId=crypto.randomUUID();
+  if (!eligible.length) {
+    await sql`
+      INSERT INTO acpos_runtime.provider_route_decisions(
+        id,candidate_group_id,preflight_id,status,reason,selected_member_id,provider_id,model_id,payload
+      ) VALUES(
+        ${decisionId},${groupId},${preflightId},'BLOCKED','NO_ELIGIBLE_PROVIDER_MEMBER',NULL,NULL,NULL,
+        ${JSON.stringify({
+          canonical_instruction_hash:createHash("sha256").update(canonicalInstruction).digest("hex"),
+          required_capability:requiredCapability,
+          data_classification:classification,
+          external_request_sent:false,
+        })}::jsonb
+      )
+    `;
+    return {
+      route_decision_id:decisionId,
+      preflight_id:preflightId,
+      status:"BLOCKED",
+      reason:"NO_ELIGIBLE_PROVIDER_MEMBER",
+      eligible_members:0,
+      external_request_sent:false,
+    };
+  }
+
+  const selected=eligible[0]!;
+  const selectedRow=members.find((row) => asText(row.member_id)===selected.member_id);
+  if (!selectedRow) throw new NamedRuntimeError("AIAPI_PROVIDER_SELECTED_MEMBER_NOT_FOUND");
+  const profile=providerHttpProfile(selectedRow);
+  const compiled=compileProviderRequest(profile,canonicalInstruction);
+  const compiledPromptId=crypto.randomUUID();
+  const attemptId=crypto.randomUUID();
+  const canonicalHash=createHash("sha256").update(canonicalInstruction).digest("hex");
+  const canonicalInstructionId=asText(payload.canonical_instruction_id) ?? `AIAPI_ROUTE_${canonicalHash}`;
+  const scopedContext=asRecord(payload.scoped_context);
+  const dnaVersionIds=Array.isArray(payload.dna_version_ids)
+    ? payload.dna_version_ids.map(asText).filter((value): value is string => Boolean(value))
+    : [];
+
+  await sql.transaction([
+    sql`
+      INSERT INTO acpos_runtime.provider_compiled_prompts(
+        id,canonical_instruction_id,provider_profile_id,provider_id,model_id,profile_version,
+        adapter_type,compiled_prompt,compiled_prompt_hash,api_request_payload,api_request_hash,
+        scoped_context,blueprint_version_id,dna_version_ids,source_compiled_prompt_id,fallback_recompiled
+      ) VALUES(
+        ${compiledPromptId},${canonicalInstructionId},${profile.profile_id},${profile.provider_id},${profile.model_id},
+        ${profile.version},${profile.adapter_type},${compiled.compiled_prompt},${compiled.compiled_prompt_hash},
+        ${JSON.stringify(compiled.api_request_payload)}::jsonb,${compiled.api_request_hash},
+        ${JSON.stringify(scopedContext)}::jsonb,${asText(payload.blueprint_version_id)},${JSON.stringify(dnaVersionIds)}::jsonb,
+        NULL,false
+      )
+    `,
+    sql`
+      INSERT INTO acpos_runtime.provider_route_decisions(
+        id,candidate_group_id,preflight_id,status,reason,selected_member_id,provider_id,model_id,payload
+      ) VALUES(
+        ${decisionId},${groupId},${preflightId},'QUEUED',NULL,${selected.member_id},${selected.provider_id},${selected.model_id},
+        ${JSON.stringify({
+          canonical_instruction_id:canonicalInstructionId,
+          canonical_instruction_hash:canonicalHash,
+          required_capability:requiredCapability,
+          data_classification:classification,
+          compiled_prompt_id:compiledPromptId,
+          api_request_hash:compiled.api_request_hash,
+          external_request_sent:false,
+        })}::jsonb
+      )
+    `,
+    sql`
+      INSERT INTO acpos_runtime.provider_route_attempts(
+        id,route_decision_id,preflight_id,candidate_group_id,member_id,provider_profile_id,
+        compiled_prompt_id,provider_id,model_id,attempt_no,same_provider_attempt_no,fallback_no,status,evidence_json
+      ) VALUES(
+        ${attemptId},${decisionId},${preflightId},${groupId},${selected.member_id},${profile.profile_id},
+        ${compiledPromptId},${profile.provider_id},${profile.model_id},1,1,0,'QUEUED',
+        ${JSON.stringify({ queue_required:true,secret_persisted:false,external_request_sent:false })}::jsonb
+      )
+    `,
+  ]);
+
+  const queued=await enqueueProviderExecutionRequest({
+    correlation_id:correlationId,
+    route_decision_id:decisionId,
+    idempotency_key:`provider-route:${decisionId}`,
+    payload:{
+      route_decision_id:decisionId,
+      preflight_id:preflightId,
+      candidate_group_id:groupId,
+      member_id:selected.member_id,
+      provider_profile_id:profile.profile_id,
+      compiled_prompt_id:compiledPromptId,
+      attempt_id:attemptId,
+    },
+  });
+  const drain=await drainProviderExecutionEvent(queued.event_id);
+  const decision=first(await sql`
+    SELECT status,reason,payload
+    FROM acpos_runtime.provider_route_decisions
+    WHERE id=${decisionId}
+    LIMIT 1
+  `);
+  const decisionPayload=asRecord(decision?.payload);
   return {
-    route_decision_id: decisionId,
-    preflight_id: preflightId,
-    status: decisionStatus,
-    reason,
-    eligible_members: eligible.length,
-    external_request_sent: false,
+    route_decision_id:decisionId,
+    preflight_id:preflightId,
+    queue_event_id:queued.event_id,
+    status:asText(decision?.status) ?? "QUEUED",
+    reason:asText(decision?.reason),
+    eligible_members:eligible.length,
+    worker:drain,
+    external_request_sent:decisionPayload.external_request_sent===true,
+    result_hash:asText(decisionPayload.result_hash),
   };
 }
-
 export async function executeProductionAiApiCommand(request: AiApiRuntimeRequest): Promise<unknown> {
   const sql = await requireSql();
   const payload = asRecord(request.payload);
@@ -600,7 +698,7 @@ export async function executeProductionAiApiCommand(request: AiApiRuntimeRequest
       return changed;
     }
     case "executeProviderRoute":
-      return routePreflight(sql, payload);
+      return routePreflight(sql,payload,request.correlation_id);
     case "getProviderRouteDecision": {
       const routeDecisionId = requirePath(request, "routeDecisionId");
       const result = first(await sql`
