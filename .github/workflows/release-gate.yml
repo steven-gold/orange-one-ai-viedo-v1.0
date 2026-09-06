@@ -36,6 +36,8 @@ jobs:
       - name: Release unit tests
         run: npm test
 
+      - name: Validate formal 1453 control/action denominator
+        run: node scripts/release-formal-control-denominator.mjs
       - name: Validate deployment smoke syntax
         run: |
           node --check scripts/post-deploy-smoke.mjs
