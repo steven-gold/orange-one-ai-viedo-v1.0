@@ -65,5 +65,5 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(runtime, /external_request_sent: false/);
   assert.match(runtime, /production_secret_used: false/);
   assert.match(runtime, /plaintext_persisted: false/);
-  assert.doesNotMatch(runtime, /process\.env\[[^\]]+\]\s*=|process\.env\.[A-Z0-9_]+\s*=/);
+  assert.doesNotMatch(runtime, /process\.env\[[^\]]+\]\s*=(?!=)|process\.env\.[A-Z0-9_]+\s*=/);
 });
