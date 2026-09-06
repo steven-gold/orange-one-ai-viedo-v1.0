@@ -107,7 +107,8 @@ test("Production identity runtime names app_users actor and internal cookie sess
   assert.match(identity, /adapter_bind_allowed: true/);
   assert.match(identity, /lookup_by_external_subject_sql:/);
   assert.match(identity, /operation_registry_file_in_app_repo: PRESENT/);
-  assert.match(identity, /identity_operation_coverage: IDENTITY_SESSION_ONLY/);\n  assert.match(identity, /operation_registry_coverage: IDENTITY_SESSION_AND_AIAPI_PROVIDER_GOVERNED_OPERATIONS/);
+  assert.match(identity, /identity_operation_coverage: IDENTITY_SESSION_ONLY/);
+  assert.match(identity, /operation_registry_coverage: IDENTITY_SESSION_AND_AIAPI_PROVIDER_GOVERNED_OPERATIONS/);
   assert.match(identity, /catalog_registration: NOT_IN_ACCOUNT_PERMISSION_CATALOG/);
   assert.match(identity, /reason_code: IDENTITY_RUNTIME_NOT_BOUND/);
   assert.match(identity, /status_predicate: DISABLED_AT_IS_NULL/);
@@ -117,7 +118,8 @@ test("Production identity runtime names app_users actor and internal cookie sess
   const registry = await readFile("03_api/operation_registry.yaml", "utf8");
   assert.match(registry, /operation_id: resolveIdentityAccountAuthority/);
   assert.match(registry, /path: \/v1\/identity\/session/);
-  assert.match(registry, /coverage: IDENTITY_SESSION_AND_AIAPI_PROVIDER_GOVERNED_OPERATIONS/);\n  assert.match(registry, /operation_id: resolveIdentityAccountAuthority/);
+  assert.match(registry, /coverage: IDENTITY_SESSION_AND_AIAPI_PROVIDER_GOVERNED_OPERATIONS/);
+  assert.match(registry, /operation_id: resolveIdentityAccountAuthority/);
 });
 
 test("System implementation truth is not silently promoted", () => {
