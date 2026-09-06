@@ -22,7 +22,7 @@ import {
 type Runtime = {
   projection: StrategyAdminProjection | null;
   runtimeError: string | null;
-  invoke: (actionId: string, view: StrategyAdminView) => Promise<void>;
+  invoke: (actionId: string, view: StrategyAdminView, payload?: Readonly<Record<string, unknown>>) => Promise<boolean>;
   canInvoke: (actionId: string, view: StrategyAdminView) => boolean;
 };
 
@@ -77,36 +77,38 @@ export function StrategyAdminRuntimeProvider({ children }: { children: ReactNode
   );
 
   const invoke = useCallback(
-    async (actionId: string, view: StrategyAdminView) => {
+    async (actionId: string, view: StrategyAdminView, payload: Readonly<Record<string, unknown>> = {}) => {
       if (!projection) {
         setRuntimeError("STR_ADMIN_PROJECTION_NOT_READY");
-        return;
+        return false;
       }
 
       if (actionId === "ACT-CANDIDATE-DECIDE") {
         setRuntimeError(
           "STR_ADMIN_AUTHORITY_BINDING_UNRESOLVED: ACT-CANDIDATE-DECIDE",
         );
-        return;
+        return false;
       }
 
       if (!(actionId in ACTIONS)) {
         setRuntimeError("STR_ADMIN_ACTION_OPERATION_NOT_REGISTERED");
-        return;
+        return false;
       }
 
       const result = await invokeStrategyAdminAction(
         actionId as StrategyAdminMappedAction,
         view,
         projection,
+        payload,
       );
 
       if (!result.ok) {
         setRuntimeError(result.reason_code);
-        return;
+        return false;
       }
 
       await refreshProjection();
+      return true;
     },
     [projection, refreshProjection],
   );
