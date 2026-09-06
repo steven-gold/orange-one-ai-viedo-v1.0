@@ -5,6 +5,7 @@ import { configureCoreRuntime, type CoreRuntimeBindings } from "@/server/core/co
 import type { CoreRuntimeRequest } from "@/domain/core/coreRuntimeContract";
 import { configureDbReadModelRuntime, type DbReadRequest } from "@/server/database/dbReadModelRuntime";
 import { configureIamRuntime, type IamRuntimeRequest } from "@/server/iam/iamRuntime";
+import { executeProductionIamCommand } from "@/server/iam/productionIamCommandRuntime";
 import { configureDepartmentOperationRuntime } from "@/server/shared/departmentOperationRuntime";
 import { configureInfoCommandRuntime, type InfoRequest } from "@/server/info/infoCommandRuntime";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
@@ -637,27 +638,7 @@ async function readDb(request: DbReadRequest): Promise<unknown> {
 }
 
 async function executeIam(request: IamRuntimeRequest): Promise<unknown> {
-  if (request.operation !== "searchProjection") {
-    throw new NamedRuntimeError("IAM01_WRITE_RUNTIME_NOT_MATERIALIZED");
-  }
-  const sql = await requireSql();
-  const payload = asRecord(request.payload) ?? {};
-  const q = (asText(payload.query) ?? "").toLowerCase();
-  const rows = await sql`
-    SELECT u.user_id::text AS account_id, u.display_name AS label, u.status::text AS status, u.email::text AS email
-    FROM app_users u
-    ORDER BY u.created_at DESC
-  `;
-  const matches = (Array.isArray(rows) ? rows : []).flatMap((raw) => {
-    const row = asRecord(raw);
-    const account_id = asText(row?.account_id);
-    const label = asText(row?.label);
-    const email = asText(row?.email) ?? "";
-    if (!account_id || !label) return [];
-    if (q && !label.toLowerCase().includes(q) && !email.toLowerCase().includes(q) && !account_id.toLowerCase().includes(q)) return [];
-    return [account_id];
-  });
-  return { query: q, matches };
+  return executeProductionIamCommand(request);
 }
 
 async function executeInfo(request: InfoRequest): Promise<unknown> {
@@ -670,6 +651,29 @@ async function executeInfo(request: InfoRequest): Promise<unknown> {
   const sql = await requireSql();
   const identityContext = await requireIdentityContext();
   const payload = asRecord(request.payload) ?? {};
+  const pageUid = asText(payload.page_uid);
+  if (pageUid === "admin:IAM-01") {
+    const needle = (asText(payload.query) ?? "").toLowerCase();
+    const rows = await runRlsActorQuery(
+      sql,
+      identityContext.session_token_hash,
+      sql`
+        SELECT u.user_id::text AS ref, u.display_name AS label, u.email::text AS email
+        FROM app_users u
+        ORDER BY u.created_at DESC
+      `,
+    );
+    const results = (Array.isArray(rows) ? rows : []).flatMap((raw) => {
+      const row = asRecord(raw);
+      const ref = asText(row?.ref);
+      const label = asText(row?.label);
+      const email = asText(row?.email) ?? "";
+      if (!ref || !label) return [];
+      if (needle && !ref.toLowerCase().includes(needle) && !label.toLowerCase().includes(needle) && !email.toLowerCase().includes(needle)) return [];
+      return [{ ref, label }];
+    });
+    return { results, matches: results.map((item) => item.ref) };
+  }
   const q = `%${asText(payload.query) ?? ""}%`;
   const rows = await runRlsActorQuery(
     sql,
