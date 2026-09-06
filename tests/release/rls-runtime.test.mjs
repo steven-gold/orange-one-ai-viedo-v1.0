@@ -9,7 +9,8 @@ test("migration 0016 materializes a non-BYPASSRLS role and session-bound policie
   const manifest = await read("database/migrations/migration_checksum_manifest.yaml");
 
   assert.match(migration, /CREATE ROLE acpos_app_runtime NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS/);
-  assert.match(migration, /ALTER ROLE acpos_app_runtime NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOBYPASSRLS/);
+  assert.match(migration, /RAISE EXCEPTION 'ACPOS_RUNTIME_ROLE_SECURITY_MISMATCH'/);
+  assert.doesNotMatch(migration, /ALTER ROLE acpos_app_runtime/);
   assert.match(migration, /GRANT acpos_app_runtime TO neondb_owner/);
   assert.match(migration, /current_setting\('acpos\.session_token_hash', true\)/);
   assert.match(migration, /current_actor_user_id/);
@@ -34,10 +35,10 @@ test("migration 0016 materializes a non-BYPASSRLS role and session-bound policie
   );
 
   assert.match(migration, /0016_postgresql_rls_runtime_foundation/);
-  assert.match(migration, /9695cf577be5ea4aab5cd1a309112bab4e96da8a9743453b1a9bbb67b82b347d/);
-  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.4/);
+  assert.match(migration, /8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4/);
+  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.5/);
   assert.match(manifest, /migration_id: 0016_postgresql_rls_runtime_foundation/);
-  assert.match(manifest, /payload_sha256: 9695cf577be5ea4aab5cd1a309112bab4e96da8a9743453b1a9bbb67b82b347d/);
+  assert.match(manifest, /payload_sha256: 8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4/);
 });
 
 test("migration 0017 extends project-scope RLS to Core story tables", async () => {
