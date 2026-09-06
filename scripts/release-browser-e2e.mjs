@@ -83,13 +83,13 @@ try {
               const visible = style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
               const disabled = "disabled" in element && Boolean(element.disabled);
               const text = (element.textContent ?? "").trim().replace(/\s+/g, " ");
-              const accessible = (
-                element.getAttribute("aria-label") ??
-                element.getAttribute("title") ??
-                element.getAttribute("placeholder") ??
-                ("value" in element && typeof element.value === "string" ? element.value : "") ??
-                text
-              ).trim();
+              const accessible = [
+                element.getAttribute("aria-label"),
+                element.getAttribute("title"),
+                element.getAttribute("placeholder"),
+                "value" in element && typeof element.value === "string" ? element.value : null,
+                text,
+              ].map((value) => typeof value === "string" ? value.trim() : "").find(Boolean) ?? "";
               const governed = [
                 "data-control-id", "data-operation-id", "data-action-uid",
                 "data-gate-uid", "data-permission-uid"
