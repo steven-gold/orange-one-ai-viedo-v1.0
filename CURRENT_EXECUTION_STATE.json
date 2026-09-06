@@ -1,538 +1,153 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "last_sync_at": "2026-09-07T01:29:00+08:00",
+  "as_of": "2026-09-07T04:29:22+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
-  "main_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
-  "new_sha_basis": "17a7d7cf53995e343cd65e6fb2c089e24b3f8a77",
-  "latest_release_gate": {
-    "status": "PASS",
-    "run_number": 300,
-    "run_id": 34047255114,
-    "head_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
-    "branch": "main",
-    "conclusion": "success"
+  "git": {
+    "main_sha": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
+    "new_sha_basis": "dff0e4bd9c64e0f51182077d45ab64e0be899dc5",
+    "construction_branch": "new",
+    "release_branch": "main",
+    "main_only_vercel_deployment": true,
+    "construction_branch_vercel_deployment": false
   },
-  "latest_post_deploy_smoke": {
-    "status": "PASS",
-    "run_number": 529,
-    "run_id": 34047410031,
-    "run_attempt": 2,
-    "head_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
-    "event": "workflow_run",
-    "http_smoke": "PASS",
-    "readiness_http": 200,
-    "release_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
-    "credential_readiness": "CONFIGURED",
-    "authenticated_e2e": "PASS",
-    "authenticated_e2e_projections": "18/18",
-    "authenticated_visible_pages": "18/18",
-    "authenticated_browser_e2e": "PASS",
-    "front_nav": "9/9",
-    "admin_nav": "9/9",
-    "browser_smoke": "PASS",
-    "browser_cases": "54/54",
-    "evidence": "Attempt 2 rerun after Production Environment secret ADMIN was corrected. Login/session/dashboard/18 projections/logout/stale-cookie deny and authenticated browser visibility all passed."
-  },
-  "vercel": {
-    "target": "orange-one-acpos-test",
-    "production_url": "https://orange-one-acpos-test.vercel.app",
-    "release_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
-    "deployment_status": "SUCCESS_VERIFIED_VIA_GITHUB_VERCEL_STATUS",
-    "deployment_environment": "Production",
-    "deployment_trigger_actor": "vercel[bot]",
-    "deployment_target_url": "https://vercel.com/gold5757/orange-one-acpos-test/CN536rgrJKDqyjurwgyAJbbR3FRq",
-    "management_authority": "NOT_VERIFIED",
-    "management_authority_reason": "Current Vercel plugin team scope returns zero visible projects and direct get_project orange-one-acpos-test returns 404. GitHub Vercel status independently confirms gold5757/orange-one-acpos-test deployment target, so this is a management-plugin scope mismatch rather than evidence that the project does not exist.",
-    "health_http": 200,
-    "health_status": "ok",
-    "health_service": "ORANGE ONE ACPOS",
-    "health_environment": "production",
-    "readiness_http": 200,
-    "readiness_reason": "READY",
-    "http_smoke": {
+  "release_validation": {
+    "final_pre_state_construction_gate": {
       "status": "PASS",
-      "run_number": 529,
-      "projections": 18,
-      "release_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623"
+      "run_number": 395,
+      "run_id": 34057997235,
+      "head_sha": "dff0e4bd9c64e0f51182077d45ab64e0be899dc5",
+      "branch": "new",
+      "conclusion": "success"
     },
-    "authenticated_e2e": {
+    "current_main_release_gate": {
       "status": "PASS",
-      "run_number": 529,
-      "run_attempt": 2,
-      "projections": 18,
-      "visible_pages": 18,
-      "dashboard": 1,
-      "login": 1,
-      "session": 1,
-      "logout": 1,
-      "stale_cookie_after_logout_http": 401,
-      "credential_secret_names": [
-        "ADMIN"
-      ],
-      "credential_email_source": "literal admin",
-      "credential_values_committed_to_repository": false
-    },
-    "browser_smoke": {
-      "status": "PASS",
-      "run_number": 529,
-      "cases": 54,
-      "pages": 18,
-      "widths": [
-        1280,
-        1440,
-        1920
-      ]
-    },
-    "authenticated_browser_e2e": {
-      "status": "PASS",
-      "run_number": 529,
-      "run_attempt": 2,
-      "front_nav": 9,
-      "admin_nav": 9,
-      "visible_pages": 18
+      "run_number": 376,
+      "run_id": 34056101124,
+      "head_sha": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
+      "conclusion": "success"
     }
+  },
+  "production": {
+    "target": "orange-one-acpos-test",
+    "url": "https://orange-one-acpos-test.vercel.app",
+    "deployed_sha": "16d62a34852608dd703b0d1a50993d0d4061fe87",
+    "current_main_sha_not_deployed": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
+    "deployment_status": "LAST_VERIFIED_DEPLOYMENT_PASS_CURRENT_MAIN_DEPLOYMENT_BLOCKED",
+    "current_main_deployment_blocker": "VERCEL_HOBBY_BUILD_RATE_LIMIT",
+    "latest_verified_post_deploy": {
+      "status": "PASS",
+      "run_number": 614,
+      "run_id": 34055358391,
+      "head_sha": "16d62a34852608dd703b0d1a50993d0d4061fe87",
+      "http_smoke": "PASS",
+      "authenticated_e2e": "PASS",
+      "browser_smoke": "PASS",
+      "authenticated_browser_visibility": "PASS"
+    },
+    "health_readiness_last_verified": "PASS_ON_DEPLOYED_SHA_16d62a34852608dd703b0d1a50993d0d4061fe87",
+    "database_migration_count": 19
   },
   "neon": {
     "project": "wild-wave-25661146",
     "branch": "main",
     "branch_id": "br-shy-cherry-auiol4oy",
     "database": "neondb",
-    "current_role": "neondb_owner",
-    "public_base_table_count": 152,
-    "acpos_runtime_table_count": 42,
-    "rls_enabled_public_table_count": 17,
-    "public_policy_count": 35,
-    "account_count": 2,
-    "session_count": 48,
-    "app_user_count": 2,
-    "migration_repo_highest": 18,
-    "migration_applied_count": 18,
-    "migration_applied_range": "0001-0018",
-    "permission_resource_count": 3651,
-    "permission_resource_authority": "3650 sealed catalog + 1 current navigation delta page:admin:DB-01",
-    "validated_fk_public": 301,
-    "validated_fk_acpos_runtime": 43,
-    "validated_fk_acpos_total": 344,
-    "validated_fk_neon_auth_excluded": 6,
+    "migration_count": 19,
+    "latest_migration": "0019_async_queue_delivery_runtime",
+    "migration_0019_checksum": "aea7ea811c826b255d3478e12e9715cb042444c5d2c6f8431f02b0189c0818cc",
+    "canonical_queue_ready_count": 1,
+    "canonical_worker_ready_count": 1,
+    "worker_last_heartbeat_at": "2026-09-06T19:38:54.130296Z",
     "provider_capability_count": 0,
     "provider_profile_count": 0,
     "secret_reference_count": 0,
-    "queue_count": 0,
-    "worker_count": 0,
-    "dlq_count": 0,
-    "active_session_count": 1,
-    "rls_validation": {
-      "branch_name": "rls-0016-validate-20260906",
-      "branch_id": "br-orange-smoke-aut9pafw",
-      "parent_branch_id": "br-shy-cherry-auiol4oy",
-      "inherited_production_snapshot": {
-        "migrations": 15,
-        "public_tables": 152,
-        "acpos_runtime_tables": 42,
-        "permission_resources": 3651,
-        "acpos_validated_fk": 344
-      },
-      "migration_0016_registered": true,
-      "migration_0017_registered": true,
-      "migration_count_after_validation": 17,
-      "migration_0016_checksum": "8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4",
-      "migration_0017_checksum": "6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551",
-      "rls_enabled_public_tables": 10,
-      "public_policy_count": 21,
-      "runtime_role": {
-        "name": "acpos_app_runtime",
-        "can_login": false,
-        "bypass_rls": false,
-        "create_role": false,
-        "create_db": false
-      },
-      "row_isolation": {
-        "unauthenticated": {
-          "assignments": 0,
-          "projects": 0,
-          "conversations": 0,
-          "mother_locks": 0,
-          "story_candidates": 0
-        },
-        "runtime_test": {
-          "assignments": 1,
-          "projects": 1,
-          "visible_project_codes": [
-            "TEST-PRJ-001"
-          ],
-          "admin_project_rows": 0,
-          "own_mother_locks": 1,
-          "own_story_candidate_insert": "PASS",
-          "cross_project_story_candidate_insert": "RLS_VIOLATION_BLOCKED"
-        },
-        "bootstrap_admin": {
-          "assignments": 19,
-          "projects": 3,
-          "conversations": 3,
-          "messages": 1
-        },
-        "runtime_test_write_admin_project_rows": 0,
-        "runtime_test_write_own_project_rows": 1
-      },
-      "projection_validation": {
-        "server_typescript_files_scanned": 70,
-        "production_projection_bypass_paths_found": [
-          "src/server/dashboard/wb01ProjectionRuntime.ts",
-          "src/server/shared/pageCatalogProjectionRuntime.ts"
-        ],
-        "production_projection_bypass_paths_closed": 2,
-        "controlled_test_paths_excluded": true,
-        "systemConversationBindings_db_bypass": false,
-        "department_task_child_lock_projection_query_under_runtime_role": "PASS"
-      },
-      "release_gate": {
-        "run_number": 243,
-        "run_id": 34036973166,
-        "head_sha": "1f795eed2f95cfcc3d4ec6b7ac09cad82df44faa",
-        "status": "PASS"
-      },
-      "status": "PASS",
-      "production_compatibility": {
-        "first_apply_attempt": "ROLLED_BACK",
-        "failure_reason": "Neon Production denied redundant ALTER ROLE",
-        "rollback_verified": {
-          "migrations": 15,
-          "runtime_role_count": 0,
-          "rls_tables": 0,
-          "public_policies": 0
-        },
-        "rollback_safe_dry_run": "CREATE ROLE NOBYPASSRLS + GRANT succeeded; intentional division-by-zero rolled transaction back",
-        "migration_0016_remediation": "Removed ALTER ROLE; existing-role path now raises ACPOS_RUNTIME_ROLE_SECURITY_MISMATCH if security flags differ",
-        "validation_branch_checksum_updated": true,
-        "validation_role_flags_verified": "NOLOGIN/NOSUPERUSER/NOCREATEDB/NOCREATEROLE/NOINHERIT/NOBYPASSRLS"
-      }
-    },
-    "production_rls_runtime_role": {
-      "name": "acpos_app_runtime",
-      "can_login": false,
-      "superuser": false,
-      "create_db": false,
-      "create_role": false,
-      "inherit": false,
-      "bypass_rls": false
-    },
-    "production_rls_verification": {
-      "migration_count": 18,
-      "public_tables": 152,
-      "acpos_runtime_tables": 42,
-      "permission_resources": 3651,
-      "acpos_validated_fk": 344,
-      "public_rls_tables": 17,
-      "public_policies": 35,
-      "migration_0016_checksum": "8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4",
-      "migration_0017_checksum": "6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551",
-      "unauthenticated_non_owner_deny": {
-        "actor_unbound": true,
-        "bootstrap_admin": false,
-        "projects": 0,
-        "memberships": 0,
-        "conversations": 0,
-        "mother_locks": 0,
-        "story_candidates": 0,
-        "department_tasks": 0,
-        "permission_assignments": 0
-      },
-      "status": "PASS",
-      "migration_0018_checksum": "d898fcc1a2ccd0d3b814e3cd0578b4c0a8a573f84e96a0e68c68b4af1b2212b5",
-      "department_runtime_tables": {
-        "tables": [
-          "department_tasks",
-          "task_outputs",
-          "findings",
-          "correction_requests",
-          "scorecards",
-          "handoffs",
-          "release_packages"
-        ],
-        "rls_enabled": "7/7",
-        "policy_count": 14,
-        "unresolved_project_resolution_rows": 0
-      },
-      "runtime_role": {
-        "name": "acpos_app_runtime",
-        "can_login": false,
-        "superuser": false,
-        "bypass_rls": false,
-        "inherit": false
-      },
-      "current_evidence_at": "2026-09-07T01:29:00+08:00",
-      "authenticated_non_admin_isolation": {
-        "actor_bound": true,
-        "bootstrap_admin": false,
-        "visible_projects": 1,
-        "visible_project_codes": [
-          "TEST-PRJ-001"
-        ],
-        "forbidden_project_rows": 0,
-        "visible_department_tasks": 1,
-        "cross_project_department_task_rows": 0,
-        "residual_test_sessions": 0
-      },
-      "authenticated_production_allow": {
-        "source": "Post Deploy #529 attempt 2",
-        "login": "PASS",
-        "session": "PASS",
-        "dashboard": "PASS",
-        "projections": "18/18",
-        "permission_visibility": "PASS",
-        "logout": "PASS",
-        "stale_cookie_http": 401
-      }
-    },
-    "provider_job_count": 0,
-    "runtime_provider_profile_count": 0,
-    "runtime_provider_group_count": 0,
-    "runtime_provider_member_count": 0,
-    "runtime_execution_job_count": 0,
-    "accounts_total": 2,
-    "ready_account_count": 2,
-    "active_app_user_count": 2,
-    "ready_account_actor_mapping_count": 2,
-    "identity_session_store_relation": true,
-    "session_total_count": 49,
-    "scrypt_hash_shape_account_count": 2
+    "provider_group_count": 0
   },
-  "current_gate_scores": {
-    "1_main_sha": {
-      "status": "PASS",
-      "score": "2/2",
-      "main_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623"
+  "deployment_policy": {
+    "status": "MATERIALIZED_CURRENT",
+    "vercel_git_policy": {
+      "*": false,
+      "main": true
     },
-    "2_release_gate": {
-      "status": "PASS",
-      "score": "2/2",
-      "run_number": 300,
-      "head_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623"
+    "construction_evidence": "new commits run ACPOS Release Gate without Vercel combined deployment status",
+    "authority": "authority/runtime/ACPOS_PRODUCTION_DEPLOYMENT_EXECUTION_POLICY_FINAL_LOCKED_V1.0.yaml",
+    "empty_commit_redeploy": "FORBIDDEN",
+    "release_rule": "BUILD_AND_VALIDATE_ALL_ON_NEW_THEN_ONE_MAIN_RELEASE"
+  },
+  "queue_worker_dlq": {
+    "migration_0019": "APPLIED_VERIFIED_PRODUCTION",
+    "production_db_layer_probe": "PASS",
+    "production_db_probe_cleanup": "PASS_RESIDUAL_ZERO",
+    "full_http_probe_code": "MATERIALIZED_AND_RELEASE_VALIDATED_ON_NEW",
+    "full_http_probe_scope": [
+      "idempotency",
+      "claim",
+      "success_handler",
+      "inbox_receipt",
+      "publish",
+      "expired_lease_recovery",
+      "retry",
+      "dlq",
+      "heartbeat",
+      "probe_cleanup"
+    ],
+    "production_full_http_probe": "PENDING_SINGLE_MAIN_DEPLOYMENT",
+    "external_provider_call_during_probe": false,
+    "daily_recovery_cron": "MATERIALIZED_HOBBY_DAILY_UTC_0000",
+    "cron_secret": "NOT_VERIFIED_VERCEL_MANAGEMENT_SCOPE_MISMATCH"
+  },
+  "aiapi": {
+    "operation_registry": "MATERIALIZED_CURRENT",
+    "server_routes": "MATERIALIZED_CURRENT",
+    "server_command_runtime": "MATERIALIZED_CURRENT",
+    "client_command_port": "MATERIALIZED_CURRENT_ON_NEW",
+    "frontend_mutation_binding": "MATERIALIZED_CURRENT_ON_NEW",
+    "frontend_secret_handling": "SECRET_ENV_REFERENCE_ONLY_NO_PLAINTEXT_KEY_INPUT",
+    "regression_validation": {
+      "release_gate_384": "PASS",
+      "release_gate_391": "PASS",
+      "release_gate_395": "PASS"
     },
-    "3_vercel_deployment": {
-      "status": "PASS",
-      "score": "3/3",
-      "reason": "Production HTTP smoke #529 attempt 2 verified exact release_sha 5aa21a94340b2dc1005fa4821220f23ef6342623 on orange-one-acpos-test."
-    },
-    "4_health": {
-      "status": "PASS",
-      "score": "4/4",
-      "reason": "Post Deploy Smoke #529 attempt 2 passed against exact Production release 5aa21a94340b2dc1005fa4821220f23ef6342623."
-    },
-    "5_readiness": {
-      "status": "PASS",
-      "score": "4/4",
-      "reason": "Post Deploy Smoke #529 attempt 2 reported readiness HTTP 200 on Production."
-    },
-    "6_remote_http_smoke": {
-      "status": "PASS",
-      "score": "3/3",
-      "reason": "Post Deploy Smoke #529 attempt 2 HTTP stage PASS with 18 production projections."
-    },
-    "7_remote_browser_smoke": {
-      "status": "PASS",
-      "score": "3/3",
-      "reason": "Post Deploy Smoke #529 attempt 2 browser stage PASS: 54/54 cases across 18 pages and widths 1280/1440/1920."
-    },
-    "8_routes": {
-      "status": "PASS",
-      "score": "18/18",
-      "reason": "Post Deploy Smoke #529 attempt 2 retained all 18 formal production routes/pages."
-    },
-    "9_production_authority": {
-      "status": "PARTIAL",
-      "score": "3/4",
-      "reason": "GitHub main, Vercel deployment target/status, exact release_sha, health/readiness and Neon authority are current. Vercel management plugin scope still cannot read the project: list_projects=0 and direct get_project=404 despite GitHub Vercel status confirming gold5757/orange-one-acpos-test."
-    },
-    "10_migrations": {
-      "status": "PASS",
-      "score": "18/18",
-      "reason": "Production schema_migration_history verified through 0018; migration 0018 checksum d898fcc1... matched the repository migration."
-    },
-    "11_schema_integrity": {
-      "status": "PASS",
-      "score": "8/8",
-      "reason": "Production remains 152 public + 42 acpos_runtime tables, permission_resources 3651 and ACPOS validated FK 344 after migrations 0016-0017."
-    },
-    "12_postgresql_rls": {
-      "status": "PASS",
-      "reason": "Production verified with 17 RLS-enabled public tables and 35 policies; acpos_app_runtime is NOLOGIN/NOBYPASSRLS/NOINHERIT/NOSUPERUSER; current unauthenticated non-owner queries return 0 across protected resources; Post Deploy #529 attempt 2 proves authenticated Production allow across login/session/dashboard/18 projections; an ephemeral non-admin Production session saw exactly its own TEST-PRJ-001 and one department task while two forbidden project rows and all cross-project task rows remained 0; the test session was removed and residual count is 0."
-    },
-    "13_accounts": {
-      "status": "PASS",
-      "score": "3/3",
-      "reason": "Production accounts=2 and READY accounts=2. Bootstrap account identity is admin; its existing scrypt hash was verified against the user-authorized admin password without changing the Production record."
-    },
-    "14_login_session_e2e": {
-      "status": "PASS",
-      "score": "4/4",
-      "reason": "Post Deploy #529 attempt 2 PASS: login 200, secure acpos_session cookie, session GET 200, dashboard 200, 18/18 authenticated projections 200, logout 200, and the stale cookie returns 401 after logout."
-    },
-    "15_permission_e2e": {
-      "status": "PASS",
-      "score": "4/4",
-      "reason": "Authenticated E2E returned navigation_visibility=READY with exact 18 visible pages, and authenticated browser E2E verified front_nav 9/9 plus admin_nav 9/9 on Production."
-    },
-    "16_production_read_models": {
-      "status": "PASS",
-      "score": "18/18",
-      "reason": "Post Deploy #529 attempt 2 authenticated E2E read the dashboard and all 18 production UI projections with HTTP 200 and no TEST_ONLY/synthetic leakage."
-    },
-    "17_core_runtime": {
-      "status": "NOT_REVERIFIED_THIS_SYNC"
-    },
-    "18_asset_runtime": {
-      "status": "NOT_REVERIFIED_THIS_SYNC"
-    },
-    "19_video_runtime": {
-      "status": "NOT_REVERIFIED_THIS_SYNC"
-    },
-    "20_edit_voice_runtime": {
-      "status": "NOT_REVERIFIED_THIS_SYNC"
-    },
-    "21_qa_runtime": {
-      "status": "NOT_REVERIFIED_THIS_SYNC"
-    },
-    "22_external_provider": {
-      "status": "BLOCKED",
-      "score": "0/4",
-      "reason": "Production has 0 provider capabilities, 0 provider profiles, 0 secret references and 0 provider jobs. Current AIAPI-01 Authority requires existing registered operations, but 03_api/operation_registry.yaml is IDENTITY_SESSION_ONLY and Runtime Binding Gap Report explicitly forbids inferring effectful Provider API paths/handlers."
-    },
-    "23_queue_worker_dlq": {
-      "status": "BLOCKED",
-      "score": "0/4",
-      "reason": "Canonical queues/workers/dead_letters tables exist, but Production rows are queues=0, workers=0, dead_letters=0. Current Authority does not define exact queue_key/worker_key materialization, so seeding or inventing a worker topology is forbidden."
-    },
-    "24_admin_mutation": {
-      "status": "NOT_REVERIFIED_THIS_SYNC"
-    },
-    "25_full_page_button_acceptance": {
-      "status": "NOT_REVERIFIED_THIS_SYNC"
+    "production_deployment": "PENDING_SINGLE_MAIN_RELEASE",
+    "external_provider_execution": "BLOCKED_REAL_PROVIDER_CONFIGURATION_AND_EXTERNAL_ADAPTER_REQUIRED",
+    "provider_counts": {
+      "capabilities": 0,
+      "profiles": 0,
+      "secret_references": 0,
+      "groups": 0
     }
   },
-  "production_ready_percentage": null,
-  "production_ready_percentage_reason": "25 gates were not fully re-audited in this sync; no prior percentage is reused as Current.",
-  "completed_items": [
-    "Baseline current repo branch verification",
-    "Production Neon target verification",
-    "Identity/session runtime owner verification",
-    "Repository migration sequence verification through 0015",
-    "Production migration history exact 0001-0015 verification",
-    "Production schema/integrity reconciliation against Current Authority",
-    "Established unique Current Execution State",
-    "RLS validation branch recreated from current Production main after approved obsolete-branch cleanup",
-    "Migration 0016 PostgreSQL RLS runtime foundation materialized in repository",
-    "Non-login NOBYPASSRLS acpos_app_runtime role validated",
-    "Database-level unauthenticated deny, user row isolation, bootstrap admin allow, and cross-project write deny validated",
-    "Protected page permission and first Core/Info/Conversation query paths switched to actor-scoped RLS transactions",
-    "Migration 0017 Core story RLS closure validated at final checksum 6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551",
-    "WB01 projection switched to session-bound actor-scoped RLS",
-    "Page Catalog projection switched to session-bound actor-scoped RLS",
-    "70 src/server TypeScript files scanned for protected-table bypass; two real Production projection paths found and closed",
-    "Projection dependency query department_tasks/child_locks validated under acpos_app_runtime",
-    "Release Gate #243 completed successfully for projection RLS wiring",
-    "Production 0016 first attempt safely rolled back on Neon ALTER ROLE restriction and Production unchanged",
-    "Migration 0016 remediated for Neon Production with fail-closed existing-role security guard",
-    "Production migration 0016 PostgreSQL RLS runtime foundation applied successfully",
-    "Production migration 0017 Core story RLS closure applied successfully",
-    "Production verified at 17 migrations / 10 RLS tables / 21 policies",
-    "Production acpos_app_runtime verified NOLOGIN/NOBYPASSRLS with all privileged flags false",
-    "Production schema invariants preserved at 152 public tables / 42 runtime tables / 3651 permissions / 344 validated FK",
-    "Production unauthenticated non-owner RLS deny verified across permissions/projects/conversations/mother_locks/story_candidates",
-    "PR #15 merged new -> main as 8ecbb07e96187bbc3528685cedd1f70ab919a104",
-    "Vercel Production deployment_status success received for main 8ecbb07e96187bbc3528685cedd1f70ab919a104",
-    "Production Health 200 verified with environment=production and exact release_sha 8ecbb07e96187bbc3528685cedd1f70ab919a104",
-    "Production Readiness 200 verified",
-    "Post Deploy HTTP Smoke #436 PASS across 18 projections and 18 formal routes",
-    "Post Deploy Browser Smoke #436 PASS 54/54 cases across 18 pages and 3 widths",
-    "Main Release Gate #251 PASS for merge commit 8ecbb07e96187bbc3528685cedd1f70ab919a104",
-    "Production Accounts Gate reverified PASS 3/3: session store exists, 2 READY accounts, 2 active app_users, 2 exact email mappings, scrypt hash format valid",
-    "Production authenticated acceptance harness materialized and secret-gated without committed plaintext credentials",
-    "Release Gate #261 PASS for authenticated acceptance harness batch",
-    "PR #16 merged new -> main as f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
-    "Vercel Production deployment completed for exact main f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
-    "Main Release Gate #263 PASS for f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
-    "Post Deploy Smoke #458 PASS with ready=200 and exact release_sha f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
-    "Post Deploy Browser Smoke #458 PASS 54/54 across 18 pages x 3 widths",
-    "Production auth harness #458 explicitly reported PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED; no false authenticated PASS recorded",
-    "GitHub Environment Production secret ADMIN corrected and verified by Post Deploy #529 attempt 2",
-    "Production Login/Session E2E PASS 4/4 on main 5aa21a94340b2dc1005fa4821220f23ef6342623",
-    "Production authenticated permission/browser visibility E2E PASS: front nav 9/9, admin nav 9/9, visible pages 18/18",
-    "Production authenticated Read Models PASS 18/18",
-    "Production PostgreSQL RLS Current Evidence PASS: 17 protected tables / 35 policies / acpos_app_runtime non-login non-bypass role",
-    "Production unauthenticated non-owner RLS deny PASS across projects, memberships, conversations, mother locks, story candidates, department tasks and permission assignments",
-    "Production authenticated non-admin cross-project isolation PASS: own project visible 1, forbidden projects 0, own department task visible 1, cross-project task rows 0, residual test sessions 0",
-    "Gate 12 PostgreSQL RLS closed to PASS"
-  ],
-  "in_progress_item": "HARD_BLOCKED_PROVIDER_QUEUE_AUTHORITY",
-  "remaining_queue": [
-    {
-      "item_id": "PROVIDER-QUEUE-001",
-      "affects_gate": [
-        22,
-        23,
-        17,
-        18,
-        19,
-        20,
-        21
-      ],
-      "dependency": "production authority and runtime security closure",
-      "status": "BLOCKED_ON_CURRENT_AUTHORITY_AND_EXTERNAL_SECRET",
-      "evidence": "Production current evidence: provider_capabilities=0, provider_prompt_profiles=0, secret_references=0, provider_jobs=0, queues=0, workers=0, dead_letters=0; existing provider/queue schema is present. AIAPI effectful mapping is explicitly blocked by Current Authority because operation_registry is IDENTITY_SESSION_ONLY; no exact queue_key/worker_key authority exists.",
-      "exact_files": [
-        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
-        "authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml",
-        "authority/runtime/ACPOS_RUNTIME_BINDING_GAP_REPORT.md",
-        "03_api/operation_registry.yaml",
-        "database/migrations/0007_runtime_operational_schema.sql",
-        "database/migrations/0008_provider_router_runtime_closure.sql",
-        "src/server/testing/controlledAiApiTestRuntime.ts"
-      ]
+  "formal_truth": {
+    "gate22_external_provider": {
+      "status": "BLOCKED",
+      "reason": "Production has no real provider capability/profile/secret/group configuration and external adapter execution remains intentionally fail-closed."
     },
-    {
-      "item_id": "MUTATION-ACCEPTANCE-001",
-      "affects_gate": [
-        24,
-        25
-      ],
-      "dependency": "runtime/read/provider/queue closures",
-      "status": "WAITING_DEPENDENCY"
+    "gate23_queue_worker_dlq": {
+      "status": "PARTIAL_PENDING_FINAL_PRODUCTION_HTTP",
+      "reason": "Production data layer and DB probe pass; full authenticated HTTP worker acceptance is release-validated on new but not yet deployed."
+    },
+    "gate24_admin_mutation": {
+      "status": "PARTIAL_PENDING_PRODUCTION_DEPLOYMENT",
+      "reason": "AIAPI governed UI/server mutation binding is materialized and Release Gate validated on new; Production deployment/E2E is pending."
+    },
+    "gate25_full_page_button_acceptance": {
+      "status": "NOT_REAUDITED",
+      "reason": "No full 1453-control Production acceptance has been rerun in this closure batch."
     }
-  ],
+  },
   "blockers": [
-    "PROVIDER-001 hard blocker: Production provider capability/profile/secret/job rows remain 0 and Current Authority does not yet materialize effectful provider operation mapping.",
-    "QUEUE-001 hard blocker: Production queues/workers/dead_letters remain 0 and exact queue_key/worker_key topology is not materialized in Current Authority.",
-    "Vercel management-plane plugin scope mismatch remains: GitHub Vercel status and Post Deploy Smoke provide current deployment evidence, while the Vercel management connector cannot read this project.",
-    "PROVIDER-001 hard blocker: Production provider capability/profile/secret/job rows remain 0 and Current Authority does not materialize the required effectful provider operation mapping.",
-    "QUEUE-001 hard blocker: Production queues/workers/dead_letters remain 0 and Current Authority does not materialize exact queue_key/worker_key topology."
+    "Vercel Hobby build-rate-limit currently blocks the next single Production deployment of main.",
+    "Real external Provider capability/profile/secret values are absent and must not be fabricated.",
+    "Vercel management connector can read the team but cannot read the project, so Production CRON_SECRET binding is not verified."
   ],
-  "next_executable_item": "No dependency-ready non-blocked construction item remains before PROVIDER-QUEUE-001. Current Authority must first materialize effectful provider operation mapping and exact queue/worker topology, and Production provider secret references must be supplied; until then Gate 22/23 remain hard blocked and downstream runtime/mutation/full-button acceptance cannot be honestly closed.",
-  "last_successful_commit": "5aa21a94340b2dc1005fa4821220f23ef6342623",
-  "last_successful_deployment": {
-    "main_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
-    "url": "https://orange-one-acpos-test.vercel.app",
-    "deployment_status": "success",
-    "health": 200,
-    "readiness": 200,
-    "post_deploy_smoke_run": 529,
-    "post_deploy_smoke_attempt": 2,
-    "http_smoke": "PASS",
-    "authenticated_e2e": "PASS",
-    "authenticated_projections": 18,
-    "browser_smoke": "PASS",
-    "browser_cases": 54,
-    "authenticated_browser_e2e": "PASS",
-    "authenticated_visible_pages": 18
-  },
-  "latest_construction_release_gate": {
-    "status": "PASS",
-    "run_number": 305,
-    "run_id": 34048594515,
-    "head_sha": "17a7d7cf53995e343cd65e6fb2c089e24b3f8a77",
-    "branch": "new",
-    "conclusion": "success"
-  }
+  "next_release_sequence": [
+    "Run ACPOS Release Gate on the exact Current State commit head.",
+    "If PASS, create one PR new -> main and merge with exact expected head SHA.",
+    "Allow exactly one Vercel Production deployment attempt for the resulting main SHA.",
+    "If Vercel remains rate-limited, do not push retry commits; retain the exact main SHA and blocker.",
+    "If Vercel succeeds, require Post Deploy HTTP/auth/browser and FULL queue probe PASS for that exact main SHA.",
+    "Re-query Neon worker heartbeat and probe residual rows, then update Current State and Gate 23/24 truth."
+  ]
 }
