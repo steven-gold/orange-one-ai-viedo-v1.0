@@ -164,5 +164,21 @@ operation_registry:
     persistence_owner: acpos_runtime.provider_route_decisions
     external_effect: NONE
 
+  - operation_id: runProviderQueueProbe
+    port_uid: AIAPI-01-PORT-QUEUE-PROBE
+    path: /v1/aiapi/queue/probe
+    methods: [POST]
+    runtime_owner: PROVIDER_EXECUTION_QUEUE_RUNTIME
+    permission_owner: page:admin:AIAPI-01
+    persistence_owner:
+    - public.queues
+    - public.workers
+    - public.outbox_events
+    - public.inbox_events
+    - public.dead_letters
+    external_effect: NONE
+    probe_cleanup_required: true
+    external_provider_call: FORBIDDEN
+
   unregistered_catalog_apis: REMAIN_UNREGISTERED
   aiapi_effectful_mapping_status: MATERIALIZED_CURRENT
