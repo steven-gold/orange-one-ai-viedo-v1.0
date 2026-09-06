@@ -205,7 +205,7 @@ async function command(
         "content-type": "application/json",
         "x-correlation-id": correlation_id,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ ...(asRecord(payload) ?? {}), page_uid: "admin:SG-02" }),
       cache: "no-store",
     });
   } catch {

@@ -9,6 +9,8 @@ const runtime = await readFile("src/server/aiApi/productionAiApiCommandRuntime.t
 const commandRuntime = await readFile("src/server/aiApi/aiApiCommandRuntime.ts", "utf8");
 const binder = await readFile("src/server/shared/identityPageCommandRuntime.ts", "utf8");
 const queueAuthority = await readFile("authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml", "utf8");
+const providerAdapter = await readFile("src/server/aiApi/providerHttpAdapterRuntime.ts", "utf8");
+const queueRuntime = await readFile("src/server/queue/providerExecutionQueueRuntime.ts", "utf8");
 
 const routeFiles = [
   ["src/app/v1/aiapi/provider-profiles/route.ts", "listProviderModelProfiles", "createProviderModelProfile"],
@@ -38,7 +40,7 @@ test("AIAPI Current registry materializes only Authority-named provider operatio
     assert.match(authority, new RegExp(`- ${operation}\\b`));
     assert.match(registry, new RegExp(`operation_id: ${operation}\\b`));
   }
-  assert.match(registry, /coverage: IDENTITY_SESSION_AND_AIAPI_PROVIDER_GOVERNED_OPERATIONS/);
+  assert.match(registry, /coverage: IDENTITY_SESSION_AIAPI_PROVIDER_AND_IAM_GOVERNED_OPERATIONS/);
   assert.match(registry, /aiapi_effectful_mapping_status: MATERIALIZED_CURRENT/);
 });
 
@@ -62,12 +64,24 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(providerContract, /prompt_template_rule: Must contain canonical instruction placeholder/);
   assert.match(runtime, /AIAPI_PROMPT_TEMPLATE_CANONICAL_TOKEN_REQUIRED/);
   assert.match(runtime, /PROVIDER_SECRET_ENV_NOT_BOUND/);
-  assert.match(runtime, /PROVIDER_EXTERNAL_TEST_ADAPTER_NOT_MATERIALIZED/);
-  assert.match(runtime, /PROVIDER_EXTERNAL_ADAPTER_EXECUTION_NOT_MATERIALIZED/);
-  assert.match(runtime, /external_request_sent: false/);
-  assert.match(runtime, /production_secret_used: false/);
-  assert.match(runtime, /plaintext_persisted: false/);
-  assert.doesNotMatch(runtime, /process\.env\[[^\]]+\]\s*=(?!=)|process\.env\.[A-Z0-9_]+\s*=/);
+  assert.match(runtime, /compileProviderRequest/);
+  assert.match(runtime, /executeProviderHttpRequest/);
+  assert.match(runtime, /enqueueProviderExecutionRequest/);
+  assert.match(runtime, /drainProviderExecutionEvent/);
+  assert.match(runtime, /external_request_sent:false/);
+  assert.match(runtime, /production_secret_used:false/);
+  assert.match(runtime, /plaintext_persisted:false/);
+  assert.match(providerAdapter, /OPENAI_COMPATIBLE_CHAT/);
+  assert.match(providerAdapter, /GENERIC_JSON_HTTP/);
+  assert.match(providerAdapter, /PROVIDER_ENDPOINT_PRIVATE_NETWORK_FORBIDDEN/);
+  assert.match(providerAdapter, /PROVIDER_REQUEST_TIMEOUT/);
+  assert.match(providerAdapter, /PROVIDER_RESPONSE_TEXT_PATH_NOT_FOUND/);
+  assert.match(providerAdapter, /authorization:/);
+  assert.match(providerAdapter, /Bearer/);
+  assert.match(queueRuntime, /executeQueuedProviderRequest/);
+  assert.match(queueRuntime, /recordQueuedProviderFailure/);
+  assert.doesNotMatch(runtime + providerAdapter, /process\.env\[[^\]]+\]\s*=(?!=)|process\.env\.[A-Z0-9_]+\s*=/);
+  assert.doesNotMatch(providerAdapter, /console\.(?:log|debug|info|warn|error)\s*\(/);
 });
 
 test("AIAPI queue probe is separately governed by queue runtime authority", () => {

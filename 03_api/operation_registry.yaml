@@ -1,10 +1,10 @@
 operation_registry:
   contract_meta:
-    contract_id: ACPOS-OPERATION-REGISTRY-CURRENT-1.1.0
+    contract_id: ACPOS-OPERATION-REGISTRY-CURRENT-1.2.0
     status: FINAL_LOCKED
     current_only: true
-    revision: 2026-09-07-IDENTITY-AIAPI-PROVIDER-MATERIALIZED
-    coverage: IDENTITY_SESSION_AND_AIAPI_PROVIDER_GOVERNED_OPERATIONS
+    revision: 2026-09-07-IAM-EXACT-ACTION-AUTHORIZATION
+    coverage: IDENTITY_SESSION_AIAPI_PROVIDER_AND_IAM_GOVERNED_OPERATIONS
     undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
     supersedes_revision: 2026-09-05-IDENTITY-SESSION-ONLY
     governance_basis:
@@ -18,7 +18,9 @@ operation_registry:
     - Provider/model/profile values are runtime/admin data and are never fabricated by Authority.
     - External provider execution stays fail-closed until an approved capability, enabled profile, bound secret reference, adapter, and route preflight all pass.
     - Sandbox never uses Production provider credentials.
-    - All effectful operations require authenticated admin:AIAPI-01 page permission, correlation_id, audit, and explicit error codes.
+    - AIAPI effectful operations require authenticated admin:AIAPI-01 page permission, correlation_id, audit, and explicit error codes.
+    - IAM effectful operations require authenticated admin:IAM-01 page permission plus the exact reused ACTION resource INVOKE assignment.
+    - Generic governance operations require explicit page_uid context and resolve to that page family's registered source ACTION resource.
   operations:
   - operation_id: resolveIdentityAccountAuthority
     port_uid: GHS-PORT-IDENTITY
@@ -36,11 +38,62 @@ operation_registry:
     - src/app/v1/identity/session/route.ts
     catalog_resource_key: NOT_IN_ACCOUNT_PERMISSION_CATALOG
 
+  - operation_id: searchProjection
+    port_uid: IAM-01-PORT-SEARCH
+    path: /v1/search
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-01:ACT-SEARCH
+    authorization_action: INVOKE
+    source_authority: admin:IAM-01
+  - operation_id: saveDraft
+    port_uid: IAM-01-PORT-DRAFT
+    path: /v1/drafts
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-02:ACT-DRAFT-SAVE
+    authorization_action: INVOKE
+    reused_source_operation: true
+  - operation_id: validateDraft
+    port_uid: IAM-01-PORT-DRAFT
+    path: /v1/drafts/{id}/validate
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-02:ACT-DRAFT-VALIDATE
+    authorization_action: INVOKE
+    reused_source_operation: true
+  - operation_id: previewAuthorizationImpact
+    port_uid: IAM-01-PORT-AUTHORIZATION-IMPACT
+    path: /v1/iam/accounts/{accountId}/authorization-impact
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-02:ACT-ACCOUNT-PERMISSION-PREVIEW
+    authorization_action: INVOKE
+    reused_source_operation: true
+  - operation_id: assignAccountPermission
+    port_uid: IAM-01-PORT-ACCOUNT-PERMISSION
+    path: /v1/iam/accounts/{accountId}/permissions
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-05:ACT-CONFIGURE
+    authorization_action: INVOKE
+    reused_source_operation: true
+  - operation_id: revokeAccountPermission
+    port_uid: IAM-01-PORT-ACCOUNT-PERMISSION
+    path: /v1/iam/accounts/{accountId}/permissions
+    methods: [DELETE]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-05:ACT-CONFIGURE
+    authorization_action: INVOKE
+    reused_source_operation: true
+
   - operation_id: createProviderModelProfile
     port_uid: AIAPI-01-PORT-PROVIDER-PROFILE
     path: /v1/aiapi/provider-profiles
     methods: [POST]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE
+    authorization_action: INVOKE
     persistence_owner: acpos_runtime.provider_profiles
     external_effect: NONE
   - operation_id: listProviderModelProfiles
@@ -48,6 +101,8 @@ operation_registry:
     path: /v1/aiapi/provider-profiles
     methods: [GET]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-LIST-PROFILES
+    authorization_action: INVOKE
     persistence_owner: acpos_runtime.provider_profiles
     external_effect: NONE
   - operation_id: getProviderModelProfile
@@ -55,6 +110,8 @@ operation_registry:
     path: /v1/aiapi/provider-profiles/{profileId}
     methods: [GET]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE
+    authorization_action: INVOKE
     persistence_owner: acpos_runtime.provider_profiles
     external_effect: NONE
   - operation_id: updateProviderModelProfile
@@ -62,6 +119,8 @@ operation_registry:
     path: /v1/aiapi/provider-profiles/{profileId}
     methods: [PATCH]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-UPDATE-PROFILE
+    authorization_action: INVOKE
     persistence_owner: acpos_runtime.provider_profiles
     external_effect: NONE
   - operation_id: retireProviderModelProfile
@@ -69,6 +128,8 @@ operation_registry:
     path: /v1/aiapi/provider-profiles/{profileId}/retire
     methods: [POST]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-RETIRE-PROFILE
+    authorization_action: INVOKE
     persistence_owner: acpos_runtime.provider_profiles
     effect: SET_ENABLED_FALSE
     external_effect: NONE
@@ -77,6 +138,8 @@ operation_registry:
     path: /v1/aiapi/provider-profiles/{profileId}/test
     methods: [POST]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE
+    authorization_action: INVOKE
     persistence_owner: acpos_runtime.provider_profile_tests
     external_effect: PROVIDER_CONNECTION_TEST
     external_gate: SECRET_REFERENCE_AND_ADAPTER_REQUIRED
@@ -85,6 +148,8 @@ operation_registry:
     path: /v1/aiapi/provider-profiles/{profileId}/credential
     methods: [PUT]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL
+    authorization_action: INVOKE
     persistence_owner: public.secret_references
     credential_contract: SECRET_ENV_REFERENCE_ONLY
     raw_secret_body_field: FORBIDDEN
@@ -93,6 +158,8 @@ operation_registry:
     path: /v1/aiapi/provider-profiles/{profileId}/credential
     methods: [DELETE]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-DELETE-CREDENTIAL
+    authorization_action: INVOKE
     persistence_owner: public.secret_references
     effect: RETIRE_REFERENCE_AND_CLEAR_PROFILE_REFERENCE
     raw_secret_return: FORBIDDEN
@@ -103,18 +170,42 @@ operation_registry:
     methods: [PATCH]
     runtime_owner: IAM_RUNTIME
     existing_route_reused: true
+    page_context_required: true
+    authorization_contexts:
+      admin:IAM-01:
+        resource_key: action:admin:IAM-05:ACT-CONFIGURE
+        action: INVOKE
+      admin:AIAPI-01:
+        resource_key: action:admin:AIAPI-04:ACT-CONFIGURE
+        action: INVOKE
+      admin:SG-02:
+        resource_key: action:admin:SG-02:ACT-CONFIGURE
+        action: INVOKE
   - operation_id: approveGovernedResource
     port_uid: IAM-01-PORT-GOVERNED-RESOURCE
     path: /v1/governance/resources/{id}/approve
     methods: [POST]
     runtime_owner: IAM_RUNTIME
     existing_route_reused: true
+    page_context_required: true
+    authorization_contexts:
+      admin:IAM-01:
+        resource_key: action:admin:IAM-05:ACT-APPROVE
+        action: INVOKE
+      admin:AIAPI-01:
+        resource_key: action:admin:AIAPI-04:ACT-APPROVE
+        action: INVOKE
+      admin:SG-02:
+        resource_key: action:admin:SG-02:ACT-APPROVE
+        action: INVOKE
 
   - operation_id: setKillSwitch
     port_uid: AIAPI-01-PORT-KILL-SWITCH
     path: /v1/aiapi/kill-switch
     methods: [POST]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-09-ACT-02-ACT-KILL-SWITCH
+    authorization_action: INVOKE
     effect: PROFILE_OR_GROUP_ENABLE_STATE
     confirmation_required: true
   - operation_id: createProviderCandidateGroup
@@ -122,6 +213,8 @@ operation_registry:
     path: /v1/aiapi/provider-groups
     methods: [POST]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-CREATE-GROUP
+    authorization_action: INVOKE
     persistence_owner:
     - acpos_runtime.provider_groups
     - acpos_runtime.provider_members
@@ -130,12 +223,16 @@ operation_registry:
     path: /v1/aiapi/quarantine
     methods: [GET]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-VIEW-QUARANTINE
+    authorization_action: INVOKE
     persistence_owner: acpos_runtime.provider_quarantine
   - operation_id: restoreProviderFromQuarantine
     port_uid: AIAPI-01-PORT-QUARANTINE
     path: /v1/aiapi/quarantine/{quarantineId}/restore
     methods: [POST]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-RESTORE-PROVIDER
+    authorization_action: INVOKE
     persistence_owner: acpos_runtime.provider_quarantine
     reason_required: true
   - operation_id: runSandboxTest
@@ -143,6 +240,8 @@ operation_registry:
     path: /v1/aiapi/sandbox-tests
     methods: [POST]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: action:admin:AIAPI-08:ACT-SYSTEM-TEST
+    authorization_action: INVOKE
     production_secret_use: FORBIDDEN
     production_output_write: FORBIDDEN
   - operation_id: executeProviderRoute
@@ -150,6 +249,8 @@ operation_registry:
     path: /v1/aiapi/routes
     methods: [POST]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-EXECUTE-ROUTE
+    authorization_action: INVOKE
     persistence_owner:
     - acpos_runtime.provider_route_preflights
     - acpos_runtime.provider_route_decisions
@@ -161,6 +262,8 @@ operation_registry:
     path: /v1/aiapi/routes/{routeDecisionId}
     methods: [GET]
     runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    authorization_resource_key: control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-VIEW-ROUTE-DECISION
+    authorization_action: INVOKE
     persistence_owner: acpos_runtime.provider_route_decisions
     external_effect: NONE
 
@@ -181,4 +284,5 @@ operation_registry:
     external_provider_call: FORBIDDEN
 
   unregistered_catalog_apis: REMAIN_UNREGISTERED
-  aiapi_effectful_mapping_status: MATERIALIZED_CURRENT
+  aiapi_effectful_mapping_status: MATERIALIZED_CURRENT_EXACT_CONTROL_AUTHORIZATION
+  iam_effectful_mapping_status: MATERIALIZED_CURRENT_EXACT_ACTION

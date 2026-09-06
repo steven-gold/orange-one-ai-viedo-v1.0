@@ -22,6 +22,16 @@ export const AIAPI_TEXT = {
   routingWorkspace: { "zh-TW": "Routing / Sandbox / Compile Audit", "zh-CN": "Routing / Sandbox / Compile Audit", en: "Routing / Sandbox / Compile Audit" },
   operationsWorkspace: { "zh-TW": "Job / Cost / Incident", "zh-CN": "Job / Cost / Incident", en: "Job / Cost / Incident" },
   secretRule: { "zh-TW": "API Key 僅 write-only 設定；禁止明文顯示、匯出、log、audit 或資料庫保存。", "zh-CN": "API Key 仅 write-only 设置；禁止明文显示、导出、log、audit 或数据库保存。", en: "API keys are write-only; plaintext reveal, export, logging, audit and database persistence are forbidden." },
+  bindingReady: { "zh-TW": "Current HTTP binding 已完成；操作仍依權限、資料狀態與 Server Gate 決定是否可用。", "zh-CN": "Current HTTP binding 已完成；操作仍依权限、数据状态与 Server Gate 决定是否可用。", en: "Current HTTP bindings are materialized; availability still depends on permission, data state and server gates." },
+  selectedProvider: { "zh-TW": "已選取 Provider / Model", "zh-CN": "已选择 Provider / Model", en: "Selected Provider / Model" },
+  operationForm: { "zh-TW": "受治理操作表單", "zh-CN": "受治理操作表单", en: "Governed Operation Form" },
+  operationResult: { "zh-TW": "操作結果", "zh-CN": "操作结果", en: "Operation Result" },
+  submitAction: { "zh-TW": "送出操作", "zh-CN": "提交操作", en: "Submit Operation" },
+  cancel: { "zh-TW": "取消", "zh-CN": "取消", en: "Cancel" },
+  close: { "zh-TW": "關閉", "zh-CN": "关闭", en: "Close" },
+  pending: { "zh-TW": "操作執行中", "zh-CN": "操作执行中", en: "Operation in progress" },
+  selectRequired: { "zh-TW": "請先選取 Provider / Model", "zh-CN": "请先选择 Provider / Model", en: "Select a Provider / Model first" },
+  noPlaintextSecret: { "zh-TW": "此表單只接受 Secret 環境變數參照名稱，不接受明文 API Key。", "zh-CN": "此表单只接受 Secret 环境变量引用名称，不接受明文 API Key。", en: "This form accepts only a secret environment-variable reference name, never plaintext API keys." },
 } satisfies Record<string, Entry>;
 
 export type AiApiTextKey = keyof typeof AIAPI_TEXT;

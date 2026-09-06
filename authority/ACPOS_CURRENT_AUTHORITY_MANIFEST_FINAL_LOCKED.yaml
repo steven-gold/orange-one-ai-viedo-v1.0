@@ -1,9 +1,9 @@
 authority:
   id: ACPOS_CURRENT_AUTHORITY_MANIFEST
-  version: V1.7
+  version: V1.8
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-07-PRODUCTION-MIGRATION-0019-APPLIED
+  revision: 2026-09-07-MAIN-ONLY-DEPLOYMENT-AND-AIAPI-QUEUE-CLOSURE
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -22,6 +22,7 @@ current_authority_set:
   - authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
   - authority/runtime/ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1.0.yaml
   - authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+  - authority/runtime/ACPOS_PRODUCTION_DEPLOYMENT_EXECUTION_POLICY_FINAL_LOCKED_V1.0.yaml
   permission:
   - 06_permission/account_permission_catalog.yaml
   pages:
@@ -57,6 +58,7 @@ precedence:
   - ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT within production DB driver/env contract scope only
   - ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT within production request-to-app_users actor scope only
   - ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT within queue/worker/outbox/DLQ runtime scope only
+  - ACPOS_PRODUCTION_DEPLOYMENT_EXECUTION_POLICY within Git/Vercel construction and Production release sequencing scope only
 cross_authority_bindings:
   database_migration_v1_0:
     authority_path: authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml

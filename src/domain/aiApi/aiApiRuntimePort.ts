@@ -21,6 +21,7 @@ export type AiApiProjectionTestMetadata = {
 };
 
 export type AiApiProviderRow = {
+  profile_id: string;
   provider_id: string;
   provider_name: string;
   model_id: string;
@@ -33,6 +34,10 @@ export type AiApiProviderRow = {
   enabled: string;
   credential_status: string;
   last_test: string;
+  health_status: string;
+  capability_status: string;
+  capability_version: string;
+  version: number | null;
 };
 
 export type AiApiProjection = {
@@ -74,13 +79,19 @@ function normalizeTestMetadata(value: unknown): AiApiProjectionTestMetadata | un
 function normalizeProviderRows(value: unknown): AiApiProviderRow[] {
   if (!Array.isArray(value)) return [];
   const rows: AiApiProviderRow[] = [];
-  const keys: (keyof AiApiProviderRow)[] = ["provider_id","provider_name","model_id","model_name","capability","adapter","base_url","endpoint","timeout","enabled","credential_status","last_test"];
+  const stringKeys: (keyof AiApiProviderRow)[] = ["profile_id","provider_id","provider_name","model_id","model_name","capability","adapter","base_url","endpoint","timeout","enabled","credential_status","last_test","health_status","capability_status","capability_version"];
   for (const raw of value) {
     const row = asRecord(raw); if (!row) continue;
     const normalized = {} as AiApiProviderRow;
     let valid = true;
-    for (const key of keys) { const field = row[key]; if (typeof field !== "string") { valid = false; break; } normalized[key] = field; }
-    if (valid) rows.push(normalized);
+    for (const key of stringKeys) {
+      const field = row[key];
+      if (typeof field !== "string") { valid = false; break; }
+      (normalized as Record<string, unknown>)[key] = field;
+    }
+    if (!valid) continue;
+    normalized.version = typeof row.version === "number" && Number.isInteger(row.version) ? row.version : null;
+    rows.push(normalized);
   }
   return rows;
 }

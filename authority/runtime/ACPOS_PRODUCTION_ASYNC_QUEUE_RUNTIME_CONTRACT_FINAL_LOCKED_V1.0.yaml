@@ -107,7 +107,7 @@ on_demand_authenticated_probe:
   path: /v1/aiapi/queue/probe
   method: POST
   permission: page:admin:AIAPI-01
-  purpose: Production runtime proof of enqueue, claim, handler, inbox receipt, publish, heartbeat and cleanup.
+  purpose: Production runtime proof of enqueue, idempotency, claim, handler, inbox receipt, publish, expired-lease recovery, retry, DLQ, heartbeat and cleanup.
   external_provider_call: FORBIDDEN
   cleanup_required: true
   success_evidence:
@@ -116,6 +116,10 @@ on_demand_authenticated_probe:
   - claimed = 1
   - inbox_receipt = 1
   - published = 1
+  - idempotent_enqueue = true
+  - lease_recovered = true
+  - retry_observed = true
+  - dlq_observed = true
   - residual_probe_rows = 0
   - worker heartbeat updated
   primary_worker_acceptance_path: true
@@ -134,8 +138,14 @@ provider_execution_contract:
   - canonical instruction may be represented by governed compiled prompt reference/hash
   - correlation_id REQUIRED
   worker_handler:
-    current_status: FAIL_CLOSED_UNTIL_EXTERNAL_PROVIDER_ADAPTER_MATERIALIZED
-    missing_adapter_reason: PROVIDER_EXTERNAL_ADAPTER_EXECUTION_NOT_MATERIALIZED
+    current_status: MATERIALIZED_CURRENT
+    adapter_runtime: src/server/aiApi/providerHttpAdapterRuntime.ts
+    queue_binding: src/server/queue/providerExecutionQueueRuntime.ts
+    supported_adapter_types:
+    - OPENAI_COMPATIBLE_CHAT
+    - GENERIC_JSON_HTTP
+    fail_closed_without_real_configuration: true
+    missing_secret_reason: PROVIDER_SECRET_ENV_NOT_BOUND
   queue_runtime_probe:
     event_type: ACPOS_QUEUE_RUNTIME_PROBE
     external_provider_call: FORBIDDEN
@@ -161,7 +171,8 @@ acceptance:
 - dlq_after_max_attempts_pass
 - inbox_receipt_idempotency_pass
 - production_runtime_probe_pass
-- provider_execution_remains_fail_closed_without_real provider secret/adapter
+- provider_execution_remains_fail_closed_without_real provider profile/capability/secret configuration
+- provider_execution_adapter_runtime_materialized
 
 completion_claim:
   gate_23_pass_requires:
@@ -170,3 +181,18 @@ completion_claim:
   - Authenticated Production HTTP probe proves queue + claim + success + inbox + heartbeat + cleanup
   - Production failure probe proves retry + DLQ + no residual unsafe data
   gate_22_independent: true
+
+provider_execution_implementation_evidence:
+  adapter_runtime: src/server/aiApi/providerHttpAdapterRuntime.ts
+  command_runtime: src/server/aiApi/productionAiApiCommandRuntime.ts
+  canonical_worker: src/server/queue/providerExecutionQueueRuntime.ts
+  release_gate:
+    run_number: 405
+    conclusion: success
+    head_sha: fb7e649ca791a8d81ec1f0e9b6c8233b033aaf1a
+  external_configuration_current_counts:
+    provider_capabilities: 0
+    provider_profiles: 0
+    secret_references: 0
+    provider_groups: 0
+  production_external_execution_proof: NOT_EXECUTED_NO_REAL_CONFIGURATION

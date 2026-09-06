@@ -5,6 +5,7 @@ import { configureCoreRuntime, type CoreRuntimeBindings } from "@/server/core/co
 import type { CoreRuntimeRequest } from "@/domain/core/coreRuntimeContract";
 import { configureDbReadModelRuntime, type DbReadRequest } from "@/server/database/dbReadModelRuntime";
 import { configureIamRuntime, type IamRuntimeRequest } from "@/server/iam/iamRuntime";
+import { executeProductionIamCommand } from "@/server/iam/productionIamCommandRuntime";
 import { configureDepartmentOperationRuntime } from "@/server/shared/departmentOperationRuntime";
 import { configureInfoCommandRuntime, type InfoRequest } from "@/server/info/infoCommandRuntime";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
@@ -152,6 +153,134 @@ async function evaluatePageView(resourceKey: string): Promise<{ allowed: true; a
   } catch {
     return { allowed: false, reason_code: "AUTHORIZATION_EVALUATION_FAILED" };
   }
+}
+
+async function evaluateResourceAction(
+  resourceKey: string,
+  action: string,
+): Promise<{ allowed: true; actor: IdentityActor } | { allowed: false; reason_code: string }> {
+  if (!resourceKey || !action) return { allowed: false, reason_code: "OPERATION_PERMISSION_MAPPING_REQUIRED" };
+  if (!getProductionNeonSql()) await ensureProductionNeonRuntime();
+  const sql = getProductionNeonSql();
+  if (!sql) return { allowed: false, reason_code: "DATABASE_RUNTIME_NOT_BOUND" };
+  const cookieValue = await readSessionCookie();
+  const identity = await resolveIdentityFromCookie(cookieValue);
+  if (!identity.ok) return { allowed: false, reason_code: identity.reason_code };
+  if (!cookieValue) return { allowed: false, reason_code: "RLS_SESSION_CONTEXT_REQUIRED" };
+  try {
+    const result = await runRlsActorQuery(
+      sql,
+      hashSessionToken(cookieValue),
+      sql`
+        SELECT a.effect,a.scope,a.condition
+        FROM account_permission_assignments a
+        JOIN permission_resources r ON r.resource_id=a.resource_id
+        WHERE a.user_id=${identity.actor.user_id}
+          AND r.resource_key=${resourceKey}
+          AND r.resource_type IN ('ACTION','CONTROL','API','SENSITIVE_PERMISSION')
+          AND r.active=true
+          AND ${action}=ANY(
+            SELECT jsonb_array_elements_text(
+              CASE WHEN jsonb_typeof(r.allowed_actions)='array' THEN r.allowed_actions ELSE '[]'::jsonb END
+            )
+          )
+          AND a.action=${action}
+          AND a.status='APPROVED'
+          AND a.effective_from<=now()
+          AND (a.effective_to IS NULL OR a.effective_to>now())
+      `,
+    );
+    const requestScope={} as Record<string,never>;
+    const matched:string[]=[];
+    for(const raw of Array.isArray(result)?result:[]){
+      const row=asRecord(raw);
+      if(!row)continue;
+      if(!emptyObjectMatches(row.scope,requestScope))continue;
+      if(!conditionAllows(row.condition))continue;
+      const effect=asText(row.effect);
+      if(effect)matched.push(effect);
+    }
+    if(matched.includes("DENY"))return{allowed:false,reason_code:"PERMISSION_DENIED"};
+    if(matched.includes("ALLOW"))return{allowed:true,actor:identity.actor};
+    return{allowed:false,reason_code:"PERMISSION_OR_SCOPE_DENIED"};
+  } catch {
+    return{allowed:false,reason_code:"AUTHORIZATION_EVALUATION_FAILED"};
+  }
+}
+
+const IAM_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  searchProjection:{resource_key:"action:admin:IAM-01:ACT-SEARCH",action:"INVOKE"},
+  saveDraft:{resource_key:"action:admin:IAM-02:ACT-DRAFT-SAVE",action:"INVOKE"},
+  validateDraft:{resource_key:"action:admin:IAM-02:ACT-DRAFT-VALIDATE",action:"INVOKE"},
+  previewAuthorizationImpact:{resource_key:"action:admin:IAM-02:ACT-ACCOUNT-PERMISSION-PREVIEW",action:"INVOKE"},
+  assignAccountPermission:{resource_key:"action:admin:IAM-05:ACT-CONFIGURE",action:"INVOKE"},
+  revokeAccountPermission:{resource_key:"action:admin:IAM-05:ACT-CONFIGURE",action:"INVOKE"},
+};
+
+const AIAPI_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  createProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE",action:"INVOKE"},
+  updateProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-UPDATE-PROFILE",action:"INVOKE"},
+  getProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE",action:"INVOKE"},
+  listProviderModelProfiles:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-LIST-PROFILES",action:"INVOKE"},
+  testProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE",action:"INVOKE"},
+  retireProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-RETIRE-PROFILE",action:"INVOKE"},
+  setProviderModelCredential:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL",action:"INVOKE"},
+  deleteProviderModelCredential:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-DELETE-CREDENTIAL",action:"INVOKE"},
+  setKillSwitch:{resource_key:"control:CTRL-ADMIN-AIAPI-09-ACT-02-ACT-KILL-SWITCH",action:"INVOKE"},
+  createProviderCandidateGroup:{resource_key:"control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-CREATE-GROUP",action:"INVOKE"},
+  getProviderQuarantine:{resource_key:"control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-VIEW-QUARANTINE",action:"INVOKE"},
+  restoreProviderFromQuarantine:{resource_key:"control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-RESTORE-PROVIDER",action:"INVOKE"},
+  runSandboxTest:{resource_key:"action:admin:AIAPI-08:ACT-SYSTEM-TEST",action:"INVOKE"},
+  executeProviderRoute:{resource_key:"control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-EXECUTE-ROUTE",action:"INVOKE"},
+  getProviderRouteDecision:{resource_key:"control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-VIEW-ROUTE-DECISION",action:"INVOKE"},
+};
+
+const GOVERNANCE_PERMISSION_CONTEXT: Readonly<Record<string,{
+  configure:{resource_key:string;action:string};
+  approve:{resource_key:string;action:string};
+}>> = {
+  "admin:IAM-01":{
+    configure:{resource_key:"action:admin:IAM-05:ACT-CONFIGURE",action:"INVOKE"},
+    approve:{resource_key:"action:admin:IAM-05:ACT-APPROVE",action:"INVOKE"},
+  },
+  "admin:AIAPI-01":{
+    configure:{resource_key:"action:admin:AIAPI-04:ACT-CONFIGURE",action:"INVOKE"},
+    approve:{resource_key:"action:admin:AIAPI-04:ACT-APPROVE",action:"INVOKE"},
+  },
+  "admin:SG-02":{
+    configure:{resource_key:"action:admin:SG-02:ACT-CONFIGURE",action:"INVOKE"},
+    approve:{resource_key:"action:admin:SG-02:ACT-APPROVE",action:"INVOKE"},
+  },
+};
+
+async function authorizeAiApi(request:{operation_id:string}):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:AIAPI-01"]);
+  if(!page.allowed)return page;
+  if(request.operation_id==="runProviderQueueProbe")return{allowed:true};
+  const permission=AIAPI_OPERATION_PERMISSION[request.operation_id];
+  if(!permission)return{allowed:false,reason_code:"AIAPI_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
+}
+
+async function authorizeIam(request:IamRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:IAM-01"]);
+  if(!page.allowed)return page;
+  if(request.operation==="getUiProjection")return{allowed:true};
+  if(request.operation==="configureGovernedResource"||request.operation==="approveGovernedResource"){
+    const payload=asRecord(request.payload)??{};
+    const pageUid=asText(payload.page_uid);
+    if(!pageUid)return{allowed:false,reason_code:"IAM_OPERATION_PERMISSION_CONTEXT_REQUIRED"};
+    const context=GOVERNANCE_PERMISSION_CONTEXT[pageUid];
+    if(!context)return{allowed:false,reason_code:"IAM_OPERATION_PERMISSION_CONTEXT_UNREGISTERED"};
+    const permission=request.operation==="configureGovernedResource"?context.configure:context.approve;
+    const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+    return gate.allowed?{allowed:true}:gate;
+  }
+  const permission=IAM_OPERATION_PERMISSION[request.operation];
+  if(!permission)return{allowed:false,reason_code:"IAM_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
 }
 
 async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
@@ -637,27 +766,7 @@ async function readDb(request: DbReadRequest): Promise<unknown> {
 }
 
 async function executeIam(request: IamRuntimeRequest): Promise<unknown> {
-  if (request.operation !== "searchProjection") {
-    throw new NamedRuntimeError("IAM01_WRITE_RUNTIME_NOT_MATERIALIZED");
-  }
-  const sql = await requireSql();
-  const payload = asRecord(request.payload) ?? {};
-  const q = (asText(payload.query) ?? "").toLowerCase();
-  const rows = await sql`
-    SELECT u.user_id::text AS account_id, u.display_name AS label, u.status::text AS status, u.email::text AS email
-    FROM app_users u
-    ORDER BY u.created_at DESC
-  `;
-  const matches = (Array.isArray(rows) ? rows : []).flatMap((raw) => {
-    const row = asRecord(raw);
-    const account_id = asText(row?.account_id);
-    const label = asText(row?.label);
-    const email = asText(row?.email) ?? "";
-    if (!account_id || !label) return [];
-    if (q && !label.toLowerCase().includes(q) && !email.toLowerCase().includes(q) && !account_id.toLowerCase().includes(q)) return [];
-    return [account_id];
-  });
-  return { query: q, matches };
+  return executeProductionIamCommand(request);
 }
 
 async function executeInfo(request: InfoRequest): Promise<unknown> {
@@ -670,6 +779,29 @@ async function executeInfo(request: InfoRequest): Promise<unknown> {
   const sql = await requireSql();
   const identityContext = await requireIdentityContext();
   const payload = asRecord(request.payload) ?? {};
+  const pageUid = asText(payload.page_uid);
+  if (pageUid === "admin:IAM-01") {
+    const needle = (asText(payload.query) ?? "").toLowerCase();
+    const rows = await runRlsActorQuery(
+      sql,
+      identityContext.session_token_hash,
+      sql`
+        SELECT u.user_id::text AS ref, u.display_name AS label, u.email::text AS email
+        FROM app_users u
+        ORDER BY u.created_at DESC
+      `,
+    );
+    const results = (Array.isArray(rows) ? rows : []).flatMap((raw) => {
+      const row = asRecord(raw);
+      const ref = asText(row?.ref);
+      const label = asText(row?.label);
+      const email = asText(row?.email) ?? "";
+      if (!ref || !label) return [];
+      if (needle && !ref.toLowerCase().includes(needle) && !label.toLowerCase().includes(needle) && !email.toLowerCase().includes(needle)) return [];
+      return [{ ref, label }];
+    });
+    return { results, matches: results.map((item) => item.ref) };
+  }
   const q = `%${asText(payload.query) ?? ""}%`;
   const rows = await runRlsActorQuery(
     sql,
@@ -864,7 +996,7 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureIamRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:IAM-01"]),
+    authorize: authorizeIam,
     execute: executeIam,
     audit: async () => undefined,
   });
@@ -917,7 +1049,7 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureAiApiCommandRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:AIAPI-01"]),
+    authorize: authorizeAiApi,
     execute: executeProductionAiApiCommand,
     audit: auditProductionAiApiCommand,
   });
