@@ -342,30 +342,28 @@ export async function runProviderQueueRuntimeProbe(input: {
   claimed: number;
   inbox_receipt: number;
   published: number;
+  lease_recovered: boolean;
+  retry_observed: boolean;
+  dlq_observed: boolean;
   residual_probe_rows: number;
   external_provider_call: false;
 }> {
   const sql=await sqlClient();
-  const queued=await enqueueQueueRuntimeProbe(input);
-  await heartbeat(sql,"PROBING",{ event_id:queued.event_id });
-
-  const claimed=await claimEventById(sql,queued.event_id);
-  if (!claimed) {
-    const existing=first(await sql`
-      SELECT published_at,dead_lettered_at
-      FROM outbox_events
-      WHERE event_id=${queued.event_id}::uuid
-      LIMIT 1
-    `);
-    if (!existing || existing.published_at == null) {
-      throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_CLAIM_FAILED");
-    }
-  } else {
-    const value=await handleEvent(claimed);
-    await completeEvent(sql,claimed,value);
+  const baseKey=input.idempotency_key?.trim() || `queue-runtime-full-probe:${input.correlation_id}`;
+  const queued=await enqueueQueueRuntimeProbe({ correlation_id:input.correlation_id,idempotency_key:`${baseKey}:success` });
+  const duplicate=await enqueueQueueRuntimeProbe({ correlation_id:input.correlation_id,idempotency_key:`${baseKey}:success` });
+  if (duplicate.enqueued || duplicate.event_id!==queued.event_id) {
+    throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_IDEMPOTENCY_FAILED");
   }
 
-  const evidence=first(await sql`
+  await heartbeat(sql,"PROBING",{ event_id:queued.event_id,phase:"SUCCESS" });
+
+  const claimed=await claimEventById(sql,queued.event_id);
+  if (!claimed) throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_CLAIM_FAILED");
+  const value=await handleEvent(claimed);
+  await completeEvent(sql,claimed,value);
+
+  const successEvidence=first(await sql`
     SELECT
       (SELECT count(*)::int FROM inbox_events
        WHERE consumer_name=${PROVIDER_EXECUTION_WORKER_KEY}
@@ -377,14 +375,79 @@ export async function runProviderQueueRuntimeProbe(input: {
          AND claimed_by_worker_id IS NULL
          AND lease_until IS NULL) AS published
   `);
-  const inboxReceipt=asInt(evidence?.inbox_receipt);
-  const published=asInt(evidence?.published);
-  if (inboxReceipt !== 1 || published !== 1) {
-    throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_EVIDENCE_FAILED");
+  const inboxReceipt=asInt(successEvidence?.inbox_receipt);
+  const published=asInt(successEvidence?.published);
+  if (inboxReceipt!==1 || published!==1) {
+    throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_SUCCESS_EVIDENCE_FAILED");
   }
 
+  const leaseQueued=await enqueueQueueRuntimeProbe({
+    correlation_id:input.correlation_id,
+    idempotency_key:`${baseKey}:lease`,
+  });
+  await sql`
+    UPDATE outbox_events o
+    SET claimed_by_worker_id=w.worker_id,
+        lease_until=now()-interval '5 minutes',
+        attempt_count=1
+    FROM workers w
+    WHERE o.event_id=${leaseQueued.event_id}::uuid
+      AND w.worker_key=${PROVIDER_EXECUTION_WORKER_KEY}
+  `;
+  const leaseClaimed=await claimEventById(sql,leaseQueued.event_id);
+  const leaseRecovered=Boolean(leaseClaimed) && asInt(leaseClaimed?.attempt_count)===2;
+  if (!leaseClaimed || !leaseRecovered) {
+    throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_LEASE_RECOVERY_FAILED");
+  }
+  await completeEvent(sql,leaseClaimed,await handleEvent(leaseClaimed));
+
+  const dlqQueued=await enqueueQueueRuntimeProbe({
+    correlation_id:input.correlation_id,
+    idempotency_key:`${baseKey}:dlq`,
+  });
+  await sql`
+    UPDATE outbox_events
+    SET max_attempts=2
+    WHERE event_id=${dlqQueued.event_id}::uuid
+  `;
+  const firstFailure=await claimEventById(sql,dlqQueued.event_id);
+  if (!firstFailure) throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_RETRY_FIRST_CLAIM_FAILED");
+  const firstOutcome=await failEvent(sql,firstFailure,"QUEUE_RUNTIME_PROBE_FORCED_FAILURE");
+  const retryObserved=firstOutcome==="RETRY";
+  if (!retryObserved) throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_RETRY_NOT_OBSERVED");
+
+  await sql`
+    UPDATE outbox_events
+    SET available_at=now()-interval '1 second'
+    WHERE event_id=${dlqQueued.event_id}::uuid
+  `;
+  const secondFailure=await claimEventById(sql,dlqQueued.event_id);
+  if (!secondFailure) throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_RETRY_SECOND_CLAIM_FAILED");
+  const secondOutcome=await failEvent(sql,secondFailure,"QUEUE_RUNTIME_PROBE_FORCED_FAILURE");
+  if (secondOutcome!=="DLQ") throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_DLQ_NOT_OBSERVED");
+
+  const dlqEvidence=first(await sql`
+    SELECT
+      (SELECT count(*)::int FROM dead_letters
+       WHERE consumer_name=${PROVIDER_EXECUTION_WORKER_KEY}
+         AND event_id=${dlqQueued.event_id}::uuid
+         AND retry_count=2
+         AND status='BLOCKED') AS dlq_rows,
+      (SELECT count(*)::int FROM outbox_events
+       WHERE event_id=${dlqQueued.event_id}::uuid
+         AND dead_lettered_at IS NOT NULL
+         AND published_at IS NULL) AS terminal_rows
+  `);
+  const dlqObserved=asInt(dlqEvidence?.dlq_rows)===1 && asInt(dlqEvidence?.terminal_rows)===1;
+  if (!dlqObserved) throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_DLQ_EVIDENCE_FAILED");
+
   await heartbeat(sql,"HEALTHY",{
-    last_probe:"PRODUCTION_HTTP_RUNTIME_PASS",
+    last_probe:"PRODUCTION_HTTP_RUNTIME_FULL_PASS",
+    success:true,
+    idempotency:true,
+    lease_recovery:true,
+    retry:true,
+    dlq:true,
     external_provider_call:false,
   });
 
@@ -392,37 +455,59 @@ export async function runProviderQueueRuntimeProbe(input: {
     sql`
       DELETE FROM inbox_events
       WHERE consumer_name=${PROVIDER_EXECUTION_WORKER_KEY}
-        AND event_id=${queued.event_id}::uuid
+        AND event_id IN (
+          ${queued.event_id}::uuid,
+          ${leaseQueued.event_id}::uuid,
+          ${dlqQueued.event_id}::uuid
+        )
     `,
     sql`
       DELETE FROM dead_letters
-      WHERE event_id=${queued.event_id}::uuid
+      WHERE event_id IN (
+        ${queued.event_id}::uuid,
+        ${leaseQueued.event_id}::uuid,
+        ${dlqQueued.event_id}::uuid
+      )
     `,
     sql`
       DELETE FROM outbox_events
-      WHERE event_id=${queued.event_id}::uuid
+      WHERE event_id IN (
+        ${queued.event_id}::uuid,
+        ${leaseQueued.event_id}::uuid,
+        ${dlqQueued.event_id}::uuid
+      )
     `,
   ]);
 
   const residual=first(await sql`
-    SELECT
-      (
-        (SELECT count(*) FROM outbox_events WHERE event_id=${queued.event_id}::uuid)
-        +
-        (SELECT count(*) FROM inbox_events WHERE event_id=${queued.event_id}::uuid)
-        +
-        (SELECT count(*) FROM dead_letters WHERE event_id=${queued.event_id}::uuid)
-      )::int AS residual_probe_rows
+    SELECT (
+      (SELECT count(*) FROM outbox_events WHERE event_id IN (
+        ${queued.event_id}::uuid,${leaseQueued.event_id}::uuid,${dlqQueued.event_id}::uuid
+      ))
+      +
+      (SELECT count(*) FROM inbox_events WHERE event_id IN (
+        ${queued.event_id}::uuid,${leaseQueued.event_id}::uuid,${dlqQueued.event_id}::uuid
+      ))
+      +
+      (SELECT count(*) FROM dead_letters WHERE event_id IN (
+        ${queued.event_id}::uuid,${leaseQueued.event_id}::uuid,${dlqQueued.event_id}::uuid
+      ))
+    )::int AS residual_probe_rows
   `);
+  const residualProbeRows=asInt(residual?.residual_probe_rows);
+  if (residualProbeRows!==0) throw new NamedRuntimeError("QUEUE_RUNTIME_PROBE_CLEANUP_FAILED");
 
   return {
     status:"PASS",
     event_id:queued.event_id,
-    idempotent_enqueue:!queued.enqueued,
-    claimed:claimed ? 1 : 0,
+    idempotent_enqueue:true,
+    claimed:1,
     inbox_receipt:inboxReceipt,
     published,
-    residual_probe_rows:asInt(residual?.residual_probe_rows),
+    lease_recovered:leaseRecovered,
+    retry_observed:retryObserved,
+    dlq_observed:dlqObserved,
+    residual_probe_rows:residualProbeRows,
     external_provider_call:false,
   };
 }
