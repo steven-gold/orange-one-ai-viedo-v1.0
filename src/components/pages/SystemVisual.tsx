@@ -52,7 +52,6 @@ function controlTraceProps(control_uid: string) {
     "data-runtime-binding": trace.runtime_binding ?? (trace.service_operation ? "NOT_EXECUTED" : "NOT_BOUND"),
     "data-service-operation": trace.service_operation ?? undefined,
     "data-enabled-in-visual-phase": trace.enabled_in_visual_phase ? "true" : "false",
-    "data-disabled-reason": trace.enabled_in_visual_phase ? undefined : "SYS_CONTROL_DISABLED_IN_VISUAL_PHASE",
   };
 }
 
@@ -297,11 +296,15 @@ export function SystemVisual() {
         </Section>
         <Section id="SEC-ADMIN-SYS-01-EXECUTION-PANEL" title={t("executionPanel")}>
           <div className={styles.executionLine} data-component-uid="SYS-01-CMP-EXECUTION-PANEL" data-visual-uid="SYS-01-VIS-EXECUTION-PANEL">
-            <DataRow label={t("sandboxResult")} />
+            <div>
+              <span>{t("validation")}</span>
+              <strong>{DASH}</strong>
+            </div>
             <button id="SYS-01-BTN-SANDBOX-TEST" {...controlTraceProps("SYS-01-BTN-SANDBOX-TEST")} className={styles.secondaryButton} type="button" disabled>
               {t("sandboxTest")}
             </button>
           </div>
+          <p className={styles.phaseNote}>{t("disabledVisual")}</p>
         </Section>
       </div>
     </div>
