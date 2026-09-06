@@ -477,7 +477,7 @@ async function readDashboardProjection(request: DashboardAccessRequest): Promise
     industry_news: { industry_news: { items: [] } },
     system_status_summary: {
       system_status_summary: {
-        overall_status: migrationCount === 17 ? "READY" : "BLOCKED",
+        overall_status: migrationCount === 18 ? "READY" : "BLOCKED",
         summary: `schema_migration_history=${migrationCount ?? "unresolved"}`,
         checked_at: asText(migration?.checked_at),
       },
