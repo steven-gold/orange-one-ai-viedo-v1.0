@@ -17,10 +17,10 @@ test("AIAPI UI binds current governed operations instead of hard-disabled remap 
 
 test("AIAPI provider table uses profile identity and optimistic version state", () => {
   assert.match(runtimePort, /profile_id: string/);
-  assert.match(runtimePort, /version: number \\| null/);
-  assert.match(visual, /data-profile-id=\\{row\\.profile_id\\}/);
-  assert.match(visual, /selectedProfileId === row\\.profile_id/);
-  assert.match(visual, /expected_version: selectedRow\\?\\.version/);
+  assert.equal(runtimePort.includes("version: number | null"), true);
+  assert.equal(visual.includes("data-profile-id={row.profile_id}"), true);
+  assert.equal(visual.includes("selectedProfileId === row.profile_id"), true);
+  assert.equal(visual.includes("expected_version: selectedRow?.version"), true);
 });
 
 test("AIAPI credential surface accepts secret references only", () => {
