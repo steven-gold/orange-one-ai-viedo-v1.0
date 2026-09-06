@@ -37,6 +37,15 @@ const projectionUids = [
   "admin:KB-01",
 ];
 
+function assertExactVisiblePages(body, stage) {
+  const visible = Array.isArray(body?.visible_page_uids) ? body.visible_page_uids : [];
+  assert(body?.navigation_visibility === "READY", `${stage}_NAVIGATION_VISIBILITY_NOT_READY`);
+  assert(visible.length === projectionUids.length, `${stage}_VISIBLE_PAGE_COUNT_${visible.length}`);
+  const actual = [...visible].sort();
+  const expected = [...projectionUids].sort();
+  assert(JSON.stringify(actual) === JSON.stringify(expected), `${stage}_VISIBLE_PAGE_SET_MISMATCH`);
+}
+
 if (!email || !password) {
   process.stdout.write("POST_DEPLOY_AUTH_E2E_BLOCKED reason=PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED\n");
   process.exit(0);
@@ -64,6 +73,7 @@ try {
 }
 assert(loginBody?.ok === true && loginBody?.logged_in === true, "AUTH_LOGIN_BODY_INVALID");
 assert(typeof loginBody?.email === "string" && loginBody.email.toLowerCase() === email.toLowerCase(), "AUTH_LOGIN_ACTOR_MISMATCH");
+assertExactVisiblePages(loginBody, "AUTH_LOGIN");
 assert(Boolean(login.headers.get("x-correlation-id")), "AUTH_LOGIN_CORRELATION_ID_MISSING");
 
 const setCookie = login.headers.get("set-cookie") ?? "";
@@ -83,6 +93,7 @@ const sessionBody = await session.json().catch(() => null);
 assert(session.status === 200, `AUTH_SESSION_HTTP_${session.status}`);
 assert(sessionBody?.ok === true && sessionBody?.logged_in === true, "AUTH_SESSION_BODY_INVALID");
 assert(typeof sessionBody?.email === "string" && sessionBody.email.toLowerCase() === email.toLowerCase(), "AUTH_SESSION_ACTOR_MISMATCH");
+assertExactVisiblePages(sessionBody, "AUTH_SESSION");
 assert(Boolean(session.headers.get("x-correlation-id")), "AUTH_SESSION_CORRELATION_ID_MISSING");
 
 const dashboard = await fetch(`${base}/v1/dashboard/read-model`, {
@@ -126,4 +137,5 @@ const afterLogoutBody = await afterLogout.json().catch(() => null);
 assert(afterLogout.status === 401, `AUTH_LOGOUT_SESSION_STILL_ACTIVE_HTTP_${afterLogout.status}`);
 assert(afterLogoutBody?.logged_in === false, "AUTH_LOGOUT_SESSION_BODY_INVALID");
 
-process.stdout.write(`POST_DEPLOY_AUTH_E2E_PASS projections=${projectionPass} dashboard=1 login=1 session=1 logout=1\n`);
+assert(projectionPass === 18, `AUTH_PROJECTION_PASS_COUNT_${projectionPass}`);
+process.stdout.write(`POST_DEPLOY_AUTH_E2E_PASS projections=${projectionPass} visible_pages=18 dashboard=1 login=1 session=1 logout=1\n`);

@@ -6,6 +6,7 @@ import {
   destroyIdentitySession,
   resolveIdentityFromCookie,
 } from "@/server/identity/identityRuntime";
+import { readVisiblePageUidsForActor } from "@/server/identity/navigationVisibilityRuntime";
 
 export const dynamic = "force-dynamic";
 
@@ -62,12 +63,16 @@ export async function GET(request: NextRequest) {
       correlation_id,
     );
   }
+  const sessionToken = request.cookies.get(IDENTITY_COOKIE_NAME)?.value ?? "";
+  const visibility = await readVisiblePageUidsForActor(sessionToken, resolved.actor.user_id);
   return json(
     {
       ok: true,
       logged_in: true,
       display_name: resolved.actor.display_name,
       email: resolved.actor.email,
+      navigation_visibility: visibility.ok ? "READY" : "UNAVAILABLE",
+      visible_page_uids: visibility.visible_page_uids,
       correlation_id,
     },
     200,
@@ -90,12 +95,15 @@ export async function POST(request: NextRequest) {
   if (!created.ok) {
     return json({ ok: false, reason_code: created.reason_code, correlation_id }, created.status, correlation_id);
   }
+  const visibility = await readVisiblePageUidsForActor(created.token, created.actor.user_id);
   const response = json(
     {
       ok: true,
       logged_in: true,
       display_name: created.actor.display_name,
       email: created.actor.email,
+      navigation_visibility: visibility.ok ? "READY" : "UNAVAILABLE",
+      visible_page_uids: visibility.visible_page_uids,
       correlation_id,
     },
     200,

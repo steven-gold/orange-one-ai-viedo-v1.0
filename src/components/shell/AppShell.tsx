@@ -10,9 +10,10 @@ import { bindIdentityClientProjectionAdapters } from "@/domain/catalog/identityC
 
 type NavItem = {
   id: string;
+  pageUid: string;
   labelKey: TranslationKey;
   icon: "dashboard" | "project" | "asset" | "video" | "edit" | "qa" | "database" | "strategy" | "info";
-  href?: string;
+  href: string;
 };
 
 type AppShellProps = {
@@ -22,27 +23,27 @@ type AppShellProps = {
 };
 
 const NAV_ITEMS: readonly NavItem[] = [
-  { id: "NAV-01", labelKey: "global.nav.dashboard", icon: "dashboard", href: "/" },
-  { id: "NAV-02", labelKey: "global.nav.project_topic", icon: "project", href: "/core" },
-  { id: "NAV-03", labelKey: "global.nav.asset", icon: "asset", href: "/assets" },
-  { id: "NAV-04", labelKey: "global.nav.video", icon: "video", href: "/video" },
-  { id: "NAV-05", labelKey: "global.nav.edit_voice", icon: "edit", href: "/edit" },
-  { id: "NAV-06", labelKey: "global.nav.qa", icon: "qa", href: "/qa" },
-  { id: "NAV-07", labelKey: "global.nav.database", icon: "database", href: "/database" },
-  { id: "NAV-08", labelKey: "global.nav.strategy", icon: "strategy", href: "/strategy" },
-  { id: "NAV-09", labelKey: "global.nav.latest_information", icon: "info", href: "/info" },
- ] as const;
+  { id: "NAV-01", pageUid: "workspace:WB-01", labelKey: "global.nav.dashboard", icon: "dashboard", href: "/" },
+  { id: "NAV-02", pageUid: "CORE-01", labelKey: "global.nav.project_topic", icon: "project", href: "/core" },
+  { id: "NAV-03", pageUid: "ASSET-01", labelKey: "global.nav.asset", icon: "asset", href: "/assets" },
+  { id: "NAV-04", pageUid: "VIDEO-01", labelKey: "global.nav.video", icon: "video", href: "/video" },
+  { id: "NAV-05", pageUid: "EDIT-01", labelKey: "global.nav.edit_voice", icon: "edit", href: "/edit" },
+  { id: "NAV-06", pageUid: "QA-01", labelKey: "global.nav.qa", icon: "qa", href: "/qa" },
+  { id: "NAV-07", pageUid: "admin:DB-01", labelKey: "global.nav.database", icon: "database", href: "/database" },
+  { id: "NAV-08", pageUid: "workspace:STR-01", labelKey: "global.nav.strategy", icon: "strategy", href: "/strategy" },
+  { id: "NAV-09", pageUid: "workspace:INFO-01", labelKey: "global.nav.latest_information", icon: "info", href: "/info" },
+] as const;
 
 const ADMIN_NAV_ITEMS: readonly NavItem[] = [
-  { id: "ADMIN-NAV-01", labelKey: "global.admin.system", icon: "strategy", href: "/admin/system" },
-  { id: "ADMIN-NAV-02", labelKey: "global.admin.iam", icon: "project", href: "/admin/accounts" },
-  { id: "ADMIN-NAV-03", labelKey: "global.admin.dev", icon: "video", href: "/admin/dev" },
-  { id: "ADMIN-NAV-04", labelKey: "global.admin.social", icon: "info", href: "/admin/social" },
-  { id: "ADMIN-NAV-05", labelKey: "global.admin.erp", icon: "database", href: "/admin/erp" },
-  { id: "ADMIN-NAV-06", labelKey: "global.admin.aiapi", icon: "video", href: "/admin/aiapi" },
-  { id: "ADMIN-NAV-07", labelKey: "global.admin.qa_criteria", icon: "qa", href: "/admin/qa-criteria" },
-  { id: "ADMIN-NAV-08", labelKey: "global.admin.strategy", icon: "strategy", href: "/admin/strategy" },
-  { id: "ADMIN-NAV-09", labelKey: "global.admin.knowledge", icon: "asset", href: "/admin/knowledge" },
+  { id: "ADMIN-NAV-01", pageUid: "admin:SYS-01", labelKey: "global.admin.system", icon: "strategy", href: "/admin/system" },
+  { id: "ADMIN-NAV-02", pageUid: "admin:IAM-01", labelKey: "global.admin.iam", icon: "project", href: "/admin/accounts" },
+  { id: "ADMIN-NAV-03", pageUid: "admin:DEV-01", labelKey: "global.admin.dev", icon: "video", href: "/admin/dev" },
+  { id: "ADMIN-NAV-04", pageUid: "admin:SOC-01", labelKey: "global.admin.social", icon: "info", href: "/admin/social" },
+  { id: "ADMIN-NAV-05", pageUid: "admin:ERP-01", labelKey: "global.admin.erp", icon: "database", href: "/admin/erp" },
+  { id: "ADMIN-NAV-06", pageUid: "admin:AIAPI-01", labelKey: "global.admin.aiapi", icon: "video", href: "/admin/aiapi" },
+  { id: "ADMIN-NAV-07", pageUid: "admin:SG-02", labelKey: "global.admin.qa_criteria", icon: "qa", href: "/admin/qa-criteria" },
+  { id: "ADMIN-NAV-08", pageUid: "admin:STR-01", labelKey: "global.admin.strategy", icon: "strategy", href: "/admin/strategy" },
+  { id: "ADMIN-NAV-09", pageUid: "admin:KB-01", labelKey: "global.admin.knowledge", icon: "asset", href: "/admin/knowledge" },
 ] as const;
 
 function Icon({ name }: { name: NavItem["icon"] }) {
@@ -104,11 +105,15 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
   const [languageOpen, setLanguageOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [identityLabel, setIdentityLabel] = useState<string | null>(null);
+  const [visiblePageUids, setVisiblePageUids] = useState<readonly string[]>([]);
   const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sidebarRef = useRef<HTMLElement | null>(null);
   const languageRef = useRef<HTMLDivElement | null>(null);
   const accountRef = useRef<HTMLDivElement | null>(null);
-  const navItems = surface === "admin" ? ADMIN_NAV_ITEMS : NAV_ITEMS;
+  const visiblePageSet = new Set(visiblePageUids);
+  const navItems = (surface === "admin" ? ADMIN_NAV_ITEMS : NAV_ITEMS).filter((item) => visiblePageSet.has(item.pageUid));
+  const frontSurfaceTarget = NAV_ITEMS.find((item) => visiblePageSet.has(item.pageUid));
+  const adminSurfaceTarget = ADMIN_NAV_ITEMS.find((item) => visiblePageSet.has(item.pageUid));
 
   const cancelCollapse = () => {
     if (collapseTimer.current) {
@@ -163,10 +168,17 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
         const record = body && typeof body === "object" ? (body as Record<string, unknown>) : null;
         const loggedIn = record?.ok === true && record.logged_in === true;
         const displayName = typeof record?.display_name === "string" ? record.display_name.trim() : "";
+        const visible = Array.isArray(record?.visible_page_uids)
+          ? record.visible_page_uids.filter((value): value is string => typeof value === "string")
+          : [];
         setIdentityLabel(loggedIn && displayName ? displayName : "");
+        setVisiblePageUids(loggedIn ? visible : []);
       })
       .catch(() => {
-        if (!cancelled) setIdentityLabel("");
+        if (!cancelled) {
+          setIdentityLabel("");
+          setVisiblePageUids([]);
+        }
       });
     return () => {
       cancelled = true;
@@ -222,28 +234,32 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
             )}
           </div>
           <div className="surface-switch-group" aria-label={`${t("global.header.frontend")} / ${t("global.header.admin")}`}>
-            <a
-              className="surface-switch-button"
-              href="/"
-              data-control-uid="GHS-CTL-SURFACE-FRONT"
-              data-target-page-uid="workspace:WB-01"
-              data-canonical-nav-id="NAV-01"
-              aria-label={t("global.header.frontend")}
-              aria-current={surface === "front" ? "page" : undefined}
-            >
-              {t("global.header.frontend")}
-            </a>
-            <a
-              className="surface-switch-button"
-              href="/admin/system"
-              data-control-uid="GHS-CTL-SURFACE-ADMIN"
-              data-target-page-uid="admin:SYS-01"
-              data-canonical-nav-id="ADMIN-NAV-01"
-              aria-label={t("global.header.admin")}
-              aria-current={surface === "admin" ? "page" : undefined}
-            >
-              {t("global.header.admin")}
-            </a>
+            {frontSurfaceTarget ? (
+              <a
+                className="surface-switch-button"
+                href={frontSurfaceTarget.href}
+                data-control-uid="GHS-CTL-SURFACE-FRONT"
+                data-target-page-uid={frontSurfaceTarget.pageUid}
+                data-canonical-nav-id={frontSurfaceTarget.id}
+                aria-label={t("global.header.frontend")}
+                aria-current={surface === "front" ? "page" : undefined}
+              >
+                {t("global.header.frontend")}
+              </a>
+            ) : null}
+            {adminSurfaceTarget ? (
+              <a
+                className="surface-switch-button"
+                href={adminSurfaceTarget.href}
+                data-control-uid="GHS-CTL-SURFACE-ADMIN"
+                data-target-page-uid={adminSurfaceTarget.pageUid}
+                data-canonical-nav-id={adminSurfaceTarget.id}
+                aria-label={t("global.header.admin")}
+                aria-current={surface === "admin" ? "page" : undefined}
+              >
+                {t("global.header.admin")}
+              </a>
+            ) : null}
           </div>
           <div className="account-menu" ref={accountRef} data-port-uid="GHS-PORT-IDENTITY">
             {identityLabel ? (
@@ -308,6 +324,7 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
                   aria-label={label}
                   aria-current={isActive ? "page" : undefined}
                   data-nav-id={item.id}
+                  data-target-page-uid={item.pageUid}
                 >
                   {content}
                 </a>

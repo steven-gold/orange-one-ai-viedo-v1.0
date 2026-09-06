@@ -56,6 +56,40 @@ test("migration 0017 extends project-scope RLS to Core story tables", async () =
   assert.match(manifest, /payload_sha256: 6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551/);
 });
 
+test("migration 0018 protects department runtime tables by project authority", async () => {
+  const migration = await read("database/migrations/0018_department_runtime_rls_closure.sql");
+  const manifest = await read("database/migrations/migration_checksum_manifest.yaml");
+
+  assert.match(migration, /project_id_for_task/);
+  assert.match(migration, /project_id_for_output/);
+  assert.match(migration, /GRANT SELECT, INSERT, UPDATE, DELETE ON/);
+  assert.match(migration, /TO acpos_app_runtime/);
+
+  const protectedTables = [...migration.matchAll(/ALTER TABLE public\.([a-z_]+) ENABLE ROW LEVEL SECURITY/g)].map((match) => match[1]);
+  assert.deepEqual(
+    protectedTables,
+    [
+      "department_tasks",
+      "task_outputs",
+      "findings",
+      "correction_requests",
+      "scorecards",
+      "handoffs",
+      "release_packages",
+    ],
+  );
+
+  const policies = [...migration.matchAll(/CREATE POLICY ([a-z_]+)/g)].map((match) => match[1]);
+  assert.equal(policies.length, 14);
+  assert.match(migration, /acpos_runtime\.can_access_project/);
+  assert.match(migration, /acpos_runtime\.can_manage_project/);
+  assert.match(migration, /DEPARTMENT_RLS_EXISTING_PROJECT_RESOLUTION_GAP/);
+  assert.match(migration, /0018_department_runtime_rls_closure/);
+  assert.match(migration, /d898fcc1a2ccd0d3b814e3cd0578b4c0a8a573f84e96a0e68c68b4af1b2212b5/);
+  assert.match(manifest, /migration_id: 0018_department_runtime_rls_closure/);
+  assert.match(manifest, /payload_sha256: d898fcc1a2ccd0d3b814e3cd0578b4c0a8a573f84e96a0e68c68b4af1b2212b5/);
+});
+
 test("production query runtime sets local non-owner role before protected queries", async () => {
   const neonRuntime = await read("src/server/database/neonRuntime.ts");
   const rlsRuntime = await read("src/server/database/rlsRuntime.ts");
@@ -63,6 +97,8 @@ test("production query runtime sets local non-owner role before protected querie
   const coreClient = await read("src/domain/core/coreClientPort.ts");
 
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 17/);
+  assert.match(neonRuntime, /TARGET_MIGRATION_COUNT = 18/);
+  assert.match(neonRuntime, /n < REQUIRED_MIGRATION_COUNT \|\| n > TARGET_MIGRATION_COUNT/);
   assert.match(rlsRuntime, /RLS_RUNTIME_ROLE = "acpos_app_runtime"/);
   assert.match(rlsRuntime, /set_config\('acpos\.session_token_hash'/);
   assert.match(rlsRuntime, /SET LOCAL ROLE acpos_app_runtime/);
@@ -91,7 +127,8 @@ test("projection owners do not bypass protected rows", async () => {
   assert.match(wb01, /runRlsActorQuery/);
   assert.match(wb01, /hashSessionToken/);
   assert.match(wb01, /JOIN topics tp ON tp\.topic_id = cl\.topic_id/);
-  assert.match(wb01, /migrationCount === 17/);
+  assert.match(wb01, /migrationCount >= REQUIRED_MIGRATION_COUNT/);
+  assert.match(wb01, /migrationCount <= TARGET_MIGRATION_COUNT/);
 
   assert.match(catalog, /runRlsActorQuery/);
   assert.match(catalog, /hashSessionToken/);
