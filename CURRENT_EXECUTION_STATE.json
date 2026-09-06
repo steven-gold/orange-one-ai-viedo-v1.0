@@ -2,23 +2,23 @@
   "schema_version": "1.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "last_sync_at": "2026-09-06T22:45:00+08:00",
+  "last_sync_at": "2026-09-06T23:07:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
-  "main_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
-  "new_sha_basis": "bc3d73bde09bfdab4e0bba452855aeeec65c64fa",
+  "main_sha": "f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
+  "new_sha_basis": "f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
   "latest_release_gate": {
     "status": "PASS",
-    "run_number": 251,
-    "run_id": 34039358472,
-    "head_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
+    "run_number": 263,
+    "run_id": 34041124246,
+    "head_sha": "f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
     "branch": "main",
     "conclusion": "success"
   },
   "latest_post_deploy_smoke": {
     "status": "PASS",
-    "run_number": 436,
-    "run_id": 34039388450,
-    "head_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
+    "run_number": 458,
+    "run_id": 34041150762,
+    "head_sha": "f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
     "event": "deployment_status",
     "trigger_actor": "vercel[bot]",
     "http_smoke": "PASS",
@@ -29,17 +29,21 @@
       1280,
       1440,
       1920
-    ]
+    ],
+    "readiness_http": 200,
+    "authenticated_e2e": "BLOCKED",
+    "authenticated_e2e_reason": "PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED"
   },
   "vercel": {
     "target": "orange-one-acpos-test",
     "production_url": "https://orange-one-acpos-test.vercel.app",
-    "release_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
-    "deployment_status": "SUCCESS_VERIFIED_VIA_GITHUB_VERCEL_DEPLOYMENT_STATUS",
+    "release_sha": "f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
+    "deployment_status": "SUCCESS_VERIFIED_VIA_GITHUB_VERCEL_STATUS",
     "deployment_environment": "Production",
     "deployment_trigger_actor": "vercel[bot]",
+    "deployment_target_url": "https://vercel.com/gold5757/orange-one-acpos-test/9sXzuhcSSgbevqgidQcjRGUaFSMS",
     "management_authority": "NOT_VERIFIED",
-    "management_authority_reason": "Connected Vercel team gold5757 currently returns zero visible projects; management-plane project/env authority cannot be read with this connection.",
+    "management_authority_reason": "Current Vercel plugin team scope returns zero visible projects and direct get_project orange-one-acpos-test returns 404. GitHub Vercel status independently confirms gold5757/orange-one-acpos-test deployment target, so this is a management-plugin scope mismatch rather than evidence that the project does not exist.",
     "health_http": 200,
     "health_status": "ok",
     "health_service": "ORANGE ONE ACPOS",
@@ -48,13 +52,24 @@
     "readiness_reason": "READY",
     "http_smoke": {
       "status": "PASS",
-      "run_number": 436,
+      "run_number": 458,
       "projections": 18,
-      "release_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104"
+      "release_sha": "f552f88d9d5f6f56f6a7aaefe02b7316521c288b"
+    },
+    "authenticated_e2e": {
+      "status": "BLOCKED",
+      "run_number": 458,
+      "reason": "PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED",
+      "harness_deployed": true,
+      "credential_secret_names": [
+        "ACPOS_PRODUCTION_E2E_EMAIL",
+        "ACPOS_PRODUCTION_E2E_PASSWORD"
+      ],
+      "credential_values_observed": false
     },
     "browser_smoke": {
       "status": "PASS",
-      "run_number": 436,
+      "run_number": 458,
       "cases": 54,
       "pages": 18,
       "widths": [
@@ -226,48 +241,48 @@
     "1_main_sha": {
       "status": "PASS",
       "score": "2/2",
-      "main_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104"
+      "main_sha": "f552f88d9d5f6f56f6a7aaefe02b7316521c288b"
     },
     "2_release_gate": {
       "status": "PASS",
       "score": "2/2",
-      "run_number": 251,
-      "head_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104"
+      "run_number": 263,
+      "head_sha": "f552f88d9d5f6f56f6a7aaefe02b7316521c288b"
     },
     "3_vercel_deployment": {
       "status": "PASS",
       "score": "3/3",
-      "reason": "GitHub received Vercel Production deployment_status=success for main 8ecbb07e..., and formal URL smoke resolved the exact release_sha."
+      "reason": "GitHub Vercel status reported Deployment has completed for exact main SHA f552f88d... and target gold5757/orange-one-acpos-test; Post Deploy Smoke #458 resolved the same release_sha."
     },
     "4_health": {
       "status": "PASS",
       "score": "4/4",
-      "reason": "Post Deploy Smoke #436 verified HTTP 200, status=ok, service=ORANGE ONE ACPOS, environment=production, release_sha=8ecbb07e..."
+      "reason": "Post Deploy Smoke #458 HTTP stage PASS; health assertions succeeded for production and exact release_sha f552f88d..."
     },
     "5_readiness": {
       "status": "PASS",
       "score": "4/4",
-      "reason": "Post Deploy Smoke #436 raw job log reported ready=200 for release 8ecbb07e..."
+      "reason": "Post Deploy Smoke #458 raw log reported ready=200 for production release f552f88d..."
     },
     "6_remote_http_smoke": {
       "status": "PASS",
       "score": "3/3",
-      "reason": "Post Deploy Smoke #436 HTTP stage PASS; 18 projections checked and release_sha matched main."
+      "reason": "Post Deploy Smoke #458 HTTP stage PASS with 18 projection checks and exact release_sha f552f88d..."
     },
     "7_remote_browser_smoke": {
       "status": "PASS",
       "score": "3/3",
-      "reason": "Post Deploy Smoke #436 browser stage PASS: 54/54 cases, 18 pages x widths 1280/1440/1920."
+      "reason": "Post Deploy Smoke #458 browser stage PASS: 54/54 cases across 18 pages and widths 1280/1440/1920."
     },
     "8_routes": {
       "status": "PASS",
       "score": "18/18",
-      "reason": "Post Deploy Smoke #436 HTTP script asserts all 18 formal routes returned HTTP 200."
+      "reason": "Post Deploy Smoke #458 HTTP script asserted all 18 formal page routes returned HTTP 200."
     },
     "9_production_authority": {
       "status": "PARTIAL",
       "score": "3/4",
-      "reason": "GitHub main, Production deployment event, release_sha, health/readiness and Neon authority are current; Vercel management-plane project/env authority remains unreadable because connected team lists zero projects."
+      "reason": "GitHub main, Vercel deployment target/status, exact release_sha, health/readiness and Neon authority are current. Vercel management plugin scope still cannot read the project: list_projects=0 and direct get_project=404 despite GitHub Vercel status confirming gold5757/orange-one-acpos-test."
     },
     "10_migrations": {
       "status": "PASS",
@@ -281,7 +296,7 @@
     },
     "12_postgresql_rls": {
       "status": "PARTIAL",
-      "reason": "Production DB and deployed runtime foundation are live: 10 RLS tables / 21 policies / acpos_app_runtime NOLOGIN NOBYPASSRLS; unauthenticated production deny verified. Positive authenticated Production allow/cross-project E2E remains unavailable because active sessions=0 and no authorized plaintext credential is available."
+      "reason": "Production remains 10 RLS tables / 21 policies with acpos_app_runtime NOLOGIN/NOBYPASSRLS and unauthenticated deny verified. Authenticated Production allow/cross-project E2E is still blocked because the newly deployed auth harness reported PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED."
     },
     "13_accounts": {
       "status": "PASS",
@@ -291,16 +306,16 @@
     "14_login_session_e2e": {
       "status": "BLOCKED",
       "score": "0/4",
-      "reason": "Production active sessions=0 and no plaintext credential is available; no synthetic Production session was inserted."
+      "reason": "Production authenticated E2E harness is now deployed and wired in Post Deploy Smoke #458, but raw log reported PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED and the authenticated step was skipped. No credential was inferred and no synthetic Production session was inserted."
     },
     "15_permission_e2e": {
       "status": "PARTIAL",
-      "reason": "Production RLS deny path and actor-scoped runtime deployment are live; Production-derived validation proved user/bootstrap allow and cross-project deny. Authenticated Production UI visibility E2E remains blocked by lack of authorized login credential."
+      "reason": "RLS deny and production-derived allow/cross-project DB validation exist, and the deployed auth harness is ready to test permission-visible UI. Post Deploy Smoke #458 could not execute the authenticated path because Production login credential secrets are not configured."
     },
     "16_production_read_models": {
       "status": "BLOCKED",
       "score": "0/18_AUTHENTICATED",
-      "reason": "Post Deploy Smoke #436 validates all 18 projection endpoints are truthful and TEST_ONLY-free but explicitly accepts 200/403/503. Production active sessions=0, so authenticated DB-backed 18/18 read payloads cannot be claimed without an authorized login credential."
+      "reason": "Post Deploy Smoke #458 verifies truthful TEST_ONLY-free projection endpoints and the new auth harness is wired to require 18/18 authenticated HTTP 200. The authenticated step was skipped because PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED, so 18/18 authenticated DB-backed payloads are not yet proven."
     },
     "17_core_runtime": {
       "status": "NOT_REVERIFIED_THIS_SYNC"
@@ -370,9 +385,17 @@
     "Post Deploy HTTP Smoke #436 PASS across 18 projections and 18 formal routes",
     "Post Deploy Browser Smoke #436 PASS 54/54 cases across 18 pages and 3 widths",
     "Main Release Gate #251 PASS for merge commit 8ecbb07e96187bbc3528685cedd1f70ab919a104",
-    "Production Accounts Gate reverified PASS 3/3: session store exists, 2 READY accounts, 2 active app_users, 2 exact email mappings, scrypt hash format valid"
+    "Production Accounts Gate reverified PASS 3/3: session store exists, 2 READY accounts, 2 active app_users, 2 exact email mappings, scrypt hash format valid",
+    "Production authenticated acceptance harness materialized and secret-gated without committed plaintext credentials",
+    "Release Gate #261 PASS for authenticated acceptance harness batch",
+    "PR #16 merged new -> main as f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
+    "Vercel Production deployment completed for exact main f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
+    "Main Release Gate #263 PASS for f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
+    "Post Deploy Smoke #458 PASS with ready=200 and exact release_sha f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
+    "Post Deploy Browser Smoke #458 PASS 54/54 across 18 pages x 3 widths",
+    "Production auth harness #458 explicitly reported PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED; no false authenticated PASS recorded"
   ],
-  "in_progress_item": "LOGIN_SESSION_RLS_DEPENDENCY_CHAIN",
+  "in_progress_item": "PRODUCTION_AUTH_E2E_CREDENTIAL_BINDING",
   "remaining_queue": [
     {
       "item_id": "AUTH-001",
@@ -384,13 +407,16 @@
       "exact_files": [
         "src/server/identity/identityRuntime.ts",
         "src/app/identity/login/route.ts",
+        "scripts/post-deploy-auth-e2e.mjs",
+        ".github/workflows/post-deploy-smoke.yml",
+        "tests/release/post-deploy-auth-e2e.test.mjs",
         "tests/release/identity-runtime.test.mjs"
       ],
       "exact_runtime": "Production identity/session",
-      "expected_test": "positive login -> Set-Cookie -> authenticated session -> permission-visible UI -> logout",
+      "expected_test": "configured CI secret -> login -> secure acpos_session -> authenticated dashboard -> 18/18 projections -> logout -> old cookie 401",
       "expected_deploy_effect": "close production Login/Session E2E evidence",
-      "status": "BLOCKED_ON_PRODUCTION_TEST_CREDENTIAL_OR_EXISTING_SECURE_CI_SECRET",
-      "evidence": "2 runtime accounts and 2 app_users exist; all 48 recorded production sessions are expired; no plaintext credential was retrieved or inferred"
+      "status": "E2E_HARNESS_DEPLOYED_CREDENTIAL_NOT_CONFIGURED",
+      "evidence": "Production auth harness deployed in main f552f88d... and exercised by Post Deploy Smoke #458. Raw log emitted POST_DEPLOY_AUTH_E2E_BLOCKED reason=PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED; authenticated step skipped. Production active sessions remain 0."
     },
     {
       "item_id": "RLS-001",
@@ -416,7 +442,7 @@
       "expected_test": "deny/allow/cross-project isolation + authenticated runtime smoke",
       "expected_deploy_effect": "Apply 0016 then 0017 to Production; runtime uses SET LOCAL ROLE acpos_app_runtime with existing DB credential; then merge and deploy REQUIRED_MIGRATION_COUNT=17.",
       "status": "PRODUCTION_DEPLOYED_AUTHENTICATED_E2E_PENDING",
-      "evidence": "Production DB applied 0016/0017 and deployed main 8ecbb07e...; Readiness 200; HTTP smoke PASS; Browser smoke 54/54; 10 RLS tables / 21 policies / NOLOGIN NOBYPASSRLS; unauthenticated deny verified. Positive authenticated Production E2E remains blocked by no active/authorized credential."
+      "evidence": "Production DB remains 17 migrations / 10 RLS tables / 21 policies / acpos_app_runtime NOLOGIN NOBYPASSRLS after release f552f88d...; Readiness 200, HTTP smoke PASS, Browser 54/54. Authenticated positive/cross-project E2E remains credential-blocked."
     },
     {
       "item_id": "READ-001",
@@ -429,7 +455,8 @@
         21
       ],
       "dependency": "AUTH-001 + RLS-001",
-      "status": "WAITING_DEPENDENCY"
+      "status": "AUTH_E2E_CREDENTIAL_PENDING",
+      "evidence": "Production harness now requires 18/18 authenticated projection HTTP 200, but Post Deploy #458 skipped the authenticated step because Production login credential is not configured."
     },
     {
       "item_id": "PROVIDER-QUEUE-001",
@@ -466,29 +493,31 @@
     }
   ],
   "blockers": [
-    "AUTH-001 hard blocker: Production active sessions=0 and no authorized plaintext credential or secure CI login secret is present; identity runtime has no legal passwordless/magic-token bypass.",
-    "READ-001 depends on authenticated Production actor evidence. Post Deploy Smoke accepts truthful projection 403/503 and therefore does not prove 18/18 authenticated DB-backed read payloads.",
-    "PROVIDER-001 hard blocker: AIAPI effectful operation-to-command-port/handler mapping is absent from current operation registry; Current Authority explicitly forbids route inference. Production provider capability/profile/secret/job rows are all 0.",
-    "QUEUE-001 hard blocker: Production queues/workers/dead_letters rows are all 0 and Current Authority provides no exact queue_key/worker_key topology; inventing seed rows is forbidden.",
-    "Vercel management-plane authority remains unreadable because the connected Vercel team returns zero projects, though Production deployment_status/release_sha/health/readiness/smoke are independently verified."
+    "AUTH-001 hard blocker narrowed: Production authenticated E2E harness is deployed, but Post Deploy Smoke #458 explicitly reported PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED. At least one of ACPOS_PRODUCTION_E2E_EMAIL / ACPOS_PRODUCTION_E2E_PASSWORD is absent; secret values were not read or inferred.",
+    "READ-001 depends on the authenticated Production actor path. The harness is ready to require dashboard plus 18/18 projection HTTP 200 once the authorized credential secrets are configured.",
+    "PROVIDER-001 hard blocker: AIAPI effectful operation-to-command-port/handler mapping is absent from current operation registry; Current Authority explicitly forbids route inference. Production provider capability/profile/secret/job rows remain 0.",
+    "QUEUE-001 hard blocker: Production queues/workers/dead_letters rows remain 0 and Current Authority provides no exact queue_key/worker_key topology; inventing seed rows is forbidden.",
+    "Vercel management-plane plugin scope mismatch: connected team lists zero projects and direct get_project returns 404, while GitHub Vercel deployment status independently confirms gold5757/orange-one-acpos-test."
   ],
-  "next_executable_item": "No remaining production gate can be truthfully closed without one of these governed inputs: (A) an authorized Production login credential/secure CI secret for AUTH-001; (B) System Lifecycle materialization of exact AIAPI effectful operation -> command port/handler/path/permission mappings for PROVIDER-001; (C) Current Authority definition of exact queue_key/worker_key/retry/lease/DLQ topology for QUEUE-001. Until one is supplied/materialized, do not fabricate runtime rows, routes, credentials, sessions, or PASS evidence.",
-  "last_successful_commit": "34eb3ae2dcf40de2bae164ea8abf7b0c53d2ff9b",
+  "next_executable_item": "AUTH-001 is implementation-complete up to the credential boundary. Next executable production acceptance action requires authorized configuration of ACPOS_PRODUCTION_E2E_EMAIL and ACPOS_PRODUCTION_E2E_PASSWORD in GitHub Actions secrets, then rerun Post Deploy Smoke to execute login -> session -> dashboard -> 18 projections -> logout. If those credentials are not supplied/authorized, no remaining dependency-ready gate can be truthfully closed without materializing the governed Provider mapping or Queue topology Authority.",
+  "last_successful_commit": "f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
   "last_successful_deployment": {
-    "main_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
+    "main_sha": "f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
     "url": "https://orange-one-acpos-test.vercel.app",
     "deployment_status": "success",
     "health": 200,
     "readiness": 200,
-    "post_deploy_smoke_run": 436,
+    "post_deploy_smoke_run": 458,
     "http_smoke": "PASS",
-    "browser_smoke": "PASS"
+    "authenticated_e2e": "BLOCKED_PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED",
+    "browser_smoke": "PASS",
+    "browser_cases": 54
   },
   "latest_construction_release_gate": {
     "status": "PASS",
-    "run_number": 253,
-    "run_id": 34039595259,
-    "head_sha": "bc3d73bde09bfdab4e0bba452855aeeec65c64fa",
+    "run_number": 261,
+    "run_id": 34040831504,
+    "head_sha": "5dfe75bd163183e46c6804b7c2d78a45fd3d903d",
     "branch": "new",
     "conclusion": "success"
   }
