@@ -163,6 +163,24 @@ function payloadRecord(request: CoreRuntimeRequest): Record<string, unknown> {
   return asRecord(request.payload) ?? {};
 }
 
+function requirePayloadText(payload: Record<string, unknown>, key: string): string {
+  const value = asText(payload[key]);
+  if (!value) throw new NamedRuntimeError(`STORY_CANDIDATE_FIELD_REQUIRED:${key}`);
+  return value;
+}
+
+function requirePayloadJson(payload: Record<string, unknown>, key: string): string {
+  const value = payload[key];
+  if (value === undefined || value === null) {
+    throw new NamedRuntimeError(`STORY_CANDIDATE_FIELD_REQUIRED:${key}`);
+  }
+  try {
+    return JSON.stringify(value);
+  } catch {
+    throw new NamedRuntimeError(`STORY_CANDIDATE_FIELD_INVALID:${key}`);
+  }
+}
+
 function slugCode(title: string, prefix: string): string {
   const base = title.toUpperCase().replace(/[^A-Z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 20);
   return `${prefix}-${base || "ITEM"}-${Date.now().toString(36).toUpperCase()}`;
@@ -282,14 +300,18 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       const title = asText(payload.title) ?? asText(payload.fixture_label);
       if (!title) throw new NamedRuntimeError("TOPIC_TITLE_REQUIRED");
       const topic_code = asText(payload.topic_code) ?? slugCode(title, "TPC");
-      const lockRows = await sql`
-        SELECT mother_lock_id::text AS mother_lock_id, project_version_id::text AS project_version_id
-        FROM mother_locks
-        WHERE project_id = ${projectId}::uuid
-          AND status = 'MOTHER_LOCKED'
-        ORDER BY lock_version DESC
-        LIMIT 1
-      `;
+      const lockRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          SELECT mother_lock_id::text AS mother_lock_id, project_version_id::text AS project_version_id
+          FROM mother_locks
+          WHERE project_id = ${projectId}::uuid
+            AND status = 'MOTHER_LOCKED'
+          ORDER BY lock_version DESC
+          LIMIT 1
+        `,
+      );
       const lock = firstRow(lockRows);
       const mother_lock_id = asText(lock?.mother_lock_id);
       const mother_project_version_id = asText(lock?.project_version_id);
@@ -420,13 +442,37 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       const project = firstRow(projectRows);
       if (!project) throw new NamedRuntimeError("PROJECT_NOT_FOUND");
       if (asText(project.status) !== "CORE_MODELING") throw new NamedRuntimeError("PROJECT_NOT_CONFIRMED");
-      const candidate_key = `STORY-${Date.now().toString(36).toUpperCase()}`;
-      const content = JSON.stringify({ candidate_key, created_by: actor.user_id });
-      const storyRows = await sql`
-        INSERT INTO story_candidates (project_id, candidate_key, content, status)
-        VALUES (${projectId}::uuid, ${candidate_key}, ${content}::jsonb, 'CANDIDATE')
-        RETURNING story_candidate_id::text AS story_candidate_set_ref
-      `;
+      const candidate_key = asText(payload.candidate_key) ?? `STORY-${Date.now().toString(36).toUpperCase()}`;
+      const content = requirePayloadJson(payload, "content");
+      const strengths = requirePayloadJson(payload, "strengths");
+      const weaknesses = requirePayloadJson(payload, "weaknesses");
+      const market_positioning = requirePayloadText(payload, "market_positioning");
+      const character_space = requirePayloadText(payload, "character_space");
+      const long_form_extension = requirePayloadText(payload, "long_form_extension");
+      const foreshadowing_capacity = requirePayloadText(payload, "foreshadowing_capacity");
+      const production_cost = requirePayloadText(payload, "production_cost");
+      const production_risk = requirePayloadText(payload, "production_risk");
+      const recommendation = requirePayloadText(payload, "recommendation");
+      const wizard_session_id = asText(payload.wizard_session_id);
+      const storyRows = await runRlsActorQuery(
+        sql,
+        identityContext.session_token_hash,
+        sql`
+          INSERT INTO story_candidates (
+            story_candidate_id, project_id, candidate_key, content, status, wizard_session_id,
+            strengths, weaknesses, market_positioning, character_space, long_form_extension,
+            foreshadowing_capacity, production_cost, production_risk, recommendation,
+            generated_by_subject_type
+          ) VALUES (
+            gen_random_uuid(), ${projectId}::uuid, ${candidate_key}, ${content}::jsonb, 'CANDIDATE',
+            ${wizard_session_id}::uuid, ${strengths}::jsonb, ${weaknesses}::jsonb,
+            ${market_positioning}, ${character_space}, ${long_form_extension},
+            ${foreshadowing_capacity}, ${production_cost}, ${production_risk},
+            ${recommendation}, 'USER'
+          )
+          RETURNING story_candidate_id::text AS story_candidate_set_ref
+        `,
+      );
       const story_candidate_set_ref = asText(firstRow(storyRows)?.story_candidate_set_ref);
       if (!story_candidate_set_ref) throw new NamedRuntimeError("STORY_CANDIDATE_INSERT_FAILED");
       return { story_candidate_set_ref, project_id: projectId };
