@@ -161,21 +161,36 @@ async function invoke(input:{action_uid:string;control_uid:string;client_state:u
       front_l1:client.front_l1,admin_l1:client.admin_l1,
     });
     if(!rePreview.ok)return rePreview;
+    const refreshedPreview=rec(rec(rePreview.raw).value);
+    const added=strings(refreshedPreview.added).length?strings(refreshedPreview.added):[...preview.added];
+    const removed=strings(refreshedPreview.removed).length?strings(refreshedPreview.removed):[...preview.removed];
+    const approvalRequired=typeof refreshedPreview.approval_required==="boolean"?refreshedPreview.approval_required:preview.approval_required;
     const configure=await request(`/v1/governance/resources/${encodeURIComponent(accountId)}`,"PATCH",{
       ...base,draft_id:draftId,mode:client.mode,account_id:client.account_id,explicit_confirmation:true,
     });
     if(!configure.ok)return configure;
-    for(const permission_ref of preview.added){
-      const r=await request(`/v1/iam/accounts/${encodeURIComponent(accountId)}/permissions`,"POST",{...base,permission_ref,explicit_confirmation:true});
+
+    let approvalRef:string|null=null;
+    if(approvalRequired){
+      const approval=await request(`/v1/governance/resources/${encodeURIComponent(accountId)}/approve`,"POST",{
+        ...base,explicit_confirmation:true,
+      });
+      if(!approval.ok)return approval;
+      approvalRef=text(rec(rec(approval.raw).value).approval_ref);
+      if(!approvalRef)return{ok:false as const,error_uid:"IAM-01-ERR-AUTH-DENIED",reason_code:"IAM_APPROVAL_REF_NOT_RETURNED",correlation_id:approval.correlation_id};
+    }
+
+    for(const permission_ref of added){
+      const r=await request(`/v1/iam/accounts/${encodeURIComponent(accountId)}/permissions`,"POST",{
+        ...base,permission_ref,explicit_confirmation:true,...(approvalRef?{approval_ref:approvalRef}:{}),
+      });
       if(!r.ok)return{...r,error_uid:"IAM-01-ERR-PARTIAL-APPLY",reason_code:"IAM-01-ERR-PARTIAL-APPLY"};
     }
-    for(const permission_ref of preview.removed){
-      const r=await request(`/v1/iam/accounts/${encodeURIComponent(accountId)}/permissions`,"DELETE",{...base,permission_ref,explicit_confirmation:true});
+    for(const permission_ref of removed){
+      const r=await request(`/v1/iam/accounts/${encodeURIComponent(accountId)}/permissions`,"DELETE",{
+        ...base,permission_ref,explicit_confirmation:true,
+      });
       if(!r.ok)return{...r,error_uid:"IAM-01-ERR-PARTIAL-APPLY",reason_code:"IAM-01-ERR-PARTIAL-APPLY"};
-    }
-    if(preview.approval_required){
-      const r=await request(`/v1/governance/resources/${encodeURIComponent(accountId)}/approve`,"POST",{...base,explicit_confirmation:true});
-      if(!r.ok)return r;
     }
     return after({...client,account_id:accountId,draft_id:draftId,flow:"COMPLETE"},configure.correlation_id);
   }
