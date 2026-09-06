@@ -257,6 +257,7 @@ test("post-deploy acceptance is pinned to the exact production release SHA", asy
   const workflow = await read(".github/workflows/post-deploy-smoke.yml");
   const smoke = await read("scripts/post-deploy-smoke.mjs");
   const browserSmoke = await read("scripts/post-deploy-browser-smoke.mjs");
+  const releaseBrowser = await read("scripts/release-browser-e2e.mjs");
   const governance = await read("authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml");
 
   assert.match(workflow, /head_branch == 'main'/);
@@ -272,10 +273,23 @@ test("post-deploy acceptance is pinned to the exact production release SHA", asy
   assert.match(governance, /Counting skipped browser cases as executed/);
   assert.match(browserSmoke, /isExpectedUnauthenticatedResponse/);
   assert.match(browserSmoke, /url\.pathname === "\/v1\/identity\/session"/);
+  assert.match(browserSmoke, /url\.pathname === "\/v1\/dashboard\/read-model"/);
   assert.match(browserSmoke, /url\.pathname\.startsWith\("\/v1\/ui-projections\/"\)/);
   assert.match(browserSmoke, /response\.status\(\) >= 400/);
+  assert.match(releaseBrowser, /isExpectedUnauthenticatedResponse/);
+  assert.match(releaseBrowser, /url\.pathname === "\/v1\/dashboard\/read-model"/);
+  assert.match(releaseBrowser, /response\.status\(\) >= 400/);
   assert.match(governance, /exact_path_and_status_required: true/);
+  assert.match(governance, /GET \/v1\/dashboard\/read-model may return 403/);
   assert.match(governance, /Ignoring an HTTP error without exact path and status validation/);
+});
+
+test("WB-01 dashboard policy failures take precedence over runtime-shaped reason codes", async () => {
+  const route = await read("src/app/v1/dashboard/read-model/route.ts");
+  const policyIndex = route.indexOf('error_uid === "WB-01-ERR-POLICY-001"');
+  const runtimeIndex = route.indexOf('reason_code.includes("RUNTIME")');
+  assert.ok(policyIndex >= 0 && runtimeIndex > policyIndex);
+  assert.match(route, /WB-01-ERR-POLICY-001[\s\S]*\? 403/);
 });
 
 test("Vercel build disables standalone while Docker keeps standalone output", async () => {

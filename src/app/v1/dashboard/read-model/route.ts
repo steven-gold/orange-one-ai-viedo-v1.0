@@ -11,10 +11,10 @@ export async function GET(request: NextRequest) {
   const result = await getDashboardReadModel({ correlation_id });
 
   if (!result.ok) {
-    const status = result.error.reason_code.includes("RUNTIME") || result.error.reason_code.includes("DATABASE")
-      ? 503
-      : result.error.error_uid === "WB-01-ERR-POLICY-001"
-        ? 403
+    const status = result.error.error_uid === "WB-01-ERR-POLICY-001"
+      ? 403
+      : result.error.reason_code.includes("RUNTIME") || result.error.reason_code.includes("DATABASE")
+        ? 503
         : result.error.error_uid === "WB-01-ERR-SCHEMA-001"
           ? 502
           : 503;

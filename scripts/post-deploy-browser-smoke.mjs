@@ -7,6 +7,7 @@ function isExpectedUnauthenticatedResponse(response) {
   const url = new URL(response.url());
   if (url.origin !== baseOrigin) return false;
   if (url.pathname === "/v1/identity/session") return response.status() === 401;
+  if (url.pathname === "/v1/dashboard/read-model") return response.status() === 403;
   if (url.pathname.startsWith("/v1/ui-projections/")) return [403, 503].includes(response.status());
   return false;
 }

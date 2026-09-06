@@ -73,6 +73,7 @@ authorize:
     cookie_name: acpos_session
     gap_reason: Cookie session resolves app_users.user_id. Page-gate and section read SQL are named.
     missing_identity_reason_code: IDENTITY_RUNTIME_NOT_BOUND
+    unauthenticated_dashboard_http_status: 403
   page_assignment_probe:
     tables:
     - permission_resources

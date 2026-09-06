@@ -249,6 +249,7 @@ post_deploy_acceptance:
   browser_gate_dependency: HTTP smoke for the same SHA must pass before remote browser cases run.
   unauthenticated_browser_contract:
     identity_session: GET /v1/identity/session may return 401
+    dashboard_read_model: GET /v1/dashboard/read-model may return 403 for the registered WB-01 policy block
     page_projection: GET /v1/ui-projections/{page_uid} may return 403 or 503 with a governed reason
     exact_path_and_status_required: true
     unexpected_4xx_or_5xx: FAIL
