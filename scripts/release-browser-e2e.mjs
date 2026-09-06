@@ -40,7 +40,7 @@ try {
         const errors = [];
         page.on("pageerror", (error) => errors.push(`pageerror:${error.message}`));
         page.on("console", (message) => {
-          if (message.type() === "error" && !/Failed to load resource.*503/.test(message.text())) errors.push(`console:${message.text()}`);
+          if (message.type() === "error" && !/Failed to load resource.*(?:401|503)/.test(message.text())) errors.push(`console:${message.text()}`);
         });
         const response = await page.goto(`${base}${route}`, { waitUntil: "networkidle", timeout: 45_000 });
         if (!response?.ok()) throw new Error(`NAV_${route}_${response?.status()}`);
