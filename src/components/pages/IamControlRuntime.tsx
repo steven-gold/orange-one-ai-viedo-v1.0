@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { INITIAL_IAM_CLIENT_STATE, openIamCreate, openIamEdit, selectAllAdmin, selectAllFront, type IamClientState } from "@/domain/iam/iamClientState";
 import { invokeIamClientCommand, isIamClientCommandAdapterBound, isIamProjectionResolverBound, readIamProjection, type IamNormalizedProjection } from "@/domain/iam/iamClientPort";
 import { ensureControlledIamClientTestRuntime } from "@/domain/iam/controlledIamClientTestRuntime";
+import { ensureProductionIamClientRuntime } from "@/domain/iam/productionIamClientRuntime";
 import { IAM_CONTROL_BINDINGS, type IamControlBinding, type IamControlUid } from "@/domain/iam/iamControlBindings";
 import type { IamPageState } from "@/domain/iam/iamRuntimeContract";
 
@@ -12,6 +13,7 @@ const Ctx=createContext<IamRuntime|null>(null);
 
 export function IamRuntimeProvider({children}:{children:ReactNode}){
  ensureControlledIamClientTestRuntime();
+ ensureProductionIamClientRuntime();
  const[client,setClient]=useState<IamClientState>(INITIAL_IAM_CLIENT_STATE),[projection,setProjection]=useState<IamNormalizedProjection|null>(null),[runtimeError,setRuntimeError]=useState<string|null>(null),[runtimeErrorUid,setRuntimeErrorUid]=useState<string|null>(null),[runtimeReasonCode,setRuntimeReasonCode]=useState<string|null>(null),[correlationId,setCorrelationId]=useState<string|null>(null);
  const setRuntimeFailure=(errorUid:string,reasonCode:string,nextCorrelationId:string)=>{setRuntimeErrorUid(errorUid);setRuntimeReasonCode(reasonCode);setRuntimeError(`${errorUid}: ${reasonCode}`);setCorrelationId(nextCorrelationId);};
  const clearRuntimeFailure=()=>{setRuntimeErrorUid(null);setRuntimeReasonCode(null);setRuntimeError(null);};
