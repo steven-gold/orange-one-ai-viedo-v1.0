@@ -1005,49 +1005,122 @@ async function readErpFromDb(sql: SqlClient): Promise<unknown> {
 }
 
 async function readAiApiFromDb(sql: SqlClient): Promise<unknown> {
-  const capabilities = await safeRows(() => sql`
-    SELECT provider_capability_id::text AS provider_id,
-           provider_key AS provider_name,
-           model_key AS model_id,
-           model_key AS model_name,
-           capability_version AS capability,
-           status::text AS enabled,
-           limits
-    FROM provider_capabilities
-    ORDER BY provider_key, model_key
+  const profiles = await safeRows(() => sql`
+    SELECT p.id AS profile_id,
+           p.provider_id,
+           p.provider_id AS provider_name,
+           p.model_id,
+           p.model_id AS model_name,
+           p.capability_type AS capability,
+           p.adapter_type AS adapter,
+           p.base_url,
+           p.endpoint_path AS endpoint,
+           p.timeout_seconds,
+           p.enabled,
+           p.health_status,
+           p.secret_env_ref,
+           p.version,
+           p.updated_at::text AS updated_at
+    FROM acpos_runtime.provider_profiles p
+    ORDER BY p.provider_id, p.model_id
   `);
-  const secrets = await safeRows(() => sql`
-    SELECT secret_key, status::text AS status, last_used_at::text AS last_used_at, provider_key
+  const tests = await safeRows(() => sql`
+    SELECT DISTINCT ON (profile_id)
+           profile_id,
+           status,
+           dry_run,
+           error_code,
+           created_at::text AS created_at
+    FROM acpos_runtime.provider_profile_tests
+    ORDER BY profile_id, created_at DESC
+  `);
+  const capabilities = await safeRows(() => sql`
+    SELECT provider_key, model_key, capability_version, status::text AS status, limits
+    FROM provider_capabilities
+    ORDER BY provider_key, model_key, capability_version DESC
+  `);
+  const secretRefs = await safeRows(() => sql`
+    SELECT secret_key, status::text AS status, provider_key
     FROM secret_references
     ORDER BY created_at DESC
   `);
-  const provider_rows = capabilities.map((row) => {
-    const provider_key = asText(row.provider_name) ?? DASH;
-    const secret = secrets.find((item) => asText(item.provider_key) === provider_key) ?? null;
+
+  const provider_rows = profiles.map((row) => {
+    const profile_id = asText(row.profile_id) ?? "";
+    const provider_id = asText(row.provider_id) ?? "";
+    const model_id = asText(row.model_id) ?? DASH;
+    const secret_env_ref = asText(row.secret_env_ref);
+    const secret = secret_env_ref
+      ? secretRefs.find((item) => asText(item.secret_key) === secret_env_ref) ?? null
+      : null;
+    const environmentBound = secret_env_ref ? Boolean(process.env[secret_env_ref]) : false;
+    const capability = capabilities.find((item) =>
+      asText(item.provider_key) === provider_id && asText(item.model_key) === model_id
+    ) ?? null;
+    const lastTest = tests.find((item) => asText(item.profile_id) === profile_id) ?? null;
     return {
-      provider_id: asText(row.provider_id) ?? "",
-      provider_name: provider_key,
-      model_id: asText(row.model_id) ?? DASH,
-      model_name: asText(row.model_name) ?? DASH,
+      profile_id,
+      provider_id,
+      provider_name: asText(row.provider_name) ?? provider_id,
+      model_id,
+      model_name: asText(row.model_name) ?? model_id,
       capability: asText(row.capability) ?? DASH,
-      adapter: DASH,
-      base_url: DASH,
-      endpoint: DASH,
-      timeout: jsonText(row.limits),
-      enabled: asText(row.enabled) ?? DASH,
-      credential_status: asText(secret?.status) ?? DASH,
-      last_test: asText(secret?.last_used_at) ?? DASH,
+      adapter: asText(row.adapter) ?? DASH,
+      base_url: asText(row.base_url) ?? DASH,
+      endpoint: asText(row.endpoint) ?? DASH,
+      timeout: row.timeout_seconds == null ? DASH : `${String(row.timeout_seconds)}s`,
+      enabled: row.enabled === true ? "ENABLED" : "DISABLED",
+      credential_status: secret && environmentBound && asText(secret.status) === "APPROVED" ? "SET" : "NOT_SET",
+      last_test: asText(lastTest?.created_at) ?? DASH,
+      capability_status: asText(capability?.status) ?? "NOT_REGISTERED",
+      capability_version: asText(capability?.capability_version) ?? DASH,
+      health_status: asText(row.health_status) ?? "UNKNOWN",
+      version: row.version ?? null,
     };
-  }).filter((row) => row.provider_id);
+  }).filter((row) => row.profile_id && row.provider_id);
+
+  const selected = provider_rows[0] ?? null;
   return {
     page_state: provider_rows.length ? "READY" : "EMPTY",
     values: {
       "AIAPI-01-FLD-PROVIDER-COUNT": String(provider_rows.length),
-      "AIAPI-01-FLD-SELECTED": provider_rows[0]?.provider_id ?? DASH,
+      "AIAPI-01-FLD-SELECTED": selected?.profile_id ?? DASH,
+      "provider.selected": selected ? `${selected.provider_id}/${selected.model_id}` : DASH,
+      "AIAPI-01-PRO-DESC-IDENTITY": selected ? `${selected.provider_id} / ${selected.model_id}` : DASH,
+      "AIAPI-01-PRO-DESC-POSITIONING": selected?.capability ?? DASH,
+      "AIAPI-01-PRO-DESC-ACPOS-SCOPE": selected?.capability_status ?? DASH,
+      "AIAPI-01-PRO-DESC-CAPABILITIES": selected?.capability ?? DASH,
+      "AIAPI-01-PRO-DESC-INPUT": selected?.adapter ?? DASH,
+      "AIAPI-01-PRO-DESC-OUTPUT": selected?.adapter ?? DASH,
+      "AIAPI-01-PRO-DESC-LIMITS": selected?.timeout ?? DASH,
+      "AIAPI-01-PRO-DESC-ENDPOINT": selected ? `${selected.base_url}${selected.endpoint}` : DASH,
+      "AIAPI-01-PRO-DESC-AUTH": selected?.credential_status ?? DASH,
+      "AIAPI-01-PRO-DESC-BILLING": DASH,
+      "AIAPI-01-PRO-DESC-HEALTH": selected?.health_status ?? DASH,
+      "AIAPI-01-PRO-DESC-LAST-TEST": selected?.last_test ?? DASH,
+      "AIAPI-01-PRO-DESC-RECOMMENDED-USE": selected?.capability_status === "APPROVED" ? selected.capability : DASH,
+      "AIAPI-01-PRO-DESC-RESTRICTIONS": selected?.capability_status ?? DASH,
+      "AIAPI-01-PRO-DESC-DOCS": DASH,
     },
-    control_enabled: {},
+    control_enabled: {
+      createProviderModelProfile: true,
+      listProviderModelProfiles: true,
+      getProviderModelProfile: provider_rows.length > 0,
+      updateProviderModelProfile: provider_rows.length > 0,
+      retireProviderModelProfile: provider_rows.length > 0,
+      setProviderModelCredential: provider_rows.length > 0,
+      deleteProviderModelCredential: provider_rows.some((row) => row.credential_status === "SET"),
+      testProviderModelProfile: provider_rows.some((row) => row.credential_status === "SET"),
+      createProviderCandidateGroup: provider_rows.length > 0,
+      getProviderQuarantine: true,
+      restoreProviderFromQuarantine: true,
+      runSandboxTest: provider_rows.length > 0,
+      executeProviderRoute: provider_rows.length > 0,
+      getProviderRouteDecision: true,
+      setKillSwitch: provider_rows.length > 0,
+    },
     provider_rows,
-    selected_resource_id: provider_rows[0]?.provider_id ?? null,
+    selected_resource_id: selected?.profile_id ?? null,
   };
 }
 
