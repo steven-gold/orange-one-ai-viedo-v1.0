@@ -46,7 +46,7 @@ test("Production Script V1.3 remains the current integration contract", () => {
 });
 
 test("Current production integrity reconciles the sealed catalog and post-0001 FK delta", () => {
-  assert.match(manifest, /version: V1\.7/);
+  assert.match(manifest, /version: V1\.8/);
   assert.match(manifest, /production_integrity_checklist:/);
   assert.match(manifest, /required_check_count: 8/);
   assert.match(manifest, /neon_identity: wild-wave-25661146\/main\/br-shy-cherry-auiol4oy\/neondb/);
