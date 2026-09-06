@@ -32,16 +32,16 @@ current_page_policy:
 runtime_truth:
   file_spec: COMPLETE
   encoding_file: COMPLETE
-  application_implementation: NOT_EXECUTED
-  navigation_registry_remap: IMPLEMENTATION_REQUIRED_NOT_EXECUTED
-  control_resource_remap: IMPLEMENTATION_REQUIRED_NOT_EXECUTED
-  permission_resource_remap: IMPLEMENTATION_REQUIRED_NOT_EXECUTED
-  runtime_binding: NOT_EXECUTED
-  sandbox_validation: NOT_EXECUTED
-  regression_validation: NOT_EXECUTED
-  e2e_validation: NOT_EXECUTED
-  production_deployment: NOT_EXECUTED
-  completion_claim_rule: FILE_SPEC_COMPLETE does not mean application/runtime/deployment complete.
+  application_implementation: MATERIALIZED_CURRENT_ON_NEW
+  navigation_registry_remap: COMPLETE_CURRENT_SINGLE_PAGE
+  control_resource_remap: MATERIALIZED_OPERATION_BOUND_UI
+  permission_resource_remap: COMPLETE_PAGE_RESOURCE_WITH_SERVER_AUTHORIZATION
+  runtime_binding: MATERIALIZED_CURRENT_SERVER_AND_CLIENT
+  sandbox_validation: MATERIALIZED_DRY_RUN_EXTERNAL_PROFILE_DATA_REQUIRED
+  regression_validation: PASS_RELEASE_GATE_384
+  e2e_validation: CONTROLLED_RELEASE_E2E_PASS_PRODUCTION_POST_DEPLOY_PENDING
+  production_deployment: PENDING_SINGLE_MAIN_RELEASE
+  completion_claim_rule: Construction/runtime binding is complete on new; Production completion remains forbidden until exact main deployment and Post Deploy acceptance pass.
 page_contract:
   role: SINGLE_PAGE_AI_API_MANAGEMENT
   owner_boundary: Frontend management surface only; backend owners remain existing ProviderGovernanceService / InstructionCompiler / JobService
@@ -436,7 +436,7 @@ registered_operation_policy:
   - executeProviderRoute
   - getProviderRouteDecision
   unlisted_operation_behavior: DO_NOT_INFER; resolve from current registered registry or BLOCK
-  current_ui_binding_status: REMAP_REQUIRED_NOT_EXECUTED
+  current_ui_binding_status: MATERIALIZED_CURRENT
 state_error_contract:
   states:
     LOADING: Preserve geometry; skeleton; controls disabled where applicable.
@@ -509,10 +509,10 @@ acceptance:
   condition: No parallel AI API Center and no retired standalone frontend page tokens in current encoding.
 - uid: AIAPI-01-ACC-11
   name: Truthful Runtime
-  condition: Registry/permission/navigation remap remains NOT_EXECUTED until actual implementation/tests exist.
+  condition: Registry/permission/navigation/client/server bindings are MATERIALIZED_CURRENT on new; Production deployment and external Provider execution remain separately evidenced and may not be inferred.
 construction_gate:
   static_ui_may_use_this_encoding: true
-  effectful_runtime_enablement: BLOCK_UNTIL_REGISTRY_PERMISSION_NAVIGATION_REMAP_AND_TESTS
+  effectful_runtime_enablement: MATERIALIZED_SERVER_GATED_ON_NEW_PRODUCTION_PENDING_POST_DEPLOY
   before_runtime_enablement_required:
   - Navigation Registry migration
   - Page/Section/Control resource remap
@@ -525,3 +525,21 @@ construction_gate:
   - E2E validation
   ai_instruction: Read this encoding first. Do not reconstruct retired multi-page AI API UI. Do not invent missing values or APIs. If any required
     binding is absent, BLOCK and REPORT_AUTHORITY_GAP.
+
+implementation_evidence:
+  operation_registry: 03_api/operation_registry.yaml
+  client_command_port: src/domain/aiApi/aiApiCommandPort.ts
+  frontend_binding: src/components/pages/AiApiVisual.tsx
+  projection_adapter: src/domain/aiApi/aiApiRuntimePort.ts
+  server_command_runtime: src/server/aiApi/productionAiApiCommandRuntime.ts
+  route_factory: src/server/aiApi/aiApiRouteFactory.ts
+  server_authorization_binding: src/server/shared/identityPageCommandRuntime.ts
+  regression_tests:
+  - tests/release/aiapi-provider-runtime.test.mjs
+  - tests/release/aiapi-ui-runtime.test.mjs
+  - tests/release/admin-page-interaction.test.mjs
+  validated_release_gate:
+    run_number: 384
+    conclusion: success
+    head_sha: 6a000b39702e7b2e60d5c8a67fe22fb9de073719
+  external_provider_execution_status: BLOCKED_UNTIL_REAL_APPROVED_PROFILE_CAPABILITY_SECRET_AND_ADAPTER
