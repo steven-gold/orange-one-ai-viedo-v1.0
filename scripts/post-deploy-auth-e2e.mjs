@@ -119,6 +119,28 @@ for (const uid of projectionUids) {
   projectionPass += 1;
 }
 
+const queueProbe = await fetch(`${base}/v1/aiapi/queue/probe`, {
+  method: "POST",
+  cache: "no-store",
+  headers: {
+    ...cookieHeaders(cookie),
+    "content-type": "application/json",
+    "x-correlation-id": crypto.randomUUID(),
+  },
+  body: JSON.stringify({
+    idempotency_key: `post-deploy-queue-probe:${process.env.ACPOS_EXPECT_RELEASE_SHA ?? crypto.randomUUID()}`,
+  }),
+});
+const queueProbeBody = await queueProbe.json().catch(() => null);
+assert(queueProbe.status === 200, `AUTH_QUEUE_PROBE_HTTP_${queueProbe.status}`);
+assert(queueProbeBody?.ok === true, "AUTH_QUEUE_PROBE_BODY_INVALID");
+assert(queueProbeBody?.value?.status === "PASS", "AUTH_QUEUE_PROBE_STATUS_INVALID");
+assert(queueProbeBody?.value?.claimed === 1, "AUTH_QUEUE_PROBE_CLAIM_INVALID");
+assert(queueProbeBody?.value?.inbox_receipt === 1, "AUTH_QUEUE_PROBE_INBOX_INVALID");
+assert(queueProbeBody?.value?.published === 1, "AUTH_QUEUE_PROBE_PUBLISHED_INVALID");
+assert(queueProbeBody?.value?.residual_probe_rows === 0, "AUTH_QUEUE_PROBE_RESIDUAL_ROWS");
+assert(queueProbeBody?.value?.external_provider_call === false, "AUTH_QUEUE_PROBE_EXTERNAL_CALL_FORBIDDEN");
+
 const logout = await fetch(`${base}/v1/identity/session`, {
   method: "DELETE",
   cache: "no-store",
@@ -138,4 +160,4 @@ assert(afterLogout.status === 401, `AUTH_LOGOUT_SESSION_STILL_ACTIVE_HTTP_${afte
 assert(afterLogoutBody?.logged_in === false, "AUTH_LOGOUT_SESSION_BODY_INVALID");
 
 assert(projectionPass === 18, `AUTH_PROJECTION_PASS_COUNT_${projectionPass}`);
-process.stdout.write(`POST_DEPLOY_AUTH_E2E_PASS projections=${projectionPass} visible_pages=18 dashboard=1 login=1 session=1 logout=1\n`);
+process.stdout.write(`POST_DEPLOY_AUTH_E2E_PASS projections=${projectionPass} visible_pages=18 dashboard=1 login=1 session=1 queue_probe=1 logout=1\n`);
