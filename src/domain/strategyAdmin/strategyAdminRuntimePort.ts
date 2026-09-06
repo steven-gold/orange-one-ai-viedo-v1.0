@@ -219,6 +219,18 @@ export const STRATEGY_ADMIN_ACTION_OPERATION = {
   "ACT-ADOPT-CONTEXT": "adoptAsContextCandidate",
 } as const satisfies Readonly<Record<string, StrategyAdminOperation>>;
 
+const STRATEGY_ADMIN_MATERIALIZED_OPERATIONS = new Set<StrategyAdminOperation>([
+  "searchProjection",
+  "refreshProjection",
+]);
+
+export function isStrategyAdminOperationRuntimeReady(actionId: string): boolean {
+  if (!(actionId in STRATEGY_ADMIN_ACTION_OPERATION)) return false;
+  return STRATEGY_ADMIN_MATERIALIZED_OPERATIONS.has(
+    STRATEGY_ADMIN_ACTION_OPERATION[actionId as keyof typeof STRATEGY_ADMIN_ACTION_OPERATION],
+  );
+}
+
 export type StrategyAdminMappedAction =
   keyof typeof STRATEGY_ADMIN_ACTION_OPERATION;
 
