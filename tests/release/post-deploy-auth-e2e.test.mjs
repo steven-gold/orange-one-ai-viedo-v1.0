@@ -32,8 +32,9 @@ test("production authenticated post-deploy E2E is secret-gated and exercises log
   assert.doesNotMatch(script, /AUTH_DASHBOARD_READ_MODEL_HTTP_\$\{dashboard\.status\}_\$\{dashboardText\}/);
   assert.doesNotMatch(script, /AUTH_PROJECTION_\$\{uid\}_HTTP_\$\{response\.status\}_\$\{text\}/);
 
-  assert.match(workflow, /secrets\.ACPOS_PRODUCTION_E2E_EMAIL/);
-  assert.match(workflow, /secrets\.ACPOS_PRODUCTION_E2E_PASSWORD/);
+  assert.match(workflow, /environment: Production/);
+  assert.match(workflow, /ACPOS_PRODUCTION_E2E_EMAIL: admin/);
+  assert.match(workflow, /ACPOS_PRODUCTION_E2E_PASSWORD: \${{ secrets\.ADMIN }}/);
   assert.match(workflow, /node --check scripts\/post-deploy-auth-e2e\.mjs/);
   assert.match(workflow, /Run deployed ACPOS authenticated E2E/);
   assert.match(workflow, /env\.ACPOS_PRODUCTION_E2E_EMAIL != ''/);
