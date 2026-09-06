@@ -2,10 +2,10 @@
   "schema_version": "1.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "last_sync_at": "2026-09-06T22:35:00+08:00",
+  "last_sync_at": "2026-09-06T22:39:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "main_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
-  "new_sha_basis": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
+  "new_sha_basis": "bc3d73bde09bfdab4e0bba452855aeeec65c64fa",
   "latest_release_gate": {
     "status": "PASS",
     "run_number": 251,
@@ -86,12 +86,12 @@
     "validated_fk_acpos_runtime": 43,
     "validated_fk_acpos_total": 344,
     "validated_fk_neon_auth_excluded": 6,
-    "provider_capability_count": "NOT_VERIFIED_THIS_SYNC",
-    "provider_profile_count": "NOT_VERIFIED_THIS_SYNC",
-    "secret_reference_count": "NOT_VERIFIED_THIS_SYNC",
-    "queue_count": "NOT_VERIFIED_THIS_SYNC",
-    "worker_count": "NOT_VERIFIED_THIS_SYNC",
-    "dlq_count": "NOT_VERIFIED_THIS_SYNC",
+    "provider_capability_count": 0,
+    "provider_profile_count": 0,
+    "secret_reference_count": 0,
+    "queue_count": 0,
+    "worker_count": 0,
+    "dlq_count": 0,
     "active_session_count": 0,
     "rls_validation": {
       "branch_name": "rls-0016-validate-20260906",
@@ -208,7 +208,12 @@
         "story_candidates": 0
       },
       "status": "PASS_DB_FOUNDATION"
-    }
+    },
+    "provider_job_count": 0,
+    "runtime_provider_profile_count": 0,
+    "runtime_provider_group_count": 0,
+    "runtime_provider_member_count": 0,
+    "runtime_execution_job_count": 0
   },
   "current_gate_scores": {
     "1_main_sha": {
@@ -285,7 +290,9 @@
       "reason": "Production RLS deny path and actor-scoped runtime deployment are live; Production-derived validation proved user/bootstrap allow and cross-project deny. Authenticated Production UI visibility E2E remains blocked by lack of authorized login credential."
     },
     "16_production_read_models": {
-      "status": "NOT_REVERIFIED_THIS_SYNC"
+      "status": "BLOCKED",
+      "score": "0/18_AUTHENTICATED",
+      "reason": "Post Deploy Smoke #436 validates all 18 projection endpoints are truthful and TEST_ONLY-free but explicitly accepts 200/403/503. Production active sessions=0, so authenticated DB-backed 18/18 read payloads cannot be claimed without an authorized login credential."
     },
     "17_core_runtime": {
       "status": "NOT_REVERIFIED_THIS_SYNC"
@@ -303,10 +310,14 @@
       "status": "NOT_REVERIFIED_THIS_SYNC"
     },
     "22_external_provider": {
-      "status": "NOT_REVERIFIED_THIS_SYNC"
+      "status": "BLOCKED",
+      "score": "0/4",
+      "reason": "Production has 0 provider capabilities, 0 provider profiles, 0 secret references and 0 provider jobs. Current AIAPI-01 Authority requires existing registered operations, but 03_api/operation_registry.yaml is IDENTITY_SESSION_ONLY and Runtime Binding Gap Report explicitly forbids inferring effectful Provider API paths/handlers."
     },
     "23_queue_worker_dlq": {
-      "status": "NOT_REVERIFIED_THIS_SYNC"
+      "status": "BLOCKED",
+      "score": "0/4",
+      "reason": "Canonical queues/workers/dead_letters tables exist, but Production rows are queues=0, workers=0, dead_letters=0. Current Authority does not define exact queue_key/worker_key materialization, so seeding or inventing a worker topology is forbidden."
     },
     "24_admin_mutation": {
       "status": "NOT_REVERIFIED_THIS_SYNC"
@@ -423,7 +434,17 @@
         21
       ],
       "dependency": "production authority and runtime security closure",
-      "status": "WAITING_DEPENDENCY"
+      "status": "BLOCKED_ON_CURRENT_AUTHORITY_AND_EXTERNAL_SECRET",
+      "evidence": "Production current evidence: provider_capabilities=0, provider_prompt_profiles=0, secret_references=0, provider_jobs=0, queues=0, workers=0, dead_letters=0; existing provider/queue schema is present. AIAPI effectful mapping is explicitly blocked by Current Authority because operation_registry is IDENTITY_SESSION_ONLY; no exact queue_key/worker_key authority exists.",
+      "exact_files": [
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml",
+        "authority/runtime/ACPOS_RUNTIME_BINDING_GAP_REPORT.md",
+        "03_api/operation_registry.yaml",
+        "database/migrations/0007_runtime_operational_schema.sql",
+        "database/migrations/0008_provider_router_runtime_closure.sql",
+        "src/server/testing/controlledAiApiTestRuntime.ts"
+      ]
     },
     {
       "item_id": "MUTATION-ACCEPTANCE-001",
@@ -436,11 +457,14 @@
     }
   ],
   "blockers": [
-    "Production has 0 active sessions and no authorized plaintext login credential is available, so positive Login/Session and authenticated Production RLS/UI visibility E2E remain blocked.",
-    "Connected Vercel team gold5757 returns zero visible projects, so Vercel management-plane project/environment authority cannot currently be verified."
+    "AUTH-001 hard blocker: Production active sessions=0 and no authorized plaintext credential or secure CI login secret is present; identity runtime has no legal passwordless/magic-token bypass.",
+    "READ-001 depends on authenticated Production actor evidence. Post Deploy Smoke accepts truthful projection 403/503 and therefore does not prove 18/18 authenticated DB-backed read payloads.",
+    "PROVIDER-001 hard blocker: AIAPI effectful operation-to-command-port/handler mapping is absent from current operation registry; Current Authority explicitly forbids route inference. Production provider capability/profile/secret/job rows are all 0.",
+    "QUEUE-001 hard blocker: Production queues/workers/dead_letters rows are all 0 and Current Authority provides no exact queue_key/worker_key topology; inventing seed rows is forbidden.",
+    "Vercel management-plane authority remains unreadable because the connected Vercel team returns zero projects, though Production deployment_status/release_sha/health/readiness/smoke are independently verified."
   ],
-  "next_executable_item": "Resolve AUTH-001 using an authorized Production login credential or existing secure CI secret without inferring plaintext from hashes; then run positive Login -> Session -> RLS allow -> Permission/UI visibility -> Logout E2E. If credential remains unavailable, continue with the next dependency-ready non-destructive Provider/Queue or Read Model construction item that does not falsely require authenticated Production evidence.",
-  "last_successful_commit": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
+  "next_executable_item": "No remaining production gate can be truthfully closed without one of these governed inputs: (A) an authorized Production login credential/secure CI secret for AUTH-001; (B) System Lifecycle materialization of exact AIAPI effectful operation -> command port/handler/path/permission mappings for PROVIDER-001; (C) Current Authority definition of exact queue_key/worker_key/retry/lease/DLQ topology for QUEUE-001. Until one is supplied/materialized, do not fabricate runtime rows, routes, credentials, sessions, or PASS evidence.",
+  "last_successful_commit": "bc3d73bde09bfdab4e0bba452855aeeec65c64fa",
   "last_successful_deployment": {
     "main_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
     "url": "https://orange-one-acpos-test.vercel.app",
@@ -450,5 +474,13 @@
     "post_deploy_smoke_run": 436,
     "http_smoke": "PASS",
     "browser_smoke": "PASS"
+  },
+  "latest_construction_release_gate": {
+    "status": "PASS",
+    "run_number": 253,
+    "run_id": 34039595259,
+    "head_sha": "bc3d73bde09bfdab4e0bba452855aeeec65c64fa",
+    "branch": "new",
+    "conclusion": "success"
   }
 }
