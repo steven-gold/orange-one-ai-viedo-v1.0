@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(path, "utf8");
 
-test("production authenticated post-deploy E2E is secret-gated and exercises login/session/read/logout", async () => {
+test("production authenticated post-deploy E2E is secret-gated and exercises login/session/read/queue/logout", async () => {
   const script = await read("scripts/post-deploy-auth-e2e.mjs");
   const workflow = await read(".github/workflows/post-deploy-smoke.yml");
   const releaseGate = await read(".github/workflows/release-gate.yml");
@@ -25,6 +25,10 @@ test("production authenticated post-deploy E2E is secret-gated and exercises log
   assert.match(script, /workspace:WB-01/);
   assert.match(script, /admin:KB-01/);
   assert.match(script, /projectionPass \+= 1/);
+  assert.match(script, /\/v1\/aiapi\/queue\/probe/);
+  assert.match(script, /AUTH_QUEUE_PROBE_HTTP_/);
+  assert.match(script, /AUTH_QUEUE_PROBE_RESIDUAL_ROWS/);
+  assert.match(script, /queue_probe=1/);
   assert.match(script, /AUTH_LOGOUT_SESSION_STILL_ACTIVE/);
   assert.match(script, /POST_DEPLOY_AUTH_E2E_PASS/);
   assert.doesNotMatch(script, /console\.(?:log|debug)\s*\(/);
