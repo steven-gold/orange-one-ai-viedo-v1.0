@@ -244,10 +244,18 @@ export function bindIdentityClientCommandAdapters(): void {
   configureStrategyAdminCommandAdapter({
     invoke: async (input) => {
       if (input.operation === "searchProjection" || input.operation === "refreshProjection") {
-        const response = await fetch("/v1/ui-projections/admin%3ASTR-01", {
-          method: "GET",
+        const path = input.operation === "searchProjection" ? "/v1/search" : "/v1/projections/refresh";
+        const response = await fetch(path, {
+          method: "POST",
           cache: "no-store",
           credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            ...input.payload,
+            current_page_uid: "admin:STR-01",
+            page_uid: "admin:STR-01",
+            source_page_uid: input.source_page_uid,
+          }),
         });
         const correlation_id = response.headers.get("x-correlation-id") ?? "unresolved";
         const raw: unknown = await response.json().catch(() => null);
@@ -255,13 +263,13 @@ export function bindIdentityClientCommandAdapters(): void {
         if (!response.ok) {
           return {
             ok: false,
-            reason_code: typeof body?.reason_code === "string" ? body.reason_code : "STR_ADMIN_PROJECTION_READ_FAILED",
+            reason_code: typeof body?.reason_code === "string" ? body.reason_code : "STR_ADMIN_COMMAND_FAILED",
             correlation_id,
           };
         }
         return { ok: true, value: raw, correlation_id };
       }
-      return { ok: false, reason_code: "PROVIDER_GATEWAY_NOT_MATERIALIZED", correlation_id: "unresolved" };
+      return { ok: false, reason_code: "STR_ADMIN_OPERATION_RUNTIME_NOT_MATERIALIZED", correlation_id: "unresolved" };
     },
   });
 }
