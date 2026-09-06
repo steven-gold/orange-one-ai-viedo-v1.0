@@ -274,6 +274,7 @@ export type StrategyAdminCommandInput = {
   view: StrategyAdminView;
   source_page_uid: StrategyAdminSourcePage;
   projection: StrategyAdminProjection;
+  payload: Readonly<Record<string, unknown>>;
 };
 
 export type StrategyAdminCommandAdapter = {
@@ -324,5 +325,6 @@ export async function invokeStrategyAdminAction(
     view,
     source_page_uid,
     projection,
+    payload,
   });
 }
