@@ -1,10 +1,10 @@
 operation_registry:
   contract_meta:
-    contract_id: ACPOS-OPERATION-REGISTRY-CURRENT-1.1.0
+    contract_id: ACPOS-OPERATION-REGISTRY-CURRENT-1.2.0
     status: FINAL_LOCKED
     current_only: true
-    revision: 2026-09-07-IDENTITY-AIAPI-PROVIDER-MATERIALIZED
-    coverage: IDENTITY_SESSION_AND_AIAPI_PROVIDER_GOVERNED_OPERATIONS
+    revision: 2026-09-07-IAM-EXACT-ACTION-AUTHORIZATION
+    coverage: IDENTITY_SESSION_AIAPI_PROVIDER_AND_IAM_GOVERNED_OPERATIONS
     undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
     supersedes_revision: 2026-09-05-IDENTITY-SESSION-ONLY
     governance_basis:
@@ -18,7 +18,9 @@ operation_registry:
     - Provider/model/profile values are runtime/admin data and are never fabricated by Authority.
     - External provider execution stays fail-closed until an approved capability, enabled profile, bound secret reference, adapter, and route preflight all pass.
     - Sandbox never uses Production provider credentials.
-    - All effectful operations require authenticated admin:AIAPI-01 page permission, correlation_id, audit, and explicit error codes.
+    - AIAPI effectful operations require authenticated admin:AIAPI-01 page permission, correlation_id, audit, and explicit error codes.
+    - IAM effectful operations require authenticated admin:IAM-01 page permission plus the exact reused ACTION resource INVOKE assignment.
+    - Generic governance operations require explicit page_uid context and resolve to that page family's registered source ACTION resource.
   operations:
   - operation_id: resolveIdentityAccountAuthority
     port_uid: GHS-PORT-IDENTITY
@@ -35,6 +37,55 @@ operation_registry:
     - authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
     - src/app/v1/identity/session/route.ts
     catalog_resource_key: NOT_IN_ACCOUNT_PERMISSION_CATALOG
+
+  - operation_id: searchProjection
+    port_uid: IAM-01-PORT-SEARCH
+    path: /v1/search
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-01:ACT-SEARCH
+    authorization_action: INVOKE
+    source_authority: admin:IAM-01
+  - operation_id: saveDraft
+    port_uid: IAM-01-PORT-DRAFT
+    path: /v1/drafts
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-02:ACT-DRAFT-SAVE
+    authorization_action: INVOKE
+    reused_source_operation: true
+  - operation_id: validateDraft
+    port_uid: IAM-01-PORT-DRAFT
+    path: /v1/drafts/{id}/validate
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-02:ACT-DRAFT-VALIDATE
+    authorization_action: INVOKE
+    reused_source_operation: true
+  - operation_id: previewAuthorizationImpact
+    port_uid: IAM-01-PORT-AUTHORIZATION-IMPACT
+    path: /v1/iam/accounts/{accountId}/authorization-impact
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-02:ACT-ACCOUNT-PERMISSION-PREVIEW
+    authorization_action: INVOKE
+    reused_source_operation: true
+  - operation_id: assignAccountPermission
+    port_uid: IAM-01-PORT-ACCOUNT-PERMISSION
+    path: /v1/iam/accounts/{accountId}/permissions
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-05:ACT-CONFIGURE
+    authorization_action: INVOKE
+    reused_source_operation: true
+  - operation_id: revokeAccountPermission
+    port_uid: IAM-01-PORT-ACCOUNT-PERMISSION
+    path: /v1/iam/accounts/{accountId}/permissions
+    methods: [DELETE]
+    runtime_owner: IAM_RUNTIME
+    authorization_resource_key: action:admin:IAM-05:ACT-CONFIGURE
+    authorization_action: INVOKE
+    reused_source_operation: true
 
   - operation_id: createProviderModelProfile
     port_uid: AIAPI-01-PORT-PROVIDER-PROFILE
@@ -103,12 +154,34 @@ operation_registry:
     methods: [PATCH]
     runtime_owner: IAM_RUNTIME
     existing_route_reused: true
+    page_context_required: true
+    authorization_contexts:
+      admin:IAM-01:
+        resource_key: action:admin:IAM-05:ACT-CONFIGURE
+        action: INVOKE
+      admin:AIAPI-01:
+        resource_key: action:admin:AIAPI-04:ACT-CONFIGURE
+        action: INVOKE
+      admin:SG-02:
+        resource_key: action:admin:SG-02:ACT-CONFIGURE
+        action: INVOKE
   - operation_id: approveGovernedResource
     port_uid: IAM-01-PORT-GOVERNED-RESOURCE
     path: /v1/governance/resources/{id}/approve
     methods: [POST]
     runtime_owner: IAM_RUNTIME
     existing_route_reused: true
+    page_context_required: true
+    authorization_contexts:
+      admin:IAM-01:
+        resource_key: action:admin:IAM-05:ACT-APPROVE
+        action: INVOKE
+      admin:AIAPI-01:
+        resource_key: action:admin:AIAPI-04:ACT-APPROVE
+        action: INVOKE
+      admin:SG-02:
+        resource_key: action:admin:SG-02:ACT-APPROVE
+        action: INVOKE
 
   - operation_id: setKillSwitch
     port_uid: AIAPI-01-PORT-KILL-SWITCH
@@ -182,3 +255,4 @@ operation_registry:
 
   unregistered_catalog_apis: REMAIN_UNREGISTERED
   aiapi_effectful_mapping_status: MATERIALIZED_CURRENT
+  iam_effectful_mapping_status: MATERIALIZED_CURRENT_EXACT_ACTION
