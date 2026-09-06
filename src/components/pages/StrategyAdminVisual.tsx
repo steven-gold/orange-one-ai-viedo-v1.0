@@ -132,16 +132,98 @@ const VIEWS: readonly ViewSpec[] = [
   },
 ] as const;
 
+type ReadyFormSpec = {
+  schema: "SearchProjectionRequest" | "RefreshProjectionRequest";
+  fields: readonly { name: string; label: string; required: boolean; kind?: "json" }[];
+  defaults: Readonly<Record<string, string>>;
+};
+
+const READY_FORM_BY_VIEW_ACTION: Readonly<Record<string, ReadyFormSpec>> = {
+  "overview::ACT-SEARCH": {
+    schema: "SearchProjectionRequest",
+    fields: [
+      { name: "query", label: "query", required: true },
+      { name: "scope_ref", label: "scope_ref", required: true },
+      { name: "filters_json", label: "filters_json", required: false, kind: "json" },
+    ],
+    defaults: { query: "", scope_ref: "admin:STR-01", filters_json: "" },
+  },
+  "intelligence::ACT-SEARCH": {
+    schema: "SearchProjectionRequest",
+    fields: [
+      { name: "query", label: "query", required: true },
+      { name: "scope_ref", label: "scope_ref", required: true },
+      { name: "filters_json", label: "filters_json", required: false, kind: "json" },
+    ],
+    defaults: { query: "", scope_ref: "admin:STR-01", filters_json: "" },
+  },
+  "overview::ACT-REFRESH": {
+    schema: "RefreshProjectionRequest",
+    fields: [
+      { name: "projection_type", label: "projection_type", required: true },
+      { name: "scope_ref", label: "scope_ref", required: true },
+    ],
+    defaults: { projection_type: "strategy_admin", scope_ref: "admin:STR-01" },
+  },
+};
+
 function StrategyAdminContent() {
   const { locale } = useI18n();
   const { projection, runtimeError, invoke, canInvoke } = useStrategyAdminRuntime();
   const [activeKey, setActiveKey] = useState<StrategyViewKey>("overview");
+  const [formAction, setFormAction] = useState<string | null>(null);
+  const [formValues, setFormValues] = useState<Record<string, string>>({});
+  const [formValidation, setFormValidation] = useState<string | null>(null);
   const active = VIEWS.find((view) => view.key === activeKey) || VIEWS[0];
+  const formKey = formAction ? `${active.key}::${formAction}` : null;
+  const formSpec = formKey ? READY_FORM_BY_VIEW_ACTION[formKey] ?? null : null;
   const copy = strategyViewCopy(locale, active.key);
   const summary = active.responsibilities.slice(0, 4);
   const valueFor = (item: string) => projection?.values[item] ?? "—";
   const evidenceFor = (item: string) => projection?.evidence[item] ?? "—";
   const stateFor = (item: string) => projection?.states[item] ?? "—";
+
+  const openReadyAction = (actionId: string) => {
+    const spec = READY_FORM_BY_VIEW_ACTION[`${active.key}::${actionId}`];
+    if (!spec) {
+      void invoke(actionId, active.key);
+      return;
+    }
+    setFormAction(actionId);
+    setFormValues({ ...spec.defaults });
+    setFormValidation(null);
+  };
+
+  const closeForm = () => {
+    setFormAction(null);
+    setFormValues({});
+    setFormValidation(null);
+  };
+
+  const submitForm = async () => {
+    if (!formAction || !formSpec) return;
+    const payload: Record<string, unknown> = {};
+    for (const field of formSpec.fields) {
+      const raw = formValues[field.name]?.trim() ?? "";
+      if (field.required && !raw) {
+        setFormValidation(`${field.name}: REQUIRED`);
+        return;
+      }
+      if (!raw) continue;
+      if (field.kind === "json") {
+        try {
+          payload[field.name] = JSON.parse(raw);
+        } catch {
+          setFormValidation(`${field.name}: INVALID_JSON`);
+          return;
+        }
+      } else {
+        payload[field.name] = raw;
+      }
+    }
+    const ok = await invoke(formAction, active.key, payload);
+    if (ok) closeForm();
+  };
 
   return (
     <div
@@ -152,7 +234,8 @@ function StrategyAdminContent() {
       data-effectful-runtime-ready="false"
       data-remap-state="IMPLEMENTATION_REQUIRED_NOT_EXECUTED"
       data-application-implementation="NOT_EXECUTED"
-      data-runtime-binding-validation="NOT_EXECUTED"
+      data-runtime-binding-validation="PARTIAL_SEARCH_REFRESH_MATERIALIZED"
+      data-runtime-materialized-operations="searchProjection,refreshProjection"
       data-e2e-validation="NOT_EXECUTED"
       data-data-classification={
         projection?.test_metadata?.data_classification ?? "—"
@@ -325,7 +408,7 @@ function StrategyAdminContent() {
                 data-disabled-reason={!enabled ? bindingState : undefined}
                 disabled={!enabled}
                 title={title}
-                onClick={() => void invoke(actionId, active.key)}
+                onClick={() => openReadyAction(actionId)}
               >
                 {strategyActionLabel(locale, actionId)}
               </button>
@@ -333,6 +416,58 @@ function StrategyAdminContent() {
           })}
         </div>
       </section>
+
+      {formAction && formSpec && (
+        <>
+          <button
+            type="button"
+            className={styles.modalBackdrop}
+            aria-label="Close Strategy action form"
+            onClick={closeForm}
+          />
+          <section
+            className={styles.formModal}
+            role="dialog"
+            aria-modal="true"
+            aria-label={formSpec.schema}
+            data-form-schema={formSpec.schema}
+            data-action-id={formAction}
+          >
+            <header className={styles.formHead}>
+              <div>
+                <div className={styles.eyebrow}>STRATEGY · REGISTERED FORM</div>
+                <h2>{strategyActionLabel(locale, formAction)}</h2>
+                <p>{formSpec.schema}</p>
+              </div>
+              <button type="button" className={styles.formClose} aria-label="Close" onClick={closeForm}>×</button>
+            </header>
+            <div className={styles.formBody}>
+              {formSpec.fields.map((field) => (
+                <label key={field.name} className={styles.formField}>
+                  <span>{field.label}{field.required ? " *" : ""}</span>
+                  {field.kind === "json" ? (
+                    <textarea
+                      rows={5}
+                      value={formValues[field.name] ?? ""}
+                      onChange={(event) => setFormValues((current) => ({ ...current, [field.name]: event.target.value }))}
+                    />
+                  ) : (
+                    <input
+                      value={formValues[field.name] ?? ""}
+                      onChange={(event) => setFormValues((current) => ({ ...current, [field.name]: event.target.value }))}
+                    />
+                  )}
+                </label>
+              ))}
+              {formValidation && <div className={styles.formError}>{formValidation}</div>}
+            </div>
+            <footer className={styles.formFooter}>
+              <button type="button" className={styles.action} onClick={closeForm}>取消</button>
+              <button type="button" className={`${styles.action} ${styles.actionPrimary}`} onClick={() => void submitForm()}>執行</button>
+            </footer>
+          </section>
+        </>
+      )}
     </div>
   );
 }
