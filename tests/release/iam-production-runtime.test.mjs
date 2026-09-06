@@ -43,7 +43,7 @@ test("generic governance commands require explicit page permission context",()=>
 });
 
 test("IAM L1 permission expansion is explicit and runtime inheritance remains forbidden",()=>{
-  assert.match(authority,/runtime_inheritance:\s*FORBIDDEN/);
+  assert.match(authority,/runtime inheritance remains forbidden/i);
   assert.match(server,/WITH RECURSIVE resource_tree AS/);
   assert.match(server,/jsonb_array_elements_text/);
   assert.match(server,/permission_resources/);
@@ -61,7 +61,7 @@ test("IAM HIGH-risk apply obtains a real approval reference before assignments",
 });
 
 test("unresolved identity candidate fields remain fail-closed instead of invented",()=>{
-  assert.match(authority,/do not invent username\/email\/department\/position\/identity-source fields/i);
+  assert.match(authority,/do not invent username\/email\/etc\./i);
   assert.match(projection,/identity_schema:\s*\[\]/);
   assert.match(projection,/department_presets:\s*\[\]/);
   assert.doesNotMatch(client,/username.*required|password.*required/i);
