@@ -55,7 +55,7 @@ const login = await fetch(`${base}/v1/identity/session`, {
 });
 
 const loginText = await login.text();
-assert(login.status === 200, `AUTH_LOGIN_HTTP_${login.status}_${loginText}`);
+assert(login.status === 200, `AUTH_LOGIN_HTTP_${login.status}`);
 let loginBody;
 try {
   loginBody = JSON.parse(loginText);
@@ -91,7 +91,7 @@ const dashboard = await fetch(`${base}/v1/dashboard/read-model`, {
   headers: cookieHeaders(cookie),
 });
 const dashboardText = await dashboard.text();
-assert(dashboard.status === 200, `AUTH_DASHBOARD_READ_MODEL_HTTP_${dashboard.status}_${dashboardText}`);
+assert(dashboard.status === 200, `AUTH_DASHBOARD_READ_MODEL_HTTP_${dashboard.status}`);
 assert(!/TEST_ONLY|TEST-RUN-|"synthetic"\s*:\s*true/.test(dashboardText), "AUTH_DASHBOARD_TEST_DATA_LEAK");
 
 let projectionPass = 0;
@@ -102,7 +102,7 @@ for (const uid of projectionUids) {
     headers: cookieHeaders(cookie),
   });
   const text = await response.text();
-  assert(response.status === 200, `AUTH_PROJECTION_${uid}_HTTP_${response.status}_${text}`);
+  assert(response.status === 200, `AUTH_PROJECTION_${uid}_HTTP_${response.status}`);
   assert(!/TEST_ONLY|TEST-RUN-|"synthetic"\s*:\s*true/.test(text), `AUTH_PROJECTION_TEST_DATA_LEAK_${uid}`);
   assert(Boolean(response.headers.get("x-correlation-id")), `AUTH_PROJECTION_CORRELATION_ID_MISSING_${uid}`);
   projectionPass += 1;
