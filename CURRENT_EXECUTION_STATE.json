@@ -2,40 +2,43 @@
   "schema_version": "1.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "last_sync_at": "2026-09-07T00:48:00+08:00",
+  "last_sync_at": "2026-09-07T01:29:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
-  "main_sha": "d5f0f45e44115944c7b3aa3263a2c0c861f4a610",
-  "new_sha_basis": "d5f0f45e44115944c7b3aa3263a2c0c861f4a610",
+  "main_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
+  "new_sha_basis": "17a7d7cf53995e343cd65e6fb2c089e24b3f8a77",
   "latest_release_gate": {
     "status": "PASS",
-    "run_number": 289,
-    "run_id": 34045459371,
-    "head_sha": "49b2ac8c91fc731b1b4fb95df7bf954b1f192315",
+    "run_number": 300,
+    "run_id": 34047255114,
+    "head_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
     "branch": "main",
     "conclusion": "success"
   },
   "latest_post_deploy_smoke": {
-    "status": "PASS_WITH_AUTH_BLOCKER",
-    "run_number": 516,
-    "run_id": 34046477279,
-    "head_sha": "d5f0f45e44115944c7b3aa3263a2c0c861f4a610",
-    "event": "deployment_status",
+    "status": "PASS",
+    "run_number": 529,
+    "run_id": 34047410031,
+    "run_attempt": 2,
+    "head_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
+    "event": "workflow_run",
     "http_smoke": "PASS",
+    "readiness_http": 200,
+    "release_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
+    "credential_readiness": "CONFIGURED",
+    "authenticated_e2e": "PASS",
+    "authenticated_e2e_projections": "18/18",
+    "authenticated_visible_pages": "18/18",
+    "authenticated_browser_e2e": "PASS",
+    "front_nav": "9/9",
+    "admin_nav": "9/9",
     "browser_smoke": "PASS",
-    "authenticated_e2e": "SKIPPED",
-    "authenticated_browser_e2e": "SKIPPED",
-    "authenticated_e2e_reason": "GITHUB_ACTIONS_ENV_VALUES_EMPTY",
-    "raw_log_evidence": {
-      "ACPOS_PRODUCTION_E2E_EMAIL": "EMPTY",
-      "ACPOS_PRODUCTION_E2E_PASSWORD": "EMPTY",
-      "post_deploy_http": "PASS",
-      "post_deploy_browser": "PASS"
-    }
+    "browser_cases": "54/54",
+    "evidence": "Attempt 2 rerun after Production Environment secret ADMIN was corrected. Login/session/dashboard/18 projections/logout/stale-cookie deny and authenticated browser visibility all passed."
   },
   "vercel": {
     "target": "orange-one-acpos-test",
     "production_url": "https://orange-one-acpos-test.vercel.app",
-    "release_sha": "49b2ac8c91fc731b1b4fb95df7bf954b1f192315",
+    "release_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
     "deployment_status": "SUCCESS_VERIFIED_VIA_GITHUB_VERCEL_STATUS",
     "deployment_environment": "Production",
     "deployment_trigger_actor": "vercel[bot]",
@@ -50,25 +53,30 @@
     "readiness_reason": "READY",
     "http_smoke": {
       "status": "PASS",
-      "run_number": 508,
+      "run_number": 529,
       "projections": 18,
-      "release_sha": "49b2ac8c91fc731b1b4fb95df7bf954b1f192315"
+      "release_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623"
     },
     "authenticated_e2e": {
-      "status": "BLOCKED",
-      "run_number": 508,
-      "reason": "GITHUB_ACTIONS_PRODUCTION_E2E_SECRETS_NOT_CONFIGURED",
-      "harness_deployed": true,
+      "status": "PASS",
+      "run_number": 529,
+      "run_attempt": 2,
+      "projections": 18,
+      "visible_pages": 18,
+      "dashboard": 1,
+      "login": 1,
+      "session": 1,
+      "logout": 1,
+      "stale_cookie_after_logout_http": 401,
       "credential_secret_names": [
-        "ACPOS_PRODUCTION_E2E_EMAIL",
-        "ACPOS_PRODUCTION_E2E_PASSWORD"
+        "ADMIN"
       ],
-      "credential_identity_verified_in_production": true,
+      "credential_email_source": "literal admin",
       "credential_values_committed_to_repository": false
     },
     "browser_smoke": {
       "status": "PASS",
-      "run_number": 508,
+      "run_number": 529,
       "cases": 54,
       "pages": 18,
       "widths": [
@@ -76,6 +84,14 @@
         1440,
         1920
       ]
+    },
+    "authenticated_browser_e2e": {
+      "status": "PASS",
+      "run_number": 529,
+      "run_attempt": 2,
+      "front_nav": 9,
+      "admin_nav": 9,
+      "visible_pages": 18
     }
   },
   "neon": {
@@ -106,7 +122,7 @@
     "queue_count": 0,
     "worker_count": 0,
     "dlq_count": 0,
-    "active_session_count": 0,
+    "active_session_count": 1,
     "rls_validation": {
       "branch_name": "rls-0016-validate-20260906",
       "branch_id": "br-orange-smoke-aut9pafw",
@@ -213,15 +229,17 @@
       "migration_0016_checksum": "8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4",
       "migration_0017_checksum": "6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551",
       "unauthenticated_non_owner_deny": {
-        "actor_user_id": null,
+        "actor_unbound": true,
         "bootstrap_admin": false,
-        "assignments": 0,
         "projects": 0,
+        "memberships": 0,
         "conversations": 0,
         "mother_locks": 0,
-        "story_candidates": 0
+        "story_candidates": 0,
+        "department_tasks": 0,
+        "permission_assignments": 0
       },
-      "status": "PASS_DB_FOUNDATION_AUTHENTICATED_PRODUCTION_E2E_PENDING",
+      "status": "PASS",
       "migration_0018_checksum": "d898fcc1a2ccd0d3b814e3cd0578b4c0a8a573f84e96a0e68c68b4af1b2212b5",
       "department_runtime_tables": {
         "tables": [
@@ -243,6 +261,29 @@
         "superuser": false,
         "bypass_rls": false,
         "inherit": false
+      },
+      "current_evidence_at": "2026-09-07T01:29:00+08:00",
+      "authenticated_non_admin_isolation": {
+        "actor_bound": true,
+        "bootstrap_admin": false,
+        "visible_projects": 1,
+        "visible_project_codes": [
+          "TEST-PRJ-001"
+        ],
+        "forbidden_project_rows": 0,
+        "visible_department_tasks": 1,
+        "cross_project_department_task_rows": 0,
+        "residual_test_sessions": 0
+      },
+      "authenticated_production_allow": {
+        "source": "Post Deploy #529 attempt 2",
+        "login": "PASS",
+        "session": "PASS",
+        "dashboard": "PASS",
+        "projections": "18/18",
+        "permission_visibility": "PASS",
+        "logout": "PASS",
+        "stale_cookie_http": 401
       }
     },
     "provider_job_count": 0,
@@ -255,50 +296,50 @@
     "active_app_user_count": 2,
     "ready_account_actor_mapping_count": 2,
     "identity_session_store_relation": true,
-    "session_total_count": 48,
+    "session_total_count": 49,
     "scrypt_hash_shape_account_count": 2
   },
   "current_gate_scores": {
     "1_main_sha": {
       "status": "PASS",
       "score": "2/2",
-      "main_sha": "49b2ac8c91fc731b1b4fb95df7bf954b1f192315"
+      "main_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623"
     },
     "2_release_gate": {
       "status": "PASS",
       "score": "2/2",
-      "run_number": 289,
-      "head_sha": "49b2ac8c91fc731b1b4fb95df7bf954b1f192315"
+      "run_number": 300,
+      "head_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623"
     },
     "3_vercel_deployment": {
       "status": "PASS",
       "score": "3/3",
-      "reason": "Vercel GitHub status reported Deployment has completed for exact main SHA 49b2ac8c91fc731b1b4fb95df7bf954b1f192315; Post Deploy Smoke #508 targeted the same head SHA."
+      "reason": "Production HTTP smoke #529 attempt 2 verified exact release_sha 5aa21a94340b2dc1005fa4821220f23ef6342623 on orange-one-acpos-test."
     },
     "4_health": {
       "status": "PASS",
       "score": "4/4",
-      "reason": "Post Deploy Smoke #508 HTTP stage PASS on exact production release 49b2ac8c91fc731b1b4fb95df7bf954b1f192315."
+      "reason": "Post Deploy Smoke #529 attempt 2 passed against exact Production release 5aa21a94340b2dc1005fa4821220f23ef6342623."
     },
     "5_readiness": {
       "status": "PASS",
       "score": "4/4",
-      "reason": "Post Deploy Smoke #508 HTTP stage PASS after strict migration 0018 deployment; readiness remained HTTP 200."
+      "reason": "Post Deploy Smoke #529 attempt 2 reported readiness HTTP 200 on Production."
     },
     "6_remote_http_smoke": {
       "status": "PASS",
       "score": "3/3",
-      "reason": "Post Deploy Smoke #508 deployed HTTP smoke PASS on exact main SHA 49b2ac8c91fc731b1b4fb95df7bf954b1f192315."
+      "reason": "Post Deploy Smoke #529 attempt 2 HTTP stage PASS with 18 production projections."
     },
     "7_remote_browser_smoke": {
       "status": "PASS",
       "score": "3/3",
-      "reason": "Post Deploy Smoke #508 browser stage PASS: 54/54 cases across 18 pages and widths 1280/1440/1920."
+      "reason": "Post Deploy Smoke #529 attempt 2 browser stage PASS: 54/54 cases across 18 pages and widths 1280/1440/1920."
     },
     "8_routes": {
       "status": "PASS",
       "score": "18/18",
-      "reason": "Post Deploy Smoke #508 HTTP/browser acceptance retained all 18 formal production routes."
+      "reason": "Post Deploy Smoke #529 attempt 2 retained all 18 formal production routes/pages."
     },
     "9_production_authority": {
       "status": "PARTIAL",
@@ -316,8 +357,8 @@
       "reason": "Production remains 152 public + 42 acpos_runtime tables, permission_resources 3651 and ACPOS validated FK 344 after migrations 0016-0017."
     },
     "12_postgresql_rls": {
-      "status": "PARTIAL",
-      "reason": "Production is now 17 RLS tables / 35 policies with acpos_app_runtime NOLOGIN/NOBYPASSRLS/NOINHERIT. Migration 0018 closed RLS for seven department runtime tables and unresolved project mappings are 0. Positive authenticated Production allow/cross-project browser/runtime E2E is still not executed because GitHub Actions Production E2E secrets are not bound."
+      "status": "PASS",
+      "reason": "Production verified with 17 RLS-enabled public tables and 35 policies; acpos_app_runtime is NOLOGIN/NOBYPASSRLS/NOINHERIT/NOSUPERUSER; current unauthenticated non-owner queries return 0 across protected resources; Post Deploy #529 attempt 2 proves authenticated Production allow across login/session/dashboard/18 projections; an ephemeral non-admin Production session saw exactly its own TEST-PRJ-001 and one department task while two forbidden project rows and all cross-project task rows remained 0; the test session was removed and residual count is 0."
     },
     "13_accounts": {
       "status": "PASS",
@@ -325,18 +366,19 @@
       "reason": "Production accounts=2 and READY accounts=2. Bootstrap account identity is admin; its existing scrypt hash was verified against the user-authorized admin password without changing the Production record."
     },
     "14_login_session_e2e": {
-      "status": "BLOCKED",
-      "score": "0/4",
-      "reason": "Fresh Post Deploy #516 was queued after user-confirmed secret setup, but raw job log still showed ACPOS_PRODUCTION_E2E_EMAIL and ACPOS_PRODUCTION_E2E_PASSWORD as empty; authenticated E2E was skipped. This proves the values are not visible in this repository workflow scope."
+      "status": "PASS",
+      "score": "4/4",
+      "reason": "Post Deploy #529 attempt 2 PASS: login 200, secure acpos_session cookie, session GET 200, dashboard 200, 18/18 authenticated projections 200, logout 200, and the stale cookie returns 401 after logout."
     },
     "15_permission_e2e": {
-      "status": "PARTIAL",
-      "reason": "PAGE-permission navigation implementation is deployed and ordinary Browser smoke passes. Fresh Post Deploy #516 authenticated browser visibility E2E was skipped because both Production E2E workflow env values were empty."
+      "status": "PASS",
+      "score": "4/4",
+      "reason": "Authenticated E2E returned navigation_visibility=READY with exact 18 visible pages, and authenticated browser E2E verified front_nav 9/9 plus admin_nav 9/9 on Production."
     },
     "16_production_read_models": {
-      "status": "BLOCKED",
-      "score": "0/18_AUTHENTICATED",
-      "reason": "Fresh Post Deploy #516 ordinary HTTP smoke verified 18 production projections and exact release SHA, but authenticated 18/18 E2E was skipped because both GitHub Actions Production E2E env values were empty."
+      "status": "PASS",
+      "score": "18/18",
+      "reason": "Post Deploy #529 attempt 2 authenticated E2E read the dashboard and all 18 production UI projections with HTTP 200 and no TEST_ONLY/synthetic leakage."
     },
     "17_core_runtime": {
       "status": "NOT_REVERIFIED_THIS_SYNC"
@@ -414,71 +456,18 @@
     "Main Release Gate #263 PASS for f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
     "Post Deploy Smoke #458 PASS with ready=200 and exact release_sha f552f88d9d5f6f56f6a7aaefe02b7316521c288b",
     "Post Deploy Browser Smoke #458 PASS 54/54 across 18 pages x 3 widths",
-    "Production auth harness #458 explicitly reported PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED; no false authenticated PASS recorded"
+    "Production auth harness #458 explicitly reported PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED; no false authenticated PASS recorded",
+    "GitHub Environment Production secret ADMIN corrected and verified by Post Deploy #529 attempt 2",
+    "Production Login/Session E2E PASS 4/4 on main 5aa21a94340b2dc1005fa4821220f23ef6342623",
+    "Production authenticated permission/browser visibility E2E PASS: front nav 9/9, admin nav 9/9, visible pages 18/18",
+    "Production authenticated Read Models PASS 18/18",
+    "Production PostgreSQL RLS Current Evidence PASS: 17 protected tables / 35 policies / acpos_app_runtime non-login non-bypass role",
+    "Production unauthenticated non-owner RLS deny PASS across projects, memberships, conversations, mother locks, story candidates, department tasks and permission assignments",
+    "Production authenticated non-admin cross-project isolation PASS: own project visible 1, forbidden projects 0, own department task visible 1, cross-project task rows 0, residual test sessions 0",
+    "Gate 12 PostgreSQL RLS closed to PASS"
   ],
-  "in_progress_item": "AUTH_001_REPOSITORY_SECRET_SCOPE_CORRECTION",
+  "in_progress_item": "HARD_BLOCKED_PROVIDER_QUEUE_AUTHORITY",
   "remaining_queue": [
-    {
-      "item_id": "AUTH-001",
-      "affects_gate": [
-        14,
-        15
-      ],
-      "dependency": "existing acpos_runtime.accounts/sessions and app_users",
-      "exact_files": [
-        "src/server/identity/identityRuntime.ts",
-        "src/app/identity/login/route.ts",
-        "scripts/post-deploy-auth-e2e.mjs",
-        ".github/workflows/post-deploy-smoke.yml",
-        "tests/release/post-deploy-auth-e2e.test.mjs",
-        "tests/release/identity-runtime.test.mjs"
-      ],
-      "exact_runtime": "Production identity/session",
-      "expected_test": "configured CI secret -> login -> secure acpos_session -> authenticated dashboard -> 18/18 projections -> logout -> old cookie 401",
-      "expected_deploy_effect": "close production Login/Session E2E evidence",
-      "status": "REPOSITORY_SECRET_SCOPE_CORRECTION_REQUIRED",
-      "evidence": "Fresh Post Deploy #516 on main d5f0f45e... raw log showed ACPOS_PRODUCTION_E2E_EMAIL and ACPOS_PRODUCTION_E2E_PASSWORD both empty. Authenticated HTTP and browser steps were skipped. User credentials themselves are not the current failure; repository workflow secret visibility is."
-    },
-    {
-      "item_id": "RLS-001",
-      "affects_gate": [
-        12,
-        15,
-        16
-      ],
-      "dependency": "runtime non-owner role + authority-aligned policy mapping + deployable DB credential binding",
-      "exact_files": [
-        "database/migrations/0016_postgresql_rls_runtime_foundation.sql",
-        "database/migrations/0017_core_story_rls_closure.sql",
-        "database/migrations/migration_checksum_manifest.yaml",
-        "src/server/database/neonRuntime.ts",
-        "src/server/database/rlsRuntime.ts",
-        "src/server/shared/identityPageCommandRuntime.ts",
-        "src/server/dashboard/wb01ProjectionRuntime.ts",
-        "src/server/shared/pageCatalogProjectionRuntime.ts",
-        "src/domain/core/coreClientPort.ts",
-        "tests/release/rls-runtime.test.mjs"
-      ],
-      "exact_runtime": "Neon production non-owner runtime role",
-      "expected_test": "deny/allow/cross-project isolation + authenticated runtime smoke",
-      "expected_deploy_effect": "Apply 0016 then 0017 to Production; runtime uses SET LOCAL ROLE acpos_app_runtime with existing DB credential; then merge and deploy REQUIRED_MIGRATION_COUNT=17.",
-      "status": "PRODUCTION_0018_DEPLOYED_AUTHENTICATED_E2E_PENDING",
-      "evidence": "Production is 18 migrations / 17 RLS tables / 35 policies; seven department runtime tables are RLS-enabled with 14 policies, unresolved project mappings=0, acpos_app_runtime is NOLOGIN/NOBYPASSRLS/NOINHERIT. Strict-18 main release 49b2ac8c... and Post Deploy #508 passed."
-    },
-    {
-      "item_id": "READ-001",
-      "affects_gate": [
-        16,
-        17,
-        18,
-        19,
-        20,
-        21
-      ],
-      "dependency": "AUTH-001 + RLS-001",
-      "status": "GITHUB_ACTIONS_E2E_SECRET_BINDING_PENDING",
-      "evidence": "Production harness requires 18/18 authenticated projection HTTP 200. Post Deploy #508 skipped authenticated execution only because the required GitHub Actions repository secrets are not configured."
-    },
     {
       "item_id": "PROVIDER-QUEUE-001",
       "affects_gate": [
@@ -514,31 +503,35 @@
     }
   ],
   "blockers": [
-    "AUTH-001 external configuration blocker: Fresh Post Deploy #516 raw log proves ACPOS_PRODUCTION_E2E_EMAIL and ACPOS_PRODUCTION_E2E_PASSWORD are both empty in the workflow environment. The secrets must be created in this repository under Settings -> Secrets and variables -> Actions -> Repository secrets with those exact names, or if they were created as Environment secrets the workflow must be bound to the exact environment name.",
-    "READ-001 depends on AUTH-001 authenticated Production actor path; harness already requires dashboard + exact 18/18 projections.",
     "PROVIDER-001 hard blocker: Production provider capability/profile/secret/job rows remain 0 and Current Authority does not yet materialize effectful provider operation mapping.",
     "QUEUE-001 hard blocker: Production queues/workers/dead_letters remain 0 and exact queue_key/worker_key topology is not materialized in Current Authority.",
-    "Vercel management-plane plugin scope mismatch remains: GitHub Vercel status and Post Deploy Smoke provide current deployment evidence, while the Vercel management connector cannot read this project."
+    "Vercel management-plane plugin scope mismatch remains: GitHub Vercel status and Post Deploy Smoke provide current deployment evidence, while the Vercel management connector cannot read this project.",
+    "PROVIDER-001 hard blocker: Production provider capability/profile/secret/job rows remain 0 and Current Authority does not materialize the required effectful provider operation mapping.",
+    "QUEUE-001 hard blocker: Production queues/workers/dead_letters remain 0 and Current Authority does not materialize exact queue_key/worker_key topology."
   ],
-  "next_executable_item": "User decision required: confirm whether the two E2E credentials were created under Repository secrets or under an Environment. If Repository secrets, verify exact names ACPOS_PRODUCTION_E2E_EMAIL and ACPOS_PRODUCTION_E2E_PASSWORD in steven-gold/orange-one-ai-viedo-v1.0. If Environment secrets, provide the exact GitHub Environment name so the smoke job can be bound to it. After correction, create a fresh main deployment run and execute authenticated Gate 14/15/16 E2E.",
-  "last_successful_commit": "49b2ac8c91fc731b1b4fb95df7bf954b1f192315",
+  "next_executable_item": "No dependency-ready non-blocked construction item remains before PROVIDER-QUEUE-001. Current Authority must first materialize effectful provider operation mapping and exact queue/worker topology, and Production provider secret references must be supplied; until then Gate 22/23 remain hard blocked and downstream runtime/mutation/full-button acceptance cannot be honestly closed.",
+  "last_successful_commit": "5aa21a94340b2dc1005fa4821220f23ef6342623",
   "last_successful_deployment": {
-    "main_sha": "49b2ac8c91fc731b1b4fb95df7bf954b1f192315",
+    "main_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
     "url": "https://orange-one-acpos-test.vercel.app",
     "deployment_status": "success",
     "health": 200,
     "readiness": 200,
-    "post_deploy_smoke_run": 508,
+    "post_deploy_smoke_run": 529,
+    "post_deploy_smoke_attempt": 2,
     "http_smoke": "PASS",
-    "authenticated_e2e": "BLOCKED_GITHUB_ACTIONS_E2E_SECRETS_NOT_CONFIGURED",
+    "authenticated_e2e": "PASS",
+    "authenticated_projections": 18,
     "browser_smoke": "PASS",
-    "browser_cases": 54
+    "browser_cases": 54,
+    "authenticated_browser_e2e": "PASS",
+    "authenticated_visible_pages": 18
   },
   "latest_construction_release_gate": {
     "status": "PASS",
-    "run_number": 288,
-    "run_id": 34045274406,
-    "head_sha": "e8384d35c9c0c1e33ce46eadfa68a51e72bdca75",
+    "run_number": 305,
+    "run_id": 34048594515,
+    "head_sha": "17a7d7cf53995e343cd65e6fb2c089e24b3f8a77",
     "branch": "new",
     "conclusion": "success"
   }

@@ -1,20 +1,29 @@
 operation_registry:
   contract_meta:
-    contract_id: ACPOS-OPERATION-REGISTRY-IDENTITY-SESSION-1.0.0
+    contract_id: ACPOS-OPERATION-REGISTRY-CURRENT-1.1.0
     status: FINAL_LOCKED
     current_only: true
-    revision: 2026-09-05-IDENTITY-SESSION-ONLY
-    coverage: IDENTITY_SESSION_ONLY
+    revision: 2026-09-07-IDENTITY-AIAPI-PROVIDER-MATERIALIZED
+    coverage: IDENTITY_SESSION_AND_AIAPI_PROVIDER_GOVERNED_OPERATIONS
     undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
-    note: This file registers the GHS identity port that already exists in src. It does not reconstruct the 242 catalog API operations.
+    supersedes_revision: 2026-09-05-IDENTITY-SESSION-ONLY
+    governance_basis:
+    - authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+    - authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+    - database/migrations/0001_canonical_schema.sql
+    - database/migrations/0007_runtime_operational_schema.sql
+    - database/migrations/0008_provider_router_runtime_closure.sql
+    rules:
+    - No operation may persist plaintext credentials.
+    - Provider/model/profile values are runtime/admin data and are never fabricated by Authority.
+    - External provider execution stays fail-closed until an approved capability, enabled profile, bound secret reference, adapter, and route preflight all pass.
+    - Sandbox never uses Production provider credentials.
+    - All effectful operations require authenticated admin:AIAPI-01 page permission, correlation_id, audit, and explicit error codes.
   operations:
   - operation_id: resolveIdentityAccountAuthority
     port_uid: GHS-PORT-IDENTITY
     path: /v1/identity/session
-    methods:
-    - GET
-    - POST
-    - DELETE
+    methods: [GET, POST, DELETE]
     workflow:
       GET: READ_SESSION
       POST: CREATE_SESSION
@@ -26,4 +35,134 @@ operation_registry:
     - authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
     - src/app/v1/identity/session/route.ts
     catalog_resource_key: NOT_IN_ACCOUNT_PERMISSION_CATALOG
-    unregistered_catalog_apis: REMAIN_UNREGISTERED
+
+  - operation_id: createProviderModelProfile
+    port_uid: AIAPI-01-PORT-PROVIDER-PROFILE
+    path: /v1/aiapi/provider-profiles
+    methods: [POST]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: acpos_runtime.provider_profiles
+    external_effect: NONE
+  - operation_id: listProviderModelProfiles
+    port_uid: AIAPI-01-PORT-PROVIDER-PROFILE
+    path: /v1/aiapi/provider-profiles
+    methods: [GET]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: acpos_runtime.provider_profiles
+    external_effect: NONE
+  - operation_id: getProviderModelProfile
+    port_uid: AIAPI-01-PORT-PROVIDER-PROFILE
+    path: /v1/aiapi/provider-profiles/{profileId}
+    methods: [GET]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: acpos_runtime.provider_profiles
+    external_effect: NONE
+  - operation_id: updateProviderModelProfile
+    port_uid: AIAPI-01-PORT-PROVIDER-PROFILE
+    path: /v1/aiapi/provider-profiles/{profileId}
+    methods: [PATCH]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: acpos_runtime.provider_profiles
+    external_effect: NONE
+  - operation_id: retireProviderModelProfile
+    port_uid: AIAPI-01-PORT-PROVIDER-PROFILE
+    path: /v1/aiapi/provider-profiles/{profileId}/retire
+    methods: [POST]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: acpos_runtime.provider_profiles
+    effect: SET_ENABLED_FALSE
+    external_effect: NONE
+  - operation_id: testProviderModelProfile
+    port_uid: AIAPI-01-PORT-PROVIDER-TEST
+    path: /v1/aiapi/provider-profiles/{profileId}/test
+    methods: [POST]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: acpos_runtime.provider_profile_tests
+    external_effect: PROVIDER_CONNECTION_TEST
+    external_gate: SECRET_REFERENCE_AND_ADAPTER_REQUIRED
+  - operation_id: setProviderModelCredential
+    port_uid: AIAPI-01-PORT-PROVIDER-CREDENTIAL
+    path: /v1/aiapi/provider-profiles/{profileId}/credential
+    methods: [PUT]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: public.secret_references
+    credential_contract: SECRET_ENV_REFERENCE_ONLY
+    raw_secret_body_field: FORBIDDEN
+  - operation_id: deleteProviderModelCredential
+    port_uid: AIAPI-01-PORT-PROVIDER-CREDENTIAL
+    path: /v1/aiapi/provider-profiles/{profileId}/credential
+    methods: [DELETE]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: public.secret_references
+    effect: RETIRE_REFERENCE_AND_CLEAR_PROFILE_REFERENCE
+    raw_secret_return: FORBIDDEN
+
+  - operation_id: configureGovernedResource
+    port_uid: IAM-01-PORT-GOVERNED-RESOURCE
+    path: /v1/governance/resources/{id}
+    methods: [PATCH]
+    runtime_owner: IAM_RUNTIME
+    existing_route_reused: true
+  - operation_id: approveGovernedResource
+    port_uid: IAM-01-PORT-GOVERNED-RESOURCE
+    path: /v1/governance/resources/{id}/approve
+    methods: [POST]
+    runtime_owner: IAM_RUNTIME
+    existing_route_reused: true
+
+  - operation_id: setKillSwitch
+    port_uid: AIAPI-01-PORT-KILL-SWITCH
+    path: /v1/aiapi/kill-switch
+    methods: [POST]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    effect: PROFILE_OR_GROUP_ENABLE_STATE
+    confirmation_required: true
+  - operation_id: createProviderCandidateGroup
+    port_uid: AIAPI-01-PORT-CANDIDATE-GROUP
+    path: /v1/aiapi/provider-groups
+    methods: [POST]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner:
+    - acpos_runtime.provider_groups
+    - acpos_runtime.provider_members
+  - operation_id: getProviderQuarantine
+    port_uid: AIAPI-01-PORT-QUARANTINE
+    path: /v1/aiapi/quarantine
+    methods: [GET]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: acpos_runtime.provider_quarantine
+  - operation_id: restoreProviderFromQuarantine
+    port_uid: AIAPI-01-PORT-QUARANTINE
+    path: /v1/aiapi/quarantine/{quarantineId}/restore
+    methods: [POST]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: acpos_runtime.provider_quarantine
+    reason_required: true
+  - operation_id: runSandboxTest
+    port_uid: AIAPI-01-PORT-SANDBOX
+    path: /v1/aiapi/sandbox-tests
+    methods: [POST]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    production_secret_use: FORBIDDEN
+    production_output_write: FORBIDDEN
+  - operation_id: executeProviderRoute
+    port_uid: AIAPI-01-PORT-ROUTE
+    path: /v1/aiapi/routes
+    methods: [POST]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner:
+    - acpos_runtime.provider_route_preflights
+    - acpos_runtime.provider_route_decisions
+    - acpos_runtime.provider_route_attempts
+    external_effect: PROVIDER_REQUEST
+    external_gate: APPROVED_CAPABILITY_ENABLED_PROFILE_SECRET_ADAPTER_PREFLIGHT_QUEUE
+  - operation_id: getProviderRouteDecision
+    port_uid: AIAPI-01-PORT-ROUTE
+    path: /v1/aiapi/routes/{routeDecisionId}
+    methods: [GET]
+    runtime_owner: AIAPI_PROVIDER_COMMAND_RUNTIME
+    persistence_owner: acpos_runtime.provider_route_decisions
+    external_effect: NONE
+
+  unregistered_catalog_apis: REMAIN_UNREGISTERED
+  aiapi_effectful_mapping_status: MATERIALIZED_CURRENT

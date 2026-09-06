@@ -54,14 +54,30 @@ jobs:
             echo "POST_DEPLOY_AUTH_E2E_BLOCKED reason=PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED"
           fi
       - name: Run deployed ACPOS authenticated E2E
+        id: auth_http
         if: ${{ env.ACPOS_PRODUCTION_E2E_EMAIL != '' && env.ACPOS_PRODUCTION_E2E_PASSWORD != '' }}
+        continue-on-error: true
         run: node scripts/post-deploy-auth-e2e.mjs
       - name: Install current browser audit dependency
+        if: ${{ always() }}
         run: |
           npm install --no-save --package-lock=false playwright@1.62.1
           npx playwright install --with-deps chromium
       - name: Run deployed ACPOS browser smoke
+        if: ${{ always() }}
         run: node scripts/post-deploy-browser-smoke.mjs
       - name: Run deployed ACPOS authenticated browser visibility E2E
-        if: ${{ env.ACPOS_PRODUCTION_E2E_EMAIL != '' && env.ACPOS_PRODUCTION_E2E_PASSWORD != '' }}
+        id: auth_browser
+        if: ${{ always() && env.ACPOS_PRODUCTION_E2E_EMAIL != '' && env.ACPOS_PRODUCTION_E2E_PASSWORD != '' }}
+        continue-on-error: true
         run: node scripts/post-deploy-auth-browser-e2e.mjs
+      - name: Enforce authenticated acceptance
+        if: ${{ always() && env.ACPOS_PRODUCTION_E2E_EMAIL != '' && env.ACPOS_PRODUCTION_E2E_PASSWORD != '' }}
+        env:
+          AUTH_HTTP_OUTCOME: ${{ steps.auth_http.outcome }}
+          AUTH_BROWSER_OUTCOME: ${{ steps.auth_browser.outcome }}
+        run: |
+          echo "AUTH_HTTP_OUTCOME=$AUTH_HTTP_OUTCOME"
+          echo "AUTH_BROWSER_OUTCOME=$AUTH_BROWSER_OUTCOME"
+          test "$AUTH_HTTP_OUTCOME" = "success"
+          test "$AUTH_BROWSER_OUTCOME" = "success"

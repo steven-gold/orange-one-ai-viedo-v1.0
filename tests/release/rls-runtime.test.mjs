@@ -36,7 +36,7 @@ test("migration 0016 materializes a non-BYPASSRLS role and session-bound policie
 
   assert.match(migration, /0016_postgresql_rls_runtime_foundation/);
   assert.match(migration, /8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4/);
-  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.5/);
+  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.6/);
   assert.match(manifest, /migration_id: 0016_postgresql_rls_runtime_foundation/);
   assert.match(manifest, /payload_sha256: 8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4/);
 });
@@ -97,8 +97,9 @@ test("production query runtime sets local non-owner role before protected querie
   const coreClient = await read("src/domain/core/coreClientPort.ts");
 
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 18/);
+  assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 19/);
   assert.doesNotMatch(neonRuntime, /TARGET_MIGRATION_COUNT/);
-  assert.match(neonRuntime, /n !== REQUIRED_MIGRATION_COUNT/);
+  assert.match(neonRuntime, /isSupportedMigrationCount/);
   assert.match(rlsRuntime, /RLS_RUNTIME_ROLE = "acpos_app_runtime"/);
   assert.match(rlsRuntime, /set_config\('acpos\.session_token_hash'/);
   assert.match(rlsRuntime, /SET LOCAL ROLE acpos_app_runtime/);
@@ -127,7 +128,7 @@ test("projection owners do not bypass protected rows", async () => {
   assert.match(wb01, /runRlsActorQuery/);
   assert.match(wb01, /hashSessionToken/);
   assert.match(wb01, /JOIN topics tp ON tp\.topic_id = cl\.topic_id/);
-  assert.match(wb01, /migrationCount === REQUIRED_MIGRATION_COUNT/);
+  assert.match(wb01, /isSupportedMigrationCount\(migrationCount\)/);
   assert.doesNotMatch(wb01, /TARGET_MIGRATION_COUNT/);
 
   assert.match(catalog, /runRlsActorQuery/);

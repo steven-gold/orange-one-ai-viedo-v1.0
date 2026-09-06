@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { cookies } from "next/headers";
-import { ensureProductionNeonRuntime, getProductionNeonSql, REQUIRED_MIGRATION_COUNT } from "@/server/database/neonRuntime";
+import { ensureProductionNeonRuntime, getProductionNeonSql, isSupportedMigrationCount } from "@/server/database/neonRuntime";
 import { runRlsActorQuery } from "@/server/database/rlsRuntime";
 import {
   configureDashboardRuntime,
@@ -477,7 +477,7 @@ async function readDashboardProjection(request: DashboardAccessRequest): Promise
     industry_news: { industry_news: { items: [] } },
     system_status_summary: {
       system_status_summary: {
-        overall_status: migrationCount === REQUIRED_MIGRATION_COUNT ? "READY" : "BLOCKED",
+        overall_status: migrationCount !== null && isSupportedMigrationCount(migrationCount) ? "READY" : "BLOCKED",
         summary: `schema_migration_history=${migrationCount ?? "unresolved"}`,
         checked_at: asText(migration?.checked_at),
       },

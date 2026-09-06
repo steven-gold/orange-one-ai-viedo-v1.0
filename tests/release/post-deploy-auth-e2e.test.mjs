@@ -40,6 +40,13 @@ test("production authenticated post-deploy E2E is secret-gated and exercises log
   assert.match(workflow, /env\.ACPOS_PRODUCTION_E2E_EMAIL != ''/);
   assert.match(workflow, /env\.ACPOS_PRODUCTION_E2E_PASSWORD != ''/);
   assert.match(workflow, /POST_DEPLOY_AUTH_E2E_BLOCKED reason=PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED/);
+  assert.match(workflow, /id: auth_http/);
+  assert.match(workflow, /id: auth_browser/);
+  assert.match(workflow, /continue-on-error: true/);
+  assert.match(workflow, /Enforce authenticated acceptance/);
+  assert.match(workflow, /AUTH_HTTP_OUTCOME/);
+  assert.match(workflow, /AUTH_BROWSER_OUTCOME/);
+  assert.match(workflow, /if: \${{ always\(\) }}/);
 
   assert.match(releaseGate, /Validate deployment smoke syntax/);
   assert.match(releaseGate, /node --check scripts\/post-deploy-smoke\.mjs/);
