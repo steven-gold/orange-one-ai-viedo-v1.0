@@ -247,7 +247,14 @@ post_deploy_acceptance:
   stale_alias_behavior: RETRY_FOR_120_SECONDS_THEN_FAIL
   preview_protection_behavior: Preview protection must not be bypassed by weakening application checks; production acceptance uses the canonical production alias.
   browser_gate_dependency: HTTP smoke for the same SHA must pass before remote browser cases run.
+  unauthenticated_browser_contract:
+    identity_session: GET /v1/identity/session may return 401
+    page_projection: GET /v1/ui-projections/{page_uid} may return 403 or 503 with a governed reason
+    exact_path_and_status_required: true
+    unexpected_4xx_or_5xx: FAIL
+    pageerror_or_unexpected_console_error: FAIL
   false_success_forbidden:
   - Testing the production alias for a new-branch SHA
   - Accepting a well-formed but stale release_sha
   - Counting skipped browser cases as executed
+  - Ignoring an HTTP error without exact path and status validation
