@@ -128,7 +128,7 @@ test("projection owners do not bypass protected rows", async () => {
   assert.match(wb01, /runRlsActorQuery/);
   assert.match(wb01, /hashSessionToken/);
   assert.match(wb01, /JOIN topics tp ON tp\.topic_id = cl\.topic_id/);
-  assert.match(wb01, /isSupportedMigrationCount\\(migrationCount\\)/);
+  assert.match(wb01, /isSupportedMigrationCount\(migrationCount\)/);
   assert.doesNotMatch(wb01, /TARGET_MIGRATION_COUNT/);
 
   assert.match(catalog, /runRlsActorQuery/);
