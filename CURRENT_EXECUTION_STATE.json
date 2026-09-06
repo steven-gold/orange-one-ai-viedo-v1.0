@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "last_sync_at": "2026-09-06T22:39:00+08:00",
+  "last_sync_at": "2026-09-06T22:45:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "main_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
   "new_sha_basis": "bc3d73bde09bfdab4e0bba452855aeeec65c64fa",
@@ -213,7 +213,14 @@
     "runtime_provider_profile_count": 0,
     "runtime_provider_group_count": 0,
     "runtime_provider_member_count": 0,
-    "runtime_execution_job_count": 0
+    "runtime_execution_job_count": 0,
+    "accounts_total": 2,
+    "ready_account_count": 2,
+    "active_app_user_count": 2,
+    "ready_account_actor_mapping_count": 2,
+    "identity_session_store_relation": true,
+    "session_total_count": 48,
+    "scrypt_hash_shape_account_count": 2
   },
   "current_gate_scores": {
     "1_main_sha": {
@@ -277,8 +284,9 @@
       "reason": "Production DB and deployed runtime foundation are live: 10 RLS tables / 21 policies / acpos_app_runtime NOLOGIN NOBYPASSRLS; unauthenticated production deny verified. Positive authenticated Production allow/cross-project E2E remains unavailable because active sessions=0 and no authorized plaintext credential is available."
     },
     "13_accounts": {
-      "status": "PARTIAL",
-      "reason": "2 runtime accounts and 2 app_users verified; full gate criteria not reverified"
+      "status": "PASS",
+      "score": "3/3",
+      "reason": "Production identity control-plane reverified against Current Identity Runtime Contract: acpos_runtime.sessions relation exists; accounts=2 and READY accounts=2; active non-disabled app_users=2; READY account-to-app_users email mappings=2; both account password_hash values match required scrypt$16384$8$1 format."
     },
     "14_login_session_e2e": {
       "status": "BLOCKED",
@@ -361,7 +369,8 @@
     "Production Readiness 200 verified",
     "Post Deploy HTTP Smoke #436 PASS across 18 projections and 18 formal routes",
     "Post Deploy Browser Smoke #436 PASS 54/54 cases across 18 pages and 3 widths",
-    "Main Release Gate #251 PASS for merge commit 8ecbb07e96187bbc3528685cedd1f70ab919a104"
+    "Main Release Gate #251 PASS for merge commit 8ecbb07e96187bbc3528685cedd1f70ab919a104",
+    "Production Accounts Gate reverified PASS 3/3: session store exists, 2 READY accounts, 2 active app_users, 2 exact email mappings, scrypt hash format valid"
   ],
   "in_progress_item": "LOGIN_SESSION_RLS_DEPENDENCY_CHAIN",
   "remaining_queue": [
@@ -464,7 +473,7 @@
     "Vercel management-plane authority remains unreadable because the connected Vercel team returns zero projects, though Production deployment_status/release_sha/health/readiness/smoke are independently verified."
   ],
   "next_executable_item": "No remaining production gate can be truthfully closed without one of these governed inputs: (A) an authorized Production login credential/secure CI secret for AUTH-001; (B) System Lifecycle materialization of exact AIAPI effectful operation -> command port/handler/path/permission mappings for PROVIDER-001; (C) Current Authority definition of exact queue_key/worker_key/retry/lease/DLQ topology for QUEUE-001. Until one is supplied/materialized, do not fabricate runtime rows, routes, credentials, sessions, or PASS evidence.",
-  "last_successful_commit": "bc3d73bde09bfdab4e0bba452855aeeec65c64fa",
+  "last_successful_commit": "34eb3ae2dcf40de2bae164ea8abf7b0c53d2ff9b",
   "last_successful_deployment": {
     "main_sha": "8ecbb07e96187bbc3528685cedd1f70ab919a104",
     "url": "https://orange-one-acpos-test.vercel.app",
