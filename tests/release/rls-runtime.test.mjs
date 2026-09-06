@@ -46,12 +46,13 @@ test("migration 0017 extends project-scope RLS to Core story tables", async () =
 
   assert.match(migration, /ALTER TABLE public\.mother_locks ENABLE ROW LEVEL SECURITY/);
   assert.match(migration, /ALTER TABLE public\.story_candidates ENABLE ROW LEVEL SECURITY/);
+  assert.match(migration, /GRANT SELECT ON public\.department_tasks, public\.child_locks TO acpos_app_runtime/);
   assert.match(migration, /acpos_runtime\.can_access_project\(project_id\)/);
   assert.match(migration, /acpos_runtime\.can_manage_project\(project_id\)/);
   assert.match(migration, /0017_core_story_rls_closure/);
-  assert.match(migration, /7530585a9c2b6c2a3e1890fb858d4f24d5c838a52cbd556f9b64427d6f5382ba/);
+  assert.match(migration, /6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551/);
   assert.match(manifest, /migration_id: 0017_core_story_rls_closure/);
-  assert.match(manifest, /payload_sha256: 7530585a9c2b6c2a3e1890fb858d4f24d5c838a52cbd556f9b64427d6f5382ba/);
+  assert.match(manifest, /payload_sha256: 6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551/);
 });
 
 test("production query runtime sets local non-owner role before protected queries", async () => {
@@ -80,4 +81,23 @@ test("production query runtime sets local non-owner role before protected querie
   assert.match(identityRuntime, /recommendation/);
   assert.match(identityRuntime, /generated_by_subject_type/);
   assert.match(identityRuntime, /'USER'/);
+});
+
+test("projection owners do not bypass protected rows", async () => {
+  const wb01 = await read("src/server/dashboard/wb01ProjectionRuntime.ts");
+  const catalog = await read("src/server/shared/pageCatalogProjectionRuntime.ts");
+
+  assert.match(wb01, /runRlsActorQuery/);
+  assert.match(wb01, /hashSessionToken/);
+  assert.match(wb01, /JOIN topics tp ON tp\.topic_id = cl\.topic_id/);
+  assert.match(wb01, /migrationCount === 17/);
+
+  assert.match(catalog, /runRlsActorQuery/);
+  assert.match(catalog, /hashSessionToken/);
+  assert.match(catalog, /session_token_hash/);
+  assert.match(catalog, /readProjectRefs\(sql, sessionTokenHash\)/);
+  assert.match(catalog, /readTopicRefs\(sql, sessionTokenHash\)/);
+  assert.match(catalog, /readDepartmentTasks\(sql, sessionTokenHash/);
+  assert.match(catalog, /readCoreProjection\(sql, sessionTokenHash\)/);
+  assert.match(catalog, /readStrategyFromDb\(sql, sessionTokenHash\)/);
 });
