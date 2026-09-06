@@ -9,7 +9,7 @@ const pages = [
   ["DEV", "src/components/pages/DevVisual.tsx", ["DevRuntimeProvider", "runtimeErrorUid", "phaseDisplay", "audit"]],
   ["SOC", "src/components/pages/SocVisual.tsx", ["SocRuntimeProvider", "SocGovernedButton", "projection"]],
   ["ERP", "src/components/pages/ErpVisual.tsx", ["ErpRuntimeProvider", "invoke", "data-disabled-reason", "runtimeError"]],
-  ["AIAPI", "src/components/pages/AiApiVisual.tsx", ["readAiApiProjection", "REMAP_REQUIRED_NOT_EXECUTED", "data-disabled-reason", "runtimeError"]],
+  ["AIAPI", "src/components/pages/AiApiVisual.tsx", ["readAiApiProjection", "invokeAiApiCommand", "MATERIALIZED_CURRENT", "data-disabled-reason", "runtimeError"]],
   ["SG-02", "src/components/pages/QaCriteriaVisual.tsx", ["readQaCriteriaProjection", "configureQaCriteriaResource", "approveQaCriteriaResource", "runtimeError"]],
   ["ADMIN-STRATEGY", "src/components/pages/StrategyAdminVisual.tsx", ["StrategyAdminRuntimeProvider", "useStrategyAdminRuntime", "data-disabled-reason", "runtimeError"]],
   ["KB", "src/components/pages/KnowledgeAdminVisual.tsx", ["readKnowledgeProjection", "getKnowledgeActionTrace", "data-blocked-reason", "runtimeError"]],
