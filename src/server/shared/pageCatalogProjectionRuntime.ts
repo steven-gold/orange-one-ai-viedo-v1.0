@@ -1,6 +1,8 @@
 import { cookies } from "next/headers";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
+import { runRlsActorQuery } from "@/server/database/rlsRuntime";
 import {
+  hashSessionToken,
   IDENTITY_COOKIE_NAME,
   resolveIdentityFromCookie,
 } from "@/server/identity/identityRuntime";
@@ -73,18 +75,26 @@ async function readSessionCookie(): Promise<string | undefined> {
   }
 }
 
-type GateDecision = { allowed: true } | { allowed: false; reason_code: string };
+type GateDecision =
+  | { allowed: true; session_token_hash: string }
+  | { allowed: false; reason_code: string };
 
 async function evaluatePageViewGate(resourceKey: string): Promise<GateDecision> {
   await ensureProductionNeonRuntime();
   const sql = getProductionNeonSql();
   if (!sql) return { allowed: false, reason_code: "DATABASE_RUNTIME_NOT_BOUND" };
 
-  const identity = await resolveIdentityFromCookie(await readSessionCookie());
+  const cookieValue = await readSessionCookie();
+  const identity = await resolveIdentityFromCookie(cookieValue);
   if (!identity.ok) return { allowed: false, reason_code: identity.reason_code };
+  if (!cookieValue) return { allowed: false, reason_code: "RLS_SESSION_CONTEXT_REQUIRED" };
+  const sessionTokenHash = hashSessionToken(cookieValue);
 
   try {
-    const rows = await sql`
+    const rows = await runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
       SELECT a.account_permission_assignment_id::text AS account_permission_assignment_id,
              a.effect,
              a.status,
@@ -101,7 +111,8 @@ async function evaluatePageViewGate(resourceKey: string): Promise<GateDecision> 
         AND a.status = 'APPROVED'
         AND a.effective_from <= now()
         AND (a.effective_to IS NULL OR a.effective_to > now())
-    `;
+      `,
+    );
     const list = Array.isArray(rows) ? rows : [];
     const requestScope = {} as Record<string, never>;
     const matched: Array<{ effect: string }> = [];
@@ -115,7 +126,7 @@ async function evaluatePageViewGate(resourceKey: string): Promise<GateDecision> 
       matched.push({ effect });
     }
     if (matched.some((row) => row.effect === "DENY")) return { allowed: false, reason_code: "PERMISSION_DENIED" };
-    if (matched.some((row) => row.effect === "ALLOW")) return { allowed: true };
+    if (matched.some((row) => row.effect === "ALLOW")) return { allowed: true, session_token_hash: sessionTokenHash };
     return { allowed: false, reason_code: "PERMISSION_OR_SCOPE_DENIED" };
   } catch {
     return { allowed: false, reason_code: "AUTHORIZATION_EVALUATION_FAILED" };
@@ -164,13 +175,17 @@ function refList(rows: Record<string, unknown>[], refKey = "ref", labelKey = "la
   });
 }
 
-async function readProjectRefs(sql: SqlClient): Promise<RefItem[]> {
-  const rows = await sql`
-    SELECT p.project_id::text AS ref, p.title AS label
-    FROM projects p
-    WHERE p.archived_at IS NULL
-    ORDER BY p.created_at DESC
-  `;
+async function readProjectRefs(sql: SqlClient, sessionTokenHash: string): Promise<RefItem[]> {
+  const rows = await runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT p.project_id::text AS ref, p.title AS label
+      FROM projects p
+      WHERE p.archived_at IS NULL
+      ORDER BY p.created_at DESC
+    `,
+  );
   return (Array.isArray(rows) ? rows : []).flatMap((raw) => {
     const row = asRecord(raw);
     const ref = asText(row?.ref);
@@ -180,13 +195,17 @@ async function readProjectRefs(sql: SqlClient): Promise<RefItem[]> {
   });
 }
 
-async function readTopicRefs(sql: SqlClient): Promise<RefItem[]> {
-  const rows = await sql`
-    SELECT t.topic_id::text AS ref, t.title AS label
-    FROM topics t
-    WHERE t.archived_at IS NULL
-    ORDER BY t.created_at DESC
-  `;
+async function readTopicRefs(sql: SqlClient, sessionTokenHash: string): Promise<RefItem[]> {
+  const rows = await runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT t.topic_id::text AS ref, t.title AS label
+      FROM topics t
+      WHERE t.archived_at IS NULL
+      ORDER BY t.created_at DESC
+    `,
+  );
   return (Array.isArray(rows) ? rows : []).flatMap((raw) => {
     const row = asRecord(raw);
     const ref = asText(row?.ref);
@@ -206,22 +225,26 @@ type DepartmentTaskRow = {
   topic_label: string;
 };
 
-async function readDepartmentTasks(sql: SqlClient, department: string): Promise<DepartmentTaskRow[]> {
-  const rows = await sql`
-    SELECT t.task_id::text AS task_id,
-           t.status::text AS status,
-           t.input_fingerprint,
-           p.project_id::text AS project_id,
-           p.title AS project_label,
-           tp.topic_id::text AS topic_id,
-           tp.title AS topic_label
-    FROM department_tasks t
-    JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
-    JOIN topics tp ON tp.topic_id = cl.topic_id
-    JOIN projects p ON p.project_id = tp.project_id
-    WHERE t.department::text = ${department}
-    ORDER BY t.created_at DESC
-  `;
+async function readDepartmentTasks(sql: SqlClient, sessionTokenHash: string, department: string): Promise<DepartmentTaskRow[]> {
+  const rows = await runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT t.task_id::text AS task_id,
+             t.status::text AS status,
+             t.input_fingerprint,
+             p.project_id::text AS project_id,
+             p.title AS project_label,
+             tp.topic_id::text AS topic_id,
+             tp.title AS topic_label
+      FROM department_tasks t
+      JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
+      JOIN topics tp ON tp.topic_id = cl.topic_id
+      JOIN projects p ON p.project_id = tp.project_id
+      WHERE t.department::text = ${department}
+      ORDER BY t.created_at DESC
+    `,
+  );
   return (Array.isArray(rows) ? rows : []).flatMap((raw) => {
     const row = asRecord(raw);
     const task_id = asText(row?.task_id);
@@ -243,27 +266,35 @@ async function readDepartmentTasks(sql: SqlClient, department: string): Promise<
   });
 }
 
-async function readCoreProjection(sql: SqlClient): Promise<unknown> {
-  const projectRows = await sql`
+async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
+  const projectRows = await runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
     SELECT p.project_id::text AS project_id,
            p.active_version_id::text AS project_version_ref,
            p.title AS label,
            p.status::text AS status
     FROM projects p
     WHERE p.archived_at IS NULL
-    ORDER BY p.created_at DESC
-  `;
+      ORDER BY p.created_at DESC
+    `,
+  );
   let topicRows: unknown = [];
   try {
-    topicRows = await sql`
-      SELECT t.topic_id::text AS topic_id,
-             t.active_version_id::text AS topic_version_ref,
-             t.title AS label,
-             t.project_id::text AS project_id
-      FROM topics t
-      WHERE t.archived_at IS NULL
-      ORDER BY t.created_at DESC
-    `;
+    topicRows = await runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT t.topic_id::text AS topic_id,
+               t.active_version_id::text AS topic_version_ref,
+               t.title AS label,
+               t.project_id::text AS project_id
+        FROM topics t
+        WHERE t.archived_at IS NULL
+        ORDER BY t.created_at DESC
+      `,
+    );
   } catch {
     topicRows = [];
   }
@@ -287,13 +318,17 @@ async function readCoreProjection(sql: SqlClient): Promise<unknown> {
   let threadRows: unknown = [];
   if (first) {
     try {
-      threadRows = await sql`
-        SELECT c.conversation_id::text AS conversation_id,
-               c.title AS label
-        FROM conversations c
-        WHERE c.project_id = ${first.project_id}::uuid
-        ORDER BY c.created_at DESC
-      `;
+      threadRows = await runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT c.conversation_id::text AS conversation_id,
+                 c.title AS label
+          FROM conversations c
+          WHERE c.project_id = ${first.project_id}::uuid
+          ORDER BY c.created_at DESC
+        `,
+      );
     } catch {
       threadRows = [];
     }
@@ -613,11 +648,11 @@ function emptyKnowledge(): unknown {
   return { page_state: "EMPTY", values: {}, control_enabled: {} };
 }
 
-async function readAssetFromDb(sql: SqlClient): Promise<unknown> {
+async function readAssetFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
   const [projects, topics, tasks] = await Promise.all([
-    readProjectRefs(sql),
-    readTopicRefs(sql),
-    readDepartmentTasks(sql, "ASSET"),
+    readProjectRefs(sql, sessionTokenHash),
+    readTopicRefs(sql, sessionTokenHash),
+    readDepartmentTasks(sql, sessionTokenHash, "ASSET"),
   ]);
   const first = tasks[0] ?? null;
   const empty = emptyAsset() as Record<string, unknown>;
@@ -638,11 +673,11 @@ async function readAssetFromDb(sql: SqlClient): Promise<unknown> {
   };
 }
 
-async function readVideoFromDb(sql: SqlClient): Promise<unknown> {
+async function readVideoFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
   const [projects, topics, tasks] = await Promise.all([
-    readProjectRefs(sql),
-    readTopicRefs(sql),
-    readDepartmentTasks(sql, "VIDEO"),
+    readProjectRefs(sql, sessionTokenHash),
+    readTopicRefs(sql, sessionTokenHash),
+    readDepartmentTasks(sql, sessionTokenHash, "VIDEO"),
   ]);
   const first = tasks[0] ?? null;
   const empty = emptyVideo() as Record<string, unknown>;
@@ -663,11 +698,11 @@ async function readVideoFromDb(sql: SqlClient): Promise<unknown> {
   };
 }
 
-async function readEditFromDb(sql: SqlClient): Promise<unknown> {
+async function readEditFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
   const [projects, topics, tasks] = await Promise.all([
-    readProjectRefs(sql),
-    readTopicRefs(sql),
-    readDepartmentTasks(sql, "EDITING"),
+    readProjectRefs(sql, sessionTokenHash),
+    readTopicRefs(sql, sessionTokenHash),
+    readDepartmentTasks(sql, sessionTokenHash, "EDITING"),
   ]);
   const first = tasks[0] ?? null;
   const empty = emptyEdit() as Record<string, unknown>;
@@ -689,11 +724,11 @@ async function readEditFromDb(sql: SqlClient): Promise<unknown> {
   };
 }
 
-async function readQaFromDb(sql: SqlClient): Promise<unknown> {
+async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
   const [projects, topics, tasks] = await Promise.all([
-    readProjectRefs(sql),
-    readTopicRefs(sql),
-    readDepartmentTasks(sql, "QA"),
+    readProjectRefs(sql, sessionTokenHash),
+    readTopicRefs(sql, sessionTokenHash),
+    readDepartmentTasks(sql, sessionTokenHash, "QA"),
   ]);
   const first = tasks[0] ?? null;
   const reviews = refList(await safeRows(() => sql`
@@ -752,13 +787,17 @@ async function readQaFromDb(sql: SqlClient): Promise<unknown> {
   };
 }
 
-async function readStrategyFromDb(sql: SqlClient): Promise<unknown> {
-  const topics = await readTopicRefs(sql);
-  const conversations = refList(await safeRows(() => sql`
-    SELECT c.conversation_id::text AS ref, c.title AS label
-    FROM conversations c
-    ORDER BY c.created_at DESC
-  `));
+async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
+  const topics = await readTopicRefs(sql, sessionTokenHash);
+  const conversations = refList(await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT c.conversation_id::text AS ref, c.title AS label
+      FROM conversations c
+      ORDER BY c.created_at DESC
+    `,
+  )));
   const candidates = refList(await safeRows(() => sql`
     SELECT s.strategy_candidate_id::text AS ref, s.decision_status::text AS label
     FROM strategy_candidates s
@@ -802,13 +841,13 @@ async function readStrategyFromDb(sql: SqlClient): Promise<unknown> {
   };
 }
 
-async function readInfoFromDb(sql: SqlClient): Promise<unknown> {
+async function readInfoFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
   const sources = refList(await safeRows(() => sql`
     SELECT k.knowledge_source_id::text AS ref, k.source_key AS label
     FROM knowledge_sources k
     ORDER BY k.created_at DESC
   `));
-  const projects = await readProjectRefs(sql);
+  const projects = await readProjectRefs(sql, sessionTokenHash);
   const packs = await safeRows(() => sql`
     SELECT f.fact_pack_id::text AS ref, f.freshness_at::text AS freshness_at
     FROM fact_packs f
@@ -1139,24 +1178,24 @@ async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
   };
 }
 
-async function readPageValue(pageUid: string, sql: SqlClient): Promise<unknown> {
+async function readPageValue(pageUid: string, sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
   switch (pageUid) {
     case "CORE-01":
-      return readCoreProjection(sql);
+      return readCoreProjection(sql, sessionTokenHash);
     case "ASSET-01":
-      return readAssetFromDb(sql);
+      return readAssetFromDb(sql, sessionTokenHash);
     case "VIDEO-01":
-      return readVideoFromDb(sql);
+      return readVideoFromDb(sql, sessionTokenHash);
     case "EDIT-01":
-      return readEditFromDb(sql);
+      return readEditFromDb(sql, sessionTokenHash);
     case "QA-01":
-      return readQaFromDb(sql);
+      return readQaFromDb(sql, sessionTokenHash);
     case "admin:DB-01":
       return readDbCatalogProjection(sql);
     case "workspace:STR-01":
-      return readStrategyFromDb(sql);
+      return readStrategyFromDb(sql, sessionTokenHash);
     case "workspace:INFO-01":
-      return readInfoFromDb(sql);
+      return readInfoFromDb(sql, sessionTokenHash);
     case "admin:SYS-01":
       return readSystemFromDb(sql);
     case "admin:IAM-01":
@@ -1197,7 +1236,7 @@ export async function readCatalogPageProjection(request: UiProjectionRequest) {
   }
 
   try {
-    const value = await readPageValue(request.page_uid, sql);
+    const value = await readPageValue(request.page_uid, sql, decision.session_token_hash);
     if (value == null) return null;
     return { ok: true as const, value, correlation_id: request.correlation_id };
   } catch {
