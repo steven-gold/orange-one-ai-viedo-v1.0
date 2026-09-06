@@ -3,6 +3,7 @@
 -- Scope: mother lock and story candidate rows are isolated by the existing session-bound project authority.
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.mother_locks, public.story_candidates TO acpos_app_runtime;
+GRANT SELECT ON public.department_tasks, public.child_locks TO acpos_app_runtime;
 
 ALTER TABLE public.mother_locks ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS acpos_mother_locks_select ON public.mother_locks;
@@ -29,7 +30,7 @@ WITH CHECK (acpos_runtime.can_manage_project(project_id));
 INSERT INTO schema_migration_history(migration_id, checksum, applied_by, approval_ref)
 VALUES (
   '0017_core_story_rls_closure',
-  '7530585a9c2b6c2a3e1890fb858d4f24d5c838a52cbd556f9b64427d6f5382ba',
+  '6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551',
   'migration-runner',
   'CR-RLS-0017'
 )
