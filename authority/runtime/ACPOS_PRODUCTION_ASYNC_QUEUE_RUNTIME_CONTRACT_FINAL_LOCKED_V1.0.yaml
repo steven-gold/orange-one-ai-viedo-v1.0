@@ -102,6 +102,25 @@ worker_contract:
     approval: public.replay_candidates required
     same_idempotency_key_reuse: REQUIRED
 
+on_demand_authenticated_probe:
+  operation_id: runProviderQueueProbe
+  path: /v1/aiapi/queue/probe
+  method: POST
+  permission: page:admin:AIAPI-01
+  purpose: Production runtime proof of enqueue, claim, handler, inbox receipt, publish, heartbeat and cleanup.
+  external_provider_call: FORBIDDEN
+  cleanup_required: true
+  success_evidence:
+  - queue row READY
+  - worker row READY
+  - claimed = 1
+  - inbox_receipt = 1
+  - published = 1
+  - residual_probe_rows = 0
+  - worker heartbeat updated
+  primary_worker_acceptance_path: true
+  recovery_cron_independent: true
+
 provider_execution_contract:
   enqueue_after:
   - approved provider capability
@@ -148,6 +167,6 @@ completion_claim:
   gate_23_pass_requires:
   - migration applied in Production
   - cron worker deployed and authenticated
-  - Production probe proves queue + claim + success + inbox + heartbeat
+  - Authenticated Production HTTP probe proves queue + claim + success + inbox + heartbeat + cleanup
   - Production failure probe proves retry + DLQ + no residual unsafe data
   gate_22_independent: true

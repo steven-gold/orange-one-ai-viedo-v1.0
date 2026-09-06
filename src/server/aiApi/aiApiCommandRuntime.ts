@@ -15,7 +15,8 @@ export type AiApiOperation =
   | "restoreProviderFromQuarantine"
   | "runSandboxTest"
   | "executeProviderRoute"
-  | "getProviderRouteDecision";
+  | "getProviderRouteDecision"
+  | "runProviderQueueProbe";
 
 export type AiApiRuntimeRequest = {
   operation_id: AiApiOperation;

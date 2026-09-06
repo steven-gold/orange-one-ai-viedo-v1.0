@@ -8,6 +8,7 @@ const providerContract = await readFile("authority/global/ACPOS_PRODUCTION_SCRIP
 const runtime = await readFile("src/server/aiApi/productionAiApiCommandRuntime.ts", "utf8");
 const commandRuntime = await readFile("src/server/aiApi/aiApiCommandRuntime.ts", "utf8");
 const binder = await readFile("src/server/shared/identityPageCommandRuntime.ts", "utf8");
+const queueAuthority = await readFile("authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml", "utf8");
 
 const routeFiles = [
   ["src/app/v1/aiapi/provider-profiles/route.ts", "listProviderModelProfiles", "createProviderModelProfile"],
@@ -22,6 +23,7 @@ const routeFiles = [
   ["src/app/v1/aiapi/routes/route.ts", "executeProviderRoute"],
   ["src/app/v1/aiapi/routes/[routeDecisionId]/route.ts", "getProviderRouteDecision"],
   ["src/app/v1/aiapi/kill-switch/route.ts", "setKillSwitch"],
+  ["src/app/v1/aiapi/queue/probe/route.ts", "runProviderQueueProbe"],
 ];
 
 test("AIAPI Current registry materializes only Authority-named provider operations", () => {
@@ -67,3 +69,13 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(runtime, /plaintext_persisted: false/);
   assert.doesNotMatch(runtime, /process\.env\[[^\]]+\]\s*=(?!=)|process\.env\.[A-Z0-9_]+\s*=/);
 });
+
+test("AIAPI queue probe is separately governed by queue runtime authority", () => {
+  assert.match(queueAuthority, /operation_id: runProviderQueueProbe/);
+  assert.match(queueAuthority, /path: \/v1\/aiapi\/queue\/probe/);
+  assert.match(queueAuthority, /external_provider_call: FORBIDDEN/);
+  assert.match(registry, /operation_id: runProviderQueueProbe/);
+  assert.match(registry, /probe_cleanup_required: true/);
+  assert.match(runtime, /runProviderQueueRuntimeProbe/);
+});
+

@@ -96,7 +96,7 @@ test("production query runtime sets local non-owner role before protected querie
   const identityRuntime = await read("src/server/shared/identityPageCommandRuntime.ts");
   const coreClient = await read("src/domain/core/coreClientPort.ts");
 
-  assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 18/);
+  assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 19/);
   assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 19/);
   assert.doesNotMatch(neonRuntime, /TARGET_MIGRATION_COUNT/);
   assert.match(neonRuntime, /isSupportedMigrationCount/);
