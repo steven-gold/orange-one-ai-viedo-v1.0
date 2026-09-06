@@ -314,6 +314,7 @@ export async function invokeStrategyAdminAction(
   action_id: StrategyAdminMappedAction,
   view: StrategyAdminView,
   projection: StrategyAdminProjection,
+  payload: Readonly<Record<string, unknown>> = {},
 ) {
   const current = commandAdapter;
   if (!current) {
