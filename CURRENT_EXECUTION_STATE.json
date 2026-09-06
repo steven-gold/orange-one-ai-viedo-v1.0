@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0",
+  "project": "ACPOS",
+  "repository": "steven-gold/orange-one-ai-viedo-v1.0",
+  "last_sync_at": "2026-09-06T18:27:00+08:00",
+  "evidence_policy": "CURRENT_EVIDENCE_ONLY",
+  "main_sha": "a7678265dc8dc914b3c9d8f4a7216c34226ca851",
+  "new_sha_before_state_commit": "742c518784df88dbe9c5f5fbe883875e73b2cd4c",
+  "new_sha": "PENDING_STATE_COMMIT_RESULT",
+  "latest_release_gate": {
+    "status": "NOT_REVERIFIED_THIS_SYNC",
+    "last_recorded": "PASS #219"
+  },
+  "latest_post_deploy_smoke": {
+    "status": "NOT_REVERIFIED_THIS_SYNC",
+    "last_recorded": "PASS #374"
+  },
+  "vercel": {
+    "target": "orange-one-acpos-test",
+    "production_url": "https://orange-one-acpos-test.vercel.app",
+    "release_sha": "NOT_VERIFIED_THIS_SYNC",
+    "deployment_status": "NOT_VERIFIED_THIS_SYNC",
+    "management_authority": "NOT_VERIFIED",
+    "management_authority_reason": "Connected Vercel team currently returned zero visible projects and target lookup returned 404; do not infer environment authority from prior records.",
+    "readiness_http": "NOT_VERIFIED_THIS_SYNC",
+    "readiness_reason": "NOT_VERIFIED_THIS_SYNC"
+  },
+  "neon": {
+    "project": "wild-wave-25661146",
+    "branch": "main",
+    "branch_id": "br-shy-cherry-auiol4oy",
+    "database": "neondb",
+    "current_role": "neondb_owner",
+    "public_base_table_count": 152,
+    "rls_enabled_public_table_count": 0,
+    "public_policy_count": 0,
+    "account_count": 2,
+    "session_count": 48,
+    "app_user_count": 2,
+    "migration_repo_highest": 15,
+    "migration_applied_count": "NOT_VERIFIED_THIS_SYNC",
+    "provider_capability_count": "NOT_VERIFIED_THIS_SYNC",
+    "provider_profile_count": "NOT_VERIFIED_THIS_SYNC",
+    "secret_reference_count": "NOT_VERIFIED_THIS_SYNC",
+    "queue_count": "NOT_VERIFIED_THIS_SYNC",
+    "worker_count": "NOT_VERIFIED_THIS_SYNC",
+    "dlq_count": "NOT_VERIFIED_THIS_SYNC"
+  },
+  "current_gate_scores": {
+    "1_main_sha": {"status": "PASS", "score": "2/2"},
+    "2_release_gate": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "3_vercel_deployment": {"status": "NOT_VERIFIED_THIS_SYNC"},
+    "4_health": {"status": "NOT_VERIFIED_THIS_SYNC"},
+    "5_readiness": {"status": "NOT_VERIFIED_THIS_SYNC"},
+    "6_remote_http_smoke": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "7_remote_browser_smoke": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "8_routes": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "9_production_authority": {"status": "PARTIAL", "reason": "Vercel management authority not currently readable"},
+    "10_migrations": {"status": "PARTIAL", "reason": "repository sequence verified through 0015; production applied history not reverified"},
+    "11_schema_integrity": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "12_postgresql_rls": {"status": "BLOCKED", "score": "0", "reason": "public RLS enabled 0/152; public policies 0; connected production role neondb_owner"},
+    "13_accounts": {"status": "PARTIAL", "reason": "2 runtime accounts and 2 app_users verified; full gate criteria not reverified"},
+    "14_login_session_e2e": {"status": "BLOCKED", "score": "0/4", "reason": "positive production credential E2E not executed this sync"},
+    "15_permission_e2e": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "16_production_read_models": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "17_core_runtime": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "18_asset_runtime": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "19_video_runtime": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "20_edit_voice_runtime": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "21_qa_runtime": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "22_external_provider": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "23_queue_worker_dlq": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "24_admin_mutation": {"status": "NOT_REVERIFIED_THIS_SYNC"},
+    "25_full_page_button_acceptance": {"status": "NOT_REVERIFIED_THIS_SYNC"}
+  },
+  "production_ready_percentage": null,
+  "production_ready_percentage_reason": "25 gates were not fully re-audited in this sync; prior 50.0% must not be reused as Current.",
+  "completed_items": [
+    "Baseline current repo branch verification",
+    "Production Neon target verification",
+    "Identity/session runtime owner verification",
+    "Repository migration sequence verification through 0015"
+  ],
+  "in_progress_item": "LOGIN_SESSION_RLS_DEPENDENCY_CHAIN",
+  "remaining_queue": [
+    {
+      "item_id": "AUTH-001",
+      "affects_gate": [14, 15],
+      "dependency": "existing acpos_runtime.accounts/sessions and app_users",
+      "exact_files": ["src/server/identity/identityRuntime.ts", "src/app/identity/login/route.ts", "tests/release/identity-runtime.test.mjs"],
+      "exact_runtime": "Production identity/session",
+      "expected_test": "positive login -> Set-Cookie -> authenticated session -> permission-visible UI -> logout",
+      "expected_deploy_effect": "close production Login/Session E2E evidence",
+      "status": "BLOCKED_ON_PRODUCTION_TEST_CREDENTIAL_OR_EXISTING_SECURE_CI_SECRET",
+      "evidence": "runtime data exists (2 accounts, 48 sessions, 2 app_users); no production plaintext credential was retrieved or inferred"
+    },
+    {
+      "item_id": "RLS-001",
+      "affects_gate": [12, 15, 16],
+      "dependency": "runtime non-owner role + authority-aligned policy mapping + deployable DB credential binding",
+      "exact_files": ["database/migrations/0016_*", "src/server/database/neonRuntime.ts"],
+      "exact_runtime": "Neon production non-owner runtime role",
+      "expected_test": "deny/allow/cross-project isolation + authenticated runtime smoke",
+      "expected_deploy_effect": "remove owner/BYPASSRLS dependency",
+      "status": "READY_FOR_DESIGN_FROM_CURRENT_SCHEMA_BUT_DEPLOY_BINDING_BLOCKED_BY_VERCEL_MANAGEMENT_AUTHORITY",
+      "evidence": "public RLS 0/152; policies 0; current production DB role neondb_owner"
+    },
+    {
+      "item_id": "READ-001",
+      "affects_gate": [16,17,18,19,20,21],
+      "dependency": "AUTH-001 + RLS-001",
+      "status": "WAITING_DEPENDENCY"
+    },
+    {
+      "item_id": "PROVIDER-QUEUE-001",
+      "affects_gate": [22,23,17,18,19,20,21],
+      "dependency": "production authority and runtime security closure",
+      "status": "WAITING_DEPENDENCY"
+    },
+    {
+      "item_id": "MUTATION-ACCEPTANCE-001",
+      "affects_gate": [24,25],
+      "dependency": "runtime/read/provider/queue closures",
+      "status": "WAITING_DEPENDENCY"
+    }
+  ],
+  "blockers": [
+    "Vercel management-plane project/environment authority is not currently readable through the connected Vercel account/team.",
+    "No production plaintext login credential may be inferred from password hashes; positive Login/Session E2E needs an existing secure credential source.",
+    "RLS production cutover requires a non-owner runtime credential to be bound to deployment before it can be accepted."
+  ],
+  "next_executable_item": "Inspect current schema permission/project ownership and prepare non-destructive RLS policy/role migration design without changing production credentials until deployment binding is available.",
+  "last_successful_commit": "742c518784df88dbe9c5f5fbe883875e73b2cd4c",
+  "last_successful_deployment": "NOT_REVERIFIED_THIS_SYNC"
+}
