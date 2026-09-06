@@ -238,3 +238,16 @@ completion_truth:
     - test runtime adapters are disabled
     - required real external E2E gates are PASS or explicitly recorded as deployment blocker
   no_evidence_no_complete: true
+
+post_deploy_acceptance:
+  scope: PRODUCTION_MAIN_ONLY
+  canonical_url: https://orange-one-acpos-test.vercel.app
+  required_release_identity: health.release_sha equals the triggering main deployment SHA
+  checkout_identity: exact deployment SHA or successful main Release Gate head SHA
+  stale_alias_behavior: RETRY_FOR_120_SECONDS_THEN_FAIL
+  preview_protection_behavior: Preview protection must not be bypassed by weakening application checks; production acceptance uses the canonical production alias.
+  browser_gate_dependency: HTTP smoke for the same SHA must pass before remote browser cases run.
+  false_success_forbidden:
+  - Testing the production alias for a new-branch SHA
+  - Accepting a well-formed but stale release_sha
+  - Counting skipped browser cases as executed
