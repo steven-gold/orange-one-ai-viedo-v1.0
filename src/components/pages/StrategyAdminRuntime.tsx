@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   isStrategyAdminCommandAdapterBound,
+  isStrategyAdminOperationRuntimeReady,
   invokeStrategyAdminAction,
   readStrategyAdminProjection,
   type StrategyAdminMappedAction,
@@ -70,6 +71,7 @@ export function StrategyAdminRuntimeProvider({ children }: { children: ReactNode
         actionId !== "ACT-CANDIDATE-DECIDE" &&
         actionId !== "ACT-NAV-OPEN" &&
         actionId in ACTIONS &&
+        isStrategyAdminOperationRuntimeReady(actionId) &&
         isStrategyAdminCommandAdapterBound()
       );
     },
