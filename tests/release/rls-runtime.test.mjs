@@ -35,17 +35,32 @@ test("migration 0016 materializes a non-BYPASSRLS role and session-bound policie
 
   assert.match(migration, /0016_postgresql_rls_runtime_foundation/);
   assert.match(migration, /9695cf577be5ea4aab5cd1a309112bab4e96da8a9743453b1a9bbb67b82b347d/);
-  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.3/);
+  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.4/);
   assert.match(manifest, /migration_id: 0016_postgresql_rls_runtime_foundation/);
   assert.match(manifest, /payload_sha256: 9695cf577be5ea4aab5cd1a309112bab4e96da8a9743453b1a9bbb67b82b347d/);
+});
+
+test("migration 0017 extends project-scope RLS to Core story tables", async () => {
+  const migration = await read("database/migrations/0017_core_story_rls_closure.sql");
+  const manifest = await read("database/migrations/migration_checksum_manifest.yaml");
+
+  assert.match(migration, /ALTER TABLE public\.mother_locks ENABLE ROW LEVEL SECURITY/);
+  assert.match(migration, /ALTER TABLE public\.story_candidates ENABLE ROW LEVEL SECURITY/);
+  assert.match(migration, /acpos_runtime\.can_access_project\(project_id\)/);
+  assert.match(migration, /acpos_runtime\.can_manage_project\(project_id\)/);
+  assert.match(migration, /0017_core_story_rls_closure/);
+  assert.match(migration, /7530585a9c2b6c2a3e1890fb858d4f24d5c838a52cbd556f9b64427d6f5382ba/);
+  assert.match(manifest, /migration_id: 0017_core_story_rls_closure/);
+  assert.match(manifest, /payload_sha256: 7530585a9c2b6c2a3e1890fb858d4f24d5c838a52cbd556f9b64427d6f5382ba/);
 });
 
 test("production query runtime sets local non-owner role before protected queries", async () => {
   const neonRuntime = await read("src/server/database/neonRuntime.ts");
   const rlsRuntime = await read("src/server/database/rlsRuntime.ts");
   const identityRuntime = await read("src/server/shared/identityPageCommandRuntime.ts");
+  const coreClient = await read("src/domain/core/coreClientPort.ts");
 
-  assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 16/);
+  assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 17/);
   assert.match(rlsRuntime, /RLS_RUNTIME_ROLE = "acpos_app_runtime"/);
   assert.match(rlsRuntime, /set_config\('acpos\.session_token_hash'/);
   assert.match(rlsRuntime, /SET LOCAL ROLE acpos_app_runtime/);
@@ -53,5 +68,16 @@ test("production query runtime sets local non-owner role before protected querie
   assert.match(identityRuntime, /runRlsActorQuery/);
 
   const scopedCalls = (identityRuntime.match(/runRlsActorQuery\(/g) ?? []).length;
-  assert.ok(scopedCalls >= 15, `expected at least 15 actor-scoped protected queries, got ${scopedCalls}`);
+  assert.ok(scopedCalls >= 17, `expected at least 17 actor-scoped protected queries, got ${scopedCalls}`);
+
+  assert.match(coreClient, /CORE-01-ACT-STORY-CANDIDATE/);
+  assert.match(coreClient, /STORY_CANDIDATE_REGISTERED_SCHEMA_PAYLOAD_REQUIRED/);
+  assert.match(identityRuntime, /STORY_CANDIDATE_FIELD_REQUIRED/);
+  assert.match(identityRuntime, /strengths/);
+  assert.match(identityRuntime, /weaknesses/);
+  assert.match(identityRuntime, /market_positioning/);
+  assert.match(identityRuntime, /production_cost/);
+  assert.match(identityRuntime, /recommendation/);
+  assert.match(identityRuntime, /generated_by_subject_type/);
+  assert.match(identityRuntime, /'USER'/);
 });
