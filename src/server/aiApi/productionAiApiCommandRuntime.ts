@@ -4,7 +4,8 @@ import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/data
 import { IDENTITY_COOKIE_NAME, resolveIdentityFromCookie } from "@/server/identity/identityRuntime";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 import type { AiApiRuntimeRequest } from "@/server/aiApi/aiApiCommandRuntime";
-import { runProviderQueueRuntimeProbe } from "@/server/queue/providerExecutionQueueRuntime";
+import { drainProviderExecutionEvent, enqueueProviderExecutionRequest, runProviderQueueRuntimeProbe } from "@/server/queue/providerExecutionQueueRuntime";
+import { compileProviderRequest, executeProviderHttpRequest, type ProviderHttpProfile } from "@/server/aiApi/providerHttpAdapterRuntime";
 
 type SqlClient = NonNullable<ReturnType<typeof getProductionNeonSql>>;
 type Row = Record<string, unknown>;
@@ -63,6 +64,33 @@ function credentialStatus(secretEnvRef: unknown): "SET" | "NOT_SET" {
   if (!ref) return "NOT_SET";
   return typeof process.env[ref] === "string" && process.env[ref]!.length > 0 ? "SET" : "NOT_SET";
 }
+function providerHttpProfile(row: Row): ProviderHttpProfile {
+  const profile_id=asText(row.id ?? row.profile_id);
+  const provider_id=asText(row.provider_id);
+  const model_id=asText(row.model_id);
+  const capability_type=asText(row.capability_type);
+  const adapter_type=asText(row.adapter_type);
+  const base_url=asText(row.base_url);
+  const endpoint_path=asText(row.endpoint_path);
+  const http_method=asText(row.http_method);
+  const secret_env_ref=asText(row.secret_env_ref);
+  const timeout_seconds=asInteger(row.timeout_seconds);
+  const request_template=asRecord(row.request_template);
+  const response_text_path=asText(row.response_text_path);
+  const version=asInteger(row.version ?? row.profile_version);
+  if (
+    !profile_id || !provider_id || !model_id || !capability_type || !base_url || !endpoint_path ||
+    !secret_env_ref || !timeout_seconds || !response_text_path || !version ||
+    (adapter_type!=="OPENAI_COMPATIBLE_CHAT" && adapter_type!=="GENERIC_JSON_HTTP") ||
+    (http_method!=="GET" && http_method!=="POST")
+  ) throw new NamedRuntimeError("AIAPI_PROVIDER_PROFILE_RUNTIME_INVALID");
+  return {
+    profile_id,provider_id,model_id,capability_type,
+    adapter_type,http_method,base_url,endpoint_path,secret_env_ref,timeout_seconds,
+    request_template,response_text_path,version,
+  };
+}
+
 function profileView(row: Row) {
   return {
     profile_id: asText(row.id),
