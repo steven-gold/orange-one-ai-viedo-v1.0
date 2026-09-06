@@ -271,40 +271,112 @@ async function deleteCredential(sql: SqlClient, request: AiApiRuntimeRequest) {
 }
 
 async function testProfile(sql: SqlClient, request: AiApiRuntimeRequest) {
-  const profileId = requirePath(request, "profileId");
-  const profile = first(await sql`SELECT * FROM acpos_runtime.provider_profiles WHERE id=${profileId} LIMIT 1`);
-  if (!profile) throw new NamedRuntimeError("AIAPI_PROFILE_NOT_FOUND");
-  const testId = crypto.randomUUID();
-  const secretRef = asText(profile.secret_env_ref);
-  const envBound = secretRef ? Boolean(process.env[secretRef]) : false;
-  const errorCode = envBound ? "PROVIDER_EXTERNAL_TEST_ADAPTER_NOT_MATERIALIZED" : "PROVIDER_SECRET_ENV_NOT_BOUND";
-  await sql`
-    INSERT INTO acpos_runtime.provider_profile_tests(
-      id,profile_id,status,dry_run,error_code,evidence_json
-    ) VALUES(
-      ${testId},${profileId},'BLOCKED',false,${errorCode},
-      ${JSON.stringify({ secret_reference_bound: envBound, plaintext_persisted: false })}::jsonb
-    )
-  `;
-  throw new NamedRuntimeError(errorCode);
+  const profileId=requirePath(request,"profileId");
+  const row=first(await sql`SELECT * FROM acpos_runtime.provider_profiles WHERE id=${profileId} LIMIT 1`);
+  if (!row) throw new NamedRuntimeError("AIAPI_PROFILE_NOT_FOUND");
+  const testId=crypto.randomUUID();
+  const profile=providerHttpProfile(row);
+  const envBound=Boolean(process.env[profile.secret_env_ref]);
+  if (!envBound) {
+    await sql`
+      INSERT INTO acpos_runtime.provider_profile_tests(
+        id,profile_id,status,dry_run,error_code,evidence_json
+      ) VALUES(
+        ${testId},${profileId},'BLOCKED',false,'PROVIDER_SECRET_ENV_NOT_BOUND',
+        ${JSON.stringify({ secret_reference_bound:false,plaintext_persisted:false,external_request_sent:false })}::jsonb
+      )
+    `;
+    throw new NamedRuntimeError("PROVIDER_SECRET_ENV_NOT_BOUND");
+  }
+
+  const compiled=compileProviderRequest(profile,"ACPOS provider connection test. Return a short acknowledgement.");
+  try {
+    const result=await executeProviderHttpRequest(profile,compiled);
+    await sql.transaction([
+      sql`
+        INSERT INTO acpos_runtime.provider_profile_tests(
+          id,profile_id,status,dry_run,compiled_payload_hash,result_hash,error_code,evidence_json
+        ) VALUES(
+          ${testId},${profileId},'PASS',false,${compiled.api_request_hash},${result.result_hash},NULL,
+          ${JSON.stringify({
+            secret_reference_bound:true,
+            plaintext_persisted:false,
+            external_request_sent:true,
+            http_status:result.http_status,
+            latency_ms:result.latency_ms,
+          })}::jsonb
+        )
+      `,
+      sql`
+        UPDATE acpos_runtime.provider_profiles
+        SET health_status='HEALTHY',updated_at=now()
+        WHERE id=${profileId}
+      `,
+    ]);
+    return {
+      test_id:testId,
+      status:"PASS",
+      dry_run:false,
+      http_status:result.http_status,
+      latency_ms:result.latency_ms,
+      result_hash:result.result_hash,
+      plaintext_persisted:false,
+    };
+  } catch (error) {
+    const errorCode=error instanceof Error && error.message ? error.message : "PROVIDER_CONNECTION_TEST_FAILED";
+    await sql.transaction([
+      sql`
+        INSERT INTO acpos_runtime.provider_profile_tests(
+          id,profile_id,status,dry_run,compiled_payload_hash,error_code,evidence_json
+        ) VALUES(
+          ${testId},${profileId},'FAIL',false,${compiled.api_request_hash},${errorCode},
+          ${JSON.stringify({
+            secret_reference_bound:true,
+            plaintext_persisted:false,
+            external_request_attempted:true,
+          })}::jsonb
+        )
+      `,
+      sql`
+        UPDATE acpos_runtime.provider_profiles
+        SET health_status='DEGRADED',updated_at=now()
+        WHERE id=${profileId}
+      `,
+    ]);
+    throw new NamedRuntimeError(errorCode);
+  }
 }
 
 async function runSandbox(sql: SqlClient, payload: Row) {
-  const profileId = requireText(payload, "profile_id");
-  const canonical = requireText(payload, "canonical_instruction");
-  const profile = first(await sql`SELECT id,request_template FROM acpos_runtime.provider_profiles WHERE id=${profileId} LIMIT 1`);
-  if (!profile) throw new NamedRuntimeError("AIAPI_PROFILE_NOT_FOUND");
-  const testId = crypto.randomUUID();
-  const compiledHash = createHash("sha256").update(`${profileId}:${canonical}`).digest("hex");
+  const profileId=requireText(payload,"profile_id");
+  const canonical=requireText(payload,"canonical_instruction");
+  const row=first(await sql`SELECT * FROM acpos_runtime.provider_profiles WHERE id=${profileId} LIMIT 1`);
+  if (!row) throw new NamedRuntimeError("AIAPI_PROFILE_NOT_FOUND");
+  const profile=providerHttpProfile(row);
+  const compiled=compileProviderRequest(profile,canonical);
+  const testId=crypto.randomUUID();
   await sql`
     INSERT INTO acpos_runtime.provider_profile_tests(
       id,profile_id,status,dry_run,compiled_payload_hash,evidence_json
     ) VALUES(
-      ${testId},${profileId},'PASS',true,${compiledHash},
-      ${JSON.stringify({ production_secret_used: false, production_output_written: false, canonical_meaning_preserved: true })}::jsonb
+      ${testId},${profileId},'PASS',true,${compiled.api_request_hash},
+      ${JSON.stringify({
+        production_secret_used:false,
+        production_output_written:false,
+        canonical_meaning_preserved:true,
+        external_request_sent:false,
+        compiled_prompt_hash:compiled.compiled_prompt_hash,
+      })}::jsonb
     )
   `;
-  return { test_id: testId, status: "PASS", dry_run: true, compiled_payload_hash: compiledHash };
+  return {
+    test_id:testId,
+    status:"PASS",
+    dry_run:true,
+    compiled_payload_hash:compiled.api_request_hash,
+    compiled_prompt_hash:compiled.compiled_prompt_hash,
+    external_request_sent:false,
+  };
 }
 
 async function createGroup(sql: SqlClient, payload: Row) {
