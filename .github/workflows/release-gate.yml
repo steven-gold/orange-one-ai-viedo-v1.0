@@ -36,7 +36,7 @@ jobs:
       - name: Release unit tests
         run: npm test
 
-      - name: Validate formal 1453 control/action denominator
+      - name: Validate legacy 92-page permission catalog baseline
         run: node scripts/release-formal-control-denominator.mjs
       - name: Validate deployment smoke syntax
         run: |
