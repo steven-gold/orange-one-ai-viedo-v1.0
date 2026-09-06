@@ -3,7 +3,12 @@ import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 import { emitObservability } from "@/server/shared/observability";
 
 export const AUTHORITY_NEON_PROJECT_ID = "wild-wave-25661146";
-export const REQUIRED_MIGRATION_COUNT = 18;\nexport const MAX_SUPPORTED_MIGRATION_COUNT = 19;\n\nexport function isSupportedMigrationCount(value: number): boolean {\n  return Number.isInteger(value) && value >= REQUIRED_MIGRATION_COUNT && value <= MAX_SUPPORTED_MIGRATION_COUNT;\n}
+export const REQUIRED_MIGRATION_COUNT = 18;
+export const MAX_SUPPORTED_MIGRATION_COUNT = 19;
+
+export function isSupportedMigrationCount(value: number): boolean {
+  return Number.isInteger(value) && value >= REQUIRED_MIGRATION_COUNT && value <= MAX_SUPPORTED_MIGRATION_COUNT;
+}
 
 type NeonSql = NeonQueryFunction<false, false>;
 
