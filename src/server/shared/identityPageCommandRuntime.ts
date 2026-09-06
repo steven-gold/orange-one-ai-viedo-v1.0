@@ -217,6 +217,24 @@ const IAM_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;acti
   revokeAccountPermission:{resource_key:"action:admin:IAM-05:ACT-CONFIGURE",action:"INVOKE"},
 };
 
+const AIAPI_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  createProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE",action:"INVOKE"},
+  updateProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-UPDATE-PROFILE",action:"INVOKE"},
+  getProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE",action:"INVOKE"},
+  listProviderModelProfiles:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-LIST-PROFILES",action:"INVOKE"},
+  testProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE",action:"INVOKE"},
+  retireProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-RETIRE-PROFILE",action:"INVOKE"},
+  setProviderModelCredential:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL",action:"INVOKE"},
+  deleteProviderModelCredential:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-DELETE-CREDENTIAL",action:"INVOKE"},
+  setKillSwitch:{resource_key:"control:CTRL-ADMIN-AIAPI-09-ACT-02-ACT-KILL-SWITCH",action:"INVOKE"},
+  createProviderCandidateGroup:{resource_key:"control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-CREATE-GROUP",action:"INVOKE"},
+  getProviderQuarantine:{resource_key:"control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-VIEW-QUARANTINE",action:"INVOKE"},
+  restoreProviderFromQuarantine:{resource_key:"control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-RESTORE-PROVIDER",action:"INVOKE"},
+  runSandboxTest:{resource_key:"action:admin:AIAPI-08:ACT-SYSTEM-TEST",action:"INVOKE"},
+  executeProviderRoute:{resource_key:"control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-EXECUTE-ROUTE",action:"INVOKE"},
+  getProviderRouteDecision:{resource_key:"control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-VIEW-ROUTE-DECISION",action:"INVOKE"},
+};
+
 const GOVERNANCE_PERMISSION_CONTEXT: Readonly<Record<string,{
   configure:{resource_key:string;action:string};
   approve:{resource_key:string;action:string};
@@ -234,6 +252,16 @@ const GOVERNANCE_PERMISSION_CONTEXT: Readonly<Record<string,{
     approve:{resource_key:"action:admin:SG-02:ACT-APPROVE",action:"INVOKE"},
   },
 };
+
+async function authorizeAiApi(request:{operation_id:string}):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:AIAPI-01"]);
+  if(!page.allowed)return page;
+  if(request.operation_id==="runProviderQueueProbe")return{allowed:true};
+  const permission=AIAPI_OPERATION_PERMISSION[request.operation_id];
+  if(!permission)return{allowed:false,reason_code:"AIAPI_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
+}
 
 async function authorizeIam(request:IamRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
   const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:IAM-01"]);
@@ -1021,7 +1049,7 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureAiApiCommandRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:AIAPI-01"]),
+    authorize: authorizeAiApi,
     execute: executeProductionAiApiCommand,
     audit: auditProductionAiApiCommand,
   });
