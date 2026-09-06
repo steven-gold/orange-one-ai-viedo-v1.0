@@ -44,6 +44,9 @@ try {
   await waitForServer();
   const browser = await chromium.launch({ headless: true });
   let cases = 0;
+  let interactiveControls = 0;
+  let governedControls = 0;
+  let safeLocalClicks = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -70,6 +73,79 @@ try {
         if (overflow > 0) throw new Error(`OVERFLOW_${uid}_${width}_${overflow}`);
         const body = (await page.locator("body").textContent()) ?? "";
         if (body.includes('"use client"') || body.includes("function KnowledgeAdminVisual") || body.includes("const CONTROLS")) throw new Error(`SOURCE_RENDER_${uid}`);
+
+        if (width === 1280) {
+          const controls = await page.locator('button, a[href], input, select, textarea, [role="button"]').evaluateAll((nodes) =>
+            nodes.map((node, index) => {
+              const element = /** @type {HTMLElement} */ (node);
+              const style = getComputedStyle(element);
+              const rect = element.getBoundingClientRect();
+              const visible = style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+              const disabled = "disabled" in element && Boolean(element.disabled);
+              const text = (element.textContent ?? "").trim().replace(/\s+/g, " ");
+              const accessible = (
+                element.getAttribute("aria-label") ??
+                element.getAttribute("title") ??
+                element.getAttribute("placeholder") ??
+                ("value" in element && typeof element.value === "string" ? element.value : "") ??
+                text
+              ).trim();
+              const governed = [
+                "data-control-id", "data-operation-id", "data-action-uid",
+                "data-gate-uid", "data-permission-uid"
+              ].some((name) => element.hasAttribute(name));
+              return {
+                index,
+                tag: element.tagName.toLowerCase(),
+                type: element.getAttribute("type"),
+                href: element.getAttribute("href"),
+                role: element.getAttribute("role"),
+                accessible,
+                disabled,
+                visible,
+                governed,
+                controlId: element.getAttribute("data-control-id"),
+                operationId: element.getAttribute("data-operation-id"),
+                actionUid: element.getAttribute("data-action-uid"),
+                viewSwitch: element.getAttribute("data-view-switch"),
+                disabledReason: element.getAttribute("data-disabled-reason"),
+                gateUid: element.getAttribute("data-gate-uid"),
+                permissionUid: element.getAttribute("data-permission-uid"),
+                insideForm: Boolean(element.closest("form")),
+              };
+            })
+          );
+          const visibleControls = controls.filter((control) => control.visible);
+          interactiveControls += visibleControls.length;
+          governedControls += visibleControls.filter((control) => control.governed).length;
+
+          for (const control of visibleControls) {
+            if (!control.accessible) throw new Error(`CONTROL_ACCESSIBLE_NAME_MISSING_${uid}_${control.tag}_${control.index}`);
+            if (control.tag === "a" && (!control.href || control.href === "#" || /^javascript:/i.test(control.href))) {
+              throw new Error(`CONTROL_LINK_TARGET_INVALID_${uid}_${control.index}`);
+            }
+            if (control.tag === "button" && control.insideForm && !control.type) {
+              throw new Error(`CONTROL_FORM_BUTTON_TYPE_MISSING_${uid}_${control.index}`);
+            }
+            if (control.governed && !control.disabled && !(control.controlId || control.operationId || control.actionUid || control.viewSwitch)) {
+              throw new Error(`CONTROL_GOVERNED_ACTION_IDENTITY_MISSING_${uid}_${control.index}`);
+            }
+            if (control.governed && control.disabled && !(control.disabledReason || control.gateUid || control.permissionUid)) {
+              throw new Error(`CONTROL_DISABLED_REASON_MISSING_${uid}_${control.index}`);
+            }
+          }
+
+          const viewSwitches = page.locator("button[data-view-switch]:visible:not(:disabled)");
+          for (let index = 0; index < await viewSwitches.count(); index += 1) {
+            const button = viewSwitches.nth(index);
+            await button.click();
+            await page.waitForTimeout(25);
+            const currentUid = await page.locator("[data-page-uid]").first().getAttribute("data-page-uid");
+            if (currentUid !== uid) throw new Error(`CONTROL_VIEW_SWITCH_NAVIGATION_ESCAPE_${uid}_${index}`);
+            safeLocalClicks += 1;
+          }
+        }
+
         if (errors.length) throw new Error(`${uid}_${width}_${errors.join("|")}`);
         cases += 1;
         await page.close();
@@ -78,7 +154,7 @@ try {
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks}\n`);
 } finally {
   server.kill("SIGTERM");
 }
