@@ -352,6 +352,43 @@ async function handleEvent(row: QueueRow): Promise<Record<string, unknown>> {
   throw new NamedRuntimeError("QUEUE_EVENT_TYPE_NOT_REGISTERED");
 }
 
+export async function drainProviderExecutionEvent(eventId: string): Promise<{
+  claimed: number;
+  succeeded: number;
+  retried: number;
+  dead_lettered: number;
+}> {
+  const sql=await sqlClient();
+  await heartbeat(sql,"DRAINING",{ event_id:eventId });
+  const row=await claimEventById(sql,eventId);
+  if (!row) {
+    await heartbeat(sql,"HEALTHY",{ event_id:eventId,claimed:0 });
+    return { claimed:0,succeeded:0,retried:0,dead_lettered:0 };
+  }
+  try {
+    const value=await handleEvent(row);
+    await completeEvent(sql,row,value);
+    await heartbeat(sql,"HEALTHY",{ event_id:eventId,claimed:1,succeeded:1,retried:0,dead_lettered:0 });
+    return { claimed:1,succeeded:1,retried:0,dead_lettered:0 };
+  } catch (error) {
+    const reason=error instanceof Error && error.message ? error.message : "QUEUE_HANDLER_FAILED";
+    const outcome=await failEvent(sql,row,reason);
+    if (asText(row.event_type)===PROVIDER_EXECUTION_EVENT) {
+      try {
+        await recordQueuedProviderFailure(row.payload,reason,outcome);
+      } catch {
+        // Queue outcome remains authoritative.
+      }
+    }
+    const retried=outcome==="RETRY" ? 1 : 0;
+    const deadLettered=outcome==="DLQ" ? 1 : 0;
+    await heartbeat(sql,"HEALTHY",{
+      event_id:eventId,claimed:1,succeeded:0,retried,dead_lettered:deadLettered,
+    });
+    return { claimed:1,succeeded:0,retried,dead_lettered:deadLettered };
+  }
+}
+
 export async function drainProviderExecutionQueue(limit=10): Promise<{
   claimed: number;
   succeeded: number;
