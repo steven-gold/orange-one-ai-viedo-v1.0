@@ -66,16 +66,28 @@ try {
           const rect = element.getBoundingClientRect();
           return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
         });
+        const governanceNames = [
+          "data-control-id", "data-control-uid", "data-action-uid", "data-operation-id", "data-view-switch", "data-view-uid", "data-gate-uid",
+          "data-permission-uid", "data-permission", "data-navigation-target", "data-command-id", "data-action-id",
+        ];
         const rows = visible.map((node, index) => {
           const element = node;
           const tag = element.tagName.toLowerCase();
           const disabled = "disabled" in element ? Boolean(element.disabled) : element.getAttribute("aria-disabled") === "true";
           const label = (element.getAttribute("aria-label") || element.textContent || element.getAttribute("placeholder") || element.getAttribute("name") || "").trim().replace(/\s+/g, " ").slice(0, 120);
-          const governance = [
-            "data-control-id", "data-action-uid", "data-operation-id", "data-view-switch", "data-gate-uid",
-            "data-permission-uid", "data-navigation-target", "data-command-id", "data-action-id",
-          ].filter((name) => element.hasAttribute(name));
-          const disabledReason = element.getAttribute("data-disabled-reason") || element.getAttribute("data-blocked-reason") || element.getAttribute("title") || "";
+          const owner = element.closest(governanceNames.map((name) => `[${name}]`).join(","));
+          const governance = governanceNames.filter((name) => element.hasAttribute(name) || Boolean(owner?.hasAttribute(name)));
+          const gateUid = element.getAttribute("data-gate-uid") || owner?.getAttribute("data-gate-uid") || "";
+          const allowed = element.getAttribute("data-allowed") || owner?.getAttribute("data-allowed") || "";
+          const disabledReason =
+            element.getAttribute("data-disabled-reason") ||
+            element.getAttribute("data-blocked-reason") ||
+            element.getAttribute("data-blocked-error-uid") ||
+            owner?.getAttribute("data-disabled-reason") ||
+            owner?.getAttribute("data-blocked-reason") ||
+            owner?.getAttribute("data-blocked-error-uid") ||
+            element.getAttribute("title") ||
+            (disabled && allowed === "false" && gateUid ? `${gateUid}:NOT_SATISFIED` : "");
           const localSemantic = tag === "a" || element.getAttribute("type") === "submit" || element.getAttribute("type") === "reset" || element.hasAttribute("aria-controls") || element.hasAttribute("aria-expanded");
           return { index, tag, label, disabled, governance, disabledReason, localSemantic };
         });
