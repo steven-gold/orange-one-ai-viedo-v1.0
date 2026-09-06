@@ -4,6 +4,7 @@ import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/data
 import { IDENTITY_COOKIE_NAME, resolveIdentityFromCookie } from "@/server/identity/identityRuntime";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 import type { AiApiRuntimeRequest } from "@/server/aiApi/aiApiCommandRuntime";
+import { runProviderQueueRuntimeProbe } from "@/server/queue/providerExecutionQueueRuntime";
 
 type SqlClient = NonNullable<ReturnType<typeof getProductionNeonSql>>;
 type Row = Record<string, unknown>;
@@ -512,6 +513,11 @@ export async function executeProductionAiApiCommand(request: AiApiRuntimeRequest
       if (!result) throw new NamedRuntimeError("AIAPI_ROUTE_DECISION_NOT_FOUND");
       return result;
     }
+    case "runProviderQueueProbe":
+      return runProviderQueueRuntimeProbe({
+        correlation_id: request.correlation_id,
+        idempotency_key: asText(payload.idempotency_key) ?? undefined,
+      });
   }
 }
 
