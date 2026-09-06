@@ -55,7 +55,11 @@ test("provider queue runtime implements claim, lease recovery, retry, DLQ, idemp
   assert.match(runtime,/external_provider_call: false/);
   assert.match(runtime,/runProviderQueueRuntimeProbe/);
   assert.match(runtime,/residual_probe_rows/);
-  assert.match(runtime,/PRODUCTION_HTTP_RUNTIME_PASS/);
+  assert.match(runtime,/QUEUE_RUNTIME_PROBE_FORCED_FAILURE/);
+  assert.match(runtime,/lease_recovered/);
+  assert.match(runtime,/retry_observed/);
+  assert.match(runtime,/dlq_observed/);
+  assert.match(runtime,/PRODUCTION_HTTP_RUNTIME_FULL_PASS/);
 });
 
 test("cron drain is secret-gated and Hobby-compatible recovery schedule is materialized",()=>{
