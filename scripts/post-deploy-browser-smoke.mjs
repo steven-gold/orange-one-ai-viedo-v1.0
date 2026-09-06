@@ -1,6 +1,15 @@
 import { chromium } from "playwright";
 
 const base = (process.env.ACPOS_DEPLOYMENT_URL ?? "https://orange-one-acpos-test.vercel.app").replace(/\/$/, "");
+const baseOrigin = new URL(base).origin;
+
+function isExpectedUnauthenticatedResponse(response) {
+  const url = new URL(response.url());
+  if (url.origin !== baseOrigin) return false;
+  if (url.pathname === "/v1/identity/session") return response.status() === 401;
+  if (url.pathname.startsWith("/v1/ui-projections/")) return [403, 503].includes(response.status());
+  return false;
+}
 
 function protectionHeaders() {
   const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
@@ -30,8 +39,13 @@ try {
       });
       const errors = [];
       page.on("pageerror", (error) => errors.push(`pageerror:${error.message}`));
+      page.on("response", (response) => {
+        if (response.status() >= 400 && !isExpectedUnauthenticatedResponse(response)) {
+          errors.push(`response:${response.status()}:${new URL(response.url()).pathname}`);
+        }
+      });
       page.on("console", (message) => {
-        if (message.type() === "error" && !/Failed to load resource.*503/.test(message.text())) {
+        if (message.type() === "error" && !/Failed to load resource.*(?:401|403|503)/.test(message.text())) {
           errors.push(`console:${message.text()}`);
         }
       });
