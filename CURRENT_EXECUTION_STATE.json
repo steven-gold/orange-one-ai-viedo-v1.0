@@ -2,10 +2,10 @@
   "schema_version": "1.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "last_sync_at": "2026-09-07T01:24:00+08:00",
+  "last_sync_at": "2026-09-07T01:29:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "main_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
-  "new_sha_basis": "c5947754bdeba416dde44f7cef64415a364b515b",
+  "new_sha_basis": "17a7d7cf53995e343cd65e6fb2c089e24b3f8a77",
   "latest_release_gate": {
     "status": "PASS",
     "run_number": 300,
@@ -122,7 +122,7 @@
     "queue_count": 0,
     "worker_count": 0,
     "dlq_count": 0,
-    "active_session_count": 0,
+    "active_session_count": 1,
     "rls_validation": {
       "branch_name": "rls-0016-validate-20260906",
       "branch_id": "br-orange-smoke-aut9pafw",
@@ -229,15 +229,17 @@
       "migration_0016_checksum": "8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4",
       "migration_0017_checksum": "6b2cc216f5f49a40e6d310217c6ddc284361960c063b7b0ad60d8be9eaac7551",
       "unauthenticated_non_owner_deny": {
-        "actor_user_id": null,
+        "actor_unbound": true,
         "bootstrap_admin": false,
-        "assignments": 0,
         "projects": 0,
+        "memberships": 0,
         "conversations": 0,
         "mother_locks": 0,
-        "story_candidates": 0
+        "story_candidates": 0,
+        "department_tasks": 0,
+        "permission_assignments": 0
       },
-      "status": "PASS_DB_FOUNDATION_AUTHENTICATED_PRODUCTION_E2E_PENDING",
+      "status": "PASS",
       "migration_0018_checksum": "d898fcc1a2ccd0d3b814e3cd0578b4c0a8a573f84e96a0e68c68b4af1b2212b5",
       "department_runtime_tables": {
         "tables": [
@@ -259,6 +261,29 @@
         "superuser": false,
         "bypass_rls": false,
         "inherit": false
+      },
+      "current_evidence_at": "2026-09-07T01:29:00+08:00",
+      "authenticated_non_admin_isolation": {
+        "actor_bound": true,
+        "bootstrap_admin": false,
+        "visible_projects": 1,
+        "visible_project_codes": [
+          "TEST-PRJ-001"
+        ],
+        "forbidden_project_rows": 0,
+        "visible_department_tasks": 1,
+        "cross_project_department_task_rows": 0,
+        "residual_test_sessions": 0
+      },
+      "authenticated_production_allow": {
+        "source": "Post Deploy #529 attempt 2",
+        "login": "PASS",
+        "session": "PASS",
+        "dashboard": "PASS",
+        "projections": "18/18",
+        "permission_visibility": "PASS",
+        "logout": "PASS",
+        "stale_cookie_http": 401
       }
     },
     "provider_job_count": 0,
@@ -271,7 +296,7 @@
     "active_app_user_count": 2,
     "ready_account_actor_mapping_count": 2,
     "identity_session_store_relation": true,
-    "session_total_count": 48,
+    "session_total_count": 49,
     "scrypt_hash_shape_account_count": 2
   },
   "current_gate_scores": {
@@ -332,8 +357,8 @@
       "reason": "Production remains 152 public + 42 acpos_runtime tables, permission_resources 3651 and ACPOS validated FK 344 after migrations 0016-0017."
     },
     "12_postgresql_rls": {
-      "status": "PARTIAL",
-      "reason": "Production RLS foundation remains 17 RLS tables / 35 policies with acpos_app_runtime NOLOGIN/NOBYPASSRLS/NOINHERIT. Authenticated Production allow path now passes through login/session/dashboard/18 projections, but an explicit Production cross-project isolation E2E under the authenticated runtime actor is still pending."
+      "status": "PASS",
+      "reason": "Production verified with 17 RLS-enabled public tables and 35 policies; acpos_app_runtime is NOLOGIN/NOBYPASSRLS/NOINHERIT/NOSUPERUSER; current unauthenticated non-owner queries return 0 across protected resources; Post Deploy #529 attempt 2 proves authenticated Production allow across login/session/dashboard/18 projections; an ephemeral non-admin Production session saw exactly its own TEST-PRJ-001 and one department task while two forbidden project rows and all cross-project task rows remained 0; the test session was removed and residual count is 0."
     },
     "13_accounts": {
       "status": "PASS",
@@ -435,36 +460,14 @@
     "GitHub Environment Production secret ADMIN corrected and verified by Post Deploy #529 attempt 2",
     "Production Login/Session E2E PASS 4/4 on main 5aa21a94340b2dc1005fa4821220f23ef6342623",
     "Production authenticated permission/browser visibility E2E PASS: front nav 9/9, admin nav 9/9, visible pages 18/18",
-    "Production authenticated Read Models PASS 18/18"
+    "Production authenticated Read Models PASS 18/18",
+    "Production PostgreSQL RLS Current Evidence PASS: 17 protected tables / 35 policies / acpos_app_runtime non-login non-bypass role",
+    "Production unauthenticated non-owner RLS deny PASS across projects, memberships, conversations, mother locks, story candidates, department tasks and permission assignments",
+    "Production authenticated non-admin cross-project isolation PASS: own project visible 1, forbidden projects 0, own department task visible 1, cross-project task rows 0, residual test sessions 0",
+    "Gate 12 PostgreSQL RLS closed to PASS"
   ],
-  "in_progress_item": "RLS_001_PRODUCTION_AUTHENTICATED_CROSS_PROJECT_ISOLATION_E2E",
+  "in_progress_item": "HARD_BLOCKED_PROVIDER_QUEUE_AUTHORITY",
   "remaining_queue": [
-    {
-      "item_id": "RLS-001",
-      "affects_gate": [
-        12,
-        15,
-        16
-      ],
-      "dependency": "Production RLS foundation + authenticated Production actor path",
-      "exact_files": [
-        "database/migrations/0016_postgresql_rls_runtime_foundation.sql",
-        "database/migrations/0017_core_story_rls_closure.sql",
-        "database/migrations/migration_checksum_manifest.yaml",
-        "src/server/database/neonRuntime.ts",
-        "src/server/database/rlsRuntime.ts",
-        "src/server/shared/identityPageCommandRuntime.ts",
-        "src/server/dashboard/wb01ProjectionRuntime.ts",
-        "src/server/shared/pageCatalogProjectionRuntime.ts",
-        "src/domain/core/coreClientPort.ts",
-        "tests/release/rls-runtime.test.mjs"
-      ],
-      "exact_runtime": "Neon production non-owner runtime role",
-      "expected_test": "deny/allow/cross-project isolation + authenticated runtime smoke",
-      "expected_deploy_effect": "Apply 0016 then 0017 to Production; runtime uses SET LOCAL ROLE acpos_app_runtime with existing DB credential; then merge and deploy REQUIRED_MIGRATION_COUNT=17.",
-      "status": "AUTHENTICATED_ALLOW_PASS_CROSS_PROJECT_ISOLATION_E2E_PENDING",
-      "evidence": "Production is 18 migrations / 17 RLS tables / 35 policies; acpos_app_runtime is NOLOGIN/NOBYPASSRLS/NOINHERIT. Post Deploy #529 attempt 2 now proves authenticated login/session/dashboard/18 projection allow path. Explicit Production cross-project isolation E2E remains to close the Gate."
-    },
     {
       "item_id": "PROVIDER-QUEUE-001",
       "affects_gate": [
@@ -502,9 +505,11 @@
   "blockers": [
     "PROVIDER-001 hard blocker: Production provider capability/profile/secret/job rows remain 0 and Current Authority does not yet materialize effectful provider operation mapping.",
     "QUEUE-001 hard blocker: Production queues/workers/dead_letters remain 0 and exact queue_key/worker_key topology is not materialized in Current Authority.",
-    "Vercel management-plane plugin scope mismatch remains: GitHub Vercel status and Post Deploy Smoke provide current deployment evidence, while the Vercel management connector cannot read this project."
+    "Vercel management-plane plugin scope mismatch remains: GitHub Vercel status and Post Deploy Smoke provide current deployment evidence, while the Vercel management connector cannot read this project.",
+    "PROVIDER-001 hard blocker: Production provider capability/profile/secret/job rows remain 0 and Current Authority does not materialize the required effectful provider operation mapping.",
+    "QUEUE-001 hard blocker: Production queues/workers/dead_letters remain 0 and Current Authority does not materialize exact queue_key/worker_key topology."
   ],
-  "next_executable_item": "RLS-001: execute explicit Production authenticated cross-project isolation E2E under acpos_app_runtime and record deny/allow evidence. If PASS, re-score Gate 12; then continue to provider/queue blockers.",
+  "next_executable_item": "No dependency-ready non-blocked construction item remains before PROVIDER-QUEUE-001. Current Authority must first materialize effectful provider operation mapping and exact queue/worker topology, and Production provider secret references must be supplied; until then Gate 22/23 remain hard blocked and downstream runtime/mutation/full-button acceptance cannot be honestly closed.",
   "last_successful_commit": "5aa21a94340b2dc1005fa4821220f23ef6342623",
   "last_successful_deployment": {
     "main_sha": "5aa21a94340b2dc1005fa4821220f23ef6342623",
@@ -524,9 +529,9 @@
   },
   "latest_construction_release_gate": {
     "status": "PASS",
-    "run_number": 304,
-    "run_id": 34047569454,
-    "head_sha": "c5947754bdeba416dde44f7cef64415a364b515b",
+    "run_number": 305,
+    "run_id": 34048594515,
+    "head_sha": "17a7d7cf53995e343cd65e6fb2c089e24b3f8a77",
     "branch": "new",
     "conclusion": "success"
   }
