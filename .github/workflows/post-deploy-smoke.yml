@@ -28,6 +28,8 @@ jobs:
       ACPOS_EXPECT_READY: "0"
       ACPOS_EXPECT_RELEASE_SHA: ${{ github.event.deployment.sha || github.event.workflow_run.head_sha || github.sha }}
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      ACPOS_PRODUCTION_E2E_EMAIL: ${{ secrets.ACPOS_PRODUCTION_E2E_EMAIL }}
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ACPOS_PRODUCTION_E2E_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,8 +41,19 @@ jobs:
         run: |
           node --check scripts/post-deploy-smoke.mjs
           node --check scripts/post-deploy-browser-smoke.mjs
+          node --check scripts/post-deploy-auth-e2e.mjs
       - name: Run deployed ACPOS HTTP smoke
         run: node scripts/post-deploy-smoke.mjs
+      - name: Report Production auth E2E credential readiness
+        run: |
+          if [ -n "$ACPOS_PRODUCTION_E2E_EMAIL" ] && [ -n "$ACPOS_PRODUCTION_E2E_PASSWORD" ]; then
+            echo "POST_DEPLOY_AUTH_E2E_CREDENTIALS_CONFIGURED"
+          else
+            echo "POST_DEPLOY_AUTH_E2E_BLOCKED reason=PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED"
+          fi
+      - name: Run deployed ACPOS authenticated E2E
+        if: ${{ env.ACPOS_PRODUCTION_E2E_EMAIL != '' && env.ACPOS_PRODUCTION_E2E_PASSWORD != '' }}
+        run: node scripts/post-deploy-auth-e2e.mjs
       - name: Install current browser audit dependency
         run: |
           npm install --no-save --package-lock=false playwright@1.62.1
