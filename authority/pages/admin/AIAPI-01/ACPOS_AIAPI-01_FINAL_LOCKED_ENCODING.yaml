@@ -539,7 +539,9 @@ implementation_evidence:
   - tests/release/aiapi-ui-runtime.test.mjs
   - tests/release/admin-page-interaction.test.mjs
   validated_release_gate:
-    run_number: 384
+    run_number: 405
     conclusion: success
-    head_sha: 6a000b39702e7b2e60d5c8a67fe22fb9de073719
-  external_provider_execution_status: BLOCKED_UNTIL_REAL_APPROVED_PROFILE_CAPABILITY_SECRET_AND_ADAPTER
+    head_sha: fb7e649ca791a8d81ec1f0e9b6c8233b033aaf1a
+  provider_http_adapter_runtime: src/server/aiApi/providerHttpAdapterRuntime.ts
+  provider_queue_execution_runtime: src/server/queue/providerExecutionQueueRuntime.ts
+  external_provider_execution_status: ADAPTER_MATERIALIZED_BLOCKED_UNTIL_REAL_APPROVED_PROFILE_CAPABILITY_SECRET_CONFIGURATION
