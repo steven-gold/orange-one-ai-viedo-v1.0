@@ -79,6 +79,7 @@ try {
           const governance = governanceNames.filter((name) => element.hasAttribute(name) || Boolean(owner?.hasAttribute(name)));
           const gateUid = element.getAttribute("data-gate-uid") || owner?.getAttribute("data-gate-uid") || "";
           const allowed = element.getAttribute("data-allowed") || owner?.getAttribute("data-allowed") || "";
+          const runtimeBinding = element.getAttribute("data-runtime-binding") || owner?.getAttribute("data-runtime-binding") || "";
           const disabledReason =
             element.getAttribute("data-disabled-reason") ||
             element.getAttribute("data-blocked-reason") ||
@@ -87,8 +88,11 @@ try {
             owner?.getAttribute("data-blocked-reason") ||
             owner?.getAttribute("data-blocked-error-uid") ||
             element.getAttribute("title") ||
-            (disabled && allowed === "false" && gateUid ? `${gateUid}:NOT_SATISFIED` : "");
-          const localSemantic = tag === "a" || element.getAttribute("type") === "submit" || element.getAttribute("type") === "reset" || element.hasAttribute("aria-controls") || element.hasAttribute("aria-expanded");
+            (disabled && allowed === "false" && gateUid ? `${gateUid}:NOT_SATISFIED` : "") ||
+            (disabled && /^(NOT_EXECUTED|NOT_BOUND|BLOCKED|UNRESOLVED)/.test(runtimeBinding) ? runtimeBinding : "");
+          const searchRegion = element.closest("[role='search']");
+          const governedSearchPeer = Boolean(searchRegion?.querySelector("[data-control-id],[data-control-uid],[data-action-uid],[data-action-id],[data-operation-id]"));
+          const localSemantic = tag === "a" || element.getAttribute("type") === "submit" || element.getAttribute("type") === "reset" || element.hasAttribute("aria-controls") || element.hasAttribute("aria-expanded") || (tag === "input" && Boolean(searchRegion) && governedSearchPeer);
           return { index, tag, label, disabled, governance, disabledReason, localSemantic };
         });
         return {
