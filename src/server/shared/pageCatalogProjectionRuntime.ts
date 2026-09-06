@@ -76,7 +76,7 @@ async function readSessionCookie(): Promise<string | undefined> {
 }
 
 type GateDecision =
-  | { allowed: true; session_token_hash: string }
+  | { allowed: true; session_token_hash: string; actor_user_id: string }
   | { allowed: false; reason_code: string };
 
 async function evaluatePageViewGate(resourceKey: string): Promise<GateDecision> {
@@ -126,10 +126,57 @@ async function evaluatePageViewGate(resourceKey: string): Promise<GateDecision> 
       matched.push({ effect });
     }
     if (matched.some((row) => row.effect === "DENY")) return { allowed: false, reason_code: "PERMISSION_DENIED" };
-    if (matched.some((row) => row.effect === "ALLOW")) return { allowed: true, session_token_hash: sessionTokenHash };
+    if (matched.some((row) => row.effect === "ALLOW")) return { allowed: true, session_token_hash: sessionTokenHash, actor_user_id: identity.actor.user_id };
     return { allowed: false, reason_code: "PERMISSION_OR_SCOPE_DENIED" };
   } catch {
     return { allowed: false, reason_code: "AUTHORIZATION_EVALUATION_FAILED" };
+  }
+}
+
+async function evaluateCatalogResourceAction(
+  sql: SqlClient,
+  sessionTokenHash: string,
+  actorUserId: string,
+  resourceKey: string,
+  action: string,
+): Promise<boolean> {
+  try {
+    const rows = await runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT a.effect, a.scope, a.condition
+        FROM account_permission_assignments a
+        JOIN permission_resources r ON r.resource_id = a.resource_id
+        WHERE a.user_id = ${actorUserId}
+          AND r.resource_key = ${resourceKey}
+          AND r.resource_type IN ('ACTION','CONTROL','API','SENSITIVE_PERMISSION')
+          AND r.active = true
+          AND ${action} = ANY(
+            SELECT jsonb_array_elements_text(
+              CASE WHEN jsonb_typeof(r.allowed_actions) = 'array' THEN r.allowed_actions ELSE '[]'::jsonb END
+            )
+          )
+          AND a.action = ${action}
+          AND a.status = 'APPROVED'
+          AND a.effective_from <= now()
+          AND (a.effective_to IS NULL OR a.effective_to > now())
+      `,
+    );
+    const requestScope = {} as Record<string, never>;
+    const effects: string[] = [];
+    for (const raw of Array.isArray(rows) ? rows : []) {
+      const row = asRecord(raw);
+      if (!row) continue;
+      if (!emptyObjectMatches(row.scope, requestScope)) continue;
+      if (!conditionAllows(row.condition)) continue;
+      const effect = asText(row.effect);
+      if (effect) effects.push(effect);
+    }
+    if (effects.includes("DENY")) return false;
+    return effects.includes("ALLOW");
+  } catch {
+    return false;
   }
 }
 
@@ -1124,7 +1171,11 @@ async function readAiApiFromDb(sql: SqlClient): Promise<unknown> {
   };
 }
 
-async function readSg02FromDb(sql: SqlClient): Promise<unknown> {
+async function readSg02FromDb(
+  sql: SqlClient,
+  sessionTokenHash: string,
+  actorUserId: string,
+): Promise<unknown> {
   const versions = await safeRows(() => sql`
     SELECT criteria_version_id::text AS criteria_version_id,
            criteria_key,
@@ -1138,6 +1189,10 @@ async function readSg02FromDb(sql: SqlClient): Promise<unknown> {
     ORDER BY criteria_key, version_no DESC
   `);
   const first = versions[0] ?? null;
+  const [canConfigure, canApprove] = await Promise.all([
+    evaluateCatalogResourceAction(sql, sessionTokenHash, actorUserId, "action:admin:SG-02:ACT-CONFIGURE", "INVOKE"),
+    evaluateCatalogResourceAction(sql, sessionTokenHash, actorUserId, "action:admin:SG-02:ACT-APPROVE", "INVOKE"),
+  ]);
   return {
     page_state: versions.length ? "READY" : "EMPTY",
     values: {
@@ -1158,7 +1213,11 @@ async function readSg02FromDb(sql: SqlClient): Promise<unknown> {
       approvals: asText(first?.status) ?? DASH,
       audit_ref: DASH,
     },
-    control_enabled: {},
+    control_enabled: {
+      "CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE": canConfigure,
+      "CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE": canApprove,
+      "CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN": true,
+    },
   };
 }
 
@@ -1251,7 +1310,12 @@ async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
   };
 }
 
-async function readPageValue(pageUid: string, sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
+async function readPageValue(
+  pageUid: string,
+  sql: SqlClient,
+  sessionTokenHash: string,
+  actorUserId: string,
+): Promise<unknown> {
   switch (pageUid) {
     case "CORE-01":
       return readCoreProjection(sql, sessionTokenHash);
@@ -1282,7 +1346,7 @@ async function readPageValue(pageUid: string, sql: SqlClient, sessionTokenHash: 
     case "admin:AIAPI-01":
       return readAiApiFromDb(sql);
     case "admin:SG-02":
-      return readSg02FromDb(sql);
+      return readSg02FromDb(sql, sessionTokenHash, actorUserId);
     case "admin:STR-01":
       return readStrategyAdminFromDb(sql);
     case "admin:KB-01":
@@ -1309,7 +1373,12 @@ export async function readCatalogPageProjection(request: UiProjectionRequest) {
   }
 
   try {
-    const value = await readPageValue(request.page_uid, sql, decision.session_token_hash);
+    const value = await readPageValue(
+      request.page_uid,
+      sql,
+      decision.session_token_hash,
+      decision.actor_user_id,
+    );
     if (value == null) return null;
     return { ok: true as const, value, correlation_id: request.correlation_id };
   } catch {
