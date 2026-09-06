@@ -30,6 +30,7 @@ const iamControlRuntime = await readFile("src/components/pages/IamControlRuntime
 const knowledgePage = await readFile("authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml", "utf8");
 const knowledgeRuntimePort = await readFile("src/domain/knowledge/knowledgeRuntimePort.ts", "utf8");
 const knowledgeVisual = await readFile("src/components/pages/KnowledgeAdminVisual.tsx", "utf8");
+const migrationAuthority = await readFile("authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml", "utf8");
 
 test("Current Authority contains exactly 18 unique page authorities", () => {
   const pages = [...manifest.matchAll(/^  - (authority\/pages\/[^\n]+)$/gm)].map((match) => match[1]);
@@ -42,6 +43,22 @@ test("Production Script V1.3 remains the current integration contract", () => {
   assert.match(manifest, /production_script_v1_3:/);
   assert.match(system, /ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1\.3\.yaml/);
   assert.doesNotMatch(manifest, /PRODUCTION_SCRIPT.*V1\.2/);
+});
+
+test("Current production integrity reconciles the sealed catalog and post-0001 FK delta", () => {
+  assert.match(manifest, /version: V1\.5/);
+  assert.match(manifest, /production_integrity_checklist:/);
+  assert.match(manifest, /required_check_count: 8/);
+  assert.match(manifest, /neon_identity: wild-wave-25661146\/main\/br-shy-cherry-auiol4oy\/neondb/);
+  assert.match(manifest, /validated_foreign_keys_after_0005: 344/);
+  assert.match(manifest, /permission_resource_rows_current: 3651/);
+  assert.match(manifest, /current_page_delta_resource_key: page:admin:DB-01/);
+  assert.match(manifest, /current_db_page_resource_rows: 1/);
+  assert.match(migrationAuthority, /current_production_reconciliation:/);
+  assert.match(migrationAuthority, /historical_evidence_immutable: true/);
+  assert.match(migrationAuthority, /added_constraint: meetings\.fk_meetings_context_snapshot/);
+  assert.match(migrationAuthority, /sealed_0003_catalog: 3650/);
+  assert.match(migrationAuthority, /current_total: 3651/);
 });
 
 test("WB-01 UI projection mapping locks page-gate authorize and named section read SQL", async () => {

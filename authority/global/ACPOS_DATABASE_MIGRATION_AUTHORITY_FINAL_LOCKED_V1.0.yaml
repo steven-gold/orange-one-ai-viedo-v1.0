@@ -74,6 +74,26 @@ artifact_bindings:
   account_permission_catalog_bytes: 2762474
   account_permission_catalog_lines: 79399
   materialized_migration_count: 15
+current_production_reconciliation:
+  status: PASS
+  verified_on: '2026-09-06'
+  target: wild-wave-25661146/main/br-shy-cherry-auiol4oy/neondb
+  historical_evidence_immutable: true
+  validated_foreign_keys:
+    canonical_0001: 343
+    added_by_0005: 1
+    current_total: 344
+    added_constraint: meetings.fk_meetings_context_snapshot
+  permission_resources:
+    sealed_0003_catalog: 3650
+    current_navigation_delta: 1
+    current_total: 3651
+    delta_resource_key: page:admin:DB-01
+    delta_source: authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+  integrity:
+    unvalidated_constraints: 0
+    duplicate_permission_resource_keys: 0
+    orphan_permission_parent_keys: 0
 correction_evidence:
   diagnostic_environment: Neon PostgreSQL 15.19 temporary branch
   proven_blockers:
@@ -510,7 +530,7 @@ temporary_0005_validation:
   target_tables_checked: 20
   target_table_rows_after_validation: 0
   fk_meetings_context_snapshot_present: true
-  meeting_function_comment: NON_AUTHORIZATION_METADATA: meeting function/perspective only; never an Authorization Role.
+  meeting_function_comment: "NON_AUTHORIZATION_METADATA: meeting function/perspective only; never an Authorization Role."
   unvalidated_constraints: 0
   permission_resource_rows_preserved: 3650
   schema_diff_against_staging:
@@ -536,7 +556,7 @@ staging_0005_verification:
   target_tables_checked: 20
   target_table_rows_after_staging_execution: 0
   fk_meetings_context_snapshot_present: true
-  meeting_function_comment: NON_AUTHORIZATION_METADATA: meeting function/perspective only; never an Authorization Role.
+  meeting_function_comment: "NON_AUTHORIZATION_METADATA: meeting function/perspective only; never an Authorization Role."
   permission_resource_rows_preserved: 3650
   unvalidated_constraints: 0
   clean_schema_diff_against_restore_point:
