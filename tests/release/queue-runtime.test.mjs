@@ -55,7 +55,7 @@ test("provider queue runtime implements claim, lease recovery, retry, DLQ, idemp
   assert.match(runtime,/external_provider_call: false/);
 });
 
-test("cron drain is secret-gated and provider queue is scheduled",()=>{
+test("cron drain is secret-gated and Hobby-compatible recovery schedule is materialized",()=>{
   assert.match(route,/QUEUE_CRON_SECRET_NOT_BOUND/);
   assert.match(route,/QUEUE_CRON_UNAUTHORIZED/);
   assert.match(route,/authorization/);
@@ -64,6 +64,6 @@ test("cron drain is secret-gated and provider queue is scheduled",()=>{
   const config=JSON.parse(vercel);
   assert.deepEqual(config.crons,[{
     path:"/v1/internal/queue/provider-execution/drain",
-    schedule:"*/5 * * * *",
+    schedule:"0 0 * * *",
   }]);
 });
