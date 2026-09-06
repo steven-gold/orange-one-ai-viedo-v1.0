@@ -51,7 +51,10 @@ test("provider queue runtime implements claim, lease recovery, retry, DLQ, idemp
   assert.match(runtime,/dead_letters/);
   assert.match(runtime,/dead_lettered_at=now\(\)/);
   assert.match(runtime,/last_heartbeat_at=now\(\)/);
-  assert.match(runtime,/PROVIDER_EXTERNAL_ADAPTER_EXECUTION_NOT_MATERIALIZED/);
+  assert.match(runtime,/executeQueuedProviderRequest/);
+  assert.match(runtime,/recordQueuedProviderFailure/);
+  assert.match(runtime,/enqueueProviderExecutionRequest/);
+  assert.match(runtime,/drainProviderExecutionEvent/);
   assert.match(runtime,/external_provider_call: false/);
   assert.match(runtime,/runProviderQueueRuntimeProbe/);
   assert.match(runtime,/residual_probe_rows/);
