@@ -138,6 +138,10 @@ assert(queueProbeBody?.value?.status === "PASS", "AUTH_QUEUE_PROBE_STATUS_INVALI
 assert(queueProbeBody?.value?.claimed === 1, "AUTH_QUEUE_PROBE_CLAIM_INVALID");
 assert(queueProbeBody?.value?.inbox_receipt === 1, "AUTH_QUEUE_PROBE_INBOX_INVALID");
 assert(queueProbeBody?.value?.published === 1, "AUTH_QUEUE_PROBE_PUBLISHED_INVALID");
+assert(queueProbeBody?.value?.idempotent_enqueue === true, "AUTH_QUEUE_PROBE_IDEMPOTENCY_INVALID");
+assert(queueProbeBody?.value?.lease_recovered === true, "AUTH_QUEUE_PROBE_LEASE_RECOVERY_INVALID");
+assert(queueProbeBody?.value?.retry_observed === true, "AUTH_QUEUE_PROBE_RETRY_INVALID");
+assert(queueProbeBody?.value?.dlq_observed === true, "AUTH_QUEUE_PROBE_DLQ_INVALID");
 assert(queueProbeBody?.value?.residual_probe_rows === 0, "AUTH_QUEUE_PROBE_RESIDUAL_ROWS");
 assert(queueProbeBody?.value?.external_provider_call === false, "AUTH_QUEUE_PROBE_EXTERNAL_CALL_FORBIDDEN");
 
