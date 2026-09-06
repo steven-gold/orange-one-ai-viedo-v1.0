@@ -22,6 +22,8 @@ import type { SocRuntimeRequest } from "@/server/testing/controlledSocTestRuntim
 import { configureErpCommandRuntime } from "@/server/erp/erpCommandRuntime";
 import type { ErpRuntimeRequest } from "@/server/testing/controlledErpTestRuntime";
 import { configureSystemLifecycleRuntime } from "@/server/system/systemLifecycleRuntime";
+import { configureAiApiCommandRuntime } from "@/server/aiApi/aiApiCommandRuntime";
+import { executeProductionAiApiCommand, auditProductionAiApiCommand } from "@/server/aiApi/productionAiApiCommandRuntime";
 
 type SqlClient = NonNullable<ReturnType<typeof getProductionNeonSql>>;
 
@@ -913,6 +915,11 @@ export function bindIdentityPageCommandRuntimes(): void {
     authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:ERP-01"]),
     execute: executeErp,
     audit: async () => undefined,
+  });
+  configureAiApiCommandRuntime({
+    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:AIAPI-01"]),
+    execute: executeProductionAiApiCommand,
+    audit: auditProductionAiApiCommand,
   });
   configureSystemLifecycleRuntime({
     resolveContinuityContext: async (system_change_id) => ({
