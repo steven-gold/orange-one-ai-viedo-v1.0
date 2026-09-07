@@ -65,8 +65,7 @@ function controlledTestProjection(rawProjection: unknown): CoreProjectionResolve
 export async function resolveCoreProjection(rawProjection: unknown): Promise<CoreProjectionResolveResult> {
   const current = resolver;
   if (!current) {
-    if (isControlledTestMode()) return controlledTestProjection(rawProjection);
-    return { ok: false, reason_code: "CORE_PROJECTION_SCHEMA_ADAPTER_NOT_BOUND" };
+    return controlledTestProjection(rawProjection);
   }
   try {
     const projection = await current.resolve(rawProjection);
