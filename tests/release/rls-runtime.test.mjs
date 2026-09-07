@@ -90,6 +90,47 @@ test("migration 0018 protects department runtime tables by project authority", a
   assert.match(manifest, /payload_sha256: d898fcc1a2ccd0d3b814e3cd0578b4c0a8a573f84e96a0e68c68b4af1b2212b5/);
 });
 
+test("migration 0021 materializes governed Core decision and candidate owners under RLS", async () => {
+  const migration = await read("database/migrations/0021_core_decision_candidate_runtime.sql");
+  const manifest = await read("database/migrations/migration_checksum_manifest.yaml");
+
+  for (const table of [
+    "core_evaluations",
+    "core_human_decisions",
+    "core_structured_decisions",
+    "candidate_versions",
+    "candidate_decisions",
+  ]) {
+    assert.match(migration, new RegExp(`CREATE TABLE IF NOT EXISTS public\\.${table}\\b`));
+    assert.match(migration, new RegExp(`ALTER TABLE public\\.${table} ENABLE ROW LEVEL SECURITY`));
+  }
+
+  const policies = [...migration.matchAll(/CREATE POLICY ([a-z_]+)/g)].map((match) => match[1]);
+  assert.deepEqual(policies, [
+    "acpos_core_evaluations_select",
+    "acpos_core_evaluations_insert",
+    "acpos_core_human_decisions_select",
+    "acpos_core_human_decisions_insert",
+    "acpos_core_structured_decisions_select",
+    "acpos_core_structured_decisions_insert",
+    "acpos_candidate_versions_select",
+    "acpos_candidate_versions_insert",
+    "acpos_candidate_decisions_select",
+    "acpos_candidate_decisions_insert",
+  ]);
+
+  assert.match(migration, /GRANT SELECT, INSERT ON[\s\S]*TO acpos_app_runtime;/);
+  assert.match(migration, /acpos_runtime\.can_access_project/);
+  assert.match(migration, /acpos_runtime\.can_manage_project/);
+  assert.match(migration, /CORE_DECISION_CANDIDATE_RLS_TABLE_COUNT_MISMATCH/);
+  assert.match(migration, /CORE_DECISION_CANDIDATE_RLS_POLICY_COUNT_MISMATCH/);
+  assert.match(migration, /0021_core_decision_candidate_runtime/);
+  assert.match(migration, /e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6/);
+  assert.match(manifest, /migration_id: 0021_core_decision_candidate_runtime/);
+  assert.match(manifest, /payload_sha256: e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6/);
+  assert.match(manifest, /production_apply: PENDING/);
+});
+
 test("production query runtime sets local non-owner role before protected queries", async () => {
   const neonRuntime = await read("src/server/database/neonRuntime.ts");
   const rlsRuntime = await read("src/server/database/rlsRuntime.ts");
