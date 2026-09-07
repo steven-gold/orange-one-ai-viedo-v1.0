@@ -98,8 +98,9 @@ test("AIAPI queue probe is separately governed by queue runtime authority", () =
 test("provider capability governance query matches canonical schema", async () => {
   const migration = await readFile("database/migrations/0001_canonical_schema.sql", "utf8");
   assert.match(migration, /CREATE TABLE provider_capabilities/);
-  assert.match(migration, /capability_version text NOT NULL/);
-  assert.doesNotMatch(migration, /provider_capabilities[\s\S]*?capability_key text/);
+  const providerCapabilityTable = migration.match(/CREATE TABLE provider_capabilities \(([\s\S]*?)\n\);/)?.[1] ?? "";
+  assert.match(providerCapabilityTable, /capability_version text NOT NULL/);
+  assert.doesNotMatch(providerCapabilityTable, /capability_key text/);
 
   assert.match(runtime, /p\.capability_type/);
   assert.match(runtime, /asText\(m\.capability_type\)!==requiredCapability/);
