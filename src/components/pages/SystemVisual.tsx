@@ -113,7 +113,7 @@ export function SystemVisual() {
     >
       <header className={styles.contextBar}>
         <div>
-          <div className={styles.eyebrow}>SYS-01 · SYSTEM LIFECYCLE AI</div>
+          <div className={styles.eyebrow}>{t("eyebrow")}</div>
           <h1>{t("pageName")}</h1>
           <p>{t("pageRole")}</p>
         </div>
