@@ -24,6 +24,7 @@ export type KnowledgeProjection = {
   page_state: KnowledgePageState | null;
   values: Readonly<Record<string, unknown>>;
   control_enabled: Readonly<Record<string, boolean>>;
+  entities: Readonly<Record<string, Readonly<Record<string, string>>>>;
   test_metadata?: KnowledgeProjectionTestMetadata;
 };
 
@@ -104,11 +105,20 @@ function normalizeKnowledgeProjection(raw: unknown): KnowledgeProjection {
 
   const valuesRaw = asRecord(record.values) ?? {};
   const controlsRaw = asRecord(record.control_enabled) ?? {};
+  const entitiesRaw = asRecord(record.entities) ?? {};
   const values: Record<string, unknown> = {};
   const control_enabled: Record<string, boolean> = {};
+  const entities: Record<string, Record<string, string>> = {};
 
   for (const [key, value] of Object.entries(valuesRaw)) values[key] = value;
   for (const [key, value] of Object.entries(controlsRaw)) if (typeof value === "boolean") control_enabled[key] = value;
+  for (const [entityKey, rawEntity] of Object.entries(entitiesRaw)) {
+    const entity = asRecord(rawEntity);
+    if (!entity) continue;
+    const normalized: Record<string, string> = {};
+    for (const [key, value] of Object.entries(entity)) if (typeof value === "string") normalized[key] = value;
+    entities[entityKey] = normalized;
+  }
 
   let page_state: KnowledgePageState | null = null;
   if (record.page_state !== null && record.page_state !== undefined) {
@@ -122,6 +132,7 @@ function normalizeKnowledgeProjection(raw: unknown): KnowledgeProjection {
     page_state,
     values,
     control_enabled,
+    entities,
     ...(record.test_metadata ? { test_metadata: normalizeTestMetadata(record.test_metadata) } : {}),
   };
 }
