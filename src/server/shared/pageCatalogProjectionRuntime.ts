@@ -1265,18 +1265,50 @@ async function readSocFromDb(sql: SqlClient): Promise<unknown> {
     FROM social_market_targets
     ORDER BY social_target_id
   `);
+  const packages = await safeRows(() => sql`
+    SELECT content_package_id::text AS ref,
+           release_package_id::text AS release_ref,
+           channel_account_id::text AS channel_account_ref,
+           status::text AS status,
+           package_hash::text AS package_hash
+    FROM content_packages
+    ORDER BY created_at DESC
+    LIMIT 20
+  `);
+  const drafts = await safeRows(() => sql`
+    SELECT id::text AS ref,status,version::text AS version,payload
+    FROM acpos_runtime.entities
+    WHERE kind='SOC_CONTENT_DRAFT'
+    ORDER BY updated_at DESC
+    LIMIT 20
+  `);
   const first = bindings[0] ?? accounts[0] ?? null;
+  const contentPackage = packages[0] ?? null;
+  const packageRef = asText(contentPackage?.ref);
+  const candidate = packageRef
+    ? drafts.find((row) => asText(asRecord(row.payload)?.content_package_id) === packageRef) ?? null
+    : null;
+  const candidateStatus = asText(candidate?.status);
   return {
-    page_state: first ? "READY" : "EMPTY",
+    page_state: first || contentPackage ? "READY" : "EMPTY",
     values: {
       "SOC-01-FLD-PLATFORM": asText(first && "platform_key" in first ? first.platform_key : first?.label) ?? DASH,
       "SOC-01-FLD-ACCOUNT": asText(first?.label) ?? DASH,
       "SOC-01-FLD-ACCOUNT-STATUS": asText(first?.status) ?? DASH,
       "SOC-01-FLD-TARGET-COUNT": String(targets.length),
+      "SOC-01-FLD-RELEASE-SOURCE": asText(contentPackage?.release_ref) ?? DASH,
+      "SOC-01-FLD-CONTENT-PACKAGE": packageRef ?? DASH,
+      "SOC-01-FLD-CHANNEL-ACCOUNT": asText(contentPackage?.channel_account_ref) ?? DASH,
+      "SOC-01-FLD-APPROVAL": candidate ? `${asText(candidate.ref) ?? DASH} · ${candidateStatus ?? "DRAFT"}` : "DRAFT_NOT_CREATED",
+      "SOC-01-FLD-CANDIDATE-REF": asText(candidate?.ref) ?? DASH,
+      "SOC-01-FLD-CANDIDATE-VERSION": asText(candidate?.version) ?? DASH,
     },
     gate_state: {
       "SOC-01-GATE-PAGE": true,
       "SOC-01-GATE-READ": true,
+      "SOC-01-GATE-CONTENT": Boolean(contentPackage),
+      "SOC-01-GATE-CANDIDATE": candidateStatus === "REVIEW",
+      "SOC-01-GATE-PUBLISH": candidateStatus === "APPROVED" && targets.length > 0,
       "SOC-01-GATE-RECORDS": true,
     },
   };
