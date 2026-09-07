@@ -2,17 +2,17 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T14:47:36+08:00",
+  "as_of": "2026-09-07T21:40:10+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "67e0fa9c36e813e7c78626304a56f5e3ad424f0b",
-    "new_sha_basis": "67e0fa9c36e813e7c78626304a56f5e3ad424f0b",
+    "new_sha_basis": "2ae9762a3428b29586b854588ebd5c11af04de43",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "FAST_FORWARDED_TO_VISUAL_REPAIR_MAIN",
-    "post_release_new_status": "AHEAD_MAIN_BY_STATE_AND_TEST_HARNESS_ONLY_NO_PRODUCTION_RUNTIME_DELTA"
+    "construction_branch_alignment": "AHEAD_MAIN_PREDEPLOY_VISUAL_I18N_NAVIGATION_REPAIR",
+    "post_release_new_status": "PREDEPLOY_CODE_PASS_STATE_SYNC_PENDING"
   },
   "release_validation": {
     "final_pre_state_construction_gate": {
@@ -381,6 +381,55 @@
         "dirty_tree": "PASS"
       },
       "failure_retained_in_evidence": true
+    },
+    "latest_predeploy_visual_i18n_gate": {
+      "status": "PASS_CONSTRUCTION_PREDEPLOY",
+      "run_number": 575,
+      "run_id": 34128425385,
+      "head_sha": "2ae9762a3428b29586b854588ebd5c11af04de43",
+      "branch": "new",
+      "conclusion": "success",
+      "navigation_authority": "FRONT_GLOBAL_L1_8_ADMIN_GLOBAL_L1_8_INFO01_KB01_RETAINED_AS_CURRENT_NON_L1_PAGES",
+      "surface_switch": "PASS_FIXED_HEADER_FRONT_ADMIN_SWITCH",
+      "i18n_static_guard": "PASS_CURRENT_VISIBLE_UI_LITERALS_USE_CATALOGS",
+      "unit_tests": "PASS_109",
+      "browser_e2e": "PASS_72_CASES",
+      "i18n_browser": "PASS_54_CASES_18_PAGES_X_3_LOCALES",
+      "shell_geometry": "PASS_18_CASES_HEADER58_SIDEBAR64_WORKSPACE_LEFT78_TOP68_RIGHT16_BOTTOM16_AT_1280",
+      "browser_evidence": "interactive_controls=507 governed_controls=321 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2 kb_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_416_VISIBLE_416_GOVERNED",
+      "current_dom_breakdown": "enabled=205 disabled=211",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "deployment_effect": "NONE_NEW_BRANCH_ONLY",
+      "failed_intermediate_runs_retained": [
+        {
+          "run_number": 552,
+          "run_id": 34124575676,
+          "reason": "SG-02 Browser selector depended on English aria-label Close after UI became locale-aware."
+        },
+        {
+          "run_number": 562,
+          "run_id": 34125471605,
+          "reason": "Initial i18n Browser acceptance assumed every Current page had h1; some canonical pages use h2."
+        },
+        {
+          "run_number": 572,
+          "run_id": 34126243668,
+          "reason": "Initial shell geometry assertion sampled before CSS layout stabilized and observed ASSET-01 header 0x0."
+        },
+        {
+          "run_number": 573,
+          "run_id": 34126591791,
+          "reason": "AIAPI controlled Kill Switch Browser selector depended on English field label Target Type after field labels became locale-aware."
+        }
+      ],
+      "remediations": [
+        "SG-02 close selector made locale-neutral.",
+        "18-page i18n acceptance accepts canonical h1 or h2 heading and verifies html lang plus localized rerender.",
+        "Shell geometry waits for exact frozen layout values to stabilize before asserting.",
+        "AIAPI form fields expose stable data-field-key identities and Browser E2E no longer depends on translated labels."
+      ]
     }
   },
   "production": {
@@ -552,6 +601,20 @@
     "gate25_full_page_button_acceptance": {
       "status": "PASS_PRODUCTION_CURRENT_18_PAGE_ACCEPTANCE_AFTER_VISUAL_SHELL_REPAIR",
       "reason": "Production exact SHA 67e0fa9c passed Post-Deploy #804 after restoring the frozen global visual shell DOM/CSS alignment: HTTP smoke, authenticated E2E, 54 browser cases across 18 Current pages at 1280/1440/1920, 18 visible-page auth, and Current DOM acceptance 538 visible / 538 governed (308 enabled, 230 disabled)."
+    },
+    "predeploy_visual_i18n_navigation": {
+      "status": "PASS_CONSTRUCTION_NOT_YET_PRODUCTION",
+      "target_navigation": "FRONT_8_ADMIN_8_GLOBAL_L1",
+      "retained_non_l1_current_pages": [
+        "workspace:INFO-01",
+        "admin:KB-01"
+      ],
+      "locales": [
+        "zh-TW",
+        "zh-CN",
+        "en"
+      ],
+      "evidence": "Release Gate #575 on new@2ae9762a passed 109 unit tests, 72 viewport Browser cases, 54 three-locale cases, 18 shell-geometry cases, 18-page DOM governance, Docker and dirty-tree. This is pre-deploy evidence only and does not change Production until merged to main."
     }
   },
   "blockers": [
@@ -560,11 +623,13 @@
     "Vercel management connector still lacks Project-read visibility even though Git-linked deployment for gold5757/orange-one-acpos-test succeeded on exact main SHA; use GitHub↔Vercel status plus Post-Deploy evidence as deployment authority until connector visibility is repaired."
   ],
   "next_release_sequence": [
-    "Current released baseline is main/new code basis 67e0fa9c36e813e7c78626304a56f5e3ad424f0b with the frozen visual shell structure restored and Production Post-Deploy #804 PASS.",
-    "Do not rebuild Gate 22 internals. The remaining Gate 22 action requires real Production capability/profile/approved secret reference/group/member data from the actual Provider configuration.",
-    "When real Provider configuration exists, run ACPOS External Provider Acceptance manually with the real profile/group/capability and require external_request_sent=true, worker success, route decision SUCCESS and result_hash lineage.",
-    "Keep SYS-01 mutation blocked until Current Authority explicitly enables its service mutations and the exact production lifecycle runtime is materialized.",
-    "Add future visual acceptance that asserts shell DOM/CSS authority parity; functional Browser/DOM acceptance alone must not be used as proof of visual freeze fidelity."
+    "Run exact-head Release Gate after this Current State synchronization commit; do not create a release PR unless it is SUCCESS.",
+    "Create one integrated new→main PR and require the integrated merge-result Release Gate to pass, including 8+8 navigation, 54 i18n browser cases, 18 shell geometry cases, Current DOM, Docker and dirty-tree.",
+    "Only after integrated pre-deploy acceptance is PASS, merge once to main to minimize Vercel Hobby deployment count.",
+    "Require Vercel exact-main-SHA success and Production Post-Deploy acceptance. Production authenticated navigation must then verify front_nav=8 admin_nav=8 visible_pages=18.",
+    "Re-run Production browser/DOM acceptance after deploy and confirm the visual shell and three-language behavior before considering the UI release closed.",
+    "Do not rebuild Gate 22 internals. Real External Provider configuration/evidence remains separately required.",
+    "Keep SYS-01 mutation blocked until Current Authority explicitly enables its service mutations and the exact production lifecycle runtime is materialized."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
