@@ -1115,3 +1115,25 @@ single_source_rules:
 - Do not load the old 14dbb954... 0003 payload as Current.
 - Do not create a second checksum manifest or parallel migration directory.
 - DB-01 remains read-only; migration execution belongs to governed System Lifecycle / migration runner.
+
+pending_0021_core_decision_candidate_runtime:
+  status: PENDING_VALIDATION_AND_PRODUCTION_APPLY
+  source_migration: database/migrations/0021_core_decision_candidate_runtime.sql
+  payload_sha256: e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6
+  change_ref: CR-CORE-0021
+  authority_basis:
+  - CORE-01-OBJ-EVALUATION owner CORE Evaluation
+  - CORE-01-OBJ-HUMAN-DECISION owner Human
+  - CORE-01-OBJ-STRUCTURED-DECISION owner AI Assistant
+  - CORE-01-OBJ-CANDIDATE entity CandidateVersion owner Candidate Service
+  - CORE-01-ACC-05 Decision Safety
+  - CORE-01-ACC-06 Immutable Version
+  reuse_contract:
+  - public.conversations
+  - public.conversation_messages
+  - public.quality_criteria_versions
+  - public.projects
+  - public.topics
+  - acpos_runtime RLS actor helpers
+  new_parallel_systems: 0
+  production_apply: FORBIDDEN_UNTIL_VALIDATED_AND_RELEASE_SEQUENCE
