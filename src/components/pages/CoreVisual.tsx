@@ -17,7 +17,7 @@ import styles from "./CoreVisual.module.css";
 
 type LabelKey = TranslationKey;
 type PageState = "LOADING" | "READY" | "ERROR";
-type ConversationUiMessage = { id: string; role: "USER" | "STATUS" | "SIMULATED_AI"; text: string };
+type ConversationUiMessage = { id: string; role: "USER" | "STATUS" | "ASSISTANT" | "SIMULATED_AI"; text: string };
 type ControlProps = { id: string; labelKey: LabelKey; primary?: boolean; compact?: boolean; disabled?: boolean; onClick?: () => void };
 
 const CONTROL_ACTION_UID: Record<string, CoreActionUid> = {
@@ -295,8 +295,13 @@ export function CoreVisual() {
           if (result.ok) {
             const value = asRecord(result.value);
             appendConversationMessage("USER", submitted, text(value.message_ref) ?? undefined);
+            const assistantText = text(value.assistant_response_text);
             const simulatedText = text(value.simulated_response_text);
-            if (simulatedText) appendConversationMessage("SIMULATED_AI", simulatedText, text(value.simulated_response_ref) ?? undefined);
+            if (assistantText) {
+              appendConversationMessage("ASSISTANT", assistantText, text(value.assistant_response_ref) ?? undefined);
+            } else if (simulatedText) {
+              appendConversationMessage("SIMULATED_AI", simulatedText, text(value.simulated_response_ref) ?? undefined);
+            }
             setMessage("");
             await syncProjection();
           } else {
@@ -418,8 +423,13 @@ export function CoreVisual() {
           const result = await runServerAction(action, { path_params: { conversationId }, payload: payload.payload });
           if (result?.ok) {
             const value = asRecord(result.value);
+            const assistantText = text(value.assistant_response_text);
             const simulatedText = text(value.simulated_response_text);
-            if (simulatedText) appendConversationMessage("SIMULATED_AI", simulatedText, text(value.simulated_response_ref) ?? undefined);
+            if (assistantText) {
+              appendConversationMessage("ASSISTANT", assistantText, text(value.assistant_response_ref) ?? undefined);
+            } else if (simulatedText) {
+              appendConversationMessage("SIMULATED_AI", simulatedText, text(value.simulated_response_ref) ?? undefined);
+            }
             await syncProjection();
           }
         })();
