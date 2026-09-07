@@ -63,3 +63,17 @@ test("Strategy send has an exact canonical Production request builder and clears
   assert.match(ui, /isStrategyRequestBuilderBound\(binding\.action_uid as StrategyFormalAction\)/);
   assert.match(ui, /action==='STR-01-ACT-SEND'\|\|action==='STR-01-ACT-STOP'/);
 });
+
+test("CORE projection restores persisted messages for each visible thread", async () => {
+  const projection = await read("src/server/shared/pageCatalogProjectionRuntime.ts");
+  const adapter = await read("src/domain/core/coreProjectionAdapter.ts");
+  const ui = await read("src/components/pages/CoreVisual.tsx");
+  assert.match(projection, /messages_by_thread/);
+  assert.match(projection, /FROM conversation_messages/);
+  assert.match(projection, /actor_type === "PROVIDER" \? "ASSISTANT"/);
+  assert.match(adapter, /messages_by_thread\?/);
+  assert.match(ui, /messagesForThread/);
+  assert.match(ui, /setConversationMessages\(messagesForThread\(resolved\.projection/);
+  assert.match(ui, /setConversationMessages\(messagesForThread\(projection, conversationId/);
+});
+
