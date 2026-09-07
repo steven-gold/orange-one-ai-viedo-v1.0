@@ -157,6 +157,7 @@ export async function resolveProductionSystemContinuityContext(
                  message_content->>'assistant_summary' AS assistant_summary,
                  message_content->>'response_mode' AS response_mode,
                  message_content->'governance'->>'context_fingerprint' AS context_fingerprint,
+                 message_content->'entries' AS entries,
                  COALESCE(message_content->>'kind','') AS kind
           FROM conversation_messages
           WHERE conversation_id=${conversationId}::uuid
