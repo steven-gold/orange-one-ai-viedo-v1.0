@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T10:40:29+08:00",
+  "as_of": "2026-09-07T11:15:41+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
-    "new_sha_basis": "30778e00c5eb6f6db3487ade8500c925d446f3dc",
+    "new_sha_basis": "1b066c5ca284b13ed9d24047d65bd0ba00f02b2f",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -43,15 +43,18 @@
     },
     "latest_control_acceptance_gate": {
       "status": "PASS",
-      "run_number": 436,
-      "run_id": 34064727165,
-      "head_sha": "17804d7b6f3800b538674607bef3dc30a284994d",
+      "run_number": 504,
+      "run_id": 34078890336,
+      "head_sha": "1b066c5ca284b13ed9d24047d65bd0ba00f02b2f",
       "branch": "new",
       "conclusion": "success",
-      "browser_e2e": "PASS",
-      "current_dom_control_acceptance": "PASS",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=515 governed_controls=309 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_301_VISIBLE_301_GOVERNED",
+      "current_dom_breakdown": "enabled=197 disabled=104",
       "standalone_docker_build": "PASS",
-      "dirty_tree_guard": "PASS"
+      "dirty_tree_guard": "PASS",
+      "note": "Current DOM visible count is runtime evidence for this controlled fixture run only and is not a frozen Production denominator."
     },
     "latest_remote_control_acceptance_gate": {
       "status": "PASS",
@@ -129,6 +132,86 @@
       "current_dom_control_acceptance": "PASS_18_PAGES_369_VISIBLE_369_GOVERNED",
       "standalone_docker_build": "PASS",
       "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_erp_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 501,
+      "run_id": 34077206335,
+      "head_sha": "85c1f806ee75ae5a0d42758b91cc2a5e37691a70",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:ERP-01",
+      "controls": [
+        "ERP-01-BTN-SNAPSHOT-REFRESH"
+      ],
+      "actions": [
+        "ERP-01-ACT-SNAPSHOT-REFRESH"
+      ],
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=481 governed_controls=285 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1",
+      "current_dom_control_acceptance": "PASS_18_PAGES_406_VISIBLE_406_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_dev_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 502,
+      "run_id": 34078573469,
+      "head_sha": "988cc34a149a00139aec7dbe05fec6d7c600e3c7",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:DEV-01",
+      "controls": [
+        "DEV-01-BTN-DISCOVERY-START",
+        "DEV-01-BTN-DISCOVERY-PAUSE",
+        "DEV-01-BTN-DISCOVERY-RESUME",
+        "DEV-01-BTN-DISCOVERY-STOP"
+      ],
+      "operations": [
+        "startCompanyDiscovery",
+        "pauseCompanyDiscovery",
+        "resumeCompanyDiscovery",
+        "stopCompanyDiscovery"
+      ],
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=515 governed_controls=309 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4",
+      "current_dom_control_acceptance": "PASS_18_PAGES_406_VISIBLE_406_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_soc_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 504,
+      "run_id": 34078890336,
+      "head_sha": "1b066c5ca284b13ed9d24047d65bd0ba00f02b2f",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:SOC-01",
+      "controls": [
+        "SOC-01-BTN-CONTENT-SAVE",
+        "SOC-01-BTN-CANDIDATE-DECIDE"
+      ],
+      "actions": [
+        "SOC-01-ACT-CONTENT-SAVE",
+        "SOC-01-ACT-CANDIDATE-DECIDE"
+      ],
+      "external_publish_executed": false,
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=515 governed_controls=309 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_301_VISIBLE_301_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "prior_attempt": {
+        "run_number": 503,
+        "run_id": 34078753563,
+        "conclusion": "failure",
+        "failure_step": "Supported-viewport browser E2E",
+        "failure_reason": "IAM_ADD_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST",
+        "remediation_commit": "1b066c5ca284b13ed9d24047d65bd0ba00f02b2f"
+      },
       "production_status": "PENDING_NEXT_MAIN_RELEASE"
     }
   },
@@ -248,12 +331,12 @@
       "reason": "Production queue and worker are READY (1/1 each), worker heartbeat is current, and Post Deploy authenticated E2E #696 passed the full queue probe including idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup on deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_RELEASE_STRATEGY_SG02_IAM_PASS_PRODUCTION_9_TARGET_ACCEPTANCE_INCOMPLETE",
-      "reason": "Release Gate #494 proves Strategy Admin configure/approve governance mutations in CONTROLLED_TEST. Release Gate #497 proves SG-02 configure/approve governance mutations. Release Gate #499 proves IAM-01 Add/Create permission mutation flow through save, validate, impact preview, explicit confirmation, governed configure, permission assignment/revocation orchestration and approval. Current Production still lacks evidence for all 9 admin mutation targets end-to-end, so Gate 24 remains PARTIAL."
+      "status": "PARTIAL_RELEASE_6_OF_9_TARGETS_PASS_PRODUCTION_9_TARGET_ACCEPTANCE_INCOMPLETE",
+      "reason": "Release-controlled mutation evidence now covers Strategy Admin (#494), SG-02 (#497), IAM-01 (#499/#504), ERP-01 (#501), DEV-01 (#502) and SOC-01 (#504). SOC stops before external publish and therefore does not imply External Provider PASS. Current Production still lacks end-to-end evidence for all 9 admin mutation targets, so Gate 24 remains PARTIAL."
     },
     "gate25_full_page_button_acceptance": {
       "status": "PARTIAL_RELEASE_BROWSER_AND_DOM_ACCEPTANCE_PASS_REMOTE_PRODUCTION_PENDING",
-      "reason": "Release Gate #491 passes supported-viewport Browser E2E across 72 cases and Current DOM control acceptance across all 18 Current pages (378 visible / 378 governed) on exact head 6fc4639a0da4159e2a678be2d3c01624976faf29. The historical 1453 value is now verified only as the legacy 92-page permission catalog control/action baseline (1141 controls + 312 actions), not the Current 18-page DOM denominator. Production remote control acceptance remains pending the next main release; remote visible-control count must be measured at runtime and 100% governed rather than hard-coded to 358."
+      "reason": "Release Gate #504 passes supported-viewport Browser E2E across 72 cases and Current DOM control acceptance across all 18 Current pages (301 visible / 301 governed) on exact head 1b066c5ca284b13ed9d24047d65bd0ba00f02b2f. The historical 1453 value remains only the legacy 92-page permission catalog baseline (1141 controls + 312 actions), not the Current 18-page DOM denominator. Production remote control acceptance remains pending the next main release; remote visible-control count must be measured at runtime and 100% governed."
     }
   },
   "blockers": [
@@ -262,11 +345,11 @@
     "Gate 25 Production remote Current DOM acceptance is not yet executed on the next main release; Release-side 18-page Browser/DOM acceptance is PASS."
   ],
   "next_release_sequence": [
-    "Continue Gate 24 admin mutation closure on new using registered Current operations and exact page ownership; prioritize non-provider, internally reversible targets before the next single Production release.",
+    "Continue Gate 24 on new with the remaining admin targets. Next executable internal target is AIAPI-01 controlled command closure; keep it TEST_ONLY and do not treat synthetic provider profiles as Gate 22 External Provider evidence.",
+    "Do not execute SOC external publish or claim External Provider PASS until real provider capability/profile/secret/group configuration is supplied and a real external request succeeds.",
     "Keep main fixed at deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671 until the next integration point.",
     "At the next integration point, require a full Release Gate on the exact new head, then one new→main release and Post Deploy HTTP/auth/browser/remote-control acceptance with runtime-measured visible controls.",
-    "Treat 1453 strictly as the legacy 92-page permission catalog baseline (1141 controls + 312 actions), not as the Current 18-page DOM denominator.",
-    "Do not claim External Provider PASS until real provider capability/profile/secret/group configuration is supplied and a real external request succeeds."
+    "Treat 1453 strictly as the legacy 92-page permission catalog baseline (1141 controls + 312 actions), not as the Current 18-page DOM denominator."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
