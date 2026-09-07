@@ -50,6 +50,8 @@ async function navigate(page, route, uid, viewSwitch = null) {
       await sleep(35);
     }
   }
+  const state = await root.getAttribute("data-page-state");
+  if (state === "ERROR") throw new Error(`TEMP_PAGE_STATE_ERROR_${uid}`);
   return root;
 }
 
@@ -220,7 +222,7 @@ try {
               if (control.controlId) loc = discovery.locator(`[data-control-id="${control.controlId}"]`).nth(index);
               else if (control.operationId) loc = discovery.locator(`[data-operation-id="${control.operationId}"]`).nth(index);
               else if (control.accessible) loc = discovery.locator(control.tag).filter({ hasText: control.accessible }).nth(index);
-              if (loc && await loc.count()) {
+              if (loc && await loc.count() && await loc.isEnabled().catch(() => false)) {
                 try {
                   if (await fillField(loc)) inputExercises += 1;
                 } catch (error) {
@@ -246,6 +248,12 @@ try {
               });
               try {
                 const actionRoot = await navigate(actionPage, route, uid, viewSwitch);
+                const pageFields = actionPage.locator('input:visible:enabled, select:visible:enabled, textarea:visible:enabled');
+                for (let fieldIndex = 0; fieldIndex < await pageFields.count(); fieldIndex += 1) {
+                  try {
+                    if (await fillField(pageFields.nth(fieldIndex))) inputExercises += 1;
+                  } catch {}
+                }
                 let loc = null;
                 if (control.controlId) loc = actionPage.locator(`[data-control-id="${control.controlId}"]:visible:not(:disabled)`).nth(control.occurrence);
                 else if (control.operationId) loc = actionPage.locator(`[data-operation-id="${control.operationId}"]:visible:not(:disabled)`).nth(control.occurrence);

@@ -499,6 +499,7 @@ export function readControlledKnowledgeTestProjection() {
   const pausedSource = state.sources.find(item => item.status === "PAUSED") ?? null;
   const retireCandidate = state.sources.find(item => item.status !== "RETIRED") ?? null;
   const values: Record<string, string> = {
+    "KB-01-FLD-SCOPE": source?.scope ?? state.sources[0]?.scope ?? "—",
     overview_kpi: `${state.sources.length} sources · ${state.runs.length} runs · ${state.experiences.length} experiences · ${review ? 1 : 0} in review · ${approved ? 1 : 0} approved`,
     overview_warn: hasActiveNonCancelableRun() ? "1 conflicting run in progress" : "No warnings",
     source_list: state.sources.map(item => `${item.source_id} v${item.source_version} ${item.status}`).join(" | ") || "—",

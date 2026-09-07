@@ -12,7 +12,7 @@ const TEST_METADATA = {
 type CredentialStatus = "SET" | "NOT_SET" | "ROTATION_DUE" | "ERROR";
 type ProviderProfileState = "ENABLED" | "DISABLED" | "RETIRED";
 type ProviderProfile = {
-  provider_id: string; provider_name: string; model_id: string; model_name: string; capability: string; adapter_type: string;
+  profile_id: string; provider_id: string; provider_name: string; model_id: string; model_name: string; capability: string; adapter_type: string;
   base_url_ref: string; endpoint_path: string; timeout_seconds: number; state: ProviderProfileState; credential_status: CredentialStatus;
   last_test_ref: string | null; version: number;
 };
@@ -22,8 +22,8 @@ const state: ControlledState = { profiles: [], audit_counter: 0, last_audit_ref:
 function seedFixture() {
   if (state.profiles.length > 0) return;
   state.profiles.push(
-    { provider_id: "TEST-AIAPI-PROVIDER-001", provider_name: "[TEST] Primary Provider", model_id: "TEST-AIAPI-MODEL-001", model_name: "[TEST] Primary Model", capability: "text_generation", adapter_type: "openai_compatible", base_url_ref: "TEST-AIAPI-BASEURL-001", endpoint_path: "/v1/test/chat", timeout_seconds: 30, state: "ENABLED", credential_status: "SET", last_test_ref: null, version: 2 },
-    { provider_id: "TEST-AIAPI-PROVIDER-002", provider_name: "[TEST] Secondary Provider", model_id: "TEST-AIAPI-MODEL-002", model_name: "[TEST] Secondary Model", capability: "text_generation", adapter_type: "openai_compatible", base_url_ref: "TEST-AIAPI-BASEURL-002", endpoint_path: "/v1/test/chat", timeout_seconds: 45, state: "DISABLED", credential_status: "NOT_SET", last_test_ref: null, version: 1 },
+    { profile_id: "TEST-AIAPI-PROFILE-001", provider_id: "TEST-AIAPI-PROVIDER-001", provider_name: "[TEST] Primary Provider", model_id: "TEST-AIAPI-MODEL-001", model_name: "[TEST] Primary Model", capability: "TEXT_CHAT", adapter_type: "OPENAI_COMPATIBLE_CHAT", base_url_ref: "TEST-AIAPI-BASEURL-001", endpoint_path: "/v1/test/chat", timeout_seconds: 30, state: "ENABLED", credential_status: "SET", last_test_ref: null, version: 2 },
+    { profile_id: "TEST-AIAPI-PROFILE-002", provider_id: "TEST-AIAPI-PROVIDER-002", provider_name: "[TEST] Secondary Provider", model_id: "TEST-AIAPI-MODEL-002", model_name: "[TEST] Secondary Model", capability: "TEXT_CHAT", adapter_type: "OPENAI_COMPATIBLE_CHAT", base_url_ref: "TEST-AIAPI-BASEURL-002", endpoint_path: "/v1/test/chat", timeout_seconds: 45, state: "DISABLED", credential_status: "NOT_SET", last_test_ref: null, version: 1 },
   );
 }
 
@@ -84,7 +84,8 @@ export function readControlledAiApiTestProjection() {
       ...VIEW_VALUES, "Provider summary": profileSummary(), ...PRO_DESC_VALUES,
       "provider.profile": profileSummary(), "provider.selected": `${primary.provider_id}/${primary.model_id}`,
     } as Readonly<Record<string, string>>,
-    provider_rows: state.profiles.map((item) => ({
+    provider_rows: state.profiles.map((item, index) => ({
+      profile_id: item.profile_id,
       provider_id: item.provider_id,
       provider_name: item.provider_name,
       model_id: item.model_id,
@@ -97,6 +98,10 @@ export function readControlledAiApiTestProjection() {
       enabled: item.state,
       credential_status: item.credential_status,
       last_test: item.last_test_ref ?? "—",
+      health_status: item.state === "ENABLED" ? "HEALTHY" : "UNKNOWN",
+      capability_status: index === 0 ? "APPROVED" : "NOT_REGISTERED",
+      capability_version: index === 0 ? "TEST-CAP-V1" : "—",
+      version: item.version,
     })),
     evidence: Object.fromEntries(Object.keys({ ...VIEW_VALUES, ...PRO_DESC_VALUES }).map((key) => [key, "projection_bound · TEST_ONLY"])),
     states: Object.fromEntries(Object.keys({ ...VIEW_VALUES, ...PRO_DESC_VALUES }).map((key) => [key, "READY"])),
@@ -107,7 +112,7 @@ export function readControlledAiApiTestProjection() {
       setKillSwitch: true, createProviderCandidateGroup: true, getProviderQuarantine: true, restoreProviderFromQuarantine: true,
       runSandboxTest: true, executeProviderRoute: true, getProviderRouteDecision: true,
     } as Readonly<Record<string, boolean>>,
-    selected_resource_id: primary.provider_id,
+    selected_resource_id: primary.profile_id,
     test_metadata: TEST_METADATA,
   };
 }
@@ -138,6 +143,61 @@ export function executeControlledAiApiCommand(request: ControlledAiApiRequest): 
   }
   seedFixture();
 
+  const profileView = (profile: ProviderProfile) => ({
+    profile_id: profile.profile_id,
+    provider_id: profile.provider_id,
+    model_id: profile.model_id,
+    capability_type: profile.capability,
+    adapter_type: profile.adapter_type,
+    base_url: profile.base_url_ref,
+    endpoint_path: profile.endpoint_path,
+    http_method: "POST",
+    secret_env_ref: "TEST_ONLY_SECRET_REFERENCE",
+    credential_status: profile.credential_status,
+    preferred_language: "zh-TW",
+    max_context: null,
+    timeout_seconds: profile.timeout_seconds,
+    request_template: { prompt_template: "{{canonical_instruction}}" },
+    response_text_path: "choices.0.message.content",
+    enabled: profile.state === "ENABLED",
+    health_status: profile.state === "ENABLED" ? "HEALTHY" : "UNKNOWN",
+    version: profile.version,
+    test_metadata: TEST_METADATA,
+  });
+  const findProfile = (ref: string | null) => state.profiles.find((item) =>
+    item.profile_id === ref || item.provider_id === ref || item.model_id === ref
+  ) ?? null;
+
+  if (request.operation_id === "listProviderModelProfiles") {
+    return { ok: true, value: { profiles: state.profiles.map(profileView), test_metadata: TEST_METADATA }, correlation_id: request.correlation_id };
+  }
+  if (request.operation_id === "getProviderModelProfile") {
+    const profile = findProfile(textValue(request.path_params.profileId));
+    return profile
+      ? { ok: true, value: profileView(profile), correlation_id: request.correlation_id }
+      : { ok: false, status: 404, reason_code: "AIAPI_PROFILE_NOT_FOUND", correlation_id: request.correlation_id };
+  }
+  if (request.operation_id === "testProviderModelProfile") {
+    const profile = findProfile(textValue(request.path_params.profileId));
+    if (!profile) return { ok: false, status: 404, reason_code: "AIAPI_PROFILE_NOT_FOUND", correlation_id: request.correlation_id };
+    state.audit_counter += 1;
+    profile.last_test_ref = `TEST-AIAPI-PROFILE-TEST-${String(state.audit_counter).padStart(3, "0")}`;
+    return {
+      ok: true,
+      value: {
+        test_id: profile.last_test_ref,
+        status: "TEST_ONLY_PASS",
+        dry_run: true,
+        external_request_sent: false,
+        plaintext_persisted: false,
+        test_metadata: TEST_METADATA,
+      },
+      correlation_id: request.correlation_id,
+    };
+  }
+  if (request.operation_id === "getProviderQuarantine") {
+    return { ok: true, value: { quarantine: [], test_metadata: TEST_METADATA }, correlation_id: request.correlation_id };
+  }
   if (request.operation_id !== "setKillSwitch") {
     return { ok: false, status: 503, reason_code: "AIAPI_CONTROLLED_OPERATION_NOT_MATERIALIZED", correlation_id: request.correlation_id };
   }
@@ -161,7 +221,7 @@ export function executeControlledAiApiCommand(request: ControlledAiApiRequest): 
     return { ok: false, status: 400, reason_code: "AIAPI_FIELD_REQUIRED:enabled", correlation_id: request.correlation_id };
   }
 
-  const profile = state.profiles.find((item) => item.provider_id === targetRef || item.model_id === targetRef);
+  const profile = state.profiles.find((item) => item.profile_id === targetRef || item.provider_id === targetRef || item.model_id === targetRef);
   if (!profile) {
     return { ok: false, status: 404, reason_code: "AIAPI_PROFILE_NOT_FOUND", correlation_id: request.correlation_id };
   }

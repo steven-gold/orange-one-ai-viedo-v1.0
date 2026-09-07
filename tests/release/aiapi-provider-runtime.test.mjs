@@ -11,6 +11,7 @@ const binder = await readFile("src/server/shared/identityPageCommandRuntime.ts",
 const queueAuthority = await readFile("authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml", "utf8");
 const providerAdapter = await readFile("src/server/aiApi/providerHttpAdapterRuntime.ts", "utf8");
 const queueRuntime = await readFile("src/server/queue/providerExecutionQueueRuntime.ts", "utf8");
+const controlledRuntime = await readFile("src/server/testing/controlledAiApiTestRuntime.ts", "utf8");
 
 const routeFiles = [
   ["src/app/v1/aiapi/provider-profiles/route.ts", "listProviderModelProfiles", "createProviderModelProfile"],
@@ -120,4 +121,19 @@ test("provider capability governance query matches canonical schema", async () =
   assert.match(runtime, /c\.status='APPROVED'/);
   assert.match(runtime, /accepted_classifications::text\[\]/);
   assert.doesNotMatch(runtime, /c\.capability_key/);
+});
+
+
+test("AIAPI controlled fixture matches Current provider projection and safe read contracts", () => {
+  assert.match(controlledRuntime, /profile_id:/);
+  assert.match(controlledRuntime, /adapter:/);
+  assert.match(controlledRuntime, /base_url:/);
+  assert.match(controlledRuntime, /health_status:/);
+  assert.match(controlledRuntime, /capability_status:/);
+  assert.match(controlledRuntime, /capability_version:/);
+  assert.match(controlledRuntime, /request\.operation_id === "getProviderModelProfile"/);
+  assert.match(controlledRuntime, /request\.operation_id === "testProviderModelProfile"/);
+  assert.match(controlledRuntime, /request\.operation_id === "getProviderQuarantine"/);
+  assert.match(controlledRuntime, /external_request_sent: false/);
+  assert.match(controlledRuntime, /TEST_ONLY_PASS/);
 });
