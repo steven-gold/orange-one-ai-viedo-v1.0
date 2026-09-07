@@ -5,6 +5,10 @@ const singleProfileId = (process.env.ACPOS_EXTERNAL_E2E_PROFILE_ID ?? "").trim()
 const profileIds = (process.env.ACPOS_EXTERNAL_E2E_PROFILE_IDS ?? singleProfileId)
   .split(",").map((value) => value.trim()).filter(Boolean);
 const groupId = (process.env.ACPOS_EXTERNAL_E2E_GROUP_ID ?? "").trim();
+const secondaryGroupId = (process.env.ACPOS_EXTERNAL_E2E_SECONDARY_GROUP_ID ?? "").trim();
+const secondaryExpectedProvider = (process.env.ACPOS_EXTERNAL_E2E_SECONDARY_EXPECTED_PROVIDER ?? "").trim();
+const secondaryExpectedModel = (process.env.ACPOS_EXTERNAL_E2E_SECONDARY_EXPECTED_MODEL ?? "").trim();
+const blockedGroupId = (process.env.ACPOS_EXTERNAL_E2E_BLOCKED_GROUP_ID ?? "").trim();
 const capability = (process.env.ACPOS_EXTERNAL_E2E_CAPABILITY ?? "").trim().toUpperCase();
 const classification = (process.env.ACPOS_EXTERNAL_E2E_CLASSIFICATION ?? "INTERNAL").trim().toUpperCase();
 const expectedReleaseSha = (process.env.ACPOS_EXPECT_RELEASE_SHA ?? "").trim();
@@ -138,6 +142,42 @@ try {
     }
   }
 
+  const sandboxTests = [];
+  for (const testedProfile of tested) {
+    const sandbox = await fetch(`${base}/v1/aiapi/sandbox-tests`, {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        ...cookieHeaders(cookie),
+        "content-type": "application/json",
+        "x-correlation-id": crypto.randomUUID(),
+      },
+      body: JSON.stringify({
+        profile_id: testedProfile.profile_id,
+        canonical_instruction: "ACPOS AIAPI acceptance dry-run compile. Preserve canonical meaning and do not send an external Provider request.",
+      }),
+    });
+    const sandboxBody = await json(sandbox, `SANDBOX_${testedProfile.profile_id}`);
+    assert(
+      sandbox.status === 200 && sandboxBody?.ok === true,
+      `SANDBOX_HTTP_${testedProfile.profile_id}_${sandbox.status}_${sandboxBody?.reason_code ?? "UNKNOWN"}`,
+    );
+    assert(sandboxBody?.value?.status === "PASS", `SANDBOX_STATUS_${testedProfile.profile_id}`);
+    assert(sandboxBody?.value?.dry_run === true, `SANDBOX_NOT_DRY_RUN_${testedProfile.profile_id}`);
+    assert(
+      sandboxBody?.value?.external_request_sent === false,
+      `SANDBOX_EXTERNAL_REQUEST_FORBIDDEN_${testedProfile.profile_id}`,
+    );
+    assert(
+      typeof sandboxBody?.value?.test_id === "string" && sandboxBody.value.test_id.length > 0,
+      `SANDBOX_TEST_ID_MISSING_${testedProfile.profile_id}`,
+    );
+    sandboxTests.push({
+      profile_id: testedProfile.profile_id,
+      test_id: sandboxBody.value.test_id,
+    });
+  }
+
   const route = await fetch(`${base}/v1/aiapi/routes`, {
     method: "POST",
     cache: "no-store",
@@ -191,14 +231,109 @@ try {
     "ROUTE_DECISION_MODEL_MISSING",
   );
 
+  let secondaryRoute = null;
+  if (secondaryGroupId) {
+    const secondary = await fetch(`${base}/v1/aiapi/routes`, {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        ...cookieHeaders(cookie),
+        "content-type": "application/json",
+        "x-correlation-id": crypto.randomUUID(),
+      },
+      body: JSON.stringify({
+        candidate_group_id: secondaryGroupId,
+        required_capability: capability,
+        use_case: "PRODUCTION_EXTERNAL_PROVIDER_SECONDARY_ACCEPTANCE",
+        data_classification: classification,
+        canonical_instruction: "ACPOS secondary Provider acceptance check. Return a short acknowledgement.",
+        scoped_context: { acceptance_scope: "GATE_22_SECONDARY_PROVIDER_ROUTE" },
+      }),
+    });
+    const secondaryBody = await json(secondary, "SECONDARY_PROVIDER_ROUTE");
+    assert(
+      secondary.status === 200 && secondaryBody?.ok === true,
+      `SECONDARY_PROVIDER_ROUTE_HTTP_${secondary.status}_${secondaryBody?.reason_code ?? "UNKNOWN"}`,
+    );
+    const secondaryValue = secondaryBody?.value ?? {};
+    assert(secondaryValue.status === "SUCCESS", `SECONDARY_PROVIDER_ROUTE_STATUS_${secondaryValue.status ?? "UNRESOLVED"}`);
+    assert(secondaryValue.external_request_sent === true, "SECONDARY_PROVIDER_EXTERNAL_REQUEST_NOT_SENT");
+    assert(secondaryValue.worker?.succeeded === 1, "SECONDARY_PROVIDER_WORKER_NOT_SUCCESSFUL");
+    assert(
+      typeof secondaryValue.route_decision_id === "string" && secondaryValue.route_decision_id.length > 0,
+      "SECONDARY_PROVIDER_DECISION_ID_MISSING",
+    );
+    const secondaryDecision = await fetch(
+      `${base}/v1/aiapi/routes/${encodeURIComponent(secondaryValue.route_decision_id)}`,
+      { method: "GET", cache: "no-store", headers: cookieHeaders(cookie) },
+    );
+    const secondaryDecisionBody = await json(secondaryDecision, "SECONDARY_ROUTE_DECISION");
+    assert(secondaryDecision.status === 200 && secondaryDecisionBody?.ok === true, "SECONDARY_ROUTE_DECISION_READ_FAILED");
+    const secondaryResolved = secondaryDecisionBody?.value ?? {};
+    assert(secondaryResolved.status === "SUCCESS", "SECONDARY_ROUTE_DECISION_NOT_SUCCESS");
+    assert(secondaryResolved.payload?.external_request_sent === true, "SECONDARY_ROUTE_EXTERNAL_REQUEST_NOT_ATTESTED");
+    if (secondaryExpectedProvider) {
+      assert(secondaryResolved.provider_id === secondaryExpectedProvider, `SECONDARY_PROVIDER_MISMATCH_${secondaryResolved.provider_id ?? "UNRESOLVED"}`);
+    }
+    if (secondaryExpectedModel) {
+      assert(secondaryResolved.model_id === secondaryExpectedModel, `SECONDARY_MODEL_MISMATCH_${secondaryResolved.model_id ?? "UNRESOLVED"}`);
+    }
+    secondaryRoute = {
+      provider_id: secondaryResolved.provider_id,
+      model_id: secondaryResolved.model_id,
+      route_decision_id: secondaryValue.route_decision_id,
+    };
+  }
+
+  let blockedRouteVerified = false;
+  if (blockedGroupId) {
+    const blockedRoute = await fetch(`${base}/v1/aiapi/routes`, {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        ...cookieHeaders(cookie),
+        "content-type": "application/json",
+        "x-correlation-id": crypto.randomUUID(),
+      },
+      body: JSON.stringify({
+        candidate_group_id: blockedGroupId,
+        required_capability: capability,
+        use_case: "PRODUCTION_EXTERNAL_PROVIDER_FAIL_CLOSED_ACCEPTANCE",
+        data_classification: classification,
+        canonical_instruction: "This acceptance request must not leave ACPOS because all members are health-gated.",
+        scoped_context: { acceptance_scope: "GATE_22_FAIL_CLOSED" },
+      }),
+    });
+    const blockedBody = await json(blockedRoute, "BLOCKED_PROVIDER_ROUTE");
+    assert(blockedRoute.status === 200 && blockedBody?.ok === true, `BLOCKED_ROUTE_HTTP_${blockedRoute.status}`);
+    const blockedValue = blockedBody?.value ?? {};
+    assert(blockedValue.status === "BLOCKED", `BLOCKED_ROUTE_STATUS_${blockedValue.status ?? "UNRESOLVED"}`);
+    assert(blockedValue.reason === "NO_ELIGIBLE_PROVIDER_MEMBER", `BLOCKED_ROUTE_REASON_${blockedValue.reason ?? "UNRESOLVED"}`);
+    assert(blockedValue.eligible_members === 0, "BLOCKED_ROUTE_ELIGIBLE_MEMBER_PRESENT");
+    assert(blockedValue.external_request_sent === false, "BLOCKED_ROUTE_EXTERNAL_REQUEST_SENT");
+    assert(
+      typeof blockedValue.route_decision_id === "string" && blockedValue.route_decision_id.length > 0,
+      "BLOCKED_ROUTE_DECISION_ID_MISSING",
+    );
+    const blockedDecision = await fetch(
+      `${base}/v1/aiapi/routes/${encodeURIComponent(blockedValue.route_decision_id)}`,
+      { method: "GET", cache: "no-store", headers: cookieHeaders(cookie) },
+    );
+    const blockedDecisionBody = await json(blockedDecision, "BLOCKED_ROUTE_DECISION");
+    assert(blockedDecision.status === 200 && blockedDecisionBody?.ok === true, "BLOCKED_ROUTE_DECISION_READ_FAILED");
+    assert(blockedDecisionBody?.value?.status === "BLOCKED", "BLOCKED_ROUTE_DECISION_NOT_BLOCKED");
+    assert(blockedDecisionBody?.value?.payload?.external_request_sent === false, "BLOCKED_ROUTE_DECISION_EXTERNAL_REQUEST_ATTESTED");
+    blockedRouteVerified = true;
+  }
+
   if (profileFailures.length) {
     process.stdout.write(
-      `PRODUCTION_EXTERNAL_PROVIDER_E2E_PARTIAL release_sha=${healthBody.release_sha} profile_tests_passed=${tested.length} profile_tests_failed=${profileFailures.length} failed_profiles=${profileFailures.map((row) => row.profile_id).join(",")} route_provider=${resolved.provider_id} route_model=${resolved.model_id} worker_succeeded=1 external_request_sent=true provider_matrix_complete=false plaintext_persisted=false\n`,
+      `PRODUCTION_EXTERNAL_PROVIDER_E2E_PARTIAL release_sha=${healthBody.release_sha} profile_tests_passed=${tested.length} profile_tests_failed=${profileFailures.length} failed_profiles=${profileFailures.map((row) => row.profile_id).join(",")} route_provider=${resolved.provider_id} route_model=${resolved.model_id} worker_succeeded=1 sandbox_tests=${sandboxTests.length} secondary_route_provider=${secondaryRoute?.provider_id ?? "NONE"} blocked_route_verified=${blockedRouteVerified} external_request_sent=true provider_matrix_complete=false plaintext_persisted=false\n`,
     );
   }
 
   process.stdout.write(
-    `PRODUCTION_EXTERNAL_PROVIDER_E2E_PASS release_sha=${healthBody.release_sha} profile_tests=${tested.length} providers=${tested.map((row) => row.provider_id).join(",")} capability=${capability} route_provider=${resolved.provider_id} route_model=${resolved.model_id} route_decision_id=${decisionId} worker_succeeded=1 external_request_sent=true provider_matrix_complete=${profileFailures.length === 0} plaintext_persisted=false\n`,
+    `PRODUCTION_EXTERNAL_PROVIDER_E2E_PASS release_sha=${healthBody.release_sha} profile_tests=${tested.length} providers=${tested.map((row) => row.provider_id).join(",")} capability=${capability} route_provider=${resolved.provider_id} route_model=${resolved.model_id} route_decision_id=${decisionId} worker_succeeded=1 sandbox_tests=${sandboxTests.length} secondary_route_provider=${secondaryRoute?.provider_id ?? "NONE"} secondary_route_model=${secondaryRoute?.model_id ?? "NONE"} blocked_route_verified=${blockedRouteVerified} external_request_sent=true provider_matrix_complete=${profileFailures.length === 0} plaintext_persisted=false\n`,
   );
 } finally {
   await logout(cookie);
