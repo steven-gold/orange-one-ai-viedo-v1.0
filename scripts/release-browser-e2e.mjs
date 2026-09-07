@@ -352,7 +352,13 @@ try {
       }
 
       const addButton = iamPage.locator('button[data-control-id="IAM-01-BTN-ADD"]');
-      if (!(await addButton.isEnabled())) throw new Error("IAM_ADD_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await iamPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="IAM-01-BTN-ADD"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
       await addButton.click();
       await iamPage.waitForFunction(
         () => document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute("data-page-state") === "CREATE_BASIC",
