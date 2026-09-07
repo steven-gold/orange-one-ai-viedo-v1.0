@@ -1,5 +1,4 @@
 import type { CoreExactRefs } from "./coreClientState";
-import { isControlledTestMode } from "../testing/controlledTestData";
 
 export type CoreProjectOption = { project_id: string; project_version_ref: string | null; label: string };
 export type CoreTopicOption = { topic_id: string; topic_version_ref: string | null; label: string };
