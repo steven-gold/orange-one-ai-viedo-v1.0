@@ -52,3 +52,23 @@ test("production authenticated acceptance requires exact 18-page API and browser
   assert.match(workflow, /node scripts\/post-deploy-auth-browser-e2e\.mjs/);
   assert.match(release, /node --check scripts\/post-deploy-auth-browser-e2e\.mjs/);
 });
+
+
+test("AppShell preserves frozen global visual shell classes while retaining permission-aware navigation", async () => {
+  const shell = await readFile("src/components/shell/AppShell.tsx", "utf8");
+  const css = await readFile("src/app/globals.css", "utf8");
+
+  for (const className of ["acpos-shell", "global-header", "global-sidebar", "workspace-slot", "header-cluster", "sidebar-surface"]) {
+    assert.match(shell, new RegExp(`className=.*${className}`), `${className} must remain in the Current visual shell`);
+    assert.match(css, new RegExp(`\\.${className}\\b`), `${className} must have a global visual rule`);
+  }
+
+  for (const staleClass of ["app-shell", "shell-main", "topbar", "content-area"]) {
+    assert.doesNotMatch(shell, new RegExp(`className=["']${staleClass}["']`), `${staleClass} must not replace the frozen shell without matching visual authority`);
+  }
+
+  assert.match(shell, /visible_page_uids/);
+  assert.match(shell, /data-target-page-uid=\{item\.pageUid\}/);
+  assert.match(shell, /sidebar-footer/);
+  assert.match(shell, /GHS-PORT-IDENTITY/);
+});

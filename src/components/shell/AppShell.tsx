@@ -124,14 +124,17 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
     }
   };
 
-  const scheduleCollapse = () => {
+  const openSidebar = () => {
     cancelCollapse();
-    collapseTimer.current = setTimeout(() => setExpanded(false), 180);
+    setExpanded(true);
   };
 
-  useEffect(() => {
-    return () => cancelCollapse();
-  }, []);
+  const scheduleCollapse = () => {
+    cancelCollapse();
+    collapseTimer.current = setTimeout(() => {
+      if (!sidebarRef.current?.contains(document.activeElement)) setExpanded(false);
+    }, 180);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -158,14 +161,26 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
   }, []);
 
   useEffect(() => {
-    function onPointerDown(event: PointerEvent) {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setLanguageOpen(false);
+        setAccountOpen(false);
+        if (expanded && !sidebarRef.current?.contains(document.activeElement)) setExpanded(false);
+      }
+    };
+    const onPointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
       if (languageRef.current && !languageRef.current.contains(target)) setLanguageOpen(false);
       if (accountRef.current && !accountRef.current.contains(target)) setAccountOpen(false);
-    }
-    document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, []);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointerdown", onPointerDown);
+      cancelCollapse();
+    };
+  }, [expanded]);
 
   const go = (href: string) => {
     if (window.location.pathname === href) return;
@@ -173,103 +188,126 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
   };
 
   return (
-    <div className="app-shell" data-sidebar-expanded={expanded ? "true" : "false"}>
+    <div className="acpos-shell" data-vis-step="VIS-00">
+      <header className="global-header" aria-label="Global Header">
+        <div className={brandStyles.wrapper} aria-label="ORANGE ONE">
+          <img className={brandStyles.logo} src="/brand/orange-one-logo.png" alt="ORANGE ONE" />
+        </div>
+
+        <div className="header-cluster">
+          <button className="quick-button" type="button" aria-label={t("global.header.notifications")} onClick={() => go("/")}><HeaderIcon kind="bell"/><span>—</span></button>
+          <button className="quick-button" type="button" aria-label={t("global.header.todo")} onClick={() => go("/")}><HeaderIcon kind="todo"/><span>—</span></button>
+          <button className="quick-button" type="button" aria-label={t("global.header.running")} onClick={() => go("/")}><HeaderIcon kind="running"/><span>—</span></button>
+
+          <div className={languageStyles.control} ref={languageRef}>
+            <button
+              className={languageStyles.button}
+              type="button"
+              aria-label={t("global.header.language")}
+              aria-haspopup="listbox"
+              aria-expanded={languageOpen}
+              onClick={() => setLanguageOpen((open) => !open)}
+            >
+              {locale}
+            </button>
+            {languageOpen && (
+              <div className={languageStyles.menu} role="listbox" aria-label={t("global.header.language")}>
+                {LOCALES.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    role="option"
+                    aria-selected={locale === option}
+                    className={`${languageStyles.option} ${locale === option ? languageStyles.selected : ""}`}
+                    onClick={() => {
+                      setLocale(option);
+                      setLanguageOpen(false);
+                    }}
+                  >
+                    <span>{LOCALE_LABELS[option]}</span>
+                    <span className={languageStyles.code}>{option}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div ref={accountRef} className="account-menu" data-port-uid="GHS-PORT-IDENTITY">
+            {identityLabel ? (
+              <button className="account-button" type="button" aria-label={t("global.header.account")} onClick={() => setAccountOpen((open) => !open)} aria-expanded={accountOpen}>
+                <span className="avatar-placeholder" aria-hidden="true"/>
+                <span className="account-label">{identityLabel}</span>
+                <span className="caret" aria-hidden="true">⌄</span>
+              </button>
+            ) : (
+              <a className="account-button" href="/login" aria-label={t("global.header.login")}>
+                <span className="avatar-placeholder" aria-hidden="true"/>
+                <span className="account-label">{t("global.header.login")}</span>
+              </a>
+            )}
+            {identityLabel && accountOpen && (
+              <div className="account-popover">
+                <div className="account-popover-link" aria-hidden="true">{identityLabel}</div>
+                <button type="button" className="account-popover-link" onClick={() => go("/admin/accounts")}>{t("global.admin.iam")}</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
       <aside
         ref={sidebarRef}
-        className="sidebar"
-        aria-label={surface === "admin" ? t("global.admin.system") : t("global.nav.dashboard")}
-        onMouseEnter={() => { cancelCollapse(); setExpanded(true); }}
-        onMouseLeave={scheduleCollapse}
-        onFocusCapture={() => { cancelCollapse(); setExpanded(true); }}
-        onBlurCapture={(event) => {
-          const next = event.relatedTarget as Node | null;
-          if (!next || !sidebarRef.current?.contains(next)) scheduleCollapse();
-        }}
+        className={expanded ? "global-sidebar is-expanded" : "global-sidebar"}
+        aria-label="Primary Navigation"
+        onPointerEnter={openSidebar}
+        onPointerLeave={scheduleCollapse}
+        onFocusCapture={openSidebar}
+        onBlurCapture={scheduleCollapse}
       >
-        <button type="button" className="brand" onClick={() => go("/")} aria-label="ACPOS">
-          <span className={brandStyles.mark}>A</span>
-          <span className="brand-wordmark">ACPOS</span>
-        </button>
-
+        <div className="sidebar-surface" aria-hidden={!expanded} />
         <nav className="nav-list">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={`nav-item ${item.id === activeNavId ? "active" : ""}`}
-              data-nav-id={item.id}
-              data-target-page-uid={item.pageUid}
-              data-navigation-target={item.href}
-              onClick={() => go(item.href)}
-              aria-current={item.id === activeNavId ? "page" : undefined}
-            >
-              <span className="nav-icon"><Icon name={item.icon}/></span>
-              <span className="nav-label">{t(item.labelKey)}</span>
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const isActive = item.id === activeNavId;
+            const label = t(item.labelKey);
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={isActive ? "nav-item is-active" : "nav-item"}
+                aria-label={label}
+                aria-current={isActive ? "page" : undefined}
+                data-nav-id={item.id}
+                data-target-page-uid={item.pageUid}
+                data-navigation-target={item.href}
+                onClick={() => go(item.href)}
+              >
+                <span className="nav-icon"><Icon name={item.icon}/></span>
+                <span className="nav-label" aria-hidden={!expanded}>{label}</span>
+              </button>
+            );
+          })}
         </nav>
 
         <div className="sidebar-footer">
           {surface === "admin" ? (
             frontSurfaceTarget && (
-              <button type="button" className="nav-item" onClick={() => go(frontSurfaceTarget.href)} data-target-page-uid={frontSurfaceTarget.pageUid} data-navigation-target={frontSurfaceTarget.href}>
-                <span className="nav-icon"><Icon name="dashboard"/></span><span className="nav-label">{t("global.nav.dashboard")}</span>
+              <button type="button" className="nav-item" onClick={() => go(frontSurfaceTarget.href)} data-target-page-uid={frontSurfaceTarget.pageUid} data-navigation-target={frontSurfaceTarget.href} aria-label={t("global.nav.dashboard")}>
+                <span className="nav-icon"><Icon name="dashboard"/></span>
+                <span className="nav-label" aria-hidden={!expanded}>{t("global.nav.dashboard")}</span>
               </button>
             )
           ) : (
             adminSurfaceTarget && (
-              <button type="button" className="nav-item" onClick={() => go(adminSurfaceTarget.href)} data-target-page-uid={adminSurfaceTarget.pageUid} data-navigation-target={adminSurfaceTarget.href}>
-                <span className="nav-icon"><Icon name="strategy"/></span><span className="nav-label">{t("global.admin.system")}</span>
+              <button type="button" className="nav-item" onClick={() => go(adminSurfaceTarget.href)} data-target-page-uid={adminSurfaceTarget.pageUid} data-navigation-target={adminSurfaceTarget.href} aria-label={t("global.admin.system")}>
+                <span className="nav-icon"><Icon name="strategy"/></span>
+                <span className="nav-label" aria-hidden={!expanded}>{t("global.admin.system")}</span>
               </button>
             )
           )}
         </div>
       </aside>
 
-      <div className="shell-main">
-        <header className="topbar">
-          <div className="topbar-spacer"/>
-          <div className="topbar-actions">
-            <button type="button" className="header-icon" aria-label={t("global.header.notifications")} onClick={() => go("/")}><HeaderIcon kind="bell"/></button>
-            <button type="button" className="header-icon" aria-label={t("global.header.todo")} onClick={() => go("/")}><HeaderIcon kind="todo"/></button>
-            <button type="button" className="header-icon" aria-label={t("global.header.running")} onClick={() => go("/")}><HeaderIcon kind="running"/></button>
-            <div ref={languageRef} className="language-wrap">
-              <button type="button" className="language-button" onClick={() => setLanguageOpen((value) => !value)} aria-expanded={languageOpen}>
-                {LOCALE_LABELS[locale]}
-              </button>
-              {languageOpen && (
-                <div className="language-menu" role="menu">
-                  {LOCALES.map((value) => (
-                    <button key={value} type="button" role="menuitem" onClick={() => { setLocale(value); setLanguageOpen(false); }}>
-                      {LOCALE_LABELS[value]}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div ref={accountRef} className="account-wrap" data-port-uid="GHS-PORT-IDENTITY">
-              {identityLabel ? (
-                <button type="button" className="account-button" onClick={() => setAccountOpen((value) => !value)} aria-expanded={accountOpen}>
-                  <span className="account-avatar">{identityLabel.slice(0, 1).toUpperCase()}</span>
-                  <span className="account-label">{identityLabel}</span>
-                </button>
-              ) : (
-                <a className="account-button" href="/login" aria-label={t("global.header.login")}>
-                  <span className="account-avatar">A</span>
-                  <span className="account-label">{t("global.header.login")}</span>
-                </a>
-              )}
-              {identityLabel && accountOpen && (
-                <div className="account-menu">
-                  <div className="account-menu-label">{identityLabel}</div>
-                  <button type="button" onClick={() => go("/admin/accounts")}>{t("global.admin.iam")}</button>
-                </div>
-              )}
-            </div>
-          </div>
-        </header>
-        <main className="content-area">{children}</main>
-      </div>
+      <main className="workspace-slot" aria-label="Page Content Slot">{children}</main>
     </div>
   );
 }

@@ -261,6 +261,15 @@ test("release gate covers both construction and production branches", async () =
   assert.match(workflow, /push:[\s\S]*branches:\s*\[new, main\]/);
 });
 
+test("release browser ERP mutation waits for governed control hydration instead of racing isEnabled", async () => {
+  const browser = await read("scripts/release-browser-e2e.mjs");
+  assert.match(browser, /async function requireActionable\(locator, reason, timeout = 5_000\)/);
+  assert.match(browser, /locator\.click\(\{ trial: true, timeout \}\)/);
+  assert.match(browser, /requireActionable\(syncTab, "ERP_SYNC_TAB_NOT_ENABLED_IN_CONTROLLED_TEST"\)/);
+  assert.match(browser, /requireActionable\(refreshButton, "ERP_SNAPSHOT_REFRESH_NOT_ENABLED_IN_CONTROLLED_TEST"\)/);
+  assert.doesNotMatch(browser, /if \(!\(await syncTab\.isEnabled\(\)\)\)/);
+});
+
 test("post-deploy acceptance is pinned to the exact production release SHA", async () => {
   const workflow = await read(".github/workflows/post-deploy-smoke.yml");
   const smoke = await read("scripts/post-deploy-smoke.mjs");
