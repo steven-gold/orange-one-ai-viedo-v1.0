@@ -5,6 +5,9 @@ type Entry = Record<Locale, string>;
 export const IAM_CATALOG = {
   pageName: { "zh-TW": "帳戶與權限", "zh-CN": "账户与权限", en: "Accounts & Permissions" },
   pageRole: { "zh-TW": "帳戶、明確權限指派、預覽與存取治理工作區", "zh-CN": "账户、明确权限指派、预览与访问治理工作区", en: "Account, explicit permission assignment, preview and access-governance workspace" },
+  eyebrow: { "zh-TW": "IAM-01 · 帳戶權限指派", "zh-CN": "IAM-01 · 账户权限指派", en: "IAM-01 · ACCOUNT PERMISSION ASSIGNMENT" },
+  identityProjection: { "zh-TW": "IdentityService / IAM 投影", "zh-CN": "IdentityService / IAM 投影", en: "IdentityService / IAM Projection" },
+  auditTraceFields: { "zh-TW": "關聯 · 版本 · 範圍 · 條件 · 存取審查", "zh-CN": "关联 · 版本 · 范围 · 条件 · 访问审查", en: "correlation · version · scope · condition · access review" },
   authorizedCount: { "zh-TW": "授權帳號", "zh-CN": "授权账户", en: "Authorized accounts" },
   addAccount: { "zh-TW": "新增帳號", "zh-CN": "新增账户", en: "Add account" },
   directory: { "zh-TW": "帳號目錄", "zh-CN": "账户目录", en: "Account Directory" },
