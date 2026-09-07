@@ -70,6 +70,7 @@ try {
   let governedControls = 0;
   let safeLocalClicks = 0;
   let strategyFormCases = 0;
+  let sgGovernanceCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -295,10 +296,50 @@ try {
     } finally {
       await strategyPage.close();
     }
+
+    const sgPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      await navigateToCurrentPage(sgPage, "/admin/qa-criteria", "admin:SG-02");
+
+      const configureButton = sgPage.locator('button[data-control-id="CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE"][data-operation-id="configureGovernedResource"]').first();
+      if (!(await configureButton.isEnabled())) throw new Error("SG02_CONFIGURE_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await configureButton.click();
+      const sgDrawer = sgPage.locator('aside[data-detail-drawer="SG-02"]');
+      await sgDrawer.waitFor({ state: "visible", timeout: 5_000 });
+      await sgDrawer.locator("input").nth(0).fill("quality_criteria_version");
+      await sgDrawer.locator("input").nth(1).fill("TEST-CRITERIA-DRAFT-001");
+      await sgDrawer.locator("textarea").nth(0).fill('{"mode":"controlled-test","threshold":0.95}');
+      await sgDrawer.locator("textarea").nth(1).fill("Controlled SG-02 governance configuration");
+      const configureSubmit = sgDrawer.locator('button[data-control-id="CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE"][data-operation-id="configureGovernedResource"]').last();
+      await configureSubmit.click();
+      await sgDrawer.locator("input").first().waitFor({ state: "detached", timeout: 5_000 });
+      if ((await sgPage.locator('[data-page-uid="admin:SG-02"]').getAttribute("data-page-state")) === "ERROR") {
+        throw new Error("SG02_CONFIGURE_RUNTIME_ERROR");
+      }
+      sgGovernanceCases += 1;
+
+      const approveButton = sgPage.locator('button[data-control-id="CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE"][data-operation-id="approveGovernedResource"]').first();
+      if (!(await approveButton.isEnabled())) throw new Error("SG02_APPROVE_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await approveButton.click();
+      await sgDrawer.waitFor({ state: "visible", timeout: 5_000 });
+      await sgDrawer.locator("input").nth(0).fill("quality_criteria_version");
+      await sgDrawer.locator("input").nth(1).fill("TEST-CRITERIA-REVIEW-001");
+      await sgDrawer.locator("textarea").nth(0).fill("Controlled SG-02 governance approval");
+      await sgDrawer.locator("input").nth(2).fill("3");
+      const approveSubmit = sgDrawer.locator('button[data-control-id="CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE"][data-operation-id="approveGovernedResource"]').last();
+      await approveSubmit.click();
+      await sgDrawer.locator("input").first().waitFor({ state: "detached", timeout: 5_000 });
+      if ((await sgPage.locator('[data-page-uid="admin:SG-02"]').getAttribute("data-page-state")) === "ERROR") {
+        throw new Error("SG02_APPROVE_RUNTIME_ERROR");
+      }
+      sgGovernanceCases += 1;
+    } finally {
+      await sgPage.close();
+    }
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }
