@@ -40,6 +40,17 @@ async function waitForServer() {
   throw new Error("BROWSER_SERVER_START_TIMEOUT");
 }
 
+async function navigateToCurrentPage(page, route, uid) {
+  const response = await page.goto(`${base}${route}`, { waitUntil: "domcontentloaded", timeout: 45_000 });
+  if (!response?.ok()) throw new Error(`NAV_${route}_${response?.status()}`);
+  const root = page.locator("[data-page-uid]").first();
+  await root.waitFor({ state: "attached", timeout: 15_000 });
+  const actual = await root.getAttribute("data-page-uid");
+  if (actual !== uid) throw new Error(`UID_${route}_${actual}`);
+  await page.locator("body").waitFor({ state: "visible", timeout: 15_000 });
+  return root;
+}
+
 try {
   await waitForServer();
   const browser = await chromium.launch({ headless: true });
@@ -62,12 +73,7 @@ try {
         page.on("console", (message) => {
           if (message.type() === "error" && !/Failed to load resource.*(?:401|403|503)/.test(message.text())) errors.push(`console:${message.text()}`);
         });
-        const response = await page.goto(`${base}${route}`, { waitUntil: "networkidle", timeout: 45_000 });
-        if (!response?.ok()) throw new Error(`NAV_${route}_${response?.status()}`);
-        const root = page.locator("[data-page-uid]").first();
-        await root.waitFor({ state: "attached", timeout: 15_000 });
-        const actual = await root.getAttribute("data-page-uid");
-        if (actual !== uid) throw new Error(`UID_${route}_${actual}`);
+        const root = await navigateToCurrentPage(page, route, uid);
         const state = await root.getAttribute("data-page-state");
         if (state === "LOADING") throw new Error(`STUCK_LOADING_${uid}`);
         const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -154,9 +160,7 @@ try {
     }
     const strategyPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
     try {
-      const response = await strategyPage.goto(`${base}/admin/strategy`, { waitUntil: "networkidle", timeout: 45_000 });
-      if (!response?.ok()) throw new Error(`STRATEGY_FORM_NAV_${response?.status()}`);
-      await strategyPage.locator('[data-page-uid="admin:STR-01"]').waitFor({ state: "attached", timeout: 15_000 });
+      await navigateToCurrentPage(strategyPage, "/admin/strategy", "admin:STR-01");
 
       const searchButton = strategyPage.locator('button[data-action-id="ACT-SEARCH"][data-source-page-uid="admin:STR-01"]').first();
       if (!(await searchButton.isEnabled())) throw new Error("STRATEGY_SEARCH_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
