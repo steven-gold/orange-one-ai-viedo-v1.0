@@ -59,7 +59,7 @@ try {
   assert(adminSurfaceTargets.length === 1, `AUTH_BROWSER_ADMIN_SURFACE_TARGET_COUNT_${adminSurfaceTargets.length}`);
   assert(adminSurfaceTargets[0] === "workspace:WB-01", `AUTH_BROWSER_ADMIN_SURFACE_TARGET_INVALID_${adminSurfaceTargets[0] ?? "UNRESOLVED"}`);
 
-  process.stdout.write("POST_DEPLOY_AUTH_BROWSER_E2E_PASS front_nav=9 admin_nav=9 surface_targets=2 visible_pages=18\n");
+  process.stdout.write("POST_DEPLOY_AUTH_BROWSER_E2E_PASS front_nav=9 admin_nav=9 visible_pages=18\n");
   await context.close();
 } finally {
   await browser.close();
