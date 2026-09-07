@@ -8,6 +8,8 @@ import {
   ACPOS_AI_GOVERNANCE_POLICY_VERSION,
   ACPOS_AI_RESPONSE_POLICY,
   ACPOS_AI_RESPONSE_SCHEMA,
+  enforceAcposDecisionConsistency,
+  enforceAcposGovernanceEvidence,
   parseAcposGovernedAiResponse,
   renderAcposGovernedAiResponse,
   validateDecisionUpdatesAgainstUserMessage,
@@ -56,6 +58,7 @@ type GovernanceContext = {
   validation: unknown;
   deployment: unknown;
   latest_context_fingerprint: string;
+  allowed_evidence_refs: string[];
 };
 
 type RoutedText = {
@@ -513,6 +516,28 @@ async function loadRuntimeTruth(sql: SqlClient): Promise<unknown> {
   };
 }
 
+function collectGovernanceRefs(value: unknown, key = "", output = new Set<string>()): Set<string> {
+  if (typeof value === "string") {
+    if (
+      /(?:_id|_ref|_refs|fingerprint|release_sha|latest_migration|policy_version)$/i.test(key)
+      || /^(?:ref|id|hash)$/i.test(key)
+    ) {
+      if (value.trim()) output.add(value.trim());
+    }
+    return output;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) collectGovernanceRefs(item, key, output);
+    return output;
+  }
+  if (value && typeof value === "object") {
+    for (const [childKey, childValue] of Object.entries(value as Record<string, unknown>)) {
+      collectGovernanceRefs(childValue, childKey, output);
+    }
+  }
+  return output;
+}
+
 async function buildGovernanceContext(
   sql: SqlClient,
   input: ProductionConversationTurnInput,
@@ -561,7 +586,19 @@ async function buildGovernanceContext(
       release_sha: deployment.release_sha,
     },
   };
-  return { ...payload, latest_context_fingerprint: stableHash(payload) };
+  const latest_context_fingerprint = stableHash(payload);
+  const allowed = collectGovernanceRefs(payload);
+  allowed.add(latest_context_fingerprint);
+  for (const item of evidence) if (item.resolved) allowed.add(item.ref);
+  for (const message of history) allowed.add(message.message_ref);
+  for (const decision of decisions) {
+    if (decision.decision_ref) allowed.add(decision.decision_ref);
+  }
+  return {
+    ...payload,
+    latest_context_fingerprint,
+    allowed_evidence_refs: [...allowed].sort(),
+  };
 }
 
 async function resolveTextChatGroup(sql: SqlClient): Promise<string> {
@@ -647,8 +684,11 @@ function governanceInstruction(
     "Return exactly one JSON object and no markdown fence. It MUST match this schema:",
     JSON.stringify(ACPOS_AI_RESPONSE_SCHEMA),
     "",
+    "Allowed exact evidence refs:",
+    JSON.stringify(governanceContext.allowed_evidence_refs),
+    "",
     "Rules for the JSON response:",
-    "- Every facts[].evidence_refs item must refer to a ref present in the supplied Governance Context.",
+    "- Every facts[].evidence_refs item must be an exact value from Allowed exact evidence refs.",
     "- If a statement is not evidence-backed, put it in inferences or open_questions, not facts.",
     "- Only P0/P1 may appear in open_questions.",
     "- P2/P3 belong in resolved_items and may not be asked back to the human.",
@@ -722,6 +762,8 @@ async function executeGovernedSingle(
   }
   if (!governed) throw new NamedRuntimeError("CONVERSATION_GOVERNANCE_RESPONSE_INVALID");
   governed = validateDecisionUpdatesAgainstUserMessage(governed, input.message);
+  governed = enforceAcposGovernanceEvidence(governed, new Set(governanceContext.allowed_evidence_refs));
+  governed = enforceAcposDecisionConsistency(governed, governanceContext.decisions);
   return {
     ...routed,
     governed,
@@ -941,6 +983,8 @@ async function executeMultiAiCouncil(
     }
     if (!governed) throw new NamedRuntimeError("CONVERSATION_GOVERNANCE_RESPONSE_INVALID");
     governed = validateDecisionUpdatesAgainstUserMessage(governed, input.message);
+    governed = enforceAcposGovernanceEvidence(governed, new Set(governanceContext.allowed_evidence_refs));
+    governed = enforceAcposDecisionConsistency(governed, governanceContext.decisions);
 
     const synthesisMessageId = crypto.randomUUID();
     await sql`
