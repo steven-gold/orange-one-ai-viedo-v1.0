@@ -51,13 +51,17 @@ try {
         }
       });
 
-      const response = await page.goto(`${base}${route}`, { waitUntil: "networkidle", timeout: 45_000 });
+      const response = await page.goto(`${base}${route}`, { waitUntil: "domcontentloaded", timeout: 45_000 });
       if (!response?.ok()) throw new Error(`NAV_${route}_${response?.status()}`);
 
       const root = page.locator("[data-page-uid]").first();
       await root.waitFor({ state: "attached", timeout: 15_000 });
       const actual = await root.getAttribute("data-page-uid");
       if (actual !== uid) throw new Error(`UID_${route}_${actual}`);
+      await page.waitForFunction(
+        () => document.querySelector("[data-page-uid]")?.getAttribute("data-page-state") !== "LOADING",
+        { timeout: 15_000 },
+      );
 
       const state = await root.getAttribute("data-page-state");
       if (state === "LOADING") throw new Error(`STUCK_LOADING_${uid}`);
