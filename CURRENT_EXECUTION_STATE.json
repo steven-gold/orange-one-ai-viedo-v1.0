@@ -2,16 +2,16 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-08T01:35:00+08:00",
+  "as_of": "2026-09-08T02:04:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
-    "main_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
-    "new_sha_basis": "c0141aa27d41cb949cc575e73196ac50b3563d93",
+    "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+    "new_sha_basis": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "NEW_AHEAD_WITH_USER_APPROVED_SYS01_RUNTIME_READY_FOR_INTEGRATION",
+    "construction_branch_alignment": "NEW_ALIGNED_TO_CURRENT_MAIN_AFTER_PR31",
     "post_release_new_status": "ALIGNED_WITH_MAIN_BEFORE_STATE_ONLY_EVIDENCE_UPDATE"
   },
   "release_validation": {
@@ -479,6 +479,101 @@
       },
       "production_application_deployment": "PENDING_MAIN_INTEGRATION",
       "production_mutation_e2e": "NOT_YET_EXECUTED_ON_DEPLOYED_CODE"
+    },
+    "system_lifecycle_runtime_production": {
+      "status": "DEPLOYED_VERIFIED_PENDING_SYS_MUTATION_E2E",
+      "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+      "release_gate": {
+        "run_number": 601,
+        "run_id": 34149867364,
+        "conclusion": "success"
+      },
+      "vercel": {
+        "status": "success",
+        "description": "Deployment has completed",
+        "deployment_target": "7xmuHuWBZwWBeEH1UgZNZZcR7yag"
+      },
+      "post_deploy": {
+        "run_number": 866,
+        "run_id": 34149919976,
+        "conclusion": "success",
+        "readiness_http": 200,
+        "release_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+        "projections": 18,
+        "auth_e2e": "PASS",
+        "browser_smoke_cases": 54,
+        "auth_browser_visibility": {
+          "front_nav": 8,
+          "admin_nav": 8,
+          "visible_pages": 18
+        },
+        "current_dom": {
+          "interactive": 495,
+          "enabled": 312,
+          "disabled": 183,
+          "governed": 495
+        }
+      },
+      "production_mutation_e2e": "NOT_YET_EXECUTED"
+    },
+    "external_provider_control_plane": {
+      "status": "MATERIALIZED_PENDING_REAL_CONNECTION_E2E",
+      "env_evidence": {
+        "source": "USER_PROVIDED_VERCEL_PRODUCTION_ENVIRONMENT_VARIABLE_SCREENSHOT_2026-09-08",
+        "variables": [
+          "GROQ_API_KEY",
+          "GOOGLE_GEMINI_API_KEY",
+          "DEEPSEEK_API_KEY",
+          "OPENROUTER_API_KEY"
+        ],
+        "environment": "Production",
+        "plaintext_recorded_in_repo_or_db": false
+      },
+      "production_counts": {
+        "enabled_profiles": 4,
+        "approved_secret_references": 4,
+        "approved_capabilities": 4,
+        "enabled_groups": 1,
+        "enabled_members": 4
+      },
+      "profiles": [
+        {
+          "profile_id": "profile-groq-text-v1",
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "adapter": "OPENAI_COMPATIBLE_CHAT",
+          "health_status": "UNKNOWN",
+          "priority": 1
+        },
+        {
+          "profile_id": "profile-google-text-v1",
+          "provider": "google",
+          "model": "gemini-2.5-flash",
+          "adapter": "GENERIC_JSON_HTTP_X_GOOG_API_KEY",
+          "health_status": "UNKNOWN",
+          "priority": 2
+        },
+        {
+          "profile_id": "profile-deepseek-text-v1",
+          "provider": "deepseek",
+          "model": "deepseek-v4-flash",
+          "adapter": "OPENAI_COMPATIBLE_CHAT",
+          "health_status": "UNKNOWN",
+          "priority": 3
+        },
+        {
+          "profile_id": "profile-openrouter-text-v1",
+          "provider": "openrouter",
+          "model": "openrouter/auto",
+          "adapter": "OPENAI_COMPATIBLE_CHAT",
+          "health_status": "UNKNOWN",
+          "priority": 4
+        }
+      ],
+      "group_id": "group-text-chat-primary-v1",
+      "classification": "INTERNAL",
+      "bootstrap_admin_aiapi_acceptance_permissions": "PASS_4_APPROVED_ALLOW_ASSIGNMENTS",
+      "real_external_request_evidence": "NOT_YET_EXECUTED"
     }
   },
   "production": {
@@ -676,16 +771,16 @@
   },
   "formal_truth": {
     "gate22_external_provider": {
-      "status": "BLOCKED_SECRET_ENV_BINDING_AND_REAL_EXTERNAL_E2E",
-      "reason": "User supplied four Provider credentials for Groq/Google/DeepSeek/OpenRouter, but secrets have not been persisted in repository or database plaintext. Current available Vercel connector exposes no environment-variable write operation. Production provider control-plane remains profiles=0, groups=0, members=0, capabilities=0, secret_references=0 until secure env binding and governed provider configuration are completed."
+      "status": "PARTIAL_CONTROL_PLANE_5_OF_6_READY_REAL_EXTERNAL_E2E_PENDING",
+      "reason": "Vercel Production screenshot confirms the four exact env names. Production Neon now has 4 enabled provider profiles, 4 approved env-name secret references, 4 approved TEXT_CHAT capabilities, 1 enabled routing group and 4 enabled members. Secret plaintext is not stored in GitHub or Neon. All profile health states remain UNKNOWN because no real connection test has yet executed. Current ChatGPT GitHub connector exposes no workflow_dispatch action for the existing ACPOS External Provider Acceptance workflow, so external_request_sent=true evidence is still pending."
     },
     "gate23_queue_worker_dlq": {
       "status": "PASS",
       "reason": "Production queue/worker/DLQ is re-verified on exact Production SHA 2e53c4ec via Post-Deploy #796 and duplicate confirming #797; authenticated E2E passes idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup without external provider calls."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_SYS01_CODE_DB_PERMISSION_VALIDATED_PENDING_DEPLOY_AND_PRODUCTION_E2E",
-      "reason": "User approved CR-SYS-0020 and all three SYS-01 mutations. Production Neon is migration 0020 with exact checksum, 3 RLS tables, 6 policies and zero unvalidated constraints; bootstrap admin has the five required ACTION/API ALLOW assignments; Current Authority now enables createCandidate/createChangeRequest/runSandboxTest and binds three canonical HTTP routes. Exact new SHA c0141aa27d41cb949cc575e73196ac50b3563d93 passed Release Gate #598. Gate is not closed until this SHA is integrated/deployed and authenticated Production mutation E2E passes."
+      "status": "PARTIAL_SYS01_DEPLOYED_PENDING_AUTHENTICATED_MUTATION_E2E",
+      "reason": "CR-SYS-0020 is applied in Production; three canonical SYS lifecycle routes and enabled controls are deployed on exact main dc84346a41bbadc2537fe2de9ba535126547e0cf. Release Gate #601 and Post-Deploy #866 are SUCCESS with readiness=200 and exact release SHA. Bootstrap admin has the five required SYS ACTION/API assignments. Gate is not closed until authenticated Production createCandidate -> createChangeRequest -> runSandboxTest E2E is executed."
     },
     "gate25_full_page_button_acceptance": {
       "status": "PASS_PRODUCTION_CURRENT_18_PAGE_STAGE_DRIVEN_VISUAL_RELEASE",
@@ -709,16 +804,15 @@
     }
   },
   "blockers": [
-    "Gate 24: deploy integrated SYS-01 runtime to main and pass authenticated Production createCandidate/createChangeRequest/runSandboxTest E2E.",
-    "Gate 22: securely bind GROQ_API_KEY, GOOGLE_GEMINI_API_KEY, DEEPSEEK_API_KEY and OPENROUTER_API_KEY in Vercel Production environment without repository/database plaintext, then materialize governed profiles/capabilities/group and run real external-provider E2E.",
-    "Current Vercel connector does not expose project environment-variable write capability; do not bypass this by storing plaintext secrets in GitHub or Neon."
+    "Gate 22: execute the existing ACPOS External Provider Acceptance workflow (or equivalent authenticated Production call) to prove real profile connection and routed worker external_request_sent=true. Current GitHub connector does not expose workflow_dispatch.",
+    "Gate 24: execute authenticated Production SYS-01 createCandidate -> createChangeRequest -> runSandboxTest E2E on deployed main.",
+    "Do not persist Provider API-key plaintext in GitHub, Neon, logs or state artifacts."
   ],
   "next_release_sequence": [
-    "Integrate new c0141aa27d41cb949cc575e73196ac50b3563d93 through PR after exact Release Gate #598 PASS; main code must support Production migration count 20.",
-    "Verify exact merged main Release Gate, Vercel deployment status, readiness=200 and Post-Deploy acceptance.",
-    "Run authenticated Production SYS-01 mutation E2E for createCandidate -> createChangeRequest -> runSandboxTest; Sandbox remains dry-run and does not send an external Provider request.",
-    "Securely bind four Provider environment variables in Vercel Production without plaintext repository/database storage.",
-    "Materialize Groq/Google/DeepSeek/OpenRouter TEXT_CHAT profiles, approved capabilities and one governed routing group; run real connection tests and Gate 22 external_request_sent=true E2E."
+    "Run real Groq Production connection test using profile-groq-text-v1 and group-text-chat-primary-v1; require external_request_sent=true and worker.succeeded=1.",
+    "Run real profile connection tests for Google Gemini, DeepSeek and OpenRouter; only mark each HEALTHY on actual HTTP PASS.",
+    "Run authenticated Production SYS-01 createCandidate -> createChangeRequest -> runSandboxTest E2E.",
+    "Recompute Gate 22 and Gate 24 percentages from actual evidence; do not infer completion from configuration alone."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
