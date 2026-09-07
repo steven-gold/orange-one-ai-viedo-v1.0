@@ -30,6 +30,8 @@ export async function sendSystemConversationMessage(input: {
   branch_id: string | null;
   draft: string;
   attachment_refs: string[];
+  ai_mode: "SINGLE_AI" | "MULTI_AI";
+  council_mode: "DISCUSSION" | "PARALLEL";
   signal?: AbortSignal;
 }) {
   if (!input.conversation_id || !input.system_change_id || !input.draft.trim()) {
@@ -39,6 +41,7 @@ export async function sendSystemConversationMessage(input: {
     const response = await fetch(`/v1/conversations/${encodeURIComponent(input.conversation_id)}/messages`, {
       method: "POST",
       cache: "no-store",
+      credentials: "include",
       signal: input.signal,
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -47,6 +50,10 @@ export async function sendSystemConversationMessage(input: {
         branch_id: input.branch_id,
         message: input.draft,
         attachment_refs: input.attachment_refs,
+        reference_refs: input.attachment_refs,
+        page_uid: "admin:SYS-01",
+        ai_mode: input.ai_mode,
+        council_mode: input.council_mode,
       }),
     });
     const value: unknown = await response.json().catch(() => null);
@@ -62,9 +69,10 @@ export async function stopSystemConversationGeneration(input: { conversation_id:
     const response = await fetch(`/v1/conversations/${encodeURIComponent(input.conversation_id)}/generation/stop`, {
       method: "POST",
       cache: "no-store",
+      credentials: "include",
       signal: input.signal,
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({}),
+      body: JSON.stringify({ page_uid: "admin:SYS-01" }),
     });
     const value: unknown = await response.json().catch(() => null);
     return response.ok ? { ok: true as const, value } : { ok: false as const, reason_code: "SYSTEM_CONVERSATION_STOP_FAILED", value };
