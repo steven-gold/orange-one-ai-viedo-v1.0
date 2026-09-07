@@ -624,6 +624,9 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
           ? payload.reference_refs.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
           : [],
         page_uid: "CORE-01",
+        ai_mode: asText(payload.ai_mode),
+        council_mode: asText(payload.council_mode),
+        system_change_id: asText(payload.system_change_id),
       });
     }
 
@@ -1019,6 +1022,9 @@ async function executeConversation(request: ConversationRequest): Promise<unknow
       ? payload.reference_refs.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
       : [],
     page_uid: asText(payload.page_uid) ?? "workspace:STR-01",
+    ai_mode: asText(payload.ai_mode) ?? asText(payload.mode),
+    council_mode: asText(payload.council_mode),
+    system_change_id: asText(payload.system_change_id),
   });
 }
 
