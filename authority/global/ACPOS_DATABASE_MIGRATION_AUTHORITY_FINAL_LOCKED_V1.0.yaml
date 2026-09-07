@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-08-SYS0020-PRODUCTION-APPLIED
+  revision: 2026-09-08-CORE0021-VALIDATED-PENDING-PRODUCTION-APPLY
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 live_neon_target:
@@ -73,7 +73,7 @@ artifact_bindings:
   account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   account_permission_catalog_bytes: 2762474
   account_permission_catalog_lines: 79399
-  materialized_migration_count: 20
+  materialized_migration_count: 21
 current_production_reconciliation:
   status: PASS
   verified_on: '2026-09-06'
@@ -1117,7 +1117,7 @@ single_source_rules:
 - DB-01 remains read-only; migration execution belongs to governed System Lifecycle / migration runner.
 
 pending_0021_core_decision_candidate_runtime:
-  status: PENDING_VALIDATION_AND_PRODUCTION_APPLY
+  status: VALIDATED_PENDING_PRODUCTION_APPLY
   source_migration: database/migrations/0021_core_decision_candidate_runtime.sql
   payload_sha256: e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6
   change_ref: CR-CORE-0021
@@ -1136,4 +1136,47 @@ pending_0021_core_decision_candidate_runtime:
   - public.topics
   - acpos_runtime RLS actor helpers
   new_parallel_systems: 0
-  production_apply: FORBIDDEN_UNTIL_VALIDATED_AND_RELEASE_SEQUENCE
+  validation_evidence:
+    status: PASS
+    validated_on: '2026-09-08'
+    source: LIVE_NEON_VALIDATION_BRANCH_AND_RELEASE_GATE
+    validation_branch_name: rls-0016-validate-20260906
+    validation_branch_id: br-orange-smoke-aut9pafw
+    parent_branch_id: br-shy-cherry-auiol4oy
+    production_target: wild-wave-25661146/main/br-shy-cherry-auiol4oy/neondb
+    production_baseline:
+      migration_count: 20
+      latest_migration: 0020_system_lifecycle_runtime
+      table_fingerprint_excluding_0021: EXACT
+      column_fingerprint_excluding_0021: EXACT
+      constraint_fingerprint_excluding_0021: EXACT
+      index_fingerprint_excluding_0021: EXACT
+      migration_0001_0019_history: EXACT
+      migration_0020_checksum_match: true
+      migration_0020_history_metadata_delta:
+        validation_approval_ref: PENDING-CR-SYS-0020
+        production_approval_ref: USER-APPROVED-CR-SYS-0020-20260908
+        classification: METADATA_ONLY_NOT_SCHEMA_DRIFT
+    migration_0021:
+      migration_history_rows: 1
+      checksum: e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6
+      approval_ref: CR-CORE-0021-PENDING-PRODUCTION-APPLY
+      target_tables: 5
+      rls_enabled_tables: 5
+      rls_policies: 10
+      unvalidated_constraints: 0
+      runtime_role: acpos_app_runtime
+      runtime_role_superuser: false
+      runtime_role_bypassrls: false
+      runtime_role_login: false
+      select_grants_all_target_tables: true
+      insert_grants_all_target_tables: true
+      no_session_runtime_visible_rows_all_target_tables: 0
+    release_gate:
+      run_number: 680
+      run_id: 34166350928
+      head_sha: 2ba38a6fff279dd64a87c635717b928bf3e48ac6
+      conclusion: success
+      regression_test: migration 0021 materializes governed Core decision and candidate owners under RLS
+    production_mutation_performed: false
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
