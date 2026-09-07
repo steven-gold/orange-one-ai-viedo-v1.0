@@ -577,7 +577,7 @@ export function AiApiVisual() {
           <section className={styles.formModal} role="dialog" aria-modal="true" aria-label={t("operationForm")} onMouseDown={(event) => event.stopPropagation()}>
             <div className={styles.modalHeader}><div><span>{t("operationForm")}</span><h2>{aiApiLabel(locale, activeAction.label)}</h2></div><button type="button" onClick={() => setActiveAction(null)} disabled={pending}>{t("close")}</button></div>
             {activeAction.confirmationOnly ? (
-              <label className={styles.formField}>
+              <label className={styles.formField} data-field-key="confirmation">
                 <span>{aiApiLabel(locale, "Confirmation")}</span>
                 <select value={formValues.confirmation ?? ""} onChange={(event) => setFormValues({ confirmation: event.target.value })} disabled={pending}>
                   <option value="">—</option><option value="CONFIRM">CONFIRM</option>
@@ -586,7 +586,7 @@ export function AiApiVisual() {
             ) : (
               <div className={styles.formGrid}>
                 {(activeAction.fields ?? []).map((field) => (
-                  <label className={field.kind === "textarea" ? styles.formFieldWide : styles.formField} key={field.key} data-required={field.required ? "true" : "false"}>
+                  <label className={field.kind === "textarea" ? styles.formFieldWide : styles.formField} key={field.key} data-field-key={field.key} data-required={field.required ? "true" : "false"}>
                     <span>{aiApiLabel(locale, field.label)}{field.required ? " *" : ""}</span>
                     {field.kind === "select" ? (
                       <select value={formValues[field.key] ?? ""} onChange={(event) => setFormValues((prev) => ({ ...prev, [field.key]: event.target.value }))} disabled={pending}>
