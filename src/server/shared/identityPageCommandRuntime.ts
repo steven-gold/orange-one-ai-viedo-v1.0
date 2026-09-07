@@ -251,6 +251,10 @@ const GOVERNANCE_PERMISSION_CONTEXT: Readonly<Record<string,{
     configure:{resource_key:"action:admin:SG-02:ACT-CONFIGURE",action:"INVOKE"},
     approve:{resource_key:"action:admin:SG-02:ACT-APPROVE",action:"INVOKE"},
   },
+  "admin:STR-02":{
+    configure:{resource_key:"action:admin:STR-02:ACT-CONFIGURE",action:"INVOKE"},
+    approve:{resource_key:"action:admin:STR-02:ACT-APPROVE",action:"INVOKE"},
+  },
 };
 
 async function authorizeAiApi(request:{operation_id:string}):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
@@ -264,19 +268,24 @@ async function authorizeAiApi(request:{operation_id:string}):Promise<{allowed:tr
 }
 
 async function authorizeIam(request:IamRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
-  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:IAM-01"]);
-  if(!page.allowed)return page;
-  if(request.operation==="getUiProjection")return{allowed:true};
   if(request.operation==="configureGovernedResource"||request.operation==="approveGovernedResource"){
     const payload=asRecord(request.payload)??{};
-    const pageUid=asText(payload.page_uid);
-    if(!pageUid)return{allowed:false,reason_code:"IAM_OPERATION_PERMISSION_CONTEXT_REQUIRED"};
-    const context=GOVERNANCE_PERMISSION_CONTEXT[pageUid];
+    const currentPageUid=asText(payload.current_page_uid)??asText(payload.page_uid);
+    const sourcePageUid=asText(payload.source_page_uid)??asText(payload.page_uid);
+    if(!currentPageUid||!sourcePageUid)return{allowed:false,reason_code:"IAM_OPERATION_PERMISSION_CONTEXT_REQUIRED"};
+    const currentPageResource=CURRENT_PAGE_RESOURCE_KEYS[currentPageUid as keyof typeof CURRENT_PAGE_RESOURCE_KEYS];
+    if(!currentPageResource)return{allowed:false,reason_code:"IAM_CURRENT_PAGE_PERMISSION_CONTEXT_UNREGISTERED"};
+    const page=await evaluatePageView(currentPageResource);
+    if(!page.allowed)return page;
+    const context=GOVERNANCE_PERMISSION_CONTEXT[sourcePageUid as keyof typeof GOVERNANCE_PERMISSION_CONTEXT];
     if(!context)return{allowed:false,reason_code:"IAM_OPERATION_PERMISSION_CONTEXT_UNREGISTERED"};
     const permission=request.operation==="configureGovernedResource"?context.configure:context.approve;
     const gate=await evaluateResourceAction(permission.resource_key,permission.action);
     return gate.allowed?{allowed:true}:gate;
   }
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:IAM-01"]);
+  if(!page.allowed)return page;
+  if(request.operation==="getUiProjection")return{allowed:true};
   const permission=IAM_OPERATION_PERMISSION[request.operation];
   if(!permission)return{allowed:false,reason_code:"IAM_OPERATION_PERMISSION_MAPPING_REQUIRED"};
   const gate=await evaluateResourceAction(permission.resource_key,permission.action);

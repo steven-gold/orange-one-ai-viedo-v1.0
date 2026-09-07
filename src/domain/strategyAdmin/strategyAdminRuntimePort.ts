@@ -224,6 +224,8 @@ export const STRATEGY_ADMIN_ACTION_OPERATION = {
 const STRATEGY_ADMIN_MATERIALIZED_OPERATIONS = new Set<StrategyAdminOperation>([
   "searchProjection",
   "refreshProjection",
+  "configureGovernedResource",
+  "approveGovernedResource",
 ]);
 
 export function isStrategyAdminOperationRuntimeReady(actionId: string): boolean {

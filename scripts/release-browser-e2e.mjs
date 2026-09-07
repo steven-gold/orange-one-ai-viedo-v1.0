@@ -259,6 +259,35 @@ try {
       await refreshModal.waitFor({ state: "detached", timeout: 5_000 });
       strategyFormCases += 1;
 
+      await strategyPage.locator('button[data-view-uid="STR-CURRENT-VIEW-INTELLIGENCE-FACT"]').click();
+
+      const configureButton = strategyPage.locator('button[data-action-id="ACT-CONFIGURE"][data-source-page-uid="admin:STR-02"]').first();
+      if (!(await configureButton.isEnabled())) throw new Error("STRATEGY_CONFIGURE_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await configureButton.getAttribute("data-operation-id")) !== "configureGovernedResource") throw new Error("STRATEGY_CONFIGURE_OPERATION_TRACE_INVALID");
+      await configureButton.click();
+      const configureModal = strategyPage.locator('[data-form-schema="ConfigureGovernedResourceRequest"]');
+      await configureModal.waitFor({ state: "visible", timeout: 5_000 });
+      await configureModal.locator("input").nth(0).fill("STRATEGY_FACT");
+      await configureModal.locator("input").nth(1).fill("TEST-STR-FACT-001");
+      await configureModal.locator("textarea").nth(0).fill('{"mode":"controlled-test"}');
+      await configureModal.locator("input").nth(2).fill("Controlled Strategy governance configuration");
+      await configureModal.locator("footer button").last().click();
+      await configureModal.waitFor({ state: "detached", timeout: 5_000 });
+      strategyFormCases += 1;
+
+      const approveButton = strategyPage.locator('button[data-action-id="ACT-APPROVE"][data-source-page-uid="admin:STR-02"]').first();
+      if (!(await approveButton.isEnabled())) throw new Error("STRATEGY_APPROVE_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await approveButton.getAttribute("data-operation-id")) !== "approveGovernedResource") throw new Error("STRATEGY_APPROVE_OPERATION_TRACE_INVALID");
+      await approveButton.click();
+      const approveModal = strategyPage.locator('[data-form-schema="ApproveGovernedResourceRequest"]');
+      await approveModal.waitFor({ state: "visible", timeout: 5_000 });
+      await approveModal.locator("input").nth(0).fill("STRATEGY_FACT");
+      await approveModal.locator("input").nth(1).fill("TEST-STR-FACT-001");
+      await approveModal.locator("input").nth(2).fill("Controlled Strategy governance approval");
+      await approveModal.locator("footer button").last().click();
+      await approveModal.waitFor({ state: "detached", timeout: 5_000 });
+      strategyFormCases += 1;
+
       const unresolvedDecision = strategyPage.locator('button[data-action-id="ACT-CANDIDATE-DECIDE"]');
       await strategyPage.locator('button[data-view-uid="STR-CURRENT-VIEW-DECISION"]').click();
       if ((await unresolvedDecision.getAttribute("data-operation-id")) !== "rejectStrategyCandidate") throw new Error("STRATEGY_REJECT_OPERATION_TRACE_INVALID");

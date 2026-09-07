@@ -20,10 +20,26 @@ type StrategySource = { source_id: string; state: StrategySourceState; version: 
 type StrategyFact = { fact_id: string; state: StrategyFactState; version: number };
 type StrategyPlaybookDraft = { draft_id: string; draft_type: "playbook"; title: string; state: StrategyPlaybookState; version: number };
 type StrategyCandidate = { candidate_ref: string; state: StrategyCandidateState; version: number };
+type StrategyGovernedResource = {
+  resource_id: string;
+  resource_type: string;
+  state: "CONFIGURED" | "APPROVED";
+  version: number;
+  config_patch_json: unknown;
+  reason: string;
+  rationale?: string;
+};
 
 type StrategyAuditEntry = {
   audit_ref: string;
-  event: "strategy.searched" | "strategy.refreshed" | "strategy.exported" | "strategy.context_adopted" | "strategy.draft_saved";
+  event:
+    | "strategy.searched"
+    | "strategy.refreshed"
+    | "strategy.exported"
+    | "strategy.context_adopted"
+    | "strategy.draft_saved"
+    | "strategy.governance_configured"
+    | "strategy.governance_approved";
   subject_ref: string;
   correlation_id: string;
   outcome: "SUCCESS" | "DENIED" | "ERROR";
@@ -37,6 +53,7 @@ type ControlledState = {
   facts: StrategyFact[];
   playbook_drafts: StrategyPlaybookDraft[];
   candidates: StrategyCandidate[];
+  governed_resources: Map<string, StrategyGovernedResource>;
   audits: StrategyAuditEntry[];
   audit_counter: number;
   idempotency: Map<string, IdempotencyResult>;
@@ -50,6 +67,7 @@ const state: ControlledState = {
   facts: [],
   playbook_drafts: [],
   candidates: [],
+  governed_resources: new Map(),
   audits: [],
   audit_counter: 0,
   idempotency: new Map(),
@@ -262,12 +280,83 @@ export async function executeControlledStrategyInfoCommand(r: InfoRequest):
 
 export async function executeControlledStrategyIamCommand(r: IamRuntimeRequest):
   Promise<{ ok: true; value: unknown; correlation_id: string } | { ok: false; reason_code: string; correlation_id: string } | null> {
-  if (r.operation !== "saveDraft" || !isControlledStrategyServerTestMode()) return null;
+  if (!isControlledStrategyServerTestMode()) return null;
   const cached = cachedIam(r);
   if (cached) return cached;
   seedFixture();
 
   const payload = record(r.payload);
+  const currentPageUid = text(payload.current_page_uid) ?? text(payload.page_uid);
+  const sourcePageUid = text(payload.source_page_uid) ?? text(payload.page_uid);
+
+  if (r.operation === "configureGovernedResource" || r.operation === "approveGovernedResource") {
+    if (currentPageUid !== "admin:STR-01" || sourcePageUid !== "admin:STR-02") return null;
+    const resourceId = text(r.resource_id) ?? text(payload.resource_id);
+    const resourceType = text(payload.resource_type);
+    if (!resourceId || !resourceType) {
+      state.idempotency.set(r.correlation_id, { ok: false, reason_code: "STR_ADMIN_GOVERNANCE_REQUIRED_FIELDS_MISSING" });
+      return { ok: false as const, reason_code: "STR_ADMIN_GOVERNANCE_REQUIRED_FIELDS_MISSING", correlation_id: r.correlation_id };
+    }
+
+    if (r.operation === "configureGovernedResource") {
+      const reason = text(payload.reason);
+      if (!reason || !Object.prototype.hasOwnProperty.call(payload, "config_patch_json")) {
+        state.idempotency.set(r.correlation_id, { ok: false, reason_code: "STR_ADMIN_GOVERNANCE_REQUIRED_FIELDS_MISSING" });
+        return { ok: false as const, reason_code: "STR_ADMIN_GOVERNANCE_REQUIRED_FIELDS_MISSING", correlation_id: r.correlation_id };
+      }
+      const current = state.governed_resources.get(resourceId);
+      const next: StrategyGovernedResource = {
+        resource_id: resourceId,
+        resource_type: resourceType,
+        state: "CONFIGURED",
+        version: (current?.version ?? 0) + 1,
+        config_patch_json: payload.config_patch_json,
+        reason,
+      };
+      state.governed_resources.set(resourceId, next);
+      const audit = appendAudit({
+        event: "strategy.governance_configured",
+        subject_ref: resourceId,
+        correlation_id: r.correlation_id,
+        outcome: "SUCCESS",
+      });
+      const value = { ...next, audit_ref: audit.audit_ref, test_metadata: TEST_METADATA };
+      state.idempotency.set(r.correlation_id, { ok: true, value });
+      return { ok: true as const, value, correlation_id: r.correlation_id };
+    }
+
+    const rationale = text(payload.rationale);
+    const current = state.governed_resources.get(resourceId);
+    if (!rationale || !current || current.state !== "CONFIGURED") {
+      const reason_code = !current ? "STR_ADMIN_GOVERNED_RESOURCE_NOT_CONFIGURED" : "STR_ADMIN_GOVERNANCE_REQUIRED_FIELDS_MISSING";
+      state.idempotency.set(r.correlation_id, { ok: false, reason_code });
+      return { ok: false as const, reason_code, correlation_id: r.correlation_id };
+    }
+    const expectedVersion = text(payload.expected_resource_version);
+    if (expectedVersion && Number(expectedVersion) !== current.version) {
+      state.idempotency.set(r.correlation_id, { ok: false, reason_code: "STR_ADMIN_GOVERNANCE_VERSION_CONFLICT" });
+      return { ok: false as const, reason_code: "STR_ADMIN_GOVERNANCE_VERSION_CONFLICT", correlation_id: r.correlation_id };
+    }
+    const next: StrategyGovernedResource = {
+      ...current,
+      resource_type: resourceType,
+      state: "APPROVED",
+      version: current.version + 1,
+      rationale,
+    };
+    state.governed_resources.set(resourceId, next);
+    const audit = appendAudit({
+      event: "strategy.governance_approved",
+      subject_ref: resourceId,
+      correlation_id: r.correlation_id,
+      outcome: "SUCCESS",
+    });
+    const value = { ...next, approval_ref: audit.audit_ref, test_metadata: TEST_METADATA };
+    state.idempotency.set(r.correlation_id, { ok: true, value });
+    return { ok: true as const, value, correlation_id: r.correlation_id };
+  }
+
+  if (r.operation !== "saveDraft") return null;
   const draftId = text(payload.draft_id) ?? text(r.draft_id ?? null);
   const draftType = text(payload.draft_type);
   if (draftType !== "playbook") return null;

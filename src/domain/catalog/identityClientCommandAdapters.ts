@@ -103,6 +103,36 @@ function bindStrategyAdminHttpCommandAdapter(): void {
         }
         return { ok: true, value: raw, correlation_id };
       }
+      if (input.operation === "configureGovernedResource" || input.operation === "approveGovernedResource") {
+        const resourceId = typeof input.payload.resource_id === "string" ? input.payload.resource_id.trim() : "";
+        if (!resourceId) {
+          return { ok: false, reason_code: "STR_ADMIN_GOVERNED_RESOURCE_ID_REQUIRED", correlation_id: "unresolved" };
+        }
+        const suffix = input.operation === "approveGovernedResource" ? "/approve" : "";
+        const response = await fetch(`/v1/governance/resources/${encodeURIComponent(resourceId)}${suffix}`, {
+          method: input.operation === "approveGovernedResource" ? "POST" : "PATCH",
+          cache: "no-store",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            ...input.payload,
+            current_page_uid: "admin:STR-01",
+            page_uid: "admin:STR-01",
+            source_page_uid: input.source_page_uid,
+          }),
+        });
+        const correlation_id = response.headers.get("x-correlation-id") ?? "unresolved";
+        const raw: unknown = await response.json().catch(() => null);
+        const body = rec(raw);
+        if (!response.ok) {
+          return {
+            ok: false,
+            reason_code: typeof body?.reason_code === "string" ? body.reason_code : "STR_ADMIN_GOVERNANCE_COMMAND_FAILED",
+            correlation_id,
+          };
+        }
+        return { ok: true, value: raw, correlation_id };
+      }
       return { ok: false, reason_code: "STR_ADMIN_OPERATION_RUNTIME_NOT_MATERIALIZED", correlation_id: "unresolved" };
     },
   });

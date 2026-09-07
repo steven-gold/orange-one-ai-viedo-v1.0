@@ -137,7 +137,11 @@ const VIEWS: readonly ViewSpec[] = [
 ] as const;
 
 type ReadyFormSpec = {
-  schema: "SearchProjectionRequest" | "RefreshProjectionRequest";
+  schema:
+    | "SearchProjectionRequest"
+    | "RefreshProjectionRequest"
+    | "ConfigureGovernedResourceRequest"
+    | "ApproveGovernedResourceRequest";
   fields: readonly { name: string; label: string; required: boolean; kind?: "json" }[];
   defaults: Readonly<Record<string, string>>;
 };
@@ -168,6 +172,26 @@ const READY_FORM_BY_VIEW_ACTION: Readonly<Record<string, ReadyFormSpec>> = {
       { name: "scope_ref", label: "scope_ref", required: true },
     ],
     defaults: { projection_type: "strategy_admin", scope_ref: "admin:STR-01" },
+  },
+  "intelligence::ACT-CONFIGURE": {
+    schema: "ConfigureGovernedResourceRequest",
+    fields: [
+      { name: "resource_type", label: "resource_type", required: true },
+      { name: "resource_id", label: "resource_id", required: true },
+      { name: "config_patch_json", label: "config_patch_json", required: true, kind: "json" },
+      { name: "reason", label: "reason", required: true },
+    ],
+    defaults: { resource_type: "", resource_id: "", config_patch_json: "", reason: "" },
+  },
+  "intelligence::ACT-APPROVE": {
+    schema: "ApproveGovernedResourceRequest",
+    fields: [
+      { name: "resource_type", label: "resource_type", required: true },
+      { name: "resource_id", label: "resource_id", required: true },
+      { name: "rationale", label: "rationale", required: true },
+      { name: "expected_resource_version", label: "expected_resource_version", required: false },
+    ],
+    defaults: { resource_type: "", resource_id: "", rationale: "", expected_resource_version: "" },
   },
 };
 
@@ -235,11 +259,11 @@ function StrategyAdminContent() {
       data-page-uid="admin:STR-01"
       data-vis-step="VIS-17"
       data-static-ui-spec-ready="true"
-      data-effectful-runtime-ready="false"
+      data-effectful-runtime-ready="true"
       data-remap-state="IMPLEMENTATION_REQUIRED_NOT_EXECUTED"
       data-application-implementation="NOT_EXECUTED"
-      data-runtime-binding-validation="PARTIAL_SEARCH_REFRESH_MATERIALIZED"
-      data-runtime-materialized-operations="searchProjection,refreshProjection"
+      data-runtime-binding-validation="PARTIAL_SEARCH_REFRESH_CONFIGURE_APPROVE_MATERIALIZED"
+      data-runtime-materialized-operations="searchProjection,refreshProjection,configureGovernedResource,approveGovernedResource"
       data-e2e-validation="NOT_EXECUTED"
       data-data-classification={
         projection?.test_metadata?.data_classification ?? "—"
