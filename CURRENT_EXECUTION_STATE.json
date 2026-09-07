@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T21:52:40+08:00",
+  "as_of": "2026-09-07T21:57:45+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "e00afb626bae2de451b6a07d2efa42cc46c96e51",
@@ -11,8 +11,8 @@
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "FAST_FORWARDED_TO_PRODUCTION_ACCEPTED_MAIN",
-    "post_release_new_status": "ALIGNED_TO_MAIN_BEFORE_FINAL_STATE_SYNC"
+    "construction_branch_alignment": "MAIN_PRODUCTION_ACCEPTED_NEW_AHEAD_BY_STATE_ONLY",
+    "post_release_new_status": "AHEAD_MAIN_BY_FINAL_STATE_ONLY_NO_PRODUCTION_RUNTIME_DELTA"
   },
   "release_validation": {
     "final_pre_state_construction_gate": {
