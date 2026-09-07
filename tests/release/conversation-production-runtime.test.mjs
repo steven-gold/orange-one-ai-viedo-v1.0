@@ -1,0 +1,65 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+
+const read = (path) => readFile(new URL(`../../${path}`, import.meta.url), "utf8");
+
+test("Production conversation runtime routes real AI turns through governed AIAPI", async () => {
+  const source = await read("src/server/shared/productionConversationAiRuntime.ts");
+  assert.match(source, /operation_id:\s*"executeProviderRoute"/);
+  assert.match(source, /operation_id:\s*"getProviderRouteDecision"/);
+  assert.match(source, /use_case:\s*"ACPOS_CONVERSATION"/);
+  assert.match(source, /use_case\s*=\s*'ACPOS_TEXT_CHAT'/);
+  assert.match(source, /external_request_sent\s*!==\s*true/);
+  assert.match(source, /payload\.normalized_result/);
+  assert.match(source, /LIMIT 20/);
+  assert.match(source, /'USER'/);
+  assert.match(source, /'PROVIDER'/);
+  assert.doesNotMatch(source, /GROQ_API_KEY|GOOGLE_GEMINI_API_KEY|DEEPSEEK_API_KEY|OPENROUTER_API_KEY/);
+});
+
+test("CORE and shared Strategy conversation sends reuse the same Production AI turn runtime", async () => {
+  const source = await read("src/server/shared/identityPageCommandRuntime.ts");
+  assert.match(source, /executeProductionConversationTurn/);
+  assert.match(source, /case "CORE-01-PORT-MESSAGE-SEND"/);
+  assert.match(source, /page_uid:\s*"CORE-01"/);
+  assert.match(source, /async function executeConversation/);
+  assert.match(source, /page_uid:\s*asText\(payload\.page_uid\) \?\? "workspace:STR-01"/);
+});
+
+test("CORE Production UI renders real assistant response and retains controlled-test fallback", async () => {
+  const source = await read("src/components/pages/CoreVisual.tsx");
+  assert.match(source, /role: "USER" \| "STATUS" \| "ASSISTANT" \| "SIMULATED_AI"/);
+  assert.match(source, /assistant_response_text/);
+  assert.match(source, /assistant_response_ref/);
+  assert.match(source, /appendConversationMessage\("ASSISTANT"/);
+  assert.match(source, /simulated_response_text/);
+});
+
+test("CORE canonical projection and conversation payloads are usable without test-only adapters", async () => {
+  const projection = await read("src/domain/core/coreProjectionAdapter.ts");
+  const conversation = await read("src/domain/core/coreConversationPayloadAdapter.ts");
+  assert.match(projection, /if \(!current\) \{\s*return controlledTestProjection\(rawProjection\);\s*\}/);
+  assert.match(conversation, /if \(!current\) \{[\s\S]*return \{ ok: true, payload: \{ \.\.\.context \} \};/);
+  assert.doesNotMatch(projection, /CORE_PROJECTION_SCHEMA_ADAPTER_NOT_BOUND/);
+});
+
+test("Strategy conversation projection exposes persisted user and provider history", async () => {
+  const source = await read("src/server/shared/pageCatalogProjectionRuntime.ts");
+  assert.match(source, /FROM conversation_messages/);
+  assert.match(source, /actorType === "PROVIDER" \? "AI"/);
+  assert.match(source, /"STR-01-VIEW-CONVERSATION": conversationText \|\| DASH/);
+  assert.match(source, /"STR-01-FLD-ASSISTANT-SUMMARY": latestAssistantText \?\? DASH/);
+  assert.match(source, /"STR-01-GATE-CONTEXT": Boolean\(firstConversation\)/);
+  assert.match(source, /"STR-01-GATE-MESSAGE": Boolean\(firstConversation\)/);
+});
+
+test("Strategy send has an exact canonical Production request builder and clears composer after send", async () => {
+  const port = await read("src/domain/strategy/strategyCommandPort.ts");
+  const ui = await read("src/components/pages/StrategyControlRuntime.tsx");
+  assert.match(port, /action==='STR-01-ACT-SEND'/);
+  assert.match(port, /path_params:\{conversationId:input\.conversation_id\?\?''\}/);
+  assert.match(port, /page_uid:'workspace:STR-01'/);
+  assert.match(ui, /isStrategyRequestBuilderBound\(binding\.action_uid as StrategyFormalAction\)/);
+  assert.match(ui, /action==='STR-01-ACT-SEND'\|\|action==='STR-01-ACT-STOP'/);
+});
