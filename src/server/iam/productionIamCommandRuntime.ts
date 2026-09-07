@@ -54,6 +54,33 @@ function rows(value:unknown):Row[]{
 }
 function first(value:unknown):Row|null{return rows(value)[0]??null;}
 function sha256(value:string){return createHash("sha256").update(value).digest("hex");}
+function object(value:unknown):Row|null{return value&&typeof value==="object"&&!Array.isArray(value)?value as Row:null;}
+function integer(value:unknown):number|null{const parsed=typeof value==="number"?value:Number(value);return Number.isInteger(parsed)?parsed:null;}
+const AIAPI_PAGE_UID="admin:AIAPI-01";
+const AIAPI_CLASSIFICATIONS=new Set(["PUBLIC","INTERNAL","RESTRICTED","RESTRICTED_FINANCE"]);
+type AiApiCapabilityConfig={
+  provider_key:string;model_key:string;capability_version:string;accepted_classifications:string[];
+  input_schema:Row;output_schema:Row;limits:Row;
+};
+function aiApiCapabilityConfig(payload:Row):AiApiCapabilityConfig|null{
+  if(text(payload.page_uid)!==AIAPI_PAGE_UID)return null;
+  if(!text(payload.resource_type))throw new NamedRuntimeError("AIAPI_CAPABILITY_RESOURCE_TYPE_REQUIRED");
+  const patch=object(payload.config_patch_json);
+  if(!patch)throw new NamedRuntimeError("AIAPI_CAPABILITY_CONFIG_PATCH_REQUIRED");
+  const provider_key=text(patch.provider_key),model_key=text(patch.model_key),capability_version=text(patch.capability_version);
+  const accepted_classifications=strings(patch.accepted_classifications).map((value)=>value.toUpperCase());
+  const input_schema=object(patch.input_schema),output_schema=object(patch.output_schema),limits=object(patch.limits);
+  if(!provider_key)throw new NamedRuntimeError("AIAPI_CAPABILITY_PROVIDER_KEY_REQUIRED");
+  if(!model_key)throw new NamedRuntimeError("AIAPI_CAPABILITY_MODEL_KEY_REQUIRED");
+  if(!capability_version)throw new NamedRuntimeError("AIAPI_CAPABILITY_VERSION_REQUIRED");
+  if(!accepted_classifications.length||accepted_classifications.some((value)=>!AIAPI_CLASSIFICATIONS.has(value))){
+    throw new NamedRuntimeError("AIAPI_CAPABILITY_CLASSIFICATION_INVALID");
+  }
+  if(!input_schema)throw new NamedRuntimeError("AIAPI_CAPABILITY_INPUT_SCHEMA_REQUIRED");
+  if(!output_schema)throw new NamedRuntimeError("AIAPI_CAPABILITY_OUTPUT_SCHEMA_REQUIRED");
+  if(!limits)throw new NamedRuntimeError("AIAPI_CAPABILITY_LIMITS_REQUIRED");
+  return{provider_key,model_key,capability_version,accepted_classifications,input_schema,output_schema,limits};
+}
 function permissionRef(resourceId:string,action:string){return `${resourceId}|${action}`;}
 function parsePermissionRef(value:unknown){
   const ref=text(value);
@@ -253,6 +280,10 @@ async function configureResource(request:IamRuntimeRequest){
   if(!resourceId)throw new NamedRuntimeError("IAM_GOVERNED_RESOURCE_ID_REQUIRED");
   const payload=rec(request.payload);
   if(payload.explicit_confirmation!==true&&text(payload.page_uid)==="admin:IAM-01")throw new NamedRuntimeError("IAM01_EXPLICIT_CONFIRMATION_REQUIRED");
+  if(text(payload.page_uid)===AIAPI_PAGE_UID){
+    if(!text(payload.reason))throw new NamedRuntimeError("AIAPI_CAPABILITY_CONFIG_REASON_REQUIRED");
+    aiApiCapabilityConfig(payload);
+  }
   const row=await upsertEntity(sql,{kind:"GOVERNED_RESOURCE",id:resourceId,status:"CONFIGURED",payload:{...payload,configured_by:actor.user_id,configured_at:new Date().toISOString()}});
   await audit(sql,{operation:"configureGovernedResource",actorId:actor.user_id,correlationId:request.correlation_id,entityId:resourceId,payload:{version:row.version}});
   return{resource_id:resourceId,state:"CONFIGURED",version:row.version};
@@ -263,8 +294,85 @@ async function approveResource(request:IamRuntimeRequest){
   if(!resourceId)throw new NamedRuntimeError("IAM_GOVERNED_RESOURCE_ID_REQUIRED");
   const existing=await loadEntity(sql,"GOVERNED_RESOURCE",resourceId);
   if(!existing)throw new NamedRuntimeError("IAM_GOVERNED_RESOURCE_NOT_CONFIGURED");
+  const requestPayload=rec(request.payload);
+  const existingPayload=rec(existing.payload);
+  const currentVersion=integer(existing.version);
   const approvalRef=`IAM-APPROVAL:${request.correlation_id}`;
-  const payload={...rec(existing.payload),approved_by:actor.user_id,approved_at:new Date().toISOString(),approval_ref:approvalRef};
+
+  if(text(existingPayload.page_uid)===AIAPI_PAGE_UID){
+    const expectedVersion=integer(requestPayload.expected_resource_version);
+    if(!expectedVersion||!currentVersion||expectedVersion!==currentVersion)throw new NamedRuntimeError("AIAPI_CAPABILITY_RESOURCE_VERSION_CONFLICT");
+    if(!text(requestPayload.rationale))throw new NamedRuntimeError("AIAPI_CAPABILITY_APPROVAL_RATIONALE_REQUIRED");
+    const configuredType=text(existingPayload.resource_type),approvedType=text(requestPayload.resource_type);
+    if(!configuredType||!approvedType||configuredType!==approvedType)throw new NamedRuntimeError("AIAPI_CAPABILITY_RESOURCE_TYPE_MISMATCH");
+    const capability=aiApiCapabilityConfig(existingPayload);
+    if(!capability)throw new NamedRuntimeError("AIAPI_CAPABILITY_CONFIG_REQUIRED");
+    const capabilityHash=sha256(JSON.stringify({
+      provider_key:capability.provider_key,
+      model_key:capability.model_key,
+      capability_version:capability.capability_version,
+      accepted_classifications:capability.accepted_classifications,
+      input_schema:capability.input_schema,
+      output_schema:capability.output_schema,
+      limits:capability.limits,
+    }));
+    const approvedPayload={
+      ...existingPayload,
+      approved_by:actor.user_id,
+      approved_at:new Date().toISOString(),
+      approval_ref:approvalRef,
+      approval_rationale:text(requestPayload.rationale),
+      provider_capability_hash:capabilityHash,
+    };
+    await sql.transaction([
+      sql`
+        INSERT INTO provider_capabilities(
+          provider_key,model_key,capability_version,accepted_classifications,input_schema,output_schema,limits,status,capability_hash
+        ) VALUES(
+          ${capability.provider_key},${capability.model_key},${capability.capability_version},
+          ${capability.accepted_classifications}::classification_level[],
+          ${JSON.stringify(capability.input_schema)}::jsonb,${JSON.stringify(capability.output_schema)}::jsonb,
+          ${JSON.stringify(capability.limits)}::jsonb,'APPROVED',${capabilityHash}
+        )
+        ON CONFLICT(provider_key,model_key,capability_version) DO UPDATE
+        SET accepted_classifications=EXCLUDED.accepted_classifications,
+            input_schema=EXCLUDED.input_schema,
+            output_schema=EXCLUDED.output_schema,
+            limits=EXCLUDED.limits,
+            status='APPROVED',
+            capability_hash=EXCLUDED.capability_hash
+      `,
+      sql`
+        INSERT INTO acpos_runtime.entities(kind,id,parent_id,status,version,payload)
+        VALUES('GOVERNED_RESOURCE',${resourceId},${text(existing.parent_id)},'APPROVED',1,${JSON.stringify(approvedPayload)}::jsonb)
+        ON CONFLICT(kind,id) DO UPDATE
+        SET parent_id=EXCLUDED.parent_id,
+            status='APPROVED',
+            version=acpos_runtime.entities.version+1,
+            payload=EXCLUDED.payload,
+            updated_at=now()
+      `,
+    ]);
+    const row=await loadEntity(sql,"GOVERNED_RESOURCE",resourceId);
+    const materialized=first(await sql`
+      SELECT provider_capability_id::text AS provider_capability_id,status::text AS status,capability_hash
+      FROM provider_capabilities
+      WHERE provider_key=${capability.provider_key}
+        AND model_key=${capability.model_key}
+        AND capability_version=${capability.capability_version}
+      LIMIT 1
+    `);
+    if(!row||!materialized)throw new NamedRuntimeError("AIAPI_CAPABILITY_MATERIALIZATION_FAILED");
+    await audit(sql,{operation:"approveGovernedResource",actorId:actor.user_id,correlationId:request.correlation_id,entityId:resourceId,payload:{version:row.version,approval_ref:approvalRef,provider_capability_id:text(materialized.provider_capability_id)}});
+    return{
+      resource_id:resourceId,state:"APPROVED",version:row.version,approval_ref:approvalRef,
+      provider_capability_id:text(materialized.provider_capability_id),
+      capability_status:text(materialized.status),
+      capability_hash:text(materialized.capability_hash),
+    };
+  }
+
+  const payload={...existingPayload,approved_by:actor.user_id,approved_at:new Date().toISOString(),approval_ref:approvalRef};
   const row=await upsertEntity(sql,{kind:"GOVERNED_RESOURCE",id:resourceId,parent_id:text(existing.parent_id),status:"APPROVED",payload});
   await audit(sql,{operation:"approveGovernedResource",actorId:actor.user_id,correlationId:request.correlation_id,entityId:resourceId,payload:{version:row.version,approval_ref:approvalRef}});
   return{resource_id:resourceId,state:"APPROVED",version:row.version,approval_ref:approvalRef};

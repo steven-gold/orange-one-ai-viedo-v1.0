@@ -12,6 +12,7 @@ const queueAuthority = await readFile("authority/runtime/ACPOS_PRODUCTION_ASYNC_
 const providerAdapter = await readFile("src/server/aiApi/providerHttpAdapterRuntime.ts", "utf8");
 const queueRuntime = await readFile("src/server/queue/providerExecutionQueueRuntime.ts", "utf8");
 const controlledRuntime = await readFile("src/server/testing/controlledAiApiTestRuntime.ts", "utf8");
+const iamRuntime = await readFile("src/server/iam/productionIamCommandRuntime.ts", "utf8");
 
 const routeFiles = [
   ["src/app/v1/aiapi/provider-profiles/route.ts", "listProviderModelProfiles", "createProviderModelProfile"],
@@ -93,6 +94,18 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(providerAdapter, /PROVIDER_SECRET_REFERENCE_NOT_APPROVED/);
   assert.doesNotMatch(runtime + providerAdapter, /process\.env\[[^\]]+\]\s*=(?!=)|process\.env\.[A-Z0-9_]+\s*=/);
   assert.doesNotMatch(providerAdapter, /console\.(?:log|debug|info|warn|error)\s*\(/);
+});
+
+test("AIAPI capability governance approval materializes the canonical provider capability registry", () => {
+  assert.match(iamRuntime, /AIAPI_PAGE_UID="admin:AIAPI-01"/);
+  assert.match(iamRuntime, /AIAPI_CAPABILITY_RESOURCE_VERSION_CONFLICT/);
+  assert.match(iamRuntime, /provider_key,model_key,capability_version,accepted_classifications,input_schema,output_schema,limits,status,capability_hash/);
+  assert.match(iamRuntime, /ON CONFLICT\(provider_key,model_key,capability_version\) DO UPDATE/);
+  assert.match(iamRuntime, /classification_level\[\]/);
+  assert.match(iamRuntime, /capability_hash=EXCLUDED\.capability_hash/);
+  assert.match(iamRuntime, /sql\.transaction\(\[/);
+  assert.match(iamRuntime, /AIAPI_CAPABILITY_MATERIALIZATION_FAILED/);
+  assert.doesNotMatch(iamRuntime, /PROVIDER_CAPABILITY["']|resource_type\s*===\s*["']PROVIDER_CAPABILITY/);
 });
 
 test("Gate 22 has an independent real Production External Provider acceptance harness", async () => {
