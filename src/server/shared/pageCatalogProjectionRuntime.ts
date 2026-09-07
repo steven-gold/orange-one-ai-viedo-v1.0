@@ -1217,6 +1217,7 @@ async function readDevFromDb(sql: SqlClient): Promise<unknown> {
   const jobs = await safeRows(() => sql`
     SELECT discovery_job_id::text AS ref, job_name AS label, status::text AS status, mode::text AS mode
     FROM outreach_discovery_jobs
+    WHERE coalesce(stats->>'acceptance_scope','') <> 'GATE_24_DEV'
     ORDER BY created_at DESC
   `);
   const companies = await safeRows(() => sql`
@@ -1233,12 +1234,16 @@ async function readDevFromDb(sql: SqlClient): Promise<unknown> {
     run_status,
     values: {
       "DEV-01-FLD-JOB": asText(first?.label) ?? DASH,
+      "DEV-01-FLD-JOB-REF": asText(first?.ref) ?? DASH,
       "DEV-01-FLD-JOB-STATUS": status ?? DASH,
       "DEV-01-FLD-MODE": asText(first?.mode) ?? DASH,
       "DEV-01-FLD-DIRECTORY": String(companies.length),
     },
     gate_state: {
       "DEV-01-GATE-PAGE": true,
+      "DEV-01-GATE-DISCOVERY-START": run_status === null || run_status === "STOPPED",
+      "DEV-01-GATE-DISCOVERY-RUNNING": run_status === "RUNNING",
+      "DEV-01-GATE-DISCOVERY-PAUSED": run_status === "PAUSED",
       "DEV-01-GATE-DIRECTORY-READ": companies.length > 0,
     },
   };
