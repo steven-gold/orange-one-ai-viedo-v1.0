@@ -7,6 +7,7 @@ const server = fs.readFileSync("src/server/shared/identityPageCommandRuntime.ts"
 const port = fs.readFileSync("src/domain/strategyAdmin/strategyAdminRuntimePort.ts", "utf8");
 const visual = fs.readFileSync("src/components/pages/StrategyAdminVisual.tsx", "utf8");
 const controlled = fs.readFileSync("src/server/testing/controlledStrategyTestRuntime.ts", "utf8");
+const controlledQaCriteria = fs.readFileSync("src/server/testing/controlledQaCriteriaTestRuntime.ts", "utf8");
 
 test("Strategy Admin materialized operations use registered routes with source identity", () => {
   assert.match(adapter, /input\.operation === "searchProjection" \|\| input\.operation === "refreshProjection"/);
@@ -47,4 +48,10 @@ test("Strategy Admin materializes registered Search, Refresh, Configure and Appr
   assert.match(visual, /data-runtime-materialized-operations="searchProjection,refreshProjection,configureGovernedResource,approveGovernedResource"/);
   assert.match(controlled, /r\.operation === "configureGovernedResource" \|\| r\.operation === "approveGovernedResource"/);
   assert.match(controlled, /sourcePageUid !== "admin:STR-02"/);
+});
+
+
+test("Controlled governance handlers preserve page ownership before Strategy dispatch", () => {
+  assert.match(controlledQaCriteria, /pageUid !== "admin:SG-02" \|\| sourcePageUid !== "admin:SG-02"/);
+  assert.match(controlled, /currentPageUid !== "admin:STR-01" \|\| sourcePageUid !== "admin:STR-02"/);
 });
