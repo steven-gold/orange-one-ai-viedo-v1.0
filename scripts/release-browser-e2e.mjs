@@ -166,6 +166,28 @@ try {
         if (body.includes('"use client"') || body.includes("function KnowledgeAdminVisual") || body.includes("const CONTROLS")) throw new Error(`SOURCE_RENDER_${uid}`);
 
         if (width === 1280) {
+          try {
+            await page.waitForFunction(
+              () => {
+                const header = document.querySelector(".global-header");
+                const sidebar = document.querySelector(".global-sidebar");
+                const workspace = document.querySelector(".workspace-slot");
+                if (!(header instanceof HTMLElement) || !(sidebar instanceof HTMLElement) || !(workspace instanceof HTMLElement)) return false;
+                const h = header.getBoundingClientRect();
+                const s = sidebar.getBoundingClientRect();
+                const w = workspace.getBoundingClientRect();
+                return Math.abs(h.height - 58) <= 1
+                  && h.width > 0
+                  && Math.abs(s.width - 64) <= 1
+                  && Math.abs(s.top - 58) <= 1
+                  && Math.abs(w.left - 78) <= 1
+                  && Math.abs(w.top - 68) <= 1;
+              },
+              { timeout: 5_000 },
+            );
+          } catch {
+            throw new Error(`SHELL_GEOMETRY_NOT_STABLE_${uid}`);
+          }
           const shellGeometry = await page.evaluate(() => {
             const header = document.querySelector(".global-header");
             const sidebar = document.querySelector(".global-sidebar");
