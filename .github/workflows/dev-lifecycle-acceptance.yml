@@ -1,0 +1,40 @@
+name: ACPOS DEV Lifecycle Acceptance
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: Exact Production deployment URL
+        required: false
+        default: https://orange-one-acpos-test.vercel.app
+        type: string
+      expected_release_sha:
+        description: Exact deployed main release SHA
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  dev-lifecycle:
+    runs-on: ubuntu-latest
+    environment: Production
+    timeout-minutes: 15
+    env:
+      ACPOS_DEPLOYMENT_URL: ${{ inputs.deployment_url }}
+      ACPOS_EXPECT_RELEASE_SHA: ${{ inputs.expected_release_sha }}
+      ACPOS_PRODUCTION_E2E_EMAIL: admin
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate DEV lifecycle E2E syntax
+        run: node --check scripts/production-dev-lifecycle-e2e.mjs
+      - name: Run governed Production DEV lifecycle E2E
+        run: node scripts/production-dev-lifecycle-e2e.mjs
