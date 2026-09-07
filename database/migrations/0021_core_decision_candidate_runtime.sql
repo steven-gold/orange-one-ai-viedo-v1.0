@@ -230,7 +230,7 @@ $$;
 INSERT INTO schema_migration_history(migration_id, checksum, applied_by, approval_ref)
 VALUES(
   '0021_core_decision_candidate_runtime',
-  'PENDING_CHECKSUM',
+  'e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6',
   'migration-runner',
   'CR-CORE-0021-PENDING-PRODUCTION-APPLY'
 )
