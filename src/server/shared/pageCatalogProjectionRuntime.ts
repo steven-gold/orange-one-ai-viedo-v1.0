@@ -911,7 +911,10 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
     gate_state: {
       "STR-01-GATE-PAGE": true,
       "STR-01-GATE-TOPIC": topics.length > 0,
+      "STR-01-GATE-CONTEXT": Boolean(firstConversation),
       "STR-01-GATE-MESSAGE": Boolean(firstConversation),
+      "STR-01-GATE-ANALYSIS": Boolean(latestAssistantText),
+      "STR-01-GATE-MULTI": false,
     },
     owner_type: firstConversation ? "CONVERSATION" : null,
     owner_context_ref: firstConversation?.ref ?? null,
