@@ -13,6 +13,8 @@ import { configureStrategyAdminCommandAdapter } from "@/domain/strategyAdmin/str
 import { configureDevCommandAdapter } from "@/domain/dev/devCommandPort";
 import { readDevProjection } from "@/domain/dev/devProjectionPort";
 import { DEV_CONTROL_BINDINGS, type DevControlBinding, type DevControlUid } from "@/domain/dev/devControlBindings";
+import { configureSocCommandAdapter } from "@/domain/social/socCommandPort";
+import { readSocProjection } from "@/domain/social/socProjectionPort";
 
 let bound = false;
 
@@ -249,6 +251,85 @@ export function bindIdentityClientCommandAdapters(): void {
       const refreshed = await readDevProjection();
       if (!refreshed.ok) return refreshed;
       return { ok: true, projection: refreshed.projection, correlation_id };
+    },
+  });
+
+  configureSocCommandAdapter({
+    supports: (action_uid) => [
+      "SOC-01-ACT-CONTENT-SAVE",
+      "SOC-01-ACT-CANDIDATE-DECIDE",
+      "SOC-01-ACT-REFRESH",
+    ].includes(action_uid),
+    invoke: async (input) => {
+      if (input.action_uid === "SOC-01-ACT-REFRESH") {
+        const refreshed = await readSocProjection();
+        return refreshed.ok
+          ? { ok: true as const, projection: refreshed.projection, correlation_id: refreshed.correlation_id }
+          : refreshed;
+      }
+
+      const projection = input.projection;
+      if (!projection) {
+        return { ok: false as const, error_uid: "SOC-01-ERR-CONTENT", reason_code: "SOC_PROJECTION_REQUIRED", correlation_id: "unresolved" };
+      }
+
+      const contentPackageId = projection.values["SOC-01-FLD-CONTENT-PACKAGE"] ?? "";
+      const candidateRef = projection.values["SOC-01-FLD-CANDIDATE-REF"] ?? "";
+      const versionText = projection.values["SOC-01-FLD-CANDIDATE-VERSION"] ?? "";
+      const candidateVersion = Number(versionText);
+      let path: string;
+      let payload: Record<string, unknown>;
+
+      if (input.action_uid === "SOC-01-ACT-CONTENT-SAVE") {
+        if (!contentPackageId || contentPackageId === "—") {
+          return { ok: false as const, error_uid: "SOC-01-ERR-CONTENT", reason_code: "SOC01_CONTENT_PACKAGE_REQUIRED", correlation_id: "unresolved" };
+        }
+        path = "/v1/drafts";
+        payload = {
+          page_uid: "admin:SOC-01",
+          content_package_id: contentPackageId,
+          idempotency_key: `soc-draft:${contentPackageId}:${crypto.randomUUID()}`,
+          ...(candidateRef && candidateRef !== "—" ? { draft_id: candidateRef } : {}),
+          ...(Number.isSafeInteger(candidateVersion) && candidateVersion > 0 ? { expected_version: candidateVersion } : {}),
+        };
+      } else if (input.action_uid === "SOC-01-ACT-CANDIDATE-DECIDE") {
+        if (!candidateRef || candidateRef === "—" || !Number.isSafeInteger(candidateVersion) || candidateVersion < 1) {
+          return { ok: false as const, error_uid: "SOC-01-ERR-CONTENT", reason_code: "SOC01_CANDIDATE_REQUIRED", correlation_id: "unresolved" };
+        }
+        path = `/v1/candidates/${encodeURIComponent(candidateRef)}/decision`;
+        payload = {
+          page_uid: "admin:SOC-01",
+          candidate_id: candidateRef,
+          expected_version: candidateVersion,
+          decision: "APPROVE",
+          rationale: "Approved from governed SOC-01 candidate review.",
+        };
+      } else {
+        return { ok: false as const, error_uid: "SOC-01-ERR-UNDEFINED", reason_code: "SOC_COMMAND_RUNTIME_NOT_MATERIALIZED", correlation_id: "unresolved" };
+      }
+
+      const response = await fetch(path, {
+        method: "POST",
+        cache: "no-store",
+        credentials: "include",
+        headers: { "content-type": "application/json", "x-correlation-id": crypto.randomUUID() },
+        body: JSON.stringify(payload),
+      });
+      const correlation_id = response.headers.get("x-correlation-id") ?? "unresolved";
+      const raw: unknown = await response.json().catch(() => null);
+      const body = rec(raw);
+      if (!response.ok) {
+        return {
+          ok: false as const,
+          error_uid: "SOC-01-ERR-CONTENT",
+          reason_code: typeof body?.reason_code === "string" ? body.reason_code : "SOC_COMMAND_REQUEST_FAILED",
+          correlation_id,
+        };
+      }
+
+      const refreshed = await readSocProjection();
+      if (!refreshed.ok) return refreshed;
+      return { ok: true as const, projection: refreshed.projection, correlation_id };
     },
   });
 
