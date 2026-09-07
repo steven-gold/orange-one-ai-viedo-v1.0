@@ -45,6 +45,52 @@ function fingerprint(value: unknown): string {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
 }
 
+async function ensureSystemConversation(
+  sql: SqlClient,
+  identity: SystemRuntimeIdentity,
+  systemChangeId: string,
+): Promise<string> {
+  await sql`
+    INSERT INTO workspaces(workspace_key,name,status,data_classification,created_by)
+    VALUES('ACPOS-SYSTEM-AI','ACPOS System AI','READY','INTERNAL',${identity.actor_user_id}::uuid)
+    ON CONFLICT(workspace_key) DO NOTHING
+  `;
+  const workspaceRows = await sql`
+    SELECT workspace_id::text AS workspace_id
+    FROM workspaces
+    WHERE workspace_key='ACPOS-SYSTEM-AI'
+    LIMIT 1
+  `;
+  const workspaceId = asText(first(workspaceRows)?.workspace_id);
+  if (!workspaceId) throw new NamedRuntimeError("SYS01_SYSTEM_WORKSPACE_NOT_READY");
+  await runRlsActorQuery(
+    sql,
+    identity.session_token_hash,
+    sql`
+      INSERT INTO conversations(
+        conversation_id,workspace_id,project_id,topic_id,title,created_by
+      ) VALUES(
+        ${systemChangeId}::uuid,${workspaceId}::uuid,NULL,NULL,
+        ${`SYSTEM_CHANGE /${systemChangeId}`},${identity.actor_user_id}::uuid
+      )
+      ON CONFLICT(conversation_id) DO NOTHING
+    `,
+  );
+  const conversationRows = await runRlsActorQuery(
+    sql,
+    identity.session_token_hash,
+    sql`
+      SELECT conversation_id::text AS conversation_id
+      FROM conversations
+      WHERE conversation_id=${systemChangeId}::uuid
+      LIMIT 1
+    `,
+  );
+  const conversationId = asText(first(conversationRows)?.conversation_id);
+  if (!conversationId) throw new NamedRuntimeError("SYS01_SHARED_CONVERSATION_NOT_READY");
+  return conversationId;
+}
+
 export async function resolveProductionSystemContinuityContext(
   system_change_id: string,
   session_token_hash: string,
@@ -166,8 +212,10 @@ export async function executeProductionSystemLifecycleOperation(
         WHERE system_change_id=${systemChangeId}::uuid
       `,
     );
+    const conversationId = await ensureSystemConversation(sql, identity, systemChangeId);
     return {
       system_change_id: systemChangeId,
+      conversation_id: conversationId,
       candidate_ref: candidateRef,
       status: "DRAFT",
       production_mutation: false,
