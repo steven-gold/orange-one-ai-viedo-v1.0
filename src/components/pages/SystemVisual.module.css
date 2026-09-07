@@ -193,6 +193,55 @@
   background: linear-gradient(180deg, rgba(8, 12, 32, 0.72), rgba(5, 8, 22, 0.82));
 }
 
+.conversationTimeline {
+  width: 100%;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 48px 14px 14px;
+  overflow: auto;
+}
+
+.messageBubble {
+  max-width: min(760px, 86%);
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: rgba(12, 16, 38, 0.82);
+  color: var(--text-primary);
+}
+
+.messageUser { align-self: flex-end; background: rgba(79, 70, 229, 0.16); }
+.messageAssistant { align-self: flex-start; }
+.messageSystem { align-self: center; max-width: 92%; opacity: 0.82; }
+
+.messageMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.messageBubble p {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.messageBubble small {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-secondary);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
 .assistantBadge {
   position: absolute;
   top: 10px;
