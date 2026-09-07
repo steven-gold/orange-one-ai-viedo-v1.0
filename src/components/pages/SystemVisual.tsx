@@ -13,6 +13,7 @@ import {
 } from "@/domain/system/systemRuntimeContract";
 import { readSystemProjection, type SystemNormalizedProjection } from "@/domain/system/systemProjectionPort";
 import { createSystemCandidate, createSystemChangeRequest, runSystemSandbox } from "@/domain/system/systemMutationPort";
+import { sendSystemConversationMessage, stopSystemConversationGeneration } from "@/server/system/systemConversationBindings";
 import styles from "./SystemVisual.module.css";
 
 const DASH = "—";
@@ -62,6 +63,8 @@ export function SystemVisual() {
   const [state, dispatch] = useReducer(reduceSystemClientState, INITIAL_SYSTEM_CLIENT_STATE);
   const [projection, setProjection] = useState<ProjectionState>({ status: "LOADING", reason_code: null, correlation_id: null, value:null });
   const [mutationBusy,setMutationBusy]=useState(false);
+  const [conversationBusy,setConversationBusy]=useState(false);
+  const [conversationNotice,setConversationNotice]=useState<string|null>(null);
   const [mutationNotice,setMutationNotice]=useState<string|null>(null);
 
   useEffect(() => {
@@ -120,12 +123,48 @@ export function SystemVisual() {
     setMutationBusy(false);
   }
 
+  async function handleConversationSend(){
+    const draft=state.draft.trim();
+    if(!state.system_change_id||!state.conversation_id||!draft){
+      setConversationNotice(t("draftRequired"));
+      return;
+    }
+    setConversationBusy(true);
+    setConversationNotice(null);
+    const result=await sendSystemConversationMessage({
+      conversation_id:state.conversation_id,
+      system_change_id:state.system_change_id,
+      thread_id:state.thread_id,
+      branch_id:state.branch_id,
+      draft,
+      attachment_refs:state.attachment_refs,
+      ai_mode:state.ai_mode,
+      council_mode:state.council_mode,
+    });
+    if(!result.ok){
+      setConversationNotice(`${t("operationFailed")}: ${result.reason_code}`);
+    }else{
+      dispatch({type:"DRAFT",value:""});
+      setConversationNotice(t("runtimeReady"));
+      await refreshProjection();
+    }
+    setConversationBusy(false);
+  }
+
+  async function handleConversationStop(){
+    if(!state.conversation_id)return;
+    const result=await stopSystemConversationGeneration({conversation_id:state.conversation_id});
+    if(!result.ok)setConversationNotice(`${t("operationFailed")}: ${result.reason_code}`);
+    else setConversationNotice(t("runtimeReady"));
+  }
+
   const multi = state.ai_mode === "MULTI_AI";
   const systemContextResolved = projection.status === "READY" && Boolean(state.system_change_id);
   const activeConversationContextResolved = systemContextResolved && Boolean(state.conversation_id);
   const modeGateReady = systemContextResolved && activeConversationContextResolved;
   const multiAiRouteReady = projection.status === "READY" && projection.value.multi_ai_route_available;
   const multiAiGateReady = modeGateReady && multiAiRouteReady;
+  const providerRouteReady = projection.status === "READY" && Number(projection.value.values.healthy_ai_members ?? "0") > 0;
   const councilGateReady = multi && multiAiGateReady;
   const projectionReason = projection.reason_code ?? (projection.status === "READY" ? "READY" : "LOADING");
   const candidateRef=projection.status==="READY"?projection.value.values.candidate_ref??null:null;
@@ -133,6 +172,8 @@ export function SystemVisual() {
   const candidateDisabledReason=mutationBusy?"SYS01_MUTATION_IN_PROGRESS":projection.status!=="READY"?projectionReason:!state.draft.trim()?"SYS01_DRAFT_REQUIRED":null;
   const changeRequestDisabledReason=mutationBusy?"SYS01_MUTATION_IN_PROGRESS":!state.system_change_id||!candidateReady?"SYSTEM_CHANGE_CANDIDATE_REQUIRED":!state.draft.trim()?"SYS01_DRAFT_REQUIRED":null;
   const sandboxDisabledReason=mutationBusy?"SYS01_MUTATION_IN_PROGRESS":!state.system_change_id||!candidateReady?"SYSTEM_CHANGE_CANDIDATE_REQUIRED":null;
+  const sendDisabledReason=conversationBusy?"SYS01_CONVERSATION_IN_PROGRESS":!activeConversationContextResolved?"ACTIVE_CONVERSATION_CONTEXT_MISSING":!providerRouteReady?"CONVERSATION_PROVIDER_ROUTE_NOT_READY":!state.draft.trim()?"SYS01_DRAFT_REQUIRED":null;
+  const stopDisabledReason=!conversationBusy?"NO_ACTIVE_GENERATION":!state.conversation_id?"ACTIVE_CONVERSATION_CONTEXT_MISSING":null;
 
   return (
     <div
@@ -246,11 +287,32 @@ export function SystemVisual() {
 
           <div className={styles.conversationBody}>
             <div className={styles.assistantBadge}>{t("assistant")}</div>
-            <div className={styles.emptyConversation}>
-              <div className={styles.emptyGlyph}>◇</div>
-              <strong>{t("noData")}</strong>
-              <p>{t("emptyConversation")}</p>
-            </div>
+            {projection.status === "READY" && projection.value.messages.length ? (
+              <div className={styles.conversationTimeline}>
+                {projection.value.messages.map((message) => (
+                  <article
+                    key={message.message_ref}
+                    className={`${styles.messageBubble} ${message.role === "USER" ? styles.messageUser : message.role === "ASSISTANT" ? styles.messageAssistant : styles.messageSystem}`}
+                    data-message-ref={message.message_ref}
+                    data-message-role={message.role}
+                    data-governance-status={message.governance_status ?? undefined}
+                  >
+                    <div className={styles.messageMeta}>
+                      <strong>{message.role === "USER" ? "User" : message.role === "ASSISTANT" ? "System AI" : "System"}</strong>
+                      <span>{message.response_mode ?? ""}</span>
+                    </div>
+                    <p>{message.text}</p>
+                    {message.assistant_summary ? <small>{message.assistant_summary}</small> : null}
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.emptyConversation}>
+                <div className={styles.emptyGlyph}>◇</div>
+                <strong>{t("noData")}</strong>
+                <p>{t("emptyConversation")}</p>
+              </div>
+            )}
           </div>
           <div className={styles.contextStrip}>
             <DataRow label="conversation_id" value={state.conversation_id ?? DASH} />
@@ -271,16 +333,22 @@ export function SystemVisual() {
               onChange={(event) => dispatch({ type: "DRAFT", value: event.target.value })}
             />
             <div className={styles.composerActions}>
-              <button id="SYS-01-BTN-ATTACH" {...controlTraceProps("SYS-01-BTN-ATTACH")} className={styles.composerButton} type="button" disabled>
+              <button id="SYS-01-BTN-ATTACH" {...controlTraceProps("SYS-01-BTN-ATTACH")} className={styles.composerButton} type="button"
+                disabled data-disabled-reason="GLOBAL_ATTACHMENT_SELECTOR_NOT_BOUND">
                 {t("attach")}
               </button>
-              <button id="SYS-01-BTN-STOP" {...controlTraceProps("SYS-01-BTN-STOP")} className={styles.composerButton} type="button" disabled>
+              <button id="SYS-01-BTN-STOP" {...controlTraceProps("SYS-01-BTN-STOP")} className={styles.composerButton} type="button"
+                disabled={Boolean(stopDisabledReason)} data-disabled-reason={stopDisabledReason ?? undefined}
+                onClick={() => void handleConversationStop()}>
                 {t("stop")}
               </button>
-              <button id="SYS-01-BTN-SEND" {...controlTraceProps("SYS-01-BTN-SEND")} className={`${styles.composerButton} ${styles.composerSend}`} type="button" disabled>
+              <button id="SYS-01-BTN-SEND" {...controlTraceProps("SYS-01-BTN-SEND")} className={`${styles.composerButton} ${styles.composerSend}`} type="button"
+                disabled={Boolean(sendDisabledReason)} data-disabled-reason={sendDisabledReason ?? undefined}
+                onClick={() => void handleConversationSend()}>
                 {t("send")}
               </button>
             </div>
+            <p className={styles.phaseNote}>{conversationNotice ?? (providerRouteReady ? t("runtimeReady") : "CONVERSATION_PROVIDER_ROUTE_NOT_READY")}</p>
           </div>
         </Section>
       </div>
