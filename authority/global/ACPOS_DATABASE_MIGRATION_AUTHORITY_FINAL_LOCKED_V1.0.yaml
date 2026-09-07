@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-08-SOC0022-ERP0023-DATA-VALIDATED-PENDING-PRODUCTION-APPLY
+  revision: 2026-09-08-KB0024-VALIDATED-PENDING-PRODUCTION-APPLY
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 live_neon_target:
@@ -73,9 +73,9 @@ artifact_bindings:
   account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   account_permission_catalog_bytes: 2762474
   account_permission_catalog_lines: 79399
-  materialized_migration_count: 23
-  repository_registered_migration_count: 23
-  validation_branch_migration_count: 23
+  materialized_migration_count: 24
+  repository_registered_migration_count: 24
+  validation_branch_migration_count: 24
   production_applied_migration_count: 20
 current_production_reconciliation:
   status: PASS
@@ -1277,4 +1277,89 @@ pending_0023_erp_snapshot_refresh_permission_closure:
     erp_snapshot_rows: 0
     approved_erp_refresh_assignments: 0
     production_apply_performed: false
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+pending_0024_kb_source_state_permission_rls_closure:
+  status: VALIDATED_PENDING_PRODUCTION_APPLY_AND_REAL_SOURCE_E2E
+  source_migration: database/migrations/0024_kb_source_state_permission_rls_closure.sql
+  payload_sha256: de41bfa7773dd495056b49e656fa8fd0fb5c032b5d0f680065aa4f90911c9341
+  change_ref: CR-KB-0024
+  authority_basis:
+  - admin:KB-01 KnowledgeSource state machine is DRAFT / ACTIVE / PAUSED / RETIRED
+  - pauseKnowledgeSource requires ACTIVE + expected_version
+  - resumeKnowledgeSource requires PAUSED + expected_version
+  - SourceStateChangeRequest requires source_id / expected_version / reason / correlation_id / idempotency_key
+  - permission key knowledge.source.configure
+  reuse_contract:
+  - public.knowledge_sources
+  - public.audit_events
+  - public.permission_resources
+  - public.account_permission_assignments
+  - acpos_runtime session-bound RLS actor helpers
+  new_parallel_systems: 0
+  validation_evidence:
+    status: PASS
+    validated_on: '2026-09-08'
+    source: LIVE_NEON_VALIDATION_BRANCH_AND_RELEASE_GATE
+    validation_branch_name: rls-0016-validate-20260906
+    validation_branch_id: br-orange-smoke-aut9pafw
+    parent_branch_id: br-shy-cherry-auiol4oy
+    migration_count_before_apply: 23
+    migration_count_after_apply: 24
+    migration_history_rows: 1
+    checksum: de41bfa7773dd495056b49e656fa8fd0fb5c032b5d0f680065aa4f90911c9341
+    knowledge_source_status_type: text
+    knowledge_source_states:
+    - DRAFT
+    - ACTIVE
+    - PAUSED
+    - RETIRED
+    source_version_column: PRESENT_INTEGER_NOT_NULL_DEFAULT_1
+    updated_at_column: PRESENT_TIMESTAMPTZ
+    configure_permission_resource:
+      resource_key: permission:knowledge.source.configure
+      resource_id: aa55cc3a-bab5-5c45-9625-617de64a8fff
+      allowed_action: EXECUTE
+      approved_allow_assignments: 1
+    rls:
+      knowledge_sources_enabled: true
+      audit_events_enabled: true
+      kb_named_policies: 4
+      runtime_role_select_grant: true
+      runtime_role_status_update_grant: true
+      runtime_role_source_version_update_grant: true
+      runtime_role_audit_insert_grant: true
+      helper_execute_grant: true
+    no_session_fail_closed:
+      actor_user_id: null
+      can_configure: false
+      visible_knowledge_sources: 0
+      visible_kb_audits: 0
+    production_mutation_performed: false
+  release_gate:
+    run_number: 740
+    run_id: 34171452925
+    head_sha: 995550ff972081178347616bb54d7486ea06f8f0
+    conclusion: success
+    unit_tests: 133
+    unit_pass: 133
+    unit_fail: 0
+    browser_cases: 72
+    kb_mutation_cases: 2
+    docker: PASS
+    regression_tests:
+    - KB-01 pause/resume materializes Current KnowledgeSource state/version contract without provider execution
+    - KB-01 Production projection and UI use real source_version and exact state-transition request schema
+    - migration 0024 stages KnowledgeSource state/version, configure permission, and KB-scoped RLS only
+  production_baseline:
+    migration_count: 20
+    latest_migration: 0020_system_lifecycle_runtime
+    knowledge_source_rows: 0
+    source_version_column_present: false
+    configure_permission_present: false
+    knowledge_sources_rls_enabled: false
+    production_apply_performed: false
+  production_positive_e2e:
+    status: BLOCKED_UNTIL_FINAL_RELEASE_AND_REAL_KNOWLEDGE_SOURCE
+    reason: Production has zero KnowledgeSource rows and migration 0024 is intentionally not applied before final release sequence.
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
