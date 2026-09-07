@@ -45,26 +45,26 @@ async function startDiscovery(request: DevRuntimeRequest) {
     ? { acceptance_scope: "GATE_24_DEV", acceptance_ref, external_request_sent: false }
     : { external_request_sent: false };
 
-  const active = first(await sql\`
+  const active = first(await sql`
     SELECT discovery_job_id::text AS discovery_job_id,status::text AS status
     FROM public.outreach_discovery_jobs
     WHERE status IN ('RUNNING','PAUSED')
       AND coalesce(stats->>'acceptance_scope','') <> 'GATE_24_DEV'
     ORDER BY created_at DESC
     LIMIT 1
-  \`);
+  `);
   if (active && !acceptance_ref) throw new NamedRuntimeError("DEV_DISCOVERY_ACTIVE_JOB_STATE_CONFLICT");
 
-  const rows = await sql\`
+  const rows = await sql`
     INSERT INTO public.outreach_discovery_jobs(
       job_name,mode,search_scope,allowed_sources,interval_seconds,result_limit,status,stats,started_at
     )
     VALUES(
-      \${job_name},\${mode},\${JSON.stringify(search_scope)}::jsonb,\${JSON.stringify(allowed_sources)}::jsonb,
-      \${interval_seconds},\${result_limit},'RUNNING',\${JSON.stringify(stats)}::jsonb,now()
+      ${job_name},${mode},${JSON.stringify(search_scope)}::jsonb,${JSON.stringify(allowed_sources)}::jsonb,
+      ${interval_seconds},${result_limit},'RUNNING',${JSON.stringify(stats)}::jsonb,now()
     )
     RETURNING discovery_job_id::text AS discovery_job_id,job_name,mode,status,created_at
-  \`;
+  `;
   const row = first(rows);
   if (!row) throw new NamedRuntimeError("DEV_DISCOVERY_START_FAILED");
   return { ...row, external_request_sent: false, deployment_triggered: false };
@@ -73,12 +73,12 @@ async function startDiscovery(request: DevRuntimeRequest) {
 async function pauseDiscovery(request: DevRuntimeRequest) {
   const sql = requireSql();
   const id = jobId(request);
-  const rows = await sql\`
+  const rows = await sql`
     UPDATE public.outreach_discovery_jobs
     SET status='PAUSED',updated_at=now()
-    WHERE discovery_job_id=\${id}::uuid AND status='RUNNING'
+    WHERE discovery_job_id=${id}::uuid AND status='RUNNING'
     RETURNING discovery_job_id::text AS discovery_job_id,job_name,mode,status,updated_at
-  \`;
+  `;
   const row = first(rows);
   if (!row) throw new NamedRuntimeError("DEV_DISCOVERY_STATE_CONFLICT");
   return { ...row, external_request_sent: false, deployment_triggered: false };
@@ -87,12 +87,12 @@ async function pauseDiscovery(request: DevRuntimeRequest) {
 async function resumeDiscovery(request: DevRuntimeRequest) {
   const sql = requireSql();
   const id = jobId(request);
-  const rows = await sql\`
+  const rows = await sql`
     UPDATE public.outreach_discovery_jobs
     SET status='RUNNING',stopped_at=NULL,updated_at=now()
-    WHERE discovery_job_id=\${id}::uuid AND status='PAUSED'
+    WHERE discovery_job_id=${id}::uuid AND status='PAUSED'
     RETURNING discovery_job_id::text AS discovery_job_id,job_name,mode,status,updated_at
-  \`;
+  `;
   const row = first(rows);
   if (!row) throw new NamedRuntimeError("DEV_DISCOVERY_STATE_CONFLICT");
   return { ...row, external_request_sent: false, deployment_triggered: false };
@@ -101,12 +101,12 @@ async function resumeDiscovery(request: DevRuntimeRequest) {
 async function stopDiscovery(request: DevRuntimeRequest) {
   const sql = requireSql();
   const id = jobId(request);
-  const rows = await sql\`
+  const rows = await sql`
     UPDATE public.outreach_discovery_jobs
     SET status='STOPPED',stopped_at=now(),updated_at=now()
-    WHERE discovery_job_id=\${id}::uuid AND status IN ('RUNNING','PAUSED')
+    WHERE discovery_job_id=${id}::uuid AND status IN ('RUNNING','PAUSED')
     RETURNING discovery_job_id::text AS discovery_job_id,job_name,mode,status,stopped_at,updated_at
-  \`;
+  `;
   const row = first(rows);
   if (!row) throw new NamedRuntimeError("DEV_DISCOVERY_STATE_CONFLICT");
   return { ...row, external_request_sent: false, deployment_triggered: false };
