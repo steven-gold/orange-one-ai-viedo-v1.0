@@ -86,6 +86,7 @@ try {
   let aiApiMutationCases = 0;
   let kbMutationCases = 0;
   let i18nCases = 0;
+  let shellGeometryCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -165,6 +166,41 @@ try {
         if (body.includes('"use client"') || body.includes("function KnowledgeAdminVisual") || body.includes("const CONTROLS")) throw new Error(`SOURCE_RENDER_${uid}`);
 
         if (width === 1280) {
+          const shellGeometry = await page.evaluate(() => {
+            const header = document.querySelector(".global-header");
+            const sidebar = document.querySelector(".global-sidebar");
+            const workspace = document.querySelector(".workspace-slot");
+            if (!(header instanceof HTMLElement) || !(sidebar instanceof HTMLElement) || !(workspace instanceof HTMLElement)) {
+              return null;
+            }
+            const rect = (element) => {
+              const value = element.getBoundingClientRect();
+              const style = getComputedStyle(element);
+              return {
+                left: value.left,
+                top: value.top,
+                right: value.right,
+                bottom: value.bottom,
+                width: value.width,
+                height: value.height,
+                position: style.position,
+              };
+            };
+            return { header: rect(header), sidebar: rect(sidebar), workspace: rect(workspace) };
+          });
+          if (!shellGeometry) throw new Error(`SHELL_GEOMETRY_MISSING_${uid}`);
+          const near = (actual, expected) => Math.abs(actual - expected) <= 1;
+          if (shellGeometry.header.position !== "fixed" || !near(shellGeometry.header.top, 0) || !near(shellGeometry.header.height, 58)) {
+            throw new Error(`SHELL_HEADER_GEOMETRY_${uid}_${JSON.stringify(shellGeometry.header)}`);
+          }
+          if (shellGeometry.sidebar.position !== "fixed" || !near(shellGeometry.sidebar.left, 0) || !near(shellGeometry.sidebar.top, 58) || !near(shellGeometry.sidebar.width, 64)) {
+            throw new Error(`SHELL_SIDEBAR_GEOMETRY_${uid}_${JSON.stringify(shellGeometry.sidebar)}`);
+          }
+          if (shellGeometry.workspace.position !== "fixed" || !near(shellGeometry.workspace.left, 78) || !near(shellGeometry.workspace.top, 68) || !near(shellGeometry.workspace.right, 1264) || !near(shellGeometry.workspace.bottom, 1384)) {
+            throw new Error(`SHELL_WORKSPACE_GEOMETRY_${uid}_${JSON.stringify(shellGeometry.workspace)}`);
+          }
+          shellGeometryCases += 1;
+
           const controls = await page.locator('button, a[href], input, select, textarea, [role="button"]').evaluateAll((nodes) =>
             nodes.map((node, index) => {
               const element = /** @type {HTMLElement} */ (node);
@@ -673,7 +709,7 @@ try {
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} i18n_cases=${i18nCases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases} kb_mutation_cases=${kbMutationCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} i18n_cases=${i18nCases} shell_geometry_cases=${shellGeometryCases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases} kb_mutation_cases=${kbMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }
