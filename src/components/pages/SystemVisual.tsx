@@ -140,7 +140,7 @@ export function SystemVisual() {
 
         <Section id="SEC-ADMIN-SYS-01-CONVERSATION" title={t("conversation")} className={styles.conversationPanel}>
           <div className={styles.modeHeader} data-component-uid="SYS-01-CMP-DESIGN-CONVERSATION-HEADER" data-visual-uid="SYS-01-VIS-DESIGN-CONVERSATION-HEADER">
-            <div className={styles.segmentGroup} aria-label="AI Mode">
+            <div className={styles.segmentGroup} aria-label={t("aiMode")}>
               <button
                 id="SYS-01-BTN-SINGLE-AI"
                 {...controlTraceProps("SYS-01-BTN-SINGLE-AI")}
@@ -168,7 +168,7 @@ export function SystemVisual() {
                 {t("multiAi")}
               </button>
             </div>
-            <div className={styles.segmentGroup} aria-label="Council Mode" hidden={!multi}>
+            <div className={styles.segmentGroup} aria-label={t("councilMode")} hidden={!multi}>
               <button
                 id="SYS-01-BTN-COUNCIL-DISCUSSION"
                 {...controlTraceProps("SYS-01-BTN-COUNCIL-DISCUSSION")}
@@ -241,11 +241,11 @@ export function SystemVisual() {
 
       <div className={styles.secondaryGrid}>
         <Section id="SEC-ADMIN-SYS-01-CANDIDATE-CHANGE" title={t("candidateChange")}>
-          <DataRow label="requirement" />
-          <DataRow label="decision" />
-          <DataRow label="design" />
-          <DataRow label="authority_changes" />
-          <DataRow label="implementation" />
+          <DataRow label={t("requirement")} />
+          <DataRow label={t("decision")} />
+          <DataRow label={t("design")} />
+          <DataRow label={t("authorityChanges")} />
+          <DataRow label={t("implementation")} />
         </Section>
         <Section id="SEC-ADMIN-SYS-01-SOURCE-REFS" title={t("sourceRefs")}>
           <div className={styles.referenceBox}>
@@ -269,8 +269,8 @@ export function SystemVisual() {
             <span>{t("affectedTypes")}</span>
             <strong>{DASH}</strong>
           </div>
-          <DataRow label="dependency_graph_ref" value={projection.status === "READY" ? projection.value.values.dependency_graph_ref ?? DASH : DASH} />
-          <DataRow label="latest_context_fingerprint" value={projection.status === "READY" ? projection.value.values.latest_context_fingerprint ?? DASH : DASH} />
+          <DataRow label={t("dependencyGraphRef")} value={projection.status === "READY" ? projection.value.values.dependency_graph_ref ?? DASH : DASH} />
+          <DataRow label={t("latestContextFingerprint")} value={projection.status === "READY" ? projection.value.values.latest_context_fingerprint ?? DASH : DASH} />
         </Section>
       </div>
 
@@ -280,8 +280,8 @@ export function SystemVisual() {
             <span>{t("auditTrail")}</span>
             <strong>{DASH}</strong>
           </div>
-          <DataRow label="confirmed_decision_refs" />
-          <DataRow label="unresolved_failure_refs" />
+          <DataRow label={t("confirmedDecisionRefs")} />
+          <DataRow label={t("unresolvedFailureRefs")} />
         </Section>
         <Section id="SEC-ADMIN-SYS-01-ACTION-DOCK" title={t("actionDock")}>
           <div className={styles.actionRow} data-component-uid="SYS-01-CMP-ACTION-DOCK" data-visual-uid="SYS-01-VIS-ACTION-DOCK">

@@ -40,6 +40,8 @@ export const IAM_CATALOG = {
   previewEmpty: { "zh-TW": "完成 Basic Data 驗證並形成明確 L1 草稿後，才可產生 added / removed / unchanged / blocked 預覽。", "zh-CN": "完成 Basic Data 验证并形成明确 L1 草稿后，才可产生 added / removed / unchanged / blocked 预览。", en: "Impact preview becomes available after Basic Data validates and an explicit L1 draft exists." },
   audit: { "zh-TW": "Audit / Access Review", "zh-CN": "Audit / Access Review", en: "Audit / Access Review" },
   auditEmpty: { "zh-TW": "目前無可顯示的真實 Audit / Access Review 資料", "zh-CN": "目前无可显示的真实 Audit / Access Review 数据", en: "No real Audit / Access Review data is available" },
+  readProjection: { "zh-TW": "讀取投影", "zh-CN": "读取投影", en: "Read Projection" },
+  identitySchemaBlockedTitle: { "zh-TW": "阻擋 · Identity Schema", "zh-CN": "阻挡 · Identity Schema", en: "Blocked · Identity Schema" },
   visualPhase: { "zh-TW": "視覺施工階段：不執行帳號或權限變更", "zh-CN": "视觉施工阶段：不执行账户或权限变更", en: "Visual phase: account and permission mutations are disabled" },
 } satisfies Record<string, Entry>;
 

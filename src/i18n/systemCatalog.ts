@@ -43,6 +43,17 @@ export const SYSTEM_CATALOG = {
   multiAi: { "zh-TW": "Multi AI", "zh-CN": "Multi AI", en: "Multi AI" },
   discussion: { "zh-TW": "Discussion", "zh-CN": "Discussion", en: "Discussion" },
   parallel: { "zh-TW": "Parallel", "zh-CN": "Parallel", en: "Parallel" },
+  aiMode: { "zh-TW": "AI 模式", "zh-CN": "AI 模式", en: "AI Mode" },
+  councilMode: { "zh-TW": "Council 模式", "zh-CN": "Council 模式", en: "Council Mode" },
+  requirement: { "zh-TW": "需求", "zh-CN": "需求", en: "Requirement" },
+  decision: { "zh-TW": "決策", "zh-CN": "决策", en: "Decision" },
+  design: { "zh-TW": "設計", "zh-CN": "设计", en: "Design" },
+  authorityChanges: { "zh-TW": "Authority 變更", "zh-CN": "Authority 变更", en: "Authority Changes" },
+  implementation: { "zh-TW": "實作", "zh-CN": "实现", en: "Implementation" },
+  dependencyGraphRef: { "zh-TW": "依賴圖參照", "zh-CN": "依赖图引用", en: "Dependency Graph Ref" },
+  latestContextFingerprint: { "zh-TW": "最新 Context 指紋", "zh-CN": "最新 Context 指纹", en: "Latest Context Fingerprint" },
+  confirmedDecisionRefs: { "zh-TW": "已確認決策參照", "zh-CN": "已确认决策引用", en: "Confirmed Decision Refs" },
+  unresolvedFailureRefs: { "zh-TW": "未解決失敗參照", "zh-CN": "未解决失败引用", en: "Unresolved Failure Refs" },
   auditTrail: { "zh-TW": "Change / Decision / Validation / Evidence", "zh-CN": "Change / Decision / Validation / Evidence", en: "Change / Decision / Validation / Evidence" },
 } satisfies Record<string, Entry>;
 
