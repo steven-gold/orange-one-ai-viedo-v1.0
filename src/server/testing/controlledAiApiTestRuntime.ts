@@ -132,10 +132,6 @@ function textValue(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-export function isControlledAiApiServerTestMode() {
-  return isControlledTestMode();
-}
-
 export function executeControlledAiApiCommand(request: ControlledAiApiRequest): ControlledAiApiCommandResult {
   if (!isControlledTestMode()) {
     return { ok: false, status: 503, reason_code: "AIAPI_CONTROLLED_RUNTIME_FORBIDDEN", correlation_id: request.correlation_id };
