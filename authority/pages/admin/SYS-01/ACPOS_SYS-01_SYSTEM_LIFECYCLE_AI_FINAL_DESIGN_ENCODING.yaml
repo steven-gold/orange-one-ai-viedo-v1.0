@@ -715,7 +715,7 @@ hard_locks:
 - No completion claim without actual implementation and validation evidence.
 - This YAML does not itself execute application code, sandbox tests, E2E or deployment.
 current_control_registry:
-  authority_closure: 2026-08-30-USER-APPROVED-CURRENT-ONLY
+  authority_closure: 2026-09-08-USER-APPROVED-SYS01-MUTATION-RUNTIME
   legacy_25_control_count_policy: REMOVED_AS_MIGRATION_RESIDUE_NOT_A_CURRENT_COUNT_CONSTRAINT
   rule: Register only controls required by the Current SYS-01 functional contract. Do not reconstruct or pad to a legacy R9/master count. Read-only truth/ref/impact/audit projections are components, not business controls unless an explicit interaction is required.
   count: 12
@@ -747,7 +747,11 @@ current_control_registry:
     action_uid: ACT-CANDIDATE-CREATE
     permission_uid: system.change.propose
     service_operation: createCandidate
-    enabled_in_visual_phase: false
+    runtime_binding:
+      binding_kind: CANONICAL_HTTP_SERVICE_OPERATION
+      method: POST
+      path: /v1/system/changes/candidates
+    enabled_in_visual_phase: true
   - control_uid: SYS-01-BTN-CR-CREATE
     type: BUTTON
     label_zh: 建立變更請求
@@ -757,7 +761,11 @@ current_control_registry:
     action_uid: ACT-CR-CREATE
     permission_uid: core.change.create
     service_operation: createChangeRequest
-    enabled_in_visual_phase: false
+    runtime_binding:
+      binding_kind: CANONICAL_HTTP_SERVICE_OPERATION
+      method: POST
+      path: /v1/system/changes/{SYSTEM_CHANGE_ID}/requests
+    enabled_in_visual_phase: true
   - control_uid: SYS-01-BTN-NAV-OPEN
     type: BUTTON
     label_zh: 開啟引用項目
@@ -777,7 +785,11 @@ current_control_registry:
     action_uid: SYS-01-ACT-SANDBOX-TEST
     permission_uid: system.test.execute
     service_operation: runSandboxTest
-    enabled_in_visual_phase: false
+    runtime_binding:
+      binding_kind: CANONICAL_HTTP_SERVICE_OPERATION
+      method: POST
+      path: /v1/system/changes/{SYSTEM_CHANGE_ID}/sandbox-tests
+    enabled_in_visual_phase: true
   excluded_controls:
   - production_deploy_button: NOT_REGISTERED_BECAUSE_EXPLICIT_SYS06_RELEASE_ACTION_PERMISSION_GATE_BINDING_IS_UNRESOLVED
   - provider_model_picker: FORBIDDEN
@@ -788,7 +800,7 @@ current_control_registry:
     effect_type: SERVICE_OPERATION
     service_operation: runSandboxTest
     permission_uid: system.test.execute
-    visual_phase_execution: FORBIDDEN
+    visual_phase_execution: ALLOWED_AFTER_RUNTIME_AND_PERMISSION_GATE
 
 derived_validation:
   status: PASS_DESIGN_ENCODING_ONLY
@@ -872,6 +884,25 @@ current_page_function_contract:
   - createChangeRequest
   - runSandboxTest
   - executeSystemRelease
+  current_http_route_bindings:
+  - operation_id: createCandidate
+    method: POST
+    path: /v1/system/changes/candidates
+    permission_resources:
+    - action:admin:SYS-01:ACT-CANDIDATE-CREATE/INVOKE
+    - api:createCandidate/EXECUTE
+  - operation_id: createChangeRequest
+    method: POST
+    path: /v1/system/changes/{SYSTEM_CHANGE_ID}/requests
+    permission_resources:
+    - action:admin:SYS-01:ACT-CR-CREATE/INVOKE
+    - api:createChangeRequest/EXECUTE
+  - operation_id: runSandboxTest
+    method: POST
+    path: /v1/system/changes/{SYSTEM_CHANGE_ID}/sandbox-tests
+    provider_selection: SYSTEM_OWNED_NO_MANUAL_PICKER
+    permission_resources:
+    - api:runSandboxTest/EXECUTE
   current_forbidden:
   - direct_code_deploy
   - direct_production_change

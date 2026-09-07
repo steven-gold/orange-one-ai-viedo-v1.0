@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-05-LIVE-NEON-TARGET-WILD-WAVE
+  revision: 2026-09-08-SYS0020-PRODUCTION-APPLIED
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 live_neon_target:
@@ -73,7 +73,7 @@ artifact_bindings:
   account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   account_permission_catalog_bytes: 2762474
   account_permission_catalog_lines: 79399
-  materialized_migration_count: 15
+  materialized_migration_count: 20
 current_production_reconciliation:
   status: PASS
   verified_on: '2026-09-06'
@@ -94,6 +94,23 @@ current_production_reconciliation:
     unvalidated_constraints: 0
     duplicate_permission_resource_keys: 0
     orphan_permission_parent_keys: 0
+sys_0020_production_verification:
+  status: APPLIED_VERIFIED
+  verified_on: '2026-09-08'
+  approval_ref: USER-APPROVED-CR-SYS-0020-20260908
+  target: wild-wave-25661146/main/br-shy-cherry-auiol4oy/neondb
+  restore_snapshot_id: snap-lucky-salad-ausky51r
+  restore_snapshot_name: pre-sys-0020-production-20260908
+  migration_id: 0020_system_lifecycle_runtime
+  payload_sha256: 22fb185cc50fa0d19d1431bd5e2fb6233ca28878dbafa7b65da9d44caba02b9f
+  migration_count_after_apply: 20
+  latest_migration: 0020_system_lifecycle_runtime
+  rls_tables: 3
+  rls_policies: 6
+  unvalidated_constraints: 0
+  validation_branch_id: br-orange-smoke-aut9pafw
+  validation_baseline: EXACT_0019_SCHEMA_FINGERPRINT_MATCH_PRODUCTION
+  production_apply_mode: SINGLE_TRANSACTION_28_STATEMENTS
 correction_evidence:
   diagnostic_environment: Neon PostgreSQL 15.19 temporary branch
   proven_blockers:

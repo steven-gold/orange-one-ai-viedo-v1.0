@@ -162,6 +162,6 @@ VALUES(
   '0020_system_lifecycle_runtime',
   '22fb185cc50fa0d19d1431bd5e2fb6233ca28878dbafa7b65da9d44caba02b9f',
   'migration-runner',
-  'PENDING-CR-SYS-0020'
+  'USER-APPROVED-CR-SYS-0020-20260908'
 )
 ON CONFLICT (migration_id) DO NOTHING;
