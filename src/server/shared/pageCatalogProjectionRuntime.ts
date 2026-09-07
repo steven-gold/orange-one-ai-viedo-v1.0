@@ -1648,9 +1648,14 @@ async function readStrategyAdminFromDb(
 
 async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
   const sources = await safeRows(() => sql`
-    SELECT knowledge_source_id::text AS ref, source_key AS label, status::text AS status, source_uri, classification::text AS classification
+    SELECT knowledge_source_id::text AS ref,
+           source_key AS label,
+           status::text AS status,
+           source_uri,
+           classification::text AS classification,
+           source_version::text AS source_version
     FROM knowledge_sources
-    ORDER BY created_at DESC
+    ORDER BY created_at DESC,knowledge_source_id DESC
   `);
   const evidence = await safeRows(() => sql`
     SELECT evidence_record_id::text AS ref
@@ -1668,7 +1673,7 @@ async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
     ORDER BY created_at DESC
   `);
   const first = sources[0] ?? null;
-  const approved = sources.filter((row) => asText(row.status) === "APPROVED");
+  const approved = sources.filter((row) => asText(row.status) === "ACTIVE");
   return {
     page_state: sources.length || packs.length ? "READY" : "EMPTY",
     values: {
@@ -1685,7 +1690,19 @@ async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
     },
     control_enabled: {
       "KB-01-CTL-SEARCH-GLOBAL": true,
+      "KB-01-CTL-SOURCE-PAUSE": asText(first?.status) === "ACTIVE",
+      "KB-01-CTL-SOURCE-RESUME": asText(first?.status) === "PAUSED",
     },
+    entities: first ? {
+      selected_source: {
+        source_id: asText(first.ref) ?? "",
+        source_version: asText(first.source_version) ?? "",
+        name: asText(first.label) ?? "",
+        source_uri: asText(first.source_uri) ?? "",
+        classification: asText(first.classification) ?? "",
+        status: asText(first.status) ?? "",
+      },
+    } : {},
   };
 }
 
