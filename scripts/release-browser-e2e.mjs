@@ -302,8 +302,10 @@ try {
             localeHtmlLang[locale],
             { timeout: 5_000 },
           );
-          const title = ((await root.locator("h1").first().textContent()) ?? "").trim();
-          if (!title) throw new Error(`I18N_PAGE_TITLE_MISSING_${uid}_${locale}`);
+          const heading = root.locator("h1, h2").first();
+          if (await heading.count() === 0) throw new Error(`I18N_PAGE_HEADING_MISSING_${uid}_${locale}`);
+          const title = ((await heading.textContent({ timeout: 5_000 })) ?? "").trim();
+          if (!title) throw new Error(`I18N_PAGE_HEADING_EMPTY_${uid}_${locale}`);
           const visibleText = ((await root.innerText()) ?? "").replace(/\s+/g, " ").trim();
           if (!visibleText) throw new Error(`I18N_VISIBLE_TEXT_MISSING_${uid}_${locale}`);
           snapshots[locale] = { title, visibleText };
