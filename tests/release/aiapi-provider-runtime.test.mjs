@@ -11,6 +11,8 @@ const binder = await readFile("src/server/shared/identityPageCommandRuntime.ts",
 const queueAuthority = await readFile("authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml", "utf8");
 const providerAdapter = await readFile("src/server/aiApi/providerHttpAdapterRuntime.ts", "utf8");
 const queueRuntime = await readFile("src/server/queue/providerExecutionQueueRuntime.ts", "utf8");
+const controlledRuntime = await readFile("src/server/testing/controlledAiApiTestRuntime.ts", "utf8");
+const iamRuntime = await readFile("src/server/iam/productionIamCommandRuntime.ts", "utf8");
 
 const routeFiles = [
   ["src/app/v1/aiapi/provider-profiles/route.ts", "listProviderModelProfiles", "createProviderModelProfile"],
@@ -64,6 +66,12 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(providerContract, /prompt_template_rule: Must contain canonical instruction placeholder/);
   assert.match(runtime, /AIAPI_PROMPT_TEMPLATE_CANONICAL_TOKEN_REQUIRED/);
   assert.match(runtime, /PROVIDER_SECRET_ENV_NOT_BOUND/);
+  assert.match(runtime, /PROVIDER_SECRET_REFERENCE_NOT_APPROVED/);
+  assert.match(runtime, /FROM secret_references/);
+  assert.match(runtime, /s\.status='APPROVED'/);
+  assert.match(runtime, /SECRET_REFERENCE_NOT_APPROVED/);
+  assert.match(runtime, /secret_reference_approved/);
+  assert.match(runtime, /credentialStatus\(row\.secret_env_ref, row\.secret_reference_approved === true\)/);
   assert.match(runtime, /compileProviderRequest/);
   assert.match(runtime, /executeProviderHttpRequest/);
   assert.match(runtime, /enqueueProviderExecutionRequest/);
@@ -80,8 +88,55 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(providerAdapter, /Bearer/);
   assert.match(queueRuntime, /executeQueuedProviderRequest/);
   assert.match(queueRuntime, /recordQueuedProviderFailure/);
+  assert.match(providerAdapter, /p\.enabled AS profile_enabled/);
+  assert.match(providerAdapter, /secret_reference_approved/);
+  assert.match(providerAdapter, /PROVIDER_PROFILE_DISABLED/);
+  assert.match(providerAdapter, /PROVIDER_SECRET_REFERENCE_NOT_APPROVED/);
+  assert.match(providerAdapter, /PROVIDER_PREFLIGHT_NOT_READY/);
+  assert.match(providerAdapter, /PROVIDER_GROUP_DISABLED/);
+  assert.match(providerAdapter, /PROVIDER_MEMBER_DISABLED/);
+  assert.match(providerAdapter, /PROVIDER_PROFILE_HEALTH_TEST_REQUIRED/);
+  assert.match(providerAdapter, /PROVIDER_CAPABILITY_MISMATCH/);
+  assert.match(providerAdapter, /PROVIDER_CAPABILITY_NOT_APPROVED_FOR_CLASSIFICATION/);
+  assert.match(providerAdapter, /PROVIDER_PROFILE_VERSION_CHANGED_AFTER_COMPILE/);
+  assert.match(providerAdapter, /cp\.profile_version AS compiled_profile_version/);
+  assert.match(providerAdapter, /pf\.checks_json/);
+  assert.match(providerAdapter, /provider_capabilities c/);
+  assert.match(providerAdapter, /shouldDegradeProviderHealth/);
+  assert.match(providerAdapter, /PROVIDER_REQUEST_/);
+  assert.match(providerAdapter, /PROVIDER_HTTP_STATUS_/);
+  assert.match(providerAdapter, /PROVIDER_RESPONSE_/);
+  assert.match(providerAdapter, /PROVIDER_ENDPOINT_/);
   assert.doesNotMatch(runtime + providerAdapter, /process\.env\[[^\]]+\]\s*=(?!=)|process\.env\.[A-Z0-9_]+\s*=/);
   assert.doesNotMatch(providerAdapter, /console\.(?:log|debug|info|warn|error)\s*\(/);
+});
+
+test("AIAPI capability governance approval materializes the canonical provider capability registry", () => {
+  assert.match(iamRuntime, /AIAPI_PAGE_UID="admin:AIAPI-01"/);
+  assert.match(iamRuntime, /AIAPI_CAPABILITY_RESOURCE_VERSION_CONFLICT/);
+  assert.match(iamRuntime, /provider_key,model_key,capability_version,accepted_classifications,input_schema,output_schema,limits,status,capability_hash/);
+  assert.match(iamRuntime, /ON CONFLICT\(provider_key,model_key,capability_version\) DO UPDATE/);
+  assert.match(iamRuntime, /classification_level\[\]/);
+  assert.match(iamRuntime, /capability_hash=EXCLUDED\.capability_hash/);
+  assert.match(iamRuntime, /sql\.transaction\(\[/);
+  assert.match(iamRuntime, /AIAPI_CAPABILITY_MATERIALIZATION_FAILED/);
+  assert.doesNotMatch(iamRuntime, /PROVIDER_CAPABILITY["']|resource_type\s*===\s*["']PROVIDER_CAPABILITY/);
+});
+
+test("Gate 22 has an independent real Production External Provider acceptance harness", async () => {
+  const workflow = await readFile(".github/workflows/external-provider-acceptance.yml", "utf8");
+  const script = await readFile("scripts/production-external-provider-e2e.mjs", "utf8");
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.doesNotMatch(workflow, /push:|pull_request:|schedule:/);
+  assert.match(workflow, /environment:\s*Production/);
+  assert.match(script, /REAL_PROVIDER_PROFILE_ID_NOT_CONFIGURED/);
+  assert.match(script, /REAL_PROVIDER_GROUP_ID_NOT_CONFIGURED/);
+  assert.match(script, /REAL_PROVIDER_CAPABILITY_NOT_CONFIGURED/);
+  assert.match(script, /PROFILE_CONNECTION_TEST_MUST_BE_REAL/);
+  assert.match(script, /external_request_sent === true/);
+  assert.match(script, /PRODUCTION_EXTERNAL_PROVIDER_E2E_PASS/);
+  assert.doesNotMatch(script, /TEST_ONLY|CONTROLLED_TEST/);
+  assert.match(runtime, /external_request_sent:true/);
 });
 
 test("AIAPI queue probe is separately governed by queue runtime authority", () => {
@@ -93,3 +148,68 @@ test("AIAPI queue probe is separately governed by queue runtime authority", () =
   assert.match(runtime, /runProviderQueueRuntimeProbe/);
 });
 
+
+
+test("provider capability governance query matches canonical schema", async () => {
+  const migration = await readFile("database/migrations/0001_canonical_schema.sql", "utf8");
+  assert.match(migration, /CREATE TABLE provider_capabilities/);
+  const providerCapabilityTable = migration.match(/CREATE TABLE provider_capabilities \(([\s\S]*?)\n\);/)?.[1] ?? "";
+  assert.match(providerCapabilityTable, /capability_version text NOT NULL/);
+  assert.doesNotMatch(providerCapabilityTable, /capability_key text/);
+
+  assert.match(runtime, /p\.capability_type/);
+  assert.match(runtime, /asText\(m\.capability_type\)!==requiredCapability/);
+  assert.match(runtime, /FROM provider_capabilities c/);
+  assert.match(runtime, /c\.provider_key=m\.provider_id/);
+  assert.match(runtime, /c\.model_key=m\.model_id/);
+  assert.match(runtime, /c\.status='APPROVED'/);
+  assert.match(runtime, /accepted_classifications::text\[\]/);
+  assert.doesNotMatch(runtime, /c\.capability_key/);
+});
+
+
+test("AIAPI controlled fixture matches Current provider projection and safe read contracts", () => {
+  assert.match(controlledRuntime, /profile_id:/);
+  assert.match(controlledRuntime, /adapter:/);
+  assert.match(controlledRuntime, /base_url:/);
+  assert.match(controlledRuntime, /health_status:/);
+  assert.match(controlledRuntime, /capability_status:/);
+  assert.match(controlledRuntime, /capability_version:/);
+  assert.match(controlledRuntime, /request\.operation_id === "getProviderModelProfile"/);
+  assert.match(controlledRuntime, /request\.operation_id === "testProviderModelProfile"/);
+  assert.match(controlledRuntime, /request\.operation_id === "getProviderQuarantine"/);
+  assert.match(controlledRuntime, /external_request_sent: false/);
+  assert.match(controlledRuntime, /TEST_ONLY_PASS/);
+});
+
+
+test("queued provider dispatch revalidates the full preflight authority before any external request", () => {
+  const dispatchIndex = providerAdapter.indexOf("export async function executeQueuedProviderRequest");
+  const httpIndex = providerAdapter.indexOf("await executeProviderHttpRequest(profile", dispatchIndex);
+  for (const marker of [
+    "PROVIDER_PREFLIGHT_NOT_READY",
+    "PROVIDER_GROUP_DISABLED",
+    "PROVIDER_MEMBER_DISABLED",
+    "PROVIDER_PROFILE_DISABLED",
+    "PROVIDER_PROFILE_HEALTH_TEST_REQUIRED",
+    "PROVIDER_CAPABILITY_MISMATCH",
+    "PROVIDER_CAPABILITY_NOT_APPROVED_FOR_CLASSIFICATION",
+    "PROVIDER_SECRET_REFERENCE_NOT_APPROVED",
+    "PROVIDER_PROFILE_VERSION_CHANGED_AFTER_COMPILE",
+    "PROVIDER_SECRET_ENV_NOT_BOUND",
+  ]) {
+    const markerIndex = providerAdapter.indexOf(marker, dispatchIndex);
+    assert.ok(markerIndex > dispatchIndex && markerIndex < httpIndex, `${marker} must fail closed before external HTTP dispatch`);
+  }
+  assert.match(providerAdapter, /m\.provider_id=p\.provider_id AND m\.model_id=p\.model_id/);
+  assert.match(providerAdapter, /pf\.checks_json->>'data_classification'/);
+});
+
+test("governance-only queued failures do not falsify provider health", () => {
+  assert.match(providerAdapter, /function shouldDegradeProviderHealth/);
+  assert.match(providerAdapter, /if \(shouldDegradeProviderHealth\(reasonCode\)\)/);
+  assert.doesNotMatch(
+    providerAdapter.match(/function shouldDegradeProviderHealth[\s\S]*?\n\}/)?.[0] ?? "",
+    /GROUP_DISABLED|MEMBER_DISABLED|CAPABILITY|VERSION_CHANGED|SECRET_REFERENCE/
+  );
+});

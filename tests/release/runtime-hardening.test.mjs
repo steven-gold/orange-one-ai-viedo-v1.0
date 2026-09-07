@@ -72,6 +72,14 @@ test("register() injects the authority Neon driver and WB-01 projection binding"
   assert.match(uiProjection, /UI_PROJECTION_RUNTIME_NOT_BOUND/);
 });
 
+test("WB-01 controlled read model takes precedence over production lazy binding", async () => {
+  const dashboard = await read("src/server/dashboard/readModelRuntime.ts");
+  const controlledIndex = dashboard.indexOf("if (isControlledDashboardServerTestMode())");
+  const bindIndex = dashboard.indexOf("bindWb01ProjectionRuntime()");
+  assert.ok(controlledIndex >= 0 && bindIndex > controlledIndex, "controlled WB-01 projection must be selected before production runtime binding");
+  assert.match(dashboard, /readControlledDashboardTestProjection/);
+});
+
 test("controlled test mode is hard-disabled for production deployment", async () => {
   const controlledTestData = await read("src/domain/testing/controlledTestData.ts");
   assert.match(controlledTestData, /ACPOS_DEPLOYMENT_ENV/);

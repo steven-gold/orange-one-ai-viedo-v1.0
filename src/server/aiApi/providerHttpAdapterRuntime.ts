@@ -332,6 +332,26 @@ export async function executeQueuedProviderRequest(payload: unknown): Promise<{
            p.request_template,
            p.response_text_path,
            p.version AS profile_version,
+           p.enabled AS profile_enabled,
+           p.health_status AS profile_health_status,
+           g.enabled AS group_enabled,
+           m.enabled AS member_enabled,
+           cp.profile_version AS compiled_profile_version,
+           pf.status AS preflight_status,
+           pf.checks_json,
+           EXISTS(
+             SELECT 1 FROM secret_references s
+             WHERE s.secret_key=p.secret_env_ref
+               AND s.provider_key=p.provider_id
+               AND s.status='APPROVED'
+           ) AS secret_reference_approved,
+           EXISTS(
+             SELECT 1 FROM provider_capabilities c
+             WHERE c.provider_key=p.provider_id
+               AND c.model_key=p.model_id
+               AND c.status='APPROVED'
+               AND (pf.checks_json->>'data_classification') = ANY(c.accepted_classifications::text[])
+           ) AS governed_capability,
            cp.id AS compiled_prompt_id,
            cp.api_request_payload,
            cp.api_request_hash,
@@ -340,6 +360,9 @@ export async function executeQueuedProviderRequest(payload: unknown): Promise<{
     JOIN acpos_runtime.provider_profiles p ON p.id=a.provider_profile_id
     JOIN acpos_runtime.provider_compiled_prompts cp ON cp.id=a.compiled_prompt_id
     JOIN acpos_runtime.provider_route_preflights pf ON pf.id=a.preflight_id
+    JOIN acpos_runtime.provider_groups g ON g.id=a.candidate_group_id
+    JOIN acpos_runtime.provider_members m ON m.id=a.member_id AND m.group_id=g.id
+      AND m.provider_id=p.provider_id AND m.model_id=p.model_id
     WHERE a.id=${attemptId}
       AND a.route_decision_id=${routeDecisionId}
       AND a.provider_profile_id=${profileId}
@@ -347,8 +370,24 @@ export async function executeQueuedProviderRequest(payload: unknown): Promise<{
     LIMIT 1
   `);
   if (!row) throw new NamedRuntimeError("PROVIDER_QUEUE_LINEAGE_NOT_FOUND");
+  if (runtimeText(row.preflight_status)!=="READY") throw new NamedRuntimeError("PROVIDER_PREFLIGHT_NOT_READY");
+  if (row.group_enabled!==true) throw new NamedRuntimeError("PROVIDER_GROUP_DISABLED");
+  if (row.member_enabled!==true) throw new NamedRuntimeError("PROVIDER_MEMBER_DISABLED");
+  if (row.profile_enabled!==true) throw new NamedRuntimeError("PROVIDER_PROFILE_DISABLED");
+  if (runtimeText(row.profile_health_status)!=="HEALTHY") throw new NamedRuntimeError("PROVIDER_PROFILE_HEALTH_TEST_REQUIRED");
+
+  const checks=asRecord(row.checks_json);
+  const requiredCapability=runtimeText(checks?.required_capability);
+  const classification=runtimeText(checks?.data_classification);
+  if (!requiredCapability || !classification) throw new NamedRuntimeError("PROVIDER_PREFLIGHT_CHECKS_INVALID");
+  if (runtimeText(row.capability_type)!==requiredCapability) throw new NamedRuntimeError("PROVIDER_CAPABILITY_MISMATCH");
+  if (row.governed_capability!==true) throw new NamedRuntimeError("PROVIDER_CAPABILITY_NOT_APPROVED_FOR_CLASSIFICATION");
+  if (row.secret_reference_approved!==true) throw new NamedRuntimeError("PROVIDER_SECRET_REFERENCE_NOT_APPROVED");
 
   const profile=profileFromRuntimeRow(row);
+  const compiledProfileVersion=runtimeInt(row.compiled_profile_version);
+  if (!compiledProfileVersion || compiledProfileVersion!==profile.version) throw new NamedRuntimeError("PROVIDER_PROFILE_VERSION_CHANGED_AFTER_COMPILE");
+  if (!process.env[profile.secret_env_ref]) throw new NamedRuntimeError("PROVIDER_SECRET_ENV_NOT_BOUND");
   const requestPayload=asRecord(row.api_request_payload);
   const apiRequestHash=runtimeText(row.api_request_hash);
   if (!requestPayload || !apiRequestHash) throw new NamedRuntimeError("PROVIDER_COMPILED_REQUEST_INVALID");
@@ -435,6 +474,10 @@ export async function executeQueuedProviderRequest(payload: unknown): Promise<{
   };
 }
 
+function shouldDegradeProviderHealth(reasonCode: string): boolean {
+  return /^(?:PROVIDER_REQUEST_|PROVIDER_HTTP_STATUS_|PROVIDER_RESPONSE_|PROVIDER_ENDPOINT_)/.test(reasonCode);
+}
+
 export async function recordQueuedProviderFailure(
   payload: unknown,
   reasonCode: string,
@@ -463,12 +506,14 @@ export async function recordQueuedProviderFailure(
           updated_at=now()
       WHERE id=${attemptId}
     `,
-    sql`
+  ];
+  if (shouldDegradeProviderHealth(reasonCode)) {
+    statements.push(sql`
       UPDATE acpos_runtime.provider_profiles
       SET health_status='DEGRADED',updated_at=now()
       WHERE id=${profileId}
-    `,
-  ];
+    `);
+  }
   if (outcome==="DLQ") {
     statements.push(sql`
       UPDATE acpos_runtime.provider_route_decisions

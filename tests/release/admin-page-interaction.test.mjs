@@ -30,3 +30,13 @@ test("admin pages expose operation outcome or audit diagnostics", async () => {
     assert.match(source, /audit|correlation|runtimeError|disabled-reason/, `${family} missing outcome diagnostics`);
   }
 });
+
+
+test("KB Current search sends query plus projection-derived scope", async () => {
+  const visual = await readFile("src/components/pages/KnowledgeAdminVisual.tsx", "utf8");
+  const controlled = await readFile("src/server/testing/controlledKnowledgeTestRuntime.ts", "utf8");
+  assert.match(visual, /projectionValue\(projection, "SCOPE"\)/);
+  assert.match(visual, /JSON\.stringify\(\{ query, scope \}\)/);
+  assert.match(visual, /KB01_SEARCH_QUERY_AND_SCOPE_REQUIRED/);
+  assert.match(controlled, /"KB-01-FLD-SCOPE"/);
+});

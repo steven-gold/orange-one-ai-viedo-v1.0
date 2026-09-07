@@ -148,12 +148,19 @@ export function KnowledgeAdminVisual() {
     setBusy(true);
     try {
       if (trace.operation === "searchKnowledge") {
+        const scopeValue = projectionValue(projection, "SCOPE");
+        const scope = typeof scopeValue === "string" ? scopeValue.trim() : "";
+        const query = searchQuery.trim();
+        if (!query || !scope) {
+          setRuntimeError("KB01_SEARCH_QUERY_AND_SCOPE_REQUIRED");
+          return;
+        }
         const response = await fetch("/v1/knowledge/search", {
           method: "POST",
           cache: "no-store",
           credentials: "include",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ query: searchQuery }),
+          body: JSON.stringify({ query, scope }),
         });
         const correlation = response.headers.get("x-correlation-id");
         if (correlation) setCorrelationId(correlation);

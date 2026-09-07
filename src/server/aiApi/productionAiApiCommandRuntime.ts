@@ -59,9 +59,9 @@ function requireSql(): Promise<SqlClient> {
     return sql;
   });
 }
-function credentialStatus(secretEnvRef: unknown): "SET" | "NOT_SET" {
+function credentialStatus(secretEnvRef: unknown, secretReferenceApproved = false): "SET" | "NOT_SET" {
   const ref = asText(secretEnvRef);
-  if (!ref) return "NOT_SET";
+  if (!ref || !secretReferenceApproved) return "NOT_SET";
   return typeof process.env[ref] === "string" && process.env[ref]!.length > 0 ? "SET" : "NOT_SET";
 }
 function providerHttpProfile(row: Row): ProviderHttpProfile {
@@ -102,7 +102,7 @@ function profileView(row: Row) {
     endpoint_path: asText(row.endpoint_path),
     http_method: asText(row.http_method),
     secret_env_ref: asText(row.secret_env_ref),
-    credential_status: credentialStatus(row.secret_env_ref),
+    credential_status: credentialStatus(row.secret_env_ref, row.secret_reference_approved === true),
     preferred_language: asText(row.preferred_language),
     max_context: row.max_context ?? null,
     timeout_seconds: row.timeout_seconds ?? null,
@@ -152,19 +152,31 @@ function validateProfilePayload(payload: Row) {
 async function listProfiles(sql: SqlClient, profileId?: string) {
   const result = profileId
     ? await sql`
-        SELECT id,provider_id,model_id,capability_type,adapter_type,base_url,endpoint_path,http_method,
-               secret_env_ref,preferred_language,max_context,timeout_seconds,request_template,response_text_path,
-               enabled,health_status,version,created_at,updated_at
-        FROM acpos_runtime.provider_profiles
-        WHERE id = ${profileId}
+        SELECT p.id,p.provider_id,p.model_id,p.capability_type,p.adapter_type,p.base_url,p.endpoint_path,p.http_method,
+               p.secret_env_ref,p.preferred_language,p.max_context,p.timeout_seconds,p.request_template,p.response_text_path,
+               p.enabled,p.health_status,p.version,p.created_at,p.updated_at,
+               EXISTS(
+                 SELECT 1 FROM secret_references s
+                 WHERE s.secret_key=p.secret_env_ref
+                   AND s.provider_key=p.provider_id
+                   AND s.status='APPROVED'
+               ) AS secret_reference_approved
+        FROM acpos_runtime.provider_profiles p
+        WHERE p.id = ${profileId}
         LIMIT 1
       `
     : await sql`
-        SELECT id,provider_id,model_id,capability_type,adapter_type,base_url,endpoint_path,http_method,
-               secret_env_ref,preferred_language,max_context,timeout_seconds,request_template,response_text_path,
-               enabled,health_status,version,created_at,updated_at
-        FROM acpos_runtime.provider_profiles
-        ORDER BY provider_id,model_id
+        SELECT p.id,p.provider_id,p.model_id,p.capability_type,p.adapter_type,p.base_url,p.endpoint_path,p.http_method,
+               p.secret_env_ref,p.preferred_language,p.max_context,p.timeout_seconds,p.request_template,p.response_text_path,
+               p.enabled,p.health_status,p.version,p.created_at,p.updated_at,
+               EXISTS(
+                 SELECT 1 FROM secret_references s
+                 WHERE s.secret_key=p.secret_env_ref
+                   AND s.provider_key=p.provider_id
+                   AND s.status='APPROVED'
+               ) AS secret_reference_approved
+        FROM acpos_runtime.provider_profiles p
+        ORDER BY p.provider_id,p.model_id
       `;
   return rows(result).map(profileView);
 }
@@ -187,7 +199,7 @@ async function insertProfile(sql: SqlClient, payload: Row) {
   `;
   const created = first(result);
   if (!created) throw new NamedRuntimeError("AIAPI_PROFILE_INSERT_FAILED");
-  return profileView(created);
+  return (await listProfiles(sql, asText(created.id) ?? id))[0] ?? profileView(created);
 }
 
 async function updateProfile(sql: SqlClient, request: AiApiRuntimeRequest, payload: Row) {
@@ -217,7 +229,7 @@ async function updateProfile(sql: SqlClient, request: AiApiRuntimeRequest, paylo
     RETURNING *
   `;
   const changed = first(result);
-  if (changed) return profileView(changed);
+  if (changed) return (await listProfiles(sql, profileId))[0] ?? profileView(changed);
   const exists = first(await sql`SELECT id,version FROM acpos_runtime.provider_profiles WHERE id=${profileId}`);
   if (!exists) throw new NamedRuntimeError("AIAPI_PROFILE_NOT_FOUND");
   throw new NamedRuntimeError("AIAPI_PROFILE_VERSION_CONFLICT");
@@ -276,17 +288,31 @@ async function testProfile(sql: SqlClient, request: AiApiRuntimeRequest) {
   if (!row) throw new NamedRuntimeError("AIAPI_PROFILE_NOT_FOUND");
   const testId=crypto.randomUUID();
   const profile=providerHttpProfile(row);
+  const secretReference=first(await sql`
+    SELECT secret_key,status::text AS status,provider_key
+    FROM secret_references
+    WHERE secret_key=${profile.secret_env_ref}
+      AND provider_key=${profile.provider_id}
+    LIMIT 1
+  `);
+  const secretReferenceApproved=asText(secretReference?.status)==="APPROVED";
   const envBound=Boolean(process.env[profile.secret_env_ref]);
-  if (!envBound) {
+  if (!secretReferenceApproved || !envBound) {
+    const errorCode=!secretReferenceApproved ? "PROVIDER_SECRET_REFERENCE_NOT_APPROVED" : "PROVIDER_SECRET_ENV_NOT_BOUND";
     await sql`
       INSERT INTO acpos_runtime.provider_profile_tests(
         id,profile_id,status,dry_run,error_code,evidence_json
       ) VALUES(
-        ${testId},${profileId},'BLOCKED',false,'PROVIDER_SECRET_ENV_NOT_BOUND',
-        ${JSON.stringify({ secret_reference_bound:false,plaintext_persisted:false,external_request_sent:false })}::jsonb
+        ${testId},${profileId},'BLOCKED',false,${errorCode},
+        ${JSON.stringify({
+          secret_reference_approved:secretReferenceApproved,
+          secret_reference_bound:envBound,
+          plaintext_persisted:false,
+          external_request_sent:false,
+        })}::jsonb
       )
     `;
-    throw new NamedRuntimeError("PROVIDER_SECRET_ENV_NOT_BOUND");
+    throw new NamedRuntimeError(errorCode);
   }
 
   const compiled=compileProviderRequest(profile,"ACPOS provider connection test. Return a short acknowledgement.");
@@ -320,6 +346,7 @@ async function testProfile(sql: SqlClient, request: AiApiRuntimeRequest) {
       http_status:result.http_status,
       latency_ms:result.latency_ms,
       result_hash:result.result_hash,
+      external_request_sent:true,
       plaintext_persisted:false,
     };
   } catch (error) {
@@ -465,10 +492,15 @@ async function routePreflight(sql: SqlClient, payload: Row, correlationId: strin
              SELECT 1 FROM provider_capabilities c
              WHERE c.provider_key=m.provider_id
                AND c.model_key=m.model_id
-               AND c.capability_key=${requiredCapability}
                AND c.status='APPROVED'
                AND ${classification} = ANY(c.accepted_classifications::text[])
-           ) AS governed_capability
+           ) AS governed_capability,
+           EXISTS(
+             SELECT 1 FROM secret_references s
+             WHERE s.secret_key=p.secret_env_ref
+               AND s.provider_key=m.provider_id
+               AND s.status='APPROVED'
+           ) AS governed_secret_reference
     FROM acpos_runtime.provider_members m
     JOIN acpos_runtime.provider_groups g ON g.id=m.group_id
     JOIN acpos_runtime.provider_profiles p ON p.provider_id=m.provider_id AND p.model_id=m.model_id
@@ -484,7 +516,8 @@ async function routePreflight(sql: SqlClient, payload: Row, correlationId: strin
     if (m.profile_enabled!==true) reasons.push("PROFILE_DISABLED");
     if (asText(m.capability_type)!==requiredCapability) reasons.push("CAPABILITY_MISMATCH");
     if (m.governed_capability!==true) reasons.push("CAPABILITY_NOT_APPROVED_FOR_CLASSIFICATION");
-    if (credentialStatus(m.secret_env_ref)!=="SET") reasons.push("SECRET_REFERENCE_NOT_BOUND");
+    if (m.governed_secret_reference!==true) reasons.push("SECRET_REFERENCE_NOT_APPROVED");
+    if (credentialStatus(m.secret_env_ref, m.governed_secret_reference===true)!=="SET") reasons.push("SECRET_REFERENCE_NOT_BOUND");
     if (asText(m.profile_health_status)!=="HEALTHY") reasons.push("PROFILE_HEALTH_TEST_REQUIRED");
     return {
       member_id:asText(m.member_id),
