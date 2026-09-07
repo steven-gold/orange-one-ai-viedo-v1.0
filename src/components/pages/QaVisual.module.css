@@ -33,7 +33,7 @@
 
 .primaryGrid {
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(720px, 3fr) minmax(300px, 1fr);
+  grid-template-columns: minmax(190px, .85fr) minmax(0, 2.8fr) minmax(220px, 1fr);
   gap: var(--section-gap);
   align-items: start;
 }
@@ -279,5 +279,12 @@
 }
 
 @media (max-width: 1439px) {
-  .primaryGrid { grid-template-columns: minmax(0,1fr); }
+  .primaryGrid { grid-template-columns: minmax(190px,.85fr) minmax(0,2.8fr) minmax(220px,1fr); }
 }
+
+.technicalAction {
+  margin-top: var(--inner-gap);
+  padding-top: var(--inner-gap);
+  border-top: 1px solid var(--border-subtle);
+}
+.technicalAction .button { width: 100%; }

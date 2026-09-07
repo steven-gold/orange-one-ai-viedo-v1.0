@@ -186,7 +186,7 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
   };
 
   return (
-    <div className="acpos-shell" data-vis-step="VIS-00">
+    <div className="acpos-shell" data-vis-step="VIS-00" data-sidebar-expanded={expanded ? "true" : "false"}>
       <header className="global-header" aria-label={t("global.shell.header")}>
         <div className={brandStyles.wrapper} aria-label={t("global.brand.name")}>
           <img className={brandStyles.logo} src="/brand/orange-one-logo.png" alt="ORANGE ONE" />
@@ -206,7 +206,7 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
               aria-expanded={languageOpen}
               onClick={() => setLanguageOpen((open) => !open)}
             >
-              {locale}
+              {LOCALE_LABELS[locale]}
             </button>
             {languageOpen && (
               <div className={languageStyles.menu} role="listbox" aria-label={t("global.header.language")}>

@@ -23,6 +23,9 @@ const routes = [
   ["/admin/knowledge", "admin:KB-01"],
 ];
 
+const THREE_COLUMN_TOPOLOGY_UIDS = new Set(["CORE-01","ASSET-01","VIDEO-01","EDIT-01","QA-01"]);
+
+
 const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-p", port], {
   stdio: ["ignore", "inherit", "inherit"],
   env: { ...process.env, NODE_ENV: "production", NEXT_PUBLIC_ACPOS_RUNTIME_MODE: "CONTROLLED_TEST" },
@@ -87,6 +90,8 @@ try {
   let kbMutationCases = 0;
   let i18nCases = 0;
   let shellGeometryCases = 0;
+  let visualTopologyCases = 0;
+  let sidebarReflowCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -222,6 +227,77 @@ try {
             throw new Error(`SHELL_WORKSPACE_GEOMETRY_${uid}_${JSON.stringify(shellGeometry.workspace)}`);
           }
           shellGeometryCases += 1;
+
+          if (THREE_COLUMN_TOPOLOGY_UIDS.has(uid)) {
+            const topology = await page.evaluate(() => {
+              const grid = document.querySelector('[data-layout-grid="workspace-three-column"]');
+              if (!(grid instanceof HTMLElement)) return null;
+              return ["left","center","right"].map((column) => {
+                const element = grid.querySelector(`:scope > [data-layout-column="${column}"]`);
+                if (!(element instanceof HTMLElement)) return null;
+                const rect = element.getBoundingClientRect();
+                return { column, left: rect.left, top: rect.top, width: rect.width, right: rect.right };
+              });
+            });
+            if (!topology || topology.some((entry) => !entry)) throw new Error(`VISUAL_TOPOLOGY_COLUMN_MISSING_${uid}_${JSON.stringify(topology)}`);
+            const [left, center, right] = topology;
+            const sameRow = Math.abs(left.top - center.top) <= 4 && Math.abs(center.top - right.top) <= 4;
+            const ordered = left.left < center.left && center.left < right.left && left.right <= center.left + 1 && center.right <= right.left + 1;
+            const centerPriority = center.width > left.width && center.width > right.width;
+            if (!sameRow || !ordered || !centerPriority) {
+              throw new Error(`VISUAL_TOPOLOGY_INVALID_${uid}_${JSON.stringify(topology)}`);
+            }
+            visualTopologyCases += 1;
+          }
+
+          const collapsedStageSections = {
+            "ASSET-01": ["ASSET-01-SEC-06","ASSET-01-SEC-07","ASSET-01-SEC-08","ASSET-01-SEC-10"],
+            "VIDEO-01": ["VIDEO-01-SEC-05","VIDEO-01-SEC-06","VIDEO-01-SEC-07","VIDEO-01-SEC-08","VIDEO-01-SEC-09","VIDEO-01-SEC-10"],
+            "QA-01": ["QA-01-SEC-07","QA-01-SEC-08","QA-01-SEC-09","QA-01-SEC-10"],
+          }[uid];
+          if (collapsedStageSections) {
+            const visibleUnexpected = await page.evaluate((ids) => ids.filter((id) => {
+              const element = document.querySelector(`[data-section-id="${id}"]`);
+              if (!(element instanceof HTMLElement)) return false;
+              const style = getComputedStyle(element);
+              const rect = element.getBoundingClientRect();
+              return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+            }), collapsedStageSections);
+            if (visibleUnexpected.length) throw new Error(`STAGE_FIRST_LAYER_FLATTENED_${uid}_${visibleUnexpected.join(",")}`);
+          }
+
+          if (uid === "EDIT-01") {
+            const editLayout = await page.evaluate(() => {
+              const pageRoot = document.querySelector('[data-page-uid="EDIT-01"]');
+              const preview = document.querySelector('[data-component-uid="EDIT-01-CMP-PREVIEW"]');
+              const timeline = document.querySelector('[data-component-uid="EDIT-01-CMP-TIMELINE"]');
+              const dock = document.querySelector('[data-current-stage-action-dock="true"]');
+              if (!(pageRoot instanceof HTMLElement) || !(preview instanceof HTMLElement) || !(timeline instanceof HTMLElement) || !(dock instanceof HTMLElement)) return null;
+              const p = pageRoot.getBoundingClientRect(), v = preview.getBoundingClientRect(), t = timeline.getBoundingClientRect(), d = dock.getBoundingClientRect();
+              return {pageHeight:p.height,previewTop:v.top,previewBottom:v.bottom,timelineTop:t.top,timelineBottom:t.bottom,dockTop:d.top,dockBottom:d.bottom,timelineOverflow:getComputedStyle(timeline).overflowY,viewportHeight:window.innerHeight};
+            });
+            if (!editLayout || editLayout.previewBottom > editLayout.dockTop + 1 || editLayout.timelineTop >= editLayout.dockTop || editLayout.dockBottom > editLayout.viewportHeight + 2) {
+              throw new Error(`EDIT_VIEWPORT_LOCK_INVALID_${JSON.stringify(editLayout)}`);
+            }
+          }
+
+          if (route === "/") {
+            const sidebar = page.locator(".global-sidebar");
+            const workspace = page.locator(".workspace-slot");
+            await sidebar.hover();
+            await page.waitForFunction(() => {
+              const element = document.querySelector(".workspace-slot");
+              return element instanceof HTMLElement && element.getBoundingClientRect().left >= 234;
+            }, { timeout: 5_000 });
+            const expandedLeft = await workspace.evaluate((element) => element.getBoundingClientRect().left);
+            await workspace.hover();
+            await page.waitForFunction(() => {
+              const element = document.querySelector(".workspace-slot");
+              return element instanceof HTMLElement && Math.abs(element.getBoundingClientRect().left - 78) <= 1;
+            }, { timeout: 5_000 });
+            if (expandedLeft < 234) throw new Error(`SIDEBAR_WORKSPACE_REFLOW_MISSING_${expandedLeft}`);
+            sidebarReflowCases += 1;
+          }
 
           const controls = await page.locator('button, a[href], input, select, textarea, [role="button"]').evaluateAll((nodes) =>
             nodes.map((node, index) => {
@@ -733,7 +809,7 @@ try {
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} i18n_cases=${i18nCases} shell_geometry_cases=${shellGeometryCases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases} kb_mutation_cases=${kbMutationCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} i18n_cases=${i18nCases} shell_geometry_cases=${shellGeometryCases} visual_topology_cases=${visualTopologyCases} sidebar_reflow_cases=${sidebarReflowCases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases} kb_mutation_cases=${kbMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }

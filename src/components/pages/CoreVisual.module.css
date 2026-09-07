@@ -26,7 +26,7 @@
 
 .primaryGrid {
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(720px, 3fr) minmax(300px, 1fr);
+  grid-template-columns: minmax(190px, .85fr) minmax(0, 2.8fr) minmax(220px, 1fr);
   gap: 16px;
   align-items: start;
 }
@@ -37,9 +37,9 @@
   min-width: 0;
 }
 
-.leftRail { min-width: 260px; }
-.centerColumn { min-width: 720px; display: grid; gap: 16px; }
-.rightRail { min-width: 300px; display: grid; gap: 16px; }
+.leftRail { min-width: 0; }
+.centerColumn { min-width: 0; display: grid; gap: 16px; }
+.rightRail { min-width: 0; display: grid; gap: 16px; }
 
 .panel {
   min-width: 0;
@@ -360,7 +360,7 @@
   }
 
   .primaryGrid {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(190px, .85fr) minmax(0, 2.8fr) minmax(220px, 1fr);
   }
 
   .leftRail,

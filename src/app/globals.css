@@ -327,6 +327,11 @@ button.account-popover-link {
   border: 0;
   border-radius: 0;
   overflow: auto;
+  transition: left 120ms ease;
+}
+
+.acpos-shell[data-sidebar-expanded="true"] .workspace-slot {
+  left: 235px;
 }
 
 @media (max-width: 1180px) {

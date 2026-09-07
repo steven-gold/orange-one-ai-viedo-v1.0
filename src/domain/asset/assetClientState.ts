@@ -134,7 +134,7 @@ export function reduceAssetClientState(state: AssetClientState, action: AssetCli
     case "ASSET-01-ACT-RESULT-VIEW":
     case "ASSET-01-ACT-RUNTIME-VIEW":
     case "ASSET-01-ACT-VERSION-HISTORY":
-      return { ...state, active_view_action: action.action_uid };
+      return { ...state, active_view_action: state.active_view_action === action.action_uid ? null : action.action_uid };
     case "ASSET-01-ACT-CORRECTION-OPEN":
       return { ...state, correction_open: true };
     case "ASSET-01-ACT-PATCH-REVISE":

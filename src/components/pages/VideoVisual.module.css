@@ -32,7 +32,7 @@
 
 .primaryGrid {
   display: grid;
-  grid-template-columns: minmax(260px,1fr) minmax(720px,3fr) minmax(280px,1fr);
+  grid-template-columns: minmax(190px,.85fr) minmax(0,2.8fr) minmax(220px,1fr);
   gap: 16px;
   align-items: start;
 }
@@ -305,8 +305,14 @@
 }
 
 @media (max-width: 1439px) {
-  .primaryGrid { grid-template-columns: minmax(0,1fr); }
+  .primaryGrid { grid-template-columns: minmax(190px,.85fr) minmax(0,2.8fr) minmax(220px,1fr); }
 }
 @media (max-width: 1279px) {
   .contextGrid { grid-template-columns: repeat(4,minmax(0,1fr)); }
 }
+
+.technicalActions {
+  display: grid;
+  gap: 6px;
+}
+.technicalActions .button { width: 100%; min-height: 34px; }

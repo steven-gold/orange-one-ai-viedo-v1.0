@@ -201,8 +201,14 @@ function AssetVisualBody() {
   const registry = useMemo(() => new Set(ALL_CONTROL_SPECS.map((item) => item.id)), []);
   const catalogCount = Object.keys(ASSET_CONTROL_TEXT).length;
   const registryValid = registry.size === 85 && catalogCount === 85 && [...registry].every((id) => id in ASSET_CONTROL_TEXT);
-  const correctionVisible = state.correction_open || state.projection?.page_state === "CORRECTION_REQUIRED";
-  const layerVisible = state.projection?.gate_state["ASSET-01-GATE-LAYER-ELIGIBLE"] === true;
+  const pageState = state.projection?.page_state ?? "EMPTY";
+  const currentStage = state.projection?.values["ASSET-01-FLD-STAGE"] ?? "";
+  const correctionVisible = state.correction_open || pageState === "CORRECTION_REQUIRED";
+  const bindingVisible = pageState === "READY" || ["ASSET-01-ACT-BINDING-VIEW","ASSET-01-ACT-BLUEPRINT-VIEW","ASSET-01-ACT-SCRIPT-VIEW"].includes(state.active_view_action ?? "");
+  const reuseVisible = pageState === "READY";
+  const layerVisible = state.projection?.gate_state["ASSET-01-GATE-LAYER-ELIGIBLE"] === true && currentStage.includes("STAGE-03");
+  const runtimeVisible = pageState === "EXECUTING" || pageState === "ERROR" || state.active_view_action === "ASSET-01-ACT-RUNTIME-VIEW";
+  const handoffVisible = pageState === "LOCKED" || pageState === "HANDOFF";
 
   return (
     <div
@@ -223,8 +229,8 @@ function AssetVisualBody() {
         </div>
       </section>
 
-      <div className={styles.primaryGrid}>
-        <div className={styles.leftColumn}>
+      <div className={styles.primaryGrid} data-layout-grid="workspace-three-column">
+        <div className={styles.leftColumn} data-layout-column="left">
           <section className={styles.panel} data-section-id="ASSET-01-SEC-02" data-visual-uid="ASSET-01-VIS-LEFT">
             <SectionTitle text={assetText(locale, "assetList")} />
             <div className={styles.stack} data-component-uid="ASSET-01-CMP-ASSET-LIST">
@@ -233,16 +239,13 @@ function AssetVisualBody() {
           </section>
         </div>
 
-        <div className={styles.centerColumn}>
-          <section className={styles.panel} data-section-id="ASSET-01-SEC-03" data-visual-uid="ASSET-01-VIS-BINDING">
+        <div className={styles.centerColumn} data-layout-column="center">
+          {bindingVisible ? <section className={styles.panel} data-section-id="ASSET-01-SEC-03" data-visual-uid="ASSET-01-VIS-BINDING" data-stage-surface="input-readiness">
             <SectionTitle text={assetText(locale, "binding")} />
             <div className={styles.bindingGrid} data-component-uid="ASSET-01-CMP-BINDING">
-              {BINDING.filter((spec) => spec.id !== "ASSET-01-BTN-SCRIPT").map((spec) => <Control key={spec.id} spec={spec} />)}
+              {BINDING.slice(0, 11).map((spec) => <Control key={spec.id} spec={spec} />)}
             </div>
-            <div className={styles.componentBridge} data-component-uid="ASSET-01-CMP-SCRIPT">
-              <Control spec={BINDING.find((spec) => spec.id === "ASSET-01-BTN-SCRIPT")!} />
-            </div>
-          </section>
+          </section> : <section className={styles.stageAnchor} data-section-id="ASSET-01-SEC-03" data-stage-surface="input-readiness-collapsed" aria-hidden="true" />}
 
           <section className={`${styles.panel} ${styles.previewPanel}`} data-section-id="ASSET-01-SEC-04" data-visual-uid="ASSET-01-VIS-PREVIEW">
             <div className={styles.titleRow}>
@@ -259,47 +262,31 @@ function AssetVisualBody() {
             </div>
           </section>
 
-          <section className={styles.panel} data-section-id="ASSET-01-SEC-05" data-visual-uid="ASSET-01-VIS-REUSE">
+          {reuseVisible ? <section className={styles.panel} data-section-id="ASSET-01-SEC-05" data-visual-uid="ASSET-01-VIS-REUSE" data-stage-surface="reuse-missing">
             <SectionTitle text={assetText(locale, "reuse")} />
             <div className={styles.reuseGrid} data-component-uid="ASSET-01-CMP-REUSE">
               {REUSE.map((spec) => <Control key={spec.id} spec={spec} />)}
             </div>
-          </section>
+          </section> : null}
 
-          <section className={`${styles.panel} ${styles.conditionalPanel}`} data-section-id="ASSET-01-SEC-06" data-visual-uid="ASSET-01-VIS-CORRECTION">
+          {correctionVisible ? <section className={`${styles.panel} ${styles.conditionalPanel}`} data-section-id="ASSET-01-SEC-06" data-visual-uid="ASSET-01-VIS-CORRECTION" data-stage-surface="correction-conversation">
             <SectionTitle text={assetText(locale, "correction")} />
-            <div data-component-uid="ASSET-01-CMP-CORRECTION" data-conditional-controls={correctionVisible ? CORRECTION.length : 0}>
-              {correctionVisible ? (
-                <div className={styles.stack}>
-                  {CORRECTION.map((spec) => <Control key={spec.id} spec={spec} />)}
-                </div>
-              ) : (
-                <div className={styles.conditionNotice}>{assetText(locale, "conditionalModify")}</div>
-              )}
+            <div data-component-uid="ASSET-01-CMP-CORRECTION" data-conditional-controls={CORRECTION.length}>
+              <div className={styles.stack}>{CORRECTION.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
             </div>
-          </section>
+          </section> : null}
 
-          <section className={`${styles.panel} ${styles.conditionalPanel}`} data-section-id="ASSET-01-SEC-07" data-visual-uid="ASSET-01-VIS-LAYER">
+          {layerVisible ? <section className={`${styles.panel} ${styles.conditionalPanel}`} data-section-id="ASSET-01-SEC-07" data-visual-uid="ASSET-01-VIS-LAYER" data-stage-surface="layer-composite">
             <SectionTitle text={assetText(locale, "layer")} />
-            <div className={styles.layerCondition}>
-              {layerVisible ? (
-                <div data-layer-runtime-visible="true">
-                  <div data-component-uid="ASSET-01-CMP-LAYER-STACK" />
-                  <div className={styles.stack} data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR" data-conditional-controls="8">
-                    {LAYER.slice(0, 8).map((spec) => <Control key={spec.id} spec={spec} />)}
-                  </div>
-                  <div className={styles.stack} data-component-uid="ASSET-01-CMP-PATCH" data-conditional-controls="5">
-                    {LAYER.slice(8).map((spec) => <Control key={spec.id} spec={spec} />)}
-                  </div>
-                </div>
-              ) : (
-                <div className={styles.conditionNotice}>{assetText(locale, "conditionalLayer")}</div>
-              )}
+            <div className={styles.layerCondition} data-layer-runtime-visible="true">
+              <div data-component-uid="ASSET-01-CMP-LAYER-STACK" />
+              <div className={styles.stack} data-component-uid="ASSET-01-CMP-LAYER-INSPECTOR" data-conditional-controls="8">{LAYER.slice(0, 8).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+              <div className={styles.stack} data-component-uid="ASSET-01-CMP-PATCH" data-conditional-controls="5">{LAYER.slice(8).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
             </div>
-          </section>
+          </section> : null}
         </div>
 
-        <aside className={styles.rightColumn}>
+        <aside className={styles.rightColumn} data-layout-column="right">
           <section className={styles.panel} data-section-id="ASSET-01-SEC-09" data-visual-uid="ASSET-01-VIS-DECISION">
             <SectionTitle text={assetText(locale, "decision")} />
             <div className={styles.stack} data-component-uid="ASSET-01-CMP-SCORE">
@@ -314,23 +301,26 @@ function AssetVisualBody() {
               {DECISION.slice(5, 7).map((spec) => <Control key={spec.id} spec={spec} />)}
               <Control spec={DECISION[9]} />
             </div>
+            <div className={styles.divider} />
+            <div className={styles.technicalActions} data-stage-surface="detail-triggers">
+              <Control spec={BINDING[11]} />
+              <Control spec={BINDING[12]} />
+              <Control spec={RUNTIME[8]} />
+            </div>
+            {handoffVisible ? <div className={styles.stageHandoff} data-component-uid="ASSET-01-CMP-HANDOFF" data-stage-surface="finalize-handoff">
+              {HANDOFF.map((spec) => <Control key={spec.id} spec={spec} />)}
+            </div> : null}
           </section>
         </aside>
       </div>
 
-      <section className={`${styles.panel} ${styles.fullWidth}`} data-section-id="ASSET-01-SEC-08" data-visual-uid="ASSET-01-VIS-RUNTIME">
+      {runtimeVisible ? <section className={`${styles.panel} ${styles.fullWidth}`} data-section-id="ASSET-01-SEC-08" data-visual-uid="ASSET-01-VIS-RUNTIME" data-detail-surface="runtime">
         <SectionTitle text={assetText(locale, "runtime")} />
         <div className={styles.runtimeGrid} data-component-uid="ASSET-01-CMP-RUNTIME">
-          {RUNTIME.map((spec) => <Control key={spec.id} spec={spec} />)}
+          {RUNTIME.slice(0, 8).map((spec) => <Control key={spec.id} spec={spec} />)}
         </div>
-      </section>
-
-      <section className={`${styles.panel} ${styles.fullWidth}`} data-section-id="ASSET-01-SEC-10" data-visual-uid="ASSET-01-VIS-HANDOFF">
-        <SectionTitle text={assetText(locale, "handoff")} />
-        <div className={styles.handoffGrid} data-component-uid="ASSET-01-CMP-HANDOFF">
-          {HANDOFF.map((spec) => <Control key={spec.id} spec={spec} />)}
-        </div>
-      </section>
+      </section> : null}
+      {handoffVisible ? <section className={styles.stageAnchor} data-section-id="ASSET-01-SEC-10" data-stage-surface="handoff-materialized" aria-hidden="true" /> : null}
     </div>
   );
 }
