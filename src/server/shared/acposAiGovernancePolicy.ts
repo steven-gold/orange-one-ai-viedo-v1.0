@@ -169,7 +169,7 @@ export function parseAcposGovernedAiResponse(raw: string): AcposGovernedAiRespon
     const item = record(value);
     const statement = text(item?.statement);
     const evidenceRefs = stringList(item?.evidence_refs);
-    return statement && evidenceRefs ? [{ statement, evidence_refs: evidenceRefs }] : [];
+    return statement && evidenceRefs && evidenceRefs.length > 0 ? [{ statement, evidence_refs: evidenceRefs }] : [];
   });
   if (facts.length !== root.facts.length) return null;
 
@@ -198,7 +198,7 @@ export function parseAcposGovernedAiResponse(raw: string): AcposGovernedAiRespon
     const itemText = text(item?.item);
     const resolution = text(item?.resolution);
     const basisRefs = stringList(item?.basis_refs);
-    return (priority === "P2" || priority === "P3") && itemText && resolution && basisRefs
+    return (priority === "P2" || priority === "P3") && itemText && resolution && basisRefs && basisRefs.length > 0
       ? [{ priority, item: itemText, resolution, basis_refs: basisRefs }]
       : [];
   });
@@ -261,6 +261,91 @@ export function validateDecisionUpdatesAgainstUserMessage(
   }
 
   return { ...response, decision_updates };
+}
+
+export function enforceAcposGovernanceEvidence(
+  response: AcposGovernedAiResponse,
+  allowedRefs: ReadonlySet<string>,
+): AcposGovernedAiResponse {
+  const facts: AcposGovernedAiResponse["facts"] = [];
+  const inferences: AcposGovernedAiResponse["inferences"] = [...response.inferences];
+  let evidenceViolation = false;
+
+  for (const fact of response.facts) {
+    const valid = fact.evidence_refs.length > 0
+      && fact.evidence_refs.every((ref) => allowedRefs.has(ref));
+    if (valid) {
+      facts.push(fact);
+      continue;
+    }
+    evidenceViolation = true;
+    inferences.push({
+      statement: fact.statement,
+      basis: "EVIDENCE_REFERENCE_NOT_PRESENT_IN_CURRENT_ACPOS_CONTEXT",
+    });
+  }
+
+  const resolved_items: AcposGovernedAiResponse["resolved_items"] = [];
+  for (const item of response.resolved_items) {
+    const valid = item.basis_refs.length > 0
+      && item.basis_refs.every((ref) => allowedRefs.has(ref));
+    if (valid) {
+      resolved_items.push(item);
+      continue;
+    }
+    evidenceViolation = true;
+    inferences.push({
+      statement: `${item.item}: ${item.resolution}`,
+      basis: "RESOLUTION_BASIS_REFERENCE_NOT_PRESENT_IN_CURRENT_ACPOS_CONTEXT",
+    });
+  }
+
+  return {
+    ...response,
+    facts,
+    inferences,
+    resolved_items,
+    candidate_ready: response.candidate_ready
+      && !evidenceViolation
+      && response.open_questions.length === 0,
+    response_mode: response.open_questions.length > 0
+      ? "DECISION_REQUIRED"
+      : evidenceViolation && response.response_mode === "DIRECT"
+        ? "REVIEW"
+        : response.response_mode,
+  };
+}
+
+export function enforceAcposDecisionConsistency(
+  response: AcposGovernedAiResponse,
+  existing: ReadonlyArray<{ decision_key: string; status: string; statement: string }>,
+): AcposGovernedAiResponse {
+  const openQuestions = [...response.open_questions];
+  const updates = response.decision_updates.filter((entry) => {
+    const prior = [...existing].reverse().find((item) => item.decision_key === entry.decision_key);
+    if (!prior) return true;
+    if (prior.status !== "CONFIRMED") return true;
+    if (entry.status === "SUPERSEDED" && entry.user_quote) return true;
+    if (entry.status === "CONFIRMED" && entry.statement.trim() === prior.statement.trim()) return true;
+
+    const question = `既有已確認決策「${prior.statement}」與目前提議「${entry.statement}」衝突；是否明確重新開啟或取代此決策？`;
+    if (!openQuestions.some((item) => item.priority === "P1" && item.question === question)) {
+      openQuestions.push({
+        priority: "P1",
+        question,
+        reason: "CONFIRMED_DECISION_CONFLICT_REQUIRES_AUTHORIZED_HUMAN_SUPERSESSION",
+      });
+    }
+    return false;
+  });
+
+  return {
+    ...response,
+    open_questions: openQuestions,
+    decision_updates: updates,
+    candidate_ready: response.candidate_ready && openQuestions.length === 0,
+    response_mode: openQuestions.length > 0 ? "DECISION_REQUIRED" : response.response_mode,
+  };
 }
 
 export function renderAcposGovernedAiResponse(response: AcposGovernedAiResponse): string {
