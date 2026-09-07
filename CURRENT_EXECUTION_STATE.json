@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T11:21:56+08:00",
+  "as_of": "2026-09-07T11:26:59+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
-    "new_sha_basis": "9cbdcff401ebef92a01dca68d5ed48a9a7a064f5",
+    "new_sha_basis": "de4baf3edc35094c5ced35fe78600f46f67ffead",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -43,15 +43,15 @@
     },
     "latest_control_acceptance_gate": {
       "status": "PASS",
-      "run_number": 509,
-      "run_id": 34079260047,
-      "head_sha": "9cbdcff401ebef92a01dca68d5ed48a9a7a064f5",
+      "run_number": 513,
+      "run_id": 34079534903,
+      "head_sha": "de4baf3edc35094c5ced35fe78600f46f67ffead",
       "branch": "new",
       "conclusion": "success",
       "browser_e2e": "PASS_72_CASES",
-      "browser_evidence": "interactive_controls=476 governed_controls=298 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2",
-      "current_dom_control_acceptance": "PASS_18_PAGES_373_VISIBLE_373_GOVERNED",
-      "current_dom_breakdown": "enabled=194 disabled=179",
+      "browser_evidence": "interactive_controls=442 governed_controls=274 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2 kb_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_407_VISIBLE_407_GOVERNED",
+      "current_dom_breakdown": "enabled=229 disabled=178",
       "standalone_docker_build": "PASS",
       "dirty_tree_guard": "PASS",
       "note": "Current DOM visible count is controlled-runtime evidence only; it is not a frozen Production denominator."
@@ -254,6 +254,56 @@
       "remediation_commit": "9cbdcff401ebef92a01dca68d5ed48a9a7a064f5",
       "production_status": "PENDING_NEXT_MAIN_RELEASE",
       "gate22_effect": "NONE_SYNTHETIC_CONTROLLED_DATA_IS_NOT_EXTERNAL_PROVIDER_EVIDENCE"
+    },
+    "latest_gate24_kb_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 513,
+      "run_id": 34079534903,
+      "head_sha": "de4baf3edc35094c5ced35fe78600f46f67ffead",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:KB-01",
+      "operations": [
+        "pauseKnowledgeSource",
+        "resumeKnowledgeSource"
+      ],
+      "controlled_flow": [
+        "TEST-KB-SOURCE-ACTIVE-001 ACTIVE→PAUSED",
+        "TEST-KB-SOURCE-ACTIVE-001 PAUSED→ACTIVE"
+      ],
+      "projection_context": "governed selected_source id/version/status preserved through knowledgeRuntimePort",
+      "test_data_classification": "TEST_ONLY",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=442 governed_controls=274 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2 kb_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_407_VISIBLE_407_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_sys_blocker": {
+      "status": "BLOCKED_CURRENT_AUTHORITY_AND_RUNTIME",
+      "current_page_uid": "admin:SYS-01",
+      "authority_status": "FINAL_LOCKED",
+      "implementation_status": "NOT_EXECUTED",
+      "authority_disabled_operations": [
+        {
+          "control_uid": "SYS-01-BTN-CANDIDATE-CREATE",
+          "operation": "createCandidate",
+          "enabled_in_visual_phase": false
+        },
+        {
+          "control_uid": "SYS-01-BTN-CR-CREATE",
+          "operation": "createChangeRequest",
+          "enabled_in_visual_phase": false
+        },
+        {
+          "control_uid": "SYS-01-BTN-SANDBOX-TEST",
+          "operation": "runSandboxTest",
+          "enabled_in_visual_phase": false
+        }
+      ],
+      "production_runtime_reason": "PROVIDER_GATEWAY_NOT_MATERIALIZED",
+      "note": "Do not enable these controls or count SYS-01 mutation PASS without a Current Authority change plus a materialized production runtime."
     }
   },
   "production": {
@@ -372,8 +422,8 @@
       "reason": "Production queue and worker are READY (1/1 each), worker heartbeat is current, and Post Deploy authenticated E2E #696 passed the full queue probe including idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup on deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_RELEASE_7_OF_9_TARGETS_PASS_PRODUCTION_9_TARGET_ACCEPTANCE_INCOMPLETE",
-      "reason": "Release-controlled mutation evidence now covers Strategy Admin, SG-02, IAM-01, ERP-01, DEV-01, SOC-01 and AIAPI-01. AIAPI evidence is TEST_ONLY reversible kill-switch execution with external_request_sent=false and does not satisfy External Provider. KB-01 and SYS-01 remain unresolved release targets; Production still lacks all 9 admin mutation targets end-to-end."
+      "status": "PARTIAL_RELEASE_8_OF_9_TARGETS_PASS_SYS01_BLOCKED_PRODUCTION_9_TARGET_ACCEPTANCE_INCOMPLETE",
+      "reason": "Release-controlled mutation evidence covers Strategy Admin, SG-02, IAM-01, ERP-01, DEV-01, SOC-01, AIAPI-01 and KB-01. SYS-01 remains blocked because Current Authority is FINAL_LOCKED with createCandidate/createChangeRequest/runSandboxTest enabled_in_visual_phase=false and its production lifecycle execute binding returns PROVIDER_GATEWAY_NOT_MATERIALIZED. Production 9-target acceptance is not complete."
     },
     "gate25_full_page_button_acceptance": {
       "status": "PARTIAL_RELEASE_BROWSER_AND_DOM_ACCEPTANCE_PASS_REMOTE_PRODUCTION_PENDING",
@@ -386,11 +436,11 @@
     "Gate 25 Production remote Current DOM acceptance is not yet executed on the next main release; Release-side 18-page Browser/DOM acceptance is PASS."
   ],
   "next_release_sequence": [
-    "Continue Gate 24 on new with KB-01 as the next internally reversible target. Reuse the existing controlled Knowledge runtime and materialize the Current UI command path rather than creating a second system.",
-    "After KB-01, inspect SYS-01 Current Authority/runtime before changing any visual-phase-disabled lifecycle controls; do not override an Authority-disabled operation without current evidence.",
+    "Gate 24 release-controlled internal work is complete for 8/9 targets. Keep SYS-01 blocked until Current Authority explicitly enables its service mutations and the production lifecycle provider/runtime is materialized.",
+    "The next safe integration step is to test the combined main+new result before release because main and new are diverged. Do not treat independent branch success as integrated success.",
+    "After an integrated Release Gate succeeds, release once to main and run Vercel deployment plus Production health/readiness/HTTP/auth/browser/remote-control acceptance.",
     "Do not execute SOC external publish or treat AIAPI TEST_ONLY provider profiles as External Provider evidence. Gate 22 remains blocked until real capability/profile/secret/group configuration and a real external request exist.",
-    "Keep main fixed at deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671 until the next integration point.",
-    "At the next integration point, require full Release Gate on exact new head, then one new→main release and Production HTTP/auth/browser/remote-control acceptance with runtime-measured visible controls."
+    "Treat 1453 strictly as the legacy 92-page permission catalog baseline (1141 controls + 312 actions), not as the Current 18-page DOM denominator."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
