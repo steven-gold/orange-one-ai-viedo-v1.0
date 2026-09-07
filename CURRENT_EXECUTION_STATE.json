@@ -2,17 +2,17 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-08T03:01:00+08:00",
+  "as_of": "2026-09-08T03:55:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
-    "new_sha_basis": "4353e05bdf43f931b454fe34112734a0555508bf",
+    "new_sha_basis": "5cbb8e68a3f5ed202168310b5cfe5299df5b3812",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_ACCEPTANCE_HARNESS_AND_EVIDENCE_ONLY",
-    "post_release_new_status": "AHEAD_OF_MAIN_NO_PRODUCTION_RUNTIME_DEPLOYMENT_REQUIRED"
+    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_AI_CONVERSATION_RUNTIME_PREDEPLOY",
+    "post_release_new_status": "AHEAD_OF_MAIN_NO_VERCEL_DEPLOYMENT_TRIGGERED"
   },
   "release_validation": {
     "final_pre_state_construction_gate": {
@@ -684,6 +684,56 @@
       "current_dom": "PASS_18_PAGES_372_VISIBLE_372_GOVERNED",
       "docker": "PASS",
       "dirty_tree": "PASS"
+    },
+    "ai_conversation_predeploy": {
+      "status": "PASS_PREDEPLOY_FINAL_PRODUCTION_E2E_PENDING_SINGLE_RELEASE",
+      "new_sha": "5cbb8e68a3f5ed202168310b5cfe5299df5b3812",
+      "release_gate": {
+        "run_number": 644,
+        "run_id": 34157216035,
+        "conclusion": "success",
+        "unit_tests": "120_PASS_0_FAIL",
+        "browser_e2e": "72_CASES_PASS",
+        "i18n_cases": 54,
+        "shell_geometry_cases": 18,
+        "visual_topology_cases": 5,
+        "sidebar_reflow_cases": 1,
+        "current_dom": "18_PAGES_358_VISIBLE_358_GOVERNED",
+        "docker": "PASS",
+        "dirty_tree": "PASS"
+      },
+      "discovered_prior_gap": "Production CORE/shared conversation send persisted USER message only and did not invoke a Provider; CORE UI only rendered simulated_response_text in controlled tests; Strategy Production request builder/context/history projection did not support a real chat turn.",
+      "implementation": {
+        "shared_runtime": "src/server/shared/productionConversationAiRuntime.ts",
+        "provider_path": "EXISTING_AIAPI_EXECUTE_PROVIDER_ROUTE_AND_GET_ROUTE_DECISION",
+        "provider_group_use_case": "ACPOS_TEXT_CHAT",
+        "persistence": "conversation_messages USER + PROVIDER",
+        "transcript_window": "LAST_20_MESSAGES",
+        "multi_turn_context": true,
+        "core_send": "BOUND_TO_SHARED_PRODUCTION_AI_TURN",
+        "strategy_send": "BOUND_TO_SHARED_PRODUCTION_AI_TURN",
+        "core_real_assistant_rendering": true,
+        "core_persisted_history_restore": true,
+        "strategy_persisted_history_projection": true,
+        "controlled_simulation_fallback_preserved": true,
+        "plaintext_provider_secret_in_conversation_runtime": false
+      },
+      "final_production_acceptance": {
+        "workflow": ".github/workflows/conversation-acceptance.yml",
+        "script": "scripts/production-conversation-e2e.mjs",
+        "trigger_file": ".github/conversation-acceptance-trigger.txt",
+        "trigger_file_currently_absent": true,
+        "reason": "Do not run against old Production main; trigger only after the final consolidated main deployment.",
+        "required_evidence": [
+          "exact release_sha",
+          "authenticated thread create",
+          "turn 1 USER -> real ASSISTANT external request",
+          "turn 2 recalls marker from turn 1",
+          "worker_succeeded=1 for both turns",
+          "CORE projection restores USER/ASSISTANT/USER/ASSISTANT persisted sequence"
+        ]
+      },
+      "production_status": "NOT_DEPLOYED_BY_USER_POLICY"
     }
   },
   "production": {
@@ -885,7 +935,18 @@
     "worker_dispatch_authority_revalidation": "DEPLOYED_PRODUCTION_RELEASE_GATE_535_POST_DEPLOY_796_797_PASS",
     "real_external_provider_acceptance": "PASS_RUN_6_PRIMARY_GROQ_SECONDARY_GOOGLE_QUEUE_WORKER_SANDBOX_FAIL_CLOSED",
     "production_ui_acceptance": "PASS_POST_DEPLOY_866_ATTEMPT_2_AIAPI_29_VISIBLE_29_GOVERNED",
-    "bootstrap_admin_control_permissions": "PASS_15_APPROVED_ALLOW_ASSIGNMENTS"
+    "bootstrap_admin_control_permissions": "PASS_15_APPROVED_ALLOW_ASSIGNMENTS",
+    "conversation_runtime": {
+      "status": "PREDEPLOY_RELEASE_VALIDATED_NOT_YET_ON_MAIN",
+      "healthy_provider_pool": [
+        "groq",
+        "google"
+      ],
+      "routing_owner": "AIAPI",
+      "direct_provider_call_from_ui": false,
+      "secret_handling": "NONE_IN_CONVERSATION_LAYER",
+      "final_production_e2e": "PENDING_FINAL_SINGLE_DEPLOYMENT"
+    }
   },
   "formal_truth": {
     "gate22_external_provider": {
@@ -923,14 +984,16 @@
     }
   },
   "blockers": [
+    "AI conversation final Production E2E is intentionally pending because user requires one consolidated deployment only after all construction is ready. Pre-deploy code/Release Gate validation is PASS.",
     "Gate 24 overall: SYS-01 lifecycle subset is Production E2E PASS; remaining non-SYS admin mutation acceptance must be recomputed from current Production evidence.",
     "Do not persist Provider API-key plaintext in GitHub, Neon, logs or state artifacts."
   ],
   "next_release_sequence": [
-    "Treat Groq as current healthy primary and Google as healthy secondary/fallback for Production TEXT_CHAT.",
-    "Do not spend additional Provider requests on deferred DeepSeek/OpenRouter until formal use requires them.",
-    "Continue remaining non-Provider Production acceptance gates from current evidence.",
-    "Keep acceptance harness/state-only changes on new and avoid redundant Vercel Hobby Production deployments."
+    "Continue remaining construction/acceptance work on new without Vercel deployment.",
+    "Do not merge new to main until the consolidated release set is closed and exact Release Gate is PASS.",
+    "Perform one final main integration/deployment only.",
+    "After exact final Production SHA is ready, trigger ACPOS Conversation Acceptance from new without another Vercel deployment; require two-turn history recall and persisted USER/ASSISTANT sequence.",
+    "Run final Post-Deploy/production acceptance and only then declare AI conversation Production PASS."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
@@ -945,7 +1008,7 @@
   "post_release_state_policy": {
     "branch": "new",
     "deployment_effect": "NONE",
-    "reason": "Record Production Provider/SYS acceptance evidence and automatic test harnesses on construction branch only; avoid redundant Vercel Hobby deployment because Production runtime remains exact main dc84346a.",
+    "reason": "User explicitly requires all changes to be ready before a single consolidated Vercel deployment. AI conversation work remains on new until that final release.",
     "production_runtime_delta_after_main_release": false
   },
   "deferred_followups": [
