@@ -22,7 +22,12 @@ import { configureSocCommandRuntime } from "@/server/social/socCommandRuntime";
 import type { SocRuntimeRequest } from "@/server/testing/controlledSocTestRuntime";
 import { configureErpCommandRuntime } from "@/server/erp/erpCommandRuntime";
 import type { ErpRuntimeRequest } from "@/server/testing/controlledErpTestRuntime";
-import { configureSystemLifecycleRuntime } from "@/server/system/systemLifecycleRuntime";
+import { configureSystemLifecycleRuntime, type SysRequest } from "@/server/system/systemLifecycleRuntime";
+import {
+  resolveProductionSystemContinuityContext,
+  executeProductionSystemLifecycleOperation,
+  auditProductionSystemLifecycleOperation,
+} from "@/server/system/productionSystemLifecycleRuntime";
 import { configureAiApiCommandRuntime } from "@/server/aiApi/aiApiCommandRuntime";
 import { executeProductionAiApiCommand, auditProductionAiApiCommand } from "@/server/aiApi/productionAiApiCommandRuntime";
 
@@ -217,6 +222,20 @@ const IAM_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;acti
   revokeAccountPermission:{resource_key:"action:admin:IAM-05:ACT-CONFIGURE",action:"INVOKE"},
 };
 
+const SYSTEM_OPERATION_PERMISSION: Readonly<Record<string,readonly {resource_key:string;action:string}[]>> = {
+  createCandidate:[
+    {resource_key:"action:admin:SYS-01:ACT-CANDIDATE-CREATE",action:"INVOKE"},
+    {resource_key:"api:createCandidate",action:"EXECUTE"},
+  ],
+  createChangeRequest:[
+    {resource_key:"action:admin:SYS-01:ACT-CR-CREATE",action:"INVOKE"},
+    {resource_key:"api:createChangeRequest",action:"EXECUTE"},
+  ],
+  runSandboxTest:[
+    {resource_key:"api:runSandboxTest",action:"EXECUTE"},
+  ],
+};
+
 const AIAPI_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
   createProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE",action:"INVOKE"},
   updateProviderModelProfile:{resource_key:"control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-UPDATE-PROFILE",action:"INVOKE"},
@@ -265,6 +284,18 @@ async function authorizeAiApi(request:{operation_id:string}):Promise<{allowed:tr
   if(!permission)return{allowed:false,reason_code:"AIAPI_OPERATION_PERMISSION_MAPPING_REQUIRED"};
   const gate=await evaluateResourceAction(permission.resource_key,permission.action);
   return gate.allowed?{allowed:true}:gate;
+}
+
+async function authorizeSystemLifecycle(request:SysRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:SYS-01"]);
+  if(!page.allowed)return page;
+  const permissions=SYSTEM_OPERATION_PERMISSION[request.operation_id];
+  if(!permissions?.length)return{allowed:false,reason_code:"SYS01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  for(const permission of permissions){
+    const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+    if(!gate.allowed)return gate;
+  }
+  return{allowed:true};
 }
 
 async function authorizeIam(request:IamRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
@@ -1148,22 +1179,23 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: auditProductionAiApiCommand,
   });
   configureSystemLifecycleRuntime({
-    resolveContinuityContext: async (system_change_id) => ({
-      system_change_id,
-      system_truth: null,
-      active_change: null,
-      conversation: null,
-      decisions: null,
-      affected_scope: null,
-      validation: null,
-      deployment: null,
-      latest_context_fingerprint: sha256(system_change_id),
-    }),
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:SYS-01"]),
-    execute: async () => {
-      throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
+    resolveContinuityContext: async (system_change_id) => {
+      const identity = await requireIdentityContext();
+      return resolveProductionSystemContinuityContext(system_change_id, identity.session_token_hash);
     },
-    audit: async () => undefined,
+    authorize: authorizeSystemLifecycle,
+    execute: async (request) => {
+      const identity = await requireIdentityContext();
+      return executeProductionSystemLifecycleOperation(request, {
+        actor_user_id: identity.actor.user_id,
+        session_token_hash: identity.session_token_hash,
+      });
+    },
+    audit: async (entry) => {
+      const identity = await requireIdentityContext().catch(() => null);
+      if (!identity) return;
+      await auditProductionSystemLifecycleOperation(entry, identity.actor.user_id);
+    },
   });
 }
 
