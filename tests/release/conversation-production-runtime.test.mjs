@@ -12,7 +12,14 @@ test("Production conversation runtime routes real AI turns through governed AIAP
   assert.match(source, /use_case\s*=\s*'ACPOS_TEXT_CHAT'/);
   assert.match(source, /external_request_sent\s*!==\s*true/);
   assert.match(source, /payload\.normalized_result/);
-  assert.match(source, /LIMIT 20/);
+  assert.match(source, /LIMIT 30/);
+  assert.match(source, /ACPOS_AI_GOVERNANCE_POLICY_VERSION/);
+  assert.match(source, /enforceAcposGovernanceEvidence/);
+  assert.match(source, /enforceAcposDecisionConsistency/);
+  assert.match(source, /conversation_generation_jobs/);
+  assert.match(source, /meeting_participants/);
+  assert.match(source, /meeting_rounds/);
+  assert.match(source, /meeting_messages/);
   assert.match(source, /'USER'/);
   assert.match(source, /'PROVIDER'/);
   assert.doesNotMatch(source, /GROQ_API_KEY|GOOGLE_GEMINI_API_KEY|DEEPSEEK_API_KEY|OPENROUTER_API_KEY/);
@@ -49,7 +56,7 @@ test("Strategy conversation projection exposes persisted user and provider histo
   assert.match(source, /FROM conversation_messages/);
   assert.match(source, /actorType === "PROVIDER" \? "AI"/);
   assert.match(source, /"STR-01-VIEW-CONVERSATION": conversationText \|\| DASH/);
-  assert.match(source, /"STR-01-FLD-ASSISTANT-SUMMARY": latestAssistantText \?\? DASH/);
+  assert.match(source, /"STR-01-FLD-ASSISTANT-SUMMARY": latestAssistantSummary \?\? DASH/);
   assert.match(source, /"STR-01-GATE-CONTEXT": Boolean\(firstConversation\)/);
   assert.match(source, /"STR-01-GATE-MESSAGE": Boolean\(firstConversation\)/);
 });
