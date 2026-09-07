@@ -92,6 +92,21 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(providerAdapter, /secret_reference_approved/);
   assert.match(providerAdapter, /PROVIDER_PROFILE_DISABLED/);
   assert.match(providerAdapter, /PROVIDER_SECRET_REFERENCE_NOT_APPROVED/);
+  assert.match(providerAdapter, /PROVIDER_PREFLIGHT_NOT_READY/);
+  assert.match(providerAdapter, /PROVIDER_GROUP_DISABLED/);
+  assert.match(providerAdapter, /PROVIDER_MEMBER_DISABLED/);
+  assert.match(providerAdapter, /PROVIDER_PROFILE_HEALTH_TEST_REQUIRED/);
+  assert.match(providerAdapter, /PROVIDER_CAPABILITY_MISMATCH/);
+  assert.match(providerAdapter, /PROVIDER_CAPABILITY_NOT_APPROVED_FOR_CLASSIFICATION/);
+  assert.match(providerAdapter, /PROVIDER_PROFILE_VERSION_CHANGED_AFTER_COMPILE/);
+  assert.match(providerAdapter, /cp\.profile_version AS compiled_profile_version/);
+  assert.match(providerAdapter, /pf\.checks_json/);
+  assert.match(providerAdapter, /provider_capabilities c/);
+  assert.match(providerAdapter, /shouldDegradeProviderHealth/);
+  assert.match(providerAdapter, /PROVIDER_REQUEST_/);
+  assert.match(providerAdapter, /PROVIDER_HTTP_STATUS_/);
+  assert.match(providerAdapter, /PROVIDER_RESPONSE_/);
+  assert.match(providerAdapter, /PROVIDER_ENDPOINT_/);
   assert.doesNotMatch(runtime + providerAdapter, /process\.env\[[^\]]+\]\s*=(?!=)|process\.env\.[A-Z0-9_]+\s*=/);
   assert.doesNotMatch(providerAdapter, /console\.(?:log|debug|info|warn|error)\s*\(/);
 });
@@ -165,4 +180,36 @@ test("AIAPI controlled fixture matches Current provider projection and safe read
   assert.match(controlledRuntime, /request\.operation_id === "getProviderQuarantine"/);
   assert.match(controlledRuntime, /external_request_sent: false/);
   assert.match(controlledRuntime, /TEST_ONLY_PASS/);
+});
+
+
+test("queued provider dispatch revalidates the full preflight authority before any external request", () => {
+  const dispatchIndex = providerAdapter.indexOf("export async function executeQueuedProviderRequest");
+  const httpIndex = providerAdapter.indexOf("await executeProviderHttpRequest(profile", dispatchIndex);
+  for (const marker of [
+    "PROVIDER_PREFLIGHT_NOT_READY",
+    "PROVIDER_GROUP_DISABLED",
+    "PROVIDER_MEMBER_DISABLED",
+    "PROVIDER_PROFILE_DISABLED",
+    "PROVIDER_PROFILE_HEALTH_TEST_REQUIRED",
+    "PROVIDER_CAPABILITY_MISMATCH",
+    "PROVIDER_CAPABILITY_NOT_APPROVED_FOR_CLASSIFICATION",
+    "PROVIDER_SECRET_REFERENCE_NOT_APPROVED",
+    "PROVIDER_PROFILE_VERSION_CHANGED_AFTER_COMPILE",
+    "PROVIDER_SECRET_ENV_NOT_BOUND",
+  ]) {
+    const markerIndex = providerAdapter.indexOf(marker, dispatchIndex);
+    assert.ok(markerIndex > dispatchIndex && markerIndex < httpIndex, `${marker} must fail closed before external HTTP dispatch`);
+  }
+  assert.match(providerAdapter, /m\.provider_id=p\.provider_id AND m\.model_id=p\.model_id/);
+  assert.match(providerAdapter, /pf\.checks_json->>'data_classification'/);
+});
+
+test("governance-only queued failures do not falsify provider health", () => {
+  assert.match(providerAdapter, /function shouldDegradeProviderHealth/);
+  assert.match(providerAdapter, /if \(shouldDegradeProviderHealth\(reasonCode\)\)/);
+  assert.doesNotMatch(
+    providerAdapter.match(/function shouldDegradeProviderHealth[\s\S]*?\n\}/)?.[0] ?? "",
+    /GROUP_DISABLED|MEMBER_DISABLED|CAPABILITY|VERSION_CHANGED|SECRET_REFERENCE/
+  );
 });
