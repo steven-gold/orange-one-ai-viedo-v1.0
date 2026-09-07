@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T11:15:41+08:00",
+  "as_of": "2026-09-07T11:21:56+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
-    "new_sha_basis": "1b066c5ca284b13ed9d24047d65bd0ba00f02b2f",
+    "new_sha_basis": "9cbdcff401ebef92a01dca68d5ed48a9a7a064f5",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -43,18 +43,18 @@
     },
     "latest_control_acceptance_gate": {
       "status": "PASS",
-      "run_number": 504,
-      "run_id": 34078890336,
-      "head_sha": "1b066c5ca284b13ed9d24047d65bd0ba00f02b2f",
+      "run_number": 509,
+      "run_id": 34079260047,
+      "head_sha": "9cbdcff401ebef92a01dca68d5ed48a9a7a064f5",
       "branch": "new",
       "conclusion": "success",
       "browser_e2e": "PASS_72_CASES",
-      "browser_evidence": "interactive_controls=515 governed_controls=309 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2",
-      "current_dom_control_acceptance": "PASS_18_PAGES_301_VISIBLE_301_GOVERNED",
-      "current_dom_breakdown": "enabled=197 disabled=104",
+      "browser_evidence": "interactive_controls=476 governed_controls=298 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_373_VISIBLE_373_GOVERNED",
+      "current_dom_breakdown": "enabled=194 disabled=179",
       "standalone_docker_build": "PASS",
       "dirty_tree_guard": "PASS",
-      "note": "Current DOM visible count is runtime evidence for this controlled fixture run only and is not a frozen Production denominator."
+      "note": "Current DOM visible count is controlled-runtime evidence only; it is not a frozen Production denominator."
     },
     "latest_remote_control_acceptance_gate": {
       "status": "PASS",
@@ -213,6 +213,47 @@
         "remediation_commit": "1b066c5ca284b13ed9d24047d65bd0ba00f02b2f"
       },
       "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_aiapi_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 509,
+      "run_id": 34079260047,
+      "head_sha": "9cbdcff401ebef92a01dca68d5ed48a9a7a064f5",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:AIAPI-01",
+      "operation": "setKillSwitch",
+      "controlled_flow": [
+        "disable TEST-AIAPI-PROVIDER-001",
+        "restore TEST-AIAPI-PROVIDER-001"
+      ],
+      "external_request_sent": false,
+      "test_data_classification": "TEST_ONLY",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=476 governed_controls=298 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_373_VISIBLE_373_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "failed_intermediate_runs": [
+        {
+          "run_number": 506,
+          "run_id": 34079176415,
+          "reason": "Duplicate isControlledAiApiServerTestMode declaration caused Typecheck failure"
+        },
+        {
+          "run_number": 507,
+          "run_id": 34079200829,
+          "reason": "Same duplicate declaration inherited before remediation"
+        },
+        {
+          "run_number": 508,
+          "run_id": 34079227680,
+          "reason": "Same duplicate declaration inherited before remediation"
+        }
+      ],
+      "remediation_commit": "9cbdcff401ebef92a01dca68d5ed48a9a7a064f5",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE",
+      "gate22_effect": "NONE_SYNTHETIC_CONTROLLED_DATA_IS_NOT_EXTERNAL_PROVIDER_EVIDENCE"
     }
   },
   "production": {
@@ -331,8 +372,8 @@
       "reason": "Production queue and worker are READY (1/1 each), worker heartbeat is current, and Post Deploy authenticated E2E #696 passed the full queue probe including idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup on deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_RELEASE_6_OF_9_TARGETS_PASS_PRODUCTION_9_TARGET_ACCEPTANCE_INCOMPLETE",
-      "reason": "Release-controlled mutation evidence now covers Strategy Admin (#494), SG-02 (#497), IAM-01 (#499/#504), ERP-01 (#501), DEV-01 (#502) and SOC-01 (#504). SOC stops before external publish and therefore does not imply External Provider PASS. Current Production still lacks end-to-end evidence for all 9 admin mutation targets, so Gate 24 remains PARTIAL."
+      "status": "PARTIAL_RELEASE_7_OF_9_TARGETS_PASS_PRODUCTION_9_TARGET_ACCEPTANCE_INCOMPLETE",
+      "reason": "Release-controlled mutation evidence now covers Strategy Admin, SG-02, IAM-01, ERP-01, DEV-01, SOC-01 and AIAPI-01. AIAPI evidence is TEST_ONLY reversible kill-switch execution with external_request_sent=false and does not satisfy External Provider. KB-01 and SYS-01 remain unresolved release targets; Production still lacks all 9 admin mutation targets end-to-end."
     },
     "gate25_full_page_button_acceptance": {
       "status": "PARTIAL_RELEASE_BROWSER_AND_DOM_ACCEPTANCE_PASS_REMOTE_PRODUCTION_PENDING",
@@ -345,11 +386,11 @@
     "Gate 25 Production remote Current DOM acceptance is not yet executed on the next main release; Release-side 18-page Browser/DOM acceptance is PASS."
   ],
   "next_release_sequence": [
-    "Continue Gate 24 on new with the remaining admin targets. Next executable internal target is AIAPI-01 controlled command closure; keep it TEST_ONLY and do not treat synthetic provider profiles as Gate 22 External Provider evidence.",
-    "Do not execute SOC external publish or claim External Provider PASS until real provider capability/profile/secret/group configuration is supplied and a real external request succeeds.",
+    "Continue Gate 24 on new with KB-01 as the next internally reversible target. Reuse the existing controlled Knowledge runtime and materialize the Current UI command path rather than creating a second system.",
+    "After KB-01, inspect SYS-01 Current Authority/runtime before changing any visual-phase-disabled lifecycle controls; do not override an Authority-disabled operation without current evidence.",
+    "Do not execute SOC external publish or treat AIAPI TEST_ONLY provider profiles as External Provider evidence. Gate 22 remains blocked until real capability/profile/secret/group configuration and a real external request exist.",
     "Keep main fixed at deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671 until the next integration point.",
-    "At the next integration point, require a full Release Gate on the exact new head, then one new→main release and Post Deploy HTTP/auth/browser/remote-control acceptance with runtime-measured visible controls.",
-    "Treat 1453 strictly as the legacy 92-page permission catalog baseline (1141 controls + 312 actions), not as the Current 18-page DOM denominator."
+    "At the next integration point, require full Release Gate on exact new head, then one new→main release and Production HTTP/auth/browser/remote-control acceptance with runtime-measured visible controls."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
