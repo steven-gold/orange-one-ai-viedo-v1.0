@@ -1052,7 +1052,6 @@ async function readInfoFromDb(sql: SqlClient, sessionTokenHash: string): Promise
 async function readSystemFromDb(
   sql: SqlClient,
   sessionTokenHash: string,
-  actorUserId: string,
 ): Promise<unknown> {
   const migrations = await safeRows(() => sql`
     SELECT migration_id AS ref, checksum, applied_at::text AS applied_at
@@ -1070,7 +1069,7 @@ async function readSystemFromDb(
     sessionTokenHash,
     sql`
       SELECT system_change_id::text AS system_change_id,current_goal,scope,status,
-             current_candidate_id::text AS candidate_ref,created_by::text AS created_by,updated_at::text AS updated_at
+             current_candidate_id::text AS candidate_ref,updated_at::text AS updated_at
       FROM public.system_changes
       WHERE status <> 'CLOSED'
       ORDER BY updated_at DESC
@@ -1106,82 +1105,55 @@ async function readSystemFromDb(
   }> = [];
 
   if (systemChangeId) {
-    await sql`
-      INSERT INTO workspaces(workspace_key,name,status,data_classification,created_by)
-      VALUES('ACPOS-SYSTEM-AI','ACPOS System AI','READY','INTERNAL',${actorUserId}::uuid)
-      ON CONFLICT(workspace_key) DO NOTHING
-    `;
-    const workspaceRows = await sql`
-      SELECT workspace_id::text AS workspace_id
-      FROM workspaces
-      WHERE workspace_key='ACPOS-SYSTEM-AI'
-      LIMIT 1
-    `;
-    const systemWorkspaceId = asText(asRecord(Array.isArray(workspaceRows) ? workspaceRows[0] : null)?.workspace_id);
-    if (systemWorkspaceId) {
-      await runRlsActorQuery(
-        sql,
-        sessionTokenHash,
-        sql`
-          INSERT INTO conversations(
-            conversation_id,workspace_id,project_id,topic_id,title,created_by
-          ) VALUES(
-            ${systemChangeId}::uuid,${systemWorkspaceId}::uuid,NULL,NULL,
-            ${`SYSTEM_CHANGE /${systemChangeId}`},${actorUserId}::uuid
-          )
-          ON CONFLICT(conversation_id) DO NOTHING
-        `,
-      ).catch(() => []);
-      const conversationRows = await runRlsActorQuery(
-        sql,
-        sessionTokenHash,
-        sql`
-          SELECT conversation_id::text AS conversation_id
-          FROM conversations
-          WHERE conversation_id=${systemChangeId}::uuid
-          LIMIT 1
-        `,
-      ).catch(() => []);
-      conversationId = asText(asRecord(Array.isArray(conversationRows) ? conversationRows[0] : null)?.conversation_id);
-      threadId = conversationId;
+    const conversationRows = await runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT conversation_id::text AS conversation_id
+        FROM conversations
+        WHERE conversation_id=${systemChangeId}::uuid
+        LIMIT 1
+      `,
+    ).catch(() => []);
+    conversationId = asText(asRecord(Array.isArray(conversationRows) ? conversationRows[0] : null)?.conversation_id);
+    threadId = conversationId;
 
-      if (conversationId) {
-        const messageRows = await runRlsActorQuery(
-          sql,
-          sessionTokenHash,
-          sql`
-            SELECT conversation_message_id::text AS message_ref,
-                   actor_type,
-                   COALESCE(message_content->>'text','') AS text,
-                   message_content->>'assistant_summary' AS assistant_summary,
-                   message_content->>'response_mode' AS response_mode,
-                   message_content->'governance'->>'status' AS governance_status,
-                   COALESCE(message_content->>'kind','') AS kind
-            FROM conversation_messages
-            WHERE conversation_id=${conversationId}::uuid
-              AND COALESCE(message_content->>'kind','') <> 'DECISION_LEDGER'
-            ORDER BY sequence_no ASC
-            LIMIT 80
-          `,
-        ).catch(() => []);
-        messages = (Array.isArray(messageRows) ? messageRows : []).flatMap((raw) => {
-          const row = asRecord(raw);
-          const message_ref = asText(row?.message_ref);
-          const text = asText(row?.text);
-          if (!message_ref || !text) return [];
-          const actorType = asText(row?.actor_type);
-          const role: "USER" | "ASSISTANT" | "SYSTEM" =
-            actorType === "USER" ? "USER" : actorType === "PROVIDER" ? "ASSISTANT" : "SYSTEM";
-          return [{
-            message_ref,
-            role,
-            text,
-            assistant_summary: asText(row?.assistant_summary),
-            response_mode: asText(row?.response_mode),
-            governance_status: asText(row?.governance_status),
-          }];
-        });
-      }
+    if (conversationId) {
+      const messageRows = await runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT conversation_message_id::text AS message_ref,
+                 actor_type,
+                 COALESCE(message_content->>'text','') AS text,
+                 message_content->>'assistant_summary' AS assistant_summary,
+                 message_content->>'response_mode' AS response_mode,
+                 message_content->'governance'->>'status' AS governance_status,
+                 COALESCE(message_content->>'kind','') AS kind
+          FROM conversation_messages
+          WHERE conversation_id=${conversationId}::uuid
+            AND COALESCE(message_content->>'kind','') <> 'DECISION_LEDGER'
+          ORDER BY sequence_no ASC
+          LIMIT 80
+        `,
+      ).catch(() => []);
+      messages = (Array.isArray(messageRows) ? messageRows : []).flatMap((raw) => {
+        const row = asRecord(raw);
+        const message_ref = asText(row?.message_ref);
+        const text = asText(row?.text);
+        if (!message_ref || !text) return [];
+        const actorType = asText(row?.actor_type);
+        const role: "USER" | "ASSISTANT" | "SYSTEM" =
+          actorType === "USER" ? "USER" : actorType === "PROVIDER" ? "ASSISTANT" : "SYSTEM";
+        return [{
+          message_ref,
+          role,
+          text,
+          assistant_summary: asText(row?.assistant_summary),
+          response_mode: asText(row?.response_mode),
+          governance_status: asText(row?.governance_status),
+        }];
+      });
     }
   }
 
@@ -1217,10 +1189,7 @@ async function readSystemFromDb(
       candidate_ref: asText(active?.candidate_ref) ?? DASH,
       context_snapshot_ref: asText(snapshots[0]?.ref) ?? DASH,
       dependency_graph_ref: DASH,
-      latest_context_fingerprint:
-        latestAssistant?.governance_status === "PASS"
-          ? asText(candidate?.context_fingerprint) ?? asText(head?.checksum) ?? asText(snapshots[0]?.hash) ?? DASH
-          : asText(candidate?.context_fingerprint) ?? asText(head?.checksum) ?? asText(snapshots[0]?.hash) ?? DASH,
+      latest_context_fingerprint: asText(candidate?.context_fingerprint) ?? asText(head?.checksum) ?? asText(snapshots[0]?.hash) ?? DASH,
       assigned_ai_set: asText(aiGroup?.id) ?? DASH,
       healthy_ai_members: String(healthyMembers),
       assistant_summary: latestAssistant?.assistant_summary ?? DASH,
@@ -1629,7 +1598,7 @@ async function readPageValue(
     case "workspace:INFO-01":
       return readInfoFromDb(sql, sessionTokenHash);
     case "admin:SYS-01":
-      return readSystemFromDb(sql, sessionTokenHash, actorUserId);
+      return readSystemFromDb(sql, sessionTokenHash);
     case "admin:IAM-01":
       return readIamProjection(sql);
     case "admin:DEV-01":
