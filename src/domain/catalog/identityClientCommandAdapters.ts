@@ -74,9 +74,45 @@ function openDraftDialog(kind: "PROJECT" | "TOPIC"): Promise<{ ok: true; payload
   });
 }
 
+function bindStrategyAdminHttpCommandAdapter(): void {
+  configureStrategyAdminCommandAdapter({
+    invoke: async (input) => {
+      if (input.operation === "searchProjection" || input.operation === "refreshProjection") {
+        const path = input.operation === "searchProjection" ? "/v1/search" : "/v1/projections/refresh";
+        const response = await fetch(path, {
+          method: "POST",
+          cache: "no-store",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            ...input.payload,
+            current_page_uid: "admin:STR-01",
+            page_uid: "admin:STR-01",
+            source_page_uid: input.source_page_uid,
+          }),
+        });
+        const correlation_id = response.headers.get("x-correlation-id") ?? "unresolved";
+        const raw: unknown = await response.json().catch(() => null);
+        const body = rec(raw);
+        if (!response.ok) {
+          return {
+            ok: false,
+            reason_code: typeof body?.reason_code === "string" ? body.reason_code : "STR_ADMIN_COMMAND_FAILED",
+            correlation_id,
+          };
+        }
+        return { ok: true, value: raw, correlation_id };
+      }
+      return { ok: false, reason_code: "STR_ADMIN_OPERATION_RUNTIME_NOT_MATERIALIZED", correlation_id: "unresolved" };
+    },
+  });
+}
+
 export function bindIdentityClientCommandAdapters(): void {
-  if (bound || isControlledTestMode()) return;
+  if (bound) return;
   bound = true;
+  bindStrategyAdminHttpCommandAdapter();
+  if (isControlledTestMode()) return;
 
   configureCoreCreationPermissionAdapter({
     authorizeCreation: async ({ required_permission_uid }) => {
@@ -241,35 +277,4 @@ export function bindIdentityClientCommandAdapters(): void {
     },
   });
 
-  configureStrategyAdminCommandAdapter({
-    invoke: async (input) => {
-      if (input.operation === "searchProjection" || input.operation === "refreshProjection") {
-        const path = input.operation === "searchProjection" ? "/v1/search" : "/v1/projections/refresh";
-        const response = await fetch(path, {
-          method: "POST",
-          cache: "no-store",
-          credentials: "include",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            ...input.payload,
-            current_page_uid: "admin:STR-01",
-            page_uid: "admin:STR-01",
-            source_page_uid: input.source_page_uid,
-          }),
-        });
-        const correlation_id = response.headers.get("x-correlation-id") ?? "unresolved";
-        const raw: unknown = await response.json().catch(() => null);
-        const body = rec(raw);
-        if (!response.ok) {
-          return {
-            ok: false,
-            reason_code: typeof body?.reason_code === "string" ? body.reason_code : "STR_ADMIN_COMMAND_FAILED",
-            correlation_id,
-          };
-        }
-        return { ok: true, value: raw, correlation_id };
-      }
-      return { ok: false, reason_code: "STR_ADMIN_OPERATION_RUNTIME_NOT_MATERIALIZED", correlation_id: "unresolved" };
-    },
-  });
 }
