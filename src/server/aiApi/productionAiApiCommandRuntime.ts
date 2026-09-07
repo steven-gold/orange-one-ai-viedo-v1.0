@@ -276,17 +276,31 @@ async function testProfile(sql: SqlClient, request: AiApiRuntimeRequest) {
   if (!row) throw new NamedRuntimeError("AIAPI_PROFILE_NOT_FOUND");
   const testId=crypto.randomUUID();
   const profile=providerHttpProfile(row);
+  const secretReference=first(await sql`
+    SELECT secret_key,status::text AS status,provider_key
+    FROM secret_references
+    WHERE secret_key=${profile.secret_env_ref}
+      AND provider_key=${profile.provider_id}
+    LIMIT 1
+  `);
+  const secretReferenceApproved=asText(secretReference?.status)==="APPROVED";
   const envBound=Boolean(process.env[profile.secret_env_ref]);
-  if (!envBound) {
+  if (!secretReferenceApproved || !envBound) {
+    const errorCode=!secretReferenceApproved ? "PROVIDER_SECRET_REFERENCE_NOT_APPROVED" : "PROVIDER_SECRET_ENV_NOT_BOUND";
     await sql`
       INSERT INTO acpos_runtime.provider_profile_tests(
         id,profile_id,status,dry_run,error_code,evidence_json
       ) VALUES(
-        ${testId},${profileId},'BLOCKED',false,'PROVIDER_SECRET_ENV_NOT_BOUND',
-        ${JSON.stringify({ secret_reference_bound:false,plaintext_persisted:false,external_request_sent:false })}::jsonb
+        ${testId},${profileId},'BLOCKED',false,${errorCode},
+        ${JSON.stringify({
+          secret_reference_approved:secretReferenceApproved,
+          secret_reference_bound:envBound,
+          plaintext_persisted:false,
+          external_request_sent:false,
+        })}::jsonb
       )
     `;
-    throw new NamedRuntimeError("PROVIDER_SECRET_ENV_NOT_BOUND");
+    throw new NamedRuntimeError(errorCode);
   }
 
   const compiled=compileProviderRequest(profile,"ACPOS provider connection test. Return a short acknowledgement.");
@@ -467,7 +481,13 @@ async function routePreflight(sql: SqlClient, payload: Row, correlationId: strin
                AND c.model_key=m.model_id
                AND c.status='APPROVED'
                AND ${classification} = ANY(c.accepted_classifications::text[])
-           ) AS governed_capability
+           ) AS governed_capability,
+           EXISTS(
+             SELECT 1 FROM secret_references s
+             WHERE s.secret_key=p.secret_env_ref
+               AND s.provider_key=m.provider_id
+               AND s.status='APPROVED'
+           ) AS governed_secret_reference
     FROM acpos_runtime.provider_members m
     JOIN acpos_runtime.provider_groups g ON g.id=m.group_id
     JOIN acpos_runtime.provider_profiles p ON p.provider_id=m.provider_id AND p.model_id=m.model_id
@@ -483,6 +503,7 @@ async function routePreflight(sql: SqlClient, payload: Row, correlationId: strin
     if (m.profile_enabled!==true) reasons.push("PROFILE_DISABLED");
     if (asText(m.capability_type)!==requiredCapability) reasons.push("CAPABILITY_MISMATCH");
     if (m.governed_capability!==true) reasons.push("CAPABILITY_NOT_APPROVED_FOR_CLASSIFICATION");
+    if (m.governed_secret_reference!==true) reasons.push("SECRET_REFERENCE_NOT_APPROVED");
     if (credentialStatus(m.secret_env_ref)!=="SET") reasons.push("SECRET_REFERENCE_NOT_BOUND");
     if (asText(m.profile_health_status)!=="HEALTHY") reasons.push("PROFILE_HEALTH_TEST_REQUIRED");
     return {

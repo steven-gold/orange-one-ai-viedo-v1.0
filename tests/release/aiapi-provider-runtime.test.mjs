@@ -64,6 +64,10 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(providerContract, /prompt_template_rule: Must contain canonical instruction placeholder/);
   assert.match(runtime, /AIAPI_PROMPT_TEMPLATE_CANONICAL_TOKEN_REQUIRED/);
   assert.match(runtime, /PROVIDER_SECRET_ENV_NOT_BOUND/);
+  assert.match(runtime, /PROVIDER_SECRET_REFERENCE_NOT_APPROVED/);
+  assert.match(runtime, /FROM secret_references/);
+  assert.match(runtime, /s\.status='APPROVED'/);
+  assert.match(runtime, /SECRET_REFERENCE_NOT_APPROVED/);
   assert.match(runtime, /compileProviderRequest/);
   assert.match(runtime, /executeProviderHttpRequest/);
   assert.match(runtime, /enqueueProviderExecutionRequest/);
