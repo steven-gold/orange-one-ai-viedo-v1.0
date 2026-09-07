@@ -1,10 +1,13 @@
 .page {
   width: 100%;
   min-width: 0;
-  min-height: 100%;
+  height: 100%;
+  min-height: 0;
   display: grid;
+  grid-template-rows: auto minmax(0,1fr) auto;
   gap: var(--section-gap);
-  padding: 0 0 var(--section-gap);
+  padding: 0;
+  overflow: hidden;
   color: var(--text-primary);
 }
 
@@ -43,23 +46,30 @@
 }
 
 .primaryGrid {
+  min-height: 0;
   display: grid;
   grid-template-columns: minmax(190px, .85fr) minmax(0, 2.8fr) minmax(220px, 1fr);
   gap: var(--section-gap);
-  align-items: start;
+  align-items: stretch;
+  overflow: hidden;
 }
 
 .assetPanel {
   min-width: 0;
-  max-height: 1220px;
+  height: 100%;
+  max-height: none;
   overflow-y: auto;
   padding: var(--content-padding);
 }
 
 .productionStack {
   min-width: 0;
+  min-height: 0;
+  height: 100%;
   display: grid;
+  grid-template-rows: auto auto auto minmax(0,1fr);
   gap: var(--section-gap);
+  overflow: hidden;
 }
 
 .previewPanel,
@@ -99,9 +109,10 @@
 }
 
 .viewer {
-  width: 100%;
+  width: min(100%, 640px);
   aspect-ratio: 16 / 9;
-  min-height: 360px;
+  min-height: 0;
+  margin-inline: auto;
   display: grid;
   place-items: center;
   border: 1px solid var(--border-normal);
@@ -135,7 +146,7 @@
   align-items: end;
 }
 
-.timelinePanel { min-height: 320px; }
+.timelinePanel { min-height: 0; overflow: auto; }
 
 .timelineRuler {
   height: 32px;
@@ -218,9 +229,12 @@
 
 .inspectorColumn {
   min-width: 0;
+  min-height: 0;
+  height: 100%;
   display: grid;
   gap: var(--section-gap);
   align-content: start;
+  overflow-y: auto;
 }
 
 .adjustmentRow {
@@ -507,3 +521,33 @@
 @media (prefers-reduced-motion: reduce) {
   .page * { transition: none !important; }
 }
+
+.stageActionDock {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(180px,.7fr) minmax(260px,1fr) minmax(360px,2fr);
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--border-normal);
+  border-radius: var(--panel-radius);
+  background: rgba(8,12,28,.96);
+  box-shadow: 0 -10px 28px rgba(0,0,0,.28);
+}
+.stageSummary { display:grid; gap:3px; }
+.stageSummary strong { color:var(--text-primary); font-size:12px; }
+.stageSummary span { color:var(--text-muted); font-size:11px; }
+.stageActions { display:flex; gap:8px; align-items:center; }
+.stageActions .button { flex:1 1 auto; }
+.stageActionDock .stageRail {
+  margin: 0;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+}
+.stageActionDock .stageRail > div {
+  min-height: 34px;
+  grid-template-columns: 22px minmax(0,1fr);
+}
+.stageActionDock .stageRail em { display:none; }

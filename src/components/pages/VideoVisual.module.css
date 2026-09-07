@@ -310,3 +310,9 @@
 @media (max-width: 1279px) {
   .contextGrid { grid-template-columns: repeat(4,minmax(0,1fr)); }
 }
+
+.technicalActions {
+  display: grid;
+  gap: 6px;
+}
+.technicalActions .button { width: 100%; min-height: 34px; }

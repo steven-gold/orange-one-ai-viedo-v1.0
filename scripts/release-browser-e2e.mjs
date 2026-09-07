@@ -253,6 +253,37 @@ try {
             visualTopologyCases += 1;
           }
 
+          const collapsedStageSections = {
+            "ASSET-01": ["ASSET-01-SEC-06","ASSET-01-SEC-07","ASSET-01-SEC-08","ASSET-01-SEC-10"],
+            "VIDEO-01": ["VIDEO-01-SEC-05","VIDEO-01-SEC-06","VIDEO-01-SEC-07","VIDEO-01-SEC-08","VIDEO-01-SEC-09","VIDEO-01-SEC-10"],
+            "QA-01": ["QA-01-SEC-07","QA-01-SEC-08","QA-01-SEC-09","QA-01-SEC-10"],
+          }[uid];
+          if (collapsedStageSections) {
+            const visibleUnexpected = await page.evaluate((ids) => ids.filter((id) => {
+              const element = document.querySelector(`[data-section-id="${id}"]`);
+              if (!(element instanceof HTMLElement)) return false;
+              const style = getComputedStyle(element);
+              const rect = element.getBoundingClientRect();
+              return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+            }), collapsedStageSections);
+            if (visibleUnexpected.length) throw new Error(`STAGE_FIRST_LAYER_FLATTENED_${uid}_${visibleUnexpected.join(",")}`);
+          }
+
+          if (uid === "EDIT-01") {
+            const editLayout = await page.evaluate(() => {
+              const pageRoot = document.querySelector('[data-page-uid="EDIT-01"]');
+              const preview = document.querySelector('[data-component-uid="EDIT-01-CMP-PREVIEW"]');
+              const timeline = document.querySelector('[data-component-uid="EDIT-01-CMP-TIMELINE"]');
+              const dock = document.querySelector('[data-current-stage-action-dock="true"]');
+              if (!(pageRoot instanceof HTMLElement) || !(preview instanceof HTMLElement) || !(timeline instanceof HTMLElement) || !(dock instanceof HTMLElement)) return null;
+              const p = pageRoot.getBoundingClientRect(), v = preview.getBoundingClientRect(), t = timeline.getBoundingClientRect(), d = dock.getBoundingClientRect();
+              return {pageHeight:p.height,previewTop:v.top,previewBottom:v.bottom,timelineTop:t.top,timelineBottom:t.bottom,dockTop:d.top,dockBottom:d.bottom,timelineOverflow:getComputedStyle(timeline).overflowY};
+            });
+            if (!editLayout || editLayout.previewBottom > editLayout.dockTop + 1 || editLayout.timelineTop >= editLayout.dockTop || editLayout.dockBottom > innerHeight + 2) {
+              throw new Error(`EDIT_VIEWPORT_LOCK_INVALID_${JSON.stringify(editLayout)}`);
+            }
+          }
+
           if (route === "/") {
             const sidebar = page.locator(".global-sidebar");
             const workspace = page.locator(".workspace-slot");

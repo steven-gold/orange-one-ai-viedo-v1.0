@@ -322,3 +322,19 @@
   .primaryGrid { grid-template-columns: minmax(190px,.85fr) minmax(0,2.8fr) minmax(220px,1fr); }
   .rightColumn .panel { position: sticky; }
 }
+
+.stageAnchor { display: none !important; }
+.technicalActions {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 6px;
+}
+.technicalActions .button { width: 100%; min-height: 34px; }
+.stageHandoff {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  display: grid;
+  gap: 8px;
+}
+.stageHandoff .readonly { min-height: 46px; }

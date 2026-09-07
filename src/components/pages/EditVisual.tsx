@@ -301,12 +301,22 @@ function EditVisualBody() {
     video.currentTime = bounded;
   }, [state.playhead, state.resolved.preview_uri]);
 
-  const contextMain = CONTEXT.slice(0, 12);
+  const contextMain = [...CONTEXT.slice(0, 5), ...CONTEXT.slice(6, 9)];
   const contextStatus = CONTEXT.slice(12);
+  const stage = state.resolved.current_stage_uid ?? "EDIT-01-STAGE-01-ASSEMBLY";
+  const phase = state.resolved.current_stage_phase ?? "READY";
+  const correctionVisible = phase === "CORRECTION";
+  const assemblyStage = stage === "EDIT-01-STAGE-01-ASSEMBLY";
+  const audioStage = stage === "EDIT-01-STAGE-02-AUDIO";
+  const syncStage = stage === "EDIT-01-STAGE-03-SYNC";
+  const finalizeStage = stage === "EDIT-01-STAGE-04-FINALIZE";
+  const handoffStage = stage === "EDIT-01-STAGE-05-QA-HANDOFF";
+  const showEvaluation = phase === "EVALUATING" || phase === "WAIT_CONFIRMATION" || finalizeStage || handoffStage;
+  const stageTabs = assemblyStage ? ["EDIT-01-TAB-CLIP"] : audioStage ? ["EDIT-01-TAB-VOICE","EDIT-01-TAB-AUDIO"] : syncStage ? ["EDIT-01-TAB-LIPSYNC","EDIT-01-TAB-SUBTITLE"] : finalizeStage ? ["EDIT-01-TAB-EVALUATION","EDIT-01-TAB-VERSION","EDIT-01-TAB-OUTPUT"] : ["EDIT-01-TAB-OUTPUT","EDIT-01-TAB-EVALUATION"];
+  const visibleInspectorTabs = INSPECTOR.slice(0, 9).filter((spec) => stageTabs.includes(spec.id));
   const mediaVisible = MEDIA.filter((spec) => ["EDIT-01-FLD-MEDIA-SEARCH", "EDIT-01-CTL-MEDIA-TYPE-FILTER", "EDIT-01-LST-MEDIA", "EDIT-01-CTL-DROP-TIMELINE"].includes(spec.id));
   const mediaConditional = MEDIA.filter((spec) => !mediaVisible.includes(spec));
   const toolbarVisible = MANUAL.filter((spec) => !["EDIT-01-BTN-REPLACE", "EDIT-01-CTL-CLIP-VOLUME", "EDIT-01-CTL-FADE"].includes(spec.id));
-  const inspectorTabs = INSPECTOR.slice(0, 9);
   const inspectorFields = INSPECTOR.slice(9);
   const apiVisible = API.filter((spec) => ["EDIT-01-LBL-CURRENT-SCRIPT-SECTION", "EDIT-01-LBL-BINDING-FINGERPRINT"].includes(spec.id));
   const apiConditional = API.filter((spec) => !apiVisible.includes(spec));
@@ -366,44 +376,32 @@ function EditVisualBody() {
         </section>
       </div>
       <aside className={styles.inspectorColumn} data-layout-role="right-inspector-correction">
-      <section className={`${styles.panel} ${styles.inspectorPanel}`} data-section-id="EDIT-01-SEC-07" data-visual-uid="EDIT-01-VIS-INSPECTOR" data-component-uid="EDIT-01-CMP-INSPECTOR">
-        <Title text={editUiText(locale, "inspector")} meta="34%" />
-        <div className={styles.tabs}>{inspectorTabs.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <div className={styles.inspectorGrid}>{inspectorFields.slice(0, 3).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <section className={state.inspector_tab === "VOICE" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "VOICE" ? undefined : "true"} data-section-id="EDIT-01-SEC-09" data-component-uid="EDIT-01-CMP-VOICE">{VOICE.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
-        <section className={state.inspector_tab === "AUDIO" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "AUDIO" ? undefined : "true"} data-section-id="EDIT-01-SEC-10" data-component-uid="EDIT-01-CMP-AUDIO">{AUDIO.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
-        <section className={state.inspector_tab === "LIPSYNC" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "LIPSYNC" ? undefined : "true"} data-section-id="EDIT-01-SEC-11" data-component-uid="EDIT-01-CMP-LIPSYNC">{LIPSYNC.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
-        <section className={state.inspector_tab === "SUBTITLE" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "SUBTITLE" ? undefined : "true"} data-section-id="EDIT-01-SEC-12" data-component-uid="EDIT-01-CMP-SUBTITLE">{SUBTITLE.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
-      </section>
-      <section className={`${styles.panel} ${styles.semanticPanel}`} data-section-id="EDIT-01-SEC-08" data-visual-uid="EDIT-01-VIS-SEMANTIC" data-component-uid="EDIT-01-CMP-API">
-        <Title text={editUiText(locale, "semantic")} meta="38%" />
+      {correctionVisible ? <section className={`${styles.panel} ${styles.semanticPanel}`} data-section-id="EDIT-01-SEC-07" data-visual-uid="EDIT-01-VIS-INSPECTOR" data-component-uid="EDIT-01-CMP-API" data-stage-surface="correction-conversation">
+        <Title text={editUiText(locale, "semantic")} meta="Correction" />
         <div className={styles.semanticContext}>{apiVisible.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        {state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? null : <div className={styles.conditionNotice}>{editUiText(locale, "correctionUnavailable")}</div>}
-        <div className={state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? styles.stack : styles.hiddenRegistry} aria-hidden={state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? undefined : "true"}>{apiConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <div className={styles.evaluationBox} data-section-id="EDIT-01-SEC-13" data-component-uid="EDIT-01-CMP-STAGE-EVALUATION"><div data-component-uid="EDIT-01-CMP-QA">{EVALUATION.map((spec) => <Control key={spec.id} spec={spec} />)}</div></div>
-      </section>
+        <div className={styles.stack}>{apiConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+      </section> : <section className={`${styles.panel} ${styles.inspectorPanel}`} data-section-id="EDIT-01-SEC-07" data-visual-uid="EDIT-01-VIS-INSPECTOR" data-component-uid="EDIT-01-CMP-INSPECTOR" data-stage-surface="stage-inspector">
+        <Title text={editUiText(locale, "inspector")} meta={stage.replace("EDIT-01-STAGE-","")} />
+        <div className={styles.tabs}>{visibleInspectorTabs.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+        {assemblyStage ? <div className={styles.inspectorGrid}>{inspectorFields.map((spec) => <Control key={spec.id} spec={spec} />)}</div> : null}
+        {audioStage ? <><section className={state.inspector_tab === "AUDIO" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "AUDIO" ? undefined : "true"} data-section-id="EDIT-01-SEC-10" data-component-uid="EDIT-01-CMP-AUDIO">{AUDIO.map((spec) => <Control key={spec.id} spec={spec} />)}</section><section className={state.inspector_tab !== "AUDIO" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "AUDIO" ? "true" : undefined} data-section-id="EDIT-01-SEC-09" data-component-uid="EDIT-01-CMP-VOICE">{VOICE.map((spec) => <Control key={spec.id} spec={spec} />)}</section></> : null}
+        {syncStage ? <><section className={state.inspector_tab === "SUBTITLE" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "SUBTITLE" ? undefined : "true"} data-section-id="EDIT-01-SEC-12" data-component-uid="EDIT-01-CMP-SUBTITLE">{SUBTITLE.map((spec) => <Control key={spec.id} spec={spec} />)}</section><section className={state.inspector_tab !== "SUBTITLE" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "SUBTITLE" ? "true" : undefined} data-section-id="EDIT-01-SEC-11" data-component-uid="EDIT-01-CMP-LIPSYNC">{LIPSYNC.map((spec) => <Control key={spec.id} spec={spec} />)}</section></> : null}
+        {showEvaluation && state.inspector_tab !== "VERSION" && state.inspector_tab !== "OUTPUT" ? <div className={styles.evaluationBox} data-section-id="EDIT-01-SEC-13" data-component-uid="EDIT-01-CMP-STAGE-EVALUATION"><div data-component-uid="EDIT-01-CMP-QA">{EVALUATION.map((spec) => <Control key={spec.id} spec={spec} />)}</div></div> : null}
+        {(finalizeStage||handoffStage) && state.inspector_tab === "VERSION" ? <div className={styles.inspectorGrid} data-section-id="EDIT-01-SEC-14" data-component-uid="EDIT-01-CMP-VERSION">{VERSION.map((spec) => <Control key={spec.id} spec={spec} />)}</div> : null}
+        {(finalizeStage||handoffStage) && (state.inspector_tab === "OUTPUT" || (handoffStage && state.inspector_tab !== "EVALUATION")) ? <div className={styles.inspectorGrid} data-section-id="EDIT-01-SEC-15" data-component-uid="EDIT-01-CMP-OUTPUT">{OUTPUT.map((spec) => <Control key={spec.id} spec={spec} />)}</div> : null}
+        {state.resolved.current_error_uid ? <div className={styles.statusRail} data-component-uid="EDIT-01-CMP-STATUS">{STATUS.map((spec) => <Control key={spec.id} spec={spec} />)}</div> : null}
+      </section>}
       </aside>
     </div>
 
-    <div className={styles.adjustmentRow}>
-      <section className={`${styles.panel} ${styles.microPanel}`} data-section-id="EDIT-01-SEC-06" data-visual-uid="EDIT-01-VIS-MICRO" data-component-uid="EDIT-01-CMP-MICRO-ADJUSTMENT">
-        <Title text={editUiText(locale, "micro")} meta="62%" />
-        <div className={styles.microSequence}>{editUiText(locale, "microHint")}</div>
-        <div className={styles.microGrid}>{inspectorFields.slice(3, 12).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-      </section>
-    </div>
-
-    <div className={styles.bottomRow}>
-      <section className={`${styles.panel} ${styles.comparePanel}`} data-section-id="EDIT-01-SEC-14" data-visual-uid="EDIT-01-VIS-COMPARE" data-component-uid="EDIT-01-CMP-VERSION">
-        <Title text={editUiText(locale, "compare")} meta="34%" /><div className={styles.stack}>{VERSION.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-      </section>
-
-      <section className={`${styles.panel} ${styles.outputPanel}`} data-section-id="EDIT-01-SEC-15" data-visual-uid="EDIT-01-VIS-OUTPUT" data-component-uid="EDIT-01-CMP-OUTPUT">
-        <Title text={editUiText(locale, "output")} meta="32%" />
-        <div className={styles.outputGrid}>{OUTPUT.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <div className={styles.stageRail} data-section-id="EDIT-01-SEC-16" data-component-uid="EDIT-01-CMP-STAGE-RAIL">{STAGES.map((stage, index) => <div key={stage} data-stage-uid={stage} data-stage-active={state.resolved.current_stage_uid === stage ? "true" : undefined}><span>{index + 1}</span><strong>{stage.replace("EDIT-01-STAGE-", "")}</strong><em>{state.resolved.current_stage_uid === stage ? state.resolved.current_stage_phase ?? "—" : "—"}</em></div>)}</div>
-        <div className={styles.statusRail} data-component-uid="EDIT-01-CMP-STATUS">{STATUS.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-      </section>
-    </div>
+    <section className={styles.stageActionDock} data-section-id="EDIT-01-SEC-16" data-component-uid="EDIT-01-CMP-STAGE-ACTION-DOCK" data-current-stage-action-dock="true">
+      <div className={styles.stageSummary}><strong>{stage.replace("EDIT-01-STAGE-","")}</strong><span>{phase}</span></div>
+      <div className={styles.stageActions}>
+        {(phase === "READY" || phase === "RUNNING") ? <Control spec={CONTEXT[5]} /> : null}
+        {phase === "WAIT_CONFIRMATION" ? <><Control spec={CONTEXT[9]} /><Control spec={CONTEXT[10]} /></> : null}
+        {phase === "BLOCKED" ? <Control spec={CONTEXT[11]} /> : null}
+      </div>
+      <div className={styles.stageRail} data-component-uid="EDIT-01-CMP-STAGE-RAIL">{STAGES.map((stageUid,index)=><div key={stageUid} data-stage-uid={stageUid} data-stage-active={stage===stageUid?"true":undefined}><span>{index+1}</span><strong>{stageUid.replace("EDIT-01-STAGE-","")}</strong><em>{stage===stageUid?phase:"—"}</em></div>)}</div>
+    </section>
   </div>;
 }
