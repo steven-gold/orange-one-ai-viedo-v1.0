@@ -315,7 +315,7 @@ pages:
   decision_boundary: Fact/Inference/Recommendation separation mandatory; no direct Canon/Task/Budget/Release/Publish write.
   version_boundary: Source time/version and citation remain explicit.
   shared_acquisition: RESEARCH_FACT_ACQUISITION_CONSUMER
-  navigation: FRONT_L1_NAV-09
+  navigation: NON_L1_CURRENT_PAGE
   shared_context_object: ACPOSContextCandidate
 - page_uid: admin:SYS-01
   name_zh: 系統 AI 工作區
@@ -374,8 +374,7 @@ pages:
   decision_boundary: Department membership/preset is not runtime authorization.
   version_boundary: Permission changes explicit and auditable.
   permission_authority: authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
-  admin_l1_bundle_count: 9
-  knowledge_bundle: ADMIN-L1-KNOWLEDGE
+  admin_l1_bundle_count: 8
 - page_uid: admin:DEV-01
   name_zh: 企業自動開發系統
   surface: ADMIN
@@ -571,6 +570,7 @@ pages:
   current_status: FINAL_LOCKED
   shared_acquisition: KNOWLEDGE_SOURCE_ACQUISITION_CONSUMER
   page_authority: authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+  navigation: NON_L1_CURRENT_ADMIN_PAGE
 global_rules:
 - Every current page is a governed Data Producer and/or Data Consumer.
 - Page UI/controls remain owned by its Current Page Authority.

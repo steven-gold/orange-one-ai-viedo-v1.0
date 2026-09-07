@@ -12,7 +12,7 @@ import {
   type AiApiProviderRow,
 } from "@/domain/aiApi/aiApiRuntimePort";
 import { useI18n } from "@/i18n/LocaleProvider";
-import { AIAPI_PRO_FIELDS, aiApiProLabel, aiApiText } from "@/i18n/aiApiCatalog";
+import { AIAPI_PRO_FIELDS, aiApiLabel, aiApiProLabel, aiApiText } from "@/i18n/aiApiCatalog";
 import styles from "./AiApiVisual.module.css";
 
 type ViewKey = "overview" | "provider" | "routing" | "operations";
@@ -163,8 +163,8 @@ const OPERATIONS_ACTIONS: readonly ActionDef[] = [
   },
 ];
 
-function ProjectionList({ rows, value }: { rows: readonly string[]; value: (key: string) => string }) {
-  return <div className={styles.list}>{rows.map((row) => <div className={styles.listRow} key={row}><span>{row}</span><strong>{value(row)}</strong></div>)}</div>;
+function ProjectionList({ rows, value, locale }: { rows: readonly string[]; value: (key: string) => string; locale: Parameters<typeof aiApiLabel>[0] }) {
+  return <div className={styles.list}>{rows.map((row) => <div className={styles.listRow} key={row}><span>{aiApiLabel(locale, row)}</span><strong>{value(row)}</strong></div>)}</div>;
 }
 
 function parseJsonObject(value: string | undefined, field: string) {
@@ -480,7 +480,7 @@ export function AiApiVisual() {
         return (
           <button key={action.operation} type="button" disabled={!operationEnabled(action)}
             data-operation-id={action.operation} data-disabled-reason={reason ?? undefined}
-            onClick={() => void openAction(action)}>{action.label}</button>
+            onClick={() => void openAction(action)}>{aiApiLabel(locale, action.label)}</button>
         );
       })}
     </div>
@@ -498,7 +498,7 @@ export function AiApiVisual() {
     if (activeView === "routing") return (
       <section className={styles.panel} data-view-uid="AIAPI-01-VIEW-ROUTING-TEST">
         <div className={styles.panelHeader}><h2>{t("routingWorkspace")}</h2><span>{selected.uid}</span></div>
-        <ProjectionList rows={ROUTING_GROUPS} value={projectionValue}/>
+        <ProjectionList rows={ROUTING_GROUPS} value={projectionValue} locale={locale}/>
         {actionButtons(ROUTING_ACTIONS)}
         <p className={styles.note}>{runtimeError ?? t("bindingReady")}</p>
       </section>
@@ -507,7 +507,7 @@ export function AiApiVisual() {
     if (activeView === "operations") return (
       <section className={styles.panel} data-view-uid="AIAPI-01-VIEW-OPERATIONS">
         <div className={styles.panelHeader}><h2>{t("operationsWorkspace")}</h2><span>{selected.uid}</span></div>
-        <ProjectionList rows={OPERATIONS_GROUPS} value={projectionValue}/>
+        <ProjectionList rows={OPERATIONS_GROUPS} value={projectionValue} locale={locale}/>
         {actionButtons(OPERATIONS_ACTIONS)}
         {!projection && <p className={styles.note}>{runtimeError ?? (loading ? t("loading") : t("noData"))}</p>}
       </section>
@@ -517,7 +517,7 @@ export function AiApiVisual() {
       <section className={styles.panel} data-view-uid="AIAPI-01-VIEW-PROVIDER-API">
         <div className={styles.panelHeader}><h2>{t("providerTable")}</h2><span>{selected.uid}</span></div>
         <div className={styles.table} data-provider-table="true" data-operation-id="listProviderModelProfiles">
-          <div className={styles.tableHeader}>{PROVIDER_COLUMNS.map((col) => <span key={col}>{col}</span>)}</div>
+          <div className={styles.tableHeader}>{PROVIDER_COLUMNS.map((col) => <span key={col}>{aiApiLabel(locale, col)}</span>)}</div>
           {projection?.provider_rows.length ? projection.provider_rows.map((row) => (
             <div className={styles.tableRow} key={row.profile_id}
               data-profile-id={row.profile_id} data-provider-id={row.provider_id} data-model-id={row.model_id}
@@ -532,7 +532,7 @@ export function AiApiVisual() {
                   return <button key={action.operation} type="button"
                     disabled={!rowSelected || !operationEnabled(action)}
                     data-operation-id={action.operation} data-disabled-reason={reason ?? undefined}
-                    onClick={(event) => { event.stopPropagation(); setSelectedProfileId(row.profile_id); void openAction(action); }}>{action.label}</button>;
+                    onClick={(event) => { event.stopPropagation(); setSelectedProfileId(row.profile_id); void openAction(action); }}>{aiApiLabel(locale, action.label)}</button>;
                 })}
               </span>
             </div>
@@ -565,7 +565,7 @@ export function AiApiVisual() {
         {renderMain()}
         {providerSplit && (
           <aside className={styles.infoPanel} data-panel-uid="AIAPI-01-PANEL-API-PROFESSIONAL-DESCRIPTION">
-            <div className={styles.infoHeader}><h2>{t("professional")}</h2><span>READ ONLY</span></div>
+            <div className={styles.infoHeader}><h2>{t("professional")}</h2><span>{t("readOnly")}</span></div>
             <p className={styles.note}>{selectedRow ? `${selectedRow.provider_id} / ${selectedRow.model_id}` : runtimeError ?? t("selectGuidance")}</p>
             <div className={styles.infoList}>{AIAPI_PRO_FIELDS.map(([uid, entry]) => <div className={styles.infoRow} key={uid} data-pro-field-uid={uid}><span>{aiApiProLabel(locale, entry)}</span><strong>{professionalValue(uid)}</strong></div>)}</div>
           </aside>
@@ -575,10 +575,10 @@ export function AiApiVisual() {
       {activeAction && (
         <div className={styles.modalBackdrop} role="presentation" onMouseDown={() => !pending && setActiveAction(null)}>
           <section className={styles.formModal} role="dialog" aria-modal="true" aria-label={t("operationForm")} onMouseDown={(event) => event.stopPropagation()}>
-            <div className={styles.modalHeader}><div><span>{t("operationForm")}</span><h2>{activeAction.label}</h2></div><button type="button" onClick={() => setActiveAction(null)} disabled={pending}>{t("close")}</button></div>
+            <div className={styles.modalHeader}><div><span>{t("operationForm")}</span><h2>{aiApiLabel(locale, activeAction.label)}</h2></div><button type="button" onClick={() => setActiveAction(null)} disabled={pending}>{t("close")}</button></div>
             {activeAction.confirmationOnly ? (
-              <label className={styles.formField}>
-                <span>Confirmation</span>
+              <label className={styles.formField} data-field-key="confirmation">
+                <span>{aiApiLabel(locale, "Confirmation")}</span>
                 <select value={formValues.confirmation ?? ""} onChange={(event) => setFormValues({ confirmation: event.target.value })} disabled={pending}>
                   <option value="">—</option><option value="CONFIRM">CONFIRM</option>
                 </select>
@@ -586,8 +586,8 @@ export function AiApiVisual() {
             ) : (
               <div className={styles.formGrid}>
                 {(activeAction.fields ?? []).map((field) => (
-                  <label className={field.kind === "textarea" ? styles.formFieldWide : styles.formField} key={field.key} data-required={field.required ? "true" : "false"}>
-                    <span>{field.label}{field.required ? " *" : ""}</span>
+                  <label className={field.kind === "textarea" ? styles.formFieldWide : styles.formField} key={field.key} data-field-key={field.key} data-required={field.required ? "true" : "false"}>
+                    <span>{aiApiLabel(locale, field.label)}{field.required ? " *" : ""}</span>
                     {field.kind === "select" ? (
                       <select value={formValues[field.key] ?? ""} onChange={(event) => setFormValues((prev) => ({ ...prev, [field.key]: event.target.value }))} disabled={pending}>
                         <option value="">—</option>{field.options?.map((option) => <option value={option} key={option}>{option}</option>)}

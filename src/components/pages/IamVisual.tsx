@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n } from "@/i18n/LocaleProvider";
+import type { TranslationKey } from "@/i18n/catalog";
 import { iamText } from "@/i18n/iamCatalog";
 import {
   getIamControlRuntime,
@@ -21,38 +22,30 @@ import {
 import { IAM_CONTROL_BINDING_COUNT } from "@/domain/iam/iamControlBindings";
 import styles from "./IamVisual.module.css";
 
-const FRONT_L1 = [
-  ["FRONT-L1-01", "儀表板", "仪表板", "Dashboard"],
-  ["FRONT-L1-02", "專案 / 專題", "项目 / 专题", "Project / Topic"],
-  ["FRONT-L1-03", "素材", "素材", "Assets"],
-  ["FRONT-L1-04", "影片", "影片", "Video"],
-  ["FRONT-L1-05", "剪輯配音", "剪辑配音", "Editing & Voice"],
-  ["FRONT-L1-06", "QA", "QA", "QA"],
-  ["FRONT-L1-07", "資料庫", "数据库", "Database"],
-  ["FRONT-L1-08", "戰略中心", "战略中心", "Strategy Center"],
-  ["FRONT-L1-09", "最新資訊", "最新资讯", "Latest Information"],
+const FRONT_L1: readonly (readonly [string, TranslationKey])[] = [
+  ["FRONT-L1-01", "global.nav.dashboard"],
+  ["FRONT-L1-02", "global.nav.project_topic"],
+  ["FRONT-L1-03", "global.nav.asset"],
+  ["FRONT-L1-04", "global.nav.video"],
+  ["FRONT-L1-05", "global.nav.edit_voice"],
+  ["FRONT-L1-06", "global.nav.qa"],
+  ["FRONT-L1-07", "global.nav.database"],
+  ["FRONT-L1-08", "global.nav.strategy"],
 ] as const;
 
-const ADMIN_L1 = [
-  ["ADMIN-L1-SYSTEM", "系統維護", "系统维护", "System Maintenance"],
-  ["ADMIN-L1-IAM", "帳戶與權限", "账户与权限", "Accounts & Permissions"],
-  ["ADMIN-L1-DEV", "企業自動開發系統", "企业自动开发系统", "Enterprise Automation"],
-  ["ADMIN-L1-SOCIAL", "社群發布", "社群发布", "Social Publishing"],
-  ["ADMIN-L1-ERP", "ERP", "ERP", "ERP"],
-  ["ADMIN-L1-AIAPI", "AI API", "AI API", "AI API"],
-  ["ADMIN-L1-QA-CRITERIA", "QA 評分項目", "QA 评分项目", "QA Review Criteria"],
-  ["ADMIN-L1-STRATEGY", "戰略中心", "战略中心", "Strategy Administration"],
-  ["ADMIN-L1-KNOWLEDGE", "知識庫", "知识库", "Knowledge & Experience"],
+const ADMIN_L1: readonly (readonly [string, TranslationKey])[] = [
+  ["ADMIN-L1-SYSTEM", "global.admin.system"],
+  ["ADMIN-L1-IAM", "global.admin.iam"],
+  ["ADMIN-L1-DEV", "global.admin.dev"],
+  ["ADMIN-L1-SOCIAL", "global.admin.social"],
+  ["ADMIN-L1-ERP", "global.admin.erp"],
+  ["ADMIN-L1-AIAPI", "global.admin.aiapi"],
+  ["ADMIN-L1-QA-CRITERIA", "global.admin.qa_criteria"],
+  ["ADMIN-L1-STRATEGY", "global.admin.strategy"],
 ] as const;
-
-function label(locale: string, item: readonly [string, string, string, string]) {
-  if (locale === "zh-CN") return item[2];
-  if (locale === "en") return item[3];
-  return item[1];
-}
 
 function IamVisualBody() {
-  const { locale } = useI18n();
+  const { locale, t: globalT } = useI18n();
   const runtime = useIamRuntimeState();
   const { client, projection, runtimeError, runtimeErrorUid, runtimeReasonCode, correlationId } = runtime;
   const pageState = getIamPageState(runtime);
@@ -85,8 +78,8 @@ function IamVisualBody() {
       data-authority-sections="6"
       data-authority-components="10"
       data-authority-controls="14"
-      data-frontend-l1-count="9"
-      data-backend-l1-count="9"
+      data-frontend-l1-count="8"
+      data-backend-l1-count="8"
       data-control-registry-valid={IAM_CONTROL_BINDING_COUNT === 14 ? "true" : "false"}
       data-projection-status={runtimeReasonCode ? "BLOCKED" : projection ? "BOUND" : "LOADING"}
       data-projection-reason={runtimeReasonCode ?? undefined}
@@ -100,7 +93,7 @@ function IamVisualBody() {
     >
       <section className={styles.contextBar} data-section-id="IAM-01-SEC-01" data-component-id="IAM-01-CMP-CONTEXT">
         <div>
-          <div className={styles.eyebrow}>IAM-01 · ACCOUNT PERMISSION ASSIGNMENT</div>
+          <div className={styles.eyebrow}>{t("eyebrow")}</div>
           <h1>{t("pageName")}</h1>
           <p>{t("pageRole")}</p>
         </div>
@@ -113,7 +106,7 @@ function IamVisualBody() {
       <div className={styles.primaryGrid}>
         <div className={styles.leftStack}>
           <section className={styles.panel} data-section-id="IAM-01-SEC-02" data-component-id="IAM-01-CMP-ACCOUNT-LIST">
-            <div className={styles.panelHeader}><h2>{t("directory")}</h2><span>READ PROJECTION</span></div>
+            <div className={styles.panelHeader}><h2>{t("directory")}</h2><span>{t("readProjection")}</span></div>
             <label className={styles.control}>
               <span>{t("search")}</span>
               <input
@@ -157,7 +150,7 @@ function IamVisualBody() {
                 ))}
               </div>
             ) : (
-              <div className={styles.directoryEmpty}><div className={styles.emptyIcon}>◎</div><strong>{t("noAccounts")}</strong><span>IdentityService / IAM projection</span></div>
+              <div className={styles.directoryEmpty}><div className={styles.emptyIcon}>◎</div><strong>{t("noAccounts")}</strong><span>{t("identityProjection")}</span></div>
             )}
           </section>
 
@@ -229,7 +222,7 @@ function IamVisualBody() {
               data-schema-status="BLOCKED"
               aria-disabled="true"
             >
-              <div className={styles.blockedTitle}>BLOCK · IDENTITY SCHEMA</div><p>{t("schemaBlocked")}</p>
+              <div className={styles.blockedTitle}>{t("identitySchemaBlockedTitle")}</div><p>{t("schemaBlocked")}</p>
             </div>
           )}
 
@@ -257,22 +250,22 @@ function IamVisualBody() {
           <div className={styles.permissionColumns}>
             <div className={styles.permissionGroup} data-component-id="IAM-01-CMP-FRONT-L1">
               <label className={styles.groupHeader}>
-                <input type="checkbox" data-control-id="IAM-01-CHK-FRONT-ALL" data-action-uid={frontAllControl.binding?.action_uid} data-gate-uid={frontAllControl.binding?.gate_uid} data-permission-uid={frontAllControl.binding?.permission} data-effect-type={frontAllControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={frontAllControl.runtimeBinding} data-gate-allowed={frontAllControl.gateAllowed ? "true" : "false"} data-disabled-reason={frontAllControl.disabledReason ?? undefined} checked={client.front_l1.length === 9} disabled={!frontAllControl.enabled} onChange={() => runtime.setClient(client.front_l1.length === 9 ? { ...client, front_l1: [] } : { ...client, front_l1: FRONT_L1.map((item) => item[0]) })} />
+                <input type="checkbox" data-control-id="IAM-01-CHK-FRONT-ALL" data-action-uid={frontAllControl.binding?.action_uid} data-gate-uid={frontAllControl.binding?.gate_uid} data-permission-uid={frontAllControl.binding?.permission} data-effect-type={frontAllControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={frontAllControl.runtimeBinding} data-gate-allowed={frontAllControl.gateAllowed ? "true" : "false"} data-disabled-reason={frontAllControl.disabledReason ?? undefined} checked={client.front_l1.length === 8} disabled={!frontAllControl.enabled} onChange={() => runtime.setClient(client.front_l1.length === 8 ? { ...client, front_l1: [] } : { ...client, front_l1: FRONT_L1.map((item) => item[0]) })} />
                 <span>{t("frontAll")}</span>
               </label>
               <div className={styles.groupBody} data-control-id="IAM-01-GRP-FRONT-L1" data-action-uid={frontGroupControl.binding?.action_uid} data-gate-uid={frontGroupControl.binding?.gate_uid} data-permission-uid={frontGroupControl.binding?.permission} data-effect-type={frontGroupControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={frontGroupControl.runtimeBinding} data-gate-allowed={frontGroupControl.gateAllowed ? "true" : "false"} data-disabled-reason={frontGroupControl.disabledReason ?? undefined} aria-disabled={!frontGroupControl.enabled}>
                 <div className={styles.groupTitle}>{t("frontL1")}</div>
-                {FRONT_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" checked={client.front_l1.includes(item[0])} disabled={!frontGroupControl.enabled} onChange={(event) => setIamFrontL1(runtime, item[0], event.currentTarget.checked)} /><span>{label(locale, item)}</span><code>{item[0]}</code></label>)}
+                {FRONT_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" checked={client.front_l1.includes(item[0])} disabled={!frontGroupControl.enabled} onChange={(event) => setIamFrontL1(runtime, item[0], event.currentTarget.checked)} /><span>{globalT(item[1])}</span><code>{item[0]}</code></label>)}
               </div>
             </div>
             <div className={styles.permissionGroup} data-component-id="IAM-01-CMP-BACK-L1">
               <label className={styles.groupHeader}>
-                <input type="checkbox" data-control-id="IAM-01-CHK-BACK-ALL" data-action-uid={backAllControl.binding?.action_uid} data-gate-uid={backAllControl.binding?.gate_uid} data-permission-uid={backAllControl.binding?.permission} data-effect-type={backAllControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={backAllControl.runtimeBinding} data-gate-allowed={backAllControl.gateAllowed ? "true" : "false"} data-disabled-reason={backAllControl.disabledReason ?? undefined} checked={client.admin_l1.length === 9} disabled={!backAllControl.enabled} onChange={() => runtime.setClient(client.admin_l1.length === 9 ? { ...client, admin_l1: [] } : { ...client, admin_l1: ADMIN_L1.map((item) => item[0]) })} />
+                <input type="checkbox" data-control-id="IAM-01-CHK-BACK-ALL" data-action-uid={backAllControl.binding?.action_uid} data-gate-uid={backAllControl.binding?.gate_uid} data-permission-uid={backAllControl.binding?.permission} data-effect-type={backAllControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={backAllControl.runtimeBinding} data-gate-allowed={backAllControl.gateAllowed ? "true" : "false"} data-disabled-reason={backAllControl.disabledReason ?? undefined} checked={client.admin_l1.length === 8} disabled={!backAllControl.enabled} onChange={() => runtime.setClient(client.admin_l1.length === 8 ? { ...client, admin_l1: [] } : { ...client, admin_l1: ADMIN_L1.map((item) => item[0]) })} />
                 <span>{t("backAll")}</span>
               </label>
               <div className={styles.groupBody} data-control-id="IAM-01-GRP-BACK-L1" data-action-uid={backGroupControl.binding?.action_uid} data-gate-uid={backGroupControl.binding?.gate_uid} data-permission-uid={backGroupControl.binding?.permission} data-effect-type={backGroupControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={backGroupControl.runtimeBinding} data-gate-allowed={backGroupControl.gateAllowed ? "true" : "false"} data-disabled-reason={backGroupControl.disabledReason ?? undefined} aria-disabled={!backGroupControl.enabled}>
                 <div className={styles.groupTitle}>{t("backL1")}</div>
-                {ADMIN_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" checked={client.admin_l1.includes(item[0])} disabled={!backGroupControl.enabled} onChange={(event) => setIamAdminL1(runtime, item[0], event.currentTarget.checked)} /><span>{label(locale, item)}</span><code>{item[0]}</code></label>)}
+                {ADMIN_L1.map((item) => <label key={item[0]} className={styles.permissionRow}><input type="checkbox" checked={client.admin_l1.includes(item[0])} disabled={!backGroupControl.enabled} onChange={(event) => setIamAdminL1(runtime, item[0], event.currentTarget.checked)} /><span>{globalT(item[1])}</span><code>{item[0]}</code></label>)}
               </div>
             </div>
           </div>
@@ -308,7 +301,7 @@ function IamVisualBody() {
         {client.audit_open ? (
           <div className={styles.auditList} data-audit-open="true">{projection?.audit_entries.length ? projection.audit_entries.map((entry) => <div key={entry}>{entry}</div>) : <span>—</span>}</div>
         ) : (
-          <div className={styles.auditEmpty}><span>{t("auditEmpty")}</span><code>correlation · version · scope · condition · access review</code></div>
+          <div className={styles.auditEmpty}><span>{t("auditEmpty")}</span><code>{t("auditTraceFields")}</code></div>
         )}
       </section>
     </div>

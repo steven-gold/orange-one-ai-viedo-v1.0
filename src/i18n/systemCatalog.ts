@@ -5,6 +5,7 @@ type Entry = Record<Locale, string>;
 export const SYSTEM_CATALOG = {
   pageName: { "zh-TW": "系統 AI 工作區", "zh-CN": "系统 AI 工作区", en: "System Lifecycle AI Workbench" },
   pageRole: { "zh-TW": "統一系統生命週期設計、變更、驗證與稽核工作台", "zh-CN": "统一系统生命周期设计、变更、验证与稽核工作台", en: "Unified system lifecycle design, change, validation and audit workbench" },
+  eyebrow: { "zh-TW": "SYS-01 · 系統生命週期 AI", "zh-CN": "SYS-01 · 系统生命周期 AI", en: "SYS-01 · SYSTEM LIFECYCLE AI" },
   systemContext: { "zh-TW": "系統上下文", "zh-CN": "系统上下文", en: "System Context" },
   conversation: { "zh-TW": "設計對話", "zh-CN": "设计对话", en: "Design Conversation" },
   candidateChange: { "zh-TW": "變更候選", "zh-CN": "变更候选", en: "Candidate Change" },
@@ -43,6 +44,17 @@ export const SYSTEM_CATALOG = {
   multiAi: { "zh-TW": "Multi AI", "zh-CN": "Multi AI", en: "Multi AI" },
   discussion: { "zh-TW": "Discussion", "zh-CN": "Discussion", en: "Discussion" },
   parallel: { "zh-TW": "Parallel", "zh-CN": "Parallel", en: "Parallel" },
+  aiMode: { "zh-TW": "AI 模式", "zh-CN": "AI 模式", en: "AI Mode" },
+  councilMode: { "zh-TW": "Council 模式", "zh-CN": "Council 模式", en: "Council Mode" },
+  requirement: { "zh-TW": "需求", "zh-CN": "需求", en: "Requirement" },
+  decision: { "zh-TW": "決策", "zh-CN": "决策", en: "Decision" },
+  design: { "zh-TW": "設計", "zh-CN": "设计", en: "Design" },
+  authorityChanges: { "zh-TW": "Authority 變更", "zh-CN": "Authority 变更", en: "Authority Changes" },
+  implementation: { "zh-TW": "實作", "zh-CN": "实现", en: "Implementation" },
+  dependencyGraphRef: { "zh-TW": "依賴圖參照", "zh-CN": "依赖图引用", en: "Dependency Graph Ref" },
+  latestContextFingerprint: { "zh-TW": "最新 Context 指紋", "zh-CN": "最新 Context 指纹", en: "Latest Context Fingerprint" },
+  confirmedDecisionRefs: { "zh-TW": "已確認決策參照", "zh-CN": "已确认决策引用", en: "Confirmed Decision Refs" },
+  unresolvedFailureRefs: { "zh-TW": "未解決失敗參照", "zh-CN": "未解决失败引用", en: "Unresolved Failure Refs" },
   auditTrail: { "zh-TW": "Change / Decision / Validation / Evidence", "zh-CN": "Change / Decision / Validation / Evidence", en: "Change / Decision / Validation / Evidence" },
 } satisfies Record<string, Entry>;
 

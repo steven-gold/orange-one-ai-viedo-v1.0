@@ -239,13 +239,13 @@ const STATUS: readonly Spec[] = [
 const ALL = [...CONTEXT, ...MEDIA, ...PREVIEW, ...RANGE, ...TRACK, ...MANUAL, ...INSPECTOR, ...API, ...VOICE, ...AUDIO, ...LIPSYNC, ...SUBTITLE, ...EVALUATION, ...VERSION, ...OUTPUT, ...STATUS] as const;
 
 const TRACKS = [
-  { uid: "EDIT-01-TRACK-VIDEO", label: "VIDEO", controls: ["EDIT-01-CTL-TRACK-VISIBLE", "EDIT-01-CTL-TRACK-LOCK"] },
-  { uid: "EDIT-01-TRACK-OVERLAY", label: "OVERLAY", controls: ["EDIT-01-CTL-TRACK-VISIBLE", "EDIT-01-CTL-TRACK-LOCK"] },
-  { uid: "EDIT-01-TRACK-VOICE", label: "VOICE", controls: ["EDIT-01-CTL-TRACK-MUTE", "EDIT-01-CTL-TRACK-SOLO", "EDIT-01-CTL-TRACK-LOCK"] },
-  { uid: "EDIT-01-TRACK-MUSIC", label: "MUSIC", controls: ["EDIT-01-CTL-TRACK-MUTE", "EDIT-01-CTL-TRACK-SOLO", "EDIT-01-CTL-TRACK-LOCK"] },
-  { uid: "EDIT-01-TRACK-SFX", label: "SFX", controls: ["EDIT-01-CTL-TRACK-MUTE", "EDIT-01-CTL-TRACK-SOLO", "EDIT-01-CTL-TRACK-LOCK"] },
-  { uid: "EDIT-01-TRACK-SUBTITLE", label: "SUBTITLE", controls: ["EDIT-01-CTL-TRACK-VISIBLE", "EDIT-01-CTL-TRACK-LOCK"] },
-  { uid: "EDIT-01-TRACK-LIPSYNC", label: "LIP_SYNC", controls: ["EDIT-01-CTL-TRACK-VISIBLE", "EDIT-01-CTL-TRACK-LOCK"] },
+  { uid: "EDIT-01-TRACK-VIDEO", labelKey: "trackVideo", controls: ["EDIT-01-CTL-TRACK-VISIBLE", "EDIT-01-CTL-TRACK-LOCK"] },
+  { uid: "EDIT-01-TRACK-OVERLAY", labelKey: "trackOverlay", controls: ["EDIT-01-CTL-TRACK-VISIBLE", "EDIT-01-CTL-TRACK-LOCK"] },
+  { uid: "EDIT-01-TRACK-VOICE", labelKey: "trackVoice", controls: ["EDIT-01-CTL-TRACK-MUTE", "EDIT-01-CTL-TRACK-SOLO", "EDIT-01-CTL-TRACK-LOCK"] },
+  { uid: "EDIT-01-TRACK-MUSIC", labelKey: "trackMusic", controls: ["EDIT-01-CTL-TRACK-MUTE", "EDIT-01-CTL-TRACK-SOLO", "EDIT-01-CTL-TRACK-LOCK"] },
+  { uid: "EDIT-01-TRACK-SFX", labelKey: "trackSfx", controls: ["EDIT-01-CTL-TRACK-MUTE", "EDIT-01-CTL-TRACK-SOLO", "EDIT-01-CTL-TRACK-LOCK"] },
+  { uid: "EDIT-01-TRACK-SUBTITLE", labelKey: "trackSubtitle", controls: ["EDIT-01-CTL-TRACK-VISIBLE", "EDIT-01-CTL-TRACK-LOCK"] },
+  { uid: "EDIT-01-TRACK-LIPSYNC", labelKey: "trackLipSync", controls: ["EDIT-01-CTL-TRACK-VISIBLE", "EDIT-01-CTL-TRACK-LOCK"] },
 ] as const;
 
 const STAGES = ["EDIT-01-STAGE-01-ASSEMBLY", "EDIT-01-STAGE-02-AUDIO", "EDIT-01-STAGE-03-SYNC", "EDIT-01-STAGE-04-FINALIZE", "EDIT-01-STAGE-05-QA-HANDOFF"] as const;
@@ -321,7 +321,13 @@ function EditVisualBody() {
       <section className={`${styles.panel} ${styles.assetPanel}`} data-section-id="EDIT-01-SEC-02" data-visual-uid="EDIT-01-VIS-ASSET-BIND" data-component-uid="EDIT-01-CMP-MEDIA-BIN">
         <Title text={editUiText(locale, "assetBinding")} meta="20%" />
         <div className={styles.stack}>{mediaVisible.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <div className={styles.bindingCards}><div className={styles.bindingCard}><span>Blueprint</span><strong>{state.resolved.locked_blueprint_ref ?? "—"}</strong></div><div className={styles.bindingCard}><span>Production Package</span><strong>{state.resolved.production_package_ref ?? "—"}</strong></div><div className={styles.bindingCard}><span>Input Manifest</span><strong>{state.resolved.input_manifest_ref ?? "—"}</strong></div><div className={styles.bindingCard}><span>Input Fingerprint</span><strong>{state.resolved.input_fingerprint ?? "—"}</strong></div><div className={styles.bindingCard}><span>Binding Status</span><strong>{state.resolved.gate_state["EDIT-01-GATE-BINDING-INTEGRITY"] ? "BOUND" : "—"}</strong></div></div>
+        <div className={styles.bindingCards}>
+          <div className={styles.bindingCard}><span>{editUiText(locale, "bindingBlueprint")}</span><strong>{state.resolved.locked_blueprint_ref ?? "—"}</strong></div>
+          <div className={styles.bindingCard}><span>{editUiText(locale, "bindingProductionPackage")}</span><strong>{state.resolved.production_package_ref ?? "—"}</strong></div>
+          <div className={styles.bindingCard}><span>{editUiText(locale, "bindingInputManifest")}</span><strong>{state.resolved.input_manifest_ref ?? "—"}</strong></div>
+          <div className={styles.bindingCard}><span>{editUiText(locale, "bindingInputFingerprint")}</span><strong>{state.resolved.input_fingerprint ?? "—"}</strong></div>
+          <div className={styles.bindingCard}><span>{editUiText(locale, "bindingStatus")}</span><strong>{state.resolved.gate_state["EDIT-01-GATE-BINDING-INTEGRITY"] ? "BOUND" : "—"}</strong></div>
+        </div>
         <div className={styles.emptyNote}>{editUiText(locale, "noBoundInput")}</div>
         <div className={state.source_mode === "STANDALONE_UPLOAD" ? styles.stack : styles.hiddenRegistry} aria-hidden={state.source_mode === "STANDALONE_UPLOAD" ? undefined : "true"}>{mediaConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
       </section>
@@ -355,7 +361,7 @@ function EditVisualBody() {
         <section className={`${styles.panel} ${styles.timelinePanel}`} data-section-id="EDIT-01-SEC-05" data-visual-uid="EDIT-01-VIS-TIMELINE" data-component-uid="EDIT-01-CMP-TIMELINE">
           <Title text={editUiText(locale, "timeline")} meta="min-height 320px" />
           <div className={styles.timelineRuler}><span>00:00:00:00</span><span>—</span><span>00:00:00:00</span></div>
-          <div className={styles.trackStack}>{TRACKS.map((track) => <div className={styles.trackRow} key={track.uid} data-track-type-uid={track.uid}><div className={styles.trackHeader}><strong>{track.label}</strong><div className={styles.trackControls}>{track.controls.map((id) => { const spec = specById(id); return spec ? <Control key={`${track.uid}-${id}`} spec={spec} compact scopeRef={track.uid} /> : null; })}</div></div><div className={styles.trackLane}>—</div></div>)}</div>
+          <div className={styles.trackStack}>{TRACKS.map((track) => <div className={styles.trackRow} key={track.uid} data-track-type-uid={track.uid}><div className={styles.trackHeader}><strong>{editUiText(locale, track.labelKey)}</strong><div className={styles.trackControls}>{track.controls.map((id) => { const spec = specById(id); return spec ? <Control key={`${track.uid}-${id}`} spec={spec} compact scopeRef={track.uid} /> : null; })}</div></div><div className={styles.trackLane}>—</div></div>)}</div>
           <div className={styles.dialogueGuard} data-section-id="EDIT-01-SEC-11" data-component-uid="EDIT-01-CMP-DIALOGUE-BINDING"><span>{editUiText(locale, "dialogueGuard")}</span><strong>—</strong></div>
         </section>
       </div>

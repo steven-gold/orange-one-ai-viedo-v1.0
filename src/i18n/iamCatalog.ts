@@ -5,6 +5,9 @@ type Entry = Record<Locale, string>;
 export const IAM_CATALOG = {
   pageName: { "zh-TW": "帳戶與權限", "zh-CN": "账户与权限", en: "Accounts & Permissions" },
   pageRole: { "zh-TW": "帳戶、明確權限指派、預覽與存取治理工作區", "zh-CN": "账户、明确权限指派、预览与访问治理工作区", en: "Account, explicit permission assignment, preview and access-governance workspace" },
+  eyebrow: { "zh-TW": "IAM-01 · 帳戶權限指派", "zh-CN": "IAM-01 · 账户权限指派", en: "IAM-01 · ACCOUNT PERMISSION ASSIGNMENT" },
+  identityProjection: { "zh-TW": "IdentityService / IAM 投影", "zh-CN": "IdentityService / IAM 投影", en: "IdentityService / IAM Projection" },
+  auditTraceFields: { "zh-TW": "關聯 · 版本 · 範圍 · 條件 · 存取審查", "zh-CN": "关联 · 版本 · 范围 · 条件 · 访问审查", en: "correlation · version · scope · condition · access review" },
   authorizedCount: { "zh-TW": "授權帳號", "zh-CN": "授权账户", en: "Authorized accounts" },
   addAccount: { "zh-TW": "新增帳號", "zh-CN": "新增账户", en: "Add account" },
   directory: { "zh-TW": "帳號目錄", "zh-CN": "账户目录", en: "Account Directory" },
@@ -29,8 +32,8 @@ export const IAM_CATALOG = {
   noPreset: { "zh-TW": "無預設 / 手動設定", "zh-CN": "无预设 / 手动设置", en: "No preset / Manual" },
   frontAll: { "zh-TW": "前台全部", "zh-CN": "前台全部", en: "All Frontend" },
   backAll: { "zh-TW": "後台總權限", "zh-CN": "后台总权限", en: "All Admin" },
-  frontL1: { "zh-TW": "前台 9 L1", "zh-CN": "前台 9 L1", en: "Frontend 9 L1" },
-  backL1: { "zh-TW": "後台 9 L1", "zh-CN": "后台 9 L1", en: "Admin 9 L1" },
+  frontL1: { "zh-TW": "前台 8 L1", "zh-CN": "前台 8 L1", en: "Frontend 8 L1" },
+  backL1: { "zh-TW": "後台 8 L1", "zh-CN": "后台 8 L1", en: "Admin 8 L1" },
   saveDraft: { "zh-TW": "儲存草稿", "zh-CN": "保存草稿", en: "Save Draft" },
   validate: { "zh-TW": "驗證", "zh-CN": "验证", en: "Validate" },
   previewButton: { "zh-TW": "權限預覽", "zh-CN": "权限预览", en: "Permission Preview" },
@@ -40,6 +43,8 @@ export const IAM_CATALOG = {
   previewEmpty: { "zh-TW": "完成 Basic Data 驗證並形成明確 L1 草稿後，才可產生 added / removed / unchanged / blocked 預覽。", "zh-CN": "完成 Basic Data 验证并形成明确 L1 草稿后，才可产生 added / removed / unchanged / blocked 预览。", en: "Impact preview becomes available after Basic Data validates and an explicit L1 draft exists." },
   audit: { "zh-TW": "Audit / Access Review", "zh-CN": "Audit / Access Review", en: "Audit / Access Review" },
   auditEmpty: { "zh-TW": "目前無可顯示的真實 Audit / Access Review 資料", "zh-CN": "目前无可显示的真实 Audit / Access Review 数据", en: "No real Audit / Access Review data is available" },
+  readProjection: { "zh-TW": "讀取投影", "zh-CN": "读取投影", en: "Read Projection" },
+  identitySchemaBlockedTitle: { "zh-TW": "阻擋 · Identity Schema", "zh-CN": "阻挡 · Identity Schema", en: "Blocked · Identity Schema" },
   visualPhase: { "zh-TW": "視覺施工階段：不執行帳號或權限變更", "zh-CN": "视觉施工阶段：不执行账户或权限变更", en: "Visual phase: account and permission mutations are disabled" },
 } satisfies Record<string, Entry>;
 

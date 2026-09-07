@@ -22,6 +22,21 @@ const catalog = {
     "zh-CN": "ORANGE ONE",
     en: "ORANGE ONE",
   },
+  "global.shell.header": {
+    "zh-TW": "全域頁首",
+    "zh-CN": "全局页首",
+    en: "Global Header",
+  },
+  "global.shell.primary_navigation": {
+    "zh-TW": "主要導航",
+    "zh-CN": "主要导航",
+    en: "Primary Navigation",
+  },
+  "global.shell.page_content": {
+    "zh-TW": "頁面內容",
+    "zh-CN": "页面内容",
+    en: "Page Content",
+  },
   "global.header.notifications": {
     "zh-TW": "通知",
     "zh-CN": "通知",

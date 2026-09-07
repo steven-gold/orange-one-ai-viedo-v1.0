@@ -211,6 +211,18 @@ export const EDIT_UI_TEXT = {
     en: "Range / Clip / Track Scope → Drag / Move / Trim / Snap → Frame / Timecode Nudge → Volume / Fade / Transition / Subtitle Offset",
   },
   noBoundInput: { "zh-TW": "尚無已綁定輸入", "zh-CN": "尚无已绑定输入", en: "No bound input" },
+  bindingBlueprint: { "zh-TW": "Blueprint", "zh-CN": "Blueprint", en: "Blueprint" },
+  bindingProductionPackage: { "zh-TW": "生產 Package", "zh-CN": "生产 Package", en: "Production Package" },
+  bindingInputManifest: { "zh-TW": "輸入 Manifest", "zh-CN": "输入 Manifest", en: "Input Manifest" },
+  bindingInputFingerprint: { "zh-TW": "輸入指紋", "zh-CN": "输入指纹", en: "Input Fingerprint" },
+  bindingStatus: { "zh-TW": "綁定狀態", "zh-CN": "绑定状态", en: "Binding Status" },
+  trackVideo: { "zh-TW": "影片", "zh-CN": "视频", en: "Video" },
+  trackOverlay: { "zh-TW": "疊加", "zh-CN": "叠加", en: "Overlay" },
+  trackVoice: { "zh-TW": "配音", "zh-CN": "配音", en: "Voice" },
+  trackMusic: { "zh-TW": "音樂", "zh-CN": "音乐", en: "Music" },
+  trackSfx: { "zh-TW": "SFX", "zh-CN": "SFX", en: "SFX" },
+  trackSubtitle: { "zh-TW": "字幕", "zh-CN": "字幕", en: "Subtitle" },
+  trackLipSync: { "zh-TW": "LipSync", "zh-CN": "LipSync", en: "LipSync" },
 } as const;
 
 export type EditUiTextKey = keyof typeof EDIT_UI_TEXT;

@@ -85,6 +85,8 @@ try {
   let socMutationCases = 0;
   let aiApiMutationCases = 0;
   let kbMutationCases = 0;
+  let i18nCases = 0;
+  let shellGeometryCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -164,6 +166,63 @@ try {
         if (body.includes('"use client"') || body.includes("function KnowledgeAdminVisual") || body.includes("const CONTROLS")) throw new Error(`SOURCE_RENDER_${uid}`);
 
         if (width === 1280) {
+          try {
+            await page.waitForFunction(
+              () => {
+                const header = document.querySelector(".global-header");
+                const sidebar = document.querySelector(".global-sidebar");
+                const workspace = document.querySelector(".workspace-slot");
+                if (!(header instanceof HTMLElement) || !(sidebar instanceof HTMLElement) || !(workspace instanceof HTMLElement)) return false;
+                const h = header.getBoundingClientRect();
+                const s = sidebar.getBoundingClientRect();
+                const w = workspace.getBoundingClientRect();
+                return Math.abs(h.height - 58) <= 1
+                  && h.width > 0
+                  && Math.abs(s.width - 64) <= 1
+                  && Math.abs(s.top - 58) <= 1
+                  && Math.abs(w.left - 78) <= 1
+                  && Math.abs(w.top - 68) <= 1;
+              },
+              { timeout: 5_000 },
+            );
+          } catch {
+            throw new Error(`SHELL_GEOMETRY_NOT_STABLE_${uid}`);
+          }
+          const shellGeometry = await page.evaluate(() => {
+            const header = document.querySelector(".global-header");
+            const sidebar = document.querySelector(".global-sidebar");
+            const workspace = document.querySelector(".workspace-slot");
+            if (!(header instanceof HTMLElement) || !(sidebar instanceof HTMLElement) || !(workspace instanceof HTMLElement)) {
+              return null;
+            }
+            const rect = (element) => {
+              const value = element.getBoundingClientRect();
+              const style = getComputedStyle(element);
+              return {
+                left: value.left,
+                top: value.top,
+                right: value.right,
+                bottom: value.bottom,
+                width: value.width,
+                height: value.height,
+                position: style.position,
+              };
+            };
+            return { header: rect(header), sidebar: rect(sidebar), workspace: rect(workspace) };
+          });
+          if (!shellGeometry) throw new Error(`SHELL_GEOMETRY_MISSING_${uid}`);
+          const near = (actual, expected) => Math.abs(actual - expected) <= 1;
+          if (shellGeometry.header.position !== "fixed" || !near(shellGeometry.header.top, 0) || !near(shellGeometry.header.height, 58)) {
+            throw new Error(`SHELL_HEADER_GEOMETRY_${uid}_${JSON.stringify(shellGeometry.header)}`);
+          }
+          if (shellGeometry.sidebar.position !== "fixed" || !near(shellGeometry.sidebar.left, 0) || !near(shellGeometry.sidebar.top, 58) || !near(shellGeometry.sidebar.width, 64)) {
+            throw new Error(`SHELL_SIDEBAR_GEOMETRY_${uid}_${JSON.stringify(shellGeometry.sidebar)}`);
+          }
+          if (shellGeometry.workspace.position !== "fixed" || !near(shellGeometry.workspace.left, 78) || !near(shellGeometry.workspace.top, 68) || !near(shellGeometry.workspace.right, 1264) || !near(shellGeometry.workspace.bottom, 1384)) {
+            throw new Error(`SHELL_WORKSPACE_GEOMETRY_${uid}_${JSON.stringify(shellGeometry.workspace)}`);
+          }
+          shellGeometryCases += 1;
+
           const controls = await page.locator('button, a[href], input, select, textarea, [role="button"]').evaluateAll((nodes) =>
             nodes.map((node, index) => {
               const element = /** @type {HTMLElement} */ (node);
@@ -247,6 +306,40 @@ try {
         await page.close();
       }
     }
+    const localeHtmlLang = {
+      "zh-TW": "zh-Hant-TW",
+      "zh-CN": "zh-Hans-CN",
+      en: "en",
+    };
+    for (const [route, uid] of routes) {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+      try {
+        await page.goto(base, { waitUntil: "domcontentloaded", timeout: 45_000 });
+        const snapshots = {};
+        for (const locale of ["zh-TW", "zh-CN", "en"]) {
+          await page.evaluate((nextLocale) => window.localStorage.setItem("acpos.locale", nextLocale), locale);
+          const root = await navigateToCurrentPage(page, route, uid);
+          await page.waitForFunction(
+            (expected) => document.documentElement.lang === expected,
+            localeHtmlLang[locale],
+            { timeout: 5_000 },
+          );
+          const heading = root.locator("h1, h2").first();
+          if (await heading.count() === 0) throw new Error(`I18N_PAGE_HEADING_MISSING_${uid}_${locale}`);
+          const title = ((await heading.textContent({ timeout: 5_000 })) ?? "").trim();
+          if (!title) throw new Error(`I18N_PAGE_HEADING_EMPTY_${uid}_${locale}`);
+          const visibleText = ((await root.innerText()) ?? "").replace(/\s+/g, " ").trim();
+          if (!visibleText) throw new Error(`I18N_VISIBLE_TEXT_MISSING_${uid}_${locale}`);
+          snapshots[locale] = { title, visibleText };
+          i18nCases += 1;
+        }
+        if (snapshots["zh-TW"].visibleText === snapshots.en.visibleText) throw new Error(`I18N_ZHTW_NOT_RERENDERED_${uid}`);
+        if (snapshots["zh-CN"].visibleText === snapshots.en.visibleText) throw new Error(`I18N_ZHCN_NOT_RERENDERED_${uid}`);
+      } finally {
+        await page.close();
+      }
+    }
+
     const strategyPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
     try {
       await navigateToCurrentPage(strategyPage, "/admin/strategy", "admin:STR-01");
@@ -331,7 +424,7 @@ try {
         throw new Error("SG02_CONFIGURE_RUNTIME_ERROR");
       }
       sgGovernanceCases += 1;
-      await sgDrawer.locator('button[aria-label="Close"]').click();
+      await sgDrawer.locator("button").first().click();
       await sgDrawer.waitFor({ state: "detached", timeout: 5_000 });
 
       const approveButton = sgPage.locator('button[data-control-id="CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE"][data-operation-id="approveGovernedResource"]').first();
@@ -563,11 +656,11 @@ try {
         const dialog = aiApiPage.locator('section[role="dialog"]');
         await dialog.waitFor({ state: "visible", timeout: 5_000 });
 
-        const targetType = dialog.locator("label").filter({ hasText: "Target Type" }).locator("select");
-        const targetRef = dialog.locator("label").filter({ hasText: "Target Ref" }).locator("input");
-        const enabledField = dialog.locator("label").filter({ hasText: "Enabled" }).locator("select");
-        const reasonField = dialog.locator("label").filter({ hasText: "Reason" }).locator("textarea");
-        const confirmation = dialog.locator("label").filter({ hasText: "Confirmation" }).locator("select");
+        const targetType = dialog.locator('[data-field-key="target_type"] select');
+        const targetRef = dialog.locator('[data-field-key="target_ref"] input');
+        const enabledField = dialog.locator('[data-field-key="enabled"] select');
+        const reasonField = dialog.locator('[data-field-key="reason"] textarea');
+        const confirmation = dialog.locator('[data-field-key="confirmation"] select');
 
         await targetType.selectOption("PROFILE");
         await targetRef.fill("TEST-AIAPI-PROVIDER-001");
@@ -640,7 +733,7 @@ try {
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases} kb_mutation_cases=${kbMutationCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} i18n_cases=${i18nCases} shell_geometry_cases=${shellGeometryCases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases} kb_mutation_cases=${kbMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }

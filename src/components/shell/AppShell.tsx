@@ -32,7 +32,6 @@ const NAV_ITEMS: readonly NavItem[] = [
   { id: "NAV-06", pageUid: "QA-01", labelKey: "global.nav.qa", icon: "qa", href: "/qa" },
   { id: "NAV-07", pageUid: "admin:DB-01", labelKey: "global.nav.database", icon: "database", href: "/database" },
   { id: "NAV-08", pageUid: "workspace:STR-01", labelKey: "global.nav.strategy", icon: "strategy", href: "/strategy" },
-  { id: "NAV-09", pageUid: "workspace:INFO-01", labelKey: "global.nav.latest_information", icon: "info", href: "/info" },
 ] as const;
 
 const ADMIN_NAV_ITEMS: readonly NavItem[] = [
@@ -44,7 +43,6 @@ const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { id: "ADMIN-NAV-06", pageUid: "admin:AIAPI-01", labelKey: "global.admin.aiapi", icon: "video", href: "/admin/aiapi" },
   { id: "ADMIN-NAV-07", pageUid: "admin:SG-02", labelKey: "global.admin.qa_criteria", icon: "qa", href: "/admin/qa-criteria" },
   { id: "ADMIN-NAV-08", pageUid: "admin:STR-01", labelKey: "global.admin.strategy", icon: "strategy", href: "/admin/strategy" },
-  { id: "ADMIN-NAV-09", pageUid: "admin:KB-01", labelKey: "global.admin.knowledge", icon: "asset", href: "/admin/knowledge" },
 ] as const;
 
 function Icon({ name }: { name: NavItem["icon"] }) {
@@ -189,8 +187,8 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
 
   return (
     <div className="acpos-shell" data-vis-step="VIS-00">
-      <header className="global-header" aria-label="Global Header">
-        <div className={brandStyles.wrapper} aria-label="ORANGE ONE">
+      <header className="global-header" aria-label={t("global.shell.header")}>
+        <div className={brandStyles.wrapper} aria-label={t("global.brand.name")}>
           <img className={brandStyles.logo} src="/brand/orange-one-logo.png" alt="ORANGE ONE" />
         </div>
 
@@ -232,6 +230,37 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
             )}
           </div>
 
+          <div className="surface-switch-group" aria-label={`${t("global.header.frontend")} / ${t("global.header.admin")}`}>
+            {frontSurfaceTarget && (
+              <button
+                type="button"
+                className="surface-switch-button"
+                data-control-uid="GHS-CTL-SURFACE-FRONT"
+                data-target-page-uid={frontSurfaceTarget.pageUid}
+                data-navigation-target={frontSurfaceTarget.href}
+                aria-label={t("global.header.frontend")}
+                aria-current={surface === "front" ? "page" : undefined}
+                onClick={() => go(frontSurfaceTarget.href)}
+              >
+                {t("global.header.frontend")}
+              </button>
+            )}
+            {adminSurfaceTarget && (
+              <button
+                type="button"
+                className="surface-switch-button"
+                data-control-uid="GHS-CTL-SURFACE-ADMIN"
+                data-target-page-uid={adminSurfaceTarget.pageUid}
+                data-navigation-target={adminSurfaceTarget.href}
+                aria-label={t("global.header.admin")}
+                aria-current={surface === "admin" ? "page" : undefined}
+                onClick={() => go(adminSurfaceTarget.href)}
+              >
+                {t("global.header.admin")}
+              </button>
+            )}
+          </div>
+
           <div ref={accountRef} className="account-menu" data-port-uid="GHS-PORT-IDENTITY">
             {identityLabel ? (
               <button className="account-button" type="button" aria-label={t("global.header.account")} onClick={() => setAccountOpen((open) => !open)} aria-expanded={accountOpen}>
@@ -258,7 +287,7 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
       <aside
         ref={sidebarRef}
         className={expanded ? "global-sidebar is-expanded" : "global-sidebar"}
-        aria-label="Primary Navigation"
+        aria-label={t("global.shell.primary_navigation")}
         onPointerEnter={openSidebar}
         onPointerLeave={scheduleCollapse}
         onFocusCapture={openSidebar}
@@ -287,27 +316,9 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
             );
           })}
         </nav>
-
-        <div className="sidebar-footer">
-          {surface === "admin" ? (
-            frontSurfaceTarget && (
-              <button type="button" className="nav-item" onClick={() => go(frontSurfaceTarget.href)} data-target-page-uid={frontSurfaceTarget.pageUid} data-navigation-target={frontSurfaceTarget.href} aria-label={t("global.nav.dashboard")}>
-                <span className="nav-icon"><Icon name="dashboard"/></span>
-                <span className="nav-label" aria-hidden={!expanded}>{t("global.nav.dashboard")}</span>
-              </button>
-            )
-          ) : (
-            adminSurfaceTarget && (
-              <button type="button" className="nav-item" onClick={() => go(adminSurfaceTarget.href)} data-target-page-uid={adminSurfaceTarget.pageUid} data-navigation-target={adminSurfaceTarget.href} aria-label={t("global.admin.system")}>
-                <span className="nav-icon"><Icon name="strategy"/></span>
-                <span className="nav-label" aria-hidden={!expanded}>{t("global.admin.system")}</span>
-              </button>
-            )
-          )}
-        </div>
       </aside>
 
-      <main className="workspace-slot" aria-label="Page Content Slot">{children}</main>
+      <main className="workspace-slot" aria-label={t("global.shell.page_content")}>{children}</main>
     </div>
   );
 }
