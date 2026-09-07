@@ -777,6 +777,10 @@ try {
         { timeout: 5_000 },
       );
       if ((await pauseButton.getAttribute("data-action-operation")) !== "pauseKnowledgeSource") throw new Error("KB_SOURCE_PAUSE_OPERATION_TRACE_INVALID");
+      kbPage.once("dialog", async (dialog) => {
+        if (dialog.type() !== "prompt") throw new Error("KB_SOURCE_PAUSE_REASON_PROMPT_MISSING");
+        await dialog.accept("Controlled Gate 24 pause reason");
+      });
       await pauseButton.click();
 
       const resumeButton = kbPage.locator('button[data-control-id="KB-01-CTL-SOURCE-RESUME"]');
@@ -792,6 +796,10 @@ try {
       if ((await kbRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("KB_SOURCE_PAUSE_RUNTIME_ERROR");
       kbMutationCases += 1;
 
+      kbPage.once("dialog", async (dialog) => {
+        if (dialog.type() !== "prompt") throw new Error("KB_SOURCE_RESUME_REASON_PROMPT_MISSING");
+        await dialog.accept("Controlled Gate 24 resume reason");
+      });
       await resumeButton.click();
       await pauseButton.waitFor({ state: "visible", timeout: 5_000 });
       await kbPage.waitForFunction(
