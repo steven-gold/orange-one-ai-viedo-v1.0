@@ -29,7 +29,7 @@ test("CORE and shared Strategy conversation sends reuse the same Production AI t
 
 test("CORE Production UI renders real assistant response and retains controlled-test fallback", async () => {
   const source = await read("src/components/pages/CoreVisual.tsx");
-  assert.match(source, /role: "USER" \| "STATUS" \| "ASSISTANT" \| "SIMULATED_AI"/);
+  assert.match(source, /role: "USER" \| "STATUS" \| "SYSTEM" \| "ASSISTANT" \| "SIMULATED_AI"/);
   assert.match(source, /assistant_response_text/);
   assert.match(source, /assistant_response_ref/);
   assert.match(source, /appendConversationMessage\("ASSISTANT"/);
