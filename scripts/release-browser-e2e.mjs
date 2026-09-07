@@ -89,6 +89,20 @@ try {
           const overflow = document.documentElement.scrollWidth - document.documentElement.clientWidth;
           if (overflow <= 0) return { overflow, offenders: [] };
           const viewportRight = document.documentElement.clientWidth;
+          const isClippedByAncestor = (element) => {
+            let parent = element.parentElement;
+            const rect = element.getBoundingClientRect();
+            while (parent && parent !== document.body) {
+              const parentRect = parent.getBoundingClientRect();
+              const overflowX = getComputedStyle(parent).overflowX;
+              if (
+                ["auto", "scroll", "hidden", "clip"].includes(overflowX) &&
+                rect.right > parentRect.right + 0.5
+              ) return true;
+              parent = parent.parentElement;
+            }
+            return false;
+          };
           const offenders = [...document.querySelectorAll("body *")]
             .map((node) => {
               const element = /** @type {HTMLElement} */ (node);
@@ -102,15 +116,34 @@ try {
                 width: Math.round(rect.width * 100) / 100,
                 overflowX: style.overflowX,
                 delta: Math.round((rect.right - viewportRight) * 100) / 100,
+                clipped: isClippedByAncestor(element),
               };
             })
-            .filter((entry) => entry.delta > 0.5)
+            .filter((entry) => entry.delta > 0.5 && !entry.clipped)
             .sort((a, b) => b.delta - a.delta)
-            .slice(0, 8);
-          return { overflow, offenders };
+            .slice(0, 12);
+          const root = document.querySelector("[data-page-uid]");
+          const chain = [];
+          let current = root;
+          while (current) {
+            const element = /** @type {HTMLElement} */ (current);
+            const rect = element.getBoundingClientRect();
+            chain.push({
+              tag: element.tagName.toLowerCase(),
+              className: typeof element.className === "string" ? element.className : "",
+              left: Math.round(rect.left * 100) / 100,
+              right: Math.round(rect.right * 100) / 100,
+              width: Math.round(rect.width * 100) / 100,
+              clientWidth: element.clientWidth,
+              scrollWidth: element.scrollWidth,
+              overflowX: getComputedStyle(element).overflowX,
+            });
+            current = current.parentElement;
+          }
+          return { overflow, offenders, chain };
         });
         if (overflowAudit.overflow > 0) {
-          throw new Error(`OVERFLOW_${uid}_${width}_${overflowAudit.overflow}_OFFENDERS_${JSON.stringify(overflowAudit.offenders)}`);
+          throw new Error(`OVERFLOW_${uid}_${width}_${overflowAudit.overflow}_OFFENDERS_${JSON.stringify(overflowAudit.offenders)}_CHAIN_${JSON.stringify(overflowAudit.chain)}`);
         }
         const body = (await page.locator("body").textContent()) ?? "";
         if (body.includes('"use client"') || body.includes("function KnowledgeAdminVisual") || body.includes("const CONTROLS")) throw new Error(`SOURCE_RENDER_${uid}`);
