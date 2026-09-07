@@ -2,15 +2,16 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T13:49:25+08:00",
+  "as_of": "2026-09-07T13:58:30+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
-    "main_sha": "bfa5d2671bfaf3a6f1890cc54e66d82356a06d2e",
-    "new_sha_basis": "8ec82dc6bf8ae7696b0c7da76231cfd4df34cca9",
+    "main_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
+    "new_sha_basis": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
-    "construction_branch_vercel_deployment": false
+    "construction_branch_vercel_deployment": false,
+    "construction_branch_alignment": "FAST_FORWARDED_TO_RELEASED_MAIN_BEFORE_STATE_ONLY_UPDATE"
   },
   "release_validation": {
     "final_pre_state_construction_gate": {
@@ -23,18 +24,24 @@
     },
     "current_main_release_gate": {
       "status": "PASS",
-      "run_number": 520,
-      "run_id": 34082112399,
-      "head_sha": "bfa5d2671bfaf3a6f1890cc54e66d82356a06d2e",
+      "run_number": 535,
+      "run_id": 34088576411,
+      "head_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
       "branch": "main",
       "conclusion": "success",
-      "integrated_from": "PR_26_PRODUCTION_REMOTE_ACCEPTANCE_REMEDIATION",
-      "production_post_deploy_runs": [
-        780,
-        782
-      ],
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=500 governed_controls=311 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2 kb_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_397_VISIBLE_397_GOVERNED",
+      "current_dom_breakdown": "enabled=195 disabled=202",
       "standalone_docker_build": "PASS",
-      "dirty_tree_guard": "PASS"
+      "dirty_tree_guard": "PASS",
+      "integrated_pr": {
+        "number": 27,
+        "integrated_release_gate_run_number": 534,
+        "integrated_release_gate_run_id": 34088378594,
+        "merge_result_sha": "81a4a862040e8a5591a82058d9e7c324f71e036b",
+        "conclusion": "success"
+      }
     },
     "latest_provider_adapter_gate": {
       "status": "PASS",
@@ -61,11 +68,11 @@
     },
     "latest_remote_control_acceptance_gate": {
       "status": "PASS_PRODUCTION",
-      "run_number": 780,
-      "run_id": 34082142028,
-      "duplicate_confirming_run_number": 782,
-      "duplicate_confirming_run_id": 34082267404,
-      "head_sha": "bfa5d2671bfaf3a6f1890cc54e66d82356a06d2e",
+      "run_number": 796,
+      "run_id": 34088606609,
+      "duplicate_confirming_run_number": 797,
+      "duplicate_confirming_run_id": 34088737458,
+      "head_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
       "branch": "main",
       "conclusion": "success",
       "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_RELEASE_SHA_EXACT_PROJECTIONS_18",
@@ -74,7 +81,7 @@
       "authenticated_browser_visibility": "PASS_FRONT_NAV_9_ADMIN_NAV_9_VISIBLE_PAGES_18",
       "production_dom_control_acceptance": "PASS_18_PAGES_538_VISIBLE_538_GOVERNED",
       "production_dom_breakdown": "enabled=308 disabled=230",
-      "note": "Historical 1453 remains only the legacy 92-page permission catalog baseline (1141 controls + 312 actions)."
+      "note": "Deployment-triggered #796 and workflow-run-triggered #797 both passed on the exact same Production SHA."
     },
     "latest_gate24_strategy_governance_gate": {
       "status": "PASS_RELEASE_CONTROLLED",
@@ -330,7 +337,7 @@
       "repository_cleanup": "TEMPORARY_WORKFLOW_STEP_AND_SCRIPT_REMOVED"
     },
     "latest_gate22_internal_runtime_gate": {
-      "status": "PASS_CODE_READY_EXTERNAL_CONFIGURATION_STILL_BLOCKED",
+      "status": "PASS_CODE_DEPLOYED_EXTERNAL_CONFIGURATION_STILL_BLOCKED",
       "run_number": 532,
       "run_id": 34088141080,
       "head_sha": "8ec82dc6bf8ae7696b0c7da76231cfd4df34cca9",
@@ -346,28 +353,32 @@
       "external_provider_e2e_workflow": ".github/workflows/external-provider-acceptance.yml",
       "external_provider_e2e_script": "scripts/production-external-provider-e2e.mjs",
       "external_request_evidence_required": true,
-      "synthetic_provider_evidence_forbidden": true
+      "synthetic_provider_evidence_forbidden": true,
+      "production_main_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
+      "integrated_release_gate": "#534 PASS",
+      "main_release_gate": "#535 PASS",
+      "production_post_deploy": "#796 PASS + #797 PASS"
     }
   },
   "production": {
     "target": "orange-one-acpos-test",
     "url": "https://orange-one-acpos-test.vercel.app",
-    "deployed_sha": "bfa5d2671bfaf3a6f1890cc54e66d82356a06d2e",
+    "deployed_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
     "deployment_status": "PASS_EXACT_MAIN_SHA",
     "latest_verified_post_deploy": {
       "status": "PASS",
-      "deployment_trigger_run_number": 780,
-      "deployment_trigger_run_id": 34082142028,
-      "duplicate_workflow_run_number": 782,
-      "duplicate_workflow_run_id": 34082267404,
-      "head_sha": "bfa5d2671bfaf3a6f1890cc54e66d82356a06d2e",
+      "deployment_trigger_run_number": 796,
+      "deployment_trigger_run_id": 34088606609,
+      "duplicate_workflow_run_number": 797,
+      "duplicate_workflow_run_id": 34088737458,
+      "head_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
       "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_PROJECTIONS_18",
       "authenticated_e2e": "PASS_LOGIN_SESSION_DASHBOARD_PROJECTIONS_18_QUEUE_PROBE_LOGOUT",
       "browser_smoke": "PASS_54_CASES_18_PAGES_3_WIDTHS",
       "authenticated_browser_visibility": "PASS_FRONT_NAV_9_ADMIN_NAV_9_VISIBLE_PAGES_18",
       "current_dom_control_acceptance": "PASS_18_PAGES_538_VISIBLE_538_GOVERNED_ENABLED_308_DISABLED_230"
     },
-    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_bfa5d2671bfaf3a6f1890cc54e66d82356a06d2e",
+    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
     "database_migration_count": 19,
     "vercel_management_visibility": {
       "team": "gold5757",
@@ -377,6 +388,14 @@
       "direct_get_project": "NOT_VISIBLE_404",
       "deployment_evidence": "GITHUB_VERCEL_STATUS_CONFIRMS_gold5757/orange-one-acpos-test",
       "classification": "MANAGEMENT_CONNECTOR_PROJECT_READ_VISIBILITY_MISMATCH_NOT_DEPLOYMENT_FAILURE"
+    },
+    "vercel_deployment": {
+      "state": "SUCCESS",
+      "description": "Deployment has completed",
+      "main_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
+      "target": "gold5757/orange-one-acpos-test",
+      "deployment_ref": "4Rf3iXC1At6oWDTDzun6dEqRAU3H",
+      "deployment_trigger_count_for_this_release": 1
     }
   },
   "neon": {
@@ -426,15 +445,15 @@
       "heartbeat",
       "probe_cleanup"
     ],
-    "production_full_http_probe": "PASS_ON_bfa5d2671bfaf3a6f1890cc54e66d82356a06d2e",
+    "production_full_http_probe": "PASS_ON_2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
     "external_provider_call_during_probe": false,
     "daily_recovery_cron": "MATERIALIZED_HOBBY_DAILY_UTC_0000",
     "cron_secret": "NOT_VERIFIED_VERCEL_MANAGEMENT_SCOPE_MISMATCH",
     "production_full_http_probe_evidence": {
-      "run_number": 780,
-      "run_id": 34082142028,
-      "duplicate_confirming_run_number": 782,
-      "duplicate_confirming_run_id": 34082267404,
+      "run_number": 796,
+      "run_id": 34088606609,
+      "duplicate_confirming_run_number": 797,
+      "duplicate_confirming_run_id": 34088737458,
       "authenticated_e2e": "PASS",
       "idempotency": true,
       "claim": true,
@@ -463,7 +482,7 @@
       "release_gate_531": "PASS",
       "release_gate_532": "PASS"
     },
-    "production_deployment": "DEPLOYED_ON_bfa5d2671bfaf3a6f1890cc54e66d82356a06d2e",
+    "production_deployment": "DEPLOYED_ON_2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
     "external_provider_execution": "BLOCKED_REAL_PROVIDER_CONFIGURATION_REQUIRED",
     "provider_counts": {
       "capabilities": 0,
@@ -474,19 +493,19 @@
       "profile_tests": 0,
       "route_decisions": 0
     },
-    "external_provider_adapter_runtime": "MATERIALIZED_CURRENT_ON_NEW",
-    "capability_governance_materialization": "MATERIALIZED_CURRENT_ON_NEW_RELEASE_GATE_531_PASS",
-    "worker_dispatch_authority_revalidation": "MATERIALIZED_CURRENT_ON_NEW_RELEASE_GATE_532_PASS",
-    "real_external_provider_acceptance": "MANUAL_ONLY_WORKFLOW_MATERIALIZED_RELEASE_GATE_530_PASS"
+    "external_provider_adapter_runtime": "DEPLOYED_PRODUCTION",
+    "capability_governance_materialization": "DEPLOYED_PRODUCTION_RELEASE_GATE_535_POST_DEPLOY_796_797_PASS",
+    "worker_dispatch_authority_revalidation": "DEPLOYED_PRODUCTION_RELEASE_GATE_535_POST_DEPLOY_796_797_PASS",
+    "real_external_provider_acceptance": "MANUAL_ONLY_WORKFLOW_DEPLOYED_NOT_EXECUTED_REAL_CONFIG_ABSENT"
   },
   "formal_truth": {
     "gate22_external_provider": {
-      "status": "BLOCKED_EXTERNAL_CONFIGURATION_CODE_PATH_READY_ON_NEW",
-      "reason": "Internal Gate 22 code path is now release-validated through #532, including canonical capability materialization, secret/profile/group/queue/worker/HTTP fail-closed checks, full dispatch-time revalidation, and an independent real Production External Provider E2E workflow. Production Neon still has 0 capabilities, 0 profiles, 0 approved secret references, 0 groups, 0 members, 0 profile tests and 0 route decisions, so real external Provider E2E cannot yet execute or be claimed."
+      "status": "BLOCKED_EXTERNAL_CONFIGURATION_INTERNAL_PATH_DEPLOYED",
+      "reason": "Gate 22 internal implementation is now deployed on Production SHA 2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed and passed integrated Release Gate #534, main Release Gate #535, and Production Post-Deploy #796/#797. The deployed path includes canonical capability approval materialization, secret/profile/group/queue/worker/HTTP fail-closed checks, dispatch-time authority/classification/profile-version revalidation, and a manual-only real External Provider E2E workflow. Production Neon still has 0 capabilities, 0 profiles, 0 approved secret references, 0 groups, 0 members, 0 profile tests and 0 route decisions. No real external request exists, so Gate 22 remains BLOCKED and must not be marked PASS."
     },
     "gate23_queue_worker_dlq": {
       "status": "PASS",
-      "reason": "Production queue/worker/DLQ remains verified on bfa5d267 via Post Deploy #780 and duplicate confirming #782; authenticated E2E passes idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup without external provider calls."
+      "reason": "Production queue/worker/DLQ is re-verified on exact Production SHA 2e53c4ec via Post-Deploy #796 and duplicate confirming #797; authenticated E2E passes idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup without external provider calls."
     },
     "gate24_admin_mutation": {
       "status": "PARTIAL_8_OF_9_SYS01_BLOCKED",
@@ -494,20 +513,19 @@
     },
     "gate25_full_page_button_acceptance": {
       "status": "PASS_PRODUCTION_CURRENT_18_PAGE_ACCEPTANCE",
-      "reason": "Production exact SHA bfa5d267 passed Post Deploy #780 and confirming #782: HTTP smoke, authenticated E2E, 54 browser cases across 18 Current pages at 1280/1440/1920, 18 visible-page auth, and Current DOM acceptance 538 visible / 538 governed (308 enabled, 230 disabled). Release Gate #532 also passes 72 controlled browser cases and 18-page Current DOM acceptance on the latest construction head. Historical 1453 is only the legacy 92-page permission catalog baseline (1141 controls + 312 actions)."
+      "reason": "Production exact SHA 2e53c4ec passed Post-Deploy #796 and confirming #797: HTTP smoke, authenticated E2E, 54 browser cases across 18 Current pages at 1280/1440/1920, 18 visible-page auth, and Current DOM acceptance 538 visible / 538 governed (308 enabled, 230 disabled). Main Release Gate #535 also passes 72 controlled browser cases and 18-page Current DOM acceptance 397/397 governed. Historical 1453 remains only the legacy 92-page permission catalog baseline (1141 controls + 312 actions)."
     }
   },
   "blockers": [
-    "Gate 22 real external configuration is absent in Production Neon: capabilities=0, profiles=0, approved secret references=0, groups=0, members=0. Real external request evidence cannot be fabricated.",
+    "Gate 22 real external configuration is absent in Production Neon: capabilities=0, profiles=0, approved secret references=0, groups=0, members=0. No real external_request_sent=true evidence exists, so Gate 22 cannot pass.",
     "Gate 24 SYS-01 remains blocked by FINAL_LOCKED Current Authority (service mutations enabled_in_visual_phase=false) and PROVIDER_GATEWAY_NOT_MATERIALIZED.",
-    "Vercel management connector can see Hobby team gold5757 but cannot enumerate/read the Production project; GitHub↔Vercel deployment status and exact-SHA Post-Deploy evidence remain the deployment authority until connector project-read visibility is repaired."
+    "Vercel management connector still lacks Project-read visibility even though Git-linked deployment for gold5757/orange-one-acpos-test succeeded on exact main SHA; use GitHub↔Vercel status plus Post-Deploy evidence as deployment authority until connector visibility is repaired."
   ],
   "next_release_sequence": [
-    "Latest new code head 8ec82dc6bf8ae7696b0c7da76231cfd4df34cca9 passed Release Gate #532. main is bfa5d2671bfaf3a6f1890cc54e66d82356a06d2e and branches are diverged; create a new new→main PR and require the pull_request integrated Release Gate before merge.",
-    "After integrated PR Release Gate succeeds, merge once to main. Let the Git-linked Vercel Production deployment occur once; do not trigger redundant Hobby deployments.",
-    "Require exact new main SHA Release Gate plus Production Post-Deploy HTTP/auth/browser/Current-DOM acceptance before calling the release deployed.",
-    "After release, Gate 22 remains BLOCKED until real capability/profile/approved secret reference/group/member configuration exists. Then run ACPOS External Provider Acceptance manually with real IDs and require external_request_sent=true plus result_hash evidence.",
-    "Keep SYS-01 mutation blocked until Current Authority changes and the exact production lifecycle runtime is materialized.",
+    "Current released baseline is main/new code basis 2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed. This state update is construction-branch-only and must not trigger a redundant Vercel Hobby deployment.",
+    "Do not rebuild Gate 22 internals. The remaining Gate 22 action requires real Production capability/profile/approved secret reference/group/member data from the actual Provider configuration.",
+    "When real Provider configuration exists, run ACPOS External Provider Acceptance manually with the real profile/group/capability and require external_request_sent=true, worker success, route decision SUCCESS and result_hash lineage.",
+    "Keep SYS-01 mutation blocked until Current Authority explicitly enables its service mutations and the exact production lifecycle runtime is materialized.",
     "Treat 1453 strictly as the legacy 92-page permission catalog baseline (1141 controls + 312 actions), not the Current 18-page DOM denominator."
   ],
   "ui_visual_adjustment_policy": {
@@ -519,5 +537,10 @@
       "Preserve the established visual proportion between columns, panels, controls, spacing, and hierarchy.",
       "Prefer minimal px/gap/padding/min-width/flex shrink corrections; structural rearrangement requires separate authority."
     ]
+  },
+  "post_release_state_policy": {
+    "branch": "new",
+    "deployment_effect": "NONE",
+    "reason": "Final evidence is recorded after Production release without creating a second main/Vercel deployment."
   }
 }
