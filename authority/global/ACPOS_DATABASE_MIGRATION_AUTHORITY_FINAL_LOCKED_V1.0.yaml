@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-08-CORE0021-VALIDATED-PENDING-PRODUCTION-APPLY
+  revision: 2026-09-08-SOC0022-ERP0023-DATA-VALIDATED-PENDING-PRODUCTION-APPLY
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 live_neon_target:
@@ -73,7 +73,10 @@ artifact_bindings:
   account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   account_permission_catalog_bytes: 2762474
   account_permission_catalog_lines: 79399
-  materialized_migration_count: 21
+  materialized_migration_count: 23
+  repository_registered_migration_count: 23
+  validation_branch_migration_count: 23
+  production_applied_migration_count: 20
 current_production_reconciliation:
   status: PASS
   verified_on: '2026-09-06'
@@ -1179,4 +1182,99 @@ pending_0021_core_decision_candidate_runtime:
       conclusion: success
       regression_test: migration 0021 materializes governed Core decision and candidate owners under RLS
     production_mutation_performed: false
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+pending_0022_soc_draft_candidate_permission_closure:
+  status: DATA_VALIDATED_PENDING_SESSION_BOUND_RUNTIME_E2E_AND_PRODUCTION_APPLY
+  source_migration: database/migrations/0022_soc_draft_candidate_permission_closure.sql
+  payload_sha256: 4592e475b078613928117e40a304c3d039a187e234a3ef257844226cb4b50047
+  change_ref: CR-SOC-0022
+  authority_basis:
+  - admin:SOC-01 saveDraft reuses Existing Draft/Candidate owner
+  - admin:SOC-01 decideCandidate reuses Existing Candidate owner
+  - existing permission resources api:saveDraft and api:decideCandidate
+  reuse_contract:
+  - public.content_packages
+  - acpos_runtime.entities kind SOC_CONTENT_DRAFT
+  - public.permission_resources
+  - public.account_permission_assignments
+  - acpos_runtime session-bound RLS actor helpers
+  new_parallel_systems: 0
+  validation_evidence:
+    status: PASS_DATA_LAYER
+    validated_on: '2026-09-08'
+    source: LIVE_NEON_VALIDATION_BRANCH
+    validation_branch_name: rls-0016-validate-20260906
+    validation_branch_id: br-orange-smoke-aut9pafw
+    parent_branch_id: br-shy-cherry-auiol4oy
+    migration_count_before_apply: 21
+    migration_count_after_apply: 22
+    migration_history_rows: 1
+    checksum: 4592e475b078613928117e40a304c3d039a187e234a3ef257844226cb4b50047
+    approved_allow_assignments: 2
+    approved_deny_assignments: 0
+    permission_resources_created: 0
+    roles_created_or_altered: 0
+    production_mutation_performed: false
+  session_bound_runtime_validation:
+    status: PENDING_FINAL_PRODUCTION_LOGIN_E2E
+    validation_branch_active_admin_sessions: 0
+    fail_closed_actor_resolution_without_active_session: CONFIRMED
+    simulation_bypass_performed: false
+    note: Validation branch contains no active admin session; session-bound operation authorization must be proven by governed login after final Production release rather than by synthesizing credentials.
+  production_baseline:
+    migration_count: 20
+    latest_migration: 0020_system_lifecycle_runtime
+    approved_soc_api_assignments: 0
+    production_apply_performed: false
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+pending_0023_erp_snapshot_refresh_permission_closure:
+  status: DATA_VALIDATED_PENDING_SESSION_BOUND_RUNTIME_E2E_AND_PRODUCTION_APPLY
+  source_migration: database/migrations/0023_erp_snapshot_refresh_permission_closure.sql
+  payload_sha256: d18b51cb45f1c0ed3519ba3b1d2c7ac2ed11bc270e2bf59e21c98d41694f0cfa
+  change_ref: CR-ERP-0023
+  authority_basis:
+  - admin:ERP-01 refreshERPSnapshot reuses ERPConnectorService
+  - existing control resource CTRL-ADMIN-ERP-01-ACT-05-ERP-SNAPSHOT-REFRESH
+  - existing API resource api:refreshERPSnapshot
+  - refresh request writes only erp_sync_jobs and does not synthesize erp_snapshots
+  reuse_contract:
+  - public.erp_connectors
+  - public.erp_snapshots
+  - public.erp_sync_jobs
+  - public.permission_resources
+  - public.account_permission_assignments
+  - acpos_runtime session-bound RLS actor helpers
+  new_parallel_systems: 0
+  validation_evidence:
+    status: PASS_DATA_LAYER
+    validated_on: '2026-09-08'
+    source: LIVE_NEON_VALIDATION_BRANCH
+    validation_branch_name: rls-0016-validate-20260906
+    validation_branch_id: br-orange-smoke-aut9pafw
+    parent_branch_id: br-shy-cherry-auiol4oy
+    migration_count_before_apply: 22
+    migration_count_after_apply: 23
+    migration_history_rows: 1
+    checksum: d18b51cb45f1c0ed3519ba3b1d2c7ac2ed11bc270e2bf59e21c98d41694f0cfa
+    approved_allow_assignments: 2
+    approved_deny_assignments: 0
+    permission_resources_created: 0
+    roles_created_or_altered: 0
+    connector_rows_created: 0
+    snapshot_rows_created: 0
+    production_mutation_performed: false
+  session_bound_runtime_validation:
+    status: PENDING_FINAL_PRODUCTION_LOGIN_E2E
+    validation_branch_active_admin_sessions: 0
+    simulation_bypass_performed: false
+    note: Operation permission visibility remains intentionally unproven without a governed authenticated session on the validation branch; final Production login E2E is required.
+  production_baseline:
+    migration_count: 20
+    latest_migration: 0020_system_lifecycle_runtime
+    erp_connector_rows: 0
+    erp_snapshot_rows: 0
+    approved_erp_refresh_assignments: 0
+    production_apply_performed: false
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
