@@ -71,6 +71,7 @@ try {
   let safeLocalClicks = 0;
   let strategyFormCases = 0;
   let sgGovernanceCases = 0;
+  let iamMutationCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -338,10 +339,94 @@ try {
     } finally {
       await sgPage.close();
     }
+
+    const iamPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      await navigateToCurrentPage(iamPage, "/admin/accounts", "admin:IAM-01");
+      const iamRoot = iamPage.locator('[data-page-uid="admin:IAM-01"]');
+      if ((await iamRoot.getAttribute("data-effectful-runtime-ready")) !== "true") {
+        throw new Error("IAM_EFFECTFUL_RUNTIME_NOT_READY_IN_CONTROLLED_TEST");
+      }
+
+      const addButton = iamPage.locator('button[data-control-id="IAM-01-BTN-ADD"]');
+      if (!(await addButton.isEnabled())) throw new Error("IAM_ADD_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await addButton.click();
+      await iamPage.waitForFunction(
+        () => document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute("data-page-state") === "CREATE_BASIC",
+        { timeout: 5_000 },
+      );
+
+      const identityField = iamPage.locator('input[data-field-uid="TEST-IAM-FIELD-IDENTITY-CANDIDATE"]');
+      const scopeField = iamPage.locator('input[data-field-uid="TEST-IAM-FIELD-ORG-SCOPE"]');
+      await identityField.fill("TEST-IDENTITY-CANDIDATE-NEW-001");
+      await scopeField.fill("TEST-ORG-SCOPE-NEW");
+      await iamPage.locator('select[data-control-id="IAM-01-SEL-DEPT-PRESET"]').selectOption("TEST-IAM-PRESET-EDITING");
+
+      const saveButton = iamPage.locator('button[data-control-id="IAM-01-BTN-SAVE-DRAFT"]');
+      if (!(await saveButton.isEnabled())) throw new Error("IAM_SAVE_DRAFT_NOT_ENABLED");
+      await saveButton.click();
+      const validateButton = iamPage.locator('button[data-control-id="IAM-01-BTN-VALIDATE"]');
+      await validateButton.waitFor({ state: "visible", timeout: 5_000 });
+      await iamPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="IAM-01-BTN-VALIDATE"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      iamMutationCases += 1;
+
+      await validateButton.click();
+      await iamPage.waitForFunction(
+        () => document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute("data-page-state") === "CREATE_PERMISSION",
+        { timeout: 5_000 },
+      );
+      iamMutationCases += 1;
+
+      const previewButton = iamPage.locator('button[data-control-id="IAM-01-BTN-PREVIEW"]');
+      await iamPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="IAM-01-BTN-PREVIEW"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      await previewButton.click();
+      await iamPage.waitForFunction(
+        () => document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute("data-page-state") === "CREATE_PREVIEW",
+        { timeout: 5_000 },
+      );
+      iamMutationCases += 1;
+
+      const completeButton = iamPage.locator('button[data-control-id="IAM-01-BTN-COMPLETE"]');
+      await iamPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="IAM-01-BTN-COMPLETE"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      if (!(await completeButton.getAttribute("data-operations"))?.includes("assignAccountPermission")) {
+        throw new Error("IAM_COMPLETE_ORCHESTRATION_TRACE_INVALID");
+      }
+      iamPage.once("dialog", async (dialog) => {
+        await dialog.accept();
+      });
+      await completeButton.click();
+      await iamPage.waitForFunction(
+        () => document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute("data-page-state") === "COMPLETE",
+        { timeout: 10_000 },
+      );
+      await iamPage.locator('button[data-account-id="TEST-IAM-ACCOUNT-NEW-001"]').waitFor({ state: "visible", timeout: 5_000 });
+      if ((await iamRoot.getAttribute("data-runtime-error-uid")) !== null) throw new Error("IAM_COMPLETE_RUNTIME_ERROR");
+      iamMutationCases += 1;
+    } finally {
+      await iamPage.close();
+    }
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }
