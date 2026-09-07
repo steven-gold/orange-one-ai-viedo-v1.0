@@ -1,7 +1,9 @@
 const base = (process.env.ACPOS_DEPLOYMENT_URL ?? "https://orange-one-acpos-test.vercel.app").replace(/\/$/, "");
 const email = (process.env.ACPOS_PRODUCTION_E2E_EMAIL ?? "").trim();
 const password = process.env.ACPOS_PRODUCTION_E2E_PASSWORD ?? "";
-const profileId = (process.env.ACPOS_EXTERNAL_E2E_PROFILE_ID ?? "").trim();
+const singleProfileId = (process.env.ACPOS_EXTERNAL_E2E_PROFILE_ID ?? "").trim();
+const profileIds = (process.env.ACPOS_EXTERNAL_E2E_PROFILE_IDS ?? singleProfileId)
+  .split(",").map((value) => value.trim()).filter(Boolean);
 const groupId = (process.env.ACPOS_EXTERNAL_E2E_GROUP_ID ?? "").trim();
 const capability = (process.env.ACPOS_EXTERNAL_E2E_CAPABILITY ?? "").trim().toUpperCase();
 const classification = (process.env.ACPOS_EXTERNAL_E2E_CLASSIFICATION ?? "INTERNAL").trim().toUpperCase();
@@ -35,7 +37,7 @@ async function logout(cookie) {
 }
 
 if (!email || !password) blocked("PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED");
-if (!profileId) blocked("REAL_PROVIDER_PROFILE_ID_NOT_CONFIGURED");
+if (!profileIds.length) blocked("REAL_PROVIDER_PROFILE_ID_NOT_CONFIGURED");
 if (!groupId) blocked("REAL_PROVIDER_GROUP_ID_NOT_CONFIGURED");
 if (!capability) blocked("REAL_PROVIDER_CAPABILITY_NOT_CONFIGURED");
 
@@ -45,7 +47,12 @@ try {
   const healthBody = await json(health, "HEALTH");
   assert(health.status === 200, `HEALTH_HTTP_${health.status}`);
   assert(healthBody?.environment === "production", "HEALTH_ENVIRONMENT_NOT_PRODUCTION");
-  if (expectedReleaseSha) assert(healthBody?.release_sha === expectedReleaseSha, `HEALTH_RELEASE_SHA_MISMATCH_${healthBody?.release_sha ?? "UNRESOLVED"}`);
+  if (expectedReleaseSha) {
+    assert(
+      healthBody?.release_sha === expectedReleaseSha,
+      `HEALTH_RELEASE_SHA_MISMATCH_${healthBody?.release_sha ?? "UNRESOLVED"}`,
+    );
+  }
 
   const login = await fetch(`${base}/v1/identity/session`, {
     method: "POST",
@@ -73,28 +80,53 @@ try {
   const listBody = await json(list, "PROFILE_LIST");
   assert(list.status === 200 && listBody?.ok === true, `PROFILE_LIST_HTTP_${list.status}`);
   const profiles = Array.isArray(listBody?.value?.profiles) ? listBody.value.profiles : [];
-  const profile = profiles.find((row) => row?.profile_id === profileId);
-  if (!profile) blocked("REAL_PROVIDER_PROFILE_NOT_FOUND");
-  if (profile.enabled !== true) blocked("REAL_PROVIDER_PROFILE_DISABLED");
-  if (profile.credential_status !== "SET") blocked("REAL_PROVIDER_CREDENTIAL_NOT_SET");
-  if (String(profile.capability_type ?? "").toUpperCase() !== capability) blocked("REAL_PROVIDER_CAPABILITY_PROFILE_MISMATCH");
 
-  const connectionTest = await fetch(`${base}/v1/aiapi/provider-profiles/${encodeURIComponent(profileId)}/test`, {
-    method: "POST",
-    cache: "no-store",
-    headers: {
-      ...cookieHeaders(cookie),
-      "content-type": "application/json",
-      "x-correlation-id": crypto.randomUUID(),
-    },
-    body: JSON.stringify({}),
-  });
-  const connectionBody = await json(connectionTest, "PROFILE_CONNECTION_TEST");
-  assert(connectionTest.status === 200 && connectionBody?.ok === true, `PROFILE_CONNECTION_TEST_HTTP_${connectionTest.status}_${connectionBody?.reason_code ?? "UNKNOWN"}`);
-  assert(connectionBody?.value?.status === "PASS", "PROFILE_CONNECTION_TEST_STATUS_NOT_PASS");
-  assert(connectionBody?.value?.dry_run === false, "PROFILE_CONNECTION_TEST_MUST_BE_REAL");
-  assert(connectionBody?.value?.external_request_sent === true, "PROFILE_CONNECTION_TEST_EXTERNAL_REQUEST_NOT_ATTESTED");
-  assert(typeof connectionBody?.value?.result_hash === "string" && connectionBody.value.result_hash.length > 0, "PROFILE_CONNECTION_TEST_RESULT_HASH_MISSING");
+  const tested = [];
+  for (const profileId of profileIds) {
+    const profile = profiles.find((row) => row?.profile_id === profileId);
+    if (!profile) blocked(`REAL_PROVIDER_PROFILE_NOT_FOUND_${profileId}`);
+    if (profile.enabled !== true) blocked(`REAL_PROVIDER_PROFILE_DISABLED_${profileId}`);
+    if (profile.credential_status !== "SET") blocked(`REAL_PROVIDER_CREDENTIAL_NOT_SET_${profileId}`);
+    if (String(profile.capability_type ?? "").toUpperCase() !== capability) {
+      blocked(`REAL_PROVIDER_CAPABILITY_PROFILE_MISMATCH_${profileId}`);
+    }
+
+    const connectionTest = await fetch(
+      `${base}/v1/aiapi/provider-profiles/${encodeURIComponent(profileId)}/test`,
+      {
+        method: "POST",
+        cache: "no-store",
+        headers: {
+          ...cookieHeaders(cookie),
+          "content-type": "application/json",
+          "x-correlation-id": crypto.randomUUID(),
+        },
+        body: JSON.stringify({}),
+      },
+    );
+    const connectionBody = await json(connectionTest, `PROFILE_CONNECTION_TEST_${profileId}`);
+    assert(
+      connectionTest.status === 200 && connectionBody?.ok === true,
+      `PROFILE_CONNECTION_TEST_HTTP_${profileId}_${connectionTest.status}_${connectionBody?.reason_code ?? "UNKNOWN"}`,
+    );
+    assert(connectionBody?.value?.status === "PASS", `PROFILE_CONNECTION_TEST_STATUS_NOT_PASS_${profileId}`);
+    assert(connectionBody?.value?.dry_run === false, `PROFILE_CONNECTION_TEST_MUST_BE_REAL_${profileId}`);
+    assert(
+      connectionBody?.value?.external_request_sent === true,
+      `PROFILE_CONNECTION_TEST_EXTERNAL_REQUEST_NOT_ATTESTED_${profileId}`,
+    );
+    assert(
+      typeof connectionBody?.value?.result_hash === "string" && connectionBody.value.result_hash.length > 0,
+      `PROFILE_CONNECTION_TEST_RESULT_HASH_MISSING_${profileId}`,
+    );
+    tested.push({
+      profile_id: profileId,
+      provider_id: profile.provider_id,
+      model_id: profile.model_id,
+      test_id: connectionBody.value.test_id,
+      result_hash: connectionBody.value.result_hash,
+    });
+  }
 
   const route = await fetch(`${base}/v1/aiapi/routes`, {
     method: "POST",
@@ -114,14 +146,25 @@ try {
     }),
   });
   const routeBody = await json(route, "PROVIDER_ROUTE");
-  assert(route.status === 200 && routeBody?.ok === true, `PROVIDER_ROUTE_HTTP_${route.status}_${routeBody?.reason_code ?? "UNKNOWN"}`);
+  assert(
+    route.status === 200 && routeBody?.ok === true,
+    `PROVIDER_ROUTE_HTTP_${route.status}_${routeBody?.reason_code ?? "UNKNOWN"}`,
+  );
   const value = routeBody?.value ?? {};
-  assert(value.external_request_sent === true, `PROVIDER_ROUTE_EXTERNAL_REQUEST_NOT_SENT_${value.status ?? "UNKNOWN"}_${value.reason ?? "UNKNOWN"}`);
+  assert(
+    value.external_request_sent === true,
+    `PROVIDER_ROUTE_EXTERNAL_REQUEST_NOT_SENT_${value.status ?? "UNKNOWN"}_${value.reason ?? "UNKNOWN"}`,
+  );
   assert(value.status === "SUCCESS", `PROVIDER_ROUTE_STATUS_${value.status ?? "UNRESOLVED"}`);
   assert(typeof value.result_hash === "string" && value.result_hash.length > 0, "PROVIDER_ROUTE_RESULT_HASH_MISSING");
   assert(value.worker?.succeeded === 1, "PROVIDER_ROUTE_WORKER_NOT_SUCCESSFUL");
   const decisionId = value.route_decision_id;
   assert(typeof decisionId === "string" && decisionId.length > 0, "PROVIDER_ROUTE_DECISION_ID_MISSING");
+
+  const routedProfile = profiles.find(
+    (row) => row?.provider_id === value.provider_id && row?.model_id === value.model_id,
+  );
+  assert(routedProfile, "PROVIDER_ROUTE_PROFILE_NOT_REGISTERED");
 
   const decision = await fetch(`${base}/v1/aiapi/routes/${encodeURIComponent(decisionId)}`, {
     method: "GET",
@@ -134,11 +177,11 @@ try {
   assert(resolved.status === "SUCCESS", `ROUTE_DECISION_STATUS_${resolved.status ?? "UNRESOLVED"}`);
   assert(resolved.payload?.external_request_sent === true, "ROUTE_DECISION_EXTERNAL_REQUEST_NOT_ATTESTED");
   assert(resolved.payload?.result_hash === value.result_hash, "ROUTE_DECISION_RESULT_HASH_MISMATCH");
-  assert(resolved.provider_id === profile.provider_id, "ROUTE_DECISION_PROVIDER_MISMATCH");
-  assert(resolved.model_id === profile.model_id, "ROUTE_DECISION_MODEL_MISMATCH");
+  assert(resolved.provider_id === value.provider_id, "ROUTE_DECISION_PROVIDER_MISMATCH");
+  assert(resolved.model_id === value.model_id, "ROUTE_DECISION_MODEL_MISMATCH");
 
   process.stdout.write(
-    `PRODUCTION_EXTERNAL_PROVIDER_E2E_PASS release_sha=${healthBody.release_sha} profile_id=${profileId} provider_id=${profile.provider_id} model_id=${profile.model_id} capability=${capability} connection_test_id=${connectionBody.value.test_id} route_decision_id=${decisionId} external_request_sent=true result_hash=${value.result_hash} plaintext_persisted=false\n`
+    `PRODUCTION_EXTERNAL_PROVIDER_E2E_PASS release_sha=${healthBody.release_sha} profile_tests=${tested.length} providers=${tested.map((row) => row.provider_id).join(",")} capability=${capability} route_provider=${value.provider_id} route_model=${value.model_id} route_decision_id=${decisionId} worker_succeeded=1 external_request_sent=true plaintext_persisted=false\n`,
   );
 } finally {
   await logout(cookie);
