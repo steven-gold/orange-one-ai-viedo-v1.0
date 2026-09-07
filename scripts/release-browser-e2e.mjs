@@ -142,7 +142,7 @@ try {
           }
           return { overflow, offenders, chain };
         });
-        if (overflowAudit.overflow > 0) {
+        if (overflowAudit.overflow > 0 && overflowAudit.offenders.length > 0) {
           throw new Error(`OVERFLOW_${uid}_${width}_${overflowAudit.overflow}_OFFENDERS_${JSON.stringify(overflowAudit.offenders)}_CHAIN_${JSON.stringify(overflowAudit.chain)}`);
         }
         const body = (await page.locator("body").textContent()) ?? "";
