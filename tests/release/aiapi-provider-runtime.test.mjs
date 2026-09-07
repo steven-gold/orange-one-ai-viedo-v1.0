@@ -84,7 +84,7 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(providerAdapter, /PROVIDER_ENDPOINT_PRIVATE_NETWORK_FORBIDDEN/);
   assert.match(providerAdapter, /PROVIDER_REQUEST_TIMEOUT/);
   assert.match(providerAdapter, /PROVIDER_RESPONSE_TEXT_PATH_NOT_FOUND/);
-  assert.match(providerAdapter, /authorization:/);
+  assert.match(providerAdapter, /headers\.authorization/);
   assert.match(providerAdapter, /Bearer/);
   assert.match(providerAdapter, /X_GOOG_API_KEY/);
   assert.match(providerAdapter, /x-goog-api-key/);

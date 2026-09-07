@@ -27,9 +27,9 @@ test("SYS-01 SystemChangeService is materialized with user-approved governed mut
   assert.match(runtime, /public\.system_change_candidates/);
   assert.match(runtime, /public\.system_change_requests/);
   assert.match(runtime, /executeProductionAiApiCommand/);
-  assert.match(runtime, /operation_id: "runSandboxTest"/);
-  assert.match(runtime, /production_mutation: false/);
-  assert.match(runtime, /deployment_triggered: false/);
+  assert.match(runtime, /operation_id:\s*["']runSandboxTest["']/);
+  assert.match(runtime, /production_mutation:\s*false/);
+  assert.match(runtime, /deployment_triggered:\s*false/);
 
   assert.match(identity, /action:admin:SYS-01:ACT-CANDIDATE-CREATE/);
   assert.match(identity, /api:createCandidate/);
