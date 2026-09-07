@@ -2,16 +2,16 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-08T03:55:00+08:00",
+  "as_of": "2026-09-08T06:27:02+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
-    "new_sha_basis": "5cbb8e68a3f5ed202168310b5cfe5299df5b3812",
+    "new_sha_basis": "4a90b144731b0b1c2c8eb5c483278313396f3633",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_AI_CONVERSATION_RUNTIME_PREDEPLOY",
+    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_AI_GOVERNANCE_SYS_CONVERSATION_CORE0021_VALIDATED_PREDEPLOY",
     "post_release_new_status": "AHEAD_OF_MAIN_NO_VERCEL_DEPLOYMENT_TRIGGERED"
   },
   "release_validation": {
@@ -660,45 +660,39 @@
     },
     "current_construction_gate": {
       "status": "PASS",
-      "run_number": 623,
-      "run_id": 34153607111,
-      "head_sha": "4353e05bdf43f931b454fe34112734a0555508bf",
+      "run_number": 681,
+      "run_id": 34166553250,
+      "head_sha": "4a90b144731b0b1c2c8eb5c483278313396f3633",
       "branch": "new",
       "conclusion": "success",
-      "unit_tests": "PASS_112_FAIL_0",
-      "aiapi_tests": [
-        "AIAPI Current registry materializes only Authority-named provider operations",
-        "AIAPI routes bind fixed registry operations through one governed runtime",
-        "AIAPI production adapter preserves provider and credential safety gates",
-        "AIAPI capability governance materializes canonical provider_capabilities",
-        "Gate 22 Production External Provider acceptance harness",
-        "AIAPI queue probe governed by queue runtime authority",
-        "Queued Provider dispatch revalidates full preflight authority",
-        "AIAPI UI governed operation binding",
-        "AIAPI optimistic profile version state",
-        "AIAPI credential surface secret-reference-only",
-        "AIAPI command port reuses registered Current routes"
-      ],
+      "unit_tests": "PASS_121_FAIL_0",
       "browser_e2e": "PASS_72_CASES",
-      "aiapi_mutation_cases": 2,
-      "current_dom": "PASS_18_PAGES_372_VISIBLE_372_GOVERNED",
-      "docker": "PASS",
-      "dirty_tree": "PASS"
+      "i18n_cases": 54,
+      "shell_geometry_cases": 18,
+      "visual_topology_cases": 5,
+      "sidebar_reflow_cases": 1,
+      "browser_evidence": "interactive_controls=462 governed_controls=276",
+      "production_http_e2e": "PASS",
+      "controlled_build": "PASS",
+      "controlled_misconfiguration_http_e2e": "PASS",
+      "current_dom_control_acceptance": "PASS",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_effect": "NONE_NEW_BRANCH_ONLY"
     },
     "ai_conversation_predeploy": {
-      "status": "PASS_PREDEPLOY_FINAL_PRODUCTION_E2E_PENDING_SINGLE_RELEASE",
-      "new_sha": "5cbb8e68a3f5ed202168310b5cfe5299df5b3812",
+      "status": "PASS_PREDEPLOY_INCLUDED_IN_CURRENT_RELEASE_GATE_FINAL_PRODUCTION_E2E_PENDING_SINGLE_RELEASE",
+      "new_sha": "4a90b144731b0b1c2c8eb5c483278313396f3633",
       "release_gate": {
-        "run_number": 644,
-        "run_id": 34157216035,
+        "run_number": 681,
+        "run_id": 34166553250,
         "conclusion": "success",
-        "unit_tests": "120_PASS_0_FAIL",
+        "unit_tests": "121_PASS_0_FAIL",
         "browser_e2e": "72_CASES_PASS",
         "i18n_cases": 54,
         "shell_geometry_cases": 18,
         "visual_topology_cases": 5,
         "sidebar_reflow_cases": 1,
-        "current_dom": "18_PAGES_358_VISIBLE_358_GOVERNED",
         "docker": "PASS",
         "dirty_tree": "PASS"
       },
@@ -734,6 +728,59 @@
         ]
       },
       "production_status": "NOT_DEPLOYED_BY_USER_POLICY"
+    },
+    "core_candidate_0021_predeploy": {
+      "status": "VALIDATED_PENDING_PRODUCTION_APPLY",
+      "migration_id": "0021_core_decision_candidate_runtime",
+      "payload_sha256": "e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6",
+      "repository_migration_count": 21,
+      "production_migration_count": 20,
+      "production_latest_migration": "0020_system_lifecycle_runtime",
+      "production_mutation_performed": false,
+      "validation_branch": {
+        "id": "br-orange-smoke-aut9pafw",
+        "name": "rls-0016-validate-20260906",
+        "migration_count": 21,
+        "target_tables": 5,
+        "rls_enabled_tables": 5,
+        "rls_policies": 10,
+        "unvalidated_constraints": 0,
+        "runtime_role": "acpos_app_runtime",
+        "runtime_role_bypassrls": false,
+        "runtime_role_superuser": false,
+        "runtime_role_login": false,
+        "all_select_grants": true,
+        "all_insert_grants": true,
+        "no_session_visible_rows_all_target_tables": 0
+      },
+      "baseline_against_production": {
+        "table_fingerprint_excluding_0021": "EXACT",
+        "column_fingerprint_excluding_0021": "EXACT",
+        "constraint_fingerprint_excluding_0021": "EXACT",
+        "index_fingerprint_excluding_0021": "EXACT",
+        "migration_0001_0019_history": "EXACT",
+        "migration_0020_checksum_match": true,
+        "migration_0020_history_metadata_delta": {
+          "validation_approval_ref": "PENDING-CR-SYS-0020",
+          "production_approval_ref": "USER-APPROVED-CR-SYS-0020-20260908",
+          "classification": "METADATA_ONLY_NOT_SCHEMA_DRIFT"
+        }
+      },
+      "regression_fix": {
+        "failed_release_gate": 678,
+        "failed_sha": "edf955076c9327d502d5e8f45aba7714c3a7f6b5",
+        "failures": [
+          "migration checksum contract test expected 1.0.7 while Current manifest is 1.0.8",
+          "RLS runtime test expected MAX_SUPPORTED_MIGRATION_COUNT=20 while staged 0021 requires max 21"
+        ],
+        "fix_commit": "842a03c0a1f11079645e1bc9644a0ea0e7339edd",
+        "first_green_release_gate": 679
+      },
+      "regression_lock_commit": "2ba38a6fff279dd64a87c635717b928bf3e48ac6",
+      "regression_lock_release_gate": 680,
+      "authority_commit": "4a90b144731b0b1c2c8eb5c483278313396f3633",
+      "authority_release_gate": 681,
+      "production_apply_policy": "FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE"
     }
   },
   "production": {
@@ -848,7 +895,14 @@
     "provider_group_count": 1,
     "provider_member_count": 4,
     "provider_profile_test_count": 24,
-    "provider_route_decision_count": 3
+    "provider_route_decision_count": 3,
+    "pending_validated_migration_0021": {
+      "status": "VALIDATED_NOT_APPLIED_TO_PRODUCTION",
+      "migration_id": "0021_core_decision_candidate_runtime",
+      "checksum": "e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6",
+      "validation_branch_id": "br-orange-smoke-aut9pafw",
+      "production_apply": "PENDING_FINAL_RELEASE_SEQUENCE"
+    }
   },
   "deployment_policy": {
     "status": "MATERIALIZED_CURRENT",
@@ -984,16 +1038,19 @@
     }
   },
   "blockers": [
-    "AI conversation final Production E2E is intentionally pending because user requires one consolidated deployment only after all construction is ready. Pre-deploy code/Release Gate validation is PASS.",
-    "Gate 24 overall: SYS-01 lifecycle subset is Production E2E PASS; remaining non-SYS admin mutation acceptance must be recomputed from current Production evidence.",
+    "AI conversation final Production E2E is intentionally pending because user requires one consolidated deployment only after all construction is ready. Current predeploy code is included in Release Gate #681 PASS.",
+    "CORE Candidate migration 0021 is validated but intentionally not applied to Production until the final consolidated release sequence; Production remains at migration 0020.",
+    "Gate 24 overall: SYS-01 lifecycle subset is Production E2E PASS; remaining non-SYS admin mutation acceptance must be recomputed/closed from Current code and evidence.",
     "Do not persist Provider API-key plaintext in GitHub, Neon, logs or state artifacts."
   ],
   "next_release_sequence": [
-    "Continue remaining construction/acceptance work on new without Vercel deployment.",
+    "Continue remaining non-SYS admin mutation acceptance/closure on new without Vercel deployment.",
+    "Continue any remaining dependency-ready runtime/acceptance gaps on new; keep migration 0021 Production apply deferred until the consolidated release sequence.",
     "Do not merge new to main until the consolidated release set is closed and exact Release Gate is PASS.",
     "Perform one final main integration/deployment only.",
+    "Apply validated migration 0021 in the governed final release sequence with Production verification.",
     "After exact final Production SHA is ready, trigger ACPOS Conversation Acceptance from new without another Vercel deployment; require two-turn history recall and persisted USER/ASSISTANT sequence.",
-    "Run final Post-Deploy/production acceptance and only then declare AI conversation Production PASS."
+    "Run final Post-Deploy/production acceptance and only then declare AI conversation and overall Production PASS."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
