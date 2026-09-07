@@ -12,6 +12,7 @@ import {
   getSystemControlTrace,
 } from "@/domain/system/systemRuntimeContract";
 import { readSystemProjection, type SystemNormalizedProjection } from "@/domain/system/systemProjectionPort";
+import { createSystemCandidate, createSystemChangeRequest, runSystemSandbox } from "@/domain/system/systemMutationPort";
 import styles from "./SystemVisual.module.css";
 
 const DASH = "—";
@@ -60,6 +61,8 @@ export function SystemVisual() {
   const t = (key: Parameters<typeof systemText>[1]) => systemText(locale, key);
   const [state, dispatch] = useReducer(reduceSystemClientState, INITIAL_SYSTEM_CLIENT_STATE);
   const [projection, setProjection] = useState<ProjectionState>({ status: "LOADING", reason_code: null, correlation_id: null, value:null });
+  const [mutationBusy,setMutationBusy]=useState(false);
+  const [mutationNotice,setMutationNotice]=useState<string|null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -79,6 +82,44 @@ export function SystemVisual() {
     };
   }, []);
 
+  async function refreshProjection(){
+    const result=await readSystemProjection();
+    if(result.ok){
+      dispatch({type:"BIND_CONTEXT",system_change_id:result.projection.system_change_id,conversation_id:result.projection.conversation_id,thread_id:result.projection.thread_id,branch_id:result.projection.branch_id});
+      setProjection({status:"READY",reason_code:null,correlation_id:result.correlation_id,value:result.projection});
+      return result.projection;
+    }
+    setProjection({status:"BLOCKED",reason_code:result.reason_code,correlation_id:result.correlation_id,value:null});
+    return null;
+  }
+  async function handleCandidateCreate(){
+    const currentGoal=state.draft.trim();
+    if(!currentGoal){setMutationNotice(t("draftRequired"));return;}
+    setMutationBusy(true);setMutationNotice(null);
+    const result=await createSystemCandidate({system_change_id:state.system_change_id,current_goal:currentGoal,source_refs:state.attachment_refs});
+    if(!result.ok)setMutationNotice(`${t("operationFailed")}: ${result.reason_code}`);
+    else{setMutationNotice(t("candidateCreated"));await refreshProjection();}
+    setMutationBusy(false);
+  }
+  async function handleChangeRequestCreate(candidateRef:string|null){
+    const reason=state.draft.trim();
+    if(!state.system_change_id||!candidateRef){setMutationNotice(t("candidateRequired"));return;}
+    if(!reason){setMutationNotice(t("draftRequired"));return;}
+    setMutationBusy(true);setMutationNotice(null);
+    const result=await createSystemChangeRequest({system_change_id:state.system_change_id,candidate_ref:candidateRef,reason});
+    if(!result.ok)setMutationNotice(`${t("operationFailed")}: ${result.reason_code}`);
+    else{setMutationNotice(t("changeRequestCreated"));await refreshProjection();}
+    setMutationBusy(false);
+  }
+  async function handleSandboxTest(candidateRef:string|null){
+    if(!state.system_change_id||!candidateRef){setMutationNotice(t("candidateRequired"));return;}
+    setMutationBusy(true);setMutationNotice(null);
+    const result=await runSystemSandbox({system_change_id:state.system_change_id});
+    if(!result.ok)setMutationNotice(`${t("operationFailed")}: ${result.reason_code}`);
+    else{setMutationNotice(t("sandboxPassed"));await refreshProjection();}
+    setMutationBusy(false);
+  }
+
   const multi = state.ai_mode === "MULTI_AI";
   const systemContextResolved = projection.status === "READY" && Boolean(state.system_change_id);
   const activeConversationContextResolved = systemContextResolved && Boolean(state.conversation_id);
@@ -87,6 +128,11 @@ export function SystemVisual() {
   const multiAiGateReady = modeGateReady && multiAiRouteReady;
   const councilGateReady = multi && multiAiGateReady;
   const projectionReason = projection.reason_code ?? (projection.status === "READY" ? "READY" : "LOADING");
+  const candidateRef=projection.status==="READY"?projection.value.values.candidate_ref??null:null;
+  const candidateReady=Boolean(candidateRef&&candidateRef!==DASH);
+  const candidateDisabledReason=mutationBusy?"SYS01_MUTATION_IN_PROGRESS":projection.status!=="READY"?projectionReason:!state.draft.trim()?"SYS01_DRAFT_REQUIRED":null;
+  const changeRequestDisabledReason=mutationBusy?"SYS01_MUTATION_IN_PROGRESS":!state.system_change_id||!candidateReady?"SYSTEM_CHANGE_CANDIDATE_REQUIRED":!state.draft.trim()?"SYS01_DRAFT_REQUIRED":null;
+  const sandboxDisabledReason=mutationBusy?"SYS01_MUTATION_IN_PROGRESS":!state.system_change_id||!candidateReady?"SYSTEM_CHANGE_CANDIDATE_REQUIRED":null;
 
   return (
     <div
@@ -107,7 +153,7 @@ export function SystemVisual() {
       data-active-conversation-context-resolved={String(activeConversationContextResolved)}
       data-mode-gate-ready={String(modeGateReady)}
       data-multi-ai-route-ready={String(multiAiRouteReady)}
-      data-effectful-runtime-ready="false"
+      data-effectful-runtime-ready="true"
       data-data-classification={projection.status === "READY" ? projection.value.test_metadata?.data_classification : undefined}
       data-production-eligible={projection.status === "READY" && projection.value.test_metadata ? String(projection.value.test_metadata.production_eligible) : undefined}
     >
@@ -241,11 +287,11 @@ export function SystemVisual() {
 
       <div className={styles.secondaryGrid}>
         <Section id="SEC-ADMIN-SYS-01-CANDIDATE-CHANGE" title={t("candidateChange")}>
-          <DataRow label={t("requirement")} />
-          <DataRow label={t("decision")} />
-          <DataRow label={t("design")} />
-          <DataRow label={t("authorityChanges")} />
-          <DataRow label={t("implementation")} />
+          <DataRow label={t("requirement")} value={state.draft.trim() || DASH} />
+          <DataRow label={t("decision")} value={candidateReady ? "PENDING" : DASH} />
+          <DataRow label={t("design")} value={candidateReady ? candidateRef ?? DASH : DASH} />
+          <DataRow label={t("authorityChanges")} value={SYS_AUTHORITY_STATUS} />
+          <DataRow label={t("implementation")} value={SYS_IMPLEMENTATION_STATUS} />
         </Section>
         <Section id="SEC-ADMIN-SYS-01-SOURCE-REFS" title={t("sourceRefs")}>
           <div className={styles.referenceBox}>
@@ -285,14 +331,17 @@ export function SystemVisual() {
         </Section>
         <Section id="SEC-ADMIN-SYS-01-ACTION-DOCK" title={t("actionDock")}>
           <div className={styles.actionRow} data-component-uid="SYS-01-CMP-ACTION-DOCK" data-visual-uid="SYS-01-VIS-ACTION-DOCK">
-            <button id="SYS-01-BTN-CANDIDATE-CREATE" {...controlTraceProps("SYS-01-BTN-CANDIDATE-CREATE")} className={styles.primaryButton} type="button" disabled>
+            <button id="SYS-01-BTN-CANDIDATE-CREATE" {...controlTraceProps("SYS-01-BTN-CANDIDATE-CREATE")} className={styles.primaryButton} type="button"
+              disabled={Boolean(candidateDisabledReason)} data-disabled-reason={candidateDisabledReason ?? undefined} onClick={() => void handleCandidateCreate()}>
               {t("candidateCreate")}
             </button>
-            <button id="SYS-01-BTN-CR-CREATE" {...controlTraceProps("SYS-01-BTN-CR-CREATE")} className={styles.secondaryButton} type="button" disabled>
+            <button id="SYS-01-BTN-CR-CREATE" {...controlTraceProps("SYS-01-BTN-CR-CREATE")} className={styles.secondaryButton} type="button"
+              disabled={Boolean(changeRequestDisabledReason)} data-disabled-reason={changeRequestDisabledReason ?? undefined}
+              onClick={() => void handleChangeRequestCreate(candidateReady ? candidateRef : null)}>
               {t("changeRequestCreate")}
             </button>
           </div>
-          <p className={styles.phaseNote}>{t("disabledVisual")}</p>
+          <p className={styles.phaseNote}>{mutationNotice ?? t("runtimeReady")}</p>
         </Section>
         <Section id="SEC-ADMIN-SYS-01-EXECUTION-PANEL" title={t("executionPanel")}>
           <div className={styles.executionLine} data-component-uid="SYS-01-CMP-EXECUTION-PANEL" data-visual-uid="SYS-01-VIS-EXECUTION-PANEL">
@@ -300,11 +349,13 @@ export function SystemVisual() {
               <span>{t("validation")}</span>
               <strong>{DASH}</strong>
             </div>
-            <button id="SYS-01-BTN-SANDBOX-TEST" {...controlTraceProps("SYS-01-BTN-SANDBOX-TEST")} className={styles.secondaryButton} type="button" disabled>
+            <button id="SYS-01-BTN-SANDBOX-TEST" {...controlTraceProps("SYS-01-BTN-SANDBOX-TEST")} className={styles.secondaryButton} type="button"
+              disabled={Boolean(sandboxDisabledReason)} data-disabled-reason={sandboxDisabledReason ?? undefined}
+              onClick={() => void handleSandboxTest(candidateReady ? candidateRef : null)}>
               {t("sandboxTest")}
             </button>
           </div>
-          <p className={styles.phaseNote}>{t("disabledVisual")}</p>
+          <p className={styles.phaseNote}>{mutationNotice ?? t("runtimeReady")}</p>
         </Section>
       </div>
     </div>

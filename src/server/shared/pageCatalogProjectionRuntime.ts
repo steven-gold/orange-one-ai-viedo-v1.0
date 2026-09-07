@@ -939,23 +939,41 @@ async function readSystemFromDb(sql: SqlClient): Promise<unknown> {
     ORDER BY version_no DESC
     LIMIT 1
   `);
+  const changes = await safeRows(() => sql`
+    SELECT system_change_id::text AS system_change_id,current_goal,scope,status,
+           current_candidate_id::text AS candidate_ref,updated_at::text AS updated_at
+    FROM public.system_changes
+    WHERE status <> 'CLOSED'
+    ORDER BY updated_at DESC
+    LIMIT 1
+  `);
+  const active = changes[0] ?? null;
+  const candidate = active?.candidate_ref
+    ? (await safeRows(() => sql`
+        SELECT context_fingerprint,status
+        FROM public.system_change_candidates
+        WHERE system_change_candidate_id=${asText(active.candidate_ref)}::uuid
+        LIMIT 1
+      `))[0] ?? null
+    : null;
   const head = migrations[migrations.length - 1] ?? null;
-  const page_state = migrations.length ? "READY" : "EMPTY";
+  const systemChangeId = asText(active?.system_change_id);
+  const page_state = migrations.length || systemChangeId ? "READY" : "EMPTY";
   return {
     page_state,
-    system_change_id: null,
+    system_change_id: systemChangeId,
     conversation_id: null,
     thread_id: null,
     branch_id: null,
     multi_ai_route_available: false,
     values: {
       current_system_version: asText(head?.ref) ?? DASH,
-      current_goal: DASH,
-      scope: "admin:SYS-01",
-      candidate_ref: DASH,
+      current_goal: asText(active?.current_goal) ?? DASH,
+      scope: active?.scope ? JSON.stringify(active.scope) : "admin:SYS-01",
+      candidate_ref: asText(active?.candidate_ref) ?? DASH,
       context_snapshot_ref: asText(snapshots[0]?.ref) ?? DASH,
       dependency_graph_ref: DASH,
-      latest_context_fingerprint: asText(head?.checksum) ?? asText(snapshots[0]?.hash) ?? DASH,
+      latest_context_fingerprint: asText(candidate?.context_fingerprint) ?? asText(head?.checksum) ?? asText(snapshots[0]?.hash) ?? DASH,
     },
   };
 }

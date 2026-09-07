@@ -2,17 +2,17 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T21:57:45+08:00",
+  "as_of": "2026-09-08T01:35:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
-    "main_sha": "e00afb626bae2de451b6a07d2efa42cc46c96e51",
-    "new_sha_basis": "e00afb626bae2de451b6a07d2efa42cc46c96e51",
+    "main_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
+    "new_sha_basis": "c0141aa27d41cb949cc575e73196ac50b3563d93",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "MAIN_PRODUCTION_ACCEPTED_NEW_AHEAD_BY_STATE_ONLY",
-    "post_release_new_status": "AHEAD_MAIN_BY_FINAL_STATE_ONLY_NO_PRODUCTION_RUNTIME_DELTA"
+    "construction_branch_alignment": "NEW_AHEAD_WITH_USER_APPROVED_SYS01_RUNTIME_READY_FOR_INTEGRATION",
+    "post_release_new_status": "ALIGNED_WITH_MAIN_BEFORE_STATE_ONLY_EVIDENCE_UPDATE"
   },
   "release_validation": {
     "final_pre_state_construction_gate": {
@@ -25,24 +25,26 @@
     },
     "current_main_release_gate": {
       "status": "PASS",
-      "run_number": 578,
-      "run_id": 34129422547,
-      "head_sha": "e00afb626bae2de451b6a07d2efa42cc46c96e51",
+      "run_number": 588,
+      "run_id": 34141367603,
+      "head_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
       "branch": "main",
       "conclusion": "success",
       "integrated_pr": {
-        "number": 29,
-        "integrated_release_gate_run_number": 577,
-        "integrated_release_gate_run_id": 34129114454,
-        "merge_result_sha": "8c384070ee98a98012302f627126f2c505bcf4a9",
-        "merged_main_sha": "e00afb626bae2de451b6a07d2efa42cc46c96e51",
+        "number": 30,
+        "integrated_release_gate_run_number": 587,
+        "integrated_release_gate_run_id": 34141086688,
+        "pr_head_sha": "02f72c59b22f0c1c05430d9fe18f029ed6dfa642",
+        "merged_main_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
         "conclusion": "success"
       },
       "navigation": "PASS_FRONT8_ADMIN8_GLOBAL_L1_INFO01_KB01_NON_L1_CURRENT",
       "surface_switch": "PASS_FIXED_HEADER_FRONT_ADMIN",
-      "i18n_static_guard": "PASS",
-      "browser_e2e": "PASS_72_CASES_54_I18N_CASES_18_SHELL_GEOMETRY_CASES",
-      "current_dom_control_acceptance": "PASS_18_PAGES",
+      "stage_driven_workspace": "PASS_CORE_ASSET_VIDEO_EDIT_QA_FIRST_LAYER",
+      "browser_e2e": "PASS_72_CASES_54_I18N_CASES_18_SHELL_GEOMETRY_5_VISUAL_TOPOLOGY_1_SIDEBAR_REFLOW",
+      "browser_evidence": "interactive_controls=462 governed_controls=276",
+      "current_dom_control_acceptance": "PASS_18_PAGES_372_VISIBLE_372_GOVERNED",
+      "current_dom_breakdown": "enabled=220 disabled=152",
       "standalone_docker_build": "PASS",
       "dirty_tree_guard": "PASS"
     },
@@ -71,19 +73,17 @@
     },
     "latest_remote_control_acceptance_gate": {
       "status": "PASS_PRODUCTION",
-      "run_number": 842,
-      "run_id": 34129693664,
-      "confirming_run_number": 841,
-      "confirming_run_id": 34129474393,
-      "head_sha": "e00afb626bae2de451b6a07d2efa42cc46c96e51",
+      "run_number": 852,
+      "run_id": 34141411118,
+      "head_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
       "branch": "main",
       "conclusion": "success",
       "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_RELEASE_SHA_EXACT_PROJECTIONS_18",
       "authenticated_e2e": "PASS_LOGIN_SESSION_DASHBOARD_PROJECTIONS_18_QUEUE_PROBE_LOGOUT",
       "browser_smoke": "PASS_54_CASES_WIDTHS_1280_1440_1920_PAGES_18",
       "authenticated_browser_visibility": "PASS_FRONT_NAV_8_ADMIN_NAV_8_VISIBLE_PAGES_18",
-      "production_dom_control_acceptance": "PASS_18_PAGES_536_VISIBLE_536_GOVERNED",
-      "production_dom_breakdown": "enabled=308 disabled=228"
+      "production_dom_control_acceptance": "PASS_18_PAGES_491_VISIBLE_491_GOVERNED",
+      "production_dom_breakdown": "enabled=308 disabled=183"
     },
     "latest_gate24_strategy_governance_gate": {
       "status": "PASS_RELEASE_CONTROLLED",
@@ -435,27 +435,69 @@
         "Shell geometry waits for exact frozen layout values to stabilize before asserting.",
         "AIAPI form fields expose stable data-field-key identities and Browser E2E no longer depends on translated labels."
       ]
+    },
+    "pending_system_lifecycle_runtime": {
+      "status": "CODE_AND_DB_VALIDATED_READY_FOR_MAIN_INTEGRATION",
+      "new_head_sha": "c0141aa27d41cb949cc575e73196ac50b3563d93",
+      "release_gate": {
+        "run_number": 598,
+        "run_id": 34147999302,
+        "conclusion": "success"
+      },
+      "migration": {
+        "id": "0020_system_lifecycle_runtime",
+        "production_status": "APPLIED_VERIFIED",
+        "payload_sha256": "22fb185cc50fa0d19d1431bd5e2fb6233ca28878dbafa7b65da9d44caba02b9f",
+        "approval_ref": "USER-APPROVED-CR-SYS-0020-20260908",
+        "production_migration_count": 20,
+        "latest_migration": "0020_system_lifecycle_runtime",
+        "restore_snapshot_id": "snap-lucky-salad-ausky51r",
+        "restore_snapshot_name": "pre-sys-0020-production-20260908",
+        "rls_tables": 3,
+        "rls_policies": 6,
+        "unvalidated_constraints": 0
+      },
+      "canonical_routes": [
+        "POST /v1/system/changes/candidates",
+        "POST /v1/system/changes/{SYSTEM_CHANGE_ID}/requests",
+        "POST /v1/system/changes/{SYSTEM_CHANGE_ID}/sandbox-tests"
+      ],
+      "visual_authority": {
+        "createCandidate": "enabled_in_visual_phase=true",
+        "createChangeRequest": "enabled_in_visual_phase=true",
+        "runSandboxTest": "enabled_in_visual_phase=true"
+      },
+      "bootstrap_admin_permissions": {
+        "status": "PASS_5_APPROVED_ALLOW_ASSIGNMENTS",
+        "assignments": [
+          "action:admin:SYS-01:ACT-CANDIDATE-CREATE/INVOKE",
+          "api:createCandidate/EXECUTE",
+          "action:admin:SYS-01:ACT-CR-CREATE/INVOKE",
+          "api:createChangeRequest/EXECUTE",
+          "api:runSandboxTest/EXECUTE"
+        ]
+      },
+      "production_application_deployment": "PENDING_MAIN_INTEGRATION",
+      "production_mutation_e2e": "NOT_YET_EXECUTED_ON_DEPLOYED_CODE"
     }
   },
   "production": {
     "target": "orange-one-acpos-test",
     "url": "https://orange-one-acpos-test.vercel.app",
-    "deployed_sha": "e00afb626bae2de451b6a07d2efa42cc46c96e51",
+    "deployed_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
     "deployment_status": "PASS_EXACT_MAIN_SHA",
     "latest_verified_post_deploy": {
-      "status": "PASS_CONFIRMED_TWICE",
-      "deployment_status_run_number": 841,
-      "deployment_status_run_id": 34129474393,
-      "release_workflow_run_number": 842,
-      "release_workflow_run_id": 34129693664,
-      "head_sha": "e00afb626bae2de451b6a07d2efa42cc46c96e51",
+      "status": "PASS",
+      "deployment_status_run_number": 852,
+      "deployment_status_run_id": 34141411118,
+      "head_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
       "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_RELEASE_SHA_EXACT_PROJECTIONS_18",
       "authenticated_e2e": "PASS_LOGIN_SESSION_DASHBOARD_PROJECTIONS_18_QUEUE_PROBE_LOGOUT",
       "browser_smoke": "PASS_54_CASES_18_PAGES_3_WIDTHS",
       "authenticated_browser_visibility": "PASS_FRONT_NAV_8_ADMIN_NAV_8_VISIBLE_PAGES_18",
-      "current_dom_control_acceptance": "PASS_18_PAGES_536_VISIBLE_536_GOVERNED_ENABLED_308_DISABLED_228"
+      "current_dom_control_acceptance": "PASS_18_PAGES_491_VISIBLE_491_GOVERNED_ENABLED_308_DISABLED_183"
     },
-    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_e00afb626bae2de451b6a07d2efa42cc46c96e51",
+    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
     "database_migration_count": 19,
     "vercel_management_visibility": {
       "team": "gold5757",
@@ -469,9 +511,9 @@
     "vercel_deployment": {
       "state": "SUCCESS",
       "description": "Deployment has completed",
-      "main_sha": "e00afb626bae2de451b6a07d2efa42cc46c96e51",
+      "main_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
       "target": "gold5757/orange-one-acpos-test",
-      "deployment_ref": "EmZAn9iAFRBPLpN8HPW9g4GpbHPT",
+      "deployment_ref": "4bqwteM56Xq5VUHfNdYQZUvADW7v",
       "deployment_trigger_count_for_this_release": 1
     },
     "visual_shell_repair": {
@@ -509,6 +551,27 @@
       "production_browser": "54_CASES_18_PAGES_X_3_WIDTHS_PASS",
       "production_auth_visibility": "FRONT_NAV_8_ADMIN_NAV_8_VISIBLE_PAGES_18",
       "production_dom": "536_VISIBLE_536_GOVERNED"
+    },
+    "stage_driven_workspace_release": {
+      "status": "DEPLOYED_AND_ACCEPTED",
+      "main_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
+      "pr": 30,
+      "integrated_release_gate": "#587 PASS",
+      "main_release_gate": "#588 PASS",
+      "vercel": "SUCCESS_EXACT_MAIN_SHA",
+      "production_post_deploy": "#852 PASS",
+      "changes": [
+        "preserve three-column topology at supported desktop widths",
+        "stage-driven ASSET/VIDEO/QA first layer",
+        "stage-driven EDIT+VOICE inspector and action dock",
+        "sidebar workspace reflow",
+        "stable layout-column browser acceptance"
+      ],
+      "predeploy_browser": "72_CASES_PASS",
+      "predeploy_visual_topology": "5_CASES_PASS",
+      "production_browser": "54_CASES_18_PAGES_X_3_WIDTHS_PASS",
+      "production_auth_visibility": "FRONT_NAV_8_ADMIN_NAV_8_VISIBLE_PAGES_18",
+      "production_dom": "491_VISIBLE_491_GOVERNED"
     }
   },
   "neon": {
@@ -613,20 +676,20 @@
   },
   "formal_truth": {
     "gate22_external_provider": {
-      "status": "BLOCKED_EXTERNAL_CONFIGURATION_INTERNAL_PATH_DEPLOYED",
-      "reason": "Gate 22 internal implementation is now deployed on Production SHA 2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed and passed integrated Release Gate #534, main Release Gate #535, and Production Post-Deploy #796/#797. The deployed path includes canonical capability approval materialization, secret/profile/group/queue/worker/HTTP fail-closed checks, dispatch-time authority/classification/profile-version revalidation, and a manual-only real External Provider E2E workflow. Production Neon still has 0 capabilities, 0 profiles, 0 approved secret references, 0 groups, 0 members, 0 profile tests and 0 route decisions. No real external request exists, so Gate 22 remains BLOCKED and must not be marked PASS."
+      "status": "BLOCKED_SECRET_ENV_BINDING_AND_REAL_EXTERNAL_E2E",
+      "reason": "User supplied four Provider credentials for Groq/Google/DeepSeek/OpenRouter, but secrets have not been persisted in repository or database plaintext. Current available Vercel connector exposes no environment-variable write operation. Production provider control-plane remains profiles=0, groups=0, members=0, capabilities=0, secret_references=0 until secure env binding and governed provider configuration are completed."
     },
     "gate23_queue_worker_dlq": {
       "status": "PASS",
       "reason": "Production queue/worker/DLQ is re-verified on exact Production SHA 2e53c4ec via Post-Deploy #796 and duplicate confirming #797; authenticated E2E passes idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup without external provider calls."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_8_OF_9_SYS01_BLOCKED",
-      "reason": "Release-controlled mutation evidence covers Strategy Admin, SG-02, IAM-01, ERP-01, DEV-01, SOC-01, AIAPI-01 and KB-01. SYS-01 remains blocked because Current Authority is FINAL_LOCKED with createCandidate/createChangeRequest/runSandboxTest enabled_in_visual_phase=false and production lifecycle execution remains PROVIDER_GATEWAY_NOT_MATERIALIZED. Do not override this Authority."
+      "status": "PARTIAL_SYS01_CODE_DB_PERMISSION_VALIDATED_PENDING_DEPLOY_AND_PRODUCTION_E2E",
+      "reason": "User approved CR-SYS-0020 and all three SYS-01 mutations. Production Neon is migration 0020 with exact checksum, 3 RLS tables, 6 policies and zero unvalidated constraints; bootstrap admin has the five required ACTION/API ALLOW assignments; Current Authority now enables createCandidate/createChangeRequest/runSandboxTest and binds three canonical HTTP routes. Exact new SHA c0141aa27d41cb949cc575e73196ac50b3563d93 passed Release Gate #598. Gate is not closed until this SHA is integrated/deployed and authenticated Production mutation E2E passes."
     },
     "gate25_full_page_button_acceptance": {
-      "status": "PASS_PRODUCTION_CURRENT_18_PAGE_ACCEPTANCE_8X8_VISUAL_I18N_RELEASE",
-      "reason": "Production exact SHA e00afb626bae2de451b6a07d2efa42cc46c96e51 passed main Release Gate #578 and Post-Deploy #841/#842. Pre-deploy exact release code passed 72 viewport Browser cases, 54 three-locale cases and 18 frozen-shell geometry cases. Production then passed readiness=200, authenticated 18-page E2E, 54 remote browser cases, front_nav=8/admin_nav=8 visibility, and 536 visible / 536 governed Current DOM controls (308 enabled, 228 disabled)."
+      "status": "PASS_PRODUCTION_CURRENT_18_PAGE_STAGE_DRIVEN_VISUAL_RELEASE",
+      "reason": "Production exact SHA 3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801 passed main Release Gate #588 and Post-Deploy #852. Pre-deploy passed 72 viewport Browser cases including 5 stable three-column topology cases and sidebar reflow. Production passed readiness=200, authenticated 18-page E2E, 54 remote browser cases, front_nav=8/admin_nav=8 visibility, and 491 visible / 491 governed Current DOM controls (308 enabled, 183 disabled)."
     },
     "predeploy_visual_i18n_navigation": {
       "status": "PASS_AND_DEPLOYED_TO_PRODUCTION",
@@ -646,16 +709,16 @@
     }
   },
   "blockers": [
-    "Gate 22 real external configuration is absent in Production Neon: capabilities=0, profiles=0, approved secret references=0, groups=0, members=0. No real external_request_sent=true evidence exists, so Gate 22 cannot pass.",
-    "Gate 24 SYS-01 remains blocked by FINAL_LOCKED Current Authority (service mutations enabled_in_visual_phase=false) and PROVIDER_GATEWAY_NOT_MATERIALIZED.",
-    "Vercel management connector still lacks Project-read visibility even though Git-linked deployment for gold5757/orange-one-acpos-test succeeded on exact main SHA; use GitHub↔Vercel status plus Post-Deploy evidence as deployment authority until connector visibility is repaired."
+    "Gate 24: deploy integrated SYS-01 runtime to main and pass authenticated Production createCandidate/createChangeRequest/runSandboxTest E2E.",
+    "Gate 22: securely bind GROQ_API_KEY, GOOGLE_GEMINI_API_KEY, DEEPSEEK_API_KEY and OPENROUTER_API_KEY in Vercel Production environment without repository/database plaintext, then materialize governed profiles/capabilities/group and run real external-provider E2E.",
+    "Current Vercel connector does not expose project environment-variable write capability; do not bypass this by storing plaintext secrets in GitHub or Neon."
   ],
   "next_release_sequence": [
-    "Current Production UI/navigation release is accepted on main e00afb626bae2de451b6a07d2efa42cc46c96e51: Vercel success, Release Gate #578 PASS, Post-Deploy #841/#842 PASS, front_nav=8 admin_nav=8 visible_pages=18 and Current DOM 536/536 governed.",
-    "Do not rebuild the completed visual/navigation/i18n release unless a new verified regression is found.",
-    "Gate 22 remains separately blocked on real Production Provider capability/profile/approved secret reference/group/member configuration and real external_request_sent=true evidence.",
-    "Gate 24 remains 8/9 because SYS-01 mutation is intentionally blocked by Current FINAL_LOCKED Authority and missing exact production lifecycle runtime.",
-    "Keep future releases behind the static visible-i18n guard, 18-page x 3-locale predeploy Browser acceptance, frozen-shell geometry acceptance, integrated PR Release Gate, exact-main Vercel status and Production Post-Deploy acceptance."
+    "Integrate new c0141aa27d41cb949cc575e73196ac50b3563d93 through PR after exact Release Gate #598 PASS; main code must support Production migration count 20.",
+    "Verify exact merged main Release Gate, Vercel deployment status, readiness=200 and Post-Deploy acceptance.",
+    "Run authenticated Production SYS-01 mutation E2E for createCandidate -> createChangeRequest -> runSandboxTest; Sandbox remains dry-run and does not send an external Provider request.",
+    "Securely bind four Provider environment variables in Vercel Production without plaintext repository/database storage.",
+    "Materialize Groq/Google/DeepSeek/OpenRouter TEXT_CHAT profiles, approved capabilities and one governed routing group; run real connection tests and Gate 22 external_request_sent=true E2E."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
@@ -670,7 +733,7 @@
   "post_release_state_policy": {
     "branch": "new",
     "deployment_effect": "NONE",
-    "reason": "Final Production evidence and test-harness stability remediation are recorded on construction branch without creating a redundant Vercel Hobby deployment.",
+    "reason": "Record final Production UI/stage-driven evidence on construction branch only; no redundant Vercel Hobby deployment.",
     "production_runtime_delta_after_main_release": false
   }
 }

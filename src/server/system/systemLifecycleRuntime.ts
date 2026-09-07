@@ -6,6 +6,7 @@ export type SysRequest = {
   correlation_id: string;
   context: SystemContinuityContext;
   payload?: unknown;
+  generated_system_change_id: boolean;
 };
 export type SysBindings = {
   resolveContinuityContext: (system_change_id: string) => Promise<SystemContinuityContext>;
@@ -27,7 +28,7 @@ async function audit(b: SysBindings, e: Parameters<SysBindings["audit"]>[0]) {
 export async function executeSystemLifecycleOperation(input: {
   operation_id: SysServiceOperation;
   correlation_id: string;
-  system_change_id: string;
+  system_change_id?: string | null;
   payload?: unknown;
 }) {
   if (!binding) {
@@ -36,9 +37,15 @@ export async function executeSystemLifecycleOperation(input: {
   }
   const b = binding;
   if (!b) return { ok: false as const, reason_code: "SYS01_RUNTIME_NOT_BOUND", correlation_id: input.correlation_id };
-  const context = await b.resolveContinuityContext(input.system_change_id).catch(() => null);
+  const suppliedSystemChangeId = input.system_change_id?.trim() || null;
+  if (!suppliedSystemChangeId && input.operation_id !== "createCandidate") {
+    return { ok: false as const, reason_code: "SYSTEM_CHANGE_ID_REQUIRED", correlation_id: input.correlation_id };
+  }
+  const generated_system_change_id = suppliedSystemChangeId === null;
+  const systemChangeId = suppliedSystemChangeId ?? crypto.randomUUID();
+  const context = await b.resolveContinuityContext(systemChangeId).catch(() => null);
   if (!context) return { ok: false as const, reason_code: "SYSTEM_CONTINUITY_CONTEXT_UNRESOLVED", correlation_id: input.correlation_id };
-  const r = { operation_id: input.operation_id, correlation_id: input.correlation_id, context, payload: input.payload };
+  const r: SysRequest = { operation_id: input.operation_id, correlation_id: input.correlation_id, context, payload: input.payload, generated_system_change_id };
   const a = await b.authorize(r).catch(() => ({ allowed: false as const, reason_code: "AUTHORIZATION_EVALUATION_FAILED" }));
   if (!a.allowed) {
     const reason_code = a.reason_code ?? "PERMISSION_OR_GATE_DENIED";

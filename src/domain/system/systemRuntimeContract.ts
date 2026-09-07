@@ -1,7 +1,7 @@
 export const SYS_CURRENT_CONTROL_COUNT = 12;
 export const SYS_SECTION_COUNT = 8;
 export const SYS_AUTHORITY_STATUS = "FINAL_LOCKED" as const;
-export const SYS_IMPLEMENTATION_STATUS = "NOT_EXECUTED" as const;
+export const SYS_IMPLEMENTATION_STATUS = "RUNTIME_BOUND" as const;
 
 export const SYS_SERVICE_OPERATIONS = ["createCandidate", "createChangeRequest", "runSandboxTest"] as const;
 export type SysServiceOperation = (typeof SYS_SERVICE_OPERATIONS)[number];
@@ -96,18 +96,18 @@ export const SYS_CONTROL_REGISTRY: readonly SystemControlAuthorityTrace[] = [
     action_uid: "ACT-CANDIDATE-CREATE",
     gate_uid: null,
     permission_uid: "system.change.propose",
-    runtime_binding: null,
+    runtime_binding: "POST /v1/system/changes/candidates",
     service_operation: "createCandidate",
-    enabled_in_visual_phase: false,
+    enabled_in_visual_phase: true,
   },
   {
     control_uid: "SYS-01-BTN-CR-CREATE",
     action_uid: "ACT-CR-CREATE",
     gate_uid: null,
     permission_uid: "core.change.create",
-    runtime_binding: null,
+    runtime_binding: "POST /v1/system/changes/{SYSTEM_CHANGE_ID}/requests",
     service_operation: "createChangeRequest",
-    enabled_in_visual_phase: false,
+    enabled_in_visual_phase: true,
   },
   {
     control_uid: "SYS-01-BTN-NAV-OPEN",
@@ -123,9 +123,9 @@ export const SYS_CONTROL_REGISTRY: readonly SystemControlAuthorityTrace[] = [
     action_uid: "SYS-01-ACT-SANDBOX-TEST",
     gate_uid: null,
     permission_uid: "system.test.execute",
-    runtime_binding: null,
+    runtime_binding: "POST /v1/system/changes/{SYSTEM_CHANGE_ID}/sandbox-tests",
     service_operation: "runSandboxTest",
-    enabled_in_visual_phase: false,
+    enabled_in_visual_phase: true,
   },
 ] as const;
 
