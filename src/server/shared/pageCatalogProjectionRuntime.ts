@@ -421,8 +421,8 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     }
   }
   const currentConversationId = threads[0]?.conversation_id ?? null;
-  const latestAssistantMeta = currentConversationId
-    ? first(await runRlsActorQuery(
+  const latestAssistantRows = currentConversationId
+    ? await runRlsActorQuery(
         sql,
         sessionTokenHash,
         sql`
@@ -436,9 +436,10 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
           ORDER BY sequence_no DESC
           LIMIT 1
         `,
-      ).catch(() => []))
-    : null;
-  const aiGroup = first(await sql`
+      ).catch(() => [])
+    : [];
+  const latestAssistantMeta = asRecord(Array.isArray(latestAssistantRows) ? latestAssistantRows[0] : null);
+  const aiGroupRows = await sql`
     SELECT g.id,
            count(*) FILTER (WHERE m.enabled=true AND p.enabled=true AND p.health_status='HEALTHY')::int AS healthy_members
     FROM acpos_runtime.provider_groups g
@@ -448,7 +449,8 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     GROUP BY g.id,g.updated_at
     ORDER BY g.updated_at DESC,g.id
     LIMIT 1
-  `.catch(() => []));
+  `.catch(() => []);
+  const aiGroup = asRecord(Array.isArray(aiGroupRows) ? aiGroupRows[0] : null);
   const assignedAiSet = asText(aiGroup?.id);
   const healthyAiMembers = Number(aiGroup?.healthy_members ?? 0);
 
@@ -952,7 +954,7 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
   const latestAssistant = [...orderedMessages].reverse().find((row) => asText(row.actor_type) === "PROVIDER");
   const latestAssistantText = asText(latestAssistant?.text);
   const latestAssistantSummary = asText(latestAssistant?.assistant_summary) ?? latestAssistantText;
-  const strategyAiRoute = first(await sql`
+  const strategyAiRouteRows = await sql`
     SELECT g.id,
            count(*) FILTER (WHERE m.enabled=true AND p.enabled=true AND p.health_status='HEALTHY')::int AS healthy_members
     FROM acpos_runtime.provider_groups g
@@ -962,7 +964,8 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
     GROUP BY g.id,g.updated_at
     ORDER BY g.updated_at DESC,g.id
     LIMIT 1
-  `.catch(() => []));
+  `.catch(() => []);
+  const strategyAiRoute = asRecord(Array.isArray(strategyAiRouteRows) ? strategyAiRouteRows[0] : null);
   const strategyMultiReady = Number(strategyAiRoute?.healthy_members ?? 0) > 0;
 
   const page_state = firstCandidate ? "CANDIDATE_READY" : firstConversation || topics.length ? "READY" : "EMPTY";
