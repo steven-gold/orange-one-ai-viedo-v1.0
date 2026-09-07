@@ -5,6 +5,7 @@ type Entry = Record<Locale, string>;
 export const SYSTEM_CATALOG = {
   pageName: { "zh-TW": "系統 AI 工作區", "zh-CN": "系统 AI 工作区", en: "System Lifecycle AI Workbench" },
   pageRole: { "zh-TW": "統一系統生命週期設計、變更、驗證與稽核工作台", "zh-CN": "统一系统生命周期设计、变更、验证与稽核工作台", en: "Unified system lifecycle design, change, validation and audit workbench" },
+  eyebrow: { "zh-TW": "SYS-01 · 系統生命週期 AI", "zh-CN": "SYS-01 · 系统生命周期 AI", en: "SYS-01 · SYSTEM LIFECYCLE AI" },
   systemContext: { "zh-TW": "系統上下文", "zh-CN": "系统上下文", en: "System Context" },
   conversation: { "zh-TW": "設計對話", "zh-CN": "设计对话", en: "Design Conversation" },
   candidateChange: { "zh-TW": "變更候選", "zh-CN": "变更候选", en: "Candidate Change" },
