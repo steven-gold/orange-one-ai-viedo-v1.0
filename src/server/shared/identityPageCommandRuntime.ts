@@ -30,7 +30,7 @@ import {
 } from "@/server/system/productionSystemLifecycleRuntime";
 import { configureAiApiCommandRuntime } from "@/server/aiApi/aiApiCommandRuntime";
 import { executeProductionAiApiCommand, auditProductionAiApiCommand } from "@/server/aiApi/productionAiApiCommandRuntime";
-import { executeProductionConversationTurn } from "@/server/shared/productionConversationAiRuntime";
+import { executeProductionConversationTurn, requestProductionConversationStop } from "@/server/shared/productionConversationAiRuntime";
 
 type SqlClient = NonNullable<ReturnType<typeof getProductionNeonSql>>;
 
@@ -997,16 +997,40 @@ async function executeKnowledge(request: KnowledgeRuntimeRequest): Promise<unkno
   throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
 }
 
+async function authorizeConversation(
+  request: ConversationRequest,
+): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
+  const payload = asRecord(request.payload) ?? {};
+  const requestedPage = asText(payload.page_uid);
+  const pageUid = requestedPage === "admin:SYS-01"
+    ? "admin:SYS-01"
+    : requestedPage === "CORE-01"
+      ? "CORE-01"
+      : "workspace:STR-01";
+  const pageKey = CURRENT_PAGE_RESOURCE_KEYS[pageUid];
+  if (!pageKey) return { allowed: false, reason_code: "CONVERSATION_PAGE_AUTHORITY_UNRESOLVED" };
+  const page = await evaluatePageView(pageKey);
+  if (!page.allowed) return page;
+  const permission = request.operation_id === "stopConversationGeneration"
+    ? { resource_key: "api:stopConversationGeneration", action: "EXECUTE" }
+    : { resource_key: "api:sendConversationMessage", action: "EXECUTE" };
+  const operation = await evaluateResourceAction(permission.resource_key, permission.action);
+  return operation.allowed ? { allowed: true } : operation;
+}
+
 async function executeConversation(request: ConversationRequest): Promise<unknown> {
+  const conversationId = asText(request.conversation_id);
+  if (!conversationId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:conversationId");
+  if (request.operation_id === "stopConversationGeneration") {
+    return requestProductionConversationStop(conversationId);
+  }
   if (request.operation_id !== "sendConversationMessage") {
-    throw new NamedRuntimeError("CONVERSATION_GENERATION_STOP_NOT_REQUIRED_FOR_SYNCHRONOUS_PROVIDER_ROUTE");
+    throw new NamedRuntimeError("CONVERSATION_OPERATION_NOT_REGISTERED");
   }
   const identityContext = await requireIdentityContext();
   const payload = asRecord(request.payload) ?? {};
   const message = asText(payload.message);
   if (!message) throw new NamedRuntimeError("MESSAGE_REQUIRED");
-  const conversationId = asText(request.conversation_id);
-  if (!conversationId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:conversationId");
   return executeProductionConversationTurn({
     conversation_id: conversationId,
     actor_user_id: identityContext.actor.user_id,
@@ -1126,7 +1150,7 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureConversationRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["workspace:STR-01"]),
+    authorize: authorizeConversation,
     execute: executeConversation,
     audit: async () => undefined,
   });
