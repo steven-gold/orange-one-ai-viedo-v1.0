@@ -32,10 +32,106 @@ export const AIAPI_TEXT = {
   pending: { "zh-TW": "操作執行中", "zh-CN": "操作执行中", en: "Operation in progress" },
   selectRequired: { "zh-TW": "請先選取 Provider / Model", "zh-CN": "请先选择 Provider / Model", en: "Select a Provider / Model first" },
   noPlaintextSecret: { "zh-TW": "此表單只接受 Secret 環境變數參照名稱，不接受明文 API Key。", "zh-CN": "此表单只接受 Secret 环境变量引用名称，不接受明文 API Key。", en: "This form accepts only a secret environment-variable reference name, never plaintext API keys." },
+  readOnly: { "zh-TW": "唯讀", "zh-CN": "只读", en: "Read Only" },
 } satisfies Record<string, Entry>;
 
 export type AiApiTextKey = keyof typeof AIAPI_TEXT;
 export function aiApiText(locale: Locale, key: AiApiTextKey): string { return AIAPI_TEXT[key][locale]; }
+
+
+export const AIAPI_LABELS: Record<string, Entry> = {
+  "Provider summary": { "zh-TW":"Provider 摘要","zh-CN":"Provider 摘要",en:"Provider Summary" },
+  "Route summary": { "zh-TW":"路由摘要","zh-CN":"路由摘要",en:"Route Summary" },
+  "Capability summary": { "zh-TW":"Capability 摘要","zh-CN":"Capability 摘要",en:"Capability Summary" },
+  "Job summary": { "zh-TW":"Job 摘要","zh-CN":"Job 摘要",en:"Job Summary" },
+  "Cost summary": { "zh-TW":"成本摘要","zh-CN":"成本摘要",en:"Cost Summary" },
+  "Health summary": { "zh-TW":"健康狀態摘要","zh-CN":"健康状态摘要",en:"Health Summary" },
+  "Incident summary": { "zh-TW":"事件摘要","zh-CN":"事件摘要",en:"Incident Summary" },
+  "Candidate Group": { "zh-TW":"Candidate Group","zh-CN":"Candidate Group",en:"Candidate Group" },
+  "Fallback / limits": { "zh-TW":"Fallback / 限制","zh-CN":"Fallback / 限制",en:"Fallback / Limits" },
+  "Preflight": { "zh-TW":"Preflight","zh-CN":"Preflight",en:"Preflight" },
+  "Instruction Compile Audit": { "zh-TW":"Instruction 編譯稽核","zh-CN":"Instruction 编译稽核",en:"Instruction Compile Audit" },
+  "Sandbox": { "zh-TW":"Sandbox","zh-CN":"Sandbox",en:"Sandbox" },
+  "Route Simulation": { "zh-TW":"路由模擬","zh-CN":"路由模拟",en:"Route Simulation" },
+  "Route Decision": { "zh-TW":"路由決策","zh-CN":"路由决策",en:"Route Decision" },
+  "Quarantine / restore": { "zh-TW":"隔離 / 恢復","zh-CN":"隔离 / 恢复",en:"Quarantine / Restore" },
+  "Job": { "zh-TW":"Job","zh-CN":"Job",en:"Job" },
+  "Attempt": { "zh-TW":"Attempt","zh-CN":"Attempt",en:"Attempt" },
+  "Callback": { "zh-TW":"Callback","zh-CN":"Callback",en:"Callback" },
+  "Artifact": { "zh-TW":"Artifact","zh-CN":"Artifact",en:"Artifact" },
+  "Cost": { "zh-TW":"成本","zh-CN":"成本",en:"Cost" },
+  "Budget": { "zh-TW":"預算","zh-CN":"预算",en:"Budget" },
+  "Degradation": { "zh-TW":"降級","zh-CN":"降级",en:"Degradation" },
+  "Incident": { "zh-TW":"事件","zh-CN":"事件",en:"Incident" },
+  "Fallback Decision": { "zh-TW":"Fallback 決策","zh-CN":"Fallback 决策",en:"Fallback Decision" },
+  "Kill Switch": { "zh-TW":"Kill Switch","zh-CN":"Kill Switch",en:"Kill Switch" },
+
+  "Provider": { "zh-TW":"Provider","zh-CN":"Provider",en:"Provider" },
+  "Model": { "zh-TW":"Model","zh-CN":"Model",en:"Model" },
+  "Capability": { "zh-TW":"Capability","zh-CN":"Capability",en:"Capability" },
+  "Adapter": { "zh-TW":"Adapter","zh-CN":"Adapter",en:"Adapter" },
+  "Base URL": { "zh-TW":"Base URL","zh-CN":"Base URL",en:"Base URL" },
+  "Endpoint": { "zh-TW":"Endpoint","zh-CN":"Endpoint",en:"Endpoint" },
+  "Timeout": { "zh-TW":"逾時","zh-CN":"超时",en:"Timeout" },
+  "Enabled": { "zh-TW":"啟用","zh-CN":"启用",en:"Enabled" },
+  "Credential Status": { "zh-TW":"Credential 狀態","zh-CN":"Credential 状态",en:"Credential Status" },
+  "Last Test": { "zh-TW":"最近測試","zh-CN":"最近测试",en:"Last Test" },
+  "Actions": { "zh-TW":"操作","zh-CN":"操作",en:"Actions" },
+
+  "Provider ID": { "zh-TW":"Provider ID","zh-CN":"Provider ID",en:"Provider ID" },
+  "Model ID": { "zh-TW":"Model ID","zh-CN":"Model ID",en:"Model ID" },
+  "Base URL (HTTPS)": { "zh-TW":"Base URL（HTTPS）","zh-CN":"Base URL（HTTPS）",en:"Base URL (HTTPS)" },
+  "Endpoint Path": { "zh-TW":"Endpoint 路徑","zh-CN":"Endpoint 路径",en:"Endpoint Path" },
+  "HTTP Method": { "zh-TW":"HTTP 方法","zh-CN":"HTTP 方法",en:"HTTP Method" },
+  "Secret Env Reference": { "zh-TW":"Secret 環境變數參照","zh-CN":"Secret 环境变量引用",en:"Secret Env Reference" },
+  "Timeout Seconds": { "zh-TW":"逾時秒數","zh-CN":"超时秒数",en:"Timeout Seconds" },
+  "Prompt Template": { "zh-TW":"Prompt Template","zh-CN":"Prompt Template",en:"Prompt Template" },
+  "Request Template JSON": { "zh-TW":"Request Template JSON","zh-CN":"Request Template JSON",en:"Request Template JSON" },
+  "Response Text Path": { "zh-TW":"Response 文字路徑","zh-CN":"Response 文本路径",en:"Response Text Path" },
+  "Preferred Language": { "zh-TW":"偏好語言","zh-CN":"偏好语言",en:"Preferred Language" },
+  "Max Context": { "zh-TW":"最大 Context","zh-CN":"最大 Context",en:"Max Context" },
+
+  "查看": { "zh-TW":"查看","zh-CN":"查看",en:"View" },
+  "編輯": { "zh-TW":"編輯","zh-CN":"编辑",en:"Edit" },
+  "測試": { "zh-TW":"測試","zh-CN":"测试",en:"Test" },
+  "退役": { "zh-TW":"退役","zh-CN":"退役",en:"Retire" },
+  "設定金鑰": { "zh-TW":"設定金鑰","zh-CN":"设置密钥",en:"Set Credential" },
+  "刪除金鑰": { "zh-TW":"刪除金鑰","zh-CN":"删除密钥",en:"Delete Credential" },
+  "新增 Provider": { "zh-TW":"新增 Provider","zh-CN":"新增 Provider",en:"Add Provider" },
+  "Quarantine": { "zh-TW":"隔離","zh-CN":"隔离",en:"Quarantine" },
+  "Restore": { "zh-TW":"恢復","zh-CN":"恢复",en:"Restore" },
+  "Route": { "zh-TW":"執行路由","zh-CN":"执行路由",en:"Route" },
+  "Decision": { "zh-TW":"路由決策","zh-CN":"路由决策",en:"Decision" },
+  "Configure": { "zh-TW":"設定","zh-CN":"设置",en:"Configure" },
+  "Approve": { "zh-TW":"核准","zh-CN":"批准",en:"Approve" },
+
+  "Group Name": { "zh-TW":"Group 名稱","zh-CN":"Group 名称",en:"Group Name" },
+  "Use Case": { "zh-TW":"使用情境","zh-CN":"使用场景",en:"Use Case" },
+  "Profile IDs (comma separated)": { "zh-TW":"Profile IDs（逗號分隔）","zh-CN":"Profile IDs（逗号分隔）",en:"Profile IDs (comma separated)" },
+  "Data Classification": { "zh-TW":"資料分類","zh-CN":"数据分类",en:"Data Classification" },
+  "Limits JSON": { "zh-TW":"限制 JSON","zh-CN":"限制 JSON",en:"Limits JSON" },
+  "Quality Tiers JSON": { "zh-TW":"品質層級 JSON","zh-CN":"质量层级 JSON",en:"Quality Tiers JSON" },
+  "Quarantine ID": { "zh-TW":"隔離 ID","zh-CN":"隔离 ID",en:"Quarantine ID" },
+  "Reason": { "zh-TW":"原因","zh-CN":"原因",en:"Reason" },
+  "Canonical Instruction": { "zh-TW":"Canonical Instruction","zh-CN":"Canonical Instruction",en:"Canonical Instruction" },
+  "Candidate Group ID": { "zh-TW":"Candidate Group ID","zh-CN":"Candidate Group ID",en:"Candidate Group ID" },
+  "Required Capability": { "zh-TW":"必要 Capability","zh-CN":"必要 Capability",en:"Required Capability" },
+  "Route Decision ID": { "zh-TW":"Route Decision ID","zh-CN":"Route Decision ID",en:"Route Decision ID" },
+  "Target Type": { "zh-TW":"目標類型","zh-CN":"目标类型",en:"Target Type" },
+  "Target Ref": { "zh-TW":"目標參照","zh-CN":"目标引用",en:"Target Ref" },
+  "Confirmation": { "zh-TW":"確認","zh-CN":"确认",en:"Confirmation" },
+  "Governed Resource ID": { "zh-TW":"受治理資源 ID","zh-CN":"受治理资源 ID",en:"Governed Resource ID" },
+  "Resource Type": { "zh-TW":"資源類型","zh-CN":"资源类型",en:"Resource Type" },
+  "Config Patch JSON": { "zh-TW":"設定 Patch JSON","zh-CN":"设置 Patch JSON",en:"Config Patch JSON" },
+  "Rationale": { "zh-TW":"核准理由","zh-CN":"批准理由",en:"Rationale" },
+  "Expected Resource Version": { "zh-TW":"預期資源版本","zh-CN":"预期资源版本",en:"Expected Resource Version" },
+};
+
+export function aiApiLabel(locale: Locale, key: string): string {
+  const entry = AIAPI_LABELS[key];
+  if (!entry) return key;
+  return entry[locale];
+}
 
 export const AIAPI_PRO_FIELDS: readonly [string, Entry][] = [
   ["AIAPI-01-PRO-DESC-IDENTITY", {"zh-TW":"API / Model 身分","zh-CN":"API / Model 身份",en:"API / Model Identity"}],
