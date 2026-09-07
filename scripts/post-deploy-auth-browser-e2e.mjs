@@ -14,8 +14,8 @@ function protectionHeaders() {
   return { "x-vercel-protection-bypass": secret };
 }
 
-const frontNavIds = ["NAV-01","NAV-02","NAV-03","NAV-04","NAV-05","NAV-06","NAV-07","NAV-08","NAV-09"];
-const adminNavIds = ["ADMIN-NAV-01","ADMIN-NAV-02","ADMIN-NAV-03","ADMIN-NAV-04","ADMIN-NAV-05","ADMIN-NAV-06","ADMIN-NAV-07","ADMIN-NAV-08","ADMIN-NAV-09"];
+const frontNavIds = ["NAV-01","NAV-02","NAV-03","NAV-04","NAV-05","NAV-06","NAV-07","NAV-08"];
+const adminNavIds = ["ADMIN-NAV-01","ADMIN-NAV-02","ADMIN-NAV-03","ADMIN-NAV-04","ADMIN-NAV-05","ADMIN-NAV-06","ADMIN-NAV-07","ADMIN-NAV-08"];
 
 if (!email || !password) {
   process.stdout.write("POST_DEPLOY_AUTH_BROWSER_E2E_BLOCKED reason=PRODUCTION_LOGIN_CREDENTIAL_NOT_CONFIGURED\n");
@@ -42,10 +42,9 @@ try {
   assert(JSON.stringify(actualFront) === JSON.stringify(frontNavIds), `AUTH_BROWSER_FRONT_NAV_MISMATCH_${actualFront.join(",")}`);
 
   const frontTargets = await page.locator("[data-nav-id]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-target-page-uid")).filter(Boolean));
-  assert(frontTargets.length === 9, `AUTH_BROWSER_FRONT_TARGET_COUNT_${frontTargets.length}`);
-  const frontSurfaceTargets = await page.locator(".sidebar-footer button[data-target-page-uid]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-target-page-uid")).filter(Boolean));
-  assert(frontSurfaceTargets.length === 1, `AUTH_BROWSER_FRONT_SURFACE_TARGET_COUNT_${frontSurfaceTargets.length}`);
-  assert(frontSurfaceTargets[0] === "admin:SYS-01", `AUTH_BROWSER_FRONT_SURFACE_TARGET_INVALID_${frontSurfaceTargets[0] ?? "UNRESOLVED"}`);
+  assert(frontTargets.length === 8, `AUTH_BROWSER_FRONT_TARGET_COUNT_${frontTargets.length}`);
+  const frontSurfaceTargets = await page.locator(".surface-switch-group [data-target-page-uid]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-target-page-uid")).filter(Boolean));
+  assert(JSON.stringify(frontSurfaceTargets) === JSON.stringify(["workspace:WB-01","admin:SYS-01"]), `AUTH_BROWSER_FRONT_SURFACE_TARGET_INVALID_${frontSurfaceTargets.join(",")}`);
 
   await page.goto(`${base}/admin/system`, { waitUntil: "domcontentloaded", timeout: 45_000 });
   await page.waitForFunction((expected) => document.querySelectorAll("[data-nav-id]").length === expected, adminNavIds.length, { timeout: 15_000 });
@@ -53,13 +52,12 @@ try {
   assert(JSON.stringify(actualAdmin) === JSON.stringify(adminNavIds), `AUTH_BROWSER_ADMIN_NAV_MISMATCH_${actualAdmin.join(",")}`);
 
   const adminTargets = await page.locator("[data-nav-id]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-target-page-uid")).filter(Boolean));
-  assert(adminTargets.length === 9, `AUTH_BROWSER_ADMIN_TARGET_COUNT_${adminTargets.length}`);
+  assert(adminTargets.length === 8, `AUTH_BROWSER_ADMIN_TARGET_COUNT_${adminTargets.length}`);
 
-  const adminSurfaceTargets = await page.locator(".sidebar-footer button[data-target-page-uid]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-target-page-uid")).filter(Boolean));
-  assert(adminSurfaceTargets.length === 1, `AUTH_BROWSER_ADMIN_SURFACE_TARGET_COUNT_${adminSurfaceTargets.length}`);
-  assert(adminSurfaceTargets[0] === "workspace:WB-01", `AUTH_BROWSER_ADMIN_SURFACE_TARGET_INVALID_${adminSurfaceTargets[0] ?? "UNRESOLVED"}`);
+  const adminSurfaceTargets = await page.locator(".surface-switch-group [data-target-page-uid]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-target-page-uid")).filter(Boolean));
+  assert(JSON.stringify(adminSurfaceTargets) === JSON.stringify(["workspace:WB-01","admin:SYS-01"]), `AUTH_BROWSER_ADMIN_SURFACE_TARGET_INVALID_${adminSurfaceTargets.join(",")}`);
 
-  process.stdout.write("POST_DEPLOY_AUTH_BROWSER_E2E_PASS front_nav=9 admin_nav=9 visible_pages=18\n");
+  process.stdout.write("POST_DEPLOY_AUTH_BROWSER_E2E_PASS front_nav=8 admin_nav=8 visible_pages=18\n");
   await context.close();
 } finally {
   await browser.close();

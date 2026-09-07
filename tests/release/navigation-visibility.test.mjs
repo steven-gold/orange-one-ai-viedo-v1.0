@@ -23,7 +23,8 @@ test("session navigation visibility is derived from PAGE permission assignments 
   assert.match(session, /visible_page_uids: visibility\.visible_page_uids/);
 
   assert.match(shell, /pageUid: "workspace:WB-01"/);
-  assert.match(shell, /pageUid: "admin:KB-01"/);
+  assert.doesNotMatch(shell, /id: "NAV-09"/);
+  assert.doesNotMatch(shell, /id: "ADMIN-NAV-09"/);
   assert.match(shell, /visiblePageSet\.has\(item\.pageUid\)/);
   assert.match(shell, /frontSurfaceTarget/);
   assert.match(shell, /adminSurfaceTarget/);
@@ -46,7 +47,7 @@ test("production authenticated acceptance requires exact 18-page API and browser
   assert.match(browser, /adminNavIds/);
   assert.match(browser, /AUTH_BROWSER_FRONT_NAV_MISMATCH/);
   assert.match(browser, /AUTH_BROWSER_ADMIN_NAV_MISMATCH/);
-  assert.match(browser, /POST_DEPLOY_AUTH_BROWSER_E2E_PASS front_nav=9 admin_nav=9 visible_pages=18/);
+  assert.match(browser, /POST_DEPLOY_AUTH_BROWSER_E2E_PASS front_nav=8 admin_nav=8 visible_pages=18/);
 
   assert.match(workflow, /Run deployed ACPOS authenticated browser visibility E2E/);
   assert.match(workflow, /node scripts\/post-deploy-auth-browser-e2e\.mjs/);
@@ -69,6 +70,34 @@ test("AppShell preserves frozen global visual shell classes while retaining perm
 
   assert.match(shell, /visible_page_uids/);
   assert.match(shell, /data-target-page-uid=\{item\.pageUid\}/);
-  assert.match(shell, /sidebar-footer/);
+  assert.match(shell, /surface-switch-group/);
+  assert.match(shell, /GHS-CTL-SURFACE-FRONT/);
+  assert.match(shell, /GHS-CTL-SURFACE-ADMIN/);
+  assert.doesNotMatch(shell, /sidebar-footer/);
   assert.match(shell, /GHS-PORT-IDENTITY/);
+});
+
+
+test("Current Global L1 authority is user-confirmed 8 frontend + 8 admin while INFO/KB remain non-L1 current pages", async () => {
+  const nav = await read("authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml");
+  const shellAuthority = await read("authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml");
+  const system = await read("authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml");
+  const matrix = await read("authority/global/ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml");
+  const iam = await read("src/components/pages/IamVisual.tsx");
+  const iamCatalog = await read("src/i18n/iamCatalog.ts");
+
+  assert.match(nav, /front_workspace_navigation:[\s\S]*?count: 8/);
+  assert.match(nav, /admin_navigation:[\s\S]*?count: 8/);
+  assert.doesNotMatch(nav, /nav_id: NAV-09/);
+  assert.doesNotMatch(nav, /nav_id: ADMIN-NAV-09/);
+  assert.match(shellAuthority, /navigation:[\s\S]*?count: 8/);
+  assert.doesNotMatch(shellAuthority, /nav_id: NAV-09/);
+  assert.match(system, /Front workspace navigation has exactly 8 L1 items/);
+  assert.match(system, /Admin navigation has exactly 8 L1 items/);
+  assert.match(matrix, /page_uid: workspace:INFO-01[\s\S]*?navigation: NON_L1_CURRENT_PAGE/);
+  assert.match(matrix, /page_uid: admin:KB-01[\s\S]*?navigation: NON_L1_CURRENT_ADMIN_PAGE/);
+  assert.match(iam, /data-frontend-l1-count="8"/);
+  assert.match(iam, /data-backend-l1-count="8"/);
+  assert.match(iamCatalog, /前台 8 L1/);
+  assert.match(iamCatalog, /後台 8 L1/);
 });
