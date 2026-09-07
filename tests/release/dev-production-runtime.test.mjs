@@ -49,3 +49,27 @@ test("DEV-01 production discovery routes stay on the registered Authority paths"
     assert.match(source, new RegExp(`createDevRoute\\("${operation}"\\)`));
   }
 });
+
+
+test("DEV-01 production acceptance stays manual, exact-SHA-pinned, and non-deploying", async () => {
+  const script = await read("scripts/production-dev-lifecycle-e2e.mjs");
+  const workflow = await read(".github/workflows/dev-lifecycle-acceptance.yml");
+
+  assert.match(script, /ACPOS_EXPECT_RELEASE_SHA/);
+  assert.match(script, /HEALTH_RELEASE_SHA_MISMATCH/);
+  assert.match(script, /\/v1\/outreach\/discovery-jobs/);
+  assert.match(script, /\/pause/);
+  assert.match(script, /\/resume/);
+  assert.match(script, /\/stop/);
+  assert.match(script, /external_request_sent === false/);
+  assert.match(script, /deployment_triggered === false/);
+  assert.match(script, /PRODUCTION_DEV_LIFECYCLE_E2E_PASS/);
+
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.doesNotMatch(workflow, /push:/);
+  assert.doesNotMatch(workflow, /deployment_status:/);
+  assert.match(workflow, /expected_release_sha:/);
+  assert.match(workflow, /environment: Production/);
+  assert.match(workflow, /node --check scripts\/production-dev-lifecycle-e2e\.mjs/);
+  assert.match(workflow, /node scripts\/production-dev-lifecycle-e2e\.mjs/);
+});
