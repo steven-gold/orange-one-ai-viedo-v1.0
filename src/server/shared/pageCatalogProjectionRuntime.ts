@@ -1316,28 +1316,92 @@ async function readSocFromDb(sql: SqlClient): Promise<unknown> {
 
 async function readErpFromDb(sql: SqlClient): Promise<unknown> {
   const connectors = await safeRows(() => sql`
-    SELECT erp_connector_id::text AS ref, provider_key AS label, adapter_key, connection_status, configuration_version::text AS configuration_version
+    SELECT erp_connector_id::text AS ref,
+           provider_key AS label,
+           adapter_key,
+           connection_status,
+           configuration_version::text AS configuration_version,
+           CASE
+             WHEN jsonb_typeof(entity_scope)='string' THEN entity_scope #>> '{}'
+             ELSE entity_scope::text
+           END AS entity_scope_text
     FROM erp_connectors
-    ORDER BY created_at DESC
+    ORDER BY created_at DESC,erp_connector_id DESC
+  `);
+  const snapshots = await safeRows(() => sql`
+    SELECT erp_snapshot_id::text AS ref,
+           erp_connector_id::text AS connector_ref,
+           snapshot_type,
+           completeness::text AS completeness,
+           freshness_at::text AS freshness_at,
+           status::text AS status,
+           floor(extract(epoch FROM created_at) * 1000)::bigint::text AS version
+    FROM erp_snapshots
+    ORDER BY created_at DESC,erp_snapshot_id DESC
   `);
   const jobs = await safeRows(() => sql`
-    SELECT erp_sync_job_id::text AS ref, status::text AS label
+    SELECT erp_sync_job_id::text AS ref,
+           erp_connector_id::text AS connector_ref,
+           status::text AS status,
+           requested_scope,
+           attempt_no::text AS attempt_no
     FROM erp_sync_jobs
-    ORDER BY requested_at DESC
+    ORDER BY requested_at DESC,erp_sync_job_id DESC
   `);
   const first = connectors[0] ?? null;
+  const connectorRef = asText(first?.ref);
+  const snapshot = connectorRef
+    ? snapshots.find((row) => asText(row.connector_ref) === connectorRef) ?? null
+    : null;
+  const latestJob = connectorRef
+    ? jobs.find((row) => asText(row.connector_ref) === connectorRef) ?? null
+    : null;
+  const connectionStatus = asText(first?.connection_status);
+  const latestJobStatus = asText(latestJob?.status);
+  const activeRefresh = latestJobStatus === "QUEUED" || latestJobStatus === "RUNNING" || latestJobStatus === "PENDING_EXTERNAL";
+  const snapshotRefreshReady = Boolean(
+    first
+    && snapshot
+    && (connectionStatus === "READY" || connectionStatus === "DEGRADED")
+    && !activeRefresh
+  );
+  const requestedScope = asText(first?.entity_scope_text) ?? "";
   return {
-    page_state: first ? "READY" : "EMPTY",
+    page_state: first || snapshot ? "READY" : "EMPTY",
     values: {
       "ERP-01-FLD-PROVIDER": asText(first?.label) ?? DASH,
       "ERP-01-FLD-ADAPTER": asText(first?.adapter_key) ?? DASH,
-      "ERP-01-FLD-CONNECTION-STATUS": asText(first?.connection_status) ?? DASH,
+      "ERP-01-FLD-CONNECTION-STATUS": connectionStatus ?? DASH,
       "ERP-01-FLD-CONFIG-VERSION": asText(first?.configuration_version) ?? DASH,
-      "ERP-01-FLD-SYNC-STATUS": asText(jobs[0]?.label) ?? DASH,
+      "ERP-01-FLD-SNAPSHOT": snapshot ? `${asText(snapshot.ref) ?? DASH} · ${asText(snapshot.status) ?? DASH}` : DASH,
+      "ERP-01-FLD-FRESHNESS": asText(snapshot?.freshness_at) ?? DASH,
+      "ERP-01-FLD-SYNC-SNAPSHOT-ID": asText(snapshot?.ref) ?? DASH,
+      "ERP-01-FLD-SYNC-FRESHNESS-AT": asText(snapshot?.freshness_at) ?? DASH,
+      "ERP-01-FLD-SYNC-COMPLETENESS": asText(snapshot?.completeness) ?? DASH,
+      "ERP-01-FLD-SYNC-LAST-SYNC-STATUS": latestJobStatus ?? DASH,
+      "ERP-01-FLD-SYNC-STATUS": latestJobStatus ?? DASH,
     },
-    gate_state: { "ERP-01-GATE-PAGE": true },
-    selected: first ? { connector_id: asText(first.ref) ?? "" } : {},
-    form_schemas: {},
+    gate_state: {
+      "ERP-01-GATE-PAGE": true,
+      "ERP-01-GATE-CONNECTOR-READ": Boolean(first),
+      "ERP-01-GATE-SYNC-READ": Boolean(snapshot || latestJob),
+      "ERP-01-GATE-SNAPSHOT-REFRESH": snapshotRefreshReady,
+      "ERP-01-GATE-FINANCE": Boolean(snapshot),
+    },
+    selected: first ? {
+      connector_id: connectorRef ?? "",
+      connector_version: asText(first.configuration_version) ?? "",
+      snapshot_id: asText(snapshot?.ref) ?? "",
+      snapshot_version: asText(snapshot?.version) ?? "",
+      sync_job_id: asText(latestJob?.ref) ?? "",
+      sync_job_version: asText(latestJob?.attempt_no) ?? "",
+      requested_scope: requestedScope,
+    } : {},
+    form_schemas: snapshotRefreshReady ? {
+      "ERP-01-BTN-SNAPSHOT-REFRESH": [
+        { key: "requested_scope", type: "text", required: true },
+      ],
+    } : {},
   };
 }
 
