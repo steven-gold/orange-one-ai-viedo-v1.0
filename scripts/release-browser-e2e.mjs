@@ -656,11 +656,11 @@ try {
         const dialog = aiApiPage.locator('section[role="dialog"]');
         await dialog.waitFor({ state: "visible", timeout: 5_000 });
 
-        const targetType = dialog.locator("label").filter({ hasText: "Target Type" }).locator("select");
-        const targetRef = dialog.locator("label").filter({ hasText: "Target Ref" }).locator("input");
-        const enabledField = dialog.locator("label").filter({ hasText: "Enabled" }).locator("select");
-        const reasonField = dialog.locator("label").filter({ hasText: "Reason" }).locator("textarea");
-        const confirmation = dialog.locator("label").filter({ hasText: "Confirmation" }).locator("select");
+        const targetType = dialog.locator('[data-field-key="target_type"] select');
+        const targetRef = dialog.locator('[data-field-key="target_ref"] input');
+        const enabledField = dialog.locator('[data-field-key="enabled"] select');
+        const reasonField = dialog.locator('[data-field-key="reason"] textarea');
+        const confirmation = dialog.locator('[data-field-key="confirmation"] select');
 
         await targetType.selectOption("PROFILE");
         await targetRef.fill("TEST-AIAPI-PROVIDER-001");
