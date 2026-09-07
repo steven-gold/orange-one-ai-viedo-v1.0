@@ -76,6 +76,7 @@ try {
   let devMutationCases = 0;
   let socMutationCases = 0;
   let aiApiMutationCases = 0;
+  let kbMutationCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -582,10 +583,56 @@ try {
     } finally {
       await aiApiPage.close();
     }
+
+
+    const kbPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      const kbRoot = await navigateToCurrentPage(kbPage, "/admin/knowledge", "admin:KB-01");
+      await kbPage.locator('button[data-view-uid="KB-01-VIEW-SOURCE"]').click();
+
+      const pauseButton = kbPage.locator('button[data-control-id="KB-01-CTL-SOURCE-PAUSE"]');
+      await pauseButton.waitFor({ state: "visible", timeout: 5_000 });
+      await kbPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="KB-01-CTL-SOURCE-PAUSE"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      if ((await pauseButton.getAttribute("data-action-operation")) !== "pauseKnowledgeSource") throw new Error("KB_SOURCE_PAUSE_OPERATION_TRACE_INVALID");
+      await pauseButton.click();
+
+      const resumeButton = kbPage.locator('button[data-control-id="KB-01-CTL-SOURCE-RESUME"]');
+      await resumeButton.waitFor({ state: "visible", timeout: 5_000 });
+      await kbPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="KB-01-CTL-SOURCE-RESUME"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      if ((await resumeButton.getAttribute("data-action-operation")) !== "resumeKnowledgeSource") throw new Error("KB_SOURCE_RESUME_OPERATION_TRACE_INVALID");
+      if ((await kbRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("KB_SOURCE_PAUSE_RUNTIME_ERROR");
+      kbMutationCases += 1;
+
+      await resumeButton.click();
+      await pauseButton.waitFor({ state: "visible", timeout: 5_000 });
+      await kbPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="KB-01-CTL-SOURCE-PAUSE"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      if ((await kbRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("KB_SOURCE_RESUME_RUNTIME_ERROR");
+      kbMutationCases += 1;
+    } finally {
+      await kbPage.close();
+    }
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases} kb_mutation_cases=${kbMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }
