@@ -633,7 +633,7 @@
   "formal_truth": {
     "gate22_external_provider": {
       "status": "BLOCKED_EXTERNAL_CONFIGURATION_INTERNAL_PATH_DEPLOYED",
-      "reason": "Gate 22 internal implementation is now deployed on Production SHA 2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed and passed integrated Release Gate #534, main Release Gate #535, and Production Post-Deploy #796/#797. The deployed path includes canonical capability approval materialization, secret/profile/group/queue/worker/HTTP fail-closed checks, dispatch-time authority/classification/profile-version revalidation, and a manual-only real External Provider E2E workflow. Production Neon still has 0 capabilities, 0 profiles, 0 approved secret references, 0 groups, 0 members, 0 profile tests and 0 route decisions. No real external request exists, so Gate 22 remains BLOCKED and must not be marked PASS."
+      "reason": "Current Production Neon reverified 2026-09-08: provider_capabilities=0, provider_prompt_profiles=0, secret_references=0, provider_candidate_groups=0, provider_candidate_members=0, provider_route_preflights=0; queues=1 and workers=1. The production external-provider E2E requires a real enabled profile, credential_status=SET, matching capability, real connection test with external_request_sent=true, and a successful routed worker execution. No real provider configuration/evidence exists, so Gate 22 cannot pass."
     },
     "gate23_queue_worker_dlq": {
       "status": "PASS",
@@ -641,7 +641,7 @@
     },
     "gate24_admin_mutation": {
       "status": "PARTIAL_8_OF_9_SYS01_BLOCKED",
-      "reason": "Release-controlled mutation evidence covers Strategy Admin, SG-02, IAM-01, ERP-01, DEV-01, SOC-01, AIAPI-01 and KB-01. SYS-01 remains blocked because Current Authority is FINAL_LOCKED with createCandidate/createChangeRequest/runSandboxTest enabled_in_visual_phase=false and production lifecycle execution remains PROVIDER_GATEWAY_NOT_MATERIALIZED. Do not override this Authority."
+      "reason": "Current SYS-01 FINAL_LOCKED Authority reverified 2026-09-08. SYS-01-BTN-CANDIDATE-CREATE/createCandidate, SYS-01-BTN-CR-CREATE/createChangeRequest, and SYS-01-BTN-SANDBOX-TEST/runSandboxTest remain enabled_in_visual_phase=false. Do not enable or count SYS-01 mutation PASS without an explicit Current Authority change and production lifecycle runtime."
     },
     "gate25_full_page_button_acceptance": {
       "status": "PASS_PRODUCTION_CURRENT_18_PAGE_STAGE_DRIVEN_VISUAL_RELEASE",
@@ -665,8 +665,8 @@
     }
   },
   "blockers": [
-    "Gate 22 real external configuration is absent in Production Neon: capabilities=0, profiles=0, approved secret references=0, groups=0, members=0. No real external_request_sent=true evidence exists, so Gate 22 cannot pass.",
-    "Gate 24 SYS-01 remains blocked by FINAL_LOCKED Current Authority (service mutations enabled_in_visual_phase=false) and PROVIDER_GATEWAY_NOT_MATERIALIZED.",
+    "Gate 22 current Production Neon real provider configuration remains absent: provider_capabilities=0, provider_prompt_profiles=0, secret_references=0, provider_candidate_groups=0, provider_candidate_members=0, provider_route_preflights=0. Queue/worker are present (1/1), but no real external_request_sent=true evidence exists.",
+    "Gate 24 SYS-01 remains blocked by CURRENT FINAL_LOCKED Authority: createCandidate/createChangeRequest/runSandboxTest are enabled_in_visual_phase=false. An explicit Authority change is required before implementation may enable these controls.",
     "Vercel management connector still lacks Project-read visibility even though Git-linked deployment for gold5757/orange-one-acpos-test succeeded on exact main SHA; use GitHub↔Vercel status plus Post-Deploy evidence as deployment authority until connector visibility is repaired."
   ],
   "next_release_sequence": [
