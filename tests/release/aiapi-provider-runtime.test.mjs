@@ -68,6 +68,8 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(runtime, /FROM secret_references/);
   assert.match(runtime, /s\.status='APPROVED'/);
   assert.match(runtime, /SECRET_REFERENCE_NOT_APPROVED/);
+  assert.match(runtime, /secret_reference_approved/);
+  assert.match(runtime, /credentialStatus\(row\.secret_env_ref, row\.secret_reference_approved === true\)/);
   assert.match(runtime, /compileProviderRequest/);
   assert.match(runtime, /executeProviderHttpRequest/);
   assert.match(runtime, /enqueueProviderExecutionRequest/);
