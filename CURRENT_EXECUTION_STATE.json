@@ -2,16 +2,16 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T14:05:50+08:00",
+  "as_of": "2026-09-07T14:47:36+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
-    "main_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
-    "new_sha_basis": "4bb525654cde1759d6698441f44bd6372f0f7865",
+    "main_sha": "67e0fa9c36e813e7c78626304a56f5e3ad424f0b",
+    "new_sha_basis": "67e0fa9c36e813e7c78626304a56f5e3ad424f0b",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "FAST_FORWARDED_TO_RELEASED_MAIN_BEFORE_STATE_ONLY_UPDATE",
+    "construction_branch_alignment": "FAST_FORWARDED_TO_VISUAL_REPAIR_MAIN",
     "post_release_new_status": "AHEAD_MAIN_BY_STATE_AND_TEST_HARNESS_ONLY_NO_PRODUCTION_RUNTIME_DELTA"
   },
   "release_validation": {
@@ -25,24 +25,23 @@
     },
     "current_main_release_gate": {
       "status": "PASS",
-      "run_number": 535,
-      "run_id": 34088576411,
-      "head_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
+      "run_number": 542,
+      "run_id": 34092213498,
+      "head_sha": "67e0fa9c36e813e7c78626304a56f5e3ad424f0b",
       "branch": "main",
       "conclusion": "success",
-      "browser_e2e": "PASS_72_CASES",
-      "browser_evidence": "interactive_controls=500 governed_controls=311 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2 kb_mutation_cases=2",
-      "current_dom_control_acceptance": "PASS_18_PAGES_397_VISIBLE_397_GOVERNED",
-      "current_dom_breakdown": "enabled=195 disabled=202",
-      "standalone_docker_build": "PASS",
-      "dirty_tree_guard": "PASS",
       "integrated_pr": {
-        "number": 27,
-        "integrated_release_gate_run_number": 534,
-        "integrated_release_gate_run_id": 34088378594,
-        "merge_result_sha": "81a4a862040e8a5591a82058d9e7c324f71e036b",
+        "number": 28,
+        "integrated_release_gate_run_number": 541,
+        "integrated_release_gate_run_id": 34091971256,
+        "merge_result_sha": "cb495371f99cb5b42a23b5b664bf9b51c21b3945",
         "conclusion": "success"
-      }
+      },
+      "visual_shell_repair": "RESTORED_FROZEN_ACPOS_SHELL_GLOBAL_HEADER_GLOBAL_SIDEBAR_WORKSPACE_SLOT",
+      "browser_e2e": "PASS_72_CASES_ON_INTEGRATED_RELEASE",
+      "current_dom_control_acceptance": "PASS_18_PAGES_ON_INTEGRATED_RELEASE",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS"
     },
     "latest_provider_adapter_gate": {
       "status": "PASS",
@@ -69,11 +68,9 @@
     },
     "latest_remote_control_acceptance_gate": {
       "status": "PASS_PRODUCTION",
-      "run_number": 796,
-      "run_id": 34088606609,
-      "duplicate_confirming_run_number": 797,
-      "duplicate_confirming_run_id": 34088737458,
-      "head_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
+      "run_number": 804,
+      "run_id": 34092254683,
+      "head_sha": "67e0fa9c36e813e7c78626304a56f5e3ad424f0b",
       "branch": "main",
       "conclusion": "success",
       "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_RELEASE_SHA_EXACT_PROJECTIONS_18",
@@ -81,8 +78,7 @@
       "browser_smoke": "PASS_54_CASES_WIDTHS_1280_1440_1920_PAGES_18",
       "authenticated_browser_visibility": "PASS_FRONT_NAV_9_ADMIN_NAV_9_VISIBLE_PAGES_18",
       "production_dom_control_acceptance": "PASS_18_PAGES_538_VISIBLE_538_GOVERNED",
-      "production_dom_breakdown": "enabled=308 disabled=230",
-      "note": "Deployment-triggered #796 and workflow-run-triggered #797 both passed on the exact same Production SHA."
+      "production_dom_breakdown": "enabled=308 disabled=230"
     },
     "latest_gate24_strategy_governance_gate": {
       "status": "PASS_RELEASE_CONTROLLED",
@@ -390,22 +386,20 @@
   "production": {
     "target": "orange-one-acpos-test",
     "url": "https://orange-one-acpos-test.vercel.app",
-    "deployed_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
+    "deployed_sha": "67e0fa9c36e813e7c78626304a56f5e3ad424f0b",
     "deployment_status": "PASS_EXACT_MAIN_SHA",
     "latest_verified_post_deploy": {
       "status": "PASS",
-      "deployment_trigger_run_number": 796,
-      "deployment_trigger_run_id": 34088606609,
-      "duplicate_workflow_run_number": 797,
-      "duplicate_workflow_run_id": 34088737458,
-      "head_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
+      "deployment_trigger_run_number": 804,
+      "deployment_trigger_run_id": 34092254683,
+      "head_sha": "67e0fa9c36e813e7c78626304a56f5e3ad424f0b",
       "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_PROJECTIONS_18",
       "authenticated_e2e": "PASS_LOGIN_SESSION_DASHBOARD_PROJECTIONS_18_QUEUE_PROBE_LOGOUT",
       "browser_smoke": "PASS_54_CASES_18_PAGES_3_WIDTHS",
       "authenticated_browser_visibility": "PASS_FRONT_NAV_9_ADMIN_NAV_9_VISIBLE_PAGES_18",
       "current_dom_control_acceptance": "PASS_18_PAGES_538_VISIBLE_538_GOVERNED_ENABLED_308_DISABLED_230"
     },
-    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
+    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_67e0fa9c36e813e7c78626304a56f5e3ad424f0b",
     "database_migration_count": 19,
     "vercel_management_visibility": {
       "team": "gold5757",
@@ -423,6 +417,23 @@
       "target": "gold5757/orange-one-acpos-test",
       "deployment_ref": "4Rf3iXC1At6oWDTDzun6dEqRAU3H",
       "deployment_trigger_count_for_this_release": 1
+    },
+    "visual_shell_repair": {
+      "status": "DEPLOYED_AND_ACCEPTED",
+      "root_cause": "AppShell DOM/class structure had been changed to app-shell/sidebar/shell-main/topbar/content-area while globals.css still governed acpos-shell/global-header/global-sidebar/workspace-slot, causing global layout rules to detach from the rendered shell.",
+      "repair_commit": "add426bc487660ac83f0b5572dd7be3d30e2bde6",
+      "integrated_pr": 28,
+      "integrated_release_gate": "#541 PASS",
+      "main_release_gate": "#542 PASS",
+      "production_post_deploy": "#804 PASS",
+      "visual_authority_strategy": "RESTORE_FROZEN_VISUAL_SHELL_DOM_AND_CLASSES_PRESERVE_CURRENT_RUNTIME",
+      "runtime_preserved": [
+        "identity projection/command adapters",
+        "PAGE permission visibility",
+        "account/login surface",
+        "front/admin navigation target traces",
+        "current page runtimes"
+      ]
     }
   },
   "neon": {
@@ -539,8 +550,8 @@
       "reason": "Release-controlled mutation evidence covers Strategy Admin, SG-02, IAM-01, ERP-01, DEV-01, SOC-01, AIAPI-01 and KB-01. SYS-01 remains blocked because Current Authority is FINAL_LOCKED with createCandidate/createChangeRequest/runSandboxTest enabled_in_visual_phase=false and production lifecycle execution remains PROVIDER_GATEWAY_NOT_MATERIALIZED. Do not override this Authority."
     },
     "gate25_full_page_button_acceptance": {
-      "status": "PASS_PRODUCTION_CURRENT_18_PAGE_ACCEPTANCE",
-      "reason": "Production exact SHA 2e53c4ec passed Post-Deploy #796 and confirming #797: HTTP smoke, authenticated E2E, 54 browser cases across 18 Current pages at 1280/1440/1920, 18 visible-page auth, and Current DOM acceptance 538 visible / 538 governed (308 enabled, 230 disabled). Main Release Gate #535 also passes 72 controlled browser cases and 18-page Current DOM acceptance 397/397 governed. Historical 1453 remains only the legacy 92-page permission catalog baseline (1141 controls + 312 actions)."
+      "status": "PASS_PRODUCTION_CURRENT_18_PAGE_ACCEPTANCE_AFTER_VISUAL_SHELL_REPAIR",
+      "reason": "Production exact SHA 67e0fa9c passed Post-Deploy #804 after restoring the frozen global visual shell DOM/CSS alignment: HTTP smoke, authenticated E2E, 54 browser cases across 18 Current pages at 1280/1440/1920, 18 visible-page auth, and Current DOM acceptance 538 visible / 538 governed (308 enabled, 230 disabled)."
     }
   },
   "blockers": [
@@ -549,11 +560,11 @@
     "Vercel management connector still lacks Project-read visibility even though Git-linked deployment for gold5757/orange-one-acpos-test succeeded on exact main SHA; use GitHub↔Vercel status plus Post-Deploy evidence as deployment authority until connector visibility is repaired."
   ],
   "next_release_sequence": [
-    "Production released baseline remains main 2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed. new contains only post-release state evidence plus Release Browser ERP hydration-stability remediation; these do not require an immediate Production redeploy.",
+    "Current released baseline is main/new code basis 67e0fa9c36e813e7c78626304a56f5e3ad424f0b with the frozen visual shell structure restored and Production Post-Deploy #804 PASS.",
     "Do not rebuild Gate 22 internals. The remaining Gate 22 action requires real Production capability/profile/approved secret reference/group/member data from the actual Provider configuration.",
     "When real Provider configuration exists, run ACPOS External Provider Acceptance manually with the real profile/group/capability and require external_request_sent=true, worker success, route decision SUCCESS and result_hash lineage.",
     "Keep SYS-01 mutation blocked until Current Authority explicitly enables its service mutations and the exact production lifecycle runtime is materialized.",
-    "Treat 1453 strictly as the legacy 92-page permission catalog baseline (1141 controls + 312 actions), not the Current 18-page DOM denominator."
+    "Add future visual acceptance that asserts shell DOM/CSS authority parity; functional Browser/DOM acceptance alone must not be used as proof of visual freeze fidelity."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
