@@ -75,5 +75,5 @@ test("migration 0023 stages only ERP snapshot refresh control/API permissions", 
   assert.match(manifest, /payload_sha256: d18b51cb45f1c0ed3519ba3b1d2c7ac2ed11bc270e2bf59e21c98d41694f0cfa/);
   assert.match(manifest, /approval_ref: CR-ERP-0023-PENDING-PRODUCTION-APPLY/);
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 20/);
-  assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0) >= 23);
+  assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 23);
 });
