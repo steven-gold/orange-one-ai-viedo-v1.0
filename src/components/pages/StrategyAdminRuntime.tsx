@@ -38,6 +38,7 @@ const ACTIONS: Readonly<Record<StrategyAdminMappedAction, true>> = {
   "ACT-DRAFT-SAVE": true,
   "ACT-CANDIDATE-CREATE": true,
   "ACT-CANDIDATE-COMPARE": true,
+  "ACT-CANDIDATE-DECIDE": true,
   "ACT-ADOPT-CONTEXT": true,
 };
 
