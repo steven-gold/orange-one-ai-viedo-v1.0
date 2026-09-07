@@ -439,17 +439,6 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
       ).catch(() => [])
     : [];
   const latestAssistantMeta = asRecord(Array.isArray(latestAssistantRows) ? latestAssistantRows[0] : null);
-  const generationRows = conversationId
-    ? await sql`
-        SELECT id,status,cancel_requested,updated_at::text AS updated_at
-        FROM acpos_runtime.conversation_generation_jobs
-        WHERE conversation_id=${conversationId}
-        ORDER BY created_at DESC
-        LIMIT 1
-      `.catch(() => [])
-    : [];
-  const generation = asRecord(Array.isArray(generationRows) ? generationRows[0] : null);
-
   const aiGroupRows = await sql`
     SELECT g.id,
            count(*) FILTER (WHERE m.enabled=true AND p.enabled=true AND p.health_status='HEALTHY')::int AS healthy_members
@@ -1167,6 +1156,17 @@ async function readSystemFromDb(
       });
     }
   }
+
+  const generationRows = conversationId
+    ? await sql`
+        SELECT id,status,cancel_requested,updated_at::text AS updated_at
+        FROM acpos_runtime.conversation_generation_jobs
+        WHERE conversation_id=${conversationId}
+        ORDER BY created_at DESC
+        LIMIT 1
+      `.catch(() => [])
+    : [];
+  const generation = asRecord(Array.isArray(generationRows) ? generationRows[0] : null);
 
   const aiGroupRows = await sql`
     SELECT g.id,
