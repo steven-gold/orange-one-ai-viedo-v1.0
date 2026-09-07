@@ -253,12 +253,22 @@ test("SYS-01 exposes only the three user-approved lifecycle routes while undefin
   assert.match(conversationRuntime, /status:\s*503/);
 
   assert.match(visual, /data-effectful-runtime-ready=["']true["']/);
-  for (const controlId of ["SYS-01-BTN-ATTACH","SYS-01-BTN-SEND","SYS-01-BTN-STOP"]) {
-    assert.match(visual, new RegExp(`id=["']${controlId}["'][\\s\\S]{0,300}?\\bdisabled\\b`), `${controlId} remains blocked by its separate unresolved conversation binding`);
+  assert.match(
+    visual,
+    /id=["']SYS-01-BTN-ATTACH["'][\s\S]{0,500}?disabled[\s\S]{0,500}?GLOBAL_ATTACHMENT_SELECTOR_NOT_BOUND/,
+    "SYS-01 attachment stays fail-closed until the shared global selector is bound",
+  );
+  for (const controlId of ["SYS-01-BTN-SEND","SYS-01-BTN-STOP","SYS-01-BTN-CANDIDATE-CREATE","SYS-01-BTN-CR-CREATE","SYS-01-BTN-SANDBOX-TEST"]) {
+    assert.match(
+      visual,
+      new RegExp(`id=["']${controlId}["'][\\s\\S]{0,900}?data-disabled-reason`),
+      `${controlId} must be conditionally governed rather than permanently disabled`,
+    );
   }
-  for (const controlId of ["SYS-01-BTN-CANDIDATE-CREATE","SYS-01-BTN-CR-CREATE","SYS-01-BTN-SANDBOX-TEST"]) {
-    assert.match(visual, new RegExp(`id=["']${controlId}["'][\\s\\S]{0,500}?data-disabled-reason`), `${controlId} must be conditionally governed rather than permanently disabled`);
-  }
+  assert.match(conversationBindings, /credentials:\s*["']include["']/);
+  assert.match(conversationBindings, /page_uid:\s*["']admin:SYS-01["']/);
+  assert.match(conversationBindings, /ai_mode:\s*input\.ai_mode/);
+  assert.match(conversationBindings, /council_mode:\s*input\.council_mode/);
 });
 
 test("release gate covers both construction and production branches", async () => {
