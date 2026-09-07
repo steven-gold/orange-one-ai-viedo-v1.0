@@ -2,16 +2,17 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T13:58:30+08:00",
+  "as_of": "2026-09-07T14:05:50+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
-    "new_sha_basis": "2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
+    "new_sha_basis": "4bb525654cde1759d6698441f44bd6372f0f7865",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "FAST_FORWARDED_TO_RELEASED_MAIN_BEFORE_STATE_ONLY_UPDATE"
+    "construction_branch_alignment": "FAST_FORWARDED_TO_RELEASED_MAIN_BEFORE_STATE_ONLY_UPDATE",
+    "post_release_new_status": "AHEAD_MAIN_BY_STATE_AND_TEST_HARNESS_ONLY_NO_PRODUCTION_RUNTIME_DELTA"
   },
   "release_validation": {
     "final_pre_state_construction_gate": {
@@ -53,18 +54,18 @@
     },
     "latest_control_acceptance_gate": {
       "status": "PASS",
-      "run_number": 532,
-      "run_id": 34088141080,
-      "head_sha": "8ec82dc6bf8ae7696b0c7da76231cfd4df34cca9",
+      "run_number": 538,
+      "run_id": 34089146783,
+      "head_sha": "4bb525654cde1759d6698441f44bd6372f0f7865",
       "branch": "new",
       "conclusion": "success",
       "browser_e2e": "PASS_72_CASES",
-      "browser_evidence": "interactive_controls=527 governed_controls=321 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2 kb_mutation_cases=2",
-      "current_dom_control_acceptance": "PASS_18_PAGES_280_VISIBLE_280_GOVERNED",
-      "current_dom_breakdown": "enabled=195 disabled=85",
+      "browser_evidence": "interactive_controls=500 governed_controls=311 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2 kb_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_419_VISIBLE_419_GOVERNED",
+      "current_dom_breakdown": "enabled=235 disabled=184",
       "standalone_docker_build": "PASS",
       "dirty_tree_guard": "PASS",
-      "note": "Current DOM visible count is per-run controlled-runtime evidence, not a frozen Production denominator."
+      "production_effect": "NONE_NEW_BRANCH_ONLY"
     },
     "latest_remote_control_acceptance_gate": {
       "status": "PASS_PRODUCTION",
@@ -358,6 +359,32 @@
       "integrated_release_gate": "#534 PASS",
       "main_release_gate": "#535 PASS",
       "production_post_deploy": "#796 PASS + #797 PASS"
+    },
+    "latest_state_only_validation": {
+      "status": "PASS_AFTER_BROWSER_HYDRATION_REMEDIATION",
+      "failed_run": {
+        "run_number": 537,
+        "run_id": 34088902149,
+        "head_sha": "b21b93a213294ed25bb026ec49eb8a4c20aba8a9",
+        "conclusion": "failure",
+        "failure_step": "Supported-viewport browser E2E",
+        "failure_reason": "ERP_SYNC_TAB_NOT_ENABLED_IN_CONTROLLED_TEST",
+        "classification": "TEST_HARNESS_CONTROLLED_PROJECTION_HYDRATION_RACE",
+        "evidence": "Production runtime code was identical to main 2e53c4ec, which already passed #535 and Production #796/#797."
+      },
+      "remediation": {
+        "commit_sha": "4bb525654cde1759d6698441f44bd6372f0f7865",
+        "change": "Replace immediate ERP isEnabled checks with Playwright trial actionability waits before real clicks.",
+        "regression_test": "runtime-hardening asserts ERP governed control hydration wait and forbids immediate syncTab.isEnabled race.",
+        "release_gate_run_number": 538,
+        "release_gate_run_id": 34089146783,
+        "conclusion": "success",
+        "browser_e2e": "PASS_72_CASES_500_INTERACTIVE_311_GOVERNED",
+        "current_dom": "PASS_18_PAGES_419_VISIBLE_419_GOVERNED",
+        "docker": "PASS",
+        "dirty_tree": "PASS"
+      },
+      "failure_retained_in_evidence": true
     }
   },
   "production": {
@@ -522,7 +549,7 @@
     "Vercel management connector still lacks Project-read visibility even though Git-linked deployment for gold5757/orange-one-acpos-test succeeded on exact main SHA; use GitHub↔Vercel status plus Post-Deploy evidence as deployment authority until connector visibility is repaired."
   ],
   "next_release_sequence": [
-    "Current released baseline is main/new code basis 2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed. This state update is construction-branch-only and must not trigger a redundant Vercel Hobby deployment.",
+    "Production released baseline remains main 2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed. new contains only post-release state evidence plus Release Browser ERP hydration-stability remediation; these do not require an immediate Production redeploy.",
     "Do not rebuild Gate 22 internals. The remaining Gate 22 action requires real Production capability/profile/approved secret reference/group/member data from the actual Provider configuration.",
     "When real Provider configuration exists, run ACPOS External Provider Acceptance manually with the real profile/group/capability and require external_request_sent=true, worker success, route decision SUCCESS and result_hash lineage.",
     "Keep SYS-01 mutation blocked until Current Authority explicitly enables its service mutations and the exact production lifecycle runtime is materialized.",
@@ -541,6 +568,7 @@
   "post_release_state_policy": {
     "branch": "new",
     "deployment_effect": "NONE",
-    "reason": "Final evidence is recorded after Production release without creating a second main/Vercel deployment."
+    "reason": "Final Production evidence and test-harness stability remediation are recorded on construction branch without creating a redundant Vercel Hobby deployment.",
+    "production_runtime_delta_after_main_release": false
   }
 }
