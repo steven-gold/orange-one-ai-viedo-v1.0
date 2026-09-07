@@ -312,6 +312,23 @@ button.account-popover-link {
 }
 .global-sidebar.is-expanded .nav-label { opacity: 1; transform: translateX(0); }
 
+.sidebar-footer {
+  position: absolute;
+  left: 10px;
+  bottom: 16px;
+  width: 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.global-sidebar.is-expanded .sidebar-footer {
+  left: 15px;
+  width: 191px;
+}
+.global-sidebar.is-expanded .sidebar-footer .nav-item {
+  width: 191px;
+}
+
 .workspace-slot {
   position: fixed;
   z-index: 1;
