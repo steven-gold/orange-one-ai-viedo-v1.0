@@ -317,6 +317,8 @@ try {
         throw new Error("SG02_CONFIGURE_RUNTIME_ERROR");
       }
       sgGovernanceCases += 1;
+      await sgDrawer.locator('button[aria-label="Close"]').click();
+      await sgDrawer.waitFor({ state: "detached", timeout: 5_000 });
 
       const approveButton = sgPage.locator('button[data-control-id="CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE"][data-operation-id="approveGovernedResource"]').first();
       if (!(await approveButton.isEnabled())) throw new Error("SG02_APPROVE_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
