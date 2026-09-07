@@ -465,7 +465,6 @@ async function routePreflight(sql: SqlClient, payload: Row, correlationId: strin
              SELECT 1 FROM provider_capabilities c
              WHERE c.provider_key=m.provider_id
                AND c.model_key=m.model_id
-               AND c.capability_key=${requiredCapability}
                AND c.status='APPROVED'
                AND ${classification} = ANY(c.accepted_classifications::text[])
            ) AS governed_capability
