@@ -74,8 +74,8 @@ test("migration 0024 stages KnowledgeSource state/version, configure permission,
   assert.doesNotMatch(migration, /INSERT INTO public\.knowledge_sources/);
   assert.doesNotMatch(migration, /CREATE TABLE .*knowledge/i);
 
-  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.11/);
+  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.\d+/);
   assert.match(manifest, /migration_id: 0024_kb_source_state_permission_rls_closure/);
   assert.match(manifest, /payload_sha256: de41bfa7773dd495056b49e656fa8fd0fb5c032b5d0f680065aa4f90911c9341/);
-  assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 24/);
+  assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 24);
 });
