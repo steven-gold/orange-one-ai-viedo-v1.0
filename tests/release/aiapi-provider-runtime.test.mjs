@@ -86,6 +86,10 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.match(providerAdapter, /Bearer/);
   assert.match(queueRuntime, /executeQueuedProviderRequest/);
   assert.match(queueRuntime, /recordQueuedProviderFailure/);
+  assert.match(providerAdapter, /p\.enabled AS profile_enabled/);
+  assert.match(providerAdapter, /secret_reference_approved/);
+  assert.match(providerAdapter, /PROVIDER_PROFILE_DISABLED/);
+  assert.match(providerAdapter, /PROVIDER_SECRET_REFERENCE_NOT_APPROVED/);
   assert.doesNotMatch(runtime + providerAdapter, /process\.env\[[^\]]+\]\s*=(?!=)|process\.env\.[A-Z0-9_]+\s*=/);
   assert.doesNotMatch(providerAdapter, /console\.(?:log|debug|info|warn|error)\s*\(/);
 });
