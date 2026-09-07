@@ -365,25 +365,7 @@ function EditVisualBody() {
           <div className={styles.dialogueGuard} data-section-id="EDIT-01-SEC-11" data-component-uid="EDIT-01-CMP-DIALOGUE-BINDING"><span>{editUiText(locale, "dialogueGuard")}</span><strong>—</strong></div>
         </section>
       </div>
-    </div>
-
-    <div className={styles.adjustmentRow}>
-      <section className={`${styles.panel} ${styles.semanticPanel}`} data-section-id="EDIT-01-SEC-08" data-visual-uid="EDIT-01-VIS-SEMANTIC" data-component-uid="EDIT-01-CMP-API">
-        <Title text={editUiText(locale, "semantic")} meta="38%" />
-        <div className={styles.semanticContext}>{apiVisible.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        {state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? null : <div className={styles.conditionNotice}>{editUiText(locale, "correctionUnavailable")}</div>}
-        <div className={state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? styles.stack : styles.hiddenRegistry} aria-hidden={state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? undefined : "true"}>{apiConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <div className={styles.evaluationBox} data-section-id="EDIT-01-SEC-13" data-component-uid="EDIT-01-CMP-STAGE-EVALUATION"><div data-component-uid="EDIT-01-CMP-QA">{EVALUATION.map((spec) => <Control key={spec.id} spec={spec} />)}</div></div>
-      </section>
-
-      <section className={`${styles.panel} ${styles.microPanel}`} data-section-id="EDIT-01-SEC-06" data-visual-uid="EDIT-01-VIS-MICRO" data-component-uid="EDIT-01-CMP-MICRO-ADJUSTMENT">
-        <Title text={editUiText(locale, "micro")} meta="62%" />
-        <div className={styles.microSequence}>{editUiText(locale, "microHint")}</div>
-        <div className={styles.microGrid}>{inspectorFields.slice(3, 12).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-      </section>
-    </div>
-
-    <div className={styles.bottomRow}>
+      <aside className={styles.inspectorColumn} data-layout-role="right-inspector-correction">
       <section className={`${styles.panel} ${styles.inspectorPanel}`} data-section-id="EDIT-01-SEC-07" data-visual-uid="EDIT-01-VIS-INSPECTOR" data-component-uid="EDIT-01-CMP-INSPECTOR">
         <Title text={editUiText(locale, "inspector")} meta="34%" />
         <div className={styles.tabs}>{inspectorTabs.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
@@ -393,7 +375,25 @@ function EditVisualBody() {
         <section className={state.inspector_tab === "LIPSYNC" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "LIPSYNC" ? undefined : "true"} data-section-id="EDIT-01-SEC-11" data-component-uid="EDIT-01-CMP-LIPSYNC">{LIPSYNC.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
         <section className={state.inspector_tab === "SUBTITLE" ? styles.inspectorGrid : styles.hiddenRegistry} aria-hidden={state.inspector_tab === "SUBTITLE" ? undefined : "true"} data-section-id="EDIT-01-SEC-12" data-component-uid="EDIT-01-CMP-SUBTITLE">{SUBTITLE.map((spec) => <Control key={spec.id} spec={spec} />)}</section>
       </section>
+      <section className={`${styles.panel} ${styles.semanticPanel}`} data-section-id="EDIT-01-SEC-08" data-visual-uid="EDIT-01-VIS-SEMANTIC" data-component-uid="EDIT-01-CMP-API">
+        <Title text={editUiText(locale, "semantic")} meta="38%" />
+        <div className={styles.semanticContext}>{apiVisible.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+        {state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? null : <div className={styles.conditionNotice}>{editUiText(locale, "correctionUnavailable")}</div>}
+        <div className={state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? styles.stack : styles.hiddenRegistry} aria-hidden={state.resolved.gate_state["EDIT-01-GATE-CORRECTION"] ? undefined : "true"}>{apiConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+        <div className={styles.evaluationBox} data-section-id="EDIT-01-SEC-13" data-component-uid="EDIT-01-CMP-STAGE-EVALUATION"><div data-component-uid="EDIT-01-CMP-QA">{EVALUATION.map((spec) => <Control key={spec.id} spec={spec} />)}</div></div>
+      </section>
+      </aside>
+    </div>
 
+    <div className={styles.adjustmentRow}>
+      <section className={`${styles.panel} ${styles.microPanel}`} data-section-id="EDIT-01-SEC-06" data-visual-uid="EDIT-01-VIS-MICRO" data-component-uid="EDIT-01-CMP-MICRO-ADJUSTMENT">
+        <Title text={editUiText(locale, "micro")} meta="62%" />
+        <div className={styles.microSequence}>{editUiText(locale, "microHint")}</div>
+        <div className={styles.microGrid}>{inspectorFields.slice(3, 12).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+      </section>
+    </div>
+
+    <div className={styles.bottomRow}>
       <section className={`${styles.panel} ${styles.comparePanel}`} data-section-id="EDIT-01-SEC-14" data-visual-uid="EDIT-01-VIS-COMPARE" data-component-uid="EDIT-01-CMP-VERSION">
         <Title text={editUiText(locale, "compare")} meta="34%" /><div className={styles.stack}>{VERSION.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
       </section>
