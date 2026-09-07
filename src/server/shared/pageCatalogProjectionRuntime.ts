@@ -387,6 +387,34 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     if (!conversation_id || !label) return [];
     return [{ conversation_id, label }];
   });
+  const messages_by_thread: Record<string, Array<{ message_ref: string; conversation_id: string; role: "USER" | "ASSISTANT" | "SYSTEM"; text: string }>> = {};
+  if (threads.length) {
+    const ids = threads.map((item) => item.conversation_id);
+    const messageRows = await runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT conversation_message_id::text AS message_ref,
+               conversation_id::text AS conversation_id,
+               actor_type,
+               COALESCE(message_content->>'text','') AS text
+        FROM conversation_messages
+        WHERE conversation_id = ANY(${ids}::uuid[])
+        ORDER BY conversation_id, sequence_no
+      `,
+    ).catch(() => []);
+    for (const raw of Array.isArray(messageRows) ? messageRows : []) {
+      const row = asRecord(raw);
+      const message_ref = asText(row?.message_ref);
+      const conversation_id = asText(row?.conversation_id);
+      const actor_type = asText(row?.actor_type);
+      const text = typeof row?.text === "string" ? row.text : "";
+      if (!message_ref || !conversation_id) continue;
+      const role: "USER" | "ASSISTANT" | "SYSTEM" =
+        actor_type === "USER" ? "USER" : actor_type === "PROVIDER" ? "ASSISTANT" : "SYSTEM";
+      (messages_by_thread[conversation_id] ??= []).push({ message_ref, conversation_id, role, text });
+    }
+  }
   return {
     refs: {
       project_id: first?.project_id ?? null,
@@ -407,6 +435,7 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     topics,
     work_items: ["STORY", "CHAPTER", "WORLD_SETTING", "DNA", "BLUEPRINT"].map((work_item) => ({ work_item, label: work_item })),
     threads,
+    messages_by_thread,
     display_values: {
       page_mode: "PROJECT_CORE",
       assigned_ai_set: DASH,
