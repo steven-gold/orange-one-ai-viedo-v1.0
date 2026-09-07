@@ -205,6 +205,7 @@ export type StrategyAdminOperation =
   | "saveDraft"
   | "createCandidate"
   | "compareCandidates"
+  | "rejectStrategyCandidate"
   | "adoptAsContextCandidate";
 
 export const STRATEGY_ADMIN_ACTION_OPERATION = {
@@ -216,17 +217,81 @@ export const STRATEGY_ADMIN_ACTION_OPERATION = {
   "ACT-DRAFT-SAVE": "saveDraft",
   "ACT-CANDIDATE-CREATE": "createCandidate",
   "ACT-CANDIDATE-COMPARE": "compareCandidates",
+  "ACT-CANDIDATE-DECIDE": "rejectStrategyCandidate",
   "ACT-ADOPT-CONTEXT": "adoptAsContextCandidate",
 } as const satisfies Readonly<Record<string, StrategyAdminOperation>>;
 
+const STRATEGY_ADMIN_MATERIALIZED_OPERATIONS = new Set<StrategyAdminOperation>([
+  "searchProjection",
+  "refreshProjection",
+  "configureGovernedResource",
+  "approveGovernedResource",
+]);
+
+export function isStrategyAdminOperationRuntimeReady(actionId: string): boolean {
+  if (!(actionId in STRATEGY_ADMIN_ACTION_OPERATION)) return false;
+  return STRATEGY_ADMIN_MATERIALIZED_OPERATIONS.has(
+    STRATEGY_ADMIN_ACTION_OPERATION[actionId as keyof typeof STRATEGY_ADMIN_ACTION_OPERATION],
+  );
+}
+
 export type StrategyAdminMappedAction =
   keyof typeof STRATEGY_ADMIN_ACTION_OPERATION;
+
+export type StrategyAdminSourcePage =
+  | "admin:STR-01"
+  | "admin:STR-02"
+  | "admin:STR-03"
+  | "admin:STR-04"
+  | "admin:STR-05"
+  | "admin:STR-06";
+
+export const STRATEGY_ADMIN_ACTION_SOURCE = {
+  overview: {
+    "ACT-SEARCH": "admin:STR-01",
+    "ACT-REFRESH": "admin:STR-01",
+  },
+  intelligence: {
+    "ACT-CONFIGURE": "admin:STR-02",
+    "ACT-APPROVE": "admin:STR-02",
+    "ACT-SEARCH": "admin:STR-04",
+    "ACT-EXPORT": "admin:STR-04",
+  },
+  playbook: {
+    "ACT-DRAFT-SAVE": "admin:STR-03",
+    "ACT-APPROVE": "admin:STR-03",
+  },
+  opportunity: {
+    "ACT-CANDIDATE-CREATE": "admin:STR-05",
+    "ACT-APPROVE": "admin:STR-05",
+  },
+  decision: {
+    "ACT-CANDIDATE-COMPARE": "admin:STR-06",
+    "ACT-CANDIDATE-DECIDE": "admin:STR-06",
+    "ACT-ADOPT-CONTEXT": "admin:STR-06",
+  },
+} as const;
+
+export function strategyAdminSourcePage(
+  view: StrategyAdminView,
+  action_id: string,
+): StrategyAdminSourcePage | null {
+  const viewMap = STRATEGY_ADMIN_ACTION_SOURCE[view] as Readonly<Record<string, StrategyAdminSourcePage>>;
+  return viewMap[action_id] ?? null;
+}
+
+export function strategyAdminPermissionKey(view: StrategyAdminView, action_id: string) {
+  const source = strategyAdminSourcePage(view, action_id);
+  return source ? `${source}::${action_id}` : null;
+}
 
 export type StrategyAdminCommandInput = {
   action_id: StrategyAdminMappedAction;
   operation: StrategyAdminOperation;
   view: StrategyAdminView;
+  source_page_uid: StrategyAdminSourcePage;
   projection: StrategyAdminProjection;
+  payload: Readonly<Record<string, unknown>>;
 };
 
 export type StrategyAdminCommandAdapter = {
@@ -254,6 +319,7 @@ export async function invokeStrategyAdminAction(
   action_id: StrategyAdminMappedAction,
   view: StrategyAdminView,
   projection: StrategyAdminProjection,
+  payload: Readonly<Record<string, unknown>> = {},
 ) {
   const current = commandAdapter;
   if (!current) {
@@ -263,10 +329,20 @@ export async function invokeStrategyAdminAction(
       correlation_id: "unresolved",
     };
   }
+  const source_page_uid = strategyAdminSourcePage(view, action_id);
+  if (!source_page_uid) {
+    return {
+      ok: false as const,
+      reason_code: "STR_ADMIN_SOURCE_ACTION_BINDING_UNRESOLVED",
+      correlation_id: "unresolved",
+    };
+  }
   return current.invoke({
     action_id,
     operation: STRATEGY_ADMIN_ACTION_OPERATION[action_id],
     view,
+    source_page_uid,
     projection,
+    payload,
   });
 }

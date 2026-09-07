@@ -1,5 +1,6 @@
 .page {
-  min-width: 1280px;
+  width: 100%;
+  min-width: 0;
   min-height: 100%;
   padding: 16px;
 }
@@ -356,5 +357,15 @@
 @media (max-width: 1439px) {
   .contextComponent {
     grid-template-columns: 150px auto 150px auto 210px 220px;
+  }
+
+  .primaryGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .leftRail,
+  .centerColumn,
+  .rightRail {
+    min-width: 0;
   }
 }

@@ -48,12 +48,24 @@ try {
       const page = await browser.newPage({ viewport: { width: 1440, height: 1400 } });
       const runtimeErrors = [];
       page.on("pageerror", (error) => runtimeErrors.push(`pageerror:${error.message}`));
-      const response = await page.goto(`${base}${route}`, { waitUntil: "networkidle", timeout: 45_000 });
+      const response = await page.goto(`${base}${route}`, { waitUntil: "domcontentloaded", timeout: 45_000 });
       assert(response?.ok(), `CONTROL_NAV_${route}_${response?.status()}`);
       const root = page.locator("[data-page-uid]").first();
       await root.waitFor({ state: "attached", timeout: 15_000 });
       const actualUid = await root.getAttribute("data-page-uid");
       assert(actualUid === expectedUid, `CONTROL_UID_${route}_${actualUid}`);
+      await page.locator("body").waitFor({ state: "visible", timeout: 15_000 });
+      try {
+        await page.waitForFunction(
+          () => {
+            const current = document.querySelector("[data-page-uid]");
+            return current?.getAttribute("data-page-state") !== "LOADING";
+          },
+          { timeout: 15_000 },
+        );
+      } catch {
+        throw new Error(`CONTROL_STUCK_LOADING_${expectedUid}`);
+      }
 
       const audit = await page.evaluate(() => {
         const root = document.querySelector("[data-page-uid]");

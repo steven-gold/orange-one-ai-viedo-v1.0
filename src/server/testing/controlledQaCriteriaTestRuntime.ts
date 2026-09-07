@@ -162,9 +162,11 @@ function executeGovernedCommand(request: IamRuntimeRequest): unknown {
 export async function executeControlledQaCriteriaGovernance(request: IamRuntimeRequest): Promise<{ ok: true; value: unknown; correlation_id: string } | { ok: false; reason_code: string; correlation_id: string } | null> {
   if ((request.operation !== "configureGovernedResource" && request.operation !== "approveGovernedResource") || !isControlledQaCriteriaServerTestMode()) return null;
   const payload = record(request.payload);
+  const pageUid = text(payload.current_page_uid) ?? text(payload.page_uid);
+  const sourcePageUid = text(payload.source_page_uid) ?? pageUid;
+  if (pageUid !== "admin:SG-02" || sourcePageUid !== "admin:SG-02") return null;
   const resourceType = text(payload.resource_type);
   const resourceId = text(payload.resource_id) ?? request.resource_id ?? null;
-  if (resourceType === "social_platform" || (typeof resourceId === "string" && resourceId.startsWith("TEST-SOC-PLATFORM"))) return null;
   const cached = state.idempotency.get(request.correlation_id);
   if (cached) return cached.ok ? { ok: true as const, value: cached.value, correlation_id: request.correlation_id } : { ok: false as const, reason_code: cached.reason_code as string, correlation_id: request.correlation_id };
   seedFixture();

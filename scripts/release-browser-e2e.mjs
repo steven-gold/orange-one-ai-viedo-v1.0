@@ -40,6 +40,28 @@ async function waitForServer() {
   throw new Error("BROWSER_SERVER_START_TIMEOUT");
 }
 
+async function navigateToCurrentPage(page, route, uid) {
+  const response = await page.goto(`${base}${route}`, { waitUntil: "domcontentloaded", timeout: 45_000 });
+  if (!response?.ok()) throw new Error(`NAV_${route}_${response?.status()}`);
+  const root = page.locator("[data-page-uid]").first();
+  await root.waitFor({ state: "attached", timeout: 15_000 });
+  const actual = await root.getAttribute("data-page-uid");
+  if (actual !== uid) throw new Error(`UID_${route}_${actual}`);
+  await page.locator("body").waitFor({ state: "visible", timeout: 15_000 });
+  try {
+    await page.waitForFunction(
+      () => {
+        const current = document.querySelector("[data-page-uid]");
+        return current?.getAttribute("data-page-state") !== "LOADING";
+      },
+      { timeout: 15_000 },
+    );
+  } catch {
+    throw new Error(`STUCK_LOADING_${uid}`);
+  }
+  return root;
+}
+
 try {
   await waitForServer();
   const browser = await chromium.launch({ headless: true });
@@ -47,6 +69,14 @@ try {
   let interactiveControls = 0;
   let governedControls = 0;
   let safeLocalClicks = 0;
+  let strategyFormCases = 0;
+  let sgGovernanceCases = 0;
+  let iamMutationCases = 0;
+  let erpMutationCases = 0;
+  let devMutationCases = 0;
+  let socMutationCases = 0;
+  let aiApiMutationCases = 0;
+  let kbMutationCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -61,16 +91,67 @@ try {
         page.on("console", (message) => {
           if (message.type() === "error" && !/Failed to load resource.*(?:401|403|503)/.test(message.text())) errors.push(`console:${message.text()}`);
         });
-        const response = await page.goto(`${base}${route}`, { waitUntil: "networkidle", timeout: 45_000 });
-        if (!response?.ok()) throw new Error(`NAV_${route}_${response?.status()}`);
-        const root = page.locator("[data-page-uid]").first();
-        await root.waitFor({ state: "attached", timeout: 15_000 });
-        const actual = await root.getAttribute("data-page-uid");
-        if (actual !== uid) throw new Error(`UID_${route}_${actual}`);
-        const state = await root.getAttribute("data-page-state");
-        if (state === "LOADING") throw new Error(`STUCK_LOADING_${uid}`);
-        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-        if (overflow > 0) throw new Error(`OVERFLOW_${uid}_${width}_${overflow}`);
+        const root = await navigateToCurrentPage(page, route, uid);
+        const overflowAudit = await page.evaluate(() => {
+          const overflow = document.documentElement.scrollWidth - document.documentElement.clientWidth;
+          if (overflow <= 0) return { overflow, offenders: [] };
+          const viewportRight = document.documentElement.clientWidth;
+          const isClippedByAncestor = (element) => {
+            let parent = element.parentElement;
+            const rect = element.getBoundingClientRect();
+            while (parent && parent !== document.body) {
+              const parentRect = parent.getBoundingClientRect();
+              const overflowX = getComputedStyle(parent).overflowX;
+              if (
+                ["auto", "scroll", "hidden", "clip"].includes(overflowX) &&
+                rect.right > parentRect.right + 0.5
+              ) return true;
+              parent = parent.parentElement;
+            }
+            return false;
+          };
+          const offenders = [...document.querySelectorAll("body *")]
+            .map((node) => {
+              const element = /** @type {HTMLElement} */ (node);
+              const rect = element.getBoundingClientRect();
+              const style = getComputedStyle(element);
+              return {
+                tag: element.tagName.toLowerCase(),
+                id: element.id || "",
+                className: typeof element.className === "string" ? element.className : "",
+                right: Math.round(rect.right * 100) / 100,
+                width: Math.round(rect.width * 100) / 100,
+                overflowX: style.overflowX,
+                delta: Math.round((rect.right - viewportRight) * 100) / 100,
+                clipped: isClippedByAncestor(element),
+              };
+            })
+            .filter((entry) => entry.delta > 0.5 && !entry.clipped)
+            .sort((a, b) => b.delta - a.delta)
+            .slice(0, 12);
+          const root = document.querySelector("[data-page-uid]");
+          const chain = [];
+          let current = root;
+          while (current) {
+            const element = /** @type {HTMLElement} */ (current);
+            const rect = element.getBoundingClientRect();
+            chain.push({
+              tag: element.tagName.toLowerCase(),
+              className: typeof element.className === "string" ? element.className : "",
+              left: Math.round(rect.left * 100) / 100,
+              right: Math.round(rect.right * 100) / 100,
+              width: Math.round(rect.width * 100) / 100,
+              clientWidth: element.clientWidth,
+              scrollWidth: element.scrollWidth,
+              overflowX: getComputedStyle(element).overflowX,
+            });
+            current = current.parentElement;
+          }
+          return { overflow, offenders, chain };
+        });
+        if (overflowAudit.overflow > 0 && overflowAudit.offenders.length > 0) {
+          throw new Error(`OVERFLOW_${uid}_${width}_${overflowAudit.overflow}_OFFENDERS_${JSON.stringify(overflowAudit.offenders)}_CHAIN_${JSON.stringify(overflowAudit.chain)}`);
+        }
         const body = (await page.locator("body").textContent()) ?? "";
         if (body.includes('"use client"') || body.includes("function KnowledgeAdminVisual") || body.includes("const CONTROLS")) throw new Error(`SOURCE_RENDER_${uid}`);
 
@@ -83,10 +164,17 @@ try {
               const visible = style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
               const disabled = "disabled" in element && Boolean(element.disabled);
               const text = (element.textContent ?? "").trim().replace(/\s+/g, " ");
+              const associatedLabel = "labels" in element && element.labels
+                ? [...element.labels]
+                    .map((label) => (label.textContent ?? "").trim().replace(/\s+/g, " "))
+                    .filter(Boolean)
+                    .join(" ")
+                : "";
               const accessible = [
                 element.getAttribute("aria-label"),
                 element.getAttribute("title"),
                 element.getAttribute("placeholder"),
+                associatedLabel,
                 "value" in element && typeof element.value === "string" ? element.value : null,
                 text,
               ].map((value) => typeof value === "string" ? value.trim() : "").find(Boolean) ?? "";
@@ -151,10 +239,400 @@ try {
         await page.close();
       }
     }
+    const strategyPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      await navigateToCurrentPage(strategyPage, "/admin/strategy", "admin:STR-01");
+
+      const searchButton = strategyPage.locator('button[data-action-id="ACT-SEARCH"][data-source-page-uid="admin:STR-01"]').first();
+      if (!(await searchButton.isEnabled())) throw new Error("STRATEGY_SEARCH_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await searchButton.getAttribute("data-operation-id")) !== "searchProjection") throw new Error("STRATEGY_SEARCH_OPERATION_TRACE_INVALID");
+      await searchButton.click();
+      const searchModal = strategyPage.locator('[data-form-schema="SearchProjectionRequest"]');
+      await searchModal.waitFor({ state: "visible", timeout: 5_000 });
+      await searchModal.locator('input').nth(0).fill("TEST-STR");
+      const searchSubmit = searchModal.locator("footer button").last();
+      await searchSubmit.click();
+      await searchModal.waitFor({ state: "detached", timeout: 5_000 });
+      strategyFormCases += 1;
+
+      const refreshButton = strategyPage.locator('button[data-action-id="ACT-REFRESH"][data-source-page-uid="admin:STR-01"]').first();
+      if (!(await refreshButton.isEnabled())) throw new Error("STRATEGY_REFRESH_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await refreshButton.getAttribute("data-operation-id")) !== "refreshProjection") throw new Error("STRATEGY_REFRESH_OPERATION_TRACE_INVALID");
+      await refreshButton.click();
+      const refreshModal = strategyPage.locator('[data-form-schema="RefreshProjectionRequest"]');
+      await refreshModal.waitFor({ state: "visible", timeout: 5_000 });
+      const refreshSubmit = refreshModal.locator("footer button").last();
+      await refreshSubmit.click();
+      await refreshModal.waitFor({ state: "detached", timeout: 5_000 });
+      strategyFormCases += 1;
+
+      await strategyPage.locator('button[data-view-uid="STR-CURRENT-VIEW-INTELLIGENCE-FACT"]').click();
+
+      const configureButton = strategyPage.locator('button[data-action-id="ACT-CONFIGURE"][data-source-page-uid="admin:STR-02"]').first();
+      if (!(await configureButton.isEnabled())) throw new Error("STRATEGY_CONFIGURE_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await configureButton.getAttribute("data-operation-id")) !== "configureGovernedResource") throw new Error("STRATEGY_CONFIGURE_OPERATION_TRACE_INVALID");
+      await configureButton.click();
+      const configureModal = strategyPage.locator('[data-form-schema="ConfigureGovernedResourceRequest"]');
+      await configureModal.waitFor({ state: "visible", timeout: 5_000 });
+      await configureModal.locator("input").nth(0).fill("STRATEGY_FACT");
+      await configureModal.locator("input").nth(1).fill("TEST-STR-FACT-001");
+      await configureModal.locator("textarea").nth(0).fill('{"mode":"controlled-test"}');
+      await configureModal.locator("input").nth(2).fill("Controlled Strategy governance configuration");
+      await configureModal.locator("footer button").last().click();
+      await configureModal.waitFor({ state: "detached", timeout: 5_000 });
+      strategyFormCases += 1;
+
+      const approveButton = strategyPage.locator('button[data-action-id="ACT-APPROVE"][data-source-page-uid="admin:STR-02"]').first();
+      if (!(await approveButton.isEnabled())) throw new Error("STRATEGY_APPROVE_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await approveButton.getAttribute("data-operation-id")) !== "approveGovernedResource") throw new Error("STRATEGY_APPROVE_OPERATION_TRACE_INVALID");
+      await approveButton.click();
+      const approveModal = strategyPage.locator('[data-form-schema="ApproveGovernedResourceRequest"]');
+      await approveModal.waitFor({ state: "visible", timeout: 5_000 });
+      await approveModal.locator("input").nth(0).fill("STRATEGY_FACT");
+      await approveModal.locator("input").nth(1).fill("TEST-STR-FACT-001");
+      await approveModal.locator("input").nth(2).fill("Controlled Strategy governance approval");
+      await approveModal.locator("footer button").last().click();
+      await approveModal.waitFor({ state: "detached", timeout: 5_000 });
+      strategyFormCases += 1;
+
+      const unresolvedDecision = strategyPage.locator('button[data-action-id="ACT-CANDIDATE-DECIDE"]');
+      await strategyPage.locator('button[data-view-uid="STR-CURRENT-VIEW-DECISION"]').click();
+      if ((await unresolvedDecision.getAttribute("data-operation-id")) !== "rejectStrategyCandidate") throw new Error("STRATEGY_REJECT_OPERATION_TRACE_INVALID");
+      if (await unresolvedDecision.isEnabled()) throw new Error("STRATEGY_REJECT_SHOULD_REMAIN_DISABLED");
+    } finally {
+      await strategyPage.close();
+    }
+
+    const sgPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      await navigateToCurrentPage(sgPage, "/admin/qa-criteria", "admin:SG-02");
+
+      const configureButton = sgPage.locator('button[data-control-id="CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE"][data-operation-id="configureGovernedResource"]').first();
+      if (!(await configureButton.isEnabled())) throw new Error("SG02_CONFIGURE_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await configureButton.click();
+      const sgDrawer = sgPage.locator('aside[data-detail-drawer="SG-02"]');
+      await sgDrawer.waitFor({ state: "visible", timeout: 5_000 });
+      await sgDrawer.locator("input").nth(0).fill("quality_criteria_version");
+      await sgDrawer.locator("input").nth(1).fill("TEST-CRITERIA-DRAFT-001");
+      await sgDrawer.locator("textarea").nth(0).fill('{"mode":"controlled-test","threshold":0.95}');
+      await sgDrawer.locator("textarea").nth(1).fill("Controlled SG-02 governance configuration");
+      const configureSubmit = sgDrawer.locator('button[data-control-id="CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE"][data-operation-id="configureGovernedResource"]').last();
+      await configureSubmit.click();
+      await sgDrawer.locator("input").first().waitFor({ state: "detached", timeout: 5_000 });
+      if ((await sgPage.locator('[data-page-uid="admin:SG-02"]').getAttribute("data-page-state")) === "ERROR") {
+        throw new Error("SG02_CONFIGURE_RUNTIME_ERROR");
+      }
+      sgGovernanceCases += 1;
+      await sgDrawer.locator('button[aria-label="Close"]').click();
+      await sgDrawer.waitFor({ state: "detached", timeout: 5_000 });
+
+      const approveButton = sgPage.locator('button[data-control-id="CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE"][data-operation-id="approveGovernedResource"]').first();
+      if (!(await approveButton.isEnabled())) throw new Error("SG02_APPROVE_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await approveButton.click();
+      await sgDrawer.waitFor({ state: "visible", timeout: 5_000 });
+      await sgDrawer.locator("input").nth(0).fill("quality_criteria_version");
+      await sgDrawer.locator("input").nth(1).fill("TEST-CRITERIA-REVIEW-001");
+      await sgDrawer.locator("textarea").nth(0).fill("Controlled SG-02 governance approval");
+      await sgDrawer.locator("input").nth(2).fill("3");
+      const approveSubmit = sgDrawer.locator('button[data-control-id="CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE"][data-operation-id="approveGovernedResource"]').last();
+      await approveSubmit.click();
+      await sgDrawer.locator("input").first().waitFor({ state: "detached", timeout: 5_000 });
+      if ((await sgPage.locator('[data-page-uid="admin:SG-02"]').getAttribute("data-page-state")) === "ERROR") {
+        throw new Error("SG02_APPROVE_RUNTIME_ERROR");
+      }
+      sgGovernanceCases += 1;
+    } finally {
+      await sgPage.close();
+    }
+
+    const iamPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      await navigateToCurrentPage(iamPage, "/admin/accounts", "admin:IAM-01");
+      const iamRoot = iamPage.locator('[data-page-uid="admin:IAM-01"]');
+      if ((await iamRoot.getAttribute("data-effectful-runtime-ready")) !== "true") {
+        throw new Error("IAM_EFFECTFUL_RUNTIME_NOT_READY_IN_CONTROLLED_TEST");
+      }
+
+      const addButton = iamPage.locator('button[data-control-id="IAM-01-BTN-ADD"]');
+      await iamPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="IAM-01-BTN-ADD"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      await addButton.click();
+      await iamPage.waitForFunction(
+        () => document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute("data-page-state") === "CREATE_BASIC",
+        { timeout: 5_000 },
+      );
+
+      const identityField = iamPage.locator('input[data-field-uid="TEST-IAM-FIELD-IDENTITY-CANDIDATE"]');
+      const scopeField = iamPage.locator('input[data-field-uid="TEST-IAM-FIELD-ORG-SCOPE"]');
+      await identityField.fill("TEST-IDENTITY-CANDIDATE-NEW-001");
+      await scopeField.fill("TEST-ORG-SCOPE-NEW");
+      await iamPage.locator('select[data-control-id="IAM-01-SEL-DEPT-PRESET"]').selectOption("TEST-IAM-PRESET-EDITING");
+
+      const saveButton = iamPage.locator('button[data-control-id="IAM-01-BTN-SAVE-DRAFT"]');
+      if (!(await saveButton.isEnabled())) throw new Error("IAM_SAVE_DRAFT_NOT_ENABLED");
+      await saveButton.click();
+      const validateButton = iamPage.locator('button[data-control-id="IAM-01-BTN-VALIDATE"]');
+      await validateButton.waitFor({ state: "visible", timeout: 5_000 });
+      await iamPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="IAM-01-BTN-VALIDATE"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      iamMutationCases += 1;
+
+      await validateButton.click();
+      await iamPage.waitForFunction(
+        () => document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute("data-page-state") === "CREATE_PERMISSION",
+        { timeout: 5_000 },
+      );
+      iamMutationCases += 1;
+
+      const previewButton = iamPage.locator('button[data-control-id="IAM-01-BTN-PREVIEW"]');
+      await iamPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="IAM-01-BTN-PREVIEW"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      await previewButton.click();
+      await iamPage.waitForFunction(
+        () => document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute("data-page-state") === "CREATE_PREVIEW",
+        { timeout: 5_000 },
+      );
+      iamMutationCases += 1;
+
+      const completeButton = iamPage.locator('button[data-control-id="IAM-01-BTN-COMPLETE"]');
+      await iamPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="IAM-01-BTN-COMPLETE"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      if (!(await completeButton.getAttribute("data-operations"))?.includes("assignAccountPermission")) {
+        throw new Error("IAM_COMPLETE_ORCHESTRATION_TRACE_INVALID");
+      }
+      iamPage.once("dialog", async (dialog) => {
+        await dialog.accept();
+      });
+      await completeButton.click();
+      await iamPage.waitForFunction(
+        () => document.querySelector('[data-page-uid="admin:IAM-01"]')?.getAttribute("data-page-state") === "COMPLETE",
+        { timeout: 10_000 },
+      );
+      await iamPage.locator('button[data-account-id="TEST-IAM-ACCOUNT-NEW-001"]').waitFor({ state: "visible", timeout: 5_000 });
+      if ((await iamRoot.getAttribute("data-runtime-error-uid")) !== null) throw new Error("IAM_COMPLETE_RUNTIME_ERROR");
+      iamMutationCases += 1;
+    } finally {
+      await iamPage.close();
+    }
+
+    const erpPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      await navigateToCurrentPage(erpPage, "/admin/erp", "admin:ERP-01");
+      const syncTab = erpPage.locator('button[data-control-id="ERP-01-BTN-TAB-SYNC"]');
+      if (!(await syncTab.isEnabled())) throw new Error("ERP_SYNC_TAB_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await syncTab.click();
+
+      const refreshButton = erpPage.locator('button[data-control-id="ERP-01-BTN-SNAPSHOT-REFRESH"]');
+      if (!(await refreshButton.isEnabled())) throw new Error("ERP_SNAPSHOT_REFRESH_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await refreshButton.getAttribute("data-form-schema-ready")) !== "true") throw new Error("ERP_SNAPSHOT_REFRESH_FORM_NOT_BOUND");
+      await refreshButton.click();
+
+      const refreshForm = erpPage.locator('[data-drawer-form="ERP-01-BTN-SNAPSHOT-REFRESH"]');
+      await refreshForm.waitFor({ state: "visible", timeout: 5_000 });
+      await refreshForm.locator('[data-form-field-key="requested_scope"] input').fill("finance-ledger");
+      const submit = refreshForm.locator('button[data-form-submit="true"]');
+      if (!(await submit.isEnabled())) throw new Error("ERP_SNAPSHOT_REFRESH_SUBMIT_NOT_ENABLED");
+      await submit.click();
+      await refreshForm.waitFor({ state: "detached", timeout: 5_000 });
+      if ((await erpPage.locator('[data-page-uid="admin:ERP-01"]').getAttribute("data-page-state")) === "ERROR") {
+        throw new Error("ERP_SNAPSHOT_REFRESH_RUNTIME_ERROR");
+      }
+      erpMutationCases += 1;
+    } finally {
+      await erpPage.close();
+    }
+
+    const devPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      const devRoot = await navigateToCurrentPage(devPage, "/admin/dev", "admin:DEV-01");
+      const startButton = devPage.locator('button[data-control-id="DEV-01-BTN-DISCOVERY-START"]');
+      if (!(await startButton.isEnabled())) throw new Error("DEV_DISCOVERY_START_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await startButton.getAttribute("data-operation")) !== "startCompanyDiscovery") throw new Error("DEV_DISCOVERY_START_OPERATION_TRACE_INVALID");
+      await startButton.click();
+
+      const pauseButton = devPage.locator('button[data-control-id="DEV-01-BTN-DISCOVERY-PAUSE"]');
+      await pauseButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await pauseButton.isEnabled())) throw new Error("DEV_DISCOVERY_PAUSE_NOT_ENABLED_AFTER_START");
+      if ((await pauseButton.getAttribute("data-operation")) !== "pauseCompanyDiscovery") throw new Error("DEV_DISCOVERY_PAUSE_OPERATION_TRACE_INVALID");
+      if ((await devRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("DEV_DISCOVERY_START_RUNTIME_ERROR");
+      devMutationCases += 1;
+
+      await pauseButton.click();
+      const resumeButton = devPage.locator('button[data-control-id="DEV-01-BTN-DISCOVERY-RESUME"]');
+      await resumeButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await resumeButton.isEnabled())) throw new Error("DEV_DISCOVERY_RESUME_NOT_ENABLED_AFTER_PAUSE");
+      if ((await resumeButton.getAttribute("data-operation")) !== "resumeCompanyDiscovery") throw new Error("DEV_DISCOVERY_RESUME_OPERATION_TRACE_INVALID");
+      devMutationCases += 1;
+
+      await resumeButton.click();
+      await pauseButton.waitFor({ state: "visible", timeout: 5_000 });
+      const stopButton = devPage.locator('button[data-control-id="DEV-01-BTN-DISCOVERY-STOP"]');
+      await stopButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await stopButton.isEnabled())) throw new Error("DEV_DISCOVERY_STOP_NOT_ENABLED_AFTER_RESUME");
+      if ((await stopButton.getAttribute("data-operation")) !== "stopCompanyDiscovery") throw new Error("DEV_DISCOVERY_STOP_OPERATION_TRACE_INVALID");
+      devMutationCases += 1;
+
+      await stopButton.click();
+      await startButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await startButton.isEnabled())) throw new Error("DEV_DISCOVERY_START_NOT_RESTORED_AFTER_STOP");
+      if ((await devRoot.getAttribute("data-runtime-error-uid")) !== null) throw new Error("DEV_DISCOVERY_STOP_RUNTIME_ERROR");
+      devMutationCases += 1;
+    } finally {
+      await devPage.close();
+    }
+
+    const socPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      const socRoot = await navigateToCurrentPage(socPage, "/admin/social", "admin:SOC-01");
+      const contentTab = socPage.locator('button[data-control-id="SOC-01-TAB-STAGE-3"]');
+      if (!(await contentTab.isEnabled())) throw new Error("SOC_CONTENT_TAB_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await contentTab.click();
+
+      const saveButton = socPage.locator('button[data-control-id="SOC-01-BTN-CONTENT-SAVE"]');
+      await saveButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await saveButton.isEnabled())) throw new Error("SOC_CONTENT_SAVE_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await saveButton.getAttribute("data-action-uid")) !== "SOC-01-ACT-CONTENT-SAVE") throw new Error("SOC_CONTENT_SAVE_ACTION_TRACE_INVALID");
+      await saveButton.click();
+      await socPage.waitForFunction(
+        () => (document.querySelector('[data-control-id="SOC-01-FLD-APPROVAL"]')?.textContent ?? "").includes("REVIEW"),
+        { timeout: 5_000 },
+      );
+      if ((await socRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("SOC_CONTENT_SAVE_RUNTIME_ERROR");
+      socMutationCases += 1;
+
+      const decideButton = socPage.locator('button[data-control-id="SOC-01-BTN-CANDIDATE-DECIDE"]');
+      await decideButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await decideButton.isEnabled())) throw new Error("SOC_CANDIDATE_DECIDE_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await decideButton.getAttribute("data-action-uid")) !== "SOC-01-ACT-CANDIDATE-DECIDE") throw new Error("SOC_CANDIDATE_DECIDE_ACTION_TRACE_INVALID");
+      await decideButton.click();
+      await socPage.waitForFunction(
+        () => (document.querySelector('[data-control-id="SOC-01-FLD-APPROVAL"]')?.textContent ?? "").includes("APPROVED"),
+        { timeout: 5_000 },
+      );
+      if (await decideButton.isVisible()) throw new Error("SOC_CANDIDATE_DECIDE_SHOULD_CLOSE_AFTER_APPROVAL");
+      if ((await socRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("SOC_CANDIDATE_DECIDE_RUNTIME_ERROR");
+      socMutationCases += 1;
+    } finally {
+      await socPage.close();
+    }
+
+    const aiApiPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      const aiApiRoot = await navigateToCurrentPage(aiApiPage, "/admin/aiapi", "admin:AIAPI-01");
+      await aiApiPage.locator('button[data-view-switch="AIAPI-01-VIEW-OPERATIONS"]').click();
+
+      const killButton = aiApiPage.locator('button[data-operation-id="setKillSwitch"]');
+      await aiApiPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-operation-id="setKillSwitch"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+
+      const executeKillSwitch = async (enabled, reason) => {
+        await killButton.click();
+        const dialog = aiApiPage.locator('section[role="dialog"]');
+        await dialog.waitFor({ state: "visible", timeout: 5_000 });
+
+        const targetType = dialog.locator("label").filter({ hasText: "Target Type" }).locator("select");
+        const targetRef = dialog.locator("label").filter({ hasText: "Target Ref" }).locator("input");
+        const enabledField = dialog.locator("label").filter({ hasText: "Enabled" }).locator("select");
+        const reasonField = dialog.locator("label").filter({ hasText: "Reason" }).locator("textarea");
+        const confirmation = dialog.locator("label").filter({ hasText: "Confirmation" }).locator("select");
+
+        await targetType.selectOption("PROFILE");
+        await targetRef.fill("TEST-AIAPI-PROVIDER-001");
+        await enabledField.selectOption(enabled ? "true" : "false");
+        await reasonField.fill(reason);
+        await confirmation.selectOption("CONFIRM");
+        await dialog.locator("button").last().click();
+        await dialog.waitFor({ state: "detached", timeout: 5_000 });
+
+        const result = aiApiPage.locator('aside[data-aiapi-command-result="true"]');
+        await result.waitFor({ state: "visible", timeout: 5_000 });
+        const resultText = (await result.textContent()) ?? "";
+        if (!resultText.includes('"external_request_sent": false')) throw new Error("AIAPI_KILL_SWITCH_EXTERNAL_REQUEST_GUARD_MISSING");
+        if (!resultText.includes(`"enabled": ${enabled ? "true" : "false"}`)) throw new Error("AIAPI_KILL_SWITCH_RESULT_STATE_INVALID");
+        if ((await aiApiRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("AIAPI_KILL_SWITCH_RUNTIME_ERROR");
+        aiApiMutationCases += 1;
+      };
+
+      await executeKillSwitch(false, "Controlled Gate 24 disable verification");
+      await executeKillSwitch(true, "Controlled Gate 24 restore verification");
+    } finally {
+      await aiApiPage.close();
+    }
+
+
+    const kbPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      const kbRoot = await navigateToCurrentPage(kbPage, "/admin/knowledge", "admin:KB-01");
+      await kbPage.locator('button[data-view-uid="KB-01-VIEW-SOURCE"]').click();
+
+      const pauseButton = kbPage.locator('button[data-control-id="KB-01-CTL-SOURCE-PAUSE"]');
+      await pauseButton.waitFor({ state: "visible", timeout: 5_000 });
+      await kbPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="KB-01-CTL-SOURCE-PAUSE"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      if ((await pauseButton.getAttribute("data-action-operation")) !== "pauseKnowledgeSource") throw new Error("KB_SOURCE_PAUSE_OPERATION_TRACE_INVALID");
+      await pauseButton.click();
+
+      const resumeButton = kbPage.locator('button[data-control-id="KB-01-CTL-SOURCE-RESUME"]');
+      await resumeButton.waitFor({ state: "visible", timeout: 5_000 });
+      await kbPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="KB-01-CTL-SOURCE-RESUME"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      if ((await resumeButton.getAttribute("data-action-operation")) !== "resumeKnowledgeSource") throw new Error("KB_SOURCE_RESUME_OPERATION_TRACE_INVALID");
+      if ((await kbRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("KB_SOURCE_PAUSE_RUNTIME_ERROR");
+      kbMutationCases += 1;
+
+      await resumeButton.click();
+      await pauseButton.waitFor({ state: "visible", timeout: 5_000 });
+      await kbPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-control-id="KB-01-CTL-SOURCE-PAUSE"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+      if ((await kbRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("KB_SOURCE_RESUME_RUNTIME_ERROR");
+      kbMutationCases += 1;
+    } finally {
+      await kbPage.close();
+    }
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases} kb_mutation_cases=${kbMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }

@@ -93,13 +93,14 @@ function fieldsFor(section: number, component: string) { return FIELD_GROUPS.fil
 function projectionValue(projection: KnowledgeProjection | null, suffix: string): unknown { return projection?.values[`KB-01-FLD-${suffix}`] ?? projection?.values[suffix] ?? null; }
 function displayProjectionValue(value: unknown) { if (value === null || value === undefined || value === "") return "—"; if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value); try { return JSON.stringify(value); } catch { return "—"; } }
 function hasProjectionValue(projection: KnowledgeProjection | null, suffix: string) { const value = projectionValue(projection, suffix); if (value === null || value === undefined) return false; if (typeof value === "string") return value.trim() !== "" && value !== "—"; if (Array.isArray(value)) return value.length > 0; if (typeof value === "object") return Object.keys(value as Record<string, unknown>).length > 0; return true; }
+function knowledgeEntityValue(projection: KnowledgeProjection | null, entity: string, key: string) { return projection?.entities[entity]?.[key] ?? null; }
 function isVisible(control: ControlSpec, active: KnowledgeViewKey, projection: KnowledgeProjection | null) {
   if (control.visible === "always") return true;
   if (control.visible === "view") return control.view === active;
   if (control.view !== active) return false;
-  if (control.visible === "sourceSelected") return hasProjectionValue(projection, "SOURCE-ID");
-  if (control.visible === "sourceActive") return projectionValue(projection, "SOURCE-STATUS") === "ACTIVE";
-  if (control.visible === "sourcePaused") return projectionValue(projection, "SOURCE-STATUS") === "PAUSED";
+  if (control.visible === "sourceSelected") return Boolean(knowledgeEntityValue(projection, "selected_source", "source_id")) || hasProjectionValue(projection, "SOURCE-ID");
+  if (control.visible === "sourceActive") return knowledgeEntityValue(projection, "selected_source", "status") === "ACTIVE" || projectionValue(projection, "SOURCE-STATUS") === "ACTIVE";
+  if (control.visible === "sourcePaused") return knowledgeEntityValue(projection, "selected_source", "status") === "PAUSED" || projectionValue(projection, "SOURCE-STATUS") === "PAUSED";
   if (control.visible === "retry") return projectionValue(projection, "RUN-STATUS") === "RETRY_ELIGIBLE" || projectionValue(projection, "RUN-RETRY") === true || projectionValue(projection, "RUN-RETRY") === "true";
   if (control.visible === "resultSelected") return hasProjectionValue(projection, "RESULT-ID");
   if (control.visible === "contextItem") return hasProjectionValue(projection, "CTX-CAND-ITEMS");
@@ -165,6 +166,47 @@ export function KnowledgeAdminVisual() {
         }
         return;
       }
+
+      if (trace.operation === "pauseKnowledgeSource" || trace.operation === "resumeKnowledgeSource") {
+        const sourceId = knowledgeEntityValue(projection, "selected_source", "source_id");
+        const sourceVersionRaw = knowledgeEntityValue(projection, "selected_source", "source_version");
+        const sourceVersion = sourceVersionRaw ? Number(sourceVersionRaw) : NaN;
+        if (!sourceId || !Number.isInteger(sourceVersion) || sourceVersion < 1) {
+          setRuntimeError("KB01_SOURCE_RUNTIME_CONTEXT_REQUIRED");
+          return;
+        }
+        const path = trace.path.replace("{sourceId}", encodeURIComponent(sourceId));
+        const response = await fetch(path, {
+          method: trace.method,
+          cache: "no-store",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            source_id: sourceId,
+            expected_version: sourceVersion,
+            idempotency_key: `KB-UI-${trace.operation}-${sourceId}-v${sourceVersion}`,
+          }),
+        });
+        const correlation = response.headers.get("x-correlation-id");
+        if (correlation) setCorrelationId(correlation);
+        const raw: unknown = await response.json().catch(() => null);
+        const body = raw && typeof raw === "object" && !Array.isArray(raw) ? raw as Record<string, unknown> : null;
+        if (!response.ok) {
+          setRuntimeError(typeof body?.reason_code === "string" ? body.reason_code : "KB_SOURCE_STATE_TRANSITION_FAILED");
+          return;
+        }
+        const refreshed = await readKnowledgeProjection();
+        setCorrelationId(refreshed.correlation_id);
+        if (refreshed.ok) {
+          setProjection(refreshed.projection);
+          setRuntimeError(null);
+        } else {
+          setProjection(null);
+          setRuntimeError(refreshed.reason_code);
+        }
+        return;
+      }
+
       setRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
     } catch {
       setRuntimeError("KB_PORT_REQUEST_FAILED");
@@ -178,7 +220,7 @@ export function KnowledgeAdminVisual() {
     const projectionEnabled = projection?.control_enabled[control.uid] === true;
     const disabled = !EFFECTFUL_RUNTIME_READY || !projectionEnabled || busy;
     return (
-      <button key={control.uid} type="button" onClick={() => { void runControl(control); }} data-control-uid={control.uid} data-action-id={control.action} data-gate-uid={control.gate} data-permission={control.permission}
+      <button key={control.uid} type="button" onClick={() => { void runControl(control); }} data-control-uid={control.uid} data-control-id={control.uid} data-action-id={control.action} data-action-uid={control.action} data-gate-uid={control.gate} data-permission={control.permission}
         data-action-owner={trace?.owner ?? "UNRESOLVED"} data-action-operation={trace?.operation ?? "UNRESOLVED"} data-action-method={trace?.method ?? "UNRESOLVED"}
         data-action-path={trace?.path ?? "UNRESOLVED"} data-action-errors={trace?.errors.join(",") ?? "UNRESOLVED"} data-audit-event={trace?.audit_event ?? "UNRESOLVED"}
         data-runtime-binding={EFFECTFUL_RUNTIME_READY ? "BOUND" : "NOT_EXECUTED"} data-required-context={control.visible} data-required-permission={control.permission} data-current-state={pageState}

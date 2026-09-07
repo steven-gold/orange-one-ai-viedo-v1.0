@@ -11,9 +11,11 @@ import {
 } from "react";
 import {
   isStrategyAdminCommandAdapterBound,
+  isStrategyAdminOperationRuntimeReady,
   invokeStrategyAdminAction,
   readStrategyAdminProjection,
   type StrategyAdminMappedAction,
+  strategyAdminPermissionKey,
   type StrategyAdminProjection,
   type StrategyAdminView,
 } from "@/domain/strategyAdmin/strategyAdminRuntimePort";
@@ -21,8 +23,8 @@ import {
 type Runtime = {
   projection: StrategyAdminProjection | null;
   runtimeError: string | null;
-  invoke: (actionId: string, view: StrategyAdminView) => Promise<void>;
-  canInvoke: (actionId: string) => boolean;
+  invoke: (actionId: string, view: StrategyAdminView, payload?: Readonly<Record<string, unknown>>) => Promise<boolean>;
+  canInvoke: (actionId: string, view: StrategyAdminView) => boolean;
 };
 
 const Ctx = createContext<Runtime | null>(null);
@@ -36,6 +38,7 @@ const ACTIONS: Readonly<Record<StrategyAdminMappedAction, true>> = {
   "ACT-DRAFT-SAVE": true,
   "ACT-CANDIDATE-CREATE": true,
   "ACT-CANDIDATE-COMPARE": true,
+  "ACT-CANDIDATE-DECIDE": true,
   "ACT-ADOPT-CONTEXT": true,
 };
 
@@ -61,46 +64,54 @@ export function StrategyAdminRuntimeProvider({ children }: { children: ReactNode
   }, [refreshProjection]);
 
   const canInvoke = useCallback(
-    (actionId: string) =>
-      Boolean(projection?.action_enabled[actionId]) &&
-      actionId !== "ACT-CANDIDATE-DECIDE" &&
-      actionId !== "ACT-NAV-OPEN" &&
-      actionId in ACTIONS &&
-      isStrategyAdminCommandAdapterBound(),
+    (actionId: string, view: StrategyAdminView) => {
+      const permissionKey = strategyAdminPermissionKey(view, actionId);
+      return Boolean(
+        permissionKey &&
+        projection?.action_enabled[permissionKey] &&
+        actionId !== "ACT-CANDIDATE-DECIDE" &&
+        actionId !== "ACT-NAV-OPEN" &&
+        actionId in ACTIONS &&
+        isStrategyAdminOperationRuntimeReady(actionId) &&
+        isStrategyAdminCommandAdapterBound()
+      );
+    },
     [projection],
   );
 
   const invoke = useCallback(
-    async (actionId: string, view: StrategyAdminView) => {
+    async (actionId: string, view: StrategyAdminView, payload: Readonly<Record<string, unknown>> = {}) => {
       if (!projection) {
         setRuntimeError("STR_ADMIN_PROJECTION_NOT_READY");
-        return;
+        return false;
       }
 
       if (actionId === "ACT-CANDIDATE-DECIDE") {
         setRuntimeError(
           "STR_ADMIN_AUTHORITY_BINDING_UNRESOLVED: ACT-CANDIDATE-DECIDE",
         );
-        return;
+        return false;
       }
 
       if (!(actionId in ACTIONS)) {
         setRuntimeError("STR_ADMIN_ACTION_OPERATION_NOT_REGISTERED");
-        return;
+        return false;
       }
 
       const result = await invokeStrategyAdminAction(
         actionId as StrategyAdminMappedAction,
         view,
         projection,
+        payload,
       );
 
       if (!result.ok) {
         setRuntimeError(result.reason_code);
-        return;
+        return false;
       }
 
       await refreshProjection();
+      return true;
     },
     [projection, refreshProjection],
   );

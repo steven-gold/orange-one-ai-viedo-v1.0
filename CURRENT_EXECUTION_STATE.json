@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T06:44:09+08:00",
+  "as_of": "2026-09-07T11:26:59+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
-    "main_sha": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
-    "new_sha_basis": "17804d7b6f3800b538674607bef3dc30a284994d",
+    "main_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
+    "new_sha_basis": "de4baf3edc35094c5ced35fe78600f46f67ffead",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -23,10 +23,15 @@
     },
     "current_main_release_gate": {
       "status": "PASS",
-      "run_number": 376,
-      "run_id": 34056101124,
-      "head_sha": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
-      "conclusion": "success"
+      "run_number": 439,
+      "run_id": 34065258943,
+      "head_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
+      "branch": "main",
+      "conclusion": "success",
+      "browser_e2e": "PASS_72_CASES_448_VISIBLE_INTERACTIONS",
+      "current_dom_control_acceptance": "PASS_18_PAGES_358_VISIBLE_358_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS"
     },
     "latest_provider_adapter_gate": {
       "status": "PASS",
@@ -38,35 +43,287 @@
     },
     "latest_control_acceptance_gate": {
       "status": "PASS",
-      "run_number": 436,
-      "run_id": 34064727165,
-      "head_sha": "17804d7b6f3800b538674607bef3dc30a284994d",
+      "run_number": 513,
+      "run_id": 34079534903,
+      "head_sha": "de4baf3edc35094c5ced35fe78600f46f67ffead",
       "branch": "new",
       "conclusion": "success",
-      "browser_e2e": "PASS",
-      "current_dom_control_acceptance": "PASS",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=442 governed_controls=274 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2 kb_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_407_VISIBLE_407_GOVERNED",
+      "current_dom_breakdown": "enabled=229 disabled=178",
       "standalone_docker_build": "PASS",
-      "dirty_tree_guard": "PASS"
+      "dirty_tree_guard": "PASS",
+      "note": "Current DOM visible count is controlled-runtime evidence only; it is not a frozen Production denominator."
+    },
+    "latest_remote_control_acceptance_gate": {
+      "status": "PASS",
+      "run_number": 491,
+      "run_id": 34073766541,
+      "head_sha": "6fc4639a0da4159e2a678be2d3c01624976faf29",
+      "branch": "new",
+      "conclusion": "success",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=515 governed_controls=309 safe_local_clicks=4 strategy_form_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_378_VISIBLE_378_GOVERNED",
+      "current_dom_breakdown": "enabled=187 disabled=191",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "remote_production_control_acceptance": "PENDING_NEXT_MAIN_RELEASE",
+      "note": "Release-side Current DOM visible count is evidence for this controlled fixture run only; it is not a frozen Production denominator."
+    },
+    "latest_gate24_strategy_governance_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 494,
+      "run_id": 34076199416,
+      "head_sha": "8422aa6c0c57bf4d92eb2a4e41b25b046d1f65c7",
+      "branch": "new",
+      "conclusion": "success",
+      "operations": [
+        "configureGovernedResource",
+        "approveGovernedResource"
+      ],
+      "source_owner": "admin:STR-02",
+      "current_page_uid": "admin:STR-01",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=476 governed_controls=298 safe_local_clicks=4 strategy_form_cases=4",
+      "current_dom_control_acceptance": "PASS_18_PAGES_406_VISIBLE_406_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_sg02_governance_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 497,
+      "run_id": 34076631425,
+      "head_sha": "20ee95d8dd2d326a97ec670d87a8191f0fe6b3ed",
+      "branch": "new",
+      "conclusion": "success",
+      "operations": [
+        "configureGovernedResource",
+        "approveGovernedResource"
+      ],
+      "current_page_uid": "admin:SG-02",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=515 governed_controls=309 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_407_VISIBLE_407_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_iam_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 499,
+      "run_id": 34076966070,
+      "head_sha": "30778e00c5eb6f6db3487ade8500c925d446f3dc",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:IAM-01",
+      "flow": [
+        "saveDraft",
+        "validateDraft",
+        "previewAuthorizationImpact",
+        "configureGovernedResource",
+        "assignAccountPermission/revokeAccountPermission",
+        "approveGovernedResource"
+      ],
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=476 governed_controls=298 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4",
+      "current_dom_control_acceptance": "PASS_18_PAGES_369_VISIBLE_369_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_erp_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 501,
+      "run_id": 34077206335,
+      "head_sha": "85c1f806ee75ae5a0d42758b91cc2a5e37691a70",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:ERP-01",
+      "controls": [
+        "ERP-01-BTN-SNAPSHOT-REFRESH"
+      ],
+      "actions": [
+        "ERP-01-ACT-SNAPSHOT-REFRESH"
+      ],
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=481 governed_controls=285 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1",
+      "current_dom_control_acceptance": "PASS_18_PAGES_406_VISIBLE_406_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_dev_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 502,
+      "run_id": 34078573469,
+      "head_sha": "988cc34a149a00139aec7dbe05fec6d7c600e3c7",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:DEV-01",
+      "controls": [
+        "DEV-01-BTN-DISCOVERY-START",
+        "DEV-01-BTN-DISCOVERY-PAUSE",
+        "DEV-01-BTN-DISCOVERY-RESUME",
+        "DEV-01-BTN-DISCOVERY-STOP"
+      ],
+      "operations": [
+        "startCompanyDiscovery",
+        "pauseCompanyDiscovery",
+        "resumeCompanyDiscovery",
+        "stopCompanyDiscovery"
+      ],
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=515 governed_controls=309 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4",
+      "current_dom_control_acceptance": "PASS_18_PAGES_406_VISIBLE_406_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_soc_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 504,
+      "run_id": 34078890336,
+      "head_sha": "1b066c5ca284b13ed9d24047d65bd0ba00f02b2f",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:SOC-01",
+      "controls": [
+        "SOC-01-BTN-CONTENT-SAVE",
+        "SOC-01-BTN-CANDIDATE-DECIDE"
+      ],
+      "actions": [
+        "SOC-01-ACT-CONTENT-SAVE",
+        "SOC-01-ACT-CANDIDATE-DECIDE"
+      ],
+      "external_publish_executed": false,
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=515 governed_controls=309 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_301_VISIBLE_301_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "prior_attempt": {
+        "run_number": 503,
+        "run_id": 34078753563,
+        "conclusion": "failure",
+        "failure_step": "Supported-viewport browser E2E",
+        "failure_reason": "IAM_ADD_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST",
+        "remediation_commit": "1b066c5ca284b13ed9d24047d65bd0ba00f02b2f"
+      },
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_aiapi_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 509,
+      "run_id": 34079260047,
+      "head_sha": "9cbdcff401ebef92a01dca68d5ed48a9a7a064f5",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:AIAPI-01",
+      "operation": "setKillSwitch",
+      "controlled_flow": [
+        "disable TEST-AIAPI-PROVIDER-001",
+        "restore TEST-AIAPI-PROVIDER-001"
+      ],
+      "external_request_sent": false,
+      "test_data_classification": "TEST_ONLY",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=476 governed_controls=298 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_373_VISIBLE_373_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "failed_intermediate_runs": [
+        {
+          "run_number": 506,
+          "run_id": 34079176415,
+          "reason": "Duplicate isControlledAiApiServerTestMode declaration caused Typecheck failure"
+        },
+        {
+          "run_number": 507,
+          "run_id": 34079200829,
+          "reason": "Same duplicate declaration inherited before remediation"
+        },
+        {
+          "run_number": 508,
+          "run_id": 34079227680,
+          "reason": "Same duplicate declaration inherited before remediation"
+        }
+      ],
+      "remediation_commit": "9cbdcff401ebef92a01dca68d5ed48a9a7a064f5",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE",
+      "gate22_effect": "NONE_SYNTHETIC_CONTROLLED_DATA_IS_NOT_EXTERNAL_PROVIDER_EVIDENCE"
+    },
+    "latest_gate24_kb_mutation_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 513,
+      "run_id": 34079534903,
+      "head_sha": "de4baf3edc35094c5ced35fe78600f46f67ffead",
+      "branch": "new",
+      "conclusion": "success",
+      "current_page_uid": "admin:KB-01",
+      "operations": [
+        "pauseKnowledgeSource",
+        "resumeKnowledgeSource"
+      ],
+      "controlled_flow": [
+        "TEST-KB-SOURCE-ACTIVE-001 ACTIVE→PAUSED",
+        "TEST-KB-SOURCE-ACTIVE-001 PAUSED→ACTIVE"
+      ],
+      "projection_context": "governed selected_source id/version/status preserved through knowledgeRuntimePort",
+      "test_data_classification": "TEST_ONLY",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=442 governed_controls=274 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2 kb_mutation_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_407_VISIBLE_407_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_sys_blocker": {
+      "status": "BLOCKED_CURRENT_AUTHORITY_AND_RUNTIME",
+      "current_page_uid": "admin:SYS-01",
+      "authority_status": "FINAL_LOCKED",
+      "implementation_status": "NOT_EXECUTED",
+      "authority_disabled_operations": [
+        {
+          "control_uid": "SYS-01-BTN-CANDIDATE-CREATE",
+          "operation": "createCandidate",
+          "enabled_in_visual_phase": false
+        },
+        {
+          "control_uid": "SYS-01-BTN-CR-CREATE",
+          "operation": "createChangeRequest",
+          "enabled_in_visual_phase": false
+        },
+        {
+          "control_uid": "SYS-01-BTN-SANDBOX-TEST",
+          "operation": "runSandboxTest",
+          "enabled_in_visual_phase": false
+        }
+      ],
+      "production_runtime_reason": "PROVIDER_GATEWAY_NOT_MATERIALIZED",
+      "note": "Do not enable these controls or count SYS-01 mutation PASS without a Current Authority change plus a materialized production runtime."
     }
   },
   "production": {
     "target": "orange-one-acpos-test",
     "url": "https://orange-one-acpos-test.vercel.app",
-    "deployed_sha": "16d62a34852608dd703b0d1a50993d0d4061fe87",
-    "current_main_sha_not_deployed": "7aec4b253b6e62886f3eeabc2f0db7dfb4b6074c",
-    "deployment_status": "LAST_VERIFIED_DEPLOYMENT_PASS_CURRENT_MAIN_DEPLOYMENT_BLOCKED",
-    "current_main_deployment_blocker": "VERCEL_HOBBY_BUILD_RATE_LIMIT",
+    "deployed_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
+    "deployment_status": "PASS_EXACT_MAIN_SHA",
     "latest_verified_post_deploy": {
       "status": "PASS",
-      "run_number": 614,
-      "run_id": 34055358391,
-      "head_sha": "16d62a34852608dd703b0d1a50993d0d4061fe87",
-      "http_smoke": "PASS",
-      "authenticated_e2e": "PASS",
-      "browser_smoke": "PASS",
-      "authenticated_browser_visibility": "PASS"
+      "deployment_trigger_run_number": 696,
+      "deployment_trigger_run_id": 34065289122,
+      "duplicate_workflow_run_number": 697,
+      "duplicate_workflow_run_id": 34065412653,
+      "head_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
+      "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_PROJECTIONS_18",
+      "authenticated_e2e": "PASS_LOGIN_SESSION_DASHBOARD_PROJECTIONS_18_QUEUE_PROBE_LOGOUT",
+      "browser_smoke": "PASS_54_CASES_18_PAGES_3_WIDTHS",
+      "authenticated_browser_visibility": "PASS_FRONT_NAV_9_ADMIN_NAV_9_VISIBLE_PAGES_18"
     },
-    "health_readiness_last_verified": "PASS_ON_DEPLOYED_SHA_16d62a34852608dd703b0d1a50993d0d4061fe87",
+    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_d434c9ea4a300daf6aad2b09a16beb415351f671",
     "database_migration_count": 19
   },
   "neon": {
@@ -79,7 +336,7 @@
     "migration_0019_checksum": "aea7ea811c826b255d3478e12e9715cb042444c5d2c6f8431f02b0189c0818cc",
     "canonical_queue_ready_count": 1,
     "canonical_worker_ready_count": 1,
-    "worker_last_heartbeat_at": "2026-09-06T19:38:54.130296Z",
+    "worker_last_heartbeat_at": "2026-09-06T22:53:09.811Z",
     "provider_capability_count": 0,
     "provider_profile_count": 0,
     "secret_reference_count": 0,
@@ -113,10 +370,24 @@
       "heartbeat",
       "probe_cleanup"
     ],
-    "production_full_http_probe": "PENDING_SINGLE_MAIN_DEPLOYMENT",
+    "production_full_http_probe": "PASS_ON_d434c9ea4a300daf6aad2b09a16beb415351f671",
     "external_provider_call_during_probe": false,
     "daily_recovery_cron": "MATERIALIZED_HOBBY_DAILY_UTC_0000",
-    "cron_secret": "NOT_VERIFIED_VERCEL_MANAGEMENT_SCOPE_MISMATCH"
+    "cron_secret": "NOT_VERIFIED_VERCEL_MANAGEMENT_SCOPE_MISMATCH",
+    "production_full_http_probe_evidence": {
+      "run_number": 696,
+      "run_id": 34065289122,
+      "authenticated_e2e": "PASS",
+      "idempotency": true,
+      "claim": true,
+      "inbox_receipt": true,
+      "publish": true,
+      "expired_lease_recovery": true,
+      "retry": true,
+      "dlq": true,
+      "cleanup_residual_zero": true,
+      "external_provider_call": false
+    }
   },
   "aiapi": {
     "operation_registry": "MATERIALIZED_CURRENT",
@@ -131,7 +402,7 @@
       "release_gate_395": "PASS",
       "release_gate_405": "PASS"
     },
-    "production_deployment": "PENDING_SINGLE_MAIN_RELEASE",
+    "production_deployment": "DEPLOYED_ON_d434c9ea4a300daf6aad2b09a16beb415351f671",
     "external_provider_execution": "BLOCKED_REAL_PROVIDER_CONFIGURATION_REQUIRED",
     "provider_counts": {
       "capabilities": 0,
@@ -144,32 +415,41 @@
   "formal_truth": {
     "gate22_external_provider": {
       "status": "BLOCKED_EXTERNAL_CONFIGURATION",
-      "reason": "Provider HTTP adapter, queue execution and governed route lineage are materialized and Release Gate #405 passed on new. Production still has 0 approved capabilities, 0 provider profiles, 0 secret references and 0 provider groups, so no real external Provider E2E may be claimed."
+      "reason": "Production runtime is deployed and queue execution is live, but current Neon Production still has 0 provider capabilities, 0 provider profiles, 0 secret references and 0 provider groups. Real external Provider E2E cannot be claimed or fabricated."
     },
     "gate23_queue_worker_dlq": {
-      "status": "PARTIAL_PENDING_FINAL_PRODUCTION_HTTP",
-      "reason": "Production data layer and DB probe pass; full authenticated HTTP worker acceptance is release-validated on new but not yet deployed."
+      "status": "PASS",
+      "reason": "Production queue and worker are READY (1/1 each), worker heartbeat is current, and Post Deploy authenticated E2E #696 passed the full queue probe including idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup on deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_PENDING_PRODUCTION_DEPLOYMENT",
-      "reason": "AIAPI governed UI/server mutation binding is materialized and Release Gate validated on new; Production deployment/E2E is pending."
+      "status": "PARTIAL_RELEASE_8_OF_9_TARGETS_PASS_SYS01_BLOCKED_PRODUCTION_9_TARGET_ACCEPTANCE_INCOMPLETE",
+      "reason": "Release-controlled mutation evidence covers Strategy Admin, SG-02, IAM-01, ERP-01, DEV-01, SOC-01, AIAPI-01 and KB-01. SYS-01 remains blocked because Current Authority is FINAL_LOCKED with createCandidate/createChangeRequest/runSandboxTest enabled_in_visual_phase=false and its production lifecycle execute binding returns PROVIDER_GATEWAY_NOT_MATERIALIZED. Production 9-target acceptance is not complete."
     },
     "gate25_full_page_button_acceptance": {
-      "status": "CONSTRUCTION_CURRENT_DOM_PASS_PENDING_PRODUCTION_ACCEPTANCE",
-      "reason": "Current DOM Control Acceptance passed in ACPOS Release Gate #436 on new@17804d7b6f3800b538674607bef3dc30a284994d after exact SYS-01 restoration and governed visual-phase disabled-control scanner handling. Production full-page/full-button acceptance has not yet been rerun on the final main deployment, so Gate 25 is not yet PASS."
+      "status": "PARTIAL_RELEASE_BROWSER_AND_DOM_ACCEPTANCE_PASS_REMOTE_PRODUCTION_PENDING",
+      "reason": "Release Gate #504 passes supported-viewport Browser E2E across 72 cases and Current DOM control acceptance across all 18 Current pages (301 visible / 301 governed) on exact head 1b066c5ca284b13ed9d24047d65bd0ba00f02b2f. The historical 1453 value remains only the legacy 92-page permission catalog baseline (1141 controls + 312 actions), not the Current 18-page DOM denominator. Production remote control acceptance remains pending the next main release; remote visible-control count must be measured at runtime and 100% governed."
     }
   },
   "blockers": [
-    "Vercel Hobby build-rate-limit currently blocks the next single Production deployment of main.",
-    "Real external Provider capability/profile/secret/group configuration is absent; runtime is materialized but real values must not be fabricated.",
-    "Vercel management connector can read the team but cannot read the project, so Production CRON_SECRET binding is not verified."
+    "Real external Provider capability/profile/secret/group configuration is absent; runtime is deployed but real values must not be fabricated.",
+    "Vercel management connector can see the Hobby team but project listing is empty / deployment listing is forbidden, so management-plane environment authority remains not directly readable through the connector.",
+    "Gate 25 Production remote Current DOM acceptance is not yet executed on the next main release; Release-side 18-page Browser/DOM acceptance is PASS."
   ],
   "next_release_sequence": [
-    "Run ACPOS Release Gate on the exact final new head produced by this Current State update.",
-    "If PASS, create one PR new -> main and merge with exact expected head SHA.",
-    "Allow exactly one Vercel Production deployment attempt for the resulting main SHA.",
-    "If Vercel remains rate-limited, do not push retry commits; retain the exact main SHA and blocker.",
-    "If Vercel succeeds, require Post Deploy HTTP/auth/browser, FULL queue probe, and Production control acceptance for that exact main SHA.",
-    "Re-query Neon worker heartbeat and Provider configuration counts, then update Current State and formal Gate truth."
-  ]
+    "Gate 24 release-controlled internal work is complete for 8/9 targets. Keep SYS-01 blocked until Current Authority explicitly enables its service mutations and the production lifecycle provider/runtime is materialized.",
+    "The next safe integration step is to test the combined main+new result before release because main and new are diverged. Do not treat independent branch success as integrated success.",
+    "After an integrated Release Gate succeeds, release once to main and run Vercel deployment plus Production health/readiness/HTTP/auth/browser/remote-control acceptance.",
+    "Do not execute SOC external publish or treat AIAPI TEST_ONLY provider profiles as External Provider evidence. Gate 22 remains blocked until real capability/profile/secret/group configuration and a real external request exist.",
+    "Treat 1453 strictly as the legacy 92-page permission catalog baseline (1141 controls + 312 actions), not as the Current 18-page DOM denominator."
+  ],
+  "ui_visual_adjustment_policy": {
+    "status": "ACTIVE",
+    "rule": "PIXEL_LEVEL_ADJUSTMENT_ONLY_WHEN_NEEDED",
+    "constraints": [
+      "Do not change page/block/control position or information architecture solely to resolve small pixel overflow.",
+      "Do not change control function, action binding, permission behavior, or workflow.",
+      "Preserve the established visual proportion between columns, panels, controls, spacing, and hierarchy.",
+      "Prefer minimal px/gap/padding/min-width/flex shrink corrections; structural rearrangement requires separate authority."
+    ]
+  }
 }

@@ -144,6 +144,10 @@ function IamVisualBody() {
                     type="button"
                     className={`${styles.accountRow} ${client.account_id === account.account_id ? styles.accountRowActive : ""}`}
                     data-account-id={account.account_id}
+                    data-navigation-target="IAM-01-CMP-ACCOUNT-DETAIL"
+                    aria-controls="IAM-01-CMP-ACCOUNT-DETAIL"
+                    aria-pressed={client.account_id === account.account_id}
+                    data-disabled-reason={!searchControl.gateAllowed ? (searchControl.disabledReason ?? searchControl.binding?.gate_uid) : undefined}
                     disabled={!searchControl.gateAllowed}
                     onClick={() => selectIamAccount(runtime, account.account_id)}
                   >
@@ -157,7 +161,7 @@ function IamVisualBody() {
             )}
           </section>
 
-          <section className={styles.panel} data-section-id="IAM-01-SEC-03" data-component-id="IAM-01-CMP-ACCOUNT-DETAIL">
+          <section id="IAM-01-CMP-ACCOUNT-DETAIL" className={styles.panel} data-section-id="IAM-01-SEC-03" data-component-id="IAM-01-CMP-ACCOUNT-DETAIL">
             <div className={styles.panelHeader}><h2>{t("accountDetail")}</h2><IamGovernedButton className={styles.compactButton} controlId="IAM-01-BTN-EDIT" selectedAccountId={selectedAccount?.account_id}>{t("edit")}</IamGovernedButton></div>
             <div className={styles.detailGrid}>
               {[

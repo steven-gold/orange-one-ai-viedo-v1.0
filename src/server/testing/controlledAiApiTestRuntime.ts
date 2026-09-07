@@ -111,3 +111,77 @@ export function readControlledAiApiTestProjection() {
     test_metadata: TEST_METADATA,
   };
 }
+
+
+type ControlledAiApiRequest = {
+  operation_id: string;
+  correlation_id: string;
+  path_params: Record<string, string>;
+  payload: unknown;
+};
+
+export type ControlledAiApiCommandResult =
+  | { ok: true; value: unknown; correlation_id: string }
+  | { ok: false; status: number; reason_code: string; correlation_id: string };
+
+function payloadRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
+}
+
+function textValue(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+export function executeControlledAiApiCommand(request: ControlledAiApiRequest): ControlledAiApiCommandResult {
+  if (!isControlledTestMode()) {
+    return { ok: false, status: 503, reason_code: "AIAPI_CONTROLLED_RUNTIME_FORBIDDEN", correlation_id: request.correlation_id };
+  }
+  seedFixture();
+
+  if (request.operation_id !== "setKillSwitch") {
+    return { ok: false, status: 503, reason_code: "AIAPI_CONTROLLED_OPERATION_NOT_MATERIALIZED", correlation_id: request.correlation_id };
+  }
+
+  const payload = payloadRecord(request.payload);
+  if (textValue(payload.confirmation) !== "CONFIRM") {
+    return { ok: false, status: 400, reason_code: "AIAPI_HIGH_RISK_CONFIRMATION_REQUIRED", correlation_id: request.correlation_id };
+  }
+  if (textValue(payload.target_type)?.toUpperCase() !== "PROFILE") {
+    return { ok: false, status: 400, reason_code: "AIAPI_KILL_SWITCH_TARGET_INVALID", correlation_id: request.correlation_id };
+  }
+  const targetRef = textValue(payload.target_ref);
+  const reason = textValue(payload.reason);
+  if (!targetRef) {
+    return { ok: false, status: 400, reason_code: "AIAPI_FIELD_REQUIRED:target_ref", correlation_id: request.correlation_id };
+  }
+  if (!reason) {
+    return { ok: false, status: 400, reason_code: "AIAPI_FIELD_REQUIRED:reason", correlation_id: request.correlation_id };
+  }
+  if (typeof payload.enabled !== "boolean") {
+    return { ok: false, status: 400, reason_code: "AIAPI_FIELD_REQUIRED:enabled", correlation_id: request.correlation_id };
+  }
+
+  const profile = state.profiles.find((item) => item.provider_id === targetRef || item.model_id === targetRef);
+  if (!profile) {
+    return { ok: false, status: 404, reason_code: "AIAPI_PROFILE_NOT_FOUND", correlation_id: request.correlation_id };
+  }
+
+  profile.state = payload.enabled ? "ENABLED" : "DISABLED";
+  profile.version += 1;
+  state.audit_counter += 1;
+  state.last_audit_ref = `TEST-AIAPI-AUDIT-${String(state.audit_counter).padStart(3, "0")}:setKillSwitch:${profile.provider_id}`;
+
+  return {
+    ok: true,
+    value: {
+      target_type: "PROFILE",
+      target_ref: profile.provider_id,
+      enabled: payload.enabled,
+      version: profile.version,
+      audit_ref: state.last_audit_ref,
+      test_metadata: TEST_METADATA,
+      external_request_sent: false,
+    },
+    correlation_id: request.correlation_id,
+  };
+}
