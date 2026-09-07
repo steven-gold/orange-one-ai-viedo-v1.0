@@ -10,6 +10,9 @@ import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 import { configureInfoCommandPayloadBuilder } from "@/domain/info/infoCommandPort";
 import { configureStrategyRequestBuilder } from "@/domain/strategy/strategyCommandPort";
 import { configureStrategyAdminCommandAdapter } from "@/domain/strategyAdmin/strategyAdminRuntimePort";
+import { configureDevCommandAdapter } from "@/domain/dev/devCommandPort";
+import { readDevProjection } from "@/domain/dev/devProjectionPort";
+import { DEV_CONTROL_BINDINGS, type DevControlUid } from "@/domain/dev/devControlBindings";
 
 let bound = false;
 
@@ -183,6 +186,69 @@ export function bindIdentityClientCommandAdapters(): void {
       const ref = typeof window !== "undefined" ? window.prompt(`${context.kind} ref`) : null;
       if (!ref || !ref.trim()) return { ok: false, reason_code: `${context.kind}_REF_REQUIRED` };
       return { ok: true, ref: ref.trim() };
+    },
+  });
+
+  configureDevCommandAdapter({
+    invoke: async (input) => {
+      const binding = DEV_CONTROL_BINDINGS[input.control_uid as DevControlUid];
+      if (!binding || binding.action_uid !== input.action_uid || !binding.operation) {
+        return { ok: false, error_uid: "DEV-01-ERR-UNDEFINED", reason_code: "DEV_COMMAND_BINDING_UNREGISTERED", correlation_id: "unresolved" };
+      }
+
+      const jobRef = input.projection?.values["DEV-01-FLD-JOB-REF"] ?? "";
+      let path: string;
+      let payload: Record<string, unknown> = {};
+      if (binding.operation === "startCompanyDiscovery") {
+        path = "/v1/outreach/discovery-jobs";
+        payload = {
+          job_name: "ACPOS Company Discovery",
+          mode: "SINGLE_RUN",
+          search_scope: {},
+          allowed_sources: [],
+          interval_seconds: 3600,
+          result_limit: 50,
+        };
+      } else if (
+        binding.operation === "pauseCompanyDiscovery"
+        || binding.operation === "resumeCompanyDiscovery"
+        || binding.operation === "stopCompanyDiscovery"
+      ) {
+        if (!jobRef || jobRef === "—") {
+          return { ok: false, error_uid: "DEV-01-ERR-UNDEFINED", reason_code: "DEV_DISCOVERY_JOB_ID_REQUIRED", correlation_id: "unresolved" };
+        }
+        const suffix = binding.operation === "pauseCompanyDiscovery"
+          ? "pause"
+          : binding.operation === "resumeCompanyDiscovery"
+            ? "resume"
+            : "stop";
+        path = `/v1/outreach/discovery-jobs/${encodeURIComponent(jobRef)}/${suffix}`;
+      } else {
+        return { ok: false, error_uid: "DEV-01-ERR-UNDEFINED", reason_code: "DEV_COMMAND_RUNTIME_NOT_MATERIALIZED", correlation_id: "unresolved" };
+      }
+
+      const response = await fetch(path, {
+        method: "POST",
+        cache: "no-store",
+        credentials: "include",
+        headers: { "content-type": "application/json", "x-correlation-id": crypto.randomUUID() },
+        body: JSON.stringify(payload),
+      });
+      const correlation_id = response.headers.get("x-correlation-id") ?? "unresolved";
+      const raw: unknown = await response.json().catch(() => null);
+      const body = rec(raw);
+      if (!response.ok) {
+        return {
+          ok: false,
+          error_uid: "DEV-01-ERR-UNDEFINED",
+          reason_code: typeof body?.reason_code === "string" ? body.reason_code : "DEV_COMMAND_REQUEST_FAILED",
+          correlation_id,
+        };
+      }
+
+      const refreshed = await readDevProjection();
+      if (!refreshed.ok) return refreshed;
+      return { ok: true, projection: refreshed.projection, correlation_id };
     },
   });
 
