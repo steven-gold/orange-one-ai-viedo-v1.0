@@ -62,6 +62,10 @@ jobs:
           echo "ACPOS_EXPECT_RELEASE_SHA=$(tr -d '\r\n ' < .github/external-provider-acceptance-trigger.txt)" >> "$GITHUB_ENV"
           echo "ACPOS_EXTERNAL_E2E_PROFILE_IDS=profile-groq-text-v1,profile-google-text-v1,profile-deepseek-text-v1,profile-openrouter-text-v1" >> "$GITHUB_ENV"
           echo "ACPOS_EXTERNAL_E2E_GROUP_ID=group-text-chat-primary-v1" >> "$GITHUB_ENV"
+          echo "ACPOS_EXTERNAL_E2E_SECONDARY_GROUP_ID=accept-google-only-20260908-v1" >> "$GITHUB_ENV"
+          echo "ACPOS_EXTERNAL_E2E_SECONDARY_EXPECTED_PROVIDER=google" >> "$GITHUB_ENV"
+          echo "ACPOS_EXTERNAL_E2E_SECONDARY_EXPECTED_MODEL=gemini-3.5-flash" >> "$GITHUB_ENV"
+          echo "ACPOS_EXTERNAL_E2E_BLOCKED_GROUP_ID=accept-degraded-only-20260908-v1" >> "$GITHUB_ENV"
           echo "ACPOS_EXTERNAL_E2E_CAPABILITY=TEXT_CHAT" >> "$GITHUB_ENV"
           echo "ACPOS_EXTERNAL_E2E_CLASSIFICATION=INTERNAL" >> "$GITHUB_ENV"
       - name: Resolve manual Production acceptance target
