@@ -48,6 +48,17 @@ async function navigateToCurrentPage(page, route, uid) {
   const actual = await root.getAttribute("data-page-uid");
   if (actual !== uid) throw new Error(`UID_${route}_${actual}`);
   await page.locator("body").waitFor({ state: "visible", timeout: 15_000 });
+  try {
+    await page.waitForFunction(
+      () => {
+        const current = document.querySelector("[data-page-uid]");
+        return current?.getAttribute("data-page-state") !== "LOADING";
+      },
+      { timeout: 15_000 },
+    );
+  } catch {
+    throw new Error(`STUCK_LOADING_${uid}`);
+  }
   return root;
 }
 
@@ -74,8 +85,6 @@ try {
           if (message.type() === "error" && !/Failed to load resource.*(?:401|403|503)/.test(message.text())) errors.push(`console:${message.text()}`);
         });
         const root = await navigateToCurrentPage(page, route, uid);
-        const state = await root.getAttribute("data-page-state");
-        if (state === "LOADING") throw new Error(`STUCK_LOADING_${uid}`);
         const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
         if (overflow > 0) throw new Error(`OVERFLOW_${uid}_${width}_${overflow}`);
         const body = (await page.locator("body").textContent()) ?? "";
