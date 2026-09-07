@@ -1,4 +1,5 @@
 import { namedReason } from "@/server/shared/namedRuntimeError";
+import { executeControlledAiApiCommand, isControlledAiApiServerTestMode } from "@/server/testing/controlledAiApiTestRuntime";
 
 export type AiApiOperation =
   | "createProviderModelProfile"
@@ -72,6 +73,7 @@ export async function runAiApiCommand(request: AiApiRuntimeRequest): Promise<AiA
   }
   const current = binding;
   if (!current) {
+    if (isControlledAiApiServerTestMode()) return executeControlledAiApiCommand(request);
     return {
       ok: false,
       status: 503,
