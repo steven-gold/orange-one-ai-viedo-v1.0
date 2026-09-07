@@ -85,6 +85,7 @@ try {
   let socMutationCases = 0;
   let aiApiMutationCases = 0;
   let kbMutationCases = 0;
+  let i18nCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -247,6 +248,38 @@ try {
         await page.close();
       }
     }
+    const localeHtmlLang = {
+      "zh-TW": "zh-Hant-TW",
+      "zh-CN": "zh-Hans-CN",
+      en: "en",
+    };
+    for (const [route, uid] of routes) {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+      try {
+        await page.goto(base, { waitUntil: "domcontentloaded", timeout: 45_000 });
+        const snapshots = {};
+        for (const locale of ["zh-TW", "zh-CN", "en"]) {
+          await page.evaluate((nextLocale) => window.localStorage.setItem("acpos.locale", nextLocale), locale);
+          const root = await navigateToCurrentPage(page, route, uid);
+          await page.waitForFunction(
+            (expected) => document.documentElement.lang === expected,
+            localeHtmlLang[locale],
+            { timeout: 5_000 },
+          );
+          const title = ((await root.locator("h1").first().textContent()) ?? "").trim();
+          if (!title) throw new Error(`I18N_PAGE_TITLE_MISSING_${uid}_${locale}`);
+          const visibleText = ((await root.innerText()) ?? "").replace(/\s+/g, " ").trim();
+          if (!visibleText) throw new Error(`I18N_VISIBLE_TEXT_MISSING_${uid}_${locale}`);
+          snapshots[locale] = { title, visibleText };
+          i18nCases += 1;
+        }
+        if (snapshots["zh-TW"].visibleText === snapshots.en.visibleText) throw new Error(`I18N_ZHTW_NOT_RERENDERED_${uid}`);
+        if (snapshots["zh-CN"].visibleText === snapshots.en.visibleText) throw new Error(`I18N_ZHCN_NOT_RERENDERED_${uid}`);
+      } finally {
+        await page.close();
+      }
+    }
+
     const strategyPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
     try {
       await navigateToCurrentPage(strategyPage, "/admin/strategy", "admin:STR-01");
@@ -640,7 +673,7 @@ try {
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases} kb_mutation_cases=${kbMutationCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} i18n_cases=${i18nCases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases} kb_mutation_cases=${kbMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }
