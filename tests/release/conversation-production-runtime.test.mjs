@@ -8,7 +8,7 @@ test("Production conversation runtime routes real AI turns through governed AIAP
   const source = await read("src/server/shared/productionConversationAiRuntime.ts");
   assert.match(source, /operation_id:\s*"executeProviderRoute"/);
   assert.match(source, /operation_id:\s*"getProviderRouteDecision"/);
-  assert.match(source, /use_case:\s*"ACPOS_CONVERSATION"/);
+  assert.match(source, /executeTextRoute\([\s\S]{0,1600}?"ACPOS_CONVERSATION"/);
   assert.match(source, /use_case\s*=\s*'ACPOS_TEXT_CHAT'/);
   assert.match(source, /external_request_sent\s*!==\s*true/);
   assert.match(source, /payload\.normalized_result/);
