@@ -615,6 +615,81 @@ async function resolveTextChatGroup(sql: SqlClient): Promise<string> {
   return groupId;
 }
 
+async function startConversationGenerationJob(
+  sql: SqlClient,
+  input: ProductionConversationTurnInput,
+  userMessageRef: string,
+): Promise<string> {
+  const id = crypto.randomUUID();
+  const groupId = await resolveTextChatGroup(sql);
+  await sql`
+    INSERT INTO acpos_runtime.conversation_generation_jobs(
+      id,conversation_id,user_message_id,candidate_group_id,provider_mode,status,cancel_requested
+    ) VALUES(
+      ${id},${input.conversation_id},${userMessageRef},${groupId},'SYSTEM_OWNED','RUNNING',false
+    )
+  `;
+  return id;
+}
+
+async function conversationGenerationCancelled(sql: SqlClient, jobId: string): Promise<boolean> {
+  const rows = await sql`
+    SELECT cancel_requested,status
+    FROM acpos_runtime.conversation_generation_jobs
+    WHERE id=${jobId}
+    LIMIT 1
+  `;
+  const row = first(rows);
+  return row?.cancel_requested === true || asText(row?.status) === "CANCELLED";
+}
+
+async function finishConversationGenerationJob(
+  sql: SqlClient,
+  jobId: string,
+  status: "COMPLETED" | "CANCELLED" | "FAILED",
+  values: {
+    provider_id?: string | null;
+    model_id?: string | null;
+    result_message_id?: string | null;
+    failure_code?: string | null;
+  } = {},
+): Promise<void> {
+  await sql`
+    UPDATE acpos_runtime.conversation_generation_jobs
+    SET status=${status},
+        provider_id=${values.provider_id ?? null},
+        model_id=${values.model_id ?? null},
+        result_message_id=${values.result_message_id ?? null},
+        failure_code=${values.failure_code ?? null},
+        updated_at=now()
+    WHERE id=${jobId}
+  `;
+}
+
+export async function requestProductionConversationStop(
+  conversationId: string,
+): Promise<{ generation_job_id: string | null; cancel_requested: boolean; status: string }> {
+  const sql = getProductionNeonSql();
+  if (!sql) throw new NamedRuntimeError("DATABASE_RUNTIME_NOT_BOUND");
+  const rows = await sql`
+    UPDATE acpos_runtime.conversation_generation_jobs
+    SET cancel_requested=true,updated_at=now()
+    WHERE id=(
+      SELECT id
+      FROM acpos_runtime.conversation_generation_jobs
+      WHERE conversation_id=${conversationId}
+        AND status='RUNNING'
+      ORDER BY created_at DESC
+      LIMIT 1
+    )
+    RETURNING id,status
+  `;
+  const row = first(rows);
+  return row
+    ? { generation_job_id: asText(row.id), cancel_requested: true, status: asText(row.status) ?? "RUNNING" }
+    : { generation_job_id: null, cancel_requested: false, status: "NO_ACTIVE_GENERATION" };
+}
+
 async function executeTextRoute(
   groupId: string,
   input: ProductionConversationTurnInput,
@@ -1141,62 +1216,97 @@ export async function executeProductionConversationTurn(
   const context = await requireConversationContext(sql, input);
   const normalizedInput = { ...input, message };
   const messageRef = await insertUserMessage(sql, normalizedInput);
-  const governanceContext = await buildGovernanceContext(sql, normalizedInput, context);
-  const source = governanceContext.conversation.source_refs.find((item) =>
-    item.kind === "MESSAGE" && item.resolved
-  );
-  const task = input.instruction_kind === "ANALYZE" && source?.content
-    ? `Analyze the exact referenced message while preserving current ACPOS context. Referenced content: ${String(source.content)}`
-    : "Review and respond to the latest user message under the ACPOS governance contract.";
+  const generationJobId = await startConversationGenerationJob(sql, normalizedInput, messageRef);
 
-  const aiMode = normalizeAiMode(input.ai_mode);
-  const routed = aiMode === "MULTI_AI"
-    ? await executeMultiAiCouncil(sql, normalizedInput, context, governanceContext, task)
-    : await executeGovernedSingle(sql, normalizedInput, governanceContext, task);
+  try {
+    const governanceContext = await buildGovernanceContext(sql, normalizedInput, context);
+    const source = governanceContext.conversation.source_refs.find((item) =>
+      item.kind === "MESSAGE" && item.resolved
+    );
+    const task = input.instruction_kind === "ANALYZE" && source?.content
+      ? `Analyze the exact referenced message while preserving current ACPOS context. Referenced content: ${String(source.content)}`
+      : "Review and respond to the latest user message under the ACPOS governance contract.";
 
-  const assistantRef = await insertAssistantMessage(
-    sql,
-    normalizedInput,
-    messageRef,
-    routed,
-    governanceContext,
-  );
-  const ledgerUpdates = await persistDecisionLedger(
-    sql,
-    normalizedInput,
-    messageRef,
-    assistantRef,
-    routed.governed,
-    governanceContext,
-  );
+    const aiMode = normalizeAiMode(input.ai_mode);
+    const routed = aiMode === "MULTI_AI"
+      ? await executeMultiAiCouncil(sql, normalizedInput, context, governanceContext, task)
+      : await executeGovernedSingle(sql, normalizedInput, governanceContext, task);
 
-  return {
-    conversation_id: input.conversation_id,
-    message_ref: messageRef,
-    accepted: true,
-    assistant_response_ref: assistantRef,
-    assistant_response_text: routed.renderedText,
-    assistant_summary: routed.governed.assistant_summary,
-    facts: routed.governed.facts,
-    inferences: routed.governed.inferences,
-    open_questions: routed.governed.open_questions,
-    resolved_items: routed.governed.resolved_items,
-    candidate_ready: routed.governed.candidate_ready,
-    response_mode: routed.governed.response_mode,
-    decision_ledger_updates: ledgerUpdates,
-    context_fingerprint: governanceContext.latest_context_fingerprint,
-    governance_policy_version: ACPOS_AI_GOVERNANCE_POLICY_VERSION,
-    governance_status: "PASS",
-    governance_repair_used: routed.governanceRepairUsed,
-    ai_mode: aiMode,
-    council_mode: "councilMode" in routed ? routed.councilMode : null,
-    multi_ai_meeting_id: "meetingId" in routed ? routed.meetingId : null,
-    multi_ai_participant_responses: "participantResponses" in routed ? routed.participantResponses : 0,
-    provider_id: routed.providerId,
-    model_id: routed.modelId,
-    route_decision_id: routed.decisionId,
-    result_hash: routed.resultHash,
-    external_request_sent: true,
-    worker_succeeded: routed.workerSucceeded ? 1 : 0,
-  };
+    if (await conversationGenerationCancelled(sql, generationJobId)) {
+      await finishConversationGenerationJob(sql, generationJobId, "CANCELLED", {
+        provider_id: routed.providerId,
+        model_id: routed.modelId,
+        failure_code: "USER_CANCELLED",
+      });
+      return {
+        conversation_id: input.conversation_id,
+        message_ref: messageRef,
+        accepted: true,
+        cancelled: true,
+        generation_job_id: generationJobId,
+        assistant_response_ref: null,
+        assistant_response_text: null,
+        external_request_sent: true,
+        worker_succeeded: routed.workerSucceeded ? 1 : 0,
+      };
+    }
+
+    const assistantRef = await insertAssistantMessage(
+      sql,
+      normalizedInput,
+      messageRef,
+      routed,
+      governanceContext,
+    );
+    const ledgerUpdates = await persistDecisionLedger(
+      sql,
+      normalizedInput,
+      messageRef,
+      assistantRef,
+      routed.governed,
+      governanceContext,
+    );
+    await finishConversationGenerationJob(sql, generationJobId, "COMPLETED", {
+      provider_id: routed.providerId,
+      model_id: routed.modelId,
+      result_message_id: assistantRef,
+    });
+
+    return {
+      conversation_id: input.conversation_id,
+      message_ref: messageRef,
+      accepted: true,
+      cancelled: false,
+      generation_job_id: generationJobId,
+      assistant_response_ref: assistantRef,
+      assistant_response_text: routed.renderedText,
+      assistant_summary: routed.governed.assistant_summary,
+      facts: routed.governed.facts,
+      inferences: routed.governed.inferences,
+      open_questions: routed.governed.open_questions,
+      resolved_items: routed.governed.resolved_items,
+      candidate_ready: routed.governed.candidate_ready,
+      response_mode: routed.governed.response_mode,
+      decision_ledger_updates: ledgerUpdates,
+      context_fingerprint: governanceContext.latest_context_fingerprint,
+      governance_policy_version: ACPOS_AI_GOVERNANCE_POLICY_VERSION,
+      governance_status: "PASS",
+      governance_repair_used: routed.governanceRepairUsed,
+      ai_mode: aiMode,
+      council_mode: "councilMode" in routed ? routed.councilMode : null,
+      multi_ai_meeting_id: "meetingId" in routed ? routed.meetingId : null,
+      multi_ai_participant_responses: "participantResponses" in routed ? routed.participantResponses : 0,
+      provider_id: routed.providerId,
+      model_id: routed.modelId,
+      route_decision_id: routed.decisionId,
+      result_hash: routed.resultHash,
+      external_request_sent: true,
+      worker_succeeded: routed.workerSucceeded ? 1 : 0,
+    };
+  } catch (error) {
+    await finishConversationGenerationJob(sql, generationJobId, "FAILED", {
+      failure_code: error instanceof Error ? error.message.slice(0, 160) : "CONVERSATION_OPERATION_FAILED",
+    }).catch(() => undefined);
+    throw error;
+  }
 }
