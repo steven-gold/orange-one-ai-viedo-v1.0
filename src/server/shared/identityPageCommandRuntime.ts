@@ -17,6 +17,7 @@ import { CURRENT_PAGE_RESOURCE_KEYS } from "@/server/shared/pageCatalogProjectio
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 import { configureQaRuntime, type QaRequest } from "@/server/qa/qaRuntime";
 import { configureKnowledgeRuntime } from "@/server/knowledge/knowledgeRuntime";
+import { transitionProductionKnowledgeSource } from "@/server/knowledge/productionKnowledgeSourceStateRuntime";
 import type { KnowledgeRuntimeRequest } from "@/domain/knowledge/knowledgeRuntimeContract";
 import { configureConversationRuntime, type ConversationRequest } from "@/server/shared/conversationRuntime";
 import { configureCandidateDecisionRuntime, type CandidateDecisionRequest } from "@/server/shared/candidateDecisionRuntime";
@@ -1026,6 +1027,17 @@ async function executeQa(_request: QaRequest): Promise<unknown> {
   throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
 }
 
+async function authorizeKnowledge(request:KnowledgeRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:KB-01"]);
+  if(!page.allowed)return page;
+  if(request.operation==="searchKnowledge"||request.operation==="getCitation")return{allowed:true};
+  if(request.operation==="pauseKnowledgeSource"||request.operation==="resumeKnowledgeSource"){
+    const gate=await evaluateResourceAction("permission:knowledge.source.configure","EXECUTE");
+    return gate.allowed?{allowed:true}:gate;
+  }
+  return{allowed:false,reason_code:"KB01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+}
+
 async function executeKnowledge(request: KnowledgeRuntimeRequest): Promise<unknown> {
   if (request.operation === "searchKnowledge") {
     const sql = await requireSql();
@@ -1046,6 +1058,9 @@ async function executeKnowledge(request: KnowledgeRuntimeRequest): Promise<unkno
       LIMIT 50
     `;
     return { results: [...refItems(sources), ...refItems(evidence)] };
+  }
+  if (request.operation === "pauseKnowledgeSource" || request.operation === "resumeKnowledgeSource") {
+    return transitionProductionKnowledgeSource(request);
   }
   if (request.operation === "getCitation") {
     const sql = await requireSql();
@@ -1216,7 +1231,7 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureKnowledgeRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:KB-01"]),
+    authorize: authorizeKnowledge,
     execute: executeKnowledge,
     audit: async () => undefined,
   });
