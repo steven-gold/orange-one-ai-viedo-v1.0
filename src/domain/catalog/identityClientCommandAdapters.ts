@@ -12,7 +12,7 @@ import { configureStrategyRequestBuilder } from "@/domain/strategy/strategyComma
 import { configureStrategyAdminCommandAdapter } from "@/domain/strategyAdmin/strategyAdminRuntimePort";
 import { configureDevCommandAdapter } from "@/domain/dev/devCommandPort";
 import { readDevProjection } from "@/domain/dev/devProjectionPort";
-import { DEV_CONTROL_BINDINGS, type DevControlUid } from "@/domain/dev/devControlBindings";
+import { DEV_CONTROL_BINDINGS, type DevControlBinding, type DevControlUid } from "@/domain/dev/devControlBindings";
 
 let bound = false;
 
@@ -191,7 +191,7 @@ export function bindIdentityClientCommandAdapters(): void {
 
   configureDevCommandAdapter({
     invoke: async (input) => {
-      const binding = DEV_CONTROL_BINDINGS[input.control_uid as DevControlUid];
+      const binding = DEV_CONTROL_BINDINGS[input.control_uid as DevControlUid] as DevControlBinding | undefined;
       if (!binding || binding.action_uid !== input.action_uid || !binding.operation) {
         return { ok: false, error_uid: "DEV-01-ERR-UNDEFINED", reason_code: "DEV_COMMAND_BINDING_UNREGISTERED", correlation_id: "unresolved" };
       }
