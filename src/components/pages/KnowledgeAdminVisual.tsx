@@ -182,16 +182,29 @@ export function KnowledgeAdminVisual() {
           setRuntimeError("KB01_SOURCE_RUNTIME_CONTEXT_REQUIRED");
           return;
         }
+        const reason = typeof window !== "undefined"
+          ? window.prompt(trace.operation === "pauseKnowledgeSource" ? "暫停原因" : "恢復原因")
+          : null;
+        if (!reason || !reason.trim()) {
+          setRuntimeError("KB01_SOURCE_STATE_REASON_REQUIRED");
+          return;
+        }
+        const correlationId = crypto.randomUUID();
         const path = trace.path.replace("{sourceId}", encodeURIComponent(sourceId));
         const response = await fetch(path, {
           method: trace.method,
           cache: "no-store",
           credentials: "include",
-          headers: { "content-type": "application/json" },
+          headers: {
+            "content-type": "application/json",
+            "x-correlation-id": correlationId,
+          },
           body: JSON.stringify({
             source_id: sourceId,
             expected_version: sourceVersion,
-            idempotency_key: `KB-UI-${trace.operation}-${sourceId}-v${sourceVersion}`,
+            reason: reason.trim(),
+            correlation_id: correlationId,
+            idempotency_key: `KB-UI-${trace.operation}-${sourceId}-v${sourceVersion}-${correlationId}`,
           }),
         });
         const correlation = response.headers.get("x-correlation-id");
