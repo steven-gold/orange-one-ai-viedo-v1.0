@@ -89,6 +89,11 @@ jobs:
           NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
         run: npm run test:browser
 
+      - name: Temporary full Current functional acceptance (TEST_ONLY)
+        env:
+          NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
+        run: node scripts/temporary-full-controlled-acceptance.mjs
+
       - name: Current DOM control acceptance
         env:
           NEXT_PUBLIC_ACPOS_RUNTIME_MODE: CONTROLLED_TEST
