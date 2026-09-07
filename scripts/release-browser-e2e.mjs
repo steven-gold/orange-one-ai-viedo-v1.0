@@ -157,10 +157,17 @@ try {
               const visible = style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
               const disabled = "disabled" in element && Boolean(element.disabled);
               const text = (element.textContent ?? "").trim().replace(/\s+/g, " ");
+              const associatedLabel = "labels" in element && element.labels
+                ? [...element.labels]
+                    .map((label) => (label.textContent ?? "").trim().replace(/\s+/g, " "))
+                    .filter(Boolean)
+                    .join(" ")
+                : "";
               const accessible = [
                 element.getAttribute("aria-label"),
                 element.getAttribute("title"),
                 element.getAttribute("placeholder"),
+                associatedLabel,
                 "value" in element && typeof element.value === "string" ? element.value : null,
                 text,
               ].map((value) => typeof value === "string" ? value.trim() : "").find(Boolean) ?? "";
