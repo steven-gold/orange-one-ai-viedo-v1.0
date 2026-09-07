@@ -40,6 +40,14 @@ async function waitForServer() {
   throw new Error("BROWSER_SERVER_START_TIMEOUT");
 }
 
+async function requireActionable(locator, reason, timeout = 5_000) {
+  try {
+    await locator.click({ trial: true, timeout });
+  } catch {
+    throw new Error(reason);
+  }
+}
+
 async function navigateToCurrentPage(page, route, uid) {
   const response = await page.goto(`${base}${route}`, { waitUntil: "domcontentloaded", timeout: 45_000 });
   if (!response?.ok()) throw new Error(`NAV_${route}_${response?.status()}`);
@@ -439,11 +447,11 @@ try {
     try {
       await navigateToCurrentPage(erpPage, "/admin/erp", "admin:ERP-01");
       const syncTab = erpPage.locator('button[data-control-id="ERP-01-BTN-TAB-SYNC"]');
-      if (!(await syncTab.isEnabled())) throw new Error("ERP_SYNC_TAB_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await requireActionable(syncTab, "ERP_SYNC_TAB_NOT_ENABLED_IN_CONTROLLED_TEST");
       await syncTab.click();
 
       const refreshButton = erpPage.locator('button[data-control-id="ERP-01-BTN-SNAPSHOT-REFRESH"]');
-      if (!(await refreshButton.isEnabled())) throw new Error("ERP_SNAPSHOT_REFRESH_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await requireActionable(refreshButton, "ERP_SNAPSHOT_REFRESH_NOT_ENABLED_IN_CONTROLLED_TEST");
       if ((await refreshButton.getAttribute("data-form-schema-ready")) !== "true") throw new Error("ERP_SNAPSHOT_REFRESH_FORM_NOT_BOUND");
       await refreshButton.click();
 
