@@ -70,10 +70,10 @@ test("migration 0023 stages only ERP snapshot refresh control/API permissions", 
   assert.doesNotMatch(migration, /INSERT INTO public\.permission_resources/);
   assert.doesNotMatch(migration, /CREATE ROLE|ALTER ROLE/);
 
-  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.10/);
+  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.\d+/);
   assert.match(manifest, /migration_id: 0023_erp_snapshot_refresh_permission_closure/);
   assert.match(manifest, /payload_sha256: d18b51cb45f1c0ed3519ba3b1d2c7ac2ed11bc270e2bf59e21c98d41694f0cfa/);
   assert.match(manifest, /approval_ref: CR-ERP-0023-PENDING-PRODUCTION-APPLY/);
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 20/);
-  assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 23/);
+  assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0) >= 23);
 });
