@@ -852,6 +852,33 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
   `));
   const firstConversation = conversations[0] ?? null;
   const firstCandidate = candidates[0] ?? null;
+
+  const messageRows = firstConversation
+    ? await safeRows(() => runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT sequence_no, actor_type, actor_ref,
+                 left(COALESCE(message_content->>'text',''), 4000) AS text
+          FROM conversation_messages
+          WHERE conversation_id = ${firstConversation.ref}::uuid
+          ORDER BY sequence_no DESC
+          LIMIT 20
+        `,
+      ))
+    : [];
+  const orderedMessages = [...messageRows].reverse();
+  const conversationText = orderedMessages.map((row) => {
+    const actorType = asText(row.actor_type);
+    const label = actorType === "USER" ? "User"
+      : actorType === "PROVIDER" ? "AI"
+      : actorType === "SYSTEM" ? "System"
+      : "Service";
+    return `${label}: ${asText(row.text) ?? ""}`;
+  }).filter((value) => !value.endsWith(": ")).join("\n");
+  const latestAssistant = [...orderedMessages].reverse().find((row) => asText(row.actor_type) === "PROVIDER");
+  const latestAssistantText = asText(latestAssistant?.text);
+
   const page_state = firstCandidate ? "CANDIDATE_READY" : firstConversation || topics.length ? "READY" : "EMPTY";
   return {
     page_state,
@@ -864,6 +891,8 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
       "STR-01-FLD-HORIZON": DASH,
       "STR-01-FLD-STATE": page_state,
       "STR-01-FLD-DECISION-STATE": firstCandidate?.label ?? DASH,
+      "STR-01-FLD-ASSISTANT-SUMMARY": latestAssistantText ?? DASH,
+      "STR-01-FLD-PROVIDER-BRAND": asText(latestAssistant?.actor_ref) ?? DASH,
     },
     lists: {
       "STR-01-LST-TOPICS": topics,
@@ -876,7 +905,8 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
       "STR-01-LST-CANDIDATES": candidates,
     },
     blocks: {
-      "STR-01-BLK-ASSISTANT": DASH,
+      "STR-01-VIEW-CONVERSATION": conversationText || DASH,
+      "STR-01-BLK-ASSISTANT": latestAssistantText ?? DASH,
     },
     gate_state: {
       "STR-01-GATE-PAGE": true,
