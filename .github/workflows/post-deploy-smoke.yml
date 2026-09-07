@@ -76,8 +76,6 @@ jobs:
         id: control_acceptance
         if: ${{ always() && env.ACPOS_PRODUCTION_E2E_EMAIL != '' && env.ACPOS_PRODUCTION_E2E_PASSWORD != '' }}
         continue-on-error: true
-        env:
-          ACPOS_EXPECT_CURRENT_DOM_CONTROLS: "358"
         run: node scripts/post-deploy-control-acceptance.mjs
       - name: Enforce authenticated acceptance
         if: ${{ always() && env.ACPOS_PRODUCTION_E2E_EMAIL != '' && env.ACPOS_PRODUCTION_E2E_PASSWORD != '' }}

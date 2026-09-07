@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T07:09:32+08:00",
+  "as_of": "2026-09-07T09:43:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
-    "new_sha_basis": "4b03ae589bd46f352b8791b696878428ce87602a",
+    "new_sha_basis": "6fc4639a0da4159e2a678be2d3c01624976faf29",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -55,17 +55,19 @@
     },
     "latest_remote_control_acceptance_gate": {
       "status": "PASS",
-      "run_number": 443,
-      "run_id": 34065919692,
-      "head_sha": "4b03ae589bd46f352b8791b696878428ce87602a",
+      "run_number": 491,
+      "run_id": 34073766541,
+      "head_sha": "6fc4639a0da4159e2a678be2d3c01624976faf29",
       "branch": "new",
       "conclusion": "success",
-      "browser_e2e": "PASS",
-      "current_dom_control_acceptance": "PASS_18_PAGES_358_VISIBLE_358_GOVERNED",
-      "remote_control_acceptance_script": "MATERIALIZED_ON_NEW",
-      "post_deploy_workflow_binding": "MATERIALIZED_ON_NEW_PENDING_NEXT_MAIN_RELEASE",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=515 governed_controls=309 safe_local_clicks=4 strategy_form_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_378_VISIBLE_378_GOVERNED",
+      "current_dom_breakdown": "enabled=187 disabled=191",
       "standalone_docker_build": "PASS",
-      "dirty_tree_guard": "PASS"
+      "dirty_tree_guard": "PASS",
+      "remote_production_control_acceptance": "PENDING_NEXT_MAIN_RELEASE",
+      "note": "Release-side Current DOM visible count is evidence for this controlled fixture run only; it is not a frozen Production denominator."
     }
   },
   "production": {
@@ -188,20 +190,30 @@
       "reason": "AIAPI governed UI/server mutation runtime is deployed and the authenticated queue mutation probe passes in Production, but no current evidence proves all 9 admin mutation acceptance targets end-to-end."
     },
     "gate25_full_page_button_acceptance": {
-      "status": "PARTIAL_REMOTE_RUNNER_MATERIALIZED_PENDING_PRODUCTION_DEPLOYMENT_AND_DENOMINATOR_RECONCILIATION",
-      "reason": "Current Release Gate #443 passes 18-page Current DOM acceptance (358 visible / 358 governed) and validates the new remote Production control-acceptance script. The Post Deploy workflow on new now enforces that remote scanner after authenticated browser E2E, but this change is not yet deployed to main. The formal historical 1453-control denominator has not been reproduced from Current Authority; raw control_uid counting is invalid because several Current page authorities use deduplicated or compact encodings. Do not replace 1453 with 358 and do not mark Gate 25 PASS until the Authority denominator is reconciled and the remote Production run passes."
+      "status": "PARTIAL_RELEASE_BROWSER_AND_DOM_ACCEPTANCE_PASS_REMOTE_PRODUCTION_PENDING",
+      "reason": "Release Gate #491 passes supported-viewport Browser E2E across 72 cases and Current DOM control acceptance across all 18 Current pages (378 visible / 378 governed) on exact head 6fc4639a0da4159e2a678be2d3c01624976faf29. The historical 1453 value is now verified only as the legacy 92-page permission catalog control/action baseline (1141 controls + 312 actions), not the Current 18-page DOM denominator. Production remote control acceptance remains pending the next main release; remote visible-control count must be measured at runtime and 100% governed rather than hard-coded to 358."
     }
   },
   "blockers": [
     "Real external Provider capability/profile/secret/group configuration is absent; runtime is deployed but real values must not be fabricated.",
     "Vercel management connector can see the Hobby team but project listing is empty / deployment listing is forbidden, so management-plane environment authority remains not directly readable through the connector.",
-    "Gate 25 remote Production control-acceptance runner is materialized and Release-validated on new, but it has not yet been included in the next single main deployment; formal Authority control denominator reconciliation is still required before PASS."
+    "Gate 25 Production remote Current DOM acceptance is not yet executed on the next main release; Release-side 18-page Browser/DOM acceptance is PASS."
   ],
   "next_release_sequence": [
-    "Keep main fixed at deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671 while additional dependency-ready acceptance work is accumulated on new.",
-    "Continue Gate 24 admin mutation closure using only registered Current operations; do not mark pages with PROVIDER_GATEWAY_NOT_MATERIALIZED as mutation PASS.",
-    "Reconcile the formal Gate 25 Authority control denominator separately from the 358 visible Current DOM controls; duplicate/compact authority encodings must be normalized before counting.",
-    "At the next integration point, require a full Release Gate on the exact new head, then one new→main release and Post Deploy HTTP/auth/browser/remote-control acceptance.",
+    "Keep main fixed at deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671 while remaining dependency-ready Gate 24/25 work is accumulated on new.",
+    "Continue Gate 24 admin mutation closure using only registered Current operations; do not claim provider-dependent actions as materialized.",
+    "Treat 1453 strictly as legacy 92-page permission catalog baseline (1141 controls + 312 actions), not as the Current 18-page DOM denominator.",
+    "At the next integration point, require a full Release Gate on the exact new head, then one new→main release and Post Deploy HTTP/auth/browser/remote-control acceptance with runtime-measured visible controls.",
     "Do not claim External Provider PASS until real provider capability/profile/secret/group configuration is supplied and a real external request succeeds."
-  ]
+  ],
+  "ui_visual_adjustment_policy": {
+    "status": "ACTIVE",
+    "rule": "PIXEL_LEVEL_ADJUSTMENT_ONLY_WHEN_NEEDED",
+    "constraints": [
+      "Do not change page/block/control position or information architecture solely to resolve small pixel overflow.",
+      "Do not change control function, action binding, permission behavior, or workflow.",
+      "Preserve the established visual proportion between columns, panels, controls, spacing, and hierarchy.",
+      "Prefer minimal px/gap/padding/min-width/flex shrink corrections; structural rearrangement requires separate authority."
+    ]
+  }
 }
