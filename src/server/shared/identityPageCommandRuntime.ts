@@ -19,8 +19,10 @@ import { configureQaRuntime, type QaRequest } from "@/server/qa/qaRuntime";
 import { configureKnowledgeRuntime } from "@/server/knowledge/knowledgeRuntime";
 import type { KnowledgeRuntimeRequest } from "@/domain/knowledge/knowledgeRuntimeContract";
 import { configureConversationRuntime, type ConversationRequest } from "@/server/shared/conversationRuntime";
+import { configureCandidateDecisionRuntime, type CandidateDecisionRequest } from "@/server/shared/candidateDecisionRuntime";
 import { configureStrategyDecisionRuntime } from "@/server/strategy/strategyDecisionRuntime";
 import { configureSocCommandRuntime } from "@/server/social/socCommandRuntime";
+import { saveProductionSocDraft, decideProductionSocCandidate } from "@/server/social/productionSocContentRuntime";
 import type { SocRuntimeRequest } from "@/server/testing/controlledSocTestRuntime";
 import { configureErpCommandRuntime } from "@/server/erp/erpCommandRuntime";
 import type { ErpRuntimeRequest } from "@/server/testing/controlledErpTestRuntime";
@@ -302,6 +304,26 @@ async function authorizeAiApi(request:{operation_id:string}):Promise<{allowed:tr
   const permission=AIAPI_OPERATION_PERMISSION[request.operation_id];
   if(!permission)return{allowed:false,reason_code:"AIAPI_OPERATION_PERMISSION_MAPPING_REQUIRED"};
   const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
+}
+
+async function authorizeSoc(request:SocRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:SOC-01"]);
+  if(!page.allowed)return page;
+  if(request.operation_id==="searchProjection"||request.operation_id==="refreshProjection")return{allowed:true};
+  if(request.operation_id==="saveDraft"){
+    const gate=await evaluateResourceAction("api:saveDraft","EXECUTE");
+    return gate.allowed?{allowed:true}:gate;
+  }
+  return{allowed:false,reason_code:"SOC01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+}
+
+async function authorizeSocCandidateDecision(request:CandidateDecisionRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const payload=asRecord(request.payload)??{};
+  if(asText(payload.page_uid)!=="admin:SOC-01")return{allowed:false,reason_code:"CANDIDATE_DECISION_OWNER_CONTEXT_UNREGISTERED"};
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:SOC-01"]);
+  if(!page.allowed)return page;
+  const gate=await evaluateResourceAction("api:decideCandidate","EXECUTE");
   return gate.allowed?{allowed:true}:gate;
 }
 
@@ -1071,6 +1093,7 @@ async function executeConversation(request: ConversationRequest): Promise<unknow
 }
 
 async function executeSoc(request: SocRuntimeRequest): Promise<unknown> {
+  if (request.operation_id === "saveDraft") return saveProductionSocDraft(request);
   if (request.operation_id === "refreshProjection") return { refreshed: true };
   if (request.operation_id === "searchProjection") {
     const sql = await requireSql();
@@ -1185,8 +1208,13 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureSocCommandRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:SOC-01"]),
+    authorize: authorizeSoc,
     execute: executeSoc,
+    audit: async () => undefined,
+  });
+  configureCandidateDecisionRuntime({
+    authorize: authorizeSocCandidateDecision,
+    decide: decideProductionSocCandidate,
     audit: async () => undefined,
   });
   configureErpCommandRuntime({
