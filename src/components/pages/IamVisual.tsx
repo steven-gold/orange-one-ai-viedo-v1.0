@@ -93,7 +93,7 @@ function IamVisualBody() {
     >
       <section className={styles.contextBar} data-section-id="IAM-01-SEC-01" data-component-id="IAM-01-CMP-CONTEXT">
         <div>
-          <div className={styles.eyebrow}>IAM-01 · ACCOUNT PERMISSION ASSIGNMENT</div>
+          <div className={styles.eyebrow}>{t("eyebrow")}</div>
           <h1>{t("pageName")}</h1>
           <p>{t("pageRole")}</p>
         </div>
@@ -150,7 +150,7 @@ function IamVisualBody() {
                 ))}
               </div>
             ) : (
-              <div className={styles.directoryEmpty}><div className={styles.emptyIcon}>◎</div><strong>{t("noAccounts")}</strong><span>IdentityService / IAM projection</span></div>
+              <div className={styles.directoryEmpty}><div className={styles.emptyIcon}>◎</div><strong>{t("noAccounts")}</strong><span>{t("identityProjection")}</span></div>
             )}
           </section>
 
@@ -301,7 +301,7 @@ function IamVisualBody() {
         {client.audit_open ? (
           <div className={styles.auditList} data-audit-open="true">{projection?.audit_entries.length ? projection.audit_entries.map((entry) => <div key={entry}>{entry}</div>) : <span>—</span>}</div>
         ) : (
-          <div className={styles.auditEmpty}><span>{t("auditEmpty")}</span><code>correlation · version · scope · condition · access review</code></div>
+          <div className={styles.auditEmpty}><span>{t("auditEmpty")}</span><code>{t("auditTraceFields")}</code></div>
         )}
       </section>
     </div>
