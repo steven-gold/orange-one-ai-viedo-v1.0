@@ -25,6 +25,7 @@ import { configureSocCommandRuntime } from "@/server/social/socCommandRuntime";
 import { saveProductionSocDraft, decideProductionSocCandidate } from "@/server/social/productionSocContentRuntime";
 import type { SocRuntimeRequest } from "@/server/testing/controlledSocTestRuntime";
 import { configureErpCommandRuntime } from "@/server/erp/erpCommandRuntime";
+import { requestProductionErpSnapshotRefresh } from "@/server/erp/productionErpSnapshotRuntime";
 import type { ErpRuntimeRequest } from "@/server/testing/controlledErpTestRuntime";
 import { configureSystemLifecycleRuntime, type SysRequest } from "@/server/system/systemLifecycleRuntime";
 import {
@@ -305,6 +306,32 @@ async function authorizeAiApi(request:{operation_id:string}):Promise<{allowed:tr
   if(!permission)return{allowed:false,reason_code:"AIAPI_OPERATION_PERMISSION_MAPPING_REQUIRED"};
   const gate=await evaluateResourceAction(permission.resource_key,permission.action);
   return gate.allowed?{allowed:true}:gate;
+}
+
+const ERP_SNAPSHOT_REFRESH_PERMISSIONS: readonly {resource_key:string;action:string}[] = [
+  {resource_key:"control:CTRL-ADMIN-ERP-01-ACT-05-ERP-SNAPSHOT-REFRESH",action:"INVOKE"},
+  {resource_key:"api:refreshERPSnapshot",action:"EXECUTE"},
+];
+
+async function authorizeErp(request:ErpRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:ERP-01"]);
+  if(!page.allowed)return page;
+  if([
+    "refreshProjection",
+    "getERPSyncStatus",
+    "getERPFailure",
+    "getERPFinanceFactPack",
+    "getERPCapacityGuardrails",
+    "getERPForecast",
+  ].includes(request.operation_id))return{allowed:true};
+  if(request.operation_id==="refreshERPSnapshot"){
+    for(const permission of ERP_SNAPSHOT_REFRESH_PERMISSIONS){
+      const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+      if(!gate.allowed)return gate;
+    }
+    return{allowed:true};
+  }
+  return{allowed:false,reason_code:"ERP01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
 }
 
 async function authorizeSoc(request:SocRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
@@ -1112,7 +1139,10 @@ async function executeSoc(request: SocRuntimeRequest): Promise<unknown> {
 }
 
 async function executeErp(request: ErpRuntimeRequest): Promise<unknown> {
-  if (request.operation_id === "refreshProjection" || request.operation_id === "refreshERPSnapshot") {
+  if (request.operation_id === "refreshERPSnapshot") {
+    return requestProductionErpSnapshotRefresh(request);
+  }
+  if (request.operation_id === "refreshProjection") {
     return { refreshed: true };
   }
   const sql = await requireSql();
@@ -1218,7 +1248,7 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureErpCommandRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:ERP-01"]),
+    authorize: authorizeErp,
     execute: executeErp,
     audit: async () => undefined,
   });
