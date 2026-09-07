@@ -13,6 +13,10 @@ import {
   StrategyAdminRuntimeProvider,
   useStrategyAdminRuntime,
 } from "./StrategyAdminRuntime";
+import {
+  STRATEGY_ADMIN_ACTION_OPERATION,
+  strategyAdminSourcePage,
+} from "@/domain/strategyAdmin/strategyAdminRuntimePort";
 import styles from "./StrategyAdminVisual.module.css";
 
 type ViewSpec = {
@@ -384,6 +388,13 @@ function StrategyAdminContent() {
             const unresolved = actionId === "ACT-CANDIDATE-DECIDE";
             const navOnly = actionId === "ACT-NAV-OPEN";
             const enabled = canInvoke(actionId, active.key);
+            const sourcePageUid = strategyAdminSourcePage(active.key, actionId);
+            const operationId =
+              actionId in STRATEGY_ADMIN_ACTION_OPERATION
+                ? STRATEGY_ADMIN_ACTION_OPERATION[
+                    actionId as keyof typeof STRATEGY_ADMIN_ACTION_OPERATION
+                  ]
+                : null;
             const bindingState =
               unresolved || navOnly
                 ? "AUTHORITY_BINDING_UNRESOLVED"
@@ -404,6 +415,8 @@ function StrategyAdminContent() {
                 type="button"
                 className={`${styles.action} ${index === 0 ? styles.actionPrimary : ""}`}
                 data-action-id={actionId}
+                data-operation-id={operationId ?? undefined}
+                data-source-page-uid={sourcePageUid ?? undefined}
                 data-operation-binding={bindingState}
                 data-disabled-reason={!enabled ? bindingState : undefined}
                 disabled={!enabled}
