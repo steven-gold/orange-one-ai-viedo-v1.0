@@ -36,7 +36,7 @@ test("migration 0016 materializes a non-BYPASSRLS role and session-bound policie
 
   assert.match(migration, /0016_postgresql_rls_runtime_foundation/);
   assert.match(migration, /8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4/);
-  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.6/);
+  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.7/);
   assert.match(manifest, /migration_id: 0016_postgresql_rls_runtime_foundation/);
   assert.match(manifest, /payload_sha256: 8c8ca99cbbc171e45940869da014dcbdde7130d2e0dd73d1b2c1cac39e7e3cd4/);
 });
