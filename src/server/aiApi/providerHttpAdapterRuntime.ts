@@ -58,8 +58,14 @@ function renderCanonical(value: unknown, canonicalInstruction: string): unknown 
 function requestBodyTemplate(profile: ProviderHttpProfile): Record<string, unknown> {
   const explicit=asRecord(profile.request_template.body);
   if (explicit) return explicit;
-  const entries=Object.entries(profile.request_template).filter(([key]) => key!=="prompt_template");
+  const entries=Object.entries(profile.request_template).filter(([key]) => key!=="prompt_template" && key!=="auth_mode");
   return Object.fromEntries(entries);
+}
+
+function providerAuthMode(profile:ProviderHttpProfile):"BEARER"|"X_GOOG_API_KEY" {
+  const raw=typeof profile.request_template.auth_mode==="string"?profile.request_template.auth_mode.trim().toUpperCase():"BEARER";
+  if(raw==="BEARER"||raw==="X_GOOG_API_KEY")return raw;
+  throw new NamedRuntimeError("PROVIDER_AUTH_MODE_INVALID");
 }
 
 function assertSafeHttpsTarget(baseUrl: string, endpointPath: string): URL {
@@ -163,10 +169,10 @@ export async function executeProviderHttpRequest(
   const started=Date.now();
 
   try {
-    const headers: Record<string,string>={
-      accept:"application/json",
-      authorization:`Bearer ${secret}`,
-    };
+    const headers: Record<string,string>={accept:"application/json"};
+    const authMode=providerAuthMode(profile);
+    if(authMode==="X_GOOG_API_KEY")headers["x-goog-api-key"]=secret;
+    else headers.authorization=`Bearer ${secret}`;
     let body: string | undefined;
     if (profile.http_method==="POST") {
       headers["content-type"]="application/json";

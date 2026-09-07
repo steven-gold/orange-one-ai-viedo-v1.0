@@ -211,30 +211,43 @@ export async function executeProductionSystemLifecycleOperation(
   }
 
   if (request.operation_id === "runSandboxTest") {
-    const candidateRows = await runRlsActorQuery(
+    const changeRows = await runRlsActorQuery(
       sql,
       identity.session_token_hash,
       sql`
-        SELECT current_candidate_id::text AS candidate_ref
+        SELECT current_candidate_id::text AS candidate_ref,current_goal
         FROM public.system_changes
         WHERE system_change_id=${systemChangeId}::uuid
         LIMIT 1
       `,
     );
-    const candidateRef = asText(first(candidateRows)?.candidate_ref);
-    if (!candidateRef) throw new NamedRuntimeError("SYSTEM_CHANGE_CANDIDATE_REQUIRED");
-    const sandbox = await executeProductionAiApiCommand({
-      operation_id: "runSandboxTest",
-      correlation_id: request.correlation_id,
-      path_params: {},
-      payload,
+    const change=first(changeRows);
+    const candidateRef=asText(change?.candidate_ref);
+    if(!candidateRef)throw new NamedRuntimeError("SYSTEM_CHANGE_CANDIDATE_REQUIRED");
+    const profileRows=await sql`
+      SELECT id
+      FROM acpos_runtime.provider_profiles
+      WHERE enabled=true AND capability_type='TEXT_CHAT'
+      ORDER BY (health_status='HEALTHY') DESC,updated_at DESC
+      LIMIT 1
+    `;
+    const profileId=asText(first(profileRows)?.id);
+    if(!profileId)throw new NamedRuntimeError("SYS01_SANDBOX_PROVIDER_PROFILE_NOT_CONFIGURED");
+    const canonicalInstruction=asText(payload.canonical_instruction)??asText(change?.current_goal);
+    if(!canonicalInstruction)throw new NamedRuntimeError("SYS01_SANDBOX_CANONICAL_INSTRUCTION_REQUIRED");
+    const sandbox=await executeProductionAiApiCommand({
+      operation_id:"runSandboxTest",
+      correlation_id:request.correlation_id,
+      path_params:{},
+      payload:{profile_id:profileId,canonical_instruction:canonicalInstruction},
     });
-    return {
-      system_change_id: systemChangeId,
-      candidate_ref: candidateRef,
+    return{
+      system_change_id:systemChangeId,
+      candidate_ref:candidateRef,
+      provider_profile_id:profileId,
       sandbox,
-      production_mutation: false,
-      deployment_triggered: false,
+      production_mutation:false,
+      deployment_triggered:false,
     };
   }
 
