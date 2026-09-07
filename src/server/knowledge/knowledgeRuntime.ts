@@ -12,6 +12,19 @@ let bindings: KnowledgeRuntimeBindings | null = null;
 
 export function configureKnowledgeRuntime(next: KnowledgeRuntimeBindings): void { bindings = next; }
 
+function statusForReason(reason_code: string): number {
+  if (reason_code.includes("PERMISSION") || reason_code.includes("AUTHORIZATION") || reason_code.includes("DENIED")) return 403;
+  if (reason_code.includes("NOT_FOUND")) return 404;
+  if (reason_code.includes("VERSION_CONFLICT") || reason_code.includes("STATE_GUARD") || reason_code.includes("IDEMPOTENCY_CONFLICT")) return 409;
+  if (
+    reason_code.includes("REQUIRED")
+    || reason_code.includes("INVALID")
+    || reason_code.includes("MISMATCH")
+    || reason_code.includes("SCHEMA")
+  ) return 400;
+  return 503;
+}
+
 export async function executeKnowledgePort(request: KnowledgeRuntimeRequest): Promise<KnowledgeRuntimeResult> {
   if (!bindings) {
     const { bindIdentityPageCommandRuntimes } = await import("@/server/shared/identityPageCommandRuntime");
@@ -41,6 +54,6 @@ export async function executeKnowledgePort(request: KnowledgeRuntimeRequest): Pr
   } catch (error) {
     const reason_code = namedReason(error, "KB_PORT_EXECUTION_FAILED");
     await runtime.audit({ ...request, outcome: "ERROR", reason_code }).catch(() => undefined);
-    return { ok: false, error_uid: "KB-01-ERR-001", reason_code, correlation_id: request.correlation_id, status: 503 };
+    return { ok: false, error_uid: "KB-01-ERR-001", reason_code, correlation_id: request.correlation_id, status: statusForReason(reason_code) };
   }
 }
