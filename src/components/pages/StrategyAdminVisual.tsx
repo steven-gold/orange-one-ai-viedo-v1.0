@@ -277,9 +277,9 @@ function StrategyAdminContent() {
         projection?.page_state ?? (runtimeError ? "ERROR" : "LOADING")
       }
     >
-      <section className={styles.contextBar} aria-label="STR-01 Context">
+      <section className={styles.contextBar} aria-label={strategyText(locale, "contextLabel")}>
         <div className={styles.identity}>
-          <div className={styles.eyebrow}>ADMIN · STR-01 · STRATEGY GOVERNANCE</div>
+          <div className={styles.eyebrow}>{strategyText(locale, "eyebrow")}</div>
           <h1>{strategyText(locale, "pageName")}</h1>
           <p>{strategyText(locale, "pageRole")}</p>
         </div>
