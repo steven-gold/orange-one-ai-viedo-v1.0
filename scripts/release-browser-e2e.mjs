@@ -72,6 +72,7 @@ try {
   let strategyFormCases = 0;
   let sgGovernanceCases = 0;
   let iamMutationCases = 0;
+  let erpMutationCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -423,10 +424,37 @@ try {
     } finally {
       await iamPage.close();
     }
+
+    const erpPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      await navigateToCurrentPage(erpPage, "/admin/erp", "admin:ERP-01");
+      const syncTab = erpPage.locator('button[data-control-id="ERP-01-BTN-TAB-SYNC"]');
+      if (!(await syncTab.isEnabled())) throw new Error("ERP_SYNC_TAB_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await syncTab.click();
+
+      const refreshButton = erpPage.locator('button[data-control-id="ERP-01-BTN-SNAPSHOT-REFRESH"]');
+      if (!(await refreshButton.isEnabled())) throw new Error("ERP_SNAPSHOT_REFRESH_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await refreshButton.getAttribute("data-form-schema-ready")) !== "true") throw new Error("ERP_SNAPSHOT_REFRESH_FORM_NOT_BOUND");
+      await refreshButton.click();
+
+      const refreshForm = erpPage.locator('[data-drawer-form="ERP-01-BTN-SNAPSHOT-REFRESH"]');
+      await refreshForm.waitFor({ state: "visible", timeout: 5_000 });
+      await refreshForm.locator('[data-form-field-key="requested_scope"] input').fill("finance-ledger");
+      const submit = refreshForm.locator('button[data-form-submit="true"]');
+      if (!(await submit.isEnabled())) throw new Error("ERP_SNAPSHOT_REFRESH_SUBMIT_NOT_ENABLED");
+      await submit.click();
+      await refreshForm.waitFor({ state: "detached", timeout: 5_000 });
+      if ((await erpPage.locator('[data-page-uid="admin:ERP-01"]').getAttribute("data-page-state")) === "ERROR") {
+        throw new Error("ERP_SNAPSHOT_REFRESH_RUNTIME_ERROR");
+      }
+      erpMutationCases += 1;
+    } finally {
+      await erpPage.close();
+    }
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }
