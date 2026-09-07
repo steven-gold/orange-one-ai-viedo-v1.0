@@ -397,9 +397,14 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
         SELECT conversation_message_id::text AS message_ref,
                conversation_id::text AS conversation_id,
                actor_type,
-               COALESCE(message_content->>'text','') AS text
+               COALESCE(message_content->>'text','') AS text,
+               COALESCE(message_content->>'kind','') AS kind,
+               message_content->>'assistant_summary' AS assistant_summary,
+               message_content->>'response_mode' AS response_mode,
+               message_content->'governance' AS governance
         FROM conversation_messages
         WHERE conversation_id = ANY(${ids}::uuid[])
+          AND COALESCE(message_content->>'kind','') <> 'DECISION_LEDGER'
         ORDER BY conversation_id, sequence_no
       `,
     ).catch(() => []);
@@ -409,12 +414,44 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
       const conversation_id = asText(row?.conversation_id);
       const actor_type = asText(row?.actor_type);
       const text = typeof row?.text === "string" ? row.text : "";
-      if (!message_ref || !conversation_id) continue;
+      if (!message_ref || !conversation_id || !text.trim()) continue;
       const role: "USER" | "ASSISTANT" | "SYSTEM" =
         actor_type === "USER" ? "USER" : actor_type === "PROVIDER" ? "ASSISTANT" : "SYSTEM";
       (messages_by_thread[conversation_id] ??= []).push({ message_ref, conversation_id, role, text });
     }
   }
+  const currentConversationId = threads[0]?.conversation_id ?? null;
+  const latestAssistantMeta = currentConversationId
+    ? first(await runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT message_content->>'assistant_summary' AS assistant_summary,
+                 message_content->>'response_mode' AS response_mode,
+                 message_content->'governance'->>'context_fingerprint' AS context_fingerprint,
+                 actor_ref
+          FROM conversation_messages
+          WHERE conversation_id=${currentConversationId}::uuid
+            AND actor_type='PROVIDER'
+          ORDER BY sequence_no DESC
+          LIMIT 1
+        `,
+      ).catch(() => []))
+    : null;
+  const aiGroup = first(await sql`
+    SELECT g.id,
+           count(*) FILTER (WHERE m.enabled=true AND p.enabled=true AND p.health_status='HEALTHY')::int AS healthy_members
+    FROM acpos_runtime.provider_groups g
+    LEFT JOIN acpos_runtime.provider_members m ON m.group_id=g.id
+    LEFT JOIN acpos_runtime.provider_profiles p ON p.provider_id=m.provider_id AND p.model_id=m.model_id
+    WHERE g.enabled=true AND g.use_case='ACPOS_TEXT_CHAT'
+    GROUP BY g.id,g.updated_at
+    ORDER BY g.updated_at DESC,g.id
+    LIMIT 1
+  `.catch(() => []));
+  const assignedAiSet = asText(aiGroup?.id);
+  const healthyAiMembers = Number(aiGroup?.healthy_members ?? 0);
+
   return {
     refs: {
       project_id: first?.project_id ?? null,
@@ -423,7 +460,7 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
       topic_version_ref: topics[0]?.topic_version_ref ?? null,
       dna_version_ref: null,
       blueprint_version_ref: null,
-      conversation_id: threads[0]?.conversation_id ?? null,
+      conversation_id: currentConversationId,
       candidate_ref: null,
     },
     work_item: null,
@@ -438,15 +475,15 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     messages_by_thread,
     display_values: {
       page_mode: "PROJECT_CORE",
-      assigned_ai_set: DASH,
+      assigned_ai_set: assignedAiSet ?? DASH,
       project_state: first?.status ?? DASH,
       story_candidate_set: DASH,
       dna_state: DASH,
       blueprint_state: DASH,
-      assistant_summary: DASH,
+      assistant_summary: asText(latestAssistantMeta?.assistant_summary) ?? DASH,
       evaluation: DASH,
       structured_decision: DASH,
-      runtime_stage: "READY",
+      runtime_stage: asText(latestAssistantMeta?.response_mode) ?? "READY",
       topic_scope: DASH,
       canonical_script: DASH,
       package: DASH,
@@ -456,6 +493,9 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
       version_state: DASH,
       candidate_compare: DASH,
       lock_review: DASH,
+      governance_policy: "ACPOS_AI_GOVERNANCE_V1.0",
+      governance_context_fingerprint: asText(latestAssistantMeta?.context_fingerprint) ?? DASH,
+      healthy_ai_members: String(healthyAiMembers),
     },
   };
 }
@@ -888,9 +928,13 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
         sessionTokenHash,
         sql`
           SELECT sequence_no, actor_type, actor_ref,
-                 left(COALESCE(message_content->>'text',''), 4000) AS text
+                 left(COALESCE(message_content->>'text',''), 4000) AS text,
+                 message_content->>'assistant_summary' AS assistant_summary,
+                 message_content->'governance'->>'context_fingerprint' AS context_fingerprint,
+                 COALESCE(message_content->>'kind','') AS kind
           FROM conversation_messages
           WHERE conversation_id = ${firstConversation.ref}::uuid
+            AND COALESCE(message_content->>'kind','') <> 'DECISION_LEDGER'
           ORDER BY sequence_no DESC
           LIMIT 20
         `,
@@ -907,6 +951,19 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
   }).filter((value) => !value.endsWith(": ")).join("\n");
   const latestAssistant = [...orderedMessages].reverse().find((row) => asText(row.actor_type) === "PROVIDER");
   const latestAssistantText = asText(latestAssistant?.text);
+  const latestAssistantSummary = asText(latestAssistant?.assistant_summary) ?? latestAssistantText;
+  const strategyAiRoute = first(await sql`
+    SELECT g.id,
+           count(*) FILTER (WHERE m.enabled=true AND p.enabled=true AND p.health_status='HEALTHY')::int AS healthy_members
+    FROM acpos_runtime.provider_groups g
+    LEFT JOIN acpos_runtime.provider_members m ON m.group_id=g.id
+    LEFT JOIN acpos_runtime.provider_profiles p ON p.provider_id=m.provider_id AND p.model_id=m.model_id
+    WHERE g.enabled=true AND g.use_case='ACPOS_TEXT_CHAT'
+    GROUP BY g.id,g.updated_at
+    ORDER BY g.updated_at DESC,g.id
+    LIMIT 1
+  `.catch(() => []));
+  const strategyMultiReady = Number(strategyAiRoute?.healthy_members ?? 0) > 0;
 
   const page_state = firstCandidate ? "CANDIDATE_READY" : firstConversation || topics.length ? "READY" : "EMPTY";
   return {
@@ -920,7 +977,7 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
       "STR-01-FLD-HORIZON": DASH,
       "STR-01-FLD-STATE": page_state,
       "STR-01-FLD-DECISION-STATE": firstCandidate?.label ?? DASH,
-      "STR-01-FLD-ASSISTANT-SUMMARY": latestAssistantText ?? DASH,
+      "STR-01-FLD-ASSISTANT-SUMMARY": latestAssistantSummary ?? DASH,
       "STR-01-FLD-PROVIDER-BRAND": asText(latestAssistant?.actor_ref) ?? DASH,
     },
     lists: {
@@ -935,7 +992,7 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
     },
     blocks: {
       "STR-01-VIEW-CONVERSATION": conversationText || DASH,
-      "STR-01-BLK-ASSISTANT": latestAssistantText ?? DASH,
+      "STR-01-BLK-ASSISTANT": latestAssistantSummary ?? DASH,
     },
     gate_state: {
       "STR-01-GATE-PAGE": true,
@@ -943,7 +1000,7 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
       "STR-01-GATE-CONTEXT": Boolean(firstConversation),
       "STR-01-GATE-MESSAGE": Boolean(firstConversation),
       "STR-01-GATE-ANALYSIS": Boolean(latestAssistantText),
-      "STR-01-GATE-MULTI": false,
+      "STR-01-GATE-MULTI": strategyMultiReady,
     },
     owner_type: firstConversation ? "CONVERSATION" : null,
     owner_context_ref: firstConversation?.ref ?? null,
