@@ -229,8 +229,8 @@ function AssetVisualBody() {
         </div>
       </section>
 
-      <div className={styles.primaryGrid}>
-        <div className={styles.leftColumn}>
+      <div className={styles.primaryGrid} data-layout-grid="workspace-three-column">
+        <div className={styles.leftColumn} data-layout-column="left">
           <section className={styles.panel} data-section-id="ASSET-01-SEC-02" data-visual-uid="ASSET-01-VIS-LEFT">
             <SectionTitle text={assetText(locale, "assetList")} />
             <div className={styles.stack} data-component-uid="ASSET-01-CMP-ASSET-LIST">
@@ -239,7 +239,7 @@ function AssetVisualBody() {
           </section>
         </div>
 
-        <div className={styles.centerColumn}>
+        <div className={styles.centerColumn} data-layout-column="center">
           {bindingVisible ? <section className={styles.panel} data-section-id="ASSET-01-SEC-03" data-visual-uid="ASSET-01-VIS-BINDING" data-stage-surface="input-readiness">
             <SectionTitle text={assetText(locale, "binding")} />
             <div className={styles.bindingGrid} data-component-uid="ASSET-01-CMP-BINDING">
@@ -286,7 +286,7 @@ function AssetVisualBody() {
           </section> : null}
         </div>
 
-        <aside className={styles.rightColumn}>
+        <aside className={styles.rightColumn} data-layout-column="right">
           <section className={styles.panel} data-section-id="ASSET-01-SEC-09" data-visual-uid="ASSET-01-VIS-DECISION">
             <SectionTitle text={assetText(locale, "decision")} />
             <div className={styles.stack} data-component-uid="ASSET-01-CMP-SCORE">

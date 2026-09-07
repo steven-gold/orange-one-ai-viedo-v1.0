@@ -327,8 +327,8 @@ function EditVisualBody() {
       <div className={styles.contextStatus}>{contextStatus.map((spec) => <Control key={spec.id} spec={spec} compact />)}</div>
     </section>
 
-    <div className={styles.primaryGrid}>
-      <section className={`${styles.panel} ${styles.assetPanel}`} data-section-id="EDIT-01-SEC-02" data-visual-uid="EDIT-01-VIS-ASSET-BIND" data-component-uid="EDIT-01-CMP-MEDIA-BIN">
+    <div className={styles.primaryGrid} data-layout-grid="workspace-three-column">
+      <section data-layout-column="left" className={`${styles.panel} ${styles.assetPanel}`} data-section-id="EDIT-01-SEC-02" data-visual-uid="EDIT-01-VIS-ASSET-BIND" data-component-uid="EDIT-01-CMP-MEDIA-BIN">
         <Title text={editUiText(locale, "assetBinding")} meta="20%" />
         <div className={styles.stack}>{mediaVisible.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
         <div className={styles.bindingCards}>
@@ -342,7 +342,7 @@ function EditVisualBody() {
         <div className={state.source_mode === "STANDALONE_UPLOAD" ? styles.stack : styles.hiddenRegistry} aria-hidden={state.source_mode === "STANDALONE_UPLOAD" ? undefined : "true"}>{mediaConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
       </section>
 
-      <div className={styles.productionStack}>
+      <div className={styles.productionStack} data-layout-column="center">
         <section className={`${styles.panel} ${styles.previewPanel}`} data-section-id="EDIT-01-SEC-03" data-visual-uid="EDIT-01-VIS-PREVIEW">
           <Title text={editUiText(locale, "preview")} meta="16:9" />
           <div className={styles.viewer} data-component-uid="EDIT-01-CMP-PREVIEW" data-preview-ref={state.resolved.preview_uri ?? undefined} data-playing={state.playing ? "true" : "false"} data-muted={state.preview_muted ? "true" : "false"} data-loop={state.loop ? "true" : "false"}>
@@ -375,7 +375,7 @@ function EditVisualBody() {
           <div className={styles.dialogueGuard} data-section-id="EDIT-01-SEC-11" data-component-uid="EDIT-01-CMP-DIALOGUE-BINDING"><span>{editUiText(locale, "dialogueGuard")}</span><strong>—</strong></div>
         </section>
       </div>
-      <aside className={styles.inspectorColumn} data-layout-role="right-inspector-correction">
+      <aside className={styles.inspectorColumn} data-layout-column="right" data-layout-role="right-inspector-correction">
       {correctionVisible ? <section className={`${styles.panel} ${styles.semanticPanel}`} data-section-id="EDIT-01-SEC-07" data-visual-uid="EDIT-01-VIS-INSPECTOR" data-component-uid="EDIT-01-CMP-API" data-stage-surface="correction-conversation">
         <Title text={editUiText(locale, "semantic")} meta="Correction" />
         <div className={styles.semanticContext}>{apiVisible.map((spec) => <Control key={spec.id} spec={spec} />)}</div>

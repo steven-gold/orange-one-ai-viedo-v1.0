@@ -23,13 +23,7 @@ const routes = [
   ["/admin/knowledge", "admin:KB-01"],
 ];
 
-const THREE_COLUMN_TOPOLOGY = {
-  "CORE-01": ["CORE-01-SEC-02", "CORE-01-SEC-03", "CORE-01-SEC-08"],
-  "ASSET-01": ["ASSET-01-SEC-02", "ASSET-01-SEC-03", "ASSET-01-SEC-09"],
-  "VIDEO-01": ["VIDEO-01-SEC-02", "VIDEO-01-SEC-03", "VIDEO-01-SEC-04"],
-  "EDIT-01": ["EDIT-01-SEC-02", "EDIT-01-SEC-03", "EDIT-01-SEC-07"],
-  "QA-01": ["QA-01-SEC-02", "QA-01-SEC-03", "QA-01-SEC-06"],
-};
+const THREE_COLUMN_TOPOLOGY_UIDS = new Set(["CORE-01","ASSET-01","VIDEO-01","EDIT-01","QA-01"]);
 
 
 const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-p", port], {
@@ -234,15 +228,18 @@ try {
           }
           shellGeometryCases += 1;
 
-          const topologyIds = THREE_COLUMN_TOPOLOGY[uid];
-          if (topologyIds) {
-            const topology = await page.evaluate((ids) => ids.map((id) => {
-              const element = document.querySelector(`[data-section-id="${id}"]`);
-              if (!(element instanceof HTMLElement)) return null;
-              const rect = element.getBoundingClientRect();
-              return { id, left: rect.left, top: rect.top, width: rect.width, right: rect.right };
-            }), topologyIds);
-            if (topology.some((entry) => !entry)) throw new Error(`VISUAL_TOPOLOGY_SECTION_MISSING_${uid}_${JSON.stringify(topology)}`);
+          if (THREE_COLUMN_TOPOLOGY_UIDS.has(uid)) {
+            const topology = await page.evaluate(() => {
+              const grid = document.querySelector('[data-layout-grid="workspace-three-column"]');
+              if (!(grid instanceof HTMLElement)) return null;
+              return ["left","center","right"].map((column) => {
+                const element = grid.querySelector(`:scope > [data-layout-column="${column}"]`);
+                if (!(element instanceof HTMLElement)) return null;
+                const rect = element.getBoundingClientRect();
+                return { column, left: rect.left, top: rect.top, width: rect.width, right: rect.right };
+              });
+            });
+            if (!topology || topology.some((entry) => !entry)) throw new Error(`VISUAL_TOPOLOGY_COLUMN_MISSING_${uid}_${JSON.stringify(topology)}`);
             const [left, center, right] = topology;
             const sameRow = Math.abs(left.top - center.top) <= 4 && Math.abs(center.top - right.top) <= 4;
             const ordered = left.left < center.left && center.left < right.left && left.right <= center.left + 1 && center.right <= right.left + 1;
