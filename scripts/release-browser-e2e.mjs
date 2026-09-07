@@ -74,6 +74,7 @@ try {
   let iamMutationCases = 0;
   let erpMutationCases = 0;
   let devMutationCases = 0;
+  let socMutationCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -491,10 +492,45 @@ try {
     } finally {
       await devPage.close();
     }
+
+    const socPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      const socRoot = await navigateToCurrentPage(socPage, "/admin/social", "admin:SOC-01");
+      const contentTab = socPage.locator('button[data-control-id="SOC-01-TAB-STAGE-3"]');
+      if (!(await contentTab.isEnabled())) throw new Error("SOC_CONTENT_TAB_NOT_ENABLED_IN_CONTROLLED_TEST");
+      await contentTab.click();
+
+      const saveButton = socPage.locator('button[data-control-id="SOC-01-BTN-CONTENT-SAVE"]');
+      await saveButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await saveButton.isEnabled())) throw new Error("SOC_CONTENT_SAVE_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await saveButton.getAttribute("data-action-uid")) !== "SOC-01-ACT-CONTENT-SAVE") throw new Error("SOC_CONTENT_SAVE_ACTION_TRACE_INVALID");
+      await saveButton.click();
+      await socPage.waitForFunction(
+        () => (document.querySelector('[data-control-id="SOC-01-FLD-APPROVAL"]')?.textContent ?? "").includes("REVIEW"),
+        { timeout: 5_000 },
+      );
+      if ((await socRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("SOC_CONTENT_SAVE_RUNTIME_ERROR");
+      socMutationCases += 1;
+
+      const decideButton = socPage.locator('button[data-control-id="SOC-01-BTN-CANDIDATE-DECIDE"]');
+      await decideButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await decideButton.isEnabled())) throw new Error("SOC_CANDIDATE_DECIDE_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await decideButton.getAttribute("data-action-uid")) !== "SOC-01-ACT-CANDIDATE-DECIDE") throw new Error("SOC_CANDIDATE_DECIDE_ACTION_TRACE_INVALID");
+      await decideButton.click();
+      await socPage.waitForFunction(
+        () => (document.querySelector('[data-control-id="SOC-01-FLD-APPROVAL"]')?.textContent ?? "").includes("APPROVED"),
+        { timeout: 5_000 },
+      );
+      if (await decideButton.isVisible()) throw new Error("SOC_CANDIDATE_DECIDE_SHOULD_CLOSE_AFTER_APPROVAL");
+      if ((await socRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("SOC_CANDIDATE_DECIDE_RUNTIME_ERROR");
+      socMutationCases += 1;
+    } finally {
+      await socPage.close();
+    }
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }
