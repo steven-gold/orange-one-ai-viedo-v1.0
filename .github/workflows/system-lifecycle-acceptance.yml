@@ -1,0 +1,46 @@
+name: ACPOS SYS Lifecycle Acceptance
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: Exact Production deployment URL
+        required: false
+        default: https://orange-one-acpos-test.vercel.app
+        type: string
+  push:
+    branches:
+      - new
+    paths:
+      - .github/system-lifecycle-acceptance-trigger.txt
+
+permissions:
+  contents: read
+
+jobs:
+  system-lifecycle:
+    runs-on: ubuntu-latest
+    environment: Production
+    timeout-minutes: 15
+    env:
+      ACPOS_DEPLOYMENT_URL: ${{ inputs.deployment_url }}
+      ACPOS_PRODUCTION_E2E_EMAIL: admin
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate SYS lifecycle E2E syntax
+        run: node --check scripts/production-system-lifecycle-e2e.mjs
+      - name: Resolve automatic Production acceptance target
+        if: github.event_name == 'push'
+        run: |
+          echo "ACPOS_DEPLOYMENT_URL=https://orange-one-acpos-test.vercel.app" >> "$GITHUB_ENV"
+          echo "ACPOS_EXPECT_RELEASE_SHA=$(tr -d '\r\n ' < .github/system-lifecycle-acceptance-trigger.txt)" >> "$GITHUB_ENV"
+      - name: Resolve manual Production acceptance target
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "ACPOS_EXPECT_RELEASE_SHA=${{ github.sha }}" >> "$GITHUB_ENV"
+      - name: Run governed Production SYS lifecycle E2E
+        run: node scripts/production-system-lifecycle-e2e.mjs
