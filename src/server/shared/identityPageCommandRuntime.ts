@@ -6,6 +6,8 @@ import type { CoreRuntimeRequest } from "@/domain/core/coreRuntimeContract";
 import { configureDbReadModelRuntime, type DbReadRequest } from "@/server/database/dbReadModelRuntime";
 import { configureIamRuntime, type IamRuntimeRequest } from "@/server/iam/iamRuntime";
 import { executeProductionIamCommand } from "@/server/iam/productionIamCommandRuntime";
+import { configureDevCommandRuntime, type DevRuntimeRequest } from "@/server/dev/devCommandRuntime";
+import { executeProductionDevCommand } from "@/server/dev/productionDevCommandRuntime";
 import { configureDepartmentOperationRuntime } from "@/server/shared/departmentOperationRuntime";
 import { configureInfoCommandRuntime, type InfoRequest } from "@/server/info/infoCommandRuntime";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
@@ -223,6 +225,13 @@ const IAM_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;acti
   revokeAccountPermission:{resource_key:"action:admin:IAM-05:ACT-CONFIGURE",action:"INVOKE"},
 };
 
+const DEV_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  startCompanyDiscovery:{resource_key:"action:admin:DEV-01:ACT-DISCOVERY-START",action:"INVOKE"},
+  pauseCompanyDiscovery:{resource_key:"action:admin:DEV-01:ACT-DISCOVERY-PAUSE",action:"INVOKE"},
+  resumeCompanyDiscovery:{resource_key:"action:admin:DEV-01:ACT-DISCOVERY-RESUME",action:"INVOKE"},
+  stopCompanyDiscovery:{resource_key:"action:admin:DEV-01:ACT-DISCOVERY-STOP",action:"INVOKE"},
+};
+
 const SYSTEM_OPERATION_PERMISSION: Readonly<Record<string,readonly {resource_key:string;action:string}[]>> = {
   createCandidate:[
     {resource_key:"action:admin:SYS-01:ACT-CANDIDATE-CREATE",action:"INVOKE"},
@@ -276,6 +285,15 @@ const GOVERNANCE_PERMISSION_CONTEXT: Readonly<Record<string,{
     approve:{resource_key:"action:admin:STR-02:ACT-APPROVE",action:"INVOKE"},
   },
 };
+
+async function authorizeDev(request:DevRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:DEV-01"]);
+  if(!page.allowed)return page;
+  const permission=DEV_OPERATION_PERMISSION[request.operation_id];
+  if(!permission)return{allowed:false,reason_code:"DEV01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
+}
 
 async function authorizeAiApi(request:{operation_id:string}):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
   const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:AIAPI-01"]);
@@ -1159,6 +1177,11 @@ export function bindIdentityPageCommandRuntimes(): void {
     execute: async () => {
       throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
     },
+    audit: async () => undefined,
+  });
+  configureDevCommandRuntime({
+    authorize: authorizeDev,
+    execute: executeProductionDevCommand,
     audit: async () => undefined,
   });
   configureSocCommandRuntime({
