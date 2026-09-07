@@ -30,6 +30,7 @@ import {
 } from "@/server/system/productionSystemLifecycleRuntime";
 import { configureAiApiCommandRuntime } from "@/server/aiApi/aiApiCommandRuntime";
 import { executeProductionAiApiCommand, auditProductionAiApiCommand } from "@/server/aiApi/productionAiApiCommandRuntime";
+import { executeProductionConversationTurn } from "@/server/shared/productionConversationAiRuntime";
 
 type SqlClient = NonNullable<ReturnType<typeof getProductionNeonSql>>;
 
@@ -608,32 +609,22 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       if (!conversationId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:conversationId");
       const message = asText(payload.message);
       if (!message) throw new NamedRuntimeError("MESSAGE_REQUIRED");
-      const seqRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          SELECT COALESCE(MAX(sequence_no), 0)::int AS seq
-          FROM conversation_messages
-          WHERE conversation_id = ${conversationId}::uuid
-        `,
-      );
-      const seq = Number(firstRow(seqRows)?.seq ?? 0) + 1;
-      const content = JSON.stringify({ text: message, instruction_kind: asText(payload.instruction_kind) ?? "MESSAGE" });
-      const message_ref = crypto.randomUUID();
-      const msgRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          INSERT INTO conversation_messages (
-            conversation_message_id, conversation_id, sequence_no, actor_type, actor_ref, message_content
-          ) VALUES (
-            ${message_ref}::uuid, ${conversationId}::uuid, ${seq}, 'USER', ${actor.user_id}, ${content}::jsonb
-          )
-          RETURNING conversation_message_id::text AS message_ref
-        `,
-      );
-      if (!asText(firstRow(msgRows)?.message_ref)) throw new NamedRuntimeError("MESSAGE_INSERT_FAILED");
-      return { conversation_id: conversationId, message_ref, accepted: true };
+      return executeProductionConversationTurn({
+        conversation_id: conversationId,
+        actor_user_id: actor.user_id,
+        session_token_hash: identityContext.session_token_hash,
+        message,
+        correlation_id: request.correlation_id,
+        instruction_kind: asText(payload.instruction_kind),
+        source_message_id: asText(payload.source_message_id),
+        attachment_refs: Array.isArray(payload.attachment_refs)
+          ? payload.attachment_refs.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+          : [],
+        reference_refs: Array.isArray(payload.reference_refs)
+          ? payload.reference_refs.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+          : [],
+        page_uid: "CORE-01",
+      });
     }
 
     case "CORE-01-PORT-STORY-CANDIDATE": {
@@ -1005,53 +996,30 @@ async function executeKnowledge(request: KnowledgeRuntimeRequest): Promise<unkno
 
 async function executeConversation(request: ConversationRequest): Promise<unknown> {
   if (request.operation_id !== "sendConversationMessage") {
-    throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
+    throw new NamedRuntimeError("CONVERSATION_GENERATION_STOP_NOT_REQUIRED_FOR_SYNCHRONOUS_PROVIDER_ROUTE");
   }
-  const sql = await requireSql();
   const identityContext = await requireIdentityContext();
-  const actor = identityContext.actor;
   const payload = asRecord(request.payload) ?? {};
   const message = asText(payload.message);
   if (!message) throw new NamedRuntimeError("MESSAGE_REQUIRED");
   const conversationId = asText(request.conversation_id);
   if (!conversationId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:conversationId");
-  const exists = await runRlsActorQuery(
-    sql,
-    identityContext.session_token_hash,
-    sql`
-      SELECT conversation_id::text AS conversation_id
-      FROM conversations
-      WHERE conversation_id = ${conversationId}::uuid
-      LIMIT 1
-    `,
-  );
-  if (!asText(firstRow(exists)?.conversation_id)) throw new NamedRuntimeError("CONVERSATION_NOT_FOUND");
-  const seqRows = await runRlsActorQuery(
-    sql,
-    identityContext.session_token_hash,
-    sql`
-      SELECT COALESCE(MAX(sequence_no), 0)::int AS seq
-      FROM conversation_messages
-      WHERE conversation_id = ${conversationId}::uuid
-    `,
-  );
-  const seq = Number(firstRow(seqRows)?.seq ?? 0) + 1;
-  const content = JSON.stringify({ text: message, instruction_kind: asText(payload.instruction_kind) ?? "MESSAGE" });
-  const message_ref = crypto.randomUUID();
-  const msgRows = await runRlsActorQuery(
-    sql,
-    identityContext.session_token_hash,
-    sql`
-      INSERT INTO conversation_messages (
-        conversation_message_id, conversation_id, sequence_no, actor_type, actor_ref, message_content
-      ) VALUES (
-        ${message_ref}::uuid, ${conversationId}::uuid, ${seq}, 'USER', ${actor.user_id}, ${content}::jsonb
-      )
-      RETURNING conversation_message_id::text AS message_ref
-    `,
-  );
-  if (!asText(firstRow(msgRows)?.message_ref)) throw new NamedRuntimeError("MESSAGE_INSERT_FAILED");
-  return { conversation_id: conversationId, message_ref, accepted: true };
+  return executeProductionConversationTurn({
+    conversation_id: conversationId,
+    actor_user_id: identityContext.actor.user_id,
+    session_token_hash: identityContext.session_token_hash,
+    message,
+    correlation_id: request.correlation_id,
+    instruction_kind: asText(payload.instruction_kind),
+    source_message_id: asText(payload.source_message_id),
+    attachment_refs: Array.isArray(payload.attachment_refs)
+      ? payload.attachment_refs.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+      : [],
+    reference_refs: Array.isArray(payload.reference_refs)
+      ? payload.reference_refs.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+      : [],
+    page_uid: asText(payload.page_uid) ?? "workspace:STR-01",
+  });
 }
 
 async function executeSoc(request: SocRuntimeRequest): Promise<unknown> {
