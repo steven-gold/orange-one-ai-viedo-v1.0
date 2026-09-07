@@ -187,8 +187,8 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
 
   return (
     <div className="acpos-shell" data-vis-step="VIS-00">
-      <header className="global-header" aria-label="Global Header">
-        <div className={brandStyles.wrapper} aria-label="ORANGE ONE">
+      <header className="global-header" aria-label={t("global.shell.header")}>
+        <div className={brandStyles.wrapper} aria-label={t("global.brand.name")}>
           <img className={brandStyles.logo} src="/brand/orange-one-logo.png" alt="ORANGE ONE" />
         </div>
 
@@ -287,7 +287,7 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
       <aside
         ref={sidebarRef}
         className={expanded ? "global-sidebar is-expanded" : "global-sidebar"}
-        aria-label="Primary Navigation"
+        aria-label={t("global.shell.primary_navigation")}
         onPointerEnter={openSidebar}
         onPointerLeave={scheduleCollapse}
         onFocusCapture={openSidebar}
@@ -318,7 +318,7 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
         </nav>
       </aside>
 
-      <main className="workspace-slot" aria-label="Page Content Slot">{children}</main>
+      <main className="workspace-slot" aria-label={t("global.shell.page_content")}>{children}</main>
     </div>
   );
 }
