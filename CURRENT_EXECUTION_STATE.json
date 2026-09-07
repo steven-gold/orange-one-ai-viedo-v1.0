@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-07T10:27:15+08:00",
+  "as_of": "2026-09-07T10:34:20+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "d434c9ea4a300daf6aad2b09a16beb415351f671",
-    "new_sha_basis": "8422aa6c0c57bf4d92eb2a4e41b25b046d1f65c7",
+    "new_sha_basis": "20ee95d8dd2d326a97ec670d87a8191f0fe6b3ed",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -85,6 +85,25 @@
       "browser_e2e": "PASS_72_CASES",
       "browser_evidence": "interactive_controls=476 governed_controls=298 safe_local_clicks=4 strategy_form_cases=4",
       "current_dom_control_acceptance": "PASS_18_PAGES_406_VISIBLE_406_GOVERNED",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_status": "PENDING_NEXT_MAIN_RELEASE"
+    },
+    "latest_gate24_sg02_governance_gate": {
+      "status": "PASS_RELEASE_CONTROLLED",
+      "run_number": 497,
+      "run_id": 34076631425,
+      "head_sha": "20ee95d8dd2d326a97ec670d87a8191f0fe6b3ed",
+      "branch": "new",
+      "conclusion": "success",
+      "operations": [
+        "configureGovernedResource",
+        "approveGovernedResource"
+      ],
+      "current_page_uid": "admin:SG-02",
+      "browser_e2e": "PASS_72_CASES",
+      "browser_evidence": "interactive_controls=515 governed_controls=309 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2",
+      "current_dom_control_acceptance": "PASS_18_PAGES_407_VISIBLE_407_GOVERNED",
       "standalone_docker_build": "PASS",
       "dirty_tree_guard": "PASS",
       "production_status": "PENDING_NEXT_MAIN_RELEASE"
@@ -206,8 +225,8 @@
       "reason": "Production queue and worker are READY (1/1 each), worker heartbeat is current, and Post Deploy authenticated E2E #696 passed the full queue probe including idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup on deployed SHA d434c9ea4a300daf6aad2b09a16beb415351f671."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_RELEASE_STRATEGY_GOVERNANCE_PASS_PRODUCTION_9_TARGET_ACCEPTANCE_INCOMPLETE",
-      "reason": "Current new branch Release Gate #494 proves Strategy Admin configureGovernedResource and approveGovernedResource end-to-end in CONTROLLED_TEST through the registered governance routes, exact source owner admin:STR-02, Browser E2E and Current DOM governance. AIAPI governed runtime/queue mutation remains deployed in current Production, but current evidence still does not prove all 9 admin mutation targets end-to-end in Production; provider-dependent operations must remain blocked until real provider configuration exists."
+      "status": "PARTIAL_RELEASE_STRATEGY_AND_SG02_GOVERNANCE_PASS_PRODUCTION_9_TARGET_ACCEPTANCE_INCOMPLETE",
+      "reason": "Release Gate #494 proves Strategy Admin configure/approve governance mutations in CONTROLLED_TEST through exact STR ownership. Release Gate #497 additionally proves SG-02 configureGovernedResource and approveGovernedResource through the page UI, registered governance routes, projection sync, Browser E2E and Current DOM governance. Current Production still does not have evidence for all 9 admin mutation targets end-to-end, so Gate 24 remains PARTIAL."
     },
     "gate25_full_page_button_acceptance": {
       "status": "PARTIAL_RELEASE_BROWSER_AND_DOM_ACCEPTANCE_PASS_REMOTE_PRODUCTION_PENDING",
