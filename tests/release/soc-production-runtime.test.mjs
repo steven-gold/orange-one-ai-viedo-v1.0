@@ -83,11 +83,11 @@ test("migration 0022 stages only the two missing SOC API assignments and stays p
   assert.doesNotMatch(migration, /INSERT INTO public\.permission_resources/);
   assert.doesNotMatch(migration, /CREATE ROLE|ALTER ROLE/);
 
-  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.9/);
+  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.10/);
   assert.match(manifest, /migration_id: 0022_soc_draft_candidate_permission_closure/);
   assert.match(manifest, /payload_sha256: 4592e475b078613928117e40a304c3d039a187e234a3ef257844226cb4b50047/);
   assert.match(manifest, /approval_ref: CR-SOC-0022-PENDING-PRODUCTION-APPLY/);
   assert.match(manifest, /production_apply: PENDING/);
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 20/);
-  assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 22/);
+  assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 23/);
 });
