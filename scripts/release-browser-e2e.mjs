@@ -75,6 +75,7 @@ try {
   let erpMutationCases = 0;
   let devMutationCases = 0;
   let socMutationCases = 0;
+  let aiApiMutationCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -533,10 +534,58 @@ try {
     } finally {
       await socPage.close();
     }
+
+    const aiApiPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      const aiApiRoot = await navigateToCurrentPage(aiApiPage, "/admin/aiapi", "admin:AIAPI-01");
+      await aiApiPage.locator('button[data-view-switch="AIAPI-01-VIEW-OPERATIONS"]').click();
+
+      const killButton = aiApiPage.locator('button[data-operation-id="setKillSwitch"]');
+      await aiApiPage.waitForFunction(
+        () => {
+          const button = document.querySelector('button[data-operation-id="setKillSwitch"]');
+          return button instanceof HTMLButtonElement && !button.disabled;
+        },
+        { timeout: 5_000 },
+      );
+
+      const executeKillSwitch = async (enabled, reason) => {
+        await killButton.click();
+        const dialog = aiApiPage.locator('section[role="dialog"]');
+        await dialog.waitFor({ state: "visible", timeout: 5_000 });
+
+        const targetType = dialog.locator("label").filter({ hasText: "Target Type" }).locator("select");
+        const targetRef = dialog.locator("label").filter({ hasText: "Target Ref" }).locator("input");
+        const enabledField = dialog.locator("label").filter({ hasText: "Enabled" }).locator("select");
+        const reasonField = dialog.locator("label").filter({ hasText: "Reason" }).locator("textarea");
+        const confirmation = dialog.locator("label").filter({ hasText: "Confirmation" }).locator("select");
+
+        await targetType.selectOption("PROFILE");
+        await targetRef.fill("TEST-AIAPI-PROVIDER-001");
+        await enabledField.selectOption(enabled ? "true" : "false");
+        await reasonField.fill(reason);
+        await confirmation.selectOption("CONFIRM");
+        await dialog.locator("button").last().click();
+        await dialog.waitFor({ state: "detached", timeout: 5_000 });
+
+        const result = aiApiPage.locator('aside[data-aiapi-command-result="true"]');
+        await result.waitFor({ state: "visible", timeout: 5_000 });
+        const resultText = (await result.textContent()) ?? "";
+        if (!resultText.includes('"external_request_sent": false')) throw new Error("AIAPI_KILL_SWITCH_EXTERNAL_REQUEST_GUARD_MISSING");
+        if (!resultText.includes(`"enabled": ${enabled ? "true" : "false"}`)) throw new Error("AIAPI_KILL_SWITCH_RESULT_STATE_INVALID");
+        if ((await aiApiRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("AIAPI_KILL_SWITCH_RUNTIME_ERROR");
+        aiApiMutationCases += 1;
+      };
+
+      await executeKillSwitch(false, "Controlled Gate 24 disable verification");
+      await executeKillSwitch(true, "Controlled Gate 24 restore verification");
+    } finally {
+      await aiApiPage.close();
+    }
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases} soc_mutation_cases=${socMutationCases} aiapi_mutation_cases=${aiApiMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }
