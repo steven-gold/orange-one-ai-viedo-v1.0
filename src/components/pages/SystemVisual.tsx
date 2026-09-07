@@ -155,7 +155,10 @@ export function SystemVisual() {
     if(!state.conversation_id)return;
     const result=await stopSystemConversationGeneration({conversation_id:state.conversation_id});
     if(!result.ok)setConversationNotice(`${t("operationFailed")}: ${result.reason_code}`);
-    else setConversationNotice(t("runtimeReady"));
+    else {
+      setConversationNotice(t("runtimeReady"));
+      await refreshProjection();
+    }
   }
 
   const multi = state.ai_mode === "MULTI_AI";
@@ -165,6 +168,8 @@ export function SystemVisual() {
   const multiAiRouteReady = projection.status === "READY" && projection.value.multi_ai_route_available;
   const multiAiGateReady = modeGateReady && multiAiRouteReady;
   const providerRouteReady = projection.status === "READY" && Number(projection.value.values.healthy_ai_members ?? "0") > 0;
+  const serverGenerationActive = projection.status === "READY" && projection.value.values.generation_status === "RUNNING";
+  const generationActive = conversationBusy || serverGenerationActive;
   const councilGateReady = multi && multiAiGateReady;
   const projectionReason = projection.reason_code ?? (projection.status === "READY" ? "READY" : "LOADING");
   const candidateRef=projection.status==="READY"?projection.value.values.candidate_ref??null:null;
@@ -172,8 +177,8 @@ export function SystemVisual() {
   const candidateDisabledReason=mutationBusy?"SYS01_MUTATION_IN_PROGRESS":projection.status!=="READY"?projectionReason:!state.draft.trim()?"SYS01_DRAFT_REQUIRED":null;
   const changeRequestDisabledReason=mutationBusy?"SYS01_MUTATION_IN_PROGRESS":!state.system_change_id||!candidateReady?"SYSTEM_CHANGE_CANDIDATE_REQUIRED":!state.draft.trim()?"SYS01_DRAFT_REQUIRED":null;
   const sandboxDisabledReason=mutationBusy?"SYS01_MUTATION_IN_PROGRESS":!state.system_change_id||!candidateReady?"SYSTEM_CHANGE_CANDIDATE_REQUIRED":null;
-  const sendDisabledReason=conversationBusy?"SYS01_CONVERSATION_IN_PROGRESS":!activeConversationContextResolved?"ACTIVE_CONVERSATION_CONTEXT_MISSING":!providerRouteReady?"CONVERSATION_PROVIDER_ROUTE_NOT_READY":!state.draft.trim()?"SYS01_DRAFT_REQUIRED":null;
-  const stopDisabledReason=!conversationBusy?"NO_ACTIVE_GENERATION":!state.conversation_id?"ACTIVE_CONVERSATION_CONTEXT_MISSING":null;
+  const sendDisabledReason=generationActive?"SYS01_CONVERSATION_IN_PROGRESS":!activeConversationContextResolved?"ACTIVE_CONVERSATION_CONTEXT_MISSING":!providerRouteReady?"CONVERSATION_PROVIDER_ROUTE_NOT_READY":!state.draft.trim()?"SYS01_DRAFT_REQUIRED":null;
+  const stopDisabledReason=!generationActive?"NO_ACTIVE_GENERATION":!state.conversation_id?"ACTIVE_CONVERSATION_CONTEXT_MISSING":null;
 
   return (
     <div
