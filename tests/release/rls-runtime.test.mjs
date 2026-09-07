@@ -138,7 +138,7 @@ test("production query runtime sets local non-owner role before protected querie
   const coreClient = await read("src/domain/core/coreClientPort.ts");
 
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 20/);
-  assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 21/);
+  assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 22/);
   assert.doesNotMatch(neonRuntime, /TARGET_MIGRATION_COUNT/);
   assert.match(neonRuntime, /isSupportedMigrationCount/);
   assert.match(rlsRuntime, /RLS_RUNTIME_ROLE = "acpos_app_runtime"/);
