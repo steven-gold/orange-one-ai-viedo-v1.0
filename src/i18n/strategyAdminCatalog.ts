@@ -32,6 +32,11 @@ const COPY = {
     bindingUnresolved: "Authority 的 Action-to-Operation 綁定尚未解析；禁止推測。",
     detailBindingRequired: "必須先有已註冊的 Drawer / Context 詳情綁定。",
     operationAdapterNotReady: "Projection gate 或已註冊 Operation adapter 尚未就緒。",
+    closeActionForm: "關閉戰略操作表單",
+    registeredForm: "STRATEGY · 已註冊表單",
+    close: "關閉",
+    cancel: "取消",
+    execute: "執行",
     views: {
       overview: {
         label: "戰略總覽",
@@ -133,6 +138,11 @@ const COPY = {
     bindingUnresolved: "Authority 的 Action-to-Operation 绑定尚未解析；禁止推测。",
     detailBindingRequired: "必须先有已注册的 Drawer / Context 详情绑定。",
     operationAdapterNotReady: "Projection gate 或已注册 Operation adapter 尚未就绪。",
+    closeActionForm: "关闭战略操作表单",
+    registeredForm: "STRATEGY · 已注册表单",
+    close: "关闭",
+    cancel: "取消",
+    execute: "执行",
     views: {
       overview: {
         label: "战略总览",
@@ -234,6 +244,11 @@ const COPY = {
     bindingUnresolved: "Authority action-to-operation binding is unresolved; do not infer.",
     detailBindingRequired: "A registered Drawer / Context detail binding is required.",
     operationAdapterNotReady: "Projection gate or registered Operation adapter is not ready.",
+    closeActionForm: "Close strategy action form",
+    registeredForm: "STRATEGY · REGISTERED FORM",
+    close: "Close",
+    cancel: "Cancel",
+    execute: "Execute",
     views: {
       overview: {
         label: "Strategy Overview",

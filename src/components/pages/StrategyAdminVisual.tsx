@@ -459,7 +459,7 @@ function StrategyAdminContent() {
           <button
             type="button"
             className={styles.modalBackdrop}
-            aria-label="Close Strategy action form"
+            aria-label={strategyText(locale, "closeActionForm")}
             onClick={closeForm}
           />
           <section
@@ -472,11 +472,11 @@ function StrategyAdminContent() {
           >
             <header className={styles.formHead}>
               <div>
-                <div className={styles.eyebrow}>STRATEGY · REGISTERED FORM</div>
+                <div className={styles.eyebrow}>{strategyText(locale, "registeredForm")}</div>
                 <h2>{strategyActionLabel(locale, formAction)}</h2>
                 <p>{formSpec.schema}</p>
               </div>
-              <button type="button" className={styles.formClose} aria-label="Close" onClick={closeForm}>×</button>
+              <button type="button" className={styles.formClose} aria-label={strategyText(locale, "close")} onClick={closeForm}>×</button>
             </header>
             <div className={styles.formBody}>
               {formSpec.fields.map((field) => (
@@ -499,8 +499,8 @@ function StrategyAdminContent() {
               {formValidation && <div className={styles.formError}>{formValidation}</div>}
             </div>
             <footer className={styles.formFooter}>
-              <button type="button" className={styles.action} onClick={closeForm}>取消</button>
-              <button type="button" className={`${styles.action} ${styles.actionPrimary}`} onClick={() => void submitForm()}>執行</button>
+              <button type="button" className={styles.action} onClick={closeForm}>{strategyText(locale, "cancel")}</button>
+              <button type="button" className={`${styles.action} ${styles.actionPrimary}`} onClick={() => void submitForm()}>{strategyText(locale, "execute")}</button>
             </footer>
           </section>
         </>
