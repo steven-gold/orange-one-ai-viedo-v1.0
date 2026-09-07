@@ -17,7 +17,7 @@ import styles from "./CoreVisual.module.css";
 
 type LabelKey = TranslationKey;
 type PageState = "LOADING" | "READY" | "ERROR";
-type ConversationUiMessage = { id: string; role: "USER" | "STATUS" | "ASSISTANT" | "SIMULATED_AI"; text: string };
+type ConversationUiMessage = { id: string; role: "USER" | "STATUS" | "SYSTEM" | "ASSISTANT" | "SIMULATED_AI"; text: string };
 type ControlProps = { id: string; labelKey: LabelKey; primary?: boolean; compact?: boolean; disabled?: boolean; onClick?: () => void };
 
 const CONTROL_ACTION_UID: Record<string, CoreActionUid> = {
