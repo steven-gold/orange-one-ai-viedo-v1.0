@@ -2,17 +2,17 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-08T02:04:00+08:00",
+  "as_of": "2026-09-08T02:37:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
-    "new_sha_basis": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+    "new_sha_basis": "45ef32aac52851cb9a1196ae81a0a253169819b0",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "NEW_ALIGNED_TO_CURRENT_MAIN_AFTER_PR31",
-    "post_release_new_status": "ALIGNED_WITH_MAIN_BEFORE_STATE_ONLY_EVIDENCE_UPDATE"
+    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_ACCEPTANCE_HARNESS_AND_STATE_ONLY",
+    "post_release_new_status": "AHEAD_OF_MAIN_NO_PRODUCTION_RUNTIME_DELTA"
   },
   "release_validation": {
     "final_pre_state_construction_gate": {
@@ -481,7 +481,7 @@
       "production_mutation_e2e": "NOT_YET_EXECUTED_ON_DEPLOYED_CODE"
     },
     "system_lifecycle_runtime_production": {
-      "status": "DEPLOYED_VERIFIED_PENDING_SYS_MUTATION_E2E",
+      "status": "DEPLOYED_AND_PRODUCTION_E2E_PASS",
       "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
       "release_gate": {
         "run_number": 601,
@@ -514,10 +514,30 @@
           "governed": 495
         }
       },
-      "production_mutation_e2e": "NOT_YET_EXECUTED"
+      "production_mutation_e2e": {
+        "status": "PASS",
+        "workflow": "ACPOS SYS Lifecycle Acceptance",
+        "run_number": 1,
+        "run_id": 34152129285,
+        "release_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+        "system_change_id": "3cece791-fe3c-49c6-a9f7-4bf3cc3de713",
+        "candidate_ref": "f35acc00-92f3-4e44-8676-4883e9b6370f",
+        "change_request_ref": "5e7d8c9c-1731-4d6d-b6af-f4ecc4d59e11",
+        "sandbox_test_id": "56bfaf98-0205-416a-ba59-e13f8f94d6ef",
+        "provider_profile_id": "profile-groq-text-v1",
+        "dry_run": true,
+        "external_request_sent": false,
+        "production_mutation": false,
+        "deployment_triggered": false
+      },
+      "bootstrap_admin_permissions": {
+        "status": "PASS_6_APPROVED_ALLOW_ASSIGNMENTS_FOR_SYS_ACCEPTANCE",
+        "sys_required_assignments": 5,
+        "aiapi_sandbox_invoke_assignment": 1
+      }
     },
     "external_provider_control_plane": {
-      "status": "MATERIALIZED_PENDING_REAL_CONNECTION_E2E",
+      "status": "REAL_E2E_CORE_PASS_PROVIDER_COVERAGE_2_OF_4",
       "env_evidence": {
         "source": "USER_PROVIDED_VERCEL_PRODUCTION_ENVIRONMENT_VARIABLE_SCREENSHOT_2026-09-08",
         "variables": [
@@ -542,58 +562,102 @@
           "provider": "groq",
           "model": "openai/gpt-oss-120b",
           "adapter": "OPENAI_COMPATIBLE_CHAT",
-          "health_status": "UNKNOWN",
-          "priority": 1
+          "health_status": "HEALTHY",
+          "priority": 1,
+          "last_real_test": "PASS_HTTP_200"
         },
         {
           "profile_id": "profile-google-text-v1",
           "provider": "google",
-          "model": "gemini-2.5-flash",
+          "model": "gemini-3.5-flash",
           "adapter": "GENERIC_JSON_HTTP_X_GOOG_API_KEY",
-          "health_status": "UNKNOWN",
-          "priority": 2
+          "health_status": "HEALTHY",
+          "priority": 2,
+          "last_real_test": "PASS_HTTP_200"
         },
         {
           "profile_id": "profile-deepseek-text-v1",
           "provider": "deepseek",
           "model": "deepseek-v4-flash",
           "adapter": "OPENAI_COMPATIBLE_CHAT",
-          "health_status": "UNKNOWN",
-          "priority": 3
+          "health_status": "DEGRADED",
+          "priority": 3,
+          "last_real_test": "FAIL_HTTP_402_INSUFFICIENT_BALANCE"
         },
         {
           "profile_id": "profile-openrouter-text-v1",
           "provider": "openrouter",
           "model": "openrouter/auto",
           "adapter": "OPENAI_COMPATIBLE_CHAT",
-          "health_status": "UNKNOWN",
-          "priority": 4
+          "health_status": "DEGRADED",
+          "priority": 4,
+          "last_real_test": "FAIL_HTTP_401_AUTHENTICATION"
         }
       ],
       "group_id": "group-text-chat-primary-v1",
       "classification": "INTERNAL",
       "bootstrap_admin_aiapi_acceptance_permissions": "PASS_4_APPROVED_ALLOW_ASSIGNMENTS",
-      "real_external_request_evidence": "NOT_YET_EXECUTED"
+      "real_external_request_evidence": {
+        "status": "PASS_CORE_ROUTE_WITH_PARTIAL_PROVIDER_MATRIX",
+        "workflow": "ACPOS External Provider Acceptance",
+        "run_number": 5,
+        "run_id": 34151830183,
+        "conclusion": "success",
+        "release_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+        "profile_tests_passed": 2,
+        "profile_tests_failed": 2,
+        "healthy_providers": [
+          "groq",
+          "google"
+        ],
+        "degraded_providers": [
+          "deepseek",
+          "openrouter"
+        ],
+        "route_provider": "groq",
+        "route_model": "openai/gpt-oss-120b",
+        "route_decision_id": "998fa0d5-4dab-4f40-866e-54d1d9af99db",
+        "worker_succeeded": 1,
+        "external_request_sent": true,
+        "provider_matrix_complete": false,
+        "plaintext_persisted": false
+      },
+      "automatic_acceptance_trigger": {
+        "status": "MATERIALIZED_AND_PROVEN",
+        "branch": "new",
+        "workflow": ".github/workflows/external-provider-acceptance.yml",
+        "trigger_file": ".github/external-provider-acceptance-trigger.txt",
+        "manual_workflow_dispatch_required": false
+      }
+    },
+    "current_construction_gate": {
+      "status": "PASS",
+      "run_number": 617,
+      "run_id": 34152129154,
+      "head_sha": "45ef32aac52851cb9a1196ae81a0a253169819b0",
+      "branch": "new",
+      "conclusion": "success",
+      "scope": "Provider acceptance automation + SYS lifecycle Production acceptance harness + state-only evidence; no Production app runtime delta."
     }
   },
   "production": {
     "target": "orange-one-acpos-test",
     "url": "https://orange-one-acpos-test.vercel.app",
-    "deployed_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
+    "deployed_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
     "deployment_status": "PASS_EXACT_MAIN_SHA",
     "latest_verified_post_deploy": {
       "status": "PASS",
-      "deployment_status_run_number": 852,
-      "deployment_status_run_id": 34141411118,
-      "head_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
+      "deployment_status_run_number": 866,
+      "deployment_status_run_id": 34149919976,
+      "head_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
       "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_RELEASE_SHA_EXACT_PROJECTIONS_18",
       "authenticated_e2e": "PASS_LOGIN_SESSION_DASHBOARD_PROJECTIONS_18_QUEUE_PROBE_LOGOUT",
       "browser_smoke": "PASS_54_CASES_18_PAGES_3_WIDTHS",
       "authenticated_browser_visibility": "PASS_FRONT_NAV_8_ADMIN_NAV_8_VISIBLE_PAGES_18",
-      "current_dom_control_acceptance": "PASS_18_PAGES_491_VISIBLE_491_GOVERNED_ENABLED_308_DISABLED_183"
+      "current_dom_control_acceptance": "PASS_18_PAGES_495_VISIBLE_495_GOVERNED_ENABLED_312_DISABLED_183"
     },
-    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
-    "database_migration_count": 19,
+    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_dc84346a41bbadc2537fe2de9ba535126547e0cf",
+    "database_migration_count": 20,
     "vercel_management_visibility": {
       "team": "gold5757",
       "plan": "Hobby",
@@ -606,9 +670,9 @@
     "vercel_deployment": {
       "state": "SUCCESS",
       "description": "Deployment has completed",
-      "main_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
+      "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
       "target": "gold5757/orange-one-acpos-test",
-      "deployment_ref": "4bqwteM56Xq5VUHfNdYQZUvADW7v",
+      "deployment_ref": "7xmuHuWBZwWBeEH1UgZNZZcR7yag",
       "deployment_trigger_count_for_this_release": 1
     },
     "visual_shell_repair": {
@@ -674,19 +738,19 @@
     "branch": "main",
     "branch_id": "br-shy-cherry-auiol4oy",
     "database": "neondb",
-    "migration_count": 19,
-    "latest_migration": "0019_async_queue_delivery_runtime",
+    "migration_count": 20,
+    "latest_migration": "0020_system_lifecycle_runtime",
     "migration_0019_checksum": "aea7ea811c826b255d3478e12e9715cb042444c5d2c6f8431f02b0189c0818cc",
     "canonical_queue_ready_count": 1,
     "canonical_worker_ready_count": 1,
     "worker_last_heartbeat_at": "2026-09-06T22:53:09.811Z",
-    "provider_capability_count": 0,
-    "provider_profile_count": 0,
-    "secret_reference_count": 0,
-    "provider_group_count": 0,
-    "provider_member_count": 0,
-    "provider_profile_test_count": 0,
-    "provider_route_decision_count": 0
+    "provider_capability_count": 4,
+    "provider_profile_count": 4,
+    "secret_reference_count": 4,
+    "provider_group_count": 1,
+    "provider_member_count": 4,
+    "provider_profile_test_count": 24,
+    "provider_route_decision_count": 3
   },
   "deployment_policy": {
     "status": "MATERIALIZED_CURRENT",
@@ -754,33 +818,33 @@
       "release_gate_532": "PASS"
     },
     "production_deployment": "DEPLOYED_ON_2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
-    "external_provider_execution": "BLOCKED_REAL_PROVIDER_CONFIGURATION_REQUIRED",
+    "external_provider_execution": "REAL_E2E_CORE_PASS_PROVIDER_COVERAGE_2_OF_4",
     "provider_counts": {
-      "capabilities": 0,
-      "profiles": 0,
-      "secret_references": 0,
-      "groups": 0,
-      "members": 0,
-      "profile_tests": 0,
-      "route_decisions": 0
+      "capabilities": 4,
+      "profiles": 4,
+      "secret_references": 4,
+      "groups": 1,
+      "members": 4,
+      "profile_tests": 24,
+      "route_decisions": 3
     },
     "external_provider_adapter_runtime": "DEPLOYED_PRODUCTION",
     "capability_governance_materialization": "DEPLOYED_PRODUCTION_RELEASE_GATE_535_POST_DEPLOY_796_797_PASS",
     "worker_dispatch_authority_revalidation": "DEPLOYED_PRODUCTION_RELEASE_GATE_535_POST_DEPLOY_796_797_PASS",
-    "real_external_provider_acceptance": "MANUAL_ONLY_WORKFLOW_DEPLOYED_NOT_EXECUTED_REAL_CONFIG_ABSENT"
+    "real_external_provider_acceptance": "PASS_RUN_5_GROQ_AND_GOOGLE_HEALTHY_DEEPSEEK_402_OPENROUTER_401"
   },
   "formal_truth": {
     "gate22_external_provider": {
-      "status": "PARTIAL_CONTROL_PLANE_5_OF_6_READY_REAL_EXTERNAL_E2E_PENDING",
-      "reason": "Vercel Production screenshot confirms the four exact env names. Production Neon now has 4 enabled provider profiles, 4 approved env-name secret references, 4 approved TEXT_CHAT capabilities, 1 enabled routing group and 4 enabled members. Secret plaintext is not stored in GitHub or Neon. All profile health states remain UNKNOWN because no real connection test has yet executed. Current ChatGPT GitHub connector exposes no workflow_dispatch action for the existing ACPOS External Provider Acceptance workflow, so external_request_sent=true evidence is still pending."
+      "status": "PASS_CORE_EXTERNAL_PROVIDER_E2E_PROVIDER_COVERAGE_2_OF_4",
+      "reason": "Production has 4 governed profiles, 4 approved env-name secret references, 4 approved TEXT_CHAT capabilities, 1 enabled routing group and 4 enabled members. ACPOS External Provider Acceptance #5 completed SUCCESS against exact Production release dc84346a...: Groq and Google returned HTTP 200 real external responses; routed worker succeeded=1 through Groq with external_request_sent=true. DeepSeek is DEGRADED on HTTP 402 (insufficient balance) and OpenRouter is DEGRADED on HTTP 401 (credential rejected). Gate 22 core external-provider path is proven; four-provider health coverage remains 2/4."
     },
     "gate23_queue_worker_dlq": {
       "status": "PASS",
       "reason": "Production queue/worker/DLQ is re-verified on exact Production SHA 2e53c4ec via Post-Deploy #796 and duplicate confirming #797; authenticated E2E passes idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup without external provider calls."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_SYS01_DEPLOYED_PENDING_AUTHENTICATED_MUTATION_E2E",
-      "reason": "CR-SYS-0020 is applied in Production; three canonical SYS lifecycle routes and enabled controls are deployed on exact main dc84346a41bbadc2537fe2de9ba535126547e0cf. Release Gate #601 and Post-Deploy #866 are SUCCESS with readiness=200 and exact release SHA. Bootstrap admin has the five required SYS ACTION/API assignments. Gate is not closed until authenticated Production createCandidate -> createChangeRequest -> runSandboxTest E2E is executed."
+      "status": "PARTIAL_SYS01_PRODUCTION_E2E_PASS_OTHER_ADMIN_MUTATION_ACCEPTANCE_REMAINS",
+      "reason": "SYS-01 approved Production lifecycle subset is now E2E PASS on exact release dc84346a... via ACPOS SYS Lifecycle Acceptance #1: createCandidate created a governed system change/candidate, createChangeRequest returned SUBMITTED, and runSandboxTest returned PASS dry_run=true with external_request_sent=false, production_mutation=false and deployment_triggered=false. This closes the SYS-01 lifecycle blocker only; Gate 24 overall still includes other admin mutation acceptance evidence and is not declared fully closed here."
     },
     "gate25_full_page_button_acceptance": {
       "status": "PASS_PRODUCTION_CURRENT_18_PAGE_STAGE_DRIVEN_VISUAL_RELEASE",
@@ -804,15 +868,16 @@
     }
   },
   "blockers": [
-    "Gate 22: execute the existing ACPOS External Provider Acceptance workflow (or equivalent authenticated Production call) to prove real profile connection and routed worker external_request_sent=true. Current GitHub connector does not expose workflow_dispatch.",
-    "Gate 24: execute authenticated Production SYS-01 createCandidate -> createChangeRequest -> runSandboxTest E2E on deployed main.",
+    "DeepSeek provider profile is correctly bound but real Production test returns HTTP 402; official DeepSeek semantics classify 402 as insufficient account balance. Requires account top-up before this provider can become HEALTHY.",
+    "OpenRouter provider profile is correctly bound but real Production test returns HTTP 401. The Production env reference is present, but the provider rejects the credential; the OPENROUTER_API_KEY value must be replaced/rotated in Vercel Production before this provider can become HEALTHY.",
+    "Gate 24 overall: SYS-01 lifecycle subset is Production E2E PASS; remaining non-SYS admin mutation acceptance must be recomputed from current Production evidence.",
     "Do not persist Provider API-key plaintext in GitHub, Neon, logs or state artifacts."
   ],
   "next_release_sequence": [
-    "Run real Groq Production connection test using profile-groq-text-v1 and group-text-chat-primary-v1; require external_request_sent=true and worker.succeeded=1.",
-    "Run real profile connection tests for Google Gemini, DeepSeek and OpenRouter; only mark each HEALTHY on actual HTTP PASS.",
-    "Run authenticated Production SYS-01 createCandidate -> createChangeRequest -> runSandboxTest E2E.",
-    "Recompute Gate 22 and Gate 24 percentages from actual evidence; do not infer completion from configuration alone."
+    "Keep Groq as current primary and Google as healthy fallback; degraded DeepSeek/OpenRouter remain health-gated and must not be treated as healthy.",
+    "After DeepSeek balance is topped up and OpenRouter Production key is replaced, touch the existing external-provider acceptance trigger on new to rerun all four providers automatically; no manual GitHub Run workflow action is required.",
+    "Recompute remaining Gate 24 non-SYS Production mutation acceptance from current evidence.",
+    "Do not issue a redundant Vercel Hobby deployment for acceptance-harness/state-only commits; merge with the next real Production runtime release."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
@@ -827,7 +892,7 @@
   "post_release_state_policy": {
     "branch": "new",
     "deployment_effect": "NONE",
-    "reason": "Record final Production UI/stage-driven evidence on construction branch only; no redundant Vercel Hobby deployment.",
+    "reason": "Record Production Provider/SYS acceptance evidence and automatic test harnesses on construction branch only; avoid redundant Vercel Hobby deployment because Production runtime remains exact main dc84346a.",
     "production_runtime_delta_after_main_release": false
   }
 }
