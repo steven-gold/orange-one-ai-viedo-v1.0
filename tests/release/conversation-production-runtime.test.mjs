@@ -77,3 +77,18 @@ test("CORE projection restores persisted messages for each visible thread", asyn
   assert.match(ui, /setConversationMessages\(messagesForThread\(projection, conversationId/);
 });
 
+test("Final Production conversation acceptance proves two real turns and persisted history", async () => {
+  const script = await read("scripts/production-conversation-e2e.mjs");
+  const workflow = await read(".github/workflows/conversation-acceptance.yml");
+  assert.match(script, /assistant_response_text/);
+  assert.match(script, /external_request_sent===true/);
+  assert.match(script, /worker_succeeded===1/);
+  assert.match(script, /What marker did I ask you to remember in the previous turn/);
+  assert.match(script, /messages_by_thread/);
+  assert.match(script, /\["USER","ASSISTANT","USER","ASSISTANT"\]/);
+  assert.match(script, /history_recall=true/);
+  assert.match(workflow, /branches:[\s\S]*- new[\s\S]*conversation-acceptance-trigger\.txt/);
+  assert.match(workflow, /environment:\s*Production/);
+  assert.match(workflow, /scripts\/production-conversation-e2e\.mjs/);
+});
+
