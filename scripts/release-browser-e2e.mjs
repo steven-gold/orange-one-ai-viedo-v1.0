@@ -47,6 +47,7 @@ try {
   let interactiveControls = 0;
   let governedControls = 0;
   let safeLocalClicks = 0;
+  let strategyFormCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -151,10 +152,46 @@ try {
         await page.close();
       }
     }
+    const strategyPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      const response = await strategyPage.goto(`${base}/admin/strategy`, { waitUntil: "networkidle", timeout: 45_000 });
+      if (!response?.ok()) throw new Error(`STRATEGY_FORM_NAV_${response?.status()}`);
+      await strategyPage.locator('[data-page-uid="admin:STR-01"]').waitFor({ state: "attached", timeout: 15_000 });
+
+      const searchButton = strategyPage.locator('button[data-action-id="ACT-SEARCH"][data-source-page-uid="admin:STR-01"]').first();
+      if (!(await searchButton.isEnabled())) throw new Error("STRATEGY_SEARCH_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await searchButton.getAttribute("data-operation-id")) !== "searchProjection") throw new Error("STRATEGY_SEARCH_OPERATION_TRACE_INVALID");
+      await searchButton.click();
+      const searchModal = strategyPage.locator('[data-form-schema="SearchProjectionRequest"]');
+      await searchModal.waitFor({ state: "visible", timeout: 5_000 });
+      await searchModal.locator('input').nth(0).fill("TEST-STR");
+      const searchSubmit = searchModal.locator("footer button").last();
+      await searchSubmit.click();
+      await searchModal.waitFor({ state: "detached", timeout: 5_000 });
+      strategyFormCases += 1;
+
+      const refreshButton = strategyPage.locator('button[data-action-id="ACT-REFRESH"][data-source-page-uid="admin:STR-01"]').first();
+      if (!(await refreshButton.isEnabled())) throw new Error("STRATEGY_REFRESH_CONTROL_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await refreshButton.getAttribute("data-operation-id")) !== "refreshProjection") throw new Error("STRATEGY_REFRESH_OPERATION_TRACE_INVALID");
+      await refreshButton.click();
+      const refreshModal = strategyPage.locator('[data-form-schema="RefreshProjectionRequest"]');
+      await refreshModal.waitFor({ state: "visible", timeout: 5_000 });
+      const refreshSubmit = refreshModal.locator("footer button").last();
+      await refreshSubmit.click();
+      await refreshModal.waitFor({ state: "detached", timeout: 5_000 });
+      strategyFormCases += 1;
+
+      const unresolvedDecision = strategyPage.locator('button[data-action-id="ACT-CANDIDATE-DECIDE"]');
+      await strategyPage.locator('button[data-view-uid="STR-CURRENT-VIEW-DECISION"]').click();
+      if ((await unresolvedDecision.getAttribute("data-operation-id")) !== "rejectStrategyCandidate") throw new Error("STRATEGY_REJECT_OPERATION_TRACE_INVALID");
+      if (await unresolvedDecision.isEnabled()) throw new Error("STRATEGY_REJECT_SHOULD_REMAIN_DISABLED");
+    } finally {
+      await strategyPage.close();
+    }
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }
