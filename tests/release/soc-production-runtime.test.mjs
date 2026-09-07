@@ -89,5 +89,5 @@ test("migration 0022 stages only the two missing SOC API assignments and stays p
   assert.match(manifest, /approval_ref: CR-SOC-0022-PENDING-PRODUCTION-APPLY/);
   assert.match(manifest, /production_apply: PENDING/);
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 20/);
-  assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0) >= 22);
+  assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 22);
 });
