@@ -205,6 +205,7 @@ export type StrategyAdminOperation =
   | "saveDraft"
   | "createCandidate"
   | "compareCandidates"
+  | "rejectStrategyCandidate"
   | "adoptAsContextCandidate";
 
 export const STRATEGY_ADMIN_ACTION_OPERATION = {
@@ -216,6 +217,7 @@ export const STRATEGY_ADMIN_ACTION_OPERATION = {
   "ACT-DRAFT-SAVE": "saveDraft",
   "ACT-CANDIDATE-CREATE": "createCandidate",
   "ACT-CANDIDATE-COMPARE": "compareCandidates",
+  "ACT-CANDIDATE-DECIDE": "rejectStrategyCandidate",
   "ACT-ADOPT-CONTEXT": "adoptAsContextCandidate",
 } as const satisfies Readonly<Record<string, StrategyAdminOperation>>;
 
@@ -263,6 +265,7 @@ export const STRATEGY_ADMIN_ACTION_SOURCE = {
   },
   decision: {
     "ACT-CANDIDATE-COMPARE": "admin:STR-06",
+    "ACT-CANDIDATE-DECIDE": "admin:STR-06",
     "ACT-ADOPT-CONTEXT": "admin:STR-06",
   },
 } as const;
