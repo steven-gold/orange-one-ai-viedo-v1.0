@@ -37,6 +37,8 @@ const COPY = {
     close: "關閉",
     cancel: "取消",
     execute: "執行",
+    contextLabel: "STR-01 上下文",
+    eyebrow: "ADMIN · STR-01 · 戰略治理",
     views: {
       overview: {
         label: "戰略總覽",
@@ -143,6 +145,8 @@ const COPY = {
     close: "关闭",
     cancel: "取消",
     execute: "执行",
+    contextLabel: "STR-01 上下文",
+    eyebrow: "ADMIN · STR-01 · 战略治理",
     views: {
       overview: {
         label: "战略总览",
@@ -249,6 +253,8 @@ const COPY = {
     close: "Close",
     cancel: "Cancel",
     execute: "Execute",
+    contextLabel: "STR-01 Context",
+    eyebrow: "ADMIN · STR-01 · STRATEGY GOVERNANCE",
     views: {
       overview: {
         label: "Strategy Overview",
