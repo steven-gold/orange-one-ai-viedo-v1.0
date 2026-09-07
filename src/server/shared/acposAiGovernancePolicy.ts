@@ -181,7 +181,7 @@ export function parseAcposGovernedAiResponse(raw: string): AcposGovernedAiRespon
   });
   if (inferences.length !== root.inferences.length) return null;
 
-  const openQuestions = root.open_questions.flatMap((value) => {
+  const openQuestions: AcposGovernedAiResponse["open_questions"] = root.open_questions.flatMap((value) => {
     const item = record(value);
     const priority = item?.priority;
     const question = text(item?.question);
@@ -192,7 +192,7 @@ export function parseAcposGovernedAiResponse(raw: string): AcposGovernedAiRespon
   });
   if (openQuestions.length !== root.open_questions.length) return null;
 
-  const resolvedItems = root.resolved_items.flatMap((value) => {
+  const resolvedItems: AcposGovernedAiResponse["resolved_items"] = root.resolved_items.flatMap((value) => {
     const item = record(value);
     const priority = item?.priority;
     const itemText = text(item?.item);
