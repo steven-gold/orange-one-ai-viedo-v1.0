@@ -2,16 +2,16 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-08T00:54:00+08:00",
+  "as_of": "2026-09-08T01:35:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
-    "new_sha_basis": "d42a497584549a4dc391481686750a287f594969",
+    "new_sha_basis": "c0141aa27d41cb949cc575e73196ac50b3563d93",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "NEW_AHEAD_WITH_PENDING_SYS0020_RUNTIME_VALIDATION",
+    "construction_branch_alignment": "NEW_AHEAD_WITH_USER_APPROVED_SYS01_RUNTIME_READY_FOR_INTEGRATION",
     "post_release_new_status": "ALIGNED_WITH_MAIN_BEFORE_STATE_ONLY_EVIDENCE_UPDATE"
   },
   "release_validation": {
@@ -437,59 +437,48 @@
       ]
     },
     "pending_system_lifecycle_runtime": {
-      "status": "PREVIEW_VALIDATED_NOT_PRODUCTION_APPLIED",
-      "new_head_sha": "d42a497584549a4dc391481686750a287f594969",
+      "status": "CODE_AND_DB_VALIDATED_READY_FOR_MAIN_INTEGRATION",
+      "new_head_sha": "c0141aa27d41cb949cc575e73196ac50b3563d93",
       "release_gate": {
-        "run_number": 593,
-        "run_id": 34145099637,
+        "run_number": 598,
+        "run_id": 34147999302,
         "conclusion": "success"
       },
       "migration": {
         "id": "0020_system_lifecycle_runtime",
+        "production_status": "APPLIED_VERIFIED",
         "payload_sha256": "22fb185cc50fa0d19d1431bd5e2fb6233ca28878dbafa7b65da9d44caba02b9f",
-        "approval_ref": "PENDING-CR-SYS-0020",
-        "production_apply": "BLOCKED_PENDING_HUMAN_APPROVAL",
-        "validation_branch": "br-orange-smoke-aut9pafw",
-        "validation_branch_name": "rls-0016-validate-20260906",
-        "validation_baseline": "SCHEMA_FINGERPRINT_MATCH_PRODUCTION_0019",
-        "validation_result": "PASS_20_MIGRATIONS_3_RLS_TABLES_6_POLICIES_0_UNVALIDATED_CONSTRAINTS_9_RUNTIME_GRANTS"
+        "approval_ref": "USER-APPROVED-CR-SYS-0020-20260908",
+        "production_migration_count": 20,
+        "latest_migration": "0020_system_lifecycle_runtime",
+        "restore_snapshot_id": "snap-lucky-salad-ausky51r",
+        "restore_snapshot_name": "pre-sys-0020-production-20260908",
+        "rls_tables": 3,
+        "rls_policies": 6,
+        "unvalidated_constraints": 0
       },
-      "service_runtime": {
-        "owner": "SystemChangeService",
-        "materialized_operations": [
-          "createCandidate",
-          "createChangeRequest",
-          "runSandboxTest"
-        ],
-        "provider_sandbox_owner": "REUSE_admin:AIAPI-01_production_runSandboxTest",
-        "audit_owner": "REUSE_public.audit_events",
-        "rls_owner": "REUSE_acpos_app_runtime_session_bound_actor",
-        "production_deploy_path": "NOT_CREATED"
-      },
-      "permission_runtime": {
-        "createCandidate": [
-          "action:admin:SYS-01:ACT-CANDIDATE-CREATE/INVOKE",
-          "api:createCandidate/EXECUTE"
-        ],
-        "createChangeRequest": [
-          "action:admin:SYS-01:ACT-CR-CREATE/INVOKE",
-          "api:createChangeRequest/EXECUTE"
-        ],
-        "runSandboxTest": [
-          "api:runSandboxTest/EXECUTE"
-        ],
-        "current_assignments_for_required_resources": 0
-      },
-      "reachability": {
-        "http_route": "BLOCKED_UNDEFINED_CURRENT_AUTHORITY_PATH",
-        "reason": "Current permission catalog has exact API operation identities but no endpoint/path metadata and no existing generic SYS lifecycle command route. Existing /v1/candidates and correction routes belong to different data owners and are not reused."
-      },
+      "canonical_routes": [
+        "POST /v1/system/changes/candidates",
+        "POST /v1/system/changes/{SYSTEM_CHANGE_ID}/requests",
+        "POST /v1/system/changes/{SYSTEM_CHANGE_ID}/sandbox-tests"
+      ],
       "visual_authority": {
-        "createCandidate": "enabled_in_visual_phase=false",
-        "createChangeRequest": "enabled_in_visual_phase=false",
-        "runSandboxTest": "enabled_in_visual_phase=false",
-        "status": "FINAL_LOCKED_UNCHANGED"
-      }
+        "createCandidate": "enabled_in_visual_phase=true",
+        "createChangeRequest": "enabled_in_visual_phase=true",
+        "runSandboxTest": "enabled_in_visual_phase=true"
+      },
+      "bootstrap_admin_permissions": {
+        "status": "PASS_5_APPROVED_ALLOW_ASSIGNMENTS",
+        "assignments": [
+          "action:admin:SYS-01:ACT-CANDIDATE-CREATE/INVOKE",
+          "api:createCandidate/EXECUTE",
+          "action:admin:SYS-01:ACT-CR-CREATE/INVOKE",
+          "api:createChangeRequest/EXECUTE",
+          "api:runSandboxTest/EXECUTE"
+        ]
+      },
+      "production_application_deployment": "PENDING_MAIN_INTEGRATION",
+      "production_mutation_e2e": "NOT_YET_EXECUTED_ON_DEPLOYED_CODE"
     }
   },
   "production": {
@@ -687,16 +676,16 @@
   },
   "formal_truth": {
     "gate22_external_provider": {
-      "status": "BLOCKED_EXTERNAL_CONFIGURATION_INTERNAL_PATH_DEPLOYED",
-      "reason": "Current Production Neon reverified 2026-09-08: provider_capabilities=0, provider_prompt_profiles=0, secret_references=0, provider_candidate_groups=0, provider_candidate_members=0, provider_route_preflights=0; queues=1 and workers=1. The production external-provider E2E requires a real enabled profile, credential_status=SET, matching capability, real connection test with external_request_sent=true, and a successful routed worker execution. No real provider configuration/evidence exists, so Gate 22 cannot pass."
+      "status": "BLOCKED_SECRET_ENV_BINDING_AND_REAL_EXTERNAL_E2E",
+      "reason": "User supplied four Provider credentials for Groq/Google/DeepSeek/OpenRouter, but secrets have not been persisted in repository or database plaintext. Current available Vercel connector exposes no environment-variable write operation. Production provider control-plane remains profiles=0, groups=0, members=0, capabilities=0, secret_references=0 until secure env binding and governed provider configuration are completed."
     },
     "gate23_queue_worker_dlq": {
       "status": "PASS",
       "reason": "Production queue/worker/DLQ is re-verified on exact Production SHA 2e53c4ec via Post-Deploy #796 and duplicate confirming #797; authenticated E2E passes idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup without external provider calls."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_8_OF_9_SYS01_RUNTIME_PREVIEW_VALIDATED",
-      "reason": "SYS-01 SystemChangeService code and migration 0020 are materialized on new and Release Gate #593 passed. A Production-compatible Neon validation branch matched the exact 0019 schema fingerprints, then applied 0020 successfully: 20 migrations, 3 RLS tables, 6 policies, 0 unvalidated constraints, 9 runtime grants. Production remains 19 migrations with zero 0020 tables. Gate remains blocked because Current FINAL_LOCKED keeps createCandidate/createChangeRequest/runSandboxTest disabled, Production migration approval is pending, exact required permission assignments are 0, and Current Authority does not define a SYS lifecycle HTTP endpoint path."
+      "status": "PARTIAL_SYS01_CODE_DB_PERMISSION_VALIDATED_PENDING_DEPLOY_AND_PRODUCTION_E2E",
+      "reason": "User approved CR-SYS-0020 and all three SYS-01 mutations. Production Neon is migration 0020 with exact checksum, 3 RLS tables, 6 policies and zero unvalidated constraints; bootstrap admin has the five required ACTION/API ALLOW assignments; Current Authority now enables createCandidate/createChangeRequest/runSandboxTest and binds three canonical HTTP routes. Exact new SHA c0141aa27d41cb949cc575e73196ac50b3563d93 passed Release Gate #598. Gate is not closed until this SHA is integrated/deployed and authenticated Production mutation E2E passes."
     },
     "gate25_full_page_button_acceptance": {
       "status": "PASS_PRODUCTION_CURRENT_18_PAGE_STAGE_DRIVEN_VISUAL_RELEASE",
@@ -720,19 +709,16 @@
     }
   },
   "blockers": [
-    "Gate 22 Production real provider configuration remains absent: provider_capabilities=0, provider_prompt_profiles=0, secret_references=0, provider_candidate_groups=0, provider_candidate_members=0, provider_route_preflights=0. Queue/worker are present (1/1), but no real external_request_sent=true evidence exists.",
-    "Gate 24 SYS-01: migration 0020 and SystemChangeService runtime are preview-validated but Production apply is pending explicit human approval; Production remains migration 0019 with zero system lifecycle tables.",
-    "Gate 24 SYS-01 Current FINAL_LOCKED still sets createCandidate/createChangeRequest/runSandboxTest enabled_in_visual_phase=false.",
-    "Gate 24 SYS-01 required exact permission assignments are currently 0 for action/API resources; no execution may be counted as allowed.",
-    "Gate 24 SYS-01 HTTP reachability remains blocked because Current Authority/catalog defines API operation identities but no SYS lifecycle endpoint path; do not invent/reuse unrelated route owners.",
-    "Vercel management connector still lacks Project-read visibility even though Git-linked deployment for gold5757/orange-one-acpos-test succeeded on exact main SHA; use GitHub↔Vercel status plus Post-Deploy evidence as deployment authority until connector visibility is repaired."
+    "Gate 24: deploy integrated SYS-01 runtime to main and pass authenticated Production createCandidate/createChangeRequest/runSandboxTest E2E.",
+    "Gate 22: securely bind GROQ_API_KEY, GOOGLE_GEMINI_API_KEY, DEEPSEEK_API_KEY and OPENROUTER_API_KEY in Vercel Production environment without repository/database plaintext, then materialize governed profiles/capabilities/group and run real external-provider E2E.",
+    "Current Vercel connector does not expose project environment-variable write capability; do not bypass this by storing plaintext secrets in GitHub or Neon."
   ],
   "next_release_sequence": [
-    "Production UI/stage-driven release remains accepted on main 3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801: Release Gate #588 PASS, Vercel success, Post-Deploy #852 PASS, readiness=200, front_nav=8 admin_nav=8, 491/491 governed Production DOM controls.",
-    "SYS-01 0020 is now preview-validated only. Before Production apply: obtain explicit human migration approval for CR-SYS-0020, preserve Current FINAL_LOCKED visual flags, then apply exact migration and rerun migration/RLS/readiness/post-deploy evidence.",
-    "Do not expose SYS-01 createCandidate/createChangeRequest/runSandboxTest over HTTP until Current Authority defines the exact route/path binding or an existing exact owner is proven.",
-    "Do not enable SYS-01 mutation controls until Current Authority explicitly changes enabled_in_visual_phase and required account permission assignments exist.",
-    "Gate 22 remains blocked on real Production Provider capability/profile/approved secret/group/member configuration and real external_request_sent=true evidence."
+    "Integrate new c0141aa27d41cb949cc575e73196ac50b3563d93 through PR after exact Release Gate #598 PASS; main code must support Production migration count 20.",
+    "Verify exact merged main Release Gate, Vercel deployment status, readiness=200 and Post-Deploy acceptance.",
+    "Run authenticated Production SYS-01 mutation E2E for createCandidate -> createChangeRequest -> runSandboxTest; Sandbox remains dry-run and does not send an external Provider request.",
+    "Securely bind four Provider environment variables in Vercel Production without plaintext repository/database storage.",
+    "Materialize Groq/Google/DeepSeek/OpenRouter TEXT_CHAT profiles, approved capabilities and one governed routing group; run real connection tests and Gate 22 external_request_sent=true E2E."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
