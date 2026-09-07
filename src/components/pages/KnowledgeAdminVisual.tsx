@@ -178,7 +178,7 @@ export function KnowledgeAdminVisual() {
     const projectionEnabled = projection?.control_enabled[control.uid] === true;
     const disabled = !EFFECTFUL_RUNTIME_READY || !projectionEnabled || busy;
     return (
-      <button key={control.uid} type="button" onClick={() => { void runControl(control); }} data-control-uid={control.uid} data-action-id={control.action} data-gate-uid={control.gate} data-permission={control.permission}
+      <button key={control.uid} type="button" onClick={() => { void runControl(control); }} data-control-uid={control.uid} data-control-id={control.uid} data-action-id={control.action} data-action-uid={control.action} data-gate-uid={control.gate} data-permission={control.permission}
         data-action-owner={trace?.owner ?? "UNRESOLVED"} data-action-operation={trace?.operation ?? "UNRESOLVED"} data-action-method={trace?.method ?? "UNRESOLVED"}
         data-action-path={trace?.path ?? "UNRESOLVED"} data-action-errors={trace?.errors.join(",") ?? "UNRESOLVED"} data-audit-event={trace?.audit_event ?? "UNRESOLVED"}
         data-runtime-binding={EFFECTFUL_RUNTIME_READY ? "BOUND" : "NOT_EXECUTED"} data-required-context={control.visible} data-required-permission={control.permission} data-current-state={pageState}
