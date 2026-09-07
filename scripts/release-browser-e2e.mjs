@@ -85,8 +85,33 @@ try {
           if (message.type() === "error" && !/Failed to load resource.*(?:401|403|503)/.test(message.text())) errors.push(`console:${message.text()}`);
         });
         const root = await navigateToCurrentPage(page, route, uid);
-        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-        if (overflow > 0) throw new Error(`OVERFLOW_${uid}_${width}_${overflow}`);
+        const overflowAudit = await page.evaluate(() => {
+          const overflow = document.documentElement.scrollWidth - document.documentElement.clientWidth;
+          if (overflow <= 0) return { overflow, offenders: [] };
+          const viewportRight = document.documentElement.clientWidth;
+          const offenders = [...document.querySelectorAll("body *")]
+            .map((node) => {
+              const element = /** @type {HTMLElement} */ (node);
+              const rect = element.getBoundingClientRect();
+              const style = getComputedStyle(element);
+              return {
+                tag: element.tagName.toLowerCase(),
+                id: element.id || "",
+                className: typeof element.className === "string" ? element.className : "",
+                right: Math.round(rect.right * 100) / 100,
+                width: Math.round(rect.width * 100) / 100,
+                overflowX: style.overflowX,
+                delta: Math.round((rect.right - viewportRight) * 100) / 100,
+              };
+            })
+            .filter((entry) => entry.delta > 0.5)
+            .sort((a, b) => b.delta - a.delta)
+            .slice(0, 8);
+          return { overflow, offenders };
+        });
+        if (overflowAudit.overflow > 0) {
+          throw new Error(`OVERFLOW_${uid}_${width}_${overflowAudit.overflow}_OFFENDERS_${JSON.stringify(overflowAudit.offenders)}`);
+        }
         const body = (await page.locator("body").textContent()) ?? "";
         if (body.includes('"use client"') || body.includes("function KnowledgeAdminVisual") || body.includes("const CONTROLS")) throw new Error(`SOURCE_RENDER_${uid}`);
 
