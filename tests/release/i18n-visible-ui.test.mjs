@@ -36,8 +36,10 @@ const MACHINE_CODES = new Set([
 ]);
 
 function isAllowedMachineCode(text) {
-  if (MACHINE_CODES.has(text)) return true;
-  if (/^[A-Z0-9]+(?:[_-][A-Z0-9]+)+$/.test(text)) return true;
+  const normalized = text.replace(/[·:]/g, "").trim();
+  if (MACHINE_CODES.has(text) || MACHINE_CODES.has(normalized)) return true;
+  if (/^[A-Za-z0-9]+(?:[_-][A-Za-z0-9]+)+$/.test(normalized)) return true;
+  if (text === "S:") return true;
   return false;
 }
 
