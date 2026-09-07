@@ -73,6 +73,7 @@ try {
   let sgGovernanceCases = 0;
   let iamMutationCases = 0;
   let erpMutationCases = 0;
+  let devMutationCases = 0;
   try {
     for (const width of [1024, 1280, 1440, 1920]) {
       for (const [route, uid] of routes) {
@@ -451,10 +452,49 @@ try {
     } finally {
       await erpPage.close();
     }
+
+    const devPage = await browser.newPage({ viewport: { width: 1280, height: 1400 } });
+    try {
+      const devRoot = await navigateToCurrentPage(devPage, "/admin/dev", "admin:DEV-01");
+      const startButton = devPage.locator('button[data-control-id="DEV-01-BTN-DISCOVERY-START"]');
+      if (!(await startButton.isEnabled())) throw new Error("DEV_DISCOVERY_START_NOT_ENABLED_IN_CONTROLLED_TEST");
+      if ((await startButton.getAttribute("data-operation")) !== "startCompanyDiscovery") throw new Error("DEV_DISCOVERY_START_OPERATION_TRACE_INVALID");
+      await startButton.click();
+
+      const pauseButton = devPage.locator('button[data-control-id="DEV-01-BTN-DISCOVERY-PAUSE"]');
+      await pauseButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await pauseButton.isEnabled())) throw new Error("DEV_DISCOVERY_PAUSE_NOT_ENABLED_AFTER_START");
+      if ((await pauseButton.getAttribute("data-operation")) !== "pauseCompanyDiscovery") throw new Error("DEV_DISCOVERY_PAUSE_OPERATION_TRACE_INVALID");
+      if ((await devRoot.getAttribute("data-page-state")) === "ERROR") throw new Error("DEV_DISCOVERY_START_RUNTIME_ERROR");
+      devMutationCases += 1;
+
+      await pauseButton.click();
+      const resumeButton = devPage.locator('button[data-control-id="DEV-01-BTN-DISCOVERY-RESUME"]');
+      await resumeButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await resumeButton.isEnabled())) throw new Error("DEV_DISCOVERY_RESUME_NOT_ENABLED_AFTER_PAUSE");
+      if ((await resumeButton.getAttribute("data-operation")) !== "resumeCompanyDiscovery") throw new Error("DEV_DISCOVERY_RESUME_OPERATION_TRACE_INVALID");
+      devMutationCases += 1;
+
+      await resumeButton.click();
+      await pauseButton.waitFor({ state: "visible", timeout: 5_000 });
+      const stopButton = devPage.locator('button[data-control-id="DEV-01-BTN-DISCOVERY-STOP"]');
+      await stopButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await stopButton.isEnabled())) throw new Error("DEV_DISCOVERY_STOP_NOT_ENABLED_AFTER_RESUME");
+      if ((await stopButton.getAttribute("data-operation")) !== "stopCompanyDiscovery") throw new Error("DEV_DISCOVERY_STOP_OPERATION_TRACE_INVALID");
+      devMutationCases += 1;
+
+      await stopButton.click();
+      await startButton.waitFor({ state: "visible", timeout: 5_000 });
+      if (!(await startButton.isEnabled())) throw new Error("DEV_DISCOVERY_START_NOT_RESTORED_AFTER_STOP");
+      if ((await devRoot.getAttribute("data-runtime-error-uid")) !== null) throw new Error("DEV_DISCOVERY_STOP_RUNTIME_ERROR");
+      devMutationCases += 1;
+    } finally {
+      await devPage.close();
+    }
   } finally {
     await browser.close();
   }
-  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases}\n`);
+  process.stdout.write(`RELEASE_BROWSER_E2E_PASS cases=${cases} interactive_controls=${interactiveControls} governed_controls=${governedControls} safe_local_clicks=${safeLocalClicks} strategy_form_cases=${strategyFormCases} sg_governance_cases=${sgGovernanceCases} iam_mutation_cases=${iamMutationCases} erp_mutation_cases=${erpMutationCases} dev_mutation_cases=${devMutationCases}\n`);
 } finally {
   server.kill("SIGTERM");
 }
