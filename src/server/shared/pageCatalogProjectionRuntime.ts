@@ -1049,7 +1049,11 @@ async function readInfoFromDb(sql: SqlClient, sessionTokenHash: string): Promise
   };
 }
 
-async function readSystemFromDb(sql: SqlClient): Promise<unknown> {
+async function readSystemFromDb(
+  sql: SqlClient,
+  sessionTokenHash: string,
+  actorUserId: string,
+): Promise<unknown> {
   const migrations = await safeRows(() => sql`
     SELECT migration_id AS ref, checksum, applied_at::text AS applied_at
     FROM schema_migration_history
@@ -1061,33 +1065,151 @@ async function readSystemFromDb(sql: SqlClient): Promise<unknown> {
     ORDER BY version_no DESC
     LIMIT 1
   `);
-  const changes = await safeRows(() => sql`
-    SELECT system_change_id::text AS system_change_id,current_goal,scope,status,
-           current_candidate_id::text AS candidate_ref,updated_at::text AS updated_at
-    FROM public.system_changes
-    WHERE status <> 'CLOSED'
-    ORDER BY updated_at DESC
-    LIMIT 1
-  `);
+  const changes = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT system_change_id::text AS system_change_id,current_goal,scope,status,
+             current_candidate_id::text AS candidate_ref,created_by::text AS created_by,updated_at::text AS updated_at
+      FROM public.system_changes
+      WHERE status <> 'CLOSED'
+      ORDER BY updated_at DESC
+      LIMIT 1
+    `,
+  ));
   const active = changes[0] ?? null;
-  const candidate = active?.candidate_ref
-    ? (await safeRows(() => sql`
-        SELECT context_fingerprint,status
-        FROM public.system_change_candidates
-        WHERE system_change_candidate_id=${asText(active.candidate_ref)}::uuid
-        LIMIT 1
-      `))[0] ?? null
-    : null;
-  const head = migrations[migrations.length - 1] ?? null;
   const systemChangeId = asText(active?.system_change_id);
+
+  const candidate = systemChangeId && active?.candidate_ref
+    ? (await safeRows(() => runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT context_fingerprint,status
+          FROM public.system_change_candidates
+          WHERE system_change_candidate_id=${asText(active.candidate_ref)}::uuid
+            AND system_change_id=${systemChangeId}::uuid
+          LIMIT 1
+        `,
+      )))[0] ?? null
+    : null;
+
+  let conversationId: string | null = null;
+  let threadId: string | null = null;
+  let messages: Array<{
+    message_ref: string;
+    role: "USER" | "ASSISTANT" | "SYSTEM";
+    text: string;
+    assistant_summary: string | null;
+    response_mode: string | null;
+    governance_status: string | null;
+  }> = [];
+
+  if (systemChangeId) {
+    await sql`
+      INSERT INTO workspaces(workspace_key,name,status,data_classification,created_by)
+      VALUES('ACPOS-SYSTEM-AI','ACPOS System AI','READY','INTERNAL',${actorUserId}::uuid)
+      ON CONFLICT(workspace_key) DO NOTHING
+    `;
+    const workspaceRows = await sql`
+      SELECT workspace_id::text AS workspace_id
+      FROM workspaces
+      WHERE workspace_key='ACPOS-SYSTEM-AI'
+      LIMIT 1
+    `;
+    const systemWorkspaceId = asText(asRecord(Array.isArray(workspaceRows) ? workspaceRows[0] : null)?.workspace_id);
+    if (systemWorkspaceId) {
+      await runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          INSERT INTO conversations(
+            conversation_id,workspace_id,project_id,topic_id,title,created_by
+          ) VALUES(
+            ${systemChangeId}::uuid,${systemWorkspaceId}::uuid,NULL,NULL,
+            ${`SYSTEM_CHANGE /${systemChangeId}`},${actorUserId}::uuid
+          )
+          ON CONFLICT(conversation_id) DO NOTHING
+        `,
+      ).catch(() => []);
+      const conversationRows = await runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT conversation_id::text AS conversation_id
+          FROM conversations
+          WHERE conversation_id=${systemChangeId}::uuid
+          LIMIT 1
+        `,
+      ).catch(() => []);
+      conversationId = asText(asRecord(Array.isArray(conversationRows) ? conversationRows[0] : null)?.conversation_id);
+      threadId = conversationId;
+
+      if (conversationId) {
+        const messageRows = await runRlsActorQuery(
+          sql,
+          sessionTokenHash,
+          sql`
+            SELECT conversation_message_id::text AS message_ref,
+                   actor_type,
+                   COALESCE(message_content->>'text','') AS text,
+                   message_content->>'assistant_summary' AS assistant_summary,
+                   message_content->>'response_mode' AS response_mode,
+                   message_content->'governance'->>'status' AS governance_status,
+                   COALESCE(message_content->>'kind','') AS kind
+            FROM conversation_messages
+            WHERE conversation_id=${conversationId}::uuid
+              AND COALESCE(message_content->>'kind','') <> 'DECISION_LEDGER'
+            ORDER BY sequence_no ASC
+            LIMIT 80
+          `,
+        ).catch(() => []);
+        messages = (Array.isArray(messageRows) ? messageRows : []).flatMap((raw) => {
+          const row = asRecord(raw);
+          const message_ref = asText(row?.message_ref);
+          const text = asText(row?.text);
+          if (!message_ref || !text) return [];
+          const actorType = asText(row?.actor_type);
+          const role: "USER" | "ASSISTANT" | "SYSTEM" =
+            actorType === "USER" ? "USER" : actorType === "PROVIDER" ? "ASSISTANT" : "SYSTEM";
+          return [{
+            message_ref,
+            role,
+            text,
+            assistant_summary: asText(row?.assistant_summary),
+            response_mode: asText(row?.response_mode),
+            governance_status: asText(row?.governance_status),
+          }];
+        });
+      }
+    }
+  }
+
+  const aiGroupRows = await sql`
+    SELECT g.id,
+           count(*) FILTER (WHERE m.enabled=true AND p.enabled=true AND p.health_status='HEALTHY')::int AS healthy_members
+    FROM acpos_runtime.provider_groups g
+    LEFT JOIN acpos_runtime.provider_members m ON m.group_id=g.id
+    LEFT JOIN acpos_runtime.provider_profiles p ON p.provider_id=m.provider_id AND p.model_id=m.model_id
+    WHERE g.enabled=true AND g.use_case='ACPOS_TEXT_CHAT'
+    GROUP BY g.id,g.updated_at
+    ORDER BY g.updated_at DESC,g.id
+    LIMIT 1
+  `.catch(() => []);
+  const aiGroup = asRecord(Array.isArray(aiGroupRows) ? aiGroupRows[0] : null);
+  const healthyMembers = Number(aiGroup?.healthy_members ?? 0);
+  const latestAssistant = [...messages].reverse().find((item) => item.role === "ASSISTANT");
+
+  const head = migrations[migrations.length - 1] ?? null;
   const page_state = migrations.length || systemChangeId ? "READY" : "EMPTY";
   return {
     page_state,
     system_change_id: systemChangeId,
-    conversation_id: null,
-    thread_id: null,
+    conversation_id: conversationId,
+    thread_id: threadId,
     branch_id: null,
-    multi_ai_route_available: false,
+    multi_ai_route_available: Boolean(conversationId && healthyMembers > 0),
+    messages,
     values: {
       current_system_version: asText(head?.ref) ?? DASH,
       current_goal: asText(active?.current_goal) ?? DASH,
@@ -1095,7 +1217,15 @@ async function readSystemFromDb(sql: SqlClient): Promise<unknown> {
       candidate_ref: asText(active?.candidate_ref) ?? DASH,
       context_snapshot_ref: asText(snapshots[0]?.ref) ?? DASH,
       dependency_graph_ref: DASH,
-      latest_context_fingerprint: asText(candidate?.context_fingerprint) ?? asText(head?.checksum) ?? asText(snapshots[0]?.hash) ?? DASH,
+      latest_context_fingerprint:
+        latestAssistant?.governance_status === "PASS"
+          ? asText(candidate?.context_fingerprint) ?? asText(head?.checksum) ?? asText(snapshots[0]?.hash) ?? DASH
+          : asText(candidate?.context_fingerprint) ?? asText(head?.checksum) ?? asText(snapshots[0]?.hash) ?? DASH,
+      assigned_ai_set: asText(aiGroup?.id) ?? DASH,
+      healthy_ai_members: String(healthyMembers),
+      assistant_summary: latestAssistant?.assistant_summary ?? DASH,
+      response_mode: latestAssistant?.response_mode ?? DASH,
+      conversation_runtime: conversationId ? "BOUND_SHARED_CONVERSATION_CORE" : "NOT_BOUND",
     },
   };
 }
@@ -1499,7 +1629,7 @@ async function readPageValue(
     case "workspace:INFO-01":
       return readInfoFromDb(sql, sessionTokenHash);
     case "admin:SYS-01":
-      return readSystemFromDb(sql);
+      return readSystemFromDb(sql, sessionTokenHash, actorUserId);
     case "admin:IAM-01":
       return readIamProjection(sql);
     case "admin:DEV-01":
