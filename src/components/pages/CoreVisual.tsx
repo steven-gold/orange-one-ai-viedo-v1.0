@@ -138,6 +138,14 @@ export function CoreVisual() {
   const [projection, setProjection] = useState<CoreNormalizedProjection | null>(null);
 
   const display = (key: string) => projection?.display_values[key] ?? "—";
+  const messagesForThread = (source: CoreNormalizedProjection | null, conversationId: string | null | undefined): ConversationUiMessage[] => {
+    if (!source || !conversationId) return [];
+    return (source.messages_by_thread?.[conversationId] ?? []).map((entry) => ({
+      id: entry.message_ref,
+      role: entry.role,
+      text: entry.text,
+    }));
+  };
   const applyRawProjection = async (rawProjection: unknown) => {
     const resolved = await resolveCoreProjection(rawProjection);
     if (!resolved.ok) {
@@ -148,6 +156,7 @@ export function CoreVisual() {
     }
     setProjection(resolved.projection);
     dispatchClient({ type: "CORE_INTERNAL_PROJECTION_SYNC", refs: resolved.projection.refs, work_item: resolved.projection.work_item });
+    setConversationMessages(messagesForThread(resolved.projection, resolved.projection.refs.conversation_id));
     setPageState("READY");
     setRuntimeReason(null);
     return true;
@@ -376,7 +385,7 @@ export function CoreVisual() {
   const selectThread = (conversationId: string) => {
     if (conversationId && !(projection?.threads.some((item) => item.conversation_id === conversationId) ?? false)) { reportBlock("CORE-01-ERR-THREAD-001:THREAD_NOT_IN_CURRENT_CONTEXT"); return; }
     dispatchClient({ action_uid: "CORE-01-ACT-THREAD-SELECT", thread_ref: conversationId || null, conversation_id: conversationId || null });
-    setConversationMessages([]); setContextMessageId(null); setMenuOpen(false);
+    setConversationMessages(messagesForThread(projection, conversationId || null)); setContextMessageId(null); setMenuOpen(false);
     reportLocalSuccess(conversationId ? `THREAD_SELECTED:${conversationId}` : "THREAD_CLEARED");
   };
 
