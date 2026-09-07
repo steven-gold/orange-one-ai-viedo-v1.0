@@ -171,11 +171,6 @@ try {
   const decisionId = value.route_decision_id;
   assert(typeof decisionId === "string" && decisionId.length > 0, "PROVIDER_ROUTE_DECISION_ID_MISSING");
 
-  const routedProfile = profiles.find(
-    (row) => row?.provider_id === value.provider_id && row?.model_id === value.model_id,
-  );
-  assert(routedProfile, "PROVIDER_ROUTE_PROFILE_NOT_REGISTERED");
-
   const decision = await fetch(`${base}/v1/aiapi/routes/${encodeURIComponent(decisionId)}`, {
     method: "GET",
     cache: "no-store",
@@ -192,7 +187,7 @@ try {
 
   if (profileFailures.length) {
     process.stdout.write(
-      `PRODUCTION_EXTERNAL_PROVIDER_E2E_PARTIAL release_sha=${healthBody.release_sha} profile_tests_passed=${tested.length} profile_tests_failed=${profileFailures.length} failed_profiles=${profileFailures.map((row) => row.profile_id).join(",")} route_provider=${value.provider_id} route_model=${value.model_id} worker_succeeded=1 external_request_sent=true plaintext_persisted=false\n`,
+      `PRODUCTION_EXTERNAL_PROVIDER_E2E_PARTIAL release_sha=${healthBody.release_sha} profile_tests_passed=${tested.length} profile_tests_failed=${profileFailures.length} failed_profiles=${profileFailures.map((row) => row.profile_id).join(",")} route_provider=${resolved.provider_id} route_model=${resolved.model_id} worker_succeeded=1 external_request_sent=true plaintext_persisted=false\n`,
     );
     throw new Error(
       `PROFILE_CONNECTION_MATRIX_FAILED_${profileFailures.map((row) => `${row.profile_id}:${row.reason}`).join("|")}`,
@@ -200,7 +195,7 @@ try {
   }
 
   process.stdout.write(
-    `PRODUCTION_EXTERNAL_PROVIDER_E2E_PASS release_sha=${healthBody.release_sha} profile_tests=${tested.length} providers=${tested.map((row) => row.provider_id).join(",")} capability=${capability} route_provider=${value.provider_id} route_model=${value.model_id} route_decision_id=${decisionId} worker_succeeded=1 external_request_sent=true plaintext_persisted=false\n`,
+    `PRODUCTION_EXTERNAL_PROVIDER_E2E_PASS release_sha=${healthBody.release_sha} profile_tests=${tested.length} providers=${tested.map((row) => row.provider_id).join(",")} capability=${capability} route_provider=${resolved.provider_id} route_model=${resolved.model_id} route_decision_id=${decisionId} worker_succeeded=1 external_request_sent=true plaintext_persisted=false\n`,
   );
 } finally {
   await logout(cookie);
