@@ -95,6 +95,22 @@ test("AIAPI production adapter preserves provider and credential safety gates", 
   assert.doesNotMatch(providerAdapter, /console\.(?:log|debug|info|warn|error)\s*\(/);
 });
 
+test("Gate 22 has an independent real Production External Provider acceptance harness", async () => {
+  const workflow = await readFile(".github/workflows/external-provider-acceptance.yml", "utf8");
+  const script = await readFile("scripts/production-external-provider-e2e.mjs", "utf8");
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.doesNotMatch(workflow, /push:|pull_request:|schedule:/);
+  assert.match(workflow, /environment:\s*Production/);
+  assert.match(script, /REAL_PROVIDER_PROFILE_ID_NOT_CONFIGURED/);
+  assert.match(script, /REAL_PROVIDER_GROUP_ID_NOT_CONFIGURED/);
+  assert.match(script, /REAL_PROVIDER_CAPABILITY_NOT_CONFIGURED/);
+  assert.match(script, /PROFILE_CONNECTION_TEST_MUST_BE_REAL/);
+  assert.match(script, /external_request_sent === true/);
+  assert.match(script, /PRODUCTION_EXTERNAL_PROVIDER_E2E_PASS/);
+  assert.doesNotMatch(script, /TEST_ONLY|CONTROLLED_TEST/);
+  assert.match(runtime, /external_request_sent:true/);
+});
+
 test("AIAPI queue probe is separately governed by queue runtime authority", () => {
   assert.match(queueAuthority, /operation_id: runProviderQueueProbe/);
   assert.match(queueAuthority, /path: \/v1\/aiapi\/queue\/probe/);

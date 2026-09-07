@@ -346,6 +346,7 @@ async function testProfile(sql: SqlClient, request: AiApiRuntimeRequest) {
       http_status:result.http_status,
       latency_ms:result.latency_ms,
       result_hash:result.result_hash,
+      external_request_sent:true,
       plaintext_persisted:false,
     };
   } catch (error) {
