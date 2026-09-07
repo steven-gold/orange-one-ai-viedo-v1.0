@@ -274,9 +274,9 @@ try {
               const dock = document.querySelector('[data-current-stage-action-dock="true"]');
               if (!(pageRoot instanceof HTMLElement) || !(preview instanceof HTMLElement) || !(timeline instanceof HTMLElement) || !(dock instanceof HTMLElement)) return null;
               const p = pageRoot.getBoundingClientRect(), v = preview.getBoundingClientRect(), t = timeline.getBoundingClientRect(), d = dock.getBoundingClientRect();
-              return {pageHeight:p.height,previewTop:v.top,previewBottom:v.bottom,timelineTop:t.top,timelineBottom:t.bottom,dockTop:d.top,dockBottom:d.bottom,timelineOverflow:getComputedStyle(timeline).overflowY};
+              return {pageHeight:p.height,previewTop:v.top,previewBottom:v.bottom,timelineTop:t.top,timelineBottom:t.bottom,dockTop:d.top,dockBottom:d.bottom,timelineOverflow:getComputedStyle(timeline).overflowY,viewportHeight:window.innerHeight};
             });
-            if (!editLayout || editLayout.previewBottom > editLayout.dockTop + 1 || editLayout.timelineTop >= editLayout.dockTop || editLayout.dockBottom > innerHeight + 2) {
+            if (!editLayout || editLayout.previewBottom > editLayout.dockTop + 1 || editLayout.timelineTop >= editLayout.dockTop || editLayout.dockBottom > editLayout.viewportHeight + 2) {
               throw new Error(`EDIT_VIEWPORT_LOCK_INVALID_${JSON.stringify(editLayout)}`);
             }
           }
