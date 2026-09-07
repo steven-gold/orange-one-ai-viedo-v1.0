@@ -198,6 +198,7 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
               type="button"
               className={`nav-item ${item.id === activeNavId ? "active" : ""}`}
               data-nav-id={item.id}
+              data-target-page-uid={item.pageUid}
               data-navigation-target={item.href}
               onClick={() => go(item.href)}
               aria-current={item.id === activeNavId ? "page" : undefined}
@@ -211,13 +212,13 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
         <div className="sidebar-footer">
           {surface === "admin" ? (
             frontSurfaceTarget && (
-              <button type="button" className="nav-item" onClick={() => go(frontSurfaceTarget.href)} data-navigation-target={frontSurfaceTarget.href}>
+              <button type="button" className="nav-item" onClick={() => go(frontSurfaceTarget.href)} data-target-page-uid={frontSurfaceTarget.pageUid} data-navigation-target={frontSurfaceTarget.href}>
                 <span className="nav-icon"><Icon name="dashboard"/></span><span className="nav-label">{t("global.nav.dashboard")}</span>
               </button>
             )
           ) : (
             adminSurfaceTarget && (
-              <button type="button" className="nav-item" onClick={() => go(adminSurfaceTarget.href)} data-navigation-target={adminSurfaceTarget.href}>
+              <button type="button" className="nav-item" onClick={() => go(adminSurfaceTarget.href)} data-target-page-uid={adminSurfaceTarget.pageUid} data-navigation-target={adminSurfaceTarget.href}>
                 <span className="nav-icon"><Icon name="strategy"/></span><span className="nav-label">{t("global.admin.system")}</span>
               </button>
             )
@@ -246,14 +247,21 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
                 </div>
               )}
             </div>
-            <div ref={accountRef} className="account-wrap">
-              <button type="button" className="account-button" onClick={() => setAccountOpen((value) => !value)} aria-expanded={accountOpen}>
-                <span className="account-avatar">{identityLabel?.slice(0, 1).toUpperCase() ?? "A"}</span>
-                <span className="account-label">{identityLabel ?? t("global.header.account")}</span>
-              </button>
-              {accountOpen && (
+            <div ref={accountRef} className="account-wrap" data-port-uid="GHS-PORT-IDENTITY">
+              {identityLabel ? (
+                <button type="button" className="account-button" onClick={() => setAccountOpen((value) => !value)} aria-expanded={accountOpen}>
+                  <span className="account-avatar">{identityLabel.slice(0, 1).toUpperCase()}</span>
+                  <span className="account-label">{identityLabel}</span>
+                </button>
+              ) : (
+                <a className="account-button" href="/login" aria-label={t("global.header.login")}>
+                  <span className="account-avatar">A</span>
+                  <span className="account-label">{t("global.header.login")}</span>
+                </a>
+              )}
+              {identityLabel && accountOpen && (
                 <div className="account-menu">
-                  <div className="account-menu-label">{identityLabel ?? t("global.header.account")}</div>
+                  <div className="account-menu-label">{identityLabel}</div>
                   <button type="button" onClick={() => go("/admin/accounts")}>{t("global.admin.iam")}</button>
                 </div>
               )}
