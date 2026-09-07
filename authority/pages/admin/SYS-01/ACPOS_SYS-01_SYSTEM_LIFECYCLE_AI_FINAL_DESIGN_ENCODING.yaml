@@ -6,7 +6,7 @@ authority:
   status: FINAL_LOCKED
   current_only: true
   implementation_status: RUNTIME_BOUND_PENDING_RELEASE
-  truthful_status_rule: Current repository runtime and canonical SYS mutation routes are materialized and Release validation is required before production deployment; this Authority file itself is not runtime execution evidence.
+  truthful_status_rule: Current repository runtime includes canonical SYS mutations plus shared Conversation Core send/stop and governed Single/Multi AI wiring; exact Release validation is still required before production deployment, and this Authority file itself is not runtime execution evidence.
   render_mode: SYSTEM_CONTEXT_CONVERSATION_WORKBENCH
   owner_refs:
   - SystemChangeService
@@ -351,24 +351,28 @@ conversation_composer_contract:
     action_uid: SYS-01-ACT-CONVERSATION-SEND
     gate_uid: SYS-01-GATE-CONVERSATION-SEND
     permission_uid: system.ai.use
-    enabled_in_visual_phase: false
+    enabled_in_visual_phase: true
     runtime_binding:
       binding_kind: REUSE_ACPOS_AI_CONVERSATION_CORE_MESSAGE_SUBMIT
-      exact_operation_uid: RESOLVE_FROM_CURRENT_CONVERSATION_CORE_DURING_LOGIC_PHASE
-      api_required_in_visual_phase: false
-    rule: Submit only through the shared Conversation Core under the same SYSTEM_CHANGE_ID/conversation/thread/context; no direct provider call.
+      exact_operation_uid: sendConversationMessage
+      method: POST
+      path: /v1/conversations/{CONVERSATION_ID}/messages
+      api_required_in_visual_phase: true
+    rule: Submit only through the shared Conversation Core under the same SYSTEM_CHANGE_ID/conversation/thread/context; no direct provider call. Runtime remains condition-gated by active conversation, provider route, permission, and non-empty draft.
   - control_uid: SYS-01-BTN-STOP
     type: SECONDARY_BUTTON
     label_zh: 停止
     action_uid: SYS-01-ACT-CONVERSATION-STOP
     gate_uid: SYS-01-GATE-CONVERSATION-STOP
     permission_uid: system.ai.use
-    enabled_in_visual_phase: false
+    enabled_in_visual_phase: true
     runtime_binding:
       binding_kind: REUSE_ACPOS_AI_CONVERSATION_CORE_GENERATION_STOP
-      exact_operation_uid: RESOLVE_FROM_CURRENT_CONVERSATION_CORE_DURING_LOGIC_PHASE
-      api_required_in_visual_phase: false
-    rule: Stop only the current generation; never delete/reset SYSTEM_CHANGE_ID, conversation, thread, Decision Ledger, draft or source refs.
+      exact_operation_uid: stopConversationGeneration
+      method: POST
+      path: /v1/conversations/{CONVERSATION_ID}/generation/stop
+      api_required_in_visual_phase: true
+    rule: Stop only the current generation by setting the current Conversation Core generation job cancel request; never delete/reset SYSTEM_CHANGE_ID, conversation, thread, Decision Ledger, draft or source refs.
   actions:
   - action_uid: SYS-01-ACT-MESSAGE-DRAFT
     effect_type: UI_DRAFT_STATE
@@ -379,10 +383,10 @@ conversation_composer_contract:
     visual_phase_execution: FORBIDDEN
   - action_uid: SYS-01-ACT-CONVERSATION-SEND
     effect_type: SHARED_CONVERSATION_CORE_OPERATION
-    visual_phase_execution: FORBIDDEN
+    visual_phase_execution: ALLOWED_AFTER_RUNTIME_PERMISSION_CONTEXT_PROVIDER_GATE
   - action_uid: SYS-01-ACT-CONVERSATION-STOP
     effect_type: SHARED_CONVERSATION_CORE_OPERATION
-    visual_phase_execution: FORBIDDEN
+    visual_phase_execution: ALLOWED_WHEN_GENERATION_IN_PROGRESS
   gates:
   - gate_uid: SYS-01-GATE-CONVERSATION-COMPOSER
     requires:
@@ -409,7 +413,8 @@ conversation_composer_contract:
   - composer_send_must_not_call_provider_directly
   - composer_must_preserve_SYSTEM_CHANGE_ID_conversation_thread_branch_context
   - visual_phase_typing_is_local_draft_only
-  - attachment_send_stop_business_execution_remains_blocked_until_logic_phase_exact_binding
+  - attachment_business_execution_remains_blocked_until_global_selector_binding
+  - send_stop_reuse_shared_conversation_core_and_must_not_create_parallel_backend
 requirement_convergence_contract:
   question_priority:
     P0: Required when unanswered issue prevents architecture/legal/safe construction; Design Freeze blocked.
