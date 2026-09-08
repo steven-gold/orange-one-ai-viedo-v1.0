@@ -198,3 +198,25 @@ test("SOC-01 publish request closes canonical target/content relation without me
   assert.match(interactions, /soc_publish_request_interaction_registry:/);
   assert.match(interactions, /SOC-01-BTN-PUBLISH[\s\S]*RequestSocialTargetPublishRequest/);
 });
+
+
+test("SOC candidate APPROVE seals exact content package atomically without publishing", async () => {
+  const authority = await read("authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml");
+  const runtime = await read("src/server/social/productionSocContentRuntime.ts");
+
+  assert.match(authority, /candidate_package_approval_contract:/);
+  assert.match(authority, /content_package_state: PENDING_APPROVAL\|APPROVED -> APPROVED/);
+  assert.match(authority, /REJECT:[\s\S]*content_package_state: UNCHANGED/);
+  assert.match(authority, /RETURN:[\s\S]*content_package_state: UNCHANGED/);
+  assert.match(authority, /Candidate approval may seal status only; it must not rewrite content package identity/);
+
+  assert.match(runtime, /SOC01_CONTENT_PACKAGE_APPROVAL_STATE_INVALID/);
+  assert.match(runtime, /WITH package_guard AS/);
+  assert.match(runtime, /btrim\(cp\.package_hash::text\)/);
+  assert.match(runtime, /AND cp\.status IN \('PENDING_APPROVAL','APPROVED'\)/);
+  assert.match(runtime, /sealed_package AS/);
+  assert.match(runtime, /SET status='APPROVED'/);
+  assert.match(runtime, /audited AS/);
+  assert.match(runtime, /content_package_status/);
+  assert.doesNotMatch(runtime, /decideProductionSocCandidate[\s\S]*fetch\(/);
+});

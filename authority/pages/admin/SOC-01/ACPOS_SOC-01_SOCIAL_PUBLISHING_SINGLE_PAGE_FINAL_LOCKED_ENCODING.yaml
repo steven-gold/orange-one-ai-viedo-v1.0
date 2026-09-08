@@ -828,7 +828,7 @@ controls:
   action_uid: SOC-01-ACT-CANDIDATE-DECIDE
   gate_uid: SOC-01-GATE-CANDIDATE
   permission_uid: SOC-01-PERM-CANDIDATE-DECIDE
-  rule: Approval does not itself publish.
+  rule: APPROVE atomically seals the exact source-hash-matched content package to APPROVED; REJECT/RETURN never approve the package. Approval does not itself publish.
   default: —
 - control_uid: SOC-01-FLD-TARGET-SELECTOR
   section_uid: SOC-01-SEC-06
@@ -1455,12 +1455,45 @@ state_model:
   - requestSocialTargetJoin from DISCOVERED/READY_TO_JOIN may become MANUAL_ACTION_REQUIRED or PENDING_EXTERNAL.
   - completeSocialManualAction uses actual pending action context and may progress target according to source state machine; page never chooses
     an impossible target state.
+  - decideCandidate APPROVE atomically changes the exact REVIEW SOC_CONTENT_DRAFT to APPROVED and seals its exact source-hash-matched
+    public.content_packages row from PENDING_APPROVAL/APPROVED to APPROVED. REJECT/RETURN never approve a package and no candidate decision publishes.
   - configureSocialTargetPolicy operates on an eligible JOINED target and prepares READY_TO_POST according to source state machine.
   - requestSocialTargetPublish from READY_TO_POST validates the exact target/version, approved SOC content candidate, canonical content package,
     approved release package and matching approved channel account, then atomically creates public.publish_requests=PENDING_EXTERNAL and transitions
     the exact target to PENDING_EXTERNAL with version+1. This local request creation does not call the external platform and is not POSTED success.
   - A later real PublishingAdapterService result may create MANUAL_ACTION_REQUIRED or recorded external progress; no local request path may fabricate it.
   - Results/Records render only recorded real external status/callback/metrics; UI may not infer POSTED.
+candidate_package_approval_contract:
+  owner: Existing Candidate owner + PublishingService content package owner
+  operation: decideCandidate
+  source_candidate_kind: SOC_CONTENT_DRAFT
+  exact_identity:
+  - candidate id/version required
+  - candidate payload content_package_id must resolve exact public.content_packages row
+  - candidate source_package_hash must equal public.content_packages.package_hash
+  legal_package_states_for_approve:
+  - PENDING_APPROVAL
+  - APPROVED
+  transitions:
+    APPROVE:
+      candidate_state: REVIEW -> APPROVED
+      content_package_state: PENDING_APPROVAL|APPROVED -> APPROVED
+      atomic: true
+      audit_atomic: true
+      publish_side_effect: false
+    REJECT:
+      candidate_state: REVIEW -> REJECTED
+      content_package_state: UNCHANGED
+      publish_side_effect: false
+    RETURN:
+      candidate_state: REVIEW -> DRAFT
+      content_package_state: UNCHANGED
+      publish_side_effect: false
+  hard_rules:
+  - Candidate approval may seal status only; it must not rewrite content package identity, release_package_id, channel_account_id, payload_manifest or package_hash.
+  - A stale candidate version or changed package hash blocks the whole decision.
+  - No candidate decision creates publish_requests or calls PublishingAdapterService.
+
 policy_contract:
   platform_native_variant_rule: One governed Master Message/source may produce platform-native variants, but blind identical cross-platform copy
     is forbidden.

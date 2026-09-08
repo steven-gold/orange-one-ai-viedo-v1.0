@@ -185,36 +185,101 @@ export async function decideProductionSocCandidate(request: CandidateDecisionReq
   }
 
   const nextState = decision === "APPROVE" ? "APPROVED" : decision === "REJECT" ? "REJECTED" : "DRAFT";
-  const rows = await sql`
-    UPDATE acpos_runtime.entities
-    SET status=${nextState},
-        version=version+1,
-        payload=payload || ${JSON.stringify({
-          decision,
-          rationale,
-          decided_by_user_id: actor_user_id,
-          decided_at: new Date().toISOString(),
-        })}::jsonb,
-        updated_at=now()
-    WHERE kind='SOC_CONTENT_DRAFT' AND id=${candidateId}::uuid AND status='REVIEW' AND version=${expectedVersion}
-    RETURNING id::text AS id,status,version
-  `;
-  const decided = first(rows);
-  if (!decided) throw new NamedRuntimeError("SOC01_CANDIDATE_VERSION_CONFLICT");
-
-  await audit(sql,{
-    action:"decideCandidate",
-    entity_id:candidateId,
-    actor_user_id,
-    correlation_id:request.correlation_id,
-    payload:{decision,rationale,version:decided.version,content_package_id:contentPackageId},
+  const decisionPayload = JSON.stringify({
+    decision,
+    rationale,
+    decided_by_user_id: actor_user_id,
+    decided_at: new Date().toISOString(),
   });
+  const correlationId = uuid(request.correlation_id) ? request.correlation_id : randomUUID();
+  let decided: Row | null;
+
+  if (decision === "APPROVE") {
+    if (!["PENDING_APPROVAL","APPROVED"].includes(text(source.status))) {
+      throw new NamedRuntimeError("SOC01_CONTENT_PACKAGE_APPROVAL_STATE_INVALID");
+    }
+    const rows = await sql`
+      WITH package_guard AS (
+        SELECT cp.content_package_id
+        FROM public.content_packages cp
+        WHERE cp.content_package_id=${contentPackageId}::uuid
+          AND btrim(cp.package_hash::text)=${text(source.package_hash)}
+          AND cp.status IN ('PENDING_APPROVAL','APPROVED')
+        FOR UPDATE
+      ),
+      decided AS (
+        UPDATE acpos_runtime.entities e
+        SET status='APPROVED',
+            version=e.version+1,
+            payload=e.payload || ${decisionPayload}::jsonb,
+            updated_at=now()
+        WHERE e.kind='SOC_CONTENT_DRAFT'
+          AND e.id=${candidateId}::uuid
+          AND e.status='REVIEW'
+          AND e.version=${expectedVersion}
+          AND EXISTS (SELECT 1 FROM package_guard)
+        RETURNING e.id,e.status,e.version
+      ),
+      sealed_package AS (
+        UPDATE public.content_packages cp
+        SET status='APPROVED'
+        WHERE cp.content_package_id=${contentPackageId}::uuid
+          AND EXISTS (SELECT 1 FROM decided)
+        RETURNING cp.status::text AS content_package_status
+      ),
+      audited AS (
+        INSERT INTO public.audit_events(action,entity_type,entity_id,actor_id,actor_type,correlation_id,payload_hash)
+        SELECT
+          'decideCandidate','admin:SOC-01',d.id,${actor_user_id}::uuid,'USER',${correlationId}::uuid,
+          encode(digest(${JSON.stringify({decision,rationale,content_package_id:contentPackageId,package_status:"APPROVED"})}::text,'sha256'),'hex')
+        FROM decided d
+        CROSS JOIN sealed_package p
+        RETURNING audit_event_id
+      )
+      SELECT d.id::text AS id,d.status,d.version,p.content_package_status,
+             (SELECT audit_event_id::text FROM audited LIMIT 1) AS audit_event_id
+      FROM decided d
+      CROSS JOIN sealed_package p
+    `;
+    decided = first(rows);
+  } else {
+    const rows = await sql`
+      WITH decided AS (
+        UPDATE acpos_runtime.entities e
+        SET status=${nextState},
+            version=e.version+1,
+            payload=e.payload || ${decisionPayload}::jsonb,
+            updated_at=now()
+        WHERE e.kind='SOC_CONTENT_DRAFT'
+          AND e.id=${candidateId}::uuid
+          AND e.status='REVIEW'
+          AND e.version=${expectedVersion}
+        RETURNING e.id,e.status,e.version
+      ),
+      audited AS (
+        INSERT INTO public.audit_events(action,entity_type,entity_id,actor_id,actor_type,correlation_id,payload_hash)
+        SELECT
+          'decideCandidate','admin:SOC-01',d.id,${actor_user_id}::uuid,'USER',${correlationId}::uuid,
+          encode(digest(${JSON.stringify({decision,rationale,content_package_id:contentPackageId,package_status:"UNCHANGED"})}::text,'sha256'),'hex')
+        FROM decided d
+        RETURNING audit_event_id
+      )
+      SELECT d.id::text AS id,d.status,d.version,${text(source.status)}::text AS content_package_status,
+             (SELECT audit_event_id::text FROM audited LIMIT 1) AS audit_event_id
+      FROM decided d
+    `;
+    decided = first(rows);
+  }
+
+  if (!decided) throw new NamedRuntimeError("SOC01_CANDIDATE_VERSION_CONFLICT");
 
   return {
     candidate_id: candidateId,
     content_package_id: contentPackageId,
     state: nextState,
     version: Number(decided.version),
+    content_package_status: text(decided.content_package_status),
+    audit_event_id: text(decided.audit_event_id),
     external_request_sent: false,
     publish_triggered: false,
   };
