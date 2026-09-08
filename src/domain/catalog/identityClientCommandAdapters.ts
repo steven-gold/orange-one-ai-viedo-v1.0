@@ -240,6 +240,54 @@ function openSocTargetPolicyDialog(projection: import("@/domain/social/socProjec
   });
 }
 
+
+function openSocPublishRequestConfirm(input: {
+  target_id: string;
+  content_package_id: string;
+  channel_account_id: string;
+}): Promise<{ok:true}|{ok:false;reason_code:string}> {
+  if (typeof document === "undefined") return Promise.resolve({ok:false,reason_code:"SOC_PUBLISH_WINDOW_UNAVAILABLE"});
+  return new Promise((resolve) => {
+    document.getElementById("acpos-soc-publish-confirm-dialog")?.remove();
+    const dialog=document.createElement("dialog");
+    dialog.id="acpos-soc-publish-confirm-dialog";
+    dialog.style.padding="20px";
+    dialog.style.border="1px solid #3a4458";
+    dialog.style.borderRadius="12px";
+    dialog.style.background="#10151f";
+    dialog.style.color="#e8edf7";
+    dialog.style.minWidth="440px";
+    dialog.innerHTML=`<form method="dialog" style="display:grid;gap:12px">
+      <strong>建立發佈要求</strong>
+      <div data-field="target"></div>
+      <div data-field="content"></div>
+      <div data-field="channel"></div>
+      <small>此步驟只建立 PENDING_EXTERNAL 要求，不代表外部平台已發佈成功。</small>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" id="acpos-soc-publish-cancel">取消</button>
+        <button value="ok">確認建立</button>
+      </div>
+    </form>`;
+    document.body.appendChild(dialog);
+    const form=dialog.querySelector("form") as HTMLFormElement;
+    const setText=(field:string,value:string)=>{
+      const node=dialog.querySelector(`[data-field="${field}"]`);
+      if(node)node.textContent=value;
+    };
+    setText("target",`Target: ${input.target_id}`);
+    setText("content",`Content package: ${input.content_package_id}`);
+    setText("channel",`Channel account: ${input.channel_account_id}`);
+    let settled=false;
+    const finish=(result:{ok:true}|{ok:false;reason_code:string})=>{
+      if(settled)return;settled=true;if(dialog.open)dialog.close();dialog.remove();resolve(result);
+    };
+    dialog.querySelector("#acpos-soc-publish-cancel")?.addEventListener("click",()=>finish({ok:false,reason_code:"SOC_PUBLISH_CANCELLED"}));
+    form.addEventListener("submit",(event)=>{event.preventDefault();finish({ok:true})});
+    dialog.addEventListener("cancel",(event)=>{event.preventDefault();finish({ok:false,reason_code:"SOC_PUBLISH_CANCELLED"})});
+    if(typeof dialog.showModal==="function")dialog.showModal();else finish({ok:false,reason_code:"SOC_PUBLISH_DIALOG_UNSUPPORTED"});
+  });
+}
+
 function bindStrategyAdminHttpCommandAdapter(): void {
   configureStrategyAdminCommandAdapter({
     invoke: async (input) => {
@@ -420,6 +468,7 @@ export function bindIdentityClientCommandAdapters(): void {
       "SOC-01-ACT-CONTENT-SAVE",
       "SOC-01-ACT-CANDIDATE-DECIDE",
       "SOC-01-ACT-POLICY-CONFIG",
+      "SOC-01-ACT-PUBLISH-REQUEST",
       "SOC-01-ACT-REFRESH",
     ].includes(action_uid),
     invoke: async (input) => {
@@ -459,6 +508,31 @@ export function bindIdentityClientCommandAdapters(): void {
           expected_version:targetVersion,
           idempotency_key:`soc-policy:${targetId}:${crypto.randomUUID()}`,
           ...dialog.payload,
+        };
+      } else if (input.action_uid === "SOC-01-ACT-PUBLISH-REQUEST") {
+        const targetId=projection.selected.target_id??"";
+        const targetVersion=Number(projection.selected.target_version??"");
+        const publishContentPackageId=projection.selected.content_package_id??contentPackageId;
+        const channelAccountId=projection.selected.channel_account_id??"";
+        const contentHash=projection.selected.content_hash??"";
+        if(!targetId||!Number.isSafeInteger(targetVersion)||targetVersion<1||!publishContentPackageId||publishContentPackageId==="—"||!channelAccountId){
+          return {ok:false as const,error_uid:"SOC-01-ERR-PUBLISH",reason_code:"SOC01_PUBLISH_CONTEXT_REQUIRED",correlation_id:"unresolved"};
+        }
+        const confirm=await openSocPublishRequestConfirm({
+          target_id:targetId,
+          content_package_id:publishContentPackageId,
+          channel_account_id:channelAccountId,
+        });
+        if(!confirm.ok)return {ok:false as const,error_uid:"SOC-01-ERR-PUBLISH",reason_code:confirm.reason_code,correlation_id:"unresolved"};
+        path=`/v1/social/targets/${encodeURIComponent(targetId)}/publish`;
+        payload={
+          target_id:targetId,
+          content_package_id:publishContentPackageId,
+          channel_account_id:channelAccountId,
+          scope:{},
+          expected_version:targetVersion,
+          idempotency_key:`soc-publish:${targetId}:${crypto.randomUUID()}`,
+          ...(contentHash?{content_hash:contentHash}:{}),
         };
       } else if (input.action_uid === "SOC-01-ACT-CONTENT-SAVE") {
         if (!contentPackageId || contentPackageId === "—") {

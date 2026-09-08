@@ -67,7 +67,7 @@ test("SOC-01 Production UI enables only materialized content actions and derives
   assert.match(projection, /"SOC-01-GATE-CONTENT": Boolean\(contentPackage\)/);
   assert.match(projection, /"SOC-01-GATE-CANDIDATE": candidateStatus === "REVIEW"/);
   assert.match(projection, /"SOC-01-GATE-POLICY": policyTargetStatus === "JOINED"/);
-  assert.match(projection, /"SOC-01-GATE-PUBLISH": candidateStatus === "APPROVED" && policyTargetStatus === "READY_TO_POST"/);
+  assert.match(projection, /"SOC-01-GATE-PUBLISH": publishContextReady/);
 });
 
 test("migration 0022 stages only the two missing SOC API assignments and stays pending Production apply", async () => {
@@ -147,5 +147,54 @@ test("migration 0030 stages only existing SOC policy resources, target version a
   assert.match(manifest, /migration_id: 0030_soc_target_policy_permission_rls_closure/);
   assert.match(manifest, /payload_sha256: d43ee379e03c27824e61613f89ffdb75823182ef3397bd9c507d70b943aed518/);
   assert.match(manifest, /production_apply: PENDING/);
-  assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 30/);
+  assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0) >= 30);
+});
+
+
+test("SOC-01 publish request closes canonical target/content relation without metadata identity fallback", async () => {
+  const authority = await read("authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml");
+  const migration = await read("database/migrations/0031_soc_publish_request_relation_runtime.sql");
+  const manifest = await read("database/migrations/migration_checksum_manifest.yaml");
+  const runtime = await read("src/server/social/productionSocPublishRuntime.ts");
+  const route = await read("src/app/v1/social/targets/[targetId]/publish/route.ts");
+  const identity = await read("src/server/shared/identityPageCommandRuntime.ts");
+  const projection = await read("src/server/shared/pageCatalogProjectionRuntime.ts");
+  const adapters = await read("src/domain/catalog/identityClientCommandAdapters.ts");
+  const interactions = await read("07_ui/interaction_registry.yaml");
+
+  assert.match(authority, /canonical_column: social_target_id[\s\S]*metadata_target_id: FORBIDDEN/);
+  assert.match(authority, /canonical_column: content_package_id[\s\S]*foreign_key: public\.content_packages\.content_package_id/);
+  assert.match(authority, /canonical_identity_keys_forbidden:[\s\S]*target_id[\s\S]*content_package_id[\s\S]*channel_account_id[\s\S]*release_package_id/);
+  assert.match(authority, /target_state_after_request: PENDING_EXTERNAL/);
+  assert.match(route, /createSocRoute\("requestSocialTargetPublish"\)/);
+
+  assert.match(migration, /ADD COLUMN IF NOT EXISTS social_target_id uuid/);
+  assert.match(migration, /ADD COLUMN IF NOT EXISTS content_package_id uuid/);
+  assert.match(migration, /publish_requests_social_target_id_fkey/);
+  assert.match(migration, /publish_requests_content_package_id_fkey/);
+  assert.match(migration, /publish_requests_metadata_no_canonical_identity/);
+  assert.match(migration, /NOT metadata \?\| ARRAY/);
+  assert.match(migration, /request_soc_target_publish/);
+  assert.match(migration, /SOC01_CONTENT_NOT_APPROVED/);
+  assert.match(migration, /join_status='PENDING_EXTERNAL'/);
+  assert.match(migration, /external_request_sent',false/);
+  assert.match(migration, /81f65e614d720ad44b8d8d4b2594f7128caac5af396d16221f15f46a31fc600e/);
+  assert.doesNotMatch(migration, /metadata[^\n]*target_id/);
+  assert.doesNotMatch(migration, /INSERT INTO public\.permission_resources/);
+
+  assert.match(manifest, /migration_id: 0031_soc_publish_request_relation_runtime/);
+  assert.match(manifest, /payload_sha256: 81f65e614d720ad44b8d8d4b2594f7128caac5af396d16221f15f46a31fc600e/);
+  assert.match(identity, /SOC_PUBLISH_REQUEST_PERMISSIONS/);
+  assert.match(identity, /requestProductionSocTargetPublish/);
+  assert.match(runtime, /request_soc_target_publish/);
+  assert.match(runtime, /requestSocialTargetPublish/);
+  assert.match(runtime, /createHash\("sha256"\)/);
+  assert.doesNotMatch(runtime, /fetch\(|ProviderGateway/);
+  assert.match(projection, /FROM public\.publish_requests/);
+  assert.match(projection, /content_package_id: packageRef/);
+  assert.match(projection, /channel_account_id:/);
+  assert.match(adapters, /openSocPublishRequestConfirm/);
+  assert.match(adapters, /\/v1\/social\/targets\/\$\{encodeURIComponent\(targetId\)\}\/publish/);
+  assert.match(interactions, /soc_publish_request_interaction_registry:/);
+  assert.match(interactions, /SOC-01-BTN-PUBLISH[\s\S]*RequestSocialTargetPublishRequest/);
 });
