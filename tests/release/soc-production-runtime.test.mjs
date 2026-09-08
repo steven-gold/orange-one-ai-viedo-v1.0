@@ -61,7 +61,7 @@ test("SOC-01 Production UI enables only materialized content actions and derives
   assert.match(adapters, /\/v1\/drafts/);
   assert.match(adapters, /\/v1\/candidates\/\$\{encodeURIComponent\(candidateRef\)\}\/decision/);
 
-  assert.match(projection, /FROM content_packages/);
+  assert.match(projection, /FROM public\.content_packages cp/);
   assert.match(projection, /FROM acpos_runtime\.entities/);
   assert.match(projection, /kind='SOC_CONTENT_DRAFT'/);
   assert.match(projection, /"SOC-01-GATE-CONTENT": Boolean\(contentPackage\)/);
@@ -147,7 +147,7 @@ test("migration 0030 stages only existing SOC policy resources, target version a
   assert.match(manifest, /migration_id: 0030_soc_target_policy_permission_rls_closure/);
   assert.match(manifest, /payload_sha256: d43ee379e03c27824e61613f89ffdb75823182ef3397bd9c507d70b943aed518/);
   assert.match(manifest, /production_apply: PENDING/);
-  assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0) >= 30);
+  assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 30);
 });
 
 
