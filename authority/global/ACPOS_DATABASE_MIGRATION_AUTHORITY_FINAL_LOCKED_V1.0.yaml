@@ -1743,9 +1743,12 @@ pending_0030_soc_target_policy_permission_rls_closure:
       cleanup_session_rows: 0
   predeploy_runtime_evidence:
     release_gate:
-      run_number: 813
-      run_id: 34191812915
-      head_sha: de64634f2d59697faed65bc9e392fb9dc35271d7
+      implementation_run_number: 813
+      implementation_run_id: 34191812915
+      implementation_head_sha: de64634f2d59697faed65bc9e392fb9dc35271d7
+      authority_exact_run_number: 814
+      authority_exact_run_id: 34192093403
+      authority_exact_head_sha: 7ef2418622ea954d3b651c7abe39d9eafc587ef2
       conclusion: success
     regression_tests:
     - exact ConfigureSocialTargetPolicyRequest + PublishingService route binding
@@ -1761,6 +1764,7 @@ pending_0030_soc_target_policy_permission_rls_closure:
     social_target_rows: 0
     production_apply_performed: false
   remaining_runtime_blockers:
-  - requestSocialTargetPublish remains a separate external-provider/publish-owner closure and is not executed by migration 0030.
+  - requestSocialTargetPublish is target-scoped by Current Authority, but canonical public.publish_requests from migration 0001 has no social_target_id and migration 0015 introduced public.social_market_targets without adding a publish-request relation. Current source does not define metadata.target_id, so target linkage remains an Authority/data-model gap and no metadata/FK invention is permitted.
+  - External publish/provider dispatch remains a separate closure and is not executed by migration 0030.
   - Other SOC account/discovery/join/manual-action operations remain outside this 0030 local policy closure unless their exact schema/runtime evidence is separately materialized.
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE

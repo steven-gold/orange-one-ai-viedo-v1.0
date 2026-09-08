@@ -6,7 +6,7 @@
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
-    "new_sha_basis": "de64634f2d59697faed65bc9e392fb9dc35271d7",
+    "new_sha_basis": "7ef2418622ea954d3b651c7abe39d9eafc587ef2",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -660,9 +660,9 @@
     },
     "current_construction_gate": {
       "status": "PASS",
-      "run_number": 813,
-      "run_id": 34191812915,
-      "head_sha": "de64634f2d59697faed65bc9e392fb9dc35271d7",
+      "run_number": 814,
+      "run_id": 34192093403,
+      "head_sha": "7ef2418622ea954d3b651c7abe39d9eafc587ef2",
       "branch": "new",
       "conclusion": "success",
       "source_lint": "PASS",
@@ -1189,10 +1189,11 @@
     "INFO-01 exact Evidence/source lineage and export persistence owner remain Authority gaps; no fabricated Evidence or export is permitted.",
     "Gate 24 overall non-SYS admin mutation acceptance still requires final Current recomputation after remaining runtime closures.",
     "Do not persist Provider API-key plaintext in GitHub, Neon, logs or state artifacts.",
-    "ERP-01 remaining write closure is Authority/schema blocked: CreateERPConnector requires data_classification without a canonical connector/mapping persistence column and requires workspace_id without a Current user-to-workspace/scope owner; Update/Validate/Retry schemas are not fully materialized in the Current business payload registry. Do not hardcode a workspace or persist fields into unrelated JSON."
+    "ERP-01 remaining write closure is Authority/schema blocked: CreateERPConnector requires data_classification without a canonical connector/mapping persistence column and requires workspace_id without a Current user-to-workspace/scope owner; Update/Validate/Retry schemas are not fully materialized in the Current business payload registry. Do not hardcode a workspace or persist fields into unrelated JSON.",
+    "SOC-01 requestSocialTargetPublish is Authority/data-model blocked: RequestSocialTargetPublishRequest is target-scoped, but canonical publish_requests from migration 0001 has no social_target_id and migration 0015 introduced social_market_targets without adding a publish-request relation; Current source does not define metadata.target_id. Do not invent a metadata linkage or additive FK without Authority."
   ],
   "next_release_sequence": [
-    "SOC-01 target posting policy local persistence is closed through validated migration 0030; continue Delta scan for the next dependency-ready Current runtime closure while external publish/provider operations remain fail-closed.",
+    "SOC-01 target policy 0030 is Authority-exact and Release Gate #814 PASS. Keep requestSocialTargetPublish fail-closed on the missing canonical target-to-publish-request relation and continue to the next dependency-ready Current runtime closure.",
     "Do not merge new to main and do not trigger Vercel while construction remains open.",
     "Keep validated migrations 0021-0030 unapplied to Production until the consolidated governed release sequence.",
     "After all dependency-ready runtime/acceptance gaps close, run one exact Release Gate on new and integrate once to main.",
