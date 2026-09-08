@@ -13,7 +13,7 @@ test("INFO-01 registries materialize exact Current workspace operations without 
   assert.match(payloads, /operation_id: adoptContextCandidate[\s\S]*request_schema_id: AdoptContextCandidateRequest[\s\S]*context_candidate_id[\s\S]*decision_reason/);
   assert.match(payloads, /operation_id: decideCandidate[\s\S]*request_schema_id: DecideCandidateRequest[\s\S]*candidate_id[\s\S]*values: \[ACCEPTED, REJECTED\]/);
 
-  assert.match(operations, /coverage: IDENTITY_SESSION_AIAPI_PROVIDER_IAM_AND_INFO_GOVERNED_OPERATIONS/);
+  assert.match(operations, /coverage: IDENTITY_SESSION_AIAPI_PROVIDER_IAM_INFO_DEPARTMENT_AND_SHARED_CORRECTION_VERSION_OPERATIONS/);
   assert.match(operations, /operation_id: searchProjection[\s\S]*authorization_by_page:[\s\S]*admin:IAM-01:[\s\S]*workspace:INFO-01:/);
   assert.match(operations, /operation_id: refreshProjection[\s\S]*authorization_resource_key: api:refreshProjection/);
   assert.match(operations, /operation_id: adoptContextCandidate[\s\S]*persistence_owner: public\.context_candidates/);

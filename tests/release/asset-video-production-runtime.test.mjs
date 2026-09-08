@@ -28,7 +28,7 @@ test("ASSET Production RequestBuilder covers formal current ports",async()=>{
   assert.doesNotMatch(adapters,/ASSET_REQUEST_ADAPTER_NOT_BOUND/);
 });
 
-test("migration 0033 reuses exactly 35 existing resources and adds only minimum RLS",async()=>{
+test("migration 0033 remains immutable while later migration ceiling advances",async()=>{
   const migration=await read("database/migrations/0033_asset_video_department_runtime_permission_rls_closure.sql");
   const manifest=await read("database/migrations/migration_checksum_manifest.yaml");
   const neon=await read("src/server/database/neonRuntime.ts");
@@ -41,5 +41,5 @@ test("migration 0033 reuses exactly 35 existing resources and adds only minimum 
   assert.doesNotMatch(migration,/INSERT INTO public\.permission_resources/);
   assert.match(manifest,/0033_asset_video_department_runtime_permission_rls_closure/);
   assert.match(manifest,/7bb4797ce24c1bba93572b0ec55f5ea6baf7297fc2f0687e95564a556f925c71/);
-  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 33/);
+  assert.ok(Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0) >= 33);
 });

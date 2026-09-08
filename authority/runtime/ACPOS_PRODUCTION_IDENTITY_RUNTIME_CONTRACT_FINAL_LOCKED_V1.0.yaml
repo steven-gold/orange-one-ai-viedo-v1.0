@@ -3,7 +3,7 @@ authority:
   version: V1.2
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-08-INFO-REGISTRY-SCOPE-SYNCHRONIZED
+  revision: 2026-09-09-SHARED-REGISTRY-SCOPE-SYNCHRONIZED
   scope: PRODUCTION_REQUEST_TO_APP_USERS_ACTOR_CONTRACT_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -82,7 +82,7 @@ shell_identity_port:
   operation_registry_file: 03_api/operation_registry.yaml
   operation_registry_file_in_app_repo: PRESENT
   identity_operation_coverage: IDENTITY_SESSION_ONLY
-  operation_registry_coverage: IDENTITY_SESSION_AIAPI_PROVIDER_IAM_AND_INFO_GOVERNED_OPERATIONS
+  operation_registry_coverage: IDENTITY_SESSION_AIAPI_PROVIDER_IAM_INFO_DEPARTMENT_AND_SHARED_CORRECTION_VERSION_OPERATIONS
   registry_scope_rule: This identity contract owns only resolveIdentityAccountAuthority; broader registry entries do not extend identity semantics.
   catalog_registration: NOT_IN_ACCOUNT_PERMISSION_CATALOG
 current_http_surface:
