@@ -241,6 +241,81 @@ function openSocTargetPolicyDialog(projection: import("@/domain/social/socProjec
 }
 
 
+
+type SocCandidateDecisionDialogResult =
+  | { ok: true; decision: "APPROVE" | "REJECT" | "RETURN"; rationale: string }
+  | { ok: false; reason_code: string };
+
+function openSocCandidateDecisionDialog(): Promise<SocCandidateDecisionDialogResult> {
+  if (typeof document === "undefined") {
+    return Promise.resolve({ ok: false, reason_code: "SOC_CANDIDATE_WINDOW_UNAVAILABLE" });
+  }
+  return new Promise((resolve) => {
+    document.getElementById("acpos-soc-candidate-decision-dialog")?.remove();
+    const dialog = document.createElement("dialog");
+    dialog.id = "acpos-soc-candidate-decision-dialog";
+    dialog.style.padding = "20px";
+    dialog.style.border = "1px solid #3a4458";
+    dialog.style.borderRadius = "12px";
+    dialog.style.background = "#10151f";
+    dialog.style.color = "#e8edf7";
+    dialog.style.minWidth = "440px";
+    dialog.innerHTML = `<form method="dialog" style="display:grid;gap:12px">
+      <strong>審查內容 Candidate</strong>
+      <label style="display:grid;gap:4px">Decision
+        <select name="decision" required>
+          <option value="">—</option>
+          <option value="APPROVE">APPROVE</option>
+          <option value="REJECT">REJECT</option>
+          <option value="RETURN">RETURN</option>
+        </select>
+      </label>
+      <label style="display:grid;gap:4px">Rationale
+        <textarea name="rationale" rows="4" required autocomplete="off"></textarea>
+      </label>
+      <small>APPROVE 只封板 exact content package；此動作不建立發佈要求，也不代表外部平台已發佈。</small>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" id="acpos-soc-candidate-cancel">取消</button>
+        <button value="ok">送出審查</button>
+      </div>
+    </form>`;
+    document.body.appendChild(dialog);
+    const form = dialog.querySelector("form") as HTMLFormElement;
+    let settled = false;
+    const finish = (result: SocCandidateDecisionDialogResult) => {
+      if (settled) return;
+      settled = true;
+      if (dialog.open) dialog.close();
+      dialog.remove();
+      resolve(result);
+    };
+    dialog.querySelector("#acpos-soc-candidate-cancel")?.addEventListener("click", () => {
+      finish({ ok: false, reason_code: "SOC_CANDIDATE_DECISION_CANCELLED" });
+    });
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const decision = String(data.get("decision") ?? "").trim();
+      const rationale = String(data.get("rationale") ?? "").trim();
+      if (decision !== "APPROVE" && decision !== "REJECT" && decision !== "RETURN") {
+        finish({ ok: false, reason_code: "SOC01_CANDIDATE_DECISION_INVALID" });
+        return;
+      }
+      if (!rationale) {
+        finish({ ok: false, reason_code: "SOC01_CANDIDATE_RATIONALE_REQUIRED" });
+        return;
+      }
+      finish({ ok: true, decision, rationale });
+    });
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      finish({ ok: false, reason_code: "SOC_CANDIDATE_DECISION_CANCELLED" });
+    });
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else finish({ ok: false, reason_code: "SOC_CANDIDATE_DIALOG_UNSUPPORTED" });
+  });
+}
+
 function openSocPublishRequestConfirm(input: {
   target_id: string;
   content_package_id: string;
@@ -550,13 +625,17 @@ export function bindIdentityClientCommandAdapters(): void {
         if (!candidateRef || candidateRef === "—" || !Number.isSafeInteger(candidateVersion) || candidateVersion < 1) {
           return { ok: false as const, error_uid: "SOC-01-ERR-CONTENT", reason_code: "SOC01_CANDIDATE_REQUIRED", correlation_id: "unresolved" };
         }
+        const decisionDialog = await openSocCandidateDecisionDialog();
+        if (!decisionDialog.ok) {
+          return { ok: false as const, error_uid: "SOC-01-ERR-CONTENT", reason_code: decisionDialog.reason_code, correlation_id: "unresolved" };
+        }
         path = `/v1/candidates/${encodeURIComponent(candidateRef)}/decision`;
         payload = {
           page_uid: "admin:SOC-01",
           candidate_id: candidateRef,
           expected_version: candidateVersion,
-          decision: "APPROVE",
-          rationale: "Approved from governed SOC-01 candidate review.",
+          decision: decisionDialog.decision,
+          rationale: decisionDialog.rationale,
         };
       } else {
         return { ok: false as const, error_uid: "SOC-01-ERR-UNDEFINED", reason_code: "SOC_COMMAND_RUNTIME_NOT_MATERIALIZED", correlation_id: "unresolved" };
