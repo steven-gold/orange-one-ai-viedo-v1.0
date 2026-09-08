@@ -16,6 +16,7 @@ import { hashSessionToken, IDENTITY_COOKIE_NAME, resolveIdentityFromCookie, type
 import { CURRENT_PAGE_RESOURCE_KEYS } from "@/server/shared/pageCatalogProjectionRuntime";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 import { configureQaRuntime, type QaRequest } from "@/server/qa/qaRuntime";
+import { executeProductionQaLifecycle } from "@/server/qa/productionQaLifecycleRuntime";
 import { configureKnowledgeRuntime } from "@/server/knowledge/knowledgeRuntime";
 import { transitionProductionKnowledgeSource } from "@/server/knowledge/productionKnowledgeSourceStateRuntime";
 import type { KnowledgeRuntimeRequest } from "@/domain/knowledge/knowledgeRuntimeContract";
@@ -1022,9 +1023,25 @@ function refItems(rows: unknown) {
   });
 }
 
-async function executeQa(_request: QaRequest): Promise<unknown> {
-  void _request;
-  throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
+const QA_LIFECYCLE_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  startQaReview:{resource_key:"api:startQaReview",action:"EXECUTE"},
+  startRecheck:{resource_key:"api:startRecheck",action:"EXECUTE"},
+  decidePass:{resource_key:"api:decidePass",action:"EXECUTE"},
+  decideFail:{resource_key:"api:decideFail",action:"EXECUTE"},
+  createReleasePackage:{resource_key:"api:createReleasePackage",action:"EXECUTE"},
+};
+
+async function authorizeQa(request:QaRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["QA-01"]);
+  if(!page.allowed)return page;
+  const permission=QA_LIFECYCLE_PERMISSION[request.operation_id];
+  if(!permission)return{allowed:false,reason_code:"QA01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
+}
+
+async function executeQa(request: QaRequest): Promise<unknown> {
+  return executeProductionQaLifecycle(request);
 }
 
 async function authorizeKnowledge(request:KnowledgeRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
@@ -1226,7 +1243,7 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureQaRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["QA-01"]),
+    authorize: authorizeQa,
     execute: executeQa,
     audit: async () => undefined,
   });
