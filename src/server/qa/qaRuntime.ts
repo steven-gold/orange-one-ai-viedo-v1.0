@@ -19,6 +19,19 @@ async function audit(r: QaBindings, e: Parameters<QaBindings["audit"]>[0]) {
   try { await r.audit(e); } catch { /* fail closed */ }
 }
 
+function statusFor(reason_code: string): number {
+  if (reason_code.includes("NOT_FOUND")) return 404;
+  if (
+    reason_code.includes("CONFLICT")
+    || reason_code.includes("GATE_NOT_SATISFIED")
+    || reason_code.includes("NOT_READY")
+    || reason_code.includes("FORBIDDEN")
+    || reason_code.includes("REQUIRED")
+  ) return 409;
+  if (reason_code.includes("INVALID") || reason_code.includes("MISMATCH")) return 400;
+  return 503;
+}
+
 export async function executeQaOperation(request: QaRequest) {
   if (!bindings) {
     const { bindIdentityPageCommandRuntimes } = await import("@/server/shared/identityPageCommandRuntime");
@@ -47,6 +60,6 @@ export async function executeQaOperation(request: QaRequest) {
   } catch (error) {
     const reason_code = namedReason(error, "QA_OPERATION_FAILED");
     await audit(r, { ...request, outcome: "ERROR", reason_code });
-    return { ok: false as const, status: 503, error_uid: "QA-01-ERR-CONTEXT-001", reason_code, correlation_id: request.correlation_id };
+    return { ok: false as const, status: statusFor(reason_code), error_uid: "QA-01-ERR-CONTEXT-001", reason_code, correlation_id: request.correlation_id };
   }
 }
