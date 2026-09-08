@@ -19,6 +19,12 @@ async function audit(b: StrategyDecisionBindings, e: Parameters<StrategyDecision
   try { await b.audit(e); } catch { /* fail closed */ }
 }
 
+function statusFor(reason_code: string): number {
+  if (reason_code.includes("REQUIRED") || reason_code.includes("REJECTED") || reason_code.includes("REQUIRES_APPROVED")) return 409;
+  if (reason_code.includes("INVALID") || reason_code.includes("MISMATCH")) return 400;
+  return 503;
+}
+
 export async function executeStrategyDecision(r: StrategyDecisionRequest) {
   if (!binding) {
     const { bindIdentityPageCommandRuntimes } = await import("@/server/shared/identityPageCommandRuntime");
@@ -44,6 +50,6 @@ export async function executeStrategyDecision(r: StrategyDecisionRequest) {
   } catch (error) {
     const reason_code = namedReason(error, "STRATEGY_DECISION_OPERATION_FAILED");
     await audit(b, { ...r, outcome: "ERROR", reason_code });
-    return { ok: false as const, status: 503, reason_code, correlation_id: r.correlation_id };
+    return { ok: false as const, status: statusFor(reason_code), reason_code, correlation_id: r.correlation_id };
   }
 }
