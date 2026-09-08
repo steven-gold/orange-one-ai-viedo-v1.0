@@ -1591,7 +1591,7 @@ pending_0028_strategy_human_review_permission_rls_closure:
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
 
 pending_0029_info_context_candidate_permission_rls_closure:
-  status: VALIDATED_PENDING_PRODUCTION_APPLY_AND_UI_HUMAN_INPUT_MATERIALIZATION
+  status: VALIDATED_PENDING_PRODUCTION_APPLY_EVIDENCE_LINEAGE_AND_EXPORT_OWNER
   source_migration: database/migrations/0029_info_context_candidate_permission_rls_closure.sql
   payload_sha256: a1494503e3dde66d9bcfcf9bdc0c18277bd942a5a415d827058df851dc8ba7b2
   change_ref: CR-INFO-0029
@@ -1678,7 +1678,89 @@ pending_0029_info_context_candidate_permission_rls_closure:
     production_apply_performed: false
   remaining_runtime_blockers:
   - Production has no FactPack or ContextCandidate rows, so positive INFO mutation E2E cannot be fabricated.
-  - INFO Adopt/Decide action schemas are registered, but 07_ui/interaction_registry.yaml has no registered human-input interaction for the two buttons; UI remains fail-closed rather than auto-fabricating decision/reason.
   - Exact knowledge_sources/evidence_records workspace lineage and FactPack evidence_refs JSON shape are not defined strongly enough to open Evidence RLS safely.
   - exportProjection has no canonical export persistence owner and remains fail-closed.
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+
+pending_0030_soc_target_policy_permission_rls_closure:
+  status: VALIDATED_PENDING_PRODUCTION_APPLY
+  source_migration: database/migrations/0030_soc_target_policy_permission_rls_closure.sql
+  payload_sha256: d43ee379e03c27824e61613f89ffdb75823182ef3397bd9c507d70b943aed518
+  change_ref: CR-SOC-0030
+  authority_basis:
+  - admin:SOC-01 ConfigureSocialTargetPolicyRequest uses the exact existing PublishingService route /v1/social/targets/{targetId}/posting-policy.
+  - The closure reuses public.social_market_targets, public.audit_events and acpos_runtime.idempotency; no parallel policy store is created.
+  - public.social_market_targets.version is the only additive schema field and supplies exact optimistic-concurrency expected_version semantics.
+  - Existing ACTION, CONTROL and API permission resources are reused; no permission resource is invented.
+  - Actor-scoped idempotency keys are stored in the existing acpos_runtime.idempotency owner and are not shared across actors.
+  - An eligible JOINED target may transition only to READY_TO_POST; this operation does not create a publish request, does not call an external provider and does not claim POSTED.
+  reused_permission_resources:
+  - page:admin:SOC-01 VIEW
+  - action:admin:SOC-04:ACT-SOCIAL-TARGET-POLICY INVOKE
+  - control:CTRL-ADMIN-SOC-04-ACT-01-ACT-SOCIAL-TARGET-POLICY INVOKE
+  - api:configureSocialTargetPolicy EXECUTE
+  reuse_contract:
+  - public.social_market_targets
+  - public.audit_events
+  - acpos_runtime.idempotency
+  new_parallel_systems: 0
+  validation_evidence:
+    status: PASS_DATA_SCHEMA_PERMISSION_RLS_RUNTIME_ROLE_AND_TRANSACTIONAL_MUTATION
+    validated_on: '2026-09-08'
+    source: LIVE_NEON_VALIDATION_BRANCH_AND_RELEASE_GATE
+    validation_branch_name: rls-0016-validate-20260906
+    validation_branch_id: br-orange-smoke-aut9pafw
+    parent_branch_id: br-shy-cherry-auiol4oy
+    migration_count_before_apply: 29
+    migration_count_after_apply: 30
+    migration_history_rows: 1
+    checksum: d43ee379e03c27824e61613f89ffdb75823182ef3397bd9c507d70b943aed518
+    approved_allow_assignments: 3
+    rls_policy_count_added_or_replaced: 6
+    target_version_column: true
+    target_select_grant: true
+    target_policy_update_grant: true
+    idempotency_select_insert_grant: true
+    audit_select_insert_grant: true
+    production_mutation_performed: false
+    runtime_role_validation:
+      role: acpos_app_runtime
+      validation_data_scope: VALIDATION_BRANCH_TRANSACTION_ONLY
+      actor_resolved: true
+      action_permission: true
+      control_permission: true
+      api_permission: true
+      target_visible_rows: 1
+      target_transition: JOINED_TO_READY_TO_POST_V1_TO_V2_PASS
+      idempotency_insert: PASS
+      idempotency_read: PASS
+      audit_insert: PASS
+      audit_visible_rows: 1
+      cleanup_target_rows: 0
+      cleanup_idempotency_rows: 0
+      cleanup_audit_rows: 0
+      cleanup_session_rows: 0
+  predeploy_runtime_evidence:
+    release_gate:
+      run_number: 813
+      run_id: 34191812915
+      head_sha: de64634f2d59697faed65bc9e392fb9dc35271d7
+      conclusion: success
+    regression_tests:
+    - exact ConfigureSocialTargetPolicyRequest + PublishingService route binding
+    - safe registered FORM_MODAL human input without DOM interpolation of DB values
+    - three-layer ACTION/CONTROL/API authorization
+    - session-bound target projection with selected target/version
+    - actor-scoped idempotency and audit persistence
+    - no external provider request and no publish request side effect
+  production_baseline:
+    migration_count: 20
+    latest_migration: 0020_system_lifecycle_runtime
+    soc_0030_assignment_rows: 0
+    social_target_rows: 0
+    production_apply_performed: false
+  remaining_runtime_blockers:
+  - requestSocialTargetPublish remains a separate external-provider/publish-owner closure and is not executed by migration 0030.
+  - Other SOC account/discovery/join/manual-action operations remain outside this 0030 local policy closure unless their exact schema/runtime evidence is separately materialized.
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
