@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-08-IAM0026-VALIDATED-PENDING-PRODUCTION-APPLY
+  revision: 2026-09-08-QA0027-VALIDATED-PENDING-PRODUCTION-APPLY
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 live_neon_target:
@@ -73,9 +73,9 @@ artifact_bindings:
   account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   account_permission_catalog_bytes: 2762474
   account_permission_catalog_lines: 79399
-  materialized_migration_count: 26
-  repository_registered_migration_count: 26
-  validation_branch_migration_count: 26
+  materialized_migration_count: 27
+  repository_registered_migration_count: 27
+  validation_branch_migration_count: 27
   production_applied_migration_count: 20
 current_production_reconciliation:
   status: PASS
@@ -1451,4 +1451,70 @@ pending_0026_iam_operation_permission_closure:
   authenticated_runtime_validation:
     status: PENDING_FINAL_RELEASE_SEQUENCE
     note: Validation branch permission data is proven; final authenticated IAM operation E2E remains gated on governed Production apply/login.
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+pending_0027_qa_review_lifecycle_permission_rls_closure:
+  status: VALIDATED_PENDING_PRODUCTION_APPLY_AND_REAL_QA_SOURCE_E2E
+  source_migration: database/migrations/0027_qa_review_lifecycle_permission_rls_closure.sql
+  payload_sha256: 9309b61424bbd72adace0e7da86836bc6ac429e4b99c96a5a2105fec10979c19
+  change_ref: CR-QA-0027
+  authority_basis:
+  - QA-01 Start Review uses exact handoff target_task_id -> source_output_version_id linkage.
+  - Approved quality_criteria_versions is the only accepted criteria source.
+  - QA PASS/FAIL requires a persisted scorecard matching current review output/task/criteria and requested gate outcome.
+  - PASS blocks on any finding with closed_at null and any unresolved ManualReviewCase.
+  - Release Candidate remains fail-closed until rights/channel evidence owners are materially verifiable; no release package is synthesized.
+  reuse_contract:
+  - public.department_tasks
+  - public.handoffs
+  - public.task_outputs
+  - public.quality_criteria_versions
+  - public.qa_review_runs
+  - public.scorecards
+  - public.findings
+  - public.manual_review_cases
+  - public.correction_requests
+  - public.release_packages
+  - existing API permission resources api:startQaReview/api:startRecheck/api:decidePass/api:decideFail/api:createReleasePackage
+  new_parallel_systems: 0
+  validation_evidence:
+    status: PASS_DATA_SCHEMA_PERMISSION_RLS
+    validated_on: '2026-09-08'
+    source: LIVE_NEON_VALIDATION_BRANCH_AND_RELEASE_REGRESSION
+    validation_branch_name: rls-0016-validate-20260906
+    validation_branch_id: br-orange-smoke-aut9pafw
+    parent_branch_id: br-shy-cherry-auiol4oy
+    migration_count_before_apply: 26
+    migration_count_after_apply: 27
+    migration_history_rows: 1
+    checksum: 9309b61424bbd72adace0e7da86836bc6ac429e4b99c96a5a2105fec10979c19
+    approved_allow_assignments: 5
+    approved_deny_assignments: 0
+    rls_policy_count_added_or_replaced: 4
+    criteria_select_grant: true
+    qa_review_select_grant: true
+    qa_review_insert_grant: true
+    qa_review_output_version_update_grant: true
+    qa_review_rows_created_by_migration: 0
+    scorecard_rows_created_by_migration: 0
+    finding_rows_created_by_migration: 0
+    release_rows_created_by_migration: 0
+    production_mutation_performed: false
+  predeploy_runtime_evidence:
+    qa_regression_tests:
+    - exact handoff output + approved criteria projection
+    - lifecycle owner requires canonical QA data and scorecard gate
+    - migration 0027 existing-resource-only permission/RLS closure
+    release_gate_exact_sha: PENDING_LATEST_EXACT_GATE
+  production_baseline:
+    migration_count: 20
+    latest_migration: 0020_system_lifecycle_runtime
+    qa_0027_assignment_rows: 0
+    qa_review_rows: 0
+    production_apply_performed: false
+  remaining_runtime_blockers:
+  - Real Production QA task/output/approved criteria rows are currently absent, so positive start-review E2E cannot be fabricated.
+  - System/AI scorecard generation remains Provider-dependent and must not be simulated in Production.
+  - createFinding remains blocked by Authority gap QA issue-category registry.
+  - createReleasePackage remains fail-closed because current schema cannot verify rights_gate_ref/channel_policy_ref against canonical relational owners.
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
