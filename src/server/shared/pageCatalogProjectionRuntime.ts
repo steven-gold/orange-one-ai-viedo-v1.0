@@ -898,6 +898,92 @@ async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<u
     ORDER BY r.created_at DESC
     LIMIT 1
   `))[0] ?? null;
+  const qaReviewRef=asText(reviewRow?.qa_review_ref);
+  const exactOutputRef=asText(reviewRow?.target_output_version_id);
+
+  const releaseContext = qaReviewRef && exactOutputRef
+    ? (await safeRows(() => runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT
+            r.qa_review_run_id::text AS qa_review_ref,
+            r.status::text AS review_status,
+            r.output_version_id::text AS output_version_id,
+            s.scorecard_id::text AS qa_gate_ref,
+            b.release_policy_binding_id::text AS release_policy_binding_id,
+            rv.rights_policy_version_id::text AS rights_policy_version_id,
+            rv.gate_state AS rights_gate_state,
+            rv.status::text AS rights_status,
+            b.channel_required,
+            cv.channel_policy_version_id::text AS channel_policy_version_id,
+            cv.gate_state AS channel_gate_state,
+            cv.status::text AS channel_status,
+            ca.channel_account_id::text AS channel_account_id,
+            ca.status::text AS channel_account_status,
+            EXISTS(
+              SELECT 1 FROM public.findings f
+              WHERE f.output_version_id=r.output_version_id AND f.closed_at IS NULL
+            ) AS has_open_finding,
+            EXISTS(
+              SELECT 1 FROM public.manual_review_cases m
+              WHERE m.qa_review_run_id=r.qa_review_run_id AND m.decided_at IS NULL
+            ) AS has_open_manual,
+            rp.release_package_id::text AS release_package_id
+          FROM public.qa_review_runs r
+          JOIN LATERAL (
+            SELECT s0.scorecard_id
+            FROM public.scorecards s0
+            WHERE s0.output_version_id=r.output_version_id
+              AND s0.task_id=r.qa_task_id
+              AND s0.criteria_version_id=r.criteria_version_id
+              AND s0.gate_status='PASS'
+            ORDER BY s0.created_at DESC,s0.scorecard_id DESC
+            LIMIT 1
+          ) s ON true
+          JOIN public.release_policy_bindings b
+            ON b.output_version_id=r.output_version_id
+           AND b.status='APPROVED'
+          JOIN public.rights_policy_versions rv
+            ON rv.rights_policy_version_id=b.rights_policy_version_id
+           AND rv.status='APPROVED'
+           AND rv.gate_state='PASS'
+          LEFT JOIN public.channel_policy_versions cv
+            ON cv.channel_policy_version_id=b.channel_policy_version_id
+           AND cv.status='APPROVED'
+           AND cv.gate_state='PASS'
+          LEFT JOIN public.channel_accounts ca
+            ON ca.channel_account_id=cv.channel_account_id
+           AND ca.status='APPROVED'
+          LEFT JOIN public.release_packages rp
+            ON rp.qa_review_run_id=r.qa_review_run_id
+          WHERE r.qa_review_run_id=${qaReviewRef}::uuid
+            AND r.output_version_id=${exactOutputRef}::uuid
+          LIMIT 1
+        `,
+      )))[0] ?? null
+    : null;
+
+  const channelRequired=releaseContext?.channel_required===true;
+  const channelReady=!channelRequired || Boolean(
+    asText(releaseContext?.channel_policy_version_id)
+    && asText(releaseContext?.channel_gate_state)==="PASS"
+    && asText(releaseContext?.channel_status)==="APPROVED"
+    && asText(releaseContext?.channel_account_status)==="APPROVED"
+  );
+  const releaseReady=Boolean(
+    releaseContext
+    && asText(releaseContext.review_status)==="PASS"
+    && asText(releaseContext.qa_gate_ref)
+    && asText(releaseContext.rights_policy_version_id)
+    && asText(releaseContext.rights_gate_state)==="PASS"
+    && asText(releaseContext.rights_status)==="APPROVED"
+    && releaseContext.has_open_finding!==true
+    && releaseContext.has_open_manual!==true
+    && channelReady
+  );
+  const existingReleaseRef=asText(releaseContext?.release_package_id);
+
   const empty = emptyQa() as Record<string, unknown>;
   return {
     ...empty,
@@ -905,19 +991,30 @@ async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<u
     project_id: first?.project_id ?? projects[0]?.ref ?? null,
     topic_id: first?.topic_id ?? topics[0]?.ref ?? null,
     qa_task_ref: asText(reviewRow?.qa_task_ref) ?? first?.task_id ?? null,
-    qa_review_ref: asText(reviewRow?.qa_review_ref) ?? null,
-    target_output_version_id: asText(reviewRow?.target_output_version_id) ?? asText(first?.handed_off_output_version_id) ?? asText(scorecards[0]?.output_version_id) ?? null,
-    scorecard_ref: asText(scorecards[0]?.scorecard_id) ?? null,
+    qa_review_ref: qaReviewRef ?? null,
+    target_output_version_id: exactOutputRef ?? asText(first?.handed_off_output_version_id) ?? asText(scorecards[0]?.output_version_id) ?? null,
+    scorecard_ref: asText(releaseContext?.qa_gate_ref) ?? asText(scorecards[0]?.scorecard_id) ?? null,
+    release_package_ref: existingReleaseRef ?? null,
     values: {
       "QA-01-FLD-PROJECT": first?.project_label ?? projects[0]?.label ?? DASH,
       "QA-01-FLD-TOPIC": first?.topic_label ?? topics[0]?.label ?? DASH,
       "QA-01-FLD-QA-TASK": first?.task_id ?? DASH,
-      "QA-01-FLD-TARGET-OUTPUT": asText(reviewRow?.target_output_version_id) ?? asText(first?.handed_off_output_version_id) ?? DASH,
+      "QA-01-FLD-TARGET-OUTPUT": exactOutputRef ?? asText(first?.handed_off_output_version_id) ?? DASH,
       "QA-01-FLD-REVIEW-STATE": asText(reviewRow?.status) ?? first?.status ?? DASH,
       "QA-01-FLD-CRITERIA-VERSION": asText(criteria?.ref) ?? DASH,
       "QA-01-FLD-GATE-POLICY": criteria?.gate_policy ?? DASH,
       "QA-01-FLD-REQUIRED-CHECKS": criteria?.required_checks ?? DASH,
       "QA-01-FLD-SCRIPT-HASH": asText(criteria?.content_hash) ?? DASH,
+      "QA-01-FLD-REL-QA-PASS": asText(releaseContext?.review_status) ?? DASH,
+      "QA-01-FLD-REL-FINDINGS": releaseContext ? (releaseContext.has_open_finding===true ? "OPEN" : "CLOSED") : DASH,
+      "QA-01-FLD-REL-MANUAL": releaseContext ? (releaseContext.has_open_manual===true ? "OPEN" : "CLOSED") : DASH,
+      "QA-01-FLD-REL-RIGHTS": asText(releaseContext?.rights_gate_state) ?? DASH,
+      "QA-01-FLD-REL-POLICY": releaseReady ? "PASS" : DASH,
+      "QA-01-FLD-REL-CHANNEL": channelRequired ? (asText(releaseContext?.channel_policy_version_id) ?? DASH) : "NOT_REQUIRED",
+      "QA-01-FLD-REL-PACKAGE": existingReleaseRef ?? DASH,
+      "QA-01-FLD-REL-OUTPUTS": exactOutputRef ?? DASH,
+      "QA-01-FLD-REL-QA-GATE": asText(releaseContext?.qa_gate_ref) ?? DASH,
+      "QA-01-FLD-REL-RIGHTS-GATE": asText(releaseContext?.rights_policy_version_id) ?? DASH,
     },
     lists: {
       "QA-01-LIST-REVIEWS": reviews,
@@ -934,6 +1031,7 @@ async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<u
       "QA-01-GATE-PAGE": true,
       "QA-01-GATE-START": Boolean(first?.task_id && first?.handed_off_output_version_id && criteria?.ref),
       "QA-01-GATE-CRITERIA": Boolean(criteria?.ref),
+      "QA-01-GATE-RELEASE": releaseReady && !existingReleaseRef,
     },
   };
 }

@@ -340,65 +340,256 @@ async function releasePreflight(request: QaRequest): Promise<unknown> {
     : [];
   if (outputIds.length !== 1) throw new NamedRuntimeError("QA01_RELEASE_EXACT_OUTPUT_REQUIRED");
 
-  const qaGateRef = text(payload.qa_gate_ref);
-  const rightsGateRef = text(payload.rights_gate_ref);
-  const channelPolicyRef = text(payload.channel_policy_ref);
-  if (!qaGateRef) throw new NamedRuntimeError("QA01_QA_GATE_REF_REQUIRED");
-  if (!rightsGateRef || !channelPolicyRef) {
-    throw new NamedRuntimeError("QA01_RELEASE_RIGHTS_POLICY_EVIDENCE_REQUIRED");
-  }
+  const qaGateRef = requireUuid(payload.qa_gate_ref, "QA01_QA_GATE_REF_REQUIRED");
+  const rightsGateRef = requireUuid(payload.rights_gate_ref, "QA01_RELEASE_RIGHTS_POLICY_EVIDENCE_REQUIRED");
+  const channelRaw = text(payload.channel_policy_ref);
+  const channelPolicyRef = channelRaw && channelRaw !== "NOT_REQUIRED" && channelRaw !== "—"
+    ? requireUuid(channelRaw, "QA01_RELEASE_CHANNEL_POLICY_REF_INVALID")
+    : null;
 
-  const { sql, session_token_hash } = await requireContext();
+  const { sql, actor_user_id, session_token_hash } = await requireContext();
   const rows = await runRlsActorQuery(
     sql,
     session_token_hash,
     sql`
-      SELECT
-        r.qa_review_run_id::text AS qa_review_id,
-        r.output_version_id::text AS target_output_version_id,
-        s.scorecard_id::text AS scorecard_ref,
-        h.rights_profile_id::text AS rights_profile_ref
-      FROM public.qa_review_runs r
-      JOIN LATERAL (
-        SELECT s0.scorecard_id
-        FROM public.scorecards s0
-        WHERE s0.output_version_id=r.output_version_id
-          AND s0.task_id=r.qa_task_id
-          AND s0.criteria_version_id=r.criteria_version_id
-          AND s0.gate_status='PASS'
-        ORDER BY s0.created_at DESC
+      WITH eligible AS (
+        SELECT
+          r.qa_review_run_id,
+          r.qa_task_id,
+          r.output_version_id,
+          s.scorecard_id,
+          o.artifact_checksum,
+          o.production_contract_id,
+          o.goal_id,
+          o.blueprint_version_id,
+          o.topic_id,
+          COALESCE(o.project_id,r.project_id,t.project_id) AS project_id,
+          b.release_policy_binding_id,
+          b.channel_required,
+          rp.rights_profile_id,
+          rv.rights_policy_version_id,
+          rv.version_no AS rights_version_no,
+          rv.policy_scope AS rights_policy_scope,
+          rv.policy_document AS rights_policy_document,
+          btrim(rv.content_hash::text) AS rights_content_hash,
+          cv.channel_policy_version_id,
+          cv.version_no AS channel_version_no,
+          cv.policy_scope AS channel_policy_scope,
+          cv.policy_document AS channel_policy_document,
+          btrim(cv.content_hash::text) AS channel_content_hash,
+          ca.channel_account_id,
+          ca.platform_key,
+          ca.external_account_ref
+        FROM public.qa_review_runs r
+        JOIN public.department_tasks t ON t.task_id=r.qa_task_id
+        JOIN public.task_outputs o ON o.output_version_id=r.output_version_id
+        JOIN public.scorecards s
+          ON s.scorecard_id=${qaGateRef}::uuid
+         AND s.output_version_id=r.output_version_id
+         AND s.task_id=r.qa_task_id
+         AND s.criteria_version_id=r.criteria_version_id
+         AND s.gate_status='PASS'
+        JOIN public.release_policy_bindings b
+          ON b.output_version_id=r.output_version_id
+         AND b.project_id=COALESCE(o.project_id,r.project_id,t.project_id)
+         AND b.status='APPROVED'
+        JOIN public.rights_policy_versions rv
+          ON rv.rights_policy_version_id=b.rights_policy_version_id
+         AND rv.project_id=b.project_id
+         AND rv.status='APPROVED'
+         AND rv.gate_state='PASS'
+        JOIN public.rights_profiles rp
+          ON rp.rights_profile_id=rv.rights_profile_id
+         AND rp.project_id=b.project_id
+         AND rp.status='APPROVED'
+        LEFT JOIN public.channel_policy_versions cv
+          ON cv.channel_policy_version_id=b.channel_policy_version_id
+         AND cv.project_id=b.project_id
+         AND cv.status='APPROVED'
+         AND cv.gate_state='PASS'
+        LEFT JOIN public.channel_accounts ca
+          ON ca.channel_account_id=cv.channel_account_id
+         AND ca.status='APPROVED'
+        JOIN LATERAL (
+          SELECT h0.rights_profile_id
+          FROM public.handoffs h0
+          WHERE h0.target_task_id=r.qa_task_id
+            AND h0.source_output_version_id=r.output_version_id
+            AND h0.status IN ('HANDOFF_READY','HANDED_OFF')
+          ORDER BY h0.created_at DESC,h0.handoff_id DESC
+          LIMIT 1
+        ) h ON true
+        WHERE r.qa_review_run_id=${qaReviewId}::uuid
+          AND r.status='PASS'
+          AND r.output_version_id=${outputIds[0]}::uuid
+          AND rv.rights_policy_version_id=${rightsGateRef}::uuid
+          AND (h.rights_profile_id IS NULL OR h.rights_profile_id=rp.rights_profile_id)
+          AND (
+            (b.channel_required=false AND b.channel_policy_version_id IS NULL AND ${channelPolicyRef}::text IS NULL)
+            OR
+            (
+              b.channel_required=true
+              AND cv.channel_policy_version_id IS NOT NULL
+              AND ca.channel_account_id IS NOT NULL
+              AND cv.channel_policy_version_id::text=${channelPolicyRef}
+            )
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM public.findings f
+            WHERE f.output_version_id=r.output_version_id AND f.closed_at IS NULL
+          )
+          AND NOT EXISTS (
+            SELECT 1 FROM public.manual_review_cases m
+            WHERE m.qa_review_run_id=r.qa_review_run_id AND m.decided_at IS NULL
+          )
         LIMIT 1
-      ) s ON true
-      JOIN public.handoffs h
-        ON h.target_task_id=r.qa_task_id
-       AND h.source_output_version_id=r.output_version_id
-       AND h.status IN ('HANDOFF_READY','HANDED_OFF')
-      WHERE r.qa_review_run_id=${qaReviewId}::uuid
-        AND r.status='PASS'
-        AND r.output_version_id=${outputIds[0]}::uuid
-        AND s.scorecard_id::text=${qaGateRef}
-        AND NOT EXISTS (
-          SELECT 1 FROM public.findings f
-          WHERE f.output_version_id=r.output_version_id AND f.closed_at IS NULL
+      ),
+      inserted AS (
+        INSERT INTO public.release_packages(
+          qa_review_run_id,
+          output_version_id,
+          rights_evidence,
+          channel_policy_snapshot,
+          approval_path,
+          status,
+          package_hash,
+          production_contract_id,
+          goal_id,
+          blueprint_version_id,
+          topic_id,
+          project_id,
+          release_policy_binding_id,
+          rights_policy_version_id,
+          channel_policy_version_id
         )
-        AND NOT EXISTS (
-          SELECT 1 FROM public.manual_review_cases m
-          WHERE m.qa_review_run_id=r.qa_review_run_id AND m.decided_at IS NULL
+        SELECT
+          e.qa_review_run_id,
+          e.output_version_id,
+          jsonb_build_object(
+            'rights_profile_id',e.rights_profile_id,
+            'rights_policy_version_id',e.rights_policy_version_id,
+            'version_no',e.rights_version_no,
+            'gate_state','PASS',
+            'content_hash',e.rights_content_hash,
+            'policy_scope',e.rights_policy_scope,
+            'policy_document',e.rights_policy_document
+          ),
+          CASE WHEN e.channel_required THEN
+            jsonb_build_object(
+              'channel_required',true,
+              'channel_policy_version_id',e.channel_policy_version_id,
+              'channel_account_id',e.channel_account_id,
+              'version_no',e.channel_version_no,
+              'gate_state','PASS',
+              'content_hash',e.channel_content_hash,
+              'platform_key',e.platform_key,
+              'external_account_ref',e.external_account_ref,
+              'policy_scope',e.channel_policy_scope,
+              'policy_document',e.channel_policy_document
+            )
+          ELSE jsonb_build_object('channel_required',false) END,
+          jsonb_build_object(
+            'qa_review_id',e.qa_review_run_id,
+            'qa_gate_ref',e.scorecard_id,
+            'release_policy_binding_id',e.release_policy_binding_id,
+            'candidate_only',true,
+            'publish',false
+          ),
+          'PENDING_APPROVAL',
+          encode(digest(concat_ws('|',
+            e.qa_review_run_id::text,
+            e.output_version_id::text,
+            btrim(e.artifact_checksum::text),
+            e.scorecard_id::text,
+            e.release_policy_binding_id::text,
+            e.rights_policy_version_id::text,
+            COALESCE(e.channel_policy_version_id::text,'NOT_REQUIRED'),
+            e.rights_content_hash,
+            COALESCE(e.channel_content_hash,'NOT_REQUIRED')
+          ),'sha256'),'hex')::char(64),
+          e.production_contract_id,
+          e.goal_id,
+          e.blueprint_version_id,
+          e.topic_id,
+          e.project_id,
+          e.release_policy_binding_id,
+          e.rights_policy_version_id,
+          e.channel_policy_version_id
+        FROM eligible e
+        ON CONFLICT (qa_review_run_id) DO NOTHING
+        RETURNING *
+      ),
+      audited AS (
+        INSERT INTO public.audit_events(
+          action,entity_type,entity_id,actor_id,actor_type,workspace_id,reason,correlation_id,payload_hash
         )
-      ORDER BY h.created_at DESC
+        SELECT
+          'createReleasePackage',
+          'QA-01',
+          i.release_package_id,
+          ${actor_user_id}::uuid,
+          'USER',
+          p.workspace_id,
+          'Release candidate created from exact QA PASS and canonical policy binding; no approval or publish',
+          ${request.correlation_id}::uuid,
+          encode(digest(concat_ws('|',
+            i.release_package_id::text,
+            i.qa_review_run_id::text,
+            i.release_policy_binding_id::text,
+            i.rights_policy_version_id::text,
+            COALESCE(i.channel_policy_version_id::text,'NOT_REQUIRED')
+          ),'sha256'),'hex')
+        FROM inserted i
+        JOIN public.projects p ON p.project_id=i.project_id
+        RETURNING audit_event_id,entity_id
+      ),
+      exact_existing AS (
+        SELECT rp.*
+        FROM public.release_packages rp
+        JOIN eligible e
+          ON e.qa_review_run_id=rp.qa_review_run_id
+         AND e.output_version_id=rp.output_version_id
+         AND e.release_policy_binding_id=rp.release_policy_binding_id
+         AND e.rights_policy_version_id=rp.rights_policy_version_id
+         AND rp.channel_policy_version_id IS NOT DISTINCT FROM e.channel_policy_version_id
+        WHERE NOT EXISTS (SELECT 1 FROM inserted)
+      )
+      SELECT
+        x.release_package_id::text AS release_package_id,
+        x.qa_review_run_id::text AS qa_review_id,
+        x.output_version_id::text AS target_output_version_id,
+        x.release_policy_binding_id::text AS release_policy_binding_id,
+        x.rights_policy_version_id::text AS rights_policy_version_id,
+        x.channel_policy_version_id::text AS channel_policy_version_id,
+        x.status::text AS state,
+        false AS idempotent_replay,
+        (SELECT audit_event_id::text FROM audited a WHERE a.entity_id=x.release_package_id LIMIT 1) AS audit_event_id
+      FROM inserted x
+      UNION ALL
+      SELECT
+        x.release_package_id::text,
+        x.qa_review_run_id::text,
+        x.output_version_id::text,
+        x.release_policy_binding_id::text,
+        x.rights_policy_version_id::text,
+        x.channel_policy_version_id::text,
+        x.status::text,
+        true,
+        NULL::text
+      FROM exact_existing x
       LIMIT 1
     `,
   );
-  const row = first(rows);
-  if (!row) throw new NamedRuntimeError("QA01_RELEASE_GATE_NOT_SATISFIED");
-  if (!text(row.rights_profile_ref)) {
-    throw new NamedRuntimeError("QA01_RELEASE_RIGHTS_PROFILE_NOT_VERIFIABLE");
-  }
 
-  // Current schema has no canonical rights-profile relation and no channel-policy relation
-  // that can prove the user-provided refs. Keep ReleaseService fail-closed rather than
-  // materializing unverifiable evidence into release_packages.
-  throw new NamedRuntimeError("QA01_RELEASE_EVIDENCE_OWNER_NOT_MATERIALIZED");
+  const row = first(rows);
+  if (!row) throw new NamedRuntimeError("QA01_RELEASE_POLICY_BINDING_OR_CONTEXT_CONFLICT");
+  return {
+    ...row,
+    candidate_only: true,
+    publish: false,
+    release_approved: false,
+    external_request_sent: false,
+  };
 }
 
 export async function executeProductionQaLifecycle(request: QaRequest): Promise<unknown> {
