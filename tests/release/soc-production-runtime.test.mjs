@@ -219,4 +219,14 @@ test("SOC candidate APPROVE seals exact content package atomically without publi
   assert.match(runtime, /audited AS/);
   assert.match(runtime, /content_package_status/);
   assert.doesNotMatch(runtime, /decideProductionSocCandidate[\s\S]*fetch\(/);
+
+  const adapters = await read("src/domain/catalog/identityClientCommandAdapters.ts");
+  assert.match(adapters, /openSocCandidateDecisionDialog/);
+  assert.match(adapters, /option value="APPROVE"/);
+  assert.match(adapters, /option value="REJECT"/);
+  assert.match(adapters, /option value="RETURN"/);
+  assert.match(adapters, /SOC01_CANDIDATE_RATIONALE_REQUIRED/);
+  assert.match(adapters, /decision: decisionDialog\.decision/);
+  assert.match(adapters, /rationale: decisionDialog\.rationale/);
+  assert.doesNotMatch(adapters, /decision: "APPROVE",[\s\S]{0,120}Approved from governed SOC-01 candidate review/);
 });
