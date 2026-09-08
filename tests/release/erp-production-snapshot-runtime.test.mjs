@@ -77,3 +77,28 @@ test("migration 0023 stages only ERP snapshot refresh control/API permissions", 
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 20/);
   assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 23);
 });
+
+
+test("ERP-01 Production sync status and failure reads honor exact path identity", async () => {
+  const identity = await read("src/server/shared/identityPageCommandRuntime.ts");
+  const projection = await read("src/server/shared/pageCatalogProjectionRuntime.ts");
+  const runtime = await read("src/components/pages/ErpControlRuntime.tsx");
+
+  assert.match(identity, /ERP01_SYNC_JOB_ID_INVALID/);
+  assert.match(identity, /WHERE erp_sync_job_id = \${jobId}::uuid/);
+  assert.match(identity, /ERP01_SYNC_JOB_NOT_FOUND/);
+  assert.match(identity, /event: "erp\.sync\.status_read"/);
+  assert.match(identity, /ERP01_FAILURE_ID_INVALID/);
+  assert.match(identity, /WHERE erp_failure_id = \${failureId}::uuid/);
+  assert.match(identity, /ERP01_FAILURE_NOT_FOUND/);
+  assert.match(identity, /event: "erp\.failure\.read"/);
+  assert.doesNotMatch(identity, /getERPSyncStatus"[\\s\\S]{0,800}ORDER BY requested_at DESC[\\s\\S]{0,100}LIMIT 50/);
+  assert.doesNotMatch(identity, /getERPFailure"[\\s\\S]{0,800}ORDER BY occurred_at DESC[\\s\\S]{0,100}LIMIT 50/);
+
+  assert.match(projection, /FROM erp_failures/);
+  assert.match(projection, /latestFailure/);
+  assert.match(projection, /"ERP-01-FLD-SYNC-FAILURE-ID"/);
+  assert.match(projection, /failure_id: asText\(latestFailure\?\.ref\)/);
+  assert.match(runtime, /\/v1\/erp\/sync-jobs\/\$\{encodeURIComponent\(jobId\)\}/);
+  assert.match(runtime, /\/v1\/erp\/failures\/\$\{encodeURIComponent\(failureId\)\}/);
+});

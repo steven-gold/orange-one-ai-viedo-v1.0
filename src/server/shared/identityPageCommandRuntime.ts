@@ -55,6 +55,11 @@ function asText(value: unknown): string | null {
   return trimmed.length > 0 ? trimmed : null;
 }
 
+function asUuidText(value: unknown): string | null {
+  const text = asText(value);
+  return text && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(text) ? text : null;
+}
+
 function asJsonObject(value: unknown): Record<string, unknown> | null {
   if (typeof value === "string") {
     try {
@@ -1230,22 +1235,48 @@ async function executeErp(request: ErpRuntimeRequest): Promise<unknown> {
   }
   const sql = await requireSql();
   if (request.operation_id === "getERPSyncStatus") {
+    const jobId = asUuidText(request.path_params?.id);
+    if (!jobId) throw new NamedRuntimeError("ERP01_SYNC_JOB_ID_INVALID");
     const rows = await sql`
-      SELECT erp_sync_job_id::text AS ref, status::text AS label
+      SELECT erp_sync_job_id::text AS job_id,
+             erp_connector_id::text AS erp_connector_id,
+             status::text AS state,
+             requested_scope,
+             data_classification,
+             snapshot_type,
+             attempt_no,
+             external_evidence_refs,
+             requested_at::text AS requested_at,
+             started_at::text AS started_at,
+             completed_at::text AS completed_at
       FROM erp_sync_jobs
-      ORDER BY requested_at DESC
-      LIMIT 50
+      WHERE erp_sync_job_id = ${jobId}::uuid
+      LIMIT 1
     `;
-    return { jobs: refItems(rows) };
+    const job = firstRow(rows);
+    if (!job) throw new NamedRuntimeError("ERP01_SYNC_JOB_NOT_FOUND");
+    return { ...job, event: "erp.sync.status_read" };
   }
   if (request.operation_id === "getERPFailure") {
+    const failureId = asUuidText(request.path_params?.id);
+    if (!failureId) throw new NamedRuntimeError("ERP01_FAILURE_ID_INVALID");
     const rows = await sql`
-      SELECT erp_failure_id::text AS ref, failure_code AS label, status::text AS status
+      SELECT erp_failure_id::text AS failure_id,
+             erp_connector_id::text AS erp_connector_id,
+             erp_sync_job_id::text AS sync_job_ref,
+             failure_code,
+             failure_detail,
+             retryable,
+             status::text AS state,
+             occurred_at::text AS occurred_at,
+             resolved_at::text AS resolved_at
       FROM erp_failures
-      ORDER BY occurred_at DESC
-      LIMIT 50
+      WHERE erp_failure_id = ${failureId}::uuid
+      LIMIT 1
     `;
-    return { failures: refItems(rows) };
+    const failure = firstRow(rows);
+    if (!failure) throw new NamedRuntimeError("ERP01_FAILURE_NOT_FOUND");
+    return { ...failure, event: "erp.failure.read" };
   }
   if (
     request.operation_id === "getERPFinanceFactPack"

@@ -1594,6 +1594,16 @@ async function readErpFromDb(sql: SqlClient): Promise<unknown> {
     FROM erp_sync_jobs
     ORDER BY requested_at DESC,erp_sync_job_id DESC
   `);
+  const failures = await safeRows(() => sql`
+    SELECT erp_failure_id::text AS ref,
+           erp_connector_id::text AS connector_ref,
+           erp_sync_job_id::text AS job_ref,
+           failure_code,
+           retryable,
+           status::text AS status
+    FROM erp_failures
+    ORDER BY occurred_at DESC,erp_failure_id DESC
+  `);
   const first = connectors[0] ?? null;
   const connectorRef = asText(first?.ref);
   const snapshot = connectorRef
@@ -1602,6 +1612,11 @@ async function readErpFromDb(sql: SqlClient): Promise<unknown> {
   const latestJob = connectorRef
     ? jobs.find((row) => asText(row.connector_ref) === connectorRef) ?? null
     : null;
+  const latestFailure = latestJob
+    ? failures.find((row) => asText(row.job_ref) === asText(latestJob.ref)) ?? null
+    : connectorRef
+      ? failures.find((row) => asText(row.connector_ref) === connectorRef) ?? null
+      : null;
   const connectionStatus = asText(first?.connection_status);
   const latestJobStatus = asText(latestJob?.status);
   const activeRefresh = latestJobStatus === "QUEUED" || latestJobStatus === "RUNNING" || latestJobStatus === "PENDING_EXTERNAL";
@@ -1626,6 +1641,9 @@ async function readErpFromDb(sql: SqlClient): Promise<unknown> {
       "ERP-01-FLD-SYNC-COMPLETENESS": asText(snapshot?.completeness) ?? DASH,
       "ERP-01-FLD-SYNC-LAST-SYNC-STATUS": latestJobStatus ?? DASH,
       "ERP-01-FLD-SYNC-STATUS": latestJobStatus ?? DASH,
+      "ERP-01-FLD-SYNC-FAILURE-ID": latestFailure
+        ? `${asText(latestFailure.ref) ?? DASH} · ${asText(latestFailure.failure_code) ?? DASH}`
+        : DASH,
     },
     gate_state: {
       "ERP-01-GATE-PAGE": true,
@@ -1641,6 +1659,8 @@ async function readErpFromDb(sql: SqlClient): Promise<unknown> {
       snapshot_version: asText(snapshot?.version) ?? "",
       sync_job_id: asText(latestJob?.ref) ?? "",
       sync_job_version: asText(latestJob?.attempt_no) ?? "",
+      failure_id: asText(latestFailure?.ref) ?? "",
+      failure_version: "1",
       requested_scope: requestedScope,
     } : {},
     form_schemas: snapshotRefreshReady ? {
