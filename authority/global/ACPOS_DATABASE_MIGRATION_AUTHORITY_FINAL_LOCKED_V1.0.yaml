@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-08-GOV0025-VALIDATED-PENDING-PRODUCTION-APPLY
+  revision: 2026-09-08-IAM0026-VALIDATED-PENDING-PRODUCTION-APPLY
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 live_neon_target:
@@ -73,9 +73,9 @@ artifact_bindings:
   account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   account_permission_catalog_bytes: 2762474
   account_permission_catalog_lines: 79399
-  materialized_migration_count: 25
-  repository_registered_migration_count: 25
-  validation_branch_migration_count: 25
+  materialized_migration_count: 26
+  repository_registered_migration_count: 26
+  validation_branch_migration_count: 26
   production_applied_migration_count: 20
 current_production_reconciliation:
   status: PASS
@@ -1404,4 +1404,51 @@ pending_0025_governance_operation_permission_closure:
   production_positive_e2e:
     status: PENDING_FINAL_RELEASE_SEQUENCE
     note: Production operation assignments remain intentionally absent and no governed resource was created during predeploy validation.
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+pending_0026_iam_operation_permission_closure:
+  status: VALIDATED_PENDING_PRODUCTION_APPLY_AND_AUTHENTICATED_IAM_E2E
+  source_migration: database/migrations/0026_iam_operation_permission_closure.sql
+  payload_sha256: 642d77e5f54bc5d922e6325d7a22d28ec7e2e3d2eb8b8005e493a8c0aea52cfe
+  change_ref: CR-IAM-0026
+  authority_basis:
+  - IAM registered operations reuse existing ACTION resources; no new IAM authority object is created.
+  - Six ACTION assignments cover eight registered IAM operations because assign/revoke share admin:IAM-05 ACT-CONFIGURE.
+  reused_permission_resources:
+  - action:admin:IAM-01:ACT-SEARCH
+  - action:admin:IAM-02:ACT-DRAFT-SAVE
+  - action:admin:IAM-02:ACT-DRAFT-VALIDATE
+  - action:admin:IAM-02:ACT-ACCOUNT-PERMISSION-PREVIEW
+  - action:admin:IAM-05:ACT-CONFIGURE
+  - action:admin:IAM-05:ACT-APPROVE
+  validation_evidence:
+    status: PASS
+    validated_on: '2026-09-08'
+    source: LIVE_NEON_VALIDATION_BRANCH_AND_RELEASE_GATE
+    validation_branch_name: rls-0016-validate-20260906
+    validation_branch_id: br-orange-smoke-aut9pafw
+    parent_branch_id: br-shy-cherry-auiol4oy
+    migration_count_before_apply: 25
+    migration_count_after_apply: 26
+    migration_history_rows: 1
+    checksum: 642d77e5f54bc5d922e6325d7a22d28ec7e2e3d2eb8b8005e493a8c0aea52cfe
+    approved_allow_assignments: 6
+    production_mutation_performed: false
+    release_gate:
+      run_number: 753
+      run_id: 34172049125
+      head_sha: dcc79a8d9a304c47413e61809b2426501732a779
+      conclusion: success
+      unit_tests: 137
+      unit_pass: 137
+      browser_cases: 72
+      iam_mutation_cases: 4
+  production_baseline:
+    migration_count: 20
+    latest_migration: 0020_system_lifecycle_runtime
+    iam_0026_rows: 0
+    production_apply_performed: false
+  authenticated_runtime_validation:
+    status: PENDING_FINAL_RELEASE_SEQUENCE
+    note: Validation branch permission data is proven; final authenticated IAM operation E2E remains gated on governed Production apply/login.
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
