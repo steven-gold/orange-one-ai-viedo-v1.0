@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-08-QA0027-VALIDATED-PENDING-PRODUCTION-APPLY
+  revision: 2026-09-08-STR0028-VALIDATED-PENDING-PRODUCTION-APPLY
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 live_neon_target:
@@ -73,9 +73,9 @@ artifact_bindings:
   account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   account_permission_catalog_bytes: 2762474
   account_permission_catalog_lines: 79399
-  materialized_migration_count: 27
-  repository_registered_migration_count: 27
-  validation_branch_migration_count: 27
+  materialized_migration_count: 28
+  repository_registered_migration_count: 28
+  validation_branch_migration_count: 28
   production_applied_migration_count: 20
 current_production_reconciliation:
   status: PASS
@@ -1517,4 +1517,75 @@ pending_0027_qa_review_lifecycle_permission_rls_closure:
   - System/AI scorecard generation remains Provider-dependent and must not be simulated in Production.
   - createFinding remains blocked by Authority gap QA issue-category registry.
   - createReleasePackage remains fail-closed because current schema cannot verify rights_gate_ref/channel_policy_ref against canonical relational owners.
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+pending_0028_strategy_human_review_permission_rls_closure:
+  status: VALIDATED_PENDING_PRODUCTION_APPLY_AND_GOVERNANCE_APPROVAL_E2E
+  source_migration: database/migrations/0028_strategy_human_review_permission_rls_closure.sql
+  payload_sha256: fbfb62018cdc45e2df51bb8262647a468845a7cdc98439e092453421949f865e
+  change_ref: CR-STR-0028
+  authority_basis:
+  - workspace:STR-01 human review/adoption reuses strategy_candidates, strategy_decisions and decision_requests.
+  - Candidate expected-version semantics use a SHA-256 fingerprint of immutable candidate content; no parallel version table is created.
+  - submitStrategyReview records an OPEN DecisionRequest and moves CANDIDATE -> DECISION_PENDING only.
+  - adoptAsContextCandidate never self-approves; it requires an APPROVED DecisionRequest with decider, decision_reason and evidence_refs.
+  - Adopt writes StrategyDecision ADOPT_CONTEXT and maps the canonical DB status APPROVED to UI state ADOPTED_CONTEXT.
+  - Finance / Workflow / Governance / Production execution remains outside STR-01; owner_execution_performed is always false.
+  reused_permission_resources:
+  - page:workspace:STR-01 VIEW
+  - api:submitStrategyReview EXECUTE
+  - api:adoptAsContextCandidate EXECUTE
+  reuse_contract:
+  - public.strategy_candidates
+  - public.strategy_decisions
+  - public.decision_requests
+  new_parallel_systems: 0
+  validation_evidence:
+    status: PASS_DATA_SCHEMA_PERMISSION_RLS_AND_RUNTIME_ROLE_AUTHORITY
+    validated_on: '2026-09-08'
+    source: LIVE_NEON_VALIDATION_BRANCH_AND_RELEASE_REGRESSION
+    validation_branch_name: rls-0016-validate-20260906
+    validation_branch_id: br-orange-smoke-aut9pafw
+    parent_branch_id: br-shy-cherry-auiol4oy
+    migration_count_before_apply: 27
+    migration_count_after_apply: 28
+    migration_history_rows: 1
+    checksum: fbfb62018cdc45e2df51bb8262647a468845a7cdc98439e092453421949f865e
+    approved_allow_assignments: 2
+    rls_policy_count_added_or_replaced: 6
+    candidate_select_grant: true
+    candidate_status_update_grant: true
+    strategy_decision_insert_grant: true
+    decision_request_insert_grant: true
+    candidate_rows_created_by_migration: 0
+    decision_rows_created_by_migration: 0
+    decision_request_rows_created_by_migration: 0
+    runtime_role_validation:
+      role: acpos_app_runtime
+      synthetic_validation_session_transactional: true
+      actor_resolved: true
+      page_view: true
+      review_execute: true
+      adopt_execute: true
+      validation_session_rows_after_transaction: 0
+    production_mutation_performed: false
+  predeploy_runtime_evidence:
+    strategy_regression_tests:
+    - session-bound RLS projection + immutable candidate fingerprint
+    - OPEN DecisionRequest review flow with no self-approval
+    - APPROVED DecisionRequest required for ADOPT_CONTEXT
+    - migration 0028 exact existing-resource-only permission/RLS closure
+    release_gate_exact_sha: PENDING_LATEST_EXACT_GATE
+  production_baseline:
+    migration_count: 20
+    latest_migration: 0020_system_lifecycle_runtime
+    str_0028_assignment_rows: 0
+    strategy_candidate_rows: 0
+    strategy_decision_rows: 0
+    decision_request_rows: 0
+    production_apply_performed: false
+  remaining_runtime_blockers:
+  - Production has no StrategyCandidate rows, so positive human-review mutation E2E cannot be fabricated.
+  - Governance owner capable of changing DecisionRequest OPEN/NOTIFIED -> APPROVED with decider/reason/evidence is not currently materialized as a dedicated DecisionRequest approval route.
+  - External AI/provider candidate generation remains a separate Provider-dependent concern and is not simulated by STR-01 runtime.
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
