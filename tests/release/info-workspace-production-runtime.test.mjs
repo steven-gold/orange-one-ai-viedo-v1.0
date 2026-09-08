@@ -21,26 +21,33 @@ test("INFO-01 registries materialize exact Current workspace operations without 
   assert.match(operations, /operation_id: exportProjection[\s\S]*materialization_status: BLOCKED_NO_CANONICAL_EXPORT_PERSISTENCE_OWNER/);
 });
 
-test("INFO-01 Production projection and client fail closed on unresolved evidence/export/human decision inputs", async () => {
+test("INFO-01 Production projection keeps evidence/export fail-closed and materializes registered human Adopt/Decide input", async () => {
   const projection = await read("src/server/shared/pageCatalogProjectionRuntime.ts");
   const port = await read("src/domain/info/infoProjectionPort.ts");
   const client = await read("src/domain/catalog/identityClientCommandAdapters.ts");
+  const interactions = await read("07_ui/interaction_registry.yaml");
 
   assert.match(projection, /readInfoFromDb[\s\S]*runRlsActorQuery\([\s\S]*FROM fact_packs f/);
   assert.match(projection, /FROM context_candidates c[\s\S]*JOIN fact_packs f/);
   assert.match(projection, /"INFO-01-GATE-EVIDENCE": false/);
   assert.match(projection, /"INFO-01-GATE-EXPORT": false/);
-  assert.match(projection, /"INFO-01-GATE-ADOPT": false/);
-  assert.match(projection, /"INFO-01-GATE-DECIDE": false/);
+  assert.match(projection, /"INFO-01-GATE-ADOPT": firstCandidate\?\.status === "CANDIDATE"/);
+  assert.match(projection, /"INFO-01-GATE-DECIDE": firstCandidate\?\.status === "CANDIDATE"/);
   assert.match(port, /export function isInfoProjectionResolverBound\(\)\{return true;\}/);
   assert.match(port, /function normalizeInfoProjection/);
 
   assert.match(client, /projection_type: "INFO_WORKSPACE"/);
   assert.match(client, /scope_ref/);
   assert.match(client, /INFO_EXPORT_OWNER_NOT_MATERIALIZED/);
-  assert.match(client, /INFO_HUMAN_ADOPTION_INPUT_NOT_MATERIALIZED/);
-  assert.match(client, /INFO_HUMAN_DECISION_INPUT_NOT_MATERIALIZED/);
-  assert.doesNotMatch(client, /decision:\s*"ACCEPTED"/);
+  assert.match(interactions, /info_interaction_registry:/);
+  assert.match(interactions, /INFO-01-BTN-ADOPT-CONTEXT[\s\S]*adoptContextCandidate[\s\S]*AdoptContextCandidateRequest/);
+  assert.match(client, /openInfoHumanDecisionDialog/);
+  assert.match(client, /document\.createElement\("dialog"\)/);
+  assert.match(client, /context_candidate_id: input\.candidate_ref[\s\S]*decision_reason: human\.decision_reason/);
+  assert.match(interactions, /INFO-01-BTN-CANDIDATE-DECIDE[\s\S]*decideCandidate[\s\S]*DecideCandidateRequest/);
+  assert.match(client, /candidate_id: input\.candidate_ref[\s\S]*decision: human\.decision/);
+  assert.doesNotMatch(client, /INFO_HUMAN_ADOPTION_INPUT_NOT_MATERIALIZED/);
+  assert.doesNotMatch(client, /INFO_HUMAN_DECISION_INPUT_NOT_MATERIALIZED/);
 });
 
 test("INFO-01 Production runtime separates adoption from candidate decision and audits exact owner context", async () => {

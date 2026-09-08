@@ -33,3 +33,21 @@ interaction_registry:
     - { control_id: CTRL-ADMIN-STR-06-ACT-02-ACT-CANDIDATE-DECIDE, source_page_uid: admin:STR-06, action_id: ACT-CANDIDATE-DECIDE, operation_id: rejectStrategyCandidate, method: POST, path: "/v1/ai/strategy/candidates/{strategyCandidateId}/reject", interaction_type: FORM_MODAL, form_schema: RejectStrategyCandidateRequest }
     - { control_id: CTRL-ADMIN-STR-06-ACT-03-ACT-ADOPT-CONTEXT, source_page_uid: admin:STR-06, action_id: ACT-ADOPT-CONTEXT, operation_id: adoptAsContextCandidate, method: POST, path: /v1/state-commands/strategycandidate/adoptascontextcandidate, interaction_type: FORM_MODAL, form_schema: AdoptAsContextCandidateRequest }
     - { control_id: CTRL-ADMIN-STR-06-ACT-04-ACT-NAV-OPEN, source_page_uid: admin:STR-06, action_id: ACT-NAV-OPEN, operation_id: getUiProjection, method: GET, path: "/v1/ui-projections/{pageUid}", interaction_type: DRAWER, form_schema: null }
+
+
+info_interaction_registry:
+  contract_meta:
+    contract_id: ACPOS-CURRENT-INFO-HUMAN-DECISION-INTERACTION-1.0.0
+    status: CURRENT_INFO_HUMAN_DECISION_REGISTERED
+    current_ui_owner: workspace:INFO-01
+    current_authority: authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml
+    source_registry_provenance: ACPOS_INFO-01_FINAL_LOCKED_ENCODING
+    provenance_is_non_executable: true
+  coverage:
+    scope: INFO_HUMAN_DECISION_ACTION_CONTROLS
+    source_pages: [workspace:INFO-01]
+    action_controls_materialized_here: 2
+    rule: Only the two Current INFO human decision controls are registered here; Evidence lineage and Export remain separate Authority/runtime gaps.
+  controls:
+    - { control_id: INFO-01-BTN-ADOPT-CONTEXT, source_page_uid: workspace:INFO-01, action_id: INFO-01-ACT-ADOPT-CONTEXT, operation_id: adoptContextCandidate, method: POST, path: "/v1/context-candidates/{id}/adopt", interaction_type: FORM_MODAL, form_schema: AdoptContextCandidateRequest }
+    - { control_id: INFO-01-BTN-CANDIDATE-DECIDE, source_page_uid: workspace:INFO-01, action_id: INFO-01-ACT-CANDIDATE-DECIDE, operation_id: decideCandidate, method: POST, path: "/v1/candidates/{id}/decision", interaction_type: FORM_MODAL, form_schema: DecideCandidateRequest }

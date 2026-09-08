@@ -1265,7 +1265,7 @@ async function readInfoFromDb(sql: SqlClient, sessionTokenHash: string): Promise
       "INFO-01-FLD-CANDIDATE-CITATIONS": firstCandidate?.evidence_refs ?? DASH,
       "INFO-01-FLD-CANDIDATE-STATE": firstCandidate?.status ?? DASH,
       "INFO-01-FLD-ADOPTION-REVIEW": firstCandidate?.decision_reason ?? DASH,
-      "INFO-01-FLD-DISABLED": "Evidence/source lineage, Export owner, and human decision input stay fail-closed until materialized",
+      "INFO-01-FLD-DISABLED": "Evidence/source lineage and Export owner stay fail-closed until materialized",
     },
     lists: {
       "INFO-01-LST-SOURCES": [],
@@ -1289,8 +1289,8 @@ async function readInfoFromDb(sql: SqlClient, sessionTokenHash: string): Promise
       "INFO-01-GATE-SEARCH": true,
       "INFO-01-GATE-EXPORT": false,
       "INFO-01-GATE-CANDIDATE": candidates.length > 0,
-      "INFO-01-GATE-ADOPT": false,
-      "INFO-01-GATE-DECIDE": false,
+      "INFO-01-GATE-ADOPT": firstCandidate?.status === "CANDIDATE",
+      "INFO-01-GATE-DECIDE": firstCandidate?.status === "CANDIDATE",
     },
   };
 }

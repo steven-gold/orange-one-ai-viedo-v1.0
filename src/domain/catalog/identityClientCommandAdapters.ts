@@ -79,6 +79,83 @@ function openDraftDialog(kind: "PROJECT" | "TOPIC"): Promise<{ ok: true; payload
   });
 }
 
+
+type InfoHumanDecisionResult =
+  | { ok: true; decision_reason: string; decision?: "ACCEPTED" | "REJECTED" }
+  | { ok: false; reason_code: string };
+
+function openInfoHumanDecisionDialog(kind: "ADOPT" | "DECIDE"): Promise<InfoHumanDecisionResult> {
+  if (typeof document === "undefined") {
+    return Promise.resolve({ ok: false, reason_code: "INFO_HUMAN_DECISION_WINDOW_UNAVAILABLE" });
+  }
+  return new Promise((resolve) => {
+    document.getElementById("acpos-info-human-decision-dialog")?.remove();
+    const dialog = document.createElement("dialog");
+    dialog.id = "acpos-info-human-decision-dialog";
+    dialog.style.padding = "20px";
+    dialog.style.border = "1px solid #3a4458";
+    dialog.style.borderRadius = "12px";
+    dialog.style.background = "#10151f";
+    dialog.style.color = "#e8edf7";
+    dialog.style.minWidth = "420px";
+    const isAdopt = kind === "ADOPT";
+    dialog.innerHTML = `<form method="dialog" id="acpos-info-human-decision-form" style="display:grid;gap:12px">
+      <strong>${isAdopt ? "Adopt context candidate" : "Decide context candidate"}</strong>
+      ${isAdopt ? "" : `<label style="display:grid;gap:4px">Decision
+        <select name="decision" required style="padding:8px">
+          <option value="ACCEPTED">Accept</option>
+          <option value="REJECTED">Reject</option>
+        </select>
+      </label>`}
+      <label style="display:grid;gap:4px">Decision reason
+        <textarea name="decision_reason"${isAdopt ? " required" : ""} rows="4" autocomplete="off" style="padding:8px"></textarea>
+      </label>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button value="cancel" type="button" id="acpos-info-human-decision-cancel">Cancel</button>
+        <button value="ok">${isAdopt ? "Adopt" : "Submit decision"}</button>
+      </div>
+    </form>`;
+    document.body.appendChild(dialog);
+    const form = dialog.querySelector("form") as HTMLFormElement;
+    let settled = false;
+    const finish = (result: InfoHumanDecisionResult) => {
+      if (settled) return;
+      settled = true;
+      if (dialog.open) dialog.close();
+      dialog.remove();
+      resolve(result);
+    };
+    dialog.querySelector("#acpos-info-human-decision-cancel")?.addEventListener("click", () => {
+      finish({ ok: false, reason_code: "INFO_HUMAN_DECISION_CANCELLED" });
+    });
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const decision_reason = String(data.get("decision_reason") ?? "").trim();
+      if (isAdopt) {
+        if (!decision_reason) {
+          finish({ ok: false, reason_code: "INFO01_DECISION_REASON_REQUIRED" });
+          return;
+        }
+        finish({ ok: true, decision_reason });
+        return;
+      }
+      const decision = String(data.get("decision") ?? "").trim();
+      if (decision !== "ACCEPTED" && decision !== "REJECTED") {
+        finish({ ok: false, reason_code: "INFO01_REGISTERED_DECISION_REQUIRED" });
+        return;
+      }
+      finish({ ok: true, decision, decision_reason });
+    });
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      finish({ ok: false, reason_code: "INFO_HUMAN_DECISION_CANCELLED" });
+    });
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else finish({ ok: false, reason_code: "INFO_HUMAN_DECISION_DIALOG_UNSUPPORTED" });
+  });
+}
+
 function bindStrategyAdminHttpCommandAdapter(): void {
   configureStrategyAdminCommandAdapter({
     invoke: async (input) => {
@@ -391,7 +468,7 @@ export function bindIdentityClientCommandAdapters(): void {
   });
 
   configureInfoCommandPayloadBuilder({
-    build: (input) => {
+    build: async (input) => {
       const scope_ref = input.scope_filter ?? input.authorized_scope ?? "workspace:INFO-01";
       const payload = {
         page_uid: "workspace:INFO-01",
@@ -407,10 +484,31 @@ export function bindIdentityClientCommandAdapters(): void {
         throw new Error("INFO_EXPORT_OWNER_NOT_MATERIALIZED");
       }
       if (input.action_uid === "INFO-01-ACT-ADOPT-CONTEXT") {
-        throw new Error("INFO_HUMAN_ADOPTION_INPUT_NOT_MATERIALIZED");
+        if (!input.candidate_ref) throw new Error("INFO_CONTEXT_CANDIDATE_REQUIRED");
+        const human = await openInfoHumanDecisionDialog("ADOPT");
+        if (!human.ok) throw new Error(human.reason_code);
+        return {
+          path_params: { id: input.candidate_ref },
+          payload: {
+            ...payload,
+            context_candidate_id: input.candidate_ref,
+            decision_reason: human.decision_reason,
+          },
+        };
       }
       if (input.action_uid === "INFO-01-ACT-CANDIDATE-DECIDE") {
-        throw new Error("INFO_HUMAN_DECISION_INPUT_NOT_MATERIALIZED");
+        if (!input.candidate_ref) throw new Error("INFO_CANDIDATE_REQUIRED");
+        const human = await openInfoHumanDecisionDialog("DECIDE");
+        if (!human.ok) throw new Error(human.reason_code);
+        return {
+          path_params: { id: input.candidate_ref },
+          payload: {
+            ...payload,
+            candidate_id: input.candidate_ref,
+            decision: human.decision,
+            decision_reason: human.decision_reason || undefined,
+          },
+        };
       }
       return { payload };
     },
