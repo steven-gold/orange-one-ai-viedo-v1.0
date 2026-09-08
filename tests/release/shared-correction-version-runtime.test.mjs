@@ -102,6 +102,8 @@ test("migration 0034 seals minimum shared permission RLS and migration ceiling",
   assert.match(migration,/g<>6/);
   assert.match(migration,/SHARED0034_RUNTIME_COLUMN_GRANT_COUNT_MISMATCH/);
   assert.match(migration,/cg<>6/);
+  assert.equal((migration.match(/DO \\$\\$/g) ?? []).length,3);
+  assert.equal((migration.match(/END \\$\\$;/g) ?? []).length,3);
   assert.match(migration,/production_output_version_locks/);
   assert.match(migration,/asset_version_restore_drafts/);
   assert.match(migration,/861adc15e7bb255290fca7d253bed197cc757baf601f5da5887b0ef62fbee83c/);
