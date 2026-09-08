@@ -67,6 +67,24 @@ try {
         throw new Error(`CONTROL_STUCK_LOADING_${expectedUid}`);
       }
 
+      try {
+        await page.waitForFunction(
+          () => {
+            const current = document.querySelector("[data-page-uid]");
+            if (!current) return false;
+            const nodes = Array.from(current.querySelectorAll("button,input,select,textarea,a[href],[role='button']"));
+            return nodes.some((node) => {
+              const style = getComputedStyle(node);
+              const rect = node.getBoundingClientRect();
+              return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+            });
+          },
+          { timeout: 15_000 },
+        );
+      } catch {
+        // Preserve fail-closed behavior: the detailed audit below records root state and ZERO_VISIBLE_INTERACTIVE_CONTROLS.
+      }
+
       const audit = await page.evaluate(() => {
         const root = document.querySelector("[data-page-uid]");
         if (!root) return { rows: [], visible: 0, enabled: 0, disabled: 0, governed: 0, nodesTotal: 0, diagnostic: { rootMissing: true } };
