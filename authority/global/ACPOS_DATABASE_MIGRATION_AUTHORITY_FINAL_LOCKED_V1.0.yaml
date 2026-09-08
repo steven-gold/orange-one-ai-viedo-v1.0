@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-08-KB0024-VALIDATED-PENDING-PRODUCTION-APPLY
+  revision: 2026-09-08-GOV0025-VALIDATED-PENDING-PRODUCTION-APPLY
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 live_neon_target:
@@ -73,9 +73,9 @@ artifact_bindings:
   account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   account_permission_catalog_bytes: 2762474
   account_permission_catalog_lines: 79399
-  materialized_migration_count: 24
-  repository_registered_migration_count: 24
-  validation_branch_migration_count: 24
+  materialized_migration_count: 25
+  repository_registered_migration_count: 25
+  validation_branch_migration_count: 25
   production_applied_migration_count: 20
 current_production_reconciliation:
   status: PASS
@@ -1362,4 +1362,46 @@ pending_0024_kb_source_state_permission_rls_closure:
   production_positive_e2e:
     status: BLOCKED_UNTIL_FINAL_RELEASE_AND_REAL_KNOWLEDGE_SOURCE
     reason: Production has zero KnowledgeSource rows and migration 0024 is intentionally not applied before final release sequence.
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+pending_0025_governance_operation_permission_closure:
+  status: VALIDATED_PENDING_PRODUCTION_APPLY_AND_AUTHENTICATED_RESOURCE_LIFECYCLE_E2E
+  source_migration: database/migrations/0025_governance_operation_permission_closure.sql
+  payload_sha256: c95ea4cb98a21749b962abe4f43b28ee3b2552e3505d85704c9c3903be2e3c23
+  change_ref: CR-GOV-0025
+  authority_basis:
+  - admin:SG-02 configureGovernedResource / approveGovernedResource
+  - admin:STR-01 current page with registered admin:STR-02 source-operation lineage for intelligence configure/approve
+  - existing governed resource owner in productionIamCommandRuntime
+  new_parallel_systems: 0
+  validation_evidence:
+    status: PASS
+    validated_on: '2026-09-08'
+    source: LIVE_NEON_VALIDATION_BRANCH_AND_RELEASE_GATE
+    validation_branch_name: rls-0016-validate-20260906
+    validation_branch_id: br-orange-smoke-aut9pafw
+    migration_count_before_apply: 24
+    migration_count_after_apply: 25
+    checksum: c95ea4cb98a21749b962abe4f43b28ee3b2552e3505d85704c9c3903be2e3c23
+    approved_allow_assignments: 4
+    approved_deny_assignments: 0
+    permission_resources_created: 0
+    production_mutation_performed: false
+  release_gate:
+    run_number: 747
+    run_id: 34171774498
+    head_sha: 42f16f7608f81e1aeb4f65afd1e50f95ed635386
+    conclusion: success
+    regression_tests:
+    - SG-02 and Strategy governance reuse the existing governed-resource owner with distinct current/source permission context
+    - migration 0025 stages only the four existing governance operation assignments
+  production_baseline:
+    migration_count: 20
+    latest_migration: 0020_system_lifecycle_runtime
+    governance_operation_approved_allows: 0
+    governed_resource_rows: 0
+    production_apply_performed: false
+  production_positive_e2e:
+    status: PENDING_FINAL_RELEASE_SEQUENCE
+    note: Production operation assignments remain intentionally absent and no governed resource was created during predeploy validation.
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
