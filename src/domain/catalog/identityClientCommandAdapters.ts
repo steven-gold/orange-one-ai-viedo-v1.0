@@ -438,6 +438,8 @@ export function bindIdentityClientCommandAdapters(): void {
 
   configureAssetRequestBuilder({
     build: ({ action_uid, control_value, state, projection, correction_request }) => {
+      const path = (entries: ReadonlyArray<readonly [string, string]>): Record<string, string> =>
+        Object.fromEntries(entries.filter(([, value]) => value.length > 0));
       const taskId = projection?.task_id ?? "";
       const outputVersionId = projection?.output_version_id ?? "";
       const layerDocumentId = projection?.layer_document_id ?? "";
@@ -451,7 +453,7 @@ export function bindIdentityClientCommandAdapters(): void {
       const common = { input_fingerprint: inputFingerprint, mode: state.mode };
       switch (action_uid) {
         case "ASSET-01-ACT-FLOW-START":
-          return { path_params: taskId ? { taskId } : {}, payload: common };
+          return { path_params: path([["taskId", taskId]]), payload: common };
         case "ASSET-01-ACT-EVALUATE":
           return {
             payload: {
@@ -463,12 +465,12 @@ export function bindIdentityClientCommandAdapters(): void {
           };
         case "ASSET-01-ACT-CANDIDATE-CONFIRM":
           return {
-            path_params: taskId && outputVersionId ? { taskId, outputVersionId } : {},
+            path_params: path([["taskId", taskId], ["outputVersionId", outputVersionId]]),
             payload: { decision: "CONFIRM" },
           };
         case "ASSET-01-ACT-CORRECTION-EXECUTE":
           return {
-            path_params: taskId ? { taskId } : {},
+            path_params: path([["taskId", taskId]]),
             payload: {
               ...common,
               correction_request: correction_request.trim(),
@@ -485,7 +487,7 @@ export function bindIdentityClientCommandAdapters(): void {
             },
           };
         case "ASSET-01-ACT-TASK-RETRY":
-          return { path_params: taskId ? { taskId } : {}, payload: { ...common, preserve_previous_output: true } };
+          return { path_params: path([["taskId", taskId]]), payload: { ...common, preserve_previous_output: true } };
         case "ASSET-01-ACT-HANDOFF":
           return {
             payload: {
@@ -504,16 +506,16 @@ export function bindIdentityClientCommandAdapters(): void {
             },
           };
         case "ASSET-01-ACT-LAYER-DOC-UPDATE":
-          return { path_params: layerDocumentId ? { layerDocumentId } : {}, payload: control_value ?? {} };
+          return { path_params: path([["layerDocumentId", layerDocumentId]]), payload: control_value ?? {} };
         case "ASSET-01-ACT-LAYER-ADD":
-          return { path_params: layerDocumentId ? { layerDocumentId } : {}, payload: control_value ?? {} };
+          return { path_params: path([["layerDocumentId", layerDocumentId]]), payload: control_value ?? {} };
         case "ASSET-01-ACT-LAYER-DELETE":
-          return { path_params: layerDocumentId && layerId ? { layerDocumentId, layerId } : {}, payload: null };
+          return { path_params: path([["layerDocumentId", layerDocumentId], ["layerId", layerId]]), payload: null };
         case "ASSET-01-ACT-LAYER-DUPLICATE":
         case "ASSET-01-ACT-LAYER-REORDER":
         case "ASSET-01-ACT-LAYER-PROPERTIES":
         case "ASSET-01-ACT-LAYER-MASK":
-          return { path_params: layerDocumentId && layerId ? { layerDocumentId, layerId } : {}, payload: control_value ?? {} };
+          return { path_params: path([["layerDocumentId", layerDocumentId], ["layerId", layerId]]), payload: control_value ?? {} };
         case "ASSET-01-ACT-PATCH-CREATE":
           return {
             payload: {
@@ -523,11 +525,11 @@ export function bindIdentityClientCommandAdapters(): void {
             },
           };
         case "ASSET-01-ACT-PATCH-PREVIEW":
-          return { path_params: patchId ? { patchId } : {}, payload: {} };
+          return { path_params: path([["patchId", patchId]]), payload: {} };
         case "ASSET-01-ACT-PATCH-ACCEPT":
-          return { path_params: patchId ? { patchId } : {}, payload: { decision: "ACCEPT" } };
+          return { path_params: path([["patchId", patchId]]), payload: { decision: "ACCEPT" } };
         case "ASSET-01-ACT-PATCH-REJECT":
-          return { path_params: patchId ? { patchId } : {}, payload: { decision: "REJECT" } };
+          return { path_params: path([["patchId", patchId]]), payload: { decision: "REJECT" } };
         default:
           return { payload: control_value ?? {} };
       }
