@@ -1,10 +1,10 @@
 operation_registry:
   contract_meta:
-    contract_id: ACPOS-OPERATION-REGISTRY-CURRENT-1.2.0
+    contract_id: ACPOS-OPERATION-REGISTRY-CURRENT-1.3.0
     status: FINAL_LOCKED
     current_only: true
-    revision: 2026-09-07-IAM-EXACT-ACTION-AUTHORIZATION
-    coverage: IDENTITY_SESSION_AIAPI_PROVIDER_AND_IAM_GOVERNED_OPERATIONS
+    revision: 2026-09-08-INFO-WORKSPACE-RUNTIME-MATERIALIZATION
+    coverage: IDENTITY_SESSION_AIAPI_PROVIDER_IAM_AND_INFO_GOVERNED_OPERATIONS
     undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
     supersedes_revision: 2026-09-05-IDENTITY-SESSION-ONLY
     governance_basis:
@@ -39,13 +39,58 @@ operation_registry:
     catalog_resource_key: NOT_IN_ACCOUNT_PERMISSION_CATALOG
 
   - operation_id: searchProjection
-    port_uid: IAM-01-PORT-SEARCH
+    port_uid: SHARED-PORT-SEARCH
     path: /v1/search
     methods: [POST]
-    runtime_owner: IAM_RUNTIME
-    authorization_resource_key: action:admin:IAM-01:ACT-SEARCH
-    authorization_action: INVOKE
-    source_authority: admin:IAM-01
+    runtime_owner: INFO_COMMAND_RUNTIME
+    authorization_by_page:
+      admin:IAM-01:
+        resource_key: action:admin:IAM-01:ACT-SEARCH
+        action: INVOKE
+      workspace:INFO-01:
+        resource_key: api:searchProjection
+        action: EXECUTE
+    source_authorities: [admin:IAM-01, workspace:INFO-01]
+    owner_context_required: true
+  - operation_id: refreshProjection
+    port_uid: INFO-01-PORT-REFRESH
+    path: /v1/projections/refresh
+    methods: [POST]
+    runtime_owner: INFO_COMMAND_RUNTIME
+    authorization_resource_key: api:refreshProjection
+    authorization_action: EXECUTE
+    source_authority: workspace:INFO-01
+    external_effect: NONE
+  - operation_id: exportProjection
+    port_uid: INFO-01-PORT-EXPORT
+    path: /v1/exports
+    methods: [POST]
+    runtime_owner: INFO_COMMAND_RUNTIME
+    authorization_resource_key: api:exportProjection
+    authorization_action: EXECUTE
+    source_authority: workspace:INFO-01
+    materialization_status: BLOCKED_NO_CANONICAL_EXPORT_PERSISTENCE_OWNER
+    external_effect: NONE
+  - operation_id: adoptContextCandidate
+    port_uid: INFO-01-PORT-CONTEXT-ADOPT
+    path: /v1/context-candidates/{id}/adopt
+    methods: [POST]
+    runtime_owner: INFO_COMMAND_RUNTIME
+    authorization_resource_key: api:adoptContextCandidate
+    authorization_action: EXECUTE
+    source_authority: workspace:INFO-01
+    persistence_owner: public.context_candidates
+    external_effect: NONE
+  - operation_id: decideCandidate
+    port_uid: INFO-01-PORT-CANDIDATE-DECIDE
+    path: /v1/candidates/{id}/decision
+    methods: [POST]
+    runtime_owner: CANDIDATE_DECISION_RUNTIME
+    authorization_resource_key: api:decideCandidate
+    authorization_action: EXECUTE
+    source_authority: workspace:INFO-01
+    persistence_owner: public.context_candidates
+    external_effect: NONE
   - operation_id: saveDraft
     port_uid: IAM-01-PORT-DRAFT
     path: /v1/drafts
