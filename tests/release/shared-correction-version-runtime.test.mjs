@@ -98,12 +98,14 @@ test("migration 0034 seals minimum shared permission RLS and migration ceiling",
   assert.match(migration,/a<>19/);
   assert.match(migration,/SHARED0034_RLS_POLICY_COUNT_MISMATCH/);
   assert.match(migration,/p<>8/);
-  assert.match(migration,/SHARED0034_RUNTIME_GRANT_COUNT_MISMATCH/);
-  assert.match(migration,/g<>8/);
+  assert.match(migration,/SHARED0034_RUNTIME_TABLE_GRANT_COUNT_MISMATCH/);
+  assert.match(migration,/g<>6/);
+  assert.match(migration,/SHARED0034_RUNTIME_COLUMN_GRANT_COUNT_MISMATCH/);
+  assert.match(migration,/cg<>6/);
   assert.match(migration,/production_output_version_locks/);
   assert.match(migration,/asset_version_restore_drafts/);
-  assert.match(migration,/a39faf43141d47e43c8c9269bb30116ecd4556b6795cd8e0290a207535764986/);
+  assert.match(migration,/861adc15e7bb255290fca7d253bed197cc757baf601f5da5887b0ef62fbee83c/);
   assert.match(manifest,/0034_shared_correction_version_runtime_closure/);
-  assert.match(manifest,/a39faf43141d47e43c8c9269bb30116ecd4556b6795cd8e0290a207535764986/);
+  assert.match(manifest,/861adc15e7bb255290fca7d253bed197cc757baf601f5da5887b0ef62fbee83c/);
   assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 34/);
 });

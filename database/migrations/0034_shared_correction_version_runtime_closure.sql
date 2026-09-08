@@ -184,8 +184,8 @@ USING(acpos_runtime.can_execute_shared_operation('api:restoreAssetVersionAsNewDr
 WITH CHECK(acpos_runtime.can_execute_shared_operation('api:restoreAssetVersionAsNewDraft')
   AND acpos_runtime.can_manage_project(acpos_runtime.project_id_for_output(source_output_version_id)));
 
-DO $$
-DECLARE p bigint; g bigint;
+DO $
+DECLARE p bigint; g bigint; cg bigint;
 BEGIN
   SELECT count(*) INTO p FROM pg_policies WHERE schemaname='public' AND policyname IN(
     'acpos_correction_script_versions_shared_select','acpos_correction_script_versions_shared_insert','acpos_correction_script_versions_shared_update',
@@ -193,12 +193,19 @@ BEGIN
     'acpos_asset_restore_drafts_shared_select','acpos_asset_restore_drafts_shared_insert','acpos_asset_restore_drafts_shared_update');
   IF p<>8 THEN RAISE EXCEPTION 'SHARED0034_RLS_POLICY_COUNT_MISMATCH:%',p; END IF;
   SELECT count(*) INTO g FROM information_schema.role_table_grants WHERE grantee='acpos_app_runtime' AND table_schema='public'
-    AND ((table_name='correction_script_versions' AND privilege_type IN('SELECT','INSERT','UPDATE'))
+    AND ((table_name='correction_script_versions' AND privilege_type IN('SELECT','INSERT'))
       OR(table_name='production_output_version_locks' AND privilege_type IN('SELECT','INSERT'))
-      OR(table_name='asset_version_restore_drafts' AND privilege_type IN('SELECT','INSERT','UPDATE')));
-  IF g<>8 THEN RAISE EXCEPTION 'SHARED0034_RUNTIME_GRANT_COUNT_MISMATCH:%',g; END IF;
-END $$;
+      OR(table_name='asset_version_restore_drafts' AND privilege_type IN('SELECT','INSERT')));
+  IF g<>6 THEN RAISE EXCEPTION 'SHARED0034_RUNTIME_TABLE_GRANT_COUNT_MISMATCH:%',g; END IF;
+  SELECT count(*) INTO cg FROM information_schema.role_column_grants WHERE grantee='acpos_app_runtime' AND table_schema='public'
+    AND privilege_type='UPDATE'
+    AND (
+      (table_name='correction_script_versions' AND column_name IN('status','decision_reason','decided_by','decided_at'))
+      OR (table_name='asset_version_restore_drafts' AND column_name IN('status','consumed_output_version_id'))
+    );
+  IF cg<>6 THEN RAISE EXCEPTION 'SHARED0034_RUNTIME_COLUMN_GRANT_COUNT_MISMATCH:%',cg; END IF;
+END $;
 
 INSERT INTO schema_migration_history(migration_id,checksum,applied_by,approval_ref)
-VALUES('0034_shared_correction_version_runtime_closure','a39faf43141d47e43c8c9269bb30116ecd4556b6795cd8e0290a207535764986','migration-runner','CR-SHARED-0034-PENDING-PRODUCTION-APPLY')
+VALUES('0034_shared_correction_version_runtime_closure','861adc15e7bb255290fca7d253bed197cc757baf601f5da5887b0ef62fbee83c','migration-runner','CR-SHARED-0034-PENDING-PRODUCTION-APPLY')
 ON CONFLICT(migration_id) DO NOTHING;
