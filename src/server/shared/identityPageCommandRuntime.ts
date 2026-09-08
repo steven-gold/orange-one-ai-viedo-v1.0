@@ -22,7 +22,8 @@ import { transitionProductionKnowledgeSource } from "@/server/knowledge/producti
 import type { KnowledgeRuntimeRequest } from "@/domain/knowledge/knowledgeRuntimeContract";
 import { configureConversationRuntime, type ConversationRequest } from "@/server/shared/conversationRuntime";
 import { configureCandidateDecisionRuntime, type CandidateDecisionRequest } from "@/server/shared/candidateDecisionRuntime";
-import { configureStrategyDecisionRuntime } from "@/server/strategy/strategyDecisionRuntime";
+import { configureStrategyDecisionRuntime, type StrategyDecisionRequest } from "@/server/strategy/strategyDecisionRuntime";
+import { executeProductionStrategyDecision } from "@/server/strategy/productionStrategyDecisionRuntime";
 import { configureSocCommandRuntime } from "@/server/social/socCommandRuntime";
 import { saveProductionSocDraft, decideProductionSocCandidate } from "@/server/social/productionSocContentRuntime";
 import type { SocRuntimeRequest } from "@/server/testing/controlledSocTestRuntime";
@@ -1040,6 +1041,20 @@ async function authorizeQa(request:QaRequest):Promise<{allowed:true}|{allowed:fa
   return gate.allowed?{allowed:true}:gate;
 }
 
+const STRATEGY_DECISION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  submitStrategyReview:{resource_key:"api:submitStrategyReview",action:"EXECUTE"},
+  adoptAsContextCandidate:{resource_key:"api:adoptAsContextCandidate",action:"EXECUTE"},
+};
+
+async function authorizeStrategyDecision(request:StrategyDecisionRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["workspace:STR-01"]);
+  if(!page.allowed)return page;
+  const permission=STRATEGY_DECISION_PERMISSION[request.operation_id];
+  if(!permission)return{allowed:false,reason_code:"STR01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
+}
+
 async function executeQa(request: QaRequest): Promise<unknown> {
   return executeProductionQaLifecycle(request);
 }
@@ -1258,10 +1273,8 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureStrategyDecisionRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["workspace:STR-01"]),
-    execute: async () => {
-      throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
-    },
+    authorize: authorizeStrategyDecision,
+    execute: executeProductionStrategyDecision,
     audit: async () => undefined,
   });
   configureDevCommandRuntime({
