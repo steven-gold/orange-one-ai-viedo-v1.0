@@ -155,7 +155,7 @@ USING (
   )
 );
 
-GRANT SELECT, INSERT, UPDATE(status,decision_reason,decided_at)
+GRANT SELECT, INSERT, UPDATE(status,output_version_id,decision_reason,decided_at)
 ON public.qa_review_runs TO acpos_app_runtime;
 ALTER TABLE public.qa_review_runs ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS acpos_qa_review_runs_select ON public.qa_review_runs;
@@ -216,7 +216,7 @@ $$;
 INSERT INTO schema_migration_history(migration_id, checksum, applied_by, approval_ref)
 VALUES(
   '0027_qa_review_lifecycle_permission_rls_closure',
-  'b12ec83f4ad0794c215f6b5f0624fdbe98e08d86361d1c47262fcea00aa0255f',
+  '9309b61424bbd72adace0e7da86836bc6ac429e4b99c96a5a2105fec10979c19',
   'migration-runner',
   'CR-QA-0027-PENDING-PRODUCTION-APPLY'
 )
