@@ -1,0 +1,113 @@
+authority_id: ACPOS_EDIT_VOICE_RUNTIME_OPERATION_AUTHORITY
+version: 1.0
+status: CURRENT_CANDIDATE_PENDING_VALIDATION
+authority_revision: 2026-09-09-EDIT-VOICE-RUNTIME
+source_authorities:
+- authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+- src/domain/edit/editRuntimeContract.ts
+- database/migrations/0012_editing_voice_runtime_closure.sql
+scope:
+  page_uid: EDIT-01
+  department: EDITING
+  operations:
+  - createEditingRuntimeRun
+  - getEditingRuntimeRun
+  - completeAssembly
+  - transitionEditingToVoiceStage
+  - startVoiceRuntime
+  - getVoiceRuntimeRun
+  - completeAudioMix
+  - completeLipSync
+  - completeSubtitle
+  - handoffVoiceToQA
+rules:
+- EDIT+VOICE remains one Current department/page. No Voice subpage or parallel runtime is created.
+- Existing routes from EDIT_PORT_METHOD_PATH are reused exactly; route inference is forbidden.
+- Existing acpos_runtime.editing_runtime_runs_runtime and acpos_runtime.editing_runtime_steps_runtime are the operational lifecycle owners from migration 0012.
+- Existing acpos_runtime.voice_runtime_profiles_runtime is read-only profile input for this closure; this closure does not fabricate voice profiles.
+- PROJECT_TASK runtime derives exact task lineage from canonical department_tasks/handoffs and fails closed when timeline/profile/source evidence is absent.
+- External voice/media provider execution is not satisfied by local lifecycle writes. startVoiceRuntime remains fail-closed until an exact governed Provider operation/capability mapping exists.
+- Controlled test runtime never satisfies Production binding.
+- Every effectful operation requires page:workspace:EDIT-01 plus its registered API EXECUTE assignment. Editing-runtime controls additionally require their existing CONTROL INVOKE assignment.
+- No operation may overwrite a locked or immutable production output.
+operation_contracts:
+  createEditingRuntimeRun:
+    method: POST
+    path: /v1/editing-runtime-runs
+    api_resource_key: api:createEditingRuntimeRun
+    control_resource_key: control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-CREATE-EDITING-RUNTIME-RUN
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+    required_payload: [task_id, input_fingerprint]
+  getEditingRuntimeRun:
+    method: GET
+    path: /v1/editing-runtime-runs/{runId}
+    api_resource_key: api:getEditingRuntimeRun
+    control_resource_key: control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-GET-EDITING-RUNTIME-RUN
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+  completeAssembly:
+    method: POST
+    path: /v1/editing-runtime-runs/{runId}/assembly
+    api_resource_key: api:completeAssembly
+    control_resource_key: control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-COMPLETE-ASSEMBLY
+    persistence_owner:
+    - acpos_runtime.editing_runtime_runs_runtime
+    - acpos_runtime.editing_runtime_steps_runtime
+    required_payload: [working_draft_ref]
+  transitionEditingToVoiceStage:
+    method: POST
+    path: /v1/editing-runtime-runs/{runId}/voice-handoff
+    api_resource_key: api:transitionEditingToVoiceStage
+    control_resource_key: control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-HANDOFF-EDITING-TO-VOICE
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+  startVoiceRuntime:
+    method: POST
+    path: /v1/voice-runtime-runs/{runId}/start
+    api_resource_key: api:startVoiceRuntime
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+    external_effect: GOVERNED_PROVIDER_EXECUTION
+    external_gate: EXACT_PROVIDER_OPERATION_CAPABILITY_MAPPING_REQUIRED
+  getVoiceRuntimeRun:
+    method: GET
+    path: /v1/voice-runtime-runs/{runId}
+    api_resource_key: api:getVoiceRuntimeRun
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+  completeAudioMix:
+    method: POST
+    path: /v1/voice-runtime-runs/{runId}/audio-mix
+    api_resource_key: api:completeAudioMix
+    persistence_owner:
+    - acpos_runtime.editing_runtime_runs_runtime
+    - acpos_runtime.editing_runtime_steps_runtime
+    required_payload: [mix_manifest_ref]
+  completeLipSync:
+    method: POST
+    path: /v1/voice-runtime-runs/{runId}/lip-sync
+    api_resource_key: api:completeLipSync
+    persistence_owner:
+    - acpos_runtime.editing_runtime_runs_runtime
+    - acpos_runtime.editing_runtime_steps_runtime
+    required_payload: [dialogue_timing_binding_ref]
+  completeSubtitle:
+    method: POST
+    path: /v1/voice-runtime-runs/{runId}/subtitle
+    api_resource_key: api:completeSubtitle
+    persistence_owner:
+    - acpos_runtime.editing_runtime_runs_runtime
+    - acpos_runtime.editing_runtime_steps_runtime
+    required_payload: [dialogue_timing_binding_ref]
+  handoffVoiceToQA:
+    method: POST
+    path: /v1/voice-runtime-runs/{runId}/qa-handoff
+    api_resource_key: api:handoffVoiceToQA
+    required_payload: [task_id, saved_edit_version_id, output_version_id, locked_version_ref]
+    external_effect: NONE
+    handoff_owner: public.handoffs
+permission_materialization:
+  existing_api_resources: 9
+  missing_api_resource_to_create: api:transitionEditingToVoiceStage
+  existing_control_resources_reused: 4
+  bootstrap_assignments_required: 14
+runtime_owner_materialization:
+  migration_id: 0035_edit_voice_runtime_permission_rls_closure
+  grants_and_rls_required: true
+production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
