@@ -266,6 +266,7 @@ type DepartmentTaskRow = {
   task_id: string;
   status: string;
   input_fingerprint: string | null;
+  handed_off_output_version_id: string | null;
   project_id: string;
   project_label: string;
   topic_id: string;
@@ -639,11 +640,7 @@ function emptyQa(): unknown {
     release_package_ref: null,
     values: {},
     lists: {},
-    gate_state: {
-      "QA-01-GATE-PAGE": true,
-      "QA-01-GATE-START": Boolean(first?.task_id && first?.handed_off_output_version_id && criteria?.ref),
-      "QA-01-GATE-CRITERIA": Boolean(criteria?.ref),
-    },
+    gate_state: { "QA-01-GATE-PAGE": true },
     correlation_id: null,
     audit_ref: null,
   };
@@ -933,7 +930,11 @@ async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<u
       "QA-01-CTL-TOPIC": topics,
       "QA-01-LST-TASK": tasks.map((item) => ({ ref: item.task_id, label: item.status })),
     },
-    gate_state: { "QA-01-GATE-PAGE": true },
+    gate_state: {
+      "QA-01-GATE-PAGE": true,
+      "QA-01-GATE-START": Boolean(first?.task_id && first?.handed_off_output_version_id && criteria?.ref),
+      "QA-01-GATE-CRITERIA": Boolean(criteria?.ref),
+    },
   };
 }
 
