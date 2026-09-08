@@ -1876,3 +1876,64 @@ pending_0031_soc_publish_request_relation_runtime:
   - QA createReleasePackage remains fail-closed on QA01_RELEASE_EVIDENCE_OWNER_NOT_MATERIALIZED because exact rights-profile/channel-policy evidence ownership is not yet materialized.
   - External PublishingAdapterService dispatch/callback proof remains separate and no external success is claimed by this closure.
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+pending_0032_qa_release_policy_evidence_owner:
+  status: VALIDATED_PENDING_PRODUCTION_APPLY
+  source_migration: database/migrations/0032_qa_release_policy_evidence_owner.sql
+  payload_sha256: 29ea699d2a7330380fa0b74ff0139d7fb5eb9d018a491d03999a615b24892636
+  validation:
+    branch_id: br-orange-smoke-aut9pafw
+    migration_count_after_apply: 32
+    owner_tables: 4
+    rls_policies: 4
+    release_package_relations: 3
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+pending_0033_asset_video_department_runtime_permission_rls_closure:
+  status: VALIDATED_PENDING_PRODUCTION_APPLY
+  source_migration: database/migrations/0033_asset_video_department_runtime_permission_rls_closure.sql
+  payload_sha256: 7bb4797ce24c1bba93572b0ec55f5ea6baf7297fc2f0687e95564a556f925c71
+  change_ref: CR-DEPT-0033
+  reused_permission_resources:
+    ACTION: 14
+    CONTROL: 14
+    API: 7
+    total: 35
+    new_permission_resources: 0
+  validation:
+    branch_id: br-orange-smoke-aut9pafw
+    migration_count_before_apply: 32
+    migration_count_after_apply: 33
+    latest_migration: 0033_asset_video_department_runtime_permission_rls_closure
+    approved_allow_assignments: 35
+    rls_policies: 8
+    runtime_grants: 8
+    runtime_role: acpos_app_runtime
+    runtime_role_probe:
+      canonical_read_owners:
+      - public.task_input_manifests
+      - public.department_script_views
+      - public.instruction_packages
+      - public.route_policies
+      - public.provider_capabilities
+      provider_jobs_insert_privilege_probe: PASS_ZERO_ROW
+      provider_jobs_update_privilege_probe: PASS_ZERO_ROW
+      validation_session_created: true
+      validation_session_cleaned: true
+      validation_business_rows_created: 0
+  production_baseline_after_validation:
+    migration_count: 20
+    latest_migration: 0020_system_lifecycle_runtime
+    bootstrap_asset_video_effectful_allow: 0
+    approved_asset_video_route_policies: 0
+    production_mutation_performed: false
+  source_evidence:
+    server_runtime_commit: 384092b3be43351df0c730620c29953aaa496163
+    request_builder_fix_commit: 96734e89c42b414a0813415e3cda5bd3370506f8
+    release_gate_run: 830
+    release_gate_conclusion: SUCCESS
+  remaining_operational_blockers:
+  - Production migration 0033 is intentionally not applied until final release sequence.
+  - Production has no APPROVED ASSET/VIDEO route policy; execute remains fail-closed at ROUTE_POLICY_NOT_READY.
+  - Shared correction/version operations referenced by ASSET/VIDEO page authority still require explicit runtime materialization before department runtime is considered fully closed.
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
