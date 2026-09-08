@@ -51,3 +51,20 @@ info_interaction_registry:
   controls:
     - { control_id: INFO-01-BTN-ADOPT-CONTEXT, source_page_uid: workspace:INFO-01, action_id: INFO-01-ACT-ADOPT-CONTEXT, operation_id: adoptContextCandidate, method: POST, path: "/v1/context-candidates/{id}/adopt", interaction_type: FORM_MODAL, form_schema: AdoptContextCandidateRequest }
     - { control_id: INFO-01-BTN-CANDIDATE-DECIDE, source_page_uid: workspace:INFO-01, action_id: INFO-01-ACT-CANDIDATE-DECIDE, operation_id: decideCandidate, method: POST, path: "/v1/candidates/{id}/decision", interaction_type: FORM_MODAL, form_schema: DecideCandidateRequest }
+
+
+soc_policy_interaction_registry:
+  contract_meta:
+    contract_id: ACPOS-CURRENT-SOC-TARGET-POLICY-INTERACTION-1.0.0
+    status: CURRENT_SOC_TARGET_POLICY_REGISTERED
+    current_ui_owner: admin:SOC-01
+    current_authority: authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    source_registry_provenance: ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING
+    provenance_is_non_executable: true
+  coverage:
+    scope: SOC_TARGET_POSTING_POLICY_ACTION_ONLY
+    source_pages: [admin:SOC-01]
+    action_controls_materialized_here: 1
+    rule: This interaction materializes ConfigureSocialTargetPolicyRequest only; external publish remains a separate provider-dependent closure.
+  controls:
+    - { control_id: SOC-01-BTN-POLICY-CONFIG, source_page_uid: admin:SOC-01, action_id: SOC-01-ACT-POLICY-CONFIG, operation_id: configureSocialTargetPolicy, method: PUT, path: "/v1/social/targets/{targetId}/posting-policy", interaction_type: FORM_MODAL, form_schema: ConfigureSocialTargetPolicyRequest }
