@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-08-STR0028-VALIDATED-PENDING-PRODUCTION-APPLY
+  revision: 2026-09-08-INFO0029-VALIDATED-PENDING-PRODUCTION-APPLY
   scope: DATABASE_MIGRATION_BOOTSTRAP_CHECKSUM_AND_EXECUTION_GOVERNANCE
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 live_neon_target:
@@ -73,9 +73,9 @@ artifact_bindings:
   account_permission_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
   account_permission_catalog_bytes: 2762474
   account_permission_catalog_lines: 79399
-  materialized_migration_count: 28
-  repository_registered_migration_count: 28
-  validation_branch_migration_count: 28
+  materialized_migration_count: 29
+  repository_registered_migration_count: 29
+  validation_branch_migration_count: 29
   production_applied_migration_count: 20
 current_production_reconciliation:
   status: PASS
@@ -1588,4 +1588,97 @@ pending_0028_strategy_human_review_permission_rls_closure:
   - Production has no StrategyCandidate rows, so positive human-review mutation E2E cannot be fabricated.
   - Governance owner capable of changing DecisionRequest OPEN/NOTIFIED -> APPROVED with decider/reason/evidence is not currently materialized as a dedicated DecisionRequest approval route.
   - External AI/provider candidate generation remains a separate Provider-dependent concern and is not simulated by STR-01 runtime.
+  production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+
+pending_0029_info_context_candidate_permission_rls_closure:
+  status: VALIDATED_PENDING_PRODUCTION_APPLY_AND_UI_HUMAN_INPUT_MATERIALIZATION
+  source_migration: database/migrations/0029_info_context_candidate_permission_rls_closure.sql
+  payload_sha256: a1494503e3dde66d9bcfcf9bdc0c18277bd942a5a415d827058df851dc8ba7b2
+  change_ref: CR-INFO-0029
+  authority_basis:
+  - workspace:INFO-01 reuses fact_packs, context_candidates and audit_events; no parallel information store is created.
+  - Current Business Payload Registry now materializes workspace:INFO-01 Search/Refresh/Export/Adopt/Decide schemas from INFO-01 FINAL_LOCKED authority.
+  - Current Operation Registry dispatches shared search by owner page and registers INFO operation owners explicitly.
+  - FactPack and ContextCandidate visibility is session-bound and limited to PUBLIC/INTERNAL classification; RESTRICTED and RESTRICTED_FINANCE remain fail-closed.
+  - Adopt Context maps canonical ContextCandidate CANDIDATE -> APPROVED and displays ADOPTED without mutating Canon/Lock/Task/Publish owners.
+  - Candidate Decision maps only CANDIDATE -> ACCEPTED or REJECTED.
+  - api:decideCandidate receives INFO-specific assignment version 2 with gate_profile page_uid workspace:INFO-01; the prior SOC assignment remains separate.
+  - Export remains blocked because no canonical export persistence owner exists.
+  - Evidence/source projection remains blocked where exact FactPack evidence_refs JSON lineage and classification masking are undefined.
+  reused_permission_resources:
+  - page:workspace:INFO-01 VIEW
+  - api:refreshProjection EXECUTE
+  - api:searchProjection EXECUTE
+  - api:adoptContextCandidate EXECUTE
+  - api:decideCandidate EXECUTE
+  intentionally_unassigned_resource:
+  - api:exportProjection
+  reuse_contract:
+  - public.fact_packs
+  - public.context_candidates
+  - public.audit_events
+  new_parallel_systems: 0
+  validation_evidence:
+    status: PASS_DATA_SCHEMA_PERMISSION_RLS_RUNTIME_ROLE_AND_TRANSACTIONAL_MUTATION
+    validated_on: '2026-09-08'
+    source: LIVE_NEON_VALIDATION_BRANCH_AND_RELEASE_GATE
+    validation_branch_name: rls-0016-validate-20260906
+    validation_branch_id: br-orange-smoke-aut9pafw
+    parent_branch_id: br-shy-cherry-auiol4oy
+    migration_count_before_apply: 28
+    migration_count_after_apply: 29
+    migration_history_rows: 1
+    checksum: a1494503e3dde66d9bcfcf9bdc0c18277bd942a5a415d827058df851dc8ba7b2
+    approved_allow_assignments: 4
+    rls_policy_count_added_or_replaced: 5
+    fact_pack_select_grant: true
+    context_candidate_select_grant: true
+    context_candidate_status_update_grant: true
+    context_candidate_decider_update_grant: true
+    context_candidate_reason_update_grant: true
+    audit_insert_grant: true
+    production_mutation_performed: false
+    runtime_role_validation:
+      role: acpos_app_runtime
+      validation_data_scope: VALIDATION_BRANCH_TRANSACTION_ONLY
+      actor_resolved: true
+      page_view: true
+      refresh_execute: true
+      search_execute: true
+      adopt_execute: true
+      decide_execute: true
+      fact_pack_visible_rows: 1
+      context_candidate_visible_rows: 1
+      adoption_transition: CANDIDATE_TO_APPROVED_PASS
+      audit_insert: PASS
+      audit_visible_rows: 1
+      cleanup_workspace_rows: 0
+      cleanup_fact_rows: 0
+      cleanup_candidate_rows: 0
+      cleanup_audit_rows: 0
+      cleanup_session_rows: 0
+  predeploy_runtime_evidence:
+    release_gate:
+      run_number: 799
+      run_id: 34187478265
+      head_sha: 7ad3dec0a694700c1e39bbd406e7bb48bab3b3ee
+      conclusion: success
+    regression_tests:
+    - Current INFO payload/operation registry materialization
+    - Production projection session-bound FactPack/ContextCandidate read model
+    - Production client forbids fabricated human decision/adoption input
+    - Production runtime separates APPROVED adoption from ACCEPTED/REJECTED decision
+    - migration 0029 exact INFO-specific permission/RLS closure
+  production_baseline:
+    migration_count: 20
+    latest_migration: 0020_system_lifecycle_runtime
+    info_0029_assignment_rows: 0
+    fact_pack_rows: 0
+    context_candidate_rows: 0
+    production_apply_performed: false
+  remaining_runtime_blockers:
+  - Production has no FactPack or ContextCandidate rows, so positive INFO mutation E2E cannot be fabricated.
+  - INFO Adopt/Decide action schemas are registered, but 07_ui/interaction_registry.yaml has no registered human-input interaction for the two buttons; UI remains fail-closed rather than auto-fabricating decision/reason.
+  - Exact knowledge_sources/evidence_records workspace lineage and FactPack evidence_refs JSON shape are not defined strongly enough to open Evidence RLS safely.
+  - exportProjection has no canonical export persistence owner and remains fail-closed.
   production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
