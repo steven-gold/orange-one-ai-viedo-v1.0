@@ -2,16 +2,16 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-08T13:47:36.000+08:00",
+  "as_of": "2026-09-08T14:10:00.000+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
-    "new_sha_basis": "7ef2418622ea954d3b651c7abe39d9eafc587ef2",
+    "new_sha_basis": "1079fd8a718d13da20732541d9756cf6403185f3",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_PREDEPLOY_RUNTIME_CLOSURES_THROUGH_SOC_POLICY_0030",
+    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_PREDEPLOY_RUNTIME_CLOSURES_THROUGH_SOC_PUBLISH_0031",
     "post_release_new_status": "AHEAD_OF_MAIN_NO_VERCEL_DEPLOYMENT_TRIGGERED"
   },
   "release_validation": {
@@ -660,9 +660,9 @@
     },
     "current_construction_gate": {
       "status": "PASS",
-      "run_number": 814,
-      "run_id": 34192093403,
-      "head_sha": "7ef2418622ea954d3b651c7abe39d9eafc587ef2",
+      "run_number": 820,
+      "run_id": 34194623208,
+      "head_sha": "1079fd8a718d13da20732541d9756cf6403185f3",
       "branch": "new",
       "conclusion": "success",
       "source_lint": "PASS",
@@ -914,6 +914,55 @@
         "production_mutation_performed": false
       },
       "production_apply_policy": "FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE"
+    },
+    "soc_publish_request_0031_predeploy": {
+      "status": "VALIDATED_PENDING_PRODUCTION_APPLY",
+      "commit_sha": "1079fd8a718d13da20732541d9756cf6403185f3",
+      "migration_id": "0031_soc_publish_request_relation_runtime",
+      "payload_sha256": "81f65e614d720ad44b8d8d4b2594f7128caac5af396d16221f15f46a31fc600e",
+      "release_gate": {
+        "run_number": 820,
+        "run_id": 34194623208,
+        "head_sha": "1079fd8a718d13da20732541d9756cf6403185f3",
+        "conclusion": "success"
+      },
+      "validation_branch": {
+        "id": "br-orange-smoke-aut9pafw",
+        "name": "rls-0016-validate-20260906",
+        "migration_before": 30,
+        "migration_after": 31,
+        "approved_allow_assignments": 3,
+        "relation_columns_not_null": 2,
+        "relation_constraints": 3,
+        "publish_rls_policies": 1,
+        "security_definer_function": true,
+        "runtime_role": "acpos_app_runtime",
+        "successful_local_request": true,
+        "target_transition": "READY_TO_POST_V7_TO_PENDING_EXTERNAL_V8_PASS",
+        "idempotent_replay_same_request": true,
+        "metadata_identity_negative_check": "PASS",
+        "external_request_sent": false,
+        "external_success": false,
+        "cleanup_residual_zero": true
+      },
+      "implementation": {
+        "authority_relation_contract": "MATERIALIZED_CURRENT",
+        "interaction_registry": "MATERIALIZED_CURRENT",
+        "production_client_confirmation": "MATERIALIZED_SAFE_TEXTCONTENT",
+        "production_projection": "MATERIALIZED_EXACT_CANONICAL_REFS",
+        "production_mutation": "MATERIALIZED_LOCAL_PERSISTENCE_ONLY",
+        "metadata_identity_fallback": "FORBIDDEN_BY_DB_CHECK",
+        "external_publish": "NOT_EXECUTED_SEPARATE_CLOSURE"
+      },
+      "production_baseline": {
+        "migration_count": 20,
+        "latest_migration": "0020_system_lifecycle_runtime",
+        "social_target_id_column": false,
+        "content_package_id_column": false,
+        "soc_0031_assignment_rows": 0,
+        "production_mutation_performed": false
+      },
+      "production_apply_policy": "FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE"
     }
   },
   "production": {
@@ -1036,15 +1085,15 @@
       "validation_branch_id": "br-orange-smoke-aut9pafw",
       "production_apply": "PENDING_FINAL_RELEASE_SEQUENCE"
     },
-    "repository_registered_migration_count": 30,
-    "validation_branch_migration_count": 30,
-    "validation_latest_migration": "0030_soc_target_policy_permission_rls_closure",
+    "repository_registered_migration_count": 31,
+    "validation_branch_migration_count": 31,
+    "validation_latest_migration": "0031_soc_publish_request_relation_runtime",
     "production_migration_count": 20,
     "pending_validated_migrations": {
-      "range": "0021-0030",
+      "range": "0021-0031",
       "status": "VALIDATED_ON_EXISTING_VALIDATION_BRANCH_NOT_APPLIED_TO_PRODUCTION",
       "validation_branch_id": "br-orange-smoke-aut9pafw",
-      "validation_migration_count": 30,
+      "validation_migration_count": 31,
       "production_migration_count": 20,
       "production_latest_migration": "0020_system_lifecycle_runtime",
       "production_apply": "PENDING_FINAL_RELEASE_SEQUENCE"
@@ -1185,17 +1234,19 @@
   },
   "blockers": [
     "AI conversation final Production E2E is intentionally pending because user requires one consolidated deployment only after all construction is ready.",
-    "Validated migrations 0021-0030 are intentionally not applied to Production until the final consolidated release sequence; Production remains at migration 0020.",
+    "Validated migrations 0021-0031 are intentionally not applied to Production until the final consolidated release sequence; Production remains at migration 0020.",
     "INFO-01 exact Evidence/source lineage and export persistence owner remain Authority gaps; no fabricated Evidence or export is permitted.",
     "Gate 24 overall non-SYS admin mutation acceptance still requires final Current recomputation after remaining runtime closures.",
     "Do not persist Provider API-key plaintext in GitHub, Neon, logs or state artifacts.",
     "ERP-01 remaining write closure is Authority/schema blocked: CreateERPConnector requires data_classification without a canonical connector/mapping persistence column and requires workspace_id without a Current user-to-workspace/scope owner; Update/Validate/Retry schemas are not fully materialized in the Current business payload registry. Do not hardcode a workspace or persist fields into unrelated JSON.",
-    "SOC-01 requestSocialTargetPublish is Authority/data-model blocked: RequestSocialTargetPublishRequest is target-scoped, but canonical publish_requests from migration 0001 has no social_target_id and migration 0015 introduced social_market_targets without adding a publish-request relation; Current source does not define metadata.target_id. Do not invent a metadata linkage or additive FK without Authority."
+    "SOC-01 publish relation is closed by 0031, but SOC candidate APPROVE does not yet seal the exact public.content_packages row to APPROVED; keep publish fail-closed until the content-package approval owner is materialized.",
+    "QA createReleasePackage is still blocked by QA01_RELEASE_EVIDENCE_OWNER_NOT_MATERIALIZED; approved release/content lineage cannot be fabricated for Production."
   ],
   "next_release_sequence": [
-    "SOC-01 target policy 0030 is Authority-exact and Release Gate #814 PASS. Keep requestSocialTargetPublish fail-closed on the missing canonical target-to-publish-request relation and continue to the next dependency-ready Current runtime closure.",
+    "SOC publish target/content canonical relation and local PENDING_EXTERNAL request closure are validated through migration 0031 and Release Gate #820. Next close the exact SOC content-package approval transition, then the QA ReleasePackage evidence owner.",
     "Do not merge new to main and do not trigger Vercel while construction remains open.",
-    "Keep validated migrations 0021-0030 unapplied to Production until the consolidated governed release sequence.",
+    "Keep validated migrations 0021-0031 unapplied to Production until the consolidated governed release sequence.",
+    "Continue dependency-ready local runtime closures; keep external PublishingAdapterService success fail-closed until real provider/platform evidence exists.",
     "After all dependency-ready runtime/acceptance gaps close, run one exact Release Gate on new and integrate once to main.",
     "Apply the validated migration chain in the governed final release sequence with Production verification.",
     "After exact final Production SHA is ready, run pending Conversation Acceptance and final Post-Deploy/Production acceptance before declaring overall PASS."
