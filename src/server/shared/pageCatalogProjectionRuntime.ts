@@ -283,11 +283,20 @@ async function readDepartmentTasks(sql: SqlClient, sessionTokenHash: string, dep
              p.project_id::text AS project_id,
              p.title AS project_label,
              tp.topic_id::text AS topic_id,
-             tp.title AS topic_label
+             tp.title AS topic_label,
+             h.source_output_version_id::text AS handed_off_output_version_id
       FROM department_tasks t
       JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
       JOIN topics tp ON tp.topic_id = cl.topic_id
       JOIN projects p ON p.project_id = tp.project_id
+      LEFT JOIN LATERAL (
+        SELECT h0.source_output_version_id
+        FROM handoffs h0
+        WHERE h0.target_task_id=t.task_id
+          AND h0.status IN ('HANDOFF_READY','HANDED_OFF')
+        ORDER BY h0.created_at DESC,h0.handoff_id DESC
+        LIMIT 1
+      ) h ON true
       WHERE t.department::text = ${department}
       ORDER BY t.created_at DESC
     `,
@@ -305,6 +314,7 @@ async function readDepartmentTasks(sql: SqlClient, sessionTokenHash: string, dep
       task_id,
       status,
       input_fingerprint: asText(row?.input_fingerprint),
+      handed_off_output_version_id: asText(row?.handed_off_output_version_id),
       project_id,
       project_label,
       topic_id,
@@ -629,7 +639,11 @@ function emptyQa(): unknown {
     release_package_ref: null,
     values: {},
     lists: {},
-    gate_state: { "QA-01-GATE-PAGE": true },
+    gate_state: {
+      "QA-01-GATE-PAGE": true,
+      "QA-01-GATE-START": Boolean(first?.task_id && first?.handed_off_output_version_id && criteria?.ref),
+      "QA-01-GATE-CRITERIA": Boolean(criteria?.ref),
+    },
     correlation_id: null,
     audit_ref: null,
   };
@@ -849,6 +863,20 @@ async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<u
     readDepartmentTasks(sql, sessionTokenHash, "QA"),
   ]);
   const first = tasks[0] ?? null;
+  const approvedCriteria = (await safeRows(() => sql`
+    SELECT criteria_version_id::text AS ref,
+           criteria_key AS label,
+           version_no::text AS version_no,
+           gate_policy,
+           required_checks,
+           content_hash::text AS content_hash
+    FROM quality_criteria_versions
+    WHERE status='APPROVED'
+      AND (department::text='QA' OR department IS NULL)
+    ORDER BY version_no DESC,criteria_version_id DESC
+    LIMIT 20
+  `));
+  const criteria = approvedCriteria[0] ?? null;
   const reviews = refList(await safeRows(() => sql`
     SELECT r.qa_review_run_id::text AS ref, r.status::text AS label
     FROM qa_review_runs r
@@ -881,14 +909,18 @@ async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<u
     topic_id: first?.topic_id ?? topics[0]?.ref ?? null,
     qa_task_ref: asText(reviewRow?.qa_task_ref) ?? first?.task_id ?? null,
     qa_review_ref: asText(reviewRow?.qa_review_ref) ?? null,
-    target_output_version_id: asText(reviewRow?.target_output_version_id) ?? asText(scorecards[0]?.output_version_id) ?? null,
+    target_output_version_id: asText(reviewRow?.target_output_version_id) ?? asText(first?.handed_off_output_version_id) ?? asText(scorecards[0]?.output_version_id) ?? null,
     scorecard_ref: asText(scorecards[0]?.scorecard_id) ?? null,
     values: {
       "QA-01-FLD-PROJECT": first?.project_label ?? projects[0]?.label ?? DASH,
       "QA-01-FLD-TOPIC": first?.topic_label ?? topics[0]?.label ?? DASH,
       "QA-01-FLD-QA-TASK": first?.task_id ?? DASH,
-      "QA-01-FLD-TARGET-OUTPUT": asText(reviewRow?.target_output_version_id) ?? DASH,
+      "QA-01-FLD-TARGET-OUTPUT": asText(reviewRow?.target_output_version_id) ?? asText(first?.handed_off_output_version_id) ?? DASH,
       "QA-01-FLD-REVIEW-STATE": asText(reviewRow?.status) ?? first?.status ?? DASH,
+      "QA-01-FLD-CRITERIA-VERSION": asText(criteria?.ref) ?? DASH,
+      "QA-01-FLD-GATE-POLICY": criteria?.gate_policy ?? DASH,
+      "QA-01-FLD-REQUIRED-CHECKS": criteria?.required_checks ?? DASH,
+      "QA-01-FLD-SCRIPT-HASH": asText(criteria?.content_hash) ?? DASH,
     },
     lists: {
       "QA-01-LIST-REVIEWS": reviews,
