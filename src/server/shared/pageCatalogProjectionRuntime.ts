@@ -1154,40 +1154,143 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
 }
 
 async function readInfoFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
-  const sources = refList(await safeRows(() => sql`
-    SELECT k.knowledge_source_id::text AS ref, k.source_key AS label
-    FROM knowledge_sources k
-    ORDER BY k.created_at DESC
-  `));
-  const projects = await readProjectRefs(sql, sessionTokenHash);
-  const packs = await safeRows(() => sql`
-    SELECT f.fact_pack_id::text AS ref, f.freshness_at::text AS freshness_at
-    FROM fact_packs f
-    ORDER BY f.freshness_at DESC
-    LIMIT 1
-  `);
-  const combined = sources.length ? sources : projects;
-  const page_state = combined.length ? "READY" : "EMPTY";
+  const packRows = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT
+        f.fact_pack_id::text AS ref,
+        f.workspace_id::text AS workspace_id,
+        f.status::text AS status,
+        f.scope::text AS scope,
+        f.freshness_at::text AS freshness_at,
+        f.completeness::text AS completeness,
+        f.confidence::text AS confidence,
+        f.classification::text AS classification,
+        f.content_hash::text AS content_hash
+      FROM fact_packs f
+      ORDER BY f.freshness_at DESC
+      LIMIT 50
+    `,
+  ));
+  const packs = packRows.flatMap((raw) => {
+    const row = asRecord(raw);
+    const ref = asText(row?.ref);
+    const workspace_id = asText(row?.workspace_id);
+    if (!ref || !workspace_id) return [];
+    return [{
+      ref,
+      label: `FACT_PACK · ${asText(row?.status) ?? "APPROVED"} · ${asText(row?.completeness) ?? "0"}%`,
+      workspace_id,
+      status: asText(row?.status),
+      scope: asText(row?.scope),
+      freshness_at: asText(row?.freshness_at),
+      completeness: asText(row?.completeness),
+      confidence: asText(row?.confidence),
+      classification: asText(row?.classification),
+      content_hash: asText(row?.content_hash),
+    }];
+  });
+
+  const candidateRows = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT
+        c.context_candidate_id::text AS ref,
+        c.decision_status::text AS status,
+        c.target_scope::text AS target_scope,
+        c.decision_reason,
+        c.created_at::text AS created_at,
+        f.workspace_id::text AS workspace_id,
+        f.fact_pack_id::text AS fact_pack_ref,
+        f.evidence_refs::text AS evidence_refs,
+        f.classification::text AS classification
+      FROM context_candidates c
+      JOIN fact_packs f ON f.fact_pack_id=c.fact_pack_id
+      ORDER BY c.created_at DESC
+      LIMIT 50
+    `,
+  ));
+  const candidates = candidateRows.flatMap((raw) => {
+    const row = asRecord(raw);
+    const ref = asText(row?.ref);
+    if (!ref) return [];
+    return [{
+      ref,
+      label: `CONTEXT_CANDIDATE · ${asText(row?.status) ?? "CANDIDATE"}`,
+      status: asText(row?.status),
+      target_scope: asText(row?.target_scope),
+      decision_reason: asText(row?.decision_reason),
+      created_at: asText(row?.created_at),
+      workspace_id: asText(row?.workspace_id),
+      fact_pack_ref: asText(row?.fact_pack_ref),
+      evidence_refs: asText(row?.evidence_refs),
+      classification: asText(row?.classification),
+    }];
+  });
+
+  const firstPack = packs[0] ?? null;
+  const firstCandidate = candidates[0] ?? null;
+  const page_state = firstCandidate
+    ? "CONTEXT_CANDIDATE"
+    : firstPack
+      ? "READY"
+      : "EMPTY";
+  const projectionVersion = firstPack?.content_hash ?? "info:empty";
+  const authorizedScope = firstPack?.workspace_id ?? "workspace:INFO-01";
+  const workspaceFilters = [...new Map(
+    packs.map((item) => [item.workspace_id, { ref: item.workspace_id, label: item.workspace_id }]),
+  ).values()];
+
   return {
     page_state,
-    projection_version: "neon:wild-wave",
-    authorized_scope: "workspace:INFO-01",
-    last_refresh: asText(packs[0]?.freshness_at) ?? null,
+    projection_version: projectionVersion,
+    authorized_scope: authorizedScope,
+    last_refresh: firstPack?.freshness_at ?? null,
     values: {
-      "INFO-01-FLD-SCOPE": "workspace:INFO-01",
-      "INFO-01-FLD-PROJECTION-VERSION": "neon:wild-wave",
+      "INFO-01-FLD-SCOPE": authorizedScope,
+      "INFO-01-FLD-PROJECTION-VERSION": projectionVersion,
       "INFO-01-FLD-PAGE-STATE": page_state,
-      "INFO-01-FLD-LAST-REFRESH": asText(packs[0]?.freshness_at) ?? DASH,
-      "INFO-01-FLD-SOURCE-REF": combined[0]?.ref ?? DASH,
+      "INFO-01-FLD-LAST-REFRESH": firstPack?.freshness_at ?? DASH,
+      "INFO-01-FLD-SOURCE-REF": DASH,
+      "INFO-01-FLD-FACTPACK-REF": firstPack?.ref ?? DASH,
+      "INFO-01-FLD-FACTPACK-SCOPE": firstPack?.scope ?? DASH,
+      "INFO-01-FLD-FACTPACK-STATE": firstPack?.status ?? DASH,
+      "INFO-01-FLD-FRESHNESS": firstPack?.freshness_at ?? DASH,
+      "INFO-01-FLD-COMPLETENESS": firstPack?.completeness ?? DASH,
+      "INFO-01-FLD-CONFIDENCE": firstPack?.confidence ?? DASH,
+      "INFO-01-FLD-CANDIDATE-ID": firstCandidate?.ref ?? DASH,
+      "INFO-01-FLD-CANDIDATE-SCOPE": firstCandidate?.target_scope ?? DASH,
+      "INFO-01-FLD-CANDIDATE-CITATIONS": firstCandidate?.evidence_refs ?? DASH,
+      "INFO-01-FLD-CANDIDATE-STATE": firstCandidate?.status ?? DASH,
+      "INFO-01-FLD-ADOPTION-REVIEW": firstCandidate?.decision_reason ?? DASH,
+      "INFO-01-FLD-DISABLED": "Evidence/source lineage, Export owner, and human decision input stay fail-closed until materialized",
     },
     lists: {
-      "INFO-01-LST-SOURCES": combined,
+      "INFO-01-LST-SOURCES": [],
+      "INFO-01-LST-ALERTS": [],
+      "INFO-01-LST-FACTPACKS": packs.map(({ ref, label }) => ({ ref, label })),
+      "INFO-01-LST-FACTS": [],
+      "INFO-01-LST-INFERENCES": [],
+      "INFO-01-LST-EVIDENCE": [],
+      "INFO-01-LST-RESEARCH": [],
+      "INFO-01-LST-CANDIDATES": candidates.map(({ ref, label }) => ({ ref, label })),
     },
-    filters: {},
+    filters: {
+      "INFO-01-SEL-SCOPE": workspaceFilters,
+    },
     gate_state: {
       "INFO-01-GATE-PAGE": true,
-      "INFO-01-GATE-SEARCH": true,
+      "INFO-01-GATE-READ": true,
+      "INFO-01-GATE-FACTPACK": packs.length > 0,
+      "INFO-01-GATE-EVIDENCE": false,
       "INFO-01-GATE-REFRESH": true,
+      "INFO-01-GATE-SEARCH": true,
+      "INFO-01-GATE-EXPORT": false,
+      "INFO-01-GATE-CANDIDATE": candidates.length > 0,
+      "INFO-01-GATE-ADOPT": false,
+      "INFO-01-GATE-DECIDE": false,
     },
   };
 }
