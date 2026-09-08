@@ -53,6 +53,7 @@ test("SOC-01 Production UI enables only materialized content actions and derives
 
   assert.match(adapters, /"SOC-01-ACT-CONTENT-SAVE"/);
   assert.match(adapters, /"SOC-01-ACT-CANDIDATE-DECIDE"/);
+  assert.match(adapters, /"SOC-01-ACT-POLICY-CONFIG"/);
   assert.match(adapters, /"SOC-01-ACT-REFRESH"/);
   assert.match(adapters, /supports:/);
   assert.doesNotMatch(adapters, /"SOC-01-ACT-PUBLISH-REQUEST"[\s\S]{0,160}supports/);
@@ -65,7 +66,8 @@ test("SOC-01 Production UI enables only materialized content actions and derives
   assert.match(projection, /kind='SOC_CONTENT_DRAFT'/);
   assert.match(projection, /"SOC-01-GATE-CONTENT": Boolean\(contentPackage\)/);
   assert.match(projection, /"SOC-01-GATE-CANDIDATE": candidateStatus === "REVIEW"/);
-  assert.match(projection, /"SOC-01-GATE-PUBLISH": candidateStatus === "APPROVED" && targets\.length > 0/);
+  assert.match(projection, /"SOC-01-GATE-POLICY": policyTargetStatus === "JOINED"/);
+  assert.match(projection, /"SOC-01-GATE-PUBLISH": candidateStatus === "APPROVED" && policyTargetStatus === "READY_TO_POST"/);
 });
 
 test("migration 0022 stages only the two missing SOC API assignments and stays pending Production apply", async () => {
@@ -90,4 +92,60 @@ test("migration 0022 stages only the two missing SOC API assignments and stays p
   assert.match(manifest, /production_apply: PENDING/);
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 20/);
   assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 22);
+});
+
+
+test("SOC-01 target posting policy runtime reuses exact Authority request, route and local persistence owner", async () => {
+  const authority = await read("authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml");
+  const interactions = await read("07_ui/interaction_registry.yaml");
+  const adapters = await read("src/domain/catalog/identityClientCommandAdapters.ts");
+  const identity = await read("src/server/shared/identityPageCommandRuntime.ts");
+  const runtime = await read("src/server/social/productionSocPolicyRuntime.ts");
+  const route = await read("src/app/v1/social/targets/[targetId]/posting-policy/route.ts");
+  const projection = await read("src/server/shared/pageCatalogProjectionRuntime.ts");
+
+  assert.match(authority, /ConfigureSocialTargetPolicyRequest:[\s\S]*minimum_interval_hours[\s\S]*daily_limit[\s\S]*weekly_limit/);
+  assert.match(authority, /operation_id: configureSocialTargetPolicy[\s\S]*method: PUT[\s\S]*\/v1\/social\/targets\/\{targetId\}\/posting-policy[\s\S]*owner: PublishingService/);
+  assert.match(interactions, /soc_policy_interaction_registry:/);
+  assert.match(interactions, /SOC-01-BTN-POLICY-CONFIG[\s\S]*ConfigureSocialTargetPolicyRequest/);
+  assert.match(route, /createSocRoute\("configureSocialTargetPolicy"\)/);
+  assert.match(adapters, /openSocTargetPolicyDialog/);
+  assert.match(adapters, /method="PUT"/);
+  assert.match(adapters, /expected_version:targetVersion/);
+  assert.match(identity, /SOC_TARGET_POLICY_PERMISSIONS/);
+  assert.match(identity, /configureProductionSocTargetPolicy/);
+  assert.match(runtime, /acpos_runtime\.idempotency/);
+  assert.match(runtime, /pg_advisory_xact_lock/);
+  assert.match(runtime, /join_status='READY_TO_POST'/);
+  assert.match(runtime, /version=t\.version\+1/);
+  assert.match(runtime, /external_request_sent',false/);
+  assert.match(runtime, /publish_triggered',false/);
+  assert.doesNotMatch(runtime, /fetch\(|ProviderGateway/);
+  assert.match(projection, /runRlsActorQuery\([\s\S]*FROM public\.social_market_targets/);
+  assert.match(projection, /selected:[\s\S]*target_id:[\s\S]*target_version:/);
+});
+
+test("migration 0030 stages only existing SOC policy resources, target version and session-bound RLS", async () => {
+  const migration = await read("database/migrations/0030_soc_target_policy_permission_rls_closure.sql");
+  const manifest = await read("database/migrations/migration_checksum_manifest.yaml");
+  const neonRuntime = await read("src/server/database/neonRuntime.ts");
+
+  assert.match(migration, /action:admin:SOC-04:ACT-SOCIAL-TARGET-POLICY/);
+  assert.match(migration, /control:CTRL-ADMIN-SOC-04-ACT-01-ACT-SOCIAL-TARGET-POLICY/);
+  assert.match(migration, /api:configureSocialTargetPolicy/);
+  assert.match(migration, /resource_count <> 3/);
+  assert.match(migration, /approved_allow_count <> 3/);
+  assert.match(migration, /ADD COLUMN IF NOT EXISTS version bigint NOT NULL DEFAULT 1/);
+  assert.match(migration, /ALTER TABLE public\.social_market_targets ENABLE ROW LEVEL SECURITY/);
+  assert.match(migration, /ALTER TABLE acpos_runtime\.idempotency ENABLE ROW LEVEL SECURITY/);
+  assert.match(migration, /acpos_social_market_targets_soc_policy_update/);
+  assert.match(migration, /acpos_idempotency_actor_insert/);
+  assert.match(migration, /acpos_audit_events_soc_insert/);
+  assert.match(migration, /d43ee379e03c27824e61613f89ffdb75823182ef3397bd9c507d70b943aed518/);
+  assert.doesNotMatch(migration, /INSERT INTO public\.permission_resources/);
+  assert.doesNotMatch(migration, /CREATE ROLE|ALTER ROLE/);
+  assert.match(manifest, /migration_id: 0030_soc_target_policy_permission_rls_closure/);
+  assert.match(manifest, /payload_sha256: d43ee379e03c27824e61613f89ffdb75823182ef3397bd9c507d70b943aed518/);
+  assert.match(manifest, /production_apply: PENDING/);
+  assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 30/);
 });

@@ -156,6 +156,90 @@ function openInfoHumanDecisionDialog(kind: "ADOPT" | "DECIDE"): Promise<InfoHuma
   });
 }
 
+
+type SocPolicyDialogResult =
+  | { ok: true; payload: Record<string, unknown> }
+  | { ok: false; reason_code: string };
+
+function openSocTargetPolicyDialog(projection: import("@/domain/social/socProjectionPort").SocNormalizedProjection): Promise<SocPolicyDialogResult> {
+  if (typeof document === "undefined") return Promise.resolve({ ok: false, reason_code: "SOC_POLICY_WINDOW_UNAVAILABLE" });
+  return new Promise((resolve) => {
+    document.getElementById("acpos-soc-target-policy-dialog")?.remove();
+    const dialog=document.createElement("dialog");
+    dialog.id="acpos-soc-target-policy-dialog";
+    dialog.style.padding="20px";
+    dialog.style.border="1px solid #3a4458";
+    dialog.style.borderRadius="12px";
+    dialog.style.background="#10151f";
+    dialog.style.color="#e8edf7";
+    dialog.style.minWidth="480px";
+    dialog.innerHTML=`<form method="dialog" style="display:grid;gap:10px">
+      <strong>Configure target posting policy</strong>
+      <label>minimum_interval_hours<input name="minimum_interval_hours" type="number" min="0" step="1" required></label>
+      <label>daily_limit<input name="daily_limit" type="number" min="0" step="1" required></label>
+      <label>weekly_limit<input name="weekly_limit" type="number" min="0" step="1" required></label>
+      <label>same_content_cooldown_hours<input name="same_content_cooldown_hours" type="number" min="0" step="1"></label>
+      <label>similar_content_cooldown_hours<input name="similar_content_cooldown_hours" type="number" min="0" step="1"></label>
+      <label>allowed_time_window<textarea name="allowed_time_window" rows="3"></textarea></label>
+      <label>target_rule_notes<textarea name="target_rule_notes" rows="3"></textarea></label>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" id="acpos-soc-policy-cancel">Cancel</button>
+        <button value="ok">Save policy</button>
+      </div>
+    </form>`;
+    document.body.appendChild(dialog);
+    const form=dialog.querySelector("form") as HTMLFormElement;
+    const setValue=(name:string,key:string)=>{
+      const field=form.elements.namedItem(name) as HTMLInputElement|HTMLTextAreaElement|null;
+      const current=projection.values[key];
+      if(field&&current&&current!=="—")field.value=current;
+    };
+    setValue("minimum_interval_hours","SOC-01-FLD-MIN-INTERVAL");
+    setValue("daily_limit","SOC-01-FLD-DAILY-LIMIT");
+    setValue("weekly_limit","SOC-01-FLD-WEEKLY-LIMIT");
+    setValue("same_content_cooldown_hours","SOC-01-FLD-SAME-COOLDOWN");
+    setValue("similar_content_cooldown_hours","SOC-01-FLD-SIMILAR-COOLDOWN");
+    setValue("allowed_time_window","SOC-01-FLD-ALLOWED-WINDOW");
+    setValue("target_rule_notes","SOC-01-FLD-TARGET-RULE-NOTES");
+    let settled=false;
+    const finish=(result:SocPolicyDialogResult)=>{if(settled)return;settled=true;if(dialog.open)dialog.close();dialog.remove();resolve(result)};
+    dialog.querySelector("#acpos-soc-policy-cancel")?.addEventListener("click",()=>finish({ok:false,reason_code:"SOC_POLICY_CANCELLED"}));
+    form.addEventListener("submit",(event)=>{
+      event.preventDefault();
+      const data=new FormData(form);
+      const requiredNumber=(name:string)=>Number(String(data.get(name)??""));
+      const minimum_interval_hours=requiredNumber("minimum_interval_hours");
+      const daily_limit=requiredNumber("daily_limit");
+      const weekly_limit=requiredNumber("weekly_limit");
+      if(![minimum_interval_hours,daily_limit,weekly_limit].every((n)=>Number.isSafeInteger(n)&&n>=0)){
+        finish({ok:false,reason_code:"SOC01_REQUIRED_POLICY_FIELD_MISSING"});return;
+      }
+      const payload:Record<string,unknown>={minimum_interval_hours,daily_limit,weekly_limit};
+      for(const key of ["same_content_cooldown_hours","similar_content_cooldown_hours"]){
+        const raw=String(data.get(key)??"").trim();
+        if(raw){
+          const parsed=Number(raw);
+          if(!Number.isSafeInteger(parsed)||parsed<0){finish({ok:false,reason_code:"SOC01_POLICY_INTEGER_INVALID"});return;}
+          payload[key]=parsed;
+        }
+      }
+      const windowRaw=String(data.get("allowed_time_window")??"").trim();
+      if(windowRaw){
+        try{
+          const parsed:unknown=JSON.parse(windowRaw);
+          if(!parsed||typeof parsed!=="object"||Array.isArray(parsed))throw new Error("invalid");
+          payload.allowed_time_window=parsed;
+        }catch{finish({ok:false,reason_code:"SOC01_ALLOWED_TIME_WINDOW_INVALID"});return;}
+      }
+      const notes=String(data.get("target_rule_notes")??"").trim();
+      if(notes)payload.target_rule_notes=notes;
+      finish({ok:true,payload});
+    });
+    dialog.addEventListener("cancel",(event)=>{event.preventDefault();finish({ok:false,reason_code:"SOC_POLICY_CANCELLED"})});
+    if(typeof dialog.showModal==="function")dialog.showModal();else finish({ok:false,reason_code:"SOC_POLICY_DIALOG_UNSUPPORTED"});
+  });
+}
+
 function bindStrategyAdminHttpCommandAdapter(): void {
   configureStrategyAdminCommandAdapter({
     invoke: async (input) => {
@@ -307,7 +391,7 @@ export function bindIdentityClientCommandAdapters(): void {
       }
 
       const response = await fetch(path, {
-        method: "POST",
+        method,
         cache: "no-store",
         credentials: "include",
         headers: { "content-type": "application/json", "x-correlation-id": crypto.randomUUID() },
@@ -335,6 +419,7 @@ export function bindIdentityClientCommandAdapters(): void {
     supports: (action_uid) => [
       "SOC-01-ACT-CONTENT-SAVE",
       "SOC-01-ACT-CANDIDATE-DECIDE",
+      "SOC-01-ACT-POLICY-CONFIG",
       "SOC-01-ACT-REFRESH",
     ].includes(action_uid),
     invoke: async (input) => {
@@ -356,8 +441,26 @@ export function bindIdentityClientCommandAdapters(): void {
       const candidateVersion = Number(versionText);
       let path: string;
       let payload: Record<string, unknown>;
+      let method = "POST";
 
-      if (input.action_uid === "SOC-01-ACT-CONTENT-SAVE") {
+      if (input.action_uid === "SOC-01-ACT-POLICY-CONFIG") {
+        const targetId=projection.selected.target_id??"";
+        const targetVersion=Number(projection.selected.target_version??"");
+        if(!targetId||!Number.isSafeInteger(targetVersion)||targetVersion<1){
+          return {ok:false as const,error_uid:"SOC-01-ERR-UNDEFINED",reason_code:"SOC01_TARGET_POLICY_CONTEXT_REQUIRED",correlation_id:"unresolved"};
+        }
+        const dialog=await openSocTargetPolicyDialog(projection);
+        if(!dialog.ok)return {ok:false as const,error_uid:"SOC-01-ERR-UNDEFINED",reason_code:dialog.reason_code,correlation_id:"unresolved"};
+        path=`/v1/social/targets/${encodeURIComponent(targetId)}/posting-policy`;
+        method="PUT";
+        payload={
+          target_id:targetId,
+          scope:{},
+          expected_version:targetVersion,
+          idempotency_key:`soc-policy:${targetId}:${crypto.randomUUID()}`,
+          ...dialog.payload,
+        };
+      } else if (input.action_uid === "SOC-01-ACT-CONTENT-SAVE") {
         if (!contentPackageId || contentPackageId === "—") {
           return { ok: false as const, error_uid: "SOC-01-ERR-CONTENT", reason_code: "SOC01_CONTENT_PACKAGE_REQUIRED", correlation_id: "unresolved" };
         }
