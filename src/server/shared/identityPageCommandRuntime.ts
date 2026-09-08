@@ -27,6 +27,7 @@ import { configureStrategyDecisionRuntime, type StrategyDecisionRequest } from "
 import { executeProductionStrategyDecision } from "@/server/strategy/productionStrategyDecisionRuntime";
 import { configureSocCommandRuntime } from "@/server/social/socCommandRuntime";
 import { saveProductionSocDraft, decideProductionSocCandidate } from "@/server/social/productionSocContentRuntime";
+import { configureProductionSocTargetPolicy } from "@/server/social/productionSocPolicyRuntime";
 import type { SocRuntimeRequest } from "@/server/testing/controlledSocTestRuntime";
 import { configureErpCommandRuntime } from "@/server/erp/erpCommandRuntime";
 import { requestProductionErpSnapshotRefresh } from "@/server/erp/productionErpSnapshotRuntime";
@@ -343,6 +344,12 @@ async function authorizeErp(request:ErpRuntimeRequest):Promise<{allowed:true}|{a
   return{allowed:false,reason_code:"ERP01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
 }
 
+const SOC_TARGET_POLICY_PERMISSIONS: readonly {resource_key:string;action:string}[] = [
+  {resource_key:"action:admin:SOC-04:ACT-SOCIAL-TARGET-POLICY",action:"INVOKE"},
+  {resource_key:"control:CTRL-ADMIN-SOC-04-ACT-01-ACT-SOCIAL-TARGET-POLICY",action:"INVOKE"},
+  {resource_key:"api:configureSocialTargetPolicy",action:"EXECUTE"},
+];
+
 async function authorizeSoc(request:SocRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
   const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:SOC-01"]);
   if(!page.allowed)return page;
@@ -350,6 +357,13 @@ async function authorizeSoc(request:SocRuntimeRequest):Promise<{allowed:true}|{a
   if(request.operation_id==="saveDraft"){
     const gate=await evaluateResourceAction("api:saveDraft","EXECUTE");
     return gate.allowed?{allowed:true}:gate;
+  }
+  if(request.operation_id==="configureSocialTargetPolicy"){
+    for(const permission of SOC_TARGET_POLICY_PERMISSIONS){
+      const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+      if(!gate.allowed)return gate;
+    }
+    return{allowed:true};
   }
   return{allowed:false,reason_code:"SOC01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
 }
@@ -1209,6 +1223,7 @@ async function executeConversation(request: ConversationRequest): Promise<unknow
 
 async function executeSoc(request: SocRuntimeRequest): Promise<unknown> {
   if (request.operation_id === "saveDraft") return saveProductionSocDraft(request);
+  if (request.operation_id === "configureSocialTargetPolicy") return configureProductionSocTargetPolicy(request);
   if (request.operation_id === "refreshProjection") return { refreshed: true };
   if (request.operation_id === "searchProjection") {
     const sql = await requireSql();

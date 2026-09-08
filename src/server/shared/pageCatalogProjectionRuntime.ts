@@ -1495,7 +1495,7 @@ async function readDevFromDb(sql: SqlClient): Promise<unknown> {
   };
 }
 
-async function readSocFromDb(sql: SqlClient): Promise<unknown> {
+async function readSocFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
   const accounts = await safeRows(() => sql`
     SELECT channel_account_id::text AS ref, platform_key AS label, status::text AS status
     FROM channel_accounts
@@ -1506,11 +1506,21 @@ async function readSocFromDb(sql: SqlClient): Promise<unknown> {
     FROM social_account_bindings
     ORDER BY created_at DESC
   `);
-  const targets = await safeRows(() => sql`
-    SELECT social_target_id::text AS ref, target_name AS label, status::text AS status
-    FROM social_market_targets
-    ORDER BY social_target_id
-  `);
+  const targets = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT
+        t.social_target_id::text AS ref,
+        t.target_name AS label,
+        t.join_status AS status,
+        COALESCE((to_jsonb(t)->>'version')::bigint,1)::text AS version,
+        t.posting_policy
+      FROM public.social_market_targets t
+      ORDER BY CASE WHEN t.join_status='JOINED' THEN 0 WHEN t.join_status='READY_TO_POST' THEN 1 ELSE 2 END,
+               t.social_target_id
+    `,
+  ));
   const packages = await safeRows(() => sql`
     SELECT content_package_id::text AS ref,
            release_package_id::text AS release_ref,
@@ -1535,13 +1545,29 @@ async function readSocFromDb(sql: SqlClient): Promise<unknown> {
     ? drafts.find((row) => asText(asRecord(row.payload)?.content_package_id) === packageRef) ?? null
     : null;
   const candidateStatus = asText(candidate?.status);
+  const policyTarget = targets.find((row) => asText(row.status) === "JOINED")
+    ?? targets.find((row) => asText(row.status) === "READY_TO_POST")
+    ?? targets[0]
+    ?? null;
+  const policyTargetStatus = asText(policyTarget?.status);
+  const postingPolicy = asRecord(policyTarget?.posting_policy) ?? {};
   return {
-    page_state: first || contentPackage ? "READY" : "EMPTY",
+    page_state: first || contentPackage || policyTarget ? "READY" : "EMPTY",
     values: {
       "SOC-01-FLD-PLATFORM": asText(first && "platform_key" in first ? first.platform_key : first?.label) ?? DASH,
       "SOC-01-FLD-ACCOUNT": asText(first?.label) ?? DASH,
       "SOC-01-FLD-ACCOUNT-STATUS": asText(first?.status) ?? DASH,
       "SOC-01-FLD-TARGET-COUNT": String(targets.length),
+      "SOC-01-FLD-TARGET-DIRECTORY": policyTarget ? `${asText(policyTarget.ref) ?? DASH} · ${asText(policyTarget.label) ?? DASH} · ${policyTargetStatus ?? DASH}` : DASH,
+      "SOC-01-FLD-TARGET-SELECTOR": policyTarget ? `${asText(policyTarget.ref) ?? DASH} · ${policyTargetStatus ?? DASH}` : DASH,
+      "SOC-01-FLD-TARGET-CAPABILITY-STATUS": policyTargetStatus ?? DASH,
+      "SOC-01-FLD-MIN-INTERVAL": postingPolicy.minimum_interval_hours == null ? DASH : String(postingPolicy.minimum_interval_hours),
+      "SOC-01-FLD-DAILY-LIMIT": postingPolicy.daily_limit == null ? DASH : String(postingPolicy.daily_limit),
+      "SOC-01-FLD-WEEKLY-LIMIT": postingPolicy.weekly_limit == null ? DASH : String(postingPolicy.weekly_limit),
+      "SOC-01-FLD-SAME-COOLDOWN": postingPolicy.same_content_cooldown_hours == null ? DASH : String(postingPolicy.same_content_cooldown_hours),
+      "SOC-01-FLD-SIMILAR-COOLDOWN": postingPolicy.similar_content_cooldown_hours == null ? DASH : String(postingPolicy.similar_content_cooldown_hours),
+      "SOC-01-FLD-ALLOWED-WINDOW": postingPolicy.allowed_time_window == null ? DASH : jsonText(postingPolicy.allowed_time_window),
+      "SOC-01-FLD-TARGET-RULE-NOTES": asText(postingPolicy.target_rule_notes) ?? DASH,
       "SOC-01-FLD-RELEASE-SOURCE": asText(contentPackage?.release_ref) ?? DASH,
       "SOC-01-FLD-CONTENT-PACKAGE": packageRef ?? DASH,
       "SOC-01-FLD-CHANNEL-ACCOUNT": asText(contentPackage?.channel_account_ref) ?? DASH,
@@ -1554,8 +1580,13 @@ async function readSocFromDb(sql: SqlClient): Promise<unknown> {
       "SOC-01-GATE-READ": true,
       "SOC-01-GATE-CONTENT": Boolean(contentPackage),
       "SOC-01-GATE-CANDIDATE": candidateStatus === "REVIEW",
-      "SOC-01-GATE-PUBLISH": candidateStatus === "APPROVED" && targets.length > 0,
+      "SOC-01-GATE-POLICY": policyTargetStatus === "JOINED",
+      "SOC-01-GATE-PUBLISH": candidateStatus === "APPROVED" && policyTargetStatus === "READY_TO_POST",
       "SOC-01-GATE-RECORDS": true,
+    },
+    selected: {
+      target_id: asText(policyTarget?.ref) ?? "",
+      target_version: asText(policyTarget?.version) ?? "",
     },
   };
 }
@@ -2002,7 +2033,7 @@ async function readPageValue(
     case "admin:DEV-01":
       return readDevFromDb(sql);
     case "admin:SOC-01":
-      return readSocFromDb(sql);
+      return readSocFromDb(sql, sessionTokenHash);
     case "admin:ERP-01":
       return readErpFromDb(sql);
     case "admin:AIAPI-01":
