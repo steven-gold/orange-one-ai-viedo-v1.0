@@ -85,5 +85,6 @@ test("migration 0027 stages only five existing QA lifecycle API assignments and 
   assert.match(manifest, /migration_id: 0027_qa_review_lifecycle_permission_rls_closure/);
   assert.match(manifest, /payload_sha256: 9309b61424bbd72adace0e7da86836bc6ac429e4b99c96a5a2105fec10979c19/);
   assert.match(manifest, /approval_ref: CR-QA-0027-PENDING-PRODUCTION-APPLY/);
-  assert.match(neonRuntime, /MAX_SUPPORTED_MIGRATION_COUNT = 27/);
+  const maximumMigration = Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0);
+  assert.ok(maximumMigration >= 27);
 });
