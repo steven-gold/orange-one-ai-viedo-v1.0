@@ -106,17 +106,70 @@ async function resolveExecutionContext(f:Family,taskId:string,sql:Sql,session:st
 async function runExecution(f:Family,request:Request,retry:boolean){
   const taskId=requireUuid(request.path_params?.taskId,reason(f,"TASK_ID_REQUIRED"));
   const payload=record(request.payload);
+  const correctionMode=str(payload.mode)==="CORRECTION"||Boolean(uuid(payload.approved_candidate_ref));
+  const approvedCandidateId=correctionMode?requireUuid(payload.approved_candidate_ref,reason(f,"APPROVED_CORRECTION_CANDIDATE_REQUIRED")):null;
   const {sql,session_token_hash}=await context();
   const resolved=await resolveExecutionContext(f,taskId,sql,session_token_hash);
   const taskStatus=str(resolved.task.task_status);
-  if(retry){
-    if(taskStatus!=="FAILED"&&taskStatus!=="BLOCKED")throw new NamedRuntimeError(reason(f,"RETRY_STATE_NOT_ELIGIBLE"));
-  }else if(taskStatus!=="READY")throw new NamedRuntimeError(reason(f,"EXECUTE_STATE_NOT_READY"));
-  const supplied=str(payload.input_fingerprint)??str(payload.expected_input_fingerprint);
   const canonicalFingerprint=str(resolved.task.input_fingerprint);
+  const supplied=str(payload.input_fingerprint)??str(payload.expected_input_fingerprint);
   if(supplied&&supplied!==canonicalFingerprint)throw new NamedRuntimeError(reason(f,"INPUT_FINGERPRINT_MISMATCH"));
 
-  const idempotency=sha([f,taskId,retry?"RETRY":"EXECUTE",canonicalFingerprint,str(resolved.instruction.instruction_package_id),str(resolved.instruction.package_hash),str(resolved.route.route_policy_id),str(resolved.route.policy_hash)].join("|"));
+  let correctionCandidate:Row|null=null;
+  let canonicalInstruction=resolved.canonical;
+  let instructionPackageId=str(resolved.instruction.instruction_package_id);
+  let instructionPackageHash=str(resolved.instruction.package_hash);
+  let correctionSourceOutputId:string|null=null;
+  let correctionRunId:string|null=null;
+
+  if(correctionMode){
+    if(retry)throw new NamedRuntimeError(reason(f,"CORRECTION_RETRY_MUST_USE_APPROVED_CANDIDATE_EXECUTE"));
+    if(!["BLOCKED","CANDIDATE_OUTPUT","SCORE_PENDING","HANDOFF_READY"].includes(taskStatus??"")){
+      throw new NamedRuntimeError(reason(f,"CORRECTION_STATE_NOT_ELIGIBLE"));
+    }
+    correctionCandidate=first(await runRlsActorQuery(sql,session_token_hash,sql`
+      SELECT c.correction_script_version_id::text,c.correction_request_id::text,c.correction_instruction,c.status,c.content_hash::text,
+             c.source_instruction_package_id::text,c.source_blueprint_version_id::text,c.decided_by::text,c.decision_reason,c.decided_at::text,
+             cr.source_output_version_id::text,cr.original_owner_task_id::text,cr.revalidation_requirements,
+             ip.package_hash::text AS source_package_hash
+      FROM public.correction_script_versions c
+      JOIN public.correction_requests cr ON cr.correction_request_id=c.correction_request_id
+      JOIN public.instruction_packages ip ON ip.instruction_package_id=c.source_instruction_package_id AND ip.task_id=cr.original_owner_task_id AND ip.status='APPROVED'
+      WHERE c.correction_script_version_id=${approvedCandidateId}::uuid
+        AND cr.original_owner_task_id=${taskId}::uuid
+        AND c.target_department=${f}
+      LIMIT 1
+    `));
+    if(!correctionCandidate)throw new NamedRuntimeError(reason(f,"APPROVED_CORRECTION_CANDIDATE_NOT_FOUND"));
+    if(str(correctionCandidate.status)!=="APPROVED"||!uuid(correctionCandidate.decided_by)||!str(correctionCandidate.decision_reason)||!str(correctionCandidate.decided_at)){
+      throw new NamedRuntimeError(reason(f,"HUMAN_APPROVED_CORRECTION_REQUIRED"));
+    }
+    const revalidation=json(correctionCandidate.revalidation_requirements);
+    if(str(revalidation?.input_fingerprint)!==canonicalFingerprint)throw new NamedRuntimeError(reason(f,"CORRECTION_INPUT_FINGERPRINT_STALE"));
+    if(str(correctionCandidate.source_instruction_package_id)!==instructionPackageId||str(correctionCandidate.source_package_hash)!==instructionPackageHash){
+      throw new NamedRuntimeError(reason(f,"CORRECTION_INSTRUCTION_LINEAGE_STALE"));
+    }
+    if(str(correctionCandidate.source_blueprint_version_id)!==str(resolved.task.blueprint_version_id)){
+      throw new NamedRuntimeError(reason(f,"CORRECTION_BLUEPRINT_LINEAGE_STALE"));
+    }
+    const instruction=json(correctionCandidate.correction_instruction);
+    canonicalInstruction=str(instruction?.generated_instruction)??"";
+    if(!canonicalInstruction)throw new NamedRuntimeError(reason(f,"APPROVED_CORRECTION_INSTRUCTION_REQUIRED"));
+    correctionSourceOutputId=requireUuid(correctionCandidate.source_output_version_id,reason(f,"CORRECTION_SOURCE_OUTPUT_REQUIRED"));
+    const locked=first(await runRlsActorQuery(sql,session_token_hash,sql`
+      SELECT production_output_version_lock_id::text FROM public.production_output_version_locks
+      WHERE output_version_id=${correctionSourceOutputId}::uuid AND status='LOCKED' LIMIT 1
+    `));
+    if(locked)throw new NamedRuntimeError(reason(f,"LOCKED_SOURCE_OUTPUT_CORRECTION_FORBIDDEN"));
+  }else if(retry){
+    if(taskStatus!=="FAILED"&&taskStatus!=="BLOCKED")throw new NamedRuntimeError(reason(f,"RETRY_STATE_NOT_ELIGIBLE"));
+  }else if(taskStatus!=="READY"){
+    throw new NamedRuntimeError(reason(f,"EXECUTE_STATE_NOT_READY"));
+  }
+
+  const executionKind=correctionMode?"CORRECTION":retry?"RETRY":"EXECUTE";
+  const correctionHash=str(correctionCandidate?.content_hash);
+  const idempotency=sha([f,taskId,executionKind,canonicalFingerprint,instructionPackageId,instructionPackageHash,str(resolved.route.route_policy_id),str(resolved.route.policy_hash),approvedCandidateId,correctionHash].join("|"));
   const existing=first(await runRlsActorQuery(sql,session_token_hash,sql`
     SELECT provider_job_id::text,status::text,external_job_ref
     FROM public.provider_jobs
@@ -136,13 +189,37 @@ async function runExecution(f:Family,request:Request,retry:boolean){
       task_id,instruction_package_id,route_policy_id,idempotency_key,status,
       production_contract_id,goal_id,output_contract_hash,blueprint_version_id,topic_id,project_id
     )
-    SELECT task_id,${str(resolved.instruction.instruction_package_id)}::uuid,${str(resolved.route.route_policy_id)}::uuid,
+    SELECT task_id,${instructionPackageId}::uuid,${str(resolved.route.route_policy_id)}::uuid,
            ${idempotency}::char(64),'ROUTING',production_contract_id,COALESCE(goal_id,production_goal_id),
            output_contract_hash,${str(resolved.task.blueprint_version_id)}::uuid,topic_id,project_id
     FROM moved
     RETURNING provider_job_id::text
   `));
   const jobId=requireUuid(created?.provider_job_id,reason(f,"PROVIDER_JOB_CREATE_FAILED"));
+
+  if(correctionMode&&approvedCandidateId&&correctionSourceOutputId){
+    correctionRunId=randomUUID();
+    try{
+      await sql`
+        INSERT INTO acpos_runtime.correction_runs(
+          id,correction_script_id,task_id,provider_candidate_group_id,source_output_version_id,
+          execution_mode,status,evidence_json
+        ) VALUES(
+          ${correctionRunId},${approvedCandidateId},${taskId},${resolved.groupId},${correctionSourceOutputId},
+          'CORRECTION','ROUTING',
+          ${JSON.stringify({approved_candidate_ref:approvedCandidateId,candidate_content_hash:correctionHash,input_fingerprint:canonicalFingerprint,provider_job_id:jobId})}::jsonb
+        )
+      `;
+    }catch{
+      await runRlsActorQuery(sql,session_token_hash,sql`
+        UPDATE public.provider_jobs SET status='BLOCKED',completed_at=now() WHERE provider_job_id=${jobId}::uuid RETURNING provider_job_id
+      `).catch(()=>[]);
+      await runRlsActorQuery(sql,session_token_hash,sql`
+        UPDATE public.department_tasks SET status='BLOCKED' WHERE task_id=${taskId}::uuid AND status='ROUTING' RETURNING task_id
+      `).catch(()=>[]);
+      throw new NamedRuntimeError(reason(f,"CORRECTION_RUNTIME_TRACE_CREATE_FAILED"));
+    }
+  }
 
   try{
     const routed=record(await executeProductionAiApiCommand({
@@ -154,8 +231,8 @@ async function runExecution(f:Family,request:Request,retry:boolean){
         required_capability:resolved.capability,
         data_classification:resolved.classification,
         use_case:`ACPOS_${f}_PRODUCTION`,
-        canonical_instruction:resolved.canonical,
-        canonical_instruction_id:`${f}:${taskId}:${str(resolved.instruction.instruction_package_id)}`,
+        canonical_instruction:canonicalInstruction,
+        canonical_instruction_id:correctionMode?`CORRECTION:${approvedCandidateId}`:`${f}:${taskId}:${instructionPackageId}`,
         scoped_context:{
           task_id:taskId,
           task_input_manifest_id:str(resolved.task.task_input_manifest_id),
@@ -164,7 +241,10 @@ async function runExecution(f:Family,request:Request,retry:boolean){
           script_hash:str(resolved.task.script_hash),
           input_fingerprint:canonicalFingerprint,
           route_policy_id:str(resolved.route.route_policy_id),
-          route_policy_hash:str(resolved.route.policy_hash)
+          route_policy_hash:str(resolved.route.policy_hash),
+          execution_mode:executionKind,
+          approved_correction_candidate_ref:approvedCandidateId,
+          correction_source_output_version_id:correctionSourceOutputId,
         }
       }
     }));
@@ -193,10 +273,13 @@ async function runExecution(f:Family,request:Request,retry:boolean){
         SELECT t.task_id,${jobId}::uuid,t.production_goal_id,t.output_contract_hash,${normalized},${resultHash}::char(64),
           jsonb_build_object(
             'source','ACPOS_DEPARTMENT_RUNTIME','family',${f},'external_request_sent',true,
-            'instruction_package_id',${str(resolved.instruction.instruction_package_id)},
+            'instruction_package_id',${instructionPackageId},
             'route_policy_id',${str(resolved.route.route_policy_id)},'route_decision_id',${routeDecisionId},
             'provider_id',${str(decision?.provider_id)},'model_id',${str(decision?.model_id)},
-            'input_fingerprint',btrim(t.input_fingerprint::text)
+            'input_fingerprint',btrim(t.input_fingerprint::text),
+            'execution_mode',${executionKind},
+            'approved_correction_candidate_ref',${approvedCandidateId},
+            'correction_source_output_version_id',${correctionSourceOutputId}
           ),
           'CANDIDATE',t.production_contract_id,COALESCE(t.goal_id,t.production_goal_id),
           ${str(resolved.task.blueprint_version_id)}::uuid,t.topic_id,t.project_id
@@ -226,9 +309,36 @@ async function runExecution(f:Family,request:Request,retry:boolean){
       FROM resolved_output WHERE EXISTS(SELECT 1 FROM task_done)
     `));
     if(!output)throw new NamedRuntimeError(reason(f,"CANDIDATE_OUTPUT_PERSIST_FAILED"));
-    return{...output,provider_job_id:jobId,route_decision_id:routeDecisionId,external_request_sent:true};
+
+    if(correctionMode&&correctionRunId&&approvedCandidateId&&correctionCandidate){
+      await sql`
+        UPDATE acpos_runtime.correction_runs
+        SET new_output_version_id=${str(output.output_version_id)},route_decision_id=${routeDecisionId},
+            provider_id=${str(decision?.provider_id)},model_id=${str(decision?.model_id)},
+            status='COMPLETED',evidence_json=evidence_json||${JSON.stringify({external_request_sent:true,result_hash:resultHash,provider_job_id:jobId})}::jsonb,
+            updated_at=now(),completed_at=now()
+        WHERE id=${correctionRunId}
+      `;
+      await runRlsActorQuery(sql,session_token_hash,sql`
+        UPDATE public.correction_requests
+        SET status='RECHECK'
+        WHERE correction_request_id=${str(correctionCandidate.correction_request_id)}::uuid
+          AND status='CORRECTION_REQUIRED'
+        RETURNING correction_request_id
+      `);
+      await sql`
+        UPDATE acpos_runtime.correction_requests_runtime
+        SET status='RECHECK',updated_at=now()
+        WHERE id=${str(correctionCandidate.correction_request_id)}
+      `;
+    }
+
+    return{...output,provider_job_id:jobId,route_decision_id:routeDecisionId,external_request_sent:true,execution_mode:executionKind,correction_run_id:correctionRunId};
   }catch(error){
     const code=namedReason(error,reason(f,"PROVIDER_ROUTE_FAILED"));
+    if(correctionRunId){
+      await sql`UPDATE acpos_runtime.correction_runs SET status='BLOCKED',evidence_json=evidence_json||${JSON.stringify({reason_code:code})}::jsonb,updated_at=now(),completed_at=now() WHERE id=${correctionRunId}`.catch(()=>[]);
+    }
     await runRlsActorQuery(sql,session_token_hash,sql`
       WITH j AS(
         UPDATE public.provider_jobs SET status='BLOCKED',completed_at=now()
