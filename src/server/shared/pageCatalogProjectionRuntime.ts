@@ -949,13 +949,102 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
       ORDER BY c.created_at DESC
     `,
   )));
-  const candidates = refList(await safeRows(() => sql`
-    SELECT s.strategy_candidate_id::text AS ref, s.decision_status::text AS label
-    FROM strategy_candidates s
-    ORDER BY s.created_at DESC
-  `));
+  const candidateRows = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT
+        s.strategy_candidate_id::text AS ref,
+        s.decision_status::text AS label,
+        encode(digest(concat_ws('|',
+          s.source_fact_pack_ids::text,
+          s.strategy_document::text,
+          s.citations::text,
+          s.freshness_at::text,
+          s.confidence::text
+        ),'sha256'),'hex') AS version_ref,
+        COALESCE(NULLIF(s.strategy_document->>'analysis_basis',''),NULLIF(s.strategy_document->>'basis',''),NULLIF(s.strategy_document->>'analysis','')) AS analysis_basis,
+        COALESCE(s.strategy_document->>'risk',s.strategy_document->'risks'::text) AS risk,
+        s.strategy_document->'uncertainty'::text AS uncertainty,
+        s.confidence::text AS confidence,
+        s.freshness_at::text AS freshness_at
+      FROM strategy_candidates s
+      ORDER BY s.created_at DESC
+    `,
+  ));
+  const candidates = candidateRows.flatMap((raw) => {
+    const row = asRecord(raw);
+    const ref = asText(row?.ref);
+    const label = asText(row?.label);
+    const version_ref = asText(row?.version_ref);
+    if (!ref || !label || !version_ref) return [];
+    return [{
+      ref,
+      label,
+      version_ref,
+      analysis_basis: asText(row?.analysis_basis),
+      risk: asText(row?.risk),
+      uncertainty: asText(row?.uncertainty),
+      confidence: asText(row?.confidence),
+      freshness_at: asText(row?.freshness_at),
+    }];
+  });
   const firstConversation = conversations[0] ?? null;
   const firstCandidate = candidates[0] ?? null;
+
+  const decisionRows = firstCandidate
+    ? await safeRows(() => runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT
+            d.strategy_decision_id::text AS decision_id,
+            d.decision,
+            d.rationale,
+            d.decider_id::text AS decider_id,
+            d.created_at::text AS decided_at
+          FROM strategy_decisions d
+          WHERE d.strategy_candidate_id=${firstCandidate.ref}::uuid
+          ORDER BY d.created_at DESC
+          LIMIT 1
+        `,
+      ))
+    : [];
+  const decisionRow = asRecord(decisionRows[0] ?? null);
+
+  const reviewRequestRows = firstCandidate
+    ? await safeRows(() => runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT
+            d.decision_request_id::text AS decision_request_ref,
+            d.state,
+            d.decision_reason,
+            d.decided_by_user_id::text AS decided_by_user_id,
+            d.decided_at::text AS decided_at,
+            CASE
+              WHEN d.state='APPROVED'
+               AND d.decided_by_user_id IS NOT NULL
+               AND NULLIF(d.decision_reason,'') IS NOT NULL
+               AND d.evidence_refs<>'[]'::jsonb
+               AND d.evidence_refs<>'{}'::jsonb
+              THEN true ELSE false
+            END AS approved_review_ready
+          FROM decision_requests d
+          JOIN permission_resources r
+            ON r.resource_id=d.required_resource_id
+           AND r.resource_key='api:adoptAsContextCandidate'
+           AND r.active=true
+          WHERE d.required_scope->>'candidate_ref'=${firstCandidate.ref}
+            AND d.condition_snapshot->>'candidate_version_ref'=${firstCandidate.version_ref}
+          ORDER BY d.created_at DESC
+          LIMIT 1
+        `,
+      ))
+    : [];
+  const reviewRequestRow = asRecord(reviewRequestRows[0] ?? null);
+  const approvedReviewReady = reviewRequestRow?.approved_review_ready === true;
 
   const messageRows = firstConversation
     ? await safeRows(() => runRlsActorQuery(
@@ -1001,18 +1090,36 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
   const strategyAiRoute = asRecord(Array.isArray(strategyAiRouteRows) ? strategyAiRouteRows[0] : null);
   const strategyMultiReady = Number(strategyAiRoute?.healthy_members ?? 0) > 0;
 
-  const page_state = firstCandidate ? "CANDIDATE_READY" : firstConversation || topics.length ? "READY" : "EMPTY";
+  const candidateState = firstCandidate?.label ?? null;
+  const page_state = candidateState === "DECISION_PENDING"
+    ? "REVIEW_REQUIRED"
+    : candidateState === "APPROVED"
+      ? "ADOPTED_CONTEXT"
+      : firstCandidate
+        ? "CANDIDATE_READY"
+        : firstConversation || topics.length
+          ? "READY"
+          : "EMPTY";
   return {
     page_state,
     conversation_id: firstConversation?.ref ?? null,
     candidate_ref: firstCandidate?.ref ?? null,
-    candidate_version_ref: null,
+    candidate_version_ref: firstCandidate?.version_ref ?? null,
     values: {
       "STR-01-FLD-TOPIC": topics[0]?.label ?? DASH,
       "STR-01-FLD-SCOPE": "workspace:STR-01",
       "STR-01-FLD-HORIZON": DASH,
       "STR-01-FLD-STATE": page_state,
-      "STR-01-FLD-DECISION-STATE": firstCandidate?.label ?? DASH,
+      "STR-01-FLD-DECISION-STATE": page_state,
+      "STR-01-FLD-BASIS": firstCandidate?.analysis_basis ?? DASH,
+      "STR-01-FLD-RISKS": firstCandidate?.risk ?? DASH,
+      "STR-01-FLD-UNCERTAINTY": firstCandidate?.uncertainty ?? DASH,
+      "STR-01-FLD-CANDIDATE-REF": firstCandidate ? `${firstCandidate.ref} · ${firstCandidate.version_ref}` : DASH,
+      "STR-01-FLD-REVIEW-STATE": asText(reviewRequestRow?.state) ?? page_state,
+      "STR-01-FLD-DECISION-ID": asText(decisionRow?.decision_id) ?? DASH,
+      "STR-01-FLD-DECISION-RESULT": asText(decisionRow?.decision) ?? DASH,
+      "STR-01-FLD-DECISION-REASON": asText(decisionRow?.rationale) ?? asText(reviewRequestRow?.decision_reason) ?? DASH,
+      "STR-01-FLD-EXECUTION-STATE": firstCandidate ? "OWNER_EXECUTION_NOT_PERFORMED" : DASH,
       "STR-01-FLD-ASSISTANT-SUMMARY": latestAssistantSummary ?? DASH,
       "STR-01-FLD-PROVIDER-BRAND": asText(latestAssistant?.actor_ref) ?? DASH,
     },
@@ -1035,8 +1142,11 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
       "STR-01-GATE-TOPIC": topics.length > 0,
       "STR-01-GATE-CONTEXT": Boolean(firstConversation),
       "STR-01-GATE-MESSAGE": Boolean(firstConversation),
-      "STR-01-GATE-ANALYSIS": Boolean(latestAssistantText),
+      "STR-01-GATE-ANALYSIS": Boolean(latestAssistantText || firstCandidate?.analysis_basis),
       "STR-01-GATE-MULTI": strategyMultiReady,
+      "STR-01-GATE-COMPARE": candidates.length >= 2,
+      "STR-01-GATE-REVIEW": candidateState === "CANDIDATE",
+      "STR-01-GATE-ADOPT": candidateState === "DECISION_PENDING" && approvedReviewReady,
     },
     owner_type: firstConversation ? "CONVERSATION" : null,
     owner_context_ref: firstConversation?.ref ?? null,
