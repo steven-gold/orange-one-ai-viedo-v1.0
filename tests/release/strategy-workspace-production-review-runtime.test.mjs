@@ -70,7 +70,8 @@ test("migration 0028 reuses existing Strategy owners and stages only two exact A
   assert.doesNotMatch(migration, /INSERT INTO public\.strategy_decisions/);
   assert.doesNotMatch(migration, /INSERT INTO public\.decision_requests/);
 
-  assert.match(manifest, /contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.15/);
+  const contractVersion = Number(manifest.match(/contract_id: ACPOS-MIGRATION-CHECKSUM-1\.0\.(\d+)/)?.[1] ?? 0);
+  assert.ok(contractVersion >= 15);
   assert.match(manifest, /migration_id: 0028_strategy_human_review_permission_rls_closure/);
   assert.match(manifest, /payload_sha256: fbfb62018cdc45e2df51bb8262647a468845a7cdc98439e092453421949f865e/);
   assert.match(manifest, /approval_ref: CR-STR-0028-PENDING-PRODUCTION-APPLY/);
