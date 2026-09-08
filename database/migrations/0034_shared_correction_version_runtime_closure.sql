@@ -184,7 +184,7 @@ USING(acpos_runtime.can_execute_shared_operation('api:restoreAssetVersionAsNewDr
 WITH CHECK(acpos_runtime.can_execute_shared_operation('api:restoreAssetVersionAsNewDraft')
   AND acpos_runtime.can_manage_project(acpos_runtime.project_id_for_output(source_output_version_id)));
 
-DO $
+DO $$
 DECLARE p bigint; g bigint; cg bigint;
 BEGIN
   SELECT count(*) INTO p FROM pg_policies WHERE schemaname='public' AND policyname IN(
@@ -204,8 +204,8 @@ BEGIN
       OR (table_name='asset_version_restore_drafts' AND column_name IN('status','consumed_output_version_id'))
     );
   IF cg<>6 THEN RAISE EXCEPTION 'SHARED0034_RUNTIME_COLUMN_GRANT_COUNT_MISMATCH:%',cg; END IF;
-END $;
+END $$;
 
 INSERT INTO schema_migration_history(migration_id,checksum,applied_by,approval_ref)
-VALUES('0034_shared_correction_version_runtime_closure','861adc15e7bb255290fca7d253bed197cc757baf601f5da5887b0ef62fbee83c','migration-runner','CR-SHARED-0034-PENDING-PRODUCTION-APPLY')
+VALUES('0034_shared_correction_version_runtime_closure','4f67f35eee2afb996ba2cce88fb7377c1a762b182c70de45eb6518062a9aac7b','migration-runner','CR-SHARED-0034-PENDING-PRODUCTION-APPLY')
 ON CONFLICT(migration_id) DO NOTHING;

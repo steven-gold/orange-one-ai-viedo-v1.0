@@ -106,8 +106,8 @@ test("migration 0034 seals minimum shared permission RLS and migration ceiling",
   assert.equal((migration.match(/END \\$\\$;/g) ?? []).length,3);
   assert.match(migration,/production_output_version_locks/);
   assert.match(migration,/asset_version_restore_drafts/);
-  assert.match(migration,/861adc15e7bb255290fca7d253bed197cc757baf601f5da5887b0ef62fbee83c/);
+  assert.match(migration,/4f67f35eee2afb996ba2cce88fb7377c1a762b182c70de45eb6518062a9aac7b/);
   assert.match(manifest,/0034_shared_correction_version_runtime_closure/);
-  assert.match(manifest,/861adc15e7bb255290fca7d253bed197cc757baf601f5da5887b0ef62fbee83c/);
+  assert.match(manifest,/4f67f35eee2afb996ba2cce88fb7377c1a762b182c70de45eb6518062a9aac7b/);
   assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 34/);
 });
