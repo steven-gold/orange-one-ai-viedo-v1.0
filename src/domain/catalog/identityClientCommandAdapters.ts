@@ -392,21 +392,25 @@ export function bindIdentityClientCommandAdapters(): void {
 
   configureInfoCommandPayloadBuilder({
     build: (input) => {
+      const scope_ref = input.scope_filter ?? input.authorized_scope ?? "workspace:INFO-01";
       const payload = {
         page_uid: "workspace:INFO-01",
         query: input.scope_filter ?? "",
+        projection_type: "INFO_WORKSPACE",
+        scope_ref,
         projection_version: input.projection_version,
         authorized_scope: input.authorized_scope,
         scope_filter: input.scope_filter,
         candidate_ref: input.candidate_ref,
       };
+      if (input.action_uid === "INFO-01-ACT-EXPORT") {
+        throw new Error("INFO_EXPORT_OWNER_NOT_MATERIALIZED");
+      }
       if (input.action_uid === "INFO-01-ACT-ADOPT-CONTEXT") {
-        if (!input.candidate_ref) throw new Error("INFO_CONTEXT_CANDIDATE_REQUIRED");
-        return { path_params: { id: input.candidate_ref }, payload };
+        throw new Error("INFO_HUMAN_ADOPTION_INPUT_NOT_MATERIALIZED");
       }
       if (input.action_uid === "INFO-01-ACT-CANDIDATE-DECIDE") {
-        if (!input.candidate_ref) throw new Error("INFO_CANDIDATE_REQUIRED");
-        return { path_params: { id: input.candidate_ref }, payload: { ...payload, decision: "ACCEPTED" } };
+        throw new Error("INFO_HUMAN_DECISION_INPUT_NOT_MATERIALIZED");
       }
       return { payload };
     },
