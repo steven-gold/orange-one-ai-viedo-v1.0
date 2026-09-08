@@ -36,7 +36,7 @@ test("STR-01 Production lifecycle creates governance review request and never se
   assert.match(runtime, /SET decision_status='APPROVED'/);
   assert.match(runtime, /INSERT INTO public\.strategy_decisions/);
   assert.match(runtime, /'ADOPT_CONTEXT'/);
-  assert.match(runtime, /owner_execution_performed: false/);
+  assert.match(runtime, /false AS owner_execution_performed/);
   assert.doesNotMatch(runtime, /UPDATE public\.decision_requests[\s\S]*state='APPROVED'/);
 
   assert.match(identity, /submitStrategyReview:\{resource_key:"api:submitStrategyReview",action:"EXECUTE"\}/);
