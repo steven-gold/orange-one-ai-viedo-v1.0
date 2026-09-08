@@ -1,9 +1,11 @@
 business_payload_registry:
   contract_meta:
-    contract_id: ACPOS-CURRENT-STRATEGY-ADMIN-BUSINESS-PAYLOAD-RECOVERY-1.0.0
-    status: CURRENT_STRATEGY_ADMIN_RECOVERY
-    current_ui_owner: admin:STR-01
-    current_authority: authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    contract_id: ACPOS-CURRENT-BUSINESS-PAYLOAD-REGISTRY-1.1.0
+    status: FINAL_LOCKED
+    current_ui_owners: [admin:STR-01, workspace:INFO-01]
+    current_authorities:
+    - authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    - authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml
     source_registry_provenance: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL
     provenance_is_non_executable: true
   rule:
@@ -21,7 +23,7 @@ business_payload_registry:
   schemas:
     - operation_id: searchProjection
       request_schema_id: SearchProjectionRequest
-      source_page_uids: [admin:STR-01, admin:STR-04]
+      source_page_uids: [admin:STR-01, admin:STR-04, workspace:INFO-01]
       method: POST
       path: /v1/search
       fields:
@@ -30,7 +32,7 @@ business_payload_registry:
         - { name: filters_json, type: json, required: false }
     - operation_id: refreshProjection
       request_schema_id: RefreshProjectionRequest
-      source_page_uids: [admin:STR-01]
+      source_page_uids: [admin:STR-01, workspace:INFO-01]
       method: POST
       path: /v1/projections/refresh
       fields:
@@ -68,7 +70,7 @@ business_payload_registry:
         - { name: reference_ids, type: reference_list, required: false }
     - operation_id: exportProjection
       request_schema_id: ExportProjectionRequest
-      source_page_uids: [admin:STR-04]
+      source_page_uids: [admin:STR-04, workspace:INFO-01]
       method: POST
       path: /v1/exports
       fields:
@@ -105,6 +107,25 @@ business_payload_registry:
         - { name: strategy_candidate_id, type: reference, required: true }
         - { name: decision_reason, type: text, required: true }
         - { name: evidence_refs, type: reference_list, required: false }
+
+    - operation_id: adoptContextCandidate
+      request_schema_id: AdoptContextCandidateRequest
+      source_page_uids: [workspace:INFO-01]
+      method: POST
+      path: /v1/context-candidates/{id}/adopt
+      path_identifier: id
+      fields:
+        - { name: context_candidate_id, type: reference, required: true, rule: "Body identifier must equal canonical path identifier." }
+        - { name: decision_reason, type: text, required: true }
+    - operation_id: decideCandidate
+      request_schema_id: DecideCandidateRequest
+      source_page_uids: [workspace:INFO-01]
+      method: POST
+      path: /v1/candidates/{id}/decision
+      path_identifier: id
+      fields:
+        - { name: candidate_id, type: reference, required: true, rule: "Body identifier must equal canonical path identifier." }
+        - { name: decision, type: enum, required: true, values: [ACCEPTED, REJECTED] }
   no_form_operations:
     - operation_id: compareCandidates
       source_page_uids: [admin:STR-06]
