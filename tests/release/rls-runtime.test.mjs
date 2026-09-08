@@ -138,8 +138,8 @@ test("production query runtime sets local non-owner role before protected querie
   const coreClient = await read("src/domain/core/coreClientPort.ts");
 
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 20/);
-  const required = Number(neonRuntime.match(/REQUIRED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0);
-  const maximum = Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0);
+  const required = Number(neonRuntime.match(/REQUIRED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0);
+  const maximum = Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0);
   assert.ok(required >= 1);
   assert.ok(maximum >= required);
   assert.doesNotMatch(neonRuntime, /TARGET_MIGRATION_COUNT/);
