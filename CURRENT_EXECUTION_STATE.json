@@ -2,16 +2,16 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-08T13:03:34.000+08:00",
+  "as_of": "2026-09-08T13:13:20.000+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
-    "new_sha_basis": "df7ba56cc6fbe8162d3ee4def799d6e4317c8075",
+    "new_sha_basis": "0800421f08a66b091836928d2f01cf68a870dd03",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_MIGRATIONS_0021_0029_VALIDATED_PREDEPLOY_INFO_HUMAN_INTERACTION_MATERIALIZED",
+    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_PREDEPLOY_RUNTIME_CLOSURES_INFO_AND_ERP_EXACT_READS",
     "post_release_new_status": "AHEAD_OF_MAIN_NO_VERCEL_DEPLOYMENT_TRIGGERED"
   },
   "release_validation": {
@@ -660,9 +660,9 @@
     },
     "current_construction_gate": {
       "status": "PASS",
-      "run_number": 802,
-      "run_id": 34188998821,
-      "head_sha": "df7ba56cc6fbe8162d3ee4def799d6e4317c8075",
+      "run_number": 804,
+      "run_id": 34189626560,
+      "head_sha": "0800421f08a66b091836928d2f01cf68a870dd03",
       "branch": "new",
       "conclusion": "success",
       "source_lint": "PASS",
@@ -851,6 +851,23 @@
       "production_projection_gates": "CANDIDATE_STATE_GOVERNED",
       "evidence_lineage": "AUTHORITY_GAP_REMAINS_FAIL_CLOSED",
       "export_owner": "AUTHORITY_GAP_REMAINS_FAIL_CLOSED",
+      "production_effect": "NONE_NEW_BRANCH_ONLY"
+    },
+    "erp_exact_read_closure": {
+      "status": "MATERIALIZED_RELEASE_VALIDATED_PENDING_CONSOLIDATED_PRODUCTION_RELEASE",
+      "commit_sha": "0800421f08a66b091836928d2f01cf68a870dd03",
+      "release_gate": {
+        "run_number": 804,
+        "run_id": 34189626560,
+        "conclusion": "success"
+      },
+      "operations": [
+        "getERPSyncStatus",
+        "getERPFailure"
+      ],
+      "exact_path_identity": "UUID_PATH_BOUND_SINGLE_RECORD",
+      "production_projection_failure_ref": "MATERIALIZED",
+      "list_fallback_for_path_endpoints": "REMOVED",
       "production_effect": "NONE_NEW_BRANCH_ONLY"
     }
   },
@@ -1126,10 +1143,11 @@
     "Validated migrations 0021-0029 are intentionally not applied to Production until the final consolidated release sequence; Production remains at migration 0020.",
     "INFO-01 exact Evidence/source lineage and export persistence owner remain Authority gaps; no fabricated Evidence or export is permitted.",
     "Gate 24 overall non-SYS admin mutation acceptance still requires final Current recomputation after remaining runtime closures.",
-    "Do not persist Provider API-key plaintext in GitHub, Neon, logs or state artifacts."
+    "Do not persist Provider API-key plaintext in GitHub, Neon, logs or state artifacts.",
+    "ERP-01 remaining write closure is Authority/schema blocked: CreateERPConnector requires data_classification without a canonical connector/mapping persistence column and requires workspace_id without a Current user-to-workspace/scope owner; Update/Validate/Retry schemas are not fully materialized in the Current business payload registry. Do not hardcode a workspace or persist fields into unrelated JSON."
   ],
   "next_release_sequence": [
-    "Continue dependency-ready Current runtime closures on new; next code-level PARTIAL runtime is ERP-01, while INFO Evidence/source lineage and export persistence owner remain explicit Authority gaps.",
+    "Continue dependency-ready Current runtime closures on new: ERP exact path reads are closed; keep ERP writes fail-closed on Authority/schema gaps and move to SOC-01 exact local policy persistence before external-provider operations.",
     "Do not merge new to main and do not trigger Vercel while construction remains open.",
     "Keep validated migrations 0021-0029 unapplied to Production until the consolidated governed release sequence.",
     "After all dependency-ready runtime/acceptance gaps close, run one exact Release Gate on new and integrate once to main.",
