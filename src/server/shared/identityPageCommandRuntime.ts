@@ -10,6 +10,7 @@ import { configureDevCommandRuntime, type DevRuntimeRequest } from "@/server/dev
 import { executeProductionDevCommand } from "@/server/dev/productionDevCommandRuntime";
 import { configureDepartmentOperationRuntime } from "@/server/shared/departmentOperationRuntime";
 import { configureInfoCommandRuntime, type InfoRequest } from "@/server/info/infoCommandRuntime";
+import { executeProductionInfoCommand, decideProductionInfoCandidate } from "@/server/info/productionInfoRuntime";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
 import { runRlsActorQuery } from "@/server/database/rlsRuntime";
 import { hashSessionToken, IDENTITY_COOKIE_NAME, resolveIdentityFromCookie, type IdentityActor } from "@/server/identity/identityRuntime";
@@ -348,13 +349,30 @@ async function authorizeSoc(request:SocRuntimeRequest):Promise<{allowed:true}|{a
   return{allowed:false,reason_code:"SOC01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
 }
 
-async function authorizeSocCandidateDecision(request:CandidateDecisionRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+async function authorizeCandidateDecision(request:CandidateDecisionRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
   const payload=asRecord(request.payload)??{};
-  if(asText(payload.page_uid)!=="admin:SOC-01")return{allowed:false,reason_code:"CANDIDATE_DECISION_OWNER_CONTEXT_UNREGISTERED"};
-  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:SOC-01"]);
-  if(!page.allowed)return page;
-  const gate=await evaluateResourceAction("api:decideCandidate","EXECUTE");
-  return gate.allowed?{allowed:true}:gate;
+  const pageUid=asText(payload.page_uid);
+  if(pageUid==="admin:SOC-01"){
+    const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:SOC-01"]);
+    if(!page.allowed)return page;
+    const gate=await evaluateResourceAction("api:decideCandidate","EXECUTE");
+    return gate.allowed?{allowed:true}:gate;
+  }
+  if(pageUid==="workspace:INFO-01"){
+    const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["workspace:INFO-01"]);
+    if(!page.allowed)return page;
+    const gate=await evaluateResourceAction("api:decideCandidate","EXECUTE");
+    return gate.allowed?{allowed:true}:gate;
+  }
+  return{allowed:false,reason_code:"CANDIDATE_DECISION_OWNER_CONTEXT_UNREGISTERED"};
+}
+
+async function decideRegisteredCandidate(request:CandidateDecisionRequest):Promise<unknown>{
+  const payload=asRecord(request.payload)??{};
+  const pageUid=asText(payload.page_uid);
+  if(pageUid==="admin:SOC-01")return decideProductionSocCandidate(request);
+  if(pageUid==="workspace:INFO-01")return decideProductionInfoCandidate(request);
+  throw new NamedRuntimeError("CANDIDATE_DECISION_OWNER_CONTEXT_UNREGISTERED");
 }
 
 async function authorizeSystemLifecycle(request:SysRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
@@ -394,6 +412,13 @@ async function authorizeIam(request:IamRuntimeRequest):Promise<{allowed:true}|{a
   return gate.allowed?{allowed:true}:gate;
 }
 
+const INFO_WORKSPACE_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  refreshProjection:{resource_key:"api:refreshProjection",action:"EXECUTE"},
+  searchProjection:{resource_key:"api:searchProjection",action:"EXECUTE"},
+  exportProjection:{resource_key:"api:exportProjection",action:"EXECUTE"},
+  adoptContextCandidate:{resource_key:"api:adoptContextCandidate",action:"EXECUTE"},
+};
+
 async function authorizeInfoCommand(request: InfoRequest): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
   const payload = asRecord(request.payload) ?? {};
   const currentPageUid = asText(payload.current_page_uid) ?? asText(payload.page_uid);
@@ -430,7 +455,15 @@ async function authorizeInfoCommand(request: InfoRequest): Promise<{ allowed: tr
     return actionGate.allowed ? { allowed: true } : actionGate;
   }
 
-  return authorizePage(CURRENT_PAGE_RESOURCE_KEYS["workspace:INFO-01"]);
+  if (currentPageUid !== "workspace:INFO-01") {
+    return { allowed: false, reason_code: "INFO01_OWNER_CONTEXT_REQUIRED" };
+  }
+  const pageGate = await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["workspace:INFO-01"]);
+  if (!pageGate.allowed) return pageGate;
+  const permission = INFO_WORKSPACE_OPERATION_PERMISSION[request.operation_id];
+  if (!permission) return { allowed: false, reason_code: "INFO01_OPERATION_PERMISSION_MAPPING_REQUIRED" };
+  const actionGate = await evaluateResourceAction(permission.resource_key, permission.action);
+  return actionGate.allowed ? { allowed: true } : actionGate;
 }
 
 async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
@@ -917,6 +950,9 @@ async function executeInfo(request: InfoRequest): Promise<unknown> {
   const pageUid = asText(payload.current_page_uid) ?? asText(payload.page_uid);
   const sourcePageUid = asText(payload.source_page_uid);
 
+  if (pageUid === "workspace:INFO-01") {
+    return executeProductionInfoCommand(request);
+  }
   if (request.operation_id === "refreshProjection") {
     return { refreshed: true, page_uid: pageUid, source_page_uid: sourcePageUid };
   }
@@ -1288,8 +1324,8 @@ export function bindIdentityPageCommandRuntimes(): void {
     audit: async () => undefined,
   });
   configureCandidateDecisionRuntime({
-    authorize: authorizeSocCandidateDecision,
-    decide: decideProductionSocCandidate,
+    authorize: authorizeCandidateDecision,
+    decide: decideRegisteredCandidate,
     audit: async () => undefined,
   });
   configureErpCommandRuntime({
