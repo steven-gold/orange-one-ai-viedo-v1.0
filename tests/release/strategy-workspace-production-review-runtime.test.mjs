@@ -43,7 +43,7 @@ test("STR-01 Production lifecycle creates governance review request and never se
   assert.match(identity, /adoptAsContextCandidate:\{resource_key:"api:adoptAsContextCandidate",action:"EXECUTE"\}/);
   assert.match(identity, /configureStrategyDecisionRuntime\(\{[\s\S]*authorize: authorizeStrategyDecision,[\s\S]*execute: executeProductionStrategyDecision/);
 
-  assert.match(client, /action==='STR-01-ACT-REVIEW'\|\|input\.action_uid==='STR-01-ACT-ADOPT'/);
+  assert.match(client, /input\.action_uid==='STR-01-ACT-REVIEW'\|\|input\.action_uid==='STR-01-ACT-ADOPT'/);
   assert.match(client, /candidate_ref:input\.candidate_ref,candidate_version_ref:input\.candidate_version_ref/);
   assert.doesNotMatch(client, /currentBuild[\s\S]*human_review:\{decision:'APPROVED'/);
 });
