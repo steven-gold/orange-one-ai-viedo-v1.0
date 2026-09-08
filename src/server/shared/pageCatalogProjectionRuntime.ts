@@ -1513,22 +1513,28 @@ async function readSocFromDb(sql: SqlClient, sessionTokenHash: string): Promise<
       SELECT
         t.social_target_id::text AS ref,
         t.target_name AS label,
+        t.platform_key,
         t.join_status AS status,
         COALESCE((to_jsonb(t)->>'version')::bigint,1)::text AS version,
         t.posting_policy
       FROM public.social_market_targets t
-      ORDER BY CASE WHEN t.join_status='JOINED' THEN 0 WHEN t.join_status='READY_TO_POST' THEN 1 ELSE 2 END,
+      ORDER BY CASE WHEN t.join_status='READY_TO_POST' THEN 0 WHEN t.join_status='JOINED' THEN 1 ELSE 2 END,
                t.social_target_id
     `,
   ));
   const packages = await safeRows(() => sql`
-    SELECT content_package_id::text AS ref,
-           release_package_id::text AS release_ref,
-           channel_account_id::text AS channel_account_ref,
-           status::text AS status,
-           package_hash::text AS package_hash
-    FROM content_packages
-    ORDER BY created_at DESC
+    SELECT cp.content_package_id::text AS ref,
+           cp.release_package_id::text AS release_ref,
+           cp.channel_account_id::text AS channel_account_ref,
+           cp.status::text AS status,
+           btrim(cp.package_hash::text) AS package_hash,
+           rp.status::text AS release_status,
+           ca.status::text AS channel_status,
+           ca.platform_key AS channel_platform_key
+    FROM public.content_packages cp
+    JOIN public.release_packages rp ON rp.release_package_id=cp.release_package_id
+    JOIN public.channel_accounts ca ON ca.channel_account_id=cp.channel_account_id
+    ORDER BY cp.created_at DESC
     LIMIT 20
   `);
   const drafts = await safeRows(() => sql`
@@ -1538,6 +1544,22 @@ async function readSocFromDb(sql: SqlClient, sessionTokenHash: string): Promise<
     ORDER BY updated_at DESC
     LIMIT 20
   `);
+  const publishRequests = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT publish_request_id::text AS ref,
+             social_target_id::text AS target_ref,
+             content_package_id::text AS content_package_ref,
+             channel_account_id::text AS channel_account_ref,
+             status::text AS status,
+             schedule_at::text AS schedule_at,
+             created_at::text AS created_at
+      FROM public.publish_requests
+      ORDER BY created_at DESC,publish_request_id DESC
+      LIMIT 50
+    `,
+  ));
   const first = bindings[0] ?? accounts[0] ?? null;
   const contentPackage = packages[0] ?? null;
   const packageRef = asText(contentPackage?.ref);
@@ -1545,12 +1567,29 @@ async function readSocFromDb(sql: SqlClient, sessionTokenHash: string): Promise<
     ? drafts.find((row) => asText(asRecord(row.payload)?.content_package_id) === packageRef) ?? null
     : null;
   const candidateStatus = asText(candidate?.status);
-  const policyTarget = targets.find((row) => asText(row.status) === "JOINED")
-    ?? targets.find((row) => asText(row.status) === "READY_TO_POST")
+  const publishTarget = targets.find((row) => asText(row.status) === "READY_TO_POST") ?? null;
+  const policyTarget = publishTarget
+    ?? targets.find((row) => asText(row.status) === "JOINED")
     ?? targets[0]
     ?? null;
   const policyTargetStatus = asText(policyTarget?.status);
   const postingPolicy = asRecord(policyTarget?.posting_policy) ?? {};
+  const contentPackageStatus = asText(contentPackage?.status);
+  const releaseStatus = asText(contentPackage?.release_status);
+  const channelStatus = asText(contentPackage?.channel_status);
+  const targetPlatform = asText(policyTarget?.platform_key);
+  const channelPlatform = asText(contentPackage?.channel_platform_key);
+  const latestPublish = publishRequests[0] ?? null;
+  const publishContextReady = Boolean(
+    contentPackage
+    && candidateStatus === "APPROVED"
+    && policyTargetStatus === "READY_TO_POST"
+    && contentPackageStatus === "APPROVED"
+    && releaseStatus === "APPROVED"
+    && channelStatus === "APPROVED"
+    && targetPlatform
+    && channelPlatform === targetPlatform
+  );
   return {
     page_state: first || contentPackage || policyTarget ? "READY" : "EMPTY",
     values: {
@@ -1571,9 +1610,16 @@ async function readSocFromDb(sql: SqlClient, sessionTokenHash: string): Promise<
       "SOC-01-FLD-RELEASE-SOURCE": asText(contentPackage?.release_ref) ?? DASH,
       "SOC-01-FLD-CONTENT-PACKAGE": packageRef ?? DASH,
       "SOC-01-FLD-CHANNEL-ACCOUNT": asText(contentPackage?.channel_account_ref) ?? DASH,
+      "SOC-01-FLD-SCHEDULE-AT": asText(latestPublish?.schedule_at) ?? DASH,
+      "SOC-01-FLD-PUBLISH-QUEUE": publishRequests.length
+        ? `${publishRequests.length} request(s) · ${publishRequests.filter((row) => asText(row.status) === "PENDING_EXTERNAL").length} pending external`
+        : "0 requests",
       "SOC-01-FLD-APPROVAL": candidate ? `${asText(candidate.ref) ?? DASH} · ${candidateStatus ?? "DRAFT"}` : "DRAFT_NOT_CREATED",
       "SOC-01-FLD-CANDIDATE-REF": asText(candidate?.ref) ?? DASH,
       "SOC-01-FLD-CANDIDATE-VERSION": asText(candidate?.version) ?? DASH,
+      "SOC-01-FLD-BLOCKERS": publishContextReady
+        ? "No local publish-request blocker"
+        : `target=${policyTargetStatus ?? "missing"}; content=${contentPackageStatus ?? "missing"}; release=${releaseStatus ?? "missing"}; channel=${channelStatus ?? "missing"}; candidate=${candidateStatus ?? "missing"}`,
     },
     gate_state: {
       "SOC-01-GATE-PAGE": true,
@@ -1581,12 +1627,15 @@ async function readSocFromDb(sql: SqlClient, sessionTokenHash: string): Promise<
       "SOC-01-GATE-CONTENT": Boolean(contentPackage),
       "SOC-01-GATE-CANDIDATE": candidateStatus === "REVIEW",
       "SOC-01-GATE-POLICY": policyTargetStatus === "JOINED",
-      "SOC-01-GATE-PUBLISH": candidateStatus === "APPROVED" && policyTargetStatus === "READY_TO_POST",
+      "SOC-01-GATE-PUBLISH": publishContextReady,
       "SOC-01-GATE-RECORDS": true,
     },
     selected: {
       target_id: asText(policyTarget?.ref) ?? "",
       target_version: asText(policyTarget?.version) ?? "",
+      content_package_id: packageRef ?? "",
+      channel_account_id: asText(contentPackage?.channel_account_ref) ?? "",
+      content_hash: asText(contentPackage?.package_hash) ?? "",
     },
   };
 }

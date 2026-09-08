@@ -28,6 +28,7 @@ import { executeProductionStrategyDecision } from "@/server/strategy/productionS
 import { configureSocCommandRuntime } from "@/server/social/socCommandRuntime";
 import { saveProductionSocDraft, decideProductionSocCandidate } from "@/server/social/productionSocContentRuntime";
 import { configureProductionSocTargetPolicy } from "@/server/social/productionSocPolicyRuntime";
+import { requestProductionSocTargetPublish } from "@/server/social/productionSocPublishRuntime";
 import type { SocRuntimeRequest } from "@/server/testing/controlledSocTestRuntime";
 import { configureErpCommandRuntime } from "@/server/erp/erpCommandRuntime";
 import { requestProductionErpSnapshotRefresh } from "@/server/erp/productionErpSnapshotRuntime";
@@ -350,6 +351,12 @@ const SOC_TARGET_POLICY_PERMISSIONS: readonly {resource_key:string;action:string
   {resource_key:"api:configureSocialTargetPolicy",action:"EXECUTE"},
 ];
 
+const SOC_PUBLISH_REQUEST_PERMISSIONS: readonly {resource_key:string;action:string}[] = [
+  {resource_key:"action:admin:SOC-04:ACT-SOCIAL-TARGET-PUBLISH",action:"INVOKE"},
+  {resource_key:"control:CTRL-ADMIN-SOC-04-ACT-02-ACT-SOCIAL-TARGET-PUBLISH",action:"INVOKE"},
+  {resource_key:"api:requestSocialTargetPublish",action:"EXECUTE"},
+];
+
 async function authorizeSoc(request:SocRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
   const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:SOC-01"]);
   if(!page.allowed)return page;
@@ -360,6 +367,13 @@ async function authorizeSoc(request:SocRuntimeRequest):Promise<{allowed:true}|{a
   }
   if(request.operation_id==="configureSocialTargetPolicy"){
     for(const permission of SOC_TARGET_POLICY_PERMISSIONS){
+      const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+      if(!gate.allowed)return gate;
+    }
+    return{allowed:true};
+  }
+  if(request.operation_id==="requestSocialTargetPublish"){
+    for(const permission of SOC_PUBLISH_REQUEST_PERMISSIONS){
       const gate=await evaluateResourceAction(permission.resource_key,permission.action);
       if(!gate.allowed)return gate;
     }
@@ -1224,6 +1238,7 @@ async function executeConversation(request: ConversationRequest): Promise<unknow
 async function executeSoc(request: SocRuntimeRequest): Promise<unknown> {
   if (request.operation_id === "saveDraft") return saveProductionSocDraft(request);
   if (request.operation_id === "configureSocialTargetPolicy") return configureProductionSocTargetPolicy(request);
+  if (request.operation_id === "requestSocialTargetPublish") return requestProductionSocTargetPublish(request);
   if (request.operation_id === "refreshProjection") return { refreshed: true };
   if (request.operation_id === "searchProjection") {
     const sql = await requireSql();
