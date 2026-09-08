@@ -328,6 +328,57 @@ operation_registry:
     probe_cleanup_required: true
     external_provider_call: FORBIDDEN
 
+  - operation_id: requestTaskExecution
+    path: /v1/tasks/{taskId}/execute
+    methods: [POST]
+    runtime_owner: ASSET_VIDEO_DEPARTMENT_RUNTIME
+    api_resource_key: api:requestTaskExecution
+    authorization_action: EXECUTE
+    persistence_owner: [public.department_tasks, public.provider_jobs, public.task_outputs]
+    external_effect: GOVERNED_PROVIDER_ROUTE_VIA_EXISTING_AIAPI_QUEUE
+  - operation_id: retryTaskExecution
+    path: /v1/tasks/{taskId}/retry
+    methods: [POST]
+    runtime_owner: ASSET_VIDEO_DEPARTMENT_RUNTIME
+    api_resource_key: api:retryTaskExecution
+    authorization_action: EXECUTE
+    persistence_owner: [public.department_tasks, public.provider_jobs, public.task_outputs]
+  - operation_id: decideOutputCandidate
+    path: /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
+    methods: [POST]
+    runtime_owner: ASSET_VIDEO_DEPARTMENT_RUNTIME
+    api_resource_key: api:decideOutputCandidate
+    authorization_action: EXECUTE
+    persistence_owner: [public.task_outputs, public.department_tasks]
+  - operation_id: submitScorecard
+    path: /v1/scorecards
+    methods: [POST]
+    runtime_owner: ASSET_VIDEO_DEPARTMENT_RUNTIME
+    api_resource_key: api:submitScorecard
+    authorization_action: EXECUTE
+    persistence_owner: [public.scorecards, public.department_tasks]
+  - operation_id: createFinding
+    path: /v1/findings
+    methods: [POST]
+    runtime_owner: ASSET_VIDEO_DEPARTMENT_RUNTIME
+    api_resource_key: api:createFinding
+    authorization_action: EXECUTE
+    persistence_owner: public.findings
+  - operation_id: createCorrectionRequest
+    path: /v1/correction-requests
+    methods: [POST]
+    runtime_owner: ASSET_VIDEO_DEPARTMENT_RUNTIME
+    api_resource_key: api:createCorrectionRequest
+    authorization_action: EXECUTE
+    persistence_owner: public.correction_requests
+  - operation_id: createDepartmentHandoff
+    path: /v1/handoffs
+    methods: [POST]
+    runtime_owner: ASSET_VIDEO_DEPARTMENT_RUNTIME
+    api_resource_key: api:createDepartmentHandoff
+    authorization_action: EXECUTE
+    persistence_owner: [public.handoffs, public.department_tasks]
+
   unregistered_catalog_apis: REMAIN_UNREGISTERED
   aiapi_effectful_mapping_status: MATERIALIZED_CURRENT_EXACT_CONTROL_AUTHORIZATION
   iam_effectful_mapping_status: MATERIALIZED_CURRENT_EXACT_ACTION

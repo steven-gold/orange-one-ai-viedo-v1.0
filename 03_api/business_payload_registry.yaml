@@ -132,3 +132,30 @@ business_payload_registry:
       method: GET
       path: /v1/candidates/compare
       interaction_type: DRAWER
+
+department_runtime_payload_registry:
+  authority_revision: 2026-09-09-ASSET-VIDEO-PRODUCTION-RUNTIME
+  source_pages: [ASSET-01, VIDEO-01]
+  rule:
+  - Exact path identifiers are canonical; body copies may not disagree.
+  - Blueprint/Script/Manifest/Instruction/Route lineage is derived from canonical DB owners.
+  - Missing evaluation evidence, correction lineage, handoff target, or Provider route data fails closed; no defaults are fabricated.
+  operations:
+  - operation_id: requestTaskExecution
+    required_path: [taskId]
+    optional_body: [input_fingerprint, mode]
+  - operation_id: retryTaskExecution
+    required_path: [taskId]
+    optional_body: [input_fingerprint, preserve_previous_output]
+  - operation_id: decideOutputCandidate
+    required_path: [taskId, outputVersionId]
+    required_body: [decision]
+    allowed_decision: [CONFIRM]
+  - operation_id: submitScorecard
+    required_body: [task_ref, target_output_version_id, criteria_version_ref, dimensions, evidence_refs, total_score, gate_status]
+  - operation_id: createFinding
+    required_body: [target_output_version_id, severity, category, affected_scope, evidence]
+  - operation_id: createCorrectionRequest
+    required_body: [finding_id, source_output_version_id, source_instruction_package_id, original_owner_task_id, affected_scope, revalidation_requirements]
+  - operation_id: createDepartmentHandoff
+    required_body: [source_task_id, target_task_id, source_output_version_id, scorecard_id]
