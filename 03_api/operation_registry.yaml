@@ -1,10 +1,10 @@
 operation_registry:
   contract_meta:
-    contract_id: ACPOS-OPERATION-REGISTRY-CURRENT-1.3.0
+    contract_id: ACPOS-OPERATION-REGISTRY-CURRENT-1.4.0
     status: FINAL_LOCKED
     current_only: true
-    revision: 2026-09-08-INFO-WORKSPACE-RUNTIME-MATERIALIZATION
-    coverage: IDENTITY_SESSION_AIAPI_PROVIDER_IAM_AND_INFO_GOVERNED_OPERATIONS
+    revision: 2026-09-09-SHARED-CORRECTION-VERSION-RUNTIME
+    coverage: IDENTITY_SESSION_AIAPI_PROVIDER_IAM_INFO_DEPARTMENT_AND_SHARED_CORRECTION_VERSION_OPERATIONS
     undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
     supersedes_revision: 2026-09-05-IDENTITY-SESSION-ONLY
     governance_basis:
@@ -378,6 +378,66 @@ operation_registry:
     api_resource_key: api:createDepartmentHandoff
     authorization_action: EXECUTE
     persistence_owner: [public.handoffs, public.department_tasks]
+
+  - operation_id: generateCorrectionScriptCandidate
+    path: /v1/state-commands/correctionscript/generate
+    methods: [POST]
+    runtime_owner: SHARED_PRODUCTION_OPERATION_RUNTIME
+    api_resource_key: api:generateCorrectionScriptCandidate
+    authorization_action: EXECUTE
+    source_pages: [ASSET-01, VIDEO-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    canonical_persistence_owner:
+    - public.correction_requests
+    - public.correction_script_versions
+    trace_persistence_owner:
+    - acpos_runtime.correction_requests_runtime
+    - acpos_runtime.correction_script_versions_runtime
+    external_effect: GOVERNED_TEXT_PROVIDER_ROUTE
+    provider_neutral_instruction_required: true
+  - operation_id: approveCorrectionScriptCandidate
+    path: /v1/state-commands/correctionscript/approve
+    methods: [POST]
+    runtime_owner: SHARED_PRODUCTION_OPERATION_RUNTIME
+    api_resource_key: api:approveCorrectionScriptCandidate
+    authorization_action: EXECUTE
+    source_pages: [ASSET-01, VIDEO-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: public.correction_script_versions
+    human_decision_required: true
+    required_decision_evidence: [decided_by, decision_reason, decided_at]
+  - operation_id: restoreAssetVersionAsNewDraft
+    path: /v1/state-commands/assetversion/restoreasnewdraft
+    methods: [POST]
+    runtime_owner: SHARED_PRODUCTION_OPERATION_RUNTIME
+    api_resource_key: api:restoreAssetVersionAsNewDraft
+    authorization_action: EXECUTE
+    source_pages: [ASSET-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: public.asset_version_restore_drafts
+    artifact_creation: FORBIDDEN
+    source_task_output_copy: FORBIDDEN
+  - operation_id: lockAssetVersion
+    path: /v1/state-commands/assetversion/lock
+    methods: [POST]
+    runtime_owner: SHARED_PRODUCTION_OPERATION_RUNTIME
+    api_resource_key: api:lockAssetVersion
+    authorization_action: EXECUTE
+    source_pages: [ASSET-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: public.production_output_version_locks
+    exact_accepted_output_required: true
+  - operation_id: lockVideoVersion
+    path: /v1/state-commands/videoversion/lock
+    methods: [POST]
+    runtime_owner: SHARED_PRODUCTION_OPERATION_RUNTIME
+    api_resource_key: api:lockVideoVersion
+    authorization_action: EXECUTE
+    source_pages: [VIDEO-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: public.production_output_version_locks
+    exact_accepted_output_required: true
+    minimum_score: 95
 
   unregistered_catalog_apis: REMAIN_UNREGISTERED
   aiapi_effectful_mapping_status: MATERIALIZED_CURRENT_EXACT_CONTROL_AUTHORIZATION

@@ -134,7 +134,7 @@ business_payload_registry:
       interaction_type: DRAWER
 
 department_runtime_payload_registry:
-  authority_revision: 2026-09-09-ASSET-VIDEO-PRODUCTION-RUNTIME
+  authority_revision: 2026-09-09-SHARED-CORRECTION-VERSION-RUNTIME
   source_pages: [ASSET-01, VIDEO-01]
   rule:
   - Exact path identifiers are canonical; body copies may not disagree.
@@ -143,7 +143,12 @@ department_runtime_payload_registry:
   operations:
   - operation_id: requestTaskExecution
     required_path: [taskId]
-    optional_body: [input_fingerprint, mode]
+    optional_body: [input_fingerprint, mode, approved_candidate_ref]
+    correction_mode_contract:
+      required_when_mode_CORRECTION: [approved_candidate_ref]
+      source_candidate_state: APPROVED
+      human_decision_required: true
+      locked_source_output_correction: FORBIDDEN
   - operation_id: retryTaskExecution
     required_path: [taskId]
     optional_body: [input_fingerprint, preserve_previous_output]
@@ -159,3 +164,43 @@ department_runtime_payload_registry:
     required_body: [finding_id, source_output_version_id, source_instruction_package_id, original_owner_task_id, affected_scope, revalidation_requirements]
   - operation_id: createDepartmentHandoff
     required_body: [source_task_id, target_task_id, source_output_version_id, scorecard_id]
+
+shared_correction_version_payload_registry:
+  authority_revision: 2026-09-09-SHARED-CORRECTION-VERSION-RUNTIME
+  authority_file: authority/runtime/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml
+  source_pages: [ASSET-01, VIDEO-01]
+  rules:
+  - Exact task/output/finding/candidate references are required; latest-row guessing is forbidden.
+  - Human correction approval requires decision_reason and exact candidate_ref.
+  - Restore-as-new-draft persists lineage only and never creates or duplicates task_outputs.
+  - Output lock is exact-version immutable state and may not reuse Mother/Child lock semantics.
+  operations:
+  - operation_id: generateCorrectionScriptCandidate
+    method: POST
+    path: /v1/state-commands/correctionscript/generate
+    required_body: [family, task_id, output_version_id, finding_id, request, affected_scope]
+    family_values: [ASSET, VIDEO]
+    request_language: zh-TW
+  - operation_id: approveCorrectionScriptCandidate
+    method: POST
+    path: /v1/state-commands/correctionscript/approve
+    required_body: [family, candidate_ref, decision_reason]
+    optional_body: [expected_content_hash]
+    family_values: [ASSET, VIDEO]
+  - operation_id: restoreAssetVersionAsNewDraft
+    method: POST
+    path: /v1/state-commands/assetversion/restoreasnewdraft
+    required_body: [family, output_version_id]
+    family_values: [ASSET]
+  - operation_id: lockAssetVersion
+    method: POST
+    path: /v1/state-commands/assetversion/lock
+    required_body: [family, output_version_id]
+    optional_body: [manifest_hash]
+    family_values: [ASSET]
+  - operation_id: lockVideoVersion
+    method: POST
+    path: /v1/state-commands/videoversion/lock
+    required_body: [family, output_version_id]
+    optional_body: [manifest_hash]
+    family_values: [VIDEO]
