@@ -42,7 +42,7 @@ test("AIAPI Current registry materializes only Authority-named provider operatio
     assert.match(authority, new RegExp(`- ${operation}\\b`));
     assert.match(registry, new RegExp(`operation_id: ${operation}\\b`));
   }
-  assert.match(registry, /coverage: IDENTITY_SESSION_AIAPI_PROVIDER_AND_IAM_GOVERNED_OPERATIONS/);
+  assert.match(registry, /coverage: IDENTITY_SESSION_AIAPI_PROVIDER_IAM_AND_INFO_GOVERNED_OPERATIONS/);
   assert.match(registry, /aiapi_effectful_mapping_status: MATERIALIZED_CURRENT/);
 });
 
