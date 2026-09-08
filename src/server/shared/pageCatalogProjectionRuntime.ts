@@ -964,8 +964,8 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
           s.confidence::text
         ),'sha256'),'hex') AS version_ref,
         COALESCE(NULLIF(s.strategy_document->>'analysis_basis',''),NULLIF(s.strategy_document->>'basis',''),NULLIF(s.strategy_document->>'analysis','')) AS analysis_basis,
-        COALESCE(s.strategy_document->>'risk',s.strategy_document->'risks'::text) AS risk,
-        s.strategy_document->'uncertainty'::text AS uncertainty,
+        COALESCE(NULLIF(s.strategy_document->>'risk',''),NULLIF((s.strategy_document->'risks')::text,'')) AS risk,
+        COALESCE(NULLIF(s.strategy_document->>'uncertainty',''),NULLIF((s.strategy_document->'uncertainty')::text,'')) AS uncertainty,
         s.confidence::text AS confidence,
         s.freshness_at::text AS freshness_at
       FROM strategy_candidates s
