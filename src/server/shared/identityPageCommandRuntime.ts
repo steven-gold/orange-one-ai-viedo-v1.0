@@ -42,6 +42,11 @@ import {
 import { configureAiApiCommandRuntime } from "@/server/aiApi/aiApiCommandRuntime";
 import { executeProductionAiApiCommand, auditProductionAiApiCommand } from "@/server/aiApi/productionAiApiCommandRuntime";
 import { executeProductionConversationTurn, requestProductionConversationStop } from "@/server/shared/productionConversationAiRuntime";
+import { configureAssetRuntime } from "@/server/asset/assetRuntime";
+import type { AssetRuntimeRequest } from "@/domain/asset/assetRuntimeContract";
+import { configureVideoRuntime } from "@/server/video/videoRuntime";
+import type { VideoRuntimeRequest } from "@/domain/video/videoRuntimeContract";
+import { executeProductionDepartmentPort, auditProductionDepartmentPort } from "@/server/shared/productionDepartmentPortRuntime";
 
 type SqlClient = NonNullable<ReturnType<typeof getProductionNeonSql>>;
 
@@ -1093,6 +1098,36 @@ function refItems(rows: unknown) {
   });
 }
 
+
+type DepartmentPermission={action_resource:string;control_resource:string;api_resource:string};
+const DEPARTMENT_PERMISSION:Readonly<Record<string,DepartmentPermission>>={
+  "ASSET:ASSET-01-PORT-EXECUTE":{action_resource:"action:workspace:ASSET-01:ACT-TASK-EXECUTE",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-01-ACT-TASK-EXECUTE",api_resource:"api:requestTaskExecution"},
+  "ASSET:ASSET-01-PORT-RETRY":{action_resource:"action:workspace:ASSET-01:ACT-TASK-RETRY",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-02-ACT-TASK-RETRY",api_resource:"api:retryTaskExecution"},
+  "ASSET:ASSET-01-PORT-DECISION":{action_resource:"action:workspace:ASSET-01:ACT-OUTPUT-SELECT",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-03-ACT-OUTPUT-SELECT",api_resource:"api:decideOutputCandidate"},
+  "ASSET:ASSET-01-PORT-SCORECARD":{action_resource:"action:workspace:ASSET-01:ACT-SCORECARD-SUBMIT",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-04-ACT-SCORECARD-SUBMIT",api_resource:"api:submitScorecard"},
+  "ASSET:ASSET-01-PORT-FINDING":{action_resource:"action:workspace:ASSET-01:ACT-FINDING-CREATE",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-05-ACT-FINDING-CREATE",api_resource:"api:createFinding"},
+  "ASSET:ASSET-01-PORT-CORRECTION":{action_resource:"action:workspace:ASSET-01:ACT-CORRECTION-REQUEST",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-06-ACT-CORRECTION-REQUEST",api_resource:"api:createCorrectionRequest"},
+  "ASSET:ASSET-01-PORT-OUT-VIDEO":{action_resource:"action:workspace:ASSET-01:ACT-HANDOFF-CREATE",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-07-ACT-HANDOFF-CREATE",api_resource:"api:createDepartmentHandoff"},
+  "VIDEO:VIDEO-01-PORT-EXECUTE":{action_resource:"action:workspace:VIDEO-01:ACT-TASK-EXECUTE",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-01-ACT-TASK-EXECUTE",api_resource:"api:requestTaskExecution"},
+  "VIDEO:VIDEO-01-PORT-RETRY":{action_resource:"action:workspace:VIDEO-01:ACT-TASK-RETRY",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-02-ACT-TASK-RETRY",api_resource:"api:retryTaskExecution"},
+  "VIDEO:VIDEO-01-PORT-DECISION":{action_resource:"action:workspace:VIDEO-01:ACT-OUTPUT-SELECT",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-03-ACT-OUTPUT-SELECT",api_resource:"api:decideOutputCandidate"},
+  "VIDEO:VIDEO-01-PORT-SCORECARD":{action_resource:"action:workspace:VIDEO-01:ACT-SCORECARD-SUBMIT",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-04-ACT-SCORECARD-SUBMIT",api_resource:"api:submitScorecard"},
+  "VIDEO:VIDEO-01-PORT-FINDING":{action_resource:"action:workspace:VIDEO-01:ACT-FINDING-CREATE",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-05-ACT-FINDING-CREATE",api_resource:"api:createFinding"},
+  "VIDEO:VIDEO-01-PORT-CORRECTION":{action_resource:"action:workspace:VIDEO-01:ACT-CORRECTION-REQUEST",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-06-ACT-CORRECTION-REQUEST",api_resource:"api:createCorrectionRequest"},
+  "VIDEO:VIDEO-01-PORT-OUT-EDIT":{action_resource:"action:workspace:VIDEO-01:ACT-HANDOFF-CREATE",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-07-ACT-HANDOFF-CREATE",api_resource:"api:createDepartmentHandoff"},
+};
+async function authorizeDepartmentPort(family:"ASSET"|"VIDEO",request:AssetRuntimeRequest|VideoRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS[family==="ASSET"?"ASSET-01":"VIDEO-01"]);
+  if(!page.allowed)return page;
+  const permission=DEPARTMENT_PERMISSION[`${family}:${request.port_uid}`];
+  if(!permission)return{allowed:false,reason_code:`${family}_PORT_PERMISSION_MAPPING_REQUIRED`};
+  for(const [resource,action] of [[permission.action_resource,"INVOKE"],[permission.control_resource,"INVOKE"],[permission.api_resource,"EXECUTE"]] as const){
+    const gate=await evaluateResourceAction(resource,action);
+    if(!gate.allowed)return gate;
+  }
+  return{allowed:true};
+}
+
 const QA_LIFECYCLE_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
   startQaReview:{resource_key:"api:startQaReview",action:"EXECUTE"},
   startRecheck:{resource_key:"api:startRecheck",action:"EXECUTE"},
@@ -1353,6 +1388,16 @@ export function bindIdentityPageCommandRuntimes(): void {
       throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
     },
     audit: async () => undefined,
+  });
+  configureAssetRuntime({
+    authorize:(request)=>authorizeDepartmentPort("ASSET",request),
+    execute:(request)=>executeProductionDepartmentPort("ASSET",request),
+    audit:(entry)=>auditProductionDepartmentPort("ASSET",entry),
+  });
+  configureVideoRuntime({
+    authorize:(request)=>authorizeDepartmentPort("VIDEO",request),
+    execute:(request)=>executeProductionDepartmentPort("VIDEO",request),
+    audit:(entry)=>auditProductionDepartmentPort("VIDEO",entry),
   });
   configureQaRuntime({
     authorize: authorizeQa,
