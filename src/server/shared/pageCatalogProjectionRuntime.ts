@@ -777,52 +777,248 @@ function emptyKnowledge(): unknown {
   return { page_state: "EMPTY", values: {}, control_enabled: {} };
 }
 
+type DepartmentProductionContext={
+  outputs:Record<string,unknown>[];
+  scorecards:Record<string,unknown>[];
+  findings:Record<string,unknown>[];
+  corrections:Record<string,unknown>[];
+  correctionScripts:Record<string,unknown>[];
+  locks:Record<string,unknown>[];
+  providerJobs:Record<string,unknown>[];
+};
+async function readDepartmentProductionContext(sql:SqlClient,sessionTokenHash:string,taskId:string):Promise<DepartmentProductionContext>{
+  const [outputs,scorecards,findings,corrections,correctionScripts,locks,providerJobs]=await Promise.all([
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT o.output_version_id::text AS output_version_id,o.status::text AS status,o.output_uri,
+             btrim(o.artifact_checksum::text) AS artifact_checksum,btrim(o.output_contract_hash::text) AS output_contract_hash,
+             o.immutable_at::text AS immutable_at,o.provenance,o.created_at::text AS created_at,
+             av.asset_version_id::text AS asset_version_id,av.asset_kind
+      FROM task_outputs o
+      LEFT JOIN asset_versions av ON av.task_output_version_id=o.output_version_id
+      WHERE o.task_id=${taskId}::uuid
+      ORDER BY o.created_at DESC,o.output_version_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT s.scorecard_id::text AS scorecard_id,s.output_version_id::text AS output_version_id,
+             s.criteria_version_id::text AS criteria_version_id,s.total_score::text AS total_score,
+             s.gate_status::text AS gate_status,s.evidence_refs,s.created_at::text AS created_at
+      FROM scorecards s WHERE s.task_id=${taskId}::uuid
+      ORDER BY s.created_at DESC,s.scorecard_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT f.finding_id::text AS finding_id,f.output_version_id::text AS output_version_id,f.scorecard_id::text AS scorecard_id,
+             f.severity,f.category,f.affected_scope,f.evidence,f.status::text AS status,f.closed_at::text AS closed_at,f.created_at::text AS created_at
+      FROM findings f JOIN task_outputs o ON o.output_version_id=f.output_version_id
+      WHERE o.task_id=${taskId}::uuid
+      ORDER BY f.created_at DESC,f.finding_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT cr.correction_request_id::text AS correction_request_id,cr.finding_id::text AS finding_id,
+             cr.source_output_version_id::text AS source_output_version_id,cr.source_instruction_package_id::text AS source_instruction_package_id,
+             cr.source_scorecard_id::text AS source_scorecard_id,cr.affected_scope,cr.revalidation_requirements,cr.status::text AS status,cr.created_at::text AS created_at
+      FROM correction_requests cr WHERE cr.original_owner_task_id=${taskId}::uuid
+      ORDER BY cr.created_at DESC,cr.correction_request_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT c.correction_script_version_id::text AS correction_script_version_id,c.correction_request_id::text AS correction_request_id,
+             c.failed_output_id::text AS failed_output_id,c.status,c.version_no::text AS version_no,c.content_hash::text AS content_hash,
+             c.correction_instruction,c.decision_reason,c.decided_by::text AS decided_by,c.decided_at::text AS decided_at,c.created_at::text AS created_at
+      FROM correction_script_versions c
+      JOIN correction_requests cr ON cr.correction_request_id=c.correction_request_id
+      WHERE cr.original_owner_task_id=${taskId}::uuid
+      ORDER BY c.created_at DESC,c.correction_script_version_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT l.production_output_version_lock_id::text AS lock_id,l.output_version_id::text AS output_version_id,l.status,l.locked_at::text AS locked_at
+      FROM production_output_version_locks l JOIN task_outputs o ON o.output_version_id=l.output_version_id
+      WHERE o.task_id=${taskId}::uuid
+      ORDER BY l.locked_at DESC,l.production_output_version_lock_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT j.provider_job_id::text AS provider_job_id,j.status::text AS status,j.external_job_ref,
+             j.route_policy_id::text AS route_policy_id,j.completed_at::text AS completed_at,j.created_at::text AS created_at
+      FROM provider_jobs j WHERE j.task_id=${taskId}::uuid
+      ORDER BY j.created_at DESC,j.provider_job_id DESC
+    `)),
+  ]);
+  return{outputs,scorecards,findings,corrections,correctionScripts,locks,providerJobs};
+}
+function mediaKind(row:Record<string,unknown>):"IMAGE"|"AUDIO"|"REFERENCE"{
+  const kind=(asText(row.asset_kind)??"").toUpperCase(),uri=(asText(row.output_uri)??"").toLowerCase();
+  if(kind.includes("AUDIO")||/\.(mp3|wav|m4a|aac|ogg)(\?|$)/.test(uri))return"AUDIO";
+  if(kind.includes("REFERENCE"))return"REFERENCE";
+  return"IMAGE";
+}
+function departmentPageState(taskStatus:string|null,hasCorrection:boolean,locked:boolean){
+  if(!taskStatus)return"EMPTY";
+  if(taskStatus==="ROUTING"||taskStatus==="RUNNING"||taskStatus==="CALLBACK_PENDING")return"EXECUTING";
+  if(taskStatus==="CANDIDATE_OUTPUT")return"CANDIDATE_OUTPUT";
+  if(taskStatus==="SCORE_PENDING")return"WAIT_CONFIRMATION";
+  if(taskStatus==="HANDOFF_READY")return locked?"LOCKED":"CONFIRMED";
+  if(taskStatus==="HANDED_OFF")return"HANDOFF";
+  if(taskStatus==="BLOCKED"||taskStatus==="FAILED")return hasCorrection?"CORRECTION_REQUIRED":"ERROR";
+  return"READY";
+}
+
 async function readAssetFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
   const [projects, topics, tasks] = await Promise.all([
     readProjectRefs(sql, sessionTokenHash),
     readTopicRefs(sql, sessionTokenHash),
     readDepartmentTasks(sql, sessionTokenHash, "ASSET"),
   ]);
-  const first = tasks[0] ?? null;
-  const empty = emptyAsset() as Record<string, unknown>;
-  return {
-    ...empty,
-    task_id: first?.task_id ?? null,
-    values: {
-      "ASSET-01-FLD-TASK": first?.task_id ?? DASH,
-      "ASSET-01-FLD-TASK-STATUS": first?.status ?? DASH,
-      "ASSET-01-FLD-STAGE": first?.status ?? DASH,
-      "ASSET-01-FLD-INPUT-FINGERPRINT": first?.input_fingerprint ?? DASH,
+  const first=tasks[0]??null,empty=emptyAsset() as Record<string,unknown>;
+  if(!first)return{...empty,page_state:"EMPTY",lists:{"ASSET-01-CTL-PROJECT":projects,"ASSET-01-CTL-TOPIC":topics,"ASSET-01-LST-ASSET":[]}};
+  const ctx=await readDepartmentProductionContext(sql,sessionTokenHash,first.task_id);
+  const candidate=ctx.outputs.find(r=>asText(r.status)==="CANDIDATE")??null;
+  const accepted=ctx.outputs.find(r=>asText(r.status)==="ACCEPTED")??null;
+  const focus=candidate??accepted??ctx.outputs[0]??null;
+  const focusId=asText(focus?.output_version_id);
+  const score=(focusId?ctx.scorecards.find(r=>asText(r.output_version_id)===focusId):null)??ctx.scorecards[0]??null;
+  const finding=(focusId?ctx.findings.find(r=>asText(r.output_version_id)===focusId&&!asText(r.closed_at)):null)??ctx.findings.find(r=>!asText(r.closed_at))??null;
+  const correction=(focusId?ctx.corrections.find(r=>asText(r.source_output_version_id)===focusId):null)??ctx.corrections[0]??null;
+  const correctionId=asText(correction?.correction_request_id);
+  const correctionCandidate=(correctionId?ctx.correctionScripts.find(r=>asText(r.correction_request_id)===correctionId&&asText(r.status)==="CANDIDATE"):null)??null;
+  const approvedCorrection=(correctionId?ctx.correctionScripts.find(r=>asText(r.correction_request_id)===correctionId&&asText(r.status)==="APPROVED"):null)??null;
+  const lock=(accepted?ctx.locks.find(r=>asText(r.output_version_id)===asText(accepted.output_version_id)&&asText(r.status)==="LOCKED"):null)??null;
+  const restores=accepted?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT asset_version_restore_draft_id::text AS ref,status,created_at::text AS created_at
+    FROM asset_version_restore_drafts WHERE source_output_version_id=${asText(accepted.output_version_id)}::uuid
+    ORDER BY created_at DESC LIMIT 10
+  `)):[];
+  const layerRows=focusId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT d.layer_document_id::text AS layer_document_id,d.status,d.version_no::text AS version_no
+    FROM asset_versions av JOIN versioned_layer_documents d ON d.asset_version_id=av.asset_version_id
+    WHERE av.task_output_version_id=${focusId}::uuid ORDER BY d.created_at DESC LIMIT 10
+  `)):[];
+  const layer=layerRows[0]??null;
+  const patchRows=asText(focus?.asset_version_id)?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT p.asset_patch_id::text AS patch_id,p.status FROM asset_patches p
+    WHERE p.source_asset_version_id=${asText(focus?.asset_version_id)}::uuid ORDER BY p.created_at DESC LIMIT 10
+  `)):[];
+  const patch=patchRows[0]??null,provider=ctx.providerJobs[0]??null;
+  const taskStatus=first.status,page_state=departmentPageState(taskStatus,Boolean(finding||correction),Boolean(lock));
+  const candidateVersions=ctx.outputs.filter(r=>asText(r.status)==="CANDIDATE").slice(0,3).flatMap(r=>{
+    const ref=asText(r.output_version_id),uri=asText(r.output_uri);if(!ref||!uri)return[];
+    return[{ref,label:`${asText(r.status)??"CANDIDATE"} · ${ref}`,uri,media_kind:mediaKind(r)}];
+  });
+  const outputId=focusId??null,scorePass=asText(score?.gate_status)==="PASS";
+  return{
+    ...empty,page_state,task_id:first.task_id,output_version_id:outputId,
+    finding_id:asText(finding?.finding_id),correction_request_id:correctionId,
+    correction_candidate_id:asText(correctionCandidate?.correction_script_version_id),
+    correction_candidate_content_hash:asText(correctionCandidate?.content_hash),
+    approved_correction_candidate_id:asText(approvedCorrection?.correction_script_version_id),
+    restore_draft_id:asText(restores[0]?.ref),locked_version_ref:asText(lock?.lock_id),
+    layer_document_id:asText(layer?.layer_document_id),patch_id:asText(patch?.patch_id),
+    current_asset_type_uid:asText(focus?.asset_kind),candidate_uri:asText(candidate?.output_uri),
+    candidate_media_kind:candidate?mediaKind(candidate):null,candidate_versions:candidateVersions,
+    values:{
+      "ASSET-01-FLD-TASK":first.task_id,
+      "ASSET-01-FLD-TASK-STATUS":taskStatus,
+      "ASSET-01-FLD-STAGE":page_state,
+      "ASSET-01-FLD-INPUT-FINGERPRINT":first.input_fingerprint??DASH,
+      "ASSET-01-FLD-OUTPUT-ID":outputId??DASH,
+      "ASSET-01-FLD-CANDIDATE-URI":asText(candidate?.output_uri)??DASH,
+      "ASSET-01-FLD-CHECKSUM":asText(focus?.artifact_checksum)??DASH,
+      "ASSET-01-FLD-CRITERIA-VERSION":asText(score?.criteria_version_id)??DASH,
+      "ASSET-01-FLD-SCORECARD":asText(score?.scorecard_id)??DASH,
+      "ASSET-01-FLD-OVERALL-SCORE":asText(score?.total_score)??DASH,
+      "ASSET-01-FLD-ISSUES":asText(finding?.finding_id)??DASH,
+      "ASSET-01-FLD-CORRECTION-CANDIDATE":asText(correctionCandidate?.correction_script_version_id)??asText(approvedCorrection?.correction_script_version_id)??DASH,
+      "ASSET-01-FLD-RUNTIME-STATE":asText(provider?.status)??DASH,
+      "ASSET-01-FLD-ROUTE":asText(provider?.route_policy_id)??DASH,
+      "ASSET-01-FLD-HANDOFF-ASSET-VERSION":asText(accepted?.output_version_id)??DASH,
+      "ASSET-01-FLD-HANDOFF-CHECKSUM":asText(accepted?.artifact_checksum)??DASH,
+      "ASSET-01-FLD-HANDOFF-SCORECARD":asText(score?.scorecard_id)??DASH,
+      "ASSET-01-FLD-HANDOFF-CONTRACT-HASH":asText(accepted?.output_contract_hash)??DASH,
+      "ASSET-01-FLD-HANDOFF-RIGHTS":DASH,
+      "ASSET-01-FLD-RIGHTS":DASH,
+      "ASSET-01-FLD-LOCK":asText(lock?.lock_id)??DASH,
+      "ASSET-01-FLD-RESTORE-DRAFT":asText(restores[0]?.ref)??DASH,
     },
-    lists: {
-      "ASSET-01-CTL-PROJECT": projects,
-      "ASSET-01-CTL-TOPIC": topics,
-      "ASSET-01-LST-ASSET": tasks.map((item) => ({ ref: item.task_id, label: item.status })),
+    lists:{
+      "ASSET-01-CTL-PROJECT":projects,"ASSET-01-CTL-TOPIC":topics,
+      "ASSET-01-LST-ASSET":tasks.map(item=>({ref:item.task_id,label:item.status})),
+      "ASSET-01-LST-VERSIONS":ctx.outputs.flatMap(r=>{const ref=asText(r.output_version_id);return ref?[{ref,label:`${asText(r.status)??"OUTPUT"} · ${ref}`}]:[]}),
+      "ASSET-01-LST-ISSUES":ctx.findings.flatMap(r=>{const ref=asText(r.finding_id);return ref?[{ref,label:`${asText(r.severity)??""} ${asText(r.category)??""}`.trim()||ref}]:[]}),
+    },
+    filters:{},
+    gate_state:{
+      "ASSET-01-GATE-PAGE":true,"ASSET-01-GATE-CONTEXT":true,
+      "ASSET-01-GATE-EXECUTE":taskStatus==="READY","ASSET-01-GATE-MANIFEST":Boolean(first.input_fingerprint),
+      "ASSET-01-GATE-CHILD-LOCK":true,"ASSET-01-GATE-SCRIPT":true,"ASSET-01-GATE-NAMING":true,"ASSET-01-GATE-ROUTE":true,
+      "ASSET-01-GATE-COMPARE":ctx.outputs.length>=2,"ASSET-01-GATE-CANDIDATE":Boolean(candidate),
+      "ASSET-01-GATE-EVALUATION":Boolean(candidate)&&taskStatus==="CANDIDATE_OUTPUT",
+      "ASSET-01-GATE-CONFIRM":Boolean(candidate)&&scorePass&&taskStatus==="SCORE_PENDING",
+      "ASSET-01-GATE-WAIT-CONFIRM":taskStatus==="SCORE_PENDING",
+      "ASSET-01-GATE-CORRECTION":Boolean(finding&&outputId)&&taskStatus!=="HANDED_OFF",
+      "ASSET-01-GATE-RETRY":taskStatus==="BLOCKED"||taskStatus==="FAILED",
+      "ASSET-01-GATE-LOCK":Boolean(accepted)&&taskStatus==="HANDOFF_READY"&&!lock,
+      "ASSET-01-GATE-HANDOFF":Boolean(accepted&&lock)&&taskStatus==="HANDOFF_READY",
+      "ASSET-01-GATE-LAYER-WRITE":Boolean(outputId)&&!lock,
+      "ASSET-01-GATE-PATCH-PREVIEW":Boolean(patch)&&asText(patch?.status)==="CANDIDATE",
+      "ASSET-01-GATE-PATCH-DECISION":Boolean(patch)&&["CANDIDATE","HUMAN_REVIEW"].includes(asText(patch?.status)??""),
     },
   };
 }
 
 async function readVideoFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
-  const [projects, topics, tasks] = await Promise.all([
-    readProjectRefs(sql, sessionTokenHash),
-    readTopicRefs(sql, sessionTokenHash),
-    readDepartmentTasks(sql, sessionTokenHash, "VIDEO"),
-  ]);
-  const first = tasks[0] ?? null;
-  const empty = emptyVideo() as Record<string, unknown>;
-  return {
-    ...empty,
-    task_id: first?.task_id ?? null,
-    values: {
-      "VIDEO-01-FLD-STATUS": first?.status ?? DASH,
-      "VIDEO-01-FLD-TASK-STATE": first?.status ?? DASH,
-      "VIDEO-01-FLD-PAGE-STATE": "READY",
-      "VIDEO-01-FLD-INPUT-FINGERPRINT": first?.input_fingerprint ?? DASH,
+  const [projects,topics,tasks]=await Promise.all([readProjectRefs(sql,sessionTokenHash),readTopicRefs(sql,sessionTokenHash),readDepartmentTasks(sql,sessionTokenHash,"VIDEO")]);
+  const first=tasks[0]??null,empty=emptyVideo() as Record<string,unknown>;
+  if(!first)return{...empty,page_state:"EMPTY",lists:{"VIDEO-01-FLD-PROJECT":projects,"VIDEO-01-FLD-TOPIC":topics,"VIDEO-01-FLD-TASK":[]}};
+  const ctx=await readDepartmentProductionContext(sql,sessionTokenHash,first.task_id);
+  const candidate=ctx.outputs.find(r=>asText(r.status)==="CANDIDATE")??null;
+  const accepted=ctx.outputs.find(r=>asText(r.status)==="ACCEPTED")??null;
+  const focus=candidate??accepted??ctx.outputs[0]??null,focusId=asText(focus?.output_version_id);
+  const score=(focusId?ctx.scorecards.find(r=>asText(r.output_version_id)===focusId):null)??ctx.scorecards[0]??null;
+  const finding=(focusId?ctx.findings.find(r=>asText(r.output_version_id)===focusId&&!asText(r.closed_at)):null)??ctx.findings.find(r=>!asText(r.closed_at))??null;
+  const correction=(focusId?ctx.corrections.find(r=>asText(r.source_output_version_id)===focusId):null)??ctx.corrections[0]??null,correctionId=asText(correction?.correction_request_id);
+  const correctionCandidate=(correctionId?ctx.correctionScripts.find(r=>asText(r.correction_request_id)===correctionId&&asText(r.status)==="CANDIDATE"):null)??null;
+  const approvedCorrection=(correctionId?ctx.correctionScripts.find(r=>asText(r.correction_request_id)===correctionId&&asText(r.status)==="APPROVED"):null)??null;
+  const lock=(accepted?ctx.locks.find(r=>asText(r.output_version_id)===asText(accepted.output_version_id)&&asText(r.status)==="LOCKED"):null)??null,provider=ctx.providerJobs[0]??null;
+  const taskStatus=first.status,page_state=departmentPageState(taskStatus,Boolean(finding||correction),Boolean(lock)),scorePass=asText(score?.gate_status)==="PASS";
+  return{
+    ...empty,page_state,task_id:first.task_id,current_version_id:asText(accepted?.output_version_id),candidate_version_id:asText(candidate?.output_version_id),
+    finding_id:asText(finding?.finding_id),correction_request_id:correctionId,
+    correction_candidate_id:asText(correctionCandidate?.correction_script_version_id),
+    correction_candidate_content_hash:asText(correctionCandidate?.content_hash),
+    approved_correction_candidate_id:asText(approvedCorrection?.correction_script_version_id),locked_version_ref:asText(lock?.lock_id),
+    current_uri:asText(accepted?.output_uri),candidate_uri:asText(candidate?.output_uri),
+    versions:ctx.outputs.flatMap(r=>{const ref=asText(r.output_version_id),uri=asText(r.output_uri);return ref&&uri?[{ref,label:`${asText(r.status)??"OUTPUT"} · ${ref}`,uri,duration_seconds:0}]:[]}),
+    values:{
+      "VIDEO-01-FLD-STATUS":taskStatus,"VIDEO-01-FLD-TASK-STATE":taskStatus,"VIDEO-01-FLD-PAGE-STATE":page_state,
+      "VIDEO-01-FLD-INPUT-FINGERPRINT":first.input_fingerprint??DASH,
+      "VIDEO-01-FLD-CURRENT-VERSION":asText(accepted?.output_version_id)??DASH,
+      "VIDEO-01-FLD-CANDIDATE-VERSION":asText(candidate?.output_version_id)??DASH,
+      "VIDEO-01-FLD-OUTPUT-URI":asText(focus?.output_uri)??DASH,
+      "VIDEO-01-FLD-CHECKSUM":asText(focus?.artifact_checksum)??DASH,
+      "VIDEO-01-FLD-OVERALL-SCORE":asText(score?.total_score)??DASH,
+      "VIDEO-01-FLD-CRITERIA-VERSION":asText(score?.criteria_version_id)??DASH,
+      "VIDEO-01-FLD-SCORECARD":asText(score?.scorecard_id)??DASH,
+      "VIDEO-01-FLD-ISSUE-REF":asText(finding?.finding_id)??DASH,
+      "VIDEO-01-FLD-ROUTE":asText(provider?.route_policy_id)??DASH,
+      "VIDEO-01-FLD-JOB-STATE":asText(provider?.status)??DASH,
+      "VIDEO-01-FLD-ATTEMPT":asText(provider?.provider_job_id)??DASH,
+      "VIDEO-01-FLD-RETRY":taskStatus==="BLOCKED"||taskStatus==="FAILED"?"ELIGIBLE":"NOT_ELIGIBLE",
+      "VIDEO-01-FLD-HANDOFF-CONTRACT":asText(accepted?.output_contract_hash)??DASH,
+      "VIDEO-01-FLD-LOCK":asText(lock?.lock_id)??DASH,
     },
-    lists: {
-      "VIDEO-01-FLD-PROJECT": projects,
-      "VIDEO-01-FLD-TOPIC": topics,
-      "VIDEO-01-FLD-TASK": tasks.map((item) => ({ ref: item.task_id, label: item.status })),
+    lists:{
+      "VIDEO-01-FLD-PROJECT":projects,"VIDEO-01-FLD-TOPIC":topics,
+      "VIDEO-01-FLD-TASK":tasks.map(item=>({ref:item.task_id,label:item.status})),
+      "VIDEO-01-LST-VERSIONS":ctx.outputs.flatMap(r=>{const ref=asText(r.output_version_id);return ref?[{ref,label:`${asText(r.status)??"OUTPUT"} · ${ref}`}]:[]}),
+    },
+    filters:{},
+    gate_state:{
+      "VIDEO-01-GATE-PAGE":true,"VIDEO-01-GATE-TASK-READY":true,
+      "VIDEO-01-GATE-EXECUTE":taskStatus==="READY","VIDEO-01-GATE-CHILD-LOCK":true,"VIDEO-01-GATE-SCRIPT":true,
+      "VIDEO-01-GATE-CANDIDATE":Boolean(candidate||accepted),"VIDEO-01-GATE-COMPARE":ctx.outputs.length>=2,
+      "VIDEO-01-GATE-EVALUATION":Boolean(candidate)&&taskStatus==="CANDIDATE_OUTPUT",
+      "VIDEO-01-GATE-CONFIRM":Boolean(candidate)&&scorePass&&taskStatus==="SCORE_PENDING",
+      "VIDEO-01-GATE-CORRECTION":Boolean(finding&&focusId)&&taskStatus!=="HANDED_OFF",
+      "VIDEO-01-GATE-RETRY":taskStatus==="BLOCKED"||taskStatus==="FAILED",
+      "VIDEO-01-GATE-LOCK":Boolean(accepted)&&taskStatus==="HANDOFF_READY"&&!lock,
+      "VIDEO-01-GATE-HANDOFF":Boolean(accepted&&lock)&&taskStatus==="HANDOFF_READY",
     },
   };
 }
