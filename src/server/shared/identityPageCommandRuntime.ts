@@ -47,6 +47,8 @@ import type { AssetRuntimeRequest } from "@/domain/asset/assetRuntimeContract";
 import { configureVideoRuntime } from "@/server/video/videoRuntime";
 import type { VideoRuntimeRequest } from "@/domain/video/videoRuntimeContract";
 import { executeProductionDepartmentPort, auditProductionDepartmentPort } from "@/server/shared/productionDepartmentPortRuntime";
+import { configureSharedProductionOperationRuntime, type SharedProductionOperationRequest } from "@/server/shared/sharedProductionOperationRuntime";
+import { executeProductionSharedOperation, auditProductionSharedOperation } from "@/server/shared/productionSharedOperationRuntime";
 
 type SqlClient = NonNullable<ReturnType<typeof getProductionNeonSql>>;
 
@@ -1128,6 +1130,42 @@ async function authorizeDepartmentPort(family:"ASSET"|"VIDEO",request:AssetRunti
   return{allowed:true};
 }
 
+type SharedPermission={family:"ASSET"|"VIDEO";action_resource:string;control_resource:string;api_resource:string};
+const SHARED_OPERATION_PERMISSION:Readonly<Record<string,readonly SharedPermission[]>>={
+  generateCorrectionScriptCandidate:[
+    {family:"ASSET",action_resource:"action:workspace:ASSET-01:ACT-CORRECTION-GENERATE",control_resource:"control:workspace:ASSET-01:ASSET-01-BTN-CORRECTION-GENERATE",api_resource:"api:generateCorrectionScriptCandidate"},
+    {family:"VIDEO",action_resource:"action:workspace:VIDEO-01:ACT-CORRECTION-GENERATE",control_resource:"control:workspace:VIDEO-01:VIDEO-01-BTN-GEN-CORRECTION",api_resource:"api:generateCorrectionScriptCandidate"},
+  ],
+  approveCorrectionScriptCandidate:[
+    {family:"ASSET",action_resource:"action:workspace:ASSET-01:ACT-CORRECTION-APPROVE",control_resource:"control:workspace:ASSET-01:ASSET-01-BTN-CORRECTION-APPROVE",api_resource:"api:approveCorrectionScriptCandidate"},
+    {family:"VIDEO",action_resource:"action:workspace:VIDEO-01:ACT-CORRECTION-APPROVE",control_resource:"control:workspace:VIDEO-01:VIDEO-01-BTN-APPROVE-CORRECTION",api_resource:"api:approveCorrectionScriptCandidate"},
+  ],
+  restoreAssetVersionAsNewDraft:[
+    {family:"ASSET",action_resource:"action:workspace:ASSET-01:ACT-RESTORE-AS-NEW",control_resource:"control:workspace:ASSET-01:ASSET-01-BTN-RESTORE-AS-NEW",api_resource:"api:restoreAssetVersionAsNewDraft"},
+  ],
+  lockAssetVersion:[
+    {family:"ASSET",action_resource:"action:workspace:ASSET-01:ACT-VERSION-LOCK",control_resource:"control:workspace:ASSET-01:ASSET-01-BTN-LOCK",api_resource:"api:lockAssetVersion"},
+  ],
+  lockVideoVersion:[
+    {family:"VIDEO",action_resource:"action:workspace:VIDEO-01:ACT-VERSION-LOCK",control_resource:"control:workspace:VIDEO-01:VIDEO-01-BTN-LOCK",api_resource:"api:lockVideoVersion"},
+  ],
+};
+async function authorizeSharedProductionOperation(request:SharedProductionOperationRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const payload=asRecord(request.payload)??{};
+  const family=asText(payload.family);
+  if(family!=="ASSET"&&family!=="VIDEO")return{allowed:false,reason_code:"SHARED_OPERATION_FAMILY_REQUIRED"};
+  const candidates=SHARED_OPERATION_PERMISSION[request.operation_id]??[];
+  const permission=candidates.find((item)=>item.family===family);
+  if(!permission)return{allowed:false,reason_code:"SHARED_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS[family==="ASSET"?"ASSET-01":"VIDEO-01"]);
+  if(!page.allowed)return page;
+  for(const [resource,action] of [[permission.action_resource,"INVOKE"],[permission.control_resource,"INVOKE"],[permission.api_resource,"EXECUTE"]] as const){
+    const gate=await evaluateResourceAction(resource,action);
+    if(!gate.allowed)return gate;
+  }
+  return{allowed:true};
+}
+
 const QA_LIFECYCLE_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
   startQaReview:{resource_key:"api:startQaReview",action:"EXECUTE"},
   startRecheck:{resource_key:"api:startRecheck",action:"EXECUTE"},
@@ -1398,6 +1436,11 @@ export function bindIdentityPageCommandRuntimes(): void {
     authorize:(request)=>authorizeDepartmentPort("VIDEO",request),
     execute:(request)=>executeProductionDepartmentPort("VIDEO",request),
     audit:(entry)=>auditProductionDepartmentPort("VIDEO",entry),
+  });
+  configureSharedProductionOperationRuntime({
+    authorize:authorizeSharedProductionOperation,
+    execute:executeProductionSharedOperation,
+    audit:auditProductionSharedOperation,
   });
   configureQaRuntime({
     authorize: authorizeQa,
