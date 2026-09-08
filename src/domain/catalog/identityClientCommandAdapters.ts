@@ -20,6 +20,35 @@ import { configureAssetSharedRuntime } from "@/domain/asset/assetClientPort";
 import { configureVideoSharedRuntime } from "@/domain/video/videoClientPort";
 
 let bound = false;
+let assetCorrectionCandidateRef:string|null=null;
+let assetApprovedCorrectionRef:string|null=null;
+let videoCorrectionCandidateRef:string|null=null;
+let videoApprovedCorrectionRef:string|null=null;
+
+const SHARED_OPERATION_PATH:Readonly<Record<string,string>>={
+  generateCorrectionScriptCandidate:"/v1/state-commands/correctionscript/generate",
+  approveCorrectionScriptCandidate:"/v1/state-commands/correctionscript/approve",
+  restoreAssetVersionAsNewDraft:"/v1/state-commands/assetversion/restoreasnewdraft",
+  lockAssetVersion:"/v1/state-commands/assetversion/lock",
+  lockVideoVersion:"/v1/state-commands/videoversion/lock",
+};
+async function invokeSharedHttp(
+  operation_id:string,
+  payload:unknown,
+  error_uid:string,
+):Promise<{ok:true;value:unknown;correlation_id:string}|{ok:false;error_uid:string;reason_code:string;correlation_id:string}>{
+  const path=SHARED_OPERATION_PATH[operation_id];
+  if(!path)return{ok:false,error_uid,reason_code:"SHARED_OPERATION_PATH_UNREGISTERED",correlation_id:"unresolved"};
+  try{
+    const response=await fetch(path,{method:"POST",cache:"no-store",credentials:"include",headers:{"content-type":"application/json","x-correlation-id":crypto.randomUUID()},body:JSON.stringify(payload??{})});
+    const correlation_id=response.headers.get("x-correlation-id")??"unresolved";
+    const raw:unknown=await response.json().catch(()=>null);
+    const body=rec(raw);
+    if(!response.ok)return{ok:false,error_uid,reason_code:typeof body?.reason_code==="string"?body.reason_code:"SHARED_OPERATION_REQUEST_FAILED",correlation_id};
+    return{ok:true,value:raw,correlation_id};
+  }catch{return{ok:false,error_uid,reason_code:"SHARED_OPERATION_REQUEST_FAILED",correlation_id:"unresolved"};}
+}
+
 
 function rec(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
@@ -468,6 +497,36 @@ export function bindIdentityClientCommandAdapters(): void {
             path_params: path([["taskId", taskId], ["outputVersionId", outputVersionId]]),
             payload: { decision: "CONFIRM" },
           };
+        case "ASSET-01-ACT-CORRECTION-GENERATE":
+          return {
+            payload: {
+              family: "ASSET",
+              task_id: taskId,
+              output_version_id: outputVersionId,
+              finding_id: projection?.finding_id ?? "",
+              request: correction_request.trim(),
+              affected_scope: { asset_ref: state.asset_ref },
+            },
+          };
+        case "ASSET-01-ACT-CORRECTION-APPROVE":
+          return {
+            payload: {
+              family: "ASSET",
+              candidate_ref: projection?.correction_candidate_id ?? assetCorrectionCandidateRef ?? "",
+              decision_reason: correction_request.trim(),
+              expected_content_hash: projection?.correction_candidate_content_hash ?? undefined,
+            },
+          };
+        case "ASSET-01-ACT-RESTORE-AS-NEW":
+          return { payload: { family: "ASSET", output_version_id: outputVersionId } };
+        case "ASSET-01-ACT-VERSION-LOCK":
+          return {
+            payload: {
+              family: "ASSET",
+              output_version_id: outputVersionId,
+              manifest_hash: projection?.values["ASSET-01-FLD-HANDOFF-CONTRACT-HASH"] ?? undefined,
+            },
+          };
         case "ASSET-01-ACT-CORRECTION-EXECUTE":
           return {
             path_params: path([["taskId", taskId]]),
@@ -538,27 +597,50 @@ export function bindIdentityClientCommandAdapters(): void {
 
   configureAssetSharedRuntime({
     prepareEvaluation: async (input) => input.payload ?? {},
-    prepareCorrectionExecution: async (input) => input.payload ?? {},
-    invoke: async (operation_id) => ({
-      ok: false,
-      error_uid:
-        operation_id === "lockAssetVersion" || operation_id === "restoreAssetVersionAsNewDraft"
-          ? "ASSET-01-ERR-VERSION-001"
-          : "ASSET-01-ERR-CORRECTION-001",
-      reason_code: "ASSET_SHARED_OPERATION_AUTHORITY_NOT_MATERIALIZED:" + operation_id,
-      correlation_id: "unresolved",
-    }),
+    prepareCorrectionExecution: async (input) => {
+      const base=rec(input.payload)??{};
+      const approved=assetApprovedCorrectionRef;
+      if(!approved)throw new Error("ASSET_APPROVED_CORRECTION_REQUIRED");
+      return{...base,family:"ASSET",mode:"CORRECTION",approved_candidate_ref:approved};
+    },
+    invoke: async (operation_id,input) => {
+      const base=rec(input.payload)??{};
+      const payload=operation_id==="approveCorrectionScriptCandidate"
+        ? {...base,family:"ASSET",candidate_ref:base.candidate_ref??assetCorrectionCandidateRef}
+        : {...base,family:"ASSET"};
+      const error_uid=operation_id==="lockAssetVersion"||operation_id==="restoreAssetVersionAsNewDraft"?"ASSET-01-ERR-VERSION-001":"ASSET-01-ERR-CORRECTION-001";
+      const result=await invokeSharedHttp(operation_id,payload,error_uid);
+      if(result.ok){
+        const body=rec(result.value);
+        if(operation_id==="generateCorrectionScriptCandidate"&&typeof body?.candidate_ref==="string"){assetCorrectionCandidateRef=body.candidate_ref;assetApprovedCorrectionRef=null;}
+        if(operation_id==="approveCorrectionScriptCandidate"&&typeof body?.approved_candidate_ref==="string")assetApprovedCorrectionRef=body.approved_candidate_ref;
+      }
+      return result as Awaited<ReturnType<NonNullable<Parameters<typeof configureAssetSharedRuntime>[0]["invoke"]>>>;
+    },
   });
 
   configureVideoSharedRuntime({
     prepareEvaluation: async (input) => input.payload ?? {},
-    prepareCorrectionExecution: async (input) => input.payload ?? {},
-    invoke: async (operation_id) => ({
-      ok: false,
-      error_uid: operation_id === "lockVideoVersion" ? "VIDEO-01-ERR-VERSION-001" : "VIDEO-01-ERR-CORRECTION-001",
-      reason_code: "VIDEO_SHARED_OPERATION_AUTHORITY_NOT_MATERIALIZED:" + operation_id,
-      correlation_id: "unresolved",
-    }),
+    prepareCorrectionExecution: async (input) => {
+      const base=rec(input.payload)??{};
+      const approved=videoApprovedCorrectionRef;
+      if(!approved)throw new Error("VIDEO_APPROVED_CORRECTION_REQUIRED");
+      return{...base,family:"VIDEO",mode:"CORRECTION",approved_candidate_ref:approved};
+    },
+    invoke: async (operation_id,input) => {
+      const base=rec(input.payload)??{};
+      const payload=operation_id==="approveCorrectionScriptCandidate"
+        ? {...base,family:"VIDEO",candidate_ref:base.candidate_ref??videoCorrectionCandidateRef}
+        : {...base,family:"VIDEO"};
+      const error_uid=operation_id==="lockVideoVersion"?"VIDEO-01-ERR-VERSION-001":"VIDEO-01-ERR-CORRECTION-001";
+      const result=await invokeSharedHttp(operation_id,payload,error_uid);
+      if(result.ok){
+        const body=rec(result.value);
+        if(operation_id==="generateCorrectionScriptCandidate"&&typeof body?.candidate_ref==="string"){videoCorrectionCandidateRef=body.candidate_ref;videoApprovedCorrectionRef=null;}
+        if(operation_id==="approveCorrectionScriptCandidate"&&typeof body?.approved_candidate_ref==="string")videoApprovedCorrectionRef=body.approved_candidate_ref;
+      }
+      return result as Awaited<ReturnType<NonNullable<Parameters<typeof configureVideoSharedRuntime>[0]["invoke"]>>>;
+    },
   });
 
   configureCoreCreationPermissionAdapter({
