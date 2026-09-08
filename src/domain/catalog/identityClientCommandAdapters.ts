@@ -391,7 +391,7 @@ export function bindIdentityClientCommandAdapters(): void {
       }
 
       const response = await fetch(path, {
-        method,
+        method: "POST",
         cache: "no-store",
         credentials: "include",
         headers: { "content-type": "application/json", "x-correlation-id": crypto.randomUUID() },
@@ -489,7 +489,7 @@ export function bindIdentityClientCommandAdapters(): void {
       }
 
       const response = await fetch(path, {
-        method: "POST",
+        method,
         cache: "no-store",
         credentials: "include",
         headers: { "content-type": "application/json", "x-correlation-id": crypto.randomUUID() },
