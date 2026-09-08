@@ -15,6 +15,9 @@ import { readDevProjection } from "@/domain/dev/devProjectionPort";
 import { DEV_CONTROL_BINDINGS, type DevControlBinding, type DevControlUid } from "@/domain/dev/devControlBindings";
 import { configureSocCommandAdapter } from "@/domain/social/socCommandPort";
 import { readSocProjection } from "@/domain/social/socProjectionPort";
+import { configureAssetRequestBuilder } from "@/domain/asset/assetRequestAdapter";
+import { configureAssetSharedRuntime } from "@/domain/asset/assetClientPort";
+import { configureVideoSharedRuntime } from "@/domain/video/videoClientPort";
 
 let bound = false;
 
@@ -432,6 +435,129 @@ export function bindIdentityClientCommandAdapters(): void {
   bound = true;
   bindStrategyAdminHttpCommandAdapter();
   if (isControlledTestMode()) return;
+
+  configureAssetRequestBuilder({
+    build: ({ action_uid, control_value, state, projection, correction_request }) => {
+      const taskId = projection?.task_id ?? "";
+      const outputVersionId = projection?.output_version_id ?? "";
+      const layerDocumentId = projection?.layer_document_id ?? "";
+      const layerId = projection?.layer_id ?? "";
+      const patchId = projection?.patch_id ?? "";
+      const inputFingerprint = projection?.values["ASSET-01-FLD-INPUT-FINGERPRINT"] ?? "";
+      const criteriaVersionRef =
+        projection?.values["ASSET-01-FLD-CRITERIA-VERSION"]
+        ?? projection?.values["ASSET-01-FLD-CRITERIA"]
+        ?? "";
+      const common = { input_fingerprint: inputFingerprint, mode: state.mode };
+      switch (action_uid) {
+        case "ASSET-01-ACT-FLOW-START":
+          return { path_params: taskId ? { taskId } : {}, payload: common };
+        case "ASSET-01-ACT-EVALUATE":
+          return {
+            payload: {
+              task_ref: taskId,
+              target_output_version_id: outputVersionId,
+              criteria_version_ref: criteriaVersionRef,
+              evidence_refs: [],
+            },
+          };
+        case "ASSET-01-ACT-CANDIDATE-CONFIRM":
+          return {
+            path_params: taskId && outputVersionId ? { taskId, outputVersionId } : {},
+            payload: { decision: "CONFIRM" },
+          };
+        case "ASSET-01-ACT-CORRECTION-EXECUTE":
+          return {
+            path_params: taskId ? { taskId } : {},
+            payload: {
+              ...common,
+              correction_request: correction_request.trim(),
+              source_output_version_id: outputVersionId,
+            },
+          };
+        case "ASSET-01-ACT-FINDING-CREATE":
+          return {
+            payload: {
+              task_ref: taskId,
+              target_output_version_id: outputVersionId,
+              scorecard_ref: projection?.values["ASSET-01-FLD-SCORECARD"] ?? "",
+              evidence_refs: [],
+            },
+          };
+        case "ASSET-01-ACT-TASK-RETRY":
+          return { path_params: taskId ? { taskId } : {}, payload: { ...common, preserve_previous_output: true } };
+        case "ASSET-01-ACT-HANDOFF":
+          return {
+            payload: {
+              source_task_id: taskId,
+              source_output_version_id: outputVersionId,
+              scorecard_id: projection?.values["ASSET-01-FLD-SCORECARD"] ?? "",
+              rights_profile_id: projection?.values["ASSET-01-FLD-RIGHTS"] ?? "",
+            },
+          };
+        case "ASSET-01-ACT-LAYER-DOC-CREATE":
+          return {
+            payload: {
+              project_id: state.project_ref,
+              topic_id: state.topic_ref,
+              asset_version_id: outputVersionId,
+            },
+          };
+        case "ASSET-01-ACT-LAYER-DOC-UPDATE":
+          return { path_params: layerDocumentId ? { layerDocumentId } : {}, payload: control_value ?? {} };
+        case "ASSET-01-ACT-LAYER-ADD":
+          return { path_params: layerDocumentId ? { layerDocumentId } : {}, payload: control_value ?? {} };
+        case "ASSET-01-ACT-LAYER-DELETE":
+          return { path_params: layerDocumentId && layerId ? { layerDocumentId, layerId } : {}, payload: null };
+        case "ASSET-01-ACT-LAYER-DUPLICATE":
+        case "ASSET-01-ACT-LAYER-REORDER":
+        case "ASSET-01-ACT-LAYER-PROPERTIES":
+        case "ASSET-01-ACT-LAYER-MASK":
+          return { path_params: layerDocumentId && layerId ? { layerDocumentId, layerId } : {}, payload: control_value ?? {} };
+        case "ASSET-01-ACT-PATCH-CREATE":
+          return {
+            payload: {
+              source_asset_version_id: outputVersionId,
+              document_layer_id: layerId,
+              revision_instruction: correction_request.trim() ? { request: correction_request.trim() } : {},
+            },
+          };
+        case "ASSET-01-ACT-PATCH-PREVIEW":
+          return { path_params: patchId ? { patchId } : {}, payload: {} };
+        case "ASSET-01-ACT-PATCH-ACCEPT":
+          return { path_params: patchId ? { patchId } : {}, payload: { decision: "ACCEPT" } };
+        case "ASSET-01-ACT-PATCH-REJECT":
+          return { path_params: patchId ? { patchId } : {}, payload: { decision: "REJECT" } };
+        default:
+          return { payload: control_value ?? {} };
+      }
+    },
+  });
+
+  configureAssetSharedRuntime({
+    prepareEvaluation: async (input) => input.payload ?? {},
+    prepareCorrectionExecution: async (input) => input.payload ?? {},
+    invoke: async (operation_id) => ({
+      ok: false,
+      error_uid:
+        operation_id === "lockAssetVersion" || operation_id === "restoreAssetVersionAsNewDraft"
+          ? "ASSET-01-ERR-VERSION-001"
+          : "ASSET-01-ERR-CORRECTION-001",
+      reason_code: "ASSET_SHARED_OPERATION_AUTHORITY_NOT_MATERIALIZED:" + operation_id,
+      correlation_id: "unresolved",
+    }),
+  });
+
+  configureVideoSharedRuntime({
+    prepareEvaluation: async (input) => input.payload ?? {},
+    prepareCorrectionExecution: async (input) => input.payload ?? {},
+    invoke: async (operation_id) => ({
+      ok: false,
+      error_uid: operation_id === "lockVideoVersion" ? "VIDEO-01-ERR-VERSION-001" : "VIDEO-01-ERR-CORRECTION-001",
+      reason_code: "VIDEO_SHARED_OPERATION_AUTHORITY_NOT_MATERIALIZED:" + operation_id,
+      correlation_id: "unresolved",
+    }),
+  });
 
   configureCoreCreationPermissionAdapter({
     authorizeCreation: async ({ required_permission_uid }) => {
