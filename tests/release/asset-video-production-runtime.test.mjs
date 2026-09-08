@@ -41,5 +41,5 @@ test("migration 0033 remains immutable while later migration ceiling advances",a
   assert.doesNotMatch(migration,/INSERT INTO public\.permission_resources/);
   assert.match(manifest,/0033_asset_video_department_runtime_permission_rls_closure/);
   assert.match(manifest,/7bb4797ce24c1bba93572b0ec55f5ea6baf7297fc2f0687e95564a556f925c71/);
-  assert.ok(Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0) >= 33);
+  assert.ok(Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 33);
 });
