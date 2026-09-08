@@ -2,16 +2,16 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-08T06:27:02+08:00",
+  "as_of": "2026-09-08T12:41:11+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
-    "new_sha_basis": "4a90b144731b0b1c2c8eb5c483278313396f3633",
+    "new_sha_basis": "7e8e1c1cb967ad375c46539ded3ebf56e18b44b1",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_AI_GOVERNANCE_SYS_CONVERSATION_CORE0021_VALIDATED_PREDEPLOY",
+    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_MIGRATIONS_0021_0029_VALIDATED_PREDEPLOY_INFO_RUNTIME",
     "post_release_new_status": "AHEAD_OF_MAIN_NO_VERCEL_DEPLOYMENT_TRIGGERED"
   },
   "release_validation": {
@@ -660,18 +660,18 @@
     },
     "current_construction_gate": {
       "status": "PASS",
-      "run_number": 681,
-      "run_id": 34166553250,
-      "head_sha": "4a90b144731b0b1c2c8eb5c483278313396f3633",
+      "run_number": 800,
+      "run_id": 34187695414,
+      "head_sha": "7e8e1c1cb967ad375c46539ded3ebf56e18b44b1",
       "branch": "new",
       "conclusion": "success",
-      "unit_tests": "PASS_121_FAIL_0",
+      "unit_tests": "PASS_147_FAIL_0",
       "browser_e2e": "PASS_72_CASES",
       "i18n_cases": 54,
       "shell_geometry_cases": 18,
       "visual_topology_cases": 5,
       "sidebar_reflow_cases": 1,
-      "browser_evidence": "interactive_controls=462 governed_controls=276",
+      "browser_evidence": "interactive_controls=456 governed_controls=274 safe_local_clicks=4 strategy_form_cases=4 sg_governance_cases=2 iam_mutation_cases=4 erp_mutation_cases=1 dev_mutation_cases=4 soc_mutation_cases=2 aiapi_mutation_cases=2 kb_mutation_cases=2",
       "production_http_e2e": "PASS",
       "controlled_build": "PASS",
       "controlled_misconfiguration_http_e2e": "PASS",
@@ -780,6 +780,57 @@
       "regression_lock_release_gate": 680,
       "authority_commit": "4a90b144731b0b1c2c8eb5c483278313396f3633",
       "authority_release_gate": 681,
+      "production_apply_policy": "FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE"
+    },
+    "info_0029_predeploy": {
+      "status": "VALIDATED_PENDING_PRODUCTION_APPLY_AND_UI_HUMAN_INPUT_MATERIALIZATION",
+      "migration_id": "0029_info_context_candidate_permission_rls_closure",
+      "payload_sha256": "a1494503e3dde66d9bcfcf9bdc0c18277bd942a5a415d827058df851dc8ba7b2",
+      "repository_migration_count": 29,
+      "validation_branch_migration_count": 29,
+      "production_migration_count": 20,
+      "production_latest_migration": "0020_system_lifecycle_runtime",
+      "production_mutation_performed": false,
+      "validation_branch": {
+        "id": "br-orange-smoke-aut9pafw",
+        "name": "rls-0016-validate-20260906",
+        "migration_before": 28,
+        "migration_after": 29,
+        "approved_allow_assignments": 4,
+        "rls_policies": 5,
+        "runtime_role": "acpos_app_runtime",
+        "actor_resolved": true,
+        "page_view": true,
+        "refresh_execute": true,
+        "search_execute": true,
+        "adopt_execute": true,
+        "decide_execute": true,
+        "transactional_adoption": "CANDIDATE_TO_APPROVED_PASS",
+        "audit_insert": "PASS",
+        "cleanup_residual_zero": true
+      },
+      "implementation": {
+        "business_payload_registry": "MATERIALIZED_CURRENT",
+        "operation_registry": "MATERIALIZED_CURRENT",
+        "production_projection_normalizer": "MATERIALIZED_CURRENT",
+        "session_bound_fact_pack_projection": "MATERIALIZED_CURRENT",
+        "context_candidate_runtime": "MATERIALIZED_CURRENT",
+        "candidate_decision_owner_routing": "MATERIALIZED_CURRENT",
+        "fabricated_production_human_decision": "FORBIDDEN"
+      },
+      "remaining_blockers": [
+        "INFO Adopt/Decide action schemas are registered, but 07_ui/interaction_registry.yaml has no human-input interaction for those buttons; UI remains fail-closed.",
+        "knowledge_sources/evidence_records workspace lineage and FactPack evidence_refs JSON shape are not defined strongly enough to open Evidence RLS safely.",
+        "exportProjection has no canonical export persistence owner."
+      ],
+      "release_gate": {
+        "run_number": 800,
+        "run_id": 34187695414,
+        "head_sha": "7e8e1c1cb967ad375c46539ded3ebf56e18b44b1",
+        "conclusion": "success",
+        "unit_tests": 147,
+        "browser_cases": 72
+      },
       "production_apply_policy": "FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE"
     }
   },
@@ -901,6 +952,19 @@
       "migration_id": "0021_core_decision_candidate_runtime",
       "checksum": "e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6",
       "validation_branch_id": "br-orange-smoke-aut9pafw",
+      "production_apply": "PENDING_FINAL_RELEASE_SEQUENCE"
+    },
+    "repository_registered_migration_count": 29,
+    "validation_branch_migration_count": 29,
+    "validation_latest_migration": "0029_info_context_candidate_permission_rls_closure",
+    "production_migration_count": 20,
+    "pending_validated_migrations": {
+      "range": "0021-0029",
+      "status": "VALIDATED_ON_EXISTING_VALIDATION_BRANCH_NOT_APPLIED_TO_PRODUCTION",
+      "validation_branch_id": "br-orange-smoke-aut9pafw",
+      "validation_migration_count": 29,
+      "production_migration_count": 20,
+      "production_latest_migration": "0020_system_lifecycle_runtime",
       "production_apply": "PENDING_FINAL_RELEASE_SEQUENCE"
     }
   },
@@ -1038,19 +1102,20 @@
     }
   },
   "blockers": [
-    "AI conversation final Production E2E is intentionally pending because user requires one consolidated deployment only after all construction is ready. Current predeploy code is included in Release Gate #681 PASS.",
-    "CORE Candidate migration 0021 is validated but intentionally not applied to Production until the final consolidated release sequence; Production remains at migration 0020.",
-    "Gate 24 overall: SYS-01 lifecycle subset is Production E2E PASS; remaining non-SYS admin mutation acceptance must be recomputed/closed from Current code and evidence.",
+    "AI conversation final Production E2E is intentionally pending because user requires one consolidated deployment only after all construction is ready.",
+    "Validated migrations 0021-0029 are intentionally not applied to Production until the final consolidated release sequence; Production remains at migration 0020.",
+    "INFO-01 human Adopt/Decide input interaction is not registered in 07_ui/interaction_registry.yaml, so the two UI mutations remain fail-closed despite materialized server runtime.",
+    "INFO-01 exact Evidence/source lineage and export persistence owner remain Authority gaps; no fabricated Evidence or export is permitted.",
+    "Gate 24 overall non-SYS admin mutation acceptance still requires final Current recomputation after remaining runtime closures.",
     "Do not persist Provider API-key plaintext in GitHub, Neon, logs or state artifacts."
   ],
   "next_release_sequence": [
-    "Continue remaining non-SYS admin mutation acceptance/closure on new without Vercel deployment.",
-    "Continue any remaining dependency-ready runtime/acceptance gaps on new; keep migration 0021 Production apply deferred until the consolidated release sequence.",
-    "Do not merge new to main until the consolidated release set is closed and exact Release Gate is PASS.",
-    "Perform one final main integration/deployment only.",
-    "Apply validated migration 0021 in the governed final release sequence with Production verification.",
-    "After exact final Production SHA is ready, trigger ACPOS Conversation Acceptance from new without another Vercel deployment; require two-turn history recall and persisted USER/ASSISTANT sequence.",
-    "Run final Post-Deploy/production acceptance and only then declare AI conversation and overall Production PASS."
+    "Continue dependency-ready Current runtime closures on new; next code-level PARTIAL runtime is ERP-01, while INFO human-input/evidence/export remains explicit Authority-gapped work.",
+    "Do not merge new to main and do not trigger Vercel while construction remains open.",
+    "Keep validated migrations 0021-0029 unapplied to Production until the consolidated governed release sequence.",
+    "After all dependency-ready runtime/acceptance gaps close, run one exact Release Gate on new and integrate once to main.",
+    "Apply the validated migration chain in the governed final release sequence with Production verification.",
+    "After exact final Production SHA is ready, run pending Conversation Acceptance and final Post-Deploy/Production acceptance before declaring overall PASS."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
