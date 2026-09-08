@@ -8,17 +8,62 @@ import type { EditVoiceRequest } from "@/server/edit/editVoiceRuntime";
 
 type Sql=NonNullable<ReturnType<typeof getProductionNeonSql>>;
 type Row=Record<string,unknown>;
+type RuntimeContext={sql:Sql;actor_user_id:string;session_token_hash:string};
 function rec(v:unknown):Row{return v&&typeof v==="object"&&!Array.isArray(v)?v as Row:{};}
 function rows(v:unknown):Row[]{return Array.isArray(v)?v.filter((x):x is Row=>Boolean(x)&&typeof x==="object"&&!Array.isArray(x)):[];}
 function first(v:unknown):Row|null{return rows(v)[0]??null;}
 function text(v:unknown):string|null{if(typeof v!=="string")return null;const x=v.trim();return x||null;}
 function uuid(v:unknown):string|null{const x=text(v);return x&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(x)?x:null;}
 function requireUuid(v:unknown,reason:string){const x=uuid(v);if(!x)throw new NamedRuntimeError(reason);return x;}
-async function context():Promise<{sql:Sql;actor_user_id:string;session_token_hash:string}>{
+async function context():Promise<RuntimeContext>{
   await ensureProductionNeonRuntime();const sql=getProductionNeonSql();if(!sql)throw new NamedRuntimeError("DATABASE_RUNTIME_NOT_BOUND");
   const token=(await cookies()).get(IDENTITY_COOKIE_NAME)?.value?.trim();if(!token)throw new NamedRuntimeError("IDENTITY_RUNTIME_NOT_BOUND");
   const identity=await resolveIdentityFromCookie(token);if(!identity.ok)throw new NamedRuntimeError(identity.reason_code);
   return{sql,actor_user_id:identity.actor.user_id,session_token_hash:hashSessionToken(token)};
+}
+const API_RESOURCE:Readonly<Record<EditVoiceRequest["operation_id"],string>>={
+  createEditingRuntimeRun:"api:createEditingRuntimeRun",
+  getEditingRuntimeRun:"api:getEditingRuntimeRun",
+  completeAssembly:"api:completeAssembly",
+  transitionEditingToVoiceStage:"api:transitionEditingToVoiceStage",
+  startVoiceRuntime:"api:startVoiceRuntime",
+  getVoiceRuntimeRun:"api:getVoiceRuntimeRun",
+  completeAudioMix:"api:completeAudioMix",
+  completeLipSync:"api:completeLipSync",
+  completeSubtitle:"api:completeSubtitle",
+  handoffVoiceToQA:"api:handoffVoiceToQA",
+};
+const CONTROL_RESOURCE:Partial<Record<EditVoiceRequest["operation_id"],string>>={
+  createEditingRuntimeRun:"control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-CREATE-EDITING-RUNTIME-RUN",
+  getEditingRuntimeRun:"control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-GET-EDITING-RUNTIME-RUN",
+  completeAssembly:"control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-COMPLETE-ASSEMBLY",
+  transitionEditingToVoiceStage:"control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-HANDOFF-EDITING-TO-VOICE",
+};
+async function permissionEffects(ctx:RuntimeContext,resourceKey:string,action:string,resourceType:string){
+  const result=await runRlsActorQuery(ctx.sql,ctx.session_token_hash,ctx.sql`
+    SELECT a.effect
+    FROM public.account_permission_assignments a
+    JOIN public.permission_resources r ON r.resource_id=a.resource_id
+    WHERE a.user_id=${ctx.actor_user_id}::uuid
+      AND r.resource_key=${resourceKey} AND r.resource_type=${resourceType} AND r.active=true
+      AND ${action}=ANY(SELECT jsonb_array_elements_text(CASE WHEN jsonb_typeof(r.allowed_actions)='array' THEN r.allowed_actions ELSE '[]'::jsonb END))
+      AND a.action=${action} AND a.status='APPROVED' AND a.scope='{}'::jsonb AND a.condition='{}'::jsonb
+      AND a.effective_from<=now() AND (a.effective_to IS NULL OR a.effective_to>now())
+  `);
+  return rows(result).map((r)=>text(r.effect)).filter((v):v is string=>Boolean(v));
+}
+async function allowed(ctx:RuntimeContext,resourceKey:string,action:string,resourceType:string){
+  const effects=await permissionEffects(ctx,resourceKey,action,resourceType);
+  return !effects.includes("DENY")&&effects.includes("ALLOW");
+}
+export async function authorizeProductionEditVoiceOperation(request:EditVoiceRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  let ctx:RuntimeContext;try{ctx=await context();}catch(error){return{allowed:false,reason_code:error instanceof Error?error.message:"IDENTITY_RUNTIME_NOT_BOUND"};}
+  if(!await allowed(ctx,"page:workspace:EDIT-01","VIEW","PAGE"))return{allowed:false,reason_code:"EDIT_PAGE_PERMISSION_DENIED"};
+  const control=CONTROL_RESOURCE[request.operation_id];
+  if(control&&!await allowed(ctx,control,"INVOKE","CONTROL"))return{allowed:false,reason_code:"EDIT_CONTROL_PERMISSION_DENIED"};
+  const api=API_RESOURCE[request.operation_id];
+  if(!api||!await allowed(ctx,api,"EXECUTE","API"))return{allowed:false,reason_code:"EDIT_API_PERMISSION_DENIED"};
+  return{allowed:true};
 }
 async function exactRun(sql:Sql,session:string,runId:string){
   const row=first(await runRlsActorQuery(sql,session,sql`
@@ -116,9 +161,25 @@ async function handoffToQa(request:EditVoiceRequest){
   if(!text(payload.saved_edit_version_id)||!text(payload.locked_version_ref))throw new NamedRuntimeError("EDIT_LOCKED_OUTPUT_REQUIRED");
   const {sql,session_token_hash}=await context();const run=await exactRun(sql,session_token_hash,runId);
   if(text(run.task_id)!==taskId||text(run.current_state)!=="QA_READY"||text(run.status)!=="QA_READY")throw new NamedRuntimeError("EDIT_QA_HANDOFF_STATE_NOT_READY");
+  const source=first(await runRlsActorQuery(sql,session_token_hash,sql`
+    SELECT t.project_id::text,t.topic_id::text,t.production_contract_id::text,t.topic_production_contract_id::text,
+           COALESCE(t.goal_id,t.production_goal_id)::text AS goal_id,t.production_goal_id::text,
+           btrim(t.output_contract_hash::text) AS output_contract_hash,
+           o.output_version_id::text,o.status::text AS output_status,
+           s.scorecard_id::text,s.gate_status::text AS gate_status
+    FROM public.department_tasks t
+    JOIN public.task_outputs o ON o.task_id=t.task_id AND o.output_version_id=${outputId}::uuid
+    JOIN LATERAL(
+      SELECT s0.scorecard_id,s0.gate_status FROM public.scorecards s0
+      WHERE s0.task_id=t.task_id AND s0.output_version_id=o.output_version_id AND s0.gate_status='PASS'
+      ORDER BY s0.created_at DESC,s0.scorecard_id DESC LIMIT 1
+    ) s ON true
+    WHERE t.task_id=${taskId}::uuid AND t.department::text='EDITING' LIMIT 1
+  `));
+  if(!source||text(source.output_status)!=="ACCEPTED"||text(source.gate_status)!=="PASS")throw new NamedRuntimeError("EDIT_QA_HANDOFF_CANONICAL_EVIDENCE_REQUIRED");
   const target=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT q.task_id::text FROM public.department_tasks q JOIN public.department_tasks e ON e.task_id=${taskId}::uuid
-    WHERE q.department::text='QA' AND q.project_id=e.project_id AND q.topic_id=e.topic_id AND q.status='READY'
+    SELECT q.task_id::text FROM public.department_tasks q
+    WHERE q.department::text='QA' AND q.project_id=${text(source.project_id)}::uuid AND q.topic_id=${text(source.topic_id)}::uuid AND q.status='READY'
     ORDER BY q.created_at DESC LIMIT 1
   `));
   const qaTaskId=requireUuid(target?.task_id,"EDIT_QA_TARGET_TASK_REQUIRED");
@@ -128,8 +189,15 @@ async function handoffToQa(request:EditVoiceRequest){
   if(existing)return{handoff_ref:text(existing.handoff_id),run_id:runId};
   const handoffId=randomUUID();
   await runRlsActorQuery(sql,session_token_hash,sql`
-    INSERT INTO public.handoffs(handoff_id,source_task_id,target_task_id,source_output_version_id,status)
-    VALUES(${handoffId}::uuid,${taskId}::uuid,${qaTaskId}::uuid,${outputId}::uuid,'HANDOFF_READY')
+    INSERT INTO public.handoffs(
+      handoff_id,source_task_id,target_task_id,source_output_version_id,scorecard_id,
+      topic_production_contract_id,production_goal_id,output_contract_hash,status,
+      production_contract_id,goal_id,topic_id,project_id
+    ) VALUES(
+      ${handoffId}::uuid,${taskId}::uuid,${qaTaskId}::uuid,${outputId}::uuid,${text(source.scorecard_id)}::uuid,
+      ${text(source.topic_production_contract_id)}::uuid,${text(source.production_goal_id)}::uuid,${text(source.output_contract_hash)}::char(64),'HANDOFF_READY',
+      ${uuid(source.production_contract_id)}::uuid,${uuid(source.goal_id)}::uuid,${uuid(source.topic_id)}::uuid,${uuid(source.project_id)}::uuid
+    )
   `);
   await runRlsActorQuery(sql,session_token_hash,sql`UPDATE acpos_runtime.editing_runtime_runs_runtime SET status='HANDED_OFF',updated_at=now() WHERE id=${runId}`);
   return{handoff_ref:handoffId,run_id:runId,target_task_id:qaTaskId};
