@@ -2,7 +2,9 @@ export const EDIT_INTEGRATION_PORT_UIDS = [
   "EDIT-01-PORT-IN-VIDEO-HANDOFF","EDIT-01-PORT-EDIT-RUN-CREATE","EDIT-01-PORT-EDIT-RUN-READ","EDIT-01-PORT-ASSEMBLY-COMPLETE",
   "EDIT-01-PORT-ASSEMBLY-DECISION","EDIT-01-PORT-ASSEMBLY-SCORECARD","EDIT-01-PORT-EDIT-VOICE-HANDOFF","EDIT-01-PORT-VOICE-RUNTIME-START",
   "EDIT-01-PORT-VOICE-RUNTIME-READ","EDIT-01-PORT-AUDIO-MIX-COMPLETE","EDIT-01-PORT-LIPSYNC-COMPLETE","EDIT-01-PORT-SUBTITLE-COMPLETE",
-  "EDIT-01-PORT-VOICE-DECISION","EDIT-01-PORT-VOICE-SCORECARD","EDIT-01-PORT-VOICE-QA-HANDOFF"
+  "EDIT-01-PORT-VOICE-DECISION","EDIT-01-PORT-VOICE-SCORECARD","EDIT-01-PORT-VOICE-QA-HANDOFF",
+  "EDIT-01-PORT-VERSION-SAVE","EDIT-01-PORT-RENDER-START","EDIT-01-PORT-RENDER-CANCEL","EDIT-01-PORT-OUTPUT-SAVE",
+  "EDIT-01-PORT-VERSION-LOCK","EDIT-01-PORT-VERSION-RESTORE","EDIT-01-PORT-OUTPUT-DOWNLOAD"
 ] as const;
 export type EditIntegrationPortUid = typeof EDIT_INTEGRATION_PORT_UIDS[number];
 
@@ -34,7 +36,9 @@ export type EditErrorUid = typeof EDIT_ERROR_UIDS[number];
 
 export type EditVoiceOperationId =
   | "createEditingRuntimeRun" | "getEditingRuntimeRun" | "completeAssembly" | "transitionEditingToVoiceStage"
-  | "startVoiceRuntime" | "getVoiceRuntimeRun" | "completeAudioMix" | "completeLipSync" | "completeSubtitle" | "handoffVoiceToQA";
+  | "startVoiceRuntime" | "getVoiceRuntimeRun" | "completeAudioMix" | "completeLipSync" | "completeSubtitle" | "handoffVoiceToQA"
+  | "saveEditVersion" | "startEditRender" | "cancelEditRender" | "saveEditOutputVersion"
+  | "lockEditVersion" | "restoreEditVersionAsDraft" | "getEditOutputDownload";
 export const EDIT_PORT_METHOD_PATH: Record<EditIntegrationPortUid,{operation:string;method:"GET"|"POST";path:string}> = {
   "EDIT-01-PORT-IN-VIDEO-HANDOFF":{operation:"createDepartmentHandoff",method:"POST",path:"/v1/handoffs"},
   "EDIT-01-PORT-EDIT-RUN-CREATE":{operation:"createEditingRuntimeRun",method:"POST",path:"/v1/editing-runtime-runs"},
@@ -51,6 +55,13 @@ export const EDIT_PORT_METHOD_PATH: Record<EditIntegrationPortUid,{operation:str
   "EDIT-01-PORT-VOICE-DECISION":{operation:"decideOutputCandidate",method:"POST",path:"/v1/tasks/{taskId}/outputs/{outputVersionId}/decision"},
   "EDIT-01-PORT-VOICE-SCORECARD":{operation:"submitScorecard",method:"POST",path:"/v1/scorecards"},
   "EDIT-01-PORT-VOICE-QA-HANDOFF":{operation:"handoffVoiceToQA",method:"POST",path:"/v1/voice-runtime-runs/{runId}/qa-handoff"},
+  "EDIT-01-PORT-VERSION-SAVE":{operation:"saveEditVersion",method:"POST",path:"/v1/editing-runtime-runs/{runId}/versions"},
+  "EDIT-01-PORT-RENDER-START":{operation:"startEditRender",method:"POST",path:"/v1/editing-runtime-runs/{runId}/renders"},
+  "EDIT-01-PORT-RENDER-CANCEL":{operation:"cancelEditRender",method:"POST",path:"/v1/editing-runtime-runs/{runId}/renders/{renderJobId}/cancel"},
+  "EDIT-01-PORT-OUTPUT-SAVE":{operation:"saveEditOutputVersion",method:"POST",path:"/v1/editing-runtime-runs/{runId}/renders/{renderJobId}/output"},
+  "EDIT-01-PORT-VERSION-LOCK":{operation:"lockEditVersion",method:"POST",path:"/v1/editing-runtime-runs/{runId}/versions/{editVersionId}/lock"},
+  "EDIT-01-PORT-VERSION-RESTORE":{operation:"restoreEditVersionAsDraft",method:"POST",path:"/v1/editing-runtime-runs/{runId}/versions/{editVersionId}/restore"},
+  "EDIT-01-PORT-OUTPUT-DOWNLOAD":{operation:"getEditOutputDownload",method:"GET",path:"/v1/editing-runtime-runs/{runId}/outputs/{outputVersionId}/download"},
 };
 export const EDIT_INTEGRATION_PORT_COUNT = EDIT_INTEGRATION_PORT_UIDS.length;
 export const EDIT_EXPECTED_ACTION_COUNT = 124;

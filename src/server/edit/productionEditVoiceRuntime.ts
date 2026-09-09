@@ -5,6 +5,7 @@ import { runRlsActorQuery } from "@/server/database/rlsRuntime";
 import { hashSessionToken,IDENTITY_COOKIE_NAME,resolveIdentityFromCookie } from "@/server/identity/identityRuntime";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 import type { EditVoiceRequest } from "@/server/edit/editVoiceRuntime";
+import { executeProductionEditFinalizeOperation } from "@/server/edit/productionEditFinalizeRuntime";
 
 type Sql=NonNullable<ReturnType<typeof getProductionNeonSql>>;
 type Row=Record<string,unknown>;
@@ -32,12 +33,35 @@ const API_RESOURCE:Readonly<Record<EditVoiceRequest["operation_id"],string>>={
   completeLipSync:"api:completeLipSync",
   completeSubtitle:"api:completeSubtitle",
   handoffVoiceToQA:"api:handoffVoiceToQA",
+  saveEditVersion:"api:saveEditVersion",
+  startEditRender:"api:startEditRender",
+  cancelEditRender:"api:cancelEditRender",
+  saveEditOutputVersion:"api:saveEditOutputVersion",
+  lockEditVersion:"api:lockEditVersion",
+  restoreEditVersionAsDraft:"api:restoreEditVersionAsDraft",
+  getEditOutputDownload:"api:getEditOutputDownload",
 };
 const CONTROL_RESOURCE:Partial<Record<EditVoiceRequest["operation_id"],string>>={
   createEditingRuntimeRun:"control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-CREATE-EDITING-RUNTIME-RUN",
   getEditingRuntimeRun:"control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-GET-EDITING-RUNTIME-RUN",
   completeAssembly:"control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-COMPLETE-ASSEMBLY",
   transitionEditingToVoiceStage:"control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-HANDOFF-EDITING-TO-VOICE",
+  saveEditVersion:"control:workspace:EDIT-01:EDIT-01-BTN-VERSION-SAVE",
+  startEditRender:"control:workspace:EDIT-01:EDIT-01-BTN-RENDER-EXECUTE",
+  cancelEditRender:"control:workspace:EDIT-01:EDIT-01-BTN-RENDER-CANCEL",
+  saveEditOutputVersion:"control:workspace:EDIT-01:EDIT-01-BTN-OUTPUT-SAVE",
+  lockEditVersion:"control:workspace:EDIT-01:EDIT-01-BTN-VERSION-LOCK",
+  restoreEditVersionAsDraft:"control:workspace:EDIT-01:EDIT-01-BTN-VERSION-RESTORE",
+  getEditOutputDownload:"control:workspace:EDIT-01:EDIT-01-BTN-DOWNLOAD",
+};
+const ACTION_RESOURCE:Partial<Record<EditVoiceRequest["operation_id"],string>>={
+  saveEditVersion:"action:workspace:EDIT-01:EDIT-01-ACT-VERSION-SAVE",
+  startEditRender:"action:workspace:EDIT-01:EDIT-01-ACT-RENDER-START",
+  cancelEditRender:"action:workspace:EDIT-01:EDIT-01-ACT-RENDER-CANCEL",
+  saveEditOutputVersion:"action:workspace:EDIT-01:EDIT-01-ACT-OUTPUT-VERSION-SAVE",
+  lockEditVersion:"action:workspace:EDIT-01:EDIT-01-ACT-VERSION-LOCK",
+  restoreEditVersionAsDraft:"action:workspace:EDIT-01:EDIT-01-ACT-VERSION-RESTORE-AS-DRAFT",
+  getEditOutputDownload:"action:workspace:EDIT-01:EDIT-01-ACT-OUTPUT-DOWNLOAD",
 };
 async function permissionEffects(ctx:RuntimeContext,resourceKey:string,action:string,resourceType:string){
   const result=await runRlsActorQuery(ctx.sql,ctx.session_token_hash,ctx.sql`
@@ -59,6 +83,11 @@ async function allowed(ctx:RuntimeContext,resourceKey:string,action:string,resou
 export async function authorizeProductionEditVoiceOperation(request:EditVoiceRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
   let ctx:RuntimeContext;try{ctx=await context();}catch(error){return{allowed:false,reason_code:error instanceof Error?error.message:"IDENTITY_RUNTIME_NOT_BOUND"};}
   if(!await allowed(ctx,"page:workspace:EDIT-01","VIEW","PAGE"))return{allowed:false,reason_code:"EDIT_PAGE_PERMISSION_DENIED"};
+  const action=ACTION_RESOURCE[request.operation_id];
+  if(action){
+    if(!request.action_uid||request.action_uid!==action.split(":").slice(3).join(":"))return{allowed:false,reason_code:"EDIT_ACTION_UID_MISMATCH"};
+    if(!await allowed(ctx,action,"INVOKE","ACTION"))return{allowed:false,reason_code:"EDIT_ACTION_PERMISSION_DENIED"};
+  }
   const control=CONTROL_RESOURCE[request.operation_id];
   if(control&&!await allowed(ctx,control,"INVOKE","CONTROL"))return{allowed:false,reason_code:"EDIT_CONTROL_PERMISSION_DENIED"};
   const api=API_RESOURCE[request.operation_id];
@@ -128,8 +157,8 @@ async function completeStep(request:EditVoiceRequest,stepNo:number,stepName:"ASS
   if(text(run.current_state)!==expectedState)throw new NamedRuntimeError(`EDIT_${stepName}_STATE_CONFLICT`);
   const evidence=stepName==="ASSEMBLY"?text(payload.working_draft_ref):stepName==="AUDIO_MIX"?text(payload.mix_manifest_ref):text(payload.dialogue_timing_binding_ref);
   if(!evidence)throw new NamedRuntimeError(`EDIT_${stepName}_EVIDENCE_REQUIRED`);
-  const nextState=stepName==="ASSEMBLY"?"ASSEMBLY":stepName==="AUDIO_MIX"?"LIP_SYNC":stepName==="LIP_SYNC"?"SUBTITLE":"QA_READY";
-  const nextStatus=stepName==="ASSEMBLY"?"ASSEMBLY_REVIEW_REQUIRED":stepName==="SUBTITLE"?"QA_READY":"READY";
+  const nextState=stepName==="ASSEMBLY"?"ASSEMBLY":stepName==="AUDIO_MIX"?"LIP_SYNC":stepName==="LIP_SYNC"?"SUBTITLE":"FINALIZE";
+  const nextStatus=stepName==="ASSEMBLY"?"ASSEMBLY_REVIEW_REQUIRED":stepName==="SUBTITLE"?"READY":"READY";
   const stepId=randomUUID(),outputRef=text(payload.output_version_id)??evidence;
   await runRlsActorQuery(sql,session_token_hash,sql`
     INSERT INTO acpos_runtime.editing_runtime_steps_runtime(
@@ -160,7 +189,17 @@ async function handoffToQa(request:EditVoiceRequest){
   const taskId=requireUuid(payload.task_id,"EDIT_TASK_ID_REQUIRED"),outputId=requireUuid(payload.output_version_id,"EDIT_OUTPUT_VERSION_ID_REQUIRED");
   if(!text(payload.saved_edit_version_id)||!text(payload.locked_version_ref))throw new NamedRuntimeError("EDIT_LOCKED_OUTPUT_REQUIRED");
   const {sql,session_token_hash}=await context();const run=await exactRun(sql,session_token_hash,runId);
-  if(text(run.task_id)!==taskId||text(run.current_state)!=="QA_READY"||text(run.status)!=="QA_READY")throw new NamedRuntimeError("EDIT_QA_HANDOFF_STATE_NOT_READY");
+  if(text(run.task_id)!==taskId||text(run.current_state)!=="FINALIZE"||text(run.status)!=="LOCKED")throw new NamedRuntimeError("EDIT_QA_HANDOFF_STATE_NOT_READY");
+  const lock=first(await runRlsActorQuery(sql,session_token_hash,sql`
+    SELECT l.edit_version_lock_id::text,l.edit_version_id::text,l.output_version_id::text
+    FROM public.edit_version_locks l
+    WHERE l.edit_version_lock_id=${text(payload.locked_version_ref)}::uuid
+      AND l.edit_version_id=${text(payload.saved_edit_version_id)}::uuid
+      AND l.output_version_id=${outputId}::uuid
+      AND l.task_id=${taskId}::uuid AND l.status='LOCKED'
+    LIMIT 1
+  `));
+  if(!lock)throw new NamedRuntimeError("EDIT_QA_HANDOFF_EXACT_VERSION_LOCK_REQUIRED");
   const source=first(await runRlsActorQuery(sql,session_token_hash,sql`
     SELECT t.project_id::text,t.topic_id::text,t.production_contract_id::text,t.topic_production_contract_id::text,
            COALESCE(t.goal_id,t.production_goal_id)::text AS goal_id,t.production_goal_id::text,
@@ -214,6 +253,14 @@ export async function executeProductionEditVoiceOperation(request:EditVoiceReque
     case"completeLipSync":return completeStep(request,3,"LIP_SYNC");
     case"completeSubtitle":return completeStep(request,4,"SUBTITLE");
     case"handoffVoiceToQA":return handoffToQa(request);
+    case"saveEditVersion":
+    case"startEditRender":
+    case"cancelEditRender":
+    case"saveEditOutputVersion":
+    case"lockEditVersion":
+    case"restoreEditVersionAsDraft":
+    case"getEditOutputDownload":
+      return executeProductionEditFinalizeOperation(request);
   }
 }
 export async function auditProductionEditVoiceOperation():Promise<void>{return;}

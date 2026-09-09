@@ -1,7 +1,7 @@
 import type { EditVoiceOperationId } from "@/domain/edit/editRuntimeContract";
 import { executeControlledEditVoiceTestOperation, isControlledEditServerTestMode } from "@/server/testing/controlledEditTestRuntime";
 import { namedReason } from "@/server/shared/namedRuntimeError";
-export type EditVoiceRequest={operation_id:EditVoiceOperationId;correlation_id:string;path_params:Record<string,string>;payload:unknown};
+export type EditVoiceRequest={operation_id:EditVoiceOperationId;correlation_id:string;path_params:Record<string,string>;payload:unknown;action_uid?:string|null};
 export type EditVoiceBindings={
   authorize:(request:EditVoiceRequest)=>Promise<{allowed:true}|{allowed:false;reason_code?:string}>;
   execute:(request:EditVoiceRequest)=>Promise<unknown>;

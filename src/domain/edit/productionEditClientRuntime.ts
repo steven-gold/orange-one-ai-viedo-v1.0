@@ -75,6 +75,35 @@ export const productionEditActionInvoker:EditActionInvoker={
       if(!locked_version_ref||locked_version_ref==="—")return fail("EDIT_LOCKED_VERSION_REF_REQUIRED","EDIT-01-ERR-VERSION-001");
       return port(input,"EDIT-01-PORT-VOICE-QA-HANDOFF",{runId},{task_id:taskId,saved_edit_version_id:p.saved_edit_version_id,output_version_id:outputId,locked_version_ref});
     }
+    if(input.action_uid==="EDIT-01-ACT-VERSION-SAVE"){
+      if(!runId)return fail("EDIT_RUNTIME_RUN_ID_REQUIRED","EDIT-01-ERR-VERSION-001");
+      return port(input,"EDIT-01-PORT-VERSION-SAVE",{runId},{});
+    }
+    if(input.action_uid==="EDIT-01-ACT-RENDER-START"){
+      if(!runId||!p.saved_edit_version_id)return fail("EDIT_SAVED_VERSION_REQUIRED","EDIT-01-ERR-RENDER-001");
+      return port(input,"EDIT-01-PORT-RENDER-START",{runId},{edit_version_id:p.saved_edit_version_id,settings:{}});
+    }
+    if(input.action_uid==="EDIT-01-ACT-RENDER-CANCEL"){
+      if(!runId||!p.render_job_id)return fail("EDIT_RENDER_JOB_REQUIRED","EDIT-01-ERR-RENDER-001");
+      return port(input,"EDIT-01-PORT-RENDER-CANCEL",{runId,renderJobId:p.render_job_id},{});
+    }
+    if(input.action_uid==="EDIT-01-ACT-OUTPUT-VERSION-SAVE"){
+      if(!runId||!p.render_job_id)return fail("EDIT_COMPLETED_RENDER_REQUIRED","EDIT-01-ERR-RENDER-001");
+      return port(input,"EDIT-01-PORT-OUTPUT-SAVE",{runId,renderJobId:p.render_job_id},{});
+    }
+    if(input.action_uid==="EDIT-01-ACT-VERSION-LOCK"){
+      if(!runId||!p.saved_edit_version_id||!outputId)return fail("EDIT_OUTPUT_READY_EXACT_VERSION_REQUIRED","EDIT-01-ERR-VERSION-001");
+      return port(input,"EDIT-01-PORT-VERSION-LOCK",{runId,editVersionId:p.saved_edit_version_id},{output_version_id:outputId,reason:"EDIT-01-ACT-VERSION-LOCK"});
+    }
+    if(input.action_uid==="EDIT-01-ACT-VERSION-RESTORE-AS-DRAFT"){
+      const version=input.state.selected_version_ref??p.saved_edit_version_id;
+      if(!runId||!version)return fail("EDIT_SAVED_VERSION_REQUIRED","EDIT-01-ERR-VERSION-001");
+      return port(input,"EDIT-01-PORT-VERSION-RESTORE",{runId,editVersionId:version},{});
+    }
+    if(input.action_uid==="EDIT-01-ACT-OUTPUT-DOWNLOAD"){
+      if(!runId||!outputId)return fail("EDIT_OUTPUT_REFERENCE_REQUIRED","EDIT-01-ERR-RENDER-001");
+      return port(input,"EDIT-01-PORT-OUTPUT-DOWNLOAD",{runId,outputVersionId:outputId},{});
+    }
     if(input.action_uid==="EDIT-01-ACT-EVAL-RECHECK-FULL"||input.action_uid==="EDIT-01-ACT-EVAL-RECHECK-SELECTED"){
       const target_ref=p.working_draft_ref??outputId;
       const criteria_ref=p.values["EDIT-01-FLD-CRITERIA-VERSION"]??null;
