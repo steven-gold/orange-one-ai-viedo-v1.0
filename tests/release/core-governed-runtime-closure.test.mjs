@@ -12,7 +12,7 @@ test("CORE Current governed ports bind the existing API resources and dedicated 
   assert.match(identity,/isProductionCoreGovernedPort/);
   for(const key of [
     "api:createCandidate","api:compareCandidates","api:decideCandidate","api:requestDNALock","api:submitCoreReview",
-    "api:createBlueprint","api:validateBlueprint","api:approveBlueprint","api:requestChildLock","api:getCanonicalScript",
+    "api:createBlueprint","api:validateBlueprint","api:approveBlueprint","api:requestChildLock","api:getCanonicalScript","api:requestMotherLock",
   ]) assert.ok(identity.includes(key),key);
   assert.match(runtime,/public\.candidate_versions/);
   assert.match(runtime,/public\.candidate_decisions/);
@@ -32,6 +32,9 @@ test("CORE Candidate and Blueprint creation fail closed instead of fabricating C
   assert.match(runtime,/MASTER_BLUEPRINT_AUTHORITY_NOT_READY/);
   assert.match(runtime,/CORE_BLUEPRINT_DOCUMENT_MATERIALIZER_NOT_BOUND/);
   assert.match(runtime,/CORE_LOCK_REVIEWER_PATH_UNRESOLVED/);
+  assert.match(runtime,/CORE_LOCK_REVIEW_CONTRACT_INVALID/);
+  assert.match(runtime,/CORE_LOCK_REVIEW_TARGET_STALE/);
+  assert.doesNotMatch(runtime,/reviewer_path\s*=\s*JSON\.stringify\(\[\]\)/);
   assert.doesNotMatch(runtime,/blueprint_document\s*=\s*JSON\.stringify\(\{\s*topic_id/);
 });
 
@@ -53,19 +56,19 @@ test("migration 0037 grants only existing CORE API resources and closes missing 
   const manifest=await read("database/migrations/migration_checksum_manifest.yaml");
   const neon=await read("src/server/database/neonRuntime.ts");
   assert.match(migration,/CORE0037_API_RESOURCE_COUNT_MISMATCH/);
-  assert.match(migration,/resource_count<>10/);
+  assert.match(migration,/resource_count<>11/);
   assert.match(migration,/CORE0037_ASSIGNMENT_COUNT_MISMATCH/);
-  assert.match(migration,/assignment_count<>10/);
+  assert.match(migration,/assignment_count<>11/);
   for(const table of [
     "topic_versions","topic_production_contracts","master_blueprints","topic_blueprints","blueprint_versions",
     "dna_versions","lock_reviews","decision_requests","canonical_script_versions",
   ]) assert.match(migration,new RegExp(`ALTER TABLE public\\.${table} ENABLE ROW LEVEL SECURITY`),table);
   assert.match(migration,/acpos_runtime\.can_access_project/);
   assert.match(migration,/acpos_runtime\.can_manage_project/);
-  assert.match(migration,/42253b9c137e299f482d0f35d2132a32bfa45204e32074ed83bbae0768822ec7/);
+  assert.match(migration,/dbf666eda38405ed59e7008e72612b68e2e71cb8eeeec8257747654692d8b454/);
   assert.doesNotMatch(migration,/INSERT INTO public\.(candidate_versions|blueprint_versions|dna_versions|canonical_script_versions)/);
   assert.match(manifest,/0037_core_governed_runtime_permission_rls_closure/);
-  assert.match(manifest,/42253b9c137e299f482d0f35d2132a32bfa45204e32074ed83bbae0768822ec7/);
+  assert.match(manifest,/dbf666eda38405ed59e7008e72612b68e2e71cb8eeeec8257747654692d8b454/);
   const ceiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0);
   assert.ok(ceiling>=37,`migration ceiling must include 0037, found ${ceiling}`);
 });
