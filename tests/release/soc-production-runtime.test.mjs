@@ -70,7 +70,7 @@ test("SOC-01 Production UI enables only materialized content actions and derives
   assert.match(projection, /"SOC-01-GATE-PUBLISH": publishContextReady/);
 });
 
-test("migration 0022 stages only the two missing SOC API assignments and stays pending Production apply", async () => {
+test("migration 0022 stages only the two missing SOC API assignments and records verified Production apply", async () => {
   const migration = await read("database/migrations/0022_soc_draft_candidate_permission_closure.sql");
   const manifest = await read("database/migrations/migration_checksum_manifest.yaml");
   const neonRuntime = await read("src/server/database/neonRuntime.ts");
@@ -89,7 +89,7 @@ test("migration 0022 stages only the two missing SOC API assignments and stays p
   assert.match(manifest, /migration_id: 0022_soc_draft_candidate_permission_closure/);
   assert.match(manifest, /payload_sha256: 4592e475b078613928117e40a304c3d039a187e234a3ef257844226cb4b50047/);
   assert.match(manifest, /approval_ref: CR-SOC-0022-PENDING-PRODUCTION-APPLY/);
-  assert.match(manifest, /production_apply: PENDING/);
+  assert.match(manifest, /production_apply: APPLIED_VERIFIED/);
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 20/);
   assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 22);
 });
@@ -146,7 +146,7 @@ test("migration 0030 stages only existing SOC policy resources, target version a
   assert.doesNotMatch(migration, /CREATE ROLE|ALTER ROLE/);
   assert.match(manifest, /migration_id: 0030_soc_target_policy_permission_rls_closure/);
   assert.match(manifest, /payload_sha256: d43ee379e03c27824e61613f89ffdb75823182ef3397bd9c507d70b943aed518/);
-  assert.match(manifest, /production_apply: PENDING/);
+  assert.match(manifest, /production_apply: APPLIED_VERIFIED/);
   assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 30);
 });
 

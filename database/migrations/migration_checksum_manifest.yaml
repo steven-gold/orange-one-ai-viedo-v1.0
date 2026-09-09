@@ -1,8 +1,8 @@
 contract_meta:
-  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.37
+  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.38
   rule: checksum is calculated from migration payload excluding the terminal schema_migration_history registration statement; zero value is forbidden.
   bootstrap_rule: 0001 is self-contained and must be executed before all later migrations.
-  authority_revision: 2026-09-09-KB-SOURCE-CREATE-UPDATE-RUNTIME-PENDING-PRODUCTION-APPLY
+  authority_revision: 2026-09-09-PRODUCTION-MIGRATIONS-0039-APPLIED-VERIFIED
   live_target_revision: 2026-09-05-REQUIRED-ON-WILD-WAVE
   live_neon_project_id: wild-wave-25661146
   live_database_name: neondb
@@ -97,89 +97,94 @@ migrations:
   payload_sha256: e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6
   approval_ref: CR-CORE-0021-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0022_soc_draft_candidate_permission_closure
   payload_sha256: 4592e475b078613928117e40a304c3d039a187e234a3ef257844226cb4b50047
   approval_ref: CR-SOC-0022-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0023_erp_snapshot_refresh_permission_closure
   payload_sha256: d18b51cb45f1c0ed3519ba3b1d2c7ac2ed11bc270e2bf59e21c98d41694f0cfa
   approval_ref: CR-ERP-0023-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0024_kb_source_state_permission_rls_closure
   payload_sha256: de41bfa7773dd495056b49e656fa8fd0fb5c032b5d0f680065aa4f90911c9341
   approval_ref: CR-KB-0024-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0025_governance_operation_permission_closure
   payload_sha256: c95ea4cb98a21749b962abe4f43b28ee3b2552e3505d85704c9c3903be2e3c23
   approval_ref: CR-GOV-0025-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0026_iam_operation_permission_closure
   payload_sha256: 642d77e5f54bc5d922e6325d7a22d28ec7e2e3d2eb8b8005e493a8c0aea52cfe
   approval_ref: CR-IAM-0026-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0027_qa_review_lifecycle_permission_rls_closure
   payload_sha256: 9309b61424bbd72adace0e7da86836bc6ac429e4b99c96a5a2105fec10979c19
   approval_ref: CR-QA-0027-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0028_strategy_human_review_permission_rls_closure
   payload_sha256: fbfb62018cdc45e2df51bb8262647a468845a7cdc98439e092453421949f865e
   approval_ref: CR-STR-0028-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0029_info_context_candidate_permission_rls_closure
   payload_sha256: a1494503e3dde66d9bcfcf9bdc0c18277bd942a5a415d827058df851dc8ba7b2
   approval_ref: CR-INFO-0029-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0030_soc_target_policy_permission_rls_closure
   payload_sha256: d43ee379e03c27824e61613f89ffdb75823182ef3397bd9c507d70b943aed518
   approval_ref: CR-SOC-0030-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0031_soc_publish_request_relation_runtime
   payload_sha256: 81f65e614d720ad44b8d8d4b2594f7128caac5af396d16221f15f46a31fc600e
   approval_ref: CR-SOC-0031-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0032_qa_release_policy_evidence_owner
   payload_sha256: 29ea699d2a7330380fa0b74ff0139d7fb5eb9d018a491d03999a615b24892636
   approval_ref: CR-QA-0032-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0033_asset_video_department_runtime_permission_rls_closure
   payload_sha256: 7bb4797ce24c1bba93572b0ec55f5ea6baf7297fc2f0687e95564a556f925c71
   approval_ref: CR-DEPT-0033-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0034_shared_correction_version_runtime_closure
   payload_sha256: 4f67f35eee2afb996ba2cce88fb7377c1a762b182c70de45eb6518062a9aac7b
   approval_ref: CR-SHARED-0034-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0035_edit_voice_runtime_permission_rls_closure
   payload_sha256: 119a8945677f009298cb251c4c974a5758156c395e17af9fd4aafc13ee03c916
   approval_ref: CR-EDITVOICE-0035-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0036_kb_source_create_update_permission_rls_closure
   payload_sha256: 9cc3b0d0beeb8b0eadc2e2bf8d356799f39696dbd22b2fa967e02b4a6fe7a3fb
   approval_ref: CR-KB-0036-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0037_core_governed_runtime_permission_rls_closure
   payload_sha256: 7385e677951edd84d440fe124c68e0772e199b071770fc54c0cd1a7f639a74e8
   approval_ref: CR-CORE-0037-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
 - migration_id: 0038_core_conversation_thread_work_item_lineage
-  payload_sha256: d93b99515da566ce4caffab361fde27a7d5ecad1209c7e07d90e2262591f68b3
+  payload_sha256: 384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d
   approval_ref: CR-CORE-0038-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING
+  production_apply: APPLIED_VERIFIED
+- migration_id: 0039_conversation_generation_job_canonical_lineage
+  payload_sha256: d8e75fcbfafafab8a49155b5e3d44dc4e06651f9e775d105fcf22ca06ffd80eb
+  approval_ref: CR-CONVERSATION-0039-PENDING-PRODUCTION-APPLY
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED

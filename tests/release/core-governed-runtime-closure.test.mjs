@@ -67,9 +67,9 @@ test("CORE ConversationThread work-item lineage has a dedicated immutable owner 
   assert.match(migration,/core_bound_conversation_lineage_guard/);
   assert.match(migration,/ALTER TABLE public\.core_conversation_thread_bindings ENABLE ROW LEVEL SECURITY/);
   assert.match(migration,/GRANT SELECT,INSERT ON public\.core_conversation_thread_bindings TO acpos_app_runtime/);
-  assert.match(migration,/d93b99515da566ce4caffab361fde27a7d5ecad1209c7e07d90e2262591f68b3/);
-  assert.match(manifest,/0038_core_conversation_thread_work_item_lineage[\s\S]*d93b99515da566ce4caffab361fde27a7d5ecad1209c7e07d90e2262591f68b3/);
-  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 38/);
+  assert.match(migration,/384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d/);
+  assert.match(manifest,/0038_core_conversation_thread_work_item_lineage[\s\S]*384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d/);
+  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 39/);
 
   assert.match(identity,/runRlsActorTransaction/);
   assert.match(identity,/INSERT INTO core_conversation_thread_bindings/);

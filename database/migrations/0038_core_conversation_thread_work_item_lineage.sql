@@ -97,7 +97,7 @@ RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = pg_catalog, public, acpos_runtime
-AS $
+AS $$
 BEGIN
   IF EXISTS(
     SELECT 1
@@ -112,7 +112,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END
-$;
+$$;
 
 REVOKE ALL ON FUNCTION acpos_runtime.protect_core_bound_conversation_lineage() FROM PUBLIC;
 
@@ -173,7 +173,7 @@ $$;
 INSERT INTO schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0038_core_conversation_thread_work_item_lineage',
-  'd93b99515da566ce4caffab361fde27a7d5ecad1209c7e07d90e2262591f68b3',
+  '384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d',
   'migration-runner',
   'CR-CORE-0038-PENDING-PRODUCTION-APPLY'
 )

@@ -128,7 +128,7 @@ test("migration 0021 materializes governed Core decision and candidate owners un
   assert.match(migration, /e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6/);
   assert.match(manifest, /migration_id: 0021_core_decision_candidate_runtime/);
   assert.match(manifest, /payload_sha256: e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6/);
-  assert.match(manifest, /production_apply: PENDING/);
+  assert.match(manifest, /production_apply: APPLIED_VERIFIED/);
 });
 
 test("production query runtime sets local non-owner role before protected queries", async () => {
