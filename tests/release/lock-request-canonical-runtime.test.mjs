@@ -39,7 +39,7 @@ test("0042 canonical lock request is explicit, idempotent, audited and evented",
   assert.doesNotMatch(migration,/ORDER BY[^;]*(latest|current|default)/i);
   assert.match(manifest,/0042_lock_request_canonical_event_closure/);
   assert.ok(manifest.includes("4eeae25811a6b215f8e2a4a653397998bf1ed3d569ace9ac8e54788cf29b415c"));
-  const currentCeiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0);
+  const currentCeiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0);
   assert.ok(currentCeiling>=42,`migration ceiling must include 0042, found ${currentCeiling}`);
 });
 
