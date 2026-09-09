@@ -11,7 +11,7 @@ test("CORE Current governed ports bind the existing API resources and dedicated 
   assert.match(identity,/executeProductionCoreGovernedPort/);
   assert.match(identity,/isProductionCoreGovernedPort/);
   for(const key of [
-    "api:createProjectDraft","api:createCandidate","api:compareCandidates","api:decideCandidate","api:requestDNALock","api:submitCoreReview",
+    "api:createProjectDraft","api:validateProjectDraft","api:confirmProjectDraft","api:createStoryCandidateSet","api:createConversationThread","api:sendConversationMessage","api:createCandidate","api:compareCandidates","api:decideCandidate","api:requestDNALock","api:submitCoreReview",
     "api:createBlueprint","api:validateBlueprint","api:approveBlueprint","api:requestChildLock","api:getCanonicalScript","api:requestMotherLock","api:createTopic",
   ]) assert.ok(identity.includes(key),key);
   assert.match(runtime,/public\.candidate_versions/);
@@ -19,6 +19,20 @@ test("CORE Current governed ports bind the existing API resources and dedicated 
   assert.doesNotMatch(runtime,/story_candidates|story_candidate_comparisons/);
   assert.match(runtime,/read_only:true,version_mutation:false/);
   assert.match(runtime,/decisionInput==="RETURN"\?"MODIFY_REQUESTED"/);
+});
+
+test("CORE legacy mutation ports enforce their registered API resources server-side",async()=>{
+  const identity=await read("src/server/shared/identityPageCommandRuntime.ts");
+  const expected={
+    "CORE-01-PORT-PROJECT-VALIDATE":"api:validateProjectDraft",
+    "CORE-01-PORT-PROJECT-CONFIRM":"api:confirmProjectDraft",
+    "CORE-01-PORT-STORY-CANDIDATE":"api:createStoryCandidateSet",
+    "CORE-01-PORT-THREAD-CREATE":"api:createConversationThread",
+    "CORE-01-PORT-MESSAGE-SEND":"api:sendConversationMessage",
+  };
+  for(const [port,resource] of Object.entries(expected)){
+    assert.ok(identity.includes(`"${port}":"${resource}"`),`${port} -> ${resource}`);
+  }
 });
 
 test("CORE Project draft creation requires registered fields and has no owner or naming fallback",async()=>{
@@ -89,19 +103,19 @@ test("migration 0037 grants only existing CORE API resources and closes missing 
   const manifest=await read("database/migrations/migration_checksum_manifest.yaml");
   const neon=await read("src/server/database/neonRuntime.ts");
   assert.match(migration,/CORE0037_API_RESOURCE_COUNT_MISMATCH/);
-  assert.match(migration,/resource_count<>13/);
+  assert.match(migration,/resource_count<>18/);
   assert.match(migration,/CORE0037_ASSIGNMENT_COUNT_MISMATCH/);
-  assert.match(migration,/assignment_count<>13/);
+  assert.match(migration,/assignment_count<>18/);
   for(const table of [
     "topic_versions","topic_production_contracts","master_blueprints","topic_blueprints","blueprint_versions",
     "dna_versions","lock_reviews","decision_requests","canonical_script_versions",
   ]) assert.match(migration,new RegExp(`ALTER TABLE public\\.${table} ENABLE ROW LEVEL SECURITY`),table);
   assert.match(migration,/acpos_runtime\.can_access_project/);
   assert.match(migration,/acpos_runtime\.can_manage_project/);
-  assert.match(migration,/ef71e744e04f31e00da05800516adccf839ddbf63d38b3b8a1b689d8fe7fef5b/);
+  assert.match(migration,/7385e677951edd84d440fe124c68e0772e199b071770fc54c0cd1a7f639a74e8/);
   assert.doesNotMatch(migration,/INSERT INTO public\.(candidate_versions|blueprint_versions|dna_versions|canonical_script_versions)/);
   assert.match(manifest,/0037_core_governed_runtime_permission_rls_closure/);
-  assert.match(manifest,/ef71e744e04f31e00da05800516adccf839ddbf63d38b3b8a1b689d8fe7fef5b/);
+  assert.match(manifest,/7385e677951edd84d440fe124c68e0772e199b071770fc54c0cd1a7f639a74e8/);
   const ceiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0);
   assert.ok(ceiling>=37,`migration ceiling must include 0037, found ${ceiling}`);
 });
