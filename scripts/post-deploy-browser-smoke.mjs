@@ -74,6 +74,18 @@ try {
         throw new Error(`SOURCE_RENDER_${uid}`);
       }
       if (/TEST_ONLY|TEST-RUN-|"synthetic"\s*:\s*true/.test(body)) throw new Error(`TEST_DATA_LEAK_${uid}`);
+
+      if (["CORE-01","ASSET-01","VIDEO-01","EDIT-01","QA-01"].includes(uid)) {
+        const dock = page.locator('[data-current-stage-action-dock="true"]');
+        if (await dock.count() !== 1) throw new Error(`WORKSPACE_STAGE_DOCK_${uid}_${await dock.count()}`);
+        const grid = page.locator('[data-layout-grid="workspace-three-column"]');
+        if (await grid.count() !== 1) throw new Error(`WORKSPACE_THREE_COLUMN_${uid}_${await grid.count()}`);
+      }
+      if (uid === "EDIT-01") {
+        const mainTimeline = page.locator('[data-main-timeline="true"][data-timeline-legacy-merge="MERGE_VISUAL_ONLY"]');
+        if (await mainTimeline.count() !== 1) throw new Error(`EDIT_MAIN_TIMELINE_SYNC_${await mainTimeline.count()}`);
+      }
+
       if (errors.length) throw new Error(`${uid}_${width}_${errors.join("|")}`);
 
       cases += 1;
