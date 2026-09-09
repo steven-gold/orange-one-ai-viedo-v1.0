@@ -65,22 +65,57 @@ current_state:
   authority_baseline: COMPLETE
   authority_file_positioning: COMPLETE
   visual_construction: COMPLETE
-  page_logic_construction: PARTIAL_FAIL_CLOSED_RUNTIME_CONTRACTS_PRESENT
-  shared_runtime_construction: BLOCKED_AT_PRODUCTION_BINDING_GATE
-  e2e: RUNTIME_E2E_NOT_EXECUTED
-  deployment: PREVIEW_DEPLOYMENT_COMPLETED_RUNTIME_BINDING_BLOCKED
-  current_task: PRODUCTION_RUNTIME_BINDING
-  current_task_state: BLOCKED
+  page_logic_construction: ACTIVE_CURRENT_RUNTIME_CLOSURE
+  shared_runtime_construction: CURRENT_GOVERNED_RLS_RUNTIME_MATERIALIZED_ON_NEW_PRODUCTION_APPLY_PENDING
+  e2e: RELEASE_GATE_PASS_NEW_ONLY
+  deployment: PRODUCTION_MAIN_UNCHANGED_BY_LOCAL_ARCHIVE_RECONCILIATION
+  current_task: LOCAL_ARCHIVE_RECONCILIATION_AND_PREDEPLOY_RUNTIME_CLOSURE
+  current_task_state: COMPLETE_FOR_ARCHIVE_RECONCILIATION
   current_task_blockers:
-  - PRODUCTION_DATABASE_DRIVER_CONTRACT_NOT_MATERIALIZED
-  - PRODUCTION_DATABASE_CONNECTION_ENV_CONTRACT_NOT_MATERIALIZED
-  - PRODUCTION_RUNTIME_BOOTSTRAP_NOT_MATERIALIZED
-  - PRODUCTION_SERVER_RUNTIME_ADAPTER_BINDINGS_NOT_EXECUTED
-  - AUTHORITY_GAPS_REQUIRE_BLOCK_NO_GUESSING
-  last_completed_task: POST_MIGRATION_RUNTIME_BINDING_READINESS_AUDIT
-  current_front_l1_count: 9
-  navigation_revision: 2026-08-30-PHASE1-CLOSURE-FRONT9-ADMIN9-ALL-ROUTES
-  navigation_history_note: VIS-00 through VIS-08 retain their historical render evidence. VIS-09 regression supersedes the current Global Shell navigation count from 8 to 9 without rewriting prior evidence.
+  - PROJECT_CONFIRM_ADOPT_CONTRACT_NOT_BOUND
+  - CORE_BLUEPRINT_DOCUMENT_MATERIALIZER_NOT_BOUND
+  - CORE_LOCK_REVIEWER_PATH_UNRESOLVED
+  - MIGRATIONS_0037_0038_PENDING_PRODUCTION_APPLY
+  - FINAL_CONSOLIDATED_MAIN_RELEASE_NOT_EXECUTED
+  last_completed_task: 2026-09-09-LOCAL-ARCHIVE-RECONCILIATION-THROUGH-CORE-THREAD-WORK-ITEM-LINEAGE
+  latest_construction_sha: 830b780e2b4832e9751b48f2e62a28761450f5c9
+  latest_release_gate:
+    run_id: 34315733464
+    conclusion: SUCCESS
+    lint: PASS
+    dependency_audit: PASS
+    typecheck: PASS
+    release_unit_tests: PASS
+    production_build: PASS
+    production_http_e2e: PASS
+    controlled_build: PASS
+    controlled_misconfiguration_http_e2e: PASS
+    browser_e2e: PASS
+    current_dom_control_acceptance: PASS
+    standalone_docker_build: PASS
+    dirty_tree_guard: PASS
+  archive_reconciliation:
+    archive: acpos-new-local-20260909.tar.gz
+    recorded_local_base: 4c43aa29fbccb3622c5446eaa54f642a8489376f
+    repository_like_files: 576
+    true_local_delta_files: 28
+    exact_delta_blobs_retained: 14
+    later_current_superseding_reconciled_deltas: 11
+    documentation_deltas_absorbed_by_current_closure: 3
+    env_example_omission: PACKAGING_OMISSION_NOT_DELETION
+    status: COMPLETE
+  staged_migrations:
+    latest_repository_migration: 0038_core_conversation_thread_work_item_lineage
+    production_apply: PENDING_FINAL_RELEASE_SEQUENCE
+  current_front_l1_count: 8
+  current_admin_l1_count: 8
+  navigation_revision: CURRENT_FRONT8_ADMIN8_GLOBAL_L1
+  historical_freeze:
+    date: 2026-09-08
+    snapshot: .monkeycode/specs/2026-09-08-strict-construction-audit-monitor/FROZEN-DEPLOYED-AUDIT-SNAPSHOT.md
+    matrix: .monkeycode/specs/2026-09-08-strict-construction-audit-monitor/AUDIT-MATRIX.md
+    rule: HISTORICAL_EVIDENCE_ONLY_DO_NOT_RESTORE_OVER_CURRENT
+
 phase_1_visual_positioning:
   objective: Finish all page visual/layout positioning before business logic construction.
   execution_mode: STRICT_SEQUENTIAL
