@@ -17,7 +17,9 @@ test("0042 canonical lock request is explicit, idempotent, audited and evented",
     "request_reason","requested_scope_refs","request_correlation_id",
     "request_idempotency_key_hash","request_payload_hash"
   ])assert.ok(migration.includes(field),field);
-  assert.match(migration,/REVOKE INSERT ON public\.lock_reviews FROM acpos_app_runtime/);\n  assert.match(migration,/CREATE POLICY acpos_quality_criteria_versions_lock_select/);\n  assert.match(migration,/count_lock_reviewer_candidates/);
+  assert.match(migration,/REVOKE INSERT ON public\.lock_reviews FROM acpos_app_runtime/);
+  assert.match(migration,/CREATE POLICY acpos_quality_criteria_versions_lock_select/);
+  assert.match(migration,/count_lock_reviewer_candidates/);
   assert.match(migration,/CREATE OR REPLACE FUNCTION acpos_runtime\.request_lock_review/);
   assert.match(migration,/api:requestMotherLock/);
   assert.match(migration,/api:requestChildLock/);
