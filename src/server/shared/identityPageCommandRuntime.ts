@@ -708,7 +708,7 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       const project = firstRow(projectRows);
       if (!project) throw new NamedRuntimeError("PROJECT_NOT_FOUND");
       if (asText(project.status) !== "CORE_MODELING") throw new NamedRuntimeError("PROJECT_NOT_CONFIRMED");
-      const candidate_key = asText(payload.candidate_key) ?? `STORY-${Date.now().toString(36).toUpperCase()}`;
+      const candidate_key = requirePayloadText(payload, "candidate_key");
       const content = requirePayloadJson(payload, "content");
       const strengths = requirePayloadJson(payload, "strengths");
       const weaknesses = requirePayloadJson(payload, "weaknesses");
