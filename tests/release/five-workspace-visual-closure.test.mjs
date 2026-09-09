@@ -11,8 +11,14 @@ function registrySlice(source, start, end) {
   return source.slice(a, b);
 }
 
-function uids(source, prefix) {
-  return [...source.matchAll(new RegExp(`["'](${prefix}-01-[A-Z0-9-]+)["']`, "g"))].map((m) => m[1]);
+function registryUids(source, prefix) {
+  if (prefix === "CORE") {
+    return [...source.matchAll(/^\s*["'](CORE-01-[A-Z0-9-]+)["']\s*:/gm)].map((m) => m[1]);
+  }
+  if (prefix === "QA") {
+    return [...source.matchAll(/\bs\(["'](QA-01-[A-Z0-9-]+)["']/g)].map((m) => m[1]);
+  }
+  return [...source.matchAll(new RegExp(`\\bid\\s*:\\s*["'](${prefix}-01-[A-Z0-9-]+)["']`, "g"))].map((m) => m[1]);
 }
 
 test("five workspace visual closure keeps the 467 Current control registry", async () => {
@@ -34,7 +40,7 @@ test("five workspace visual closure keeps the 467 Current control registry", asy
 
   let total = 0;
   for (const [prefix, source, expected] of slices) {
-    const ids = uids(source, prefix);
+    const ids = registryUids(source, prefix);
     const unique = new Set(ids);
     assert.equal(unique.size, expected, `${prefix}_CONTROL_REGISTRY_COUNT`);
     assert.equal(ids.length, expected, `${prefix}_CONTROL_REGISTRY_DUPLICATE`);
