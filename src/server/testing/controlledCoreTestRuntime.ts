@@ -184,7 +184,16 @@ function projection() {
       .filter((thread) => !state.project_id || thread.project_id === state.project_id)
       .filter((thread) => !state.topic_id || thread.topic_id === state.topic_id)
       .filter((thread) => !state.work_item || thread.work_item === state.work_item)
-      .map((thread) => ({ conversation_id: thread.conversation_id, label: thread.label })),
+      .map((thread) => ({
+        conversation_id: thread.conversation_id,
+        label: thread.label,
+        project_id: thread.project_id,
+        topic_id: thread.topic_id,
+        work_item: thread.work_item,
+        parent_conversation_id: thread.parent_conversation_id ?? null,
+        source_message_id: thread.source_message_id ?? null,
+        relation_kind: thread.parent_conversation_id ? "BRANCH" as const : "ROOT" as const,
+      })),
     display_values: {
       test_mode: "TEST_ONLY",
       test_data_classification: "TEST_ONLY",
