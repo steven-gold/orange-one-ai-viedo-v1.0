@@ -112,6 +112,8 @@ TO acpos_app_runtime;
 
 ALTER TABLE public.service_identities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.service_identity_capability_assignments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mother_locks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.child_locks ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS acpos_service_identity_self_select ON public.service_identities;
 CREATE POLICY acpos_service_identity_self_select ON public.service_identities
@@ -124,6 +126,25 @@ FOR SELECT TO acpos_app_runtime
 USING (service_identity_id=acpos_runtime.current_service_identity_id());
 
 GRANT SELECT ON public.service_identities,public.service_identity_capability_assignments TO acpos_app_runtime;
+
+DROP POLICY IF EXISTS acpos_mother_locks_project_select ON public.mother_locks;
+CREATE POLICY acpos_mother_locks_project_select ON public.mother_locks
+FOR SELECT TO acpos_app_runtime
+USING (acpos_runtime.can_access_project(project_id));
+
+DROP POLICY IF EXISTS acpos_child_locks_project_select ON public.child_locks;
+CREATE POLICY acpos_child_locks_project_select ON public.child_locks
+FOR SELECT TO acpos_app_runtime
+USING (
+  EXISTS(
+    SELECT 1
+    FROM public.topics t
+    WHERE t.topic_id=child_locks.topic_id
+      AND acpos_runtime.can_access_project(t.project_id)
+  )
+);
+
+GRANT SELECT ON public.mother_locks,public.child_locks TO acpos_app_runtime;
 
 ALTER TABLE public.lock_reviews ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS acpos_core_lock_review_decide_update ON public.lock_reviews;
@@ -144,13 +165,6 @@ GRANT UPDATE(
   status,decided_by,decision_reason,decided_at,review_version,
   decision_correlation_id,decision_idempotency_key_hash,decision_payload_hash
 ) ON public.lock_reviews TO acpos_app_runtime;
-GRANT SELECT,INSERT ON public.child_locks,public.mother_locks TO acpos_app_runtime;
-GRANT UPDATE(status,frozen_at) ON public.blueprint_versions TO acpos_app_runtime;
-GRANT UPDATE(status,active_version_id) ON public.topic_blueprints TO acpos_app_runtime;
-GRANT UPDATE(status,immutable_at) ON public.topic_production_contracts TO acpos_app_runtime;
-GRANT UPDATE(status,immutable_at) ON public.project_versions TO acpos_app_runtime;
-GRANT INSERT ON public.audit_events TO acpos_app_runtime;
-
 CREATE OR REPLACE FUNCTION acpos_runtime.decide_lock_review(
   p_lock_review_id uuid,
   p_expected_version text,
@@ -370,7 +384,7 @@ $$;
 INSERT INTO public.schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0041_governed_lock_decision_service_identity_foundation',
-  '0c7da1493827da6d43ea26532ea0d6021c01f62969442637616acb5f130a5d8e',
+  '58a7d78fed454b5f1a49a18b2978f44fec248a4dd184ed4f6ea60e998c22f0c5',
   'migration-runner',
   'CR-RUNTIME-0041'
 )
