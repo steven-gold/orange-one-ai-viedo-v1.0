@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T05:45:00+08:00",
+  "as_of": "2026-09-10T06:30:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
-    "new_sha": "5cdca0478ad53bd190fe1a7312e08793b07d1f66",
+    "new_sha": "fa1f1734687c32104013eba883d20dee6a541b76",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -178,8 +178,8 @@
     "project": "wild-wave-25661146",
     "branch": "main",
     "database": "neondb",
-    "migration_count": 41,
-    "latest_migration": "0041_governed_lock_decision_service_identity_foundation",
+    "migration_count": 45,
+    "latest_migration": "0045_local_test_identity_cleanup",
     "migration_0040_checksum": "301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50",
     "permission_resources_active": 3672,
     "permission_resources_authority_seal_status": "CURRENT_EXPANSION_TALLY_NOT_SEALED",
@@ -212,7 +212,18 @@
     },
     "migration_0041_checksum": "58a7d78fed454b5f1a49a18b2978f44fec248a4dd184ed4f6ea60e998c22f0c5",
     "approved_service_identities": 2,
-    "approved_service_capabilities": 4
+    "approved_service_capabilities": 4,
+    "production_formal_materialization_counts": {
+      "quality_criteria_versions": 0,
+      "child_locks": 0,
+      "work_packages": 0,
+      "department_tasks": 0,
+      "canonical_script_versions": 0,
+      "script_projection_rules": 0,
+      "department_script_views": 0,
+      "task_input_manifests": 0,
+      "instruction_packages": 0
+    }
   },
   "construction": {
     "core_truthful_gate": {
@@ -423,8 +434,8 @@
     "production_ready_percent": 81.5
   },
   "blockers": [
-    "Production DB is at migration 41, but application code through new@5cdca047 is not yet on Production main; consolidated deployment remains pending.",
-    "Mother/Child Lock request client/runtime still uses an older payload shape and must be aligned to the single active construction schema before positive lock-to-task E2E.",
+    "Production formal business rows are currently zero after TEST_ONLY cleanup; do not fabricate permanent business data to make counts non-zero.",
+    "All 9 formal materialization items are mandatory and must remain in every progress report until individually proven by Production effectful evidence.",
     "Production application main does not yet contain new-branch KB 0040 runtime and CORE truthful gate corrections.",
     "QA release package evidence owner remains incomplete.",
     "ERP remaining write contracts require canonical persistence/scope closure; no unrelated JSON fallback is allowed.",
@@ -435,8 +446,15 @@
     "DeepSeek 402 and OpenRouter 401 are external account issues deferred by user."
   ],
   "remaining_queue": [
-    "Close canonical lock decision/materialization ownership from Current single authority without historical-source execution.",
-    "Materialize work package/task/script view/input manifest/instruction package compiler chain.",
+    "MANDATORY 1/9 QualityCriteriaVersion materialization + Production effectful acceptance",
+    "MANDATORY 2/9 ChildLock materialization + Production effectful acceptance",
+    "MANDATORY 3/9 CanonicalScriptVersion materialization + Production effectful acceptance",
+    "MANDATORY 4/9 ScriptProjectionRule materialization + Production effectful acceptance",
+    "MANDATORY 5/9 WorkPackage materialization + Production effectful acceptance",
+    "MANDATORY 6/9 DepartmentTask materialization + Production effectful acceptance",
+    "MANDATORY 7/9 DepartmentScriptView materialization + Production effectful acceptance",
+    "MANDATORY 8/9 TaskInputManifest materialization + Production effectful acceptance",
+    "MANDATORY 9/9 InstructionPackage materialization + Production effectful acceptance",
     "Run ASSET positive effectful path and close all applicable gates.",
     "Run VIDEO positive effectful path and close all applicable gates.",
     "Close EDIT+VOICE lifecycle and positive effectful path.",
@@ -447,5 +465,103 @@
     "Recompute control/action denominator using sealed 1453 historical baseline plus explicitly sealed Current expansion.",
     "Recompute all 25 gates from final Production evidence."
   ],
-  "next_executable_item": "Align Mother/Child Lock request adapter/runtime to the single active construction schema, then materialize the compiler chain."
+  "next_executable_item": "MANDATORY 1/9 QualityCriteriaVersion: close SG-02 canonical materializer Production effectful path, then continue 2/9 ChildLock without skipping.",
+  "execution_reporting_contract": {
+    "mandatory": true,
+    "every_progress_report_must_include_remaining_incomplete_list": true,
+    "omission_forbidden": true,
+    "completion_claim_requires_execution_evidence": true,
+    "completion_evidence": [
+      "runtime/materializer implementation",
+      "Release Gate PASS",
+      "Production effectful create/execute",
+      "read-back/persistence verification",
+      "negative/error path where applicable",
+      "cleanup/residual-zero when acceptance data is test-only"
+    ],
+    "rule": "Never mark an item complete only because a table exists, a UI control is governed, or test-only rows were inserted. Production business data must not be fabricated merely to make a count non-zero."
+  },
+  "mandatory_formal_materialization_queue": [
+    {
+      "order": 1,
+      "key": "QualityCriteriaVersion",
+      "table": "quality_criteria_versions",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "required_execution": "SG-02 Configure -> Approve -> canonical quality_criteria_versions materializer -> Production effectful E2E -> read-back -> cleanup if acceptance-only",
+      "dependency": "SG-02 approved criteria content supplied through governed runtime; no hardcoded/sample business criteria"
+    },
+    {
+      "order": 2,
+      "key": "ChildLock",
+      "table": "child_locks",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "required_execution": "Mother/Child Lock request -> independent reviewer decision -> child lock materialization -> read-back -> audit/outbox verification -> cleanup if acceptance-only",
+      "dependency": "Approved QualityCriteriaVersion + evidence refs + eligible reviewer assignment + exact target version"
+    },
+    {
+      "order": 3,
+      "key": "CanonicalScriptVersion",
+      "table": "canonical_script_versions",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "required_execution": "Canonical script materializer from approved/locked Current lineage -> immutable version -> read-back -> cleanup if acceptance-only",
+      "dependency": "ChildLock/approved blueprint lineage"
+    },
+    {
+      "order": 4,
+      "key": "ScriptProjectionRule",
+      "table": "script_projection_rules",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "required_execution": "Materialize explicit department projection rules with exact version refs -> read-back -> cleanup if acceptance-only",
+      "dependency": "CanonicalScriptVersion + Current department projection authority"
+    },
+    {
+      "order": 5,
+      "key": "WorkPackage",
+      "table": "work_packages",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "required_execution": "compileWorkPackage from exact ChildLock/production-contract/goal lineage -> DAG snapshot -> read-back -> cleanup if acceptance-only",
+      "dependency": "ChildLock + production goal/output contract + compiler capability"
+    },
+    {
+      "order": 6,
+      "key": "DepartmentTask",
+      "table": "department_tasks",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "required_execution": "TaskOrchestrator materializes approved DAG tasks -> exact task contract/fingerprint -> read-back -> cleanup if acceptance-only",
+      "dependency": "WorkPackage/DAG + task template/output contract"
+    },
+    {
+      "order": 7,
+      "key": "DepartmentScriptView",
+      "table": "department_script_views",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "required_execution": "compileDepartmentScriptView under instruction_compiler service identity -> exact script projection -> read-back -> cleanup if acceptance-only",
+      "dependency": "DepartmentTask + CanonicalScriptVersion + ScriptProjectionRule"
+    },
+    {
+      "order": 8,
+      "key": "TaskInputManifest",
+      "table": "task_input_manifests",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "required_execution": "Compile explicit immutable task input manifest from task/script/evidence/dependency refs -> read-back -> cleanup if acceptance-only",
+      "dependency": "DepartmentTask + DepartmentScriptView + exact dependency/output lineage"
+    },
+    {
+      "order": 9,
+      "key": "InstructionPackage",
+      "table": "instruction_packages",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "required_execution": "compileInstructionPackage under instruction_compiler service identity -> exact manifest/script/task refs -> read-back -> cleanup if acceptance-only",
+      "dependency": "TaskInputManifest + DepartmentScriptView + DepartmentTask"
+    }
+  ]
 }
