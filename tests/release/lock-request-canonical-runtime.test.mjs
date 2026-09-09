@@ -12,12 +12,12 @@ test("0042 canonical lock request is explicit, idempotent, audited and evented",
   const idx=migration.indexOf(sep);
   assert.ok(idx>0);
   const checksum=createHash("sha256").update(migration.slice(0,idx)).digest("hex");
-  assert.equal(checksum,"d959f5dbb0cd2d9d624528a81d80d93aa87787c7db1bac2fa781c116a64e7518");
+  assert.equal(checksum,"03ac268173889742f876296a825418928c679c965998f00d9e5285405156ad18");
   for(const field of [
     "request_reason","requested_scope_refs","request_correlation_id",
     "request_idempotency_key_hash","request_payload_hash"
   ])assert.ok(migration.includes(field),field);
-  assert.match(migration,/REVOKE INSERT ON public\.lock_reviews FROM acpos_app_runtime/);
+  assert.match(migration,/REVOKE INSERT ON public\.lock_reviews FROM acpos_app_runtime/);\n  assert.match(migration,/CREATE POLICY acpos_quality_criteria_versions_lock_select/);\n  assert.match(migration,/count_lock_reviewer_candidates/);
   assert.match(migration,/CREATE OR REPLACE FUNCTION acpos_runtime\.request_lock_review/);
   assert.match(migration,/api:requestMotherLock/);
   assert.match(migration,/api:requestChildLock/);
@@ -33,7 +33,7 @@ test("0042 canonical lock request is explicit, idempotent, audited and evented",
   assert.match(migration,/READY_FOR_CHILD_REVIEW/);
   assert.doesNotMatch(migration,/ORDER BY[^;]*(latest|current|default)/i);
   assert.match(manifest,/0042_lock_request_canonical_event_closure/);
-  assert.ok(manifest.includes("d959f5dbb0cd2d9d624528a81d80d93aa87787c7db1bac2fa781c116a64e7518"));
+  assert.ok(manifest.includes("03ac268173889742f876296a825418928c679c965998f00d9e5285405156ad18"));
   assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 42/);
 });
 

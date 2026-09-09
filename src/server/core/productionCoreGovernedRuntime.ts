@@ -472,7 +472,7 @@ async function requestMotherLock(request:CoreRuntimeRequest){
   return requestLockReview(request,"MOTHER");
 }
 
-async function createTopicasync function createTopic(request:CoreRuntimeRequest){
+async function createTopic(request:CoreRuntimeRequest){
   const payload=rec(request.payload);
   const projectId=requiredUuid(request.path_params?.projectId,"REQUIRED_PATH_REFERENCE_MISSING:projectId");
   if(payload.project_id!==undefined&&requiredUuid(payload.project_id,"TOPIC_CANONICAL_LINEAGE_INCOMPLETE")!==projectId){

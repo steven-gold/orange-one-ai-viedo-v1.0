@@ -14,6 +14,52 @@ WHERE request_idempotency_key_hash IS NOT NULL;
 
 REVOKE INSERT ON public.lock_reviews FROM acpos_app_runtime;
 
+DROP POLICY IF EXISTS acpos_quality_criteria_versions_lock_select ON public.quality_criteria_versions;
+CREATE POLICY acpos_quality_criteria_versions_lock_select ON public.quality_criteria_versions
+FOR SELECT TO acpos_app_runtime
+USING (
+  status='APPROVED'
+  AND (
+    acpos_runtime.has_account_resource_action('api:requestMotherLock','EXECUTE')
+    OR acpos_runtime.has_account_resource_action('api:requestChildLock','EXECUTE')
+  )
+);
+
+CREATE OR REPLACE FUNCTION acpos_runtime.count_lock_reviewer_candidates()
+RETURNS integer
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = pg_catalog, public, acpos_runtime
+AS $
+  SELECT CASE
+    WHEN acpos_runtime.current_actor_user_id() IS NULL THEN 0
+    WHEN NOT (
+      acpos_runtime.has_account_resource_action('api:requestMotherLock','EXECUTE')
+      OR acpos_runtime.has_account_resource_action('api:requestChildLock','EXECUTE')
+    ) THEN 0
+    ELSE (
+      SELECT count(DISTINCT a.user_id)::integer
+      FROM public.account_permission_assignments a
+      JOIN public.permission_resources r ON r.resource_id=a.resource_id
+      JOIN public.app_users u ON u.user_id=a.user_id
+      WHERE r.resource_key='api:decideLockReview'
+        AND r.resource_type='API'
+        AND r.active=true
+        AND a.action='EXECUTE'
+        AND a.effect='ALLOW'
+        AND a.status='APPROVED'
+        AND a.effective_from<=now()
+        AND (a.effective_to IS NULL OR a.effective_to>now())
+        AND a.condition='{}'::jsonb
+        AND u.disabled_at IS NULL
+        AND a.user_id<>acpos_runtime.current_actor_user_id()
+    )
+  END
+$;
+
+GRANT EXECUTE ON FUNCTION acpos_runtime.count_lock_reviewer_candidates() TO acpos_app_runtime;
+
 CREATE OR REPLACE FUNCTION acpos_runtime.request_lock_review(
   p_lock_kind text,
   p_scope jsonb,
@@ -504,7 +550,7 @@ $$;
 INSERT INTO public.schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0042_lock_request_canonical_event_closure',
-  'd959f5dbb0cd2d9d624528a81d80d93aa87787c7db1bac2fa781c116a64e7518',
+  '03ac268173889742f876296a825418928c679c965998f00d9e5285405156ad18',
   'migration-runner',
   'CR-RUNTIME-0042'
 )
