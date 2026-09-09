@@ -512,6 +512,11 @@ async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: tr
   if(!page.allowed)return page;
   const governedPermission:Partial<Record<CoreRuntimeRequest["port_uid"],string>>={
     "CORE-01-PORT-PROJECT-CREATE":"api:createProjectDraft",
+    "CORE-01-PORT-PROJECT-VALIDATE":"api:validateProjectDraft",
+    "CORE-01-PORT-PROJECT-CONFIRM":"api:confirmProjectDraft",
+    "CORE-01-PORT-STORY-CANDIDATE":"api:createStoryCandidateSet",
+    "CORE-01-PORT-THREAD-CREATE":"api:createConversationThread",
+    "CORE-01-PORT-MESSAGE-SEND":"api:sendConversationMessage",
     "CORE-01-PORT-CANDIDATE-CREATE":"api:createCandidate",
     "CORE-01-PORT-CANDIDATE-COMPARE":"api:compareCandidates",
     "CORE-01-PORT-CANDIDATE-DECIDE":"api:decideCandidate",
