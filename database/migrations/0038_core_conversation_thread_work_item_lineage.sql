@@ -92,6 +92,37 @@ $$;
 
 REVOKE ALL ON FUNCTION acpos_runtime.validate_core_conversation_thread_binding() FROM PUBLIC;
 
+CREATE OR REPLACE FUNCTION acpos_runtime.protect_core_bound_conversation_lineage()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog, public, acpos_runtime
+AS $
+BEGIN
+  IF EXISTS(
+    SELECT 1
+    FROM public.core_conversation_thread_bindings b
+    WHERE b.conversation_id=OLD.conversation_id
+  ) AND (
+    NEW.project_id IS DISTINCT FROM OLD.project_id
+    OR NEW.topic_id IS DISTINCT FROM OLD.topic_id
+    OR NEW.created_by IS DISTINCT FROM OLD.created_by
+  ) THEN
+    RAISE EXCEPTION 'CORE0038_BOUND_CONVERSATION_LINEAGE_IMMUTABLE';
+  END IF;
+  RETURN NEW;
+END
+$;
+
+REVOKE ALL ON FUNCTION acpos_runtime.protect_core_bound_conversation_lineage() FROM PUBLIC;
+
+CREATE TRIGGER core_bound_conversation_lineage_guard
+BEFORE UPDATE OF project_id,topic_id,created_by ON public.conversations
+FOR EACH ROW
+EXECUTE FUNCTION acpos_runtime.protect_core_bound_conversation_lineage();
+
+
+
 CREATE TRIGGER core_conversation_thread_binding_validate
 BEFORE INSERT OR UPDATE ON public.core_conversation_thread_bindings
 FOR EACH ROW
@@ -142,7 +173,7 @@ $$;
 INSERT INTO schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0038_core_conversation_thread_work_item_lineage',
-  'a5abe1c4f91e6a1725a6d6596bd1937693d8de839ec24a620aea66ef603ec660',
+  'd93b99515da566ce4caffab361fde27a7d5ecad1209c7e07d90e2262591f68b3',
   'migration-runner',
   'CR-CORE-0038-PENDING-PRODUCTION-APPLY'
 )
