@@ -465,16 +465,85 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
   const assignedAiSet = asText(aiGroup?.id);
   const healthyAiMembers = Number(aiGroup?.healthy_members ?? 0);
 
+  const currentProjectId=first?.project_id??null;
+  const currentTopicId=topics[0]?.topic_id??null;
+  const candidateRows=currentProjectId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT c.candidate_version_id::text AS candidate_ref,c.version_no,c.work_item,c.content_hash::text AS content_hash,
+           c.core_evaluation_id::text AS core_evaluation_id,c.core_structured_decision_id::text AS structured_decision_id,
+           e.result AS evaluation_result,e.score_total::text AS score_total,sd.structured_document,
+           d.decision,d.reason
+    FROM public.candidate_versions c
+    LEFT JOIN public.core_evaluations e ON e.core_evaluation_id=c.core_evaluation_id
+    LEFT JOIN public.core_structured_decisions sd ON sd.core_structured_decision_id=c.core_structured_decision_id
+    LEFT JOIN public.candidate_decisions d ON d.candidate_version_id=c.candidate_version_id
+    WHERE c.project_id=${currentProjectId}::uuid
+      AND (${currentTopicId}::uuid IS NULL OR c.topic_id=${currentTopicId}::uuid)
+    ORDER BY c.version_no DESC,c.created_at DESC
+    LIMIT 10
+  `)):[];
+  const currentCandidate=asRecord(candidateRows[0]??null);
+
+  const dnaRows=currentProjectId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT dna_version_id::text AS dna_version_ref,dna_type,entity_key,version_no,status,checksum::text AS checksum,
+           lock_decision_request_id::text AS lock_decision_request_id
+    FROM public.dna_versions
+    WHERE project_id=${currentProjectId}::uuid
+    ORDER BY created_at DESC,dna_version_id DESC
+    LIMIT 20
+  `)):[];
+  const currentDna=asRecord(dnaRows[0]??null);
+
+  const blueprintRows=currentTopicId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT bv.blueprint_version_id::text AS blueprint_version_ref,bv.version_no,bv.status::text AS status,
+           bv.content_hash::text AS content_hash,tb.topic_blueprint_id::text AS topic_blueprint_id,
+           pc.topic_production_contract_id::text AS topic_scope_ref,pc.contract_hash::text AS topic_scope_hash,
+           mb.master_blueprint_id::text AS master_blueprint_ref,mb.blueprint_key
+    FROM public.blueprint_versions bv
+    JOIN public.topic_blueprints tb ON tb.topic_blueprint_id=bv.topic_blueprint_id
+    JOIN public.topic_production_contracts pc ON pc.topic_production_contract_id=tb.topic_production_contract_id
+    JOIN public.topic_versions tv ON tv.topic_version_id=pc.topic_version_id
+    JOIN public.master_blueprints mb ON mb.master_blueprint_id=tb.master_blueprint_id
+    WHERE tv.topic_id=${currentTopicId}::uuid
+    ORDER BY bv.version_no DESC,bv.created_at DESC
+    LIMIT 10
+  `)):[];
+  const currentBlueprint=asRecord(blueprintRows[0]??null);
+
+  const scriptRows=currentTopicId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT canonical_script_version_id::text AS canonical_script_ref,version_no,status::text AS status,
+           content_hash::text AS content_hash,script_document
+    FROM public.canonical_script_versions
+    WHERE topic_id=${currentTopicId}::uuid
+    ORDER BY version_no DESC,created_at DESC
+    LIMIT 1
+  `)):[];
+  const currentScript=asRecord(scriptRows[0]??null);
+
+  const lockTargetIds=[first?.project_version_ref,asText(currentBlueprint.blueprint_version_ref)].filter((value):value is string=>Boolean(value));
+  const lockRows=lockTargetIds.length?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT lock_review_id::text AS lock_review_ref,lock_kind::text AS lock_kind,target_type,status::text AS status,
+           target_version_id::text AS target_version_id,expected_target_hash::text AS expected_target_hash
+    FROM public.lock_reviews
+    WHERE target_version_id=ANY(${lockTargetIds}::uuid[])
+    ORDER BY created_at DESC
+    LIMIT 10
+  `)):[];
+  const currentLock=asRecord(lockRows[0]??null);
+  const structuredDecision=currentCandidate.structured_document&&typeof currentCandidate.structured_document==="object"
+    ? JSON.stringify(currentCandidate.structured_document)
+    : null;
+  const scriptLineage=asRecord(asRecord(currentScript.script_document).identity_and_lineage);
+
   return {
     refs: {
       project_id: first?.project_id ?? null,
       project_version_ref: first?.project_version_ref ?? null,
       topic_id: topics[0]?.topic_id ?? null,
       topic_version_ref: topics[0]?.topic_version_ref ?? null,
-      dna_version_ref: null,
-      blueprint_version_ref: null,
+      dna_version_ref: asText(currentDna.dna_version_ref),
+      blueprint_version_ref: asText(currentBlueprint.blueprint_version_ref),
       conversation_id: currentConversationId,
-      candidate_ref: null,
+      candidate_ref: asText(currentCandidate.candidate_ref),
     },
     work_item: null,
     projects: projects.map((item) => ({
@@ -491,23 +560,24 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
       assigned_ai_set: assignedAiSet ?? DASH,
       project_state: first?.status ?? DASH,
       story_candidate_set: DASH,
-      dna_state: DASH,
-      blueprint_state: DASH,
+      dna_state: asText(currentDna.status) ?? DASH,
+      blueprint_state: asText(currentBlueprint.status) ?? DASH,
       assistant_summary: asText(latestAssistantMeta?.assistant_summary) ?? DASH,
-      evaluation: DASH,
-      structured_decision: DASH,
+      evaluation: asText(currentCandidate.evaluation_result) ?? DASH,
+      structured_decision: structuredDecision ?? DASH,
       runtime_stage: asText(latestAssistantMeta?.response_mode) ?? "READY",
-      topic_scope: DASH,
-      canonical_script: DASH,
+      topic_scope: asText(currentBlueprint.topic_scope_ref) ?? DASH,
+      canonical_script: asText(currentScript.canonical_script_ref) ?? DASH,
       package: DASH,
       downstream_asset: DASH,
       downstream_video: DASH,
       downstream_edit: DASH,
-      version_state: DASH,
-      candidate_compare: DASH,
-      lock_review: DASH,
+      version_state: asText(currentCandidate.decision) ?? (asText(currentCandidate.candidate_ref) ? `CANDIDATE_V${String(currentCandidate.version_no ?? "")}` : DASH),
+      candidate_compare: candidateRows.length>1 ? `${candidateRows.length} IMMUTABLE VERSIONS` : asText(currentCandidate.candidate_ref) ?? DASH,
+      lock_review: asText(currentLock.lock_review_ref) ?? DASH,
       governance_policy: "ACPOS_AI_GOVERNANCE_V1.0",
       governance_context_fingerprint: asText(latestAssistantMeta?.context_fingerprint) ?? DASH,
+      canonical_script_source_candidate_ref: asText(scriptLineage.source_candidate_ref) ?? DASH,
       healthy_ai_members: String(healthyAiMembers),
     },
   };
