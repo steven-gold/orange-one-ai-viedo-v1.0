@@ -31,7 +31,7 @@ LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = pg_catalog, public, acpos_runtime
-AS $
+AS $$
   SELECT CASE
     WHEN acpos_runtime.current_actor_user_id() IS NULL THEN 0
     WHEN NOT (
@@ -56,7 +56,7 @@ AS $
         AND a.user_id<>acpos_runtime.current_actor_user_id()
     )
   END
-$;
+$$;
 
 GRANT EXECUTE ON FUNCTION acpos_runtime.count_lock_reviewer_candidates() TO acpos_app_runtime;
 
@@ -550,7 +550,7 @@ $$;
 INSERT INTO public.schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0042_lock_request_canonical_event_closure',
-  '03ac268173889742f876296a825418928c679c965998f00d9e5285405156ad18',
+  '4eeae25811a6b215f8e2a4a653397998bf1ed3d569ace9ac8e54788cf29b415c',
   'migration-runner',
   'CR-RUNTIME-0042'
 )
