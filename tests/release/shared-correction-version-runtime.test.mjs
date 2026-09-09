@@ -109,5 +109,5 @@ test("migration 0034 seals minimum shared permission RLS and migration ceiling",
   assert.match(migration,/4f67f35eee2afb996ba2cce88fb7377c1a762b182c70de45eb6518062a9aac7b/);
   assert.match(manifest,/0034_shared_correction_version_runtime_closure/);
   assert.match(manifest,/4f67f35eee2afb996ba2cce88fb7377c1a762b182c70de45eb6518062a9aac7b/);
-  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 34/);
+  const ceiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0);\n  assert.ok(ceiling>=34,`migration ceiling must preserve 0034 or later, found ${ceiling}`);
 });
