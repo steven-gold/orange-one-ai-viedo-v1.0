@@ -23,6 +23,8 @@ export type AssetNormalizedProjection={
   locked_version_ref?:string|null;
   layer_document_id:string|null;
   layer_id:string|null;
+  layer_z_index?:number|null;
+  document_layer_id?:string|null;
   patch_id:string|null;
   current_asset_type_uid:string|null;
   candidate_uri:string|null;
@@ -53,6 +55,8 @@ function validProjection(v:unknown):v is AssetNormalizedProjection{
   const p=v as Partial<AssetNormalizedProjection>;
   if(!textOrNull(p.page_state)||!textOrNull(p.task_id)||!textOrNull(p.output_version_id)||!textOrNull(p.layer_document_id)||!textOrNull(p.layer_id)||!textOrNull(p.patch_id)||!textOrNull(p.current_asset_type_uid)||!textOrNull(p.candidate_uri)||!textOrNull(p.candidate_media_kind))return false;
   for(const key of ["finding_id","correction_request_id","correction_candidate_id","correction_candidate_content_hash","approved_correction_candidate_id","restore_draft_id","locked_version_ref"] as const){if(p[key]!==undefined&&!textOrNull(p[key]))return false;}
+  if(p.layer_z_index!==undefined&&p.layer_z_index!==null&&typeof p.layer_z_index!=="number")return false;
+  if(p.document_layer_id!==undefined&&!textOrNull(p.document_layer_id))return false;
   if(!Array.isArray(p.candidate_versions)||p.candidate_versions.some(item=>!item||typeof item.ref!=="string"||typeof item.label!=="string"||typeof item.uri!=="string"||!["IMAGE","AUDIO","REFERENCE"].includes(item.media_kind)))return false;
   if(!p.values||typeof p.values!=="object"||Object.values(p.values).some(item=>typeof item!=="string"))return false;
   if(!validListMap(p.lists)||!validListMap(p.filters))return false;
