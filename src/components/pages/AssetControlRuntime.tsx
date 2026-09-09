@@ -354,24 +354,36 @@ export function AssetRuntimeControl({ id, kind }: { id: string; kind: AssetVisua
   if (kind === "search") {
     const correction = id === "ASSET-01-TXT-CORRECTION-REQUEST";
     const value = correction ? state.correction_request : state.search;
+    const onChange = (nextValue: string) => {
+      if (!allowed) {
+        block(state.runtime_error ?? `${binding?.gate_uid ?? "GATE"}:NOT_SATISFIED`);
+        return;
+      }
+      correction
+        ? dispatch({ action_uid: "LOCAL-CORRECTION-REQUEST", value: nextValue })
+        : act(nextValue);
+    };
     return (
-      <label className={styles.inputControl}>
+      <label className={correction ? styles.correctionComposerControl : styles.inputControl}>
         <span>{label}</span>
-        <input
-          {...common}
-          disabled={!enabled || busy}
-          value={value}
-          onChange={(event) => {
-            if (!allowed) {
-              block(state.runtime_error ?? `${binding?.gate_uid ?? "GATE"}:NOT_SATISFIED`);
-              return;
-            }
-            correction
-              ? dispatch({ action_uid: "LOCAL-CORRECTION-REQUEST", value: event.target.value })
-              : act(event.target.value);
-          }}
-          placeholder="—"
-        />
+        {correction ? (
+          <textarea
+            {...common}
+            disabled={!enabled || busy}
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
+            placeholder="—"
+            rows={6}
+          />
+        ) : (
+          <input
+            {...common}
+            disabled={!enabled || busy}
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
+            placeholder="—"
+          />
+        )}
       </label>
     );
   }
