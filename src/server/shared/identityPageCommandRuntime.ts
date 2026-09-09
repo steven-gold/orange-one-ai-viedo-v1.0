@@ -516,6 +516,7 @@ async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: tr
     "CORE-01-PORT-CANDIDATE-DECIDE":"api:decideCandidate",
     "CORE-01-PORT-DNA-LOCK":"api:requestDNALock",
     "CORE-01-PORT-CORE-REVIEW":"api:submitCoreReview",
+    "CORE-01-PORT-MOTHER-LOCK":"api:requestMotherLock",
     "CORE-01-PORT-BLUEPRINT-CREATE":"api:createBlueprint",
     "CORE-01-PORT-BLUEPRINT-VALIDATE":"api:validateBlueprint",
     "CORE-01-PORT-BLUEPRINT-APPROVE":"api:approveBlueprint",
@@ -842,38 +843,6 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       return { story_candidate_set_ref, project_id: projectId };
     }
 
-    case "CORE-01-PORT-MOTHER-LOCK": {
-      const project_id = asText(payload.project_id);
-      const project_version_ref = asText(payload.project_version_ref);
-      if (!project_id || !project_version_ref) throw new NamedRuntimeError("REQUIRED_PROJECT_VERSION_REF_MISSING");
-      const versionRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          SELECT content_hash, status::text AS status
-          FROM project_versions
-          WHERE project_version_id = ${project_version_ref}::uuid
-            AND project_id = ${project_id}::uuid
-          LIMIT 1
-        `,
-      );
-      const version = firstRow(versionRows);
-      const content_hash = asText(version?.content_hash);
-      if (!content_hash) throw new NamedRuntimeError("PROJECT_VERSION_NOT_FOUND");
-      const evidence = JSON.stringify({ evidence_refs: payload.evidence_refs ?? [] });
-      const reviewer_path = JSON.stringify([]);
-      const reviewRows = await sql`
-        INSERT INTO lock_reviews (
-          lock_kind, target_type, target_version_id, evidence, reviewer_path, status, expected_target_hash, requested_by
-        ) VALUES (
-          'MOTHER', 'PROJECT_VERSION', ${project_version_ref}::uuid, ${evidence}::jsonb, ${reviewer_path}::jsonb, 'IN_REVIEW', ${content_hash}, ${actor.user_id}::uuid
-        )
-        RETURNING lock_review_id::text AS lock_review_id
-      `;
-      const lock_review_id = asText(firstRow(reviewRows)?.lock_review_id);
-      if (!lock_review_id) throw new NamedRuntimeError("LOCK_REVIEW_INSERT_FAILED");
-      return { lock_review_id, project_id, project_version_ref, state: "IN_REVIEW" };
-    }
 
     case "CORE-01-PORT-PROJECTION":
       return { reason_code: "USE_UI_PROJECTION_ROUTE" };
