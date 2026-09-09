@@ -183,13 +183,19 @@ BEGIN
   DELETE FROM public.lock_reviews WHERE lock_review_id IN (v_mother_review,v_child_review);
   DELETE FROM public.project_versions WHERE project_version_id=v_project_version;
   DELETE FROM public.projects WHERE project_id=v_project;
+
+  -- Acceptance notifications were explicitly tagged for deletion after the same test run.
+  DELETE FROM public.notifications
+  WHERE notification_type='TEST_SETUP'
+    AND aggregate_ref->>'purpose'='TEST_ONLY'
+    AND aggregate_ref->>'delete_after_test'='true';
 END
 $$;
 
 INSERT INTO public.schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0043_production_test_only_lineage_cleanup',
-  '569f0130d2c10b6cb75060a7269b3c82c7bee7682edf8068566a5be442efce2b',
+  'adc47bc0c6c20a8178b124534866ebd0121f1d08725cce7dc62f3b6bf0a113cc',
   'migration-runner',
   'CR-RUNTIME-0043'
 )

@@ -12,8 +12,8 @@ test("0043 removes only the historical TEST_ONLY production lineage and creates 
   const idx=migration.indexOf(sep);
   assert.ok(idx>0);
   const checksum=createHash("sha256").update(migration.slice(0,idx)).digest("hex");
-  assert.equal(checksum,"569f0130d2c10b6cb75060a7269b3c82c7bee7682edf8068566a5be442efce2b");
-  assert.ok(manifest.includes("569f0130d2c10b6cb75060a7269b3c82c7bee7682edf8068566a5be442efce2b"));
+  assert.equal(checksum,"adc47bc0c6c20a8178b124534866ebd0121f1d08725cce7dc62f3b6bf0a113cc");
+  assert.ok(manifest.includes("adc47bc0c6c20a8178b124534866ebd0121f1d08725cce7dc62f3b6bf0a113cc"));
   assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 43/);
 
   for(const marker of [
@@ -33,6 +33,9 @@ test("0043 removes only the historical TEST_ONLY production lineage and creates 
   assert.match(migration,/DELETE FROM public\.department_tasks/);
   assert.match(migration,/DELETE FROM public\.lock_reviews/);
   assert.match(migration,/DELETE FROM public\.projects/);
+  assert.match(migration,/DELETE FROM public\.notifications/);
+  assert.match(migration,/notification_type='TEST_SETUP'/);
+  assert.match(migration,/delete_after_test/);
   const businessInsert=migration.slice(0,idx).match(/INSERT INTO public\.(?!schema_migration_history)/g)??[];
   assert.equal(businessInsert.length,0,"0043 must not create business rows");
 });
