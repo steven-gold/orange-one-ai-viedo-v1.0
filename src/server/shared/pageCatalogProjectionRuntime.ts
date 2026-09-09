@@ -2307,17 +2307,28 @@ async function readStrategyAdminFromDb(
   };
 }
 
-async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
-  const sources = await safeRows(() => sql`
+async function readKnowledgeFromDb(sql: SqlClient, sessionTokenHash: string, actorUserId: string): Promise<unknown> {
+  const canConfigure=await evaluateCatalogResourceAction(
+    sql,sessionTokenHash,actorUserId,"permission:knowledge.source.configure","EXECUTE",
+  );
+  const sources = await safeRows(() => runRlsActorQuery(sql,sessionTokenHash,sql`
     SELECT knowledge_source_id::text AS ref,
            source_key AS label,
+           name,
+           source_type,
+           scope,
+           rights_policy,
            status::text AS status,
            source_uri,
            classification::text AS classification,
+           collection_method,
+           collection_config,
+           freshness_policy,
+           retention_policy,
            source_version::text AS source_version
     FROM knowledge_sources
     ORDER BY created_at DESC,knowledge_source_id DESC
-  `);
+  `));
   const evidence = await safeRows(() => sql`
     SELECT evidence_record_id::text AS ref
     FROM evidence_records
@@ -2335,12 +2346,23 @@ async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
   `);
   const first = sources[0] ?? null;
   const approved = sources.filter((row) => asText(row.status) === "ACTIVE");
+  const sourceStatus=asText(first?.status);
   return {
     page_state: sources.length || packs.length ? "READY" : "EMPTY",
     values: {
       "KB-01-FLD-SCOPE": "admin:KB-01",
       "KB-01-FLD-SOURCE-ID": asText(first?.ref) ?? DASH,
-      "KB-01-FLD-SOURCE-STATUS": asText(first?.status) ?? DASH,
+      "KB-01-FLD-SOURCE-VERSION": asText(first?.source_version) ?? DASH,
+      "KB-01-FLD-SOURCE-NAME": asText(first?.name) ?? asText(first?.label) ?? DASH,
+      "KB-01-FLD-SOURCE-TYPE": asText(first?.source_type) ?? DASH,
+      "KB-01-FLD-SOURCE-SCOPE": first?.scope ?? DASH,
+      "KB-01-FLD-SOURCE-RIGHTS": first?.rights_policy ?? DASH,
+      "KB-01-FLD-SOURCE-CLASS": asText(first?.classification) ?? DASH,
+      "KB-01-FLD-SOURCE-COLLECT": asText(first?.collection_method) ?? DASH,
+      "KB-01-FLD-SOURCE-CONFIG": first?.collection_config ?? {},
+      "KB-01-FLD-SOURCE-FRESH": first?.freshness_policy ?? DASH,
+      "KB-01-FLD-SOURCE-RETENTION": first?.retention_policy ?? DASH,
+      "KB-01-FLD-SOURCE-STATUS": sourceStatus ?? DASH,
       "KB-01-FLD-SOURCE-URI": asText(first?.source_uri) ?? DASH,
       "KB-01-FLD-CTX-CAND-ITEMS": candidates,
       Source: String(sources.length),
@@ -2351,17 +2373,26 @@ async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
     },
     control_enabled: {
       "KB-01-CTL-SEARCH-GLOBAL": true,
-      "KB-01-CTL-SOURCE-PAUSE": asText(first?.status) === "ACTIVE",
-      "KB-01-CTL-SOURCE-RESUME": asText(first?.status) === "PAUSED",
+      "KB-01-CTL-SOURCE-CREATE": canConfigure,
+      "KB-01-CTL-SOURCE-SAVE": canConfigure && sourceStatus === "DRAFT",
+      "KB-01-CTL-SOURCE-PAUSE": canConfigure && sourceStatus === "ACTIVE",
+      "KB-01-CTL-SOURCE-RESUME": canConfigure && sourceStatus === "PAUSED",
     },
     entities: first ? {
       selected_source: {
         source_id: asText(first.ref) ?? "",
         source_version: asText(first.source_version) ?? "",
-        name: asText(first.label) ?? "",
+        name: asText(first.name) ?? asText(first.label) ?? "",
+        source_type: asText(first.source_type) ?? "",
+        scope: first.scope ?? null,
+        rights: first.rights_policy ?? null,
         source_uri: asText(first.source_uri) ?? "",
         classification: asText(first.classification) ?? "",
-        status: asText(first.status) ?? "",
+        collection_method: asText(first.collection_method) ?? "",
+        collection_config: first.collection_config ?? {},
+        freshness_policy: first.freshness_policy ?? null,
+        retention_policy: first.retention_policy ?? null,
+        status: sourceStatus ?? "",
       },
     } : {},
   };
@@ -2407,7 +2438,7 @@ async function readPageValue(
     case "admin:STR-01":
       return readStrategyAdminFromDb(sql, sessionTokenHash, actorUserId);
     case "admin:KB-01":
-      return readKnowledgeFromDb(sql);
+      return readKnowledgeFromDb(sql, sessionTokenHash, actorUserId);
     default:
       return null;
   }
