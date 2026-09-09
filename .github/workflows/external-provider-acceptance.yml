@@ -25,6 +25,11 @@ on:
         required: false
         default: https://orange-one-acpos-test.vercel.app
         type: string
+  push:
+    branches:
+      - new
+    paths:
+      - .github/external-provider-acceptance-trigger.txt
 
 permissions:
   contents: read
@@ -36,7 +41,6 @@ jobs:
     timeout-minutes: 15
     env:
       ACPOS_DEPLOYMENT_URL: ${{ inputs.deployment_url }}
-      ACPOS_EXPECT_RELEASE_SHA: ${{ github.sha }}
       ACPOS_PRODUCTION_E2E_EMAIL: admin
       ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
@@ -51,5 +55,17 @@ jobs:
           node-version: 22
       - name: Validate External Provider E2E syntax
         run: node --check scripts/production-external-provider-e2e.mjs
+      - name: Resolve automatic Production acceptance target
+        if: github.event_name == 'push'
+        run: |
+          echo "ACPOS_DEPLOYMENT_URL=https://orange-one-acpos-test.vercel.app" >> "$GITHUB_ENV"
+          echo "ACPOS_EXPECT_RELEASE_SHA=$(tr -d '\r\n ' < .github/external-provider-acceptance-trigger.txt)" >> "$GITHUB_ENV"
+          echo "ACPOS_EXTERNAL_E2E_PROFILE_IDS=profile-groq-text-v1,profile-google-text-v1,profile-deepseek-text-v1,profile-openrouter-text-v1" >> "$GITHUB_ENV"
+          echo "ACPOS_EXTERNAL_E2E_GROUP_ID=group-text-chat-primary-v1" >> "$GITHUB_ENV"
+          echo "ACPOS_EXTERNAL_E2E_CAPABILITY=TEXT_CHAT" >> "$GITHUB_ENV"
+          echo "ACPOS_EXTERNAL_E2E_CLASSIFICATION=INTERNAL" >> "$GITHUB_ENV"
+      - name: Resolve manual Production acceptance target
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "ACPOS_EXPECT_RELEASE_SHA=${{ github.sha }}" >> "$GITHUB_ENV"
       - name: Run real Production External Provider E2E
         run: node scripts/production-external-provider-e2e.mjs

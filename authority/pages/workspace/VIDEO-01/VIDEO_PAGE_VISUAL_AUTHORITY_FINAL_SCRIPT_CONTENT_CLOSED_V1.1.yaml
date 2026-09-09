@@ -1612,14 +1612,14 @@ registries:
     registered_operation: decideOutputCandidate
     method_effective_path: POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
     registered_permission: department.output.decide
-    state_event: CANDIDATE_OUTPUT→SCORE_PENDING | output.decision_recorded
+    state_event: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
     video01_exposure: VIDEO-01-ACT-CANDIDATE-CONFIRM.
   - port_uid: VIDEO-01-PORT-SCORECARD
     boundary: Score Persist
     registered_operation: submitScorecard
     method_effective_path: POST /v1/scorecards
     registered_permission: department.score.write
-    state_event: SCORE_PENDING→BLOCKED or HANDOFF_READY | scorecard.submitted
+    state_event: CANDIDATE_OUTPUT→SCORE_PENDING or BLOCKED | scorecard.submitted
     video01_exposure: Persist confirmed VIDEO evaluation with VIDEO criteria version.
   - port_uid: VIDEO-01-PORT-OUT-EDIT
     boundary: Outbound to EDIT

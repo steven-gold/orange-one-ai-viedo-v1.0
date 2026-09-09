@@ -94,6 +94,42 @@ function projectionValue(projection: KnowledgeProjection | null, suffix: string)
 function displayProjectionValue(value: unknown) { if (value === null || value === undefined || value === "") return "—"; if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value); try { return JSON.stringify(value); } catch { return "—"; } }
 function hasProjectionValue(projection: KnowledgeProjection | null, suffix: string) { const value = projectionValue(projection, suffix); if (value === null || value === undefined) return false; if (typeof value === "string") return value.trim() !== "" && value !== "—"; if (Array.isArray(value)) return value.length > 0; if (typeof value === "object") return Object.keys(value as Record<string, unknown>).length > 0; return true; }
 function knowledgeEntityValue(projection: KnowledgeProjection | null, entity: string, key: string) { return projection?.entities[entity]?.[key] ?? null; }
+
+type SourceDraftKey =
+  | "SOURCE-NAME" | "SOURCE-TYPE" | "SOURCE-SCOPE" | "SOURCE-RIGHTS"
+  | "SOURCE-CLASS" | "SOURCE-COLLECT" | "SOURCE-CONFIG"
+  | "SOURCE-FRESH" | "SOURCE-RETENTION";
+type SourceDraft = Record<SourceDraftKey,string>;
+const SOURCE_EDITABLE_FIELDS = new Set<SourceDraftKey>([
+  "SOURCE-NAME","SOURCE-TYPE","SOURCE-SCOPE","SOURCE-RIGHTS","SOURCE-CLASS",
+  "SOURCE-COLLECT","SOURCE-CONFIG","SOURCE-FRESH","SOURCE-RETENTION",
+]);
+const SOURCE_JSON_FIELDS = new Set<SourceDraftKey>([
+  "SOURCE-SCOPE","SOURCE-RIGHTS","SOURCE-CONFIG","SOURCE-FRESH","SOURCE-RETENTION",
+]);
+function draftText(value: unknown): string {
+  if(value===null||value===undefined||value==="—") return "";
+  if(typeof value==="string") return value;
+  try{return JSON.stringify(value);}catch{return "";}
+}
+function sourceDraftFromProjection(projection: KnowledgeProjection | null): SourceDraft {
+  return {
+    "SOURCE-NAME":draftText(projectionValue(projection,"SOURCE-NAME")),
+    "SOURCE-TYPE":draftText(projectionValue(projection,"SOURCE-TYPE")),
+    "SOURCE-SCOPE":draftText(projectionValue(projection,"SOURCE-SCOPE")),
+    "SOURCE-RIGHTS":draftText(projectionValue(projection,"SOURCE-RIGHTS")),
+    "SOURCE-CLASS":draftText(projectionValue(projection,"SOURCE-CLASS")),
+    "SOURCE-COLLECT":draftText(projectionValue(projection,"SOURCE-COLLECT")),
+    "SOURCE-CONFIG":draftText(projectionValue(projection,"SOURCE-CONFIG")),
+    "SOURCE-FRESH":draftText(projectionValue(projection,"SOURCE-FRESH")),
+    "SOURCE-RETENTION":draftText(projectionValue(projection,"SOURCE-RETENTION")),
+  };
+}
+function draftPayloadValue(key: SourceDraftKey,value: string): unknown {
+  const trimmed=value.trim();
+  if(!SOURCE_JSON_FIELDS.has(key)||!trimmed) return trimmed;
+  try{return JSON.parse(trimmed) as unknown;}catch{return trimmed;}
+}
 function isVisible(control: ControlSpec, active: KnowledgeViewKey, projection: KnowledgeProjection | null) {
   if (control.visible === "always") return true;
   if (control.visible === "view") return control.view === active;
@@ -122,13 +158,14 @@ export function KnowledgeAdminVisual() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [busy, setBusy] = useState(false);
+  const [sourceDraft, setSourceDraft] = useState<SourceDraft>(() => sourceDraftFromProjection(null));
 
   useEffect(() => {
     const controller = new AbortController();
     void readKnowledgeProjection(controller.signal).then((result) => {
       setCorrelationId(result.correlation_id);
-      if (result.ok) { setProjection(result.projection); setRuntimeError(null); }
-      else { setProjection(null); setRuntimeError(result.reason_code); }
+      if (result.ok) { setProjection(result.projection); setSourceDraft(sourceDraftFromProjection(result.projection)); setRuntimeError(null); }
+      else { setProjection(null); setSourceDraft(sourceDraftFromProjection(null)); setRuntimeError(result.reason_code); }
       setLoading(false);
     });
     return () => controller.abort();
@@ -174,6 +211,78 @@ export function KnowledgeAdminVisual() {
         return;
       }
 
+      if (trace.operation === "createKnowledgeSource" || trace.operation === "updateKnowledgeSource") {
+        const requiredKeys: SourceDraftKey[] = [
+          "SOURCE-NAME","SOURCE-TYPE","SOURCE-SCOPE","SOURCE-RIGHTS",
+          "SOURCE-CLASS","SOURCE-COLLECT","SOURCE-FRESH","SOURCE-RETENTION",
+        ];
+        if(requiredKeys.some((key)=>!sourceDraft[key].trim())){
+          setRuntimeError("KB01_REQUIRED_SOURCE_FIELD_MISSING");
+          return;
+        }
+        const correlationId=crypto.randomUUID();
+        const common={
+          name:sourceDraft["SOURCE-NAME"].trim(),
+          source_type:sourceDraft["SOURCE-TYPE"].trim(),
+          scope:draftPayloadValue("SOURCE-SCOPE",sourceDraft["SOURCE-SCOPE"]),
+          rights:draftPayloadValue("SOURCE-RIGHTS",sourceDraft["SOURCE-RIGHTS"]),
+          classification:sourceDraft["SOURCE-CLASS"].trim(),
+          collection_method:sourceDraft["SOURCE-COLLECT"].trim(),
+          freshness_policy:draftPayloadValue("SOURCE-FRESH",sourceDraft["SOURCE-FRESH"]),
+          retention_policy:draftPayloadValue("SOURCE-RETENTION",sourceDraft["SOURCE-RETENTION"]),
+          ...(sourceDraft["SOURCE-CONFIG"].trim()
+            ? {collection_config:draftPayloadValue("SOURCE-CONFIG",sourceDraft["SOURCE-CONFIG"])}
+            : {}),
+        };
+        let path=trace.path;
+        let body:Record<string,unknown>;
+        if(trace.operation==="updateKnowledgeSource"){
+          const sourceId=knowledgeEntityValue(projection,"selected_source","source_id");
+          const sourceVersionRaw=knowledgeEntityValue(projection,"selected_source","source_version");
+          const sourceVersion=sourceVersionRaw?Number(sourceVersionRaw):NaN;
+          if(typeof sourceId!=="string"||!sourceId||!Number.isInteger(sourceVersion)||sourceVersion<1){
+            setRuntimeError("KB01_SOURCE_RUNTIME_CONTEXT_REQUIRED");
+            return;
+          }
+          path=trace.path.replace("{sourceId}",encodeURIComponent(sourceId));
+          body={
+            source_id:sourceId,expected_version:sourceVersion,correlation_id:correlationId,
+            idempotency_key:`KB-UI-updateKnowledgeSource-${sourceId}-v${sourceVersion}-${correlationId}`,
+            ...common,
+          };
+        }else{
+          body={
+            ...common,correlation_id:correlationId,
+            idempotency_key:`KB-UI-createKnowledgeSource-${correlationId}`,
+          };
+        }
+        const response=await fetch(path,{
+          method:trace.method,cache:"no-store",credentials:"include",
+          headers:{"content-type":"application/json","x-correlation-id":correlationId},
+          body:JSON.stringify(body),
+        });
+        const correlation=response.headers.get("x-correlation-id");
+        if(correlation)setCorrelationId(correlation);
+        const raw:unknown=await response.json().catch(()=>null);
+        const responseBody=raw&&typeof raw==="object"&&!Array.isArray(raw)?raw as Record<string,unknown>:null;
+        if(!response.ok){
+          setRuntimeError(typeof responseBody?.reason_code==="string"?responseBody.reason_code:"KB_SOURCE_WRITE_FAILED");
+          return;
+        }
+        const refreshed=await readKnowledgeProjection();
+        setCorrelationId(refreshed.correlation_id);
+        if(refreshed.ok){
+          setProjection(refreshed.projection);
+          setSourceDraft(sourceDraftFromProjection(refreshed.projection));
+          setRuntimeError(null);
+        }else{
+          setProjection(null);
+          setSourceDraft(sourceDraftFromProjection(null));
+          setRuntimeError(refreshed.reason_code);
+        }
+        return;
+      }
+
       if (trace.operation === "pauseKnowledgeSource" || trace.operation === "resumeKnowledgeSource") {
         const sourceId = knowledgeEntityValue(projection, "selected_source", "source_id");
         const sourceVersionRaw = knowledgeEntityValue(projection, "selected_source", "source_version");
@@ -182,16 +291,29 @@ export function KnowledgeAdminVisual() {
           setRuntimeError("KB01_SOURCE_RUNTIME_CONTEXT_REQUIRED");
           return;
         }
+        const reason = typeof window !== "undefined"
+          ? window.prompt(trace.operation === "pauseKnowledgeSource" ? "暫停原因" : "恢復原因")
+          : null;
+        if (!reason || !reason.trim()) {
+          setRuntimeError("KB01_SOURCE_STATE_REASON_REQUIRED");
+          return;
+        }
+        const correlationId = crypto.randomUUID();
         const path = trace.path.replace("{sourceId}", encodeURIComponent(sourceId));
         const response = await fetch(path, {
           method: trace.method,
           cache: "no-store",
           credentials: "include",
-          headers: { "content-type": "application/json" },
+          headers: {
+            "content-type": "application/json",
+            "x-correlation-id": correlationId,
+          },
           body: JSON.stringify({
             source_id: sourceId,
             expected_version: sourceVersion,
-            idempotency_key: `KB-UI-${trace.operation}-${sourceId}-v${sourceVersion}`,
+            reason: reason.trim(),
+            correlation_id: correlationId,
+            idempotency_key: `KB-UI-${trace.operation}-${sourceId}-v${sourceVersion}-${correlationId}`,
           }),
         });
         const correlation = response.headers.get("x-correlation-id");
@@ -206,9 +328,11 @@ export function KnowledgeAdminVisual() {
         setCorrelationId(refreshed.correlation_id);
         if (refreshed.ok) {
           setProjection(refreshed.projection);
+          setSourceDraft(sourceDraftFromProjection(refreshed.projection));
           setRuntimeError(null);
         } else {
           setProjection(null);
+          setSourceDraft(sourceDraftFromProjection(null));
           setRuntimeError(refreshed.reason_code);
         }
         return;
@@ -262,7 +386,15 @@ export function KnowledgeAdminVisual() {
             <div className={styles.sectionHead}><div><span>S:{String(section.section).padStart(2, "0")}</span><h2>{knowledgeUiLabel(locale, section.name)}</h2></div><span className={styles.emptyState}>{projection ? pageState : runtimeError ?? knowledgeText(locale, "noData")}</span></div>
             <div className={styles.componentGrid}>{section.components.map((component) => { const groups = fieldsFor(section.section, component.suffix); return <article key={component.suffix} className={styles.component} data-component-uid={`KB-01-CMP-${component.suffix}`}>
               <div className={styles.componentHead}><strong>{knowledgeUiLabel(locale, component.name)}</strong><span>{groups.reduce((sum, group) => sum + group.fields.length, 0)} {knowledgeUiLabel(locale, "fields")}</span></div>
-              {groups.length === 0 ? <div className={styles.noProjection}>—</div> : groups.map((group) => <div key={group.object} className={styles.fieldGroup}><div className={styles.objectName}>{group.object}</div><div className={styles.fieldGrid}>{group.fields.map((field) => <div className={styles.field} key={field} data-field-uid={`KB-01-FLD-${field}`}><span>{field}</span><strong>{fieldValue(field)}</strong></div>)}</div></div>)}
+              {groups.length === 0 ? <div className={styles.noProjection}>—</div> : groups.map((group) => <div key={group.object} className={styles.fieldGroup}><div className={styles.objectName}>{group.object}</div><div className={styles.fieldGrid}>{group.fields.map((field) => {
+                const draftKey=field as SourceDraftKey;
+                const editable=group.object==="KnowledgeSource"&&SOURCE_EDITABLE_FIELDS.has(draftKey);
+                return <div className={styles.field} key={field} data-field-uid={`KB-01-FLD-${field}`}><span>{field}</span>{editable ? (
+                  SOURCE_JSON_FIELDS.has(draftKey)
+                    ? <textarea className={styles.fieldEditorArea} value={sourceDraft[draftKey]} disabled={busy||projection?.control_enabled["KB-01-CTL-SOURCE-CREATE"]!==true} onChange={(event)=>setSourceDraft((current)=>({...current,[draftKey]:event.target.value}))} />
+                    : <input className={styles.fieldEditor} value={sourceDraft[draftKey]} disabled={busy||projection?.control_enabled["KB-01-CTL-SOURCE-CREATE"]!==true} onChange={(event)=>setSourceDraft((current)=>({...current,[draftKey]:event.target.value}))} />
+                ) : <strong>{fieldValue(field)}</strong>}</div>;
+              })}</div></div>)}
             </article>; })}</div>
           </section>)}
         </main>

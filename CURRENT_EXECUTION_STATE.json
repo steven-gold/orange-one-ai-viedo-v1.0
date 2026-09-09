@@ -2,17 +2,17 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-08T01:35:00+08:00",
+  "as_of": "2026-09-08T14:10:00.000+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
-    "main_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
-    "new_sha_basis": "c0141aa27d41cb949cc575e73196ac50b3563d93",
+    "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+    "new_sha_basis": "1079fd8a718d13da20732541d9756cf6403185f3",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "NEW_AHEAD_WITH_USER_APPROVED_SYS01_RUNTIME_READY_FOR_INTEGRATION",
-    "post_release_new_status": "ALIGNED_WITH_MAIN_BEFORE_STATE_ONLY_EVIDENCE_UPDATE"
+    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_PREDEPLOY_RUNTIME_CLOSURES_THROUGH_SOC_PUBLISH_0031",
+    "post_release_new_status": "AHEAD_OF_MAIN_NO_VERCEL_DEPLOYMENT_TRIGGERED"
   },
   "release_validation": {
     "final_pre_state_construction_gate": {
@@ -479,26 +479,512 @@
       },
       "production_application_deployment": "PENDING_MAIN_INTEGRATION",
       "production_mutation_e2e": "NOT_YET_EXECUTED_ON_DEPLOYED_CODE"
+    },
+    "system_lifecycle_runtime_production": {
+      "status": "DEPLOYED_AND_PRODUCTION_E2E_PASS",
+      "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+      "release_gate": {
+        "run_number": 601,
+        "run_id": 34149867364,
+        "conclusion": "success"
+      },
+      "vercel": {
+        "status": "success",
+        "description": "Deployment has completed",
+        "deployment_target": "7xmuHuWBZwWBeEH1UgZNZZcR7yag"
+      },
+      "post_deploy": {
+        "run_number": 866,
+        "run_id": 34149919976,
+        "conclusion": "success",
+        "readiness_http": 200,
+        "release_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+        "projections": 18,
+        "auth_e2e": "PASS",
+        "browser_smoke_cases": 54,
+        "auth_browser_visibility": {
+          "front_nav": 8,
+          "admin_nav": 8,
+          "visible_pages": 18
+        },
+        "current_dom": {
+          "interactive": 495,
+          "enabled": 312,
+          "disabled": 183,
+          "governed": 495
+        }
+      },
+      "production_mutation_e2e": {
+        "status": "PASS",
+        "workflow": "ACPOS SYS Lifecycle Acceptance",
+        "run_number": 1,
+        "run_id": 34152129285,
+        "release_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+        "system_change_id": "3cece791-fe3c-49c6-a9f7-4bf3cc3de713",
+        "candidate_ref": "f35acc00-92f3-4e44-8676-4883e9b6370f",
+        "change_request_ref": "5e7d8c9c-1731-4d6d-b6af-f4ecc4d59e11",
+        "sandbox_test_id": "56bfaf98-0205-416a-ba59-e13f8f94d6ef",
+        "provider_profile_id": "profile-groq-text-v1",
+        "dry_run": true,
+        "external_request_sent": false,
+        "production_mutation": false,
+        "deployment_triggered": false
+      },
+      "bootstrap_admin_permissions": {
+        "status": "PASS_6_APPROVED_ALLOW_ASSIGNMENTS_FOR_SYS_ACCEPTANCE",
+        "sys_required_assignments": 5,
+        "aiapi_sandbox_invoke_assignment": 1
+      }
+    },
+    "external_provider_control_plane": {
+      "status": "PRODUCTION_CORE_PASS_HEALTHY_POOL_2_DEFERRED_2",
+      "env_evidence": {
+        "source": "USER_PROVIDED_VERCEL_PRODUCTION_ENVIRONMENT_VARIABLE_SCREENSHOT_2026-09-08",
+        "variables": [
+          "GROQ_API_KEY",
+          "GOOGLE_GEMINI_API_KEY",
+          "DEEPSEEK_API_KEY",
+          "OPENROUTER_API_KEY"
+        ],
+        "environment": "Production",
+        "plaintext_recorded_in_repo_or_db": false
+      },
+      "production_counts": {
+        "enabled_profiles": 4,
+        "healthy_profiles": 2,
+        "degraded_profiles": 2,
+        "approved_secret_references": 4,
+        "approved_capabilities": 4,
+        "enabled_groups": 1,
+        "enabled_members": 4,
+        "real_profile_passes": 14,
+        "sandbox_passes": 3,
+        "successful_routes": 5,
+        "blocked_no_external_routes": 1
+      },
+      "profiles": [
+        {
+          "profile_id": "profile-groq-text-v1",
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "health_status": "HEALTHY",
+          "priority": 1,
+          "last_real_test": "PASS_HTTP_200"
+        },
+        {
+          "profile_id": "profile-google-text-v1",
+          "provider": "google",
+          "model": "gemini-3.5-flash",
+          "health_status": "HEALTHY",
+          "priority": 2,
+          "last_real_test": "PASS_HTTP_200"
+        },
+        {
+          "profile_id": "profile-deepseek-text-v1",
+          "provider": "deepseek",
+          "model": "deepseek-v4-flash",
+          "health_status": "DEGRADED",
+          "priority": 3,
+          "last_real_test": "DEFERRED_KNOWN_HTTP_402"
+        },
+        {
+          "profile_id": "profile-openrouter-text-v1",
+          "provider": "openrouter",
+          "model": "openrouter/auto",
+          "health_status": "DEGRADED",
+          "priority": 4,
+          "last_real_test": "DEFERRED_KNOWN_HTTP_401"
+        }
+      ],
+      "main_group": {
+        "group_id": "group-text-chat-primary-v1",
+        "enabled": true,
+        "members": 4,
+        "routing_policy": "health_and_capability_gated_priority"
+      },
+      "comprehensive_production_acceptance": {
+        "workflow": "ACPOS External Provider Acceptance",
+        "run_number": 6,
+        "run_id": 34153388562,
+        "conclusion": "success",
+        "release_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+        "direct_real_tests": {
+          "groq": "PASS_HTTP_200",
+          "google": "PASS_HTTP_200",
+          "deepseek": "DEFERRED_HTTP_402",
+          "openrouter": "DEFERRED_HTTP_401"
+        },
+        "sandbox_tests": {
+          "groq": "PASS_DRY_RUN_NO_EXTERNAL",
+          "google": "PASS_DRY_RUN_NO_EXTERNAL",
+          "count": 2
+        },
+        "primary_route": {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "status": "SUCCESS",
+          "worker_succeeded": 1,
+          "external_request_sent": true,
+          "route_decision_id": "d8a53774-148b-467f-a41b-361b05c6979e"
+        },
+        "secondary_route": {
+          "provider": "google",
+          "model": "gemini-3.5-flash",
+          "status": "SUCCESS",
+          "worker_succeeded": 1,
+          "external_request_sent": true,
+          "route_decision_id": "dc81c0f2-e985-49d9-8ac1-a89342b287f3"
+        },
+        "fail_closed_route": {
+          "status": "BLOCKED",
+          "reason": "NO_ELIGIBLE_PROVIDER_MEMBER",
+          "eligible_members": 0,
+          "external_request_sent": false,
+          "route_decision_id": "d4d33561-c338-4ce2-b980-ba8d1dfca413"
+        },
+        "plaintext_persisted": false
+      },
+      "temporary_acceptance_groups": {
+        "cleanup_status": "DISABLED_AFTER_EVIDENCE_CAPTURE",
+        "enabled_acceptance_groups": 0,
+        "groups": [
+          "accept-google-only-20260908-v1",
+          "accept-degraded-only-20260908-v1"
+        ],
+        "production_primary_group_unchanged": true
+      },
+      "bootstrap_admin_permissions": {
+        "status": "PASS",
+        "aiapi_approved_allow_assignments": 15
+      }
+    },
+    "current_construction_gate": {
+      "status": "PASS",
+      "run_number": 820,
+      "run_id": 34194623208,
+      "head_sha": "1079fd8a718d13da20732541d9756cf6403185f3",
+      "branch": "new",
+      "conclusion": "success",
+      "source_lint": "PASS",
+      "dependency_audit": "PASS",
+      "typecheck": "PASS",
+      "release_unit_tests": "PASS",
+      "production_build": "PASS",
+      "production_http_e2e": "PASS",
+      "controlled_build": "PASS",
+      "controlled_misconfiguration_http_e2e": "PASS",
+      "supported_viewport_browser_e2e": "PASS",
+      "current_dom_control_acceptance": "PASS",
+      "standalone_docker_build": "PASS",
+      "dirty_tree_guard": "PASS",
+      "production_effect": "NONE_NEW_BRANCH_ONLY"
+    },
+    "ai_conversation_predeploy": {
+      "status": "PASS_PREDEPLOY_INCLUDED_IN_CURRENT_RELEASE_GATE_FINAL_PRODUCTION_E2E_PENDING_SINGLE_RELEASE",
+      "new_sha": "4a90b144731b0b1c2c8eb5c483278313396f3633",
+      "release_gate": {
+        "run_number": 681,
+        "run_id": 34166553250,
+        "conclusion": "success",
+        "unit_tests": "121_PASS_0_FAIL",
+        "browser_e2e": "72_CASES_PASS",
+        "i18n_cases": 54,
+        "shell_geometry_cases": 18,
+        "visual_topology_cases": 5,
+        "sidebar_reflow_cases": 1,
+        "docker": "PASS",
+        "dirty_tree": "PASS"
+      },
+      "discovered_prior_gap": "Production CORE/shared conversation send persisted USER message only and did not invoke a Provider; CORE UI only rendered simulated_response_text in controlled tests; Strategy Production request builder/context/history projection did not support a real chat turn.",
+      "implementation": {
+        "shared_runtime": "src/server/shared/productionConversationAiRuntime.ts",
+        "provider_path": "EXISTING_AIAPI_EXECUTE_PROVIDER_ROUTE_AND_GET_ROUTE_DECISION",
+        "provider_group_use_case": "ACPOS_TEXT_CHAT",
+        "persistence": "conversation_messages USER + PROVIDER",
+        "transcript_window": "LAST_20_MESSAGES",
+        "multi_turn_context": true,
+        "core_send": "BOUND_TO_SHARED_PRODUCTION_AI_TURN",
+        "strategy_send": "BOUND_TO_SHARED_PRODUCTION_AI_TURN",
+        "core_real_assistant_rendering": true,
+        "core_persisted_history_restore": true,
+        "strategy_persisted_history_projection": true,
+        "controlled_simulation_fallback_preserved": true,
+        "plaintext_provider_secret_in_conversation_runtime": false
+      },
+      "final_production_acceptance": {
+        "workflow": ".github/workflows/conversation-acceptance.yml",
+        "script": "scripts/production-conversation-e2e.mjs",
+        "trigger_file": ".github/conversation-acceptance-trigger.txt",
+        "trigger_file_currently_absent": true,
+        "reason": "Do not run against old Production main; trigger only after the final consolidated main deployment.",
+        "required_evidence": [
+          "exact release_sha",
+          "authenticated thread create",
+          "turn 1 USER -> real ASSISTANT external request",
+          "turn 2 recalls marker from turn 1",
+          "worker_succeeded=1 for both turns",
+          "CORE projection restores USER/ASSISTANT/USER/ASSISTANT persisted sequence"
+        ]
+      },
+      "production_status": "NOT_DEPLOYED_BY_USER_POLICY"
+    },
+    "core_candidate_0021_predeploy": {
+      "status": "VALIDATED_PENDING_PRODUCTION_APPLY",
+      "migration_id": "0021_core_decision_candidate_runtime",
+      "payload_sha256": "e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6",
+      "repository_migration_count": 21,
+      "production_migration_count": 20,
+      "production_latest_migration": "0020_system_lifecycle_runtime",
+      "production_mutation_performed": false,
+      "validation_branch": {
+        "id": "br-orange-smoke-aut9pafw",
+        "name": "rls-0016-validate-20260906",
+        "migration_count": 21,
+        "target_tables": 5,
+        "rls_enabled_tables": 5,
+        "rls_policies": 10,
+        "unvalidated_constraints": 0,
+        "runtime_role": "acpos_app_runtime",
+        "runtime_role_bypassrls": false,
+        "runtime_role_superuser": false,
+        "runtime_role_login": false,
+        "all_select_grants": true,
+        "all_insert_grants": true,
+        "no_session_visible_rows_all_target_tables": 0
+      },
+      "baseline_against_production": {
+        "table_fingerprint_excluding_0021": "EXACT",
+        "column_fingerprint_excluding_0021": "EXACT",
+        "constraint_fingerprint_excluding_0021": "EXACT",
+        "index_fingerprint_excluding_0021": "EXACT",
+        "migration_0001_0019_history": "EXACT",
+        "migration_0020_checksum_match": true,
+        "migration_0020_history_metadata_delta": {
+          "validation_approval_ref": "PENDING-CR-SYS-0020",
+          "production_approval_ref": "USER-APPROVED-CR-SYS-0020-20260908",
+          "classification": "METADATA_ONLY_NOT_SCHEMA_DRIFT"
+        }
+      },
+      "regression_fix": {
+        "failed_release_gate": 678,
+        "failed_sha": "edf955076c9327d502d5e8f45aba7714c3a7f6b5",
+        "failures": [
+          "migration checksum contract test expected 1.0.7 while Current manifest is 1.0.8",
+          "RLS runtime test expected MAX_SUPPORTED_MIGRATION_COUNT=20 while staged 0021 requires max 21"
+        ],
+        "fix_commit": "842a03c0a1f11079645e1bc9644a0ea0e7339edd",
+        "first_green_release_gate": 679
+      },
+      "regression_lock_commit": "2ba38a6fff279dd64a87c635717b928bf3e48ac6",
+      "regression_lock_release_gate": 680,
+      "authority_commit": "4a90b144731b0b1c2c8eb5c483278313396f3633",
+      "authority_release_gate": 681,
+      "production_apply_policy": "FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE"
+    },
+    "info_0029_predeploy": {
+      "status": "VALIDATED_PENDING_PRODUCTION_APPLY_EVIDENCE_LINEAGE_AND_EXPORT_OWNER",
+      "migration_id": "0029_info_context_candidate_permission_rls_closure",
+      "payload_sha256": "a1494503e3dde66d9bcfcf9bdc0c18277bd942a5a415d827058df851dc8ba7b2",
+      "repository_migration_count": 29,
+      "validation_branch_migration_count": 29,
+      "production_migration_count": 20,
+      "production_latest_migration": "0020_system_lifecycle_runtime",
+      "production_mutation_performed": false,
+      "validation_branch": {
+        "id": "br-orange-smoke-aut9pafw",
+        "name": "rls-0016-validate-20260906",
+        "migration_before": 28,
+        "migration_after": 29,
+        "approved_allow_assignments": 4,
+        "rls_policies": 5,
+        "runtime_role": "acpos_app_runtime",
+        "actor_resolved": true,
+        "page_view": true,
+        "refresh_execute": true,
+        "search_execute": true,
+        "adopt_execute": true,
+        "decide_execute": true,
+        "transactional_adoption": "CANDIDATE_TO_APPROVED_PASS",
+        "audit_insert": "PASS",
+        "cleanup_residual_zero": true
+      },
+      "implementation": {
+        "business_payload_registry": "MATERIALIZED_CURRENT",
+        "operation_registry": "MATERIALIZED_CURRENT",
+        "production_projection_normalizer": "MATERIALIZED_CURRENT",
+        "session_bound_fact_pack_projection": "MATERIALIZED_CURRENT",
+        "context_candidate_runtime": "MATERIALIZED_CURRENT",
+        "candidate_decision_owner_routing": "MATERIALIZED_CURRENT",
+        "fabricated_production_human_decision": "FORBIDDEN",
+        "human_adopt_decide_interaction": "MATERIALIZED_CURRENT",
+        "human_decision_payload_builder": "MATERIALIZED_CURRENT",
+        "human_decision_projection_gates": "MATERIALIZED_CURRENT_CANDIDATE_STATE_ONLY"
+      },
+      "remaining_blockers": [
+        "knowledge_sources/evidence_records workspace lineage and FactPack evidence_refs JSON shape are not defined strongly enough to open Evidence RLS safely.",
+        "exportProjection has no canonical export persistence owner."
+      ],
+      "release_gate": {
+        "run_number": 802,
+        "run_id": 34188998821,
+        "head_sha": "df7ba56cc6fbe8162d3ee4def799d6e4317c8075",
+        "conclusion": "success"
+      },
+      "production_apply_policy": "FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE"
+    },
+    "info_human_interaction_closure": {
+      "status": "MATERIALIZED_RELEASE_VALIDATED_PENDING_CONSOLIDATED_PRODUCTION_RELEASE",
+      "commit_sha": "df7ba56cc6fbe8162d3ee4def799d6e4317c8075",
+      "release_gate": {
+        "run_number": 802,
+        "run_id": 34188998821,
+        "conclusion": "success"
+      },
+      "interaction_registry": "07_ui/interaction_registry.yaml",
+      "controls": [
+        "INFO-01-BTN-ADOPT-CONTEXT",
+        "INFO-01-BTN-CANDIDATE-DECIDE"
+      ],
+      "production_client_dialog": "MATERIALIZED_EXISTING_DIALOG_PATTERN",
+      "adopt_payload": "MATERIALIZED_EXACT_CONTEXT_CANDIDATE_ID_AND_DECISION_REASON",
+      "decide_payload": "MATERIALIZED_EXACT_CANDIDATE_ID_HUMAN_DECISION_AND_OPTIONAL_REASON",
+      "production_projection_gates": "CANDIDATE_STATE_GOVERNED",
+      "evidence_lineage": "AUTHORITY_GAP_REMAINS_FAIL_CLOSED",
+      "export_owner": "AUTHORITY_GAP_REMAINS_FAIL_CLOSED",
+      "production_effect": "NONE_NEW_BRANCH_ONLY"
+    },
+    "erp_exact_read_closure": {
+      "status": "MATERIALIZED_RELEASE_VALIDATED_PENDING_CONSOLIDATED_PRODUCTION_RELEASE",
+      "commit_sha": "0800421f08a66b091836928d2f01cf68a870dd03",
+      "release_gate": {
+        "run_number": 804,
+        "run_id": 34189626560,
+        "conclusion": "success"
+      },
+      "operations": [
+        "getERPSyncStatus",
+        "getERPFailure"
+      ],
+      "exact_path_identity": "UUID_PATH_BOUND_SINGLE_RECORD",
+      "production_projection_failure_ref": "MATERIALIZED",
+      "list_fallback_for_path_endpoints": "REMOVED",
+      "production_effect": "NONE_NEW_BRANCH_ONLY"
+    },
+    "soc_target_policy_0030_predeploy": {
+      "status": "VALIDATED_PENDING_PRODUCTION_APPLY",
+      "commit_sha": "de64634f2d59697faed65bc9e392fb9dc35271d7",
+      "migration_id": "0030_soc_target_policy_permission_rls_closure",
+      "payload_sha256": "d43ee379e03c27824e61613f89ffdb75823182ef3397bd9c507d70b943aed518",
+      "release_gate": {
+        "run_number": 813,
+        "run_id": 34191812915,
+        "head_sha": "de64634f2d59697faed65bc9e392fb9dc35271d7",
+        "conclusion": "success"
+      },
+      "validation_branch": {
+        "id": "br-orange-smoke-aut9pafw",
+        "name": "rls-0016-validate-20260906",
+        "migration_before": 29,
+        "migration_after": 30,
+        "approved_allow_assignments": 3,
+        "rls_policies": 6,
+        "target_version_column": true,
+        "runtime_role": "acpos_app_runtime",
+        "actor_resolved": true,
+        "action_permission": true,
+        "control_permission": true,
+        "api_permission": true,
+        "transactional_target_transition": "JOINED_TO_READY_TO_POST_V1_TO_V2_PASS",
+        "idempotency_insert_read": "PASS",
+        "audit_insert_read": "PASS",
+        "cleanup_residual_zero": true
+      },
+      "implementation": {
+        "interaction_registry": "MATERIALIZED_CURRENT",
+        "production_client_form": "MATERIALIZED_SAFE_FORM_MODAL",
+        "production_projection": "MATERIALIZED_SESSION_BOUND_TARGET_SELECTION",
+        "production_mutation": "MATERIALIZED_LOCAL_PERSISTENCE_ONLY",
+        "external_publish": "NOT_EXECUTED_SEPARATE_CLOSURE"
+      },
+      "production_baseline": {
+        "migration_count": 20,
+        "latest_migration": "0020_system_lifecycle_runtime",
+        "soc_0030_assignment_rows": 0,
+        "social_target_rows": 0,
+        "production_mutation_performed": false
+      },
+      "production_apply_policy": "FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE"
+    },
+    "soc_publish_request_0031_predeploy": {
+      "status": "VALIDATED_PENDING_PRODUCTION_APPLY",
+      "commit_sha": "1079fd8a718d13da20732541d9756cf6403185f3",
+      "migration_id": "0031_soc_publish_request_relation_runtime",
+      "payload_sha256": "81f65e614d720ad44b8d8d4b2594f7128caac5af396d16221f15f46a31fc600e",
+      "release_gate": {
+        "run_number": 820,
+        "run_id": 34194623208,
+        "head_sha": "1079fd8a718d13da20732541d9756cf6403185f3",
+        "conclusion": "success"
+      },
+      "validation_branch": {
+        "id": "br-orange-smoke-aut9pafw",
+        "name": "rls-0016-validate-20260906",
+        "migration_before": 30,
+        "migration_after": 31,
+        "approved_allow_assignments": 3,
+        "relation_columns_not_null": 2,
+        "relation_constraints": 3,
+        "publish_rls_policies": 1,
+        "security_definer_function": true,
+        "runtime_role": "acpos_app_runtime",
+        "successful_local_request": true,
+        "target_transition": "READY_TO_POST_V7_TO_PENDING_EXTERNAL_V8_PASS",
+        "idempotent_replay_same_request": true,
+        "metadata_identity_negative_check": "PASS",
+        "external_request_sent": false,
+        "external_success": false,
+        "cleanup_residual_zero": true
+      },
+      "implementation": {
+        "authority_relation_contract": "MATERIALIZED_CURRENT",
+        "interaction_registry": "MATERIALIZED_CURRENT",
+        "production_client_confirmation": "MATERIALIZED_SAFE_TEXTCONTENT",
+        "production_projection": "MATERIALIZED_EXACT_CANONICAL_REFS",
+        "production_mutation": "MATERIALIZED_LOCAL_PERSISTENCE_ONLY",
+        "metadata_identity_fallback": "FORBIDDEN_BY_DB_CHECK",
+        "external_publish": "NOT_EXECUTED_SEPARATE_CLOSURE"
+      },
+      "production_baseline": {
+        "migration_count": 20,
+        "latest_migration": "0020_system_lifecycle_runtime",
+        "social_target_id_column": false,
+        "content_package_id_column": false,
+        "soc_0031_assignment_rows": 0,
+        "production_mutation_performed": false
+      },
+      "production_apply_policy": "FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE"
     }
   },
   "production": {
     "target": "orange-one-acpos-test",
     "url": "https://orange-one-acpos-test.vercel.app",
-    "deployed_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
+    "deployed_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
     "deployment_status": "PASS_EXACT_MAIN_SHA",
     "latest_verified_post_deploy": {
-      "status": "PASS",
-      "deployment_status_run_number": 852,
-      "deployment_status_run_id": 34141411118,
-      "head_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
+      "status": "PASS_RERUN_WITH_CURRENT_PROVIDER_DATA",
+      "deployment_status_run_number": 866,
+      "deployment_status_run_id": 34149919976,
+      "run_attempt": 2,
+      "head_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
       "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_RELEASE_SHA_EXACT_PROJECTIONS_18",
       "authenticated_e2e": "PASS_LOGIN_SESSION_DASHBOARD_PROJECTIONS_18_QUEUE_PROBE_LOGOUT",
       "browser_smoke": "PASS_54_CASES_18_PAGES_3_WIDTHS",
       "authenticated_browser_visibility": "PASS_FRONT_NAV_8_ADMIN_NAV_8_VISIBLE_PAGES_18",
-      "current_dom_control_acceptance": "PASS_18_PAGES_491_VISIBLE_491_GOVERNED_ENABLED_308_DISABLED_183"
+      "current_dom_control_acceptance": "PASS_18_PAGES_519_VISIBLE_519_GOVERNED_ENABLED_319_DISABLED_200",
+      "aiapi_page_dom": "PASS_ROUTE_/admin/aiapi_UID_admin:AIAPI-01_VISIBLE_29_ENABLED_11_DISABLED_18_GOVERNED_29"
     },
-    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
-    "database_migration_count": 19,
+    "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_dc84346a41bbadc2537fe2de9ba535126547e0cf_RERUN_20260908",
+    "database_migration_count": 20,
     "vercel_management_visibility": {
       "team": "gold5757",
       "plan": "Hobby",
@@ -511,9 +997,9 @@
     "vercel_deployment": {
       "state": "SUCCESS",
       "description": "Deployment has completed",
-      "main_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
+      "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
       "target": "gold5757/orange-one-acpos-test",
-      "deployment_ref": "4bqwteM56Xq5VUHfNdYQZUvADW7v",
+      "deployment_ref": "7xmuHuWBZwWBeEH1UgZNZZcR7yag",
       "deployment_trigger_count_for_this_release": 1
     },
     "visual_shell_repair": {
@@ -579,19 +1065,39 @@
     "branch": "main",
     "branch_id": "br-shy-cherry-auiol4oy",
     "database": "neondb",
-    "migration_count": 19,
-    "latest_migration": "0019_async_queue_delivery_runtime",
+    "migration_count": 20,
+    "latest_migration": "0020_system_lifecycle_runtime",
     "migration_0019_checksum": "aea7ea811c826b255d3478e12e9715cb042444c5d2c6f8431f02b0189c0818cc",
     "canonical_queue_ready_count": 1,
     "canonical_worker_ready_count": 1,
     "worker_last_heartbeat_at": "2026-09-06T22:53:09.811Z",
-    "provider_capability_count": 0,
-    "provider_profile_count": 0,
-    "secret_reference_count": 0,
-    "provider_group_count": 0,
-    "provider_member_count": 0,
-    "provider_profile_test_count": 0,
-    "provider_route_decision_count": 0
+    "provider_capability_count": 4,
+    "provider_profile_count": 4,
+    "secret_reference_count": 4,
+    "provider_group_count": 1,
+    "provider_member_count": 4,
+    "provider_profile_test_count": 24,
+    "provider_route_decision_count": 3,
+    "pending_validated_migration_0021": {
+      "status": "VALIDATED_NOT_APPLIED_TO_PRODUCTION",
+      "migration_id": "0021_core_decision_candidate_runtime",
+      "checksum": "e9a50e98fcd7ba907ddeff7de6c0014500afab7e8b8836591006a7784c639ae6",
+      "validation_branch_id": "br-orange-smoke-aut9pafw",
+      "production_apply": "PENDING_FINAL_RELEASE_SEQUENCE"
+    },
+    "repository_registered_migration_count": 31,
+    "validation_branch_migration_count": 31,
+    "validation_latest_migration": "0031_soc_publish_request_relation_runtime",
+    "production_migration_count": 20,
+    "pending_validated_migrations": {
+      "range": "0021-0031",
+      "status": "VALIDATED_ON_EXISTING_VALIDATION_BRANCH_NOT_APPLIED_TO_PRODUCTION",
+      "validation_branch_id": "br-orange-smoke-aut9pafw",
+      "validation_migration_count": 31,
+      "production_migration_count": 20,
+      "production_latest_migration": "0020_system_lifecycle_runtime",
+      "production_apply": "PENDING_FINAL_RELEASE_SEQUENCE"
+    }
   },
   "deployment_policy": {
     "status": "MATERIALIZED_CURRENT",
@@ -659,33 +1165,51 @@
       "release_gate_532": "PASS"
     },
     "production_deployment": "DEPLOYED_ON_2e53c4ecfb18ff5d4268d61adf01ee754c9ba0ed",
-    "external_provider_execution": "BLOCKED_REAL_PROVIDER_CONFIGURATION_REQUIRED",
+    "external_provider_execution": "PASS_CURRENT_HEALTHY_POOL_GROQ_GOOGLE",
     "provider_counts": {
-      "capabilities": 0,
-      "profiles": 0,
-      "secret_references": 0,
-      "groups": 0,
-      "members": 0,
-      "profile_tests": 0,
-      "route_decisions": 0
+      "capabilities": 4,
+      "profiles": 4,
+      "healthy_profiles": 2,
+      "degraded_profiles": 2,
+      "secret_references": 4,
+      "enabled_groups": 1,
+      "enabled_members": 4,
+      "real_profile_passes": 14,
+      "sandbox_passes": 3,
+      "route_successes": 5,
+      "blocked_no_external_routes": 1
     },
-    "external_provider_adapter_runtime": "DEPLOYED_PRODUCTION",
+    "external_provider_adapter_runtime": "DEPLOYED_PRODUCTION_AND_REAL_E2E_PASS",
     "capability_governance_materialization": "DEPLOYED_PRODUCTION_RELEASE_GATE_535_POST_DEPLOY_796_797_PASS",
     "worker_dispatch_authority_revalidation": "DEPLOYED_PRODUCTION_RELEASE_GATE_535_POST_DEPLOY_796_797_PASS",
-    "real_external_provider_acceptance": "MANUAL_ONLY_WORKFLOW_DEPLOYED_NOT_EXECUTED_REAL_CONFIG_ABSENT"
+    "real_external_provider_acceptance": "PASS_RUN_6_PRIMARY_GROQ_SECONDARY_GOOGLE_QUEUE_WORKER_SANDBOX_FAIL_CLOSED",
+    "production_ui_acceptance": "PASS_POST_DEPLOY_866_ATTEMPT_2_AIAPI_29_VISIBLE_29_GOVERNED",
+    "bootstrap_admin_control_permissions": "PASS_15_APPROVED_ALLOW_ASSIGNMENTS",
+    "conversation_runtime": {
+      "status": "PREDEPLOY_RELEASE_VALIDATED_NOT_YET_ON_MAIN",
+      "healthy_provider_pool": [
+        "groq",
+        "google"
+      ],
+      "routing_owner": "AIAPI",
+      "direct_provider_call_from_ui": false,
+      "secret_handling": "NONE_IN_CONVERSATION_LAYER",
+      "final_production_e2e": "PENDING_FINAL_SINGLE_DEPLOYMENT"
+    }
   },
   "formal_truth": {
     "gate22_external_provider": {
-      "status": "BLOCKED_SECRET_ENV_BINDING_AND_REAL_EXTERNAL_E2E",
-      "reason": "User supplied four Provider credentials for Groq/Google/DeepSeek/OpenRouter, but secrets have not been persisted in repository or database plaintext. Current available Vercel connector exposes no environment-variable write operation. Production provider control-plane remains profiles=0, groups=0, members=0, capabilities=0, secret_references=0 until secure env binding and governed provider configuration are completed."
+      "status": "PASS_CURRENT_PRODUCTION_PROVIDER_POOL",
+      "completion": "4/4=100%",
+      "reason": "Gate 22 core criteria are now proven in Production: governed Provider profiles/capabilities/secret references are materialized; real external connection tests pass for Groq and Google; canonical routing passes through Queue/Worker with external_request_sent=true; Google-only secondary routing also passes; health-gated degraded-only routing is BLOCKED before external dispatch; Groq/Google sandbox compilation passes dry_run=true with no external request. DeepSeek HTTP 402 and OpenRouter HTTP 401 are explicitly deferred by the user and are not current Gate 22 blockers."
     },
     "gate23_queue_worker_dlq": {
       "status": "PASS",
       "reason": "Production queue/worker/DLQ is re-verified on exact Production SHA 2e53c4ec via Post-Deploy #796 and duplicate confirming #797; authenticated E2E passes idempotency, claim, inbox receipt, publish, expired-lease recovery, retry, DLQ and residual-zero cleanup without external provider calls."
     },
     "gate24_admin_mutation": {
-      "status": "PARTIAL_SYS01_CODE_DB_PERMISSION_VALIDATED_PENDING_DEPLOY_AND_PRODUCTION_E2E",
-      "reason": "User approved CR-SYS-0020 and all three SYS-01 mutations. Production Neon is migration 0020 with exact checksum, 3 RLS tables, 6 policies and zero unvalidated constraints; bootstrap admin has the five required ACTION/API ALLOW assignments; Current Authority now enables createCandidate/createChangeRequest/runSandboxTest and binds three canonical HTTP routes. Exact new SHA c0141aa27d41cb949cc575e73196ac50b3563d93 passed Release Gate #598. Gate is not closed until this SHA is integrated/deployed and authenticated Production mutation E2E passes."
+      "status": "PARTIAL_SYS01_PRODUCTION_E2E_PASS_OTHER_ADMIN_MUTATION_ACCEPTANCE_REMAINS",
+      "reason": "SYS-01 approved Production lifecycle subset is now E2E PASS on exact release dc84346a... via ACPOS SYS Lifecycle Acceptance #1: createCandidate created a governed system change/candidate, createChangeRequest returned SUBMITTED, and runSandboxTest returned PASS dry_run=true with external_request_sent=false, production_mutation=false and deployment_triggered=false. This closes the SYS-01 lifecycle blocker only; Gate 24 overall still includes other admin mutation acceptance evidence and is not declared fully closed here."
     },
     "gate25_full_page_button_acceptance": {
       "status": "PASS_PRODUCTION_CURRENT_18_PAGE_STAGE_DRIVEN_VISUAL_RELEASE",
@@ -709,16 +1233,23 @@
     }
   },
   "blockers": [
-    "Gate 24: deploy integrated SYS-01 runtime to main and pass authenticated Production createCandidate/createChangeRequest/runSandboxTest E2E.",
-    "Gate 22: securely bind GROQ_API_KEY, GOOGLE_GEMINI_API_KEY, DEEPSEEK_API_KEY and OPENROUTER_API_KEY in Vercel Production environment without repository/database plaintext, then materialize governed profiles/capabilities/group and run real external-provider E2E.",
-    "Current Vercel connector does not expose project environment-variable write capability; do not bypass this by storing plaintext secrets in GitHub or Neon."
+    "AI conversation final Production E2E is intentionally pending because user requires one consolidated deployment only after all construction is ready.",
+    "Validated migrations 0021-0031 are intentionally not applied to Production until the final consolidated release sequence; Production remains at migration 0020.",
+    "INFO-01 exact Evidence/source lineage and export persistence owner remain Authority gaps; no fabricated Evidence or export is permitted.",
+    "Gate 24 overall non-SYS admin mutation acceptance still requires final Current recomputation after remaining runtime closures.",
+    "Do not persist Provider API-key plaintext in GitHub, Neon, logs or state artifacts.",
+    "ERP-01 remaining write closure is Authority/schema blocked: CreateERPConnector requires data_classification without a canonical connector/mapping persistence column and requires workspace_id without a Current user-to-workspace/scope owner; Update/Validate/Retry schemas are not fully materialized in the Current business payload registry. Do not hardcode a workspace or persist fields into unrelated JSON.",
+    "SOC-01 publish relation is closed by 0031, but SOC candidate APPROVE does not yet seal the exact public.content_packages row to APPROVED; keep publish fail-closed until the content-package approval owner is materialized.",
+    "QA createReleasePackage is still blocked by QA01_RELEASE_EVIDENCE_OWNER_NOT_MATERIALIZED; approved release/content lineage cannot be fabricated for Production."
   ],
   "next_release_sequence": [
-    "Integrate new c0141aa27d41cb949cc575e73196ac50b3563d93 through PR after exact Release Gate #598 PASS; main code must support Production migration count 20.",
-    "Verify exact merged main Release Gate, Vercel deployment status, readiness=200 and Post-Deploy acceptance.",
-    "Run authenticated Production SYS-01 mutation E2E for createCandidate -> createChangeRequest -> runSandboxTest; Sandbox remains dry-run and does not send an external Provider request.",
-    "Securely bind four Provider environment variables in Vercel Production without plaintext repository/database storage.",
-    "Materialize Groq/Google/DeepSeek/OpenRouter TEXT_CHAT profiles, approved capabilities and one governed routing group; run real connection tests and Gate 22 external_request_sent=true E2E."
+    "SOC publish target/content canonical relation and local PENDING_EXTERNAL request closure are validated through migration 0031 and Release Gate #820. Next close the exact SOC content-package approval transition, then the QA ReleasePackage evidence owner.",
+    "Do not merge new to main and do not trigger Vercel while construction remains open.",
+    "Keep validated migrations 0021-0031 unapplied to Production until the consolidated governed release sequence.",
+    "Continue dependency-ready local runtime closures; keep external PublishingAdapterService success fail-closed until real provider/platform evidence exists.",
+    "After all dependency-ready runtime/acceptance gaps close, run one exact Release Gate on new and integrate once to main.",
+    "Apply the validated migration chain in the governed final release sequence with Production verification.",
+    "After exact final Production SHA is ready, run pending Conversation Acceptance and final Post-Deploy/Production acceptance before declaring overall PASS."
   ],
   "ui_visual_adjustment_policy": {
     "status": "ACTIVE",
@@ -733,7 +1264,12 @@
   "post_release_state_policy": {
     "branch": "new",
     "deployment_effect": "NONE",
-    "reason": "Record final Production UI/stage-driven evidence on construction branch only; no redundant Vercel Hobby deployment.",
+    "reason": "User explicitly requires all changes to be ready before a single consolidated Vercel deployment. AI conversation work remains on new until that final release.",
     "production_runtime_delta_after_main_release": false
-  }
+  },
+  "deferred_followups": [
+    "DeepSeek: current profile remains configured but DEGRADED after known HTTP 402; user explicitly deferred balance/account correction until actual formal use.",
+    "OpenRouter: current profile remains configured but DEGRADED after known HTTP 401; user explicitly deferred credential replacement until actual formal use.",
+    "Do not repeatedly retest DeepSeek/OpenRouter until the user decides to activate those providers for formal use."
+  ]
 }

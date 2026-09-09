@@ -266,6 +266,7 @@ type DepartmentTaskRow = {
   task_id: string;
   status: string;
   input_fingerprint: string | null;
+  handed_off_output_version_id: string | null;
   project_id: string;
   project_label: string;
   topic_id: string;
@@ -283,11 +284,20 @@ async function readDepartmentTasks(sql: SqlClient, sessionTokenHash: string, dep
              p.project_id::text AS project_id,
              p.title AS project_label,
              tp.topic_id::text AS topic_id,
-             tp.title AS topic_label
+             tp.title AS topic_label,
+             h.source_output_version_id::text AS handed_off_output_version_id
       FROM department_tasks t
       JOIN child_locks cl ON cl.child_lock_id = t.child_lock_id
       JOIN topics tp ON tp.topic_id = cl.topic_id
       JOIN projects p ON p.project_id = tp.project_id
+      LEFT JOIN LATERAL (
+        SELECT h0.source_output_version_id
+        FROM handoffs h0
+        WHERE h0.target_task_id=t.task_id
+          AND h0.status IN ('HANDOFF_READY','HANDED_OFF')
+        ORDER BY h0.created_at DESC,h0.handoff_id DESC
+        LIMIT 1
+      ) h ON true
       WHERE t.department::text = ${department}
       ORDER BY t.created_at DESC
     `,
@@ -305,6 +315,7 @@ async function readDepartmentTasks(sql: SqlClient, sessionTokenHash: string, dep
       task_id,
       status,
       input_fingerprint: asText(row?.input_fingerprint),
+      handed_off_output_version_id: asText(row?.handed_off_output_version_id),
       project_id,
       project_label,
       topic_id,
@@ -359,44 +370,197 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     const label = asText(row?.label);
     const project_id = asText(row?.project_id);
     if (!topic_id || !label || !project_id) return [];
-    if (first && project_id !== first.project_id) return [];
-    return [{ topic_id, topic_version_ref: asText(row?.topic_version_ref), label }];
+    return [{ topic_id, topic_version_ref: asText(row?.topic_version_ref), project_id, label }];
   });
   let threadRows: unknown = [];
-  if (first) {
-    try {
-      threadRows = await runRlsActorQuery(
-        sql,
-        sessionTokenHash,
-        sql`
-          SELECT c.conversation_id::text AS conversation_id,
-                 c.title AS label
-          FROM conversations c
-          WHERE c.project_id = ${first.project_id}::uuid
-          ORDER BY c.created_at DESC
-        `,
-      );
-    } catch {
-      threadRows = [];
-    }
+  try {
+    threadRows = await runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT c.conversation_id::text AS conversation_id,
+               COALESCE(NULLIF(c.title,''),b.work_item) AS label,
+               b.project_id::text AS project_id,
+               b.topic_id::text AS topic_id,
+               b.work_item,
+               b.parent_conversation_id::text AS parent_conversation_id,
+               b.source_message_id::text AS source_message_id,
+               b.relation_kind
+        FROM conversations c
+        JOIN core_conversation_thread_bindings b ON b.conversation_id=c.conversation_id
+        ORDER BY b.created_at DESC,c.created_at DESC
+      `,
+    );
+  } catch {
+    threadRows = [];
   }
   const threads = (Array.isArray(threadRows) ? threadRows : []).flatMap((raw) => {
     const row = asRecord(raw);
     const conversation_id = asText(row?.conversation_id);
     const label = asText(row?.label);
-    if (!conversation_id || !label) return [];
-    return [{ conversation_id, label }];
+    const project_id = asText(row?.project_id);
+    const topic_id = asText(row?.topic_id);
+    const work_item = asText(row?.work_item);
+    const parent_conversation_id = asText(row?.parent_conversation_id);
+    const source_message_id = asText(row?.source_message_id);
+    const relation_kind = asText(row?.relation_kind);
+    if (!conversation_id || !label || !project_id || !work_item || !["ROOT","BRANCH"].includes(relation_kind ?? "")) return [];
+    return [{
+      conversation_id,
+      label,
+      project_id,
+      topic_id,
+      work_item,
+      parent_conversation_id,
+      source_message_id,
+      relation_kind: relation_kind as "ROOT" | "BRANCH",
+    }];
   });
+  const messages_by_thread: Record<string, Array<{ message_ref: string; conversation_id: string; role: "USER" | "ASSISTANT" | "SYSTEM"; text: string }>> = {};
+  if (threads.length) {
+    const ids = threads.map((item) => item.conversation_id);
+    const messageRows = await runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT conversation_message_id::text AS message_ref,
+               conversation_id::text AS conversation_id,
+               actor_type,
+               COALESCE(message_content->>'text','') AS text,
+               COALESCE(message_content->>'kind','') AS kind,
+               message_content->>'assistant_summary' AS assistant_summary,
+               message_content->>'response_mode' AS response_mode,
+               message_content->'governance' AS governance
+        FROM conversation_messages
+        WHERE conversation_id = ANY(${ids}::uuid[])
+          AND COALESCE(message_content->>'kind','') <> 'DECISION_LEDGER'
+        ORDER BY conversation_id, sequence_no
+      `,
+    ).catch(() => []);
+    for (const raw of Array.isArray(messageRows) ? messageRows : []) {
+      const row = asRecord(raw);
+      const message_ref = asText(row?.message_ref);
+      const conversation_id = asText(row?.conversation_id);
+      const actor_type = asText(row?.actor_type);
+      const text = typeof row?.text === "string" ? row.text : "";
+      if (!message_ref || !conversation_id || !text.trim()) continue;
+      const role: "USER" | "ASSISTANT" | "SYSTEM" =
+        actor_type === "USER" ? "USER" : actor_type === "PROVIDER" ? "ASSISTANT" : "SYSTEM";
+      (messages_by_thread[conversation_id] ??= []).push({ message_ref, conversation_id, role, text });
+    }
+  }
+  const currentConversationId: string | null = null; // Client-selected exact thread only; server projection never guesses current context.
+  const latestAssistantRows = currentConversationId
+    ? await runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT message_content->>'assistant_summary' AS assistant_summary,
+                 message_content->>'response_mode' AS response_mode,
+                 message_content->'governance'->>'context_fingerprint' AS context_fingerprint,
+                 actor_ref
+          FROM conversation_messages
+          WHERE conversation_id=${currentConversationId}::uuid
+            AND actor_type='PROVIDER'
+          ORDER BY sequence_no DESC
+          LIMIT 1
+        `,
+      ).catch(() => [])
+    : [];
+  const latestAssistantMeta = asRecord(Array.isArray(latestAssistantRows) ? latestAssistantRows[0] : null);
+  const aiGroupRows = await sql`
+    SELECT g.id,
+           count(*) FILTER (WHERE m.enabled=true AND p.enabled=true AND p.health_status='HEALTHY')::int AS healthy_members
+    FROM acpos_runtime.provider_groups g
+    LEFT JOIN acpos_runtime.provider_members m ON m.group_id=g.id
+    LEFT JOIN acpos_runtime.provider_profiles p ON p.provider_id=m.provider_id AND p.model_id=m.model_id
+    WHERE g.enabled=true AND g.use_case='ACPOS_TEXT_CHAT'
+    GROUP BY g.id,g.updated_at
+    ORDER BY g.updated_at DESC,g.id
+    LIMIT 1
+  `.catch(() => []);
+  const aiGroup = asRecord(Array.isArray(aiGroupRows) ? aiGroupRows[0] : null);
+  const assignedAiSet = asText(aiGroup?.id);
+  const healthyAiMembers = Number(aiGroup?.healthy_members ?? 0);
+
+  const currentProjectId=first?.project_id??null;
+  const currentTopicId=topics[0]?.topic_id??null;
+  const candidateRows=currentProjectId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT c.candidate_version_id::text AS candidate_ref,c.version_no,c.work_item,c.content_hash::text AS content_hash,
+           c.core_evaluation_id::text AS core_evaluation_id,c.core_structured_decision_id::text AS structured_decision_id,
+           e.result AS evaluation_result,e.score_total::text AS score_total,sd.structured_document,
+           d.decision,d.reason
+    FROM public.candidate_versions c
+    LEFT JOIN public.core_evaluations e ON e.core_evaluation_id=c.core_evaluation_id
+    LEFT JOIN public.core_structured_decisions sd ON sd.core_structured_decision_id=c.core_structured_decision_id
+    LEFT JOIN public.candidate_decisions d ON d.candidate_version_id=c.candidate_version_id
+    WHERE c.project_id=${currentProjectId}::uuid
+      AND (${currentTopicId}::uuid IS NULL OR c.topic_id=${currentTopicId}::uuid)
+    ORDER BY c.version_no DESC,c.created_at DESC
+    LIMIT 10
+  `)):[];
+  const currentCandidate=asRecord(candidateRows[0]??null)??{};
+
+  const dnaRows=currentProjectId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT dna_version_id::text AS dna_version_ref,dna_type,entity_key,version_no,status,checksum::text AS checksum,
+           lock_decision_request_id::text AS lock_decision_request_id
+    FROM public.dna_versions
+    WHERE project_id=${currentProjectId}::uuid
+    ORDER BY created_at DESC,dna_version_id DESC
+    LIMIT 20
+  `)):[];
+  const currentDna=asRecord(dnaRows[0]??null)??{};
+
+  const blueprintRows=currentTopicId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT bv.blueprint_version_id::text AS blueprint_version_ref,bv.version_no,bv.status::text AS status,
+           bv.content_hash::text AS content_hash,tb.topic_blueprint_id::text AS topic_blueprint_id,
+           pc.topic_production_contract_id::text AS topic_scope_ref,pc.contract_hash::text AS topic_scope_hash,
+           mb.master_blueprint_id::text AS master_blueprint_ref,mb.blueprint_key
+    FROM public.blueprint_versions bv
+    JOIN public.topic_blueprints tb ON tb.topic_blueprint_id=bv.topic_blueprint_id
+    JOIN public.topic_production_contracts pc ON pc.topic_production_contract_id=tb.topic_production_contract_id
+    JOIN public.topic_versions tv ON tv.topic_version_id=pc.topic_version_id
+    JOIN public.master_blueprints mb ON mb.master_blueprint_id=tb.master_blueprint_id
+    WHERE tv.topic_id=${currentTopicId}::uuid
+    ORDER BY bv.version_no DESC,bv.created_at DESC
+    LIMIT 10
+  `)):[];
+  const currentBlueprint=asRecord(blueprintRows[0]??null)??{};
+
+  const scriptRows=currentTopicId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT canonical_script_version_id::text AS canonical_script_ref,version_no,status::text AS status,
+           content_hash::text AS content_hash,script_document
+    FROM public.canonical_script_versions
+    WHERE topic_id=${currentTopicId}::uuid
+    ORDER BY version_no DESC,created_at DESC
+    LIMIT 1
+  `)):[];
+  const currentScript=asRecord(scriptRows[0]??null)??{};
+
+  const lockTargetIds=[first?.project_version_ref,asText(currentBlueprint.blueprint_version_ref)].filter((value):value is string=>Boolean(value));
+  const lockRows=lockTargetIds.length?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT lock_review_id::text AS lock_review_ref,lock_kind::text AS lock_kind,target_type,status::text AS status,
+           target_version_id::text AS target_version_id,expected_target_hash::text AS expected_target_hash
+    FROM public.lock_reviews
+    WHERE target_version_id=ANY(${lockTargetIds}::uuid[])
+    ORDER BY created_at DESC
+    LIMIT 10
+  `)):[];
+  const currentLock=asRecord(lockRows[0]??null)??{};
+  const structuredDecision=currentCandidate.structured_document&&typeof currentCandidate.structured_document==="object"
+    ? JSON.stringify(currentCandidate.structured_document)
+    : null;
+  const scriptLineage=asRecord((asRecord(currentScript.script_document)??{}).identity_and_lineage)??{};
+
   return {
     refs: {
       project_id: first?.project_id ?? null,
       project_version_ref: first?.project_version_ref ?? null,
       topic_id: topics[0]?.topic_id ?? null,
       topic_version_ref: topics[0]?.topic_version_ref ?? null,
-      dna_version_ref: null,
-      blueprint_version_ref: null,
-      conversation_id: threads[0]?.conversation_id ?? null,
-      candidate_ref: null,
+      dna_version_ref: asText(currentDna.dna_version_ref),
+      blueprint_version_ref: asText(currentBlueprint.blueprint_version_ref),
+      candidate_ref: asText(currentCandidate.candidate_ref),
     },
     work_item: null,
     projects: projects.map((item) => ({
@@ -405,28 +569,33 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
       label: item.label,
     })),
     topics,
-    work_items: ["STORY", "CHAPTER", "WORLD_SETTING", "DNA", "BLUEPRINT"].map((work_item) => ({ work_item, label: work_item })),
+    work_items: ["STORY", "CHAPTER", "WORLD_SETTING", "DNA", "BLUEPRINT", "TOPIC_SCOPE", "PRODUCTION_SCRIPT"].map((work_item) => ({ work_item, label: work_item })),
     threads,
+    messages_by_thread,
     display_values: {
       page_mode: "PROJECT_CORE",
-      assigned_ai_set: DASH,
+      assigned_ai_set: assignedAiSet ?? DASH,
       project_state: first?.status ?? DASH,
       story_candidate_set: DASH,
-      dna_state: DASH,
-      blueprint_state: DASH,
-      assistant_summary: DASH,
-      evaluation: DASH,
-      structured_decision: DASH,
-      runtime_stage: "READY",
-      topic_scope: DASH,
-      canonical_script: DASH,
+      dna_state: asText(currentDna.status) ?? DASH,
+      blueprint_state: asText(currentBlueprint.status) ?? DASH,
+      assistant_summary: asText(latestAssistantMeta?.assistant_summary) ?? DASH,
+      evaluation: asText(currentCandidate.evaluation_result) ?? DASH,
+      structured_decision: structuredDecision ?? DASH,
+      runtime_stage: asText(latestAssistantMeta?.response_mode) ?? "READY",
+      topic_scope: asText(currentBlueprint.topic_scope_ref) ?? DASH,
+      canonical_script: asText(currentScript.canonical_script_ref) ?? DASH,
       package: DASH,
       downstream_asset: DASH,
       downstream_video: DASH,
       downstream_edit: DASH,
-      version_state: DASH,
-      candidate_compare: DASH,
-      lock_review: DASH,
+      version_state: asText(currentCandidate.decision) ?? (asText(currentCandidate.candidate_ref) ? `CANDIDATE_V${String(currentCandidate.version_no ?? "")}` : DASH),
+      candidate_compare: candidateRows.length>1 ? `${candidateRows.length} IMMUTABLE VERSIONS` : asText(currentCandidate.candidate_ref) ?? DASH,
+      lock_review: asText(currentLock.lock_review_ref) ?? DASH,
+      governance_policy: "ACPOS_AI_GOVERNANCE_V1.0",
+      governance_context_fingerprint: asText(latestAssistantMeta?.context_fingerprint) ?? DASH,
+      canonical_script_source_candidate_ref: asText(scriptLineage.source_candidate_ref) ?? DASH,
+      healthy_ai_members: String(healthyAiMembers),
     },
   };
 }
@@ -695,52 +864,269 @@ function emptyKnowledge(): unknown {
   return { page_state: "EMPTY", values: {}, control_enabled: {} };
 }
 
+type DepartmentProductionContext={
+  outputs:Record<string,unknown>[];
+  scorecards:Record<string,unknown>[];
+  findings:Record<string,unknown>[];
+  corrections:Record<string,unknown>[];
+  correctionScripts:Record<string,unknown>[];
+  locks:Record<string,unknown>[];
+  providerJobs:Record<string,unknown>[];
+};
+async function readDepartmentProductionContext(sql:SqlClient,sessionTokenHash:string,taskId:string):Promise<DepartmentProductionContext>{
+  const [outputs,scorecards,findings,corrections,correctionScripts,locks,providerJobs]=await Promise.all([
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT o.output_version_id::text AS output_version_id,o.status::text AS status,o.output_uri,
+             btrim(o.artifact_checksum::text) AS artifact_checksum,btrim(o.output_contract_hash::text) AS output_contract_hash,
+             o.immutable_at::text AS immutable_at,o.provenance,o.created_at::text AS created_at,
+             av.asset_version_id::text AS asset_version_id,av.asset_kind
+      FROM task_outputs o
+      LEFT JOIN asset_versions av ON av.task_output_version_id=o.output_version_id
+      WHERE o.task_id=${taskId}::uuid
+      ORDER BY o.created_at DESC,o.output_version_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT s.scorecard_id::text AS scorecard_id,s.output_version_id::text AS output_version_id,
+             s.criteria_version_id::text AS criteria_version_id,s.total_score::text AS total_score,
+             s.gate_status::text AS gate_status,s.evidence_refs,s.created_at::text AS created_at
+      FROM scorecards s WHERE s.task_id=${taskId}::uuid
+      ORDER BY s.created_at DESC,s.scorecard_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT f.finding_id::text AS finding_id,f.output_version_id::text AS output_version_id,f.scorecard_id::text AS scorecard_id,
+             f.severity,f.category,f.affected_scope,f.evidence,f.status::text AS status,f.closed_at::text AS closed_at,f.created_at::text AS created_at
+      FROM findings f JOIN task_outputs o ON o.output_version_id=f.output_version_id
+      WHERE o.task_id=${taskId}::uuid
+      ORDER BY f.created_at DESC,f.finding_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT cr.correction_request_id::text AS correction_request_id,cr.finding_id::text AS finding_id,
+             cr.source_output_version_id::text AS source_output_version_id,cr.source_instruction_package_id::text AS source_instruction_package_id,
+             cr.source_scorecard_id::text AS source_scorecard_id,cr.affected_scope,cr.revalidation_requirements,cr.status::text AS status,cr.created_at::text AS created_at
+      FROM correction_requests cr WHERE cr.original_owner_task_id=${taskId}::uuid
+      ORDER BY cr.created_at DESC,cr.correction_request_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT c.correction_script_version_id::text AS correction_script_version_id,c.correction_request_id::text AS correction_request_id,
+             c.failed_output_id::text AS failed_output_id,c.status,c.version_no::text AS version_no,c.content_hash::text AS content_hash,
+             c.correction_instruction,c.decision_reason,c.decided_by::text AS decided_by,c.decided_at::text AS decided_at,c.created_at::text AS created_at
+      FROM correction_script_versions c
+      JOIN correction_requests cr ON cr.correction_request_id=c.correction_request_id
+      WHERE cr.original_owner_task_id=${taskId}::uuid
+      ORDER BY c.created_at DESC,c.correction_script_version_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT l.production_output_version_lock_id::text AS lock_id,l.output_version_id::text AS output_version_id,l.status,l.locked_at::text AS locked_at
+      FROM production_output_version_locks l JOIN task_outputs o ON o.output_version_id=l.output_version_id
+      WHERE o.task_id=${taskId}::uuid
+      ORDER BY l.locked_at DESC,l.production_output_version_lock_id DESC
+    `)),
+    safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+      SELECT j.provider_job_id::text AS provider_job_id,j.status::text AS status,j.external_job_ref,
+             j.route_policy_id::text AS route_policy_id,j.completed_at::text AS completed_at,j.created_at::text AS created_at
+      FROM provider_jobs j WHERE j.task_id=${taskId}::uuid
+      ORDER BY j.created_at DESC,j.provider_job_id DESC
+    `)),
+  ]);
+  return{outputs,scorecards,findings,corrections,correctionScripts,locks,providerJobs};
+}
+function mediaKind(row:Record<string,unknown>):"IMAGE"|"AUDIO"|"REFERENCE"{
+  const kind=(asText(row.asset_kind)??"").toUpperCase(),uri=(asText(row.output_uri)??"").toLowerCase();
+  if(kind.includes("AUDIO")||/\.(mp3|wav|m4a|aac|ogg)(\?|$)/.test(uri))return"AUDIO";
+  if(kind.includes("REFERENCE"))return"REFERENCE";
+  return"IMAGE";
+}
+function departmentPageState(taskStatus:string|null,hasCorrection:boolean,locked:boolean){
+  if(!taskStatus)return"EMPTY";
+  if(taskStatus==="ROUTING"||taskStatus==="RUNNING"||taskStatus==="CALLBACK_PENDING")return"EXECUTING";
+  if(taskStatus==="CANDIDATE_OUTPUT")return"CANDIDATE_OUTPUT";
+  if(taskStatus==="SCORE_PENDING")return"WAIT_CONFIRMATION";
+  if(taskStatus==="HANDOFF_READY")return locked?"LOCKED":"CONFIRMED";
+  if(taskStatus==="HANDED_OFF")return"HANDOFF";
+  if(taskStatus==="BLOCKED"||taskStatus==="FAILED")return hasCorrection?"CORRECTION_REQUIRED":"ERROR";
+  return"READY";
+}
+
 async function readAssetFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
   const [projects, topics, tasks] = await Promise.all([
     readProjectRefs(sql, sessionTokenHash),
     readTopicRefs(sql, sessionTokenHash),
     readDepartmentTasks(sql, sessionTokenHash, "ASSET"),
   ]);
-  const first = tasks[0] ?? null;
-  const empty = emptyAsset() as Record<string, unknown>;
-  return {
-    ...empty,
-    task_id: first?.task_id ?? null,
-    values: {
-      "ASSET-01-FLD-TASK": first?.task_id ?? DASH,
-      "ASSET-01-FLD-TASK-STATUS": first?.status ?? DASH,
-      "ASSET-01-FLD-STAGE": first?.status ?? DASH,
-      "ASSET-01-FLD-INPUT-FINGERPRINT": first?.input_fingerprint ?? DASH,
+  const first=tasks[0]??null,empty=emptyAsset() as Record<string,unknown>;
+  if(!first)return{...empty,page_state:"EMPTY",lists:{"ASSET-01-CTL-PROJECT":projects,"ASSET-01-CTL-TOPIC":topics,"ASSET-01-LST-ASSET":[]}};
+  const ctx=await readDepartmentProductionContext(sql,sessionTokenHash,first.task_id);
+  const candidate=ctx.outputs.find(r=>asText(r.status)==="CANDIDATE")??null;
+  const accepted=ctx.outputs.find(r=>asText(r.status)==="ACCEPTED")??null;
+  const focus=candidate??accepted??ctx.outputs[0]??null;
+  const focusId=asText(focus?.output_version_id);
+  const score=(focusId?ctx.scorecards.find(r=>asText(r.output_version_id)===focusId):null)??ctx.scorecards[0]??null;
+  const finding=(focusId?ctx.findings.find(r=>asText(r.output_version_id)===focusId&&!asText(r.closed_at)):null)??ctx.findings.find(r=>!asText(r.closed_at))??null;
+  const correction=(focusId?ctx.corrections.find(r=>asText(r.source_output_version_id)===focusId):null)??ctx.corrections[0]??null;
+  const correctionId=asText(correction?.correction_request_id);
+  const correctionCandidate=(correctionId?ctx.correctionScripts.find(r=>asText(r.correction_request_id)===correctionId&&asText(r.status)==="CANDIDATE"):null)??null;
+  const approvedCorrection=(correctionId?ctx.correctionScripts.find(r=>asText(r.correction_request_id)===correctionId&&asText(r.status)==="APPROVED"):null)??null;
+  const lock=(accepted?ctx.locks.find(r=>asText(r.output_version_id)===asText(accepted.output_version_id)&&asText(r.status)==="LOCKED"):null)??null;
+  const restores=accepted?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT asset_version_restore_draft_id::text AS ref,status,created_at::text AS created_at
+    FROM asset_version_restore_drafts WHERE source_output_version_id=${asText(accepted.output_version_id)}::uuid
+    ORDER BY created_at DESC LIMIT 10
+  `)):[];
+  const layerRows=focusId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT d.layer_document_id::text AS layer_document_id,d.status,d.version_no::text AS version_no
+    FROM asset_versions av JOIN versioned_layer_documents d ON d.asset_version_id=av.asset_version_id
+    WHERE av.task_output_version_id=${focusId}::uuid ORDER BY d.created_at DESC LIMIT 10
+  `)):[];
+  const layer=layerRows[0]??null;
+  const layerDocumentId=asText(layer?.layer_document_id);
+  const documentLayers=layerDocumentId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT document_layer_id::text AS document_layer_id,layer_id,z_index,locked
+    FROM document_layers
+    WHERE layer_document_id=${layerDocumentId}::uuid
+    ORDER BY z_index ASC
+    LIMIT 1
+  `)):[];
+  const documentLayer=documentLayers[0]??null;
+  const layerId=asText(documentLayer?.layer_id);
+  const layerZRaw=Number(documentLayer?.z_index);
+  const layerZIndex=Number.isFinite(layerZRaw)?layerZRaw:null;
+  const documentLayerId=asText(documentLayer?.document_layer_id);
+  const layerLocked=documentLayer?.locked===true||asText(documentLayer?.locked)==="true";
+  const patchRows=asText(focus?.asset_version_id)?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT p.asset_patch_id::text AS patch_id,p.status FROM asset_patches p
+    WHERE p.source_asset_version_id=${asText(focus?.asset_version_id)}::uuid ORDER BY p.created_at DESC LIMIT 10
+  `)):[];
+  const patch=patchRows[0]??null,provider=ctx.providerJobs[0]??null;
+  const taskStatus=first.status,page_state=departmentPageState(taskStatus,Boolean(finding||correction),Boolean(lock));
+  const candidateVersions=ctx.outputs.filter(r=>asText(r.status)==="CANDIDATE").slice(0,3).flatMap(r=>{
+    const ref=asText(r.output_version_id),uri=asText(r.output_uri);if(!ref||!uri)return[];
+    return[{ref,label:`${asText(r.status)??"CANDIDATE"} · ${ref}`,uri,media_kind:mediaKind(r)}];
+  });
+  const outputId=focusId??null,scorePass=asText(score?.gate_status)==="PASS";
+  const audioAsset=Boolean(focus)&&mediaKind(focus as Record<string,unknown>)==="AUDIO";
+  const layerEligible=Boolean(outputId)&&!audioAsset;
+  const layerDocumentStatus=asText(layer?.status);
+  const documentUnlocked=!layerDocumentId||layerDocumentStatus==="DRAFT";
+  const layerWrite=layerEligible&&documentUnlocked&&!layerLocked&&!lock;
+  return{
+    ...empty,page_state,task_id:first.task_id,output_version_id:outputId,
+    finding_id:asText(finding?.finding_id),correction_request_id:correctionId,
+    correction_candidate_id:asText(correctionCandidate?.correction_script_version_id),
+    correction_candidate_content_hash:asText(correctionCandidate?.content_hash),
+    approved_correction_candidate_id:asText(approvedCorrection?.correction_script_version_id),
+    restore_draft_id:asText(restores[0]?.ref),locked_version_ref:asText(lock?.lock_id),
+    layer_document_id:layerDocumentId,layer_id:layerId,layer_z_index:layerZIndex,document_layer_id:documentLayerId,patch_id:asText(patch?.patch_id),
+    current_asset_type_uid:asText(focus?.asset_kind),candidate_uri:asText(candidate?.output_uri),
+    candidate_media_kind:candidate?mediaKind(candidate):null,candidate_versions:candidateVersions,
+    values:{
+      "ASSET-01-FLD-TASK":first.task_id,
+      "ASSET-01-FLD-TASK-STATUS":taskStatus,
+      "ASSET-01-FLD-STAGE":page_state,
+      "ASSET-01-FLD-INPUT-FINGERPRINT":first.input_fingerprint??DASH,
+      "ASSET-01-FLD-OUTPUT-ID":outputId??DASH,
+      "ASSET-01-FLD-CANDIDATE-URI":asText(candidate?.output_uri)??DASH,
+      "ASSET-01-FLD-CHECKSUM":asText(focus?.artifact_checksum)??DASH,
+      "ASSET-01-FLD-CRITERIA-VERSION":asText(score?.criteria_version_id)??DASH,
+      "ASSET-01-FLD-SCORECARD":asText(score?.scorecard_id)??DASH,
+      "ASSET-01-FLD-OVERALL-SCORE":asText(score?.total_score)??DASH,
+      "ASSET-01-FLD-ISSUES":asText(finding?.finding_id)??DASH,
+      "ASSET-01-FLD-CORRECTION-CANDIDATE":asText(correctionCandidate?.correction_script_version_id)??asText(approvedCorrection?.correction_script_version_id)??DASH,
+      "ASSET-01-FLD-RUNTIME-STATE":asText(provider?.status)??DASH,
+      "ASSET-01-FLD-ROUTE":asText(provider?.route_policy_id)??DASH,
+      "ASSET-01-FLD-HANDOFF-ASSET-VERSION":asText(accepted?.output_version_id)??DASH,
+      "ASSET-01-FLD-HANDOFF-CHECKSUM":asText(accepted?.artifact_checksum)??DASH,
+      "ASSET-01-FLD-HANDOFF-SCORECARD":asText(score?.scorecard_id)??DASH,
+      "ASSET-01-FLD-HANDOFF-CONTRACT-HASH":asText(accepted?.output_contract_hash)??DASH,
+      "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE":layerDocumentId??DASH,
+      "ASSET-01-FLD-HANDOFF-RIGHTS":DASH,
+      "ASSET-01-FLD-RIGHTS":DASH,
+      "ASSET-01-FLD-LOCK":asText(lock?.lock_id)??DASH,
+      "ASSET-01-FLD-RESTORE-DRAFT":asText(restores[0]?.ref)??DASH,
     },
-    lists: {
-      "ASSET-01-CTL-PROJECT": projects,
-      "ASSET-01-CTL-TOPIC": topics,
-      "ASSET-01-LST-ASSET": tasks.map((item) => ({ ref: item.task_id, label: item.status })),
+    lists:{
+      "ASSET-01-CTL-PROJECT":projects,"ASSET-01-CTL-TOPIC":topics,
+      "ASSET-01-LST-ASSET":tasks.map(item=>({ref:item.task_id,label:item.status})),
+      "ASSET-01-LST-VERSIONS":ctx.outputs.flatMap(r=>{const ref=asText(r.output_version_id);return ref?[{ref,label:`${asText(r.status)??"OUTPUT"} · ${ref}`}]:[]}),
+      "ASSET-01-LST-ISSUES":ctx.findings.flatMap(r=>{const ref=asText(r.finding_id);return ref?[{ref,label:`${asText(r.severity)??""} ${asText(r.category)??""}`.trim()||ref}]:[]}),
+    },
+    filters:{},
+    gate_state:{
+      "ASSET-01-GATE-PAGE":true,"ASSET-01-GATE-CONTEXT":true,
+      "ASSET-01-GATE-EXECUTE":taskStatus==="READY","ASSET-01-GATE-MANIFEST":Boolean(first.input_fingerprint),
+      "ASSET-01-GATE-CHILD-LOCK":true,"ASSET-01-GATE-SCRIPT":true,"ASSET-01-GATE-NAMING":true,"ASSET-01-GATE-ROUTE":true,
+      "ASSET-01-GATE-COMPARE":ctx.outputs.length>=2,"ASSET-01-GATE-CANDIDATE":Boolean(candidate),
+      "ASSET-01-GATE-EVALUATION":Boolean(candidate)&&taskStatus==="CANDIDATE_OUTPUT",
+      "ASSET-01-GATE-CONFIRM":Boolean(candidate)&&scorePass&&taskStatus==="SCORE_PENDING",
+      "ASSET-01-GATE-WAIT-CONFIRM":taskStatus==="SCORE_PENDING",
+      "ASSET-01-GATE-CORRECTION":Boolean(finding&&outputId)&&taskStatus!=="HANDED_OFF",
+      "ASSET-01-GATE-RETRY":taskStatus==="BLOCKED"||taskStatus==="FAILED",
+      "ASSET-01-GATE-LOCK":Boolean(accepted)&&taskStatus==="HANDOFF_READY"&&!lock,
+      "ASSET-01-GATE-HANDOFF":Boolean(accepted&&lock)&&taskStatus==="HANDOFF_READY",
+      "ASSET-01-GATE-LAYER-ELIGIBLE":layerEligible,
+      "ASSET-01-GATE-LAYER-WRITE":layerWrite,
+      "ASSET-01-GATE-PATCH-PREVIEW":Boolean(patch)&&asText(patch?.status)==="CANDIDATE",
+      "ASSET-01-GATE-PATCH-DECISION":Boolean(patch)&&["CANDIDATE","HUMAN_REVIEW"].includes(asText(patch?.status)??""),
     },
   };
 }
 
 async function readVideoFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
-  const [projects, topics, tasks] = await Promise.all([
-    readProjectRefs(sql, sessionTokenHash),
-    readTopicRefs(sql, sessionTokenHash),
-    readDepartmentTasks(sql, sessionTokenHash, "VIDEO"),
-  ]);
-  const first = tasks[0] ?? null;
-  const empty = emptyVideo() as Record<string, unknown>;
-  return {
-    ...empty,
-    task_id: first?.task_id ?? null,
-    values: {
-      "VIDEO-01-FLD-STATUS": first?.status ?? DASH,
-      "VIDEO-01-FLD-TASK-STATE": first?.status ?? DASH,
-      "VIDEO-01-FLD-PAGE-STATE": "READY",
-      "VIDEO-01-FLD-INPUT-FINGERPRINT": first?.input_fingerprint ?? DASH,
+  const [projects,topics,tasks]=await Promise.all([readProjectRefs(sql,sessionTokenHash),readTopicRefs(sql,sessionTokenHash),readDepartmentTasks(sql,sessionTokenHash,"VIDEO")]);
+  const first=tasks[0]??null,empty=emptyVideo() as Record<string,unknown>;
+  if(!first)return{...empty,page_state:"EMPTY",lists:{"VIDEO-01-FLD-PROJECT":projects,"VIDEO-01-FLD-TOPIC":topics,"VIDEO-01-FLD-TASK":[]}};
+  const ctx=await readDepartmentProductionContext(sql,sessionTokenHash,first.task_id);
+  const candidate=ctx.outputs.find(r=>asText(r.status)==="CANDIDATE")??null;
+  const accepted=ctx.outputs.find(r=>asText(r.status)==="ACCEPTED")??null;
+  const focus=candidate??accepted??ctx.outputs[0]??null,focusId=asText(focus?.output_version_id);
+  const score=(focusId?ctx.scorecards.find(r=>asText(r.output_version_id)===focusId):null)??ctx.scorecards[0]??null;
+  const finding=(focusId?ctx.findings.find(r=>asText(r.output_version_id)===focusId&&!asText(r.closed_at)):null)??ctx.findings.find(r=>!asText(r.closed_at))??null;
+  const correction=(focusId?ctx.corrections.find(r=>asText(r.source_output_version_id)===focusId):null)??ctx.corrections[0]??null,correctionId=asText(correction?.correction_request_id);
+  const correctionCandidate=(correctionId?ctx.correctionScripts.find(r=>asText(r.correction_request_id)===correctionId&&asText(r.status)==="CANDIDATE"):null)??null;
+  const approvedCorrection=(correctionId?ctx.correctionScripts.find(r=>asText(r.correction_request_id)===correctionId&&asText(r.status)==="APPROVED"):null)??null;
+  const lock=(accepted?ctx.locks.find(r=>asText(r.output_version_id)===asText(accepted.output_version_id)&&asText(r.status)==="LOCKED"):null)??null,provider=ctx.providerJobs[0]??null;
+  const taskStatus=first.status,page_state=departmentPageState(taskStatus,Boolean(finding||correction),Boolean(lock)),scorePass=asText(score?.gate_status)==="PASS";
+  return{
+    ...empty,page_state,task_id:first.task_id,current_version_id:asText(accepted?.output_version_id),candidate_version_id:asText(candidate?.output_version_id),
+    finding_id:asText(finding?.finding_id),correction_request_id:correctionId,
+    correction_candidate_id:asText(correctionCandidate?.correction_script_version_id),
+    correction_candidate_content_hash:asText(correctionCandidate?.content_hash),
+    approved_correction_candidate_id:asText(approvedCorrection?.correction_script_version_id),locked_version_ref:asText(lock?.lock_id),
+    current_uri:asText(accepted?.output_uri),candidate_uri:asText(candidate?.output_uri),
+    versions:ctx.outputs.flatMap(r=>{const ref=asText(r.output_version_id),uri=asText(r.output_uri);return ref&&uri?[{ref,label:`${asText(r.status)??"OUTPUT"} · ${ref}`,uri,duration_seconds:0}]:[]}),
+    values:{
+      "VIDEO-01-FLD-STATUS":taskStatus,"VIDEO-01-FLD-TASK-STATE":taskStatus,"VIDEO-01-FLD-PAGE-STATE":page_state,
+      "VIDEO-01-FLD-INPUT-FINGERPRINT":first.input_fingerprint??DASH,
+      "VIDEO-01-FLD-CURRENT-VERSION":asText(accepted?.output_version_id)??DASH,
+      "VIDEO-01-FLD-CANDIDATE-VERSION":asText(candidate?.output_version_id)??DASH,
+      "VIDEO-01-FLD-OUTPUT-URI":asText(focus?.output_uri)??DASH,
+      "VIDEO-01-FLD-CHECKSUM":asText(focus?.artifact_checksum)??DASH,
+      "VIDEO-01-FLD-OVERALL-SCORE":asText(score?.total_score)??DASH,
+      "VIDEO-01-FLD-CRITERIA-VERSION":asText(score?.criteria_version_id)??DASH,
+      "VIDEO-01-FLD-SCORECARD":asText(score?.scorecard_id)??DASH,
+      "VIDEO-01-FLD-ISSUE-REF":asText(finding?.finding_id)??DASH,
+      "VIDEO-01-FLD-ROUTE":asText(provider?.route_policy_id)??DASH,
+      "VIDEO-01-FLD-JOB-STATE":asText(provider?.status)??DASH,
+      "VIDEO-01-FLD-ATTEMPT":asText(provider?.provider_job_id)??DASH,
+      "VIDEO-01-FLD-RETRY":taskStatus==="BLOCKED"||taskStatus==="FAILED"?"ELIGIBLE":"NOT_ELIGIBLE",
+      "VIDEO-01-FLD-HANDOFF-CONTRACT":asText(accepted?.output_contract_hash)??DASH,
+      "VIDEO-01-FLD-LOCK":asText(lock?.lock_id)??DASH,
     },
-    lists: {
-      "VIDEO-01-FLD-PROJECT": projects,
-      "VIDEO-01-FLD-TOPIC": topics,
-      "VIDEO-01-FLD-TASK": tasks.map((item) => ({ ref: item.task_id, label: item.status })),
+    lists:{
+      "VIDEO-01-FLD-PROJECT":projects,"VIDEO-01-FLD-TOPIC":topics,
+      "VIDEO-01-FLD-TASK":tasks.map(item=>({ref:item.task_id,label:item.status})),
+      "VIDEO-01-LST-VERSIONS":ctx.outputs.flatMap(r=>{const ref=asText(r.output_version_id);return ref?[{ref,label:`${asText(r.status)??"OUTPUT"} · ${ref}`}]:[]}),
+    },
+    filters:{},
+    gate_state:{
+      "VIDEO-01-GATE-PAGE":true,"VIDEO-01-GATE-TASK-READY":true,
+      "VIDEO-01-GATE-EXECUTE":taskStatus==="READY","VIDEO-01-GATE-CHILD-LOCK":true,"VIDEO-01-GATE-SCRIPT":true,
+      "VIDEO-01-GATE-CANDIDATE":Boolean(candidate||accepted),"VIDEO-01-GATE-COMPARE":ctx.outputs.length>=2,
+      "VIDEO-01-GATE-EVALUATION":Boolean(candidate)&&taskStatus==="CANDIDATE_OUTPUT",
+      "VIDEO-01-GATE-CONFIRM":Boolean(candidate)&&scorePass&&taskStatus==="SCORE_PENDING",
+      "VIDEO-01-GATE-CORRECTION":Boolean(finding&&focusId)&&taskStatus!=="HANDED_OFF",
+      "VIDEO-01-GATE-RETRY":taskStatus==="BLOCKED"||taskStatus==="FAILED",
+      "VIDEO-01-GATE-LOCK":Boolean(accepted)&&taskStatus==="HANDOFF_READY"&&!lock,
+      "VIDEO-01-GATE-HANDOFF":Boolean(accepted&&lock)&&taskStatus==="HANDOFF_READY",
     },
   };
 }
@@ -778,6 +1164,20 @@ async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<u
     readDepartmentTasks(sql, sessionTokenHash, "QA"),
   ]);
   const first = tasks[0] ?? null;
+  const approvedCriteria = (await safeRows(() => sql`
+    SELECT criteria_version_id::text AS ref,
+           criteria_key AS label,
+           version_no::text AS version_no,
+           gate_policy,
+           required_checks,
+           content_hash::text AS content_hash
+    FROM quality_criteria_versions
+    WHERE status='APPROVED'
+      AND (department::text='QA' OR department IS NULL)
+    ORDER BY version_no DESC,criteria_version_id DESC
+    LIMIT 20
+  `));
+  const criteria = approvedCriteria[0] ?? null;
   const reviews = refList(await safeRows(() => sql`
     SELECT r.qa_review_run_id::text AS ref, r.status::text AS label
     FROM qa_review_runs r
@@ -802,6 +1202,92 @@ async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<u
     ORDER BY r.created_at DESC
     LIMIT 1
   `))[0] ?? null;
+  const qaReviewRef=asText(reviewRow?.qa_review_ref);
+  const exactOutputRef=asText(reviewRow?.target_output_version_id);
+
+  const releaseContext = qaReviewRef && exactOutputRef
+    ? (await safeRows(() => runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT
+            r.qa_review_run_id::text AS qa_review_ref,
+            r.status::text AS review_status,
+            r.output_version_id::text AS output_version_id,
+            s.scorecard_id::text AS qa_gate_ref,
+            b.release_policy_binding_id::text AS release_policy_binding_id,
+            rv.rights_policy_version_id::text AS rights_policy_version_id,
+            rv.gate_state AS rights_gate_state,
+            rv.status::text AS rights_status,
+            b.channel_required,
+            cv.channel_policy_version_id::text AS channel_policy_version_id,
+            cv.gate_state AS channel_gate_state,
+            cv.status::text AS channel_status,
+            ca.channel_account_id::text AS channel_account_id,
+            ca.status::text AS channel_account_status,
+            EXISTS(
+              SELECT 1 FROM public.findings f
+              WHERE f.output_version_id=r.output_version_id AND f.closed_at IS NULL
+            ) AS has_open_finding,
+            EXISTS(
+              SELECT 1 FROM public.manual_review_cases m
+              WHERE m.qa_review_run_id=r.qa_review_run_id AND m.decided_at IS NULL
+            ) AS has_open_manual,
+            rp.release_package_id::text AS release_package_id
+          FROM public.qa_review_runs r
+          JOIN LATERAL (
+            SELECT s0.scorecard_id
+            FROM public.scorecards s0
+            WHERE s0.output_version_id=r.output_version_id
+              AND s0.task_id=r.qa_task_id
+              AND s0.criteria_version_id=r.criteria_version_id
+              AND s0.gate_status='PASS'
+            ORDER BY s0.created_at DESC,s0.scorecard_id DESC
+            LIMIT 1
+          ) s ON true
+          JOIN public.release_policy_bindings b
+            ON b.output_version_id=r.output_version_id
+           AND b.status='APPROVED'
+          JOIN public.rights_policy_versions rv
+            ON rv.rights_policy_version_id=b.rights_policy_version_id
+           AND rv.status='APPROVED'
+           AND rv.gate_state='PASS'
+          LEFT JOIN public.channel_policy_versions cv
+            ON cv.channel_policy_version_id=b.channel_policy_version_id
+           AND cv.status='APPROVED'
+           AND cv.gate_state='PASS'
+          LEFT JOIN public.channel_accounts ca
+            ON ca.channel_account_id=cv.channel_account_id
+           AND ca.status='APPROVED'
+          LEFT JOIN public.release_packages rp
+            ON rp.qa_review_run_id=r.qa_review_run_id
+          WHERE r.qa_review_run_id=${qaReviewRef}::uuid
+            AND r.output_version_id=${exactOutputRef}::uuid
+          LIMIT 1
+        `,
+      )))[0] ?? null
+    : null;
+
+  const channelRequired=releaseContext?.channel_required===true;
+  const channelReady=!channelRequired || Boolean(
+    asText(releaseContext?.channel_policy_version_id)
+    && asText(releaseContext?.channel_gate_state)==="PASS"
+    && asText(releaseContext?.channel_status)==="APPROVED"
+    && asText(releaseContext?.channel_account_status)==="APPROVED"
+  );
+  const releaseReady=Boolean(
+    releaseContext
+    && asText(releaseContext.review_status)==="PASS"
+    && asText(releaseContext.qa_gate_ref)
+    && asText(releaseContext.rights_policy_version_id)
+    && asText(releaseContext.rights_gate_state)==="PASS"
+    && asText(releaseContext.rights_status)==="APPROVED"
+    && releaseContext.has_open_finding!==true
+    && releaseContext.has_open_manual!==true
+    && channelReady
+  );
+  const existingReleaseRef=asText(releaseContext?.release_package_id);
+
   const empty = emptyQa() as Record<string, unknown>;
   return {
     ...empty,
@@ -809,15 +1295,30 @@ async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<u
     project_id: first?.project_id ?? projects[0]?.ref ?? null,
     topic_id: first?.topic_id ?? topics[0]?.ref ?? null,
     qa_task_ref: asText(reviewRow?.qa_task_ref) ?? first?.task_id ?? null,
-    qa_review_ref: asText(reviewRow?.qa_review_ref) ?? null,
-    target_output_version_id: asText(reviewRow?.target_output_version_id) ?? asText(scorecards[0]?.output_version_id) ?? null,
-    scorecard_ref: asText(scorecards[0]?.scorecard_id) ?? null,
+    qa_review_ref: qaReviewRef ?? null,
+    target_output_version_id: exactOutputRef ?? asText(first?.handed_off_output_version_id) ?? asText(scorecards[0]?.output_version_id) ?? null,
+    scorecard_ref: asText(releaseContext?.qa_gate_ref) ?? asText(scorecards[0]?.scorecard_id) ?? null,
+    release_package_ref: existingReleaseRef ?? null,
     values: {
       "QA-01-FLD-PROJECT": first?.project_label ?? projects[0]?.label ?? DASH,
       "QA-01-FLD-TOPIC": first?.topic_label ?? topics[0]?.label ?? DASH,
       "QA-01-FLD-QA-TASK": first?.task_id ?? DASH,
-      "QA-01-FLD-TARGET-OUTPUT": asText(reviewRow?.target_output_version_id) ?? DASH,
+      "QA-01-FLD-TARGET-OUTPUT": exactOutputRef ?? asText(first?.handed_off_output_version_id) ?? DASH,
       "QA-01-FLD-REVIEW-STATE": asText(reviewRow?.status) ?? first?.status ?? DASH,
+      "QA-01-FLD-CRITERIA-VERSION": asText(criteria?.ref) ?? DASH,
+      "QA-01-FLD-GATE-POLICY": criteria?.gate_policy ?? DASH,
+      "QA-01-FLD-REQUIRED-CHECKS": criteria?.required_checks ?? DASH,
+      "QA-01-FLD-SCRIPT-HASH": asText(criteria?.content_hash) ?? DASH,
+      "QA-01-FLD-REL-QA-PASS": asText(releaseContext?.review_status) ?? DASH,
+      "QA-01-FLD-REL-FINDINGS": releaseContext ? (releaseContext.has_open_finding===true ? "OPEN" : "CLOSED") : DASH,
+      "QA-01-FLD-REL-MANUAL": releaseContext ? (releaseContext.has_open_manual===true ? "OPEN" : "CLOSED") : DASH,
+      "QA-01-FLD-REL-RIGHTS": asText(releaseContext?.rights_gate_state) ?? DASH,
+      "QA-01-FLD-REL-POLICY": releaseReady ? "PASS" : DASH,
+      "QA-01-FLD-REL-CHANNEL": channelRequired ? (asText(releaseContext?.channel_policy_version_id) ?? DASH) : "NOT_REQUIRED",
+      "QA-01-FLD-REL-PACKAGE": existingReleaseRef ?? DASH,
+      "QA-01-FLD-REL-OUTPUTS": exactOutputRef ?? DASH,
+      "QA-01-FLD-REL-QA-GATE": asText(releaseContext?.qa_gate_ref) ?? DASH,
+      "QA-01-FLD-REL-RIGHTS-GATE": asText(releaseContext?.rights_policy_version_id) ?? DASH,
     },
     lists: {
       "QA-01-LIST-REVIEWS": reviews,
@@ -830,7 +1331,12 @@ async function readQaFromDb(sql: SqlClient, sessionTokenHash: string): Promise<u
       "QA-01-CTL-TOPIC": topics,
       "QA-01-LST-TASK": tasks.map((item) => ({ ref: item.task_id, label: item.status })),
     },
-    gate_state: { "QA-01-GATE-PAGE": true },
+    gate_state: {
+      "QA-01-GATE-PAGE": true,
+      "QA-01-GATE-START": Boolean(first?.task_id && first?.handed_off_output_version_id && criteria?.ref),
+      "QA-01-GATE-CRITERIA": Boolean(criteria?.ref),
+      "QA-01-GATE-RELEASE": releaseReady && !existingReleaseRef,
+    },
   };
 }
 
@@ -845,25 +1351,179 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
       ORDER BY c.created_at DESC
     `,
   )));
-  const candidates = refList(await safeRows(() => sql`
-    SELECT s.strategy_candidate_id::text AS ref, s.decision_status::text AS label
-    FROM strategy_candidates s
-    ORDER BY s.created_at DESC
-  `));
+  const candidateRows = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT
+        s.strategy_candidate_id::text AS ref,
+        s.decision_status::text AS label,
+        encode(digest(concat_ws('|',
+          s.source_fact_pack_ids::text,
+          s.strategy_document::text,
+          s.citations::text,
+          s.freshness_at::text,
+          s.confidence::text
+        ),'sha256'),'hex') AS version_ref,
+        COALESCE(NULLIF(s.strategy_document->>'analysis_basis',''),NULLIF(s.strategy_document->>'basis',''),NULLIF(s.strategy_document->>'analysis','')) AS analysis_basis,
+        COALESCE(NULLIF(s.strategy_document->>'risk',''),NULLIF((s.strategy_document->'risks')::text,'')) AS risk,
+        COALESCE(NULLIF(s.strategy_document->>'uncertainty',''),NULLIF((s.strategy_document->'uncertainty')::text,'')) AS uncertainty,
+        s.confidence::text AS confidence,
+        s.freshness_at::text AS freshness_at
+      FROM strategy_candidates s
+      ORDER BY s.created_at DESC
+    `,
+  ));
+  const candidates = candidateRows.flatMap((raw) => {
+    const row = asRecord(raw);
+    const ref = asText(row?.ref);
+    const label = asText(row?.label);
+    const version_ref = asText(row?.version_ref);
+    if (!ref || !label || !version_ref) return [];
+    return [{
+      ref,
+      label,
+      version_ref,
+      analysis_basis: asText(row?.analysis_basis),
+      risk: asText(row?.risk),
+      uncertainty: asText(row?.uncertainty),
+      confidence: asText(row?.confidence),
+      freshness_at: asText(row?.freshness_at),
+    }];
+  });
   const firstConversation = conversations[0] ?? null;
   const firstCandidate = candidates[0] ?? null;
-  const page_state = firstCandidate ? "CANDIDATE_READY" : firstConversation || topics.length ? "READY" : "EMPTY";
+
+  const decisionRows = firstCandidate
+    ? await safeRows(() => runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT
+            d.strategy_decision_id::text AS decision_id,
+            d.decision,
+            d.rationale,
+            d.decider_id::text AS decider_id,
+            d.created_at::text AS decided_at
+          FROM strategy_decisions d
+          WHERE d.strategy_candidate_id=${firstCandidate.ref}::uuid
+          ORDER BY d.created_at DESC
+          LIMIT 1
+        `,
+      ))
+    : [];
+  const decisionRow = asRecord(decisionRows[0] ?? null);
+
+  const reviewRequestRows = firstCandidate
+    ? await safeRows(() => runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT
+            d.decision_request_id::text AS decision_request_ref,
+            d.state,
+            d.decision_reason,
+            d.decided_by_user_id::text AS decided_by_user_id,
+            d.decided_at::text AS decided_at,
+            CASE
+              WHEN d.state='APPROVED'
+               AND d.decided_by_user_id IS NOT NULL
+               AND NULLIF(d.decision_reason,'') IS NOT NULL
+               AND d.evidence_refs<>'[]'::jsonb
+               AND d.evidence_refs<>'{}'::jsonb
+              THEN true ELSE false
+            END AS approved_review_ready
+          FROM decision_requests d
+          JOIN permission_resources r
+            ON r.resource_id=d.required_resource_id
+           AND r.resource_key='api:adoptAsContextCandidate'
+           AND r.active=true
+          WHERE d.required_scope->>'candidate_ref'=${firstCandidate.ref}
+            AND d.condition_snapshot->>'candidate_version_ref'=${firstCandidate.version_ref}
+          ORDER BY d.created_at DESC
+          LIMIT 1
+        `,
+      ))
+    : [];
+  const reviewRequestRow = asRecord(reviewRequestRows[0] ?? null);
+  const approvedReviewReady = reviewRequestRow?.approved_review_ready === true;
+
+  const messageRows = firstConversation
+    ? await safeRows(() => runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT sequence_no, actor_type, actor_ref,
+                 left(COALESCE(message_content->>'text',''), 4000) AS text,
+                 message_content->>'assistant_summary' AS assistant_summary,
+                 message_content->'governance'->>'context_fingerprint' AS context_fingerprint,
+                 COALESCE(message_content->>'kind','') AS kind
+          FROM conversation_messages
+          WHERE conversation_id = ${firstConversation.ref}::uuid
+            AND COALESCE(message_content->>'kind','') <> 'DECISION_LEDGER'
+          ORDER BY sequence_no DESC
+          LIMIT 20
+        `,
+      ))
+    : [];
+  const orderedMessages = [...messageRows].reverse();
+  const conversationText = orderedMessages.map((row) => {
+    const actorType = asText(row.actor_type);
+    const label = actorType === "USER" ? "User"
+      : actorType === "PROVIDER" ? "AI"
+      : actorType === "SYSTEM" ? "System"
+      : "Service";
+    return `${label}: ${asText(row.text) ?? ""}`;
+  }).filter((value) => !value.endsWith(": ")).join("\n");
+  const latestAssistant = [...orderedMessages].reverse().find((row) => asText(row.actor_type) === "PROVIDER");
+  const latestAssistantText = asText(latestAssistant?.text);
+  const latestAssistantSummary = asText(latestAssistant?.assistant_summary) ?? latestAssistantText;
+  const strategyAiRouteRows = await sql`
+    SELECT g.id,
+           count(*) FILTER (WHERE m.enabled=true AND p.enabled=true AND p.health_status='HEALTHY')::int AS healthy_members
+    FROM acpos_runtime.provider_groups g
+    LEFT JOIN acpos_runtime.provider_members m ON m.group_id=g.id
+    LEFT JOIN acpos_runtime.provider_profiles p ON p.provider_id=m.provider_id AND p.model_id=m.model_id
+    WHERE g.enabled=true AND g.use_case='ACPOS_TEXT_CHAT'
+    GROUP BY g.id,g.updated_at
+    ORDER BY g.updated_at DESC,g.id
+    LIMIT 1
+  `.catch(() => []);
+  const strategyAiRoute = asRecord(Array.isArray(strategyAiRouteRows) ? strategyAiRouteRows[0] : null);
+  const strategyMultiReady = Number(strategyAiRoute?.healthy_members ?? 0) > 0;
+
+  const candidateState = firstCandidate?.label ?? null;
+  const page_state = candidateState === "DECISION_PENDING"
+    ? "REVIEW_REQUIRED"
+    : candidateState === "APPROVED"
+      ? "ADOPTED_CONTEXT"
+      : firstCandidate
+        ? "CANDIDATE_READY"
+        : firstConversation || topics.length
+          ? "READY"
+          : "EMPTY";
   return {
     page_state,
     conversation_id: firstConversation?.ref ?? null,
     candidate_ref: firstCandidate?.ref ?? null,
-    candidate_version_ref: null,
+    candidate_version_ref: firstCandidate?.version_ref ?? null,
     values: {
       "STR-01-FLD-TOPIC": topics[0]?.label ?? DASH,
       "STR-01-FLD-SCOPE": "workspace:STR-01",
       "STR-01-FLD-HORIZON": DASH,
       "STR-01-FLD-STATE": page_state,
-      "STR-01-FLD-DECISION-STATE": firstCandidate?.label ?? DASH,
+      "STR-01-FLD-DECISION-STATE": page_state,
+      "STR-01-FLD-BASIS": firstCandidate?.analysis_basis ?? DASH,
+      "STR-01-FLD-RISKS": firstCandidate?.risk ?? DASH,
+      "STR-01-FLD-UNCERTAINTY": firstCandidate?.uncertainty ?? DASH,
+      "STR-01-FLD-CANDIDATE-REF": firstCandidate ? `${firstCandidate.ref} · ${firstCandidate.version_ref}` : DASH,
+      "STR-01-FLD-REVIEW-STATE": asText(reviewRequestRow?.state) ?? page_state,
+      "STR-01-FLD-DECISION-ID": asText(decisionRow?.decision_id) ?? DASH,
+      "STR-01-FLD-DECISION-RESULT": asText(decisionRow?.decision) ?? DASH,
+      "STR-01-FLD-DECISION-REASON": asText(decisionRow?.rationale) ?? asText(reviewRequestRow?.decision_reason) ?? DASH,
+      "STR-01-FLD-EXECUTION-STATE": firstCandidate ? "OWNER_EXECUTION_NOT_PERFORMED" : DASH,
+      "STR-01-FLD-ASSISTANT-SUMMARY": latestAssistantSummary ?? DASH,
+      "STR-01-FLD-PROVIDER-BRAND": asText(latestAssistant?.actor_ref) ?? DASH,
     },
     lists: {
       "STR-01-LST-TOPICS": topics,
@@ -876,12 +1536,19 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
       "STR-01-LST-CANDIDATES": candidates,
     },
     blocks: {
-      "STR-01-BLK-ASSISTANT": DASH,
+      "STR-01-VIEW-CONVERSATION": conversationText || DASH,
+      "STR-01-BLK-ASSISTANT": latestAssistantSummary ?? DASH,
     },
     gate_state: {
       "STR-01-GATE-PAGE": true,
       "STR-01-GATE-TOPIC": topics.length > 0,
+      "STR-01-GATE-CONTEXT": Boolean(firstConversation),
       "STR-01-GATE-MESSAGE": Boolean(firstConversation),
+      "STR-01-GATE-ANALYSIS": Boolean(latestAssistantText || firstCandidate?.analysis_basis),
+      "STR-01-GATE-MULTI": strategyMultiReady,
+      "STR-01-GATE-COMPARE": candidates.length >= 2,
+      "STR-01-GATE-REVIEW": candidateState === "CANDIDATE",
+      "STR-01-GATE-ADOPT": candidateState === "DECISION_PENDING" && approvedReviewReady,
     },
     owner_type: firstConversation ? "CONVERSATION" : null,
     owner_context_ref: firstConversation?.ref ?? null,
@@ -889,45 +1556,151 @@ async function readStrategyFromDb(sql: SqlClient, sessionTokenHash: string): Pro
 }
 
 async function readInfoFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
-  const sources = refList(await safeRows(() => sql`
-    SELECT k.knowledge_source_id::text AS ref, k.source_key AS label
-    FROM knowledge_sources k
-    ORDER BY k.created_at DESC
-  `));
-  const projects = await readProjectRefs(sql, sessionTokenHash);
-  const packs = await safeRows(() => sql`
-    SELECT f.fact_pack_id::text AS ref, f.freshness_at::text AS freshness_at
-    FROM fact_packs f
-    ORDER BY f.freshness_at DESC
-    LIMIT 1
-  `);
-  const combined = sources.length ? sources : projects;
-  const page_state = combined.length ? "READY" : "EMPTY";
+  const packRows = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT
+        f.fact_pack_id::text AS ref,
+        f.workspace_id::text AS workspace_id,
+        f.status::text AS status,
+        f.scope::text AS scope,
+        f.freshness_at::text AS freshness_at,
+        f.completeness::text AS completeness,
+        f.confidence::text AS confidence,
+        f.classification::text AS classification,
+        f.content_hash::text AS content_hash
+      FROM fact_packs f
+      ORDER BY f.freshness_at DESC
+      LIMIT 50
+    `,
+  ));
+  const packs = packRows.flatMap((raw) => {
+    const row = asRecord(raw);
+    const ref = asText(row?.ref);
+    const workspace_id = asText(row?.workspace_id);
+    if (!ref || !workspace_id) return [];
+    return [{
+      ref,
+      label: `FACT_PACK · ${asText(row?.status) ?? "APPROVED"} · ${asText(row?.completeness) ?? "0"}%`,
+      workspace_id,
+      status: asText(row?.status),
+      scope: asText(row?.scope),
+      freshness_at: asText(row?.freshness_at),
+      completeness: asText(row?.completeness),
+      confidence: asText(row?.confidence),
+      classification: asText(row?.classification),
+      content_hash: asText(row?.content_hash),
+    }];
+  });
+
+  const candidateRows = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT
+        c.context_candidate_id::text AS ref,
+        c.decision_status::text AS status,
+        c.target_scope::text AS target_scope,
+        c.decision_reason,
+        c.created_at::text AS created_at,
+        f.workspace_id::text AS workspace_id,
+        f.fact_pack_id::text AS fact_pack_ref,
+        f.evidence_refs::text AS evidence_refs,
+        f.classification::text AS classification
+      FROM context_candidates c
+      JOIN fact_packs f ON f.fact_pack_id=c.fact_pack_id
+      ORDER BY c.created_at DESC
+      LIMIT 50
+    `,
+  ));
+  const candidates = candidateRows.flatMap((raw) => {
+    const row = asRecord(raw);
+    const ref = asText(row?.ref);
+    if (!ref) return [];
+    return [{
+      ref,
+      label: `CONTEXT_CANDIDATE · ${asText(row?.status) ?? "CANDIDATE"}`,
+      status: asText(row?.status),
+      target_scope: asText(row?.target_scope),
+      decision_reason: asText(row?.decision_reason),
+      created_at: asText(row?.created_at),
+      workspace_id: asText(row?.workspace_id),
+      fact_pack_ref: asText(row?.fact_pack_ref),
+      evidence_refs: asText(row?.evidence_refs),
+      classification: asText(row?.classification),
+    }];
+  });
+
+  const firstPack = packs[0] ?? null;
+  const firstCandidate = candidates[0] ?? null;
+  const page_state = firstCandidate
+    ? "CONTEXT_CANDIDATE"
+    : firstPack
+      ? "READY"
+      : "EMPTY";
+  const projectionVersion = firstPack?.content_hash ?? "info:empty";
+  const authorizedScope = firstPack?.workspace_id ?? "workspace:INFO-01";
+  const workspaceFilters = [...new Map(
+    packs.map((item) => [item.workspace_id, { ref: item.workspace_id, label: item.workspace_id }]),
+  ).values()];
+
   return {
     page_state,
-    projection_version: "neon:wild-wave",
-    authorized_scope: "workspace:INFO-01",
-    last_refresh: asText(packs[0]?.freshness_at) ?? null,
+    projection_version: projectionVersion,
+    authorized_scope: authorizedScope,
+    last_refresh: firstPack?.freshness_at ?? null,
     values: {
-      "INFO-01-FLD-SCOPE": "workspace:INFO-01",
-      "INFO-01-FLD-PROJECTION-VERSION": "neon:wild-wave",
+      "INFO-01-FLD-SCOPE": authorizedScope,
+      "INFO-01-FLD-PROJECTION-VERSION": projectionVersion,
       "INFO-01-FLD-PAGE-STATE": page_state,
-      "INFO-01-FLD-LAST-REFRESH": asText(packs[0]?.freshness_at) ?? DASH,
-      "INFO-01-FLD-SOURCE-REF": combined[0]?.ref ?? DASH,
+      "INFO-01-FLD-LAST-REFRESH": firstPack?.freshness_at ?? DASH,
+      "INFO-01-FLD-SOURCE-REF": DASH,
+      "INFO-01-FLD-FACTPACK-REF": firstPack?.ref ?? DASH,
+      "INFO-01-FLD-FACTPACK-SCOPE": firstPack?.scope ?? DASH,
+      "INFO-01-FLD-FACTPACK-STATE": firstPack?.status ?? DASH,
+      "INFO-01-FLD-FRESHNESS": firstPack?.freshness_at ?? DASH,
+      "INFO-01-FLD-COMPLETENESS": firstPack?.completeness ?? DASH,
+      "INFO-01-FLD-CONFIDENCE": firstPack?.confidence ?? DASH,
+      "INFO-01-FLD-CANDIDATE-ID": firstCandidate?.ref ?? DASH,
+      "INFO-01-FLD-CANDIDATE-SCOPE": firstCandidate?.target_scope ?? DASH,
+      "INFO-01-FLD-CANDIDATE-CITATIONS": firstCandidate?.evidence_refs ?? DASH,
+      "INFO-01-FLD-CANDIDATE-STATE": firstCandidate?.status ?? DASH,
+      "INFO-01-FLD-ADOPTION-REVIEW": firstCandidate?.decision_reason ?? DASH,
+      "INFO-01-FLD-DISABLED": "Evidence/source lineage and Export owner stay fail-closed until materialized",
     },
     lists: {
-      "INFO-01-LST-SOURCES": combined,
+      "INFO-01-LST-SOURCES": [],
+      "INFO-01-LST-ALERTS": [],
+      "INFO-01-LST-FACTPACKS": packs.map(({ ref, label }) => ({ ref, label })),
+      "INFO-01-LST-FACTS": [],
+      "INFO-01-LST-INFERENCES": [],
+      "INFO-01-LST-EVIDENCE": [],
+      "INFO-01-LST-RESEARCH": [],
+      "INFO-01-LST-CANDIDATES": candidates.map(({ ref, label }) => ({ ref, label })),
     },
-    filters: {},
+    filters: {
+      "INFO-01-SEL-SCOPE": workspaceFilters,
+    },
     gate_state: {
       "INFO-01-GATE-PAGE": true,
-      "INFO-01-GATE-SEARCH": true,
+      "INFO-01-GATE-READ": true,
+      "INFO-01-GATE-FACTPACK": packs.length > 0,
+      "INFO-01-GATE-EVIDENCE": false,
       "INFO-01-GATE-REFRESH": true,
+      "INFO-01-GATE-SEARCH": true,
+      "INFO-01-GATE-EXPORT": false,
+      "INFO-01-GATE-CANDIDATE": candidates.length > 0,
+      "INFO-01-GATE-ADOPT": firstCandidate?.status === "CANDIDATE",
+      "INFO-01-GATE-DECIDE": firstCandidate?.status === "CANDIDATE",
     },
   };
 }
 
-async function readSystemFromDb(sql: SqlClient): Promise<unknown> {
+async function readSystemFromDb(
+  sql: SqlClient,
+  sessionTokenHash: string,
+): Promise<unknown> {
   const migrations = await safeRows(() => sql`
     SELECT migration_id AS ref, checksum, applied_at::text AS applied_at
     FROM schema_migration_history
@@ -939,33 +1712,135 @@ async function readSystemFromDb(sql: SqlClient): Promise<unknown> {
     ORDER BY version_no DESC
     LIMIT 1
   `);
-  const changes = await safeRows(() => sql`
-    SELECT system_change_id::text AS system_change_id,current_goal,scope,status,
-           current_candidate_id::text AS candidate_ref,updated_at::text AS updated_at
-    FROM public.system_changes
-    WHERE status <> 'CLOSED'
-    ORDER BY updated_at DESC
-    LIMIT 1
-  `);
+  const changes = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT system_change_id::text AS system_change_id,current_goal,scope,status,
+             current_candidate_id::text AS candidate_ref,updated_at::text AS updated_at
+      FROM public.system_changes
+      WHERE status <> 'CLOSED'
+      ORDER BY updated_at DESC
+      LIMIT 1
+    `,
+  ));
   const active = changes[0] ?? null;
-  const candidate = active?.candidate_ref
-    ? (await safeRows(() => sql`
-        SELECT context_fingerprint,status
-        FROM public.system_change_candidates
-        WHERE system_change_candidate_id=${asText(active.candidate_ref)}::uuid
-        LIMIT 1
-      `))[0] ?? null
-    : null;
-  const head = migrations[migrations.length - 1] ?? null;
   const systemChangeId = asText(active?.system_change_id);
+
+  const candidate = systemChangeId && active?.candidate_ref
+    ? (await safeRows(() => runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT context_fingerprint,status
+          FROM public.system_change_candidates
+          WHERE system_change_candidate_id=${asText(active.candidate_ref)}::uuid
+            AND system_change_id=${systemChangeId}::uuid
+          LIMIT 1
+        `,
+      )))[0] ?? null
+    : null;
+
+  let conversationId: string | null = null;
+  let threadId: string | null = null;
+  let messages: Array<{
+    message_ref: string;
+    role: "USER" | "ASSISTANT" | "SYSTEM";
+    text: string;
+    assistant_summary: string | null;
+    response_mode: string | null;
+    governance_status: string | null;
+  }> = [];
+
+  if (systemChangeId) {
+    const conversationRows = await runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT conversation_id::text AS conversation_id
+        FROM conversations
+        WHERE conversation_id=${systemChangeId}::uuid
+        LIMIT 1
+      `,
+    ).catch(() => []);
+    conversationId = asText(asRecord(Array.isArray(conversationRows) ? conversationRows[0] : null)?.conversation_id);
+    threadId = conversationId;
+
+    if (conversationId) {
+      const messageRows = await runRlsActorQuery(
+        sql,
+        sessionTokenHash,
+        sql`
+          SELECT conversation_message_id::text AS message_ref,
+                 actor_type,
+                 COALESCE(message_content->>'text','') AS text,
+                 message_content->>'assistant_summary' AS assistant_summary,
+                 message_content->>'response_mode' AS response_mode,
+                 message_content->'governance'->>'status' AS governance_status,
+                 COALESCE(message_content->>'kind','') AS kind
+          FROM conversation_messages
+          WHERE conversation_id=${conversationId}::uuid
+            AND COALESCE(message_content->>'kind','') <> 'DECISION_LEDGER'
+          ORDER BY sequence_no ASC
+          LIMIT 80
+        `,
+      ).catch(() => []);
+      messages = (Array.isArray(messageRows) ? messageRows : []).flatMap((raw) => {
+        const row = asRecord(raw);
+        const message_ref = asText(row?.message_ref);
+        const text = asText(row?.text);
+        if (!message_ref || !text) return [];
+        const actorType = asText(row?.actor_type);
+        const role: "USER" | "ASSISTANT" | "SYSTEM" =
+          actorType === "USER" ? "USER" : actorType === "PROVIDER" ? "ASSISTANT" : "SYSTEM";
+        return [{
+          message_ref,
+          role,
+          text,
+          assistant_summary: asText(row?.assistant_summary),
+          response_mode: asText(row?.response_mode),
+          governance_status: asText(row?.governance_status),
+        }];
+      });
+    }
+  }
+
+  const generationRows = conversationId
+    ? await sql`
+        SELECT id,status,cancel_requested,updated_at::text AS updated_at
+        FROM acpos_runtime.conversation_generation_jobs
+        WHERE conversation_id=${conversationId}
+        ORDER BY created_at DESC
+        LIMIT 1
+      `.catch(() => [])
+    : [];
+  const generation = asRecord(Array.isArray(generationRows) ? generationRows[0] : null);
+
+  const aiGroupRows = await sql`
+    SELECT g.id,
+           count(*) FILTER (WHERE m.enabled=true AND p.enabled=true AND p.health_status='HEALTHY')::int AS healthy_members
+    FROM acpos_runtime.provider_groups g
+    LEFT JOIN acpos_runtime.provider_members m ON m.group_id=g.id
+    LEFT JOIN acpos_runtime.provider_profiles p ON p.provider_id=m.provider_id AND p.model_id=m.model_id
+    WHERE g.enabled=true AND g.use_case='ACPOS_TEXT_CHAT'
+    GROUP BY g.id,g.updated_at
+    ORDER BY g.updated_at DESC,g.id
+    LIMIT 1
+  `.catch(() => []);
+  const aiGroup = asRecord(Array.isArray(aiGroupRows) ? aiGroupRows[0] : null);
+  const healthyMembers = Number(aiGroup?.healthy_members ?? 0);
+  const latestAssistant = [...messages].reverse().find((item) => item.role === "ASSISTANT");
+
+  const head = migrations[migrations.length - 1] ?? null;
   const page_state = migrations.length || systemChangeId ? "READY" : "EMPTY";
   return {
     page_state,
     system_change_id: systemChangeId,
-    conversation_id: null,
-    thread_id: null,
+    conversation_id: conversationId,
+    thread_id: threadId,
     branch_id: null,
-    multi_ai_route_available: false,
+    multi_ai_route_available: Boolean(conversationId && healthyMembers > 0),
+    messages,
     values: {
       current_system_version: asText(head?.ref) ?? DASH,
       current_goal: asText(active?.current_goal) ?? DASH,
@@ -974,6 +1849,14 @@ async function readSystemFromDb(sql: SqlClient): Promise<unknown> {
       context_snapshot_ref: asText(snapshots[0]?.ref) ?? DASH,
       dependency_graph_ref: DASH,
       latest_context_fingerprint: asText(candidate?.context_fingerprint) ?? asText(head?.checksum) ?? asText(snapshots[0]?.hash) ?? DASH,
+      assigned_ai_set: asText(aiGroup?.id) ?? DASH,
+      healthy_ai_members: String(healthyMembers),
+      assistant_summary: latestAssistant?.assistant_summary ?? DASH,
+      response_mode: latestAssistant?.response_mode ?? DASH,
+      conversation_runtime: conversationId ? "BOUND_SHARED_CONVERSATION_CORE" : "NOT_BOUND",
+      generation_job_ref: asText(generation?.id) ?? DASH,
+      generation_status: asText(generation?.status) ?? "IDLE",
+      generation_cancel_requested: generation?.cancel_requested === true ? "true" : "false",
     },
   };
 }
@@ -982,6 +1865,7 @@ async function readDevFromDb(sql: SqlClient): Promise<unknown> {
   const jobs = await safeRows(() => sql`
     SELECT discovery_job_id::text AS ref, job_name AS label, status::text AS status, mode::text AS mode
     FROM outreach_discovery_jobs
+    WHERE coalesce(stats->>'acceptance_scope','') <> 'GATE_24_DEV'
     ORDER BY created_at DESC
   `);
   const companies = await safeRows(() => sql`
@@ -998,18 +1882,22 @@ async function readDevFromDb(sql: SqlClient): Promise<unknown> {
     run_status,
     values: {
       "DEV-01-FLD-JOB": asText(first?.label) ?? DASH,
+      "DEV-01-FLD-JOB-REF": asText(first?.ref) ?? DASH,
       "DEV-01-FLD-JOB-STATUS": status ?? DASH,
       "DEV-01-FLD-MODE": asText(first?.mode) ?? DASH,
       "DEV-01-FLD-DIRECTORY": String(companies.length),
     },
     gate_state: {
       "DEV-01-GATE-PAGE": true,
+      "DEV-01-GATE-DISCOVERY-START": run_status === null || run_status === "STOPPED",
+      "DEV-01-GATE-DISCOVERY-RUNNING": run_status === "RUNNING",
+      "DEV-01-GATE-DISCOVERY-PAUSED": run_status === "PAUSED",
       "DEV-01-GATE-DIRECTORY-READ": companies.length > 0,
     },
   };
 }
 
-async function readSocFromDb(sql: SqlClient): Promise<unknown> {
+async function readSocFromDb(sql: SqlClient, sessionTokenHash: string): Promise<unknown> {
   const accounts = await safeRows(() => sql`
     SELECT channel_account_id::text AS ref, platform_key AS label, status::text AS status
     FROM channel_accounts
@@ -1020,52 +1908,248 @@ async function readSocFromDb(sql: SqlClient): Promise<unknown> {
     FROM social_account_bindings
     ORDER BY created_at DESC
   `);
-  const targets = await safeRows(() => sql`
-    SELECT social_target_id::text AS ref, target_name AS label, status::text AS status
-    FROM social_market_targets
-    ORDER BY social_target_id
+  const targets = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT
+        t.social_target_id::text AS ref,
+        t.target_name AS label,
+        t.platform_key,
+        t.join_status AS status,
+        COALESCE((to_jsonb(t)->>'version')::bigint,1)::text AS version,
+        t.posting_policy
+      FROM public.social_market_targets t
+      ORDER BY CASE WHEN t.join_status='READY_TO_POST' THEN 0 WHEN t.join_status='JOINED' THEN 1 ELSE 2 END,
+               t.social_target_id
+    `,
+  ));
+  const packages = await safeRows(() => sql`
+    SELECT cp.content_package_id::text AS ref,
+           cp.release_package_id::text AS release_ref,
+           cp.channel_account_id::text AS channel_account_ref,
+           cp.status::text AS status,
+           btrim(cp.package_hash::text) AS package_hash,
+           rp.status::text AS release_status,
+           ca.status::text AS channel_status,
+           ca.platform_key AS channel_platform_key
+    FROM public.content_packages cp
+    JOIN public.release_packages rp ON rp.release_package_id=cp.release_package_id
+    JOIN public.channel_accounts ca ON ca.channel_account_id=cp.channel_account_id
+    ORDER BY cp.created_at DESC
+    LIMIT 20
   `);
+  const drafts = await safeRows(() => sql`
+    SELECT id::text AS ref,status,version::text AS version,payload
+    FROM acpos_runtime.entities
+    WHERE kind='SOC_CONTENT_DRAFT'
+    ORDER BY updated_at DESC
+    LIMIT 20
+  `);
+  const publishRequests = await safeRows(() => runRlsActorQuery(
+    sql,
+    sessionTokenHash,
+    sql`
+      SELECT publish_request_id::text AS ref,
+             social_target_id::text AS target_ref,
+             content_package_id::text AS content_package_ref,
+             channel_account_id::text AS channel_account_ref,
+             status::text AS status,
+             schedule_at::text AS schedule_at,
+             created_at::text AS created_at
+      FROM public.publish_requests
+      ORDER BY created_at DESC,publish_request_id DESC
+      LIMIT 50
+    `,
+  ));
   const first = bindings[0] ?? accounts[0] ?? null;
+  const contentPackage = packages[0] ?? null;
+  const packageRef = asText(contentPackage?.ref);
+  const candidate = packageRef
+    ? drafts.find((row) => asText(asRecord(row.payload)?.content_package_id) === packageRef) ?? null
+    : null;
+  const candidateStatus = asText(candidate?.status);
+  const publishTarget = targets.find((row) => asText(row.status) === "READY_TO_POST") ?? null;
+  const policyTarget = publishTarget
+    ?? targets.find((row) => asText(row.status) === "JOINED")
+    ?? targets[0]
+    ?? null;
+  const policyTargetStatus = asText(policyTarget?.status);
+  const postingPolicy = asRecord(policyTarget?.posting_policy) ?? {};
+  const contentPackageStatus = asText(contentPackage?.status);
+  const releaseStatus = asText(contentPackage?.release_status);
+  const channelStatus = asText(contentPackage?.channel_status);
+  const targetPlatform = asText(policyTarget?.platform_key);
+  const channelPlatform = asText(contentPackage?.channel_platform_key);
+  const latestPublish = publishRequests[0] ?? null;
+  const publishContextReady = Boolean(
+    contentPackage
+    && candidateStatus === "APPROVED"
+    && policyTargetStatus === "READY_TO_POST"
+    && contentPackageStatus === "APPROVED"
+    && releaseStatus === "APPROVED"
+    && channelStatus === "APPROVED"
+    && targetPlatform
+    && channelPlatform === targetPlatform
+  );
   return {
-    page_state: first ? "READY" : "EMPTY",
+    page_state: first || contentPackage || policyTarget ? "READY" : "EMPTY",
     values: {
       "SOC-01-FLD-PLATFORM": asText(first && "platform_key" in first ? first.platform_key : first?.label) ?? DASH,
       "SOC-01-FLD-ACCOUNT": asText(first?.label) ?? DASH,
       "SOC-01-FLD-ACCOUNT-STATUS": asText(first?.status) ?? DASH,
       "SOC-01-FLD-TARGET-COUNT": String(targets.length),
+      "SOC-01-FLD-TARGET-DIRECTORY": policyTarget ? `${asText(policyTarget.ref) ?? DASH} · ${asText(policyTarget.label) ?? DASH} · ${policyTargetStatus ?? DASH}` : DASH,
+      "SOC-01-FLD-TARGET-SELECTOR": policyTarget ? `${asText(policyTarget.ref) ?? DASH} · ${policyTargetStatus ?? DASH}` : DASH,
+      "SOC-01-FLD-TARGET-CAPABILITY-STATUS": policyTargetStatus ?? DASH,
+      "SOC-01-FLD-MIN-INTERVAL": postingPolicy.minimum_interval_hours == null ? DASH : String(postingPolicy.minimum_interval_hours),
+      "SOC-01-FLD-DAILY-LIMIT": postingPolicy.daily_limit == null ? DASH : String(postingPolicy.daily_limit),
+      "SOC-01-FLD-WEEKLY-LIMIT": postingPolicy.weekly_limit == null ? DASH : String(postingPolicy.weekly_limit),
+      "SOC-01-FLD-SAME-COOLDOWN": postingPolicy.same_content_cooldown_hours == null ? DASH : String(postingPolicy.same_content_cooldown_hours),
+      "SOC-01-FLD-SIMILAR-COOLDOWN": postingPolicy.similar_content_cooldown_hours == null ? DASH : String(postingPolicy.similar_content_cooldown_hours),
+      "SOC-01-FLD-ALLOWED-WINDOW": postingPolicy.allowed_time_window == null ? DASH : jsonText(postingPolicy.allowed_time_window),
+      "SOC-01-FLD-TARGET-RULE-NOTES": asText(postingPolicy.target_rule_notes) ?? DASH,
+      "SOC-01-FLD-RELEASE-SOURCE": asText(contentPackage?.release_ref) ?? DASH,
+      "SOC-01-FLD-CONTENT-PACKAGE": packageRef ?? DASH,
+      "SOC-01-FLD-CHANNEL-ACCOUNT": asText(contentPackage?.channel_account_ref) ?? DASH,
+      "SOC-01-FLD-SCHEDULE-AT": asText(latestPublish?.schedule_at) ?? DASH,
+      "SOC-01-FLD-PUBLISH-QUEUE": publishRequests.length
+        ? `${publishRequests.length} request(s) · ${publishRequests.filter((row) => asText(row.status) === "PENDING_EXTERNAL").length} pending external`
+        : "0 requests",
+      "SOC-01-FLD-APPROVAL": candidate ? `${asText(candidate.ref) ?? DASH} · ${candidateStatus ?? "DRAFT"}` : "DRAFT_NOT_CREATED",
+      "SOC-01-FLD-CANDIDATE-REF": asText(candidate?.ref) ?? DASH,
+      "SOC-01-FLD-CANDIDATE-VERSION": asText(candidate?.version) ?? DASH,
+      "SOC-01-FLD-BLOCKERS": publishContextReady
+        ? "No local publish-request blocker"
+        : `target=${policyTargetStatus ?? "missing"}; content=${contentPackageStatus ?? "missing"}; release=${releaseStatus ?? "missing"}; channel=${channelStatus ?? "missing"}; candidate=${candidateStatus ?? "missing"}`,
     },
     gate_state: {
       "SOC-01-GATE-PAGE": true,
       "SOC-01-GATE-READ": true,
+      "SOC-01-GATE-CONTENT": Boolean(contentPackage),
+      "SOC-01-GATE-CANDIDATE": candidateStatus === "REVIEW",
+      "SOC-01-GATE-POLICY": policyTargetStatus === "JOINED",
+      "SOC-01-GATE-PUBLISH": publishContextReady,
       "SOC-01-GATE-RECORDS": true,
+    },
+    selected: {
+      target_id: asText(policyTarget?.ref) ?? "",
+      target_version: asText(policyTarget?.version) ?? "",
+      content_package_id: packageRef ?? "",
+      channel_account_id: asText(contentPackage?.channel_account_ref) ?? "",
+      content_hash: asText(contentPackage?.package_hash) ?? "",
     },
   };
 }
 
 async function readErpFromDb(sql: SqlClient): Promise<unknown> {
   const connectors = await safeRows(() => sql`
-    SELECT erp_connector_id::text AS ref, provider_key AS label, adapter_key, connection_status, configuration_version::text AS configuration_version
+    SELECT erp_connector_id::text AS ref,
+           provider_key AS label,
+           adapter_key,
+           connection_status,
+           configuration_version::text AS configuration_version,
+           CASE
+             WHEN jsonb_typeof(entity_scope)='string' THEN entity_scope #>> '{}'
+             ELSE entity_scope::text
+           END AS entity_scope_text
     FROM erp_connectors
-    ORDER BY created_at DESC
+    ORDER BY created_at DESC,erp_connector_id DESC
+  `);
+  const snapshots = await safeRows(() => sql`
+    SELECT erp_snapshot_id::text AS ref,
+           erp_connector_id::text AS connector_ref,
+           snapshot_type,
+           completeness::text AS completeness,
+           freshness_at::text AS freshness_at,
+           status::text AS status,
+           floor(extract(epoch FROM created_at) * 1000)::bigint::text AS version
+    FROM erp_snapshots
+    ORDER BY created_at DESC,erp_snapshot_id DESC
   `);
   const jobs = await safeRows(() => sql`
-    SELECT erp_sync_job_id::text AS ref, status::text AS label
+    SELECT erp_sync_job_id::text AS ref,
+           erp_connector_id::text AS connector_ref,
+           status::text AS status,
+           requested_scope,
+           attempt_no::text AS attempt_no
     FROM erp_sync_jobs
-    ORDER BY requested_at DESC
+    ORDER BY requested_at DESC,erp_sync_job_id DESC
+  `);
+  const failures = await safeRows(() => sql`
+    SELECT erp_failure_id::text AS ref,
+           erp_connector_id::text AS connector_ref,
+           erp_sync_job_id::text AS job_ref,
+           failure_code,
+           retryable,
+           status::text AS status
+    FROM erp_failures
+    ORDER BY occurred_at DESC,erp_failure_id DESC
   `);
   const first = connectors[0] ?? null;
+  const connectorRef = asText(first?.ref);
+  const snapshot = connectorRef
+    ? snapshots.find((row) => asText(row.connector_ref) === connectorRef) ?? null
+    : null;
+  const latestJob = connectorRef
+    ? jobs.find((row) => asText(row.connector_ref) === connectorRef) ?? null
+    : null;
+  const latestFailure = latestJob
+    ? failures.find((row) => asText(row.job_ref) === asText(latestJob.ref)) ?? null
+    : connectorRef
+      ? failures.find((row) => asText(row.connector_ref) === connectorRef) ?? null
+      : null;
+  const connectionStatus = asText(first?.connection_status);
+  const latestJobStatus = asText(latestJob?.status);
+  const activeRefresh = latestJobStatus === "QUEUED" || latestJobStatus === "RUNNING" || latestJobStatus === "PENDING_EXTERNAL";
+  const snapshotRefreshReady = Boolean(
+    first
+    && snapshot
+    && (connectionStatus === "READY" || connectionStatus === "DEGRADED")
+    && !activeRefresh
+  );
+  const requestedScope = asText(first?.entity_scope_text) ?? "";
   return {
-    page_state: first ? "READY" : "EMPTY",
+    page_state: first || snapshot ? "READY" : "EMPTY",
     values: {
       "ERP-01-FLD-PROVIDER": asText(first?.label) ?? DASH,
       "ERP-01-FLD-ADAPTER": asText(first?.adapter_key) ?? DASH,
-      "ERP-01-FLD-CONNECTION-STATUS": asText(first?.connection_status) ?? DASH,
+      "ERP-01-FLD-CONNECTION-STATUS": connectionStatus ?? DASH,
       "ERP-01-FLD-CONFIG-VERSION": asText(first?.configuration_version) ?? DASH,
-      "ERP-01-FLD-SYNC-STATUS": asText(jobs[0]?.label) ?? DASH,
+      "ERP-01-FLD-SNAPSHOT": snapshot ? `${asText(snapshot.ref) ?? DASH} · ${asText(snapshot.status) ?? DASH}` : DASH,
+      "ERP-01-FLD-FRESHNESS": asText(snapshot?.freshness_at) ?? DASH,
+      "ERP-01-FLD-SYNC-SNAPSHOT-ID": asText(snapshot?.ref) ?? DASH,
+      "ERP-01-FLD-SYNC-FRESHNESS-AT": asText(snapshot?.freshness_at) ?? DASH,
+      "ERP-01-FLD-SYNC-COMPLETENESS": asText(snapshot?.completeness) ?? DASH,
+      "ERP-01-FLD-SYNC-LAST-SYNC-STATUS": latestJobStatus ?? DASH,
+      "ERP-01-FLD-SYNC-STATUS": latestJobStatus ?? DASH,
+      "ERP-01-FLD-SYNC-FAILURE-ID": latestFailure
+        ? `${asText(latestFailure.ref) ?? DASH} · ${asText(latestFailure.failure_code) ?? DASH}`
+        : DASH,
     },
-    gate_state: { "ERP-01-GATE-PAGE": true },
-    selected: first ? { connector_id: asText(first.ref) ?? "" } : {},
-    form_schemas: {},
+    gate_state: {
+      "ERP-01-GATE-PAGE": true,
+      "ERP-01-GATE-CONNECTOR-READ": Boolean(first),
+      "ERP-01-GATE-SYNC-READ": Boolean(snapshot || latestJob),
+      "ERP-01-GATE-SNAPSHOT-REFRESH": snapshotRefreshReady,
+      "ERP-01-GATE-FINANCE": Boolean(snapshot),
+    },
+    selected: first ? {
+      connector_id: connectorRef ?? "",
+      connector_version: asText(first.configuration_version) ?? "",
+      snapshot_id: asText(snapshot?.ref) ?? "",
+      snapshot_version: asText(snapshot?.version) ?? "",
+      sync_job_id: asText(latestJob?.ref) ?? "",
+      sync_job_version: asText(latestJob?.attempt_no) ?? "",
+      failure_id: asText(latestFailure?.ref) ?? "",
+      failure_version: "1",
+      requested_scope: requestedScope,
+    } : {},
+    form_schemas: snapshotRefreshReady ? {
+      "ERP-01-BTN-SNAPSHOT-REFRESH": [
+        { key: "requested_scope", type: "text", required: true },
+      ],
+    } : {},
   };
 }
 
@@ -1310,12 +2394,28 @@ async function readStrategyAdminFromDb(
   };
 }
 
-async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
-  const sources = await safeRows(() => sql`
-    SELECT knowledge_source_id::text AS ref, source_key AS label, status::text AS status, source_uri, classification::text AS classification
+async function readKnowledgeFromDb(sql: SqlClient, sessionTokenHash: string, actorUserId: string): Promise<unknown> {
+  const canConfigure=await evaluateCatalogResourceAction(
+    sql,sessionTokenHash,actorUserId,"permission:knowledge.source.configure","EXECUTE",
+  );
+  const sources = await safeRows(() => runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT knowledge_source_id::text AS ref,
+           source_key AS label,
+           name,
+           source_type,
+           scope,
+           rights_policy,
+           status::text AS status,
+           source_uri,
+           classification::text AS classification,
+           collection_method,
+           collection_config,
+           freshness_policy,
+           retention_policy,
+           source_version::text AS source_version
     FROM knowledge_sources
-    ORDER BY created_at DESC
-  `);
+    ORDER BY created_at DESC,knowledge_source_id DESC
+  `));
   const evidence = await safeRows(() => sql`
     SELECT evidence_record_id::text AS ref
     FROM evidence_records
@@ -1332,13 +2432,24 @@ async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
     ORDER BY created_at DESC
   `);
   const first = sources[0] ?? null;
-  const approved = sources.filter((row) => asText(row.status) === "APPROVED");
+  const approved = sources.filter((row) => asText(row.status) === "ACTIVE");
+  const sourceStatus=asText(first?.status);
   return {
     page_state: sources.length || packs.length ? "READY" : "EMPTY",
     values: {
       "KB-01-FLD-SCOPE": "admin:KB-01",
       "KB-01-FLD-SOURCE-ID": asText(first?.ref) ?? DASH,
-      "KB-01-FLD-SOURCE-STATUS": asText(first?.status) ?? DASH,
+      "KB-01-FLD-SOURCE-VERSION": asText(first?.source_version) ?? DASH,
+      "KB-01-FLD-SOURCE-NAME": asText(first?.name) ?? asText(first?.label) ?? DASH,
+      "KB-01-FLD-SOURCE-TYPE": asText(first?.source_type) ?? DASH,
+      "KB-01-FLD-SOURCE-SCOPE": first?.scope ?? DASH,
+      "KB-01-FLD-SOURCE-RIGHTS": first?.rights_policy ?? DASH,
+      "KB-01-FLD-SOURCE-CLASS": asText(first?.classification) ?? DASH,
+      "KB-01-FLD-SOURCE-COLLECT": asText(first?.collection_method) ?? DASH,
+      "KB-01-FLD-SOURCE-CONFIG": first?.collection_config ?? {},
+      "KB-01-FLD-SOURCE-FRESH": first?.freshness_policy ?? DASH,
+      "KB-01-FLD-SOURCE-RETENTION": first?.retention_policy ?? DASH,
+      "KB-01-FLD-SOURCE-STATUS": sourceStatus ?? DASH,
       "KB-01-FLD-SOURCE-URI": asText(first?.source_uri) ?? DASH,
       "KB-01-FLD-CTX-CAND-ITEMS": candidates,
       Source: String(sources.length),
@@ -1349,7 +2460,28 @@ async function readKnowledgeFromDb(sql: SqlClient): Promise<unknown> {
     },
     control_enabled: {
       "KB-01-CTL-SEARCH-GLOBAL": true,
+      "KB-01-CTL-SOURCE-CREATE": canConfigure,
+      "KB-01-CTL-SOURCE-SAVE": canConfigure && sourceStatus === "DRAFT",
+      "KB-01-CTL-SOURCE-PAUSE": canConfigure && sourceStatus === "ACTIVE",
+      "KB-01-CTL-SOURCE-RESUME": canConfigure && sourceStatus === "PAUSED",
     },
+    entities: first ? {
+      selected_source: {
+        source_id: asText(first.ref) ?? "",
+        source_version: asText(first.source_version) ?? "",
+        name: asText(first.name) ?? asText(first.label) ?? "",
+        source_type: asText(first.source_type) ?? "",
+        scope: first.scope ?? null,
+        rights: first.rights_policy ?? null,
+        source_uri: asText(first.source_uri) ?? "",
+        classification: asText(first.classification) ?? "",
+        collection_method: asText(first.collection_method) ?? "",
+        collection_config: first.collection_config ?? {},
+        freshness_policy: first.freshness_policy ?? null,
+        retention_policy: first.retention_policy ?? null,
+        status: sourceStatus ?? "",
+      },
+    } : {},
   };
 }
 
@@ -1377,13 +2509,13 @@ async function readPageValue(
     case "workspace:INFO-01":
       return readInfoFromDb(sql, sessionTokenHash);
     case "admin:SYS-01":
-      return readSystemFromDb(sql);
+      return readSystemFromDb(sql, sessionTokenHash);
     case "admin:IAM-01":
       return readIamProjection(sql);
     case "admin:DEV-01":
       return readDevFromDb(sql);
     case "admin:SOC-01":
-      return readSocFromDb(sql);
+      return readSocFromDb(sql, sessionTokenHash);
     case "admin:ERP-01":
       return readErpFromDb(sql);
     case "admin:AIAPI-01":
@@ -1393,7 +2525,7 @@ async function readPageValue(
     case "admin:STR-01":
       return readStrategyAdminFromDb(sql, sessionTokenHash, actorUserId);
     case "admin:KB-01":
-      return readKnowledgeFromDb(sql);
+      return readKnowledgeFromDb(sql, sessionTokenHash, actorUserId);
     default:
       return null;
   }

@@ -45,6 +45,52 @@ function fingerprint(value: unknown): string {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
 }
 
+async function ensureSystemConversation(
+  sql: SqlClient,
+  identity: SystemRuntimeIdentity,
+  systemChangeId: string,
+): Promise<string> {
+  await sql`
+    INSERT INTO workspaces(workspace_key,name,status,data_classification,created_by)
+    VALUES('ACPOS-SYSTEM-AI','ACPOS System AI','READY','INTERNAL',${identity.actor_user_id}::uuid)
+    ON CONFLICT(workspace_key) DO NOTHING
+  `;
+  const workspaceRows = await sql`
+    SELECT workspace_id::text AS workspace_id
+    FROM workspaces
+    WHERE workspace_key='ACPOS-SYSTEM-AI'
+    LIMIT 1
+  `;
+  const workspaceId = asText(first(workspaceRows)?.workspace_id);
+  if (!workspaceId) throw new NamedRuntimeError("SYS01_SYSTEM_WORKSPACE_NOT_READY");
+  await runRlsActorQuery(
+    sql,
+    identity.session_token_hash,
+    sql`
+      INSERT INTO conversations(
+        conversation_id,workspace_id,project_id,topic_id,title,created_by
+      ) VALUES(
+        ${systemChangeId}::uuid,${workspaceId}::uuid,NULL,NULL,
+        ${`SYSTEM_CHANGE /${systemChangeId}`},${identity.actor_user_id}::uuid
+      )
+      ON CONFLICT(conversation_id) DO NOTHING
+    `,
+  );
+  const conversationRows = await runRlsActorQuery(
+    sql,
+    identity.session_token_hash,
+    sql`
+      SELECT conversation_id::text AS conversation_id
+      FROM conversations
+      WHERE conversation_id=${systemChangeId}::uuid
+      LIMIT 1
+    `,
+  );
+  const conversationId = asText(first(conversationRows)?.conversation_id);
+  if (!conversationId) throw new NamedRuntimeError("SYS01_SHARED_CONVERSATION_NOT_READY");
+  return conversationId;
+}
+
 export async function resolveProductionSystemContinuityContext(
   system_change_id: string,
   session_token_hash: string,
@@ -71,6 +117,7 @@ export async function resolveProductionSystemContinuityContext(
   ]);
   const active = first(changeRows);
   const head = first(migrationRows);
+
   const candidateRows = active?.current_candidate_id
     ? await runRlsActorQuery(
         sql,
@@ -79,33 +126,110 @@ export async function resolveProductionSystemContinuityContext(
           SELECT system_change_candidate_id::text AS candidate_ref,status,context_fingerprint,candidate_document
           FROM public.system_change_candidates
           WHERE system_change_candidate_id=${asText(active.current_candidate_id)}::uuid
+            AND system_change_id=${system_change_id}::uuid
           LIMIT 1
         `,
       )
     : [];
   const candidate = first(candidateRows);
-  const contextFingerprint = asText(candidate?.context_fingerprint)
-    ?? asText(head?.checksum)
-    ?? fingerprint({ system_change_id, active_change: active, candidate });
+
+  const conversationRows = await runRlsActorQuery(
+    sql,
+    session_token_hash,
+    sql`
+      SELECT conversation_id::text AS conversation_id,title,updated_at::text AS updated_at
+      FROM conversations
+      WHERE conversation_id=${system_change_id}::uuid
+      LIMIT 1
+    `,
+  ).catch(() => []);
+  const conversation = first(conversationRows);
+  const conversationId = asText(conversation?.conversation_id);
+
+  const recentMessages = conversationId
+    ? await runRlsActorQuery(
+        sql,
+        session_token_hash,
+        sql`
+          SELECT conversation_message_id::text AS message_ref,
+                 actor_type,
+                 left(COALESCE(message_content->>'text',''),2200) AS text,
+                 message_content->>'assistant_summary' AS assistant_summary,
+                 message_content->>'response_mode' AS response_mode,
+                 message_content->'governance'->>'context_fingerprint' AS context_fingerprint,
+                 message_content->'entries' AS entries,
+                 COALESCE(message_content->>'kind','') AS kind
+          FROM conversation_messages
+          WHERE conversation_id=${conversationId}::uuid
+          ORDER BY sequence_no DESC
+          LIMIT 30
+        `,
+      ).catch(() => [])
+    : [];
+
+  const decisionRows = (Array.isArray(recentMessages) ? recentMessages : [])
+    .map(asRecord)
+    .filter((row): row is Row => Boolean(row) && asText(row?.kind) === "DECISION_LEDGER");
+  const decisions = decisionRows.flatMap((row) => {
+    const raw = row.entries ?? null;
+    if (Array.isArray(raw)) return raw;
+    return [];
+  });
+
+  const conversationHistory = (Array.isArray(recentMessages) ? recentMessages : [])
+    .map(asRecord)
+    .filter((row): row is Row => Boolean(row) && asText(row?.kind) !== "DECISION_LEDGER")
+    .reverse()
+    .map((row) => ({
+      message_ref: asText(row.message_ref),
+      actor_type: asText(row.actor_type),
+      text: asText(row.text),
+      assistant_summary: asText(row.assistant_summary),
+      response_mode: asText(row.response_mode),
+      context_fingerprint: asText(row.context_fingerprint),
+    }));
+
+  const systemTruth = {
+    current_system_version: asText(head?.ref),
+    current_system_checksum: asText(head?.checksum),
+    authority_scope: "admin:SYS-01",
+  };
+  const activeChange = active ? {
+    system_change_id: asText(active.system_change_id),
+    current_goal: asText(active.current_goal),
+    scope: active.scope ?? {},
+    status: asText(active.status),
+    candidate_ref: asText(active.current_candidate_id),
+  } : null;
+  const conversationContext = conversationId ? {
+    conversation_id: conversationId,
+    thread_id: conversationId,
+    branch_id: null,
+    title: asText(conversation?.title),
+    history: conversationHistory,
+  } : null;
+  const validation = candidate ? {
+    candidate_ref: asText(candidate.candidate_ref),
+    candidate_status: asText(candidate.status),
+    candidate_context_fingerprint: asText(candidate.context_fingerprint),
+  } : null;
+  const contextFingerprint = fingerprint({
+    system_truth: systemTruth,
+    active_change: activeChange,
+    conversation: conversationContext,
+    decisions,
+    affected_scope: active?.scope ?? null,
+    validation,
+  });
 
   return {
     system_change_id,
-    system_truth: {
-      current_system_version: asText(head?.ref),
-      current_system_checksum: asText(head?.checksum),
-      authority_scope: "admin:SYS-01",
-    },
-    active_change: active ? {
-      system_change_id: asText(active.system_change_id),
-      current_goal: asText(active.current_goal),
-      scope: active.scope ?? {},
-      status: asText(active.status),
-      candidate_ref: asText(active.current_candidate_id),
-    } : null,
-    conversation: null,
-    decisions: null,
+    system_truth: systemTruth,
+    active_change: activeChange,
+    conversation: conversationContext,
+    decisions,
     affected_scope: active?.scope ?? null,
-    validation: candidate ? { candidate_ref: asText(candidate.candidate_ref), candidate_status: asText(candidate.status) } : null,
+    validation,
     deployment: null,
     latest_context_fingerprint: contextFingerprint,
   };
@@ -166,8 +290,10 @@ export async function executeProductionSystemLifecycleOperation(
         WHERE system_change_id=${systemChangeId}::uuid
       `,
     );
+    const conversationId = await ensureSystemConversation(sql, identity, systemChangeId);
     return {
       system_change_id: systemChangeId,
+      conversation_id: conversationId,
       candidate_ref: candidateRef,
       status: "DRAFT",
       production_mutation: false,

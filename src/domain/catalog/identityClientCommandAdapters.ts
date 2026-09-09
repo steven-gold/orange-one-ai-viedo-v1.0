@@ -10,8 +10,45 @@ import { isControlledTestMode } from "@/domain/testing/controlledTestData";
 import { configureInfoCommandPayloadBuilder } from "@/domain/info/infoCommandPort";
 import { configureStrategyRequestBuilder } from "@/domain/strategy/strategyCommandPort";
 import { configureStrategyAdminCommandAdapter } from "@/domain/strategyAdmin/strategyAdminRuntimePort";
+import { configureDevCommandAdapter } from "@/domain/dev/devCommandPort";
+import { readDevProjection } from "@/domain/dev/devProjectionPort";
+import { DEV_CONTROL_BINDINGS, type DevControlBinding, type DevControlUid } from "@/domain/dev/devControlBindings";
+import { configureSocCommandAdapter } from "@/domain/social/socCommandPort";
+import { readSocProjection } from "@/domain/social/socProjectionPort";
+import { configureAssetRequestBuilder } from "@/domain/asset/assetRequestAdapter";
+import { configureAssetSharedRuntime } from "@/domain/asset/assetClientPort";
+import { configureVideoSharedRuntime } from "@/domain/video/videoClientPort";
 
 let bound = false;
+let assetCorrectionCandidateRef:string|null=null;
+let assetApprovedCorrectionRef:string|null=null;
+let videoCorrectionCandidateRef:string|null=null;
+let videoApprovedCorrectionRef:string|null=null;
+
+const SHARED_OPERATION_PATH:Readonly<Record<string,string>>={
+  generateCorrectionScriptCandidate:"/v1/state-commands/correctionscript/generate",
+  approveCorrectionScriptCandidate:"/v1/state-commands/correctionscript/approve",
+  restoreAssetVersionAsNewDraft:"/v1/state-commands/assetversion/restoreasnewdraft",
+  lockAssetVersion:"/v1/state-commands/assetversion/lock",
+  lockVideoVersion:"/v1/state-commands/videoversion/lock",
+};
+async function invokeSharedHttp(
+  operation_id:string,
+  payload:unknown,
+  error_uid:string,
+):Promise<{ok:true;value:unknown;correlation_id:string}|{ok:false;error_uid:string;reason_code:string;correlation_id:string}>{
+  const path=SHARED_OPERATION_PATH[operation_id];
+  if(!path)return{ok:false,error_uid,reason_code:"SHARED_OPERATION_PATH_UNREGISTERED",correlation_id:"unresolved"};
+  try{
+    const response=await fetch(path,{method:"POST",cache:"no-store",credentials:"include",headers:{"content-type":"application/json","x-correlation-id":crypto.randomUUID()},body:JSON.stringify(payload??{})});
+    const correlation_id=response.headers.get("x-correlation-id")??"unresolved";
+    const raw:unknown=await response.json().catch(()=>null);
+    const body=rec(raw);
+    if(!response.ok)return{ok:false,error_uid,reason_code:typeof body?.reason_code==="string"?body.reason_code:"SHARED_OPERATION_REQUEST_FAILED",correlation_id};
+    return{ok:true,value:raw,correlation_id};
+  }catch{return{ok:false,error_uid,reason_code:"SHARED_OPERATION_REQUEST_FAILED",correlation_id:"unresolved"};}
+}
+
 
 function rec(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
@@ -71,6 +108,290 @@ function openDraftDialog(kind: "PROJECT" | "TOPIC"): Promise<{ ok: true; payload
     });
     if (typeof dialog.showModal === "function") dialog.showModal();
     else finish({ ok: false, reason_code: "DRAFT_FORM_DIALOG_UNSUPPORTED" });
+  });
+}
+
+
+type InfoHumanDecisionResult =
+  | { ok: true; decision_reason: string; decision?: "ACCEPTED" | "REJECTED" }
+  | { ok: false; reason_code: string };
+
+function openInfoHumanDecisionDialog(kind: "ADOPT" | "DECIDE"): Promise<InfoHumanDecisionResult> {
+  if (typeof document === "undefined") {
+    return Promise.resolve({ ok: false, reason_code: "INFO_HUMAN_DECISION_WINDOW_UNAVAILABLE" });
+  }
+  return new Promise((resolve) => {
+    document.getElementById("acpos-info-human-decision-dialog")?.remove();
+    const dialog = document.createElement("dialog");
+    dialog.id = "acpos-info-human-decision-dialog";
+    dialog.style.padding = "20px";
+    dialog.style.border = "1px solid #3a4458";
+    dialog.style.borderRadius = "12px";
+    dialog.style.background = "#10151f";
+    dialog.style.color = "#e8edf7";
+    dialog.style.minWidth = "420px";
+    const isAdopt = kind === "ADOPT";
+    dialog.innerHTML = `<form method="dialog" id="acpos-info-human-decision-form" style="display:grid;gap:12px">
+      <strong>${isAdopt ? "Adopt context candidate" : "Decide context candidate"}</strong>
+      ${isAdopt ? "" : `<label style="display:grid;gap:4px">Decision
+        <select name="decision" required style="padding:8px">
+          <option value="ACCEPTED">Accept</option>
+          <option value="REJECTED">Reject</option>
+        </select>
+      </label>`}
+      <label style="display:grid;gap:4px">Decision reason
+        <textarea name="decision_reason"${isAdopt ? " required" : ""} rows="4" autocomplete="off" style="padding:8px"></textarea>
+      </label>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button value="cancel" type="button" id="acpos-info-human-decision-cancel">Cancel</button>
+        <button value="ok">${isAdopt ? "Adopt" : "Submit decision"}</button>
+      </div>
+    </form>`;
+    document.body.appendChild(dialog);
+    const form = dialog.querySelector("form") as HTMLFormElement;
+    let settled = false;
+    const finish = (result: InfoHumanDecisionResult) => {
+      if (settled) return;
+      settled = true;
+      if (dialog.open) dialog.close();
+      dialog.remove();
+      resolve(result);
+    };
+    dialog.querySelector("#acpos-info-human-decision-cancel")?.addEventListener("click", () => {
+      finish({ ok: false, reason_code: "INFO_HUMAN_DECISION_CANCELLED" });
+    });
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const decision_reason = String(data.get("decision_reason") ?? "").trim();
+      if (isAdopt) {
+        if (!decision_reason) {
+          finish({ ok: false, reason_code: "INFO01_DECISION_REASON_REQUIRED" });
+          return;
+        }
+        finish({ ok: true, decision_reason });
+        return;
+      }
+      const decision = String(data.get("decision") ?? "").trim();
+      if (decision !== "ACCEPTED" && decision !== "REJECTED") {
+        finish({ ok: false, reason_code: "INFO01_REGISTERED_DECISION_REQUIRED" });
+        return;
+      }
+      finish({ ok: true, decision, decision_reason });
+    });
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      finish({ ok: false, reason_code: "INFO_HUMAN_DECISION_CANCELLED" });
+    });
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else finish({ ok: false, reason_code: "INFO_HUMAN_DECISION_DIALOG_UNSUPPORTED" });
+  });
+}
+
+
+type SocPolicyDialogResult =
+  | { ok: true; payload: Record<string, unknown> }
+  | { ok: false; reason_code: string };
+
+function openSocTargetPolicyDialog(projection: import("@/domain/social/socProjectionPort").SocNormalizedProjection): Promise<SocPolicyDialogResult> {
+  if (typeof document === "undefined") return Promise.resolve({ ok: false, reason_code: "SOC_POLICY_WINDOW_UNAVAILABLE" });
+  return new Promise((resolve) => {
+    document.getElementById("acpos-soc-target-policy-dialog")?.remove();
+    const dialog=document.createElement("dialog");
+    dialog.id="acpos-soc-target-policy-dialog";
+    dialog.style.padding="20px";
+    dialog.style.border="1px solid #3a4458";
+    dialog.style.borderRadius="12px";
+    dialog.style.background="#10151f";
+    dialog.style.color="#e8edf7";
+    dialog.style.minWidth="480px";
+    dialog.innerHTML=`<form method="dialog" style="display:grid;gap:10px">
+      <strong>Configure target posting policy</strong>
+      <label>minimum_interval_hours<input name="minimum_interval_hours" type="number" min="0" step="1" required></label>
+      <label>daily_limit<input name="daily_limit" type="number" min="0" step="1" required></label>
+      <label>weekly_limit<input name="weekly_limit" type="number" min="0" step="1" required></label>
+      <label>same_content_cooldown_hours<input name="same_content_cooldown_hours" type="number" min="0" step="1"></label>
+      <label>similar_content_cooldown_hours<input name="similar_content_cooldown_hours" type="number" min="0" step="1"></label>
+      <label>allowed_time_window<textarea name="allowed_time_window" rows="3"></textarea></label>
+      <label>target_rule_notes<textarea name="target_rule_notes" rows="3"></textarea></label>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" id="acpos-soc-policy-cancel">Cancel</button>
+        <button value="ok">Save policy</button>
+      </div>
+    </form>`;
+    document.body.appendChild(dialog);
+    const form=dialog.querySelector("form") as HTMLFormElement;
+    const setValue=(name:string,key:string)=>{
+      const field=form.elements.namedItem(name) as HTMLInputElement|HTMLTextAreaElement|null;
+      const current=projection.values[key];
+      if(field&&current&&current!=="—")field.value=current;
+    };
+    setValue("minimum_interval_hours","SOC-01-FLD-MIN-INTERVAL");
+    setValue("daily_limit","SOC-01-FLD-DAILY-LIMIT");
+    setValue("weekly_limit","SOC-01-FLD-WEEKLY-LIMIT");
+    setValue("same_content_cooldown_hours","SOC-01-FLD-SAME-COOLDOWN");
+    setValue("similar_content_cooldown_hours","SOC-01-FLD-SIMILAR-COOLDOWN");
+    setValue("allowed_time_window","SOC-01-FLD-ALLOWED-WINDOW");
+    setValue("target_rule_notes","SOC-01-FLD-TARGET-RULE-NOTES");
+    let settled=false;
+    const finish=(result:SocPolicyDialogResult)=>{if(settled)return;settled=true;if(dialog.open)dialog.close();dialog.remove();resolve(result)};
+    dialog.querySelector("#acpos-soc-policy-cancel")?.addEventListener("click",()=>finish({ok:false,reason_code:"SOC_POLICY_CANCELLED"}));
+    form.addEventListener("submit",(event)=>{
+      event.preventDefault();
+      const data=new FormData(form);
+      const requiredNumber=(name:string)=>Number(String(data.get(name)??""));
+      const minimum_interval_hours=requiredNumber("minimum_interval_hours");
+      const daily_limit=requiredNumber("daily_limit");
+      const weekly_limit=requiredNumber("weekly_limit");
+      if(![minimum_interval_hours,daily_limit,weekly_limit].every((n)=>Number.isSafeInteger(n)&&n>=0)){
+        finish({ok:false,reason_code:"SOC01_REQUIRED_POLICY_FIELD_MISSING"});return;
+      }
+      const payload:Record<string,unknown>={minimum_interval_hours,daily_limit,weekly_limit};
+      for(const key of ["same_content_cooldown_hours","similar_content_cooldown_hours"]){
+        const raw=String(data.get(key)??"").trim();
+        if(raw){
+          const parsed=Number(raw);
+          if(!Number.isSafeInteger(parsed)||parsed<0){finish({ok:false,reason_code:"SOC01_POLICY_INTEGER_INVALID"});return;}
+          payload[key]=parsed;
+        }
+      }
+      const windowRaw=String(data.get("allowed_time_window")??"").trim();
+      if(windowRaw){
+        try{
+          const parsed:unknown=JSON.parse(windowRaw);
+          if(!parsed||typeof parsed!=="object"||Array.isArray(parsed))throw new Error("invalid");
+          payload.allowed_time_window=parsed;
+        }catch{finish({ok:false,reason_code:"SOC01_ALLOWED_TIME_WINDOW_INVALID"});return;}
+      }
+      const notes=String(data.get("target_rule_notes")??"").trim();
+      if(notes)payload.target_rule_notes=notes;
+      finish({ok:true,payload});
+    });
+    dialog.addEventListener("cancel",(event)=>{event.preventDefault();finish({ok:false,reason_code:"SOC_POLICY_CANCELLED"})});
+    if(typeof dialog.showModal==="function")dialog.showModal();else finish({ok:false,reason_code:"SOC_POLICY_DIALOG_UNSUPPORTED"});
+  });
+}
+
+
+
+type SocCandidateDecisionDialogResult =
+  | { ok: true; decision: "APPROVE" | "REJECT" | "RETURN"; rationale: string }
+  | { ok: false; reason_code: string };
+
+function openSocCandidateDecisionDialog(): Promise<SocCandidateDecisionDialogResult> {
+  if (typeof document === "undefined") {
+    return Promise.resolve({ ok: false, reason_code: "SOC_CANDIDATE_WINDOW_UNAVAILABLE" });
+  }
+  return new Promise((resolve) => {
+    document.getElementById("acpos-soc-candidate-decision-dialog")?.remove();
+    const dialog = document.createElement("dialog");
+    dialog.id = "acpos-soc-candidate-decision-dialog";
+    dialog.style.padding = "20px";
+    dialog.style.border = "1px solid #3a4458";
+    dialog.style.borderRadius = "12px";
+    dialog.style.background = "#10151f";
+    dialog.style.color = "#e8edf7";
+    dialog.style.minWidth = "440px";
+    dialog.innerHTML = `<form method="dialog" style="display:grid;gap:12px">
+      <strong>審查內容 Candidate</strong>
+      <label style="display:grid;gap:4px">Decision
+        <select name="decision" required>
+          <option value="">—</option>
+          <option value="APPROVE">APPROVE</option>
+          <option value="REJECT">REJECT</option>
+          <option value="RETURN">RETURN</option>
+        </select>
+      </label>
+      <label style="display:grid;gap:4px">Rationale
+        <textarea name="rationale" rows="4" required autocomplete="off"></textarea>
+      </label>
+      <small>APPROVE 只封板 exact content package；此動作不建立發佈要求，也不代表外部平台已發佈。</small>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" id="acpos-soc-candidate-cancel">取消</button>
+        <button value="ok">送出審查</button>
+      </div>
+    </form>`;
+    document.body.appendChild(dialog);
+    const form = dialog.querySelector("form") as HTMLFormElement;
+    let settled = false;
+    const finish = (result: SocCandidateDecisionDialogResult) => {
+      if (settled) return;
+      settled = true;
+      if (dialog.open) dialog.close();
+      dialog.remove();
+      resolve(result);
+    };
+    dialog.querySelector("#acpos-soc-candidate-cancel")?.addEventListener("click", () => {
+      finish({ ok: false, reason_code: "SOC_CANDIDATE_DECISION_CANCELLED" });
+    });
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const decision = String(data.get("decision") ?? "").trim();
+      const rationale = String(data.get("rationale") ?? "").trim();
+      if (decision !== "APPROVE" && decision !== "REJECT" && decision !== "RETURN") {
+        finish({ ok: false, reason_code: "SOC01_CANDIDATE_DECISION_INVALID" });
+        return;
+      }
+      if (!rationale) {
+        finish({ ok: false, reason_code: "SOC01_CANDIDATE_RATIONALE_REQUIRED" });
+        return;
+      }
+      finish({ ok: true, decision, rationale });
+    });
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      finish({ ok: false, reason_code: "SOC_CANDIDATE_DECISION_CANCELLED" });
+    });
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else finish({ ok: false, reason_code: "SOC_CANDIDATE_DIALOG_UNSUPPORTED" });
+  });
+}
+
+function openSocPublishRequestConfirm(input: {
+  target_id: string;
+  content_package_id: string;
+  channel_account_id: string;
+}): Promise<{ok:true}|{ok:false;reason_code:string}> {
+  if (typeof document === "undefined") return Promise.resolve({ok:false,reason_code:"SOC_PUBLISH_WINDOW_UNAVAILABLE"});
+  return new Promise((resolve) => {
+    document.getElementById("acpos-soc-publish-confirm-dialog")?.remove();
+    const dialog=document.createElement("dialog");
+    dialog.id="acpos-soc-publish-confirm-dialog";
+    dialog.style.padding="20px";
+    dialog.style.border="1px solid #3a4458";
+    dialog.style.borderRadius="12px";
+    dialog.style.background="#10151f";
+    dialog.style.color="#e8edf7";
+    dialog.style.minWidth="440px";
+    dialog.innerHTML=`<form method="dialog" style="display:grid;gap:12px">
+      <strong>建立發佈要求</strong>
+      <div data-field="target"></div>
+      <div data-field="content"></div>
+      <div data-field="channel"></div>
+      <small>此步驟只建立 PENDING_EXTERNAL 要求，不代表外部平台已發佈成功。</small>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" id="acpos-soc-publish-cancel">取消</button>
+        <button value="ok">確認建立</button>
+      </div>
+    </form>`;
+    document.body.appendChild(dialog);
+    const form=dialog.querySelector("form") as HTMLFormElement;
+    const setText=(field:string,value:string)=>{
+      const node=dialog.querySelector(`[data-field="${field}"]`);
+      if(node)node.textContent=value;
+    };
+    setText("target",`Target: ${input.target_id}`);
+    setText("content",`Content package: ${input.content_package_id}`);
+    setText("channel",`Channel account: ${input.channel_account_id}`);
+    let settled=false;
+    const finish=(result:{ok:true}|{ok:false;reason_code:string})=>{
+      if(settled)return;settled=true;if(dialog.open)dialog.close();dialog.remove();resolve(result);
+    };
+    dialog.querySelector("#acpos-soc-publish-cancel")?.addEventListener("click",()=>finish({ok:false,reason_code:"SOC_PUBLISH_CANCELLED"}));
+    form.addEventListener("submit",(event)=>{event.preventDefault();finish({ok:true})});
+    dialog.addEventListener("cancel",(event)=>{event.preventDefault();finish({ok:false,reason_code:"SOC_PUBLISH_CANCELLED"})});
+    if(typeof dialog.showModal==="function")dialog.showModal();else finish({ok:false,reason_code:"SOC_PUBLISH_DIALOG_UNSUPPORTED"});
   });
 }
 
@@ -144,6 +465,184 @@ export function bindIdentityClientCommandAdapters(): void {
   bindStrategyAdminHttpCommandAdapter();
   if (isControlledTestMode()) return;
 
+  configureAssetRequestBuilder({
+    build: ({ action_uid, control_value, state, projection, correction_request }) => {
+      const path = (entries: ReadonlyArray<readonly [string, string]>): Record<string, string> =>
+        Object.fromEntries(entries.filter(([, value]) => value.length > 0));
+      const taskId = projection?.task_id ?? "";
+      const outputVersionId = projection?.output_version_id ?? "";
+      const layerDocumentId = projection?.layer_document_id ?? "";
+      const layerId = projection?.layer_id ?? "";
+      const patchId = projection?.patch_id ?? "";
+      const inputFingerprint = projection?.values["ASSET-01-FLD-INPUT-FINGERPRINT"] ?? "";
+      const criteriaVersionRef =
+        projection?.values["ASSET-01-FLD-CRITERIA-VERSION"]
+        ?? projection?.values["ASSET-01-FLD-CRITERIA"]
+        ?? "";
+      const common = { input_fingerprint: inputFingerprint, mode: state.mode };
+      switch (action_uid) {
+        case "ASSET-01-ACT-FLOW-START":
+          return { path_params: path([["taskId", taskId]]), payload: common };
+        case "ASSET-01-ACT-EVALUATE":
+          return {
+            payload: {
+              task_ref: taskId,
+              target_output_version_id: outputVersionId,
+              criteria_version_ref: criteriaVersionRef,
+              evidence_refs: [],
+            },
+          };
+        case "ASSET-01-ACT-CANDIDATE-CONFIRM":
+          return {
+            path_params: path([["taskId", taskId], ["outputVersionId", outputVersionId]]),
+            payload: { decision: "CONFIRM" },
+          };
+        case "ASSET-01-ACT-CORRECTION-GENERATE":
+          return {
+            payload: {
+              family: "ASSET",
+              task_id: taskId,
+              output_version_id: outputVersionId,
+              finding_id: projection?.finding_id ?? "",
+              request: correction_request.trim(),
+              affected_scope: { asset_ref: state.asset_ref },
+            },
+          };
+        case "ASSET-01-ACT-CORRECTION-APPROVE":
+          return {
+            payload: {
+              family: "ASSET",
+              candidate_ref: projection?.correction_candidate_id ?? assetCorrectionCandidateRef ?? "",
+              decision_reason: correction_request.trim(),
+              expected_content_hash: projection?.correction_candidate_content_hash ?? undefined,
+            },
+          };
+        case "ASSET-01-ACT-RESTORE-AS-NEW":
+          return { payload: { family: "ASSET", output_version_id: outputVersionId } };
+        case "ASSET-01-ACT-VERSION-LOCK":
+          return {
+            payload: {
+              family: "ASSET",
+              output_version_id: outputVersionId,
+              manifest_hash: projection?.values["ASSET-01-FLD-HANDOFF-CONTRACT-HASH"] ?? undefined,
+            },
+          };
+        case "ASSET-01-ACT-CORRECTION-EXECUTE":
+          return {
+            path_params: path([["taskId", taskId]]),
+            payload: {
+              ...common,
+              correction_request: correction_request.trim(),
+              source_output_version_id: outputVersionId,
+            },
+          };
+        case "ASSET-01-ACT-FINDING-CREATE":
+          return {
+            payload: {
+              task_ref: taskId,
+              target_output_version_id: outputVersionId,
+              scorecard_ref: projection?.values["ASSET-01-FLD-SCORECARD"] ?? "",
+              evidence_refs: [],
+            },
+          };
+        case "ASSET-01-ACT-TASK-RETRY":
+          return { path_params: path([["taskId", taskId]]), payload: { ...common, preserve_previous_output: true } };
+        case "ASSET-01-ACT-HANDOFF":
+          return {
+            payload: {
+              source_task_id: taskId,
+              source_output_version_id: outputVersionId,
+              scorecard_id: projection?.values["ASSET-01-FLD-SCORECARD"] ?? "",
+              rights_profile_id: projection?.values["ASSET-01-FLD-RIGHTS"] ?? "",
+            },
+          };
+        case "ASSET-01-ACT-LAYER-DOC-CREATE":
+          return {
+            payload: {
+              project_id: state.project_ref,
+              topic_id: state.topic_ref,
+              asset_version_id: outputVersionId,
+            },
+          };
+        case "ASSET-01-ACT-LAYER-DOC-UPDATE":
+          return { path_params: path([["layerDocumentId", layerDocumentId]]), payload: control_value ?? {} };
+        case "ASSET-01-ACT-LAYER-ADD":
+          return { path_params: path([["layerDocumentId", layerDocumentId]]), payload: control_value ?? {} };
+        case "ASSET-01-ACT-LAYER-DELETE":
+          return { path_params: path([["layerDocumentId", layerDocumentId], ["layerId", layerId]]), payload: null };
+        case "ASSET-01-ACT-LAYER-DUPLICATE":
+        case "ASSET-01-ACT-LAYER-REORDER":
+        case "ASSET-01-ACT-LAYER-PROPERTIES":
+        case "ASSET-01-ACT-LAYER-MASK":
+          return { path_params: path([["layerDocumentId", layerDocumentId], ["layerId", layerId]]), payload: control_value ?? {} };
+        case "ASSET-01-ACT-PATCH-CREATE":
+          return {
+            payload: {
+              source_asset_version_id: outputVersionId,
+              document_layer_id: layerId,
+              revision_instruction: correction_request.trim() ? { request: correction_request.trim() } : {},
+            },
+          };
+        case "ASSET-01-ACT-PATCH-PREVIEW":
+          return { path_params: path([["patchId", patchId]]), payload: {} };
+        case "ASSET-01-ACT-PATCH-ACCEPT":
+          return { path_params: path([["patchId", patchId]]), payload: { decision: "ACCEPT" } };
+        case "ASSET-01-ACT-PATCH-REJECT":
+          return { path_params: path([["patchId", patchId]]), payload: { decision: "REJECT" } };
+        default:
+          return { payload: control_value ?? {} };
+      }
+    },
+  });
+
+  configureAssetSharedRuntime({
+    prepareEvaluation: async (input) => input.payload ?? {},
+    prepareCorrectionExecution: async (input) => {
+      const base=rec(input.payload)??{};
+      const approved=assetApprovedCorrectionRef;
+      if(!approved)throw new Error("ASSET_APPROVED_CORRECTION_REQUIRED");
+      return{...base,family:"ASSET",mode:"CORRECTION",approved_candidate_ref:approved};
+    },
+    invoke: async (operation_id,input) => {
+      const base=rec(input.payload)??{};
+      const payload=operation_id==="approveCorrectionScriptCandidate"
+        ? {...base,family:"ASSET",candidate_ref:base.candidate_ref??assetCorrectionCandidateRef}
+        : {...base,family:"ASSET"};
+      const error_uid=operation_id==="lockAssetVersion"||operation_id==="restoreAssetVersionAsNewDraft"?"ASSET-01-ERR-VERSION-001":"ASSET-01-ERR-CORRECTION-001";
+      const result=await invokeSharedHttp(operation_id,payload,error_uid);
+      if(result.ok){
+        const body=rec(result.value);
+        if(operation_id==="generateCorrectionScriptCandidate"&&typeof body?.candidate_ref==="string"){assetCorrectionCandidateRef=body.candidate_ref;assetApprovedCorrectionRef=null;}
+        if(operation_id==="approveCorrectionScriptCandidate"&&typeof body?.approved_candidate_ref==="string")assetApprovedCorrectionRef=body.approved_candidate_ref;
+      }
+      return result as Awaited<ReturnType<NonNullable<Parameters<typeof configureAssetSharedRuntime>[0]["invoke"]>>>;
+    },
+  });
+
+  configureVideoSharedRuntime({
+    prepareEvaluation: async (input) => input.payload ?? {},
+    prepareCorrectionExecution: async (input) => {
+      const base=rec(input.payload)??{};
+      const approved=videoApprovedCorrectionRef;
+      if(!approved)throw new Error("VIDEO_APPROVED_CORRECTION_REQUIRED");
+      return{...base,family:"VIDEO",mode:"CORRECTION",approved_candidate_ref:approved};
+    },
+    invoke: async (operation_id,input) => {
+      const base=rec(input.payload)??{};
+      const payload=operation_id==="approveCorrectionScriptCandidate"
+        ? {...base,family:"VIDEO",candidate_ref:base.candidate_ref??videoCorrectionCandidateRef}
+        : {...base,family:"VIDEO"};
+      const error_uid=operation_id==="lockVideoVersion"?"VIDEO-01-ERR-VERSION-001":"VIDEO-01-ERR-CORRECTION-001";
+      const result=await invokeSharedHttp(operation_id,payload,error_uid);
+      if(result.ok){
+        const body=rec(result.value);
+        if(operation_id==="generateCorrectionScriptCandidate"&&typeof body?.candidate_ref==="string"){videoCorrectionCandidateRef=body.candidate_ref;videoApprovedCorrectionRef=null;}
+        if(operation_id==="approveCorrectionScriptCandidate"&&typeof body?.approved_candidate_ref==="string")videoApprovedCorrectionRef=body.approved_candidate_ref;
+      }
+      return result as Awaited<ReturnType<NonNullable<Parameters<typeof configureVideoSharedRuntime>[0]["invoke"]>>>;
+    },
+  });
+
   configureCoreCreationPermissionAdapter({
     authorizeCreation: async ({ required_permission_uid }) => {
       try {
@@ -183,6 +682,197 @@ export function bindIdentityClientCommandAdapters(): void {
       const ref = typeof window !== "undefined" ? window.prompt(`${context.kind} ref`) : null;
       if (!ref || !ref.trim()) return { ok: false, reason_code: `${context.kind}_REF_REQUIRED` };
       return { ok: true, ref: ref.trim() };
+    },
+  });
+
+  configureDevCommandAdapter({
+    invoke: async (input) => {
+      const binding = DEV_CONTROL_BINDINGS[input.control_uid as DevControlUid] as DevControlBinding | undefined;
+      if (!binding || binding.action_uid !== input.action_uid || !binding.operation) {
+        return { ok: false, error_uid: "DEV-01-ERR-UNDEFINED", reason_code: "DEV_COMMAND_BINDING_UNREGISTERED", correlation_id: "unresolved" };
+      }
+
+      const jobRef = input.projection?.values["DEV-01-FLD-JOB-REF"] ?? "";
+      let path: string;
+      let payload: Record<string, unknown> = {};
+      if (binding.operation === "startCompanyDiscovery") {
+        path = "/v1/outreach/discovery-jobs";
+        payload = {
+          job_name: "ACPOS Company Discovery",
+          mode: "SINGLE_RUN",
+          search_scope: {},
+          allowed_sources: [],
+          interval_seconds: 3600,
+          result_limit: 50,
+        };
+      } else if (
+        binding.operation === "pauseCompanyDiscovery"
+        || binding.operation === "resumeCompanyDiscovery"
+        || binding.operation === "stopCompanyDiscovery"
+      ) {
+        if (!jobRef || jobRef === "—") {
+          return { ok: false, error_uid: "DEV-01-ERR-UNDEFINED", reason_code: "DEV_DISCOVERY_JOB_ID_REQUIRED", correlation_id: "unresolved" };
+        }
+        const suffix = binding.operation === "pauseCompanyDiscovery"
+          ? "pause"
+          : binding.operation === "resumeCompanyDiscovery"
+            ? "resume"
+            : "stop";
+        path = `/v1/outreach/discovery-jobs/${encodeURIComponent(jobRef)}/${suffix}`;
+      } else {
+        return { ok: false, error_uid: "DEV-01-ERR-UNDEFINED", reason_code: "DEV_COMMAND_RUNTIME_NOT_MATERIALIZED", correlation_id: "unresolved" };
+      }
+
+      const response = await fetch(path, {
+        method: "POST",
+        cache: "no-store",
+        credentials: "include",
+        headers: { "content-type": "application/json", "x-correlation-id": crypto.randomUUID() },
+        body: JSON.stringify(payload),
+      });
+      const correlation_id = response.headers.get("x-correlation-id") ?? "unresolved";
+      const raw: unknown = await response.json().catch(() => null);
+      const body = rec(raw);
+      if (!response.ok) {
+        return {
+          ok: false,
+          error_uid: "DEV-01-ERR-UNDEFINED",
+          reason_code: typeof body?.reason_code === "string" ? body.reason_code : "DEV_COMMAND_REQUEST_FAILED",
+          correlation_id,
+        };
+      }
+
+      const refreshed = await readDevProjection();
+      if (!refreshed.ok) return refreshed;
+      return { ok: true, projection: refreshed.projection, correlation_id };
+    },
+  });
+
+  configureSocCommandAdapter({
+    supports: (action_uid) => [
+      "SOC-01-ACT-CONTENT-SAVE",
+      "SOC-01-ACT-CANDIDATE-DECIDE",
+      "SOC-01-ACT-POLICY-CONFIG",
+      "SOC-01-ACT-PUBLISH-REQUEST",
+      "SOC-01-ACT-REFRESH",
+    ].includes(action_uid),
+    invoke: async (input) => {
+      if (input.action_uid === "SOC-01-ACT-REFRESH") {
+        const refreshed = await readSocProjection();
+        return refreshed.ok
+          ? { ok: true as const, projection: refreshed.projection, correlation_id: refreshed.correlation_id }
+          : refreshed;
+      }
+
+      const projection = input.projection;
+      if (!projection) {
+        return { ok: false as const, error_uid: "SOC-01-ERR-CONTENT", reason_code: "SOC_PROJECTION_REQUIRED", correlation_id: "unresolved" };
+      }
+
+      const contentPackageId = projection.values["SOC-01-FLD-CONTENT-PACKAGE"] ?? "";
+      const candidateRef = projection.values["SOC-01-FLD-CANDIDATE-REF"] ?? "";
+      const versionText = projection.values["SOC-01-FLD-CANDIDATE-VERSION"] ?? "";
+      const candidateVersion = Number(versionText);
+      let path: string;
+      let payload: Record<string, unknown>;
+      let method = "POST";
+
+      if (input.action_uid === "SOC-01-ACT-POLICY-CONFIG") {
+        const targetId=projection.selected.target_id??"";
+        const targetVersion=Number(projection.selected.target_version??"");
+        if(!targetId||!Number.isSafeInteger(targetVersion)||targetVersion<1){
+          return {ok:false as const,error_uid:"SOC-01-ERR-UNDEFINED",reason_code:"SOC01_TARGET_POLICY_CONTEXT_REQUIRED",correlation_id:"unresolved"};
+        }
+        const dialog=await openSocTargetPolicyDialog(projection);
+        if(!dialog.ok)return {ok:false as const,error_uid:"SOC-01-ERR-UNDEFINED",reason_code:dialog.reason_code,correlation_id:"unresolved"};
+        path=`/v1/social/targets/${encodeURIComponent(targetId)}/posting-policy`;
+        method="PUT";
+        payload={
+          target_id:targetId,
+          scope:{},
+          expected_version:targetVersion,
+          idempotency_key:`soc-policy:${targetId}:${crypto.randomUUID()}`,
+          ...dialog.payload,
+        };
+      } else if (input.action_uid === "SOC-01-ACT-PUBLISH-REQUEST") {
+        const targetId=projection.selected.target_id??"";
+        const targetVersion=Number(projection.selected.target_version??"");
+        const publishContentPackageId=projection.selected.content_package_id??contentPackageId;
+        const channelAccountId=projection.selected.channel_account_id??"";
+        const contentHash=projection.selected.content_hash??"";
+        if(!targetId||!Number.isSafeInteger(targetVersion)||targetVersion<1||!publishContentPackageId||publishContentPackageId==="—"||!channelAccountId){
+          return {ok:false as const,error_uid:"SOC-01-ERR-PUBLISH",reason_code:"SOC01_PUBLISH_CONTEXT_REQUIRED",correlation_id:"unresolved"};
+        }
+        const confirm=await openSocPublishRequestConfirm({
+          target_id:targetId,
+          content_package_id:publishContentPackageId,
+          channel_account_id:channelAccountId,
+        });
+        if(!confirm.ok)return {ok:false as const,error_uid:"SOC-01-ERR-PUBLISH",reason_code:confirm.reason_code,correlation_id:"unresolved"};
+        path=`/v1/social/targets/${encodeURIComponent(targetId)}/publish`;
+        payload={
+          target_id:targetId,
+          content_package_id:publishContentPackageId,
+          channel_account_id:channelAccountId,
+          scope:{},
+          expected_version:targetVersion,
+          idempotency_key:`soc-publish:${targetId}:${crypto.randomUUID()}`,
+          ...(contentHash?{content_hash:contentHash}:{}),
+        };
+      } else if (input.action_uid === "SOC-01-ACT-CONTENT-SAVE") {
+        if (!contentPackageId || contentPackageId === "—") {
+          return { ok: false as const, error_uid: "SOC-01-ERR-CONTENT", reason_code: "SOC01_CONTENT_PACKAGE_REQUIRED", correlation_id: "unresolved" };
+        }
+        path = "/v1/drafts";
+        payload = {
+          page_uid: "admin:SOC-01",
+          content_package_id: contentPackageId,
+          idempotency_key: `soc-draft:${contentPackageId}:${crypto.randomUUID()}`,
+          ...(candidateRef && candidateRef !== "—" ? { draft_id: candidateRef } : {}),
+          ...(Number.isSafeInteger(candidateVersion) && candidateVersion > 0 ? { expected_version: candidateVersion } : {}),
+        };
+      } else if (input.action_uid === "SOC-01-ACT-CANDIDATE-DECIDE") {
+        if (!candidateRef || candidateRef === "—" || !Number.isSafeInteger(candidateVersion) || candidateVersion < 1) {
+          return { ok: false as const, error_uid: "SOC-01-ERR-CONTENT", reason_code: "SOC01_CANDIDATE_REQUIRED", correlation_id: "unresolved" };
+        }
+        const decisionDialog = await openSocCandidateDecisionDialog();
+        if (!decisionDialog.ok) {
+          return { ok: false as const, error_uid: "SOC-01-ERR-CONTENT", reason_code: decisionDialog.reason_code, correlation_id: "unresolved" };
+        }
+        path = `/v1/candidates/${encodeURIComponent(candidateRef)}/decision`;
+        payload = {
+          page_uid: "admin:SOC-01",
+          candidate_id: candidateRef,
+          expected_version: candidateVersion,
+          decision: decisionDialog.decision,
+          rationale: decisionDialog.rationale,
+        };
+      } else {
+        return { ok: false as const, error_uid: "SOC-01-ERR-UNDEFINED", reason_code: "SOC_COMMAND_RUNTIME_NOT_MATERIALIZED", correlation_id: "unresolved" };
+      }
+
+      const response = await fetch(path, {
+        method,
+        cache: "no-store",
+        credentials: "include",
+        headers: { "content-type": "application/json", "x-correlation-id": crypto.randomUUID() },
+        body: JSON.stringify(payload),
+      });
+      const correlation_id = response.headers.get("x-correlation-id") ?? "unresolved";
+      const raw: unknown = await response.json().catch(() => null);
+      const body = rec(raw);
+      if (!response.ok) {
+        return {
+          ok: false as const,
+          error_uid: "SOC-01-ERR-CONTENT",
+          reason_code: typeof body?.reason_code === "string" ? body.reason_code : "SOC_COMMAND_REQUEST_FAILED",
+          correlation_id,
+        };
+      }
+
+      const refreshed = await readSocProjection();
+      if (!refreshed.ok) return refreshed;
+      return { ok: true as const, projection: refreshed.projection, correlation_id };
     },
   });
 
@@ -244,22 +934,47 @@ export function bindIdentityClientCommandAdapters(): void {
   });
 
   configureInfoCommandPayloadBuilder({
-    build: (input) => {
+    build: async (input) => {
+      const scope_ref = input.scope_filter ?? input.authorized_scope ?? "workspace:INFO-01";
       const payload = {
         page_uid: "workspace:INFO-01",
         query: input.scope_filter ?? "",
+        projection_type: "INFO_WORKSPACE",
+        scope_ref,
         projection_version: input.projection_version,
         authorized_scope: input.authorized_scope,
         scope_filter: input.scope_filter,
         candidate_ref: input.candidate_ref,
       };
+      if (input.action_uid === "INFO-01-ACT-EXPORT") {
+        throw new Error("INFO_EXPORT_OWNER_NOT_MATERIALIZED");
+      }
       if (input.action_uid === "INFO-01-ACT-ADOPT-CONTEXT") {
         if (!input.candidate_ref) throw new Error("INFO_CONTEXT_CANDIDATE_REQUIRED");
-        return { path_params: { id: input.candidate_ref }, payload };
+        const human = await openInfoHumanDecisionDialog("ADOPT");
+        if (!human.ok) throw new Error(human.reason_code);
+        return {
+          path_params: { id: input.candidate_ref },
+          payload: {
+            ...payload,
+            context_candidate_id: input.candidate_ref,
+            decision_reason: human.decision_reason,
+          },
+        };
       }
       if (input.action_uid === "INFO-01-ACT-CANDIDATE-DECIDE") {
         if (!input.candidate_ref) throw new Error("INFO_CANDIDATE_REQUIRED");
-        return { path_params: { id: input.candidate_ref }, payload: { ...payload, decision: "ACCEPTED" } };
+        const human = await openInfoHumanDecisionDialog("DECIDE");
+        if (!human.ok) throw new Error(human.reason_code);
+        return {
+          path_params: { id: input.candidate_ref },
+          payload: {
+            ...payload,
+            candidate_id: input.candidate_ref,
+            decision: human.decision,
+            decision_reason: human.decision_reason || undefined,
+          },
+        };
       }
       return { payload };
     },

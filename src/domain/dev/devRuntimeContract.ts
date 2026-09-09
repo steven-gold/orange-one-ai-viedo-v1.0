@@ -1,5 +1,5 @@
 export const DEV_AUTHORITY_STATUS = "FINAL_LOCKED" as const;
-export const DEV_SYSTEM_IMPLEMENTATION_STATUS = "NOT_EXECUTED" as const;
+export const DEV_SYSTEM_IMPLEMENTATION_STATUS = "RUNTIME_BOUND_PENDING_RELEASE" as const;
 export const DEV_SECTION_COUNT = 9 as const;
 export const DEV_COMPONENT_COUNT = 15 as const;
 export const DEV_CONTROL_COUNT = 22 as const;

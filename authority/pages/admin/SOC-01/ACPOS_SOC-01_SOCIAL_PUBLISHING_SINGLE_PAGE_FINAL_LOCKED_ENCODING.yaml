@@ -34,6 +34,10 @@ single_system_contract:
   - social_target_discovery_jobs
   - social_market_targets
   - social_manual_actions
+  - content_packages
+  - release_packages
+  - channel_accounts
+  - publish_requests
   - existing publishing/content/candidate/audit projections
   forbidden_parallel_components:
   - second social publishing system
@@ -824,7 +828,7 @@ controls:
   action_uid: SOC-01-ACT-CANDIDATE-DECIDE
   gate_uid: SOC-01-GATE-CANDIDATE
   permission_uid: SOC-01-PERM-CANDIDATE-DECIDE
-  rule: Approval does not itself publish.
+  rule: APPROVE atomically seals the exact source-hash-matched content package to APPROVED; REJECT/RETURN never approve the package. Approval does not itself publish.
   default: —
 - control_uid: SOC-01-FLD-TARGET-SELECTOR
   section_uid: SOC-01-SEC-06
@@ -1285,6 +1289,44 @@ form_contracts:
       required: false
     - name: content_similarity_key
       required: false
+    persistence_contract:
+      canonical_owner: public.publish_requests
+      target_identity:
+        request_source: URL path targetId
+        canonical_column: social_target_id
+        foreign_key: public.social_market_targets.social_target_id
+        metadata_target_id: FORBIDDEN
+      content_identity:
+        request_source: content_package_id
+        canonical_column: content_package_id
+        foreign_key: public.content_packages.content_package_id
+        release_package_resolution: public.content_packages.release_package_id -> public.publish_requests.release_package_id
+        channel_account_rule: Request channel_account_id MUST equal public.content_packages.channel_account_id.
+      channel_account_validation:
+      - public.channel_accounts.channel_account_id must exist and status=APPROVED.
+      - channel account platform_key must equal social target platform_key.
+      content_approval_validation:
+      - public.content_packages.status must be APPROVED.
+      - referenced public.release_packages.status must be APPROVED.
+      - an approved SOC_CONTENT_DRAFT candidate for the exact content_package_id must exist.
+      metadata_contract:
+        canonical_identity_keys_forbidden:
+        - target_id
+        - content_package_id
+        - channel_account_id
+        - release_package_id
+        allowed_request_evidence:
+        - content_hash
+        - content_similarity_key
+      local_request_transition:
+        source_target_state: READY_TO_POST
+        publish_request_state: PENDING_EXTERNAL
+        target_state_after_request: PENDING_EXTERNAL
+        target_version_increment: 1
+        external_request_sent: false
+        external_success: false
+      idempotency: actor + operation + client idempotency_key is SHA-256 scoped into existing publish_requests.idempotency_key.
+      atomicity: Exact validation, publish request creation, target transition and audit must commit atomically.
     ui_rule: Registered operation is target-scoped. Page must not invent bulkSocialPublish. If future UX permits multi-select, it may only orchestrate
       independent exact existing requests with unique idempotency and truthful per-target partial result; no new endpoint.
 operations:
@@ -1413,10 +1455,45 @@ state_model:
   - requestSocialTargetJoin from DISCOVERED/READY_TO_JOIN may become MANUAL_ACTION_REQUIRED or PENDING_EXTERNAL.
   - completeSocialManualAction uses actual pending action context and may progress target according to source state machine; page never chooses
     an impossible target state.
+  - decideCandidate APPROVE atomically changes the exact REVIEW SOC_CONTENT_DRAFT to APPROVED and seals its exact source-hash-matched
+    public.content_packages row from PENDING_APPROVAL/APPROVED to APPROVED. REJECT/RETURN never approve a package and no candidate decision publishes.
   - configureSocialTargetPolicy operates on an eligible JOINED target and prepares READY_TO_POST according to source state machine.
-  - requestSocialTargetPublish from READY_TO_POST creates a request that may become MANUAL_ACTION_REQUIRED or PENDING_EXTERNAL; request completion
-    is not equivalent to POSTED external success.
+  - requestSocialTargetPublish from READY_TO_POST validates the exact target/version, approved SOC content candidate, canonical content package,
+    approved release package and matching approved channel account, then atomically creates public.publish_requests=PENDING_EXTERNAL and transitions
+    the exact target to PENDING_EXTERNAL with version+1. This local request creation does not call the external platform and is not POSTED success.
+  - A later real PublishingAdapterService result may create MANUAL_ACTION_REQUIRED or recorded external progress; no local request path may fabricate it.
   - Results/Records render only recorded real external status/callback/metrics; UI may not infer POSTED.
+candidate_package_approval_contract:
+  owner: Existing Candidate owner + PublishingService content package owner
+  operation: decideCandidate
+  source_candidate_kind: SOC_CONTENT_DRAFT
+  exact_identity:
+  - candidate id/version required
+  - candidate payload content_package_id must resolve exact public.content_packages row
+  - candidate source_package_hash must equal public.content_packages.package_hash
+  legal_package_states_for_approve:
+  - PENDING_APPROVAL
+  - APPROVED
+  transitions:
+    APPROVE:
+      candidate_state: REVIEW -> APPROVED
+      content_package_state: PENDING_APPROVAL|APPROVED -> APPROVED
+      atomic: true
+      audit_atomic: true
+      publish_side_effect: false
+    REJECT:
+      candidate_state: REVIEW -> REJECTED
+      content_package_state: UNCHANGED
+      publish_side_effect: false
+    RETURN:
+      candidate_state: REVIEW -> DRAFT
+      content_package_state: UNCHANGED
+      publish_side_effect: false
+  hard_rules:
+  - Candidate approval may seal status only; it must not rewrite content package identity, release_package_id, channel_account_id, payload_manifest or package_hash.
+  - A stale candidate version or changed package hash blocks the whole decision.
+  - No candidate decision creates publish_requests or calls PublishingAdapterService.
+
 policy_contract:
   platform_native_variant_rule: One governed Master Message/source may produce platform-native variants, but blind identical cross-platform copy
     is forbidden.
@@ -1471,6 +1548,8 @@ hard_locks:
   exposed as a new fine-grained permission UI here.
 - Role name or department membership never authorizes an operation.
 - Platform capability/health/policy and external status are real data only; missing=—/incomplete, never AI-filled.
+- publish_requests canonical target/content identity MUST use dedicated social_target_id/content_package_id foreign keys; metadata identity fallback is FORBIDDEN.
+- requestSocialTargetPublish local persistence MUST NOT call an external platform; external success requires recorded PublishingAdapterService result/callback.
 - Raw social credential is never shown by default; reveal is an existing high-risk audited operation only.
 - verifySocialAccountBinding and verifySocialTargetCapability remain service-runtime operations; no page user Verify button is invented.
 - Content package remains Draft/Candidate until governed decision; content approval does not itself publish.

@@ -175,7 +175,7 @@ function projection() {
     })),
     topics: state.topics
       .filter((item) => !state.project_id || item.project_id === state.project_id)
-      .map((item) => ({ topic_id: item.topic_id, topic_version_ref: item.topic_version_ref, label: item.label })),
+      .map((item) => ({ topic_id: item.topic_id, topic_version_ref: item.topic_version_ref, project_id: item.project_id, label: item.label })),
     work_items: (topicMode
       ? ["TOPIC_SCOPE", "PRODUCTION_SCRIPT"]
       : ["STORY", "CHAPTER", "WORLD_SETTING", "DNA", "BLUEPRINT"])
@@ -184,7 +184,16 @@ function projection() {
       .filter((thread) => !state.project_id || thread.project_id === state.project_id)
       .filter((thread) => !state.topic_id || thread.topic_id === state.topic_id)
       .filter((thread) => !state.work_item || thread.work_item === state.work_item)
-      .map((thread) => ({ conversation_id: thread.conversation_id, label: thread.label })),
+      .map((thread) => ({
+        conversation_id: thread.conversation_id,
+        label: thread.label,
+        project_id: thread.project_id,
+        topic_id: thread.topic_id,
+        work_item: thread.work_item,
+        parent_conversation_id: thread.parent_conversation_id ?? null,
+        source_message_id: thread.source_message_id ?? null,
+        relation_kind: thread.parent_conversation_id ? "BRANCH" as const : "ROOT" as const,
+      })),
     display_values: {
       test_mode: "TEST_ONLY",
       test_data_classification: "TEST_ONLY",

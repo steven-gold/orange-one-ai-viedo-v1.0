@@ -1,10 +1,15 @@
 import type { CoreExactRefs } from "./coreClientState";
-import { isControlledTestMode } from "../testing/controlledTestData";
 
 export type CoreProjectOption = { project_id: string; project_version_ref: string | null; label: string };
-export type CoreTopicOption = { topic_id: string; topic_version_ref: string | null; label: string };
+export type CoreTopicOption = { topic_id: string; topic_version_ref: string | null; project_id: string; label: string };
 export type CoreWorkItemOption = { work_item: string; label: string };
-export type CoreThreadOption = { conversation_id: string; label: string };
+export type CoreThreadOption = { conversation_id: string; label: string; project_id: string; topic_id: string | null; work_item: string; parent_conversation_id?: string | null; source_message_id?: string | null; relation_kind?: "ROOT" | "BRANCH" };
+export type CoreConversationProjectionMessage = {
+  message_ref: string;
+  conversation_id: string;
+  role: "USER" | "ASSISTANT" | "SYSTEM";
+  text: string;
+};
 
 export type CoreNormalizedProjection = {
   refs: Partial<CoreExactRefs>;
@@ -13,6 +18,7 @@ export type CoreNormalizedProjection = {
   topics: readonly CoreTopicOption[];
   work_items: readonly CoreWorkItemOption[];
   threads: readonly CoreThreadOption[];
+  messages_by_thread?: Readonly<Record<string, readonly CoreConversationProjectionMessage[]>>;
   display_values: Readonly<Record<string, string>>;
 };
 
@@ -48,9 +54,21 @@ function validateProjection(value: CoreNormalizedProjection): boolean {
   for (const ref of Object.values(refs)) if (!validNullableText(ref)) return false;
   if (!validNullableText(value.work_item)) return false;
   if (!Array.isArray(value.projects) || value.projects.some(item => !validText(item.project_id) || !validNullableText(item.project_version_ref) || !validText(item.label))) return false;
-  if (!Array.isArray(value.topics) || value.topics.some(item => !validText(item.topic_id) || !validNullableText(item.topic_version_ref) || !validText(item.label))) return false;
+  if (!Array.isArray(value.topics) || value.topics.some(item => !validText(item.topic_id) || !validNullableText(item.topic_version_ref) || !validText(item.project_id) || !validText(item.label))) return false;
   if (!Array.isArray(value.work_items) || value.work_items.some(item => !validText(item.work_item) || !validText(item.label))) return false;
-  if (!Array.isArray(value.threads) || value.threads.some(item => !validText(item.conversation_id) || !validText(item.label))) return false;
+  if (!Array.isArray(value.threads) || value.threads.some(item => !validText(item.conversation_id) || !validText(item.label) || !validText(item.project_id) || !validText(item.work_item) || !validNullableText(item.topic_id) || (item.relation_kind !== undefined && !["ROOT","BRANCH"].includes(item.relation_kind)))) return false;
+  if (value.messages_by_thread !== undefined) {
+    if (!value.messages_by_thread || typeof value.messages_by_thread !== "object" || Array.isArray(value.messages_by_thread)) return false;
+    for (const [conversationId, messages] of Object.entries(value.messages_by_thread)) {
+      if (!validText(conversationId) || !Array.isArray(messages)) return false;
+      if (messages.some((item) =>
+        !validText(item.message_ref)
+        || item.conversation_id !== conversationId
+        || !["USER", "ASSISTANT", "SYSTEM"].includes(item.role)
+        || typeof item.text !== "string"
+      )) return false;
+    }
+  }
   if (!value.display_values || typeof value.display_values !== "object" || Object.values(value.display_values).some(item => typeof item !== "string")) return false;
   return true;
 }
@@ -65,8 +83,7 @@ function controlledTestProjection(rawProjection: unknown): CoreProjectionResolve
 export async function resolveCoreProjection(rawProjection: unknown): Promise<CoreProjectionResolveResult> {
   const current = resolver;
   if (!current) {
-    if (isControlledTestMode()) return controlledTestProjection(rawProjection);
-    return { ok: false, reason_code: "CORE_PROJECTION_SCHEMA_ADAPTER_NOT_BOUND" };
+    return controlledTestProjection(rawProjection);
   }
   try {
     const projection = await current.resolve(rawProjection);

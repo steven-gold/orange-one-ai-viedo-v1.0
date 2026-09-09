@@ -42,7 +42,7 @@ test("AIAPI Current registry materializes only Authority-named provider operatio
     assert.match(authority, new RegExp(`- ${operation}\\b`));
     assert.match(registry, new RegExp(`operation_id: ${operation}\\b`));
   }
-  assert.match(registry, /coverage: IDENTITY_SESSION_AIAPI_PROVIDER_AND_IAM_GOVERNED_OPERATIONS/);
+  assert.match(registry, /coverage: IDENTITY_SESSION_AIAPI_PROVIDER_IAM_INFO_DEPARTMENT_AND_SHARED_CORRECTION_VERSION_OPERATIONS/);
   assert.match(registry, /aiapi_effectful_mapping_status: MATERIALIZED_CURRENT/);
 });
 
@@ -130,8 +130,11 @@ test("Gate 22 has an independent real Production External Provider acceptance ha
   const workflow = await readFile(".github/workflows/external-provider-acceptance.yml", "utf8");
   const script = await readFile("scripts/production-external-provider-e2e.mjs", "utf8");
   assert.match(workflow, /workflow_dispatch:/);
-  assert.doesNotMatch(workflow, /push:|pull_request:|schedule:/);
+  assert.match(workflow, /push:[\s\S]*branches:[\s\S]*- new[\s\S]*paths:[\s\S]*- \.github\/external-provider-acceptance-trigger\.txt/);
+  assert.doesNotMatch(workflow, /pull_request:|schedule:/);
   assert.match(workflow, /environment:\s*Production/);
+  assert.match(workflow, /ACPOS_EXTERNAL_E2E_PROFILE_IDS=profile-groq-text-v1,profile-google-text-v1,profile-deepseek-text-v1,profile-openrouter-text-v1/);
+  assert.match(workflow, /ACPOS_EXPECT_RELEASE_SHA=.*external-provider-acceptance-trigger\.txt/);
   assert.match(script, /REAL_PROVIDER_PROFILE_ID_NOT_CONFIGURED/);
   assert.match(script, /REAL_PROVIDER_GROUP_ID_NOT_CONFIGURED/);
   assert.match(script, /REAL_PROVIDER_CAPABILITY_NOT_CONFIGURED/);

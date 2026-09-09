@@ -16,6 +16,8 @@ export type EditResolvedContext = {
   voice_run_id: string|null;
   saved_edit_version_id: string|null;
   output_version_id: string|null;
+  render_job_id?: string|null;
+  locked_version_ref?: string|null;
   dialogue_timing_binding_ref: string|null;
   page_state_uid: string|null;
   current_stage_uid: string|null;

@@ -1,9 +1,11 @@
 business_payload_registry:
   contract_meta:
-    contract_id: ACPOS-CURRENT-STRATEGY-ADMIN-BUSINESS-PAYLOAD-RECOVERY-1.0.0
-    status: CURRENT_STRATEGY_ADMIN_RECOVERY
-    current_ui_owner: admin:STR-01
-    current_authority: authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    contract_id: ACPOS-CURRENT-BUSINESS-PAYLOAD-REGISTRY-1.1.0
+    status: FINAL_LOCKED
+    current_ui_owners: [admin:STR-01, workspace:INFO-01]
+    current_authorities:
+    - authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    - authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml
     source_registry_provenance: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL
     provenance_is_non_executable: true
   rule:
@@ -21,7 +23,7 @@ business_payload_registry:
   schemas:
     - operation_id: searchProjection
       request_schema_id: SearchProjectionRequest
-      source_page_uids: [admin:STR-01, admin:STR-04]
+      source_page_uids: [admin:STR-01, admin:STR-04, workspace:INFO-01]
       method: POST
       path: /v1/search
       fields:
@@ -30,7 +32,7 @@ business_payload_registry:
         - { name: filters_json, type: json, required: false }
     - operation_id: refreshProjection
       request_schema_id: RefreshProjectionRequest
-      source_page_uids: [admin:STR-01]
+      source_page_uids: [admin:STR-01, workspace:INFO-01]
       method: POST
       path: /v1/projections/refresh
       fields:
@@ -68,7 +70,7 @@ business_payload_registry:
         - { name: reference_ids, type: reference_list, required: false }
     - operation_id: exportProjection
       request_schema_id: ExportProjectionRequest
-      source_page_uids: [admin:STR-04]
+      source_page_uids: [admin:STR-04, workspace:INFO-01]
       method: POST
       path: /v1/exports
       fields:
@@ -105,9 +107,100 @@ business_payload_registry:
         - { name: strategy_candidate_id, type: reference, required: true }
         - { name: decision_reason, type: text, required: true }
         - { name: evidence_refs, type: reference_list, required: false }
+
+    - operation_id: adoptContextCandidate
+      request_schema_id: AdoptContextCandidateRequest
+      source_page_uids: [workspace:INFO-01]
+      method: POST
+      path: /v1/context-candidates/{id}/adopt
+      path_identifier: id
+      fields:
+        - { name: context_candidate_id, type: reference, required: true, rule: "Body identifier must equal canonical path identifier." }
+        - { name: decision_reason, type: text, required: true }
+    - operation_id: decideCandidate
+      request_schema_id: DecideCandidateRequest
+      source_page_uids: [workspace:INFO-01]
+      method: POST
+      path: /v1/candidates/{id}/decision
+      path_identifier: id
+      fields:
+        - { name: candidate_id, type: reference, required: true, rule: "Body identifier must equal canonical path identifier." }
+        - { name: decision, type: enum, required: true, values: [ACCEPTED, REJECTED] }
   no_form_operations:
     - operation_id: compareCandidates
       source_page_uids: [admin:STR-06]
       method: GET
       path: /v1/candidates/compare
       interaction_type: DRAWER
+
+department_runtime_payload_registry:
+  authority_revision: 2026-09-09-SHARED-CORRECTION-VERSION-RUNTIME
+  source_pages: [ASSET-01, VIDEO-01]
+  rule:
+  - Exact path identifiers are canonical; body copies may not disagree.
+  - Blueprint/Script/Manifest/Instruction/Route lineage is derived from canonical DB owners.
+  - Missing evaluation evidence, correction lineage, handoff target, or Provider route data fails closed; no defaults are fabricated.
+  operations:
+  - operation_id: requestTaskExecution
+    required_path: [taskId]
+    optional_body: [input_fingerprint, mode, approved_candidate_ref]
+    correction_mode_contract:
+      required_when_mode_CORRECTION: [approved_candidate_ref]
+      source_candidate_state: APPROVED
+      human_decision_required: true
+      locked_source_output_correction: FORBIDDEN
+  - operation_id: retryTaskExecution
+    required_path: [taskId]
+    optional_body: [input_fingerprint, preserve_previous_output]
+  - operation_id: decideOutputCandidate
+    required_path: [taskId, outputVersionId]
+    required_body: [decision]
+    allowed_decision: [CONFIRM]
+  - operation_id: submitScorecard
+    required_body: [task_ref, target_output_version_id, criteria_version_ref, dimensions, evidence_refs, total_score, gate_status]
+  - operation_id: createFinding
+    required_body: [target_output_version_id, severity, category, affected_scope, evidence]
+  - operation_id: createCorrectionRequest
+    required_body: [finding_id, source_output_version_id, source_instruction_package_id, original_owner_task_id, affected_scope, revalidation_requirements]
+  - operation_id: createDepartmentHandoff
+    required_body: [source_task_id, target_task_id, source_output_version_id, scorecard_id]
+
+shared_correction_version_payload_registry:
+  authority_revision: 2026-09-09-SHARED-CORRECTION-VERSION-RUNTIME
+  authority_file: authority/runtime/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml
+  source_pages: [ASSET-01, VIDEO-01]
+  rules:
+  - Exact task/output/finding/candidate references are required; latest-row guessing is forbidden.
+  - Human correction approval requires decision_reason and exact candidate_ref.
+  - Restore-as-new-draft persists lineage only and never creates or duplicates task_outputs.
+  - Output lock is exact-version immutable state and may not reuse Mother/Child lock semantics.
+  operations:
+  - operation_id: generateCorrectionScriptCandidate
+    method: POST
+    path: /v1/state-commands/correctionscript/generate
+    required_body: [family, task_id, output_version_id, finding_id, request, affected_scope]
+    family_values: [ASSET, VIDEO]
+    request_language: zh-TW
+  - operation_id: approveCorrectionScriptCandidate
+    method: POST
+    path: /v1/state-commands/correctionscript/approve
+    required_body: [family, candidate_ref, decision_reason]
+    optional_body: [expected_content_hash]
+    family_values: [ASSET, VIDEO]
+  - operation_id: restoreAssetVersionAsNewDraft
+    method: POST
+    path: /v1/state-commands/assetversion/restoreasnewdraft
+    required_body: [family, output_version_id]
+    family_values: [ASSET]
+  - operation_id: lockAssetVersion
+    method: POST
+    path: /v1/state-commands/assetversion/lock
+    required_body: [family, output_version_id]
+    optional_body: [manifest_hash]
+    family_values: [ASSET]
+  - operation_id: lockVideoVersion
+    method: POST
+    path: /v1/state-commands/videoversion/lock
+    required_body: [family, output_version_id]
+    optional_body: [manifest_hash]
+    family_values: [VIDEO]

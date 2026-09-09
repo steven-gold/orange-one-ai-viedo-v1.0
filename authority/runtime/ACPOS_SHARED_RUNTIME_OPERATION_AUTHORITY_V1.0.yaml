@@ -1,0 +1,151 @@
+authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+version: 1.0
+status: VALIDATED_PENDING_PRODUCTION_APPLY
+authority_revision: 2026-09-09-SHARED-CORRECTION-VERSION-RUNTIME
+scope:
+  pages: [ASSET-01, VIDEO-01]
+  operations:
+  - generateCorrectionScriptCandidate
+  - approveCorrectionScriptCandidate
+  - restoreAssetVersionAsNewDraft
+  - lockAssetVersion
+  - lockVideoVersion
+rules:
+- Human correction candidate canonical owner is public.correction_script_versions.
+- public.correction_requests remains the exact correction lineage owner.
+- acpos_runtime.correction_* tables are execution/trace mirrors only; they never replace the public canonical human-decision record.
+- Correction candidate generation must preserve provider-neutral zh-TW intent and exact source lineage.
+- Correction approval is a human decision. Candidate status cannot become APPROVED without decided_by, decision_reason and decided_at.
+- Correction execution must consume an exact APPROVED candidate and route through the existing governed AIAPI Router/Queue.
+- Output lock is immutable for the exact task_output version. Mother/Child lock kinds are forbidden substitutes.
+- Restore as New Draft creates lineage-only draft state. It must not duplicate task_outputs or fabricate a new artifact checksum.
+- Locked source outputs are never overwritten.
+operations:
+  generateCorrectionScriptCandidate:
+    route: /v1/state-commands/correctionscript/generate
+    method: POST
+    api_resource_key: api:generateCorrectionScriptCandidate
+    page_bindings:
+      ASSET-01:
+        action_uid: ASSET-01-ACT-CORRECTION-GENERATE
+        control_uid: ASSET-01-BTN-CORRECTION-GENERATE
+        action_resource_key: action:workspace:ASSET-01:ACT-CORRECTION-GENERATE
+        control_resource_key: control:workspace:ASSET-01:ASSET-01-BTN-CORRECTION-GENERATE
+      VIDEO-01:
+        action_uid: VIDEO-01-ACT-CORRECTION-GENERATE
+        control_uid: VIDEO-01-BTN-GEN-CORRECTION
+        action_resource_key: action:workspace:VIDEO-01:ACT-CORRECTION-GENERATE
+        control_resource_key: control:workspace:VIDEO-01:VIDEO-01-BTN-GEN-CORRECTION
+    required_payload: [family, task_id, output_version_id, finding_id, request, affected_scope]
+    canonical_owner: public.correction_script_versions
+    trace_owner:
+    - acpos_runtime.correction_requests_runtime
+    - acpos_runtime.correction_script_versions_runtime
+    external_effect: GOVERNED_TEXT_PROVIDER_ROUTE
+  approveCorrectionScriptCandidate:
+    route: /v1/state-commands/correctionscript/approve
+    method: POST
+    api_resource_key: api:approveCorrectionScriptCandidate
+    page_bindings:
+      ASSET-01:
+        action_uid: ASSET-01-ACT-CORRECTION-APPROVE
+        control_uid: ASSET-01-BTN-CORRECTION-APPROVE
+        action_resource_key: action:workspace:ASSET-01:ACT-CORRECTION-APPROVE
+        control_resource_key: control:workspace:ASSET-01:ASSET-01-BTN-CORRECTION-APPROVE
+      VIDEO-01:
+        action_uid: VIDEO-01-ACT-CORRECTION-APPROVE
+        control_uid: VIDEO-01-BTN-APPROVE-CORRECTION
+        action_resource_key: action:workspace:VIDEO-01:ACT-CORRECTION-APPROVE
+        control_resource_key: control:workspace:VIDEO-01:VIDEO-01-BTN-APPROVE-CORRECTION
+    required_payload: [family, candidate_ref, decision_reason]
+    canonical_owner: public.correction_script_versions
+    human_decision_required: true
+  restoreAssetVersionAsNewDraft:
+    route: /v1/state-commands/assetversion/restoreasnewdraft
+    method: POST
+    api_resource_key: api:restoreAssetVersionAsNewDraft
+    page_bindings:
+      ASSET-01:
+        action_uid: ASSET-01-ACT-RESTORE-AS-NEW
+        control_uid: ASSET-01-BTN-RESTORE-AS-NEW
+        action_resource_key: action:workspace:ASSET-01:ACT-RESTORE-AS-NEW
+        control_resource_key: control:workspace:ASSET-01:ASSET-01-BTN-RESTORE-AS-NEW
+    required_payload: [family, output_version_id]
+    canonical_owner: public.asset_version_restore_drafts
+    artifact_creation: FORBIDDEN
+  lockAssetVersion:
+    route: /v1/state-commands/assetversion/lock
+    method: POST
+    api_resource_key: api:lockAssetVersion
+    page_bindings:
+      ASSET-01:
+        action_uid: ASSET-01-ACT-VERSION-LOCK
+        control_uid: ASSET-01-BTN-LOCK
+        action_resource_key: action:workspace:ASSET-01:ACT-VERSION-LOCK
+        control_resource_key: control:workspace:ASSET-01:ASSET-01-BTN-LOCK
+    required_payload: [family, output_version_id]
+    canonical_owner: public.production_output_version_locks
+  lockVideoVersion:
+    route: /v1/state-commands/videoversion/lock
+    method: POST
+    api_resource_key: api:lockVideoVersion
+    page_bindings:
+      VIDEO-01:
+        action_uid: VIDEO-01-ACT-VERSION-LOCK
+        control_uid: VIDEO-01-BTN-LOCK
+        action_resource_key: action:workspace:VIDEO-01:ACT-VERSION-LOCK
+        control_resource_key: control:workspace:VIDEO-01:VIDEO-01-BTN-LOCK
+    required_payload: [family, output_version_id]
+    optional_payload: [manifest_hash]
+    canonical_owner: public.production_output_version_locks
+state_contract:
+  correction:
+    CANDIDATE: generateCorrectionScriptCandidate
+    APPROVED: approveCorrectionScriptCandidate
+    EXECUTION: approved candidate -> existing requestTaskExecution route in CORRECTION mode
+    RECHECK: new task_output candidate -> scorecard/evaluation
+  version:
+    CONFIRMED: accepted immutable task_output + PASS scorecard
+    LOCKED: exact production_output_version_lock exists
+    RESTORE_DRAFT: lineage-only asset_version_restore_draft exists
+validation_evidence:
+  validation_branch_id: br-orange-smoke-aut9pafw
+  source_release_gate:
+    run_number: 844
+    exact_source_sha: 62d79bd2ed257f221a03e38e980764c0e0e4152a
+    conclusion: SUCCESS
+  migration:
+    migration_id: 0034_shared_correction_version_runtime_closure
+    migration_count_before_apply: 33
+    migration_count_after_apply: 34
+    payload_sha256: 4f67f35eee2afb996ba2cce88fb7377c1a762b182c70de45eb6518062a9aac7b
+  permission_validation:
+    shared_permission_resources: 19
+    bootstrap_approved_allow_assignments: 19
+  schema_validation:
+    canonical_correction_new_columns: 5
+    canonical_correction_constraints: 2
+    dedicated_output_lock_owner: public.production_output_version_locks
+    dedicated_restore_draft_owner: public.asset_version_restore_drafts
+  rls_validation:
+    shared_rls_policies: 8
+    runtime_table_grants: 6
+    runtime_column_update_grants: 6
+    correction_script_versions_rls_enabled: true
+    production_output_version_locks_rls_enabled: true
+    asset_version_restore_drafts_rls_enabled: true
+  runtime_role_probe:
+    role: acpos_app_runtime
+    row_security: on
+    actor_context_present: false
+    visible_correction_scripts: 0
+    visible_output_locks: 0
+    visible_restore_drafts: 0
+    fail_closed_without_actor_context: true
+  validation_business_rows_created: 0
+  validation_session_created: false
+production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+remaining_operational_blockers:
+- Production migration 0034 remains intentionally unapplied until the final release sequence.
+- End-to-end correction generation still depends on a healthy governed ACPOS_TEXT_CHAT provider route and valid external provider response.
+- End-to-end correction execution still depends on a valid ASSET/VIDEO production route policy, provider capability/profile/secret/queue path, and eligible exact task/output/finding lineage.

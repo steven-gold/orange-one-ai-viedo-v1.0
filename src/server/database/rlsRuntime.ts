@@ -9,6 +9,29 @@ type NeonSql = NeonQueryFunction<false, false>;
 type NeonQuery = NeonQueryPromise<false, false>;
 export type RlsRows = Record<string, unknown>[];
 
+
+export async function runRlsActorTransaction(
+  sql: NeonSql,
+  sessionTokenHash: string,
+  queries: readonly NeonQuery[],
+): Promise<RlsRows[]> {
+  const tokenHash = sessionTokenHash.trim();
+  if (!tokenHash) {
+    throw new Error("RLS_SESSION_CONTEXT_REQUIRED");
+  }
+  if (queries.length === 0) {
+    return [];
+  }
+
+  const results = await sql.transaction([
+    sql`SELECT set_config('acpos.session_token_hash', ${tokenHash}, true)`,
+    sql`SET LOCAL ROLE acpos_app_runtime`,
+    ...queries,
+  ]);
+
+  return results.slice(2) as RlsRows[];
+}
+
 export async function runRlsActorQuery(
   sql: NeonSql,
   sessionTokenHash: string,

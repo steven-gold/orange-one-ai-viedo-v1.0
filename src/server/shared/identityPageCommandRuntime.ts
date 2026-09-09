@@ -6,21 +6,32 @@ import type { CoreRuntimeRequest } from "@/domain/core/coreRuntimeContract";
 import { configureDbReadModelRuntime, type DbReadRequest } from "@/server/database/dbReadModelRuntime";
 import { configureIamRuntime, type IamRuntimeRequest } from "@/server/iam/iamRuntime";
 import { executeProductionIamCommand } from "@/server/iam/productionIamCommandRuntime";
+import { configureDevCommandRuntime, type DevRuntimeRequest } from "@/server/dev/devCommandRuntime";
+import { executeProductionDevCommand } from "@/server/dev/productionDevCommandRuntime";
 import { configureDepartmentOperationRuntime } from "@/server/shared/departmentOperationRuntime";
 import { configureInfoCommandRuntime, type InfoRequest } from "@/server/info/infoCommandRuntime";
+import { executeProductionInfoCommand, decideProductionInfoCandidate } from "@/server/info/productionInfoRuntime";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
-import { runRlsActorQuery } from "@/server/database/rlsRuntime";
+import { runRlsActorQuery, runRlsActorTransaction } from "@/server/database/rlsRuntime";
 import { hashSessionToken, IDENTITY_COOKIE_NAME, resolveIdentityFromCookie, type IdentityActor } from "@/server/identity/identityRuntime";
 import { CURRENT_PAGE_RESOURCE_KEYS } from "@/server/shared/pageCatalogProjectionRuntime";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 import { configureQaRuntime, type QaRequest } from "@/server/qa/qaRuntime";
+import { executeProductionQaLifecycle } from "@/server/qa/productionQaLifecycleRuntime";
 import { configureKnowledgeRuntime } from "@/server/knowledge/knowledgeRuntime";
+import { mutateProductionKnowledgeSource, transitionProductionKnowledgeSource } from "@/server/knowledge/productionKnowledgeSourceStateRuntime";
 import type { KnowledgeRuntimeRequest } from "@/domain/knowledge/knowledgeRuntimeContract";
 import { configureConversationRuntime, type ConversationRequest } from "@/server/shared/conversationRuntime";
-import { configureStrategyDecisionRuntime } from "@/server/strategy/strategyDecisionRuntime";
+import { configureCandidateDecisionRuntime, type CandidateDecisionRequest } from "@/server/shared/candidateDecisionRuntime";
+import { configureStrategyDecisionRuntime, type StrategyDecisionRequest } from "@/server/strategy/strategyDecisionRuntime";
+import { executeProductionStrategyDecision } from "@/server/strategy/productionStrategyDecisionRuntime";
 import { configureSocCommandRuntime } from "@/server/social/socCommandRuntime";
+import { saveProductionSocDraft, decideProductionSocCandidate } from "@/server/social/productionSocContentRuntime";
+import { configureProductionSocTargetPolicy } from "@/server/social/productionSocPolicyRuntime";
+import { requestProductionSocTargetPublish } from "@/server/social/productionSocPublishRuntime";
 import type { SocRuntimeRequest } from "@/server/testing/controlledSocTestRuntime";
 import { configureErpCommandRuntime } from "@/server/erp/erpCommandRuntime";
+import { requestProductionErpSnapshotRefresh } from "@/server/erp/productionErpSnapshotRuntime";
 import type { ErpRuntimeRequest } from "@/server/testing/controlledErpTestRuntime";
 import { configureSystemLifecycleRuntime, type SysRequest } from "@/server/system/systemLifecycleRuntime";
 import {
@@ -30,6 +41,15 @@ import {
 } from "@/server/system/productionSystemLifecycleRuntime";
 import { configureAiApiCommandRuntime } from "@/server/aiApi/aiApiCommandRuntime";
 import { executeProductionAiApiCommand, auditProductionAiApiCommand } from "@/server/aiApi/productionAiApiCommandRuntime";
+import { executeProductionConversationTurn, requestProductionConversationStop } from "@/server/shared/productionConversationAiRuntime";
+import { executeProductionCoreGovernedPort,isProductionCoreGovernedPort } from "@/server/core/productionCoreGovernedRuntime";
+import { configureAssetRuntime } from "@/server/asset/assetRuntime";
+import type { AssetRuntimeRequest } from "@/domain/asset/assetRuntimeContract";
+import { configureVideoRuntime } from "@/server/video/videoRuntime";
+import type { VideoRuntimeRequest } from "@/domain/video/videoRuntimeContract";
+import { executeProductionDepartmentPort, auditProductionDepartmentPort } from "@/server/shared/productionDepartmentPortRuntime";
+import { configureSharedProductionOperationRuntime, type SharedProductionOperationRequest } from "@/server/shared/sharedProductionOperationRuntime";
+import { executeProductionSharedOperation, auditProductionSharedOperation } from "@/server/shared/productionSharedOperationRuntime";
 
 type SqlClient = NonNullable<ReturnType<typeof getProductionNeonSql>>;
 
@@ -43,6 +63,11 @@ function asText(value: unknown): string | null {
   if (typeof value !== "string") return null;
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : null;
+}
+
+function asUuidText(value: unknown): string | null {
+  const text = asText(value);
+  return text && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(text) ? text : null;
 }
 
 function asJsonObject(value: unknown): Record<string, unknown> | null {
@@ -222,6 +247,13 @@ const IAM_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;acti
   revokeAccountPermission:{resource_key:"action:admin:IAM-05:ACT-CONFIGURE",action:"INVOKE"},
 };
 
+const DEV_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  startCompanyDiscovery:{resource_key:"action:admin:DEV-01:ACT-DISCOVERY-START",action:"INVOKE"},
+  pauseCompanyDiscovery:{resource_key:"action:admin:DEV-01:ACT-DISCOVERY-PAUSE",action:"INVOKE"},
+  resumeCompanyDiscovery:{resource_key:"action:admin:DEV-01:ACT-DISCOVERY-RESUME",action:"INVOKE"},
+  stopCompanyDiscovery:{resource_key:"action:admin:DEV-01:ACT-DISCOVERY-STOP",action:"INVOKE"},
+};
+
 const SYSTEM_OPERATION_PERMISSION: Readonly<Record<string,readonly {resource_key:string;action:string}[]>> = {
   createCandidate:[
     {resource_key:"action:admin:SYS-01:ACT-CANDIDATE-CREATE",action:"INVOKE"},
@@ -276,6 +308,15 @@ const GOVERNANCE_PERMISSION_CONTEXT: Readonly<Record<string,{
   },
 };
 
+async function authorizeDev(request:DevRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:DEV-01"]);
+  if(!page.allowed)return page;
+  const permission=DEV_OPERATION_PERMISSION[request.operation_id];
+  if(!permission)return{allowed:false,reason_code:"DEV01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
+}
+
 async function authorizeAiApi(request:{operation_id:string}):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
   const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:AIAPI-01"]);
   if(!page.allowed)return page;
@@ -284,6 +325,95 @@ async function authorizeAiApi(request:{operation_id:string}):Promise<{allowed:tr
   if(!permission)return{allowed:false,reason_code:"AIAPI_OPERATION_PERMISSION_MAPPING_REQUIRED"};
   const gate=await evaluateResourceAction(permission.resource_key,permission.action);
   return gate.allowed?{allowed:true}:gate;
+}
+
+const ERP_SNAPSHOT_REFRESH_PERMISSIONS: readonly {resource_key:string;action:string}[] = [
+  {resource_key:"control:CTRL-ADMIN-ERP-01-ACT-05-ERP-SNAPSHOT-REFRESH",action:"INVOKE"},
+  {resource_key:"api:refreshERPSnapshot",action:"EXECUTE"},
+];
+
+async function authorizeErp(request:ErpRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:ERP-01"]);
+  if(!page.allowed)return page;
+  if([
+    "refreshProjection",
+    "getERPSyncStatus",
+    "getERPFailure",
+    "getERPFinanceFactPack",
+    "getERPCapacityGuardrails",
+    "getERPForecast",
+  ].includes(request.operation_id))return{allowed:true};
+  if(request.operation_id==="refreshERPSnapshot"){
+    for(const permission of ERP_SNAPSHOT_REFRESH_PERMISSIONS){
+      const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+      if(!gate.allowed)return gate;
+    }
+    return{allowed:true};
+  }
+  return{allowed:false,reason_code:"ERP01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+}
+
+const SOC_TARGET_POLICY_PERMISSIONS: readonly {resource_key:string;action:string}[] = [
+  {resource_key:"action:admin:SOC-04:ACT-SOCIAL-TARGET-POLICY",action:"INVOKE"},
+  {resource_key:"control:CTRL-ADMIN-SOC-04-ACT-01-ACT-SOCIAL-TARGET-POLICY",action:"INVOKE"},
+  {resource_key:"api:configureSocialTargetPolicy",action:"EXECUTE"},
+];
+
+const SOC_PUBLISH_REQUEST_PERMISSIONS: readonly {resource_key:string;action:string}[] = [
+  {resource_key:"action:admin:SOC-04:ACT-SOCIAL-TARGET-PUBLISH",action:"INVOKE"},
+  {resource_key:"control:CTRL-ADMIN-SOC-04-ACT-02-ACT-SOCIAL-TARGET-PUBLISH",action:"INVOKE"},
+  {resource_key:"api:requestSocialTargetPublish",action:"EXECUTE"},
+];
+
+async function authorizeSoc(request:SocRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:SOC-01"]);
+  if(!page.allowed)return page;
+  if(request.operation_id==="searchProjection"||request.operation_id==="refreshProjection")return{allowed:true};
+  if(request.operation_id==="saveDraft"){
+    const gate=await evaluateResourceAction("api:saveDraft","EXECUTE");
+    return gate.allowed?{allowed:true}:gate;
+  }
+  if(request.operation_id==="configureSocialTargetPolicy"){
+    for(const permission of SOC_TARGET_POLICY_PERMISSIONS){
+      const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+      if(!gate.allowed)return gate;
+    }
+    return{allowed:true};
+  }
+  if(request.operation_id==="requestSocialTargetPublish"){
+    for(const permission of SOC_PUBLISH_REQUEST_PERMISSIONS){
+      const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+      if(!gate.allowed)return gate;
+    }
+    return{allowed:true};
+  }
+  return{allowed:false,reason_code:"SOC01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+}
+
+async function authorizeCandidateDecision(request:CandidateDecisionRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const payload=asRecord(request.payload)??{};
+  const pageUid=asText(payload.page_uid);
+  if(pageUid==="admin:SOC-01"){
+    const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:SOC-01"]);
+    if(!page.allowed)return page;
+    const gate=await evaluateResourceAction("api:decideCandidate","EXECUTE");
+    return gate.allowed?{allowed:true}:gate;
+  }
+  if(pageUid==="workspace:INFO-01"){
+    const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["workspace:INFO-01"]);
+    if(!page.allowed)return page;
+    const gate=await evaluateResourceAction("api:decideCandidate","EXECUTE");
+    return gate.allowed?{allowed:true}:gate;
+  }
+  return{allowed:false,reason_code:"CANDIDATE_DECISION_OWNER_CONTEXT_UNREGISTERED"};
+}
+
+async function decideRegisteredCandidate(request:CandidateDecisionRequest):Promise<unknown>{
+  const payload=asRecord(request.payload)??{};
+  const pageUid=asText(payload.page_uid);
+  if(pageUid==="admin:SOC-01")return decideProductionSocCandidate(request);
+  if(pageUid==="workspace:INFO-01")return decideProductionInfoCandidate(request);
+  throw new NamedRuntimeError("CANDIDATE_DECISION_OWNER_CONTEXT_UNREGISTERED");
 }
 
 async function authorizeSystemLifecycle(request:SysRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
@@ -323,6 +453,13 @@ async function authorizeIam(request:IamRuntimeRequest):Promise<{allowed:true}|{a
   return gate.allowed?{allowed:true}:gate;
 }
 
+const INFO_WORKSPACE_OPERATION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  refreshProjection:{resource_key:"api:refreshProjection",action:"EXECUTE"},
+  searchProjection:{resource_key:"api:searchProjection",action:"EXECUTE"},
+  exportProjection:{resource_key:"api:exportProjection",action:"EXECUTE"},
+  adoptContextCandidate:{resource_key:"api:adoptContextCandidate",action:"EXECUTE"},
+};
+
 async function authorizeInfoCommand(request: InfoRequest): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
   const payload = asRecord(request.payload) ?? {};
   const currentPageUid = asText(payload.current_page_uid) ?? asText(payload.page_uid);
@@ -359,14 +496,44 @@ async function authorizeInfoCommand(request: InfoRequest): Promise<{ allowed: tr
     return actionGate.allowed ? { allowed: true } : actionGate;
   }
 
-  return authorizePage(CURRENT_PAGE_RESOURCE_KEYS["workspace:INFO-01"]);
+  if (currentPageUid !== "workspace:INFO-01") {
+    return { allowed: false, reason_code: "INFO01_OWNER_CONTEXT_REQUIRED" };
+  }
+  const pageGate = await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["workspace:INFO-01"]);
+  if (!pageGate.allowed) return pageGate;
+  const permission = INFO_WORKSPACE_OPERATION_PERMISSION[request.operation_id];
+  if (!permission) return { allowed: false, reason_code: "INFO01_OPERATION_PERMISSION_MAPPING_REQUIRED" };
+  const actionGate = await evaluateResourceAction(permission.resource_key, permission.action);
+  return actionGate.allowed ? { allowed: true } : actionGate;
 }
 
 async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
-  const gate = await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["CORE-01"]);
-  if (!gate.allowed) return gate;
-  void request;
-  return { allowed: true };
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["CORE-01"]);
+  if(!page.allowed)return page;
+  const governedPermission:Partial<Record<CoreRuntimeRequest["port_uid"],string>>={
+    "CORE-01-PORT-PROJECT-CREATE":"api:createProjectDraft",
+    "CORE-01-PORT-PROJECT-VALIDATE":"api:validateProjectDraft",
+    "CORE-01-PORT-PROJECT-CONFIRM":"api:confirmProjectDraft",
+    "CORE-01-PORT-STORY-CANDIDATE":"api:createStoryCandidateSet",
+    "CORE-01-PORT-THREAD-CREATE":"api:createConversationThread",
+    "CORE-01-PORT-MESSAGE-SEND":"api:sendConversationMessage",
+    "CORE-01-PORT-CANDIDATE-CREATE":"api:createCandidate",
+    "CORE-01-PORT-CANDIDATE-COMPARE":"api:compareCandidates",
+    "CORE-01-PORT-CANDIDATE-DECIDE":"api:decideCandidate",
+    "CORE-01-PORT-DNA-LOCK":"api:requestDNALock",
+    "CORE-01-PORT-CORE-REVIEW":"api:submitCoreReview",
+    "CORE-01-PORT-MOTHER-LOCK":"api:requestMotherLock",
+    "CORE-01-PORT-TOPIC-CREATE":"api:createTopic",
+    "CORE-01-PORT-BLUEPRINT-CREATE":"api:createBlueprint",
+    "CORE-01-PORT-BLUEPRINT-VALIDATE":"api:validateBlueprint",
+    "CORE-01-PORT-BLUEPRINT-APPROVE":"api:approveBlueprint",
+    "CORE-01-PORT-CHILD-LOCK":"api:requestChildLock",
+    "CORE-01-PORT-CANONICAL-SCRIPT":"api:getCanonicalScript",
+  };
+  const resource=governedPermission[request.port_uid];
+  if(!resource)return{allowed:true};
+  const operation=await evaluateResourceAction(resource,"EXECUTE");
+  return operation.allowed?{allowed:true}:operation;
 }
 
 function payloadRecord(request: CoreRuntimeRequest): Record<string, unknown> {
@@ -402,205 +569,115 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
   const actor = identityContext.actor;
   const payload = payloadRecord(request);
 
+  if(isProductionCoreGovernedPort(request.port_uid)) return executeProductionCoreGovernedPort(request);
+
   switch (request.port_uid) {
-    case "CORE-01-PORT-PROJECT-CREATE": {
-      const title = asText(payload.title) ?? asText(payload.fixture_label);
-      if (!title) throw new NamedRuntimeError("PROJECT_TITLE_REQUIRED");
-      const project_code = asText(payload.project_code) ?? slugCode(title, "PRJ");
-      const workspaceRows = await sql`
-        SELECT workspace_id::text AS workspace_id
-        FROM workspaces
-        WHERE status = 'READY'
-        ORDER BY created_at ASC
-        LIMIT 1
-      `;
-      const workspace_id = asText(firstRow(workspaceRows)?.workspace_id);
-      if (!workspace_id) throw new NamedRuntimeError("WORKSPACE_NOT_READY");
-      const inserted = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          INSERT INTO projects (workspace_id, project_code, title, owner_id, status)
-          VALUES (${workspace_id}::uuid, ${project_code}, ${title}, ${actor.user_id}::uuid, 'DRAFT')
-          RETURNING project_id::text AS project_id
-        `,
-      );
-      const project_id = asText(firstRow(inserted)?.project_id);
-      if (!project_id) throw new NamedRuntimeError("PROJECT_INSERT_FAILED");
-      const content_hash = sha256(`project:${project_id}:v1:${title}:${project_code}`);
-      const story_core = JSON.stringify({ title });
-      const versionRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          INSERT INTO project_versions (
-            project_id, version_no, status, story_core, content_hash, created_by
-          ) VALUES (
-            ${project_id}::uuid, 1, 'DRAFT', ${story_core}::jsonb, ${content_hash}, ${actor.user_id}::uuid
-          )
-          RETURNING project_version_id::text AS project_version_ref
-        `,
-      );
-      const project_version_ref = asText(firstRow(versionRows)?.project_version_ref);
-      if (!project_version_ref) throw new NamedRuntimeError("PROJECT_VERSION_INSERT_FAILED");
-      await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          UPDATE projects
-          SET active_version_id = ${project_version_ref}::uuid
-          WHERE project_id = ${project_id}::uuid
-        `,
-      );
-      return { project_id, project_version_ref, project_code, title, state: "DRAFT" };
-    }
 
-    case "CORE-01-PORT-PROJECT-VALIDATE": {
-      const projectVersionId = asText(request.path_params?.projectVersionId);
-      if (!projectVersionId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:projectVersionId");
-      const rows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          UPDATE project_versions
-          SET decision_reason = 'VALIDATED'
-          WHERE project_version_id = ${projectVersionId}::uuid
-            AND status = 'DRAFT'
-          RETURNING project_version_id::text AS project_version_ref, project_id::text AS project_id
-        `,
-      );
-      const row = firstRow(rows);
-      if (!row) throw new NamedRuntimeError("PROJECT_VERSION_NOT_IN_DRAFT");
-      return { project_id: asText(row.project_id), project_version_ref: asText(row.project_version_ref), state: "VALIDATED" };
-    }
 
-    case "CORE-01-PORT-PROJECT-CONFIRM": {
-      const id = asText(request.path_params?.id);
-      if (!id) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:id");
-      const rows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          UPDATE project_versions
-          SET status = 'CORE_MODELING'
-          WHERE project_version_id = ${id}::uuid
-            AND status = 'DRAFT'
-            AND decision_reason = 'VALIDATED'
-          RETURNING project_version_id::text AS project_version_ref, project_id::text AS project_id
-        `,
-      );
-      const row = firstRow(rows);
-      if (!row) throw new NamedRuntimeError("PROJECT_VERSION_NOT_VALIDATED");
-      const project_id = asText(row.project_id);
-      await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          UPDATE projects
-          SET status = 'CORE_MODELING', active_version_id = ${id}::uuid
-          WHERE project_id = ${project_id}::uuid
-        `,
-      );
-      return { project_id, project_version_ref: asText(row.project_version_ref), state: "CORE_MODELING" };
-    }
-
-    case "CORE-01-PORT-TOPIC-CREATE": {
-      const projectId = asText(request.path_params?.projectId);
-      if (!projectId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:projectId");
-      const title = asText(payload.title) ?? asText(payload.fixture_label);
-      if (!title) throw new NamedRuntimeError("TOPIC_TITLE_REQUIRED");
-      const topic_code = asText(payload.topic_code) ?? slugCode(title, "TPC");
-      const lockRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          SELECT mother_lock_id::text AS mother_lock_id, project_version_id::text AS project_version_id
-          FROM mother_locks
-          WHERE project_id = ${projectId}::uuid
-            AND status = 'MOTHER_LOCKED'
-          ORDER BY lock_version DESC
-          LIMIT 1
-        `,
-      );
-      const lock = firstRow(lockRows);
-      const mother_lock_id = asText(lock?.mother_lock_id);
-      const mother_project_version_id = asText(lock?.project_version_id);
-      if (!mother_lock_id || !mother_project_version_id) throw new NamedRuntimeError("MOTHER_LOCK_REQUIRED");
-      const topicRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          INSERT INTO topics (project_id, topic_code, title, mother_lock_id, status)
-          VALUES (${projectId}::uuid, ${topic_code}, ${title}, ${mother_lock_id}::uuid, 'DRAFT')
-          RETURNING topic_id::text AS topic_id
-        `,
-      );
-      const topic_id = asText(firstRow(topicRows)?.topic_id);
-      if (!topic_id) throw new NamedRuntimeError("TOPIC_INSERT_FAILED");
-      const content_hash = sha256(`topic:${topic_id}:v1:${title}`);
-      const boundary = JSON.stringify({ title });
-      const bridge = JSON.stringify({});
-      const versionRows = await sql`
-        INSERT INTO topic_versions (
-          topic_id, version_no, mother_project_version_id, boundary, bridge, status, content_hash, created_by
-        ) VALUES (
-          ${topic_id}::uuid, 1, ${mother_project_version_id}::uuid, ${boundary}::jsonb, ${bridge}::jsonb, 'DRAFT', ${content_hash}, ${actor.user_id}::uuid
-        )
-        RETURNING topic_version_id::text AS topic_version_ref
-      `;
-      const topic_version_ref = asText(firstRow(versionRows)?.topic_version_ref);
-      if (!topic_version_ref) throw new NamedRuntimeError("TOPIC_VERSION_INSERT_FAILED");
-      await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          UPDATE topics SET active_version_id = ${topic_version_ref}::uuid WHERE topic_id = ${topic_id}::uuid
-        `,
-      );
-      return { topic_id, topic_version_ref, project_id: projectId, title, state: "DRAFT" };
-    }
 
     case "CORE-01-PORT-THREAD-CREATE": {
-      const projectId = asText(request.path_params?.projectId);
+      const projectId = asUuidText(request.path_params?.projectId);
       if (!projectId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:projectId");
       const work_item = asText(payload.work_item);
       if (!work_item) throw new NamedRuntimeError("REQUIRED_WORK_ITEM_MISSING");
-      const topic_id = asText(payload.topic_id);
-      const title = `${work_item} / ${new Date().toISOString()}`;
-      const projectRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          SELECT p.workspace_id::text AS workspace_id
-          FROM projects p
-          WHERE p.project_id = ${projectId}::uuid
-          LIMIT 1
-        `,
-      );
-      const workspace_id = asText(firstRow(projectRows)?.workspace_id);
-      if (!workspace_id) throw new NamedRuntimeError("PROJECT_NOT_FOUND");
-      const conversation_id = crypto.randomUUID();
-      const threadRows = topic_id
+      const topicRaw = payload.topic_id;
+      const topic_id = topicRaw == null || topicRaw === "" ? null : asUuidText(topicRaw);
+      if (topicRaw != null && topicRaw !== "" && !topic_id) throw new NamedRuntimeError("TOPIC_ID_INVALID");
+
+      const projectWorkItems = new Set(["STORY","CHAPTER","WORLD_SETTING","DNA","BLUEPRINT"]);
+      const topicWorkItems = new Set(["TOPIC_SCOPE","PRODUCTION_SCRIPT"]);
+      if ((topic_id === null && !projectWorkItems.has(work_item)) || (topic_id !== null && !topicWorkItems.has(work_item))) {
+        throw new NamedRuntimeError("WORK_ITEM_NOT_ALLOWED_IN_CURRENT_MODE");
+      }
+
+      const relation_kind = asText(payload.relation_kind) ?? "ROOT";
+      if (relation_kind !== "ROOT" && relation_kind !== "BRANCH") throw new NamedRuntimeError("THREAD_RELATION_KIND_INVALID");
+      const parent_conversation_id = payload.parent_conversation_id == null || payload.parent_conversation_id === "" ? null : asUuidText(payload.parent_conversation_id);
+      const source_message_id = payload.source_message_id == null || payload.source_message_id === "" ? null : asUuidText(payload.source_message_id);
+      if (relation_kind === "ROOT" && (parent_conversation_id || source_message_id)) throw new NamedRuntimeError("ROOT_THREAD_RELATION_REFS_FORBIDDEN");
+      if (relation_kind === "BRANCH" && (!parent_conversation_id || !source_message_id)) throw new NamedRuntimeError("BRANCH_THREAD_RELATION_REFS_REQUIRED");
+
+      const projectRows = topic_id
         ? await runRlsActorQuery(
             sql,
             identityContext.session_token_hash,
             sql`
-              INSERT INTO conversations (conversation_id, workspace_id, project_id, topic_id, title, created_by)
-              VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${topic_id}::uuid, ${title}, ${actor.user_id}::uuid)
-              RETURNING conversation_id::text AS conversation_id
+              SELECT p.workspace_id::text AS workspace_id
+              FROM projects p
+              JOIN topics t ON t.project_id=p.project_id
+              WHERE p.project_id=${projectId}::uuid
+                AND t.topic_id=${topic_id}::uuid
+              LIMIT 1
             `,
           )
         : await runRlsActorQuery(
             sql,
             identityContext.session_token_hash,
             sql`
-              INSERT INTO conversations (conversation_id, workspace_id, project_id, title, created_by)
-              VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${title}, ${actor.user_id}::uuid)
-              RETURNING conversation_id::text AS conversation_id
+              SELECT p.workspace_id::text AS workspace_id
+              FROM projects p
+              WHERE p.project_id=${projectId}::uuid
+              LIMIT 1
             `,
           );
-      if (!asText(firstRow(threadRows)?.conversation_id)) throw new NamedRuntimeError("CONVERSATION_INSERT_FAILED");
-      return { conversation_id, project_id: projectId, work_item, topic_id };
+      const workspace_id = asUuidText(firstRow(projectRows)?.workspace_id);
+      if (!workspace_id) throw new NamedRuntimeError(topic_id ? "TOPIC_PROJECT_LINEAGE_MISMATCH" : "PROJECT_NOT_FOUND");
+
+      if (relation_kind === "BRANCH") {
+        const branchRows = await runRlsActorQuery(
+          sql,
+          identityContext.session_token_hash,
+          sql`
+            SELECT b.conversation_id::text AS parent_conversation_id
+            FROM core_conversation_thread_bindings b
+            JOIN conversation_messages m
+              ON m.conversation_id=b.conversation_id
+             AND m.conversation_message_id=${source_message_id}::uuid
+            WHERE b.conversation_id=${parent_conversation_id}::uuid
+              AND b.project_id=${projectId}::uuid
+              AND b.work_item=${work_item}
+              AND (
+                (${topic_id}::uuid IS NULL AND b.topic_id IS NULL)
+                OR b.topic_id=${topic_id}::uuid
+              )
+            LIMIT 1
+          `,
+        );
+        if (!firstRow(branchRows)) throw new NamedRuntimeError("BRANCH_THREAD_SCOPE_MISMATCH");
+      }
+
+      const conversation_id = crypto.randomUUID();
+      const title = work_item;
+      const [conversationRows,bindingRows] = await runRlsActorTransaction(
+        sql,
+        identityContext.session_token_hash,
+        [
+          topic_id
+            ? sql`
+                INSERT INTO conversations (conversation_id, workspace_id, project_id, topic_id, title, created_by)
+                VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${topic_id}::uuid, ${title}, ${actor.user_id}::uuid)
+                RETURNING conversation_id::text AS conversation_id
+              `
+            : sql`
+                INSERT INTO conversations (conversation_id, workspace_id, project_id, title, created_by)
+                VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${title}, ${actor.user_id}::uuid)
+                RETURNING conversation_id::text AS conversation_id
+              `,
+          sql`
+            INSERT INTO core_conversation_thread_bindings(
+              conversation_id,project_id,topic_id,work_item,parent_conversation_id,source_message_id,relation_kind,created_by
+            ) VALUES(
+              ${conversation_id}::uuid,${projectId}::uuid,${topic_id}::uuid,${work_item},
+              ${parent_conversation_id}::uuid,${source_message_id}::uuid,${relation_kind},${actor.user_id}::uuid
+            )
+            RETURNING conversation_id::text AS conversation_id
+          `,
+        ],
+      );
+      if (!asText(firstRow(conversationRows)?.conversation_id) || !asText(firstRow(bindingRows)?.conversation_id)) {
+        throw new NamedRuntimeError("CONVERSATION_THREAD_BINDING_INSERT_FAILED");
+      }
+      return { conversation_id, project_id: projectId, work_item, topic_id, relation_kind, parent_conversation_id, source_message_id };
     }
 
     case "CORE-01-PORT-MESSAGE-SEND": {
@@ -608,32 +685,25 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       if (!conversationId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:conversationId");
       const message = asText(payload.message);
       if (!message) throw new NamedRuntimeError("MESSAGE_REQUIRED");
-      const seqRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          SELECT COALESCE(MAX(sequence_no), 0)::int AS seq
-          FROM conversation_messages
-          WHERE conversation_id = ${conversationId}::uuid
-        `,
-      );
-      const seq = Number(firstRow(seqRows)?.seq ?? 0) + 1;
-      const content = JSON.stringify({ text: message, instruction_kind: asText(payload.instruction_kind) ?? "MESSAGE" });
-      const message_ref = crypto.randomUUID();
-      const msgRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          INSERT INTO conversation_messages (
-            conversation_message_id, conversation_id, sequence_no, actor_type, actor_ref, message_content
-          ) VALUES (
-            ${message_ref}::uuid, ${conversationId}::uuid, ${seq}, 'USER', ${actor.user_id}, ${content}::jsonb
-          )
-          RETURNING conversation_message_id::text AS message_ref
-        `,
-      );
-      if (!asText(firstRow(msgRows)?.message_ref)) throw new NamedRuntimeError("MESSAGE_INSERT_FAILED");
-      return { conversation_id: conversationId, message_ref, accepted: true };
+      return executeProductionConversationTurn({
+        conversation_id: conversationId,
+        actor_user_id: actor.user_id,
+        session_token_hash: identityContext.session_token_hash,
+        message,
+        correlation_id: request.correlation_id,
+        instruction_kind: asText(payload.instruction_kind),
+        source_message_id: asText(payload.source_message_id),
+        attachment_refs: Array.isArray(payload.attachment_refs)
+          ? payload.attachment_refs.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+          : [],
+        reference_refs: Array.isArray(payload.reference_refs)
+          ? payload.reference_refs.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+          : [],
+        page_uid: "CORE-01",
+        ai_mode: asText(payload.ai_mode),
+        council_mode: asText(payload.council_mode),
+        system_change_id: asText(payload.system_change_id),
+      });
     }
 
     case "CORE-01-PORT-STORY-CANDIDATE": {
@@ -652,7 +722,7 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       const project = firstRow(projectRows);
       if (!project) throw new NamedRuntimeError("PROJECT_NOT_FOUND");
       if (asText(project.status) !== "CORE_MODELING") throw new NamedRuntimeError("PROJECT_NOT_CONFIRMED");
-      const candidate_key = asText(payload.candidate_key) ?? `STORY-${Date.now().toString(36).toUpperCase()}`;
+      const candidate_key = requirePayloadText(payload, "candidate_key");
       const content = requirePayloadJson(payload, "content");
       const strengths = requirePayloadJson(payload, "strengths");
       const weaknesses = requirePayloadJson(payload, "weaknesses");
@@ -688,38 +758,6 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       return { story_candidate_set_ref, project_id: projectId };
     }
 
-    case "CORE-01-PORT-MOTHER-LOCK": {
-      const project_id = asText(payload.project_id);
-      const project_version_ref = asText(payload.project_version_ref);
-      if (!project_id || !project_version_ref) throw new NamedRuntimeError("REQUIRED_PROJECT_VERSION_REF_MISSING");
-      const versionRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          SELECT content_hash, status::text AS status
-          FROM project_versions
-          WHERE project_version_id = ${project_version_ref}::uuid
-            AND project_id = ${project_id}::uuid
-          LIMIT 1
-        `,
-      );
-      const version = firstRow(versionRows);
-      const content_hash = asText(version?.content_hash);
-      if (!content_hash) throw new NamedRuntimeError("PROJECT_VERSION_NOT_FOUND");
-      const evidence = JSON.stringify({ evidence_refs: payload.evidence_refs ?? [] });
-      const reviewer_path = JSON.stringify([]);
-      const reviewRows = await sql`
-        INSERT INTO lock_reviews (
-          lock_kind, target_type, target_version_id, evidence, reviewer_path, status, expected_target_hash, requested_by
-        ) VALUES (
-          'MOTHER', 'PROJECT_VERSION', ${project_version_ref}::uuid, ${evidence}::jsonb, ${reviewer_path}::jsonb, 'IN_REVIEW', ${content_hash}, ${actor.user_id}::uuid
-        )
-        RETURNING lock_review_id::text AS lock_review_id
-      `;
-      const lock_review_id = asText(firstRow(reviewRows)?.lock_review_id);
-      if (!lock_review_id) throw new NamedRuntimeError("LOCK_REVIEW_INSERT_FAILED");
-      return { lock_review_id, project_id, project_version_ref, state: "IN_REVIEW" };
-    }
 
     case "CORE-01-PORT-PROJECTION":
       return { reason_code: "USE_UI_PROJECTION_ROUTE" };
@@ -853,6 +891,9 @@ async function executeInfo(request: InfoRequest): Promise<unknown> {
   const pageUid = asText(payload.current_page_uid) ?? asText(payload.page_uid);
   const sourcePageUid = asText(payload.source_page_uid);
 
+  if (pageUid === "workspace:INFO-01") {
+    return executeProductionInfoCommand(request);
+  }
   if (request.operation_id === "refreshProjection") {
     return { refreshed: true, page_uid: pageUid, source_page_uid: sourcePageUid };
   }
@@ -960,9 +1001,121 @@ function refItems(rows: unknown) {
   });
 }
 
-async function executeQa(_request: QaRequest): Promise<unknown> {
-  void _request;
-  throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
+
+type DepartmentPermission={action_resource:string;control_resource:string;api_resource:string};
+const DEPARTMENT_PERMISSION:Readonly<Record<string,DepartmentPermission>>={
+  "ASSET:ASSET-01-PORT-EXECUTE":{action_resource:"action:workspace:ASSET-01:ACT-TASK-EXECUTE",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-01-ACT-TASK-EXECUTE",api_resource:"api:requestTaskExecution"},
+  "ASSET:ASSET-01-PORT-RETRY":{action_resource:"action:workspace:ASSET-01:ACT-TASK-RETRY",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-02-ACT-TASK-RETRY",api_resource:"api:retryTaskExecution"},
+  "ASSET:ASSET-01-PORT-DECISION":{action_resource:"action:workspace:ASSET-01:ACT-OUTPUT-SELECT",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-03-ACT-OUTPUT-SELECT",api_resource:"api:decideOutputCandidate"},
+  "ASSET:ASSET-01-PORT-SCORECARD":{action_resource:"action:workspace:ASSET-01:ACT-SCORECARD-SUBMIT",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-04-ACT-SCORECARD-SUBMIT",api_resource:"api:submitScorecard"},
+  "ASSET:ASSET-01-PORT-FINDING":{action_resource:"action:workspace:ASSET-01:ACT-FINDING-CREATE",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-05-ACT-FINDING-CREATE",api_resource:"api:createFinding"},
+  "ASSET:ASSET-01-PORT-CORRECTION":{action_resource:"action:workspace:ASSET-01:ACT-CORRECTION-REQUEST",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-06-ACT-CORRECTION-REQUEST",api_resource:"api:createCorrectionRequest"},
+  "ASSET:ASSET-01-PORT-OUT-VIDEO":{action_resource:"action:workspace:ASSET-01:ACT-HANDOFF-CREATE",control_resource:"control:CTRL-WORKSPACE-ASSET-01-ACT-07-ACT-HANDOFF-CREATE",api_resource:"api:createDepartmentHandoff"},
+  "VIDEO:VIDEO-01-PORT-EXECUTE":{action_resource:"action:workspace:VIDEO-01:ACT-TASK-EXECUTE",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-01-ACT-TASK-EXECUTE",api_resource:"api:requestTaskExecution"},
+  "VIDEO:VIDEO-01-PORT-RETRY":{action_resource:"action:workspace:VIDEO-01:ACT-TASK-RETRY",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-02-ACT-TASK-RETRY",api_resource:"api:retryTaskExecution"},
+  "VIDEO:VIDEO-01-PORT-DECISION":{action_resource:"action:workspace:VIDEO-01:ACT-OUTPUT-SELECT",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-03-ACT-OUTPUT-SELECT",api_resource:"api:decideOutputCandidate"},
+  "VIDEO:VIDEO-01-PORT-SCORECARD":{action_resource:"action:workspace:VIDEO-01:ACT-SCORECARD-SUBMIT",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-04-ACT-SCORECARD-SUBMIT",api_resource:"api:submitScorecard"},
+  "VIDEO:VIDEO-01-PORT-FINDING":{action_resource:"action:workspace:VIDEO-01:ACT-FINDING-CREATE",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-05-ACT-FINDING-CREATE",api_resource:"api:createFinding"},
+  "VIDEO:VIDEO-01-PORT-CORRECTION":{action_resource:"action:workspace:VIDEO-01:ACT-CORRECTION-REQUEST",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-06-ACT-CORRECTION-REQUEST",api_resource:"api:createCorrectionRequest"},
+  "VIDEO:VIDEO-01-PORT-OUT-EDIT":{action_resource:"action:workspace:VIDEO-01:ACT-HANDOFF-CREATE",control_resource:"control:CTRL-WORKSPACE-VIDEO-01-ACT-07-ACT-HANDOFF-CREATE",api_resource:"api:createDepartmentHandoff"},
+};
+async function authorizeDepartmentPort(family:"ASSET"|"VIDEO",request:AssetRuntimeRequest|VideoRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS[family==="ASSET"?"ASSET-01":"VIDEO-01"]);
+  if(!page.allowed)return page;
+  const permission=DEPARTMENT_PERMISSION[`${family}:${request.port_uid}`];
+  if(!permission)return{allowed:false,reason_code:`${family}_PORT_PERMISSION_MAPPING_REQUIRED`};
+  for(const [resource,action] of [[permission.action_resource,"INVOKE"],[permission.control_resource,"INVOKE"],[permission.api_resource,"EXECUTE"]] as const){
+    const gate=await evaluateResourceAction(resource,action);
+    if(!gate.allowed)return gate;
+  }
+  return{allowed:true};
+}
+
+type SharedPermission={family:"ASSET"|"VIDEO";action_resource:string;control_resource:string;api_resource:string};
+const SHARED_OPERATION_PERMISSION:Readonly<Record<string,readonly SharedPermission[]>>={
+  generateCorrectionScriptCandidate:[
+    {family:"ASSET",action_resource:"action:workspace:ASSET-01:ACT-CORRECTION-GENERATE",control_resource:"control:workspace:ASSET-01:ASSET-01-BTN-CORRECTION-GENERATE",api_resource:"api:generateCorrectionScriptCandidate"},
+    {family:"VIDEO",action_resource:"action:workspace:VIDEO-01:ACT-CORRECTION-GENERATE",control_resource:"control:workspace:VIDEO-01:VIDEO-01-BTN-GEN-CORRECTION",api_resource:"api:generateCorrectionScriptCandidate"},
+  ],
+  approveCorrectionScriptCandidate:[
+    {family:"ASSET",action_resource:"action:workspace:ASSET-01:ACT-CORRECTION-APPROVE",control_resource:"control:workspace:ASSET-01:ASSET-01-BTN-CORRECTION-APPROVE",api_resource:"api:approveCorrectionScriptCandidate"},
+    {family:"VIDEO",action_resource:"action:workspace:VIDEO-01:ACT-CORRECTION-APPROVE",control_resource:"control:workspace:VIDEO-01:VIDEO-01-BTN-APPROVE-CORRECTION",api_resource:"api:approveCorrectionScriptCandidate"},
+  ],
+  restoreAssetVersionAsNewDraft:[
+    {family:"ASSET",action_resource:"action:workspace:ASSET-01:ACT-RESTORE-AS-NEW",control_resource:"control:workspace:ASSET-01:ASSET-01-BTN-RESTORE-AS-NEW",api_resource:"api:restoreAssetVersionAsNewDraft"},
+  ],
+  lockAssetVersion:[
+    {family:"ASSET",action_resource:"action:workspace:ASSET-01:ACT-VERSION-LOCK",control_resource:"control:workspace:ASSET-01:ASSET-01-BTN-LOCK",api_resource:"api:lockAssetVersion"},
+  ],
+  lockVideoVersion:[
+    {family:"VIDEO",action_resource:"action:workspace:VIDEO-01:ACT-VERSION-LOCK",control_resource:"control:workspace:VIDEO-01:VIDEO-01-BTN-LOCK",api_resource:"api:lockVideoVersion"},
+  ],
+};
+async function authorizeSharedProductionOperation(request:SharedProductionOperationRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const payload=asRecord(request.payload)??{};
+  const family=asText(payload.family);
+  if(family!=="ASSET"&&family!=="VIDEO")return{allowed:false,reason_code:"SHARED_OPERATION_FAMILY_REQUIRED"};
+  const candidates=SHARED_OPERATION_PERMISSION[request.operation_id]??[];
+  const permission=candidates.find((item)=>item.family===family);
+  if(!permission)return{allowed:false,reason_code:"SHARED_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS[family==="ASSET"?"ASSET-01":"VIDEO-01"]);
+  if(!page.allowed)return page;
+  for(const [resource,action] of [[permission.action_resource,"INVOKE"],[permission.control_resource,"INVOKE"],[permission.api_resource,"EXECUTE"]] as const){
+    const gate=await evaluateResourceAction(resource,action);
+    if(!gate.allowed)return gate;
+  }
+  return{allowed:true};
+}
+
+const QA_LIFECYCLE_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  startQaReview:{resource_key:"api:startQaReview",action:"EXECUTE"},
+  startRecheck:{resource_key:"api:startRecheck",action:"EXECUTE"},
+  decidePass:{resource_key:"api:decidePass",action:"EXECUTE"},
+  decideFail:{resource_key:"api:decideFail",action:"EXECUTE"},
+  createReleasePackage:{resource_key:"api:createReleasePackage",action:"EXECUTE"},
+};
+
+async function authorizeQa(request:QaRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["QA-01"]);
+  if(!page.allowed)return page;
+  const permission=QA_LIFECYCLE_PERMISSION[request.operation_id];
+  if(!permission)return{allowed:false,reason_code:"QA01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
+}
+
+const STRATEGY_DECISION_PERMISSION: Readonly<Record<string,{resource_key:string;action:string}>> = {
+  submitStrategyReview:{resource_key:"api:submitStrategyReview",action:"EXECUTE"},
+  adoptAsContextCandidate:{resource_key:"api:adoptAsContextCandidate",action:"EXECUTE"},
+};
+
+async function authorizeStrategyDecision(request:StrategyDecisionRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["workspace:STR-01"]);
+  if(!page.allowed)return page;
+  const permission=STRATEGY_DECISION_PERMISSION[request.operation_id];
+  if(!permission)return{allowed:false,reason_code:"STR01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
+  const gate=await evaluateResourceAction(permission.resource_key,permission.action);
+  return gate.allowed?{allowed:true}:gate;
+}
+
+async function executeQa(request: QaRequest): Promise<unknown> {
+  return executeProductionQaLifecycle(request);
+}
+
+async function authorizeKnowledge(request:KnowledgeRuntimeRequest):Promise<{allowed:true}|{allowed:false;reason_code:string}>{
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:KB-01"]);
+  if(!page.allowed)return page;
+  if(request.operation==="searchKnowledge"||request.operation==="getCitation")return{allowed:true};
+  if(
+    request.operation==="createKnowledgeSource"
+    ||request.operation==="updateKnowledgeSource"
+    ||request.operation==="pauseKnowledgeSource"
+    ||request.operation==="resumeKnowledgeSource"
+  ){
+    const gate=await evaluateResourceAction("permission:knowledge.source.configure","EXECUTE");
+    return gate.allowed?{allowed:true}:gate;
+  }
+  return{allowed:false,reason_code:"KB01_OPERATION_PERMISSION_MAPPING_REQUIRED"};
 }
 
 async function executeKnowledge(request: KnowledgeRuntimeRequest): Promise<unknown> {
@@ -986,6 +1139,12 @@ async function executeKnowledge(request: KnowledgeRuntimeRequest): Promise<unkno
     `;
     return { results: [...refItems(sources), ...refItems(evidence)] };
   }
+  if (request.operation === "createKnowledgeSource" || request.operation === "updateKnowledgeSource") {
+    return mutateProductionKnowledgeSource(request);
+  }
+  if (request.operation === "pauseKnowledgeSource" || request.operation === "resumeKnowledgeSource") {
+    return transitionProductionKnowledgeSource(request);
+  }
   if (request.operation === "getCitation") {
     const sql = await requireSql();
     const citationId = asText(request.path_params?.citationId);
@@ -1003,58 +1162,65 @@ async function executeKnowledge(request: KnowledgeRuntimeRequest): Promise<unkno
   throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
 }
 
+async function authorizeConversation(
+  request: ConversationRequest,
+): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
+  const payload = asRecord(request.payload) ?? {};
+  const requestedPage = asText(payload.page_uid);
+  const pageUid = requestedPage === "admin:SYS-01"
+    ? "admin:SYS-01"
+    : requestedPage === "CORE-01"
+      ? "CORE-01"
+      : "workspace:STR-01";
+  const pageKey = CURRENT_PAGE_RESOURCE_KEYS[pageUid];
+  if (!pageKey) return { allowed: false, reason_code: "CONVERSATION_PAGE_AUTHORITY_UNRESOLVED" };
+  const page = await evaluatePageView(pageKey);
+  if (!page.allowed) return page;
+  const permission = request.operation_id === "stopConversationGeneration"
+    ? { resource_key: "api:stopConversationGeneration", action: "EXECUTE" }
+    : { resource_key: "api:sendConversationMessage", action: "EXECUTE" };
+  const operation = await evaluateResourceAction(permission.resource_key, permission.action);
+  return operation.allowed ? { allowed: true } : operation;
+}
+
 async function executeConversation(request: ConversationRequest): Promise<unknown> {
-  if (request.operation_id !== "sendConversationMessage") {
-    throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
+  const conversationId = asText(request.conversation_id);
+  if (!conversationId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:conversationId");
+  if (request.operation_id === "stopConversationGeneration") {
+    return requestProductionConversationStop(conversationId);
   }
-  const sql = await requireSql();
+  if (request.operation_id !== "sendConversationMessage") {
+    throw new NamedRuntimeError("CONVERSATION_OPERATION_NOT_REGISTERED");
+  }
   const identityContext = await requireIdentityContext();
-  const actor = identityContext.actor;
   const payload = asRecord(request.payload) ?? {};
   const message = asText(payload.message);
   if (!message) throw new NamedRuntimeError("MESSAGE_REQUIRED");
-  const conversationId = asText(request.conversation_id);
-  if (!conversationId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:conversationId");
-  const exists = await runRlsActorQuery(
-    sql,
-    identityContext.session_token_hash,
-    sql`
-      SELECT conversation_id::text AS conversation_id
-      FROM conversations
-      WHERE conversation_id = ${conversationId}::uuid
-      LIMIT 1
-    `,
-  );
-  if (!asText(firstRow(exists)?.conversation_id)) throw new NamedRuntimeError("CONVERSATION_NOT_FOUND");
-  const seqRows = await runRlsActorQuery(
-    sql,
-    identityContext.session_token_hash,
-    sql`
-      SELECT COALESCE(MAX(sequence_no), 0)::int AS seq
-      FROM conversation_messages
-      WHERE conversation_id = ${conversationId}::uuid
-    `,
-  );
-  const seq = Number(firstRow(seqRows)?.seq ?? 0) + 1;
-  const content = JSON.stringify({ text: message, instruction_kind: asText(payload.instruction_kind) ?? "MESSAGE" });
-  const message_ref = crypto.randomUUID();
-  const msgRows = await runRlsActorQuery(
-    sql,
-    identityContext.session_token_hash,
-    sql`
-      INSERT INTO conversation_messages (
-        conversation_message_id, conversation_id, sequence_no, actor_type, actor_ref, message_content
-      ) VALUES (
-        ${message_ref}::uuid, ${conversationId}::uuid, ${seq}, 'USER', ${actor.user_id}, ${content}::jsonb
-      )
-      RETURNING conversation_message_id::text AS message_ref
-    `,
-  );
-  if (!asText(firstRow(msgRows)?.message_ref)) throw new NamedRuntimeError("MESSAGE_INSERT_FAILED");
-  return { conversation_id: conversationId, message_ref, accepted: true };
+  return executeProductionConversationTurn({
+    conversation_id: conversationId,
+    actor_user_id: identityContext.actor.user_id,
+    session_token_hash: identityContext.session_token_hash,
+    message,
+    correlation_id: request.correlation_id,
+    instruction_kind: asText(payload.instruction_kind),
+    source_message_id: asText(payload.source_message_id),
+    attachment_refs: Array.isArray(payload.attachment_refs)
+      ? payload.attachment_refs.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+      : [],
+    reference_refs: Array.isArray(payload.reference_refs)
+      ? payload.reference_refs.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+      : [],
+    page_uid: asText(payload.page_uid) ?? "workspace:STR-01",
+    ai_mode: asText(payload.ai_mode) ?? asText(payload.mode),
+    council_mode: asText(payload.council_mode),
+    system_change_id: asText(payload.system_change_id),
+  });
 }
 
 async function executeSoc(request: SocRuntimeRequest): Promise<unknown> {
+  if (request.operation_id === "saveDraft") return saveProductionSocDraft(request);
+  if (request.operation_id === "configureSocialTargetPolicy") return configureProductionSocTargetPolicy(request);
+  if (request.operation_id === "requestSocialTargetPublish") return requestProductionSocTargetPublish(request);
   if (request.operation_id === "refreshProjection") return { refreshed: true };
   if (request.operation_id === "searchProjection") {
     const sql = await requireSql();
@@ -1073,27 +1239,56 @@ async function executeSoc(request: SocRuntimeRequest): Promise<unknown> {
 }
 
 async function executeErp(request: ErpRuntimeRequest): Promise<unknown> {
-  if (request.operation_id === "refreshProjection" || request.operation_id === "refreshERPSnapshot") {
+  if (request.operation_id === "refreshERPSnapshot") {
+    return requestProductionErpSnapshotRefresh(request);
+  }
+  if (request.operation_id === "refreshProjection") {
     return { refreshed: true };
   }
   const sql = await requireSql();
   if (request.operation_id === "getERPSyncStatus") {
+    const jobId = asUuidText(request.path_params?.id);
+    if (!jobId) throw new NamedRuntimeError("ERP01_SYNC_JOB_ID_INVALID");
     const rows = await sql`
-      SELECT erp_sync_job_id::text AS ref, status::text AS label
+      SELECT erp_sync_job_id::text AS job_id,
+             erp_connector_id::text AS erp_connector_id,
+             status::text AS state,
+             requested_scope,
+             data_classification,
+             snapshot_type,
+             attempt_no,
+             external_evidence_refs,
+             requested_at::text AS requested_at,
+             started_at::text AS started_at,
+             completed_at::text AS completed_at
       FROM erp_sync_jobs
-      ORDER BY requested_at DESC
-      LIMIT 50
+      WHERE erp_sync_job_id = ${jobId}::uuid
+      LIMIT 1
     `;
-    return { jobs: refItems(rows) };
+    const job = firstRow(rows);
+    if (!job) throw new NamedRuntimeError("ERP01_SYNC_JOB_NOT_FOUND");
+    return { ...job, event: "erp.sync.status_read" };
   }
   if (request.operation_id === "getERPFailure") {
+    const failureId = asUuidText(request.path_params?.id);
+    if (!failureId) throw new NamedRuntimeError("ERP01_FAILURE_ID_INVALID");
     const rows = await sql`
-      SELECT erp_failure_id::text AS ref, failure_code AS label, status::text AS status
+      SELECT erp_failure_id::text AS failure_id,
+             erp_connector_id::text AS erp_connector_id,
+             erp_sync_job_id::text AS sync_job_ref,
+             failure_code,
+             failure_detail,
+             retryable,
+             status::text AS state,
+             occurred_at::text AS occurred_at,
+             resolved_at::text AS resolved_at
       FROM erp_failures
-      ORDER BY occurred_at DESC
-      LIMIT 50
+      WHERE erp_failure_id = ${failureId}::uuid
+      LIMIT 1
     `;
-    return { failures: refItems(rows) };
+    const failure = firstRow(rows);
+    if (!failure) throw new NamedRuntimeError("ERP01_FAILURE_NOT_FOUND");
+    return { ...failure, event: "erp.failure.read" };
   }
   if (
     request.operation_id === "getERPFinanceFactPack"
@@ -1141,35 +1336,58 @@ export function bindIdentityPageCommandRuntimes(): void {
     },
     audit: async () => undefined,
   });
+  configureAssetRuntime({
+    authorize:(request)=>authorizeDepartmentPort("ASSET",request),
+    execute:(request)=>executeProductionDepartmentPort("ASSET",request),
+    audit:(entry)=>auditProductionDepartmentPort("ASSET",entry),
+  });
+  configureVideoRuntime({
+    authorize:(request)=>authorizeDepartmentPort("VIDEO",request),
+    execute:(request)=>executeProductionDepartmentPort("VIDEO",request),
+    audit:(entry)=>auditProductionDepartmentPort("VIDEO",entry),
+  });
+  configureSharedProductionOperationRuntime({
+    authorize:authorizeSharedProductionOperation,
+    execute:executeProductionSharedOperation,
+    audit:auditProductionSharedOperation,
+  });
   configureQaRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["QA-01"]),
+    authorize: authorizeQa,
     execute: executeQa,
     audit: async () => undefined,
   });
   configureKnowledgeRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:KB-01"]),
+    authorize: authorizeKnowledge,
     execute: executeKnowledge,
     audit: async () => undefined,
   });
   configureConversationRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["workspace:STR-01"]),
+    authorize: authorizeConversation,
     execute: executeConversation,
     audit: async () => undefined,
   });
   configureStrategyDecisionRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["workspace:STR-01"]),
-    execute: async () => {
-      throw new NamedRuntimeError("PROVIDER_GATEWAY_NOT_MATERIALIZED");
-    },
+    authorize: authorizeStrategyDecision,
+    execute: executeProductionStrategyDecision,
+    audit: async () => undefined,
+  });
+  configureDevCommandRuntime({
+    authorize: authorizeDev,
+    execute: executeProductionDevCommand,
     audit: async () => undefined,
   });
   configureSocCommandRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:SOC-01"]),
+    authorize: authorizeSoc,
     execute: executeSoc,
     audit: async () => undefined,
   });
+  configureCandidateDecisionRuntime({
+    authorize: authorizeCandidateDecision,
+    decide: decideRegisteredCandidate,
+    audit: async () => undefined,
+  });
   configureErpCommandRuntime({
-    authorize: async () => authorizePage(CURRENT_PAGE_RESOURCE_KEYS["admin:ERP-01"]),
+    authorize: authorizeErp,
     execute: executeErp,
     audit: async () => undefined,
   });
