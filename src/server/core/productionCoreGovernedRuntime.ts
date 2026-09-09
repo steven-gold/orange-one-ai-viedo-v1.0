@@ -15,6 +15,7 @@ const GOVERNED_PORTS=new Set<CoreRuntimeRequest["port_uid"]>([
   "CORE-01-PORT-CANDIDATE-DECIDE",
   "CORE-01-PORT-DNA-LOCK",
   "CORE-01-PORT-CORE-REVIEW",
+  "CORE-01-PORT-MOTHER-LOCK",
   "CORE-01-PORT-BLUEPRINT-CREATE",
   "CORE-01-PORT-BLUEPRINT-VALIDATE",
   "CORE-01-PORT-BLUEPRINT-APPROVE",
@@ -262,6 +263,46 @@ async function submitCoreReview(request:CoreRuntimeRequest){
   return{project_id:projectId,project_version_ref:versionId,candidate_ref:text(accepted.candidate_ref),state:"CORE_REVIEW",final_approval_granted:false};
 }
 
+async function requestMotherLock(request:CoreRuntimeRequest){
+  const payload=rec(request.payload);
+  const projectId=requiredUuid(payload.project_id,"PROJECT_ID_REQUIRED");
+  const projectVersionId=requiredUuid(payload.project_version_ref,"REQUIRED_PROJECT_VERSION_REF_MISSING");
+  const {sql,session_token_hash}=await context();
+  const version=first(await runRlsActorQuery(sql,session_token_hash,sql`
+    SELECT pv.project_version_id::text AS project_version_ref,pv.project_id::text AS project_id,
+           pv.status::text AS status,pv.content_hash::text AS content_hash
+    FROM public.project_versions pv
+    WHERE pv.project_version_id=${projectVersionId}::uuid AND pv.project_id=${projectId}::uuid
+    LIMIT 1
+  `));
+  if(!version)throw new NamedRuntimeError("PROJECT_VERSION_NOT_FOUND");
+  const existing=first(await runRlsActorQuery(sql,session_token_hash,sql`
+    SELECT lock_review_id::text AS lock_review_id,status::text AS status,
+           expected_target_hash::text AS expected_target_hash,evidence,reviewer_path
+    FROM public.lock_reviews
+    WHERE lock_kind='MOTHER' AND target_type='PROJECT_VERSION'
+      AND target_version_id=${projectVersionId}::uuid
+    ORDER BY created_at DESC
+    LIMIT 1
+  `));
+  if(existing){
+    const reviewerPath=Array.isArray(existing.reviewer_path)?existing.reviewer_path:[];
+    const evidence=rec(existing.evidence);
+    const evidenceRefs=stringArray(evidence.evidence_refs);
+    if(reviewerPath.length===0||evidenceRefs.length===0){
+      throw new NamedRuntimeError("CORE_LOCK_REVIEW_CONTRACT_INVALID");
+    }
+    if(text(existing.expected_target_hash)!==text(version.content_hash)){
+      throw new NamedRuntimeError("CORE_LOCK_REVIEW_TARGET_STALE");
+    }
+    return{
+      lock_review_id:text(existing.lock_review_id),project_id:projectId,project_version_ref:projectVersionId,
+      lock_state:text(existing.status),final_lock_granted:false,idempotent_replay:true,
+    };
+  }
+  throw new NamedRuntimeError("CORE_LOCK_REVIEWER_PATH_UNRESOLVED");
+}
+
 async function createBlueprint(request:CoreRuntimeRequest){
   const topicId=requiredUuid(request.path_params?.id,"REQUIRED_PATH_REFERENCE_MISSING:id");
   const {sql,session_token_hash}=await context();
@@ -417,6 +458,7 @@ export async function executeProductionCoreGovernedPort(request:CoreRuntimeReque
     case "CORE-01-PORT-CANDIDATE-DECIDE":return decideCandidate(request);
     case "CORE-01-PORT-DNA-LOCK":return requestDnaLock(request);
     case "CORE-01-PORT-CORE-REVIEW":return submitCoreReview(request);
+    case "CORE-01-PORT-MOTHER-LOCK":return requestMotherLock(request);
     case "CORE-01-PORT-BLUEPRINT-CREATE":return createBlueprint(request);
     case "CORE-01-PORT-BLUEPRINT-VALIDATE":return validateBlueprint(request);
     case "CORE-01-PORT-BLUEPRINT-APPROVE":return approveBlueprint(request);
