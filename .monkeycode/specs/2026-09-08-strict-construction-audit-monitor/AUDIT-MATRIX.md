@@ -142,9 +142,9 @@ Source archive: `acpos-new-local-20260909.tar.gz`
 - Recorded local base inside the frozen audit: `4c43aa29fbccb3622c5446eaa54f642a8489376f`.
 - Archive files after excluding the stale `.git` worktree pointer: 576.
 - Content deltas versus the recorded base: 28 files.
-- Exact local delta blobs still present in Current: 14.
+- Exact local delta blobs still present in Current: 15.
 - Superseded after explicit three-way reconciliation: 11 files — this audit matrix plus `scripts/post-deploy-smoke.mjs`, `src/components/pages/VideoVisual.tsx`, `src/components/pages/KnowledgeAdminVisual.tsx`, `src/domain/asset/assetProjectionPort.ts`, `src/domain/catalog/identityClientCommandAdapters.ts`, `src/server/asset/assetRuntime.ts`, `src/server/edit/editVoiceRuntime.ts`, `src/server/shared/identityPageCommandRuntime.ts`, `src/server/shared/pageCatalogProjectionRuntime.ts`, and `src/server/video/videoRuntime.ts`. Current versions contain later runtime/Authority closure and must not be replaced by the older archive blobs.
-- Remaining documentation deltas were absorbed into Current without restoring stale runtime status: `.monkeycode/MEMORY.md`, `authority/runtime/ACPOS_RUNTIME_BINDING_GAP_REPORT.md`, and `docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml`.
+- Remaining non-exact documentation deltas were absorbed into Current without restoring stale runtime status: `authority/runtime/ACPOS_RUNTIME_BINDING_GAP_REPORT.md` and `docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml`. `.monkeycode/MEMORY.md` is retained exactly.
 - `.env.example` is absent from the tar payload but is not treated as a deletion because the archive's own gap report references that env contract; Current retains it.
 - Current verified construction basis for this closure: `830b780e2b4832e9751b48f2e62a28761450f5c9`.
 - Release Gate `#34315733464` on that exact basis: SUCCESS through Browser, DOM, Docker, and Dirty tree.
