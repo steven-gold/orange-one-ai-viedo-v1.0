@@ -13,9 +13,9 @@ The 2026-09-08 local worktree snapshot `acpos-new-local-20260909.tar.gz` has now
 
 - Archive payload: 576 repository-like files after excluding the stale worktree `.git` pointer.
 - True local content delta from `4c43aa2`: 28 files.
-- Exact local delta blobs retained in Current: 14.
+- Exact local delta blobs retained in Current: 15.
 - Later Current versions that supersede already-reconciled local deltas: 11, comprising the updated audit matrix plus the ten overlapping runtime/UI files separately reconciled during merge construction.
-- Remaining local documentation deltas: `.monkeycode/MEMORY.md`, this runtime gap report, and `docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml`; their still-valid freeze/audit meaning is absorbed by the 2026-09-09 closure rather than restoring stale 2026-09-08 runtime status.
+- Remaining non-exact documentation deltas: this runtime gap report and `docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml`; their still-valid freeze/audit meaning is absorbed by the 2026-09-09 closure rather than restoring stale 2026-09-08 runtime status. `.monkeycode/MEMORY.md` is retained as an exact archive blob.
 - The archive omission of `.env.example` is classified as packaging omission, not a requested deletion: the archive's own runtime gap report explicitly references the env contract and Current retains that contract.
 - Current construction SHA after runtime reconciliation: `830b780e2b4832e9751b48f2e62a28761450f5c9`.
 - ACPOS Release Gate `#34315733464`: SUCCESS on that exact SHA, including lint, dependency audit, typecheck, release unit tests, Production build/HTTP E2E, controlled build/misconfiguration E2E, Browser E2E, Current DOM acceptance, Standalone Docker, and Dirty tree guard.
