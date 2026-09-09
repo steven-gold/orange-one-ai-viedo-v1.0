@@ -82,8 +82,9 @@ try {
         if (await grid.count() !== 1) throw new Error(`WORKSPACE_THREE_COLUMN_${uid}_${await grid.count()}`);
       }
       if (uid === "EDIT-01") {
-        const mainTimeline = page.locator('[data-main-timeline="true"][data-timeline-legacy-merge="MERGE_VISUAL_ONLY"]');
-        if (await mainTimeline.count() !== 1) throw new Error(`EDIT_MAIN_TIMELINE_SYNC_${await mainTimeline.count()}`);
+        const mainTimeline = page.locator('[data-main-timeline="true"]');
+        const mergedLayers = mainTimeline.locator('[data-timeline-legacy-merge="MERGE_VISUAL_ONLY"]');
+        if (await mainTimeline.count() !== 1 || await mergedLayers.count() !== 1) throw new Error(`EDIT_MAIN_TIMELINE_SYNC_${await mainTimeline.count()}_${await mergedLayers.count()}`);
       }
 
       if (errors.length) throw new Error(`${uid}_${width}_${errors.join("|")}`);
