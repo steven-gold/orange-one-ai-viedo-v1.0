@@ -517,6 +517,7 @@ async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: tr
     "CORE-01-PORT-DNA-LOCK":"api:requestDNALock",
     "CORE-01-PORT-CORE-REVIEW":"api:submitCoreReview",
     "CORE-01-PORT-MOTHER-LOCK":"api:requestMotherLock",
+    "CORE-01-PORT-TOPIC-CREATE":"api:createTopic",
     "CORE-01-PORT-BLUEPRINT-CREATE":"api:createBlueprint",
     "CORE-01-PORT-BLUEPRINT-VALIDATE":"api:validateBlueprint",
     "CORE-01-PORT-BLUEPRINT-APPROVE":"api:approveBlueprint",
@@ -666,61 +667,6 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
       return { project_id, project_version_ref: asText(row.project_version_ref), state: "CORE_MODELING" };
     }
 
-    case "CORE-01-PORT-TOPIC-CREATE": {
-      const projectId = asText(request.path_params?.projectId);
-      if (!projectId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:projectId");
-      const title = asText(payload.title) ?? asText(payload.fixture_label);
-      if (!title) throw new NamedRuntimeError("TOPIC_TITLE_REQUIRED");
-      const topic_code = asText(payload.topic_code) ?? slugCode(title, "TPC");
-      const lockRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          SELECT mother_lock_id::text AS mother_lock_id, project_version_id::text AS project_version_id
-          FROM mother_locks
-          WHERE project_id = ${projectId}::uuid
-            AND status = 'MOTHER_LOCKED'
-          ORDER BY lock_version DESC
-          LIMIT 1
-        `,
-      );
-      const lock = firstRow(lockRows);
-      const mother_lock_id = asText(lock?.mother_lock_id);
-      const mother_project_version_id = asText(lock?.project_version_id);
-      if (!mother_lock_id || !mother_project_version_id) throw new NamedRuntimeError("MOTHER_LOCK_REQUIRED");
-      const topicRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          INSERT INTO topics (project_id, topic_code, title, mother_lock_id, status)
-          VALUES (${projectId}::uuid, ${topic_code}, ${title}, ${mother_lock_id}::uuid, 'DRAFT')
-          RETURNING topic_id::text AS topic_id
-        `,
-      );
-      const topic_id = asText(firstRow(topicRows)?.topic_id);
-      if (!topic_id) throw new NamedRuntimeError("TOPIC_INSERT_FAILED");
-      const content_hash = sha256(`topic:${topic_id}:v1:${title}`);
-      const boundary = JSON.stringify({ title });
-      const bridge = JSON.stringify({});
-      const versionRows = await sql`
-        INSERT INTO topic_versions (
-          topic_id, version_no, mother_project_version_id, boundary, bridge, status, content_hash, created_by
-        ) VALUES (
-          ${topic_id}::uuid, 1, ${mother_project_version_id}::uuid, ${boundary}::jsonb, ${bridge}::jsonb, 'DRAFT', ${content_hash}, ${actor.user_id}::uuid
-        )
-        RETURNING topic_version_id::text AS topic_version_ref
-      `;
-      const topic_version_ref = asText(firstRow(versionRows)?.topic_version_ref);
-      if (!topic_version_ref) throw new NamedRuntimeError("TOPIC_VERSION_INSERT_FAILED");
-      await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          UPDATE topics SET active_version_id = ${topic_version_ref}::uuid WHERE topic_id = ${topic_id}::uuid
-        `,
-      );
-      return { topic_id, topic_version_ref, project_id: projectId, title, state: "DRAFT" };
-    }
 
     case "CORE-01-PORT-THREAD-CREATE": {
       const projectId = asText(request.path_params?.projectId);
