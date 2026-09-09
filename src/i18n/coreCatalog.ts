@@ -61,7 +61,15 @@ export const CORE_CATALOG = {
   "core01.control.downstream_edit": { "zh-TW": "EDIT Boundary Readiness", "zh-CN": "EDIT Boundary Readiness", en: "EDIT Boundary Readiness" },
   "core01.control.candidate_compare": { "zh-TW": "比較 Candidate", "zh-CN": "比较 Candidate", en: "Compare Candidate" },
   "core01.control.version_state": { "zh-TW": "Current Candidate / Confirmed Version", "zh-CN": "Current Candidate / Confirmed Version", en: "Current Candidate / Confirmed Version" },
-  "core01.control.lock_review": { "zh-TW": "Lock Review Status / Block Reason", "zh-CN": "Lock Review Status / Block Reason", en: "Lock Review Status / Block Reason" }
+  "core01.control.lock_review": { "zh-TW": "Lock Review Status / Block Reason", "zh-CN": "Lock Review Status / Block Reason", en: "Lock Review Status / Block Reason" },
+  "core01.lock_modal.title_mother": { "zh-TW": "提出 Mother Lock", "zh-CN": "提出 Mother Lock", en: "Request Mother Lock" },
+  "core01.lock_modal.title_child": { "zh-TW": "提出 Child Lock", "zh-CN": "提出 Child Lock", en: "Request Child Lock" },
+  "core01.lock_modal.request_reason": { "zh-TW": "請求原因", "zh-CN": "请求原因", en: "Request Reason" },
+  "core01.lock_modal.criteria_version": { "zh-TW": "Criteria Version", "zh-CN": "Criteria Version", en: "Criteria Version" },
+  "core01.lock_modal.evidence_refs": { "zh-TW": "已選 Evidence Refs", "zh-CN": "已选 Evidence Refs", en: "Selected Evidence Refs" },
+  "core01.lock_modal.reviewer_ready": { "zh-TW": "可用 Reviewer", "zh-CN": "可用 Reviewer", en: "Eligible Reviewers" },
+  "core01.lock_modal.cancel": { "zh-TW": "取消", "zh-CN": "取消", en: "Cancel" },
+  "core01.lock_modal.execute": { "zh-TW": "執行", "zh-CN": "执行", en: "Execute" }
 } as const;
 
 export type CoreTranslationKey = keyof typeof CORE_CATALOG;

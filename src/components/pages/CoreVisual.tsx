@@ -137,6 +137,11 @@ export function CoreVisual() {
   const [message, setMessage] = useState("");
   const [conversationMessages, setConversationMessages] = useState<ConversationUiMessage[]>([]);
   const [humanDecision, setHumanDecision] = useState("");
+  const [lockDialog, setLockDialog] = useState<"MOTHER_LOCK" | "CHILD_LOCK" | null>(null);
+  const [lockRequestReason, setLockRequestReason] = useState("");
+  const [lockCriteriaVersionId, setLockCriteriaVersionId] = useState("");
+  const [lockCorrelationId, setLockCorrelationId] = useState("");
+  const [lockIdempotencyKey, setLockIdempotencyKey] = useState("");
   const [clientState, dispatchClient] = useReducer(reduceCoreClientState, INITIAL_CORE_CLIENT_STATE);
   const [projection, setProjection] = useState<CoreNormalizedProjection | null>(null);
 
@@ -236,17 +241,47 @@ export function CoreVisual() {
       : { path_params: { projectId: projectId! }, payload: form.payload });
   };
 
+  const openLockDialog = (kind: "MOTHER_LOCK" | "CHILD_LOCK") => {
+    setLockDialog(kind);
+    setLockRequestReason("");
+    setLockCriteriaVersionId("");
+    setLockCorrelationId(crypto.randomUUID());
+    setLockIdempotencyKey(`lock-${crypto.randomUUID()}`);
+  };
+  const closeLockDialog = () => {
+    if (busyAction) return;
+    setLockDialog(null);
+    setLockRequestReason("");
+    setLockCriteriaVersionId("");
+    setLockCorrelationId("");
+    setLockIdempotencyKey("");
+  };
   const runLockCommand = async (action: CoreActionUid, kind: CoreLockCommandKind) => {
     if (kind === "DNA_LOCK" && !requireDnaVersionRef()) return;
-    if ((kind === "CORE_REVIEW" || kind === "MOTHER_LOCK") && !requireProjectVersionRef()) return;
-    if (kind === "CHILD_LOCK" && !requireBlueprintVersionRef()) return;
-    const payload = await requestCoreLockCommandPayload({ kind, project_id: clientState.project_id, project_version_ref: clientState.project_version_ref, dna_version_ref: clientState.dna_version_ref, blueprint_version_ref: clientState.blueprint_version_ref, topic_id: clientState.topic_id, evidence_refs: clientState.decision_evidence_refs });
+    if (kind === "CORE_REVIEW" && !requireProjectVersionRef()) return;
+    const selectedProject=projection?.projects.find(item=>item.project_id===clientState.project_id)??null;
+    const selectedTopic=projection?.topics.find(item=>item.topic_id===clientState.topic_id&&item.project_id===clientState.project_id)??null;
+    const targetRef=kind==="MOTHER_LOCK"?selectedProject?.project_version_ref??null:kind==="CHILD_LOCK"?selectedTopic?.blueprint_version_ref??null:null;
+    const expectedVersionNo=kind==="MOTHER_LOCK"?selectedProject?.project_version_no??null:kind==="CHILD_LOCK"?selectedTopic?.blueprint_version_no??null:null;
+    const payload = await requestCoreLockCommandPayload({
+      kind,project_id:clientState.project_id,project_version_ref:clientState.project_version_ref,
+      dna_version_ref:clientState.dna_version_ref,blueprint_version_ref:clientState.blueprint_version_ref,
+      topic_id:clientState.topic_id,evidence_refs:clientState.decision_evidence_refs,
+      workspace_id:selectedProject?.workspace_id??null,target_ref:targetRef,expected_version_no:expectedVersionNo,
+      request_reason:lockRequestReason,criteria_version_id:lockCriteriaVersionId,
+      correlation_id:lockCorrelationId,idempotency_key:lockIdempotencyKey,
+    });
     if (!payload.ok) {
       const error = kind === "DNA_LOCK" ? "CORE-01-ERR-DNA-LOCK-001" : kind === "CORE_REVIEW" ? "CORE-01-ERR-CONTEXT-001" : "CORE-01-ERR-LOCK-CONTRACT-001";
       reportBlock(`${error}:${payload.reason_code}`);
       return;
     }
-    await runServerActionAndSync(action, { payload: payload.payload });
+    const result=await runServerActionAndSync(action,{payload:payload.payload});
+    if(result?.ok&&(kind==="MOTHER_LOCK"||kind==="CHILD_LOCK"))closeLockDialog();
+  };
+  const submitLockDialog = () => {
+    if(lockDialog==="MOTHER_LOCK")void runLockCommand("CORE-01-ACT-MOTHER-LOCK-REQUEST","MOTHER_LOCK");
+    else if(lockDialog==="CHILD_LOCK")void runLockCommand("CORE-01-ACT-CHILD-LOCK-REQUEST","CHILD_LOCK");
   };
 
   const runComposerResource = async (kind: "ATTACHMENT" | "REFERENCE") => {
@@ -355,8 +390,8 @@ export function CoreVisual() {
       case "CORE-01-ACT-STORY-CANDIDATE": { const projectId = requireProjectId(); if (projectId) void runServerActionAndSync(action, { path_params: { projectId } }); return; }
       case "CORE-01-ACT-DNA-LOCK-REQUEST": void runLockCommand(action,"DNA_LOCK"); return;
       case "CORE-01-ACT-CORE-REVIEW-SUBMIT": void runLockCommand(action,"CORE_REVIEW"); return;
-      case "CORE-01-ACT-MOTHER-LOCK-REQUEST": void runLockCommand(action,"MOTHER_LOCK"); return;
-      case "CORE-01-ACT-CHILD-LOCK-REQUEST": void runLockCommand(action,"CHILD_LOCK"); return;
+      case "CORE-01-ACT-MOTHER-LOCK-REQUEST": openLockDialog("MOTHER_LOCK"); return;
+      case "CORE-01-ACT-CHILD-LOCK-REQUEST": openLockDialog("CHILD_LOCK"); return;
       case "CORE-01-ACT-BLUEPRINT-CREATE": { const topicId = requireTopicId(); if (topicId) void runServerActionAndSync(action, { path_params: { id: topicId } }); return; }
       case "CORE-01-ACT-BLUEPRINT-VALIDATE": case "CORE-01-ACT-BLUEPRINT-APPROVE": { const blueprintVersionRef = requireBlueprintVersionRef(); if (blueprintVersionRef) void runServerActionAndSync(action, { path_params: { id: blueprintVersionRef } }); return; }
       case "CORE-01-ACT-CANONICAL-SCRIPT-VIEW": { const topicId = requireTopicId(); if (topicId) void runServerActionAndSync(action, { path_params: { id: topicId } }); return; }
@@ -381,7 +416,7 @@ export function CoreVisual() {
     const matches = projection?.topics.filter((item) => item.topic_id === topicId && item.project_id === clientState.project_id) ?? [];
     if (matches.length !== 1) { reportBlock("CORE-01-ERR-TOPIC-LINEAGE-001:TOPIC_PROJECTION_SELECTION_AMBIGUOUS"); return; }
     const selected = matches[0];
-    dispatchClient({ action_uid: "CORE-01-ACT-TOPIC-SELECT", topic_ref: selected.topic_id, topic_id: selected.topic_id, topic_version_ref: selected.topic_version_ref });
+    dispatchClient({ action_uid: "CORE-01-ACT-TOPIC-SELECT", topic_ref: selected.topic_id, topic_id: selected.topic_id, topic_version_ref: selected.topic_version_ref, blueprint_version_ref: selected.blueprint_version_ref });
     reportLocalSuccess(`TOPIC_SELECTED:${selected.topic_id}`);
   };
   const selectWorkItem = (workItem: string) => {
@@ -515,6 +550,19 @@ export function CoreVisual() {
     const candidate = Boolean(clientState.candidate_ref);
     const blueprint = Boolean(clientState.blueprint_version_ref);
     const dna = Boolean(clientState.dna_version_ref);
+    const selectedProject=projection?.projects.find(item=>item.project_id===clientState.project_id)??null;
+    const selectedTopic=projection?.topics.find(item=>item.topic_id===clientState.topic_id&&item.project_id===clientState.project_id)??null;
+    const criteriaReady=(projection?.lock_context.approved_criteria.length??0)>0;
+    const reviewerReady=(projection?.lock_context.eligible_reviewer_count??0)>0;
+    const evidenceReady=clientState.decision_evidence_refs.length>0;
+    const lockPrerequisite=(targetReady:boolean,versionReady:boolean):string|null=>{
+      if(!targetReady)return "LOCK_TARGET_NOT_READY";
+      if(!versionReady)return "EXPECTED_VERSION_INVALID";
+      if(!criteriaReady)return "LOCK_CRITERIA_VERSION_REQUIRED";
+      if(!evidenceReady)return "LOCK_EVIDENCE_REQUIRED";
+      if(!reviewerReady)return "CORE_LOCK_REVIEWER_PATH_UNRESOLVED";
+      return null;
+    };
     switch (id) {
       case "CORE-01-BTN-PROJECT-CREATE": return null;
       case "CORE-01-BTN-TOPIC-CREATE": return project && projectVersion ? null : "PROJECT_VERSION_REQUIRED";
@@ -534,11 +582,11 @@ export function CoreVisual() {
       case "CORE-01-BTN-STORY-CANDIDATE": return project ? null : "PROJECT_REQUIRED";
       case "CORE-01-BTN-DNA-LOCK": return dna ? null : "EXACT_DNA_VERSION_REF_REQUIRED";
       case "CORE-01-BTN-CORE-REVIEW": return projectVersion ? null : "PROJECT_VERSION_REQUIRED";
-      case "CORE-01-BTN-PROJECT-LOCK": return "CORE_LOCK_REVIEWER_PATH_UNRESOLVED";
+      case "CORE-01-BTN-PROJECT-LOCK": return projectVersion ? lockPrerequisite(selectedProject?.status==="READY_FOR_MOTHER_REVIEW",Boolean(selectedProject?.project_version_no)) : "PROJECT_VERSION_REQUIRED";
       case "CORE-01-BTN-BLUEPRINT-CREATE": return "CORE_BLUEPRINT_DOCUMENT_MATERIALIZER_NOT_BOUND";
       case "CORE-01-BTN-BLUEPRINT-VALIDATE":
       case "CORE-01-BTN-BLUEPRINT-APPROVE": return blueprint ? null : "EXACT_BLUEPRINT_VERSION_REF_REQUIRED";
-      case "CORE-01-BTN-CHILD-LOCK": return "CORE_LOCK_REVIEWER_PATH_UNRESOLVED";
+      case "CORE-01-BTN-CHILD-LOCK": return topic&&blueprint ? lockPrerequisite(selectedTopic?.blueprint_status==="READY_FOR_CHILD_REVIEW",Boolean(selectedTopic?.blueprint_version_no)) : "EXACT_BLUEPRINT_VERSION_REF_REQUIRED";
       case "CORE-01-BTN-CANONICAL-SCRIPT": return topic ? null : "TOPIC_REQUIRED";
       default: return null;
     }
@@ -578,6 +626,16 @@ export function CoreVisual() {
           <section className={styles.panel} data-section-id="CORE-01-SEC-10" data-visual-id="CORE-01-VIS-RIGHT-VERSION"><div data-component-uid="CORE-01-CMP-VERSION"><PanelTitle labelKey="core01.group.version" /><GatedAction id="CORE-01-BTN-CANDIDATE-COMPARE" labelKey="core01.control.candidate_compare" onClick={() => runControl("CORE-01-BTN-CANDIDATE-COMPARE")} /><ReadonlyField id="CORE-01-FLD-VERSION-STATE" labelKey="core01.control.version_state" value={display("version_state")} /><div className={styles.stateValue} data-candidate-compare-read-model="true">{display("candidate_compare")}</div></div><div className={styles.divider} /><div data-component-uid="CORE-01-CMP-LOCK-REVIEW"><PanelTitle labelKey="core01.group.lock_review" /><ReadonlyField id="CORE-01-FLD-LOCK-REVIEW" labelKey="core01.control.lock_review" value={display("lock_review")} /></div></section>
         </aside>
       </div>
+      {lockDialog ? <div className={styles.modalBackdrop} role="presentation" onMouseDown={(event)=>{if(event.target===event.currentTarget)closeLockDialog();}}>
+        <form className={styles.lockModal} role="dialog" aria-modal="true" aria-labelledby="core-lock-modal-title" onSubmit={(event)=>{event.preventDefault();submitLockDialog();}}>
+          <h2 id="core-lock-modal-title">{t(lockDialog==="MOTHER_LOCK"?"core01.lock_modal.title_mother":"core01.lock_modal.title_child")}</h2>
+          <label className={styles.modalField}><span>{t("core01.lock_modal.request_reason")}</span><textarea value={lockRequestReason} disabled={Boolean(busyAction)} onChange={(event)=>setLockRequestReason(event.target.value)} required /></label>
+          <label className={styles.modalField}><span>{t("core01.lock_modal.criteria_version")}</span><select value={lockCriteriaVersionId} disabled={Boolean(busyAction)} onChange={(event)=>setLockCriteriaVersionId(event.target.value)} required><option value="">—</option>{(projection?.lock_context.approved_criteria??[]).map(item=><option key={item.criteria_version_id} value={item.criteria_version_id}>{item.label}</option>)}</select></label>
+          <div className={styles.modalReadOnly}><span>{t("core01.lock_modal.evidence_refs")}</span><strong>{clientState.decision_evidence_refs.length}</strong></div>
+          <div className={styles.modalReadOnly}><span>{t("core01.lock_modal.reviewer_ready")}</span><strong>{projection?.lock_context.eligible_reviewer_count??0}</strong></div>
+          <div className={styles.modalActions}><button type="button" className={styles.button} disabled={Boolean(busyAction)} onClick={closeLockDialog}>{t("core01.lock_modal.cancel")}</button><button type="submit" className={`${styles.button} ${styles.primaryButton}`} disabled={Boolean(busyAction)||!lockRequestReason.trim()||!lockCriteriaVersionId}>{t("core01.lock_modal.execute")}</button></div>
+        </form>
+      </div> : null}
       <section className={styles.stageActionDock} data-current-stage-action-dock="true" data-current-stage={String(coreStage)} data-primary-control-ref={stageMeta.control}>
         <div className={styles.stageSummary}><span>{t("core01.control.runtime_stage")}</span><strong>{runtimeDisplay}</strong></div>
         <div className={styles.stagePrimaryHint}><span>{t("core01.control.runtime_stage")}</span><strong>{t(stageMeta.key)}</strong></div>

@@ -56,7 +56,7 @@ export const INITIAL_CORE_CLIENT_STATE: CoreClientState = {
 export type CoreClientAction =
   | { type: "CORE_INTERNAL_PROJECTION_SYNC"; refs: Partial<CoreExactRefs>; work_item?: string | null }
   | { action_uid: "CORE-01-ACT-PROJECT-SELECT"; project_ref: string | null; project_id?: string | null; project_version_ref?: string | null }
-  | { action_uid: "CORE-01-ACT-TOPIC-SELECT"; topic_ref: string | null; topic_id?: string | null; topic_version_ref?: string | null }
+  | { action_uid: "CORE-01-ACT-TOPIC-SELECT"; topic_ref: string | null; topic_id?: string | null; topic_version_ref?: string | null; blueprint_version_ref?: string | null }
   | { action_uid: "CORE-01-ACT-WORK-ITEM-SELECT"; work_item: string | null }
   | { action_uid: "CORE-01-ACT-THREAD-SELECT"; thread_ref: string | null; conversation_id?: string | null }
   | { action_uid: "CORE-01-ACT-AI-MODE-SINGLE" }
@@ -118,7 +118,7 @@ export function reduceCoreClientState(state: CoreClientState, action: CoreClient
         topic_version_ref: action.topic_version_ref ?? null,
         topic_ref: topic_id,
         dna_version_ref: null,
-        blueprint_version_ref: null,
+        blueprint_version_ref: action.blueprint_version_ref ?? null,
         work_item: null,
         conversation_id: null,
         thread_ref: null,
