@@ -287,7 +287,7 @@ try {
             await sidebar.hover();
             await page.waitForFunction(() => {
               const element = document.querySelector(".workspace-slot");
-              return element instanceof HTMLElement && element.getBoundingClientRect().left >= 234;
+              return element instanceof HTMLElement && Math.abs(element.getBoundingClientRect().left - 78) <= 1;
             }, { timeout: 5_000 });
             const expandedLeft = await workspace.evaluate((element) => element.getBoundingClientRect().left);
             await workspace.hover();
@@ -295,7 +295,7 @@ try {
               const element = document.querySelector(".workspace-slot");
               return element instanceof HTMLElement && Math.abs(element.getBoundingClientRect().left - 78) <= 1;
             }, { timeout: 5_000 });
-            if (expandedLeft < 234) throw new Error(`SIDEBAR_WORKSPACE_REFLOW_MISSING_${expandedLeft}`);
+            if (Math.abs(expandedLeft - 78) > 1) throw new Error(`SIDEBAR_WORKSPACE_OVERLAY_REFLOW_FORBIDDEN_${expandedLeft}`);
             sidebarReflowCases += 1;
           }
 
