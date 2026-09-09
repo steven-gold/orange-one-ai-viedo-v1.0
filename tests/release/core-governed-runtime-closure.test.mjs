@@ -44,6 +44,19 @@ test("CORE legacy mutation ports enforce their registered API resources server-s
   }
 });
 
+test("CORE Project validate verifies stored draft lineage and Confirm blocks unresolved adopt contract",async()=>{
+  const identity=await read("src/server/shared/identityPageCommandRuntime.ts");
+  const runtime=await read("src/server/core/productionCoreGovernedRuntime.ts");
+  assert.match(runtime,/"CORE-01-PORT-PROJECT-VALIDATE"/);
+  assert.match(runtime,/"CORE-01-PORT-PROJECT-CONFIRM"/);
+  assert.match(runtime,/PROJECT_DRAFT_CONTENT_HASH_MISMATCH/);
+  assert.match(runtime,/workspace_status/);
+  assert.match(runtime,/decision_reason='VALIDATED'/);
+  assert.match(runtime,/PROJECT_CONFIRM_ADOPT_CONTRACT_NOT_BOUND/);
+  assert.doesNotMatch(identity,/case "CORE-01-PORT-PROJECT-VALIDATE"/);
+  assert.doesNotMatch(identity,/case "CORE-01-PORT-PROJECT-CONFIRM"/);
+});
+
 test("CORE Project draft creation requires registered fields and has no owner or naming fallback",async()=>{
   const identity=await read("src/server/shared/identityPageCommandRuntime.ts");
   const runtime=await read("src/server/core/productionCoreGovernedRuntime.ts");
