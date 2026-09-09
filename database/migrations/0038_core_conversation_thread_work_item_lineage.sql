@@ -173,7 +173,7 @@ $$;
 INSERT INTO schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0038_core_conversation_thread_work_item_lineage',
-  '8ab978383b9834b5101b2041be32408b57bc95f3debbab992818b95c23709db0',
+  '384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d',
   'migration-runner',
   'CR-CORE-0038-PENDING-PRODUCTION-APPLY'
 )
