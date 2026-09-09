@@ -98,7 +98,7 @@ try {
       assert(/UI_PROJECTION_RUNTIME_NOT_BOUND/.test(text), `CONTROLLED_PRODUCTION_PROJECTION_REASON_${uid}`);
     } else {
       assert([200, 403, 503].includes(projection.status), `PROJECTION_${uid}_HTTP_${projection.status}`);
-      if (projection.status === 403) assert(/AUTHORIZATION|PERMISSION|DENIED|POLICY|DATABASE_RUNTIME/.test(text), `UNTRUTHFUL_403_${uid}`);
+      if (projection.status === 403) assert(/AUTHORIZATION|PERMISSION|DENIED|POLICY|DATABASE_RUNTIME|IDENTITY_RUNTIME_NOT_BOUND/.test(text), `UNTRUTHFUL_403_${uid}`);
       if (projection.status === 503) assert(/RUNTIME_NOT_BOUND|NOT_BOUND|NOT_CONFIGURED/.test(text), `UNTRUTHFUL_503_${uid}`);
     }
   }

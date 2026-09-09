@@ -412,7 +412,7 @@ export function AssetRuntimeControl({ id, kind }: { id: string; kind: AssetVisua
       {...common}
       type="button"
       disabled={!enabled || busy}
-      onClick={() => act()}
+      onClick={() => act(id === "ASSET-01-BTN-LAYER-REORDER" ? state.projection?.layer_z_index ?? null : undefined)}
       className={`${styles.button} ${kind === "primary" ? styles.primary : ""}`}
     >
       {label}
