@@ -26,10 +26,10 @@ BEGIN
       )
     )
     AND resource_key IN(
-      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview',
+      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock',
       'api:createBlueprint','api:validateBlueprint','api:approveBlueprint','api:requestChildLock','api:getCanonicalScript'
     );
-  IF resource_count<>10 THEN
+  IF resource_count<>11 THEN
     RAISE EXCEPTION 'CORE0037_API_RESOURCE_COUNT_MISMATCH:%',resource_count;
   END IF;
 
@@ -48,7 +48,7 @@ BEGIN
   FROM public.permission_resources r
   WHERE r.active=true
     AND r.resource_key IN(
-      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview',
+      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock',
       'api:createBlueprint','api:validateBlueprint','api:approveBlueprint','api:requestChildLock','api:getCanonicalScript'
     )
   ON CONFLICT(user_id,resource_id,action,version_no) DO NOTHING;
@@ -339,11 +339,11 @@ BEGIN
   JOIN acpos_runtime.accounts ac ON lower(ac.email)=lower(u.email::text)
   WHERE ac.id='runtime-admin'
     AND r.resource_key IN(
-      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview',
+      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock',
       'api:createBlueprint','api:validateBlueprint','api:approveBlueprint','api:requestChildLock','api:getCanonicalScript'
     )
     AND a.action='EXECUTE' AND a.effect='ALLOW' AND a.status='APPROVED';
-  IF assignment_count<>10 THEN
+  IF assignment_count<>11 THEN
     RAISE EXCEPTION 'CORE0037_ASSIGNMENT_COUNT_MISMATCH:%',assignment_count;
   END IF;
 
@@ -361,7 +361,7 @@ $$;
 INSERT INTO schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0037_core_governed_runtime_permission_rls_closure',
-  '42253b9c137e299f482d0f35d2132a32bfa45204e32074ed83bbae0768822ec7',
+  'dbf666eda38405ed59e7008e72612b68e2e71cb8eeeec8257747654692d8b454',
   'migration-runner',
   'CR-CORE-0037-PENDING-PRODUCTION-APPLY'
 )
