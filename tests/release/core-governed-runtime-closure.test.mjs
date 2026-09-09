@@ -21,6 +21,15 @@ test("CORE Current governed ports bind the existing API resources and dedicated 
   assert.match(runtime,/decisionInput==="RETURN"\?"MODIFY_REQUESTED"/);
 });
 
+test("CORE Story Candidate direct API cannot invent candidate_key",async()=>{
+  const identity=await read("src/server/shared/identityPageCommandRuntime.ts");
+  assert.match(identity,/const candidate_key = requirePayloadText\(payload, "candidate_key"\)/);
+  assert.doesNotMatch(identity,/STORY-\$\{Date\.now\(\)/);
+  assert.match(identity,/requirePayloadJson\(payload, "content"\)/);
+  assert.match(identity,/requirePayloadJson\(payload, "strengths"\)/);
+  assert.match(identity,/requirePayloadJson\(payload, "weaknesses"\)/);
+});
+
 test("CORE legacy mutation ports enforce their registered API resources server-side",async()=>{
   const identity=await read("src/server/shared/identityPageCommandRuntime.ts");
   const expected={
