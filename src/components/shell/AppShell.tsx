@@ -112,8 +112,8 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
   const accountRef = useRef<HTMLDivElement | null>(null);
   const visiblePageSet = new Set(visiblePageUids);
   const navItems = (surface === "admin" ? ADMIN_NAV_ITEMS : NAV_ITEMS).filter((item) => visiblePageSet.has(item.pageUid));
-  const frontSurfaceTarget = NAV_ITEMS.find((item) => visiblePageSet.has(item.pageUid));
-  const adminSurfaceTarget = ADMIN_NAV_ITEMS.find((item) => visiblePageSet.has(item.pageUid));
+  const frontSurfaceTarget = NAV_ITEMS.find((item) => item.id === "NAV-01" && visiblePageSet.has(item.pageUid));
+  const adminSurfaceTarget = ADMIN_NAV_ITEMS.find((item) => item.id === "ADMIN-NAV-01" && visiblePageSet.has(item.pageUid));
 
   const cancelCollapse = () => {
     if (collapseTimer.current) {
@@ -193,9 +193,9 @@ export function AppShell({ children, activeNavId, surface = "front" }: AppShellP
         </div>
 
         <div className="header-cluster">
-          <button className="quick-button" type="button" aria-label={t("global.header.notifications")} onClick={() => go("/")}><HeaderIcon kind="bell"/><span>—</span></button>
-          <button className="quick-button" type="button" aria-label={t("global.header.todo")} onClick={() => go("/")}><HeaderIcon kind="todo"/><span>—</span></button>
-          <button className="quick-button" type="button" aria-label={t("global.header.running")} onClick={() => go("/")}><HeaderIcon kind="running"/><span>—</span></button>
+          <button className="quick-button" type="button" aria-label={t("global.header.notifications")} aria-disabled="true" disabled><HeaderIcon kind="bell"/><span>0</span></button>
+          <button className="quick-button" type="button" aria-label={t("global.header.todo")} aria-disabled="true" disabled><HeaderIcon kind="todo"/><span>0</span></button>
+          <button className="quick-button" type="button" aria-label={t("global.header.running")} aria-disabled="true" disabled><HeaderIcon kind="running"/><span>0</span></button>
 
           <div className={languageStyles.control} ref={languageRef}>
             <button
