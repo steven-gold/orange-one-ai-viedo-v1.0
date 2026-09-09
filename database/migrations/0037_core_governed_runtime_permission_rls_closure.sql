@@ -26,10 +26,10 @@ BEGIN
       )
     )
     AND resource_key IN(
-      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock','api:createTopic',
+      'api:createProjectDraft','api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock','api:createTopic',
       'api:createBlueprint','api:validateBlueprint','api:approveBlueprint','api:requestChildLock','api:getCanonicalScript'
     );
-  IF resource_count<>12 THEN
+  IF resource_count<>13 THEN
     RAISE EXCEPTION 'CORE0037_API_RESOURCE_COUNT_MISMATCH:%',resource_count;
   END IF;
 
@@ -48,7 +48,7 @@ BEGIN
   FROM public.permission_resources r
   WHERE r.active=true
     AND r.resource_key IN(
-      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock','api:createTopic',
+      'api:createProjectDraft','api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock','api:createTopic',
       'api:createBlueprint','api:validateBlueprint','api:approveBlueprint','api:requestChildLock','api:getCanonicalScript'
     )
   ON CONFLICT(user_id,resource_id,action,version_no) DO NOTHING;
@@ -361,11 +361,11 @@ BEGIN
   JOIN acpos_runtime.accounts ac ON lower(ac.email)=lower(u.email::text)
   WHERE ac.id='runtime-admin'
     AND r.resource_key IN(
-      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock','api:createTopic',
+      'api:createProjectDraft','api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock','api:createTopic',
       'api:createBlueprint','api:validateBlueprint','api:approveBlueprint','api:requestChildLock','api:getCanonicalScript'
     )
     AND a.action='EXECUTE' AND a.effect='ALLOW' AND a.status='APPROVED';
-  IF assignment_count<>12 THEN
+  IF assignment_count<>13 THEN
     RAISE EXCEPTION 'CORE0037_ASSIGNMENT_COUNT_MISMATCH:%',assignment_count;
   END IF;
 
@@ -384,7 +384,7 @@ $$;
 INSERT INTO schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0037_core_governed_runtime_permission_rls_closure',
-  '2f3bb6b3ea9b25a7e134c5d181d09eefc2e3a8eee555fe8d715966b8d4480fbb',
+  'ef71e744e04f31e00da05800516adccf839ddbf63d38b3b8a1b689d8fe7fef5b',
   'migration-runner',
   'CR-CORE-0037-PENDING-PRODUCTION-APPLY'
 )
