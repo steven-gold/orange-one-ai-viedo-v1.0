@@ -14,7 +14,8 @@ test("0044 removes only the historical TEST-CMD command/conversation fixture",as
   const checksum=createHash("sha256").update(migration.slice(0,idx)).digest("hex");
   assert.equal(checksum,"4115f0e111e13dcbb044432871ba7116276ace5ef50083c8c402ba6cb5a60579");
   assert.ok(manifest.includes("4115f0e111e13dcbb044432871ba7116276ace5ef50083c8c402ba6cb5a60579"));
-  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 44/);
+  const currentCeiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0);
+  assert.ok(currentCeiling>=44,`migration ceiling must include 0044, found ${currentCeiling}`);
 
   for(const marker of [
     "TEST-CMD-001",
