@@ -320,6 +320,11 @@ function EditVisualBody() {
   const inspectorFields = INSPECTOR.slice(9);
   const apiVisible = API.filter((spec) => ["EDIT-01-LBL-CURRENT-SCRIPT-SECTION", "EDIT-01-LBL-BINDING-FINGERPRINT"].includes(spec.id));
   const apiConditional = API.filter((spec) => !apiVisible.includes(spec));
+  const correctionControls = [...apiVisible, ...apiConditional];
+  const correctionContext = correctionControls.filter((spec) => ["EDIT-01-FLD-API-PROVIDER","EDIT-01-FLD-API-MODEL","EDIT-01-FLD-API-SCOPE","EDIT-01-LBL-CURRENT-SCRIPT-SECTION","EDIT-01-LBL-BINDING-FINGERPRINT"].includes(spec.id));
+  const correctionComposer = correctionControls.filter((spec) => spec.id === "EDIT-01-FLD-API-INSTRUCTION");
+  const correctionCandidate = correctionControls.filter((spec) => ["EDIT-01-LBL-API-JOB","EDIT-01-PNL-API-CANDIDATE"].includes(spec.id));
+  const correctionActions = correctionControls.filter((spec) => !correctionContext.includes(spec) && !correctionComposer.includes(spec) && !correctionCandidate.includes(spec));
 
   return <div className={styles.page} data-page-uid="EDIT-01" data-vis-step="VIS-05" data-page-state={state.resolved.page_state_uid ?? "EDIT-01-ST-PAGE-EMPTY"} data-current-stage={state.resolved.current_stage_uid ?? undefined} data-stage-phase={state.resolved.current_stage_phase ?? undefined} data-authority-controls="160" data-registry-valid={registryValid ? "true" : "false"}>
     <section className={styles.contextBar} data-section-id="EDIT-01-SEC-01" data-visual-uid="EDIT-01-VIS-CONTEXT" data-component-uid="EDIT-01-CMP-SOURCE-BAR">
@@ -357,29 +362,33 @@ function EditVisualBody() {
           <div className={styles.hiddenRegistry} aria-hidden="true">{MANUAL.filter((spec) => !toolbarVisible.includes(spec)).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
         </section>
 
-        <section className={`${styles.panel} ${styles.rangePanel}`} data-section-id="EDIT-01-SEC-04" data-visual-uid="EDIT-01-VIS-RANGE" data-component-uid="EDIT-01-CMP-PRECISION">
-          <Title text={editUiText(locale, "rangeMarker")} />
-          <div className={styles.horizontalToolbar}>{RANGE.slice(0, 8).map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-          <div className={styles.timelineNavigation}>
-            <div data-component-uid="EDIT-01-CMP-MINI-TIMELINE"><Control spec={RANGE[8]} /></div>
-            <div data-component-uid="EDIT-01-CMP-RULER"><Control spec={RANGE[9]} /></div>
-            <Control spec={RANGE[10]} /><Control spec={RANGE[11]} />
-            <div data-component-uid="EDIT-01-CMP-MARKER-RAIL"><Control spec={RANGE[12]} /></div>
+        <section className={`${styles.panel} ${styles.timelinePanel}`} data-section-id="EDIT-01-SEC-05" data-visual-uid="EDIT-01-VIS-TIMELINE" data-component-uid="EDIT-01-CMP-TIMELINE" data-main-timeline="true">
+          <div className={styles.timelineHeader}>
+            <Title text={editUiText(locale, "timeline")} meta="Main Timeline · viewport locked" />
+            <div className={styles.timelineTools} data-section-id="EDIT-01-SEC-04" data-visual-uid="EDIT-01-VIS-RANGE" data-component-uid="EDIT-01-CMP-PRECISION">{RANGE.slice(0, 8).map((spec) => <Control key={spec.id} spec={spec} compact />)}</div>
           </div>
-        </section>
-
-        <section className={`${styles.panel} ${styles.timelinePanel}`} data-section-id="EDIT-01-SEC-05" data-visual-uid="EDIT-01-VIS-TIMELINE" data-component-uid="EDIT-01-CMP-TIMELINE">
-          <Title text={editUiText(locale, "timeline")} meta="min-height 320px" />
+          <div className={styles.timelineLayers} data-timeline-legacy-merge="MERGE_VISUAL_ONLY">
+            <div className={styles.timelineOverview} data-component-uid="EDIT-01-CMP-MINI-TIMELINE"><Control spec={RANGE[8]} /></div>
+            <div className={styles.timelineRulerLayer} data-component-uid="EDIT-01-CMP-RULER"><Control spec={RANGE[9]} /></div>
+            <div className={styles.timelinePlayheadLayer}><Control spec={RANGE[10]} /></div>
+            <div className={styles.timelineRangeLayer}><Control spec={RANGE[11]} /></div>
+            <div className={styles.timelineMarkerLayer} data-component-uid="EDIT-01-CMP-MARKER-RAIL"><Control spec={RANGE[12]} /></div>
+          </div>
           <div className={styles.timelineRuler}><span>00:00:00:00</span><span>—</span><span>00:00:00:00</span></div>
           <div className={styles.trackStack}>{TRACKS.map((track) => <div className={styles.trackRow} key={track.uid} data-track-type-uid={track.uid}><div className={styles.trackHeader}><strong>{editUiText(locale, track.labelKey)}</strong><div className={styles.trackControls}>{track.controls.map((id) => { const spec = specById(id); return spec ? <Control key={`${track.uid}-${id}`} spec={spec} compact scopeRef={track.uid} /> : null; })}</div></div><div className={styles.trackLane}>—</div></div>)}</div>
           <div className={styles.dialogueGuard} data-section-id="EDIT-01-SEC-11" data-component-uid="EDIT-01-CMP-DIALOGUE-BINDING"><span>{editUiText(locale, "dialogueGuard")}</span><strong>—</strong></div>
         </section>
       </div>
       <aside className={styles.inspectorColumn} data-layout-column="right" data-layout-role="right-inspector-correction">
-      {correctionVisible ? <section className={`${styles.panel} ${styles.semanticPanel}`} data-section-id="EDIT-01-SEC-07" data-visual-uid="EDIT-01-VIS-INSPECTOR" data-component-uid="EDIT-01-CMP-API" data-stage-surface="correction-conversation">
-        <Title text={editUiText(locale, "semantic")} meta="Correction" />
-        <div className={styles.semanticContext}>{apiVisible.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-        <div className={styles.stack}>{apiConditional.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+      {correctionVisible ? <section className={`${styles.panel} ${styles.semanticPanel}`} data-section-id="EDIT-01-SEC-07" data-visual-uid="EDIT-01-VIS-INSPECTOR" data-component-uid="EDIT-01-CMP-API" data-stage-surface="correction-conversation" data-correction-ui="full-conversation">
+        <Title text={editUiText(locale, "semantic")} meta="Correction Conversation" />
+        <div className={styles.correctionConversation}>
+          <div className={styles.correctionContext} data-correction-region="context">{correctionContext.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+          <div className={styles.correctionHistory} data-correction-region="history"><span>History / Status</span><strong>{state.runtime_error ?? "—"}</strong></div>
+          <div className={styles.correctionCandidate} data-correction-region="candidate">{correctionCandidate.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+          <div className={styles.correctionComposer} data-correction-region="composer">{correctionComposer.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+          <div className={styles.correctionActions} data-correction-region="actions">{correctionActions.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+        </div>
       </section> : <section className={`${styles.panel} ${styles.inspectorPanel}`} data-section-id="EDIT-01-SEC-07" data-visual-uid="EDIT-01-VIS-INSPECTOR" data-component-uid="EDIT-01-CMP-INSPECTOR" data-stage-surface="stage-inspector">
         <Title text={editUiText(locale, "inspector")} meta={stage.replace("EDIT-01-STAGE-","")} />
         <div className={styles.tabs}>{visibleInspectorTabs.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
