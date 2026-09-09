@@ -3648,9 +3648,58 @@ registries:
     registered_operation: handoffVoiceToQA
     method_effective_path: POST /v1/voice-runtime-runs/{runId}/qa-handoff
     registered_permission: voice.handoff.create
-    state_transition_event: HANDOFF_READY→HANDED_OFF；dependent WAITING_DEPENDENCY→READY；EditingVoiceRuntime:VOICE_OUTPUT_READY→QA_READY | voice.qa_handoff.created
+    state_transition_event: HANDOFF_READY→HANDED_OFF；dependent WAITING_DEPENDENCY→READY；EditingVoiceRuntime:FINALIZE(LOCKED)→QA_READY | voice.qa_handoff.created
     edit01_binding_exposure: EDIT-01-ACT-HANDOFF 唯一 PROJECT_TASK final outbound；必須 Stage 04 Save→Render→Verify→Lock 完成。這是 EDIT+VOICE→QA backend
       boundary，不是 Editing→QA。
+  - port_uid: EDIT-01-PORT-VERSION-SAVE
+    boundary_stage: Stage 04 Version Save
+    registered_operation: saveEditVersion
+    method_effective_path: POST /v1/editing-runtime-runs/{runId}/versions
+    registered_permission: EDITING_EDIT
+    state_transition_event: Working Draft→new immutable EditVersion | editing.version.saved
+    edit01_binding_exposure: EDIT-01-ACT-VERSION-SAVE；必須 Evaluation PASS 與 exact Working Draft lineage；永遠建立新版本，禁止 overwrite。
+  - port_uid: EDIT-01-PORT-RENDER-START
+    boundary_stage: Stage 04 Render Start
+    registered_operation: startEditRender
+    method_effective_path: POST /v1/editing-runtime-runs/{runId}/renders
+    registered_permission: EDITING_RENDER
+    state_transition_event: Saved EditVersion→RenderJob QUEUED/RUNNING | editing.render.started
+    edit01_binding_exposure: EDIT-01-ACT-RENDER-START；input_edit_version_id 固定；需 Completion/Evaluation Gate PASS。
+  - port_uid: EDIT-01-PORT-RENDER-CANCEL
+    boundary_stage: Stage 04 Render Cancel
+    registered_operation: cancelEditRender
+    method_effective_path: POST /v1/editing-runtime-runs/{runId}/renders/{renderJobId}/cancel
+    registered_permission: EDITING_RENDER
+    state_transition_event: RenderJob QUEUED/RUNNING→CANCELLED | editing.render.cancelled
+    edit01_binding_exposure: EDIT-01-ACT-RENDER-CANCEL；只取消既有 RenderJob，不建立 OutputReference。
+  - port_uid: EDIT-01-PORT-OUTPUT-SAVE
+    boundary_stage: Stage 04 Output Materialization
+    registered_operation: saveEditOutputVersion
+    method_effective_path: POST /v1/editing-runtime-runs/{runId}/renders/{renderJobId}/output
+    registered_permission: EDITING_RENDER
+    state_transition_event: RenderJob COMPLETED→new immutable OutputVersion | editing.output.saved
+    edit01_binding_exposure: EDIT-01-ACT-OUTPUT-VERSION-SAVE；必須保留 input_edit_version_id、Manifest、Checksum 與 render lineage。
+  - port_uid: EDIT-01-PORT-VERSION-LOCK
+    boundary_stage: Stage 04 Exact Version Lock
+    registered_operation: lockEditVersion
+    method_effective_path: POST /v1/editing-runtime-runs/{runId}/versions/{editVersionId}/lock
+    registered_permission: EDITING_HANDOFF
+    state_transition_event: EditVersion APPROVED→LOCKED | editing.version.locked
+    edit01_binding_exposure: EDIT-01-ACT-VERSION-LOCK；只鎖 exact EditVersion + OutputVersion；鎖定後禁止原地修改。
+  - port_uid: EDIT-01-PORT-VERSION-RESTORE
+    boundary_stage: Version Recovery
+    registered_operation: restoreEditVersionAsDraft
+    method_effective_path: POST /v1/editing-runtime-runs/{runId}/versions/{editVersionId}/restore
+    registered_permission: EDITING_EDIT
+    state_transition_event: Saved EditVersion→new Working Draft | editing.version.restored_as_draft
+    edit01_binding_exposure: EDIT-01-ACT-VERSION-RESTORE-AS-DRAFT；不得改寫來源 Saved Version，只能建立新草稿。
+  - port_uid: EDIT-01-PORT-OUTPUT-DOWNLOAD
+    boundary_stage: Final Output Read
+    registered_operation: getEditOutputDownload
+    method_effective_path: GET /v1/editing-runtime-runs/{runId}/outputs/{outputVersionId}/download
+    registered_permission: EDITING_RENDER
+    state_transition_event: No transition | editing.output.downloaded
+    edit01_binding_exposure: EDIT-01-ACT-OUTPUT-DOWNLOAD；只讀既有 OutputReference；不得因下載建立或改寫輸出。
   integration_port_hard_guards:
   - rule_uid: EDIT-01-PORT-RULE-VOICE-PROFILE
     hard_guard: createEditingRuntimeRun 只消費 exact immutable LOCKED voice_runtime_profile_id。EDIT 不得呼叫 createVoiceRuntimeProfile、不得 overwrite/default/guess
