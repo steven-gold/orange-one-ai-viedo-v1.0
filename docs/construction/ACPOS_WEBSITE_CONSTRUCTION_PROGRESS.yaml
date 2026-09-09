@@ -1,712 +1,156 @@
-authority:
-  id: ACPOS_WEBSITE_CONSTRUCTION_PROGRESS
-  version: V1.0
-  status: ACTIVE
-  branch: new
-  authority_baseline_commit: 2c8a23feb6ccdc564c7590dc949fa164206ebb18
-  source_of_truth: authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
-  purpose: Track actual website construction progress without becoming a second system/page authority.
-  construction_truth_rule: Only mark a step COMPLETE when the corresponding files, render/test evidence, and validation actually exist.
-program_rules:
-  sequence_lock:
-  - Complete visual positioning for all pages before page business/runtime logic construction.
-  - Visual construction order is Home -> Front Workspace -> Admin.
-  - After Front visual completion, remaining visual/logic/runtime order is dependency-planned by ACPOS construction sequencing.
-  - No page may invent sections, controls, routes, permissions, provider pickers, or business data outside Current Authority.
-  visual_phase_boundary:
-    allowed:
-    - App shell rendering
-    - Exact section/component/control placement
-    - Page-local visual tabs/drawers/modals using local presentation state only
-    - Responsive layout behavior
-    - Loading/empty/error/disabled presentation states
-    - Real-data placeholders using authority missing-value rules
-    forbidden_until_logic_phase:
-    - Business API mutation
-    - Database mutation
-    - Provider execution
-    - Crawler execution
-    - Cross-page business handoff execution
-    - Fake business records or fabricated KPI/project/provider/version values
-  page_visual_complete_gate:
-  - Current Page Authority loaded and page UID matched
-  - All registered visible sections/components/controls positioned
-  - Global Shell V1.9 and Global Visual inherited without page-local theme override
-  - No extra menu/page/header/control invented
-  - No clipping/overlap at desktop target widths
-  - Expanded/collapsed sidebar does not break workspace geometry
-  - Loading/empty/error/disabled states have defined visual treatment
-  - Render evidence captured and inspected
-  - Visual validation PASS
-  all_visual_complete_gate:
-  - VIS-00 through VIS-18 are COMPLETE
-  - No page business logic has been prematurely implemented
-  - Cross-page visual consistency audit PASS
-  - Navigation route-to-page visual audit PASS
-  page_logic_complete_gate:
-  - Required Control -> Action -> Gate -> Permission -> State/Transition path implemented
-  - API/DB/runtime binding implemented only where authority requires it
-  - Registered errors and recovery paths implemented
-  - Exact version/reference rules enforced
-  - Audit/correlation evidence exists
-  - Unit/integration validation PASS
-  final_close_gate:
-  - All page logic steps COMPLETE
-  - Shared runtimes COMPLETE
-  - Five-department handoff E2E PASS
-  - Permission/IAM E2E PASS
-  - AI routing/provider E2E PASS where external environment is available
-  - Shared acquisition E2E PASS where external environment is available
-  - i18n PASS
-  - Runtime/error/rollback PASS
-  - No known P0/P1 construction gap
-current_state:
-  program: ACTIVE
-  authority_baseline: COMPLETE
-  authority_file_positioning: COMPLETE
-  visual_construction: COMPLETE
-  page_logic_construction: ACTIVE_CURRENT_RUNTIME_CLOSURE
-  shared_runtime_construction: CURRENT_GOVERNED_RLS_RUNTIME_MATERIALIZED_ON_NEW_PRODUCTION_APPLY_PENDING
-  e2e: RELEASE_GATE_PASS_NEW_ONLY
-  deployment: PRODUCTION_MAIN_UNCHANGED_BY_LOCAL_ARCHIVE_RECONCILIATION
-  current_task: LOCAL_ARCHIVE_RECONCILIATION_AND_PREDEPLOY_RUNTIME_CLOSURE
-  current_task_state: COMPLETE_FOR_ARCHIVE_RECONCILIATION
-  current_task_blockers:
-  - PROJECT_CONFIRM_ADOPT_CONTRACT_NOT_BOUND
-  - CORE_BLUEPRINT_DOCUMENT_MATERIALIZER_NOT_BOUND
-  - CORE_LOCK_REVIEWER_PATH_UNRESOLVED
-  - MIGRATIONS_0037_0038_PENDING_PRODUCTION_APPLY
-  - FINAL_CONSOLIDATED_MAIN_RELEASE_NOT_EXECUTED
-  last_completed_task: 2026-09-09-LOCAL-ARCHIVE-RECONCILIATION-THROUGH-CORE-THREAD-WORK-ITEM-LINEAGE
-  latest_construction_sha: 830b780e2b4832e9751b48f2e62a28761450f5c9
-  latest_release_gate:
-    run_id: 34315733464
-    conclusion: SUCCESS
-    lint: PASS
-    dependency_audit: PASS
-    typecheck: PASS
-    release_unit_tests: PASS
-    production_build: PASS
-    production_http_e2e: PASS
-    controlled_build: PASS
-    controlled_misconfiguration_http_e2e: PASS
-    browser_e2e: PASS
-    current_dom_control_acceptance: PASS
-    standalone_docker_build: PASS
-    dirty_tree_guard: PASS
-  archive_reconciliation:
-    archive: acpos-new-local-20260909.tar.gz
-    recorded_local_base: 4c43aa29fbccb3622c5446eaa54f642a8489376f
-    repository_like_files: 576
-    true_local_delta_files: 28
-    exact_delta_blobs_retained: 15
-    later_current_superseding_reconciled_deltas: 11
-    documentation_deltas_absorbed_by_current_closure: 2
-    env_example_omission: PACKAGING_OMISSION_NOT_DELETION
-    status: COMPLETE
-  staged_migrations:
-    latest_repository_migration: 0038_core_conversation_thread_work_item_lineage
-    production_apply: PENDING_FINAL_RELEASE_SEQUENCE
-  current_front_l1_count: 8
-  current_admin_l1_count: 8
-  navigation_revision: CURRENT_FRONT8_ADMIN8_GLOBAL_L1
-  historical_freeze:
-    date: 2026-09-08
-    snapshot: .monkeycode/specs/2026-09-08-strict-construction-audit-monitor/FROZEN-DEPLOYED-AUDIT-SNAPSHOT.md
-    matrix: .monkeycode/specs/2026-09-08-strict-construction-audit-monitor/AUDIT-MATRIX.md
-    rule: HISTORICAL_EVIDENCE_ONLY_DO_NOT_RESTORE_OVER_CURRENT
+document_id: ACPOS_WEBSITE_CONSTRUCTION_PROGRESS
+version: 2.0
+status: CURRENT_ONLY
+as_of: 2026-09-10T05:11:00+08:00
 
-phase_1_visual_positioning:
-  objective: Finish all page visual/layout positioning before business logic construction.
-  execution_mode: STRICT_SEQUENTIAL
-  steps:
-  - id: VIS-00
-    group: GLOBAL
-    page_uid: GLOBAL_SHELL_VISUAL
-    name: Global Shell + Global Visual implementation baseline
-    status: COMPLETE
-    scope: Header, sidebar, content slot, global typography/surface/button/input/state tokens only.
-    evidence:
-      implementation_commit: f9bb2f4635f985ddf180ac511f605ae4f29b31ba
-      final_validation_run_id: 33251062067
-      final_evidence_artifact_id: 9714380396
-      artifact_sha256: f35bb5d63e8cf3aec5969828870cbb6a38ba552c9f98fbb4e845f9b466122ef9
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_geometry: PASS
-      manual_visual_inspection: PASS
-      viewport: 1440x900
-      render_evidence:
-      - docs/construction/evidence/VIS-00/vis00-collapsed-1440x900.png
-      - docs/construction/evidence/VIS-00/vis00-expanded-1440x900.png
-      - docs/construction/evidence/VIS-00/vis00-geometry.json
-      verified_geometry:
-        header_height: 58
-        sidebar_collapsed_width: 64
-        sidebar_expanded_width: 221
-        workspace_origin: x=78,y=68
-        workspace_reflow_on_expand: false
-        nav_count: 8
-        nav_hit_target: 44x44
-      brand_lockup_note: Superseded during VIS-01 by the canonical user-supplied transparent logo asset; dark-header render uses the user-approved white monochrome color adaptation while preserving artwork content, geometry, and intrinsic aspect ratio.
-  - id: VIS-01
-    group: HOME
-    page_uid: workspace:WB-01
-    name: 儀表板 / Dashboard
-    status: COMPLETE
-    scope: 14 canonical dashboard sections, 14 SECTION_OPEN controls, fixed empty/loading/error presentation, 520px projection drawer, shared Global Header language selector, and canonical ORANGE ONE logo only; no business API/DB/provider/crawler logic.
-    evidence:
-      implementation_commit: b7e2a180d410ac376cb8fd6327c95b837b1aadaf
-      final_validation_run_id: 33253370713
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      locale_sequence: zh-TW -> zh-CN -> en -> zh-TW
-      business_requests_during_locale_switch: 0
-      manual_visual_inspection: PASS
-      manual_visual_inspection_basis: All seven persisted screenshots from the same visual implementation were inspected; no unintended clipping, overlap, logo distortion, or shell reflow found. 1200px intentionally preserves the registered 1280px dashboard min-width with horizontal scrolling.
-      render_evidence:
-      - docs/construction/evidence/VIS-01/vis01-1440-top.png
-      - docs/construction/evidence/VIS-01/vis01-1440-middle.png
-      - docs/construction/evidence/VIS-01/vis01-1440-bottom.png
-      - docs/construction/evidence/VIS-01/vis01-1440-drawer.png
-      - docs/construction/evidence/VIS-01/vis01-language-menu-zh-tw.png
-      - docs/construction/evidence/VIS-01/vis01-1366-top.png
-      - docs/construction/evidence/VIS-01/vis01-1200-minwidth.png
-      - docs/construction/evidence/VIS-01/vis01-validation.json
-      verified_contract:
-        sections: 14
-        section_open_controls: 14
-        kpi_count: 6
-        drawer_width: 520px
-        fake_business_data: false
-        business_fetch_xhr: 0
-        global_nav_count: 8
-        header_height: 58px
-        workspace_origin: x=78,y=68
-        logo_asset: public/brand/orange-one-logo.png
-        logo_source_dimensions: 416x192
-        logo_render_dimensions: 104x48
-        logo_aspect_ratio_preserved: true
-        logo_color_application: USER_APPROVED_WHITE_MONOCHROME_FOR_DARK_HEADER
-        supported_locales: zh-TW/zh-CN/en
-  - id: VIS-02
-    group: FRONT
-    page_uid: CORE-01
-    name: 專案 / 專題
-    status: COMPLETE
-    scope: 56px context bar, 20/60/20 three-column CORE workstation, conversation-first center workspace, right-side Project Core/Blueprint/Topic Package/Version and Lock state projections, exact registered controls, shared language selector, and empty/disabled presentation only; no business API/DB/provider/crawler logic.
-    evidence:
-      implementation_commit: 1e779b33ac2760e35245901fd73b54f5c5b41234
-      final_validation_run_id: 33258180111
-      final_evidence_artifact_id: 9716463233
-      artifact_sha256: 899a7d5d3a9b8f274b354f824732f2241f3eb0d7ee697f97826db90dce5cd6ba
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      locale_sequence: zh-TW -> zh-CN -> en -> zh-TW
-      business_requests_during_validation: 0
-      manual_visual_inspection: PASS
-      manual_visual_inspection_basis: All six final screenshots were inspected after the English left-rail compression correction; no unintended overlap or clipping found. The 1200px viewport intentionally preserves the registered 1280px page min-width with horizontal scrolling.
-      render_evidence:
-      - docs/construction/evidence/VIS-02/vis02-1440-top.png
-      - docs/construction/evidence/VIS-02/vis02-1440-context-menu.png
-      - docs/construction/evidence/VIS-02/vis02-1440-middle.png
-      - docs/construction/evidence/VIS-02/vis02-1440-bottom.png
-      - docs/construction/evidence/VIS-02/vis02-language-en.png
-      - docs/construction/evidence/VIS-02/vis02-1200-minwidth.png
-      - docs/construction/evidence/VIS-02/vis02-validation.json
-      verified_contract:
-        route: /core
-        sections: 10
-        components: 17
-        controls: 50
-        context_bar_height: 56px
-        left_rail_min_width: 260px
-        center_min_width: 720px
-        right_rail_min_width: 300px
-        message_workspace_min_height: 420px
-        runtime_strip_height: 40px
-        composer_min_height: 104px
-        page_min_width: 1280px
-        fake_business_data: false
-        enabled_business_controls: 0
-        business_fetch_xhr: 0
-        global_nav_count: 8
-        active_nav: NAV-02
-        sidebar_collapsed_width: 64px
-        sidebar_expanded_width: 221px
-        workspace_reflow_on_expand: false
-        supported_locales: zh-TW/zh-CN/en
-  - id: VIS-03
-    group: FRONT
-    page_uid: ASSET-01
-    name: 素材
-    status: COMPLETE
-    scope: 20/60/20 ASSET production workstation with Asset Manifest/List, exact Blueprint/Script/DNA binding, preview-first compare surface, Reuse First status, conditional Correction and Layer/Patch sections, read-only Runtime/Provider, Score/Version/Decision, and Exact Handoff Manifest; no business API/DB/provider execution.
-    evidence:
-      implementation_commit: e04aec7964cd3e076d1a86ac4df57ec1c60680cd
-      final_validation_run_id: 33259143382
-      final_evidence_artifact_id: 9716739962
-      artifact_sha256: 86e21c5186c30f1bfa9de046c758c4158fac38f6ed7058d5b5e56952a9851013
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      locale_sequence: zh-TW -> zh-CN -> en -> zh-TW
-      business_requests_during_validation: 0
-      manual_visual_inspection: PASS
-      manual_visual_inspection_basis: All five persisted screenshots were inspected; no unintended overlap or clipping found at 1440px. The 1200px viewport intentionally preserves the registered 1280px minimum width with horizontal scrolling.
-      render_evidence:
-      - docs/construction/evidence/VIS-03/vis03-1440-top.png
-      - docs/construction/evidence/VIS-03/vis03-1440-middle.png
-      - docs/construction/evidence/VIS-03/vis03-1440-bottom.png
-      - docs/construction/evidence/VIS-03/vis03-language-en.png
-      - docs/construction/evidence/VIS-03/vis03-1200-minwidth.png
-      - docs/construction/evidence/VIS-03/vis03-validation.json
-      verified_contract:
-        route: /assets
-        sections: 10
-        components: 16
-        controls: 85
-        visible_empty_state_controls: 67
-        conditional_controls: 18
-        correction_controls_rendered_without_modify: 0
-        layer_patch_controls_rendered_without_image_context: 0
-        context_bar_min_height: 56px
-        left_rail_min_width: 260px
-        center_min_width: 720px
-        right_rail_min_width: 280px
-        preview_min_height: 500px
-        page_min_width: 1280px
-        fake_business_data: false
-        enabled_business_controls: 0
-        business_fetch_xhr: 0
-        global_nav_count: 8
-        active_nav: NAV-03
-        sidebar_collapsed_width: 64px
-        sidebar_expanded_width: 221px
-        workspace_reflow_on_expand: false
-        supported_locales: zh-TW/zh-CN/en
-  - id: VIS-04
-    group: FRONT
-    page_uid: VIDEO-01
-    name: 影片
-    status: COMPLETE
-    scope: 20/60/20 VIDEO production workspace with exact bound Scene/Shot input, single 16:9 Current Viewer, Candidate-only compare, Version/Score/Decision, conditional VIDEO correction scope and semantic correction, read-only Provider Runtime, VIDEO evaluation, Exact Output Manifest, and State/Error/Audit; no business API/DB/provider execution.
-    evidence:
-      implementation_commit: 40cad2a80e3247227c60183a3086d643ff749c7e
-      final_validation_run_id: 33259987909
-      final_evidence_artifact_id: 9716975041
-      artifact_sha256: a2e81c5679cd288f64f12ea70b91909be7b5b038c2c7af0ab7cd0eaf359030b6
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      locale_sequence: zh-TW -> zh-CN -> en -> zh-TW
-      business_requests_during_validation: 0
-      manual_visual_inspection: PASS
-      manual_visual_inspection_basis: The final exact-tree run regenerated all five screenshots; their per-file SHA256 values are byte-identical to the previously manually inspected render set. No unintended overlap/clipping was found, the single Current Viewer preserves 16:9, and 1200px intentionally preserves the registered 1280px minimum width with horizontal scrolling.
-      render_evidence:
-      - docs/construction/evidence/VIS-04/vis04-1440-top.png
-      - docs/construction/evidence/VIS-04/vis04-1440-middle.png
-      - docs/construction/evidence/VIS-04/vis04-1440-bottom.png
-      - docs/construction/evidence/VIS-04/vis04-language-en.png
-      - docs/construction/evidence/VIS-04/vis04-1200-minwidth.png
-      - docs/construction/evidence/VIS-04/vis04-validation.json
-      verified_contract:
-        route: /video
-        sections: 10
-        components: 17
-        controls: 85
-        visible_empty_state_controls: 71
-        conditional_controls: 14
-        current_viewer_count_without_candidate: 1
-        candidate_version_b_rendered_without_candidate: false
-        correction_controls_rendered_before_correction: 0
-        viewer_width: 708px
-        viewer_height: 398.3px
-        viewer_ratio: 1.7775546070800903
-        context_bar_min_height: 56px
-        left_rail_min_width: 260px
-        center_min_width: 720px
-        right_rail_min_width: 280px
-        page_min_width: 1280px
-        fake_business_data: false
-        enabled_business_controls: 0
-        business_fetch_xhr: 0
-        global_nav_count: 8
-        active_nav: NAV-04
-        sidebar_collapsed_width: 64px
-        sidebar_expanded_width: 221px
-        workspace_reflow_on_expand: false
-        supported_locales: zh-TW/zh-CN/en
-  - id: VIS-05
-    group: FRONT
-    page_uid: EDIT-01
-    name: 剪輯配音
-    status: COMPLETE
-    evidence:
-      final_validation_run_id: 33273554069
-      evidence_directory: docs/construction/evidence/VIS-05
-      validation_record: docs/construction/evidence/VIS-05/vis05-validation.json
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      manual_visual_inspection: PASS
-  - id: VIS-06
-    group: FRONT
-    page_uid: QA-01
-    name: QA
-    status: COMPLETE
-    evidence:
-      final_validation_run_id: 33275590962
-      evidence_directory: docs/construction/evidence/VIS-06
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      manual_visual_inspection: PASS
-  - id: VIS-07
-    group: FRONT
-    page_uid: admin:DB-01
-    name: 資料庫
-    status: COMPLETE
-    note: Page UID is ADMIN but canonical Front L1 navigation exposes it as the Database workspace entry.
-    evidence:
-      final_validation_run_id: 33276294897
-      evidence_directory: docs/construction/evidence/VIS-07
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      manual_visual_inspection: PASS
-  - id: VIS-08
-    group: FRONT
-    page_uid: workspace:STR-01
-    name: 戰略中心
-    status: COMPLETE
-    evidence:
-      final_validation_run_id: 33278244242
-      evidence_directory: docs/construction/evidence/VIS-08
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      manual_visual_inspection: PASS
-  - id: VIS-09
-    group: FRONT
-    page_uid: workspace:INFO-01
-    name: 最新資訊工作區
-    status: COMPLETE
-    scope: User-approved promotion of the existing INFO-01 authority to NAV-09 plus exact 12-section / 12-visual / 20-component / 66-control visual positioning; no business mutation/runtime execution.
-    evidence:
-      final_validation_run_id: 33280678519
-      manual_evidence_export_run_id: 33280753917
-      manual_evidence_artifact_id: 9722905545
-      artifact_sha256: 2d9895108b97fe7f8fdef1f118b3163d5d81b90340db837aba76eb9595237a6e
-      evidence_directory: docs/construction/evidence/VIS-09
-      validation_record: docs/construction/evidence/VIS-09/vis09-validation.json
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      all_front_routes_nav09_regression: PASS
-      locale_switch_runtime: PASS
-      business_requests_during_validation: 0
-      manual_visual_inspection: PASS
-      verified_contract:
-        route: /info
-        front_l1_count: 9
-        active_nav: NAV-09
-        sections: 12
-        visuals: 12
-        components: 20
-        controls: 66
-        workspace_origin_x: 78px
-        sidebar_collapsed_width: 64px
-        sidebar_expanded_width: 221px
-        workspace_reflow_on_expand: false
-        desktop_1600_horizontal_overflow: false
-        desktop_1440_horizontal_overflow: false
-        below_1280_horizontal_scroll: true
-        fact_inference_visibly_separated: true
-        unregistered_start_cancel_research: false
-  - id: VIS-10
-    group: ADMIN
-    page_uid: admin:SYS-01
-    name: 系統維護
-    status: COMPLETE
-    scope: Current-only SYS-01 visual implementation at /admin/system with one shared Global Shell, frontend Account -> Admin entry, nine-item Admin navigation, exact eight canonical sections and twelve registered controls including the user-approved conversation composer; visual/empty/disabled presentation only, no business runtime mutation.
-    authority_closure:
-      route: /admin/system
-      legacy_25_control_count: REMOVED_AS_MIGRATION_RESIDUE
-      current_registered_controls: 12
-      current_sections: 8
-      rule: Current-only SYS-01 controls are defined from current functional contracts; no R9/master count padding.
-      status: CLOSED
-    evidence:
-      implementation_commit: 3bc7edcb6ee209e3352d6170f53d8ff4d18497be
-      final_validation_run_id: 33284782877
-      final_evidence_artifact_id: 9724069583
-      artifact_sha256: 66778fc3fe64bce81b36f57064b0adcecd87bd82957d328b5bef84831a210889
-      evidence_directory: docs/construction/evidence/VIS-10
-      validation_record: docs/construction/evidence/VIS-10/vis10-final-regression.json
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      all_front_routes_shared_shell_regression: PASS
-      admin_navigation_regression: PASS
-      locale_switch_runtime: PASS
-      business_requests_during_validation: 0
-      manual_visual_inspection: PASS
-      manual_visual_inspection_basis: Final collapsed, expanded overlay, lower workspace and frontend Account/Admin-entry screenshots were directly inspected after correcting Council hidden state and Global Shell active navigation state; no unintended clipping, overlap or workspace reflow remained.
-      verified_contract:
-        route: /admin/system
-        admin_l1_count: 9
-        active_admin_nav: ADMIN-NAV-01
-        front_l1_count_preserved: 9
-        sections: 8
-        controls: 12
-        council_controls_hidden_in_single_ai: true
-        enabled_business_controls_in_visual_phase: 0
-        production_deploy_control_rendered: false
-        provider_model_picker_rendered: false
-        workspace_origin_x: 78px
-        sidebar_collapsed_width: 64px
-        sidebar_expanded_width: 221px
-        workspace_reflow_on_expand: false
-        desktop_1440_horizontal_overflow: false
-        below_1280_horizontal_scroll: true
-        account_front_to_admin_entry: PASS
-        account_admin_to_front_return: PASS
-        global_active_nav_state: PASS
-        conversation_composer_remediation:
-          user_decision_ref: 2026-08-30-USER-APPROVED-SYS01-CONVERSATION-COMPOSER
-          validation_run_id: 33298153408
-          controls_added: 4
-          current_registered_controls: 12
-          message_input_resizable: true
-          conversation_panel_enlarged: true
-          visual_phase_message_typing: LOCAL_DRAFT_ONLY
-          attach_send_stop_business_execution: BLOCKED_UNTIL_LOGIC_PHASE_EXACT_CONVERSATION_CORE_BINDING
-          shared_shell_regression: PASS
-          business_requests_during_validation: 0
-          manual_visual_inspection: PASS
-          manual_evidence_pack_run_id: 33298242805
-          manual_evidence_artifact_id: 9728086389
-          manual_evidence_sha256: f8364aead388ca8e0539a8d435bafaa2332c1e81c51f6c2d5ede58a50c208346
-          manual_visual_inspection_basis: Composer top, expanded overlay, and corrected workspace-bottom screenshots were directly inspected; textarea/action alignment, panel sizing, sidebar overlay, and lower sections had no unintended clipping, overlap, or reflow.
-  - id: VIS-11
-    group: ADMIN
-    page_uid: admin:IAM-01
-    name: 帳戶與權限
-    status: COMPLETE
-    scope: Single-page Accounts & Permissions visual implementation at /admin/accounts with exact 6 sections / 10 components / 14 registered controls; current 9 frontend + 9 admin L1 permission configuration, empty real-data projections, blocked unresolved Identity Candidate schema, and no business mutation runtime.
-    authority_closure:
-      route: /admin/accounts
-      front_l1_count: 9
-      admin_l1_count: 9
-      info_front_bundle: FRONT-L1-09
-      knowledge_admin_bundle: ADMIN-L1-KNOWLEDGE
-      role_or_department_implicit_authorization: FORBIDDEN
-      status: CLOSED
-      validation_run_id: 33296561011
-    evidence:
-      implementation_commit: 7f2b81c8c4df8f91ab1c2482702207d625ad5769
-      final_validation_run_id: 33296725383
-      manual_evidence_export_run_id: 33296797489
-      manual_evidence_artifact_id: 9727662200
-      manual_evidence_artifact_sha256: f949bba3633b248f6d805be6f64916199e64acb43326a04a39e8d2e54d977b47
-      corrected_bottom_evidence_run_id: 33296878270
-      corrected_bottom_evidence_artifact_id: 9727696289
-      corrected_bottom_evidence_sha256: 8eca65fbd1df85930d3857113f4753099c5ebc106d2cb23eca5c6a06afec6a55
-      evidence_directory: docs/construction/evidence/VIS-11
-      validation_record: docs/construction/evidence/VIS-11/vis11-validation.json
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      business_requests_during_validation: 0
-      manual_visual_inspection: PASS
-      manual_visual_inspection_basis: 1440 top, expanded sidebar, corrected workspace bottom, 1600 and 1200 evidence were inspected; no unintended clipping, overlap or workspace reflow. The first bottom screenshot scrolled window instead of workspace and was deleted as superseded evidence.
-      verified_contract:
-        route: /admin/accounts
-        active_admin_nav: ADMIN-NAV-02
-        sections: 6
-        components: 10
-        controls: 14
-        front_l1_permission_choices: 9
-        admin_l1_permission_choices: 9
-        exact_identity_schema_resolved: false
-        invented_identity_fields: false
-        add_account_business_mutation: false
-        enabled_effectful_business_controls: 0
-        workspace_origin_x: 78px
-        sidebar_collapsed_width: 64px
-        sidebar_expanded_width: 221px
-        workspace_reflow_on_expand: false
-        desktop_1600_horizontal_overflow: false
-        desktop_1440_horizontal_overflow: false
-        below_1280_horizontal_scroll: true
-  - id: VIS-12
-    group: ADMIN
-    page_uid: admin:DEV-01
-    name: 企業自動開發系統
-    status: COMPLETE
-    evidence:
-      final_validation_run_id: 33301638501
-      evidence_directory: docs/construction/evidence/VIS-12
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      business_requests_during_validation: 0
-  - id: VIS-13
-    group: ADMIN
-    page_uid: admin:SOC-01
-    name: 社群發布
-    status: COMPLETE
-    evidence:
-      final_validation_run_id: 33302938068
-      evidence_directory: docs/construction/evidence/VIS-13
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      business_requests_during_validation: 0
-  - id: VIS-14
-    group: ADMIN
-    page_uid: admin:ERP-01
-    name: ERP
-    status: COMPLETE
-    evidence:
-      final_validation_run_id: 33303301159
-      evidence_directory: docs/construction/evidence/VIS-14
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      business_requests_during_validation: 0
-  - id: VIS-15
-    group: ADMIN
-    page_uid: admin:AIAPI-01
-    name: AI API
-    status: COMPLETE
-    evidence:
-      final_validation_run_id: 33303584058
-      evidence_directory: docs/construction/evidence/VIS-15
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      business_requests_during_validation: 0
-      current_ui_binding_status: REMAP_REQUIRED_NOT_EXECUTED
-  - id: VIS-16
-    group: ADMIN
-    page_uid: admin:SG-02
-    name: QA 評分項目
-    status: COMPLETE
-    evidence:
-      final_validation_run_id: 33304612269
-      evidence_directory: docs/construction/evidence/VIS-16
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      business_requests_during_validation: 0
-      expected_controls: 11
-      unregistered_search_filter_export: false
-  - id: VIS-17
-    group: ADMIN
-    page_uid: admin:STR-01
-    name: 戰略中心後台
-    status: COMPLETE
-    scope: Single-page Strategy Center administration visual at /admin/strategy with five authority-defined Current Views, real-data-only empty projections, registered action/operation traceability, no parallel subpages, and all governed business actions disabled until resource/runtime remap.
-    evidence:
-      final_validation_run_id: 33313441132
-      evidence_directory: docs/construction/evidence/VIS-17
-      validation_record: docs/construction/evidence/VIS-17/vis17-validation.json
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      business_requests_during_validation: 0
-      current_views: 5
-      control_resource_remap: NOT_EXECUTED
-      effectful_runtime_ready: false
-  - id: VIS-18
-    group: ADMIN
-    page_uid: admin:KB-01
-    name: 知識庫
-    status: COMPLETE
-    scope: Single-page Knowledge & Experience governance visual at /admin/knowledge with five authority-defined Views, exact 16 sections / 22 components / 127 fields / 27 controls, real-data-only empty projections, and no parallel crawler/context/experience/learning implementation.
-    evidence:
-      final_validation_run_id: 33314938473
-      evidence_directory: docs/construction/evidence/VIS-18
-      validation_record: docs/construction/evidence/VIS-18/vis18-validation.json
-      typecheck: PASS
-      next_build: PASS
-      production_server: PASS
-      chromium_render_and_geometry: PASS
-      locale_switch_runtime: PASS
-      business_requests_during_validation: 0
-      sections: 16
-      components: 22
-      fields: 127
-      controls: 27
-      actions: 21
-      gates: 17
-      errors: 14
-      effectful_runtime_ready: false
-phase_1_global_closure:
-  status: COMPLETE
-  final_validation_run_id: 33317269084
-  evidence: docs/construction/evidence/PHASE-1-CLOSURE/phase1-closure-validation.json
-  cross_page_visual_consistency_audit: PASS
-  navigation_route_to_page_visual_audit: PASS
-  authority_conflict_remediation: PASS
-  residual_syntax_scan: PASS
-  business_requests_during_validation: 0
-phase_2_logic_construction:
-  status: BLOCKED_AT_PRODUCTION_RUNTIME_BINDING
-  rule: VIS-00 through VIS-18 visual gate is complete; logic construction may proceed only where Current Authority is exact. Undefined production binding behavior remains BLOCK + REPORT_AUTHORITY_GAP.
-  runtime_binding_readiness_audit:
-    status: COMPLETE_WITH_BLOCKERS
-    audited_head: e001d7bd7a1fc56494da0895b5b4de1127c373cc
-    evidence: docs/construction/evidence/POST-MIGRATION-RUNTIME-BINDING/runtime-binding-readiness-and-authority-gap.json
-    classification_mode: LAYERED_NONEXCLUSIVE
-    class_a_direct_binding_ready: 0
-    production_runtime_code_changed_by_audit: false
-    controlled_test_runtime_accepted_as_production: false
-    runtime_complete_claim_allowed: false
-phase_3_cross_page_closure:
-  status: BLOCKED_BY_PHASE_2
-final_validation:
-  status: NOT_STARTED
-metrics:
-  visual_steps_total: 19
-  visual_steps_complete: 19
-  visual_steps_in_progress: 0
-  logic_steps_complete: 0
-  runtime_readiness_audit_steps_complete: 1
-  production_runtime_binding_steps_complete: 0
-  shared_runtime_steps_complete: 0
-  cross_page_steps_complete: 0
-  truthful_progress_note: VIS-00 through VIS-18 visual positioning remains complete. Post-migration Runtime Binding Readiness Audit was executed against e001d7bd7a1fc56494da0895b5b4de1127c373cc. Existing API routes and configure runtime ports remain fail-closed when production bindings are absent; controlled test runtimes remain validation-only. No production database driver dependency, database connection environment contract, production PostgreSQL/Neon adapter, or server bootstrap binding is materialized, and src/instrumentation.ts register() remains empty. A-class direct production binding readiness is 0. Current Authority gaps and domain B/C/D/E classifications are recorded in docs/construction/evidence/POST-MIGRATION-RUNTIME-BINDING/runtime-binding-readiness-and-authority-gap.json. Production API/database runtime binding, shared crawler execution, runtime E2E and external/production E2E remain NOT_EXECUTED; runtime/production-ready completion must not be claimed.
+authority:
+  construction_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL
+  production_truth_order:
+    - GitHub Current
+    - Vercel Current Deployment
+    - Neon Current Production
+    - Current Execution State
+    - Single Active Construction Authority
+  historical_source_trace_executable: false
+  rule: Do not restore historical page/runtime assumptions over Current implementation or Current Production evidence.
+
+git:
+  repository: steven-gold/orange-one-ai-viedo-v1.0
+  main_sha: 5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c
+  new_sha: 0f5aff87d4dc14612fc68151b40210bd34728ae4
+  latest_new_release_gate:
+    run: 1021
+    id: 34404462555
+    status: SUCCESS
+  production_main_release_gate:
+    run: 1017
+    id: 34399580132
+    status: SUCCESS
+
+production:
+  url: https://orange-one-acpos-test.vercel.app
+  release_sha: 5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c
+  vercel_status: SUCCESS
+  latest_post_deploy:
+    run: 1325
+    id: 34399815616
+    status: SUCCESS
+  readiness_http: 200
+  routes: 18/18
+  browser_smoke: 54/54
+  front_nav: 8
+  admin_nav: 8
+  visible_pages: 18
+  dom:
+    interactive: 548
+    governed: 548
+    enabled: 362
+    disabled: 186
+    classification: VISUAL_GOVERNANCE_PASS_EFFECTFUL_ACCEPTANCE_PENDING
+
+database:
+  project: wild-wave-25661146
+  branch: main
+  database: neondb
+  migrations: 40/40
+  latest_migration: 0040_kb_source_retire_audit_rls_closure
+  active_permission_resources: 3672
+  current_permission_tally_seal: PENDING
+  approved_allow_assignments: 158
+  rls_tables: 62
+  policies: 123
+  provider_capabilities_approved: 4
+  secret_references_approved: 4
+  queues: 1
+  workers: 1
+
+construction:
+  kb_0040:
+    database_apply: APPLIED_VERIFIED
+    application_code_on_new: PASS_RELEASE_GATE_1019
+    application_code_on_production_main: PENDING_CONSOLIDATED_DEPLOYMENT
+  core_truthful_gate:
+    commit: 0f5aff87d4dc14612fc68151b40210bd34728ae4
+    release_gate: 1021
+    status: SUCCESS
+    production_deployed: false
+  department_materialization:
+    status: OPEN
+    production_observation:
+      department_tasks: 1
+      department_task_classification: TEST_ONLY_WAITING_DEPENDENCY
+      department_script_views: 0
+      task_input_manifests: 0
+      instruction_packages: 0
+      canonical_script_versions: 0
+      script_projection_rules: 0
+      quality_criteria_versions: 0
+      rights_profiles: 0
+      route_policies: 0
+    required_chain:
+      - governed lock decision
+      - child lock materialization
+      - work package compiler
+      - task orchestrator
+      - department script view compiler
+      - task input manifest compiler
+      - instruction package compiler
+      - effectful department runtime
+    safety_rule: Never force-enable a control or fabricate business rows to bypass a missing canonical owner.
+
+current_gate_summary:
+  production_ready_percent: 81.5
+  pass: 14
+  partial: 10
+  fail: 1
+  blocked: 0
+  unknown: 0
+  gate_9:
+    percent: 75
+    status: PARTIAL
+    remaining: Vercel management connector visibility mismatch
+  gate_10:
+    percent: 100
+    status: PASS
+    evidence: 40/40
+  gate_11:
+    percent: 87.5
+    status: PARTIAL
+    remaining: Current permission-resource expansion tally seal
+  gate_15:
+    percent: 75
+    status: PARTIAL
+    remaining: negative permission Production E2E
+  gate_17:
+    percent: 75
+    status: PARTIAL
+  gate_18:
+    percent: 50
+    status: PARTIAL
+  gate_19:
+    percent: 50
+    status: PARTIAL
+  gate_20:
+    percent: 50
+    status: PARTIAL
+  gate_21:
+    percent: 50
+    status: PARTIAL
+  gate_22:
+    percent: 75
+    status: PARTIAL
+  gate_24:
+    percent: 0
+    status: FAIL
+  gate_25:
+    percent: 50
+    status: PARTIAL
+
+next:
+  - Close canonical department materialization ownership on new.
+  - Close ASSET / VIDEO / EDIT+VOICE / QA effectful paths.
+  - Close IAM / ERP / AIAPI / SOC Production mutations.
+  - Run AI Conversation Production E2E after consolidated deployment.
+  - Build permanent Production Effectful Acceptance.
+  - Seal Current permission-resource expansion and final control/action denominator.
+  - Recompute all 25 gates from final Production evidence.
