@@ -1,11 +1,29 @@
 # ACPOS Runtime Binding Gap Report
 
-Revision: 2026-09-05 LIVE-WILD-WAVE-DB-CONTRACT
-Status: BLOCKED_BEFORE_PRODUCTION_BINDING
+Revision: 2026-09-09 LOCAL-ARCHIVE-RECONCILED-CURRENT-NEW
+Status: CURRENT_NEW_RELEASE_VALIDATED_PRODUCTION_APPLY_PENDING
 
 ## Scope
 
 This document records runtime binding blockers after verified database migration and release validation. It is a gap record only. It does not authorize new schema, new API semantics, invented permissions, or controlled-test runtime promotion to production.
+
+## 2026-09-09 Current Reconciliation
+
+The 2026-09-08 local worktree snapshot `acpos-new-local-20260909.tar.gz` has now been reconciled against its recorded base `4c43aa29fbccb3622c5446eaa54f642a8489376f` and Current `new`.
+
+- Archive payload: 576 repository-like files after excluding the stale worktree `.git` pointer.
+- True local content delta from `4c43aa2`: 28 files.
+- Exact local delta blobs retained in Current: 14.
+- Later Current versions that supersede already-reconciled local deltas: 11, comprising the updated audit matrix plus the ten overlapping runtime/UI files separately reconciled during merge construction.
+- Remaining local documentation deltas: `.monkeycode/MEMORY.md`, this runtime gap report, and `docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml`; their still-valid freeze/audit meaning is absorbed by the 2026-09-09 closure rather than restoring stale 2026-09-08 runtime status.
+- The archive omission of `.env.example` is classified as packaging omission, not a requested deletion: the archive's own runtime gap report explicitly references the env contract and Current retains that contract.
+- Current construction SHA after runtime reconciliation: `830b780e2b4832e9751b48f2e62a28761450f5c9`.
+- ACPOS Release Gate `#34315733464`: SUCCESS on that exact SHA, including lint, dependency audit, typecheck, release unit tests, Production build/HTTP E2E, controlled build/misconfiguration E2E, Browser E2E, Current DOM acceptance, Standalone Docker, and Dirty tree guard.
+- CORE legacy `executeCore()` owner-SQL paths were reduced to zero during the governed runtime reconciliation.
+- Repository migrations are staged through `0038_core_conversation_thread_work_item_lineage`; migrations 0037/0038 remain pending Production apply and are not evidence of Production schema completion.
+- This archive reconciliation does not merge `new` to `main`, apply pending migrations to Production, or trigger Vercel.
+
+Older sections below are retained as historical gap evidence. Where an older statement conflicts with this reconciliation or later Current evidence, the newer verified Current evidence governs.
 
 ## Verified Completed
 
