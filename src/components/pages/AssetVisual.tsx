@@ -282,7 +282,7 @@ function AssetVisualBody() {
                 <strong>{String(state.projection?.output_version_id ?? "—")} · {String(state.projection?.values["ASSET-01-FLD-ISSUES"] ?? "—")}</strong>
               </div>
               <div className={styles.correctionHistory} data-correction-region="history"><span>Conversation History</span><strong>{String(state.projection?.correction_request_id ?? "—")}</strong></div>
-              <div className={styles.correctionCandidate} data-correction-region="candidate"><span>Correction Candidate</span><Control spec={CORRECTION[2]} /><Control spec={CORRECTION[3]} /></div>
+              <div className={styles.correctionCandidate} data-correction-region="candidate"><span>Correction Candidate · {String(state.projection?.correction_candidate_id ?? "—")} · Approved {String(state.projection?.approved_correction_candidate_id ?? "—")}</span><Control spec={CORRECTION[2]} /><Control spec={CORRECTION[3]} /></div>
               <div className={styles.correctionComposer} data-correction-region="composer"><Control spec={CORRECTION[1]} /></div>
             </div>
           </section> : null}
