@@ -42,6 +42,7 @@ import {
 import { configureAiApiCommandRuntime } from "@/server/aiApi/aiApiCommandRuntime";
 import { executeProductionAiApiCommand, auditProductionAiApiCommand } from "@/server/aiApi/productionAiApiCommandRuntime";
 import { executeProductionConversationTurn, requestProductionConversationStop } from "@/server/shared/productionConversationAiRuntime";
+import { executeProductionCoreGovernedPort,isProductionCoreGovernedPort } from "@/server/core/productionCoreGovernedRuntime";
 import { configureAssetRuntime } from "@/server/asset/assetRuntime";
 import type { AssetRuntimeRequest } from "@/domain/asset/assetRuntimeContract";
 import { configureVideoRuntime } from "@/server/video/videoRuntime";
@@ -507,10 +508,24 @@ async function authorizeInfoCommand(request: InfoRequest): Promise<{ allowed: tr
 }
 
 async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
-  const gate = await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["CORE-01"]);
-  if (!gate.allowed) return gate;
-  void request;
-  return { allowed: true };
+  const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["CORE-01"]);
+  if(!page.allowed)return page;
+  const governedPermission:Partial<Record<CoreRuntimeRequest["port_uid"],string>>={
+    "CORE-01-PORT-CANDIDATE-CREATE":"api:createCandidate",
+    "CORE-01-PORT-CANDIDATE-COMPARE":"api:compareCandidates",
+    "CORE-01-PORT-CANDIDATE-DECIDE":"api:decideCandidate",
+    "CORE-01-PORT-DNA-LOCK":"api:requestDNALock",
+    "CORE-01-PORT-CORE-REVIEW":"api:submitCoreReview",
+    "CORE-01-PORT-BLUEPRINT-CREATE":"api:createBlueprint",
+    "CORE-01-PORT-BLUEPRINT-VALIDATE":"api:validateBlueprint",
+    "CORE-01-PORT-BLUEPRINT-APPROVE":"api:approveBlueprint",
+    "CORE-01-PORT-CHILD-LOCK":"api:requestChildLock",
+    "CORE-01-PORT-CANONICAL-SCRIPT":"api:getCanonicalScript",
+  };
+  const resource=governedPermission[request.port_uid];
+  if(!resource)return{allowed:true};
+  const operation=await evaluateResourceAction(resource,"EXECUTE");
+  return operation.allowed?{allowed:true}:operation;
 }
 
 function payloadRecord(request: CoreRuntimeRequest): Record<string, unknown> {
@@ -545,6 +560,8 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
   const identityContext = await requireIdentityContext();
   const actor = identityContext.actor;
   const payload = payloadRecord(request);
+
+  if(isProductionCoreGovernedPort(request.port_uid)) return executeProductionCoreGovernedPort(request);
 
   switch (request.port_uid) {
     case "CORE-01-PORT-PROJECT-CREATE": {
