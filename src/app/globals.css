@@ -271,7 +271,7 @@ button.account-popover-link {
   border-radius: 10px;
   background: transparent;
   color: var(--text-secondary);
-  cursor: default;
+  cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
   text-decoration: none;
@@ -327,11 +327,12 @@ button.account-popover-link {
   border: 0;
   border-radius: 0;
   overflow: auto;
-  transition: left 120ms ease;
 }
 
+/* Global Shell V1.9: the 221px sidebar is a temporary overlay.
+   Workspace origin stays x=78px in both collapsed and expanded states. */
 .acpos-shell[data-sidebar-expanded="true"] .workspace-slot {
-  left: 235px;
+  left: 78px;
 }
 
 @media (max-width: 1180px) {
