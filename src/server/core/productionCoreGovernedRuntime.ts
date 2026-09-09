@@ -403,47 +403,76 @@ async function submitCoreReview(request:CoreRuntimeRequest){
   return{project_id:projectId,project_version_ref:versionId,candidate_ref:text(accepted.candidate_ref),state:"CORE_REVIEW",final_approval_granted:false};
 }
 
-async function requestMotherLock(request:CoreRuntimeRequest){
-  const payload=rec(request.payload);
-  const projectId=requiredUuid(payload.project_id,"PROJECT_ID_REQUIRED");
-  const projectVersionId=requiredUuid(payload.project_version_ref,"REQUIRED_PROJECT_VERSION_REF_MISSING");
-  const {sql,session_token_hash}=await context();
-  const version=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT pv.project_version_id::text AS project_version_ref,pv.project_id::text AS project_id,
-           pv.status::text AS status,pv.content_hash::text AS content_hash
-    FROM public.project_versions pv
-    WHERE pv.project_version_id=${projectVersionId}::uuid AND pv.project_id=${projectId}::uuid
-    LIMIT 1
-  `));
-  if(!version)throw new NamedRuntimeError("PROJECT_VERSION_NOT_FOUND");
-  const existing=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT lock_review_id::text AS lock_review_id,status::text AS status,
-           expected_target_hash::text AS expected_target_hash,evidence,reviewer_path
-    FROM public.lock_reviews
-    WHERE lock_kind='MOTHER' AND target_type='PROJECT_VERSION'
-      AND target_version_id=${projectVersionId}::uuid
-    ORDER BY created_at DESC
-    LIMIT 1
-  `));
-  if(existing){
-    const reviewerPath=Array.isArray(existing.reviewer_path)?existing.reviewer_path:[];
-    const evidence=rec(existing.evidence);
-    const evidenceRefs=stringArray(evidence.evidence_refs);
-    if(reviewerPath.length===0||evidenceRefs.length===0){
-      throw new NamedRuntimeError("CORE_LOCK_REVIEW_CONTRACT_INVALID");
-    }
-    if(text(existing.expected_target_hash)!==text(version.content_hash)){
-      throw new NamedRuntimeError("CORE_LOCK_REVIEW_TARGET_STALE");
-    }
-    return{
-      lock_review_id:text(existing.lock_review_id),project_id:projectId,project_version_ref:projectVersionId,
-      lock_state:text(existing.status),final_lock_granted:false,idempotent_replay:true,
-    };
+function lockRequestInput(payload:Record<string,unknown>){
+  const allowedKeys=new Set(["scope","expected_version","correlation_id","idempotency_key","target_ref","request_reason","requested_scope_refs"]);
+  if(Object.keys(payload).some((key)=>!allowedKeys.has(key)))throw new NamedRuntimeError("LOCK_REQUEST_SCHEMA_INVALID");
+  const scope=nonEmptyObject(payload.scope,"R9_CONTEXT_REQUIRED");
+  const expectedVersion=required(payload.expected_version,"EXPECTED_VERSION_INVALID");
+  if(!/^v[1-9][0-9]*$/.test(expectedVersion))throw new NamedRuntimeError("EXPECTED_VERSION_INVALID");
+  const correlationId=requiredUuid(payload.correlation_id,"CORRELATION_ID_INVALID");
+  const idempotencyKey=required(payload.idempotency_key,"IDEMPOTENCY_KEY_INVALID");
+  if(idempotencyKey.length<16||idempotencyKey.length>128)throw new NamedRuntimeError("IDEMPOTENCY_KEY_INVALID");
+  const targetRef=requiredUuid(payload.target_ref,"TARGET_REF_INVALID");
+  const requestReason=required(payload.request_reason,"REQUEST_REASON_INVALID");
+  const requestedScopeRefs=payload.requested_scope_refs===undefined?[]:stringArray(payload.requested_scope_refs);
+  if(payload.requested_scope_refs!==undefined&&(!Array.isArray(payload.requested_scope_refs)||requestedScopeRefs.length!==(payload.requested_scope_refs as unknown[]).length)){
+    throw new NamedRuntimeError("REQUESTED_SCOPE_REFS_INVALID");
   }
-  throw new NamedRuntimeError("CORE_LOCK_REVIEWER_PATH_UNRESOLVED");
+  return{scope,expectedVersion,correlationId,idempotencyKey,targetRef,requestReason,requestedScopeRefs};
 }
 
-async function createTopic(request:CoreRuntimeRequest){
+async function requestLockReview(request:CoreRuntimeRequest,kind:"MOTHER"|"CHILD"){
+  const input=lockRequestInput(rec(request.payload));
+  const {sql,session_token_hash}=await context();
+  try{
+    const rows=await runRlsActorQuery(sql,session_token_hash,sql`
+      SELECT lock_review_id::text,lock_kind,review_status,review_version,target_ref::text,
+             criteria_version_id::text,reviewer_count,evidence_count,idempotent_replay
+      FROM acpos_runtime.request_lock_review(
+        ${kind},
+        ${JSON.stringify(input.scope)}::jsonb,
+        ${input.expectedVersion},
+        ${input.correlationId}::uuid,
+        ${input.idempotencyKey},
+        ${input.targetRef}::uuid,
+        ${input.requestReason},
+        ${JSON.stringify(input.requestedScopeRefs)}::jsonb
+      )
+    `);
+    const row=first(rows);
+    if(!row)throw new NamedRuntimeError("LOCK_REVIEW_REQUEST_WRITE_FAILED");
+    return{
+      lock_review_id:text(row.lock_review_id),
+      lock_kind:text(row.lock_kind),
+      lock_state:text(row.review_status),
+      review_version:Number(row.review_version),
+      target_ref:text(row.target_ref),
+      criteria_version_id:text(row.criteria_version_id),
+      reviewer_count:Number(row.reviewer_count),
+      evidence_count:Number(row.evidence_count),
+      final_lock_granted:false,
+      idempotent_replay:row.idempotent_replay===true,
+      correlation_id:input.correlationId,
+    };
+  }catch(error){
+    const message=error instanceof Error?error.message:String(error);
+    for(const code of [
+      "PERMISSION_OR_SCOPE_DENIED","R9_CONTEXT_REQUIRED","EXPECTED_VERSION_INVALID","CORRELATION_ID_INVALID",
+      "IDEMPOTENCY_KEY_INVALID","TARGET_REF_INVALID","REQUEST_REASON_INVALID","REQUESTED_SCOPE_REFS_INVALID",
+      "IDEMPOTENCY_CONFLICT","LOCK_TARGET_NOT_READY","VERSION_CONFLICT","SCOPE_WORKSPACE_MISMATCH",
+      "SCOPE_PROJECT_MISMATCH","SCOPE_TOPIC_MISMATCH","LOCK_CRITERIA_AMBIGUOUS","LOCK_CRITERIA_VERSION_REQUIRED",
+      "LOCK_EVIDENCE_REQUIRED","CORE_LOCK_REVIEWER_PATH_UNRESOLVED"
+    ])if(message.includes(code))throw new NamedRuntimeError(code);
+    if(message.includes("REQUESTED_SCOPE_REF_NOT_RESOLVED"))throw new NamedRuntimeError("REQUESTED_SCOPE_REF_NOT_RESOLVED");
+    throw error;
+  }
+}
+
+async function requestMotherLock(request:CoreRuntimeRequest){
+  return requestLockReview(request,"MOTHER");
+}
+
+async function createTopicasync function createTopic(request:CoreRuntimeRequest){
   const payload=rec(request.payload);
   const projectId=requiredUuid(request.path_params?.projectId,"REQUIRED_PATH_REFERENCE_MISSING:projectId");
   if(payload.project_id!==undefined&&requiredUuid(payload.project_id,"TOPIC_CANONICAL_LINEAGE_INCOMPLETE")!==projectId){
@@ -601,33 +630,7 @@ async function approveBlueprint(request:CoreRuntimeRequest){
 }
 
 async function requestChildLock(request:CoreRuntimeRequest){
-  const payload=rec(request.payload);
-  const topicId=requiredUuid(payload.topic_id,"TOPIC_ID_REQUIRED");
-  const blueprintId=requiredUuid(payload.blueprint_version_ref,"REQUIRED_BLUEPRINT_VERSION_REF_MISSING");
-  const {sql,session_token_hash}=await context();
-  const existing=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT lr.lock_review_id::text AS lock_review_id,lr.status::text AS status
-    FROM public.lock_reviews lr
-    JOIN public.blueprint_versions bv ON bv.blueprint_version_id=lr.target_version_id
-    JOIN public.topic_blueprints tb ON tb.topic_blueprint_id=bv.topic_blueprint_id
-    JOIN public.topic_production_contracts pc ON pc.topic_production_contract_id=tb.topic_production_contract_id
-    JOIN public.topic_versions tv ON tv.topic_version_id=pc.topic_version_id
-    WHERE lr.target_type='BLUEPRINT_VERSION' AND lr.lock_kind='CHILD'
-      AND lr.target_version_id=${blueprintId}::uuid AND tv.topic_id=${topicId}::uuid
-    ORDER BY lr.created_at DESC LIMIT 1
-  `));
-  if(existing)return{lock_review_id:text(existing.lock_review_id),topic_id:topicId,blueprint_version_ref:blueprintId,lock_state:text(existing.status),final_lock_granted:false,idempotent_replay:true};
-  const blueprint=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT bv.status::text AS status,bv.content_hash::text AS content_hash,pc.topic_production_contract_id::text AS contract_id
-    FROM public.blueprint_versions bv
-    JOIN public.topic_blueprints tb ON tb.topic_blueprint_id=bv.topic_blueprint_id
-    JOIN public.topic_production_contracts pc ON pc.topic_production_contract_id=tb.topic_production_contract_id
-    JOIN public.topic_versions tv ON tv.topic_version_id=pc.topic_version_id
-    WHERE bv.blueprint_version_id=${blueprintId}::uuid AND tv.topic_id=${topicId}::uuid LIMIT 1
-  `));
-  if(!blueprint)throw new NamedRuntimeError("BLUEPRINT_VERSION_NOT_FOUND");
-  if(text(blueprint.status)!=="READY_FOR_CHILD_REVIEW")throw new NamedRuntimeError("BLUEPRINT_NOT_READY_FOR_CHILD_REVIEW");
-  throw new NamedRuntimeError("CORE_LOCK_REVIEWER_PATH_UNRESOLVED");
+  return requestLockReview(request,"CHILD");
 }
 
 async function decideLockReview(request:CoreRuntimeRequest){

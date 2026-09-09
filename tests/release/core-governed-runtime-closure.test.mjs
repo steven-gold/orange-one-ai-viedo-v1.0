@@ -69,7 +69,7 @@ test("CORE ConversationThread work-item lineage has a dedicated immutable owner 
   assert.match(migration,/GRANT SELECT,INSERT ON public\.core_conversation_thread_bindings TO acpos_app_runtime/);
   assert.match(migration,/384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d/);
   assert.match(manifest,/0038_core_conversation_thread_work_item_lineage[\s\S]*384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d/);
-  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 41/);
+  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 42/);
 
   assert.match(identity,/runRlsActorTransaction/);
   assert.match(identity,/INSERT INTO core_conversation_thread_bindings/);
@@ -146,8 +146,9 @@ test("CORE Candidate and Blueprint creation fail closed instead of fabricating C
   assert.match(runtime,/MASTER_BLUEPRINT_AUTHORITY_NOT_READY/);
   assert.match(runtime,/CORE_BLUEPRINT_DOCUMENT_MATERIALIZER_NOT_BOUND/);
   assert.match(runtime,/CORE_LOCK_REVIEWER_PATH_UNRESOLVED/);
-  assert.match(runtime,/CORE_LOCK_REVIEW_CONTRACT_INVALID/);
-  assert.match(runtime,/CORE_LOCK_REVIEW_TARGET_STALE/);
+  assert.match(runtime,/LOCK_CRITERIA_VERSION_REQUIRED/);
+  assert.match(runtime,/LOCK_EVIDENCE_REQUIRED/);
+  assert.match(runtime,/acpos_runtime\.request_lock_review/);
   assert.doesNotMatch(runtime,/reviewer_path\s*=\s*JSON\.stringify\(\[\]\)/);
   assert.doesNotMatch(runtime,/blueprint_document\s*=\s*JSON\.stringify\(\{\s*topic_id/);
 });

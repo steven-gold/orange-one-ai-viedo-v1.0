@@ -1,8 +1,8 @@
 contract_meta:
-  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.41
+  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.42
   rule: checksum is calculated from migration payload excluding the terminal schema_migration_history registration statement; zero value is forbidden.
   bootstrap_rule: 0001 is self-contained and must be executed before all later migrations.
-  authority_revision: 2026-09-10-PRODUCTION-0041-GOVERNED-LOCK-SERVICE-IDENTITY-APPLIED
+  authority_revision: 2026-09-10-STAGED-0042-LOCK-REQUEST-CANONICAL-EVENT
   live_target_revision: 2026-09-05-REQUIRED-ON-WILD-WAVE
   live_neon_project_id: wild-wave-25661146
   live_database_name: neondb
@@ -200,3 +200,9 @@ migrations:
   approval_ref: CR-RUNTIME-0041
   bootstrap: REQUIRES_PRIOR_MIGRATION
   production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
+
+- migration_id: 0042_lock_request_canonical_event_closure
+  payload_sha256: d959f5dbb0cd2d9d624528a81d80d93aa87787c7db1bac2fa781c116a64e7518
+  approval_ref: CR-RUNTIME-0042
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: STAGED_PENDING_PRODUCTION_APPLY

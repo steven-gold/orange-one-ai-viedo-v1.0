@@ -28,7 +28,7 @@ test("0041 materializes only Current service identities/capabilities and governe
   assert.doesNotMatch(migration,/GRANT SELECT,INSERT ON public\.child_locks/);
   assert.match(manifest,/0041_governed_lock_decision_service_identity_foundation/);
   assert.match(manifest,/58a7d78fed454b5f1a49a18b2978f44fec248a4dd184ed4f6ea60e998c22f0c5/);
-  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 41/);
+  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 42/);
 });
 
 test("Current lock decision API uses existing CORE runtime chain and exact request contract",async()=>{
