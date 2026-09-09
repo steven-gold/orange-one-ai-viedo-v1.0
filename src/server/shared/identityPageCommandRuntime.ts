@@ -12,7 +12,7 @@ import { configureDepartmentOperationRuntime } from "@/server/shared/departmentO
 import { configureInfoCommandRuntime, type InfoRequest } from "@/server/info/infoCommandRuntime";
 import { executeProductionInfoCommand, decideProductionInfoCandidate } from "@/server/info/productionInfoRuntime";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
-import { runRlsActorQuery } from "@/server/database/rlsRuntime";
+import { runRlsActorQuery, runRlsActorTransaction } from "@/server/database/rlsRuntime";
 import { hashSessionToken, IDENTITY_COOKIE_NAME, resolveIdentityFromCookie, type IdentityActor } from "@/server/identity/identityRuntime";
 import { CURRENT_PAGE_RESOURCE_KEYS } from "@/server/shared/pageCatalogProjectionRuntime";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
@@ -576,46 +576,108 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
 
 
     case "CORE-01-PORT-THREAD-CREATE": {
-      const projectId = asText(request.path_params?.projectId);
+      const projectId = asUuidText(request.path_params?.projectId);
       if (!projectId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:projectId");
       const work_item = asText(payload.work_item);
       if (!work_item) throw new NamedRuntimeError("REQUIRED_WORK_ITEM_MISSING");
-      const topic_id = asText(payload.topic_id);
-      const title = `${work_item} / ${new Date().toISOString()}`;
-      const projectRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          SELECT p.workspace_id::text AS workspace_id
-          FROM projects p
-          WHERE p.project_id = ${projectId}::uuid
-          LIMIT 1
-        `,
-      );
-      const workspace_id = asText(firstRow(projectRows)?.workspace_id);
-      if (!workspace_id) throw new NamedRuntimeError("PROJECT_NOT_FOUND");
-      const conversation_id = crypto.randomUUID();
-      const threadRows = topic_id
+      const topicRaw = payload.topic_id;
+      const topic_id = topicRaw == null || topicRaw === "" ? null : asUuidText(topicRaw);
+      if (topicRaw != null && topicRaw !== "" && !topic_id) throw new NamedRuntimeError("TOPIC_ID_INVALID");
+
+      const projectWorkItems = new Set(["STORY","CHAPTER","WORLD_SETTING","DNA","BLUEPRINT"]);
+      const topicWorkItems = new Set(["TOPIC_SCOPE","PRODUCTION_SCRIPT"]);
+      if ((topic_id === null && !projectWorkItems.has(work_item)) || (topic_id !== null && !topicWorkItems.has(work_item))) {
+        throw new NamedRuntimeError("WORK_ITEM_NOT_ALLOWED_IN_CURRENT_MODE");
+      }
+
+      const relation_kind = asText(payload.relation_kind) ?? "ROOT";
+      if (relation_kind !== "ROOT" && relation_kind !== "BRANCH") throw new NamedRuntimeError("THREAD_RELATION_KIND_INVALID");
+      const parent_conversation_id = payload.parent_conversation_id == null || payload.parent_conversation_id === "" ? null : asUuidText(payload.parent_conversation_id);
+      const source_message_id = payload.source_message_id == null || payload.source_message_id === "" ? null : asUuidText(payload.source_message_id);
+      if (relation_kind === "ROOT" && (parent_conversation_id || source_message_id)) throw new NamedRuntimeError("ROOT_THREAD_RELATION_REFS_FORBIDDEN");
+      if (relation_kind === "BRANCH" && (!parent_conversation_id || !source_message_id)) throw new NamedRuntimeError("BRANCH_THREAD_RELATION_REFS_REQUIRED");
+
+      const projectRows = topic_id
         ? await runRlsActorQuery(
             sql,
             identityContext.session_token_hash,
             sql`
-              INSERT INTO conversations (conversation_id, workspace_id, project_id, topic_id, title, created_by)
-              VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${topic_id}::uuid, ${title}, ${actor.user_id}::uuid)
-              RETURNING conversation_id::text AS conversation_id
+              SELECT p.workspace_id::text AS workspace_id
+              FROM projects p
+              JOIN topics t ON t.project_id=p.project_id
+              WHERE p.project_id=${projectId}::uuid
+                AND t.topic_id=${topic_id}::uuid
+              LIMIT 1
             `,
           )
         : await runRlsActorQuery(
             sql,
             identityContext.session_token_hash,
             sql`
-              INSERT INTO conversations (conversation_id, workspace_id, project_id, title, created_by)
-              VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${title}, ${actor.user_id}::uuid)
-              RETURNING conversation_id::text AS conversation_id
+              SELECT p.workspace_id::text AS workspace_id
+              FROM projects p
+              WHERE p.project_id=${projectId}::uuid
+              LIMIT 1
             `,
           );
-      if (!asText(firstRow(threadRows)?.conversation_id)) throw new NamedRuntimeError("CONVERSATION_INSERT_FAILED");
-      return { conversation_id, project_id: projectId, work_item, topic_id };
+      const workspace_id = asUuidText(firstRow(projectRows)?.workspace_id);
+      if (!workspace_id) throw new NamedRuntimeError(topic_id ? "TOPIC_PROJECT_LINEAGE_MISMATCH" : "PROJECT_NOT_FOUND");
+
+      if (relation_kind === "BRANCH") {
+        const branchRows = await runRlsActorQuery(
+          sql,
+          identityContext.session_token_hash,
+          sql`
+            SELECT b.conversation_id::text AS parent_conversation_id
+            FROM core_conversation_thread_bindings b
+            JOIN conversation_messages m
+              ON m.conversation_id=b.conversation_id
+             AND m.conversation_message_id=${source_message_id}::uuid
+            WHERE b.conversation_id=${parent_conversation_id}::uuid
+              AND b.project_id=${projectId}::uuid
+              AND b.work_item=${work_item}
+              AND (
+                (${topic_id}::uuid IS NULL AND b.topic_id IS NULL)
+                OR b.topic_id=${topic_id}::uuid
+              )
+            LIMIT 1
+          `,
+        );
+        if (!firstRow(branchRows)) throw new NamedRuntimeError("BRANCH_THREAD_SCOPE_MISMATCH");
+      }
+
+      const conversation_id = crypto.randomUUID();
+      const title = work_item;
+      const [conversationRows,bindingRows] = await runRlsActorTransaction(
+        sql,
+        identityContext.session_token_hash,
+        [
+          topic_id
+            ? sql`
+                INSERT INTO conversations (conversation_id, workspace_id, project_id, topic_id, title, created_by)
+                VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${topic_id}::uuid, ${title}, ${actor.user_id}::uuid)
+                RETURNING conversation_id::text AS conversation_id
+              `
+            : sql`
+                INSERT INTO conversations (conversation_id, workspace_id, project_id, title, created_by)
+                VALUES (${conversation_id}::uuid, ${workspace_id}::uuid, ${projectId}::uuid, ${title}, ${actor.user_id}::uuid)
+                RETURNING conversation_id::text AS conversation_id
+              `,
+          sql`
+            INSERT INTO core_conversation_thread_bindings(
+              conversation_id,project_id,topic_id,work_item,parent_conversation_id,source_message_id,relation_kind,created_by
+            ) VALUES(
+              ${conversation_id}::uuid,${projectId}::uuid,${topic_id}::uuid,${work_item},
+              ${parent_conversation_id}::uuid,${source_message_id}::uuid,${relation_kind},${actor.user_id}::uuid
+            )
+            RETURNING conversation_id::text AS conversation_id
+          `,
+        ],
+      );
+      if (!asText(firstRow(conversationRows)?.conversation_id) || !asText(firstRow(bindingRows)?.conversation_id)) {
+        throw new NamedRuntimeError("CONVERSATION_THREAD_BINDING_INSERT_FAILED");
+      }
+      return { conversation_id, project_id: projectId, work_item, topic_id, relation_kind, parent_conversation_id, source_message_id };
     }
 
     case "CORE-01-PORT-MESSAGE-SEND": {
