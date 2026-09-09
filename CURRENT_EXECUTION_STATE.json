@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-10T04:13:52.220+08:00",
+  "as_of": "2026-09-10T04:35:00.000+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
     "main_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
-    "new_sha_basis": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
+    "new_sha_basis": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
@@ -984,7 +984,7 @@
       "current_dom_control_acceptance": "PASS_18_PAGES_548_VISIBLE_548_GOVERNED_ENABLED_362_DISABLED_186"
     },
     "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_dc84346a41bbadc2537fe2de9ba535126547e0cf_RERUN_20260908",
-    "database_migration_count": 20,
+    "database_migration_count": 40,
     "vercel_management_visibility": {
       "team": "gold5757",
       "plan": "Hobby",
@@ -1076,6 +1076,14 @@
       ],
       "production_browser_evidence": "POST_DEPLOY_AUTH_BROWSER_E2E_PASS login_visual=ACPOS_LOGIN_CURRENT_V2 login_locales=3 front_nav=8 admin_nav=8 visible_pages=18",
       "production_dom": "548_VISIBLE_548_GOVERNED_ENABLED_362_DISABLED_186"
+    },
+    "latest_migration": "0040_kb_source_retire_audit_rls_closure",
+    "migration_0040": {
+      "status": "APPLIED_VERIFIED",
+      "checksum": "301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50",
+      "kb_rls_policy_count": 5,
+      "release_code_status": "NEW_BRANCH_RELEASE_GATE_1019_PASS",
+      "release_gate_run_id": 34402901556
     }
   },
   "neon": {
@@ -1294,5 +1302,37 @@
     "DeepSeek: current profile remains configured but DEGRADED after known HTTP 402; user explicitly deferred balance/account correction until actual formal use.",
     "OpenRouter: current profile remains configured but DEGRADED after known HTTP 401; user explicitly deferred credential replacement until actual formal use.",
     "Do not repeatedly retest DeepSeek/OpenRouter until the user decides to activate those providers for formal use."
+  ],
+  "database_migration_count": 40,
+  "current_item": {
+    "id": "PRODUCTION_EFFECTFUL_RUNTIME_CLOSURE",
+    "status": "IN_PROGRESS",
+    "exact_breakpoint": "VersionLockService decideLockReview -> child_lock.approved -> WorkPackageCompiler -> TaskOrchestrator -> InstructionCompiler",
+    "evidence": [
+      "Production migration 40/40",
+      "department_tasks=1 TEST_ONLY WAITING_DEPENDENCY",
+      "department_script_views=0",
+      "task_input_manifests=0",
+      "instruction_packages=0",
+      "canonical_script_versions=0",
+      "script_projection_rules=0",
+      "quality_criteria_versions=0",
+      "rights_profiles=0",
+      "route_policies=0"
+    ],
+    "next_executable_item": "Materialize canonical VersionLockService decision port and strict compiler chain without fake/latest/default inputs."
+  },
+  "remaining_queue": [
+    "CORE true gate projection instead of busy-only enabled",
+    "VersionLockService decideLockReview with separation-of-duties",
+    "WorkPackageCompiler deterministic materialization from approved ChildLock",
+    "InstructionCompiler script view + input manifest + instruction package",
+    "ASSET/VIDEO/EDIT/VOICE/QA positive Production effectful E2E",
+    "IAM/ERP/AIAPI/SOC Production mutation acceptance",
+    "AI Conversation Production E2E",
+    "Production exhaustive enabled-control acceptance with persistence/reload/cleanup",
+    "1453 legacy control+action denominator recomputation plus Current expansion seal",
+    "25 Gate full recomputation",
+    "External provider matrix DeepSeek/OpenRouter if credentials/billing become valid"
   ]
 }
