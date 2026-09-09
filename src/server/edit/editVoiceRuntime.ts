@@ -2,6 +2,7 @@ import type { EditVoiceOperationId } from "@/domain/edit/editRuntimeContract";
 import { executeControlledEditVoiceTestOperation, isControlledEditServerTestMode } from "@/server/testing/controlledEditTestRuntime";
 import { namedReason } from "@/server/shared/namedRuntimeError";
 export type EditVoiceRequest={operation_id:EditVoiceOperationId;correlation_id:string;path_params:Record<string,string>;payload:unknown;action_uid?:string|null};
+export type EditVoiceOperationResult={ok:true;value:unknown;correlation_id:string}|{ok:false;status:number;error_uid:string;reason_code:string;correlation_id:string};
 export type EditVoiceBindings={
   authorize:(request:EditVoiceRequest)=>Promise<{allowed:true}|{allowed:false;reason_code?:string}>;
   execute:(request:EditVoiceRequest)=>Promise<unknown>;
@@ -20,7 +21,7 @@ async function ensureProductionBinding(){
 }
 async function audit(r:EditVoiceBindings,e:Parameters<EditVoiceBindings["audit"]>[0]){try{await r.audit(e);}catch{/* runtime stays fail-closed */}}
 function statusFor(reason:string){if(reason.includes("REQUIRED")||reason.includes("INVALID")||reason.includes("MISMATCH"))return 400;if(reason.includes("PERMISSION")||reason.includes("DENIED")||reason.includes("AUTHORIZATION"))return 403;if(reason.includes("CONFLICT"))return 409;return 503;}
-export async function executeEditVoiceOperation(request:EditVoiceRequest){
+export async function executeEditVoiceOperation(request:EditVoiceRequest):Promise<EditVoiceOperationResult>{
   await ensureProductionBinding();
   const r=bindings;
   if(!r){
