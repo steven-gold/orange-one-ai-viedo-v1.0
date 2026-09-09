@@ -384,7 +384,7 @@ function EditVisualBody() {
         <Title text={editUiText(locale, "semantic")} meta="Correction Conversation" />
         <div className={styles.correctionConversation}>
           <div className={styles.correctionContext} data-correction-region="context">{correctionContext.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-          <div className={styles.correctionHistory} data-correction-region="history"><span>History / Status</span><strong>{state.runtime_error ?? "—"}</strong></div>
+          <div className={styles.correctionHistory} data-correction-region="history"><span>History / Status</span><strong>{state.resolved.current_error_uid ?? "—"}</strong></div>
           <div className={styles.correctionCandidate} data-correction-region="candidate">{correctionCandidate.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
           <div className={styles.correctionComposer} data-correction-region="composer">{correctionComposer.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
           <div className={styles.correctionActions} data-correction-region="actions">{correctionActions.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
