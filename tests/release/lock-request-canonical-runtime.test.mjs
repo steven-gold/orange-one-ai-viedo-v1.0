@@ -47,6 +47,6 @@ test("CORE Mother and Child Lock runtime accept only the single-authority reques
   assert.match(runtime,/requestLockReview\(request,"MOTHER"\)/);
   assert.match(runtime,/requestLockReview\(request,"CHILD"\)/);
   assert.match(runtime,/acpos_runtime\.request_lock_review/);
-  assert.doesNotMatch(runtime,/async function requestMotherLock[\s\S]{0,1000}project_version_ref/);
-  assert.doesNotMatch(runtime,/async function requestChildLock[\s\S]{0,1000}blueprint_version_ref/);
+  assert.match(runtime,/async function requestMotherLock\(request:CoreRuntimeRequest\)\{\s*return requestLockReview\(request,"MOTHER"\);\s*\}/);
+  assert.match(runtime,/async function requestChildLock\(request:CoreRuntimeRequest\)\{\s*return requestLockReview\(request,"CHILD"\);\s*\}/);
 });
