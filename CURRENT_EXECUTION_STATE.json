@@ -2,17 +2,17 @@
   "schema_version": "2.0",
   "project": "ACPOS",
   "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-  "as_of": "2026-09-08T14:10:00.000+08:00",
+  "as_of": "2026-09-10T04:13:52.220+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "git": {
-    "main_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
-    "new_sha_basis": "1079fd8a718d13da20732541d9756cf6403185f3",
+    "main_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
+    "new_sha_basis": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
     "construction_branch": "new",
     "release_branch": "main",
     "main_only_vercel_deployment": true,
     "construction_branch_vercel_deployment": false,
-    "construction_branch_alignment": "NEW_AHEAD_OF_MAIN_PREDEPLOY_RUNTIME_CLOSURES_THROUGH_SOC_PUBLISH_0031",
-    "post_release_new_status": "AHEAD_OF_MAIN_NO_VERCEL_DEPLOYMENT_TRIGGERED"
+    "construction_branch_alignment": "PRODUCT_RELEASE_EXACT_MAIN_NEW_BEFORE_STATE_ONLY_EVIDENCE_COMMIT",
+    "post_release_new_status": "STATE_ONLY_EVIDENCE_UPDATE_NO_VERCEL_DEPLOYMENT"
   },
   "release_validation": {
     "final_pre_state_construction_gate": {
@@ -25,9 +25,9 @@
     },
     "current_main_release_gate": {
       "status": "PASS",
-      "run_number": 588,
-      "run_id": 34141367603,
-      "head_sha": "3b913feb4ce60b09d5c0d95fbbabdf82ea0a5801",
+      "run_number": 1017,
+      "run_id": 34399580132,
+      "head_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
       "branch": "main",
       "conclusion": "success",
       "integrated_pr": {
@@ -46,7 +46,9 @@
       "current_dom_control_acceptance": "PASS_18_PAGES_372_VISIBLE_372_GOVERNED",
       "current_dom_breakdown": "enabled=220 disabled=152",
       "standalone_docker_build": "PASS",
-      "dirty_tree_guard": "PASS"
+      "dirty_tree_guard": "PASS",
+      "login_visual_contract": "ACPOS_LOGIN_CURRENT_V2",
+      "production_login_browser_assertion": "MATERIALIZED"
     },
     "latest_provider_adapter_gate": {
       "status": "PASS",
@@ -968,20 +970,18 @@
   "production": {
     "target": "orange-one-acpos-test",
     "url": "https://orange-one-acpos-test.vercel.app",
-    "deployed_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+    "deployed_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
     "deployment_status": "PASS_EXACT_MAIN_SHA",
     "latest_verified_post_deploy": {
-      "status": "PASS_RERUN_WITH_CURRENT_PROVIDER_DATA",
-      "deployment_status_run_number": 866,
-      "deployment_status_run_id": 34149919976,
-      "run_attempt": 2,
-      "head_sha": "dc84346a41bbadc2537fe2de9ba535126547e0cf",
+      "status": "PASS_LOGIN_VISUAL_CURRENT_V2",
+      "run_number": 1324,
+      "run_id": 34399631230,
+      "head_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
       "http_smoke": "PASS_READY_200_ENVIRONMENT_PRODUCTION_RELEASE_SHA_EXACT_PROJECTIONS_18",
       "authenticated_e2e": "PASS_LOGIN_SESSION_DASHBOARD_PROJECTIONS_18_QUEUE_PROBE_LOGOUT",
-      "browser_smoke": "PASS_54_CASES_18_PAGES_3_WIDTHS",
-      "authenticated_browser_visibility": "PASS_FRONT_NAV_8_ADMIN_NAV_8_VISIBLE_PAGES_18",
-      "current_dom_control_acceptance": "PASS_18_PAGES_519_VISIBLE_519_GOVERNED_ENABLED_319_DISABLED_200",
-      "aiapi_page_dom": "PASS_ROUTE_/admin/aiapi_UID_admin:AIAPI-01_VISIBLE_29_ENABLED_11_DISABLED_18_GOVERNED_29"
+      "browser_smoke": "PASS_54_CASES_WIDTHS_1280_1440_1920_PAGES_18",
+      "authenticated_browser_visibility": "PASS_LOGIN_VISUAL_ACPOS_LOGIN_CURRENT_V2_LOCALES_3_FRONT_NAV_8_ADMIN_NAV_8_VISIBLE_PAGES_18",
+      "current_dom_control_acceptance": "PASS_18_PAGES_548_VISIBLE_548_GOVERNED_ENABLED_362_DISABLED_186"
     },
     "health_readiness_last_verified": "PASS_READY_200_ON_DEPLOYED_SHA_dc84346a41bbadc2537fe2de9ba535126547e0cf_RERUN_20260908",
     "database_migration_count": 20,
@@ -1058,6 +1058,24 @@
       "production_browser": "54_CASES_18_PAGES_X_3_WIDTHS_PASS",
       "production_auth_visibility": "FRONT_NAV_8_ADMIN_NAV_8_VISIBLE_PAGES_18",
       "production_dom": "491_VISIBLE_491_GOVERNED"
+    },
+    "login_visual_release": {
+      "status": "DEPLOYED_AND_ACCEPTED",
+      "product_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
+      "pr": 36,
+      "predeploy_release_gate": "#1016 PASS",
+      "main_release_gate": "#1017 PASS",
+      "production_post_deploy": "#1324 PASS",
+      "root_cause": "LOGIN_SOURCE_HAD_NOT_CHANGED_SINCE_2026_09_05_AND_EXISTING_PRODUCTION_BROWSER_ACCEPTANCE_DID_NOT_VISIT_LOGIN_UI",
+      "changes": [
+        "Current ACPOS split login surface",
+        "ORANGE ONE / ACPOS production-pipeline hero",
+        "zh-TW / zh-CN / en login locale selector",
+        "canonical POST /identity/login preserved",
+        "production browser assertion for login visual marker and locale controls"
+      ],
+      "production_browser_evidence": "POST_DEPLOY_AUTH_BROWSER_E2E_PASS login_visual=ACPOS_LOGIN_CURRENT_V2 login_locales=3 front_nav=8 admin_nav=8 visible_pages=18",
+      "production_dom": "548_VISIBLE_548_GOVERNED_ENABLED_362_DISABLED_186"
     }
   },
   "neon": {
@@ -1230,6 +1248,11 @@
       "evidence": "Release Gate #575 on new@2ae9762a passed 109 unit tests, 72 viewport Browser cases, 54 three-locale cases, 18 shell-geometry cases, 18-page DOM governance, Docker and dirty-tree. This is pre-deploy evidence only and does not change Production until merged to main.",
       "production_sha": "e00afb626bae2de451b6a07d2efa42cc46c96e51",
       "production_evidence": "#841/#842 PASS"
+    },
+    "login_visual_sync": {
+      "status": "PASS_PRODUCTION",
+      "completion": "CURRENT_LOGIN_VISUAL_DEPLOYED_AND_BROWSER_VERIFIED",
+      "evidence": "main/new product SHA 5dd33537...; Vercel success; main Release Gate #1017; Post-Deploy #1324; Production browser asserted ACPOS_LOGIN_CURRENT_V2 and 3 locale controls."
     }
   },
   "blockers": [
