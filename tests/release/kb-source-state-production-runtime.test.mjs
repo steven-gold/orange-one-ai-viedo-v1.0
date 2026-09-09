@@ -44,8 +44,10 @@ test("KB-01 Production projection and UI use real source_version and exact state
 
   assert.match(projection, /source_version::text AS source_version/);
   assert.match(projection, /selected_source/);
-  assert.match(projection, /"KB-01-CTL-SOURCE-PAUSE": asText\(first\?\.status\) === "ACTIVE"/);
-  assert.match(projection, /"KB-01-CTL-SOURCE-RESUME": asText\(first\?\.status\) === "PAUSED"/);
+  assert.match(projection, /"KB-01-CTL-SOURCE-CREATE": canConfigure/);
+  assert.match(projection, /"KB-01-CTL-SOURCE-SAVE": canConfigure && sourceStatus === "DRAFT"/);
+  assert.match(projection, /"KB-01-CTL-SOURCE-PAUSE": canConfigure && sourceStatus === "ACTIVE"/);
+  assert.match(projection, /"KB-01-CTL-SOURCE-RESUME": canConfigure && sourceStatus === "PAUSED"/);
 
   assert.match(visual, /window\.prompt/);
   assert.match(visual, /reason: reason\.trim\(\)/);
