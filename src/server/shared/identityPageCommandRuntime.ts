@@ -511,6 +511,7 @@ async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: tr
   const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["CORE-01"]);
   if(!page.allowed)return page;
   const governedPermission:Partial<Record<CoreRuntimeRequest["port_uid"],string>>={
+    "CORE-01-PORT-PROJECT-CREATE":"api:createProjectDraft",
     "CORE-01-PORT-CANDIDATE-CREATE":"api:createCandidate",
     "CORE-01-PORT-CANDIDATE-COMPARE":"api:compareCandidates",
     "CORE-01-PORT-CANDIDATE-DECIDE":"api:decideCandidate",
@@ -566,57 +567,6 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
   if(isProductionCoreGovernedPort(request.port_uid)) return executeProductionCoreGovernedPort(request);
 
   switch (request.port_uid) {
-    case "CORE-01-PORT-PROJECT-CREATE": {
-      const title = asText(payload.title) ?? asText(payload.fixture_label);
-      if (!title) throw new NamedRuntimeError("PROJECT_TITLE_REQUIRED");
-      const project_code = asText(payload.project_code) ?? slugCode(title, "PRJ");
-      const workspaceRows = await sql`
-        SELECT workspace_id::text AS workspace_id
-        FROM workspaces
-        WHERE status = 'READY'
-        ORDER BY created_at ASC
-        LIMIT 1
-      `;
-      const workspace_id = asText(firstRow(workspaceRows)?.workspace_id);
-      if (!workspace_id) throw new NamedRuntimeError("WORKSPACE_NOT_READY");
-      const inserted = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          INSERT INTO projects (workspace_id, project_code, title, owner_id, status)
-          VALUES (${workspace_id}::uuid, ${project_code}, ${title}, ${actor.user_id}::uuid, 'DRAFT')
-          RETURNING project_id::text AS project_id
-        `,
-      );
-      const project_id = asText(firstRow(inserted)?.project_id);
-      if (!project_id) throw new NamedRuntimeError("PROJECT_INSERT_FAILED");
-      const content_hash = sha256(`project:${project_id}:v1:${title}:${project_code}`);
-      const story_core = JSON.stringify({ title });
-      const versionRows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          INSERT INTO project_versions (
-            project_id, version_no, status, story_core, content_hash, created_by
-          ) VALUES (
-            ${project_id}::uuid, 1, 'DRAFT', ${story_core}::jsonb, ${content_hash}, ${actor.user_id}::uuid
-          )
-          RETURNING project_version_id::text AS project_version_ref
-        `,
-      );
-      const project_version_ref = asText(firstRow(versionRows)?.project_version_ref);
-      if (!project_version_ref) throw new NamedRuntimeError("PROJECT_VERSION_INSERT_FAILED");
-      await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          UPDATE projects
-          SET active_version_id = ${project_version_ref}::uuid
-          WHERE project_id = ${project_id}::uuid
-        `,
-      );
-      return { project_id, project_version_ref, project_code, title, state: "DRAFT" };
-    }
 
     case "CORE-01-PORT-PROJECT-VALIDATE": {
       const projectVersionId = asText(request.path_params?.projectVersionId);
