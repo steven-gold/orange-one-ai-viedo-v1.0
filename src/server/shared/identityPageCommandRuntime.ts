@@ -19,7 +19,7 @@ import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 import { configureQaRuntime, type QaRequest } from "@/server/qa/qaRuntime";
 import { executeProductionQaLifecycle } from "@/server/qa/productionQaLifecycleRuntime";
 import { configureKnowledgeRuntime } from "@/server/knowledge/knowledgeRuntime";
-import { transitionProductionKnowledgeSource } from "@/server/knowledge/productionKnowledgeSourceStateRuntime";
+import { mutateProductionKnowledgeSource, transitionProductionKnowledgeSource } from "@/server/knowledge/productionKnowledgeSourceStateRuntime";
 import type { KnowledgeRuntimeRequest } from "@/domain/knowledge/knowledgeRuntimeContract";
 import { configureConversationRuntime, type ConversationRequest } from "@/server/shared/conversationRuntime";
 import { configureCandidateDecisionRuntime, type CandidateDecisionRequest } from "@/server/shared/candidateDecisionRuntime";
@@ -1205,7 +1205,12 @@ async function authorizeKnowledge(request:KnowledgeRuntimeRequest):Promise<{allo
   const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["admin:KB-01"]);
   if(!page.allowed)return page;
   if(request.operation==="searchKnowledge"||request.operation==="getCitation")return{allowed:true};
-  if(request.operation==="pauseKnowledgeSource"||request.operation==="resumeKnowledgeSource"){
+  if(
+    request.operation==="createKnowledgeSource"
+    ||request.operation==="updateKnowledgeSource"
+    ||request.operation==="pauseKnowledgeSource"
+    ||request.operation==="resumeKnowledgeSource"
+  ){
     const gate=await evaluateResourceAction("permission:knowledge.source.configure","EXECUTE");
     return gate.allowed?{allowed:true}:gate;
   }
@@ -1232,6 +1237,9 @@ async function executeKnowledge(request: KnowledgeRuntimeRequest): Promise<unkno
       LIMIT 50
     `;
     return { results: [...refItems(sources), ...refItems(evidence)] };
+  }
+  if (request.operation === "createKnowledgeSource" || request.operation === "updateKnowledgeSource") {
+    return mutateProductionKnowledgeSource(request);
   }
   if (request.operation === "pauseKnowledgeSource" || request.operation === "resumeKnowledgeSource") {
     return transitionProductionKnowledgeSource(request);
