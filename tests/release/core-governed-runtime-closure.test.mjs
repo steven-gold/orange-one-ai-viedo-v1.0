@@ -198,3 +198,25 @@ test("CORE projection resolves Current candidate DNA blueprint and script refs f
   assert.match(projection,/candidate_ref: asText\(currentCandidate\.candidate_ref\)/);
   assert.match(projection,/canonical_script_source_candidate_ref/);
 });
+
+
+test("CORE Current visual exposes real prerequisite gates instead of busy-only enabled controls",async()=>{
+  const visual=await read("src/components/pages/CoreVisual.tsx");
+  assert.match(visual,/coreControlDisabledReason/);
+  for(const reason of [
+    "PROJECT_VERSION_REQUIRED",
+    "PROJECT_AND_WORK_ITEM_REQUIRED",
+    "CONVERSATION_REQUIRED",
+    "HUMAN_DECISION_REQUIRED",
+    "EXACT_CANDIDATE_REF_REQUIRED",
+    "PROJECT_CONFIRM_ADOPT_CONTRACT_NOT_BOUND",
+    "CORE_LOCK_REVIEWER_PATH_UNRESOLVED",
+    "CORE_BLUEPRINT_DOCUMENT_MATERIALIZER_NOT_BOUND",
+    "EXACT_BLUEPRINT_VERSION_REF_REQUIRED",
+  ]) assert.ok(visual.includes(reason),reason);
+  assert.match(visual,/data-disabled-reason=\{disabled \? disabledReason/);
+  assert.match(visual,/data-runtime-binding=\{disabled \? "BLOCKED" : "ACTION_BOUND"\}/);
+  assert.doesNotMatch(visual,/<ActionButton[^>]+disabled=\{isBusy\}/);
+  assert.match(visual,/CORE-01-FLD-MESSAGE"[\s\S]*disabled=\{isBusy \|\| !clientState\.conversation_id\}/);
+  assert.match(visual,/CORE-01-FLD-HUMAN-DECISION"[\s\S]*disabled=\{isBusy \|\| !clientState\.conversation_id\}/);
+});
