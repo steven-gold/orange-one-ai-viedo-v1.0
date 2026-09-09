@@ -10,6 +10,7 @@ type Sql=NonNullable<ReturnType<typeof getProductionNeonSql>>;
 type Row=Record<string,unknown>;
 
 const GOVERNED_PORTS=new Set<CoreRuntimeRequest["port_uid"]>([
+  "CORE-01-PORT-PROJECT-CREATE",
   "CORE-01-PORT-CANDIDATE-CREATE",
   "CORE-01-PORT-CANDIDATE-COMPARE",
   "CORE-01-PORT-CANDIDATE-DECIDE",
@@ -58,6 +59,81 @@ async function context():Promise<{sql:Sql;actor_user_id:string;session_token_has
 
 export function isProductionCoreGovernedPort(port_uid:CoreRuntimeRequest["port_uid"]):boolean{
   return GOVERNED_PORTS.has(port_uid);
+}
+
+async function createProjectDraft(request:CoreRuntimeRequest){
+  const payload=rec(request.payload);
+  const workspaceId=requiredUuid(payload.workspace_id,"PROJECT_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED");
+  const projectCode=required(payload.project_code,"PROJECT_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED");
+  const title=required(payload.title,"PROJECT_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED");
+  const storyCore=nonEmptyObject(payload.story_core,"PROJECT_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED");
+  if(payload.source_version_ref!==undefined&&payload.source_version_ref!==null&&payload.source_version_ref!==""){
+    throw new NamedRuntimeError("PROJECT_DRAFT_REGISTERED_SCHEMA_PAYLOAD_REQUIRED");
+  }
+  const {sql,actor_user_id,session_token_hash}=await context();
+  const workspace=first(await runRlsActorQuery(sql,session_token_hash,sql`
+    SELECT workspace_id::text AS workspace_id,status::text AS status
+    FROM public.workspaces
+    WHERE workspace_id=${workspaceId}::uuid AND status='READY'
+    LIMIT 1
+  `));
+  if(!workspace)throw new NamedRuntimeError("WORKSPACE_NOT_READY");
+
+  const canonicalDocument=stableValue({
+    workspace_id:workspaceId,
+    project_code:projectCode,
+    title,
+    story_core:storyCore,
+  });
+  const contentHash=sha(canonicalDocument);
+
+  const existing=first(await runRlsActorQuery(sql,session_token_hash,sql`
+    SELECT p.project_id::text AS project_id,p.active_version_id::text AS project_version_ref,
+           pv.content_hash::text AS content_hash,pv.story_core
+    FROM public.projects p
+    LEFT JOIN public.project_versions pv ON pv.project_version_id=p.active_version_id
+    WHERE p.workspace_id=${workspaceId}::uuid AND p.project_code=${projectCode}
+    LIMIT 1
+  `));
+  if(existing){
+    if(
+      text(existing.content_hash)!==contentHash
+      ||JSON.stringify(stableValue(existing.story_core))!==JSON.stringify(stableValue(storyCore))
+    ) throw new NamedRuntimeError("PROJECT_CODE_ALREADY_EXISTS_WITH_DIFFERENT_DRAFT");
+    return{
+      project_id:text(existing.project_id),project_version_ref:text(existing.project_version_ref),
+      workspace_id:workspaceId,project_code:projectCode,title,state:"DRAFT",content_hash:contentHash,idempotent_replay:true,
+    };
+  }
+
+  const projectId=crypto.randomUUID();
+  const projectVersionId=crypto.randomUUID();
+  const [projectRows,versionRows,activateRows]=await runRlsActorTransaction(sql,session_token_hash,[
+    sql`
+      INSERT INTO public.projects(project_id,workspace_id,project_code,title,owner_id,status)
+      VALUES(${projectId}::uuid,${workspaceId}::uuid,${projectCode},${title},${actor_user_id}::uuid,'DRAFT')
+      RETURNING project_id::text AS project_id
+    `,
+    sql`
+      INSERT INTO public.project_versions(
+        project_version_id,project_id,version_no,status,story_core,content_hash,created_by
+      ) VALUES(
+        ${projectVersionId}::uuid,${projectId}::uuid,1,'DRAFT',${JSON.stringify(storyCore)}::jsonb,${contentHash},${actor_user_id}::uuid
+      )
+      RETURNING project_version_id::text AS project_version_ref
+    `,
+    sql`
+      UPDATE public.projects
+      SET active_version_id=${projectVersionId}::uuid
+      WHERE project_id=${projectId}::uuid AND owner_id=${actor_user_id}::uuid
+      RETURNING project_id::text AS project_id
+    `,
+  ]);
+  if(!first(projectRows)||!first(versionRows)||!first(activateRows))throw new NamedRuntimeError("PROJECT_CREATE_TRANSACTION_INCOMPLETE");
+  return{
+    project_id:projectId,project_version_ref:projectVersionId,workspace_id:workspaceId,
+    project_code:projectCode,title,story_core:storyCore,state:"DRAFT",content_hash:contentHash,idempotent_replay:false,
+  };
 }
 
 async function createCandidate(request:CoreRuntimeRequest){
@@ -563,6 +639,7 @@ async function canonicalScript(request:CoreRuntimeRequest){
 
 export async function executeProductionCoreGovernedPort(request:CoreRuntimeRequest):Promise<unknown>{
   switch(request.port_uid){
+    case "CORE-01-PORT-PROJECT-CREATE":return createProjectDraft(request);
     case "CORE-01-PORT-CANDIDATE-CREATE":return createCandidate(request);
     case "CORE-01-PORT-CANDIDATE-COMPARE":return compareCandidates(request);
     case "CORE-01-PORT-CANDIDATE-DECIDE":return decideCandidate(request);
