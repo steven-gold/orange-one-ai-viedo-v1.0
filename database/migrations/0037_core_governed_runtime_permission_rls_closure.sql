@@ -26,10 +26,10 @@ BEGIN
       )
     )
     AND resource_key IN(
-      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock',
+      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock','api:createTopic',
       'api:createBlueprint','api:validateBlueprint','api:approveBlueprint','api:requestChildLock','api:getCanonicalScript'
     );
-  IF resource_count<>11 THEN
+  IF resource_count<>12 THEN
     RAISE EXCEPTION 'CORE0037_API_RESOURCE_COUNT_MISMATCH:%',resource_count;
   END IF;
 
@@ -48,7 +48,7 @@ BEGIN
   FROM public.permission_resources r
   WHERE r.active=true
     AND r.resource_key IN(
-      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock',
+      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock','api:createTopic',
       'api:createBlueprint','api:validateBlueprint','api:approveBlueprint','api:requestChildLock','api:getCanonicalScript'
     )
   ON CONFLICT(user_id,resource_id,action,version_no) DO NOTHING;
@@ -66,6 +66,7 @@ GRANT SELECT ON
   public.canonical_script_versions
 TO acpos_app_runtime;
 
+GRANT INSERT ON public.topic_versions TO acpos_app_runtime;
 GRANT INSERT,UPDATE ON public.topic_blueprints TO acpos_app_runtime;
 GRANT INSERT ON public.blueprint_versions TO acpos_app_runtime;
 GRANT UPDATE(status,validation_result,frozen_at) ON public.blueprint_versions TO acpos_app_runtime;
@@ -82,6 +83,27 @@ USING (
     SELECT 1 FROM public.topics t
     WHERE t.topic_id=topic_versions.topic_id
       AND acpos_runtime.can_access_project(t.project_id)
+  )
+);
+
+DROP POLICY IF EXISTS acpos_core_topic_versions_insert ON public.topic_versions;
+CREATE POLICY acpos_core_topic_versions_insert ON public.topic_versions
+FOR INSERT TO acpos_app_runtime
+WITH CHECK (
+  created_by=acpos_runtime.current_actor_user_id()
+  AND version_no=1
+  AND source_version_id IS NULL
+  AND EXISTS(
+    SELECT 1
+    FROM public.topics t
+    JOIN public.mother_locks ml ON ml.mother_lock_id=t.mother_lock_id
+    JOIN public.project_versions pv ON pv.project_version_id=topic_versions.mother_project_version_id
+    WHERE t.topic_id=topic_versions.topic_id
+      AND ml.project_id=t.project_id
+      AND ml.project_version_id=topic_versions.mother_project_version_id
+      AND ml.status='MOTHER_LOCKED'
+      AND pv.project_id=t.project_id
+      AND acpos_runtime.can_manage_project(t.project_id)
   )
 );
 
@@ -339,15 +361,16 @@ BEGIN
   JOIN acpos_runtime.accounts ac ON lower(ac.email)=lower(u.email::text)
   WHERE ac.id='runtime-admin'
     AND r.resource_key IN(
-      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock',
+      'api:createCandidate','api:compareCandidates','api:decideCandidate','api:requestDNALock','api:submitCoreReview','api:requestMotherLock','api:createTopic',
       'api:createBlueprint','api:validateBlueprint','api:approveBlueprint','api:requestChildLock','api:getCanonicalScript'
     )
     AND a.action='EXECUTE' AND a.effect='ALLOW' AND a.status='APPROVED';
-  IF assignment_count<>11 THEN
+  IF assignment_count<>12 THEN
     RAISE EXCEPTION 'CORE0037_ASSIGNMENT_COUNT_MISMATCH:%',assignment_count;
   END IF;
 
-  IF NOT has_table_privilege('acpos_app_runtime','public.candidate_versions','SELECT')
+  IF NOT has_table_privilege('acpos_app_runtime','public.topic_versions','SELECT,INSERT')
+     OR NOT has_table_privilege('acpos_app_runtime','public.candidate_versions','SELECT')
      OR NOT has_table_privilege('acpos_app_runtime','public.candidate_decisions','SELECT,INSERT')
      OR NOT has_table_privilege('acpos_app_runtime','public.blueprint_versions','SELECT')
      OR NOT has_column_privilege('acpos_app_runtime','public.blueprint_versions','status','UPDATE')
@@ -361,7 +384,7 @@ $$;
 INSERT INTO schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0037_core_governed_runtime_permission_rls_closure',
-  'dbf666eda38405ed59e7008e72612b68e2e71cb8eeeec8257747654692d8b454',
+  '2f3bb6b3ea9b25a7e134c5d181d09eefc2e3a8eee555fe8d715966b8d4480fbb',
   'migration-runner',
   'CR-CORE-0037-PENDING-PRODUCTION-APPLY'
 )
