@@ -47,7 +47,9 @@ test("production authenticated acceptance requires exact 18-page API and browser
   assert.match(browser, /adminNavIds/);
   assert.match(browser, /AUTH_BROWSER_FRONT_NAV_MISMATCH/);
   assert.match(browser, /AUTH_BROWSER_ADMIN_NAV_MISMATCH/);
-  assert.match(browser, /POST_DEPLOY_AUTH_BROWSER_E2E_PASS front_nav=8 admin_nav=8 visible_pages=18/);
+  assert.match(browser, /POST_DEPLOY_AUTH_BROWSER_E2E_PASS login_visual=ACPOS_LOGIN_CURRENT_V2 login_locales=3 front_nav=8 admin_nav=8 visible_pages=18/);
+  assert.match(browser, /AUTH_BROWSER_LOGIN_VISUAL_MARKER_MISSING/);
+  assert.match(browser, /AUTH_BROWSER_LOGIN_LOCALE_COUNT_INVALID/);
 
   assert.match(workflow, /Run deployed ACPOS authenticated browser visibility E2E/);
   assert.match(workflow, /node scripts\/post-deploy-auth-browser-e2e\.mjs/);
