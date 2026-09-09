@@ -63,13 +63,21 @@ BEGIN
 
   SELECT count(*) INTO v_count FROM public.topic_blueprints WHERE topic_production_contract_id=v_contract;
   IF v_count<>1 THEN RAISE EXCEPTION 'CLEANUP0043_TEST_BLUEPRINT_CARDINALITY_INVALID'; END IF;
-  SELECT topic_blueprint_id,master_blueprint_id,active_version_id
-    INTO v_topic_blueprint,v_master_blueprint,v_blueprint_version
+  SELECT topic_blueprint_id,master_blueprint_id
+    INTO v_topic_blueprint,v_master_blueprint
   FROM public.topic_blueprints
   WHERE topic_production_contract_id=v_contract;
 
+  SELECT count(*) INTO v_count
+  FROM public.blueprint_versions
+  WHERE topic_blueprint_id=v_topic_blueprint;
+  IF v_count<>1 THEN RAISE EXCEPTION 'CLEANUP0043_TEST_BLUEPRINT_VERSION_CARDINALITY_INVALID'; END IF;
+  SELECT blueprint_version_id INTO v_blueprint_version
+  FROM public.blueprint_versions
+  WHERE topic_blueprint_id=v_topic_blueprint
+    AND blueprint_document->>'purpose'='TEST_ONLY';
   IF v_blueprint_version IS NULL THEN
-    RAISE EXCEPTION 'CLEANUP0043_TEST_BLUEPRINT_VERSION_MISSING';
+    RAISE EXCEPTION 'CLEANUP0043_TEST_BLUEPRINT_VERSION_MARKER_INVALID';
   END IF;
 
   SELECT count(*) INTO v_count
@@ -181,7 +189,7 @@ $$;
 INSERT INTO public.schema_migration_history(migration_id,checksum,applied_by,approval_ref)
 VALUES(
   '0043_production_test_only_lineage_cleanup',
-  'b56af22f743bafc0fcfc6dffd8856123da77d705f4e64c6120d2e7096bcd2c97',
+  '569f0130d2c10b6cb75060a7269b3c82c7bee7682edf8068566a5be442efce2b',
   'migration-runner',
   'CR-RUNTIME-0043'
 )

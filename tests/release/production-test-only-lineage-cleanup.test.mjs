@@ -12,13 +12,14 @@ test("0043 removes only the historical TEST_ONLY production lineage and creates 
   const idx=migration.indexOf(sep);
   assert.ok(idx>0);
   const checksum=createHash("sha256").update(migration.slice(0,idx)).digest("hex");
-  assert.equal(checksum,"b56af22f743bafc0fcfc6dffd8856123da77d705f4e64c6120d2e7096bcd2c97");
-  assert.ok(manifest.includes("b56af22f743bafc0fcfc6dffd8856123da77d705f4e64c6120d2e7096bcd2c97"));
+  assert.equal(checksum,"569f0130d2c10b6cb75060a7269b3c82c7bee7682edf8068566a5be442efce2b");
+  assert.ok(manifest.includes("569f0130d2c10b6cb75060a7269b3c82c7bee7682edf8068566a5be442efce2b"));
   assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 43/);
 
   for(const marker of [
     "TEST-PRJ-001","TEST_ONLY","TEST-1","TEST-TPL-VIDEO","TEST-GOAL-001","TEST-OUTPUT",
     "CLEANUP0043_TEST_WORK_PACKAGE_MARKER_INVALID",
+    "CLEANUP0043_TEST_BLUEPRINT_VERSION_MARKER_INVALID",
     "CLEANUP0043_TEST_MOTHER_REVIEW_MARKER_INVALID",
     "CLEANUP0043_TEST_CHILD_REVIEW_MARKER_INVALID",
     "CLEANUP0043_TEST_TEMPLATE_SHARED",
