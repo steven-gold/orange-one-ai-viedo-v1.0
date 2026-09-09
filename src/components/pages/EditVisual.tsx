@@ -364,7 +364,7 @@ function EditVisualBody() {
 
         <section className={`${styles.panel} ${styles.timelinePanel}`} data-section-id="EDIT-01-SEC-05" data-visual-uid="EDIT-01-VIS-TIMELINE" data-component-uid="EDIT-01-CMP-TIMELINE" data-main-timeline="true">
           <div className={styles.timelineHeader}>
-            <Title text={editUiText(locale, "timeline")} meta="Main Timeline · viewport locked" />
+            <Title text={editUiText(locale, "timeline")} />
             <div className={styles.timelineTools} data-section-id="EDIT-01-SEC-04" data-visual-uid="EDIT-01-VIS-RANGE" data-component-uid="EDIT-01-CMP-PRECISION">{RANGE.slice(0, 8).map((spec) => <Control key={spec.id} spec={spec} compact />)}</div>
           </div>
           <div className={styles.timelineLayers} data-timeline-legacy-merge="MERGE_VISUAL_ONLY">
@@ -381,10 +381,10 @@ function EditVisualBody() {
       </div>
       <aside className={styles.inspectorColumn} data-layout-column="right" data-layout-role="right-inspector-correction">
       {correctionVisible ? <section className={`${styles.panel} ${styles.semanticPanel}`} data-section-id="EDIT-01-SEC-07" data-visual-uid="EDIT-01-VIS-INSPECTOR" data-component-uid="EDIT-01-CMP-API" data-stage-surface="correction-conversation" data-correction-ui="full-conversation">
-        <Title text={editUiText(locale, "semantic")} meta="Correction Conversation" />
+        <Title text={editUiText(locale, "semantic")} />
         <div className={styles.correctionConversation}>
           <div className={styles.correctionContext} data-correction-region="context">{correctionContext.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
-          <div className={styles.correctionHistory} data-correction-region="history"><span>History / Status</span><strong>{state.resolved.current_error_uid ?? "—"}</strong></div>
+          <div className={styles.correctionHistory} data-correction-region="history"><span>{editUiText(locale, "semantic")}</span><strong>{state.resolved.current_error_uid ?? "—"}</strong></div>
           <div className={styles.correctionCandidate} data-correction-region="candidate">{correctionCandidate.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
           <div className={styles.correctionComposer} data-correction-region="composer">{correctionComposer.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
           <div className={styles.correctionActions} data-correction-region="actions">{correctionActions.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
