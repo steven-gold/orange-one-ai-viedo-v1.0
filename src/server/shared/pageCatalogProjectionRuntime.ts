@@ -481,7 +481,7 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     ORDER BY c.version_no DESC,c.created_at DESC
     LIMIT 10
   `)):[];
-  const currentCandidate=asRecord(candidateRows[0]??null);
+  const currentCandidate=asRecord(candidateRows[0]??null)??{};
 
   const dnaRows=currentProjectId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
     SELECT dna_version_id::text AS dna_version_ref,dna_type,entity_key,version_no,status,checksum::text AS checksum,
@@ -491,7 +491,7 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     ORDER BY created_at DESC,dna_version_id DESC
     LIMIT 20
   `)):[];
-  const currentDna=asRecord(dnaRows[0]??null);
+  const currentDna=asRecord(dnaRows[0]??null)??{};
 
   const blueprintRows=currentTopicId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
     SELECT bv.blueprint_version_id::text AS blueprint_version_ref,bv.version_no,bv.status::text AS status,
@@ -507,7 +507,7 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     ORDER BY bv.version_no DESC,bv.created_at DESC
     LIMIT 10
   `)):[];
-  const currentBlueprint=asRecord(blueprintRows[0]??null);
+  const currentBlueprint=asRecord(blueprintRows[0]??null)??{};
 
   const scriptRows=currentTopicId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
     SELECT canonical_script_version_id::text AS canonical_script_ref,version_no,status::text AS status,
@@ -517,7 +517,7 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     ORDER BY version_no DESC,created_at DESC
     LIMIT 1
   `)):[];
-  const currentScript=asRecord(scriptRows[0]??null);
+  const currentScript=asRecord(scriptRows[0]??null)??{};
 
   const lockTargetIds=[first?.project_version_ref,asText(currentBlueprint.blueprint_version_ref)].filter((value):value is string=>Boolean(value));
   const lockRows=lockTargetIds.length?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
@@ -528,11 +528,11 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     ORDER BY created_at DESC
     LIMIT 10
   `)):[];
-  const currentLock=asRecord(lockRows[0]??null);
+  const currentLock=asRecord(lockRows[0]??null)??{};
   const structuredDecision=currentCandidate.structured_document&&typeof currentCandidate.structured_document==="object"
     ? JSON.stringify(currentCandidate.structured_document)
     : null;
-  const scriptLineage=asRecord(asRecord(currentScript.script_document).identity_and_lineage);
+  const scriptLineage=asRecord((asRecord(currentScript.script_document)??{}).identity_and_lineage)??{};
 
   return {
     refs: {
