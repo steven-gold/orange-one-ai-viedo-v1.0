@@ -69,7 +69,8 @@ test("CORE ConversationThread work-item lineage has a dedicated immutable owner 
   assert.match(migration,/GRANT SELECT,INSERT ON public\.core_conversation_thread_bindings TO acpos_app_runtime/);
   assert.match(migration,/384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d/);
   assert.match(manifest,/0038_core_conversation_thread_work_item_lineage[\s\S]*384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d/);
-  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 42/);
+  const currentCeiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1] ?? 0);
+  assert.ok(currentCeiling>=38,`migration ceiling must include 0038, found ${currentCeiling}`);
 
   assert.match(identity,/runRlsActorTransaction/);
   assert.match(identity,/INSERT INTO core_conversation_thread_bindings/);
