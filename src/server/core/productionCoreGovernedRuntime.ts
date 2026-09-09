@@ -24,6 +24,7 @@ const GOVERNED_PORTS=new Set<CoreRuntimeRequest["port_uid"]>([
   "CORE-01-PORT-BLUEPRINT-VALIDATE",
   "CORE-01-PORT-BLUEPRINT-APPROVE",
   "CORE-01-PORT-CHILD-LOCK",
+  "CORE-01-PORT-LOCK-DECIDE",
   "CORE-01-PORT-CANONICAL-SCRIPT",
 ]);
 
@@ -629,6 +630,65 @@ async function requestChildLock(request:CoreRuntimeRequest){
   throw new NamedRuntimeError("CORE_LOCK_REVIEWER_PATH_UNRESOLVED");
 }
 
+async function decideLockReview(request:CoreRuntimeRequest){
+  const payload=rec(request.payload);
+  const allowedKeys=new Set(["scope","expected_version","correlation_id","idempotency_key","lock_review_id","decision","reason"]);
+  if(Object.keys(payload).some((key)=>!allowedKeys.has(key)))throw new NamedRuntimeError("LOCK_REVIEW_REQUEST_SCHEMA_INVALID");
+  const pathId=requiredUuid(request.path_params?.id,"REQUIRED_PATH_REFERENCE_MISSING:id");
+  const bodyId=requiredUuid(payload.lock_review_id,"LOCK_REVIEW_ID_INVALID");
+  if(pathId!==bodyId)throw new NamedRuntimeError("PATH_BODY_ID_MISMATCH");
+  const scope=nonEmptyObject(payload.scope,"R9_CONTEXT_REQUIRED");
+  const expectedVersion=required(payload.expected_version,"EXPECTED_VERSION_INVALID");
+  if(!/^v[1-9][0-9]*$/.test(expectedVersion))throw new NamedRuntimeError("EXPECTED_VERSION_INVALID");
+  const correlationId=requiredUuid(payload.correlation_id,"CORRELATION_ID_INVALID");
+  const idempotencyKey=required(payload.idempotency_key,"IDEMPOTENCY_KEY_INVALID");
+  if(idempotencyKey.length<16||idempotencyKey.length>128)throw new NamedRuntimeError("IDEMPOTENCY_KEY_INVALID");
+  const decision=required(payload.decision,"DECISION_INVALID");
+  if(decision!=="APPROVE"&&decision!=="REJECT")throw new NamedRuntimeError("DECISION_INVALID");
+  const reason=required(payload.reason,"REASON_INVALID");
+  const {sql,session_token_hash}=await context();
+  try{
+    const rows=await runRlsActorQuery(sql,session_token_hash,sql`
+      SELECT
+        lock_review_id::text,
+        lock_kind,
+        decision_status,
+        review_version,
+        lock_ref::text,
+        idempotent_replay
+      FROM acpos_runtime.decide_lock_review(
+        ${pathId}::uuid,
+        ${expectedVersion},
+        ${JSON.stringify(scope)}::jsonb,
+        ${decision},
+        ${reason},
+        ${correlationId}::uuid,
+        ${idempotencyKey}
+      )
+    `);
+    const row=first(rows);
+    if(!row)throw new NamedRuntimeError("LOCK_REVIEW_DECISION_WRITE_FAILED");
+    return{
+      lock_review_id:text(row.lock_review_id),
+      lock_kind:text(row.lock_kind),
+      decision_status:text(row.decision_status),
+      review_version:Number(row.review_version),
+      lock_ref:text(row.lock_ref),
+      idempotent_replay:row.idempotent_replay===true,
+      correlation_id:correlationId,
+    };
+  }catch(error){
+    const message=error instanceof Error?error.message:String(error);
+    for(const code of [
+      "PERMISSION_OR_SCOPE_DENIED","SEPARATION_OF_DUTIES_VIOLATION","LOCK_REVIEW_NOT_FOUND",
+      "LOCK_REVIEW_STATE_CONFLICT","VERSION_CONFLICT","IDEMPOTENCY_CONFLICT","EXPECTED_VERSION_INVALID",
+      "DECISION_INVALID","REASON_INVALID","IDEMPOTENCY_KEY_INVALID","R9_CONTEXT_REQUIRED",
+      "SCOPE_WORKSPACE_MISMATCH","SCOPE_PROJECT_MISMATCH","SCOPE_TOPIC_MISMATCH","LOCK_REVIEW_TARGET_LINEAGE_INVALID",
+    ])if(message.includes(code))throw new NamedRuntimeError(code);
+    throw error;
+  }
+}
+
 async function canonicalScript(request:CoreRuntimeRequest){
   const topicId=requiredUuid(request.path_params?.id,"REQUIRED_PATH_REFERENCE_MISSING:id");
   const {sql,session_token_hash}=await context();
@@ -702,6 +762,7 @@ export async function executeProductionCoreGovernedPort(request:CoreRuntimeReque
     case "CORE-01-PORT-BLUEPRINT-VALIDATE":return validateBlueprint(request);
     case "CORE-01-PORT-BLUEPRINT-APPROVE":return approveBlueprint(request);
     case "CORE-01-PORT-CHILD-LOCK":return requestChildLock(request);
+    case "CORE-01-PORT-LOCK-DECIDE":return decideLockReview(request);
     case "CORE-01-PORT-CANONICAL-SCRIPT":return canonicalScript(request);
     default:throw new NamedRuntimeError("CORE_GOVERNED_PORT_NOT_REGISTERED");
   }

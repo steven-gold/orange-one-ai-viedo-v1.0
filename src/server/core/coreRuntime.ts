@@ -48,6 +48,12 @@ export async function executeCorePort(request: CoreRuntimeRequest): Promise<Core
   } catch (error) {
     const reason_code = namedReason(error, "CORE_PORT_EXECUTION_FAILED");
     await audit(runtime, { ...request, outcome: "ERROR", reason_code });
-    return { ok: false, error_uid: "CORE-01-ERR-CONTEXT-001", reason_code, correlation_id: request.correlation_id, status: 503 };
+    const status =
+      reason_code.includes("PERMISSION") || reason_code.includes("AUTHORIZATION") || reason_code.includes("SEPARATION_OF_DUTIES") ? 403 :
+      reason_code.includes("NOT_FOUND") ? 404 :
+      reason_code.includes("VERSION_CONFLICT") || reason_code.includes("STATE_CONFLICT") || reason_code.includes("IDEMPOTENCY_CONFLICT") || reason_code.includes("MISMATCH") ? 409 :
+      reason_code.includes("INVALID") || reason_code.includes("REQUIRED") || reason_code.includes("R9_CONTEXT") ? 400 :
+      reason_code.includes("CONTRACT") ? 422 : 503;
+    return { ok: false, error_uid: status===403 ? "CORE-01-ERR-PERM-001" : "CORE-01-ERR-CONTEXT-001", reason_code, correlation_id: request.correlation_id, status };
   }
 }
