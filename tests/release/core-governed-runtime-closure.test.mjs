@@ -63,10 +63,12 @@ test("CORE ConversationThread work-item lineage has a dedicated immutable owner 
   assert.match(migration,/CORE0038_TOPIC_PROJECT_LINEAGE_MISMATCH/);
   assert.match(migration,/CORE0038_PARENT_THREAD_SCOPE_MISMATCH/);
   assert.match(migration,/CORE0038_SOURCE_MESSAGE_PARENT_MISMATCH/);
+  assert.match(migration,/CORE0038_BOUND_CONVERSATION_LINEAGE_IMMUTABLE/);
+  assert.match(migration,/core_bound_conversation_lineage_guard/);
   assert.match(migration,/ALTER TABLE public\.core_conversation_thread_bindings ENABLE ROW LEVEL SECURITY/);
   assert.match(migration,/GRANT SELECT,INSERT ON public\.core_conversation_thread_bindings TO acpos_app_runtime/);
-  assert.match(migration,/a5abe1c4f91e6a1725a6d6596bd1937693d8de839ec24a620aea66ef603ec660/);
-  assert.match(manifest,/0038_core_conversation_thread_work_item_lineage[\s\S]*a5abe1c4f91e6a1725a6d6596bd1937693d8de839ec24a620aea66ef603ec660/);
+  assert.match(migration,/d93b99515da566ce4caffab361fde27a7d5ecad1209c7e07d90e2262591f68b3/);
+  assert.match(manifest,/0038_core_conversation_thread_work_item_lineage[\s\S]*d93b99515da566ce4caffab361fde27a7d5ecad1209c7e07d90e2262591f68b3/);
   assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 38/);
 
   assert.match(identity,/runRlsActorTransaction/);
@@ -82,6 +84,8 @@ test("CORE ConversationThread work-item lineage has a dedicated immutable owner 
   assert.match(visual,/PROJECT_CORE_WORK_ITEMS/);
   assert.match(visual,/TOPIC_PRODUCTION_WORK_ITEMS/);
   assert.match(visual,/visibleThreads/);
+  assert.match(visual,/visibleTopics/);
+  assert.match(visual,/item\.project_id === clientState\.project_id/);
   assert.match(visual,/THREAD_NOT_IN_CURRENT_CONTEXT/);
 });
 
