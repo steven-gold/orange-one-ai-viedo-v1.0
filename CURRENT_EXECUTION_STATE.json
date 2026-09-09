@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T05:11:00+08:00",
+  "as_of": "2026-09-10T05:45:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
-    "new_sha": "0f5aff87d4dc14612fc68151b40210bd34728ae4",
+    "new_sha": "5cdca0478ad53bd190fe1a7312e08793b07d1f66",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -35,9 +35,9 @@
       }
     ],
     "latest_new_release_gate": {
-      "run_number": 1021,
-      "run_id": 34404462555,
-      "head_sha": "0f5aff87d4dc14612fc68151b40210bd34728ae4",
+      "run_number": 1026,
+      "run_id": 34407657348,
+      "head_sha": "5cdca0478ad53bd190fe1a7312e08793b07d1f66",
       "status": "SUCCESS"
     },
     "production_main_release_gate": {
@@ -178,18 +178,18 @@
     "project": "wild-wave-25661146",
     "branch": "main",
     "database": "neondb",
-    "migration_count": 40,
-    "latest_migration": "0040_kb_source_retire_audit_rls_closure",
+    "migration_count": 41,
+    "latest_migration": "0041_governed_lock_decision_service_identity_foundation",
     "migration_0040_checksum": "301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50",
     "permission_resources_active": 3672,
     "permission_resources_authority_seal_status": "CURRENT_EXPANSION_TALLY_NOT_SEALED",
     "approved_allow_assignments": 158,
-    "rls_tables_total": 62,
+    "rls_tables_total": 65,
     "rls_tables_by_schema": {
       "public": 58,
       "acpos_runtime": 4
     },
-    "policies_total": 123,
+    "policies_total": 128,
     "policies_by_schema": {
       "public": 115,
       "acpos_runtime": 8
@@ -209,7 +209,10 @@
       "quality_criteria_versions": 0,
       "rights_profiles": 0,
       "route_policies": 0
-    }
+    },
+    "migration_0041_checksum": "58a7d78fed454b5f1a49a18b2978f44fec248a4dd184ed4f6ea60e998c22f0c5",
+    "approved_service_identities": 2,
+    "approved_service_capabilities": 4
   },
   "construction": {
     "core_truthful_gate": {
@@ -222,8 +225,11 @@
     "materialization_breakpoint": {
       "status": "OPEN",
       "exact_chain": [
-        "Approved governed lock decision",
+        "Canonical RequestMotherLock/RequestChildLock payload adapter",
+        "Governed reviewer resolution + lock review request",
+        "Lock decision",
         "Child lock materialization",
+        "Canonical script version",
         "Work package compiler",
         "Task orchestration",
         "Department script view compiler",
@@ -242,6 +248,14 @@
         "route_policies=0"
       ],
       "rule": "Do not force-enable controls or fabricate business rows. Close the canonical owner chain."
+    },
+    "lock_decision_service_identity_foundation": {
+      "commit": "5cdca0478ad53bd190fe1a7312e08793b07d1f66",
+      "release_gate": 1026,
+      "status": "PRODUCTION_DB_APPLIED_VERIFIED_APP_PENDING_CONSOLIDATED_DEPLOYMENT",
+      "service_identities": 2,
+      "service_capabilities": 4,
+      "production_migration": "41/41"
     }
   },
   "providers": {
@@ -409,8 +423,9 @@
     "production_ready_percent": 81.5
   },
   "blockers": [
+    "Production DB is at migration 41, but application code through new@5cdca047 is not yet on Production main; consolidated deployment remains pending.",
+    "Mother/Child Lock request client/runtime still uses an older payload shape and must be aligned to the single active construction schema before positive lock-to-task E2E.",
     "Production application main does not yet contain new-branch KB 0040 runtime and CORE truthful gate corrections.",
-    "Canonical department materialization chain is incomplete before ASSET/VIDEO/EDIT/VOICE/QA positive effectful execution.",
     "QA release package evidence owner remains incomplete.",
     "ERP remaining write contracts require canonical persistence/scope closure; no unrelated JSON fallback is allowed.",
     "SOC final content-package approval/publish closure remains incomplete.",
@@ -432,5 +447,5 @@
     "Recompute control/action denominator using sealed 1453 historical baseline plus explicitly sealed Current expansion.",
     "Recompute all 25 gates from final Production evidence."
   ],
-  "next_executable_item": "Canonical department materialization ownership and compiler closure on new branch."
+  "next_executable_item": "Align Mother/Child Lock request adapter/runtime to the single active construction schema, then materialize the compiler chain."
 }

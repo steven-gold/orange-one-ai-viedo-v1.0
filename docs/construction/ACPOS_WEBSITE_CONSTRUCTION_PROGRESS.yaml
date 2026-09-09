@@ -17,10 +17,10 @@ authority:
 git:
   repository: steven-gold/orange-one-ai-viedo-v1.0
   main_sha: 5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c
-  new_sha: 0f5aff87d4dc14612fc68151b40210bd34728ae4
+  new_sha: 5cdca0478ad53bd190fe1a7312e08793b07d1f66
   latest_new_release_gate:
-    run: 1021
-    id: 34404462555
+    run: 1026
+    id: 34407657348
     status: SUCCESS
   production_main_release_gate:
     run: 1017
@@ -52,13 +52,13 @@ database:
   project: wild-wave-25661146
   branch: main
   database: neondb
-  migrations: 40/40
-  latest_migration: 0040_kb_source_retire_audit_rls_closure
+  migrations: 41/41
+  latest_migration: 0041_governed_lock_decision_service_identity_foundation
   active_permission_resources: 3672
   current_permission_tally_seal: PENDING
   approved_allow_assignments: 158
-  rls_tables: 62
-  policies: 123
+  rls_tables: 65
+  policies: 128
   provider_capabilities_approved: 4
   secret_references_approved: 4
   queues: 1
@@ -154,3 +154,11 @@ next:
   - Build permanent Production Effectful Acceptance.
   - Seal Current permission-resource expansion and final control/action denominator.
   - Recompute all 25 gates from final Production evidence.
+
+  lock_decision_service_identity_0041:
+    database_apply: APPLIED_VERIFIED
+    checksum: 58a7d78fed454b5f1a49a18b2978f44fec248a4dd184ed4f6ea60e998c22f0c5
+    service_identities: 2
+    service_capabilities: 4
+    release_gate: 1026
+    application_code_on_production_main: PENDING_CONSOLIDATED_DEPLOYMENT

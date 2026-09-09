@@ -24,12 +24,12 @@ Do not create parallel runtimes, duplicate APIs, synthetic business rows, guesse
 - Admin navigation: 8
 - Production DOM governance: 548 interactive / 548 governed / 362 enabled / 186 disabled
 - Neon Production: `wild-wave-25661146 / main / neondb`
-- Migrations: 40/40
-- Latest migration: `0040_kb_source_retire_audit_rls_closure`
+- Migrations: 41/41
+- Latest migration: `0041_governed_lock_decision_service_identity_foundation`
 - Active permission resources: 3672
 - Approved ALLOW assignments: 158
-- RLS tables: 62
-- RLS policies: 123
+- RLS tables: 65
+- RLS policies: 128
 - Approved Provider capabilities: 4
 - Approved secret references: 4
 - Queue: 1
@@ -37,8 +37,8 @@ Do not create parallel runtimes, duplicate APIs, synthetic business rows, guesse
 
 ## Verified new-branch construction
 
-- Current new SHA: `0f5aff87d4dc14612fc68151b40210bd34728ae4`
-- Release Gate #1021: SUCCESS
+- Current new SHA: `5cdca0478ad53bd190fe1a7312e08793b07d1f66`
+- Release Gate #1026: SUCCESS
 - KB retire runtime + migration 0040 application code exists on new and passed release validation.
 - CORE control gating now reports prerequisite/runtime blockers instead of marking all action controls enabled.
 - These application changes are not yet merged/deployed to Production main.
@@ -115,3 +115,15 @@ The sealed historical control/action baseline remains a denominator reference on
 ## Next executable item
 
 Close the canonical department materialization owner chain on `new`, then run positive ASSET -> VIDEO -> EDIT+VOICE -> QA effectful paths before building exhaustive Production button acceptance.
+
+
+## 0041 closure evidence
+
+- Production migration: 41/41
+- VersionLock decision DB owner: materialized
+- TaskOrchestrator service identity: APPROVED
+- InstructionCompiler service identity: APPROVED
+- Service capabilities: 4 APPROVED
+- Mother/Child Lock project-scoped RLS: enabled
+- Direct INSERT grant bypass to lock tables: removed before Production apply
+- Application code remains on new pending consolidated deployment
