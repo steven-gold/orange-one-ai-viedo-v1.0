@@ -54,9 +54,20 @@ function rows(value:unknown):Row[]{
 }
 function first(value:unknown):Row|null{return rows(value)[0]??null;}
 function sha256(value:string){return createHash("sha256").update(value).digest("hex");}
+function stableValue(value:unknown):unknown{
+  if(Array.isArray(value))return value.map(stableValue);
+  if(value&&typeof value==="object"){
+    return Object.fromEntries(Object.entries(value as Row).sort(([a],[b])=>a.localeCompare(b)).map(([key,item])=>[key,stableValue(item)]));
+  }
+  return value;
+}
+function stableJson(value:unknown){return JSON.stringify(stableValue(value));}
 function object(value:unknown):Row|null{return value&&typeof value==="object"&&!Array.isArray(value)?value as Row:null;}
 function integer(value:unknown):number|null{const parsed=typeof value==="number"?value:Number(value);return Number.isInteger(parsed)?parsed:null;}
 const AIAPI_PAGE_UID="admin:AIAPI-01";
+const SG02_PAGE_UID="admin:SG-02";
+const SG02_CRITERIA_RESOURCE_TYPE="quality_criteria_version";
+const SG02_DEPARTMENTS=new Set(["CORE","ASSET","VIDEO","EDITING","QA","RELEASE","STRATEGY","SYSTEM"]);
 const AIAPI_CLASSIFICATIONS=new Set(["PUBLIC","INTERNAL","RESTRICTED","RESTRICTED_FINANCE"]);
 type AiApiCapabilityConfig={
   provider_key:string;model_key:string;capability_version:string;accepted_classifications:string[];
@@ -80,6 +91,34 @@ function aiApiCapabilityConfig(payload:Row):AiApiCapabilityConfig|null{
   if(!output_schema)throw new NamedRuntimeError("AIAPI_CAPABILITY_OUTPUT_SCHEMA_REQUIRED");
   if(!limits)throw new NamedRuntimeError("AIAPI_CAPABILITY_LIMITS_REQUIRED");
   return{provider_key,model_key,capability_version,accepted_classifications,input_schema,output_schema,limits};
+}
+
+type QualityCriteriaConfig={
+  criteria_key:string;
+  version_no:number;
+  department:string;
+  dimensions:unknown;
+  required_checks:unknown;
+  gate_policy:Row;
+};
+function qaCriteriaConfig(payload:Row):QualityCriteriaConfig|null{
+  if(text(payload.page_uid)!==SG02_PAGE_UID)return null;
+  if(text(payload.resource_type)!==SG02_CRITERIA_RESOURCE_TYPE)return null;
+  const patch=object(payload.config_patch_json);
+  if(!patch)throw new NamedRuntimeError("SG02_CRITERIA_CONFIG_PATCH_REQUIRED");
+  const criteria_key=text(patch.criteria_key);
+  const version_no=integer(patch.version_no);
+  const department=(text(patch.department)??"").toUpperCase();
+  const dimensions=patch.dimensions;
+  const required_checks=patch.required_checks;
+  const gate_policy=object(patch.gate_policy);
+  if(!criteria_key)throw new NamedRuntimeError("SG02_CRITERIA_KEY_REQUIRED");
+  if(!version_no||version_no<1)throw new NamedRuntimeError("SG02_CRITERIA_VERSION_REQUIRED");
+  if(!SG02_DEPARTMENTS.has(department))throw new NamedRuntimeError("SG02_CRITERIA_DEPARTMENT_INVALID");
+  if(dimensions===undefined||dimensions===null||(!Array.isArray(dimensions)&&!object(dimensions)))throw new NamedRuntimeError("SG02_CRITERIA_DIMENSIONS_REQUIRED");
+  if(required_checks===undefined||required_checks===null||(!Array.isArray(required_checks)&&!object(required_checks)))throw new NamedRuntimeError("SG02_CRITERIA_REQUIRED_CHECKS_REQUIRED");
+  if(!gate_policy)throw new NamedRuntimeError("SG02_CRITERIA_GATE_POLICY_REQUIRED");
+  return{criteria_key,version_no,department,dimensions,required_checks,gate_policy};
 }
 function permissionRef(resourceId:string,action:string){return `${resourceId}|${action}`;}
 function parsePermissionRef(value:unknown){
@@ -130,15 +169,15 @@ async function upsertEntity(sql:SqlClient,input:{kind:string;id:string;parent_id
   return row;
 }
 async function audit(sql:SqlClient,input:{
-  operation:string;actorId:string;correlationId:string;entityId:string;payload:unknown;
+  operation:string;actorId:string;correlationId:string;entityId:string;payload:unknown;entityType?:string;
 }){
   const correlation=/^[0-9a-f-]{36}$/i.test(input.correlationId)?input.correlationId:crypto.randomUUID();
   const entity=/^[0-9a-f-]{36}$/i.test(input.entityId)?input.entityId:crypto.randomUUID();
   await sql`
     INSERT INTO audit_events(action,entity_type,entity_id,actor_id,actor_type,correlation_id,payload_hash)
     VALUES(
-      ${input.operation},'admin:IAM-01',${entity}::uuid,${input.actorId}::uuid,'USER',
-      ${correlation}::uuid,${sha256(JSON.stringify(input.payload))}
+      ${input.operation},${input.entityType??"admin:IAM-01"},${entity}::uuid,${input.actorId}::uuid,'USER',
+      ${correlation}::uuid,${sha256(stableJson(input.payload))}
     )
   `;
 }
@@ -284,8 +323,20 @@ async function configureResource(request:IamRuntimeRequest){
     if(!text(payload.reason))throw new NamedRuntimeError("AIAPI_CAPABILITY_CONFIG_REASON_REQUIRED");
     aiApiCapabilityConfig(payload);
   }
+  const criteria=qaCriteriaConfig(payload);
+  if(criteria){
+    if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(resourceId))throw new NamedRuntimeError("SG02_CRITERIA_RESOURCE_ID_INVALID");
+    if(!text(payload.reason))throw new NamedRuntimeError("SG02_CRITERIA_CONFIG_REASON_REQUIRED");
+    const existing=first(await sql`
+      SELECT criteria_version_id::text AS criteria_version_id,status::text AS status
+      FROM quality_criteria_versions
+      WHERE criteria_version_id=${resourceId}::uuid
+      LIMIT 1
+    `);
+    if(existing)throw new NamedRuntimeError("SG02_ACTIVE_RESOURCE_IMMUTABLE");
+  }
   const row=await upsertEntity(sql,{kind:"GOVERNED_RESOURCE",id:resourceId,status:"CONFIGURED",payload:{...payload,configured_by:actor.user_id,configured_at:new Date().toISOString()}});
-  await audit(sql,{operation:"configureGovernedResource",actorId:actor.user_id,correlationId:request.correlation_id,entityId:resourceId,payload:{version:row.version}});
+  await audit(sql,{operation:"configureGovernedResource",actorId:actor.user_id,correlationId:request.correlation_id,entityId:resourceId,payload:{version:row.version},entityType:criteria?SG02_PAGE_UID:undefined});
   return{resource_id:resourceId,state:"CONFIGURED",version:row.version};
 }
 async function approveResource(request:IamRuntimeRequest){
@@ -298,6 +349,83 @@ async function approveResource(request:IamRuntimeRequest){
   const existingPayload=rec(existing.payload);
   const currentVersion=integer(existing.version);
   const approvalRef=`IAM-APPROVAL:${request.correlation_id}`;
+
+  const criteria=qaCriteriaConfig(existingPayload);
+  if(criteria){
+    const expectedVersion=integer(requestPayload.expected_resource_version);
+    if(expectedVersion!==null&&(!currentVersion||expectedVersion!==currentVersion))throw new NamedRuntimeError("SG02_CRITERIA_RESOURCE_VERSION_CONFLICT");
+    if(!text(requestPayload.rationale))throw new NamedRuntimeError("SG02_CRITERIA_APPROVAL_RATIONALE_REQUIRED");
+    const approvedType=text(requestPayload.resource_type);
+    if(approvedType!==SG02_CRITERIA_RESOURCE_TYPE)throw new NamedRuntimeError("SG02_CRITERIA_RESOURCE_TYPE_MISMATCH");
+    if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(resourceId))throw new NamedRuntimeError("SG02_CRITERIA_RESOURCE_ID_INVALID");
+
+    const canonical={
+      criteria_key:criteria.criteria_key,
+      version_no:criteria.version_no,
+      department:criteria.department,
+      dimensions:criteria.dimensions,
+      required_checks:criteria.required_checks,
+      gate_policy:criteria.gate_policy,
+    };
+    const contentHash=sha256(stableJson(canonical));
+    const collision=first(await sql`
+      SELECT criteria_version_id::text AS criteria_version_id,criteria_key,version_no,status::text AS status,content_hash
+      FROM quality_criteria_versions
+      WHERE criteria_version_id=${resourceId}::uuid
+         OR (criteria_key=${criteria.criteria_key} AND version_no=${criteria.version_no})
+      LIMIT 1
+    `);
+    if(collision)throw new NamedRuntimeError(
+      text(collision.criteria_version_id)===resourceId?"SG02_ACTIVE_RESOURCE_IMMUTABLE":"SG02_CRITERIA_VERSION_CONFLICT"
+    );
+    const approvedPayload={
+      ...existingPayload,
+      approved_by:actor.user_id,
+      approved_at:new Date().toISOString(),
+      approval_ref:approvalRef,
+      approval_rationale:text(requestPayload.rationale),
+      criteria_content_hash:contentHash,
+    };
+    await sql.transaction([
+      sql`
+        INSERT INTO quality_criteria_versions(
+          criteria_version_id,criteria_key,version_no,department,dimensions,required_checks,gate_policy,status,content_hash
+        ) VALUES(
+          ${resourceId}::uuid,${criteria.criteria_key},${criteria.version_no},${criteria.department}::department_code,
+          ${JSON.stringify(criteria.dimensions)}::jsonb,${JSON.stringify(criteria.required_checks)}::jsonb,
+          ${JSON.stringify(criteria.gate_policy)}::jsonb,'APPROVED',${contentHash}
+        )
+      `,
+      sql`
+        INSERT INTO acpos_runtime.entities(kind,id,parent_id,status,version,payload)
+        VALUES('GOVERNED_RESOURCE',${resourceId},${text(existing.parent_id)},'APPROVED',1,${JSON.stringify(approvedPayload)}::jsonb)
+        ON CONFLICT(kind,id) DO UPDATE
+        SET parent_id=EXCLUDED.parent_id,
+            status='APPROVED',
+            version=acpos_runtime.entities.version+1,
+            payload=EXCLUDED.payload,
+            updated_at=now()
+      `,
+    ]);
+    const row=await loadEntity(sql,"GOVERNED_RESOURCE",resourceId);
+    const materialized=first(await sql`
+      SELECT criteria_version_id::text AS criteria_version_id,criteria_key,version_no::int,department::text AS department,status::text AS status,content_hash
+      FROM quality_criteria_versions
+      WHERE criteria_version_id=${resourceId}::uuid
+      LIMIT 1
+    `);
+    if(!row||!materialized)throw new NamedRuntimeError("SG02_CRITERIA_MATERIALIZATION_FAILED");
+    await audit(sql,{operation:"approveGovernedResource",actorId:actor.user_id,correlationId:request.correlation_id,entityId:resourceId,payload:{version:row.version,approval_ref:approvalRef,criteria_version_id:resourceId,content_hash:contentHash},entityType:SG02_PAGE_UID});
+    return{
+      resource_id:resourceId,state:"APPROVED",version:row.version,approval_ref:approvalRef,
+      criteria_version_id:text(materialized.criteria_version_id),
+      criteria_key:text(materialized.criteria_key),
+      criteria_version_no:integer(materialized.version_no),
+      criteria_department:text(materialized.department),
+      criteria_status:text(materialized.status),
+      criteria_content_hash:text(materialized.content_hash),
+    };
+  }
 
   if(text(existingPayload.page_uid)===AIAPI_PAGE_UID){
     const expectedVersion=integer(requestPayload.expected_resource_version);
