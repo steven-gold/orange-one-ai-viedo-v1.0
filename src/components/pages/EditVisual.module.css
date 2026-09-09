@@ -67,7 +67,7 @@
   min-height: 0;
   height: 100%;
   display: grid;
-  grid-template-rows: auto auto auto minmax(0,1fr);
+  grid-template-rows: auto auto minmax(0,1fr);
   gap: var(--section-gap);
   overflow: hidden;
 }
@@ -138,15 +138,23 @@
   padding-bottom: 2px;
 }
 
-.timelineNavigation {
-  margin-top: var(--inner-gap);
-  display: grid;
-  grid-template-columns: 1.2fr 1fr .7fr 1fr 1fr;
-  gap: 8px;
-  align-items: end;
-}
-
 .timelinePanel { min-height: 0; overflow: auto; }
+.timelineHeader { display:grid; gap:8px; position:sticky; top:0; z-index:3; padding-bottom:8px; background:var(--surface-l1); }
+.timelineTools { display:flex; align-items:end; gap:6px; overflow-x:auto; padding-bottom:2px; }
+.timelineTools > * { flex:0 0 auto; min-width:88px; }
+.timelineLayers {
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(160px,.9fr) minmax(160px,1fr) minmax(110px,.65fr) minmax(180px,1fr) minmax(160px,.9fr);
+  gap:6px;
+  margin-bottom:8px;
+  padding:8px;
+  border:1px solid var(--border-subtle);
+  border-radius:var(--button-radius);
+  background:var(--surface-input);
+}
+.timelineLayers > div { min-width:0; }
+.timelineOverview,.timelineRulerLayer,.timelinePlayheadLayer,.timelineRangeLayer,.timelineMarkerLayer { display:grid; align-items:end; }
 
 .timelineRuler {
   height: 32px;
@@ -551,3 +559,17 @@
   grid-template-columns: 22px minmax(0,1fr);
 }
 .stageActionDock .stageRail em { display:none; }
+
+
+.correctionConversation { display:grid; gap:10px; }
+.correctionContext { display:grid; gap:8px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+.correctionHistory {
+  min-height:96px; display:grid; align-content:start; gap:8px; padding:12px;
+  border:1px solid var(--border-subtle); border-radius:var(--button-radius); background:var(--surface-input);
+}
+.correctionHistory span { color:var(--text-muted); font-size:11px; }
+.correctionHistory strong { color:var(--text-secondary); font-size:12px; font-weight:500; overflow-wrap:anywhere; }
+.correctionCandidate { display:grid; gap:8px; }
+.correctionComposer { display:grid; gap:8px; }
+.correctionComposer textarea { min-height:132px; }
+.correctionActions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
