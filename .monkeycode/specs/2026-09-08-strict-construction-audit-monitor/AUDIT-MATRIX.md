@@ -134,3 +134,20 @@ Map write rule: do not hand-edit GENERATED bindings; do not assign a catalog-onl
 - 未完成: asset/video/edit/qa-aux/candidate/AIAPI effectful/DEV routes/external E2E/secret; most page execute paths
 - 待修正: live SHA, ready=200 extra fields, identity reason_code vs ready claim, stale readiness JSON; unique GENERATED binding counts still 20/13/18/10 vs freeze G
 - 已修正: construction progress YAML bootstrap claims; runtime gap report empty-register claims; 18-page C/A/G vs execute inventory; smoke 403 regex for `IDENTITY_RUNTIME_NOT_BOUND`; VIDEO readonly `VIDEO_CONTROL_GATE` includes `VIDEO-01-GATE-ASSET-BIND`; catalog-only LAYER-ELIGIBLE / INSTRUCTION / ROUTE / CONTEXT / MULTI fail-closed in `*_GATE_UIDS` and production `gate_state`
+
+## 2026-09-09 Archive Reconciliation Closure
+
+Source archive: `acpos-new-local-20260909.tar.gz`
+
+- Recorded local base inside the frozen audit: `4c43aa29fbccb3622c5446eaa54f642a8489376f`.
+- Archive files after excluding the stale `.git` worktree pointer: 576.
+- Content deltas versus the recorded base: 28 files.
+- Exact local delta blobs still present in Current: 14.
+- Superseded after explicit three-way reconciliation: 11 files — this audit matrix plus `scripts/post-deploy-smoke.mjs`, `src/components/pages/VideoVisual.tsx`, `src/components/pages/KnowledgeAdminVisual.tsx`, `src/domain/asset/assetProjectionPort.ts`, `src/domain/catalog/identityClientCommandAdapters.ts`, `src/server/asset/assetRuntime.ts`, `src/server/edit/editVoiceRuntime.ts`, `src/server/shared/identityPageCommandRuntime.ts`, `src/server/shared/pageCatalogProjectionRuntime.ts`, and `src/server/video/videoRuntime.ts`. Current versions contain later runtime/Authority closure and must not be replaced by the older archive blobs.
+- Remaining documentation deltas were absorbed into Current without restoring stale runtime status: `.monkeycode/MEMORY.md`, `authority/runtime/ACPOS_RUNTIME_BINDING_GAP_REPORT.md`, and `docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml`.
+- `.env.example` is absent from the tar payload but is not treated as a deletion because the archive's own gap report references that env contract; Current retains it.
+- Current verified construction basis for this closure: `830b780e2b4832e9751b48f2e62a28761450f5c9`.
+- Release Gate `#34315733464` on that exact basis: SUCCESS through Browser, DOM, Docker, and Dirty tree.
+- Archive merge status: `RECONCILED_COMPLETE_ON_NEW`.
+- Production effect: NONE. No `new -> main` integration, pending migration apply, or Vercel deployment is authorized by this archival reconciliation.
+
