@@ -573,54 +573,6 @@ async function executeCore(request: CoreRuntimeRequest): Promise<unknown> {
 
   switch (request.port_uid) {
 
-    case "CORE-01-PORT-PROJECT-VALIDATE": {
-      const projectVersionId = asText(request.path_params?.projectVersionId);
-      if (!projectVersionId) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:projectVersionId");
-      const rows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          UPDATE project_versions
-          SET decision_reason = 'VALIDATED'
-          WHERE project_version_id = ${projectVersionId}::uuid
-            AND status = 'DRAFT'
-          RETURNING project_version_id::text AS project_version_ref, project_id::text AS project_id
-        `,
-      );
-      const row = firstRow(rows);
-      if (!row) throw new NamedRuntimeError("PROJECT_VERSION_NOT_IN_DRAFT");
-      return { project_id: asText(row.project_id), project_version_ref: asText(row.project_version_ref), state: "VALIDATED" };
-    }
-
-    case "CORE-01-PORT-PROJECT-CONFIRM": {
-      const id = asText(request.path_params?.id);
-      if (!id) throw new NamedRuntimeError("REQUIRED_PATH_REFERENCE_MISSING:id");
-      const rows = await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          UPDATE project_versions
-          SET status = 'CORE_MODELING'
-          WHERE project_version_id = ${id}::uuid
-            AND status = 'DRAFT'
-            AND decision_reason = 'VALIDATED'
-          RETURNING project_version_id::text AS project_version_ref, project_id::text AS project_id
-        `,
-      );
-      const row = firstRow(rows);
-      if (!row) throw new NamedRuntimeError("PROJECT_VERSION_NOT_VALIDATED");
-      const project_id = asText(row.project_id);
-      await runRlsActorQuery(
-        sql,
-        identityContext.session_token_hash,
-        sql`
-          UPDATE projects
-          SET status = 'CORE_MODELING', active_version_id = ${id}::uuid
-          WHERE project_id = ${project_id}::uuid
-        `,
-      );
-      return { project_id, project_version_ref: asText(row.project_version_ref), state: "CORE_MODELING" };
-    }
 
 
     case "CORE-01-PORT-THREAD-CREATE": {
