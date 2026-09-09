@@ -318,7 +318,11 @@ export async function mutateProductionKnowledgeSource(request: KnowledgeRuntimeR
 }
 
 export async function transitionProductionKnowledgeSource(request: KnowledgeRuntimeRequest): Promise<unknown> {
-  if (request.operation !== "pauseKnowledgeSource" && request.operation !== "resumeKnowledgeSource") {
+  if (
+    request.operation !== "pauseKnowledgeSource"
+    && request.operation !== "resumeKnowledgeSource"
+    && request.operation !== "retireKnowledgeSource"
+  ) {
     throw new NamedRuntimeError("KB_UNSUPPORTED_OPERATION");
   }
 
@@ -345,11 +349,18 @@ export async function transitionProductionKnowledgeSource(request: KnowledgeRunt
     throw new NamedRuntimeError("KB01_IDEMPOTENCY_KEY_REQUIRED");
   }
 
+  const isRetire = request.operation === "retireKnowledgeSource";
   const expectedState = request.operation === "pauseKnowledgeSource" ? "ACTIVE" : "PAUSED";
-  const targetState = request.operation === "pauseKnowledgeSource" ? "PAUSED" : "ACTIVE";
+  const targetState = request.operation === "pauseKnowledgeSource"
+    ? "PAUSED"
+    : request.operation === "resumeKnowledgeSource"
+      ? "ACTIVE"
+      : "RETIRED";
   const auditAction = request.operation === "pauseKnowledgeSource"
     ? "knowledge.source.paused"
-    : "knowledge.source.resumed";
+    : request.operation === "resumeKnowledgeSource"
+      ? "knowledge.source.resumed"
+      : "knowledge.source.retired";
 
   const { sql, actor_user_id, session_token_hash } = await requireContext();
 
@@ -394,7 +405,56 @@ export async function transitionProductionKnowledgeSource(request: KnowledgeRunt
   const rows = await runRlsActorQuery(
     sql,
     session_token_hash,
-    sql`
+    isRetire
+      ? sql`
+      WITH current AS (
+        SELECT knowledge_source_id,status,source_version
+        FROM public.knowledge_sources
+        WHERE knowledge_source_id=${sourceId}::uuid
+          AND status IN ('DRAFT','ACTIVE','PAUSED')
+          AND source_version=${expectedVersion}
+      ),
+      updated AS (
+        UPDATE public.knowledge_sources s
+        SET status=${targetState},
+            source_version=source_version+1,
+            updated_at=now()
+        FROM current c
+        WHERE s.knowledge_source_id=c.knowledge_source_id
+        RETURNING s.knowledge_source_id::text AS source_id,s.status,s.source_version,c.status AS previous_status
+      ),
+      audited AS (
+        INSERT INTO public.audit_events(
+          action,
+          entity_type,
+          entity_id,
+          actor_id,
+          actor_type,
+          before_version,
+          after_version,
+          reason,
+          correlation_id,
+          payload_hash
+        )
+        SELECT
+          ${auditAction},
+          'admin:KB-01',
+          u.source_id::uuid,
+          ${actor_user_id}::uuid,
+          'USER',
+          jsonb_build_object('status',u.previous_status,'source_version',${expectedVersion}),
+          jsonb_build_object('status',u.status,'source_version',u.source_version),
+          ${reason},
+          ${request.correlation_id}::uuid,
+          encode(digest(${idempotencyKey}::text,'sha256'),'hex')
+        FROM updated u
+        RETURNING audit_event_id::text AS audit_event_id
+      )
+      SELECT u.source_id,u.status,u.source_version,a.audit_event_id
+      FROM updated u
+      CROSS JOIN audited a
+    `
+      : sql`
       WITH updated AS (
         UPDATE public.knowledge_sources
         SET status=${targetState},

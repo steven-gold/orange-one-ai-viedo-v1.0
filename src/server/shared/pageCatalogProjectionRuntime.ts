@@ -2464,6 +2464,7 @@ async function readKnowledgeFromDb(sql: SqlClient, sessionTokenHash: string, act
       "KB-01-CTL-SOURCE-SAVE": canConfigure && sourceStatus === "DRAFT",
       "KB-01-CTL-SOURCE-PAUSE": canConfigure && sourceStatus === "ACTIVE",
       "KB-01-CTL-SOURCE-RESUME": canConfigure && sourceStatus === "PAUSED",
+      "KB-01-CTL-SOURCE-RETIRE": canConfigure && (sourceStatus === "DRAFT" || sourceStatus === "ACTIVE" || sourceStatus === "PAUSED"),
     },
     entities: first ? {
       selected_source: {

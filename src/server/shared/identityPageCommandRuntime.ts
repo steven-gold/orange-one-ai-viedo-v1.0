@@ -1111,6 +1111,7 @@ async function authorizeKnowledge(request:KnowledgeRuntimeRequest):Promise<{allo
     ||request.operation==="updateKnowledgeSource"
     ||request.operation==="pauseKnowledgeSource"
     ||request.operation==="resumeKnowledgeSource"
+    ||request.operation==="retireKnowledgeSource"
   ){
     const gate=await evaluateResourceAction("permission:knowledge.source.configure","EXECUTE");
     return gate.allowed?{allowed:true}:gate;
@@ -1142,7 +1143,7 @@ async function executeKnowledge(request: KnowledgeRuntimeRequest): Promise<unkno
   if (request.operation === "createKnowledgeSource" || request.operation === "updateKnowledgeSource") {
     return mutateProductionKnowledgeSource(request);
   }
-  if (request.operation === "pauseKnowledgeSource" || request.operation === "resumeKnowledgeSource") {
+  if (request.operation === "pauseKnowledgeSource" || request.operation === "resumeKnowledgeSource" || request.operation === "retireKnowledgeSource") {
     return transitionProductionKnowledgeSource(request);
   }
   if (request.operation === "getCitation") {
