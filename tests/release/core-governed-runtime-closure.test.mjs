@@ -44,6 +44,47 @@ test("CORE legacy mutation ports enforce their registered API resources server-s
   }
 });
 
+test("CORE ConversationThread work-item lineage has a dedicated immutable owner and exact UI scope",async()=>{
+  const migration=await read("database/migrations/0038_core_conversation_thread_work_item_lineage.sql");
+  const manifest=await read("database/migrations/migration_checksum_manifest.yaml");
+  const neon=await read("src/server/database/neonRuntime.ts");
+  const identity=await read("src/server/shared/identityPageCommandRuntime.ts");
+  const projection=await read("src/server/shared/pageCatalogProjectionRuntime.ts");
+  const adapter=await read("src/domain/core/coreProjectionAdapter.ts");
+  const visual=await read("src/components/pages/CoreVisual.tsx");
+
+  assert.match(migration,/CREATE TABLE public\.core_conversation_thread_bindings/);
+  for(const column of ["conversation_id","project_id","topic_id","work_item","parent_conversation_id","source_message_id","relation_kind","created_by"]){
+    assert.ok(migration.includes(column),column);
+  }
+  assert.match(migration,/core_conversation_thread_mode_check/);
+  assert.match(migration,/core_conversation_thread_relation_check/);
+  assert.match(migration,/validate_core_conversation_thread_binding/);
+  assert.match(migration,/CORE0038_TOPIC_PROJECT_LINEAGE_MISMATCH/);
+  assert.match(migration,/CORE0038_PARENT_THREAD_SCOPE_MISMATCH/);
+  assert.match(migration,/CORE0038_SOURCE_MESSAGE_PARENT_MISMATCH/);
+  assert.match(migration,/ALTER TABLE public\.core_conversation_thread_bindings ENABLE ROW LEVEL SECURITY/);
+  assert.match(migration,/GRANT SELECT,INSERT ON public\.core_conversation_thread_bindings TO acpos_app_runtime/);
+  assert.match(migration,/a5abe1c4f91e6a1725a6d6596bd1937693d8de839ec24a620aea66ef603ec660/);
+  assert.match(manifest,/0038_core_conversation_thread_work_item_lineage[\s\S]*a5abe1c4f91e6a1725a6d6596bd1937693d8de839ec24a620aea66ef603ec660/);
+  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 38/);
+
+  assert.match(identity,/runRlsActorTransaction/);
+  assert.match(identity,/INSERT INTO core_conversation_thread_bindings/);
+  assert.match(identity,/WORK_ITEM_NOT_ALLOWED_IN_CURRENT_MODE/);
+  assert.match(identity,/TOPIC_PROJECT_LINEAGE_MISMATCH/);
+  assert.match(identity,/BRANCH_THREAD_SCOPE_MISMATCH/);
+  assert.doesNotMatch(identity,/const title = `\$\{work_item\} \/ \$\{new Date\(\)\.toISOString\(\)\}`/);
+
+  assert.match(projection,/JOIN core_conversation_thread_bindings b ON b\.conversation_id=c\.conversation_id/);
+  assert.match(projection,/const currentConversationId: string \| null = null/);
+  assert.match(adapter,/project_id: string; topic_id: string \| null; work_item: string/);
+  assert.match(visual,/PROJECT_CORE_WORK_ITEMS/);
+  assert.match(visual,/TOPIC_PRODUCTION_WORK_ITEMS/);
+  assert.match(visual,/visibleThreads/);
+  assert.match(visual,/THREAD_NOT_IN_CURRENT_CONTEXT/);
+});
+
 test("CORE Project validate verifies stored draft lineage and Confirm blocks unresolved adopt contract",async()=>{
   const identity=await read("src/server/shared/identityPageCommandRuntime.ts");
   const runtime=await read("src/server/core/productionCoreGovernedRuntime.ts");
