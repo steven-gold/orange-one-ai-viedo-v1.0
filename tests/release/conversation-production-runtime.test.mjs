@@ -25,6 +25,19 @@ test("Production conversation runtime routes real AI turns through governed AIAP
   assert.doesNotMatch(source, /GROQ_API_KEY|GOOGLE_GEMINI_API_KEY|DEEPSEEK_API_KEY|OPENROUTER_API_KEY/);
 });
 
+test("Conversation generation jobs bind the Current canonical public conversation lineage", async () => {
+  const migration = await read("database/migrations/0039_conversation_generation_job_canonical_lineage.sql");
+  const manifest = await read("database/migrations/migration_checksum_manifest.yaml");
+  assert.match(migration, /ALTER COLUMN conversation_id TYPE uuid/);
+  assert.match(migration, /ALTER COLUMN user_message_id TYPE uuid/);
+  assert.match(migration, /ALTER COLUMN result_message_id TYPE uuid/);
+  assert.match(migration, /REFERENCES public\.conversations\(conversation_id\)/);
+  assert.match(migration, /REFERENCES public\.conversation_messages\(conversation_message_id\)/);
+  assert.match(migration, /CONV0039_CANONICAL_FK_COUNT_MISMATCH/);
+  assert.match(migration, /384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d/);
+  assert.match(manifest, /0039_conversation_generation_job_canonical_lineage[\s\S]*d8e75fcbfafafab8a49155b5e3d44dc4e06651f9e775d105fcf22ca06ffd80eb/);
+});
+
 test("CORE and shared Strategy conversation sends reuse the same Production AI turn runtime", async () => {
   const source = await read("src/server/shared/identityPageCommandRuntime.ts");
   assert.match(source, /executeProductionConversationTurn/);
