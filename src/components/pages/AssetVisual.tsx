@@ -278,11 +278,11 @@ function AssetVisualBody() {
             <div className={styles.correctionHeader}><SectionTitle text={assetText(locale, "correction")} /><Control spec={CORRECTION[0]} /></div>
             <div data-component-uid="ASSET-01-CMP-CORRECTION" data-conditional-controls={CORRECTION.length}>
               <div className={styles.correctionContext} data-correction-region="context">
-                <span>Asset / Version / Issue / Evidence</span>
+                <span>{assetText(locale, "binding")}</span>
                 <strong>{String(state.projection?.output_version_id ?? "—")} · {String(state.projection?.values["ASSET-01-FLD-ISSUES"] ?? "—")}</strong>
               </div>
-              <div className={styles.correctionHistory} data-correction-region="history"><span>Conversation History</span><strong>{String(state.projection?.correction_request_id ?? "—")}</strong></div>
-              <div className={styles.correctionCandidate} data-correction-region="candidate"><span>Correction Candidate · {String(state.projection?.correction_candidate_id ?? "—")} · Approved {String(state.projection?.approved_correction_candidate_id ?? "—")}</span><Control spec={CORRECTION[2]} /><Control spec={CORRECTION[3]} /></div>
+              <div className={styles.correctionHistory} data-correction-region="history"><span>{assetText(locale, "correction")}</span><strong>{String(state.projection?.correction_request_id ?? "—")}</strong></div>
+              <div className={styles.correctionCandidate} data-correction-region="candidate"><span>{String(state.projection?.correction_candidate_id ?? "—")} · {String(state.projection?.approved_correction_candidate_id ?? "—")}</span><Control spec={CORRECTION[2]} /><Control spec={CORRECTION[3]} /></div>
               <div className={styles.correctionComposer} data-correction-region="composer"><Control spec={CORRECTION[1]} /></div>
             </div>
           </section> : null}
@@ -333,7 +333,7 @@ function AssetVisualBody() {
       </section> : null}
       {handoffVisible ? <section className={styles.stageAnchor} data-section-id="ASSET-01-SEC-10" data-stage-surface="handoff-materialized" aria-hidden="true" /> : null}
       <section className={styles.stageActionDock} data-current-stage-action-dock="true" data-current-stage={currentStage || pageState}>
-        <div className={styles.stageSummary}><span>Current Stage</span><strong>{currentStage || pageState}</strong></div>
+        <div className={styles.stageSummary}><span>{assetText(locale, "ASSET-01-FLD-STAGE")}</span><strong>{currentStage || pageState}</strong></div>
         <div className={styles.stagePrimary}>{stagePrimarySpec ? <Control spec={stagePrimarySpec} /> : null}</div>
       </section>
     </div>
