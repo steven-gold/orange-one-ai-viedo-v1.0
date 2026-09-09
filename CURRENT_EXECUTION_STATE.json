@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T06:30:00+08:00",
+  "as_of": "2026-09-10T07:05:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
-    "new_sha": "fa1f1734687c32104013eba883d20dee6a541b76",
+    "new_sha": "e1211a71ce3d240241766233ba9ae8041f91d3ef",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -35,9 +35,9 @@
       }
     ],
     "latest_new_release_gate": {
-      "run_number": 1026,
-      "run_id": 34407657348,
-      "head_sha": "5cdca0478ad53bd190fe1a7312e08793b07d1f66",
+      "run_number": 1045,
+      "run_id": 34418209831,
+      "head_sha": "e1211a71ce3d240241766233ba9ae8041f91d3ef",
       "status": "SUCCESS"
     },
     "production_main_release_gate": {
@@ -223,6 +223,15 @@
       "department_script_views": 0,
       "task_input_manifests": 0,
       "instruction_packages": 0
+    },
+    "production_formal_dependency_counts": {
+      "task_templates": 0,
+      "production_goals": 0,
+      "output_contracts": 0,
+      "rights_profiles": 0,
+      "production_contracts": 0,
+      "topics": 0,
+      "blueprint_versions": 0
     }
   },
   "construction": {
@@ -434,6 +443,8 @@
     "production_ready_percent": 81.5
   },
   "blockers": [
+    "TaskTemplate/ProductionGoal/OutputContract/RightsProfile are zero in Production and are dependencies of the nine formal materialization items; they may not be omitted from progress reports.",
+    "Current PostgreSQL department_code lacks VOICE while Current authority requires VOICE; do not map VOICE to EDITING as a workaround.",
     "Production formal business rows are currently zero after TEST_ONLY cleanup; do not fabricate permanent business data to make counts non-zero.",
     "All 9 formal materialization items are mandatory and must remain in every progress report until individually proven by Production effectful evidence.",
     "Production application main does not yet contain new-branch KB 0040 runtime and CORE truthful gate corrections.",
@@ -463,9 +474,14 @@
     "Run AI Conversation Production E2E after consolidated main deployment.",
     "Build permanent Production Effectful Acceptance runner: UI -> API -> permission -> runtime -> DB/Queue/Provider -> reload -> cleanup.",
     "Recompute control/action denominator using sealed 1453 historical baseline plus explicitly sealed Current expansion.",
-    "Recompute all 25 gates from final Production evidence."
+    "Recompute all 25 gates from final Production evidence.",
+    "DEPENDENCY TaskTemplate: Current Production count 0; required before formal DAG task materialization.",
+    "DEPENDENCY ProductionGoal: Current Production count 0; must be created by governed Topic Production Contract lifecycle.",
+    "DEPENDENCY OutputContract: Current Production count 0; must be created by governed Topic Production Contract lifecycle.",
+    "DEPENDENCY RightsProfile: Current Production count 0; formal manifest/package execution may not invent rights refs.",
+    "SCHEMA MISMATCH VOICE department enum: Current PostgreSQL department_code lacks VOICE while Current authority includes VOICE."
   ],
-  "next_executable_item": "MANDATORY 1/9 QualityCriteriaVersion: close SG-02 canonical materializer Production effectful path, then continue 2/9 ChildLock without skipping.",
+  "next_executable_item": "Close reusable compiler/RLS infrastructure on new (WorkPackage/DAG/ScriptProjectionRule) while keeping formal business materialization fail-closed until governed Topic/Goal/Output/Criteria/Rights inputs exist.",
   "execution_reporting_contract": {
     "mandatory": true,
     "every_progress_report_must_include_remaining_incomplete_list": true,
@@ -562,6 +578,78 @@
       "status": "INCOMPLETE",
       "required_execution": "compileInstructionPackage under instruction_compiler service identity -> exact manifest/script/task refs -> read-back -> cleanup if acceptance-only",
       "dependency": "TaskInputManifest + DepartmentScriptView + DepartmentTask"
+    }
+  ],
+  "discovered_mandatory_dependencies": [
+    {
+      "key": "TaskTemplate",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "affects": [
+        "WorkPackage",
+        "DepartmentTask",
+        "DepartmentScriptView",
+        "TaskInputManifest",
+        "InstructionPackage"
+      ],
+      "rule": "Must use Current authority-defined template documents; no guessed template/schema."
+    },
+    {
+      "key": "ProductionGoal",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "affects": [
+        "WorkPackage",
+        "DepartmentTask"
+      ],
+      "rule": "Must originate from governed TopicProductionContract lifecycle."
+    },
+    {
+      "key": "OutputContract",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "affects": [
+        "WorkPackage",
+        "DepartmentTask",
+        "InstructionPackage"
+      ],
+      "rule": "Must originate from governed ProductionGoal/TopicProductionContract lifecycle."
+    },
+    {
+      "key": "RightsProfile",
+      "production_count": 0,
+      "status": "INCOMPLETE",
+      "affects": [
+        "TaskInputManifest",
+        "InstructionPackage",
+        "ASSET",
+        "VIDEO",
+        "EDIT+VOICE"
+      ],
+      "rule": "Must be explicit governed rights reference; no empty/fake fallback for formal execution."
+    },
+    {
+      "key": "VOICE_department_enum",
+      "production_count": null,
+      "status": "SCHEMA_MISMATCH",
+      "current_enum": [
+        "CORE",
+        "ASSET",
+        "VIDEO",
+        "EDITING",
+        "QA",
+        "RELEASE",
+        "STRATEGY",
+        "SYSTEM"
+      ],
+      "authority_requires": "VOICE",
+      "affects": [
+        "EDIT+VOICE",
+        "ScriptProjectionRule",
+        "DepartmentScriptView",
+        "DepartmentTask"
+      ],
+      "rule": "Do not coerce VOICE into EDITING; resolve schema contract before formal VOICE task materialization."
     }
   ]
 }
