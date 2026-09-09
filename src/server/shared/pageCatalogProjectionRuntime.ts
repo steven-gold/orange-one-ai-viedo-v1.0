@@ -370,33 +370,29 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     const label = asText(row?.label);
     const project_id = asText(row?.project_id);
     if (!topic_id || !label || !project_id) return [];
-    if (first && project_id !== first.project_id) return [];
-    return [{ topic_id, topic_version_ref: asText(row?.topic_version_ref), label }];
+    return [{ topic_id, topic_version_ref: asText(row?.topic_version_ref), project_id, label }];
   });
   let threadRows: unknown = [];
-  if (first) {
-    try {
-      threadRows = await runRlsActorQuery(
-        sql,
-        sessionTokenHash,
-        sql`
-          SELECT c.conversation_id::text AS conversation_id,
-                 COALESCE(NULLIF(c.title,''),b.work_item) AS label,
-                 b.project_id::text AS project_id,
-                 b.topic_id::text AS topic_id,
-                 b.work_item,
-                 b.parent_conversation_id::text AS parent_conversation_id,
-                 b.source_message_id::text AS source_message_id,
-                 b.relation_kind
-          FROM conversations c
-          JOIN core_conversation_thread_bindings b ON b.conversation_id=c.conversation_id
-          WHERE b.project_id = ${first.project_id}::uuid
-          ORDER BY b.created_at DESC,c.created_at DESC
-        `,
-      );
-    } catch {
-      threadRows = [];
-    }
+  try {
+    threadRows = await runRlsActorQuery(
+      sql,
+      sessionTokenHash,
+      sql`
+        SELECT c.conversation_id::text AS conversation_id,
+               COALESCE(NULLIF(c.title,''),b.work_item) AS label,
+               b.project_id::text AS project_id,
+               b.topic_id::text AS topic_id,
+               b.work_item,
+               b.parent_conversation_id::text AS parent_conversation_id,
+               b.source_message_id::text AS source_message_id,
+               b.relation_kind
+        FROM conversations c
+        JOIN core_conversation_thread_bindings b ON b.conversation_id=c.conversation_id
+        ORDER BY b.created_at DESC,c.created_at DESC
+      `,
+    );
+  } catch {
+    threadRows = [];
   }
   const threads = (Array.isArray(threadRows) ? threadRows : []).flatMap((raw) => {
     const row = asRecord(raw);
