@@ -167,6 +167,13 @@ test("current EDIT integration ports remain reachable through their authority-bo
     ["src/app/v1/voice-runtime-runs/[runId]/lip-sync/route.ts", "POST", "completeLipSync"],
     ["src/app/v1/voice-runtime-runs/[runId]/subtitle/route.ts", "POST", "completeSubtitle"],
     ["src/app/v1/voice-runtime-runs/[runId]/qa-handoff/route.ts", "POST", "handoffVoiceToQA"],
+    ["src/app/v1/editing-runtime-runs/[runId]/versions/route.ts", "POST", "saveEditVersion"],
+    ["src/app/v1/editing-runtime-runs/[runId]/renders/route.ts", "POST", "startEditRender"],
+    ["src/app/v1/editing-runtime-runs/[runId]/renders/[renderJobId]/cancel/route.ts", "POST", "cancelEditRender"],
+    ["src/app/v1/editing-runtime-runs/[runId]/renders/[renderJobId]/output/route.ts", "POST", "saveEditOutputVersion"],
+    ["src/app/v1/editing-runtime-runs/[runId]/versions/[editVersionId]/lock/route.ts", "POST", "lockEditVersion"],
+    ["src/app/v1/editing-runtime-runs/[runId]/versions/[editVersionId]/restore/route.ts", "POST", "restoreEditVersionAsDraft"],
+    ["src/app/v1/editing-runtime-runs/[runId]/outputs/[outputVersionId]/download/route.ts", "GET", "getEditOutputDownload"],
   ];
 
   for (const [path, method, operation] of routeBindings) {
@@ -176,7 +183,7 @@ test("current EDIT integration ports remain reachable through their authority-bo
   }
 
   const contractPorts = [...contract.matchAll(/"EDIT-01-PORT-[A-Z0-9-]+":\{operation:"([^"]+)",method:"(GET|POST)",path:"([^"]+)"\}/g)];
-  assert.equal(contractPorts.length, 15, `expected 15 current EDIT integration ports, found ${contractPorts.length}`);
+  assert.equal(contractPorts.length, 22, `expected 22 current EDIT integration ports, found ${contractPorts.length}`);
 });
 
 test("current QA integration ports remain reachable through their authority-bound routes", async () => {
