@@ -11,6 +11,8 @@ type Row=Record<string,unknown>;
 
 const GOVERNED_PORTS=new Set<CoreRuntimeRequest["port_uid"]>([
   "CORE-01-PORT-PROJECT-CREATE",
+  "CORE-01-PORT-PROJECT-VALIDATE",
+  "CORE-01-PORT-PROJECT-CONFIRM",
   "CORE-01-PORT-CANDIDATE-CREATE",
   "CORE-01-PORT-CANDIDATE-COMPARE",
   "CORE-01-PORT-CANDIDATE-DECIDE",
@@ -134,6 +136,53 @@ async function createProjectDraft(request:CoreRuntimeRequest){
     project_id:projectId,project_version_ref:projectVersionId,workspace_id:workspaceId,
     project_code:projectCode,title,story_core:storyCore,state:"DRAFT",content_hash:contentHash,idempotent_replay:false,
   };
+}
+
+async function validateProjectDraft(request:CoreRuntimeRequest){
+  const projectVersionId=requiredUuid(request.path_params?.projectVersionId,"REQUIRED_PATH_REFERENCE_MISSING:projectVersionId");
+  const {sql,session_token_hash}=await context();
+  const row=first(await runRlsActorQuery(sql,session_token_hash,sql`
+    SELECT pv.project_version_id::text AS project_version_ref,pv.project_id::text AS project_id,pv.version_no,
+           pv.status::text AS status,pv.story_core,pv.content_hash::text AS content_hash,
+           p.workspace_id::text AS workspace_id,p.project_code,p.title,w.status::text AS workspace_status
+    FROM public.project_versions pv
+    JOIN public.projects p ON p.project_id=pv.project_id
+    JOIN public.workspaces w ON w.workspace_id=p.workspace_id
+    WHERE pv.project_version_id=${projectVersionId}::uuid
+    LIMIT 1
+  `));
+  if(!row)throw new NamedRuntimeError("PROJECT_VERSION_NOT_FOUND");
+  if(text(row.status)!=="DRAFT")throw new NamedRuntimeError("PROJECT_VERSION_NOT_IN_DRAFT");
+  if(text(row.workspace_status)!=="READY")throw new NamedRuntimeError("WORKSPACE_NOT_READY");
+  const workspaceId=requiredUuid(row.workspace_id,"WORKSPACE_NOT_READY");
+  const projectCode=required(row.project_code,"PROJECT_DRAFT_REGISTERED_SCHEMA_INVALID");
+  const title=required(row.title,"PROJECT_DRAFT_REGISTERED_SCHEMA_INVALID");
+  const storyCore=nonEmptyObject(row.story_core,"PROJECT_DRAFT_REGISTERED_SCHEMA_INVALID");
+  const expectedHash=sha(stableValue({
+    workspace_id:workspaceId,
+    project_code:projectCode,
+    title,
+    story_core:storyCore,
+  }));
+  if(text(row.content_hash)!==expectedHash)throw new NamedRuntimeError("PROJECT_DRAFT_CONTENT_HASH_MISMATCH");
+  const updated=await runRlsActorQuery(sql,session_token_hash,sql`
+    UPDATE public.project_versions
+    SET decision_reason='VALIDATED'
+    WHERE project_version_id=${projectVersionId}::uuid
+      AND status='DRAFT'
+      AND content_hash=${expectedHash}
+    RETURNING project_version_id::text AS project_version_ref,project_id::text AS project_id,version_no
+  `);
+  const validated=first(updated);
+  if(!validated)throw new NamedRuntimeError("PROJECT_DRAFT_VALIDATION_WRITE_FAILED");
+  return{
+    project_id:text(validated.project_id),project_version_ref:text(validated.project_version_ref),
+    expected_version:Number(validated.version_no),state:"VALIDATED",content_hash:expectedHash,
+  };
+}
+
+async function confirmProjectDraft(_request:CoreRuntimeRequest){
+  throw new NamedRuntimeError("PROJECT_CONFIRM_ADOPT_CONTRACT_NOT_BOUND");
 }
 
 async function createCandidate(request:CoreRuntimeRequest){
@@ -640,6 +689,8 @@ async function canonicalScript(request:CoreRuntimeRequest){
 export async function executeProductionCoreGovernedPort(request:CoreRuntimeRequest):Promise<unknown>{
   switch(request.port_uid){
     case "CORE-01-PORT-PROJECT-CREATE":return createProjectDraft(request);
+    case "CORE-01-PORT-PROJECT-VALIDATE":return validateProjectDraft(request);
+    case "CORE-01-PORT-PROJECT-CONFIRM":return confirmProjectDraft(request);
     case "CORE-01-PORT-CANDIDATE-CREATE":return createCandidate(request);
     case "CORE-01-PORT-CANDIDATE-COMPARE":return compareCandidates(request);
     case "CORE-01-PORT-CANDIDATE-DECIDE":return decideCandidate(request);
