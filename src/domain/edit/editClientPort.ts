@@ -51,6 +51,7 @@ export async function invokeEditIntegrationPort(input: EditPortInvokeInput): Pro
     const response = await fetch(path, {
       method: contract.method,
       cache: "no-store",
+      credentials: "include",
       signal: input.signal,
       headers: Object.keys(headers).length ? headers : undefined,
       body: contract.method === "POST" ? JSON.stringify(input.payload ?? null) : undefined,
