@@ -88,6 +88,9 @@ function SelectionList({ id, labelKey, value, options, onChange }: ControlProps 
 }
 function PanelTitle({ labelKey }: { labelKey: LabelKey }) { const { t } = useI18n(); return <h2 className={styles.panelTitle}>{t(labelKey)}</h2>; }
 
+const PROJECT_CORE_WORK_ITEMS = new Set(["STORY","CHAPTER","WORLD_SETTING","DNA","BLUEPRINT"]);
+const TOPIC_PRODUCTION_WORK_ITEMS = new Set(["TOPIC_SCOPE","PRODUCTION_SCRIPT"]);
+
 const MESSAGE_MENU: readonly { id: string; key: LabelKey }[] = [
   { id: "CORE-01-MENU-QUOTE", key: "core01.control.quote" }, { id: "CORE-01-MENU-CONTINUE", key: "core01.control.continue" },
   { id: "CORE-01-MENU-ANALYZE", key: "core01.control.analyze" }, { id: "CORE-01-MENU-DECISION", key: "core01.control.decision_list" },
@@ -271,7 +274,13 @@ export function CoreVisual() {
         void (async()=>{
           const payload = await requestCoreThreadCreatePayload({ project_id: projectId, topic_id: clientState.topic_id, work_item, ai_mode: clientState.ai_mode });
           if (!payload.ok) { reportBlock(`CORE-01-ERR-THREAD-001:${payload.reason_code}`); return; }
-          await runServerActionAndSync(action, { path_params: { projectId }, payload: payload.payload });
+          const result = await runServerAction(action, { path_params: { projectId }, payload: payload.payload });
+          if (!result?.ok) return;
+          const created = text(asRecord(result.value).conversation_id);
+          if (!created) { reportBlock("CORE-01-ERR-THREAD-001:CONVERSATION_THREAD_REF_MISSING"); return; }
+          await syncProjection();
+          dispatchClient({ action_uid: "CORE-01-ACT-THREAD-SELECT", thread_ref: created, conversation_id: created });
+          setConversationMessages([]);
         })(); return;
       }
       case "CORE-01-ACT-AI-MODE-SINGLE": {
@@ -376,14 +385,23 @@ export function CoreVisual() {
     reportLocalSuccess(`TOPIC_SELECTED:${selected.topic_id}`);
   };
   const selectWorkItem = (workItem: string) => {
-    const allowed = projection?.work_items.some((item) => item.work_item === workItem) ?? false;
-    if (workItem && !allowed) { reportBlock("CORE-01-ERR-WORK-ITEM-001:WORK_ITEM_NOT_ALLOWED_IN_CURRENT_MODE"); return; }
+    const modeSet = clientState.topic_id ? TOPIC_PRODUCTION_WORK_ITEMS : PROJECT_CORE_WORK_ITEMS;
+    const registered = projection?.work_items.some((item) => item.work_item === workItem) ?? false;
+    if (workItem && (!registered || !modeSet.has(workItem))) { reportBlock("CORE-01-ERR-WORK-ITEM-001:WORK_ITEM_NOT_ALLOWED_IN_CURRENT_MODE"); return; }
     dispatchClient({ action_uid: "CORE-01-ACT-WORK-ITEM-SELECT", work_item: workItem || null });
     setConversationMessages([]); setContextMessageId(null); setMenuOpen(false);
     reportLocalSuccess(workItem ? `WORK_ITEM_SELECTED:${workItem}` : "WORK_ITEM_CLEARED");
   };
   const selectThread = (conversationId: string) => {
-    if (conversationId && !(projection?.threads.some((item) => item.conversation_id === conversationId) ?? false)) { reportBlock("CORE-01-ERR-THREAD-001:THREAD_NOT_IN_CURRENT_CONTEXT"); return; }
+    if (conversationId) {
+      const matches = projection?.threads.filter((item) =>
+        item.conversation_id === conversationId
+        && item.project_id === clientState.project_id
+        && item.work_item === clientState.work_item
+        && (clientState.topic_id ? item.topic_id === clientState.topic_id : item.topic_id === null)
+      ) ?? [];
+      if (matches.length !== 1) { reportBlock("CORE-01-ERR-THREAD-001:THREAD_NOT_IN_CURRENT_CONTEXT"); return; }
+    }
     dispatchClient({ action_uid: "CORE-01-ACT-THREAD-SELECT", thread_ref: conversationId || null, conversation_id: conversationId || null });
     setConversationMessages(messagesForThread(projection, conversationId || null)); setContextMessageId(null); setMenuOpen(false);
     reportLocalSuccess(conversationId ? `THREAD_SELECTED:${conversationId}` : "THREAD_CLEARED");
@@ -449,7 +467,12 @@ export function CoreVisual() {
         void (async () => {
           const payload = await requestCoreThreadCreatePayload({ project_id: projectId, topic_id: clientState.topic_id, work_item: workItem, ai_mode: clientState.ai_mode, parent_conversation_id: conversationId, source_message_id: selected.id, relation_kind: "BRANCH" });
           if (!payload.ok) { reportBlock(`CORE-01-ERR-THREAD-001:${payload.reason_code}`); return; }
-          await runServerActionAndSync(action, { path_params: { projectId }, payload: payload.payload });
+          const result = await runServerAction(action, { path_params: { projectId }, payload: payload.payload });
+          if (!result?.ok) return;
+          const created = text(asRecord(result.value).conversation_id);
+          if (!created) { reportBlock("CORE-01-ERR-THREAD-001:CONVERSATION_THREAD_REF_MISSING"); return; }
+          await syncProjection();
+          dispatchClient({ action_uid: "CORE-01-ACT-THREAD-SELECT", thread_ref: created, conversation_id: created });
           setConversationMessages([]);
         })();
         return;
@@ -461,6 +484,14 @@ export function CoreVisual() {
 
   const runtimeDisplay = runtimeReason?.startsWith("CORE-01-ERR-PERM-001:") ? `${t("core01.notice.creation_permission_denied")} (${runtimeReason.split(":").slice(1).join(":")})` : runtimeReason ?? display("runtime_stage");
   const isBusy = busyAction !== null;
+  const activeWorkItems = (projection?.work_items ?? []).filter((item) =>
+    (clientState.topic_id ? TOPIC_PRODUCTION_WORK_ITEMS : PROJECT_CORE_WORK_ITEMS).has(item.work_item)
+  );
+  const visibleThreads = (projection?.threads ?? []).filter((item) =>
+    item.project_id === clientState.project_id
+    && item.work_item === clientState.work_item
+    && (clientState.topic_id ? item.topic_id === clientState.topic_id : item.topic_id === null)
+  );
 
   return (
     <div className={styles.page} data-page-uid="CORE-01" data-vis-step="VIS-02" data-page-state={pageState} data-runtime-reason={runtimeReason ?? undefined} onClick={() => { if (menuOpen) setMenuOpen(false); }}>
@@ -469,13 +500,13 @@ export function CoreVisual() {
         <ActionButton id="CORE-01-BTN-PROJECT-CREATE" labelKey="core01.control.create_project" primary disabled={isBusy} onClick={() => runControl("CORE-01-BTN-PROJECT-CREATE")} />
         <label className={styles.selectField}><span>{t("core01.control.topic")}</span><select value={clientState.topic_id ?? ""} onChange={(event) => selectTopic(event.target.value)} data-control-id="CORE-01-CTL-TOPIC" data-action-uid={actionUid("CORE-01-CTL-TOPIC")} aria-label={t("core01.control.topic")}><option value="">—</option>{(projection?.topics ?? []).map((item) => <option key={`${item.topic_id}:${item.topic_version_ref ?? ""}`} value={item.topic_id}>{item.label}</option>)}</select></label>
         <ActionButton id="CORE-01-BTN-TOPIC-CREATE" labelKey="core01.control.create_topic" primary disabled={isBusy} onClick={() => runControl("CORE-01-BTN-TOPIC-CREATE")} />
-        <ReadonlyField id="CORE-01-FLD-PAGE-MODE" labelKey="core01.control.page_mode" value={display("page_mode")} /><ReadonlyField id="CORE-01-FLD-NAMING-AUTHORITY" labelKey="core01.control.naming_authority" value="ACPOS_SYSTEM" />
+        <ReadonlyField id="CORE-01-FLD-PAGE-MODE" labelKey="core01.control.page_mode" value={clientState.topic_id ? "TOPIC_PRODUCTION" : "PROJECT_CORE"} /><ReadonlyField id="CORE-01-FLD-NAMING-AUTHORITY" labelKey="core01.control.naming_authority" value="ACPOS_SYSTEM" />
       </div></section>
 
       <div className={styles.primaryGrid} data-layout="primary-grid" data-layout-grid="workspace-three-column">
         <aside className={styles.leftRail} data-layout-column="left"><section className={styles.panel} data-section-id="CORE-01-SEC-02" data-visual-id="CORE-01-VIS-LEFT">
-          <div data-component-uid="CORE-01-CMP-NAV"><SelectionList id="CORE-01-LST-WORK-ITEMS" labelKey="core01.control.work_items" value={clientState.work_item ?? ""} options={(projection?.work_items ?? []).map((item) => ({ value: item.work_item, label: item.label }))} onChange={selectWorkItem} /></div><div className={styles.divider} />
-          <div data-component-uid="CORE-01-CMP-THREADS"><div className={styles.threadHeader}><PanelTitle labelKey="core01.group.conversation_threads" /><ActionButton id="CORE-01-BTN-NEW-THREAD" labelKey="core01.control.new_thread" compact disabled={isBusy} onClick={() => runControl("CORE-01-BTN-NEW-THREAD")} /></div><div className={styles.threadListScroll}><SelectionList id="CORE-01-LST-THREADS" labelKey="core01.control.threads" value={clientState.conversation_id ?? ""} options={(projection?.threads ?? []).map((item) => ({ value: item.conversation_id, label: item.label }))} onChange={selectThread} /></div></div>
+          <div data-component-uid="CORE-01-CMP-NAV"><SelectionList id="CORE-01-LST-WORK-ITEMS" labelKey="core01.control.work_items" value={clientState.work_item ?? ""} options={activeWorkItems.map((item) => ({ value: item.work_item, label: item.label }))} onChange={selectWorkItem} /></div><div className={styles.divider} />
+          <div data-component-uid="CORE-01-CMP-THREADS"><div className={styles.threadHeader}><PanelTitle labelKey="core01.group.conversation_threads" /><ActionButton id="CORE-01-BTN-NEW-THREAD" labelKey="core01.control.new_thread" compact disabled={isBusy} onClick={() => runControl("CORE-01-BTN-NEW-THREAD")} /></div><div className={styles.threadListScroll}><SelectionList id="CORE-01-LST-THREADS" labelKey="core01.control.threads" value={clientState.conversation_id ?? ""} options={visibleThreads.map((item) => ({ value: item.conversation_id, label: item.label }))} onChange={selectThread} /></div></div>
         </section></aside>
 
         <main className={styles.centerColumn} data-layout-column="center">
