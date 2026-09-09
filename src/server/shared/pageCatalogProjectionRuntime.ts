@@ -381,10 +381,17 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
         sessionTokenHash,
         sql`
           SELECT c.conversation_id::text AS conversation_id,
-                 c.title AS label
+                 COALESCE(NULLIF(c.title,''),b.work_item) AS label,
+                 b.project_id::text AS project_id,
+                 b.topic_id::text AS topic_id,
+                 b.work_item,
+                 b.parent_conversation_id::text AS parent_conversation_id,
+                 b.source_message_id::text AS source_message_id,
+                 b.relation_kind
           FROM conversations c
-          WHERE c.project_id = ${first.project_id}::uuid
-          ORDER BY c.created_at DESC
+          JOIN core_conversation_thread_bindings b ON b.conversation_id=c.conversation_id
+          WHERE b.project_id = ${first.project_id}::uuid
+          ORDER BY b.created_at DESC,c.created_at DESC
         `,
       );
     } catch {
@@ -395,8 +402,23 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     const row = asRecord(raw);
     const conversation_id = asText(row?.conversation_id);
     const label = asText(row?.label);
-    if (!conversation_id || !label) return [];
-    return [{ conversation_id, label }];
+    const project_id = asText(row?.project_id);
+    const topic_id = asText(row?.topic_id);
+    const work_item = asText(row?.work_item);
+    const parent_conversation_id = asText(row?.parent_conversation_id);
+    const source_message_id = asText(row?.source_message_id);
+    const relation_kind = asText(row?.relation_kind);
+    if (!conversation_id || !label || !project_id || !work_item || !["ROOT","BRANCH"].includes(relation_kind ?? "")) return [];
+    return [{
+      conversation_id,
+      label,
+      project_id,
+      topic_id,
+      work_item,
+      parent_conversation_id,
+      source_message_id,
+      relation_kind: relation_kind as "ROOT" | "BRANCH",
+    }];
   });
   const messages_by_thread: Record<string, Array<{ message_ref: string; conversation_id: string; role: "USER" | "ASSISTANT" | "SYSTEM"; text: string }>> = {};
   if (threads.length) {
@@ -431,7 +453,7 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
       (messages_by_thread[conversation_id] ??= []).push({ message_ref, conversation_id, role, text });
     }
   }
-  const currentConversationId = threads[0]?.conversation_id ?? null;
+  const currentConversationId: string | null = null; // Client-selected exact thread only; server projection never guesses current context.
   const latestAssistantRows = currentConversationId
     ? await runRlsActorQuery(
         sql,
@@ -542,7 +564,6 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
       topic_version_ref: topics[0]?.topic_version_ref ?? null,
       dna_version_ref: asText(currentDna.dna_version_ref),
       blueprint_version_ref: asText(currentBlueprint.blueprint_version_ref),
-      conversation_id: currentConversationId,
       candidate_ref: asText(currentCandidate.candidate_ref),
     },
     work_item: null,
@@ -552,7 +573,7 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
       label: item.label,
     })),
     topics,
-    work_items: ["STORY", "CHAPTER", "WORLD_SETTING", "DNA", "BLUEPRINT"].map((work_item) => ({ work_item, label: work_item })),
+    work_items: ["STORY", "CHAPTER", "WORLD_SETTING", "DNA", "BLUEPRINT", "TOPIC_SCOPE", "PRODUCTION_SCRIPT"].map((work_item) => ({ work_item, label: work_item })),
     threads,
     messages_by_thread,
     display_values: {
