@@ -1,5 +1,5 @@
 contract_meta:
-  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.36
+  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.37
   rule: checksum is calculated from migration payload excluding the terminal schema_migration_history registration statement; zero value is forbidden.
   bootstrap_rule: 0001 is self-contained and must be executed before all later migrations.
   authority_revision: 2026-09-09-KB-SOURCE-CREATE-UPDATE-RUNTIME-PENDING-PRODUCTION-APPLY
@@ -171,5 +171,10 @@ migrations:
 - migration_id: 0036_kb_source_create_update_permission_rls_closure
   payload_sha256: 9cc3b0d0beeb8b0eadc2e2bf8d356799f39696dbd22b2fa967e02b4a6fe7a3fb
   approval_ref: CR-KB-0036-PENDING-PRODUCTION-APPLY
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: PENDING
+- migration_id: 0037_core_governed_runtime_permission_rls_closure
+  payload_sha256: 42253b9c137e299f482d0f35d2132a32bfa45204e32074ed83bbae0768822ec7
+  approval_ref: CR-CORE-0037-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
   production_apply: PENDING
