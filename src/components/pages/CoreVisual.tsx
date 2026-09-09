@@ -378,7 +378,7 @@ export function CoreVisual() {
   const selectTopic = (topicId: string) => {
     setConversationMessages([]); setContextMessageId(null); setMenuOpen(false);
     if (!topicId) { dispatchClient({ action_uid: "CORE-01-ACT-TOPIC-SELECT", topic_ref: null, topic_id: null, topic_version_ref: null }); return; }
-    const matches = projection?.topics.filter((item) => item.topic_id === topicId) ?? [];
+    const matches = projection?.topics.filter((item) => item.topic_id === topicId && item.project_id === clientState.project_id) ?? [];
     if (matches.length !== 1) { reportBlock("CORE-01-ERR-TOPIC-LINEAGE-001:TOPIC_PROJECTION_SELECTION_AMBIGUOUS"); return; }
     const selected = matches[0];
     dispatchClient({ action_uid: "CORE-01-ACT-TOPIC-SELECT", topic_ref: selected.topic_id, topic_id: selected.topic_id, topic_version_ref: selected.topic_version_ref });
@@ -484,6 +484,7 @@ export function CoreVisual() {
 
   const runtimeDisplay = runtimeReason?.startsWith("CORE-01-ERR-PERM-001:") ? `${t("core01.notice.creation_permission_denied")} (${runtimeReason.split(":").slice(1).join(":")})` : runtimeReason ?? display("runtime_stage");
   const isBusy = busyAction !== null;
+  const visibleTopics = (projection?.topics ?? []).filter((item) => item.project_id === clientState.project_id);
   const activeWorkItems = (projection?.work_items ?? []).filter((item) =>
     (clientState.topic_id ? TOPIC_PRODUCTION_WORK_ITEMS : PROJECT_CORE_WORK_ITEMS).has(item.work_item)
   );
@@ -498,7 +499,7 @@ export function CoreVisual() {
       <section className={styles.contextBar} data-section-id="CORE-01-SEC-01" data-visual-id="CORE-01-VIS-CONTEXT"><div className={styles.contextComponent} data-component-uid="CORE-01-CMP-CONTEXT">
         <label className={styles.selectField}><span>{t("core01.control.project")}</span><select value={clientState.project_id ?? ""} onChange={(event) => selectProject(event.target.value)} data-control-id="CORE-01-CTL-PROJECT" data-action-uid={actionUid("CORE-01-CTL-PROJECT")} aria-label={t("core01.control.project")}><option value="">—</option>{(projection?.projects ?? []).map((item) => <option key={`${item.project_id}:${item.project_version_ref ?? ""}`} value={item.project_id}>{item.label}</option>)}</select></label>
         <ActionButton id="CORE-01-BTN-PROJECT-CREATE" labelKey="core01.control.create_project" primary disabled={isBusy} onClick={() => runControl("CORE-01-BTN-PROJECT-CREATE")} />
-        <label className={styles.selectField}><span>{t("core01.control.topic")}</span><select value={clientState.topic_id ?? ""} onChange={(event) => selectTopic(event.target.value)} data-control-id="CORE-01-CTL-TOPIC" data-action-uid={actionUid("CORE-01-CTL-TOPIC")} aria-label={t("core01.control.topic")}><option value="">—</option>{(projection?.topics ?? []).map((item) => <option key={`${item.topic_id}:${item.topic_version_ref ?? ""}`} value={item.topic_id}>{item.label}</option>)}</select></label>
+        <label className={styles.selectField}><span>{t("core01.control.topic")}</span><select value={clientState.topic_id ?? ""} onChange={(event) => selectTopic(event.target.value)} data-control-id="CORE-01-CTL-TOPIC" data-action-uid={actionUid("CORE-01-CTL-TOPIC")} aria-label={t("core01.control.topic")}><option value="">—</option>{visibleTopics.map((item) => <option key={`${item.topic_id}:${item.topic_version_ref ?? ""}`} value={item.topic_id}>{item.label}</option>)}</select></label>
         <ActionButton id="CORE-01-BTN-TOPIC-CREATE" labelKey="core01.control.create_topic" primary disabled={isBusy} onClick={() => runControl("CORE-01-BTN-TOPIC-CREATE")} />
         <ReadonlyField id="CORE-01-FLD-PAGE-MODE" labelKey="core01.control.page_mode" value={clientState.topic_id ? "TOPIC_PRODUCTION" : "PROJECT_CORE"} /><ReadonlyField id="CORE-01-FLD-NAMING-AUTHORITY" labelKey="core01.control.naming_authority" value="ACPOS_SYSTEM" />
       </div></section>
