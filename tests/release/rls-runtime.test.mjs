@@ -135,6 +135,7 @@ test("production query runtime sets local non-owner role before protected querie
   const neonRuntime = await read("src/server/database/neonRuntime.ts");
   const rlsRuntime = await read("src/server/database/rlsRuntime.ts");
   const identityRuntime = await read("src/server/shared/identityPageCommandRuntime.ts");
+  const governedCoreRuntime = await read("src/server/core/productionCoreGovernedRuntime.ts");
   const coreClient = await read("src/domain/core/coreClientPort.ts");
 
   assert.match(neonRuntime, /REQUIRED_MIGRATION_COUNT = 20/);
@@ -150,8 +151,13 @@ test("production query runtime sets local non-owner role before protected querie
   assert.match(identityRuntime, /hashSessionToken/);
   assert.match(identityRuntime, /runRlsActorQuery/);
 
-  const scopedCalls = (identityRuntime.match(/runRlsActorQuery\(/g) ?? []).length;
-  assert.ok(scopedCalls >= 17, `expected at least 17 actor-scoped protected queries, got ${scopedCalls}`);
+  const scopedCalls =
+    (identityRuntime.match(/runRlsActorQuery\(/g) ?? []).length
+    + (governedCoreRuntime.match(/runRlsActorQuery\(/g) ?? []).length
+    + (governedCoreRuntime.match(/runRlsActorTransaction\(/g) ?? []).length;
+  assert.ok(scopedCalls >= 17, `expected at least 17 actor-scoped protected query/transaction owners, got ${scopedCalls}`);
+  assert.match(rlsRuntime, /export async function runRlsActorTransaction/);
+  assert.match(governedCoreRuntime, /runRlsActorTransaction/);
 
   assert.match(coreClient, /CORE-01-ACT-STORY-CANDIDATE/);
   assert.match(coreClient, /STORY_CANDIDATE_REGISTERED_SCHEMA_PAYLOAD_REQUIRED/);
