@@ -891,6 +891,20 @@ async function readAssetFromDb(sql: SqlClient, sessionTokenHash: string): Promis
     WHERE av.task_output_version_id=${focusId}::uuid ORDER BY d.created_at DESC LIMIT 10
   `)):[];
   const layer=layerRows[0]??null;
+  const layerDocumentId=asText(layer?.layer_document_id);
+  const documentLayers=layerDocumentId?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT document_layer_id::text AS document_layer_id,layer_id,z_index,locked
+    FROM document_layers
+    WHERE layer_document_id=${layerDocumentId}::uuid
+    ORDER BY z_index ASC
+    LIMIT 1
+  `)):[];
+  const documentLayer=documentLayers[0]??null;
+  const layerId=asText(documentLayer?.layer_id);
+  const layerZRaw=Number(documentLayer?.z_index);
+  const layerZIndex=Number.isFinite(layerZRaw)?layerZRaw:null;
+  const documentLayerId=asText(documentLayer?.document_layer_id);
+  const layerLocked=documentLayer?.locked===true||asText(documentLayer?.locked)==="true";
   const patchRows=asText(focus?.asset_version_id)?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
     SELECT p.asset_patch_id::text AS patch_id,p.status FROM asset_patches p
     WHERE p.source_asset_version_id=${asText(focus?.asset_version_id)}::uuid ORDER BY p.created_at DESC LIMIT 10
@@ -902,6 +916,11 @@ async function readAssetFromDb(sql: SqlClient, sessionTokenHash: string): Promis
     return[{ref,label:`${asText(r.status)??"CANDIDATE"} · ${ref}`,uri,media_kind:mediaKind(r)}];
   });
   const outputId=focusId??null,scorePass=asText(score?.gate_status)==="PASS";
+  const audioAsset=Boolean(focus)&&mediaKind(focus as Record<string,unknown>)==="AUDIO";
+  const layerEligible=Boolean(outputId)&&!audioAsset;
+  const layerDocumentStatus=asText(layer?.status);
+  const documentUnlocked=!layerDocumentId||layerDocumentStatus==="DRAFT";
+  const layerWrite=layerEligible&&documentUnlocked&&!layerLocked&&!lock;
   return{
     ...empty,page_state,task_id:first.task_id,output_version_id:outputId,
     finding_id:asText(finding?.finding_id),correction_request_id:correctionId,
@@ -909,7 +928,7 @@ async function readAssetFromDb(sql: SqlClient, sessionTokenHash: string): Promis
     correction_candidate_content_hash:asText(correctionCandidate?.content_hash),
     approved_correction_candidate_id:asText(approvedCorrection?.correction_script_version_id),
     restore_draft_id:asText(restores[0]?.ref),locked_version_ref:asText(lock?.lock_id),
-    layer_document_id:asText(layer?.layer_document_id),patch_id:asText(patch?.patch_id),
+    layer_document_id:layerDocumentId,layer_id:layerId,layer_z_index:layerZIndex,document_layer_id:documentLayerId,patch_id:asText(patch?.patch_id),
     current_asset_type_uid:asText(focus?.asset_kind),candidate_uri:asText(candidate?.output_uri),
     candidate_media_kind:candidate?mediaKind(candidate):null,candidate_versions:candidateVersions,
     values:{
@@ -931,6 +950,7 @@ async function readAssetFromDb(sql: SqlClient, sessionTokenHash: string): Promis
       "ASSET-01-FLD-HANDOFF-CHECKSUM":asText(accepted?.artifact_checksum)??DASH,
       "ASSET-01-FLD-HANDOFF-SCORECARD":asText(score?.scorecard_id)??DASH,
       "ASSET-01-FLD-HANDOFF-CONTRACT-HASH":asText(accepted?.output_contract_hash)??DASH,
+      "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE":layerDocumentId??DASH,
       "ASSET-01-FLD-HANDOFF-RIGHTS":DASH,
       "ASSET-01-FLD-RIGHTS":DASH,
       "ASSET-01-FLD-LOCK":asText(lock?.lock_id)??DASH,
@@ -955,7 +975,8 @@ async function readAssetFromDb(sql: SqlClient, sessionTokenHash: string): Promis
       "ASSET-01-GATE-RETRY":taskStatus==="BLOCKED"||taskStatus==="FAILED",
       "ASSET-01-GATE-LOCK":Boolean(accepted)&&taskStatus==="HANDOFF_READY"&&!lock,
       "ASSET-01-GATE-HANDOFF":Boolean(accepted&&lock)&&taskStatus==="HANDOFF_READY",
-      "ASSET-01-GATE-LAYER-WRITE":Boolean(outputId)&&!lock,
+      "ASSET-01-GATE-LAYER-ELIGIBLE":layerEligible,
+      "ASSET-01-GATE-LAYER-WRITE":layerWrite,
       "ASSET-01-GATE-PATCH-PREVIEW":Boolean(patch)&&asText(patch?.status)==="CANDIDATE",
       "ASSET-01-GATE-PATCH-DECISION":Boolean(patch)&&["CANDIDATE","HUMAN_REVIEW"].includes(asText(patch?.status)??""),
     },
