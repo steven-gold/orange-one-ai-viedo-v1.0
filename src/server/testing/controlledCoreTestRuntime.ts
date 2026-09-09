@@ -175,7 +175,7 @@ function projection() {
     })),
     topics: state.topics
       .filter((item) => !state.project_id || item.project_id === state.project_id)
-      .map((item) => ({ topic_id: item.topic_id, topic_version_ref: item.topic_version_ref, label: item.label })),
+      .map((item) => ({ topic_id: item.topic_id, topic_version_ref: item.topic_version_ref, project_id: item.project_id, label: item.label })),
     work_items: (topicMode
       ? ["TOPIC_SCOPE", "PRODUCTION_SCRIPT"]
       : ["STORY", "CHAPTER", "WORLD_SETTING", "DNA", "BLUEPRINT"])
