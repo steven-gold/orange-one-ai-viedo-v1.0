@@ -41,7 +41,7 @@ test("CORE Candidate and Blueprint creation fail closed instead of fabricating C
 test("CORE DNA review and canonical script reads preserve exact authority lineage",async()=>{
   const runtime=await read("src/server/core/productionCoreGovernedRuntime.ts");
   assert.match(runtime,/resource_key='api:requestDNALock'/);
-  assert.match(runtime,/required_action[\\s\\S]*?'EXECUTE'/);
+  assert.match(runtime,/required_action[\s\S]*?'EXECUTE'/);
   assert.match(runtime,/expected_checksum/);
   assert.match(runtime,/CANONICAL_SCRIPT_LINEAGE_UNRESOLVED/);
   assert.match(runtime,/project_blueprint_ref/);
