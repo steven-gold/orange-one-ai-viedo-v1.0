@@ -296,6 +296,11 @@ try {
               return element instanceof HTMLElement && Math.abs(element.getBoundingClientRect().left - 78) <= 1;
             }, { timeout: 5_000 });
             if (Math.abs(expandedLeft - 78) > 1) throw new Error(`SIDEBAR_WORKSPACE_OVERLAY_REFLOW_FORBIDDEN_${expandedLeft}`);
+            const dashboardWidth = await page.locator('[data-page-uid="workspace:WB-01"]').evaluate((element) => {
+              const grid = element.firstElementChild;
+              return grid instanceof HTMLElement ? grid.getBoundingClientRect().width : 0;
+            });
+            if (dashboardWidth < 1279) throw new Error(`WB01_MIN_WIDTH_AUTHORITY_MISMATCH_${dashboardWidth}`);
             sidebarReflowCases += 1;
           }
 
