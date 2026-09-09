@@ -486,14 +486,14 @@ export function CoreVisual() {
   const candidateReady = display("story_candidate_set") !== "—";
   const coreStage = !clientState.conversation_id ? 1 : conversationMessages.length === 0 ? 2 : !humanDecision.trim() ? 3 : !candidateReady ? 4 : 5;
   const stageMeta = coreStage === 1
-    ? { label: "Resolve Context", control: "CORE-01-BTN-NEW-THREAD", key: "core01.control.new_thread" as LabelKey }
+    ? { control: "CORE-01-BTN-NEW-THREAD", key: "core01.control.new_thread" as LabelKey }
     : coreStage === 2
-      ? { label: "Converse / Analyze", control: "CORE-01-BTN-SEND", key: "core01.control.send" as LabelKey }
+      ? { control: "CORE-01-BTN-SEND", key: "core01.control.send" as LabelKey }
       : coreStage === 3
-        ? { label: "Summary / Evaluation", control: "CORE-01-FLD-HUMAN-DECISION", key: "core01.control.human_decision" as LabelKey }
+        ? { control: "CORE-01-FLD-HUMAN-DECISION", key: "core01.control.human_decision" as LabelKey }
         : coreStage === 4
-          ? { label: "Human Decision", control: "CORE-01-BTN-CANDIDATE-CREATE", key: "core01.control.create_candidate" as LabelKey }
-          : { label: "Candidate / Domain Review", control: "CORE-01-BTN-CANDIDATE-CONFIRM", key: "core01.control.confirm_candidate" as LabelKey };
+          ? { control: "CORE-01-BTN-CANDIDATE-CREATE", key: "core01.control.create_candidate" as LabelKey }
+          : { control: "CORE-01-BTN-CANDIDATE-CONFIRM", key: "core01.control.confirm_candidate" as LabelKey };
   const isBusy = busyAction !== null;
   const visibleTopics = (projection?.topics ?? []).filter((item) => item.project_id === clientState.project_id);
   const activeWorkItems = (projection?.work_items ?? []).filter((item) =>
@@ -535,8 +535,8 @@ export function CoreVisual() {
           <section className={styles.panel} data-section-id="CORE-01-SEC-10" data-visual-id="CORE-01-VIS-RIGHT-VERSION"><div data-component-uid="CORE-01-CMP-VERSION"><PanelTitle labelKey="core01.group.version" /><ActionButton id="CORE-01-BTN-CANDIDATE-COMPARE" labelKey="core01.control.candidate_compare" disabled={isBusy} onClick={() => runControl("CORE-01-BTN-CANDIDATE-COMPARE")} /><ReadonlyField id="CORE-01-FLD-VERSION-STATE" labelKey="core01.control.version_state" value={display("version_state")} /><div className={styles.stateValue} data-candidate-compare-read-model="true">{display("candidate_compare")}</div></div><div className={styles.divider} /><div data-component-uid="CORE-01-CMP-LOCK-REVIEW"><PanelTitle labelKey="core01.group.lock_review" /><ReadonlyField id="CORE-01-FLD-LOCK-REVIEW" labelKey="core01.control.lock_review" value={display("lock_review")} /></div></section>
         </aside>
       </div>
-      <section className={styles.stageActionDock} data-current-stage-action-dock="true" data-current-stage={stageMeta.label} data-primary-control-ref={stageMeta.control}>
-        <div className={styles.stageSummary}><span>Stage {coreStage} / 5</span><strong>{stageMeta.label}</strong></div>
+      <section className={styles.stageActionDock} data-current-stage-action-dock="true" data-current-stage={String(coreStage)} data-primary-control-ref={stageMeta.control}>
+        <div className={styles.stageSummary}><span>{t("core01.control.runtime_stage")}</span><strong>{runtimeDisplay}</strong></div>
         <div className={styles.stagePrimaryHint}><span>{t("core01.control.runtime_stage")}</span><strong>{t(stageMeta.key)}</strong></div>
       </section>
     </div>
