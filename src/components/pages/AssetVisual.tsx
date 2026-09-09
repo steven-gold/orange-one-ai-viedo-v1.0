@@ -202,13 +202,18 @@ function AssetVisualBody() {
   const catalogCount = Object.keys(ASSET_CONTROL_TEXT).length;
   const registryValid = registry.size === 85 && catalogCount === 85 && [...registry].every((id) => id in ASSET_CONTROL_TEXT);
   const pageState = state.projection?.page_state ?? "EMPTY";
-  const currentStage = state.projection?.values["ASSET-01-FLD-STAGE"] ?? "";
+  const currentStage = String(state.projection?.values["ASSET-01-FLD-STAGE"] ?? "");
   const correctionVisible = state.correction_open || pageState === "CORRECTION_REQUIRED";
   const bindingVisible = pageState === "READY" || ["ASSET-01-ACT-BINDING-VIEW","ASSET-01-ACT-BLUEPRINT-VIEW","ASSET-01-ACT-SCRIPT-VIEW"].includes(state.active_view_action ?? "");
   const reuseVisible = pageState === "READY";
   const layerVisible = state.projection?.gate_state["ASSET-01-GATE-LAYER-ELIGIBLE"] === true && currentStage.includes("STAGE-03");
   const runtimeVisible = pageState === "EXECUTING" || pageState === "ERROR" || state.active_view_action === "ASSET-01-ACT-RUNTIME-VIEW";
   const handoffVisible = pageState === "LOCKED" || pageState === "HANDOFF";
+  const stagePrimarySpec =
+    correctionVisible ? CORRECTION[4]
+    : handoffVisible ? HANDOFF[11]
+    : currentStage.includes("STAGE-04") || pageState === "REVIEW" ? DECISION[5]
+    : CONTEXT[5];
 
   return (
     <div
@@ -225,7 +230,7 @@ function AssetVisualBody() {
     >
       <section className={styles.contextBar} data-section-id="ASSET-01-SEC-01" data-visual-uid="ASSET-01-VIS-CONTEXT">
         <div className={styles.contextGrid} data-component-uid="ASSET-01-CMP-CONTEXT">
-          {CONTEXT.map((spec) => <Control key={spec.id} spec={spec} />)}
+          {CONTEXT.filter((spec) => spec.id !== "ASSET-01-BTN-EXECUTE").map((spec) => <Control key={spec.id} spec={spec} />)}
         </div>
       </section>
 
@@ -269,10 +274,16 @@ function AssetVisualBody() {
             </div>
           </section> : null}
 
-          {correctionVisible ? <section className={`${styles.panel} ${styles.conditionalPanel}`} data-section-id="ASSET-01-SEC-06" data-visual-uid="ASSET-01-VIS-CORRECTION" data-stage-surface="correction-conversation">
-            <SectionTitle text={assetText(locale, "correction")} />
+          {correctionVisible ? <section className={`${styles.panel} ${styles.conditionalPanel} ${styles.correctionConversation}`} data-section-id="ASSET-01-SEC-06" data-visual-uid="ASSET-01-VIS-CORRECTION" data-stage-surface="correction-conversation" data-correction-ui="full-conversation">
+            <div className={styles.correctionHeader}><SectionTitle text={assetText(locale, "correction")} /><Control spec={CORRECTION[0]} /></div>
             <div data-component-uid="ASSET-01-CMP-CORRECTION" data-conditional-controls={CORRECTION.length}>
-              <div className={styles.stack}>{CORRECTION.map((spec) => <Control key={spec.id} spec={spec} />)}</div>
+              <div className={styles.correctionContext} data-correction-region="context">
+                <span>Asset / Version / Issue / Evidence</span>
+                <strong>{String(state.projection?.output_version_id ?? "—")} · {String(state.projection?.values["ASSET-01-FLD-ISSUES"] ?? "—")}</strong>
+              </div>
+              <div className={styles.correctionHistory} data-correction-region="history"><span>Conversation History</span><strong>{state.runtime_error ?? "—"}</strong></div>
+              <div className={styles.correctionCandidate} data-correction-region="candidate"><span>Correction Candidate</span><Control spec={CORRECTION[2]} /><Control spec={CORRECTION[3]} /></div>
+              <div className={styles.correctionComposer} data-correction-region="composer"><Control spec={CORRECTION[1]} /></div>
             </div>
           </section> : null}
 
@@ -298,7 +309,7 @@ function AssetVisualBody() {
             </div>
             <div className={styles.divider} />
             <div className={styles.stack} data-component-uid="ASSET-01-CMP-DECISION">
-              {DECISION.slice(5, 7).map((spec) => <Control key={spec.id} spec={spec} />)}
+              {DECISION.slice(5, 7).filter((spec) => spec.id !== "ASSET-01-BTN-CONFIRM").map((spec) => <Control key={spec.id} spec={spec} />)}
               <Control spec={DECISION[9]} />
             </div>
             <div className={styles.divider} />
@@ -308,7 +319,7 @@ function AssetVisualBody() {
               <Control spec={RUNTIME[8]} />
             </div>
             {handoffVisible ? <div className={styles.stageHandoff} data-component-uid="ASSET-01-CMP-HANDOFF" data-stage-surface="finalize-handoff">
-              {HANDOFF.map((spec) => <Control key={spec.id} spec={spec} />)}
+              {HANDOFF.filter((spec) => spec.id !== "ASSET-01-BTN-HANDOFF").map((spec) => <Control key={spec.id} spec={spec} />)}
             </div> : null}
           </section>
         </aside>
@@ -321,6 +332,10 @@ function AssetVisualBody() {
         </div>
       </section> : null}
       {handoffVisible ? <section className={styles.stageAnchor} data-section-id="ASSET-01-SEC-10" data-stage-surface="handoff-materialized" aria-hidden="true" /> : null}
+      <section className={styles.stageActionDock} data-current-stage-action-dock="true" data-current-stage={currentStage || pageState}>
+        <div className={styles.stageSummary}><span>Current Stage</span><strong>{currentStage || pageState}</strong></div>
+        <div className={styles.stagePrimary}>{stagePrimarySpec ? <Control spec={stagePrimarySpec} /> : null}</div>
+      </section>
     </div>
   );
 }
