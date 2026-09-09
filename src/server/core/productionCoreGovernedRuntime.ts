@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { cookies } from "next/headers";
 import type { CoreRuntimeRequest } from "@/domain/core/coreRuntimeContract";
 import { ensureProductionNeonRuntime,getProductionNeonSql } from "@/server/database/neonRuntime";
-import { runRlsActorQuery } from "@/server/database/rlsRuntime";
+import { runRlsActorQuery,runRlsActorTransaction } from "@/server/database/rlsRuntime";
 import { hashSessionToken,IDENTITY_COOKIE_NAME,resolveIdentityFromCookie } from "@/server/identity/identityRuntime";
 import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 
@@ -16,6 +16,7 @@ const GOVERNED_PORTS=new Set<CoreRuntimeRequest["port_uid"]>([
   "CORE-01-PORT-DNA-LOCK",
   "CORE-01-PORT-CORE-REVIEW",
   "CORE-01-PORT-MOTHER-LOCK",
+  "CORE-01-PORT-TOPIC-CREATE",
   "CORE-01-PORT-BLUEPRINT-CREATE",
   "CORE-01-PORT-BLUEPRINT-VALIDATE",
   "CORE-01-PORT-BLUEPRINT-APPROVE",
@@ -31,6 +32,19 @@ function stringArray(value:unknown):string[]{return Array.isArray(value)?[...new
 function sha(value:unknown):string{return createHash("sha256").update(typeof value==="string"?value:JSON.stringify(value)).digest("hex");}
 function required(value:unknown,reason:string):string{const v=text(value);if(!v)throw new NamedRuntimeError(reason);return v;}
 function requiredUuid(value:unknown,reason:string):string{const v=uuid(value);if(!v)throw new NamedRuntimeError(reason);return v;}
+
+function nonEmptyObject(value:unknown,reason:string):Row{
+  const v=rec(value);
+  if(Object.keys(v).length===0)throw new NamedRuntimeError(reason);
+  return v;
+}
+function stableValue(value:unknown):unknown{
+  if(Array.isArray(value))return value.map(stableValue);
+  if(value&&typeof value==="object"){
+    return Object.fromEntries(Object.entries(value as Row).sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>[k,stableValue(v)]));
+  }
+  return value;
+}
 
 async function context():Promise<{sql:Sql;actor_user_id:string;session_token_hash:string}>{
   await ensureProductionNeonRuntime();
@@ -303,6 +317,102 @@ async function requestMotherLock(request:CoreRuntimeRequest){
   throw new NamedRuntimeError("CORE_LOCK_REVIEWER_PATH_UNRESOLVED");
 }
 
+async function createTopic(request:CoreRuntimeRequest){
+  const payload=rec(request.payload);
+  const projectId=requiredUuid(request.path_params?.projectId,"REQUIRED_PATH_REFERENCE_MISSING:projectId");
+  if(payload.project_id!==undefined&&requiredUuid(payload.project_id,"TOPIC_CANONICAL_LINEAGE_INCOMPLETE")!==projectId){
+    throw new NamedRuntimeError("TOPIC_CANONICAL_LINEAGE_INCOMPLETE");
+  }
+  const title=required(payload.title,"TOPIC_CANONICAL_LINEAGE_INCOMPLETE");
+  const topicCode=required(payload.topic_code,"TOPIC_CANONICAL_LINEAGE_INCOMPLETE");
+  const motherLockRef=requiredUuid(payload.mother_lock_ref,"TOPIC_CANONICAL_LINEAGE_INCOMPLETE");
+  const motherProjectVersionRef=requiredUuid(payload.mother_project_version_ref,"TOPIC_CANONICAL_LINEAGE_INCOMPLETE");
+  const boundary=nonEmptyObject(payload.boundary,"TOPIC_CANONICAL_LINEAGE_INCOMPLETE");
+  const bridge=nonEmptyObject(payload.bridge,"TOPIC_CANONICAL_LINEAGE_INCOMPLETE");
+  if(payload.source_version_ref!==undefined&&payload.source_version_ref!==null&&payload.source_version_ref!==""){
+    throw new NamedRuntimeError("TOPIC_CANONICAL_LINEAGE_INCOMPLETE");
+  }
+
+  const {sql,actor_user_id,session_token_hash}=await context();
+  const lock=first(await runRlsActorQuery(sql,session_token_hash,sql`
+    SELECT ml.mother_lock_id::text AS mother_lock_ref,ml.project_id::text AS project_id,
+           ml.project_version_id::text AS mother_project_version_ref,ml.project_hash::text AS project_hash,
+           ml.status::text AS lock_status,pv.status::text AS project_version_status
+    FROM public.mother_locks ml
+    JOIN public.project_versions pv ON pv.project_version_id=ml.project_version_id
+    WHERE ml.mother_lock_id=${motherLockRef}::uuid
+      AND ml.project_id=${projectId}::uuid
+      AND ml.project_version_id=${motherProjectVersionRef}::uuid
+      AND ml.status='MOTHER_LOCKED'
+    LIMIT 1
+  `));
+  if(!lock)throw new NamedRuntimeError("TOPIC_CANONICAL_LINEAGE_INCOMPLETE");
+
+  const canonicalDocument=stableValue({
+    project_id:projectId,
+    mother_lock_ref:motherLockRef,
+    mother_project_version_ref:motherProjectVersionRef,
+    topic_code:topicCode,
+    title,
+    boundary,
+    bridge,
+  });
+  const contentHash=sha(canonicalDocument);
+
+  const existing=first(await runRlsActorQuery(sql,session_token_hash,sql`
+    SELECT t.topic_id::text AS topic_id,t.active_version_id::text AS topic_version_ref,
+           tv.content_hash::text AS content_hash,tv.boundary,tv.bridge,
+           tv.mother_project_version_id::text AS mother_project_version_ref
+    FROM public.topics t
+    LEFT JOIN public.topic_versions tv ON tv.topic_version_id=t.active_version_id
+    WHERE t.project_id=${projectId}::uuid AND t.topic_code=${topicCode}
+    LIMIT 1
+  `));
+  if(existing){
+    if(
+      text(existing.content_hash)!==contentHash
+      ||text(existing.mother_project_version_ref)!==motherProjectVersionRef
+      ||JSON.stringify(stableValue(existing.boundary))!==JSON.stringify(stableValue(boundary))
+      ||JSON.stringify(stableValue(existing.bridge))!==JSON.stringify(stableValue(bridge))
+    ) throw new NamedRuntimeError("TOPIC_CODE_ALREADY_EXISTS_WITH_DIFFERENT_LINEAGE");
+    return{
+      topic_id:text(existing.topic_id),topic_version_ref:text(existing.topic_version_ref),project_id:projectId,
+      topic_code:topicCode,title,state:"DRAFT",content_hash:contentHash,idempotent_replay:true,
+    };
+  }
+
+  const topicId=crypto.randomUUID();
+  const topicVersionId=crypto.randomUUID();
+  const [topicRows,versionRows,activateRows]=await runRlsActorTransaction(sql,session_token_hash,[
+    sql`
+      INSERT INTO public.topics(topic_id,project_id,topic_code,title,mother_lock_id,status)
+      VALUES(${topicId}::uuid,${projectId}::uuid,${topicCode},${title},${motherLockRef}::uuid,'DRAFT')
+      RETURNING topic_id::text AS topic_id
+    `,
+    sql`
+      INSERT INTO public.topic_versions(
+        topic_version_id,topic_id,version_no,mother_project_version_id,boundary,bridge,status,content_hash,created_by
+      ) VALUES(
+        ${topicVersionId}::uuid,${topicId}::uuid,1,${motherProjectVersionRef}::uuid,
+        ${JSON.stringify(boundary)}::jsonb,${JSON.stringify(bridge)}::jsonb,'DRAFT',${contentHash},${actor_user_id}::uuid
+      )
+      RETURNING topic_version_id::text AS topic_version_ref
+    `,
+    sql`
+      UPDATE public.topics
+      SET active_version_id=${topicVersionId}::uuid
+      WHERE topic_id=${topicId}::uuid AND project_id=${projectId}::uuid
+      RETURNING topic_id::text AS topic_id
+    `,
+  ]);
+  if(!first(topicRows)||!first(versionRows)||!first(activateRows))throw new NamedRuntimeError("TOPIC_CREATE_TRANSACTION_INCOMPLETE");
+  return{
+    topic_id:topicId,topic_version_ref:topicVersionId,project_id:projectId,topic_code:topicCode,title,
+    mother_lock_ref:motherLockRef,mother_project_version_ref:motherProjectVersionRef,
+    boundary,bridge,state:"DRAFT",content_hash:contentHash,idempotent_replay:false,
+  };
+}
+
 async function createBlueprint(request:CoreRuntimeRequest){
   const topicId=requiredUuid(request.path_params?.id,"REQUIRED_PATH_REFERENCE_MISSING:id");
   const {sql,session_token_hash}=await context();
@@ -459,6 +569,7 @@ export async function executeProductionCoreGovernedPort(request:CoreRuntimeReque
     case "CORE-01-PORT-DNA-LOCK":return requestDnaLock(request);
     case "CORE-01-PORT-CORE-REVIEW":return submitCoreReview(request);
     case "CORE-01-PORT-MOTHER-LOCK":return requestMotherLock(request);
+    case "CORE-01-PORT-TOPIC-CREATE":return createTopic(request);
     case "CORE-01-PORT-BLUEPRINT-CREATE":return createBlueprint(request);
     case "CORE-01-PORT-BLUEPRINT-VALIDATE":return validateBlueprint(request);
     case "CORE-01-PORT-BLUEPRINT-APPROVE":return approveBlueprint(request);
