@@ -1,0 +1,83 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+const read=(p)=>readFile(p,"utf8");
+
+test("CORE Current governed ports bind the existing API resources and dedicated Production owner",async()=>{
+  const authority=await read("authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml");
+  const identity=await read("src/server/shared/identityPageCommandRuntime.ts");
+  const runtime=await read("src/server/core/productionCoreGovernedRuntime.ts");
+  assert.match(authority,/Compare Candidates[\s\S]*effect_type: READ_ONLY[\s\S]*Read comparison only; no version mutation/);
+  assert.match(identity,/executeProductionCoreGovernedPort/);
+  assert.match(identity,/isProductionCoreGovernedPort/);
+  for(const key of [
+    "api:createCandidate","api:compareCandidates","api:decideCandidate","api:requestDNALock","api:submitCoreReview",
+    "api:createBlueprint","api:validateBlueprint","api:approveBlueprint","api:requestChildLock","api:getCanonicalScript",
+  ]) assert.ok(identity.includes(key),key);
+  assert.match(runtime,/public\.candidate_versions/);
+  assert.match(runtime,/public\.candidate_decisions/);
+  assert.doesNotMatch(runtime,/story_candidates|story_candidate_comparisons/);
+  assert.match(runtime,/read_only:true,version_mutation:false/);
+  assert.match(runtime,/decisionInput==="RETURN"\?"MODIFY_REQUESTED"/);
+});
+
+test("CORE Candidate and Blueprint creation fail closed instead of fabricating Current business objects",async()=>{
+  const runtime=await read("src/server/core/productionCoreGovernedRuntime.ts");
+  assert.match(runtime,/CORE_STRUCTURED_DECISION_REQUIRED/);
+  assert.match(runtime,/core_structured_decisions/);
+  assert.match(runtime,/core_human_decisions/);
+  assert.match(runtime,/core_evaluations/);
+  assert.match(runtime,/e\.result='PASS'/);
+  assert.match(runtime,/COALESCE\(schema->>'purpose',''\)<>'TEST_ONLY'/);
+  assert.match(runtime,/MASTER_BLUEPRINT_AUTHORITY_NOT_READY/);
+  assert.match(runtime,/CORE_BLUEPRINT_DOCUMENT_MATERIALIZER_NOT_BOUND/);
+  assert.match(runtime,/CORE_LOCK_REVIEWER_PATH_UNRESOLVED/);
+  assert.doesNotMatch(runtime,/blueprint_document\s*=\s*JSON\.stringify\(\{\s*topic_id/);
+});
+
+test("CORE DNA review and canonical script reads preserve exact authority lineage",async()=>{
+  const runtime=await read("src/server/core/productionCoreGovernedRuntime.ts");
+  assert.match(runtime,/resource_key='api:requestDNALock'/);
+  assert.match(runtime,/required_action[^\n]*'EXECUTE'/);
+  assert.match(runtime,/expected_checksum/);
+  assert.match(runtime,/CANONICAL_SCRIPT_LINEAGE_UNRESOLVED/);
+  assert.match(runtime,/project_blueprint_ref/);
+  assert.match(runtime,/topic_production_scope_ref/);
+  assert.match(runtime,/source_candidate_ref/);
+  assert.match(runtime,/d\.decision='ACCEPTED'/);
+  assert.match(runtime,/lineage_complete:true,read_only:true/);
+});
+
+test("migration 0037 grants only existing CORE API resources and closes missing session-bound RLS",async()=>{
+  const migration=await read("database/migrations/0037_core_governed_runtime_permission_rls_closure.sql");
+  const manifest=await read("database/migrations/migration_checksum_manifest.yaml");
+  const neon=await read("src/server/database/neonRuntime.ts");
+  assert.match(migration,/CORE0037_API_RESOURCE_COUNT_MISMATCH/);
+  assert.match(migration,/resource_count<>10/);
+  assert.match(migration,/CORE0037_ASSIGNMENT_COUNT_MISMATCH/);
+  assert.match(migration,/assignment_count<>10/);
+  for(const table of [
+    "topic_versions","topic_production_contracts","master_blueprints","topic_blueprints","blueprint_versions",
+    "dna_versions","lock_reviews","decision_requests","canonical_script_versions",
+  ]) assert.match(migration,new RegExp(`ALTER TABLE public\\.${table} ENABLE ROW LEVEL SECURITY`),table);
+  assert.match(migration,/acpos_runtime\.can_access_project/);
+  assert.match(migration,/acpos_runtime\.can_manage_project/);
+  assert.match(migration,/42253b9c137e299f482d0f35d2132a32bfa45204e32074ed83bbae0768822ec7/);
+  assert.doesNotMatch(migration,/INSERT INTO public\.(candidate_versions|blueprint_versions|dna_versions|canonical_script_versions)/);
+  assert.match(manifest,/0037_core_governed_runtime_permission_rls_closure/);
+  assert.match(manifest,/42253b9c137e299f482d0f35d2132a32bfa45204e32074ed83bbae0768822ec7/);
+  const ceiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0);
+  assert.ok(ceiling>=37,`migration ceiling must include 0037, found ${ceiling}`);
+});
+
+test("CORE projection resolves Current candidate DNA blueprint and script refs from canonical owners",async()=>{
+  const projection=await read("src/server/shared/pageCatalogProjectionRuntime.ts");
+  for(const owner of [
+    "candidate_versions","core_evaluations","core_structured_decisions","candidate_decisions",
+    "dna_versions","blueprint_versions","topic_production_contracts","canonical_script_versions","lock_reviews",
+  ]) assert.ok(projection.includes(owner),owner);
+  assert.match(projection,/dna_version_ref: asText\(currentDna\.dna_version_ref\)/);
+  assert.match(projection,/blueprint_version_ref: asText\(currentBlueprint\.blueprint_version_ref\)/);
+  assert.match(projection,/candidate_ref: asText\(currentCandidate\.candidate_ref\)/);
+  assert.match(projection,/canonical_script_source_candidate_ref/);
+});
