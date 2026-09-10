@@ -1,0 +1,72 @@
+name: ACPOS Identity Queue Authority Residue Cleanup Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - .github/workflows/identity-queue-authority-residue-cleanup-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Externalize mutable Identity and Queue execution state
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs');
+          const identityPath='authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml';
+          const queuePath='authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml';
+          const authorityTest='tests/release/authority.test.mjs';
+
+          let identity=fs.readFileSync(identityPath,'utf8');
+          identity=identity.replace(/^  revision:.*$/m,'  revision: 2026-09-11-CURRENT-STATE-EXTERNALIZED');
+          const identityTail=/remaining_blockers:\s*\[\]\nadapter_bind_allowed: true\nproduction_ready_claim_allowed: false\nnext_action: VERIFY_CONTROL_PLANE_READINESS_THEN_CONTINUE_REMAINING_PRODUCTION_GATES\s*$/;
+          if(!identityTail.test(identity)) throw new Error('identity stale operational tail missing');
+          identity=identity.replace(identityTail,`adapter_bind_allowed: true\nproduction_ready_claim_allowed_from_this_contract_alone: false\ndeployment_state_policy:\n  mutable_environment_state_embedded: false\n  current_state_owner: CURRENT_EXECUTION_STATE.json\n  production_evidence_owner: docs/construction/evidence/\n`);
+          fs.writeFileSync(identityPath,identity);
+
+          let queue=fs.readFileSync(queuePath,'utf8');
+          queue=queue.replace(/^  revision:.*$/m,'  revision: 2026-09-11-CURRENT-STATE-EXTERNALIZED');
+          const queueEvidence=/\nprovider_execution_implementation_evidence:\n[\s\S]*$/;
+          if(!queueEvidence.test(queue)) throw new Error('queue mutable implementation evidence tail missing');
+          queue=queue.replace(queueEvidence,`\ndeployment_state_policy:\n  mutable_environment_state_embedded: false\n  current_state_owner: CURRENT_EXECUTION_STATE.json\n  production_evidence_owner: docs/construction/evidence/\n  rule: Release run, exact source SHA, provider configuration counts and Production execution outcomes are mutable evidence and must not be embedded in this Current Authority contract.\n`);
+          fs.writeFileSync(queuePath,queue);
+
+          let test=fs.readFileSync(authorityTest,'utf8');
+          const old='  assert.match(identity, /VERIFY_CONTROL_PLANE_READINESS/);';
+          if(!test.includes(old)) throw new Error('stale identity next-action assertion missing');
+          test=test.replace(old,`  assert.match(identity, /deployment_state_policy:/);\n  assert.match(identity, /mutable_environment_state_embedded:\\s*false/);\n  assert.match(identity, /current_state_owner:\\s*CURRENT_EXECUTION_STATE\\.json/);\n  assert.doesNotMatch(identity, /next_action:/);`);
+          fs.writeFileSync(authorityTest,test);
+
+          fs.writeFileSync('tests/release/runtime-authority-current-state-separation.test.mjs',`import test from "node:test";\nimport assert from "node:assert/strict";\nimport { readFile } from "node:fs/promises";\nconst identity=await readFile("${identityPath}","utf8");\nconst queue=await readFile("${queuePath}","utf8");\ntest("Identity Current Authority keeps fail-closed semantics but not mutable readiness progression",()=>{\n  assert.match(identity,/reason_code: IDENTITY_RUNTIME_NOT_BOUND/);\n  assert.match(identity,/adapter_bind_allowed: true/);\n  assert.match(identity,/production_ready_claim_allowed_from_this_contract_alone: false/);\n  assert.match(identity,/current_state_owner: CURRENT_EXECUTION_STATE\\.json/);\n  assert.doesNotMatch(identity,/remaining_blockers:/);\n  assert.doesNotMatch(identity,/next_action:/);\n});\ntest("Queue Current Authority does not embed old release, SHA, provider counts, or execution outcomes",()=>{\n  assert.match(queue,/deployment_state_policy:/);\n  assert.match(queue,/mutable_environment_state_embedded: false/);\n  assert.match(queue,/current_state_owner: CURRENT_EXECUTION_STATE\\.json/);\n  assert.doesNotMatch(queue,/provider_execution_implementation_evidence:/);\n  assert.doesNotMatch(queue,/release_gate:\\s*\\n\\s*run_number:/);\n  assert.doesNotMatch(queue,/external_configuration_current_counts:/);\n  assert.doesNotMatch(queue,/production_external_execution_proof:/);\n});\n`);
+          NODE
+      - name: Validate authority current-state separation
+        run: |
+          set -euo pipefail
+          ! grep -q "next_action: VERIFY_CONTROL_PLANE_READINESS" authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+          grep -q "reason_code: IDENTITY_RUNTIME_NOT_BOUND" authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+          ! grep -q "provider_execution_implementation_evidence:\|external_configuration_current_counts:\|production_external_execution_proof:" authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+          grep -q "current_state_owner: CURRENT_EXECUTION_STATE.json" authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+          grep -q "current_state_owner: CURRENT_EXECUTION_STATE.json" authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+      - run: npm ci
+      - run: npm test
+      - name: Commit clean tree without one-shot
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/identity-queue-authority-residue-cleanup-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml tests/release/authority.test.mjs tests/release/runtime-authority-current-state-separation.test.mjs
+          git commit -m "chore: externalize identity and queue execution state"
+          git push origin HEAD:new
