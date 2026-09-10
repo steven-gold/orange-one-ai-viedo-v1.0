@@ -32,3 +32,13 @@ test("EDIT+VOICE Production audit resolves exact task workspace and is no longer
   assert.match(runtime,/EDIT_AUDIT_WORKSPACE_REQUIRED/);
   assert.match(runtime,/entity_type,entity_id,actor_id,actor_type,workspace_id,reason,correlation_id,payload_hash/);
 });
+
+
+test("ALLOWED audit persistence is fail-closed before EDIT effectful execution",async()=>{
+  const runtime=await read("src/server/edit/editVoiceRuntime.ts");
+  assert.match(runtime,/const allowedAuditPersisted=await audit\(r,\{\.\.\.request,outcome:"ALLOWED"\}\)/);
+  assert.match(runtime,/if\(!allowedAuditPersisted\)return\{ok:false as const,status:503[\s\S]*EDIT_AUDIT_PERSISTENCE_REQUIRED/);
+  const gate=runtime.indexOf("EDIT_AUDIT_PERSISTENCE_REQUIRED");
+  const execute=runtime.indexOf("r.execute(request)");
+  assert.ok(gate>=0&&execute>gate,"effectful execute must occur only after durable ALLOWED audit gate");
+});
