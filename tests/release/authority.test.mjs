@@ -51,15 +51,20 @@ test("Production Script V1.3 remains the current integration contract", () => {
   assert.doesNotMatch(manifest, /PRODUCTION_SCRIPT.*V1\.2/);
 });
 
-test("Current-only manifest does not embed mutable historical migration execution state", () => {
-  assert.match(manifest, /version: V1\.8/);
+test("Current-only authority does not embed mutable historical migration execution state", () => {
   assert.match(manifest, /historical_execution_evidence_owner: database\/migrations\/migration_checksum_manifest\.yaml/);
   assert.match(manifest, /mutable_production_state_embedded: false/);
   assert.doesNotMatch(manifest, /post_migration_validation:/);
   assert.doesNotMatch(manifest, /production_integrity_checklist:/);
   assert.doesNotMatch(manifest, /CR-R9-/);
-  assert.match(migrationAuthority, /current_production_reconciliation:/);
-  assert.match(migrationAuthority, /historical_evidence_immutable: true/);
+  assert.match(migrationAuthority, /current_state_policy:/);
+  assert.match(migrationAuthority, /mutable_environment_state_embedded:\s*false/);
+  assert.match(migrationAuthority, /mutable_registered_migration_count_embedded:\s*false/);
+  assert.match(migrationAuthority, /mutable_applied_migration_count_embedded:\s*false/);
+  assert.match(migrationAuthority, /historical_execution_evidence_is_not_runtime_authority:\s*true/);
+  assert.doesNotMatch(migrationAuthority, /current_production_reconciliation:/);
+  assert.doesNotMatch(migrationAuthority, /tiny-dust/);
+  assert.doesNotMatch(migrationAuthority, /migration_chain_0001_0015_on_this_target/);
 });
 
 test("WB-01 UI projection mapping locks page-gate authorize and named section read SQL", async () => {
