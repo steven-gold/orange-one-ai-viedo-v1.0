@@ -1,0 +1,61 @@
+name: ACPOS System Authority Current Truth Cleanup Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - .github/workflows/system-authority-current-truth-cleanup-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Externalize mutable implementation truth from System Authority
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const systemPath = 'authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml';
+          const testPath = 'tests/release/authority.test.mjs';
+          let system = fs.readFileSync(systemPath, 'utf8');
+          system = system.replace(/^  revision:.*$/m, '  revision: 2026-09-11-CURRENT-TRUTH-EXTERNALIZED');
+          const oldTruth = /implementation_truth:\n[\s\S]*?\nacceptance:/;
+          if (!oldTruth.test(system)) throw new Error('System implementation_truth block missing');
+          system = system.replace(oldTruth, `implementation_truth_policy:\n  mutable_environment_state_embedded: false\n  current_state_owner: CURRENT_EXECUTION_STATE.json\n  production_evidence_owner: docs/construction/evidence/\n  rule: Authority defines contracts and boundaries; runtime, test, migration and deployment completion are resolved only from Current execution evidence.\nacceptance:`);
+          fs.writeFileSync(systemPath, system);
+
+          let test = fs.readFileSync(testPath, 'utf8');
+          const oldTest = /test\("System implementation truth is not silently promoted", \(\) => \{[\s\S]*?\n\}\);/;
+          if (!oldTest.test(test)) throw new Error('stale System implementation truth test missing');
+          test = test.replace(oldTest, `test("System Authority externalizes mutable implementation and deployment truth", () => {\n  assert.match(system, /implementation_truth_policy:/);\n  assert.match(system, /mutable_environment_state_embedded:\\s*false/);\n  assert.match(system, /current_state_owner:\\s*CURRENT_EXECUTION_STATE\\.json/);\n  assert.match(system, /production_evidence_owner:\\s*docs\\/construction\\/evidence\\//);\n  assert.doesNotMatch(system, /application_code:\\s*VISUAL_PHASE_EXECUTED_BUSINESS_LOGIC_NOT_EXECUTED/);\n  assert.doesNotMatch(system, /api_binding:\\s*NOT_EXECUTED/);\n  assert.doesNotMatch(system, /database_binding:\\s*NOT_EXECUTED/);\n  assert.doesNotMatch(system, /deployment:\\s*NOT_EXECUTED/);\n});`);
+          fs.writeFileSync(testPath, test);
+          NODE
+      - name: Validate Current truth separation
+        run: |
+          set -euo pipefail
+          grep -q "implementation_truth_policy:" authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+          grep -q "current_state_owner: CURRENT_EXECUTION_STATE.json" authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+          ! grep -q "api_binding: NOT_EXECUTED\|database_binding: NOT_EXECUTED\|deployment: NOT_EXECUTED" authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+      - name: Install dependencies
+        run: npm ci
+      - name: Run release tests
+        run: npm test
+      - name: Commit clean tree without one-shot workflow
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/system-authority-current-truth-cleanup-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml tests/release/authority.test.mjs
+          git commit -m "chore: externalize mutable System Authority execution truth"
+          git push origin HEAD:new
