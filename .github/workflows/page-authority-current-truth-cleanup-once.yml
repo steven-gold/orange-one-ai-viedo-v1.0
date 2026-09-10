@@ -2,9 +2,10 @@ name: ACPOS Page Authority Current Truth Cleanup Once
 
 on:
   push:
-    branches: [new]
+    branches:
+      - new
     paths:
-      - '.github/workflows/page-authority-current-truth-cleanup-once.yml'
+      - .github/workflows/page-authority-current-truth-cleanup-once.yml
 
 permissions:
   contents: write
@@ -20,194 +21,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Remove superseded page execution snapshots and 9x9 navigation residue
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-
-          def read(path):
-              return Path(path).read_text()
-          def write(path, text):
-              Path(path).write_text(text)
-          def replace_once(text, old, new, path):
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f'{path}: expected exactly one replacement, found {count}: {old[:100]!r}')
-              return text.replace(old, new, 1)
-          def externalize_top_status(path, status_line):
-              text = read(path)
-              text = replace_once(text, status_line + '\n', '', path)
-              pattern = r'^  truthful_status_rule:.*\n(?:    .*\n)*'
-              replacement = (
-                  '  execution_state_policy:\n'
-                  '    mutable_execution_state_embedded: false\n'
-                  '    current_state_owner: CURRENT_EXECUTION_STATE.json\n'
-                  '    production_evidence_owner: docs/construction/evidence/\n'
-              )
-              text2, count = re.subn(pattern, replacement, text, count=1, flags=re.MULTILINE)
-              if count != 1:
-                  raise SystemExit(f'{path}: truthful_status_rule replacement count={count}')
-              write(path, text2)
-
-          # INFO-01 is a Current page but Current Navigation Authority explicitly says it is not a Global L1 item.
-          path = 'authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml'
-          text = read(path)
-          text = replace_once(text,
-              '  revision: 2026-08-30-USER-APPROVED-FRONT-L1-NAV09\n',
-              '  revision: 2026-09-11-CURRENT-NON-GLOBAL-L1-ALIGNMENT\n', path)
-          old = '''  navigation_mode: FRONT_L1
-  global_l1: true
-  navigation_id: NAV-09
-  navigation_label_zh: 最新資訊
-  navigation_label_en: Latest Information
-  navigation_entry_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
-'''
-          new = '''  navigation_mode: NON_GLOBAL_L1_CURRENT_PAGE
-  global_l1: false
-  navigation_entry_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
-  navigation_rule: This Page Authority does not declare or add a Global L1 item; global navigation is owned only by Current Navigation Authority.
-'''
-          text = replace_once(text, old, new, path)
-          write(path, text)
-
-          # IAM-01: remove superseded 9x9 L1 model and mutable execution status.
-          path = 'authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml'
-          text = read(path)
-          text = replace_once(text,
-              '  revision: 2026-08-30-CURRENT-NAV-9X9-ALIGNMENT\n',
-              '  revision: 2026-09-11-CURRENT-NAV-8X8-ALIGNMENT\n', path)
-          text = replace_once(text, '  system_implementation_status: NOT_EXECUTED\n', '', path)
-          pattern = r'^  truthful_status_rule:.*\n(?:    .*\n)*'
-          replacement = (
-              '  execution_state_policy:\n'
-              '    mutable_execution_state_embedded: false\n'
-              '    current_state_owner: CURRENT_EXECUTION_STATE.json\n'
-              '    production_evidence_owner: docs/construction/evidence/\n'
-          )
-          text, count = re.subn(pattern, replacement, text, count=1, flags=re.MULTILINE)
-          if count != 1:
-              raise SystemExit(f'{path}: truthful_status_rule replacement count={count}')
-          text = replace_once(text, '''  - order: 9
-    bundle_key: FRONT-L1-09
-    label: 最新資訊
-    canonical_page_uid: workspace:INFO-01
-''', '', path)
-          text = replace_once(text, '''  - order: 9
-    bundle_key: ADMIN-L1-KNOWLEDGE
-    label: 知識庫
-    canonical_page_uid: admin:KB-01
-''', '', path)
-          replacements = {
-              'Select all 9 backend L1 choices in draft only; no super-admin bypass.': 'Select all 8 backend L1 choices in draft only; no super-admin bypass.',
-              'Select all 9 frontend L1 choices in the draft only.': 'Select all 8 frontend L1 choices in the draft only.',
-              'role: Nine frontend L1 permission choices only': 'role: Eight frontend L1 permission choices only',
-              'role: Nine backend L1 permission choices only': 'role: Eight backend L1 permission choices only',
-              'label: 前台 9 L1': 'label: 前台 8 L1',
-              'label: 後台 9 L1': 'label: 後台 8 L1',
-              'rule: Select/deselect all nine frontend L1 draft choices.': 'rule: Select/deselect all eight frontend L1 draft choices.',
-              'rule: Select/deselect all nine backend L1 draft choices; not super-admin.': 'rule: Select/deselect all eight backend L1 draft choices; not super-admin.',
-          }
-          for old, new in replacements.items():
-              text = replace_once(text, old, new, path)
-          write(path, text)
-
-          # SYS-01: execution/deployment state belongs to Current execution evidence, not Page Authority.
-          path = 'authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml'
-          text = read(path)
-          text = replace_once(text, '  implementation_status: RUNTIME_BOUND_PENDING_RELEASE\n', '', path)
-          pattern = r'^  truthful_status_rule:.*\n(?:    .*\n)*'
-          replacement = (
-              '  execution_state_policy:\n'
-              '    mutable_execution_state_embedded: false\n'
-              '    current_state_owner: CURRENT_EXECUTION_STATE.json\n'
-              '    production_evidence_owner: docs/construction/evidence/\n'
-          )
-          text, count = re.subn(pattern, replacement, text, count=1, flags=re.MULTILINE)
-          if count != 1:
-              raise SystemExit(f'{path}: truthful_status_rule replacement count={count}')
-          write(path, text)
-
-          # DEV/SOC/ERP share the same stale file-level NOT_EXECUTED pattern.
-          for path in [
-              'authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml',
-              'authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml',
-              'authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml',
-          ]:
-              externalize_top_status(path, '  system_implementation_status: NOT_EXECUTED')
-
-          # AIAPI and Strategy Admin embed whole mutable runtime_truth snapshots.
-          for path in [
-              'authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml',
-              'authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml',
-          ]:
-              text = read(path)
-              pattern = r'^runtime_truth:\n(?:  .*\n)+(?=page_contract:)'
-              replacement = (
-                  'execution_state_policy:\n'
-                  '  mutable_execution_state_embedded: false\n'
-                  '  current_state_owner: CURRENT_EXECUTION_STATE.json\n'
-                  '  production_evidence_owner: docs/construction/evidence/\n'
-                  '  rule: Runtime, validation, Release and Production deployment completion are resolved only from Current execution evidence.\n'
-              )
-              text2, count = re.subn(pattern, replacement, text, count=1, flags=re.MULTILINE)
-              if count != 1:
-                  raise SystemExit(f'{path}: runtime_truth replacement count={count}')
-              write(path, text2)
-
-          # Permanent regression: Current page authority must not revive 9x9 navigation or mutable deployment snapshots.
-          Path('tests/release/page-authority-current-truth.test.mjs').write_text(r'''import test from "node:test";
-import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
-
-const read = (p) => readFile(p, "utf8");
-
-test("INFO and IAM follow the Current 8+8 navigation authority", async () => {
-  const info = await read("authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml");
-  const iam = await read("authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml");
-  assert.match(info, /global_l1:\s*false/);
-  assert.doesNotMatch(info, /navigation_id:\s*NAV-09|navigation_mode:\s*FRONT_L1/);
-  assert.doesNotMatch(iam, /FRONT-L1-09|ADMIN-L1-KNOWLEDGE|9X9|前台 9 L1|後台 9 L1|all nine|Nine frontend|Nine backend/);
-  assert.match(iam, /前台 8 L1/);
-  assert.match(iam, /後台 8 L1/);
-});
-
-test("Current page authorities externalize mutable execution and deployment state", async () => {
-  const paths = [
-    "authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml",
-    "authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
-    "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
-    "authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
-    "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
-    "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
-    "authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
-  ];
-  for (const path of paths) {
-    const text = await read(path);
-    assert.match(text, /execution_state_policy:/, path);
-    assert.match(text, /current_state_owner:\s*CURRENT_EXECUTION_STATE\.json/, path);
-    assert.doesNotMatch(text, /system_implementation_status:\s*NOT_EXECUTED|implementation_status:\s*RUNTIME_BOUND_PENDING_RELEASE|runtime_truth:/, path);
-  }
-  const aiapi = await read(paths[5]);
-  assert.doesNotMatch(aiapi, /PASS_RELEASE_GATE_384|PENDING_SINGLE_MAIN_RELEASE/);
-  const strategy = await read(paths[6]);
-  assert.doesNotMatch(strategy, /IMPLEMENTATION_REQUIRED_NOT_EXECUTED|production_deployment:\s*NOT_EXECUTED/);
-});
-''')
-          PY
-      - name: Validate current page truth separation
+      - name: Apply Current page authority cleanup
+        run: python3 scripts/page-authority-current-truth-cleanup-once.py
+      - name: Validate permanent regression
         run: node --test tests/release/page-authority-current-truth.test.mjs
       - name: Install dependencies
         run: npm ci
       - name: Run release unit tests
         run: npm test
-      - name: Commit clean tree and remove one-shot
+      - name: Commit clean tree
         shell: bash
         run: |
           rm .github/workflows/page-authority-current-truth-cleanup-once.yml
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add authority/pages tests/release .github/workflows/page-authority-current-truth-cleanup-once.yml
-          git commit -m 'chore: align page authorities to Current truth'
+          rm scripts/page-authority-current-truth-cleanup-once.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: align page authorities to Current truth"
           git push origin HEAD:new
