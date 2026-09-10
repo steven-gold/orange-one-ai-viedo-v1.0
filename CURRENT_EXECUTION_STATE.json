@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T13:08:00+08:00",
+  "as_of": "2026-09-10T14:56:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
-    "new_sha": "8cf21984f78b6f3c193aaadbaf24118beef2d5f6",
+    "new_sha": "e386c6e8066554a5bc6c42871b6352b8e0b6d970",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -32,12 +32,40 @@
       {
         "sha": "0f5aff87d4dc14612fc68151b40210bd34728ae4",
         "purpose": "CORE truthful control gating"
+      },
+      {
+        "sha": "352c126c36ec0cc6ab850ccca10fcd97e2557180",
+        "purpose": "IAM canonical L1 page authority mapping"
+      },
+      {
+        "sha": "71d1565af48f13ac0ba75b8fabcccc12feb53668",
+        "purpose": "Production IAM account projection materializer"
+      },
+      {
+        "sha": "4c0999154458120a0eb5c231dba868a302501991",
+        "purpose": "IAM-01 live UI projection binding"
+      },
+      {
+        "sha": "877e7c0ed1ba98c8b642a61a5fdc64cf363a7795",
+        "purpose": "IAM identity projection aligned to Current Identity Runtime Authority"
+      },
+      {
+        "sha": "0a485733cb0bd679395773e22d2f4002747b5ab8",
+        "purpose": "IAM command runtime canonical L1 mapping deduplication"
+      },
+      {
+        "sha": "ff00080cf227df92a831391657a6198e8e054e7f",
+        "purpose": "IAM production projection canonical authority release tests"
+      },
+      {
+        "sha": "e386c6e8066554a5bc6c42871b6352b8e0b6d970",
+        "purpose": "IAM organization/MFA/account-risk Current Authority gap evidence"
       }
     ],
     "latest_new_release_gate": {
-      "run_number": 1091,
-      "run_id": 34439332118,
-      "head_sha": "8cf21984f78b6f3c193aaadbaf24118beef2d5f6",
+      "run_number": 1102,
+      "run_id": 34446910563,
+      "head_sha": "ff00080cf227df92a831391657a6198e8e054e7f",
       "status": "SUCCESS"
     },
     "production_main_release_gate": {
@@ -100,148 +128,35 @@
       "disabled": 216,
       "status": "VISUAL_GOVERNANCE_PASS_EFFECTFUL_ACCEPTANCE_PARTIAL",
       "page_counts": {
-        "workspace:WB-01": {
-          "visible": 14,
-          "enabled": 14,
-          "disabled": 0,
-          "governed": 14
-        },
-        "CORE-01": {
-          "visible": 30,
-          "enabled": 7,
-          "disabled": 23,
-          "governed": 30
-        },
-        "ASSET-01": {
-          "visible": 23,
-          "enabled": 3,
-          "disabled": 20,
-          "governed": 23
-        },
-        "VIDEO-01": {
-          "visible": 19,
-          "enabled": 6,
-          "disabled": 13,
-          "governed": 19
-        },
-        "EDIT-01": {
-          "visible": 77,
-          "enabled": 6,
-          "disabled": 71,
-          "governed": 77
-        },
-        "QA-01": {
-          "visible": 18,
-          "enabled": 7,
-          "disabled": 11,
-          "governed": 18
-        },
-        "admin:DB-01": {
-          "visible": 236,
-          "enabled": 236,
-          "disabled": 0,
-          "governed": 236
-        },
-        "workspace:STR-01": {
-          "visible": 18,
-          "enabled": 2,
-          "disabled": 16,
-          "governed": 18
-        },
-        "workspace:INFO-01": {
-          "visible": 10,
-          "enabled": 4,
-          "disabled": 6,
-          "governed": 10
-        },
-        "admin:SYS-01": {
-          "visible": 10,
-          "enabled": 3,
-          "disabled": 7,
-          "governed": 10
-        },
-        "admin:IAM-01": {
-          "visible": 28,
-          "enabled": 4,
-          "disabled": 24,
-          "governed": 28
-        },
-        "admin:DEV-01": {
-          "visible": 6,
-          "enabled": 6,
-          "disabled": 0,
-          "governed": 6
-        },
-        "admin:SOC-01": {
-          "visible": 6,
-          "enabled": 6,
-          "disabled": 0,
-          "governed": 6
-        },
-        "admin:ERP-01": {
-          "visible": 8,
-          "enabled": 4,
-          "disabled": 4,
-          "governed": 8
-        },
-        "admin:AIAPI-01": {
-          "visible": 29,
-          "enabled": 11,
-          "disabled": 18,
-          "governed": 29
-        },
-        "admin:SG-02": {
-          "visible": 11,
-          "enabled": 11,
-          "disabled": 0,
-          "governed": 11
-        },
-        "admin:STR-01": {
-          "visible": 8,
-          "enabled": 5,
-          "disabled": 3,
-          "governed": 8
-        },
-        "admin:KB-01": {
-          "visible": 7,
-          "enabled": 7,
-          "disabled": 0,
-          "governed": 7
-        }
+        "workspace:WB-01": {"visible": 14,"enabled": 14,"disabled": 0,"governed": 14},
+        "CORE-01": {"visible": 30,"enabled": 7,"disabled": 23,"governed": 30},
+        "ASSET-01": {"visible": 23,"enabled": 3,"disabled": 20,"governed": 23},
+        "VIDEO-01": {"visible": 19,"enabled": 6,"disabled": 13,"governed": 19},
+        "EDIT-01": {"visible": 77,"enabled": 6,"disabled": 71,"governed": 77},
+        "QA-01": {"visible": 18,"enabled": 7,"disabled": 11,"governed": 18},
+        "admin:DB-01": {"visible": 236,"enabled": 236,"disabled": 0,"governed": 236},
+        "workspace:STR-01": {"visible": 18,"enabled": 2,"disabled": 16,"governed": 18},
+        "workspace:INFO-01": {"visible": 10,"enabled": 4,"disabled": 6,"governed": 10},
+        "admin:SYS-01": {"visible": 10,"enabled": 3,"disabled": 7,"governed": 10},
+        "admin:IAM-01": {"visible": 28,"enabled": 4,"disabled": 24,"governed": 28},
+        "admin:DEV-01": {"visible": 6,"enabled": 6,"disabled": 0,"governed": 6},
+        "admin:SOC-01": {"visible": 6,"enabled": 6,"disabled": 0,"governed": 6},
+        "admin:ERP-01": {"visible": 8,"enabled": 4,"disabled": 4,"governed": 8},
+        "admin:AIAPI-01": {"visible": 29,"enabled": 11,"disabled": 18,"governed": 29},
+        "admin:SG-02": {"visible": 11,"enabled": 11,"disabled": 0,"governed": 11},
+        "admin:STR-01": {"visible": 8,"enabled": 5,"disabled": 3,"governed": 8},
+        "admin:KB-01": {"visible": 7,"enabled": 7,"disabled": 0,"governed": 7}
       }
     },
     "pending_product_delta": "NONE: PR #38 merged; main c3be46239146673c02d261defa17f55340342c8a passed Release Gate #1076 and Production Post-Deploy #1384/#1385.",
     "formal_acceptance_denominator": {
-      "legacy_catalog": {
-        "controls": 1141,
-        "actions": 312,
-        "control_action_baseline": 1453,
-        "permission_resources": 3650
-      },
-      "current_production_permission_catalog": {
-        "controls": 1155,
-        "actions": 326,
-        "control_action_denominator": 1481,
-        "control_action_expansion": 28,
-        "active_permission_resources": 3693,
-        "permission_resource_expansion": 43
-      },
+      "legacy_catalog": {"controls": 1141,"actions": 312,"control_action_baseline": 1453,"permission_resources": 3650},
+      "current_production_permission_catalog": {"controls": 1155,"actions": 326,"control_action_denominator": 1481,"control_action_expansion": 28,"active_permission_resources": 3693,"permission_resource_expansion": 43},
       "rule": "1453 is the historical CONTROL+ACTION catalog baseline. 1481 is the Current active Production CONTROL+ACTION permission denominator. 558 is the separately observed current Production rendered DOM interactive denominator. These denominators are not interchangeable. Gate 25 remains PARTIAL until all formal controls/actions have an explicit acceptance disposition and effectful paths are proven without fabricated business data.",
       "evidence": "docs/construction/evidence/CURRENT_ACCEPTANCE_DENOMINATOR_2026-09-10.json",
-      "current_production_rendered_dom": {
-        "interactive": 559,
-        "governed": 559,
-        "enabled": 343,
-        "disabled": 216
-      }
+      "current_production_rendered_dom": {"interactive": 559,"governed": 559,"enabled": 343,"disabled": 216}
     },
-    "post_deploy_redundant_confirmation": {
-      "run_number": 1385,
-      "run_id": 34431553596,
-      "event": "workflow_run",
-      "head_sha": "c3be46239146673c02d261defa17f55340342c8a",
-      "status": "SUCCESS"
-    }
+    "post_deploy_redundant_confirmation": {"run_number": 1385,"run_id": 34431553596,"event": "workflow_run","head_sha": "c3be46239146673c02d261defa17f55340342c8a","status": "SUCCESS"}
   },
   "neon": {
     "project": "wild-wave-25661146",
@@ -254,15 +169,9 @@
     "permission_resources_authority_seal_status": "CURRENT_EXPANSION_TALLY_NOT_SEALED",
     "approved_allow_assignments": 158,
     "rls_tables_total": 73,
-    "rls_tables_by_schema": {
-      "public": 69,
-      "acpos_runtime": 4
-    },
+    "rls_tables_by_schema": {"public": 69,"acpos_runtime": 4},
     "policies_total": 143,
-    "policies_by_schema": {
-      "public": 115,
-      "acpos_runtime": 8
-    },
+    "policies_by_schema": {"public": 115,"acpos_runtime": 8},
     "approved_provider_capabilities": 4,
     "approved_secret_references": 4,
     "queues": 1,
@@ -283,239 +192,51 @@
     "approved_service_identities": 2,
     "approved_service_capabilities": 4,
     "production_formal_materialization_counts": {
-      "quality_criteria_versions": 0,
-      "child_locks": 0,
-      "work_packages": 0,
-      "department_tasks": 0,
-      "canonical_script_versions": 0,
-      "script_projection_rules": 0,
-      "department_script_views": 0,
-      "task_input_manifests": 0,
-      "instruction_packages": 0,
-      "editing_timelines": 0,
-      "edit_render_jobs": 0,
-      "editing_output_locks": 0,
-      "editing_runtime_runs": 0
+      "quality_criteria_versions": 0,"child_locks": 0,"work_packages": 0,"department_tasks": 0,"canonical_script_versions": 0,"script_projection_rules": 0,"department_script_views": 0,"task_input_manifests": 0,"instruction_packages": 0,"editing_timelines": 0,"edit_render_jobs": 0,"editing_output_locks": 0,"editing_runtime_runs": 0
     },
-    "production_formal_dependency_counts": {
-      "task_templates": 0,
-      "production_goals": 0,
-      "output_contracts": 0,
-      "rights_profiles": 0,
-      "production_contracts": 0,
-      "topics": 0,
-      "blueprint_versions": 0
-    },
+    "production_formal_dependency_counts": {"task_templates": 0,"production_goals": 0,"output_contracts": 0,"rights_profiles": 0,"production_contracts": 0,"topics": 0,"blueprint_versions": 0},
     "migration_0046_checksum": "73f8b38070d62a8c12307674d9e6c0fbefd838c2eaa23da3f1ca7b7d38745c92",
     "compiler_rls_tables": 8,
     "compiler_api_assignments": 2,
     "migration_0047_checksum": "7f9a709236c13482b67deeb63d09085eadcde1a0ae05920d39a31b0e67b8e19f",
     "migration_0048_checksum": "5e218c9a78826c0e56719ef7865957b75e4508a021cac9f858edebc7bd2a2f60",
     "migration_0049_checksum": "efaca6966229c2cd10c6e0ea4e509d2df8f3c6621cfb460e66635010dacbf947",
-    "department_code_current": [
-      "CORE",
-      "ASSET",
-      "VIDEO",
-      "EDITING",
-      "QA",
-      "RELEASE",
-      "STRATEGY",
-      "SYSTEM",
-      "VOICE"
-    ],
+    "department_code_current": ["CORE","ASSET","VIDEO","EDITING","QA","RELEASE","STRATEGY","SYSTEM","VOICE"],
     "latest_migration_checksum": "576e039f06550edd7374471ce01ad7384478393b19e5cf9530e85c07de95c305",
     "migration_0052_checksum": "576e039f06550edd7374471ce01ad7384478393b19e5cf9530e85c07de95c305"
   },
   "construction": {
-    "core_truthful_gate": {
-      "commit": "0f5aff87d4dc14612fc68151b40210bd34728ae4",
-      "release_gate": 1021,
-      "release_gate_status": "SUCCESS",
-      "production_deployed": true,
-      "status": "PRODUCTION_DEPLOYED_VERIFIED_EFFECTFUL_CHAIN_PENDING"
-    },
+    "core_truthful_gate": {"commit": "0f5aff87d4dc14612fc68151b40210bd34728ae4","release_gate": 1021,"release_gate_status": "SUCCESS","production_deployed": true,"status": "PRODUCTION_DEPLOYED_VERIFIED_EFFECTFUL_CHAIN_PENDING"},
     "materialization_breakpoint": {
       "status": "OPEN",
-      "exact_chain": [
-        "Canonical RequestMotherLock/RequestChildLock payload adapter",
-        "Governed reviewer resolution + lock review request",
-        "Lock decision",
-        "Child lock materialization",
-        "Canonical script version",
-        "Work package compiler",
-        "Task orchestration",
-        "Department script view compiler",
-        "Task input manifest compiler",
-        "Instruction package compiler",
-        "Department effectful runtime"
-      ],
-      "observed_production_gap": [
-        "department_script_views=0",
-        "task_input_manifests=0",
-        "instruction_packages=0",
-        "canonical_script_versions=0",
-        "script_projection_rules=0",
-        "quality_criteria_versions=0",
-        "rights_profiles=0",
-        "route_policies=0"
-      ],
+      "exact_chain": ["Canonical RequestMotherLock/RequestChildLock payload adapter","Governed reviewer resolution + lock review request","Lock decision","Child lock materialization","Canonical script version","Work package compiler","Task orchestration","Department script view compiler","Task input manifest compiler","Instruction package compiler","Department effectful runtime"],
+      "observed_production_gap": ["department_script_views=0","task_input_manifests=0","instruction_packages=0","canonical_script_versions=0","script_projection_rules=0","quality_criteria_versions=0","rights_profiles=0","route_policies=0"],
       "rule": "Do not force-enable controls or fabricate business rows. Close the canonical owner chain."
     },
-    "lock_decision_service_identity_foundation": {
-      "commit": "5cdca0478ad53bd190fe1a7312e08793b07d1f66",
-      "release_gate": 1026,
-      "status": "PRODUCTION_DB_APPLIED_VERIFIED_APP_PENDING_CONSOLIDATED_DEPLOYMENT",
-      "service_identities": 2,
-      "service_capabilities": 4,
-      "production_migration": "41/41"
-    },
-    "compiler_foundation_0046": {
-      "commit": "004b5e030a91476c2dc84ce686dc1a55e777155e",
-      "release_gate": 1047,
-      "release_gate_status": "SUCCESS",
-      "production_migration": "46/46",
-      "production_apply": "APPLIED_VERIFIED",
-      "rls_tables": 7,
-      "api_assignments": 2,
-      "business_rows_created": 0
-    },
+    "lock_decision_service_identity_foundation": {"commit": "5cdca0478ad53bd190fe1a7312e08793b07d1f66","release_gate": 1026,"status": "PRODUCTION_DB_APPLIED_VERIFIED_APP_PENDING_CONSOLIDATED_DEPLOYMENT","service_identities": 2,"service_capabilities": 4,"production_migration": "41/41"},
+    "compiler_foundation_0046": {"commit": "004b5e030a91476c2dc84ce686dc1a55e777155e","release_gate": 1047,"release_gate_status": "SUCCESS","production_migration": "46/46","production_apply": "APPLIED_VERIFIED","rls_tables": 7,"api_assignments": 2,"business_rows_created": 0},
     "canonical_script_version_0047": {
-      "commit": "ffcce60555f545991d6ff29f284b03e07327434b",
-      "release_gate": 1050,
-      "release_gate_status": "SUCCESS",
-      "production_migration": "47/47",
-      "production_apply": "APPLIED_VERIFIED",
-      "runtime_function": "acpos_runtime.create_canonical_script_version",
-      "app_production_deployed": true,
-      "production_effectful_e2e": false,
-      "business_rows_created": 0,
-      "status": "DB_RUNTIME_AND_APP_DEPLOYED_EFFECTFUL_BLOCKED_NO_CANONICAL_BUSINESS_LINEAGE",
-      "production_effectful_preflight": {
-        "quality_criteria_versions": 0,
-        "topics": 0,
-        "topic_versions": 0,
-        "topic_production_contracts": 0,
-        "topic_blueprints": 0,
-        "blueprint_versions": 0,
-        "canonical_script_versions": 0,
-        "child_locks": 0,
-        "governed_resources": 0,
-        "rule": "Do not fabricate Production business rows. Positive effectful acceptance resumes only from real canonical operator-created lineage."
-      }
+      "commit": "ffcce60555f545991d6ff29f284b03e07327434b","release_gate": 1050,"release_gate_status": "SUCCESS","production_migration": "47/47","production_apply": "APPLIED_VERIFIED","runtime_function": "acpos_runtime.create_canonical_script_version","app_production_deployed": true,"production_effectful_e2e": false,"business_rows_created": 0,"status": "DB_RUNTIME_AND_APP_DEPLOYED_EFFECTFUL_BLOCKED_NO_CANONICAL_BUSINESS_LINEAGE",
+      "production_effectful_preflight": {"quality_criteria_versions": 0,"topics": 0,"topic_versions": 0,"topic_production_contracts": 0,"topic_blueprints": 0,"blueprint_versions": 0,"canonical_script_versions": 0,"child_locks": 0,"governed_resources": 0,"rule": "Do not fabricate Production business rows. Positive effectful acceptance resumes only from real canonical operator-created lineage."}
     },
-    "compiler_dag_edge_0048": {
-      "commit": "a920fa03d1a85ffffe29ee99e36a835545acf975",
-      "release_gate": 1055,
-      "release_gate_status": "SUCCESS",
-      "production_migration": "48/48",
-      "production_apply": "APPLIED_VERIFIED",
-      "dag_edges_rls": true,
-      "policies": 2,
-      "runtime_select": true,
-      "runtime_insert": true,
-      "business_rows_created": 0
-    },
-    "voice_department_schema_0049": {
-      "release_gate": 1057,
-      "release_gate_status": "SUCCESS",
-      "production_migration": "49/49",
-      "production_apply": "APPLIED_VERIFIED",
-      "department_code_voice": true,
-      "voice_business_rows_created": 0,
-      "status": "COMPLETE"
-    },
-    "edit_voice_runtime_current_blocker": {
-      "status": "PARTIAL_FAIL_CLOSED",
-      "voice_schema_contract": "COMPLETE_0049",
-      "positive_lifecycle_effectful": false,
-      "provider_operation_mapping": "ROUTE_REGISTERED_PROVIDER_CAPABILITY_MAPPING_ABSENT",
-      "runtime_behavior": "startVoiceRuntime remains fail-closed with EDIT_VOICE_PROVIDER_OPERATION_NOT_MATERIALIZED until an exact governed VOICE Provider operation/capability mapping exists.",
-      "rule": "Do not alias or guess startVoiceRuntime to generic executeProviderRoute without an exact Current operation/capability mapping."
-    },
-    "edit_finalize_0050": {
-      "status": "PRODUCTION_DEPLOYED_VERIFIED_EFFECTFUL_DATA_PENDING",
-      "migration_id": "0050_edit_finalize_persistence_permission_rls_closure",
-      "checksum": "f6be546d52ff486236913c5f8c02971cf7e25c9f801fe3a8c5774f1a548553d5",
-      "production_migration_count": "50/50",
-      "schema": {
-        "editing_timeline_finalize_columns": 6,
-        "edit_render_jobs_owner": "public.edit_render_jobs",
-        "version_lock_owner": "public.production_output_version_locks",
-        "parallel_edit_version_locks_created": false
-      },
-      "permission_materialization": {
-        "resources": 21,
-        "approved_allow_assignments": 21
-      },
-      "business_rows_created": 0,
-      "remaining": [
-        "positive EDIT/QA canonical business lineage absent",
-        "EDIT_RENDER governed Provider route/capability absent"
-      ]
-    },
-    "edit_finalize_blueprint_lineage": {
-      "status": "PRODUCTION_DEPLOYED_VERIFIED",
-      "source": "department_tasks.child_lock_id -> child_locks.blueprint_version_id",
-      "rule": "Do not add a duplicate blueprint_version_id column to department_tasks."
-    },
-    "edit_voice_audit_0051": {
-      "status": "PRODUCTION_DEPLOYED_VERIFIED",
-      "migration_id": "0051_edit_voice_audit_rls_closure",
-      "checksum": "ddce6a15daa6f3f5e1407163fa2e10717fead8b82c264cbd08ac77ed0c4ab74e",
-      "production_migration_count": "51/51",
-      "audit_owner": "public.audit_events",
-      "policies": [
-        "acpos_audit_events_edit_insert",
-        "acpos_audit_events_edit_select"
-      ],
-      "grants": [
-        "INSERT",
-        "SELECT"
-      ],
-      "durable_allowed_audit_gate": true,
-      "business_rows_created": 0,
-      "production_release_sha": "c3be46239146673c02d261defa17f55340342c8a"
-    },
-    "edit_voice_provider_preflight": {
-      "status": "BLOCKED_BY_CURRENT_PROVIDER_AUTHORITY_DATA",
-      "approved_provider_capabilities": 4,
-      "approved_capability_types": [
-        "TEXT_CHAT"
-      ],
-      "approved_route_policies": 0,
-      "approved_editing_route_policies": 0,
-      "approved_edit_render_capabilities": 0,
-      "approved_voice_capabilities": 0,
-      "rule": "TEXT_CHAT provider capability does not satisfy EDIT_RENDER or VOICE execution. Do not fabricate route policy/capability mappings."
-    },
+    "compiler_dag_edge_0048": {"commit": "a920fa03d1a85ffffe29ee99e36a835545acf975","release_gate": 1055,"release_gate_status": "SUCCESS","production_migration": "48/48","production_apply": "APPLIED_VERIFIED","dag_edges_rls": true,"policies": 2,"runtime_select": true,"runtime_insert": true,"business_rows_created": 0},
+    "voice_department_schema_0049": {"release_gate": 1057,"release_gate_status": "SUCCESS","production_migration": "49/49","production_apply": "APPLIED_VERIFIED","department_code_voice": true,"voice_business_rows_created": 0,"status": "COMPLETE"},
+    "edit_voice_runtime_current_blocker": {"status": "PARTIAL_FAIL_CLOSED","voice_schema_contract": "COMPLETE_0049","positive_lifecycle_effectful": false,"provider_operation_mapping": "ROUTE_REGISTERED_PROVIDER_CAPABILITY_MAPPING_ABSENT","runtime_behavior": "startVoiceRuntime remains fail-closed with EDIT_VOICE_PROVIDER_OPERATION_NOT_MATERIALIZED until an exact governed VOICE Provider operation/capability mapping exists.","rule": "Do not alias or guess startVoiceRuntime to generic executeProviderRoute without an exact Current operation/capability mapping."},
+    "edit_finalize_0050": {"status": "PRODUCTION_DEPLOYED_VERIFIED_EFFECTFUL_DATA_PENDING","migration_id": "0050_edit_finalize_persistence_permission_rls_closure","checksum": "f6be546d52ff486236913c5f8c02971cf7e25c9f801fe3a8c5774f1a548553d5","production_migration_count": "50/50","schema": {"editing_timeline_finalize_columns": 6,"edit_render_jobs_owner": "public.edit_render_jobs","version_lock_owner": "public.production_output_version_locks","parallel_edit_version_locks_created": false},"permission_materialization": {"resources": 21,"approved_allow_assignments": 21},"business_rows_created": 0,"remaining": ["positive EDIT/QA canonical business lineage absent","EDIT_RENDER governed Provider route/capability absent"]},
+    "edit_finalize_blueprint_lineage": {"status": "PRODUCTION_DEPLOYED_VERIFIED","source": "department_tasks.child_lock_id -> child_locks.blueprint_version_id","rule": "Do not add a duplicate blueprint_version_id column to department_tasks."},
+    "edit_voice_audit_0051": {"status": "PRODUCTION_DEPLOYED_VERIFIED","migration_id": "0051_edit_voice_audit_rls_closure","checksum": "ddce6a15daa6f3f5e1407163fa2e10717fead8b82c264cbd08ac77ed0c4ab74e","production_migration_count": "51/51","audit_owner": "public.audit_events","policies": ["acpos_audit_events_edit_insert","acpos_audit_events_edit_select"],"grants": ["INSERT","SELECT"],"durable_allowed_audit_gate": true,"business_rows_created": 0,"production_release_sha": "c3be46239146673c02d261defa17f55340342c8a"},
+    "edit_voice_provider_preflight": {"status": "BLOCKED_BY_CURRENT_PROVIDER_AUTHORITY_DATA","approved_provider_capabilities": 4,"approved_capability_types": ["TEXT_CHAT"],"approved_route_policies": 0,"approved_editing_route_policies": 0,"approved_edit_render_capabilities": 0,"approved_voice_capabilities": 0,"rule": "TEXT_CHAT provider capability does not satisfy EDIT_RENDER or VOICE execution. Do not fabricate route policy/capability mappings."},
     "gate25_formal_acceptance_ledger": {
       "status": "LEDGER_COVERAGE_MATERIALIZED_PARTIAL_EXECUTION_EVIDENCE",
       "inventory": "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
       "disposition_ledger": "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json",
-      "denominator": {
-        "controls": 1155,
-        "actions": 326,
-        "total": 1481
-      },
-      "dispositions": {
-        "PASS": 5,
-        "BLOCKED": 48,
-        "NOT_EXECUTED": 1428
-      },
-      "aggregate_dom": {
-        "interactive": 558,
-        "governed": 558,
-        "per_resource_pass_propagation": false
-      },
+      "denominator": {"controls": 1155,"actions": 326,"total": 1481},
+      "dispositions": {"PASS": 5,"BLOCKED": 48,"NOT_EXECUTED": 1428},
+      "aggregate_dom": {"interactive": 558,"governed": 558,"per_resource_pass_propagation": false},
       "validation_runner": "scripts/release-formal-acceptance-ledger.mjs",
       "final_mode": "node scripts/release-formal-acceptance-ledger.mjs --require-pass",
       "rule": "Ledger coverage is not effectful acceptance. PASS requires per-resource evidence. Aggregate DOM evidence never auto-promotes individual resources.",
-      "latest_execution": {
-        "workflow_run": 34439777346,
-        "resources_passed": 5,
-        "neon_audit_correlations": 5,
-        "neon_audit_rows": 10
-      }
+      "latest_execution": {"workflow_run": 34439777346,"resources_passed": 5,"neon_audit_correlations": 5,"neon_audit_rows": 10}
     },
     "gate25_direct_http_adapters": {
       "status": "PRODUCTION_READONLY_5_PASS_MORE_ADAPTERS_PENDING",
@@ -525,30 +246,14 @@
       "mapped_pending_fixture_or_cleanup": 20,
       "production_runner": "scripts/production-formal-readonly-acceptance.mjs",
       "workflow": ".github/workflows/production-formal-readonly-acceptance.yml",
-      "production_fixture_evidence": {
-        "provider_profiles": 4,
-        "enabled_provider_profiles": 4,
-        "route_decisions": 30,
-        "quarantine_rows": 0,
-        "four_resource_admin_allow_assignments": "4/4"
-      },
+      "production_fixture_evidence": {"provider_profiles": 4,"enabled_provider_profiles": 4,"route_decisions": 30,"quarantine_rows": 0,"four_resource_admin_allow_assignments": "4/4"},
       "mutation_count": 0,
       "external_provider_call_count": 0,
       "rule": "No API-only operation is guessed onto a formal CONTROL/ACTION. Mutation/external-effect adapters remain pending until fixture/readback/cleanup contracts are explicit.",
       "production_trigger": "workflow_run: ACPOS Release Gate SUCCESS on main",
       "exact_release_sha_guard": true,
-      "route_decision_fixture": {
-        "id": "f913ad44-5524-44ca-b715-4884a62f366b",
-        "status": "BLOCKED",
-        "source": "Existing Production acpos_runtime.provider_route_decisions row",
-        "read_only_use": true
-      },
-      "production_run": {
-        "run_number": 12,
-        "run_id": 34439777346,
-        "status": "SUCCESS",
-        "release_sha": "d6787156222ae1ff38126e1244c10980ffc49929"
-      },
+      "route_decision_fixture": {"id": "f913ad44-5524-44ca-b715-4884a62f366b","status": "BLOCKED","source": "Existing Production acpos_runtime.provider_route_decisions row","read_only_use": true},
+      "production_run": {"run_number": 12,"run_id": 34439777346,"status": "SUCCESS","release_sha": "d6787156222ae1ff38126e1244c10980ffc49929"},
       "accepted_formal_resources": 5,
       "runner_contract_fix": "/v1/search uses raw result.value success body plus x-correlation-id header; no ok wrapper"
     },
@@ -557,218 +262,77 @@
       "migration_id": "0052_iam_search_audit_rls_closure",
       "checksum": "576e039f06550edd7374471ce01ad7384478393b19e5cf9530e85c07de95c305",
       "audit_owner": "public.audit_events",
-      "exact_scope": {
-        "page_uid": "admin:IAM-01",
-        "operation_id": "searchProjection",
-        "page_resource": "page:admin:IAM-01",
-        "action_resource": "action:admin:IAM-01:ACT-SEARCH"
-      },
+      "exact_scope": {"page_uid": "admin:IAM-01","operation_id": "searchProjection","page_resource": "page:admin:IAM-01","action_resource": "action:admin:IAM-01:ACT-SEARCH"},
       "business_rows_created": 0,
       "rule": "Reuse existing IAM audit_events semantics. No generic IAM audit policy and no alternate audit owner are created.",
       "production_migration": "52/52",
       "production_policy": "acpos_audit_events_iam_search_insert",
       "forced_rollback_validation": "PASS",
       "production_release_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
-      "formal_run": {
-        "run_number": 12,
-        "run_id": 34439777346,
-        "status": "SUCCESS"
-      },
+      "formal_run": {"run_number": 12,"run_id": 34439777346,"status": "SUCCESS"},
       "correlation_id": "51b9faf9-839a-4447-8e0c-e9f1e3122e2f",
-      "audit_event_ids": [
-        "1a06b667-2eb0-4264-ad3d-82b6d98200f7",
-        "8c67b626-404e-4b07-8a7e-9a2516e70997"
-      ],
-      "audit_outcomes": [
-        "ALLOWED",
-        "SUCCESS"
-      ]
+      "audit_event_ids": ["1a06b667-2eb0-4264-ad3d-82b6d98200f7","8c67b626-404e-4b07-8a7e-9a2516e70997"],
+      "audit_outcomes": ["ALLOWED","SUCCESS"]
     },
     "iam_projection_current_gaps": {
-      "status": "INCOMPLETE_CANONICAL_OWNER_RESOLUTION_REQUIRED",
+      "status": "IMPLEMENTED_CORE_PROJECTION_SECURITY_FIELDS_AUTHORITY_BLOCKED",
       "authority": "authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+      "identity_authority": "authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml",
       "required_by_acceptance": "IAM-01-ACC-03 Account Directory: Search/list/status/identity source/MFA/risk/audit remain available",
       "observed_runtime": {
         "account_search": "IMPLEMENTED",
         "account_list_status": "IMPLEMENTED",
-        "identity_source": "HARDCODED_LOCAL_PASSWORD",
-        "organization_scope": "DASH",
-        "mfa": "DASH",
-        "risk": "DASH",
-        "session": "DASH",
-        "front_l1": "EMPTY",
-        "admin_l1": "EMPTY",
-        "audit_entries": "EMPTY"
+        "identity_source": "IMPLEMENTED_CURRENT_AUTHORITY_INTERNAL_RUNTIME_ACCOUNT_EMAIL",
+        "organization_scope": "AUTHORITY_GAP_NO_REGISTERED_OWNER",
+        "mfa": "AUTHORITY_GAP_NO_REGISTERED_OWNER",
+        "risk": "AUTHORITY_GAP_NO_REGISTERED_ACCOUNT_RISK_OWNER",
+        "session": "IMPLEMENTED_ACPOS_RUNTIME_SESSIONS",
+        "front_l1": "IMPLEMENTED_EFFECTIVE_APPROVED_PAGE_VIEW_ASSIGNMENTS",
+        "admin_l1": "IMPLEMENTED_EFFECTIVE_APPROVED_PAGE_VIEW_ASSIGNMENTS",
+        "audit_entries": "IMPLEMENTED_PUBLIC_AUDIT_EVENTS"
       },
-      "rule": "Resolve each field from an existing canonical owner before materialization. Do not fabricate identity/MFA/risk/session/audit data."
+      "implementation_commits": ["352c126c36ec0cc6ab850ccca10fcd97e2557180","71d1565af48f13ac0ba75b8fabcccc12feb53668","4c0999154458120a0eb5c231dba868a302501991","877e7c0ed1ba98c8b642a61a5fdc64cf363a7795","0a485733cb0bd679395773e22d2f4002747b5ab8","ff00080cf227df92a831391657a6198e8e054e7f"],
+      "release_gate": {"run_number": 1102,"run_id": 34446910563,"head_sha": "ff00080cf227df92a831391657a6198e8e054e7f","status": "SUCCESS"},
+      "authority_gap_evidence": "docs/construction/evidence/IAM_SECURITY_OWNER_GAP_2026-09-10.json",
+      "rule": "Core IAM projection owners are now materialized. Organization scope, MFA and account risk remain explicitly blocked until a newer approved Current Authority registers exact owner schema/semantics; do not fabricate them."
     }
   },
   "providers": {
-    "healthy": [
-      "Groq",
-      "Google"
-    ],
+    "healthy": ["Groq","Google"],
     "deferred_external_account_issues": [
-      {
-        "provider": "DeepSeek",
-        "http": 402,
-        "status": "DEGRADED_USER_DEFERRED"
-      },
-      {
-        "provider": "OpenRouter",
-        "http": 401,
-        "status": "DEGRADED_USER_DEFERRED"
-      }
+      {"provider": "DeepSeek","http": 402,"status": "DEGRADED_USER_DEFERRED"},
+      {"provider": "OpenRouter","http": 401,"status": "DEGRADED_USER_DEFERRED"}
     ],
     "matrix_complete": false
   },
   "gate_scores": {
-    "1": {
-      "name": "main 可讀與 SHA",
-      "percent": 100,
-      "status": "PASS"
-    },
-    "2": {
-      "name": "Release Gate",
-      "percent": 100,
-      "status": "PASS"
-    },
-    "3": {
-      "name": "Vercel Deployment",
-      "percent": 100,
-      "status": "PASS"
-    },
-    "4": {
-      "name": "Health",
-      "percent": 100,
-      "status": "PASS"
-    },
-    "5": {
-      "name": "Readiness",
-      "percent": 100,
-      "status": "PASS"
-    },
-    "6": {
-      "name": "Remote HTTP Smoke",
-      "percent": 100,
-      "status": "PASS"
-    },
-    "7": {
-      "name": "Remote Browser Smoke",
-      "percent": 100,
-      "status": "PASS"
-    },
-    "8": {
-      "name": "正式 Routes",
-      "percent": 100,
-      "status": "PASS",
-      "detail": "18/18"
-    },
-    "9": {
-      "name": "Production Authority",
-      "percent": 75,
-      "status": "PARTIAL",
-      "detail": "Current State/Progress/Runtime Gap synchronized; Vercel management connector visibility mismatch remains."
-    },
-    "10": {
-      "name": "Migrations",
-      "percent": 100,
-      "status": "PASS",
-      "detail": "52/52 Production migrations verified through 0052_iam_search_audit_rls_closure."
-    },
-    "11": {
-      "name": "Schema / Integrity",
-      "percent": 87.5,
-      "status": "PARTIAL",
-      "detail": "3693 active permission resources; historical authority baseline 3650 plus Current expansion +43. Final graph/integrity Current seal remains pending."
-    },
-    "12": {
-      "name": "PostgreSQL RLS",
-      "percent": 100,
-      "status": "PASS",
-      "detail": "Current applicability denominator requires recompute; observed 73 RLS-enabled of 209 user tables after 0048, known dag_edges compiler gap closed."
-    },
-    "13": {
-      "name": "Accounts",
-      "percent": 100,
-      "status": "PASS"
-    },
-    "14": {
-      "name": "Login / Session E2E",
-      "percent": 100,
-      "status": "PASS"
-    },
-    "15": {
-      "name": "Permission E2E",
-      "percent": 75,
-      "status": "PARTIAL",
-      "detail": "Production negative permission mutation/visibility E2E pending."
-    },
-    "16": {
-      "name": "Production Read Models",
-      "percent": 100,
-      "status": "PASS",
-      "detail": "18/18"
-    },
-    "17": {
-      "name": "CORE Runtime",
-      "percent": 75,
-      "status": "PARTIAL",
-      "detail": "CanonicalScript DB/runtime/application are deployed on main c3be46239146673c02d261defa17f55340342c8a. Positive QualityCriteriaVersion -> CanonicalScriptVersion -> ChildLock effectful E2E remains blocked because required canonical Production business lineage rows are zero; acceptance may not fabricate them."
-    },
-    "18": {
-      "name": "ASSET Runtime",
-      "percent": 50,
-      "status": "PARTIAL"
-    },
-    "19": {
-      "name": "VIDEO Runtime",
-      "percent": 50,
-      "status": "PARTIAL"
-    },
-    "20": {
-      "name": "EDIT + VOICE Runtime",
-      "percent": 50,
-      "status": "PARTIAL",
-      "detail": "VOICE schema 0049, EDIT Finalize persistence/permission/RLS 0050, EDIT audit RLS 0051, ChildLock->Blueprint resolution, 17/17 route bindings and durable pre-effect audit are deployed on main c3be46239146673c02d261defa17f55340342c8a. Positive lifecycle remains blocked by zero real EDIT/QA lineage, zero approved route policies, zero EDIT_RENDER capabilities and zero VOICE capabilities."
-    },
-    "21": {
-      "name": "QA Runtime",
-      "percent": 50,
-      "status": "PARTIAL"
-    },
-    "22": {
-      "name": "External Provider",
-      "percent": 75,
-      "status": "PARTIAL"
-    },
-    "23": {
-      "name": "Queue / Worker / DLQ",
-      "percent": 100,
-      "status": "PASS"
-    },
-    "24": {
-      "name": "後台 Production Mutation Acceptance",
-      "percent": 0,
-      "status": "FAIL",
-      "detail": "Production effectful 9-family acceptance not yet exhaustive."
-    },
-    "25": {
-      "name": "全頁全按鈕 Acceptance",
-      "percent": 50,
-      "status": "PARTIAL",
-      "detail": "Formal denominator 1481 is sealed. Production rendered DOM is 559/559 governed. Exact per-resource ledger now PASS=5, BLOCKED=48, NOT_EXECUTED=1428 after Formal Readonly Acceptance run #12 and Neon audit readback. Exhaustive formal/effectful acceptance remains open."
-    }
+    "1": {"name": "main 可讀與 SHA","percent": 100,"status": "PASS"},
+    "2": {"name": "Release Gate","percent": 100,"status": "PASS"},
+    "3": {"name": "Vercel Deployment","percent": 100,"status": "PASS"},
+    "4": {"name": "Health","percent": 100,"status": "PASS"},
+    "5": {"name": "Readiness","percent": 100,"status": "PASS"},
+    "6": {"name": "Remote HTTP Smoke","percent": 100,"status": "PASS"},
+    "7": {"name": "Remote Browser Smoke","percent": 100,"status": "PASS"},
+    "8": {"name": "正式 Routes","percent": 100,"status": "PASS","detail": "18/18"},
+    "9": {"name": "Production Authority","percent": 75,"status": "PARTIAL","detail": "Current State/Progress/Runtime Gap synchronized; Vercel management connector visibility mismatch remains."},
+    "10": {"name": "Migrations","percent": 100,"status": "PASS","detail": "52/52 Production migrations verified through 0052_iam_search_audit_rls_closure."},
+    "11": {"name": "Schema / Integrity","percent": 87.5,"status": "PARTIAL","detail": "3693 active permission resources; historical authority baseline 3650 plus Current expansion +43. Final graph/integrity Current seal remains pending."},
+    "12": {"name": "PostgreSQL RLS","percent": 100,"status": "PASS","detail": "Current applicability denominator requires recompute; observed 73 RLS-enabled of 209 user tables after 0048, known dag_edges compiler gap closed."},
+    "13": {"name": "Accounts","percent": 100,"status": "PASS"},
+    "14": {"name": "Login / Session E2E","percent": 100,"status": "PASS"},
+    "15": {"name": "Permission E2E","percent": 75,"status": "PARTIAL","detail": "Production negative permission mutation/visibility E2E pending."},
+    "16": {"name": "Production Read Models","percent": 100,"status": "PASS","detail": "18/18"},
+    "17": {"name": "CORE Runtime","percent": 75,"status": "PARTIAL","detail": "CanonicalScript DB/runtime/application are deployed on main c3be46239146673c02d261defa17f55340342c8a. Positive QualityCriteriaVersion -> CanonicalScriptVersion -> ChildLock effectful E2E remains blocked because required canonical Production business lineage rows are zero; acceptance may not fabricate them."},
+    "18": {"name": "ASSET Runtime","percent": 50,"status": "PARTIAL"},
+    "19": {"name": "VIDEO Runtime","percent": 50,"status": "PARTIAL"},
+    "20": {"name": "EDIT + VOICE Runtime","percent": 50,"status": "PARTIAL","detail": "VOICE schema 0049, EDIT Finalize persistence/permission/RLS 0050, EDIT audit RLS 0051, ChildLock->Blueprint resolution, 17/17 route bindings and durable pre-effect audit are deployed on main c3be46239146673c02d261defa17f55340342c8a. Positive lifecycle remains blocked by zero real EDIT/QA lineage, zero approved route policies, zero EDIT_RENDER capabilities and zero VOICE capabilities."},
+    "21": {"name": "QA Runtime","percent": 50,"status": "PARTIAL"},
+    "22": {"name": "External Provider","percent": 75,"status": "PARTIAL"},
+    "23": {"name": "Queue / Worker / DLQ","percent": 100,"status": "PASS"},
+    "24": {"name": "後台 Production Mutation Acceptance","percent": 0,"status": "FAIL","detail": "Production effectful 9-family acceptance not yet exhaustive."},
+    "25": {"name": "全頁全按鈕 Acceptance","percent": 50,"status": "PARTIAL","detail": "Formal denominator 1481 is sealed. Production rendered DOM is 559/559 governed. Exact per-resource ledger now PASS=5, BLOCKED=48, NOT_EXECUTED=1428 after Formal Readonly Acceptance run #12 and Neon audit readback. Exhaustive formal/effectful acceptance remains open."}
   },
-  "gate_summary": {
-    "pass": 14,
-    "partial": 10,
-    "fail": 1,
-    "blocked": 0,
-    "unknown": 0,
-    "production_ready_percent": 81.5,
-    "production_ready_percent_status": "CURRENT_SCORE_FROM_EXISTING_GATE_WEIGHTS_EFFECTFUL_ACCEPTANCE_STILL_OPEN"
-  },
+  "gate_summary": {"pass": 14,"partial": 10,"fail": 1,"blocked": 0,"unknown": 0,"production_ready_percent": 81.5,"production_ready_percent_status": "CURRENT_SCORE_FROM_EXISTING_GATE_WEIGHTS_EFFECTFUL_ACCEPTANCE_STILL_OPEN"},
   "blockers": [
     "TaskTemplate/ProductionGoal/OutputContract/RightsProfile are zero in Production and are dependencies of the nine formal materialization items; they may not be omitted from progress reports.",
     "Production formal business rows are currently zero after TEST_ONLY cleanup; do not fabricate permanent business data to make counts non-zero.",
@@ -783,38 +347,16 @@
     {
       "blocker_id": "WORKPACKAGE_CURRENT_AUTHORITY_CONFLICT",
       "status": "HARD_BLOCKER_AUTHORITY_DECISION_REQUIRED",
-      "affects": [
-        "WorkPackage",
-        "DepartmentTask",
-        "DepartmentScriptView",
-        "TaskInputManifest",
-        "InstructionPackage",
-        "ASSET",
-        "VIDEO",
-        "EDIT+VOICE",
-        "QA"
-      ],
+      "affects": ["WorkPackage","DepartmentTask","DepartmentScriptView","TaskInputManifest","InstructionPackage","ASSET","VIDEO","EDIT+VOICE","QA"],
       "current_evidence": {
         "operation_registry": "03_api/operation_registry.yaml has no compileWorkPackage operation; undefined_behavior=BLOCK + REPORT_AUTHORITY_GAP",
         "permission_catalog": "api:compileWorkPackage exists but source_ref points to missing 03_api/operation_registry.yaml#compileWorkPackage",
         "task_template_authority": "Current authority manifest/page/runtime authority files contain no formal TaskTemplate template documents or exact materialization payload",
         "service_identity_runtime": "runRlsServiceTransaction/runRlsServiceQuery already exist and must be reused; primitive service binding is not the blocker"
       },
-      "historical_conflicts_non_executable": [
-        "R9-PENDING-DAG-001 trigger/subject conflict: child_lock.approved TaskOrchestrator vs USER compile control",
-        "R9-PENDING-DAG-002 CompileWorkPackageRequest cannot satisfy required compiler inputs",
-        "R9-PENDING-DAG-003 continuity/resume reverse dependency",
-        "R9-PENDING-DAG-004 one ChildLock WorkPackage uniqueness vs multi-goal Topic",
-        "R9-PENDING-DAG-005 TaskTemplate seed lacks canonical/compiler-required schemas, hashes and policies",
-        "R9-PENDING-DAG-008 dependency type and consumer scheduling unresolved"
-      ],
+      "historical_conflicts_non_executable": ["R9-PENDING-DAG-001 trigger/subject conflict: child_lock.approved TaskOrchestrator vs USER compile control","R9-PENDING-DAG-002 CompileWorkPackageRequest cannot satisfy required compiler inputs","R9-PENDING-DAG-003 continuity/resume reverse dependency","R9-PENDING-DAG-004 one ChildLock WorkPackage uniqueness vs multi-goal Topic","R9-PENDING-DAG-005 TaskTemplate seed lacks canonical/compiler-required schemas, hashes and policies","R9-PENDING-DAG-008 dependency type and consumer scheduling unresolved"],
       "closed_subconflict": "R9-PENDING-DAG-006 VOICE enum mismatch closed by Production migration 0049; does not resolve remaining compiler conflicts.",
-      "prohibited_fixes": [
-        "do not revive legacy workspace:CORE-05 UI under Current CORE-01 authority",
-        "do not invent CompileWorkPackage payload fields/defaults/latest resolution",
-        "do not fabricate TaskTemplate/Goal/Output/Rights business rows",
-        "do not create a second TaskOrchestrator or service identity runtime"
-      ],
+      "prohibited_fixes": ["do not revive legacy workspace:CORE-05 UI under Current CORE-01 authority","do not invent CompileWorkPackage payload fields/defaults/latest resolution","do not fabricate TaskTemplate/Goal/Output/Rights business rows","do not create a second TaskOrchestrator or service identity runtime"],
       "unblock_requirement": "A newer approved Current Authority must define the unique compiler trigger/subject, exact version-pinned input resolution or request schema, single-vs-multi-goal cardinality, complete TaskTemplate documents, and dependency/event orchestration."
     },
     "Production QualityCriteriaVersion/Topic/TopicVersion/TopicProductionContract/Blueprint/CanonicalScriptVersion/ChildLock and governed-resource business rows are all zero at the 2026-09-10 Production preflight; positive CORE effectful acceptance must not fabricate rows and waits for real canonical operator-created lineage.",
@@ -826,7 +368,7 @@
     "Production Provider authority has 4 APPROVED capabilities and all are TEXT_CHAT; APPROVED route policies=0, EDITING route policies=0, EDIT_RENDER capabilities=0, VOICE capabilities=0. TEXT_CHAT capabilities must not be substituted for media/voice execution.",
     "Gate 25 lacks a permanent exhaustive formal/effectful acceptance runner for the Current 1481 CONTROL+ACTION denominator. Existing Post-Deploy control acceptance proves only rendered DOM governance (558/558) and cannot be used as exhaustive effectful evidence.",
     "Gate 25 denominator types must remain separate: historical catalog CONTROL+ACTION=1453, Current Production permission CONTROL+ACTION=1481, Current rendered Production DOM interactive=558.",
-    "IAM-01 Current projection remains incomplete beyond Search: organization_scope/MFA/risk/session are DASH, front_l1/admin_l1 and audit_entries are empty, while IAM-01-ACC-03 requires current registered authority account-directory security/audit projections. Resolve canonical owners before filling; fake values are forbidden.",
+    "IAM-01 core Production projection is implemented and Release Gate #1102 PASS for identity source/session/L1/audit. Organization scope/MFA/account-risk remain AUTHORITY_BLOCKED because Current registered owner schema/operations are absent; evidence: docs/construction/evidence/IAM_SECURITY_OWNER_GAP_2026-09-10.json.",
     "Gate 25 exact ledger now has PASS=5/BLOCKED=48/NOT_EXECUTED=1428 after five Production read-only formal resources passed exact-SHA execution and Neon audit readback. Remaining 1476 resources still require explicit disposition closure; aggregate evidence must not promote them."
   ],
   "remaining_queue": [
@@ -852,178 +394,33 @@
     "ACCEPTANCE Gate 25 per-resource execution: 5/1481 exact resources PASS with Production HTTP + audit readback; 48 BLOCKED; 1428 NOT_EXECUTED. Continue 20 additional direct mappings with fixture/readback/cleanup, then resolve remaining exact operation mappings.",
     "ACCEPTANCE Gate 25 denominator seal: historical 1453 / Current permission 1481 / Current Production DOM 558",
     "ACCEPTANCE Full 25-Gate recompute from Current evidence",
-    "IAM-01 projection closure: resolve canonical owners for organization scope, MFA, risk, session, explicit L1 assignments and audit/access-review projection; then Production readback acceptance"
+    "IAM-01 security projection remainder: organization_scope/MFA/account-risk are AUTHORITY_BLOCKED; do not invent owner schema. Core identity/session/L1/audit projection is implemented and Release Gate #1102 PASS."
   ],
-  "next_executable_item": "WorkPackage compiler is HARD_BLOCKED by unresolved Current Authority. Select next independent dependency-ready closure only; do not implement compiler semantics until a newer approved Current Authority resolves WORKPACKAGE_CURRENT_AUTHORITY_CONFLICT.",
+  "next_executable_item": "Gate 25 additional exact direct mappings and other independent dependency-ready closures may continue. WorkPackage compiler remains HARD_BLOCKED by unresolved Current Authority; do not implement compiler semantics until a newer approved Current Authority resolves WORKPACKAGE_CURRENT_AUTHORITY_CONFLICT.",
   "execution_reporting_contract": {
     "mandatory": true,
     "every_progress_report_must_include_remaining_incomplete_list": true,
     "omission_forbidden": true,
     "completion_claim_requires_execution_evidence": true,
-    "completion_evidence": [
-      "runtime/materializer implementation",
-      "Release Gate PASS",
-      "Production effectful create/execute",
-      "read-back/persistence verification",
-      "negative/error path where applicable",
-      "cleanup/residual-zero when acceptance data is test-only"
-    ],
+    "completion_evidence": ["runtime/materializer implementation","Release Gate PASS","Production effectful create/execute","read-back/persistence verification","negative/error path where applicable","cleanup/residual-zero when acceptance data is test-only"],
     "rule": "Never mark an item complete only because a table exists, a UI control is governed, or test-only rows were inserted. Production business data must not be fabricated merely to make a count non-zero."
   },
   "mandatory_formal_materialization_queue": [
-    {
-      "order": 1,
-      "key": "QualityCriteriaVersion",
-      "table": "quality_criteria_versions",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "required_execution": "SG-02 Configure -> Approve -> canonical quality_criteria_versions materializer -> Production effectful E2E -> read-back -> cleanup if acceptance-only",
-      "dependency": "SG-02 approved criteria content supplied through governed runtime; no hardcoded/sample business criteria"
-    },
-    {
-      "order": 2,
-      "key": "CanonicalScriptVersion",
-      "table": "canonical_script_versions",
-      "production_count": 0,
-      "status": "DB_RUNTIME_APPLIED_APP_PENDING_PRODUCTION_EFFECTFUL_E2E",
-      "required_execution": "Canonical script materializer from approved/locked Current lineage -> immutable version -> read-back -> cleanup if acceptance-only",
-      "dependency": "Approved Blueprint/Topic/ProductionContract lineage + governed Canonical Script source; required before ChildLock readiness."
-    },
-    {
-      "order": 3,
-      "key": "ChildLock",
-      "table": "child_locks",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "required_execution": "Mother/Child Lock request -> independent reviewer decision -> child lock materialization -> read-back -> audit/outbox verification -> cleanup if acceptance-only",
-      "dependency": "Approved QualityCriteriaVersion + exact CanonicalScriptVersion + evidence refs + eligible independent reviewer + exact target version."
-    },
-    {
-      "order": 4,
-      "key": "ScriptProjectionRule",
-      "table": "script_projection_rules",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "required_execution": "Materialize explicit department projection rules with exact version refs -> read-back -> cleanup if acceptance-only",
-      "dependency": "CanonicalScriptVersion + Current department projection authority"
-    },
-    {
-      "order": 5,
-      "key": "WorkPackage",
-      "table": "work_packages",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "required_execution": "compileWorkPackage from exact ChildLock/production-contract/goal lineage -> DAG snapshot -> read-back -> cleanup if acceptance-only",
-      "dependency": "ChildLock + production goal/output contract + compiler capability"
-    },
-    {
-      "order": 6,
-      "key": "DepartmentTask",
-      "table": "department_tasks",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "required_execution": "TaskOrchestrator materializes approved DAG tasks -> exact task contract/fingerprint -> read-back -> cleanup if acceptance-only",
-      "dependency": "WorkPackage/DAG + task template/output contract"
-    },
-    {
-      "order": 7,
-      "key": "DepartmentScriptView",
-      "table": "department_script_views",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "required_execution": "compileDepartmentScriptView under instruction_compiler service identity -> exact script projection -> read-back -> cleanup if acceptance-only",
-      "dependency": "DepartmentTask + CanonicalScriptVersion + ScriptProjectionRule"
-    },
-    {
-      "order": 8,
-      "key": "TaskInputManifest",
-      "table": "task_input_manifests",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "required_execution": "Compile explicit immutable task input manifest from task/script/evidence/dependency refs -> read-back -> cleanup if acceptance-only",
-      "dependency": "DepartmentTask + DepartmentScriptView + exact dependency/output lineage"
-    },
-    {
-      "order": 9,
-      "key": "InstructionPackage",
-      "table": "instruction_packages",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "required_execution": "compileInstructionPackage under instruction_compiler service identity -> exact manifest/script/task refs -> read-back -> cleanup if acceptance-only",
-      "dependency": "TaskInputManifest + DepartmentScriptView + DepartmentTask"
-    }
+    {"order": 1,"key": "QualityCriteriaVersion","table": "quality_criteria_versions","production_count": 0,"status": "INCOMPLETE","required_execution": "SG-02 Configure -> Approve -> canonical quality_criteria_versions materializer -> Production effectful E2E -> read-back -> cleanup if acceptance-only","dependency": "SG-02 approved criteria content supplied through governed runtime; no hardcoded/sample business criteria"},
+    {"order": 2,"key": "CanonicalScriptVersion","table": "canonical_script_versions","production_count": 0,"status": "DB_RUNTIME_APPLIED_APP_PENDING_PRODUCTION_EFFECTFUL_E2E","required_execution": "Canonical script materializer from approved/locked Current lineage -> immutable version -> read-back -> cleanup if acceptance-only","dependency": "Approved Blueprint/Topic/ProductionContract lineage + governed Canonical Script source; required before ChildLock readiness."},
+    {"order": 3,"key": "ChildLock","table": "child_locks","production_count": 0,"status": "INCOMPLETE","required_execution": "Mother/Child Lock request -> independent reviewer decision -> child lock materialization -> read-back -> audit/outbox verification -> cleanup if acceptance-only","dependency": "Approved QualityCriteriaVersion + exact CanonicalScriptVersion + evidence refs + eligible independent reviewer + exact target version."},
+    {"order": 4,"key": "ScriptProjectionRule","table": "script_projection_rules","production_count": 0,"status": "INCOMPLETE","required_execution": "Materialize explicit department projection rules with exact version refs -> read-back -> cleanup if acceptance-only","dependency": "CanonicalScriptVersion + Current department projection authority"},
+    {"order": 5,"key": "WorkPackage","table": "work_packages","production_count": 0,"status": "INCOMPLETE","required_execution": "compileWorkPackage from exact ChildLock/production-contract/goal lineage -> DAG snapshot -> read-back -> cleanup if acceptance-only","dependency": "ChildLock + production goal/output contract + compiler capability"},
+    {"order": 6,"key": "DepartmentTask","table": "department_tasks","production_count": 0,"status": "INCOMPLETE","required_execution": "TaskOrchestrator materializes approved DAG tasks -> exact task contract/fingerprint -> read-back -> cleanup if acceptance-only","dependency": "WorkPackage/DAG + task template/output contract"},
+    {"order": 7,"key": "DepartmentScriptView","table": "department_script_views","production_count": 0,"status": "INCOMPLETE","required_execution": "compileDepartmentScriptView under instruction_compiler service identity -> exact script projection -> read-back -> cleanup if acceptance-only","dependency": "DepartmentTask + CanonicalScriptVersion + ScriptProjectionRule"},
+    {"order": 8,"key": "TaskInputManifest","table": "task_input_manifests","production_count": 0,"status": "INCOMPLETE","required_execution": "Compile explicit immutable task input manifest from task/script/evidence/dependency refs -> read-back -> cleanup if acceptance-only","dependency": "DepartmentTask + DepartmentScriptView + exact dependency/output lineage"},
+    {"order": 9,"key": "InstructionPackage","table": "instruction_packages","production_count": 0,"status": "INCOMPLETE","required_execution": "compileInstructionPackage under instruction_compiler service identity -> exact manifest/script/task refs -> read-back -> cleanup if acceptance-only","dependency": "TaskInputManifest + DepartmentScriptView + DepartmentTask"}
   ],
   "discovered_mandatory_dependencies": [
-    {
-      "key": "TaskTemplate",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "affects": [
-        "WorkPackage",
-        "DepartmentTask",
-        "DepartmentScriptView",
-        "TaskInputManifest",
-        "InstructionPackage"
-      ],
-      "rule": "Must use Current authority-defined template documents; no guessed template/schema."
-    },
-    {
-      "key": "ProductionGoal",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "affects": [
-        "WorkPackage",
-        "DepartmentTask"
-      ],
-      "rule": "Must originate from governed TopicProductionContract lifecycle."
-    },
-    {
-      "key": "OutputContract",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "affects": [
-        "WorkPackage",
-        "DepartmentTask",
-        "InstructionPackage"
-      ],
-      "rule": "Must originate from governed ProductionGoal/TopicProductionContract lifecycle."
-    },
-    {
-      "key": "RightsProfile",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "affects": [
-        "TaskInputManifest",
-        "InstructionPackage",
-        "ASSET",
-        "VIDEO",
-        "EDIT+VOICE"
-      ],
-      "rule": "Must be explicit governed rights reference; no empty/fake fallback for formal execution."
-    },
-    {
-      "key": "VOICE_department_enum",
-      "production_count": null,
-      "status": "COMPLETE_0049_PRODUCTION_VERIFIED",
-      "current_enum": [
-        "CORE",
-        "ASSET",
-        "VIDEO",
-        "EDITING",
-        "QA",
-        "RELEASE",
-        "STRATEGY",
-        "SYSTEM",
-        "VOICE"
-      ],
-      "authority_requires": "VOICE",
-      "affects": [
-        "EDIT+VOICE",
-        "ScriptProjectionRule",
-        "DepartmentScriptView",
-        "DepartmentTask"
-      ],
-      "rule": "Do not coerce VOICE into EDITING; resolve schema contract before formal VOICE task materialization."
-    }
+    {"key": "TaskTemplate","production_count": 0,"status": "INCOMPLETE","affects": ["WorkPackage","DepartmentTask","DepartmentScriptView","TaskInputManifest","InstructionPackage"],"rule": "Must use Current authority-defined template documents; no guessed template/schema."},
+    {"key": "ProductionGoal","production_count": 0,"status": "INCOMPLETE","affects": ["WorkPackage","DepartmentTask"],"rule": "Must originate from governed TopicProductionContract lifecycle."},
+    {"key": "OutputContract","production_count": 0,"status": "INCOMPLETE","affects": ["WorkPackage","DepartmentTask","InstructionPackage"],"rule": "Must originate from governed ProductionGoal/TopicProductionContract lifecycle."},
+    {"key": "RightsProfile","production_count": 0,"status": "INCOMPLETE","affects": ["TaskInputManifest","InstructionPackage","ASSET","VIDEO","EDIT+VOICE"],"rule": "Must be explicit governed rights reference; no empty/fake fallback for formal execution."},
+    {"key": "VOICE_department_enum","production_count": null,"status": "COMPLETE_0049_PRODUCTION_VERIFIED","current_enum": ["CORE","ASSET","VIDEO","EDITING","QA","RELEASE","STRATEGY","SYSTEM","VOICE"],"authority_requires": "VOICE","affects": ["EDIT+VOICE","ScriptProjectionRule","DepartmentScriptView","DepartmentTask"],"rule": "Do not coerce VOICE into EDITING; resolve schema contract before formal VOICE task materialization."}
   ]
 }
