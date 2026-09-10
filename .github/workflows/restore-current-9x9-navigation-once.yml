@@ -1,0 +1,41 @@
+name: ACPOS Restore Current 9x9 Navigation Once
+
+on:
+  push:
+    branches:
+      - new
+    paths:
+      - .github/workflows/restore-current-9x9-navigation-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Restore Current 9x9 topology
+        run: python3 scripts/restore-current-9x9-navigation-once.py
+      - name: Validate 9x9 topology regression
+        run: node --test tests/release/page-authority-current-truth.test.mjs
+      - name: Install dependencies
+        run: npm ci
+      - name: Run release unit tests
+        run: npm test
+      - name: Commit restored Current tree
+        shell: bash
+        run: |
+          rm .github/workflows/restore-current-9x9-navigation-once.yml
+          rm scripts/restore-current-9x9-navigation-once.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix(nav): restore user-confirmed current 9x9 topology"
+          git push origin HEAD:new
