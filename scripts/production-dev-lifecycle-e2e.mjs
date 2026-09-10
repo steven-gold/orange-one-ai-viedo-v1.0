@@ -57,10 +57,10 @@ try {
   const readinessText = await readiness.text();
   let readinessBody = null;
   try { readinessBody = JSON.parse(readinessText); } catch { /* preserve raw text below */ }
-  assert(
-    readiness.status === 200,
-    `READINESS_HTTP_${readiness.status}_${readinessBody?.reason_code ?? readinessBody?.reason ?? readinessText.slice(0, 200) || "UNKNOWN"}`,
-  );
+  const readinessReason = readinessBody?.reason_code
+    ?? readinessBody?.reason
+    ?? (readinessText.slice(0, 200) || "UNKNOWN");
+  assert(readiness.status === 200, `READINESS_HTTP_${readiness.status}_${readinessReason}`);
 
   const login = await fetch(`${base}/v1/identity/session`, {
     method: "POST",
