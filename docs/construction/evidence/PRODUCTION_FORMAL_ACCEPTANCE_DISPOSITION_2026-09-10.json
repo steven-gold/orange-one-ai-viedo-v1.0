@@ -28,9 +28,9 @@
   "blocked_rule": "BLOCKED requires a concrete reason_code and one or more blocker evidence refs.",
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
-    "PASS": 29,
+    "PASS": 43,
     "BLOCKED": 113,
-    "NOT_EXECUTED": 1339
+    "NOT_EXECUTED": 1325
   },
   "entries": [
     {
@@ -4542,51 +4542,128 @@
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-AUDIT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-AUDIT-REF"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-COMPLETENESS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-SYNC-COMPLETENESS"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-CONNECTOR-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-CONN-CONNECTOR-ID"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-CURRENCY-TIMEZONE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-SYNC-CURRENCY-TIMEZONE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-FAILURE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-SYNC-FAILURE-ID"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-FRESHNESS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FRESHNESS"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-SNAPSHOT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-SNAPSHOT"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-01-ERP-FINANCE-GET-FACTPACK",
@@ -4626,51 +4703,128 @@
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-CAPACITY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-CAPACITY"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-CASHFLOW-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-CASHFLOW"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-COST-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-COST"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-FORECAST-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-FORECAST"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-GUARDRAILS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-GUARDRAILS"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-RECOMMENDATION-BOUNDARY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-RECOMMENDATION-BOUNDARY"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-REVENUE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-REVENUE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-IAM-01-ACT-01-ACT-SEARCH",
