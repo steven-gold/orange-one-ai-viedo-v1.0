@@ -187,14 +187,15 @@ async function startVoice(request:EditVoiceRequest){
 async function handoffToQa(request:EditVoiceRequest){
   const runId=requireUuid(request.path_params?.runId,"EDIT_VOICE_RUN_ID_REQUIRED"),payload=rec(request.payload);
   const taskId=requireUuid(payload.task_id,"EDIT_TASK_ID_REQUIRED"),outputId=requireUuid(payload.output_version_id,"EDIT_OUTPUT_VERSION_ID_REQUIRED");
-  if(!text(payload.saved_edit_version_id)||!text(payload.locked_version_ref))throw new NamedRuntimeError("EDIT_LOCKED_OUTPUT_REQUIRED");
+  const savedEditVersionId=requireUuid(payload.saved_edit_version_id,"EDIT_SAVED_VERSION_ID_REQUIRED");
+  const lockedVersionRef=requireUuid(payload.locked_version_ref,"EDIT_LOCKED_VERSION_REF_REQUIRED");
   const {sql,session_token_hash}=await context();const run=await exactRun(sql,session_token_hash,runId);
   if(text(run.task_id)!==taskId||text(run.current_state)!=="FINALIZE"||text(run.status)!=="LOCKED")throw new NamedRuntimeError("EDIT_QA_HANDOFF_STATE_NOT_READY");
   const lock=first(await runRlsActorQuery(sql,session_token_hash,sql`
     SELECT l.production_output_version_lock_id::text AS lock_id,l.edit_version_id::text,l.output_version_id::text
     FROM public.production_output_version_locks l
-    WHERE l.production_output_version_lock_id=${text(payload.locked_version_ref)}::uuid
-      AND l.edit_version_id=${text(payload.saved_edit_version_id)}::uuid
+    WHERE l.production_output_version_lock_id=${lockedVersionRef}::uuid
+      AND l.edit_version_id=${savedEditVersionId}::uuid
       AND l.output_version_id=${outputId}::uuid
       AND l.task_id=${taskId}::uuid AND l.department='EDITING' AND l.status='LOCKED'
     LIMIT 1
