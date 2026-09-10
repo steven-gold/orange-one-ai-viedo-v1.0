@@ -131,15 +131,24 @@
       "admin:STR-01 old NOT_EXECUTED runtime snapshot remains externalized"
     ],
     "navigation_route_residual_fix": {
-      "status": "9X9_RESTORED_SOURCE_RELEASE_PENDING",
+      "status": "9X9_RESTORED_SOURCE_TESTS_PASS_RELEASE_PENDING",
+      "restore_bot_sha": "1d18e5c535419f4b819f971e6bc2414b284cda4c",
+      "restore_one_shot_run_id": 34526404490,
+      "restore_one_shot_conclusion": "SUCCESS",
       "info_route_nav_09_restored": true,
       "knowledge_route_admin_nav_09_restored": true,
-      "permanent_regression_updated": "tests/release/page-authority-current-truth.test.mjs"
+      "integration_matrix_9x9_restored": true,
+      "production_browser_9x9_acceptance_restored": true,
+      "permanent_regressions": [
+        "tests/release/page-authority-current-truth.test.mjs",
+        "tests/release/navigation-visibility.test.mjs"
+      ],
+      "temporary_restore_files_remaining": 0
     },
     "current_named_global_authority_scan": {
       "navigation_permission": "STATIC_CURRENT_CONTRACT_RETAINED",
-      "page_integration_matrix": "STATIC_CURRENT_CONTRACT_RETAINED",
-      "system_authority": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
+      "page_integration_matrix": "CURRENT_9X9_INTEGRATION_RESTORED",
+      "system_authority": "MUTABLE_EXECUTION_STATE_EXTERNALIZED_9X9_NAV_RESTORED",
       "database_migration_authority": "MUTABLE_EXECUTION_HISTORY_EXTERNALIZED"
     },
     "runtime_authority_scan": {
@@ -183,7 +192,9 @@
   },
   "current_batch_validation": {
     "item": "RESTORE_USER_CONFIRMED_9X9_CURRENT_TOPOLOGY",
-    "source_head": "AUTOMATION_COMMIT_PENDING",
+    "source_head": "1d18e5c535419f4b819f971e6bc2414b284cda4c",
+    "one_shot_run_id": 34526404490,
+    "one_shot_conclusion": "SUCCESS",
     "release_gate": "PENDING"
   },
   "remaining_queue_policy": "Only top-level closures are counted here. Discovered subdependencies remain inside their owning item and must not inflate the queue count.",
