@@ -1,0 +1,92 @@
+name: ACPOS Gate25 Production DOM Ledger Sync Once
+
+on:
+  push:
+    branches: [new]
+
+permissions:
+  contents: write
+
+jobs:
+  sync-ledger:
+    runs-on: ubuntu-24.04
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - name: Synchronize structural Production DOM blockers into physical ledger
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile, writeFile } from 'node:fs/promises';
+
+          const ledgerPath='docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json';
+          const evidencePath='docs/construction/evidence/GATE25_PRODUCTION_DOM_FORMAL_RESOURCE_EVIDENCE_2026-09-10.json';
+          const syncPath='docs/construction/evidence/GATE25_PRODUCTION_DOM_BLOCKER_LEDGER_SYNC_2026-09-10.json';
+          const ledger=JSON.parse(await readFile(ledgerPath,'utf8'));
+          const evidence=JSON.parse(await readFile(evidencePath,'utf8'));
+          if(evidence.production_release_sha!=='608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36') throw new Error('PRODUCTION_SHA_MISMATCH');
+          if(evidence.post_deploy?.run_number!==1443 || evidence.post_deploy?.status!=='SUCCESS') throw new Error('POST_DEPLOY_EVIDENCE_INVALID');
+          if(evidence.dom?.formal_resource_exact_matches!==31) throw new Error('FORMAL_MATCH_COUNT_INVALID');
+
+          const allowedReasons=new Set(['AUTHORITY_BINDING_UNRESOLVED','IMPLEMENTATION_REQUIRED_NOT_EXECUTED','DISABLED_IN_VISUAL_PHASE']);
+          const candidates=evidence.observations.filter(x=>x.disposition_candidate==='BLOCKED');
+          if(candidates.length!==4) throw new Error(`STRUCTURAL_BLOCKER_COUNT_${candidates.length}`);
+          const byKey=new Map(ledger.entries.map(x=>[x.resource_key,x]));
+          const before={...ledger.counts};
+          const changed=[];
+          const preserved=[];
+          for(const obs of candidates){
+            if(!allowedReasons.has(obs.disabled_reason)) throw new Error(`UNSAFE_BLOCKER_REASON_${obs.resource_key}`);
+            const row=byKey.get(obs.resource_key);
+            if(!row) throw new Error(`LEDGER_RESOURCE_MISSING_${obs.resource_key}`);
+            if(row.disposition==='NOT_EXECUTED'){
+              row.disposition='BLOCKED';
+              row.reason_code=obs.disabled_reason;
+              row.evidence_refs=[
+                evidencePath,
+                'GitHub Actions Post-Deploy #1443 run_id=34453506474 job_id=102794421439',
+                `Production release_sha=${evidence.production_release_sha}`
+              ];
+              changed.push(obs.resource_key);
+            } else {
+              preserved.push({resource_key:obs.resource_key,disposition:row.disposition});
+            }
+          }
+          const counts={PASS:0,BLOCKED:0,NOT_EXECUTED:0};
+          for(const row of ledger.entries){
+            if(!(row.disposition in counts)) throw new Error(`INVALID_DISPOSITION_${row.resource_key}`);
+            counts[row.disposition]++;
+          }
+          ledger.counts=counts;
+          if(ledger.entries.length!==1481) throw new Error(`DENOMINATOR_${ledger.entries.length}`);
+          await writeFile(ledgerPath,JSON.stringify(ledger,null,2)+'\n');
+          const sync={
+            document_id:'ACPOS_GATE25_PRODUCTION_DOM_BLOCKER_LEDGER_SYNC',
+            status:'PHYSICAL_LEDGER_SYNCED',
+            as_of:'2026-09-10T16:24:00+08:00',
+            production_release_sha:evidence.production_release_sha,
+            post_deploy:{run_number:1443,run_id:34453506474,job_id:102794421439,status:'SUCCESS'},
+            source:evidencePath,
+            structural_blocker_candidates:4,
+            changed_count:changed.length,
+            changed_resource_keys:changed,
+            preserved,
+            counts_before:before,
+            counts_after:counts,
+            untouched_prerequisite_resources:evidence.observations.filter(x=>x.disposition_candidate==='NOT_EXECUTED_PREREQUISITE').map(x=>x.resource_key),
+            untouched_enabled_resources:evidence.observations.filter(x=>String(x.disposition_candidate).startsWith('NOT_EXECUTED_')&&x.enabled===true).map(x=>x.resource_key),
+            rule:'Only exact Production-disabled resources with structural authority/implementation/visual-phase reasons are promoted to BLOCKED. Prerequisite-state and enabled resources are not promoted.'
+          };
+          await writeFile(syncPath,JSON.stringify(sync,null,2)+'\n');
+          console.log(JSON.stringify(sync));
+          NODE
+      - name: Commit ledger sync and remove one-shot workflow
+        run: |
+          rm .github/workflows/gate25-production-dom-ledger-sync-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json docs/construction/evidence/GATE25_PRODUCTION_DOM_BLOCKER_LEDGER_SYNC_2026-09-10.json .github/workflows/gate25-production-dom-ledger-sync-once.yml
+          git commit -m "evidence(gate25): sync Production DOM structural blockers"
+          git push origin HEAD:new
