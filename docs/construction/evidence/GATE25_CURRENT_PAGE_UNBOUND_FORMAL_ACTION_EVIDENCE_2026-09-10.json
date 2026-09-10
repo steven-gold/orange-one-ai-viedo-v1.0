@@ -1,0 +1,56 @@
+{
+  "document_id": "ACPOS_GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE",
+  "status": "CURRENT_EVIDENCE",
+  "captured_at": "2026-09-10T12:02:57.853539+00:00",
+  "source_inventory": "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+  "ledger": "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json",
+  "rule": "A Production formal ACTION cannot be promoted to PASS or exercised by a fabricated UI interaction when its exact action UID is absent from the FINAL_LOCKED Current page authority. It remains BLOCKED until the Production permission inventory is remapped/deactivated or Current Authority explicitly registers an executable owner.",
+  "targets": [
+    {
+      "resource_key": "action:admin:IAM-01:ACT-NAV-OPEN",
+      "page_uid": "admin:IAM-01",
+      "formal_inventory_present": true,
+      "current_authority_path": "authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+      "current_authority_action_uid_present": false,
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY"
+    },
+    {
+      "resource_key": "action:admin:KB-01:ACT-NAV-OPEN",
+      "page_uid": "admin:KB-01",
+      "formal_inventory_present": true,
+      "current_authority_path": "authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml",
+      "current_authority_action_uid_present": false,
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY"
+    },
+    {
+      "resource_key": "action:admin:SOC-01:ACT-NAV-OPEN",
+      "page_uid": "admin:SOC-01",
+      "formal_inventory_present": true,
+      "current_authority_path": "authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+      "current_authority_action_uid_present": false,
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY"
+    },
+    {
+      "resource_key": "action:admin:AIAPI-01:ACT-NAV-OPEN",
+      "page_uid": "admin:AIAPI-01",
+      "formal_inventory_present": true,
+      "current_authority_path": "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+      "current_authority_action_uid_present": false,
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY"
+    },
+    {
+      "resource_key": "action:admin:AIAPI-01:ACT-REFRESH",
+      "page_uid": "admin:AIAPI-01",
+      "formal_inventory_present": true,
+      "current_authority_path": "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+      "current_authority_action_uid_present": false,
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY"
+    }
+  ],
+  "count": 5
+}

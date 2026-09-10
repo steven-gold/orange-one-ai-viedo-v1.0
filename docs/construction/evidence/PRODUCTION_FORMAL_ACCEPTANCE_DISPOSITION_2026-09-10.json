@@ -29,23 +29,39 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 29,
-    "BLOCKED": 108,
-    "NOT_EXECUTED": 1344
+    "BLOCKED": 113,
+    "NOT_EXECUTED": 1339
   },
   "entries": [
     {
       "resource_key": "action:admin:AIAPI-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal permission inventory contains this ACTION, but the exact action UID is absent from the FINAL_LOCKED Current page authority. No executable Current binding is authorized; fabricating a UI/runtime owner is forbidden. Resolve by authoritative inventory remap/deactivation or explicit Current Authority registration.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-01:ACT-REFRESH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal permission inventory contains this ACTION, but the exact action UID is absent from the FINAL_LOCKED Current page authority. No executable Current binding is authorized; fabricating a UI/runtime owner is forbidden. Resolve by authoritative inventory remap/deactivation or explicit Current Authority registration.",
+      "operation_ids": [
+        "ACT-REFRESH"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-02:ACT-CONFIGURE",
@@ -953,9 +969,17 @@
     {
       "resource_key": "action:admin:IAM-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal permission inventory contains this ACTION, but the exact action UID is absent from the FINAL_LOCKED Current page authority. No executable Current binding is authorized; fabricating a UI/runtime owner is forbidden. Resolve by authoritative inventory remap/deactivation or explicit Current Authority registration.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-01:ACT-SEARCH",
@@ -1123,9 +1147,17 @@
     {
       "resource_key": "action:admin:KB-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal permission inventory contains this ACTION, but the exact action UID is absent from the FINAL_LOCKED Current page authority. No executable Current binding is authorized; fabricating a UI/runtime owner is forbidden. Resolve by authoritative inventory remap/deactivation or explicit Current Authority registration.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:KB-02:ACT-NAV-OPEN",
@@ -1263,9 +1295,17 @@
     {
       "resource_key": "action:admin:SOC-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal permission inventory contains this ACTION, but the exact action UID is absent from the FINAL_LOCKED Current page authority. No executable Current binding is authorized; fabricating a UI/runtime owner is forbidden. Resolve by authoritative inventory remap/deactivation or explicit Current Authority registration.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:SOC-02:ACT-NAV-OPEN",
