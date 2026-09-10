@@ -1,0 +1,63 @@
+name: ACPOS Prepare 0053 DEV Permission Manifest Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - 'database/migrations/0053_dev_discovery_permission_closure.sql'
+
+permissions:
+  contents: write
+
+jobs:
+  prepare-manifest:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate payload checksum and update manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const crypto = require('crypto');
+          const migrationPath = 'database/migrations/0053_dev_discovery_permission_closure.sql';
+          const manifestPath = 'database/migrations/migration_checksum_manifest.yaml';
+          const expected = 'e410c52e8a65e31f86554b591d1e9d2d895127d47e30a9402a3558a6eb3f9149';
+          const sql = fs.readFileSync(migrationPath, 'utf8');
+          const marker = 'INSERT INTO public.schema_migration_history';
+          const index = sql.indexOf(marker);
+          if (index < 0) throw new Error('DEV0053_TERMINAL_MIGRATION_REGISTRATION_MISSING');
+          const payload = sql.slice(0, index);
+          const actual = crypto.createHash('sha256').update(payload).digest('hex');
+          if (actual !== expected) throw new Error(`DEV0053_PAYLOAD_CHECKSUM_MISMATCH:${actual}`);
+          if (!sql.includes(`'${expected}'`)) throw new Error('DEV0053_EMBEDDED_CHECKSUM_MISMATCH');
+
+          let manifest = fs.readFileSync(manifestPath, 'utf8');
+          if (manifest.includes('migration_id: 0053_dev_discovery_permission_closure')) {
+            throw new Error('DEV0053_MANIFEST_ALREADY_REGISTERED');
+          }
+          manifest = manifest.replace('contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.52', 'contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.53');
+          manifest = manifest.replace('authority_revision: 2026-09-10-STAGED-0052-IAM-SEARCH-AUDIT-RLS', 'authority_revision: 2026-09-10-STAGED-0053-DEV-DISCOVERY-PERMISSION');
+          if (!manifest.includes('contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.53')) throw new Error('DEV0053_MANIFEST_CONTRACT_REVISION_NOT_UPDATED');
+          manifest = manifest.replace(/\s*$/, '') + `\n\n- migration_id: 0053_dev_discovery_permission_closure\n  payload_sha256: ${expected}\n  approval_ref: CR-DEV-0053-PENDING-PRODUCTION-APPLY\n  bootstrap: REQUIRES_PRIOR_MIGRATION\n  production_apply: PENDING_PRODUCTION_APPLY\n`;
+          fs.writeFileSync(manifestPath, manifest);
+          NODE
+      - name: Self-clean helper and commit manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/prepare-0053-dev-permission-manifest-once.yml
+          git config user.name 'acpos-gate-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add database/migrations/migration_checksum_manifest.yaml .github/workflows/prepare-0053-dev-permission-manifest-once.yml
+          git diff --cached --check
+          git commit -m 'chore(migration): register DEV discovery permission 0053'
+          git push origin HEAD:new
