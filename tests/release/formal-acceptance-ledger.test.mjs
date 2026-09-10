@@ -22,7 +22,7 @@ test("Current formal acceptance ledger covers exact 1481 Production CONTROL+ACTI
     physicalCounts[row.disposition]+=1;
   }
   assert.deepEqual(ledger.counts,physicalCounts);
-  assert.deepEqual(ledger.counts,{PASS:51,BLOCKED:187,NOT_EXECUTED:1243});
+  assert.deepEqual(ledger.counts,{PASS:51,BLOCKED:194,NOT_EXECUTED:1236});
   assert.equal(ledger.counts.PASS+ledger.counts.BLOCKED+ledger.counts.NOT_EXECUTED,1481);
   assert.equal(ledger.production_release_sha,"526316501c86fe54f02603cdb47da5ad51a005dc");
   assert.equal(ledger.aggregate_dom_evidence.post_deploy_run,1561);
