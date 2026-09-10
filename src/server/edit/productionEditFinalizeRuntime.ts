@@ -31,9 +31,11 @@ async function runRow(sql:Sql,session:string,runId:string){
 }
 async function exactTask(sql:Sql,session:string,taskId:string){
   const t=first(await runRlsActorQuery(sql,session,sql`
-    SELECT task_id::text,status::text,production_goal_id::text,production_contract_id::text,goal_id::text,
-           topic_id::text,project_id::text,blueprint_version_id::text,btrim(output_contract_hash::text) AS output_contract_hash
-    FROM public.department_tasks WHERE task_id=${taskId}::uuid AND department::text='EDITING' LIMIT 1
+    SELECT t.task_id::text,t.status::text,t.production_goal_id::text,t.production_contract_id::text,t.goal_id::text,
+           t.topic_id::text,t.project_id::text,cl.blueprint_version_id::text,btrim(t.output_contract_hash::text) AS output_contract_hash
+    FROM public.department_tasks t
+    JOIN public.child_locks cl ON cl.child_lock_id=t.child_lock_id AND cl.status='LOCKED'
+    WHERE t.task_id=${taskId}::uuid AND t.department::text='EDITING' LIMIT 1
   `));if(!t)throw new NamedRuntimeError("EDIT_TASK_NOT_FOUND");return t;
 }
 async function saveVersion(request:EditVoiceRequest){

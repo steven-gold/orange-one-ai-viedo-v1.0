@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T09:38:58+08:00",
+  "as_of": "2026-09-10T10:37:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "a75602a5ce26da42a7c281e7e7225bb9fb6df720",
-    "new_sha": "91ddc58bddb8a8e8b51c7d8bdd07fce425b3bf64",
+    "new_sha": "28df74e39a440e2c06bbdd307a732b7f7ef8454c",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -172,7 +172,7 @@
         }
       }
     },
-    "pending_product_delta": "NONE: PR #37 merged new@91ddc58bddb8a8e8b51c7d8bdd07fce425b3bf64 to main; exact main a75602a5ce26da42a7c281e7e7225bb9fb6df720 passed Release Gate #1061 and Post-Deploy #1370.",
+    "pending_product_delta": "new contains EDIT Finalize/VOICE lifecycle fixes through 28df74e39a440e2c06bbdd307a732b7f7ef8454c; Release Gate #1066 SUCCESS. Production DB migration 0050 is applied, but the application delta is not yet merged/deployed to main.",
     "formal_acceptance_denominator": {
       "legacy_catalog": {
         "controls": 1141,
@@ -181,20 +181,20 @@
         "permission_resources": 3650
       },
       "current_production_permission_catalog": {
-        "controls": 1148,
-        "actions": 319,
-        "control_action_denominator": 1467,
-        "control_action_expansion": 14,
-        "active_permission_resources": 3672,
-        "permission_resource_expansion": 22
+        "controls": 1155,
+        "actions": 326,
+        "control_action_denominator": 1481,
+        "control_action_expansion": 28,
+        "active_permission_resources": 3693,
+        "permission_resource_expansion": 43
       },
-      "current_rendered_dom": {
+      "last_deployed_rendered_dom": {
         "interactive": 555,
         "governed": 555,
         "enabled": 339,
         "disabled": 216
       },
-      "rule": "1453 is historical catalog baseline; 1467 is the Current active CONTROL+ACTION permission denominator; rendered DOM 555 is a separate observed interactive denominator and is not substituted for the formal permission denominator.",
+      "rule": "1453 is historical catalog baseline; 1481 is Current active CONTROL+ACTION permission denominator after migration 0050. DOM 555 belongs to the last deployed main and must be rerun after the new application delta reaches Production.",
       "evidence": "docs/construction/evidence/CURRENT_ACCEPTANCE_DENOMINATOR_2026-09-10.json"
     }
   },
@@ -202,10 +202,10 @@
     "project": "wild-wave-25661146",
     "branch": "main",
     "database": "neondb",
-    "migration_count": 49,
-    "latest_migration": "0049_voice_department_schema_contract",
+    "migration_count": 50,
+    "latest_migration": "0050_edit_finalize_persistence_permission_rls_closure",
     "migration_0040_checksum": "301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50",
-    "permission_resources_active": 3672,
+    "permission_resources_active": 3693,
     "permission_resources_authority_seal_status": "CURRENT_EXPANSION_TALLY_NOT_SEALED",
     "approved_allow_assignments": 158,
     "rls_tables_total": 73,
@@ -246,7 +246,11 @@
       "script_projection_rules": 0,
       "department_script_views": 0,
       "task_input_manifests": 0,
-      "instruction_packages": 0
+      "instruction_packages": 0,
+      "editing_timelines": 0,
+      "edit_render_jobs": 0,
+      "editing_output_locks": 0,
+      "editing_runtime_runs": 0
     },
     "production_formal_dependency_counts": {
       "task_templates": 0,
@@ -273,7 +277,8 @@
       "STRATEGY",
       "SYSTEM",
       "VOICE"
-    ]
+    ],
+    "latest_migration_checksum": "f6be546d52ff486236913c5f8c02971cf7e25c9f801fe3a8c5774f1a548553d5"
   },
   "construction": {
     "core_truthful_gate": {
@@ -380,6 +385,33 @@
       "provider_operation_mapping": "ABSENT_FROM_CURRENT_OPERATION_REGISTRY",
       "runtime_behavior": "startVoiceRuntime throws EDIT_VOICE_PROVIDER_OPERATION_NOT_MATERIALIZED",
       "rule": "Do not alias or guess startVoiceRuntime to generic executeProviderRoute without an exact Current operation/capability mapping."
+    },
+    "edit_finalize_0050": {
+      "status": "PRODUCTION_DB_APPLIED_APPLICATION_DEPLOY_PENDING",
+      "migration_id": "0050_edit_finalize_persistence_permission_rls_closure",
+      "checksum": "f6be546d52ff486236913c5f8c02971cf7e25c9f801fe3a8c5774f1a548553d5",
+      "production_migration_count": "50/50",
+      "schema": {
+        "editing_timeline_finalize_columns": 6,
+        "edit_render_jobs_owner": "public.edit_render_jobs",
+        "version_lock_owner": "public.production_output_version_locks",
+        "parallel_edit_version_locks_created": false
+      },
+      "permission_materialization": {
+        "resources": 21,
+        "approved_allow_assignments": 21
+      },
+      "business_rows_created": 0,
+      "remaining": [
+        "application delta not merged/deployed to main",
+        "positive EDIT/QA lineage absent",
+        "VOICE Provider exact operation/capability mapping absent"
+      ]
+    },
+    "edit_finalize_blueprint_lineage": {
+      "status": "CODE_FIXED_RELEASE_GATE_PENDING",
+      "source": "department_tasks.child_lock_id -> child_locks.blueprint_version_id",
+      "rule": "Do not add a duplicate blueprint_version_id column to department_tasks."
     }
   },
   "providers": {
@@ -507,9 +539,9 @@
     },
     "20": {
       "name": "EDIT + VOICE Runtime",
-      "percent": 50,
+      "percent": 62.5,
       "status": "PARTIAL",
-      "detail": "VOICE schema contract is closed by 0049. EDIT+VOICE lifecycle remains partial: startVoiceRuntime is intentionally fail-closed because Current operation registry has no exact VOICE Provider operation/capability mapping, and upstream canonical task lineage is not materialized."
+      "detail": "VOICE schema 0049 and EDIT Finalize DB/permission/RLS 0050 are Production-applied. Application fixes are on new and pending integration/deploy. Positive lifecycle is still blocked by zero real EDIT/QA lineage and missing exact VOICE Provider mapping."
     },
     "21": {
       "name": "QA Runtime",
@@ -536,7 +568,7 @@
       "name": "全頁全按鈕 Acceptance",
       "percent": 50,
       "status": "PARTIAL",
-      "detail": "Legacy control+action baseline 1453 is preserved; Current active Production permission denominator is 1467 (+14). Post-Deploy #1370 rendered 555 interactive controls and governed 555/555. Exhaustive Production effectful acceptance remains pending."
+      "detail": "Historical baseline 1453 preserved; Current Production CONTROL+ACTION denominator is 1481 after 0050. Last deployed DOM evidence is 555/555 governed and must be regenerated after the new application delta is deployed. Exhaustive effectful acceptance remains pending."
     }
   },
   "gate_summary": {
@@ -546,7 +578,7 @@
     "blocked": 0,
     "unknown": 0,
     "production_ready_percent": 81.5,
-    "production_ready_percent_status": "STALE_RECOMPUTE_REQUIRED_AFTER_A756_DEPLOY_AND_CURRENT_DENOMINATOR_SEAL"
+    "production_ready_percent_status": "STALE_RECOMPUTE_REQUIRED_AFTER_0050_AND_PENDING_APP_DEPLOY"
   },
   "blockers": [
     "TaskTemplate/ProductionGoal/OutputContract/RightsProfile are zero in Production and are dependencies of the nine formal materialization items; they may not be omitted from progress reports.",
@@ -598,7 +630,10 @@
     },
     "Production QualityCriteriaVersion/Topic/TopicVersion/TopicProductionContract/Blueprint/CanonicalScriptVersion/ChildLock and governed-resource business rows are all zero at the 2026-09-10 Production preflight; positive CORE effectful acceptance must not fabricate rows and waits for real canonical operator-created lineage.",
     "EDIT+VOICE VOICE schema blocker is closed by 0049, but Current operation registry has no exact startVoiceRuntime Provider operation/capability mapping; startVoiceRuntime must remain fail-closed and generic executeProviderRoute must not be guessed as a substitute.",
-    "Gate 25 denominator is sealed as legacy 1453 versus Current active CONTROL+ACTION 1467 (+14), with rendered Production DOM 555/555 governed; exhaustive effectful acceptance is still pending."
+    "Gate 25 Current permission denominator is now 1481 after Production migration 0050; the last deployed DOM evidence remains 555/555 and must be regenerated after the new application delta is merged/deployed.",
+    "EDIT Finalize application delta is not yet on main; Production DB is at 50/50 while deployed application main is still a75602a5 until integration.",
+    "Positive EDIT+VOICE lifecycle remains blocked by zero real EDITING/QA tasks, outputs, timelines, voice profiles and locks; acceptance must not fabricate business rows.",
+    "VOICE start remains fail-closed because Current operation registry has route registration but no exact Provider operation/capability mapping for startVoiceRuntime."
   ],
   "remaining_queue": [
     "MANDATORY 1/9 QualityCriteriaVersion materialization + Production effectful acceptance",

@@ -1,7 +1,7 @@
 {
   "document_id": "ACPOS_CURRENT_ACCEPTANCE_DENOMINATOR",
   "status": "CURRENT_EVIDENCE",
-  "as_of": "2026-09-10T09:38:58+08:00",
+  "as_of": "2026-09-10T10:37:00+08:00",
   "production_release_sha": "a75602a5ce26da42a7c281e7e7225bb9fb6df720",
   "source_evidence": {
     "release_gate": {
@@ -26,12 +26,12 @@
     "permission_resources": 3650
   },
   "production_neon": {
-    "active_controls": 1148,
-    "active_actions": 319,
-    "current_control_action_denominator": 1467,
-    "control_action_expansion": 14,
-    "active_permission_resources": 3672,
-    "permission_resource_expansion": 22
+    "active_controls": 1155,
+    "active_actions": 326,
+    "current_control_action_denominator": 1481,
+    "control_action_expansion": 28,
+    "active_permission_resources": 3693,
+    "permission_resource_expansion": 43
   },
   "post_deploy_dom": {
     "pages": 18,
@@ -40,5 +40,12 @@
     "enabled": 339,
     "disabled": 216
   },
-  "acceptance_rule": "1453 remains the historical catalog baseline. 1467 is the Current active CONTROL+ACTION permission denominator. The rendered DOM denominator 555 is observed UI coverage and must not be substituted for the formal permission denominator. Gate 25 remains PARTIAL until exhaustive Production effectful acceptance closes."
+  "acceptance_rule": "1453 remains the historical catalog baseline. 1481 is the Current active CONTROL+ACTION permission denominator after Production migration 0050. The rendered DOM denominator 555 is evidence from the last deployed main and remains a separate observed UI denominator until the 0050 application delta is deployed and Post-Deploy acceptance is rerun. Gate 25 remains PARTIAL until exhaustive Production effectful acceptance closes.",
+  "production_migration": {
+    "migration_count": 50,
+    "latest": "0050_edit_finalize_persistence_permission_rls_closure",
+    "checksum": "f6be546d52ff486236913c5f8c02971cf7e25c9f801fe3a8c5774f1a548553d5",
+    "approval_ref": "CR-RUNTIME-0050",
+    "applied_at_utc": "2026-09-10 02:39:22.322043+00"
+  }
 }

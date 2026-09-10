@@ -46,3 +46,11 @@ test("0050 seals seven Finalize PAGE_ACTION_CONTROL_API operations and creates n
   assert.doesNotMatch(migration,/INSERT INTO public\.(editing_timelines|edit_render_jobs|production_output_version_locks|task_outputs|department_tasks|scorecards)\b/i);
   assert.match(registry,/operation_id: lockEditVersion[\s\S]*persistence_owner: public\.production_output_version_locks/);
 });
+
+
+test("EDIT Finalize resolves Blueprint lineage through canonical ChildLock owner",async()=>{
+  const runtime=await read("src/server/edit/productionEditFinalizeRuntime.ts");
+  assert.match(runtime,/JOIN public\.child_locks cl ON cl\.child_lock_id=t\.child_lock_id AND cl\.status='LOCKED'/);
+  assert.match(runtime,/cl\.blueprint_version_id::text/);
+  assert.doesNotMatch(runtime,/t\.blueprint_version_id::text/);
+});

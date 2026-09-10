@@ -43,10 +43,10 @@ const currentDom = current.post_deploy_dom ?? {};
 if (current.legacy_permission_catalog?.controls !== controlResources || current.legacy_permission_catalog?.actions !== actionResources || current.legacy_permission_catalog?.control_action_baseline !== legacyCatalogControlActionBaseline || current.legacy_permission_catalog?.permission_resources !== resourceTotal) {
   throw new Error("CURRENT_DENOMINATOR_LEGACY_BASELINE_MISMATCH");
 }
-if (currentNeon.active_controls !== 1148 || currentNeon.active_actions !== 319 || currentNeon.current_control_action_denominator !== 1467 || currentNeon.control_action_expansion !== 14) {
+if (currentNeon.active_controls !== 1155 || currentNeon.active_actions !== 326 || currentNeon.current_control_action_denominator !== 1481 || currentNeon.control_action_expansion !== 28) {
   throw new Error(`CURRENT_PERMISSION_CONTROL_ACTION_DENOMINATOR_MISMATCH controls=${currentNeon.active_controls} actions=${currentNeon.active_actions} total=${currentNeon.current_control_action_denominator} expansion=${currentNeon.control_action_expansion}`);
 }
-if (currentNeon.active_permission_resources !== 3672 || currentNeon.permission_resource_expansion !== 22) {
+if (currentNeon.active_permission_resources !== 3693 || currentNeon.permission_resource_expansion !== 43) {
   throw new Error(`CURRENT_PERMISSION_RESOURCE_DENOMINATOR_MISMATCH total=${currentNeon.active_permission_resources} expansion=${currentNeon.permission_resource_expansion}`);
 }
 if (currentDom.interactive !== 555 || currentDom.governed !== 555 || currentDom.enabled + currentDom.disabled !== currentDom.interactive) {
