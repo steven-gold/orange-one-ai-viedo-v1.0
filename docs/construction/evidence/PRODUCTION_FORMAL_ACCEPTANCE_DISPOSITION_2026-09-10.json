@@ -29,8 +29,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 47,
-    "BLOCKED": 139,
-    "NOT_EXECUTED": 1295
+    "BLOCKED": 141,
+    "NOT_EXECUTED": 1293
   },
   "entries": [
     {
@@ -5920,16 +5920,38 @@
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SG02_EFFECTFUL_CONTROL_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SG02 Effectful Controls Materialize run_id=34494829082",
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json",
+        "authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/qaCriteria/qaCriteriaRuntimePort.ts",
+        "src/components/pages/QaCriteriaVisual.tsx"
+      ],
+      "blocker_detail": "Authenticated Production SG-02 has no real QualityCriteriaVersion lineage and the paired ACTION is blocked on real governed criteria content. Sample/hardcoded Production criteria are forbidden. Production UI gate-alignment defect: this effectful control is currently enabled despite the missing real criteria prerequisite.",
+      "operation_ids": [
+        "configureGovernedResource"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SG02_EFFECTFUL_CONTROL_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SG02 Effectful Controls Materialize run_id=34494829082",
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json",
+        "authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/qaCriteria/qaCriteriaRuntimePort.ts",
+        "src/components/pages/QaCriteriaVisual.tsx"
+      ],
+      "blocker_detail": "Authenticated Production SG-02 has no real QualityCriteriaVersion lineage and the paired ACTION is blocked on real governed criteria content. Sample/hardcoded Production criteria are forbidden. Production UI gate-alignment defect: this effectful control is currently enabled despite the missing real criteria prerequisite.",
+      "operation_ids": [
+        "approveGovernedResource"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN",
