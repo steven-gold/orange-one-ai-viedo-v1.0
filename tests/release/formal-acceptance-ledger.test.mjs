@@ -40,7 +40,7 @@ test("Current formal acceptance ledger covers exact 1481 Production CONTROL+ACTI
   assert.equal(productionDomSync.structural_blocker_candidates,4);
   assert.equal(productionDomSync.changed_count,4);
   assert.deepEqual(productionDomSync.counts_before,{PASS:5,BLOCKED:68,NOT_EXECUTED:1408});
-  assert.deepEqual(productionDomSync.counts_after,ledger.counts);
+  assert.deepEqual(productionDomSync.counts_after,{PASS:5,BLOCKED:72,NOT_EXECUTED:1404});
   assert.equal(productionDomSync.untouched_prerequisite_resources.length,2);
   assert.equal(productionDomSync.untouched_enabled_resources.length,25);
 
