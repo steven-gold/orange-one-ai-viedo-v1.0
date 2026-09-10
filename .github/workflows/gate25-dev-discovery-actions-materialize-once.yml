@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 20
     env:
       ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
-      ACPOS_EXPECT_RELEASE_SHA: 608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36
+      ACPOS_EXPECT_RELEASE_SHA: 526316501c86fe54f02603cdb47da5ad51a005dc
       ACPOS_PRODUCTION_E2E_EMAIL: admin
       ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
       VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
