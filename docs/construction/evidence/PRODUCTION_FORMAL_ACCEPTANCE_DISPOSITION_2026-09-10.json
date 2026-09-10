@@ -29,8 +29,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 43,
-    "BLOCKED": 113,
-    "NOT_EXECUTED": 1325
+    "BLOCKED": 116,
+    "NOT_EXECUTED": 1322
   },
   "entries": [
     {
@@ -4668,23 +4668,59 @@
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-01-ERP-FINANCE-GET-FACTPACK",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Blocker Materialize run_id=34487157379",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "scripts/gate25-production-erp-finance-gate-diagnostic.mjs",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes the Current control, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity.",
+      "operation_ids": [
+        "ERP-01-ACT-FACTPACK",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-02-ERP-CAPACITY-GET-GUARDRAILS",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Blocker Materialize run_id=34487157379",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "scripts/gate25-production-erp-finance-gate-diagnostic.mjs",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes the Current control, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity.",
+      "operation_ids": [
+        "ERP-01-ACT-GUARDRAILS",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-03-ERP-FORECAST-GET",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Blocker Materialize run_id=34487157379",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "scripts/gate25-production-erp-finance-gate-diagnostic.mjs",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes the Current control, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity.",
+      "operation_ids": [
+        "ERP-01-ACT-FORECAST",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-04-ACT-EXPORT",
