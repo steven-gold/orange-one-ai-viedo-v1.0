@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T12:59:00+08:00",
+  "as_of": "2026-09-10T13:08:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -18,8 +18,8 @@
   },
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-    "main_sha": "d4f2f481f0db1078bf9ee880f7e3c385163a903d",
-    "new_sha": "31a7bbafb6429a33702ef865800919ec75510533",
+    "main_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
+    "new_sha": "8cf21984f78b6f3c193aaadbaf24118beef2d5f6",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -35,27 +35,27 @@
       }
     ],
     "latest_new_release_gate": {
-      "run_number": 1085,
-      "run_id": 34436024458,
-      "head_sha": "75d1c1cd38e428f8a697c92bd74a07f7dbf3fadb",
+      "run_number": 1091,
+      "run_id": 34439332118,
+      "head_sha": "8cf21984f78b6f3c193aaadbaf24118beef2d5f6",
       "status": "SUCCESS"
     },
     "production_main_release_gate": {
-      "run_number": 1090,
-      "run_id": 34438972720,
-      "head_sha": "d4f2f481f0db1078bf9ee880f7e3c385163a903d",
+      "run_number": 1093,
+      "run_id": 34439564751,
+      "head_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
       "status": "SUCCESS"
     }
   },
   "production": {
     "url": "https://orange-one-acpos-test.vercel.app",
-    "release_sha": "d4f2f481f0db1078bf9ee880f7e3c385163a903d",
+    "release_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
     "vercel_commit_status": "SUCCESS",
     "latest_post_deploy": {
-      "run_number": 1405,
-      "run_id": 34439005592,
+      "run_number": 1411,
+      "run_id": 34439601051,
       "event": "deployment_status",
-      "head_sha": "d4f2f481f0db1078bf9ee880f7e3c385163a903d",
+      "head_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
       "status": "SUCCESS"
     },
     "readiness_http": 200,
@@ -498,9 +498,9 @@
         "total": 1481
       },
       "dispositions": {
-        "PASS": 4,
+        "PASS": 5,
         "BLOCKED": 48,
-        "NOT_EXECUTED": 1429
+        "NOT_EXECUTED": 1428
       },
       "aggregate_dom": {
         "interactive": 558,
@@ -511,14 +511,14 @@
       "final_mode": "node scripts/release-formal-acceptance-ledger.mjs --require-pass",
       "rule": "Ledger coverage is not effectful acceptance. PASS requires per-resource evidence. Aggregate DOM evidence never auto-promotes individual resources.",
       "latest_execution": {
-        "workflow_run": 34435464021,
-        "resources_passed": 4,
-        "neon_audit_correlations": 4,
-        "neon_audit_rows": 8
+        "workflow_run": 34439777346,
+        "resources_passed": 5,
+        "neon_audit_correlations": 5,
+        "neon_audit_rows": 10
       }
     },
     "gate25_direct_http_adapters": {
-      "status": "IAM_SEARCH_RUNTIME_SUCCESS_RUNNER_CONTRACT_FIX_STAGED",
+      "status": "PRODUCTION_READONLY_5_PASS_MORE_ADAPTERS_PENDING",
       "authority": "03_api/operation_registry.yaml",
       "exact_direct_formal_resource_mappings": 25,
       "executable_readonly_resources": 5,
@@ -544,30 +544,16 @@
         "read_only_use": true
       },
       "production_run": {
-        "run_number": 1,
-        "run_id": 34435464021,
+        "run_number": 12,
+        "run_id": 34439777346,
         "status": "SUCCESS",
-        "release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb"
+        "release_sha": "d6787156222ae1ff38126e1244c10980ffc49929"
       },
-      "accepted_formal_resources": 4,
-      "fifth_staged_resource": "action:admin:IAM-01:ACT-SEARCH",
-      "false_negative_run": {
-        "run_number": 9,
-        "run_id": 34439161902,
-        "assertion": "searchProjection_BODY_NOT_OK"
-      },
-      "false_negative_runtime_evidence": {
-        "correlation_id": "ba33f4e0-bf1e-4bcd-856d-df07a837fa63",
-        "audit_rows": 2,
-        "outcomes": [
-          "ALLOWED",
-          "SUCCESS"
-        ]
-      },
+      "accepted_formal_resources": 5,
       "runner_contract_fix": "/v1/search uses raw result.value success body plus x-correlation-id header; no ok wrapper"
     },
     "iam_search_audit_0052": {
-      "status": "PRODUCTION_APPLIED_VERIFIED_FORMAL_SEARCH_ACCEPTANCE_PENDING",
+      "status": "PRODUCTION_APPLIED_AND_FORMAL_ACCEPTANCE_PASS",
       "migration_id": "0052_iam_search_audit_rls_closure",
       "checksum": "576e039f06550edd7374471ce01ad7384478393b19e5cf9530e85c07de95c305",
       "audit_owner": "public.audit_events",
@@ -582,7 +568,21 @@
       "production_migration": "52/52",
       "production_policy": "acpos_audit_events_iam_search_insert",
       "forced_rollback_validation": "PASS",
-      "production_release_sha": "0264a7cf2a801c34b490e56ec7f7ab6bae22de55"
+      "production_release_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
+      "formal_run": {
+        "run_number": 12,
+        "run_id": 34439777346,
+        "status": "SUCCESS"
+      },
+      "correlation_id": "51b9faf9-839a-4447-8e0c-e9f1e3122e2f",
+      "audit_event_ids": [
+        "1a06b667-2eb0-4264-ad3d-82b6d98200f7",
+        "8c67b626-404e-4b07-8a7e-9a2516e70997"
+      ],
+      "audit_outcomes": [
+        "ALLOWED",
+        "SUCCESS"
+      ]
     },
     "iam_projection_current_gaps": {
       "status": "INCOMPLETE_CANONICAL_OWNER_RESOLUTION_REQUIRED",
@@ -757,7 +757,7 @@
       "name": "全頁全按鈕 Acceptance",
       "percent": 50,
       "status": "PARTIAL",
-      "detail": "Formal denominator 1481 is sealed. Production rendered DOM remains 558/558 governed. Exact per-resource ledger now PASS=4, BLOCKED=48, NOT_EXECUTED=1429 after Formal Readonly Acceptance run #1 and Neon audit readback. Exhaustive formal/effectful acceptance remains open."
+      "detail": "Formal denominator 1481 is sealed. Production rendered DOM is 559/559 governed. Exact per-resource ledger now PASS=5, BLOCKED=48, NOT_EXECUTED=1428 after Formal Readonly Acceptance run #12 and Neon audit readback. Exhaustive formal/effectful acceptance remains open."
     }
   },
   "gate_summary": {
@@ -826,9 +826,8 @@
     "Production Provider authority has 4 APPROVED capabilities and all are TEXT_CHAT; APPROVED route policies=0, EDITING route policies=0, EDIT_RENDER capabilities=0, VOICE capabilities=0. TEXT_CHAT capabilities must not be substituted for media/voice execution.",
     "Gate 25 lacks a permanent exhaustive formal/effectful acceptance runner for the Current 1481 CONTROL+ACTION denominator. Existing Post-Deploy control acceptance proves only rendered DOM governance (558/558) and cannot be used as exhaustive effectful evidence.",
     "Gate 25 denominator types must remain separate: historical catalog CONTROL+ACTION=1453, Current Production permission CONTROL+ACTION=1481, Current rendered Production DOM interactive=558.",
-    "Gate 25 exact ledger now has PASS=4/BLOCKED=48/NOT_EXECUTED=1429 after four Production read-only AIAPI resources passed exact-SHA HTTP execution and Neon audit readback. Remaining 1477 resources still require explicit disposition closure; no aggregate evidence may promote them.",
     "IAM-01 Current projection remains incomplete beyond Search: organization_scope/MFA/risk/session are DASH, front_l1/admin_l1 and audit_entries are empty, while IAM-01-ACC-03 requires current registered authority account-directory security/audit projections. Resolve canonical owners before filling; fake values are forbidden.",
-    "Gate 25 IAM Search formal adapter reached Production runtime ALLOWED+SUCCESS on correlation ba33f4e0-bf1e-4bcd-856d-df07a837fa63, but Formal run #9 failed because runner expected an AIAPI-style ok wrapper. Runner contract fix is staged; ledger remains PASS=4 until corrected full run passes."
+    "Gate 25 exact ledger now has PASS=5/BLOCKED=48/NOT_EXECUTED=1428 after five Production read-only formal resources passed exact-SHA execution and Neon audit readback. Remaining 1476 resources still require explicit disposition closure; aggregate evidence must not promote them."
   ],
   "remaining_queue": [
     "MANDATORY 1/9 QualityCriteriaVersion materialization + real Production Configure→Approve→readback→cleanup acceptance",
@@ -850,7 +849,7 @@
     "RUNTIME QA ReleasePackage evidence owner + positive Production effectful closure",
     "ACCEPTANCE IAM/ERP/AIAPI/SOC Production mutation acceptance",
     "ACCEPTANCE AI Conversation Production E2E",
-    "ACCEPTANCE Gate 25 per-resource execution: 4/1481 exact resources PASS; IAM Search fifth exact adapter staged with 0052 Production audit RLS applied; 20 additional direct mappings need fixture/readback/cleanup; remaining formal resources need exact operation mapping.",
+    "ACCEPTANCE Gate 25 per-resource execution: 5/1481 exact resources PASS with Production HTTP + audit readback; 48 BLOCKED; 1428 NOT_EXECUTED. Continue 20 additional direct mappings with fixture/readback/cleanup, then resolve remaining exact operation mappings.",
     "ACCEPTANCE Gate 25 denominator seal: historical 1453 / Current permission 1481 / Current Production DOM 558",
     "ACCEPTANCE Full 25-Gate recompute from Current evidence",
     "IAM-01 projection closure: resolve canonical owners for organization scope, MFA, risk, session, explicit L1 assignments and audit/access-review projection; then Production readback acceptance"

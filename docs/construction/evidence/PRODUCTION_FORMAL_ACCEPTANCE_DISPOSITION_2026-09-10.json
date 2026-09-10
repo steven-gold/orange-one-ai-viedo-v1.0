@@ -1,8 +1,8 @@
 {
   "document_id": "ACPOS_PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION",
   "status": "CURRENT_PARTIAL",
-  "captured_at": "2026-09-10T12:01:00+08:00",
-  "production_release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
+  "captured_at": "2026-09-10T13:08:00+08:00",
+  "production_release_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
   "source_inventory": "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
   "denominator": {
     "controls": 1155,
@@ -28,9 +28,9 @@
   "blocked_rule": "BLOCKED requires a concrete reason_code and one or more blocker evidence refs.",
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
-    "PASS": 4,
+    "PASS": 5,
     "BLOCKED": 48,
-    "NOT_EXECUTED": 1429
+    "NOT_EXECUTED": 1428
   },
   "entries": [
     {
@@ -582,9 +582,14 @@
     {
       "resource_key": "action:admin:IAM-01:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_HTTP_AND_AUDIT_PASS",
+      "evidence_refs": [
+        "GitHub Actions: ACPOS Production Formal Readonly Acceptance run #12 / run_id=34439777346 / SUCCESS",
+        "Production release_sha=d6787156222ae1ff38126e1244c10980ffc49929",
+        "HTTP correlation_id=51b9faf9-839a-4447-8e0c-e9f1e3122e2f operation_id=searchProjection method=POST effect=READ path=/v1/search",
+        "Neon public.audit_events ids=1a06b667-2eb0-4264-ad3d-82b6d98200f7,8c67b626-404e-4b07-8a7e-9a2516e70997 entity_type=admin:IAM-01 action=searchProjection outcomes=ALLOWED,SUCCESS"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-02:ACT-ACCOUNT-PERMISSION-PREVIEW",
@@ -10615,13 +10620,13 @@
   ],
   "latest_execution_evidence": {
     "workflow": "ACPOS Production Formal Readonly Acceptance",
-    "run_number": 1,
-    "run_id": 34435464021,
+    "run_number": 12,
+    "run_id": 34439777346,
     "status": "SUCCESS",
-    "production_release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
-    "resources_passed": 4,
+    "production_release_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
+    "resources_passed": 5,
     "mutations": 0,
     "external_provider_calls": 0,
-    "neon_audit_readback": "8 audit rows / 4 correlations / exact operation match"
+    "neon_audit_readback": "10 audit rows / 5 correlations / exact operation match; IAM Search has explicit ALLOWED+SUCCESS reasons"
   }
 }
