@@ -21,3 +21,8 @@ export function isIamPageState(value:unknown):value is IamPageState{return typeo
 
 export const IAM_FRONT_L1=["FRONT-L1-01","FRONT-L1-02","FRONT-L1-03","FRONT-L1-04","FRONT-L1-05","FRONT-L1-06","FRONT-L1-07","FRONT-L1-08","FRONT-L1-09"]as const;
 export const IAM_ADMIN_L1=["ADMIN-L1-SYSTEM","ADMIN-L1-IAM","ADMIN-L1-DEV","ADMIN-L1-SOCIAL","ADMIN-L1-ERP","ADMIN-L1-AIAPI","ADMIN-L1-QA-CRITERIA","ADMIN-L1-STRATEGY","ADMIN-L1-KNOWLEDGE"]as const;
+export const IAM_FRONT_L1_PAGE_UID:Readonly<Record<(typeof IAM_FRONT_L1)[number],string>>={
+"FRONT-L1-01":"workspace:WB-01","FRONT-L1-02":"CORE-01","FRONT-L1-03":"ASSET-01","FRONT-L1-04":"VIDEO-01","FRONT-L1-05":"EDIT-01","FRONT-L1-06":"QA-01","FRONT-L1-07":"admin:DB-01","FRONT-L1-08":"workspace:STR-01","FRONT-L1-09":"workspace:INFO-01"};
+export const IAM_ADMIN_L1_PAGE_UID:Readonly<Record<(typeof IAM_ADMIN_L1)[number],string>>={
+"ADMIN-L1-SYSTEM":"admin:SYS-01","ADMIN-L1-IAM":"admin:IAM-01","ADMIN-L1-DEV":"admin:DEV-01","ADMIN-L1-SOCIAL":"admin:SOC-01","ADMIN-L1-ERP":"admin:ERP-01","ADMIN-L1-AIAPI":"admin:AIAPI-01","ADMIN-L1-QA-CRITERIA":"admin:SG-02","ADMIN-L1-STRATEGY":"admin:STR-01","ADMIN-L1-KNOWLEDGE":"admin:KB-01"};
+export const IAM_L1_PAGE_UID:Readonly<Record<string,string>>={...IAM_FRONT_L1_PAGE_UID,...IAM_ADMIN_L1_PAGE_UID};
