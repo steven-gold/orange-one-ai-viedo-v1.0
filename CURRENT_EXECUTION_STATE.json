@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T09:07:00+08:00",
+  "as_of": "2026-09-10T09:10:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
-    "new_sha": "0e55f4b51cecc1455f4ceb3b3296451d34e3772e",
+    "new_sha": "08a426a87e99bb5f3f163f264066fafd11132078",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -35,9 +35,9 @@
       }
     ],
     "latest_new_release_gate": {
-      "run_number": 1057,
-      "run_id": 34423826302,
-      "head_sha": "0e55f4b51cecc1455f4ceb3b3296451d34e3772e",
+      "run_number": 1058,
+      "run_id": 34424129176,
+      "head_sha": "08a426a87e99bb5f3f163f264066fafd11132078",
       "status": "SUCCESS"
     },
     "production_main_release_gate": {
@@ -515,7 +515,44 @@
     "AI Conversation final Production E2E remains pending consolidated deployment.",
     "Production exhaustive effectful button acceptance and 1453 legacy-baseline-plus-Current-expansion tally are not yet complete.",
     "Vercel management connector does not enumerate the deployed project although GitHub Vercel status is SUCCESS.",
-    "DeepSeek 402 and OpenRouter 401 are external account issues deferred by user."
+    "DeepSeek 402 and OpenRouter 401 are external account issues deferred by user.",
+    {
+      "blocker_id": "WORKPACKAGE_CURRENT_AUTHORITY_CONFLICT",
+      "status": "HARD_BLOCKER_AUTHORITY_DECISION_REQUIRED",
+      "affects": [
+        "WorkPackage",
+        "DepartmentTask",
+        "DepartmentScriptView",
+        "TaskInputManifest",
+        "InstructionPackage",
+        "ASSET",
+        "VIDEO",
+        "EDIT+VOICE",
+        "QA"
+      ],
+      "current_evidence": {
+        "operation_registry": "03_api/operation_registry.yaml has no compileWorkPackage operation; undefined_behavior=BLOCK + REPORT_AUTHORITY_GAP",
+        "permission_catalog": "api:compileWorkPackage exists but source_ref points to missing 03_api/operation_registry.yaml#compileWorkPackage",
+        "task_template_authority": "Current authority manifest/page/runtime authority files contain no formal TaskTemplate template documents or exact materialization payload",
+        "service_identity_runtime": "runRlsServiceTransaction/runRlsServiceQuery already exist and must be reused; primitive service binding is not the blocker"
+      },
+      "historical_conflicts_non_executable": [
+        "R9-PENDING-DAG-001 trigger/subject conflict: child_lock.approved TaskOrchestrator vs USER compile control",
+        "R9-PENDING-DAG-002 CompileWorkPackageRequest cannot satisfy required compiler inputs",
+        "R9-PENDING-DAG-003 continuity/resume reverse dependency",
+        "R9-PENDING-DAG-004 one ChildLock WorkPackage uniqueness vs multi-goal Topic",
+        "R9-PENDING-DAG-005 TaskTemplate seed lacks canonical/compiler-required schemas, hashes and policies",
+        "R9-PENDING-DAG-008 dependency type and consumer scheduling unresolved"
+      ],
+      "closed_subconflict": "R9-PENDING-DAG-006 VOICE enum mismatch closed by Production migration 0049; does not resolve remaining compiler conflicts.",
+      "prohibited_fixes": [
+        "do not revive legacy workspace:CORE-05 UI under Current CORE-01 authority",
+        "do not invent CompileWorkPackage payload fields/defaults/latest resolution",
+        "do not fabricate TaskTemplate/Goal/Output/Rights business rows",
+        "do not create a second TaskOrchestrator or service identity runtime"
+      ],
+      "unblock_requirement": "A newer approved Current Authority must define the unique compiler trigger/subject, exact version-pinned input resolution or request schema, single-vs-multi-goal cardinality, complete TaskTemplate documents, and dependency/event orchestration."
+    }
   ],
   "remaining_queue": [
     "MANDATORY 1/9 QualityCriteriaVersion materialization + Production effectful acceptance",
@@ -542,7 +579,7 @@
     "DEPENDENCY RightsProfile: Current Production count 0; formal manifest/package execution may not invent rights refs.",
     "SCHEMA VOICE department enum: COMPLETE via 0049 Production 49/49; no VOICE business rows fabricated."
   ],
-  "next_executable_item": "Resolve WorkPackage compiler authority/materialization dependencies without inventing TaskTemplate payload: Current operation registry lacks compileWorkPackage and Current Authority contains no TaskTemplate template documents; continue with next authority-complete closure if compiler remains blocked.",
+  "next_executable_item": "WorkPackage compiler is HARD_BLOCKED by unresolved Current Authority. Select next independent dependency-ready closure only; do not implement compiler semantics until a newer approved Current Authority resolves WORKPACKAGE_CURRENT_AUTHORITY_CONFLICT.",
   "execution_reporting_contract": {
     "mandatory": true,
     "every_progress_report_must_include_remaining_incomplete_list": true,
