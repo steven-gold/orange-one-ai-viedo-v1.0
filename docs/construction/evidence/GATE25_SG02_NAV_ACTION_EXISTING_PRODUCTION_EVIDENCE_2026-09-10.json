@@ -1,0 +1,36 @@
+{
+  "document_id": "ACPOS_GATE25_SG02_NAV_ACTION_EXISTING_PRODUCTION_EVIDENCE",
+  "status": "CURRENT_PRODUCTION_EVIDENCE",
+  "as_of": "2026-09-10T16:50:00+08:00",
+  "production_release_sha": "608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36",
+  "source_execution": {
+    "workflow_run_id": 34455072666,
+    "job_id": 102799444139,
+    "status": "SUCCESS"
+  },
+  "authority_ref": "authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml",
+  "source_control_resource": "control:CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN",
+  "formal_action_resource": "action:admin:SG-02:ACT-NAV-OPEN",
+  "authority_mapping": {
+    "source_action_id": "ACT-NAV-OPEN",
+    "operation_id": "getUiProjection",
+    "method": "GET",
+    "path": "/v1/ui-projections/{pageUid}",
+    "permission": "page.view",
+    "interaction_type": "DRAWER",
+    "state_transition": "NONE",
+    "event": null
+  },
+  "production_observation": {
+    "route": "/admin/qa-criteria",
+    "drawer_key": "governance",
+    "projection_http": 200,
+    "page_state": "EMPTY",
+    "drawer_visible": true,
+    "heading_present": true,
+    "operation_id": "getUiProjection",
+    "outcome": "PASS"
+  },
+  "effectful": false,
+  "rule": "This evidence promotes only action:admin:SG-02:ACT-NAV-OPEN because the exact Current control-to-source-action mapping and the exact Production click are both proven. It does not promote configure or approve."
+}

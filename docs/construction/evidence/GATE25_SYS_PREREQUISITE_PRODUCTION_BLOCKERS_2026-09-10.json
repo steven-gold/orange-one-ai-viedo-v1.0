@@ -1,0 +1,48 @@
+{
+  "document_id": "ACPOS_GATE25_SYS_PREREQUISITE_PRODUCTION_BLOCKERS",
+  "status": "BLOCKED",
+  "recorded_at": "2026-09-10T15:29:54.643389+00:00",
+  "production_release_sha": "608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36",
+  "deployment_url": "https://orange-one-acpos-test.vercel.app",
+  "github_run_id": "34495914259",
+  "resource_count": 4,
+  "mutation_count": 0,
+  "production_snapshot": {
+    "page_state": "READY",
+    "system_change_id": "3c3ea2ab-3e45-4f92-83c4-aefeb48d9005",
+    "candidate_ref": "1fca0b3f-b9b5-49a0-bf01-e2c17242ee7d",
+    "conversation_id": "3c3ea2ab-3e45-4f92-83c4-aefeb48d9005"
+  },
+  "controls": [
+    {
+      "control_id": "SYS-01-BTN-CANDIDATE-CREATE",
+      "action_uid": "ACT-CANDIDATE-CREATE",
+      "operation_id": "createCandidate",
+      "enabled": false,
+      "disabled_reason": "SYS01_DRAFT_REQUIRED",
+      "gate_uid": null,
+      "permission_uid": "system.change.propose"
+    },
+    {
+      "control_id": "SYS-01-BTN-CR-CREATE",
+      "action_uid": "ACT-CR-CREATE",
+      "operation_id": "createChangeRequest",
+      "enabled": false,
+      "disabled_reason": "SYS01_DRAFT_REQUIRED",
+      "gate_uid": null,
+      "permission_uid": "core.change.create"
+    }
+  ],
+  "formal_resources": [
+    "control:CTRL-ADMIN-SYS-01-ACT-01-ACT-CANDIDATE-CREATE",
+    "action:admin:SYS-01:ACT-CANDIDATE-CREATE",
+    "control:CTRL-ADMIN-SYS-01-ACT-02-ACT-CR-CREATE",
+    "action:admin:SYS-01:ACT-CR-CREATE"
+  ],
+  "runtime_evidence": [
+    "src/server/system/productionSystemLifecycleRuntime.ts",
+    "src/domain/system/systemMutationPort.ts",
+    "authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml"
+  ],
+  "rule": "createCandidate can persist a new Production system change, candidate and conversation; createChangeRequest persists a Production change request. No isolated reversible acceptance fixture/cleanup operation is registered. Formal acceptance must not fabricate durable System Lifecycle business state solely to turn these resources PASS."
+}

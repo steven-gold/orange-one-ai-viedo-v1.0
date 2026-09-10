@@ -1,0 +1,34 @@
+{
+  "document_id": "ACPOS_GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_LEDGER_SYNC",
+  "status": "PHYSICAL_LEDGER_SYNCED",
+  "as_of": "2026-09-10T09:07:29.856Z",
+  "target_count": 13,
+  "changed_count": 13,
+  "changed_resource_keys": [
+    "action:admin:AIAPI-04:ACT-NAV-OPEN",
+    "action:admin:AIAPI-05:ACT-APPROVE",
+    "action:admin:AIAPI-05:ACT-CONFIGURE",
+    "action:admin:AIAPI-05:ACT-NAV-OPEN",
+    "action:admin:AIAPI-06:ACT-EXPORT",
+    "action:admin:AIAPI-06:ACT-NAV-OPEN",
+    "action:admin:AIAPI-06:ACT-SEARCH",
+    "action:admin:AIAPI-07:ACT-NAV-OPEN",
+    "action:admin:AIAPI-07:ACT-SEARCH",
+    "action:admin:AIAPI-08:ACT-NAV-OPEN",
+    "action:admin:AIAPI-09:ACT-KILL-SWITCH",
+    "action:admin:AIAPI-09:ACT-NAV-OPEN",
+    "action:admin:AIAPI-09:ACT-REFRESH"
+  ],
+  "counts_before": {
+    "PASS": 29,
+    "BLOCKED": 77,
+    "NOT_EXECUTED": 1375
+  },
+  "counts_after": {
+    "PASS": 29,
+    "BLOCKED": 90,
+    "NOT_EXECUTED": 1362
+  },
+  "source": "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+  "rule": "Only the exact thirteen still-NOT_EXECUTED AIAPI-04..09 ACTION resources proven retired by Current Authority/navigation/page catalog are moved to BLOCKED; pre-existing specific blockers are untouched."
+}

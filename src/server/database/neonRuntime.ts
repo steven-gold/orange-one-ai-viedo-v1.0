@@ -4,7 +4,7 @@ import { emitObservability } from "@/server/shared/observability";
 
 export const AUTHORITY_NEON_PROJECT_ID = "wild-wave-25661146";
 export const REQUIRED_MIGRATION_COUNT = 20;
-export const MAX_SUPPORTED_MIGRATION_COUNT = 52;
+export const MAX_SUPPORTED_MIGRATION_COUNT = 53;
 
 export function isSupportedMigrationCount(value: number): boolean {
   return Number.isInteger(value) && value >= REQUIRED_MIGRATION_COUNT && value <= MAX_SUPPORTED_MIGRATION_COUNT;

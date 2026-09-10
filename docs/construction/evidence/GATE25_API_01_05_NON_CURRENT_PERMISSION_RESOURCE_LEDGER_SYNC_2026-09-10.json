@@ -1,0 +1,34 @@
+{
+  "document_id": "ACPOS_GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_LEDGER_SYNC",
+  "status": "PHYSICAL_LEDGER_SYNCED",
+  "as_of": "2026-09-10T09:12:12.393Z",
+  "target_count": 13,
+  "changed_count": 13,
+  "changed_resource_keys": [
+    "action:admin:API-01:ACT-NAV-OPEN",
+    "action:admin:API-01:ACT-REFRESH",
+    "action:admin:API-02:ACT-EXPORT",
+    "action:admin:API-02:ACT-NAV-OPEN",
+    "action:admin:API-02:ACT-SEARCH",
+    "action:admin:API-03:ACT-EXPORT",
+    "action:admin:API-03:ACT-NAV-OPEN",
+    "action:admin:API-03:ACT-SEARCH",
+    "action:admin:API-04:ACT-NAV-OPEN",
+    "action:admin:API-04:ACT-REPLAY",
+    "action:admin:API-04:ACT-SEARCH",
+    "action:admin:API-05:ACT-NAV-OPEN",
+    "action:admin:API-05:ACT-SYSTEM-TEST"
+  ],
+  "counts_before": {
+    "PASS": 29,
+    "BLOCKED": 90,
+    "NOT_EXECUTED": 1362
+  },
+  "counts_after": {
+    "PASS": 29,
+    "BLOCKED": 103,
+    "NOT_EXECUTED": 1349
+  },
+  "source": "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+  "rule": "Only the exact thirteen still-NOT_EXECUTED API-01..05 ACTION resources proven to lack a Current page owner are moved to BLOCKED."
+}

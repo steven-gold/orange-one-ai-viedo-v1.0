@@ -1,0 +1,34 @@
+{
+  "document_id": "ACPOS_GATE25_ERP_FINANCE_ACTION_PRODUCTION_GATE_BLOCKERS",
+  "status": "BLOCKED",
+  "recorded_at": "2026-09-10T14:11:56.104296+00:00",
+  "production_release_sha": "608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36",
+  "source_control_gate_evidence": "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+  "source_production_run_id": "34487157379",
+  "prior_diagnostic_run_id": "34486930610",
+  "resource_count": 3,
+  "mutation_count": 0,
+  "blocking_gate_uid": "ERP-01-GATE-FINANCE",
+  "blocking_permission_uid": "ERP-01-PERM-FINANCE",
+  "actions": [
+    {
+      "resource_key": "action:admin:ERP-02:erp.finance.get_factpack",
+      "current_control_id": "ERP-01-BTN-FACTPACK",
+      "current_action_uid": "ERP-01-ACT-FACTPACK",
+      "operation_id": "getERPFinanceFactPack"
+    },
+    {
+      "resource_key": "action:admin:ERP-02:erp.capacity.get_guardrails",
+      "current_control_id": "ERP-01-BTN-GUARDRAILS",
+      "current_action_uid": "ERP-01-ACT-GUARDRAILS",
+      "operation_id": "getERPCapacityGuardrails"
+    },
+    {
+      "resource_key": "action:admin:ERP-02:erp.forecast.get",
+      "current_control_id": "ERP-01-BTN-FORECAST",
+      "current_action_uid": "ERP-01-ACT-FORECAST",
+      "operation_id": "getERPForecast"
+    }
+  ],
+  "rule": "These exact formal ERP finance ACTION resources are BLOCKED because their authoritative Current controls/actions are the same operations proven disabled in authenticated Production by ERP-01-GATE-FINANCE=false. No operation was invoked or force-executed."
+}

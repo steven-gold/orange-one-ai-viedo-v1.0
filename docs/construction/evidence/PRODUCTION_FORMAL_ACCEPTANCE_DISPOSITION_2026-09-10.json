@@ -1,8 +1,8 @@
 {
   "document_id": "ACPOS_PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION",
-  "status": "CURRENT_PARTIAL_DIRECT_25_PHYSICAL_LEDGER_SYNCED",
+  "status": "CURRENT_PARTIAL_GATE25_PHYSICAL_LEDGER_SYNCED",
   "captured_at": "2026-09-10T16:08:00+08:00",
-  "production_release_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
+  "production_release_sha": "608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36",
   "source_inventory": "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
   "denominator": {
     "controls": 1155,
@@ -28,59 +28,125 @@
   "blocked_rule": "BLOCKED requires a concrete reason_code and one or more blocker evidence refs.",
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
-    "PASS": 5,
-    "BLOCKED": 68,
-    "NOT_EXECUTED": 1408
+    "PASS": 47,
+    "BLOCKED": 145,
+    "NOT_EXECUTED": 1289
   },
   "entries": [
     {
       "resource_key": "action:admin:AIAPI-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal permission inventory contains this ACTION, but the exact action UID is absent from the FINAL_LOCKED Current page authority. No executable Current binding is authorized; fabricating a UI/runtime owner is forbidden. Resolve by authoritative inventory remap/deactivation or explicit Current Authority registration.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-01:ACT-REFRESH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal permission inventory contains this ACTION, but the exact action UID is absent from the FINAL_LOCKED Current page authority. No executable Current binding is authorized; fabricating a UI/runtime owner is forbidden. Resolve by authoritative inventory remap/deactivation or explicit Current Authority registration.",
+      "operation_ids": [
+        "ACT-REFRESH"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-02:ACT-CONFIGURE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_02_03_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by retired AIAPI-02/03 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-CONFIGURE"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-02:ACT-KILL-SWITCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_02_03_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by retired AIAPI-02/03 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-KILL-SWITCH"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-02:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_02_03_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by retired AIAPI-02/03 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-03:ACT-CONFIGURE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_02_03_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by retired AIAPI-02/03 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-CONFIGURE"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-03:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_02_03_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by retired AIAPI-02/03 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-04:ACT-APPROVE",
@@ -111,72 +177,172 @@
     {
       "resource_key": "action:admin:AIAPI-04:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-05:ACT-APPROVE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-APPROVE"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-05:ACT-CONFIGURE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-CONFIGURE"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-05:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-06:ACT-EXPORT",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-EXPORT"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-06:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-06:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-SEARCH"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-07:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-07:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-SEARCH"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-08:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-08:ACT-SYSTEM-TEST",
@@ -194,149 +360,359 @@
     {
       "resource_key": "action:admin:AIAPI-09:ACT-KILL-SWITCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-KILL-SWITCH"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-09:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-09:ACT-REFRESH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-REFRESH"
+      ]
     },
     {
       "resource_key": "action:admin:API-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:API-01:ACT-REFRESH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-REFRESH"
+      ]
     },
     {
       "resource_key": "action:admin:API-02:ACT-EXPORT",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-EXPORT"
+      ]
     },
     {
       "resource_key": "action:admin:API-02:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:API-02:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-SEARCH"
+      ]
     },
     {
       "resource_key": "action:admin:API-03:ACT-EXPORT",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-EXPORT"
+      ]
     },
     {
       "resource_key": "action:admin:API-03:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:API-03:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-SEARCH"
+      ]
     },
     {
       "resource_key": "action:admin:API-04:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:API-04:ACT-REPLAY",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-REPLAY"
+      ]
     },
     {
       "resource_key": "action:admin:API-04:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-SEARCH"
+      ]
     },
     {
       "resource_key": "action:admin:API-05:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:API-05:ACT-SYSTEM-TEST",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_01_05_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-01..05, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-SYSTEM-TEST"
+      ]
     },
     {
       "resource_key": "action:admin:API-06:ACT-APPROVE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-06/07, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-APPROVE"
+      ]
     },
     {
       "resource_key": "action:admin:API-06:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-06/07, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:API-06:ACT-REPLAY",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-06/07, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-REPLAY"
+      ]
     },
     {
       "resource_key": "action:admin:API-07:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-06/07, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:API-07:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-06/07, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-SEARCH"
+      ]
     },
     {
       "resource_key": "action:admin:DEV-01:ACT-DISCOVERY-PAUSE",
@@ -488,114 +864,319 @@
     {
       "resource_key": "action:admin:ERP-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_ERP_DETAIL_UI_CONTEXT_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_NAV_PRODUCTION_UI_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic rerun run_id=34486930610 job_id=102907639887 attempt=2",
+        "scripts/gate25-production-erp-nav-ui-acceptance.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/domain/erp/erpControlBindings.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "ERP-01-ACT-DETAIL-OPEN",
+        "ERP-01-GATE-PAGE",
+        "ERP-01-PERM-READ"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.connector.create",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-CREATE but ERP-01-GATE-CONNECTOR-WRITE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "createERPConnector",
+        "ERP-01-ACT-CONNECTOR-CREATE",
+        "ERP-01-GATE-CONNECTOR-WRITE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.connector.update",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-UPDATE but ERP-01-GATE-CONNECTOR-WRITE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "updateERPConnector",
+        "ERP-01-ACT-CONNECTOR-UPDATE",
+        "ERP-01-GATE-CONNECTOR-WRITE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.connector.validate",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-VALIDATE but ERP-01-GATE-CONNECTOR-VALIDATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "validateERPConnector",
+        "ERP-01-ACT-CONNECTOR-VALIDATE",
+        "ERP-01-GATE-CONNECTOR-VALIDATE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.failure.get",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-FAILURE-GET but ERP-01-GATE-SYNC-READ=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "getERPFailure",
+        "ERP-01-ACT-FAILURE-GET",
+        "ERP-01-GATE-SYNC-READ",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.mapping.validate",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-MAPPING-VALIDATE but ERP-01-GATE-MAPPING-VALIDATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "validateERPMapping",
+        "ERP-01-ACT-MAPPING-VALIDATE",
+        "ERP-01-GATE-MAPPING-VALIDATE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.snapshot.refresh",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SNAPSHOT-REFRESH but ERP-01-GATE-SNAPSHOT-REFRESH=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "refreshERPSnapshot",
+        "ERP-01-ACT-SNAPSHOT-REFRESH",
+        "ERP-01-GATE-SNAPSHOT-REFRESH",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.sync.create",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-CREATE but ERP-01-GATE-SYNC-CREATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "createERPSyncJob",
+        "ERP-01-ACT-SYNC-CREATE",
+        "ERP-01-GATE-SYNC-CREATE",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.sync.retry",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-RETRY but ERP-01-GATE-SYNC-RETRY=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "retryERPSync",
+        "ERP-01-ACT-SYNC-RETRY",
+        "ERP-01-GATE-SYNC-RETRY",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.sync.status",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-STATUS but ERP-01-GATE-SYNC-READ=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "getERPSyncStatus",
+        "ERP-01-ACT-SYNC-STATUS",
+        "ERP-01-GATE-SYNC-READ",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-02:ACT-EXPORT",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_EXPORT_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Export Gate Materialize run_id=34492672937",
+        "scripts/gate25-production-erp-finance-gate-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-EXPORT, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity. Export execution around the gate is forbidden.",
+      "operation_ids": [
+        "exportProjection",
+        "ERP-01-ACT-EXPORT",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-02:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_ERP_DETAIL_UI_CONTEXT_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_NAV_PRODUCTION_UI_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic rerun run_id=34486930610 job_id=102907639887 attempt=2",
+        "scripts/gate25-production-erp-nav-ui-acceptance.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/domain/erp/erpControlBindings.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "ERP-01-ACT-DETAIL-OPEN",
+        "ERP-01-GATE-PAGE",
+        "ERP-01-PERM-READ"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-02:erp.capacity.get_guardrails",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_ACTION_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "The formal finance read action maps to a Current ERP action whose authenticated Production control is disabled by ERP-01-GATE-FINANCE=false / ERP-01-PERM-FINANCE; executing around the gate is forbidden.",
+      "operation_ids": [
+        "getERPCapacityGuardrails",
+        "ERP-01-ACT-GUARDRAILS",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-02:erp.finance.get_factpack",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_ACTION_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "The formal finance read action maps to a Current ERP action whose authenticated Production control is disabled by ERP-01-GATE-FINANCE=false / ERP-01-PERM-FINANCE; executing around the gate is forbidden.",
+      "operation_ids": [
+        "getERPFinanceFactPack",
+        "ERP-01-ACT-FACTPACK",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-02:erp.forecast.get",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_ACTION_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "The formal finance read action maps to a Current ERP action whose authenticated Production control is disabled by ERP-01-GATE-FINANCE=false / ERP-01-PERM-FINANCE; executing around the gate is forbidden.",
+      "operation_ids": [
+        "getERPForecast",
+        "ERP-01-ACT-FORECAST",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal permission inventory contains this ACTION, but the exact action UID is absent from the FINAL_LOCKED Current page authority. No executable Current binding is authorized; fabricating a UI/runtime owner is forbidden. Resolve by authoritative inventory remap/deactivation or explicit Current Authority registration.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-01:ACT-SEARCH",
@@ -763,9 +1344,17 @@
     {
       "resource_key": "action:admin:KB-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal permission inventory contains this ACTION, but the exact action UID is absent from the FINAL_LOCKED Current page authority. No executable Current binding is authorized; fabricating a UI/runtime owner is forbidden. Resolve by authoritative inventory remap/deactivation or explicit Current Authority registration.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:KB-02:ACT-NAV-OPEN",
@@ -852,9 +1441,18 @@
     {
       "resource_key": "action:admin:SG-02:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_ACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SG02_NAV_ACTION_EXISTING_PRODUCTION_EVIDENCE_2026-09-10.json",
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ],
+      "operation_ids": [
+        "getUiProjection"
+      ]
     },
     {
       "resource_key": "action:admin:SG-03:ACT-EXPORT",
@@ -894,9 +1492,17 @@
     {
       "resource_key": "action:admin:SOC-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CURRENT_PAGE_UNBOUND_FORMAL_ACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal permission inventory contains this ACTION, but the exact action UID is absent from the FINAL_LOCKED Current page authority. No executable Current binding is authorized; fabricating a UI/runtime owner is forbidden. Resolve by authoritative inventory remap/deactivation or explicit Current Authority registration.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:SOC-02:ACT-NAV-OPEN",
@@ -1020,23 +1626,35 @@
     {
       "resource_key": "action:admin:STR-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "AUTHORITY_BINDING_UNRESOLVED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_DOM_FORMAL_RESOURCE_EVIDENCE_2026-09-10.json",
+        "GitHub Actions Post-Deploy #1443 run_id=34453506474 job_id=102794421439",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "action:admin:STR-01:ACT-REFRESH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "IMPLEMENTATION_REQUIRED_NOT_EXECUTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_DOM_FORMAL_RESOURCE_EVIDENCE_2026-09-10.json",
+        "GitHub Actions Post-Deploy #1443 run_id=34453506474 job_id=102794421439",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "action:admin:STR-01:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "IMPLEMENTATION_REQUIRED_NOT_EXECUTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_DOM_FORMAL_RESOURCE_EVIDENCE_2026-09-10.json",
+        "GitHub Actions Post-Deploy #1443 run_id=34453506474 job_id=102794421439",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "action:admin:STR-02:ACT-APPROVE",
@@ -1153,23 +1771,47 @@
     {
       "resource_key": "action:admin:SYS-01:ACT-CANDIDATE-CREATE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "SYSTEM_CHANGE_CANDIDATE_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SYS_PREREQUISITE_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SYS Prerequisite Blocker Materialize run_id=34495914259",
+        "src/server/system/productionSystemLifecycleRuntime.ts",
+        "src/domain/system/systemMutationPort.ts",
+        "authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml"
+      ],
+      "blocker_detail": "Production execution would create or extend durable System Lifecycle state and no isolated reversible acceptance fixture/cleanup contract is registered; fabricating Production business state for acceptance is forbidden.",
+      "operation_ids": [
+        "createCandidate"
+      ]
     },
     {
       "resource_key": "action:admin:SYS-01:ACT-CR-CREATE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "SYSTEM_CHANGE_REQUEST_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SYS_PREREQUISITE_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SYS Prerequisite Blocker Materialize run_id=34495914259",
+        "src/server/system/productionSystemLifecycleRuntime.ts",
+        "src/domain/system/systemMutationPort.ts",
+        "authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml"
+      ],
+      "blocker_detail": "Production execution would create or extend durable System Lifecycle state and no isolated reversible acceptance fixture/cleanup contract is registered; fabricating Production business state for acceptance is forbidden.",
+      "operation_ids": [
+        "createChangeRequest"
+      ]
     },
     {
       "resource_key": "action:admin:SYS-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "DISABLED_IN_VISUAL_PHASE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_DOM_FORMAL_RESOURCE_EVIDENCE_2026-09-10.json",
+        "GitHub Actions Post-Deploy #1443 run_id=34453506474 job_id=102794421439",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "action:admin:SYS-02:ACT-APPROVE",
@@ -4047,205 +4689,553 @@
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-01-ERP-CONNECTOR-CREATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-CREATE but ERP-01-GATE-CONNECTOR-WRITE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "createERPConnector",
+        "ERP-01-ACT-CONNECTOR-CREATE",
+        "ERP-01-GATE-CONNECTOR-WRITE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-02-ERP-CONNECTOR-UPDATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-UPDATE but ERP-01-GATE-CONNECTOR-WRITE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "updateERPConnector",
+        "ERP-01-ACT-CONNECTOR-UPDATE",
+        "ERP-01-GATE-CONNECTOR-WRITE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-03-ERP-CONNECTOR-VALIDATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-VALIDATE but ERP-01-GATE-CONNECTOR-VALIDATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "validateERPConnector",
+        "ERP-01-ACT-CONNECTOR-VALIDATE",
+        "ERP-01-GATE-CONNECTOR-VALIDATE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-04-ERP-MAPPING-VALIDATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-MAPPING-VALIDATE but ERP-01-GATE-MAPPING-VALIDATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "validateERPMapping",
+        "ERP-01-ACT-MAPPING-VALIDATE",
+        "ERP-01-GATE-MAPPING-VALIDATE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-05-ERP-SNAPSHOT-REFRESH",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SNAPSHOT-REFRESH but ERP-01-GATE-SNAPSHOT-REFRESH=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "refreshERPSnapshot",
+        "ERP-01-ACT-SNAPSHOT-REFRESH",
+        "ERP-01-GATE-SNAPSHOT-REFRESH",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-06-ERP-SYNC-CREATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-CREATE but ERP-01-GATE-SYNC-CREATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "createERPSyncJob",
+        "ERP-01-ACT-SYNC-CREATE",
+        "ERP-01-GATE-SYNC-CREATE",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-07-ERP-SYNC-STATUS",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-STATUS but ERP-01-GATE-SYNC-READ=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "getERPSyncStatus",
+        "ERP-01-ACT-SYNC-STATUS",
+        "ERP-01-GATE-SYNC-READ",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-08-ERP-SYNC-RETRY",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-RETRY but ERP-01-GATE-SYNC-RETRY=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "retryERPSync",
+        "ERP-01-ACT-SYNC-RETRY",
+        "ERP-01-GATE-SYNC-RETRY",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-09-ERP-FAILURE-GET",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-FAILURE-GET but ERP-01-GATE-SYNC-READ=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "getERPFailure",
+        "ERP-01-ACT-FAILURE-GET",
+        "ERP-01-GATE-SYNC-READ",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-10-ACT-NAV-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_ERP_DETAIL_UI_CONTEXT_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_NAV_PRODUCTION_UI_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic rerun run_id=34486930610 job_id=102907639887 attempt=2",
+        "scripts/gate25-production-erp-nav-ui-acceptance.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/domain/erp/erpControlBindings.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "ERP-01-ACT-DETAIL-OPEN",
+        "ERP-01-GATE-PAGE",
+        "ERP-01-PERM-READ"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-AUDIT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-AUDIT-REF"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-COMPLETENESS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-SYNC-COMPLETENESS"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-CONNECTOR-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-CONN-CONNECTOR-ID"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-CURRENCY-TIMEZONE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-SYNC-CURRENCY-TIMEZONE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-FAILURE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-SYNC-FAILURE-ID"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-FRESHNESS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FRESHNESS"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-SNAPSHOT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-SNAPSHOT"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-01-ERP-FINANCE-GET-FACTPACK",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Blocker Materialize run_id=34487157379",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "scripts/gate25-production-erp-finance-gate-diagnostic.mjs",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes the Current control, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity.",
+      "operation_ids": [
+        "ERP-01-ACT-FACTPACK",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-02-ERP-CAPACITY-GET-GUARDRAILS",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Blocker Materialize run_id=34487157379",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "scripts/gate25-production-erp-finance-gate-diagnostic.mjs",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes the Current control, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity.",
+      "operation_ids": [
+        "ERP-01-ACT-GUARDRAILS",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-03-ERP-FORECAST-GET",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Blocker Materialize run_id=34487157379",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "scripts/gate25-production-erp-finance-gate-diagnostic.mjs",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes the Current control, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity.",
+      "operation_ids": [
+        "ERP-01-ACT-FORECAST",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-04-ACT-EXPORT",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_EXPORT_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Export Gate Materialize run_id=34492672937",
+        "scripts/gate25-production-erp-finance-gate-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-EXPORT, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity. Export execution around the gate is forbidden.",
+      "operation_ids": [
+        "exportProjection",
+        "ERP-01-ACT-EXPORT",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-05-ACT-NAV-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_ERP_DETAIL_UI_CONTEXT_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_NAV_PRODUCTION_UI_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic rerun run_id=34486930610 job_id=102907639887 attempt=2",
+        "scripts/gate25-production-erp-nav-ui-acceptance.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/domain/erp/erpControlBindings.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "ERP-01-ACT-DETAIL-OPEN",
+        "ERP-01-GATE-PAGE",
+        "ERP-01-PERM-READ"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-CAPACITY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-CAPACITY"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-CASHFLOW-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-CASHFLOW"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-COST-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-COST"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-FORECAST-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-FORECAST"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-GUARDRAILS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-GUARDRAILS"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-RECOMMENDATION-BOUNDARY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-RECOMMENDATION-BOUNDARY"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-REVENUE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id=34476681754",
+        "scripts/gate25-production-erp-readonly-acceptance.mjs",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "getUiProjection",
+        "ERP-01-FLD-FIN-REVENUE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-IAM-01-ACT-01-ACT-SEARCH",
@@ -4950,79 +5940,137 @@
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SG02_EFFECTFUL_CONTROL_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SG02 Effectful Controls Materialize run_id=34494829082",
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json",
+        "authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/qaCriteria/qaCriteriaRuntimePort.ts",
+        "src/components/pages/QaCriteriaVisual.tsx"
+      ],
+      "blocker_detail": "Authenticated Production SG-02 has no real QualityCriteriaVersion lineage and the paired ACTION is blocked on real governed criteria content. Sample/hardcoded Production criteria are forbidden. Production UI gate-alignment defect: this effectful control is currently enabled despite the missing real criteria prerequisite.",
+      "operation_ids": [
+        "configureGovernedResource"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SG02_EFFECTFUL_CONTROL_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SG02 Effectful Controls Materialize run_id=34494829082",
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json",
+        "authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/qaCriteria/qaCriteriaRuntimePort.ts",
+        "src/components/pages/QaCriteriaVisual.tsx"
+      ],
+      "blocker_detail": "Authenticated Production SG-02 has no real QualityCriteriaVersion lineage and the paired ACTION is blocked on real governed criteria content. Sample/hardcoded Production criteria are forbidden. Production UI gate-alignment defect: this effectful control is currently enabled despite the missing real criteria prerequisite.",
+      "operation_ids": [
+        "approveGovernedResource"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-APPROVAL-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-GATE-POLICY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-IMPACT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-THRESHOLDS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-03-ACT-01-ACT-SEARCH",
@@ -5944,16 +6992,36 @@
     {
       "resource_key": "control:CTRL-ADMIN-SYS-01-ACT-01-ACT-CANDIDATE-CREATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "SYSTEM_CHANGE_CANDIDATE_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SYS_PREREQUISITE_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SYS Prerequisite Blocker Materialize run_id=34495914259",
+        "src/server/system/productionSystemLifecycleRuntime.ts",
+        "src/domain/system/systemMutationPort.ts",
+        "authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml"
+      ],
+      "blocker_detail": "Production execution would create or extend durable System Lifecycle state and no isolated reversible acceptance fixture/cleanup contract is registered; fabricating Production business state for acceptance is forbidden.",
+      "operation_ids": [
+        "createCandidate"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SYS-01-ACT-02-ACT-CR-CREATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "SYSTEM_CHANGE_REQUEST_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SYS_PREREQUISITE_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SYS Prerequisite Blocker Materialize run_id=34495914259",
+        "src/server/system/productionSystemLifecycleRuntime.ts",
+        "src/domain/system/systemMutationPort.ts",
+        "authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml"
+      ],
+      "blocker_detail": "Production execution would create or extend durable System Lifecycle state and no isolated reversible acceptance fixture/cleanup contract is registered; fabricating Production business state for acceptance is forbidden.",
+      "operation_ids": [
+        "createChangeRequest"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SYS-01-ACT-03-ACT-NAV-OPEN",
@@ -10518,100 +11586,156 @@
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:workspace:ASSET-01:ASSET-01-BTN-CORRECTION-APPROVE",

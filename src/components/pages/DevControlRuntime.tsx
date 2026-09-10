@@ -23,6 +23,11 @@ import {
   type DevControlUid,
 } from "@/domain/dev/devControlBindings";
 import { ensureControlledDevClientTestRuntime } from "@/domain/dev/controlledDevClientTestRuntime";
+import {
+  ensureProductionDevClientRuntime,
+  isDevClientActionBound,
+  isDevEffectfulCoverageComplete,
+} from "@/domain/dev/productionDevClientRuntime";
 import type { DevGateUid } from "@/domain/dev/devRuntimeContract";
 
 type ProjectionStatus = "LOADING" | "READY" | "BLOCKED";
@@ -44,6 +49,7 @@ type Runtime = {
 const Ctx = createContext<Runtime | null>(null);
 
 export function DevRuntimeProvider({ children }: { children: ReactNode }) {
+  ensureProductionDevClientRuntime();
   ensureControlledDevClientTestRuntime();
   const [projection, setProjection] = useState<DevNormalizedProjection | null>(null);
   const [projectionStatus, setProjectionStatus] = useState<ProjectionStatus>("LOADING");
@@ -74,7 +80,11 @@ export function DevRuntimeProvider({ children }: { children: ReactNode }) {
     return () => controller.abort();
   }, []);
 
-  const effectfulRuntimeReady = projectionStatus === "READY" && projectionAdapterReady && commandAdapterReady;
+  const effectfulRuntimeReady =
+    projectionStatus === "READY"
+    && projectionAdapterReady
+    && commandAdapterReady
+    && isDevEffectfulCoverageComplete();
 
   const value = useMemo(
     () => ({
@@ -131,14 +141,16 @@ export function DevGovernedButton({
   const binding: DevControlBinding | undefined = DEV_CONTROL_BINDINGS[controlId as DevControlUid];
   const allowed = Boolean(binding) && runtime.projection?.gate_state[binding!.gate_uid as DevGateUid] === true;
   const formal = binding?.effect_type !== "UI_CONTEXT_STATE";
-  const formalRuntimeReady = formal ? runtime.commandAdapterReady : true;
-  const enabled = Boolean(binding) && allowed && formalRuntimeReady;
+  const actionRuntimeReady = formal
+    ? Boolean(binding) && runtime.commandAdapterReady && isDevClientActionBound(binding!.action_uid)
+    : true;
+  const enabled = Boolean(binding) && allowed && actionRuntimeReady;
 
   const disabledReason = !binding
     ? "DEV-01-ERR-UNDEFINED"
     : !allowed
       ? binding.gate_uid
-      : formal && !runtime.commandAdapterReady
+      : formal && !actionRuntimeReady
         ? "DEV_COMMAND_RUNTIME_NOT_BOUND"
         : undefined;
 
@@ -176,7 +188,7 @@ export function DevGovernedButton({
       data-operation={binding?.operation}
       data-method-path={binding?.method_path}
       data-current-state={enabled ? "ENABLED" : "DISABLED"}
-      data-formal-runtime-ready={formal ? String(runtime.commandAdapterReady) : "not-required"}
+      data-formal-runtime-ready={formal ? String(actionRuntimeReady) : "not-required"}
       data-disabled-reason={disabledReason}
       disabled={!enabled}
       onClick={click}

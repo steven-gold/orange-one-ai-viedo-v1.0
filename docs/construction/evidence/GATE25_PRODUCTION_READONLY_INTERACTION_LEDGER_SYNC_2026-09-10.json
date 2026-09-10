@@ -1,0 +1,57 @@
+{
+  "document_id": "ACPOS_GATE25_PRODUCTION_READONLY_INTERACTION_LEDGER_SYNC",
+  "status": "PHYSICAL_LEDGER_SYNCED",
+  "as_of": "2026-09-10T16:29:00+08:00",
+  "production_release_sha": "608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36",
+  "source": "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+  "workflow": {
+    "name": "ACPOS Gate25 Production Readonly Interactions",
+    "run_number": 1,
+    "run_id": 34455072666,
+    "job_id": 102799444139,
+    "conclusion": "success",
+    "github_token_contents_permission": "read"
+  },
+  "target_count": 23,
+  "changed_count": 23,
+  "changed_resource_keys": [
+    "control:CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN",
+    "control:CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN",
+    "control:CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN",
+    "control:CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN",
+    "control:CTRL-ADMIN-SG-02-THRESHOLDS-OPEN",
+    "control:CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN",
+    "control:CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN",
+    "control:CTRL-ADMIN-SG-02-GATE-POLICY-OPEN",
+    "control:CTRL-ADMIN-SG-02-APPROVAL-OPEN",
+    "control:CTRL-ADMIN-SG-02-IMPACT-OPEN",
+    "control:CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN"
+  ],
+  "counts_before": {
+    "PASS": 5,
+    "BLOCKED": 72,
+    "NOT_EXECUTED": 1404
+  },
+  "counts_after": {
+    "PASS": 28,
+    "BLOCKED": 72,
+    "NOT_EXECUTED": 1381
+  },
+  "excluded_effectful_resources": [
+    "control:CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE",
+    "control:CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE"
+  ],
+  "rule": "Only the exact 23 successful Production read-only interactions are promoted from NOT_EXECUTED to PASS."
+}
