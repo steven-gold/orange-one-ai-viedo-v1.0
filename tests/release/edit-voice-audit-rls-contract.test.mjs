@@ -17,18 +17,18 @@ test("0051 seals EDIT+VOICE audit RLS without opening generic audit writes",asyn
   assert.match(migration,/acpos_audit_events_edit_insert/);
   assert.match(migration,/acpos_audit_events_edit_select/);
   assert.match(migration,/entity_type='workspace:EDIT-01'/);
-  assert.match(migration,/actor_id=acpos_runtime\\.current_actor_user_id\\(\\)/);
-  assert.match(migration,/workspace_id IS NULL[\\s\\S]*reason LIKE 'DENIED:%'[\\s\\S]*reason LIKE 'ERROR:%'/);
+  assert.match(migration,/actor_id=acpos_runtime\.current_actor_user_id\(\)/);
+  assert.match(migration,/workspace_id IS NULL[\s\S]*reason LIKE 'DENIED:%'[\\s\\S]*reason LIKE 'ERROR:%'/);
   assert.doesNotMatch(migration,/CREATE TABLE/i);
-  assert.doesNotMatch(migration,/INSERT INTO public\\.(projects|department_tasks|audit_events)\\b/i);
-  assert.ok(Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1]??0)>=51);
+  assert.doesNotMatch(migration,/INSERT INTO public\.(projects|department_tasks|audit_events)\b/i);
+  assert.ok(Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1]??0)>=51);
 });
 
 test("EDIT+VOICE Production audit resolves exact task workspace and is no longer empty",async()=>{
   const runtime=await read("src/server/edit/productionEditVoiceRuntime.ts");
-  assert.doesNotMatch(runtime,/auditProductionEditVoiceOperation\\(\\):Promise<void>\\{return;\\}/);
-  assert.match(runtime,/INSERT INTO public\\.audit_events/);
-  assert.match(runtime,/JOIN public\\.projects p ON p\\.project_id=t\\.project_id/);
+  assert.doesNotMatch(runtime,/auditProductionEditVoiceOperation\(\):Promise<void>\{return;\}/);
+  assert.match(runtime,/INSERT INTO public\.audit_events/);
+  assert.match(runtime,/JOIN public\.projects p ON p\.project_id=t\.project_id/);
   assert.match(runtime,/EDIT_AUDIT_WORKSPACE_REQUIRED/);
   assert.match(runtime,/entity_type,entity_id,actor_id,actor_type,workspace_id,reason,correlation_id,payload_hash/);
 });
