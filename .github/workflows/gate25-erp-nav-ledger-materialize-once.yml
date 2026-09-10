@@ -1,0 +1,111 @@
+name: ACPOS Gate25 ERP NAV Ledger Materialize Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/gate25-erp-nav-ledger-materialize-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-erp-nav:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify ERP NAV evidence and synchronize exact ledger resources
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          ledger_path=Path('docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json')
+          evidence_path=Path('docs/construction/evidence/GATE25_ERP_NAV_PRODUCTION_UI_EXECUTION_2026-09-10.json')
+          authority_path=Path('authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml')
+          runtime_path=Path('src/domain/erp/erpRuntimeContract.ts')
+          bindings_path=Path('src/domain/erp/erpControlBindings.ts')
+          visual_path=Path('src/components/pages/ErpVisual.tsx')
+          for p in (ledger_path,evidence_path,authority_path,runtime_path,bindings_path,visual_path):
+            assert p.exists(), f'missing required file: {p}'
+
+          evidence=json.loads(evidence_path.read_text())
+          assert evidence['status']=='PASS'
+          assert evidence['production_release_sha']=='608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36'
+          assert evidence['github_run_id']=='34486930610'
+          assert evidence['github_job_id']=='102907639887'
+          assert evidence['resource_count']==4 and evidence['mutation_count']==0
+          expected={
+            'control:CTRL-ADMIN-ERP-01-ACT-10-ACT-NAV-OPEN',
+            'action:admin:ERP-01:ACT-NAV-OPEN',
+            'control:CTRL-ADMIN-ERP-02-ACT-05-ACT-NAV-OPEN',
+            'action:admin:ERP-02:ACT-NAV-OPEN',
+          }
+          resources=evidence['resources']
+          assert {r['resource_key'] for r in resources}==expected
+          assert len(resources)==4
+          for r in resources:
+            assert r['outcome']=='PASS'
+            assert r['current_control_id']=='ERP-01-BTN-DETAIL'
+            assert r['current_action_uid']=='ERP-01-ACT-DETAIL-OPEN'
+            assert r['current_gate_uid']=='ERP-01-GATE-PAGE'
+            assert r['current_permission_uid']=='ERP-01-PERM-READ'
+            assert r['drawer_state']=='OPEN_DETAIL' and r['detail_visible'] is True and r['mutation_count']==0
+
+          authority=authority_path.read_text()
+          runtime=runtime_path.read_text()
+          bindings=bindings_path.read_text()
+          visual=visual_path.read_text()
+          assert 'CTRL-ADMIN-ERP-01-ACT-10-ACT-NAV-OPEN' in runtime
+          assert 'CTRL-ADMIN-ERP-02-ACT-05-ACT-NAV-OPEN' in runtime
+          assert 'ERP-01-BTN-DETAIL' in bindings and 'ERP-01-ACT-DETAIL-OPEN' in bindings
+          assert 'ERP-01-BTN-DETAIL' in visual and 'ERP-01-SEC-08' in visual
+          assert 'CTRL-ADMIN-ERP-02-ACT-05-ACT-NAV-OPEN' in authority
+
+          ledger=json.loads(ledger_path.read_text())
+          assert ledger['denominator']['total']==1481
+          before=dict(ledger['counts'])
+          entries={e['resource_key']:e for e in ledger['entries']}
+          for key in expected:
+            assert key in entries, f'missing ledger resource: {key}'
+            assert entries[key]['disposition']=='NOT_EXECUTED', f'{key} expected NOT_EXECUTED, got {entries[key]["disposition"]}'
+
+          run_ref='GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic rerun run_id=34486930610 job_id=102907639887 attempt=2'
+          for key in expected:
+            entry=entries[key]
+            entry['disposition']='PASS'
+            entry['reason_code']='PRODUCTION_CURRENT_ERP_DETAIL_UI_CONTEXT_PASS'
+            entry['evidence_refs']=[str(evidence_path),run_ref,'scripts/gate25-production-erp-nav-ui-acceptance.mjs',str(authority_path),str(runtime_path),str(bindings_path),str(visual_path)]
+            entry['blocker_detail']=None
+            entry['operation_ids']=['ERP-01-ACT-DETAIL-OPEN','ERP-01-GATE-PAGE','ERP-01-PERM-READ']
+
+          counts={'PASS':0,'BLOCKED':0,'NOT_EXECUTED':0}
+          for entry in ledger['entries']:
+            counts[entry['disposition']]+=1
+          assert sum(counts.values())==1481
+          assert counts['PASS']==before['PASS']+4
+          assert counts['BLOCKED']==before['BLOCKED']
+          assert counts['NOT_EXECUTED']==before['NOT_EXECUTED']-4
+          ledger['counts']=counts
+          ledger_path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps({'before':before,'after':counts,'resource_count':4},ensure_ascii=False))
+          PY
+      - name: Validate synchronized ledger
+        run: node scripts/release-formal-acceptance-ledger.mjs
+      - name: Commit ERP NAV ledger update
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json
+          git commit -m 'evidence(gate25): pass 4 ERP NAV Production UI resources'
+          git push origin HEAD:new
