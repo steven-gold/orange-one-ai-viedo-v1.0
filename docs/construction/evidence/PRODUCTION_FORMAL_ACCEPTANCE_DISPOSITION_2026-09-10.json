@@ -29,8 +29,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 51,
-    "BLOCKED": 155,
-    "NOT_EXECUTED": 1275
+    "BLOCKED": 159,
+    "NOT_EXECUTED": 1271
   },
   "entries": [
     {
@@ -4321,30 +4321,70 @@
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-ACT-01-ACT-DISCOVERY-START",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_DEV_UI_ACCEPTANCE_STATE_BRIDGE_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_CONTROLS_PRODUCTION_UI_BLOCKER_2026-09-11.json",
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_ACTIONS_PRODUCTION_PASS_2026-09-10.json",
+        "src/domain/dev/productionDevClientRuntime.ts",
+        "src/server/dev/productionDevCommandRuntime.ts",
+        "src/server/shared/pageCatalogProjectionRuntime.ts"
+      ],
+      "operation_ids": [
+        "startCompanyDiscovery"
+      ],
+      "blocker_detail": "Paired Production ACTION E2E is PASS, but exhaustive Current UI CONTROL interaction would require either a normal Production discovery row or an Authority-registered acceptance-state bridge. Production has zero normal discovery jobs and safe GATE_24_DEV rows are excluded from normal projection; fabricating rows or synthetic projection is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-ACT-02-ACT-DISCOVERY-PAUSE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_DEV_UI_ACCEPTANCE_STATE_BRIDGE_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_CONTROLS_PRODUCTION_UI_BLOCKER_2026-09-11.json",
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_ACTIONS_PRODUCTION_PASS_2026-09-10.json",
+        "src/domain/dev/productionDevClientRuntime.ts",
+        "src/server/dev/productionDevCommandRuntime.ts",
+        "src/server/shared/pageCatalogProjectionRuntime.ts"
+      ],
+      "operation_ids": [
+        "pauseCompanyDiscovery"
+      ],
+      "blocker_detail": "Paired Production ACTION E2E is PASS, but exhaustive Current UI CONTROL interaction would require either a normal Production discovery row or an Authority-registered acceptance-state bridge. Production has zero normal discovery jobs and safe GATE_24_DEV rows are excluded from normal projection; fabricating rows or synthetic projection is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-ACT-03-ACT-DISCOVERY-RESUME",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_DEV_UI_ACCEPTANCE_STATE_BRIDGE_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_CONTROLS_PRODUCTION_UI_BLOCKER_2026-09-11.json",
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_ACTIONS_PRODUCTION_PASS_2026-09-10.json",
+        "src/domain/dev/productionDevClientRuntime.ts",
+        "src/server/dev/productionDevCommandRuntime.ts",
+        "src/server/shared/pageCatalogProjectionRuntime.ts"
+      ],
+      "operation_ids": [
+        "resumeCompanyDiscovery"
+      ],
+      "blocker_detail": "Paired Production ACTION E2E is PASS, but exhaustive Current UI CONTROL interaction would require either a normal Production discovery row or an Authority-registered acceptance-state bridge. Production has zero normal discovery jobs and safe GATE_24_DEV rows are excluded from normal projection; fabricating rows or synthetic projection is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-ACT-04-ACT-DISCOVERY-STOP",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_DEV_UI_ACCEPTANCE_STATE_BRIDGE_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_CONTROLS_PRODUCTION_UI_BLOCKER_2026-09-11.json",
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_ACTIONS_PRODUCTION_PASS_2026-09-10.json",
+        "src/domain/dev/productionDevClientRuntime.ts",
+        "src/server/dev/productionDevCommandRuntime.ts",
+        "src/server/shared/pageCatalogProjectionRuntime.ts"
+      ],
+      "operation_ids": [
+        "stopCompanyDiscovery"
+      ],
+      "blocker_detail": "Paired Production ACTION E2E is PASS, but exhaustive Current UI CONTROL interaction would require either a normal Production discovery row or an Authority-registered acceptance-state bridge. Production has zero normal discovery jobs and safe GATE_24_DEV rows are excluded from normal projection; fabricating rows or synthetic projection is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-ACT-05-ACT-NAV-OPEN",
