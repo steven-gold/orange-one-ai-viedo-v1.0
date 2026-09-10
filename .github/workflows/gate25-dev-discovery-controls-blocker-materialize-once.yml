@@ -1,0 +1,108 @@
+name: ACPOS Gate25 DEV Discovery Controls Blocker Materialize Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/gate25-dev-discovery-controls-blocker-materialize-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Materialize exact DEV Discovery CONTROL blockers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          ledger_path=Path('docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json')
+          evidence_path=Path('docs/construction/evidence/GATE25_DEV_DISCOVERY_CONTROLS_PRODUCTION_UI_BLOCKER_2026-09-11.json')
+          action_evidence_path=Path('docs/construction/evidence/GATE25_DEV_DISCOVERY_ACTIONS_PRODUCTION_PASS_2026-09-10.json')
+          client_path=Path('src/domain/dev/productionDevClientRuntime.ts')
+          server_path=Path('src/server/dev/productionDevCommandRuntime.ts')
+          projection_path=Path('src/server/shared/pageCatalogProjectionRuntime.ts')
+
+          ledger=json.loads(ledger_path.read_text())
+          evidence=json.loads(evidence_path.read_text())
+          action_evidence=json.loads(action_evidence_path.read_text())
+          client=client_path.read_text()
+          server=server_path.read_text()
+          projection=projection_path.read_text()
+
+          before=dict(ledger['counts'])
+          assert before=={'PASS':51,'BLOCKED':155,'NOT_EXECUTED':1275},before
+          assert evidence['status']=='BLOCKED'
+          assert evidence['production_release_sha']=='526316501c86fe54f02603cdb47da5ad51a005dc'
+          assert evidence['resource_count']==4
+          assert evidence['production_neon_readback']['non_acceptance_discovery_job_count']==0
+          assert evidence['paired_action_acceptance']['status']=='PASS'
+          assert evidence['paired_action_acceptance']['external_request_sent'] is False
+          assert evidence['paired_action_acceptance']['deployment_triggered'] is False
+          assert evidence['safety_facts']['normal_start_creates_non_acceptance_business_row'] is True
+          assert evidence['safety_facts']['safe_acceptance_rows_are_excluded_from_normal_dev_projection'] is True
+          assert evidence['safety_facts']['authorized_production_ui_acceptance_state_bridge_registered'] is False
+          assert evidence['safety_facts']['synthetic_projection_forbidden'] is True
+          assert evidence['safety_facts']['fake_normal_business_row_forbidden'] is True
+          assert action_evidence['status']=='PASS'
+          assert action_evidence['production_release_sha']=='526316501c86fe54f02603cdb47da5ad51a005dc'
+          assert 'body: JSON.stringify(body)' in client
+          assert 'url = "/v1/outreach/discovery-jobs"' in client
+          assert 'const acceptance_ref = text(payload.acceptance_ref);' in server
+          assert 'coalesce(stats->>\'acceptance_scope\',\'\') <> \'GATE_24_DEV\'' in projection
+
+          resources=[r['resource_key'] for r in evidence['resources']]
+          entries={e['resource_key']:e for e in ledger['entries']}
+          paired_actions={
+            'control:CTRL-ADMIN-DEV-01-ACT-01-ACT-DISCOVERY-START':'action:admin:DEV-01:ACT-DISCOVERY-START',
+            'control:CTRL-ADMIN-DEV-01-ACT-02-ACT-DISCOVERY-PAUSE':'action:admin:DEV-01:ACT-DISCOVERY-PAUSE',
+            'control:CTRL-ADMIN-DEV-01-ACT-03-ACT-DISCOVERY-RESUME':'action:admin:DEV-01:ACT-DISCOVERY-RESUME',
+            'control:CTRL-ADMIN-DEV-01-ACT-04-ACT-DISCOVERY-STOP':'action:admin:DEV-01:ACT-DISCOVERY-STOP',
+          }
+          assert set(resources)==set(paired_actions)
+          for key in resources:
+            assert entries[key]['disposition']=='NOT_EXECUTED',(key,entries[key]['disposition'])
+            assert entries[paired_actions[key]]['disposition']=='PASS',(paired_actions[key],entries[paired_actions[key]]['disposition'])
+            current=next(r for r in evidence['resources'] if r['resource_key']==key)
+            e=entries[key]
+            e['disposition']='BLOCKED'
+            e['reason_code']='PRODUCTION_DEV_UI_ACCEPTANCE_STATE_BRIDGE_NOT_REGISTERED'
+            e['evidence_refs']=[str(evidence_path),str(action_evidence_path),str(client_path),str(server_path),str(projection_path)]
+            e['operation_ids']=[current['operation_id']]
+            e['blocker_detail']='Paired Production ACTION E2E is PASS, but exhaustive Current UI CONTROL interaction would require either a normal Production discovery row or an Authority-registered acceptance-state bridge. Production has zero normal discovery jobs and safe GATE_24_DEV rows are excluded from normal projection; fabricating rows or synthetic projection is forbidden.'
+
+          counts={'PASS':0,'BLOCKED':0,'NOT_EXECUTED':0}
+          for e in ledger['entries']:
+            counts[e['disposition']]+=1
+          assert counts=={'PASS':51,'BLOCKED':159,'NOT_EXECUTED':1271},counts
+          ledger['counts']=counts
+          ledger_path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps({'before':before,'after':counts,'resource_count':4}))
+          PY
+      - name: Validate synchronized ledger
+        run: node scripts/release-formal-acceptance-ledger.mjs
+      - name: Commit DEV Discovery CONTROL blocker evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json
+          git commit -m 'evidence(gate25): block 4 DEV discovery UI controls safely'
+          git push origin HEAD:new
