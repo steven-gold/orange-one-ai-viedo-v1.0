@@ -2,7 +2,7 @@ authority:
   id: ACPOS_SYSTEM_AUTHORITY
   version: V1.0
   status: FINAL_LOCKED
-  revision: 2026-09-07-USER-RECONFIRM-8X8-GLOBAL-L1
+  revision: 2026-09-11-CURRENT-TRUTH-EXTERNALIZED
   current_only: true
   scope: ORANGE_ONE_WHOLE_SITE_CENTRAL_BRAIN_AND_CROSS_PAGE_INTEGRATION_AUTHORITY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
@@ -504,19 +504,11 @@ page_precedence:
   page_ui_business_logic: CURRENT_PAGE_AUTHORITY
   production_instruction_provider_adapter: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT V1.3
   undefined: BLOCK + REPORT_AUTHORITY_GAP
-implementation_truth:
-  authority_spec: FINAL_LOCKED
-  page_integration_spec: FINAL_LOCKED
-  global_visual_spec: FINAL_LOCKED
-  navigation_permission_spec: FINAL_LOCKED
-  knowledge_page_spec: FINAL_LOCKED
-  production_script_contract: FINAL_LOCKED
-  application_code: VISUAL_PHASE_EXECUTED_BUSINESS_LOGIC_NOT_EXECUTED
-  api_binding: NOT_EXECUTED
-  database_binding: NOT_EXECUTED
-  shared_crawler_runtime_execution: NOT_EXECUTED
-  e2e: NOT_EXECUTED
-  deployment: NOT_EXECUTED
+implementation_truth_policy:
+  mutable_environment_state_embedded: false
+  current_state_owner: CURRENT_EXECUTION_STATE.json
+  production_evidence_owner: docs/construction/evidence/
+  rule: Authority defines contracts and boundaries; runtime, test, migration and deployment completion are resolved only from Current execution evidence.
 acceptance:
 - 18 unique current page authorities are represented in the Page Integration Matrix.
 - Front workspace navigation has exactly 8 L1 items.

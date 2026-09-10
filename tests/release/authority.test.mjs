@@ -123,10 +123,15 @@ test("Production identity runtime names app_users actor and internal cookie sess
   assert.match(registry, /operation_id: resolveIdentityAccountAuthority/);
 });
 
-test("System implementation truth is not silently promoted", () => {
-  assert.match(system, /api_binding:\s*NOT_EXECUTED/);
-  assert.match(system, /database_binding:\s*NOT_EXECUTED/);
-  assert.match(system, /deployment:\s*NOT_EXECUTED/);
+test("System Authority externalizes mutable implementation and deployment truth", () => {
+  assert.match(system, /implementation_truth_policy:/);
+  assert.match(system, /mutable_environment_state_embedded:\s*false/);
+  assert.match(system, /current_state_owner:\s*CURRENT_EXECUTION_STATE\.json/);
+  assert.match(system, /production_evidence_owner:\s*docs\/construction\/evidence\//);
+  assert.doesNotMatch(system, /application_code:\s*VISUAL_PHASE_EXECUTED_BUSINESS_LOGIC_NOT_EXECUTED/);
+  assert.doesNotMatch(system, /api_binding:\s*NOT_EXECUTED/);
+  assert.doesNotMatch(system, /database_binding:\s*NOT_EXECUTED/);
+  assert.doesNotMatch(system, /deployment:\s*NOT_EXECUTED/);
 });
 
 test("SYS-01 mode switching remains Authority-defined client state with continuity preservation", () => {
