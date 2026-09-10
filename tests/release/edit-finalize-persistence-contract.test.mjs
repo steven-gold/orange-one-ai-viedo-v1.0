@@ -9,6 +9,7 @@ test("0050 materializes EDIT Finalize persistence without a parallel lock owner"
   const manifest=await read("database/migrations/migration_checksum_manifest.yaml");
   const neon=await read("src/server/database/neonRuntime.ts");
   const runtime=await read("src/server/edit/productionEditFinalizeRuntime.ts");
+  const lifecycleRuntime=await read("src/server/edit/productionEditVoiceRuntime.ts");
   const sep="\nINSERT INTO public.schema_migration_history";
   const idx=migration.indexOf(sep);
   assert.ok(idx>0);
@@ -24,6 +25,8 @@ test("0050 materializes EDIT Finalize persistence without a parallel lock owner"
   assert.match(migration,/department IN\('ASSET','VIDEO','EDITING'\)/);
   assert.match(runtime,/public\.production_output_version_locks/);
   assert.doesNotMatch(runtime,/public\.edit_version_locks/);
+  assert.match(lifecycleRuntime,/public\.production_output_version_locks/);
+  assert.doesNotMatch(lifecycleRuntime,/public\.edit_version_locks/);
   assert.ok(Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1]??0)>=50);
 });
 

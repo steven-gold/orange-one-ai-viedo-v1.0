@@ -439,6 +439,102 @@ operation_registry:
     exact_accepted_output_required: true
     minimum_score: 95
 
+  - operation_id: createEditingRuntimeRun
+    path: /v1/editing-runtime-runs
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:createEditingRuntimeRun
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_CONTROL_API
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+  - operation_id: getEditingRuntimeRun
+    path: /v1/editing-runtime-runs/{runId}
+    methods: [GET]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:getEditingRuntimeRun
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_CONTROL_API
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+    external_effect: NONE
+  - operation_id: completeAssembly
+    path: /v1/editing-runtime-runs/{runId}/assembly
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:completeAssembly
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_CONTROL_API
+    persistence_owner: [acpos_runtime.editing_runtime_runs_runtime, acpos_runtime.editing_runtime_steps_runtime]
+  - operation_id: transitionEditingToVoiceStage
+    path: /v1/editing-runtime-runs/{runId}/voice-handoff
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:transitionEditingToVoiceStage
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_CONTROL_API
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+  - operation_id: startVoiceRuntime
+    path: /v1/voice-runtime-runs/{runId}/start
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:startVoiceRuntime
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+    external_effect: GOVERNED_PROVIDER_EXECUTION
+    external_gate: EXACT_PROVIDER_OPERATION_CAPABILITY_MAPPING_REQUIRED
+  - operation_id: getVoiceRuntimeRun
+    path: /v1/voice-runtime-runs/{runId}
+    methods: [GET]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:getVoiceRuntimeRun
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+    external_effect: NONE
+  - operation_id: completeAudioMix
+    path: /v1/voice-runtime-runs/{runId}/audio-mix
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:completeAudioMix
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: [acpos_runtime.editing_runtime_runs_runtime, acpos_runtime.editing_runtime_steps_runtime]
+  - operation_id: completeLipSync
+    path: /v1/voice-runtime-runs/{runId}/lip-sync
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:completeLipSync
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: [acpos_runtime.editing_runtime_runs_runtime, acpos_runtime.editing_runtime_steps_runtime]
+  - operation_id: completeSubtitle
+    path: /v1/voice-runtime-runs/{runId}/subtitle
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:completeSubtitle
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: [acpos_runtime.editing_runtime_runs_runtime, acpos_runtime.editing_runtime_steps_runtime]
+  - operation_id: handoffVoiceToQA
+    path: /v1/voice-runtime-runs/{runId}/qa-handoff
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:handoffVoiceToQA
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: public.handoffs
+    external_effect: NONE
+
   - operation_id: saveEditVersion
     path: /v1/editing-runtime-runs/{runId}/versions
     methods: [POST]

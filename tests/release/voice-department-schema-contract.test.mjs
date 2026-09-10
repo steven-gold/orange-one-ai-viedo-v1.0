@@ -36,7 +36,7 @@ test("VOICE Provider execution stays fail-closed until exact Current mapping exi
   const registry=await read("03_api/operation_registry.yaml");
   const runtime=await read("src/server/edit/productionEditVoiceRuntime.ts");
   assert.match(authority,/startVoiceRuntime[\s\S]*EXACT_PROVIDER_OPERATION_CAPABILITY_MAPPING_REQUIRED/);
-  assert.doesNotMatch(registry,/operation_id:\s*startVoiceRuntime\b/);
+  assert.match(registry,/operation_id:\s*startVoiceRuntime\b[\s\S]*?external_gate:\s*EXACT_PROVIDER_OPERATION_CAPABILITY_MAPPING_REQUIRED/);
   assert.match(runtime,/case"startVoiceRuntime":return startVoice\(request\)/);
   assert.match(runtime,/EDIT_VOICE_PROVIDER_OPERATION_NOT_MATERIALIZED/);
   assert.doesNotMatch(runtime,/startVoice[\s\S]{0,1200}executeProviderRoute/);

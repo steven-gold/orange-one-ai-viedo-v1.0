@@ -191,12 +191,12 @@ async function handoffToQa(request:EditVoiceRequest){
   const {sql,session_token_hash}=await context();const run=await exactRun(sql,session_token_hash,runId);
   if(text(run.task_id)!==taskId||text(run.current_state)!=="FINALIZE"||text(run.status)!=="LOCKED")throw new NamedRuntimeError("EDIT_QA_HANDOFF_STATE_NOT_READY");
   const lock=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT l.edit_version_lock_id::text,l.edit_version_id::text,l.output_version_id::text
-    FROM public.edit_version_locks l
-    WHERE l.edit_version_lock_id=${text(payload.locked_version_ref)}::uuid
+    SELECT l.production_output_version_lock_id::text AS lock_id,l.edit_version_id::text,l.output_version_id::text
+    FROM public.production_output_version_locks l
+    WHERE l.production_output_version_lock_id=${text(payload.locked_version_ref)}::uuid
       AND l.edit_version_id=${text(payload.saved_edit_version_id)}::uuid
       AND l.output_version_id=${outputId}::uuid
-      AND l.task_id=${taskId}::uuid AND l.status='LOCKED'
+      AND l.task_id=${taskId}::uuid AND l.department='EDITING' AND l.status='LOCKED'
     LIMIT 1
   `));
   if(!lock)throw new NamedRuntimeError("EDIT_QA_HANDOFF_EXACT_VERSION_LOCK_REQUIRED");
