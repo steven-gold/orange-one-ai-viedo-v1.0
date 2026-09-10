@@ -1,164 +1,90 @@
 document_id: ACPOS_WEBSITE_CONSTRUCTION_PROGRESS
-version: 2.0
+version: 3.0
 status: CURRENT_ONLY
-as_of: 2026-09-10T05:11:00+08:00
+as_of: 2026-09-11
 
 authority:
-  construction_authority: ACPOS_SINGLE_AUTHORITY_CONSTRUCTION_MASTER_FINAL
-  production_truth_order:
-    - GitHub Current
-    - Vercel Current Deployment
-    - Neon Current Production
-    - Current Execution State
-    - Single Active Construction Authority
+  current_authority_manifest: authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+  formal_gate25_inventory: docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json
+  formal_gate25_ledger: docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json
   historical_source_trace_executable: false
-  rule: Do not restore historical page/runtime assumptions over Current implementation or Current Production evidence.
-
-git:
-  repository: steven-gold/orange-one-ai-viedo-v1.0
-  main_sha: 5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c
-  new_sha: 5cdca0478ad53bd190fe1a7312e08793b07d1f66
-  latest_new_release_gate:
-    run: 1026
-    id: 34407657348
-    status: SUCCESS
-  production_main_release_gate:
-    run: 1017
-    id: 34399580132
-    status: SUCCESS
+  rule: Only Current Authority and fresh Production evidence may determine current construction state. Superseded R9 working copies, pre-repair snapshots, and historical deployment assumptions are non-executable.
 
 production:
   url: https://orange-one-acpos-test.vercel.app
-  release_sha: 5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c
-  vercel_status: SUCCESS
-  latest_post_deploy:
-    run: 1325
-    id: 34399815616
-    status: SUCCESS
-  readiness_http: 200
-  routes: 18/18
-  browser_smoke: 54/54
-  front_nav: 8
-  admin_nav: 8
-  visible_pages: 18
-  dom:
-    interactive: 548
-    governed: 548
-    enabled: 362
-    disabled: 186
-    classification: VISUAL_GOVERNANCE_PASS_EFFECTFUL_ACCEPTANCE_PENDING
-
-database:
-  project: wild-wave-25661146
   branch: main
-  database: neondb
-  migrations: 41/41
-  latest_migration: 0041_governed_lock_decision_service_identity_foundation
-  active_permission_resources: 3672
-  current_permission_tally_seal: PENDING
-  approved_allow_assignments: 158
-  rls_tables: 65
-  policies: 128
-  provider_capabilities_approved: 4
-  secret_references_approved: 4
-  queues: 1
-  workers: 1
+  release_sha: 526316501c86fe54f02603cdb47da5ad51a005dc
+  latest_verified_post_deploy_run: 1561
+  readiness_http: 200
+  neon:
+    project: wild-wave-25661146
+    branch: main
+    database: neondb
+    migrations: 53/53
+  dom:
+    governed_controls_passed: 560
 
-construction:
-  kb_0040:
-    database_apply: APPLIED_VERIFIED
-    application_code_on_new: PASS_RELEASE_GATE_1019
-    application_code_on_production_main: PENDING_CONSOLIDATED_DEPLOYMENT
-  core_truthful_gate:
-    commit: 0f5aff87d4dc14612fc68151b40210bd34728ae4
-    release_gate: 1021
-    status: SUCCESS
-    production_deployed: false
-  department_materialization:
-    status: OPEN
-    production_observation:
-      department_tasks: 1
-      department_task_classification: TEST_ONLY_WAITING_DEPENDENCY
-      department_script_views: 0
-      task_input_manifests: 0
-      instruction_packages: 0
-      canonical_script_versions: 0
-      script_projection_rules: 0
-      quality_criteria_versions: 0
-      rights_profiles: 0
-      route_policies: 0
-    required_chain:
-      - governed lock decision
-      - child lock materialization
-      - work package compiler
-      - task orchestrator
-      - department script view compiler
-      - task input manifest compiler
-      - instruction package compiler
-      - effectful department runtime
-    safety_rule: Never force-enable a control or fabricate business rows to bypass a missing canonical owner.
+formal_acceptance_gate25:
+  total: 1481
+  controls: 1155
+  actions: 326
+  pass: 51
+  blocked: 204
+  not_executed: 1226
+  aggregate_dom_auto_promotes_resource_pass: false
 
-current_gate_summary:
-  production_ready_percent: 81.5
-  pass: 14
-  partial: 10
-  fail: 1
-  blocked: 0
-  unknown: 0
-  gate_9:
-    percent: 75
-    status: PARTIAL
-    remaining: Vercel management connector visibility mismatch
-  gate_10:
-    percent: 100
-    status: PASS
-    evidence: 40/40
-  gate_11:
-    percent: 87.5
-    status: PARTIAL
-    remaining: Current permission-resource expansion tally seal
-  gate_15:
-    percent: 75
-    status: PARTIAL
-    remaining: negative permission Production E2E
-  gate_17:
-    percent: 75
-    status: PARTIAL
-  gate_18:
-    percent: 50
-    status: PARTIAL
-  gate_19:
-    percent: 50
-    status: PARTIAL
-  gate_20:
-    percent: 50
-    status: PARTIAL
-  gate_21:
-    percent: 50
-    status: PARTIAL
-  gate_22:
-    percent: 75
-    status: PARTIAL
-  gate_24:
-    percent: 0
-    status: FAIL
-  gate_25:
-    percent: 50
-    status: PARTIAL
+rls:
+  status: PARTIAL
+  public_user_tables: 168
+  rls_enabled_tables: 71
+  policies: 143
+  runtime_role: acpos_app_runtime
+  runtime_role_bypassrls: false
+  owner_role: neondb_owner
+  owner_role_bypassrls: true
+  unclassified_no_rls_tables: 97
+  remaining: Classify the 97 no-RLS tables against Current Authority and prove runtime-role enforcement on protected queries.
+
+work_package_compiler:
+  status: BLOCKED
+  operation_registry_compileWorkPackage_present: false
+  current_server_compiler_path_present: false
+  production_related_tables: 13
+  production_related_rows_total: 0
+  api_compileWorkPackage_permission: APPROVED_ALLOW_EXECUTE
+  service_capabilities:
+    - task_orchestrator:dag.materialize_locked_blueprint:ACTIVE
+    - instruction_compiler:service.script_view.compile:ACTIVE
+  remaining: Materialize a Current operation/runtime owner with real Production lineage without restoring legacy compiler authority or fabricating business rows.
+
+gate20_edit_voice:
+  status: PARTIAL
+  canonical_runtime_lineage_present: false
+  provider_route_policies_table_present: false
+  approved_provider_capabilities: 4
+
+cleanup:
+  stale_r9_monitor_specs_removed: true
+  stale_r9_monitor_specs_cleanup_release_run_id: 34515862998
+  stale_r9_monitor_specs_cleanup_release_conclusion: SUCCESS
+  temporary_workflows_remaining: 0
+  preserved_current_collaboration_memory: .monkeycode/MEMORY.md
+  known_git_ref_cleanup_debt:
+    - tmp-unused
+    - tmp-unused-2
+  cleanup_evidence: docs/construction/evidence/R9_RESIDUAL_CLEANUP_2026-09-11.md
+
+production_ready_percent:
+  status: RECOMPUTE_REQUIRED
+  rule: Do not reuse the historical 81.5 percent or any earlier 25-gate aggregate. Recompute only from current Production evidence after the remaining gates are freshly verified.
 
 next:
-  - Close canonical department materialization ownership on new.
-  - Close ASSET / VIDEO / EDIT+VOICE / QA effectful paths.
-  - Close IAM / ERP / AIAPI / SOC Production mutations.
-  - Run AI Conversation Production E2E after consolidated deployment.
-  - Build permanent Production Effectful Acceptance.
-  - Seal Current permission-resource expansion and final control/action denominator.
-  - Recompute all 25 gates from final Production evidence.
-
-  lock_decision_service_identity_0041:
-    database_apply: APPLIED_VERIFIED
-    checksum: 58a7d78fed454b5f1a49a18b2978f44fec248a4dd184ed4f6ea60e998c22f0c5
-    service_identities: 2
-    service_capabilities: 4
-    release_gate: 1026
-    application_code_on_production_main: PENDING_CONSOLIDATED_DEPLOYMENT
+  - Validate the Current-state and construction-progress truth sync with the full Release Gate.
+  - Remove or update any remaining Current-named files that contain superseded R9 or construction state.
+  - Close the WorkPackage Current operation/runtime owner blocker.
+  - Classify 97 no-RLS tables and verify runtime-role enforcement.
+  - Run fresh Production External Provider acceptance.
+  - Run fresh Production Queue/Worker/DLQ acceptance.
+  - Run Production Read Models acceptance.
+  - Close MFA/risk/org-owner prerequisites.
+  - Continue Gate25 disposition work for the remaining 1226 NOT_EXECUTED resources.
