@@ -2,6 +2,7 @@ const base=(process.env.ACPOS_DEPLOYMENT_URL??"https://orange-one-acpos-test.ver
 const email=(process.env.ACPOS_PRODUCTION_E2E_EMAIL??"").trim();
 const password=process.env.ACPOS_PRODUCTION_E2E_PASSWORD??"";
 const routeDecisionId=(process.env.ACPOS_ACCEPTANCE_ROUTE_DECISION_ID??"").trim();
+const expectedReleaseSha=(process.env.ACPOS_EXPECT_RELEASE_SHA??"").trim();
 
 function assert(condition,message){if(!condition)throw new Error(message);}
 function protectionHeaders(){
@@ -31,6 +32,27 @@ async function callGet(cookie,resourceKey,operationId,path,validate){
 
 assert(email&&password,"FORMAL_READONLY_ACCEPTANCE_CREDENTIAL_NOT_CONFIGURED");
 assert(routeDecisionId,"FORMAL_READONLY_ROUTE_DECISION_ID_REQUIRED");
+if(expectedReleaseSha)assert(/^[0-9a-f]{40}$/i.test(expectedReleaseSha),"FORMAL_EXPECTED_RELEASE_SHA_INVALID");
+
+async function waitForExactRelease(){
+  if(!expectedReleaseSha)return;
+  const deadline=Date.now()+120_000;
+  let last="UNRESOLVED";
+  while(Date.now()<deadline){
+    try{
+      const response=await fetch(`${base}/health`,{cache:"no-store",headers:protectionHeaders()});
+      const body=await response.json().catch(()=>null);
+      last=String(body?.release_sha??`HTTP_${response.status}`);
+      if(response.status===200&&body?.release_sha===expectedReleaseSha){
+        process.stdout.write(`FORMAL_ACCEPTANCE_RELEASE_SHA_MATCH release_sha=${expectedReleaseSha}\n`);
+        return;
+      }
+    }catch(error){last=error instanceof Error?error.message:"FETCH_FAILED";}
+    await new Promise(resolve=>setTimeout(resolve,3000));
+  }
+  throw new Error(`FORMAL_ACCEPTANCE_RELEASE_SHA_TIMEOUT expected=${expectedReleaseSha} actual=${last}`);
+}
+await waitForExactRelease();
 
 const loginCorrelation=crypto.randomUUID();
 const login=await fetch(`${base}/v1/identity/session`,{

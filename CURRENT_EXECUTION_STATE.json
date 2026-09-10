@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "c3be46239146673c02d261defa17f55340342c8a",
-    "new_sha": "1160cf56a7b370185dd115e3040c0caaceb6d439",
+    "new_sha": "de49f83219076d209310bc5ae397c40fb63e1b08",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -511,7 +511,7 @@
       "rule": "Ledger coverage is not effectful acceptance. PASS requires per-resource evidence. Aggregate DOM evidence never auto-promotes individual resources."
     },
     "gate25_direct_http_adapters": {
-      "status": "CODE_MATERIALIZED_RELEASE_GATE_PENDING",
+      "status": "CODE_MATERIALIZED_AUTO_PRODUCTION_TRIGGER_RELEASE_GATE_PENDING",
       "authority": "03_api/operation_registry.yaml",
       "exact_direct_formal_resource_mappings": 25,
       "executable_readonly_resources": 4,
@@ -527,7 +527,15 @@
       },
       "mutation_count": 0,
       "external_provider_call_count": 0,
-      "rule": "No API-only operation is guessed onto a formal CONTROL/ACTION. Mutation/external-effect adapters remain pending until fixture/readback/cleanup contracts are explicit."
+      "rule": "No API-only operation is guessed onto a formal CONTROL/ACTION. Mutation/external-effect adapters remain pending until fixture/readback/cleanup contracts are explicit.",
+      "production_trigger": "workflow_run: ACPOS Release Gate SUCCESS on main",
+      "exact_release_sha_guard": true,
+      "route_decision_fixture": {
+        "id": "f913ad44-5524-44ca-b715-4884a62f366b",
+        "status": "BLOCKED",
+        "source": "Existing Production acpos_runtime.provider_route_decisions row",
+        "read_only_use": true
+      }
     }
   },
   "providers": {
