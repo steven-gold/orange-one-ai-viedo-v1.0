@@ -115,7 +115,10 @@ test("Production identity runtime names app_users actor and internal cookie sess
   assert.match(identity, /status_predicate: DISABLED_AT_IS_NULL/);
   assert.match(identity, /status_predicate_sql: app_users.disabled_at IS NULL/);
   assert.match(identity, /scope: DATABASE_AND_IDENTITY_CONTROL_PLANE/);
-  assert.match(identity, /VERIFY_CONTROL_PLANE_READINESS/);
+  assert.match(identity, /deployment_state_policy:/);
+  assert.match(identity, /mutable_environment_state_embedded:\s*false/);
+  assert.match(identity, /current_state_owner:\s*CURRENT_EXECUTION_STATE\.json/);
+  assert.doesNotMatch(identity, /next_action:/);
   const registry = await readFile("03_api/operation_registry.yaml", "utf8");
   assert.match(registry, /operation_id: resolveIdentityAccountAuthority/);
   assert.match(registry, /path: \/v1\/identity\/session/);
