@@ -51,6 +51,7 @@ jobs:
           node --check scripts/production-formal-readonly-acceptance.mjs
           node --check scripts/gate25-production-wb-readonly-acceptance.mjs
           node --check scripts/gate25-production-sg02-readonly-acceptance.mjs
+          node --check scripts/gate25-production-dev-stage-readonly-acceptance.mjs
 
       - name: Production build
         env:
