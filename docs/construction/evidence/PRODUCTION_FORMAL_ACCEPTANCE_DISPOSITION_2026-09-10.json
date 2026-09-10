@@ -30,8 +30,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 51,
-    "BLOCKED": 194,
-    "NOT_EXECUTED": 1236
+    "BLOCKED": 204,
+    "NOT_EXECUTED": 1226
   },
   "entries": [
     {
@@ -9640,23 +9640,50 @@
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-APPROVED-VIDEO-HANDOFF-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_EDIT01_UNBOUND_FORMAL_CONTROLS_2026-09-11.json",
+        "docs/construction/evidence/GATE25_EDIT01_FORMAL_IDENTITY_DIAGNOSTIC_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal CONTROL has no exact owner in FINAL_LOCKED Current EDIT-01 Authority and no exact src binding. Semantic remap or retired-control reconstruction is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-EDIT-01-APPROVED-VIDEO-HANDOFF-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-CANDIDATE-OUTPUT-PANEL-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_EDIT01_UNBOUND_FORMAL_CONTROLS_2026-09-11.json",
+        "docs/construction/evidence/GATE25_EDIT01_FORMAL_IDENTITY_DIAGNOSTIC_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal CONTROL has no exact owner in FINAL_LOCKED Current EDIT-01 Authority and no exact src binding. Semantic remap or retired-control reconstruction is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-EDIT-01-CANDIDATE-OUTPUT-PANEL-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-DECISION-DOCK-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_EDIT01_UNBOUND_FORMAL_CONTROLS_2026-09-11.json",
+        "docs/construction/evidence/GATE25_EDIT01_FORMAL_IDENTITY_DIAGNOSTIC_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal CONTROL has no exact owner in FINAL_LOCKED Current EDIT-01 Authority and no exact src binding. Semantic remap or retired-control reconstruction is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-EDIT-01-DECISION-DOCK-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-EDITING-RUNTIME-COMPLETE-ASSEMBLY",
@@ -9705,37 +9732,82 @@
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-EDITING-SCRIPT-VIEW-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_EDIT01_UNBOUND_FORMAL_CONTROLS_2026-09-11.json",
+        "docs/construction/evidence/GATE25_EDIT01_FORMAL_IDENTITY_DIAGNOSTIC_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal CONTROL has no exact owner in FINAL_LOCKED Current EDIT-01 Authority and no exact src binding. Semantic remap or retired-control reconstruction is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-EDIT-01-EDITING-SCRIPT-VIEW-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-PROJECT-TOPIC-TASK-TREE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_EDIT01_UNBOUND_FORMAL_CONTROLS_2026-09-11.json",
+        "docs/construction/evidence/GATE25_EDIT01_FORMAL_IDENTITY_DIAGNOSTIC_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal CONTROL has no exact owner in FINAL_LOCKED Current EDIT-01 Authority and no exact src binding. Semantic remap or retired-control reconstruction is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-EDIT-01-PROJECT-TOPIC-TASK-TREE-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-QA-HANDOFF-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_EDIT01_UNBOUND_FORMAL_CONTROLS_2026-09-11.json",
+        "docs/construction/evidence/GATE25_EDIT01_FORMAL_IDENTITY_DIAGNOSTIC_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal CONTROL has no exact owner in FINAL_LOCKED Current EDIT-01 Authority and no exact src binding. Semantic remap or retired-control reconstruction is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-EDIT-01-QA-HANDOFF-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-SCORECARD-PANEL-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_EDIT01_UNBOUND_FORMAL_CONTROLS_2026-09-11.json",
+        "docs/construction/evidence/GATE25_EDIT01_FORMAL_IDENTITY_DIAGNOSTIC_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal CONTROL has no exact owner in FINAL_LOCKED Current EDIT-01 Authority and no exact src binding. Semantic remap or retired-control reconstruction is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-EDIT-01-SCORECARD-PANEL-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-TASK-HEADER-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_EDIT01_UNBOUND_FORMAL_CONTROLS_2026-09-11.json",
+        "docs/construction/evidence/GATE25_EDIT01_FORMAL_IDENTITY_DIAGNOSTIC_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal CONTROL has no exact owner in FINAL_LOCKED Current EDIT-01 Authority and no exact src binding. Semantic remap or retired-control reconstruction is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-EDIT-01-TASK-HEADER-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-TIMELINE-PATCH-APPROVE-TIMECODE-PATCH",
@@ -9817,16 +9889,34 @@
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-TIMELINE-WORK-AREA-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_EDIT01_UNBOUND_FORMAL_CONTROLS_2026-09-11.json",
+        "docs/construction/evidence/GATE25_EDIT01_FORMAL_IDENTITY_DIAGNOSTIC_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal CONTROL has no exact owner in FINAL_LOCKED Current EDIT-01 Authority and no exact src binding. Semantic remap or retired-control reconstruction is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-EDIT-01-TIMELINE-WORK-AREA-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-01-VOICE-SUBTITLE-REFS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_EDIT01_UNBOUND_FORMAL_CONTROLS_2026-09-11.json",
+        "docs/construction/evidence/GATE25_EDIT01_FORMAL_IDENTITY_DIAGNOSTIC_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal CONTROL has no exact owner in FINAL_LOCKED Current EDIT-01 Authority and no exact src binding. Semantic remap or retired-control reconstruction is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-EDIT-01-VOICE-SUBTITLE-REFS-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-EDIT-03-ACT-01-ACT-SCORECARD-SUBMIT",
