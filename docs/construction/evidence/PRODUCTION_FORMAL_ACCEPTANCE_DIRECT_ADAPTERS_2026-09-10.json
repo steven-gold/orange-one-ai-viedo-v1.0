@@ -1,7 +1,7 @@
 {
   "document_id": "ACPOS_PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS",
-  "status": "PRODUCTION_READONLY_5_OF_25_DIRECT_MAPPINGS_ACCEPTED",
-  "as_of": "2026-09-10T13:08:00+08:00",
+  "status": "PRODUCTION_25_EXACT_MAPPINGS_CLASSIFIED_5_PASS_20_BLOCKED_PENDING_SAFE_ACCEPTANCE",
+  "as_of": "2026-09-10T15:12:00+08:00",
   "authority": "03_api/operation_registry.yaml",
   "exact_direct_mapping_count": 25,
   "executable_readonly_now": [
@@ -55,7 +55,174 @@
     }
   ],
   "mapped_not_yet_executable_count": 20,
-  "rule": "Only exact operation_registry authorization_resource_key/resource_key mappings qualify. API-only operations are not guessed onto formal CONTROL/ACTION resources. Mutation/external-effect adapters require an explicit fixture, expected readback, negative path and cleanup contract before execution.",
+  "mapped_not_yet_executable": [
+    {
+      "resource_key": "action:admin:IAM-02:ACT-DRAFT-SAVE",
+      "operation_ids": ["saveDraft"],
+      "path": "/v1/drafts",
+      "effect": "MUTATION",
+      "reason_code": "ACCEPTANCE_CLEANUP_OWNER_NOT_REGISTERED",
+      "detail": "Creates IAM_ACCOUNT_DRAFT in acpos_runtime.entities. Current formal acceptance workflow has no registered HTTP cleanup operation or database cleanup credential."
+    },
+    {
+      "resource_key": "action:admin:IAM-02:ACT-DRAFT-VALIDATE",
+      "operation_ids": ["validateDraft"],
+      "path": "/v1/drafts/{id}/validate",
+      "effect": "MUTATION",
+      "reason_code": "ACCEPTANCE_DRAFT_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "detail": "Requires a persisted IAM_ACCOUNT_DRAFT and updates it to VALIDATED; no isolated fixture lifecycle and cleanup owner is registered."
+    },
+    {
+      "resource_key": "action:admin:IAM-02:ACT-ACCOUNT-PERMISSION-PREVIEW",
+      "operation_ids": ["previewAuthorizationImpact"],
+      "path": "/v1/iam/accounts/{accountId}/authorization-impact",
+      "effect": "MUTATION_EVIDENCE",
+      "reason_code": "ACCEPTANCE_PREVIEW_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "detail": "Requires a validated IAM draft and persists IAM_AUTH_PREVIEW evidence in acpos_runtime.entities."
+    },
+    {
+      "resource_key": "action:admin:IAM-05:ACT-CONFIGURE",
+      "operation_ids": ["assignAccountPermission", "revokeAccountPermission", "configureGovernedResource"],
+      "path": "multiple Current IAM mutation routes",
+      "effect": "SECURITY_MUTATION",
+      "reason_code": "ISOLATED_PERMISSION_FIXTURE_AND_REVERSIBLE_CLEANUP_NOT_REGISTERED",
+      "detail": "May change effective account authorization or configure a governed resource. Formal acceptance must not mutate the real bootstrap account or leave test authorization versions."
+    },
+    {
+      "resource_key": "action:admin:IAM-05:ACT-APPROVE",
+      "operation_ids": ["approveGovernedResource"],
+      "path": "/v1/governance/resources/{id}/approve",
+      "effect": "GOVERNANCE_MUTATION",
+      "reason_code": "ISOLATED_GOVERNED_RESOURCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "detail": "Approval is durable governance state and cannot be fabricated solely for acceptance."
+    },
+    {
+      "resource_key": "action:admin:AIAPI-04:ACT-CONFIGURE",
+      "operation_ids": ["configureGovernedResource"],
+      "path": "/v1/governance/resources/{id}/configure",
+      "effect": "PROVIDER_AUTHORITY_MUTATION",
+      "reason_code": "PROVIDER_CAPABILITY_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "detail": "Requires exact provider capability configuration; Current acceptance may not create a fake provider capability."
+    },
+    {
+      "resource_key": "action:admin:AIAPI-04:ACT-APPROVE",
+      "operation_ids": ["approveGovernedResource"],
+      "path": "/v1/governance/resources/{id}/approve",
+      "effect": "PROVIDER_AUTHORITY_MUTATION",
+      "reason_code": "PROVIDER_CAPABILITY_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "detail": "Materializes APPROVED provider_capabilities and durable governed-resource state."
+    },
+    {
+      "resource_key": "action:admin:SG-02:ACT-CONFIGURE",
+      "operation_ids": ["configureGovernedResource"],
+      "path": "/v1/governance/resources/{id}/configure",
+      "effect": "QUALITY_CRITERIA_GOVERNANCE_MUTATION",
+      "reason_code": "REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED",
+      "detail": "Current Production has zero real QualityCriteriaVersion lineage. Hardcoded/sample criteria are forbidden."
+    },
+    {
+      "resource_key": "action:admin:SG-02:ACT-APPROVE",
+      "operation_ids": ["approveGovernedResource"],
+      "path": "/v1/governance/resources/{id}/approve",
+      "effect": "QUALITY_CRITERIA_MATERIALIZATION",
+      "reason_code": "REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED",
+      "detail": "Approval materializes immutable quality_criteria_versions; no fake Production business row may be created for acceptance."
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE",
+      "operation_ids": ["createProviderModelProfile"],
+      "path": "/v1/aiapi/provider-profiles",
+      "effect": "PROVIDER_CONFIGURATION_MUTATION",
+      "reason_code": "PROVIDER_PROFILE_DELETE_CLEANUP_OPERATION_NOT_REGISTERED",
+      "detail": "Creates acpos_runtime.provider_profiles. Current registry provides retire, not delete/acceptance cleanup."
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-UPDATE-PROFILE",
+      "operation_ids": ["updateProviderModelProfile"],
+      "path": "/v1/aiapi/provider-profiles/{profileId}",
+      "effect": "PROVIDER_CONFIGURATION_MUTATION",
+      "reason_code": "REAL_PRODUCTION_PROFILE_MUTATION_NOT_SAFE_FOR_ACCEPTANCE",
+      "detail": "Only real Production profiles exist; modifying one for acceptance would alter live provider configuration and version history."
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-RETIRE-PROFILE",
+      "operation_ids": ["retireProviderModelProfile"],
+      "path": "/v1/aiapi/provider-profiles/{profileId}/retire",
+      "effect": "SET_ENABLED_FALSE",
+      "reason_code": "REAL_PRODUCTION_PROFILE_MUTATION_NOT_SAFE_FOR_ACCEPTANCE",
+      "detail": "Retiring a real profile changes live routing availability; no isolated disposable profile cleanup lifecycle exists."
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE",
+      "operation_ids": ["testProviderModelProfile"],
+      "path": "/v1/aiapi/provider-profiles/{profileId}/test",
+      "effect": "EXTERNAL_PROVIDER_CALL_AND_TEST_EVIDENCE_WRITE",
+      "reason_code": "EXTERNAL_PROVIDER_AND_CLEANUP_GATE_REQUIRED",
+      "detail": "Connection test can send an external Provider request and persists provider_profile_tests; external account issues are separately user-deferred."
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL",
+      "operation_ids": ["setProviderModelCredential"],
+      "path": "/v1/aiapi/provider-profiles/{profileId}/credential",
+      "effect": "SECRET_REFERENCE_AND_PROFILE_MUTATION",
+      "reason_code": "REAL_SECRET_REFERENCE_MUTATION_NOT_SAFE_FOR_ACCEPTANCE",
+      "detail": "Requires a bound secret env reference and changes durable secret/profile governance state."
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-DELETE-CREDENTIAL",
+      "operation_ids": ["deleteProviderModelCredential"],
+      "path": "/v1/aiapi/provider-profiles/{profileId}/credential",
+      "effect": "SECRET_REFERENCE_RETIREMENT_AND_PROFILE_DISABLE",
+      "reason_code": "REAL_SECRET_REFERENCE_MUTATION_NOT_SAFE_FOR_ACCEPTANCE",
+      "detail": "Archives the current secret reference and disables the profile; not a harmless acceptance cleanup."
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-09-ACT-02-ACT-KILL-SWITCH",
+      "operation_ids": ["setKillSwitch"],
+      "path": "/v1/aiapi/kill-switch",
+      "effect": "HIGH_RISK_ENABLE_STATE_MUTATION",
+      "reason_code": "REAL_PROVIDER_ENABLE_STATE_MUTATION_NOT_SAFE_FOR_ACCEPTANCE",
+      "detail": "Explicit CONFIRM is required and operation changes real profile/group enable state."
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-CREATE-GROUP",
+      "operation_ids": ["createProviderCandidateGroup"],
+      "path": "/v1/aiapi/provider-groups",
+      "effect": "PROVIDER_GROUP_AND_MEMBER_MUTATION",
+      "reason_code": "PROVIDER_GROUP_DELETE_CLEANUP_OPERATION_NOT_REGISTERED",
+      "detail": "Creates provider_groups/provider_members and Current registry has no exact acceptance cleanup operation."
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-RESTORE-PROVIDER",
+      "operation_ids": ["restoreProviderFromQuarantine"],
+      "path": "/v1/aiapi/quarantine/{quarantineId}/restore",
+      "effect": "QUARANTINE_STATE_MUTATION",
+      "reason_code": "REAL_QUARANTINE_FIXTURE_REQUIRED",
+      "detail": "Production quarantine currently has no disposable acceptance row; creating one solely to test restore would fabricate operational state."
+    },
+    {
+      "resource_key": "action:admin:AIAPI-08:ACT-SYSTEM-TEST",
+      "operation_ids": ["runSandboxTest"],
+      "path": "/v1/aiapi/sandbox-tests",
+      "effect": "DRY_RUN_TEST_EVIDENCE_WRITE",
+      "reason_code": "SANDBOX_TEST_EVIDENCE_CLEANUP_NOT_REGISTERED",
+      "detail": "No external request is sent, but the runtime persists provider_profile_tests evidence and no formal cleanup owner is registered."
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-EXECUTE-ROUTE",
+      "operation_ids": ["executeProviderRoute"],
+      "path": "/v1/aiapi/routes",
+      "effect": "ROUTE_DECISION_PERSISTENCE_AND_POTENTIAL_EXTERNAL_PROVIDER_CALL",
+      "reason_code": "EXTERNAL_PROVIDER_AND_ROUTE_CLEANUP_GATE_REQUIRED",
+      "detail": "Persists route preflight/decision/attempt evidence and may execute a real Provider route."
+    }
+  ],
+  "classification_summary": {
+    "PASS_READONLY": 5,
+    "BLOCKED_SAFE_ACCEPTANCE_CONTRACT": 20,
+    "UNCLASSIFIED": 0
+  },
+  "rule": "Only exact operation_registry authorization_resource_key/resource_key mappings qualify. API-only operations are not guessed onto formal CONTROL/ACTION resources. Mutation/external-effect adapters require an explicit fixture, expected readback, negative path and cleanup contract before execution. A blocked classification is not a PASS and does not satisfy effectful acceptance.",
   "production_execution": {
     "workflow": "ACPOS Production Formal Readonly Acceptance",
     "run_number": 12,
@@ -70,10 +237,7 @@
       "correlations": 5,
       "audit_rows": 10,
       "operation_match": "5/5",
-      "iam_search_outcomes": [
-        "ALLOWED",
-        "SUCCESS"
-      ]
+      "iam_search_outcomes": ["ALLOWED", "SUCCESS"]
     }
   }
 }
