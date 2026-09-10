@@ -1,0 +1,37 @@
+{
+  "document_id": "ACPOS_GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER",
+  "status": "PRODUCTION_DATA_BLOCKED_NO_FABRICATION",
+  "as_of": "2026-09-10T15:20:00+08:00",
+  "production_authority": {
+    "neon_project": "wild-wave-25661146",
+    "branch": "main",
+    "database": "neondb"
+  },
+  "verified_canonical_owners": [
+    "public.quality_criteria_versions",
+    "public.topics",
+    "public.topic_versions",
+    "public.topic_production_contracts",
+    "public.topic_blueprints",
+    "public.blueprint_versions",
+    "public.canonical_script_versions",
+    "public.child_locks"
+  ],
+  "production_counts": {
+    "quality_criteria_versions": 0,
+    "topics": 0,
+    "topic_versions": 0,
+    "topic_production_contracts": 0,
+    "topic_blueprints": 0,
+    "blueprint_versions": 0,
+    "canonical_script_versions": 0,
+    "child_locks": 0
+  },
+  "gate": {
+    "gate_number": 17,
+    "name": "CORE Runtime",
+    "positive_effectful_acceptance": false,
+    "reason_code": "REAL_CANONICAL_PRODUCTION_LINEAGE_ABSENT"
+  },
+  "rule": "Do not fabricate QualityCriteriaVersion, Topic, ProductionContract, Blueprint, CanonicalScriptVersion or ChildLock Production business rows solely to satisfy acceptance. Positive Gate 17 effectful acceptance resumes only from real canonical operator-created lineage."
+}
