@@ -31,9 +31,11 @@ async function runRow(sql:Sql,session:string,runId:string){
 }
 async function exactTask(sql:Sql,session:string,taskId:string){
   const t=first(await runRlsActorQuery(sql,session,sql`
-    SELECT task_id::text,status::text,production_goal_id::text,production_contract_id::text,goal_id::text,
-           topic_id::text,project_id::text,blueprint_version_id::text,btrim(output_contract_hash::text) AS output_contract_hash
-    FROM public.department_tasks WHERE task_id=${taskId}::uuid AND department::text='EDITING' LIMIT 1
+    SELECT t.task_id::text,t.status::text,t.production_goal_id::text,t.production_contract_id::text,t.goal_id::text,
+           t.topic_id::text,t.project_id::text,cl.blueprint_version_id::text,btrim(t.output_contract_hash::text) AS output_contract_hash
+    FROM public.department_tasks t
+    JOIN public.child_locks cl ON cl.child_lock_id=t.child_lock_id AND cl.status='LOCKED'
+    WHERE t.task_id=${taskId}::uuid AND t.department::text='EDITING' LIMIT 1
   `));if(!t)throw new NamedRuntimeError("EDIT_TASK_NOT_FOUND");return t;
 }
 async function saveVersion(request:EditVoiceRequest){
@@ -171,19 +173,18 @@ async function lockVersion(request:EditVoiceRequest){
   const {sql,actor_user_id,session_token_hash}=await context();const run=await runRow(sql,session_token_hash,runId),taskId=requireUuid(run.task_id,"EDIT_TASK_ID_REQUIRED");
   if(text(run.current_state)!=="FINALIZE"||text(run.status)!=="OUTPUT_READY"||text(run.timeline_version_id)!==versionId||text(run.current_output_version_id)!==outputId)throw new NamedRuntimeError("EDIT_OUTPUT_READY_EXACT_VERSION_REQUIRED");
   const exact=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT v.editing_timeline_id::text,v.source_scorecard_id::text,v.version_content_hash::text,o.output_version_id::text,btrim(o.artifact_checksum::text) AS artifact_checksum,
+    SELECT v.editing_timeline_id::text,v.source_scorecard_id::text,v.version_content_hash::text,o.output_version_id::text,btrim(o.artifact_checksum::text) AS artifact_checksum,btrim(o.output_contract_hash::text) AS output_contract_hash,
            j.edit_render_job_id::text,j.manifest
     FROM public.editing_timelines v JOIN public.edit_render_jobs j ON j.input_edit_version_id=v.editing_timeline_id AND j.output_version_id=${outputId}::uuid AND j.status='COMPLETED'
     JOIN public.task_outputs o ON o.output_version_id=j.output_version_id AND o.task_id=v.task_id AND o.status='ACCEPTED' AND o.immutable_at IS NOT NULL
     WHERE v.editing_timeline_id=${versionId}::uuid AND v.task_id=${taskId}::uuid AND v.status='APPROVED' AND v.saved_at IS NOT NULL LIMIT 1
   `));if(!exact||!obj(exact.manifest))throw new NamedRuntimeError("EDIT_VERSION_OUTPUT_MANIFEST_BINDING_REQUIRED");
-  const existing=first(await runRlsActorQuery(sql,session_token_hash,sql`SELECT edit_version_lock_id::text FROM public.edit_version_locks WHERE edit_version_id=${versionId}::uuid LIMIT 1`));
-  if(existing)return{locked_version_ref:text(existing.edit_version_lock_id),edit_version_id:versionId,output_version_id:outputId,already_locked:true};
+  const existing=first(await runRlsActorQuery(sql,session_token_hash,sql`SELECT production_output_version_lock_id::text AS lock_id FROM public.production_output_version_locks WHERE edit_version_id=${versionId}::uuid AND output_version_id=${outputId}::uuid AND task_id=${taskId}::uuid AND department='EDITING' AND status='LOCKED' LIMIT 1`));
+  if(existing)return{locked_version_ref:text(existing.lock_id),edit_version_id:versionId,output_version_id:outputId,already_locked:true};
   const lockId=randomUUID();
   await runRlsActorQuery(sql,session_token_hash,sql`
-    INSERT INTO public.edit_version_locks(edit_version_lock_id,edit_version_id,output_version_id,task_id,render_job_id,scorecard_id,artifact_checksum,manifest_hash,locked_by,reason,status)
-    VALUES(${lockId}::uuid,${versionId}::uuid,${outputId}::uuid,${taskId}::uuid,${text(exact.edit_render_job_id)}::uuid,${text(exact.source_scorecard_id)}::uuid,
-           ${text(exact.artifact_checksum)}::char(64),${sha(JSON.stringify(exact.manifest))}::char(64),${actor_user_id}::uuid,${reason},'LOCKED')
+    INSERT INTO public.production_output_version_locks(production_output_version_lock_id,output_version_id,task_id,department,scorecard_id,artifact_checksum,output_contract_hash,manifest_hash,locked_by,status,edit_version_id,render_job_id,reason)
+    VALUES(${lockId}::uuid,${outputId}::uuid,${taskId}::uuid,'EDITING',${text(exact.source_scorecard_id)}::uuid,${text(exact.artifact_checksum)}::char(64),${text(exact.output_contract_hash)}::char(64),${sha(JSON.stringify(exact.manifest))}::char(64),${actor_user_id}::uuid,'LOCKED',${versionId}::uuid,${text(exact.edit_render_job_id)}::uuid,${reason})
   `);
   await runRlsActorQuery(sql,session_token_hash,sql`UPDATE acpos_runtime.editing_runtime_runs_runtime SET status='LOCKED',updated_at=now() WHERE id=${runId} RETURNING id`);
   return{locked_version_ref:lockId,edit_version_id:versionId,output_version_id:outputId,already_locked:false};

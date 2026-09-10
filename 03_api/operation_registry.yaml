@@ -439,6 +439,168 @@ operation_registry:
     exact_accepted_output_required: true
     minimum_score: 95
 
+  - operation_id: createEditingRuntimeRun
+    path: /v1/editing-runtime-runs
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:createEditingRuntimeRun
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_CONTROL_API
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+  - operation_id: getEditingRuntimeRun
+    path: /v1/editing-runtime-runs/{runId}
+    methods: [GET]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:getEditingRuntimeRun
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_CONTROL_API
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+    external_effect: NONE
+  - operation_id: completeAssembly
+    path: /v1/editing-runtime-runs/{runId}/assembly
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:completeAssembly
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_CONTROL_API
+    persistence_owner: [acpos_runtime.editing_runtime_runs_runtime, acpos_runtime.editing_runtime_steps_runtime]
+  - operation_id: transitionEditingToVoiceStage
+    path: /v1/editing-runtime-runs/{runId}/voice-handoff
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:transitionEditingToVoiceStage
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_CONTROL_API
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+  - operation_id: startVoiceRuntime
+    path: /v1/voice-runtime-runs/{runId}/start
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:startVoiceRuntime
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+    external_effect: GOVERNED_PROVIDER_EXECUTION
+    external_gate: EXACT_PROVIDER_OPERATION_CAPABILITY_MAPPING_REQUIRED
+  - operation_id: getVoiceRuntimeRun
+    path: /v1/voice-runtime-runs/{runId}
+    methods: [GET]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:getVoiceRuntimeRun
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: acpos_runtime.editing_runtime_runs_runtime
+    external_effect: NONE
+  - operation_id: completeAudioMix
+    path: /v1/voice-runtime-runs/{runId}/audio-mix
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:completeAudioMix
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: [acpos_runtime.editing_runtime_runs_runtime, acpos_runtime.editing_runtime_steps_runtime]
+  - operation_id: completeLipSync
+    path: /v1/voice-runtime-runs/{runId}/lip-sync
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:completeLipSync
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: [acpos_runtime.editing_runtime_runs_runtime, acpos_runtime.editing_runtime_steps_runtime]
+  - operation_id: completeSubtitle
+    path: /v1/voice-runtime-runs/{runId}/subtitle
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:completeSubtitle
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: [acpos_runtime.editing_runtime_runs_runtime, acpos_runtime.editing_runtime_steps_runtime]
+  - operation_id: handoffVoiceToQA
+    path: /v1/voice-runtime-runs/{runId}/qa-handoff
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:handoffVoiceToQA
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_API
+    persistence_owner: public.handoffs
+    external_effect: NONE
+
+  - operation_id: saveEditVersion
+    path: /v1/editing-runtime-runs/{runId}/versions
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:saveEditVersion
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: public.editing_timelines
+  - operation_id: startEditRender
+    path: /v1/editing-runtime-runs/{runId}/renders
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:startEditRender
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: public.edit_render_jobs
+    external_effect: GOVERNED_PROVIDER_ROUTE_VIA_AIAPI
+  - operation_id: cancelEditRender
+    path: /v1/editing-runtime-runs/{runId}/renders/{renderJobId}/cancel
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:cancelEditRender
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: public.edit_render_jobs
+  - operation_id: saveEditOutputVersion
+    path: /v1/editing-runtime-runs/{runId}/renders/{renderJobId}/output
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:saveEditOutputVersion
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: [public.edit_render_jobs, public.task_outputs]
+  - operation_id: lockEditVersion
+    path: /v1/editing-runtime-runs/{runId}/versions/{editVersionId}/lock
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:lockEditVersion
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: public.production_output_version_locks
+  - operation_id: restoreEditVersionAsDraft
+    path: /v1/editing-runtime-runs/{runId}/versions/{editVersionId}/restore
+    methods: [POST]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:restoreEditVersionAsDraft
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: public.editing_timelines
+  - operation_id: getEditOutputDownload
+    path: /v1/editing-runtime-runs/{runId}/outputs/{outputVersionId}/download
+    methods: [GET]
+    runtime_owner: EDIT_VOICE_RUNTIME
+    api_resource_key: api:getEditOutputDownload
+    authorization_action: EXECUTE
+    source_pages: [EDIT-01]
+    authorization_chain: PAGE_ACTION_CONTROL_API
+    persistence_owner: [public.edit_render_jobs, public.task_outputs]
+    external_effect: NONE
+
   unregistered_catalog_apis: REMAIN_UNREGISTERED
   aiapi_effectful_mapping_status: MATERIALIZED_CURRENT_EXACT_CONTROL_AUTHORIZATION
   iam_effectful_mapping_status: MATERIALIZED_CURRENT_EXACT_ACTION

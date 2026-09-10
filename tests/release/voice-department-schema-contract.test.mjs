@@ -29,3 +29,15 @@ test("0049 manifest seals 0048 and 0049 Production evidence",async()=>{
   assert.match(block48,/production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10/);
   assert.match(block49,/production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10/);
 });
+
+
+test("VOICE Provider execution stays fail-closed until exact Current mapping exists",async()=>{
+  const authority=await read("authority/runtime/ACPOS_EDIT_VOICE_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml");
+  const registry=await read("03_api/operation_registry.yaml");
+  const runtime=await read("src/server/edit/productionEditVoiceRuntime.ts");
+  assert.match(authority,/startVoiceRuntime[\s\S]*EXACT_PROVIDER_OPERATION_CAPABILITY_MAPPING_REQUIRED/);
+  assert.match(registry,/operation_id:\s*startVoiceRuntime\b[\s\S]*?external_gate:\s*EXACT_PROVIDER_OPERATION_CAPABILITY_MAPPING_REQUIRED/);
+  assert.match(runtime,/case"startVoiceRuntime":return startVoice\(request\)/);
+  assert.match(runtime,/EDIT_VOICE_PROVIDER_OPERATION_NOT_MATERIALIZED/);
+  assert.doesNotMatch(runtime,/startVoice[\s\S]{0,1200}executeProviderRoute/);
+});

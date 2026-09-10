@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
 import { ensureProductionNeonRuntime,getProductionNeonSql } from "@/server/database/neonRuntime";
 import { runRlsActorQuery } from "@/server/database/rlsRuntime";
@@ -187,16 +187,17 @@ async function startVoice(request:EditVoiceRequest){
 async function handoffToQa(request:EditVoiceRequest){
   const runId=requireUuid(request.path_params?.runId,"EDIT_VOICE_RUN_ID_REQUIRED"),payload=rec(request.payload);
   const taskId=requireUuid(payload.task_id,"EDIT_TASK_ID_REQUIRED"),outputId=requireUuid(payload.output_version_id,"EDIT_OUTPUT_VERSION_ID_REQUIRED");
-  if(!text(payload.saved_edit_version_id)||!text(payload.locked_version_ref))throw new NamedRuntimeError("EDIT_LOCKED_OUTPUT_REQUIRED");
+  const savedEditVersionId=requireUuid(payload.saved_edit_version_id,"EDIT_SAVED_VERSION_ID_REQUIRED");
+  const lockedVersionRef=requireUuid(payload.locked_version_ref,"EDIT_LOCKED_VERSION_REF_REQUIRED");
   const {sql,session_token_hash}=await context();const run=await exactRun(sql,session_token_hash,runId);
   if(text(run.task_id)!==taskId||text(run.current_state)!=="FINALIZE"||text(run.status)!=="LOCKED")throw new NamedRuntimeError("EDIT_QA_HANDOFF_STATE_NOT_READY");
   const lock=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT l.edit_version_lock_id::text,l.edit_version_id::text,l.output_version_id::text
-    FROM public.edit_version_locks l
-    WHERE l.edit_version_lock_id=${text(payload.locked_version_ref)}::uuid
-      AND l.edit_version_id=${text(payload.saved_edit_version_id)}::uuid
+    SELECT l.production_output_version_lock_id::text AS lock_id,l.edit_version_id::text,l.output_version_id::text
+    FROM public.production_output_version_locks l
+    WHERE l.production_output_version_lock_id=${lockedVersionRef}::uuid
+      AND l.edit_version_id=${savedEditVersionId}::uuid
       AND l.output_version_id=${outputId}::uuid
-      AND l.task_id=${taskId}::uuid AND l.status='LOCKED'
+      AND l.task_id=${taskId}::uuid AND l.department='EDITING' AND l.status='LOCKED'
     LIMIT 1
   `));
   if(!lock)throw new NamedRuntimeError("EDIT_QA_HANDOFF_EXACT_VERSION_LOCK_REQUIRED");
@@ -263,4 +264,48 @@ export async function executeProductionEditVoiceOperation(request:EditVoiceReque
       return executeProductionEditFinalizeOperation(request);
   }
 }
-export async function auditProductionEditVoiceOperation():Promise<void>{return;}
+export async function auditProductionEditVoiceOperation(entry:EditVoiceRequest&{outcome:"ALLOWED"|"DENIED"|"SUCCESS"|"ERROR";reason_code?:string}):Promise<void>{
+  const {sql,actor_user_id,session_token_hash}=await context();
+  const payload=rec(entry.payload);
+  const correlation=uuid(entry.correlation_id)??randomUUID();
+  const runId=uuid(entry.path_params?.runId);
+  let taskId=uuid(payload.task_id);
+  if(!taskId&&runId){
+    const run=first(await runRlsActorQuery(sql,session_token_hash,sql`
+      SELECT task_id FROM acpos_runtime.editing_runtime_runs_runtime WHERE id=${runId} LIMIT 1
+    `));
+    taskId=uuid(run?.task_id);
+  }
+  let workspaceId:string|null=null;
+  if(taskId){
+    const project=first(await runRlsActorQuery(sql,session_token_hash,sql`
+      SELECT p.workspace_id::text
+      FROM public.department_tasks t
+      JOIN public.projects p ON p.project_id=t.project_id
+      WHERE t.task_id=${taskId}::uuid AND t.department::text='EDITING'
+      LIMIT 1
+    `));
+    workspaceId=uuid(project?.workspace_id);
+  }
+  if((entry.outcome==="ALLOWED"||entry.outcome==="SUCCESS")&&!workspaceId){
+    throw new NamedRuntimeError("EDIT_AUDIT_WORKSPACE_REQUIRED");
+  }
+  const entityId=runId??taskId??correlation;
+  const reason=`${entry.outcome}:${entry.reason_code??entry.outcome}`;
+  const payloadHash=createHash("sha256").update(JSON.stringify({
+    operation_id:entry.operation_id,
+    action_uid:entry.action_uid??null,
+    outcome:entry.outcome,
+    reason_code:entry.reason_code??null,
+    task_id:taskId,
+    run_id:runId
+  })).digest("hex");
+  await runRlsActorQuery(sql,session_token_hash,sql`
+    INSERT INTO public.audit_events(
+      action,entity_type,entity_id,actor_id,actor_type,workspace_id,reason,correlation_id,payload_hash
+    ) VALUES(
+      ${entry.operation_id},'workspace:EDIT-01',${entityId}::uuid,${actor_user_id}::uuid,'USER',
+      ${workspaceId}::uuid,${reason},${correlation}::uuid,${payloadHash}::char(64)
+    )
+  `);
+}
