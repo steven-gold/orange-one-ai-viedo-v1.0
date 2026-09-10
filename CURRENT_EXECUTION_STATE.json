@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T15:55:00+08:00",
+  "as_of": "2026-09-10T16:08:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -527,8 +527,8 @@
       },
       "dispositions": {
         "PASS": 5,
-        "BLOCKED": 48,
-        "NOT_EXECUTED": 1428
+        "BLOCKED": 68,
+        "NOT_EXECUTED": 1408
       },
       "aggregate_dom": {
         "interactive": 558,
@@ -544,17 +544,28 @@
         "neon_audit_correlations": 5,
         "neon_audit_rows": 10
       },
-      "physical_counts_unchanged": {
-        "PASS": 5,
-        "BLOCKED": 48,
-        "NOT_EXECUTED": 1428
-      },
       "supplemental_direct_classification": {
         "PASS_READONLY": 5,
         "BLOCKED_SAFE_ACCEPTANCE_CONTRACT": 20,
         "UNCLASSIFIED": 0,
         "evidence": "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json",
         "rule": "Supplemental direct classification is enforced by Release Gate but is not silently folded into physical ledger counts."
+      },
+      "physical_direct_blocker_sync": {
+        "status": "SYNCED",
+        "counts_before": {
+          "PASS": 5,
+          "BLOCKED": 48,
+          "NOT_EXECUTED": 1428
+        },
+        "counts_after": {
+          "PASS": 5,
+          "BLOCKED": 68,
+          "NOT_EXECUTED": 1408
+        },
+        "newly_blocked": 20,
+        "already_blocked": 0,
+        "evidence": "docs/construction/evidence/GATE25_DIRECT_BLOCKER_LEDGER_SYNC_2026-09-10.json"
       }
     },
     "gate25_direct_http_adapters": {
@@ -916,7 +927,7 @@
       "name": "全頁全按鈕 Acceptance",
       "percent": 50,
       "status": "PARTIAL",
-      "detail": "Formal denominator remains 1481. Physical ledger remains PASS=5/BLOCKED=48/NOT_EXECUTED=1428. Exact direct subset is now fully classified and Release-enforced as 5 PASS_READONLY + 20 BLOCKED_SAFE_ACCEPTANCE_CONTRACT + 0 unclassified; supplemental blockers are not silently folded into physical ledger counts."
+      "detail": "Formal denominator 1481. Physical ledger after direct-blocker sync: PASS=5, BLOCKED=68, NOT_EXECUTED=1408. Exact direct subset: 5 PASS_READONLY + 20 evidence-backed BLOCKED + 0 unclassified. Exhaustive effectful acceptance remains open."
     }
   },
   "gate_summary": {
@@ -1192,7 +1203,7 @@
         "order": 8,
         "item": "Gate 25 remainder",
         "status": "IN_PROGRESS",
-        "detail": "1481 exhaustive physical disposition/effectful acceptance remains open; direct 25 subset is classified 5 PASS + 20 blocked."
+        "detail": "1481 exhaustive physical disposition/effectful acceptance remains open. Physical ledger now PASS=5, BLOCKED=68, NOT_EXECUTED=1408; direct 25 subset is 5 PASS + 20 evidence-backed BLOCKED."
       }
     ],
     "executed_blocked": [
