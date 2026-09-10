@@ -47,11 +47,15 @@ let cookie = "";
 try {
   const health = await fetch(`${base}/health`, { cache: "no-store", headers: protectionHeaders() });
   const healthBody = await parseJson(health, "HEALTH");
-  assert(health.status === 200, `HEALTH_HTTP_${health.status}`);
+  assert(health.status === 200, `HEALTH_HTTP_${health.status}_${healthBody?.reason_code ?? "UNKNOWN"}`);
   assert(healthBody?.environment === "production", "HEALTH_ENVIRONMENT_NOT_PRODUCTION");
   if (expectedReleaseSha) {
     assert(healthBody?.release_sha === expectedReleaseSha, `HEALTH_RELEASE_SHA_MISMATCH_${healthBody?.release_sha ?? "UNRESOLVED"}`);
   }
+
+  const readiness = await fetch(`${base}/ready`, { cache: "no-store", headers: protectionHeaders() });
+  const readinessBody = await parseJson(readiness, "READINESS");
+  assert(readiness.status === 200, `READINESS_HTTP_${readiness.status}_${readinessBody?.reason_code ?? readinessBody?.reason ?? "UNKNOWN"}`);
 
   const login = await fetch(`${base}/v1/identity/session`, {
     method: "POST",
@@ -65,7 +69,10 @@ try {
     body: JSON.stringify({ email, password }),
   });
   const loginBody = await parseJson(login, "LOGIN");
-  assert(login.status === 200 && loginBody?.ok === true && loginBody?.logged_in === true, `LOGIN_HTTP_${login.status}`);
+  assert(
+    login.status === 200 && loginBody?.ok === true && loginBody?.logged_in === true,
+    `LOGIN_HTTP_${login.status}_${loginBody?.reason_code ?? loginBody?.reason ?? "UNKNOWN"}`,
+  );
   cookie = (login.headers.get("set-cookie") ?? "").split(";")[0].trim();
   assert(cookie.startsWith("acpos_session="), "LOGIN_SESSION_COOKIE_MISSING");
 
