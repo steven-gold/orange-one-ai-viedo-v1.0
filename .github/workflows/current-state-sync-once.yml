@@ -1,0 +1,120 @@
+name: ACPOS One Shot Current State Sync
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - ".github/workflows/current-state-sync-once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  sync-current-state:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - name: Patch Current State in place
+        env:
+          SOURCE_SHA: 2c4cd92e1d303624dc1eac897280749472220331
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs');
+          const path='CURRENT_EXECUTION_STATE.json';
+          const s=JSON.parse(fs.readFileSync(path,'utf8'));
+          s.as_of='2026-09-10T15:55:00+08:00';
+          s.git=s.git||{};
+          s.git.new_sha=process.env.SOURCE_SHA;
+          s.git.latest_new_release_gate={run_number:1113,run_id:34449110903,head_sha:process.env.SOURCE_SHA,status:'SUCCESS'};
+
+          s.construction=s.construction||{};
+          const g25=s.construction.gate25_direct_http_adapters||{};
+          Object.assign(g25,{
+            status:'DIRECT_25_CLASSIFIED_5_PASS_20_BLOCKED_SAFE_ACCEPTANCE_CONTRACT',
+            authority:'03_api/operation_registry.yaml',
+            exact_direct_formal_resource_mappings:25,
+            executable_readonly_resources:5,
+            blocked_safe_acceptance_contract:20,
+            unclassified_direct_resources:0,
+            mapped_pending_fixture_or_cleanup:20,
+            evidence:'docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json',
+            release_validator:'scripts/release-formal-acceptance-ledger.mjs',
+            release_test:'tests/release/formal-readonly-acceptance-adapters.test.mjs',
+            validation_release_gate:{run_number:1105,status:'SUCCESS'},
+            rule:'The 25 exact direct formal mappings are fully classified as 5 Production read-only PASS and 20 BLOCKED_SAFE_ACCEPTANCE_CONTRACT. The supplemental 20 blockers do not change the physical 1481 ledger counts until each ledger row receives its own evidence-backed disposition update; no blocker may be promoted to PASS.'
+          });
+          s.construction.gate25_direct_http_adapters=g25;
+          const ledger=s.construction.gate25_formal_acceptance_ledger||{};
+          ledger.physical_counts_unchanged={PASS:5,BLOCKED:48,NOT_EXECUTED:1428};
+          ledger.supplemental_direct_classification={PASS_READONLY:5,BLOCKED_SAFE_ACCEPTANCE_CONTRACT:20,UNCLASSIFIED:0,evidence:'docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json',rule:'Supplemental direct classification is enforced by Release Gate but is not silently folded into physical ledger counts.'};
+          s.construction.gate25_formal_acceptance_ledger=ledger;
+
+          s.construction.gate17_current_blocker={
+            status:'EXECUTED_PRODUCTION_DATA_BLOCKED_NO_FABRICATION',
+            evidence:'docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json',
+            production_counts:{quality_criteria_versions:0,topics:0,topic_versions:0,topic_production_contracts:0,topic_blueprints:0,blueprint_versions:0,canonical_script_versions:0,child_locks:0},
+            regression_test:'tests/release/production-runtime-blocker-evidence.test.mjs',
+            validation_release_gate:{run_number:1113,run_id:34449110903,status:'SUCCESS'}
+          };
+          s.construction.gate20_current_blocker={
+            status:'EXECUTED_PRODUCTION_BLOCKED_REAL_LINEAGE_AND_PROVIDER_AUTHORITY_ABSENT',
+            evidence:'docs/construction/evidence/GATE20_EDIT_VOICE_PRODUCTION_BLOCKER_2026-09-10.json',
+            production_counts:{department_tasks_editing:0,department_tasks_qa:0,task_outputs:0,editing_timelines:0,edit_render_jobs:0,production_output_version_locks:0,editing_runtime_runs:0,voice_runtime_profiles:0,approved_provider_capabilities:4,approved_route_policies:0},
+            provider_contract_observation:{input_properties:['canonical_instruction'],output_properties:['text'],edit_render_contract_observed:false,voice_contract_observed:false},
+            regression_test:'tests/release/production-runtime-blocker-evidence.test.mjs',
+            validation_release_gate:{run_number:1113,run_id:34449110903,status:'SUCCESS'}
+          };
+          s.construction.workpackage_current_authority_blocker={
+            status:'EXECUTED_AUTHORITY_BLOCKED',
+            evidence:'docs/construction/evidence/WORKPACKAGE_CURRENT_AUTHORITY_BLOCKER_2026-09-10.json',
+            operation_registry_compileWorkPackage_registered:false,
+            permission_resource:{resource_key:'api:compileWorkPackage',allowed_actions:['EXECUTE'],active:true,risk_tier:'STANDARD'},
+            production_pg_proc_work_package_functions:0,
+            regression_test:'tests/release/workpackage-compiler-blockers.test.mjs',
+            validation_release_gate:{run_number:1113,run_id:34449110903,status:'SUCCESS'}
+          };
+          s.construction.compiler_runtime_chain_current_blocker={
+            status:'EXECUTED_PRODUCTION_DATA_AND_AUTHORITY_BLOCKED_NO_FABRICATION',
+            evidence:'docs/construction/evidence/COMPILER_RUNTIME_CHAIN_PRODUCTION_BLOCKER_2026-09-10.json',
+            production_counts:{work_packages:0,dag_edges:0,department_script_views:0,task_input_manifests:0,instruction_packages:0,task_templates:0,topic_production_goals:0,output_contracts:0,rights_profiles:0,script_projection_rules:0},
+            regression_test:'tests/release/workpackage-compiler-blockers.test.mjs',
+            validation_release_gate:{run_number:1113,run_id:34449110903,status:'SUCCESS'}
+          };
+
+          if(s.neon?.production_formal_dependency_counts){
+            delete s.neon.production_formal_dependency_counts.production_goals;
+            s.neon.production_formal_dependency_counts.topic_production_goals=0;
+          }
+          if(s.gate_scores?.['17']) s.gate_scores['17'].detail='Production lineage rechecked: QualityCriteriaVersion/Topic/TopicVersion/TopicProductionContract/TopicBlueprint/BlueprintVersion/CanonicalScriptVersion/ChildLock are all 0. Positive effectful acceptance is BLOCKED; fabricated Production rows are forbidden. Evidence: GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json.';
+          if(s.gate_scores?.['20']) s.gate_scores['20'].detail='Production lineage rechecked: EDITING/QA tasks, outputs, timelines, render jobs, output locks, editing runtime runs and voice profiles are 0; approved route policies=0. Four approved provider capabilities expose canonical_instruction -> text only, not EDIT_RENDER/VOICE contracts. Evidence: GATE20_EDIT_VOICE_PRODUCTION_BLOCKER_2026-09-10.json.';
+          if(s.gate_scores?.['25']) s.gate_scores['25'].detail='Formal denominator remains 1481. Physical ledger remains PASS=5/BLOCKED=48/NOT_EXECUTED=1428. Exact direct subset is now fully classified and Release-enforced as 5 PASS_READONLY + 20 BLOCKED_SAFE_ACCEPTANCE_CONTRACT + 0 unclassified; supplemental blockers are not silently folded into physical ledger counts.';
+
+          s.current_execution_queue={
+            status:'CURRENT',
+            incomplete:[
+              {order:8,item:'Gate 25 remainder',status:'IN_PROGRESS',detail:'1481 exhaustive physical disposition/effectful acceptance remains open; direct 25 subset is classified 5 PASS + 20 blocked.'}
+            ],
+            executed_blocked:[
+              {order:7,item:'MFA / risk / organization owner',status:'AUTHORITY_BLOCKED',evidence:'docs/construction/evidence/IAM_SECURITY_OWNER_GAP_2026-09-10.json'},
+              {order:9,item:'Gate 17 CORE Runtime positive effectful acceptance',status:'PRODUCTION_DATA_BLOCKED',evidence:'docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json'},
+              {order:10,item:'Gate 20 EDIT + VOICE positive effectful acceptance',status:'PRODUCTION_DATA_AND_PROVIDER_AUTHORITY_BLOCKED',evidence:'docs/construction/evidence/GATE20_EDIT_VOICE_PRODUCTION_BLOCKER_2026-09-10.json'},
+              {order:11,item:'WorkPackage compiler',status:'CURRENT_AUTHORITY_BLOCKED',evidence:'docs/construction/evidence/WORKPACKAGE_CURRENT_AUTHORITY_BLOCKER_2026-09-10.json'},
+              {order:12,item:'compiler/runtime chain',status:'UPSTREAM_AUTHORITY_AND_PRODUCTION_DATA_BLOCKED',evidence:'docs/construction/evidence/COMPILER_RUNTIME_CHAIN_PRODUCTION_BLOCKER_2026-09-10.json'}
+            ],
+            completed:[{order:6,item:'IAM projection canonical owner closure',status:'RELEASE_GATE_PASS',release_gate:1102}],
+            rule:'Only Gate 25 remainder is presently executable without inventing missing authority or Production business lineage. Blocked items remain reported but must not be force-completed.'
+          };
+          s.next_executable_item='Continue Gate 25 remainder using exact per-resource evidence. Do not implement WorkPackage compiler semantics or fabricate CORE/EDIT/VOICE/compiler Production business lineage while their recorded blockers remain true.';
+          fs.writeFileSync(path,JSON.stringify(s,null,2)+'\n');
+          NODE
+      - name: Commit patched state and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/current-state-sync-once.yml
+          git add CURRENT_EXECUTION_STATE.json
+          git commit -m "chore(state): sync Gate25 and runtime blockers"
+          git push origin HEAD:new
