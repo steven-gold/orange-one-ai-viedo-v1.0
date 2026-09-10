@@ -1,0 +1,155 @@
+name: ACPOS Gate25 Production Metadata Truth Sync Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/gate25-production-metadata-truth-sync-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  synchronize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Synchronize verified Production metadata only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from datetime import datetime, timezone, timedelta
+
+          PROD_SHA='526316501c86fe54f02603cdb47da5ad51a005dc'
+          ledger_path=Path('docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json')
+          inventory_path=Path('docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json')
+          manifest_path=Path('database/migrations/migration_checksum_manifest.yaml')
+          evidence_path=Path('docs/construction/evidence/PRODUCTION_GATE25_METADATA_TRUTH_SYNC_2026-09-11.json')
+
+          ledger=json.loads(ledger_path.read_text())
+          inventory=json.loads(inventory_path.read_text())
+          manifest=manifest_path.read_text()
+
+          expected_counts={'PASS':51,'BLOCKED':159,'NOT_EXECUTED':1271}
+          expected_denominator={'controls':1155,'actions':326,'total':1481}
+          assert ledger['counts']==expected_counts,ledger['counts']
+          assert ledger['denominator']==expected_denominator,ledger['denominator']
+          assert inventory['denominator']==expected_denominator,inventory['denominator']
+          assert len(ledger['entries'])==1481,len(ledger['entries'])
+          assert len(inventory['resources'])==1481,len(inventory['resources'])
+          assert len({e['resource_key'] for e in ledger['entries']})==1481
+          assert len({e['resource_key'] for e in inventory['resources']})==1481
+          inventory_type_counts={'CONTROL':0,'ACTION':0}
+          for resource in inventory['resources']:
+            inventory_type_counts[resource['resource_type']]+=1
+          assert inventory_type_counts=={'CONTROL':1155,'ACTION':326},inventory_type_counts
+
+          now=datetime.now(timezone(timedelta(hours=8))).isoformat()
+          ledger['captured_at']=now
+          ledger['production_release_sha']=PROD_SHA
+          ledger['aggregate_dom_evidence'].update({
+            'post_deploy_run':1561,
+            'post_deploy_run_id':34501027032,
+            'pages':18,
+            'interactive':560,
+            'governed':560,
+            'enabled':342,
+            'disabled':218,
+            'per_resource_pass_propagation':False,
+          })
+          inventory['captured_at']=now
+          inventory['production_release_sha']=PROD_SHA
+          inventory['neon']['migration_count']=53
+
+          old="""- migration_id: 0053_dev_discovery_permission_closure
+  payload_sha256: e410c52e8a65e31f86554b591d1e9d2d895127d47e30a9402a3558a6eb3f9149
+  approval_ref: CR-DEV-0053-PENDING-PRODUCTION-APPLY
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: PENDING_PRODUCTION_APPLY"""
+          new="""- migration_id: 0053_dev_discovery_permission_closure
+  payload_sha256: e410c52e8a65e31f86554b591d1e9d2d895127d47e30a9402a3558a6eb3f9149
+  approval_ref: CR-DEV-0053-PENDING-PRODUCTION-APPLY
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-11"""
+          assert manifest.count(old)==1,'0053 pending block not found exactly once'
+          manifest=manifest.replace(old,new,1)
+
+          evidence={
+            'document_id':'ACPOS_PRODUCTION_GATE25_METADATA_TRUTH_SYNC',
+            'status':'VERIFIED_SYNC',
+            'recorded_at':now,
+            'production_release_sha':PROD_SHA,
+            'post_deploy':{
+              'run_number':1561,
+              'run_id':34501027032,
+              'ready_http':200,
+              'projections':18,
+              'auth_http':'PASS',
+              'browser_cases':54,
+              'visible_pages':18,
+              'dom':{'pages':18,'interactive':560,'governed':560,'enabled':342,'disabled':218}
+            },
+            'production_neon':{
+              'project':'wild-wave-25661146','branch':'main','database':'neondb','migration_count':53,
+              'migration_0053_checksum':'e410c52e8a65e31f86554b591d1e9d2d895127d47e30a9402a3558a6eb3f9149'
+            },
+            'formal_denominator':expected_denominator,
+            'gate25_counts':expected_counts,
+            'mutation_scope':'METADATA_ONLY',
+            'entries_changed':0,
+            'formal_resources_changed':0,
+            'rule':'Synchronizes already-verified Production deployment, migration, and aggregate DOM metadata only. It must not promote any per-resource disposition or alter the 1481-resource denominator.'
+          }
+          ledger_path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
+          inventory_path.write_text(json.dumps(inventory,ensure_ascii=False,indent=2)+'\n')
+          manifest_path.write_text(manifest)
+          evidence_path.write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps(evidence,ensure_ascii=False))
+          PY
+      - name: Validate metadata synchronization did not alter Gate25 disposition
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/release-formal-acceptance-ledger.mjs
+          node tests/release/dev-discovery-permission-migration.test.mjs
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          ledger=json.loads(Path('docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json').read_text())
+          inventory=json.loads(Path('docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json').read_text())
+          assert ledger['counts']=={'PASS':51,'BLOCKED':159,'NOT_EXECUTED':1271}
+          assert ledger['production_release_sha']=='526316501c86fe54f02603cdb47da5ad51a005dc'
+          assert ledger['aggregate_dom_evidence']['post_deploy_run']==1561
+          assert ledger['aggregate_dom_evidence']['post_deploy_run_id']==34501027032
+          assert ledger['aggregate_dom_evidence']['governed']==560
+          assert inventory['production_release_sha']=='526316501c86fe54f02603cdb47da5ad51a005dc'
+          assert inventory['neon']['migration_count']==53
+          assert inventory['denominator']=={'controls':1155,'actions':326,'total':1481}
+          text=Path('database/migrations/migration_checksum_manifest.yaml').read_text()
+          assert 'production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-11' in text
+          PY
+      - name: Commit Production metadata truth synchronization
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add database/migrations/migration_checksum_manifest.yaml
+          git add docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json
+          git add docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json
+          git add docs/construction/evidence/PRODUCTION_GATE25_METADATA_TRUTH_SYNC_2026-09-11.json
+          git commit -m 'evidence(production): synchronize Gate25 metadata truth'
+          git push origin HEAD:new
