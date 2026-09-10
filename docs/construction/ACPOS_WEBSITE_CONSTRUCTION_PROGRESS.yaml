@@ -1,5 +1,5 @@
 document_id: ACPOS_WEBSITE_CONSTRUCTION_PROGRESS
-version: 3.0
+version: 3.1
 status: CURRENT_ONLY
 as_of: 2026-09-11
 
@@ -9,6 +9,20 @@ authority:
   formal_gate25_ledger: docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json
   historical_source_trace_executable: false
   rule: Only Current Authority and fresh Production evidence may determine current construction state. Superseded R9 working copies, pre-repair snapshots, and historical deployment assumptions are non-executable.
+
+navigation_topology:
+  current_pages_total: 18
+  page_partition: 9 workspace-facing + 9 admin
+  global_front_l1: 8
+  global_admin_l1: 8
+  current_non_global_l1_pages:
+    - workspace:INFO-01
+    - admin:KB-01
+  history:
+    post_r9_9x9_construction_commit: 357fdb5601ba3353476594e850b66229d3c333a0
+    user_8x8_shell_restore_commit: 2848e4dc949ffe3ece967dbb59c530aaa5861a57
+    user_8x8_navigation_authority_commit: 613991373b01f7f89e77ea45a2f18657e4a63cad
+  rule: 18 Current pages and 16 Global L1 menu items are different counts. The Aug-30 9x9 navigation was post-R9 construction, then explicitly superseded by the Sep-07 user-confirmed 8x8 Global L1 topology. INFO-01 and KB-01 remain Current pages.
 
 production:
   url: https://orange-one-acpos-test.vercel.app
@@ -55,7 +69,7 @@ work_package_compiler:
   service_capabilities:
     - task_orchestrator:dag.materialize_locked_blueprint:ACTIVE
     - instruction_compiler:service.script_view.compile:ACTIVE
-  remaining: Materialize a Current operation/runtime owner with real Production lineage without restoring legacy compiler authority or fabricating business rows.
+  remaining: Materialize a Current operation/runtime owner with real Production lineage without restoring superseded compiler authority or fabricating business rows.
 
 gate20_edit_voice:
   status: PARTIAL
@@ -67,6 +81,8 @@ cleanup:
   stale_r9_monitor_specs_removed: true
   stale_r9_monitor_specs_cleanup_release_run_id: 34515862998
   stale_r9_monitor_specs_cleanup_release_conclusion: SUCCESS
+  page_authority_cleanup_classification_correction: Aug-30 9x9 was post-R9 construction, not legacy R9; its L1 topology was superseded by user-confirmed Sep-07 8x8 authority. Page deletion was not part of the cleanup.
+  navigation_route_residual_fix: SOURCE_PATCHED_RELEASE_PENDING
   temporary_workflows_remaining: 0
   preserved_current_collaboration_memory: .monkeycode/MEMORY.md
   known_git_ref_cleanup_debt:
@@ -78,9 +94,9 @@ production_ready_percent:
   status: RECOMPUTE_REQUIRED
   rule: Do not reuse the historical 81.5 percent or any earlier 25-gate aggregate. Recompute only from current Production evidence after the remaining gates are freshly verified.
 
+remaining_queue_policy: Count only top-level closures. Newly discovered subdependencies stay inside their owning closure and do not increase the queue count.
+remaining_queue_count: 7
 next:
-  - Validate the Current-state and construction-progress truth sync with the full Release Gate.
-  - Remove or update any remaining Current-named files that contain superseded R9 or construction state.
   - Close the WorkPackage Current operation/runtime owner blocker.
   - Classify 97 no-RLS tables and verify runtime-role enforcement.
   - Run fresh Production External Provider acceptance.
