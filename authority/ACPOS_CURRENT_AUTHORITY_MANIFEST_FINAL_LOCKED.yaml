@@ -80,7 +80,7 @@ cross_authority_bindings:
     canonical_actor_table: app_users
     canonical_actor_column: user_id
     identity_transport: INTERNAL_COOKIE_SESSION
-    adapter_bind_allowed: false
+    adapter_bind_allowed: true
   wb01_ui_projection_sql_permission_mapping:
     authority_path: authority/runtime/ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1.0.yaml
     adapter_bind_allowed: true
