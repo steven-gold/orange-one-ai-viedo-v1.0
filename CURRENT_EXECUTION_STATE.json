@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "c3be46239146673c02d261defa17f55340342c8a",
-    "new_sha": "be1a8bea46695da1f5bbfd14eb6f08bd97b7bb34",
+    "new_sha": "1160cf56a7b370185dd115e3040c0caaceb6d439",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -509,6 +509,25 @@
       "validation_runner": "scripts/release-formal-acceptance-ledger.mjs",
       "final_mode": "node scripts/release-formal-acceptance-ledger.mjs --require-pass",
       "rule": "Ledger coverage is not effectful acceptance. PASS requires per-resource evidence. Aggregate DOM evidence never auto-promotes individual resources."
+    },
+    "gate25_direct_http_adapters": {
+      "status": "CODE_MATERIALIZED_RELEASE_GATE_PENDING",
+      "authority": "03_api/operation_registry.yaml",
+      "exact_direct_formal_resource_mappings": 25,
+      "executable_readonly_resources": 4,
+      "mapped_pending_fixture_or_cleanup": 21,
+      "production_runner": "scripts/production-formal-readonly-acceptance.mjs",
+      "workflow": ".github/workflows/production-formal-readonly-acceptance.yml",
+      "production_fixture_evidence": {
+        "provider_profiles": 4,
+        "enabled_provider_profiles": 4,
+        "route_decisions": 30,
+        "quarantine_rows": 0,
+        "four_resource_admin_allow_assignments": "4/4"
+      },
+      "mutation_count": 0,
+      "external_provider_call_count": 0,
+      "rule": "No API-only operation is guessed onto a formal CONTROL/ACTION. Mutation/external-effect adapters remain pending until fixture/readback/cleanup contracts are explicit."
     }
   },
   "providers": {
@@ -756,7 +775,7 @@
     "RUNTIME QA ReleasePackage evidence owner + positive Production effectful closure",
     "ACCEPTANCE IAM/ERP/AIAPI/SOC Production mutation acceptance",
     "ACCEPTANCE AI Conversation Production E2E",
-    "ACCEPTANCE Gate 25 execution adapters + per-resource evidence for 1481 Current CONTROL+ACTION resources (ledger coverage runner materialized; effectful execution still pending)",
+    "ACCEPTANCE Gate 25 per-resource execution: 4 exact read-only adapters materialized pending Production run; 21 additional direct mappings need fixture/cleanup; remaining formal resources need exact operation mapping",
     "ACCEPTANCE Gate 25 denominator seal: historical 1453 / Current permission 1481 / Current Production DOM 558",
     "ACCEPTANCE Full 25-Gate recompute from Current evidence"
   ],
