@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T07:05:00+08:00",
+  "as_of": "2026-09-10T07:25:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
-    "new_sha": "e1211a71ce3d240241766233ba9ae8041f91d3ef",
+    "new_sha": "004b5e030a91476c2dc84ce686dc1a55e777155e",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -35,9 +35,9 @@
       }
     ],
     "latest_new_release_gate": {
-      "run_number": 1045,
-      "run_id": 34418209831,
-      "head_sha": "e1211a71ce3d240241766233ba9ae8041f91d3ef",
+      "run_number": 1047,
+      "run_id": 34419140909,
+      "head_sha": "004b5e030a91476c2dc84ce686dc1a55e777155e",
       "status": "SUCCESS"
     },
     "production_main_release_gate": {
@@ -178,8 +178,8 @@
     "project": "wild-wave-25661146",
     "branch": "main",
     "database": "neondb",
-    "migration_count": 45,
-    "latest_migration": "0045_local_test_identity_cleanup",
+    "migration_count": 46,
+    "latest_migration": "0046_compiler_rls_permission_foundation",
     "migration_0040_checksum": "301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50",
     "permission_resources_active": 3672,
     "permission_resources_authority_seal_status": "CURRENT_EXPANSION_TALLY_NOT_SEALED",
@@ -232,7 +232,10 @@
       "production_contracts": 0,
       "topics": 0,
       "blueprint_versions": 0
-    }
+    },
+    "migration_0046_checksum": "73f8b38070d62a8c12307674d9e6c0fbefd838c2eaa23da3f1ca7b7d38745c92",
+    "compiler_rls_tables": 7,
+    "compiler_api_assignments": 2
   },
   "construction": {
     "core_truthful_gate": {
@@ -276,6 +279,16 @@
       "service_identities": 2,
       "service_capabilities": 4,
       "production_migration": "41/41"
+    },
+    "compiler_foundation_0046": {
+      "commit": "004b5e030a91476c2dc84ce686dc1a55e777155e",
+      "release_gate": 1047,
+      "release_gate_status": "SUCCESS",
+      "production_migration": "46/46",
+      "production_apply": "APPLIED_VERIFIED",
+      "rls_tables": 7,
+      "api_assignments": 2,
+      "business_rows_created": 0
     }
   },
   "providers": {
@@ -481,7 +494,7 @@
     "DEPENDENCY RightsProfile: Current Production count 0; formal manifest/package execution may not invent rights refs.",
     "SCHEMA MISMATCH VOICE department enum: Current PostgreSQL department_code lacks VOICE while Current authority includes VOICE."
   ],
-  "next_executable_item": "Close reusable compiler/RLS infrastructure on new (WorkPackage/DAG/ScriptProjectionRule) while keeping formal business materialization fail-closed until governed Topic/Goal/Output/Criteria/Rights inputs exist.",
+  "next_executable_item": "MANDATORY 3/9 CanonicalScriptVersion: implement Current createCanonicalScriptVersion route/runtime with exact lineage, explicit version, idempotency, permission, audit and no latest/default inference.",
   "execution_reporting_contract": {
     "mandatory": true,
     "every_progress_report_must_include_remaining_incomplete_list": true,
