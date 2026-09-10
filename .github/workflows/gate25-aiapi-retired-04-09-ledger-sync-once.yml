@@ -1,0 +1,165 @@
+name: ACPOS Gate25 AIAPI 04-09 Retired Resource Ledger Sync Once
+
+on:
+  push:
+    branches: [new]
+
+permissions:
+  contents: write
+
+jobs:
+  sync-ledger:
+    runs-on: ubuntu-24.04
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - name: Classify exact 13 retired AIAPI-04 through AIAPI-09 formal resources
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile, writeFile } from 'node:fs/promises';
+
+          const ledgerPath='docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json';
+          const inventoryPath='docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json';
+          const authorityPath='authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml';
+          const navigationPath='authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml';
+          const pageCatalogPath='src/server/shared/pageCatalogProjectionRuntime.ts';
+          const evidencePath='docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json';
+          const syncPath='docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_LEDGER_SYNC_2026-09-10.json';
+          const formalTestPath='tests/release/formal-acceptance-ledger.test.mjs';
+          const regressionPath='tests/release/gate25-aiapi-retired-04-09-permission-resource-ledger-sync.test.mjs';
+          const targets=[
+            'action:admin:AIAPI-04:ACT-NAV-OPEN',
+            'action:admin:AIAPI-05:ACT-APPROVE',
+            'action:admin:AIAPI-05:ACT-CONFIGURE',
+            'action:admin:AIAPI-05:ACT-NAV-OPEN',
+            'action:admin:AIAPI-06:ACT-EXPORT',
+            'action:admin:AIAPI-06:ACT-NAV-OPEN',
+            'action:admin:AIAPI-06:ACT-SEARCH',
+            'action:admin:AIAPI-07:ACT-NAV-OPEN',
+            'action:admin:AIAPI-07:ACT-SEARCH',
+            'action:admin:AIAPI-08:ACT-NAV-OPEN',
+            'action:admin:AIAPI-09:ACT-KILL-SWITCH',
+            'action:admin:AIAPI-09:ACT-NAV-OPEN',
+            'action:admin:AIAPI-09:ACT-REFRESH',
+          ];
+          const retiredPageUids=['admin:AIAPI-04','admin:AIAPI-05','admin:AIAPI-06','admin:AIAPI-07','admin:AIAPI-08','admin:AIAPI-09'];
+
+          const [authority,navigation,pageCatalog]=await Promise.all([
+            readFile(authorityPath,'utf8'),
+            readFile(navigationPath,'utf8'),
+            readFile(pageCatalogPath,'utf8'),
+          ]);
+          if(!authority.includes('canonical_frontend_page_uid: admin:AIAPI-01')) throw new Error('CURRENT_AIAPI_CANONICAL_PAGE_NOT_CONFIRMED');
+          if(!authority.includes('former_multi_page_frontend_definitions: RETIRED_FROM_CURRENT_UI')) throw new Error('AIAPI_LEGACY_RETIREMENT_NOT_CONFIRMED');
+          if(!authority.includes('standalone_parallel_pages: FORBIDDEN')) throw new Error('AIAPI_PARALLEL_PAGE_RULE_NOT_CONFIRMED');
+          if(!navigation.includes('page_uid: admin:AIAPI-01')) throw new Error('CURRENT_NAV_AIAPI01_MISSING');
+          if(!pageCatalog.includes('"admin:AIAPI-01": "page:admin:AIAPI-01"')) throw new Error('CURRENT_PAGE_CATALOG_AIAPI01_MISSING');
+          for(const pageUid of retiredPageUids){
+            if(navigation.includes(`page_uid: ${pageUid}`)) throw new Error(`RETIRED_AIAPI_PAGE_STILL_IN_CURRENT_NAVIGATION_${pageUid}`);
+            if(pageCatalog.includes(`"${pageUid}"`)) throw new Error(`RETIRED_AIAPI_PAGE_STILL_IN_CURRENT_PAGE_CATALOG_${pageUid}`);
+          }
+
+          const inventory=JSON.parse(await readFile(inventoryPath,'utf8'));
+          const inventoryByKey=new Map(inventory.resources.map(x=>[x.resource_key,x]));
+          for(const key of targets){
+            const row=inventoryByKey.get(key);
+            if(!row) throw new Error(`FORMAL_RESOURCE_MISSING_${key}`);
+            if(row.resource_type!=='ACTION') throw new Error(`FORMAL_RESOURCE_TYPE_${key}_${row.resource_type}`);
+          }
+
+          const ledger=JSON.parse(await readFile(ledgerPath,'utf8'));
+          if(JSON.stringify(ledger.counts)!==JSON.stringify({PASS:29,BLOCKED:77,NOT_EXECUTED:1375})) throw new Error(`UNEXPECTED_LEDGER_BASELINE_${JSON.stringify(ledger.counts)}`);
+          const byKey=new Map(ledger.entries.map(x=>[x.resource_key,x]));
+          const before={...ledger.counts};
+          const changed=[];
+          for(const key of targets){
+            const row=byKey.get(key);
+            if(!row) throw new Error(`LEDGER_RESOURCE_MISSING_${key}`);
+            if(row.disposition!=='NOT_EXECUTED') throw new Error(`LEDGER_RESOURCE_NOT_PENDING_${key}_${row.disposition}`);
+            row.disposition='BLOCKED';
+            row.reason_code='RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY';
+            row.evidence_refs=[evidencePath,authorityPath,navigationPath,pageCatalogPath,inventoryPath];
+            row.blocker_detail='Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.';
+            row.operation_ids=[key.split(':').at(-1)];
+            changed.push(key);
+          }
+          const counts={PASS:0,BLOCKED:0,NOT_EXECUTED:0};
+          for(const row of ledger.entries){
+            if(!(row.disposition in counts)) throw new Error(`INVALID_DISPOSITION_${row.resource_key}`);
+            counts[row.disposition]++;
+          }
+          if(ledger.entries.length!==1481) throw new Error(`DENOMINATOR_${ledger.entries.length}`);
+          if(JSON.stringify(counts)!==JSON.stringify({PASS:29,BLOCKED:90,NOT_EXECUTED:1362})) throw new Error(`COUNT_MISMATCH_${JSON.stringify(counts)}`);
+          ledger.counts=counts;
+          await writeFile(ledgerPath,JSON.stringify(ledger,null,2)+'\n');
+
+          const evidence={
+            document_id:'ACPOS_GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE',
+            status:'CURRENT_AUTHORITY_BLOCKER_EVIDENCE',
+            as_of:new Date().toISOString(),
+            target_count:targets.length,
+            target_resource_keys:targets,
+            current_canonical_page_uid:'admin:AIAPI-01',
+            retired_page_uids:retiredPageUids,
+            facts:{
+              aiapi_authority_single_page:true,
+              former_multi_page_frontend_definitions:'RETIRED_FROM_CURRENT_UI',
+              standalone_parallel_pages:'FORBIDDEN',
+              current_navigation_has_only_aiapi01:true,
+              current_page_catalog_has_only_aiapi01:true,
+              production_formal_inventory_contains_all_targets:true
+            },
+            preserved_existing_specific_blockers:[
+              'action:admin:AIAPI-04:ACT-APPROVE',
+              'action:admin:AIAPI-04:ACT-CONFIGURE',
+              'action:admin:AIAPI-08:ACT-SYSTEM-TEST'
+            ],
+            evidence_refs:[authorityPath,navigationPath,pageCatalogPath,inventoryPath],
+            rule:'These thirteen resources are not accepted operations. They are blocked because the active Production permission inventory retains retired AIAPI-04..09 page-owned ACTION resources with no Current executable page owner. Existing more-specific blockers are preserved and legacy pages must not be recreated.'
+          };
+          await writeFile(evidencePath,JSON.stringify(evidence,null,2)+'\n');
+
+          const sync={
+            document_id:'ACPOS_GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_LEDGER_SYNC',
+            status:'PHYSICAL_LEDGER_SYNCED',
+            as_of:new Date().toISOString(),
+            target_count:targets.length,
+            changed_count:changed.length,
+            changed_resource_keys:changed,
+            counts_before:before,
+            counts_after:counts,
+            source:evidencePath,
+            rule:'Only the exact thirteen still-NOT_EXECUTED AIAPI-04..09 ACTION resources proven retired by Current Authority/navigation/page catalog are moved to BLOCKED; pre-existing specific blockers are untouched.'
+          };
+          await writeFile(syncPath,JSON.stringify(sync,null,2)+'\n');
+
+          let formalTest=await readFile(formalTestPath,'utf8');
+          const oldCount='assert.deepEqual(ledger.counts,{PASS:29,BLOCKED:77,NOT_EXECUTED:1375});';
+          const newCount='assert.deepEqual(ledger.counts,{PASS:29,BLOCKED:90,NOT_EXECUTED:1362});';
+          if(!formalTest.includes(oldCount)) throw new Error('FORMAL_TEST_CURRENT_COUNT_BASELINE_NOT_FOUND');
+          formalTest=formalTest.replace(oldCount,newCount);
+          await writeFile(formalTestPath,formalTest);
+
+          await writeFile(regressionPath,`import test from "node:test";\nimport assert from "node:assert/strict";\nimport { readFile } from "node:fs/promises";\n\ntest("Gate25 blocks exact thirteen retired AIAPI-04..09 Production permission resources without recreating legacy pages",async()=>{\n  const evidence=JSON.parse(await readFile("${evidencePath}","utf8"));\n  const sync=JSON.parse(await readFile("${syncPath}","utf8"));\n  const ledger=JSON.parse(await readFile("${ledgerPath}","utf8"));\n  assert.equal(evidence.status,"CURRENT_AUTHORITY_BLOCKER_EVIDENCE");\n  assert.equal(evidence.target_count,13);\n  assert.equal(sync.changed_count,13);\n  assert.deepEqual(sync.counts_before,{PASS:29,BLOCKED:77,NOT_EXECUTED:1375});\n  assert.deepEqual(sync.counts_after,{PASS:29,BLOCKED:90,NOT_EXECUTED:1362});\n  const changed=new Set(sync.changed_resource_keys);\n  assert.equal(changed.size,13);\n  for(const row of ledger.entries.filter(x=>changed.has(x.resource_key))){\n    assert.equal(row.disposition,"BLOCKED");\n    assert.equal(row.reason_code,"RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY");\n    assert.ok(row.evidence_refs.includes("${evidencePath}"));\n  }\n  for(const key of evidence.preserved_existing_specific_blockers){\n    assert.ok(!changed.has(key));\n    const row=ledger.entries.find(x=>x.resource_key===key);\n    assert.equal(row?.disposition,"BLOCKED");\n    assert.notEqual(row?.reason_code,"RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY");\n  }\n});\n`);
+          console.log(JSON.stringify(sync));
+          NODE
+      - name: Validate synchronized ledger
+        run: |
+          node --test tests/release/formal-acceptance-ledger.test.mjs tests/release/gate25-aiapi-retired-04-09-permission-resource-ledger-sync.test.mjs
+          node scripts/release-formal-acceptance-ledger.mjs
+      - name: Commit synchronized ledger and remove one-shot workflow
+        run: |
+          rm .github/workflows/gate25-aiapi-retired-04-09-ledger-sync-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json \
+                  docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json \
+                  docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_LEDGER_SYNC_2026-09-10.json \
+                  tests/release/formal-acceptance-ledger.test.mjs \
+                  tests/release/gate25-aiapi-retired-04-09-permission-resource-ledger-sync.test.mjs \
+                  .github/workflows/gate25-aiapi-retired-04-09-ledger-sync-once.yml
+          git commit -m "evidence(gate25): block retired AIAPI-04..09 formal resources"
+          git push origin HEAD:new
