@@ -4,7 +4,7 @@ const base=(process.env.ACPOS_DEPLOYMENT_URL??"https://orange-one-acpos-test.ver
 const email=(process.env.ACPOS_PRODUCTION_E2E_EMAIL??"").trim();
 const password=process.env.ACPOS_PRODUCTION_E2E_PASSWORD??"";
 const expectedSha=(process.env.ACPOS_EXPECT_RELEASE_SHA??"").trim();
-const controls=["ERP-01-BTN-FACTPACK","ERP-01-BTN-GUARDRAILS","ERP-01-BTN-FORECAST"];
+const controls=["ERP-01-BTN-FACTPACK","ERP-01-BTN-GUARDRAILS","ERP-01-BTN-FORECAST","ERP-01-BTN-EXPORT"];
 
 function assert(value,message){if(!value)throw new Error(message)}
 function protectionHeaders(){const secret=process.env.VERCEL_AUTOMATION_BYPASS_SECRET;return secret?{"x-vercel-protection-bypass":secret}:{}}

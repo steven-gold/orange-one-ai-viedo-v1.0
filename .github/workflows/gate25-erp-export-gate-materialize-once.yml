@@ -1,0 +1,136 @@
+name: ACPOS Gate25 ERP Export Gate Materialize Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/gate25-erp-export-gate-materialize-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-erp-export-blockers:
+    runs-on: ubuntu-24.04
+    environment: Production
+    timeout-minutes: 20
+    env:
+      ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
+      ACPOS_PRODUCTION_E2E_EMAIL: admin
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      ACPOS_EXPECT_RELEASE_SHA: 608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install product dependencies
+        run: npm ci
+      - name: Install browser dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Execute authenticated Production ERP export gate acceptance
+        run: |
+          node --check scripts/gate25-production-erp-finance-gate-diagnostic.mjs
+          node scripts/gate25-production-erp-finance-gate-diagnostic.mjs | tee "$RUNNER_TEMP/erp-export-gate.log"
+      - name: Materialize exact ERP export blockers and synchronize ledger
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from datetime import datetime, timezone
+
+          log_path=Path(os.environ['RUNNER_TEMP'])/'erp-export-gate.log'
+          line=next((x for x in log_path.read_text().splitlines() if x.startswith('ERP_FINANCE_GATE_DIAGNOSTIC ')),None)
+          assert line, 'ERP export diagnostic payload missing'
+          diagnostic=json.loads(line.split(' ',1)[1])
+          assert diagnostic['production_release_sha']==os.environ['ACPOS_EXPECT_RELEASE_SHA']
+          assert diagnostic['projection_http']==200
+          assert diagnostic['projection']['page_gate'] is True
+          assert diagnostic['projection']['finance_gate'] is False
+          assert diagnostic['projection']['synthetic'] is False
+          assert diagnostic['mutation_count']==0
+          export=next((c for c in diagnostic['controls'] if c['control_id']=='ERP-01-BTN-EXPORT'),None)
+          assert export is not None
+          assert export['enabled'] is False
+          assert export['disabled_reason']=='ERP-01-GATE-FINANCE'
+          assert export['action_uid']=='ERP-01-ACT-EXPORT'
+          assert export['gate_uid']=='ERP-01-GATE-FINANCE'
+          assert export['permission_uid']=='ERP-01-PERM-FINANCE'
+
+          ledger_path=Path('docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json')
+          evidence_path=Path('docs/construction/evidence/GATE25_ERP_EXPORT_PRODUCTION_GATE_BLOCKERS_2026-09-10.json')
+          authority_path=Path('authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml')
+          binding_path=Path('src/domain/erp/erpControlBindings.ts')
+          assert authority_path.exists() and binding_path.exists()
+          authority=authority_path.read_text()
+          bindings=binding_path.read_text()
+          assert 'CTRL-ADMIN-ERP-02-ACT-04-ACT-EXPORT' in authority
+          assert 'ERP-01-BTN-EXPORT' in authority and 'ERP-01-ACT-EXPORT' in authority and 'exportProjection' in authority
+          assert 'ERP-01-BTN-EXPORT' in bindings and 'ERP-01-ACT-EXPORT' in bindings
+
+          ledger=json.loads(ledger_path.read_text())
+          assert ledger['denominator']['total']==1481
+          before=dict(ledger['counts'])
+          target_keys=['control:CTRL-ADMIN-ERP-02-ACT-04-ACT-EXPORT','action:admin:ERP-02:ACT-EXPORT']
+          entries={e['resource_key']:e for e in ledger['entries']}
+          for key in target_keys:
+            assert key in entries, f'missing ledger resource: {key}'
+            assert entries[key]['disposition']=='NOT_EXECUTED', f'{key} expected NOT_EXECUTED, got {entries[key]["disposition"]}'
+
+          evidence={
+            'document_id':'ACPOS_GATE25_ERP_EXPORT_PRODUCTION_GATE_BLOCKERS',
+            'status':'BLOCKED',
+            'recorded_at':datetime.now(timezone.utc).isoformat(),
+            'production_release_sha':os.environ['ACPOS_EXPECT_RELEASE_SHA'],
+            'deployment_url':os.environ['ACPOS_DEPLOYMENT_URL'],
+            'github_run_id':os.environ['GITHUB_RUN_ID'],
+            'github_run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],
+            'resource_count':2,
+            'mutation_count':0,
+            'blocking_gate_uid':'ERP-01-GATE-FINANCE',
+            'blocking_permission_uid':'ERP-01-PERM-FINANCE',
+            'current_control_id':'ERP-01-BTN-EXPORT',
+            'current_action_uid':'ERP-01-ACT-EXPORT',
+            'operation_id':'exportProjection',
+            'formal_resources':target_keys,
+            'rule':'The exact Current ERP export control/action are BLOCKED because authenticated Production exposes ERP-01-BTN-EXPORT disabled by ERP-01-GATE-FINANCE=false / ERP-01-PERM-FINANCE. The export POST was not bypassed or force-executed.'
+          }
+          evidence_path.write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n')
+          run_ref=f'GitHub Actions: ACPOS Gate25 ERP Export Gate Materialize run_id={os.environ["GITHUB_RUN_ID"]}'
+          for key in target_keys:
+            e=entries[key]
+            e['disposition']='BLOCKED'
+            e['reason_code']='PRODUCTION_ERP_FINANCE_GATE_FALSE'
+            e['evidence_refs']=[str(evidence_path),run_ref,'scripts/gate25-production-erp-finance-gate-diagnostic.mjs',str(authority_path),str(binding_path)]
+            e['blocker_detail']='Authenticated Production exposes ERP-01-BTN-EXPORT, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity. Export execution around the gate is forbidden.'
+            e['operation_ids']=['exportProjection','ERP-01-ACT-EXPORT','ERP-01-GATE-FINANCE','ERP-01-PERM-FINANCE']
+
+          counts={'PASS':0,'BLOCKED':0,'NOT_EXECUTED':0}
+          for e in ledger['entries']: counts[e['disposition']]+=1
+          assert sum(counts.values())==1481
+          assert counts['PASS']==before['PASS']
+          assert counts['BLOCKED']==before['BLOCKED']+2
+          assert counts['NOT_EXECUTED']==before['NOT_EXECUTED']-2
+          ledger['counts']=counts
+          ledger_path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps({'before':before,'after':counts,'resource_count':2},ensure_ascii=False))
+          PY
+      - name: Validate synchronized ledger
+        run: node scripts/release-formal-acceptance-ledger.mjs
+      - name: Commit ERP export evidence and ledger
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json
+          git add docs/construction/evidence/GATE25_ERP_EXPORT_PRODUCTION_GATE_BLOCKERS_2026-09-10.json
+          git commit -m 'evidence(gate25): block 2 ERP Export resources on Production finance gate'
+          git push origin HEAD:new
