@@ -30,8 +30,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 51,
-    "BLOCKED": 187,
-    "NOT_EXECUTED": 1243
+    "BLOCKED": 194,
+    "NOT_EXECUTED": 1236
   },
   "entries": [
     {
@@ -3170,10 +3170,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "action:workspace:VOICE-01:ACT-FINDING-CREATE",
@@ -3181,10 +3183,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "action:workspace:VOICE-01:ACT-TASK-EXECUTE",
@@ -3192,10 +3196,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-01-ACT-01-ACT-REFRESH",
@@ -11851,10 +11857,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-ACT-02-ACT-FINDING-CREATE",
@@ -11862,10 +11870,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-ACT-03-ACT-CANDIDATE-COMPARE",
@@ -11873,59 +11883,124 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-EVIDENCE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains this VOICE-01 CONTROL, but Current FINAL_LOCKED navigation and EDIT authority expose only EDIT-01 for Editing & Voice. No Current VOICE-01 page authority exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-VOICE-01-EVIDENCE-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-LANGUAGE-FORMAT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains this VOICE-01 CONTROL, but Current FINAL_LOCKED navigation and EDIT authority expose only EDIT-01 for Editing & Voice. No Current VOICE-01 page authority exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-VOICE-01-LANGUAGE-FORMAT-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-NARRATION-VIEW-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains this VOICE-01 CONTROL, but Current FINAL_LOCKED navigation and EDIT authority expose only EDIT-01 for Editing & Voice. No Current VOICE-01 page authority exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-VOICE-01-NARRATION-VIEW-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-PROJECT-TOPIC-TASK-TREE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains this VOICE-01 CONTROL, but Current FINAL_LOCKED navigation and EDIT authority expose only EDIT-01 for Editing & Voice. No Current VOICE-01 page authority exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-VOICE-01-PROJECT-TOPIC-TASK-TREE-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-SUBTITLE-TIMELINE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains this VOICE-01 CONTROL, but Current FINAL_LOCKED navigation and EDIT authority expose only EDIT-01 for Editing & Voice. No Current VOICE-01 page authority exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-VOICE-01-SUBTITLE-TIMELINE-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-TIMING-VALIDATION-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains this VOICE-01 CONTROL, but Current FINAL_LOCKED navigation and EDIT authority expose only EDIT-01 for Editing & Voice. No Current VOICE-01 page authority exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-VOICE-01-TIMING-VALIDATION-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-VOICE-REFERENCE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains this VOICE-01 CONTROL, but Current FINAL_LOCKED navigation and EDIT authority expose only EDIT-01 for Editing & Voice. No Current VOICE-01 page authority exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-VOICE-01-VOICE-REFERENCE-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-VOICE-RUNTIME-COMPLETE-AUDIO-MIX",
@@ -11933,10 +12008,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-VOICE-RUNTIME-COMPLETE-LIP-SYNC",
@@ -11944,10 +12021,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-VOICE-RUNTIME-COMPLETE-SUBTITLE",
@@ -11955,10 +12034,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-VOICE-RUNTIME-CREATE-VOICE-RUNTIME-PROFILE",
@@ -11966,10 +12047,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-VOICE-RUNTIME-GET-VOICE-RUNTIME-RUN",
@@ -11977,10 +12060,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-VOICE-RUNTIME-HANDOFF-VOICE-TO-QA",
@@ -11988,10 +12073,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-VOICE-01-VOICE-RUNTIME-START-VOICE-RUNTIME",
@@ -11999,10 +12086,12 @@
       "disposition": "BLOCKED",
       "reason_code": "EDIT_VOICE_EFFECTFUL_PREREQUISITE_NOT_READY",
       "evidence_refs": [
-        "CURRENT_EXECUTION_STATE.json#construction.edit_voice_provider_preflight",
-        "CURRENT_EXECUTION_STATE.json#blockers",
-        "NEON_PRODUCTION_PRECHECK_2026-09-10: editing/qa lineage=0; approved EDITING route policies=0; EDIT_RENDER capabilities=0; VOICE capabilities=0"
-      ]
+        "docs/construction/evidence/GATE25_VOICE01_RETIRED_FORMAL_RESOURCE_EVIDENCE_2026-09-11.json",
+        "authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Fresh Production readback confirms zero EDITING/QA lineage, zero edit/voice runtime lineage, no provider_route_policies table, and no EDIT_RENDER/VOICE provider contract. Current FINAL_LOCKED authority also consolidates Voice into EDIT-01; the separate VOICE-01 formal identity is not a Current page owner."
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN",
