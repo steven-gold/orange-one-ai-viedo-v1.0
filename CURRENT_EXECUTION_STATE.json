@@ -101,6 +101,20 @@
     "manifest_identity_alignment_base_sha": "2fd181f43bcd812416392a067c79761fda7a0851",
     "manifest_identity_alignment_one_shot_run_id": 34521037708,
     "manifest_identity_alignment_one_shot_conclusion": "SUCCESS",
+    "page_authority_navigation_and_execution_state_aligned": true,
+    "page_authority_cleanup_bot_sha": "83ee8b30bae23ae1ddf606e13770bf9aa0dba43c",
+    "page_authority_cleanup_one_shot_run_id": 34522729557,
+    "page_authority_cleanup_one_shot_conclusion": "SUCCESS",
+    "page_authority_cleanup_scope": [
+      "workspace:INFO-01 removed superseded NAV-09 Global L1 declaration",
+      "admin:IAM-01 aligned from superseded 9x9 to Current 8x8 L1 model",
+      "admin:SYS-01 mutable pending-release status externalized",
+      "admin:DEV-01 mutable NOT_EXECUTED status externalized",
+      "admin:SOC-01 mutable NOT_EXECUTED status externalized",
+      "admin:ERP-01 mutable NOT_EXECUTED status externalized",
+      "admin:AIAPI-01 old Release/deployment runtime snapshot externalized",
+      "admin:STR-01 old NOT_EXECUTED runtime snapshot externalized"
+    ],
     "current_named_global_authority_scan": {
       "navigation_permission": "STATIC_CURRENT_CONTRACT_RETAINED",
       "page_integration_matrix": "STATIC_CURRENT_CONTRACT_RETAINED",
@@ -116,17 +130,38 @@
       "shared_correction_version": "CURRENT_CONTRACT_RETAINED",
       "edit_voice": "CURRENT_CONTRACT_RETAINED"
     },
+    "page_authority_scan": {
+      "workspace:WB-01": "CURRENT_CONTRACT_RETAINED",
+      "workspace:CORE-01": "CURRENT_CONTRACT_RETAINED",
+      "workspace:ASSET-01": "CURRENT_CONTRACT_RETAINED",
+      "workspace:VIDEO-01": "CURRENT_CONTRACT_RETAINED",
+      "workspace:EDIT-01": "CURRENT_CONTRACT_RETAINED",
+      "workspace:QA-01": "CURRENT_CONTRACT_RETAINED",
+      "workspace:STR-01": "CURRENT_CONTRACT_RETAINED",
+      "workspace:INFO-01": "SUPERSEDED_NAV09_REMOVED_NON_GLOBAL_L1_CURRENT_PAGE",
+      "admin:DB-01": "CURRENT_CONTRACT_RETAINED",
+      "admin:SYS-01": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
+      "admin:IAM-01": "SUPERSEDED_9X9_REMOVED_CURRENT_8X8",
+      "admin:DEV-01": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
+      "admin:SOC-01": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
+      "admin:ERP-01": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
+      "admin:AIAPI-01": "OLD_RELEASE_DEPLOYMENT_SNAPSHOT_EXTERNALIZED",
+      "admin:SG-02": "CURRENT_CONTRACT_RETAINED",
+      "admin:STR-01": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
+      "admin:KB-01": "CURRENT_NON_GLOBAL_L1_CONTRACT_RETAINED"
+    },
     "temporary_workflows_remaining": 0,
     "preserved_current_collaboration_memory": ".monkeycode/MEMORY.md",
     "known_git_ref_cleanup_debt": [
+      "Explicit legacy r9-* branches remain present and are unprotected",
       "tmp-unused",
       "tmp-unused-2"
     ],
+    "git_ref_delete_capability_available_in_current_connector": false,
     "cleanup_evidence": "docs/construction/evidence/R9_RESIDUAL_CLEANUP_2026-09-11.md"
   },
   "next_execution_order": [
-    "Validate this exact clean source tree with the full Release Gate",
-    "Inspect remaining manifest-listed global contracts and page authorities for embedded superseded operational snapshots without deleting immutable contracts or provenance",
+    "Validate this exact Page Authority clean source tree with the full Release Gate",
     "Close the WorkPackage Current operation/runtime owner blocker without restoring legacy compiler authority",
     "Classify the 97 no-RLS tables and verify runtime-role enforcement",
     "Run fresh Production External Provider acceptance",
