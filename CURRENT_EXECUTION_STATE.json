@@ -70,6 +70,16 @@
     "stale_r9_monitor_specs_removed": true,
     "stale_r9_monitor_specs_cleanup_release_run_id": 34515862998,
     "stale_r9_monitor_specs_cleanup_release_conclusion": "SUCCESS",
+    "closed_erp_diagnostic_scripts_removed": true,
+    "stale_current_runtime_gap_report_removed": true,
+    "current_authority_mutable_r9_execution_history_embedded": false,
+    "current_authority_runtime_contracts_explicitly_listed": [
+      "authority/runtime/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml",
+      "authority/runtime/ACPOS_EDIT_VOICE_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml"
+    ],
+    "current_authority_cleanup_base_sha": "e84b640887aa2e921dae5a52580a7cab364432ac",
+    "current_authority_cleanup_one_shot_run_id": 34519677179,
+    "current_authority_cleanup_one_shot_conclusion": "SUCCESS",
     "temporary_workflows_remaining": 0,
     "preserved_current_collaboration_memory": ".monkeycode/MEMORY.md",
     "known_git_ref_cleanup_debt": [
@@ -79,8 +89,8 @@
     "cleanup_evidence": "docs/construction/evidence/R9_RESIDUAL_CLEANUP_2026-09-11.md"
   },
   "next_execution_order": [
-    "Validate this Current-state truth sync with the full Release Gate",
-    "Remove or update any other Current-named files that still contain superseded R9 or construction state",
+    "Validate the exact clean Current Authority tree with the full Release Gate",
+    "Inspect remaining Current-named global authority files for superseded operational state without deleting provenance or immutable contracts",
     "Close the WorkPackage Current operation/runtime owner blocker without restoring legacy compiler authority",
     "Classify the 97 no-RLS tables and verify runtime-role enforcement",
     "Run fresh Production External Provider acceptance",
