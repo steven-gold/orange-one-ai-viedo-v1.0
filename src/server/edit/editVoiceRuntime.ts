@@ -19,7 +19,7 @@ async function ensureProductionBinding(){
     audit:production.auditProductionEditVoiceOperation,
   });
 }
-async function audit(r:EditVoiceBindings,e:Parameters<EditVoiceBindings["audit"]>[0]){try{await r.audit(e);}catch{/* runtime stays fail-closed */}}
+async function audit(r:EditVoiceBindings,e:Parameters<EditVoiceBindings["audit"]>[0]){try{await r.audit(e);return true;}catch{return false;}}
 function statusFor(reason:string){if(reason.includes("REQUIRED")||reason.includes("INVALID")||reason.includes("MISMATCH"))return 400;if(reason.includes("PERMISSION")||reason.includes("DENIED")||reason.includes("AUTHORIZATION"))return 403;if(reason.includes("CONFLICT"))return 409;return 503;}
 export async function executeEditVoiceOperation(request:EditVoiceRequest):Promise<EditVoiceOperationResult>{
   await ensureProductionBinding();
@@ -31,7 +31,8 @@ export async function executeEditVoiceOperation(request:EditVoiceRequest):Promis
   let d:Awaited<ReturnType<EditVoiceBindings["authorize"]>>;
   try{d=await r.authorize(request);}catch{return{ok:false as const,status:403,error_uid:"EDIT-01-ERR-PERM-001",reason_code:"AUTHORIZATION_EVALUATION_FAILED",correlation_id:request.correlation_id};}
   if(!d.allowed){const reason_code=d.reason_code??"PERMISSION_OR_SCOPE_DENIED";await audit(r,{...request,outcome:"DENIED",reason_code});return{ok:false as const,status:403,error_uid:"EDIT-01-ERR-PERM-001",reason_code,correlation_id:request.correlation_id};}
-  await audit(r,{...request,outcome:"ALLOWED"});
+  const allowedAuditPersisted=await audit(r,{...request,outcome:"ALLOWED"});
+  if(!allowedAuditPersisted)return{ok:false as const,status:503,error_uid:"EDIT-01-ERR-PERM-001",reason_code:"EDIT_AUDIT_PERSISTENCE_REQUIRED",correlation_id:request.correlation_id};
   try{const value=await r.execute(request);await audit(r,{...request,outcome:"SUCCESS"});return{ok:true as const,value,correlation_id:request.correlation_id};}
   catch(error){const reason_code=namedReason(error,"EDIT_VOICE_OPERATION_FAILED");await audit(r,{...request,outcome:"ERROR",reason_code});return{ok:false as const,status:statusFor(reason_code),error_uid:"EDIT-01-ERR-STAGE-001",reason_code,correlation_id:request.correlation_id};}
 }
