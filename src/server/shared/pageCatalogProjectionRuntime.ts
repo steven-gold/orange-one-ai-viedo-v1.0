@@ -2355,6 +2355,7 @@ async function readSg02FromDb(
     ORDER BY criteria_key, version_no DESC
   `);
   const first = versions[0] ?? null;
+  const criteriaStatus = asText(first?.status);
   const [canConfigure, canApprove] = await Promise.all([
     evaluateCatalogResourceAction(sql, sessionTokenHash, actorUserId, "action:admin:SG-02:ACT-CONFIGURE", "INVOKE"),
     evaluateCatalogResourceAction(sql, sessionTokenHash, actorUserId, "action:admin:SG-02:ACT-APPROVE", "INVOKE"),
@@ -2380,8 +2381,8 @@ async function readSg02FromDb(
       audit_ref: DASH,
     },
     control_enabled: {
-      "CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE": canConfigure,
-      "CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE": canApprove,
+      "CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE": canConfigure && criteriaStatus === "DRAFT",
+      "CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE": canApprove && criteriaStatus === "REVIEW",
       "CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN": true,
     },
   };
