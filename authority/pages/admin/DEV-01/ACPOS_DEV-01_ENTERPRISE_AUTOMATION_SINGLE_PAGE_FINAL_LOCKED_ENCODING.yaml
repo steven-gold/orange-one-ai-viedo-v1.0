@@ -7,7 +7,6 @@ authority:
   status: FINAL_LOCKED
   current_only: true
   file_spec_status: FILE_SPEC_COMPLETE
-  system_implementation_status: NOT_EXECUTED
   single_page_workspace: true
   global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
   global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
@@ -17,8 +16,10 @@ authority:
   purpose: One current Enterprise Automation workspace that reorganizes the existing current registered authority outreach capabilities into a
     five-stage same-page workflow without creating parallel outreach services, registries, databases, campaign engines, message engines or delivery
     engines.
-  truthful_status_rule: This file completes page design/encoding only. Application code, master merge, runtime, Sandbox, Regression, E2E, external
-    connector verification and production deployment are not executed by this file.
+  execution_state_policy:
+    mutable_execution_state_embedded: false
+    current_state_owner: CURRENT_EXECUTION_STATE.json
+    production_evidence_owner: docs/construction/evidence/
   system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
   navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 single_system_contract:
