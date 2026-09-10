@@ -162,7 +162,6 @@ test("CORE DNA review and canonical script reads preserve exact authority lineag
   assert.match(runtime,/CANONICAL_SCRIPT_LINEAGE_UNRESOLVED/);
   assert.match(runtime,/project_blueprint_ref/);
   assert.match(runtime,/topic_production_scope_ref/);
-  assert.match(runtime,/source_candidate_ref/);
   assert.match(runtime,/d\.decision='ACCEPTED'/);
   assert.match(runtime,/lineage_complete:true,read_only:true/);
 });

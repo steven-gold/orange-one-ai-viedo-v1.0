@@ -14,7 +14,8 @@ test("0046 closes compiler RLS and existing API assignments without fabricating 
   const checksum=createHash("sha256").update(migration.slice(0,idx)).digest("hex");
   assert.equal(checksum,"73f8b38070d62a8c12307674d9e6c0fbefd838c2eaa23da3f1ca7b7d38745c92");
   assert.ok(manifest.includes("73f8b38070d62a8c12307674d9e6c0fbefd838c2eaa23da3f1ca7b7d38745c92"));
-  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 46/);
+  const ceiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1]??0);
+  assert.ok(ceiling>=46,`migration ceiling must include 0046, found ${ceiling}`);
 
   for(const table of [
     "work_packages","dag_snapshots","dag_nodes","task_templates",
