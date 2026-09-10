@@ -1,0 +1,134 @@
+name: ACPOS Gate25 ERP Finance Gate Blocker Materialize Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/gate25-erp-finance-gate-blocker-materialize-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-erp-finance-gate-blockers:
+    runs-on: ubuntu-24.04
+    environment: Production
+    timeout-minutes: 20
+    env:
+      ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
+      ACPOS_PRODUCTION_E2E_EMAIL: admin
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      ACPOS_EXPECT_RELEASE_SHA: 608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install product dependencies
+        run: npm ci
+      - name: Install browser dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Reconfirm exact Production finance gate blockers
+        run: |
+          node scripts/gate25-production-erp-finance-gate-diagnostic.mjs | tee "$RUNNER_TEMP/erp-finance-gate-diagnostic.log"
+      - name: Materialize exact blocker evidence and synchronize ledger
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from datetime import datetime, timezone
+
+          log_path=Path(os.environ['RUNNER_TEMP'])/'erp-finance-gate-diagnostic.log'
+          line=next((x for x in log_path.read_text().splitlines() if x.startswith('ERP_FINANCE_GATE_DIAGNOSTIC ')),None)
+          assert line, 'ERP finance diagnostic payload missing'
+          diagnostic=json.loads(line.split(' ',1)[1])
+          assert diagnostic['production_release_sha']==os.environ['ACPOS_EXPECT_RELEASE_SHA']
+          assert diagnostic['projection_http']==200
+          assert diagnostic['projection']['page_gate'] is True
+          assert diagnostic['projection']['finance_gate'] is False
+          assert diagnostic['projection']['synthetic'] is False
+          assert diagnostic['mutation_count']==0
+          controls=diagnostic['controls']
+          assert len(controls)==3
+          expected_controls={
+            'ERP-01-BTN-FACTPACK':'control:CTRL-ADMIN-ERP-02-ACT-01-ERP-FINANCE-GET-FACTPACK',
+            'ERP-01-BTN-GUARDRAILS':'control:CTRL-ADMIN-ERP-02-ACT-02-ERP-CAPACITY-GET-GUARDRAILS',
+            'ERP-01-BTN-FORECAST':'control:CTRL-ADMIN-ERP-02-ACT-03-ERP-FORECAST-GET',
+          }
+          for control in controls:
+            assert control['control_id'] in expected_controls
+            assert control['enabled'] is False
+            assert control['disabled_reason']=='ERP-01-GATE-FINANCE'
+            assert control['gate_uid']=='ERP-01-GATE-FINANCE'
+            assert control['permission_uid']=='ERP-01-PERM-FINANCE'
+
+          ledger_path=Path('docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json')
+          evidence_path=Path('docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json')
+          ledger=json.loads(ledger_path.read_text())
+          assert ledger['denominator']['total']==1481
+          before=dict(ledger['counts'])
+          entries={entry['resource_key']:entry for entry in ledger['entries']}
+          target_keys=[expected_controls[c['control_id']] for c in controls]
+          for key in target_keys:
+            assert key in entries, f'missing ledger resource: {key}'
+            assert entries[key]['disposition']=='NOT_EXECUTED', f'{key} expected NOT_EXECUTED, got {entries[key]["disposition"]}'
+
+          evidence={
+            'document_id':'ACPOS_GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS',
+            'status':'BLOCKED',
+            'recorded_at':datetime.now(timezone.utc).isoformat(),
+            'production_release_sha':os.environ['ACPOS_EXPECT_RELEASE_SHA'],
+            'deployment_url':os.environ['ACPOS_DEPLOYMENT_URL'],
+            'github_run_id':os.environ['GITHUB_RUN_ID'],
+            'github_run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],
+            'prior_diagnostic_run_id':'34486930610',
+            'resource_count':3,
+            'mutation_count':0,
+            'page_gate':True,
+            'finance_gate':False,
+            'blocking_gate_uid':'ERP-01-GATE-FINANCE',
+            'blocking_permission_uid':'ERP-01-PERM-FINANCE',
+            'controls':controls,
+            'rule':'BLOCKED applies only to these exact formal ERP finance GET controls because authenticated Production exposes the Current controls but disables all three via ERP-01-GATE-FINANCE while the page gate itself is allowed. No control was force-clicked and no business mutation was executed.'
+          }
+          evidence_path.write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n')
+          run_ref=f'GitHub Actions: ACPOS Gate25 ERP Finance Gate Blocker Materialize run_id={os.environ["GITHUB_RUN_ID"]}'
+          for control in controls:
+            key=expected_controls[control['control_id']]
+            entry=entries[key]
+            entry['disposition']='BLOCKED'
+            entry['reason_code']='PRODUCTION_ERP_FINANCE_GATE_FALSE'
+            entry['evidence_refs']=[str(evidence_path),run_ref,'GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610','scripts/gate25-production-erp-finance-gate-diagnostic.mjs','src/domain/erp/erpControlBindings.ts']
+            entry['blocker_detail']='Authenticated Production exposes the Current control, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity.'
+            entry['operation_ids']=[control['action_uid'],control['gate_uid'],control['permission_uid']]
+
+          counts={'PASS':0,'BLOCKED':0,'NOT_EXECUTED':0}
+          for entry in ledger['entries']:
+            counts[entry['disposition']]+=1
+          assert sum(counts.values())==1481
+          assert counts['PASS']==before['PASS']
+          assert counts['BLOCKED']==before['BLOCKED']+3
+          assert counts['NOT_EXECUTED']==before['NOT_EXECUTED']-3
+          ledger['counts']=counts
+          ledger_path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps({'before':before,'after':counts,'resource_count':3},ensure_ascii=False))
+          PY
+      - name: Validate synchronized ledger
+        run: node scripts/release-formal-acceptance-ledger.mjs
+      - name: Commit blocker evidence and ledger
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json
+          git add docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json
+          git commit -m 'evidence(gate25): block 3 ERP Finance controls on Production gate'
+          git push origin HEAD:new
