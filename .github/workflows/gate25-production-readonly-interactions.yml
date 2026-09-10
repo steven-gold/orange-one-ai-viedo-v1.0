@@ -1,0 +1,39 @@
+name: ACPOS Gate25 Production Readonly Interactions
+
+on:
+  push:
+    branches: [new]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  accept-readonly-interactions:
+    runs-on: ubuntu-24.04
+    environment: Production
+    timeout-minutes: 20
+    env:
+      ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
+      ACPOS_EXPECT_RELEASE_SHA: 608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36
+      ACPOS_PRODUCTION_E2E_EMAIL: admin
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install browser acceptance dependencies
+        run: |
+          npm ci
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Validate exact read-only runner syntax
+        run: |
+          node --check scripts/gate25-production-wb-readonly-acceptance.mjs
+          node --check scripts/gate25-production-sg02-readonly-acceptance.mjs
+      - name: Execute WB-01 fourteen read-only interactions
+        run: node scripts/gate25-production-wb-readonly-acceptance.mjs
+      - name: Execute SG-02 nine read-only interactions
+        run: node scripts/gate25-production-sg02-readonly-acceptance.mjs
