@@ -13,16 +13,15 @@ authority:
 navigation_topology:
   current_pages_total: 18
   page_partition: 9 workspace-facing + 9 admin
-  global_front_l1: 8
-  global_admin_l1: 8
-  current_non_global_l1_pages:
-    - workspace:INFO-01
-    - admin:KB-01
+  global_front_l1: 9
+  global_admin_l1: 9
+  front_l1_09: workspace:INFO-01
+  admin_l1_09: admin:KB-01
   history:
-    post_r9_9x9_construction_commit: 357fdb5601ba3353476594e850b66229d3c333a0
-    user_8x8_shell_restore_commit: 2848e4dc949ffe3ece967dbb59c530aaa5861a57
-    user_8x8_navigation_authority_commit: 613991373b01f7f89e77ea45a2f18657e4a63cad
-  rule: 18 Current pages and 16 Global L1 menu items are different counts. The Aug-30 9x9 navigation was post-R9 construction, then explicitly superseded by the Sep-07 user-confirmed 8x8 Global L1 topology. INFO-01 and KB-01 remain Current pages.
+    correct_post_r9_9x9_construction_commit: 357fdb5601ba3353476594e850b66229d3c333a0
+    erroneous_8x8_shell_commit: 2848e4dc949ffe3ece967dbb59c530aaa5861a57
+    erroneous_8x8_navigation_authority_commit: 613991373b01f7f89e77ea45a2f18657e4a63cad
+  rule: Current topology is 18 Current pages and 9+9 Global L1. INFO-01 is the ninth front L1 and KB-01 is the ninth admin L1. The Sep-07 8x8 changes were execution errors.
 
 production:
   url: https://orange-one-acpos-test.vercel.app
@@ -81,8 +80,8 @@ cleanup:
   stale_r9_monitor_specs_removed: true
   stale_r9_monitor_specs_cleanup_release_run_id: 34515862998
   stale_r9_monitor_specs_cleanup_release_conclusion: SUCCESS
-  page_authority_cleanup_classification_correction: Aug-30 9x9 was post-R9 construction, not legacy R9; its L1 topology was superseded by user-confirmed Sep-07 8x8 authority. Page deletion was not part of the cleanup.
-  navigation_route_residual_fix: SOURCE_PATCHED_RELEASE_PENDING
+  page_authority_cleanup_classification_correction: Aug-30 9x9 is post-R9 Current construction and is correct; Sep-07 8x8 was an execution error. Sep-11 8x8 alignment is superseded by the 9x9 restoration.
+  navigation_route_residual_fix: 9X9_RESTORED_SOURCE_RELEASE_PENDING
   temporary_workflows_remaining: 0
   preserved_current_collaboration_memory: .monkeycode/MEMORY.md
   known_git_ref_cleanup_debt:

@@ -7,5 +7,5 @@ export default function InfoPage(){
     throw new Error("INFO-01 integration port binding incomplete");
   }
 
-  return <AppShell><InfoVisual /></AppShell>;
+  return <AppShell activeNavId="NAV-09"><InfoVisual /></AppShell>;
 }

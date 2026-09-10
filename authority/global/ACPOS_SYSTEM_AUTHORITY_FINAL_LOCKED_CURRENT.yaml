@@ -36,7 +36,7 @@ core_identity:
 navigation_surfaces:
   front_workspace:
     authority: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 + ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
-    l1_count: 8
+    l1_count: 9
     meaning: Front workspace navigation only
     page_uids:
     - workspace:WB-01
@@ -47,9 +47,10 @@ navigation_surfaces:
     - QA-01
     - admin:DB-01
     - workspace:STR-01
+    - workspace:INFO-01
   admin:
     authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
-    l1_count: 8
+    l1_count: 9
     page_uids:
     - admin:SYS-01
     - admin:IAM-01
@@ -59,6 +60,7 @@ navigation_surfaces:
     - admin:AIAPI-01
     - admin:SG-02
     - admin:STR-01
+    - admin:KB-01
 page_title_rule:
   authority: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
   global_header_center_page_identity: REMOVED
@@ -511,10 +513,10 @@ implementation_truth_policy:
   rule: Authority defines contracts and boundaries; runtime, test, migration and deployment completion are resolved only from Current execution evidence.
 acceptance:
 - 18 unique current page authorities are represented in the Page Integration Matrix.
-- Front workspace navigation has exactly 8 L1 items.
-- Admin navigation has exactly 8 L1 items.
-- INFO-01 remains a Current front workspace page but is not a Global L1 item.
-- KB-01 remains a Current admin page but is not a Global L1 item.
+- Front workspace navigation has exactly 9 L1 items.
+- Admin navigation has exactly 9 L1 items including Knowledge.
+- INFO-01 is the ninth front L1.
+- KB-01 is the ninth admin L1.
 - All department Provider/Model binding resolves through admin:AIAPI-01 and the shared router.
 - QA is review/correction-request/recheck/pass, not production-script authoring.
 - KB reuses FactPackService + KnowledgeExperienceService and shared ACPOS objects.

@@ -2,14 +2,14 @@ authority:
   id: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY
   version: V1.0
   status: FINAL_LOCKED
-  revision: 2026-09-07-USER-RECONFIRM-FRONT8-ADMIN8-NON_L1_INFO_KB
+  revision: 2026-08-30-PHASE1-CLOSURE-FRONT9-ADMIN9-ALL-ROUTES
   current_only: true
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   authorization_model: ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
   page_declared_global_order: NON_EXECUTABLE
 front_workspace_navigation:
   owner: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 + this canonical target registry
-  count: 8
+  count: 9
   flat_l1_only: true
   items:
   - order: 1
@@ -84,9 +84,18 @@ front_workspace_navigation:
     route: /strategy
     child_menu: FORBIDDEN
     unauthorized: HIDDEN
+  - order: 9
+    nav_id: NAV-09
+    label:
+      zh-TW: 最新資訊
+      en: Latest Information
+    page_uid: workspace:INFO-01
+    route: /info
+    child_menu: FORBIDDEN
+    unauthorized: HIDDEN
 admin_navigation:
   owner: THIS_AUTHORITY
-  count: 8
+  count: 9
   items:
   - order: 1
     nav_id: ADMIN-NAV-01
@@ -160,6 +169,15 @@ admin_navigation:
     route: /admin/strategy
     permission_bundle: ADMIN-L1-STRATEGY
     unauthorized: HIDDEN
+  - order: 9
+    nav_id: ADMIN-NAV-09
+    label:
+      zh-TW: 知識庫
+      en: Knowledge & Experience
+    page_uid: admin:KB-01
+    route: /admin/knowledge
+    permission_bundle: ADMIN-L1-KNOWLEDGE
+    unauthorized: HIDDEN
 iam_permission_bundles:
   front:
   - bundle: FRONT-L1-01
@@ -186,6 +204,9 @@ iam_permission_bundles:
   - bundle: FRONT-L1-08
     page_uid: workspace:STR-01
     label_zh: 戰略中心
+  - bundle: FRONT-L1-09
+    page_uid: workspace:INFO-01
+    label_zh: 最新資訊
   admin:
   - bundle: ADMIN-L1-SYSTEM
     page_uid: admin:SYS-01
@@ -211,6 +232,9 @@ iam_permission_bundles:
   - bundle: ADMIN-L1-STRATEGY
     page_uid: admin:STR-01
     label_zh: 戰略中心
+  - bundle: ADMIN-L1-KNOWLEDGE
+    page_uid: admin:KB-01
+    label_zh: 知識庫
   all_toggle:
     meaning: UI select-all for explicit assignments only
     role_or_super_admin_semantics: FORBIDDEN

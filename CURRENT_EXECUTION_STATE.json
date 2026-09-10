@@ -1,6 +1,6 @@
 {
   "record_id": "ACPOS_CURRENT_EXECUTION_STATE",
-  "schema_version": "2.2",
+  "schema_version": "2.3",
   "record_policy": "CURRENT_ONLY",
   "historical_content_forbidden": true,
   "as_of_date": "2026-09-11",
@@ -26,18 +26,16 @@
   "navigation_topology": {
     "current_pages_total": 18,
     "current_page_partition": "9 workspace-facing + 9 admin",
-    "global_front_l1_count": 8,
-    "global_admin_l1_count": 8,
-    "current_non_global_l1_pages": [
-      "workspace:INFO-01",
-      "admin:KB-01"
-    ],
+    "global_front_l1_count": 9,
+    "global_admin_l1_count": 9,
+    "front_l1_09": "workspace:INFO-01",
+    "admin_l1_09": "admin:KB-01",
     "history": {
-      "post_r9_9x9_construction_commit": "357fdb5601ba3353476594e850b66229d3c333a0",
-      "user_8x8_shell_restore_commit": "2848e4dc949ffe3ece967dbb59c530aaa5861a57",
-      "user_8x8_navigation_authority_commit": "613991373b01f7f89e77ea45a2f18657e4a63cad"
+      "correct_post_r9_9x9_construction_commit": "357fdb5601ba3353476594e850b66229d3c333a0",
+      "erroneous_8x8_shell_commit": "2848e4dc949ffe3ece967dbb59c530aaa5861a57",
+      "erroneous_8x8_authority_commit": "613991373b01f7f89e77ea45a2f18657e4a63cad"
     },
-    "rule": "The 18 Current pages are not legacy R9 pages and must not be deleted. Page count and Global L1 menu count are separate concepts. The post-R9 9x9 navigation experiment was later superseded by the user-confirmed 2026-09-07 8x8 Global L1 authority; INFO-01 and KB-01 remain Current pages but are not Global L1 items."
+    "rule": "Current topology is 18 Current pages and 9+9 Global L1. INFO-01 is FRONT-L1-09/NAV-09 and KB-01 is ADMIN-L1-KNOWLEDGE/ADMIN-NAV-09. The Sep-07 8x8 changes were execution errors and must not be used as Current authority."
   },
   "gate25": {
     "total_resources": 1481,
@@ -121,22 +119,21 @@
     "page_authority_cleanup_bot_sha": "83ee8b30bae23ae1ddf606e13770bf9aa0dba43c",
     "page_authority_cleanup_one_shot_run_id": 34522729557,
     "page_authority_cleanup_one_shot_conclusion": "SUCCESS",
-    "page_authority_cleanup_classification_correction": "The Aug-30 9x9 navigation content was post-R9 construction, not an R9 legacy definition. It was superseded by the user-authored Sep-07 8x8 shell and Navigation Authority. The cleanup result is retained because it aligns stale Page Authority text to the later 8x8 authority; the R9 classification language is corrected here.",
+    "page_authority_cleanup_classification_correction": "Aug-30 9x9 was post-R9 Current construction and is correct. The Sep-07 8x8 shell/navigation changes were execution errors. Any Sep-11 cleanup that aligned IAM/INFO to 8x8 is superseded by this restoration.",
     "page_authority_cleanup_scope": [
-      "workspace:INFO-01 remains a Current page; its Aug-30 NAV-09 Global L1 declaration was superseded by the Sep-07 user-confirmed 8x8 Navigation Authority",
-      "admin:IAM-01 remains Current; its Aug-30 9x9 L1 permission text was aligned to the later Sep-07 Current 8x8 Global L1 model",
-      "admin:SYS-01 mutable pending-release status externalized",
-      "admin:DEV-01 mutable NOT_EXECUTED status externalized",
-      "admin:SOC-01 mutable NOT_EXECUTED status externalized",
-      "admin:ERP-01 mutable NOT_EXECUTED status externalized",
-      "admin:AIAPI-01 old Release/deployment runtime snapshot externalized",
-      "admin:STR-01 old NOT_EXECUTED runtime snapshot externalized"
+      "workspace:INFO-01 restored as Current FRONT-L1-09 / NAV-09; page remains Current",
+      "admin:IAM-01 restored to Current 9x9 L1 permission model including INFO-01 and KB-01",
+      "admin:SYS-01 mutable pending-release status remains externalized",
+      "admin:DEV-01 mutable NOT_EXECUTED status remains externalized",
+      "admin:SOC-01 mutable NOT_EXECUTED status remains externalized",
+      "admin:ERP-01 mutable NOT_EXECUTED status remains externalized",
+      "admin:AIAPI-01 old Release/deployment runtime snapshot remains externalized",
+      "admin:STR-01 old NOT_EXECUTED runtime snapshot remains externalized"
     ],
     "navigation_route_residual_fix": {
-      "status": "SOURCE_PATCHED_RELEASE_PENDING",
-      "source_head_after_patch": "810b3d4dd871bfc50af1645ea7653d70fb15fcf3",
-      "info_route_retired_active_nav_id_removed": true,
-      "knowledge_route_retired_active_nav_id_removed": true,
+      "status": "9X9_RESTORED_SOURCE_RELEASE_PENDING",
+      "info_route_nav_09_restored": true,
+      "knowledge_route_admin_nav_09_restored": true,
       "permanent_regression_updated": "tests/release/page-authority-current-truth.test.mjs"
     },
     "current_named_global_authority_scan": {
@@ -162,17 +159,17 @@
       "workspace:EDIT-01": "CURRENT_CONTRACT_RETAINED",
       "workspace:QA-01": "CURRENT_CONTRACT_RETAINED",
       "workspace:STR-01": "CURRENT_CONTRACT_RETAINED",
-      "workspace:INFO-01": "CURRENT_PAGE_NON_GLOBAL_L1_AFTER_SEP07_8X8_SUPERSESSION",
+      "workspace:INFO-01": "CURRENT_FRONT_L1_09_RESTORED",
       "admin:DB-01": "CURRENT_CONTRACT_RETAINED",
       "admin:SYS-01": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
-      "admin:IAM-01": "CURRENT_PAGE_L1_PERMISSION_TEXT_ALIGNED_TO_SEP07_8X8",
+      "admin:IAM-01": "CURRENT_9X9_PERMISSION_MODEL_RESTORED",
       "admin:DEV-01": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
       "admin:SOC-01": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
       "admin:ERP-01": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
       "admin:AIAPI-01": "OLD_RELEASE_DEPLOYMENT_SNAPSHOT_EXTERNALIZED",
       "admin:SG-02": "CURRENT_CONTRACT_RETAINED",
       "admin:STR-01": "MUTABLE_EXECUTION_STATE_EXTERNALIZED",
-      "admin:KB-01": "CURRENT_PAGE_NON_GLOBAL_L1_AFTER_SEP07_8X8_SUPERSESSION"
+      "admin:KB-01": "CURRENT_ADMIN_L1_09_RETAINED"
     },
     "temporary_workflows_remaining": 0,
     "preserved_current_collaboration_memory": ".monkeycode/MEMORY.md",
@@ -185,8 +182,8 @@
     "cleanup_evidence": "docs/construction/evidence/R9_RESIDUAL_CLEANUP_2026-09-11.md"
   },
   "current_batch_validation": {
-    "item": "NAVIGATION_TOPOLOGY_TRUTH_CORRECTION",
-    "source_head": "810b3d4dd871bfc50af1645ea7653d70fb15fcf3",
+    "item": "RESTORE_USER_CONFIRMED_9X9_CURRENT_TOPOLOGY",
+    "source_head": "AUTOMATION_COMMIT_PENDING",
     "release_gate": "PENDING"
   },
   "remaining_queue_policy": "Only top-level closures are counted here. Discovered subdependencies remain inside their owning item and must not inflate the queue count.",

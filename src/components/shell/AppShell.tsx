@@ -32,6 +32,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { id: "NAV-06", pageUid: "QA-01", labelKey: "global.nav.qa", icon: "qa", href: "/qa" },
   { id: "NAV-07", pageUid: "admin:DB-01", labelKey: "global.nav.database", icon: "database", href: "/database" },
   { id: "NAV-08", pageUid: "workspace:STR-01", labelKey: "global.nav.strategy", icon: "strategy", href: "/strategy" },
+  { id: "NAV-09", pageUid: "workspace:INFO-01", labelKey: "global.nav.latest_information", icon: "info", href: "/info" },
 ] as const;
 
 const ADMIN_NAV_ITEMS: readonly NavItem[] = [
@@ -43,6 +44,7 @@ const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   { id: "ADMIN-NAV-06", pageUid: "admin:AIAPI-01", labelKey: "global.admin.aiapi", icon: "video", href: "/admin/aiapi" },
   { id: "ADMIN-NAV-07", pageUid: "admin:SG-02", labelKey: "global.admin.qa_criteria", icon: "qa", href: "/admin/qa-criteria" },
   { id: "ADMIN-NAV-08", pageUid: "admin:STR-01", labelKey: "global.admin.strategy", icon: "strategy", href: "/admin/strategy" },
+  { id: "ADMIN-NAV-09", pageUid: "admin:KB-01", labelKey: "global.admin.knowledge", icon: "asset", href: "/admin/knowledge" },
 ] as const;
 
 function Icon({ name }: { name: NavItem["icon"] }) {
