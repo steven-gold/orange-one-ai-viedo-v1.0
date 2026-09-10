@@ -28,9 +28,9 @@
   "blocked_rule": "BLOCKED requires a concrete reason_code and one or more blocker evidence refs.",
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
-    "PASS": 43,
+    "PASS": 47,
     "BLOCKED": 119,
-    "NOT_EXECUTED": 1319
+    "NOT_EXECUTED": 1315
   },
   "entries": [
     {
@@ -864,9 +864,23 @@
     {
       "resource_key": "action:admin:ERP-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_ERP_DETAIL_UI_CONTEXT_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_NAV_PRODUCTION_UI_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic rerun run_id=34486930610 job_id=102907639887 attempt=2",
+        "scripts/gate25-production-erp-nav-ui-acceptance.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/domain/erp/erpControlBindings.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "ERP-01-ACT-DETAIL-OPEN",
+        "ERP-01-GATE-PAGE",
+        "ERP-01-PERM-READ"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.connector.create",
@@ -941,9 +955,23 @@
     {
       "resource_key": "action:admin:ERP-02:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_ERP_DETAIL_UI_CONTEXT_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_NAV_PRODUCTION_UI_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic rerun run_id=34486930610 job_id=102907639887 attempt=2",
+        "scripts/gate25-production-erp-nav-ui-acceptance.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/domain/erp/erpControlBindings.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "ERP-01-ACT-DETAIL-OPEN",
+        "ERP-01-GATE-PAGE",
+        "ERP-01-PERM-READ"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-02:erp.capacity.get_guardrails",
@@ -4574,9 +4602,23 @@
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-10-ACT-NAV-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_ERP_DETAIL_UI_CONTEXT_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_NAV_PRODUCTION_UI_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic rerun run_id=34486930610 job_id=102907639887 attempt=2",
+        "scripts/gate25-production-erp-nav-ui-acceptance.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/domain/erp/erpControlBindings.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "ERP-01-ACT-DETAIL-OPEN",
+        "ERP-01-GATE-PAGE",
+        "ERP-01-PERM-READ"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-AUDIT-OPEN",
@@ -4771,9 +4813,23 @@
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-05-ACT-NAV-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_CURRENT_ERP_DETAIL_UI_CONTEXT_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_NAV_PRODUCTION_UI_EXECUTION_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic rerun run_id=34486930610 job_id=102907639887 attempt=2",
+        "scripts/gate25-production-erp-nav-ui-acceptance.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpRuntimeContract.ts",
+        "src/domain/erp/erpControlBindings.ts",
+        "src/components/pages/ErpVisual.tsx"
+      ],
+      "blocker_detail": null,
+      "operation_ids": [
+        "ERP-01-ACT-DETAIL-OPEN",
+        "ERP-01-GATE-PAGE",
+        "ERP-01-PERM-READ"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-CAPACITY-OPEN",
