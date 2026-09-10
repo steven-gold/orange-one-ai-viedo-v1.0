@@ -997,6 +997,40 @@ async function executeInfo(request: InfoRequest): Promise<unknown> {
   return { results };
 }
 
+async function auditInfoCommand(
+  entry: InfoRequest & { outcome: "ALLOWED" | "DENIED" | "SUCCESS" | "ERROR"; reason_code?: string },
+): Promise<void> {
+  const payload = asRecord(entry.payload) ?? {};
+  const pageUid = asText(payload.current_page_uid) ?? asText(payload.page_uid);
+  if (pageUid !== "admin:IAM-01" || entry.operation_id !== "searchProjection") return;
+
+  const sql = await requireSql();
+  const identityContext = await requireIdentityContext();
+  const correlationId = asUuidText(entry.correlation_id);
+  if (!correlationId) throw new NamedRuntimeError("IAM_SEARCH_AUDIT_CORRELATION_REQUIRED");
+  const reason = `${entry.outcome}:${entry.reason_code ?? entry.outcome}`;
+  const payloadHash = sha256(JSON.stringify({
+    operation_id: entry.operation_id,
+    page_uid: pageUid,
+    outcome: entry.outcome,
+    reason_code: entry.reason_code ?? null,
+    query: asText(payload.query) ?? "",
+  }));
+
+  await runRlsActorQuery(
+    sql,
+    identityContext.session_token_hash,
+    sql`
+      INSERT INTO public.audit_events(
+        action,entity_type,entity_id,actor_id,actor_type,workspace_id,reason,correlation_id,payload_hash
+      ) VALUES(
+        'searchProjection','admin:IAM-01',${identityContext.actor.user_id}::uuid,${identityContext.actor.user_id}::uuid,
+        'USER',NULL,${reason},${correlationId}::uuid,${payloadHash}::char(64)
+      )
+    `,
+  );
+}
+
 function refItems(rows: unknown) {
   return (Array.isArray(rows) ? rows : []).flatMap((raw) => {
     const row = asRecord(raw);
@@ -1330,7 +1364,7 @@ export function bindIdentityPageCommandRuntimes(): void {
   configureInfoCommandRuntime({
     authorize: authorizeInfoCommand,
     execute: executeInfo,
-    audit: async () => undefined,
+    audit: auditInfoCommand,
   });
   configureDepartmentOperationRuntime({
     authorize: async () => {
