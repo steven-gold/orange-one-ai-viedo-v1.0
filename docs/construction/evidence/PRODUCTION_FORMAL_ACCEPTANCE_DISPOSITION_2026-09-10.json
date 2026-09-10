@@ -30,8 +30,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 51,
-    "BLOCKED": 159,
-    "NOT_EXECUTED": 1271
+    "BLOCKED": 187,
+    "NOT_EXECUTED": 1243
   },
   "entries": [
     {
@@ -2122,51 +2122,121 @@
     {
       "resource_key": "action:workspace:CORE-01:ACT-CANDIDATE-CREATE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/domain/core/coreRuntimeContract.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal ACTION remains active, but its exact UID has no Current CORE-01 Authority/runtime owner or explicit alias. Current prefixed action identities may not be inferred as a remap. No fake Production lineage may be created to force acceptance.",
+      "operation_ids": [
+        "ACT-CANDIDATE-CREATE"
+      ]
     },
     {
       "resource_key": "action:workspace:CORE-01:ACT-DRAFT-SAVE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/domain/core/coreRuntimeContract.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal ACTION remains active, but its exact UID has no Current CORE-01 Authority/runtime owner or explicit alias. Current prefixed action identities may not be inferred as a remap. No fake Production lineage may be created to force acceptance.",
+      "operation_ids": [
+        "ACT-DRAFT-SAVE"
+      ]
     },
     {
       "resource_key": "action:workspace:CORE-01:ACT-DRAFT-VALIDATE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/domain/core/coreRuntimeContract.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal ACTION remains active, but its exact UID has no Current CORE-01 Authority/runtime owner or explicit alias. Current prefixed action identities may not be inferred as a remap. No fake Production lineage may be created to force acceptance.",
+      "operation_ids": [
+        "ACT-DRAFT-VALIDATE"
+      ]
     },
     {
       "resource_key": "action:workspace:CORE-01:core.project.add_reference",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/domain/core/coreRuntimeContract.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal ACTION remains active, but its exact UID has no Current CORE-01 Authority/runtime owner or explicit alias. Current prefixed action identities may not be inferred as a remap. No fake Production lineage may be created to force acceptance.",
+      "operation_ids": [
+        "core.project.add_reference"
+      ]
     },
     {
       "resource_key": "action:workspace:CORE-01:core.project.confirm",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/domain/core/coreRuntimeContract.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal ACTION remains active, but its exact UID has no Current CORE-01 Authority/runtime owner or explicit alias. Current prefixed action identities may not be inferred as a remap. No fake Production lineage may be created to force acceptance.",
+      "operation_ids": [
+        "core.project.confirm"
+      ]
     },
     {
       "resource_key": "action:workspace:CORE-01:core.project.invite_collaborator",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/domain/core/coreRuntimeContract.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal ACTION remains active, but its exact UID has no Current CORE-01 Authority/runtime owner or explicit alias. Current prefixed action identities may not be inferred as a remap. No fake Production lineage may be created to force acceptance.",
+      "operation_ids": [
+        "core.project.invite_collaborator"
+      ]
     },
     {
       "resource_key": "action:workspace:CORE-01:core.project.open_modeling",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_ACTION_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/domain/core/coreRuntimeContract.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal ACTION remains active, but its exact UID has no Current CORE-01 Authority/runtime owner or explicit alias. Current prefixed action identities may not be inferred as a remap. No fake Production lineage may be created to force acceptance.",
+      "operation_ids": [
+        "core.project.open_modeling"
+      ]
     },
     {
       "resource_key": "action:workspace:CORE-02:core.topic.add_goal",
@@ -8519,149 +8589,359 @@
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-ACT-01-ACT-DRAFT-SAVE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-ACT-01-ACT-DRAFT-SAVE"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-ACT-02-ACT-CANDIDATE-CREATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-ACT-02-ACT-CANDIDATE-CREATE"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-ACT-03-ACT-DRAFT-VALIDATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-ACT-03-ACT-DRAFT-VALIDATE"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-ACT-04-CORE-PROJECT-OPEN-MODELING",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-ACT-04-CORE-PROJECT-OPEN-MODELING"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-ACT-05-CORE-PROJECT-ADD-REFERENCE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-ACT-05-CORE-PROJECT-ADD-REFERENCE"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-ACT-06-CORE-PROJECT-INVITE-COLLABORATOR",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-ACT-06-CORE-PROJECT-INVITE-COLLABORATOR"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-ACT-07-CORE-PROJECT-CONFIRM",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-ACT-07-CORE-PROJECT-CONFIRM"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-COLLABORATION-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-COLLABORATION-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-PREFLIGHT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-PREFLIGHT-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-ADD-NOTE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-ADD-NOTE"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-CONFIRM-PROJECT",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-CONFIRM-PROJECT"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-GENERATE-STORY-CANDIDATES",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-GENERATE-STORY-CANDIDATES"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-REQUEST-MOTHER-LOCK",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-REQUEST-MOTHER-LOCK"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-RETURN-FOR-REVISION",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-RETURN-FOR-REVISION"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-SAVE-DRAFT",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-SAVE-DRAFT"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-VALIDATE-DRAFT",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-VALIDATE-DRAFT"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-VIEW-HISTORY",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-PROJECT-CREATION-WIZARD-VIEW-HISTORY"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-PROJECT-IDENTITY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-PROJECT-IDENTITY-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-REFERENCES-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-REFERENCES-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-STORY-CORE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-STORY-CORE-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-01-WORLD-CHARACTER-DNA-RULES-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_FORMAL_CONTROL_UID_NOT_BOUND_BY_CURRENT_PAGE_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_CORE01_FORMAL_ALIGNMENT_BLOCKERS_2026-09-11.json",
+        "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+        "src/components/pages/CoreVisual.tsx",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "docs/construction/evidence/GATE17_CORE_PRODUCTION_LINEAGE_BLOCKER_2026-09-10.json"
+      ],
+      "blocker_detail": "Production formal CONTROL remains active, but its exact UID is absent from FINAL_LOCKED Current CORE-01 Authority and Current visual bindings. Recreating the retired Project Creation Wizard/control identity is forbidden.",
+      "operation_ids": [
+        "CTRL-WORKSPACE-CORE-01-WORLD-CHARACTER-DNA-RULES-OPEN"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-CORE-02-ACT-01-CORE-TOPIC-NEXT-STEP",
