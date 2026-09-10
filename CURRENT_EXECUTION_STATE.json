@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T10:51:00+08:00",
+  "as_of": "2026-09-10T11:01:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -18,8 +18,8 @@
   },
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-    "main_sha": "a75602a5ce26da42a7c281e7e7225bb9fb6df720",
-    "new_sha": "bd62b6d08d684653df3325ece00b0e1dfc80bd30",
+    "main_sha": "c3be46239146673c02d261defa17f55340342c8a",
+    "new_sha": "92f4d0c5279059af75b3e97efe82b73fba593059",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -35,25 +35,27 @@
       }
     ],
     "latest_new_release_gate": {
-      "run_number": 1059,
-      "run_id": 34424374349,
-      "head_sha": "91ddc58bddb8a8e8b51c7d8bdd07fce425b3bf64",
+      "run_number": 1074,
+      "run_id": 34431123822,
+      "head_sha": "92f4d0c5279059af75b3e97efe82b73fba593059",
       "status": "SUCCESS"
     },
     "production_main_release_gate": {
-      "run_number": 1061,
-      "run_id": 34426021861,
-      "head_sha": "a75602a5ce26da42a7c281e7e7225bb9fb6df720",
+      "run_number": 1076,
+      "run_id": 34431380486,
+      "head_sha": "c3be46239146673c02d261defa17f55340342c8a",
       "status": "SUCCESS"
     }
   },
   "production": {
     "url": "https://orange-one-acpos-test.vercel.app",
-    "release_sha": "a75602a5ce26da42a7c281e7e7225bb9fb6df720",
+    "release_sha": "c3be46239146673c02d261defa17f55340342c8a",
     "vercel_commit_status": "SUCCESS",
     "latest_post_deploy": {
-      "run_number": 1370,
-      "run_id": 34426215764,
+      "run_number": 1384,
+      "run_id": 34431418875,
+      "event": "deployment_status",
+      "head_sha": "c3be46239146673c02d261defa17f55340342c8a",
       "status": "SUCCESS"
     },
     "readiness_http": 200,
@@ -92,87 +94,123 @@
     },
     "dom_control_acceptance": {
       "pages": 18,
-      "interactive": 555,
-      "governed": 555,
-      "enabled": 339,
+      "interactive": 558,
+      "governed": 558,
+      "enabled": 342,
       "disabled": 216,
       "status": "VISUAL_GOVERNANCE_PASS_EFFECTFUL_ACCEPTANCE_PENDING",
       "page_counts": {
         "workspace:WB-01": {
+          "visible": 14,
           "enabled": 14,
-          "disabled": 0
+          "disabled": 0,
+          "governed": 14
         },
         "CORE-01": {
+          "visible": 30,
           "enabled": 7,
-          "disabled": 23
+          "disabled": 23,
+          "governed": 30
         },
         "ASSET-01": {
+          "visible": 23,
           "enabled": 3,
-          "disabled": 20
+          "disabled": 20,
+          "governed": 23
         },
         "VIDEO-01": {
+          "visible": 19,
           "enabled": 6,
-          "disabled": 13
+          "disabled": 13,
+          "governed": 19
         },
         "EDIT-01": {
+          "visible": 77,
           "enabled": 6,
-          "disabled": 71
+          "disabled": 71,
+          "governed": 77
         },
         "QA-01": {
+          "visible": 18,
           "enabled": 7,
-          "disabled": 11
+          "disabled": 11,
+          "governed": 18
         },
         "admin:DB-01": {
-          "enabled": 233,
-          "disabled": 0
+          "visible": 236,
+          "enabled": 236,
+          "disabled": 0,
+          "governed": 236
         },
         "workspace:STR-01": {
+          "visible": 18,
           "enabled": 2,
-          "disabled": 16
+          "disabled": 16,
+          "governed": 18
         },
         "workspace:INFO-01": {
+          "visible": 10,
           "enabled": 4,
-          "disabled": 6
+          "disabled": 6,
+          "governed": 10
         },
         "admin:SYS-01": {
+          "visible": 10,
           "enabled": 3,
-          "disabled": 7
+          "disabled": 7,
+          "governed": 10
         },
         "admin:IAM-01": {
+          "visible": 28,
           "enabled": 4,
-          "disabled": 24
+          "disabled": 24,
+          "governed": 28
         },
         "admin:DEV-01": {
+          "visible": 6,
           "enabled": 6,
-          "disabled": 0
+          "disabled": 0,
+          "governed": 6
         },
         "admin:SOC-01": {
+          "visible": 6,
           "enabled": 6,
-          "disabled": 0
+          "disabled": 0,
+          "governed": 6
         },
         "admin:ERP-01": {
+          "visible": 8,
           "enabled": 4,
-          "disabled": 4
+          "disabled": 4,
+          "governed": 8
         },
         "admin:AIAPI-01": {
+          "visible": 29,
           "enabled": 11,
-          "disabled": 18
+          "disabled": 18,
+          "governed": 29
         },
         "admin:SG-02": {
+          "visible": 11,
           "enabled": 11,
-          "disabled": 0
+          "disabled": 0,
+          "governed": 11
         },
         "admin:STR-01": {
+          "visible": 8,
           "enabled": 5,
-          "disabled": 3
+          "disabled": 3,
+          "governed": 8
         },
         "admin:KB-01": {
+          "visible": 7,
           "enabled": 7,
-          "disabled": 0
+          "disabled": 0,
+          "governed": 7
         }
       }
     },
-    "pending_product_delta": "new contains EDIT Finalize/VOICE lifecycle/audit fixes through bd62b6d08d684653df3325ece00b0e1dfc80bd30; Release Gate #1073 SUCCESS. Production DB is 51/51 through 0051. Application delta remains pending main integration/deploy.",
+    "pending_product_delta": "NONE: PR #38 merged; main c3be46239146673c02d261defa17f55340342c8a passed Release Gate #1076 and Production Post-Deploy #1384/#1385.",
     "formal_acceptance_denominator": {
       "legacy_catalog": {
         "controls": 1141,
@@ -188,14 +226,21 @@
         "active_permission_resources": 3693,
         "permission_resource_expansion": 43
       },
-      "last_deployed_rendered_dom": {
-        "interactive": 555,
-        "governed": 555,
-        "enabled": 339,
+      "rule": "1453 is the historical CONTROL+ACTION catalog baseline. 1481 is the Current active Production CONTROL+ACTION permission denominator. 558 is the separately observed current Production rendered DOM interactive denominator. These denominators are not interchangeable. Gate 25 remains PARTIAL until all formal controls/actions have an explicit acceptance disposition and effectful paths are proven without fabricated business data.",
+      "evidence": "docs/construction/evidence/CURRENT_ACCEPTANCE_DENOMINATOR_2026-09-10.json",
+      "current_production_rendered_dom": {
+        "interactive": 558,
+        "governed": 558,
+        "enabled": 342,
         "disabled": 216
-      },
-      "rule": "1453 is historical catalog baseline; 1481 is Current active CONTROL+ACTION permission denominator after migration 0050. DOM 555 belongs to the last deployed main and must be rerun after the new application delta reaches Production.",
-      "evidence": "docs/construction/evidence/CURRENT_ACCEPTANCE_DENOMINATOR_2026-09-10.json"
+      }
+    },
+    "post_deploy_redundant_confirmation": {
+      "run_number": 1385,
+      "run_id": 34431553596,
+      "event": "workflow_run",
+      "head_sha": "c3be46239146673c02d261defa17f55340342c8a",
+      "status": "SUCCESS"
     }
   },
   "neon": {
@@ -382,12 +427,12 @@
       "status": "PARTIAL_FAIL_CLOSED",
       "voice_schema_contract": "COMPLETE_0049",
       "positive_lifecycle_effectful": false,
-      "provider_operation_mapping": "ABSENT_FROM_CURRENT_OPERATION_REGISTRY",
-      "runtime_behavior": "startVoiceRuntime throws EDIT_VOICE_PROVIDER_OPERATION_NOT_MATERIALIZED",
+      "provider_operation_mapping": "ROUTE_REGISTERED_PROVIDER_CAPABILITY_MAPPING_ABSENT",
+      "runtime_behavior": "startVoiceRuntime remains fail-closed with EDIT_VOICE_PROVIDER_OPERATION_NOT_MATERIALIZED until an exact governed VOICE Provider operation/capability mapping exists.",
       "rule": "Do not alias or guess startVoiceRuntime to generic executeProviderRoute without an exact Current operation/capability mapping."
     },
     "edit_finalize_0050": {
-      "status": "PRODUCTION_DB_APPLIED_APPLICATION_DEPLOY_PENDING",
+      "status": "PRODUCTION_DEPLOYED_VERIFIED_EFFECTFUL_DATA_PENDING",
       "migration_id": "0050_edit_finalize_persistence_permission_rls_closure",
       "checksum": "f6be546d52ff486236913c5f8c02971cf7e25c9f801fe3a8c5774f1a548553d5",
       "production_migration_count": "50/50",
@@ -403,18 +448,17 @@
       },
       "business_rows_created": 0,
       "remaining": [
-        "application delta not merged/deployed to main",
-        "positive EDIT/QA lineage absent",
-        "VOICE Provider exact operation/capability mapping absent"
+        "positive EDIT/QA canonical business lineage absent",
+        "EDIT_RENDER governed Provider route/capability absent"
       ]
     },
     "edit_finalize_blueprint_lineage": {
-      "status": "CODE_FIXED_RELEASE_GATE_PENDING",
+      "status": "PRODUCTION_DEPLOYED_VERIFIED",
       "source": "department_tasks.child_lock_id -> child_locks.blueprint_version_id",
       "rule": "Do not add a duplicate blueprint_version_id column to department_tasks."
     },
     "edit_voice_audit_0051": {
-      "status": "PRODUCTION_DB_APPLIED_APPLICATION_DEPLOY_PENDING",
+      "status": "PRODUCTION_DEPLOYED_VERIFIED",
       "migration_id": "0051_edit_voice_audit_rls_closure",
       "checksum": "ddce6a15daa6f3f5e1407163fa2e10717fead8b82c264cbd08ac77ed0c4ab74e",
       "production_migration_count": "51/51",
@@ -428,7 +472,8 @@
         "SELECT"
       ],
       "durable_allowed_audit_gate": true,
-      "business_rows_created": 0
+      "business_rows_created": 0,
+      "production_release_sha": "c3be46239146673c02d261defa17f55340342c8a"
     },
     "edit_voice_provider_preflight": {
       "status": "BLOCKED_BY_CURRENT_PROVIDER_AUTHORITY_DATA",
@@ -514,13 +559,13 @@
       "name": "Migrations",
       "percent": 100,
       "status": "PASS",
-      "detail": "49/49 Production migrations verified"
+      "detail": "51/51 Production migrations verified through 0051_edit_voice_audit_rls_closure."
     },
     "11": {
       "name": "Schema / Integrity",
       "percent": 87.5,
       "status": "PARTIAL",
-      "detail": "3672 active permission resources; historical seal 3650 plus Current expansion +22 observed. Graph/integrity final Current seal still pending."
+      "detail": "3693 active permission resources; historical authority baseline 3650 plus Current expansion +43. Final graph/integrity Current seal remains pending."
     },
     "12": {
       "name": "PostgreSQL RLS",
@@ -554,7 +599,7 @@
       "name": "CORE Runtime",
       "percent": 75,
       "status": "PARTIAL",
-      "detail": "CanonicalScript DB runtime and application are deployed on main a75602a5; positive QualityCriteriaVersion -> CanonicalScriptVersion -> ChildLock effectful E2E is blocked because all required canonical Production business lineage rows are currently zero. No rows may be fabricated for acceptance."
+      "detail": "CanonicalScript DB/runtime/application are deployed on main c3be46239146673c02d261defa17f55340342c8a. Positive QualityCriteriaVersion -> CanonicalScriptVersion -> ChildLock effectful E2E remains blocked because required canonical Production business lineage rows are zero; acceptance may not fabricate them."
     },
     "18": {
       "name": "ASSET Runtime",
@@ -570,7 +615,7 @@
       "name": "EDIT + VOICE Runtime",
       "percent": 50,
       "status": "PARTIAL",
-      "detail": "Production DB schema/permission/RLS/audit owners are closed through migrations 0049/0050/0051. Application delta is pending main deploy. Positive EDIT Render/VOICE execution remains blocked by zero media route policies/capabilities and zero real EDIT/QA business lineage."
+      "detail": "VOICE schema 0049, EDIT Finalize persistence/permission/RLS 0050, EDIT audit RLS 0051, ChildLock->Blueprint resolution, 17/17 route bindings and durable pre-effect audit are deployed on main c3be46239146673c02d261defa17f55340342c8a. Positive lifecycle remains blocked by zero real EDIT/QA lineage, zero approved route policies, zero EDIT_RENDER capabilities and zero VOICE capabilities."
     },
     "21": {
       "name": "QA Runtime",
@@ -597,7 +642,7 @@
       "name": "全頁全按鈕 Acceptance",
       "percent": 50,
       "status": "PARTIAL",
-      "detail": "Historical baseline 1453 preserved; Current active Production CONTROL+ACTION denominator 1481 and total resources 3693. Last deployed DOM remains 555/555 governed; Post-Deploy recompute is required after the pending application integration."
+      "detail": "Historical CONTROL+ACTION baseline 1453 is preserved. Current active Production CONTROL+ACTION denominator is 1481; total active permission resources 3693. Production Post-Deploy #1384 observed 558/558 governed interactive controls (342 enabled/216 disabled). Existing runner proves DOM governance only; exhaustive formal/effectful acceptance runner remains missing."
     }
   },
   "gate_summary": {
@@ -607,7 +652,7 @@
     "blocked": 0,
     "unknown": 0,
     "production_ready_percent": 81.5,
-    "production_ready_percent_status": "STALE_RECOMPUTE_REQUIRED_AFTER_PENDING_EDITVOICE_APP_DEPLOY"
+    "production_ready_percent_status": "CURRENT_SCORE_FROM_EXISTING_GATE_WEIGHTS_EFFECTFUL_ACCEPTANCE_STILL_OPEN"
   },
   "blockers": [
     "TaskTemplate/ProductionGoal/OutputContract/RightsProfile are zero in Production and are dependencies of the nine formal materialization items; they may not be omitted from progress reports.",
@@ -659,36 +704,37 @@
     },
     "Production QualityCriteriaVersion/Topic/TopicVersion/TopicProductionContract/Blueprint/CanonicalScriptVersion/ChildLock and governed-resource business rows are all zero at the 2026-09-10 Production preflight; positive CORE effectful acceptance must not fabricate rows and waits for real canonical operator-created lineage.",
     "EDIT+VOICE VOICE schema blocker is closed by 0049, but Current operation registry has no exact startVoiceRuntime Provider operation/capability mapping; startVoiceRuntime must remain fail-closed and generic executeProviderRoute must not be guessed as a substitute.",
-    "Gate 25 Current permission denominator is now 1481 after Production migration 0050; the last deployed DOM evidence remains 555/555 and must be regenerated after the new application delta is merged/deployed.",
-    "EDIT Finalize/VOICE lifecycle/audit application delta is not yet on main; Production DB is 51/51 while deployed application main remains the previous exact-SHA release until integration.",
     "Positive EDIT+VOICE lifecycle acceptance is blocked by zero real EDITING task, QA task, accepted output, editing timeline, voice profile, EDIT lock and editing runtime rows. Production acceptance must not fabricate these rows.",
     "Production Provider authority has 4 APPROVED capabilities, all TEXT_CHAT; APPROVED route policies=0, EDITING route policies=0, EDIT_RENDER capabilities=0, VOICE capabilities=0. startEditRender/startVoiceRuntime positive execution remains blocked until exact governed mappings exist.",
-    "Gate 25 Current permission denominator remains 1481 CONTROL+ACTION and 3693 total active permission resources after 0051; last deployed DOM evidence remains 555/555 until the application delta is deployed and Post-Deploy acceptance is rerun."
+    "Positive CORE effectful chain is blocked by zero real QualityCriteriaVersion/Topic/ProductionContract/Blueprint/CanonicalScriptVersion/ChildLock business lineage. Do not fabricate Production rows for acceptance.",
+    "Positive EDIT+VOICE lifecycle acceptance is blocked by zero real EDITING/QA task/output/timeline/voice-profile/lock/runtime lineage. Do not fabricate Production rows for acceptance.",
+    "Production Provider authority has 4 APPROVED capabilities and all are TEXT_CHAT; APPROVED route policies=0, EDITING route policies=0, EDIT_RENDER capabilities=0, VOICE capabilities=0. TEXT_CHAT capabilities must not be substituted for media/voice execution.",
+    "Gate 25 lacks a permanent exhaustive formal/effectful acceptance runner for the Current 1481 CONTROL+ACTION denominator. Existing Post-Deploy control acceptance proves only rendered DOM governance (558/558) and cannot be used as exhaustive effectful evidence.",
+    "Gate 25 denominator types must remain separate: historical catalog CONTROL+ACTION=1453, Current Production permission CONTROL+ACTION=1481, Current rendered Production DOM interactive=558."
   ],
   "remaining_queue": [
-    "MANDATORY 1/9 QualityCriteriaVersion materialization + Production effectful acceptance",
-    "MANDATORY 3/9 ChildLock materialization + Production effectful acceptance",
-    "MANDATORY 2/9 CanonicalScriptVersion application deployment + Production effectful acceptance",
-    "MANDATORY 4/9 ScriptProjectionRule materialization + Production effectful acceptance",
-    "MANDATORY 5/9 WorkPackage materialization + Production effectful acceptance",
-    "MANDATORY 6/9 DepartmentTask materialization + Production effectful acceptance",
-    "MANDATORY 7/9 DepartmentScriptView materialization + Production effectful acceptance",
-    "MANDATORY 8/9 TaskInputManifest materialization + Production effectful acceptance",
-    "MANDATORY 9/9 InstructionPackage materialization + Production effectful acceptance",
-    "Run ASSET positive effectful path and close all applicable gates.",
-    "Run VIDEO positive effectful path and close all applicable gates.",
-    "Close EDIT+VOICE lifecycle and positive effectful path.",
-    "Close QA release package evidence owner and positive effectful path.",
-    "Complete IAM/ERP/AIAPI/SOC Production mutation acceptance.",
-    "Run AI Conversation Production E2E after consolidated main deployment.",
-    "Build permanent Production Effectful Acceptance runner: UI -> API -> permission -> runtime -> DB/Queue/Provider -> reload -> cleanup.",
-    "Recompute control/action denominator using sealed 1453 historical baseline plus explicitly sealed Current expansion.",
-    "Recompute all 25 gates from final Production evidence.",
-    "DEPENDENCY TaskTemplate: Current Production count 0; required before formal DAG task materialization.",
-    "DEPENDENCY ProductionGoal: Current Production count 0; must be created by governed Topic Production Contract lifecycle.",
-    "DEPENDENCY OutputContract: Current Production count 0; must be created by governed Topic Production Contract lifecycle.",
-    "DEPENDENCY RightsProfile: Current Production count 0; formal manifest/package execution may not invent rights refs.",
-    "SCHEMA VOICE department enum: COMPLETE via 0049 Production 49/49; no VOICE business rows fabricated."
+    "MANDATORY 1/9 QualityCriteriaVersion materialization + real Production Configure→Approve→readback→cleanup acceptance",
+    "MANDATORY 2/9 CanonicalScriptVersion real Production create→readback→cleanup acceptance",
+    "MANDATORY 3/9 ChildLock real Criteria + CanonicalScript + Evidence + independent Reviewer request→approve→readback acceptance",
+    "MANDATORY 4/9 ScriptProjectionRule Production materialization + acceptance",
+    "MANDATORY 5/9 WorkPackage materialization + acceptance — AUTHORITY HARD BLOCKED; do not invent compiler semantics",
+    "MANDATORY 6/9 DepartmentTask materialization + acceptance",
+    "MANDATORY 7/9 DepartmentScriptView materialization + acceptance",
+    "MANDATORY 8/9 TaskInputManifest materialization + acceptance",
+    "MANDATORY 9/9 InstructionPackage materialization + acceptance",
+    "DEPENDENCY TaskTemplate canonical materialization",
+    "DEPENDENCY ProductionGoal canonical materialization",
+    "DEPENDENCY OutputContract canonical materialization",
+    "DEPENDENCY RightsProfile canonical materialization",
+    "RUNTIME ASSET positive Production effectful closure",
+    "RUNTIME VIDEO positive Production effectful closure",
+    "RUNTIME EDIT+VOICE positive Production lifecycle closure — DB/audit deployed; real lineage + EDIT_RENDER/VOICE Provider mapping still blocked",
+    "RUNTIME QA ReleasePackage evidence owner + positive Production effectful closure",
+    "ACCEPTANCE IAM/ERP/AIAPI/SOC Production mutation acceptance",
+    "ACCEPTANCE AI Conversation Production E2E",
+    "ACCEPTANCE Permanent Production exhaustive formal/effectful runner for Current CONTROL+ACTION denominator",
+    "ACCEPTANCE Gate 25 denominator seal: historical 1453 / Current permission 1481 / Current Production DOM 558",
+    "ACCEPTANCE Full 25-Gate recompute from Current evidence"
   ],
   "next_executable_item": "WorkPackage compiler is HARD_BLOCKED by unresolved Current Authority. Select next independent dependency-ready closure only; do not implement compiler semantics until a newer approved Current Authority resolves WORKPACKAGE_CURRENT_AUTHORITY_CONFLICT.",
   "execution_reporting_contract": {
