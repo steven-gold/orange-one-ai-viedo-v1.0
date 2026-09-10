@@ -533,6 +533,7 @@ async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: tr
     "CORE-01-PORT-BLUEPRINT-APPROVE":"api:approveBlueprint",
     "CORE-01-PORT-CHILD-LOCK":"api:requestChildLock",
     "CORE-01-PORT-LOCK-DECIDE":"api:decideLockReview",
+    "CORE-01-PORT-CANONICAL-SCRIPT-CREATE":"api:createCanonicalScriptVersion",
     "CORE-01-PORT-CANONICAL-SCRIPT":"api:getCanonicalScript",
   };
   const resource=governedPermission[request.port_uid];
