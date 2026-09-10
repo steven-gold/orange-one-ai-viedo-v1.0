@@ -1,0 +1,52 @@
+{
+  "document_id": "ACPOS_GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE",
+  "status": "PRODUCTION_ACCEPTED",
+  "captured_at": "2026-09-10T16:26:28+08:00",
+  "production_release_sha": "608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36",
+  "workflow": {
+    "name": "ACPOS Gate25 Production Readonly Interactions",
+    "run_number": 1,
+    "run_id": 34455072666,
+    "job_id": 102799444139,
+    "conclusion": "success",
+    "github_token_contents_permission": "read"
+  },
+  "totals": {
+    "wb01": 14,
+    "sg02": 9,
+    "total": 23,
+    "effectful_calls": 0
+  },
+  "forbidden_effectful_resources": [
+    "control:CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE",
+    "control:CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE"
+  ],
+  "wb01": [
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN","section_key":"company_project_count","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN","section_key":"company_running_project_count","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN","section_key":"company_pending_action_count","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN","section_key":"company_pending_review_count","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN","section_key":"company_completed_project_count","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN","section_key":"company_average_progress","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN","section_key":"project_progress_overview","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN","section_key":"company_progress_summary","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN","section_key":"production_summary","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN","section_key":"notifications","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN","section_key":"company_announcements","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN","section_key":"industry_news","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN","section_key":"system_status_summary","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"},
+    {"resource_key":"control:CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN","section_key":"recent_completions","dashboard_read_http":200,"drawer_state":"READ_ONLY","dialog_visible":true,"title_present":true,"outcome":"PASS"}
+  ],
+  "sg02": [
+    {"resource_key":"control:CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN","drawer_key":"criteria_table","projection_http":200,"page_state":"EMPTY","drawer_visible":true,"heading_present":true,"operation_id":"getUiProjection","outcome":"PASS"},
+    {"resource_key":"control:CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN","drawer_key":"dimension_library","projection_http":200,"page_state":"EMPTY","drawer_visible":true,"heading_present":true,"operation_id":"getUiProjection","outcome":"PASS"},
+    {"resource_key":"control:CTRL-ADMIN-SG-02-THRESHOLDS-OPEN","drawer_key":"thresholds","projection_http":200,"page_state":"EMPTY","drawer_visible":true,"heading_present":true,"operation_id":"getUiProjection","outcome":"PASS"},
+    {"resource_key":"control:CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN","drawer_key":"department_mapping","projection_http":200,"page_state":"EMPTY","drawer_visible":true,"heading_present":true,"operation_id":"getUiProjection","outcome":"PASS"},
+    {"resource_key":"control:CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN","drawer_key":"required_checks","projection_http":200,"page_state":"EMPTY","drawer_visible":true,"heading_present":true,"operation_id":"getUiProjection","outcome":"PASS"},
+    {"resource_key":"control:CTRL-ADMIN-SG-02-GATE-POLICY-OPEN","drawer_key":"gate_policy","projection_http":200,"page_state":"EMPTY","drawer_visible":true,"heading_present":true,"operation_id":"getUiProjection","outcome":"PASS"},
+    {"resource_key":"control:CTRL-ADMIN-SG-02-APPROVAL-OPEN","drawer_key":"approval","projection_http":200,"page_state":"EMPTY","drawer_visible":true,"heading_present":true,"operation_id":"getUiProjection","outcome":"PASS"},
+    {"resource_key":"control:CTRL-ADMIN-SG-02-IMPACT-OPEN","drawer_key":"impact","projection_http":200,"page_state":"EMPTY","drawer_visible":true,"heading_present":true,"operation_id":"getUiProjection","outcome":"PASS"},
+    {"resource_key":"control:CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN","drawer_key":"governance","projection_http":200,"page_state":"EMPTY","drawer_visible":true,"heading_present":true,"operation_id":"getUiProjection","outcome":"PASS"}
+  ],
+  "rule": "PASS evidence is limited to the exact 23 Production read-only UI interactions executed against release 608e9c46. SG-02 configure/approve and SYS-01 prerequisite mutations were not executed."
+}
