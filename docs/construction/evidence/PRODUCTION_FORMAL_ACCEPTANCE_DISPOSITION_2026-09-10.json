@@ -29,8 +29,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 43,
-    "BLOCKED": 116,
-    "NOT_EXECUTED": 1322
+    "BLOCKED": 119,
+    "NOT_EXECUTED": 1319
   },
   "entries": [
     {
@@ -948,23 +948,62 @@
     {
       "resource_key": "action:admin:ERP-02:erp.capacity.get_guardrails",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_ACTION_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "The formal finance read action maps to a Current ERP action whose authenticated Production control is disabled by ERP-01-GATE-FINANCE=false / ERP-01-PERM-FINANCE; executing around the gate is forbidden.",
+      "operation_ids": [
+        "getERPCapacityGuardrails",
+        "ERP-01-ACT-GUARDRAILS",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-02:erp.finance.get_factpack",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_ACTION_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "The formal finance read action maps to a Current ERP action whose authenticated Production control is disabled by ERP-01-GATE-FINANCE=false / ERP-01-PERM-FINANCE; executing around the gate is forbidden.",
+      "operation_ids": [
+        "getERPFinanceFactPack",
+        "ERP-01-ACT-FACTPACK",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-02:erp.forecast.get",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_FINANCE_ACTION_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "docs/construction/evidence/GATE25_ERP_FINANCE_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Finance Gate Diagnostic run_id=34486930610",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "The formal finance read action maps to a Current ERP action whose authenticated Production control is disabled by ERP-01-GATE-FINANCE=false / ERP-01-PERM-FINANCE; executing around the gate is forbidden.",
+      "operation_ids": [
+        "getERPForecast",
+        "ERP-01-ACT-FORECAST",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-01:ACT-NAV-OPEN",
