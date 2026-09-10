@@ -29,8 +29,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 29,
-    "BLOCKED": 77,
-    "NOT_EXECUTED": 1375
+    "BLOCKED": 90,
+    "NOT_EXECUTED": 1362
   },
   "entries": [
     {
@@ -161,72 +161,172 @@
     {
       "resource_key": "action:admin:AIAPI-04:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-05:ACT-APPROVE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-APPROVE"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-05:ACT-CONFIGURE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-CONFIGURE"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-05:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-06:ACT-EXPORT",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-EXPORT"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-06:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-06:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-SEARCH"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-07:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-07:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-SEARCH"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-08:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-08:ACT-SYSTEM-TEST",
@@ -244,23 +344,53 @@
     {
       "resource_key": "action:admin:AIAPI-09:ACT-KILL-SWITCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-KILL-SWITCH"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-09:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-09:ACT-REFRESH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "RETIRED_CURRENT_UI_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_AIAPI_04_09_RETIRED_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Production permission inventory still contains an ACTION owned by a retired AIAPI-04..09 page identity, while Current Authority, Current navigation, and Current page catalog allow only admin:AIAPI-01. No Current executable page owner exists; reconstructing the retired page is forbidden.",
+      "operation_ids": [
+        "ACT-REFRESH"
+      ]
     },
     {
       "resource_key": "action:admin:API-01:ACT-NAV-OPEN",
