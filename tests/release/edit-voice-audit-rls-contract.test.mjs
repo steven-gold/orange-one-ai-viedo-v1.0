@@ -18,7 +18,7 @@ test("0051 seals EDIT+VOICE audit RLS without opening generic audit writes",asyn
   assert.match(migration,/acpos_audit_events_edit_select/);
   assert.match(migration,/entity_type='workspace:EDIT-01'/);
   assert.match(migration,/actor_id=acpos_runtime\.current_actor_user_id\(\)/);
-  assert.match(migration,/workspace_id IS NULL[\s\S]*reason LIKE 'DENIED:%'[\\s\\S]*reason LIKE 'ERROR:%'/);
+  assert.match(migration,/workspace_id IS NULL[\s\S]*reason LIKE 'DENIED:%'[\s\S]*reason LIKE 'ERROR:%'/);
   assert.doesNotMatch(migration,/CREATE TABLE/i);
   assert.doesNotMatch(migration,/INSERT INTO public\.(projects|department_tasks|audit_events)\b/i);
   assert.ok(Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1]??0)>=51);
