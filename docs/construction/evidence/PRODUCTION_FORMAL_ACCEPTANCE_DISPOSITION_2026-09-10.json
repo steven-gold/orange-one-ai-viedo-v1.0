@@ -29,8 +29,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 47,
-    "BLOCKED": 119,
-    "NOT_EXECUTED": 1315
+    "BLOCKED": 121,
+    "NOT_EXECUTED": 1313
   },
   "entries": [
     {
@@ -948,9 +948,22 @@
     {
       "resource_key": "action:admin:ERP-02:ACT-EXPORT",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_EXPORT_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Export Gate Materialize run_id=34492672937",
+        "scripts/gate25-production-erp-finance-gate-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-EXPORT, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity. Export execution around the gate is forbidden.",
+      "operation_ids": [
+        "exportProjection",
+        "ERP-01-ACT-EXPORT",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-02:ACT-NAV-OPEN",
@@ -4806,9 +4819,22 @@
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-04-ACT-EXPORT",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_FINANCE_GATE_FALSE",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_EXPORT_PRODUCTION_GATE_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Export Gate Materialize run_id=34492672937",
+        "scripts/gate25-production-erp-finance-gate-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-EXPORT, but ERP-01-GATE-FINANCE=false and data-disabled-reason=ERP-01-GATE-FINANCE; ERP-01-PERM-FINANCE is not satisfied for this Production identity. Export execution around the gate is forbidden.",
+      "operation_ids": [
+        "exportProjection",
+        "ERP-01-ACT-EXPORT",
+        "ERP-01-GATE-FINANCE",
+        "ERP-01-PERM-FINANCE"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-02-ACT-05-ACT-NAV-OPEN",
