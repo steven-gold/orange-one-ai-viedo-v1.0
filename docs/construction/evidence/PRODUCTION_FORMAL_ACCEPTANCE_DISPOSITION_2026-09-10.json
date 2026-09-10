@@ -1,8 +1,8 @@
 {
   "document_id": "ACPOS_PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION",
   "status": "CURRENT_PARTIAL",
-  "captured_at": "2026-09-10T11:42:00+08:00",
-  "production_release_sha": "c3be46239146673c02d261defa17f55340342c8a",
+  "captured_at": "2026-09-10T12:01:00+08:00",
+  "production_release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
   "source_inventory": "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
   "denominator": {
     "controls": 1155,
@@ -28,9 +28,9 @@
   "blocked_rule": "BLOCKED requires a concrete reason_code and one or more blocker evidence refs.",
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
-    "PASS": 0,
+    "PASS": 4,
     "BLOCKED": 48,
-    "NOT_EXECUTED": 1433
+    "NOT_EXECUTED": 1429
   },
   "entries": [
     {
@@ -2717,9 +2717,14 @@
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-VIEW-QUARANTINE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_HTTP_AND_AUDIT_PASS",
+      "evidence_refs": [
+        "GitHub Actions: ACPOS Production Formal Readonly Acceptance run #1 / run_id=34435464021 / SUCCESS",
+        "Production release_sha=591cdc0ee77785c37519d598d0a9447f1858e8fb",
+        "HTTP correlation_id=aa6b2ebb-5035-48e1-b77c-9e2b8f6c5a38 operation_id=getProviderQuarantine",
+        "Neon public.audit_events ids=ed9ae1af-7539-4b52-8a25-c805175d4b04,c2bdbd9e-a86d-4075-9ca0-901e2d375278 entity_type=admin:AIAPI-01 action=getProviderQuarantine"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-05-ROUTE-TABLE-OPEN",
@@ -2794,9 +2799,14 @@
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-LIST-PROFILES",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_HTTP_AND_AUDIT_PASS",
+      "evidence_refs": [
+        "GitHub Actions: ACPOS Production Formal Readonly Acceptance run #1 / run_id=34435464021 / SUCCESS",
+        "Production release_sha=591cdc0ee77785c37519d598d0a9447f1858e8fb",
+        "HTTP correlation_id=83cf7ab4-284a-404a-99b5-2ccfc6ee42b3 operation_id=listProviderModelProfiles",
+        "Neon public.audit_events ids=efb8350e-f366-470a-b66a-4c3731b160b7,5bbf26e0-8f1c-4155-9ae3-1248d7436a21 entity_type=admin:AIAPI-01 action=listProviderModelProfiles"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-RETIRE-PROFILE",
@@ -2829,9 +2839,14 @@
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_HTTP_AND_AUDIT_PASS",
+      "evidence_refs": [
+        "GitHub Actions: ACPOS Production Formal Readonly Acceptance run #1 / run_id=34435464021 / SUCCESS",
+        "Production release_sha=591cdc0ee77785c37519d598d0a9447f1858e8fb",
+        "HTTP correlation_id=2f9e2be7-4376-43fd-afdf-d5db94837c98 operation_id=getProviderModelProfile",
+        "Neon public.audit_events ids=c2492c5d-ea1e-4732-b70d-5ffe299dc33c,93def23d-512a-4ab8-8449-329a86f4632d entity_type=admin:AIAPI-01 action=getProviderModelProfile"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-REQUIRED-CHECKS-OPEN",
@@ -2969,9 +2984,14 @@
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-VIEW-ROUTE-DECISION",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_HTTP_AND_AUDIT_PASS",
+      "evidence_refs": [
+        "GitHub Actions: ACPOS Production Formal Readonly Acceptance run #1 / run_id=34435464021 / SUCCESS",
+        "Production release_sha=591cdc0ee77785c37519d598d0a9447f1858e8fb",
+        "HTTP correlation_id=b1a65caa-c1e4-41df-a97a-a07ab1a7453b operation_id=getProviderRouteDecision",
+        "Neon public.audit_events ids=89ba0333-eafd-4dec-8d2b-de8a10d99749,e4ecdeea-3302-4ed0-90eb-040fc90ff57f entity_type=admin:AIAPI-01 action=getProviderRouteDecision"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-08-SANDBOX-SCOPE-OPEN",
@@ -10592,5 +10612,16 @@
       "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
       "evidence_refs": []
     }
-  ]
+  ],
+  "latest_execution_evidence": {
+    "workflow": "ACPOS Production Formal Readonly Acceptance",
+    "run_number": 1,
+    "run_id": 34435464021,
+    "status": "SUCCESS",
+    "production_release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
+    "resources_passed": 4,
+    "mutations": 0,
+    "external_provider_calls": 0,
+    "neon_audit_readback": "8 audit rows / 4 correlations / exact operation match"
+  }
 }

@@ -1,0 +1,86 @@
+{
+  "document_id": "ACPOS_PRODUCTION_FORMAL_READONLY_ACCEPTANCE_RESULT",
+  "status": "PASS_PARTIAL_DENOMINATOR",
+  "executed_at": "2026-09-10T12:00:33+08:00",
+  "production_release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
+  "release_gate": {
+    "run_number": 1083,
+    "run_id": 34435308606,
+    "status": "SUCCESS"
+  },
+  "post_deploy": {
+    "run_number": 1392,
+    "run_id": 34435333989,
+    "status": "SUCCESS",
+    "readiness_http": 200,
+    "pages": 18,
+    "browser_cases": 54,
+    "dom": {
+      "interactive": 558,
+      "governed": 558,
+      "enabled": 342,
+      "disabled": 216
+    }
+  },
+  "formal_workflow": {
+    "run_number": 1,
+    "run_id": 34435464021,
+    "status": "SUCCESS",
+    "resources": 4,
+    "mutations": 0,
+    "external_provider_calls": 0
+  },
+  "resources": [
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-LIST-PROFILES",
+      "operation_id": "listProviderModelProfiles",
+      "correlation_id": "83cf7ab4-284a-404a-99b5-2ccfc6ee42b3",
+      "neon_audit_event_ids": [
+        "efb8350e-f366-470a-b66a-4c3731b160b7",
+        "5bbf26e0-8f1c-4155-9ae3-1248d7436a21"
+      ],
+      "neon_audit_rows": 2,
+      "status": "PASS"
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE",
+      "operation_id": "getProviderModelProfile",
+      "correlation_id": "2f9e2be7-4376-43fd-afdf-d5db94837c98",
+      "neon_audit_event_ids": [
+        "c2492c5d-ea1e-4732-b70d-5ffe299dc33c",
+        "93def23d-512a-4ab8-8449-329a86f4632d"
+      ],
+      "neon_audit_rows": 2,
+      "status": "PASS"
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-VIEW-QUARANTINE",
+      "operation_id": "getProviderQuarantine",
+      "correlation_id": "aa6b2ebb-5035-48e1-b77c-9e2b8f6c5a38",
+      "neon_audit_event_ids": [
+        "ed9ae1af-7539-4b52-8a25-c805175d4b04",
+        "c2bdbd9e-a86d-4075-9ca0-901e2d375278"
+      ],
+      "neon_audit_rows": 2,
+      "status": "PASS"
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-VIEW-ROUTE-DECISION",
+      "operation_id": "getProviderRouteDecision",
+      "correlation_id": "b1a65caa-c1e4-41df-a97a-a07ab1a7453b",
+      "neon_audit_event_ids": [
+        "89ba0333-eafd-4dec-8d2b-de8a10d99749",
+        "e4ecdeea-3302-4ed0-90eb-040fc90ff57f"
+      ],
+      "neon_audit_rows": 2,
+      "status": "PASS"
+    }
+  ],
+  "denominator_after": {
+    "PASS": 4,
+    "BLOCKED": 48,
+    "NOT_EXECUTED": 1429,
+    "total": 1481
+  },
+  "rule": "Only these four resources are promoted to PASS. No other formal resource inherits PASS from aggregate DOM, release, or workflow success."
+}

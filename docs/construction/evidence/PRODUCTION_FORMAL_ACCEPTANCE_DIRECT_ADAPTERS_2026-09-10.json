@@ -1,7 +1,7 @@
 {
   "document_id": "ACPOS_PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS",
-  "status": "CURRENT_PARTIAL",
-  "as_of": "2026-09-10T11:42:00+08:00",
+  "status": "PRODUCTION_READONLY_4_OF_25_DIRECT_MAPPINGS_ACCEPTED",
+  "as_of": "2026-09-10T12:01:00+08:00",
   "authority": "03_api/operation_registry.yaml",
   "exact_direct_mapping_count": 25,
   "executable_readonly_now": [
@@ -43,5 +43,21 @@
     }
   ],
   "mapped_not_yet_executable_count": 21,
-  "rule": "Only exact operation_registry authorization_resource_key/resource_key mappings qualify. API-only operations are not guessed onto formal CONTROL/ACTION resources. Mutation/external-effect adapters require an explicit fixture, expected readback, negative path and cleanup contract before execution."
+  "rule": "Only exact operation_registry authorization_resource_key/resource_key mappings qualify. API-only operations are not guessed onto formal CONTROL/ACTION resources. Mutation/external-effect adapters require an explicit fixture, expected readback, negative path and cleanup contract before execution.",
+  "production_execution": {
+    "workflow": "ACPOS Production Formal Readonly Acceptance",
+    "run_number": 1,
+    "run_id": 34435464021,
+    "status": "SUCCESS",
+    "production_release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
+    "exact_release_sha_guard": "PASS",
+    "resources_passed": 4,
+    "mutations": 0,
+    "external_provider_calls": 0,
+    "neon_audit_readback": {
+      "correlations": 4,
+      "audit_rows": 8,
+      "operation_match": "4/4"
+    }
+  }
 }
