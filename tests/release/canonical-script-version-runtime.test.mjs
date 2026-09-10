@@ -14,7 +14,7 @@ test("0047 canonical script materializer follows Current exact request and no im
   const checksum=createHash("sha256").update(migration.slice(0,idx)).digest("hex");
   assert.equal(checksum,"7f9a709236c13482b67deeb63d09085eadcde1a0ae05920d39a31b0e67b8e19f");
   assert.ok(manifest.includes("7f9a709236c13482b67deeb63d09085eadcde1a0ae05920d39a31b0e67b8e19f"));
-  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 47/);
+  const ceiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\\d+)/)?.[1]??0);\n  assert.ok(ceiling>=47,`migration ceiling must include 0047, found ${ceiling}`);
   assert.match(migration,/create_canonical_script_version/);
   assert.match(migration,/api:createCanonicalScriptVersion/);
   assert.match(migration,/script\.version_created/);
