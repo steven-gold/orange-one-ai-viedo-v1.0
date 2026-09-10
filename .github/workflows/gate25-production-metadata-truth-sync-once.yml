@@ -42,77 +42,39 @@ jobs:
           ledger=json.loads(ledger_path.read_text())
           inventory=json.loads(inventory_path.read_text())
           manifest=manifest_path.read_text()
-
           expected_counts={'PASS':51,'BLOCKED':159,'NOT_EXECUTED':1271}
           expected_denominator={'controls':1155,'actions':326,'total':1481}
           assert ledger['counts']==expected_counts,ledger['counts']
           assert ledger['denominator']==expected_denominator,ledger['denominator']
           assert inventory['denominator']==expected_denominator,inventory['denominator']
-          assert len(ledger['entries'])==1481,len(ledger['entries'])
-          assert len(inventory['resources'])==1481,len(inventory['resources'])
+          assert len(ledger['entries'])==1481
+          assert len(inventory['resources'])==1481
           assert len({e['resource_key'] for e in ledger['entries']})==1481
           assert len({e['resource_key'] for e in inventory['resources']})==1481
-          inventory_type_counts={'CONTROL':0,'ACTION':0}
+          type_counts={'CONTROL':0,'ACTION':0}
           for resource in inventory['resources']:
-            inventory_type_counts[resource['resource_type']]+=1
-          assert inventory_type_counts=={'CONTROL':1155,'ACTION':326},inventory_type_counts
+            type_counts[resource['resource_type']]+=1
+          assert type_counts=={'CONTROL':1155,'ACTION':326},type_counts
 
           now=datetime.now(timezone(timedelta(hours=8))).isoformat()
           ledger['captured_at']=now
           ledger['production_release_sha']=PROD_SHA
-          ledger['aggregate_dom_evidence'].update({
-            'post_deploy_run':1561,
-            'post_deploy_run_id':34501027032,
-            'pages':18,
-            'interactive':560,
-            'governed':560,
-            'enabled':342,
-            'disabled':218,
-            'per_resource_pass_propagation':False,
-          })
+          ledger['aggregate_dom_evidence'].update({'post_deploy_run':1561,'post_deploy_run_id':34501027032,'pages':18,'interactive':560,'governed':560,'enabled':342,'disabled':218,'per_resource_pass_propagation':False})
           inventory['captured_at']=now
           inventory['production_release_sha']=PROD_SHA
           inventory['neon']['migration_count']=53
 
-          old="""- migration_id: 0053_dev_discovery_permission_closure
-  payload_sha256: e410c52e8a65e31f86554b591d1e9d2d895127d47e30a9402a3558a6eb3f9149
-  approval_ref: CR-DEV-0053-PENDING-PRODUCTION-APPLY
-  bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: PENDING_PRODUCTION_APPLY"""
-          new="""- migration_id: 0053_dev_discovery_permission_closure
-  payload_sha256: e410c52e8a65e31f86554b591d1e9d2d895127d47e30a9402a3558a6eb3f9149
-  approval_ref: CR-DEV-0053-PENDING-PRODUCTION-APPLY
-  bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-11"""
-          assert manifest.count(old)==1,'0053 pending block not found exactly once'
-          manifest=manifest.replace(old,new,1)
+          marker='- migration_id: 0053_dev_discovery_permission_closure'
+          assert manifest.count(marker)==1
+          start=manifest.index(marker)
+          block=manifest[start:]
+          pending='  production_apply: PENDING_PRODUCTION_APPLY'
+          applied='  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-11'
+          assert block.count(pending)==1,'0053 pending production_apply not found exactly once'
+          block=block.replace(pending,applied,1)
+          manifest=manifest[:start]+block
 
-          evidence={
-            'document_id':'ACPOS_PRODUCTION_GATE25_METADATA_TRUTH_SYNC',
-            'status':'VERIFIED_SYNC',
-            'recorded_at':now,
-            'production_release_sha':PROD_SHA,
-            'post_deploy':{
-              'run_number':1561,
-              'run_id':34501027032,
-              'ready_http':200,
-              'projections':18,
-              'auth_http':'PASS',
-              'browser_cases':54,
-              'visible_pages':18,
-              'dom':{'pages':18,'interactive':560,'governed':560,'enabled':342,'disabled':218}
-            },
-            'production_neon':{
-              'project':'wild-wave-25661146','branch':'main','database':'neondb','migration_count':53,
-              'migration_0053_checksum':'e410c52e8a65e31f86554b591d1e9d2d895127d47e30a9402a3558a6eb3f9149'
-            },
-            'formal_denominator':expected_denominator,
-            'gate25_counts':expected_counts,
-            'mutation_scope':'METADATA_ONLY',
-            'entries_changed':0,
-            'formal_resources_changed':0,
-            'rule':'Synchronizes already-verified Production deployment, migration, and aggregate DOM metadata only. It must not promote any per-resource disposition or alter the 1481-resource denominator.'
-          }
+          evidence={'document_id':'ACPOS_PRODUCTION_GATE25_METADATA_TRUTH_SYNC','status':'VERIFIED_SYNC','recorded_at':now,'production_release_sha':PROD_SHA,'post_deploy':{'run_number':1561,'run_id':34501027032,'ready_http':200,'projections':18,'auth_http':'PASS','browser_cases':54,'visible_pages':18,'dom':{'pages':18,'interactive':560,'governed':560,'enabled':342,'disabled':218}},'production_neon':{'project':'wild-wave-25661146','branch':'main','database':'neondb','migration_count':53,'migration_0053_checksum':'e410c52e8a65e31f86554b591d1e9d2d895127d47e30a9402a3558a6eb3f9149'},'formal_denominator':expected_denominator,'gate25_counts':expected_counts,'mutation_scope':'METADATA_ONLY','entries_changed':0,'formal_resources_changed':0,'rule':'Synchronizes already-verified Production deployment, migration, and aggregate DOM metadata only. It must not promote any per-resource disposition or alter the 1481-resource denominator.'}
           ledger_path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
           inventory_path.write_text(json.dumps(inventory,ensure_ascii=False,indent=2)+'\n')
           manifest_path.write_text(manifest)
