@@ -28,9 +28,9 @@
   "blocked_rule": "BLOCKED requires a concrete reason_code and one or more blocker evidence refs.",
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
-    "PASS": 47,
+    "PASS": 51,
     "BLOCKED": 145,
-    "NOT_EXECUTED": 1289
+    "NOT_EXECUTED": 1285
   },
   "entries": [
     {
@@ -717,30 +717,70 @@
     {
       "resource_key": "action:admin:DEV-01:ACT-DISCOVERY-PAUSE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_DEV_DISCOVERY_LIFECYCLE_E2E_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_ACTIONS_PRODUCTION_PASS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 DEV Discovery Actions Materialize run_id=34507157128",
+        "scripts/production-dev-lifecycle-e2e.mjs",
+        "src/server/dev/productionDevCommandRuntime.ts",
+        "src/server/shared/identityPageCommandRuntime.ts"
+      ],
+      "operation_ids": [
+        "pauseCompanyDiscovery"
+      ],
+      "acceptance_detail": "Production isolated discovery lifecycle reached expected state PAUSED; external_request_sent=false and deployment_triggered=false."
     },
     {
       "resource_key": "action:admin:DEV-01:ACT-DISCOVERY-RESUME",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_DEV_DISCOVERY_LIFECYCLE_E2E_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_ACTIONS_PRODUCTION_PASS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 DEV Discovery Actions Materialize run_id=34507157128",
+        "scripts/production-dev-lifecycle-e2e.mjs",
+        "src/server/dev/productionDevCommandRuntime.ts",
+        "src/server/shared/identityPageCommandRuntime.ts"
+      ],
+      "operation_ids": [
+        "resumeCompanyDiscovery"
+      ],
+      "acceptance_detail": "Production isolated discovery lifecycle reached expected state RUNNING; external_request_sent=false and deployment_triggered=false."
     },
     {
       "resource_key": "action:admin:DEV-01:ACT-DISCOVERY-START",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_DEV_DISCOVERY_LIFECYCLE_E2E_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_ACTIONS_PRODUCTION_PASS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 DEV Discovery Actions Materialize run_id=34507157128",
+        "scripts/production-dev-lifecycle-e2e.mjs",
+        "src/server/dev/productionDevCommandRuntime.ts",
+        "src/server/shared/identityPageCommandRuntime.ts"
+      ],
+      "operation_ids": [
+        "startCompanyDiscovery"
+      ],
+      "acceptance_detail": "Production isolated discovery lifecycle reached expected state RUNNING; external_request_sent=false and deployment_triggered=false."
     },
     {
       "resource_key": "action:admin:DEV-01:ACT-DISCOVERY-STOP",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_DEV_DISCOVERY_LIFECYCLE_E2E_PASS",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_DISCOVERY_ACTIONS_PRODUCTION_PASS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 DEV Discovery Actions Materialize run_id=34507157128",
+        "scripts/production-dev-lifecycle-e2e.mjs",
+        "src/server/dev/productionDevCommandRuntime.ts",
+        "src/server/shared/identityPageCommandRuntime.ts"
+      ],
+      "operation_ids": [
+        "stopCompanyDiscovery"
+      ],
+      "acceptance_detail": "Production isolated discovery lifecycle reached expected state STOPPED; external_request_sent=false and deployment_triggered=false."
     },
     {
       "resource_key": "action:admin:DEV-01:ACT-NAV-OPEN",
