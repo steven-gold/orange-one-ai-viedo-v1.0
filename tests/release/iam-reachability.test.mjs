@@ -9,7 +9,10 @@ test("current IAM integration ports remain reachable through their authority-bou
   const contract = await read("src/domain/iam/iamRuntimeContract.ts");
   const runtime = await read("src/server/iam/iamRuntime.ts");
 
-  assert.match(authority, /system_implementation_status:\s*NOT_EXECUTED/);
+  assert.match(authority, /execution_state_policy:/);
+  assert.match(authority, /mutable_execution_state_embedded:\s*false/);
+  assert.match(authority, /current_state_owner:\s*CURRENT_EXECUTION_STATE\.json/);
+  assert.doesNotMatch(authority, /system_implementation_status:\s*NOT_EXECUTED/);
   assert.match(contract, /IAM_PORT_COUNT\s*=\s*IAM_PORT_UIDS\.length/);
   assert.match(contract, /IAM_CONTROL_COUNT\s*=\s*14/);
   assert.match(runtime, /IAM01_RUNTIME_NOT_BOUND/);

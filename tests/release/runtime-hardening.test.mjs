@@ -236,7 +236,10 @@ test("SYS-01 exposes only the three user-approved lifecycle routes while undefin
   const stopRoute = await read("src/app/v1/conversations/[conversationId]/generation/stop/route.ts");
   const visual = await read("src/components/pages/SystemVisual.tsx");
 
-  assert.match(authority, /implementation_status:\s*RUNTIME_BOUND_PENDING_RELEASE/);
+  assert.match(authority, /execution_state_policy:/);
+  assert.match(authority, /mutable_execution_state_embedded:\s*false/);
+  assert.match(authority, /current_state_owner:\s*CURRENT_EXECUTION_STATE\.json/);
+  assert.doesNotMatch(authority, /implementation_status:\s*RUNTIME_BOUND_PENDING_RELEASE/);
   assert.match(authority, /path: \/v1\/system\/changes\/candidates/);
   assert.match(authority, /path: \/v1\/system\/changes\/\{SYSTEM_CHANGE_ID\}\/requests/);
   assert.match(authority, /path: \/v1\/system\/changes\/\{SYSTEM_CHANGE_ID\}\/sandbox-tests/);

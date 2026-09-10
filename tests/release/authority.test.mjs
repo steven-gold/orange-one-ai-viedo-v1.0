@@ -39,26 +39,32 @@ test("Current Authority contains exactly 18 unique page authorities", () => {
   assert.match(manifest, /current_page_count:\s*18/);
 });
 
+test("Current Authority explicitly includes active Shared and EDIT+VOICE runtime contracts and excludes stale gap reports", () => {
+  assert.match(manifest, /authority\/runtime\/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1\.0\.yaml/);
+  assert.match(manifest, /authority\/runtime\/ACPOS_EDIT_VOICE_RUNTIME_OPERATION_AUTHORITY_V1\.0\.yaml/);
+  assert.doesNotMatch(manifest, /ACPOS_RUNTIME_BINDING_GAP_REPORT/);
+});
+
 test("Production Script V1.3 remains the current integration contract", () => {
   assert.match(manifest, /production_script_v1_3:/);
   assert.match(system, /ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1\.3\.yaml/);
   assert.doesNotMatch(manifest, /PRODUCTION_SCRIPT.*V1\.2/);
 });
 
-test("Current production integrity reconciles the sealed catalog and post-0001 FK delta", () => {
-  assert.match(manifest, /version: V1\.8/);
-  assert.match(manifest, /production_integrity_checklist:/);
-  assert.match(manifest, /required_check_count: 8/);
-  assert.match(manifest, /neon_identity: wild-wave-25661146\/main\/br-shy-cherry-auiol4oy\/neondb/);
-  assert.match(manifest, /validated_foreign_keys_after_0005: 344/);
-  assert.match(manifest, /permission_resource_rows_current: 3651/);
-  assert.match(manifest, /current_page_delta_resource_key: page:admin:DB-01/);
-  assert.match(manifest, /current_db_page_resource_rows: 1/);
-  assert.match(migrationAuthority, /current_production_reconciliation:/);
-  assert.match(migrationAuthority, /historical_evidence_immutable: true/);
-  assert.match(migrationAuthority, /added_constraint: meetings\.fk_meetings_context_snapshot/);
-  assert.match(migrationAuthority, /sealed_0003_catalog: 3650/);
-  assert.match(migrationAuthority, /current_total: 3651/);
+test("Current-only authority does not embed mutable historical migration execution state", () => {
+  assert.match(manifest, /historical_execution_evidence_owner: database\/migrations\/migration_checksum_manifest\.yaml/);
+  assert.match(manifest, /mutable_production_state_embedded: false/);
+  assert.doesNotMatch(manifest, /post_migration_validation:/);
+  assert.doesNotMatch(manifest, /production_integrity_checklist:/);
+  assert.doesNotMatch(manifest, /CR-R9-/);
+  assert.match(migrationAuthority, /current_state_policy:/);
+  assert.match(migrationAuthority, /mutable_environment_state_embedded:\s*false/);
+  assert.match(migrationAuthority, /mutable_registered_migration_count_embedded:\s*false/);
+  assert.match(migrationAuthority, /mutable_applied_migration_count_embedded:\s*false/);
+  assert.match(migrationAuthority, /historical_execution_evidence_is_not_runtime_authority:\s*true/);
+  assert.doesNotMatch(migrationAuthority, /current_production_reconciliation:/);
+  assert.doesNotMatch(migrationAuthority, /tiny-dust/);
+  assert.doesNotMatch(migrationAuthority, /migration_chain_0001_0015_on_this_target/);
 });
 
 test("WB-01 UI projection mapping locks page-gate authorize and named section read SQL", async () => {
@@ -114,7 +120,10 @@ test("Production identity runtime names app_users actor and internal cookie sess
   assert.match(identity, /status_predicate: DISABLED_AT_IS_NULL/);
   assert.match(identity, /status_predicate_sql: app_users.disabled_at IS NULL/);
   assert.match(identity, /scope: DATABASE_AND_IDENTITY_CONTROL_PLANE/);
-  assert.match(identity, /VERIFY_CONTROL_PLANE_READINESS/);
+  assert.match(identity, /deployment_state_policy:/);
+  assert.match(identity, /mutable_environment_state_embedded:\s*false/);
+  assert.match(identity, /current_state_owner:\s*CURRENT_EXECUTION_STATE\.json/);
+  assert.doesNotMatch(identity, /next_action:/);
   const registry = await readFile("03_api/operation_registry.yaml", "utf8");
   assert.match(registry, /operation_id: resolveIdentityAccountAuthority/);
   assert.match(registry, /path: \/v1\/identity\/session/);
@@ -122,10 +131,15 @@ test("Production identity runtime names app_users actor and internal cookie sess
   assert.match(registry, /operation_id: resolveIdentityAccountAuthority/);
 });
 
-test("System implementation truth is not silently promoted", () => {
-  assert.match(system, /api_binding:\s*NOT_EXECUTED/);
-  assert.match(system, /database_binding:\s*NOT_EXECUTED/);
-  assert.match(system, /deployment:\s*NOT_EXECUTED/);
+test("System Authority externalizes mutable implementation and deployment truth", () => {
+  assert.match(system, /implementation_truth_policy:/);
+  assert.match(system, /mutable_environment_state_embedded:\s*false/);
+  assert.match(system, /current_state_owner:\s*CURRENT_EXECUTION_STATE\.json/);
+  assert.match(system, /production_evidence_owner:\s*docs\/construction\/evidence\//);
+  assert.doesNotMatch(system, /application_code:\s*VISUAL_PHASE_EXECUTED_BUSINESS_LOGIC_NOT_EXECUTED/);
+  assert.doesNotMatch(system, /api_binding:\s*NOT_EXECUTED/);
+  assert.doesNotMatch(system, /database_binding:\s*NOT_EXECUTED/);
+  assert.doesNotMatch(system, /deployment:\s*NOT_EXECUTED/);
 });
 
 test("SYS-01 mode switching remains Authority-defined client state with continuity preservation", () => {

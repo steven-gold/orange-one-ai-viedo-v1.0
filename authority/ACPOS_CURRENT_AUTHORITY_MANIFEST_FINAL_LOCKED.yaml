@@ -3,7 +3,7 @@ authority:
   version: V1.8
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-07-MAIN-ONLY-DEPLOYMENT-AND-AIAPI-QUEUE-CLOSURE
+  revision: 2026-09-11-CURRENT-AUTHORITY-RUNTIME-CLEANUP
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
@@ -23,6 +23,8 @@ current_authority_set:
   - authority/runtime/ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1.0.yaml
   - authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
   - authority/runtime/ACPOS_PRODUCTION_DEPLOYMENT_EXECUTION_POLICY_FINAL_LOCKED_V1.0.yaml
+  - authority/runtime/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml
+  - authority/runtime/ACPOS_EDIT_VOICE_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml
   permission:
   - 06_permission/account_permission_catalog.yaml
   pages:
@@ -64,214 +66,8 @@ cross_authority_bindings:
     authority_path: authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml
     migration_root: database/migrations/
     checksum_manifest: database/migrations/migration_checksum_manifest.yaml
-    current_0001_payload_sha256: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
-    old_0001_payload_sha256: cb622dc4ae9d0cd5533348e5fdcda6d624ff0c5799bf7e20a94aa853451ea98f
-    old_0001_status: SUPERSEDED_DO_NOT_EXECUTE
-    clean_temporary_revalidation: PASS
-    clean_temporary_branch_id: br-little-leaf-b3qaagp0
-    staging_gate: APPLIED_VERIFIED
-    staging_branch_id: br-bitter-poetry-b3p6t5ub
-    staging_migration_history_checksum: 77754f170df227354c86083085256c62f6696c6153ec4399cca1f92819766ee1
-    0002_gate: APPLIED_VERIFIED
-    0002_payload_sha256: 207230ffb9962fc18c3028c2306bf28192c8fa48ff3c50ce72bb58137266adf6
-    0002_approval_ref: CR-SCHEMA-0002
-    0002_restore_branch_id: br-restless-forest-b37es1u4
-    0002_validation_branch_id: br-green-water-b3is6ygq
-    0003_gate: APPLIED_VERIFIED
-    0003_payload_sha256: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
-    0003_catalog_path: 06_permission/account_permission_catalog.yaml
-    0003_catalog_git_blob_sha: bf9081eae472785d260bddeb3860d2f0f0c38b9d
-    0003_catalog_sha256: e2a5f05867ba317ca968e8b71e8412e1b8d643392009d90ddee7cc1df325cb2c
-    0003_validation_branch_id: br-rapid-cherry-b325q8fm
-    0003_validation_projection_sha256: 745b716a814be0c55a2851dd82c5b3eaaf9dc07534cfcb03abc357d45d94b98c
-    0003_staging_execution: COMPLETE_VERIFIED
-    0003_approval_ref: CR-AUTH-0003
-    0003_restore_branch_id: br-icy-field-b383fiso
-    0003_staging_projection_sha256: 745b716a814be0c55a2851dd82c5b3eaaf9dc07534cfcb03abc357d45d94b98c
-    0003_staging_history_checksum: 3e8a1eec9a9069ebf5e49d2fedf4285c1c7464f147b3f1b66cc8ec1db8e62790
-    0004_gate: APPLIED_VERIFIED
-    0004_payload_sha256: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
-    0004_restore_branch_id: br-wild-unit-b3ydro9g
-    0004_validation_branch_id: br-frosty-art-b3z5ujpv
-    0004_staging_execution: COMPLETE_VERIFIED
-    0004_staging_history_checksum: cf0b7c88be4e676081190d6862bf08d9374785bae34ec88c4507e5cdd0428662
-    0004_staging_schema_diff: EMPTY
-    0004_approval_ref: CR-R9-0004
-    0005_gate: APPLIED_VERIFIED
-    0005_payload_sha256: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
-    0005_restore_branch_id: br-wispy-water-b3mbb2se
-    0005_validation_branch_id: br-frosty-art-b3z5ujpv
-    0005_validation_branch_reused: true
-    0005_staging_execution: COMPLETE_VERIFIED
-    0005_staging_history_checksum: 524ed12ddc1e7718c71fba16f60a5cc191ef88ae36a62ad527250ccea866874b
-    0005_staging_schema_diff: EXPECTED_TWO_ITEM_DELTA
-    0005_approval_ref: CR-R9-0005
-    0006_gate: APPLIED_VERIFIED
-    0006_payload_sha256: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
-    0006_restore_branch_id: br-super-smoke-b3gy5j7q
-    0006_validation_branch_id: br-super-frog-b3bcp18i
-    0006_staging_execution: COMPLETE_VERIFIED
-    0006_staging_history_checksum: 98eff12b6216c3865d4da33771fa263ad35e60df8753039065958b60ab16d873
-    0006_staging_schema_diff: EMPTY
-    0006_approval_ref: CR-R9-0006
-    0005_helper_cleanup: COMPLETE
-    0007_gate: APPLIED_VERIFIED
-    0007_payload_sha256: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
-    0007_restore_branch_id: br-damp-recipe-b3omapws
-    0007_validation_branch_id: br-tiny-tooth-b358vhge
-    0007_staging_execution: COMPLETE_VERIFIED
-    0007_staging_history_checksum: fcaa7a67b4f21d43bdaf2341c1d0fd4942b302cb4a2522f7530e45a4f24bfa2b
-    0007_staging_schema_diff: EMPTY
-    0007_approval_ref: CR-R9-0007
-    0008_gate: APPLIED_VERIFIED
-    0008_payload_sha256: 8f02fb981bc99fe89cba00ae0292c7fac8437ea4de812b3ad66967975422fbec
-    0008_restore_branch_id: br-holy-sunset-b3kxgk9c
-    0008_validation_branch_id: br-icy-mouse-b3eume5r
-    0008_staging_execution: COMPLETE_VERIFIED
-    0008_staging_history_checksum: 8f02fb981bc99fe89cba00ae0292c7fac8437ea4de812b3ad66967975422fbec
-    0008_staging_schema_diff: EMPTY
-    0008_approval_ref: CR-R9-0008
-    0009_gate: APPLIED_VERIFIED
-    0009_payload_sha256: 4813cb8b052898e66e6d0d2090dead04785f7f264f97c799614cf4751cb00746
-    0009_restore_branch_id: br-empty-cake-b3bdnb47
-    0009_validation_branch_id: br-polished-frog-b34p0h3i
-    0009_staging_execution: COMPLETE_VERIFIED
-    0009_staging_history_checksum: 4813cb8b052898e66e6d0d2090dead04785f7f264f97c799614cf4751cb00746
-    0009_staging_schema_diff: EMPTY
-    remaining_0009_0015_batch_approval: APPROVED_CONDITIONAL_ON_OWN_GATE_PASS
-    0010_gate: APPLIED_VERIFIED
-    0010_staging_execution: COMPLETE_VERIFIED
-    0010_staging_history_checksum: ec2efe83b42fe135f9dac81f058876c6e90291b760106a2a7e3c08a47ffc267b
-    0011_gate: APPLIED_VERIFIED
-    0011_staging_execution: COMPLETE_VERIFIED
-    0011_staging_history_checksum: fd40c4f92763cb80e5ba909c6d492298909c4d74c79cfaf03c35460c7be76e4f
-    0012_gate: APPLIED_VERIFIED
-    0012_staging_execution: COMPLETE_VERIFIED
-    0012_staging_history_checksum: b13a7142399c6308b0be4c393f758d4523594ceb427d05d067815a6c21f26e7d
-    0013_gate: APPLIED_VERIFIED
-    0013_staging_execution: COMPLETE_VERIFIED
-    0013_staging_history_checksum: 013a0c7e815b0efd398dfe60869d03cc4abeb3afd045bc3f8325d3c5bb04a100
-    0013_staging_schema_delta: EXPECTED_THREE_ERP_INDEXES
-    0014_gate: APPLIED_VERIFIED
-    0014_staging_execution: COMPLETE_VERIFIED
-    0014_staging_history_checksum: f6ece41036e85611231688cda4d1106cf7b2a29086dea1a173ea42fed9abcea8
-    0015_gate: APPLIED_VERIFIED
-    0015_staging_execution: COMPLETE_VERIFIED
-    0015_staging_history_checksum: 61ef9501826c3a9243ca7b8153061e981088d34e37c1e936009bf2e414745c3c
-    migration_chain_0001_0015: COMPLETE_APPLIED_VERIFIED
-    exact_migrations: 15
-    chain_history_rows: 15
-    checksum_mismatches: 0
-    approval_mismatches: 0
-    unvalidated_constraints: 0
-    permission_resource_rows: 3650
-    final_expected_schema_delta: THREE_ERP_INDEXES_FROM_0013_ONLY
-    unexpected_schema_drift: 0
-    remaining_migrations: 0
-  post_migration_validation:
-    status: RELEASE_VALIDATED_RUNTIME_BINDING_BLOCKED
-    verified_on: '2026-09-04'
-    product_head_sha: 825a676396150db32f623f93485362d9cd83e3a2
-    migration_chain:
-      state: COMPLETE_APPLIED_VERIFIED
-      exact_migrations: 15
-      remaining_migrations: 0
-    release_gate:
-      workflow: .github/workflows/release-gate.yml
-      run_id: 33819571376
-      job_id: 100859087168
-      conclusion: SUCCESS
-      source_lint: PASS
-      dependency_audit_high: PASS
-      typecheck: PASS
-      release_unit_tests: PASS
-      production_build: PASS
-      production_http_e2e_fail_closed_contract: PASS
-      controlled_mode_fail_closed_e2e: PASS
-      supported_viewport_browser_e2e: PASS
-      standalone_docker_build: PASS
-      dirty_tree_guard: PASS
-    vercel_preview:
-      deployment_status: COMPLETED
-      preview_url: https://orange-one-acpos-test-git-new-gold5757.vercel.app
-      http_smoke: PASS_WITH_PROTECTION_BYPASS
-      browser_smoke: NOT_RUN_THIS_REVISION
-      application_failure_proven: false
-      blocker_evidence: HTTP smoke passed 2026-09-05 with automation bypass; ready=503 fail-closed; release_sha=d78ce0963395257469c1d3b8af616cd007654114
-    runtime_binding_readiness:
-      status: BLOCKED
-      authority_api_binding: NOT_EXECUTED
-      authority_database_binding: NOT_EXECUTED
-      authority_e2e: NOT_EXECUTED
-      configure_entry_points_audited: 62
-      app_route_files_audited: 106
-      production_server_runtime_bootstrap_call_sites: 1
-      database_driver_dependencies: 1
-      database_connection_env_keys_in_env_example: 3
-      database_driver_package_named: "@neondatabase/serverless"
-      live_neon_project_id: wild-wave-25661146
-      instrumentation_register: NEON_DRIVER_AND_WB01_PROJECTION_BOUND
-      client_or_controlled_call_sites_do_not_satisfy_server_binding: true
-      blockers:
-      - PRODUCTION_SERVER_RUNTIME_ADAPTER_BINDINGS_NOT_EXECUTED
-      next_action: KEEP_PRODUCTION_READY_CLAIM_CLOSED
-    truth_guard:
-      runtime_complete_claim_allowed: false
-      production_ready_claim_allowed: false
-      reason: Database and identity control-plane readiness is separate from page authorization; unauthenticated projections remain fail-closed and full production acceptance stays forbidden
-  production_integrity_checklist:
-    authority_date: '2026-09-06'
-    neon_identity: wild-wave-25661146/main/br-shy-cherry-auiol4oy/neondb
-    required_check_count: 8
-    checks:
-      migration_history_rows: 19
-      checksum_mismatches: 0
-      approval_mismatches: 0
-      user_tables_public_plus_runtime: 194
-      validated_foreign_keys_after_0005: 344
-      unvalidated_constraints: 0
-      permission_resource_rows_current: 3651
-      permission_resource_graph:
-        duplicate_resource_keys: 0
-        orphan_parent_keys: 0
-        current_db_page_resource_rows: 1
-    permission_resource_reconciliation:
-      canonical_0003_catalog_rows: 3650
-      current_page_delta_rows: 1
-      current_page_delta_resource_key: page:admin:DB-01
-      current_page_delta_reason: Current Navigation Authority registers admin:DB-01, which is absent from the sealed 0003 catalog.
-      current_page_delta_contract:
-        resource_type: PAGE
-        allowed_actions:
-        - VIEW
-        parent_resource_key: null
-        active: true
-    foreign_key_reconciliation:
-      canonical_0001_foreign_keys: 343
-      0005_added_foreign_keys: 1
-      0005_added_constraint: meetings.fk_meetings_context_snapshot
-      current_validated_foreign_keys: 344
-  live_neon_target:
-    neon_project_id: wild-wave-25661146
-    neon_project_name: ORANGEONEACPOSStaging
-    region_id: aws-us-east-1
-    pg_version: 18
-    database_name: neondb
-    production_branch_id: br-shy-cherry-auiol4oy
-    git_new_preview_branch_id: br-quiet-firefly-aumuvjht
-    superseded_recorded_target: tiny-dust-89825424
-    required_schema_chain: 0001-0019
-    migration_0019:
-      migration_id: 0019_async_queue_delivery_runtime
-      checksum: aea7ea811c826b255d3478e12e9715cb042444c5d2c6f8431f02b0189c0818cc
-      validation_branch_id: br-orange-smoke-aut9pafw
-      validation_status: PASS
-      production_status: APPLIED_VERIFIED
-      production_queue_rows: 1
-      production_worker_rows: 1
-      production_db_probe: PASS
-      production_probe_residual_rows: 0
-    wild_wave_schema_gate: APPLIED_ON_MAIN_2026-09-05
+    historical_execution_evidence_owner: database/migrations/migration_checksum_manifest.yaml
+    mutable_production_state_embedded: false
   production_database_runtime_contract:
     authority_path: authority/runtime/ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
     driver_package: "@neondatabase/serverless"
@@ -284,7 +80,7 @@ cross_authority_bindings:
     canonical_actor_table: app_users
     canonical_actor_column: user_id
     identity_transport: INTERNAL_COOKIE_SESSION
-    adapter_bind_allowed: false
+    adapter_bind_allowed: true
   wb01_ui_projection_sql_permission_mapping:
     authority_path: authority/runtime/ACPOS_WB01_UI_PROJECTION_SQL_PERMISSION_MAPPING_FINAL_LOCKED_V1.0.yaml
     adapter_bind_allowed: true
@@ -335,8 +131,8 @@ cross_authority_bindings:
     - V1.3 Global Shell/visual source documents are provenance only when superseded by Current GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 or Current Global Visual Authority.
     - Any V1.2 Production Script or legacy admin:AIAPI-06 current-page binding is superseded and forbidden for current construction.
 current_page_count: 18
-front_l1_count: 8
-admin_l1_count: 8
+front_l1_count: 9
+admin_l1_count: 9
 repository_layout:
   authority_root: authority/
   global: authority/global/

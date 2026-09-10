@@ -1,6 +1,6 @@
 authority_id: ACPOS_EDIT_VOICE_RUNTIME_OPERATION_AUTHORITY
 version: 1.0
-status: CURRENT_CANDIDATE_PENDING_VALIDATION
+status: CURRENT_CONTRACT
 authority_revision: 2026-09-09-EDIT-VOICE-RUNTIME
 source_authorities:
 - authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
@@ -102,12 +102,7 @@ operation_contracts:
     required_payload: [task_id, saved_edit_version_id, output_version_id, locked_version_ref]
     external_effect: NONE
     handoff_owner: public.handoffs
-permission_materialization:
-  existing_api_resources: 9
-  missing_api_resource_to_create: api:transitionEditingToVoiceStage
-  existing_control_resources_reused: 4
-  bootstrap_assignments_required: 14
-runtime_owner_materialization:
-  migration_id: 0035_edit_voice_runtime_permission_rls_closure
-  grants_and_rls_required: true
-production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
+deployment_state_policy:
+  mutable_environment_state_embedded: false
+  evidence_owner: docs/construction/evidence/
+  migration_history_owner: database/migrations/migration_checksum_manifest.yaml

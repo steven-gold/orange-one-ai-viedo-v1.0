@@ -23,8 +23,8 @@ test("session navigation visibility is derived from PAGE permission assignments 
   assert.match(session, /visible_page_uids: visibility\.visible_page_uids/);
 
   assert.match(shell, /pageUid: "workspace:WB-01"/);
-  assert.doesNotMatch(shell, /id: "NAV-09"/);
-  assert.doesNotMatch(shell, /id: "ADMIN-NAV-09"/);
+  assert.match(shell, /id: "NAV-09"[\s\S]*?pageUid: "workspace:INFO-01"/);
+  assert.match(shell, /id: "ADMIN-NAV-09"[\s\S]*?pageUid: "admin:KB-01"/);
   assert.match(shell, /visiblePageSet\.has\(item\.pageUid\)/);
   assert.match(shell, /frontSurfaceTarget/);
   assert.match(shell, /adminSurfaceTarget/);
@@ -47,7 +47,7 @@ test("production authenticated acceptance requires exact 18-page API and browser
   assert.match(browser, /adminNavIds/);
   assert.match(browser, /AUTH_BROWSER_FRONT_NAV_MISMATCH/);
   assert.match(browser, /AUTH_BROWSER_ADMIN_NAV_MISMATCH/);
-  assert.match(browser, /POST_DEPLOY_AUTH_BROWSER_E2E_PASS login_visual=ACPOS_LOGIN_CURRENT_V2 login_locales=3 front_nav=8 admin_nav=8 visible_pages=18/);
+  assert.match(browser, /POST_DEPLOY_AUTH_BROWSER_E2E_PASS login_visual=ACPOS_LOGIN_CURRENT_V2 login_locales=3 front_nav=9 admin_nav=9 visible_pages=18/);
   assert.match(browser, /AUTH_BROWSER_LOGIN_VISUAL_MARKER_MISSING/);
   assert.match(browser, /AUTH_BROWSER_LOGIN_LOCALE_COUNT_INVALID/);
 
@@ -80,7 +80,8 @@ test("AppShell preserves frozen global visual shell classes while retaining perm
 });
 
 
-test("Current Global L1 authority is user-confirmed 8 frontend + 8 admin while INFO/KB remain non-L1 current pages", async () => {
+test("Current Global L1 authority is 9 frontend + 9 admin with INFO/KB as ninth L1", async () => {
+  const manifest = await read("authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml");
   const nav = await read("authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml");
   const shellAuthority = await read("authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml");
   const system = await read("authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml");
@@ -88,18 +89,22 @@ test("Current Global L1 authority is user-confirmed 8 frontend + 8 admin while I
   const iam = await read("src/components/pages/IamVisual.tsx");
   const iamCatalog = await read("src/i18n/iamCatalog.ts");
 
-  assert.match(nav, /front_workspace_navigation:[\s\S]*?count: 8/);
-  assert.match(nav, /admin_navigation:[\s\S]*?count: 8/);
-  assert.doesNotMatch(nav, /nav_id: NAV-09/);
-  assert.doesNotMatch(nav, /nav_id: ADMIN-NAV-09/);
-  assert.match(shellAuthority, /navigation:[\s\S]*?count: 8/);
-  assert.doesNotMatch(shellAuthority, /nav_id: NAV-09/);
-  assert.match(system, /Front workspace navigation has exactly 8 L1 items/);
-  assert.match(system, /Admin navigation has exactly 8 L1 items/);
-  assert.match(matrix, /page_uid: workspace:INFO-01[\s\S]*?navigation: NON_L1_CURRENT_PAGE/);
-  assert.match(matrix, /page_uid: admin:KB-01[\s\S]*?navigation: NON_L1_CURRENT_ADMIN_PAGE/);
-  assert.match(iam, /data-frontend-l1-count="8"/);
-  assert.match(iam, /data-backend-l1-count="8"/);
-  assert.match(iamCatalog, /前台 8 L1/);
-  assert.match(iamCatalog, /後台 8 L1/);
+  assert.match(manifest, /front_l1_count:\s*9/);
+  assert.match(manifest, /admin_l1_count:\s*9/);
+  assert.match(nav, /front_workspace_navigation:[\s\S]*?count: 9/);
+  assert.match(nav, /admin_navigation:[\s\S]*?count: 9/);
+  assert.match(nav, /nav_id: NAV-09[\s\S]*?page_uid: workspace:INFO-01/);
+  assert.match(nav, /nav_id: ADMIN-NAV-09[\s\S]*?page_uid: admin:KB-01/);
+  assert.match(shellAuthority, /navigation:[\s\S]*?count: 9/);
+  assert.match(shellAuthority, /nav_id: NAV-09/);
+  assert.match(system, /Front workspace navigation has exactly 9 L1 items/);
+  assert.match(system, /Admin navigation has exactly 9 L1 items/);
+  assert.match(matrix, /page_uid: workspace:INFO-01[\s\S]*?navigation: FRONT_L1_NAV-09/);
+  assert.match(matrix, /admin_l1_bundle_count: 9/);
+  assert.match(matrix, /knowledge_bundle: ADMIN-L1-KNOWLEDGE/);
+  assert.doesNotMatch(matrix, /NON_L1_CURRENT_PAGE|NON_L1_CURRENT_ADMIN_PAGE/);
+  assert.match(iam, /data-frontend-l1-count="9"/);
+  assert.match(iam, /data-backend-l1-count="9"/);
+  assert.match(iamCatalog, /前台 9 L1/);
+  assert.match(iamCatalog, /後台 9 L1/);
 });

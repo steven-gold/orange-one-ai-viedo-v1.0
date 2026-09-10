@@ -3,7 +3,7 @@ authority:
   version: V1.2
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-09-SHARED-REGISTRY-SCOPE-SYNCHRONIZED
+  revision: 2026-09-11-CURRENT-STATE-EXTERNALIZED
   scope: PRODUCTION_REQUEST_TO_APP_USERS_ACTOR_CONTRACT_ONLY
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -146,7 +146,9 @@ health_ready:
   success_http_status: 200
   failure_http_status: 503
   keep_fail_closed: true
-remaining_blockers: []
 adapter_bind_allowed: true
-production_ready_claim_allowed: false
-next_action: VERIFY_CONTROL_PLANE_READINESS_THEN_CONTINUE_REMAINING_PRODUCTION_GATES
+production_ready_claim_allowed_from_this_contract_alone: false
+deployment_state_policy:
+  mutable_environment_state_embedded: false
+  current_state_owner: CURRENT_EXECUTION_STATE.json
+  production_evidence_owner: docs/construction/evidence/

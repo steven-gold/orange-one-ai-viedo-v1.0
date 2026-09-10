@@ -7,7 +7,6 @@ authority:
   status: FINAL_LOCKED
   current_only: true
   file_spec_status: FILE_SPEC_COMPLETE
-  system_implementation_status: NOT_EXECUTED
   single_page_workspace: true
   global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
   global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
@@ -17,8 +16,10 @@ authority:
   purpose: One current ERP workspace that consolidates the existing current registered authority ERP Connector/Snapshot and Finance/Capacity Guardrail
     page capabilities into one same-page administration workspace without creating a second ERP service, finance service, connector registry,
     sync engine, snapshot store, finance store, export service or authorization system.
-  truthful_status_rule: This file completes current ERP page design/encoding only. Application code, current registered authority master merge,
-    external ERP connector execution, runtime, Sandbox, Regression, E2E, restart persistence and production deployment are NOT_EXECUTED.
+  execution_state_policy:
+    mutable_execution_state_embedded: false
+    current_state_owner: CURRENT_EXECUTION_STATE.json
+    production_evidence_owner: docs/construction/evidence/
   system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
   navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
 single_system_contract:

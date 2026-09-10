@@ -1,6 +1,6 @@
 authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
 version: 1.0
-status: VALIDATED_PENDING_PRODUCTION_APPLY
+status: CURRENT_CONTRACT
 authority_revision: 2026-09-09-SHARED-CORRECTION-VERSION-RUNTIME
 scope:
   pages: [ASSET-01, VIDEO-01]
@@ -108,44 +108,7 @@ state_contract:
     CONFIRMED: accepted immutable task_output + PASS scorecard
     LOCKED: exact production_output_version_lock exists
     RESTORE_DRAFT: lineage-only asset_version_restore_draft exists
-validation_evidence:
-  validation_branch_id: br-orange-smoke-aut9pafw
-  source_release_gate:
-    run_number: 844
-    exact_source_sha: 62d79bd2ed257f221a03e38e980764c0e0e4152a
-    conclusion: SUCCESS
-  migration:
-    migration_id: 0034_shared_correction_version_runtime_closure
-    migration_count_before_apply: 33
-    migration_count_after_apply: 34
-    payload_sha256: 4f67f35eee2afb996ba2cce88fb7377c1a762b182c70de45eb6518062a9aac7b
-  permission_validation:
-    shared_permission_resources: 19
-    bootstrap_approved_allow_assignments: 19
-  schema_validation:
-    canonical_correction_new_columns: 5
-    canonical_correction_constraints: 2
-    dedicated_output_lock_owner: public.production_output_version_locks
-    dedicated_restore_draft_owner: public.asset_version_restore_drafts
-  rls_validation:
-    shared_rls_policies: 8
-    runtime_table_grants: 6
-    runtime_column_update_grants: 6
-    correction_script_versions_rls_enabled: true
-    production_output_version_locks_rls_enabled: true
-    asset_version_restore_drafts_rls_enabled: true
-  runtime_role_probe:
-    role: acpos_app_runtime
-    row_security: on
-    actor_context_present: false
-    visible_correction_scripts: 0
-    visible_output_locks: 0
-    visible_restore_drafts: 0
-    fail_closed_without_actor_context: true
-  validation_business_rows_created: 0
-  validation_session_created: false
-production_apply: FORBIDDEN_UNTIL_FINAL_RELEASE_SEQUENCE
-remaining_operational_blockers:
-- Production migration 0034 remains intentionally unapplied until the final release sequence.
-- End-to-end correction generation still depends on a healthy governed ACPOS_TEXT_CHAT provider route and valid external provider response.
-- End-to-end correction execution still depends on a valid ASSET/VIDEO production route policy, provider capability/profile/secret/queue path, and eligible exact task/output/finding lineage.
+deployment_state_policy:
+  mutable_environment_state_embedded: false
+  evidence_owner: docs/construction/evidence/
+  migration_history_owner: database/migrations/migration_checksum_manifest.yaml

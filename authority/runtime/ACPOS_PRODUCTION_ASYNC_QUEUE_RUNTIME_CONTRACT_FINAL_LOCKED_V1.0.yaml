@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-07-PROVIDER-EXECUTION-QUEUE-MATERIALIZATION
+  revision: 2026-09-11-CURRENT-STATE-EXTERNALIZED
   scope: PRODUCTION_ASYNC_QUEUE_WORKER_DLQ
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
   derived_from:
@@ -182,17 +182,8 @@ completion_claim:
   - Production failure probe proves retry + DLQ + no residual unsafe data
   gate_22_independent: true
 
-provider_execution_implementation_evidence:
-  adapter_runtime: src/server/aiApi/providerHttpAdapterRuntime.ts
-  command_runtime: src/server/aiApi/productionAiApiCommandRuntime.ts
-  canonical_worker: src/server/queue/providerExecutionQueueRuntime.ts
-  release_gate:
-    run_number: 405
-    conclusion: success
-    head_sha: fb7e649ca791a8d81ec1f0e9b6c8233b033aaf1a
-  external_configuration_current_counts:
-    provider_capabilities: 0
-    provider_profiles: 0
-    secret_references: 0
-    provider_groups: 0
-  production_external_execution_proof: NOT_EXECUTED_NO_REAL_CONFIGURATION
+deployment_state_policy:
+  mutable_environment_state_embedded: false
+  current_state_owner: CURRENT_EXECUTION_STATE.json
+  production_evidence_owner: docs/construction/evidence/
+  rule: Release run, exact source SHA, provider configuration counts and Production execution outcomes are mutable evidence and must not be embedded in this Current Authority contract.

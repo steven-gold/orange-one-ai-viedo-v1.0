@@ -31,6 +31,7 @@ const FRONT_L1: readonly (readonly [string, TranslationKey])[] = [
   ["FRONT-L1-06", "global.nav.qa"],
   ["FRONT-L1-07", "global.nav.database"],
   ["FRONT-L1-08", "global.nav.strategy"],
+  ["FRONT-L1-09", "global.nav.latest_information"],
 ] as const;
 
 const ADMIN_L1: readonly (readonly [string, TranslationKey])[] = [
@@ -42,6 +43,7 @@ const ADMIN_L1: readonly (readonly [string, TranslationKey])[] = [
   ["ADMIN-L1-AIAPI", "global.admin.aiapi"],
   ["ADMIN-L1-QA-CRITERIA", "global.admin.qa_criteria"],
   ["ADMIN-L1-STRATEGY", "global.admin.strategy"],
+  ["ADMIN-L1-KNOWLEDGE", "global.admin.knowledge"],
 ] as const;
 
 function IamVisualBody() {
@@ -78,8 +80,8 @@ function IamVisualBody() {
       data-authority-sections="6"
       data-authority-components="10"
       data-authority-controls="14"
-      data-frontend-l1-count="8"
-      data-backend-l1-count="8"
+      data-frontend-l1-count="9"
+      data-backend-l1-count="9"
       data-control-registry-valid={IAM_CONTROL_BINDING_COUNT === 14 ? "true" : "false"}
       data-projection-status={runtimeReasonCode ? "BLOCKED" : projection ? "BOUND" : "LOADING"}
       data-projection-reason={runtimeReasonCode ?? undefined}
@@ -250,7 +252,7 @@ function IamVisualBody() {
           <div className={styles.permissionColumns}>
             <div className={styles.permissionGroup} data-component-id="IAM-01-CMP-FRONT-L1">
               <label className={styles.groupHeader}>
-                <input type="checkbox" data-control-id="IAM-01-CHK-FRONT-ALL" data-action-uid={frontAllControl.binding?.action_uid} data-gate-uid={frontAllControl.binding?.gate_uid} data-permission-uid={frontAllControl.binding?.permission} data-effect-type={frontAllControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={frontAllControl.runtimeBinding} data-gate-allowed={frontAllControl.gateAllowed ? "true" : "false"} data-disabled-reason={frontAllControl.disabledReason ?? undefined} checked={client.front_l1.length === 8} disabled={!frontAllControl.enabled} onChange={() => runtime.setClient(client.front_l1.length === 8 ? { ...client, front_l1: [] } : { ...client, front_l1: FRONT_L1.map((item) => item[0]) })} />
+                <input type="checkbox" data-control-id="IAM-01-CHK-FRONT-ALL" data-action-uid={frontAllControl.binding?.action_uid} data-gate-uid={frontAllControl.binding?.gate_uid} data-permission-uid={frontAllControl.binding?.permission} data-effect-type={frontAllControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={frontAllControl.runtimeBinding} data-gate-allowed={frontAllControl.gateAllowed ? "true" : "false"} data-disabled-reason={frontAllControl.disabledReason ?? undefined} checked={client.front_l1.length === 9} disabled={!frontAllControl.enabled} onChange={() => runtime.setClient(client.front_l1.length === 9 ? { ...client, front_l1: [] } : { ...client, front_l1: FRONT_L1.map((item) => item[0]) })} />
                 <span>{t("frontAll")}</span>
               </label>
               <div className={styles.groupBody} data-control-id="IAM-01-GRP-FRONT-L1" data-action-uid={frontGroupControl.binding?.action_uid} data-gate-uid={frontGroupControl.binding?.gate_uid} data-permission-uid={frontGroupControl.binding?.permission} data-effect-type={frontGroupControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={frontGroupControl.runtimeBinding} data-gate-allowed={frontGroupControl.gateAllowed ? "true" : "false"} data-disabled-reason={frontGroupControl.disabledReason ?? undefined} aria-disabled={!frontGroupControl.enabled}>
@@ -260,7 +262,7 @@ function IamVisualBody() {
             </div>
             <div className={styles.permissionGroup} data-component-id="IAM-01-CMP-BACK-L1">
               <label className={styles.groupHeader}>
-                <input type="checkbox" data-control-id="IAM-01-CHK-BACK-ALL" data-action-uid={backAllControl.binding?.action_uid} data-gate-uid={backAllControl.binding?.gate_uid} data-permission-uid={backAllControl.binding?.permission} data-effect-type={backAllControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={backAllControl.runtimeBinding} data-gate-allowed={backAllControl.gateAllowed ? "true" : "false"} data-disabled-reason={backAllControl.disabledReason ?? undefined} checked={client.admin_l1.length === 8} disabled={!backAllControl.enabled} onChange={() => runtime.setClient(client.admin_l1.length === 8 ? { ...client, admin_l1: [] } : { ...client, admin_l1: ADMIN_L1.map((item) => item[0]) })} />
+                <input type="checkbox" data-control-id="IAM-01-CHK-BACK-ALL" data-action-uid={backAllControl.binding?.action_uid} data-gate-uid={backAllControl.binding?.gate_uid} data-permission-uid={backAllControl.binding?.permission} data-effect-type={backAllControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={backAllControl.runtimeBinding} data-gate-allowed={backAllControl.gateAllowed ? "true" : "false"} data-disabled-reason={backAllControl.disabledReason ?? undefined} checked={client.admin_l1.length === 9} disabled={!backAllControl.enabled} onChange={() => runtime.setClient(client.admin_l1.length === 9 ? { ...client, admin_l1: [] } : { ...client, admin_l1: ADMIN_L1.map((item) => item[0]) })} />
                 <span>{t("backAll")}</span>
               </label>
               <div className={styles.groupBody} data-control-id="IAM-01-GRP-BACK-L1" data-action-uid={backGroupControl.binding?.action_uid} data-gate-uid={backGroupControl.binding?.gate_uid} data-permission-uid={backGroupControl.binding?.permission} data-effect-type={backGroupControl.binding?.effect_type} data-current-state={pageState} data-runtime-binding={backGroupControl.runtimeBinding} data-gate-allowed={backGroupControl.gateAllowed ? "true" : "false"} data-disabled-reason={backGroupControl.disabledReason ?? undefined} aria-disabled={!backGroupControl.enabled}>

@@ -29,19 +29,11 @@ current_page_policy:
   rule: Do not reconstruct legacy standalone AI API pages from current registered source registry. All current AI API UI must render inside admin:AIAPI-01.
   navigation_rule: Only one current AI API navigation target may render.
   route_inference: FORBIDDEN
-runtime_truth:
-  file_spec: COMPLETE
-  encoding_file: COMPLETE
-  application_implementation: MATERIALIZED_CURRENT_ON_NEW
-  navigation_registry_remap: COMPLETE_CURRENT_SINGLE_PAGE
-  control_resource_remap: MATERIALIZED_OPERATION_BOUND_UI
-  permission_resource_remap: COMPLETE_PAGE_RESOURCE_WITH_SERVER_AUTHORIZATION
-  runtime_binding: MATERIALIZED_CURRENT_SERVER_AND_CLIENT
-  sandbox_validation: MATERIALIZED_DRY_RUN_EXTERNAL_PROFILE_DATA_REQUIRED
-  regression_validation: PASS_RELEASE_GATE_384
-  e2e_validation: CONTROLLED_RELEASE_E2E_PASS_PRODUCTION_POST_DEPLOY_PENDING
-  production_deployment: PENDING_SINGLE_MAIN_RELEASE
-  completion_claim_rule: Construction/runtime binding is complete on new; Production completion remains forbidden until exact main deployment and Post Deploy acceptance pass.
+execution_state_policy:
+  mutable_execution_state_embedded: false
+  current_state_owner: CURRENT_EXECUTION_STATE.json
+  production_evidence_owner: docs/construction/evidence/
+  rule: Runtime, validation, Release and Production deployment completion are resolved only from Current execution evidence.
 page_contract:
   role: SINGLE_PAGE_AI_API_MANAGEMENT
   owner_boundary: Frontend management surface only; backend owners remain existing ProviderGovernanceService / InstructionCompiler / JobService

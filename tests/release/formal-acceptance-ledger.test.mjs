@@ -10,6 +10,8 @@ test("Current formal acceptance ledger covers exact 1481 Production CONTROL+ACTI
   const productionDomSync=JSON.parse(await readFile("docs/construction/evidence/GATE25_PRODUCTION_DOM_BLOCKER_LEDGER_SYNC_2026-09-10.json","utf8"));
   assert.equal(inventory.resources.length,1481);
   assert.deepEqual(inventory.denominator,{controls:1155,actions:326,total:1481});
+  assert.equal(inventory.production_release_sha,"526316501c86fe54f02603cdb47da5ad51a005dc");
+  assert.equal(inventory.neon.migration_count,53);
   assert.equal(ledger.entries.length,1481);
   assert.deepEqual(ledger.denominator,{controls:1155,actions:326,total:1481});
   const keys=new Set(ledger.entries.map(x=>x.resource_key));
@@ -20,9 +22,16 @@ test("Current formal acceptance ledger covers exact 1481 Production CONTROL+ACTI
     physicalCounts[row.disposition]+=1;
   }
   assert.deepEqual(ledger.counts,physicalCounts);
+  assert.deepEqual(ledger.counts,{PASS:51,BLOCKED:204,NOT_EXECUTED:1226});
   assert.equal(ledger.counts.PASS+ledger.counts.BLOCKED+ledger.counts.NOT_EXECUTED,1481);
-  assert.equal(ledger.aggregate_dom_evidence.interactive,558);
-  assert.equal(ledger.aggregate_dom_evidence.governed,558);
+  assert.equal(ledger.production_release_sha,"526316501c86fe54f02603cdb47da5ad51a005dc");
+  assert.equal(ledger.aggregate_dom_evidence.post_deploy_run,1561);
+  assert.equal(ledger.aggregate_dom_evidence.post_deploy_run_id,34501027032);
+  assert.equal(ledger.aggregate_dom_evidence.pages,18);
+  assert.equal(ledger.aggregate_dom_evidence.interactive,560);
+  assert.equal(ledger.aggregate_dom_evidence.governed,560);
+  assert.equal(ledger.aggregate_dom_evidence.enabled,342);
+  assert.equal(ledger.aggregate_dom_evidence.disabled,218);
   assert.equal(ledger.aggregate_dom_evidence.per_resource_pass_propagation,false);
 
   assert.equal(directSync.status,"PHYSICAL_LEDGER_SYNCED");
