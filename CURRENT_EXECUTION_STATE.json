@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T11:01:00+08:00",
+  "as_of": "2026-09-10T11:42:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "c3be46239146673c02d261defa17f55340342c8a",
-    "new_sha": "92f4d0c5279059af75b3e97efe82b73fba593059",
+    "new_sha": "be1a8bea46695da1f5bbfd14eb6f08bd97b7bb34",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -486,6 +486,29 @@
       "approved_edit_render_capabilities": 0,
       "approved_voice_capabilities": 0,
       "rule": "TEXT_CHAT provider capability does not satisfy EDIT_RENDER or VOICE execution. Do not fabricate route policy/capability mappings."
+    },
+    "gate25_formal_acceptance_ledger": {
+      "status": "LEDGER_COVERAGE_MATERIALIZED_EFFECTFUL_EXECUTION_PENDING",
+      "inventory": "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+      "disposition_ledger": "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json",
+      "denominator": {
+        "controls": 1155,
+        "actions": 326,
+        "total": 1481
+      },
+      "dispositions": {
+        "PASS": 0,
+        "BLOCKED": 48,
+        "NOT_EXECUTED": 1433
+      },
+      "aggregate_dom": {
+        "interactive": 558,
+        "governed": 558,
+        "per_resource_pass_propagation": false
+      },
+      "validation_runner": "scripts/release-formal-acceptance-ledger.mjs",
+      "final_mode": "node scripts/release-formal-acceptance-ledger.mjs --require-pass",
+      "rule": "Ledger coverage is not effectful acceptance. PASS requires per-resource evidence. Aggregate DOM evidence never auto-promotes individual resources."
     }
   },
   "providers": {
@@ -710,7 +733,8 @@
     "Positive EDIT+VOICE lifecycle acceptance is blocked by zero real EDITING/QA task/output/timeline/voice-profile/lock/runtime lineage. Do not fabricate Production rows for acceptance.",
     "Production Provider authority has 4 APPROVED capabilities and all are TEXT_CHAT; APPROVED route policies=0, EDITING route policies=0, EDIT_RENDER capabilities=0, VOICE capabilities=0. TEXT_CHAT capabilities must not be substituted for media/voice execution.",
     "Gate 25 lacks a permanent exhaustive formal/effectful acceptance runner for the Current 1481 CONTROL+ACTION denominator. Existing Post-Deploy control acceptance proves only rendered DOM governance (558/558) and cannot be used as exhaustive effectful evidence.",
-    "Gate 25 denominator types must remain separate: historical catalog CONTROL+ACTION=1453, Current Production permission CONTROL+ACTION=1481, Current rendered Production DOM interactive=558."
+    "Gate 25 denominator types must remain separate: historical catalog CONTROL+ACTION=1453, Current Production permission CONTROL+ACTION=1481, Current rendered Production DOM interactive=558.",
+    "Gate 25 exact 1481-resource disposition ledger is now materialized, but PASS=0/BLOCKED=48/NOT_EXECUTED=1433 until per-resource execution adapters/evidence are added. Ledger coverage must not be reported as effectful completion."
   ],
   "remaining_queue": [
     "MANDATORY 1/9 QualityCriteriaVersion materialization + real Production Configure→Approve→readback→cleanup acceptance",
@@ -732,7 +756,7 @@
     "RUNTIME QA ReleasePackage evidence owner + positive Production effectful closure",
     "ACCEPTANCE IAM/ERP/AIAPI/SOC Production mutation acceptance",
     "ACCEPTANCE AI Conversation Production E2E",
-    "ACCEPTANCE Permanent Production exhaustive formal/effectful runner for Current CONTROL+ACTION denominator",
+    "ACCEPTANCE Gate 25 execution adapters + per-resource evidence for 1481 Current CONTROL+ACTION resources (ledger coverage runner materialized; effectful execution still pending)",
     "ACCEPTANCE Gate 25 denominator seal: historical 1453 / Current permission 1481 / Current Production DOM 558",
     "ACCEPTANCE Full 25-Gate recompute from Current evidence"
   ],

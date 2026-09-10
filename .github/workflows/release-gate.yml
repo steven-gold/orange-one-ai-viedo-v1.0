@@ -38,6 +38,8 @@ jobs:
 
       - name: Validate legacy and Current acceptance denominators
         run: node scripts/release-formal-control-denominator.mjs
+      - name: Validate Current formal acceptance ledger coverage
+        run: node scripts/release-formal-acceptance-ledger.mjs
       - name: Validate deployment smoke syntax
         run: |
           node --check scripts/post-deploy-smoke.mjs
