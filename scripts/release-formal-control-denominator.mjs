@@ -49,7 +49,7 @@ if (currentNeon.active_controls !== 1155 || currentNeon.active_actions !== 326 |
 if (currentNeon.active_permission_resources !== 3693 || currentNeon.permission_resource_expansion !== 43) {
   throw new Error(`CURRENT_PERMISSION_RESOURCE_DENOMINATOR_MISMATCH total=${currentNeon.active_permission_resources} expansion=${currentNeon.permission_resource_expansion}`);
 }
-if (currentDom.interactive !== 555 || currentDom.governed !== 555 || currentDom.enabled + currentDom.disabled !== currentDom.interactive) {
+if (currentDom.interactive !== 558 || currentDom.governed !== 558 || currentDom.enabled + currentDom.disabled !== currentDom.interactive) {
   throw new Error(`CURRENT_DOM_EVIDENCE_MISMATCH interactive=${currentDom.interactive} governed=${currentDom.governed} enabled=${currentDom.enabled} disabled=${currentDom.disabled}`);
 }
 process.stdout.write(`CURRENT_ACCEPTANCE_DENOMINATOR_PASS legacy=${legacyCatalogControlActionBaseline} current_permission=${currentNeon.current_control_action_denominator} expansion=${currentNeon.control_action_expansion} current_dom=${currentDom.interactive} governed=${currentDom.governed}\n`);

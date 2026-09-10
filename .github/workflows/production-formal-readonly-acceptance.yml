@@ -1,0 +1,39 @@
+name: ACPOS Production Formal Readonly Acceptance
+
+on:
+  workflow_run:
+    workflows: ["ACPOS Release Gate"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  formal-readonly:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    environment: Production
+    timeout-minutes: 10
+    env:
+      ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
+      ACPOS_PRODUCTION_E2E_EMAIL: admin
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      ACPOS_EXPECT_RELEASE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+      ACPOS_ACCEPTANCE_ROUTE_DECISION_ID: f913ad44-5524-44ca-b715-4884a62f366b
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate formal readonly acceptance syntax
+        run: node --check scripts/production-formal-readonly-acceptance.mjs
+      - name: Run four exact formal Production read-only adapters
+        run: node scripts/production-formal-readonly-acceptance.mjs

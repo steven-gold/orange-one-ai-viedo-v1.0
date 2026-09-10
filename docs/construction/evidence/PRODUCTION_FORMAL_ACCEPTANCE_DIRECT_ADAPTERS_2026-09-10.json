@@ -1,0 +1,47 @@
+{
+  "document_id": "ACPOS_PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS",
+  "status": "CURRENT_PARTIAL",
+  "as_of": "2026-09-10T11:42:00+08:00",
+  "authority": "03_api/operation_registry.yaml",
+  "exact_direct_mapping_count": 25,
+  "executable_readonly_now": [
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-LIST-PROFILES",
+      "operation_id": "listProviderModelProfiles",
+      "method": "GET",
+      "path": "/v1/aiapi/provider-profiles",
+      "fixture": "NONE",
+      "mutation": false,
+      "external_provider_call": false
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE",
+      "operation_id": "getProviderModelProfile",
+      "method": "GET",
+      "path": "/v1/aiapi/provider-profiles/{profileId}",
+      "fixture": "derive first real profile_id from listProviderModelProfiles",
+      "mutation": false,
+      "external_provider_call": false
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-VIEW-QUARANTINE",
+      "operation_id": "getProviderQuarantine",
+      "method": "GET",
+      "path": "/v1/aiapi/quarantine",
+      "fixture": "NONE; empty list is valid",
+      "mutation": false,
+      "external_provider_call": false
+    },
+    {
+      "resource_key": "control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-VIEW-ROUTE-DECISION",
+      "operation_id": "getProviderRouteDecision",
+      "method": "GET",
+      "path": "/v1/aiapi/routes/{routeDecisionId}",
+      "fixture": "existing real Production route_decision_id supplied to workflow",
+      "mutation": false,
+      "external_provider_call": false
+    }
+  ],
+  "mapped_not_yet_executable_count": 21,
+  "rule": "Only exact operation_registry authorization_resource_key/resource_key mappings qualify. API-only operations are not guessed onto formal CONTROL/ACTION resources. Mutation/external-effect adapters require an explicit fixture, expected readback, negative path and cleanup contract before execution."
+}
