@@ -1,0 +1,134 @@
+{
+  "document_id": "ACPOS_GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS",
+  "status": "BLOCKED",
+  "recorded_at": "2026-09-10T15:10:22.395967+00:00",
+  "production_release_sha": "608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36",
+  "deployment_url": "https://orange-one-acpos-test.vercel.app",
+  "github_run_id": "34493787574",
+  "github_run_attempt": "1",
+  "resource_count": 18,
+  "mutation_count": 0,
+  "page_state": "EMPTY",
+  "gate_state": {
+    "ERP-01-GATE-PAGE": true,
+    "ERP-01-GATE-CONNECTOR-READ": false,
+    "ERP-01-GATE-CONNECTOR-WRITE": false,
+    "ERP-01-GATE-CONNECTOR-VALIDATE": false,
+    "ERP-01-GATE-MAPPING-VALIDATE": false,
+    "ERP-01-GATE-SYNC-READ": false,
+    "ERP-01-GATE-SNAPSHOT-REFRESH": false,
+    "ERP-01-GATE-SYNC-CREATE": false,
+    "ERP-01-GATE-SYNC-RETRY": false
+  },
+  "references": {
+    "connector_id_present": false,
+    "mapping_version_present": false,
+    "snapshot_id_present": false,
+    "sync_job_id_present": false,
+    "failure_id_present": false
+  },
+  "formal_resources": [
+    "control:CTRL-ADMIN-ERP-01-ACT-01-ERP-CONNECTOR-CREATE",
+    "action:admin:ERP-01:erp.connector.create",
+    "control:CTRL-ADMIN-ERP-01-ACT-02-ERP-CONNECTOR-UPDATE",
+    "action:admin:ERP-01:erp.connector.update",
+    "control:CTRL-ADMIN-ERP-01-ACT-03-ERP-CONNECTOR-VALIDATE",
+    "action:admin:ERP-01:erp.connector.validate",
+    "control:CTRL-ADMIN-ERP-01-ACT-04-ERP-MAPPING-VALIDATE",
+    "action:admin:ERP-01:erp.mapping.validate",
+    "control:CTRL-ADMIN-ERP-01-ACT-05-ERP-SNAPSHOT-REFRESH",
+    "action:admin:ERP-01:erp.snapshot.refresh",
+    "control:CTRL-ADMIN-ERP-01-ACT-06-ERP-SYNC-CREATE",
+    "action:admin:ERP-01:erp.sync.create",
+    "control:CTRL-ADMIN-ERP-01-ACT-07-ERP-SYNC-STATUS",
+    "action:admin:ERP-01:erp.sync.status",
+    "control:CTRL-ADMIN-ERP-01-ACT-08-ERP-SYNC-RETRY",
+    "action:admin:ERP-01:erp.sync.retry",
+    "control:CTRL-ADMIN-ERP-01-ACT-09-ERP-FAILURE-GET",
+    "action:admin:ERP-01:erp.failure.get"
+  ],
+  "operation_pairs": [
+    {
+      "control_resource": "control:CTRL-ADMIN-ERP-01-ACT-01-ERP-CONNECTOR-CREATE",
+      "action_resource": "action:admin:ERP-01:erp.connector.create",
+      "control_id": "ERP-01-BTN-CONNECTOR-CREATE",
+      "action_uid": "ERP-01-ACT-CONNECTOR-CREATE",
+      "gate_uid": "ERP-01-GATE-CONNECTOR-WRITE",
+      "permission_uid": "ERP-01-PERM-CONNECTOR",
+      "operation_id": "createERPConnector"
+    },
+    {
+      "control_resource": "control:CTRL-ADMIN-ERP-01-ACT-02-ERP-CONNECTOR-UPDATE",
+      "action_resource": "action:admin:ERP-01:erp.connector.update",
+      "control_id": "ERP-01-BTN-CONNECTOR-UPDATE",
+      "action_uid": "ERP-01-ACT-CONNECTOR-UPDATE",
+      "gate_uid": "ERP-01-GATE-CONNECTOR-WRITE",
+      "permission_uid": "ERP-01-PERM-CONNECTOR",
+      "operation_id": "updateERPConnector"
+    },
+    {
+      "control_resource": "control:CTRL-ADMIN-ERP-01-ACT-03-ERP-CONNECTOR-VALIDATE",
+      "action_resource": "action:admin:ERP-01:erp.connector.validate",
+      "control_id": "ERP-01-BTN-CONNECTOR-VALIDATE",
+      "action_uid": "ERP-01-ACT-CONNECTOR-VALIDATE",
+      "gate_uid": "ERP-01-GATE-CONNECTOR-VALIDATE",
+      "permission_uid": "ERP-01-PERM-CONNECTOR",
+      "operation_id": "validateERPConnector"
+    },
+    {
+      "control_resource": "control:CTRL-ADMIN-ERP-01-ACT-04-ERP-MAPPING-VALIDATE",
+      "action_resource": "action:admin:ERP-01:erp.mapping.validate",
+      "control_id": "ERP-01-BTN-MAPPING-VALIDATE",
+      "action_uid": "ERP-01-ACT-MAPPING-VALIDATE",
+      "gate_uid": "ERP-01-GATE-MAPPING-VALIDATE",
+      "permission_uid": "ERP-01-PERM-CONNECTOR",
+      "operation_id": "validateERPMapping"
+    },
+    {
+      "control_resource": "control:CTRL-ADMIN-ERP-01-ACT-05-ERP-SNAPSHOT-REFRESH",
+      "action_resource": "action:admin:ERP-01:erp.snapshot.refresh",
+      "control_id": "ERP-01-BTN-SNAPSHOT-REFRESH",
+      "action_uid": "ERP-01-ACT-SNAPSHOT-REFRESH",
+      "gate_uid": "ERP-01-GATE-SNAPSHOT-REFRESH",
+      "permission_uid": "ERP-01-PERM-SYNC",
+      "operation_id": "refreshERPSnapshot"
+    },
+    {
+      "control_resource": "control:CTRL-ADMIN-ERP-01-ACT-06-ERP-SYNC-CREATE",
+      "action_resource": "action:admin:ERP-01:erp.sync.create",
+      "control_id": "ERP-01-BTN-SYNC-CREATE",
+      "action_uid": "ERP-01-ACT-SYNC-CREATE",
+      "gate_uid": "ERP-01-GATE-SYNC-CREATE",
+      "permission_uid": "ERP-01-PERM-SYNC",
+      "operation_id": "createERPSyncJob"
+    },
+    {
+      "control_resource": "control:CTRL-ADMIN-ERP-01-ACT-07-ERP-SYNC-STATUS",
+      "action_resource": "action:admin:ERP-01:erp.sync.status",
+      "control_id": "ERP-01-BTN-SYNC-STATUS",
+      "action_uid": "ERP-01-ACT-SYNC-STATUS",
+      "gate_uid": "ERP-01-GATE-SYNC-READ",
+      "permission_uid": "ERP-01-PERM-SYNC",
+      "operation_id": "getERPSyncStatus"
+    },
+    {
+      "control_resource": "control:CTRL-ADMIN-ERP-01-ACT-08-ERP-SYNC-RETRY",
+      "action_resource": "action:admin:ERP-01:erp.sync.retry",
+      "control_id": "ERP-01-BTN-SYNC-RETRY",
+      "action_uid": "ERP-01-ACT-SYNC-RETRY",
+      "gate_uid": "ERP-01-GATE-SYNC-RETRY",
+      "permission_uid": "ERP-01-PERM-SYNC",
+      "operation_id": "retryERPSync"
+    },
+    {
+      "control_resource": "control:CTRL-ADMIN-ERP-01-ACT-09-ERP-FAILURE-GET",
+      "action_resource": "action:admin:ERP-01:erp.failure.get",
+      "control_id": "ERP-01-BTN-FAILURE-GET",
+      "action_uid": "ERP-01-ACT-FAILURE-GET",
+      "gate_uid": "ERP-01-GATE-SYNC-READ",
+      "permission_uid": "ERP-01-PERM-SYNC",
+      "operation_id": "getERPFailure"
+    }
+  ],
+  "rule": "Authenticated Production has the ERP page gate, but every connector/sync operation gate is false and no connector, mapping, snapshot, sync-job, or failure reference exists. Effectful or ID-dependent acceptance cannot bypass gates or fabricate Production business identifiers."
+}

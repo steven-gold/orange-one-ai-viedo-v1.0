@@ -29,8 +29,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 47,
-    "BLOCKED": 121,
-    "NOT_EXECUTED": 1313
+    "BLOCKED": 139,
+    "NOT_EXECUTED": 1295
   },
   "entries": [
     {
@@ -885,65 +885,182 @@
     {
       "resource_key": "action:admin:ERP-01:erp.connector.create",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-CREATE but ERP-01-GATE-CONNECTOR-WRITE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "createERPConnector",
+        "ERP-01-ACT-CONNECTOR-CREATE",
+        "ERP-01-GATE-CONNECTOR-WRITE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.connector.update",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-UPDATE but ERP-01-GATE-CONNECTOR-WRITE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "updateERPConnector",
+        "ERP-01-ACT-CONNECTOR-UPDATE",
+        "ERP-01-GATE-CONNECTOR-WRITE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.connector.validate",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-VALIDATE but ERP-01-GATE-CONNECTOR-VALIDATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "validateERPConnector",
+        "ERP-01-ACT-CONNECTOR-VALIDATE",
+        "ERP-01-GATE-CONNECTOR-VALIDATE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.failure.get",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-FAILURE-GET but ERP-01-GATE-SYNC-READ=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "getERPFailure",
+        "ERP-01-ACT-FAILURE-GET",
+        "ERP-01-GATE-SYNC-READ",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.mapping.validate",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-MAPPING-VALIDATE but ERP-01-GATE-MAPPING-VALIDATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "validateERPMapping",
+        "ERP-01-ACT-MAPPING-VALIDATE",
+        "ERP-01-GATE-MAPPING-VALIDATE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.snapshot.refresh",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SNAPSHOT-REFRESH but ERP-01-GATE-SNAPSHOT-REFRESH=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "refreshERPSnapshot",
+        "ERP-01-ACT-SNAPSHOT-REFRESH",
+        "ERP-01-GATE-SNAPSHOT-REFRESH",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.sync.create",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-CREATE but ERP-01-GATE-SYNC-CREATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "createERPSyncJob",
+        "ERP-01-ACT-SYNC-CREATE",
+        "ERP-01-GATE-SYNC-CREATE",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.sync.retry",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-RETRY but ERP-01-GATE-SYNC-RETRY=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "retryERPSync",
+        "ERP-01-ACT-SYNC-RETRY",
+        "ERP-01-GATE-SYNC-RETRY",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-01:erp.sync.status",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-STATUS but ERP-01-GATE-SYNC-READ=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "getERPSyncStatus",
+        "ERP-01-ACT-SYNC-STATUS",
+        "ERP-01-GATE-SYNC-READ",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "action:admin:ERP-02:ACT-EXPORT",
@@ -4552,65 +4669,182 @@
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-01-ERP-CONNECTOR-CREATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-CREATE but ERP-01-GATE-CONNECTOR-WRITE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "createERPConnector",
+        "ERP-01-ACT-CONNECTOR-CREATE",
+        "ERP-01-GATE-CONNECTOR-WRITE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-02-ERP-CONNECTOR-UPDATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-UPDATE but ERP-01-GATE-CONNECTOR-WRITE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "updateERPConnector",
+        "ERP-01-ACT-CONNECTOR-UPDATE",
+        "ERP-01-GATE-CONNECTOR-WRITE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-03-ERP-CONNECTOR-VALIDATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-CONNECTOR-VALIDATE but ERP-01-GATE-CONNECTOR-VALIDATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "validateERPConnector",
+        "ERP-01-ACT-CONNECTOR-VALIDATE",
+        "ERP-01-GATE-CONNECTOR-VALIDATE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-04-ERP-MAPPING-VALIDATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-MAPPING-VALIDATE but ERP-01-GATE-MAPPING-VALIDATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "validateERPMapping",
+        "ERP-01-ACT-MAPPING-VALIDATE",
+        "ERP-01-GATE-MAPPING-VALIDATE",
+        "ERP-01-PERM-CONNECTOR"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-05-ERP-SNAPSHOT-REFRESH",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SNAPSHOT-REFRESH but ERP-01-GATE-SNAPSHOT-REFRESH=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "refreshERPSnapshot",
+        "ERP-01-ACT-SNAPSHOT-REFRESH",
+        "ERP-01-GATE-SNAPSHOT-REFRESH",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-06-ERP-SYNC-CREATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-CREATE but ERP-01-GATE-SYNC-CREATE=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "createERPSyncJob",
+        "ERP-01-ACT-SYNC-CREATE",
+        "ERP-01-GATE-SYNC-CREATE",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-07-ERP-SYNC-STATUS",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-STATUS but ERP-01-GATE-SYNC-READ=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "getERPSyncStatus",
+        "ERP-01-ACT-SYNC-STATUS",
+        "ERP-01-GATE-SYNC-READ",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-08-ERP-SYNC-RETRY",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-SYNC-RETRY but ERP-01-GATE-SYNC-RETRY=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "retryERPSync",
+        "ERP-01-ACT-SYNC-RETRY",
+        "ERP-01-GATE-SYNC-RETRY",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-09-ERP-FAILURE-GET",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PRODUCTION_ERP_CONNECTOR_SYNC_PREREQUISITES_ABSENT",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_ERP_CONNECTOR_SYNC_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 ERP Connector Sync Blocker Materialize run_id=34493787574",
+        "scripts/gate25-production-erp-connector-sync-diagnostic.mjs",
+        "authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/erp/erpControlBindings.ts"
+      ],
+      "blocker_detail": "Authenticated Production exposes ERP-01-BTN-FAILURE-GET but ERP-01-GATE-SYNC-READ=false; page_state=EMPTY and required connector/sync references are absent. Bypassing the gate, inventing IDs, or creating fake Production ERP business rows is forbidden.",
+      "operation_ids": [
+        "getERPFailure",
+        "ERP-01-ACT-FAILURE-GET",
+        "ERP-01-GATE-SYNC-READ",
+        "ERP-01-PERM-SYNC"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-ERP-01-ACT-10-ACT-NAV-OPEN",
