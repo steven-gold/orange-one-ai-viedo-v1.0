@@ -264,4 +264,48 @@ export async function executeProductionEditVoiceOperation(request:EditVoiceReque
       return executeProductionEditFinalizeOperation(request);
   }
 }
-export async function auditProductionEditVoiceOperation():Promise<void>{return;}
+export async function auditProductionEditVoiceOperation(entry:EditVoiceRequest&{outcome:"ALLOWED"|"DENIED"|"SUCCESS"|"ERROR";reason_code?:string}):Promise<void>{
+  const {sql,actor_user_id,session_token_hash}=await context();
+  const payload=rec(entry.payload);
+  const correlation=uuid(entry.correlation_id)??randomUUID();
+  const runId=uuid(entry.path_params?.runId);
+  let taskId=uuid(payload.task_id);
+  if(!taskId&&runId){
+    const run=first(await runRlsActorQuery(sql,session_token_hash,sql\`
+      SELECT task_id FROM acpos_runtime.editing_runtime_runs_runtime WHERE id=\${runId} LIMIT 1
+    \`));
+    taskId=uuid(run?.task_id);
+  }
+  let workspaceId:string|null=null;
+  if(taskId){
+    const project=first(await runRlsActorQuery(sql,session_token_hash,sql\`
+      SELECT p.workspace_id::text
+      FROM public.department_tasks t
+      JOIN public.projects p ON p.project_id=t.project_id
+      WHERE t.task_id=\${taskId}::uuid AND t.department::text='EDITING'
+      LIMIT 1
+    \`));
+    workspaceId=uuid(project?.workspace_id);
+  }
+  if((entry.outcome==="ALLOWED"||entry.outcome==="SUCCESS")&&!workspaceId){
+    throw new NamedRuntimeError("EDIT_AUDIT_WORKSPACE_REQUIRED");
+  }
+  const entityId=runId??taskId??correlation;
+  const reason=\`${entry.outcome}:\${entry.reason_code??entry.outcome}\`;
+  await runRlsActorQuery(sql,session_token_hash,sql\`
+    INSERT INTO public.audit_events(
+      action,entity_type,entity_id,actor_id,actor_type,workspace_id,reason,correlation_id,payload_hash
+    ) VALUES(
+      \${entry.operation_id},'workspace:EDIT-01',\${entityId}::uuid,\${actor_user_id}::uuid,'USER',
+      \${workspaceId}::uuid,\${reason},\${correlation}::uuid,
+      \${createHash("sha256").update(JSON.stringify({
+        operation_id:entry.operation_id,
+        action_uid:entry.action_uid??null,
+        outcome:entry.outcome,
+        reason_code:entry.reason_code??null,
+        task_id:taskId,
+        run_id:runId
+      })).digest("hex")}::char(64)
+    )
+  \`);
+}
