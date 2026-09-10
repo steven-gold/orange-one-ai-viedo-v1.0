@@ -1,0 +1,109 @@
+name: ACPOS Gate25 ERP Production Readonly Acceptance V2 Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/gate25-production-erp-readonly-v2-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  erp-readonly:
+    runs-on: ubuntu-24.04
+    environment: Production
+    timeout-minutes: 20
+    env:
+      ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
+      ACPOS_PRODUCTION_E2E_EMAIL: admin
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      ACPOS_EXPECT_RELEASE_SHA: 608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install product dependencies
+        run: npm ci
+      - name: Install browser audit dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Execute exact 14 mapped ERP Production read-only controls
+        shell: bash
+        run: |
+          node --check scripts/gate25-production-erp-readonly-acceptance.mjs
+          node scripts/gate25-production-erp-readonly-acceptance.mjs | tee "$RUNNER_TEMP/erp-readonly.log"
+      - name: Materialize exact per-resource PASS evidence and synchronize ledger
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from datetime import datetime, timezone
+          log=Path(os.environ['RUNNER_TEMP'])/'erp-readonly.log'
+          ledger_path=Path('docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json')
+          evidence_path=Path('docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json')
+          prefix='GATE25_ERP_READONLY_PRODUCTION_EVIDENCE '
+          payload=[x for x in log.read_text().splitlines() if x.startswith(prefix)]
+          assert len(payload)==1, f'expected one ERP evidence payload, got {len(payload)}'
+          resources=json.loads(payload[0][len(prefix):])
+          assert len(resources)==14 and len({r['resource_key'] for r in resources})==14
+          assert all(r['outcome']=='PASS' and r['projection_http']==200 and r['current_control_visible'] and not r['synthetic_projection'] for r in resources)
+          ledger=json.loads(ledger_path.read_text())
+          entries={e['resource_key']:e for e in ledger['entries']}
+          before=dict(ledger['counts'])
+          assert ledger['denominator']['total']==1481
+          for r in resources:
+            assert r['resource_key'] in entries, f'missing ledger entry: {r["resource_key"]}'
+            assert entries[r['resource_key']]['disposition']=='NOT_EXECUTED', f'{r["resource_key"]} expected NOT_EXECUTED, got {entries[r["resource_key"]]["disposition"]}'
+          evidence={
+            'document_id':'ACPOS_GATE25_ERP_PRODUCTION_READONLY_EXECUTION',
+            'status':'PASS',
+            'executed_at':datetime.now(timezone.utc).isoformat(),
+            'production_release_sha':os.environ['ACPOS_EXPECT_RELEASE_SHA'],
+            'deployment_url':os.environ['ACPOS_DEPLOYMENT_URL'],
+            'github_run_id':os.environ['GITHUB_RUN_ID'],
+            'github_run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],
+            'resource_count':14,
+            'mutation_count':0,
+            'mapping_authority':'src/domain/erp/erpRuntimeContract.ts',
+            'resources':resources,
+            'rule':'PASS applies only to these exact formal ERP read-only controls after authenticated Production projection HTTP 200, exact ERP_SOURCE_CONTROL_MAP Current target visibility, non-error Current page state, no synthetic projection, no browser runtime error, and zero mutation.'
+          }
+          evidence_path.write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n')
+          run_ref=f'GitHub Actions: ACPOS Gate25 ERP Production Readonly Acceptance V2 run_id={os.environ["GITHUB_RUN_ID"]}'
+          for r in resources:
+            e=entries[r['resource_key']]
+            e['disposition']='PASS'
+            e['reason_code']='PRODUCTION_CURRENT_MAPPED_READONLY_PROJECTION_PASS'
+            e['evidence_refs']=[str(evidence_path),run_ref,'scripts/gate25-production-erp-readonly-acceptance.mjs','src/domain/erp/erpRuntimeContract.ts','src/components/pages/ErpVisual.tsx']
+            e['blocker_detail']=None
+            e['operation_ids']=['getUiProjection',r['current_control_id']]
+          counts={'PASS':0,'BLOCKED':0,'NOT_EXECUTED':0}
+          for e in ledger['entries']: counts[e['disposition']]+=1
+          assert sum(counts.values())==1481
+          assert counts['PASS']==before['PASS']+14
+          assert counts['BLOCKED']==before['BLOCKED']
+          assert counts['NOT_EXECUTED']==before['NOT_EXECUTED']-14
+          ledger['counts']=counts
+          ledger_path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps({'before':before,'after':counts,'resource_count':14},ensure_ascii=False))
+          PY
+      - name: Validate synchronized ledger
+        run: node scripts/release-formal-acceptance-ledger.mjs
+      - name: Commit ERP evidence and ledger
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json
+          git add docs/construction/evidence/GATE25_ERP_PRODUCTION_READONLY_EXECUTION_2026-09-10.json
+          git commit -m 'evidence(gate25): pass 14 ERP Production readonly controls'
+          git push origin HEAD:new
