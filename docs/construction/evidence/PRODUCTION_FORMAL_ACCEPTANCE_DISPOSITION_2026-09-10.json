@@ -29,8 +29,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 51,
-    "BLOCKED": 145,
-    "NOT_EXECUTED": 1285
+    "BLOCKED": 155,
+    "NOT_EXECUTED": 1275
   },
   "entries": [
     {
@@ -785,9 +785,15 @@
     {
       "resource_key": "action:admin:DEV-01:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json",
+        "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/dev/devControlBindings.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden."
     },
     {
       "resource_key": "action:admin:DEV-02:ACT-COMPANY-MERGE",
@@ -4302,9 +4308,15 @@
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-ACCUMULATION-METRICS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json",
+        "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/dev/devControlBindings.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-ACT-01-ACT-DISCOVERY-START",
@@ -4337,58 +4349,106 @@
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-ACT-05-ACT-NAV-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json",
+        "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/dev/devControlBindings.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-ALLOWED-SOURCES-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json",
+        "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/dev/devControlBindings.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-CONNECTOR-HEALTH-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json",
+        "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/dev/devControlBindings.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-DISCOVERY-JOB-SETUP-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json",
+        "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/dev/devControlBindings.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-DISCOVERY-MODE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json",
+        "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/dev/devControlBindings.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-PAUSE-STOP-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json",
+        "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/dev/devControlBindings.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-RUN-STATUS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json",
+        "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/dev/devControlBindings.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-01-SEARCH-SCOPE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json",
+        "authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml",
+        "src/domain/dev/devControlBindings.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+      ],
+      "blocker_detail": "Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden."
     },
     {
       "resource_key": "control:CTRL-ADMIN-DEV-02-ACT-01-ACT-SEARCH",
