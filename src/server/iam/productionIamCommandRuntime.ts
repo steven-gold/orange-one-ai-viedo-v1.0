@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { cookies } from "next/headers";
+import { IAM_L1_PAGE_UID } from "@/domain/iam/iamRuntimeContract";
 import type { IamRuntimeRequest } from "@/server/iam/iamRuntime";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
 import { runRlsActorQuery } from "@/server/database/rlsRuntime";
@@ -13,30 +14,6 @@ import { NamedRuntimeError } from "@/server/shared/namedRuntimeError";
 
 type SqlClient = NonNullable<ReturnType<typeof getProductionNeonSql>>;
 type Row = Record<string, unknown>;
-
-const FRONT_BUNDLE_PAGE: Readonly<Record<string,string>> = {
-  "FRONT-L1-01":"workspace:WB-01",
-  "FRONT-L1-02":"CORE-01",
-  "FRONT-L1-03":"ASSET-01",
-  "FRONT-L1-04":"VIDEO-01",
-  "FRONT-L1-05":"EDIT-01",
-  "FRONT-L1-06":"QA-01",
-  "FRONT-L1-07":"admin:DB-01",
-  "FRONT-L1-08":"workspace:STR-01",
-  "FRONT-L1-09":"workspace:INFO-01",
-};
-const ADMIN_BUNDLE_PAGE: Readonly<Record<string,string>> = {
-  "ADMIN-L1-SYSTEM":"admin:SYS-01",
-  "ADMIN-L1-IAM":"admin:IAM-01",
-  "ADMIN-L1-DEV":"admin:DEV-01",
-  "ADMIN-L1-SOCIAL":"admin:SOC-01",
-  "ADMIN-L1-ERP":"admin:ERP-01",
-  "ADMIN-L1-AIAPI":"admin:AIAPI-01",
-  "ADMIN-L1-QA-CRITERIA":"admin:SG-02",
-  "ADMIN-L1-STRATEGY":"admin:STR-01",
-  "ADMIN-L1-KNOWLEDGE":"admin:KB-01",
-};
-const BUNDLE_PAGE = {...FRONT_BUNDLE_PAGE,...ADMIN_BUNDLE_PAGE};
 
 function rec(value:unknown):Row{
   return value&&typeof value==="object"&&!Array.isArray(value)?value as Row:{};
@@ -182,11 +159,11 @@ async function audit(sql:SqlClient,input:{
   `;
 }
 async function expandBundles(sql:SqlClient,bundles:string[]){
-  const invalid=bundles.filter((bundle)=>!BUNDLE_PAGE[bundle]);
+  const invalid=bundles.filter((bundle)=>!IAM_L1_PAGE_UID[bundle]);
   if(invalid.length)throw new NamedRuntimeError(`IAM-01-ERR-L1-EXPANSION:${invalid.join(",")}`);
   const output=new Map<string,{resource_id:string;resource_key:string;action:string;bundle:string;page_uid:string;risk_tier:string|null}>();
   for(const bundle of bundles){
-    const pageUid=BUNDLE_PAGE[bundle];
+    const pageUid=IAM_L1_PAGE_UID[bundle];
     const pageResource=CURRENT_PAGE_RESOURCE_KEYS[pageUid];
     if(!pageResource)throw new NamedRuntimeError(`IAM-01-ERR-L1-EXPANSION:${bundle}`);
     const expanded=rows(await sql`
@@ -260,7 +237,7 @@ async function saveDraft(request:IamRuntimeRequest){
   const basicData=rec(payload.basic_data);
   const frontL1=strings(payload.front_l1);
   const adminL1=strings(payload.admin_l1);
-  for(const key of [...frontL1,...adminL1])if(!BUNDLE_PAGE[key])throw new NamedRuntimeError(`IAM-01-ERR-L1-EXPANSION:${key}`);
+  for(const key of [...frontL1,...adminL1])if(!IAM_L1_PAGE_UID[key])throw new NamedRuntimeError(`IAM-01-ERR-L1-EXPANSION:${key}`);
   const row=await upsertEntity(sql,{
     kind:"IAM_ACCOUNT_DRAFT",id:draftId,parent_id:accountId,status:"DRAFT",
     payload:{page_uid:"admin:IAM-01",mode,account_id:accountId,basic_data:basicData,front_l1:frontL1,admin_l1:adminL1,validated:false},
@@ -590,4 +567,4 @@ export async function executeProductionIamCommand(request:IamRuntimeRequest):Pro
   }
 }
 
-export function iamBundlePageMap(){return BUNDLE_PAGE;}
+export function iamBundlePageMap(){return IAM_L1_PAGE_UID;}

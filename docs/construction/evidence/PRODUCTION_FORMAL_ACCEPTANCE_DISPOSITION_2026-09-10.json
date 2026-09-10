@@ -1,8 +1,8 @@
 {
   "document_id": "ACPOS_PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION",
-  "status": "CURRENT_PARTIAL",
-  "captured_at": "2026-09-10T12:01:00+08:00",
-  "production_release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
+  "status": "CURRENT_PARTIAL_DIRECT_25_PHYSICAL_LEDGER_SYNCED",
+  "captured_at": "2026-09-10T16:08:00+08:00",
+  "production_release_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
   "source_inventory": "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
   "denominator": {
     "controls": 1155,
@@ -28,9 +28,9 @@
   "blocked_rule": "BLOCKED requires a concrete reason_code and one or more blocker evidence refs.",
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
-    "PASS": 4,
-    "BLOCKED": 48,
-    "NOT_EXECUTED": 1429
+    "PASS": 5,
+    "BLOCKED": 68,
+    "NOT_EXECUTED": 1408
   },
   "entries": [
     {
@@ -85,16 +85,28 @@
     {
       "resource_key": "action:admin:AIAPI-04:ACT-APPROVE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PROVIDER_CAPABILITY_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Materializes APPROVED provider_capabilities and durable governed-resource state.",
+      "operation_ids": [
+        "approveGovernedResource"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-04:ACT-CONFIGURE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PROVIDER_CAPABILITY_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Requires exact provider capability configuration; Current acceptance may not create a fake provider capability.",
+      "operation_ids": [
+        "configureGovernedResource"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-04:ACT-NAV-OPEN",
@@ -169,9 +181,15 @@
     {
       "resource_key": "action:admin:AIAPI-08:ACT-SYSTEM-TEST",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "SANDBOX_TEST_EVIDENCE_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "No external request is sent, but the runtime persists provider_profile_tests evidence and no formal cleanup owner is registered.",
+      "operation_ids": [
+        "runSandboxTest"
+      ]
     },
     {
       "resource_key": "action:admin:AIAPI-09:ACT-KILL-SWITCH",
@@ -582,16 +600,27 @@
     {
       "resource_key": "action:admin:IAM-01:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_HTTP_AND_AUDIT_PASS",
+      "evidence_refs": [
+        "GitHub Actions: ACPOS Production Formal Readonly Acceptance run #12 / run_id=34439777346 / SUCCESS",
+        "Production release_sha=d6787156222ae1ff38126e1244c10980ffc49929",
+        "HTTP correlation_id=51b9faf9-839a-4447-8e0c-e9f1e3122e2f operation_id=searchProjection method=POST effect=READ path=/v1/search",
+        "Neon public.audit_events ids=1a06b667-2eb0-4264-ad3d-82b6d98200f7,8c67b626-404e-4b07-8a7e-9a2516e70997 entity_type=admin:IAM-01 action=searchProjection outcomes=ALLOWED,SUCCESS"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-02:ACT-ACCOUNT-PERMISSION-PREVIEW",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "ACCEPTANCE_PREVIEW_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Requires a validated IAM draft and persists IAM_AUTH_PREVIEW evidence in acpos_runtime.entities.",
+      "operation_ids": [
+        "previewAuthorizationImpact"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-02:ACT-APPROVE",
@@ -603,16 +632,28 @@
     {
       "resource_key": "action:admin:IAM-02:ACT-DRAFT-SAVE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "ACCEPTANCE_CLEANUP_OWNER_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Creates IAM_ACCOUNT_DRAFT in acpos_runtime.entities. Current formal acceptance workflow has no registered HTTP cleanup operation or database cleanup credential.",
+      "operation_ids": [
+        "saveDraft"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-02:ACT-DRAFT-VALIDATE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "ACCEPTANCE_DRAFT_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Requires a persisted IAM_ACCOUNT_DRAFT and updates it to VALIDATED; no isolated fixture lifecycle and cleanup owner is registered.",
+      "operation_ids": [
+        "validateDraft"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-03:ACT-CONFIGURE",
@@ -652,16 +693,30 @@
     {
       "resource_key": "action:admin:IAM-05:ACT-APPROVE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "ISOLATED_GOVERNED_RESOURCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Approval is durable governance state and cannot be fabricated solely for acceptance.",
+      "operation_ids": [
+        "approveGovernedResource"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-05:ACT-CONFIGURE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "ISOLATED_PERMISSION_FIXTURE_AND_REVERSIBLE_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "May change effective account authorization or configure a governed resource. Formal acceptance must not mutate the real bootstrap account or leave test authorization versions.",
+      "operation_ids": [
+        "assignAccountPermission",
+        "revokeAccountPermission",
+        "configureGovernedResource"
+      ]
     },
     {
       "resource_key": "action:admin:IAM-05:ACT-NAV-OPEN",
@@ -771,16 +826,28 @@
     {
       "resource_key": "action:admin:SG-02:ACT-APPROVE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Approval materializes immutable quality_criteria_versions; no fake Production business row may be created for acceptance.",
+      "operation_ids": [
+        "approveGovernedResource"
+      ]
     },
     {
       "resource_key": "action:admin:SG-02:ACT-CONFIGURE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Current Production has zero real QualityCriteriaVersion lineage. Hardcoded/sample criteria are forbidden.",
+      "operation_ids": [
+        "configureGovernedResource"
+      ]
     },
     {
       "resource_key": "action:admin:SG-02:ACT-NAV-OPEN",
@@ -2668,9 +2735,15 @@
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-CREATE-GROUP",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PROVIDER_GROUP_DELETE_CLEANUP_OPERATION_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Creates provider_groups/provider_members and Current registry has no exact acceptance cleanup operation.",
+      "operation_ids": [
+        "createProviderCandidateGroup"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-REMOVE-MEMBER",
@@ -2689,9 +2762,15 @@
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-RESTORE-PROVIDER",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_QUARANTINE_FIXTURE_REQUIRED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Production quarantine currently has no disposable acceptance row; creating one solely to test restore would fabricate operational state.",
+      "operation_ids": [
+        "restoreProviderFromQuarantine"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-05-PROVIDER-CANDIDATE-GROUPS-RUN-PREFLIGHT",
@@ -2785,16 +2864,28 @@
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-CREATE-PROFILE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "PROVIDER_PROFILE_DELETE_CLEANUP_OPERATION_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Creates acpos_runtime.provider_profiles. Current registry provides retire, not delete/acceptance cleanup.",
+      "operation_ids": [
+        "createProviderModelProfile"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-DELETE-CREDENTIAL",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_SECRET_REFERENCE_MUTATION_NOT_SAFE_FOR_ACCEPTANCE",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Archives the current secret reference and disables the profile; not a harmless acceptance cleanup.",
+      "operation_ids": [
+        "deleteProviderModelCredential"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-LIST-PROFILES",
@@ -2811,30 +2902,54 @@
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-RETIRE-PROFILE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_PRODUCTION_PROFILE_MUTATION_NOT_SAFE_FOR_ACCEPTANCE",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Retiring a real profile changes live routing availability; no isolated disposable profile cleanup lifecycle exists.",
+      "operation_ids": [
+        "retireProviderModelProfile"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-SET-CREDENTIAL",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_SECRET_REFERENCE_MUTATION_NOT_SAFE_FOR_ACCEPTANCE",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Requires a bound secret env reference and changes durable secret/profile governance state.",
+      "operation_ids": [
+        "setProviderModelCredential"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-TEST-PROFILE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "EXTERNAL_PROVIDER_AND_CLEANUP_GATE_REQUIRED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Connection test can send an external Provider request and persists provider_profile_tests; external account issues are separately user-deferred.",
+      "operation_ids": [
+        "testProviderModelProfile"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-UPDATE-PROFILE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_PRODUCTION_PROFILE_MUTATION_NOT_SAFE_FOR_ACCEPTANCE",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Only real Production profiles exist; modifying one for acceptance would alter live provider configuration and version history.",
+      "operation_ids": [
+        "updateProviderModelProfile"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-06-PROVIDER-MODEL-PROFILES-VIEW-PROFILE",
@@ -2970,9 +3085,15 @@
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-EXECUTE-ROUTE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "EXTERNAL_PROVIDER_AND_ROUTE_CLEANUP_GATE_REQUIRED",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Persists route preflight/decision/attempt evidence and may execute a real Provider route.",
+      "operation_ids": [
+        "executeProviderRoute"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-08-ROUTE-SIMULATION-OPEN",
@@ -3017,9 +3138,15 @@
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-09-ACT-02-ACT-KILL-SWITCH",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "REAL_PROVIDER_ENABLE_STATE_MUTATION_NOT_SAFE_FOR_ACCEPTANCE",
+      "evidence_refs": [
+        "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json"
+      ],
+      "blocker_detail": "Explicit CONFIRM is required and operation changes real profile/group enable state.",
+      "operation_ids": [
+        "setKillSwitch"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-AIAPI-09-ACT-03-ACT-NAV-OPEN",
@@ -10615,13 +10742,24 @@
   ],
   "latest_execution_evidence": {
     "workflow": "ACPOS Production Formal Readonly Acceptance",
-    "run_number": 1,
-    "run_id": 34435464021,
+    "run_number": 12,
+    "run_id": 34439777346,
     "status": "SUCCESS",
-    "production_release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
-    "resources_passed": 4,
+    "production_release_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
+    "resources_passed": 5,
     "mutations": 0,
     "external_provider_calls": 0,
-    "neon_audit_readback": "8 audit rows / 4 correlations / exact operation match"
+    "neon_audit_readback": "10 audit rows / 5 correlations / exact operation match; IAM Search has explicit ALLOWED+SUCCESS reasons"
+  },
+  "direct_mapping_physical_sync": {
+    "exact_direct_mapping_count": 25,
+    "pass_readonly": 5,
+    "blocker_resources": 20,
+    "newly_blocked": 20,
+    "already_blocked": 0,
+    "unclassified": 0,
+    "evidence": "docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS_2026-09-10.json",
+    "sync_evidence": "docs/construction/evidence/GATE25_DIRECT_BLOCKER_LEDGER_SYNC_2026-09-10.json",
+    "rule": "BLOCKED is evidence classification, not effectful PASS. No Production business row or provider call is fabricated by this sync."
   }
 }
