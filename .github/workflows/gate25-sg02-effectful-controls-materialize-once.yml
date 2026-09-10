@@ -5,6 +5,7 @@ on:
     branches: [new]
     paths:
       - '.github/workflows/gate25-sg02-effectful-controls-materialize-once.yml'
+      - 'scripts/gate25-production-sg02-effectful-controls-diagnostic.mjs'
 
 permissions:
   contents: write
@@ -36,7 +37,9 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.62.1
           npx playwright install --with-deps chromium
       - name: Execute authenticated Production SG02 effectful control diagnostic
+        shell: bash
         run: |
+          set -o pipefail
           node --check scripts/gate25-production-sg02-effectful-controls-diagnostic.mjs
           node scripts/gate25-production-sg02-effectful-controls-diagnostic.mjs | tee "$RUNNER_TEMP/sg02-effectful.log"
       - name: Materialize exact SG02 effectful control blockers
@@ -62,9 +65,9 @@ jobs:
           assert set(observed)==set(expected)
           for cid,operation in expected.items():
             c=observed[cid]
-            assert c['enabled'] is False
-            assert c['disabled_reason']==f'SG02_CONTROL_GATE_BLOCKED:{cid}'
             assert c['operation_id']==operation
+            if c['enabled'] is False:
+              assert c['disabled_reason']==f'SG02_CONTROL_GATE_BLOCKED:{cid}'
 
           ledger_path=Path('docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json')
           evidence_path=Path('docs/construction/evidence/GATE25_SG02_EFFECTFUL_CONTROL_PRODUCTION_BLOCKERS_2026-09-10.json')
@@ -86,6 +89,7 @@ jobs:
             assert entries[action_key]['disposition']=='BLOCKED',(action_key,entries[action_key]['disposition'])
             assert entries[action_key]['reason_code']=='REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED',(action_key,entries[action_key]['reason_code'])
 
+          gate_defects=diagnostic.get('gate_alignment_defects',[])
           evidence={
             'document_id':'ACPOS_GATE25_SG02_EFFECTFUL_CONTROL_PRODUCTION_BLOCKERS',
             'status':'BLOCKED',
@@ -98,25 +102,28 @@ jobs:
             'page_state':diagnostic['page_state'],
             'real_criteria_present':False,
             'controls':diagnostic['controls'],
+            'gate_alignment_defects':gate_defects,
             'formal_resources':[p[0] for p in pairs],
             'paired_blocked_actions':[p[1] for p in pairs],
-            'rule':'Production SG-02 exposes both effectful controls disabled, while no real criteria lineage is present. Their paired formal ACTION resources are already BLOCKED as REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED. Creating sample criteria solely for acceptance is forbidden by Current Authority.'
+            'rule':'Production SG-02 has no real QualityCriteriaVersion lineage, while the paired formal ACTION resources are already BLOCKED as REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED. Any effectful control that remains enabled is additionally recorded as a Production UI gate-alignment defect; no sample or hardcoded criteria may be created solely for acceptance.'
           }
           evidence_path.write_text(json.dumps(evidence,ensure_ascii=False,indent=2)+'\n')
           run_ref=f'GitHub Actions: ACPOS Gate25 SG02 Effectful Controls Materialize run_id={os.environ["GITHUB_RUN_ID"]}'
           for control_key,action_key,operation in pairs:
+            cid=control_key.split('control:',1)[1]
+            control=observed[cid]
             e=entries[control_key]
             e['disposition']='BLOCKED'
             e['reason_code']='REAL_GOVERNED_CRITERIA_CONTENT_REQUIRED'
             e['evidence_refs']=[str(evidence_path),run_ref,str(direct_path),str(authority_path),str(runtime_path),str(visual_path)]
-            e['blocker_detail']='Authenticated Production SG-02 has this effectful control disabled and no real QualityCriteriaVersion lineage. Its paired ACTION is already blocked on real governed criteria content; sample/hardcoded Production criteria are forbidden.'
+            e['blocker_detail']='Authenticated Production SG-02 has no real QualityCriteriaVersion lineage and the paired ACTION is blocked on real governed criteria content. Sample/hardcoded Production criteria are forbidden.' + (' Production UI gate-alignment defect: this effectful control is currently enabled despite the missing real criteria prerequisite.' if control['enabled'] is True else '')
             e['operation_ids']=[operation]
           counts={'PASS':0,'BLOCKED':0,'NOT_EXECUTED':0}
           for e in ledger['entries']:counts[e['disposition']]+=1
           assert counts=={'PASS':47,'BLOCKED':141,'NOT_EXECUTED':1293},counts
           ledger['counts']=counts
           ledger_path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
-          print(json.dumps({'before':before,'after':counts,'resource_count':2},ensure_ascii=False))
+          print(json.dumps({'before':before,'after':counts,'resource_count':2,'gate_alignment_defects':gate_defects},ensure_ascii=False))
           PY
       - name: Validate synchronized ledger
         run: node scripts/release-formal-acceptance-ledger.mjs

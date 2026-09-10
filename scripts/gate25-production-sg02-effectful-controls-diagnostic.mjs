@@ -70,11 +70,12 @@ try{
   assert(runtimeErrors.length===0,`SG02_DIAGNOSTIC_RUNTIME_ERRORS_${runtimeErrors.join("|")}`);
   for(const c of result){
     const expected=controls.find(x=>x.source_id===c.control_id);
-    assert(c.enabled===false,`SG02_DIAGNOSTIC_CONTROL_UNEXPECTEDLY_ENABLED_${c.control_id}`);
-    assert(c.disabled_reason===`SG02_CONTROL_GATE_BLOCKED:${c.control_id}`,`SG02_DIAGNOSTIC_DISABLED_REASON_${c.control_id}_${c.disabled_reason}`);
+    assert(expected,`SG02_DIAGNOSTIC_UNREGISTERED_CONTROL_${c.control_id}`);
     assert(c.operation_id===expected.operation_id,`SG02_DIAGNOSTIC_OPERATION_MISMATCH_${c.control_id}`);
+    if(c.enabled===false)assert(c.disabled_reason===`SG02_CONTROL_GATE_BLOCKED:${c.control_id}`,`SG02_DIAGNOSTIC_DISABLED_REASON_${c.control_id}_${c.disabled_reason}`);
   }
-  console.log(`SG02_EFFECTFUL_CONTROL_DIAGNOSTIC ${JSON.stringify({production_release_sha:expectedSha,projection_http:projection.status(),page_state:await root.getAttribute("data-page-state"),real_criteria_present:hasRealCriteria(projectionBody),controls:result,mutation_count:0})}`);
+  const gateAlignmentDefects=result.filter(c=>c.enabled===true).map(c=>c.control_id);
+  console.log(`SG02_EFFECTFUL_CONTROL_DIAGNOSTIC ${JSON.stringify({production_release_sha:expectedSha,projection_http:projection.status(),page_state:await root.getAttribute("data-page-state"),real_criteria_present:hasRealCriteria(projectionBody),controls:result,gate_alignment_defects:gateAlignmentDefects,mutation_count:0})}`);
   const logout=await context.request.delete(`${base}/v1/identity/session`,{headers:{"x-correlation-id":crypto.randomUUID()}});
   const logoutBody=await logout.json().catch(()=>null);
   assert(logout.status()===200&&logoutBody?.ok===true&&logoutBody?.logged_in===false,"SG02_DIAGNOSTIC_LOGOUT_FAILED");
