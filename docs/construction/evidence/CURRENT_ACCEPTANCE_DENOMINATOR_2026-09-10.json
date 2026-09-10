@@ -1,0 +1,44 @@
+{
+  "document_id": "ACPOS_CURRENT_ACCEPTANCE_DENOMINATOR",
+  "status": "CURRENT_EVIDENCE",
+  "as_of": "2026-09-10T09:38:58+08:00",
+  "production_release_sha": "a75602a5ce26da42a7c281e7e7225bb9fb6df720",
+  "source_evidence": {
+    "release_gate": {
+      "run_number": 1061,
+      "run_id": 34426021861,
+      "status": "SUCCESS"
+    },
+    "post_deploy": {
+      "run_number": 1370,
+      "run_id": 34426215764,
+      "status": "SUCCESS"
+    },
+    "neon_project": "wild-wave-25661146",
+    "neon_database": "neondb"
+  },
+  "legacy_permission_catalog": {
+    "canonical_pages": 92,
+    "page_resources": 92,
+    "controls": 1141,
+    "actions": 312,
+    "control_action_baseline": 1453,
+    "permission_resources": 3650
+  },
+  "production_neon": {
+    "active_controls": 1148,
+    "active_actions": 319,
+    "current_control_action_denominator": 1467,
+    "control_action_expansion": 14,
+    "active_permission_resources": 3672,
+    "permission_resource_expansion": 22
+  },
+  "post_deploy_dom": {
+    "pages": 18,
+    "interactive": 555,
+    "governed": 555,
+    "enabled": 339,
+    "disabled": 216
+  },
+  "acceptance_rule": "1453 remains the historical catalog baseline. 1467 is the Current active CONTROL+ACTION permission denominator. The rendered DOM denominator 555 is observed UI coverage and must not be substituted for the formal permission denominator. Gate 25 remains PARTIAL until exhaustive Production effectful acceptance closes."
+}

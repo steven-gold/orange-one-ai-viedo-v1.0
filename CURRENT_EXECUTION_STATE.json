@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T09:10:00+08:00",
+  "as_of": "2026-09-10T09:38:58+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -18,8 +18,8 @@
   },
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-    "main_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
-    "new_sha": "08a426a87e99bb5f3f163f264066fafd11132078",
+    "main_sha": "a75602a5ce26da42a7c281e7e7225bb9fb6df720",
+    "new_sha": "91ddc58bddb8a8e8b51c7d8bdd07fce425b3bf64",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -35,25 +35,25 @@
       }
     ],
     "latest_new_release_gate": {
-      "run_number": 1058,
-      "run_id": 34424129176,
-      "head_sha": "08a426a87e99bb5f3f163f264066fafd11132078",
+      "run_number": 1059,
+      "run_id": 34424374349,
+      "head_sha": "91ddc58bddb8a8e8b51c7d8bdd07fce425b3bf64",
       "status": "SUCCESS"
     },
     "production_main_release_gate": {
-      "run_number": 1017,
-      "run_id": 34399580132,
-      "head_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
+      "run_number": 1061,
+      "run_id": 34426021861,
+      "head_sha": "a75602a5ce26da42a7c281e7e7225bb9fb6df720",
       "status": "SUCCESS"
     }
   },
   "production": {
     "url": "https://orange-one-acpos-test.vercel.app",
-    "release_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
+    "release_sha": "a75602a5ce26da42a7c281e7e7225bb9fb6df720",
     "vercel_commit_status": "SUCCESS",
     "latest_post_deploy": {
-      "run_number": 1325,
-      "run_id": 34399815616,
+      "run_number": 1370,
+      "run_id": 34426215764,
       "status": "SUCCESS"
     },
     "readiness_http": 200,
@@ -92,10 +92,10 @@
     },
     "dom_control_acceptance": {
       "pages": 18,
-      "interactive": 548,
-      "governed": 548,
-      "enabled": 362,
-      "disabled": 186,
+      "interactive": 555,
+      "governed": 555,
+      "enabled": 339,
+      "disabled": 216,
       "status": "VISUAL_GOVERNANCE_PASS_EFFECTFUL_ACCEPTANCE_PENDING",
       "page_counts": {
         "workspace:WB-01": {
@@ -103,16 +103,16 @@
           "disabled": 0
         },
         "CORE-01": {
-          "enabled": 30,
-          "disabled": 0
+          "enabled": 7,
+          "disabled": 23
         },
         "ASSET-01": {
           "enabled": 3,
           "disabled": 20
         },
         "VIDEO-01": {
-          "enabled": 10,
-          "disabled": 9
+          "enabled": 6,
+          "disabled": 13
         },
         "EDIT-01": {
           "enabled": 6,
@@ -123,23 +123,23 @@
           "disabled": 11
         },
         "admin:DB-01": {
-          "enabled": 223,
+          "enabled": 233,
           "disabled": 0
         },
         "workspace:STR-01": {
-          "enabled": 6,
-          "disabled": 14
+          "enabled": 2,
+          "disabled": 16
         },
         "workspace:INFO-01": {
           "enabled": 4,
           "disabled": 6
         },
         "admin:SYS-01": {
-          "enabled": 4,
-          "disabled": 6
+          "enabled": 3,
+          "disabled": 7
         },
         "admin:IAM-01": {
-          "enabled": 5,
+          "enabled": 4,
           "disabled": 24
         },
         "admin:DEV-01": {
@@ -172,7 +172,31 @@
         }
       }
     },
-    "pending_product_delta": "new branch contains KB 0040 runtime and CORE gate corrections not yet merged to main; Production DB migration 0040 is applied but matching application code remains pending consolidated deployment."
+    "pending_product_delta": "NONE: PR #37 merged new@91ddc58bddb8a8e8b51c7d8bdd07fce425b3bf64 to main; exact main a75602a5ce26da42a7c281e7e7225bb9fb6df720 passed Release Gate #1061 and Post-Deploy #1370.",
+    "formal_acceptance_denominator": {
+      "legacy_catalog": {
+        "controls": 1141,
+        "actions": 312,
+        "control_action_baseline": 1453,
+        "permission_resources": 3650
+      },
+      "current_production_permission_catalog": {
+        "controls": 1148,
+        "actions": 319,
+        "control_action_denominator": 1467,
+        "control_action_expansion": 14,
+        "active_permission_resources": 3672,
+        "permission_resource_expansion": 22
+      },
+      "current_rendered_dom": {
+        "interactive": 555,
+        "governed": 555,
+        "enabled": 339,
+        "disabled": 216
+      },
+      "rule": "1453 is historical catalog baseline; 1467 is the Current active CONTROL+ACTION permission denominator; rendered DOM 555 is a separate observed interactive denominator and is not substituted for the formal permission denominator.",
+      "evidence": "docs/construction/evidence/CURRENT_ACCEPTANCE_DENOMINATOR_2026-09-10.json"
+    }
   },
   "neon": {
     "project": "wild-wave-25661146",
@@ -256,8 +280,8 @@
       "commit": "0f5aff87d4dc14612fc68151b40210bd34728ae4",
       "release_gate": 1021,
       "release_gate_status": "SUCCESS",
-      "production_deployed": false,
-      "status": "CONSTRUCTION_PASS_PENDING_CONSOLIDATED_DEPLOYMENT"
+      "production_deployed": true,
+      "status": "PRODUCTION_DEPLOYED_VERIFIED_EFFECTFUL_CHAIN_PENDING"
     },
     "materialization_breakpoint": {
       "status": "OPEN",
@@ -311,10 +335,22 @@
       "production_migration": "47/47",
       "production_apply": "APPLIED_VERIFIED",
       "runtime_function": "acpos_runtime.create_canonical_script_version",
-      "app_production_deployed": false,
+      "app_production_deployed": true,
       "production_effectful_e2e": false,
       "business_rows_created": 0,
-      "status": "DB_RUNTIME_APPLIED_APP_PENDING_CONSOLIDATED_DEPLOYMENT_EFFECTFUL_E2E"
+      "status": "DB_RUNTIME_AND_APP_DEPLOYED_EFFECTFUL_BLOCKED_NO_CANONICAL_BUSINESS_LINEAGE",
+      "production_effectful_preflight": {
+        "quality_criteria_versions": 0,
+        "topics": 0,
+        "topic_versions": 0,
+        "topic_production_contracts": 0,
+        "topic_blueprints": 0,
+        "blueprint_versions": 0,
+        "canonical_script_versions": 0,
+        "child_locks": 0,
+        "governed_resources": 0,
+        "rule": "Do not fabricate Production business rows. Positive effectful acceptance resumes only from real canonical operator-created lineage."
+      }
     },
     "compiler_dag_edge_0048": {
       "commit": "a920fa03d1a85ffffe29ee99e36a835545acf975",
@@ -336,6 +372,14 @@
       "department_code_voice": true,
       "voice_business_rows_created": 0,
       "status": "COMPLETE"
+    },
+    "edit_voice_runtime_current_blocker": {
+      "status": "PARTIAL_FAIL_CLOSED",
+      "voice_schema_contract": "COMPLETE_0049",
+      "positive_lifecycle_effectful": false,
+      "provider_operation_mapping": "ABSENT_FROM_CURRENT_OPERATION_REGISTRY",
+      "runtime_behavior": "startVoiceRuntime throws EDIT_VOICE_PROVIDER_OPERATION_NOT_MATERIALIZED",
+      "rule": "Do not alias or guess startVoiceRuntime to generic executeProviderRoute without an exact Current operation/capability mapping."
     }
   },
   "providers": {
@@ -415,7 +459,7 @@
       "name": "Schema / Integrity",
       "percent": 87.5,
       "status": "PARTIAL",
-      "detail": "3672 active permission resources; Current expansion tally seal pending."
+      "detail": "3672 active permission resources; historical seal 3650 plus Current expansion +22 observed. Graph/integrity final Current seal still pending."
     },
     "12": {
       "name": "PostgreSQL RLS",
@@ -449,7 +493,7 @@
       "name": "CORE Runtime",
       "percent": 75,
       "status": "PARTIAL",
-      "detail": "CanonicalScript DB runtime applied through 0047; application deployment/effectful E2E and downstream compiler chain remain pending."
+      "detail": "CanonicalScript DB runtime and application are deployed on main a75602a5; positive QualityCriteriaVersion -> CanonicalScriptVersion -> ChildLock effectful E2E is blocked because all required canonical Production business lineage rows are currently zero. No rows may be fabricated for acceptance."
     },
     "18": {
       "name": "ASSET Runtime",
@@ -464,7 +508,8 @@
     "20": {
       "name": "EDIT + VOICE Runtime",
       "percent": 50,
-      "status": "PARTIAL"
+      "status": "PARTIAL",
+      "detail": "VOICE schema contract is closed by 0049. EDIT+VOICE lifecycle remains partial: startVoiceRuntime is intentionally fail-closed because Current operation registry has no exact VOICE Provider operation/capability mapping, and upstream canonical task lineage is not materialized."
     },
     "21": {
       "name": "QA Runtime",
@@ -491,7 +536,7 @@
       "name": "全頁全按鈕 Acceptance",
       "percent": 50,
       "status": "PARTIAL",
-      "detail": "Visual governance PASS; exhaustive Production effectful acceptance pending."
+      "detail": "Legacy control+action baseline 1453 is preserved; Current active Production permission denominator is 1467 (+14). Post-Deploy #1370 rendered 555 interactive controls and governed 555/555. Exhaustive Production effectful acceptance remains pending."
     }
   },
   "gate_summary": {
@@ -501,14 +546,12 @@
     "blocked": 0,
     "unknown": 0,
     "production_ready_percent": 81.5,
-    "production_ready_percent_status": "STALE_RECOMPUTE_REQUIRED_AFTER_0048"
+    "production_ready_percent_status": "STALE_RECOMPUTE_REQUIRED_AFTER_A756_DEPLOY_AND_CURRENT_DENOMINATOR_SEAL"
   },
   "blockers": [
     "TaskTemplate/ProductionGoal/OutputContract/RightsProfile are zero in Production and are dependencies of the nine formal materialization items; they may not be omitted from progress reports.",
-    "Current PostgreSQL department_code lacks VOICE while Current authority requires VOICE; do not map VOICE to EDITING as a workaround.",
     "Production formal business rows are currently zero after TEST_ONLY cleanup; do not fabricate permanent business data to make counts non-zero.",
     "All 9 formal materialization items are mandatory and must remain in every progress report until individually proven by Production effectful evidence.",
-    "Production application main does not yet contain new-branch KB 0040 runtime and CORE truthful gate corrections.",
     "QA release package evidence owner remains incomplete.",
     "ERP remaining write contracts require canonical persistence/scope closure; no unrelated JSON fallback is allowed.",
     "SOC final content-package approval/publish closure remains incomplete.",
@@ -552,7 +595,10 @@
         "do not create a second TaskOrchestrator or service identity runtime"
       ],
       "unblock_requirement": "A newer approved Current Authority must define the unique compiler trigger/subject, exact version-pinned input resolution or request schema, single-vs-multi-goal cardinality, complete TaskTemplate documents, and dependency/event orchestration."
-    }
+    },
+    "Production QualityCriteriaVersion/Topic/TopicVersion/TopicProductionContract/Blueprint/CanonicalScriptVersion/ChildLock and governed-resource business rows are all zero at the 2026-09-10 Production preflight; positive CORE effectful acceptance must not fabricate rows and waits for real canonical operator-created lineage.",
+    "EDIT+VOICE VOICE schema blocker is closed by 0049, but Current operation registry has no exact startVoiceRuntime Provider operation/capability mapping; startVoiceRuntime must remain fail-closed and generic executeProviderRoute must not be guessed as a substitute.",
+    "Gate 25 denominator is sealed as legacy 1453 versus Current active CONTROL+ACTION 1467 (+14), with rendered Production DOM 555/555 governed; exhaustive effectful acceptance is still pending."
   ],
   "remaining_queue": [
     "MANDATORY 1/9 QualityCriteriaVersion materialization + Production effectful acceptance",
