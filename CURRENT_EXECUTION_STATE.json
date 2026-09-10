@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T10:37:00+08:00",
+  "as_of": "2026-09-10T10:51:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "a75602a5ce26da42a7c281e7e7225bb9fb6df720",
-    "new_sha": "28df74e39a440e2c06bbdd307a732b7f7ef8454c",
+    "new_sha": "bd62b6d08d684653df3325ece00b0e1dfc80bd30",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -172,7 +172,7 @@
         }
       }
     },
-    "pending_product_delta": "new contains EDIT Finalize/VOICE lifecycle fixes through 28df74e39a440e2c06bbdd307a732b7f7ef8454c; Release Gate #1066 SUCCESS. Production DB migration 0050 is applied, but the application delta is not yet merged/deployed to main.",
+    "pending_product_delta": "new contains EDIT Finalize/VOICE lifecycle/audit fixes through bd62b6d08d684653df3325ece00b0e1dfc80bd30; Release Gate #1073 SUCCESS. Production DB is 51/51 through 0051. Application delta remains pending main integration/deploy.",
     "formal_acceptance_denominator": {
       "legacy_catalog": {
         "controls": 1141,
@@ -202,8 +202,8 @@
     "project": "wild-wave-25661146",
     "branch": "main",
     "database": "neondb",
-    "migration_count": 50,
-    "latest_migration": "0050_edit_finalize_persistence_permission_rls_closure",
+    "migration_count": 51,
+    "latest_migration": "0051_edit_voice_audit_rls_closure",
     "migration_0040_checksum": "301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50",
     "permission_resources_active": 3693,
     "permission_resources_authority_seal_status": "CURRENT_EXPANSION_TALLY_NOT_SEALED",
@@ -278,7 +278,7 @@
       "SYSTEM",
       "VOICE"
     ],
-    "latest_migration_checksum": "f6be546d52ff486236913c5f8c02971cf7e25c9f801fe3a8c5774f1a548553d5"
+    "latest_migration_checksum": "ddce6a15daa6f3f5e1407163fa2e10717fead8b82c264cbd08ac77ed0c4ab74e"
   },
   "construction": {
     "core_truthful_gate": {
@@ -412,6 +412,35 @@
       "status": "CODE_FIXED_RELEASE_GATE_PENDING",
       "source": "department_tasks.child_lock_id -> child_locks.blueprint_version_id",
       "rule": "Do not add a duplicate blueprint_version_id column to department_tasks."
+    },
+    "edit_voice_audit_0051": {
+      "status": "PRODUCTION_DB_APPLIED_APPLICATION_DEPLOY_PENDING",
+      "migration_id": "0051_edit_voice_audit_rls_closure",
+      "checksum": "ddce6a15daa6f3f5e1407163fa2e10717fead8b82c264cbd08ac77ed0c4ab74e",
+      "production_migration_count": "51/51",
+      "audit_owner": "public.audit_events",
+      "policies": [
+        "acpos_audit_events_edit_insert",
+        "acpos_audit_events_edit_select"
+      ],
+      "grants": [
+        "INSERT",
+        "SELECT"
+      ],
+      "durable_allowed_audit_gate": true,
+      "business_rows_created": 0
+    },
+    "edit_voice_provider_preflight": {
+      "status": "BLOCKED_BY_CURRENT_PROVIDER_AUTHORITY_DATA",
+      "approved_provider_capabilities": 4,
+      "approved_capability_types": [
+        "TEXT_CHAT"
+      ],
+      "approved_route_policies": 0,
+      "approved_editing_route_policies": 0,
+      "approved_edit_render_capabilities": 0,
+      "approved_voice_capabilities": 0,
+      "rule": "TEXT_CHAT provider capability does not satisfy EDIT_RENDER or VOICE execution. Do not fabricate route policy/capability mappings."
     }
   },
   "providers": {
@@ -539,9 +568,9 @@
     },
     "20": {
       "name": "EDIT + VOICE Runtime",
-      "percent": 62.5,
+      "percent": 50,
       "status": "PARTIAL",
-      "detail": "VOICE schema 0049 and EDIT Finalize DB/permission/RLS 0050 are Production-applied. Application fixes are on new and pending integration/deploy. Positive lifecycle is still blocked by zero real EDIT/QA lineage and missing exact VOICE Provider mapping."
+      "detail": "Production DB schema/permission/RLS/audit owners are closed through migrations 0049/0050/0051. Application delta is pending main deploy. Positive EDIT Render/VOICE execution remains blocked by zero media route policies/capabilities and zero real EDIT/QA business lineage."
     },
     "21": {
       "name": "QA Runtime",
@@ -568,7 +597,7 @@
       "name": "全頁全按鈕 Acceptance",
       "percent": 50,
       "status": "PARTIAL",
-      "detail": "Historical baseline 1453 preserved; Current Production CONTROL+ACTION denominator is 1481 after 0050. Last deployed DOM evidence is 555/555 governed and must be regenerated after the new application delta is deployed. Exhaustive effectful acceptance remains pending."
+      "detail": "Historical baseline 1453 preserved; Current active Production CONTROL+ACTION denominator 1481 and total resources 3693. Last deployed DOM remains 555/555 governed; Post-Deploy recompute is required after the pending application integration."
     }
   },
   "gate_summary": {
@@ -578,7 +607,7 @@
     "blocked": 0,
     "unknown": 0,
     "production_ready_percent": 81.5,
-    "production_ready_percent_status": "STALE_RECOMPUTE_REQUIRED_AFTER_0050_AND_PENDING_APP_DEPLOY"
+    "production_ready_percent_status": "STALE_RECOMPUTE_REQUIRED_AFTER_PENDING_EDITVOICE_APP_DEPLOY"
   },
   "blockers": [
     "TaskTemplate/ProductionGoal/OutputContract/RightsProfile are zero in Production and are dependencies of the nine formal materialization items; they may not be omitted from progress reports.",
@@ -631,9 +660,10 @@
     "Production QualityCriteriaVersion/Topic/TopicVersion/TopicProductionContract/Blueprint/CanonicalScriptVersion/ChildLock and governed-resource business rows are all zero at the 2026-09-10 Production preflight; positive CORE effectful acceptance must not fabricate rows and waits for real canonical operator-created lineage.",
     "EDIT+VOICE VOICE schema blocker is closed by 0049, but Current operation registry has no exact startVoiceRuntime Provider operation/capability mapping; startVoiceRuntime must remain fail-closed and generic executeProviderRoute must not be guessed as a substitute.",
     "Gate 25 Current permission denominator is now 1481 after Production migration 0050; the last deployed DOM evidence remains 555/555 and must be regenerated after the new application delta is merged/deployed.",
-    "EDIT Finalize application delta is not yet on main; Production DB is at 50/50 while deployed application main is still a75602a5 until integration.",
-    "Positive EDIT+VOICE lifecycle remains blocked by zero real EDITING/QA tasks, outputs, timelines, voice profiles and locks; acceptance must not fabricate business rows.",
-    "VOICE start remains fail-closed because Current operation registry has route registration but no exact Provider operation/capability mapping for startVoiceRuntime."
+    "EDIT Finalize/VOICE lifecycle/audit application delta is not yet on main; Production DB is 51/51 while deployed application main remains the previous exact-SHA release until integration.",
+    "Positive EDIT+VOICE lifecycle acceptance is blocked by zero real EDITING task, QA task, accepted output, editing timeline, voice profile, EDIT lock and editing runtime rows. Production acceptance must not fabricate these rows.",
+    "Production Provider authority has 4 APPROVED capabilities, all TEXT_CHAT; APPROVED route policies=0, EDITING route policies=0, EDIT_RENDER capabilities=0, VOICE capabilities=0. startEditRender/startVoiceRuntime positive execution remains blocked until exact governed mappings exist.",
+    "Gate 25 Current permission denominator remains 1481 CONTROL+ACTION and 3693 total active permission resources after 0051; last deployed DOM evidence remains 555/555 until the application delta is deployed and Post-Deploy acceptance is rerun."
   ],
   "remaining_queue": [
     "MANDATORY 1/9 QualityCriteriaVersion materialization + Production effectful acceptance",
