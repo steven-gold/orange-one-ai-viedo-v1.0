@@ -22,10 +22,10 @@ test("0049 registers VOICE as its own department without coercing EDITING or bus
   assert.ok(ceiling>=49,`migration ceiling must include 0049, found ${ceiling}`);
 });
 
-test("0049 manifest seals 0048 Production evidence and keeps 0049 staged",async()=>{
+test("0049 manifest seals 0048 and 0049 Production evidence",async()=>{
   const manifest=await read("database/migrations/migration_checksum_manifest.yaml");
   const block48=manifest.match(/- migration_id: 0048_dag_edge_rls_runtime_closure[\s\S]*?(?=\n- migration_id:|$)/)?.[0]??"";
   const block49=manifest.match(/- migration_id: 0049_voice_department_schema_contract[\s\S]*?(?=\n- migration_id:|$)/)?.[0]??"";
   assert.match(block48,/production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10/);
-  assert.match(block49,/production_apply: STAGED_PENDING_PRODUCTION_APPLY/);
+  assert.match(block49,/production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10/);
 });
