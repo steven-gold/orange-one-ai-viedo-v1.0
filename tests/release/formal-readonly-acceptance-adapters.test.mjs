@@ -18,5 +18,18 @@ test("Production formal read-only adapters are exact Current formal resources an
   }
   assert.ok(!script.includes('method:"PATCH"'));
   assert.ok(!script.includes('method:"PUT"'));
+  assert.ok(script.includes('response.headers.get("x-correlation-id")'));
   assert.ok(script.includes("PRODUCTION_FORMAL_READONLY_ACCEPTANCE_PASS resources=5 mutations=0 external_provider_calls=0"));
+});
+
+test("IAM Search adapter honors raw infoPost success body and correlation header contract",async()=>{
+  const script=await readFile("scripts/production-formal-readonly-acceptance.mjs","utf8");
+  const start=script.indexOf("async function callReadPost");
+  const end=script.indexOf("assert(email&&password",start);
+  const block=script.slice(start,end);
+  assert.ok(start>=0&&end>start);
+  assert.match(block,/response\.headers\.get\("x-correlation-id"\)/);
+  assert.match(block,/validate\(body\)/);
+  assert.doesNotMatch(block,/body\?\.ok===true/);
+  assert.doesNotMatch(block,/validate\(body\.value\)/);
 });

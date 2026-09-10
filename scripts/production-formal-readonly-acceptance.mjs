@@ -39,11 +39,11 @@ async function callReadPost(cookie,resourceKey,operationId,path,payload,validate
   });
   const body=await json(response,operationId);
   assert(response.status===200,`${operationId}_HTTP_${response.status}`);
-  assert(body?.ok===true,`${operationId}_BODY_NOT_OK`);
-  assert(body?.correlation_id===correlationId,`${operationId}_CORRELATION_MISMATCH`);
-  validate(body.value);
+  const returnedCorrelation=(response.headers.get("x-correlation-id")??"").trim();
+  assert(returnedCorrelation===correlationId,`${operationId}_CORRELATION_MISMATCH`);
+  validate(body);
   process.stdout.write(`FORMAL_RESOURCE_ACCEPTANCE_PASS resource_key=${resourceKey} operation_id=${operationId} correlation_id=${correlationId} method=POST path=${path} effect=READ\n`);
-  return body.value;
+  return body;
 }
 
 assert(email&&password,"FORMAL_READONLY_ACCEPTANCE_CREDENTIAL_NOT_CONFIGURED");
