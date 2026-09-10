@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T07:25:00+08:00",
+  "as_of": "2026-09-10T09:02:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -19,7 +19,7 @@
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
     "main_sha": "5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c",
-    "new_sha": "004b5e030a91476c2dc84ce686dc1a55e777155e",
+    "new_sha": "a920fa03d1a85ffffe29ee99e36a835545acf975",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -35,9 +35,9 @@
       }
     ],
     "latest_new_release_gate": {
-      "run_number": 1047,
-      "run_id": 34419140909,
-      "head_sha": "004b5e030a91476c2dc84ce686dc1a55e777155e",
+      "run_number": 1055,
+      "run_id": 34423388502,
+      "head_sha": "a920fa03d1a85ffffe29ee99e36a835545acf975",
       "status": "SUCCESS"
     },
     "production_main_release_gate": {
@@ -178,18 +178,18 @@
     "project": "wild-wave-25661146",
     "branch": "main",
     "database": "neondb",
-    "migration_count": 46,
-    "latest_migration": "0046_compiler_rls_permission_foundation",
+    "migration_count": 48,
+    "latest_migration": "0048_dag_edge_rls_runtime_closure",
     "migration_0040_checksum": "301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50",
     "permission_resources_active": 3672,
     "permission_resources_authority_seal_status": "CURRENT_EXPANSION_TALLY_NOT_SEALED",
     "approved_allow_assignments": 158,
-    "rls_tables_total": 65,
+    "rls_tables_total": 73,
     "rls_tables_by_schema": {
-      "public": 58,
+      "public": 69,
       "acpos_runtime": 4
     },
-    "policies_total": 128,
+    "policies_total": 143,
     "policies_by_schema": {
       "public": 115,
       "acpos_runtime": 8
@@ -234,8 +234,10 @@
       "blueprint_versions": 0
     },
     "migration_0046_checksum": "73f8b38070d62a8c12307674d9e6c0fbefd838c2eaa23da3f1ca7b7d38745c92",
-    "compiler_rls_tables": 7,
-    "compiler_api_assignments": 2
+    "compiler_rls_tables": 8,
+    "compiler_api_assignments": 2,
+    "migration_0047_checksum": "7f9a709236c13482b67deeb63d09085eadcde1a0ae05920d39a31b0e67b8e19f",
+    "migration_0048_checksum": "5e218c9a78826c0e56719ef7865957b75e4508a021cac9f858edebc7bd2a2f60"
   },
   "construction": {
     "core_truthful_gate": {
@@ -288,6 +290,30 @@
       "production_apply": "APPLIED_VERIFIED",
       "rls_tables": 7,
       "api_assignments": 2,
+      "business_rows_created": 0
+    },
+    "canonical_script_version_0047": {
+      "commit": "ffcce60555f545991d6ff29f284b03e07327434b",
+      "release_gate": 1050,
+      "release_gate_status": "SUCCESS",
+      "production_migration": "47/47",
+      "production_apply": "APPLIED_VERIFIED",
+      "runtime_function": "acpos_runtime.create_canonical_script_version",
+      "app_production_deployed": false,
+      "production_effectful_e2e": false,
+      "business_rows_created": 0,
+      "status": "DB_RUNTIME_APPLIED_APP_PENDING_CONSOLIDATED_DEPLOYMENT_EFFECTFUL_E2E"
+    },
+    "compiler_dag_edge_0048": {
+      "commit": "a920fa03d1a85ffffe29ee99e36a835545acf975",
+      "release_gate": 1055,
+      "release_gate_status": "SUCCESS",
+      "production_migration": "48/48",
+      "production_apply": "APPLIED_VERIFIED",
+      "dag_edges_rls": true,
+      "policies": 2,
+      "runtime_select": true,
+      "runtime_insert": true,
       "business_rows_created": 0
     }
   },
@@ -362,7 +388,7 @@
       "name": "Migrations",
       "percent": 100,
       "status": "PASS",
-      "detail": "40/40"
+      "detail": "48/48 Production migrations verified"
     },
     "11": {
       "name": "Schema / Integrity",
@@ -374,7 +400,7 @@
       "name": "PostgreSQL RLS",
       "percent": 100,
       "status": "PASS",
-      "detail": "62/62 tables RLS enabled"
+      "detail": "Current applicability denominator requires recompute; observed 73 RLS-enabled of 209 user tables after 0048, known dag_edges compiler gap closed."
     },
     "13": {
       "name": "Accounts",
@@ -402,7 +428,7 @@
       "name": "CORE Runtime",
       "percent": 75,
       "status": "PARTIAL",
-      "detail": "Truthful gate construction PASS on new; remaining governed runtime closures and Production deployment pending."
+      "detail": "CanonicalScript DB runtime applied through 0047; application deployment/effectful E2E and downstream compiler chain remain pending."
     },
     "18": {
       "name": "ASSET Runtime",
@@ -453,7 +479,8 @@
     "fail": 1,
     "blocked": 0,
     "unknown": 0,
-    "production_ready_percent": 81.5
+    "production_ready_percent": 81.5,
+    "production_ready_percent_status": "STALE_RECOMPUTE_REQUIRED_AFTER_0048"
   },
   "blockers": [
     "TaskTemplate/ProductionGoal/OutputContract/RightsProfile are zero in Production and are dependencies of the nine formal materialization items; they may not be omitted from progress reports.",
@@ -471,8 +498,8 @@
   ],
   "remaining_queue": [
     "MANDATORY 1/9 QualityCriteriaVersion materialization + Production effectful acceptance",
-    "MANDATORY 2/9 ChildLock materialization + Production effectful acceptance",
-    "MANDATORY 3/9 CanonicalScriptVersion materialization + Production effectful acceptance",
+    "MANDATORY 3/9 ChildLock materialization + Production effectful acceptance",
+    "MANDATORY 2/9 CanonicalScriptVersion application deployment + Production effectful acceptance",
     "MANDATORY 4/9 ScriptProjectionRule materialization + Production effectful acceptance",
     "MANDATORY 5/9 WorkPackage materialization + Production effectful acceptance",
     "MANDATORY 6/9 DepartmentTask materialization + Production effectful acceptance",
@@ -492,9 +519,9 @@
     "DEPENDENCY ProductionGoal: Current Production count 0; must be created by governed Topic Production Contract lifecycle.",
     "DEPENDENCY OutputContract: Current Production count 0; must be created by governed Topic Production Contract lifecycle.",
     "DEPENDENCY RightsProfile: Current Production count 0; formal manifest/package execution may not invent rights refs.",
-    "SCHEMA MISMATCH VOICE department enum: Current PostgreSQL department_code lacks VOICE while Current authority includes VOICE."
+    "SCHEMA VOICE department enum: migration 0049 staged; Release/Production apply/verification pending."
   ],
-  "next_executable_item": "MANDATORY 3/9 CanonicalScriptVersion: implement Current createCanonicalScriptVersion route/runtime with exact lineage, explicit version, idempotency, permission, audit and no latest/default inference.",
+  "next_executable_item": "0049 VOICE department schema contract candidate -> Release Gate; WorkPackage compiler remains blocked from exact implementation until missing Current compileWorkPackage API/TaskTemplate authority payload is resolved.",
   "execution_reporting_contract": {
     "mandatory": true,
     "every_progress_report_must_include_remaining_incomplete_list": true,
@@ -522,21 +549,21 @@
     },
     {
       "order": 2,
+      "key": "CanonicalScriptVersion",
+      "table": "canonical_script_versions",
+      "production_count": 0,
+      "status": "DB_RUNTIME_APPLIED_APP_PENDING_PRODUCTION_EFFECTFUL_E2E",
+      "required_execution": "Canonical script materializer from approved/locked Current lineage -> immutable version -> read-back -> cleanup if acceptance-only",
+      "dependency": "Approved Blueprint/Topic/ProductionContract lineage + governed Canonical Script source; required before ChildLock readiness."
+    },
+    {
+      "order": 3,
       "key": "ChildLock",
       "table": "child_locks",
       "production_count": 0,
       "status": "INCOMPLETE",
       "required_execution": "Mother/Child Lock request -> independent reviewer decision -> child lock materialization -> read-back -> audit/outbox verification -> cleanup if acceptance-only",
-      "dependency": "Approved QualityCriteriaVersion + evidence refs + eligible reviewer assignment + exact target version"
-    },
-    {
-      "order": 3,
-      "key": "CanonicalScriptVersion",
-      "table": "canonical_script_versions",
-      "production_count": 0,
-      "status": "INCOMPLETE",
-      "required_execution": "Canonical script materializer from approved/locked Current lineage -> immutable version -> read-back -> cleanup if acceptance-only",
-      "dependency": "ChildLock/approved blueprint lineage"
+      "dependency": "Approved QualityCriteriaVersion + exact CanonicalScriptVersion + evidence refs + eligible independent reviewer + exact target version."
     },
     {
       "order": 4,
@@ -644,7 +671,7 @@
     {
       "key": "VOICE_department_enum",
       "production_count": null,
-      "status": "SCHEMA_MISMATCH",
+      "status": "MIGRATION_0049_STAGED_PENDING_RELEASE_AND_PRODUCTION_APPLY",
       "current_enum": [
         "CORE",
         "ASSET",
