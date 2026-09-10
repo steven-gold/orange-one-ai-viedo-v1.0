@@ -53,9 +53,14 @@ try {
     assert(healthBody?.release_sha === expectedReleaseSha, `HEALTH_RELEASE_SHA_MISMATCH_${healthBody?.release_sha ?? "UNRESOLVED"}`);
   }
 
-  const readiness = await fetch(`${base}/ready`, { cache: "no-store", headers: protectionHeaders() });
-  const readinessBody = await parseJson(readiness, "READINESS");
-  assert(readiness.status === 200, `READINESS_HTTP_${readiness.status}_${readinessBody?.reason_code ?? readinessBody?.reason ?? "UNKNOWN"}`);
+  const readiness = await fetch(`${base}/health/ready`, { cache: "no-store", headers: protectionHeaders() });
+  const readinessText = await readiness.text();
+  let readinessBody = null;
+  try { readinessBody = JSON.parse(readinessText); } catch { /* preserve raw text below */ }
+  assert(
+    readiness.status === 200,
+    `READINESS_HTTP_${readiness.status}_${readinessBody?.reason_code ?? readinessBody?.reason ?? readinessText.slice(0, 200) || "UNKNOWN"}`,
+  );
 
   const login = await fetch(`${base}/v1/identity/session`, {
     method: "POST",
