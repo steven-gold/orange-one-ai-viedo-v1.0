@@ -1,0 +1,101 @@
+name: ACPOS Gate25 DEV Legacy Unbound Materialize Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/gate25-dev-legacy-unbound-materialize-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Materialize exact DEV legacy unbound blockers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          ledger_path=Path('docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json')
+          inventory_path=Path('docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json')
+          evidence_path=Path('docs/construction/evidence/GATE25_DEV_LEGACY_FORMAL_RESOURCE_UNBOUND_2026-09-11.json')
+          authority_path=Path('authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml')
+          bindings_path=Path('src/domain/dev/devControlBindings.ts')
+
+          ledger=json.loads(ledger_path.read_text())
+          inventory=json.loads(inventory_path.read_text())
+          evidence=json.loads(evidence_path.read_text())
+          authority=authority_path.read_text()
+          bindings=bindings_path.read_text()
+          resources=evidence['resources']
+          assert len(resources)==10 and len(set(resources))==10,resources
+          assert evidence['status']=='BLOCKED'
+          assert evidence['production_release_sha']=='526316501c86fe54f02603cdb47da5ad51a005dc'
+          assert evidence['production_permission_resources_active'] is True
+          assert 'current_only: true' in authority
+          assert 'single_page_workspace: true' in authority
+
+          exact_uids=[
+            'DEV-01-ACT-NAV-OPEN',
+            'CTRL-ADMIN-DEV-01-ACT-05-ACT-NAV-OPEN',
+            'CTRL-ADMIN-DEV-01-ACCUMULATION-METRICS-OPEN',
+            'CTRL-ADMIN-DEV-01-ALLOWED-SOURCES-OPEN',
+            'CTRL-ADMIN-DEV-01-CONNECTOR-HEALTH-OPEN',
+            'CTRL-ADMIN-DEV-01-DISCOVERY-JOB-SETUP-OPEN',
+            'CTRL-ADMIN-DEV-01-DISCOVERY-MODE-OPEN',
+            'CTRL-ADMIN-DEV-01-PAUSE-STOP-OPEN',
+            'CTRL-ADMIN-DEV-01-RUN-STATUS-OPEN',
+            'CTRL-ADMIN-DEV-01-SEARCH-SCOPE-OPEN',
+          ]
+          for uid in exact_uids:
+            assert uid not in authority,('LEGACY_UID_UNEXPECTEDLY_PRESENT_IN_CURRENT_AUTHORITY',uid)
+            assert uid not in bindings,('LEGACY_UID_UNEXPECTEDLY_PRESENT_IN_CURRENT_BINDINGS',uid)
+
+          inventory_keys={r['resource_key'] for r in inventory['resources']}
+          assert all(key in inventory_keys for key in resources)
+          entries={e['resource_key']:e for e in ledger['entries']}
+          before=dict(ledger['counts'])
+          assert before=={'PASS':51,'BLOCKED':145,'NOT_EXECUTED':1285},before
+          for key in resources:
+            e=entries[key]
+            assert e['disposition']=='NOT_EXECUTED',(key,e['disposition'])
+            e['disposition']='BLOCKED'
+            e['reason_code']='CURRENT_DEV_FORMAL_RESOURCE_NOT_BOUND_BY_FINAL_LOCKED_CURRENT_AUTHORITY'
+            e['evidence_refs']=[str(evidence_path),str(authority_path),str(bindings_path),str(inventory_path)]
+            e['blocker_detail']='Active Production formal permission resource has no exact UID owner in FINAL_LOCKED current-only DEV-01 Authority or Current DEV binding registry. Legacy UI reconstruction/invented remapping is forbidden.'
+
+          counts={'PASS':0,'BLOCKED':0,'NOT_EXECUTED':0}
+          for e in ledger['entries']:
+            counts[e['disposition']]+=1
+          assert counts=={'PASS':51,'BLOCKED':155,'NOT_EXECUTED':1275},counts
+          ledger['counts']=counts
+          ledger_path.write_text(json.dumps(ledger,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps({'before':before,'after':counts,'resource_count':len(resources)}))
+          PY
+      - name: Validate synchronized ledger
+        run: node scripts/release-formal-acceptance-ledger.mjs
+      - name: Commit blocker evidence ledger sync
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json
+          git commit -m 'evidence(gate25): block 10 DEV legacy unbound resources'
+          git push origin HEAD:new
