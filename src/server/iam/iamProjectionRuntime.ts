@@ -5,7 +5,6 @@ import {
 } from "@/domain/iam/iamRuntimeContract";
 import { ensureProductionNeonRuntime, getProductionNeonSql } from "@/server/database/neonRuntime";
 import {
-  hashSessionToken,
   IDENTITY_COOKIE_NAME,
   resolveIdentityFromCookie,
 } from "@/server/identity/identityRuntime";
@@ -16,6 +15,7 @@ import {
 
 type Request = { page_uid: string; correlation_id: string };
 type Row = Record<string, unknown>;
+const CURRENT_IDENTITY_SOURCE = "INTERNAL_RUNTIME_ACCOUNT_EMAIL";
 
 function record(value: unknown): Row | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Row : null;
@@ -34,14 +34,6 @@ function rows(value: unknown): Row[] {
         return row ? [row] : [];
       })
     : [];
-}
-
-function identitySource(externalSubject: unknown): string {
-  const subject = text(externalSubject);
-  if (!subject) return "UNBOUND";
-  const separator = subject.indexOf(":");
-  const source = (separator > 0 ? subject.slice(0, separator) : subject).trim();
-  return source ? source.toUpperCase() : "UNBOUND";
 }
 
 const FRONT_RESOURCE_TO_L1 = new Map<string, string>(
@@ -89,8 +81,6 @@ export async function readProductionIamProjection(request: Request) {
       correlation_id: request.correlation_id,
     };
   }
-  // Resolve the same canonical session context used by IAM command/runtime authorization.
-  hashSessionToken(cookie);
 
   try {
     const [accountRowsRaw, assignmentRowsRaw, auditRowsRaw] = await Promise.all([
@@ -166,7 +156,7 @@ export async function readProductionIamProjection(request: Request) {
         account_id: accountId,
         label,
         status: text(row.status) ?? "—",
-        identity_source: identitySource(row.external_subject),
+        identity_source: CURRENT_IDENTITY_SOURCE,
         organization_scope: "—",
         mfa: "—",
         risk: "—",
@@ -174,7 +164,10 @@ export async function readProductionIamProjection(request: Request) {
         session_expires_at: text(row.latest_active_session_expires_at),
         front_l1: frontByAccount.get(accountId) ?? [],
         admin_l1: adminByAccount.get(accountId) ?? [],
-        basic_data: { email: text(row.email) ?? "—" },
+        basic_data: {
+          email: text(row.email) ?? "—",
+          external_subject: text(row.external_subject) ?? "—",
+        },
       }];
     });
 
