@@ -1,0 +1,131 @@
+name: ACPOS Gate25 WB Production Readonly Acceptance Once
+
+on:
+  push:
+    branches: [new]
+    paths:
+      - '.github/workflows/gate25-production-wb-readonly-ledger-sync-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  wb-readonly:
+    runs-on: ubuntu-24.04
+    environment: Production
+    timeout-minutes: 20
+    env:
+      ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
+      ACPOS_PRODUCTION_E2E_EMAIL: admin
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      ACPOS_EXPECT_RELEASE_SHA: 608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install product dependencies
+        run: npm ci
+
+      - name: Install browser audit dependency
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+
+      - name: Execute exact 14 WB-01 Production read-only interactions
+        shell: bash
+        run: |
+          node --check scripts/gate25-production-wb-readonly-acceptance.mjs
+          node scripts/gate25-production-wb-readonly-acceptance.mjs | tee "$RUNNER_TEMP/wb-readonly.log"
+
+      - name: Materialize per-resource PASS evidence and synchronize ledger
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from datetime import datetime, timezone
+
+          log_path = Path(os.environ['RUNNER_TEMP']) / 'wb-readonly.log'
+          ledger_path = Path('docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json')
+          evidence_path = Path('docs/construction/evidence/GATE25_WB_PRODUCTION_READONLY_EXECUTION_2026-09-10.json')
+          script_path = 'scripts/gate25-production-wb-readonly-acceptance.mjs'
+
+          prefix = 'GATE25_WB_READONLY_PRODUCTION_EVIDENCE '
+          lines = log_path.read_text().splitlines()
+          payload_lines = [line for line in lines if line.startswith(prefix)]
+          assert len(payload_lines) == 1, f'expected one WB evidence payload, got {len(payload_lines)}'
+          resources = json.loads(payload_lines[0][len(prefix):])
+          assert len(resources) == 14, f'expected 14 WB resources, got {len(resources)}'
+          assert len({r['resource_key'] for r in resources}) == 14, 'duplicate WB resource key'
+          assert all(r.get('outcome') == 'PASS' for r in resources), 'non-PASS WB resource evidence'
+          assert all(r.get('dashboard_read_http') == 200 for r in resources), 'WB read-model HTTP not 200'
+          assert all(r.get('dialog_visible') is True for r in resources), 'WB dialog not visible'
+          assert all(r.get('title_present') is True for r in resources), 'WB dialog title missing'
+
+          ledger = json.loads(ledger_path.read_text())
+          entries = {e['resource_key']: e for e in ledger['entries']}
+          before = dict(ledger['counts'])
+          assert ledger['denominator']['total'] == 1481
+
+          for r in resources:
+              key = r['resource_key']
+              assert key in entries, f'missing ledger entry: {key}'
+              assert entries[key]['disposition'] == 'NOT_EXECUTED', f'{key} expected NOT_EXECUTED, got {entries[key]["disposition"]}'
+
+          run_ref = f'GitHub Actions: ACPOS Gate25 WB Production Readonly Acceptance run_id={os.environ["GITHUB_RUN_ID"]}'
+          evidence = {
+              'document_id': 'ACPOS_GATE25_WB_PRODUCTION_READONLY_EXECUTION',
+              'status': 'PASS',
+              'executed_at': datetime.now(timezone.utc).isoformat(),
+              'production_release_sha': os.environ['ACPOS_EXPECT_RELEASE_SHA'],
+              'deployment_url': os.environ['ACPOS_DEPLOYMENT_URL'],
+              'github_run_id': os.environ['GITHUB_RUN_ID'],
+              'github_run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'resources': resources,
+              'resource_count': len(resources),
+              'mutation_count': 0,
+              'rule': 'PASS is granted only to the exact 14 WB-01 controls that completed a real authenticated Production browser interaction and observed HTTP 200 from /v1/dashboard/read-model plus a visible non-loading read-only/empty drawer with dialog title and zero runtime page errors.',
+          }
+          evidence_path.write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + '\n')
+
+          for r in resources:
+              entry = entries[r['resource_key']]
+              entry['disposition'] = 'PASS'
+              entry['reason_code'] = 'PRODUCTION_READONLY_BROWSER_AND_READ_MODEL_PASS'
+              entry['evidence_refs'] = [str(evidence_path), run_ref, script_path]
+              entry['blocker_detail'] = None
+              entry['operation_ids'] = [r['section_key']]
+
+          counts = {'PASS': 0, 'BLOCKED': 0, 'NOT_EXECUTED': 0}
+          for entry in ledger['entries']:
+              counts[entry['disposition']] += 1
+          assert sum(counts.values()) == 1481
+          assert counts['PASS'] == before['PASS'] + 14
+          assert counts['BLOCKED'] == before['BLOCKED']
+          assert counts['NOT_EXECUTED'] == before['NOT_EXECUTED'] - 14
+          ledger['counts'] = counts
+          ledger_path.write_text(json.dumps(ledger, ensure_ascii=False, indent=2) + '\n')
+          print(json.dumps({'before': before, 'after': counts, 'resource_count': len(resources)}, ensure_ascii=False))
+          PY
+
+      - name: Validate synchronized ledger
+        run: node scripts/release-formal-acceptance-ledger.mjs
+
+      - name: Commit WB evidence and remove one-shot workflow
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json
+          git add docs/construction/evidence/GATE25_WB_PRODUCTION_READONLY_EXECUTION_2026-09-10.json
+          git rm .github/workflows/gate25-production-wb-readonly-ledger-sync-once.yml
+          git commit -m 'evidence(gate25): pass 14 WB-01 Production readonly controls'
+          git push origin HEAD:new
