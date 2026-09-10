@@ -30,6 +30,22 @@ async function callGet(cookie,resourceKey,operationId,path,validate){
   return body.value;
 }
 
+async function callReadPost(cookie,resourceKey,operationId,path,payload,validate){
+  const correlationId=crypto.randomUUID();
+  const response=await fetch(`${base}${path}`,{
+    method:"POST",cache:"no-store",
+    headers:{...cookieHeaders(cookie),"content-type":"application/json","x-correlation-id":correlationId},
+    body:JSON.stringify(payload),
+  });
+  const body=await json(response,operationId);
+  assert(response.status===200,`${operationId}_HTTP_${response.status}`);
+  assert(body?.ok===true,`${operationId}_BODY_NOT_OK`);
+  assert(body?.correlation_id===correlationId,`${operationId}_CORRELATION_MISMATCH`);
+  validate(body.value);
+  process.stdout.write(`FORMAL_RESOURCE_ACCEPTANCE_PASS resource_key=${resourceKey} operation_id=${operationId} correlation_id=${correlationId} method=POST path=${path} effect=READ\n`);
+  return body.value;
+}
+
 assert(email&&password,"FORMAL_READONLY_ACCEPTANCE_CREDENTIAL_NOT_CONFIGURED");
 assert(routeDecisionId,"FORMAL_READONLY_ROUTE_DECISION_ID_REQUIRED");
 if(expectedReleaseSha)assert(/^[0-9a-f]{40}$/i.test(expectedReleaseSha),"FORMAL_EXPECTED_RELEASE_SHA_INVALID");
@@ -101,9 +117,18 @@ await callGet(
   (value)=>assert(String(value?.id??"")===routeDecisionId,"FORMAL_ROUTE_DECISION_READBACK_MISMATCH"),
 );
 
+await callReadPost(
+  cookie,
+  "action:admin:IAM-01:ACT-SEARCH",
+  "searchProjection",
+  "/v1/search",
+  {page_uid:"admin:IAM-01",query:""},
+  (value)=>assert(Array.isArray(value?.results)&&Array.isArray(value?.matches),"FORMAL_IAM_SEARCH_SHAPE_INVALID"),
+);
+
 const logout=await fetch(`${base}/v1/identity/session`,{
   method:"DELETE",cache:"no-store",headers:cookieHeaders(cookie)
 });
 const logoutBody=await json(logout,"FORMAL_LOGOUT");
 assert(logout.status===200&&logoutBody?.ok===true&&logoutBody?.logged_in===false,"FORMAL_LOGOUT_FAILED");
-process.stdout.write("PRODUCTION_FORMAL_READONLY_ACCEPTANCE_PASS resources=4 mutations=0 external_provider_calls=0\n");
+process.stdout.write("PRODUCTION_FORMAL_READONLY_ACCEPTANCE_PASS resources=5 mutations=0 external_provider_calls=0\n");

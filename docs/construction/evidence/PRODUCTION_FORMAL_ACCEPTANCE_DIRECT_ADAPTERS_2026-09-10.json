@@ -1,7 +1,7 @@
 {
   "document_id": "ACPOS_PRODUCTION_FORMAL_ACCEPTANCE_DIRECT_ADAPTERS",
-  "status": "PRODUCTION_READONLY_4_OF_25_DIRECT_MAPPINGS_ACCEPTED",
-  "as_of": "2026-09-10T12:01:00+08:00",
+  "status": "PRODUCTION_READONLY_4_PASS_FIFTH_IAM_SEARCH_STAGED",
+  "as_of": "2026-09-10T12:48:00+08:00",
   "authority": "03_api/operation_registry.yaml",
   "exact_direct_mapping_count": 25,
   "executable_readonly_now": [
@@ -40,9 +40,21 @@
       "fixture": "existing real Production route_decision_id supplied to workflow",
       "mutation": false,
       "external_provider_call": false
+    },
+    {
+      "resource_key": "action:admin:IAM-01:ACT-SEARCH",
+      "operation_id": "searchProjection",
+      "method": "POST",
+      "path": "/v1/search",
+      "effect": "READ",
+      "fixture": "NONE; page_uid=admin:IAM-01, empty query returns current authorized account directory",
+      "mutation": false,
+      "external_provider_call": false,
+      "audit_owner": "public.audit_events",
+      "audit_policy": "acpos_audit_events_iam_search_insert"
     }
   ],
-  "mapped_not_yet_executable_count": 21,
+  "mapped_not_yet_executable_count": 20,
   "rule": "Only exact operation_registry authorization_resource_key/resource_key mappings qualify. API-only operations are not guessed onto formal CONTROL/ACTION resources. Mutation/external-effect adapters require an explicit fixture, expected readback, negative path and cleanup contract before execution.",
   "production_execution": {
     "workflow": "ACPOS Production Formal Readonly Acceptance",
@@ -59,5 +71,11 @@
       "audit_rows": 8,
       "operation_match": "4/4"
     }
+  },
+  "next_execution": {
+    "resource_key": "action:admin:IAM-01:ACT-SEARCH",
+    "operation_id": "searchProjection",
+    "production_migration_prerequisite": "0052_iam_search_audit_rls_closure=APPLIED_VERIFIED",
+    "required_evidence": "exact-SHA HTTP PASS + two audit rows for one correlation before ledger promotion"
   }
 }

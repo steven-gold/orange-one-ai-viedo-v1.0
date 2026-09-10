@@ -35,5 +35,5 @@ jobs:
           node-version: 22
       - name: Validate formal readonly acceptance syntax
         run: node --check scripts/production-formal-readonly-acceptance.mjs
-      - name: Run four exact formal Production read-only adapters
+      - name: Run five exact formal Production read-only adapters
         run: node scripts/production-formal-readonly-acceptance.mjs

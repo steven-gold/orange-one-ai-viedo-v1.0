@@ -1,0 +1,46 @@
+{
+  "document_id": "ACPOS_PRODUCTION_MIGRATION_0052_IAM_SEARCH_AUDIT_RLS",
+  "status": "APPLIED_VERIFIED",
+  "migration_id": "0052_iam_search_audit_rls_closure",
+  "checksum": "576e039f06550edd7374471ce01ad7384478393b19e5cf9530e85c07de95c305",
+  "approval_ref": "CR-RUNTIME-0052",
+  "release_gate_preapply": {
+    "run_number": 1085,
+    "run_id": 34436024458,
+    "head_sha": "75d1c1cd38e428f8a697c92bd74a07f7dbf3fadb",
+    "status": "SUCCESS"
+  },
+  "forced_rollback": {
+    "method": "single transaction executes exact DDL/history insert then deliberate ACPOS_FORCED_ROLLBACK_0052 exception",
+    "post_rollback_migration_count": 51,
+    "post_rollback_policy_count": 0,
+    "post_rollback_history_rows": 0,
+    "status": "PASS"
+  },
+  "deployment_before_apply": {
+    "main_sha": "0264a7cf2a801c34b490e56ec7f7ab6bae22de55",
+    "release_gate": {
+      "run_number": 1087,
+      "run_id": 34438360291,
+      "status": "SUCCESS"
+    },
+    "post_deploy": {
+      "run_number": 1399,
+      "run_id": 34438396427,
+      "status": "SUCCESS",
+      "readiness_http": 200,
+      "dom_interactive": 558,
+      "dom_governed": 558
+    }
+  },
+  "production_apply": {
+    "migration_count": 52,
+    "max_migration_id": "0052_iam_search_audit_rls_closure",
+    "history_checksum_match": true,
+    "policy_count": 1,
+    "policy_role": "acpos_app_runtime",
+    "policy_cmd": "INSERT",
+    "business_rows_created": 0,
+    "status": "PASS"
+  }
+}
