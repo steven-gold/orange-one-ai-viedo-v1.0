@@ -1,8 +1,8 @@
 contract_meta:
-  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.47
+  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.48
   rule: checksum is calculated from migration payload excluding the terminal schema_migration_history registration statement; zero value is forbidden.
   bootstrap_rule: 0001 is self-contained and must be executed before all later migrations.
-  authority_revision: 2026-09-10-STAGED-0047-CANONICAL-SCRIPT-RUNTIME
+  authority_revision: 2026-09-10-STAGED-0048-DAG-EDGE-RLS-RUNTIME
   live_target_revision: 2026-09-05-REQUIRED-ON-WILD-WAVE
   live_neon_project_id: wild-wave-25661146
   live_database_name: neondb
@@ -205,7 +205,7 @@ migrations:
   payload_sha256: 4eeae25811a6b215f8e2a4a653397998bf1ed3d569ace9ac8e54788cf29b415c
   approval_ref: CR-RUNTIME-0042
   bootstrap: REQUIRES_PRIOR_MIGRATION
-  production_apply: STAGED_PENDING_PRODUCTION_APPLY
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
 
 - migration_id: 0043_production_test_only_lineage_cleanup
   payload_sha256: adc47bc0c6c20a8178b124534866ebd0121f1d08725cce7dc62f3b6bf0a113cc
@@ -234,5 +234,11 @@ migrations:
 - migration_id: 0047_canonical_script_version_runtime
   payload_sha256: 7f9a709236c13482b67deeb63d09085eadcde1a0ae05920d39a31b0e67b8e19f
   approval_ref: CR-RUNTIME-0047
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: STAGED_PENDING_PRODUCTION_APPLY
+
+- migration_id: 0048_dag_edge_rls_runtime_closure
+  payload_sha256: 5e218c9a78826c0e56719ef7865957b75e4508a021cac9f858edebc7bd2a2f60
+  approval_ref: CR-RUNTIME-0048
   bootstrap: REQUIRES_PRIOR_MIGRATION
   production_apply: STAGED_PENDING_PRODUCTION_APPLY
