@@ -1,0 +1,30 @@
+{
+  "document_id": "ACPOS_GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE",
+  "status": "CURRENT_AUTHORITY_BLOCKER_EVIDENCE",
+  "as_of": "2026-09-10T09:17:03.450Z",
+  "target_count": 5,
+  "target_resource_keys": [
+    "action:admin:API-06:ACT-APPROVE",
+    "action:admin:API-06:ACT-NAV-OPEN",
+    "action:admin:API-06:ACT-REPLAY",
+    "action:admin:API-07:ACT-NAV-OPEN",
+    "action:admin:API-07:ACT-SEARCH"
+  ],
+  "non_current_page_uids": [
+    "admin:API-06",
+    "admin:API-07"
+  ],
+  "facts": {
+    "current_admin_authority_dirs_absent": true,
+    "current_navigation_pages_absent": true,
+    "current_page_catalog_owners_absent": true,
+    "production_formal_inventory_contains_all_targets": true
+  },
+  "evidence_refs": [
+    "authority/pages/admin",
+    "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+    "src/server/shared/pageCatalogProjectionRuntime.ts",
+    "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json"
+  ],
+  "rule": "These five resources are not accepted operations. They remain active in the formal Production permission denominator but have no Current page authority/navigation/catalog owner. They are BLOCKED until formally remapped or deactivated; no page may be invented for acceptance."
+}

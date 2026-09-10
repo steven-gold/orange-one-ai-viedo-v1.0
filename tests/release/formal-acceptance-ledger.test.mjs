@@ -14,7 +14,7 @@ test("Current formal acceptance ledger covers exact 1481 Production CONTROL+ACTI
   assert.deepEqual(ledger.denominator,{controls:1155,actions:326,total:1481});
   const keys=new Set(ledger.entries.map(x=>x.resource_key));
   assert.equal(keys.size,1481);
-  assert.deepEqual(ledger.counts,{PASS:29,BLOCKED:103,NOT_EXECUTED:1349});
+  assert.deepEqual(ledger.counts,{PASS:29,BLOCKED:108,NOT_EXECUTED:1344});
   assert.equal(ledger.aggregate_dom_evidence.interactive,558);
   assert.equal(ledger.aggregate_dom_evidence.governed,558);
   assert.equal(ledger.aggregate_dom_evidence.per_resource_pass_propagation,false);

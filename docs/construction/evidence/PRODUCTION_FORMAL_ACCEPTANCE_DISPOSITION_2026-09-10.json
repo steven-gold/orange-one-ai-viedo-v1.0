@@ -29,8 +29,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 29,
-    "BLOCKED": 103,
-    "NOT_EXECUTED": 1349
+    "BLOCKED": 108,
+    "NOT_EXECUTED": 1344
   },
   "entries": [
     {
@@ -616,37 +616,87 @@
     {
       "resource_key": "action:admin:API-06:ACT-APPROVE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-06/07, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-APPROVE"
+      ]
     },
     {
       "resource_key": "action:admin:API-06:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-06/07, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:API-06:ACT-REPLAY",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-06/07, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-REPLAY"
+      ]
     },
     {
       "resource_key": "action:admin:API-07:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-06/07, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-NAV-OPEN"
+      ]
     },
     {
       "resource_key": "action:admin:API-07:ACT-SEARCH",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "NON_CURRENT_PAGE_PERMISSION_RESOURCE_ACTIVE_IN_PRODUCTION_INVENTORY",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_API_06_07_NON_CURRENT_PERMISSION_RESOURCE_EVIDENCE_2026-09-10.json",
+        "authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml",
+        "src/server/shared/pageCatalogProjectionRuntime.ts",
+        "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
+        "authority/pages/admin"
+      ],
+      "blocker_detail": "Production formal permission inventory contains an ACTION owned by admin:API-06/07, but no corresponding Current admin Authority directory, Current navigation page, or Current page-catalog owner exists. Gate25 cannot execute or accept the resource until authority explicitly remaps or deactivates it; inventing a Current page is forbidden.",
+      "operation_ids": [
+        "ACT-SEARCH"
+      ]
     },
     {
       "resource_key": "action:admin:DEV-01:ACT-DISCOVERY-PAUSE",
