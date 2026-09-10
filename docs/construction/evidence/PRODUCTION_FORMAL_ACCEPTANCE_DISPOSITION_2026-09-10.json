@@ -28,9 +28,9 @@
   "blocked_rule": "BLOCKED requires a concrete reason_code and one or more blocker evidence refs.",
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
-    "PASS": 5,
+    "PASS": 28,
     "BLOCKED": 72,
-    "NOT_EXECUTED": 1404
+    "NOT_EXECUTED": 1381
   },
   "entries": [
     {
@@ -4980,65 +4980,101 @@
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-APPROVAL-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-GATE-POLICY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-IMPACT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-02-THRESHOLDS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SG-03-ACT-01-ACT-SEARCH",
@@ -10534,100 +10570,156 @@
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_INTERACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ]
     },
     {
       "resource_key": "control:workspace:ASSET-01:ASSET-01-BTN-CORRECTION-APPROVE",
