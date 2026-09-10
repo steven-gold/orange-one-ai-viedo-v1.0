@@ -1,8 +1,8 @@
 {
   "document_id": "ACPOS_PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION",
-  "status": "CURRENT_PARTIAL_DIRECT_25_PHYSICAL_LEDGER_SYNCED",
+  "status": "CURRENT_PARTIAL_GATE25_PHYSICAL_LEDGER_SYNCED",
   "captured_at": "2026-09-10T16:08:00+08:00",
-  "production_release_sha": "d6787156222ae1ff38126e1244c10980ffc49929",
+  "production_release_sha": "608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36",
   "source_inventory": "docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json",
   "denominator": {
     "controls": 1155,
@@ -28,9 +28,9 @@
   "blocked_rule": "BLOCKED requires a concrete reason_code and one or more blocker evidence refs.",
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
-    "PASS": 28,
+    "PASS": 29,
     "BLOCKED": 72,
-    "NOT_EXECUTED": 1381
+    "NOT_EXECUTED": 1380
   },
   "entries": [
     {
@@ -852,9 +852,18 @@
     {
       "resource_key": "action:admin:SG-02:ACT-NAV-OPEN",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "PASS",
+      "reason_code": "PRODUCTION_READONLY_ACTION_ACCEPTED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SG02_NAV_ACTION_EXISTING_PRODUCTION_EVIDENCE_2026-09-10.json",
+        "docs/construction/evidence/GATE25_PRODUCTION_READONLY_INTERACTION_EVIDENCE_2026-09-10.json",
+        "authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml",
+        "GitHub Actions run 34455072666 job 102799444139",
+        "Production release_sha=608e9c46ef6f85ba4d127d3015b73ff1b5aa8e36"
+      ],
+      "operation_ids": [
+        "getUiProjection"
+      ]
     },
     {
       "resource_key": "action:admin:SG-03:ACT-EXPORT",

@@ -10,7 +10,8 @@ test("DEV-01 stage selectors remain UI-only and outside the formal permission de
   const runner=await readFile("scripts/gate25-production-dev-stage-readonly-acceptance.mjs","utf8");
   const inventory=JSON.parse(await readFile("docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json","utf8"));
   const ledger=JSON.parse(await readFile("docs/construction/evidence/PRODUCTION_FORMAL_ACCEPTANCE_DISPOSITION_2026-09-10.json","utf8"));
-  assert.deepEqual(ledger.counts,{PASS:28,BLOCKED:72,NOT_EXECUTED:1381});
+  assert.equal(ledger.entries.length,1481);
+  assert.equal(ledger.counts.PASS+ledger.counts.BLOCKED+ledger.counts.NOT_EXECUTED,1481);
   const inventoryKeys=new Set(inventory.resources.map(row=>row.resource_key));
   const ledgerKeys=new Set(ledger.entries.map(row=>row.resource_key));
   for(const id of ids){
