@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "document_id": "ACPOS_CURRENT_EXECUTION_STATE",
   "status": "CURRENT_ONLY",
-  "as_of": "2026-09-10T12:12:00+08:00",
+  "as_of": "2026-09-10T12:48:00+08:00",
   "evidence_policy": "CURRENT_EVIDENCE_ONLY",
   "authority_policy": {
     "production_truth_order": [
@@ -18,8 +18,8 @@
   },
   "git": {
     "repository": "steven-gold/orange-one-ai-viedo-v1.0",
-    "main_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
-    "new_sha": "b1d272a62a696e917fdd1db65bf3c33eeb8a33e0",
+    "main_sha": "0264a7cf2a801c34b490e56ec7f7ab6bae22de55",
+    "new_sha": "75d1c1cd38e428f8a697c92bd74a07f7dbf3fadb",
     "new_ahead_product_commits": [
       {
         "sha": "6915d2e9aed3e142ccc85bb3bed107f8eb162c14",
@@ -35,27 +35,27 @@
       }
     ],
     "latest_new_release_gate": {
-      "run_number": 1074,
-      "run_id": 34431123822,
-      "head_sha": "92f4d0c5279059af75b3e97efe82b73fba593059",
+      "run_number": 1085,
+      "run_id": 34436024458,
+      "head_sha": "75d1c1cd38e428f8a697c92bd74a07f7dbf3fadb",
       "status": "SUCCESS"
     },
     "production_main_release_gate": {
-      "run_number": 1083,
-      "run_id": 34435308606,
-      "head_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
+      "run_number": 1087,
+      "run_id": 34438360291,
+      "head_sha": "0264a7cf2a801c34b490e56ec7f7ab6bae22de55",
       "status": "SUCCESS"
     }
   },
   "production": {
     "url": "https://orange-one-acpos-test.vercel.app",
-    "release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
+    "release_sha": "0264a7cf2a801c34b490e56ec7f7ab6bae22de55",
     "vercel_commit_status": "SUCCESS",
     "latest_post_deploy": {
-      "run_number": 1392,
-      "run_id": 34435333989,
+      "run_number": 1399,
+      "run_id": 34438396427,
       "event": "deployment_status",
-      "head_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb",
+      "head_sha": "0264a7cf2a801c34b490e56ec7f7ab6bae22de55",
       "status": "SUCCESS"
     },
     "readiness_http": 200,
@@ -247,8 +247,8 @@
     "project": "wild-wave-25661146",
     "branch": "main",
     "database": "neondb",
-    "migration_count": 51,
-    "latest_migration": "0051_edit_voice_audit_rls_closure",
+    "migration_count": 52,
+    "latest_migration": "0052_iam_search_audit_rls_closure",
     "migration_0040_checksum": "301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50",
     "permission_resources_active": 3693,
     "permission_resources_authority_seal_status": "CURRENT_EXPANSION_TALLY_NOT_SEALED",
@@ -323,7 +323,8 @@
       "SYSTEM",
       "VOICE"
     ],
-    "latest_migration_checksum": "ddce6a15daa6f3f5e1407163fa2e10717fead8b82c264cbd08ac77ed0c4ab74e"
+    "latest_migration_checksum": "576e039f06550edd7374471ce01ad7384478393b19e5cf9530e85c07de95c305",
+    "migration_0052_checksum": "576e039f06550edd7374471ce01ad7384478393b19e5cf9530e85c07de95c305"
   },
   "construction": {
     "core_truthful_gate": {
@@ -517,11 +518,11 @@
       }
     },
     "gate25_direct_http_adapters": {
-      "status": "PRODUCTION_READONLY_4_PASS_MORE_ADAPTERS_PENDING",
+      "status": "PRODUCTION_READONLY_4_PASS_FIFTH_IAM_SEARCH_STAGED",
       "authority": "03_api/operation_registry.yaml",
       "exact_direct_formal_resource_mappings": 25,
-      "executable_readonly_resources": 4,
-      "mapped_pending_fixture_or_cleanup": 21,
+      "executable_readonly_resources": 5,
+      "mapped_pending_fixture_or_cleanup": 20,
       "production_runner": "scripts/production-formal-readonly-acceptance.mjs",
       "workflow": ".github/workflows/production-formal-readonly-acceptance.yml",
       "production_fixture_evidence": {
@@ -548,10 +549,11 @@
         "status": "SUCCESS",
         "release_sha": "591cdc0ee77785c37519d598d0a9447f1858e8fb"
       },
-      "accepted_formal_resources": 4
+      "accepted_formal_resources": 4,
+      "fifth_staged_resource": "action:admin:IAM-01:ACT-SEARCH"
     },
     "iam_search_audit_0052": {
-      "status": "CODE_STAGED_RELEASE_GATE_PENDING",
+      "status": "PRODUCTION_APPLIED_VERIFIED_FORMAL_SEARCH_ACCEPTANCE_PENDING",
       "migration_id": "0052_iam_search_audit_rls_closure",
       "checksum": "576e039f06550edd7374471ce01ad7384478393b19e5cf9530e85c07de95c305",
       "audit_owner": "public.audit_events",
@@ -562,7 +564,11 @@
         "action_resource": "action:admin:IAM-01:ACT-SEARCH"
       },
       "business_rows_created": 0,
-      "rule": "Reuse existing IAM audit_events semantics. No generic IAM audit policy and no alternate audit owner are created."
+      "rule": "Reuse existing IAM audit_events semantics. No generic IAM audit policy and no alternate audit owner are created.",
+      "production_migration": "52/52",
+      "production_policy": "acpos_audit_events_iam_search_insert",
+      "forced_rollback_validation": "PASS",
+      "production_release_sha": "0264a7cf2a801c34b490e56ec7f7ab6bae22de55"
     },
     "iam_projection_current_gaps": {
       "status": "INCOMPLETE_CANONICAL_OWNER_RESOLUTION_REQUIRED",
@@ -654,7 +660,7 @@
       "name": "Migrations",
       "percent": 100,
       "status": "PASS",
-      "detail": "51/51 Production migrations verified through 0051_edit_voice_audit_rls_closure."
+      "detail": "52/52 Production migrations verified through 0052_iam_search_audit_rls_closure."
     },
     "11": {
       "name": "Schema / Integrity",
@@ -829,7 +835,7 @@
     "RUNTIME QA ReleasePackage evidence owner + positive Production effectful closure",
     "ACCEPTANCE IAM/ERP/AIAPI/SOC Production mutation acceptance",
     "ACCEPTANCE AI Conversation Production E2E",
-    "ACCEPTANCE Gate 25 per-resource execution: 4/1481 exact resources PASS with Production HTTP + audit readback; 48 BLOCKED; 1429 NOT_EXECUTED. Continue 21 direct mappings with fixture/readback/cleanup, then resolve remaining exact operation mappings.",
+    "ACCEPTANCE Gate 25 per-resource execution: 4/1481 exact resources PASS; IAM Search fifth exact adapter staged with 0052 Production audit RLS applied; 20 additional direct mappings need fixture/readback/cleanup; remaining formal resources need exact operation mapping.",
     "ACCEPTANCE Gate 25 denominator seal: historical 1453 / Current permission 1481 / Current Production DOM 558",
     "ACCEPTANCE Full 25-Gate recompute from Current evidence",
     "IAM-01 projection closure: resolve canonical owners for organization scope, MFA, risk, session, explicit L1 assignments and audit/access-review projection; then Production readback acceptance"

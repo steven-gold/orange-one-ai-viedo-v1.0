@@ -7,10 +7,10 @@ test("Production formal read-only adapters are exact Current formal resources an
   const inventory=JSON.parse(await readFile("docs/construction/evidence/PRODUCTION_FORMAL_CONTROL_ACTION_INVENTORY_2026-09-10.json","utf8"));
   const script=await readFile("scripts/production-formal-readonly-acceptance.mjs","utf8");
   const keys=new Set(inventory.resources.map(x=>x.resource_key));
-  assert.equal(adapters.executable_readonly_now.length,4);
+  assert.equal(adapters.executable_readonly_now.length,5);
   for(const a of adapters.executable_readonly_now){
     assert.ok(keys.has(a.resource_key));
-    assert.equal(a.method,"GET");
+    assert.ok(a.method==="GET"||(a.resource_key==="action:admin:IAM-01:ACT-SEARCH"&&a.method==="POST"&&a.effect==="READ"));
     assert.equal(a.mutation,false);
     assert.equal(a.external_provider_call,false);
     assert.ok(script.includes(a.operation_id));
@@ -18,6 +18,5 @@ test("Production formal read-only adapters are exact Current formal resources an
   }
   assert.ok(!script.includes('method:"PATCH"'));
   assert.ok(!script.includes('method:"PUT"'));
-  assert.ok(!script.includes('method:"POST",cache:"no-store",headers:cookieHeaders(cookie)'));
-  assert.ok(script.includes("PRODUCTION_FORMAL_READONLY_ACCEPTANCE_PASS resources=4 mutations=0 external_provider_calls=0"));
+  assert.ok(script.includes("PRODUCTION_FORMAL_READONLY_ACCEPTANCE_PASS resources=5 mutations=0 external_provider_calls=0"));
 });
