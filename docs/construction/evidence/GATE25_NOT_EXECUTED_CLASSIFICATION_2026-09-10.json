@@ -1,0 +1,882 @@
+{
+  "document_id": "ACPOS_GATE25_NOT_EXECUTED_CLASSIFICATION",
+  "status": "CURRENT_MACHINE_CLASSIFICATION_NO_DISPOSITION_PROMOTION",
+  "as_of": "2026-09-10T16:15:00+08:00",
+  "denominator": 1481,
+  "ledger_counts": {
+    "PASS": 5,
+    "BLOCKED": 68,
+    "NOT_EXECUTED": 1408
+  },
+  "remaining_not_executed": 1408,
+  "by_resource_type": {
+    "ACTION": 301,
+    "CONTROL": 1107
+  },
+  "by_risk_tier": {
+    "STANDARD": 1309,
+    "HIGH": 99
+  },
+  "by_action_family": {
+    "NAV_OPEN": 73,
+    "REFRESH": 13,
+    "CONFIGURE": 10,
+    "OTHER_ACTION": 155,
+    "APPROVE": 12,
+    "EXPORT": 14,
+    "SEARCH": 20,
+    "SAVE": 3,
+    "VALIDATE": 1,
+    "CONTROL": 1107
+  },
+  "exact_resource_key_referenced_in_current_operation_registry": {
+    "YES": 0,
+    "NO": 1408
+  },
+  "registry_referenced_not_executed_resource_keys": [],
+  "by_page": [
+    {
+      "page": "workspace:CORE-06",
+      "count": 60,
+      "families": {
+        "OTHER_ACTION": 10,
+        "CONTROL": 50
+      }
+    },
+    {
+      "page": "workspace:ASSET-01",
+      "count": 49,
+      "families": {
+        "OTHER_ACTION": 11,
+        "CONTROL": 38
+      }
+    },
+    {
+      "page": "workspace:STR-06",
+      "count": 49,
+      "families": {
+        "OTHER_ACTION": 4,
+        "CONTROL": 45
+      }
+    },
+    {
+      "page": "workspace:CORE-01",
+      "count": 38,
+      "families": {
+        "OTHER_ACTION": 5,
+        "SAVE": 1,
+        "VALIDATE": 1,
+        "CONTROL": 31
+      }
+    },
+    {
+      "page": "workspace:VIDEO-01",
+      "count": 30,
+      "families": {
+        "OTHER_ACTION": 10,
+        "CONTROL": 20
+      }
+    },
+    {
+      "page": "workspace:CORE-02",
+      "count": 29,
+      "families": {
+        "OTHER_ACTION": 9,
+        "CONTROL": 20
+      }
+    },
+    {
+      "page": "admin:SYS-01",
+      "count": 28,
+      "families": {
+        "OTHER_ACTION": 2,
+        "NAV_OPEN": 1,
+        "CONTROL": 25
+      }
+    },
+    {
+      "page": "admin:ERP-01",
+      "count": 27,
+      "families": {
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 9,
+        "CONTROL": 17
+      }
+    },
+    {
+      "page": "admin:SOC-02",
+      "count": 27,
+      "families": {
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "OTHER_ACTION": 6,
+        "CONTROL": 19
+      }
+    },
+    {
+      "page": "workspace:CORE-03",
+      "count": 26,
+      "families": {
+        "OTHER_ACTION": 5,
+        "CONTROL": 21
+      }
+    },
+    {
+      "page": "workspace:QA-01",
+      "count": 25,
+      "families": {
+        "OTHER_ACTION": 4,
+        "NAV_OPEN": 1,
+        "CONTROL": 20
+      }
+    },
+    {
+      "page": "workspace:CORE-04",
+      "count": 23,
+      "families": {
+        "OTHER_ACTION": 8,
+        "CONTROL": 15
+      }
+    },
+    {
+      "page": "workspace:VIDEO-02",
+      "count": 23,
+      "families": {
+        "OTHER_ACTION": 2,
+        "NAV_OPEN": 1,
+        "CONTROL": 20
+      }
+    },
+    {
+      "page": "admin:DEV-02",
+      "count": 20,
+      "families": {
+        "OTHER_ACTION": 2,
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 15
+      }
+    },
+    {
+      "page": "admin:AIAPI-05",
+      "count": 19,
+      "families": {
+        "APPROVE": 1,
+        "CONFIGURE": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 16
+      }
+    },
+    {
+      "page": "admin:DEV-01",
+      "count": 18,
+      "families": {
+        "OTHER_ACTION": 4,
+        "NAV_OPEN": 1,
+        "CONTROL": 13
+      }
+    },
+    {
+      "page": "workspace:ASSET-02",
+      "count": 18,
+      "families": {
+        "OTHER_ACTION": 4,
+        "NAV_OPEN": 1,
+        "CONTROL": 13
+      }
+    },
+    {
+      "page": "admin:ERP-02",
+      "count": 17,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 3,
+        "CONTROL": 12
+      }
+    },
+    {
+      "page": "admin:SYS-07",
+      "count": 17,
+      "families": {
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "CONTROL": 14
+      }
+    },
+    {
+      "page": "admin:DEV-05",
+      "count": 16,
+      "families": {
+        "OTHER_ACTION": 2,
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "CONTROL": 12
+      }
+    },
+    {
+      "page": "admin:SOC-04",
+      "count": 16,
+      "families": {
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 2,
+        "CONTROL": 13
+      }
+    },
+    {
+      "page": "workspace:CORE-05",
+      "count": 16,
+      "families": {
+        "OTHER_ACTION": 5,
+        "CONTROL": 11
+      }
+    },
+    {
+      "page": "admin:DEV-04",
+      "count": 15,
+      "families": {
+        "OTHER_ACTION": 2,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 11
+      }
+    },
+    {
+      "page": "admin:SOC-05",
+      "count": 15,
+      "families": {
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "SEARCH": 1,
+        "CONTROL": 12
+      }
+    },
+    {
+      "page": "admin:STR-06",
+      "count": 15,
+      "families": {
+        "OTHER_ACTION": 3,
+        "NAV_OPEN": 1,
+        "CONTROL": 11
+      }
+    },
+    {
+      "page": "workspace:QA-02",
+      "count": 15,
+      "families": {
+        "APPROVE": 1,
+        "OTHER_ACTION": 2,
+        "NAV_OPEN": 1,
+        "CONTROL": 11
+      }
+    },
+    {
+      "page": "admin:IAM-05",
+      "count": 14,
+      "families": {
+        "NAV_OPEN": 1,
+        "CONTROL": 13
+      }
+    },
+    {
+      "page": "workspace:QA-05",
+      "count": 14,
+      "families": {
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 1,
+        "REFRESH": 1,
+        "CONTROL": 11
+      }
+    },
+    {
+      "page": "workspace:VIDEO-03",
+      "count": 14,
+      "families": {
+        "OTHER_ACTION": 4,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "workspace:WB-01",
+      "count": 14,
+      "families": {
+        "CONTROL": 14
+      }
+    },
+    {
+      "page": "admin:AIAPI-06",
+      "count": 13,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:API-04",
+      "count": 13,
+      "families": {
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 1,
+        "SEARCH": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:DEV-03",
+      "count": 13,
+      "families": {
+        "OTHER_ACTION": 3,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:IAM-06",
+      "count": 13,
+      "families": {
+        "APPROVE": 1,
+        "CONFIGURE": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:KB-01",
+      "count": 13,
+      "families": {
+        "APPROVE": 1,
+        "CONFIGURE": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:KB-03",
+      "count": 13,
+      "families": {
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:SG-01",
+      "count": 13,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:SG-03",
+      "count": 13,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:SOC-03",
+      "count": 13,
+      "families": {
+        "OTHER_ACTION": 1,
+        "SAVE": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:STR-03",
+      "count": 13,
+      "families": {
+        "APPROVE": 1,
+        "SAVE": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:STR-05",
+      "count": 13,
+      "families": {
+        "APPROVE": 1,
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:SYS-05",
+      "count": 13,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "workspace:ASSET-04",
+      "count": 13,
+      "families": {
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 2,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "workspace:QA-03",
+      "count": 13,
+      "families": {
+        "OTHER_ACTION": 2,
+        "NAV_OPEN": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "workspace:VIDEO-04",
+      "count": 13,
+      "families": {
+        "OTHER_ACTION": 2,
+        "NAV_OPEN": 1,
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:AIAPI-02",
+      "count": 12,
+      "families": {
+        "CONFIGURE": 1,
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:AIAPI-09",
+      "count": 12,
+      "families": {
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:API-02",
+      "count": 12,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:API-03",
+      "count": 12,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:IAM-02",
+      "count": 12,
+      "families": {
+        "APPROVE": 1,
+        "CONTROL": 11
+      }
+    },
+    {
+      "page": "admin:IAM-04",
+      "count": 12,
+      "families": {
+        "APPROVE": 1,
+        "CONFIGURE": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:SG-02",
+      "count": 12,
+      "families": {
+        "NAV_OPEN": 1,
+        "CONTROL": 11
+      }
+    },
+    {
+      "page": "admin:SOC-01",
+      "count": 12,
+      "families": {
+        "CONFIGURE": 1,
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:STR-01",
+      "count": 12,
+      "families": {
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "SEARCH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:STR-02",
+      "count": 12,
+      "families": {
+        "APPROVE": 1,
+        "CONFIGURE": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:STR-04",
+      "count": 12,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:SYS-02",
+      "count": 12,
+      "families": {
+        "APPROVE": 1,
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:SYS-04",
+      "count": 12,
+      "families": {
+        "APPROVE": 1,
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "workspace:INFO-01",
+      "count": 12,
+      "families": {
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "SEARCH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "workspace:REL-01",
+      "count": 12,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "workspace:STR-01",
+      "count": 12,
+      "families": {
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "SEARCH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "workspace:STR-02",
+      "count": 12,
+      "families": {
+        "CONFIGURE": 1,
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "workspace:STR-03",
+      "count": 12,
+      "families": {
+        "OTHER_ACTION": 2,
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "workspace:STR-04",
+      "count": 12,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:AIAPI-07",
+      "count": 11,
+      "families": {
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:API-06",
+      "count": 11,
+      "families": {
+        "APPROVE": 1,
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "admin:IAM-03",
+      "count": 11,
+      "families": {
+        "CONFIGURE": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:KB-02",
+      "count": 11,
+      "families": {
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:SYS-06",
+      "count": 11,
+      "families": {
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "workspace:INFO-02",
+      "count": 11,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "workspace:QA-04",
+      "count": 11,
+      "families": {
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "workspace:STR-05",
+      "count": 11,
+      "families": {
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:AIAPI-01",
+      "count": 10,
+      "families": {
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "admin:API-01",
+      "count": 10,
+      "families": {
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "admin:API-05",
+      "count": 10,
+      "families": {
+        "NAV_OPEN": 1,
+        "OTHER_ACTION": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "admin:IAM-01",
+      "count": 10,
+      "families": {
+        "NAV_OPEN": 1,
+        "CONTROL": 9
+      }
+    },
+    {
+      "page": "admin:SYS-03",
+      "count": 10,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "workspace:ASSET-03",
+      "count": 10,
+      "families": {
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "workspace:EDIT-03",
+      "count": 10,
+      "families": {
+        "OTHER_ACTION": 2,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "workspace:LIB-01",
+      "count": 10,
+      "families": {
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "workspace:LIB-02",
+      "count": 10,
+      "families": {
+        "EXPORT": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "workspace:REL-02",
+      "count": 10,
+      "families": {
+        "NAV_OPEN": 1,
+        "REFRESH": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "workspace:REL-03",
+      "count": 10,
+      "families": {
+        "OTHER_ACTION": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "workspace:EDIT-01",
+      "count": 10,
+      "families": {
+        "CONTROL": 10
+      }
+    },
+    {
+      "page": "admin:AIAPI-03",
+      "count": 9,
+      "families": {
+        "CONFIGURE": 1,
+        "NAV_OPEN": 1,
+        "CONTROL": 7
+      }
+    },
+    {
+      "page": "admin:AIAPI-04",
+      "count": 9,
+      "families": {
+        "NAV_OPEN": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "admin:AIAPI-08",
+      "count": 9,
+      "families": {
+        "NAV_OPEN": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "admin:API-07",
+      "count": 9,
+      "families": {
+        "NAV_OPEN": 1,
+        "SEARCH": 1,
+        "CONTROL": 7
+      }
+    },
+    {
+      "page": "workspace:EDIT-04",
+      "count": 9,
+      "families": {
+        "OTHER_ACTION": 1,
+        "CONTROL": 8
+      }
+    },
+    {
+      "page": "workspace:INFO-03",
+      "count": 9,
+      "families": {
+        "OTHER_ACTION": 2,
+        "CONTROL": 7
+      }
+    },
+    {
+      "page": "workspace:LIB-03",
+      "count": 9,
+      "families": {
+        "OTHER_ACTION": 2,
+        "CONTROL": 7
+      }
+    },
+    {
+      "page": "workspace:VOICE-01",
+      "count": 7,
+      "families": {
+        "CONTROL": 7
+      }
+    }
+  ],
+  "rule": "Classification is analysis evidence only. It does not promote any resource to PASS or BLOCKED. Each disposition change still requires exact per-resource evidence or a defensible shared blocker contract."
+}
