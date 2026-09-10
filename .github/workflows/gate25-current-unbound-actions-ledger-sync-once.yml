@@ -127,7 +127,7 @@ jobs:
       - name: Validate synchronized ledger
         shell: bash
         run: |
-          node scripts/validate-production-formal-acceptance-ledger.mjs
+          node scripts/release-formal-acceptance-ledger.mjs
 
       - name: Commit synchronized ledger and remove one-shot workflow
         shell: bash
