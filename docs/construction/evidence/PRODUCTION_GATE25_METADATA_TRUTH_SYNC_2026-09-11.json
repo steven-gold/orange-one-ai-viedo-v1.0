@@ -1,0 +1,43 @@
+{
+  "document_id": "ACPOS_PRODUCTION_GATE25_METADATA_TRUTH_SYNC",
+  "status": "VERIFIED_SYNC",
+  "recorded_at": "2026-09-11T01:36:23.340609+08:00",
+  "production_release_sha": "526316501c86fe54f02603cdb47da5ad51a005dc",
+  "post_deploy": {
+    "run_number": 1561,
+    "run_id": 34501027032,
+    "ready_http": 200,
+    "projections": 18,
+    "auth_http": "PASS",
+    "browser_cases": 54,
+    "visible_pages": 18,
+    "dom": {
+      "pages": 18,
+      "interactive": 560,
+      "governed": 560,
+      "enabled": 342,
+      "disabled": 218
+    }
+  },
+  "production_neon": {
+    "project": "wild-wave-25661146",
+    "branch": "main",
+    "database": "neondb",
+    "migration_count": 53,
+    "migration_0053_checksum": "e410c52e8a65e31f86554b591d1e9d2d895127d47e30a9402a3558a6eb3f9149"
+  },
+  "formal_denominator": {
+    "controls": 1155,
+    "actions": 326,
+    "total": 1481
+  },
+  "gate25_counts": {
+    "PASS": 51,
+    "BLOCKED": 159,
+    "NOT_EXECUTED": 1271
+  },
+  "mutation_scope": "METADATA_ONLY",
+  "entries_changed": 0,
+  "formal_resources_changed": 0,
+  "rule": "Synchronizes already-verified Production deployment, migration, and aggregate DOM metadata only. It must not promote any per-resource disposition or alter the 1481-resource denominator."
+}
