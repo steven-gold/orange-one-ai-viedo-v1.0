@@ -43,7 +43,10 @@ function jsonError(correlation_id: string, status: number, error_uid: string, re
 }
 
 async function run(port_uid: CorePortUid, request: NextRequest, context: RouteContext, payload?: unknown) {
-  const correlation_id = correlationId(request);
+  const payloadCorrelation = payload && typeof payload === "object" && !Array.isArray(payload) && typeof (payload as Record<string, unknown>).correlation_id === "string"
+    ? String((payload as Record<string, unknown>).correlation_id).trim()
+    : "";
+  const correlation_id = request.headers.get("x-correlation-id")?.trim() || payloadCorrelation || correlationId(request);
   const rawPathParams = await context.params;
   const path_params = normalizePathParams(port_uid, rawPathParams);
   const missing = missingPathKey(port_uid, path_params);

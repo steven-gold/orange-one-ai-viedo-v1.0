@@ -14,6 +14,7 @@ test("KB-01 pause/resume materializes Current KnowledgeSource state/version cont
   assert.match(authority, /DRAFT->ACTIVE[\s\S]*ACTIVE->PAUSED[\s\S]*PAUSED->ACTIVE/);
   assert.match(authority, /pauseKnowledgeSource[\s\S]*\/v1\/knowledge\/sources\/\{sourceId\}\/pause/);
   assert.match(authority, /resumeKnowledgeSource[\s\S]*\/v1\/knowledge\/sources\/\{sourceId\}\/resume/);
+  assert.match(authority, /retireKnowledgeSource[\s\S]*\/v1\/knowledge\/sources\/\{sourceId\}\/retire/);
 
   assert.match(runtime, /exactKeys\(payload\)/);
   assert.match(runtime, /KB01_SOURCE_ID_MISMATCH/);
@@ -27,6 +28,8 @@ test("KB-01 pause/resume materializes Current KnowledgeSource state/version cont
   assert.match(runtime, /WITH updated AS/);
   assert.match(runtime, /knowledge\.source\.paused/);
   assert.match(runtime, /knowledge\.source\.resumed/);
+  assert.match(runtime, /knowledge\.source\.retired/);
+  assert.match(runtime, /status IN \('DRAFT','ACTIVE','PAUSED'\)/);
   assert.match(runtime, /external_request_sent: false/);
   assert.doesNotMatch(runtime, /fetch\(|ProviderGateway|external_request_sent:\s*true/);
 
@@ -48,8 +51,10 @@ test("KB-01 Production projection and UI use real source_version and exact state
   assert.match(projection, /"KB-01-CTL-SOURCE-SAVE": canConfigure && sourceStatus === "DRAFT"/);
   assert.match(projection, /"KB-01-CTL-SOURCE-PAUSE": canConfigure && sourceStatus === "ACTIVE"/);
   assert.match(projection, /"KB-01-CTL-SOURCE-RESUME": canConfigure && sourceStatus === "PAUSED"/);
+  assert.match(projection, /"KB-01-CTL-SOURCE-RETIRE": canConfigure && \(sourceStatus === "DRAFT" \|\| sourceStatus === "ACTIVE" \|\| sourceStatus === "PAUSED"\)/);
 
   assert.match(visual, /window\.prompt/);
+  assert.match(visual, /retireKnowledgeSource/);
   assert.match(visual, /reason: reason\.trim\(\)/);
   assert.match(visual, /correlation_id: correlationId/);
   assert.match(visual, /"x-correlation-id": correlationId/);
@@ -80,4 +85,28 @@ test("migration 0024 stages KnowledgeSource state/version, configure permission,
   assert.match(manifest, /migration_id: 0024_kb_source_state_permission_rls_closure/);
   assert.match(manifest, /payload_sha256: de41bfa7773dd495056b49e656fa8fd0fb5c032b5d0f680065aa4f90911c9341/);
   assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 24);
+});
+
+
+test("migration 0040 stages KnowledgeSource retire audit RLS without a new table", async () => {
+  const { createHash } = await import("node:crypto");
+  const migration = await read("database/migrations/0040_kb_source_retire_audit_rls_closure.sql");
+  const manifest = await read("database/migrations/migration_checksum_manifest.yaml");
+  const neonRuntime = await read("src/server/database/neonRuntime.ts");
+  const identity = await read("src/server/shared/identityPageCommandRuntime.ts");
+  const separator = "\nINSERT INTO schema_migration_history";
+  const index = migration.indexOf(separator);
+  assert.ok(index > 0);
+  const checksum = createHash("sha256").update(migration.slice(0, index)).digest("hex");
+  assert.equal(checksum, "301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50");
+  assert.match(migration, /knowledge\.source\.retired/);
+  assert.match(migration, /acpos_audit_events_kb_insert/);
+  assert.match(migration, /KB0040_RLS_POLICY_COUNT_MISMATCH/);
+  assert.doesNotMatch(migration, /CREATE TABLE/i);
+  assert.doesNotMatch(migration, /INSERT INTO public\.knowledge_sources/);
+  assert.match(manifest, /migration_id: 0040_kb_source_retire_audit_rls_closure/);
+  assert.match(manifest, /payload_sha256: 301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50/);
+  assert.match(identity, /retireKnowledgeSource/);
+  assert.match(identity, /PROVIDER_GATEWAY_NOT_MATERIALIZED/);
+  assert.ok(Number(neonRuntime.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0) >= 40);
 });

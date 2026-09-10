@@ -1,8 +1,8 @@
 contract_meta:
-  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.38
+  contract_id: ACPOS-MIGRATION-CHECKSUM-1.0.49
   rule: checksum is calculated from migration payload excluding the terminal schema_migration_history registration statement; zero value is forbidden.
   bootstrap_rule: 0001 is self-contained and must be executed before all later migrations.
-  authority_revision: 2026-09-09-PRODUCTION-MIGRATIONS-0039-APPLIED-VERIFIED
+  authority_revision: 2026-09-10-STAGED-0049-VOICE-DEPARTMENT-CONTRACT
   live_target_revision: 2026-09-05-REQUIRED-ON-WILD-WAVE
   live_neon_project_id: wild-wave-25661146
   live_database_name: neondb
@@ -188,3 +188,63 @@ migrations:
   approval_ref: CR-CONVERSATION-0039-PENDING-PRODUCTION-APPLY
   bootstrap: REQUIRES_PRIOR_MIGRATION
   production_apply: APPLIED_VERIFIED
+
+- migration_id: 0040_kb_source_retire_audit_rls_closure
+  payload_sha256: 301dbcfd2f65def360d8f6f128f0b4010c390c09155db7bc2a3ec07d4f9e4d50
+  approval_ref: CR-KB-0040-PENDING-PRODUCTION-APPLY
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
+
+- migration_id: 0041_governed_lock_decision_service_identity_foundation
+  payload_sha256: 58a7d78fed454b5f1a49a18b2978f44fec248a4dd184ed4f6ea60e998c22f0c5
+  approval_ref: CR-RUNTIME-0041
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
+
+- migration_id: 0042_lock_request_canonical_event_closure
+  payload_sha256: 4eeae25811a6b215f8e2a4a653397998bf1ed3d569ace9ac8e54788cf29b415c
+  approval_ref: CR-RUNTIME-0042
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
+
+- migration_id: 0043_production_test_only_lineage_cleanup
+  payload_sha256: adc47bc0c6c20a8178b124534866ebd0121f1d08725cce7dc62f3b6bf0a113cc
+  approval_ref: CR-RUNTIME-0043
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
+
+- migration_id: 0044_command_acceptance_fixture_cleanup
+  payload_sha256: 4115f0e111e13dcbb044432871ba7116276ace5ef50083c8c402ba6cb5a60579
+  approval_ref: CR-RUNTIME-0044
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
+
+- migration_id: 0045_local_test_identity_cleanup
+  payload_sha256: af1384b6f8c1cdb36a69e4d1e69baabdf8c1fbcce7bc17edc7c5ad39feaf0376
+  approval_ref: CR-RUNTIME-0045
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
+
+- migration_id: 0046_compiler_rls_permission_foundation
+  payload_sha256: 73f8b38070d62a8c12307674d9e6c0fbefd838c2eaa23da3f1ca7b7d38745c92
+  approval_ref: CR-RUNTIME-0046
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
+
+- migration_id: 0047_canonical_script_version_runtime
+  payload_sha256: 7f9a709236c13482b67deeb63d09085eadcde1a0ae05920d39a31b0e67b8e19f
+  approval_ref: CR-RUNTIME-0047
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
+
+- migration_id: 0048_dag_edge_rls_runtime_closure
+  payload_sha256: 5e218c9a78826c0e56719ef7865957b75e4508a021cac9f858edebc7bd2a2f60
+  approval_ref: CR-RUNTIME-0048
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10
+
+- migration_id: 0049_voice_department_schema_contract
+  payload_sha256: efaca6966229c2cd10c6e0ea4e509d2df8f3c6621cfb460e66635010dacbf947
+  approval_ref: CR-RUNTIME-0049
+  bootstrap: REQUIRES_PRIOR_MIGRATION
+  production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10

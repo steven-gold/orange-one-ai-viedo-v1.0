@@ -392,3 +392,23 @@
 .stageSummary span,.stagePrimaryHint span { color:var(--text-muted); font-size:11px; }
 .stageSummary strong,.stagePrimaryHint strong { color:var(--text-primary); font-size:13px; }
 .stagePrimaryHint { justify-self:end; min-width:280px; padding:8px 12px; border:1px solid var(--border-subtle); border-radius:var(--button-radius); background:var(--surface-input); }
+
+.modalBackdrop {
+  position:fixed; inset:0; z-index:80; display:grid; place-items:center; padding:24px;
+  background:rgba(3,6,18,.72); backdrop-filter:blur(5px);
+}
+.lockModal {
+  width:min(560px,calc(100vw - 48px)); max-height:calc(100vh - 48px); overflow:auto;
+  display:grid; gap:16px; padding:20px; border:1px solid var(--border-active);
+  border-radius:var(--panel-radius); background:var(--surface-panel); box-shadow:0 24px 70px rgba(0,0,0,.48);
+}
+.lockModal h2 { margin:0; color:var(--text-primary); font-size:18px; }
+.modalField { display:grid; gap:7px; color:var(--text-secondary); font-size:12px; }
+.modalField textarea,.modalField select {
+  width:100%; min-height:42px; padding:10px 12px; border:1px solid var(--border-subtle);
+  border-radius:var(--button-radius); background:var(--surface-input); color:var(--text-primary);
+}
+.modalField textarea { min-height:96px; resize:vertical; }
+.modalReadOnly { display:flex; justify-content:space-between; gap:16px; padding:10px 12px; border:1px solid var(--border-subtle); border-radius:var(--button-radius); color:var(--text-secondary); }
+.modalReadOnly strong { color:var(--text-primary); }
+.modalActions { display:flex; justify-content:flex-end; gap:10px; }

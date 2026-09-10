@@ -508,6 +508,10 @@ async function authorizeInfoCommand(request: InfoRequest): Promise<{ allowed: tr
 }
 
 async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: true } | { allowed: false; reason_code: string }> {
+  if(request.port_uid==="CORE-01-PORT-LOCK-DECIDE"){
+    const decisionGate=await evaluateResourceAction("api:decideLockReview","EXECUTE");
+    return decisionGate.allowed?{allowed:true}:decisionGate;
+  }
   const page=await evaluatePageView(CURRENT_PAGE_RESOURCE_KEYS["CORE-01"]);
   if(!page.allowed)return page;
   const governedPermission:Partial<Record<CoreRuntimeRequest["port_uid"],string>>={
@@ -528,6 +532,8 @@ async function authorizeCore(request: CoreRuntimeRequest): Promise<{ allowed: tr
     "CORE-01-PORT-BLUEPRINT-VALIDATE":"api:validateBlueprint",
     "CORE-01-PORT-BLUEPRINT-APPROVE":"api:approveBlueprint",
     "CORE-01-PORT-CHILD-LOCK":"api:requestChildLock",
+    "CORE-01-PORT-LOCK-DECIDE":"api:decideLockReview",
+    "CORE-01-PORT-CANONICAL-SCRIPT-CREATE":"api:createCanonicalScriptVersion",
     "CORE-01-PORT-CANONICAL-SCRIPT":"api:getCanonicalScript",
   };
   const resource=governedPermission[request.port_uid];
@@ -1111,6 +1117,7 @@ async function authorizeKnowledge(request:KnowledgeRuntimeRequest):Promise<{allo
     ||request.operation==="updateKnowledgeSource"
     ||request.operation==="pauseKnowledgeSource"
     ||request.operation==="resumeKnowledgeSource"
+    ||request.operation==="retireKnowledgeSource"
   ){
     const gate=await evaluateResourceAction("permission:knowledge.source.configure","EXECUTE");
     return gate.allowed?{allowed:true}:gate;
@@ -1142,7 +1149,7 @@ async function executeKnowledge(request: KnowledgeRuntimeRequest): Promise<unkno
   if (request.operation === "createKnowledgeSource" || request.operation === "updateKnowledgeSource") {
     return mutateProductionKnowledgeSource(request);
   }
-  if (request.operation === "pauseKnowledgeSource" || request.operation === "resumeKnowledgeSource") {
+  if (request.operation === "pauseKnowledgeSource" || request.operation === "resumeKnowledgeSource" || request.operation === "retireKnowledgeSource") {
     return transitionProductionKnowledgeSource(request);
   }
   if (request.operation === "getCitation") {

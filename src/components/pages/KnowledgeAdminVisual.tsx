@@ -283,7 +283,7 @@ export function KnowledgeAdminVisual() {
         return;
       }
 
-      if (trace.operation === "pauseKnowledgeSource" || trace.operation === "resumeKnowledgeSource") {
+      if (trace.operation === "pauseKnowledgeSource" || trace.operation === "resumeKnowledgeSource" || trace.operation === "retireKnowledgeSource") {
         const sourceId = knowledgeEntityValue(projection, "selected_source", "source_id");
         const sourceVersionRaw = knowledgeEntityValue(projection, "selected_source", "source_version");
         const sourceVersion = sourceVersionRaw ? Number(sourceVersionRaw) : NaN;
@@ -292,7 +292,7 @@ export function KnowledgeAdminVisual() {
           return;
         }
         const reason = typeof window !== "undefined"
-          ? window.prompt(trace.operation === "pauseKnowledgeSource" ? "暫停原因" : "恢復原因")
+          ? window.prompt(trace.operation === "pauseKnowledgeSource" ? "暫停原因" : trace.operation === "resumeKnowledgeSource" ? "恢復原因" : "退役原因")
           : null;
         if (!reason || !reason.trim()) {
           setRuntimeError("KB01_SOURCE_STATE_REASON_REQUIRED");

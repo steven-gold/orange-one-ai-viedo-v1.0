@@ -171,11 +171,27 @@ function projection() {
     projects: state.projects.map((item) => ({
       project_id: item.project_id,
       project_version_ref: item.project_version_ref,
+      project_version_no: 1,
+      workspace_id: "00000000-0000-4000-8000-000000000001",
+      status: item.state,
       label: item.label,
     })),
     topics: state.topics
       .filter((item) => !state.project_id || item.project_id === state.project_id)
-      .map((item) => ({ topic_id: item.topic_id, topic_version_ref: item.topic_version_ref, project_id: item.project_id, label: item.label })),
+      .map((item) => {
+        const blueprint=state.blueprints.find(candidate=>candidate.topic_id===item.topic_id)??null;
+        return {
+          topic_id:item.topic_id,topic_version_ref:item.topic_version_ref,project_id:item.project_id,label:item.label,
+          blueprint_version_ref:blueprint?.blueprint_version_ref??null,
+          blueprint_version_no:blueprint?1:null,
+          blueprint_status:blueprint?.state??null,
+          topic_scope_ref:blueprint?"00000000-0000-4000-8000-000000000002":null,
+        };
+      }),
+    lock_context: {
+      approved_criteria: [{ criteria_version_id: "00000000-0000-4000-8000-000000000003", label: "[TEST] CORE-CRITERIA · v1" }],
+      eligible_reviewer_count: 1,
+    },
     work_items: (topicMode
       ? ["TOPIC_SCOPE", "PRODUCTION_SCRIPT"]
       : ["STORY", "CHAPTER", "WORLD_SETTING", "DNA", "BLUEPRINT"])

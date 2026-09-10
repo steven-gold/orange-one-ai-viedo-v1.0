@@ -24,6 +24,8 @@ const GOVERNED_PORTS=new Set<CoreRuntimeRequest["port_uid"]>([
   "CORE-01-PORT-BLUEPRINT-VALIDATE",
   "CORE-01-PORT-BLUEPRINT-APPROVE",
   "CORE-01-PORT-CHILD-LOCK",
+  "CORE-01-PORT-LOCK-DECIDE",
+  "CORE-01-PORT-CANONICAL-SCRIPT-CREATE",
   "CORE-01-PORT-CANONICAL-SCRIPT",
 ]);
 
@@ -402,44 +404,73 @@ async function submitCoreReview(request:CoreRuntimeRequest){
   return{project_id:projectId,project_version_ref:versionId,candidate_ref:text(accepted.candidate_ref),state:"CORE_REVIEW",final_approval_granted:false};
 }
 
-async function requestMotherLock(request:CoreRuntimeRequest){
-  const payload=rec(request.payload);
-  const projectId=requiredUuid(payload.project_id,"PROJECT_ID_REQUIRED");
-  const projectVersionId=requiredUuid(payload.project_version_ref,"REQUIRED_PROJECT_VERSION_REF_MISSING");
-  const {sql,session_token_hash}=await context();
-  const version=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT pv.project_version_id::text AS project_version_ref,pv.project_id::text AS project_id,
-           pv.status::text AS status,pv.content_hash::text AS content_hash
-    FROM public.project_versions pv
-    WHERE pv.project_version_id=${projectVersionId}::uuid AND pv.project_id=${projectId}::uuid
-    LIMIT 1
-  `));
-  if(!version)throw new NamedRuntimeError("PROJECT_VERSION_NOT_FOUND");
-  const existing=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT lock_review_id::text AS lock_review_id,status::text AS status,
-           expected_target_hash::text AS expected_target_hash,evidence,reviewer_path
-    FROM public.lock_reviews
-    WHERE lock_kind='MOTHER' AND target_type='PROJECT_VERSION'
-      AND target_version_id=${projectVersionId}::uuid
-    ORDER BY created_at DESC
-    LIMIT 1
-  `));
-  if(existing){
-    const reviewerPath=Array.isArray(existing.reviewer_path)?existing.reviewer_path:[];
-    const evidence=rec(existing.evidence);
-    const evidenceRefs=stringArray(evidence.evidence_refs);
-    if(reviewerPath.length===0||evidenceRefs.length===0){
-      throw new NamedRuntimeError("CORE_LOCK_REVIEW_CONTRACT_INVALID");
-    }
-    if(text(existing.expected_target_hash)!==text(version.content_hash)){
-      throw new NamedRuntimeError("CORE_LOCK_REVIEW_TARGET_STALE");
-    }
-    return{
-      lock_review_id:text(existing.lock_review_id),project_id:projectId,project_version_ref:projectVersionId,
-      lock_state:text(existing.status),final_lock_granted:false,idempotent_replay:true,
-    };
+function lockRequestInput(payload:Record<string,unknown>){
+  const allowedKeys=new Set(["scope","expected_version","correlation_id","idempotency_key","target_ref","request_reason","requested_scope_refs"]);
+  if(Object.keys(payload).some((key)=>!allowedKeys.has(key)))throw new NamedRuntimeError("LOCK_REQUEST_SCHEMA_INVALID");
+  const scope=nonEmptyObject(payload.scope,"R9_CONTEXT_REQUIRED");
+  const expectedVersion=required(payload.expected_version,"EXPECTED_VERSION_INVALID");
+  if(!/^v[1-9][0-9]*$/.test(expectedVersion))throw new NamedRuntimeError("EXPECTED_VERSION_INVALID");
+  const correlationId=requiredUuid(payload.correlation_id,"CORRELATION_ID_INVALID");
+  const idempotencyKey=required(payload.idempotency_key,"IDEMPOTENCY_KEY_INVALID");
+  if(idempotencyKey.length<16||idempotencyKey.length>128)throw new NamedRuntimeError("IDEMPOTENCY_KEY_INVALID");
+  const targetRef=requiredUuid(payload.target_ref,"TARGET_REF_INVALID");
+  const requestReason=required(payload.request_reason,"REQUEST_REASON_INVALID");
+  const requestedScopeRefs=payload.requested_scope_refs===undefined?[]:stringArray(payload.requested_scope_refs);
+  if(payload.requested_scope_refs!==undefined&&(!Array.isArray(payload.requested_scope_refs)||requestedScopeRefs.length!==(payload.requested_scope_refs as unknown[]).length)){
+    throw new NamedRuntimeError("REQUESTED_SCOPE_REFS_INVALID");
   }
-  throw new NamedRuntimeError("CORE_LOCK_REVIEWER_PATH_UNRESOLVED");
+  return{scope,expectedVersion,correlationId,idempotencyKey,targetRef,requestReason,requestedScopeRefs};
+}
+
+async function requestLockReview(request:CoreRuntimeRequest,kind:"MOTHER"|"CHILD"){
+  const input=lockRequestInput(rec(request.payload));
+  const {sql,session_token_hash}=await context();
+  try{
+    const rows=await runRlsActorQuery(sql,session_token_hash,sql`
+      SELECT lock_review_id::text,lock_kind,review_status,review_version,target_ref::text,
+             criteria_version_id::text,reviewer_count,evidence_count,idempotent_replay
+      FROM acpos_runtime.request_lock_review(
+        ${kind},
+        ${JSON.stringify(input.scope)}::jsonb,
+        ${input.expectedVersion},
+        ${input.correlationId}::uuid,
+        ${input.idempotencyKey},
+        ${input.targetRef}::uuid,
+        ${input.requestReason},
+        ${JSON.stringify(input.requestedScopeRefs)}::jsonb
+      )
+    `);
+    const row=first(rows);
+    if(!row)throw new NamedRuntimeError("LOCK_REVIEW_REQUEST_WRITE_FAILED");
+    return{
+      lock_review_id:text(row.lock_review_id),
+      lock_kind:text(row.lock_kind),
+      lock_state:text(row.review_status),
+      review_version:Number(row.review_version),
+      target_ref:text(row.target_ref),
+      criteria_version_id:text(row.criteria_version_id),
+      reviewer_count:Number(row.reviewer_count),
+      evidence_count:Number(row.evidence_count),
+      final_lock_granted:false,
+      idempotent_replay:row.idempotent_replay===true,
+      correlation_id:input.correlationId,
+    };
+  }catch(error){
+    const message=error instanceof Error?error.message:String(error);
+    for(const code of [
+      "PERMISSION_OR_SCOPE_DENIED","R9_CONTEXT_REQUIRED","EXPECTED_VERSION_INVALID","CORRELATION_ID_INVALID",
+      "IDEMPOTENCY_KEY_INVALID","TARGET_REF_INVALID","REQUEST_REASON_INVALID","REQUESTED_SCOPE_REFS_INVALID",
+      "IDEMPOTENCY_CONFLICT","LOCK_TARGET_NOT_READY","VERSION_CONFLICT","SCOPE_WORKSPACE_MISMATCH",
+      "SCOPE_PROJECT_MISMATCH","SCOPE_TOPIC_MISMATCH","LOCK_CRITERIA_AMBIGUOUS","LOCK_CRITERIA_VERSION_REQUIRED",
+      "LOCK_EVIDENCE_REQUIRED","CORE_LOCK_REVIEWER_PATH_UNRESOLVED"
+    ])if(message.includes(code))throw new NamedRuntimeError(code);
+    if(message.includes("REQUESTED_SCOPE_REF_NOT_RESOLVED"))throw new NamedRuntimeError("REQUESTED_SCOPE_REF_NOT_RESOLVED");
+    throw error;
+  }
+}
+
+async function requestMotherLock(request:CoreRuntimeRequest){
+  return requestLockReview(request,"MOTHER");
 }
 
 async function createTopic(request:CoreRuntimeRequest){
@@ -600,33 +631,120 @@ async function approveBlueprint(request:CoreRuntimeRequest){
 }
 
 async function requestChildLock(request:CoreRuntimeRequest){
+  return requestLockReview(request,"CHILD");
+}
+
+async function decideLockReview(request:CoreRuntimeRequest){
   const payload=rec(request.payload);
-  const topicId=requiredUuid(payload.topic_id,"TOPIC_ID_REQUIRED");
-  const blueprintId=requiredUuid(payload.blueprint_version_ref,"REQUIRED_BLUEPRINT_VERSION_REF_MISSING");
+  const allowedKeys=new Set(["scope","expected_version","correlation_id","idempotency_key","lock_review_id","decision","reason"]);
+  if(Object.keys(payload).some((key)=>!allowedKeys.has(key)))throw new NamedRuntimeError("LOCK_REVIEW_REQUEST_SCHEMA_INVALID");
+  const pathId=requiredUuid(request.path_params?.id,"REQUIRED_PATH_REFERENCE_MISSING:id");
+  const bodyId=requiredUuid(payload.lock_review_id,"LOCK_REVIEW_ID_INVALID");
+  if(pathId!==bodyId)throw new NamedRuntimeError("PATH_BODY_ID_MISMATCH");
+  const scope=nonEmptyObject(payload.scope,"R9_CONTEXT_REQUIRED");
+  const expectedVersion=required(payload.expected_version,"EXPECTED_VERSION_INVALID");
+  if(!/^v[1-9][0-9]*$/.test(expectedVersion))throw new NamedRuntimeError("EXPECTED_VERSION_INVALID");
+  const correlationId=requiredUuid(payload.correlation_id,"CORRELATION_ID_INVALID");
+  const idempotencyKey=required(payload.idempotency_key,"IDEMPOTENCY_KEY_INVALID");
+  if(idempotencyKey.length<16||idempotencyKey.length>128)throw new NamedRuntimeError("IDEMPOTENCY_KEY_INVALID");
+  const decision=required(payload.decision,"DECISION_INVALID");
+  if(decision!=="APPROVE"&&decision!=="REJECT")throw new NamedRuntimeError("DECISION_INVALID");
+  const reason=required(payload.reason,"REASON_INVALID");
   const {sql,session_token_hash}=await context();
-  const existing=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT lr.lock_review_id::text AS lock_review_id,lr.status::text AS status
-    FROM public.lock_reviews lr
-    JOIN public.blueprint_versions bv ON bv.blueprint_version_id=lr.target_version_id
-    JOIN public.topic_blueprints tb ON tb.topic_blueprint_id=bv.topic_blueprint_id
-    JOIN public.topic_production_contracts pc ON pc.topic_production_contract_id=tb.topic_production_contract_id
-    JOIN public.topic_versions tv ON tv.topic_version_id=pc.topic_version_id
-    WHERE lr.target_type='BLUEPRINT_VERSION' AND lr.lock_kind='CHILD'
-      AND lr.target_version_id=${blueprintId}::uuid AND tv.topic_id=${topicId}::uuid
-    ORDER BY lr.created_at DESC LIMIT 1
-  `));
-  if(existing)return{lock_review_id:text(existing.lock_review_id),topic_id:topicId,blueprint_version_ref:blueprintId,lock_state:text(existing.status),final_lock_granted:false,idempotent_replay:true};
-  const blueprint=first(await runRlsActorQuery(sql,session_token_hash,sql`
-    SELECT bv.status::text AS status,bv.content_hash::text AS content_hash,pc.topic_production_contract_id::text AS contract_id
-    FROM public.blueprint_versions bv
-    JOIN public.topic_blueprints tb ON tb.topic_blueprint_id=bv.topic_blueprint_id
-    JOIN public.topic_production_contracts pc ON pc.topic_production_contract_id=tb.topic_production_contract_id
-    JOIN public.topic_versions tv ON tv.topic_version_id=pc.topic_version_id
-    WHERE bv.blueprint_version_id=${blueprintId}::uuid AND tv.topic_id=${topicId}::uuid LIMIT 1
-  `));
-  if(!blueprint)throw new NamedRuntimeError("BLUEPRINT_VERSION_NOT_FOUND");
-  if(text(blueprint.status)!=="READY_FOR_CHILD_REVIEW")throw new NamedRuntimeError("BLUEPRINT_NOT_READY_FOR_CHILD_REVIEW");
-  throw new NamedRuntimeError("CORE_LOCK_REVIEWER_PATH_UNRESOLVED");
+  try{
+    const rows=await runRlsActorQuery(sql,session_token_hash,sql`
+      SELECT
+        lock_review_id::text,
+        lock_kind,
+        decision_status,
+        review_version,
+        lock_ref::text,
+        idempotent_replay
+      FROM acpos_runtime.decide_lock_review(
+        ${pathId}::uuid,
+        ${expectedVersion},
+        ${JSON.stringify(scope)}::jsonb,
+        ${decision},
+        ${reason},
+        ${correlationId}::uuid,
+        ${idempotencyKey}
+      )
+    `);
+    const row=first(rows);
+    if(!row)throw new NamedRuntimeError("LOCK_REVIEW_DECISION_WRITE_FAILED");
+    return{
+      lock_review_id:text(row.lock_review_id),
+      lock_kind:text(row.lock_kind),
+      decision_status:text(row.decision_status),
+      review_version:Number(row.review_version),
+      lock_ref:text(row.lock_ref),
+      idempotent_replay:row.idempotent_replay===true,
+      correlation_id:correlationId,
+    };
+  }catch(error){
+    const message=error instanceof Error?error.message:String(error);
+    for(const code of [
+      "PERMISSION_OR_SCOPE_DENIED","SEPARATION_OF_DUTIES_VIOLATION","LOCK_REVIEW_NOT_FOUND",
+      "LOCK_REVIEW_STATE_CONFLICT","VERSION_CONFLICT","IDEMPOTENCY_CONFLICT","EXPECTED_VERSION_INVALID",
+      "DECISION_INVALID","REASON_INVALID","IDEMPOTENCY_KEY_INVALID","R9_CONTEXT_REQUIRED",
+      "SCOPE_WORKSPACE_MISMATCH","SCOPE_PROJECT_MISMATCH","SCOPE_TOPIC_MISMATCH","LOCK_REVIEW_TARGET_LINEAGE_INVALID",
+    ])if(message.includes(code))throw new NamedRuntimeError(code);
+    throw error;
+  }
+}
+
+async function createCanonicalScriptVersion(request:CoreRuntimeRequest){
+  const payload=rec(request.payload);
+  const allowedKeys=new Set(["scope","expected_version","correlation_id","idempotency_key","project_id","topic_id","blueprint_version_id","content","source_script_ref","change_summary"]);
+  if(Object.keys(payload).some((key)=>!allowedKeys.has(key)))throw new NamedRuntimeError("CANONICAL_SCRIPT_REQUEST_SCHEMA_INVALID");
+  const pathTopicId=requiredUuid(request.path_params?.id,"REQUIRED_PATH_REFERENCE_MISSING:id");
+  const projectId=requiredUuid(payload.project_id,"PROJECT-ID_INVALID");
+  const topicId=requiredUuid(payload.topic_id,"TOPIC-ID_INVALID");
+  const blueprintVersionId=requiredUuid(payload.blueprint_version_id,"BLUEPRINT-VERSION-ID_INVALID");
+  if(pathTopicId!==topicId)throw new NamedRuntimeError("PATH_BODY_ID_MISMATCH");
+  const scope=nonEmptyObject(payload.scope,"R9_CONTEXT_REQUIRED");
+  const expectedVersion=required(payload.expected_version,"VERSION_REQUIRED");
+  if(!/^v[1-9][0-9]*$/.test(expectedVersion))throw new NamedRuntimeError("VERSION_REQUIRED");
+  const correlationId=requiredUuid(payload.correlation_id,"CORRELATION_ID_INVALID");
+  const idempotencyKey=required(payload.idempotency_key,"IDEMPOTENCY_KEY_INVALID");
+  if(idempotencyKey.length<16||idempotencyKey.length>128)throw new NamedRuntimeError("IDEMPOTENCY_KEY_INVALID");
+  const content=required(payload.content,"CONTENT_INVALID");
+  const sourceScriptRef=payload.source_script_ref==null?null:required(payload.source_script_ref,"SOURCE-SCRIPT-REF_INVALID");
+  const changeSummary=payload.change_summary==null?null:required(payload.change_summary,"CHANGE-SUMMARY_INVALID");
+  const {sql,session_token_hash}=await context();
+  try{
+    const rows=await runRlsActorQuery(sql,session_token_hash,sql`
+      SELECT canonical_script_version_id::text AS canonical_script_ref,
+             topic_id::text AS topic_id,
+             source_topic_version_id::text AS topic_version_id,
+             blueprint_version_id::text AS blueprint_version_id,
+             topic_production_contract_id::text AS topic_production_contract_id,
+             version_no,status,content_hash,idempotent_replay
+      FROM acpos_runtime.create_canonical_script_version(
+        ${JSON.stringify(scope)}::jsonb,${expectedVersion},${correlationId}::uuid,${idempotencyKey},
+        ${projectId}::uuid,${topicId}::uuid,${blueprintVersionId}::uuid,${content},
+        ${sourceScriptRef},${changeSummary}
+      )
+    `);
+    const row=first(rows);
+    if(!row)throw new NamedRuntimeError("CANONICAL_SCRIPT_VERSION_WRITE_FAILED");
+    return{
+      canonical_script_ref:text(row.canonical_script_ref),topic_id:text(row.topic_id),project_id:projectId,
+      topic_version_id:text(row.topic_version_id),blueprint_version_id:text(row.blueprint_version_id),
+      topic_production_contract_id:text(row.topic_production_contract_id),version_no:Number(row.version_no),
+      status:text(row.status),content_hash:text(row.content_hash),idempotent_replay:row.idempotent_replay===true,
+      correlation_id:correlationId,
+    };
+  }catch(error){
+    const message=error instanceof Error?error.message:String(error);
+    for(const code of [
+      "ACCOUNT_PERMISSION_DENIED","R9_CONTEXT_REQUIRED","VERSION_REQUIRED","CORRELATION_ID_INVALID","IDEMPOTENCY_KEY_INVALID",
+      "PROJECT-ID_INVALID","TOPIC-ID_INVALID","BLUEPRINT-VERSION-ID_INVALID","CONTENT_INVALID","SOURCE-SCRIPT-REF_INVALID",
+      "CHANGE-SUMMARY_INVALID","CANONICAL_SCRIPT_LINEAGE_MISMATCH","CANONICAL_SCRIPT_BLUEPRINT_NOT_READY",
+      "SCOPE_WORKSPACE_MISMATCH","SCOPE_PROJECT_MISMATCH","SCOPE_TOPIC_MISMATCH","IDEMPOTENCY_CONFLICT","VERSION_CONFLICT"
+    ])if(message.includes(code))throw new NamedRuntimeError(code);
+    throw error;
+  }
 }
 
 async function canonicalScript(request:CoreRuntimeRequest){
@@ -646,11 +764,10 @@ async function canonicalScript(request:CoreRuntimeRequest){
   const projectId=requiredUuid(row.project_id,"PROJECT_ID_REQUIRED");
   const blueprintRef=uuid(lineage.project_blueprint_ref);
   const scopeRef=uuid(lineage.topic_production_scope_ref);
-  const candidateRef=uuid(lineage.source_candidate_ref);
   const scriptHash=text(lineage.canonical_script_hash);
   const projectCanonRefs=stringArray(lineage.project_canon_refs);
   const dnaRefs=stringArray(lineage.dna_refs);
-  if(uuid(lineage.project_id)!==projectId||uuid(lineage.topic_id)!==topicId||!blueprintRef||!scopeRef||!candidateRef||!scriptHash){
+  if(uuid(lineage.project_id)!==projectId||uuid(lineage.topic_id)!==topicId||!blueprintRef||!scopeRef||!scriptHash){
     throw new NamedRuntimeError("CANONICAL_SCRIPT_LINEAGE_UNRESOLVED");
   }
   if(scriptHash!==text(row.content_hash))throw new NamedRuntimeError("CANONICAL_SCRIPT_HASH_MISMATCH");
@@ -668,20 +785,16 @@ async function canonicalScript(request:CoreRuntimeRequest){
         JOIN public.topic_versions tv ON tv.topic_version_id=pc.topic_version_id
         WHERE pc.topic_production_contract_id=${scopeRef}::uuid AND tv.topic_id=${topicId}::uuid
       ) AS scope_ok,
-      EXISTS(
-        SELECT 1 FROM public.candidate_versions c
-        JOIN public.candidate_decisions d ON d.candidate_version_id=c.candidate_version_id
-        WHERE c.candidate_version_id=${candidateRef}::uuid AND c.project_id=${projectId}::uuid AND d.decision='ACCEPTED'
-      ) AS candidate_ok
+      TRUE AS current_contract_ok
   `));
-  if(lineageCheck?.blueprint_ok!==true||lineageCheck?.scope_ok!==true||lineageCheck?.candidate_ok!==true){
+  if(lineageCheck?.blueprint_ok!==true||lineageCheck?.scope_ok!==true||lineageCheck?.current_contract_ok!==true){
     throw new NamedRuntimeError("CANONICAL_SCRIPT_LINEAGE_UNRESOLVED");
   }
   return{
     canonical_script_ref:text(row.canonical_script_ref),topic_id:topicId,project_id:projectId,
     topic_version_id:text(row.topic_version_id),version_no:Number(row.version_no),status:text(row.status),
     content_hash:text(row.content_hash),script_document:document,
-    project_blueprint_ref:blueprintRef,topic_production_scope_ref:scopeRef,source_candidate_ref:candidateRef,
+    project_blueprint_ref:blueprintRef,topic_production_scope_ref:scopeRef,
     project_canon_refs:projectCanonRefs,dna_refs:dnaRefs,lineage_complete:true,read_only:true,
   };
 }
@@ -702,6 +815,8 @@ export async function executeProductionCoreGovernedPort(request:CoreRuntimeReque
     case "CORE-01-PORT-BLUEPRINT-VALIDATE":return validateBlueprint(request);
     case "CORE-01-PORT-BLUEPRINT-APPROVE":return approveBlueprint(request);
     case "CORE-01-PORT-CHILD-LOCK":return requestChildLock(request);
+    case "CORE-01-PORT-LOCK-DECIDE":return decideLockReview(request);
+    case "CORE-01-PORT-CANONICAL-SCRIPT-CREATE":return createCanonicalScriptVersion(request);
     case "CORE-01-PORT-CANONICAL-SCRIPT":return canonicalScript(request);
     default:throw new NamedRuntimeError("CORE_GOVERNED_PORT_NOT_REGISTERED");
   }

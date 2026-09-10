@@ -331,9 +331,12 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     sql`
     SELECT p.project_id::text AS project_id,
            p.active_version_id::text AS project_version_ref,
+           pv.version_no AS project_version_no,
+           p.workspace_id::text AS workspace_id,
            p.title AS label,
            p.status::text AS status
     FROM projects p
+    LEFT JOIN project_versions pv ON pv.project_version_id=p.active_version_id
     WHERE p.archived_at IS NULL
       ORDER BY p.created_at DESC
     `,
@@ -361,16 +364,54 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     const project_id = asText(row?.project_id);
     const label = asText(row?.label);
     if (!project_id || !label) return [];
-    return [{ project_id, project_version_ref: asText(row?.project_version_ref), label, status: asText(row?.status) ?? DASH }];
+    const workspace_id=asText(row?.workspace_id);
+    const project_version_no=Number(row?.project_version_no ?? 0);
+    if(!workspace_id)return[];
+    return [{ project_id, project_version_ref: asText(row?.project_version_ref), project_version_no:Number.isInteger(project_version_no)&&project_version_no>0?project_version_no:null, workspace_id, label, status: asText(row?.status) ?? DASH }];
   });
   const first = projects[0] ?? null;
-  const topics = (Array.isArray(topicRows) ? topicRows : []).flatMap((raw) => {
+  const topicBase = (Array.isArray(topicRows) ? topicRows : []).flatMap((raw) => {
     const row = asRecord(raw);
     const topic_id = asText(row?.topic_id);
     const label = asText(row?.label);
     const project_id = asText(row?.project_id);
     if (!topic_id || !label || !project_id) return [];
     return [{ topic_id, topic_version_ref: asText(row?.topic_version_ref), project_id, label }];
+  });
+  const activeBlueprintRows=topicBase.length?await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT tv.topic_id::text AS topic_id,
+           tb.active_version_id::text AS blueprint_version_ref,
+           bv.version_no AS blueprint_version_no,
+           bv.status::text AS blueprint_status,
+           pc.topic_production_contract_id::text AS topic_scope_ref
+    FROM public.topic_blueprints tb
+    JOIN public.topic_production_contracts pc ON pc.topic_production_contract_id=tb.topic_production_contract_id
+    JOIN public.topic_versions tv ON tv.topic_version_id=pc.topic_version_id
+    JOIN public.blueprint_versions bv ON bv.blueprint_version_id=tb.active_version_id
+    WHERE tv.topic_id=ANY(${topicBase.map(item=>item.topic_id)}::uuid[])
+      AND tb.active_version_id IS NOT NULL
+    ORDER BY tv.topic_id,tb.topic_blueprint_id
+  `)):[];
+  const activeBlueprintByTopic=new Map<string,Record<string,unknown>[]>();
+  for(const raw of activeBlueprintRows){
+    const row=asRecord(raw);
+    const topicId=asText(row?.topic_id);
+    if(!topicId||!row)continue;
+    const current=activeBlueprintByTopic.get(topicId)??[];
+    current.push(row);
+    activeBlueprintByTopic.set(topicId,current);
+  }
+  const topics=topicBase.map((item)=>{
+    const matches=activeBlueprintByTopic.get(item.topic_id)??[];
+    const exact=matches.length===1?matches[0]:null;
+    const blueprintVersionNo=Number(exact?.blueprint_version_no??0);
+    return{
+      ...item,
+      blueprint_version_ref:exact?asText(exact.blueprint_version_ref):null,
+      blueprint_version_no:exact&&Number.isInteger(blueprintVersionNo)&&blueprintVersionNo>0?blueprintVersionNo:null,
+      blueprint_status:exact?asText(exact.blueprint_status):null,
+      topic_scope_ref:exact?asText(exact.topic_scope_ref):null,
+    };
   });
   let threadRows: unknown = [];
   try {
@@ -551,6 +592,25 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     ? JSON.stringify(currentCandidate.structured_document)
     : null;
   const scriptLineage=asRecord((asRecord(currentScript.script_document)??{}).identity_and_lineage)??{};
+  const criteriaRows=await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT criteria_version_id::text AS criteria_version_id,criteria_key,version_no
+    FROM public.quality_criteria_versions
+    WHERE status='APPROVED'
+    ORDER BY criteria_key,version_no DESC
+    LIMIT 100
+  `));
+  const approvedCriteria=criteriaRows.flatMap((raw)=>{
+    const row=asRecord(raw);
+    const criteria_version_id=asText(row?.criteria_version_id);
+    const criteria_key=asText(row?.criteria_key);
+    const version_no=Number(row?.version_no??0);
+    if(!criteria_version_id||!criteria_key||!Number.isInteger(version_no)||version_no<1)return[];
+    return[{criteria_version_id,label:`${criteria_key} · v${version_no}`}];
+  });
+  const reviewerRows=await safeRows(()=>runRlsActorQuery(sql,sessionTokenHash,sql`
+    SELECT acpos_runtime.count_lock_reviewer_candidates()::int AS reviewer_count
+  `));
+  const eligibleReviewerCount=Math.max(0,Number(asRecord(reviewerRows[0]??null)?.reviewer_count??0));
 
   return {
     refs: {
@@ -566,9 +626,13 @@ async function readCoreProjection(sql: SqlClient, sessionTokenHash: string): Pro
     projects: projects.map((item) => ({
       project_id: item.project_id,
       project_version_ref: item.project_version_ref,
+      project_version_no: item.project_version_no,
+      workspace_id: item.workspace_id,
+      status: item.status,
       label: item.label,
     })),
     topics,
+    lock_context: { approved_criteria: approvedCriteria, eligible_reviewer_count: eligibleReviewerCount },
     work_items: ["STORY", "CHAPTER", "WORLD_SETTING", "DNA", "BLUEPRINT", "TOPIC_SCOPE", "PRODUCTION_SCRIPT"].map((work_item) => ({ work_item, label: work_item })),
     threads,
     messages_by_thread,
@@ -2464,6 +2528,7 @@ async function readKnowledgeFromDb(sql: SqlClient, sessionTokenHash: string, act
       "KB-01-CTL-SOURCE-SAVE": canConfigure && sourceStatus === "DRAFT",
       "KB-01-CTL-SOURCE-PAUSE": canConfigure && sourceStatus === "ACTIVE",
       "KB-01-CTL-SOURCE-RESUME": canConfigure && sourceStatus === "PAUSED",
+      "KB-01-CTL-SOURCE-RETIRE": canConfigure && (sourceStatus === "DRAFT" || sourceStatus === "ACTIVE" || sourceStatus === "PAUSED"),
     },
     entities: first ? {
       selected_source: {

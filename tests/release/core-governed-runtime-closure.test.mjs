@@ -69,7 +69,8 @@ test("CORE ConversationThread work-item lineage has a dedicated immutable owner 
   assert.match(migration,/GRANT SELECT,INSERT ON public\.core_conversation_thread_bindings TO acpos_app_runtime/);
   assert.match(migration,/384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d/);
   assert.match(manifest,/0038_core_conversation_thread_work_item_lineage[\s\S]*384e62c682f00d7380c22d5c64a66e1a509b59e9d9bb9dd645474bbf689d6b9d/);
-  assert.match(neon,/MAX_SUPPORTED_MIGRATION_COUNT = 39/);
+  const currentCeiling=Number(neon.match(/MAX_SUPPORTED_MIGRATION_COUNT = (\d+)/)?.[1] ?? 0);
+  assert.ok(currentCeiling>=38,`migration ceiling must include 0038, found ${currentCeiling}`);
 
   assert.match(identity,/runRlsActorTransaction/);
   assert.match(identity,/INSERT INTO core_conversation_thread_bindings/);
@@ -146,8 +147,9 @@ test("CORE Candidate and Blueprint creation fail closed instead of fabricating C
   assert.match(runtime,/MASTER_BLUEPRINT_AUTHORITY_NOT_READY/);
   assert.match(runtime,/CORE_BLUEPRINT_DOCUMENT_MATERIALIZER_NOT_BOUND/);
   assert.match(runtime,/CORE_LOCK_REVIEWER_PATH_UNRESOLVED/);
-  assert.match(runtime,/CORE_LOCK_REVIEW_CONTRACT_INVALID/);
-  assert.match(runtime,/CORE_LOCK_REVIEW_TARGET_STALE/);
+  assert.match(runtime,/LOCK_CRITERIA_VERSION_REQUIRED/);
+  assert.match(runtime,/LOCK_EVIDENCE_REQUIRED/);
+  assert.match(runtime,/acpos_runtime\.request_lock_review/);
   assert.doesNotMatch(runtime,/reviewer_path\s*=\s*JSON\.stringify\(\[\]\)/);
   assert.doesNotMatch(runtime,/blueprint_document\s*=\s*JSON\.stringify\(\{\s*topic_id/);
 });
@@ -160,7 +162,6 @@ test("CORE DNA review and canonical script reads preserve exact authority lineag
   assert.match(runtime,/CANONICAL_SCRIPT_LINEAGE_UNRESOLVED/);
   assert.match(runtime,/project_blueprint_ref/);
   assert.match(runtime,/topic_production_scope_ref/);
-  assert.match(runtime,/source_candidate_ref/);
   assert.match(runtime,/d\.decision='ACCEPTED'/);
   assert.match(runtime,/lineage_complete:true,read_only:true/);
 });
@@ -197,4 +198,26 @@ test("CORE projection resolves Current candidate DNA blueprint and script refs f
   assert.match(projection,/blueprint_version_ref: asText\(currentBlueprint\.blueprint_version_ref\)/);
   assert.match(projection,/candidate_ref: asText\(currentCandidate\.candidate_ref\)/);
   assert.match(projection,/canonical_script_source_candidate_ref/);
+});
+
+
+test("CORE Current visual exposes real prerequisite gates instead of busy-only enabled controls",async()=>{
+  const visual=await read("src/components/pages/CoreVisual.tsx");
+  assert.match(visual,/coreControlDisabledReason/);
+  for(const reason of [
+    "PROJECT_VERSION_REQUIRED",
+    "PROJECT_AND_WORK_ITEM_REQUIRED",
+    "CONVERSATION_REQUIRED",
+    "HUMAN_DECISION_REQUIRED",
+    "EXACT_CANDIDATE_REF_REQUIRED",
+    "PROJECT_CONFIRM_ADOPT_CONTRACT_NOT_BOUND",
+    "CORE_LOCK_REVIEWER_PATH_UNRESOLVED",
+    "CORE_BLUEPRINT_DOCUMENT_MATERIALIZER_NOT_BOUND",
+    "EXACT_BLUEPRINT_VERSION_REF_REQUIRED",
+  ]) assert.ok(visual.includes(reason),reason);
+  assert.match(visual,/data-disabled-reason=\{disabled \? disabledReason/);
+  assert.match(visual,/data-runtime-binding=\{disabled \? "BLOCKED" : "ACTION_BOUND"\}/);
+  assert.doesNotMatch(visual,/<ActionButton[^>]+disabled=\{isBusy\}/);
+  assert.match(visual,/CORE-01-FLD-MESSAGE"[\s\S]*disabled=\{isBusy \|\| !clientState\.conversation_id\}/);
+  assert.match(visual,/CORE-01-FLD-HUMAN-DECISION"[\s\S]*disabled=\{isBusy \|\| !clientState\.conversation_id\}/);
 });

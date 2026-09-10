@@ -1,209 +1,129 @@
 # ACPOS Runtime Binding Gap Report
 
-Revision: 2026-09-09 LOCAL-ARCHIVE-RECONCILED-CURRENT-NEW
-Status: CURRENT_NEW_RELEASE_VALIDATED_PRODUCTION_APPLY_PENDING
+Revision: 2026-09-10 CURRENT-ONLY  
+Status: ACTIVE_EFFECTFUL_RUNTIME_CLOSURE
 
-## Scope
+## Authority and evidence policy
 
-This document records runtime binding blockers after verified database migration and release validation. It is a gap record only. It does not authorize new schema, new API semantics, invented permissions, or controlled-test runtime promotion to production.
+This report is a Current gap record. Construction behavior is resolved from the single active construction authority. Deployment state is resolved from GitHub Current, Vercel Current Deployment, and Neon Current Production. Historical source material is provenance only and is not executable authority.
 
-## 2026-09-09 Current Reconciliation
+Do not create parallel runtimes, duplicate APIs, synthetic business rows, guessed permissions, guessed provider routes, or forced-enabled controls to close a gap.
 
-The 2026-09-08 local worktree snapshot `acpos-new-local-20260909.tar.gz` has now been reconciled against its recorded base `4c43aa29fbccb3622c5446eaa54f642a8489376f` and Current `new`.
+## Verified Current Production
 
-- Archive payload: 576 repository-like files after excluding the stale worktree `.git` pointer.
-- True local content delta from `4c43aa2`: 28 files.
-- Exact local delta blobs retained in Current: 15.
-- Later Current versions that supersede already-reconciled local deltas: 11, comprising the updated audit matrix plus the ten overlapping runtime/UI files separately reconciled during merge construction.
-- Remaining non-exact documentation deltas: this runtime gap report and `docs/construction/ACPOS_WEBSITE_CONSTRUCTION_PROGRESS.yaml`; their still-valid freeze/audit meaning is absorbed by the 2026-09-09 closure rather than restoring stale 2026-09-08 runtime status. `.monkeycode/MEMORY.md` is retained as an exact archive blob.
-- The archive omission of `.env.example` is classified as packaging omission, not a requested deletion: the archive's own runtime gap report explicitly references the env contract and Current retains that contract.
-- Current construction SHA after runtime reconciliation: `830b780e2b4832e9751b48f2e62a28761450f5c9`.
-- ACPOS Release Gate `#34315733464`: SUCCESS on that exact SHA, including lint, dependency audit, typecheck, release unit tests, Production build/HTTP E2E, controlled build/misconfiguration E2E, Browser E2E, Current DOM acceptance, Standalone Docker, and Dirty tree guard.
-- CORE legacy `executeCore()` owner-SQL paths were reduced to zero during the governed runtime reconciliation.
-- Repository migrations are staged through `0038_core_conversation_thread_work_item_lineage`; migrations 0037/0038 remain pending Production apply and are not evidence of Production schema completion.
-- This archive reconciliation does not merge `new` to `main`, apply pending migrations to Production, or trigger Vercel.
+- Production main SHA: `5dd33537d6207d8a5b195afc1a3a8a1c903b0d3c`
+- Vercel commit status: SUCCESS
+- Production URL: `https://orange-one-acpos-test.vercel.app`
+- Main Release Gate #1017: SUCCESS
+- Post-Deploy #1325: SUCCESS
+- Readiness: HTTP 200
+- Routes/projections: 18
+- Authenticated pages visible: 18
+- Browser smoke: 54 cases
+- Front navigation: 8
+- Admin navigation: 8
+- Production DOM governance: 548 interactive / 548 governed / 362 enabled / 186 disabled
+- Neon Production: `wild-wave-25661146 / main / neondb`
+- Migrations: 41/41
+- Latest migration: `0041_governed_lock_decision_service_identity_foundation`
+- Active permission resources: 3672
+- Approved ALLOW assignments: 158
+- RLS tables: 65
+- RLS policies: 128
+- Approved Provider capabilities: 4
+- Approved secret references: 4
+- Queue: 1
+- Worker: 1
 
-Older sections below are retained as historical gap evidence. Where an older statement conflicts with this reconciliation or later Current evidence, the newer verified Current evidence governs.
+## Verified new-branch construction
 
-## Verified Completed
+- Current new SHA: `5cdca0478ad53bd190fe1a7312e08793b07d1f66`
+- Release Gate #1026: SUCCESS
+- KB retire runtime + migration 0040 application code exists on new and passed release validation.
+- CORE control gating now reports prerequisite/runtime blockers instead of marking all action controls enabled.
+- These application changes are not yet merged/deployed to Production main.
 
-- Migration chain 0001-0015: COMPLETE_APPLIED_VERIFIED
-- Release Gate baseline: SUCCESS
-- Production build validation baseline: PASS
-- Current `new` branch runtime audit continued through HEAD `9471dda5727a90822432227d35f28a4bf831ad5c`
-- Historical Neon staging schema was inspected read-only on `br-bitter-poetry-b3p6t5ub` / `acpos_staging` / `tiny-dust-89825424`
-- Live authority target from 2026-09-05 is `wild-wave-25661146` / `neondb` / PG 18; 0001-0015 COMPLETE is not inherited onto this target
-- Production DB driver/env contract materialized in `authority/runtime/ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml`
-- Formal application API routes for Dashboard and UI Projection are materialized and call the existing runtime ports rather than returning fabricated success
-- AIAPI-01 production operation materialization audited against Current AIAPI-01 Authority, Production Script V1.3, frontend/domain ports, controlled runtime, and current repository route tree
+## Current runtime blockers
 
-## Current Runtime Binding State
+### 1. Department materialization chain
 
-The following items remain not executed:
+Production currently contains:
 
-- Database production binding
-- Production server runtime adapter binding
-- AIAPI-01 effectful operation runtime binding
-- Runtime E2E against real database adapters
-- External production E2E
+- department_tasks: 1
+- the only department task is TEST_ONLY and WAITING_DEPENDENCY
+- department_script_views: 0
+- task_input_manifests: 0
+- instruction_packages: 0
+- canonical_script_versions: 0
+- script_projection_rules: 0
+- quality_criteria_versions: 0
+- rights_profiles: 0
+- route_policies: 0
 
-The API HTTP surface itself is materially present for audited Dashboard/UI Projection routes. This does not mean production runtime binding is complete because the underlying production runtime adapters remain unbound.
+The existing ASSET/VIDEO production runtime consumes these canonical objects and correctly fails closed when they do not exist. Therefore the blocker is upstream materialization, not a reason to force-enable UI controls.
 
-## Existing API / Runtime Path Verified
+Required closure chain:
 
-Audited examples:
+`governed lock decision -> child lock materialization -> work package compiler -> task orchestrator -> department script view -> task input manifest -> instruction package -> department runtime`
 
-- `src/app/v1/dashboard/read-model/route.ts` -> `getDashboardReadModel()`
-- `src/app/v1/ui-projections/[pageUid]/route.ts` -> `getUiProjection()`
+### 2. CORE
 
-These routes preserve `correlation_id`, `cache-control: no-store`, explicit HTTP failure status, and existing fail-closed runtime behavior. Therefore API route absence is not the primary blocker for these paths.
+CORE truthful gating is constructed on new and Release Gate #1021 is green. Remaining runtime closures include registered operations whose canonical materializer/decision owner is not yet connected. Production main still exposes the prior UI gating until consolidated deployment.
 
-## Existing Runtime Ports Verified
+### 3. ASSET
 
-The application already contains formal fail-closed runtime ports with `configure*Runtime` binding entry points. These are not production adapters by themselves.
+ASSET production port runtime is materialized, including provider job, output, scorecard/finding/correction/handoff paths. Positive execution remains blocked by missing canonical department execution inputs and exact route/instruction lineage.
 
-- UiProjection: `configureUiProjectionRuntime`
-- Dashboard: `configureDashboardRuntime`
-- Knowledge: `configureKnowledgeRuntime`
-- ERP: `configureErpCommandRuntime`
-- Social: `configureSocCommandRuntime`
-- IAM: `configureIamRuntime`
-- QA: `configureQaRuntime`
-- DB Read Model: `configureDbReadModelRuntime`
+### 4. VIDEO
 
-The audited ports preserve authorization, audit/error handling, correlation IDs, and explicit NOT_BOUND behavior. Controlled test fallbacks remain test-only and must not satisfy production binding.
+VIDEO production port runtime is materialized. Positive execution remains blocked by the same upstream execution-input chain and exact dependency handoff.
 
-## Runtime Readiness Classification
+### 5. EDIT + VOICE
 
-### B — DB schema exists, production adapter/bootstrap missing
+EDIT+VOICE runtime exists, but positive project-task execution requires an exact accepted VIDEO handoff, task fingerprint, runtime run lineage, output verification/lock, and final QA handoff. The upstream task/materialization chain is not yet complete.
 
-- UiProjection
-- Dashboard
-- DB Read Model
-- Knowledge
-- IAM
-- QA
+### 6. QA
 
-For these domains, API/runtime ports exist and relevant database structures are present, but there is no production PostgreSQL/Neon driver bootstrap and no server startup adapter injection.
+QA lifecycle runtime exists. Positive review requires exact upstream handoff/output/criteria/evidence lineage. Release-package creation remains incomplete until its canonical evidence owner is materialized.
 
-### C — API/runtime exists, database mapping or external execution boundary is not fully materialized
+### 7. IAM / ERP / AIAPI / SOC
 
-- ERP
-- Social
+Controlled implementation evidence does not equal Production effectful acceptance. The remaining work is to prove each applicable mutation through permission -> runtime -> persistence -> reload -> rollback/error behavior without inventing missing persistence fields or scope owners.
 
-ERP has canonical tables including `erp_connectors`, `erp_mappings`, `erp_snapshots`, `erp_sync_jobs`, and related audit/failure structures. Social has canonical tables including `social_account_bindings`, `social_market_targets`, `social_target_discovery_jobs`, and related publishing/manual-action structures. Their runtime command ports exist, but the production command-to-database/external-adapter implementation is not materialized.
+### 8. AI Conversation
 
-### C/D — AIAPI registered operation names exist, application command port/handler is not materialized
+Production conversation code has pre-deploy evidence, but the final consolidated Production E2E remains pending. It must be executed after the final main deployment.
 
-Current AIAPI-01 Authority explicitly references operations including `createProviderModelProfile`, `updateProviderModelProfile`, `testProviderModelProfile`, `setProviderModelCredential`, `runSandboxTest`, `executeProviderRoute`, and `getProviderRouteDecision`. It also requires reuse of the current registered operation registry and forbids inferring unregistered API methods/paths/permissions.
+### 9. Production Effectful Acceptance
 
-Repository audit confirms:
+Current DOM acceptance is a visual/governance test. It does not click every enabled control and does not prove API/DB/Queue/Provider effects.
 
-- `src/components/pages/AiApiVisual.tsx` renders these operation IDs but keeps all effectful controls disabled with `REMAP_REQUIRED_NOT_EXECUTED`.
-- `src/domain/aiApi/aiApiRuntimePort.ts` materializes only the read-only AIAPI projection client through `/v1/ui-projections/admin%3AAIAPI-01`; it contains no effectful AIAPI command port.
-- `src/server/testing/controlledAiApiTestRuntime.ts` is TEST_ONLY synthetic projection state and cannot satisfy production runtime binding.
-- `src/server/shared/uiProjectionRuntime.ts` only exposes AIAPI through the generic projection path; without production projection bindings it fails closed.
-- Current repository tree contains no dedicated AIAPI effectful `/v1` route family and no dedicated production AIAPI server runtime/gateway implementation path.
+A permanent Production runner is still required for applicable enabled controls:
 
-Production Script V1.3 states that provider execution belongs to the existing Provider Prompt Adapter / AI API Router / ProviderGateway and creates no new runtime service. Because the current application does not materialize that existing effectful operation port/handler path and AIAPI-01 forbids route inference, a new API route or gateway architecture may not be invented from operation names alone.
+`UI click -> API -> permission -> runtime -> DB/Queue/Provider effect -> response -> reload/read-back -> negative path -> cleanup`
 
-Required disposition:
+### 10. Control/action denominator
 
-`BLOCK + REPORT_AUTHORITY_GAP`
+The sealed historical control/action baseline remains a denominator reference only. Final acceptance must explicitly seal Current expansion before the denominator is recomputed. Do not use the historical baseline as proof that Current controls are functionally complete.
 
-The missing materialization must be resolved from the current registered operation registry / governed System Lifecycle authority before ProviderGateway implementation or AIAPI effectful remap may proceed.
+## Non-blocking external account issues
 
-### D — Driver/env contract named 2026-09-05; bootstrap still empty
+- DeepSeek: HTTP 402, user deferred account/balance remediation.
+- OpenRouter: HTTP 401, user deferred credential remediation.
+- Groq and Google remain the healthy Production provider pool.
 
-The live Neon target and application connection contract are now named. Bootstrap and adapter binding remain not executed.
+## Next executable item
 
-- Live target: `wild-wave-25661146` / `ORANGEONEACPOSStaging` / `neondb` / PG 18 / production branch `br-shy-cherry-auiol4oy`
-- Driver package: `@neondatabase/serverless`
-- Env keys in `.env.example`: `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `NEON_PROJECT_ID`
-- `package.json` still has no driver dependency
-- `src/instrumentation.ts` `register()` remains empty
-- 0001-0015 COMPLETE remains historical evidence on `tiny-dust-89825424` and must not be treated as applied on wild-wave
-- System Authority defines ACPOS runtime/business/governance boundaries but does not select or specify the application database client implementation.
-- DB-01 Authority defines a read-only inspection business boundary and explicitly forbids raw/direct production mutation; it does not define the application DB driver, pool, connection env contract, or runtime bootstrap implementation.
-- Page Integration Matrix defines cross-page data/decision ownership and handoff boundaries, not application database transport/bootstrap technology.
-- Production Script V1.3 is scoped to provider-neutral instruction/provider adapters and explicitly creates no new runtime service; it does not define database runtime binding technology.
-- Database Migration Authority is scoped to migration/bootstrap/checksum/execution governance and cannot be extended into an application-runtime driver decision.
+Close the canonical department materialization owner chain on `new`, then run positive ASSET -> VIDEO -> EDIT+VOICE -> QA effectful paths before building exhaustive Production button acceptance.
 
-Selecting a different driver (`pg`, `postgres`, `@vercel/postgres`, Prisma, Drizzle) still requires a new Authority revision.
 
-### E — Leave real external execution to External/Production E2E Gate
+## 0041 closure evidence
 
-- ERP provider synchronization / connector execution
-- Social platform binding / discovery / publishing
-- Shared crawler / external acquisition
-- AI provider real external request execution
-
-These may not be treated as complete from local or controlled-test adapters.
-
-## Database Structures Confirmed for Binding Work
-
-Read-only staging inspection confirms materialized canonical tables needed by the next binding stages, including:
-
-- Core/read projection: `projects`, `project_versions`, `topics`, `topic_versions`, `department_tasks`, `provider_jobs`, `qa_review_runs`
-- Dashboard: `dashboard_todos`
-- Authorization: `permission_resources`, `account_permission_assignments`, `project_memberships`
-- Audit/correlation: `audit_events`
-- Knowledge: `knowledge_sources`, `fact_packs`, `evidence_records`
-- ERP: `erp_connectors`, `erp_mappings`, `erp_snapshots`, `erp_sync_jobs`, `erp_failures`, `erp_audit_references`
-- Social: `social_account_bindings`, `social_market_targets`, `social_target_discovery_jobs`, `social_manual_actions`, `publish_requests`
-
-This inspection does not modify schema and does not reopen migration work.
-
-## Production Runtime Bootstrap Evidence
-
-Current repository evidence remains:
-
-- `package.json` contains Next/React dependencies only and no production PostgreSQL/Neon runtime driver
-- `.env.example` now names `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, and `NEON_PROJECT_ID` with empty secret values
-- `src/instrumentation.ts` exports an empty `register()` and therefore performs no production server runtime adapter injection
-
-These facts are implementation evidence of the current block; they are not permission to invent the missing contract.
-
-## Blocking Conditions
-
-The following production contracts are still absent from the application runtime and must be materialized before a production binding can be truthfully claimed:
-
-1. Authority-defined production PostgreSQL/Neon driver and connection contract — named `@neondatabase/serverless` / wild-wave
-2. Authority-defined production database connection environment contract — named in `.env.example`
-3. Production runtime bootstrap call path (`src/instrumentation.ts` register is currently empty) — still open
-4. Production server adapter implementations for the existing `configure*Runtime` ports
-5. AIAPI effectful command port/handler mapping from the current registered operation registry
-6. Domain-specific command/read-model mappings where Authority does not already define exact behavior
-7. Real runtime E2E evidence after binding
-
-## Authority Gap Rule
-
-Where Current Authority does not define an exact adapter/database mapping, operation behavior, permission mapping, technical driver/bootstrap contract, API route/handler mapping, or external-provider boundary, the required disposition is:
-
-`BLOCK + REPORT_AUTHORITY_GAP`
-
-No implementation may guess missing schema, fields, permissions, API behavior, driver choice, connection contract, route mapping, or production external behavior.
-
-## Next Allowed Construction Gate
-
-Driver and env keys are named. Production database binding may not proceed until `register()` injects `@neondatabase/serverless` against wild-wave and 0001-0015 are re-verified on `neondb`.
-
-AIAPI effectful production binding may not proceed until the current registered operation registry / governed System Lifecycle materializes the existing operation-to-command-port/handler mapping without route inference.
-
-Until then, allowed work is limited to:
-
-- auditing non-DB production adapters that can be completely derived from Current Authority without inventing transport/bootstrap behavior;
-- preserving and testing existing fail-closed API/runtime behavior;
-- preparing exact Authority-gap evidence for System Lifecycle governance;
-- continuing external-gate classification without executing real external providers.
-
-The read-only DB/Projection paths remain the preferred first database binding candidates once the missing technical contract becomes Authority-defined.
-
-## Rules
-
-- Do not treat controlled runtime as production runtime.
-- Do not introduce schema changes from this report.
-- Do not infer missing Authority definitions from table names or registered operation names alone.
-- Do not select a database driver other than `@neondatabase/serverless` without a new Authority revision.
-- Do not invent AIAPI effectful API paths or ProviderGateway architecture where Current Authority requires reuse of an existing registered operation registry.
-- Do not claim runtime complete or production ready until implementation, commit, build/test, runtime validation, and E2E evidence all exist.
+- Production migration: 41/41
+- VersionLock decision DB owner: materialized
+- TaskOrchestrator service identity: APPROVED
+- InstructionCompiler service identity: APPROVED
+- Service capabilities: 4 APPROVED
+- Mother/Child Lock project-scoped RLS: enabled
+- Direct INSERT grant bypass to lock tables: removed before Production apply
+- Application code remains on new pending consolidated deployment
