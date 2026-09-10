@@ -1,0 +1,58 @@
+name: ACPOS Current Manifest Runtime Alignment Once
+on:
+  push:
+    branches: [new]
+    paths:
+      - .github/workflows/manifest-runtime-alignment-once.yml
+permissions:
+  contents: write
+jobs:
+  align:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Align Current identity bind flag
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs');
+          const p='authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml';
+          let s=fs.readFileSync(p,'utf8');
+          const start=s.indexOf('  production_identity_runtime_contract:');
+          const end=s.indexOf('  wb01_ui_projection_sql_permission_mapping:', start);
+          if(start<0||end<0) throw new Error('identity manifest block missing');
+          const before=s.slice(start,end);
+          if(!before.includes('adapter_bind_allowed: false')) throw new Error('expected stale bind flag missing');
+          const after=before.replace('adapter_bind_allowed: false','adapter_bind_allowed: true');
+          s=s.slice(0,start)+after+s.slice(end);
+          fs.writeFileSync(p,s);
+          NODE
+          cat > tests/release/current-manifest-runtime-alignment.test.mjs <<'TEST'
+          import test from "node:test";
+          import assert from "node:assert/strict";
+          import { readFile } from "node:fs/promises";
+          const manifest=await readFile("authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml","utf8");
+          const identity=await readFile("authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml","utf8");
+          test("Current manifest and identity runtime agree that the adapter binding is allowed",()=>{
+            const block=manifest.match(/production_identity_runtime_contract:([\s\S]*?)wb01_ui_projection_sql_permission_mapping:/);
+            assert.ok(block);
+            assert.match(block[1],/adapter_bind_allowed:\s*true/);
+            assert.match(identity,/^adapter_bind_allowed:\s*true$/m);
+          });
+          TEST
+      - run: npm ci
+      - run: npm test
+      - name: Commit clean tree
+        run: |
+          git rm .github/workflows/manifest-runtime-alignment-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml tests/release/current-manifest-runtime-alignment.test.mjs
+          git commit -m "fix: align Current manifest runtime binding"
+          git push origin HEAD:new
