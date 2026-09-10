@@ -24,10 +24,10 @@ test("0048 closes the WorkPackage DAG edge RLS/runtime omission without business
   assert.ok(ceiling>=48,`migration ceiling must include 0048, found ${ceiling}`);
 });
 
-test("0048 manifest records 0047 as Production-applied and keeps 0048 staged",async()=>{
+test("0048 manifest records 0047 and 0048 as Production-applied",async()=>{
   const manifest=await read("database/migrations/migration_checksum_manifest.yaml");
   const block47=manifest.match(/- migration_id: 0047_canonical_script_version_runtime[\s\S]*?(?=\n- migration_id:|$)/)?.[0]??"";
   const block48=manifest.match(/- migration_id: 0048_dag_edge_rls_runtime_closure[\s\S]*?(?=\n- migration_id:|$)/)?.[0]??"";
   assert.match(block47,/production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10/);
-  assert.match(block48,/production_apply: STAGED_PENDING_PRODUCTION_APPLY/);
+  assert.match(block48,/production_apply: APPLIED_VERIFIED_PRODUCTION_2026-09-10/);
 });
