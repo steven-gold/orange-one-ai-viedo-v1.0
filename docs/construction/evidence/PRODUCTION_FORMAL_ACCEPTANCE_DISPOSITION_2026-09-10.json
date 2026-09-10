@@ -29,8 +29,8 @@
   "not_executed_rule": "NOT_EXECUTED requires a reason_code and is never counted as PASS.",
   "counts": {
     "PASS": 47,
-    "BLOCKED": 141,
-    "NOT_EXECUTED": 1293
+    "BLOCKED": 145,
+    "NOT_EXECUTED": 1289
   },
   "entries": [
     {
@@ -1771,16 +1771,36 @@
     {
       "resource_key": "action:admin:SYS-01:ACT-CANDIDATE-CREATE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "SYSTEM_CHANGE_CANDIDATE_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SYS_PREREQUISITE_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SYS Prerequisite Blocker Materialize run_id=34495914259",
+        "src/server/system/productionSystemLifecycleRuntime.ts",
+        "src/domain/system/systemMutationPort.ts",
+        "authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml"
+      ],
+      "blocker_detail": "Production execution would create or extend durable System Lifecycle state and no isolated reversible acceptance fixture/cleanup contract is registered; fabricating Production business state for acceptance is forbidden.",
+      "operation_ids": [
+        "createCandidate"
+      ]
     },
     {
       "resource_key": "action:admin:SYS-01:ACT-CR-CREATE",
       "resource_type": "ACTION",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "SYSTEM_CHANGE_REQUEST_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SYS_PREREQUISITE_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SYS Prerequisite Blocker Materialize run_id=34495914259",
+        "src/server/system/productionSystemLifecycleRuntime.ts",
+        "src/domain/system/systemMutationPort.ts",
+        "authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml"
+      ],
+      "blocker_detail": "Production execution would create or extend durable System Lifecycle state and no isolated reversible acceptance fixture/cleanup contract is registered; fabricating Production business state for acceptance is forbidden.",
+      "operation_ids": [
+        "createChangeRequest"
+      ]
     },
     {
       "resource_key": "action:admin:SYS-01:ACT-NAV-OPEN",
@@ -6972,16 +6992,36 @@
     {
       "resource_key": "control:CTRL-ADMIN-SYS-01-ACT-01-ACT-CANDIDATE-CREATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "SYSTEM_CHANGE_CANDIDATE_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SYS_PREREQUISITE_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SYS Prerequisite Blocker Materialize run_id=34495914259",
+        "src/server/system/productionSystemLifecycleRuntime.ts",
+        "src/domain/system/systemMutationPort.ts",
+        "authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml"
+      ],
+      "blocker_detail": "Production execution would create or extend durable System Lifecycle state and no isolated reversible acceptance fixture/cleanup contract is registered; fabricating Production business state for acceptance is forbidden.",
+      "operation_ids": [
+        "createCandidate"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SYS-01-ACT-02-ACT-CR-CREATE",
       "resource_type": "CONTROL",
-      "disposition": "NOT_EXECUTED",
-      "reason_code": "PER_RESOURCE_ACCEPTANCE_EVIDENCE_NOT_RECORDED",
-      "evidence_refs": []
+      "disposition": "BLOCKED",
+      "reason_code": "SYSTEM_CHANGE_REQUEST_ACCEPTANCE_FIXTURE_AND_CLEANUP_NOT_REGISTERED",
+      "evidence_refs": [
+        "docs/construction/evidence/GATE25_SYS_PREREQUISITE_PRODUCTION_BLOCKERS_2026-09-10.json",
+        "GitHub Actions: ACPOS Gate25 SYS Prerequisite Blocker Materialize run_id=34495914259",
+        "src/server/system/productionSystemLifecycleRuntime.ts",
+        "src/domain/system/systemMutationPort.ts",
+        "authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml"
+      ],
+      "blocker_detail": "Production execution would create or extend durable System Lifecycle state and no isolated reversible acceptance fixture/cleanup contract is registered; fabricating Production business state for acceptance is forbidden.",
+      "operation_ids": [
+        "createChangeRequest"
+      ]
     },
     {
       "resource_key": "control:CTRL-ADMIN-SYS-01-ACT-03-ACT-NAV-OPEN",
