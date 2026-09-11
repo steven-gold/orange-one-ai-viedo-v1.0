@@ -33,7 +33,9 @@ const knowledgeVisual = await readFile("src/components/pages/KnowledgeAdminVisua
 const migrationAuthority = await readFile("authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml", "utf8");
 
 test("Current Authority contains exactly 18 unique page authorities", () => {
-  const pages = [...manifest.matchAll(/^  - (authority\/pages\/[^\n]+)$/gm)].map((match) => match[1]);
+  const pagesBlock = manifest.match(/\n  pages:\n([\s\S]*?)\n  registries:/);
+  assert.ok(pagesBlock, "current_authority_set.pages must remain explicitly bounded before registries");
+  const pages = [...pagesBlock[1].matchAll(/^\s*-\s+(authority\/pages\/[^\n]+)$/gm)].map((match) => match[1]);
   assert.equal(pages.length, 18);
   assert.equal(new Set(pages).size, 18);
   assert.match(manifest, /current_page_count:\s*18/);
