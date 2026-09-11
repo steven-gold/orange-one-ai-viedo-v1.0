@@ -3,7 +3,7 @@ authority:
   version: V1.1
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-06-SEPARATE-READINESS-FROM-PAGE-AUTHORIZATION
+  revision: 2026-09-12-DERIVED-MIGRATION-READINESS-RECONCILIATION
   scope: WB-01_PAGE_GATE_AUTHORIZE_AND_NAMED_SECTION_READ_SQL
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 approval:
@@ -22,7 +22,7 @@ approval:
   - Lock 14 section SELECT/FROM/WHERE on 0001 tables
   - Bind configureDashboardRuntime and configureUiProjectionRuntime for WB-01
   - Keep unauthenticated WB-01 projection fail-closed while separating service readiness from page authorization
-  - Keep production_ready_claim_allowed false
+  - Keep production_ready_claim_allowed false until current Production deployment and post-deploy evidence exists
 source:
   derived_from:
   - authority/pages/workspace/WB-01/ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml
@@ -34,6 +34,7 @@ source:
   - src/domain/dashboard/readModelContract.ts
   - authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
   - src/server/dashboard/wb01ProjectionRuntime.ts
+  - src/server/database/neonRuntime.ts
 page:
   page_uid: workspace:WB-01
   page_permission_label: workspace.dashboard.view
@@ -336,11 +337,12 @@ read:
         WHERE false
       projection: empty_items
     system_status_summary:
+      source: src/server/database/neonRuntime.ts::isSupportedMigrationCount
       sql: |
-        SELECT CASE WHEN count(*) = 15 THEN 'READY' ELSE 'BLOCKED' END AS overall_status,
-               'schema_migration_history=' || count(*)::text AS summary,
+        SELECT count(*)::int AS migration_count,
                now()::text AS checked_at
         FROM schema_migration_history
+      readiness_rule: Evaluate migration_count with isSupportedMigrationCount(); a fixed migration-count literal is forbidden in this mapping.
     recent_completions:
       sql: |
         SELECT t.task_id::text AS completion_id, p.title AS project_label, tp.title AS topic_label,
@@ -370,15 +372,15 @@ audit:
   action: getDashboardReadModel
   entity_type: workspace:WB-01
 forbidden:
-  - Invent resource_key workspace.dashboard.view
-  - Derive PAGE VIEW from SURFACE/L1/L2/L3 parent VIEW
-  - Invent a progress_percentage column
-  - Invent announcements or industry_news tables
-  - Bind configureUiProjectionRuntime or configureDashboardRuntime while remaining_blockers is non-empty
-  - Treat CONTROLLED_TEST dashboard projection as production read SQL
-  - Use /health/ready to bypass WB-01 identity or permission evaluation
-  - Claim all production runtimes or all-button acceptance from control-plane readiness
- remaining_blockers: []
- adapter_bind_allowed: true
+- Invent resource_key workspace.dashboard.view
+- Derive PAGE VIEW from SURFACE/L1/L2/L3 parent VIEW
+- Invent a progress_percentage column
+- Invent announcements or industry_news tables
+- Bind configureUiProjectionRuntime or configureDashboardRuntime while remaining_blockers is non-empty
+- Treat CONTROLLED_TEST dashboard projection as production read SQL
+- Use /health/ready to bypass WB-01 identity or permission evaluation
+- Claim all production runtimes or all-button acceptance from control-plane readiness
+remaining_blockers: []
+adapter_bind_allowed: true
 production_ready_claim_allowed: false
 next_action: VERIFY_CONTROL_PLANE_READINESS_AND_KEEP_PAGE_AUTHORIZATION_FAIL_CLOSED
