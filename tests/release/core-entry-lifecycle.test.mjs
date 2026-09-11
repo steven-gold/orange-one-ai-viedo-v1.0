@@ -4,19 +4,19 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(path, "utf8");
 
-test("CORE explicit Project and Topic selection enters the governed default work item", async () => {
+test("CORE Project and Topic selection do not invent an undefined default work item", async () => {
   const state = await read("src/domain/core/coreClientState.ts");
 
   assert.match(
     state,
-    /case "CORE-01-ACT-PROJECT-SELECT":[\s\S]*?work_item: project_id \? "STORY" : null/,
-    "Project selection must enter STORY rather than leaving the lifecycle without an active work item",
+    /case "CORE-01-ACT-PROJECT-SELECT":[\s\S]*?work_item: null/,
+    "Project selection must clear dependent work-item state unless Current Authority defines a unique default",
   );
 
   assert.match(
     state,
-    /case "CORE-01-ACT-TOPIC-SELECT":[\s\S]*?work_item: topic_id \? "TOPIC_SCOPE" : "STORY"/,
-    "Topic selection must enter TOPIC_SCOPE and clearing Topic must return to Project STORY context",
+    /case "CORE-01-ACT-TOPIC-SELECT":[\s\S]*?work_item: null/,
+    "Topic selection must not invent TOPIC_SCOPE or any other default work item without Current Authority",
   );
 });
 
