@@ -3,12 +3,13 @@ authority:
   version: V1.8
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-09-11-CURRENT-AUTHORITY-RUNTIME-CLEANUP
+  revision: 2026-09-11-CORE01-AUTHORITY-TRACE-CLOSURE
   load_rule: Load only exact repository paths in current_authority_set.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
 current_authority_set:
   global:
   - authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
+  - authority/global/ACPOS_CANONICAL_NAMING_REGISTRY_FINAL_LOCKED_V1.0.yaml
   - authority/global/ACPOS_I18N_TRANSLATION_ENCODING_FINAL_LOCKED_V1.0.yaml
   - authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
   - authority/global/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
@@ -46,8 +47,11 @@ current_authority_set:
   - authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml
   - authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
   - authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+  registries:
+  - authority/pages/workspace/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
 precedence:
 - ACPOS_CURRENT_AUTHORITY_MANIFEST
+- ACPOS_CANONICAL_NAMING_REGISTRY within canonical identity/name-resolution scope only
 - ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE within website-construction scope only
 - ACPOS_I18N_TRANSLATION_ENCODING within UI translation scope only
 - ACPOS_SYSTEM_AUTHORITY within cross-page/system scope
@@ -56,12 +60,25 @@ precedence:
 - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9 within shell scope
 - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY within visual scope
 - Current Page Authority within page UX/business scope
+- Page-level CURRENT_CANONICAL_VISUAL identity owner within current visual-baseline trace scope only
 - Production Script V1.3 within instruction/provider-adapter scope
   - ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT within production DB driver/env contract scope only
   - ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT within production request-to-app_users actor scope only
   - ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT within queue/worker/outbox/DLQ runtime scope only
   - ACPOS_PRODUCTION_DEPLOYMENT_EXECUTION_POLICY within Git/Vercel construction and Production release sequencing scope only
 cross_authority_bindings:
+  canonical_naming_registry_v1_0:
+    authority_path: authority/global/ACPOS_CANONICAL_NAMING_REGISTRY_FINAL_LOCKED_V1.0.yaml
+    canonical_registry_count: 1
+    package_resolution_indexes_are_non_owning: true
+    duplicate_active_naming_registry: FORBIDDEN
+  core01_current_canonical_visual_v1_0:
+    authority_path: authority/pages/workspace/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
+    page_uid: CORE-01
+    current_visual_uid: CORE-01-VIS-CURRENT
+    child_visual_owner: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    creates_new_page_or_layout: false
+    duplicate_page_level_current_visual: FORBIDDEN
   database_migration_v1_0:
     authority_path: authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml
     migration_root: database/migrations/
@@ -140,12 +157,16 @@ repository_layout:
   reference_docs: docs/reference/
   migrations: database/migrations/
   permission: 06_permission/
+  canonical_naming_registry: authority/global/ACPOS_CANONICAL_NAMING_REGISTRY_FINAL_LOCKED_V1.0.yaml
+  page_level_current_visual_owner: authority/pages/workspace/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
 single_source_rules:
 - No second website construction governance authority.
 - No second i18n translation authority.
 - No second ACPOS System authority.
 - No second database migration authority, migration directory or checksum manifest.
 - No second Global Visual authority.
+- No second Canonical Naming Registry.
+- One page has at most one page-level CURRENT_CANONICAL_VISUAL identity owner.
 - No second Navigation/IAM L1 authority.
 - No second Account Permission Catalog; Current catalog path is 06_permission/account_permission_catalog.yaml.
 - No second Knowledge page.
