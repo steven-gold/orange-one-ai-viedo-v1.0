@@ -1,19 +1,32 @@
-schema_version: 1
-branch_role: CLEAN_REBUILD_WORKSPACE
+schema_version: 2
+baseline_uid: REBUILD-BRANCH-v2.1.4-SEALED-TEST
+branch_role: CLEAN_REBUILD_TEST_WORKSPACE
 branch_name: rebuild-v2.1.1
 legacy_source_branch: new
 legacy_source_sha: 6c8a0c3334ccd17942ba14079976fb295859a43c
 legacy_source_access: READ_ONLY_EXTRACTION_ONLY
-governance_package_target: v2.1.1
+governance_test:
+  version: v2.1.4
+  state: USER_FROZEN_READ_ONLY
+  package_sha256: d789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109
+  external_trust_root_sha256: 2f5bfe186ddcf89379a9d96e0c0698e6edbbc4d765b8f0428e78ad796e86770d
+  sealed_normative_hash: b0d2efedd1fc268715d7821ef56341cc1d759e015c1683000400f70ce8d8e001
+  stage1_runtime_manifest: governance/test-runtime/v2.1.4/STAGE1_RUNTIME_MANIFEST.yaml
+  normative_edit_allowed: false
 current_load_graph_policy: ALLOWLIST_ONLY
 contamination_policy:
   temporary_files: FORBIDDEN
   duplicate_authority: FORBIDDEN
   superseded_versions_in_current_paths: FORBIDDEN
-  stale_evidence_in_current_paths: FORBIDDEN
+  stale_evidence_as_current: FORBIDDEN
   unreferenced_generated_outputs: FORBIDDEN
   extracted_legacy_files_require_classification: true
 phase_transition_requires_clean_scan: true
 implementation_policy: PAGE_VERTICAL_CLOSURE_AFTER_PROJECT_WIDE_DESIGN_FREEZE
 production_policy: NO_PRODUCTION_SWITCH_BEFORE_FINAL_ACCEPTANCE
-status: BASELINE_CREATED_BEFORE_TEST_EXECUTION
+current_phase: FOUNDATION-01-SOURCE-INTAKE
+website_reconstruction_started: false
+website_reconstruction_allowed: false
+website_code_write_allowed: false
+test_and_evidence_sync_allowed: true
+status: V2_1_4_SEALED_TEST_BASELINE_ACTIVE
