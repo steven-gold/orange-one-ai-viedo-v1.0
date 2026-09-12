@@ -3,7 +3,7 @@ authority:
   version: V1.0
   status: FINAL_LOCKED
   current_only: true
-  revision: 2026-08-31-CONTROLLED-TEST-DATA-AND-BUTTON-RUNTIME-VALIDATION
+  revision: 2026-09-12-GOVERNANCE-PACKAGE-V2.1.2-SOURCE-DOMAIN-MINIMAL-CONTROL
   scope: WEBSITE_CONSTRUCTION_ONLY
   purpose: Govern website construction behavior without redefining page, system, navigation, runtime, or business authority.
   undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
@@ -198,7 +198,7 @@ brand_asset_lock:
   forbidden_logo_changes:
     - redraw
     - regenerate artwork
-    - change aspect ratio
+    - change aspect_ratio
     - stretch
     - squash
     - crop away artwork
@@ -255,7 +255,87 @@ post_deploy_acceptance:
     unexpected_4xx_or_5xx: FAIL
     pageerror_or_unexpected_console_error: FAIL
   false_success_forbidden:
-  - Testing the production alias for a new-branch SHA
-  - Accepting a well-formed but stale release_sha
-  - Counting skipped browser cases as executed
-  - Ignoring an HTTP error without exact path and status validation
+    - Testing the production alias for a new-branch SHA
+    - Accepting a well-formed but stale release_sha
+    - Counting skipped browser cases as executed
+    - Ignoring an HTTP error without exact path and status validation
+
+governance_package_v2_1_2:
+  package_version: 2.1.2
+  package_version_namespace: GOVERNANCE_ONLY
+  selected_project_topology: MULTI_PAGE_FOUNDATION_THEN_PAGE_VERTICAL
+  topology_lock:
+    mode_locked: true
+    mode_switch_mid_project: FORBIDDEN
+    all_required_pages_foundation_before_page_runtime: REQUIRED
+    page_vertical_concurrency: 1
+    next_page_requires_previous_page_state: PRODUCTION_CLOSED
+  source_domain_decomposition_gate:
+    required: true
+    required_domains_per_page:
+      - PAGE_CONSTRUCTION_DESIGN
+      - VISUAL_CONSTRUCTION_DESIGN
+    mixed_legacy_source_file:
+      allowed_as_reference_only: true
+      positive_current_planning_authority: FORBIDDEN
+      current_load_graph_eligible: false
+    current_planning_artifact_contract:
+      exactly_one_planning_domain_per_artifact: true
+      page_and_visual_same_target_path: FORBIDDEN
+      page_and_visual_same_editable_owner: FORBIDDEN
+      source_lineage_required: true
+      source_section_refs_required: true
+      content_hash_required: true
+      shared_fact_duplication: FORBIDDEN
+      shared_fact_reference_by_uid: REQUIRED
+    source_intake_closure:
+      missing_page_construction_design: BLOCK
+      missing_visual_construction_design: BLOCK
+      inventory_extraction_contradiction: BLOCK
+      proposed_change_self_promotion: BLOCK
+  rebuild_branch_isolation_gate:
+    legacy_branch_access: READ_ONLY_EXTRACTION_ONLY
+    bulk_copy: FORBIDDEN
+    direct_merge: FORBIDDEN
+    extraction_ledger_required: true
+    reference_only_snapshot:
+      current_load_graph_eligible: false
+      allowed_status: IMPORTED_REFERENCE_ONLY
+    current_owner_import:
+      exact_source_blob_required: true
+      approved_classification_required: true
+      canonical_target_path_required: true
+      allowed_status: IMPORTED_APPROVED
+    clean_scan_after_each_mutating_batch: REQUIRED
+  current_tree_clean_scan_freshness:
+    deterministic_tree_fingerprint_required: true
+    evidence_only_paths_may_be_excluded_from_fingerprint: true
+    cache_and_generated_garbage_must_be_checked_separately: true
+    stale_scan_after_source_or_authority_change: FAIL
+    trusted_ci_revision_binding_when_available: REQUIRED
+    scan_pass_must_describe_actual_observed_tree: true
+  minimal_control_governance_self_test:
+    required: true
+    fixture_policy: OBSERVABLE_FACTS_ONLY
+    expected_outcome_location: TEST_HARNESS_AFTER_VALIDATOR_EXECUTION
+    forbidden_fixture_controls:
+      - is_invalid
+      - should_fail
+      - expected_status_consumed_by_validator
+      - synthetic_blocking_counter_used_as_only_failure_source
+      - precomputed_governance_conclusion
+    validator_must_derive_from_facts:
+      - missing_required_domain
+      - same_page_visual_target
+      - same_page_visual_owner
+      - source_inventory_extraction_contradiction
+      - proposed_change_self_promotion
+      - stale_clean_scan
+      - reference_only_snapshot_entering_current_load_graph
+    false_pass_behavior: BLOCK_PHASE_AND_RECORD_GOVERNANCE_DEFECT
+  phase_progression_guard:
+    governance_repo_materialization_required: true
+    source_domain_decomposition_required: true
+    current_tree_clean_scan_required: true
+    unresolved_contamination_must_equal: 0
+    any_required_gate_not_pass: BLOCK
