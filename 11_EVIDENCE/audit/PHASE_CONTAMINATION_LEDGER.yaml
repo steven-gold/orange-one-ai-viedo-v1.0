@@ -1,5 +1,4 @@
-run_uid: GOVRUN-REBUILD-INIT-003
-source_revision: 152889b1e6baa5fcaa73f2519b97b090c8ab5113
+run_uid: GOVRUN-REBUILD-CONTAMINATION
 sweeps:
   - scope_uid: REBUILD-PROJECT
     phase_uid: REBUILD-BRANCH-INITIALIZATION
@@ -28,4 +27,36 @@ sweeps:
     test_only_content_in_production_path: 0
     evidence_refs:
       - github:rebuild-v2.1.1@152889b1e6baa5fcaa73f2519b97b090c8ab5113
+    status: PASS
+  - scope_uid: REBUILD-PROJECT
+    phase_uid: FOUNDATION-01-SOURCE-INTAKE
+    page_uid: CORE-01+ASSET-01
+    run_uid: GOVRUN-SOURCE-EXTRACT-SWEEP-001
+    source_revision: 0639a620048b788219056cd5314eef221883306e
+    inspected_tree_sha: 86b8a1c0e75e4ec9d50485c817e8bf61c0fdc78f
+    extracted_reference_snapshots:
+      - 00_SOURCE_INTAKE/legacy_new/reference_only/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+      - 00_SOURCE_INTAKE/legacy_new/reference_only/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    extraction_ledger:
+      - 00_SOURCE_INTAKE/EXTRACTION_LEDGER_CORE_ASSET_001.yaml
+    positive_current_authority_from_legacy_snapshot: 0
+    superseded_refs_found: []
+    duplicate_owner_refs: []
+    foreign_scope_refs: []
+    generated_non_authority_refs: []
+    test_only_refs_in_production_path: []
+    current_load_graph_residuals: []
+    unexpected_paths: []
+    forbidden_cache_or_temp_paths: []
+    cleanup_actions: []
+    reference_only_noncurrent_refs:
+      - 00_SOURCE_INTAKE/legacy_new/reference_only/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+      - 00_SOURCE_INTAKE/legacy_new/reference_only/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    unresolved_current_contamination: 0
+    current_owner_conflict: 0
+    superseded_content_in_current_load_graph: 0
+    test_only_content_in_production_path: 0
+    evidence_refs:
+      - github-tree:86b8a1c0e75e4ec9d50485c817e8bf61c0fdc78f
+      - github-commit:0639a620048b788219056cd5314eef221883306e
     status: PASS
