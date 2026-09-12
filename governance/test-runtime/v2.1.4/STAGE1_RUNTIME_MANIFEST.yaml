@@ -1,0 +1,47 @@
+schema_version: 1
+runtime_uid: ACPOS-GOV-TEST-v2.1.4-STAGE1
+role: SEALED_TEST_RUNTIME_TRANSPORT
+authority: false
+normative_edit_allowed: false
+source_candidate:
+  version: v2.1.4
+  state: BUGFIX_PREFORMAL_VERIFIED_USER_FROZEN_READ_ONLY
+  zip_sha256: d789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109
+  external_trust_root_sha256: 2f5bfe186ddcf89379a9d96e0c0698e6edbbc4d765b8f0428e78ad796e86770d
+transport:
+  encoding: BASE64_CHUNKED_TAR_GZ
+  chunk_count: 9
+  chunk_glob: governance/test-runtime/v2.1.4/stage1_runtime_bundle.tar.gz.b64.part*
+  concatenated_base64_sha256: e92c466d0a3dd87a6ae4171b3d772acd3cce587e4b3cfe80cc34eed48239a1cc
+  decoded_bundle_sha256: 725527bdc4182bec7990f2faf7220b582fd0ad86bf9d661cc44d7e66b9cf5cac
+sealed_normative_hash: b0d2efedd1fc268715d7821ef56341cc1d759e015c1683000400f70ce8d8e001
+files:
+  - path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    sha256: c23a41cbfac7afea5282a92d6c2bfc52b8a64ce06923088dfec8158cd3c9558b
+    role: SEALED_NORMATIVE_READ_ONLY
+  - path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+    sha256: b1feacb7342d13fe5e9775992748fe6f6ea967153799ee48276261ac5e1acb9e
+    role: SEALED_NORMATIVE_READ_ONLY
+  - path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    sha256: 472bd36bee7ac66d3aa6b8bcb0808e80547333d8573e6f014a7fdfdddd68b19f
+    role: SEALED_NORMATIVE_READ_ONLY
+  - path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    sha256: 15372b077176fb68bbb319e75b65d570bbb968544cb42e7ca42a625a9910df57
+    role: SEALED_NORMATIVE_READ_ONLY
+  - path: 09_TESTS/governance/governance_stage1_pipeline_guard.py
+    sha256: a2d1ce114eec425f39731e4f9a21194b3cc557d28b1658b83f416212b32fc8b1
+    role: SEALED_STAGE1_VALIDATOR
+  - path: 09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py
+    sha256: 607343856d53940209382f44686f3395e8faf5f24fbcbeea0b0f638b01367db0
+    role: SEALED_STAGE1_MINIMAL_CONTROL_TEST
+expected_test:
+  suite: Stage-1 source-to-blueprint minimal-control
+  passed_expectations: 27
+  total: 27
+  result: PASS
+mutation_policy:
+  runtime_bundle_content: IMMUTABLE
+  normative_files: IMMUTABLE
+  validator_files: IMMUTABLE
+  branch_pointer_and_execution_evidence: MAY_UPDATE_WITHOUT_CHANGING_NORMATIVE_CONTENT
+status: SEALED_STAGE1_RUNTIME_MATERIALIZED
