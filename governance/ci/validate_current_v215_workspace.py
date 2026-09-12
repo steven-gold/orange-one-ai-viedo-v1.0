@@ -1,164 +1,103 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import hashlib, yaml
-
-root=Path('.')
-package='2bfeed2ec9bc6eac9f34fdd5eb43e2f76f1e78682c4b81bebb9e4a3e1084eecd'
-trust='787b2be721c0d51e8fe595ceaeeb0c80a03e692952b6ff2fc139c6a914f089ee'
-
-def die(msg): raise SystemExit(msg)
-def gblob(p):
-    b=p.read_bytes()
-    return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+import hashlib,yaml
+r=Path('.'); rr=r/'00_SOURCE_INTAKE/fresh_run_002'; i=rr/'00_SOURCE_INTAKE'
+PKG='2bfeed2ec9bc6eac9f34fdd5eb43e2f76f1e78682c4b81bebb9e4a3e1084eecd'; TRUST='787b2be721c0d51e8fe595ceaeeb0c80a03e692952b6ff2fc139c6a914f089ee'
+def die(x): raise SystemExit(x)
+def gsha(p):
+ b=p.read_bytes();return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
 def chash(d):
-    x=dict(d)
-    for k in ('content_hash','artifact_hash','blueprint_hash','binding_hash','structure_manifest_hash'):
-        x.pop(k,None)
-    return hashlib.sha256(yaml.safe_dump(x,allow_unicode=True,sort_keys=True).encode()).hexdigest()
-
-cur=yaml.safe_load((root/'GOVERNANCE_CURRENT.yaml').read_text())
-base=yaml.safe_load((root/'REBUILD_BRANCH_BASELINE.yaml').read_text())
-lock=yaml.safe_load((root/'11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml').read_text())
-sealed=yaml.safe_load((root/'11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml').read_text())
-assert cur['normative_authority']['version']=='v2.1.5'
-assert cur['normative_authority']['package_sha256']==package
-assert cur['normative_authority']['external_trust_root_sha256']==trust
-assert cur['normative_authority']['normative_edit_allowed'] is False
-assert cur['test_runtime']['runtime_uid']=='ACPOS-GOV-TEST-v2.1.5-STAGE1'
-assert cur['test_runtime']['expected_stage1_minimal_control']=='31/31_PASS'
-assert base['governance_test']['version']=='v2.1.5'
-assert base['prior_extraction_reuse']=='FORBIDDEN'
-assert lock['lock_state']=='USER_FROZEN_READ_ONLY'
-assert lock['normative_edit_after_lock']=='FORBIDDEN'
-assert sealed['sealed_governance']['version']=='v2.1.5'
-assert sealed['sealed_governance']['package_sha256']==package
-assert sealed['normative_mutation_allowed'] is False
-assert sealed['verified_test_summary']['stage1_minimal_control']=='31/31_PASS'
-
-forbidden=[p for p in [root/'app',root/'src',root/'pages',root/'public'] if p.exists()]
-if forbidden: die('premature website implementation: '+', '.join(map(str,forbidden)))
-stale_names={'CORE_ASSET_SOURCE_INVENTORY.yaml','EXTRACTION_LEDGER_CORE_ASSET_001.yaml','GOVERNANCE_EXTRACTION_LEDGER_001.yaml','SOURCE_DOMAIN_DECOMPOSITION.yaml','GOVERNANCE_DEFECT_LEDGER.yaml','GOVERNANCE_TEST_RUNTIME_SYNC_v2.1.4.yaml','PHASE_CONTAMINATION_LEDGER.yaml','REBUILD_BRANCH_ISOLATION.yaml'}
-stale=[str(p) for p in root.rglob('*') if p.is_file() and p.name in stale_names]
-if stale: die('stale current-path artifacts remain: '+', '.join(stale))
-legacy=[str(p) for p in root.rglob('*') if p.is_file() and ('legacy_new' in p.parts or 'stage1_runtime_bundle.tar.gz.b64' in p.name)]
-if legacy: die('legacy transport/source residue remains: '+', '.join(legacy))
-if (root/'governance/test-runtime/v2.1.4').exists(): die('superseded v2.1.4 runtime remains in current tree')
-
-runroot=root/'00_SOURCE_INTAKE/fresh_run_002'
-if not runroot.is_dir(): die('fresh_run_002 foundation missing')
-siblings=[p.name for p in (root/'00_SOURCE_INTAKE').iterdir() if p.name!='fresh_run_002']
-if siblings: die('unexpected current intake sibling: '+repr(siblings))
-state=yaml.safe_load((runroot/'EXECUTION_STATE.yaml').read_text())
-run=yaml.safe_load((runroot/'RUN_MANIFEST.yaml').read_text())
-if run.get('governance',{}).get('version')!='v2.1.5': die('fresh run governance version mismatch')
-if run.get('governance',{}).get('normative_edit_allowed') is not False: die('fresh run governance not frozen')
-
-st=state.get('state')
-if st=='FOUNDATION_READY_NOT_EXECUTED':
-    if (runroot/'00_SOURCE_INTAKE/RAW_SOURCE').exists(): die('raw source exists before second extraction start')
-elif st in {'RAW_SOURCE_REFERENCE_CAPTURED','SOURCE_STRUCTURE_ENUMERATION_COMPLETED'}:
-    intake=runroot/'00_SOURCE_INTAKE'
-    refs=yaml.safe_load((intake/'RAW_SOURCE_REFERENCE_MANIFEST.yaml').read_text())
-    cap=yaml.safe_load((intake/'RAW_SOURCE_CAPTURE_STATE.yaml').read_text())
-    if cap.get('state')!='CAPTURE_CLOSED': die('raw capture not terminal closed')
-    if cap.get('next_step')!='SOURCE_STRUCTURE_ENUMERATION': die('raw capture next step mismatch')
-    if cap.get('recapture_allowed') is not False: die('closed raw capture remains writable')
-    records=refs.get('records') or []
-    expected=[]; rec_by_uid={}
-    for rec in records:
-        uid=rec.get('source_uid')
-        if not uid or uid in rec_by_uid: die('duplicate/missing raw source uid: '+str(uid))
-        rec_by_uid[uid]=rec
-        if rec.get('source_domain_scope')=='MIXED_PAGE_VISUAL' and rec.get('source_role')!='MIXED_PAGE_VISUAL_SOURCE_INPUT':
-            die('mixed source role not neutral: '+str(uid))
-        p=runroot/rec['target_path']
-        if not p.is_file(): die('missing raw source: '+str(p))
-        got=gblob(p)
-        if got!=rec.get('source_git_blob_sha') or got!=rec.get('target_git_blob_sha'): die('exact blob mismatch: '+str(p))
-        if rec.get('content_mutated') is not False: die('raw source marked mutated: '+str(uid))
-        expected.append(rec['target_path'])
-    rawroot=runroot/'00_SOURCE_INTAKE/RAW_SOURCE'
-    actual=sorted(p.relative_to(runroot).as_posix() for p in rawroot.rglob('*') if p.is_file())
-    if sorted(expected)!=actual: die('raw source directory purity mismatch: '+repr(actual))
-
-    if st=='SOURCE_STRUCTURE_ENUMERATION_COMPLETED':
-        if run.get('status')!='SOURCE_STRUCTURE_ENUMERATION_COMPLETED': die('run manifest status mismatch')
-        pol=run.get('execution_policy') or {}
-        if pol.get('source_structure_enumeration')!='COMPLETED_34_OF_34_FULL_SOURCE_PROVEN': die('structure completion mismatch')
-        if pol.get('source_segment_mapping')!='NOT_EXECUTED': die('segment mapping started early')
-        if pol.get('source_domain_decomposition')!='NOT_EXECUTED': die('domain decomposition started early')
-        if state.get('source_structure_enumeration_started') is not True or state.get('source_structure_enumeration_completed') is not True:
-            die('execution state does not close enumeration')
-        if state.get('source_segment_mapping_started') is not False: die('segment mapping contamination')
-        if (intake/'SOURCE_SEGMENT_MAP.yaml').exists(): die('SOURCE_SEGMENT_MAP exists before explicit start')
-
-        struct=yaml.safe_load((intake/'SOURCE_STRUCTURE_MANIFEST.yaml').read_text())
-        if struct.get('artifact_type')!='SOURCE_STRUCTURE_MANIFEST': die('structure artifact type mismatch')
-        if struct.get('run_uid')!='FRESH-RUN-002' or struct.get('step_uid')!='SOURCE_STRUCTURE_ENUMERATION': die('structure identity mismatch')
-        if struct.get('classification_started') is not False or struct.get('segment_mapping_started') is not False: die('classification contamination')
-        sources=struct.get('sources') or []
-        by_uid={s.get('source_uid'):s for s in sources if s.get('source_uid')}
-        if len(by_uid)!=len(sources): die('duplicate/missing source uid in structure')
-        if set(by_uid)!=set(rec_by_uid): die('structure source set mismatch')
-
-        ids=set(); total=req_count=ref_count=0
-        forbidden_node_fields={'planning_domain','responsibility_uid','disposition','target_artifact_uids','classification'}
-        for uid,rec in rec_by_uid.items():
-            s=by_uid[uid]
-            if s.get('source_revision')!=refs.get('source_revision'): die('source revision mismatch: '+uid)
-            if s.get('source_git_blob_sha')!=rec.get('source_git_blob_sha'): die('source blob mismatch: '+uid)
-            if s.get('raw_source_path')!=rec.get('target_path'): die('raw path mismatch: '+uid)
-            if s.get('enumeration_method')!='PYYAML_SAFE_LOAD_TOP_LEVEL_MAPPING_ENUMERATION': die('enumeration method mismatch: '+uid)
-            if s.get('enumeration_tool')!='PyYAML==6.0.2': die('enumeration tool mismatch: '+uid)
-            if s.get('enumeration_state')!='FULL_SOURCE_ENUMERATION_PROVEN': die('enumeration not proven: '+uid)
-            if not (runroot/s.get('evidence_ref','')).is_file(): die('enumeration evidence missing: '+uid)
-            if s.get('structure_manifest_hash')!=chash(s): die('structure hash mismatch: '+uid)
-
-            parsed=yaml.safe_load((runroot/rec['target_path']).read_text(encoding='utf-8'))
-            if not isinstance(parsed,dict): die('raw YAML top-level is not mapping: '+uid)
-            actual_keys=list(parsed.keys())
-            nodes=s.get('observed_nodes') or []
-            if s.get('observed_node_count')!=len(nodes): die('observed count mismatch: '+uid)
-            declared=[n.get('source_top_level_key') for n in nodes]
-            if declared!=actual_keys: die('top-level enumeration mismatch: '+uid+' declared='+repr(declared)+' actual='+repr(actual_keys))
-            for n in nodes:
-                nid=n.get('source_node_uid'); key=n.get('source_top_level_key')
-                if not nid or nid in ids: die('duplicate/missing source_node_uid: '+str(nid))
-                ids.add(nid)
-                if n.get('source_ref')!='$.'+str(key): die('source_ref mismatch: '+str(nid))
-                if n.get('classification_state')!='UNCLASSIFIED_OBSERVED_SOURCE': die('premature classification: '+str(nid))
-                relevance=n.get('governance_relevance')
-                if relevance not in {'REQUIRED','REFERENCE_ONLY','NON_NORMATIVE'}: die('invalid relevance: '+str(nid))
-                if relevance=='REQUIRED': req_count+=1
-                elif relevance=='REFERENCE_ONLY': ref_count+=1
-                if forbidden_node_fields.intersection(n): die('classification fields present during enumeration: '+str(nid))
-            total+=len(nodes)
-
-        comp=struct.get('completion') or {}
-        if struct.get('source_count')!=3 or len(sources)!=3: die('source count is not exact 3')
-        if struct.get('observed_node_count')!=34 or total!=34: die('node count is not exact 34: '+str(total))
-        if req_count!=29 or ref_count!=5: die(f'relevance count mismatch required={req_count} reference={ref_count}')
-        if comp.get('enumeration_state')!='FULL_SOURCE_ENUMERATION_PROVEN': die('completion state mismatch')
-        if comp.get('required_nodes')!=29 or comp.get('reference_only_nodes')!=5: die('completion relevance counters mismatch')
-        if comp.get('unclassified_observed_nodes')!=34 or comp.get('classified_nodes')!=0: die('classification contamination')
-        if comp.get('missing_nodes')!=0 or comp.get('extra_nodes')!=0 or comp.get('duplicate_source_node_uids')!=0: die('completeness counters not zero-clean')
-        if comp.get('next_step')!='SOURCE_SEGMENT_MAPPING': die('structure next step mismatch')
-
-        ev=yaml.safe_load((intake/'evidence/SOURCE_STRUCTURE_ENUMERATION_EVIDENCE.yaml').read_text())
-        if ev.get('status')!='OBSERVED_FULL_SOURCE_STRUCTURE': die('evidence status mismatch')
-        if ev.get('raw_source_count')!=3 or ev.get('observed_node_count')!=34: die('evidence count mismatch')
-        if ev.get('next_step')!='SOURCE_SEGMENT_MAPPING': die('evidence next step mismatch')
-        proof=ev.get('boundary_proof') or {}
-        for k in ('raw_source_bytes_mutated','page_visual_classification_started','source_segment_mapping_started','domain_extraction_started','blueprint_materialization_started','website_construction_started','deployment_started'):
-            if proof.get(k) is not False: die('boundary proof failed: '+k)
-        print('PASS: SOURCE_STRUCTURE_ENUMERATION 34/34; required=29; reference_only=5; classified=0')
-else:
-    die('unexpected fresh-run state: '+str(st))
-
-garbage=[]
-for p in root.rglob('*'):
-    if not p.is_file() or '.git' in p.parts: continue
-    if p.name=='.DS_Store' or p.suffix in {'.pyc','.pyo'} or '__pycache__' in p.parts or p.name.endswith(('.tmp','.bak','~')):
-        garbage.append(str(p))
-if garbage: die('garbage detected: '+', '.join(garbage))
+ x=dict(d);x.pop('structure_manifest_hash',None);return hashlib.sha256(yaml.safe_dump(x,allow_unicode=True,sort_keys=True).encode()).hexdigest()
+def resolve(d,ref):
+ if not isinstance(ref,str) or not ref.startswith('$.'): return False
+ x=d
+ for k in ref[2:].split('.'):
+  if not isinstance(x,dict) or k not in x:return False
+  x=x[k]
+ return True
+# sealed authority
+c=yaml.safe_load((r/'GOVERNANCE_CURRENT.yaml').read_text());b=yaml.safe_load((r/'REBUILD_BRANCH_BASELINE.yaml').read_text());l=yaml.safe_load((r/'11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml').read_text());s0=yaml.safe_load((r/'11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml').read_text())
+if c['normative_authority']['version']!='v2.1.5' or c['normative_authority']['package_sha256']!=PKG or c['normative_authority']['external_trust_root_sha256']!=TRUST or c['normative_authority']['normative_edit_allowed'] is not False:die('sealed current mismatch')
+if c['test_runtime']['expected_stage1_minimal_control']!='31/31_PASS' or b['governance_test']['version']!='v2.1.5' or b['prior_extraction_reuse']!='FORBIDDEN' or l['lock_state']!='USER_FROZEN_READ_ONLY' or l['normative_edit_after_lock']!='FORBIDDEN' or s0['sealed_governance']['version']!='v2.1.5' or s0['sealed_governance']['package_sha256']!=PKG or s0['normative_mutation_allowed'] is not False:die('seal/lock mismatch')
+if any((r/x).exists() for x in ('app','src','pages','public')):die('premature website implementation')
+if not rr.is_dir() or [p.name for p in (r/'00_SOURCE_INTAKE').iterdir() if p.name!='fresh_run_002']:die('fresh run isolation mismatch')
+# state
+st=yaml.safe_load((rr/'EXECUTION_STATE.yaml').read_text());run=yaml.safe_load((rr/'RUN_MANIFEST.yaml').read_text())
+if st.get('state')!='SOURCE_SEGMENT_MAPPING_COMPLETED' or st.get('source_segment_mapping_completed') is not True or st.get('source_fact_materialization_started') is not False or st.get('domain_decomposition_started') is not False:die('execution state mismatch')
+if st.get('allowed_transition',{}).get('to')!='SOURCE_FACT_MATERIALIZATION_ACTIVE':die('next transition mismatch')
+if run.get('status')!='SOURCE_SEGMENT_MAPPING_COMPLETED' or run.get('governance',{}).get('version')!='v2.1.5' or run.get('governance',{}).get('normative_edit_allowed') is not False:die('run manifest mismatch')
+pol=run.get('execution_policy') or {}
+if pol.get('source_structure_enumeration')!='COMPLETED_61_OF_61_FULL_SOURCE_PROVEN' or pol.get('source_segment_mapping')!='COMPLETED_61_OF_61_ONE_SEGMENT_PER_NODE' or pol.get('source_fact_materialization')!='NOT_EXECUTED':die('run phase counters mismatch')
+# raw capture exact
+refs=yaml.safe_load((i/'RAW_SOURCE_REFERENCE_MANIFEST.yaml').read_text());cap=yaml.safe_load((i/'RAW_SOURCE_CAPTURE_STATE.yaml').read_text())
+if cap.get('state')!='CAPTURE_CLOSED' or cap.get('next_step')!='SOURCE_STRUCTURE_ENUMERATION' or cap.get('recapture_allowed') is not False:die('raw capture reopened')
+rec={x['source_uid']:x for x in refs.get('records') or []}
+if len(rec)!=3:die('raw source count mismatch')
+expected=[]
+for uid,x in rec.items():
+ if x.get('source_domain_scope')=='MIXED_PAGE_VISUAL' and x.get('source_role')!='MIXED_PAGE_VISUAL_SOURCE_INPUT':die('biased mixed role:'+uid)
+ p=rr/x['target_path']
+ if not p.is_file() or gsha(p)!=x.get('source_git_blob_sha') or gsha(p)!=x.get('target_git_blob_sha') or x.get('content_mutated') is not False:die('raw exactness fail:'+uid)
+ expected.append(x['target_path'])
+actual=sorted(p.relative_to(rr).as_posix() for p in (i/'RAW_SOURCE').rglob('*') if p.is_file())
+if sorted(expected)!=actual:die('raw directory purity fail')
+# structure, including mixed registries split
+smf=yaml.safe_load((i/'SOURCE_STRUCTURE_MANIFEST.yaml').read_text());sources=smf.get('sources') or []
+if smf.get('artifact_type')!='SOURCE_STRUCTURE_MANIFEST' or smf.get('observed_node_count')!=61 or smf.get('classification_started') is not False or smf.get('segment_mapping_started') is not True:die('structure header mismatch')
+by={x['source_uid']:x for x in sources}
+if set(by)!=set(rec) or len(by)!=3:die('structure source set mismatch')
+nodes={};reqn=refn=0
+for uid,x in by.items():
+ raw=yaml.safe_load((rr/rec[uid]['target_path']).read_text())
+ refs_expected=[]
+ for k,v in raw.items(): refs_expected.extend(['$.registries.'+str(z) for z in v.keys()] if k=='registries' and isinstance(v,dict) else ['$.'+str(k)])
+ ns=x.get('observed_nodes') or []
+ if [n.get('source_ref') for n in ns]!=refs_expected or x.get('observed_node_count')!=len(ns) or x.get('structure_manifest_hash')!=chash(x):die('structure enumeration mismatch:'+uid)
+ if any(n.get('source_ref')=='$.registries' for n in ns):die('mixed registries container unsplit:'+uid)
+ for n in ns:
+  nid=n.get('source_node_uid')
+  if not nid or nid in nodes or not resolve(raw,n.get('source_ref')) or n.get('classification_state')!='UNCLASSIFIED_OBSERVED_SOURCE':die('source node invalid:'+str(nid))
+  nodes[nid]=(uid,n); reqn+=n.get('governance_relevance')=='REQUIRED'; refn+=n.get('governance_relevance')=='REFERENCE_ONLY'
+if len(nodes)!=61 or reqn!=52 or refn!=9:die(f'structure counts {len(nodes)}/{reqn}/{refn}')
+co=smf.get('completion') or {}
+if co.get('required_nodes')!=52 or co.get('reference_only_nodes')!=9 or co.get('mixed_container_nodes_remaining')!=0 or co.get('missing_nodes')!=0 or co.get('extra_nodes')!=0:die('structure completion mismatch')
+# segment 1:1 map
+m=yaml.safe_load((i/'SOURCE_SEGMENT_MAP.yaml').read_text())
+if m.get('artifact_type')!='SOURCE_SEGMENT_MAP' or m.get('status')!='CURRENT_SOURCE_SEGMENT_MAPPING' or m.get('source_structure_node_count')!=61 or m.get('classification_started') is not False or m.get('classification_materialized') is not False:die('segment header mismatch')
+rm={x['source_uid']:x for x in m.get('raw_sources') or []}
+if set(rm)!=set(rec):die('segment raw source set mismatch')
+for uid,x in rec.items():
+ for k in ('page_uid','source_role','source_domain_scope'):
+  if rm[uid].get(k)!=x.get(k):die('segment raw metadata:'+uid+':'+k)
+segs=m.get('source_segments') or []
+if len(segs)!=61:die('segment count mismatch')
+seen=set();counts={};pn=vn=rq=rf=0
+for z in segs:
+ sid=z.get('segment_uid');nid=z.get('source_node_uid');uid=z.get('source_uid')
+ if not sid or sid in seen or nid not in nodes:die('segment identity:'+str(sid))
+ seen.add(sid)
+ counts[nid]=counts.get(nid,0)+1; exp,n=nodes[nid]
+ if uid!=exp or z.get('page_uid')!=rec[uid].get('page_uid'):die('segment lineage:'+sid)
+ dom=z.get('planning_domain'); vis=(uid=='SRC-CORE-01-CANONICAL-VISUAL-IDENTITY' or n.get('source_ref') in {'$.layout','$.registries.visuals'})
+ if dom not in {'PAGE_CONSTRUCTION','VISUAL_CONSTRUCTION'} or vis!=(dom=='VISUAL_CONSTRUCTION'):die('segment domain:'+sid)
+ pn+=dom=='PAGE_CONSTRUCTION';vn+=dom=='VISUAL_CONSTRUCTION';required=n.get('governance_relevance')=='REQUIRED'
+ if z.get('required') is not required:die('segment required flag:'+sid)
+ targets=z.get('target_artifact_uids') or []
+ if required:
+  rq+=1
+  if z.get('disposition')!='CLASSIFIED' or len(targets)!=1:die('required disposition:'+sid)
+ else:
+  rf+=1
+  if z.get('disposition')!='REFERENCE_ONLY' or targets or not z.get('authority_evidence_ref') or not (rr/z['authority_evidence_ref']).is_file():die('reference disposition:'+sid)
+if set(counts)!=set(nodes) or any(v!=1 for v in counts.values()) or (rq,rf,pn,vn)!=(52,9,52,9):die(f'segment coverage {rq}/{rf}/{pn}/{vn}')
+mc=m.get('completion') or {}
+for k,v in {'segment_count':61,'required_segment_count':52,'reference_only_segment_count':9,'page_construction_segments':52,'visual_construction_segments':9,'required_nodes_unmapped':0,'duplicate_node_mappings':0,'unknown_source_nodes':0,'physical_classification_artifacts':0}.items():
+ if mc.get(k)!=v:die('segment completion:'+k)
+if mc.get('next_step')!='SOURCE_FACT_MATERIALIZATION':die('segment next step')
+if (rr/'01_CLASSIFIED').exists() or any((i/x).exists() for x in ('SOURCE_CONTEXT_MANIFEST.yaml','CONTENT_SUPERSESSION_CONFLICT_LEDGER.yaml','SOURCE_DEPENDENCY_MAP.yaml')):die('next phase materialized early')
+# garbage
+for p in r.rglob('*'):
+ if p.is_file() and '.git' not in p.parts and (p.name=='.DS_Store' or p.suffix in {'.pyc','.pyo'} or '__pycache__' in p.parts or p.name.endswith(('.tmp','.bak','~'))):die('garbage:'+str(p))
+print('PASS: SOURCE_STRUCTURE_ENUMERATION 61/61; required=52; reference_only=9; mixed_containers=0')
+print('PASS: SOURCE_SEGMENT_MAPPING 61/61; required=52; reference_only=9; PAGE=52; VISUAL=9; classification_files=0')
 print('PASS: v2.1.5 seal/current/fresh-workspace contract valid')
