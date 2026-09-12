@@ -1,25 +1,40 @@
 authority: false
 role: CURRENT_GOVERNANCE_PACKAGE_POINTER
 candidate_package: v2.1.2
-candidate_status: LOCAL_REGRESSION_VERIFIED
+candidate_status: REPOSITORY_MATERIALIZED_AND_MINIMAL_CONTROL_VERIFIED
 package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.2.zip
 package_sha256: e12dbfacce1bee15ffb276ecb8d7033231fbb091a6ed5125150b462145fc11c8
+package_archive_in_repository: false
 supersedes_when_materialized:
   - v2.1.1
   - v2.1.0
 repository_branch: rebuild-v2.1.1
 legacy_governance_packages_in_current_load_graph: []
-repo_materialization_status: PENDING
+repo_materialization_status: PASS_CANONICAL_OWNER_AND_VALIDATOR
+normative_rules_materialized_in_canonical_owner: true
+parallel_governance_owner_created: false
+validator_harness_materialized: true
+minimal_control_ci_verified: true
+minimal_control_ci_run_id: 34664178681
+minimal_control_ci_head_sha: ea4c7456b238d7434215bfb654a1845bfaf71ea1
+minimal_control_ci_result: PASS
+current_state_gate_result: FAIL_EXPECTED
+current_state_gate_blockers:
+  - SOURCE_DOMAIN_DECOMPOSITION_GATE
+  - CURRENT_TREE_CLEAN_SCAN_FRESHNESS
 construction_may_advance: false
-blocking_reason: v2.1.2 normative governance and validator updates are verified locally but are not yet fully materialized into the rebuild repository canonical governance/tooling paths.
+blocking_reason: Governance rules and validator are materialized and the minimal-control self-test passes, but Source Intake is intentionally blocked until every required page has independent PAGE_CONSTRUCTION_DESIGN and VISUAL_CONSTRUCTION_DESIGN artifacts and a fresh clean scan.
 new_required_gates:
   - SOURCE_DOMAIN_DECOMPOSITION_GATE
   - CURRENT_TREE_CLEAN_SCAN_FRESHNESS
   - MINIMAL_CONTROL_GOVERNANCE_SELF_TEST
-normative_documents_inside_package:
-  - 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-  - 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-  - 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-  - 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-exact_resume_point: materialize v2.1.2 into existing canonical governance owner/tooling without creating a parallel authority, then rerun current-tree clean scan before any further source extraction
-status: BLOCKED_PENDING_REPO_MATERIALIZATION
+normative_package_documents_external_to_repository:
+  - 01_BLUEPRINT_DESIGN_GOVERNANCE.md
+  - 02_IMPLEMENTATION_DELIVERY_STANDARD.md
+  - 03_EXECUTION_CONTROL_STANDARD.md
+  - 04_AUDIT_PROGRESS_STANDARD.md
+repository_canonical_owner: authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
+repository_validator: 09_TESTS/governance/validate_rebuild_governance.py
+repository_minimal_control_test: 09_TESTS/governance/test_v2_1_2_minimal_control.py
+exact_resume_point: Independently classify and materialize PAGE_CONSTRUCTION_DESIGN and VISUAL_CONSTRUCTION_DESIGN for CORE-01 and ASSET-01 from allowed sources; after each mutating batch run a fresh branch clean scan.
+status: BLOCKED_PENDING_SOURCE_DOMAIN_DECOMPOSITION
