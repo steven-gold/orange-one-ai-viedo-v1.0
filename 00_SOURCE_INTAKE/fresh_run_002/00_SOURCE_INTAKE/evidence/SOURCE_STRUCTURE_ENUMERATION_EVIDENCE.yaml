@@ -1,34 +1,31 @@
-schema_version: 1
+schema_version: 2
 evidence_uid: FRESH-RUN-002-SOURCE-STRUCTURE-ENUMERATION-EVIDENCE
+artifact_type: SOURCE_STRUCTURE_ENUMERATION_EVIDENCE
 run_uid: FRESH-RUN-002
-stage_uid: STAGE-01
-step_uid: SOURCE_STRUCTURE_ENUMERATION
-status: OBSERVED_FULL_SOURCE_STRUCTURE
+status: OBSERVED_FULL_SOURCE_STRUCTURE_REFINED_FOR_SEGMENTABILITY
 source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
-enumeration_method: PYYAML_SAFE_LOAD_TOP_LEVEL_MAPPING_ENUMERATION
-enumeration_tool: PyYAML==6.0.2
-observed_at_utc: '2026-09-12T22:14:00Z'
 raw_source_count: 3
-observed_node_count: 34
-source_results:
-- source_uid: SRC-CORE-01-CANONICAL-VISUAL-IDENTITY
-  source_git_blob_sha: 09665c0a4a6b86db912f9b44160d336bfc611ae6
-  top_level_node_count: 5
-  enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
-- source_uid: SRC-CORE-01-PAGE-VISUAL-AUTHORITY
-  source_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
-  top_level_node_count: 13
-  enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
-- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
-  source_git_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
-  top_level_node_count: 16
-  enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
+observed_node_count: 61
+required_node_count: 52
+reference_only_node_count: 9
+enumeration_granularity: TOP_LEVEL_EXCEPT_MIXED_REGISTRIES_EXPANDED_TO_DIRECT_CHILDREN
+refinement_reason: The two $.registries containers contain both visual and non-visual governed content. They are containers,
+  not legal single-domain segment owners, so direct child registry keys are enumerated as stable source nodes before SOURCE_SEGMENT_MAPPING.
+raw_source_bytes_changed: false
+normative_governance_changed: false
+prior_34_node_manifest_superseded_within_same_run: true
+segment_mapping_result:
+  status: COMPLETED
+  segment_count: 61
+  required_coverage: 52/52
+  reference_only_dispositions: 9
+  classification_artifacts_materialized: 0
 boundary_proof:
   raw_source_bytes_mutated: false
-  page_visual_classification_started: false
-  source_segment_mapping_started: false
+  canonical_classification_artifacts_started: false
+  source_fact_materialization_started: false
   domain_extraction_started: false
   blueprint_materialization_started: false
   website_construction_started: false
   deployment_started: false
-next_step: SOURCE_SEGMENT_MAPPING
+next_step: SOURCE_FACT_MATERIALIZATION
