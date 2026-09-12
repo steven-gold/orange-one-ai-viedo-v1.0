@@ -1,0 +1,32 @@
+schema_version: 1
+run_uid: GOVRUN-EXTRACT-CORE-ASSET-AUTH-001
+source_branch: new
+source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+target_branch: rebuild-v2.1.1
+extraction_policy: SELECTIVE_EXACT_BLOB_REFERENCE_ONLY
+records:
+  - extraction_uid: EXT-CORE-01-AUTH-001
+    page_uid: CORE-01
+    source_path: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    source_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+    target_path: 00_SOURCE_INTAKE/legacy_new/reference_only/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    classification: LEGACY_BRANCH_CURRENT_MACHINE_AUTHORITY_REFERENCE
+    representation_role: MACHINE_READABLE_REFERENCE_SNAPSHOT
+    positive_editable_authority: false
+    current_load_graph: EXCLUDED
+    modification_allowed: false
+    purpose: exact comparison input for from-scratch reconstruction
+  - extraction_uid: EXT-ASSET-01-AUTH-001
+    page_uid: ASSET-01
+    source_path: authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    source_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    target_path: 00_SOURCE_INTAKE/legacy_new/reference_only/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    classification: LEGACY_BRANCH_CURRENT_MACHINE_AUTHORITY_REFERENCE
+    representation_role: MACHINE_READABLE_REFERENCE_SNAPSHOT
+    positive_editable_authority: false
+    current_load_graph: EXCLUDED
+    modification_allowed: false
+    purpose: exact comparison input for from-scratch reconstruction
+bulk_copy_performed: false
+direct_merge_performed: false
+status: CLASSIFIED_FOR_EXTRACTION
