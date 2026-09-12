@@ -1,0 +1,103 @@
+schema_version: 1
+run_uid: GOVRUN-SOURCE-INVENTORY-CORE-ASSET-001
+rebuild_branch: rebuild-v2.1.1
+legacy_source_branch: new
+legacy_source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+execution_topology: MULTI_PAGE_FOUNDATION_THEN_PAGE_VERTICAL
+scope:
+  pages:
+    - CORE-01
+    - ASSET-01
+source_policy:
+  legacy_branch_access: READ_ONLY_EXTRACTION_ONLY
+  bulk_copy: FORBIDDEN
+  filename_recency_as_authority: FORBIDDEN
+  self_reported_pass_as_authority: FORBIDDEN
+  proposed_change_auto_promotion: FORBIDDEN
+  current_load_graph: ALLOWLIST_ONLY
+  extraction_requires_classification: true
+  contamination_scan_after_each_extraction: true
+sources:
+  - source_uid: SRC-CORE-01-WORD-FINAL-LOCKED
+    page_uid: CORE-01
+    source_system: CHATGPT_FILE_LIBRARY
+    title: CORE_核心AI工作區_頁面設計權威封板_FINAL_LOCKED.docx
+    source_role: HUMAN_READABLE_CURRENT_AUTHORITY_SOURCE
+    authority_claim: FINAL_LOCKED_CURRENT_ONLY
+    materialization_in_rebuild_repo: EXTERNAL_SOURCE_REFERENCE_ONLY
+    current_load_graph_eligibility: SOURCE_INPUT_ONLY
+    notes:
+      - 未定義項目必須 BLOCK，不得 AI 自行補建
+      - Global Shell / Global Visual 外部繼承
+      - 此來源不得因 GitHub 舊施工結果而被覆寫
+  - source_uid: SRC-ASSET-01-WORD-FINAL-LOCKED
+    page_uid: ASSET-01
+    source_system: CHATGPT_FILE_LIBRARY
+    title: ASSET_素材生產工作區_頁面設計權威封板_FINAL_LOCKED.docx
+    source_role: HUMAN_READABLE_CURRENT_AUTHORITY_SOURCE
+    authority_claim: FINAL_LOCKED_CURRENT_ONLY
+    materialization_in_rebuild_repo: EXTERNAL_SOURCE_REFERENCE_ONLY
+    current_load_graph_eligibility: SOURCE_INPUT_ONLY
+    notes:
+      - 未定義 Section / Control / Action / State / Port 必須 BLOCK
+      - ASSET 為唯一可執行素材工作區
+      - Global Shell / Global Visual 外部繼承
+  - source_uid: SRC-PRODUCTION-UX-PLAN-2026-09-06
+    page_uid: MULTI
+    applies_to:
+      - CORE-01
+      - ASSET-01
+    source_system: CHATGPT_FILE_LIBRARY
+    title: ACPOS_五大部門_視覺與操作流程優化規劃_2026-09-06.docx
+    source_role: PROPOSED_CHANGE_INPUT
+    authority_claim: NONE
+    materialization_in_rebuild_repo: EXTERNAL_SOURCE_REFERENCE_ONLY
+    current_load_graph_eligibility: CHANGE_INPUT_ONLY
+    promotion_rule: MUST_PASS_VISUAL_REVIEW_AND_AUTHORITY_UPDATE_BEFORE_CURRENT
+    notes:
+      - 文件明示視覺/操作規劃不代表 GitHub 已修改
+      - 保留既有 Control/Action Owner，只重排 UI/Conversation/Correction/Drawer/Workflow
+  - source_uid: SRC-CORE-01-REVIEW-2026-09-11
+    page_uid: CORE-01
+    source_system: CHATGPT_FILE_LIBRARY
+    title: ACPOS_CORE01_核心頁面重新檢討與全站設計綁定規格_2026-09-11.docx
+    source_role: PROPOSED_CHANGE_INPUT
+    authority_claim: NONE
+    materialization_in_rebuild_repo: EXTERNAL_SOURCE_REFERENCE_ONLY
+    current_load_graph_eligibility: CHANGE_INPUT_ONLY
+    promotion_rule: MUST_PASS_VISUAL_REVIEW_AND_AUTHORITY_UPDATE_BEFORE_CURRENT
+    notes:
+      - 現況事實與改版規格必須分離
+      - 不得建立第二套 CORE Conversation Runtime / Control identity
+  - source_uid: SRC-CORE-01-GITHUB-CURRENT-YAML
+    page_uid: CORE-01
+    source_system: GITHUB
+    source_branch: new
+    source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+    source_path: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    source_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+    source_role: LEGACY_BRANCH_CURRENT_MACHINE_AUTHORITY_REFERENCE
+    authority_claim: FINAL_LOCKED_CURRENT_ONLY
+    materialization_in_rebuild_repo: NOT_YET_EXTRACTED
+    current_load_graph_eligibility: REFERENCE_UNTIL_REBUILT
+    extraction_disposition: CLASSIFY_BEFORE_COPY
+  - source_uid: SRC-ASSET-01-GITHUB-CURRENT-YAML
+    page_uid: ASSET-01
+    source_system: GITHUB
+    source_branch: new
+    source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+    source_path: authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    source_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    source_role: LEGACY_BRANCH_CURRENT_MACHINE_AUTHORITY_REFERENCE
+    authority_claim: FINAL_LOCKED_CURRENT_ONLY
+    materialization_in_rebuild_repo: NOT_YET_EXTRACTED
+    current_load_graph_eligibility: REFERENCE_UNTIL_REBUILT
+    extraction_disposition: CLASSIFY_BEFORE_COPY
+source_truth_decision:
+  raw_word_sources_found: true
+  machine_authority_references_found: true
+  proposed_change_inputs_found: true
+  proposed_change_is_current_authority: false
+  from_scratch_test_may_begin: true
+  limitation: Binary DOCX bytes are external File Library sources and are not yet physically mirrored into GitHub by the available connector; they remain explicit source references, not reconstructed substitutes.
+status: PASS_SOURCE_INVENTORY
