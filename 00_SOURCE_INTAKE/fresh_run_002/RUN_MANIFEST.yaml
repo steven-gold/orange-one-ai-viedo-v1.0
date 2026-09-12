@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-002
 branch: rebuild-v2.1.1
 phase: STAGE_01_SOURCE_INTAKE
-status: SOURCE_STRUCTURE_ENUMERATION_COMPLETED
+status: SOURCE_SEGMENT_MAPPING_COMPLETED
 governance:
   version: v2.1.5
   state: USER_FROZEN_READ_ONLY
@@ -17,8 +17,9 @@ source_pin:
 execution_policy:
   actual_source_extraction: STEP_01A_COMPLETED_EXACT_BLOB_CAPTURE
   source_copy: EXACT_GIT_BLOB_REUSE_ONLY
-  source_structure_enumeration: COMPLETED_34_OF_34_FULL_SOURCE_PROVEN
-  source_segment_mapping: NOT_EXECUTED
+  source_structure_enumeration: COMPLETED_61_OF_61_FULL_SOURCE_PROVEN
+  source_segment_mapping: COMPLETED_61_OF_61_ONE_SEGMENT_PER_NODE
+  source_fact_materialization: NOT_EXECUTED
   source_domain_decomposition: NOT_EXECUTED
   page_blueprint_materialization: NOT_EXECUTED
   visual_blueprint_materialization: NOT_EXECUTED
@@ -31,16 +32,10 @@ raw_capture_contract:
   recapture_allowed: false
   mixed_page_visual_role: MIXED_PAGE_VISUAL_SOURCE_INPUT
   raw_source_directory_purity: RAW_SOURCE_BYTES_ONLY
-source_structure_contract:
-  manifest_path: 00_SOURCE_INTAKE/SOURCE_STRUCTURE_MANIFEST.yaml
-  evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_STRUCTURE_ENUMERATION_EVIDENCE.yaml
-  source_count: 3
-  observed_node_count: 34
-  required_node_count: 29
-  reference_only_node_count: 5
-  classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  classification_started: false
-  segment_mapping_started: false
-  enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
-  next_step: SOURCE_SEGMENT_MAPPING
-next_phase_entry_condition: SOURCE_SEGMENT_MAPPING_EXPLICIT_START
+segment_mapping_contract:
+  source_structure_nodes: 61
+  one_segment_per_source_node: true
+  mixed_registries_container_segment_forbidden: true
+  canonical_classification_materialized: false
+  next_step: SOURCE_FACT_MATERIALIZATION
+next_phase_entry_condition: SOURCE_FACT_MATERIALIZATION_EXPLICIT_START
