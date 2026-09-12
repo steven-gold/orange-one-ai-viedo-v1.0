@@ -1,5 +1,11 @@
 schema_version: 1
-source_uid: SRC-ASSET-01-PAGE-AUTHORITY
+run_uid: FRESH-RUN-001
+page_uid: ASSET-01
 source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
-source_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
-capture_status: PENDING_EXACT_BLOB_MATERIALIZATION
+capture_status: COMPLETED_EXACT_GIT_BLOB_CAPTURE
+bindings:
+  - source_uid: SRC-ASSET-01-PAGE-AUTHORITY
+    source_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    target_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    exact_match: true
+next_step: SOURCE_STRUCTURE_ENUMERATION
