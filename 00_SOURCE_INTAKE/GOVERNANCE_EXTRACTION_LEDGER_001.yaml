@@ -1,41 +1,38 @@
-schema_version: 2
-run_uid: GOVRUN-EXTRACT-GOVERNANCE-002
-source_branch: new
-source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+schema_version: 3
+run_uid: GOVRUN-GOVERNANCE-TEST-RUNTIME-v2.1.4-001
 target_branch: rebuild-v2.1.1
-records:
-  - extraction_uid: EXT-GOV-CONSTRUCTION-001
-    batch_uid: EXTRACT-GOVERNANCE-001
-    source_branch: new
-    source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
-    source_path: authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
-    source_blob_sha: 35c19fd7f0307bf441a3882e74b5bf74892889f3
-    classification: CURRENT_AUTHORITY
-    authority_disposition: CURRENT_CANONICAL_OWNER_BOOTSTRAP
-    dependency_reason: existing canonical website-construction governance owner must be patched in place; creating a parallel governance authority is forbidden
-    target_path: authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
-    target_role: CANONICAL_GOVERNANCE_OWNER
-    current_load_graph_eligible: true
-    status: IMPORTED_APPROVED
-    imported_exact_blob: true
-    v2_1_2_patch_status: APPLIED_AND_MINIMAL_CONTROL_VERIFIED
-    patched_target_blob_sha: dff5f795683f7c01e05e6034ac37b8b69af6feb7
-    validator_path: 09_TESTS/governance/validate_rebuild_governance.py
-    validator_blob_sha: cba0c0844a201bbc8cb56ebef6ad4a5b452c49e0
-    minimal_control_test_path: 09_TESTS/governance/test_v2_1_2_minimal_control.py
-    minimal_control_test_blob_sha: 0d5db8ed39477a48adf1a98cefa27b6b3e4e4da1
-verification:
-  workflow_name: Rebuild Governance Gate
-  workflow_run_id: 34664178681
-  workflow_head_sha: ea4c7456b238d7434215bfb654a1845bfaf71ea1
-  minimal_control_self_test: PASS
-  current_state_gate: EXPECTED_FAIL
-  expected_fail_reason: Current Source Intake has no independently materialized PAGE_CONSTRUCTION_DESIGN and VISUAL_CONSTRUCTION_DESIGN artifacts and its clean scan is not current.
-bulk_copy_performed: false
-direct_merge_performed: false
-parallel_governance_owner_created: false
-governance_owner_materialized: true
-minimal_control_constraint_verified: true
-construction_may_advance: false
-next_action: Keep Source Intake blocked; independently classify and materialize PAGE_CONSTRUCTION_DESIGN and VISUAL_CONSTRUCTION_DESIGN, then run a fresh current-tree clean scan.
-status: GOVERNANCE_MATERIALIZED_SOURCE_INTAKE_BLOCKED
+current_governance_test:
+  version: v2.1.4
+  state: USER_FROZEN_READ_ONLY
+  package_sha256: d789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109
+  external_trust_root_sha256: 2f5bfe186ddcf89379a9d96e0c0698e6edbbc4d765b8f0428e78ad796e86770d
+  sealed_normative_hash: b0d2efedd1fc268715d7821ef56341cc1d759e015c1683000400f70ce8d8e001
+  runtime_uid: ACPOS-GOV-TEST-v2.1.4-STAGE1
+  runtime_manifest: governance/test-runtime/v2.1.4/STAGE1_RUNTIME_MANIFEST.yaml
+  materialization: SEALED_STAGE1_TEST_RUNTIME
+  normative_edit_allowed: false
+  status: MATERIALIZED_PENDING_GITHUB_GATE
+source_intake_state:
+  target_pages:
+    - CORE-01
+    - ASSET-01
+  reference_snapshots_present: true
+  page_construction_design_materialized: false
+  visual_construction_design_materialized: false
+  source_domain_decomposition_gate: BLOCKED
+  construction_may_advance: false
+historical_records:
+  - version: v2.1.1
+    disposition: HISTORICAL_SUPERSEDED_TEST_POINTER
+  - version: v2.1.2
+    former_record: GOVERNANCE_CANONICAL_OWNER_PATCH
+    disposition: DISCARDED_NOT_AUTHORITY
+runtime_sync_guards:
+  sealed_bundle_mutation: FORBIDDEN
+  normative_edit: FORBIDDEN
+  validator_edit: FORBIDDEN
+  test_expectation_edit: FORBIDDEN
+  branch_pointer_update: ALLOWED_OPERATIONAL_METADATA_ONLY
+  evidence_update: ALLOWED
+next_action: Execute the updated v2.1.4 sealed GitHub governance test gate. If PASS, rerun clean scan and resume CORE-01/ASSET-01 Source Domain Decomposition actual test.
+status: GOVERNANCE_V2_1_4_TEST_RUNTIME_SYNCED_SOURCE_INTAKE_STILL_BLOCKED
