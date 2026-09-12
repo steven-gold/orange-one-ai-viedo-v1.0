@@ -1,0 +1,19 @@
+schema_version: 1
+baseline_version: v2.1.0
+baseline_package_sha256: 47e744440583c2d3125ea380aca679c4af01a0c2a11cbccfd5294ce0ff54b4d4
+defects:
+  - defect_uid: GOV-DEFECT-STAGE1-EXTRACTION-DOMAIN-SEPARATION
+    status: FIXED_VERIFIED
+    scope: SOURCE_INTAKE_EXTRACTION_ONLY
+    reproduced_problem: Mixed raw/page authority source could be retained as a reference snapshot without requiring PAGE_CONSTRUCTION and VISUAL_CONSTRUCTION extraction outputs to be independently materialized at the extraction boundary.
+    correction: Require independent physical extraction artifacts, independent editable owners, section-level lineage and shared-fact reference semantics before Source Intake closure.
+  - defect_uid: GOV-DEFECT-STAGE1-MOVING-TARGET-TEST
+    status: FIXED_VERIFIED
+    scope: GOVERNANCE_TEST_CONTROL
+    reproduced_problem: Governance rules could be edited during iterative testing, creating a moving-target test process.
+    correction: Freeze normative aggregate hash per test run; any mutation invalidates the run and requires a new bugfix candidate plus rerun.
+  - defect_uid: GOV-DEFECT-STAGE1-MINIMAL-CONTROL
+    status: FIXED_VERIFIED
+    scope: GOVERNANCE_TEST_CONTROL
+    reproduced_problem: Test fixtures needed an explicit rule forbidding validator-directed expected outcomes and self-declared PASS from satisfying gates.
+    correction: Fixtures carry observable facts only; expected outcomes remain outside validator input and all PASS conclusions are recomputed.
