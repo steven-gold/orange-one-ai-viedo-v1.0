@@ -1,51 +1,43 @@
-authority: false
-role: CURRENT_GOVERNANCE_PACKAGE_POINTER
+schema_version: 3
+role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
-baseline:
-  version: v2.1.0
-  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.0(1).zip
-  package_sha256: 47e744440583c2d3125ea380aca679c4af01a0c2a11cbccfd5294ce0ff54b4d4
-  immutable: true
-current_release:
-  version: v2.1.1
-  release_name: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.1_STAGE1_LOCKED
-  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.1_STAGE1_LOCKED.zip
-  package_sha256: 0c07f4942546f684a5a8d2080bea45a88fd4dd633a5f936e0ab775346a835f50
-  derived_strictly_from_baseline: v2.1.0
-  scope: STAGE_1_SOURCE_INTAKE_EXTRACTION_GOVERNANCE_BUGFIX_ONLY
-  lock_state: STAGE_RELEASE_LOCKED
-  normative_edit_after_lock: FORBIDDEN
-  governance_release_state: STAGE_1_LOCKED_NOT_FINAL_FOR_WEBSITE_RECONSTRUCTION
-  repository_materialization_status: PENDING_EXACT_PACKAGE_SYNC
-invalidated_experiments:
-  - version: v2.1.1-experimental-pre-reset
-    status: DISCARDED_NOT_AUTHORITY
-  - version: v2.1.2
-    status: DISCARDED_NOT_AUTHORITY
-    reason: Moving-target governance development during extraction testing; user-directed reset to immutable v2.1.0 baseline and stage-gated bugfix discipline.
-verified_stage1_tests:
-  minimal_control:
-    passed_expectations: 9
-    total: 9
-    result: PASS
-  v2_1_0_regression:
-    passed_expectations: 12
-    total: 12
-    result: PASS
-  v2_1_0_post_v1_8_regression:
-    passed_expectations: 6
-    total: 6
-    result: PASS
-formal_website_reconstruction_allowed: false
-formal_page_extraction_under_locked_rules_allowed_after_repository_materialization: true
-prelock_core_asset_snapshots:
-  status: HISTORICAL_PRELOCK_TEST_EVIDENCE_ONLY
-  current_planning_authority: false
-  formal_reextraction_required: true
-change_discipline:
-  active_test_rule_mutation: FORBIDDEN
-  locked_release_rule_mutation: FORBIDDEN
-  later_defect_handling: RECORD_DEFECT_THEN_OPEN_NEW_CANDIDATE_VERSION
-  impacted_artifacts_after_new_release: REVERIFY_REQUIRED
-exact_resume_point: Materialize the exact v2.1.1 Stage-1 locked governance package into the governance test repository. Do not begin formal website reconstruction. After materialization, perform fresh Source Intake extraction under the locked rules without editing the locked release; collect defects until the extraction step is complete, then open a new governance candidate only if required.
-status: STAGE_1_LOCKED_PENDING_REPOSITORY_MATERIALIZATION
+normative_authority:
+  version: v2.1.4
+  state: BUGFIX_PREFORMAL_VERIFIED_USER_FROZEN_READ_ONLY
+  normative_edit_allowed: false
+  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.4_BUGFIX_PREFORMAL_VERIFIED.zip
+  package_sha256: d789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109
+  external_trust_root_sha256: 2f5bfe186ddcf89379a9d96e0c0698e6edbbc4d765b8f0428e78ad796e86770d
+  sealed_normative_hash: b0d2efedd1fc268715d7821ef56341cc1d759e015c1683000400f70ce8d8e001
+test_runtime:
+  version: v2.1.4
+  runtime_uid: ACPOS-GOV-TEST-v2.1.4-STAGE1
+  runtime_manifest: governance/test-runtime/v2.1.4/STAGE1_RUNTIME_MANIFEST.yaml
+  materialization_scope: SEALED_STAGE1_TEST_RUNTIME
+  materialization_status: MATERIALIZED
+  expected_stage1_minimal_control: 27/27_PASS
+  runtime_content_mutation: FORBIDDEN
+current_execution:
+  phase: FOUNDATION-01-SOURCE-INTAKE
+  mode: READ_ONLY_ACTUAL_TEST
+  target_pages:
+    - CORE-01
+    - ASSET-01
+  source_domain_decomposition_status: BLOCKED_PENDING_CURRENT_ARTIFACT_MATERIALIZATION
+  website_reconstruction_allowed: false
+  website_code_write_allowed: false
+  github_test_and_evidence_sync_allowed: true
+  normative_changes_allowed: false
+  formal_production_deployment_allowed: false
+legacy_state:
+  v2_1_0_baseline_pointer: HISTORICAL
+  v2_1_1_stage_lock_pointer: SUPERSEDED_FOR_CURRENT_TEST_RUNTIME
+  v2_1_2_experiment: DISCARDED_NOT_AUTHORITY
+source_policy:
+  legacy_source_branch: new
+  legacy_source_access: READ_ONLY_EXTRACTION_ONLY
+  current_load_graph: ALLOWLIST_ONLY
+  bulk_copy: FORBIDDEN
+  self_reported_pass_as_authority: FORBIDDEN
+next_action: Run the sealed v2.1.4 GitHub Stage-1 gate. Only after it passes, materialize CORE-01 and ASSET-01 PAGE_CONSTRUCTION_DESIGN and VISUAL_CONSTRUCTION_DESIGN test artifacts without modifying sealed governance.
+status: V2_1_4_SEALED_TEST_RUNTIME_MATERIALIZED_PENDING_CI
