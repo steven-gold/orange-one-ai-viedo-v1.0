@@ -18,14 +18,14 @@ jobs:
           python-version: '3.12'
       - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify current v2.1.4 lock and clean pre-extraction workspace
+      - name: Verify current v2.1.4 lock and phase-aware fresh workspace
         env:
           PYTHONDONTWRITEBYTECODE: '1'
         run: |
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          import yaml
+          import hashlib, yaml
           root=Path('.')
           cur=yaml.safe_load((root/'GOVERNANCE_CURRENT.yaml').read_text())
           base=yaml.safe_load((root/'REBUILD_BRANCH_BASELINE.yaml').read_text())
@@ -47,11 +47,11 @@ jobs:
           assert sealed['sealed_governance']['version']=='v2.1.4'
           assert sealed['sealed_governance']['package_sha256']==package
           assert sealed['normative_mutation_allowed'] is False
-          if (root/'00_SOURCE_INTAKE').exists():
-              raise SystemExit('00_SOURCE_INTAKE must be absent before fresh extraction')
+
           forbidden=[p for p in [root/'app',root/'src',root/'pages',root/'public'] if p.exists()]
           if forbidden:
               raise SystemExit('premature website implementation: '+', '.join(map(str,forbidden)))
+
           stale_names={
               'CORE_ASSET_SOURCE_INVENTORY.yaml','EXTRACTION_LEDGER_CORE_ASSET_001.yaml',
               'GOVERNANCE_EXTRACTION_LEDGER_001.yaml','SOURCE_DOMAIN_DECOMPOSITION.yaml',
@@ -64,6 +64,40 @@ jobs:
           legacy=[str(p) for p in root.rglob('*') if p.is_file() and ('legacy_new' in p.parts or 'stage1_runtime_bundle.tar.gz.b64' in p.name)]
           if legacy:
               raise SystemExit('legacy transport/source residue remains: '+', '.join(legacy))
+          keep=[str(p) for p in root.rglob('.keep') if p.is_file()]
+          if keep:
+              raise SystemExit('placeholder residue remains: '+', '.join(keep))
+
+          intake=root/'00_SOURCE_INTAKE'
+          if intake.exists():
+              fresh=intake/'fresh_run_001'
+              if not fresh.is_dir():
+                  raise SystemExit('00_SOURCE_INTAKE exists without fresh_run_001')
+              extras=[str(p) for p in intake.iterdir() if p.name!='fresh_run_001']
+              if extras:
+                  raise SystemExit('unexpected current intake sibling: '+', '.join(extras))
+              state=yaml.safe_load((fresh/'EXECUTION_STATE.yaml').read_text())
+              run=yaml.safe_load((fresh/'RUN_MANIFEST.yaml').read_text())
+              refs=yaml.safe_load((fresh/'SOURCE_REFERENCE_MANIFEST.yaml').read_text())
+              allowed_states={'FOUNDATION_READY_NOT_EXECUTED','RAW_SOURCE_REFERENCE_CAPTURED'}
+              if state.get('state') not in allowed_states:
+                  raise SystemExit('unexpected fresh-run state for current CI phase: '+str(state.get('state')))
+              if run.get('governance',{}).get('normative_edit_allowed') is not False:
+                  raise SystemExit('fresh run does not preserve frozen governance')
+              if state.get('state')=='RAW_SOURCE_REFERENCE_CAPTURED':
+                  if refs.get('status')!='CURRENT_RAW_SOURCE_CAPTURE':
+                      raise SystemExit('raw source reference manifest not current')
+                  for rec in refs.get('records') or []:
+                      p=root/rec['target_path']
+                      if not p.is_file():
+                          raise SystemExit('missing raw source target: '+str(p))
+                      data=p.read_bytes()
+                      git_sha=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+                      if git_sha!=rec['target_blob_sha'] or git_sha!=rec['source_blob_sha']:
+                          raise SystemExit(f'exact raw source Git blob mismatch: {p}: {git_sha}')
+                  forbidden_stage_dirs=[fresh/x for x in ['01_CLASSIFIED','02_BASE_BLUEPRINT','03_BLUEPRINT_BINDING'] if (fresh/x).exists()]
+                  if forbidden_stage_dirs:
+                      raise SystemExit('later-stage artifacts appeared during Step-01A: '+', '.join(map(str,forbidden_stage_dirs)))
           garbage=[]
           for p in root.rglob('*'):
               if not p.is_file() or '.git' in p.parts: continue
@@ -71,7 +105,7 @@ jobs:
                   garbage.append(str(p))
           if garbage:
               raise SystemExit('garbage detected: '+', '.join(garbage))
-          print('PASS: clean workspace; stale CORE/ASSET and superseded current-path residue = 0')
+          print('PASS: v2.1.4 lock intact; workspace phase valid; stale/legacy/garbage residue = 0')
           PY
 
   sealed-v2-1-4-stage1-runtime:
