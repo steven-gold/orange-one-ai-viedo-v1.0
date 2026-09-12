@@ -1,0 +1,23 @@
+schema_version: 1
+run_uid: FRESH-RUN-001
+branch: rebuild-v2.1.1
+phase: FOUNDATION_ONLY
+status: FOUNDATION_READY_NOT_EXECUTED
+governance:
+  version: v2.1.4
+  state: USER_FROZEN_READ_ONLY
+  normative_edit_allowed: false
+  runtime_uid: ACPOS-GOV-TEST-v2.1.4-STAGE1
+target_pages:
+  - CORE-01
+  - ASSET-01
+execution_policy:
+  actual_source_extraction: FORBIDDEN_THIS_PHASE
+  source_copy: FORBIDDEN_THIS_PHASE
+  source_domain_decomposition: FORBIDDEN_THIS_PHASE
+  page_blueprint_materialization: FORBIDDEN_THIS_PHASE
+  visual_blueprint_materialization: FORBIDDEN_THIS_PHASE
+  stage1_validation: FORBIDDEN_THIS_PHASE
+  website_code_write: FORBIDDEN
+  deployment: FORBIDDEN
+next_phase_entry_condition: USER_EXPLICITLY_STARTS_ACTUAL_TEST

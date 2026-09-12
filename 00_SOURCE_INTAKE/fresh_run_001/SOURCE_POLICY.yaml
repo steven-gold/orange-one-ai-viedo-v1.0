@@ -1,0 +1,21 @@
+schema_version: 1
+run_uid: FRESH-RUN-001
+status: FOUNDATION_ONLY_NOT_EXECUTED
+source_resolution_policy:
+  source_branch: new
+  resolve_branch_head_at_execution_start: true
+  pinned_source_sha_before_execution: null
+  reuse_previous_extracted_snapshot: false
+  reuse_previous_extraction_ledger: false
+  reuse_previous_domain_decomposition: false
+  bulk_copy: false
+  classification_required_before_materialization: true
+  source_hash_record_required: true
+  source_path_record_required: true
+  source_role_record_required: true
+  mixed_domain_source_may_be_direct_current_authority: false
+target_pages:
+  CORE-01:
+    source_resolution_state: NOT_EXECUTED
+  ASSET-01:
+    source_resolution_state: NOT_EXECUTED
