@@ -1,5 +1,5 @@
 schema_version: 1
-run_uid: FRESH-RUN-001
+run_uid: FRESH-RUN-002
 status: FOUNDATION_ONLY_NOT_EXECUTED
 source_resolution_policy:
   source_branch: new
@@ -14,8 +14,10 @@ source_resolution_policy:
   source_path_record_required: true
   source_role_record_required: true
   mixed_domain_source_may_be_direct_current_authority: false
-  raw_source_directory_must_contain_source_blobs_only: true
-  metadata_must_live_outside_raw_source_directory: true
+  mixed_page_visual_role_required: MIXED_PAGE_VISUAL_SOURCE_INPUT
+  raw_source_directory_purity: RAW_SOURCE_BYTES_ONLY
+  capture_terminal_state_required: CAPTURE_CLOSED
+  capture_next_step_required: SOURCE_STRUCTURE_ENUMERATION
 target_pages:
   CORE-01:
     source_resolution_state: NOT_EXECUTED

@@ -1,0 +1,56 @@
+schema_version: 3
+runtime_uid: ACPOS-GOV-TEST-v2.1.5-STAGE1
+role: SEALED_TEST_RUNTIME_TRANSPORT
+authority: false
+normative_edit_allowed: false
+source_candidate:
+  version: v2.1.5
+  state: RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED_USER_FROZEN_READ_ONLY
+  zip_sha256: 2bfeed2ec9bc6eac9f34fdd5eb43e2f76f1e78682c4b81bebb9e4a3e1084eecd
+  external_trust_root_sha256: 787b2be721c0d51e8fe595ceaeeb0c80a03e692952b6ff2fc139c6a914f089ee
+  semantic_authority_content_hash: 99565f73b8e09c466e0a9ffafa2c0ae1cd52f484be57bd000acef39dea2fff2a
+  sealed_stage1_runtime_set_sha256: 03efe023e6aaafda12364607e25a8f023a2c44caebd0e856064bfd43ee0368f6
+transport:
+  encoding: BINARY_CHUNKED_TAR_GZ
+  chunk_count: 1
+  assembled_size_bytes: 65791
+  assembled_bundle_sha256: 86b5823260c12a26de5094a7a2ccf31bf0f2de40e7172006f9c602523ddd10fe
+  transport_metadata_is_non_normative: true
+  chunks:
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz
+    size: 65791
+    sha256: 86b5823260c12a26de5094a7a2ccf31bf0f2de40e7172006f9c602523ddd10fe
+files:
+- path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+  sha256: c23a41cbfac7afea5282a92d6c2bfc52b8a64ce06923088dfec8158cd3c9558b
+  role: SEALED_NORMATIVE_READ_ONLY
+- path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+  sha256: b1feacb7342d13fe5e9775992748fe6f6ea967153799ee48276261ac5e1acb9e
+  role: SEALED_NORMATIVE_READ_ONLY
+- path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+  sha256: dbdbf1a75f48e1d30b469e02c56b62c20110f1968324046f9ae24e6b40c700ce
+  role: SEALED_NORMATIVE_READ_ONLY
+- path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+  sha256: 15372b077176fb68bbb319e75b65d570bbb968544cb42e7ca42a625a9910df57
+  role: SEALED_NORMATIVE_READ_ONLY
+- path: 09_TESTS/governance/governance_stage1_pipeline_guard.py
+  sha256: e46fc5541a6b454e635c3366e86fc01fef6f6f400aaf353fb8714e2145766d00
+  role: SEALED_STAGE1_VALIDATOR
+- path: 09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py
+  sha256: 6a684640764aa5408c1c1e6e61e65f78530b6885caebef70f3ecde92f998bc41
+  role: SEALED_STAGE1_MINIMAL_CONTROL_TEST
+expected_test:
+  suite: Stage-1 source-to-blueprint minimal-control
+  passed_expectations: 31
+  total: 31
+  result: PASS
+bugfix_contracts:
+  raw_source_capture_terminal_state: CAPTURE_CLOSED
+  next_transition_exact: SOURCE_STRUCTURE_ENUMERATION
+  mixed_page_visual_role: MIXED_PAGE_VISUAL_SOURCE_INPUT
+  raw_source_directory_purity: RAW_SOURCE_BYTES_ONLY
+mutation_policy:
+  normative_files: IMMUTABLE
+  validator_files: IMMUTABLE
+  transport_chunks: REPLACEABLE_NON_NORMATIVE_EXACT_BYTES
+status: SEALED_STAGE1_RUNTIME_MATERIALIZED_CLEAN

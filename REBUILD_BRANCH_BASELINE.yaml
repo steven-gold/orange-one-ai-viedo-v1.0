@@ -1,5 +1,5 @@
-schema_version: 3
-baseline_uid: REBUILD-BRANCH-v2.1.4-CLEAN-FRESH-TEST
+schema_version: 4
+baseline_uid: REBUILD-BRANCH-v2.1.5-CLEAN-SECOND-FRESH-TEST
 branch_role: CLEAN_REBUILD_TEST_WORKSPACE
 branch_name: rebuild-v2.1.1
 source_branch: new
@@ -7,12 +7,12 @@ source_revision_policy: RESOLVE_CURRENT_HEAD_AT_FRESH_EXTRACTION_START
 source_access: READ_ONLY_EXTRACTION_ONLY
 prior_extraction_reuse: FORBIDDEN
 governance_test:
-  version: v2.1.4
+  version: v2.1.5
   state: USER_FROZEN_READ_ONLY
-  package_sha256: d789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109
-  external_trust_root_sha256: 2f5bfe186ddcf89379a9d96e0c0698e6edbbc4d765b8f0428e78ad796e86770d
-  sealed_normative_hash: b0d2efedd1fc268715d7821ef56341cc1d759e015c1683000400f70ce8d8e001
-  stage1_runtime_manifest: governance/test-runtime/v2.1.4/STAGE1_RUNTIME_MANIFEST.yaml
+  package_sha256: 2bfeed2ec9bc6eac9f34fdd5eb43e2f76f1e78682c4b81bebb9e4a3e1084eecd
+  external_trust_root_sha256: 787b2be721c0d51e8fe595ceaeeb0c80a03e692952b6ff2fc139c6a914f089ee
+  semantic_authority_content_hash: 99565f73b8e09c466e0a9ffafa2c0ae1cd52f484be57bd000acef39dea2fff2a
+  stage1_runtime_manifest: governance/test-runtime/v2.1.5/STAGE1_RUNTIME_MANIFEST.yaml
   normative_edit_allowed: false
 current_load_graph_policy: ALLOWLIST_ONLY
 contamination_policy:
@@ -22,6 +22,7 @@ contamination_policy:
   stale_evidence_as_current: FORBIDDEN
   unreferenced_generated_outputs: FORBIDDEN
   extracted_source_files_require_classification: true
+  raw_source_directory_purity: RAW_SOURCE_BYTES_ONLY
 phase_transition_requires_clean_scan: true
 implementation_policy: PAGE_VERTICAL_CLOSURE_AFTER_PROJECT_WIDE_DESIGN_FREEZE
 production_policy: NO_PRODUCTION_SWITCH_BEFORE_FINAL_ACCEPTANCE
@@ -30,4 +31,4 @@ website_reconstruction_started: false
 website_reconstruction_allowed: false
 website_code_write_allowed: false
 test_and_evidence_sync_allowed: true
-status: V2_1_4_CLEAN_FRESH_TEST_BASELINE_ACTIVE
+status: V2_1_5_CLEAN_SECOND_FRESH_TEST_BASELINE_ACTIVE

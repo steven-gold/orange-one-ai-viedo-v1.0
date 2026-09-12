@@ -1,18 +1,18 @@
 schema_version: 1
-run_uid: FRESH-RUN-001
+run_uid: FRESH-RUN-002
 status: FOUNDATION_ONLY_NOT_EXECUTED
 planned_artifacts_per_page:
-  - RAW_SOURCE_REFERENCE
-  - SOURCE_STRUCTURE_ENUMERATION
-  - SOURCE_SEGMENT_MAPPING
-  - DOMAIN_EXTRACTION_PAGE_CONSTRUCTION
-  - DOMAIN_EXTRACTION_VISUAL_CONSTRUCTION
-  - RESPONSIBILITY_CLASSIFICATION
-  - PAGE_BASE_BLUEPRINT
-  - VISUAL_BASE_BLUEPRINT
-  - BLUEPRINT_BINDING
-  - CLEAN_SCAN
-  - RUN_CLOSE
+- RAW_SOURCE_REFERENCE
+- SOURCE_STRUCTURE_ENUMERATION
+- SOURCE_SEGMENT_MAPPING
+- DOMAIN_EXTRACTION_PAGE_CONSTRUCTION
+- DOMAIN_EXTRACTION_VISUAL_CONSTRUCTION
+- RESPONSIBILITY_CLASSIFICATION
+- PAGE_BASE_BLUEPRINT
+- VISUAL_BASE_BLUEPRINT
+- BLUEPRINT_BINDING
+- CLEAN_SCAN
+- RUN_CLOSE
 materialization_rules:
   create_only_when_execution_phase_active: true
   empty_placeholder_artifact: forbidden
@@ -21,5 +21,5 @@ materialization_rules:
   undefined_item_disposition: BLOCK_AND_RECORD
   page_and_visual_owner_must_be_independent: true
   shared_fact_handling: REFERENCE_BY_UID
-  raw_source_directory_purity_required: true
+  raw_source_directory_metadata: FORBIDDEN
 current_materialized_artifacts: []

@@ -1,32 +1,31 @@
-schema_version: 2
+schema_version: 3
 current_test_authority:
-  version: v2.1.4
-  state: BUGFIX_PREFORMAL_VERIFIED_USER_FROZEN_READ_ONLY
-  package_sha256: d789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109
-  external_trust_root_sha256: 2f5bfe186ddcf89379a9d96e0c0698e6edbbc4d765b8f0428e78ad796e86770d
-  sealed_normative_hash: b0d2efedd1fc268715d7821ef56341cc1d759e015c1683000400f70ce8d8e001
+  version: v2.1.5
+  state: RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED_USER_FROZEN_READ_ONLY
+  package_sha256: 2bfeed2ec9bc6eac9f34fdd5eb43e2f76f1e78682c4b81bebb9e4a3e1084eecd
+  external_trust_root_sha256: 787b2be721c0d51e8fe595ceaeeb0c80a03e692952b6ff2fc139c6a914f089ee
+  semantic_authority_content_hash: 99565f73b8e09c466e0a9ffafa2c0ae1cd52f484be57bd000acef39dea2fff2a
 lock_state: USER_FROZEN_READ_ONLY
 normative_edit_after_lock: FORBIDDEN
 runtime_sync:
-  runtime_uid: ACPOS-GOV-TEST-v2.1.4-STAGE1
-  runtime_manifest: governance/test-runtime/v2.1.4/STAGE1_RUNTIME_MANIFEST.yaml
+  runtime_uid: ACPOS-GOV-TEST-v2.1.5-STAGE1
+  runtime_manifest: governance/test-runtime/v2.1.5/STAGE1_RUNTIME_MANIFEST.yaml
   runtime_content_mutation: FORBIDDEN
   repository_pointer_sync: ALLOWED_OPERATIONAL_METADATA_ONLY
   evidence_sync: ALLOWED
 current_execution:
   phase: FOUNDATION-01-SOURCE-INTAKE
   target_pages:
-    - CORE-01
-    - ASSET-01
+  - CORE-01
+  - ASSET-01
+  test_iteration: 2
   website_reconstruction_started: false
   website_reconstruction_allowed: false
   website_code_write_allowed: false
 historical_locks:
-  - version: v2.1.1
-    stage_uid: STAGE-1-SOURCE-INTAKE-EXTRACTION-GOVERNANCE
-    prior_state: STAGE_RELEASE_LOCKED
-    current_disposition: HISTORICAL_SUPERSEDED_FOR_TEST_RUNTIME
-  - version: v2.1.2
-    current_disposition: DISCARDED_NOT_AUTHORITY
-next_action: Execute sealed v2.1.4 Stage-1 CI gate. If PASS, continue read-only actual Source Intake testing without modifying normative governance.
-status: V2_1_4_USER_FROZEN_TEST_LOCK_ACTIVE
+- version: v2.1.4
+  current_disposition: HISTORICAL_SUPERSEDED_FOR_CURRENT_TEST_RUNTIME
+- version: v2.1.2
+  current_disposition: DISCARDED_NOT_AUTHORITY
+next_action: Execute sealed v2.1.5 Stage-1 CI gate. If PASS, start second fresh raw-source extraction without modifying sealed governance.
+status: V2_1_5_USER_FROZEN_TEST_LOCK_ACTIVE

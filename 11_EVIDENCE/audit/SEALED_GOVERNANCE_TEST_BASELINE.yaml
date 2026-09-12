@@ -1,24 +1,24 @@
-schema_version: 1
+schema_version: 2
 branch_name: rebuild-v2.1.1
 role: CURRENT_SEALED_GOVERNANCE_TEST_BASELINE
 normative_mutation_allowed: false
 sealed_governance:
-  version: v2.1.4
-  release_name: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.4_BUGFIX_PREFORMAL_VERIFIED
-  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.4_BUGFIX_PREFORMAL_VERIFIED.zip
-  package_sha256: d789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109
-  external_trust_root_filename: ACPOS_GOVERNANCE_TRUST_ROOT_v2.1.4_BUGFIX_PREFORMAL_VERIFIED.json
-  external_trust_root_sha256: 2f5bfe186ddcf89379a9d96e0c0698e6edbbc4d765b8f0428e78ad796e86770d
-  final_report_filename: v2.1.4_CLEAN_ZIP_MULTIDIRECTION_HIGH_PRESSURE_FINAL_REPORT.md
-  final_report_sha256: 14e2cfd823cdd7b9a8b7eac9e7222b75c7d4075c4ac656e12e2a44274d06c5ef
-  state: BUGFIX_PREFORMAL_VERIFIED_CANDIDATE
+  version: v2.1.5
+  release_name: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.5_RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED
+  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.5_RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED.zip
+  package_sha256: 2bfeed2ec9bc6eac9f34fdd5eb43e2f76f1e78682c4b81bebb9e4a3e1084eecd
+  external_trust_root_filename: ACPOS_GOVERNANCE_TRUST_ROOT_v2.1.5_RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED.json
+  external_trust_root_sha256: 787b2be721c0d51e8fe595ceaeeb0c80a03e692952b6ff2fc139c6a914f089ee
+  semantic_authority_content_hash: 99565f73b8e09c466e0a9ffafa2c0ae1cd52f484be57bd000acef39dea2fff2a
+  state: RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED_CANDIDATE
   sealed_read_only: true
 verified_test_summary:
   clean_preformal: 14/14_PASS
   mandatory_suites: 8/8_PASS
-  built_in_expectations: 195/195_PASS
-  external_trust_boundary: 9/9_PASS
+  built_in_expectations: 199/199_PASS
+  stage1_minimal_control: 31/31_PASS
   fuzz_escape_count: 0
+  fresh_zip_preformal: 14/14_PASS
 execution_policy:
   governance_load_required_before_test: true
   governance_text_edit_during_execution: FORBIDDEN
@@ -26,8 +26,9 @@ execution_policy:
   github_test_infrastructure_is_normative_authority: false
   website_construction_before_stage_gate: FORBIDDEN
 historical_versions:
-  - v2.1.0
-  - v2.1.1
-  - v2.1.2
+- v2.1.0
+- v2.1.1
+- v2.1.2
+- v2.1.4
 historical_versions_are_current_test_authority: false
 status: SEALED_TEST_BASELINE_ACTIVE
