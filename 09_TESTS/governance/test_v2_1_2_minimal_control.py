@@ -52,6 +52,11 @@ cases.append(("stale_clean_scan_after_mutation",eval_isolation(isolation_doc(Fal
 cases.append(("current_clean_scan",eval_isolation(isolation_doc(False),False),"PASS"))
 cases.append(("reference_only_in_current_graph",eval_isolation(isolation_doc(True),False),"FAIL"))
 
-out={"suite":"v2.1.2 minimal-control governance self-test","minimal_control":True,"fixture_policy":"OBSERVABLE_FACTS_ONLY","total":len(cases),"passed_expectations":sum(a==e for _,a,e in cases),"results":[{"case":n,"actual":a,"expected":e,"ok":a==e} for n,a,e in cases]}
+# Anti-self-claim cases: repository documents may claim PASS/COMPLETE, but the validator
+# must ignore those conclusions and derive the outcome from physical facts only.
+d=domain_doc(); d["status"]="PASS"; d["derived_state"]={"CORE-01":{"PAGE_CONSTRUCTION_DESIGN":"COMPLETE","VISUAL_CONSTRUCTION_DESIGN":"COMPLETE"}}; cases.append(("self_claimed_pass_cannot_bypass_missing_independent_artifacts",eval_domain(d,["00_SOURCE_INTAKE/reference/source.yaml"]),"FAIL"))
+i=isolation_doc(True); i["status"]="PASS"; i["current_gate"]="PASS"; cases.append(("self_claimed_pass_cannot_promote_reference_into_current_graph",eval_isolation(i,False),"FAIL"))
+
+out={"suite":"v2.1.2 minimal-control governance self-test","minimal_control":True,"fixture_policy":"OBSERVABLE_FACTS_ONLY","validator_receives_expected_outcome":False,"self_reported_pass_is_non_authoritative":True,"total":len(cases),"passed_expectations":sum(a==e for _,a,e in cases),"results":[{"case":n,"actual":a,"expected":e,"ok":a==e} for n,a,e in cases]}
 print(json.dumps(out,ensure_ascii=False,indent=2))
 raise SystemExit(0 if out["passed_expectations"]==out["total"] else 1)
