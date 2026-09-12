@@ -12,14 +12,62 @@ source_candidate:
   sealed_stage1_runtime_set_sha256: 03efe023e6aaafda12364607e25a8f023a2c44caebd0e856064bfd43ee0368f6
 transport:
   encoding: BINARY_CHUNKED_TAR_GZ
-  chunk_count: 1
+  chunk_count: 17
   assembled_size_bytes: 65791
   assembled_bundle_sha256: 86b5823260c12a26de5094a7a2ccf31bf0f2de40e7172006f9c602523ddd10fe
   transport_metadata_is_non_normative: true
   chunks:
-  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz
-    size: 65791
-    sha256: 86b5823260c12a26de5094a7a2ccf31bf0f2de40e7172006f9c602523ddd10fe
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part00
+    size: 4096
+    sha256: 9f864c90d5fb0f72bdc8ba1ac0b27b68a2d98ca1d80271b39c486a9163cc68fb
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part01
+    size: 4096
+    sha256: 02c5aa5741579cc49b9908843d53cd208a1efd0dbe19fc9ba00acbb866611343
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part02
+    size: 4096
+    sha256: 5c579c2b532392626891d70c4083f9c1dd537535aa94f0050b3ad4787d58edfe
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part03
+    size: 4096
+    sha256: b095bb39fff168d88f0608a4e6581608bf8d809bddccb2393b1e3f008c8d92db
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part04
+    size: 4096
+    sha256: 128c08607cab100420eff55dba1d04ac955c6ed8aaff8a755faee61b40dd1526
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part05
+    size: 4096
+    sha256: 4cfe99bfe2a121e4bd970f64d728e3a47d5bd7d88c07e86e24cf8f8232d2a44d
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part06
+    size: 4096
+    sha256: de286aa936694b7c8377539a4278adf0130184a80a42b76ab1b1a271a4361603
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part07
+    size: 4096
+    sha256: fff30e378266466770e6d59fa70dd42fb130e4b0a0237450b145e380b215fb69
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part08
+    size: 4096
+    sha256: 306b78072b6debdc9c99e9f2fae46572e2c7b5129fb9b75763e9a85234a30534
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part09
+    size: 4096
+    sha256: d3c97c01104c5ae7b022cd463a6c49214bcb7c5944859ede58a28033b8eb1500
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part10
+    size: 4096
+    sha256: ed35d10943e7ba4b2088cf9e269d17942d4f716f7f8da8a258e43646aeaef81f
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part11
+    size: 4096
+    sha256: c756ec950c1fa869a560616a819aeab3802bece44ef0b3b6e3d5433f1376e962
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part12
+    size: 4096
+    sha256: 653fb166ea352c97c0b1d8ba10cc020db7562cc098febe34039253dfccccf5ee
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part13
+    size: 4096
+    sha256: 3f066682498b050c38f34d2dd4a75c67981a12db5540a2ea3acb6baed69398b5
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part14
+    size: 4096
+    sha256: eda855a96a0824643da2a187c93a24e8f9f4512227d525d4371e5f861cdaf20f
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part15
+    size: 4096
+    sha256: 45201a31a82d8f0aa24149803bfd37675f5766584b6d776e12f165de22726dd2
+  - path: governance/test-runtime/v2.1.5/stage1_runtime_exact.tar.gz.part16
+    size: 255
+    sha256: 13b791ddca4aece18feccceb081545dd5b29b6dfe986a0ced577aa5fef7d3aa3
 files:
 - path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
   sha256: c23a41cbfac7afea5282a92d6c2bfc52b8a64ce06923088dfec8158cd3c9558b
