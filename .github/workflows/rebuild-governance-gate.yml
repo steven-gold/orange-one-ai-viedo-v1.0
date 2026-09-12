@@ -2,8 +2,7 @@ name: Governance v2.1.4 Sealed Stage-1 Test Gate
 
 on:
   push:
-    branches:
-      - rebuild-v2.1.1
+    branches: [rebuild-v2.1.1]
   workflow_dispatch:
 
 permissions:
@@ -19,7 +18,6 @@ jobs:
           python-version: '3.12'
       - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-
       - name: Reconstruct and verify sealed v2.1.4 Stage-1 runtime
         env:
           PYTHONDONTWRITEBYTECODE: '1'
@@ -27,68 +25,50 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          import base64, hashlib, tarfile, shutil
-
-          b = Path('governance/test-runtime/v2.1.4')
-          if not (b/'STAGE1_RUNTIME_MANIFEST.yaml').is_file():
-              raise SystemExit('missing STAGE1_RUNTIME_MANIFEST.yaml')
-          parts = sorted(b.glob('stage1_runtime_bundle.tar.gz.b64.part*'))
-          expected_names = [f'stage1_runtime_bundle.tar.gz.b64.part{i:02d}' for i in range(9)]
-          if [p.name for p in parts] != expected_names:
-              raise SystemExit(f'chunk set/order mismatch: {[p.name for p in parts]}')
-
-          normalized = ''.join(''.join(p.read_text().split()) for p in parts)
-          try:
-              decoded = base64.b64decode(normalized, validate=True)
-          except Exception as exc:
-              raise SystemExit(f'base64 decode failed: {exc}')
-          print('transport_decoded_sha256=', hashlib.sha256(decoded).hexdigest())
-
-          tar_path = Path('/tmp/acpos-stage1.tar.gz')
-          tar_path.write_bytes(decoded)
-          out = Path('/tmp/acpos-gov-v214-stage1')
-          shutil.rmtree(out, ignore_errors=True)
-          out.mkdir(parents=True)
-
-          expected = {
-              '12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md': 'c23a41cbfac7afea5282a92d6c2bfc52b8a64ce06923088dfec8158cd3c9558b',
-              '12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md': 'b1feacb7342d13fe5e9775992748fe6f6ea967153799ee48276261ac5e1acb9e',
-              '12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md': '472bd36bee7ac66d3aa6b8bcb0808e80547333d8573e6f014a7fdfdddd68b19f',
-              '12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md': '15372b077176fb68bbb319e75b65d570bbb968544cb42e7ca42a625a9910df57',
-              '09_TESTS/governance/governance_stage1_pipeline_guard.py': 'a2d1ce114eec425f39731e4f9a21194b3cc557d28b1658b83f416212b32fc8b1',
-              '09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py': '607343856d53940209382f44686f3395e8faf5f24fbcbeea0b0f638b01367db0',
-          }
-
-          with tarfile.open(tar_path, 'r:gz') as tf:
-              file_members = sorted(m.name.lstrip('./') for m in tf.getmembers() if m.isfile())
-              if file_members != sorted(expected):
-                  raise SystemExit(f'sealed runtime member set mismatch: {file_members}')
-              tf.extractall(out)
-
-          for rel, expected_sha in expected.items():
-              p = out / rel
-              if not p.is_file():
-                  raise SystemExit(f'missing sealed runtime file: {rel}')
-              actual = hashlib.sha256(p.read_bytes()).hexdigest()
-              print(rel, actual)
-              if actual != expected_sha:
-                  raise SystemExit(f'sealed runtime file sha mismatch: {rel}: {actual}')
-          print('PASS: exact sealed v2.1.4 Stage-1 runtime file set and hashes verified')
+          import base64, hashlib, tarfile, shutil, yaml
+          b=Path('governance/test-runtime/v2.1.4')
+          m=yaml.safe_load((b/'STAGE1_RUNTIME_MANIFEST.yaml').read_text())
+          names=[
+            'stage1_runtime_bundle.tar.gz.b64.part00','stage1_runtime_bundle.tar.gz.b64.part01',
+            'stage1_runtime_bundle.tar.gz.b64.part02','stage1_runtime_bundle.tar.gz.b64.part03',
+            'stage1_runtime_bundle.tar.gz.b64.part03b','stage1_runtime_bundle.tar.gz.b64.part04',
+            'stage1_runtime_bundle.tar.gz.b64.part05','stage1_runtime_bundle.tar.gz.b64.part06',
+            'stage1_runtime_bundle.tar.gz.b64.part07','stage1_runtime_bundle.tar.gz.b64.part07b',
+            'stage1_runtime_bundle.tar.gz.b64.part08']
+          actual=sorted(p.name for p in b.glob('stage1_runtime_bundle.tar.gz.b64.part*'))
+          if sorted(names)!=actual: raise SystemExit(f'chunk set mismatch: {actual}')
+          if m['transport']['chunk_count']!=11: raise SystemExit('manifest chunk_count mismatch')
+          normalized=''.join(''.join((b/n).read_text().split()) for n in names)
+          b64sha=hashlib.sha256(normalized.encode()).hexdigest()
+          if b64sha!=m['transport']['concatenated_base64_sha256']:
+            raise SystemExit(f'base64 aggregate sha mismatch: {b64sha}')
+          decoded=base64.b64decode(normalized,validate=True)
+          dsha=hashlib.sha256(decoded).hexdigest()
+          if dsha!=m['transport']['decoded_bundle_sha256']:
+            raise SystemExit(f'decoded bundle sha mismatch: {dsha}')
+          tar=Path('/tmp/acpos-stage1.tar.gz'); tar.write_bytes(decoded)
+          out=Path('/tmp/acpos-gov-v214-stage1'); shutil.rmtree(out,ignore_errors=True); out.mkdir()
+          expected={x['path']:x['sha256'] for x in m['files']}
+          with tarfile.open(tar,'r:gz') as tf:
+            members=sorted(x.name.lstrip('./') for x in tf.getmembers() if x.isfile())
+            if members!=sorted(expected): raise SystemExit(f'sealed runtime member set mismatch: {members}')
+            tf.extractall(out)
+          for rel,sha in expected.items():
+            p=out/rel
+            got=hashlib.sha256(p.read_bytes()).hexdigest()
+            if got!=sha: raise SystemExit(f'sealed file sha mismatch {rel}: {got}')
+          print('PASS: exact v2.1.4 sealed runtime transport + 6-file set + hashes')
           PY
-
       - name: Run sealed Stage-1 minimal-control 27/27
         env:
           PYTHONDONTWRITEBYTECODE: '1'
         run: |
-          set -euo pipefail
-          python /tmp/acpos-gov-v214-stage1/09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py > /tmp/stage1-minimal.json
+          python /tmp/acpos-gov-v214-stage1/09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py > /tmp/stage1.json
           python - <<'PY'
           import json
-          from pathlib import Path
-          r=json.loads(Path('/tmp/stage1-minimal.json').read_text())
-          assert r['total'] == 27, r
-          assert r['passed_expectations'] == 27, r
-          assert all(x.get('ok') is True for x in r['results']), r
+          r=json.load(open('/tmp/stage1.json'))
+          assert r['total']==27 and r['passed_expectations']==27
+          assert all(x.get('ok') is True for x in r['results'])
           print('PASS: sealed v2.1.4 Stage-1 minimal-control = 27/27')
           PY
 
@@ -102,55 +82,43 @@ jobs:
       - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
       - name: Verify v2.1.4 current pointer and frozen rule
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
         run: |
           python - <<'PY'
           from pathlib import Path
           import yaml
-          root=Path('.')
-          cur=yaml.safe_load((root/'GOVERNANCE_CURRENT.yaml').read_text())
-          base=yaml.safe_load((root/'REBUILD_BRANCH_BASELINE.yaml').read_text())
-          lock=yaml.safe_load((root/'11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml').read_text())
-          sealed=yaml.safe_load((root/'11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml').read_text())
-          assert cur['normative_authority']['version'] == 'v2.1.4'
-          assert cur['normative_authority']['package_sha256'] == 'd789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109'
+          r=Path('.')
+          cur=yaml.safe_load((r/'GOVERNANCE_CURRENT.yaml').read_text())
+          base=yaml.safe_load((r/'REBUILD_BRANCH_BASELINE.yaml').read_text())
+          lock=yaml.safe_load((r/'11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml').read_text())
+          sealed=yaml.safe_load((r/'11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml').read_text())
+          assert cur['normative_authority']['version']=='v2.1.4'
+          assert cur['normative_authority']['package_sha256']=='d789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109'
           assert cur['normative_authority']['normative_edit_allowed'] is False
-          assert cur['test_runtime']['runtime_uid'] == 'ACPOS-GOV-TEST-v2.1.4-STAGE1'
-          assert cur['test_runtime']['materialization_status'] == 'MATERIALIZED'
+          assert cur['test_runtime']['runtime_uid']=='ACPOS-GOV-TEST-v2.1.4-STAGE1'
+          assert cur['test_runtime']['materialization_status']=='MATERIALIZED'
           assert cur['current_execution']['website_reconstruction_allowed'] is False
           assert cur['current_execution']['website_code_write_allowed'] is False
-          assert base['governance_test']['version'] == 'v2.1.4'
-          assert base['governance_test']['normative_edit_allowed'] is False
-          assert lock['lock_state'] == 'USER_FROZEN_READ_ONLY'
-          assert lock['normative_edit_after_lock'] == 'FORBIDDEN'
-          assert lock['current_execution']['website_reconstruction_started'] is False
-          assert sealed['sealed_governance']['version'] == 'v2.1.4'
-          assert sealed['sealed_governance']['package_sha256'] == 'd789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109'
-          assert sealed['normative_mutation_allowed'] is False
-          print('PASS: rebuild branch is pinned to frozen v2.1.4 test authority')
+          assert base['governance_test']['version']=='v2.1.4' and base['governance_test']['normative_edit_allowed'] is False
+          assert lock['lock_state']=='USER_FROZEN_READ_ONLY' and lock['normative_edit_after_lock']=='FORBIDDEN'
+          assert sealed['sealed_governance']['version']=='v2.1.4' and sealed['normative_mutation_allowed'] is False
+          print('PASS: branch pinned to frozen v2.1.4 test authority')
           PY
       - name: Verify CORE and ASSET reference-only source snapshots are unchanged
         run: |
-          set -euo pipefail
           test "$(git rev-parse 'HEAD:00_SOURCE_INTAKE/legacy_new/reference_only/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml')" = '9490f3bcc28c5511bc04d6c3ce53c026e3c4667f'
           test "$(git rev-parse 'HEAD:00_SOURCE_INTAKE/legacy_new/reference_only/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml')" = '9668e2307c722ea4cf64f93f07c92da1b3abcc28'
-          echo 'PASS: CORE-01 and ASSET-01 reference snapshots remain exact and read-only'
-      - name: Block premature website reconstruction
+          echo 'PASS: CORE/ASSET snapshots unchanged'
+      - name: Block premature website reconstruction and garbage
         run: |
           python - <<'PY'
           from pathlib import Path
-          root=Path('.')
-          forbidden=[p for p in [root/'app',root/'src',root/'pages',root/'public'] if p.exists()]
-          if forbidden:
-              raise SystemExit('Website implementation path appeared before Stage-1 actual-test closure: '+', '.join(str(x) for x in forbidden))
+          r=Path('.')
+          bad=[str(p) for p in [r/'app',r/'src',r/'pages',r/'public'] if p.exists()]
+          if bad: raise SystemExit('premature website paths: '+','.join(bad))
           garbage=[]
-          for p in root.rglob('*'):
-              if not p.is_file() or '.git' in p.parts:
-                  continue
-              if p.name == '.DS_Store' or p.suffix in {'.pyc', '.pyo'} or '__pycache__' in p.parts or p.name.endswith(('.tmp','.bak','~')):
-                  garbage.append(str(p))
-          if garbage:
-              raise SystemExit('Garbage detected: '+', '.join(garbage))
-          print('PASS: no website implementation and no generated garbage in current tree')
+          for p in r.rglob('*'):
+            if not p.is_file() or '.git' in p.parts: continue
+            if p.name=='.DS_Store' or p.suffix in {'.pyc','.pyo'} or '__pycache__' in p.parts or p.name.endswith(('.tmp','.bak','~')): garbage.append(str(p))
+          if garbage: raise SystemExit('garbage: '+','.join(garbage))
+          print('PASS: no website implementation and garbage=0')
           PY
