@@ -1,8 +1,8 @@
 schema_version: 1
 run_uid: FRESH-RUN-001
 branch: rebuild-v2.1.1
-phase: FOUNDATION_ONLY
-status: FOUNDATION_READY_NOT_EXECUTED
+phase: STAGE_01_SOURCE_INTAKE
+status: RAW_SOURCE_REFERENCE_CAPTURED
 governance:
   version: v2.1.4
   state: USER_FROZEN_READ_ONLY
@@ -11,13 +11,17 @@ governance:
 target_pages:
   - CORE-01
   - ASSET-01
+source_pin:
+  branch: new
+  revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
 execution_policy:
-  actual_source_extraction: FORBIDDEN_THIS_PHASE
-  source_copy: FORBIDDEN_THIS_PHASE
-  source_domain_decomposition: FORBIDDEN_THIS_PHASE
-  page_blueprint_materialization: FORBIDDEN_THIS_PHASE
-  visual_blueprint_materialization: FORBIDDEN_THIS_PHASE
-  stage1_validation: FORBIDDEN_THIS_PHASE
+  actual_source_extraction: STEP_01A_COMPLETED_EXACT_BLOB_CAPTURE
+  source_copy: EXACT_GIT_BLOB_REUSE_ONLY
+  source_structure_enumeration: NOT_EXECUTED
+  source_domain_decomposition: NOT_EXECUTED
+  page_blueprint_materialization: NOT_EXECUTED
+  visual_blueprint_materialization: NOT_EXECUTED
+  stage1_validation: NOT_EXECUTED
   website_code_write: FORBIDDEN
   deployment: FORBIDDEN
-next_phase_entry_condition: USER_EXPLICITLY_STARTS_ACTUAL_TEST
+next_phase_entry_condition: SOURCE_STRUCTURE_ENUMERATION_EXPLICIT_START
