@@ -1,5 +1,5 @@
-schema_version: 1
-run_uid: GOVRUN-EXTRACT-GOVERNANCE-001
+schema_version: 2
+run_uid: GOVRUN-EXTRACT-GOVERNANCE-002
 source_branch: new
 source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
 target_branch: rebuild-v2.1.1
@@ -18,10 +18,24 @@ records:
     current_load_graph_eligible: true
     status: IMPORTED_APPROVED
     imported_exact_blob: true
-    v2_1_2_patch_status: PENDING
+    v2_1_2_patch_status: APPLIED_AND_MINIMAL_CONTROL_VERIFIED
+    patched_target_blob_sha: dff5f795683f7c01e05e6034ac37b8b69af6feb7
+    validator_path: 09_TESTS/governance/validate_rebuild_governance.py
+    validator_blob_sha: cba0c0844a201bbc8cb56ebef6ad4a5b452c49e0
+    minimal_control_test_path: 09_TESTS/governance/test_v2_1_2_minimal_control.py
+    minimal_control_test_blob_sha: 0d5db8ed39477a48adf1a98cefa27b6b3e4e4da1
+verification:
+  workflow_name: Rebuild Governance Gate
+  workflow_run_id: 34664178681
+  workflow_head_sha: ea4c7456b238d7434215bfb654a1845bfaf71ea1
+  minimal_control_self_test: PASS
+  current_state_gate: EXPECTED_FAIL
+  expected_fail_reason: Current Source Intake has no independently materialized PAGE_CONSTRUCTION_DESIGN and VISUAL_CONSTRUCTION_DESIGN artifacts and its clean scan is not current.
 bulk_copy_performed: false
 direct_merge_performed: false
 parallel_governance_owner_created: false
+governance_owner_materialized: true
+minimal_control_constraint_verified: true
 construction_may_advance: false
-next_action: Patch this existing canonical owner with v2.1.2 source-domain decomposition, minimal-control self-test, and clean-scan freshness rules; then rerun governance regression and branch cleanliness.
-status: IMPORTED_CURRENT_OWNER_PENDING_GOVERNANCE_PATCH
+next_action: Keep Source Intake blocked; independently classify and materialize PAGE_CONSTRUCTION_DESIGN and VISUAL_CONSTRUCTION_DESIGN, then run a fresh current-tree clean scan.
+status: GOVERNANCE_MATERIALIZED_SOURCE_INTAKE_BLOCKED
