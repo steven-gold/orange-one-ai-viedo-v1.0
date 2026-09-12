@@ -1,5 +1,5 @@
 schema_version: 2
-run_uid: GOVRUN-REBUILD-ISOLATION-003
+run_uid: GOVRUN-REBUILD-ISOLATION-004
 rebuild_branch: rebuild-v2.1.1
 legacy_source_branch: new
 legacy_source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
@@ -37,12 +37,25 @@ extractions:
     target_role: REFERENCE_ONLY_SOURCE_SNAPSHOT
     current_load_graph_eligible: false
     status: IMPORTED_REFERENCE_ONLY
+  - batch_uid: EXTRACT-GOVERNANCE-001
+    source_branch: new
+    source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+    source_path: authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
+    source_blob_sha: 35c19fd7f0307bf441a3882e74b5bf74892889f3
+    classification: CURRENT_AUTHORITY
+    authority_disposition: CURRENT_CANONICAL_OWNER_BOOTSTRAP
+    dependency_reason: patch existing canonical construction governance owner in place; parallel governance owner forbidden
+    target_path: authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
+    target_role: CANONICAL_GOVERNANCE_OWNER
+    current_load_graph_eligible: true
+    status: IMPORTED_APPROVED
 clean_scan:
   previous_evidence_ref: github:rebuild-v2.1.1@893b3b481cbbb6da45b8c1ec6fece21a531acff8
   invalidated_by:
     - source inventory correction
     - extraction ledger correction
     - source domain decomposition gate materialization
+    - canonical governance owner extraction
   status: REVERIFY_REQUIRED
-current_gate: REBUILD_BRANCH_CLEAN_SCAN
+current_gate: GOVERNANCE_V2_1_2_CANONICAL_OWNER_PATCH
 status: REVERIFY_REQUIRED
