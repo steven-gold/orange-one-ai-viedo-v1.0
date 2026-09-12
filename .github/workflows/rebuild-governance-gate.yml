@@ -1,0 +1,40 @@
+name: Rebuild Governance Gate
+
+on:
+  push:
+    branches:
+      - rebuild-v2.1.1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  minimal-control-self-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install governance parser
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Run minimal-control governance self-test
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python 09_TESTS/governance/test_v2_1_2_minimal_control.py
+
+  current-state-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install governance parser
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate current rebuild state
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          GOV_OBSERVED_SOURCE_REVISION: ${{ github.sha }}
+        run: python 09_TESTS/governance/validate_rebuild_governance.py .
