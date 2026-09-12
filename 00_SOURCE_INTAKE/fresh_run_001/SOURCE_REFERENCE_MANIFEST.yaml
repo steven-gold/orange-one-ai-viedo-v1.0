@@ -1,0 +1,47 @@
+schema_version: 1
+artifact_uid: SRCREF-FRESH-RUN-001
+run_uid: FRESH-RUN-001
+stage_uid: STAGE-01
+step_uid: STAGE-01A-RAW-SOURCE-EXACT-CAPTURE
+status: CURRENT_RAW_SOURCE_CAPTURE
+source_branch: new
+source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+capture_mode: EXACT_EXISTING_GIT_BLOB_REUSE_NO_CONTENT_MUTATION
+records:
+  - source_uid: SRC-CORE-01-CANONICAL-VISUAL-IDENTITY
+    page_uid: CORE-01
+    source_path: authority/pages/workspace/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
+    source_blob_sha: 09665c0a4a6b86db912f9b44160d336bfc611ae6
+    source_size: 2886
+    source_role: CANONICAL_VISUAL_IDENTITY_REFERENCE
+    target_path: 00_SOURCE_INTAKE/fresh_run_001/00_RAW_SOURCE/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
+    target_blob_sha: 09665c0a4a6b86db912f9b44160d336bfc611ae6
+    content_mutated: false
+    downstream_eligibility: SOURCE_INPUT_ONLY
+  - source_uid: SRC-CORE-01-PAGE-AUTHORITY
+    page_uid: CORE-01
+    source_path: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    source_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+    source_size: 84159
+    source_role: PAGE_SOURCE_INPUT
+    target_path: 00_SOURCE_INTAKE/fresh_run_001/00_RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    target_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+    content_mutated: false
+    downstream_eligibility: SOURCE_INPUT_ONLY
+  - source_uid: SRC-ASSET-01-PAGE-AUTHORITY
+    page_uid: ASSET-01
+    source_path: authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    source_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    source_size: 74698
+    source_role: PAGE_SOURCE_INPUT
+    target_path: 00_SOURCE_INTAKE/fresh_run_001/00_RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    target_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    content_mutated: false
+    downstream_eligibility: SOURCE_INPUT_ONLY
+authority_effect:
+  current_authority_promotion: false
+  classification_complete: false
+  source_structure_enumeration_complete: false
+  source_domain_decomposition_complete: false
+  stage1_closure_claimed: false
+next_step: SOURCE_STRUCTURE_ENUMERATION
