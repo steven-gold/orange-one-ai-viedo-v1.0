@@ -1,0 +1,37 @@
+schema_version: 1
+baseline_version: v2.1.0
+baseline_package_sha256: 47e744440583c2d3125ea380aca679c4af01a0c2a11cbccfd5294ce0ff54b4d4
+release_version: v2.1.1
+stage_uid: STAGE-1-SOURCE-INTAKE-EXTRACTION-GOVERNANCE
+scope_lock:
+  allowed_change_types:
+    - REPRODUCED_GOVERNANCE_BUGFIX
+  allowed_defect_uids:
+    - GOV-DEFECT-STAGE1-EXTRACTION-DOMAIN-SEPARATION
+    - GOV-DEFECT-STAGE1-MOVING-TARGET-TEST
+    - GOV-DEFECT-STAGE1-MINIMAL-CONTROL
+  later_stage_feature_addition: FORBIDDEN
+candidate_normative_hash: c3f7f8ace7e925b3fb2adfe9df1c64c1b2398e94eeaf3757a458fea383d589fb
+lock_state: STAGE_RELEASE_LOCKED
+normative_edit_after_lock: FORBIDDEN
+next_stage_started: false
+website_reconstruction_started: false
+governance_release_state: STAGE_1_LOCKED_NOT_FINAL_FOR_WEBSITE_RECONSTRUCTION
+tests:
+  - suite: Stage-1 extraction minimal-control governance test
+    result: PASS
+    passed_expectations: 9
+    total: 9
+  - suite: v2.1.0 regression
+    result: PASS
+    passed_expectations: 12
+    total: 12
+  - suite: v2.1.0 post-v1.8 regression
+    result: PASS
+    passed_expectations: 6
+    total: 6
+closure:
+  stage_1_rule_change_complete: true
+  stage_1_locked: true
+  formal_website_reconstruction_allowed: false
+  exact_next_action: Materialize the exact locked package in-repository before any formal re-extraction. Then re-extract Source Intake data under this locked release without editing it; collect defects until Stage 1 extraction completes.
