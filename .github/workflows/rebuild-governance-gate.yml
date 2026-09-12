@@ -1,4 +1,4 @@
-name: Rebuild Governance Gate
+name: Governance Stage Lock Guard
 
 on:
   push:
@@ -10,31 +10,61 @@ permissions:
   contents: read
 
 jobs:
-  minimal-control-self-test:
+  stage1-release-pointer-guard:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install governance parser
+      - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Run minimal-control governance self-test
+      - name: Verify immutable baseline and Stage-1 lock
         env:
           PYTHONDONTWRITEBYTECODE: '1'
-        run: python 09_TESTS/governance/test_v2_1_2_minimal_control.py
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          root=Path('.')
+          cur=yaml.safe_load((root/'GOVERNANCE_CURRENT.yaml').read_text())
+          lock=yaml.safe_load((root/'11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml').read_text())
+          assert cur['baseline']['version']=='v2.1.0'
+          assert cur['baseline']['immutable'] is True
+          assert cur['current_release']['version']=='v2.1.1'
+          assert cur['current_release']['lock_state']=='STAGE_RELEASE_LOCKED'
+          assert cur['formal_website_reconstruction_allowed'] is False
+          assert cur['current_release']['repository_materialization_status']=='PENDING_EXACT_PACKAGE_SYNC'
+          invalid={x['version']:x['status'] for x in cur.get('invalidated_experiments',[])}
+          assert invalid.get('v2.1.2')=='DISCARDED_NOT_AUTHORITY'
+          assert lock['baseline_version']=='v2.1.0'
+          assert lock['release_version']=='v2.1.1'
+          assert lock['lock_state']=='STAGE_RELEASE_LOCKED'
+          assert lock['normative_edit_after_lock']=='FORBIDDEN'
+          assert lock['next_stage_started'] is False
+          assert lock['website_reconstruction_started'] is False
+          print('PASS: v2.1.0 baseline + v2.1.1 Stage-1 lock state is coherent')
+          PY
 
-  current-state-gate:
+  no-website-construction-before-final-governance:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install governance parser
+      - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Validate current rebuild state
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-          GOV_OBSERVED_SOURCE_REVISION: ${{ github.sha }}
-        run: python 09_TESTS/governance/validate_rebuild_governance.py .
+      - name: Block premature website reconstruction
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          root=Path('.')
+          cur=yaml.safe_load((root/'GOVERNANCE_CURRENT.yaml').read_text())
+          assert cur['formal_website_reconstruction_allowed'] is False
+          forbidden=[p for p in [root/'app',root/'src',root/'pages',root/'public'] if p.exists()]
+          if forbidden:
+              raise SystemExit('Formal website construction path appeared before governance final lock: '+', '.join(str(x) for x in forbidden))
+          print('PASS: website reconstruction remains blocked while governance is not final-locked')
+          PY
