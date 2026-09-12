@@ -1,0 +1,19 @@
+schema_version: 1
+branch_role: CLEAN_REBUILD_WORKSPACE
+branch_name: rebuild-v2.1.1
+legacy_source_branch: new
+legacy_source_sha: 6c8a0c3334ccd17942ba14079976fb295859a43c
+legacy_source_access: READ_ONLY_EXTRACTION_ONLY
+governance_package_target: v2.1.1
+current_load_graph_policy: ALLOWLIST_ONLY
+contamination_policy:
+  temporary_files: FORBIDDEN
+  duplicate_authority: FORBIDDEN
+  superseded_versions_in_current_paths: FORBIDDEN
+  stale_evidence_in_current_paths: FORBIDDEN
+  unreferenced_generated_outputs: FORBIDDEN
+  extracted_legacy_files_require_classification: true
+phase_transition_requires_clean_scan: true
+implementation_policy: PAGE_VERTICAL_CLOSURE_AFTER_PROJECT_WIDE_DESIGN_FREEZE
+production_policy: NO_PRODUCTION_SWITCH_BEFORE_FINAL_ACCEPTANCE
+status: BASELINE_CREATED_BEFORE_TEST_EXECUTION
