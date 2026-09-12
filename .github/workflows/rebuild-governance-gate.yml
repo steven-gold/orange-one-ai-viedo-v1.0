@@ -1,16 +1,13 @@
-name: Governance v2.1.5 Sealed Stage-1 Test Gate
-
+name: Governance v2.1.6 Semantic Granularity Replay Gate
 on:
   push:
     branches: [rebuild-v2.1.1]
   workflow_dispatch:
-
 permissions:
   contents: read
-
 jobs:
-  current-lock-and-fresh-workspace:
-    runs-on: ubuntu-latest
+  current-v216-replay-gate:
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -18,13 +15,12 @@ jobs:
           python-version: '3.12'
       - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify v2.1.5 seal, current pointer, fresh workspace, and source structure
+      - name: Verify v2.1.6 current pointers and expected block of restored 34-node replay
         env:
           PYTHONDONTWRITEBYTECODE: '1'
-        run: python governance/ci/validate_current_v215_workspace.py
-
-  sealed-v2-1-5-stage1-runtime:
-    runs-on: ubuntu-latest
+        run: python governance/ci/validate_current_v216_workspace.py
+  sealed-v216-runtime:
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -32,7 +28,7 @@ jobs:
           python-version: '3.12'
       - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify exact sealed runtime and run Stage-1 31/31
+      - name: Verify exact sealed v2.1.6 runtime, Stage-1 33/33, and lifecycle 11/11
         env:
           PYTHONDONTWRITEBYTECODE: '1'
-        run: python governance/ci/validate_sealed_v215_runtime.py
+        run: python governance/ci/validate_sealed_v216_runtime.py

@@ -1,34 +1,35 @@
-schema_version: 2
+schema_version: 3
 branch_name: rebuild-v2.1.1
 role: CURRENT_SEALED_GOVERNANCE_TEST_BASELINE
 normative_mutation_allowed: false
 sealed_governance:
-  version: v2.1.5
-  release_name: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.5_RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED
-  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.5_RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED.zip
-  package_sha256: 2bfeed2ec9bc6eac9f34fdd5eb43e2f76f1e78682c4b81bebb9e4a3e1084eecd
-  external_trust_root_filename: ACPOS_GOVERNANCE_TRUST_ROOT_v2.1.5_RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED.json
-  external_trust_root_sha256: 787b2be721c0d51e8fe595ceaeeb0c80a03e692952b6ff2fc139c6a914f089ee
-  semantic_authority_content_hash: 99565f73b8e09c466e0a9ffafa2c0ae1cd52f484be57bd000acef39dea2fff2a
-  state: RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED_CANDIDATE
+  version: v2.1.6
+  release_name: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.6_SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED
+  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.6_SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED.zip
+  package_sha256: 3dcc0b4b94250b7487ec923fde2604f13b6d4ce3ee1ec4636feba27bcf3c92c6
+  external_trust_root_filename: ACPOS_GOVERNANCE_TRUST_ROOT_v2.1.6_SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED.json
+  external_trust_root_sha256: 70b19fa78f641fb570c9c314552d518b50a358ce18075de0e5cad89edd746de2
+  semantic_authority_content_hash: 3e4a56f7ace751ab2a8a2c8adbe889fc6eefa133e859d7bc1f49df102e5a55bb
+  state: SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED_CANDIDATE
   sealed_read_only: true
+  formal_freeze_executed: false
 verified_test_summary:
-  clean_preformal: 14/14_PASS
-  mandatory_suites: 8/8_PASS
-  built_in_expectations: 199/199_PASS
-  stage1_minimal_control: 31/31_PASS
-  fuzz_escape_count: 0
-  fresh_zip_preformal: 14/14_PASS
+  high_pressure: 25/25_PASS
+  reference_semantic: 28/28_PASS
+  fuzz: 46/46_BLOCKED_0_ESCAPE
+  execution_load: 14/14_PASS
+  multidirection_stress: 21/21_PASS
+  stage1_minimal_control: 33/33_PASS
+  inherited_regression: 12/12_PASS
+  post_v1_8: 6/6_PASS
+  cross_stage_bugfix_regression: 30/30_PASS
+  fresh_zip_stage1: 33/33_PASS
+  fresh_zip_cross_lifecycle: 30/30_PASS
+  outer_monolithic_preformal_runner: TIMEOUT_NO_FAILURE_CONCLUSION
 execution_policy:
   governance_load_required_before_test: true
   governance_text_edit_during_execution: FORBIDDEN
   github_test_infrastructure_update_allowed: true
   github_test_infrastructure_is_normative_authority: false
   website_construction_before_stage_gate: FORBIDDEN
-historical_versions:
-- v2.1.0
-- v2.1.1
-- v2.1.2
-- v2.1.4
-historical_versions_are_current_test_authority: false
-status: SEALED_TEST_BASELINE_ACTIVE
+status: SEALED_V2_1_6_TEST_BASELINE_PENDING_GITHUB_CI

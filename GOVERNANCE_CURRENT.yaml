@@ -1,44 +1,65 @@
-schema_version: 5
+schema_version: 6
 role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
 normative_authority:
-  version: v2.1.5
-  state: RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED_USER_FROZEN_READ_ONLY
+  version: v2.1.6
+  state: SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED_CANDIDATE_USER_FROZEN_READ_ONLY
+  formal_freeze_executed: false
   normative_edit_allowed: false
-  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.5_RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED.zip
-  package_sha256: 2bfeed2ec9bc6eac9f34fdd5eb43e2f76f1e78682c4b81bebb9e4a3e1084eecd
-  external_trust_root_filename: ACPOS_GOVERNANCE_TRUST_ROOT_v2.1.5_RAW_SOURCE_CAPTURE_BUGFIX_PREFORMAL_VERIFIED.json
-  external_trust_root_sha256: 787b2be721c0d51e8fe595ceaeeb0c80a03e692952b6ff2fc139c6a914f089ee
-  semantic_authority_content_hash: 99565f73b8e09c466e0a9ffafa2c0ae1cd52f484be57bd000acef39dea2fff2a
+  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.6_SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED.zip
+  package_sha256: 3dcc0b4b94250b7487ec923fde2604f13b6d4ce3ee1ec4636feba27bcf3c92c6
+  external_trust_root_filename: ACPOS_GOVERNANCE_TRUST_ROOT_v2.1.6_SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED.json
+  external_trust_root_sha256: 70b19fa78f641fb570c9c314552d518b50a358ce18075de0e5cad89edd746de2
+  semantic_authority_content_hash: 3e4a56f7ace751ab2a8a2c8adbe889fc6eefa133e859d7bc1f49df102e5a55bb
 test_runtime:
-  version: v2.1.5
-  runtime_uid: ACPOS-GOV-TEST-v2.1.5-STAGE1
-  runtime_manifest: governance/test-runtime/v2.1.5/STAGE1_RUNTIME_MANIFEST.yaml
-  materialization_scope: SEALED_STAGE1_TEST_RUNTIME
+  version: v2.1.6
+  runtime_uid: ACPOS-GOV-TEST-v2.1.6-STAGE1-SEMANTIC-GRANULARITY
+  runtime_manifest: governance/test-runtime/v2.1.6/STAGE1_RUNTIME_MANIFEST.yaml
+  materialization_scope: SEALED_STAGE1_PLUS_LIFECYCLE_TEST_RUNTIME
   materialization_status: SYNCED_PENDING_CI
-  expected_stage1_minimal_control: 31/31_PASS
+  expected_stage1_minimal_control: 33/33_PASS
+  expected_lifecycle_semantic_granularity: 11/11_PASS
   runtime_content_mutation: FORBIDDEN
 current_execution:
   phase: FOUNDATION-01-SOURCE-INTAKE
-  mode: CLEAN_RESET_BEFORE_SECOND_FRESH_ACTUAL_TEST
+  mode: V216_PREVIOUS_STAGE_REPLAY_BEFORE_SEGMENT_MAPPING
+  run_uid: FRESH-RUN-003
   target_pages:
   - CORE-01
   - ASSET-01
-  source_domain_decomposition_status: RESET_CLEAN_WAITING_SECOND_FRESH_EXTRACTION
-  fresh_extraction_required: true
-  reuse_prior_core_asset_snapshot: false
+  restored_stage: SOURCE_STRUCTURE_ENUMERATION
+  restored_node_count: 34
+  source_segment_mapping_started: false
   website_reconstruction_allowed: false
   website_code_write_allowed: false
   github_test_and_evidence_sync_allowed: true
   normative_changes_allowed: false
   formal_production_deployment_allowed: false
+semantic_granularity_policy:
+  invariant_uid: GOV-INV-SEMANTIC-GRANULARITY-001
+  normative_section_uid: WEB-GOV-03-S052
+  applies_to_stages:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+  syntax_level_is_not_governance_granularity: true
+  mixed_terminal_unit: BLOCK
+  unresolved_container_unit: BLOCK
+  recursive_decomposition_required: true
 source_policy:
   source_branch: new
-  source_revision_policy: RESOLVE_CURRENT_HEAD_AT_FRESH_EXTRACTION_START
-  source_access: READ_ONLY_EXTRACTION_ONLY
+  source_revision_policy: PINNED_REPLAY_OF_LAST_VERIFIED_RAW_CAPTURE
+  source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+  source_access: READ_ONLY_REPLAY_FOR_BUGFIX_VALIDATION
   current_load_graph: ALLOWLIST_ONLY
-  bulk_copy: FORBIDDEN
-  prior_extraction_reuse: FORBIDDEN
-  self_reported_pass_as_authority: FORBIDDEN
-next_action: Run sealed v2.1.5 GitHub Stage-1 CI gate. Only after PASS, resolve current new HEAD and run SECOND fresh CORE-01/ASSET-01 extraction from an empty raw-source area.
-status: V2_1_5_SEALED_SYNC_PENDING_CI
+  prior_corrected_segment_map_reuse: FORBIDDEN
+next_action: Run v2.1.6 sealed CI and prove the restored 34-node pre-segment state is BLOCKED by semantic granularity before any refinement.
+status: V2_1_6_SEALED_SYNC_PENDING_CI_REPLAY_READY

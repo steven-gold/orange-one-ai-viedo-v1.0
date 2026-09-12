@@ -1,0 +1,19 @@
+schema_version: 1
+run_uid: FRESH-RUN-003
+governance_version: v2.1.6
+state: SOURCE_STRUCTURE_ENUMERATION_REPLAY_READY
+raw_source_capture_state: CAPTURE_CLOSED
+source_structure_enumeration_restored: true
+source_structure_node_count: 34
+semantic_granularity_validation_started: false
+source_segment_mapping_started: false
+source_fact_materialization_started: false
+blueprint_materialization_started: false
+stage1_validation_started: false
+website_construction_started: false
+deployment_started: false
+allowed_transition:
+  from: SOURCE_STRUCTURE_ENUMERATION_REPLAY_READY
+  to: SEMANTIC_GRANULARITY_REPLAY_VALIDATION_ACTIVE
+  trigger: GITHUB_V216_CI
+last_result: PREVIOUS_STAGE_RESTORED_NOT_YET_V216_VALIDATED

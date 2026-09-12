@@ -1,0 +1,130 @@
+schema_version: 4
+runtime_uid: ACPOS-GOV-TEST-v2.1.6-STAGE1-SEMANTIC-GRANULARITY
+role: SEALED_TEST_RUNTIME_TRANSPORT
+authority: false
+normative_edit_allowed: false
+source_candidate:
+  version: v2.1.6
+  state: SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED_CANDIDATE_USER_FROZEN_READ_ONLY
+  zip_sha256: 3dcc0b4b94250b7487ec923fde2604f13b6d4ce3ee1ec4636feba27bcf3c92c6
+  external_trust_root_sha256: 70b19fa78f641fb570c9c314552d518b50a358ce18075de0e5cad89edd746de2
+  semantic_authority_content_hash: 3e4a56f7ace751ab2a8a2c8adbe889fc6eefa133e859d7bc1f49df102e5a55bb
+transport:
+  encoding: BINARY_CHUNKED_TAR_GZ
+  chunk_count: 14
+  assembled_size_bytes: 76987
+  assembled_bundle_sha256: 0ace8aef71f37b98956eafc6f8aaf8563ccdde56eea356a9b4b60c1476f3564a
+  transport_metadata_is_non_normative: true
+  chunks:
+  - path: governance/test-runtime/v2.1.6/runtime.part00
+    size: 8192
+    sha256: 661931851b3749de305e6de38b51169a9afdbf31f885025f1a5b6bda644d09a5
+    git_blob_sha: 068905324f758ec79cfb8b9ad9a795646f53baba
+  - path: governance/test-runtime/v2.1.6/runtime.part01
+    size: 8192
+    sha256: f001a3ecc27892edba5f10fe67d44f74f5280754cda62a6c3c8f8bcf7776a671
+    git_blob_sha: 0a13a60e91cb30f9132aa538ddad9a3b13356a13
+  - path: governance/test-runtime/v2.1.6/runtime.part02
+    size: 8192
+    sha256: 819ece6de3555c965ae4cf7a4adf611953078fcdc5b39cf229af1afca7809a04
+    git_blob_sha: 18a115501be2ef4880524367281d2a6ced3bd0c6
+  - path: governance/test-runtime/v2.1.6/runtime.part03
+    size: 8192
+    sha256: 17e1026e53d84d6ea3f1230aad13d4f9d968ae316921f7f784c2723bbf16f1c4
+    git_blob_sha: 6626218c5e20bfee696742c0f4147cee1384fa6d
+  - path: governance/test-runtime/v2.1.6/runtime.part04
+    size: 8192
+    sha256: 53bec2fe6fe4154f422af240c7e2249e1ac797dfb91c66f05a98ee8bc7ae7254
+    git_blob_sha: 23dfedca124b19265f6153c09468259396bd47e2
+  - path: governance/test-runtime/v2.1.6/runtime.part05
+    size: 8192
+    sha256: 7ec9d9142242407a1a8193c1240b0b41565d5d0a40c070415efcbf834be1908f
+    git_blob_sha: 85c7c2a6bea34fc3ee07c80140b0d062fe61f2fe
+  - path: governance/test-runtime/v2.1.6/runtime.part06
+    size: 8192
+    sha256: 5cc4a03636a966cb4e7e35a745a428fa3fe8dc3243bd95ee7cfbf437f3fe939b
+    git_blob_sha: 9b5258186edfa81db2095ded73ec0a51a06e15cf
+  - path: governance/test-runtime/v2.1.6/runtime.part07
+    size: 8192
+    sha256: 528b4d84fcc271d303d38730322e615fd2dbd18835e39d906502baa7b160232d
+    git_blob_sha: e2c2a3415bb70bd5f5379af05363f08bdbfdafc8
+  - path: governance/test-runtime/v2.1.6/runtime.part16a
+    size: 1024
+    sha256: 22bc7374e9a088c88fbc37d3cdfd9f69d84c4064b171faaa8d0b1cf6a0a25fc8
+    git_blob_sha: 5bb81b3ed3d191f79915f3a1c361bb359f75b5b3
+  - path: governance/test-runtime/v2.1.6/runtime.part16b
+    size: 1024
+    sha256: 657fabd46260405fa0904b27533f4a4daf45f3b61af1ed0005ce69d45f3253bc
+    git_blob_sha: f865dbe8efc263cda056997768c9d65347dd8b7f
+  - path: governance/test-runtime/v2.1.6/runtime.part16c
+    size: 1024
+    sha256: d5c22cce25c1bc587e96a02067b949c4c009445ca2fba200a444ad14196fc39b
+    git_blob_sha: e7ab72b4a701f6728a8e3daf0cfce2fe5b62c2a8
+  - path: governance/test-runtime/v2.1.6/runtime.part16d
+    size: 1024
+    sha256: 6648ce260455cbd341416916b00e89e708101bcdec289848b7ab653b4b1c778c
+    git_blob_sha: 49cfd6dba954ff71644bdf2c07c883e49f5529fe
+  - path: governance/test-runtime/v2.1.6/runtime.part17
+    size: 4096
+    sha256: f150394708e19b6e198aab5f83cb6fed6b728311d55d7a4cf668c4c42721ae1f
+    git_blob_sha: a19a56d342e2bf466cc6e9220c90e60f57119169
+  - path: governance/test-runtime/v2.1.6/runtime.part18
+    size: 3259
+    sha256: adc723d29880da1d7f96b731c99de5e0d5805209efb8dc65ef5aac08fc999702
+    git_blob_sha: d2297e09fc8f5cd2563afc15b1935cf150b30728
+files:
+- path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+  sha256: 77453aaf7a2282c0955ef8d23bb87efa88fefa71e83b00958272bfa49cdf2370
+  role: SEALED_RUNTIME_FILE
+- path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+  sha256: 151d092124f3aad7ab8b38fc87ad8076e5b25c3af7b0ff4c5c67d70f12d4743e
+  role: SEALED_RUNTIME_FILE
+- path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+  sha256: 6191a3e9f935e4b9677bff02b6bd82a074429d368ae144182f906b9b95ee4c43
+  role: SEALED_RUNTIME_FILE
+- path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+  sha256: 6427a5a1ab695ca6e227787e78d242ea1512c7ef9ea5b3e9a2a47d4d44070400
+  role: SEALED_RUNTIME_FILE
+- path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  sha256: 1dc888f696475bb6595992fea1726de88aa135470b76cc947f62509ef23ff27b
+  role: SEALED_RUNTIME_FILE
+- path: 10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml
+  sha256: 9d7277b598f914224c1cd2b18d7ace247c7d7bef386d256615ea6beb99f6ebc2
+  role: SEALED_RUNTIME_FILE
+- path: 09_TESTS/governance/governance_lifecycle_stage_contract_guard.py
+  sha256: 994b369dbc2bf4e0e2d705ea06cf07ead59ba16b30dc63496632fbbe80dc62b3
+  role: SEALED_RUNTIME_FILE
+- path: 09_TESTS/governance/governance_stage1_pipeline_guard.py
+  sha256: fda85e35d00c9221b10fb38fc14d0951612140e9595d4d7b075a365989f356c4
+  role: SEALED_RUNTIME_FILE
+- path: 09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py
+  sha256: ea0676519519e3ff9e1c61484ebbf55074659c326c3c271475ec5dc86e9381c0
+  role: SEALED_RUNTIME_FILE
+expected_tests:
+  stage1_minimal_control: 33/33_PASS
+  lifecycle_semantic_granularity: 11/11_PASS
+  cross_lifecycle_bugfix_regression: 30/30_PASS
+bugfix_contracts:
+  syntax_level_is_not_governance_granularity: true
+  mixed_terminal_unit: BLOCK
+  unresolved_container_unit: BLOCK
+  recursive_decomposition_required: true
+  parent_child_responsibility_conservation_required: true
+  downstream_universe_shrink_forbidden: true
+  applies_to_stages:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+mutation_policy:
+  normative_files: IMMUTABLE
+  validator_files: IMMUTABLE
+  transport_chunks: REPLACEABLE_NON_NORMATIVE_EXACT_BYTES
+status: SEALED_V2_1_6_RUNTIME_MATERIALIZED_PENDING_GITHUB_CI

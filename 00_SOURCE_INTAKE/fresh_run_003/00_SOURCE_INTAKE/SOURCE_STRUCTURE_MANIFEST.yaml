@@ -1,0 +1,239 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-002-SOURCE-STRUCTURE-MANIFEST
+artifact_type: SOURCE_STRUCTURE_MANIFEST
+run_uid: FRESH-RUN-002
+stage_uid: STAGE-01
+step_uid: SOURCE_STRUCTURE_ENUMERATION
+status: CURRENT_SOURCE_STRUCTURE_ENUMERATION
+source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+source_count: 3
+observed_node_count: 34
+classification_started: false
+segment_mapping_started: false
+sources:
+- source_uid: SRC-CORE-01-CANONICAL-VISUAL-IDENTITY
+  page_uid: CORE-01
+  source_identity: git_blob:09665c0a4a6b86db912f9b44160d336bfc611ae6
+  source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+  source_git_blob_sha: 09665c0a4a6b86db912f9b44160d336bfc611ae6
+  raw_source_path: 00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
+  enumeration_method: PYYAML_SAFE_LOAD_TOP_LEVEL_MAPPING_ENUMERATION
+  enumeration_tool: PyYAML==6.0.2
+  capture_run_uid: FRESH-RUN-002
+  captured_at_utc: '2026-09-12T22:14:00Z'
+  evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_STRUCTURE_ENUMERATION_EVIDENCE.yaml
+  enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
+  observed_nodes:
+  - source_node_uid: SRCNODE-CORE01-CANVIS-01
+    source_ref: $.authority
+    source_top_level_key: authority
+    governance_relevance: REFERENCE_ONLY
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-CANVIS-02
+    source_ref: $.current_canonical_visual
+    source_top_level_key: current_canonical_visual
+    governance_relevance: REFERENCE_ONLY
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-CANVIS-03
+    source_ref: $.child_visual_contract
+    source_top_level_key: child_visual_contract
+    governance_relevance: REFERENCE_ONLY
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-CANVIS-04
+    source_ref: $.change_trace_contract
+    source_top_level_key: change_trace_contract
+    governance_relevance: REFERENCE_ONLY
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-CANVIS-05
+    source_ref: $.validation
+    source_top_level_key: validation
+    governance_relevance: REFERENCE_ONLY
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  observed_node_count: 5
+  structure_manifest_hash: b94558c4dcdbc06e1e047a835f196af7b581d9eee0d498800a1f5fbbde7788ab
+- source_uid: SRC-CORE-01-PAGE-VISUAL-AUTHORITY
+  page_uid: CORE-01
+  source_identity: git_blob:9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+  source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+  source_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+  raw_source_path: 00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  enumeration_method: PYYAML_SAFE_LOAD_TOP_LEVEL_MAPPING_ENUMERATION
+  enumeration_tool: PyYAML==6.0.2
+  capture_run_uid: FRESH-RUN-002
+  captured_at_utc: '2026-09-12T22:14:00Z'
+  evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_STRUCTURE_ENUMERATION_EVIDENCE.yaml
+  enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
+  observed_nodes:
+  - source_node_uid: SRCNODE-CORE01-PVA-01
+    source_ref: $.authority
+    source_top_level_key: authority
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-02
+    source_ref: $.creation_authorization_policy
+    source_top_level_key: creation_authorization_policy
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-03
+    source_ref: $.system_filename_governance
+    source_top_level_key: system_filename_governance
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-04
+    source_ref: $.layout
+    source_top_level_key: layout
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-05
+    source_ref: $.page_modes
+    source_top_level_key: page_modes
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-06
+    source_ref: $.conversation_policy
+    source_top_level_key: conversation_policy
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-07
+    source_ref: $.decision_flow
+    source_top_level_key: decision_flow
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-08
+    source_ref: $.registries
+    source_top_level_key: registries
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-09
+    source_ref: $.acceptance
+    source_top_level_key: acceptance
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-10
+    source_ref: $.hard_locks
+    source_top_level_key: hard_locks
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-11
+    source_ref: $.final_gap_closure
+    source_top_level_key: final_gap_closure
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-12
+    source_ref: $.derived_validation
+    source_top_level_key: derived_validation
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-CORE01-PVA-13
+    source_ref: $.canonical_production_script_authoring_contract
+    source_top_level_key: canonical_production_script_authoring_contract
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  observed_node_count: 13
+  structure_manifest_hash: 8bfc50eb16b523e3466f6a991d3a3a5619a503d0694ac2300c675ba2191f016e
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  page_uid: ASSET-01
+  source_identity: git_blob:9668e2307c722ea4cf64f93f07c92da1b3abcc28
+  source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+  source_git_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+  raw_source_path: 00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  enumeration_method: PYYAML_SAFE_LOAD_TOP_LEVEL_MAPPING_ENUMERATION
+  enumeration_tool: PyYAML==6.0.2
+  capture_run_uid: FRESH-RUN-002
+  captured_at_utc: '2026-09-12T22:14:00Z'
+  evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_STRUCTURE_ENUMERATION_EVIDENCE.yaml
+  enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
+  observed_nodes:
+  - source_node_uid: SRCNODE-ASSET01-PVA-01
+    source_ref: $.authority
+    source_top_level_key: authority
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-02
+    source_ref: $.system_filename_governance
+    source_top_level_key: system_filename_governance
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-03
+    source_ref: $.layout
+    source_top_level_key: layout
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-04
+    source_ref: $.auto_manual
+    source_top_level_key: auto_manual
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-05
+    source_ref: $.asset_types
+    source_top_level_key: asset_types
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-06
+    source_ref: $.layer_patch_contract
+    source_top_level_key: layer_patch_contract
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-07
+    source_ref: $.scorecard
+    source_top_level_key: scorecard
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-08
+    source_ref: $.registries
+    source_top_level_key: registries
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-09
+    source_ref: $.hard_locks
+    source_top_level_key: hard_locks
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-10
+    source_ref: $.derived_validation
+    source_top_level_key: derived_validation
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-11
+    source_ref: $.final_gap_closure
+    source_top_level_key: final_gap_closure
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-12
+    source_ref: $.script_content_authority_ref
+    source_top_level_key: script_content_authority_ref
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-13
+    source_ref: $.production_script_content_contract
+    source_top_level_key: production_script_content_contract
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-14
+    source_ref: $.correction_script_content_contract
+    source_top_level_key: correction_script_content_contract
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-15
+    source_ref: $.provider_adapter_contract
+    source_top_level_key: provider_adapter_contract
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  - source_node_uid: SRCNODE-ASSET01-PVA-16
+    source_ref: $.canonical_script_source_binding
+    source_top_level_key: canonical_script_source_binding
+    governance_relevance: REQUIRED
+    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
+  observed_node_count: 16
+  structure_manifest_hash: 2f43ac84573be86285f74f669112110e5101e67ff1a2156a3cf0aec54a32fba2
+completion:
+  enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
+  required_nodes: 29
+  reference_only_nodes: 5
+  non_normative_nodes: 0
+  unclassified_observed_nodes: 34
+  classified_nodes: 0
+  missing_nodes: 0
+  extra_nodes: 0
+  duplicate_source_node_uids: 0
+  next_step: SOURCE_SEGMENT_MAPPING

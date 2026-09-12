@@ -1,34 +1,28 @@
-schema_version: 4
-baseline_uid: REBUILD-BRANCH-v2.1.5-CLEAN-SECOND-FRESH-TEST
+schema_version: 5
+baseline_uid: REBUILD-BRANCH-v2.1.6-SEMANTIC-GRANULARITY-REPLAY
 branch_role: CLEAN_REBUILD_TEST_WORKSPACE
 branch_name: rebuild-v2.1.1
 source_branch: new
-source_revision_policy: RESOLVE_CURRENT_HEAD_AT_FRESH_EXTRACTION_START
-source_access: READ_ONLY_EXTRACTION_ONLY
-prior_extraction_reuse: FORBIDDEN
+source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+source_access: READ_ONLY_REPLAY_FOR_BUGFIX_VALIDATION
 governance_test:
-  version: v2.1.5
-  state: USER_FROZEN_READ_ONLY
-  package_sha256: 2bfeed2ec9bc6eac9f34fdd5eb43e2f76f1e78682c4b81bebb9e4a3e1084eecd
-  external_trust_root_sha256: 787b2be721c0d51e8fe595ceaeeb0c80a03e692952b6ff2fc139c6a914f089ee
-  semantic_authority_content_hash: 99565f73b8e09c466e0a9ffafa2c0ae1cd52f484be57bd000acef39dea2fff2a
-  stage1_runtime_manifest: governance/test-runtime/v2.1.5/STAGE1_RUNTIME_MANIFEST.yaml
+  version: v2.1.6
+  state: USER_FROZEN_READ_ONLY_PREFORMAL_CANDIDATE
+  formal_freeze_executed: false
+  package_sha256: 3dcc0b4b94250b7487ec923fde2604f13b6d4ce3ee1ec4636feba27bcf3c92c6
+  external_trust_root_sha256: 70b19fa78f641fb570c9c314552d518b50a358ce18075de0e5cad89edd746de2
+  semantic_authority_content_hash: 3e4a56f7ace751ab2a8a2c8adbe889fc6eefa133e859d7bc1f49df102e5a55bb
+  stage1_runtime_manifest: governance/test-runtime/v2.1.6/STAGE1_RUNTIME_MANIFEST.yaml
   normative_edit_allowed: false
+semantic_granularity_replay:
+  run_uid: FRESH-RUN-003
+  restore_point: SOURCE_STRUCTURE_ENUMERATION_PRE_SEGMENT_MAPPING
+  restored_node_count: 34
+  old_corrected_61_node_result_reused: false
+  expected_governance_behavior: BLOCK_MIXED_TERMINAL_BEFORE_SEGMENT_MAPPING
 current_load_graph_policy: ALLOWLIST_ONLY
-contamination_policy:
-  temporary_files: FORBIDDEN
-  duplicate_authority: FORBIDDEN
-  superseded_versions_in_current_paths: FORBIDDEN
-  stale_evidence_as_current: FORBIDDEN
-  unreferenced_generated_outputs: FORBIDDEN
-  extracted_source_files_require_classification: true
-  raw_source_directory_purity: RAW_SOURCE_BYTES_ONLY
-phase_transition_requires_clean_scan: true
-implementation_policy: PAGE_VERTICAL_CLOSURE_AFTER_PROJECT_WIDE_DESIGN_FREEZE
-production_policy: NO_PRODUCTION_SWITCH_BEFORE_FINAL_ACCEPTANCE
-current_phase: FOUNDATION-01-SOURCE-INTAKE
 website_reconstruction_started: false
 website_reconstruction_allowed: false
 website_code_write_allowed: false
 test_and_evidence_sync_allowed: true
-status: V2_1_5_CLEAN_SECOND_FRESH_TEST_BASELINE_ACTIVE
+status: V2_1_6_REPLAY_BASELINE_PENDING_CI
