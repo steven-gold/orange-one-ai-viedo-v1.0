@@ -1,4 +1,4 @@
-name: Governance Stage Lock Guard
+name: Governance v2.1.4 Sealed Stage-1 Test Gate
 
 on:
   push:
@@ -10,16 +10,72 @@ permissions:
   contents: read
 
 jobs:
-  stage1-release-pointer-guard:
+  sealed-v2-1-4-stage1-runtime:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify immutable baseline and Stage-1 lock
+
+      - name: Reconstruct and verify sealed v2.1.4 Stage-1 runtime
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          B='governance/test-runtime/v2.1.4'
+          test -f "$B/STAGE1_RUNTIME_MANIFEST.yaml"
+          count=$(find "$B" -maxdepth 1 -type f -name 'stage1_runtime_bundle.tar.gz.b64.part*' | wc -l | tr -d ' ')
+          test "$count" = '9'
+          cat "$B"/stage1_runtime_bundle.tar.gz.b64.part* > /tmp/acpos-stage1.b64
+          test "$(sha256sum /tmp/acpos-stage1.b64 | awk '{print $1}')" = 'e92c466d0a3dd87a6ae4171b3d772acd3cce587e4b3cfe80cc34eed48239a1cc'
+          base64 -d /tmp/acpos-stage1.b64 > /tmp/acpos-stage1.tar.gz
+          test "$(sha256sum /tmp/acpos-stage1.tar.gz | awk '{print $1}')" = '725527bdc4182bec7990f2faf7220b582fd0ad86bf9d661cc44d7e66b9cf5cac'
+          rm -rf /tmp/acpos-gov-v214-stage1
+          mkdir -p /tmp/acpos-gov-v214-stage1
+          tar -xzf /tmp/acpos-stage1.tar.gz -C /tmp/acpos-gov-v214-stage1
+          cd /tmp/acpos-gov-v214-stage1
+          test "$(sha256sum '12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md' | awk '{print $1}')" = 'c23a41cbfac7afea5282a92d6c2bfc52b8a64ce06923088dfec8158cd3c9558b'
+          test "$(sha256sum '12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md' | awk '{print $1}')" = 'b1feacb7342d13fe5e9775992748fe6f6ea967153799ee48276261ac5e1acb9e'
+          test "$(sha256sum '12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md' | awk '{print $1}')" = '472bd36bee7ac66d3aa6b8bcb0808e80547333d8573e6f014a7fdfdddd68b19f'
+          test "$(sha256sum '12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md' | awk '{print $1}')" = '15372b077176fb68bbb319e75b65d570bbb968544cb42e7ca42a625a9910df57'
+          test "$(sha256sum '09_TESTS/governance/governance_stage1_pipeline_guard.py' | awk '{print $1}')" = 'a2d1ce114eec425f39731e4f9a21194b3cc557d28b1658b83f416212b32fc8b1'
+          test "$(sha256sum '09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py' | awk '{print $1}')" = '607343856d53940209382f44686f3395e8faf5f24fbcbeea0b0f638b01367db0'
+          echo 'PASS: sealed v2.1.4 Stage-1 runtime transport and exact file hashes verified'
+
+      - name: Run sealed Stage-1 minimal-control 27/27
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python /tmp/acpos-gov-v214-stage1/09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py > /tmp/stage1-minimal.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/stage1-minimal.json').read_text())
+          assert r['total'] == 27, r
+          assert r['passed_expectations'] == 27, r
+          assert all(x.get('ok') is True for x in r['results']), r
+          print('PASS: sealed v2.1.4 Stage-1 minimal-control = 27/27')
+          PY
+
+  rebuild-branch-current-test-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+
+      - name: Verify v2.1.4 current pointer and frozen rule
         env:
           PYTHONDONTWRITEBYTECODE: '1'
         run: |
@@ -28,43 +84,45 @@ jobs:
           import yaml
           root=Path('.')
           cur=yaml.safe_load((root/'GOVERNANCE_CURRENT.yaml').read_text())
+          base=yaml.safe_load((root/'REBUILD_BRANCH_BASELINE.yaml').read_text())
           lock=yaml.safe_load((root/'11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml').read_text())
-          assert cur['baseline']['version']=='v2.1.0'
-          assert cur['baseline']['immutable'] is True
-          assert cur['current_release']['version']=='v2.1.1'
-          assert cur['current_release']['lock_state']=='STAGE_RELEASE_LOCKED'
-          assert cur['formal_website_reconstruction_allowed'] is False
-          assert cur['current_release']['repository_materialization_status']=='PENDING_EXACT_PACKAGE_SYNC'
-          invalid={x['version']:x['status'] for x in cur.get('invalidated_experiments',[])}
-          assert invalid.get('v2.1.2')=='DISCARDED_NOT_AUTHORITY'
-          assert lock['baseline_version']=='v2.1.0'
-          assert lock['release_version']=='v2.1.1'
-          assert lock['lock_state']=='STAGE_RELEASE_LOCKED'
-          assert lock['normative_edit_after_lock']=='FORBIDDEN'
-          assert lock['next_stage_started'] is False
-          assert lock['website_reconstruction_started'] is False
-          print('PASS: v2.1.0 baseline + v2.1.1 Stage-1 lock state is coherent')
+          assert cur['normative_authority']['version'] == 'v2.1.4'
+          assert cur['normative_authority']['package_sha256'] == 'd789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109'
+          assert cur['normative_authority']['normative_edit_allowed'] is False
+          assert cur['test_runtime']['runtime_uid'] == 'ACPOS-GOV-TEST-v2.1.4-STAGE1'
+          assert cur['test_runtime']['materialization_status'] == 'MATERIALIZED'
+          assert cur['current_execution']['website_reconstruction_allowed'] is False
+          assert cur['current_execution']['website_code_write_allowed'] is False
+          assert base['governance_test']['version'] == 'v2.1.4'
+          assert base['governance_test']['normative_edit_allowed'] is False
+          assert lock['lock_state'] == 'USER_FROZEN_READ_ONLY'
+          assert lock['normative_edit_after_lock'] == 'FORBIDDEN'
+          assert lock['current_execution']['website_reconstruction_started'] is False
+          print('PASS: rebuild branch is pinned to frozen v2.1.4 test authority')
           PY
 
-  no-website-construction-before-final-governance:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install YAML parser
-        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Verify CORE and ASSET reference-only source snapshots are unchanged
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse 'HEAD:00_SOURCE_INTAKE/legacy_new/reference_only/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml')" = '9490f3bcc28c5511bc04d6c3ce53c026e3c4667f'
+          test "$(git rev-parse 'HEAD:00_SOURCE_INTAKE/legacy_new/reference_only/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml')" = '9668e2307c722ea4cf64f93f07c92da1b3abcc28'
+          echo 'PASS: CORE-01 and ASSET-01 reference snapshots remain exact and read-only'
+
       - name: Block premature website reconstruction
         run: |
           python - <<'PY'
           from pathlib import Path
-          import yaml
           root=Path('.')
-          cur=yaml.safe_load((root/'GOVERNANCE_CURRENT.yaml').read_text())
-          assert cur['formal_website_reconstruction_allowed'] is False
           forbidden=[p for p in [root/'app',root/'src',root/'pages',root/'public'] if p.exists()]
           if forbidden:
-              raise SystemExit('Formal website construction path appeared before governance final lock: '+', '.join(str(x) for x in forbidden))
-          print('PASS: website reconstruction remains blocked while governance is not final-locked')
+              raise SystemExit('Website implementation path appeared before Stage-1 actual-test closure: '+', '.join(str(x) for x in forbidden))
+          garbage=[]
+          for p in root.rglob('*'):
+              if not p.is_file() or '.git' in p.parts:
+                  continue
+              if p.name == '.DS_Store' or p.suffix in {'.pyc', '.pyo'} or '__pycache__' in p.parts or p.name.endswith(('.tmp','.bak','~')):
+                  garbage.append(str(p))
+          if garbage:
+              raise SystemExit('Garbage detected: '+', '.join(garbage))
+          print('PASS: no website implementation and no generated garbage in current tree')
           PY
