@@ -1,4 +1,4 @@
-schema_version: 3
+schema_version: 4
 role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
 normative_authority:
@@ -14,16 +14,16 @@ test_runtime:
   runtime_uid: ACPOS-GOV-TEST-v2.1.4-STAGE1
   runtime_manifest: governance/test-runtime/v2.1.4/STAGE1_RUNTIME_MANIFEST.yaml
   materialization_scope: SEALED_STAGE1_TEST_RUNTIME
-  materialization_status: MATERIALIZED
+  materialization_status: CLEAN_BINARY_TRANSPORT_PENDING_CI
   expected_stage1_minimal_control: 27/27_PASS
   runtime_content_mutation: FORBIDDEN
 current_execution:
   phase: FOUNDATION-01-SOURCE-INTAKE
-  mode: READ_ONLY_ACTUAL_TEST
-  target_pages:
-    - CORE-01
-    - ASSET-01
-  source_domain_decomposition_status: BLOCKED_PENDING_CURRENT_ARTIFACT_MATERIALIZATION
+  mode: CLEAN_RESET_BEFORE_FRESH_ACTUAL_TEST
+  target_pages: [CORE-01, ASSET-01]
+  source_domain_decomposition_status: RESET_CLEAN_WAITING_FRESH_EXTRACTION
+  fresh_extraction_required: true
+  reuse_prior_core_asset_snapshot: false
   website_reconstruction_allowed: false
   website_code_write_allowed: false
   github_test_and_evidence_sync_allowed: true
@@ -34,10 +34,12 @@ legacy_state:
   v2_1_1_stage_lock_pointer: SUPERSEDED_FOR_CURRENT_TEST_RUNTIME
   v2_1_2_experiment: DISCARDED_NOT_AUTHORITY
 source_policy:
-  legacy_source_branch: new
-  legacy_source_access: READ_ONLY_EXTRACTION_ONLY
+  source_branch: new
+  source_revision_policy: RESOLVE_CURRENT_HEAD_AT_FRESH_EXTRACTION_START
+  source_access: READ_ONLY_EXTRACTION_ONLY
   current_load_graph: ALLOWLIST_ONLY
   bulk_copy: FORBIDDEN
+  prior_extraction_reuse: FORBIDDEN
   self_reported_pass_as_authority: FORBIDDEN
-next_action: Run the sealed v2.1.4 GitHub Stage-1 gate. Only after it passes, materialize CORE-01 and ASSET-01 PAGE_CONSTRUCTION_DESIGN and VISUAL_CONSTRUCTION_DESIGN test artifacts without modifying sealed governance.
-status: V2_1_4_SEALED_TEST_RUNTIME_MATERIALIZED_PENDING_CI
+next_action: Run clean v2.1.4 GitHub Stage-1 gate. Only after PASS, resolve the current HEAD of source branch new and freshly extract CORE-01 and ASSET-01 without reusing prior snapshots, then record first-run actual-test evidence before any repair.
+status: V2_1_4_CLEAN_RESET_PENDING_CI
