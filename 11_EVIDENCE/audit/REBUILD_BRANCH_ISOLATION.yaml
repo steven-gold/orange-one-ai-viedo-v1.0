@@ -1,5 +1,5 @@
-run_uid: GOVRUN-REBUILD-INIT-002
-source_revision: d27724acea433d0b7b0d435dbff50df8b6821be6
+schema_version: 2
+run_uid: GOVRUN-REBUILD-ISOLATION-003
 rebuild_branch: rebuild-v2.1.1
 legacy_source_branch: new
 legacy_source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
@@ -12,8 +12,37 @@ duplicate_target_count: 0
 current_tree_garbage_count: 0
 superseded_current_path_count: 0
 unreferenced_current_file_count: 0
-extractions: []
+extractions:
+  - batch_uid: EXTRACT-CORE-ASSET-001
+    source_branch: new
+    source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+    source_path: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    source_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+    classification: REFERENCE_ONLY_SOURCE_SNAPSHOT
+    authority_disposition: REFERENCE_ONLY
+    dependency_reason: exact legacy source comparison and lineage only
+    target_path: 00_SOURCE_INTAKE/legacy_new/reference_only/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    target_role: REFERENCE_ONLY_SOURCE_SNAPSHOT
+    current_load_graph_eligible: false
+    status: IMPORTED_REFERENCE_ONLY
+  - batch_uid: EXTRACT-CORE-ASSET-001
+    source_branch: new
+    source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+    source_path: authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    source_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    classification: REFERENCE_ONLY_SOURCE_SNAPSHOT
+    authority_disposition: REFERENCE_ONLY
+    dependency_reason: exact legacy source comparison and lineage only
+    target_path: 00_SOURCE_INTAKE/legacy_new/reference_only/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    target_role: REFERENCE_ONLY_SOURCE_SNAPSHOT
+    current_load_graph_eligible: false
+    status: IMPORTED_REFERENCE_ONLY
 clean_scan:
-  captured_from_revision: d27724acea433d0b7b0d435dbff50df8b6821be6
-  evidence_ref: github:rebuild-v2.1.1@d27724acea433d0b7b0d435dbff50df8b6821be6
-  status: PASS
+  previous_evidence_ref: github:rebuild-v2.1.1@893b3b481cbbb6da45b8c1ec6fece21a531acff8
+  invalidated_by:
+    - source inventory correction
+    - extraction ledger correction
+    - source domain decomposition gate materialization
+  status: REVERIFY_REQUIRED
+current_gate: REBUILD_BRANCH_CLEAN_SCAN
+status: REVERIFY_REQUIRED
