@@ -1,6 +1,6 @@
 schema_version: 1
 run_uid: FRESH-RUN-002
-state: SOURCE_STRUCTURE_ENUMERATION_COMPLETED
+state: SOURCE_SEGMENT_MAPPING_COMPLETED
 execution_started: true
 source_resolution_started: true
 source_resolution_completed: true
@@ -9,20 +9,23 @@ source_extraction_completed: true
 raw_source_capture_state: CAPTURE_CLOSED
 source_structure_enumeration_started: true
 source_structure_enumeration_completed: true
-source_segment_mapping_started: false
+source_structure_node_count: 61
+source_segment_mapping_started: true
+source_segment_mapping_completed: true
+source_segment_count: 61
+source_fact_materialization_started: false
 domain_decomposition_started: false
 blueprint_materialization_started: false
 stage1_validation_started: false
 website_construction_started: false
 deployment_started: false
 allowed_transition:
-  from: SOURCE_STRUCTURE_ENUMERATION_COMPLETED
-  to: SOURCE_SEGMENT_MAPPING_ACTIVE
+  from: SOURCE_SEGMENT_MAPPING_COMPLETED
+  to: SOURCE_FACT_MATERIALIZATION_ACTIVE
   trigger: EXPLICIT_NEXT_STEP_START
 forbidden_transitions:
-- SOURCE_STRUCTURE_ENUMERATION_COMPLETED -> RAW_SOURCE_CAPTURE_ACTIVE
-- SOURCE_STRUCTURE_ENUMERATION_COMPLETED -> DOMAIN_DECOMPOSITION_ACTIVE
-- SOURCE_STRUCTURE_ENUMERATION_COMPLETED -> BLUEPRINT_MATERIALIZATION_ACTIVE
-- SOURCE_STRUCTURE_ENUMERATION_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
-- SOURCE_STRUCTURE_ENUMERATION_COMPLETED -> DEPLOYMENT_ACTIVE
-last_result: SECOND_FRESH_SOURCE_STRUCTURE_ENUMERATION_34_NODES_COMPLETED_CI_PASS
+- SOURCE_SEGMENT_MAPPING_COMPLETED -> RAW_SOURCE_CAPTURE_ACTIVE
+- SOURCE_SEGMENT_MAPPING_COMPLETED -> BLUEPRINT_MATERIALIZATION_ACTIVE
+- SOURCE_SEGMENT_MAPPING_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
+- SOURCE_SEGMENT_MAPPING_COMPLETED -> DEPLOYMENT_ACTIVE
+last_result: SECOND_FRESH_SOURCE_SEGMENT_MAPPING_COMPLETED_PENDING_CI
