@@ -18,81 +18,10 @@ jobs:
           python-version: '3.12'
       - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify v2.1.5 seal, current pointer, and fresh-run state
+      - name: Verify v2.1.5 seal, current pointer, fresh workspace, and source structure
         env:
           PYTHONDONTWRITEBYTECODE: '1'
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          import hashlib, yaml
-          root=Path('.')
-          package='2bfeed2ec9bc6eac9f34fdd5eb43e2f76f1e78682c4b81bebb9e4a3e1084eecd'
-          trust='787b2be721c0d51e8fe595ceaeeb0c80a03e692952b6ff2fc139c6a914f089ee'
-          cur=yaml.safe_load((root/'GOVERNANCE_CURRENT.yaml').read_text())
-          base=yaml.safe_load((root/'REBUILD_BRANCH_BASELINE.yaml').read_text())
-          lock=yaml.safe_load((root/'11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml').read_text())
-          sealed=yaml.safe_load((root/'11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml').read_text())
-          assert cur['normative_authority']['version']=='v2.1.5'
-          assert cur['normative_authority']['package_sha256']==package
-          assert cur['normative_authority']['external_trust_root_sha256']==trust
-          assert cur['normative_authority']['normative_edit_allowed'] is False
-          assert cur['test_runtime']['runtime_uid']=='ACPOS-GOV-TEST-v2.1.5-STAGE1'
-          assert cur['test_runtime']['expected_stage1_minimal_control']=='31/31_PASS'
-          assert base['governance_test']['version']=='v2.1.5'
-          assert base['prior_extraction_reuse']=='FORBIDDEN'
-          assert lock['lock_state']=='USER_FROZEN_READ_ONLY'
-          assert lock['normative_edit_after_lock']=='FORBIDDEN'
-          assert sealed['sealed_governance']['version']=='v2.1.5'
-          assert sealed['sealed_governance']['package_sha256']==package
-          assert sealed['normative_mutation_allowed'] is False
-          assert sealed['verified_test_summary']['stage1_minimal_control']=='31/31_PASS'
-          forbidden=[p for p in [root/'app',root/'src',root/'pages',root/'public'] if p.exists()]
-          if forbidden: raise SystemExit('premature website implementation: '+', '.join(map(str,forbidden)))
-          stale_names={'CORE_ASSET_SOURCE_INVENTORY.yaml','EXTRACTION_LEDGER_CORE_ASSET_001.yaml','GOVERNANCE_EXTRACTION_LEDGER_001.yaml','SOURCE_DOMAIN_DECOMPOSITION.yaml','GOVERNANCE_DEFECT_LEDGER.yaml','GOVERNANCE_TEST_RUNTIME_SYNC_v2.1.4.yaml','PHASE_CONTAMINATION_LEDGER.yaml','REBUILD_BRANCH_ISOLATION.yaml'}
-          stale=[str(p) for p in root.rglob('*') if p.is_file() and p.name in stale_names]
-          if stale: raise SystemExit('stale current-path artifacts remain: '+', '.join(stale))
-          legacy=[str(p) for p in root.rglob('*') if p.is_file() and ('legacy_new' in p.parts or 'stage1_runtime_bundle.tar.gz.b64' in p.name)]
-          if legacy: raise SystemExit('legacy transport/source residue remains: '+', '.join(legacy))
-          if (root/'governance/test-runtime/v2.1.4').exists(): raise SystemExit('superseded v2.1.4 runtime remains in current tree')
-          runroot=root/'00_SOURCE_INTAKE/fresh_run_002'
-          if not runroot.is_dir(): raise SystemExit('fresh_run_002 foundation missing')
-          siblings=[p.name for p in (root/'00_SOURCE_INTAKE').iterdir() if p.name!='fresh_run_002']
-          if siblings: raise SystemExit('unexpected current intake sibling: '+repr(siblings))
-          state=yaml.safe_load((runroot/'EXECUTION_STATE.yaml').read_text())
-          run=yaml.safe_load((runroot/'RUN_MANIFEST.yaml').read_text())
-          if run.get('governance',{}).get('version')!='v2.1.5': raise SystemExit('fresh run governance version mismatch')
-          if run.get('governance',{}).get('normative_edit_allowed') is not False: raise SystemExit('fresh run governance not frozen')
-          st=state.get('state')
-          if st=='FOUNDATION_READY_NOT_EXECUTED':
-              if (runroot/'00_SOURCE_INTAKE/RAW_SOURCE').exists(): raise SystemExit('raw source exists before second extraction start')
-          elif st=='RAW_SOURCE_REFERENCE_CAPTURED':
-              intake=runroot/'00_SOURCE_INTAKE'
-              refs=yaml.safe_load((intake/'RAW_SOURCE_REFERENCE_MANIFEST.yaml').read_text())
-              cap=yaml.safe_load((intake/'RAW_SOURCE_CAPTURE_STATE.yaml').read_text())
-              if cap.get('state')!='CAPTURE_CLOSED': raise SystemExit('raw capture not terminal closed')
-              if cap.get('next_step')!='SOURCE_STRUCTURE_ENUMERATION': raise SystemExit('raw capture next step is not exact SOURCE_STRUCTURE_ENUMERATION')
-              if cap.get('recapture_allowed') is not False: raise SystemExit('closed raw capture remains writable')
-              records=refs.get('records') or []
-              expected=[]
-              for rec in records:
-                  if rec.get('source_domain_scope')=='MIXED_PAGE_VISUAL' and rec.get('source_role')!='MIXED_PAGE_VISUAL_SOURCE_INPUT': raise SystemExit('mixed source role not neutral: '+str(rec.get('source_uid')))
-                  p=runroot/rec['target_path']
-                  if not p.is_file(): raise SystemExit('missing raw source: '+str(p))
-                  b=p.read_bytes(); got=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
-                  if got!=rec.get('source_git_blob_sha') or got!=rec.get('target_git_blob_sha'): raise SystemExit('exact blob mismatch: '+str(p))
-                  expected.append(rec['target_path'])
-              rawroot=runroot/'00_SOURCE_INTAKE/RAW_SOURCE'
-              actual=sorted(p.relative_to(runroot).as_posix() for p in rawroot.rglob('*') if p.is_file())
-              if sorted(expected)!=actual: raise SystemExit('raw source directory purity mismatch: '+repr(actual))
-          else: raise SystemExit('unexpected fresh-run state: '+str(st))
-          garbage=[]
-          for p in root.rglob('*'):
-              if not p.is_file() or '.git' in p.parts: continue
-              if p.name=='.DS_Store' or p.suffix in {'.pyc','.pyo'} or '__pycache__' in p.parts or p.name.endswith(('.tmp','.bak','~')): garbage.append(str(p))
-          if garbage: raise SystemExit('garbage detected: '+', '.join(garbage))
-          print('PASS: v2.1.5 seal/current/fresh-workspace contract valid')
-          PY
+        run: python governance/ci/validate_current_v215_workspace.py
 
   sealed-v2-1-5-stage1-runtime:
     runs-on: ubuntu-latest
@@ -103,62 +32,7 @@ jobs:
           python-version: '3.12'
       - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Assemble and verify exact sealed v2.1.5 runtime
+      - name: Verify exact sealed runtime and run Stage-1 31/31
         env:
           PYTHONDONTWRITEBYTECODE: '1'
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          import hashlib, shutil, tarfile, yaml
-          root=Path('.')
-          manifest_path=root/'governance/test-runtime/v2.1.5/STAGE1_RUNTIME_MANIFEST.yaml'
-          m=yaml.safe_load(manifest_path.read_text())
-          chunks=m['transport']['chunks']
-          if len(chunks)!=m['transport']['chunk_count']: raise SystemExit('chunk_count mismatch')
-          payload=[]; expected_chunk_paths=[]
-          for item in chunks:
-              p=root/item['path']; expected_chunk_paths.append(item['path'])
-              if not p.is_file(): raise SystemExit(f'missing runtime chunk: {p}')
-              b=p.read_bytes()
-              if len(b)!=item['size']: raise SystemExit(f'chunk size mismatch: {p}: {len(b)}')
-              got=hashlib.sha256(b).hexdigest()
-              if got!=item['sha256']: raise SystemExit(f'chunk sha mismatch: {p}: {got}')
-              payload.append(b)
-          assembled=b''.join(payload)
-          if len(assembled)!=m['transport']['assembled_size_bytes']: raise SystemExit('assembled size mismatch')
-          got_bundle=hashlib.sha256(assembled).hexdigest()
-          if got_bundle!=m['transport']['assembled_bundle_sha256']: raise SystemExit('assembled bundle sha mismatch: '+got_bundle)
-          runtime_dir=root/'governance/test-runtime/v2.1.5'
-          actual=[p.as_posix() for p in runtime_dir.iterdir() if p.is_file() and p.name!='STAGE1_RUNTIME_MANIFEST.yaml']
-          if sorted(actual)!=sorted(expected_chunk_paths): raise SystemExit('runtime directory contains unregistered residue')
-          tar_path=Path('/tmp/acpos-v215-stage1.tar.gz'); tar_path.write_bytes(assembled)
-          out=Path('/tmp/acpos-gov-v215-stage1'); shutil.rmtree(out,ignore_errors=True); out.mkdir(parents=True)
-          expected={x['path']:x['sha256'] for x in m['files']}
-          with tarfile.open(tar_path,'r:gz') as tf:
-              members=[x for x in tf.getmembers() if x.isfile()]
-              names=sorted(x.name.lstrip('./') for x in members)
-              if names!=sorted(expected): raise SystemExit(f'sealed runtime member set mismatch: {names}')
-              for member in members:
-                  name=member.name.lstrip('./'); target=(out/name).resolve()
-                  if not str(target).startswith(str(out.resolve())+'/'): raise SystemExit('unsafe tar member')
-              tf.extractall(out)
-          for rel,sha in expected.items():
-              got=hashlib.sha256((out/rel).read_bytes()).hexdigest()
-              if got!=sha: raise SystemExit(f'sealed file sha mismatch {rel}: {got}')
-          print('PASS: exact v2.1.5 runtime transport + exact six-file set + file hashes')
-          PY
-      - name: Run sealed Stage-1 minimal-control 31/31
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-        run: |
-          set -euo pipefail
-          python /tmp/acpos-gov-v215-stage1/09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py > /tmp/stage1.json
-          python - <<'PY'
-          import json
-          r=json.load(open('/tmp/stage1.json'))
-          assert r['total']==31, r
-          assert r['passed_expectations']==31, r
-          assert all(x.get('ok') is True for x in r['results']), r
-          print('PASS: sealed v2.1.5 Stage-1 minimal-control = 31/31')
-          PY
+        run: python governance/ci/validate_sealed_v215_runtime.py
