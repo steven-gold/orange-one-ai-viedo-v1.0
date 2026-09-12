@@ -1,0 +1,27 @@
+schema_version: 1
+run_uid: GOVRUN-EXTRACT-GOVERNANCE-001
+source_branch: new
+source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+target_branch: rebuild-v2.1.1
+records:
+  - extraction_uid: EXT-GOV-CONSTRUCTION-001
+    batch_uid: EXTRACT-GOVERNANCE-001
+    source_branch: new
+    source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+    source_path: authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
+    source_blob_sha: 35c19fd7f0307bf441a3882e74b5bf74892889f3
+    classification: CURRENT_AUTHORITY
+    authority_disposition: CURRENT_CANONICAL_OWNER_BOOTSTRAP
+    dependency_reason: existing canonical website-construction governance owner must be patched in place; creating a parallel governance authority is forbidden
+    target_path: authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
+    target_role: CANONICAL_GOVERNANCE_OWNER
+    current_load_graph_eligible: true
+    status: IMPORTED_APPROVED
+    imported_exact_blob: true
+    v2_1_2_patch_status: PENDING
+bulk_copy_performed: false
+direct_merge_performed: false
+parallel_governance_owner_created: false
+construction_may_advance: false
+next_action: Patch this existing canonical owner with v2.1.2 source-domain decomposition, minimal-control self-test, and clean-scan freshness rules; then rerun governance regression and branch cleanliness.
+status: IMPORTED_CURRENT_OWNER_PENDING_GOVERNANCE_PATCH
