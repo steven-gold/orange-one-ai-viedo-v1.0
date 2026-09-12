@@ -27,25 +27,57 @@ jobs:
           PYTHONDONTWRITEBYTECODE: '1'
         run: |
           set -euo pipefail
-          B='governance/test-runtime/v2.1.4'
-          test -f "$B/STAGE1_RUNTIME_MANIFEST.yaml"
-          count=$(find "$B" -maxdepth 1 -type f -name 'stage1_runtime_bundle.tar.gz.b64.part*' | wc -l | tr -d ' ')
-          test "$count" = '9'
-          cat "$B"/stage1_runtime_bundle.tar.gz.b64.part* > /tmp/acpos-stage1.b64
-          test "$(sha256sum /tmp/acpos-stage1.b64 | awk '{print $1}')" = 'e92c466d0a3dd87a6ae4171b3d772acd3cce587e4b3cfe80cc34eed48239a1cc'
-          base64 -d /tmp/acpos-stage1.b64 > /tmp/acpos-stage1.tar.gz
-          test "$(sha256sum /tmp/acpos-stage1.tar.gz | awk '{print $1}')" = '725527bdc4182bec7990f2faf7220b582fd0ad86bf9d661cc44d7e66b9cf5cac'
-          rm -rf /tmp/acpos-gov-v214-stage1
-          mkdir -p /tmp/acpos-gov-v214-stage1
-          tar -xzf /tmp/acpos-stage1.tar.gz -C /tmp/acpos-gov-v214-stage1
-          cd /tmp/acpos-gov-v214-stage1
-          test "$(sha256sum '12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md' | awk '{print $1}')" = 'c23a41cbfac7afea5282a92d6c2bfc52b8a64ce06923088dfec8158cd3c9558b'
-          test "$(sha256sum '12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md' | awk '{print $1}')" = 'b1feacb7342d13fe5e9775992748fe6f6ea967153799ee48276261ac5e1acb9e'
-          test "$(sha256sum '12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md' | awk '{print $1}')" = '472bd36bee7ac66d3aa6b8bcb0808e80547333d8573e6f014a7fdfdddd68b19f'
-          test "$(sha256sum '12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md' | awk '{print $1}')" = '15372b077176fb68bbb319e75b65d570bbb968544cb42e7ca42a625a9910df57'
-          test "$(sha256sum '09_TESTS/governance/governance_stage1_pipeline_guard.py' | awk '{print $1}')" = 'a2d1ce114eec425f39731e4f9a21194b3cc557d28b1658b83f416212b32fc8b1'
-          test "$(sha256sum '09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py' | awk '{print $1}')" = '607343856d53940209382f44686f3395e8faf5f24fbcbeea0b0f638b01367db0'
-          echo 'PASS: sealed v2.1.4 Stage-1 runtime transport and exact file hashes verified'
+          python - <<'PY'
+          from pathlib import Path
+          import base64, hashlib, tarfile, shutil
+
+          root = Path('.')
+          b = root / 'governance/test-runtime/v2.1.4'
+          manifest = b / 'STAGE1_RUNTIME_MANIFEST.yaml'
+          if not manifest.is_file():
+              raise SystemExit('missing STAGE1_RUNTIME_MANIFEST.yaml')
+
+          parts = sorted(b.glob('stage1_runtime_bundle.tar.gz.b64.part*'))
+          if [p.name for p in parts] != [f'stage1_runtime_bundle.tar.gz.b64.part{i:02d}' for i in range(9)]:
+              raise SystemExit(f'chunk set/order mismatch: {[p.name for p in parts]}')
+
+          normalized = ''.join(''.join(p.read_text().split()) for p in parts)
+          try:
+              decoded = base64.b64decode(normalized, validate=True)
+          except Exception as exc:
+              raise SystemExit(f'base64 decode failed: {exc}')
+
+          decoded_sha = hashlib.sha256(decoded).hexdigest()
+          expected_decoded_sha = '725527bdc4182bec7990f2faf7220b582fd0ad86bf9d661cc44d7e66b9cf5cac'
+          print('decoded_bundle_sha256=', decoded_sha)
+          if decoded_sha != expected_decoded_sha:
+              raise SystemExit(f'decoded bundle sha mismatch: {decoded_sha}')
+
+          tar_path = Path('/tmp/acpos-stage1.tar.gz')
+          tar_path.write_bytes(decoded)
+          out = Path('/tmp/acpos-gov-v214-stage1')
+          shutil.rmtree(out, ignore_errors=True)
+          out.mkdir(parents=True)
+          with tarfile.open(tar_path, 'r:gz') as tf:
+              tf.extractall(out)
+
+          expected = {
+              '12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md': 'c23a41cbfac7afea5282a92d6c2bfc52b8a64ce06923088dfec8158cd3c9558b',
+              '12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md': 'b1feacb7342d13fe5e9775992748fe6f6ea967153799ee48276261ac5e1acb9e',
+              '12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md': '472bd36bee7ac66d3aa6b8bcb0808e80547333d8573e6f014a7fdfdddd68b19f',
+              '12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md': '15372b077176fb68bbb319e75b65d570bbb968544cb42e7ca42a625a9910df57',
+              '09_TESTS/governance/governance_stage1_pipeline_guard.py': 'a2d1ce114eec425f39731e4f9a21194b3cc557d28b1658b83f416212b32fc8b1',
+              '09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py': '607343856d53940209382f44686f3395e8faf5f24fbcbeea0b0f638b01367db0',
+          }
+          for rel, expected_sha in expected.items():
+              p = out / rel
+              if not p.is_file():
+                  raise SystemExit(f'missing sealed runtime file: {rel}')
+              actual = hashlib.sha256(p.read_bytes()).hexdigest()
+              if actual != expected_sha:
+                  raise SystemExit(f'sealed runtime file sha mismatch: {rel}: {actual}')
+          print('PASS: sealed v2.1.4 Stage-1 runtime decoded bundle and exact file hashes verified')
+          PY
 
       - name: Run sealed Stage-1 minimal-control 27/27
         env:
@@ -86,6 +118,7 @@ jobs:
           cur=yaml.safe_load((root/'GOVERNANCE_CURRENT.yaml').read_text())
           base=yaml.safe_load((root/'REBUILD_BRANCH_BASELINE.yaml').read_text())
           lock=yaml.safe_load((root/'11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml').read_text())
+          sealed=yaml.safe_load((root/'11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml').read_text())
           assert cur['normative_authority']['version'] == 'v2.1.4'
           assert cur['normative_authority']['package_sha256'] == 'd789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109'
           assert cur['normative_authority']['normative_edit_allowed'] is False
@@ -98,6 +131,9 @@ jobs:
           assert lock['lock_state'] == 'USER_FROZEN_READ_ONLY'
           assert lock['normative_edit_after_lock'] == 'FORBIDDEN'
           assert lock['current_execution']['website_reconstruction_started'] is False
+          assert sealed['sealed_governance']['version'] == 'v2.1.4'
+          assert sealed['sealed_governance']['package_sha256'] == 'd789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109'
+          assert sealed['normative_mutation_allowed'] is False
           print('PASS: rebuild branch is pinned to frozen v2.1.4 test authority')
           PY
 
