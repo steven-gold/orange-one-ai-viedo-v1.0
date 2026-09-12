@@ -27,7 +27,7 @@ with tempfile.TemporaryDirectory() as td:
  if r.returncode!=0: print(r.stdout); print(r.stderr); raise SystemExit('Stage-1 minimal-control failed')
  try: o=json.loads(r.stdout)
  except Exception: raise SystemExit('Stage-1 output not JSON')
- if o.get('passed')!=33 or o.get('total')!=33: raise SystemExit('Stage-1 not 33/33')
+ if o.get('passed_expectations')!=33 or o.get('total')!=33: raise SystemExit('Stage-1 not 33/33')
  r2=subprocess.run([sys.executable,'09_TESTS/governance/governance_lifecycle_stage_contract_guard.py'],cwd=pkg,text=True,capture_output=True)
  if r2.returncode!=0: print(r2.stdout); print(r2.stderr); raise SystemExit('lifecycle guard failed')
  o2=json.loads(r2.stdout)
