@@ -1,37 +1,32 @@
-schema_version: 1
-baseline_version: v2.1.0
-baseline_package_sha256: 47e744440583c2d3125ea380aca679c4af01a0c2a11cbccfd5294ce0ff54b4d4
-release_version: v2.1.1
-stage_uid: STAGE-1-SOURCE-INTAKE-EXTRACTION-GOVERNANCE
-scope_lock:
-  allowed_change_types:
-    - REPRODUCED_GOVERNANCE_BUGFIX
-  allowed_defect_uids:
-    - GOV-DEFECT-STAGE1-EXTRACTION-DOMAIN-SEPARATION
-    - GOV-DEFECT-STAGE1-MOVING-TARGET-TEST
-    - GOV-DEFECT-STAGE1-MINIMAL-CONTROL
-  later_stage_feature_addition: FORBIDDEN
-candidate_normative_hash: c3f7f8ace7e925b3fb2adfe9df1c64c1b2398e94eeaf3757a458fea383d589fb
-lock_state: STAGE_RELEASE_LOCKED
+schema_version: 2
+current_test_authority:
+  version: v2.1.4
+  state: BUGFIX_PREFORMAL_VERIFIED_USER_FROZEN_READ_ONLY
+  package_sha256: d789312c2657f492f98dbf29b285be18f3184e341195e8c84f57f5bcfe2d9109
+  external_trust_root_sha256: 2f5bfe186ddcf89379a9d96e0c0698e6edbbc4d765b8f0428e78ad796e86770d
+  sealed_normative_hash: b0d2efedd1fc268715d7821ef56341cc1d759e015c1683000400f70ce8d8e001
+lock_state: USER_FROZEN_READ_ONLY
 normative_edit_after_lock: FORBIDDEN
-next_stage_started: false
-website_reconstruction_started: false
-governance_release_state: STAGE_1_LOCKED_NOT_FINAL_FOR_WEBSITE_RECONSTRUCTION
-tests:
-  - suite: Stage-1 extraction minimal-control governance test
-    result: PASS
-    passed_expectations: 9
-    total: 9
-  - suite: v2.1.0 regression
-    result: PASS
-    passed_expectations: 12
-    total: 12
-  - suite: v2.1.0 post-v1.8 regression
-    result: PASS
-    passed_expectations: 6
-    total: 6
-closure:
-  stage_1_rule_change_complete: true
-  stage_1_locked: true
-  formal_website_reconstruction_allowed: false
-  exact_next_action: Materialize the exact locked package in-repository before any formal re-extraction. Then re-extract Source Intake data under this locked release without editing it; collect defects until Stage 1 extraction completes.
+runtime_sync:
+  runtime_uid: ACPOS-GOV-TEST-v2.1.4-STAGE1
+  runtime_manifest: governance/test-runtime/v2.1.4/STAGE1_RUNTIME_MANIFEST.yaml
+  runtime_content_mutation: FORBIDDEN
+  repository_pointer_sync: ALLOWED_OPERATIONAL_METADATA_ONLY
+  evidence_sync: ALLOWED
+current_execution:
+  phase: FOUNDATION-01-SOURCE-INTAKE
+  target_pages:
+    - CORE-01
+    - ASSET-01
+  website_reconstruction_started: false
+  website_reconstruction_allowed: false
+  website_code_write_allowed: false
+historical_locks:
+  - version: v2.1.1
+    stage_uid: STAGE-1-SOURCE-INTAKE-EXTRACTION-GOVERNANCE
+    prior_state: STAGE_RELEASE_LOCKED
+    current_disposition: HISTORICAL_SUPERSEDED_FOR_TEST_RUNTIME
+  - version: v2.1.2
+    current_disposition: DISCARDED_NOT_AUTHORITY
+next_action: Execute sealed v2.1.4 Stage-1 CI gate. If PASS, continue read-only actual Source Intake testing without modifying normative governance.
+status: V2_1_4_USER_FROZEN_TEST_LOCK_ACTIVE
