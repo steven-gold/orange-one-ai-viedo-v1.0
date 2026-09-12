@@ -1,6 +1,6 @@
 schema_version: 1
 run_uid: FRESH-RUN-001
-status: FOUNDATION_ONLY_NOT_EXECUTED
+status: STEP_01A_RAW_SOURCE_CAPTURED
 planned_artifacts_per_page:
   - RAW_SOURCE_REFERENCE
   - SOURCE_STRUCTURE_ENUMERATION
@@ -21,4 +21,13 @@ materialization_rules:
   undefined_item_disposition: BLOCK_AND_RECORD
   page_and_visual_owner_must_be_independent: true
   shared_fact_handling: REFERENCE_BY_UID
-current_materialized_artifacts: []
+current_materialized_artifacts:
+  - artifact_type: RAW_SOURCE_REFERENCE
+    page_uid: CORE-01
+    source_count: 2
+    manifest_ref: SOURCE_REFERENCE_MANIFEST.yaml
+  - artifact_type: RAW_SOURCE_REFERENCE
+    page_uid: ASSET-01
+    source_count: 1
+    manifest_ref: SOURCE_REFERENCE_MANIFEST.yaml
+next_unmaterialized_artifact: SOURCE_STRUCTURE_ENUMERATION
