@@ -31,13 +31,13 @@ jobs:
           names=[
             'stage1_runtime_bundle.tar.gz.b64.part00','stage1_runtime_bundle.tar.gz.b64.part01',
             'stage1_runtime_bundle.tar.gz.b64.part02','stage1_runtime_bundle.tar.gz.b64.part03',
-            'stage1_runtime_bundle.tar.gz.b64.part03b','stage1_runtime_bundle.tar.gz.b64.part04',
-            'stage1_runtime_bundle.tar.gz.b64.part05','stage1_runtime_bundle.tar.gz.b64.part06',
-            'stage1_runtime_bundle.tar.gz.b64.part07','stage1_runtime_bundle.tar.gz.b64.part07b',
-            'stage1_runtime_bundle.tar.gz.b64.part08']
+            'stage1_runtime_bundle.tar.gz.b64.part03a2','stage1_runtime_bundle.tar.gz.b64.part03b',
+            'stage1_runtime_bundle.tar.gz.b64.part04','stage1_runtime_bundle.tar.gz.b64.part05',
+            'stage1_runtime_bundle.tar.gz.b64.part06','stage1_runtime_bundle.tar.gz.b64.part07',
+            'stage1_runtime_bundle.tar.gz.b64.part07b','stage1_runtime_bundle.tar.gz.b64.part08']
           actual=sorted(p.name for p in b.glob('stage1_runtime_bundle.tar.gz.b64.part*'))
           if sorted(names)!=actual: raise SystemExit(f'chunk set mismatch: {actual}')
-          if m['transport']['chunk_count']!=11: raise SystemExit('manifest chunk_count mismatch')
+          if m['transport']['chunk_count']!=12: raise SystemExit('manifest chunk_count mismatch')
           normalized=''.join(''.join((b/n).read_text().split()) for n in names)
           b64sha=hashlib.sha256(normalized.encode()).hexdigest()
           if b64sha!=m['transport']['concatenated_base64_sha256']:
