@@ -1,0 +1,31 @@
+run_uid: GOVRUN-REBUILD-INIT-003
+source_revision: 152889b1e6baa5fcaa73f2519b97b090c8ab5113
+sweeps:
+  - scope_uid: REBUILD-PROJECT
+    phase_uid: REBUILD-BRANCH-INITIALIZATION
+    page_uid: null
+    run_uid: GOVRUN-REBUILD-INIT-003
+    source_revision: 152889b1e6baa5fcaa73f2519b97b090c8ab5113
+    input_source_set:
+      - REBUILD_BRANCH_BASELINE.yaml
+      - .gitignore
+      - GOVERNANCE_CURRENT.yaml
+      - 11_EVIDENCE/audit/REBUILD_BRANCH_ISOLATION.yaml
+    current_authority_refs:
+      - REBUILD_BRANCH_BASELINE.yaml
+      - GOVERNANCE_CURRENT.yaml
+    superseded_refs_found: []
+    duplicate_owner_refs: []
+    foreign_scope_refs: []
+    generated_non_authority_refs: []
+    test_only_refs_in_production_path: []
+    current_load_graph_residuals: []
+    cleanup_actions: []
+    archive_only_noncurrent_refs: []
+    unresolved_current_contamination: 0
+    current_owner_conflict: 0
+    superseded_content_in_current_load_graph: 0
+    test_only_content_in_production_path: 0
+    evidence_refs:
+      - github:rebuild-v2.1.1@152889b1e6baa5fcaa73f2519b97b090c8ab5113
+    status: PASS
