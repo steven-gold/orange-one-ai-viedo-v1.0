@@ -1,15 +1,25 @@
 authority: false
 role: CURRENT_GOVERNANCE_PACKAGE_POINTER
-current_package: v2.1.1
-status: CURRENT
-package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.1.zip
-package_sha256: afc53a15ca484b78677fb96e6164f9872f9bcb2609bc26eede3a3a0265498835
-supersedes: v2.1.0
+candidate_package: v2.1.2
+candidate_status: LOCAL_REGRESSION_VERIFIED
+package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.2.zip
+package_sha256: e12dbfacce1bee15ffb276ecb8d7033231fbb091a6ed5125150b462145fc11c8
+supersedes_when_materialized:
+  - v2.1.1
+  - v2.1.0
 repository_branch: rebuild-v2.1.1
 legacy_governance_packages_in_current_load_graph: []
-project_data_source_sync: REQUIRED_PENDING_PHYSICAL_REPLACEMENT
+repo_materialization_status: PENDING
+construction_may_advance: false
+blocking_reason: v2.1.2 normative governance and validator updates are verified locally but are not yet fully materialized into the rebuild repository canonical governance/tooling paths.
+new_required_gates:
+  - SOURCE_DOMAIN_DECOMPOSITION_GATE
+  - CURRENT_TREE_CLEAN_SCAN_FRESHNESS
+  - MINIMAL_CONTROL_GOVERNANCE_SELF_TEST
 normative_documents_inside_package:
   - 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
   - 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
   - 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
   - 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+exact_resume_point: materialize v2.1.2 into existing canonical governance owner/tooling without creating a parallel authority, then rerun current-tree clean scan before any further source extraction
+status: BLOCKED_PENDING_REPO_MATERIALIZATION
