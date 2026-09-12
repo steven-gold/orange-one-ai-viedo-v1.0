@@ -1,11 +1,9 @@
 schema_version: 1
 run_uid: FRESH-RUN-001
-state: RAW_SOURCE_REFERENCE_CAPTURED
-execution_started: true
-source_resolution_started: true
-source_resolution_completed: true
-source_extraction_started: true
-source_extraction_completed: true
+state: FOUNDATION_READY_NOT_EXECUTED
+execution_started: false
+source_resolution_started: false
+source_extraction_started: false
 source_structure_enumeration_started: false
 domain_decomposition_started: false
 blueprint_materialization_started: false
@@ -13,12 +11,13 @@ stage1_validation_started: false
 website_construction_started: false
 deployment_started: false
 allowed_transition:
-  from: RAW_SOURCE_REFERENCE_CAPTURED
-  to: SOURCE_STRUCTURE_ENUMERATION_ACTIVE
-  trigger: EXPLICIT_NEXT_STEP_START
+  from: FOUNDATION_READY_NOT_EXECUTED
+  to: SOURCE_RESOLUTION_ACTIVE
+  trigger: USER_EXPLICIT_ACTUAL_TEST_START
 forbidden_transitions:
-  - RAW_SOURCE_REFERENCE_CAPTURED -> DOMAIN_DECOMPOSITION_ACTIVE
-  - RAW_SOURCE_REFERENCE_CAPTURED -> BLUEPRINT_MATERIALIZATION_ACTIVE
-  - RAW_SOURCE_REFERENCE_CAPTURED -> WEBSITE_CONSTRUCTION_ACTIVE
-  - RAW_SOURCE_REFERENCE_CAPTURED -> DEPLOYMENT_ACTIVE
-last_result: STEP_01A_CAPTURE_COMPLETED_NO_STAGE1_VALIDATION
+  - FOUNDATION_READY_NOT_EXECUTED -> SOURCE_STRUCTURE_ENUMERATION_ACTIVE
+  - FOUNDATION_READY_NOT_EXECUTED -> DOMAIN_DECOMPOSITION_ACTIVE
+  - FOUNDATION_READY_NOT_EXECUTED -> BLUEPRINT_MATERIALIZATION_ACTIVE
+  - FOUNDATION_READY_NOT_EXECUTED -> WEBSITE_CONSTRUCTION_ACTIVE
+  - FOUNDATION_READY_NOT_EXECUTED -> DEPLOYMENT_ACTIVE
+last_result: NOT_EXECUTED

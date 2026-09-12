@@ -1,10 +1,10 @@
 schema_version: 1
 run_uid: FRESH-RUN-001
-status: SOURCE_PINNED_RAW_CAPTURED
+status: FOUNDATION_ONLY_NOT_EXECUTED
 source_resolution_policy:
   source_branch: new
   resolve_branch_head_at_execution_start: true
-  pinned_source_sha_before_execution: 6c8a0c3334ccd17942ba14079976fb295859a43c
+  pinned_source_sha_before_execution: null
   reuse_previous_extracted_snapshot: false
   reuse_previous_extraction_ledger: false
   reuse_previous_domain_decomposition: false
@@ -14,14 +14,10 @@ source_resolution_policy:
   source_path_record_required: true
   source_role_record_required: true
   mixed_domain_source_may_be_direct_current_authority: false
+  raw_source_directory_must_contain_source_blobs_only: true
+  metadata_must_live_outside_raw_source_directory: true
 target_pages:
   CORE-01:
-    source_resolution_state: RESOLVED_AND_EXACT_CAPTURED
-    source_refs:
-      - SRC-CORE-01-CANONICAL-VISUAL-IDENTITY
-      - SRC-CORE-01-PAGE-AUTHORITY
+    source_resolution_state: NOT_EXECUTED
   ASSET-01:
-    source_resolution_state: RESOLVED_AND_EXACT_CAPTURED
-    source_refs:
-      - SRC-ASSET-01-PAGE-AUTHORITY
-next_step: SOURCE_STRUCTURE_ENUMERATION
+    source_resolution_state: NOT_EXECUTED
