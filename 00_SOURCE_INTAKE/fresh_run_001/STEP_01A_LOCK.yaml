@@ -1,0 +1,20 @@
+schema_version: 1
+run_uid: FRESH-RUN-001
+step_uid: STAGE-01A-RAW-SOURCE-EXACT-CAPTURE
+state: CAPTURE_ACTIVE
+allowed_operations:
+  - resolve current source branch HEAD
+  - bind source path and Git blob SHA
+  - materialize exact raw-source blobs without content mutation
+  - write source reference and extraction evidence
+forbidden_operations:
+  - source structure classification
+  - source segment mapping
+  - page construction extraction
+  - visual construction extraction
+  - responsibility classification
+  - base blueprint compilation
+  - blueprint binding
+  - Stage-1 closure claim
+  - website code generation
+  - deployment
