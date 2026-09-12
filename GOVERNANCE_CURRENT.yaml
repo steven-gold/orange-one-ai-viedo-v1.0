@@ -1,40 +1,51 @@
 authority: false
 role: CURRENT_GOVERNANCE_PACKAGE_POINTER
-candidate_package: v2.1.2
-candidate_status: REPOSITORY_MATERIALIZED_AND_MINIMAL_CONTROL_VERIFIED
-package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.2.zip
-package_sha256: e12dbfacce1bee15ffb276ecb8d7033231fbb091a6ed5125150b462145fc11c8
-package_archive_in_repository: false
-supersedes_when_materialized:
-  - v2.1.1
-  - v2.1.0
 repository_branch: rebuild-v2.1.1
-legacy_governance_packages_in_current_load_graph: []
-repo_materialization_status: PASS_CANONICAL_OWNER_AND_VALIDATOR
-normative_rules_materialized_in_canonical_owner: true
-parallel_governance_owner_created: false
-validator_harness_materialized: true
-minimal_control_ci_verified: true
-minimal_control_ci_run_id: 34664178681
-minimal_control_ci_head_sha: ea4c7456b238d7434215bfb654a1845bfaf71ea1
-minimal_control_ci_result: PASS
-current_state_gate_result: FAIL_EXPECTED
-current_state_gate_blockers:
-  - SOURCE_DOMAIN_DECOMPOSITION_GATE
-  - CURRENT_TREE_CLEAN_SCAN_FRESHNESS
-construction_may_advance: false
-blocking_reason: Governance rules and validator are materialized and the minimal-control self-test passes, but Source Intake is intentionally blocked until every required page has independent PAGE_CONSTRUCTION_DESIGN and VISUAL_CONSTRUCTION_DESIGN artifacts and a fresh clean scan.
-new_required_gates:
-  - SOURCE_DOMAIN_DECOMPOSITION_GATE
-  - CURRENT_TREE_CLEAN_SCAN_FRESHNESS
-  - MINIMAL_CONTROL_GOVERNANCE_SELF_TEST
-normative_package_documents_external_to_repository:
-  - 01_BLUEPRINT_DESIGN_GOVERNANCE.md
-  - 02_IMPLEMENTATION_DELIVERY_STANDARD.md
-  - 03_EXECUTION_CONTROL_STANDARD.md
-  - 04_AUDIT_PROGRESS_STANDARD.md
-repository_canonical_owner: authority/global/ACPOS_WEBSITE_CONSTRUCTION_GOVERNANCE_FINAL_LOCKED_V1.0.yaml
-repository_validator: 09_TESTS/governance/validate_rebuild_governance.py
-repository_minimal_control_test: 09_TESTS/governance/test_v2_1_2_minimal_control.py
-exact_resume_point: Independently classify and materialize PAGE_CONSTRUCTION_DESIGN and VISUAL_CONSTRUCTION_DESIGN for CORE-01 and ASSET-01 from allowed sources; after each mutating batch run a fresh branch clean scan.
-status: BLOCKED_PENDING_SOURCE_DOMAIN_DECOMPOSITION
+baseline:
+  version: v2.1.0
+  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.0(1).zip
+  package_sha256: 47e744440583c2d3125ea380aca679c4af01a0c2a11cbccfd5294ce0ff54b4d4
+  immutable: true
+current_release:
+  version: v2.1.1
+  release_name: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.1_STAGE1_LOCKED
+  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.1_STAGE1_LOCKED.zip
+  package_sha256: 0c07f4942546f684a5a8d2080bea45a88fd4dd633a5f936e0ab775346a835f50
+  derived_strictly_from_baseline: v2.1.0
+  scope: STAGE_1_SOURCE_INTAKE_EXTRACTION_GOVERNANCE_BUGFIX_ONLY
+  lock_state: STAGE_RELEASE_LOCKED
+  normative_edit_after_lock: FORBIDDEN
+  governance_release_state: STAGE_1_LOCKED_NOT_FINAL_FOR_WEBSITE_RECONSTRUCTION
+  repository_materialization_status: PENDING_EXACT_PACKAGE_SYNC
+invalidated_experiments:
+  - version: v2.1.1-experimental-pre-reset
+    status: DISCARDED_NOT_AUTHORITY
+  - version: v2.1.2
+    status: DISCARDED_NOT_AUTHORITY
+    reason: Moving-target governance development during extraction testing; user-directed reset to immutable v2.1.0 baseline and stage-gated bugfix discipline.
+verified_stage1_tests:
+  minimal_control:
+    passed_expectations: 9
+    total: 9
+    result: PASS
+  v2_1_0_regression:
+    passed_expectations: 12
+    total: 12
+    result: PASS
+  v2_1_0_post_v1_8_regression:
+    passed_expectations: 6
+    total: 6
+    result: PASS
+formal_website_reconstruction_allowed: false
+formal_page_extraction_under_locked_rules_allowed_after_repository_materialization: true
+prelock_core_asset_snapshots:
+  status: HISTORICAL_PRELOCK_TEST_EVIDENCE_ONLY
+  current_planning_authority: false
+  formal_reextraction_required: true
+change_discipline:
+  active_test_rule_mutation: FORBIDDEN
+  locked_release_rule_mutation: FORBIDDEN
+  later_defect_handling: RECORD_DEFECT_THEN_OPEN_NEW_CANDIDATE_VERSION
+  impacted_artifacts_after_new_release: REVERIFY_REQUIRED
+exact_resume_point: Materialize the exact v2.1.1 Stage-1 locked governance package into the governance test repository. Do not begin formal website reconstruction. After materialization, perform fresh Source Intake extraction under the locked rules without editing the locked release; collect defects until the extraction step is complete, then open a new governance candidate only if required.
+status: STAGE_1_LOCKED_PENDING_REPOSITORY_MATERIALIZATION
