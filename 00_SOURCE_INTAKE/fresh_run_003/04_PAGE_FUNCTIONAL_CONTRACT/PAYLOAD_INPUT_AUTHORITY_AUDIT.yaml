@@ -1,0 +1,75 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-STAGE2-PAYLOAD-INPUT-AUTHORITY-AUDIT-V212-R1
+artifact_type: PAYLOAD_INPUT_AUTHORITY_AUDIT
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+operation_uid: FUNCTIONAL_CHAIN_COMPILE
+status: AUDITED_NO_GAP_REMOVAL_AUTHORIZED
+source_pin:
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  commit: 6c8a0c3334ccd17942ba14079976fb295859a43c
+current_authority_manifest:
+  source_path: authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+  source_git_blob: 465329b6fb19b8e44c3083a9f280015ee95cc55c
+  materialized_ref: 04_PAGE_FUNCTIONAL_CONTRACT/PAYLOAD_AUTHORITY_AUDIT_SOURCE/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+  materialized_git_blob: 465329b6fb19b8e44c3083a9f280015ee95cc55c
+  authority_id: ACPOS_CURRENT_AUTHORITY_MANIFEST
+  current_only: true
+  load_rule: Load only exact repository paths in current_authority_set.
+  unlisted_policy: DO_NOT_LOAD_FOR_CURRENT_CONSTRUCTION
+candidate_payload_registry:
+  source_path: 03_api/business_payload_registry.yaml
+  source_git_blob: 3b1130c098380ee6b64f56ee83c0ef7006a5af72
+  materialized_ref: 04_PAGE_FUNCTIONAL_CONTRACT/PAYLOAD_AUTHORITY_AUDIT_SOURCE/business_payload_registry.yaml
+  materialized_git_blob: 3b1130c098380ee6b64f56ee83c0ef7006a5af72
+  contract_id: ACPOS-CURRENT-BUSINESS-PAYLOAD-REGISTRY-1.1.0
+  declared_status: FINAL_LOCKED
+  listed_in_current_authority_set: false
+  current_construction_admissibility: REJECTED_UNLISTED_CURRENT_AUTHORITY
+  authority_upgrade_by_materialization: FORBIDDEN
+current_functional_gap_basis:
+  gap_ledger_ref: 04_PAGE_FUNCTIONAL_CONTRACT/FUNCTIONAL_CHAIN_GAP_LEDGER_R4.yaml
+  gap_ledger_git_blob: 29855a6aa9940b6ea64ca75d355c60acda3d2b94
+  total_functional_gaps: 167
+  payload_input_contract_missing_total: 34
+  CORE-01: 16
+  ASSET-01: 18
+  gap_removal_authorized_by_this_audit: 0
+  gap_total_after_this_audit: 167
+  payload_input_gap_total_after_this_audit: 34
+current_page_authority_checks:
+  ASSET-01:
+    current_page_authority_source_path: authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    current_run_raw_source_ref: 00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    git_blob: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    submitScorecard:
+      current_port_uid: ASSET-01-PORT-SCORECARD
+      current_operation: submitScorecard
+      current_ingress: POST /v1/scorecards
+      candidate_payload_entry_present: true
+      candidate_required_body_present: true
+      candidate_method_present: false
+      candidate_path_present: false
+      exact_ingress_contract_from_candidate: false
+      disposition: NON_EXACT_INCOMPLETE_CANDIDATE
+  CORE-01:
+    current_page_authority_source_path: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    current_run_raw_source_ref: 00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    git_blob: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+audit_conclusion:
+  candidate_is_current_authority: false
+  candidate_may_be_consumed_by_current_functional_compiler: false
+  candidate_may_resolve_any_of_34_by_itself: false
+  validated_gap_removal_count: 0
+  current_input_gap_count_remains: 34
+  ai_inference_or_cross_source_union_used: false
+  raw_source_mutated: false
+  current_authority_set_mutated: false
+  note: This audit rejects this specific unlisted candidate. It does not claim that no other future authoritative source can resolve the 34 gaps.
+stage2_effect:
+  functional_completion: false
+  exit_gate: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  exit_gate_result: BLOCKED
+  website_construction_allowed: false
+  deployment_allowed: false
