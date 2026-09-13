@@ -301,6 +301,22 @@ jobs:
           name: stage2-payload-action-operation-inventory
           path: stage2_payload_action_operation_inventory.json
           if-no-files-found: error
+  current-stage2-payload-action-operation-inventory-r2-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate exact 34-of-34 payload operation inventory successor
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_stage2_payload_action_operation_inventory_r2.py
+      - name: Upload machine-readable Stage-02 payload operation inventory successor
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage2-payload-action-operation-inventory-r2
+          path: stage2_payload_action_operation_inventory_r2.json
+          if-no-files-found: error
   sealed-v216-runtime:
     runs-on: ubuntu-24.04
     steps:
