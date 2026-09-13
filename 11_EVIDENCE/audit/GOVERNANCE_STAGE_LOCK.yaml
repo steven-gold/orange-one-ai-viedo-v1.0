@@ -1,9 +1,9 @@
-schema_version: 12
+schema_version: 13
 current_test_authority:
-  version: v2.1.11
-  package_sha256: 651d3027967a65125787e659765ed3cc5588cbba3e38faa55b56942af46b3e18
-  external_trust_root_sha256: 6d29a43395862b39f6d07ca07872d041892a603fc15e9950a5a618ce0fd58852
-  semantic_authority_content_hash: 6de8b03edf0197baa08577bcd46106beb70b2bcff0652078a43c1113fcbd63ff
+  version: v2.1.12
+  package_sha256: 2d6602b20983a9764c2f1496f36ab20a2f0ebcd73826492c27ba67159f5ef3df
+  external_trust_root_sha256: 4c013cfc1a91142a8b4ce44830ef467c5c960f56b136a75ff670729a523f71e3
+  semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
 lock_state: PREFORMAL_CANDIDATE_READ_ONLY
 current_execution:
   source_fact_materialization_completed: true
@@ -14,7 +14,7 @@ current_execution:
   blueprint_binding_count: 2
   stage1_validation_started: true
   stage1_validation_completed: true
-  stage1_exit_gate: PENDING_EXTERNAL_CI
+  stage1_exit_gate: SUCCESS_EXTERNAL_CI
   stage2_started: false
   unresolved_authority_gap_count: 8
 terminal_receipts:
@@ -46,15 +46,37 @@ terminal_receipts:
     run_id: 34754709362
     job_denominator: 11/11
     conclusion: SUCCESS
+  stage1_closure:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28
+    run_id: 34755361339
+    job_denominator: 12/12
+    conclusion: SUCCESS
 stage1_closure:
-  clean_scan: MATERIALIZED
-  run_close: MATERIALIZED
-  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED_PENDING_EXTERNAL_CI
+  clean_scan: COMPLETED
+  run_close: COMPLETED
+  required_evidence_integrity: PARSER_AND_REQUIRED_FIELDS_PASS
+  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  exit_gate_result: SUCCESS_EXTERNAL_CI_12_OF_12
   dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
   reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
-current_receipt_policy:
-  external_immutable_receipt_required: true
-  canonical_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
+successor_state_contract:
+  contract_uid: V212-SUCCESSOR-STATE-MONOTONIC-EVIDENCE-PARSE
+  predecessor_current_state_exact_terminal_lock: FORBIDDEN
+  successor_started_false_permanent_condition: FORBIDDEN
+  phase_order_owner: PHASE_BOUNDARY_GATE
+current_v212_receipt:
+  mode: EXTERNAL_IMMUTABLE_RECEIPT
+  required: true
+  embedded_run_id: null
+  canonical_fields:
+  - provider
+  - repository_or_project
+  - head_sha
+  - run_id
+  - job_denominator
+  - conclusion
   same_commit_self_write: FORBIDDEN
 human_formal_review: PENDING
-status: STAGE1_VALIDATION_LOCK_PENDING_EXTERNAL_CI_RECEIPT
+status: V212_STAGE_LOCK_STAGE1_CLOSED_GITHUB_CI_PENDING
