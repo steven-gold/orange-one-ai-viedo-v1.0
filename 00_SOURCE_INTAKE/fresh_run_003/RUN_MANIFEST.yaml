@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 branch: rebuild-v2.1.1
 phase: STAGE_01_SOURCE_INTAKE
-status: SOURCE_FACT_MATERIALIZATION_COMPLETED_CI_PASS
+status: SOURCE_SEGMENT_MAPPING_COMPLETED_CI_PASS
 governance:
   version: v2.1.6
   state: USER_FROZEN_READ_ONLY_PREFORMAL_CANDIDATE
@@ -17,23 +17,30 @@ source_pin:
 execution_policy:
   actual_source_extraction: REPLAY_EXACT_PREVIOUS_VERIFIED_RAW_BLOBS
   previous_34_node_replay: VERIFIED_BLOCKED_BY_V216
+  semantic_granularity_validation: PASS_EXPECTED_BLOCK
   source_structure_refinement: COMPLETED_61_TERMINAL_HOMOGENEOUS_NODES_CI_PASS
   source_segment_mapping: COMPLETED_61_OF_61_CI_PASS
-  source_fact_materialization: COMPLETED_CI_PASS
-  responsibility_classification: NOT_EXECUTED
+  old_corrected_61_node_result_reuse: FORBIDDEN_AND_NOT_REUSED
+  source_fact_materialization: NOT_EXECUTED
+  source_domain_decomposition: NOT_EXECUTED
   page_blueprint_materialization: NOT_EXECUTED
   visual_blueprint_materialization: NOT_EXECUTED
   website_code_write: FORBIDDEN
   deployment: FORBIDDEN
-source_fact_contract:
-  source_context_manifest_hash: 87495e184f31ef04bbdc2c13895533e0ce18491e552ca336d4a7ea07f62322fb
-  conflict_ledger_hash: b05022be20bad1433165f1c8d490849ef7e4ba42061f94bcff8ef72674e18ebd
-  source_dependency_map_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
-  unresolved_authority_gap_count: 8
-  invented_dependency_count: 0
+refinement_contract:
+  refined_node_count: 61
+  required_node_count: 52
+  reference_only_node_count: 9
+  mixed_terminal_units: 0
+  unresolved_container_units: 0
+segment_mapping_contract:
+  segment_count: 61
+  page_construction_segments: 52
+  visual_construction_segments: 9
+  required_nodes_unmapped: 0
+  duplicate_node_mappings: 0
 github_ci:
-  run_id: 34727817243
-  current_v216_stage1_granularity_gate: SUCCESS
-  current_v216_source_facts_gate: SUCCESS
-  sealed_v216_runtime: SUCCESS
-next_phase_entry_condition: EXPLICIT_RESPONSIBILITY_CLASSIFICATION_START
+  run_id: 34726994206
+  current_gate: SUCCESS
+  sealed_runtime_gate: SUCCESS
+next_phase_entry_condition: EXPLICIT_SOURCE_FACT_MATERIALIZATION_START
