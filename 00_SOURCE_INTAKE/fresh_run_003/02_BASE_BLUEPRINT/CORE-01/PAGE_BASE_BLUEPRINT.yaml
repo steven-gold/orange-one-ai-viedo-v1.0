@@ -1,0 +1,147 @@
+schema_version: 1
+blueprint_uid: V217-BP-CORE-01-PAGE-BASE
+blueprint_type: PAGE_BASE_BLUEPRINT
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-01
+step_uid: PAGE_BASE_BLUEPRINT_COMPILE
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+editable_owner_uid: OWNER-CORE-01-PAGE-BASE-BLUEPRINT
+owner_mode: PAGE
+target_path: 02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
+input_artifacts:
+- artifact_uid: V216-CLS-V216-N006
+  content_hash: 61cac35d2dd932b9148b6dd9cdc1a2a9a69a75aaaacbac578f6e22f04c64958f
+- artifact_uid: V216-CLS-V216-N007
+  content_hash: a00af0fce5cb55b8a3eab5e895eed4493f3b9eff7ba16a3f1215c6634bcd21d5
+- artifact_uid: V216-CLS-V216-N008
+  content_hash: 4d835a8170024b2135505b6e28deae787475d472f19dc50ecb1fb3f2bdf63005
+- artifact_uid: V216-CLS-V216-N010
+  content_hash: ef8816d029d2fc39b0c05229ea2fc7b5d9d0cf11238cd0bc54824d103109b062
+- artifact_uid: V216-CLS-V216-N011
+  content_hash: c499f93195cd120cc522b79e8bd44a2cfad7f8217f7632ff8e07c139d14a55f7
+- artifact_uid: V216-CLS-V216-N012
+  content_hash: a444ff00f7b2e554f29df7335cba8d702db7925dc7aac64ac938b7f7318e6326
+- artifact_uid: V216-CLS-V216-N013
+  content_hash: b5e05a84752151c35c955d2ee8915f8436402ad5e0573a382da6d328b638d7d0
+- artifact_uid: V216-CLS-V216-N015
+  content_hash: 43b8ab8d5b578d0c85d073236c64f646fe1fa84b02792b339ec54e226b14f127
+- artifact_uid: V216-CLS-V216-N016
+  content_hash: a5a9677b83a13c9e865157299bd38697a6d3f3b719282463e9243f38fa91e96b
+- artifact_uid: V216-CLS-V216-N017
+  content_hash: c0b94688e2985e3b3a21999a6744881dea4ba2cb547593cd7c68ea2372ed9a6e
+- artifact_uid: V216-CLS-V216-N018
+  content_hash: d0d6b0d24dce140143e3f88ca968da4248d44ab14613b52d78d746beb32787be
+- artifact_uid: V216-CLS-V216-N019
+  content_hash: 73986ffc3934b62cecca90aab2e88ab23708204c3941f5e7d6cc0e18b419fcb2
+- artifact_uid: V216-CLS-V216-N020
+  content_hash: e8609314650704cffbeb7adbac4ff1c3d3cfb6bd37648ce55acd47fcd1ac3ac3
+- artifact_uid: V216-CLS-V216-N021
+  content_hash: 78e69ce66629430babb7402337acf95c044db6889cd14d78b4b7a07090f2f222
+- artifact_uid: V216-CLS-V216-N022
+  content_hash: 7a0262670b391ae899130ff25c01530cbea831ff0a7686aee6125119283d0064
+- artifact_uid: V216-CLS-V216-N023
+  content_hash: 3a98b6e652dbd9e8b37cd56fd0071fb904ca03214855bacf9d8e068a410d4c7a
+- artifact_uid: V216-CLS-V216-N024
+  content_hash: fe934297f22a80201927cf0fd57c11d9d160c75243c25e33001e514282e1e966
+- artifact_uid: V216-CLS-V216-N025
+  content_hash: 8ab440f2467317ba4e0e2ea7394037ccf5a0ef0fe5c4f6a7405a9e2ef0a63961
+- artifact_uid: V216-CLS-V216-N026
+  content_hash: c3c1ef684cb9d09c6346a26f8d9d17ffb80b87453e3720f6986b1dc4c97191a0
+- artifact_uid: V216-CLS-V216-N027
+  content_hash: 906e055a6de10c2b77049b26feb6c64cdb01f3fae5c91af39315dfb21e93d048
+- artifact_uid: V216-CLS-V216-N028
+  content_hash: d846079a953b173bb2b538e6449457dbb59fd22218cd47a6ff17720f4790fea5
+- artifact_uid: V216-CLS-V216-N029
+  content_hash: a07e6e61e041f0bc73f043f1004c0c7bf5d0819b37d507f835b13bd45ec488b6
+- artifact_uid: V216-CLS-V216-N032
+  content_hash: 9b4ce3aad8b892147449feddec66e556409b824945af7a4feda6242d142f2a74
+required_responsibility_uids:
+- ACCEPTANCE
+- AUTHORITY
+- CANONICAL_PRODUCTION_SCRIPT_AUTHORING_CONTRACT
+- CONVERSATION_POLICY
+- CREATION_AUTHORIZATION_POLICY
+- DECISION_FLOW
+- HARD_LOCKS
+- PAGE_MODES
+- REGISTRIES_ACTIONS
+- REGISTRIES_ACTION_EFFECT_TYPES
+- REGISTRIES_COMPONENTS
+- REGISTRIES_CONTROLS
+- REGISTRIES_ERRORS
+- REGISTRIES_EVENTS
+- REGISTRIES_GATES
+- REGISTRIES_INTEGRATION_PORTS
+- REGISTRIES_OBJECTS_REFS
+- REGISTRIES_PAGE_STATES
+- REGISTRIES_PERMISSIONS
+- REGISTRIES_SECTIONS
+- REGISTRIES_STAGES
+- REGISTRIES_STAGE_TRANSITIONS
+- SYSTEM_FILENAME_GOVERNANCE
+shared_refs: []
+source_fact_refs:
+- artifact_uid: FRESH-RUN-003-SOURCE-CONTEXT-MANIFEST-V216
+  content_hash: 87495e184f31ef04bbdc2c13895533e0ce18491e552ca336d4a7ea07f62322fb
+- artifact_uid: FRESH-RUN-003-CONTENT-SUPERSESSION-CONFLICT-LEDGER-V216
+  content_hash: b05022be20bad1433165f1c8d490849ef7e4ba42061f94bcff8ef72674e18ebd
+- artifact_uid: FRESH-RUN-003-SOURCE-DEPENDENCY-MAP-V216
+  content_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
+raw_source_inputs: []
+embedded_classification_payloads: []
+unresolved_external_authority_refs:
+- gap_uid: GAP-001
+  authority_ref: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-001
+  resolved: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-002
+  authority_ref: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-002
+  resolved: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-003
+  authority_ref: ACPOS_SYSTEM_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-003
+  resolved: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-004
+  authority_ref: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-004
+  resolved: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-005
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-005
+  resolved: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-007
+  authority_ref: "IAM-01\x20/\x20account\x20permission\x20runtime"
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-007
+  resolved: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-008
+  authority_ref: "ACPOS\x20shared\x20AI\x20Router/Capability\x20Assignment"
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-008
+  resolved: false
+  auto_filled: false
+  inferred: false
+authority_resolution_performed: false
+ai_autofill_used: false
+inference_used: false
+status: CURRENT_BASE_BLUEPRINT
+blueprint_hash: b5a4f571ec9077482280855ae4522217b80842bdb0c61bcb171836d62764f901

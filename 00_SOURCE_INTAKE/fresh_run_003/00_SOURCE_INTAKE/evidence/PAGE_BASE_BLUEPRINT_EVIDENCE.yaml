@@ -1,0 +1,41 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-PAGE-BASE-BLUEPRINT-EVIDENCE-V217
+artifact_type: PAGE_BASE_BLUEPRINT_EVIDENCE
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-01
+step_uid: PAGE_BASE_BLUEPRINT_COMPILE
+status: MATERIALIZED_PENDING_CI
+summary:
+  page_blueprint_count: 2
+  page_construction_input_artifacts: 48
+  visual_construction_input_artifacts: 0
+  direct_raw_source_inputs: 0
+  embedded_classification_payloads: 0
+  blueprint_binding_started: false
+  visual_base_blueprint_started: false
+  website_construction_started: false
+  deployment_started: false
+per_page:
+  CORE-01:
+    artifact_count: 23
+    responsibility_count: 23
+    unresolved_gap_count: 7
+    blueprint_uid: V217-BP-CORE-01-PAGE-BASE
+    blueprint_hash: b5a4f571ec9077482280855ae4522217b80842bdb0c61bcb171836d62764f901
+  ASSET-01:
+    artifact_count: 25
+    responsibility_count: 25
+    unresolved_gap_count: 6
+    blueprint_uid: V217-BP-ASSET-01-PAGE-BASE
+    blueprint_hash: c88cfbf196d52f7478135e574c6d04103bd924bf714b2ca5cfb84de7c7c04a87
+external_authority_preservation:
+  source_gap_count: 8
+  core_01_carried_gap_count: 7
+  asset_01_carried_gap_count: 6
+  identity_drift: 0
+  resolution_performed: false
+  ai_autofill_used: false
+  inference_used: false
+classification_gate_prerequisite:
+  run_id: 34731817807
+  result: SUCCESS_4_OF_4

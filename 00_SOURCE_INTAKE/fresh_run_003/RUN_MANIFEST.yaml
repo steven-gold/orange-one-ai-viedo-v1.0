@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 branch: rebuild-v2.1.1
 phase: STAGE_01_SOURCE_INTAKE
-status: RESPONSIBILITY_CLASSIFICATION_COMPLETED_CI_PASS
+status: PAGE_BASE_BLUEPRINT_COMPLETED_PENDING_CI
 governance:
   version: v2.1.6
   phase_authority_overlay: v2.1.7
@@ -22,7 +22,7 @@ execution_policy:
   source_segment_mapping: COMPLETED_61_OF_61_CI_PASS
   source_fact_materialization: COMPLETED_CI_PASS
   responsibility_classification: COMPLETED_52_ARTIFACTS_CI_PASS
-  page_blueprint_materialization: NOT_EXECUTED
+  page_blueprint_materialization: COMPLETED_2_PAGE_BLUEPRINTS_PENDING_CI
   visual_blueprint_materialization: NOT_EXECUTED
   website_code_write: FORBIDDEN
   deployment: FORBIDDEN
@@ -47,4 +47,15 @@ github_ci:
   previous_final_result: SUCCESS_4_OF_4
   classification_gate: SUCCESS
   classification_run_id: 34731817807
-next_phase_entry_condition: EXPLICIT_PAGE_BASE_BLUEPRINT_START
+  page_base_blueprint_gate: PENDING
+next_phase_entry_condition: EXPLICIT_VISUAL_BASE_BLUEPRINT_START_AFTER_PAGE_BLUEPRINT_CI_PASS
+page_base_blueprint_contract:
+  blueprint_count: 2
+  core_01_page_inputs: 23
+  asset_01_page_inputs: 25
+  total_page_inputs: 48
+  cross_domain_inputs: 0
+  direct_raw_source_inputs: 0
+  core_01_unresolved_external_authority_refs: 7
+  asset_01_unresolved_external_authority_refs: 6
+  authority_resolution_performed: false

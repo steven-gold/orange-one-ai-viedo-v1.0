@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 governance_version: v2.1.6
 governance_candidate_overlay: v2.1.7
-state: RESPONSIBILITY_CLASSIFICATION_COMPLETED
+state: PAGE_BASE_BLUEPRINT_COMPLETED_PENDING_CI
 raw_source_capture_state: CAPTURE_CLOSED
 semantic_granularity_replay_validated: true
 replay_source_structure_node_count: 34
@@ -27,7 +27,7 @@ classification_artifact_count: 52
 classification_page_artifact_count: 48
 classification_visual_artifact_count: 4
 domain_decomposition_started: false
-blueprint_materialization_started: false
+blueprint_materialization_started: true
 stage1_validation_started: false
 website_construction_started: false
 deployment_started: false
@@ -36,12 +36,20 @@ github_ci:
   previous_final_result: SUCCESS_4_OF_4
   current_classification_gate: SUCCESS
   classification_run_id: 34731817807
+  current_page_blueprint_gate: PENDING
 allowed_transition:
-  from: RESPONSIBILITY_CLASSIFICATION_COMPLETED
-  to: PAGE_BASE_BLUEPRINT_ACTIVE
-  trigger: EXPLICIT_NEXT_STEP_START_AFTER_CLASSIFICATION_CI_PASS
+  from: PAGE_BASE_BLUEPRINT_COMPLETED
+  to: VISUAL_BASE_BLUEPRINT_ACTIVE
+  trigger: EXPLICIT_NEXT_STEP_START_AFTER_PAGE_BLUEPRINT_CI_PASS
 forbidden_transitions:
-- RESPONSIBILITY_CLASSIFICATION_COMPLETED -> RAW_SOURCE_CAPTURE_ACTIVE
-- RESPONSIBILITY_CLASSIFICATION_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
-- RESPONSIBILITY_CLASSIFICATION_COMPLETED -> DEPLOYMENT_ACTIVE
-last_result: V217_RESPONSIBILITY_CLASSIFICATION_COMPLETED_CI_PASS
+- PAGE_BASE_BLUEPRINT_COMPLETED -> BLUEPRINT_BINDING_ACTIVE
+- PAGE_BASE_BLUEPRINT_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
+- PAGE_BASE_BLUEPRINT_COMPLETED -> DEPLOYMENT_ACTIVE
+last_result: V217_PAGE_BASE_BLUEPRINT_MATERIALIZED_PENDING_CI
+page_base_blueprint_started: true
+page_base_blueprint_completed: true
+page_base_blueprint_count: 2
+visual_base_blueprint_started: false
+visual_base_blueprint_completed: false
+blueprint_binding_started: false
+blueprint_binding_completed: false
