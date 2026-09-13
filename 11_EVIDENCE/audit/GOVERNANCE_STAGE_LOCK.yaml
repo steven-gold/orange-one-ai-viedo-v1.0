@@ -14,6 +14,7 @@ runtime_sync:
   runtime_content_mutation: FORBIDDEN
   repository_pointer_sync: ALLOWED_OPERATIONAL_METADATA_ONLY
   evidence_sync: ALLOWED
+  github_ci_state: PASS
 current_execution:
   phase: FOUNDATION-01-SOURCE-INTAKE
   target_pages:
@@ -21,6 +22,11 @@ current_execution:
   - ASSET-01
   test_iteration: 3
   replay_restore_point: SOURCE_STRUCTURE_ENUMERATION_PRE_SEGMENT_MAPPING
+  replay_expected_block_verified: true
+  refined_source_structure_node_count: 61
+  source_segment_mapping_completed: true
+  source_segment_count: 61
+  source_fact_materialization_started: false
   website_reconstruction_started: false
   website_reconstruction_allowed: false
   website_code_write_allowed: false
@@ -31,5 +37,5 @@ historical_locks:
   current_disposition: HISTORICAL_SUPERSEDED
 - version: v2.1.2
   current_disposition: DISCARDED_NOT_AUTHORITY
-next_action: Prove old 34-node structure is blocked, then regenerate legal refinement; do not reuse old 61-node evidence.
-status: V2_1_6_USER_FROZEN_REPLAY_LOCK_ACTIVE
+next_action: SOURCE_FACT_MATERIALIZATION only after explicit next-step start; do not skip stage ordering.
+status: V2_1_6_SEGMENT_MAPPING_LOCK_CLOSED_CI_PASS

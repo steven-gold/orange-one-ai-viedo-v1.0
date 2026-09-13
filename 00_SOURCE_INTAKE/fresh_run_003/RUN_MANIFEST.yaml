@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 branch: rebuild-v2.1.1
 phase: STAGE_01_SOURCE_INTAKE
-status: SOURCE_SEGMENT_MAPPING_COMPLETED_PENDING_CI
+status: SOURCE_SEGMENT_MAPPING_COMPLETED_CI_PASS
 governance:
   version: v2.1.6
   state: USER_FROZEN_READ_ONLY_PREFORMAL_CANDIDATE
@@ -18,8 +18,8 @@ execution_policy:
   actual_source_extraction: REPLAY_EXACT_PREVIOUS_VERIFIED_RAW_BLOBS
   previous_34_node_replay: VERIFIED_BLOCKED_BY_V216
   semantic_granularity_validation: PASS_EXPECTED_BLOCK
-  source_structure_refinement: COMPLETED_61_TERMINAL_HOMOGENEOUS_NODES
-  source_segment_mapping: COMPLETED_61_OF_61_PENDING_CI
+  source_structure_refinement: COMPLETED_61_TERMINAL_HOMOGENEOUS_NODES_CI_PASS
+  source_segment_mapping: COMPLETED_61_OF_61_CI_PASS
   old_corrected_61_node_result_reuse: FORBIDDEN_AND_NOT_REUSED
   source_fact_materialization: NOT_EXECUTED
   source_domain_decomposition: NOT_EXECUTED
@@ -39,4 +39,8 @@ segment_mapping_contract:
   visual_construction_segments: 9
   required_nodes_unmapped: 0
   duplicate_node_mappings: 0
-next_phase_entry_condition: SOURCE_SEGMENT_MAPPING_CI_PASS
+github_ci:
+  run_id: 34726994206
+  current_gate: SUCCESS
+  sealed_runtime_gate: SUCCESS
+next_phase_entry_condition: EXPLICIT_SOURCE_FACT_MATERIALIZATION_START
