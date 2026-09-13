@@ -13,16 +13,16 @@ scan_scope:
 checks:
 - check_uid: CF-01
   result: PASS
-  fact: All three captured authority sources declare current/final authority state; no captured legacy authority is loaded as current.
+  fact: "All three captured authority sources declare current/final authority state; no captured legacy authority is loaded as current."
 - check_uid: CF-02
   result: PASS
-  fact: CORE and ASSET page authorities explicitly set legacy_merge: FORBIDDEN and parallel_authority_for_same_page: FORBIDDEN.
+  fact: "CORE and ASSET page authorities explicitly set legacy_merge: FORBIDDEN and parallel_authority_for_same_page: FORBIDDEN."
 - check_uid: CF-03
   result: PASS
-  fact: CORE current canonical visual identity source declares owns_page_layout=false and owns_child_visual_definitions=false, while page_design_owner/visual_registry_owner point to the CORE page visual authority; ownership is complementary rather than conflicting.
+  fact: "CORE current canonical visual identity source declares owns_page_layout=false and owns_child_visual_definitions=false, while page_design_owner/visual_registry_owner point to the CORE page visual authority; ownership is complementary rather than conflicting."
 - check_uid: CF-04
   result: PASS
-  fact: No captured source declares a superseding version of another captured current owner for the same responsibility.
+  fact: "No captured source declares a superseding version of another captured current owner for the same responsibility."
 decision: NO_SUPERSESSION_CONFLICT_OBSERVED_WITHIN_CAPTURED_SOURCE_SET
 ledger_item_count: 0
 superseded_current_owner_residual_count: 0
