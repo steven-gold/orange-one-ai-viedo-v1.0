@@ -1,4 +1,4 @@
-schema_version: 5
+schema_version: 6
 role: CURRENT_SEALED_GOVERNANCE_TEST_BASELINE
 sealed_governance:
   version: v2.1.9
@@ -10,12 +10,12 @@ verified_test_summary:
   mandatory_matrix: 11/11_PASS
   v219_evidence_state_system_logic: 24/24_PASS
 github_ci_verification:
-  head_sha: 4806b470f441d2a0077665e270c21aa88c53c8e1
   run_id: 34737738652
   jobs: 7/7_SUCCESS
 execution_checkpoint:
-  state: PAGE_BASE_BLUEPRINT_COMPLETED
+  state: VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI
   page_base_blueprint: 2/2
-  visual_base_blueprint_started: false
+  visual_base_blueprint: 2/2_PENDING_CI
+  blueprint_binding_started: false
 human_formal_review: PENDING
-status: SEALED_V2_1_9_PREFORMAL_TEST_BASELINE_PAGE_BLUEPRINT_GITHUB_CI_PASS
+status: SEALED_V2_1_9_PREFORMAL_TEST_BASELINE_VISUAL_PENDING_CI

@@ -1,0 +1,47 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-VISUAL-BASE-BLUEPRINT-EVIDENCE-V219
+artifact_type: VISUAL_BASE_BLUEPRINT_EVIDENCE
+governance_overlay: v2.1.9
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-01
+step_uid: VISUAL_BASE_BLUEPRINT_COMPILE
+status: MATERIALIZED_PENDING_CI
+summary:
+  visual_blueprint_count: 2
+  visual_construction_input_artifacts: 4
+  page_construction_input_artifacts: 0
+  direct_raw_source_inputs: 0
+  embedded_classification_payloads: 0
+  blueprint_binding_started: false
+  website_construction_started: false
+  deployment_started: false
+per_page:
+  CORE-01:
+    artifact_count: 2
+    responsibility_count: 2
+    unresolved_gap_count: 7
+    blueprint_uid: V219-BP-CORE-01-VISUAL-BASE
+    blueprint_hash: 011e80a21b6f2c822f5234e4af8f9e5163485c3dff862cb76a886abf04c3683e
+    git_blob: 8edd134ea4610ab3cb192bca7b3a34ec24ae6368
+  ASSET-01:
+    artifact_count: 2
+    responsibility_count: 2
+    unresolved_gap_count: 6
+    blueprint_uid: V219-BP-ASSET-01-VISUAL-BASE
+    blueprint_hash: 734e687f7798d97964b04eb7e79e579fef2e41f259c900b03c606ae6271aeef8
+    git_blob: f09ec9e4ccbedd1487c91592cb1df83ba5e62464
+external_authority_preservation:
+  source_gap_count: 8
+  core_01_carried_gap_count: 7
+  asset_01_carried_gap_count: 6
+  identity_drift: 0
+  resolution_performed: false
+  ai_autofill_used: false
+  inference_used: false
+page_blueprint_prerequisite:
+  current_page_blueprint_gate: SUCCESS
+  page_blueprint_count: 2
+  page_blueprint_immutable: true
+github_ci:
+  result: PENDING
+binding_entry_condition: PAGE_AND_VISUAL_BLUEPRINT_GATES_SUCCESS

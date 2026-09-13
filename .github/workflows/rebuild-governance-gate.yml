@@ -1,4 +1,4 @@
-name: Governance v2.1.9 Evidence-State Closure System Logic and Page Replay Gate
+name: Governance v2.1.9 Visual Base Blueprint Successor Gate
 on:
   push:
     branches: [rebuild-v2.1.1]
@@ -42,16 +42,16 @@ jobs:
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
       - env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v218_page_base_blueprint.py
-  current-v218-page-replay-content-audit-gate:
+  current-v219-page-replay-successor-audit-gate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify immutable Page replay inputs and regenerated Blueprint bytes
+      - name: Verify immutable Page evidence remains valid under Visual successor
         env: {PYTHONDONTWRITEBYTECODE: '1'}
-        run: python governance/ci/validate_current_v218_page_replay_content_audit.py
+        run: python governance/ci/validate_current_v219_page_replay_successor_audit.py
   current-v219-evidence-state-system-logic-gate:
     runs-on: ubuntu-24.04
     steps:
@@ -59,9 +59,19 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify v2.1.9 evidence-state closure and Stage-02 system-logic detection contract
+      - name: Verify v2.1.9 evidence-state closure remains valid under legal successor
         env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v219_evidence_logic.py
+  current-v219-visual-base-blueprint-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate 2/2 Visual Base Blueprints and preserve Page predecessor
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_v219_visual_base_blueprint.py
   sealed-v216-runtime:
     runs-on: ubuntu-24.04
     steps:

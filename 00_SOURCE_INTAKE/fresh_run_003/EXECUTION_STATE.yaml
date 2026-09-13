@@ -1,8 +1,8 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
 governance_version: v2.1.6
-governance_candidate_overlay: v2.1.8
-state: PAGE_BASE_BLUEPRINT_COMPLETED
+governance_candidate_overlay: v2.1.9
+state: VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI
 raw_source_capture_state: CAPTURE_CLOSED
 semantic_granularity_replay_validated: true
 replay_source_structure_node_count: 34
@@ -28,8 +28,9 @@ blueprint_materialization_started: true
 page_base_blueprint_started: true
 page_base_blueprint_completed: true
 page_base_blueprint_count: 2
-visual_base_blueprint_started: false
-visual_base_blueprint_completed: false
+visual_base_blueprint_started: true
+visual_base_blueprint_completed: true
+visual_base_blueprint_count: 2
 blueprint_binding_started: false
 blueprint_binding_completed: false
 stage1_validation_started: false
@@ -37,29 +38,27 @@ website_construction_started: false
 deployment_started: false
 github_ci:
   pre_page_replay_run_id: 34734265713
-  pre_page_replay_result: SUCCESS_5_OF_5
-  first_rematerialization_run_id: 34734445281
-  first_rematerialization_result: BLOCKED_5_OF_6
   page_replay_final_run_id: 34734528373
-  page_replay_final_result: SUCCESS_6_OF_6
+  page_replay_content_audit_run_id: 34734730080
+  v219_evidence_state_run_id: 34737738652
   current_classification_gate: SUCCESS
   current_page_blueprint_gate: SUCCESS
+  current_visual_blueprint_gate: PENDING
   current_phase_successor_authority_gate: SUCCESS
-  current_candidate_record_gate: SUCCESS
   current_upstream_projection_gate: SUCCESS
   sealed_v216_runtime: SUCCESS
 replay_control:
-  governance_overlay: v2.1.8
+  governance_overlay: v2.1.9
   source_checkpoint_commit: 90cbd4b5fee1b7aea25a0c15ca3b661bab605960
   source_checkpoint_tree: 6dc3a2488b8d12e9279bf9162eafaf2c56955648
   old_page_blueprint_bytes_reuse: false
-  content_audit: VERIFIED
+  page_content_audit: VERIFIED
 allowed_transition:
-  from: PAGE_BASE_BLUEPRINT_COMPLETED
-  to: VISUAL_BASE_BLUEPRINT_ACTIVE
-  trigger: EXPLICIT_NEXT_STEP_START_AFTER_PAGE_BLUEPRINT_CI_PASS
+  from: VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI
+  to: BLUEPRINT_BINDING_ACTIVE
+  trigger: CURRENT_VISUAL_BLUEPRINT_GATE_SUCCESS
 forbidden_transitions:
-- PAGE_BASE_BLUEPRINT_COMPLETED -> BLUEPRINT_BINDING_ACTIVE
-- PAGE_BASE_BLUEPRINT_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
-- PAGE_BASE_BLUEPRINT_COMPLETED -> DEPLOYMENT_ACTIVE
-last_result: V218_PAGE_BASE_BLUEPRINT_REPLAY_CONTENT_AUDIT_CLOSED_CI_PASS
+- VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI -> BLUEPRINT_BINDING_ACTIVE
+- VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI -> WEBSITE_CONSTRUCTION_ACTIVE
+- VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI -> DEPLOYMENT_ACTIVE
+last_result: V219_VISUAL_BASE_BLUEPRINT_MATERIALIZED_PENDING_CI

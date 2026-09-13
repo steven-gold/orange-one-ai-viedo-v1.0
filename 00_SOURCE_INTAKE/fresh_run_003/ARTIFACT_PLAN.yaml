@@ -1,6 +1,6 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-current_step: PAGE_BASE_BLUEPRINT_COMPLETED_CI_PASS_CONTENT_AUDITED
+current_step: VISUAL_BASE_BLUEPRINT_MATERIALIZED_PENDING_CI
 current_artifacts:
 - RAW_SOURCE_REFERENCE_MANIFEST
 - RAW_SOURCE_CAPTURE_STATE
@@ -14,6 +14,8 @@ current_artifacts:
 - PAGE_BASE_BLUEPRINT
 - PAGE_BASE_BLUEPRINT_EVIDENCE
 - V218_PAGE_REPLAY_CONTENT_AUDIT
+- VISUAL_BASE_BLUEPRINT
+- VISUAL_BASE_BLUEPRINT_EVIDENCE
 classification_materialization:
   artifact_count: 52
   page_artifacts: 48
@@ -24,11 +26,16 @@ page_base_blueprint_materialization:
   page_input_artifacts: 48
   visual_input_artifacts: 0
   direct_raw_source_inputs: 0
-  unresolved_external_authority_refs_preserved: true
   governance_overlay: v2.1.8
-  replay_regenerated: true
   content_audit: VERIFIED
-next_allowed_artifacts_after_gate_pass: [VISUAL_BASE_BLUEPRINT]
+visual_base_blueprint_materialization:
+  blueprint_count: 2
+  visual_input_artifacts: 4
+  page_input_artifacts: 0
+  direct_raw_source_inputs: 0
+  unresolved_external_authority_refs_preserved: true
+  governance_overlay: v2.1.9
+next_allowed_artifacts_after_gate_pass: [BLUEPRINT_BINDING_MANIFEST]
 forbidden_until_visual_blueprint_gate: [BLUEPRINT_BINDING_MANIFEST]
 forbidden_in_stage_01: [WEBSITE_CONSTRUCTION, DEPLOYMENT]
-status: PAGE_BASE_BLUEPRINT_CLOSED_CI_PASS_CONTENT_AUDITED
+status: VISUAL_BASE_BLUEPRINT_PENDING_CI
