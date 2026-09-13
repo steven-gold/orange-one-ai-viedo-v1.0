@@ -1,1 +1,54 @@
-{"schema_version":1,"artifact_uid":"FRESH-RUN-003-PAGE-BASE-BLUEPRINT-EVIDENCE-V218-REPLAY","artifact_type":"PAGE_BASE_BLUEPRINT_EVIDENCE","governance_overlay":"v2.1.8","replay_uid":"FRESH-RUN-003-V218-CORE-ASSET-PAGE-BLUEPRINT-REPLAY","run_uid":"FRESH-RUN-003","stage_uid":"STAGE-01","step_uid":"PAGE_BASE_BLUEPRINT_COMPILE","status":"MATERIALIZED_PENDING_CI","summary":{"page_blueprint_count":2,"page_construction_input_artifacts":48,"visual_construction_input_artifacts":0,"direct_raw_source_inputs":0,"embedded_classification_payloads":0,"blueprint_binding_started":false,"visual_base_blueprint_started":false,"website_construction_started":false,"deployment_started":false},"per_page":{"CORE-01":{"artifact_count":23,"responsibility_count":23,"unresolved_gap_count":7,"blueprint_uid":"V218-REPLAY-BP-CORE-01-PAGE-BASE","blueprint_hash":"6c76ff5da65b6b000d493b74c06f6900ee53016801a73d966bd8b9569e21cd39"},"ASSET-01":{"artifact_count":25,"responsibility_count":25,"unresolved_gap_count":6,"blueprint_uid":"V218-REPLAY-BP-ASSET-01-PAGE-BASE","blueprint_hash":"ea78941da24ddedda2b0e73f0027261b0b4ceb44940e004c9997b45ca8f04376"}},"external_authority_preservation":{"source_gap_count":8,"core_01_carried_gap_count":7,"asset_01_carried_gap_count":6,"identity_drift":0,"resolution_performed":false,"ai_autofill_used":false,"inference_used":false},"classification_gate_prerequisite":{"run_id":34731817807,"result":"SUCCESS"},"pre_page_replay_verification":{"run_id":34734265713,"result":"SUCCESS","governance_overlay":"v2.1.8"},"old_page_blueprint_bytes_reuse":false}
+schema_version: 1
+artifact_uid: FRESH-RUN-003-PAGE-BASE-BLUEPRINT-EVIDENCE-V218-REPLAY
+artifact_type: PAGE_BASE_BLUEPRINT_EVIDENCE
+governance_overlay: v2.1.8
+replay_uid: FRESH-RUN-003-V218-CORE-ASSET-PAGE-BLUEPRINT-REPLAY
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-01
+step_uid: PAGE_BASE_BLUEPRINT_COMPILE
+status: VERIFIED_CI_PASS
+summary:
+  page_blueprint_count: 2
+  page_construction_input_artifacts: 48
+  visual_construction_input_artifacts: 0
+  direct_raw_source_inputs: 0
+  embedded_classification_payloads: 0
+  blueprint_binding_started: false
+  visual_base_blueprint_started: false
+  website_construction_started: false
+  deployment_started: false
+per_page:
+  CORE-01:
+    artifact_count: 23
+    responsibility_count: 23
+    unresolved_gap_count: 7
+    blueprint_uid: V218-REPLAY-BP-CORE-01-PAGE-BASE
+    blueprint_hash: 6c76ff5da65b6b000d493b74c06f6900ee53016801a73d966bd8b9569e21cd39
+    git_blob: 0c067fb8be186a899b42115a82d71312b4014502
+  ASSET-01:
+    artifact_count: 25
+    responsibility_count: 25
+    unresolved_gap_count: 6
+    blueprint_uid: V218-REPLAY-BP-ASSET-01-PAGE-BASE
+    blueprint_hash: ea78941da24ddedda2b0e73f0027261b0b4ceb44940e004c9997b45ca8f04376
+    git_blob: 52bb27bf7eb423ddb13bcac5bd34edbcb369de3a
+external_authority_preservation:
+  source_gap_count: 8
+  core_01_carried_gap_count: 7
+  asset_01_carried_gap_count: 6
+  identity_drift: 0
+  resolution_performed: false
+  ai_autofill_used: false
+  inference_used: false
+classification_gate_prerequisite:
+  run_id: 34731817807
+  result: SUCCESS
+pre_page_replay_verification:
+  run_id: 34734265713
+  result: SUCCESS
+  governance_overlay: v2.1.8
+final_replay_verification:
+  run_id: 34734528373
+  result: SUCCESS_6_OF_6
+content_audit_ref: 00_SOURCE_INTAKE/evidence/V218_PAGE_REPLAY_CONTENT_AUDIT.yaml
+old_page_blueprint_bytes_reuse: false

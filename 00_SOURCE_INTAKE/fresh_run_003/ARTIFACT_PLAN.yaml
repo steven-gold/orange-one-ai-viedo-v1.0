@@ -1,1 +1,34 @@
-{"schema_version":1,"run_uid":"FRESH-RUN-003","current_step":"PAGE_BASE_BLUEPRINT_COMPLETED_PENDING_CI","current_artifacts":["RAW_SOURCE_REFERENCE_MANIFEST","RAW_SOURCE_CAPTURE_STATE","SOURCE_STRUCTURE_MANIFEST","SEMANTIC_GRANULARITY_REPLAY_EVIDENCE","SEMANTIC_GRANULARITY_REFINEMENT_EVIDENCE","SOURCE_SEGMENT_MAP","SOURCE_SEGMENT_MAPPING_EVIDENCE","SOURCE_CONTEXT_MANIFEST","CONTENT_SUPERSESSION_CONFLICT_LEDGER","SOURCE_DEPENDENCY_MAP","SOURCE_FACT_MATERIALIZATION_EVIDENCE","CONFLICT_DECISION_EVIDENCE","CLASSIFIED_ARTIFACT_SET","RESPONSIBILITY_CLASSIFICATION_EVIDENCE","PAGE_BASE_BLUEPRINT"],"classification_materialization":{"artifact_count":52,"page_artifacts":48,"visual_artifacts":4,"unresolved_authority_gaps_preserved":8},"page_base_blueprint_materialization":{"blueprint_count":2,"page_input_artifacts":48,"visual_input_artifacts":0,"direct_raw_source_inputs":0,"unresolved_external_authority_refs_preserved":true,"governance_overlay":"v2.1.8","replay_regenerated":true},"next_allowed_artifacts_after_gate_pass":["VISUAL_BASE_BLUEPRINT"],"forbidden_until_page_blueprint_gate":["BLUEPRINT_BINDING_MANIFEST"],"forbidden_in_stage_01":["WEBSITE_CONSTRUCTION","DEPLOYMENT"],"status":"PAGE_BASE_BLUEPRINT_GATE_PENDING_CI"}
+schema_version: 1
+run_uid: FRESH-RUN-003
+current_step: PAGE_BASE_BLUEPRINT_COMPLETED_CI_PASS_CONTENT_AUDITED
+current_artifacts:
+- RAW_SOURCE_REFERENCE_MANIFEST
+- RAW_SOURCE_CAPTURE_STATE
+- SOURCE_STRUCTURE_MANIFEST
+- SOURCE_SEGMENT_MAP
+- SOURCE_CONTEXT_MANIFEST
+- CONTENT_SUPERSESSION_CONFLICT_LEDGER
+- SOURCE_DEPENDENCY_MAP
+- CLASSIFIED_ARTIFACT_SET
+- RESPONSIBILITY_CLASSIFICATION_EVIDENCE
+- PAGE_BASE_BLUEPRINT
+- PAGE_BASE_BLUEPRINT_EVIDENCE
+- V218_PAGE_REPLAY_CONTENT_AUDIT
+classification_materialization:
+  artifact_count: 52
+  page_artifacts: 48
+  visual_artifacts: 4
+  unresolved_authority_gaps_preserved: 8
+page_base_blueprint_materialization:
+  blueprint_count: 2
+  page_input_artifacts: 48
+  visual_input_artifacts: 0
+  direct_raw_source_inputs: 0
+  unresolved_external_authority_refs_preserved: true
+  governance_overlay: v2.1.8
+  replay_regenerated: true
+  content_audit: VERIFIED
+next_allowed_artifacts_after_gate_pass: [VISUAL_BASE_BLUEPRINT]
+forbidden_until_visual_blueprint_gate: [BLUEPRINT_BINDING_MANIFEST]
+forbidden_in_stage_01: [WEBSITE_CONSTRUCTION, DEPLOYMENT]
+status: PAGE_BASE_BLUEPRINT_CLOSED_CI_PASS_CONTENT_AUDITED
