@@ -1,5 +1,5 @@
-schema_version: 10
-baseline_uid: REBUILD-BRANCH-v2.1.10-CLOSURE-CONTINUITY
+schema_version: 11
+baseline_uid: REBUILD-BRANCH-v2.1.10-BLUEPRINT-BINDING
 branch_name: rebuild-v2.1.1
 governance_test:
   version: v2.1.10
@@ -10,14 +10,13 @@ workspace_progress:
   responsibility_classification: 52/52
   page_base_blueprint: 2/2
   visual_base_blueprint: 2/2_CI_PASS
-  blueprint_binding_started: false
-predecessor_terminal_receipt:
-  head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
-  run_id: 34739267938
-  result: 8/8_SUCCESS
-current_governance_receipt:
+  blueprint_binding: 2/2_MATERIALIZED_PENDING_CI
+predecessor_terminal_receipts:
+  visual: {head_sha: e653fbcf39a18775790c6403439b076c9ed3f534, run_id: 34739267938, result: 8/8_SUCCESS}
+  v210: {head_sha: 91f4271b5145f5646be07da32b5624fad7528034, run_id: 34741356025, result: 9/9_SUCCESS}
+current_binding_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
-next_allowed: BLUEPRINT_BINDING
-status: V2_1_10_CURRENT_PENDING_EXTERNAL_CI_RECEIPT
+next_allowed: STAGE1_VALIDATION
+status: V2_1_10_BINDING_PENDING_EXTERNAL_CI_RECEIPT
