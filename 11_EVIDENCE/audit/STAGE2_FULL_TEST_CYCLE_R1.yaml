@@ -1,0 +1,84 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-STAGE2-FULL-TEST-CYCLE-V212-R1
+artifact_type: STAGE2_FULL_TEST_CYCLE
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+current_projection_revision: R4
+status: TEST_CYCLE_COMPLETE_PRODUCT_GAPS_REMAIN_BLOCKING
+scope:
+  workflow: Governance v2.1.12 Stage-02 Functional Chain Preflight Gate
+  workflow_path: .github/workflows/rebuild-governance-gate.yml
+  rule: test_first_record_all_findings_fix_permitted_bugs_then_retest_from_stage_start
+  current_projection_mutation_allowed: false
+initial_test_receipt:
+  run_number: 209
+  run_id: 34783557535
+  exact_head_sha: ab37c3a0cb88e630d7877a8ec2af2b24db8665aa
+  status: completed
+  conclusion: failure
+  job_total: 44
+findings:
+  test_or_validator_bugs:
+  - bug_uid: STAGE2-TEST-BUG-001
+    class: CI_VALIDATOR_SHALLOW_CHECKOUT_ASSUMPTION
+    affected_job: current-stage2-architecture-unresolved-evidence-gate
+    affected_job_id: 103794818355
+    symptom: receipt commit missing locally under actions/checkout fetch-depth 1
+    product_truth_impacted: false
+    current_gap_counts_impacted: false
+    root_cause: validator incorrectly required an older receipt commit object to exist in the shallow local git object database
+    correction_status: FIXED
+    correction_commit: 397b5d62e0330fd74de84c1d4a9bfd489e48c29e
+    corrected_validator: governance/ci/validate_current_stage2_architecture_unresolved_evidence.py
+    correction: removed shallow-local-object ancestry assumption while preserving pinned receipt identity and full current re-execution
+  unresolved_product_or_authority_gaps:
+    functional_gap_total: 167
+    architecture_gap_total: 133
+    architecture_gap_categories:
+      STATE_TRANSITION_LEDGER_FIELD_MISSING: 50
+      FAILURE_STATE_ERROR_BINDING_MISSING: 44
+      POST_ACTION_VALIDATION_NODE_MISSING: 18
+      AUDIT_EVENT_NODE_MISSING: 13
+      SUCCESS_NEXT_STATE_BINDING_MISSING: 7
+      ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
+    input_source_gap_total: 34
+    input_source_gap_category: PAYLOAD_INPUT_CONTRACT_MISSING
+    functional_authority_gap_total: 0
+    async_provider_unresolved_lifecycle_binding_total: 14
+    open_blocker_count: 3
+    classification: TRUE_BLOCKING_GAPS_NOT_TEST_HARNESS_FAILURES
+    ai_guess_or_default_substitution: FORBIDDEN
+    authorized_automatic_gap_removals: 0
+retest_receipt:
+  run_number: 210
+  run_id: 34783656176
+  exact_head_sha: 397b5d62e0330fd74de84c1d4a9bfd489e48c29e
+  status: completed
+  conclusion: success
+  job_total: 44
+  completed_success_jobs: 44
+  architecture_consolidation_artifact:
+    artifact_id: 10325034147
+    artifact_name: stage2-architecture-unresolved-evidence
+    digest: sha256:881793301072f8d27ca6f99e5eeef0fbe25a10ae414c8546d3b54ec8b4109789
+    nested_validator_count: 11
+    nested_validators_all_passed: true
+    architecture_authorized_removals: 0
+    architecture_unresolved_after_full_audit: 133
+test_cycle_decision:
+  test_infrastructure_bug_count_found: 1
+  test_infrastructure_bug_count_fixed: 1
+  remaining_test_infrastructure_bug_count_after_retest: 0
+  product_or_authority_gap_count_mutated_by_test_cycle: 0
+  current_projection_revision_changed: false
+  r5_successor_required_by_this_test_cycle: false
+  stage2_status: BLOCKED
+  website_construction_allowed: false
+  deployment_allowed: false
+continuity_guards:
+  current_r4_bytes_must_not_be_rewritten_for_evidence_only_change: true
+  blocker_counts_must_not_be_reduced_without_exact_resolution: true
+  predecessor_receipts_must_remain_resolvable: true
+  destructive_rewrite_forbidden: true
+  same_commit_terminal_receipt_self_write: FORBIDDEN
