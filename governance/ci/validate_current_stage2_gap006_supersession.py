@@ -57,8 +57,9 @@ if any(x.get('current_status')!='OPEN_BLOCKING' or x.get('resolved_evidence') is
 s=B.get('summary') or {}
 expected={'blocker_count':3,'open_blocker_count':3,'resolved_predecessor_blocker_count':1,'blocked_functional_gap_total':167,'functional_gap_blocker_count':2,'required_output_blocker_count':1,'input_contract_gap_count':34,'architecture_contract_gap_count':133,'functional_authority_gap_count':0,'async_provider_unresolved_lifecycle_binding_count':24,'stage2_external_authority_gap_uids_affecting_open_blockers':['GAP-005','GAP-008'],'functional_completion':False,'stage2_exit_gate':'BLOCKED','website_construction_allowed':False,'deployment_allowed':False}
 if s!=expected: die('R3 blocker summary drift')
-gs=G.get('summary') or {}
-if gs.get('total')!=167 or gs.get('classes')!={'ARCHITECTURE_GAP':133,'INPUT_SOURCE_GAP':34,'AUTHORITY_GAP':0}: die('R4 ledger current candidate summary drift')
+gs=G.get('summary') or {}; gc=gs.get('classes') or {}
+allowed_class_keys={'ARCHITECTURE_GAP','INPUT_SOURCE_GAP','AUTHORITY_GAP'}
+if gs.get('total')!=167 or gc.get('ARCHITECTURE_GAP')!=133 or gc.get('INPUT_SOURCE_GAP')!=34 or gc.get('AUTHORITY_GAP',0)!=0 or (set(gc)-allowed_class_keys): die('R4 ledger current candidate summary drift')
 print('PASS: GAP-006 exact Authority resolution is preserved as explicit successor evidence; predecessor 171/R1/R2 artifacts remain immutable')
 print('PASS: reviewed functional-gap universe is 167 = 133 architecture + 34 input + 0 functional Authority gaps')
 print('PASS: R3 Blocker Ledger has exactly 3 open blockers; GAP-006 predecessor blocker is explicitly superseded by Authority evidence')
