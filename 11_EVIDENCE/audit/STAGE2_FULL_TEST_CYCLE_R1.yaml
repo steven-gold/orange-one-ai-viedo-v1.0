@@ -1,4 +1,4 @@
-schema_version: 3
+schema_version: 4
 artifact_uid: FRESH-RUN-003-STAGE2-FULL-TEST-CYCLE-V212-R1
 artifact_type: STAGE2_TEST_DISCOVERY_FIX_AND_POLICY_PROMOTION_EVIDENCE
 governance_overlay: v2.1.12
@@ -24,6 +24,7 @@ findings:
     class: CI_VALIDATOR_SHALLOW_CHECKOUT_ASSUMPTION
     affected_job: current-stage2-architecture-unresolved-evidence-gate
     affected_job_id: 103794818355
+    source_failure_run: 34783557535
     symptom: receipt commit missing locally under actions/checkout fetch-depth 1
     product_truth_impacted: false
     current_gap_counts_impacted: false
@@ -33,6 +34,21 @@ findings:
     corrected_validator: governance/ci/validate_current_stage2_architecture_unresolved_evidence.py
     correction: removed shallow-local-object ancestry assumption while preserving pinned receipt identity and full current re-execution
     promoted_rule_uid: STAGE-TEST-RULE-SHALLOW-CHECKOUT-001
+  - bug_uid: STAGE2-TEST-BUG-002
+    class: GOVERNANCE_EVIDENCE_LIFECYCLE_STATE_HARDCODE
+    affected_job: current-stage-test-correction-promotion-policy-gate
+    affected_job_id: 103797862524
+    source_failure_run: 34784673972
+    symptom: legal forward evidence state POLICY_PROMOTION_COMPLETE_FINAL_CROSS_STAGE_RETEST_NOT_EXECUTED was rejected because validator hardcoded the earlier INTERMEDIATE state as the only valid state
+    product_truth_impacted: false
+    current_gap_counts_impacted: false
+    root_cause: governance validator modeled lifecycle evidence as a single fixed value instead of a monotonic legal state machine
+    correction_status: FIXED_VERIFIED_AND_PROMOTED_TO_CURRENT_OPERATIONAL_POLICY
+    correction_commit: fc94b8d972b6af53462c36061e6993ffb36ccbcb
+    corrected_validator: governance/ci/validate_stage_test_correction_promotion_policy.py
+    correction: implemented explicit legal lifecycle states with state-specific receipt invariants and rejection of impossible combinations
+    verification_runs: [34784783865, 34784783872]
+    promoted_rule_uid: STAGE-TEST-RULE-EVIDENCE-LIFECYCLE-STATE-002
   unresolved_product_or_authority_gaps:
     functional_gap_total: 167
     architecture_gap_total: 133
@@ -66,6 +82,20 @@ intermediate_fix_verification_receipts:
   conclusion: success
   job_total: 44
   purpose: verify_evidence_record_did_not_pollute_current_stage2
+- run_number: 218
+  run_id: 34784783872
+  exact_head_sha: fc94b8d972b6af53462c36061e6993ffb36ccbcb
+  status: completed
+  conclusion: success
+  job_total: 44
+  purpose: verify_lifecycle_state_machine_fix_did_not_break_stage2_main_governance
+- workflow: Governance v2.1.12 Stage Test Correction Promotion Policy Gate
+  workflow_run_number: 3
+  run_id: 34784783865
+  exact_head_sha: fc94b8d972b6af53462c36061e6993ffb36ccbcb
+  status: completed
+  conclusion: success
+  purpose: verify_lifecycle_state_machine_fix_before_rule_002_policy_promotion
 architecture_consolidation_artifact:
   artifact_id: 10325034147
   artifact_name: stage2-architecture-unresolved-evidence
@@ -77,38 +107,42 @@ architecture_consolidation_artifact:
 policy_promotion:
   status: COMPLETE_AND_ENFORCED
   policy_ref: governance/STAGE_TEST_CORRECTION_PROMOTION_POLICY_V1.yaml
-  policy_commit: b6a99d66c0f638f01978905c8a1919ad405c264d
+  initial_policy_commit: b6a99d66c0f638f01978905c8a1919ad405c264d
+  lifecycle_rule_policy_commit: e8288bcc69e8ff5f60bf6a46fb2e5b7085ed1a1a
   validator_ref: governance/ci/validate_stage_test_correction_promotion_policy.py
-  validator_commit: b799bf95caf060755be5c63fc763321d86dd8a6c
+  initial_validator_commit: b799bf95caf060755be5c63fc763321d86dd8a6c
+  lifecycle_state_machine_fix_commit: fc94b8d972b6af53462c36061e6993ffb36ccbcb
   enforcement_workflow_ref: .github/workflows/stage-test-correction-promotion-policy.yml
   enforcement_commit: 818e375c38bccc732b46c019b51e719560c4a471
   same_sha_stage2_main_regression:
-    run_number: 216
-    run_id: 34784586386
-    exact_head_sha: 818e375c38bccc732b46c019b51e719560c4a471
+    run_number: 219
+    run_id: 34784834182
+    exact_head_sha: e8288bcc69e8ff5f60bf6a46fb2e5b7085ed1a1a
     status: completed
     conclusion: success
     job_total: 44
     completed_success_jobs: 44
   policy_gate_receipt:
-    workflow_run_number: 1
-    run_id: 34784586407
-    exact_head_sha: 818e375c38bccc732b46c019b51e719560c4a471
+    workflow_run_number: 4
+    run_id: 34784834177
+    exact_head_sha: e8288bcc69e8ff5f60bf6a46fb2e5b7085ed1a1a
     job_name: current-stage-test-correction-promotion-policy-gate
-    job_id: 103797625757
+    job_id: 103798287576
     status: completed
     conclusion: success
-    artifact_id: 10325683763
+    artifact_id: 10325968020
     artifact_name: stage-test-correction-promotion-policy
-    artifact_digest: sha256:15ae9d73b23a5a96cb352d1e8e0868cbaa7a1aa3061f3b27a0f395cd24c377f6
+    artifact_digest: sha256:4ad1d6555e9be3ba4c5d39ca50042e37052514def1a981e96fa3be7e2120df01
   artifact_assertions:
     policy_status: CURRENT_OPERATIONAL
-    verified_rule_promotion_count: 1
+    verified_rule_promotion_count: 2
     stage2_completeness_requirement_count: 8
     known_functional_gap_total_preserved: 167
     known_async_unresolved_preserved: 14
     sealed_v212_package_unchanged: true
     current_r4_projection_unchanged: true
+    evidence_lifecycle_state: POLICY_PROMOTION_COMPLETE_FINAL_CROSS_STAGE_RETEST_NOT_EXECUTED
+    evidence_lifecycle_state_machine_valid: true
     final_cross_stage_retest_required: true
     final_cross_stage_retest_executed: false
     retest_start_boundary: STAGE-01
@@ -116,11 +150,16 @@ policy_promotion:
 required_policy_promotion:
   status: COMPLETE
   target_policy: governance/STAGE_TEST_CORRECTION_PROMOTION_POLICY_V1.yaml
+  promoted_rule_count: 2
+  promoted_rules:
+  - STAGE-TEST-RULE-SHALLOW-CHECKOUT-001
+  - STAGE-TEST-RULE-EVIDENCE-LIFECYCLE-STATE-002
   required_rules:
   - complete_current_stage_discovery_before_final_retest
   - separate_test_harness_bugs_from_true_product_or_authority_gaps
   - promote_verified_corrections_into_governance_rules_before_final_retest
   - never_treat_shallow_checkout_object_absence_as_repository_absence
+  - lifecycle_evidence_validator_must_support_legal_forward_state_transitions
   - final_retest_must_start_from_immediately_previous_stage_boundary
   - previous_stage_closure_and_stage_transition_must_pass_before_current_stage_acceptance
 final_cross_stage_retest:
@@ -133,15 +172,15 @@ final_cross_stage_retest:
   status: NOT_EXECUTED_AFTER_POLICY_PROMOTION
   terminal_receipt: null
 test_cycle_decision:
-  test_infrastructure_bug_count_found: 1
-  test_infrastructure_bug_count_fixed: 1
-  verified_fix_promoted_to_policy_count: 1
+  test_infrastructure_bug_count_found: 2
+  test_infrastructure_bug_count_fixed: 2
+  verified_fix_promoted_to_policy_count: 2
   remaining_known_test_infrastructure_bug_count_after_intermediate_verification: 0
   product_or_authority_gap_count_mutated_by_test_cycle: 0
   current_projection_revision_changed: false
   r5_successor_required_by_this_evidence_correction: false
   stage_test_cycle_complete: false
-  reason: policy promotion is complete but the required sequential cross-stage retest from Stage-01 has not yet been executed
+  reason: both verified fixes are promoted and enforced, but the required sequential cross-stage retest from Stage-01 has not yet been executed
   stage2_status: BLOCKED
   website_construction_allowed: false
   deployment_allowed: false
