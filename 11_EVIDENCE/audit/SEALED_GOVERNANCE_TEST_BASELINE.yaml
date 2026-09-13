@@ -1,4 +1,4 @@
-schema_version: 10
+schema_version: 11
 role: CURRENT_SEALED_GOVERNANCE_TEST_BASELINE
 sealed_governance:
   version: v2.1.11
@@ -14,12 +14,15 @@ verified_test_summary:
   reference_semantic: 28/28_PASS
   reference_fuzz: 46/46_BLOCKED_0_ESCAPED
 execution_checkpoint:
-  state: BLUEPRINT_BINDING_COMPLETED
+  state: STAGE1_VALIDATION_COMPLETED_PENDING_CI
   page_base_blueprint: 2/2
   visual_base_blueprint: 2/2
   blueprint_binding: 2/2_CI_PASS
-  stage1_validation_started: false
-predecessor_terminal_receipts:
+  stage1_validation_started: true
+  stage1_validation_completed: true
+  stage1_exit_gate: PENDING_EXTERNAL_CI
+  stage2_started: false
+terminal_receipts:
   visual_closure:
     provider: GITHUB_ACTIONS
     repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
@@ -41,16 +44,25 @@ predecessor_terminal_receipts:
     run_id: 34741952438
     job_denominator: 10/10
     conclusion: SUCCESS
-current_receipt:
+  v211_governance:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 74cd16e28e98a918c3f682d3b29ea7e362a19cc5
+    run_id: 34754709362
+    job_denominator: 11/11
+    conclusion: SUCCESS
+stage1_closure:
+  source_enumeration_evidence: PRESENT
+  conflict_decision_evidence: PRESENT
+  clean_scan: MATERIALIZED
+  run_close: MATERIALIZED
+  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED_PENDING_EXTERNAL_CI
+  dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+  reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+current_stage1_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
-  canonical_fields:
-  - provider
-  - repository_or_project
-  - head_sha
-  - run_id
-  - job_denominator
-  - conclusion
+  canonical_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
 human_formal_review: PENDING
-status: SEALED_V2_1_11_PREFORMAL_CONSTITUENT_VERIFIED_PENDING_EXTERNAL_CI_RECEIPT
+status: SEALED_V2_1_11_STAGE1_VALIDATION_PENDING_EXTERNAL_CI_RECEIPT
