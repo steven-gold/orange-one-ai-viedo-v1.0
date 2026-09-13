@@ -2,14 +2,14 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 branch: rebuild-v2.1.1
 phase: STAGE_01_SOURCE_INTAKE
-status: STAGE1_VALIDATION_MATERIALIZED_PENDING_CI
+status: STAGE1_VALIDATION_CI_PASS_READY_FOR_STAGE2
 governance:
   sealed_runtime_version: v2.1.6
-  current_candidate_overlay: v2.1.11
-  current_package_sha256: 651d3027967a65125787e659765ed3cc5588cbba3e38faa55b56942af46b3e18
-  current_external_trust_root_sha256: 6d29a43395862b39f6d07ca07872d041892a603fc15e9950a5a618ce0fd58852
-  current_semantic_authority_content_hash: 6de8b03edf0197baa08577bcd46106beb70b2bcff0652078a43c1113fcbd63ff
-  state: PREFORMAL_CONSTITUENT_VERIFIED_GITHUB_11_OF_11
+  current_candidate_overlay: v2.1.12
+  current_package_sha256: 2d6602b20983a9764c2f1496f36ab20a2f0ebcd73826492c27ba67159f5ef3df
+  current_external_trust_root_sha256: 4c013cfc1a91142a8b4ce44830ef467c5c960f56b136a75ff670729a523f71e3
+  current_semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
+  state: PREFORMAL_VERIFIED_LOCAL_GITHUB_CI_PENDING
   normative_edit_allowed: false
 target_pages:
 - CORE-01
@@ -25,9 +25,10 @@ execution_policy:
   page_blueprint_materialization: COMPLETED_2_PAGE_BLUEPRINTS_V218_REPLAY_CI_PASS_CONTENT_AUDITED
   visual_blueprint_materialization: COMPLETED_2_VISUAL_BLUEPRINTS_V219_CI_PASS
   blueprint_binding: COMPLETED_2_BINDINGS_EXTERNAL_CI_10_OF_10
-  stage1_validation: MATERIALIZED_CLEAN_SCAN_RUN_CLOSE_PENDING_CI
-  website_code_write: FORBIDDEN
-  deployment: FORBIDDEN
+  stage1_validation: COMPLETED_CLEAN_SCAN_RUN_CLOSE_EXTERNAL_CI_12_OF_12
+  stage2_entry: ALLOWED_ONLY_BY_ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  website_code_write: FORBIDDEN_UNTIL_LIFECYCLE_STAGE_ALLOWS
+  deployment: FORBIDDEN_UNTIL_LIFECYCLE_STAGE_ALLOWS
 blueprint_binding_contract:
   binding_count: 2
   mode: NON_OWNING_REFERENCE_ONLY
@@ -45,15 +46,24 @@ blueprint_binding_contract:
 stage1_validation_contract:
   source_enumeration_evidence_required: true
   conflict_decision_evidence_required: true
+  stage1_validation_evidence_required: true
+  required_evidence_parse_and_required_field_validation: REQUIRED
   semantic_closure_zeroes_required: true
   clean_scan_required: true
   run_close_required: true
   exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  exit_gate_result: SUCCESS_EXTERNAL_CI_12_OF_12
   next_stage_uid: STAGE-02
   stage2_started: false
   dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
   reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
   stage1_dependency_authority: SOURCE_DEPENDENCY_MAP
+successor_state_contract:
+  contract_uid: V212-SUCCESSOR-STATE-MONOTONIC-EVIDENCE-PARSE
+  predecessor_current_state_exact_terminal_lock: FORBIDDEN
+  successor_started_false_permanent_condition: FORBIDDEN
+  registered_legal_successor: ALLOW_IF_PREDECESSOR_INVARIANTS_HOLD
+  phase_order_owner: PHASE_BOUNDARY_GATE
 terminal_receipts:
   visual_closure:
     provider: GITHUB_ACTIONS
@@ -83,16 +93,16 @@ terminal_receipts:
     run_id: 34754709362
     job_denominator: 11/11
     conclusion: SUCCESS
-current_stage1_receipt:
+  stage1_closure:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28
+    run_id: 34755361339
+    job_denominator: 12/12
+    conclusion: SUCCESS
+current_v212_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
   same_commit_self_write: FORBIDDEN
-  canonical_fields:
-  - provider
-  - repository_or_project
-  - head_sha
-  - run_id
-  - job_denominator
-  - conclusion
-next_phase_entry_condition: STAGE2_ONLY_AFTER_STAGE1_CLOSURE_GATE_PASS
+next_phase_entry_condition: STAGE2_PAGE_FUNCTIONAL_CONTRACT_ALLOWED_AFTER_STAGE1_12_OF_12
