@@ -1,0 +1,55 @@
+schema_version: 1
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+artifact_uid: FRESH-RUN-003-ASYNC-PROVIDER-CONTRACT-V212-R1
+artifact_type: ASYNC_PROVIDER_CONTRACT
+operation_uid: ASYNC_PROVIDER_CONTRACT_COMPILE
+status: OPEN_BLOCKING_AUTHORITY_AND_LIFECYCLE_GAPS
+normative_gate_ref: WEB-GOV-01-S061
+required_lifecycle_fields: &id001
+- request_identity
+- input_fingerprint
+- idempotency
+- queued
+- running
+- succeeded
+- failed
+- cancel
+- retry_eligibility
+- callback_result_provenance
+- output_persistence
+- audit_correlation
+pages:
+  CORE-01:
+    source_page_blueprint_git_blob: 0c067fb8be186a899b42115a82d71312b4014502
+    provider_authority_refs:
+    - gap_uid: GAP-005
+      authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+    - gap_uid: GAP-008
+      authority_ref: ACPOS shared AI Router/Capability Assignment
+    binding_status: UNRESOLVED_EXTERNAL_AUTHORITY
+    resolved_lifecycle_fields: {}
+    unresolved_lifecycle_fields: *id001
+  ASSET-01:
+    source_page_blueprint_git_blob: 52bb27bf7eb423ddb13bcac5bd34edbcb369de3a
+    provider_adapter_authority:
+      contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3#provider_adapter
+      profile_owner: admin:AIAPI-01#provider_model_profiles
+      department_provider_registry: FORBIDDEN
+      router_owner: ACPOS AI Execution / current AI API Router
+      raw_source_git_blob: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    provider_authority_refs:
+    - gap_uid: GAP-005
+      authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+    binding_status: PARTIAL_EXACT_PROVIDER_BINDING_LIFECYCLE_FIELDS_UNRESOLVED
+    resolved_lifecycle_fields: {}
+    unresolved_lifecycle_fields: *id001
+policy:
+  optimistic_ui_completion_as_provider_completion: FORBIDDEN
+  duplicate_provider_adapter_creation: FORBIDDEN
+  ai_default_lifecycle_values: FORBIDDEN
+  raw_source_mutation_allowed: false
+functional_completion_claim: false
+website_construction_allowed: false
+deployment_allowed: false

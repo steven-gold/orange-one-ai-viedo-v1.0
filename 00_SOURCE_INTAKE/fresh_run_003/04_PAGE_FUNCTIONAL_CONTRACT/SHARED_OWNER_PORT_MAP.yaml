@@ -1,0 +1,47 @@
+schema_version: 1
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+artifact_uid: FRESH-RUN-003-SHARED-OWNER-PORT-MAP-V212-R1
+artifact_type: SHARED_OWNER_PORT_MAP
+operation_uid: SHARED_OWNER_PORT_RESOLVE
+status: OPEN_BLOCKING_AUTHORITY_GAP
+authority_gap:
+  gap_uid: GAP-006
+  authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  source_page_uid: ASSET-01
+  consumer_count: 4
+  resolution_status: EXPLICITLY_UNRESOLVED_PRESERVED
+consumers:
+- action_uid: ASSET-01-ACT-CORRECTION-GENERATE
+  shared_owner_authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  resolved_owner_uid: null
+  resolved_operation_uid: null
+  resolved_port_uid: null
+  status: UNRESOLVED_AUTHORITY_GAP
+- action_uid: ASSET-01-ACT-CORRECTION-APPROVE
+  shared_owner_authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  resolved_owner_uid: null
+  resolved_operation_uid: null
+  resolved_port_uid: null
+  status: UNRESOLVED_AUTHORITY_GAP
+- action_uid: ASSET-01-ACT-RESTORE-AS-NEW
+  shared_owner_authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  resolved_owner_uid: null
+  resolved_operation_uid: null
+  resolved_port_uid: null
+  status: UNRESOLVED_AUTHORITY_GAP
+- action_uid: ASSET-01-ACT-VERSION-LOCK
+  shared_owner_authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  resolved_owner_uid: null
+  resolved_operation_uid: null
+  resolved_port_uid: null
+  status: UNRESOLVED_AUTHORITY_GAP
+policy:
+  exact_owner_operation_port_reference_required: true
+  duplicate_page_local_runtime_api_repository_or_provider: FORBIDDEN
+  ai_guess: FORBIDDEN
+  raw_source_mutation_allowed: false
+functional_completion_claim: false
+website_construction_allowed: false
+deployment_allowed: false
