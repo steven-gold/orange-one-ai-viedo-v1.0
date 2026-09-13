@@ -1,0 +1,117 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-STAGE2-STATE-TRANSITION-AUTHORITY-AUDIT-V212-R1
+artifact_type: STATE_TRANSITION_AUTHORITY_AUDIT
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+operation_uid: FUNCTIONAL_CHAIN_COMPILE
+status: AUDITED_NO_EXACT_TRANSITION_FIELD_BINDING_FOUND
+source_transition_ledger:
+  ref: 04_PAGE_FUNCTIONAL_CONTRACT/STATE_TRANSITION_LEDGER.yaml
+  git_blob: f08d7c637a51e29dab01dc8378555d6bc4c9e635
+  transition_count: 10
+  required_fields_per_transition: 5
+  predecessor_unresolved_required_field_total: 50
+required_fields:
+  - mutation_owner
+  - failure_state
+  - recovery
+  - audit_event_uid
+  - illegal_transition_tests
+bounded_authority_sources:
+  - role: CURRENT_AUTHORITY_MANIFEST
+    ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+    git_blob: 465329b6fb19b8e44c3083a9f280015ee95cc55c
+  - role: CORE_PAGE_AUTHORITY
+    ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ASYNC_REMAINING/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    git_blob: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+  - role: ASSET_PAGE_AUTHORITY
+    ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ASYNC_REMAINING/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    git_blob: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+  - role: SYSTEM_AUTHORITY
+    ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+    git_blob: b09b7ca50313172ea021d9da0c8d57f2942f7b19
+  - role: AIAPI_AUTHORITY
+    ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+    git_blob: dd9f05e295af57cc833e90d1a12030c8198580c6
+  - role: OPERATION_REGISTRY
+    ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml
+    git_blob: 7d234cc2f2f831b82f2007403c71d4008b46a012
+  - role: SHARED_RUNTIME_OPERATION_AUTHORITY
+    ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-006/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml
+    git_blob: 12dbdf59a60df5b1cb3d3b18666209c05bb0c0a3
+  - role: ASYNC_QUEUE_RUNTIME_AUTHORITY
+    ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ASYNC/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+    git_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+  - role: PROVIDER_ADAPTER_AUTHORITY
+    ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-005/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+    git_blob: 12ef6d233e09f84571dd5d694ae8e3789ae70502
+acceptance_rule:
+  exact_binding_required: true
+  accepted_only_when_same_mapping_node_contains:
+    - exact transition_uid
+    - exact required field with non-null value
+  semantic_join_by_gate_action_event_error_or_owner: FORBIDDEN
+  error_level_recovery_may_fill_transition_recovery: false
+  generic_runtime_owner_may_fill_transition_mutation_owner: false
+  generic_audit_or_correlation_may_fill_transition_audit_event_uid: false
+  generated_illegal_transition_test_may_fill_authority: false
+  cross_source_union_without_explicit_transition_binding: false
+audit_result:
+  exact_transition_field_bindings_found: 0
+  exact_transition_field_bindings_authorized_for_removal: 0
+  unresolved_required_field_total_after_audit: 50
+  current_architecture_gap_total_after_audit: 133
+  current_functional_gap_total_after_audit: 167
+  source_scope_is_bounded_not_repository_exhaustive: true
+transitions:
+  - transition_uid: CORE-01-STTR-01
+    page_uid: CORE-01
+    resolved_fields: []
+    unresolved_fields: [mutation_owner, failure_state, recovery, audit_event_uid, illegal_transition_tests]
+  - transition_uid: CORE-01-STTR-02
+    page_uid: CORE-01
+    resolved_fields: []
+    unresolved_fields: [mutation_owner, failure_state, recovery, audit_event_uid, illegal_transition_tests]
+  - transition_uid: CORE-01-STTR-03
+    page_uid: CORE-01
+    resolved_fields: []
+    unresolved_fields: [mutation_owner, failure_state, recovery, audit_event_uid, illegal_transition_tests]
+  - transition_uid: CORE-01-STTR-04
+    page_uid: CORE-01
+    resolved_fields: []
+    unresolved_fields: [mutation_owner, failure_state, recovery, audit_event_uid, illegal_transition_tests]
+  - transition_uid: CORE-01-STTR-05
+    page_uid: CORE-01
+    resolved_fields: []
+    unresolved_fields: [mutation_owner, failure_state, recovery, audit_event_uid, illegal_transition_tests]
+  - transition_uid: ASSET-01-STTR-01
+    page_uid: ASSET-01
+    resolved_fields: []
+    unresolved_fields: [mutation_owner, failure_state, recovery, audit_event_uid, illegal_transition_tests]
+  - transition_uid: ASSET-01-STTR-02
+    page_uid: ASSET-01
+    resolved_fields: []
+    unresolved_fields: [mutation_owner, failure_state, recovery, audit_event_uid, illegal_transition_tests]
+  - transition_uid: ASSET-01-STTR-03
+    page_uid: ASSET-01
+    resolved_fields: []
+    unresolved_fields: [mutation_owner, failure_state, recovery, audit_event_uid, illegal_transition_tests]
+  - transition_uid: ASSET-01-STTR-04
+    page_uid: ASSET-01
+    resolved_fields: []
+    unresolved_fields: [mutation_owner, failure_state, recovery, audit_event_uid, illegal_transition_tests]
+  - transition_uid: ASSET-01-STTR-05
+    page_uid: ASSET-01
+    resolved_fields: []
+    unresolved_fields: [mutation_owner, failure_state, recovery, audit_event_uid, illegal_transition_tests]
+blocker_reason:
+  code: EXACT_TRANSITION_ARCHITECTURE_BINDING_MISSING
+  statement: Within the bounded materialized Authority evidence set, no mapping node binds any of the five required architecture fields directly to any of the ten exact Stage-02 transition UIDs. Similar error recovery, runtime ownership, audit, action, event, gate, or provider semantics cannot be joined by inference.
+  resolution_requirement: A future admissible Current Authority source must explicitly bind an exact transition_uid to each required field before that field can be removed from the State Transition gap set.
+  ai_guess_or_default_substitution: FORBIDDEN
+stage2_effect:
+  functional_completion: false
+  exit_gate_result: BLOCKED
+  website_construction_allowed: false
+  deployment_allowed: false
