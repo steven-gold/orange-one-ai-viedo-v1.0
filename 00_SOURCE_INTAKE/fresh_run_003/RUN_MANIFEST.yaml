@@ -2,14 +2,14 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 branch: rebuild-v2.1.1
 phase: STAGE_01_SOURCE_INTAKE
-status: BLUEPRINT_BINDING_COMPLETED_V211_GOVERNANCE_CI_PENDING
+status: STAGE1_VALIDATION_MATERIALIZED_PENDING_CI
 governance:
   sealed_runtime_version: v2.1.6
   current_candidate_overlay: v2.1.11
   current_package_sha256: 651d3027967a65125787e659765ed3cc5588cbba3e38faa55b56942af46b3e18
   current_external_trust_root_sha256: 6d29a43395862b39f6d07ca07872d041892a603fc15e9950a5a618ce0fd58852
   current_semantic_authority_content_hash: 6de8b03edf0197baa08577bcd46106beb70b2bcff0652078a43c1113fcbd63ff
-  state: PREFORMAL_CONSTITUENT_VERIFIED_GITHUB_CI_PENDING
+  state: PREFORMAL_CONSTITUENT_VERIFIED_GITHUB_11_OF_11
   normative_edit_allowed: false
 target_pages:
 - CORE-01
@@ -25,7 +25,7 @@ execution_policy:
   page_blueprint_materialization: COMPLETED_2_PAGE_BLUEPRINTS_V218_REPLAY_CI_PASS_CONTENT_AUDITED
   visual_blueprint_materialization: COMPLETED_2_VISUAL_BLUEPRINTS_V219_CI_PASS
   blueprint_binding: COMPLETED_2_BINDINGS_EXTERNAL_CI_10_OF_10
-  stage1_validation: NOT_EXECUTED
+  stage1_validation: MATERIALIZED_CLEAN_SCAN_RUN_CLOSE_PENDING_CI
   website_code_write: FORBIDDEN
   deployment: FORBIDDEN
 blueprint_binding_contract:
@@ -42,7 +42,19 @@ blueprint_binding_contract:
   - authority_ref
   - disposition
   - authority_evidence_ref
-predecessor_terminal_receipts:
+stage1_validation_contract:
+  source_enumeration_evidence_required: true
+  conflict_decision_evidence_required: true
+  semantic_closure_zeroes_required: true
+  clean_scan_required: true
+  run_close_required: true
+  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  next_stage_uid: STAGE-02
+  stage2_started: false
+  dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+  reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+  stage1_dependency_authority: SOURCE_DEPENDENCY_MAP
+terminal_receipts:
   visual_closure:
     provider: GITHUB_ACTIONS
     repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
@@ -64,7 +76,14 @@ predecessor_terminal_receipts:
     run_id: 34741952438
     job_denominator: 10/10
     conclusion: SUCCESS
-current_governance_receipt:
+  v211_governance:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 74cd16e28e98a918c3f682d3b29ea7e362a19cc5
+    run_id: 34754709362
+    job_denominator: 11/11
+    conclusion: SUCCESS
+current_stage1_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
@@ -76,4 +95,4 @@ current_governance_receipt:
   - run_id
   - job_denominator
   - conclusion
-next_phase_entry_condition: STAGE1_VALIDATION_ONLY_AFTER_BINDING_AND_V211_GOVERNANCE_GATES_PASS
+next_phase_entry_condition: STAGE2_ONLY_AFTER_STAGE1_CLOSURE_GATE_PASS
