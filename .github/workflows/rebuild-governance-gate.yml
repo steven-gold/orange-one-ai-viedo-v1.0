@@ -1,4 +1,4 @@
-name: Governance v2.1.8 CORE-ASSET Pre-Page Replay Gate
+name: Governance v2.1.8 Successor Linkage and Evidence Sync Gate
 on:
   push:
     branches: [rebuild-v2.1.1]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  v218-pre-page-checkpoint:
+  current-v218-upstream-projection-gate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -14,36 +14,19 @@ jobs:
         with: {python-version: '3.12'}
       - name: Install YAML parser
         run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify exact pre-Page replay checkpoint under v2.1.8
+      - name: Replay sealed Segment Mapping and Source Facts through isolated historical authority projection
         env: {PYTHONDONTWRITEBYTECODE: '1'}
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import yaml
-          run=Path('00_SOURCE_INTAKE/fresh_run_003')
-          s=yaml.safe_load((run/'EXECUTION_STATE.yaml').read_text())
-          r=yaml.safe_load((run/'V218_REPLAY_STATE.yaml').read_text())
-          lock=yaml.safe_load(Path('governance/current/v2.1.8/FULL_PACKAGE_LOCK.yaml').read_text())
-          assert s['governance_candidate_overlay']=='v2.1.8'
-          assert s['state']=='RESPONSIBILITY_CLASSIFICATION_COMPLETED'
-          assert s['responsibility_classification_completed'] is True
-          assert s['classification_artifact_count']==52
-          assert s['blueprint_materialization_started'] is False
-          assert s['page_base_blueprint_started'] is False
-          assert not (run/'02_BASE_BLUEPRINT').exists()
-          assert r['source_checkpoint_commit']=='90cbd4b5fee1b7aea25a0c15ca3b661bab605960'
-          assert r['old_page_blueprint_bytes_reuse']=='FORBIDDEN'
-          assert lock['source_package_sha256']=='a108845fbde176cbd20a5f9df4217c68b6512686dedc00ffc8c44e9cc2b04753'
-          print('PASS: CORE-01 / ASSET-01 restored to pre-Page Blueprint checkpoint and governed by v2.1.8')
-          PY
+        run: python governance/ci/validate_current_v218_upstream_projection.py
   current-v218-phase-successor-authority-gate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - env: {PYTHONDONTWRITEBYTECODE: '1'}
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Verify exact successor Gate chain and unresolved external Authority preservation
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v218_phase_authority.py
   current-v218-responsibility-classification-gate:
     runs-on: ubuntu-24.04
@@ -51,24 +34,41 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - env: {PYTHONDONTWRITEBYTECODE: '1'}
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate 52/52 Classification directly in current successor workspace
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v218_classification.py
-  current-v218-upstream-projection-gate:
+  current-v218-page-base-blueprint-gate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - env: {PYTHONDONTWRITEBYTECODE: '1'}
-        run: python governance/ci/validate_current_v218_upstream_projection.py
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate Page Blueprint directly and allow only legal later successors
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_v218_page_base_blueprint.py
+  current-v218-candidate-record-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Verify v2.1.8 local Pre-formal denominators, hashes, successor contract, and Evidence sync policy
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_v218_candidate_record.py
   sealed-v216-runtime:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - env: {PYTHONDONTWRITEBYTECODE: '1'}
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Verify exact sealed v2.1.6 runtime, Stage-1 33/33, and lifecycle 11/11
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_sealed_v216_runtime.py
