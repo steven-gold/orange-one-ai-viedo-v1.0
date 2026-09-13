@@ -1,25 +1,30 @@
-schema_version: 10
+schema_version: 11
 role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
 normative_authority:
-  version: v2.1.9
-  package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
-  external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
-  semantic_authority_content_hash: 531a364590e47f182f40ac3794d9b30c7ae77678423a53be787ae1cd87c70c2f
+  version: v2.1.10
+  package_sha256: a4df779f9de5c6b368c5382779e7759aa28f363da79ebd63acc8b6bc3672d205
+  external_trust_root_sha256: a13311408767651557160c8d2aa849a6c53271a65ca51ea73a462aa551afe895
+  semantic_authority_content_hash: 98c0e60aaf0ffa125def7f89fef0fdeb4198d2ebb8ea5fd89ad79af4cbc61963
 current_execution:
   run_uid: FRESH-RUN-003
   state: VISUAL_BASE_BLUEPRINT_COMPLETED
-  unresolved_authority_gap_count: 8
+  source_segment_count: 61
+  source_fact_materialization_completed: true
+  responsibility_classification_completed: true
   classification_artifact_count: 52
   page_base_blueprint_count: 2
   visual_base_blueprint_count: 2
+  unresolved_authority_gap_count: 8
   blueprint_binding_started: false
   website_construction_started: false
   deployment_started: false
-github_ci:
-  evidence_state_run_id: 34737738652
-  visual_base_blueprint_run_id: 34739072007
-  visual_gate: SUCCESS
-  visual_result: 8/8_SUCCESS
+predecessor_terminal_receipt:
+  provider: GITHUB_ACTIONS
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
+  run_id: 34739267938
+  job_denominator: 8/8
+  conclusion: SUCCESS
 next_action: BLUEPRINT_BINDING
-status: V2_1_9_VISUAL_BASE_BLUEPRINT_CLOSED_CI_PASS
+status: V2_1_10_CLOSURE_CONTINUITY_CURRENT_PENDING_EXTERNAL_CI_RECEIPT

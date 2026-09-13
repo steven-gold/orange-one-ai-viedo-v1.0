@@ -1,4 +1,4 @@
-name: Governance v2.1.9 Visual Base Blueprint Successor Gate
+name: Governance v2.1.10 Closure Continuity Gate
 on:
   push:
     branches: [rebuild-v2.1.1]
@@ -49,29 +49,36 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify immutable Page evidence remains valid under Visual successor
-        env: {PYTHONDONTWRITEBYTECODE: '1'}
+      - env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v219_page_replay_successor_audit.py
-  current-v219-evidence-state-system-logic-gate:
+  current-v219-evidence-successor-gate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify v2.1.9 evidence-state closure remains valid under legal successor
-        env: {PYTHONDONTWRITEBYTECODE: '1'}
-        run: python governance/ci/validate_current_v219_evidence_logic.py
-  current-v219-visual-base-blueprint-gate:
+      - env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_v219_evidence_logic_successor.py
+  current-v219-visual-successor-gate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Validate 2/2 Visual Base Blueprints and preserve Page predecessor
+      - env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_v219_visual_base_blueprint_successor.py
+  current-v210-closure-continuity-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Verify lifecycle-wide closure evidence continuity and synchronized current ledgers
         env: {PYTHONDONTWRITEBYTECODE: '1'}
-        run: python governance/ci/validate_current_v219_visual_base_blueprint.py
+        run: python governance/ci/validate_current_v210_closure_continuity.py
   sealed-v216-runtime:
     runs-on: ubuntu-24.04
     steps:

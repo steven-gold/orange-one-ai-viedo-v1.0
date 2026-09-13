@@ -1,0 +1,25 @@
+schema_version: 1
+record_uid: ACPOS-GOV-V210-FULL-PACKAGE-LOCK
+version: v2.1.10
+status: LOCAL_PREFORMAL_CONSTITUENT_VERIFIED_EXTERNAL_CI_RECEIPT_REQUIRED
+source_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.10_CLOSURE_EVIDENCE_CONTINUITY_LEDGER_SYNC_TERMINAL_RECEIPT_BUGFIX_PREFORMAL_VERIFIED.zip
+source_package_sha256: a4df779f9de5c6b368c5382779e7759aa28f363da79ebd63acc8b6bc3672d205
+package_regular_file_count: 63
+package_checksum_entry_count: 62
+external_trust_root_sha256: a13311408767651557160c8d2aa849a6c53271a65ca51ea73a462aa551afe895
+semantic_authority_content_hash: 98c0e60aaf0ffa125def7f89fef0fdeb4198d2ebb8ea5fd89ad79af4cbc61963
+constituent_verification_sha256: 4edb5d449a7bbb000f6233d94c54aa8db7c98d7c1c02ab7aee613bc542e0692
+verification:
+  non_matrix_definition_checks: 16/16_PASS
+  mandatory_regression_matrix: 12/12_PASS
+  closure_continuity_regression: 43/43_PASS
+  checksum_verification: 62/62_PASS
+  external_trust_root: PASS
+receipt_policy:
+  current_head_receipt: EXTERNAL_ONLY
+  same_commit_self_write: FORBIDDEN
+  materialization_and_terminal_receipt_separate: true
+human_formal_review: PENDING
+formal_test_executed: false
+formal_freeze_claimed: false
+production_release_claimed: false

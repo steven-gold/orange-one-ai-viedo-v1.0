@@ -1,15 +1,23 @@
-schema_version: 9
-baseline_uid: REBUILD-BRANCH-v2.1.9-VISUAL-CLOSED
+schema_version: 10
+baseline_uid: REBUILD-BRANCH-v2.1.10-CLOSURE-CONTINUITY
 branch_name: rebuild-v2.1.1
 governance_test:
-  version: v2.1.9
-  package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
+  version: v2.1.10
+  package_sha256: a4df779f9de5c6b368c5382779e7759aa28f363da79ebd63acc8b6bc3672d205
 workspace_progress:
+  source_segment_mapping: 61/61
+  source_fact_materialization: COMPLETED
   responsibility_classification: 52/52
   page_base_blueprint: 2/2
   visual_base_blueprint: 2/2_CI_PASS
   blueprint_binding_started: false
-github_ci:
-  visual_base_blueprint_run_id: 34739072007
+predecessor_terminal_receipt:
+  head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
+  run_id: 34739267938
   result: 8/8_SUCCESS
-status: V2_1_9_VISUAL_BLUEPRINT_BASELINE_CI_PASS
+current_governance_receipt:
+  mode: EXTERNAL_IMMUTABLE_RECEIPT
+  required: true
+  embedded_run_id: null
+next_allowed: BLUEPRINT_BINDING
+status: V2_1_10_CURRENT_PENDING_EXTERNAL_CI_RECEIPT

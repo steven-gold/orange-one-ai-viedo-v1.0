@@ -1,7 +1,7 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
 governance_version: v2.1.6
-governance_candidate_overlay: v2.1.9
+governance_candidate_overlay: v2.1.10
 state: VISUAL_BASE_BLUEPRINT_COMPLETED
 raw_source_capture_state: CAPTURE_CLOSED
 semantic_granularity_replay_validated: true
@@ -45,8 +45,11 @@ github_ci:
   page_replay_final_result: SUCCESS_6_OF_6
   page_replay_content_audit_run_id: 34734730080
   v219_evidence_state_run_id: 34737738652
-  visual_base_blueprint_run_id: 34739072007
-  visual_base_blueprint_result: SUCCESS_8_OF_8
+  visual_base_blueprint_materialization_run_id: 34739072007
+  visual_base_blueprint_materialization_result: SUCCESS_8_OF_8
+  visual_terminal_closure_run_id: 34739267938
+  visual_terminal_closure_head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
+  visual_terminal_closure_result: SUCCESS_8_OF_8
   current_classification_gate: SUCCESS
   current_page_blueprint_gate: SUCCESS
   current_visual_blueprint_gate: SUCCESS
@@ -54,11 +57,17 @@ github_ci:
   current_upstream_projection_gate: SUCCESS
   sealed_v216_runtime: SUCCESS
 replay_control:
-  governance_overlay: v2.1.9
+  governance_overlay: v2.1.10
   source_checkpoint_commit: 90cbd4b5fee1b7aea25a0c15ca3b661bab605960
   source_checkpoint_tree: 6dc3a2488b8d12e9279bf9162eafaf2c56955648
   old_page_blueprint_bytes_reuse: false
   page_content_audit: VERIFIED
+closure_evidence_continuity:
+  required: true
+  mutation_semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
+  current_ledgers_synchronized: true
+  terminal_ci_receipt_mode: EXTERNAL_IMMUTABLE_RECEIPT
+  same_commit_self_write: FORBIDDEN
 allowed_transition:
   from: VISUAL_BASE_BLUEPRINT_COMPLETED
   to: BLUEPRINT_BINDING_ACTIVE
@@ -66,4 +75,4 @@ allowed_transition:
 forbidden_transitions:
 - VISUAL_BASE_BLUEPRINT_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
 - VISUAL_BASE_BLUEPRINT_COMPLETED -> DEPLOYMENT_ACTIVE
-last_result: V219_VISUAL_BASE_BLUEPRINT_COMPLETED_CI_PASS
+last_result: V210_CONTINUITY_GOVERNANCE_LOCAL_VERIFIED_GITHUB_EXTERNAL_RECEIPT_REQUIRED

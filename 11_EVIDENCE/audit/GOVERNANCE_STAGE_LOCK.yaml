@@ -1,20 +1,23 @@
-schema_version: 8
+schema_version: 9
 current_test_authority:
-  version: v2.1.9
-  package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
-  external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
-  semantic_authority_content_hash: 531a364590e47f182f40ac3794d9b30c7ae77678423a53be787ae1cd87c70c2f
+  version: v2.1.10
+  package_sha256: a4df779f9de5c6b368c5382779e7759aa28f363da79ebd63acc8b6bc3672d205
+  external_trust_root_sha256: a13311408767651557160c8d2aa849a6c53271a65ca51ea73a462aa551afe895
+  semantic_authority_content_hash: 98c0e60aaf0ffa125def7f89fef0fdeb4198d2ebb8ea5fd89ad79af4cbc61963
 lock_state: PREFORMAL_CANDIDATE_READ_ONLY
 current_execution:
+  source_fact_materialization_completed: true
+  responsibility_classification_completed: true
   page_base_blueprint_completed: true
-  visual_base_blueprint_started: true
   visual_base_blueprint_completed: true
-  visual_base_blueprint_gate: SUCCESS
   blueprint_binding_started: false
-current_test_evidence_sync:
-  superseded_replay_pending: 0
-  human_formal_review: PENDING
-github_ci:
-  visual_base_blueprint_run_id: 34739072007
+  unresolved_authority_gap_count: 8
+predecessor_terminal_receipt:
+  head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
+  run_id: 34739267938
   result: 8/8_SUCCESS
-status: V2_1_9_VISUAL_BLUEPRINT_LOCK_CLOSED_CI_PASS
+current_receipt_policy:
+  external_immutable_receipt_required: true
+  same_commit_self_write: FORBIDDEN
+human_formal_review: PENDING
+status: V2_1_10_CONTINUITY_LOCK_PENDING_EXTERNAL_CI_RECEIPT

@@ -1,0 +1,48 @@
+schema_version: 1
+artifact_uid: ACPOS-GOV-V210-CLOSURE-EVIDENCE-CONTINUITY-CONTRACT
+artifact_type: GOVERNANCE_BUGFIX_CONTRACT
+version: v2.1.10
+baseline: v2.1.9
+status: PREFORMAL_CONSTITUENT_VERIFIED
+scope:
+  applies_to_stages: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+closure_mutation:
+  semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
+  destructive_summary_rewrite: BLOCK
+  legal_successor_presence: ALLOW
+  retroactive_predecessor_invalidation: FORBIDDEN
+predecessor_fact_classes_required:
+- START_PROOF
+- COMPLETION_PROOF
+- SOURCE_OR_CHECKPOINT_IDENTITY
+- GATE_RESULT
+- REPLAY_OR_CONTENT_AUDIT_PROOF
+- RUN_OR_EVIDENCE_IDENTITY
+current_ledger_synchronization:
+  required: true
+  ledgers:
+  - EXECUTION_STATE
+  - RUN_MANIFEST
+  - ARTIFACT_PLAN
+  - GOVERNANCE_CURRENT
+  - REBUILD_BRANCH_BASELINE
+  - GOVERNANCE_STAGE_LOCK
+  - SEALED_GOVERNANCE_TEST_BASELINE
+  - STAGE_EVIDENCE
+  - DEPENDENCY_INDEX
+  - REVERSE_DEPENDENCY_INDEX
+  synchronization_dimensions:
+  - CURRENT_PHASE
+  - ARTIFACT_COUNT
+  - AUTHORITATIVE_HASH
+  - UNRESOLVED_AUTHORITY_IDENTITY
+  - GATE_STATUS
+  - NEXT_LEGAL_TRANSITION
+  - PREDECESSOR_PROOF
+terminal_ci_receipt:
+  model: EXTERNAL_IMMUTABLE_RECEIPT
+  materialization_receipt_separate: true
+  required_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
+  same_commit_self_write: FORBIDDEN
+  future_run_id_prewrite: FORBIDDEN
+  receipt_may_be_bound_by_later_successor: true

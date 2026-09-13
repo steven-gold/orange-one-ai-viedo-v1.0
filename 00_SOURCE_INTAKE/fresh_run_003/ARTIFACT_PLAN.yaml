@@ -1,13 +1,33 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-current_step: VISUAL_BASE_BLUEPRINT_COMPLETED_CI_PASS
-current_artifacts: [PAGE_BASE_BLUEPRINT, VISUAL_BASE_BLUEPRINT, PAGE_BASE_BLUEPRINT_EVIDENCE, VISUAL_BASE_BLUEPRINT_EVIDENCE]
+current_step: V210_CLOSURE_CONTINUITY_GOVERNANCE_PENDING_EXTERNAL_CI_RECEIPT
+current_artifacts:
+- RAW_SOURCE_REFERENCE_MANIFEST
+- RAW_SOURCE_CAPTURE_STATE
+- SOURCE_STRUCTURE_MANIFEST
+- SOURCE_SEGMENT_MAP
+- SOURCE_CONTEXT_MANIFEST
+- CONTENT_SUPERSESSION_CONFLICT_LEDGER
+- SOURCE_DEPENDENCY_MAP
+- CLASSIFIED_ARTIFACT_SET
+- RESPONSIBILITY_CLASSIFICATION_EVIDENCE
+- PAGE_BASE_BLUEPRINT
+- PAGE_BASE_BLUEPRINT_EVIDENCE
+- V218_PAGE_REPLAY_CONTENT_AUDIT
+- VISUAL_BASE_BLUEPRINT
+- VISUAL_BASE_BLUEPRINT_EVIDENCE
+- V210_CLOSURE_EVIDENCE_CONTINUITY_CONTRACT
 classification_materialization:
   artifact_count: 52
   page_artifacts: 48
   visual_artifacts: 4
+  unresolved_authority_gaps_preserved: 8
 page_base_blueprint_materialization:
   blueprint_count: 2
+  page_input_artifacts: 48
+  visual_input_artifacts: 0
+  direct_raw_source_inputs: 0
+  governance_overlay: v2.1.8
   content_audit: VERIFIED
 visual_base_blueprint_materialization:
   blueprint_count: 2
@@ -15,7 +35,16 @@ visual_base_blueprint_materialization:
   page_input_artifacts: 0
   direct_raw_source_inputs: 0
   governance_overlay: v2.1.9
-  ci_result: SUCCESS_8_OF_8
+  materialization_run_id: 34739072007
+  terminal_closure_receipt:
+    mode: EXTERNAL_IMMUTABLE_RECEIPT
+    head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
+    run_id: 34739267938
+    jobs: 8/8_SUCCESS
 next_allowed_artifacts_after_gate_pass: [BLUEPRINT_BINDING_MANIFEST]
+continuity_policy:
+  closure_mutation_semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
+  current_ledger_synchronization_required: true
+  terminal_ci_same_commit_self_write: FORBIDDEN
 forbidden_in_stage_01: [WEBSITE_CONSTRUCTION, DEPLOYMENT]
-status: VISUAL_BASE_BLUEPRINT_CLOSED_CI_PASS
+status: V210_GOVERNANCE_PENDING_EXTERNAL_CI_RECEIPT
