@@ -1,5 +1,5 @@
-schema_version: 12
-baseline_uid: REBUILD-BRANCH-v2.1.11-AUTHORITY-IDENTITY-RECEIPT-SCHEMA
+schema_version: 13
+baseline_uid: REBUILD-BRANCH-v2.1.11-STAGE1-CLOSURE
 branch_name: rebuild-v2.1.1
 governance_test:
   version: v2.1.11
@@ -13,8 +13,9 @@ workspace_progress:
   page_base_blueprint: 2/2
   visual_base_blueprint: 2/2_CI_PASS
   blueprint_binding: 2/2_CI_PASS
-  stage1_validation_started: false
-predecessor_terminal_receipts:
+  stage1_validation: MATERIALIZED_PENDING_CI
+  stage2_started: false
+terminal_receipts:
   visual_closure:
     provider: GITHUB_ACTIONS
     repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
@@ -36,16 +37,24 @@ predecessor_terminal_receipts:
     run_id: 34741952438
     job_denominator: 10/10
     conclusion: SUCCESS
-current_governance_receipt:
+  v211_governance:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 74cd16e28e98a918c3f682d3b29ea7e362a19cc5
+    run_id: 34754709362
+    job_denominator: 11/11
+    conclusion: SUCCESS
+stage1_closure:
+  required_evidence: [SOURCE_ENUMERATION_EVIDENCE, CONFLICT_DECISION_EVIDENCE, STAGE1_VALIDATION_EVIDENCE]
+  clean_scan: MATERIALIZED
+  run_close: MATERIALIZED
+  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED_PENDING_EXTERNAL_CI
+  dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+  reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+current_stage1_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
-  canonical_fields:
-  - provider
-  - repository_or_project
-  - head_sha
-  - run_id
-  - job_denominator
-  - conclusion
-next_allowed: STAGE1_VALIDATION
-status: V2_1_11_CURRENT_PENDING_EXTERNAL_CI_RECEIPT
+  canonical_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
+next_allowed: STAGE2_PAGE_FUNCTIONAL_CONTRACT_AFTER_STAGE1_GATE_PASS
+status: STAGE1_VALIDATION_PENDING_EXTERNAL_CI_RECEIPT
