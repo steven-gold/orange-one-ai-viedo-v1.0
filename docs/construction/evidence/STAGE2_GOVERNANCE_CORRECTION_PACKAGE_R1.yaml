@@ -1,0 +1,31 @@
+record_id: STAGE2_GOVERNANCE_CORRECTION_PACKAGE_R1
+purpose: Convert Stage-02 execution findings into governance rules before Stage-01 -> Stage-02 rerun.
+source:
+  stage: STAGE-02
+  rule: Existing authority remains unchanged. This package only updates governance controls.
+
+corrections:
+  - id: STAGE_ENTRY_VALIDATION
+    rule: Validate authority, artifact materialization, validator schema, ledger synchronization, and required evidence before entering a stage.
+  - id: PAGE_FUNCTIONAL_FLOW_ACCEPTANCE
+    rule: Validate page user journey, action, state transition, next step, authority, and audit linkage.
+  - id: CREATE_FLOW_CONTRACT
+    rule: Every create operation must define source, creation mode, prerequisite state, resulting state, next action, and audit event.
+  - id: AUTHORITY_LIFECYCLE
+    rule: Separate raw source, candidate authority, reviewed authority, and current authority. Non-current sources cannot resolve current construction gaps.
+  - id: GAP_RESOLUTION_LIFECYCLE
+    rule: Classify gaps as AUTO_REMEDIABLE, AUTHORITY_REQUIRED, DESIGN_REQUIRED, or EXTERNAL_REQUIRED before remediation.
+  - id: VALIDATOR_SCHEMA_COMPATIBILITY
+    rule: Missing zero-value fields must not create false failures. Validators must validate semantic values, not only serialized shape.
+  - id: IMPLEMENTATION_DEVIATION_FEEDBACK
+    rule: Construction output deviations from approved requirements must create correction records before further implementation.
+
+explicit_preservation:
+  authority_gap_rules: preserved
+  unresolved_functional_gaps: preserved
+  no_ai_guess_completion: true
+  current_authority_not_changed: true
+
+next_phase:
+  action: rerun Stage-01 then Stage-02 using updated governance controls
+  status: pending
