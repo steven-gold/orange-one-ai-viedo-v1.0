@@ -1,54 +1,35 @@
-schema_version: 8
+schema_version: 9
 role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
 normative_authority:
   version: v2.1.9
   baseline: v2.1.8
-  state: EVIDENCE_STATE_CLOSURE_SYSTEM_LOGIC_GUARD_PREFORMAL_VERIFIED_GITHUB_CI_PASS
-  formal_freeze_executed: false
-  normative_edit_allowed: false
-  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.9_EVIDENCE_STATE_CLOSURE_SYSTEM_LOGIC_GUARD_BUGFIX_PREFORMAL_VERIFIED.zip
   package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
   external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
   semantic_authority_content_hash: 531a364590e47f182f40ac3794d9b30c7ae77678423a53be787ae1cd87c70c2f
-test_runtime:
-  version: v2.1.6
-  runtime_uid: ACPOS-GOV-TEST-v2.1.6-STAGE1-SEMANTIC-GRANULARITY
-  runtime_manifest: governance/test-runtime/v2.1.6/STAGE1_RUNTIME_MANIFEST.yaml
-  materialization_status: SEALED_CI_PASS
-  expected_stage1_minimal_control: 33/33_PASS
-  expected_lifecycle_semantic_granularity: 11/11_PASS
-  runtime_content_mutation: FORBIDDEN
 current_execution:
-  phase: FOUNDATION-01-SOURCE-INTAKE
   run_uid: FRESH-RUN-003
-  state: PAGE_BASE_BLUEPRINT_COMPLETED
-  target_pages:
-  - CORE-01
-  - ASSET-01
-  source_segment_mapping_completed: true
-  source_fact_materialization_completed: true
+  state: VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI
   unresolved_authority_gap_count: 8
   responsibility_classification_completed: true
   classification_artifact_count: 52
   page_base_blueprint_completed: true
   page_base_blueprint_count: 2
-  visual_base_blueprint_started: false
+  visual_base_blueprint_started: true
+  visual_base_blueprint_completed: true
+  visual_base_blueprint_count: 2
   blueprint_binding_started: false
   website_construction_started: false
   deployment_started: false
 successor_policy:
-  predecessor_validator_legal_successor_presence: ALLOW
-  retroactive_predecessor_invalidation: FORBIDDEN
   phase_chain: SOURCE_FACTS -> CLASSIFICATION -> PAGE_BLUEPRINT -> VISUAL_BLUEPRINT -> BINDING
-  next_allowed_transition: VISUAL_BASE_BLUEPRINT_ACTIVE
+  next_allowed_transition: BLUEPRINT_BINDING_ONLY_AFTER_VISUAL_GATE_SUCCESS
 current_test_evidence_sync:
   status: PASS
   superseded_replay_pending: 0
   human_formal_review: PENDING
 github_ci:
-  v219_candidate_head_sha: 4806b470f441d2a0077665e270c21aa88c53c8e1
-  v219_candidate_run_id: 34737738652
+  v219_evidence_closure_run_id: 34737738652
   result: 7/7_SUCCESS
-next_action: Start VISUAL_BASE_BLUEPRINT only on explicit next-step execution; preserve all 8 unresolved external Authority refs and do not start Binding, website construction, or deployment early.
-status: V2_1_9_PAGE_BASE_BLUEPRINT_CLOSED_EVIDENCE_STATE_CI_PASS
+  visual_gate: PENDING
+status: V2_1_9_VISUAL_BASE_BLUEPRINT_PENDING_CI
