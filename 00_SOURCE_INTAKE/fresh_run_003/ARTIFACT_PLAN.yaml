@@ -1,6 +1,6 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-current_step: STAGE2_FUNCTIONAL_CHAIN_PREFLIGHT_MATERIALIZED_PENDING_CI
+current_step: STAGE2_DEPENDENCY_AND_STATE_TRANSITION_LEDGERS_VALIDATED_OPEN_GAPS
 current_artifacts:
 - RAW_SOURCE_REFERENCE_MANIFEST
 - RAW_SOURCE_CAPTURE_STATE
@@ -26,6 +26,9 @@ current_artifacts:
 - STAGE1_VALIDATION_EVIDENCE
 - FUNCTIONAL_CHAIN_SPEC
 - PAGE_FUNCTIONAL_REVIEW_EVIDENCE
+- STAGE2_FUNCTIONAL_GAP_LEDGER
+- STAGE2_DEPENDENCY_MAP
+- STATE_TRANSITION_LEDGER
 classification_materialization:
   artifact_count: 52
   page_artifacts: 48
@@ -94,9 +97,38 @@ stage2_functional_chain_materialization:
   functional_chain_spec_count: 2
   target_pages: 2
   preflight_evidence: PRESENT
-  preflight_ci: PENDING
+  preflight_ci: SUCCESS
+  preflight_receipt:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: cbef81ec6da7f51b3379fd3e52283eda8a2dee33
+    run_id: 34763159402
+    job_denominator: 16/16
+    conclusion: SUCCESS
+    machine_result_artifact: stage2-functional-preflight-result
+    machine_result_artifact_id: 10318958789
+    machine_result_digest: sha256:d41f01d37b38376f888273cd0f4b94e351a82a91e7505c9d627a34c027aed43c
+  functional_gap_ledger: PRESENT_OPEN_BLOCKING_171
+  dependency_map: PRESENT_OPEN_BLOCKING_171
+  state_transition_ledger: PRESENT_OPEN_BLOCKING_50_FIELDS
+  functional_gap_total: 171
+  architecture_gap_total: 133
+  input_source_gap_total: 34
+  authority_gap_total: 4
+  shared_owner_authority_consumers_preserved_unresolved: 4
+  dependency_transition_ci: SUCCESS
+  dependency_transition_receipt:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 7479eee6f5e15fcf10032d3355b18e877888472a
+    run_id: 34764546141
+    job_name: current-stage2-dependency-transition-ledgers-gate
+    job_id: 103743068828
+    job_denominator: 17/17
+    conclusion: SUCCESS
   functional_completion_claim: false
-  machine_result_artifact: stage2-functional-preflight-result
+  raw_source_mutation_allowed: false
+  ai_gap_inference_allowed: false
 terminal_receipts:
   visual_closure:
     provider: GITHUB_ACTIONS
@@ -140,6 +172,20 @@ terminal_receipts:
     run_id: 34757919043
     job_denominator: 13/13
     conclusion: SUCCESS
+  stage2_functional_preflight:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: cbef81ec6da7f51b3379fd3e52283eda8a2dee33
+    run_id: 34763159402
+    job_denominator: 16/16
+    conclusion: SUCCESS
+  stage2_dependency_transition_ledgers:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 7479eee6f5e15fcf10032d3355b18e877888472a
+    run_id: 34764546141
+    job_denominator: 17/17
+    conclusion: SUCCESS
 next_allowed_artifacts_after_gate_pass:
 - STAGE2_FUNCTIONAL_GAP_LEDGER
 - STAGE2_DEPENDENCY_MAP
@@ -157,4 +203,4 @@ current_v212_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
-status: STAGE2_FUNCTIONAL_CHAIN_PREFLIGHT_PENDING_EXTERNAL_CI
+status: STAGE2_OPEN_BLOCKING_GAPS_DEPENDENCY_TRANSITION_MATERIALIZED
