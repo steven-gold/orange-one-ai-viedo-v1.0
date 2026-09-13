@@ -27,16 +27,23 @@ verified_test_summary:
   fresh_zip_cross_lifecycle: 30/30_PASS
   outer_monolithic_preformal_runner: TIMEOUT_NO_FAILURE_CONCLUSION
 github_ci_verification:
-  run_id: 34726994206
+  run_id: 34727817243
   current_v216_stage1_granularity_gate: SUCCESS
+  current_v216_source_facts_gate: SUCCESS
   sealed_v216_runtime: SUCCESS
   replay_34_node_expected_block: PASS
   refinement_61_node_mixed_terminal_zero: PASS
   source_segment_mapping_61_of_61: PASS
+  source_fact_materialization_3_of_3: PASS
+  source_context_nodes_61: PASS
+  conflict_items_zero: PASS
+  dependency_edges_2: PASS
+  unresolved_authority_gaps_tracked: 8
+  invented_dependencies_zero: PASS
 execution_policy:
   governance_load_required_before_test: true
   governance_text_edit_during_execution: FORBIDDEN
   github_test_infrastructure_update_allowed: true
   github_test_infrastructure_is_normative_authority: false
   website_construction_before_stage_gate: FORBIDDEN
-status: SEALED_V2_1_6_TEST_BASELINE_GITHUB_CI_PASS
+status: SEALED_V2_1_6_TEST_BASELINE_SOURCE_FACT_GITHUB_CI_PASS
