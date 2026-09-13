@@ -20,7 +20,7 @@ if (root/'00_SOURCE_INTAKE/fresh_run_002').exists(): die('fresh_run_002 remains 
 run=root/'00_SOURCE_INTAKE/fresh_run_003'
 if not run.is_dir(): die('fresh_run_003 missing')
 state=yaml.safe_load((run/'EXECUTION_STATE.yaml').read_text())
-if state.get('state')!='SOURCE_SEGMENT_MAPPING_COMPLETED': die('state not segment-mapping completed')
+if state.get('state') not in {'SOURCE_SEGMENT_MAPPING_COMPLETED','SOURCE_FACT_MATERIALIZATION_COMPLETED_PENDING_CI','SOURCE_FACT_MATERIALIZATION_COMPLETED'}: die('state is not a legal post-segment stage')
 if state.get('semantic_granularity_replay_validated') is not True or state.get('replay_mixed_terminal_units_detected')!=2: die('replay block proof missing')
 refs=yaml.safe_load((run/'00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml').read_text())
 cap=yaml.safe_load((run/'00_SOURCE_INTAKE/RAW_SOURCE_CAPTURE_STATE.yaml').read_text())
@@ -66,6 +66,6 @@ if (required,reference,page,visual)!=(52,9,52,9): die('segment totals mismatch')
 sc=seg.get('completion') or {}
 for k in ('required_nodes_unmapped','duplicate_node_mappings','unknown_source_nodes','physical_classification_artifacts','mixed_terminal_units','unresolved_container_units'):
  if sc.get(k)!=0: die('segment completion defect '+k)
-if state.get('source_fact_materialization_started') or state.get('blueprint_materialization_started') or state.get('website_construction_started') or state.get('deployment_started'): die('downstream phase started early')
+if state.get('responsibility_classification_started') or state.get('domain_decomposition_started') or state.get('blueprint_materialization_started') or state.get('website_construction_started') or state.get('deployment_started'): die('post-source-fact downstream phase started early')
 print('PASS: v2.1.6 replay blocked 34-node mixed terminals, then refined 61/61 with mixed=0 unresolved=0')
-print('PASS: SOURCE_SEGMENT_MAPPING 61/61; required=52; reference_only=9; PAGE=52; VISUAL=9; old_v215_bytes_reused=false')
+print('PASS: SOURCE_SEGMENT_MAPPING 61/61 remains valid after legal SOURCE_FACT_MATERIALIZATION transition; required=52; reference_only=9; PAGE=52; VISUAL=9; old_v215_bytes_reused=false')
