@@ -209,6 +209,22 @@ jobs:
       - name: Validate Stage-02 external Authority materialization and GAP-006 successor
         env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_stage2_external_authority_resolution.py
+  current-stage2-functional-gap-successor-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate exact GAP-006 functional-gap successor delta
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_stage2_functional_gap_successor.py
+      - name: Upload machine-readable Stage-02 functional-gap successor result
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage2-functional-gap-successor-result
+          path: stage2_functional_gap_successor_result.json
+          if-no-files-found: error
   sealed-v216-runtime:
     runs-on: ubuntu-24.04
     steps:
