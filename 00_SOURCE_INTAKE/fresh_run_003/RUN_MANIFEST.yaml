@@ -2,16 +2,18 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 branch: rebuild-v2.1.1
 phase: STAGE_01_SOURCE_INTAKE
-status: BLUEPRINT_BINDING_MATERIALIZED_PENDING_CI
+status: BLUEPRINT_BINDING_COMPLETED_V211_GOVERNANCE_CI_PENDING
 governance:
   sealed_runtime_version: v2.1.6
-  current_candidate_overlay: v2.1.10
-  current_package_sha256: a4df779f9de5c6b368c5382779e7759aa28f363da79ebd63acc8b6bc3672d205
-  current_external_trust_root_sha256: a13311408767651557160c8d2aa849a6c53271a65ca51ea73a462aa551afe895
-  current_semantic_authority_content_hash: 98c0e60aaf0ffa125def7f89fef0fdeb4198d2ebb8ea5fd89ad79af4cbc61963
-  state: PREFORMAL_CONSTITUENT_VERIFIED_GITHUB_9_OF_9
+  current_candidate_overlay: v2.1.11
+  current_package_sha256: 651d3027967a65125787e659765ed3cc5588cbba3e38faa55b56942af46b3e18
+  current_external_trust_root_sha256: 6d29a43395862b39f6d07ca07872d041892a603fc15e9950a5a618ce0fd58852
+  current_semantic_authority_content_hash: 6de8b03edf0197baa08577bcd46106beb70b2bcff0652078a43c1113fcbd63ff
+  state: PREFORMAL_CONSTITUENT_VERIFIED_GITHUB_CI_PENDING
   normative_edit_allowed: false
-target_pages: [CORE-01, ASSET-01]
+target_pages:
+- CORE-01
+- ASSET-01
 source_pin:
   branch: new
   revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
@@ -22,24 +24,10 @@ execution_policy:
   responsibility_classification: COMPLETED_52_ARTIFACTS_CI_PASS
   page_blueprint_materialization: COMPLETED_2_PAGE_BLUEPRINTS_V218_REPLAY_CI_PASS_CONTENT_AUDITED
   visual_blueprint_materialization: COMPLETED_2_VISUAL_BLUEPRINTS_V219_CI_PASS
-  blueprint_binding: MATERIALIZED_2_BINDINGS_V210_PENDING_CI
+  blueprint_binding: COMPLETED_2_BINDINGS_EXTERNAL_CI_10_OF_10
+  stage1_validation: NOT_EXECUTED
   website_code_write: FORBIDDEN
   deployment: FORBIDDEN
-page_base_blueprint_contract:
-  blueprint_count: 2
-  total_page_inputs: 48
-  governance_overlay: v2.1.8
-  immutable_predecessor: true
-visual_base_blueprint_contract:
-  blueprint_count: 2
-  core_01_visual_inputs: 2
-  asset_01_visual_inputs: 2
-  total_visual_inputs: 4
-  page_inputs: 0
-  direct_raw_source_inputs: 0
-  core_01_unresolved_external_authority_refs: 7
-  asset_01_unresolved_external_authority_refs: 6
-  authority_resolution_performed: false
 blueprint_binding_contract:
   binding_count: 2
   mode: NON_OWNING_REFERENCE_ONLY
@@ -49,22 +37,43 @@ blueprint_binding_contract:
   direct_raw_source_inputs: 0
   unresolved_authority_gap_universe: 8
   authority_resolution_performed: false
+  authority_identity_fields:
+  - gap_uid
+  - authority_ref
+  - disposition
+  - authority_evidence_ref
 predecessor_terminal_receipts:
   visual_closure:
     provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
     head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
     run_id: 34739267938
     job_denominator: 8/8
     conclusion: SUCCESS
   v210_governance:
     provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
     head_sha: 91f4271b5145f5646be07da32b5624fad7528034
     run_id: 34741356025
     job_denominator: 9/9
     conclusion: SUCCESS
-current_binding_receipt:
+  blueprint_binding:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: d10253d154eacabed3df967ce4aa83c71a7475f3
+    run_id: 34741952438
+    job_denominator: 10/10
+    conclusion: SUCCESS
+current_governance_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
   same_commit_self_write: FORBIDDEN
-next_phase_entry_condition: STAGE1_VALIDATION_ONLY_AFTER_BINDING_GATE_PASS
+  canonical_fields:
+  - provider
+  - repository_or_project
+  - head_sha
+  - run_id
+  - job_denominator
+  - conclusion
+next_phase_entry_condition: STAGE1_VALIDATION_ONLY_AFTER_BINDING_AND_V211_GOVERNANCE_GATES_PASS
