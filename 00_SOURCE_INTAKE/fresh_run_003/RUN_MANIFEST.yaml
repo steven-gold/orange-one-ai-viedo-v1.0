@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 branch: rebuild-v2.1.1
 phase: STAGE_02_PAGE_FUNCTIONAL_CONTRACT
-status: STAGE2_BLOCKER_COVERAGE_R2_MATERIALIZED_PENDING_EXTERNAL_CI
+status: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
 governance:
   sealed_runtime_version: v2.1.6
   current_candidate_overlay: v2.1.12
@@ -29,7 +29,7 @@ execution_policy:
   stage2_functional_review: REVIEW_COMPLETE_EXTERNAL_CI_19_OF_19
   stage2_blocker_ledger_r1: VALIDATED_EXTERNAL_CI_20_OF_20_SUPERSEDED_BY_R2_COVERAGE_CORRECTION
   stage2_current_ledger_sync_r1: VALIDATED_EXTERNAL_CI_21_OF_21
-  stage2_blocker_ledger_r2: MATERIALIZED_PENDING_EXTERNAL_CI
+  stage2_blocker_ledger_r2: VALIDATED_EXTERNAL_CI_21_OF_21
   stage2_functional_completion: false
   website_code_write: FORBIDDEN_IN_STAGE_02
   deployment: FORBIDDEN_IN_STAGE_02
@@ -98,6 +98,7 @@ terminal_receipts:
   stage2_functional_review: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 546e3826934eefc33aa1e11ba018a9aeb706f57f, run_id: 34766220936, job_denominator: 19/19, conclusion: SUCCESS}
   stage2_blocker_ledger_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d, run_id: 34766464982, job_denominator: 20/20, conclusion: SUCCESS}
   stage2_current_ledger_sync_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 92b4c2f148fbd5690eea03a0f554ba25ff1cffea, run_id: 34768036053, job_denominator: 21/21, conclusion: SUCCESS}
+  stage2_blocker_ledger_r2: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: d662a28422a9f7a671359f2f284a4d20f5cfe6e4, run_id: 34768554331, job_denominator: 21/21, conclusion: SUCCESS}
 current_v212_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
@@ -107,9 +108,9 @@ current_stage2_blocker_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   current_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
-  validation_status: PENDING_EXTERNAL_CI
-  embedded_run_id: null
-  predecessor_receipt_key: stage2_blocker_ledger_r1
+  validation_status: SUCCESS_EXTERNAL_RECEIPT
+  embedded_run_id: 34768554331
+  receipt_key: stage2_blocker_ledger_r2
   same_commit_self_write: FORBIDDEN
 next_phase_entry_condition: ALL_REQUIRED_PAGES_STAGE2_CLOSED_AFTER_FORMAL_CONTRACT_OR_AUTHORITY_RESOLUTION
-next_action: VALIDATE_STAGE2_BLOCKER_COVERAGE_R2_THEN_RESOLVE_FORMAL_CONTRACT_OR_AUTHORITY_BLOCKERS
+next_action: RESOLVE_STAGE2_FORMAL_CONTRACT_OR_AUTHORITY_BLOCKERS_THEN_RERUN_STAGE2_COMPILES

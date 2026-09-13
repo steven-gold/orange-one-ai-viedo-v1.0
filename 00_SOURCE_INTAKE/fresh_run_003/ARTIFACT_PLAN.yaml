@@ -1,6 +1,6 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-current_step: STAGE2_BLOCKER_COVERAGE_R2_MATERIALIZED_PENDING_EXTERNAL_CI
+current_step: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
 current_artifacts:
 - RAW_SOURCE_REFERENCE_MANIFEST
 - RAW_SOURCE_CAPTURE_STATE
@@ -86,7 +86,7 @@ stage1_validation_materialization:
   stage1_dependency_authority: SOURCE_DEPENDENCY_MAP
   stage2_started: true
 stage2_functional_chain_materialization:
-  operation: BLOCKER_COVERAGE_REVALIDATION
+  operation: BLOCKER_RESOLUTION_WAIT
   functional_chain_spec_count: 2
   target_pages: 2
   preflight_evidence: PRESENT
@@ -134,8 +134,8 @@ stage2_functional_chain_materialization:
     blocked_gap_total: 171
     async_provider_unresolved_lifecycle_binding_count: 24
     stage2_external_authority_gap_uids_affecting_blockers: [GAP-005, GAP-006, GAP-008]
-    validated: false
-    validation_status: PENDING_EXTERNAL_CI
+    validated: true
+    validation_status: SUCCESS_EXTERNAL_RECEIPT
   exit_gate: ALL_REQUIRED_PAGES_STAGE2_CLOSED
   exit_gate_result: BLOCKED
   functional_completion_claim: false
@@ -156,6 +156,7 @@ terminal_receipts:
   stage2_functional_review: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 546e3826934eefc33aa1e11ba018a9aeb706f57f, run_id: 34766220936, job_denominator: 19/19, conclusion: SUCCESS}
   stage2_blocker_ledger_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d, run_id: 34766464982, job_denominator: 20/20, conclusion: SUCCESS}
   stage2_current_ledger_sync_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 92b4c2f148fbd5690eea03a0f554ba25ff1cffea, run_id: 34768036053, job_denominator: 21/21, conclusion: SUCCESS}
+  stage2_blocker_ledger_r2: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: d662a28422a9f7a671359f2f284a4d20f5cfe6e4, run_id: 34768554331, job_denominator: 21/21, conclusion: SUCCESS}
 next_resolution_scope:
   mode: FORMAL_CONTRACT_OR_AUTHORITY_FIRST
   blocker_count: 4
@@ -168,7 +169,7 @@ next_resolution_scope:
   async_provider_unresolved_lifecycle_binding_count: 24
   stage2_external_authority_gap_uids_affecting_blockers: [GAP-005, GAP-006, GAP-008]
   unresolved_transition_required_fields: 50
-  exact_resume_point: VALIDATE_BLOCKER_LEDGER_R2_THEN_RESOLVE_AND_RERUN_STAGE2_COMPILES
+  exact_resume_point: RESOLVE_FORMAL_CONTRACT_OR_AUTHORITY_THEN_RERUN_STAGE2_COMPILES
   ai_guess_or_default_substitution: FORBIDDEN
 continuity_policy:
   closure_mutation_semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
@@ -185,8 +186,8 @@ current_stage2_blocker_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   current_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
-  validation_status: PENDING_EXTERNAL_CI
-  embedded_run_id: null
-  predecessor_receipt_key: stage2_blocker_ledger_r1
+  validation_status: SUCCESS_EXTERNAL_RECEIPT
+  embedded_run_id: 34768554331
+  receipt_key: stage2_blocker_ledger_r2
   same_commit_self_write: FORBIDDEN
-status: STAGE2_BLOCKER_COVERAGE_R2_MATERIALIZED_PENDING_EXTERNAL_CI
+status: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY

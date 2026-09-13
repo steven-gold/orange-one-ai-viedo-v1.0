@@ -15,7 +15,7 @@ verified_test_summary:
   reference_semantic: 28/28_PASS
   reference_fuzz: 46/46_BLOCKED_0_ESCAPED
 execution_checkpoint:
-  state: STAGE2_BLOCKER_COVERAGE_R2_MATERIALIZED_PENDING_EXTERNAL_CI
+  state: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
   page_base_blueprint: 2/2
   visual_base_blueprint: 2/2
   blueprint_binding: 2/2_CI_PASS
@@ -28,7 +28,7 @@ execution_checkpoint:
   stage2_functional_review: 19/19_CI_PASS
   stage2_blocker_ledger_r1: 20/20_CI_PASS_SUPERSEDED_BY_R2_COVERAGE_CORRECTION
   stage2_current_ledger_sync_r1: 21/21_CI_PASS
-  stage2_blocker_ledger_r2: MATERIALIZED_PENDING_EXTERNAL_CI
+  stage2_blocker_ledger_r2: 21/21_CI_PASS
   stage2_open_gap_total: 171
   stage2_blocker_count: 4
   stage2_functional_gap_blocker_count: 3
@@ -50,6 +50,7 @@ terminal_receipts:
   stage2_functional_review: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 546e3826934eefc33aa1e11ba018a9aeb706f57f, run_id: 34766220936, job_denominator: 19/19, conclusion: SUCCESS}
   stage2_blocker_ledger_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d, run_id: 34766464982, job_denominator: 20/20, conclusion: SUCCESS}
   stage2_current_ledger_sync_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 92b4c2f148fbd5690eea03a0f554ba25ff1cffea, run_id: 34768036053, job_denominator: 21/21, conclusion: SUCCESS}
+  stage2_blocker_ledger_r2: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: d662a28422a9f7a671359f2f284a4d20f5cfe6e4, run_id: 34768554331, job_denominator: 21/21, conclusion: SUCCESS}
 stage1_closure:
   source_enumeration_evidence: PRESENT_PARSE_VALID
   conflict_decision_evidence: PRESENT_PARSE_VALID
@@ -71,10 +72,10 @@ current_v212_receipt:
   embedded_run_id: null
   canonical_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
 stage2_current:
-  operation: BLOCKER_COVERAGE_REVALIDATION
+  operation: BLOCKER_RESOLUTION_WAIT
   functional_chain_spec_count: 2
   functional_review_evidence: PRESENT_VALIDATED
-  blocker_ledger: R2_MATERIALIZED_PENDING_EXTERNAL_CI
+  blocker_ledger: R2_VALIDATED_EXTERNAL_CI_21_OF_21
   blocker_ledger_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
   open_gap_total: 171
   blocker_count: 4
@@ -91,9 +92,9 @@ current_stage2_blocker_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   current_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
-  validation_status: PENDING_EXTERNAL_CI
-  embedded_run_id: null
-  predecessor_receipt_key: stage2_blocker_ledger_r1
+  validation_status: SUCCESS_EXTERNAL_RECEIPT
+  embedded_run_id: 34768554331
+  receipt_key: stage2_blocker_ledger_r2
   same_commit_self_write: FORBIDDEN
 human_formal_review: PENDING
-status: SEALED_V2_1_12_STAGE2_BLOCKER_COVERAGE_R2_PENDING_CI
+status: SEALED_V2_1_12_STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED

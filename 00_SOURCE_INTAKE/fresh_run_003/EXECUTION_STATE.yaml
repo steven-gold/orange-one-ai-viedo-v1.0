@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 governance_version: v2.1.6
 governance_candidate_overlay: v2.1.12
-state: STAGE2_BLOCKER_COVERAGE_R2_MATERIALIZED_PENDING_EXTERNAL_CI
+state: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
 raw_source_capture_state: CAPTURE_CLOSED
 semantic_granularity_replay_validated: true
 replay_source_structure_node_count: 34
@@ -63,8 +63,8 @@ stage2_reviewed_gap_total: 171
 stage2_safely_auto_remediable_total: 0
 stage2_blocker_ledger_materialized: true
 stage2_blocker_ledger_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
-stage2_blocker_ledger_validated: false
-stage2_blocker_ledger_validation_status: PENDING_EXTERNAL_CI
+stage2_blocker_ledger_validated: true
+stage2_blocker_ledger_validation_status: SUCCESS_EXTERNAL_RECEIPT
 stage2_blocker_count: 4
 stage2_functional_gap_blocker_count: 3
 stage2_required_output_blocker_count: 1
@@ -119,6 +119,9 @@ github_ci:
   stage2_current_ledger_sync_r1_run_id: 34768036053
   stage2_current_ledger_sync_r1_head_sha: 92b4c2f148fbd5690eea03a0f554ba25ff1cffea
   stage2_current_ledger_sync_r1_result: SUCCESS_21_OF_21
+  stage2_blocker_ledger_r2_run_id: 34768554331
+  stage2_blocker_ledger_r2_head_sha: d662a28422a9f7a671359f2f284a4d20f5cfe6e4
+  stage2_blocker_ledger_r2_result: SUCCESS_21_OF_21
   current_classification_gate: SUCCESS
   current_page_blueprint_gate: SUCCESS
   current_visual_blueprint_gate: SUCCESS
@@ -131,8 +134,8 @@ github_ci:
   current_stage2_dependency_transition_ledgers_gate: SUCCESS_EXTERNAL_RECEIPT
   current_stage2_required_outputs_gate: SUCCESS_EXTERNAL_RECEIPT
   current_stage2_functional_review_evidence_gate: SUCCESS_EXTERNAL_RECEIPT
-  current_stage2_blocker_ledger_gate: PENDING_EXTERNAL_CI_R2
-  current_stage2_current_ledger_sync_gate: PENDING_EXTERNAL_CI_R2
+  current_stage2_blocker_ledger_gate: SUCCESS_EXTERNAL_RECEIPT
+  current_stage2_current_ledger_sync_gate: SUCCESS_EXTERNAL_RECEIPT
   current_phase_successor_authority_gate: SUCCESS
   current_upstream_projection_gate: SUCCESS
   sealed_v216_runtime: SUCCESS
@@ -149,6 +152,7 @@ terminal_receipts:
   stage2_functional_review: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 546e3826934eefc33aa1e11ba018a9aeb706f57f, run_id: 34766220936, job_denominator: 19/19, conclusion: SUCCESS}
   stage2_blocker_ledger_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d, run_id: 34766464982, job_denominator: 20/20, conclusion: SUCCESS}
   stage2_current_ledger_sync_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 92b4c2f148fbd5690eea03a0f554ba25ff1cffea, run_id: 34768036053, job_denominator: 21/21, conclusion: SUCCESS}
+  stage2_blocker_ledger_r2: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: d662a28422a9f7a671359f2f284a4d20f5cfe6e4, run_id: 34768554331, job_denominator: 21/21, conclusion: SUCCESS}
 replay_control:
   governance_overlay: v2.1.12
   source_checkpoint_commit: 90cbd4b5fee1b7aea25a0c15ca3b661bab605960
@@ -166,7 +170,7 @@ closure_evidence_continuity:
 successor_state_monotonicity:
   contract_uid: V212-SUCCESSOR-STATE-MONOTONIC-EVIDENCE-PARSE
   current_state_exact_predecessor_terminal_equality_as_pass_condition: FORBIDDEN
-  successor_started_false_as_permanent_pass_condition: FORBIDDEN
+  successor_started_false_permanent_condition: FORBIDDEN
   phase_order_owner: PHASE_BOUNDARY_GATE
   required_evidence_presence_only_acceptance: FORBIDDEN
 stage1_validation:
@@ -184,14 +188,14 @@ forbidden_transitions:
 - STAGE1_VALIDATION_COMPLETED_CI_PASS -> WEBSITE_CONSTRUCTION_ACTIVE
 - STAGE1_VALIDATION_COMPLETED_CI_PASS -> DEPLOYMENT_ACTIVE
 stage2_current:
-  current_operation: BLOCKER_COVERAGE_REVALIDATION
+  current_operation: BLOCKER_RESOLUTION_WAIT
   functional_chain_spec_count: 2
   canonical_required_outputs_validated: true
   page_functional_review_evidence_validated: true
   blocker_ledger_ref: 04_PAGE_FUNCTIONAL_CONTRACT/BLOCKER_LEDGER.yaml
   blocker_ledger_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
-  blocker_ledger_validated: false
-  blocker_ledger_validation_status: PENDING_EXTERNAL_CI
+  blocker_ledger_validated: true
+  blocker_ledger_validation_status: SUCCESS_EXTERNAL_RECEIPT
   blocker_count: 4
   functional_gap_blocker_count: 3
   required_output_blocker_count: 1
@@ -217,8 +221,8 @@ current_stage2_blocker_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   current_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
-  validation_status: PENDING_EXTERNAL_CI
-  embedded_run_id: null
-  predecessor_receipt_key: stage2_blocker_ledger_r1
+  validation_status: SUCCESS_EXTERNAL_RECEIPT
+  embedded_run_id: 34768554331
+  receipt_key: stage2_blocker_ledger_r2
   same_commit_self_write: FORBIDDEN
-last_result: STAGE2_BLOCKER_COVERAGE_R2_MATERIALIZED_PENDING_EXTERNAL_CI
+last_result: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
