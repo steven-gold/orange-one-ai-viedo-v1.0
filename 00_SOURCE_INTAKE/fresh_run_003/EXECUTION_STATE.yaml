@@ -1,7 +1,7 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
 governance_version: v2.1.6
-governance_candidate_overlay: v2.1.10
+governance_candidate_overlay: v2.1.11
 state: BLUEPRINT_BINDING_COMPLETED
 raw_source_capture_state: CAPTURE_CLOSED
 semantic_granularity_replay_validated: true
@@ -57,15 +57,40 @@ github_ci:
   v210_terminal_closure_run_id: 34741356025
   v210_terminal_closure_head_sha: 91f4271b5145f5646be07da32b5624fad7528034
   v210_terminal_closure_result: SUCCESS_9_OF_9
+  binding_terminal_closure_run_id: 34741952438
+  binding_terminal_closure_head_sha: d10253d154eacabed3df967ce4aa83c71a7475f3
+  binding_terminal_closure_result: SUCCESS_10_OF_10
   current_classification_gate: SUCCESS
   current_page_blueprint_gate: SUCCESS
   current_visual_blueprint_gate: SUCCESS
-  current_binding_gate: PENDING
+  current_binding_gate: SUCCESS_EXTERNAL_RECEIPT
   current_phase_successor_authority_gate: SUCCESS
   current_upstream_projection_gate: SUCCESS
   sealed_v216_runtime: SUCCESS
+terminal_receipts:
+  visual_closure:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
+    run_id: 34739267938
+    job_denominator: 8/8
+    conclusion: SUCCESS
+  v210_governance:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 91f4271b5145f5646be07da32b5624fad7528034
+    run_id: 34741356025
+    job_denominator: 9/9
+    conclusion: SUCCESS
+  blueprint_binding:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: d10253d154eacabed3df967ce4aa83c71a7475f3
+    run_id: 34741952438
+    job_denominator: 10/10
+    conclusion: SUCCESS
 replay_control:
-  governance_overlay: v2.1.10
+  governance_overlay: v2.1.11
   source_checkpoint_commit: 90cbd4b5fee1b7aea25a0c15ca3b661bab605960
   source_checkpoint_tree: 6dc3a2488b8d12e9279bf9162eafaf2c56955648
   old_page_blueprint_bytes_reuse: false
@@ -74,13 +99,25 @@ closure_evidence_continuity:
   required: true
   mutation_semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
   current_ledgers_synchronized: true
+  unresolved_authority_canonical_tuple_fields:
+  - gap_uid
+  - authority_ref
+  - disposition
+  - authority_evidence_ref
+  terminal_ci_receipt_canonical_fields:
+  - provider
+  - repository_or_project
+  - head_sha
+  - run_id
+  - job_denominator
+  - conclusion
   terminal_ci_receipt_mode: EXTERNAL_IMMUTABLE_RECEIPT
   same_commit_self_write: FORBIDDEN
 allowed_transition:
   from: BLUEPRINT_BINDING_COMPLETED
   to: STAGE1_VALIDATION_ACTIVE
-  trigger: BLUEPRINT_BINDING_GATE_SUCCESS
+  trigger: BLUEPRINT_BINDING_GATE_SUCCESS_AND_V211_GOVERNANCE_GATE_SUCCESS
 forbidden_transitions:
 - BLUEPRINT_BINDING_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
 - BLUEPRINT_BINDING_COMPLETED -> DEPLOYMENT_ACTIVE
-last_result: V210_BLUEPRINT_BINDING_MATERIALIZED_PENDING_EXTERNAL_CI_RECEIPT
+last_result: V211_AUTHORITY_IDENTITY_RECEIPT_SCHEMA_LOCAL_VERIFIED_GITHUB_EXTERNAL_RECEIPT_REQUIRED
