@@ -1,0 +1,154 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-STAGE2-ASYNC-LIFECYCLE-AUTHORITY-COVERAGE-AUDIT-V212-R1
+artifact_type: ASYNC_LIFECYCLE_AUTHORITY_COVERAGE_AUDIT
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+operation_uid: ASYNC_PROVIDER_CONTRACT_COMPILE
+status: AUDITED_SUCCESSOR_CANDIDATE_NOT_CURRENT
+normative_gate_ref: WEB-GOV-01-S061
+predecessor_async_contract:
+  ref: 04_PAGE_FUNCTIONAL_CONTRACT/ASYNC_PROVIDER_CONTRACT.yaml
+  git_blob: 2aa1db9a2ec013dc2820b83a010464fe40facb0f
+  unresolved_lifecycle_binding_count: 24
+current_stage2_transaction:
+  ref: 04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_LEDGER_SYNCHRONIZATION_R3.yaml
+  git_blob: 9a6f11d383a625e3fe87a1b654644206480b321c
+current_authority_manifest:
+  ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+  git_blob: 465329b6fb19b8e44c3083a9f280015ee95cc55c
+audited_current_authorities:
+  async_queue:
+    source_path: authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+    materialized_ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ASYNC/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+    git_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+  provider_adapter:
+    source_path: authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+    materialized_ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-005/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+    git_blob: 12ef6d233e09f84571dd5d694ae8e3789ae70502
+  aiapi_page:
+    source_path: authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+    materialized_ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+    git_blob: dd9f05e295af57cc833e90d1a12030c8198580c6
+  system_authority:
+    source_path: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+    materialized_ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+    git_blob: b09b7ca50313172ea021d9da0c8d57f2942f7b19
+required_lifecycle_fields:
+- request_identity
+- input_fingerprint
+- idempotency
+- queued
+- running
+- succeeded
+- failed
+- cancel
+- retry_eligibility
+- callback_result_provenance
+- output_persistence
+- audit_correlation
+field_coverage:
+  input_fingerprint:
+    classification: EXACT_RESOLUTION_CANDIDATE
+    successor_compile_eligible: true
+    authority_blob: 12ef6d233e09f84571dd5d694ae8e3789ae70502
+    exact_evidence: shared_rules.trace_required contains input_fingerprint
+  idempotency:
+    classification: EXACT_RESOLUTION_CANDIDATE
+    successor_compile_eligible: true
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+    exact_evidence: topology.queues[acpos.provider.execution.v1].policy.idempotency_scope = QUEUE_ID_PLUS_IDEMPOTENCY_KEY; inbox receipt and same-key replay are also explicit
+  succeeded:
+    classification: EXACT_RESOLUTION_CANDIDATE
+    successor_compile_eligible: true
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+    exact_evidence: outbox_delivery_extension.terminal_success = published_at IS NOT NULL
+  failed:
+    classification: EXACT_RESOLUTION_CANDIDATE
+    successor_compile_eligible: true
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+    exact_evidence: outbox_delivery_extension.terminal_failure = dead_lettered_at IS NOT NULL
+  retry_eligibility:
+    classification: EXACT_RESOLUTION_CANDIDATE
+    successor_compile_eligible: true
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+    exact_evidence: claimable predicate requires attempt_count < max_attempts and worker failure policy retries below max / DLQs at max
+  request_identity:
+    classification: PARTIAL_NOT_EXACT
+    successor_compile_eligible: false
+    observed_evidence:
+    - AIAPI job_fields include job_id
+    - queue/outbox owns event identity/idempotency receipts
+    missing_exact_binding: No audited Current Authority binds one canonical provider request identity across enqueue, job, attempt, callback, and result.
+  queued:
+    classification: PARTIAL_NOT_EXACT
+    successor_compile_eligible: false
+    observed_evidence:
+    - queue_key acpos.provider.execution.v1 exists
+    - outbox required columns include queue_id and available_at
+    missing_exact_binding: No audited Current Authority names the S061 queued lifecycle state binding for both page provider executions.
+  running:
+    classification: PARTIAL_NOT_EXACT
+    successor_compile_eligible: false
+    observed_evidence:
+    - claim uses FOR UPDATE SKIP LOCKED
+    - claimed_by_worker_id and lease_until are authoritative runtime fields
+    missing_exact_binding: Claim/lease mechanics are not an explicit S061 running lifecycle binding for both page provider executions.
+  cancel:
+    classification: UNRESOLVED_NO_EXACT_BINDING_IDENTIFIED
+    successor_compile_eligible: false
+    observed_evidence: []
+    missing_exact_binding: No exact provider-request cancel lifecycle binding was identified in the audited Current Authorities.
+  callback_result_provenance:
+    classification: PARTIAL_NOT_EXACT
+    successor_compile_eligible: false
+    observed_evidence:
+    - Provider V1.3 persists canonical_instruction_id through job/result lineage
+    - AIAPI job_attempt_contract defines callback verification and artifact/provider_output_ref fields
+    missing_exact_binding: No audited Current Authority binds callback verification and normalized result lineage into one exact S061 callback/result provenance contract for both pages.
+  output_persistence:
+    classification: PARTIAL_NOT_EXACT
+    successor_compile_eligible: false
+    observed_evidence:
+    - Provider V1.3 requires job/result lineage persistence
+    - AIAPI artifact fields include artifact_ref/version/provider_output_ref
+    missing_exact_binding: No audited Current Authority identifies the canonical output persistence owner and exact page-result persistence binding required by S061.
+  audit_correlation:
+    classification: PARTIAL_NOT_EXACT
+    successor_compile_eligible: false
+    observed_evidence:
+    - async queue payload rules require correlation_id
+    - AIAPI effectful governance requires audit
+    missing_exact_binding: correlation_id and audit requirements are separate; no exact correlation-to-audit binding is defined for both page provider executions.
+page_projection:
+  CORE-01:
+    exact_resolution_candidate_fields: [input_fingerprint, idempotency, succeeded, failed, retry_eligibility]
+    exact_resolution_candidate_count: 5
+    unresolved_fields: [request_identity, queued, running, cancel, callback_result_provenance, output_persistence, audit_correlation]
+    unresolved_count_if_successor_compiled: 7
+  ASSET-01:
+    exact_resolution_candidate_fields: [input_fingerprint, idempotency, succeeded, failed, retry_eligibility]
+    exact_resolution_candidate_count: 5
+    unresolved_fields: [request_identity, queued, running, cancel, callback_result_provenance, output_persistence, audit_correlation]
+    unresolved_count_if_successor_compiled: 7
+candidate_successor_math:
+  predecessor_unresolved_binding_count: 24
+  exact_resolution_candidate_binding_count: 10
+  candidate_unresolved_binding_count_after_successor_compile: 14
+  current_unresolved_binding_count_after_audit_only: 24
+  audit_authorizes_current_mutation: false
+policy:
+  semantic_similarity_as_exact_binding: FORBIDDEN
+  cross_authority_field_union_without_explicit_binding: FORBIDDEN
+  optimistic_ui_completion_as_provider_completion: FORBIDDEN
+  ai_default_lifecycle_values: FORBIDDEN
+  raw_source_mutation_allowed: false
+  current_authority_mutation_allowed: false
+stage2_effect:
+  async_provider_contract_current_revision: R1
+  async_provider_unresolved_lifecycle_binding_count: 24
+  functional_completion: false
+  exit_gate: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  exit_gate_result: BLOCKED
+  website_construction_allowed: false
+  deployment_allowed: false
