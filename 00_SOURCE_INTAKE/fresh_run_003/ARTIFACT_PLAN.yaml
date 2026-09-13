@@ -1,6 +1,6 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-current_step: V210_CLOSURE_CONTINUITY_GOVERNANCE_PENDING_EXTERNAL_CI_RECEIPT
+current_step: BLUEPRINT_BINDING_MATERIALIZED_PENDING_CI
 current_artifacts:
 - RAW_SOURCE_REFERENCE_MANIFEST
 - RAW_SOURCE_CAPTURE_STATE
@@ -17,6 +17,8 @@ current_artifacts:
 - VISUAL_BASE_BLUEPRINT
 - VISUAL_BASE_BLUEPRINT_EVIDENCE
 - V210_CLOSURE_EVIDENCE_CONTINUITY_CONTRACT
+- BLUEPRINT_BINDING_MANIFEST
+- BLUEPRINT_BINDING_EVIDENCE
 classification_materialization:
   artifact_count: 52
   page_artifacts: 48
@@ -41,10 +43,26 @@ visual_base_blueprint_materialization:
     head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
     run_id: 34739267938
     jobs: 8/8_SUCCESS
-next_allowed_artifacts_after_gate_pass: [BLUEPRINT_BINDING_MANIFEST]
+blueprint_binding_materialization:
+  binding_count: 2
+  mode: NON_OWNING_REFERENCE_ONLY
+  page_blueprint_refs: 2
+  visual_blueprint_refs: 2
+  embedded_blueprint_payloads: 0
+  direct_raw_source_inputs: 0
+  governance_overlay: v2.1.10
+  predecessor_governance_receipt:
+    head_sha: 91f4271b5145f5646be07da32b5624fad7528034
+    run_id: 34741356025
+    jobs: 9/9_SUCCESS
+  terminal_closure_receipt:
+    mode: EXTERNAL_IMMUTABLE_RECEIPT
+    required: true
+    embedded_run_id: null
+next_allowed_artifacts_after_gate_pass: [STAGE1_VALIDATION_EVIDENCE]
 continuity_policy:
   closure_mutation_semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
   current_ledger_synchronization_required: true
   terminal_ci_same_commit_self_write: FORBIDDEN
 forbidden_in_stage_01: [WEBSITE_CONSTRUCTION, DEPLOYMENT]
-status: V210_GOVERNANCE_PENDING_EXTERNAL_CI_RECEIPT
+status: BLUEPRINT_BINDING_PENDING_EXTERNAL_CI_RECEIPT
