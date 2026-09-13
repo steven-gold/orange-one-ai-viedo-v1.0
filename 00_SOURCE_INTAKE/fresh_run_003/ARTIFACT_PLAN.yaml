@@ -1,6 +1,6 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-current_step: PAGE_BASE_BLUEPRINT_COMPLETED_CI_PASS
+current_step: RESPONSIBILITY_CLASSIFICATION_COMPLETED_CI_PASS
 current_artifacts:
 - RAW_SOURCE_REFERENCE_MANIFEST
 - RAW_SOURCE_CAPTURE_STATE
@@ -16,23 +16,17 @@ current_artifacts:
 - CONFLICT_DECISION_EVIDENCE
 - CLASSIFIED_ARTIFACT_SET
 - RESPONSIBILITY_CLASSIFICATION_EVIDENCE
-- PAGE_BASE_BLUEPRINT
 classification_materialization:
   artifact_count: 52
   page_artifacts: 48
   visual_artifacts: 4
   unresolved_authority_gaps_preserved: 8
-page_base_blueprint_materialization:
-  blueprint_count: 2
-  page_input_artifacts: 48
-  visual_input_artifacts: 0
-  direct_raw_source_inputs: 0
-  unresolved_external_authority_refs_preserved: true
 next_allowed_artifacts_after_gate_pass:
+- PAGE_BASE_BLUEPRINT
+forbidden_until_page_blueprint_gate:
 - VISUAL_BASE_BLUEPRINT
-forbidden_until_visual_blueprint_gate:
 - BLUEPRINT_BINDING_MANIFEST
 forbidden_in_stage_01:
 - WEBSITE_CONSTRUCTION
 - DEPLOYMENT
-status: PAGE_BASE_BLUEPRINT_GATE_CLOSED_CI_PASS
+status: RESPONSIBILITY_CLASSIFICATION_GATE_CLOSED_CI_PASS
