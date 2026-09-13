@@ -1,4 +1,4 @@
-schema_version: 1
+schema_version: 2
 artifact_uid: ACPOS-STAGE-TEST-CORRECTION-PROMOTION-POLICY-V1
 artifact_type: CURRENT_OPERATIONAL_GOVERNANCE_POLICY
 governance_overlay: v2.1.12
@@ -28,6 +28,7 @@ stage_test_feedback_loop:
   mark_stage_test_complete_from_same_stage_only_regression: FORBIDDEN
   treat_green_ci_as_product_gap_resolution: FORBIDDEN
   treat_test_harness_bug_as_product_truth_change: FORBIDDEN
+  lifecycle_evidence_validator_state_machine: REQUIRED
 finding_classification:
   TEST_HARNESS_OR_VALIDATOR_BUG:
     may_be_corrected_without_business_authority: true
@@ -58,6 +59,27 @@ verified_rule_promotions:
     forbidden_methods:
     - assume_actions_checkout_default_fetch_depth_contains_historical_receipt_commit
     - convert_git_cat_file_failure_in_shallow_checkout_into_missing_authority_or_missing_receipt_truth
+- rule_uid: STAGE-TEST-RULE-EVIDENCE-LIFECYCLE-STATE-002
+  source_bug_uid: STAGE2-TEST-BUG-002
+  source_failure_run: 34784673972
+  source_failure_job: 103797862524
+  verified_fix_commit: fc94b8d972b6af53462c36061e6993ffb36ccbcb
+  verification_runs: [34784783865, 34784783872]
+  rule: lifecycle_evidence_validator_must_accept_legal_forward_states_and_reject_regressions_or_impossible_state_receipt_combinations
+  enforcement:
+    required_legal_states:
+    - INTERMEDIATE_FIX_VERIFICATION_COMPLETE_FINAL_CROSS_STAGE_RETEST_NOT_EXECUTED
+    - POLICY_PROMOTION_COMPLETE_FINAL_CROSS_STAGE_RETEST_NOT_EXECUTED
+    - POLICY_PROMOTION_AND_FINAL_CROSS_STAGE_RETEST_COMPLETE
+    invariants:
+    - final_retest_receipt_must_be_null_until_final_retest_state
+    - policy_promoted_state_requires_enforced_policy_and_same_sha_main_receipts
+    - final_state_requires_success_terminal_cross_stage_receipt
+    - lifecycle_state_may_only_move_forward
+    forbidden_methods:
+    - hardcode_one_temporary_evidence_state_as_the_only_valid_state
+    - accept_final_state_without_terminal_replay_receipt
+    - accept_state_regression_after_policy_promotion
 stage2_contract_completeness_requirements:
   payload_input_contract:
     applies_to: EVERY_EFFECTFUL_ACTION
