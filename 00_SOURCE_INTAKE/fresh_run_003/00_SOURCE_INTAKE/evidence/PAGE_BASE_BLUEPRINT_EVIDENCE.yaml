@@ -4,7 +4,7 @@ artifact_type: PAGE_BASE_BLUEPRINT_EVIDENCE
 run_uid: FRESH-RUN-003
 stage_uid: STAGE-01
 step_uid: PAGE_BASE_BLUEPRINT_COMPILE
-status: MATERIALIZED_PENDING_CI
+status: VERIFIED_CI_PASS
 summary:
   page_blueprint_count: 2
   page_construction_input_artifacts: 48
@@ -39,3 +39,8 @@ external_authority_preservation:
 classification_gate_prerequisite:
   run_id: 34731817807
   result: SUCCESS_4_OF_4
+github_ci:
+  run_id: 34732351664
+  conclusion: SUCCESS
+  jobs: 5/5_SUCCESS
+next_step: VISUAL_BASE_BLUEPRINT_READY_FOR_EXPLICIT_START
