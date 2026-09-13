@@ -1,0 +1,65 @@
+schema_version: 1
+version: v2.1.12
+baseline: v2.1.11
+status: PREFORMAL_CONSTITUENT_VERIFIED_GITHUB_CI_PENDING
+package_sha256: 2d6602b20983a9764c2f1496f36ab20a2f0ebcd73826492c27ba67159f5ef3df
+external_trust_root_sha256: 4c013cfc1a91142a8b4ce44830ef467c5c960f56b136a75ff670729a523f71e3
+semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
+local_verification:
+  component_preformal_checks: 17/17_PASS
+  mandatory_matrix: 14/14_PASS
+  v212_successor_state_evidence_parse: 60/60_PASS
+  v211_binding_authority_receipt_schema: 54/54_PASS
+  v210_closure_continuity: 43/43_PASS
+  v219_evidence_state_closure: 24/24_PASS
+  v218_successor_evidence_sync: 24/24_PASS
+  v217_phase_authority: 25/25_PASS
+  cross_lifecycle: 30/30_PASS
+  stage1_minimal: 33/33_PASS
+  multidirection_stress: 21/21_PASS
+  execution_load: 14/14_PASS
+  inherited_v210: 12/12_PASS
+  post_v18: 6/6_PASS
+  high_pressure: 25/25_PASS
+  reference_semantic: 28/28_PASS
+  reference_fuzz: 46/46_BLOCKED_0_ESCAPED
+bugfix_scope:
+  predecessor_current_state_exact_terminal_lock: FORBIDDEN
+  successor_started_false_permanent_condition: FORBIDDEN
+  registered_legal_successor: ALLOW_IF_PREDECESSOR_INVARIANTS_HOLD
+  illegal_successor_or_stage_skip: BLOCK
+  phase_order_owner: PHASE_BOUNDARY_GATE
+  required_evidence_presence_only_acceptance: BLOCK
+  required_evidence_parser_validation: REQUIRED
+  required_evidence_schema_or_required_field_validation: REQUIRED
+  historical_predecessor_scope: VERSION_OWNED_LINEAGE_ONLY
+  future_successor_pending_defect_may_not_invalidate_historical_predecessor: true
+  owned_predecessor_pending_regression: BLOCK
+  applies_to_stages:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+stage1_predecessor_terminal_receipt:
+  provider: GITHUB_ACTIONS
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28
+  run_id: 34755361339
+  job_denominator: 12/12
+  conclusion: SUCCESS
+current_github_receipt:
+  mode: EXTERNAL_IMMUTABLE_RECEIPT
+  receipt_required: true
+  embedded_run_id: null
+  same_commit_self_write: FORBIDDEN
+human_formal_review: PENDING
+formal_test_executed: false
+formal_freeze_claimed: false
+production_release_claimed: false
