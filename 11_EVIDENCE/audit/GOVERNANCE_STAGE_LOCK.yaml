@@ -23,13 +23,23 @@ current_execution:
   test_iteration: 3
   replay_restore_point: SOURCE_STRUCTURE_ENUMERATION_PRE_SEGMENT_MAPPING
   replay_expected_block_verified: true
+  replay_mixed_terminal_units_detected: 2
   refined_source_structure_node_count: 61
   source_segment_mapping_completed: true
   source_segment_count: 61
-  source_fact_materialization_started: false
+  source_fact_materialization_started: true
+  source_fact_materialization_completed: true
+  current_source_fact_count: 3
+  unresolved_authority_gap_count: 8
+  responsibility_classification_started: false
   website_reconstruction_started: false
   website_reconstruction_allowed: false
   website_code_write_allowed: false
+github_ci:
+  run_id: 34727817243
+  current_v216_stage1_granularity_gate: SUCCESS
+  current_v216_source_facts_gate: SUCCESS
+  sealed_v216_runtime: SUCCESS
 historical_locks:
 - version: v2.1.5
   current_disposition: HISTORICAL_SUPERSEDED_BY_V2_1_6_SEMANTIC_GRANULARITY_FIX
@@ -37,5 +47,5 @@ historical_locks:
   current_disposition: HISTORICAL_SUPERSEDED
 - version: v2.1.2
   current_disposition: DISCARDED_NOT_AUTHORITY
-next_action: SOURCE_FACT_MATERIALIZATION only after explicit next-step start; do not skip stage ordering.
-status: V2_1_6_SEGMENT_MAPPING_LOCK_CLOSED_CI_PASS
+next_action: RESPONSIBILITY_CLASSIFICATION only after explicit next-step start; keep all unresolved authority gaps visible and do not skip stage ordering.
+status: V2_1_6_SOURCE_FACT_LOCK_CLOSED_CI_PASS
