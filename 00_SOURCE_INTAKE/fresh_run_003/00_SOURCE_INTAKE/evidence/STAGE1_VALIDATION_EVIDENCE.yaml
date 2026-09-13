@@ -1,0 +1,87 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-STAGE1-VALIDATION-EVIDENCE-V211
+artifact_type: STAGE1_VALIDATION_EVIDENCE
+governance_overlay: v2.1.11
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-01
+validation_scope: CLEAN_SCAN_AND_RUN_CLOSE
+status: MATERIALIZED_PENDING_CI
+entry_receipt:
+  provider: GITHUB_ACTIONS
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  head_sha: 74cd16e28e98a918c3f682d3b29ea7e362a19cc5
+  run_id: 34754709362
+  job_denominator: 11/11
+  conclusion: SUCCESS
+required_evidence:
+  source_enumeration_evidence: 00_SOURCE_INTAKE/evidence/SOURCE_ENUMERATION_EVIDENCE.yaml
+  conflict_decision_evidence: 00_SOURCE_INTAKE/evidence/CONFLICT_DECISION_EVIDENCE.yaml
+source_closure:
+  source_count: 3
+  source_structure_nodes: 61
+  source_segments: 61
+  required_responsibilities: 52
+  reference_only_nodes: 9
+  mixed_terminal_units: 0
+  unresolved_container_units: 0
+  lost_required_responsibilities: 0
+  duplicate_required_responsibilities: 0
+source_fact_closure:
+  source_context_manifest_hash: 87495e184f31ef04bbdc2c13895533e0ce18491e552ca336d4a7ea07f62322fb
+  conflict_ledger_hash: b05022be20bad1433165f1c8d490849ef7e4ba42061f94bcff8ef72674e18ebd
+  source_dependency_map_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
+  unresolved_authority_gap_count: 8
+  authority_resolution_performed: false
+classification_closure:
+  artifact_count: 52
+  page_artifacts: 48
+  visual_artifacts: 4
+  unclassified_required_segments: 0
+  multi_mapped_required_segments: 0
+  duplicate_canonical_owner: 0
+  page_visual_cross_contamination: 0
+blueprint_closure:
+  page_base_blueprint_count: 2
+  visual_base_blueprint_count: 2
+  blueprint_binding_count: 2
+  binding_mode: NON_OWNING_REFERENCE_ONLY
+  embedded_blueprint_payloads: 0
+  direct_raw_source_inputs: 0
+  page_visual_predecessor_bytes_immutable: true
+unresolved_authority_identity:
+  source_of_truth: SOURCE_DEPENDENCY_MAP
+  canonical_tuple_fields: [gap_uid, authority_ref, disposition, authority_evidence_ref]
+  exact_tuple_validation_required: true
+  count_only_or_uid_only_validation: BLOCK
+  false_resolution_autofill_inference_count: 0
+index_disposition:
+  dependency_index:
+    disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+    physical_artifact_created: false
+  reverse_dependency_index:
+    disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+    physical_artifact_created: false
+  stage1_dependency_authority: SOURCE_DEPENDENCY_MAP
+  reason: Stage-01 produces source/base-blueprint artifacts only; creating an unregistered standalone program-artifact dependency index would violate register-before-generation.
+clean_scan:
+  generated_temp_backup_copy_artifacts: 0
+  pycache_or_pyc_artifacts: 0
+  orphan_required_stage1_artifacts: 0
+  broken_required_stage1_references: 0
+  superseded_current_owner_residuals: 0
+  website_construction_started: false
+  deployment_started: false
+run_close:
+  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  target_pages: [CORE-01, ASSET-01]
+  target_pages_closed: 2
+  next_stage_uid: STAGE-02
+  stage2_started: false
+  website_construction_started: false
+  deployment_started: false
+current_stage1_receipt:
+  mode: EXTERNAL_IMMUTABLE_RECEIPT
+  required: true
+  embedded_run_id: null
+  canonical_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
+  same_commit_self_write: FORBIDDEN
