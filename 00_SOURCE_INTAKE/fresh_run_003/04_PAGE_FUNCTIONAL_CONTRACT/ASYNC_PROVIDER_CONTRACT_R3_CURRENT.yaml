@@ -1,0 +1,103 @@
+schema_version: 1
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+artifact_uid: FRESH-RUN-003-ASYNC-PROVIDER-CONTRACT-V212-R3-CURRENT
+artifact_type: ASYNC_PROVIDER_CONTRACT
+operation_uid: ASYNC_PROVIDER_CONTRACT_COMPILE
+revision: R3_CURRENT_AFTER_R2_GATE
+status: CURRENT_BLOCKED_PARTIAL_LIFECYCLE_RESOLUTION
+normative_gate_ref: WEB-GOV-01-S061
+successor_of:
+  ref: 04_PAGE_FUNCTIONAL_CONTRACT/ASYNC_PROVIDER_CONTRACT_R2.yaml
+  git_blob: 89f35cf340ba87053e51d001a5e96d17f3692db5
+  predecessor_status: CANDIDATE_AWAITING_DEDICATED_GATE
+promotion_receipt:
+  provider: GITHUB_ACTIONS
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  head_sha: abd19d51bf3dc968ccdc8a63f9ed5a918c172a14
+  run_id: 34775172873
+  run_number: 175
+  job_name: current-stage2-async-provider-contract-r2-gate
+  job_id: 103771865678
+  job_denominator: 27/27
+  conclusion: SUCCESS
+required_lifecycle_fields: &required
+- request_identity
+- input_fingerprint
+- idempotency
+- queued
+- running
+- succeeded
+- failed
+- cancel
+- retry_eligibility
+- callback_result_provenance
+- output_persistence
+- audit_correlation
+resolved_lifecycle_fields: &resolved
+- input_fingerprint
+- idempotency
+- succeeded
+- failed
+- retry_eligibility
+unresolved_lifecycle_fields: &unresolved
+- request_identity
+- queued
+- running
+- cancel
+- callback_result_provenance
+- output_persistence
+- audit_correlation
+resolved_field_authority:
+  input_fingerprint:
+    authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+    authority_blob: 12ef6d233e09f84571dd5d694ae8e3789ae70502
+  idempotency:
+    authority_ref: ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT@V1.0
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+  succeeded:
+    authority_ref: ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT@V1.0
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+  failed:
+    authority_ref: ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT@V1.0
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+  retry_eligibility:
+    authority_ref: ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT@V1.0
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+pages:
+  CORE-01:
+    source_page_blueprint_git_blob: 0c067fb8be186a899b42115a82d71312b4014502
+    binding_status: PARTIAL_EXACT_LIFECYCLE_RESOLUTION_REMAINS_BLOCKED
+    resolved_lifecycle_fields: *resolved
+    unresolved_lifecycle_fields: *unresolved
+    resolved_count: 5
+    unresolved_count: 7
+    provider_authority_gap_uids: [GAP-005, GAP-008]
+  ASSET-01:
+    source_page_blueprint_git_blob: 52bb27bf7eb423ddb13bcac5bd34edbcb369de3a
+    binding_status: PARTIAL_EXACT_LIFECYCLE_RESOLUTION_REMAINS_BLOCKED
+    resolved_lifecycle_fields: *resolved
+    unresolved_lifecycle_fields: *unresolved
+    resolved_count: 5
+    unresolved_count: 7
+    provider_authority_gap_uids: [GAP-005]
+current_state:
+  predecessor_unresolved_lifecycle_binding_count: 24
+  exact_resolved_binding_count: 10
+  unresolved_lifecycle_binding_count: 14
+  page_count: 2
+  exact_resolved_per_page: 5
+  unresolved_per_page: 7
+  is_current: true
+  functional_completion: false
+  stage2_exit_gate: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  stage2_exit_gate_result: BLOCKED
+  website_construction_allowed: false
+  deployment_allowed: false
+policy:
+  semantic_similarity_as_exact_binding: FORBIDDEN
+  cross_authority_field_union_without_explicit_binding: FORBIDDEN
+  ai_default_lifecycle_values: FORBIDDEN
+  raw_source_mutation_allowed: false
+  predecessor_mutation_allowed: false
