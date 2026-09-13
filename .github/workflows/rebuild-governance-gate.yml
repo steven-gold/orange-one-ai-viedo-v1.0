@@ -1,4 +1,4 @@
-name: Governance v2.1.11 Authority Identity Receipt Schema Gate
+name: Governance v2.1.11 Stage-01 Closure Gate
 on:
   push:
     branches: [rebuild-v2.1.1]
@@ -8,7 +8,7 @@ permissions:
 jobs:
   current-v218-upstream-projection-gate:
     runs-on: ubuntu-24.04
-    steps: &base
+    steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
@@ -94,9 +94,18 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Validate exact Authority tuples and canonical terminal receipts
-        env: {PYTHONDONTWRITEBYTECODE: '1'}
+      - env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v211_binding_authority_receipt_schema.py
+  current-stage1-closure-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate Stage-01 CLEAN_SCAN and RUN_CLOSE
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_stage1_closure.py
   sealed-v216-runtime:
     runs-on: ubuntu-24.04
     steps:
