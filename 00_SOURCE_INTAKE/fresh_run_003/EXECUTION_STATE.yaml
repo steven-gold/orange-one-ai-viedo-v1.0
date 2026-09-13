@@ -1,8 +1,8 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
 governance_version: v2.1.6
-governance_candidate_overlay: v2.1.11
-state: STAGE1_VALIDATION_COMPLETED_PENDING_CI
+governance_candidate_overlay: v2.1.12
+state: STAGE1_VALIDATION_COMPLETED_CI_PASS
 raw_source_capture_state: CAPTURE_CLOSED
 semantic_granularity_replay_validated: true
 replay_source_structure_node_count: 34
@@ -39,7 +39,7 @@ blueprint_binding_completed: true
 blueprint_binding_count: 2
 stage1_validation_started: true
 stage1_validation_completed: true
-stage1_exit_gate: PENDING_EXTERNAL_CI
+stage1_exit_gate: SUCCESS_EXTERNAL_CI
 stage2_started: false
 website_construction_started: false
 deployment_started: false
@@ -66,12 +66,15 @@ github_ci:
   v211_terminal_closure_run_id: 34754709362
   v211_terminal_closure_head_sha: 74cd16e28e98a918c3f682d3b29ea7e362a19cc5
   v211_terminal_closure_result: SUCCESS_11_OF_11
+  stage1_terminal_closure_run_id: 34755361339
+  stage1_terminal_closure_head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28
+  stage1_terminal_closure_result: SUCCESS_12_OF_12
   current_classification_gate: SUCCESS
   current_page_blueprint_gate: SUCCESS
   current_visual_blueprint_gate: SUCCESS
   current_binding_gate: SUCCESS_EXTERNAL_RECEIPT
   current_v211_authority_receipt_gate: SUCCESS_EXTERNAL_RECEIPT
-  current_stage1_closure_gate: PENDING
+  current_stage1_closure_gate: SUCCESS_EXTERNAL_RECEIPT
   current_phase_successor_authority_gate: SUCCESS
   current_upstream_projection_gate: SUCCESS
   sealed_v216_runtime: SUCCESS
@@ -104,8 +107,15 @@ terminal_receipts:
     run_id: 34754709362
     job_denominator: 11/11
     conclusion: SUCCESS
+  stage1_closure:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28
+    run_id: 34755361339
+    job_denominator: 12/12
+    conclusion: SUCCESS
 replay_control:
-  governance_overlay: v2.1.11
+  governance_overlay: v2.1.12
   source_checkpoint_commit: 90cbd4b5fee1b7aea25a0c15ca3b661bab605960
   source_checkpoint_tree: 6dc3a2488b8d12e9279bf9162eafaf2c56955648
   old_page_blueprint_bytes_reuse: false
@@ -128,20 +138,32 @@ closure_evidence_continuity:
   - conclusion
   terminal_ci_receipt_mode: EXTERNAL_IMMUTABLE_RECEIPT
   same_commit_self_write: FORBIDDEN
+successor_state_monotonicity:
+  contract_uid: V212-SUCCESSOR-STATE-MONOTONIC-EVIDENCE-PARSE
+  current_state_exact_predecessor_terminal_equality_as_pass_condition: FORBIDDEN
+  successor_started_false_as_permanent_pass_condition: FORBIDDEN
+  phase_order_owner: PHASE_BOUNDARY_GATE
+  required_evidence_presence_only_acceptance: FORBIDDEN
 stage1_validation:
   required_evidence:
   - SOURCE_ENUMERATION_EVIDENCE
   - CONFLICT_DECISION_EVIDENCE
+  - STAGE1_VALIDATION_EVIDENCE
   clean_scan_completed: true
   run_close_materialized: true
   dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
   reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
   source_dependency_authority: SOURCE_DEPENDENCY_MAP
 allowed_transition:
-  from: STAGE1_VALIDATION_COMPLETED_PENDING_CI
+  from: STAGE1_VALIDATION_COMPLETED_CI_PASS
   to: STAGE2_PAGE_FUNCTIONAL_CONTRACT_ACTIVE
   trigger: ALL_REQUIRED_PAGES_STAGE1_CLOSED_EXTERNAL_CI_SUCCESS
 forbidden_transitions:
-- STAGE1_VALIDATION_COMPLETED_PENDING_CI -> WEBSITE_CONSTRUCTION_ACTIVE
-- STAGE1_VALIDATION_COMPLETED_PENDING_CI -> DEPLOYMENT_ACTIVE
-last_result: STAGE1_CLOSURE_MATERIALIZED_PENDING_EXTERNAL_CI_RECEIPT
+- STAGE1_VALIDATION_COMPLETED_CI_PASS -> WEBSITE_CONSTRUCTION_ACTIVE
+- STAGE1_VALIDATION_COMPLETED_CI_PASS -> DEPLOYMENT_ACTIVE
+current_v212_receipt:
+  mode: EXTERNAL_IMMUTABLE_RECEIPT
+  required: true
+  embedded_run_id: null
+  same_commit_self_write: FORBIDDEN
+last_result: STAGE1_CLOSURE_CI_PASS_V212_GOVERNANCE_MATERIALIZED_PENDING_EXTERNAL_CI
