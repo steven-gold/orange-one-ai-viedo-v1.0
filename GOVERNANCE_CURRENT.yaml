@@ -1,4 +1,4 @@
-schema_version: 13
+schema_version: 14
 role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
 normative_authority:
@@ -8,7 +8,7 @@ normative_authority:
   semantic_authority_content_hash: 6de8b03edf0197baa08577bcd46106beb70b2bcff0652078a43c1113fcbd63ff
 current_execution:
   run_uid: FRESH-RUN-003
-  state: BLUEPRINT_BINDING_COMPLETED
+  state: STAGE1_VALIDATION_COMPLETED_PENDING_CI
   source_segment_count: 61
   source_fact_materialization_completed: true
   responsibility_classification_completed: true
@@ -19,10 +19,13 @@ current_execution:
   unresolved_authority_gap_count: 8
   blueprint_binding_started: true
   blueprint_binding_completed: true
-  stage1_validation_started: false
+  stage1_validation_started: true
+  stage1_validation_completed: true
+  stage1_exit_gate: PENDING_EXTERNAL_CI
+  stage2_started: false
   website_construction_started: false
   deployment_started: false
-predecessor_terminal_receipts:
+terminal_receipts:
   visual_closure:
     provider: GITHUB_ACTIONS
     repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
@@ -44,7 +47,22 @@ predecessor_terminal_receipts:
     run_id: 34741952438
     job_denominator: 10/10
     conclusion: SUCCESS
-current_governance_receipt:
+  v211_governance:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 74cd16e28e98a918c3f682d3b29ea7e362a19cc5
+    run_id: 34754709362
+    job_denominator: 11/11
+    conclusion: SUCCESS
+stage1_validation:
+  source_enumeration_evidence: PRESENT
+  conflict_decision_evidence: PRESENT
+  clean_scan: MATERIALIZED
+  run_close: MATERIALIZED
+  dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+  reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+  stage1_dependency_authority: SOURCE_DEPENDENCY_MAP
+current_stage1_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
@@ -56,5 +74,5 @@ current_governance_receipt:
   - job_denominator
   - conclusion
   same_commit_self_write: FORBIDDEN
-next_action: STAGE1_VALIDATION
-status: V2_1_11_AUTHORITY_IDENTITY_RECEIPT_SCHEMA_CURRENT_PENDING_EXTERNAL_CI_RECEIPT
+next_action: STAGE2_PAGE_FUNCTIONAL_CONTRACT_AFTER_STAGE1_GATE_PASS
+status: STAGE1_VALIDATION_PENDING_EXTERNAL_CI_RECEIPT
