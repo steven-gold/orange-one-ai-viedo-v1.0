@@ -1,0 +1,51 @@
+schema_version: 1
+version: v2.1.12
+contract_uid: V212-SUCCESSOR-STATE-MONOTONIC-EVIDENCE-PARSE
+baseline: v2.1.11
+scope:
+- STAGE-01
+- STAGE-02
+- STAGE-03
+- STAGE-04
+- STAGE-05
+- STAGE-06
+- STAGE-07
+- STAGE-08
+- STAGE-09
+- STAGE-10
+- STAGE-11
+predecessor_validator_successor_state_contract:
+  current_state_exact_predecessor_terminal_equality_as_pass_condition: FORBIDDEN
+  successor_started_false_as_permanent_pass_condition: FORBIDDEN
+  registered_legal_successor_presence: ALLOW_IF_PREDECESSOR_INVARIANTS_HOLD
+  illegal_successor_or_stage_skip: BLOCK
+  predecessor_completion_reversion: BLOCK
+  predecessor_proof_identity_drift: BLOCK
+  predecessor_authority_identity_drift: BLOCK
+  predecessor_terminal_receipt_drift: BLOCK
+  predecessor_validator_must_not_own_phase_order: true
+  phase_boundary_gate_is_authority: true
+  phase_order_owner: PHASE_BOUNDARY_GATE
+  historical_predecessor_validator_scope_must_be_version_owned_lineage_only: true
+  future_successor_pending_defect_must_not_fail_historical_predecessor: true
+  owned_predecessor_pending_regression: BLOCK
+required_evidence_integrity_contract:
+  invariant_uid: GOV-INV-REQUIRED-EVIDENCE-INTEGRITY-001
+  applies_to_stages: STAGE-01_THROUGH_STAGE-11
+  presence_only_acceptance: FORBIDDEN
+  parser_validation_required_before_materialized_or_closed: true
+  schema_or_required_field_validation_required_before_materialized_or_closed: true
+  malformed_or_unparseable_required_evidence: BLOCK
+  required_evidence_validator_failure: BLOCK
+regression:
+  suite: test_v2_1_12_successor_state_evidence_parse.py
+  denominator: 60/60_PASS
+  legal_successor_edges: 10
+  illegal_skip_cases: 9
+  predecessor_completion_reversion_cases: 10
+  malformed_and_schema_negative_cases: COVERED
+package_identity:
+  package_sha256: 2d6602b20983a9764c2f1496f36ab20a2f0ebcd73826492c27ba67159f5ef3df
+  external_trust_root_sha256: 4c013cfc1a91142a8b4ce44830ef467c5c960f56b136a75ff670729a523f71e3
+  semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
+status: PREFORMAL_VERIFIED_GITHUB_CI_PENDING
