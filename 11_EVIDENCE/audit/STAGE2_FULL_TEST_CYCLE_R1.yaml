@@ -1,15 +1,15 @@
-schema_version: 1
+schema_version: 2
 artifact_uid: FRESH-RUN-003-STAGE2-FULL-TEST-CYCLE-V212-R1
-artifact_type: STAGE2_FULL_TEST_CYCLE
-governance_overlay: v2.1.12
+artifact_type: STAGE2_TEST_DISCOVERY_AND_FIX_VERIFICATION
+ governance_overlay: v2.1.12
 run_uid: FRESH-RUN-003
 stage_uid: STAGE-02
 current_projection_revision: R4
-status: TEST_CYCLE_COMPLETE_PRODUCT_GAPS_REMAIN_BLOCKING
+status: INTERMEDIATE_FIX_VERIFICATION_COMPLETE_FINAL_CROSS_STAGE_RETEST_NOT_EXECUTED
 scope:
   workflow: Governance v2.1.12 Stage-02 Functional Chain Preflight Gate
   workflow_path: .github/workflows/rebuild-governance-gate.yml
-  rule: test_first_record_all_findings_fix_permitted_bugs_then_retest_from_stage_start
+  rule: finish_stage_discovery_then_fix_then_promote_verified_corrections_to_policy_then_retest_from_previous_stage_boundary
   current_projection_mutation_allowed: false
 initial_test_receipt:
   run_number: 209
@@ -28,7 +28,7 @@ findings:
     product_truth_impacted: false
     current_gap_counts_impacted: false
     root_cause: validator incorrectly required an older receipt commit object to exist in the shallow local git object database
-    correction_status: FIXED
+    correction_status: FIXED_AND_VERIFIED_PENDING_POLICY_PROMOTION
     correction_commit: 397b5d62e0330fd74de84c1d4a9bfd489e48c29e
     corrected_validator: governance/ci/validate_current_stage2_architecture_unresolved_evidence.py
     correction: removed shallow-local-object ancestry assumption while preserving pinned receipt identity and full current re-execution
@@ -50,29 +50,57 @@ findings:
     classification: TRUE_BLOCKING_GAPS_NOT_TEST_HARNESS_FAILURES
     ai_guess_or_default_substitution: FORBIDDEN
     authorized_automatic_gap_removals: 0
-retest_receipt:
-  run_number: 210
+intermediate_fix_verification_receipts:
+- run_number: 210
   run_id: 34783656176
   exact_head_sha: 397b5d62e0330fd74de84c1d4a9bfd489e48c29e
   status: completed
   conclusion: success
   job_total: 44
-  completed_success_jobs: 44
-  architecture_consolidation_artifact:
-    artifact_id: 10325034147
-    artifact_name: stage2-architecture-unresolved-evidence
-    digest: sha256:881793301072f8d27ca6f99e5eeef0fbe25a10ae414c8546d3b54ec8b4109789
-    nested_validator_count: 11
-    nested_validators_all_passed: true
-    architecture_authorized_removals: 0
-    architecture_unresolved_after_full_audit: 133
+  purpose: verify_specific_stage2_bug_fix_and_full_stage2_regression_before_policy_promotion
+- run_number: 211
+  run_id: 34784187024
+  exact_head_sha: 9459f8b80599088cd9412af574279bf4f59e3dc0
+  status: completed
+  conclusion: success
+  job_total: 44
+  purpose: verify_evidence_record_did_not_pollute_current_stage2
+architecture_consolidation_artifact:
+  artifact_id: 10325034147
+  artifact_name: stage2-architecture-unresolved-evidence
+  digest: sha256:881793301072f8d27ca6f99e5eeef0fbe25a10ae414c8546d3b54ec8b4109789
+  nested_validator_count: 11
+  nested_validators_all_passed: true
+  architecture_authorized_removals: 0
+  architecture_unresolved_after_full_audit: 133
+required_policy_promotion:
+  status: REQUIRED_BEFORE_FINAL_RETEST
+  target_policy: governance/STAGE_TEST_CORRECTION_PROMOTION_POLICY_V1.yaml
+  required_rules:
+  - complete_current_stage_discovery_before_final_retest
+  - separate_test_harness_bugs_from_true_product_or_authority_gaps
+  - promote_verified_corrections_into_governance_rules_before_final_retest
+  - never_treat_shallow_checkout_object_absence_as_repository_absence
+  - final_retest_must_start_from_immediately_previous_stage_boundary
+  - previous_stage_closure_and_stage_transition_must_pass_before_current_stage_acceptance
+final_cross_stage_retest:
+  required: true
+  start_boundary: STAGE-01
+  required_sequence:
+  - STAGE1_CLOSURE_VALIDATION
+  - STAGE1_TO_STAGE2_SUCCESSOR_VALIDATION
+  - STAGE2_FULL_CURRENT_GOVERNANCE_GATE
+  status: NOT_EXECUTED_AFTER_POLICY_PROMOTION
+  terminal_receipt: null
 test_cycle_decision:
   test_infrastructure_bug_count_found: 1
   test_infrastructure_bug_count_fixed: 1
-  remaining_test_infrastructure_bug_count_after_retest: 0
+  remaining_known_test_infrastructure_bug_count_after_intermediate_verification: 0
   product_or_authority_gap_count_mutated_by_test_cycle: 0
   current_projection_revision_changed: false
-  r5_successor_required_by_this_test_cycle: false
+  r5_successor_required_by_this_evidence_correction: false
+  stage_test_cycle_complete: false
+  reason: final_cross_stage_retest_must_wait_until_verified_fix_is_promoted_to_governance_policy
   stage2_status: BLOCKED
   website_construction_allowed: false
   deployment_allowed: false
