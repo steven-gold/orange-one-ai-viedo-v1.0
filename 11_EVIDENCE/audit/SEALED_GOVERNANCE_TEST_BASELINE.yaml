@@ -1,50 +1,8 @@
-schema_version: 4
-branch_name: rebuild-v2.1.1
-role: CURRENT_SEALED_GOVERNANCE_TEST_BASELINE
-normative_mutation_allowed: false
+schema_version: 5
 sealed_governance:
-  version: v2.1.8
-  baseline: v2.1.7
-  release_name: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.8_SUCCESSOR_EVIDENCE_SYNC_BUGFIX_PREFORMAL_VERIFIED
-  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.8_SUCCESSOR_EVIDENCE_SYNC_BUGFIX_PREFORMAL_VERIFIED.zip
-  package_sha256: a108845fbde176cbd20a5f9df4217c68b6512686dedc00ffc8c44e9cc2b04753
-  external_trust_root_sha256: b5c5b5776d1f0f733b1c3572f3233bde7cee3c85253aacd12a522b68a55292ac
-  semantic_authority_content_hash: e21c1b8cd1c2b04436fc77b5f9ac99320127bbf5535d63925731bc4e7d260da1
-  state: PREFORMAL_VERIFIED_GITHUB_CI_PASS
-  sealed_read_only: true
-  formal_freeze_executed: false
-sealed_runtime_dependency:
-  version: v2.1.6
-  runtime_manifest: governance/test-runtime/v2.1.6/STAGE1_RUNTIME_MANIFEST.yaml
-  mutation: FORBIDDEN
-verified_test_summary:
-  preformal: 15/15_PASS
-  mandatory_matrix: 10/10_PASS
-  high_pressure: 25/25_PASS
-  reference_semantic: 28/28_PASS
-  fuzz: 46/46_BLOCKED_0_ESCAPED
-  execution_load: 14/14_PASS
-  multidirection_stress: 21/21_PASS
-  stage1_minimal_control: 33/33_PASS
-  cross_lifecycle: 30/30_PASS
-  v217_phase_authority: 25/25_PASS
-  v218_successor_evidence_sync: 24/24_PASS
-github_ci_verification:
-  run_id: 34733412228
-  jobs: 6/6_SUCCESS
-  direct_current_workspace_classification: PASS
-  page_blueprint_successor_aware: PASS
-  exact_phase_successor_authority: PASS
-  candidate_evidence_sync: PASS
-  sealed_v216_runtime: PASS
-execution_checkpoint:
-  state: PAGE_BASE_BLUEPRINT_COMPLETED
-  classification: 52/52
-  page_base_blueprint: 2/2
-  unresolved_authority_gaps: 8
-  visual_base_blueprint_started: false
-  blueprint_binding_started: false
-  website_construction_started: false
-  deployment_started: false
+  version: v2.1.9
+  package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
+  external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
+  semantic_authority_content_hash: 531a364590e47f182f40ac3794d9b30c7ae77678423a53be787ae1cd87c70c2f
 human_formal_review: PENDING
-status: SEALED_V2_1_8_PREFORMAL_TEST_BASELINE_PAGE_BLUEPRINT_GITHUB_CI_PASS
+status: V2_1_9_PREFORMAL_CI_PENDING

@@ -1,16 +1,16 @@
-schema_version: 7
+schema_version: 8
 role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
 normative_authority:
-  version: v2.1.8
-  baseline: v2.1.7
-  state: SUCCESSOR_EVIDENCE_SYNC_BUGFIX_PREFORMAL_VERIFIED_GITHUB_CI_PASS
+  version: v2.1.9
+  baseline: v2.1.8
+  state: EVIDENCE_STATE_CLOSURE_SYSTEM_LOGIC_GUARD_PREFORMAL_VERIFIED_GITHUB_CI_PENDING
   formal_freeze_executed: false
   normative_edit_allowed: false
-  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.8_SUCCESSOR_EVIDENCE_SYNC_BUGFIX_PREFORMAL_VERIFIED.zip
-  package_sha256: a108845fbde176cbd20a5f9df4217c68b6512686dedc00ffc8c44e9cc2b04753
-  external_trust_root_sha256: b5c5b5776d1f0f733b1c3572f3233bde7cee3c85253aacd12a522b68a55292ac
-  semantic_authority_content_hash: e21c1b8cd1c2b04436fc77b5f9ac99320127bbf5535d63925731bc4e7d260da1
+  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.9_EVIDENCE_STATE_CLOSURE_SYSTEM_LOGIC_GUARD_BUGFIX_PREFORMAL_VERIFIED.zip
+  package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
+  external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
+  semantic_authority_content_hash: 531a364590e47f182f40ac3794d9b30c7ae77678423a53be787ae1cd87c70c2f
 test_runtime:
   version: v2.1.6
   runtime_uid: ACPOS-GOV-TEST-v2.1.6-STAGE1-SEMANTIC-GRANULARITY
@@ -23,16 +23,14 @@ current_execution:
   phase: FOUNDATION-01-SOURCE-INTAKE
   run_uid: FRESH-RUN-003
   state: PAGE_BASE_BLUEPRINT_COMPLETED
-  target_pages: [CORE-01, ASSET-01]
+  target_pages:
+  - CORE-01
+  - ASSET-01
   source_segment_mapping_completed: true
-  source_segment_count: 61
   source_fact_materialization_completed: true
-  current_source_fact_count: 3
   unresolved_authority_gap_count: 8
   responsibility_classification_completed: true
   classification_artifact_count: 52
-  classification_page_artifact_count: 48
-  classification_visual_artifact_count: 4
   page_base_blueprint_completed: true
   page_base_blueprint_count: 2
   visual_base_blueprint_started: false
@@ -46,16 +44,10 @@ successor_policy:
   next_allowed_transition: VISUAL_BASE_BLUEPRINT_ACTIVE
 current_test_evidence_sync:
   status: PASS
-  current_revision_only: true
-  historical_pass_substitution: BLOCK
-  denominator_drift: BLOCK
+  superseded_replay_pending: 0
   human_formal_review: PENDING
 github_ci:
-  v218_candidate_run_id: 34733412228
-  result: 6/6_SUCCESS
-  direct_current_workspace_classification: SUCCESS
-  current_page_blueprint_gate: SUCCESS
-  phase_successor_authority_gate: SUCCESS
-  candidate_evidence_sync_gate: SUCCESS
-next_action: Start VISUAL_BASE_BLUEPRINT only on explicit next-step execution; preserve all 8 unresolved external Authority refs and do not start Binding, website construction, or deployment early.
-status: V2_1_8_PAGE_BASE_BLUEPRINT_CLOSED_SUCCESSOR_EVIDENCE_SYNC_CI_PASS
+  v219_candidate_run_id: null
+  result: PENDING
+next_action: Start VISUAL_BASE_BLUEPRINT only after v2.1.9 Current candidate GitHub gate passes.
+status: V2_1_9_EVIDENCE_STATE_CLOSURE_PREFORMAL_CURRENT_CI_PENDING

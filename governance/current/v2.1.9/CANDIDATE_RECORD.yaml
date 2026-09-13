@@ -1,0 +1,44 @@
+schema_version: 1
+record_uid: ACPOS-GOV-V219-PREFORMAL-CANDIDATE
+version: v2.1.9
+baseline: v2.1.8
+status: PREFORMAL_VERIFIED_GITHUB_CI_PENDING
+package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.9_EVIDENCE_STATE_CLOSURE_SYSTEM_LOGIC_GUARD_BUGFIX_PREFORMAL_VERIFIED.zip
+package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
+external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
+semantic_authority_content_hash: 531a364590e47f182f40ac3794d9b30c7ae77678423a53be787ae1cd87c70c2f
+local_verification:
+  preformal_definition_checks: 16/16_PASS
+  mandatory_matrix: 11/11_PASS
+  high_pressure: 25/25_PASS
+  reference_semantic: 28/28_PASS
+  reference_fuzz: 46/46_BLOCKED_0_ESCAPED
+  execution_load: 14/14_PASS
+  multidirection_stress: 21/21_PASS
+  stage1_minimal: 33/33_PASS
+  cross_lifecycle: 30/30_PASS
+  v217_phase_authority: 25/25_PASS
+  v218_successor_evidence_sync: 24/24_PASS
+  v219_evidence_state_system_logic: 24/24_PASS
+closed_predecessor_github_evidence:
+  v218_successor_linkage_final_run: 34733833659
+  pre_page_replay_run: 34734265713
+  page_replay_run: 34734528373
+  content_audit_closure_run: 34734730080
+stage02_system_logic_detection:
+  page_functional_contract: true
+  functional_chain: true
+  dependency_map: true
+  permission_runtime_data: true
+  cross_page_system_logic_slice: true
+  error_retry_resume: true
+  second_system_guard: true
+  orphan_guard: true
+github_verification:
+  run_id: null
+  jobs_expected: 7
+  conclusion: PENDING
+human_formal_review: PENDING
+formal_test_executed: false
+formal_freeze_claimed: false
+production_release_claimed: false

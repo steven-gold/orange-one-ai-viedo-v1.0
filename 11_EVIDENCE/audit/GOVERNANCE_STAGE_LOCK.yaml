@@ -1,50 +1,17 @@
-schema_version: 5
+schema_version: 6
 current_test_authority:
-  version: v2.1.8
-  baseline: v2.1.7
-  state: SUCCESSOR_EVIDENCE_SYNC_BUGFIX_PREFORMAL_VERIFIED_GITHUB_CI_PASS
-  package_sha256: a108845fbde176cbd20a5f9df4217c68b6512686dedc00ffc8c44e9cc2b04753
-  external_trust_root_sha256: b5c5b5776d1f0f733b1c3572f3233bde7cee3c85253aacd12a522b68a55292ac
-  semantic_authority_content_hash: e21c1b8cd1c2b04436fc77b5f9ac99320127bbf5535d63925731bc4e7d260da1
+  version: v2.1.9
+  package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
+  external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
+  semantic_authority_content_hash: 531a364590e47f182f40ac3794d9b30c7ae77678423a53be787ae1cd87c70c2f
 lock_state: PREFORMAL_CANDIDATE_READ_ONLY
-formal_freeze_executed: false
-normative_edit_after_lock: FORBIDDEN
-runtime_sync:
-  runtime_uid: ACPOS-GOV-TEST-v2.1.6-STAGE1-SEMANTIC-GRANULARITY
-  runtime_manifest: governance/test-runtime/v2.1.6/STAGE1_RUNTIME_MANIFEST.yaml
-  runtime_content_mutation: FORBIDDEN
-  evidence_sync: REQUIRED_CURRENT_REVISION
-  github_ci_state: PASS
 current_execution:
-  run_uid: FRESH-RUN-003
-  source_segment_mapping_completed: true
-  source_fact_materialization_completed: true
-  unresolved_authority_gap_count: 8
-  responsibility_classification_completed: true
-  classification_artifact_count: 52
   page_base_blueprint_completed: true
-  page_base_blueprint_count: 2
   visual_base_blueprint_started: false
   blueprint_binding_started: false
-  website_reconstruction_started: false
-  deployment_started: false
-successor_lock:
-  classification_to_page: PASS
-  page_to_visual_requires_page_ci_pass: true
-  visual_to_binding_requires_page_and_visual_ci_pass: true
-  legal_successor_retroactive_invalidation: FORBIDDEN
 current_test_evidence_sync:
-  machine_review: PASS
-  historical_evidence_substitution: BLOCK
-  denominator_drift: BLOCK
+  superseded_replay_pending: 0
   human_formal_review: PENDING
 github_ci:
-  run_id: 34733412228
-  result: 6/6_SUCCESS
-historical_locks:
-  - version: v2.1.7
-    disposition: HISTORICAL_SUPERSEDED_BY_V2_1_8_SUCCESSOR_EVIDENCE_SYNC_FIX
-  - version: v2.1.6
-    disposition: SEALED_RUNTIME_BASELINE_RETAINED
-next_action: VISUAL_BASE_BLUEPRINT only after explicit next-step start. Preserve all 8 unresolved Authority gaps; Binding/website/deployment remain blocked.
-status: V2_1_8_PAGE_BLUEPRINT_LOCK_CLOSED_CI_PASS
+  result: PENDING
+status: V2_1_9_PREFORMAL_CI_PENDING

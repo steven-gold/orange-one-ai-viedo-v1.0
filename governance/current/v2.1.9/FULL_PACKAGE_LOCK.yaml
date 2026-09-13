@@ -1,0 +1,26 @@
+schema_version: 1
+record_uid: ACPOS-GOV-V219-FULL-PACKAGE-LOCK
+version: v2.1.9
+status: CURRENT_PREFORMAL_VERIFIED_GITHUB_CI_PENDING
+source_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.9_EVIDENCE_STATE_CLOSURE_SYSTEM_LOGIC_GUARD_BUGFIX_PREFORMAL_VERIFIED.zip
+source_package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
+package_regular_file_count: 61
+package_checksum_entry_count: 60
+package_checksum_manifest: governance/current/v2.1.9/CHECKSUMS.sha256
+external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
+semantic_authority_content_hash: 531a364590e47f182f40ac3794d9b30c7ae77678423a53be787ae1cd87c70c2f
+full_fileset_integrity:
+  checksum_verification: 60/60_PASS
+  preformal_definition_checks: 16/16_PASS
+  mandatory_regression_matrix: 11/11_PASS
+  v2_1_9_evidence_state_system_logic_regression: 24/24_PASS
+human_formal_review: PENDING
+formal_test_executed: false
+formal_freeze_claimed: false
+production_release_claimed: false
+integrity_policy:
+  exact_package_hash_required: true
+  exact_file_checksum_set_required: true
+  external_trust_root_required: true
+  superseded_github_replay_pending: BLOCK
+  stage02_system_logic_detector_required: true
