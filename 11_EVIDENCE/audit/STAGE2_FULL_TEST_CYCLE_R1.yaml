@@ -1,11 +1,11 @@
-schema_version: 2
+schema_version: 3
 artifact_uid: FRESH-RUN-003-STAGE2-FULL-TEST-CYCLE-V212-R1
-artifact_type: STAGE2_TEST_DISCOVERY_AND_FIX_VERIFICATION
+artifact_type: STAGE2_TEST_DISCOVERY_FIX_AND_POLICY_PROMOTION_EVIDENCE
 governance_overlay: v2.1.12
 run_uid: FRESH-RUN-003
 stage_uid: STAGE-02
 current_projection_revision: R4
-status: INTERMEDIATE_FIX_VERIFICATION_COMPLETE_FINAL_CROSS_STAGE_RETEST_NOT_EXECUTED
+status: POLICY_PROMOTION_COMPLETE_FINAL_CROSS_STAGE_RETEST_NOT_EXECUTED
 scope:
   workflow: Governance v2.1.12 Stage-02 Functional Chain Preflight Gate
   workflow_path: .github/workflows/rebuild-governance-gate.yml
@@ -28,10 +28,11 @@ findings:
     product_truth_impacted: false
     current_gap_counts_impacted: false
     root_cause: validator incorrectly required an older receipt commit object to exist in the shallow local git object database
-    correction_status: FIXED_AND_VERIFIED_PENDING_POLICY_PROMOTION
+    correction_status: FIXED_VERIFIED_AND_PROMOTED_TO_CURRENT_OPERATIONAL_POLICY
     correction_commit: 397b5d62e0330fd74de84c1d4a9bfd489e48c29e
     corrected_validator: governance/ci/validate_current_stage2_architecture_unresolved_evidence.py
     correction: removed shallow-local-object ancestry assumption while preserving pinned receipt identity and full current re-execution
+    promoted_rule_uid: STAGE-TEST-RULE-SHALLOW-CHECKOUT-001
   unresolved_product_or_authority_gaps:
     functional_gap_total: 167
     architecture_gap_total: 133
@@ -73,8 +74,47 @@ architecture_consolidation_artifact:
   nested_validators_all_passed: true
   architecture_authorized_removals: 0
   architecture_unresolved_after_full_audit: 133
+policy_promotion:
+  status: COMPLETE_AND_ENFORCED
+  policy_ref: governance/STAGE_TEST_CORRECTION_PROMOTION_POLICY_V1.yaml
+  policy_commit: b6a99d66c0f638f01978905c8a1919ad405c264d
+  validator_ref: governance/ci/validate_stage_test_correction_promotion_policy.py
+  validator_commit: b799bf95caf060755be5c63fc763321d86dd8a6c
+  enforcement_workflow_ref: .github/workflows/stage-test-correction-promotion-policy.yml
+  enforcement_commit: 818e375c38bccc732b46c019b51e719560c4a471
+  same_sha_stage2_main_regression:
+    run_number: 216
+    run_id: 34784586386
+    exact_head_sha: 818e375c38bccc732b46c019b51e719560c4a471
+    status: completed
+    conclusion: success
+    job_total: 44
+    completed_success_jobs: 44
+  policy_gate_receipt:
+    workflow_run_number: 1
+    run_id: 34784586407
+    exact_head_sha: 818e375c38bccc732b46c019b51e719560c4a471
+    job_name: current-stage-test-correction-promotion-policy-gate
+    job_id: 103797625757
+    status: completed
+    conclusion: success
+    artifact_id: 10325683763
+    artifact_name: stage-test-correction-promotion-policy
+    artifact_digest: sha256:15ae9d73b23a5a96cb352d1e8e0868cbaa7a1aa3061f3b27a0f395cd24c377f6
+  artifact_assertions:
+    policy_status: CURRENT_OPERATIONAL
+    verified_rule_promotion_count: 1
+    stage2_completeness_requirement_count: 8
+    known_functional_gap_total_preserved: 167
+    known_async_unresolved_preserved: 14
+    sealed_v212_package_unchanged: true
+    current_r4_projection_unchanged: true
+    final_cross_stage_retest_required: true
+    final_cross_stage_retest_executed: false
+    retest_start_boundary: STAGE-01
+    stage_test_cycle_complete: false
 required_policy_promotion:
-  status: REQUIRED_BEFORE_FINAL_RETEST
+  status: COMPLETE
   target_policy: governance/STAGE_TEST_CORRECTION_PROMOTION_POLICY_V1.yaml
   required_rules:
   - complete_current_stage_discovery_before_final_retest
@@ -95,12 +135,13 @@ final_cross_stage_retest:
 test_cycle_decision:
   test_infrastructure_bug_count_found: 1
   test_infrastructure_bug_count_fixed: 1
+  verified_fix_promoted_to_policy_count: 1
   remaining_known_test_infrastructure_bug_count_after_intermediate_verification: 0
   product_or_authority_gap_count_mutated_by_test_cycle: 0
   current_projection_revision_changed: false
   r5_successor_required_by_this_evidence_correction: false
   stage_test_cycle_complete: false
-  reason: final_cross_stage_retest_must_wait_until_verified_fix_is_promoted_to_governance_policy
+  reason: policy promotion is complete but the required sequential cross-stage retest from Stage-01 has not yet been executed
   stage2_status: BLOCKED
   website_construction_allowed: false
   deployment_allowed: false
