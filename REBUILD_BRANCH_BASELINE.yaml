@@ -32,10 +32,23 @@ source_segment_mapping:
   page_construction_segments: 52
   visual_construction_segments: 9
   ci_pass: true
+source_fact_materialization:
+  source_context_manifest_hash: 87495e184f31ef04bbdc2c13895533e0ce18491e552ca336d4a7ea07f62322fb
+  conflict_ledger_hash: b05022be20bad1433165f1c8d490849ef7e4ba42061f94bcff8ef72674e18ebd
+  source_dependency_map_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
+  current_source_fact_count: 3
+  unresolved_authority_gap_count: 8
+  invented_dependency_count: 0
+  ci_pass: true
+responsibility_classification_started: false
 current_load_graph_policy: ALLOWLIST_ONLY
 website_reconstruction_started: false
 website_reconstruction_allowed: false
 website_code_write_allowed: false
 test_and_evidence_sync_allowed: true
-github_ci_run_id: 34726994206
-status: V2_1_6_SEGMENT_MAPPING_BASELINE_CI_PASS
+github_ci:
+  run_id: 34727817243
+  current_v216_stage1_granularity_gate: SUCCESS
+  current_v216_source_facts_gate: SUCCESS
+  sealed_v216_runtime: SUCCESS
+status: V2_1_6_SOURCE_FACT_BASELINE_CI_PASS
