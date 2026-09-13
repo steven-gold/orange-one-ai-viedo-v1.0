@@ -2,7 +2,7 @@ schema_version: 1
 record_uid: ACPOS-GOV-V219-PREFORMAL-CANDIDATE
 version: v2.1.9
 baseline: v2.1.8
-status: PREFORMAL_VERIFIED_GITHUB_CI_PENDING
+status: PREFORMAL_VERIFIED_GITHUB_CI_PASS
 package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.9_EVIDENCE_STATE_CLOSURE_SYSTEM_LOGIC_GUARD_BUGFIX_PREFORMAL_VERIFIED.zip
 package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
 external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
@@ -35,9 +35,10 @@ stage02_system_logic_detection:
   second_system_guard: true
   orphan_guard: true
 github_verification:
-  run_id: null
-  jobs_expected: 7
-  conclusion: PENDING
+  head_sha: 4806b470f441d2a0077665e270c21aa88c53c8e1
+  run_id: 34737738652
+  jobs: 7/7_SUCCESS
+  conclusion: SUCCESS
 human_formal_review: PENDING
 formal_test_executed: false
 formal_freeze_claimed: false
