@@ -1,0 +1,52 @@
+schema_version: 1
+artifact_uid: ACPOS-GOV-V217-STAGE1-PHASE-AUTHORITY-CONTRACT
+artifact_type: GOVERNANCE_BUGFIX_CONTRACT
+version: v2.1.7
+baseline: v2.1.6
+status: PREFORMAL_VERIFIED_GITHUB_REPLAY_PENDING
+local_candidate_zip_sha256: d763d4c32cd189a4bc6b09c7d725ceca166c98b133b83ab6befd3207fb0ed212
+external_trust_root_sha256: 3176820679a1e5d785c46aa4ddd45419a4f21ee4e968a86d644869725a8297d3
+semantic_authority_content_hash: 1bad10c8e7238eaf92402b2c6d935e07b51e3d0b1a6f24e1f6ff2a10cf7b0ba5
+phase_boundary:
+  required_predecessor: SOURCE_SEGMENT_MAPPING_COMPLETED
+  legal_successor: SOURCE_FACT_MATERIALIZATION
+  source_fact_start_after_segment_mapping: ALLOW
+  source_fact_start_before_segment_mapping: BLOCK
+  before_source_fact_close:
+    domain_decomposition: BLOCK
+    responsibility_classification: BLOCK
+    blueprint_materialization: BLOCK
+    website_construction: BLOCK
+    deployment: BLOCK
+  stage1_always_blocked:
+    website_construction: true
+    deployment: true
+unresolved_external_authority:
+  source_fact_disposition: UNRESOLVED_AUTHORITY_GAP
+  explicit_raw_reference_outside_capture_is_source_fact_failure: false
+  explicit_raw_reference_outside_capture_is_invented_dependency: false
+  expected_current_replay_count: 8
+  expected_current_replay_refs:
+    - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+    - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+    - ACPOS_SYSTEM_AUTHORITY@V1.0
+    - ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+    - ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+    - ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+    - IAM-01 / account permission runtime
+    - ACPOS shared AI Router/Capability Assignment
+  preserve_gap_uid: true
+  preserve_authority_ref: true
+  preserve_consumer_source_uids: true
+  ai_auto_fill: BLOCK
+  ai_inference: BLOCK
+  alias_or_default_substitution: BLOCK
+  drop_or_silent_ignore: BLOCK
+  false_resolution: BLOCK
+  blueprint_carry_forward_required: true
+  affected_closure_requires_authoritative_resolution_evidence: true
+  resolution_requires:
+    - AUTHORITATIVE_SOURCE_MATERIALIZED
+    - EXACT_AUTHORITY_REF_MATCH
+    - AUTHORITY_CONTENT_HASH
+    - AUTHORITY_EVIDENCE_REF
