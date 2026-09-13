@@ -52,6 +52,10 @@ blueprint_boundary:
   blueprint_binding_started: false
   website_construction_started: false
   deployment_started: false
-status: MATERIALIZED_PENDING_CI
-next_step: PAGE_BASE_BLUEPRINT_COMPILE_AFTER_CLASSIFICATION_CI_PASS
-content_hash: 36b3bdb1eea613341f733b4ee3d39db1493bdd5374daf78b279601278147dfdf
+status: VERIFIED_CI_PASS
+next_step: PAGE_BASE_BLUEPRINT_READY_FOR_EXPLICIT_START
+github_ci:
+  run_id: 34731817807
+  conclusion: SUCCESS
+  jobs: 4/4_SUCCESS
+content_hash: bc8a0ad50c09d0779a65ac0b6311fbf9e11a183fd9c6c0e3499985290b253bc8
