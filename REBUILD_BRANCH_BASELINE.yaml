@@ -1,22 +1,51 @@
-schema_version: 11
-baseline_uid: REBUILD-BRANCH-v2.1.10-BLUEPRINT-BINDING
+schema_version: 12
+baseline_uid: REBUILD-BRANCH-v2.1.11-AUTHORITY-IDENTITY-RECEIPT-SCHEMA
 branch_name: rebuild-v2.1.1
 governance_test:
-  version: v2.1.10
-  package_sha256: a4df779f9de5c6b368c5382779e7759aa28f363da79ebd63acc8b6bc3672d205
+  version: v2.1.11
+  package_sha256: 651d3027967a65125787e659765ed3cc5588cbba3e38faa55b56942af46b3e18
+  external_trust_root_sha256: 6d29a43395862b39f6d07ca07872d041892a603fc15e9950a5a618ce0fd58852
+  semantic_authority_content_hash: 6de8b03edf0197baa08577bcd46106beb70b2bcff0652078a43c1113fcbd63ff
 workspace_progress:
   source_segment_mapping: 61/61
   source_fact_materialization: COMPLETED
   responsibility_classification: 52/52
   page_base_blueprint: 2/2
   visual_base_blueprint: 2/2_CI_PASS
-  blueprint_binding: 2/2_MATERIALIZED_PENDING_CI
+  blueprint_binding: 2/2_CI_PASS
+  stage1_validation_started: false
 predecessor_terminal_receipts:
-  visual: {head_sha: e653fbcf39a18775790c6403439b076c9ed3f534, run_id: 34739267938, result: 8/8_SUCCESS}
-  v210: {head_sha: 91f4271b5145f5646be07da32b5624fad7528034, run_id: 34741356025, result: 9/9_SUCCESS}
-current_binding_receipt:
+  visual_closure:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
+    run_id: 34739267938
+    job_denominator: 8/8
+    conclusion: SUCCESS
+  v210_governance:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 91f4271b5145f5646be07da32b5624fad7528034
+    run_id: 34741356025
+    job_denominator: 9/9
+    conclusion: SUCCESS
+  blueprint_binding:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: d10253d154eacabed3df967ce4aa83c71a7475f3
+    run_id: 34741952438
+    job_denominator: 10/10
+    conclusion: SUCCESS
+current_governance_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
+  canonical_fields:
+  - provider
+  - repository_or_project
+  - head_sha
+  - run_id
+  - job_denominator
+  - conclusion
 next_allowed: STAGE1_VALIDATION
-status: V2_1_10_BINDING_PENDING_EXTERNAL_CI_RECEIPT
+status: V2_1_11_CURRENT_PENDING_EXTERNAL_CI_RECEIPT
