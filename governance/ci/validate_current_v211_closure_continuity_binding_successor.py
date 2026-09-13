@@ -17,14 +17,10 @@ s=load(run/'EXECUTION_STATE.yaml')
 for k in ('source_segment_mapping_started','source_segment_mapping_completed','source_fact_materialization_started','source_fact_materialization_completed','responsibility_classification_started','responsibility_classification_completed','page_base_blueprint_started','page_base_blueprint_completed','visual_base_blueprint_started','visual_base_blueprint_completed','blueprint_binding_started','blueprint_binding_completed'):
  if s.get(k) is not True: die('predecessor continuity lost:'+k)
 if (s.get('source_segment_count'),s.get('classification_artifact_count'),s.get('page_base_blueprint_count'),s.get('visual_base_blueprint_count'),s.get('blueprint_binding_count'),s.get('unresolved_authority_gap_count'))!=(61,52,2,2,2,8): die('denominator drift')
-if s.get('governance_candidate_overlay')!='v2.1.11': die('governance successor drift')
-allowed={'BLUEPRINT_BINDING_COMPLETED','STAGE1_VALIDATION_COMPLETED_PENDING_CI'}
-if s.get('state') not in allowed: die('unsupported legal successor state')
-if s.get('state')=='STAGE1_VALIDATION_COMPLETED_PENDING_CI':
- if not (s.get('stage1_validation_started') is True and s.get('stage1_validation_completed') is True): die('Stage1 validation successor incomplete')
- if s.get('stage1_exit_gate')!='PENDING_EXTERNAL_CI': die('Stage1 exit-gate drift')
- ci=s.get('github_ci') or {}
- if ci.get('v211_terminal_closure_run_id')!=34754709362 or ci.get('v211_terminal_closure_head_sha')!='74cd16e28e98a918c3f682d3b29ea7e362a19cc5' or ci.get('v211_terminal_closure_result')!='SUCCESS_11_OF_11': die('Stage1 successor lacks v2.1.11 predecessor receipt')
-if s.get('stage2_started') is True or s.get('website_construction_started') is True or s.get('deployment_started') is True: die('post-Stage1 phase started early')
-print('PASS: v2.1.11 continuity predecessor preserves Source->Classification->Page->Visual->Binding immutable lineage under legal Stage-01 Validation successor')
-print('PASS: monotonic evidence/counts remain exact; Stage2/site/deploy remain blocked pending Stage-01 external closure receipt')
+# v2.1.12: predecessor closure owns immutable lineage, not global Current state or successor-start flags.
+# If Stage-01 validation exists in the successor, it may only be accepted when its own completion remains monotonic.
+if s.get('stage1_validation_started') is True and s.get('stage1_validation_completed') is not True: die('Stage1 successor completion reversion')
+ci=s.get('github_ci') or {}
+if ci.get('v211_terminal_closure_run_id')!=34754709362 or ci.get('v211_terminal_closure_head_sha')!='74cd16e28e98a918c3f682d3b29ea7e362a19cc5' or ci.get('v211_terminal_closure_result')!='SUCCESS_11_OF_11': die('v2.1.11 predecessor receipt drift')
+print('PASS: v2.1.11 continuity predecessor preserves Source->Classification->Page->Visual->Binding immutable lineage under legal successors')
+print('PASS: predecessor counts/proofs remain exact; global phase/state ordering is owned by the Phase Boundary Gate')
