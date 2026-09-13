@@ -1,6 +1,6 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-current_step: STAGE1_VALIDATION_MATERIALIZED_PENDING_CI
+current_step: STAGE1_VALIDATION_COMPLETED_CI_PASS
 current_artifacts:
 - RAW_SOURCE_REFERENCE_MANIFEST
 - RAW_SOURCE_CAPTURE_STATE
@@ -22,6 +22,7 @@ current_artifacts:
 - BLUEPRINT_BINDING_MANIFEST
 - BLUEPRINT_BINDING_EVIDENCE
 - V211_BINDING_AUTHORITY_IDENTITY_TERMINAL_RECEIPT_SCHEMA_CONTRACT
+- V212_SUCCESSOR_STATE_MONOTONIC_EVIDENCE_PARSE_CONTRACT
 - STAGE1_VALIDATION_EVIDENCE
 classification_materialization:
   artifact_count: 52
@@ -64,28 +65,21 @@ blueprint_binding_materialization:
     run_id: 34741952438
     job_denominator: 10/10
     conclusion: SUCCESS
-governance_v211:
-  package_sha256: 651d3027967a65125787e659765ed3cc5588cbba3e38faa55b56942af46b3e18
-  external_trust_root_sha256: 6d29a43395862b39f6d07ca07872d041892a603fc15e9950a5a618ce0fd58852
-  semantic_authority_content_hash: 6de8b03edf0197baa08577bcd46106beb70b2bcff0652078a43c1113fcbd63ff
-  authority_identity_fields:
-  - gap_uid
-  - authority_ref
-  - disposition
-  - authority_evidence_ref
-  terminal_receipt_fields:
-  - provider
-  - repository_or_project
-  - head_sha
-  - run_id
-  - job_denominator
-  - conclusion
+governance_v212:
+  package_sha256: 2d6602b20983a9764c2f1496f36ab20a2f0ebcd73826492c27ba67159f5ef3df
+  external_trust_root_sha256: 4c013cfc1a91142a8b4ce44830ef467c5c960f56b136a75ff670729a523f71e3
+  semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
+  mandatory_matrix: 14/14_PASS
+  component_preformal_checks: 17/17_PASS
+  successor_state_evidence_parse: 60/60_PASS
 stage1_validation_materialization:
-  source_enumeration_evidence: PRESENT
-  conflict_decision_evidence: PRESENT
-  clean_scan: MATERIALIZED
-  run_close: MATERIALIZED
-  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED_PENDING_EXTERNAL_CI
+  source_enumeration_evidence: PRESENT_PARSE_VALID
+  conflict_decision_evidence: PRESENT_PARSE_VALID
+  stage1_validation_evidence: PRESENT_PARSE_VALID
+  clean_scan: COMPLETED
+  run_close: COMPLETED
+  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  exit_gate_result: SUCCESS_EXTERNAL_CI_12_OF_12
   target_pages: 2
   unresolved_authority_gap_universe: 8
   exact_authority_tuple_required: true
@@ -122,13 +116,26 @@ terminal_receipts:
     run_id: 34754709362
     job_denominator: 11/11
     conclusion: SUCCESS
+  stage1_closure:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28
+    run_id: 34755361339
+    job_denominator: 12/12
+    conclusion: SUCCESS
 next_allowed_artifacts_after_gate_pass:
 - STAGE2_PAGE_FUNCTIONAL_CONTRACT
 continuity_policy:
   closure_mutation_semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
   current_ledger_synchronization_required: true
   terminal_ci_same_commit_self_write: FORBIDDEN
-forbidden_in_stage_01:
+  predecessor_current_state_exact_terminal_lock: FORBIDDEN
+  successor_started_false_permanent_condition: FORBIDDEN
+forbidden_before_stage2_gate:
 - WEBSITE_CONSTRUCTION
 - DEPLOYMENT
-status: STAGE1_VALIDATION_PENDING_EXTERNAL_CI_RECEIPT
+current_v212_receipt:
+  mode: EXTERNAL_IMMUTABLE_RECEIPT
+  required: true
+  embedded_run_id: null
+status: STAGE1_CLOSED_V212_GOVERNANCE_MATERIALIZED_PENDING_EXTERNAL_CI
