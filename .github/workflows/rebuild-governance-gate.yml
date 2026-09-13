@@ -49,7 +49,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - env: {PYTHONDONTWRITEBYTECODE: '1'}
+      - env: {PYTHONDWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v210_page_binding_successor.py
   current-v210-evidence-binding-successor-gate:
     runs-on: ubuntu-24.04
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - env: {PYTHONDONTWRITEBYTECODE: '1'}
+      - env: {PYTHONDWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v210_evidence_binding_successor.py
   current-v210-visual-binding-successor-gate:
     runs-on: ubuntu-24.04
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - env: {PYTHONDONTWRITEBYTECODE: '1'}
+      - env: {PYTHONDWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v210_visual_binding_successor.py
   current-v210-blueprint-binding-gate:
     runs-on: ubuntu-24.04
@@ -327,6 +327,16 @@ jobs:
       - name: Validate payload operation mapping versus Current Authority admissibility
         env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_stage2_payload_operation_authority_classification.py
+  current-stage2-state-transition-authority-audit-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate exact State Transition architecture Authority audit
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_stage2_state_transition_authority_audit.py
   sealed-v216-runtime:
     runs-on: ubuntu-24.04
     steps:
