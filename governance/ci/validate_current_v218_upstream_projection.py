@@ -5,7 +5,7 @@ import shutil,subprocess,sys,tempfile,yaml
 root=Path('.')
 
 V216_PKG='3dcc0b4b94250b7487ec923fde2604f13b6d4ce3ee1ec4636feba27bcf3c92c6'
-V216_TRUST='70b19fa78f641fb570c9c31455d518b50a358ce18075de0e5cad89edd746de2'
+V216_TRUST='70b19fa78f641fb570c9c314552d518b50a358ce18075de0e5cad89edd746de2'
 
 def die(msg):
     raise SystemExit(msg)
@@ -52,6 +52,18 @@ with tempfile.TemporaryDirectory() as td:
     seal.setdefault('sealed_governance',{})['version']='v2.1.6'
     write(sealp,seal)
 
+    # Fail immediately if the isolated historical authority projection itself
+    # is malformed. This prevents literal/hash typos from being misdiagnosed as
+    # upstream Source Fact or Segment Mapping failures.
+    projected_cur=load(t/'GOVERNANCE_CURRENT.yaml').get('normative_authority') or {}
+    projected_base=load(t/'REBUILD_BRANCH_BASELINE.yaml').get('governance_test') or {}
+    projected_lock=load(lockp).get('current_test_authority') or {}
+    projected_seal=load(sealp).get('sealed_governance') or {}
+    if (projected_cur.get('version'),projected_cur.get('package_sha256'),projected_cur.get('external_trust_root_sha256')) != ('v2.1.6',V216_PKG,V216_TRUST):
+        die('isolated v2.1.6 authority projection self-check failed')
+    if projected_base.get('version')!='v2.1.6' or projected_lock.get('version')!='v2.1.6' or projected_seal.get('version')!='v2.1.6':
+        die('isolated v2.1.6 pointer projection self-check failed')
+
     run=t/'00_SOURCE_INTAKE/fresh_run_003'
     for rel in ('01_CLASSIFIED','02_BASE_BLUEPRINT','03_BLUEPRINT_BINDING'):
         if (run/rel).exists():
@@ -76,7 +88,9 @@ with tempfile.TemporaryDirectory() as td:
     state['blueprint_binding_completed']=False
     state['website_construction_started']=False
     state['deployment_started']=False
-    for k in ('classification_artifact_count','classification_page_artifact_count','classification_visual_artifact_count','page_base_blueprint_count','governance_candidate_overlay'):
+    for k in ('classification_artifact_count','classification_page_artifact_count',
+              'classification_visual_artifact_count','page_base_blueprint_count',
+              'governance_candidate_overlay'):
         state.pop(k,None)
     write(sp,state)
 
