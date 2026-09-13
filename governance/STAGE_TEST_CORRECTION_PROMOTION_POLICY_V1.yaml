@@ -1,0 +1,152 @@
+schema_version: 1
+artifact_uid: ACPOS-STAGE-TEST-CORRECTION-PROMOTION-POLICY-V1
+artifact_type: CURRENT_OPERATIONAL_GOVERNANCE_POLICY
+governance_overlay: v2.1.12
+policy_status: CURRENT_OPERATIONAL
+applies_to: ALL_GOVERNED_STAGES
+current_validation_target: STAGE-02
+versioning:
+  sealed_governance_package_mutated: false
+  current_r4_projection_mutated: false
+  governance_version_bump_required_for_this_policy: false
+  reason: operational_policy_promotes_verified_test_findings_without_rewriting_sealed_v2_1_12_package_or_r4_truth_state
+stage_test_feedback_loop:
+  required_sequence:
+  - RUN_CURRENT_STAGE_TO_DISCOVERY_EXHAUSTION
+  - RECORD_ALL_TEST_BUGS_AND_TRUE_PRODUCT_OR_AUTHORITY_GAPS
+  - CLASSIFY_TEST_HARNESS_BUG_VS_PRODUCT_GAP_VS_AUTHORITY_GAP
+  - APPLY_ONLY_AUTHORIZED_CORRECTIONS
+  - VERIFY_EACH_CORRECTION_WITH_EXECUTION_EVIDENCE
+  - PROMOTE_EVERY_VERIFIED_CORRECTION_TO_GOVERNANCE_RULE
+  - COMPLETE_POLICY_ENFORCEMENT_BEFORE_FINAL_RETEST
+  - RETURN_TO_IMMEDIATELY_PREVIOUS_STAGE_BOUNDARY
+  - REPLAY_PREVIOUS_STAGE_CLOSURE_AND_SUCCESSOR_TRANSITION
+  - RERUN_CURRENT_STAGE_UNDER_UPDATED_RULES
+  - COMPARE_NEW_OUTPUTS_AGAINST_ALL_PREVIOUS_FINDINGS
+  - CLOSE_STAGE_TEST_CYCLE_ONLY_IF_NO_UNACCOUNTED_REGRESSION_OR_RULE_GAP_REMAINS
+  premature_final_retest_before_policy_promotion: FORBIDDEN
+  mark_stage_test_complete_from_same_stage_only_regression: FORBIDDEN
+  treat_green_ci_as_product_gap_resolution: FORBIDDEN
+  treat_test_harness_bug_as_product_truth_change: FORBIDDEN
+finding_classification:
+  TEST_HARNESS_OR_VALIDATOR_BUG:
+    may_be_corrected_without_business_authority: true
+    correction_requires_failing_receipt: true
+    correction_requires_fix_commit: true
+    correction_requires_passing_receipt: true
+    correction_must_be_promoted_to_rule: true
+  PRODUCT_OR_ARCHITECTURE_GAP:
+    may_be_auto_filled_by_ai: false
+    exact_authority_or_human_approved_contract_required: true
+    must_remain_blocking_until_exact_resolution: true
+  EXTERNAL_AUTHORITY_GAP:
+    may_be_inferred_from_semantics: false
+    unresolved_reference_must_remain_explicit: true
+    exact_authority_materialization_required: true
+verified_rule_promotions:
+- rule_uid: STAGE-TEST-RULE-SHALLOW-CHECKOUT-001
+  source_bug_uid: STAGE2-TEST-BUG-001
+  source_failure_run: 34783557535
+  source_failure_job: 103794818355
+  verified_fix_commit: 397b5d62e0330fd74de84c1d4a9bfd489e48c29e
+  verification_runs: [34783656176, 34784187024]
+  rule: validator_must_not_treat_missing_historical_object_in_shallow_checkout_as_repository_or_authority_absence
+  enforcement:
+    allowed_methods:
+    - validate_against_pinned_receipt_identity_without_local_ancestry_assumption
+    - explicitly_fetch_required_history_before_local_git_object_validation
+    forbidden_methods:
+    - assume_actions_checkout_default_fetch_depth_contains_historical_receipt_commit
+    - convert_git_cat_file_failure_in_shallow_checkout_into_missing_authority_or_missing_receipt_truth
+stage2_contract_completeness_requirements:
+  payload_input_contract:
+    applies_to: EVERY_EFFECTFUL_ACTION
+    required: true
+    exact_formal_request_or_input_schema_required: true
+    operation_route_or_port_alone_is_sufficient: false
+  state_transition_contract:
+    applies_to: EVERY_GOVERNED_STATE_TRANSITION
+    required_fields:
+    - mutation_owner
+    - failure_state
+    - recovery
+    - audit_event_uid
+    - illegal_transition_tests
+    all_required_before_stage2_closure: true
+  failure_state_error_binding:
+    applies_to: EVERY_EFFECTFUL_OR_FAILURE_CAPABLE_ACTION
+    required: true
+    accepted_binding:
+    - exact_action_error_uid_with_existing_error_recovery
+    - exact_action_triggered_transition_with_explicit_recovery
+    generic_error_registry_is_sufficient: false
+  post_action_validation:
+    applies_to: EVERY_EFFECTFUL_ACTION_REQUIRING_STATE_OR_DATA_CONFIRMATION
+    explicit_validation_node_required: true
+    generic_gate_or_route_is_sufficient: false
+  audit_event_binding:
+    applies_to: EVERY_AUDITABLE_EFFECTFUL_ACTION
+    explicit_action_or_port_audit_event_binding_required: true
+    generic_logging_trace_or_correlation_is_sufficient: false
+  success_next_state_binding:
+    applies_to: EVERY_STATE_CHANGING_ACTION
+    explicit_success_state_or_registered_transition_required: true
+    semantic_text_such_as_created_completed_or_version_increment_is_sufficient: false
+  action_control_or_trigger_binding:
+    applies_to: EVERY_ACTION
+    accepted_trigger_sources:
+    - registered_control_exact_action_uid
+    - explicit_action_trigger_field
+    - registered_stage_transition_exact_action_trigger
+    exposure_route_operation_or_state_event_is_sufficient: false
+  async_provider_lifecycle:
+    applies_to: EVERY_ASYNC_PROVIDER_PAGE
+    required_fields_per_page:
+    - request_identity
+    - input_fingerprint
+    - idempotency
+    - queued
+    - running
+    - succeeded
+    - failed
+    - retry_eligibility
+    - cancel
+    - callback_result_provenance
+    - output_persistence
+    - audit_correlation
+    all_required_before_stage2_closure: true
+stage2_current_known_gap_baseline:
+  functional_gap_total: 167
+  architecture_gap_total: 133
+  input_source_gap_total: 34
+  functional_authority_gap_total: 0
+  architecture_categories:
+    STATE_TRANSITION_LEDGER_FIELD_MISSING: 50
+    FAILURE_STATE_ERROR_BINDING_MISSING: 44
+    POST_ACTION_VALIDATION_NODE_MISSING: 18
+    AUDIT_EVENT_NODE_MISSING: 13
+    SUCCESS_NEXT_STATE_BINDING_MISSING: 7
+    ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
+  async_provider_unresolved_lifecycle_binding_total: 14
+  known_gap_baseline_is_a_completion_target: false
+  known_gap_baseline_may_be_reduced_without_exact_resolution: false
+cross_stage_retest_policy:
+  previous_stage: STAGE-01
+  current_stage: STAGE-02
+  required_post_policy_same_revision_checks:
+  - governance/ci/validate_current_stage1_closure.py
+  - governance/ci/validate_current_stage1_stage2_successor.py
+  - governance/ci/validate_current_stage2_functional_chain_preflight.py
+  final_retest_must_use_updated_policy: true
+  same_stage_only_green_run_is_final_acceptance: false
+  final_retest_terminal_receipt_must_be_recorded_after_run_completion: true
+  same_commit_terminal_receipt_self_write: FORBIDDEN
+closure_rules:
+  stage2_test_cycle_complete_requires:
+  - all_discovered_test_harness_bugs_fixed_or_explicitly_blocked
+  - every_verified_fix_promoted_to_governance_rule
+  - all_true_product_or_authority_gaps_either_exactly_resolved_or_explicitly_preserved_as_blockers
+  - post_policy_cross_stage_retest_from_stage1_boundary_completed
+  - no_unaccounted_regression
+  website_construction_before_ALL_REQUIRED_PAGES_STAGE2_CLOSED: FORBIDDEN
+  deployment_before_ALL_REQUIRED_PAGES_STAGE2_CLOSED: FORBIDDEN
