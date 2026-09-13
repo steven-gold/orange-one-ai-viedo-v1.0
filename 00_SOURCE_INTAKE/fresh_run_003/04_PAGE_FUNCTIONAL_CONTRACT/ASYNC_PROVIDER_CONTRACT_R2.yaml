@@ -1,0 +1,120 @@
+schema_version: 1
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+artifact_uid: FRESH-RUN-003-ASYNC-PROVIDER-CONTRACT-V212-R2
+artifact_type: ASYNC_PROVIDER_CONTRACT
+operation_uid: ASYNC_PROVIDER_CONTRACT_COMPILE
+status: CANDIDATE_AWAITING_DEDICATED_GATE
+normative_gate_ref: WEB-GOV-01-S061
+predecessor:
+  ref: 04_PAGE_FUNCTIONAL_CONTRACT/ASYNC_PROVIDER_CONTRACT.yaml
+  git_blob: 2aa1db9a2ec013dc2820b83a010464fe40facb0f
+  unresolved_lifecycle_binding_count: 24
+authority_coverage_audit:
+  ref: 04_PAGE_FUNCTIONAL_CONTRACT/ASYNC_PROVIDER_LIFECYCLE_AUTHORITY_AUDIT.yaml
+  git_blob: bc988b364ffc6a3e61267e152a47fb7528b6d1b3
+  gate26_receipt:
+    exact_sha: 7cb820401f956c201f1871ced59f3468577adab8
+    workflow_run_id: 34774969576
+    workflow_run_number: 173
+    workflow_conclusion: success
+    job_name: current-stage2-async-lifecycle-authority-audit-gate
+    job_id: 103771299713
+    job_conclusion: success
+required_lifecycle_fields: &required
+- request_identity
+- input_fingerprint
+- idempotency
+- queued
+- running
+- succeeded
+- failed
+- cancel
+- retry_eligibility
+- callback_result_provenance
+- output_persistence
+- audit_correlation
+exact_resolved_field_order: &resolved
+- input_fingerprint
+- idempotency
+- succeeded
+- failed
+- retry_eligibility
+remaining_unresolved_field_order: &unresolved
+- request_identity
+- queued
+- running
+- cancel
+- callback_result_provenance
+- output_persistence
+- audit_correlation
+resolved_field_authority:
+  input_fingerprint:
+    authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+    authority_blob: 12ef6d233e09f84571dd5d694ae8e3789ae70502
+    exact_binding: shared_rules.trace_required contains input_fingerprint
+  idempotency:
+    authority_ref: ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT@V1.0
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+    exact_binding: acpos.provider.execution.v1 idempotency_scope = QUEUE_ID_PLUS_IDEMPOTENCY_KEY
+  succeeded:
+    authority_ref: ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT@V1.0
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+    exact_binding: terminal_success = published_at IS NOT NULL
+  failed:
+    authority_ref: ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT@V1.0
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+    exact_binding: terminal_failure = dead_lettered_at IS NOT NULL
+  retry_eligibility:
+    authority_ref: ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT@V1.0
+    authority_blob: ac3619b3bc547ce06f244c239fa69d3cac78da76
+    exact_binding: attempt_count < max_attempts remains retry-eligible; at max attempts transitions to DLQ
+pages:
+  CORE-01:
+    source_page_blueprint_git_blob: 0c067fb8be186a899b42115a82d71312b4014502
+    provider_authority_refs:
+    - gap_uid: GAP-005
+      authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+    - gap_uid: GAP-008
+      authority_ref: ACPOS shared AI Router/Capability Assignment
+    binding_status: PARTIAL_EXACT_LIFECYCLE_RESOLUTION_REMAINS_BLOCKED
+    resolved_lifecycle_fields: *resolved
+    unresolved_lifecycle_fields: *unresolved
+    resolved_count: 5
+    unresolved_count: 7
+  ASSET-01:
+    source_page_blueprint_git_blob: 52bb27bf7eb423ddb13bcac5bd34edbcb369de3a
+    provider_authority_refs:
+    - gap_uid: GAP-005
+      authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+    binding_status: PARTIAL_EXACT_LIFECYCLE_RESOLUTION_REMAINS_BLOCKED
+    resolved_lifecycle_fields: *resolved
+    unresolved_lifecycle_fields: *unresolved
+    resolved_count: 5
+    unresolved_count: 7
+candidate_successor_math:
+  predecessor_unresolved_lifecycle_binding_count: 24
+  exact_resolved_binding_count: 10
+  candidate_unresolved_lifecycle_binding_count: 14
+  page_count: 2
+  exact_resolved_per_page: 5
+  unresolved_per_page: 7
+current_state_policy:
+  candidate_is_current: false
+  current_async_provider_contract_revision: R1
+  current_async_provider_unresolved_lifecycle_binding_count: 24
+  dedicated_r2_gate_required_before_current_supersession: true
+policy:
+  semantic_similarity_as_exact_binding: FORBIDDEN
+  cross_authority_field_union_without_explicit_binding: FORBIDDEN
+  optimistic_ui_completion_as_provider_completion: FORBIDDEN
+  duplicate_provider_adapter_creation: FORBIDDEN
+  ai_default_lifecycle_values: FORBIDDEN
+  raw_source_mutation_allowed: false
+  predecessor_mutation_allowed: false
+functional_completion_claim: false
+stage2_exit_gate: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+stage2_exit_gate_result: BLOCKED
+website_construction_allowed: false
+deployment_allowed: false
