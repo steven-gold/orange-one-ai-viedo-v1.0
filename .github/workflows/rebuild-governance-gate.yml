@@ -1,4 +1,4 @@
-name: Governance v2.1.10 Closure Continuity Gate
+name: Governance v2.1.10 Blueprint Binding Successor Gate
 on:
   push:
     branches: [rebuild-v2.1.1]
@@ -42,7 +42,7 @@ jobs:
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
       - env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v218_page_base_blueprint.py
-  current-v219-page-replay-successor-audit-gate:
+  current-v210-page-binding-successor-audit-gate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -50,8 +50,8 @@ jobs:
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
       - env: {PYTHONDONTWRITEBYTECODE: '1'}
-        run: python governance/ci/validate_current_v219_page_replay_successor_audit.py
-  current-v219-evidence-successor-gate:
+        run: python governance/ci/validate_current_v210_page_binding_successor.py
+  current-v210-evidence-binding-successor-gate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -59,8 +59,8 @@ jobs:
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
       - env: {PYTHONDONTWRITEBYTECODE: '1'}
-        run: python governance/ci/validate_current_v219_evidence_logic_successor.py
-  current-v219-visual-successor-gate:
+        run: python governance/ci/validate_current_v210_evidence_binding_successor.py
+  current-v210-visual-binding-successor-gate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -68,17 +68,26 @@ jobs:
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
       - env: {PYTHONDONTWRITEBYTECODE: '1'}
-        run: python governance/ci/validate_current_v219_visual_base_blueprint_successor.py
-  current-v210-closure-continuity-gate:
+        run: python governance/ci/validate_current_v210_visual_binding_successor.py
+  current-v210-closure-continuity-binding-successor-gate:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Verify lifecycle-wide closure evidence continuity and synchronized current ledgers
+      - env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_v210_closure_continuity_binding_successor.py
+  current-v210-blueprint-binding-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate 2/2 non-owning Blueprint Bindings and exact predecessor hashes
         env: {PYTHONDONTWRITEBYTECODE: '1'}
-        run: python governance/ci/validate_current_v210_closure_continuity.py
+        run: python governance/ci/validate_current_v210_blueprint_binding.py
   sealed-v216-runtime:
     runs-on: ubuntu-24.04
     steps:
