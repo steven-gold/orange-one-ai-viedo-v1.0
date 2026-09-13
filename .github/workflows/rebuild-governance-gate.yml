@@ -506,3 +506,19 @@ jobs:
           name: stage2-action-control-trigger-authority-audit
           path: stage2_action_control_trigger_authority_audit.json
           if-no-files-found: error
+  current-stage2-architecture-unresolved-evidence-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate consolidated unresolved Architecture evidence
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_stage2_architecture_unresolved_evidence.py
+      - name: Upload machine-readable Stage-02 Architecture unresolved evidence result
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage2-architecture-unresolved-evidence
+          path: stage2_architecture_unresolved_evidence_result.json
+          if-no-files-found: error
