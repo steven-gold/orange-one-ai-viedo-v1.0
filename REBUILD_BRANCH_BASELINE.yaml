@@ -1,23 +1,15 @@
-schema_version: 8
-baseline_uid: REBUILD-BRANCH-v2.1.9-VISUAL-CANDIDATE
+schema_version: 9
+baseline_uid: REBUILD-BRANCH-v2.1.9-VISUAL-CLOSED
 branch_name: rebuild-v2.1.1
 governance_test:
   version: v2.1.9
   package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
-  external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
-  semantic_authority_content_hash: 531a364590e47f182f40ac3794d9b30c7ae77678423a53be787ae1cd87c70c2f
 workspace_progress:
   responsibility_classification: 52/52
   page_base_blueprint: 2/2
-  visual_base_blueprint: 2/2_PENDING_CI
+  visual_base_blueprint: 2/2_CI_PASS
   blueprint_binding_started: false
-phase_sequence:
-  next_allowed: BLUEPRINT_BINDING_AFTER_VISUAL_GATE_SUCCESS
-current_test_evidence_sync:
-  status: PASS
-  human_formal_review: PENDING
 github_ci:
-  evidence_closure_run_id: 34737738652
-  evidence_closure_result: 7/7_SUCCESS
-  visual_gate: PENDING
-status: V2_1_9_VISUAL_BLUEPRINT_BASELINE_PENDING_CI
+  visual_base_blueprint_run_id: 34739072007
+  result: 8/8_SUCCESS
+status: V2_1_9_VISUAL_BLUEPRINT_BASELINE_CI_PASS

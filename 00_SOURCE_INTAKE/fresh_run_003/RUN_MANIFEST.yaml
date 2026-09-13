@@ -1,45 +1,18 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-branch: rebuild-v2.1.1
-phase: STAGE_01_SOURCE_INTAKE
-status: VISUAL_BASE_BLUEPRINT_MATERIALIZED_PENDING_CI
-governance:
-  sealed_runtime_version: v2.1.6
-  current_candidate_overlay: v2.1.9
-  current_package_sha256: 499aaccab4f38e089b465f98a2785dbef65faf304621db90599bc1dd55a9d24f
-  current_external_trust_root_sha256: 7e3c2e523484a47f02ad45e6e1d8d9ccd6624904c76c67aa5f1856583e012ae1
-  state: PREFORMAL_VERIFIED_GITHUB_CI_PASS
-  normative_edit_allowed: false
+status: VISUAL_BASE_BLUEPRINT_COMPLETED_CI_PASS
+governance_overlay: v2.1.9
 target_pages: [CORE-01, ASSET-01]
-source_pin:
-  branch: new
-  revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
-execution_policy:
-  source_structure_refinement: COMPLETED_61_TERMINAL_HOMOGENEOUS_NODES_CI_PASS
-  source_segment_mapping: COMPLETED_61_OF_61_CI_PASS
-  source_fact_materialization: COMPLETED_CI_PASS
-  responsibility_classification: COMPLETED_52_ARTIFACTS_CI_PASS
-  page_blueprint_materialization: COMPLETED_2_PAGE_BLUEPRINTS_V218_REPLAY_CI_PASS_CONTENT_AUDITED
-  visual_blueprint_materialization: MATERIALIZED_2_VISUAL_BLUEPRINTS_V219_PENDING_CI
-  blueprint_binding: NOT_EXECUTED
-  website_code_write: FORBIDDEN
-  deployment: FORBIDDEN
-page_base_blueprint_contract:
-  blueprint_count: 2
-  total_page_inputs: 48
-  governance_overlay: v2.1.8
-  immutable_predecessor: true
-visual_base_blueprint_contract:
-  blueprint_count: 2
-  core_01_visual_inputs: 2
-  asset_01_visual_inputs: 2
-  total_visual_inputs: 4
-  page_inputs: 0
-  direct_raw_source_inputs: 0
-  core_01_unresolved_external_authority_refs: 7
-  asset_01_unresolved_external_authority_refs: 6
-  authority_resolution_performed: false
-github_ci:
-  v219_evidence_state_run_id: 34737738652
-  visual_base_blueprint_result: PENDING
-next_phase_entry_condition: BLUEPRINT_BINDING_ONLY_AFTER_PAGE_AND_VISUAL_CI_PASS
+responsibility_classification: COMPLETED_52_ARTIFACTS_CI_PASS
+page_blueprint_materialization: COMPLETED_2_PAGE_BLUEPRINTS_CI_PASS
+visual_blueprint_materialization: COMPLETED_2_VISUAL_BLUEPRINTS_CI_PASS
+blueprint_binding: NOT_EXECUTED
+website_code_write: FORBIDDEN
+deployment: FORBIDDEN
+visual_blueprint_count: 2
+visual_input_artifacts: 4
+page_inputs_in_visual_blueprint: 0
+direct_raw_source_inputs: 0
+visual_base_blueprint_run_id: 34739072007
+visual_base_blueprint_result: SUCCESS_8_OF_8
+next_phase_entry_condition: BLUEPRINT_BINDING_AFTER_PAGE_AND_VISUAL_CI_PASS

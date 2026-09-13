@@ -1,30 +1,15 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-governance_version: v2.1.6
 governance_candidate_overlay: v2.1.9
-state: VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI
-raw_source_capture_state: CAPTURE_CLOSED
-semantic_granularity_replay_validated: true
-replay_source_structure_node_count: 34
-replay_mixed_terminal_units_detected: 2
-source_structure_refinement_completed: true
-source_structure_node_count: 61
-mixed_terminal_units: 0
-unresolved_container_units: 0
-source_segment_mapping_started: true
+state: VISUAL_BASE_BLUEPRINT_COMPLETED
 source_segment_mapping_completed: true
-source_segment_count: 61
-source_fact_materialization_started: true
 source_fact_materialization_completed: true
-source_fact_artifacts: [SOURCE_CONTEXT_MANIFEST, CONTENT_SUPERSESSION_CONFLICT_LEDGER, SOURCE_DEPENDENCY_MAP]
 unresolved_authority_gap_count: 8
 responsibility_classification_started: true
 responsibility_classification_completed: true
 classification_artifact_count: 52
 classification_page_artifact_count: 48
 classification_visual_artifact_count: 4
-domain_decomposition_started: false
-blueprint_materialization_started: true
 page_base_blueprint_started: true
 page_base_blueprint_completed: true
 page_base_blueprint_count: 2
@@ -33,32 +18,17 @@ visual_base_blueprint_completed: true
 visual_base_blueprint_count: 2
 blueprint_binding_started: false
 blueprint_binding_completed: false
-stage1_validation_started: false
 website_construction_started: false
 deployment_started: false
 github_ci:
-  pre_page_replay_run_id: 34734265713
-  page_replay_final_run_id: 34734528373
-  page_replay_content_audit_run_id: 34734730080
-  v219_evidence_state_run_id: 34737738652
   current_classification_gate: SUCCESS
   current_page_blueprint_gate: SUCCESS
-  current_visual_blueprint_gate: PENDING
+  current_visual_blueprint_gate: SUCCESS
   current_phase_successor_authority_gate: SUCCESS
-  current_upstream_projection_gate: SUCCESS
-  sealed_v216_runtime: SUCCESS
-replay_control:
-  governance_overlay: v2.1.9
-  source_checkpoint_commit: 90cbd4b5fee1b7aea25a0c15ca3b661bab605960
-  source_checkpoint_tree: 6dc3a2488b8d12e9279bf9162eafaf2c56955648
-  old_page_blueprint_bytes_reuse: false
-  page_content_audit: VERIFIED
+  visual_base_blueprint_run_id: 34739072007
+  visual_base_blueprint_result: SUCCESS_8_OF_8
 allowed_transition:
-  from: VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI
+  from: VISUAL_BASE_BLUEPRINT_COMPLETED
   to: BLUEPRINT_BINDING_ACTIVE
-  trigger: CURRENT_VISUAL_BLUEPRINT_GATE_SUCCESS
-forbidden_transitions:
-- VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI -> BLUEPRINT_BINDING_ACTIVE
-- VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI -> WEBSITE_CONSTRUCTION_ACTIVE
-- VISUAL_BASE_BLUEPRINT_COMPLETED_PENDING_CI -> DEPLOYMENT_ACTIVE
-last_result: V219_VISUAL_BASE_BLUEPRINT_MATERIALIZED_PENDING_CI
+  trigger: PAGE_AND_VISUAL_BLUEPRINT_GATES_SUCCESS
+last_result: V219_VISUAL_BASE_BLUEPRINT_COMPLETED_CI_PASS
