@@ -1,4 +1,4 @@
-name: Governance v2.1.12 Successor-State Monotonic Evidence Parse Gate
+name: Governance v2.1.12 Stage-02 Functional Chain Preflight Gate
 on:
   push:
     branches: [rebuild-v2.1.1]
@@ -103,8 +103,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Validate Stage-01 predecessor closure under legal successors
-        env: {PYTHONDONTWRITEBYTECODE: '1'}
+      - env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_stage1_closure.py
   current-v212-successor-state-evidence-parse-gate:
     runs-on: ubuntu-24.04
@@ -113,9 +112,33 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
-      - name: Validate v2.1.12 successor-state monotonicity and required-evidence integrity
-        env: {PYTHONDONTWRITEBYTECODE: '1'}
+      - env: {PYTHONDONTWRITEBYTECODE: '1'}
         run: python governance/ci/validate_current_v212_successor_state_evidence_parse.py
+  current-stage1-stage2-successor-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_stage1_stage2_successor.py
+  current-stage2-functional-chain-preflight-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Exhaustive Stage-02 functional-chain preflight
+        env: {PYTHONDONTWRITEBYTECODE: '1'}
+        run: python governance/ci/validate_current_stage2_functional_chain_preflight.py
+      - name: Upload machine-readable Stage-02 preflight result
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage2-functional-preflight-result
+          path: stage2_functional_preflight_result.json
+          if-no-files-found: error
   sealed-v216-runtime:
     runs-on: ubuntu-24.04
     steps:

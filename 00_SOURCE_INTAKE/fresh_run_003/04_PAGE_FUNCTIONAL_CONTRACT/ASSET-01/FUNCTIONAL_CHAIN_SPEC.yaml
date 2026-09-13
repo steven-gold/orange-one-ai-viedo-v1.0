@@ -1,0 +1,109 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-ASSET-01-FUNCTIONAL-CHAIN-SPEC-V212
+artifact_type: FUNCTIONAL_CHAIN_SPEC
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+operation_uid: FUNCTIONAL_CHAIN_COMPILE
+page_uid: ASSET-01
+status: COMPILE_CANDIDATE_PENDING_CI
+entry_gate:
+  gate_uid: ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  terminal_receipt:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28
+    run_id: 34755361339
+    job_denominator: 12/12
+    conclusion: SUCCESS
+governance_predecessor_receipt:
+  provider: GITHUB_ACTIONS
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  head_sha: 3247937d7b8ccd57551119b079cb33cee45e4ecc
+  run_id: 34757919043
+  job_denominator: 13/13
+  conclusion: SUCCESS
+page_blueprint:
+  blueprint_uid: V218-REPLAY-BP-ASSET-01-PAGE-BASE
+  blueprint_hash: ea78941da24ddedda2b0e73f0027261b0b4ceb44940e004c9997b45ca8f04376
+  git_blob: 52bb27bf7eb423ddb13bcac5bd34edbcb369de3a
+source_resolution:
+  mode: CLASSIFIED_SOURCE_TRUTH_BINDING
+  raw_source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  raw_source_git_blob: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+  direct_unclassified_inference: FORBIDDEN
+  coverage_selectors:
+    actions: $.registries.actions[*]
+    controls: $.registries.controls[*]
+    gates: $.registries.gates[*]
+    permissions: $.registries.permissions[*]
+    errors: $.registries.errors[*]
+    integration_ports: $.registries.integration_ports[*]
+    page_states: $.registries.page_states[*]
+    stages: $.registries.stages[*]
+    events: $.registries.events[*]
+    stage_transitions: $.registries.stage_transitions[*]
+functional_chain_node_order:
+- BUSINESS_INTENT
+- PRECONDITIONS
+- ENTRY
+- OPERATOR_OR_SYSTEM_INPUT_SOURCE
+- CONTROL_OR_TRIGGER
+- GATE
+- PERMISSION
+- ACTION
+- VALIDATION
+- PAYLOAD
+- API_OR_ENTRY
+- RUNTIME_OWNER
+- REPOSITORY_DATA_OR_PROVIDER
+- AUDIT_EVENT
+- RESPONSE
+- UI_OR_CALLER_FEEDBACK
+- SUCCESS_STATE
+- NEXT_STATE
+- NEXT_STEP
+- NEXT_GATE
+- FAILURE_STATE
+- RETRY_RECOVERY_OR_ROLLBACK
+- TERMINAL_OUTCOME
+per_node_required_fields:
+- requirement_class
+- canonical_uid
+- canonical_owner
+- input_contract
+- output_contract
+- previous_node
+- next_node
+- error_behavior
+- audit_item_uid
+gap_classes:
+- AUTO_REMEDIABLE
+- IMPLEMENTATION_GAP
+- SHARED_OWNER_REFERENCE
+- INPUT_SOURCE_GAP
+- AUTHORITY_GAP
+- ARCHITECTURE_GAP
+- INTENTIONAL_FAIL_CLOSED
+- TEST_ONLY_BEHAVIOR
+compile_policy:
+  action_coverage: ALL_SOURCE_REGISTERED_ACTIONS
+  control_coverage: ALL_SOURCE_REGISTERED_CONTROLS
+  missing_reference: MUST_CLASSIFY_AND_BLOCK_FALSE_COMPLETION
+  action_without_control_or_trigger: MUST_CLASSIFY
+  control_without_action: IMPLEMENTATION_GAP
+  effectful_action_without_runtime_or_port: MUST_CLASSIFY
+  effectful_action_without_permission: IMPLEMENTATION_GAP
+  effectful_action_without_gate: IMPLEMENTATION_GAP
+  action_without_error_recovery: IMPLEMENTATION_GAP
+  missing_audit_node: MUST_CLASSIFY
+  missing_next_state_or_transition: MUST_CLASSIFY
+  known_external_authority_gap: AUTHORITY_GAP
+  shared_owner_existing: SHARED_OWNER_REFERENCE
+  ai_guess_or_default_substitution: FORBIDDEN
+successor_state_policy:
+  predecessor_current_state_exact_terminal_lock: FORBIDDEN
+  phase_order_owner: PHASE_BOUNDARY_GATE
+functional_completion_claim: false
+website_construction_allowed: false
+deployment_allowed: false

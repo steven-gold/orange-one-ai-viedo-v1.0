@@ -1,0 +1,61 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-STAGE2-FUNCTIONAL-CHAIN-PREFLIGHT-EVIDENCE-V212
+artifact_type: PAGE_FUNCTIONAL_REVIEW_EVIDENCE
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+operation_uid: FUNCTIONAL_CHAIN_COMPILE
+status: PREFLIGHT_MATERIALIZED_PENDING_CI
+entry_gate:
+  gate_uid: ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  terminal_receipt:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28
+    run_id: 34755361339
+    job_denominator: 12/12
+    conclusion: SUCCESS
+governance_predecessor_receipt:
+  provider: GITHUB_ACTIONS
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  head_sha: 3247937d7b8ccd57551119b079cb33cee45e4ecc
+  run_id: 34757919043
+  job_denominator: 13/13
+  conclusion: SUCCESS
+target_pages:
+- CORE-01
+- ASSET-01
+coverage:
+  actions: ALL_SOURCE_REGISTERED_ACTIONS
+  controls: ALL_SOURCE_REGISTERED_CONTROLS
+  permissions: ALL_SOURCE_REGISTERED_PERMISSIONS
+  gates: ALL_SOURCE_REGISTERED_GATES
+  errors: ALL_SOURCE_REGISTERED_ERRORS
+  integration_ports: ALL_SOURCE_REGISTERED_INTEGRATION_PORTS
+  page_states: ALL_SOURCE_REGISTERED_PAGE_STATES
+  stages: ALL_SOURCE_REGISTERED_STAGES
+  events: ALL_SOURCE_REGISTERED_EVENTS_WHEN_PRESENT
+  stage_transitions: ALL_SOURCE_REGISTERED_STAGE_TRANSITIONS
+gap_taxonomy:
+- AUTO_REMEDIABLE
+- IMPLEMENTATION_GAP
+- SHARED_OWNER_REFERENCE
+- INPUT_SOURCE_GAP
+- AUTHORITY_GAP
+- ARCHITECTURE_GAP
+- INTENTIONAL_FAIL_CLOSED
+- TEST_ONLY_BEHAVIOR
+success_semantics:
+  preflight_success_means: ALL_REGISTERED_FUNCTIONAL_SURFACES_SCANNED_AND_EVERY_DETECTED_GAP_CLASSIFIED
+  preflight_success_does_not_mean: PAGE_FUNCTIONAL_CONTRACT_COMPLETE
+  functional_completion_requires_zero_unresolved_blocking_gaps: true
+  ai_guess_or_default_substitution: FORBIDDEN
+  machine_result_artifact: stage2-functional-preflight-result
+current_result:
+  gap_counts: EXTERNAL_CI_ARTIFACT_REQUIRED
+  functional_completion_claim: false
+next_after_preflight:
+  when_gaps_exist: MATERIALIZE_GAP_LEDGER_AND_RESOLVE_ONLY_UNIQUELY_AUTHORITATIVE_ITEMS
+  when_no_gaps: CONTINUE_DEPENDENCY_MAP_AND_STATE_TRANSITION_COMPILE
+website_construction_started: false
+deployment_started: false

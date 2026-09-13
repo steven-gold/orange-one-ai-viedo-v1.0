@@ -1,12 +1,10 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-current_step: STAGE1_VALIDATION_COMPLETED_CI_PASS
+current_step: STAGE2_FUNCTIONAL_CHAIN_PREFLIGHT_MATERIALIZED_PENDING_CI
 current_artifacts:
 - RAW_SOURCE_REFERENCE_MANIFEST
-- RAW_SOURCE_CAPTURE_STATE
 - SOURCE_STRUCTURE_MANIFEST
 - SOURCE_ENUMERATION_EVIDENCE
-- SOURCE_SEGMENT_MAP
 - SOURCE_CONTEXT_MANIFEST
 - CONTENT_SUPERSESSION_CONFLICT_LEDGER
 - CONFLICT_DECISION_EVIDENCE
@@ -14,128 +12,28 @@ current_artifacts:
 - CLASSIFIED_ARTIFACT_SET
 - RESPONSIBILITY_CLASSIFICATION_EVIDENCE
 - PAGE_BASE_BLUEPRINT
-- PAGE_BASE_BLUEPRINT_EVIDENCE
-- V218_PAGE_REPLAY_CONTENT_AUDIT
 - VISUAL_BASE_BLUEPRINT
-- VISUAL_BASE_BLUEPRINT_EVIDENCE
-- V210_CLOSURE_EVIDENCE_CONTINUITY_CONTRACT
 - BLUEPRINT_BINDING_MANIFEST
-- BLUEPRINT_BINDING_EVIDENCE
-- V211_BINDING_AUTHORITY_IDENTITY_TERMINAL_RECEIPT_SCHEMA_CONTRACT
-- V212_SUCCESSOR_STATE_MONOTONIC_EVIDENCE_PARSE_CONTRACT
 - STAGE1_VALIDATION_EVIDENCE
-classification_materialization:
-  artifact_count: 52
-  page_artifacts: 48
-  visual_artifacts: 4
-  unresolved_authority_gaps_preserved: 8
-page_base_blueprint_materialization:
-  blueprint_count: 2
-  page_input_artifacts: 48
-  visual_input_artifacts: 0
-  direct_raw_source_inputs: 0
-  governance_overlay: v2.1.8
-  content_audit: VERIFIED
-visual_base_blueprint_materialization:
-  blueprint_count: 2
-  visual_input_artifacts: 4
-  page_input_artifacts: 0
-  direct_raw_source_inputs: 0
-  governance_overlay: v2.1.9
-  materialization_run_id: 34739072007
-  terminal_closure_receipt:
-    provider: GITHUB_ACTIONS
-    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-    head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
-    run_id: 34739267938
-    job_denominator: 8/8
-    conclusion: SUCCESS
-blueprint_binding_materialization:
-  binding_count: 2
-  mode: NON_OWNING_REFERENCE_ONLY
-  page_blueprint_refs: 2
-  visual_blueprint_refs: 2
-  embedded_blueprint_payloads: 0
-  direct_raw_source_inputs: 0
-  governance_overlay: v2.1.10
-  terminal_closure_receipt:
-    provider: GITHUB_ACTIONS
-    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-    head_sha: d10253d154eacabed3df967ce4aa83c71a7475f3
-    run_id: 34741952438
-    job_denominator: 10/10
-    conclusion: SUCCESS
-governance_v212:
-  package_sha256: 2d6602b20983a9764c2f1496f36ab20a2f0ebcd73826492c27ba67159f5ef3df
-  external_trust_root_sha256: 4c013cfc1a91142a8b4ce44830ef467c5c960f56b136a75ff670729a523f71e3
-  semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
-  mandatory_matrix: 14/14_PASS
-  component_preformal_checks: 17/17_PASS
-  successor_state_evidence_parse: 60/60_PASS
-stage1_validation_materialization:
-  source_enumeration_evidence: PRESENT_PARSE_VALID
-  conflict_decision_evidence: PRESENT_PARSE_VALID
-  stage1_validation_evidence: PRESENT_PARSE_VALID
-  clean_scan: COMPLETED
-  run_close: COMPLETED
+- V212_SUCCESSOR_STATE_MONOTONIC_EVIDENCE_PARSE_CONTRACT
+- FUNCTIONAL_CHAIN_SPEC
+- PAGE_FUNCTIONAL_REVIEW_EVIDENCE
+stage1_closure:
   exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED
-  exit_gate_result: SUCCESS_EXTERNAL_CI_12_OF_12
+  result: SUCCESS_EXTERNAL_CI_12_OF_12
+stage2_materialization:
+  operation: FUNCTIONAL_CHAIN_COMPILE
+  functional_chain_spec_count: 2
   target_pages: 2
-  unresolved_authority_gap_universe: 8
-  exact_authority_tuple_required: true
-  dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
-  reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
-  stage1_dependency_authority: SOURCE_DEPENDENCY_MAP
-  stage2_started: false
+  preflight_evidence: PRESENT
+  preflight_ci: PENDING
+  functional_completion_claim: false
+  machine_result_artifact: stage2-functional-preflight-result
 terminal_receipts:
-  visual_closure:
-    provider: GITHUB_ACTIONS
-    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-    head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
-    run_id: 34739267938
-    job_denominator: 8/8
-    conclusion: SUCCESS
-  v210_governance:
-    provider: GITHUB_ACTIONS
-    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-    head_sha: 91f4271b5145f5646be07da32b5624fad7528034
-    run_id: 34741356025
-    job_denominator: 9/9
-    conclusion: SUCCESS
-  blueprint_binding:
-    provider: GITHUB_ACTIONS
-    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-    head_sha: d10253d154eacabed3df967ce4aa83c71a7475f3
-    run_id: 34741952438
-    job_denominator: 10/10
-    conclusion: SUCCESS
-  v211_governance:
-    provider: GITHUB_ACTIONS
-    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-    head_sha: 74cd16e28e98a918c3f682d3b29ea7e362a19cc5
-    run_id: 34754709362
-    job_denominator: 11/11
-    conclusion: SUCCESS
-  stage1_closure:
-    provider: GITHUB_ACTIONS
-    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-    head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28
-    run_id: 34755361339
-    job_denominator: 12/12
-    conclusion: SUCCESS
-next_allowed_artifacts_after_gate_pass:
-- STAGE2_PAGE_FUNCTIONAL_CONTRACT
+  stage1_closure: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28, run_id: 34755361339, job_denominator: 12/12, conclusion: SUCCESS}
+  v212_governance: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 3247937d7b8ccd57551119b079cb33cee45e4ecc, run_id: 34757919043, job_denominator: 13/13, conclusion: SUCCESS}
 continuity_policy:
-  closure_mutation_semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
-  current_ledger_synchronization_required: true
-  terminal_ci_same_commit_self_write: FORBIDDEN
+  current_ledgers_synchronized: true
   predecessor_current_state_exact_terminal_lock: FORBIDDEN
-  successor_started_false_permanent_condition: FORBIDDEN
-forbidden_before_stage2_gate:
-- WEBSITE_CONSTRUCTION
-- DEPLOYMENT
-current_v212_receipt:
-  mode: EXTERNAL_IMMUTABLE_RECEIPT
-  required: true
-  embedded_run_id: null
-status: STAGE1_CLOSED_V212_GOVERNANCE_MATERIALIZED_PENDING_EXTERNAL_CI
+  phase_order_owner: PHASE_BOUNDARY_GATE
+forbidden_in_stage_02: [WEBSITE_CONSTRUCTION, DEPLOYMENT]
