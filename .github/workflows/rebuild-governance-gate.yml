@@ -19,6 +19,19 @@ jobs:
         env:
           PYTHONDONTWRITEBYTECODE: '1'
         run: python governance/ci/validate_current_v216_workspace.py
+  current-v216-source-facts-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Verify source context, conflict ledger, dependency map, and stage boundary
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python governance/ci/validate_current_v216_source_facts.py
   sealed-v216-runtime:
     runs-on: ubuntu-24.04
     steps:
