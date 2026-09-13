@@ -1,13 +1,15 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-current_step: V211_AUTHORITY_IDENTITY_RECEIPT_SCHEMA_GOVERNANCE_PENDING_EXTERNAL_CI
+current_step: STAGE1_VALIDATION_MATERIALIZED_PENDING_CI
 current_artifacts:
 - RAW_SOURCE_REFERENCE_MANIFEST
 - RAW_SOURCE_CAPTURE_STATE
 - SOURCE_STRUCTURE_MANIFEST
+- SOURCE_ENUMERATION_EVIDENCE
 - SOURCE_SEGMENT_MAP
 - SOURCE_CONTEXT_MANIFEST
 - CONTENT_SUPERSESSION_CONFLICT_LEDGER
+- CONFLICT_DECISION_EVIDENCE
 - SOURCE_DEPENDENCY_MAP
 - CLASSIFIED_ARTIFACT_SET
 - RESPONSIBILITY_CLASSIFICATION_EVIDENCE
@@ -20,6 +22,7 @@ current_artifacts:
 - BLUEPRINT_BINDING_MANIFEST
 - BLUEPRINT_BINDING_EVIDENCE
 - V211_BINDING_AUTHORITY_IDENTITY_TERMINAL_RECEIPT_SCHEMA_CONTRACT
+- STAGE1_VALIDATION_EVIDENCE
 classification_materialization:
   artifact_count: 52
   page_artifacts: 48
@@ -77,17 +80,19 @@ governance_v211:
   - run_id
   - job_denominator
   - conclusion
-  external_ci_receipt_required: true
-next_allowed_artifacts_after_gate_pass:
-- STAGE1_VALIDATION_EVIDENCE
-continuity_policy:
-  closure_mutation_semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
-  current_ledger_synchronization_required: true
-  terminal_ci_same_commit_self_write: FORBIDDEN
-forbidden_in_stage_01:
-- WEBSITE_CONSTRUCTION
-- DEPLOYMENT
-status: V211_GOVERNANCE_PENDING_EXTERNAL_CI_RECEIPT
+stage1_validation_materialization:
+  source_enumeration_evidence: PRESENT
+  conflict_decision_evidence: PRESENT
+  clean_scan: MATERIALIZED
+  run_close: MATERIALIZED
+  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED_PENDING_EXTERNAL_CI
+  target_pages: 2
+  unresolved_authority_gap_universe: 8
+  exact_authority_tuple_required: true
+  dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+  reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
+  stage1_dependency_authority: SOURCE_DEPENDENCY_MAP
+  stage2_started: false
 terminal_receipts:
   visual_closure:
     provider: GITHUB_ACTIONS
@@ -110,3 +115,20 @@ terminal_receipts:
     run_id: 34741952438
     job_denominator: 10/10
     conclusion: SUCCESS
+  v211_governance:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 74cd16e28e98a918c3f682d3b29ea7e362a19cc5
+    run_id: 34754709362
+    job_denominator: 11/11
+    conclusion: SUCCESS
+next_allowed_artifacts_after_gate_pass:
+- STAGE2_PAGE_FUNCTIONAL_CONTRACT
+continuity_policy:
+  closure_mutation_semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
+  current_ledger_synchronization_required: true
+  terminal_ci_same_commit_self_write: FORBIDDEN
+forbidden_in_stage_01:
+- WEBSITE_CONSTRUCTION
+- DEPLOYMENT
+status: STAGE1_VALIDATION_PENDING_EXTERNAL_CI_RECEIPT
