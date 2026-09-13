@@ -1,0 +1,156 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-PAGE-FUNCTIONAL-REVIEW-EVIDENCE-V212-R1
+artifact_type: PAGE_FUNCTIONAL_REVIEW_EVIDENCE
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+status: REVIEW_COMPLETE_STAGE2_NOT_CLOSED
+review_scope:
+  pages:
+  - CORE-01
+  - ASSET-01
+  source_head_sha: 467427cf0d44ad029ba648d24f6c87adcd5cdd14
+  functional_gap_ledger_ref: 04_PAGE_FUNCTIONAL_CONTRACT/FUNCTIONAL_CHAIN_GAP_LEDGER.yaml
+  dependency_map_ref: 04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_MAP.yaml
+  detailed_dependency_map_ref: 04_PAGE_FUNCTIONAL_CONTRACT/STAGE2_DEPENDENCY_MAP.yaml
+  state_transition_ledger_ref: 04_PAGE_FUNCTIONAL_CONTRACT/STATE_TRANSITION_LEDGER.yaml
+  page_construction_spec_refs:
+  - 04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+  - 04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+  async_provider_contract_ref: 04_PAGE_FUNCTIONAL_CONTRACT/ASYNC_PROVIDER_CONTRACT.yaml
+  shared_owner_port_map_ref: 04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP.yaml
+immutable_source_bindings:
+  CORE-01_RAW_SOURCE:
+    path: 00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    git_blob: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+  ASSET-01_RAW_SOURCE:
+    path: 00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    git_blob: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+  FUNCTIONAL_CHAIN_GAP_LEDGER:
+    path: 04_PAGE_FUNCTIONAL_CONTRACT/FUNCTIONAL_CHAIN_GAP_LEDGER.yaml
+    git_blob: 093c72a8e3227c1228180a29586980ab5e8f85cd
+review_policy:
+  governing_sections:
+  - WEB-GOV-01-S040C
+  - WEB-GOV-02-S054B
+  - WEB-GOV-03-S048
+  auto_remediation_rule: ONLY_AUTO_REMEDIABLE_OR_AUTHORITY_UNIQUE_IMPLEMENTATION_GAP
+  input_source_gap_rule: BLOCK_UNTIL_FORMAL_INPUT_CONTRACT_EXISTS
+  authority_gap_rule: BLOCK_NO_AI_GUESS
+  architecture_gap_rule: BLOCK_UNTIL_FORMAL_CONTRACT_OR_AUTHORITY_EXISTS
+  semantic_similarity_as_binding_authority: FORBIDDEN
+  synthetic_event_uid: FORBIDDEN
+  inferred_state_uid: FORBIDDEN
+  inferred_action_error_binding: FORBIDDEN
+  inferred_payload_schema: FORBIDDEN
+baseline:
+  gap_total: 171
+  pages:
+    CORE-01: 45
+    ASSET-01: 126
+  classes:
+    ARCHITECTURE_GAP: 133
+    INPUT_SOURCE_GAP: 34
+    AUTHORITY_GAP: 4
+  auto_remediable_count: 0
+  implementation_gap_count: 0
+category_reviews:
+  PAYLOAD_INPUT_CONTRACT_MISSING:
+    gap_count: 34
+    class: INPUT_SOURCE_GAP
+    review_result: BLOCKED_NO_FORMAL_INPUT_CONTRACT
+    auto_remediable_count: 0
+    evidence:
+    - CORE registered ports expose operation/path/permission/state_event but the 16 listed gap actions have no exact request body or input schema authority.
+    - ASSET Raw Source contains an explicit payload_mode only for ASSET-01-ACT-CORRECTION-EXECUTE; that action is not one of the 18 payload-gap subjects.
+    - API path parameters, gate conditions, object required_content and semantic intent are insufficient to invent an effectful request contract.
+  AUDIT_EVENT_NODE_MISSING:
+    gap_count: 13
+    class: ARCHITECTURE_GAP
+    review_result: BLOCKED_NO_CANONICAL_AUDIT_EVENT_UID
+    auto_remediable_count: 0
+    evidence:
+    - CORE gap subjects PROJECT-CREATE/TOPIC-CREATE/PROJECT-VALIDATE/BLUEPRINT-CREATE have state_event values that are event-none, no-canonical-event, or state-only without an exact event UID.
+    - ASSET Layer/Patch gap subjects expose state effects such as layer document version increments or patch state change, but no canonical audit event UID.
+    - Synthetic event UID creation is forbidden.
+  SUCCESS_NEXT_STATE_BINDING_MISSING:
+    gap_count: 7
+    class: ARCHITECTURE_GAP
+    review_result: BLOCKED_NO_CANONICAL_NEXT_STATE_UID
+    auto_remediable_count: 0
+    evidence:
+    - Six layer mutation ports state only that the layer document version increments.
+    - ASSET patch-create states asset.patch.created without a canonical page/domain next-state UID.
+    - Effect descriptions and event names are not interchangeable with a canonical next-state binding.
+  FAILURE_STATE_ERROR_BINDING_MISSING:
+    gap_count: 44
+    class: ARCHITECTURE_GAP
+    review_result: BLOCKED_NO_EXACT_ACTION_ERROR_BINDING
+    auto_remediable_count: 0
+    evidence:
+    - ASSET has a formal error registry, but source actions do not carry exact error_uid bindings.
+    - Matching an action to an error only because the names or contexts appear related would be semantic inference and is forbidden.
+  POST_ACTION_VALIDATION_NODE_MISSING:
+    gap_count: 18
+    class: ARCHITECTURE_GAP
+    review_result: BLOCKED_NO_EXACT_POST_ACTION_VALIDATION_NODE
+    auto_remediable_count: 0
+    evidence:
+    - Existing gates are preconditions and cannot be silently reclassified as post-action validation.
+    - Result/provenance/state_event text is not an explicit post-action validation node.
+  STATE_TRANSITION_LEDGER_FIELD_MISSING:
+    gap_count: 50
+    class: ARCHITECTURE_GAP
+    review_result: BLOCKED_REQUIRED_FIELDS_ABSENT
+    auto_remediable_count: 0
+    required_fields:
+    - mutation_owner
+    - failure_state
+    - recovery
+    - audit_event_uid
+    - illegal_transition_tests
+    evidence:
+    - Exact 10 source transitions are materialized, but all five required architecture fields remain absent for each transition.
+    - STATE_TRANSITION_LEDGER preserves these values as null rather than inventing defaults.
+  SHARED_OWNER_AUTHORITY_UNRESOLVED:
+    gap_count: 4
+    class: AUTHORITY_GAP
+    review_result: BLOCKED_EXTERNAL_SHARED_OWNER_AUTHORITY_UNRESOLVED
+    auto_remediable_count: 0
+    authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+    consumers:
+    - ASSET-01-ACT-CORRECTION-GENERATE
+    - ASSET-01-ACT-CORRECTION-APPROVE
+    - ASSET-01-ACT-RESTORE-AS-NEW
+    - ASSET-01-ACT-VERSION-LOCK
+    evidence:
+    - SHARED_OWNER_PORT_MAP preserves owner/operation/port resolution fields as null.
+    - Duplicate page-local Runtime/API/Data Owner creation is forbidden.
+  ACTION_WITHOUT_CONTROL_OR_TRIGGER:
+    gap_count: 1
+    class: ARCHITECTURE_GAP
+    review_result: BLOCKED_NO_EXACT_TRIGGER_AUTHORITY
+    auto_remediable_count: 0
+    subject_uid: ASSET-01-ACT-FINDING-CREATE
+    evidence:
+    - ASSET-01-PORT-FINDING exposure points to the action and defines runtime state_event, but exposure is not a Control/Trigger contract.
+    - No exact control, stage transition, or system trigger authority identifies what invokes Create Finding.
+resolution_summary:
+  reviewed_gap_total: 171
+  safely_auto_remediable_total: 0
+  authority_unique_implementation_gap_total: 0
+  remains_blocking_total: 171
+  reclassified_to_complete_total: 0
+  source_mutations: 0
+  inferred_bindings: 0
+  synthetic_contracts: 0
+stage2_exit_gate:
+  gate_uid: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  result: BLOCKED
+  reason: 171 functional-chain gaps remain without exact formal Contract/Authority.
+  functional_completion: false
+  website_construction_allowed: false
+  deployment_allowed: false
+next_required_resolution:
+  mode: FORMAL_CONTRACT_OR_AUTHORITY_FIRST
+  rule: Resolve blocking gaps only through newly supplied/approved formal Authority or an existing exact Authority that uniquely determines the missing node; rerun the functional-chain detector after each accepted authority change.
