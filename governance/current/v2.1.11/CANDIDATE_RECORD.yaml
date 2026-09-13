@@ -1,0 +1,83 @@
+schema_version: 1
+version: v2.1.11
+baseline: v2.1.10
+status: PREFORMAL_CONSTITUENT_VERIFIED_GITHUB_CI_PENDING
+package_sha256: 651d3027967a65125787e659765ed3cc5588cbba3e38faa55b56942af46b3e18
+external_trust_root_sha256: 6d29a43395862b39f6d07ca07872d041892a603fc15e9950a5a618ce0fd58852
+semantic_authority_content_hash: 6de8b03edf0197baa08577bcd46106beb70b2bcff0652078a43c1113fcbd63ff
+constituent_verification_sha256: 1131f507b5d6eb343dd9e5dd504687fa386a467e4d738dbe9926b174f2e79cf4
+local_verification:
+  non_matrix_definition_checks: 16/16_PASS
+  mandatory_matrix: 13/13_PASS
+  v211_binding_authority_receipt_schema: 54/54_PASS
+  v210_closure_continuity: 43/43_PASS
+  v219_evidence_state_closure: 24/24_PASS
+  v218_successor_evidence_sync: 24/24_PASS
+  v217_phase_authority: 25/25_PASS
+  cross_lifecycle: 30/30_PASS
+  stage1_minimal: 33/33_PASS
+  multidirection_stress: 21/21_PASS
+  execution_load: 14/14_PASS
+  inherited_v210: 12/12_PASS
+  post_v18: 6/6_PASS
+  high_pressure: 25/25_PASS
+  reference_semantic: 28/28_PASS
+  reference_fuzz: 46/46_BLOCKED_0_ESCAPED
+bugfix_scope:
+  unresolved_authority_canonical_identity_fields:
+  - gap_uid
+  - authority_ref
+  - disposition
+  - authority_evidence_ref
+  count_or_uid_only_validation: BLOCK
+  terminal_receipt_canonical_fields:
+  - provider
+  - repository_or_project
+  - head_sha
+  - run_id
+  - job_denominator
+  - conclusion
+  terminal_receipt_alias_substitution: BLOCK
+  applies_to_stages:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+predecessor_terminal_receipts:
+  visual_closure:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
+    run_id: 34739267938
+    job_denominator: 8/8
+    conclusion: SUCCESS
+  v210_governance:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 91f4271b5145f5646be07da32b5624fad7528034
+    run_id: 34741356025
+    job_denominator: 9/9
+    conclusion: SUCCESS
+  blueprint_binding:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: d10253d154eacabed3df967ce4aa83c71a7475f3
+    run_id: 34741952438
+    job_denominator: 10/10
+    conclusion: SUCCESS
+current_github_receipt:
+  mode: EXTERNAL_IMMUTABLE_RECEIPT
+  receipt_required: true
+  embedded_run_id: null
+  same_commit_self_write: FORBIDDEN
+human_formal_review: PENDING
+formal_test_executed: false
+formal_freeze_claimed: false
+production_release_claimed: false
