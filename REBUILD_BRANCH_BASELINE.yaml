@@ -1,5 +1,5 @@
-schema_version: 16
-baseline_uid: REBUILD-BRANCH-v2.1.12-STAGE2-BLOCKED-AFTER-FUNCTIONAL-REVIEW
+schema_version: 17
+baseline_uid: REBUILD-BRANCH-v2.1.12-STAGE2-BLOCKER-COVERAGE-R2
 branch_name: rebuild-v2.1.1
 governance_test:
   version: v2.1.12
@@ -20,9 +20,15 @@ workspace_progress:
   stage2_started: true
   stage2_required_outputs: 18/18_CI_PASS
   stage2_functional_review: 19/19_CI_PASS
-  stage2_blocker_ledger: 20/20_CI_PASS
+  stage2_blocker_ledger_r1: 20/20_CI_PASS_SUPERSEDED_BY_R2_COVERAGE_CORRECTION
+  stage2_current_ledger_sync_r1: 21/21_CI_PASS
+  stage2_blocker_ledger_r2: MATERIALIZED_PENDING_EXTERNAL_CI
   stage2_open_gap_total: 171
-  stage2_blocker_count: 3
+  stage2_blocker_count: 4
+  stage2_functional_gap_blocker_count: 3
+  stage2_required_output_blocker_count: 1
+  stage2_async_provider_unresolved_lifecycle_binding_count: 24
+  stage2_external_authority_gap_uids_affecting_blockers: [GAP-005, GAP-006, GAP-008]
   stage2_exit_gate: BLOCKED
   stage2_functional_completion: false
   website_construction_started: false
@@ -38,7 +44,8 @@ terminal_receipts:
   stage2_dependency_transition_ledgers: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 7479eee6f5e15fcf10032d3355b18e877888472a, run_id: 34764546141, job_denominator: 17/17, conclusion: SUCCESS}
   stage2_required_successor_outputs: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: a9c3359cd3b90da7058a182b26e58406c4bacf9e, run_id: 34765602708, job_denominator: 18/18, conclusion: SUCCESS}
   stage2_functional_review: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 546e3826934eefc33aa1e11ba018a9aeb706f57f, run_id: 34766220936, job_denominator: 19/19, conclusion: SUCCESS}
-  stage2_blocker_ledger: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d, run_id: 34766464982, job_denominator: 20/20, conclusion: SUCCESS}
+  stage2_blocker_ledger_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d, run_id: 34766464982, job_denominator: 20/20, conclusion: SUCCESS}
+  stage2_current_ledger_sync_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 92b4c2f148fbd5690eea03a0f554ba25ff1cffea, run_id: 34768036053, job_denominator: 21/21, conclusion: SUCCESS}
 stage1_closure:
   required_evidence: [SOURCE_ENUMERATION_EVIDENCE, CONFLICT_DECISION_EVIDENCE, STAGE1_VALIDATION_EVIDENCE]
   required_evidence_integrity: PARSER_AND_REQUIRED_FIELDS_PASS
@@ -55,9 +62,14 @@ successor_state_contract:
 stage2_current:
   functional_chain_spec_count: 2
   functional_review_evidence: PRESENT_VALIDATED
-  blocker_ledger: PRESENT_VALIDATED
+  blocker_ledger: R2_MATERIALIZED_PENDING_EXTERNAL_CI
+  blocker_ledger_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
   open_gap_total: 171
-  blocker_count: 3
+  blocker_count: 4
+  functional_gap_blocker_count: 3
+  required_output_blocker_count: 1
+  async_provider_unresolved_lifecycle_binding_count: 24
+  stage2_external_authority_gap_uids_affecting_blockers: [GAP-005, GAP-006, GAP-008]
   exit_gate: ALL_REQUIRED_PAGES_STAGE2_CLOSED
   exit_gate_result: BLOCKED
   completion_claim: false
@@ -66,7 +78,10 @@ stage2_current:
 current_stage2_blocker_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
-  embedded_run_id: 34766464982
+  current_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
+  validation_status: PENDING_EXTERNAL_CI
+  embedded_run_id: null
+  predecessor_receipt_key: stage2_blocker_ledger_r1
   same_commit_self_write: FORBIDDEN
-next_allowed: FORMAL_CONTRACT_OR_AUTHORITY_RESOLUTION_THEN_STAGE2_RECOMPILE
-status: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
+next_allowed: VALIDATE_STAGE2_BLOCKER_COVERAGE_R2_THEN_FORMAL_CONTRACT_OR_AUTHORITY_RESOLUTION
+status: STAGE2_BLOCKER_COVERAGE_R2_MATERIALIZED_PENDING_EXTERNAL_CI

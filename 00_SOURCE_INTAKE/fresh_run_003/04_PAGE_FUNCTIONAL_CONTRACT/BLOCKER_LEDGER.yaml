@@ -1,11 +1,13 @@
-schema_version: 1
-artifact_uid: FRESH-RUN-003-STAGE2-BLOCKER-LEDGER-V212-R1
+schema_version: 2
+artifact_uid: FRESH-RUN-003-STAGE2-BLOCKER-LEDGER-V212-R2
 artifact_type: BLOCKER_LEDGER
 governance_overlay: v2.1.12
 run_uid: FRESH-RUN-003
 stage_uid: STAGE-02
 status: OPEN_BLOCKERS
+coverage_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
 normative_refs:
+- WEB-GOV-01-S061
 - WEB-GOV-03-S018
 - WEB-GOV-03-S019
 - WEB-GOV-04-S046
@@ -22,13 +24,33 @@ functional_review_evidence:
   git_blob: 7f7c821c9f037d29ac576bd1f944a881329666ef
   reviewed_gap_total: 171
   safely_auto_remediable_total: 0
+required_output_blocker_sources:
+  async_provider_contract:
+    ref: 04_PAGE_FUNCTIONAL_CONTRACT/ASYNC_PROVIDER_CONTRACT.yaml
+    git_blob: 2aa1db9a2ec013dc2820b83a010464fe40facb0f
+    status: OPEN_BLOCKING_AUTHORITY_AND_LIFECYCLE_GAPS
+    unresolved_lifecycle_binding_total: 24
+    unique_external_authority_gap_uids:
+    - GAP-005
+    - GAP-008
+    coverage_in_171_functional_gap_ledger: false
 formalized_at: '2026-09-13T15:39:01Z'
+coverage_corrected_at: '2026-09-13T16:15:50Z'
 completed_gate_receipt:
   provider: GITHUB_ACTIONS
   repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
   head_sha: 546e3826934eefc33aa1e11ba018a9aeb706f57f
   run_id: 34766220936
   job_denominator: 19/19
+  conclusion: SUCCESS
+predecessor_blocker_ledger_receipt:
+  revision: R1_FUNCTIONAL_GAP_ONLY
+  disposition: SUPERSEDED_BY_R2_COVERAGE_CORRECTION
+  provider: GITHUB_ACTIONS
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d
+  run_id: 34766464982
+  job_denominator: 20/20
   conclusion: SUCCESS
 blockers:
 - blocker_uid: STAGE2-BLK-INPUT-CONTRACT-001
@@ -103,14 +125,50 @@ blockers:
   missing_gates:
   - ALL_REQUIRED_PAGES_STAGE2_CLOSED
   exact_resume_point: Ingest exact external Authority evidence, preserve GAP-006 canonical identity until explicit resolution, update SHARED_OWNER_PORT_MAP by authoritative binding only, rerun Stage-02 functional-chain detector and closure gates.
+- blocker_uid: STAGE2-BLK-ASYNC-PROVIDER-LIFECYCLE-001
+  target_uid: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  scope: STAGE-02 / CORE-01 + ASSET-01 / ASYNC_PROVIDER_CONTRACT
+  severity: BLOCKING
+  opened_at: '2026-09-13T16:15:50Z'
+  owner: null
+  owner_status: UNRESOLVED_EXTERNAL_AUTHORITY_AND_LIFECYCLE_CONTRACT
+  reason: The required ASYNC_PROVIDER_CONTRACT is OPEN_BLOCKING_AUTHORITY_AND_LIFECYCLE_GAPS. CORE-01 depends on GAP-005 and GAP-008, ASSET-01 depends on GAP-005, and all 12 required async/provider lifecycle fields remain unresolved for each page.
+  impact: Provider/queue/worker completion semantics cannot be implemented or treated as complete; Stage-02 closure, website construction and deployment remain forbidden.
+  unlock_condition: Materialize exact authoritative GAP-005/GAP-008 evidence where consumed and exact lifecycle contract values for request identity, input fingerprint, idempotency, queued/running/succeeded/failed/cancel/retry eligibility, callback/result provenance, output persistence and audit correlation without defaults or optimistic UI substitution.
+  current_status: OPEN_BLOCKING
+  resolved_evidence: null
+  source_required_output: ASYNC_PROVIDER_CONTRACT
+  source_required_output_git_blob: 2aa1db9a2ec013dc2820b83a010464fe40facb0f
+  covered_by_171_functional_gap_ledger: false
+  unresolved_lifecycle_binding_count: 24
+  page_unresolved_lifecycle_binding_count:
+    CORE-01: 12
+    ASSET-01: 12
+  authority_gaps:
+  - gap_uid: GAP-005
+    authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+    consumers: [CORE-01, ASSET-01]
+  - gap_uid: GAP-008
+    authority_ref: ACPOS shared AI Router/Capability Assignment
+    consumers: [CORE-01]
+  completed_gates:
+  - Governance Run 34765602708 SUCCESS 18/18
+  missing_gates:
+  - ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  exact_resume_point: Ingest exact GAP-005/GAP-008 Authority evidence and formal async lifecycle bindings, recompile ASYNC_PROVIDER_CONTRACT, then rerun required-output validation, Blocker Ledger validation, functional review and Stage-02 exit-gate review.
 summary:
-  blocker_count: 3
-  open_blocker_count: 3
+  blocker_count: 4
+  open_blocker_count: 4
   resolved_blocker_count: 0
   blocked_gap_total: 171
+  functional_gap_blocker_count: 3
+  required_output_blocker_count: 1
   input_contract_gap_count: 34
   architecture_contract_gap_count: 133
-  external_authority_gap_count: 4
+  functional_authority_gap_count: 4
+  async_provider_unresolved_lifecycle_binding_count: 24
+  async_provider_external_authority_gap_uid_count: 2
+  stage2_external_authority_gap_uids_affecting_blockers: [GAP-005, GAP-006, GAP-008]
   functional_completion: false
   stage2_exit_gate: BLOCKED
   website_construction_allowed: false

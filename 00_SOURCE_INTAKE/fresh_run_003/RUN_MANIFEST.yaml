@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 branch: rebuild-v2.1.1
 phase: STAGE_02_PAGE_FUNCTIONAL_CONTRACT
-status: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
+status: STAGE2_BLOCKER_COVERAGE_R2_MATERIALIZED_PENDING_EXTERNAL_CI
 governance:
   sealed_runtime_version: v2.1.6
   current_candidate_overlay: v2.1.12
@@ -11,9 +11,7 @@ governance:
   current_semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
   state: PREFORMAL_VERIFIED_GITHUB_CI_PASS
   normative_edit_allowed: false
-target_pages:
-- CORE-01
-- ASSET-01
+target_pages: [CORE-01, ASSET-01]
 source_pin:
   branch: new
   revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
@@ -29,17 +27,14 @@ execution_policy:
   stage2_entry: ACTIVE_AFTER_ALL_REQUIRED_PAGES_STAGE1_CLOSED
   stage2_required_outputs: VALIDATED_EXTERNAL_CI_18_OF_18
   stage2_functional_review: REVIEW_COMPLETE_EXTERNAL_CI_19_OF_19
-  stage2_blocker_ledger: VALIDATED_EXTERNAL_CI_20_OF_20
+  stage2_blocker_ledger_r1: VALIDATED_EXTERNAL_CI_20_OF_20_SUPERSEDED_BY_R2_COVERAGE_CORRECTION
+  stage2_current_ledger_sync_r1: VALIDATED_EXTERNAL_CI_21_OF_21
+  stage2_blocker_ledger_r2: MATERIALIZED_PENDING_EXTERNAL_CI
   stage2_functional_completion: false
   website_code_write: FORBIDDEN_IN_STAGE_02
   deployment: FORBIDDEN_IN_STAGE_02
 stage2_contract:
-  operations:
-  - FUNCTIONAL_CHAIN_COMPILE
-  - DEPENDENCY_MAP_COMPILE
-  - PAGE_CONSTRUCTION_SPEC_COMPILE
-  - ASYNC_PROVIDER_CONTRACT_COMPILE
-  - SHARED_OWNER_PORT_RESOLVE
+  operations: [FUNCTIONAL_CHAIN_COMPILE, DEPENDENCY_MAP_COMPILE, PAGE_CONSTRUCTION_SPEC_COMPILE, ASYNC_PROVIDER_CONTRACT_COMPILE, SHARED_OWNER_PORT_RESOLVE]
   functional_chain_spec_count: 2
   canonical_required_outputs_materialized: true
   functional_review_evidence: PRESENT_VALIDATED
@@ -48,10 +43,17 @@ stage2_contract:
   input_source_gap_total: 34
   authority_gap_total: 4
   blocker_ledger_ref: 04_PAGE_FUNCTIONAL_CONTRACT/BLOCKER_LEDGER.yaml
-  blocker_count: 3
+  blocker_ledger_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
+  blocker_count: 4
+  functional_gap_blocker_count: 3
+  required_output_blocker_count: 1
+  async_provider_unresolved_lifecycle_binding_count: 24
+  stage2_external_authority_gap_uids_affecting_blockers: [GAP-005, GAP-006, GAP-008]
   exit_gate: ALL_REQUIRED_PAGES_STAGE2_CLOSED
   exit_gate_result: BLOCKED
   completion_claim: false
+  website_construction_allowed: false
+  deployment_allowed: false
 blueprint_binding_contract:
   binding_count: 2
   mode: NON_OWNING_REFERENCE_ONLY
@@ -61,11 +63,7 @@ blueprint_binding_contract:
   direct_raw_source_inputs: 0
   unresolved_authority_gap_universe: 8
   authority_resolution_performed: false
-  authority_identity_fields:
-  - gap_uid
-  - authority_ref
-  - disposition
-  - authority_evidence_ref
+  authority_identity_fields: [gap_uid, authority_ref, disposition, authority_evidence_ref]
 stage1_validation_contract:
   source_enumeration_evidence_required: true
   conflict_decision_evidence_required: true
@@ -98,7 +96,8 @@ terminal_receipts:
   stage2_dependency_transition_ledgers: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 7479eee6f5e15fcf10032d3355b18e877888472a, run_id: 34764546141, job_denominator: 17/17, conclusion: SUCCESS}
   stage2_required_successor_outputs: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: a9c3359cd3b90da7058a182b26e58406c4bacf9e, run_id: 34765602708, job_denominator: 18/18, conclusion: SUCCESS}
   stage2_functional_review: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 546e3826934eefc33aa1e11ba018a9aeb706f57f, run_id: 34766220936, job_denominator: 19/19, conclusion: SUCCESS}
-  stage2_blocker_ledger: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d, run_id: 34766464982, job_denominator: 20/20, conclusion: SUCCESS}
+  stage2_blocker_ledger_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d, run_id: 34766464982, job_denominator: 20/20, conclusion: SUCCESS}
+  stage2_current_ledger_sync_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 92b4c2f148fbd5690eea03a0f554ba25ff1cffea, run_id: 34768036053, job_denominator: 21/21, conclusion: SUCCESS}
 current_v212_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
@@ -107,7 +106,10 @@ current_v212_receipt:
 current_stage2_blocker_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
-  embedded_run_id: 34766464982
+  current_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
+  validation_status: PENDING_EXTERNAL_CI
+  embedded_run_id: null
+  predecessor_receipt_key: stage2_blocker_ledger_r1
   same_commit_self_write: FORBIDDEN
 next_phase_entry_condition: ALL_REQUIRED_PAGES_STAGE2_CLOSED_AFTER_FORMAL_CONTRACT_OR_AUTHORITY_RESOLUTION
-next_action: RESOLVE_STAGE2_BLOCKERS_BY_FORMAL_CONTRACT_OR_AUTHORITY_THEN_RERUN_FUNCTIONAL_CHAIN
+next_action: VALIDATE_STAGE2_BLOCKER_COVERAGE_R2_THEN_RESOLVE_FORMAL_CONTRACT_OR_AUTHORITY_BLOCKERS
