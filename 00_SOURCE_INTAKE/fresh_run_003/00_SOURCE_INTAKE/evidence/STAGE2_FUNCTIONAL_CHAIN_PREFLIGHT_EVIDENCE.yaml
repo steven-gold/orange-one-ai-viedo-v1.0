@@ -5,7 +5,7 @@ governance_overlay: v2.1.12
 run_uid: FRESH-RUN-003
 stage_uid: STAGE-02
 operation_uid: FUNCTIONAL_CHAIN_COMPILE
-status: PREFLIGHT_MATERIALIZED_PENDING_CI
+status: PREFLIGHT_CI_PASS_GAP_LEDGER_MATERIALIZED_PENDING_CI
 entry_gate:
   gate_uid: ALL_REQUIRED_PAGES_STAGE1_CLOSED
   terminal_receipt:
@@ -52,10 +52,30 @@ success_semantics:
   ai_guess_or_default_substitution: FORBIDDEN
   machine_result_artifact: stage2-functional-preflight-result
 current_result:
-  gap_counts: EXTERNAL_CI_ARTIFACT_REQUIRED
+  detector_revision: v3-authority-native-semantic-calibrated
+  ci_receipt:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 3d3ab89b2ee8092c22a3cf044c5d5ec57a904dcf
+    run_id: 34759480842
+    job_denominator: 15/15
+    conclusion: SUCCESS
+  machine_artifact:
+    artifact_id: 10317579755
+    digest: sha256:eb06d2ca1227cfff4d97600684d1ffd7f26930ad5ab6dcdd2e9f16e245baaf1f
+  gap_total: 171
+  page_gap_counts:
+    CORE-01: 45
+    ASSET-01: 126
+  class_gap_counts:
+    ARCHITECTURE_GAP: 133
+    INPUT_SOURCE_GAP: 34
+    AUTHORITY_GAP: 4
+  gap_ledger_ref: 04_PAGE_FUNCTIONAL_CONTRACT/FUNCTIONAL_CHAIN_GAP_LEDGER.yaml
   functional_completion_claim: false
 next_after_preflight:
-  when_gaps_exist: MATERIALIZE_GAP_LEDGER_AND_RESOLVE_ONLY_UNIQUELY_AUTHORITATIVE_ITEMS
+  when_gaps_exist: RESOLVE_ONLY_UNIQUELY_AUTHORITATIVE_ITEMS_THEN_RECOMPILE
+  authority_gap_behavior: BLOCK_AND_REQUEST_EXACT_AUTHORITY
   when_no_gaps: CONTINUE_DEPENDENCY_MAP_AND_STATE_TRANSITION_COMPILE
 website_construction_started: false
 deployment_started: false
