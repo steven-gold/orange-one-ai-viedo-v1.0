@@ -1,0 +1,1 @@
+v2.1.7 governance candidate is synchronized by commit 6a0bce7cf9a47edaa8d7e6d4cd074e7abf928c18 after local Pre-formal 14/14 PASS. The authoritative machine contract is STAGE1_PHASE_AUTHORITY_CONTRACT.yaml. This candidate does not mutate the current three Source Fact payloads. Prior-phase GitHub replay remains required before freeze.
