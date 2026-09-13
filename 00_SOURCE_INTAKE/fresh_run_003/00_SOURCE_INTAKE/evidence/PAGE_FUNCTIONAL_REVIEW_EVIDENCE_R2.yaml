@@ -1,0 +1,79 @@
+schema_version: 2
+artifact_uid: FRESH-RUN-003-PAGE-FUNCTIONAL-REVIEW-EVIDENCE-V212-R2
+artifact_type: PAGE_FUNCTIONAL_REVIEW_EVIDENCE
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+status: REVIEW_SUCCESSOR_COMPLETE_STAGE2_NOT_CLOSED
+predecessor_review:
+  ref: 00_SOURCE_INTAKE/evidence/PAGE_FUNCTIONAL_REVIEW_EVIDENCE.yaml
+  git_blob: 7f7c821c9f037d29ac576bd1f944a881329666ef
+  reviewed_gap_total: 171
+successor_gap_ledger:
+  ref: 04_PAGE_FUNCTIONAL_CONTRACT/FUNCTIONAL_CHAIN_GAP_LEDGER_R4.yaml
+  git_blob: 29855a6aa9940b6ea64ca75d355c60acda3d2b94
+  gap_total: 167
+  pages:
+    CORE-01: 45
+    ASSET-01: 122
+  classes:
+    ARCHITECTURE_GAP: 133
+    INPUT_SOURCE_GAP: 34
+    AUTHORITY_GAP: 0
+resolution_evidence:
+  gap_uid: GAP-006
+  authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  external_authority_materialization_ref: 04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/STAGE2_EXTERNAL_AUTHORITY_MATERIALIZATION_EVIDENCE.yaml
+  external_authority_materialization_git_blob: ff99fd8c48f4593c5ef5cdeab1d49c5caa027cfd
+  shared_owner_successor_ref: 04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R2.yaml
+  shared_owner_successor_git_blob: 65f821ad766994716f4336e961b1b160b5aac457
+  resolved_consumer_count: 4
+  consumers:
+  - ASSET-01-ACT-CORRECTION-GENERATE
+  - ASSET-01-ACT-CORRECTION-APPROVE
+  - ASSET-01-ACT-RESTORE-AS-NEW
+  - ASSET-01-ACT-VERSION-LOCK
+  disposition: SUPERSEDED_BY_EXACT_EXTERNAL_AUTHORITY
+  ai_inference_used: false
+  raw_source_mutated: false
+successor_ci_receipt:
+  provider: GITHUB_ACTIONS
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  head_sha: 0b1bd29533dab4887ae5c077a57257388efe6a27
+  run_id: 34771926824
+  job_denominator: 23/23
+  conclusion: SUCCESS
+machine_result_artifact:
+  name: stage2-functional-gap-successor-result
+  artifact_id: 10321674696
+  digest: sha256:00967fc9ad5943cb4cad211f7cca97b0052ffec45fca72851d6483b485484ee2
+review_policy:
+  semantic_similarity_as_binding_authority: FORBIDDEN
+  inferred_payload_schema: FORBIDDEN
+  inferred_state_uid: FORBIDDEN
+  synthetic_event_uid: FORBIDDEN
+  unresolved_gap_removal_without_resolution: FORBIDDEN
+resolution_summary:
+  predecessor_reviewed_gap_total: 171
+  authority_resolved_gap_total: 4
+  reviewed_gap_total: 167
+  safely_auto_remediable_total: 0
+  remains_blocking_total: 167
+  architecture_gap_total: 133
+  input_source_gap_total: 34
+  authority_gap_total: 0
+  source_mutations: 0
+  inferred_bindings: 0
+  synthetic_contracts: 0
+independent_required_output_blocker:
+  async_provider_contract_ref: 04_PAGE_FUNCTIONAL_CONTRACT/ASYNC_PROVIDER_CONTRACT.yaml
+  unresolved_lifecycle_binding_count: 24
+  covered_by_167_functional_gap_ledger: false
+  authority_gap_uids: [GAP-005, GAP-008]
+stage2_exit_gate:
+  gate_uid: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  result: BLOCKED
+  reason: 167 functional-chain gaps plus 24 independent ASYNC_PROVIDER lifecycle bindings remain unresolved.
+  functional_completion: false
+  website_construction_allowed: false
+  deployment_allowed: false
