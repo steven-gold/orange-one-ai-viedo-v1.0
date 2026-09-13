@@ -1,0 +1,28 @@
+schema_version: 1
+version: v2.1.12
+status: CURRENT_PREFORMAL_VERIFIED_GITHUB_CI_PENDING
+source_package_sha256: 2d6602b20983a9764c2f1496f36ab20a2f0ebcd73826492c27ba67159f5ef3df
+external_trust_root_sha256: 4c013cfc1a91142a8b4ce44830ef467c5c960f56b136a75ff670729a523f71e3
+semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
+package_regular_file_count: 65
+package_checksum_entry_count: 64
+verification:
+  component_preformal_checks: 17/17_PASS
+  mandatory_regression_matrix: 14/14_PASS
+  v212_successor_state_evidence_parse: 60/60_PASS
+  v211_binding_authority_receipt_schema: 54/54_PASS
+  v210_closure_continuity: 43/43_PASS
+  v219_evidence_state_closure: 24/24_PASS
+  v218_successor_evidence_sync: 24/24_PASS
+  v217_phase_authority: 25/25_PASS
+  high_pressure: 25/25_PASS
+  reference_semantic: 28/28_PASS
+  reference_fuzz: 46/46_BLOCKED_0_ESCAPED
+  checksum_manifest: 64/64_PASS
+  external_trust_root: PASS
+  clean_package_verification: PASS
+immutable_predecessor: v2.1.11
+human_formal_review: PENDING
+formal_test_executed: false
+formal_freeze_claimed: false
+production_release_claimed: false
