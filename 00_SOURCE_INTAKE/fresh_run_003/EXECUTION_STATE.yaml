@@ -1,7 +1,7 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
 governance_version: v2.1.6
-state: SOURCE_FACT_MATERIALIZATION_COMPLETED_PENDING_CI
+state: SOURCE_FACT_MATERIALIZATION_COMPLETED
 raw_source_capture_state: CAPTURE_CLOSED
 semantic_granularity_replay_validated: true
 replay_source_structure_node_count: 34
@@ -26,8 +26,18 @@ blueprint_materialization_started: false
 stage1_validation_started: false
 website_construction_started: false
 deployment_started: false
+github_ci:
+  run_id: 34727817243
+  current_v216_stage1_granularity_gate: SUCCESS
+  current_v216_source_facts_gate: SUCCESS
+  sealed_v216_runtime: SUCCESS
 allowed_transition:
-  from: SOURCE_FACT_MATERIALIZATION_COMPLETED_PENDING_CI
-  to: SOURCE_FACT_MATERIALIZATION_COMPLETED
-  trigger: GITHUB_V216_SOURCE_FACT_GATE_PASS
-last_result: SOURCE_FACT_MATERIALIZATION_COMPLETED_PENDING_CI
+  from: SOURCE_FACT_MATERIALIZATION_COMPLETED
+  to: RESPONSIBILITY_CLASSIFICATION_ACTIVE
+  trigger: EXPLICIT_NEXT_STEP_START
+forbidden_transitions:
+- SOURCE_FACT_MATERIALIZATION_COMPLETED -> RAW_SOURCE_CAPTURE_ACTIVE
+- SOURCE_FACT_MATERIALIZATION_COMPLETED -> BLUEPRINT_MATERIALIZATION_ACTIVE
+- SOURCE_FACT_MATERIALIZATION_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
+- SOURCE_FACT_MATERIALIZATION_COMPLETED -> DEPLOYMENT_ACTIVE
+last_result: V216_SOURCE_FACT_MATERIALIZATION_COMPLETED_CI_PASS
