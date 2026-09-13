@@ -1,0 +1,46 @@
+schema_version: 1
+artifact_uid: ACPOS-GOV-V211-BINDING-AUTHORITY-RECEIPT-SCHEMA-CONTRACT
+artifact_type: GOVERNANCE_BUGFIX_CONTRACT
+version: v2.1.11
+baseline: v2.1.10
+status: PREFORMAL_CONSTITUENT_VERIFIED
+scope:
+  applies_to_stages:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+unresolved_authority_identity:
+  source_of_truth: SOURCE_DEPENDENCY_MAP_OR_EXPLICIT_SUCCESSOR_AUTHORITY_LEDGER
+  canonical_tuple_fields:
+  - gap_uid
+  - authority_ref
+  - disposition
+  - authority_evidence_ref
+  carry_forward_exact_tuple_required: true
+  count_only_or_uid_only_validation: BLOCK
+  explicit_supersession_required_for_tuple_change: true
+terminal_ci_receipt:
+  model: EXTERNAL_IMMUTABLE_RECEIPT
+  canonical_projection_required: true
+  required_fields:
+  - provider
+  - repository_or_project
+  - head_sha
+  - run_id
+  - job_denominator
+  - conclusion
+  alias_field_substitution: BLOCK
+  same_commit_self_write: FORBIDDEN
+  materialization_receipt_separate: true
+current_ledger_synchronization:
+  required: true
+  terminal_receipt_projection_exact_value_equality: true
+  unresolved_authority_tuple_exact_value_equality: true
