@@ -1,49 +1,50 @@
-schema_version: 3
+schema_version: 4
 branch_name: rebuild-v2.1.1
 role: CURRENT_SEALED_GOVERNANCE_TEST_BASELINE
 normative_mutation_allowed: false
 sealed_governance:
-  version: v2.1.6
-  release_name: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.6_SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED
-  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.6_SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED.zip
-  package_sha256: 3dcc0b4b94250b7487ec923fde2604f13b6d4ce3ee1ec4636feba27bcf3c92c6
-  external_trust_root_filename: ACPOS_GOVERNANCE_TRUST_ROOT_v2.1.6_SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED.json
-  external_trust_root_sha256: 70b19fa78f641fb570c9c314552d518b50a358ce18075de0e5cad89edd746de2
-  semantic_authority_content_hash: 3e4a56f7ace751ab2a8a2c8adbe889fc6eefa133e859d7bc1f49df102e5a55bb
-  state: SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED_CANDIDATE
+  version: v2.1.8
+  baseline: v2.1.7
+  release_name: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.8_SUCCESSOR_EVIDENCE_SYNC_BUGFIX_PREFORMAL_VERIFIED
+  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.8_SUCCESSOR_EVIDENCE_SYNC_BUGFIX_PREFORMAL_VERIFIED.zip
+  package_sha256: a108845fbde176cbd20a5f9df4217c68b6512686dedc00ffc8c44e9cc2b04753
+  external_trust_root_sha256: b5c5b5776d1f0f733b1c3572f3233bde7cee3c85253aacd12a522b68a55292ac
+  semantic_authority_content_hash: e21c1b8cd1c2b04436fc77b5f9ac99320127bbf5535d63925731bc4e7d260da1
+  state: PREFORMAL_VERIFIED_GITHUB_CI_PASS
   sealed_read_only: true
   formal_freeze_executed: false
+sealed_runtime_dependency:
+  version: v2.1.6
+  runtime_manifest: governance/test-runtime/v2.1.6/STAGE1_RUNTIME_MANIFEST.yaml
+  mutation: FORBIDDEN
 verified_test_summary:
+  preformal: 15/15_PASS
+  mandatory_matrix: 10/10_PASS
   high_pressure: 25/25_PASS
   reference_semantic: 28/28_PASS
-  fuzz: 46/46_BLOCKED_0_ESCAPE
+  fuzz: 46/46_BLOCKED_0_ESCAPED
   execution_load: 14/14_PASS
   multidirection_stress: 21/21_PASS
   stage1_minimal_control: 33/33_PASS
-  inherited_regression: 12/12_PASS
-  post_v1_8: 6/6_PASS
-  cross_stage_bugfix_regression: 30/30_PASS
-  fresh_zip_stage1: 33/33_PASS
-  fresh_zip_cross_lifecycle: 30/30_PASS
-  outer_monolithic_preformal_runner: TIMEOUT_NO_FAILURE_CONCLUSION
+  cross_lifecycle: 30/30_PASS
+  v217_phase_authority: 25/25_PASS
+  v218_successor_evidence_sync: 24/24_PASS
 github_ci_verification:
-  run_id: 34727817243
-  current_v216_stage1_granularity_gate: SUCCESS
-  current_v216_source_facts_gate: SUCCESS
-  sealed_v216_runtime: SUCCESS
-  replay_34_node_expected_block: PASS
-  refinement_61_node_mixed_terminal_zero: PASS
-  source_segment_mapping_61_of_61: PASS
-  source_fact_materialization_3_of_3: PASS
-  source_context_nodes_61: PASS
-  conflict_items_zero: PASS
-  dependency_edges_2: PASS
-  unresolved_authority_gaps_tracked: 8
-  invented_dependencies_zero: PASS
-execution_policy:
-  governance_load_required_before_test: true
-  governance_text_edit_during_execution: FORBIDDEN
-  github_test_infrastructure_update_allowed: true
-  github_test_infrastructure_is_normative_authority: false
-  website_construction_before_stage_gate: FORBIDDEN
-status: SEALED_V2_1_6_TEST_BASELINE_SOURCE_FACT_GITHUB_CI_PASS
+  run_id: 34733412228
+  jobs: 6/6_SUCCESS
+  direct_current_workspace_classification: PASS
+  page_blueprint_successor_aware: PASS
+  exact_phase_successor_authority: PASS
+  candidate_evidence_sync: PASS
+  sealed_v216_runtime: PASS
+execution_checkpoint:
+  state: PAGE_BASE_BLUEPRINT_COMPLETED
+  classification: 52/52
+  page_base_blueprint: 2/2
+  unresolved_authority_gaps: 8
+  visual_base_blueprint_started: false
+  blueprint_binding_started: false
+  website_construction_started: false
+  deployment_started: false
+human_formal_review: PENDING
+status: SEALED_V2_1_8_PREFORMAL_TEST_BASELINE_PAGE_BLUEPRINT_GITHUB_CI_PASS

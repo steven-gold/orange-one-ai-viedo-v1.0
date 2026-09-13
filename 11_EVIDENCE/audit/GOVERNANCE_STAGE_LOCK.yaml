@@ -1,51 +1,50 @@
-schema_version: 4
+schema_version: 5
 current_test_authority:
-  version: v2.1.6
-  state: SEMANTIC_GRANULARITY_BUGFIX_PREFORMAL_VERIFIED_CANDIDATE_USER_FROZEN_READ_ONLY
-  package_sha256: 3dcc0b4b94250b7487ec923fde2604f13b6d4ce3ee1ec4636feba27bcf3c92c6
-  external_trust_root_sha256: 70b19fa78f641fb570c9c314552d518b50a358ce18075de0e5cad89edd746de2
-  semantic_authority_content_hash: 3e4a56f7ace751ab2a8a2c8adbe889fc6eefa133e859d7bc1f49df102e5a55bb
-lock_state: USER_FROZEN_READ_ONLY
+  version: v2.1.8
+  baseline: v2.1.7
+  state: SUCCESSOR_EVIDENCE_SYNC_BUGFIX_PREFORMAL_VERIFIED_GITHUB_CI_PASS
+  package_sha256: a108845fbde176cbd20a5f9df4217c68b6512686dedc00ffc8c44e9cc2b04753
+  external_trust_root_sha256: b5c5b5776d1f0f733b1c3572f3233bde7cee3c85253aacd12a522b68a55292ac
+  semantic_authority_content_hash: e21c1b8cd1c2b04436fc77b5f9ac99320127bbf5535d63925731bc4e7d260da1
+lock_state: PREFORMAL_CANDIDATE_READ_ONLY
 formal_freeze_executed: false
 normative_edit_after_lock: FORBIDDEN
 runtime_sync:
   runtime_uid: ACPOS-GOV-TEST-v2.1.6-STAGE1-SEMANTIC-GRANULARITY
   runtime_manifest: governance/test-runtime/v2.1.6/STAGE1_RUNTIME_MANIFEST.yaml
   runtime_content_mutation: FORBIDDEN
-  repository_pointer_sync: ALLOWED_OPERATIONAL_METADATA_ONLY
-  evidence_sync: ALLOWED
+  evidence_sync: REQUIRED_CURRENT_REVISION
   github_ci_state: PASS
 current_execution:
-  phase: FOUNDATION-01-SOURCE-INTAKE
-  target_pages:
-  - CORE-01
-  - ASSET-01
-  test_iteration: 3
-  replay_restore_point: SOURCE_STRUCTURE_ENUMERATION_PRE_SEGMENT_MAPPING
-  replay_expected_block_verified: true
-  replay_mixed_terminal_units_detected: 2
-  refined_source_structure_node_count: 61
+  run_uid: FRESH-RUN-003
   source_segment_mapping_completed: true
-  source_segment_count: 61
-  source_fact_materialization_started: true
   source_fact_materialization_completed: true
-  current_source_fact_count: 3
   unresolved_authority_gap_count: 8
-  responsibility_classification_started: false
+  responsibility_classification_completed: true
+  classification_artifact_count: 52
+  page_base_blueprint_completed: true
+  page_base_blueprint_count: 2
+  visual_base_blueprint_started: false
+  blueprint_binding_started: false
   website_reconstruction_started: false
-  website_reconstruction_allowed: false
-  website_code_write_allowed: false
+  deployment_started: false
+successor_lock:
+  classification_to_page: PASS
+  page_to_visual_requires_page_ci_pass: true
+  visual_to_binding_requires_page_and_visual_ci_pass: true
+  legal_successor_retroactive_invalidation: FORBIDDEN
+current_test_evidence_sync:
+  machine_review: PASS
+  historical_evidence_substitution: BLOCK
+  denominator_drift: BLOCK
+  human_formal_review: PENDING
 github_ci:
-  run_id: 34727817243
-  current_v216_stage1_granularity_gate: SUCCESS
-  current_v216_source_facts_gate: SUCCESS
-  sealed_v216_runtime: SUCCESS
+  run_id: 34733412228
+  result: 6/6_SUCCESS
 historical_locks:
-- version: v2.1.5
-  current_disposition: HISTORICAL_SUPERSEDED_BY_V2_1_6_SEMANTIC_GRANULARITY_FIX
-- version: v2.1.4
-  current_disposition: HISTORICAL_SUPERSEDED
-- version: v2.1.2
-  current_disposition: DISCARDED_NOT_AUTHORITY
-next_action: RESPONSIBILITY_CLASSIFICATION only after explicit next-step start; keep all unresolved authority gaps visible and do not skip stage ordering.
-status: V2_1_6_SOURCE_FACT_LOCK_CLOSED_CI_PASS
+  - version: v2.1.7
+    disposition: HISTORICAL_SUPERSEDED_BY_V2_1_8_SUCCESSOR_EVIDENCE_SYNC_FIX
+  - version: v2.1.6
+    disposition: SEALED_RUNTIME_BASELINE_RETAINED
+next_action: VISUAL_BASE_BLUEPRINT only after explicit next-step start. Preserve all 8 unresolved Authority gaps; Binding/website/deployment remain blocked.
+status: V2_1_8_PAGE_BLUEPRINT_LOCK_CLOSED_CI_PASS

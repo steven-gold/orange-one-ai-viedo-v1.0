@@ -2,7 +2,7 @@ schema_version: 1
 record_uid: ACPOS-GOV-V218-PREFORMAL-CANDIDATE
 version: v2.1.8
 baseline: v2.1.7
-status: PREFORMAL_VERIFIED_GITHUB_CI_PENDING
+status: PREFORMAL_VERIFIED_GITHUB_CI_PASS
 package_sha256: a108845fbde176cbd20a5f9df4217c68b6512686dedc00ffc8c44e9cc2b04753
 external_trust_root_sha256: b5c5b5776d1f0f733b1c3572f3233bde7cee3c85253aacd12a522b68a55292ac
 semantic_authority_content_hash: e21c1b8cd1c2b04436fc77b5f9ac99320127bbf5535d63925731bc4e7d260da1
@@ -18,6 +18,16 @@ local_verification:
   cross_lifecycle: 30/30_PASS
   v217_phase_authority: 25/25_PASS
   v218_successor_evidence_sync: 24/24_PASS
+github_verification:
+  head_sha: 6367cecda5af7ba981aa6e92c6f803b4638d4550
+  run_id: 34733412228
+  jobs: 6/6_SUCCESS
+  conclusion: SUCCESS
+  direct_current_workspace_classification: SUCCESS
+  page_blueprint_successor_aware: SUCCESS
+  phase_successor_authority: SUCCESS
+  candidate_evidence_sync: SUCCESS
 human_formal_review: PENDING
 formal_test_executed: false
+formal_freeze_claimed: false
 production_release_claimed: false
