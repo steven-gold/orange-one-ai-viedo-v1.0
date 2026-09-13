@@ -1,26 +1,27 @@
-schema_version: 11
+schema_version: 12
 role: CURRENT_SEALED_GOVERNANCE_TEST_BASELINE
 sealed_governance:
-  version: v2.1.11
-  package_sha256: 651d3027967a65125787e659765ed3cc5588cbba3e38faa55b56942af46b3e18
-  external_trust_root_sha256: 6d29a43395862b39f6d07ca07872d041892a603fc15e9950a5a618ce0fd58852
-  semantic_authority_content_hash: 6de8b03edf0197baa08577bcd46106beb70b2bcff0652078a43c1113fcbd63ff
+  version: v2.1.12
+  package_sha256: 2d6602b20983a9764c2f1496f36ab20a2f0ebcd73826492c27ba67159f5ef3df
+  external_trust_root_sha256: 4c013cfc1a91142a8b4ce44830ef467c5c960f56b136a75ff670729a523f71e3
+  semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
 verified_test_summary:
-  non_matrix_definition_checks: 16/16_PASS
-  mandatory_matrix: 13/13_PASS
+  component_preformal_checks: 17/17_PASS
+  mandatory_matrix: 14/14_PASS
+  v212_successor_state_evidence_parse: 60/60_PASS
   v211_binding_authority_receipt_schema: 54/54_PASS
   v210_closure_continuity: 43/43_PASS
   high_pressure: 25/25_PASS
   reference_semantic: 28/28_PASS
   reference_fuzz: 46/46_BLOCKED_0_ESCAPED
 execution_checkpoint:
-  state: STAGE1_VALIDATION_COMPLETED_PENDING_CI
+  state: STAGE1_VALIDATION_COMPLETED_CI_PASS
   page_base_blueprint: 2/2
   visual_base_blueprint: 2/2
   blueprint_binding: 2/2_CI_PASS
   stage1_validation_started: true
   stage1_validation_completed: true
-  stage1_exit_gate: PENDING_EXTERNAL_CI
+  stage1_exit_gate: SUCCESS_EXTERNAL_CI
   stage2_started: false
 terminal_receipts:
   visual_closure:
@@ -51,18 +52,38 @@ terminal_receipts:
     run_id: 34754709362
     job_denominator: 11/11
     conclusion: SUCCESS
+  stage1_closure:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28
+    run_id: 34755361339
+    job_denominator: 12/12
+    conclusion: SUCCESS
 stage1_closure:
-  source_enumeration_evidence: PRESENT
-  conflict_decision_evidence: PRESENT
-  clean_scan: MATERIALIZED
-  run_close: MATERIALIZED
-  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED_PENDING_EXTERNAL_CI
+  source_enumeration_evidence: PRESENT_PARSE_VALID
+  conflict_decision_evidence: PRESENT_PARSE_VALID
+  stage1_validation_evidence: PRESENT_PARSE_VALID
+  clean_scan: COMPLETED
+  run_close: COMPLETED
+  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  exit_gate_result: SUCCESS_EXTERNAL_CI_12_OF_12
   dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
   reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
-current_stage1_receipt:
+successor_state_contract:
+  contract_uid: V212-SUCCESSOR-STATE-MONOTONIC-EVIDENCE-PARSE
+  current_state_exact_predecessor_terminal_equality_as_pass_condition: FORBIDDEN
+  successor_started_false_as_permanent_pass_condition: FORBIDDEN
+  phase_order_owner: PHASE_BOUNDARY_GATE
+current_v212_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
-  canonical_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
+  canonical_fields:
+  - provider
+  - repository_or_project
+  - head_sha
+  - run_id
+  - job_denominator
+  - conclusion
 human_formal_review: PENDING
-status: SEALED_V2_1_11_STAGE1_VALIDATION_PENDING_EXTERNAL_CI_RECEIPT
+status: SEALED_V2_1_12_STAGE1_CLOSED_GITHUB_CI_PENDING
