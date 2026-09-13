@@ -1,0 +1,86 @@
+schema_version: 1
+record_uid: ACPOS-GOV-V217-PREFORMAL-BYTE-FREEZE
+version: v2.1.7
+baseline: v2.1.6
+status: USER_FROZEN_READ_ONLY_PREFORMAL_CANDIDATE
+freeze_scope: GOVERNANCE_CANDIDATE_BYTES_AND_REPLAY_EVIDENCE
+package:
+  filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.7_PHASE_AUTHORITY_BUGFIX_PREFORMAL_VERIFIED.zip
+  sha256: d763d4c32cd189a4bc6b09c7d725ceca166c98b133b83ab6befd3207fb0ed212
+  external_trust_root_sha256: 3176820679a1e5d785c46aa4ddd45419a4f21ee4e968a86d644869725a8297d3
+  semantic_authority_content_hash: 1bad10c8e7238eaf92402b2c6d935e07b51e3d0b1a6f24e1f6ff2a10cf7b0ba5
+local_verification:
+  preformal_checks: 14/14_PASS
+  mandatory_matrix: 9/9_PASS
+  high_pressure: 25/25_PASS
+  reference_semantic: 28/28_PASS
+  reference_fuzz: 46/46_BLOCKED_0_ESCAPED
+  execution_load: 14/14_PASS
+  multidirection_stress: 21/21_PASS
+  stage1_minimal_control: 33/33_PASS
+  inherited_v210: 12/12_PASS
+  post_v18: 6/6_PASS
+  v216_cross_lifecycle_regression: 30/30_PASS
+  v217_phase_authority_regression: 25/25_PASS
+github_verification:
+  candidate_complete_state:
+    head_sha: 9bf4c62eb0b12df2003de662d29379714cd6c355
+    run_id: 34730391989
+    conclusion: SUCCESS
+    jobs: 4/4_SUCCESS
+  exact_prior_stage_replay:
+    head_sha: f02fbd5678d9620a78e3362ab7f4e660774baf0e
+    source_checkpoint_commit: 81089149b9400e12a66572130693b9f6904d4fb6
+    source_checkpoint_tree: 28227fe51f3c7e59161e82712bfb740881dc579f
+    source_fact_materialization_started: false
+    run_id: 34730431595
+    conclusion: SUCCESS
+    jobs: 3/3_SUCCESS
+  source_fact_rematerialization:
+    materialization_commit: 73c8403e4fbc2ec8228d8e3d411c3b27c47d9b61
+    verification_head_sha: c17b78a6e4f36941c7cedee043a8a414332b225e
+    run_id: 34730477924
+    conclusion: SUCCESS
+    jobs: 4/4_SUCCESS
+source_fact_payloads:
+  mutation_allowed: false
+  mutation_observed: false
+  blobs:
+    SOURCE_CONTEXT_MANIFEST: c30c346060b7f217721db159d837c34c96e6b12f
+    CONTENT_SUPERSESSION_CONFLICT_LEDGER: 410d324489cdf9a70f0565c7fdee1c4b7233b717
+    SOURCE_DEPENDENCY_MAP: 14d99735dcb0f9647c7906592233ef1bee0fe425
+unresolved_external_authority:
+  expected_count: 8
+  preserved_count: 8
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  invented_dependency_count: 0
+  ai_auto_fill: BLOCK
+  ai_inference: BLOCK
+  silent_ignore_or_drop: BLOCK
+  alias_or_default_substitution: BLOCK
+  false_resolution: BLOCK
+  blueprint_carry_forward_required: true
+  refs:
+    - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+    - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+    - ACPOS_SYSTEM_AUTHORITY@V1.0
+    - ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+    - ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+    - ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+    - IAM-01 / account permission runtime
+    - ACPOS shared AI Router/Capability Assignment
+phase_boundary_result:
+  segment_mapping_to_source_fact: LEGAL_AND_VERIFIED
+  successor_start_retroactively_invalidates_predecessor: false
+  responsibility_classification_started_early: false
+  blueprint_started_early: false
+  website_started_early: false
+  deployment_started_early: false
+formal_status:
+  formal_test_executed: false
+  formal_freeze_claimed: false
+  production_release_claimed: false
+immutability:
+  candidate_package_bytes: READ_ONLY
+  three_source_fact_payloads: READ_ONLY
+  unresolved_authority_refs: PRESERVE_UNTIL_AUTHORITATIVE_RESOLUTION
