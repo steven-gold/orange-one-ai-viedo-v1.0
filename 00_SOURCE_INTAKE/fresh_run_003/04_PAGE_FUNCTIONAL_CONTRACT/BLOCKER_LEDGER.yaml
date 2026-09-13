@@ -1,0 +1,126 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-STAGE2-BLOCKER-LEDGER-V212-R1
+artifact_type: BLOCKER_LEDGER
+governance_overlay: v2.1.12
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-02
+status: OPEN_BLOCKERS
+normative_refs:
+- WEB-GOV-03-S018
+- WEB-GOV-03-S019
+- WEB-GOV-04-S046
+source_gap_ledger:
+  ref: 04_PAGE_FUNCTIONAL_CONTRACT/FUNCTIONAL_CHAIN_GAP_LEDGER.yaml
+  git_blob: 093c72a8e3227c1228180a29586980ab5e8f85cd
+  gap_total: 171
+  classes:
+    ARCHITECTURE_GAP: 133
+    INPUT_SOURCE_GAP: 34
+    AUTHORITY_GAP: 4
+functional_review_evidence:
+  ref: 00_SOURCE_INTAKE/evidence/PAGE_FUNCTIONAL_REVIEW_EVIDENCE.yaml
+  git_blob: 7f7c821c9f037d29ac576bd1f944a881329666ef
+  reviewed_gap_total: 171
+  safely_auto_remediable_total: 0
+formalized_at: '2026-09-13T15:39:01Z'
+completed_gate_receipt:
+  provider: GITHUB_ACTIONS
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  head_sha: 546e3826934eefc33aa1e11ba018a9aeb706f57f
+  run_id: 34766220936
+  job_denominator: 19/19
+  conclusion: SUCCESS
+blockers:
+- blocker_uid: STAGE2-BLK-INPUT-CONTRACT-001
+  target_uid: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  scope: STAGE-02 / CORE-01 + ASSET-01 / PAYLOAD_INPUT_CONTRACT_MISSING
+  severity: BLOCKING
+  opened_at: '2026-09-13T15:39:01Z'
+  owner: null
+  owner_status: UNRESOLVED_FORMAL_CONTRACT_OWNER
+  reason: 34 effectful actions require formal input/payload contracts, but the captured Authority does not define exact request body/input schema for those subjects.
+  impact: Stage-02 functional closure is blocked; affected page construction, website construction and deployment remain forbidden.
+  unlock_condition: Supply or approve exact formal Input Contract authority for each affected subject without semantic inference or default payload synthesis.
+  current_status: OPEN_BLOCKING
+  resolved_evidence: null
+  gap_class: INPUT_SOURCE_GAP
+  gap_count: 34
+  source_gap_category: PAYLOAD_INPUT_CONTRACT_MISSING
+  completed_gates:
+  - Governance Run 34766220936 SUCCESS 19/19
+  missing_gates:
+  - ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  exact_resume_point: Bind newly authoritative input contracts to the affected functional-chain nodes, rerun FUNCTIONAL_CHAIN_COMPILE/preflight, materialize an explicit superseding Gap Ledger revision, then revalidate Dependency Map, Page Construction Specs and Functional Review Evidence.
+- blocker_uid: STAGE2-BLK-ARCH-CONTRACT-001
+  target_uid: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  scope: STAGE-02 / CORE-01 + ASSET-01 / ARCHITECTURE_GAP
+  severity: BLOCKING
+  opened_at: '2026-09-13T15:39:01Z'
+  owner: null
+  owner_status: UNRESOLVED_FORMAL_CONTRACT_OWNER
+  reason: 133 architecture nodes lack exact formal contracts for transition fields, action-error binding, post-action validation, audit event, success next-state or exact trigger.
+  impact: Stage-02 functional closure is blocked; runtime/state/UI construction cannot legally infer missing architecture behavior.
+  unlock_condition: Supply or approve formal Architecture/State/Audit/Validation/Trigger contracts that uniquely define each missing node; synthetic event/state/error bindings are forbidden.
+  current_status: OPEN_BLOCKING
+  resolved_evidence: null
+  gap_class: ARCHITECTURE_GAP
+  gap_count: 133
+  source_gap_categories:
+    STATE_TRANSITION_LEDGER_FIELD_MISSING: 50
+    FAILURE_STATE_ERROR_BINDING_MISSING: 44
+    POST_ACTION_VALIDATION_NODE_MISSING: 18
+    AUDIT_EVENT_NODE_MISSING: 13
+    SUCCESS_NEXT_STATE_BINDING_MISSING: 7
+    ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
+  completed_gates:
+  - Governance Run 34766220936 SUCCESS 19/19
+  missing_gates:
+  - ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  exact_resume_point: Bind only approved architecture contracts to the exact missing nodes, populate successor architecture artifacts without mutating Raw Source, rerun functional-chain detection, supersede the Gap Ledger explicitly, then re-run Stage-02 exit-gate review.
+- blocker_uid: STAGE2-BLK-GAP006-SHARED-AUTHORITY-001
+  target_uid: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  scope: STAGE-02 / ASSET-01 / ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  severity: BLOCKING
+  opened_at: '2026-09-13T15:39:01Z'
+  owner: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  owner_status: EXTERNAL_AUTHORITY_REFERENCE_UNRESOLVED
+  reason: Four ASSET actions reference ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY, but exact shared owner/operation/port Authority is outside the captured authority scope and remains unresolved.
+  impact: The four shared-operation consumers cannot receive local or inferred Runtime/API/Data Owner bindings; Stage-02 closure remains blocked.
+  unlock_condition: Provide authoritative ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY evidence resolving exact owner_uid, operation_uid and port_uid for all four consumers, with explicit supersession/resolution evidence for GAP-006.
+  current_status: OPEN_BLOCKING
+  resolved_evidence: null
+  gap_class: AUTHORITY_GAP
+  gap_uid: GAP-006
+  gap_count: 4
+  authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  consumers:
+  - ASSET-01-ACT-CORRECTION-GENERATE
+  - ASSET-01-ACT-CORRECTION-APPROVE
+  - ASSET-01-ACT-RESTORE-AS-NEW
+  - ASSET-01-ACT-VERSION-LOCK
+  completed_gates:
+  - Governance Run 34766220936 SUCCESS 19/19
+  missing_gates:
+  - ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  exact_resume_point: Ingest exact external Authority evidence, preserve GAP-006 canonical identity until explicit resolution, update SHARED_OWNER_PORT_MAP by authoritative binding only, rerun Stage-02 functional-chain detector and closure gates.
+summary:
+  blocker_count: 3
+  open_blocker_count: 3
+  resolved_blocker_count: 0
+  blocked_gap_total: 171
+  input_contract_gap_count: 34
+  architecture_contract_gap_count: 133
+  external_authority_gap_count: 4
+  functional_completion: false
+  stage2_exit_gate: BLOCKED
+  website_construction_allowed: false
+  deployment_allowed: false
+policy:
+  blocked_item_may_disappear_without_resolution: false
+  valid_terminal_statuses:
+  - RESOLVED
+  - REMOVED_FROM_SCOPE
+  - SUPERSEDED_BY_AUTHORITY
+  ai_guess_or_default_substitution: FORBIDDEN
+  raw_source_mutation_allowed: false
+  local_duplicate_shared_owner_definition: FORBIDDEN
