@@ -1,0 +1,38 @@
+schema_version: 1
+artifact_uid: FRESH-RUN-003-SOURCE-ENUMERATION-EVIDENCE-V211
+artifact_type: SOURCE_ENUMERATION_EVIDENCE
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-01
+step_uid: SOURCE_STRUCTURE_ENUMERATION
+status: MATERIALIZED_FROM_VERIFIED_PREDECESSOR_PROOFS
+source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
+source_structure_manifest:
+  artifact_uid: FRESH-RUN-003-SOURCE-STRUCTURE-MANIFEST-V216
+  git_blob: cc7cdda1ff6dbb5001790de60b809d76d2fd7c9b
+  observed_node_count: 61
+  required_nodes: 52
+  reference_only_nodes: 9
+  missing_nodes: 0
+  extra_nodes: 0
+  duplicate_source_node_uids: 0
+  mixed_terminal_units: 0
+  unresolved_container_units: 0
+semantic_granularity_refinement_evidence:
+  evidence_uid: FRESH-RUN-003-V216-SEMANTIC-GRANULARITY-REFINEMENT
+  git_blob: d3c2303bfb12dd4d3a0eaef252475586a969e114
+  status: VERIFIED_CI_PASS
+  refined_node_count: 61
+  mixed_terminal_units: 0
+  unresolved_container_units: 0
+raw_source_identity:
+  source_count: 3
+  source_blobs:
+  - 09665c0a4a6b86db912f9b44160d336bfc611ae6
+  - 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+  - 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+closure_claim:
+  enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
+  semantic_granularity_state: ALL_TERMINALS_HOMOGENEOUS
+  reexecution_performed: false
+  raw_source_modified: false
+  evidence_materialization_only: true
