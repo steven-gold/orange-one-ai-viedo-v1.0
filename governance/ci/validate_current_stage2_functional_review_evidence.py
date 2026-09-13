@@ -30,6 +30,17 @@ EXPECTED_CATEGORIES = {
     'SHARED_OWNER_AUTHORITY_UNRESOLVED': (4, 'AUTHORITY_GAP', 'BLOCKED_EXTERNAL_SHARED_OWNER_AUTHORITY_UNRESOLVED'),
     'ACTION_WITHOUT_CONTROL_OR_TRIGGER': (1, 'ARCHITECTURE_GAP', 'BLOCKED_NO_EXACT_TRIGGER_AUTHORITY'),
 }
+SHARED_CONSUMERS = [
+    'ASSET-01-ACT-CORRECTION-GENERATE',
+    'ASSET-01-ACT-CORRECTION-APPROVE',
+    'ASSET-01-ACT-RESTORE-AS-NEW',
+    'ASSET-01-ACT-VERSION-LOCK',
+]
+ASYNC_FIELDS = [
+    'request_identity', 'input_fingerprint', 'idempotency', 'queued', 'running',
+    'succeeded', 'failed', 'cancel', 'retry_eligibility', 'callback_result_provenance',
+    'output_persistence', 'audit_correlation',
+]
 
 
 def die(msg):
@@ -47,10 +58,9 @@ def load(path):
 
 
 def gitobj(path):
-    p = str(path)
-    result = subprocess.run(['git', 'rev-parse', 'HEAD:' + p], text=True, capture_output=True)
+    result = subprocess.run(['git', 'rev-parse', 'HEAD:' + str(path)], text=True, capture_output=True)
     if result.returncode:
-        die('git object missing:' + p)
+        die('git object missing:' + str(path))
     return result.stdout.strip()
 
 
@@ -67,22 +77,20 @@ C = load(core_spec_path)
 AS = load(asset_spec_path)
 P = load(plan_path)
 
-if E.get('artifact_type') != 'PAGE_FUNCTIONAL_REVIEW_EVIDENCE':
-    die('review evidence artifact type drift')
-if E.get('governance_overlay') != 'v2.1.12' or E.get('stage_uid') != 'STAGE-02':
-    die('review evidence governance/stage drift')
+if E.get('artifact_type') != 'PAGE_FUNCTIONAL_REVIEW_EVIDENCE' or E.get('governance_overlay') != 'v2.1.12' or E.get('stage_uid') != 'STAGE-02':
+    die('review evidence identity/governance drift')
 if E.get('status') != 'REVIEW_COMPLETE_STAGE2_NOT_CLOSED':
     die('review evidence must not claim Stage-02 closure')
 
 baseline = E.get('baseline') or {}
-if baseline.get('gap_total') != 171:
-    die('review baseline total drift')
-if baseline.get('pages') != {'CORE-01': 45, 'ASSET-01': 126}:
-    die('review baseline page counts drift')
-if baseline.get('classes') != {'ARCHITECTURE_GAP': 133, 'INPUT_SOURCE_GAP': 34, 'AUTHORITY_GAP': 4}:
-    die('review baseline classes drift')
-if baseline.get('auto_remediable_count') != 0 or baseline.get('implementation_gap_count') != 0:
-    die('review evidence invented auto-remediable/implementation gaps')
+if baseline != {
+    'gap_total': 171,
+    'pages': {'CORE-01': 45, 'ASSET-01': 126},
+    'classes': {'ARCHITECTURE_GAP': 133, 'INPUT_SOURCE_GAP': 34, 'AUTHORITY_GAP': 4},
+    'auto_remediable_count': 0,
+    'implementation_gap_count': 0,
+}:
+    die('review baseline drift')
 
 summary = G.get('summary') or {}
 if summary.get('total') != 171 or summary.get('pages') != {'CORE-01': 45, 'ASSET-01': 126}:
@@ -98,18 +106,11 @@ for key, (count, klass, result) in EXPECTED_CATEGORIES.items():
     if row.get('gap_count') != count or row.get('class') != klass or row.get('review_result') != result:
         die('review category identity/count/result drift:' + key)
     if row.get('auto_remediable_count') != 0:
-        die('review category must remain non-auto-remediable:' + key)
+        die('review category falsely auto-remediable:' + key)
 
-shared = reviews['SHARED_OWNER_AUTHORITY_UNRESOLVED']
-if shared.get('authority_ref') != 'ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY':
-    die('shared owner authority ref drift')
-if shared.get('consumers') != [
-    'ASSET-01-ACT-CORRECTION-GENERATE',
-    'ASSET-01-ACT-CORRECTION-APPROVE',
-    'ASSET-01-ACT-RESTORE-AS-NEW',
-    'ASSET-01-ACT-VERSION-LOCK',
-]:
-    die('shared owner consumer set/order drift')
+shared_review = reviews['SHARED_OWNER_AUTHORITY_UNRESOLVED']
+if shared_review.get('authority_ref') != 'ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY' or shared_review.get('consumers') != SHARED_CONSUMERS:
+    die('functional review shared-owner identity/consumer drift')
 if reviews['ACTION_WITHOUT_CONTROL_OR_TRIGGER'].get('subject_uid') != 'ASSET-01-ACT-FINDING-CREATE':
     die('finding-create trigger gap identity drift')
 
@@ -129,35 +130,56 @@ for key, value in expected_resolution.items():
         die('resolution summary drift:' + key)
 
 exit_gate = E.get('stage2_exit_gate') or {}
-if exit_gate.get('gate_uid') != 'ALL_REQUIRED_PAGES_STAGE2_CLOSED' or exit_gate.get('result') != 'BLOCKED':
+if exit_gate.get('gate_uid') != 'ALL_REQUIRED_PAGES_STAGE2_CLOSED' or exit_gate.get('result') != 'BLOCKED' or exit_gate.get('functional_completion') is not False:
     die('Stage-02 exit gate false closure')
-if exit_gate.get('functional_completion') is not False:
-    die('functional completion must remain false')
 if exit_gate.get('website_construction_allowed') is not False or exit_gate.get('deployment_allowed') is not False:
     die('website/deployment must remain blocked')
 
 ss = S.get('summary') or {}
-if ss.get('unresolved_required_field_total') != 50 or ss.get('resolved_required_field_total') != 0:
-    die('transition required field resolution drift')
-if (SH.get('summary') or {}).get('unresolved_consumer_count') != 4:
-    die('shared owner unresolved consumer count drift')
-if SH.get('status') != 'OPEN_BLOCKING_AUTHORITY_GAP':
-    die('shared owner map false resolution')
-if A.get('status') != 'OPEN_BLOCKING_GAPS':
-    die('async provider contract false closure')
-for page_spec in (C, AS):
-    if page_spec.get('status') != 'OPEN_BLOCKING_GAPS':
-        die('page construction spec false closure')
+if ss.get('transition_count') != 10 or ss.get('unresolved_required_field_total') != 50 or ss.get('resolved_required_field_total') != 0:
+    die('transition ledger resolution drift')
+
+if SH.get('artifact_type') != 'SHARED_OWNER_PORT_MAP' or SH.get('status') != 'OPEN_BLOCKING_AUTHORITY_GAP':
+    die('shared owner map identity/status drift')
+auth_gap = SH.get('authority_gap') or {}
+if auth_gap.get('gap_uid') != 'GAP-006' or auth_gap.get('authority_ref') != 'ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY' or auth_gap.get('consumer_count') != 4:
+    die('shared owner authority gap identity/count drift')
+consumers = SH.get('consumers') or []
+if [r.get('action_uid') for r in consumers] != SHARED_CONSUMERS:
+    die('shared owner map consumer set/order drift')
+for row in consumers:
+    if row.get('status') != 'UNRESOLVED_AUTHORITY_GAP':
+        die('shared owner consumer falsely resolved:' + str(row.get('action_uid')))
+    if any(row.get(k) is not None for k in ('resolved_owner_uid', 'resolved_operation_uid', 'resolved_port_uid')):
+        die('shared owner consumer contains inferred resolution:' + str(row.get('action_uid')))
+
+if A.get('artifact_type') != 'ASYNC_PROVIDER_CONTRACT' or A.get('status') != 'OPEN_BLOCKING_AUTHORITY_AND_LIFECYCLE_GAPS':
+    die('async provider contract identity/status drift')
+if A.get('required_lifecycle_fields') != ASYNC_FIELDS:
+    die('async provider required lifecycle field drift')
+for page in ('CORE-01', 'ASSET-01'):
+    row = (A.get('pages') or {}).get(page) or {}
+    if row.get('resolved_lifecycle_fields') != {} or row.get('unresolved_lifecycle_fields') != ASYNC_FIELDS:
+        die('async provider lifecycle falsely resolved:' + page)
+if A.get('functional_completion_claim') is not False or A.get('website_construction_allowed') is not False or A.get('deployment_allowed') is not False:
+    die('async provider false completion/enablement')
+
+for page_spec, page_uid, gap_total in ((C, 'CORE-01', 45), (AS, 'ASSET-01', 126)):
+    if page_spec.get('artifact_type') != 'PAGE_CONSTRUCTION_SPEC_PACKAGE' or page_spec.get('page_uid') != page_uid or page_spec.get('status') != 'OPEN_BLOCKING_GAPS':
+        die('page construction spec identity/status drift:' + page_uid)
+    if (page_spec.get('gap_materialization') or {}).get('page_gap_total') != gap_total:
+        die('page construction spec gap total drift:' + page_uid)
     gate = page_spec.get('construction_gate') or {}
-    if gate.get('ready_for_implementation') is not False:
-        die('page construction incorrectly marked implementation-ready')
-    if gate.get('website_construction_allowed') is not False or gate.get('deployment_allowed') is not False:
-        die('page construction spec website/deployment false enablement')
+    if gate.get('ready_for_implementation') is not False or gate.get('website_construction_allowed') is not False or gate.get('deployment_allowed') is not False:
+        die('page construction incorrectly enabled:' + page_uid)
+    if page_spec.get('ai_autofill_used') is not False or page_spec.get('inference_used') is not False or page_spec.get('functional_completion_claim') is not False:
+        die('page construction spec false inference/completion:' + page_uid)
 
 if 'PAGE_FUNCTIONAL_REVIEW_EVIDENCE' not in (P.get('current_artifacts') or []):
     die('artifact plan missing required PAGE_FUNCTIONAL_REVIEW_EVIDENCE registration')
 
 print('PASS: PAGE_FUNCTIONAL_REVIEW_EVIDENCE physically exists and reviews all 171 Stage-02 gaps')
-print('PASS: 0/171 gaps are falsely reclassified as auto-remediable; 171 remain blocking under v2.1.12 authority rules')
-print('PASS: 4 shared-owner consumers and 50 transition architecture fields remain unresolved; no source mutation/inferred contract')
+print('PASS: 0/171 gaps are falsely reclassified as auto-remediable; all 171 remain blocking under v2.1.12 authority rules')
+print('PASS: 4 shared-owner consumers retain null owner/operation/port and 50 transition architecture fields remain unresolved')
+print('PASS: both async-provider lifecycle contracts retain all 12 fields unresolved; no inferred lifecycle defaults')
 print('PASS: ALL_REQUIRED_PAGES_STAGE2_CLOSED remains BLOCKED; website construction and deployment remain forbidden')
