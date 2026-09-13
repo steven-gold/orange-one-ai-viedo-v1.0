@@ -1,0 +1,1 @@
+Current v2.1.6 execution evidence is represented by SEMANTIC_GRANULARITY_REPLAY_EVIDENCE.yaml, SEMANTIC_GRANULARITY_REFINEMENT_EVIDENCE.yaml, and SOURCE_SEGMENT_MAPPING_EVIDENCE.yaml. The legacy SOURCE_STRUCTURE_ENUMERATION_EVIDENCE.yaml is historical replay input only and must not be used as current closure evidence.
