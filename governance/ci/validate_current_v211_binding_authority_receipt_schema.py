@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import yaml,subprocess
+import yaml
 root=Path('.'); run=root/'00_SOURCE_INTAKE/fresh_run_003'
 AUTH=['gap_uid','authority_ref','disposition','authority_evidence_ref']; RECEIPT=['provider','repository_or_project','head_sha','run_id','job_denominator','conclusion']
 def die(m): raise SystemExit(m)
@@ -14,15 +14,23 @@ for page,want in expected_by_page.items():
  got={x.get('gap_uid') for x in carry}
  if got!=want: die(page+' Authority gap set drift')
  for x in carry:
-  g=source_map.get(x.get('gap_uid'));
+  g=source_map.get(x.get('gap_uid'))
   if not g: die(page+' unknown Authority gap')
   if tup(x)!=tup(g): die(page+' Authority canonical tuple drift:'+str(x.get('gap_uid')))
   if any(x.get(k) is True for k in ('resolved','satisfied','auto_filled','inferred')): die(page+' false Authority resolution')
 state=load(run/'EXECUTION_STATE.yaml')
-if state.get('governance_candidate_overlay')!='v2.1.11' or state.get('state')!='BLUEPRINT_BINDING_COMPLETED': die('v211 current state drift')
-if state.get('stage1_validation_started') is True or state.get('website_construction_started') is True or state.get('deployment_started') is True: die('later phase started early')
+if state.get('governance_candidate_overlay')!='v2.1.11': die('v211 governance overlay drift')
+allowed_states={'BLUEPRINT_BINDING_COMPLETED','STAGE1_VALIDATION_COMPLETED_PENDING_CI'}
+if state.get('state') not in allowed_states: die('v211 unsupported legal successor state')
+if not (state.get('blueprint_binding_started') is True and state.get('blueprint_binding_completed') is True and state.get('blueprint_binding_count')==2): die('Binding predecessor completion drift')
+if state.get('state')=='STAGE1_VALIDATION_COMPLETED_PENDING_CI':
+ if not (state.get('stage1_validation_started') is True and state.get('stage1_validation_completed') is True): die('Stage1 successor state incomplete')
+ if state.get('stage1_exit_gate')!='PENDING_EXTERNAL_CI': die('Stage1 successor exit-gate drift')
+if state.get('stage2_started') is True or state.get('website_construction_started') is True or state.get('deployment_started') is True: die('post-Stage1 phase started early')
 receipts=state.get('terminal_receipts') or {}
 required={'visual_closure':('e653fbcf39a18775790c6403439b076c9ed3f534',34739267938,'8/8'),'v210_governance':('91f4271b5145f5646be07da32b5624fad7528034',34741356025,'9/9'),'blueprint_binding':('d10253d154eacabed3df967ce4aa83c71a7475f3',34741952438,'10/10')}
+if state.get('state')=='STAGE1_VALIDATION_COMPLETED_PENDING_CI':
+ required['v211_governance']=('74cd16e28e98a918c3f682d3b29ea7e362a19cc5',34754709362,'11/11')
 for name,(head,runid,denom) in required.items():
  r=receipts.get(name) or {}
  for f in RECEIPT:
@@ -31,11 +39,11 @@ for name,(head,runid,denom) in required.items():
 ledger_paths=['RUN_MANIFEST.yaml','ARTIFACT_PLAN.yaml','../../GOVERNANCE_CURRENT.yaml','../../REBUILD_BRANCH_BASELINE.yaml','../../11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml','../../11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml']
 for rel in ledger_paths:
  p=(run/rel).resolve(); d=load(p); text=yaml.safe_dump(d,sort_keys=False)
- for name,ref in receipts.items():
-  if str(ref['run_id']) not in text or ref['head_sha'] not in text: die(str(rel)+' receipt identity missing:'+name)
+ for name,(head,runid,denom) in required.items():
+  if str(runid) not in text or head not in text: die(str(rel)+' receipt identity missing:'+name)
  for f in RECEIPT:
   if f+':' not in text: die(str(rel)+' canonical receipt field absent:'+f)
  if 'jobs:' in text and 'job_denominator:' not in text: die(str(rel)+' jobs alias substituted for canonical denominator')
  if 'result:' in text and 'conclusion:' not in text: die(str(rel)+' result alias substituted for canonical conclusion')
 print('PASS: v2.1.11 exact unresolved Authority tuples preserved against SOURCE_DEPENDENCY_MAP for CORE/ASSET Binding')
-print('PASS: canonical six-field terminal receipts projected across Current ledgers; Binding receipt exact 34741952438@d10253d; Stage1/site/deploy not started')
+print('PASS: canonical six-field terminal receipts remain exact under legal Stage-01 Validation successor; Binding predecessor remains complete; Stage2/site/deploy not started')
