@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 governance_version: v2.1.6
 governance_candidate_overlay: v2.1.10
-state: VISUAL_BASE_BLUEPRINT_COMPLETED
+state: BLUEPRINT_BINDING_COMPLETED
 raw_source_capture_state: CAPTURE_CLOSED
 semantic_granularity_replay_validated: true
 replay_source_structure_node_count: 34
@@ -16,7 +16,10 @@ source_segment_mapping_completed: true
 source_segment_count: 61
 source_fact_materialization_started: true
 source_fact_materialization_completed: true
-source_fact_artifacts: [SOURCE_CONTEXT_MANIFEST, CONTENT_SUPERSESSION_CONFLICT_LEDGER, SOURCE_DEPENDENCY_MAP]
+source_fact_artifacts:
+- SOURCE_CONTEXT_MANIFEST
+- CONTENT_SUPERSESSION_CONFLICT_LEDGER
+- SOURCE_DEPENDENCY_MAP
 unresolved_authority_gap_count: 8
 responsibility_classification_started: true
 responsibility_classification_completed: true
@@ -31,8 +34,9 @@ page_base_blueprint_count: 2
 visual_base_blueprint_started: true
 visual_base_blueprint_completed: true
 visual_base_blueprint_count: 2
-blueprint_binding_started: false
-blueprint_binding_completed: false
+blueprint_binding_started: true
+blueprint_binding_completed: true
+blueprint_binding_count: 2
 stage1_validation_started: false
 website_construction_started: false
 deployment_started: false
@@ -50,9 +54,13 @@ github_ci:
   visual_terminal_closure_run_id: 34739267938
   visual_terminal_closure_head_sha: e653fbcf39a18775790c6403439b076c9ed3f534
   visual_terminal_closure_result: SUCCESS_8_OF_8
+  v210_terminal_closure_run_id: 34741356025
+  v210_terminal_closure_head_sha: 91f4271b5145f5646be07da32b5624fad7528034
+  v210_terminal_closure_result: SUCCESS_9_OF_9
   current_classification_gate: SUCCESS
   current_page_blueprint_gate: SUCCESS
   current_visual_blueprint_gate: SUCCESS
+  current_binding_gate: PENDING
   current_phase_successor_authority_gate: SUCCESS
   current_upstream_projection_gate: SUCCESS
   sealed_v216_runtime: SUCCESS
@@ -69,10 +77,10 @@ closure_evidence_continuity:
   terminal_ci_receipt_mode: EXTERNAL_IMMUTABLE_RECEIPT
   same_commit_self_write: FORBIDDEN
 allowed_transition:
-  from: VISUAL_BASE_BLUEPRINT_COMPLETED
-  to: BLUEPRINT_BINDING_ACTIVE
-  trigger: PAGE_AND_VISUAL_BLUEPRINT_GATES_SUCCESS
+  from: BLUEPRINT_BINDING_COMPLETED
+  to: STAGE1_VALIDATION_ACTIVE
+  trigger: BLUEPRINT_BINDING_GATE_SUCCESS
 forbidden_transitions:
-- VISUAL_BASE_BLUEPRINT_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
-- VISUAL_BASE_BLUEPRINT_COMPLETED -> DEPLOYMENT_ACTIVE
-last_result: V210_CONTINUITY_GOVERNANCE_LOCAL_VERIFIED_GITHUB_EXTERNAL_RECEIPT_REQUIRED
+- BLUEPRINT_BINDING_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
+- BLUEPRINT_BINDING_COMPLETED -> DEPLOYMENT_ACTIVE
+last_result: V210_BLUEPRINT_BINDING_MATERIALIZED_PENDING_EXTERNAL_CI_RECEIPT
