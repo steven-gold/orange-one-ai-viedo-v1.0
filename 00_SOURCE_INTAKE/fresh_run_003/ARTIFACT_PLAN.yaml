@@ -1,6 +1,6 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
-current_step: STAGE2_DEPENDENCY_AND_STATE_TRANSITION_LEDGERS_VALIDATED_OPEN_GAPS
+current_step: STAGE2_REQUIRED_SUCCESSOR_OUTPUTS_VALIDATED_OPEN_GAPS
 current_artifacts:
 - RAW_SOURCE_REFERENCE_MANIFEST
 - RAW_SOURCE_CAPTURE_STATE
@@ -29,6 +29,10 @@ current_artifacts:
 - STAGE2_FUNCTIONAL_GAP_LEDGER
 - STAGE2_DEPENDENCY_MAP
 - STATE_TRANSITION_LEDGER
+- DEPENDENCY_MAP
+- PAGE_CONSTRUCTION_SPEC_PACKAGE
+- ASYNC_PROVIDER_CONTRACT
+- SHARED_OWNER_PORT_MAP
 classification_materialization:
   artifact_count: 52
   page_artifacts: 48
@@ -126,9 +130,27 @@ stage2_functional_chain_materialization:
     job_id: 103743068828
     job_denominator: 17/17
     conclusion: SUCCESS
+  canonical_required_outputs:
+    dependency_map: PRESENT
+    page_construction_spec_package_count: 2
+    async_provider_contract: PRESENT_OPEN_BLOCKING
+    shared_owner_port_map: PRESENT_OPEN_BLOCKING_4_CONSUMERS
+    state_transition_unresolved_required_field_total: 50
+    validated: true
+  required_outputs_receipt:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: a9c3359cd3b90da7058a182b26e58406c4bacf9e
+    run_id: 34765602708
+    job_name: current-stage2-required-outputs-gate
+    job_id: 103745889860
+    job_denominator: 18/18
+    conclusion: SUCCESS
   functional_completion_claim: false
   raw_source_mutation_allowed: false
   ai_gap_inference_allowed: false
+  website_construction_allowed: false
+  deployment_allowed: false
 terminal_receipts:
   visual_closure:
     provider: GITHUB_ACTIONS
@@ -186,10 +208,21 @@ terminal_receipts:
     run_id: 34764546141
     job_denominator: 17/17
     conclusion: SUCCESS
-next_allowed_artifacts_after_gate_pass:
-- STAGE2_FUNCTIONAL_GAP_LEDGER
-- STAGE2_DEPENDENCY_MAP
-- STATE_TRANSITION_LEDGER
+  stage2_required_successor_outputs:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: a9c3359cd3b90da7058a182b26e58406c4bacf9e
+    run_id: 34765602708
+    job_denominator: 18/18
+    conclusion: SUCCESS
+next_resolution_scope:
+  mode: AUTHORITY_DETERMINED_GAP_CLOSURE_ONLY
+  open_gap_total: 171
+  architecture_gap_total: 133
+  input_source_gap_total: 34
+  authority_gap_total: 4
+  unresolved_transition_required_fields: 50
+  ai_guess_or_default_substitution: FORBIDDEN
 continuity_policy:
   closure_mutation_semantics: MERGE_APPEND_OR_EXPLICIT_SUPERSEDE
   current_ledger_synchronization_required: true
@@ -203,4 +236,4 @@ current_v212_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
   embedded_run_id: null
-status: STAGE2_OPEN_BLOCKING_GAPS_DEPENDENCY_TRANSITION_MATERIALIZED
+status: STAGE2_REQUIRED_SUCCESSOR_OUTPUTS_VALIDATED_OPEN_BLOCKING_GAPS

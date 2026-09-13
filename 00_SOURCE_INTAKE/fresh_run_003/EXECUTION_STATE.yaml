@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 governance_version: v2.1.6
 governance_candidate_overlay: v2.1.12
-state: STAGE2_FUNCTIONAL_CHAIN_PREFLIGHT_MATERIALIZED_PENDING_CI
+state: STAGE2_REQUIRED_SUCCESSOR_OUTPUTS_VALIDATED_OPEN_BLOCKING_GAPS
 raw_source_capture_state: CAPTURE_CLOSED
 semantic_granularity_replay_validated: true
 replay_source_structure_node_count: 34
@@ -44,7 +44,20 @@ stage2_started: true
 stage2_functional_chain_preflight_materialized: true
 stage2_functional_chain_spec_count: 2
 stage2_functional_completion: false
-stage2_gap_ledger_materialized: false
+stage2_gap_ledger_materialized: true
+stage2_gap_total: 171
+stage2_architecture_gap_total: 133
+stage2_input_source_gap_total: 34
+stage2_authority_gap_total: 4
+stage2_dependency_map_materialized: true
+stage2_state_transition_ledger_materialized: true
+stage2_state_transition_unresolved_required_field_total: 50
+stage2_canonical_dependency_map_materialized: true
+stage2_page_construction_spec_package_count: 2
+stage2_async_provider_contract_materialized: true
+stage2_shared_owner_port_map_materialized: true
+stage2_shared_owner_unresolved_consumer_count: 4
+stage2_required_outputs_validated: true
 website_construction_started: false
 deployment_started: false
 github_ci:
@@ -76,6 +89,15 @@ github_ci:
   v212_governance_run_id: 34757919043
   v212_governance_head_sha: 3247937d7b8ccd57551119b079cb33cee45e4ecc
   v212_governance_result: SUCCESS_13_OF_13
+  stage2_functional_preflight_run_id: 34763159402
+  stage2_functional_preflight_head_sha: cbef81ec6da7f51b3379fd3e52283eda8a2dee33
+  stage2_functional_preflight_result: SUCCESS_16_OF_16
+  stage2_dependency_transition_run_id: 34764546141
+  stage2_dependency_transition_head_sha: 7479eee6f5e15fcf10032d3355b18e877888472a
+  stage2_dependency_transition_result: SUCCESS_17_OF_17
+  stage2_required_outputs_run_id: 34765602708
+  stage2_required_outputs_head_sha: a9c3359cd3b90da7058a182b26e58406c4bacf9e
+  stage2_required_outputs_result: SUCCESS_18_OF_18
   current_classification_gate: SUCCESS
   current_page_blueprint_gate: SUCCESS
   current_visual_blueprint_gate: SUCCESS
@@ -83,7 +105,10 @@ github_ci:
   current_v211_authority_receipt_gate: SUCCESS_EXTERNAL_RECEIPT
   current_stage1_closure_gate: SUCCESS_EXTERNAL_RECEIPT
   current_v212_successor_state_evidence_parse_gate: SUCCESS_EXTERNAL_RECEIPT
-  current_stage2_functional_chain_preflight_gate: PENDING
+  current_stage2_functional_chain_preflight_gate: SUCCESS_EXTERNAL_RECEIPT
+  current_stage2_functional_gap_ledger_gate: SUCCESS_EXTERNAL_RECEIPT
+  current_stage2_dependency_transition_ledgers_gate: SUCCESS_EXTERNAL_RECEIPT
+  current_stage2_required_outputs_gate: SUCCESS_EXTERNAL_RECEIPT
   current_phase_successor_authority_gate: SUCCESS
   current_upstream_projection_gate: SUCCESS
   sealed_v216_runtime: SUCCESS
@@ -129,6 +154,27 @@ terminal_receipts:
     head_sha: 3247937d7b8ccd57551119b079cb33cee45e4ecc
     run_id: 34757919043
     job_denominator: 13/13
+    conclusion: SUCCESS
+  stage2_functional_preflight:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: cbef81ec6da7f51b3379fd3e52283eda8a2dee33
+    run_id: 34763159402
+    job_denominator: 16/16
+    conclusion: SUCCESS
+  stage2_dependency_transition_ledgers:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: 7479eee6f5e15fcf10032d3355b18e877888472a
+    run_id: 34764546141
+    job_denominator: 17/17
+    conclusion: SUCCESS
+  stage2_required_successor_outputs:
+    provider: GITHUB_ACTIONS
+    repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+    head_sha: a9c3359cd3b90da7058a182b26e58406c4bacf9e
+    run_id: 34765602708
+    job_denominator: 18/18
     conclusion: SUCCESS
 replay_control:
   governance_overlay: v2.1.12
@@ -193,9 +239,29 @@ stage2_preflight:
   machine_result_artifact: stage2-functional-preflight-result
   website_construction_allowed: false
   deployment_allowed: false
+stage2_required_outputs:
+  canonical_output_types:
+  - FUNCTIONAL_CHAIN_SPEC
+  - DEPENDENCY_MAP
+  - PAGE_CONSTRUCTION_SPEC_PACKAGE
+  - ASYNC_PROVIDER_CONTRACT
+  - SHARED_OWNER_PORT_MAP
+  validation_receipt: stage2_required_successor_outputs
+  functional_completion_claim: false
+  open_gap_total: 171
+  unresolved_authority_consumer_count: 4
+  unresolved_transition_required_field_total: 50
+  ai_guess_or_default_substitution: FORBIDDEN
+  website_construction_allowed: false
+  deployment_allowed: false
 current_stage2_preflight_receipt:
   mode: EXTERNAL_IMMUTABLE_RECEIPT
   required: true
-  embedded_run_id: null
+  embedded_run_id: 34763159402
   same_commit_self_write: FORBIDDEN
-last_result: STAGE2_FUNCTIONAL_CHAIN_PREFLIGHT_MATERIALIZED_PENDING_EXTERNAL_CI
+current_stage2_required_outputs_receipt:
+  mode: EXTERNAL_IMMUTABLE_RECEIPT
+  required: true
+  embedded_run_id: 34765602708
+  same_commit_self_write: FORBIDDEN
+last_result: STAGE2_REQUIRED_SUCCESSOR_OUTPUTS_VALIDATED_OPEN_BLOCKING_GAPS
