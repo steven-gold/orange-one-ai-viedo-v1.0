@@ -1,15 +1,23 @@
-schema_version: 1
-artifact_uid: FRESH-RUN-002-SOURCE-STRUCTURE-MANIFEST
+schema_version: 3
+artifact_uid: FRESH-RUN-003-SOURCE-STRUCTURE-MANIFEST-V216
 artifact_type: SOURCE_STRUCTURE_MANIFEST
-run_uid: FRESH-RUN-002
+run_uid: FRESH-RUN-003
 stage_uid: STAGE-01
-step_uid: SOURCE_STRUCTURE_ENUMERATION
+step_uid: SOURCE_STRUCTURE_ENUMERATION_REFINEMENT
 status: CURRENT_SOURCE_STRUCTURE_ENUMERATION
+governance_version: v2.1.6
 source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
 source_count: 3
-observed_node_count: 34
+observed_node_count: 61
+enumeration_granularity: SEMANTIC_TERMINAL_UNITS_WITH_MIXED_REGISTRIES_RECURSIVELY_EXPANDED
+syntax_level_is_not_governance_granularity: true
 classification_started: false
-segment_mapping_started: false
+segment_mapping_started: true
+terminal_defaults: &terminal
+  terminality_state: TERMINAL_HOMOGENEOUS
+  semantic_responsibility_count: 1
+  unresolved_child_responsibility_count: 0
+  classification_state: UNCLASSIFIED_OBSERVED_SOURCE
 sources:
 - source_uid: SRC-CORE-01-CANONICAL-VISUAL-IDENTITY
   page_uid: CORE-01
@@ -17,223 +25,297 @@ sources:
   source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
   source_git_blob_sha: 09665c0a4a6b86db912f9b44160d336bfc611ae6
   raw_source_path: 00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
-  enumeration_method: PYYAML_SAFE_LOAD_TOP_LEVEL_MAPPING_ENUMERATION
+  enumeration_method: PYYAML_SAFE_LOAD_SEMANTIC_STRUCTURAL_NODE_ENUMERATION
   enumeration_tool: PyYAML==6.0.2
-  capture_run_uid: FRESH-RUN-002
-  captured_at_utc: '2026-09-12T22:14:00Z'
-  evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_STRUCTURE_ENUMERATION_EVIDENCE.yaml
+  evidence_ref: 00_SOURCE_INTAKE/evidence/SEMANTIC_GRANULARITY_REFINEMENT_EVIDENCE.yaml
   enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
+  semantic_granularity_state: TERMINAL_SET_HOMOGENEOUS
   observed_nodes:
-  - source_node_uid: SRCNODE-CORE01-CANVIS-01
+  - <<: *terminal
+    source_node_uid: V216-N001
     source_ref: $.authority
-    source_top_level_key: authority
     governance_relevance: REFERENCE_ONLY
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-CANVIS-02
+  - <<: *terminal
+    source_node_uid: V216-N002
     source_ref: $.current_canonical_visual
-    source_top_level_key: current_canonical_visual
     governance_relevance: REFERENCE_ONLY
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-CANVIS-03
+  - <<: *terminal
+    source_node_uid: V216-N003
     source_ref: $.child_visual_contract
-    source_top_level_key: child_visual_contract
     governance_relevance: REFERENCE_ONLY
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-CANVIS-04
+  - <<: *terminal
+    source_node_uid: V216-N004
     source_ref: $.change_trace_contract
-    source_top_level_key: change_trace_contract
     governance_relevance: REFERENCE_ONLY
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-CANVIS-05
+  - <<: *terminal
+    source_node_uid: V216-N005
     source_ref: $.validation
-    source_top_level_key: validation
     governance_relevance: REFERENCE_ONLY
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
   observed_node_count: 5
-  structure_manifest_hash: b94558c4dcdbc06e1e047a835f196af7b581d9eee0d498800a1f5fbbde7788ab
+  structure_manifest_hash: d11fdaebbfd98409c12d2480ea3f6e39e807842d62a89793a1391e0fd0e8ede4
 - source_uid: SRC-CORE-01-PAGE-VISUAL-AUTHORITY
   page_uid: CORE-01
   source_identity: git_blob:9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
   source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
   source_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
   raw_source_path: 00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
-  enumeration_method: PYYAML_SAFE_LOAD_TOP_LEVEL_MAPPING_ENUMERATION
+  enumeration_method: PYYAML_SAFE_LOAD_SEMANTIC_STRUCTURAL_NODE_ENUMERATION
   enumeration_tool: PyYAML==6.0.2
-  capture_run_uid: FRESH-RUN-002
-  captured_at_utc: '2026-09-12T22:14:00Z'
-  evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_STRUCTURE_ENUMERATION_EVIDENCE.yaml
+  evidence_ref: 00_SOURCE_INTAKE/evidence/SEMANTIC_GRANULARITY_REFINEMENT_EVIDENCE.yaml
   enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
+  semantic_granularity_state: TERMINAL_SET_HOMOGENEOUS
   observed_nodes:
-  - source_node_uid: SRCNODE-CORE01-PVA-01
+  - <<: *terminal
+    source_node_uid: V216-N006
     source_ref: $.authority
-    source_top_level_key: authority
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-02
+  - <<: *terminal
+    source_node_uid: V216-N007
     source_ref: $.creation_authorization_policy
-    source_top_level_key: creation_authorization_policy
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-03
+  - <<: *terminal
+    source_node_uid: V216-N008
     source_ref: $.system_filename_governance
-    source_top_level_key: system_filename_governance
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-04
+  - <<: *terminal
+    source_node_uid: V216-N009
     source_ref: $.layout
-    source_top_level_key: layout
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-05
+  - <<: *terminal
+    source_node_uid: V216-N010
     source_ref: $.page_modes
-    source_top_level_key: page_modes
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-06
+  - <<: *terminal
+    source_node_uid: V216-N011
     source_ref: $.conversation_policy
-    source_top_level_key: conversation_policy
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-07
+  - <<: *terminal
+    source_node_uid: V216-N012
     source_ref: $.decision_flow
-    source_top_level_key: decision_flow
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-08
-    source_ref: $.registries
-    source_top_level_key: registries
+  - <<: *terminal
+    source_node_uid: V216-N013
+    source_ref: $.registries.sections
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-09
+  - <<: *terminal
+    source_node_uid: V216-N014
+    source_ref: $.registries.visuals
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N015
+    source_ref: $.registries.components
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N016
+    source_ref: $.registries.permissions
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N017
+    source_ref: $.registries.gates
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N018
+    source_ref: $.registries.errors
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N019
+    source_ref: $.registries.page_states
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N020
+    source_ref: $.registries.stages
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N021
+    source_ref: $.registries.events
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N022
+    source_ref: $.registries.stage_transitions
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N023
+    source_ref: $.registries.objects_refs
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N024
+    source_ref: $.registries.action_effect_types
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N025
+    source_ref: $.registries.actions
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N026
+    source_ref: $.registries.controls
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N027
+    source_ref: $.registries.integration_ports
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N028
     source_ref: $.acceptance
-    source_top_level_key: acceptance
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-10
+  - <<: *terminal
+    source_node_uid: V216-N029
     source_ref: $.hard_locks
-    source_top_level_key: hard_locks
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-11
+  - <<: *terminal
+    source_node_uid: V216-N030
     source_ref: $.final_gap_closure
-    source_top_level_key: final_gap_closure
-    governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-12
+    governance_relevance: REFERENCE_ONLY
+  - <<: *terminal
+    source_node_uid: V216-N031
     source_ref: $.derived_validation
-    source_top_level_key: derived_validation
-    governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-CORE01-PVA-13
+    governance_relevance: REFERENCE_ONLY
+  - <<: *terminal
+    source_node_uid: V216-N032
     source_ref: $.canonical_production_script_authoring_contract
-    source_top_level_key: canonical_production_script_authoring_contract
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  observed_node_count: 13
-  structure_manifest_hash: 8bfc50eb16b523e3466f6a991d3a3a5619a503d0694ac2300c675ba2191f016e
+  observed_node_count: 27
+  structure_manifest_hash: a458ca85e7f3e81c4d732d9ea8de35fd5fb49855111c164fac68bf1b542ae53e
 - source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
   page_uid: ASSET-01
   source_identity: git_blob:9668e2307c722ea4cf64f93f07c92da1b3abcc28
   source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
   source_git_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
   raw_source_path: 00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
-  enumeration_method: PYYAML_SAFE_LOAD_TOP_LEVEL_MAPPING_ENUMERATION
+  enumeration_method: PYYAML_SAFE_LOAD_SEMANTIC_STRUCTURAL_NODE_ENUMERATION
   enumeration_tool: PyYAML==6.0.2
-  capture_run_uid: FRESH-RUN-002
-  captured_at_utc: '2026-09-12T22:14:00Z'
-  evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_STRUCTURE_ENUMERATION_EVIDENCE.yaml
+  evidence_ref: 00_SOURCE_INTAKE/evidence/SEMANTIC_GRANULARITY_REFINEMENT_EVIDENCE.yaml
   enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
+  semantic_granularity_state: TERMINAL_SET_HOMOGENEOUS
   observed_nodes:
-  - source_node_uid: SRCNODE-ASSET01-PVA-01
+  - <<: *terminal
+    source_node_uid: V216-N033
     source_ref: $.authority
-    source_top_level_key: authority
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-02
+  - <<: *terminal
+    source_node_uid: V216-N034
     source_ref: $.system_filename_governance
-    source_top_level_key: system_filename_governance
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-03
+  - <<: *terminal
+    source_node_uid: V216-N035
     source_ref: $.layout
-    source_top_level_key: layout
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-04
+  - <<: *terminal
+    source_node_uid: V216-N036
     source_ref: $.auto_manual
-    source_top_level_key: auto_manual
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-05
+  - <<: *terminal
+    source_node_uid: V216-N037
     source_ref: $.asset_types
-    source_top_level_key: asset_types
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-06
+  - <<: *terminal
+    source_node_uid: V216-N038
     source_ref: $.layer_patch_contract
-    source_top_level_key: layer_patch_contract
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-07
+  - <<: *terminal
+    source_node_uid: V216-N039
     source_ref: $.scorecard
-    source_top_level_key: scorecard
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-08
-    source_ref: $.registries
-    source_top_level_key: registries
+  - <<: *terminal
+    source_node_uid: V216-N040
+    source_ref: $.registries.sections
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-09
+  - <<: *terminal
+    source_node_uid: V216-N041
+    source_ref: $.registries.components
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N042
+    source_ref: $.registries.visuals
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N043
+    source_ref: $.registries.permissions
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N044
+    source_ref: $.registries.gates
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N045
+    source_ref: $.registries.actions
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N046
+    source_ref: $.registries.controls
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N047
+    source_ref: $.registries.objects_refs
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N048
+    source_ref: $.registries.errors
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N049
+    source_ref: $.registries.page_states
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N050
+    source_ref: $.registries.stages
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N051
+    source_ref: $.registries.stage_transitions
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N052
+    source_ref: $.registries.script_roles
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N053
+    source_ref: $.registries.integration_ports
+    governance_relevance: REQUIRED
+  - <<: *terminal
+    source_node_uid: V216-N054
     source_ref: $.hard_locks
-    source_top_level_key: hard_locks
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-10
+  - <<: *terminal
+    source_node_uid: V216-N055
     source_ref: $.derived_validation
-    source_top_level_key: derived_validation
-    governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-11
+    governance_relevance: REFERENCE_ONLY
+  - <<: *terminal
+    source_node_uid: V216-N056
     source_ref: $.final_gap_closure
-    source_top_level_key: final_gap_closure
-    governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-12
+    governance_relevance: REFERENCE_ONLY
+  - <<: *terminal
+    source_node_uid: V216-N057
     source_ref: $.script_content_authority_ref
-    source_top_level_key: script_content_authority_ref
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-13
+  - <<: *terminal
+    source_node_uid: V216-N058
     source_ref: $.production_script_content_contract
-    source_top_level_key: production_script_content_contract
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-14
+  - <<: *terminal
+    source_node_uid: V216-N059
     source_ref: $.correction_script_content_contract
-    source_top_level_key: correction_script_content_contract
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-15
+  - <<: *terminal
+    source_node_uid: V216-N060
     source_ref: $.provider_adapter_contract
-    source_top_level_key: provider_adapter_contract
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  - source_node_uid: SRCNODE-ASSET01-PVA-16
+  - <<: *terminal
+    source_node_uid: V216-N061
     source_ref: $.canonical_script_source_binding
-    source_top_level_key: canonical_script_source_binding
     governance_relevance: REQUIRED
-    classification_state: UNCLASSIFIED_OBSERVED_SOURCE
-  observed_node_count: 16
-  structure_manifest_hash: 2f43ac84573be86285f74f669112110e5101e67ff1a2156a3cf0aec54a32fba2
+  observed_node_count: 29
+  structure_manifest_hash: e917b29b4de219fe87d9e2e32f24997a05d32ea378f3ac3ae031acb6d90c1bce
 completion:
   enumeration_state: FULL_SOURCE_ENUMERATION_PROVEN
-  required_nodes: 29
-  reference_only_nodes: 5
+  semantic_granularity_state: ALL_TERMINALS_HOMOGENEOUS
+  required_nodes: 52
+  reference_only_nodes: 9
   non_normative_nodes: 0
-  unclassified_observed_nodes: 34
+  unclassified_observed_nodes: 61
   classified_nodes: 0
   missing_nodes: 0
   extra_nodes: 0
   duplicate_source_node_uids: 0
+  mixed_terminal_units: 0
+  unresolved_container_units: 0
   next_step: SOURCE_SEGMENT_MAPPING

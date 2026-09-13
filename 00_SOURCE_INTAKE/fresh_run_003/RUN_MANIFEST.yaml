@@ -2,7 +2,7 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 branch: rebuild-v2.1.1
 phase: STAGE_01_SOURCE_INTAKE
-status: PREVIOUS_STAGE_REPLAY_READY_FOR_V216_VALIDATION
+status: SOURCE_SEGMENT_MAPPING_COMPLETED_PENDING_CI
 governance:
   version: v2.1.6
   state: USER_FROZEN_READ_ONLY_PREFORMAL_CANDIDATE
@@ -16,13 +16,27 @@ source_pin:
   revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
 execution_policy:
   actual_source_extraction: REPLAY_EXACT_PREVIOUS_VERIFIED_RAW_BLOBS
-  source_structure_enumeration: RESTORED_34_NODE_PRE_SEGMENT_STATE
-  semantic_granularity_validation: NOT_EXECUTED
-  source_segment_mapping: NOT_EXECUTED
-  old_corrected_61_node_result_reuse: FORBIDDEN
+  previous_34_node_replay: VERIFIED_BLOCKED_BY_V216
+  semantic_granularity_validation: PASS_EXPECTED_BLOCK
+  source_structure_refinement: COMPLETED_61_TERMINAL_HOMOGENEOUS_NODES
+  source_segment_mapping: COMPLETED_61_OF_61_PENDING_CI
+  old_corrected_61_node_result_reuse: FORBIDDEN_AND_NOT_REUSED
+  source_fact_materialization: NOT_EXECUTED
   source_domain_decomposition: NOT_EXECUTED
   page_blueprint_materialization: NOT_EXECUTED
   visual_blueprint_materialization: NOT_EXECUTED
   website_code_write: FORBIDDEN
   deployment: FORBIDDEN
-next_phase_entry_condition: V216_SEMANTIC_GRANULARITY_REPLAY_GATE
+refinement_contract:
+  refined_node_count: 61
+  required_node_count: 52
+  reference_only_node_count: 9
+  mixed_terminal_units: 0
+  unresolved_container_units: 0
+segment_mapping_contract:
+  segment_count: 61
+  page_construction_segments: 52
+  visual_construction_segments: 9
+  required_nodes_unmapped: 0
+  duplicate_node_mappings: 0
+next_phase_entry_condition: SOURCE_SEGMENT_MAPPING_CI_PASS

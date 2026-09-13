@@ -3,13 +3,15 @@ run_uid: FRESH-RUN-003
 governance_version: v2.1.6
 source_branch: new
 source_revision: 6c8a0c3334ccd17942ba14079976fb295859a43c
-source_access: READ_ONLY_REPLAY_ONLY
+source_access: READ_ONLY_REFINEMENT_OF_REPLAYED_RAW
 raw_source_mutation: FORBIDDEN
 old_segment_map_reuse: FORBIDDEN
 old_61_node_structure_reuse: FORBIDDEN
 semantic_granularity:
   syntax_level_is_not_governance_granularity: true
   mixed_terminal_unit: BLOCK
+  unresolved_container_unit: BLOCK
   recursive_decomposition_required: true
+  terminal_homogeneity_required: true
 website_code_write: FORBIDDEN
 deployment: FORBIDDEN
