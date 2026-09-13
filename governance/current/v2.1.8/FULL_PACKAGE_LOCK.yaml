@@ -1,0 +1,33 @@
+schema_version: 1
+record_uid: ACPOS-GOV-V218-FULL-PACKAGE-LOCK
+version: v2.1.8
+status: CURRENT_PREFORMAL_VERIFIED_GITHUB_CI_PASS
+source_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.8_SUCCESSOR_EVIDENCE_SYNC_BUGFIX_PREFORMAL_VERIFIED.zip
+source_package_sha256: a108845fbde176cbd20a5f9df4217c68b6512686dedc00ffc8c44e9cc2b04753
+package_regular_file_count: 58
+package_checksum_manifest: governance/current/v2.1.8/CHECKSUMS.sha256
+package_checksum_manifest_sha256: 3d299ad5862107e99e07da35a5e7dc489f1c6a6688b823e026055a3d8baa5902
+external_trust_root_filename: AI_WEB_GOVERNANCE_v2.1.8_EXTERNAL_TRUST_ROOT.json
+external_trust_root_sha256: b5c5b5776d1f0f733b1c3572f3233bde7cee3c85253aacd12a522b68a55292ac
+semantic_authority_content_hash: e21c1b8cd1c2b04436fc77b5f9ac99320127bbf5535d63925731bc4e7d260da1
+full_fileset_integrity:
+  checksum_verification: 58/58_PASS
+  current_test_evidence_sync: PASS
+  v2_1_8_successor_evidence_sync_regression: 24/24_PASS
+  preformal_definition_audit: 15/15_PASS
+  mandatory_regression_matrix: 10/10_PASS
+latest_github_verification:
+  head_sha: 989afe556400ac98226a48ba36f72a1faa9e548a
+  run_id: 34733833659
+  jobs: 6/6_SUCCESS
+  conclusion: SUCCESS
+human_formal_review: PENDING
+formal_test_executed: false
+formal_freeze_claimed: false
+production_release_claimed: false
+integrity_policy:
+  exact_package_hash_required: true
+  exact_file_checksum_set_required: true
+  external_trust_root_required: true
+  current_operational_validators_must_use_v2_1_8_successor_rules: true
+  historical_replay_must_be_isolated_from_current_pointers: true
