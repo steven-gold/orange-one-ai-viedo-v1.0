@@ -1,7 +1,8 @@
 schema_version: 1
 run_uid: FRESH-RUN-003
 governance_version: v2.1.6
-state: SOURCE_FACT_MATERIALIZATION_COMPLETED
+governance_candidate_overlay: v2.1.7
+state: RESPONSIBILITY_CLASSIFICATION_COMPLETED_PENDING_CI
 raw_source_capture_state: CAPTURE_CLOSED
 semantic_granularity_replay_validated: true
 replay_source_structure_node_count: 34
@@ -20,24 +21,26 @@ source_fact_artifacts:
 - CONTENT_SUPERSESSION_CONFLICT_LEDGER
 - SOURCE_DEPENDENCY_MAP
 unresolved_authority_gap_count: 8
-responsibility_classification_started: false
+responsibility_classification_started: true
+responsibility_classification_completed: true
+classification_artifact_count: 52
+classification_page_artifact_count: 48
+classification_visual_artifact_count: 4
 domain_decomposition_started: false
 blueprint_materialization_started: false
 stage1_validation_started: false
 website_construction_started: false
 deployment_started: false
 github_ci:
-  run_id: 34727817243
-  current_v216_stage1_granularity_gate: SUCCESS
-  current_v216_source_facts_gate: SUCCESS
-  sealed_v216_runtime: SUCCESS
+  previous_final_run_id: 34730511077
+  previous_final_result: SUCCESS_4_OF_4
+  current_classification_gate: PENDING
 allowed_transition:
-  from: SOURCE_FACT_MATERIALIZATION_COMPLETED
-  to: RESPONSIBILITY_CLASSIFICATION_ACTIVE
-  trigger: EXPLICIT_NEXT_STEP_START
+  from: RESPONSIBILITY_CLASSIFICATION_COMPLETED
+  to: PAGE_BASE_BLUEPRINT_ACTIVE
+  trigger: EXPLICIT_NEXT_STEP_START_AFTER_CLASSIFICATION_CI_PASS
 forbidden_transitions:
-- SOURCE_FACT_MATERIALIZATION_COMPLETED -> RAW_SOURCE_CAPTURE_ACTIVE
-- SOURCE_FACT_MATERIALIZATION_COMPLETED -> BLUEPRINT_MATERIALIZATION_ACTIVE
-- SOURCE_FACT_MATERIALIZATION_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
-- SOURCE_FACT_MATERIALIZATION_COMPLETED -> DEPLOYMENT_ACTIVE
-last_result: V216_SOURCE_FACT_MATERIALIZATION_COMPLETED_CI_PASS
+- RESPONSIBILITY_CLASSIFICATION_COMPLETED -> RAW_SOURCE_CAPTURE_ACTIVE
+- RESPONSIBILITY_CLASSIFICATION_COMPLETED -> WEBSITE_CONSTRUCTION_ACTIVE
+- RESPONSIBILITY_CLASSIFICATION_COMPLETED -> DEPLOYMENT_ACTIVE
+last_result: V217_RESPONSIBILITY_CLASSIFICATION_MATERIALIZED_PENDING_CI

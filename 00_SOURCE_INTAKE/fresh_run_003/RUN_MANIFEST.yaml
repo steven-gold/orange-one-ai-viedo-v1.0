@@ -2,9 +2,10 @@ schema_version: 1
 run_uid: FRESH-RUN-003
 branch: rebuild-v2.1.1
 phase: STAGE_01_SOURCE_INTAKE
-status: SOURCE_FACT_MATERIALIZATION_COMPLETED_CI_PASS
+status: RESPONSIBILITY_CLASSIFICATION_COMPLETED_PENDING_CI
 governance:
   version: v2.1.6
+  phase_authority_overlay: v2.1.7
   state: USER_FROZEN_READ_ONLY_PREFORMAL_CANDIDATE
   normative_edit_allowed: false
   runtime_uid: ACPOS-GOV-TEST-v2.1.6-STAGE1-SEMANTIC-GRANULARITY
@@ -20,7 +21,7 @@ execution_policy:
   source_structure_refinement: COMPLETED_61_TERMINAL_HOMOGENEOUS_NODES_CI_PASS
   source_segment_mapping: COMPLETED_61_OF_61_CI_PASS
   source_fact_materialization: COMPLETED_CI_PASS
-  responsibility_classification: NOT_EXECUTED
+  responsibility_classification: COMPLETED_52_ARTIFACTS_PENDING_CI
   page_blueprint_materialization: NOT_EXECUTED
   visual_blueprint_materialization: NOT_EXECUTED
   website_code_write: FORBIDDEN
@@ -31,9 +32,18 @@ source_fact_contract:
   source_dependency_map_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
   unresolved_authority_gap_count: 8
   invented_dependency_count: 0
+responsibility_classification_contract:
+  required_segments: 52
+  physical_classification_artifacts: 52
+  page_construction_artifacts: 48
+  visual_construction_artifacts: 4
+  core_01_artifacts: 25
+  asset_01_artifacts: 27
+  unresolved_external_authority_gap_count: 8
+  unresolved_external_authority_resolution_performed: false
+  blueprint_started: false
 github_ci:
-  run_id: 34727817243
-  current_v216_stage1_granularity_gate: SUCCESS
-  current_v216_source_facts_gate: SUCCESS
-  sealed_v216_runtime: SUCCESS
-next_phase_entry_condition: EXPLICIT_RESPONSIBILITY_CLASSIFICATION_START
+  previous_final_run_id: 34730511077
+  previous_final_result: SUCCESS_4_OF_4
+  classification_gate: PENDING
+next_phase_entry_condition: RESPONSIBILITY_CLASSIFICATION_CI_PASS

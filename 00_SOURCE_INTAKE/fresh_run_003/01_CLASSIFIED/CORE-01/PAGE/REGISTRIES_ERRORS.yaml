@@ -1,0 +1,54 @@
+schema_version: 1
+artifact_uid: V216-CLS-V216-N018
+artifact_type: CANONICAL_CLASSIFICATION_ARTIFACT
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-01
+step_uid: RESPONSIBILITY_CLASSIFICATION
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_ERRORS
+responsibility_class: REGISTRIES_ERRORS
+responsibilities:
+- REGISTRIES_ERRORS
+canonical_owner_uid: OWNER-CORE-01-REGISTRIES_ERRORS
+target_path: 01_CLASSIFIED/CORE-01/PAGE/REGISTRIES_ERRORS.yaml
+lifecycle_uid: LC-CORE-01-REGISTRIES_ERRORS
+approval_scope_uid: AP-CORE-01-REGISTRIES_ERRORS
+version_scope_uid: VER-CORE-01-REGISTRIES_ERRORS
+test_scope_uid: TEST-CORE-01-REGISTRIES_ERRORS
+source_lineage:
+- source_uid: SRC-CORE-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: V216-N018
+  source_ref: $.registries.errors
+  source_segment_uids:
+  - V216-S018
+  raw_source_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+source_fact_refs:
+- artifact_uid: FRESH-RUN-003-SOURCE-CONTEXT-MANIFEST-V216
+  content_hash: 87495e184f31ef04bbdc2c13895533e0ce18491e552ca336d4a7ea07f62322fb
+- artifact_uid: FRESH-RUN-003-CONTENT-SUPERSESSION-CONFLICT-LEDGER-V216
+  content_hash: b05022be20bad1433165f1c8d490849ef7e4ba42061f94bcff8ef72674e18ebd
+- artifact_uid: FRESH-RUN-003-SOURCE-DEPENDENCY-MAP-V216
+  content_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
+source_truth_binding:
+  source_uid: SRC-CORE-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: V216-N018
+  source_ref: $.registries.errors
+  raw_source_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+  binding_mode: EXACT_REFERENCE_BOUND_NO_INFERENCE
+  payload_mutation_allowed: false
+authority_resolution_performed: false
+ai_autofill_used: false
+inference_used: false
+status: CURRENT_CLASSIFICATION
+unresolved_external_authority_gap_uids:
+- GAP-001
+- GAP-002
+- GAP-003
+- GAP-004
+- GAP-005
+- GAP-007
+- GAP-008
+unresolved_authority_source_fact_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
+artifact_hash: 10803b11a8afe5ed79cdaf6ad1e09925b5e33f4a14378e3817e5ab74a799051d
+content_hash: d0d6b0d24dce140143e3f88ca968da4248d44ab14613b52d78d746beb32787be

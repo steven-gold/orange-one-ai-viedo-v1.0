@@ -1,0 +1,54 @@
+schema_version: 1
+artifact_uid: V216-CLS-V216-N023
+artifact_type: CANONICAL_CLASSIFICATION_ARTIFACT
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-01
+step_uid: RESPONSIBILITY_CLASSIFICATION
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_OBJECTS_REFS
+responsibility_class: REGISTRIES_OBJECTS_REFS
+responsibilities:
+- REGISTRIES_OBJECTS_REFS
+canonical_owner_uid: OWNER-CORE-01-REGISTRIES_OBJECTS_REFS
+target_path: 01_CLASSIFIED/CORE-01/PAGE/REGISTRIES_OBJECTS_REFS.yaml
+lifecycle_uid: LC-CORE-01-REGISTRIES_OBJECTS_REFS
+approval_scope_uid: AP-CORE-01-REGISTRIES_OBJECTS_REFS
+version_scope_uid: VER-CORE-01-REGISTRIES_OBJECTS_REFS
+test_scope_uid: TEST-CORE-01-REGISTRIES_OBJECTS_REFS
+source_lineage:
+- source_uid: SRC-CORE-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: V216-N023
+  source_ref: $.registries.objects_refs
+  source_segment_uids:
+  - V216-S023
+  raw_source_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+source_fact_refs:
+- artifact_uid: FRESH-RUN-003-SOURCE-CONTEXT-MANIFEST-V216
+  content_hash: 87495e184f31ef04bbdc2c13895533e0ce18491e552ca336d4a7ea07f62322fb
+- artifact_uid: FRESH-RUN-003-CONTENT-SUPERSESSION-CONFLICT-LEDGER-V216
+  content_hash: b05022be20bad1433165f1c8d490849ef7e4ba42061f94bcff8ef72674e18ebd
+- artifact_uid: FRESH-RUN-003-SOURCE-DEPENDENCY-MAP-V216
+  content_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
+source_truth_binding:
+  source_uid: SRC-CORE-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: V216-N023
+  source_ref: $.registries.objects_refs
+  raw_source_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+  binding_mode: EXACT_REFERENCE_BOUND_NO_INFERENCE
+  payload_mutation_allowed: false
+authority_resolution_performed: false
+ai_autofill_used: false
+inference_used: false
+status: CURRENT_CLASSIFICATION
+unresolved_external_authority_gap_uids:
+- GAP-001
+- GAP-002
+- GAP-003
+- GAP-004
+- GAP-005
+- GAP-007
+- GAP-008
+unresolved_authority_source_fact_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
+artifact_hash: 97a3e24ca259d6e7118cc504cd85121ceaeb36d1c0cb9831dba2c97f88d86a98
+content_hash: 3a98b6e652dbd9e8b37cd56fd0071fb904ca03214855bacf9d8e068a410d4c7a

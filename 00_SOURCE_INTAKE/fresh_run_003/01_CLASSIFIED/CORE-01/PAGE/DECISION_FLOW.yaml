@@ -1,0 +1,54 @@
+schema_version: 1
+artifact_uid: V216-CLS-V216-N012
+artifact_type: CANONICAL_CLASSIFICATION_ARTIFACT
+run_uid: FRESH-RUN-003
+stage_uid: STAGE-01
+step_uid: RESPONSIBILITY_CLASSIFICATION
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: DECISION_FLOW
+responsibility_class: DECISION_FLOW
+responsibilities:
+- DECISION_FLOW
+canonical_owner_uid: OWNER-CORE-01-DECISION_FLOW
+target_path: 01_CLASSIFIED/CORE-01/PAGE/DECISION_FLOW.yaml
+lifecycle_uid: LC-CORE-01-DECISION_FLOW
+approval_scope_uid: AP-CORE-01-DECISION_FLOW
+version_scope_uid: VER-CORE-01-DECISION_FLOW
+test_scope_uid: TEST-CORE-01-DECISION_FLOW
+source_lineage:
+- source_uid: SRC-CORE-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: V216-N012
+  source_ref: $.decision_flow
+  source_segment_uids:
+  - V216-S012
+  raw_source_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+source_fact_refs:
+- artifact_uid: FRESH-RUN-003-SOURCE-CONTEXT-MANIFEST-V216
+  content_hash: 87495e184f31ef04bbdc2c13895533e0ce18491e552ca336d4a7ea07f62322fb
+- artifact_uid: FRESH-RUN-003-CONTENT-SUPERSESSION-CONFLICT-LEDGER-V216
+  content_hash: b05022be20bad1433165f1c8d490849ef7e4ba42061f94bcff8ef72674e18ebd
+- artifact_uid: FRESH-RUN-003-SOURCE-DEPENDENCY-MAP-V216
+  content_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
+source_truth_binding:
+  source_uid: SRC-CORE-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: V216-N012
+  source_ref: $.decision_flow
+  raw_source_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+  binding_mode: EXACT_REFERENCE_BOUND_NO_INFERENCE
+  payload_mutation_allowed: false
+authority_resolution_performed: false
+ai_autofill_used: false
+inference_used: false
+status: CURRENT_CLASSIFICATION
+unresolved_external_authority_gap_uids:
+- GAP-001
+- GAP-002
+- GAP-003
+- GAP-004
+- GAP-005
+- GAP-007
+- GAP-008
+unresolved_authority_source_fact_hash: b8de8c2faa06b6bffef7735c33489d336cd4e97f7506879afd07ec8e56c2860f
+artifact_hash: 179e8c123129e77d897cf740b4871c38b7d4a98800ffbf37496d23e72af3a179
+content_hash: a444ff00f7b2e554f29df7335cba8d702db7925dc7aac64ac938b7f7318e6326
