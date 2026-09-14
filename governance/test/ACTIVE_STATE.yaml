@@ -1,4 +1,4 @@
-schema_version: 6
+schema_version: 7
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
@@ -9,15 +9,15 @@ execution:
   run_uid: FRESH-RUN-003
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages: [CORE-01, ASSET-01]
-  current_stage: STAGE-01-CLOSED
+  current_stage: STAGE-02-TESTED-BLOCKED
   stage1_binding_ref: governance/test/STAGE01_ACTIVE_BINDING.yaml
   stage1_binding_mode: REGISTRY_UID_RUNTIME_RESOLUTION
   stage1:
     CORE-01: PASS
     ASSET-01: PASS
   stage2:
-    result: NOT_EXECUTED
-    stage_entry_gate: NOT_EXECUTED
+    result: TEST_EXECUTED_BLOCKED
+    stage_entry_gate: PASS
     stage_exit_allowed: false
     prior_results_authoritative_for_next_run: false
     prior_results_used_in_current_run: false
@@ -63,17 +63,34 @@ stage_execution_loading:
   stage_selector_required: true
 
 stage02_active_attempt:
-  active_evidence_present: false
-  active_findings_present: false
+  attempt_uid: STAGE02-FRESH-20260915-001
+  frozen_governance_receipt_ref: governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml
+  clean_baseline_receipt_ref: governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml
+  frozen_governance_uid: GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION
+  source_execution_sha: 92fb1df0593675d649cee48e312360914478f3c1
+  active_evidence_present: true
+  active_findings_present: true
+  active_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+  active_findings_ref: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
   historical_attempt_may_be_used_as_current_result: false
   historical_defect_signatures_may_be_used_only_as_regression_targets_after_fresh_rescan: true
-  next_stage02_attempt_must_start_from_stage1_clean_predecessor_baseline: true
-  next_stage02_attempt_must_record_new_frozen_governance_receipt: true
-  next_stage02_attempt_frozen_governance_uid: null
+  fresh_functional_gap_total: 171
+  fresh_closure_blocker_total: 13
+  preserved_external_authority_union_count: 8
+  material_remediation_started: false
+
+stage2_result_evidence:
+  mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
+  static_result_pointer_required: false
+  static_run_id_copy_forbidden: true
+  static_head_sha_copy_forbidden: true
+  static_specification_digest_copy_forbidden: true
+  tracked_current_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
 
 stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
+  frozen_specification_uid: GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION
   audit_only_blocked_loop_may_count_as_progress: false
   remediation_must_materially_eliminate_remediable_gap: true
   full_line_high_pressure_required_before_every_fresh_execution_or_reexecution: true
@@ -98,5 +115,5 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
 
-status: ACTIVE_STAGE1_CLOSED_STAGE2_CLEARED
-next_action: CREATE_STAGE02_FROZEN_GOVERNANCE_AND_CLEAN_BASELINE_RECEIPTS_THEN_RUN_FRESH_STAGE02
+status: ACTIVE_STAGE2_TESTED_BLOCKED
+next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_FRESH_STAGE02_DEFECT_SET

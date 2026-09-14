@@ -1,0 +1,94 @@
+schema_version: 2
+artifact_uid: STAGE02-CURRENT-FRESH-FINDINGS-20260915-001
+artifact_type: NON_NORMATIVE_STAGE_TEST_FINDING_LEDGER
+normative_authority: false
+stage_uid: STAGE-02
+stage_name: PAGE_FUNCTIONAL_CONTRACT
+attempt_uid: STAGE02-FRESH-20260915-001
+frozen_governance_uid: GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION
+source_execution_sha: 92fb1df0593675d649cee48e312360914478f3c1
+github_run_id: 34888589057
+github_job_id: 104125298977
+github_artifact_id: 10365319125
+github_artifact_digest: sha256:82d6d74338bd67f3f5e385003a7a387a2c4975ca2c6adb451b61d6e84f2f1ef1
+evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+prior_stage2_results_used: false
+current_specification_mutated: false
+ai_autofill_used: false
+inference_used: false
+
+result: BLOCKED
+stage_entry_gate: PASS
+stage_exit_allowed: false
+fresh_functional_gap_total: 171
+closure_blocker_total: 13
+
+root_cause_classification:
+  ARCHITECTURE_GAP: 133
+  INPUT_SOURCE_GAP: 34
+  AUTHORITY_GAP: 4
+  classification_note: "Fresh scanner categories are product/contract or external-authority defects. This result alone does not authorize Current Specification mutation."
+
+pages:
+  CORE-01:
+    fresh_functional_gap_total: 45
+    categories:
+      PAYLOAD_INPUT_CONTRACT_MISSING: 16
+      AUDIT_EVENT_NODE_MISSING: 4
+      STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
+    closure_blocker_count: 7
+    closure_blockers:
+      - MISSING_BUSINESS_ENTITY_INVENTORY
+      - MISSING_BUSINESS_ENTITY_OPERATION_MATRIX
+      - MISSING_ENTITY_HIERARCHY_MATRIX
+      - MISSING_FUNCTIONAL_WORKBENCH_CONTRACT
+      - MISSING_INTERACTION_TOPOLOGY_SPEC
+      - MISSING_FUNCTION_VISUAL_IMPACT_MATRIX
+      - MISSING_AI_INTERACTION_CONTINUITY_CONTRACT
+  ASSET-01:
+    fresh_functional_gap_total: 126
+    categories:
+      ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
+      AUDIT_EVENT_NODE_MISSING: 9
+      FAILURE_STATE_ERROR_BINDING_MISSING: 44
+      PAYLOAD_INPUT_CONTRACT_MISSING: 18
+      POST_ACTION_VALIDATION_NODE_MISSING: 18
+      SHARED_OWNER_AUTHORITY_UNRESOLVED: 4
+      STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
+      SUCCESS_NEXT_STATE_BINDING_MISSING: 7
+    closure_blocker_count: 6
+    closure_blockers:
+      - MISSING_BUSINESS_ENTITY_INVENTORY
+      - MISSING_BUSINESS_ENTITY_OPERATION_MATRIX
+      - MISSING_ENTITY_HIERARCHY_MATRIX
+      - MISSING_FUNCTIONAL_WORKBENCH_CONTRACT
+      - MISSING_INTERACTION_TOPOLOGY_SPEC
+      - MISSING_FUNCTION_VISUAL_IMPACT_MATRIX
+
+preserved_external_authority:
+  exact_union_count: 8
+  gap_uids: [GAP-001, GAP-002, GAP-003, GAP-004, GAP-005, GAP-006, GAP-007, GAP-008]
+  rule: PRESERVE_UNRESOLVED_NO_INFERENCE_NO_AUTOFILL
+  shared_owner_gap_count: 4
+
+historical_regression_comparison:
+  historical_attempt_ref: governance/test/history/stage02/attempt-8d5c69947cd8/STAGE02_FINDINGS.yaml
+  historical_functional_gap_total: 171
+  historical_closure_blocker_total: 13
+  fresh_functional_gap_total: 171
+  fresh_closure_blocker_total: 13
+  same_counts_do_not_mean_history_was_reused: true
+  conclusion: DEFECT_SIGNATURE_SET_REPRODUCED_UNDER_CURRENT_FROZEN_UID
+
+mandatory_next_phase:
+  action: MATERIAL_REMEDIATION_AT_OWNING_LAYER
+  audit_only_loop_may_count_as_progress: false
+  remediable_gap_must_materially_eliminate_before_stage_closure: true
+  external_authority_gap_must_remain_blocking_until_exact_authority_resolution_or_formal_non_applicability: true
+  after_fix: CLEAN_RESET_THEN_FULL_LINE_THEN_FRESH_STAGE02_REEXECUTION
+
+specification_change_required: false
+formal_specification_may_be_modified_from_this_finding: false
+website_construction_allowed: false
+deployment_allowed: false
+status: OPEN_STAGE02_MATERIAL_REMEDIATION

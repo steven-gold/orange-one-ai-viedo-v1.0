@@ -1,0 +1,85 @@
+{
+  "schema_version": 2,
+  "artifact_type": "NON_NORMATIVE_STAGE02_CURRENT_TEST_EVIDENCE_INDEX",
+  "normative_authority": false,
+  "stage_uid": "STAGE-02",
+  "stage_name": "PAGE_FUNCTIONAL_CONTRACT",
+  "attempt_uid": "STAGE02-FRESH-20260915-001",
+  "frozen_governance_uid": "GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION",
+  "clean_predecessor_parent_commit": "7ee33c914ba6ad98c44871610db6eb959923454a",
+  "source_head_sha": "92fb1df0593675d649cee48e312360914478f3c1",
+  "github_run_id": 34888589057,
+  "github_job_id": 104125298977,
+  "github_artifact_id": 10365319125,
+  "github_artifact_digest": "sha256:82d6d74338bd67f3f5e385003a7a387a2c4975ca2c6adb451b61d6e84f2f1ef1",
+  "full_detail_source": "GITHUB_ACTION_ARTIFACT",
+  "actual_product_stage_test_started": true,
+  "actual_product_stage_test_completed": true,
+  "prior_stage2_results_used": false,
+  "current_specification_mutated": false,
+  "ai_autofill_used": false,
+  "inference_used": false,
+  "stage_entry_gate": "PASS",
+  "result": "BLOCKED",
+  "stage_exit_allowed": false,
+  "fresh_functional_gap_total": 171,
+  "closure_blocker_total": 13,
+  "pages": {
+    "CORE-01": {
+      "functional_gap_count": 45,
+      "gap_categories": {
+        "AUDIT_EVENT_NODE_MISSING": 4,
+        "PAYLOAD_INPUT_CONTRACT_MISSING": 16,
+        "STATE_TRANSITION_LEDGER_FIELD_MISSING": 25
+      },
+      "closure_blockers": [
+        "MISSING_BUSINESS_ENTITY_INVENTORY",
+        "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
+        "MISSING_ENTITY_HIERARCHY_MATRIX",
+        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_INTERACTION_TOPOLOGY_SPEC",
+        "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX",
+        "MISSING_AI_INTERACTION_CONTINUITY_CONTRACT"
+      ]
+    },
+    "ASSET-01": {
+      "functional_gap_count": 126,
+      "gap_categories": {
+        "ACTION_WITHOUT_CONTROL_OR_TRIGGER": 1,
+        "AUDIT_EVENT_NODE_MISSING": 9,
+        "FAILURE_STATE_ERROR_BINDING_MISSING": 44,
+        "PAYLOAD_INPUT_CONTRACT_MISSING": 18,
+        "POST_ACTION_VALIDATION_NODE_MISSING": 18,
+        "SHARED_OWNER_AUTHORITY_UNRESOLVED": 4,
+        "STATE_TRANSITION_LEDGER_FIELD_MISSING": 25,
+        "SUCCESS_NEXT_STATE_BINDING_MISSING": 7
+      },
+      "closure_blockers": [
+        "MISSING_BUSINESS_ENTITY_INVENTORY",
+        "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
+        "MISSING_ENTITY_HIERARCHY_MATRIX",
+        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_INTERACTION_TOPOLOGY_SPEC",
+        "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX"
+      ]
+    }
+  },
+  "gap_class_totals": {
+    "ARCHITECTURE_GAP": 133,
+    "INPUT_SOURCE_GAP": 34,
+    "AUTHORITY_GAP": 4
+  },
+  "preserved_external_authority_union_count": 8,
+  "preserved_external_authority_union_gap_uids": [
+    "GAP-001", "GAP-002", "GAP-003", "GAP-004",
+    "GAP-005", "GAP-006", "GAP-007", "GAP-008"
+  ],
+  "physical_stage2_product_artifact_root_present": false,
+  "website_construction_allowed": false,
+  "deployment_allowed": false,
+  "notes": [
+    "This is a fresh Stage-02 result under the current frozen governance UID; historical Stage-02 counts were not used as input.",
+    "Workflow SUCCESS means the test executed correctly; product Stage-02 remains BLOCKED.",
+    "The GitHub artifact is the complete immutable detail source for individual gap records."
+  ]
+}
