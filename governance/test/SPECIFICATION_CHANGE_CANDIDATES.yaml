@@ -100,17 +100,42 @@ findings:
   - finding_uid: FIND-20260914-010
     class: TEST_HARNESS_SUCCESSOR_STATE_BUG
     title: Full-line and targeted gates hard-code Stage-02 NOT_EXECUTED and would reject a legal Stage-02 successor test state
-    evidence: "Before the new Stage-02 test, both governance-full-line-system-gate.yml and targeted-stage01-stage02.yml invoke validate_stage02_zero_residual.py unconditionally; that validator intentionally accepts only the clean-reset NOT_EXECUTED predecessor state."
-    disposition: OPEN_STAGE_SUCCESSOR_HARNESS_REPAIR
+    evidence: "Before the new Stage-02 test, both governance-full-line-system-gate.yml and targeted-stage01-stage02.yml invoked validate_stage02_zero_residual.py unconditionally; that validator intentionally accepted only the clean-reset NOT_EXECUTED predecessor state."
+    disposition: RESOLVED_STAGE_SUCCESSOR_HARNESS
     specification_change_required: false
     formal_specification_mutated_for_fix: false
-    required_fix: "Add a successor-state-aware Stage-02 state-integrity validator: retain exact zero-residual validation while NOT_EXECUTED, but when Stage-02 has actually executed require parseable run evidence, fail-closed status, no Current Specification mutation/autofill/inference, Stage-01 closure continuity, and construction/deployment blocking unless Stage-02 exit is formally closed. Update both GitHub gates to call the state-aware validator."
+    resolution: "Added successor-aware validate_stage02_state_integrity.py and updated both gates. Predecessor admission passed in Stage-02 actual-test run 34868009420 on SHA 8d5c69947cd8a964fa433c94764d6615a5c65c7a. After fresh Stage-02 evidence was persisted, targeted run 34868474055 explicitly passed TEST_EXECUTED_BLOCKED successor integrity and full-line run 34868473895 again passed 11/11 lifecycle, 20/20 PRE_FORMAL, 17/17 mandatory suites with exact denominators, no skip/timeout, and zero source residual on SHA 1db9d4af5d43364644cff27bde495392480b1631."
+
+  - finding_uid: FIND-20260914-011
+    class: PRODUCT_STAGE_EXECUTION_GAPS
+    title: Fresh Stage-02 actual test is blocked by 171 functional gaps and 13 closure blockers
+    evidence: "GitHub Stage-02 run 34868009420 job 104056614223 on SHA 8d5c69947cd8a964fa433c94764d6615a5c65c7a completed the full pre-test system gate, then freshly scanned Stage-01 immutable inputs and produced artifact 10357817311 (sha256:e43880003b4bf1eda36aeddc3f7d8eddd9b8c622a1dd2ee5c52d2162b8487738). CORE-01 = 45 functional gaps / 7 closure blockers; ASSET-01 = 126 functional gaps / 6 closure blockers; preserved external authority union = GAP-001..GAP-008; prior Stage-02 results were not used."
+    disposition: OPEN_STAGE02_REMEDIATION
+    specification_change_required: false
+    formal_specification_mutated_for_fix: false
+    current_specification_may_be_modified_from_this_finding_alone: false
+    tracked_detail_ref: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+    tracked_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    required_next_action: "Remediate only the implementation/architecture/input/product-contract gaps supported by current authority. Preserve all eight unresolved external authority references and do not invent or auto-fill missing authority. Re-run Stage-02 fresh acceptance before any Stage-03 admission."
 
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
-  current_authority_after_explicit_reset: NOT_EXECUTED_NON_AUTHORITATIVE
-  may_influence_next_stage2_run: false
+  prior_reset_state: NOT_EXECUTED_NON_AUTHORITATIVE
+  prior_results_used_in_fresh_run: false
   classification: HISTORICAL_PRODUCT_EXECUTION_OUTPUT_GAPS
+
+current_stage2_execution:
+  state: TEST_EXECUTED_BLOCKED
+  fresh_CORE-01_functional_gaps: 45
+  fresh_CORE-01_closure_blockers: 7
+  fresh_ASSET-01_functional_gaps: 126
+  fresh_ASSET-01_closure_blockers: 6
+  fresh_total_functional_gaps: 171
+  fresh_total_closure_blockers: 13
+  preserved_external_authority_union_count: 8
+  stage_exit_allowed: false
+  website_construction_allowed: false
+  deployment_allowed: false
 
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER
