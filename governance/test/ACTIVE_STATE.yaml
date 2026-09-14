@@ -88,6 +88,12 @@ stage02_active_attempt:
   product_design_authority_blocked: 150
   preserved_external_shared_authority_blocked: 4
   repeat_audit_without_new_authority_counts_as_progress: false
+  authority_request_package_ref: governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml
+  authority_request_product_count: 150
+  authority_request_gap006_external_count: 4
+  authority_request_is_authority: false
+  exact_resume_point: AFTER_APPROVED_AUTHORITY_INGESTION_RESET_EXECUTION_OUTPUTS_TO_SAME_STAGE01_BASELINE_THEN_FULL_LINE_SYSTEM_GATE_THEN_FRESH_STAGE02_REEXECUTION
+  new_authority_required_before_more_material_remediation: true
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
@@ -122,7 +128,7 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
 status: ACTIVE_STAGE2_REEXECUTED_BLOCKED
-next_action: REOPEN_PRODUCT_DESIGN_AUTHORITY_FOR_150_EXACT_FIELD_BINDINGS_AND_PRESERVE_4_GAP006_EXTERNAL_BLOCKERS
+next_action: AWAIT_OR_INGEST_APPROVED_STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_REPEAT_AUDIT_WITHOUT_NEW_AUTHORITY
 stage02_material_remediation:
   cycle: R3_MATERIALIZED_R2_DUAL_LAYER_ACCEPTANCE
   owning_layer: CURRENT_STAGE_PRODUCT_OR_CONTRACT_OUTPUT

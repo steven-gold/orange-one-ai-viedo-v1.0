@@ -209,9 +209,13 @@ current_stage2_execution:
   historical_counts_may_be_treated_as_current: false
   source_execution_sha: 49e895ee6ae8b3c75bfa517004f0e978b31cbf7b
   reexecution_cycle: R2_DUAL_LAYER
-  next_action: REOPEN_PRODUCT_DESIGN_AUTHORITY_FOR_150_EXACT_FIELD_BINDINGS_AND_PRESERVE_4_GAP006_EXTERNAL_BLOCKERS
+  next_action: AWAIT_OR_INGEST_APPROVED_STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_REPEAT_AUDIT_WITHOUT_NEW_AUTHORITY
   remaining_blocker_disposition_ref: governance/test/stage02/STAGE02_REMAINING_BLOCKER_DISPOSITION_R4.yaml
   authority_sufficient_materializable_now: 0
   product_design_authority_blocked: 150
   preserved_external_shared_authority_blocked: 4
+  authority_request_package_ref: governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml
+  authority_request_product_count: 150
+  authority_request_gap006_external_count: 4
+  authority_request_is_authority: false
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER
