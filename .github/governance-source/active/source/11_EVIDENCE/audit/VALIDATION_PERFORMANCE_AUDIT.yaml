@@ -1,0 +1,31 @@
+schema_version: 1
+artifact_uid: EVID-GOV-VALIDATION-PERFORMANCE-001
+artifact_type: VALIDATION_PERFORMANCE_AUDIT
+status: PASS_WITH_REGRESSION_INDEX_USAGE_GAP_RECORDED
+canonical_path: 11_EVIDENCE/audit/VALIDATION_PERFORMANCE_AUDIT.yaml
+governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+package_snapshot:
+  file_count: 74
+  bytes: 1533273
+  pure_read_ms_avg: 1.481
+  pure_read_ms_max_observed: 6.908
+  yaml_json_python_parse_compile_ms_avg: 1100.043
+  copytree_ms_avg: 14.822
+suite_samples:
+  high_pressure_25_cases_elapsed_seconds: 27.01
+  reference_semantic_28_plus_46_elapsed_seconds: 13.18
+index_usage_audit:
+  construction_artifact_index_materialized: true
+  implementation_loader_index_first_policy_present: true
+  execution_loader_hash_or_yaml_cache_present: true
+  governance_requirement_index_materialized: true
+  governance_requirement_index_used_as_mandatory_regression_impact_index: false
+  regression_test_files_with_full_package_copytree: 10
+  full_package_copytree_call_sites: 28
+  finding: INDEX_AVAILABLE_FOR_CONSTRUCTION_AND_EXECUTION_LOAD_BUT_NOT_FULLY_CONSUMED_BY_MANDATORY_REGRESSION_ORCHESTRATION
+conclusion:
+  file_io_is_240_second_root_cause: false
+  dominant_cost: REPEATED_REGRESSION_VALIDATION_AND_MUTATION_REPARSE
+  formal_full_sweep_denominator_may_be_reduced_by_index: false
+  incremental_validation_should_use_impact_index_and_cache: true
+  optimization_must_preserve_impacted_validator_coverage: true

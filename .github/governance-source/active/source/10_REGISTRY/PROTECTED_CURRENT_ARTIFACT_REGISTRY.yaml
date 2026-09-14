@@ -1,0 +1,179 @@
+schema_version: 1
+artifact_uid: REG-PROTECTED-CURRENT-ARTIFACT-001
+artifact_type: PROTECTED_CURRENT_ARTIFACT_REGISTRY
+status: CURRENT_CANDIDATE
+canonical_path: 10_REGISTRY/PROTECTED_CURRENT_ARTIFACT_REGISTRY.yaml
+owner_uid: OWNER-GOVERNANCE-CLEANUP-PROTECTION
+governance_revision: v2.1.14-test-feedback-spec-evolution
+normative_section_uids:
+  - WEB-GOV-03-S055
+delete_gate:
+  default: DENY
+  proof_required:
+    - NOT_PROTECTED_CURRENT
+    - NOT_IMMUTABLE_RAW_SOURCE
+    - ZERO_CURRENT_OWNER_REFERENCE
+    - ZERO_UNMIGRATED_REVERSE_DEPENDENCY
+    - REPLACEMENT_VALID_IF_SUPERSEDED
+    - CLEANUP_LEDGER_ENTRY
+    - POST_DELETE_RESIDUAL_SCAN
+  missing_proof: CLEANUP_DELETE_NOT_PROVEN_SAFE
+  evidence_backed_proof_required: true
+  string_only_proof: BLOCK
+  two_phase_post_delete_verification: true
+  terminal_post_delete_state_required: true
+  post_delete_fail_or_pending: BLOCK
+protected_paths:
+  - path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/PROTECTED_CURRENT_ARTIFACT_REGISTRY.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/NAMING_REGISTRY.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/BLUEPRINT_REGISTRY.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/AUDIT_CATALOG.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 11_EVIDENCE/audit/AUDIT_BASELINE.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 11_EVIDENCE/audit/CLEANUP_LEDGER.yaml
+    reason: CURRENT_CLEANUP_RESTORATION_EVIDENCE
+  - path: 11_EVIDENCE/audit/generated/GOVERNANCE_REQUIREMENT_INDEX.json
+    reason: CURRENT_COMPILED_BASELINE_DETAIL_INDEX
+  - path: 10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
+    reason: CURRENT_REFERENCE_SEMANTIC_AUTHORITY
+  - path: 11_EVIDENCE/audit/REFERENCE_SEMANTIC_REPAIR_RESULT.yaml
+    reason: CURRENT_REFERENCE_SEMANTIC_REPAIR_EVIDENCE
+  - path: 10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
+    reason: IMMUTABLE_SEMANTIC_AUTHORITY_BASELINE
+  - path: 11_EVIDENCE/audit/HIGH_PRESSURE_HARDENING_RESULT.yaml
+    reason: CURRENT_HIGH_PRESSURE_HARDENING_EVIDENCE
+  - path: 10_REGISTRY/PROGRAM_IDENTITY_AUTHORITY_REGISTRY.yaml
+    reason: CURRENT_TYPED_PROGRAM_IDENTITY_AUTHORITY
+  - path: 11_EVIDENCE/audit/GITHUB_REPLAY_CLOSURE_RESULT.yaml
+    reason: CURRENT_GITHUB_REPLAY_EVIDENCE_STATE_CLOSURE
+  - path: 09_TESTS/governance/validate_governance.py
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 09_TESTS/governance/validate_construction_artifact_index.py
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 09_TESTS/governance/governance_stage1_pipeline_guard.py
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 09_TESTS/governance/governance_lifecycle_stage_contract_guard.py
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 09_TESTS/governance/governance_management_contract_guard.py
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 09_TESTS/governance/validate_section_registry.py
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 09_TESTS/governance/validate_cleanup_protection.py
+    reason: CURRENT_GOVERNANCE_AUTHORITY_OR_REQUIRED_VALIDATOR
+  - path: 09_TESTS/governance/compile_governance_baseline.py
+    reason: CURRENT_GOVERNANCE_COMPILER_OR_SHARED_VALIDATOR_LIBRARY
+  - path: 09_TESTS/governance/refresh_governance_root_manifest.py
+    reason: CURRENT_GOVERNANCE_COMPILER_OR_SHARED_VALIDATOR_LIBRARY
+  - path: 09_TESTS/governance/governance_common.py
+    reason: CURRENT_GOVERNANCE_COMPILER_OR_SHARED_VALIDATOR_LIBRARY
+  - path: 09_TESTS/governance/test_prefomal_stress_repairs.py
+    reason: CURRENT_PREFORMAL_STRESS_GUARD
+  - path: 09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py
+    reason: CURRENT_STAGE1_MINIMAL_CONTROL_GUARD
+  - path: 09_TESTS/governance/validate_execution_governance_load.py
+    reason: CURRENT_GOVERNANCE_EXECUTION_LOAD_VALIDATOR
+  - path: 09_TESTS/governance/test_execution_load_guard.py
+    reason: CURRENT_EXECUTION_LOAD_MINIMAL_CONTROL_GUARD
+  - path: 09_TESTS/governance/validate_reference_semantics.py
+    reason: CURRENT_REFERENCE_SEMANTIC_VALIDATOR
+  - path: 09_TESTS/governance/program_artifact_instance_guard.py
+    reason: CURRENT_PROGRAM_ARTIFACT_INSTANCE_GUARD
+  - path: 09_TESTS/governance/test_reference_semantic_guard.py
+    reason: CURRENT_REFERENCE_SEMANTIC_DESTRUCTIVE_GUARD
+  - path: 09_TESTS/governance/test_v2_1_0_regressions.py
+    reason: MANDATORY_INHERITED_REGRESSION_ASSET
+  - path: 09_TESTS/governance/test_v2_1_0_post_v1_8_regressions.py
+    reason: MANDATORY_POST_V1_8_REGRESSION_ASSET
+  - path: 09_TESTS/governance/test_high_pressure_hardening.py
+    reason: CURRENT_HIGH_PRESSURE_HARDENING_GUARD
+  - path: 09_TESTS/governance/test_bugfix_regressions.py
+    reason: MANDATORY_MULTIDIRECTION_BUGFIX_REGRESSION_ASSET
+  - path: 09_TESTS/governance/test_v2_1_7_phase_authority_bugfix.py
+    reason: MANDATORY_V217_PHASE_AUTHORITY_BUGFIX_REGRESSION_ASSET
+  - path: 09_TESTS/governance/validate_current_test_evidence.py
+    reason: CURRENT_TEST_EVIDENCE_SYNC_VALIDATOR
+  - path: 09_TESTS/governance/test_v2_1_8_successor_evidence_sync_bugfix.py
+    reason: MANDATORY_V218_SUCCESSOR_EVIDENCE_SYNC_REGRESSION_ASSET
+  - path: 09_TESTS/governance/validate_evidence_state_closure.py
+    reason: CURRENT_VALIDATOR_OR_ARTIFACT
+  - path: 09_TESTS/governance/test_v2_1_9_evidence_state_closure.py
+    reason: CURRENT_VALIDATOR_OR_ARTIFACT
+  - path: 09_TESTS/governance/validate_closure_evidence_continuity.py
+    artifact_uid: VAL-GOV-034
+    protection_reason: CURRENT_GOVERNANCE_EXECUTION_ASSET
+  - path: 09_TESTS/governance/test_v2_1_10_closure_evidence_continuity.py
+    artifact_uid: TEST-GOV-V210-CLOSURE-EVIDENCE-CONTINUITY-001
+    protection_reason: CURRENT_GOVERNANCE_EXECUTION_ASSET
+  - path: 09_TESTS/governance/test_v2_1_11_binding_authority_receipt_schema.py
+    artifact_uid: TEST-GOV-V211-BINDING-AUTHORITY-RECEIPT-SCHEMA-001
+    protection_reason: CURRENT_GOVERNANCE_EXECUTION_ASSET
+  - path: 09_TESTS/governance/test_v2_1_12_successor_state_evidence_parse.py
+    reason: MANDATORY_V212_SUCCESSOR_STATE_EVIDENCE_PARSE_REGRESSION_ASSET
+  - path: pytest.ini
+    reason: CURRENT_TEST_RUNNER_COLLECTION_BOUNDARY
+  - path: 09_TESTS/governance/test_pytest_collection_contract.py
+    reason: CURRENT_TEST_RUNNER_COLLECTION_CONTRACT_GUARD
+  - path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+    reason: CURRENT_UNIVERSAL_STAGE_EXECUTION_INVARIANT_AUTHORITY
+    artifact_uid: REG-STAGE-EXECUTION-INVARIANT-001
+  - path: 09_TESTS/governance/validate_stage_execution_invariants.py
+    reason: CURRENT_STAGE_EXECUTION_INVARIANT_VALIDATOR
+    artifact_uid: VAL-GOV-035
+  - path: 09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py
+    reason: MANDATORY_V213_STAGE_EXECUTION_INVARIANT_REGRESSION_ASSET
+    artifact_uid: TEST-GOV-V213-STAGE-EXECUTION-INVARIANT-001
+  - path: 09_TESTS/governance/validate_test_feedback_spec_evolution.py
+    reason: CURRENT_TEST_FEEDBACK_SPEC_EVOLUTION_VALIDATOR
+    artifact_uid: VAL-GOV-036
+  - path: 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
+    reason: MANDATORY_V214_TEST_FEEDBACK_SPEC_EVOLUTION_REGRESSION_ASSET
+    artifact_uid: TEST-GOV-V214-TEST-FEEDBACK-SPEC-EVOLUTION-001
+  - path: 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
+    reason: CURRENT_PRODUCT_NEUTRAL_ENTITY_LIFECYCLE_VALIDATOR
+    artifact_uid: VAL-GOV-037
+  - path: 09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py
+    reason: MANDATORY_V214_PRODUCT_NEUTRAL_ENTITY_LIFECYCLE_REGRESSION_ASSET
+    artifact_uid: TEST-GOV-V214-PRODUCT-NEUTRAL-ENTITY-LIFECYCLE-001
+non_manifest_protected_assets:
+  - path: CHECKSUMS.sha256
+    reason: PACKAGE_INTEGRITY_DENOMINATOR
+    required: true
+    sha256: 3d299ad5862107e99e07da35a5e7dc489f1c6a6688b823e026055a3d8baa5902
+  - path: 09_TESTS/governance/validate_evidence_state_closure.py
+    artifact_uid: VAL-GOV-033
+    reason: CURRENT_EVIDENCE_STATE_CLOSURE_AND_STAGE02_SYSTEM_LOGIC_GUARD
+    sha256: 64133e09ef21af78d992ba9e41c61b74e1016f2ddac697317bca992095700430
+  - path: 09_TESTS/governance/test_v2_1_9_evidence_state_closure.py
+    artifact_uid: TEST-GOV-V219-EVIDENCE-STATE-CLOSURE-001
+    reason: MANDATORY_V219_EVIDENCE_STATE_CLOSURE_REGRESSION_ASSET
+    sha256: a12ffca5227961632684e72325c97e4d012a984857a94f862de88aadc4d03173

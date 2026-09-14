@@ -1,0 +1,244 @@
+schema_version: 1
+artifact_uid: REG-STAGE1-SOURCE-FACT-CONTRACTS-001
+artifact_type: STAGE1_SOURCE_FACT_CONTRACTS
+status: CURRENT_CANDIDATE
+canonical_path: 10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
+owner_uid: OWNER-GOVERNANCE-STAGE1-SOURCE-FACTS
+governance_revision: v2.1.14-test-feedback-spec-evolution
+normative_section_uids:
+- WEB-GOV-01-S069
+contracts:
+  SOURCE_CONTEXT_MANIFEST:
+    required_fields:
+    - artifact_uid
+    - page_uid_or_scope_uid
+    - source_nodes
+    - context_edges
+    - source_lineage_refs
+    - content_hash
+    - status
+    required_edge_fields:
+    - edge_uid
+    - from_source_node_uid
+    - to_source_node_uid
+    - relation_type
+    - source_evidence_ref
+    allowed_relation_types:
+    - PARENT_CHILD
+    - PREVIOUS_NEXT
+    - CROSS_FILE_REFERENCE
+    - PAGE_SCOPE
+    - MODULE_SCOPE
+    - SHARED_CONTEXT
+    unresolved_reference: BLOCK
+  CONTENT_SUPERSESSION_CONFLICT_LEDGER:
+    required_fields:
+    - artifact_uid
+    - page_uid_or_scope_uid
+    - items
+    - content_hash
+    - status
+    item_fields:
+    - conflict_uid
+    - old_or_conflicting_uid
+    - current_or_candidate_uid
+    - conflict_type
+    - authority_disposition
+    - decision_evidence_ref
+    - downstream_impact
+    - cleanup_state
+    allowed_conflict_types:
+    - SUPERSESSION
+    - DUPLICATE
+    - CONTRADICTION
+    - STALE_CURRENT_OWNER
+    - ENCODING_MIRROR_CONFLICT
+    superseded_current_owner_residual: BLOCK
+  SOURCE_DEPENDENCY_MAP:
+    required_fields:
+    - artifact_uid
+    - page_uid_or_scope_uid
+    - edges
+    - unresolved_authority_gaps
+    - content_hash
+    - status
+    edge_fields:
+    - edge_uid
+    - producer_source_uid
+    - consumer_source_uid
+    - dependency_type
+    - authority_evidence_ref
+    allowed_dependency_types:
+    - SEQUENCE
+    - INPUT_OUTPUT
+    - GATE
+    - HANDOFF
+    - SHARED_OWNER
+    - PROVIDER_ASYNC
+    - DATA_RUNTIME
+    invented_dependency: BLOCK
+    unknown_dependency_disposition: UNRESOLVED_AUTHORITY_GAP
+base_blueprint_binding_rule:
+  page_and_visual_blueprints_must_reference_all_three_current_source_fact_hashes: true
+  editable_payload_duplication_forbidden: true
+  unresolved_external_authority_refs_must_be_carried_forward: true
+  unresolved_external_authority_must_not_be_treated_as_satisfied: true
+  affected_closure_requires_authoritative_resolution_evidence: true
+raw_source_capture_contract:
+  manifest_path: 00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml
+  capture_state_path: 00_SOURCE_INTAKE/RAW_SOURCE_CAPTURE_STATE.yaml
+  raw_source_root: 00_SOURCE_INTAKE/RAW_SOURCE
+  terminal_state: CAPTURE_CLOSED
+  exact_next_step: SOURCE_STRUCTURE_ENUMERATION
+  closed_capture_writable: false
+  raw_source_directory_source_bytes_only: true
+  metadata_inside_raw_source_directory: BLOCK
+  physical_file_set_must_exactly_equal_registered_target_paths: true
+  mixed_page_visual_source_role: MIXED_PAGE_VISUAL_SOURCE_INPUT
+  biased_role_for_mixed_source: BLOCK
+source_structure_semantic_granularity_contract:
+  syntax_level_is_not_governance_granularity: true
+  terminality_field: terminality_state
+  required_terminal_state: TERMINAL_HOMOGENEOUS
+  semantic_responsibility_count_field: semantic_responsibility_count
+  required_terminal_semantic_responsibility_count: 1
+  unresolved_child_responsibility_count_field: unresolved_child_responsibility_count
+  required_unresolved_child_responsibility_count: 0
+  mixed_terminal_node: BLOCK
+  unresolved_container_node: BLOCK
+  recursive_decomposition_required: true
+  parent_child_responsibility_conservation_required: true
+phase_boundary_contract:
+  required_predecessor_phase: SOURCE_SEGMENT_MAPPING
+  source_segment_mapping_must_be_completed_before_source_fact_start: true
+  source_fact_materialization_after_segment_mapping: ALLOW
+  source_fact_materialization_is_not_segment_mapping_boundary_violation: true
+  source_fact_phase_operations:
+  - SOURCE_CONTEXT_COMPILATION
+  - SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
+  - SOURCE_DEPENDENCY_EXTRACTION
+  source_fact_phase_requires_all_operations_complete_before_downstream: true
+  before_source_fact_close:
+    DOMAIN_EXTRACTION: BLOCK
+    RESPONSIBILITY_CLASSIFICATION: BLOCK
+    PAGE_BASE_BLUEPRINT_COMPILE: BLOCK
+    VISUAL_BASE_BLUEPRINT_COMPILE: BLOCK
+    BLUEPRINT_BINDING_COMPILE: BLOCK
+    WEBSITE_CONSTRUCTION: BLOCK
+    DEPLOYMENT: BLOCK
+  after_source_fact_close:
+    DOMAIN_EXTRACTION: ALLOW_BY_NEXT_GATE
+    RESPONSIBILITY_CLASSIFICATION: ALLOW_BY_NEXT_GATE
+    PAGE_BASE_BLUEPRINT_COMPILE: ALLOW_ONLY_AFTER_CLASSIFICATION_GATE
+    VISUAL_BASE_BLUEPRINT_COMPILE: ALLOW_ONLY_AFTER_PAGE_BLUEPRINT_GATE
+    BLUEPRINT_BINDING_COMPILE: ALLOW_ONLY_AFTER_PAGE_AND_VISUAL_BLUEPRINT_GATES
+    WEBSITE_CONSTRUCTION: BLOCK_IN_STAGE_01
+    DEPLOYMENT: BLOCK_IN_STAGE_01
+  successor_gate_chain:
+  - predecessor: SOURCE_FACT_MATERIALIZATION
+    successor: RESPONSIBILITY_CLASSIFICATION
+    required_gate: SOURCE_FACT_GATE_PASS
+  - predecessor: RESPONSIBILITY_CLASSIFICATION
+    successor: PAGE_BASE_BLUEPRINT_COMPILE
+    required_gate: CLASSIFICATION_GATE_PASS
+  - predecessor: PAGE_BASE_BLUEPRINT_COMPILE
+    successor: VISUAL_BASE_BLUEPRINT_COMPILE
+    required_gate: PAGE_BASE_BLUEPRINT_GATE_PASS
+  - predecessor: VISUAL_BASE_BLUEPRINT_COMPILE
+    successor: BLUEPRINT_BINDING_COMPILE
+    required_gate: PAGE_AND_VISUAL_BLUEPRINT_GATES_PASS
+  predecessor_validator_successor_policy:
+    legal_successor_presence: ALLOW
+    retroactive_predecessor_invalidation: FORBIDDEN
+    predecessor_validator_scope: VALIDATE_PREDECESSOR_ARTIFACT_INTEGRITY_AND_GATE_EVIDENCE
+    phase_order_enforcement_owner: PHASE_BOUNDARY_GUARD
+    projection_wrapper_as_primary_acceptance_gate: FORBIDDEN
+unresolved_external_authority_preservation_contract:
+  source_fact_disposition: UNRESOLVED_AUTHORITY_GAP
+  explicit_raw_source_reference_outside_capture_is_source_fact_failure: false
+  explicit_raw_source_reference_outside_capture_is_invented_dependency: false
+  required_identity_fields:
+  - gap_uid
+  - authority_ref
+  - consumer_source_uids
+  - disposition
+  - authority_evidence_ref
+  gap_uid_unique: true
+  authority_ref_unique: true
+  consumer_source_uid_must_resolve_to_captured_raw_source: true
+  authority_evidence_ref_required: true
+  must_preserve_until_authoritative_resolution: true
+  drop_or_silent_ignore: BLOCK
+  ai_auto_fill: BLOCK
+  ai_inference_as_resolution: BLOCK
+  similarity_or_alias_substitution_as_resolution: BLOCK
+  default_value_as_resolution: BLOCK
+  false_satisfied_or_resolved_state: BLOCK
+  blueprint_carry_forward_required: true
+  blueprint_carry_field: unresolved_external_authority_refs
+  blueprint_carry_must_preserve_gap_uid_authority_ref_and_disposition: true
+  affected_blueprint_or_execution_closure_requires_resolution_evidence: true
+  resolution_requires:
+  - AUTHORITATIVE_SOURCE_MATERIALIZED
+  - EXACT_AUTHORITY_REF_MATCH
+  - AUTHORITY_CONTENT_HASH
+  - AUTHORITY_EVIDENCE_REF
+  applies_through:
+  - SOURCE_FACT_MATERIALIZATION
+  - RESPONSIBILITY_CLASSIFICATION
+  - BASE_BLUEPRINT
+  - BLUEPRINT_BINDING
+  - COMPILER
+  - RUNTIME_CONSTRUCTION
+  - VALIDATION_QA
+  - RELEASE_GATE
+  count_or_identity_drift: BLOCK
+  blueprint_carry_must_preserve_exact_identity_fields:
+  - gap_uid
+  - authority_ref
+  - disposition
+  - authority_evidence_ref
+  count_only_or_uid_only_validation: BLOCK
+  authority_evidence_ref_identity_drift: BLOCK
+closure_evidence_continuity_contract:
+  normative_section_uid: WEB-GOV-03-S058
+  applies_through:
+  - SOURCE_FACT_MATERIALIZATION
+  - RESPONSIBILITY_CLASSIFICATION
+  - PAGE_BASE_BLUEPRINT_COMPILE
+  - VISUAL_BASE_BLUEPRINT_COMPILE
+  - BLUEPRINT_BINDING_COMPILE
+  predecessor_started_completed_proofs_monotonic: true
+  replay_and_content_audit_proofs_monotonic: true
+  destructive_current_ledger_rewrite: BLOCK
+  current_ledger_synchronization_required: true
+  terminal_ci_receipt_model: EXTERNAL_IMMUTABLE_RECEIPT
+  unresolved_authority_exact_tuple_required: true
+  unresolved_authority_canonical_tuple_fields:
+  - gap_uid
+  - authority_ref
+  - disposition
+  - authority_evidence_ref
+  terminal_receipt_canonical_projection_required: true
+  terminal_receipt_required_fields:
+  - provider
+  - repository_or_project
+  - head_sha
+  - run_id
+  - job_denominator
+  - conclusion
+  terminal_receipt_alias_substitution: BLOCK
+  predecessor_validator_current_state_lock: FORBIDDEN
+  legal_successor_must_not_retroactively_fail_predecessor: true
+  phase_order_owner: PHASE_BOUNDARY_GATE
+predecessor_validator_successor_policy:
+  current_state_exact_predecessor_terminal_equality_as_pass_condition: FORBIDDEN
+  successor_started_false_as_permanent_pass_condition: FORBIDDEN
+  registered_legal_successor_presence: ALLOW_IF_PREDECESSOR_INVARIANTS_HOLD
+  illegal_successor_or_phase_skip: BLOCK
+  phase_order_owner: PHASE_BOUNDARY_GATE
+required_evidence_integrity_contract:
+  presence_only_acceptance: FORBIDDEN
+  parser_validation_required_before_materialized_or_closed: true
+  schema_or_required_field_validation_required_before_materialized_or_closed: true
+  malformed_or_unparseable_required_evidence: BLOCK

@@ -1,0 +1,647 @@
+schema_version: 1
+artifact_uid: REG-REFERENCE-RULE-001
+artifact_type: REFERENCE_RULE_REGISTRY
+status: CURRENT_CANDIDATE
+canonical_path: 10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
+owner_uid: OWNER-GOVERNANCE-REFERENCE-SEMANTICS
+governance_revision: v2.1.14-test-feedback-spec-evolution
+normative_section_uids:
+- WEB-GOV-01-S005
+- WEB-GOV-01-S006-03
+- WEB-GOV-01-S068
+- WEB-GOV-02-S057
+- WEB-GOV-02-S070
+- WEB-GOV-03-S057
+- WEB-GOV-04-S064
+- WEB-GOV-04-S072
+- WEB-GOV-04-S073
+- WEB-GOV-04-S074
+rules:
+  legal_uid_is_not_sufficient: true
+  semantic_binding_must_match_registered_rule: true
+  free_string_identity: BLOCK
+  unknown_typed_identity: BLOCK
+  profile_reference_drift: BLOCK
+  stage_reference_drift: BLOCK
+  common_bundle_reference_drift: BLOCK
+  normative_document_classification_drift: BLOCK
+program_profile_reference_rules:
+  UI_COMPONENT:
+    rule_uid: REFRULE-PROFILE-01
+    exact_required_normative_section_uids:
+    - WEB-GOV-01-S005
+    - WEB-GOV-02-S011
+    - WEB-GOV-02-S057
+  CONTROL_HANDLER:
+    rule_uid: REFRULE-PROFILE-02
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S009
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S012
+  API_ENTRY:
+    rule_uid: REFRULE-PROFILE-03
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S009
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S022
+  RUNTIME_SERVICE:
+    rule_uid: REFRULE-PROFILE-04
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S008
+    - WEB-GOV-02-S009
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S014
+  REPOSITORY_DATA_ACCESS:
+    rule_uid: REFRULE-PROFILE-05
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S010
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S015
+  DATABASE_MIGRATION:
+    rule_uid: REFRULE-PROFILE-06
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S017
+    - WEB-GOV-02-S054D
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S016
+  ASYNC_WORKER:
+    rule_uid: REFRULE-PROFILE-07
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S025
+    - WEB-GOV-02-S057
+  EXTERNAL_ADAPTER:
+    rule_uid: REFRULE-PROFILE-08
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S023
+    - WEB-GOV-02-S057
+  TEST_IMPLEMENTATION:
+    rule_uid: REFRULE-PROFILE-09
+    exact_required_normative_section_uids:
+    - WEB-GOV-03-S046
+    - WEB-GOV-04-S073
+    - WEB-GOV-02-S027
+    - WEB-GOV-02-S028
+    - WEB-GOV-02-S057
+stage_reference_rules:
+  STAGE-01:
+    rule_uid: REFRULE-STAGE-01
+    exact_required_normative_section_uids:
+    - WEB-GOV-01-S040A
+    - WEB-GOV-01-S058
+    - WEB-GOV-01-S063
+    - WEB-GOV-01-S064
+    - WEB-GOV-01-S065
+    - WEB-GOV-01-S069
+    - WEB-GOV-03-S052
+    - WEB-GOV-04-S059A
+    - WEB-GOV-04-S067
+    - WEB-GOV-04-S069
+    - WEB-GOV-04-S070
+  STAGE-02:
+    rule_uid: REFRULE-STAGE-02
+    exact_required_normative_section_uids:
+    - WEB-GOV-01-S040C
+    - WEB-GOV-01-S059
+    - WEB-GOV-01-S061
+    - WEB-GOV-01-S062
+    - WEB-GOV-02-S008
+    - WEB-GOV-02-S009
+    - WEB-GOV-02-S054B
+    - WEB-GOV-02-S066
+    - WEB-GOV-04-S059C
+    - WEB-GOV-01-S072
+    - WEB-GOV-03-S061
+  STAGE-03:
+    rule_uid: REFRULE-STAGE-03
+    exact_required_normative_section_uids:
+    - WEB-GOV-01-S016
+    - WEB-GOV-01-S020
+    - WEB-GOV-01-S021
+    - WEB-GOV-01-S022
+    - WEB-GOV-01-S023
+    - WEB-GOV-01-S031
+    - WEB-GOV-01-S033
+    - WEB-GOV-01-S040E
+    - WEB-GOV-02-S031
+    - WEB-GOV-02-S054C
+    - WEB-GOV-04-S024
+    - WEB-GOV-04-S059D
+    - WEB-GOV-01-S072
+    - WEB-GOV-03-S061
+  STAGE-04:
+    rule_uid: REFRULE-STAGE-04
+    exact_required_normative_section_uids:
+    - WEB-GOV-01-S034
+    - WEB-GOV-01-S035
+    - WEB-GOV-01-S036
+    - WEB-GOV-01-S037
+    - WEB-GOV-01-S038
+    - WEB-GOV-03-S022
+    - WEB-GOV-04-S023
+  STAGE-05:
+    rule_uid: REFRULE-STAGE-05
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S005
+    - WEB-GOV-02-S006
+    - WEB-GOV-02-S007
+    - WEB-GOV-02-S008
+    - WEB-GOV-02-S009
+    - WEB-GOV-02-S010
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S058
+    - WEB-GOV-03-S002
+    - WEB-GOV-03-S005
+    - WEB-GOV-03-S015
+    - WEB-GOV-02-S072
+    - WEB-GOV-03-S061
+  STAGE-06:
+    rule_uid: REFRULE-STAGE-06
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S027
+    - WEB-GOV-02-S028
+    - WEB-GOV-02-S029
+    - WEB-GOV-02-S030
+    - WEB-GOV-02-S031
+    - WEB-GOV-02-S032
+    - WEB-GOV-02-S033
+    - WEB-GOV-02-S034
+    - WEB-GOV-02-S035
+    - WEB-GOV-02-S036
+    - WEB-GOV-02-S072
+    - WEB-GOV-03-S061
+  STAGE-07:
+    rule_uid: REFRULE-STAGE-07
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S037
+    - WEB-GOV-02-S052
+    - WEB-GOV-02-S054D
+    - WEB-GOV-02-S059
+    - WEB-GOV-02-S062
+  STAGE-08:
+    rule_uid: REFRULE-STAGE-08
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S038
+    - WEB-GOV-02-S063
+  STAGE-09:
+    rule_uid: REFRULE-STAGE-09
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S039
+    - WEB-GOV-02-S040
+    - WEB-GOV-02-S041
+    - WEB-GOV-02-S054D
+  STAGE-10:
+    rule_uid: REFRULE-STAGE-10
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S042
+    - WEB-GOV-02-S043
+    - WEB-GOV-02-S044
+    - WEB-GOV-02-S045
+    - WEB-GOV-02-S046
+    - WEB-GOV-02-S054E
+    - WEB-GOV-02-S054F
+    - WEB-GOV-04-S036
+    - WEB-GOV-04-S059E
+    - WEB-GOV-04-S059F
+    - WEB-GOV-02-S012
+    - WEB-GOV-02-S016
+    - WEB-GOV-02-S025
+    - WEB-GOV-02-S030
+    - WEB-GOV-02-S031
+    - WEB-GOV-02-S072
+    - WEB-GOV-03-S061
+    - WEB-GOV-04-S077
+  STAGE-11:
+    rule_uid: REFRULE-STAGE-11
+    exact_required_normative_section_uids:
+    - WEB-GOV-02-S047
+    - WEB-GOV-02-S048
+    - WEB-GOV-02-S049
+    - WEB-GOV-02-S053
+    - WEB-GOV-04-S055
+    - WEB-GOV-04-S056
+    - WEB-GOV-04-S057
+common_bundle_reference_rules:
+  BUNDLE-GOV-COMMON-CORE:
+    rule_uid: REFRULE-BUNDLE-01
+    exact_section_uids:
+    - WEB-GOV-01-S002
+    - WEB-GOV-01-S003
+    - WEB-GOV-01-S003A
+    - WEB-GOV-01-S004
+    - WEB-GOV-01-S005
+    - WEB-GOV-01-S008
+    - WEB-GOV-04-S001
+    - WEB-GOV-04-S002
+    - WEB-GOV-04-S003
+    - WEB-GOV-03-S052
+    - WEB-GOV-03-S058
+    - WEB-GOV-01-S071
+    - WEB-GOV-01-S072
+  BUNDLE-GOV-CONSTRUCTION-BASE:
+    rule_uid: REFRULE-BUNDLE-02
+    exact_section_uids:
+    - WEB-GOV-01-S066
+    - WEB-GOV-01-S067
+    - WEB-GOV-01-S068
+    - WEB-GOV-02-S001
+    - WEB-GOV-02-S002
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S058
+    - WEB-GOV-02-S066
+    - WEB-GOV-02-S070
+    - WEB-GOV-03-S001
+    - WEB-GOV-03-S020
+    - WEB-GOV-03-S043
+    - WEB-GOV-03-S053
+    - WEB-GOV-03-S054
+    - WEB-GOV-03-S055
+    - WEB-GOV-03-S056
+    - WEB-GOV-03-S057
+    - WEB-GOV-02-S071
+    - WEB-GOV-03-S060
+    - WEB-GOV-02-S072
+    - WEB-GOV-03-S061
+  BUNDLE-GOV-AUDIT-BASE:
+    rule_uid: REFRULE-BUNDLE-03
+    exact_section_uids:
+    - WEB-GOV-04-S006
+    - WEB-GOV-04-S011
+    - WEB-GOV-04-S012
+    - WEB-GOV-04-S064
+    - WEB-GOV-04-S065
+    - WEB-GOV-04-S074
+    - WEB-GOV-04-S076
+    - WEB-GOV-04-S077
+validator_identities:
+- validator_uid: VAL-GOV-001
+  canonical_name: ACCEPTANCE_BLUEPRINT_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-002
+  canonical_name: CLEANUP_PROTECTION_GUARD
+  implementation_path: 09_TESTS/governance/validate_cleanup_protection.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - AUDIT_CATALOG
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-003
+  canonical_name: CONSTRUCTION_ARTIFACT_INDEX_GUARD
+  implementation_path: 09_TESTS/governance/validate_construction_artifact_index.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - AUDIT_CATALOG
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-004
+  canonical_name: DEPENDENCY_CONTINUITY_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-005
+  canonical_name: DEPLOYMENT_IDENTITY_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-006
+  canonical_name: DESIGN_FREEZE_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-007
+  canonical_name: FINAL_PRODUCTION_ACCEPTANCE_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-008
+  canonical_name: FUNCTIONAL_CONTRACT_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-009
+  canonical_name: GOVERNANCE_VALIDATOR
+  implementation_path: 09_TESTS/governance/validate_governance.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - AUDIT_CATALOG
+  - LIFECYCLE_STAGE
+  - PREFORMAL_DEFINITION
+- validator_uid: VAL-GOV-010
+  canonical_name: IMPLEMENTATION_CONTRACT_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-011
+  canonical_name: LIFECYCLE_STAGE_CONTRACT_GUARD
+  implementation_path: 09_TESTS/governance/governance_lifecycle_stage_contract_guard.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - AUDIT_CATALOG
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-012
+  canonical_name: MANAGEMENT_CONTRACT_GUARD
+  implementation_path: 09_TESTS/governance/governance_management_contract_guard.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - AUDIT_CATALOG
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-013
+  canonical_name: MIGRATION_COMPATIBILITY_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-014
+  canonical_name: PRODUCTION_ACCEPTANCE_DIMENSION_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-015
+  canonical_name: PRODUCTION_CUTOVER_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-016
+  canonical_name: PRODUCTION_PAGE_CLOSURE_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-017
+  canonical_name: PRODUCTION_RENDER_IDENTITY_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-018
+  canonical_name: PROGRAM_ARTIFACT_INSTANCE_GUARD
+  implementation_path: 09_TESTS/governance/program_artifact_instance_guard.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - LIFECYCLE_STAGE
+  - AUDIT_CATALOG
+  - PREFORMAL_DEFINITION
+- validator_uid: VAL-GOV-019
+  canonical_name: PROGRAM_PROFILE_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-020
+  canonical_name: QA_ACCEPTANCE_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-021
+  canonical_name: REFERENCE_SEMANTIC_GUARD
+  implementation_path: 09_TESTS/governance/validate_reference_semantics.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - LIFECYCLE_STAGE
+  - AUDIT_CATALOG
+  - PREFORMAL_DEFINITION
+- validator_uid: VAL-GOV-022
+  canonical_name: RELEASE_CANDIDATE_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-023
+  canonical_name: SECTION_NUMBER_REGISTRY_GUARD
+  implementation_path: 09_TESTS/governance/validate_section_registry.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - AUDIT_CATALOG
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-024
+  canonical_name: SECURITY_FRESHNESS_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-025
+  canonical_name: SOURCE_FACT_CONTRACT_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-026
+  canonical_name: STAGE1_SOURCE_PIPELINE_GUARD
+  implementation_path: 09_TESTS/governance/governance_stage1_pipeline_guard.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - AUDIT_CATALOG
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-027
+  canonical_name: STAGING_ACCEPTANCE_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-028
+  canonical_name: STAGING_APPLICABILITY_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-029
+  canonical_name: VISUAL_DOMAIN_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-030
+  canonical_name: VISUAL_GEOMETRY_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-031
+  canonical_name: WORK_UNIT_CLOSURE_GUARD
+  implementation_path: null
+  identity_mode: DECLARED_STAGE_GUARD
+  allowed_usage:
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-032
+  canonical_name: CURRENT_TEST_EVIDENCE_SYNC_GUARD
+  implementation_path: 09_TESTS/governance/validate_current_test_evidence.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - PREFORMAL_DEFINITION
+- validator_uid: VAL-GOV-034
+  canonical_name: CLOSURE_EVIDENCE_CONTINUITY_GUARD
+  implementation_path: 09_TESTS/governance/validate_closure_evidence_continuity.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - PREFORMAL_DEFINITION
+- validator_uid: VAL-GOV-035
+  canonical_name: STAGE_EXECUTION_INVARIANT_GUARD
+  implementation_path: 09_TESTS/governance/validate_stage_execution_invariants.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - PREFORMAL_DEFINITION
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-036
+  canonical_name: TEST_FEEDBACK_SPEC_EVOLUTION_GUARD
+  implementation_path: 09_TESTS/governance/validate_test_feedback_spec_evolution.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - PREFORMAL_DEFINITION
+  - LIFECYCLE_STAGE
+- validator_uid: VAL-GOV-037
+  canonical_name: PRODUCT_NEUTRAL_ENTITY_LIFECYCLE_GUARD
+  implementation_path: 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
+  identity_mode: PHYSICAL_VALIDATOR
+  allowed_usage:
+  - PREFORMAL_DEFINITION
+  - LIFECYCLE_STAGE
+  - AUDIT_CATALOG
+audit_type_identities:
+- audit_type_uid: AUDTYPE-GOV-001
+  canonical_name: SECTION_NUMBER_UNIQUENESS
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-002
+  canonical_name: NORMATIVE_REFERENCE_RESOLUTION
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-003
+  canonical_name: PROTECTED_CURRENT_ARTIFACT_COMPLETENESS
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-004
+  canonical_name: LIFECYCLE_STAGE_CONTRACT_COMPLETENESS
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-005
+  canonical_name: DELIVERY_STEP_1_54_BINDING
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-006
+  canonical_name: MANAGEMENT_REGISTRY_MATERIALIZATION
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-007
+  canonical_name: STAGE1_SOURCE_FACT_CONTRACT
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-008
+  canonical_name: ACCEPTANCE_BLUEPRINT_BASELINE_CLOSED_LOOP
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-009
+  canonical_name: MODE_AWARE_VALIDATION
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-010
+  canonical_name: PACKAGE_PARSER_HYGIENE
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-011
+  canonical_name: SUPERSESSION_CLEANUP_FAIL_CLOSED
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-012
+  canonical_name: PROGRAM_ARTIFACT_NAMING_REFERENCE_BINDING
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-013
+  canonical_name: PRODUCT_NEUTRAL_ENTITY_LIFECYCLE_COMPLETENESS
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+review_type_identities:
+- review_type_uid: REVTYPE-GOV-001
+  canonical_name: PREFORMAL_GOVERNANCE_REVIEW
+  allowed_target_types:
+  - GOVERNANCE_PACKAGE
+blueprint_type_identities:
+- blueprint_type_uid: BPTYPE-GOV-001
+  canonical_name: PAGE_BASE_BLUEPRINT
+  planning_domain: PAGE_CONSTRUCTION
+  created_stage_uid: STAGE-01
+- blueprint_type_uid: BPTYPE-GOV-002
+  canonical_name: VISUAL_BASE_BLUEPRINT
+  planning_domain: VISUAL_CONSTRUCTION
+  created_stage_uid: STAGE-01
+- blueprint_type_uid: BPTYPE-GOV-003
+  canonical_name: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  planning_domain: PAGE_CONSTRUCTION
+  created_stage_uid: STAGE-02
+- blueprint_type_uid: BPTYPE-GOV-004
+  canonical_name: VISUAL_DESIGN_SPEC_PACKAGE
+  planning_domain: VISUAL_CONSTRUCTION
+  created_stage_uid: STAGE-03
+- blueprint_type_uid: BPTYPE-GOV-005
+  canonical_name: DESIGN_FREEZE_PACKAGE
+  planning_domain: NON_OWNING_BINDING
+  created_stage_uid: STAGE-04
+- blueprint_type_uid: BPTYPE-GOV-006
+  canonical_name: ACCEPTANCE_AUDIT_BLUEPRINT
+  planning_domain: ACCEPTANCE
+  created_stage_uid: STAGE-04
+normative_document_rules:
+- document_id: WEB-GOV-01
+  canonical_path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+  expected_category: blueprint_design_governance
+  required_before_execution: true
+  status: normative
+- document_id: WEB-GOV-02
+  canonical_path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+  expected_category: implementation_delivery
+  required_before_execution: true
+  status: normative
+- document_id: WEB-GOV-03
+  canonical_path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+  expected_category: execution_control
+  required_before_execution: true
+  status: normative
+- document_id: WEB-GOV-04
+  canonical_path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+  expected_category: audit_progress_reporting
+  required_before_execution: true
+  status: normative
+naming_registry_contract:
+  required_item_fields:
+  - uid
+  - entity_type
+  - canonical_name
+  - display_name
+  - code_name
+  - canonical_file_name
+  - module_uid
+  - parent_uid
+  - aliases
+  - deprecated_names
+  - owner_file
+  - version
+  - status
+  canonical_name_pattern: ^[A-Z][A-Z0-9_]*$
+  governance_fixed_filename_exception_authority: WEB-GOV-01-S006-03
+  duplicate_canonical_name: BLOCK
+  duplicate_uid: BLOCK
+  duplicate_canonical_path: BLOCK
+acceptance_authority_contract:
+  single_denominator_source: audit_item_uids + AUDIT_CATALOG.items
+  embedded_second_audit_items: BLOCK

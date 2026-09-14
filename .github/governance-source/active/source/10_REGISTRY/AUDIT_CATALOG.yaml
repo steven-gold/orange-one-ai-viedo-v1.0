@@ -1,0 +1,173 @@
+schema_version: 1
+artifact_uid: REG-AUDIT-CATALOG-001
+artifact_type: AUDIT_CATALOG
+status: CURRENT_CANDIDATE
+canonical_path: 10_REGISTRY/AUDIT_CATALOG.yaml
+owner_uid: OWNER-GOVERNANCE-AUDIT-CATALOG
+governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+normative_section_uids:
+- WEB-GOV-04-S072
+- WEB-GOV-04-S073
+- WEB-GOV-04-S076
+denominator_policy: FIXED_BY_CURRENT_ACCEPTANCE_AUDIT_BLUEPRINT
+items:
+- audit_item_uid: AUD-GOV-001
+  audit_type: SECTION_NUMBER_UNIQUENESS
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-023
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: SECTION_NUMBER_REGISTRY_GUARD
+  audit_type_uid: AUDTYPE-GOV-001
+- audit_item_uid: AUD-GOV-002
+  audit_type: NORMATIVE_REFERENCE_RESOLUTION
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-003
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: CONSTRUCTION_ARTIFACT_INDEX_GUARD
+  audit_type_uid: AUDTYPE-GOV-002
+- audit_item_uid: AUD-GOV-003
+  audit_type: PROTECTED_CURRENT_ARTIFACT_COMPLETENESS
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-002
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: CLEANUP_PROTECTION_GUARD
+  audit_type_uid: AUDTYPE-GOV-003
+- audit_item_uid: AUD-GOV-004
+  audit_type: LIFECYCLE_STAGE_CONTRACT_COMPLETENESS
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-011
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: LIFECYCLE_STAGE_CONTRACT_GUARD
+  audit_type_uid: AUDTYPE-GOV-004
+- audit_item_uid: AUD-GOV-005
+  audit_type: DELIVERY_STEP_1_54_BINDING
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-011
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: LIFECYCLE_STAGE_CONTRACT_GUARD
+  audit_type_uid: AUDTYPE-GOV-005
+- audit_item_uid: AUD-GOV-006
+  audit_type: MANAGEMENT_REGISTRY_MATERIALIZATION
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-012
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: MANAGEMENT_CONTRACT_GUARD
+  audit_type_uid: AUDTYPE-GOV-006
+- audit_item_uid: AUD-GOV-007
+  audit_type: STAGE1_SOURCE_FACT_CONTRACT
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-026
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: STAGE1_SOURCE_PIPELINE_GUARD
+  audit_type_uid: AUDTYPE-GOV-007
+- audit_item_uid: AUD-GOV-008
+  audit_type: ACCEPTANCE_BLUEPRINT_BASELINE_CLOSED_LOOP
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-009
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: GOVERNANCE_VALIDATOR
+  audit_type_uid: AUDTYPE-GOV-008
+- audit_item_uid: AUD-GOV-009
+  audit_type: MODE_AWARE_VALIDATION
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-009
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: GOVERNANCE_VALIDATOR
+  audit_type_uid: AUDTYPE-GOV-009
+- audit_item_uid: AUD-GOV-010
+  audit_type: PACKAGE_PARSER_HYGIENE
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-009
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: GOVERNANCE_VALIDATOR
+  audit_type_uid: AUDTYPE-GOV-010
+- audit_item_uid: AUD-GOV-011
+  audit_type: SUPERSESSION_CLEANUP_FAIL_CLOSED
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-002
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: CLEANUP_PROTECTION_GUARD
+  audit_type_uid: AUDTYPE-GOV-011
+- audit_item_uid: AUD-GOV-012
+  audit_type: PROGRAM_ARTIFACT_NAMING_REFERENCE_BINDING
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-003
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: CONSTRUCTION_ARTIFACT_INDEX_GUARD
+  audit_type_uid: AUDTYPE-GOV-012
+- audit_item_uid: AUD-GOV-013
+  audit_type: PRODUCT_NEUTRAL_ENTITY_LIFECYCLE_COMPLETENESS
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-037
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: PRODUCT_NEUTRAL_ENTITY_LIFECYCLE_GUARD
+  audit_type_uid: AUDTYPE-GOV-013
+  coverage_extensions:
+  - FUNCTIONAL_WORKBENCH_COHESION
+  - INTERACTION_TOPOLOGY_BINDING
+  - AI_INTERACTION_CONTINUITY_AND_DECISION_BOUNDARY_WHEN_APPLICABLE

@@ -1,0 +1,46 @@
+schema_version: 1
+registry_uid: REG-PROGRAM-IDENTITY-AUTHORITY-001
+artifact_type: PROGRAM_IDENTITY_AUTHORITY_REGISTRY
+status: CURRENT_CANDIDATE
+canonical_path: 10_REGISTRY/PROGRAM_IDENTITY_AUTHORITY_REGISTRY.yaml
+owner_uid: OWNER-GOVERNANCE-CONSTRUCTION-AUTHORITY
+governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+policy:
+  register_before_generation: true
+  exactly_one_identity_resolution_required: true
+  unresolved_reference: BLOCK
+  cross_type_substitution: BLOCK
+  registered_program_artifact_fields_are_write_target_authority: true
+  framework_reserved_filename_requires_explicit_allowance: true
+  product_neutral_reference_identity_required: true
+  product_specific_identity_in_common_registry: BLOCK
+identities:
+  - uid: PA-DEMO-PAGE-RUNTIME-001
+    identity_type: PROGRAM_ARTIFACT
+    status: PLANNED
+    canonical_name: EXAMPLE_RUNTIME_SERVICE
+    canonical_path: src/example/DEMO-PAGE-001/runtime-service.ts
+    canonical_filename: runtime-service.ts
+    construction_profile: RUNTIME_SERVICE
+    work_unit_uid: WU-DEMO-PAGE-001
+    page_uid_or_scope_uid: DEMO-PAGE-001
+    owner_uid: OWNER-DEMO-RUNTIME
+    producer_stage_uid: STAGE-05
+    framework_reserved_filename_allowed: false
+    example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
+  - uid: WU-DEMO-PAGE-001
+    identity_type: WORK_UNIT
+    status: CURRENT
+    example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
+  - uid: DEMO-PAGE-001
+    identity_type: PAGE_OR_SCOPE
+    status: CURRENT
+    example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
+  - uid: OWNER-DEMO-RUNTIME
+    identity_type: OWNER
+    status: CURRENT
+    example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
+  - uid: TEST-DEMO-RUNTIME-001
+    identity_type: TEST
+    status: PLANNED
+    example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY

@@ -1,0 +1,600 @@
+schema_version: 1
+baseline_version: v2.1.0
+baseline_package_sha256: 47e744440583c2d3125ea380aca679c4af01a0c2a11cbccfd5294ce0ff54b4d4
+defects:
+- defect_uid: GOV-DEFECT-STAGE1-EXTRACTION-DOMAIN-SEPARATION
+  status: FIXED_VERIFIED
+  scope: SOURCE_INTAKE_EXTRACTION_ONLY
+  reproduced_problem: Mixed raw/page authority source could be retained as a reference snapshot without requiring PAGE_CONSTRUCTION and VISUAL_CONSTRUCTION extraction
+    outputs to be independently materialized at the extraction boundary.
+  correction: Require independent physical extraction artifacts, independent editable owners, section-level lineage and shared-fact reference semantics before Source
+    Intake closure.
+- defect_uid: GOV-DEFECT-STAGE1-MOVING-TARGET-TEST
+  status: FIXED_VERIFIED
+  scope: GOVERNANCE_TEST_CONTROL
+  reproduced_problem: Governance rules could be edited during iterative testing, creating a moving-target test process.
+  correction: Freeze normative aggregate hash per test run; any mutation invalidates the run and requires a new bugfix candidate plus rerun.
+- defect_uid: GOV-DEFECT-STAGE1-MINIMAL-CONTROL
+  status: FIXED_VERIFIED
+  scope: GOVERNANCE_TEST_CONTROL
+  reproduced_problem: Test fixtures needed an explicit rule forbidding validator-directed expected outcomes and self-declared PASS from satisfying gates.
+  correction: Fixtures carry observable facts only; expected outcomes remain outside validator input and all PASS conclusions are recomputed.
+- defect_uid: GOV-DEFECT-STAGE1-CLASSIFIED-CONTENT-MATERIALIZATION
+  status: FIXED_VERIFIED_LOCAL
+  scope: SOURCE_INTAKE_CLASSIFICATION_AND_BASE_BLUEPRINT
+  reproduced_problem: v2.1.1 required Page/Visual domain separation but did not machine-enforce responsibility-scoped physical classification before Base Blueprint
+    construction, allowing two large mixed domain files to masquerade as classified planning artifacts.
+  correction: Require two-level decomposition, source-segment-to-classification mapping closure, one governed responsibility per canonical owner unless MIXED_ALLOWED
+    proof is complete, Base Blueprint compilation only from current classified refs/hashes, and zero residual current-output garbage.
+- defect_uid: GOV-DEFECT-STAGE1-SOURCE-ENUMERATION-COVERAGE
+  status: FIXED_VERIFIED_LOCAL
+  scope: SOURCE_INTAKE_COMPLETENESS
+  reproduced_problem: A run could declare only a convenient subset of source segments, classify all declared segments, and pass because the validator had no independent
+    source-structure manifest proving that all required source nodes were enumerated.
+  correction: Require an immutable SOURCE_STRUCTURE_MANIFEST derived from the observed raw source structure and require every required source node to have exactly
+    one legal segment/disposition before classification closure.
+- defect_uid: GOV-DEFECT-STAGE1-BLUEPRINT-DOMAIN-SEPARATION
+  status: FIXED_VERIFIED_LOCAL
+  scope: BASE_BLUEPRINT_DOMAIN_OWNERSHIP
+  reproduced_problem: A single Base Blueprint could index both Page Construction and Visual Construction classified artifacts, weakening the independent planning
+    ownership boundary.
+  correction: Require exactly one PAGE_BASE_BLUEPRINT and one VISUAL_BASE_BLUEPRINT per page, each consuming only its own planning domain; an optional/required binding
+    manifest may reference both hashes but may not own or duplicate either payload.
+- defect_uid: GOV-DEFECT-PROGRAM-SOURCE-NAMING-UNBOUND
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: PROGRAM_CONSTRUCTION_IDENTITY
+  reproduced_problem: Program source filenames and paths could be chosen during implementation without a pre-registered Program Artifact UID/Profile/Owner binding,
+    creating retrieval drift and duplicate source risk.
+  correction: Require pre-generation Program Artifact registration; framework-reserved filenames are controlled exceptions whose canonical path, UID, owner and profile
+    remain registered identity.
+- defect_uid: GOV-DEFECT-CONSTRUCTION-REFERENCE-GUIDANCE-UNBOUND
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: WORK_UNIT_REFERENCE_LOADING
+  reproduced_problem: Implementation could rediscover or rescan broad governance/source content instead of consuming an exact Work Unit reference set, increasing
+    missed-context and wrong-authority risk.
+  correction: Require IMPLEMENTATION_MANIFEST-first loading with exact normative refs, input artifact refs, dependency closure, acceptance blueprint and tests; ordinary
+    full-package rescans are forbidden.
+- defect_uid: GOV-DEFECT-UNIVERSAL-SUPERSESSION-CLEANUP
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: ALL_CURRENT_ARTIFACT_TYPES
+  reproduced_problem: Supersession/cleanup controls were not expressed as one universal transaction for every construction artifact class, permitting stale Current
+    owners or generated residuals to survive replacement.
+  correction: Apply a universal supersession cleanup transaction with forward/reverse reference migration, REVERIFY propagation, Current-index removal, physical generated-artifact
+    cleanup and zero-residual closure metrics.
+- defect_uid: GOV-DEFECT-CROSS-LAYER-PAGE-CONTINUITY
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: DEPENDENCY_CONTINUITY
+  reproduced_problem: Classification/indexing could be locally correct while required cross-layer, cross-stage or cross-page producer/consumer continuity remained
+    implicit.
+  correction: Require bidirectional dependency edges with producer hash, consumer stage and handoff/contract refs; changed producer hashes force dependent consumers
+    to REVERIFY_REQUIRED.
+- defect_uid: GOV-DEFECT-CLEANUP-PROTECTED-CURRENT-ARTIFACT-SAFETY
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: GOVERNANCE_INFRASTRUCTURE
+  reproduced_problem: Automated cleanup could delete required Current governance artifacts because protection/reference proof was not a hard pre-delete gate.
+  correction: Protected Current Artifact Registry + fail-closed delete proof gate; restored all required artifacts removed by the prior CLEAN packaging.
+- defect_uid: GOV-DEFECT-NORMATIVE-REFERENCE-SECTION-UID
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: GOVERNANCE_INFRASTRUCTURE
+  reproduced_problem: Program construction index used free-text heading references that did not resolve exactly and could navigate to the wrong or missing rule.
+  correction: Unique SECTION_UID anchors/registry; construction references use section UID only and validator proves exact physical resolution.
+- defect_uid: GOV-DEFECT-DUPLICATE-NORMATIVE-SECTION-NUMBERS
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: GOVERNANCE_INFRASTRUCTURE
+  reproduced_problem: Four normative documents contained 16 duplicate numeric heading groups, creating ambiguous navigation identity.
+  correction: All 16 historical duplicate groups are registered; 17 later duplicate occurrences were renumbered to unique canonical numbers and anchored by SECTION_UID.
+- defect_uid: GOV-DEFECT-PACKAGE-SELF-CONTAINMENT-OVER-CLEANUP
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: GOVERNANCE_INFRASTRUCTURE
+  reproduced_problem: CLEAN package omitted Lifecycle/Naming/Blueprint/Audit/Review/Acceptance/Baseline machine artifacts required by the current design.
+  correction: Restored non-placeholder current machine artifacts and added them to Root Manifest + Protected Current Artifact Registry.
+- defect_uid: GOV-DEFECT-CONSTRUCTION-INDEX-SEMANTIC-SHALLOWNESS
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: GOVERNANCE_INFRASTRUCTURE
+  reproduced_problem: Construction Artifact Index validator checked shape but missed unsafe semantic mutations.
+  correction: Validator now enforces exact boolean/BLOCK policies, stable section UIDs, profile set, edge fields, cleanup sequence and unsafe path denial.
+- defect_uid: GOV-DEFECT-STAGE1-CONTEXT-CONTINUITY-BLINDSPOTS
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: GOVERNANCE_INFRASTRUCTURE
+  reproduced_problem: Stage-1 guard missed page drift, source identity drift, unresolved shared refs, run/stage identity drift and residual old-copy files.
+  correction: Stage-1 guard now enforces physical evidence, run/stage identity, page/source lineage, shared target resolution, source-fact contracts and generated
+    filename residual policy.
+- defect_uid: GOV-DEFECT-GLOBAL-VALIDATOR-STAGE-AWARENESS
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: GOVERNANCE_INFRASTRUCTURE
+  reproduced_problem: Global validator crossed stage boundaries and required website/Production evidence during governance pre-formal validation.
+  correction: Mode-aware PRE_FORMAL_DEFINITION_AUDIT / STAGE_EXECUTION_VALIDATION / RELEASE_FINAL_VALIDATION entry contracts implemented.
+- defect_uid: GOV-DEFECT-PREEXECUTION-GOVERNANCE-LOAD-NOT-PROVEN
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: ALL_STAGE_EXECUTION
+  reproduced_problem: Implementation Manifest presence did not prove that required governance was actually resolved/read before execution.
+  correction: Require a current GOVERNANCE_LOAD_RECEIPT before every Stage operation/code write, bound to governance revision, Root Manifest hash, Section Registry
+    hash, target manifest hash, effective normative set, resolved Section UID receipts and loaded dependency artifacts.
+- defect_uid: GOV-DEFECT-COMMON-SPECIFIC-NORMATIVE-LOAD-GAP
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: NORMATIVE_LOADING
+  reproduced_problem: An item could theoretically consume only profile/item-specific rules and omit shared construction governance, causing baseline-rule discontinuity.
+  correction: Effective normative set is mandatory COMMON BUNDLES + STAGE refs + PROFILE refs + ARTIFACT-SPECIFIC refs + DEPENDENCY-CLOSURE refs; any missing layer
+    blocks execution.
+- defect_uid: GOV-DEFECT-UID-READ-WRITE-TARGET-TYPING
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: UID_RESOLUTION_AND_MUTATION_SAFETY
+  reproduced_problem: Exact Section UID resolution existed, but UID type/access mode and exact write-target binding were not hard-gated; a valid but wrong registered
+    artifact could be selected as a write target.
+  correction: Typed UID resolver makes normative Section UIDs read-only and requires every construction write to match Program Artifact UID, Work Unit, scope/page,
+    owner, profile, canonical path/filename, producer Stage and expected pre-write hash.
+- defect_uid: GOV-DEFECT-LEGAL-UID-WRONG-SEMANTIC-REFERENCE
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: REFERENCE_SEMANTICS
+  reproduced_problem: A legal Section UID could satisfy Profile/Stage validation even when unrelated to the required responsibility.
+  correction: REFERENCE_RULE_REGISTRY now owns exact Profile/Stage/Common-Bundle semantic sets; legal-but-wrong replacements fail closed.
+- defect_uid: GOV-DEFECT-NAMING-REGISTRY-SELF-INCONSISTENCY
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: NAMING_AUTHORITY
+  reproduced_problem: Naming Registry items omitted required Canonical Naming Authority fields and its fixed governance filenames had no explicit machine-verifiable
+    exception authority.
+  correction: Naming items now carry the complete required identity fields; fixed governance filenames are allowed only through the registered S006-03 exception and
+    exact path/name binding.
+- defect_uid: GOV-DEFECT-FREE-STRING-VALIDATOR-AUDIT-REVIEW-BLUEPRINT-IDENTITY
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: TYPED_GOVERNANCE_IDENTITY
+  reproduced_problem: Validator, Audit Type, Review Type and Blueprint Type identities were partly free strings without a formal UID-to-owner/type authority.
+  correction: REFERENCE_RULE_REGISTRY assigns typed formal UIDs and validates name/type/usage closure; unknown typed identities block.
+- defect_uid: GOV-DEFECT-SECOND-ACCEPTANCE-AUDIT-LOGIC
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: ACCEPTANCE_DENOMINATOR
+  reproduced_problem: Acceptance Audit Blueprint contained an embedded audit_items branch outside the formal AUD-GOV-001..012 denominator.
+  correction: Embedded second audit logic removed; the only acceptance denominator is blueprint audit_item_uids bound to AUDIT_CATALOG items.
+- defect_uid: GOV-DEFECT-PROGRAM-ARTIFACT-MUTUAL-SELF-PROOF
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: PROGRAM_ARTIFACT_INSTANCE
+  reproduced_problem: Artifact and Manifest could agree on the same invalid path/profile/stage/blueprint/hash and pass pairwise consistency checks.
+  correction: Independent Program Artifact Instance Guard validates Canonical Name, Path, Filename, Profile, Stage, Owner, Acceptance Blueprint, Hash and Work Unit
+    against authority before considering Manifest binding.
+- defect_uid: GOV-DEFECT-SEMANTIC-AUTHORITY-JOINT-SELF-PROOF
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: REFERENCE_SEMANTIC_AUTHORITY
+  reproduced_problem: REFERENCE_RULE_REGISTRY and its consumers could previously be mutated to the same legal-but-wrong values and then re-signed by official refresh
+    flows.
+  correction: Added an immutable semantic authority baseline whose content hash is explicitly anchored by validators and is never regenerated by compiler/refresh
+    scripts; Registry and Consumer must independently match it.
+- defect_uid: GOV-DEFECT-IMPLEMENTATION-MANIFEST-RUNTIME-ENFORCEMENT-GAP
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: PROGRAM_ARTIFACT_RUNTIME_INSTANCE
+  reproduced_problem: Implementation Manifest declared required fields but the runtime instance guard did not execute every field, receipt, dependency closure, item-specific
+    semantic minimum, or CURRENT physical hash requirement.
+  correction: Execute all Program Artifact and Implementation Manifest required fields at runtime; bind item-specific minima to immutable semantic authority; require
+    evidence objects for governance receipt/dependency closure; validate CURRENT physical file/hash.
+- defect_uid: GOV-DEFECT-RECEIPT-WRITE-BINDING-MUTUAL-SELF-PROOF
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: EXECUTION_IDENTITY
+  reproduced_problem: A fake governance receipt UID or write-target binding UID could be co-signed by Artifact and Manifest.
+  correction: Receipt and write-target binding UIDs are deterministic hashes over authoritative Work Unit/Revision/Normative Set and Artifact/Path/Hash inputs, preventing
+    arbitrary co-signed identifiers.
+- defect_uid: GOV-DEFECT-CLEANUP-STRING-ONLY-PROOF
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: CLEANUP_SAFETY
+  reproduced_problem: Delete Gate accepted the names of seven proofs without verifying evidence behind them.
+  correction: Delete authorization now requires structured evidence and independently recomputes protected/current/raw-source/reference facts, validates Cleanup Ledger
+    transaction/replacement proof, and requires post-delete residual verification.
+- defect_uid: GOV-DEFECT-ROOT-MANIFEST-NONEXACT-CURRENT-SET
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: CURRENT_ARTIFACT_AUTHORITY
+  reproduced_problem: Root Manifest validated listed entries but did not prove that all required Current artifacts were listed.
+  correction: Root Manifest and Protected Current Registry must exactly equal the immutable baseline required-current set; omission and extra-entry drift fail closed.
+- defect_uid: GOV-DEFECT-MANDATORY-REGRESSION-ASSET-DELETION
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: TEST_GOVERNANCE
+  reproduced_problem: Inherited 12/12 and post-v1.8 6/6 regression scripts plus CHECKSUMS could be removed while Pre-formal still passed.
+  correction: Promoted inherited regression scripts to Protected/Root Current execution assets, protected CHECKSUMS as non-manifest package integrity authority, and
+    execute 12/12 + 6/6 plus exact checksum coverage inside Pre-formal.
+- defect_uid: GOV-DEFECT-TEST-RUNNER-BYTECODE-SELF-POLLUTION
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: TEST_GOVERNANCE
+  reproduced_problem: Governance validation could create __pycache__/pyc and then fail its own parser hygiene on the next run.
+  correction: Move bytecode suppression before local imports and enforce PYTHONDONTWRITEBYTECODE/PYTHONPYCACHEPREFIX in subprocess regression execution.
+- defect_uid: DEF-V215-RAW-CAPTURE-LOCK-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  summary: Raw Source Capture result could be complete while capture lock remained active.
+- defect_uid: DEF-V215-ENUM-IDENTITY-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  summary: Step boundary used imprecise classification wording instead of exact SOURCE_STRUCTURE_ENUMERATION identity.
+- defect_uid: DEF-V215-MIXED-SOURCE-ROLE-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  summary: Mixed Page/Visual source could be pre-biased as PAGE_SOURCE_INPUT before segment classification.
+- defect_uid: DEF-V215-RAW-DIR-PURITY-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  summary: Control metadata could coexist inside Raw Source directory and be mistaken for source nodes.
+- defect_uid: DEF-V216-CROSS-LIFECYCLE-SEMANTIC-GRANULARITY-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: STAGE_01_THROUGH_STAGE_11
+  reproduced_problem: A syntactic/container boundary could be treated as a terminal governance unit even when it still carried multiple independent responsibilities;
+    Stage-1 mixed registries reproduced the gap and the same failure mode could recur in functional, visual, freeze, implementation, QA, release, staging, cutover,
+    acceptance, or closure units.
+  correction: Make semantic responsibility homogeneity a common all-stage invariant; syntax level is never sufficient; mixed terminal/unresolved container units block
+    closure; recursive decomposition must conserve parent/child responsibility coverage; every later Stage revalidates its own terminal units.
+- defect_uid: DEF-V217-STAGE1-SOURCE-FACT-PHASE-BOUNDARY-001
+  severity: P1
+  status: FIXED_GITHUB_REPLAY_VERIFIED
+  scope: STAGE_01_PHASE_BOUNDARY
+  reproduced_problem: A Segment Mapping operational validator treated source_fact_materialization_started=true as an illegal overrun even after Segment Mapping had
+    validly closed, so the registered successor Source Fact phase could make a valid predecessor gate fail.
+  correction: Register SOURCE_SEGMENT_MAPPING and SOURCE_FACT_MATERIALIZATION boundary explicitly; allow Source Fact to start only after Segment Mapping closes; continue
+    blocking Domain/Responsibility Classification and Blueprint before Source Fact closes, and block website/deployment throughout Stage-01.
+- defect_uid: DEF-V217-UNRESOLVED-EXTERNAL-AUTHORITY-PRESERVATION-001
+  severity: P1
+  status: FIXED_GITHUB_REPLAY_VERIFIED
+  scope: SOURCE_FACT_TO_RELEASE_AUTHORITY_CONTINUITY
+  reproduced_problem: Raw Source can explicitly reference shared external Authority outside the current capture scope, but governance did not fully require that unresolved
+    Authority identity survive every downstream handoff; an AI or downstream generator could silently omit, infer, default, alias-substitute, or falsely satisfy the
+    dependency.
+  correction: Treat evidence-backed out-of-capture Authority as UNRESOLVED_AUTHORITY_GAP rather than Source Fact failure or invented dependency; preserve stable gap
+    identity through Blueprint/Compiler/Runtime/QA/Release; forbid auto-fill/inference/drop/false resolution; require exact authoritative source/hash/evidence to
+    resolve.
+- defect_uid: DEF-V218-PREDECESSOR-VALIDATOR-SUCCESSOR-REJECTION-001
+  severity: P1
+  status: FIXED_PREFORMAL_AND_GITHUB_REPLAY_VERIFIED
+  scope: STAGE_01_SUCCESSOR_LINKAGE
+  reproduced_problem: Responsibility Classification operational validation still rejected any Blueprint presence; CI passed only by projecting the workspace backward
+    and deleting successor artifacts in a temporary copy.
+  correction: Make predecessor integrity validation successor-aware and assign phase-order enforcement to the Phase Boundary Guard; a legal successor MUST_NOT retroactively
+    invalidate a closed predecessor, and projection wrappers MUST_NOT be the primary acceptance path.
+- defect_uid: DEF-V218-PHASE-GATE-SEQUENCE-BYPASS-001
+  severity: P1
+  status: FIXED_PREFORMAL_AND_GITHUB_REPLAY_VERIFIED
+  scope: STAGE_01_PAGE_VISUAL_BINDING_SEQUENCE
+  reproduced_problem: The machine contract allowed both Page Base Blueprint and Visual Base Blueprint after only Classification Gate, permitting Visual to bypass
+    Page Blueprint closure despite the normative sequence Classification -> Page -> Visual -> Binding.
+  correction: Require Classification Gate before Page, Page Blueprint Gate before Visual, and both Page+Visual Blueprint Gates before Binding; website/deployment
+    remain blocked in Stage-01.
+- defect_uid: DEF-V218-CURRENT-TEST-EVIDENCE-DRIFT-001
+  severity: P1
+  status: FIXED_PREFORMAL_AND_GITHUB_REPLAY_VERIFIED
+  scope: PREFORMAL_EVIDENCE_GOVERNANCE
+  reproduced_problem: Current v2.1.7 test execution had newer denominators/results while formal evidence still carried v2.1.4 revision labels and older 27/27, 8/8,
+    or 12/12 denominators.
+  correction: Add Current Test Evidence Synchronization Guard that binds evidence revision and every suite/preformal denominator to the current semantic baseline
+    and candidate state; historical PASS substitution or denominator drift blocks Pre-formal.
+- defect_uid: DEF-V218-REVIEW-MACHINE-HUMAN-CONFLATION-001
+  severity: P2
+  status: FIXED_PREFORMAL_AND_GITHUB_REPLAY_VERIFIED
+  scope: REVIEW_PROGRESS_GOVERNANCE
+  reproduced_problem: Review Progress did not distinguish machine evidence synchronization closure from the separately required human governance approval, leaving
+    test-document review coverage invisible while human approval correctly remained pending.
+  correction: Track machine Current Test Evidence review independently at 100% when recomputed, while preserving human PREFORMAL_GOVERNANCE_REVIEW as PENDING until
+    an authorized reviewer explicitly approves.
+- defect_uid: DEF-V219-IMMUTABLE-PACKAGE-EVIDENCE-STATE-DRIFT-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: PREFORMAL_EVIDENCE_STATE_CLOSURE
+  reproduced_problem: The immutable v2.1.8 package still contained superseded GitHub replay PENDING / FIXED_PREFORMAL_REVERIFY_PENDING states after the corresponding
+    GitHub replays and Current workspace gates had already succeeded.
+  correction: Preserve v2.1.8 bytes as immutable history; create successor closure evidence with exact GitHub run/head identities; prohibit superseded replay/test
+    PENDING state in a successor candidate when Current Evidence already proves terminal success; keep human formal review PENDING separate.
+- defect_uid: DEF-V210-CLOSURE-EVIDENCE-CONTINUITY-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: STAGE_01_THROUGH_STAGE_11_CLOSURE_CONTINUITY
+  reproduced_problem: A legal successor/closure metadata rewrite could delete predecessor start/completion/replay/content-audit/run proof, causing a previously valid
+    predecessor to fail or making historical evidence unresolvable.
+  correction: 'Add universal monotonic closure evidence continuity: later legal stages merge/append or explicitly supersede; silent deletion/reversion of established
+    predecessor facts is blocked across Stage-01 through Stage-11.'
+- defect_uid: DEF-V210-CURRENT-LEDGER-SYNCHRONIZATION-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: CURRENT_EXECUTION_EVIDENCE_LEDGER_SET
+  reproduced_problem: EXECUTION_STATE could be corrected while RUN_MANIFEST, ARTIFACT_PLAN, Current pointers, stage lock, sealed baseline, or stage evidence retained
+    a smaller or different truth set.
+  correction: Treat Current execution/evidence ledgers as one logical closure transaction and block phase/count/hash/Authority/gate/next-transition/predecessor-proof
+    drift.
+- defect_uid: DEF-V210-TERMINAL-CI-RECEIPT-SELF-REFERENCE-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: CI_EVIDENCE_IDENTITY
+  reproduced_problem: Requiring the final CI run identity to be written into the same commit it validates creates an infinite self-reference loop; writing the receipt
+    creates a new commit and therefore a new run.
+  correction: Separate materialization CI evidence from terminal external immutable CI receipt. Terminal receipt binds exact head/run/jobs/conclusion externally and
+    is not required to self-write into the validated commit.
+- defect_uid: DEF-V211-BINDING-AUTHORITY-IDENTITY-TUPLE-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: STAGE_01_THROUGH_STAGE_11_UNRESOLVED_AUTHORITY_CONTINUITY
+  reproduced_problem: Binding validation could pass when GAP UID/count remained stable even if authority_ref or authority_evidence_ref drifted from SOURCE_DEPENDENCY_MAP.
+  correction: Require exact canonical Authority tuple equality (gap_uid, authority_ref, disposition, authority_evidence_ref) across carry-forward; count-only or UID-only
+    validation fails closed in every lifecycle Stage.
+- defect_uid: DEF-V211-TERMINAL-RECEIPT-CANONICAL-PROJECTION-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED
+  scope: STAGE_01_THROUGH_STAGE_11_TERMINAL_RECEIPT_PROJECTION
+  reproduced_problem: Current ledgers could use abbreviated jobs/result projections and still claim terminal-receipt synchronization despite the canonical six-field
+    receipt contract.
+  correction: Require every authoritative ledger projection of a terminal receipt to carry provider, repository_or_project, head_sha, run_id, job_denominator, conclusion
+    exactly; aliases cannot substitute and cross-ledger value drift blocks closure.
+- defect_uid: DEF-V212-PREDECESSOR-CURRENT-STATE-LOCK-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED_GITHUB_REPLAY_PENDING
+  scope: STAGE_01_THROUGH_STAGE_11_PREDECESSOR_VALIDATOR_SUCCESSOR_STATE
+  reproduced_problem: A predecessor validator could require Current state to equal its own terminal state, causing a registered legal successor such as STAGE1_VALIDATION
+    to retroactively turn a valid Blueprint Binding predecessor red.
+  correction: Prohibit predecessor-terminal global Current-state equality as a permanent pass condition. Validate predecessor closure invariants only; registered
+    legal successor presence is allowed and phase-order legality is owned by the Phase Boundary Gate.
+- defect_uid: DEF-V212-SUCCESSOR-STARTED-FALSE-LOCK-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED_GITHUB_REPLAY_PENDING
+  scope: STAGE_01_THROUGH_STAGE_11_PREDECESSOR_VALIDATOR_SUCCESSOR_STATE
+  reproduced_problem: A successor-continuity predecessor validator still required stage1_validation_started=false, so the legal successor remained capable of invalidating
+    the predecessor after the first exact-state fix.
+  correction: Forbid successor_started=false as a permanent predecessor acceptance condition; require regression coverage for every registered predecessor→successor
+    edge and negative tests for illegal skips/reversions/drift.
+- defect_uid: DEF-V212-REQUIRED-EVIDENCE-PRESENCE-ONLY-001
+  severity: P1
+  status: FIXED_PREFORMAL_VERIFIED_GITHUB_REPLAY_PENDING
+  scope: STAGE_01_THROUGH_STAGE_11_REQUIRED_EVIDENCE_INTEGRITY
+  reproduced_problem: CONFLICT_DECISION_EVIDENCE.yaml existed but contained YAML syntax that could not be parsed; the defect surfaced only when the Stage-01 closure
+    gate consumed it.
+  correction: Required Evidence exact bytes must pass parser and applicable schema/required-field validation before materialized/pass/closed or Stage exit-gate use;
+    presence-only acceptance and validator exceptions block closure.
+- defect_uid: DEF-V212-STANDALONE-REGRESSION-PYTEST-COLLECTION-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: PREFORMAL_TEST_RUNNER_ISOLATION
+  reproduced_problem: Mandatory standalone governance regression assets use process exit semantics. Generic pytest discovery imported a regression body, executed
+    acceptance logic during collection, and raised SystemExit, producing pytest INTERNALERROR/no-tests-collected instead of a valid, classifiable governance result.
+  correction: Define a Test Runner Isolation Contract; keep the mandatory regression matrix on the registered standalone subprocess/JSON runner; isolate all standalone
+    regressions from pytest collection; add an explicit pytest collection boundary and contract test; classify collector-triggered SystemExit/INTERNALERROR as blocking
+    harness defects rather than semantic acceptance evidence.
+  verification:
+    pytest_collection_contract: 1/1 PASS
+    mandatory_regression_matrix: 14/14 SUITES PASS
+    reference_semantic_cases: 28/28 PASS
+    reference_semantic_fuzz: 46/46 BLOCKED; 0 ESCAPED
+    v2_1_12_regression: 60/60 PASS
+    github_or_deployment_change: NONE
+- defect_uid: DEF-V213-RELATION-INFERENCE-AS-BINDING-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: RELATION_SEMANTICS
+  reproduced_problem: Port exposure, state events, registry membership or semantic similarity could be consumed as if they were an explicit trigger/action/error binding.
+  correction: Require explicit binding edge or uniquely resolving Current Authority; exposure/state_event/registry membership/similarity alone never creates a binding.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-NONCURRENT-FINAL-LOCKED-AUTHORITY-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: CURRENT_AUTHORITY_ADMISSIBILITY
+  reproduced_problem: A FINAL_LOCKED source outside the Current Authority set could be mistaken for admissible Current construction authority.
+  correction: Require Current Authority Manifest/set membership; FINAL/LOCKED status alone never confers Current authority.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-REQUIRED-EVIDENCE-PHYSICAL-MATERIALIZATION-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: REQUIRED_EVIDENCE
+  reproduced_problem: A ledger or plan could claim required evidence as Current while the physical canonical artifact did not exist.
+  correction: Required Evidence must physically exist at canonical path and parse/schema/digest validate; ledger claim alone is non-evidence.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-VALIDATOR-SCHEMA-PATH-ENUM-DRIFT-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: VALIDATOR_SEMANTICS
+  reproduced_problem: Validator used a stale/nonexistent schema path or obsolete status constant and falsely blamed valid data.
+  correction: Bind validator checks to authoritative schema paths/enums; stale validator paths/constants are validator defects.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-SPARSE-ZERO-SERIALIZATION-ASSUMPTION-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: VALIDATOR_SEMANTICS
+  reproduced_problem: Validator required a zero-valued class to be explicitly serialized although the schema legally omitted zero classes.
+  correction: For schema-declared sparse-zero optional classes, missing key equals zero; any prohibited nonzero value still fails closed.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-SUCCESSOR-CURRENT-PROJECTION-DRIFT-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: CURRENT_STATE
+  reproduced_problem: A verified successor result existed while Current ledgers still exposed the predecessor snapshot as Current truth.
+  correction: Project accepted successor state atomically across Current ledgers; remove stale snapshot from Current and retain predecessor evidence as immutable
+    history-only.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-BLOCKER-DENOMINATOR-RECEIPT-REUSE-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: RECEIPT_IDENTITY
+  reproduced_problem: After blocker/denominator change, predecessor pass receipts could be reused as if they verified the successor state.
+  correction: Denominator change invalidates old receipt for successor; mark pending external CI until a new exact receipt, retain old receipt only as predecessor
+    evidence.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-CURRENT-AUTHORITY-EVIDENCE-NONCONSUMPTION-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: AUTHORITY_EVIDENCE_CONSUMPTION
+  reproduced_problem: Uniquely relevant admissible Current Authority evidence could be skipped, leaving false unresolved gaps.
+  correction: Enumerate admissible Current evidence and track per-gap consumption; silently skipped uniquely relevant evidence is a governance defect.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-UNRESOLVED-FIELD-INVENTED-RESOLUTION-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: UNRESOLVED_CONTINUITY
+  reproduced_problem: Unresolved owner/operation/port/lifecycle fields could be filled by defaults or inferred similarity.
+  correction: Keep unresolved fields null/unresolved until formal authority evidence resolves them; no default or derived fill.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-REVIEW-COMPLETION-STAGE-CLOSURE-CONFLATION-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: STAGE_EXIT
+  reproduced_problem: Completion of gap review could be confused with Stage closure while blockers remained.
+  correction: Review completion is evidence of review only; Stage exit requires exit gate, required evidence and zero unwaived blockers.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-FUNCTIONAL-ASYNC-CONTRACT-INCOMPLETENESS-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: FUNCTIONAL_ASYNC_CONTRACT
+  reproduced_problem: Functional/async paths could appear architecturally present while lacking payload, state, validation, audit, failure/recovery or lifecycle bindings.
+  correction: Require full effectful/create functional contract and async lifecycle contract fields before closure.
+  verification:
+    stage_execution_invariant_validator: PASS
+    v2_1_13_regression: 18/18 PASS
+    mandatory_regression_matrix: 15/15 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS (split execution 14+1+10)
+- defect_uid: DEF-V213-PYTEST-COLLECTION-DENOMINATOR-DRIFT-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: PREFORMAL_TEST_RUNNER_ISOLATION
+  reproduced_problem: The pytest collection-isolation contract hard-coded the predecessor mandatory suite denominator as 14, so adding the v2.1.13 mandatory suite
+    produced a false failure even though isolation remained correct.
+  correction: Make SEMANTIC_AUTHORITY_BASELINE.mandatory_regression_assets the sole collection-contract denominator authority; forbid hard-coded historical suite
+    counts and continue validating uniqueness, physical existence, and isolation marker coverage.
+  verification:
+    pytest_collection_contract: 1/1 PASS after fix
+    denominator_source: SEMANTIC_AUTHORITY_BASELINE.mandatory_regression_assets
+- defect_uid: DEF-V214-STAGE-TEST-FEEDBACK-CLOSED-LOOP-MISSING-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: STAGE_01_THROUGH_STAGE_11_TEST_GOVERNANCE
+  reproduced_problem: Stage tests could discover bugs/gaps without a mandatory closed loop that records them, checks production conformance, patches the correct governance
+    scope, versions the governance package, backtraces the predecessor, and revalidates before freeze.
+  correction: Add the universal TEST_DEFECT_FEEDBACK_AND_SPEC_EVOLUTION invariant and normative mother-spec/audit rules with GLOBAL_SHARED versus STAGE_LOCAL scope
+    classification and a fail-closed 13-step process.
+- defect_uid: DEF-V214-GITHUB-MULTI-SPEC-AUTHORITY-RISK-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: GITHUB_GOVERNANCE_AUTHORITY
+  reproduced_problem: GitHub had Stage-specific governance correction evidence but no single canonical Current governance entry, creating a risk that different consumers
+    could read different governance versions.
+  correction: Require exactly one Current entry at docs/governance/CURRENT_GOVERNANCE_SPEC.yaml; versioned candidates and historical correction evidence remain noncurrent
+    until backtrace and full revalidation pass.
+- defect_uid: DEF-V214-CURRENT-TEST-EVIDENCE-HARDCODED-VERSION-DENOMINATOR-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: CURRENT_TEST_EVIDENCE_VALIDATOR
+  reproduced_problem: validate_current_test_evidence.py hard-coded Current version v2.1.13 and mandatory suite denominator 15, causing legitimate v2.1.X successor
+    additions to fail even when the semantic baseline was correct.
+  correction: Bind Current version to the active v2.1.14 candidate and derive mandatory suite denominator from SEMANTIC_AUTHORITY_BASELINE.mandatory_regression_assets;
+    include the v2.1.14 successor regression in evidence synchronization.
+- defect_uid: DEF-V214-ROOT-MANIFEST-SEMANTIC-SET-DRIFT-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: ROOT_MANIFEST_SEMANTIC_AUTHORITY
+  reproduced_problem: v2.1.14 validator/regression assets were present in Root Manifest and Protected Registry but omitted from SEMANTIC_AUTHORITY_BASELINE.required_root_manifest_paths,
+    producing an 18/19 definition-audit failure and proving the shared-layer propagation was incomplete.
+  correction: Add both v2.1.14 assets to the semantic required-root set, recompute the semantic authority content hash, update all semantic-hash consumers, refresh
+    the root manifest, and rerun definition/package-integrity validation.
+- defect_uid: DEF-V214-BUSINESS-ENTITY-LIFECYCLE-COMPLETENESS-MISSING-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: ALL_PAGE_FUNCTIONAL_COMPLETENESS
+  reproduced_problem: Page/Action/Control/API presence could be counted as functional completeness even when business entities such as items, categories, chapters,
+    sections, versions or other child objects lacked create/edit/resume/confirm/version/revision/hierarchy lifecycle coverage.
+  correction: Add product-neutral Business Entity Inventory, Business Entity Operation Matrix, Entity Hierarchy Matrix, bidirectional operation-to-UI/runtime coverage,
+    and Business Entity × REQUIRED Operation completeness denominator across the lifecycle.
+  verification:
+    product_neutral_entity_lifecycle_validator: PASS; product_binding_failures=0
+    v2_1_14_product_neutral_regression: 31/31 PASS
+    mandatory_regression_matrix: 17/17 SUITES PASS
+    definition_constituent_checks: 19/19 PASS
+    monolithic_preformal_wrapper: NOT_COMPLETED_TOOL_TIMEOUT; NOT CLAIMED AS PASS
+- defect_uid: DEF-V214-COMMON-GOVERNANCE-PRODUCT-BINDING-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: COMMON_GOVERNANCE_PRODUCT_NEUTRALITY
+  reproduced_problem: Common governance still contained product-specific ACPOS reconstruction wording, ACPOS-named governance runtime environment variables, and a
+    CORE-01 program identity example in a Current common registry.
+  correction: Remove product-specific normative wording, rename governance runtime environment contracts to WEB_GOVERNANCE_*, convert the Current program identity
+    example to a product-neutral DEMO identity, restrict product-specific repository data to empirical provenance, and require a pre-freeze binding substitution audit.
+  verification:
+    product_neutral_entity_lifecycle_validator: PASS; product_binding_failures=0
+    v2_1_14_product_neutral_regression: 31/31 PASS
+    mandatory_regression_matrix: 17/17 SUITES PASS
+    definition_constituent_checks: 19/19 PASS
+    monolithic_preformal_wrapper: NOT_COMPLETED_TOOL_TIMEOUT; NOT CLAIMED AS PASS
+- defect_uid: DEF-V214-PREFORMAL-WRAPPER-TIMEOUT-EVIDENCE-OVERCLAIM-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: EVIDENCE_TRUTH_AND_WRAPPER_RESULT_CLASSIFICATION
+  reproduced_problem: Current evidence strings could state 20/20 PRE_FORMAL PASS after all constituent checks had individually passed even when the monolithic PRE_FORMAL_DEFINITION_AUDIT
+    wrapper itself terminated by tool timeout without returning a PASS result.
+  correction: Require successful monolithic wrapper result before recording monolithic pre-formal PASS; record constituent verification separately; classify wrapper
+    timeout as BLOCKED_TOOL_TIMEOUT and forbid constituent success from substituting for wrapper success.
+  verification:
+    monolithic_wrapper_reexecution: TOOL_TIMEOUT REPRODUCED; NOT CLASSIFIED AS PASS
+    definition_constituents: 19/19 PASS
+    mandatory_regression_matrix: 17/17 SUITES PASS
+    evidence_overclaim_removed: true
+- defect_uid: DEF-V214-COMMON-GOVERNANCE-SOURCE-CONTROL-PROVIDER-BINDING-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: COMMON_GOVERNANCE_PROVIDER_NEUTRALITY
+  reproduced_problem: The common Stage-test/spec-evolution Mother Specs still named GitHub as a required semantic step and canonical Current authority provider even
+    after product-specific ACPOS bindings were removed. This made the common governance package source-control-provider-bound.
+  correction: Define a provider-neutral Source-Control Single-Spec Authority common invariant, move GitHub path/consumer behavior into an adapter profile, generalize
+    the closed-loop process tokens to SOURCE_CONTROL_* identities, and extend the binding audit to block provider names in common Mother Specs.
+  verification:
+    product_neutral_entity_lifecycle_validator: PASS; operation_universe=23; product_binding_failures=0; provider_binding_failures=0
+    v2_1_14_product_neutral_regression: 31/31 PASS
+    v2_1_14_test_feedback_regression: 21/21 PASS
+    mandatory_regression_matrix: 17/17 SUITES PASS
+    high_pressure_original_case_set: 25/25 PASS; split execution 14+1+10 without modifying package test asset
+    definition_constituent_checks: 19/19 PASS
+    monolithic_preformal_wrapper: NOT_COMPLETED_TOOL_TIMEOUT; NOT CLAIMED AS PASS
+- defect_uid: DEF-V214-FUNCTIONAL-WORKBENCH-TOPOLOGY-AI-CONTINUITY-MISSING-001
+  severity: P1
+  status: FIXED_LOCAL_VERIFIED
+  scope: COMMON_INTERACTION_TOPOLOGY_AND_CONDITIONAL_AI_ASSISTED_INTERACTION
+  reproduced_problem: A governed feature chain could have every required control/action/runtime/visual element present yet remain unusable or semantically wrong because
+    one contiguous work unit was fragmented across unrelated visual positions/surfaces, shared context/thread identity could reset across transitions, multi-agent
+    comparisons could receive non-equivalent baselines, raw AI output could bypass the intended decision boundary, and revision/branch flows could lose exact lineage
+    or isolation.
+  correction: Add product-neutral FUNCTIONAL_WORKBENCH_COHESION and INTERACTION_TOPOLOGY_BINDING invariants; bind Stage-02 functional topology to Stage-03 visual
+    topology; add a conditional AI-assisted interaction profile with Conversation Identity Continuity, Multi-Agent Context Equivalence, AI Output Formalization Boundary,
+    Revision Context Continuity, and Branch Context Isolation/Adoption; propagate gates through Stage-05, Stage-06, and Stage-10.
+  verification:
+    product_neutral_interaction_topology_validator: PASS; product_binding_failures=0
+    v2_1_14_product_neutral_regression: 68/68 PASS
+    section_registry: PASS
+    lifecycle_stage_contract: PASS
+    reference_semantics: PASS after explicit semantic-baseline maintenance
+artifact_uid: LEDGER-GOVERNANCE-DEFECT-001
+artifact_type: GOVERNANCE_DEFECT_LEDGER
+canonical_path: 11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml

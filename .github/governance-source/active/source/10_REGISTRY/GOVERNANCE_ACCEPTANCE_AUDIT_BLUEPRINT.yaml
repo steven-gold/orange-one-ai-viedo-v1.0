@@ -1,0 +1,218 @@
+schema_version: 1
+artifact_uid: BP-GOVERNANCE-ACCEPTANCE-001
+artifact_type: GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT
+blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
+status: CURRENT_CANDIDATE
+canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+owner_uid: OWNER-GOVERNANCE-ACCEPTANCE
+governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+normative_section_uids:
+- WEB-GOV-04-S071
+- WEB-GOV-04-S076
+audit_catalog_ref: REG-AUDIT-CATALOG-001
+audit_item_uids:
+- AUD-GOV-001
+- AUD-GOV-002
+- AUD-GOV-003
+- AUD-GOV-004
+- AUD-GOV-005
+- AUD-GOV-006
+- AUD-GOV-007
+- AUD-GOV-008
+- AUD-GOV-009
+- AUD-GOV-010
+- AUD-GOV-011
+- AUD-GOV-012
+- AUD-GOV-013
+acceptance_contract:
+  denominator_is_blueprint_owned: true
+  audit_matrix_may_not_add_requirements: true
+  review_progress_uses_same_audit_item_uids: true
+  blueprint_hash_change_marks_affected_results: REVERIFY_REQUIRED
+  na_requires_authority: true
+baseline_compiler:
+  script: 09_TESTS/governance/compile_governance_baseline.py
+  output: 11_EVIDENCE/audit/AUDIT_BASELINE.yaml
+  manual_edit_of_compiled_baseline: FORBIDDEN
+blueprint_type_uid: BPTYPE-GOV-006
+current_test_evidence_sync_contract:
+  required: true
+  validator_uid: VAL-GOV-032
+  validator_path: 09_TESTS/governance/validate_current_test_evidence.py
+  current_revision_only: true
+  historical_pass_substitution: BLOCK
+  mandatory_suite_denominator_must_equal_semantic_baseline: true
+  preformal_check_denominator_must_equal_runtime_validator: true
+  evidence_result_denominator_drift: BLOCK
+  evidence_revision_drift: BLOCK
+  review_machine_sync_required: true
+  human_formal_approval_must_not_be_auto_claimed: true
+  superseded_pending_state_drift: BLOCK
+  github_replay_closure_evidence_required: true
+  monolithic_preformal_wrapper_pass_requires_successful_wrapper_result: true
+  constituent_success_must_not_substitute_monolithic_wrapper_pass: true
+  wrapper_timeout_evidence_status: BLOCKED_TOOL_TIMEOUT
+  local_component_verification_may_be_recorded_separately: true
+closure_evidence_continuity_contract:
+  required: true
+  validator_uid: VAL-GOV-034
+  validator_path: 09_TESTS/governance/validate_closure_evidence_continuity.py
+  applies_to_stages:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+  destructive_closure_rewrite: BLOCK
+  cross_ledger_drift: BLOCK
+  predecessor_proof_loss: BLOCK
+  terminal_ci_self_reference: BLOCK
+  external_terminal_receipt_required_fields:
+  - provider
+  - repository_or_project
+  - head_sha
+  - run_id
+  - job_denominator
+  - conclusion
+  unresolved_authority_canonical_identity_fields:
+  - gap_uid
+  - authority_ref
+  - disposition
+  - authority_evidence_ref
+  count_only_or_uid_only_authority_validation: BLOCK
+  terminal_receipt_canonical_projection_required: true
+  terminal_receipt_alias_substitution: BLOCK
+  ledger_terminal_receipt_required_fields:
+  - provider
+  - repository_or_project
+  - head_sha
+  - run_id
+  - job_denominator
+  - conclusion
+  predecessor_validator_current_state_lock: BLOCK
+  legal_successor_presence_may_not_retroactively_fail_predecessor: true
+  phase_order_owner: PHASE_BOUNDARY_GATE
+  registered_successor_edge_coverage_required: true
+required_evidence_integrity_contract:
+  required: true
+  applies_to_stages:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+  presence_only_acceptance: BLOCK
+  parser_validation_required: true
+  schema_or_required_field_validation_required: true
+  malformed_or_unparseable_required_evidence: BLOCK
+test_runner_isolation_contract:
+  required: true
+  mandatory_regression_runner: STANDALONE_SUBPROCESS_JSON
+  generic_pytest_collection_of_standalone_regressions: FORBIDDEN
+  pytest_config_path: pytest.ini
+  pytest_contract_test_path: 09_TESTS/governance/test_pytest_collection_contract.py
+  standalone_collection_guard_marker: GOVERNANCE_STANDALONE_REGRESSION_PYTEST_ISOLATION
+  collection_must_not_execute_standalone_regression_body: true
+  collector_triggered_system_exit: BLOCK
+  pytest_internal_error: BLOCK
+  collection_result_is_acceptance_evidence: false
+  missing_execution_precondition_must_not_be_reclassified_as_collection_crash: true
+  mandatory_suite_denominator_source: SEMANTIC_AUTHORITY_BASELINE.mandatory_regression_assets
+  hardcoded_historical_suite_count: BLOCK
+stage_execution_invariant_contract:
+  required: true
+  registry_uid: REG-STAGE-EXECUTION-INVARIANT-001
+  registry_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+  validator_uid: VAL-GOV-035
+  validator_path: 09_TESTS/governance/validate_stage_execution_invariants.py
+  applies_to_stages:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+  stage_specific_exception_without_registered_authority: BLOCK
+  observed_stage_does_not_limit_scope: true
+test_feedback_spec_evolution_contract:
+  required: true
+  applies_to_all_stages: true
+  common_registry_ref: REG-STAGE-EXECUTION-INVARIANT-001
+  defect_gap_ledger_required_per_stage_test: true
+  production_conformance_review_required: true
+  scope_classification_required: true
+  global_shared_defect_must_patch_all_affected_governance_layers: true
+  stage_local_defect_must_not_be_generalized_without_evidence: true
+  multidirection_high_pressure_required_before_version_promotion: true
+  version_family: v2.1.X
+  predecessor_backtrace_required: true
+  current_rule_revalidation_required: true
+  freeze_requires_zero_open_unwaived_governance_defects: true
+  source_control_single_spec_authority_required: true
+  source_control_current_entry_path_is_adapter_defined: true
+  source_control_current_promotion_before_backtrace_and_full_revalidation: BLOCK
+  next_stage_before_freeze: BLOCK
+  source_control_provider_is_common_semantic_dependency: false
+  source_control_adapter_profiles:
+    GITHUB:
+      adapter_role: SOURCE_CONTROL_ADAPTER_FOR_THIS_RELEASE_FLOW
+      canonical_current_entry_path: docs/governance/CURRENT_GOVERNANCE_SPEC.yaml
+  non_github_equivalent_single_authority_adapter_allowed: true
+product_neutral_entity_lifecycle_contract:
+  required: true
+  applies_to_all_required_pages_surfaces_modules_workflows: true
+  common_registry_ref: REG-STAGE-EXECUTION-INVARIANT-001
+  validator_uid: VAL-GOV-037
+  validator_path: 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
+  business_entity_inventory_required: true
+  business_entity_operation_matrix_required: true
+  entity_hierarchy_matrix_required: true
+  not_applicable_requires_authority: true
+  required_operation_bidirectional_ui_runtime_coverage: true
+  business_completeness_count_surrogates_forbidden: true
+  product_specific_common_normative_binding: BLOCK
+  product_profile_may_weaken_common_rules: false
+  binding_substitution_audit_required: true
+  completeness_denominator: BUSINESS_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES
+  function_admission_scorecard_required: true
+  score_cannot_override_authority_gap: true
+  bounded_functional_completion_required: true
+  minimal_closure_set_required: true
+  out_of_frozen_closure_discovery_reopens_design: true
+  auto_completion_scope_ledger_required: true
+  function_visual_impact_matrix_required: true
+  logic_visual_synchronized_completion_required: true
+  user_visible_required_operation_without_visual_binding: BLOCK
+  new_visual_pattern_without_design_authority: BLOCK
+  indexed_incremental_validation_required: true
+  index_may_skip_impacted_validator: false
+  index_drift_full_sweep_required_before_freeze: true
+  functional_workbench_contract_required: true
+  interaction_topology_matrix_required: true
+  functional_to_visual_topology_equivalence_required: true
+  atomic_workbench_fragmentation: BLOCK
+  cross_surface_without_context_handoff: BLOCK
+  responsive_reflow_semantic_order_preservation_required: true
+  ai_interaction_continuity_matrix_required_when_profile_active: true
+  conversation_identity_continuity_required_when_applicable: true
+  multi_agent_context_equivalence_required_when_applicable: true
+  raw_ai_output_direct_authoritative_promotion: BLOCK
+  revision_context_continuity_required_when_applicable: true
+  branch_context_isolation_and_explicit_adoption_required_when_applicable: true
