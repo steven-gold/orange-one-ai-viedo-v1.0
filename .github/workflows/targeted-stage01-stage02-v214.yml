@@ -20,7 +20,7 @@ jobs:
           test "$GITHUB_REF_NAME" = "rebuild-v2.1.1"
           test -f governance/current/v2.1.14/EFFECTIVE_TEST_GOVERNANCE_MANIFEST.yaml
           grep -q 'target_pages: \[CORE-01, ASSET-01\]' GOVERNANCE_CURRENT.yaml
-          grep -q 'current_stage: STAGE-01' GOVERNANCE_CURRENT.yaml
+          grep -q 'version: v2.1.14' GOVERNANCE_CURRENT.yaml
       - name: Run targeted Stage-01 then Stage-02 truth classification
         run: python governance/ci/validate_targeted_stage01_stage02_v214.py
       - name: Upload targeted rerun result

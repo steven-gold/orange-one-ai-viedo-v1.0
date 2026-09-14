@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_uid": "FRESH-RUN-003-V214-TARGETED-STAGE02-RERUN",
+  "branch": "rebuild-v2.1.1",
+  "governance_revision": "v2.1.14-product-neutral-interaction-topology-ai-continuity",
+  "workflow_run_id": 34811832713,
+  "workflow_conclusion": "SUCCESS",
+  "scope_pages": ["CORE-01", "ASSET-01"],
+  "engine_result": "PASS",
+  "closure_claim": false,
+  "results": [
+    {
+      "page_uid": "CORE-01",
+      "stage1_result": "PASS",
+      "stage2_result": "BLOCKED",
+      "stage2_blocker_count": 12,
+      "blocker_codes": [
+        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_INTERACTION_TOPOLOGY_SPEC",
+        "MISSING_BUSINESS_ENTITY_INVENTORY",
+        "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
+        "MISSING_ENTITY_HIERARCHY_MATRIX",
+        "MISSING_FUNCTION_ADMISSION_SCORECARD",
+        "MISSING_AUTO_COMPLETION_SCOPE_LEDGER",
+        "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX",
+        "CORE_CHAPTER_LIFECYCLE_NOT_MATERIALIZED",
+        "CORE_WORLD_SETTING_LIFECYCLE_NOT_MATERIALIZED",
+        "CORE_CONVERSATION_ATOMIC_WORKBENCH_UNRESOLVED",
+        "CORE_AI_CONTINUITY_CONTRACT_MISSING"
+      ]
+    },
+    {
+      "page_uid": "ASSET-01",
+      "stage1_result": "PASS",
+      "stage2_result": "BLOCKED",
+      "stage2_blocker_count": 8,
+      "blocker_codes": [
+        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_INTERACTION_TOPOLOGY_SPEC",
+        "MISSING_BUSINESS_ENTITY_INVENTORY",
+        "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
+        "MISSING_ENTITY_HIERARCHY_MATRIX",
+        "MISSING_FUNCTION_ADMISSION_SCORECARD",
+        "MISSING_AUTO_COMPLETION_SCOPE_LEDGER",
+        "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX"
+      ]
+    }
+  ],
+  "artifact_receipt": {
+    "artifact_id": 10334234631,
+    "artifact_sha256": "d34d8137666372c1724fdb452d2fa46147bdda266c61e8fd5d49dbdc93f2c8f7"
+  },
+  "interpretation": "Validator engine PASS means truth classification completed. Page STAGE-02 remains BLOCKED until required v2.1.14 outputs and unresolved page-specific contracts are materialized and revalidated."
+}

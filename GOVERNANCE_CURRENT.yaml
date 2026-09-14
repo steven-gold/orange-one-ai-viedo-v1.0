@@ -1,87 +1,49 @@
-schema_version: 19
+schema_version: 20
 role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
 normative_authority:
   version: v2.1.12
-  package_sha256: 2d6602b20983a9764c2f1496f36ab20a2f0ebcd73826492c27ba67159f5ef3df
-  external_trust_root_sha256: 4c013cfc1a91142a8b4ce44830ef467c5c960f56b136a75ff670729a523f71e3
-  semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
   disposition: PRESERVED_HISTORICAL_FORMAL_TEST_BASE
-test_governance_overlay:
+  replaces_by_test_governance: false
+current_test_governance:
   version: v2.1.14
   revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
-  state: NONCURRENT_LOCAL_COMPONENT_VERIFIED
-  replaces_normative_authority: false
-  permitted_use: TARGETED_STAGE01_STAGE02_RERUN_ONLY
-  target_pages: [CORE-01, ASSET-01]
-  candidate_status_ref: governance/candidates/v2.1.14/CANDIDATE_STATUS.yaml
-  bounded_completion_ref: governance/candidates/v2.1.14/BOUNDED_FUNCTIONAL_COMPLETION_DELTA.yaml
-  interaction_topology_ref: governance/candidates/v2.1.14/INTERACTION_TOPOLOGY_AI_CONTINUITY_DELTA.yaml
-  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_COMPONENT_VERIFIED.zip
-  package_sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
+  state: CURRENT_TEST_GOVERNANCE_FOR_TARGETED_RERUN
+  manifest_ref: governance/current/v2.1.14/EFFECTIVE_TEST_GOVERNANCE_MANIFEST.yaml
+  source_package_sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
   formal_freeze_allowed: false
-  current_authority_promotion_allowed: false
+  production_current_authority_promotion_allowed: false
 active_execution:
   run_uid: FRESH-RUN-003
-  rerun_record: 00_SOURCE_INTAKE/fresh_run_003/TARGETED_STAGE01_RERUN_V214.yaml
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages: [CORE-01, ASSET-01]
   rollback_from: STAGE-02
-  current_stage: STAGE-01
-  stage1_rerun_status: ACTIVE
-  stage2_rerun_status: NOT_STARTED_AFTER_ROLLBACK
-  historical_stage2_receipts_preserved: true
-  historical_stage2_is_current_rerun_result: false
+  stage1_rerun_status: PASS
+  current_stage: STAGE-02
+  stage2_rerun_status: BLOCKED
+  stage2_result_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_V214_RESULT.json
   website_construction_allowed: false
   deployment_allowed: false
-historical_execution_snapshot:
-  run_uid: FRESH-RUN-003
-  previous_state: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
-  source_segment_count: 61
-  source_fact_materialization_completed: true
-  responsibility_classification_completed: true
-  classification_artifact_count: 52
-  page_base_blueprint_count: 2
-  visual_base_blueprint_count: 2
-  blueprint_binding_count: 2
-  unresolved_authority_gap_count: 8
-  stage1_validation_completed: true
-  stage1_exit_gate: SUCCESS_EXTERNAL_CI
-  stage2_started: true
-  stage2_functional_chain_spec_count: 2
-  stage2_required_outputs_validated: true
-  stage2_functional_review_validated: true
-  stage2_blocker_ledger_validated: true
-  stage2_blocker_ledger_validation_status: SUCCESS_EXTERNAL_RECEIPT
-  stage2_gap_total: 171
-  stage2_blocker_count: 4
-  stage2_functional_gap_blocker_count: 3
-  stage2_required_output_blocker_count: 1
-  stage2_async_provider_unresolved_lifecycle_binding_count: 24
-  stage2_external_authority_gap_uids_affecting_blockers: [GAP-005, GAP-006, GAP-008]
-  stage2_exit_gate: BLOCKED
-  stage2_functional_completion: false
-terminal_receipts:
-  visual_closure: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: e653fbcf39a18775790c6403439b076c9ed3f534, run_id: 34739267938, job_denominator: 8/8, conclusion: SUCCESS}
-  v210_governance: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 91f4271b5145f5646be07da32b5624fad7528034, run_id: 34741356025, job_denominator: 9/9, conclusion: SUCCESS}
-  blueprint_binding: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: d10253d154eacabed3df967ce4aa83c71a7475f3, run_id: 34741952438, job_denominator: 10/10, conclusion: SUCCESS}
-  v211_governance: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 74cd16e28e98a918c3f682d3b29ea7e362a19cc5, run_id: 34754709362, job_denominator: 11/11, conclusion: SUCCESS}
-  stage1_closure: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: c6a9c2e5b38a189a6517d59345a0738618e8cd28, run_id: 34755361339, job_denominator: 12/12, conclusion: SUCCESS}
-  v212_governance: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 3247937d7b8ccd57551119b079cb33cee45e4ecc, run_id: 34757919043, job_denominator: 13/13, conclusion: SUCCESS}
-  stage2_functional_preflight: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: cbef81ec6da7f51b3379fd3e52283eda8a2dee33, run_id: 34763159402, job_denominator: 16/16, conclusion: SUCCESS}
-  stage2_dependency_transition_ledgers: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 7479eee6f5e15fcf10032d3355b18e877888472a, run_id: 34764546141, job_denominator: 17/17, conclusion: SUCCESS}
-  stage2_required_successor_outputs: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: a9c3359cd3b90da7058a182b26e58406c4bacf9e, run_id: 34765602708, job_denominator: 18/18, conclusion: SUCCESS}
-  stage2_functional_review: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 546e3826934eefc33aa1e11ba018a9aeb706f57f, run_id: 34766220936, job_denominator: 19/19, conclusion: SUCCESS}
-  stage2_blocker_ledger_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d, run_id: 34766464982, job_denominator: 20/20, conclusion: SUCCESS}
-  stage2_current_ledger_sync_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 92b4c2f148fbd5690eea03a0f554ba25ff1cffea, run_id: 34768036053, job_denominator: 21/21, conclusion: SUCCESS}
-  stage2_blocker_ledger_r2: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: d662a28422a9f7a671359f2f284a4d20f5cfe6e4, run_id: 34768554331, job_denominator: 21/21, conclusion: SUCCESS}
-rollback_policy:
-  history_rewrite: FORBIDDEN
-  previous_stage2_receipts: PRESERVE_IMMUTABLE
-  previous_stage2_outputs: HISTORICAL_NOT_CURRENT_RERUN_RESULT
-  only_targeted_pages_may_rerun: true
-  target_pages: [CORE-01, ASSET-01]
-  undefined_behavior: BLOCK_AND_REPORT_AUTHORITY_GAP
-  ai_invent_missing_product_behavior: FORBIDDEN
-next_action: RUN_TARGETED_STAGE1_REVALIDATION_THEN_V214_STAGE2_RECOMPILE
-status: STAGE1_TARGETED_RERUN_ACTIVE_V214_OVERLAY
+page_results:
+  CORE-01:
+    STAGE-01: PASS
+    STAGE-02: BLOCKED
+    blocker_count: 12
+  ASSET-01:
+    STAGE-01: PASS
+    STAGE-02: BLOCKED
+    blocker_count: 8
+preservation:
+  all_other_pages: NO_MUTATION
+  main_branch: NO_MUTATION
+  new_branch: NO_MUTATION
+  historical_receipts: PRESERVE_IMMUTABLE
+terminal_receipt:
+  provider: GITHUB_ACTIONS
+  workflow: Targeted CORE ASSET Stage01 Stage02 v2.1.14 Rerun
+  run_id: 34811832713
+  head_sha: 4b538aec49dfccd365c38ab68b152be63a9418dd
+  conclusion: SUCCESS
+  artifact_id: 10334234631
+status: STAGE2_TARGETED_RERUN_COMPLETED_BLOCKED_V214
+next_action: MATERIALIZE_V214_STAGE02_REQUIRED_OUTPUTS_AND_FIX_PROVEN_BLOCKERS_ONLY
