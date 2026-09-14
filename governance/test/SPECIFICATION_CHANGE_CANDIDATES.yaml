@@ -85,6 +85,15 @@ findings:
     formal_specification_mutated_for_fix: false
     required_fix: "Keep Stage-01 identity/provenance invariants unconditional; require Stage-02 runtime result-evidence fields only when ACTIVE_STATE declares Stage-02 executed. Stage-02 NOT_EXECUTED must not require or recreate those fields."
 
+  - finding_uid: FIND-20260914-009
+    class: TEST_HARNESS_BUG
+    title: Round-1 full-line workflow was not admitted because timeout-minutes was placed at workflow root
+    evidence: "Trigger commit 8f942575860bf3b5fece8db3ca340e485bdee332 produced repository and Stage-01 reset checks but no full-line workflow run; workflow YAML placed timeout-minutes at the unsupported workflow-root level."
+    disposition: OPEN_WORKFLOW_HARNESS_REPAIR
+    specification_change_required: false
+    formal_specification_mutated_for_fix: false
+    required_fix: "Move timeout-minutes under the full-line job, preserve all test steps and denominators unchanged, then retrigger. A missing workflow run is NOT a PASS."
+
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
