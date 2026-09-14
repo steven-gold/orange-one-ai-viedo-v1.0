@@ -1,0 +1,44 @@
+schema_version: 1
+finding_uid: FIND-20260915-022
+artifact_type: NON_NORMATIVE_TEST_HARNESS_FINDING
+normative_authority: false
+class: TEST_HARNESS_OR_VALIDATOR_BUG
+title: R7 approved Product Authority ingestion did not enforce Current Authority admissibility and exact binding provenance
+status: OPEN_REMEDIATION
+stage_uid: STAGE-02
+observed_head_sha: d326f253682f3f445c19426d2199a15e4adf137d
+owning_harness: governance/ci/validate_stage02_approved_product_authority_r7.py
+normative_rule_ref: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+normative_rules:
+  current_authority_set_membership_required: true
+  final_or_locked_status_alone_confers_current_authority: false
+  non_current_final_locked_source_use: BLOCK
+  unresolved_to_resolved_requires_authority_evidence: true
+observed_validator_behavior:
+  - required authority source file to exist
+  - required source SHA-256 to match caller-supplied hash
+  - rejected governance/test and .github/stage02-test as authority source paths
+  - required approval evidence path to exist
+missing_enforcement:
+  - no Current Authority set membership or verified exact-capture provenance check
+  - no canonical owner UID identity check against source content
+  - no authority revision/version check against source content
+  - no proof that exact_binding is physically represented by the authority source
+  - no proof that approval evidence approves the exact blocker binding and source hash
+risk: A physically present non-test repository file could otherwise be presented as approved authority even when it is not Current-admissible, and caller-supplied exact_binding could diverge from source bytes.
+required_fix:
+  - resolve Current Authority set from the frozen materialized Current Authority manifest
+  - allow only direct Current members or byte-exact verified captures/materializations whose original source path is a Current member
+  - verify canonical owner UID and authority revision against physical source content
+  - require category-specific exact_binding identity and prove the binding is physically present in the source
+  - require structured approval evidence to bind blocker UID, exact binding, source path, source hash, approver and approval time
+  - add negative regressions for non-current source and source/binding divergence
+  - preserve fail-closed behavior and zero blocker reduction until valid approved authority exists
+formal_specification_change_required: false
+formal_specification_mutated_for_fix: false
+stage02_result_changed_by_this_finding: false
+current_authoritative_effective_blocker_count_remains: 150
+stage02_exit_allowed: false
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
