@@ -34,6 +34,9 @@ candidate_projection:
   delta_registry: docs/governance/candidates/v2.1.14/BOUNDED_FUNCTIONAL_COMPLETION_DELTA.yaml
   full_candidate_registry_is_inside_immutable_package: true
   stale_predecessor_registry_projection_removed: true
+external_sync_receipt:
+  commit_sha_is_not_embedded_in_local_package: true
+  reason: AVOID_SELF_REFERENTIAL_PACKAGE_HASH_LOOP
 main_current_authority_entry:
   expected_adapter_path: docs/governance/CURRENT_GOVERNANCE_SPEC.yaml
   materialized_on_main: false
