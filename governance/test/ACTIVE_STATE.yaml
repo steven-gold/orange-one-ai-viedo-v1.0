@@ -1,4 +1,4 @@
-schema_version: 1
+schema_version: 2
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
@@ -10,6 +10,8 @@ execution:
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages: [CORE-01, ASSET-01]
   current_stage: STAGE-02
+  stage1_binding_ref: governance/test/STAGE01_ACTIVE_BINDING.yaml
+  stage1_binding_mode: REGISTRY_UID_RUNTIME_RESOLUTION
   stage1:
     CORE-01: PASS
     ASSET-01: PASS
@@ -17,7 +19,10 @@ execution:
     applicability_model: EXACT_APPLICABILITY_BEFORE_BLOCKER_COUNT
     CORE-01: {result: BLOCKED, blocker_count: 7}
     ASSET-01: {result: BLOCKED, blocker_count: 6}
-  result_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_V214_RESULT.json
+  result_evidence:
+    mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
+    workflow_output_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_RESULT.json
+    static_result_pointer_required: false
   website_construction_allowed: false
   deployment_allowed: false
 
@@ -39,11 +44,14 @@ cleanup:
   duplicate_candidate_governance: REMOVED
   legacy_version_named_current_paths_active: false
 
-latest_verified_gate:
+verification_gate:
   workflow: Current Governance CORE ASSET Stage01 Stage02 Gate
-  prior_run_id: 34817895696
-  prior_head_sha: 79daac6ff91dbc5880660ce5c27149e0812c0a71
-  prior_conclusion: SUCCESS
+  workflow_file: .github/workflows/targeted-stage01-stage02.yml
+  evidence_mode: GITHUB_ACTIONS_RUNTIME
+  static_run_id_copy_forbidden: true
+  static_head_sha_copy_forbidden: true
+  static_specification_digest_copy_forbidden: true
+  exact_run_evidence_must_be_read_from_runtime: true
 
 status: ACTIVE_TARGETED_TEST_BLOCKED_AT_STAGE02
 next_action: MATERIALIZE_ONLY_APPLICABLE_STAGE02_OUTPUTS_FROM_EXISTING_AUTHORITY_THEN_RERUN
