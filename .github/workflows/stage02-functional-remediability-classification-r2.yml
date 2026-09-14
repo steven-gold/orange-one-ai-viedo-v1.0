@@ -1,0 +1,63 @@
+name: Stage-02 Functional Remediability Classification R2
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/stage02-functional-remediability-classification-r2.yml'
+      - 'governance/ci/classify_current_stage2_functional_remediability.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  classify-current-fresh-functional-gaps:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: rebuild-v2.1.1
+      - name: Install YAML dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Re-prove exact 75-file source identity
+        run: python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+      - name: Enforce frozen Current Specification
+        run: python governance/ci/specification_mutation_guard.py
+      - name: Validate Stage-02 successor state
+        run: python governance/ci/validate_stage02_successor_integrity.py
+      - name: Validate current materialized Stage-02 structural root
+        run: python governance/ci/validate_current_stage2_materialized_closure.py
+      - name: Classify every current fresh functional gap by legal bounded-completion basis
+        run: python governance/ci/classify_current_stage2_functional_remediability.py
+      - name: Prove formal Current Specification and immutable Stage-01 inputs remain unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          echo 'PASS: classifier mutated only non-normative classification evidence'
+      - name: Commit fresh remediability classification evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml
+          if git diff --cached --quiet; then
+            echo 'BLOCK: classifier produced no evidence change' >&2
+            exit 1
+          fi
+          git commit -m 'test(stage02): persist fresh functional remediability classification R2'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Upload classification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage02-functional-remediability-classification-r2
+          path: governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml
+          if-no-files-found: error
