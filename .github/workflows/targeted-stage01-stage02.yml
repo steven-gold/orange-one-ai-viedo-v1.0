@@ -14,7 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+      - name: Enforce explicit authorization before Current Specification mutation
+        run: python governance/ci/specification_mutation_guard.py
       - name: Resolve active governance through stable registry
         run: python governance/ci/governance_resolver.py
       - name: Validate governance layout and zero residual
