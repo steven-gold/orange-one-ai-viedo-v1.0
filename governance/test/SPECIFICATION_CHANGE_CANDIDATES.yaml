@@ -118,6 +118,16 @@ findings:
     tracked_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
     required_next_action: "Remediate only the implementation/architecture/input/product-contract gaps supported by current authority. Preserve all eight unresolved external authority references and do not invent or auto-fill missing authority. Re-run Stage-02 fresh acceptance before any Stage-03 admission."
 
+  - finding_uid: FIND-20260915-012
+    class: TEST_HARNESS_OR_VALIDATOR_BUG
+    title: Stage remediation closure protocol validator over-captured later YAML lists when checking ordered_steps
+    evidence: "GitHub targeted run 34880186352 job 104097264544 on SHA dabe81cead54d1fbc4209a39a98845196dab5849 failed MANDATORY_STAGE_CYCLE_ORDER_DRIFT because the regex parsed the correct 12 mandatory ordered steps plus later remediation/evidence lists as if they were ordered_steps."
+    disposition: OPEN_VALIDATOR_REPAIR
+    specification_change_required: false
+    formal_specification_mutated_for_fix: false
+    current_specification_may_be_modified_from_this_finding_alone: false
+    required_next_action: "Repair only the validator's ordered_steps parser so it stops at the end of the ordered_steps indentation block; do not relax or change the normative 12-step protocol. Re-run targeted and full-line gates."
+
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
