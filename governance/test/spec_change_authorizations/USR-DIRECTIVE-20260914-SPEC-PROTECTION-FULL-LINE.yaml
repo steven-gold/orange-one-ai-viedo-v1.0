@@ -1,0 +1,26 @@
+schema_version: 1
+authorization_uid: USR-DIRECTIVE-20260914-SPEC-PROTECTION-FULL-LINE
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+issued_date: 2026-09-14
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+
+exact_scope:
+  - Add fail-closed policy that Current Specification MUST NOT be modified for construction, implementation, test convenience, validator convenience, or passing a gate without an explicit specification-change directive.
+  - Require test-discovered bugs, defects, tuning findings, harness defects, and specification concerns to be recorded in a non-normative modification-candidate ledger before any later specification change is considered.
+  - Add enforcement/validation needed to make the rule auditable in GitHub CI.
+  - Add full-lifecycle governance validation coverage without falsely marking product execution stages complete.
+
+not_authorized:
+  - Inventing or changing ACPOS product behavior merely to make a test pass.
+  - Auto-filling unresolved Authority gaps.
+  - Rewriting preserved Stage-01 artifacts solely because a display version changed.
+  - Marking CORE-01 or ASSET-01 Stage-03 through Stage-11 complete while Stage-02 remains blocked.
+  - Reusing this authorization for future unrelated specification changes.
+
+provenance:
+  conversation_instruction_summary: "Current Specification is the highest ACPOS rule: no construction/test-driven specification mutation without explicit user specification-change instruction; test findings must be queued as modification candidates; GitHub governance validation must cover the full lifecycle."
+  ai_may_expand_scope: false
+  ai_may_reuse_authorization: false
