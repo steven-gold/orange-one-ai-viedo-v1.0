@@ -97,6 +97,15 @@ findings:
     formal_specification_mutated_for_fix: false
     resolution: "Moved timeout-minutes to the full-line job without removing any test step or denominator. GitHub run 34866095740 was admitted and completed SUCCESS on exact SHA 8bbd10d965ab768caf99397b3793799ec37fa623."
 
+  - finding_uid: FIND-20260914-010
+    class: TEST_HARNESS_SUCCESSOR_STATE_BUG
+    title: Full-line and targeted gates hard-code Stage-02 NOT_EXECUTED and would reject a legal Stage-02 successor test state
+    evidence: "Before the new Stage-02 test, both governance-full-line-system-gate.yml and targeted-stage01-stage02.yml invoke validate_stage02_zero_residual.py unconditionally; that validator intentionally accepts only the clean-reset NOT_EXECUTED predecessor state."
+    disposition: OPEN_STAGE_SUCCESSOR_HARNESS_REPAIR
+    specification_change_required: false
+    formal_specification_mutated_for_fix: false
+    required_fix: "Add a successor-state-aware Stage-02 state-integrity validator: retain exact zero-residual validation while NOT_EXECUTED, but when Stage-02 has actually executed require parseable run evidence, fail-closed status, no Current Specification mutation/autofill/inference, Stage-01 closure continuity, and construction/deployment blocking unless Stage-02 exit is formally closed. Update both GitHub gates to call the state-aware validator."
+
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
