@@ -11,18 +11,25 @@ def die(msg):
     raise SystemExit(1)
 
 source = TARGET.read_text(encoding='utf-8')
-replacements = [
-    ("ROOT / 'governance/ci/validate_current_stage2_materialized_closure.py'", "ROOT / 'governance/ci/validate_current_stage2_materialized_closure_external_aware_r3.py'"),
-    ("ROOT / 'governance/ci/validate_stage02_remediation_reset_continuity_r3.py'", "ROOT / 'governance/ci/validate_stage02_remediation_reset_continuity_external_aware_r3.py'"),
-]
-for old, new in replacements:
-    if source.count(old) != 1:
-        die('R3_PREP_VALIDATOR_BINDING_DRIFT:' + old)
-    source = source.replace(old, new, 1)
-old_post = "ROOT / 'governance/ci/validate_stage02_remediation_reset_continuity_r3.py'"
-new_post = "ROOT / 'governance/ci/validate_stage02_remediation_reset_continuity_external_aware_r3.py'"
-if source.count(old_post) != 1:
-    die('R3_PREP_POST_RESET_CONTINUITY_BINDING_DRIFT')
-source = source.replace(old_post, new_post, 1)
+structural_old = "ROOT / 'governance/ci/validate_current_stage2_materialized_closure.py'"
+structural_new = "ROOT / 'governance/ci/validate_current_stage2_materialized_closure_external_aware_r3.py'"
+continuity_old = "ROOT / 'governance/ci/validate_stage02_remediation_reset_continuity_r3.py'"
+continuity_new = "ROOT / 'governance/ci/validate_stage02_remediation_reset_continuity_external_aware_r3.py'"
+
+if source.count(structural_old) != 1:
+    die('R3_PREP_STRUCTURAL_VALIDATOR_REFERENCE_COUNT_DRIFT:' + str(source.count(structural_old)))
+if source.count(continuity_old) != 2:
+    die('R3_PREP_CONTINUITY_VALIDATOR_REFERENCE_COUNT_DRIFT:' + str(source.count(continuity_old)))
+
+source = source.replace(structural_old, structural_new, 1)
+source = source.replace(continuity_old, continuity_new, 2)
+
+if source.count(structural_old) != 0 or source.count(continuity_old) != 0:
+    die('R3_PREP_OLD_VALIDATOR_REFERENCE_RESIDUAL')
+if source.count(structural_new) != 1:
+    die('R3_PREP_EXTERNAL_AWARE_STRUCTURAL_REFERENCE_COUNT_DRIFT')
+if source.count(continuity_new) != 2:
+    die('R3_PREP_EXTERNAL_AWARE_CONTINUITY_REFERENCE_COUNT_DRIFT')
+
 ns = {'__name__': '__main__', '__file__': str(TARGET)}
 exec(compile(source, str(TARGET), 'exec'), ns, ns)
