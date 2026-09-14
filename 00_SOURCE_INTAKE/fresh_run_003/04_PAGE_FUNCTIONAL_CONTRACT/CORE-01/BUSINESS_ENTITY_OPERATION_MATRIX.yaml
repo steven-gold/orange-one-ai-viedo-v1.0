@@ -1,0 +1,726 @@
+schema_version: 1
+artifact_type: BUSINESS_ENTITY_OPERATION_MATRIX
+stage_uid: STAGE-02
+page_uid: CORE-01
+derivation: EXACT_ACTION_CONTROL_PORT_GATE_PERMISSION_PROJECTION
+semantic_entity_join_used: false
+operation_count: 34
+operations:
+- action_uid: CORE-01-ACT-PROJECT-SELECT
+  label: Select Project
+  effect_type: CONTEXT_STATE
+  gate_uid: CORE-01-GATE-PAGE
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-CTL-PROJECT
+  - CORE-01-FLD-PAGE-MODE
+  - CORE-01-FLD-NAMING-AUTHORITY
+  - CORE-01-FLD-RUNTIME-STAGE
+  - CORE-01-FLD-DOWNSTREAM-ASSET
+  - CORE-01-FLD-DOWNSTREAM-VIDEO
+  - CORE-01-FLD-DOWNSTREAM-EDIT
+  - CORE-01-FLD-LOCK-REVIEW
+  section_uids:
+  - CORE-01-SEC-01
+  - CORE-01-SEC-06
+  - CORE-01-SEC-09
+  - CORE-01-SEC-10
+  component_uids:
+  - CORE-01-CMP-CONTEXT
+  - CORE-01-CMP-DOWNSTREAM
+  - CORE-01-CMP-LOCK-REVIEW
+  - CORE-01-CMP-RUNTIME
+  visual_uids:
+  - CORE-01-VIS-CONTEXT
+  - CORE-01-VIS-RIGHT-TOPIC
+  - CORE-01-VIS-RIGHT-VERSION
+  - CORE-01-VIS-RUNTIME
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-PROJECT-CREATE
+  label: Create Project Draft
+  effect_type: PROJECT_MUTATION
+  gate_uid: CORE-01-GATE-PROJECT-DRAFT
+  permission_uid: CORE_PROJECT_WRITE
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-PROJECT-CREATE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-PROJECT-CREATE
+  section_uids:
+  - CORE-01-SEC-01
+  component_uids:
+  - CORE-01-CMP-CONTEXT
+  visual_uids:
+  - CORE-01-VIS-CONTEXT
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-TOPIC-SELECT
+  label: Select Topic
+  effect_type: CONTEXT_STATE
+  gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-CTL-TOPIC
+  - CORE-01-FLD-TOPIC-SCOPE
+  section_uids:
+  - CORE-01-SEC-01
+  - CORE-01-SEC-09
+  component_uids:
+  - CORE-01-CMP-CONTEXT
+  - CORE-01-CMP-TOPIC-PACKAGE
+  visual_uids:
+  - CORE-01-VIS-CONTEXT
+  - CORE-01-VIS-RIGHT-TOPIC
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-TOPIC-CREATE
+  label: Create Topic
+  effect_type: TOPIC_MUTATION
+  gate_uid: CORE-01-GATE-TOPIC-CREATE
+  permission_uid: CORE_TOPIC_WRITE
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-TOPIC-CREATE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-TOPIC-CREATE
+  section_uids:
+  - CORE-01-SEC-01
+  component_uids:
+  - CORE-01-CMP-CONTEXT
+  visual_uids:
+  - CORE-01-VIS-CONTEXT
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-WORK-ITEM-SELECT
+  label: Select Work Item
+  effect_type: CONTEXT_STATE
+  gate_uid: CORE-01-GATE-WORK-ITEM
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-LST-WORK-ITEMS
+  section_uids:
+  - CORE-01-SEC-02
+  component_uids:
+  - CORE-01-CMP-NAV
+  visual_uids:
+  - CORE-01-VIS-LEFT
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-THREAD-CREATE
+  label: New Conversation Thread
+  effect_type: CONVERSATION_WRITE
+  gate_uid: CORE-01-GATE-THREAD
+  permission_uid: CORE_CONVERSATION
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-THREAD-CREATE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-NEW-THREAD
+  section_uids:
+  - CORE-01-SEC-02
+  component_uids:
+  - CORE-01-CMP-THREADS
+  visual_uids:
+  - CORE-01-VIS-LEFT
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-THREAD-SELECT
+  label: Select Thread
+  effect_type: CONTEXT_STATE
+  gate_uid: CORE-01-GATE-THREAD
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-LST-THREADS
+  section_uids:
+  - CORE-01-SEC-02
+  component_uids:
+  - CORE-01-CMP-THREADS
+  visual_uids:
+  - CORE-01-VIS-LEFT
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-AI-MODE-SINGLE
+  label: Single AI
+  effect_type: UI_ONLY
+  gate_uid: CORE-01-GATE-WORK-ITEM
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-SINGLE-AI
+  section_uids:
+  - CORE-01-SEC-03
+  component_uids:
+  - CORE-01-CMP-CONV-HEADER
+  visual_uids:
+  - CORE-01-VIS-CENTER-HEADER
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-AI-MODE-MULTI
+  label: Multi AI
+  effect_type: UI_ONLY
+  gate_uid: CORE-01-GATE-MULTI-AI
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-MULTI-AI
+  section_uids:
+  - CORE-01-SEC-03
+  component_uids:
+  - CORE-01-CMP-CONV-HEADER
+  visual_uids:
+  - CORE-01-VIS-CENTER-HEADER
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-ASSISTANT-RECORD
+  label: Open Assistant Record
+  effect_type: UI_ONLY
+  gate_uid: CORE-01-GATE-PAGE
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-FLD-ASSIGNED-AI
+  - CORE-01-BTN-ASSISTANT-RECORD
+  section_uids:
+  - CORE-01-SEC-03
+  component_uids:
+  - CORE-01-CMP-CONV-HEADER
+  visual_uids:
+  - CORE-01-VIS-CENTER-HEADER
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-MSG-QUOTE
+  label: 引用此訊息
+  effect_type: UI_ONLY
+  gate_uid: CORE-01-GATE-THREAD
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-MENU-QUOTE
+  section_uids:
+  - CORE-01-SEC-04
+  component_uids:
+  - CORE-01-CMP-MESSAGE-MENU
+  visual_uids:
+  - CORE-01-VIS-MESSAGES
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-MSG-CONTINUE
+  label: 繼續討論此主題
+  effect_type: UI_ONLY
+  gate_uid: CORE-01-GATE-THREAD
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-MENU-CONTINUE
+  section_uids:
+  - CORE-01-SEC-04
+  component_uids:
+  - CORE-01-CMP-MESSAGE-MENU
+  visual_uids:
+  - CORE-01-VIS-MESSAGES
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-MSG-ANALYZE
+  label: 分析此內容
+  effect_type: CONVERSATION_WRITE
+  gate_uid: CORE-01-GATE-MESSAGE
+  permission_uid: CORE_CONVERSATION
+  runtime_binding_kind: PORT_WITH_PAYLOAD_MODE
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-MESSAGE-SEND
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-MENU-ANALYZE
+  section_uids:
+  - CORE-01-SEC-04
+  component_uids:
+  - CORE-01-CMP-MESSAGE-MENU
+  visual_uids:
+  - CORE-01-VIS-MESSAGES
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-MSG-DECISION
+  label: 加入決策清單
+  effect_type: CONTEXT_STATE
+  gate_uid: CORE-01-GATE-THREAD
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-MENU-DECISION
+  section_uids:
+  - CORE-01-SEC-04
+  component_uids:
+  - CORE-01-CMP-MESSAGE-MENU
+  visual_uids:
+  - CORE-01-VIS-MESSAGES
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-MSG-BRANCH
+  label: 建立分支討論
+  effect_type: CONVERSATION_WRITE
+  gate_uid: CORE-01-GATE-THREAD
+  permission_uid: CORE_CONVERSATION
+  runtime_binding_kind: PORT_WITH_RELATION_PAYLOAD
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-THREAD-CREATE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-MENU-BRANCH
+  section_uids:
+  - CORE-01-SEC-04
+  component_uids:
+  - CORE-01-CMP-MESSAGE-MENU
+  visual_uids:
+  - CORE-01-VIS-MESSAGES
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-MSG-COPY
+  label: 複製此訊息
+  effect_type: UI_ONLY
+  gate_uid: CORE-01-GATE-THREAD
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-MENU-COPY
+  section_uids:
+  - CORE-01-SEC-04
+  component_uids:
+  - CORE-01-CMP-MESSAGE-MENU
+  visual_uids:
+  - CORE-01-VIS-MESSAGES
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-SEND
+  label: Send Message
+  effect_type: CONVERSATION_WRITE
+  gate_uid: CORE-01-GATE-MESSAGE
+  permission_uid: CORE_CONVERSATION
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-MESSAGE-SEND
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-FLD-MESSAGE
+  - CORE-01-BTN-SEND
+  section_uids:
+  - CORE-01-SEC-07
+  component_uids:
+  - CORE-01-CMP-COMPOSER
+  visual_uids:
+  - CORE-01-VIS-COMPOSER
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-CANDIDATE-CREATE
+  label: Create Candidate
+  effect_type: CANDIDATE_CREATE
+  gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+  permission_uid: CORE_CANDIDATE_CREATE
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-CANDIDATE-CREATE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-FLD-ASSISTANT-SUMMARY
+  - CORE-01-FLD-EVALUATION
+  - CORE-01-FLD-HUMAN-DECISION
+  - CORE-01-FLD-STRUCTURED-DECISION
+  - CORE-01-BTN-CANDIDATE-CREATE
+  section_uids:
+  - CORE-01-SEC-05
+  component_uids:
+  - CORE-01-CMP-EVALUATION
+  - CORE-01-CMP-HUMAN-DECISION
+  - CORE-01-CMP-SUMMARY
+  visual_uids:
+  - CORE-01-VIS-DECISION
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-CANDIDATE-ACCEPT
+  label: Confirm Candidate
+  effect_type: CANDIDATE_DECISION
+  gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+  permission_uid: CORE_CANDIDATE_DECIDE
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-CANDIDATE-DECIDE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-CANDIDATE-CONFIRM
+  section_uids:
+  - CORE-01-SEC-05
+  component_uids:
+  - CORE-01-CMP-HUMAN-DECISION
+  visual_uids:
+  - CORE-01-VIS-DECISION
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-CANDIDATE-RETURN
+  label: Return to Modify
+  effect_type: CANDIDATE_DECISION
+  gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+  permission_uid: CORE_CANDIDATE_DECIDE
+  runtime_binding_kind: PORT_WITH_DECISION_VALUE
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-CANDIDATE-DECIDE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-RETURN-MODIFY
+  section_uids:
+  - CORE-01-SEC-05
+  component_uids:
+  - CORE-01-CMP-HUMAN-DECISION
+  visual_uids:
+  - CORE-01-VIS-DECISION
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-CANDIDATE-COMPARE
+  label: Compare Candidates
+  effect_type: READ_ONLY
+  gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+  permission_uid: CORE_USE
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-CANDIDATE-COMPARE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-CANDIDATE-COMPARE
+  - CORE-01-FLD-VERSION-STATE
+  section_uids:
+  - CORE-01-SEC-10
+  component_uids:
+  - CORE-01-CMP-VERSION
+  visual_uids:
+  - CORE-01-VIS-RIGHT-VERSION
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-PROJECT-VALIDATE
+  label: Validate Project Draft
+  effect_type: PROJECT_MUTATION
+  gate_uid: CORE-01-GATE-PROJECT-DRAFT
+  permission_uid: CORE_PROJECT_WRITE
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-PROJECT-VALIDATE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-PROJECT-VALIDATE
+  section_uids:
+  - CORE-01-SEC-08
+  component_uids:
+  - CORE-01-CMP-PROJECT-STATE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-CORE
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-PROJECT-CONFIRM
+  label: Confirm Project Draft
+  effect_type: PROJECT_MUTATION
+  gate_uid: CORE-01-GATE-PROJECT-CONFIRM
+  permission_uid: CORE_PROJECT_CONFIRM
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-PROJECT-CONFIRM
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-PROJECT-CONFIRM
+  section_uids:
+  - CORE-01-SEC-08
+  component_uids:
+  - CORE-01-CMP-PROJECT-STATE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-CORE
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-STORY-CANDIDATE
+  label: Generate Story Candidate Set
+  effect_type: CANDIDATE_CREATE
+  gate_uid: CORE-01-GATE-STORY
+  permission_uid: CORE_STORY_WRITE
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-STORY-CANDIDATE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-STORY-CANDIDATE
+  section_uids:
+  - CORE-01-SEC-08
+  component_uids:
+  - CORE-01-CMP-PROJECT-STATE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-CORE
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+  label: Request DNA Lock
+  effect_type: DNA_LOCK_REQUEST
+  gate_uid: CORE-01-GATE-DNA-LOCK
+  permission_uid: CORE_DNA_LOCK
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-DNA-LOCK
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-DNA-LOCK
+  section_uids:
+  - CORE-01-SEC-08
+  component_uids:
+  - CORE-01-CMP-PROJECT-STATE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-CORE
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+  label: Submit Project Core Review
+  effect_type: PROJECT_MUTATION
+  gate_uid: CORE-01-GATE-CORE-REVIEW
+  permission_uid: CORE_PROJECT_WRITE
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-CORE-REVIEW
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-CORE-REVIEW
+  section_uids:
+  - CORE-01-SEC-08
+  component_uids:
+  - CORE-01-CMP-PROJECT-STATE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-CORE
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+  label: Request Project Lock
+  effect_type: LOCK_REQUEST
+  gate_uid: CORE-01-GATE-PROJECT-LOCK-READY
+  permission_uid: CORE_LOCK_REQUEST
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-MOTHER-LOCK
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-PROJECT-LOCK
+  section_uids:
+  - CORE-01-SEC-08
+  component_uids:
+  - CORE-01-CMP-PROJECT-STATE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-CORE
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-BLUEPRINT-CREATE
+  label: Create Blueprint
+  effect_type: BLUEPRINT_MUTATION
+  gate_uid: CORE-01-GATE-BLUEPRINT-CREATE
+  permission_uid: CORE_BLUEPRINT_WRITE
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-BLUEPRINT-CREATE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-BLUEPRINT-CREATE
+  section_uids:
+  - CORE-01-SEC-08
+  component_uids:
+  - CORE-01-CMP-BLUEPRINT-STATE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-CORE
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+  label: Validate Blueprint
+  effect_type: BLUEPRINT_MUTATION
+  gate_uid: CORE-01-GATE-BLUEPRINT-VALIDATE
+  permission_uid: CORE_BLUEPRINT_REVIEW
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-BLUEPRINT-VALIDATE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-BLUEPRINT-VALIDATE
+  section_uids:
+  - CORE-01-SEC-08
+  component_uids:
+  - CORE-01-CMP-BLUEPRINT-STATE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-CORE
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-BLUEPRINT-APPROVE
+  label: Approve Blueprint
+  effect_type: BLUEPRINT_MUTATION
+  gate_uid: CORE-01-GATE-BLUEPRINT-APPROVE
+  permission_uid: CORE_BLUEPRINT_APPROVE
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-BLUEPRINT-APPROVE
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-BLUEPRINT-APPROVE
+  section_uids:
+  - CORE-01-SEC-08
+  component_uids:
+  - CORE-01-CMP-BLUEPRINT-STATE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-CORE
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+  label: Request Child Lock
+  effect_type: LOCK_REQUEST
+  gate_uid: CORE-01-GATE-CHILD-LOCK
+  permission_uid: CORE_LOCK_REQUEST
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-CHILD-LOCK
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-CHILD-LOCK
+  section_uids:
+  - CORE-01-SEC-08
+  component_uids:
+  - CORE-01-CMP-BLUEPRINT-STATE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-CORE
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+  label: View Canonical Production Script
+  effect_type: READ_ONLY
+  gate_uid: CORE-01-GATE-CANONICAL-SCRIPT
+  permission_uid: CORE_SCRIPT_READ
+  runtime_binding_kind: SOURCE_INTEGRATION_PORT
+  port_refs:
+  - field: port_uid
+    port_uid: CORE-01-PORT-CANONICAL-SCRIPT
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-CANONICAL-SCRIPT
+  - CORE-01-FLD-PACKAGE
+  section_uids:
+  - CORE-01-SEC-09
+  component_uids:
+  - CORE-01-CMP-TOPIC-PACKAGE
+  visual_uids:
+  - CORE-01-VIS-RIGHT-TOPIC
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-ATTACHMENT
+  label: Attach File Reference
+  effect_type: CONTEXT_STATE
+  gate_uid: CORE-01-GATE-THREAD
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-ATTACHMENT
+  section_uids:
+  - CORE-01-SEC-07
+  component_uids:
+  - CORE-01-CMP-COMPOSER
+  visual_uids:
+  - CORE-01-VIS-COMPOSER
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE
+- action_uid: CORE-01-ACT-REFERENCE-ATTACH
+  label: Attach Data / Reference
+  effect_type: CONTEXT_STATE
+  gate_uid: CORE-01-GATE-THREAD
+  permission_uid: CORE_USE
+  runtime_binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  port_refs: []
+  shared_authority_id: null
+  shared_operation_id: null
+  control_uids:
+  - CORE-01-BTN-REFERENCE
+  section_uids:
+  - CORE-01-SEC-07
+  component_uids:
+  - CORE-01-CMP-COMPOSER
+  visual_uids:
+  - CORE-01-VIS-COMPOSER
+  object_uid_bindings: []
+  object_binding_status: NO_EXACT_ACTION_OBJECT_UID_BINDING_DECLARED_IN_SOURCE

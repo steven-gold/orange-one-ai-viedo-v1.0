@@ -1,0 +1,38 @@
+schema_version: 1
+artifact_type: AI_INTERACTION_CONTINUITY_CONTRACT
+stage_uid: STAGE-02
+page_uid: CORE-01
+activation_profile: AI_ASSISTED_WORKSPACE
+derivation: EXACT_CONVERSATION_POLICY_PROJECTION
+conversation_policy:
+  single_multi_same_context: true
+  assistant_is_third_mode: false
+  provider_model_picker: FORBIDDEN
+  assigned_ai_set: Resolved by ACPOS shared AI Router/Capability Assignment; page read-only
+  right_click_message_actions:
+  - 引用此訊息
+  - 繼續討論此主題
+  - 分析此內容
+  - 加入決策清單
+  - 建立分支討論
+  - 複製此訊息
+  hover_message_toolbar: FORBIDDEN
+  branch_discussion_is_production_topic: false
+unresolved_external_authority_refs:
+- gap_uid: GAP-007
+  authority_ref: IAM-01 / account permission runtime
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-007
+- gap_uid: GAP-008
+  authority_ref: ACPOS shared AI Router/Capability Assignment
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-008
+raw_ai_output_formalization: FORBIDDEN_BY_SOURCE_AUTHORITY
+silent_context_reset: BLOCK
+semantic_ai_route_completion_used: false

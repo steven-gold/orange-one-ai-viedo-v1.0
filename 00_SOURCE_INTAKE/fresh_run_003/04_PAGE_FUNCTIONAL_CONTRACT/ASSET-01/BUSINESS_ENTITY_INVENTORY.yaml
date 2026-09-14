@@ -1,0 +1,142 @@
+schema_version: 1
+artifact_type: BUSINESS_ENTITY_INVENTORY
+stage_uid: STAGE-02
+page_uid: ASSET-01
+source_authority_id: ASSET_PAGE_VISUAL_AUTHORITY_FINAL
+source_file_sha256: 60497a42c5907d47a9e90d95e53d358c5a357864769c58f540a13f963687df0a
+derivation: EXACT_OBJECT_REGISTRY_PROJECTION_NO_NEW_ENTITY
+entity_count: 18
+entities:
+- object_uid: ASSET-01-REF-BLUEPRINT
+  entity: LockedBlueprintRef
+  owner: CORE/BLUEPRINT
+  required_content: immutable exact child lock/blueprint version/hash
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-REF-SCRIPT
+  entity: AssetProductionScriptViewRef
+  owner: CORE/SCRIPT
+  required_content: provider-neutral ASSET Script View/Section/version/hash
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-REF-DNA
+  entity: DNABindingRef
+  owner: CORE/BLUEPRINT
+  required_content: DNA/identity/continuity exact refs
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-REF-MANIFEST
+  entity: AssetManifestRef
+  owner: CORE/BLUEPRINT
+  required_content: required asset items/type/purpose/reuse policy
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-REF-NAMING
+  entity: SystemOutputNamingRef
+  owner: ACPOS_SYSTEM
+  required_content: canonical filename/output artifact identity/version/checksum policy; page read-only
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-REF-INSTRUCTION
+  entity: InstructionPackageRef
+  owner: InstructionCompiler
+  required_content: approved provider-neutral instruction package
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-REF-ROUTE
+  entity: ProviderRouteSnapshotRef
+  owner: ACPOS AI API Router
+  required_content: approved route/provider/model/capability snapshot; page read-only
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-INPUT-MANIFEST
+  entity: AssetExecutionInputManifest
+  owner: ASSET/ORCH
+  required_content: task+blueprint+script+DNA+manifest+naming+instruction+route+input fingerprint
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-CANDIDATE
+  entity: AssetCandidateOutput
+  owner: ASSET
+  required_content: candidate artifact exact version/uri/canonical filename/checksum/provenance
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-EVALUATION
+  entity: AssetEvaluation
+  owner: ASSET/EVALUATION
+  required_content: criteria version/dimension scores/hard blocks/evidence/result
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-FINDING
+  entity: AssetFinding
+  owner: ASSET/EVALUATION
+  required_content: issue type/asset/layer/region/evidence
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-CORRECTION
+  entity: AssetCorrectionContext
+  owner: ASSET/AI
+  required_content: current exact refs + issue + zh-TW request + candidate
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-CORRECTION-SCRIPT
+  entity: CorrectionScriptCandidate
+  owner: ACPOS Script System
+  required_content: provider-neutral delta; human approved before translation
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-LAYER-DOC
+  entity: VersionedLayerDocument
+  owner: AssetCatalogService
+  required_content: immutable versions of image-compatible layer document
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-ASSET-PATCH
+  entity: AssetPatch
+  owner: AssetCatalogService
+  required_content: source asset/layer/region/blueprint/DNA/preserve constraints/preview/decision
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-ASSET-VERSION
+  entity: AssetOutputVersion
+  owner: AssetCatalogService
+  required_content: immutable exact artifact version + canonical filename/checksum
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-SCORECARD
+  entity: AssetScorecard
+  owner: ASSET/EVALUATION
+  required_content: target output + criteria version + scores/issues/evidence
+  source_kind: registries.objects_refs
+- object_uid: ASSET-01-OBJ-HANDOFF
+  entity: AssetHandoffManifest
+  owner: ASSET boundary
+  required_content: exact locked output + layer/composite refs + blueprint/script/DNA/manifest/naming/score/rights/contract hash
+  source_kind: registries.objects_refs
+unresolved_external_authority_refs:
+- gap_uid: GAP-001
+  authority_ref: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-001
+- gap_uid: GAP-002
+  authority_ref: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-002
+- gap_uid: GAP-003
+  authority_ref: ACPOS_SYSTEM_AUTHORITY@V1.0
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-003
+- gap_uid: GAP-004
+  authority_ref: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-004
+- gap_uid: GAP-005
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-005
+- gap_uid: GAP-006
+  authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-006

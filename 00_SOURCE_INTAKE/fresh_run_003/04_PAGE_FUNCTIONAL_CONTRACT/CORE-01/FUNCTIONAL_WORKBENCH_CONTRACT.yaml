@@ -1,0 +1,164 @@
+schema_version: 1
+artifact_type: FUNCTIONAL_WORKBENCH_CONTRACT
+stage_uid: STAGE-02
+page_uid: CORE-01
+derivation: EXACT_SECTION_COMPONENT_CONTROL_MEMBERSHIP
+workbench_count: 10
+workbenches:
+- workbench_uid: CORE-01-WB-CORE-01-SEC-01
+  workbench_class: SAME_SURFACE_CLUSTER
+  classification_basis: EXACT_SECTION_UID_MEMBERSHIP
+  section_uid: CORE-01-SEC-01
+  section_name: Context Bar
+  section_responsibility: Project / Topic exact context; create/select; page mode derived; naming authority read-only ref
+  visual_uid: CORE-01-VIS-CONTEXT
+  component_uids:
+  - CORE-01-CMP-CONTEXT
+  control_uids:
+  - CORE-01-BTN-PROJECT-CREATE
+  - CORE-01-BTN-TOPIC-CREATE
+  - CORE-01-CTL-PROJECT
+  - CORE-01-CTL-TOPIC
+  - CORE-01-FLD-NAMING-AUTHORITY
+  - CORE-01-FLD-PAGE-MODE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-02
+  workbench_class: SAME_SURFACE_CLUSTER
+  classification_basis: EXACT_SECTION_UID_MEMBERSHIP
+  section_uid: CORE-01-SEC-02
+  section_name: Work Item / Thread Navigation
+  section_responsibility: Current mode work items, thread list, new thread; cross-work-item mixing forbidden
+  visual_uid: CORE-01-VIS-LEFT
+  component_uids:
+  - CORE-01-CMP-NAV
+  - CORE-01-CMP-THREADS
+  control_uids:
+  - CORE-01-BTN-NEW-THREAD
+  - CORE-01-LST-THREADS
+  - CORE-01-LST-WORK-ITEMS
+- workbench_uid: CORE-01-WB-CORE-01-SEC-03
+  workbench_class: SAME_SURFACE_CLUSTER
+  classification_basis: EXACT_SECTION_UID_MEMBERSHIP
+  section_uid: CORE-01-SEC-03
+  section_name: Conversation Header
+  section_responsibility: Current work item, Single/Multi AI, Assigned AI Set read-only, Assistant Record
+  visual_uid: CORE-01-VIS-CENTER-HEADER
+  component_uids:
+  - CORE-01-CMP-CONV-HEADER
+  control_uids:
+  - CORE-01-BTN-ASSISTANT-RECORD
+  - CORE-01-BTN-MULTI-AI
+  - CORE-01-BTN-SINGLE-AI
+  - CORE-01-FLD-ASSIGNED-AI
+- workbench_uid: CORE-01-WB-CORE-01-SEC-04
+  workbench_class: SAME_SURFACE_CLUSTER
+  classification_basis: EXACT_SECTION_UID_MEMBERSHIP
+  section_uid: CORE-01-SEC-04
+  section_name: Message Workspace
+  section_responsibility: User/AI/System/Assistant messages; right-click message operation menu
+  visual_uid: CORE-01-VIS-MESSAGES
+  component_uids:
+  - CORE-01-CMP-MESSAGE-MENU
+  - CORE-01-CMP-MESSAGES
+  control_uids:
+  - CORE-01-MENU-ANALYZE
+  - CORE-01-MENU-BRANCH
+  - CORE-01-MENU-CONTINUE
+  - CORE-01-MENU-COPY
+  - CORE-01-MENU-DECISION
+  - CORE-01-MENU-QUOTE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-05
+  workbench_class: SAME_SURFACE_CLUSTER
+  classification_basis: EXACT_SECTION_UID_MEMBERSHIP
+  section_uid: CORE-01-SEC-05
+  section_name: Evaluation / Human Decision
+  section_responsibility: Assistant Summary, approved CORE evaluation, human decision, structured decision, candidate decision
+  visual_uid: CORE-01-VIS-DECISION
+  component_uids:
+  - CORE-01-CMP-EVALUATION
+  - CORE-01-CMP-HUMAN-DECISION
+  - CORE-01-CMP-SUMMARY
+  control_uids:
+  - CORE-01-BTN-CANDIDATE-CONFIRM
+  - CORE-01-BTN-CANDIDATE-CREATE
+  - CORE-01-BTN-RETURN-MODIFY
+  - CORE-01-FLD-ASSISTANT-SUMMARY
+  - CORE-01-FLD-EVALUATION
+  - CORE-01-FLD-HUMAN-DECISION
+  - CORE-01-FLD-STRUCTURED-DECISION
+- workbench_uid: CORE-01-WB-CORE-01-SEC-06
+  workbench_class: SAME_SURFACE_CLUSTER
+  classification_basis: EXACT_SECTION_UID_MEMBERSHIP
+  section_uid: CORE-01-SEC-06
+  section_name: Runtime Stage Strip
+  section_responsibility: Current conversational decision stage only; domain lock remains right-rail governed
+  visual_uid: CORE-01-VIS-RUNTIME
+  component_uids:
+  - CORE-01-CMP-RUNTIME
+  control_uids:
+  - CORE-01-FLD-RUNTIME-STAGE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-07
+  workbench_class: SAME_SURFACE_CLUSTER
+  classification_basis: EXACT_SECTION_UID_MEMBERSHIP
+  section_uid: CORE-01-SEC-07
+  section_name: Input Composer
+  section_responsibility: Attachment/reference/message/@ parser/send; no page-level provider/model picker
+  visual_uid: CORE-01-VIS-COMPOSER
+  component_uids:
+  - CORE-01-CMP-COMPOSER
+  control_uids:
+  - CORE-01-BTN-ATTACHMENT
+  - CORE-01-BTN-REFERENCE
+  - CORE-01-BTN-SEND
+  - CORE-01-FLD-MESSAGE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-08
+  workbench_class: SAME_SURFACE_CLUSTER
+  classification_basis: EXACT_SECTION_UID_MEMBERSHIP
+  section_uid: CORE-01-SEC-08
+  section_name: Project Core / Blueprint State Rail
+  section_responsibility: Read model + permitted Project/DNA/Blueprint review actions
+  visual_uid: CORE-01-VIS-RIGHT-CORE
+  component_uids:
+  - CORE-01-CMP-BLUEPRINT-STATE
+  - CORE-01-CMP-PROJECT-STATE
+  control_uids:
+  - CORE-01-BTN-BLUEPRINT-APPROVE
+  - CORE-01-BTN-BLUEPRINT-CREATE
+  - CORE-01-BTN-BLUEPRINT-VALIDATE
+  - CORE-01-BTN-CHILD-LOCK
+  - CORE-01-BTN-CORE-REVIEW
+  - CORE-01-BTN-DNA-LOCK
+  - CORE-01-BTN-PROJECT-CONFIRM
+  - CORE-01-BTN-PROJECT-LOCK
+  - CORE-01-BTN-PROJECT-VALIDATE
+  - CORE-01-BTN-STORY-CANDIDATE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-09
+  workbench_class: SAME_SURFACE_CLUSTER
+  classification_basis: EXACT_SECTION_UID_MEMBERSHIP
+  section_uid: CORE-01-SEC-09
+  section_name: Topic Production Package / Downstream Readiness
+  section_responsibility: Topic scope, Canonical Script, naming authority ref, ASSET/VIDEO/EDIT readiness read-only
+  visual_uid: CORE-01-VIS-RIGHT-TOPIC
+  component_uids:
+  - CORE-01-CMP-DOWNSTREAM
+  - CORE-01-CMP-TOPIC-PACKAGE
+  control_uids:
+  - CORE-01-BTN-CANONICAL-SCRIPT
+  - CORE-01-FLD-DOWNSTREAM-ASSET
+  - CORE-01-FLD-DOWNSTREAM-EDIT
+  - CORE-01-FLD-DOWNSTREAM-VIDEO
+  - CORE-01-FLD-PACKAGE
+  - CORE-01-FLD-TOPIC-SCOPE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-10
+  workbench_class: SAME_SURFACE_CLUSTER
+  classification_basis: EXACT_SECTION_UID_MEMBERSHIP
+  section_uid: CORE-01-SEC-10
+  section_name: Version / Lock Review State Rail
+  section_responsibility: Candidate/version compare state, immutable version refs, project/topic lock review status
+  visual_uid: CORE-01-VIS-RIGHT-VERSION
+  component_uids:
+  - CORE-01-CMP-LOCK-REVIEW
+  - CORE-01-CMP-VERSION
+  control_uids:
+  - CORE-01-BTN-CANDIDATE-COMPARE
+  - CORE-01-FLD-LOCK-REVIEW
+  - CORE-01-FLD-VERSION-STATE

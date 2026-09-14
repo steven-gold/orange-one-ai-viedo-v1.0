@@ -1,0 +1,1460 @@
+schema_version: 1
+artifact_type: FUNCTIONAL_CHAIN_SPEC
+stage_uid: STAGE-02
+page_uid: ASSET-01
+source_authority_id: ASSET_PAGE_VISUAL_AUTHORITY_FINAL
+source_blueprint_uid: V218-REPLAY-BP-ASSET-01-PAGE-BASE
+source_projection:
+  actions:
+  - action_uid: ASSET-01-ACT-PROJECT-SELECT
+    label: Select Project
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-TOPIC-SELECT
+    label: Select Topic
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-MODE-SET
+    label: Set AUTO/MANUAL
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-CONTEXT
+    effect_type: CONTEXT_STATE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-FLOW-START
+    label: Execute / Resume Current Stage
+    permission_uid: ASSET_EXECUTE
+    gate_uid: ASSET-01-GATE-EXECUTE
+    effect_type: JOB_START
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-EXECUTE
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-ASSET-SEARCH
+    label: Search Asset Manifest
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-CONTEXT
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-ASSET-FILTER
+    label: Filter Asset Manifest
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-CONTEXT
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-ASSET-SELECT
+    label: Select Asset Context
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-CONTEXT
+    effect_type: CONTEXT_STATE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-BLUEPRINT-VIEW
+    label: View Locked Blueprint
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-CHILD-LOCK
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-SCRIPT-VIEW
+    label: View ASSET Script
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-SCRIPT
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-BINDING-VIEW
+    label: View Binding Manifest
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-MANIFEST
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-COMPARE-SINGLE
+    label: Single Compare
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-COMPARE
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-COMPARE-AB
+    label: A/B Compare
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-COMPARE
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-COMPARE-ABC
+    label: A/B/C Compare
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-COMPARE
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-ZOOM-IN
+    label: Zoom In
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-ZOOM-OUT
+    label: Zoom Out
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-FIT
+    label: Fit Preview
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-REFERENCE-TOGGLE
+    label: Reference Overlay
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-RESULT-VIEW
+    label: View Evaluation/Issues
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-EVALUATION
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-EVALUATE
+    label: Run/Refresh ASSET Evaluation
+    permission_uid: ASSET_SCORE
+    gate_uid: ASSET-01-GATE-EVALUATION
+    effect_type: SCORE_MUTATION
+    runtime_binding:
+      binding_kind: EVALUATION_COMPOSITE
+      persist_via_port_uid: ASSET-01-PORT-SCORECARD
+      evaluation_rule: Run bound ASSET criteria/evidence engine using approved criteria version.
+  - action_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+    label: Confirm Exact Candidate
+    permission_uid: ASSET_DECIDE
+    gate_uid: ASSET-01-GATE-CONFIRM
+    effect_type: DECISION_MUTATION
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-DECISION
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-CORRECTION-OPEN
+    label: Open Correction
+    permission_uid: ASSET_CORRECT
+    gate_uid: ASSET-01-GATE-CORRECTION
+    effect_type: CONTEXT_STATE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-CORRECTION-GENERATE
+    label: Generate Correction Script Candidate
+    permission_uid: ASSET_CORRECT
+    gate_uid: ASSET-01-GATE-CORRECTION
+    effect_type: CANDIDATE_CREATE
+    runtime_binding:
+      binding_kind: SHARED_OPERATION_REFERENCE
+      shared_authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+      shared_operation_id: generateCorrectionScriptCandidate
+  - action_uid: ASSET-01-ACT-CORRECTION-APPROVE
+    label: Approve Correction Candidate
+    permission_uid: ASSET_CORRECT
+    gate_uid: ASSET-01-GATE-CORRECTION
+    effect_type: DECISION_MUTATION
+    runtime_binding:
+      binding_kind: SHARED_OPERATION_REFERENCE
+      shared_authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+      shared_operation_id: approveCorrectionScriptCandidate
+  - action_uid: ASSET-01-ACT-CORRECTION-EXECUTE
+    label: Execute Approved Correction
+    permission_uid: ASSET_EXECUTE
+    gate_uid: ASSET-01-GATE-CORRECTION
+    effect_type: JOB_START
+    runtime_binding:
+      binding_kind: COMPOSITE_TO_EXISTING_EXECUTE_PORT
+      port_uid: ASSET-01-PORT-EXECUTE
+      pre_step: Shared compiler/adapter translates exact APPROVED correction candidate; Core/API Router resolves provider; revalidate exact input
+        fingerprint.
+      payload_mode: CORRECTION; correction_context_ref + approved_candidate_ref + translated_instruction_ref + affected_scope + source_asset_version_id
+      result: NEW candidate/version; never overwrite source version
+      decision: SOURCE_DERIVED_CLOSURE
+  - action_uid: ASSET-01-ACT-FINDING-CREATE
+    label: Create Finding
+    permission_uid: ASSET_CORRECT
+    gate_uid: ASSET-01-GATE-EVALUATION
+    effect_type: FINDING_CREATE
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-FINDING
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-TASK-RETRY
+    label: Retry Task
+    permission_uid: ASSET_EXECUTE
+    gate_uid: ASSET-01-GATE-RETRY
+    effect_type: JOB_START
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-RETRY
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-RUNTIME-VIEW
+    label: View Runtime Detail
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-PAGE
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-VERSION-HISTORY
+    label: View Version History
+    permission_uid: ASSET_USE
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    effect_type: UI_ONLY
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: ASSET-01-ACT-RESTORE-AS-NEW
+    label: Restore as New Version Draft
+    permission_uid: ASSET_DECIDE
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    effect_type: VERSION_CREATE
+    runtime_binding:
+      binding_kind: SHARED_OPERATION_REFERENCE
+      shared_authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+      shared_operation_id: restoreAssetVersionAsNewDraft
+  - action_uid: ASSET-01-ACT-VERSION-LOCK
+    label: Lock Exact Asset Version
+    permission_uid: ASSET_DECIDE
+    gate_uid: ASSET-01-GATE-LOCK
+    effect_type: VERSION_LOCK
+    runtime_binding:
+      binding_kind: SHARED_OPERATION_REFERENCE
+      shared_authority_id: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+      shared_operation_id: lockAssetVersion
+  - action_uid: ASSET-01-ACT-HANDOFF
+    label: Handoff to VIDEO
+    permission_uid: ASSET_HANDOFF
+    gate_uid: ASSET-01-GATE-HANDOFF
+    effect_type: HANDOFF_CREATE
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-OUT-VIDEO
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-LAYER-DOC-CREATE
+    label: Create Versioned Layer Document
+    permission_uid: ASSET_LAYER_WRITE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    effect_type: VERSION_CREATE
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-LAYER-DOC-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-LAYER-DOC-UPDATE
+    label: Update Layer Document
+    permission_uid: ASSET_LAYER_WRITE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    effect_type: DRAFT_MUTATION
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-LAYER-DOC-UPDATE
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-LAYER-ADD
+    label: Add Layer
+    permission_uid: ASSET_LAYER_WRITE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    effect_type: DRAFT_MUTATION
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-LAYER-ADD
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-LAYER-DELETE
+    label: Delete Layer
+    permission_uid: ASSET_LAYER_WRITE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    effect_type: DRAFT_MUTATION
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-LAYER-DELETE
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-LAYER-DUPLICATE
+    label: Duplicate Layer
+    permission_uid: ASSET_LAYER_WRITE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    effect_type: DRAFT_MUTATION
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-LAYER-DUP
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-LAYER-REORDER
+    label: Reorder Layer
+    permission_uid: ASSET_LAYER_WRITE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    effect_type: DRAFT_MUTATION
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-LAYER-REORDER
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-LAYER-PROPERTIES
+    label: Update Layer Properties
+    permission_uid: ASSET_LAYER_WRITE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    effect_type: DRAFT_MUTATION
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-LAYER-PROPS
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-LAYER-MASK
+    label: Update Layer Mask
+    permission_uid: ASSET_LAYER_WRITE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    effect_type: DRAFT_MUTATION
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-LAYER-MASK
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-PATCH-CREATE
+    label: Create Asset Patch
+    permission_uid: ASSET_LAYER_WRITE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    effect_type: CANDIDATE_CREATE
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-PATCH-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-PATCH-PREVIEW
+    label: Preview Asset Patch
+    permission_uid: ASSET_LAYER_WRITE
+    gate_uid: ASSET-01-GATE-PATCH-PREVIEW
+    effect_type: JOB_START
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-PATCH-PREVIEW
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-PATCH-ACCEPT
+    label: Accept Asset Patch
+    permission_uid: ASSET_PATCH_DECIDE
+    gate_uid: ASSET-01-GATE-PATCH-DECISION
+    effect_type: VERSION_CREATE
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-PATCH-DECIDE
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-PATCH-REJECT
+    label: Reject Asset Patch
+    permission_uid: ASSET_PATCH_DECIDE
+    gate_uid: ASSET-01-GATE-PATCH-DECISION
+    effect_type: DECISION_MUTATION
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: ASSET-01-PORT-PATCH-DECIDE
+      decision: SOURCE_DERIVED
+  - action_uid: ASSET-01-ACT-PATCH-REVISE
+    label: Revise Asset Patch
+    permission_uid: ASSET_PATCH_DECIDE
+    gate_uid: ASSET-01-GATE-PATCH-DECISION
+    effect_type: CONTEXT_STATE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  controls:
+  - control_uid: ASSET-01-CTL-PROJECT
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+    type: SELECT
+    label: Project
+    action_uid: ASSET-01-ACT-PROJECT-SELECT
+    gate_uid: ASSET-01-GATE-PAGE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-CTL-TOPIC
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+    type: SELECT
+    label: Topic
+    action_uid: ASSET-01-ACT-TOPIC-SELECT
+    gate_uid: ASSET-01-GATE-PAGE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-TASK
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+    type: READONLY
+    label: Production Task
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-CONTEXT
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-TASK-STATUS
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+    type: STATUS
+    label: Task Status
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-CONTEXT
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-CTL-MODE
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+    type: SEGMENTED
+    label: AUTO / MANUAL
+    action_uid: ASSET-01-ACT-MODE-SET
+    gate_uid: ASSET-01-GATE-CONTEXT
+    permission_uid: ASSET_USE
+    default: AUTO
+  - control_uid: ASSET-01-BTN-EXECUTE
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+    type: PRIMARY_BUTTON
+    label: 執行
+    action_uid: ASSET-01-ACT-FLOW-START
+    gate_uid: ASSET-01-GATE-EXECUTE
+    permission_uid: ASSET_EXECUTE
+    default: —
+  - control_uid: ASSET-01-FLD-STAGE
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+    type: READONLY
+    label: Current Stage
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-CONTEXT
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-SEARCH
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-ASSET-LIST
+    visual_uid: ASSET-01-VIS-LEFT
+    type: SEARCH
+    label: 搜尋素材
+    action_uid: ASSET-01-ACT-ASSET-SEARCH
+    gate_uid: ASSET-01-GATE-CONTEXT
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-CTL-FILTER
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-ASSET-LIST
+    visual_uid: ASSET-01-VIS-LEFT
+    type: FILTER
+    label: Filter
+    action_uid: ASSET-01-ACT-ASSET-FILTER
+    gate_uid: ASSET-01-GATE-CONTEXT
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-LST-ASSET
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-ASSET-LIST
+    visual_uid: ASSET-01-VIS-LEFT
+    type: LIST
+    label: Asset Items
+    action_uid: ASSET-01-ACT-ASSET-SELECT
+    gate_uid: ASSET-01-GATE-CONTEXT
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-MANIFEST-REQUIRED
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-REUSE
+    visual_uid: ASSET-01-VIS-LEFT
+    type: READONLY
+    label: Required
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-MANIFEST
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-MANIFEST-REUSE
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-REUSE
+    visual_uid: ASSET-01-VIS-LEFT
+    type: READONLY
+    label: Reuse
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-MANIFEST
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-MANIFEST-MISSING
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-REUSE
+    visual_uid: ASSET-01-VIS-LEFT
+    type: READONLY
+    label: Missing
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-MANIFEST
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-MANIFEST-DEFERRED
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-REUSE
+    visual_uid: ASSET-01-VIS-LEFT
+    type: READONLY
+    label: Deferred
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-MANIFEST
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-BLUEPRINT
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: Locked Blueprint / Child Lock
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-CHILD-LOCK
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-SCRIPT
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: ASSET Script Role / Section / Hash
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-SCRIPT
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-DNA
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: DNA / Identity / Continuity Refs
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-MANIFEST
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-MANIFEST
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: Asset Manifest Item ID / Purpose
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-MANIFEST
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-INPUT-FINGERPRINT
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: Input Fingerprint
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-MANIFEST
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-NAMING-AUTHORITY
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: Filename Authority = ACPOS_SYSTEM
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-NAMING
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-CANONICAL-FILENAME
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: Canonical Filename
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-NAMING
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-OUTPUT-ID
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: Output Artifact ID / Exact Version
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-NAMING
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-CHECKSUM
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: Checksum
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-NAMING
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-RIGHTS
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: Rights / Policy
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-MANIFEST
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-INSTRUCTION
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: READONLY
+    label: Approved Instruction Package
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-ROUTE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-BLUEPRINT
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+    type: SECONDARY_BUTTON
+    label: 查看 Blueprint
+    action_uid: ASSET-01-ACT-BLUEPRINT-VIEW
+    gate_uid: ASSET-01-GATE-CHILD-LOCK
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-SCRIPT
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-SCRIPT
+    visual_uid: ASSET-01-VIS-BINDING
+    type: SECONDARY_BUTTON
+    label: 查看 ASSET Script
+    action_uid: ASSET-01-ACT-SCRIPT-VIEW
+    gate_uid: ASSET-01-GATE-SCRIPT
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-SINGLE
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+    type: CONTROL
+    label: Single
+    action_uid: ASSET-01-ACT-COMPARE-SINGLE
+    gate_uid: ASSET-01-GATE-COMPARE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-AB
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+    type: CONTROL
+    label: A/B
+    action_uid: ASSET-01-ACT-COMPARE-AB
+    gate_uid: ASSET-01-GATE-COMPARE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-ABC
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+    type: CONTROL
+    label: A/B/C
+    action_uid: ASSET-01-ACT-COMPARE-ABC
+    gate_uid: ASSET-01-GATE-COMPARE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-ZOOM-OUT
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+    type: CONTROL
+    label: −
+    action_uid: ASSET-01-ACT-ZOOM-OUT
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-ZOOM-IN
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+    type: CONTROL
+    label: +
+    action_uid: ASSET-01-ACT-ZOOM-IN
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-FIT
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+    type: CONTROL
+    label: Fit
+    action_uid: ASSET-01-ACT-FIT
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-REFERENCE
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+    type: CONTROL
+    label: Reference
+    action_uid: ASSET-01-ACT-REFERENCE-TOGGLE
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-LST-COMPARE-VERSIONS
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-PREVIEW
+    visual_uid: ASSET-01-VIS-PREVIEW
+    type: LIST
+    label: Selected Versions
+    action_uid: ASSET-01-ACT-COMPARE-SINGLE
+    gate_uid: ASSET-01-GATE-COMPARE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-RESULT-DETAIL
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-PREVIEW
+    visual_uid: ASSET-01-VIS-PREVIEW
+    type: SECONDARY_BUTTON
+    label: 查看結果詳情
+    action_uid: ASSET-01-ACT-RESULT-VIEW
+    gate_uid: ASSET-01-GATE-EVALUATION
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-CORRECTION-OPEN
+    section_uid: ASSET-01-SEC-06
+    component_uid: ASSET-01-CMP-CORRECTION
+    visual_uid: ASSET-01-VIS-CORRECTION
+    type: CONTROL
+    label: 開始修正
+    action_uid: ASSET-01-ACT-CORRECTION-OPEN
+    gate_uid: ASSET-01-GATE-CORRECTION
+    permission_uid: ASSET_CORRECT
+    default: —
+  - control_uid: ASSET-01-TXT-CORRECTION-REQUEST
+    section_uid: ASSET-01-SEC-06
+    component_uid: ASSET-01-CMP-CORRECTION
+    visual_uid: ASSET-01-VIS-CORRECTION
+    type: CONTROL
+    label: 繁中修改要求
+    action_uid: ASSET-01-ACT-CORRECTION-GENERATE
+    gate_uid: ASSET-01-GATE-CORRECTION
+    permission_uid: ASSET_CORRECT
+    default: —
+  - control_uid: ASSET-01-BTN-CORRECTION-GENERATE
+    section_uid: ASSET-01-SEC-06
+    component_uid: ASSET-01-CMP-CORRECTION
+    visual_uid: ASSET-01-VIS-CORRECTION
+    type: CONTROL
+    label: 產生修正腳本候選
+    action_uid: ASSET-01-ACT-CORRECTION-GENERATE
+    gate_uid: ASSET-01-GATE-CORRECTION
+    permission_uid: ASSET_CORRECT
+    default: —
+  - control_uid: ASSET-01-BTN-CORRECTION-APPROVE
+    section_uid: ASSET-01-SEC-06
+    component_uid: ASSET-01-CMP-CORRECTION
+    visual_uid: ASSET-01-VIS-CORRECTION
+    type: CONTROL
+    label: 核准候選
+    action_uid: ASSET-01-ACT-CORRECTION-APPROVE
+    gate_uid: ASSET-01-GATE-CORRECTION
+    permission_uid: ASSET_CORRECT
+    default: —
+  - control_uid: ASSET-01-BTN-CORRECTION-EXECUTE
+    section_uid: ASSET-01-SEC-06
+    component_uid: ASSET-01-CMP-CORRECTION
+    visual_uid: ASSET-01-VIS-CORRECTION
+    type: CONTROL
+    label: 執行修正
+    action_uid: ASSET-01-ACT-CORRECTION-EXECUTE
+    gate_uid: ASSET-01-GATE-CORRECTION
+    permission_uid: ASSET_EXECUTE
+    default: —
+  - control_uid: ASSET-01-BTN-LAYER-DOC-CREATE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 建立 Layer Document
+    action_uid: ASSET-01-ACT-LAYER-DOC-CREATE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    permission_uid: ASSET_LAYER_WRITE
+    default: —
+  - control_uid: ASSET-01-BTN-LAYER-DOC-UPDATE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 更新 Layer Document
+    action_uid: ASSET-01-ACT-LAYER-DOC-UPDATE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    permission_uid: ASSET_LAYER_WRITE
+    default: —
+  - control_uid: ASSET-01-BTN-LAYER-ADD
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 新增 Layer
+    action_uid: ASSET-01-ACT-LAYER-ADD
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    permission_uid: ASSET_LAYER_WRITE
+    default: —
+  - control_uid: ASSET-01-BTN-LAYER-DELETE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 刪除 Layer
+    action_uid: ASSET-01-ACT-LAYER-DELETE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    permission_uid: ASSET_LAYER_WRITE
+    default: —
+  - control_uid: ASSET-01-BTN-LAYER-DUPLICATE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 複製 Layer
+    action_uid: ASSET-01-ACT-LAYER-DUPLICATE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    permission_uid: ASSET_LAYER_WRITE
+    default: —
+  - control_uid: ASSET-01-BTN-LAYER-REORDER
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 排序 Layer
+    action_uid: ASSET-01-ACT-LAYER-REORDER
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    permission_uid: ASSET_LAYER_WRITE
+    default: —
+  - control_uid: ASSET-01-CTL-LAYER-PROPERTIES
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: Opacity / Blend / Transform
+    action_uid: ASSET-01-ACT-LAYER-PROPERTIES
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    permission_uid: ASSET_LAYER_WRITE
+    default: —
+  - control_uid: ASSET-01-CTL-LAYER-MASK
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: Mask / Semantic Region
+    action_uid: ASSET-01-ACT-LAYER-MASK
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    permission_uid: ASSET_LAYER_WRITE
+    default: —
+  - control_uid: ASSET-01-BTN-PATCH-CREATE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-PATCH
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 建立 Patch
+    action_uid: ASSET-01-ACT-PATCH-CREATE
+    gate_uid: ASSET-01-GATE-LAYER-WRITE
+    permission_uid: ASSET_LAYER_WRITE
+    default: —
+  - control_uid: ASSET-01-BTN-PATCH-PREVIEW
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-PATCH
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 預覽 Patch
+    action_uid: ASSET-01-ACT-PATCH-PREVIEW
+    gate_uid: ASSET-01-GATE-PATCH-PREVIEW
+    permission_uid: ASSET_LAYER_WRITE
+    default: —
+  - control_uid: ASSET-01-BTN-PATCH-ACCEPT
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-PATCH
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 接受 Patch
+    action_uid: ASSET-01-ACT-PATCH-ACCEPT
+    gate_uid: ASSET-01-GATE-PATCH-DECISION
+    permission_uid: ASSET_PATCH_DECIDE
+    default: —
+  - control_uid: ASSET-01-BTN-PATCH-REJECT
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-PATCH
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 拒絕 Patch
+    action_uid: ASSET-01-ACT-PATCH-REJECT
+    gate_uid: ASSET-01-GATE-PATCH-DECISION
+    permission_uid: ASSET_PATCH_DECIDE
+    default: —
+  - control_uid: ASSET-01-BTN-PATCH-REVISE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-PATCH
+    visual_uid: ASSET-01-VIS-LAYER
+    type: CONTROL
+    label: 要求修改 Patch
+    action_uid: ASSET-01-ACT-PATCH-REVISE
+    gate_uid: ASSET-01-GATE-PATCH-DECISION
+    permission_uid: ASSET_PATCH_DECIDE
+    default: —
+  - control_uid: ASSET-01-FLD-ROUTE
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+    type: READONLY
+    label: Route State
+    action_uid: ASSET-01-ACT-RUNTIME-VIEW
+    gate_uid: ASSET-01-GATE-PAGE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-PROVIDER
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+    type: READONLY
+    label: Provider / Model
+    action_uid: ASSET-01-ACT-RUNTIME-VIEW
+    gate_uid: ASSET-01-GATE-PAGE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-JOB
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+    type: READONLY
+    label: Provider Job State
+    action_uid: ASSET-01-ACT-RUNTIME-VIEW
+    gate_uid: ASSET-01-GATE-PAGE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-ATTEMPT
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+    type: READONLY
+    label: Attempt
+    action_uid: ASSET-01-ACT-RUNTIME-VIEW
+    gate_uid: ASSET-01-GATE-PAGE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-CALLBACK
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+    type: READONLY
+    label: Callback
+    action_uid: ASSET-01-ACT-RUNTIME-VIEW
+    gate_uid: ASSET-01-GATE-PAGE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-RETRY-ELIGIBILITY
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+    type: READONLY
+    label: Retry Eligibility
+    action_uid: ASSET-01-ACT-RUNTIME-VIEW
+    gate_uid: ASSET-01-GATE-PAGE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-TRACE
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+    type: READONLY
+    label: Correlation / Trace
+    action_uid: ASSET-01-ACT-RUNTIME-VIEW
+    gate_uid: ASSET-01-GATE-PAGE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-RETRY
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+    type: SECONDARY_BUTTON
+    label: Retry
+    action_uid: ASSET-01-ACT-TASK-RETRY
+    gate_uid: ASSET-01-GATE-RETRY
+    permission_uid: ASSET_EXECUTE
+    default: —
+  - control_uid: ASSET-01-BTN-RUNTIME-DETAIL
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+    type: SECONDARY_BUTTON
+    label: 查看 Runtime 詳情
+    action_uid: ASSET-01-ACT-RUNTIME-VIEW
+    gate_uid: ASSET-01-GATE-PAGE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-CRITERIA
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-SCORE
+    visual_uid: ASSET-01-VIS-DECISION
+    type: READONLY
+    label: ASSET Criteria Version
+    action_uid: ASSET-01-ACT-RESULT-VIEW
+    gate_uid: ASSET-01-GATE-EVALUATION
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-DIMENSIONS
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-SCORE
+    visual_uid: ASSET-01-VIS-DECISION
+    type: READONLY
+    label: Dimension UID / Label / Weight / Score / Hard Block
+    action_uid: ASSET-01-ACT-RESULT-VIEW
+    gate_uid: ASSET-01-GATE-EVALUATION
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-OVERALL
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-SCORE
+    visual_uid: ASSET-01-VIS-DECISION
+    type: READONLY
+    label: Overall Score
+    action_uid: ASSET-01-ACT-RESULT-VIEW
+    gate_uid: ASSET-01-GATE-EVALUATION
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-ISSUES
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-SCORE
+    visual_uid: ASSET-01-VIS-DECISION
+    type: READONLY
+    label: Issue Summary
+    action_uid: ASSET-01-ACT-RESULT-VIEW
+    gate_uid: ASSET-01-GATE-EVALUATION
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-EVALUATE
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-SCORE
+    visual_uid: ASSET-01-VIS-DECISION
+    type: SECONDARY_BUTTON
+    label: 重新評估
+    action_uid: ASSET-01-ACT-EVALUATE
+    gate_uid: ASSET-01-GATE-EVALUATION
+    permission_uid: ASSET_SCORE
+    default: —
+  - control_uid: ASSET-01-BTN-CONFIRM
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-DECISION
+    visual_uid: ASSET-01-VIS-DECISION
+    type: PRIMARY_BUTTON
+    label: 確認版本
+    action_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+    gate_uid: ASSET-01-GATE-CONFIRM
+    permission_uid: ASSET_DECIDE
+    default: —
+  - control_uid: ASSET-01-BTN-MODIFY
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-DECISION
+    visual_uid: ASSET-01-VIS-DECISION
+    type: SECONDARY_BUTTON
+    label: 修改版本
+    action_uid: ASSET-01-ACT-CORRECTION-OPEN
+    gate_uid: ASSET-01-GATE-WAIT-CONFIRM
+    permission_uid: ASSET_CORRECT
+    default: —
+  - control_uid: ASSET-01-BTN-VERSION-HISTORY
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-VERSION
+    visual_uid: ASSET-01-VIS-DECISION
+    type: SECONDARY_BUTTON
+    label: 版本歷史
+    action_uid: ASSET-01-ACT-VERSION-HISTORY
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-RESTORE-AS-NEW
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-VERSION
+    visual_uid: ASSET-01-VIS-DECISION
+    type: SECONDARY_BUTTON
+    label: Restore as New Version
+    action_uid: ASSET-01-ACT-RESTORE-AS-NEW
+    gate_uid: ASSET-01-GATE-CANDIDATE
+    permission_uid: ASSET_DECIDE
+    default: —
+  - control_uid: ASSET-01-BTN-LOCK
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-DECISION
+    visual_uid: ASSET-01-VIS-DECISION
+    type: SECONDARY_BUTTON
+    label: Lock Exact Version
+    action_uid: ASSET-01-ACT-VERSION-LOCK
+    gate_uid: ASSET-01-GATE-LOCK
+    permission_uid: ASSET_DECIDE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-ASSET-VERSION
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: ASSET VERSION
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: LAYER COMPOSITE
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-BLUEPRINT
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: BLUEPRINT
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-SCRIPT-HASH
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: SCRIPT HASH
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-DNA
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: DNA
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: MANIFEST ITEMS
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: CANONICAL FILENAME
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-CHECKSUM
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: CHECKSUM
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-SCORECARD
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: SCORECARD
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-RIGHTS
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: RIGHTS
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-FLD-HANDOFF-CONTRACT-HASH
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: READONLY
+    label: CONTRACT HASH
+    action_uid: ASSET-01-ACT-BINDING-VIEW
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_USE
+    default: —
+  - control_uid: ASSET-01-BTN-HANDOFF
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+    type: PRIMARY_BUTTON
+    label: Handoff → VIDEO
+    action_uid: ASSET-01-ACT-HANDOFF
+    gate_uid: ASSET-01-GATE-HANDOFF
+    permission_uid: ASSET_HANDOFF
+    default: —
+  stages:
+  - stage_uid: ASSET-01-STAGE-01-RESOLVE
+    name: Resolve Inputs
+    flow: Resolve exact Task→Blueprint→ASSET Script→DNA→Asset Manifest→ACPOS Naming→Instruction/Route; first production has no manual prompt.
+  - stage_uid: ASSET-01-STAGE-02-REUSE-GENERATE
+    name: Reuse First / Generate Missing
+    flow: Resolve each required manifest item; reuse exact eligible asset first; only generate Missing items.
+  - stage_uid: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    name: Layer / Composite
+    flow: For image-compatible assets, optional Layer/Patch/Composite; audio assets skip LayerRuntime. No cross-department edit.
+  - stage_uid: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    name: Evaluate / Confirm or Modify
+    flow: Run bound ASSET criteria → WAIT_CONFIRMATION; Confirm or enter Correction. AUTO advances only after Confirm.
+  - stage_uid: ASSET-01-STAGE-05-FINALIZE
+    name: Lock / Handoff
+    flow: Seal exact asset output manifest, lock exact version, handoff exact manifest to VIDEO.
+  stage_transitions:
+  - transition_uid: ASSET-01-STTR-01
+    from_stage: ASSET-01-STAGE-01-RESOLVE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-FLOW-START
+    gate: ASSET-01-GATE-EXECUTE
+  - transition_uid: ASSET-01-STTR-02
+    from_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    to_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    trigger: Verified Candidate/Reuse Resolution
+    gate: all required items resolved or valid candidate produced
+  - transition_uid: ASSET-01-STTR-03
+    from_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    to_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    trigger: ASSET-01-ACT-EVALUATE
+    gate: candidate/layer/composite provenance PASS
+  - transition_uid: ASSET-01-STTR-04
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-CORRECTION-EXECUTE
+    gate: Modify path; approved correction only
+  - transition_uid: ASSET-01-STTR-05
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-05-FINALIZE
+    trigger: ASSET-01-ACT-CANDIDATE-CONFIRM
+    gate: ASSET-01-GATE-CONFIRM
+  events: []
+  integration_ports:
+  - port_uid: ASSET-01-PORT-IN-CORE-HANDOFF
+    boundary: Inbound / Task Ready
+    registered_operation: createDepartmentHandoff
+    method_effective_path: POST /v1/handoffs
+    registered_permission: department.handoff.create
+    state_event: Upstream HANDOFF_READY→HANDED_OFF; ASSET WAITING_DEPENDENCY→READY | handoff.created
+    exposure: Created upstream; ASSET validates exact task/blueprint/script/manifest refs only.
+  - port_uid: ASSET-01-PORT-EXECUTE
+    boundary: Execute Task
+    registered_operation: requestTaskExecution
+    method_effective_path: POST /v1/tasks/{taskId}/execute
+    registered_permission: department.task.execute
+    state_event: READY→ROUTING | provider.job.requested
+    exposure: ASSET-01-ACT-FLOW-START after all execute gates PASS.
+  - port_uid: ASSET-01-PORT-RETRY
+    boundary: Retry Task
+    registered_operation: retryTaskExecution
+    method_effective_path: POST /v1/tasks/{taskId}/retry
+    registered_permission: department.task.execute
+    state_event: BLOCKED/FAILED→ROUTING | provider.job.requested
+    exposure: ASSET-01-ACT-TASK-RETRY; policy eligible only.
+  - port_uid: ASSET-01-PORT-FINDING
+    boundary: Evaluation Finding
+    registered_operation: createFinding
+    method_effective_path: POST /v1/findings
+    registered_permission: finding.write
+    state_event: IN_REVIEW→FINDING_OPEN | finding.created
+    exposure: ASSET-01-ACT-FINDING-CREATE.
+  - port_uid: ASSET-01-PORT-CORRECTION
+    boundary: Correction Request
+    registered_operation: createCorrectionRequest
+    method_effective_path: POST /v1/correction-requests
+    registered_permission: correction.create
+    state_event: FINDING_OPEN→CORRECTION_REQUIRED | correction.requested
+    exposure: Correction references exact asset/layer/region; shared translation remains system-level.
+  - port_uid: ASSET-01-PORT-DECISION
+    boundary: Candidate Confirm
+    registered_operation: decideOutputCandidate
+    method_effective_path: POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
+    registered_permission: department.output.decide
+    state_event: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+    exposure: ASSET-01-ACT-CANDIDATE-CONFIRM.
+  - port_uid: ASSET-01-PORT-SCORECARD
+    boundary: Score Persist
+    registered_operation: submitScorecard
+    method_effective_path: POST /v1/scorecards
+    registered_permission: department.score.write
+    state_event: CANDIDATE_OUTPUT→SCORE_PENDING or BLOCKED | scorecard.submitted
+    exposure: Persist bound ASSET criteria version; page never invents dimension schema.
+  - port_uid: ASSET-01-PORT-OUT-VIDEO
+    boundary: Outbound to VIDEO
+    registered_operation: createDepartmentHandoff
+    method_effective_path: POST /v1/handoffs
+    registered_permission: department.handoff.create
+    state_event: HANDOFF_READY→HANDED_OFF; VIDEO dependency→READY | handoff.created
+    exposure: ASSET-01-ACT-HANDOFF; exact locked manifest only.
+  - port_uid: ASSET-01-PORT-LAYER-DOC-CREATE
+    boundary: Layer Runtime
+    registered_operation: createLayerDocument
+    method_effective_path: POST /v1/layer-documents
+    registered_permission: asset.layer.write
+    state_event: DRAFT→ACTIVE | layer.document.created
+    exposure: Image-compatible asset only.
+  - port_uid: ASSET-01-PORT-LAYER-DOC-UPDATE
+    boundary: Layer Runtime
+    registered_operation: updateLayerDocument
+    method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}
+    registered_permission: asset.layer.write
+    state_event: ACTIVE→ACTIVE | layer.document.updated
+    exposure: Versioned update only.
+  - port_uid: ASSET-01-PORT-LAYER-ADD
+    boundary: Layer Runtime
+    registered_operation: addLayer
+    method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: Add layer.
+  - port_uid: ASSET-01-PORT-LAYER-DELETE
+    boundary: Layer Runtime
+    registered_operation: deleteLayer
+    method_effective_path: DELETE /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: Locked layer rejects destructive mutation.
+  - port_uid: ASSET-01-PORT-LAYER-DUP
+    boundary: Layer Runtime
+    registered_operation: duplicateLayer
+    method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/duplicate
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: Duplicate layer.
+  - port_uid: ASSET-01-PORT-LAYER-REORDER
+    boundary: Layer Runtime
+    registered_operation: reorderLayer
+    method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/reorder
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: z_index remains unique/compact.
+  - port_uid: ASSET-01-PORT-LAYER-PROPS
+    boundary: Layer Runtime
+    registered_operation: updateLayerProperties
+    method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: Opacity/blend/transform etc.
+  - port_uid: ASSET-01-PORT-LAYER-MASK
+    boundary: Layer Runtime
+    registered_operation: updateLayerMask
+    method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}/mask
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: Mask/semantic region.
+  - port_uid: ASSET-01-PORT-PATCH-CREATE
+    boundary: Asset Patch
+    registered_operation: createAssetPatch
+    method_effective_path: POST /v1/asset-patches
+    registered_permission: asset.layer.write
+    state_event: asset.patch.created
+    exposure: Exact source asset/layer/blueprint/DNA refs required.
+  - port_uid: ASSET-01-PORT-PATCH-PREVIEW
+    boundary: Asset Patch
+    registered_operation: previewAssetPatch
+    method_effective_path: POST /v1/asset-patches/{patchId}/preview
+    registered_permission: asset.layer.write
+    state_event: Patch→PREVIEW_READY
+    exposure: No output version created yet.
+  - port_uid: ASSET-01-PORT-PATCH-DECIDE
+    boundary: Asset Patch
+    registered_operation: decideAssetPatch
+    method_effective_path: POST /v1/asset-patches/{patchId}/decision
+    registered_permission: asset.patch.decide
+    state_event: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no output
+    exposure: No non-ASSET patch operation may bind to this port.
+unresolved_external_authority_refs:
+- gap_uid: GAP-001
+  authority_ref: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-001
+- gap_uid: GAP-002
+  authority_ref: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-002
+- gap_uid: GAP-003
+  authority_ref: ACPOS_SYSTEM_AUTHORITY@V1.0
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-003
+- gap_uid: GAP-004
+  authority_ref: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-004
+- gap_uid: GAP-005
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-005
+- gap_uid: GAP-006
+  authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+  source_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml#GAP-006
+source_registry_values_mutated: false
+missing_exact_contract_fields_auto_filled: false

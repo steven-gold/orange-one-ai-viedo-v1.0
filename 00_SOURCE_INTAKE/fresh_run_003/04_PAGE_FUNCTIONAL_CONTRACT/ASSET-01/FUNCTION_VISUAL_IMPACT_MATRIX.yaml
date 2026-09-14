@@ -1,0 +1,523 @@
+schema_version: 1
+artifact_type: FUNCTION_VISUAL_IMPACT_MATRIX
+stage_uid: STAGE-02
+page_uid: ASSET-01
+derivation: EXACT_CONTROL_TO_ACTION_AND_VISUAL_BINDING
+action_count: 44
+rows:
+- action_uid: ASSET-01-ACT-PROJECT-SELECT
+  effect_type: CONTEXT_STATE
+  bindings:
+  - control_uid: ASSET-01-CTL-PROJECT
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-TOPIC-SELECT
+  effect_type: CONTEXT_STATE
+  bindings:
+  - control_uid: ASSET-01-CTL-TOPIC
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-MODE-SET
+  effect_type: CONTEXT_STATE
+  bindings:
+  - control_uid: ASSET-01-CTL-MODE
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-FLOW-START
+  effect_type: JOB_START
+  bindings:
+  - control_uid: ASSET-01-BTN-EXECUTE
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-ASSET-SEARCH
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-FLD-SEARCH
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-ASSET-LIST
+    visual_uid: ASSET-01-VIS-LEFT
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-ASSET-FILTER
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-CTL-FILTER
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-ASSET-LIST
+    visual_uid: ASSET-01-VIS-LEFT
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-ASSET-SELECT
+  effect_type: CONTEXT_STATE
+  bindings:
+  - control_uid: ASSET-01-LST-ASSET
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-ASSET-LIST
+    visual_uid: ASSET-01-VIS-LEFT
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-BLUEPRINT-VIEW
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-BLUEPRINT
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-SCRIPT-VIEW
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-SCRIPT
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-SCRIPT
+    visual_uid: ASSET-01-VIS-BINDING
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-BINDING-VIEW
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-FLD-TASK
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+  - control_uid: ASSET-01-FLD-TASK-STATUS
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+  - control_uid: ASSET-01-FLD-STAGE
+    section_uid: ASSET-01-SEC-01
+    component_uid: ASSET-01-CMP-CONTEXT
+    visual_uid: ASSET-01-VIS-CONTEXT
+  - control_uid: ASSET-01-FLD-MANIFEST-REQUIRED
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-REUSE
+    visual_uid: ASSET-01-VIS-LEFT
+  - control_uid: ASSET-01-FLD-MANIFEST-REUSE
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-REUSE
+    visual_uid: ASSET-01-VIS-LEFT
+  - control_uid: ASSET-01-FLD-MANIFEST-MISSING
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-REUSE
+    visual_uid: ASSET-01-VIS-LEFT
+  - control_uid: ASSET-01-FLD-MANIFEST-DEFERRED
+    section_uid: ASSET-01-SEC-02
+    component_uid: ASSET-01-CMP-REUSE
+    visual_uid: ASSET-01-VIS-LEFT
+  - control_uid: ASSET-01-FLD-BLUEPRINT
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-SCRIPT
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-DNA
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-MANIFEST
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-INPUT-FINGERPRINT
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-NAMING-AUTHORITY
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-CANONICAL-FILENAME
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-OUTPUT-ID
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-CHECKSUM
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-RIGHTS
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-INSTRUCTION
+    section_uid: ASSET-01-SEC-03
+    component_uid: ASSET-01-CMP-BINDING
+    visual_uid: ASSET-01-VIS-BINDING
+  - control_uid: ASSET-01-FLD-HANDOFF-ASSET-VERSION
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  - control_uid: ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  - control_uid: ASSET-01-FLD-HANDOFF-BLUEPRINT
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  - control_uid: ASSET-01-FLD-HANDOFF-SCRIPT-HASH
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  - control_uid: ASSET-01-FLD-HANDOFF-DNA
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  - control_uid: ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  - control_uid: ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  - control_uid: ASSET-01-FLD-HANDOFF-CHECKSUM
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  - control_uid: ASSET-01-FLD-HANDOFF-SCORECARD
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  - control_uid: ASSET-01-FLD-HANDOFF-RIGHTS
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  - control_uid: ASSET-01-FLD-HANDOFF-CONTRACT-HASH
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-COMPARE-SINGLE
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-SINGLE
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+  - control_uid: ASSET-01-LST-COMPARE-VERSIONS
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-PREVIEW
+    visual_uid: ASSET-01-VIS-PREVIEW
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-COMPARE-AB
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-AB
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-COMPARE-ABC
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-ABC
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-ZOOM-IN
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-ZOOM-IN
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-ZOOM-OUT
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-ZOOM-OUT
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-FIT
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-FIT
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-REFERENCE-TOGGLE
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-REFERENCE
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-COMPARE
+    visual_uid: ASSET-01-VIS-PREVIEW
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-RESULT-VIEW
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-RESULT-DETAIL
+    section_uid: ASSET-01-SEC-04
+    component_uid: ASSET-01-CMP-PREVIEW
+    visual_uid: ASSET-01-VIS-PREVIEW
+  - control_uid: ASSET-01-FLD-CRITERIA
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-SCORE
+    visual_uid: ASSET-01-VIS-DECISION
+  - control_uid: ASSET-01-FLD-DIMENSIONS
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-SCORE
+    visual_uid: ASSET-01-VIS-DECISION
+  - control_uid: ASSET-01-FLD-OVERALL
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-SCORE
+    visual_uid: ASSET-01-VIS-DECISION
+  - control_uid: ASSET-01-FLD-ISSUES
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-SCORE
+    visual_uid: ASSET-01-VIS-DECISION
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-EVALUATE
+  effect_type: SCORE_MUTATION
+  bindings:
+  - control_uid: ASSET-01-BTN-EVALUATE
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-SCORE
+    visual_uid: ASSET-01-VIS-DECISION
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+  effect_type: DECISION_MUTATION
+  bindings:
+  - control_uid: ASSET-01-BTN-CONFIRM
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-DECISION
+    visual_uid: ASSET-01-VIS-DECISION
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-CORRECTION-OPEN
+  effect_type: CONTEXT_STATE
+  bindings:
+  - control_uid: ASSET-01-BTN-CORRECTION-OPEN
+    section_uid: ASSET-01-SEC-06
+    component_uid: ASSET-01-CMP-CORRECTION
+    visual_uid: ASSET-01-VIS-CORRECTION
+  - control_uid: ASSET-01-BTN-MODIFY
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-DECISION
+    visual_uid: ASSET-01-VIS-DECISION
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-CORRECTION-GENERATE
+  effect_type: CANDIDATE_CREATE
+  bindings:
+  - control_uid: ASSET-01-TXT-CORRECTION-REQUEST
+    section_uid: ASSET-01-SEC-06
+    component_uid: ASSET-01-CMP-CORRECTION
+    visual_uid: ASSET-01-VIS-CORRECTION
+  - control_uid: ASSET-01-BTN-CORRECTION-GENERATE
+    section_uid: ASSET-01-SEC-06
+    component_uid: ASSET-01-CMP-CORRECTION
+    visual_uid: ASSET-01-VIS-CORRECTION
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-CORRECTION-APPROVE
+  effect_type: DECISION_MUTATION
+  bindings:
+  - control_uid: ASSET-01-BTN-CORRECTION-APPROVE
+    section_uid: ASSET-01-SEC-06
+    component_uid: ASSET-01-CMP-CORRECTION
+    visual_uid: ASSET-01-VIS-CORRECTION
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-CORRECTION-EXECUTE
+  effect_type: JOB_START
+  bindings:
+  - control_uid: ASSET-01-BTN-CORRECTION-EXECUTE
+    section_uid: ASSET-01-SEC-06
+    component_uid: ASSET-01-CMP-CORRECTION
+    visual_uid: ASSET-01-VIS-CORRECTION
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-FINDING-CREATE
+  effect_type: FINDING_CREATE
+  bindings: []
+  visual_binding_status: NO_REGISTERED_CONTROL_VISUAL_BINDING
+- action_uid: ASSET-01-ACT-TASK-RETRY
+  effect_type: JOB_START
+  bindings:
+  - control_uid: ASSET-01-BTN-RETRY
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-RUNTIME-VIEW
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-FLD-ROUTE
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+  - control_uid: ASSET-01-FLD-PROVIDER
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+  - control_uid: ASSET-01-FLD-JOB
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+  - control_uid: ASSET-01-FLD-ATTEMPT
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+  - control_uid: ASSET-01-FLD-CALLBACK
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+  - control_uid: ASSET-01-FLD-RETRY-ELIGIBILITY
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+  - control_uid: ASSET-01-FLD-TRACE
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+  - control_uid: ASSET-01-BTN-RUNTIME-DETAIL
+    section_uid: ASSET-01-SEC-08
+    component_uid: ASSET-01-CMP-RUNTIME
+    visual_uid: ASSET-01-VIS-RUNTIME
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-VERSION-HISTORY
+  effect_type: UI_ONLY
+  bindings:
+  - control_uid: ASSET-01-BTN-VERSION-HISTORY
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-VERSION
+    visual_uid: ASSET-01-VIS-DECISION
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-RESTORE-AS-NEW
+  effect_type: VERSION_CREATE
+  bindings:
+  - control_uid: ASSET-01-BTN-RESTORE-AS-NEW
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-VERSION
+    visual_uid: ASSET-01-VIS-DECISION
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-VERSION-LOCK
+  effect_type: VERSION_LOCK
+  bindings:
+  - control_uid: ASSET-01-BTN-LOCK
+    section_uid: ASSET-01-SEC-09
+    component_uid: ASSET-01-CMP-DECISION
+    visual_uid: ASSET-01-VIS-DECISION
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-HANDOFF
+  effect_type: HANDOFF_CREATE
+  bindings:
+  - control_uid: ASSET-01-BTN-HANDOFF
+    section_uid: ASSET-01-SEC-10
+    component_uid: ASSET-01-CMP-HANDOFF
+    visual_uid: ASSET-01-VIS-HANDOFF
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-LAYER-DOC-CREATE
+  effect_type: VERSION_CREATE
+  bindings:
+  - control_uid: ASSET-01-BTN-LAYER-DOC-CREATE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-LAYER-DOC-UPDATE
+  effect_type: DRAFT_MUTATION
+  bindings:
+  - control_uid: ASSET-01-BTN-LAYER-DOC-UPDATE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-LAYER-ADD
+  effect_type: DRAFT_MUTATION
+  bindings:
+  - control_uid: ASSET-01-BTN-LAYER-ADD
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-LAYER-DELETE
+  effect_type: DRAFT_MUTATION
+  bindings:
+  - control_uid: ASSET-01-BTN-LAYER-DELETE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-LAYER-DUPLICATE
+  effect_type: DRAFT_MUTATION
+  bindings:
+  - control_uid: ASSET-01-BTN-LAYER-DUPLICATE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-LAYER-REORDER
+  effect_type: DRAFT_MUTATION
+  bindings:
+  - control_uid: ASSET-01-BTN-LAYER-REORDER
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-LAYER-PROPERTIES
+  effect_type: DRAFT_MUTATION
+  bindings:
+  - control_uid: ASSET-01-CTL-LAYER-PROPERTIES
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-LAYER-MASK
+  effect_type: DRAFT_MUTATION
+  bindings:
+  - control_uid: ASSET-01-CTL-LAYER-MASK
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-PATCH-CREATE
+  effect_type: CANDIDATE_CREATE
+  bindings:
+  - control_uid: ASSET-01-BTN-PATCH-CREATE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-PATCH
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-PATCH-PREVIEW
+  effect_type: JOB_START
+  bindings:
+  - control_uid: ASSET-01-BTN-PATCH-PREVIEW
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-PATCH
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-PATCH-ACCEPT
+  effect_type: VERSION_CREATE
+  bindings:
+  - control_uid: ASSET-01-BTN-PATCH-ACCEPT
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-PATCH
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-PATCH-REJECT
+  effect_type: DECISION_MUTATION
+  bindings:
+  - control_uid: ASSET-01-BTN-PATCH-REJECT
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-PATCH
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
+- action_uid: ASSET-01-ACT-PATCH-REVISE
+  effect_type: CONTEXT_STATE
+  bindings:
+  - control_uid: ASSET-01-BTN-PATCH-REVISE
+    section_uid: ASSET-01-SEC-07
+    component_uid: ASSET-01-CMP-PATCH
+    visual_uid: ASSET-01-VIS-LAYER
+  visual_binding_status: EXACT_CONTROL_VISUAL_BINDINGS
