@@ -1,0 +1,30 @@
+candidate_version: v2.1.14
+candidate_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+status: VERIFIED_STANDALONE_FULL_PRESSURE
+validated_package:
+  filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_COMPONENT_VERIFIED.zip
+  sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
+  zip_integrity: PASS
+results:
+  high_pressure: 25/25 PASS
+  reference_semantic: 28/28 PASS
+  reference_semantic_fuzz: 46/46 BLOCKED; 0 ESCAPED
+  v2_1_14_interaction_entity: 68/68 PASS
+  v2_1_14_spec_evolution: 21/21 PASS
+  v2_1_13_stage_invariant: 18/18 PASS
+  v2_1_12: 60/60 PASS
+  v2_1_11: 54/54 PASS
+  v2_1_10: 43/43 PASS
+  v2_1_9: 24/24 PASS
+  v2_1_8: 24/24 PASS
+  v2_1_7: 25/25 PASS
+  v2_1_0: 12/12 PASS
+  post_v1_8: 6/6 PASS
+  stage_01_source_to_blueprint: 33/33 PASS
+  preformal_stress_repairs: 21/21 PASS
+  bugfix_regressions: 30/30 PASS
+  execution_load_guard: 14/14 PASS
+  pytest_collection_contract: PASS
+notes:
+  - monolithic PRE_FORMAL wrapper still has no terminal PASS and is not represented as complete
+  - this receipt does not promote the candidate to Current Authority
