@@ -1,4 +1,4 @@
-name: Current Governance CORE ASSET Stage01 Stage02 Gate
+name: Current Governance Stage01 Reset Integrity Gate
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  current-governance-targeted-gate:
+  stage01-reset-integrity:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -25,11 +25,5 @@ jobs:
         run: python governance/ci/stress_test_governance_registry.py
       - name: Validate Stage-01 artifacts bind to current governance by Registry UID
         run: python governance/ci/validate_stage01_registry_binding.py
-      - name: Run applicability-aware Stage-01 then Stage-02 truth classification
-        run: python governance/ci/validate_targeted_stage01_stage02.py
-      - name: Upload targeted rerun result
-        uses: actions/upload-artifact@v4
-        with:
-          name: targeted-stage01-stage02-result
-          path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_RESULT.json
-          if-no-files-found: error
+      - name: Validate Stage-02 is fully cleared with exact Stage-01 reset bytes
+        run: python governance/ci/validate_stage02_zero_residual.py
