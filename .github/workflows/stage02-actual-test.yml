@@ -1,11 +1,11 @@
-name: Governance Round1 Full-Line High-Pressure System Gate
+name: Stage-02 Actual Product Test After Full-Line Gate
 
 on:
   push:
     branches: [rebuild-v2.1.1]
     paths:
-      - '.github/governance-source/FULL_LINE_TRIGGER'
-      - '.github/workflows/governance-full-line-system-gate.yml'
+      - '.github/workflows/stage02-actual-test.yml'
+      - 'governance/ci/run_current_stage2_actual_test.py'
       - 'governance/ci/validate_stage02_state_integrity.py'
   workflow_dispatch:
 
@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  full-line-system-high-pressure:
+  stage02-actual-test:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -27,7 +27,7 @@ jobs:
       - name: Install verifier dependency
         run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
 
-      - name: Re-prove exact 75-file source identity before system testing
+      - name: Re-prove exact 75-file source identity
         run: python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
 
       - name: Enforce Current Specification mutation authorization
@@ -36,7 +36,7 @@ jobs:
       - name: Resolve stable Current governance registry
         run: python governance/ci/governance_resolver.py
 
-      - name: Validate Current governance layout and zero residual
+      - name: Validate Current governance layout
         run: python governance/ci/validate_governance_layout.py
 
       - name: Run Current Registry multidirectional stress 13 of 13
@@ -45,26 +45,38 @@ jobs:
       - name: Validate Stage-01 binding invariants
         run: python governance/ci/validate_stage01_registry_binding.py
 
-      - name: Validate Stage-02 predecessor or legal successor state integrity
+      - name: Validate Stage-02 admission predecessor state
         run: python governance/ci/validate_stage02_state_integrity.py
 
-      - name: Run complete 75-file full-lifecycle high-pressure system gate
+      - name: Run complete 75-file full-lifecycle high-pressure system gate on exact Stage-02 test SHA
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
 
-      - name: Prove verified source remained byte-clean after destructive suites
+      - name: Prove verified source remained byte-clean before Stage-02 actual test
         shell: bash
         run: |
           set -euo pipefail
           git diff --exit-code -- .github/governance-source/active/source
           bad="$(find .github/governance-source/active/source \( -name '*.pyc' -o -name '__pycache__' -o -name '*.tmp' -o -name '*.bak' -o -name '*~' \) -print)"
           test -z "$bad" || { printf 'BLOCK: source runtime residue\n%s\n' "$bad" >&2; exit 1; }
-          echo 'PASS: active 75-file source unchanged and runtime-residual free after full-line gate'
+          echo 'PASS: exact source remains byte-clean before Stage-02 actual test'
 
-      - name: Upload full-line system evidence
+      - name: Execute fresh Stage-02 actual test from Stage-01 immutable inputs
+        run: python governance/ci/run_current_stage2_actual_test.py
+
+      - name: Prove Current Specification and Stage-01 inputs were not mutated by Stage-02 test
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          echo 'PASS: Stage-02 actual test did not mutate Current Specification or immutable Stage-01 inputs'
+
+      - name: Upload Stage-02 actual test evidence
         uses: actions/upload-artifact@v4
         with:
-          name: governance-round1-full-line-system-evidence
+          name: stage02-actual-test-evidence
           path: |
+            .github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json
             .github/governance-source/SOURCE_IDENTITY_REPORT.json
             .github/governance-source/FULL_LINE_SYSTEM_GATE_RESULT.json
           if-no-files-found: error

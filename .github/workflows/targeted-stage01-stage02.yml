@@ -25,5 +25,5 @@ jobs:
         run: python governance/ci/stress_test_governance_registry.py
       - name: Validate Stage-01 artifacts bind to current governance by Registry UID
         run: python governance/ci/validate_stage01_registry_binding.py
-      - name: Validate Stage-02 is fully cleared with exact Stage-01 reset bytes
-        run: python governance/ci/validate_stage02_zero_residual.py
+      - name: Validate Stage-02 predecessor or legal successor state integrity
+        run: python governance/ci/validate_stage02_state_integrity.py
