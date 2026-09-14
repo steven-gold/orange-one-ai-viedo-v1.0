@@ -1,0 +1,34 @@
+schema_version: 1
+artifact_uid: STAGE02-POST-ACTION-VALIDATION-CURRENT-AUTHORITY-AUDIT-20260914-001
+artifact_type: NON_NORMATIVE_STAGE02_REMEDIATION_EVIDENCE
+normative_authority: false
+stage_uid: STAGE-02
+page_uid: ASSET-01
+category: POST_ACTION_VALIDATION_NODE_MISSING
+source_head_sha: a7270f47940013befc6d7f3854b9772bc0149f2a
+github_run_id: 34874085136
+github_job_id: 104076848372
+github_artifact_id: 10361020086
+github_artifact_digest: sha256:f0f119b68377f228dec2e17ee1a1401a8c1d223577fa154b63b53bc1b67cc2f0
+result: AUDIT_PASS_PRODUCT_GAPS_REMAIN_BLOCKED
+fresh_denominator:
+  total: 18
+current_post_action_validation_authority:
+  exact_bindings_materializable: 0
+  authorized_gap_removals: 0
+  blocked: 18
+  classification:
+    CURRENT_POST_ACTION_VALIDATION_AUTHORITY_MISSING: 18
+safety:
+  exact_stage2_fresh_scanner_predicate_reused: true
+  semantic_inference_used: false
+  prior_stage2_results_used: false
+  ai_autofill_used: false
+  inference_used: false
+  current_specification_mutated: false
+  stage1_product_source_mutated: false
+  website_construction_allowed: false
+  deployment_allowed: false
+classification: AUTHORITY_BLOCKED_PRODUCT_POST_ACTION_VALIDATION_GAPS
+rule: "Only exact action success_contract/validation_contract/validator_uid, runtime validation/validation_rule/evaluation_rule, or exact resolved-port validation/validation_rule/validator_uid may satisfy this Stage-02 node. Operation, route, response labels, gates, or semantic similarity are not validation authority."
+status: OPEN_AWAITING_EXACT_PRODUCT_POST_ACTION_VALIDATION_AUTHORITY
