@@ -1,0 +1,141 @@
+{
+  "actual_product_stage_test_completed": true,
+  "actual_product_stage_test_started": true,
+  "ai_autofill_used": false,
+  "artifact_type": "NON_NORMATIVE_STAGE02_ACTUAL_TEST_EVIDENCE",
+  "closure_blocker_total": 13,
+  "current_specification_mutated": false,
+  "deployment_allowed": false,
+  "fresh_functional_gap_total": 171,
+  "github_artifact_id": 10357817311,
+  "github_artifact_sha256": "e43880003b4bf1eda36aeddc3f7d8eddd9b8c622a1dd2ee5c52d2162b8487738",
+  "github_job_id": 104056614223,
+  "github_run_id": 34868009420,
+  "inference_used": false,
+  "normative_authority": false,
+  "official_stage_output_denominator": [
+    "ASYNC_PROVIDER_CONTRACT",
+    "DEPENDENCY_MAP",
+    "FUNCTIONAL_CHAIN_SPEC",
+    "FUNCTIONAL_WORKBENCH_CONTRACT",
+    "INTERACTION_TOPOLOGY_SPEC",
+    "PAGE_CONSTRUCTION_SPEC_PACKAGE",
+    "SHARED_OWNER_PORT_MAP"
+  ],
+  "pages": {
+    "ASSET-01": {
+      "ai_interaction_profile_active": false,
+      "automatic_completion_scope": "NOT_APPLICABLE_NO_AUTOMATIC_COMPLETION_ATTEMPT",
+      "blueprint_uid": "V218-REPLAY-BP-ASSET-01-PAGE-BASE",
+      "closure_blocker_count": 6,
+      "closure_blockers": [
+        "MISSING_BUSINESS_ENTITY_INVENTORY",
+        "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
+        "MISSING_ENTITY_HIERARCHY_MATRIX",
+        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_INTERACTION_TOPOLOGY_SPEC",
+        "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX"
+      ],
+      "function_admission_scorecard": "NOT_APPLICABLE_NO_AUTO_OR_AI_PROPOSED_FUNCTION_CREATED_BY_THIS_TEST",
+      "functional_chain_fresh_scan": {
+        "functional_completion": false,
+        "gap_categories": {
+          "ACTION_WITHOUT_CONTROL_OR_TRIGGER": 1,
+          "AUDIT_EVENT_NODE_MISSING": 9,
+          "FAILURE_STATE_ERROR_BINDING_MISSING": 44,
+          "PAYLOAD_INPUT_CONTRACT_MISSING": 18,
+          "POST_ACTION_VALIDATION_NODE_MISSING": 18,
+          "SHARED_OWNER_AUTHORITY_UNRESOLVED": 4,
+          "STATE_TRANSITION_LEDGER_FIELD_MISSING": 25,
+          "SUCCESS_NEXT_STATE_BINDING_MISSING": 7
+        },
+        "gap_classes": {
+          "ARCHITECTURE_GAP": 104,
+          "AUTHORITY_GAP": 4,
+          "INPUT_SOURCE_GAP": 18
+        },
+        "gap_count": 126,
+        "registered_runtime_reference_count": 19,
+        "registry_denominator": {
+          "actions": 44,
+          "controls": 85,
+          "effectful_actions": 23,
+          "errors": 17,
+          "events": 0,
+          "gates": 21,
+          "integration_ports": 19,
+          "permissions": 8,
+          "stage_transitions": 5,
+          "stages": 5
+        }
+      },
+      "unresolved_external_authority_ref_count": 6
+    },
+    "CORE-01": {
+      "ai_interaction_profile_active": true,
+      "automatic_completion_scope": "NOT_APPLICABLE_NO_AUTOMATIC_COMPLETION_ATTEMPT",
+      "blueprint_uid": "V218-REPLAY-BP-CORE-01-PAGE-BASE",
+      "closure_blocker_count": 7,
+      "closure_blockers": [
+        "MISSING_BUSINESS_ENTITY_INVENTORY",
+        "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
+        "MISSING_ENTITY_HIERARCHY_MATRIX",
+        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_INTERACTION_TOPOLOGY_SPEC",
+        "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX",
+        "MISSING_AI_INTERACTION_CONTINUITY_CONTRACT"
+      ],
+      "function_admission_scorecard": "NOT_APPLICABLE_NO_AUTO_OR_AI_PROPOSED_FUNCTION_CREATED_BY_THIS_TEST",
+      "functional_chain_fresh_scan": {
+        "functional_completion": false,
+        "gap_categories": {
+          "AUDIT_EVENT_NODE_MISSING": 4,
+          "PAYLOAD_INPUT_CONTRACT_MISSING": 16,
+          "STATE_TRANSITION_LEDGER_FIELD_MISSING": 25
+        },
+        "gap_classes": {
+          "ARCHITECTURE_GAP": 29,
+          "INPUT_SOURCE_GAP": 16
+        },
+        "gap_count": 45,
+        "registered_runtime_reference_count": 21,
+        "registry_denominator": {
+          "actions": 34,
+          "controls": 50,
+          "effectful_actions": 19,
+          "errors": 16,
+          "events": 7,
+          "gates": 26,
+          "integration_ports": 19,
+          "permissions": 14,
+          "stage_transitions": 5,
+          "stages": 5
+        }
+      },
+      "unresolved_external_authority_ref_count": 7
+    }
+  },
+  "physical_stage2_product_artifact_root_present": false,
+  "preserved_external_authorities": {
+    "GAP-001": {"authority_ref": "GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9", "consumers": ["CORE-01", "ASSET-01"]},
+    "GAP-002": {"authority_ref": "GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0", "consumers": ["CORE-01", "ASSET-01"]},
+    "GAP-003": {"authority_ref": "ACPOS_SYSTEM_AUTHORITY@V1.0", "consumers": ["CORE-01", "ASSET-01"]},
+    "GAP-004": {"authority_ref": "ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0", "consumers": ["CORE-01", "ASSET-01"]},
+    "GAP-005": {"authority_ref": "ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3", "consumers": ["CORE-01", "ASSET-01"]},
+    "GAP-006": {"authority_ref": "ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY", "consumers": ["ASSET-01"]},
+    "GAP-007": {"authority_ref": "IAM-01 / account permission runtime", "consumers": ["CORE-01"]},
+    "GAP-008": {"authority_ref": "ACPOS shared AI Router/Capability Assignment", "consumers": ["CORE-01"]}
+  },
+  "preserved_external_authority_union_count": 8,
+  "preserved_external_authority_union_gap_uids": ["GAP-001", "GAP-002", "GAP-003", "GAP-004", "GAP-005", "GAP-006", "GAP-007", "GAP-008"],
+  "prior_stage2_results_used": false,
+  "result": "BLOCKED",
+  "schema_version": 1,
+  "source_head_sha": "8d5c69947cd8a964fa433c94764d6615a5c65c7a",
+  "stage_entry_gate": "PASS",
+  "stage_exit_allowed": false,
+  "stage_name": "PAGE_FUNCTIONAL_CONTRACT",
+  "stage_uid": "STAGE-02",
+  "test_mode": "FRESH_FROM_STAGE1_IMMUTABLE_INPUTS_NO_PRIOR_STAGE2_RESULT_REUSE",
+  "website_construction_allowed": false
+}
