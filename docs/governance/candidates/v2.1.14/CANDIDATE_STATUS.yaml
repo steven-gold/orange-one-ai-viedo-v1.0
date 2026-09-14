@@ -6,11 +6,18 @@ source_control_profile: GITHUB
 branch: governance-v2.1.14-product-neutral-candidate
 formal_freeze_allowed: false
 current_authority_promotion_allowed: false
-monolithic_preformal_wrapper: NOT_COMPLETED_TOOL_TIMEOUT
+monolithic_preformal_wrapper: NOT_COMPLETED_TOOL_TIMEOUT_240S
 definition_constituent_checks: 19/19 PASS
 mandatory_regression_matrix: 17/17 SUITES PASS
 high_pressure_original_case_set: 25/25 PASS
 product_provider_binding_audit: PASS
 business_entity_operation_universe: 23
-current_authority_entry_on_main: docs/governance/CURRENT_GOVERNANCE_SPEC.yaml
-promotion_rule: Candidate remains NONCURRENT until the registered promotion sequence and Current-authority gates pass.
+local_verified_package:
+  filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_ENTITY_LIFECYCLE_LOCAL_COMPONENT_VERIFIED.zip
+  sha256: 9fc682f1b84e8366d9a3e528f96f111f774d432d2ec1dc2961238e9064c063b2
+  zip_integrity: PASS
+main_current_authority_entry:
+  expected_adapter_path: docs/governance/CURRENT_GOVERNANCE_SPEC.yaml
+  materialized_on_main: false
+  candidate_must_not_create_or_replace_current_entry: true
+promotion_rule: Candidate remains NONCURRENT until the registered predecessor backtrace, full Current revalidation, monolithic preformal completion, and Current-authority promotion gates pass.
