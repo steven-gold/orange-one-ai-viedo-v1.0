@@ -1,4 +1,4 @@
-name: Targeted CORE ASSET Stage01 Stage02 v2.1.14 Rerun
+name: Current v2.1.14 CORE ASSET Stage01 Stage02 Gate
 
 on:
   push:
@@ -9,19 +9,24 @@ permissions:
   contents: read
 
 jobs:
-  targeted-rerun:
-    runs-on: ubuntu-latest
+  v214-current-targeted-gate:
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Verify exact scope and governance materialization
+        with:
+          fetch-depth: 1
+      - name: Verify exact scope and single governance layer
         shell: bash
         run: |
           set -euo pipefail
           test "$GITHUB_REF_NAME" = "rebuild-v2.1.1"
           test -f governance/current/v2.1.14/EFFECTIVE_TEST_GOVERNANCE_MANIFEST.yaml
+          test -f governance/current/v2.1.14/TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml
           grep -q 'target_pages: \[CORE-01, ASSET-01\]' GOVERNANCE_CURRENT.yaml
           grep -q 'version: v2.1.14' GOVERNANCE_CURRENT.yaml
-      - name: Run targeted Stage-01 then Stage-02 truth classification
+      - name: Validate zero residual governance cleanup
+        run: python governance/ci/validate_v214_zero_residual_cleanup.py
+      - name: Run applicability-aware Stage-01 then Stage-02 truth classification
         run: python governance/ci/validate_targeted_stage01_stage02_v214.py
       - name: Upload targeted rerun result
         uses: actions/upload-artifact@v4

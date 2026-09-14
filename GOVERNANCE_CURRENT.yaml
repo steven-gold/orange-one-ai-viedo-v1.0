@@ -1,18 +1,22 @@
-schema_version: 20
+schema_version: 21
 role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
+
 normative_authority:
   version: v2.1.12
   disposition: PRESERVED_HISTORICAL_FORMAL_TEST_BASE
   replaces_by_test_governance: false
+
 current_test_governance:
   version: v2.1.14
   revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
   state: CURRENT_TEST_GOVERNANCE_FOR_TARGETED_RERUN
   manifest_ref: governance/current/v2.1.14/EFFECTIVE_TEST_GOVERNANCE_MANIFEST.yaml
-  source_package_sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
+  test_feedback_component_ref: governance/current/v2.1.14/TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml
   formal_freeze_allowed: false
   production_current_authority_promotion_allowed: false
+  standalone_parallel_operational_governance_allowed: false
+
 active_execution:
   run_uid: FRESH-RUN-003
   scope_mode: EXACT_PAGE_SCOPE_ONLY
@@ -20,30 +24,31 @@ active_execution:
   rollback_from: STAGE-02
   stage1_rerun_status: PASS
   current_stage: STAGE-02
-  stage2_rerun_status: BLOCKED
-  stage2_result_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_V214_RESULT.json
+  stage2_rerun_status: RERUN_REQUIRED_AFTER_APPLICABILITY_CORRECTION
   website_construction_allowed: false
   deployment_allowed: false
-page_results:
-  CORE-01:
-    STAGE-01: PASS
-    STAGE-02: BLOCKED
-    blocker_count: 12
-  ASSET-01:
-    STAGE-01: PASS
-    STAGE-02: BLOCKED
-    blocker_count: 8
+
+superseded_targeted_result:
+  result_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_V214_RESULT.json
+  prior_classification: CORE_12_BLOCKERS_ASSET_8_BLOCKERS
+  disposition: INVALIDATED_AS_FINAL_DENOMINATOR
+  reason:
+    - CONDITIONAL_STAGE2_OUTPUTS_WERE_COUNTED_AS_UNCONDITIONAL
+    - INTERACTION_TOPOLOGY_SPEC_MATRIX_NAMING_WAS_NOT_NORMALIZED
+  may_be_used_as_current_blocker_count: false
+
 preservation:
   all_other_pages: NO_MUTATION
   main_branch: NO_MUTATION
   new_branch: NO_MUTATION
   historical_receipts: PRESERVE_IMMUTABLE
-terminal_receipt:
-  provider: GITHUB_ACTIONS
-  workflow: Targeted CORE ASSET Stage01 Stage02 v2.1.14 Rerun
-  run_id: 34811832713
-  head_sha: 4b538aec49dfccd365c38ab68b152be63a9418dd
-  conclusion: SUCCESS
-  artifact_id: 10334234631
-status: STAGE2_TARGETED_RERUN_COMPLETED_BLOCKED_V214
-next_action: MATERIALIZE_V214_STAGE02_REQUIRED_OUTPUTS_AND_FIX_PROVEN_BLOCKERS_ONLY
+  historical_text_may_reference_retired_paths: true
+
+cleanup_policy:
+  root_current_pointer_universe: [GOVERNANCE_CURRENT.yaml]
+  retired_root_aliases_may_be_current: false
+  temporary_test_correction_files_allowed_only_under_governed_lifecycle: true
+  zero_residual_scan_required_after_promotion_or_discard: true
+
+status: STAGE2_TARGETED_RERUN_PENDING_APPLICABILITY_CORRECTED_V214
+next_action: RUN_CURRENT_V214_ZERO_RESIDUAL_GATE_AND_APPLICABILITY_AWARE_STAGE2_RERUN
