@@ -47,25 +47,28 @@ findings:
     class: TEST_HARNESS_EXECUTION_RESIDUE
     title: Python bytecode cache caused parser_hygiene false failure during extracted-package test
     evidence: "Fresh local full-package preformal decomposition found garbage: 09_TESTS/governance/__pycache__/validate_governance.cpython-313.pyc after importing test modules."
-    disposition: OPEN_RUNNER_HARDENING
+    disposition: RESOLVED_RUNNER_HARDENING
     specification_change_required: false
-    required_fix: "Execute source-package validation with PYTHONDONTWRITEBYTECODE=1 and isolated PYTHONPYCACHEPREFIX; zero-residual scan after run."
+    formal_specification_mutated_for_fix: false
+    resolution: "Full-line GitHub run 34866095740 executed with PYTHONDONTWRITEBYTECODE=1 and external PYTHONPYCACHEPREFIX; destructive/high-pressure regressions passed and source runtime residual count remained 0."
 
   - finding_uid: FIND-20260914-005
     class: GITHUB_FULL_SOURCE_MATERIALIZATION_GAP
     title: Verified 75-file full-lifecycle source package is referenced by manifest but not fully materialized in GitHub
-    evidence: "SPECIFICATION_MANIFEST declares verified_source_file_count=75 and exact_full_zip_binary_materialized_in_git=false."
-    disposition: OPEN_INFRASTRUCTURE_REMEDIATION
+    evidence: "SPECIFICATION_MANIFEST declared verified_source_file_count=75 while the exact full source was not yet materialized in GitHub."
+    disposition: RESOLVED_GITHUB_FULL_SOURCE_MATERIALIZATION
     specification_change_required: false
-    required_fix: "Materialize exact hash-verifiable 75-file source under the non-normative GitHub CI source root without making version-named paths the active governance locator."
+    formal_specification_mutated_for_fix: false
+    resolution: "GitHub materialization run 34860950871 succeeded; identity run 34861307634 proved exact file count 75, checksum/path-set identity, zero residue, and deterministic bundle SHA256 b5bf1af1817e41832e53aeb6e4b78f7fa0c24ac41204fe6de2a69eb663ceb625."
 
   - finding_uid: FIND-20260914-006
     class: GITHUB_FULL_LIFECYCLE_VALIDATION_COVERAGE_GAP
     title: Existing registry stress gate is not the complete 11-stage 75-file governance regression system gate
-    evidence: "Current GitHub Current Specification is a stable active projection while source lineage contains 75 files and an 11-stage lifecycle registry."
-    disposition: OPEN_CI_REMEDIATION
+    evidence: "Current GitHub Current Specification was a stable active projection while source lineage contained 75 files and an 11-stage lifecycle registry."
+    disposition: RESOLVED_FULL_LINE_SYSTEM_GATE
     specification_change_required: false
-    required_fix: "Add full-source integrity + all 17 mandatory regression suites + 11-stage definition coverage as one unskippable Round-1 system gate; keep practical product execution as separate Round 2."
+    formal_specification_mutated_for_fix: false
+    resolution: "GitHub Round-1 run 34866095740 passed exact 75-file identity, Current guards, 13/13 registry stress, 11/11 lifecycle stages, official PRE_FORMAL_DEFINITION_AUDIT 20/20, all 17/17 mandatory regression suites with exact denominators, no skip/timeout, and zero source residual."
 
   - finding_uid: FIND-20260914-007
     class: TEST_HARNESS_BUG
@@ -80,19 +83,19 @@ findings:
     class: VALIDATOR_SCOPE_BUG
     title: Stage-01 registry binding validator required Stage-02 runtime result-evidence fields after Stage-02 clean reset
     evidence: "GitHub reset run 34824307982 failed validate_stage01_registry_binding.py because it required RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT/static-result-pointer fields that belong to an executed Stage-02 result state."
-    disposition: OPEN_VALIDATOR_REPAIR
+    disposition: RESOLVED_VALIDATOR_SCOPE
     specification_change_required: false
     formal_specification_mutated_for_fix: false
-    required_fix: "Keep Stage-01 identity/provenance invariants unconditional; require Stage-02 runtime result-evidence fields only when ACTIVE_STATE declares Stage-02 executed. Stage-02 NOT_EXECUTED must not require or recreate those fields."
+    resolution: "Stage-01 identity/provenance invariants remain unconditional while Stage-02 runtime evidence is conditional on execution state. GitHub Round-1 run 34866095740 passed Stage-01 binding with Stage-02 NOT_EXECUTED and zero Stage-02 runtime evidence/residual."
 
   - finding_uid: FIND-20260914-009
     class: TEST_HARNESS_BUG
     title: Round-1 full-line workflow was not admitted because timeout-minutes was placed at workflow root
     evidence: "Trigger commit 8f942575860bf3b5fece8db3ca340e485bdee332 produced repository and Stage-01 reset checks but no full-line workflow run; workflow YAML placed timeout-minutes at the unsupported workflow-root level."
-    disposition: OPEN_WORKFLOW_HARNESS_REPAIR
+    disposition: RESOLVED_WORKFLOW_HARNESS
     specification_change_required: false
     formal_specification_mutated_for_fix: false
-    required_fix: "Move timeout-minutes under the full-line job, preserve all test steps and denominators unchanged, then retrigger. A missing workflow run is NOT a PASS."
+    resolution: "Moved timeout-minutes to the full-line job without removing any test step or denominator. GitHub run 34866095740 was admitted and completed SUCCESS on exact SHA 8bbd10d965ab768caf99397b3793799ec37fa623."
 
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
