@@ -1,0 +1,29 @@
+schema_version: 1
+artifact_type: GOVERNANCE_TEMPORARY_CORRECTION_CLEANUP_RECEIPT
+receipt_uid: V214-CLEANUP-20260914-001
+branch: rebuild-v2.1.1
+parent_governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+promotion:
+  promoted_component: governance/current/v2.1.14/TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml
+  manifest_updated: governance/current/v2.1.14/EFFECTIVE_TEST_GOVERNANCE_MANIFEST.yaml
+  standalone_parallel_policy_allowed: false
+cleanup_commit: 36f7879c55ab216a02436e1c88eb16020b51780d
+cleanup_actions:
+  legacy_root_current_aliases: REMOVED
+  legacy_rebuild_baseline_aliases: REMOVED
+  standalone_v212_correction_policy: REMOVED
+  standalone_v212_policy_workflow_and_validator: REMOVED
+  old_monolithic_rebuild_governance_gate: RETIRED_AND_REMOVED
+  retired_v216_runtime_shards: REMOVED
+  one_time_branch_recovery_trigger: REMOVED
+  temporary_reference_scan_workflow: REMOVED
+  temporary_staging_files: REMOVED
+historical_evidence:
+  immutable_receipts_preserved: true
+  historical_text_references_to_retired_paths_allowed: true
+validation:
+  zero_residual_workflow_run_id: 34817259245
+  zero_residual_head_sha: 36f7879c55ab216a02436e1c88eb16020b51780d
+  zero_residual_result: PASS
+  targeted_stage_engine_result: PASS
+status: CLEANUP_COMPLETE_PENDING_SAME_HEAD_EVIDENCE_REVALIDATION

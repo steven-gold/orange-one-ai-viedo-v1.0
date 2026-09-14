@@ -1,10 +1,17 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "run_uid": "FRESH-RUN-003-V214-TARGETED-STAGE02-RERUN",
   "branch": "rebuild-v2.1.1",
   "governance_revision": "v2.1.14-product-neutral-interaction-topology-ai-continuity",
-  "workflow_run_id": 34811832713,
-  "workflow_conclusion": "SUCCESS",
+  "applicability_model": "V214_EXACT_APPLICABILITY_BEFORE_BLOCKER_COUNT",
+  "workflow_receipt": {
+    "run_id": 34817259245,
+    "head_sha": "36f7879c55ab216a02436e1c88eb16020b51780d",
+    "conclusion": "SUCCESS",
+    "artifact_id": 10337535227,
+    "artifact_digest": "sha256:dd55ff7e32662f641947b1ed22d7ddc1df436c021069f79438e2e0636f628c55"
+  },
+  "zero_residual_cleanup": "PASS",
   "scope_pages": ["CORE-01", "ASSET-01"],
   "engine_result": "PASS",
   "closure_claim": false,
@@ -13,42 +20,56 @@
       "page_uid": "CORE-01",
       "stage1_result": "PASS",
       "stage2_result": "BLOCKED",
-      "stage2_blocker_count": 12,
+      "stage2_blocker_count": 7,
       "blocker_codes": [
-        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
-        "MISSING_INTERACTION_TOPOLOGY_SPEC",
         "MISSING_BUSINESS_ENTITY_INVENTORY",
         "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
         "MISSING_ENTITY_HIERARCHY_MATRIX",
-        "MISSING_FUNCTION_ADMISSION_SCORECARD",
-        "MISSING_AUTO_COMPLETION_SCOPE_LEDGER",
+        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_INTERACTION_TOPOLOGY_MATRIX",
         "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX",
-        "CORE_CHAPTER_LIFECYCLE_NOT_MATERIALIZED",
-        "CORE_WORLD_SETTING_LIFECYCLE_NOT_MATERIALIZED",
-        "CORE_CONVERSATION_ATOMIC_WORKBENCH_UNRESOLVED",
-        "CORE_AI_CONTINUITY_CONTRACT_MISSING"
-      ]
+        "MISSING_AI_INTERACTION_CONTINUITY_CONTRACT"
+      ],
+      "applicability": {
+        "async_provider": true,
+        "business_entity": true,
+        "entity_hierarchy": true,
+        "continuous_workbench": true,
+        "function_visual_impact": true,
+        "function_admission": false,
+        "bounded_auto_completion": false,
+        "ai_interaction_continuity": true
+      }
     },
     {
       "page_uid": "ASSET-01",
       "stage1_result": "PASS",
       "stage2_result": "BLOCKED",
-      "stage2_blocker_count": 8,
+      "stage2_blocker_count": 6,
       "blocker_codes": [
-        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
-        "MISSING_INTERACTION_TOPOLOGY_SPEC",
         "MISSING_BUSINESS_ENTITY_INVENTORY",
         "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
         "MISSING_ENTITY_HIERARCHY_MATRIX",
-        "MISSING_FUNCTION_ADMISSION_SCORECARD",
-        "MISSING_AUTO_COMPLETION_SCOPE_LEDGER",
+        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_INTERACTION_TOPOLOGY_MATRIX",
         "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX"
-      ]
+      ],
+      "applicability": {
+        "async_provider": true,
+        "business_entity": true,
+        "entity_hierarchy": true,
+        "continuous_workbench": true,
+        "function_visual_impact": true,
+        "function_admission": false,
+        "bounded_auto_completion": false,
+        "ai_interaction_continuity": false
+      }
     }
   ],
-  "artifact_receipt": {
-    "artifact_id": 10334234631,
-    "artifact_sha256": "d34d8137666372c1724fdb452d2fa46147bdda266c61e8fd5d49dbdc93f2c8f7"
+  "supersedes_prior_classification": {
+    "CORE-01": 12,
+    "ASSET-01": 8,
+    "reason": "conditional outputs were previously counted as unconditional and topology naming was not normalized"
   },
-  "interpretation": "Validator engine PASS means truth classification completed. Page STAGE-02 remains BLOCKED until required v2.1.14 outputs and unresolved page-specific contracts are materialized and revalidated."
+  "interpretation": "Only outputs whose v2.1.14 applicability condition is proven may count as Stage-02 blockers. Missing conditional non-applicable artifacts are not blockers."
 }

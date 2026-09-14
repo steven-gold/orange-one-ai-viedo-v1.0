@@ -1,4 +1,4 @@
-schema_version: 21
+schema_version: 22
 role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
 
@@ -24,31 +24,61 @@ active_execution:
   rollback_from: STAGE-02
   stage1_rerun_status: PASS
   current_stage: STAGE-02
-  stage2_rerun_status: RERUN_REQUIRED_AFTER_APPLICABILITY_CORRECTION
+  stage2_rerun_status: BLOCKED_APPLICABILITY_AWARE
+  stage2_result_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_V214_RESULT.json
   website_construction_allowed: false
   deployment_allowed: false
 
+page_results:
+  CORE-01:
+    STAGE-01: PASS
+    STAGE-02: BLOCKED
+    blocker_count: 7
+  ASSET-01:
+    STAGE-01: PASS
+    STAGE-02: BLOCKED
+    blocker_count: 6
+
+applicability_corrections:
+  FUNCTION_ADMISSION_SCORECARD:
+    CORE-01: NOT_APPLICABLE_NOT_ACTIVATED
+    ASSET-01: NOT_APPLICABLE_NOT_ACTIVATED
+  AUTO_COMPLETION_SCOPE_LEDGER:
+    CORE-01: NOT_APPLICABLE_NOT_ACTIVATED
+    ASSET-01: NOT_APPLICABLE_NOT_ACTIVATED
+  AI_INTERACTION_CONTINUITY_CONTRACT:
+    CORE-01: APPLIES
+    ASSET-01: NOT_APPLICABLE_NO_AI_INTERACTION_PROFILE
+  interaction_topology_canonical_artifact: INTERACTION_TOPOLOGY_MATRIX
+
 superseded_targeted_result:
-  result_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_V214_RESULT.json
   prior_classification: CORE_12_BLOCKERS_ASSET_8_BLOCKERS
-  disposition: INVALIDATED_AS_FINAL_DENOMINATOR
-  reason:
-    - CONDITIONAL_STAGE2_OUTPUTS_WERE_COUNTED_AS_UNCONDITIONAL
-    - INTERACTION_TOPOLOGY_SPEC_MATRIX_NAMING_WAS_NOT_NORMALIZED
+  disposition: SUPERSEDED
   may_be_used_as_current_blocker_count: false
+
+cleanup_state:
+  zero_residual_scan: PASS
+  legacy_root_current_aliases: REMOVED
+  legacy_standalone_correction_policy: REMOVED_AFTER_RULE_PROMOTION
+  retired_v216_runtime_shards: REMOVED
+  temporary_reference_scan: REMOVED
+  one_time_recovery_trigger: REMOVED
+  historical_receipts: PRESERVED
+
+terminal_receipt:
+  provider: GITHUB_ACTIONS
+  workflow: Current v2.1.14 CORE ASSET Stage01 Stage02 Gate
+  run_id: 34817259245
+  head_sha: 36f7879c55ab216a02436e1c88eb16020b51780d
+  conclusion: SUCCESS
+  artifact_id: 10337535227
+  artifact_digest: sha256:dd55ff7e32662f641947b1ed22d7ddc1df436c021069f79438e2e0636f628c55
 
 preservation:
   all_other_pages: NO_MUTATION
   main_branch: NO_MUTATION
   new_branch: NO_MUTATION
   historical_receipts: PRESERVE_IMMUTABLE
-  historical_text_may_reference_retired_paths: true
 
-cleanup_policy:
-  root_current_pointer_universe: [GOVERNANCE_CURRENT.yaml]
-  retired_root_aliases_may_be_current: false
-  temporary_test_correction_files_allowed_only_under_governed_lifecycle: true
-  zero_residual_scan_required_after_promotion_or_discard: true
-
-status: STAGE2_TARGETED_RERUN_PENDING_APPLICABILITY_CORRECTED_V214
-next_action: RUN_CURRENT_V214_ZERO_RESIDUAL_GATE_AND_APPLICABILITY_AWARE_STAGE2_RERUN
+status: STAGE2_TARGETED_RERUN_COMPLETED_BLOCKED_APPLICABILITY_AWARE_V214
+next_action: MATERIALIZE_ONLY_APPLICABLE_V214_STAGE02_OUTPUTS_FROM_EXISTING_AUTHORITY_THEN_RERUN
