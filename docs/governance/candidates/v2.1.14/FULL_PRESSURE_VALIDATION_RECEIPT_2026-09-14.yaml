@@ -1,0 +1,35 @@
+schema_version: 1
+candidate_version: v2.1.14
+candidate_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+validation_status: FULL_PRESSURE_COMPONENT_REGRESSION_PASS
+validated_package_sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
+zip_integrity: PASS
+standalone_suites:
+  high_pressure_hardening: 25/25 PASS
+  reference_semantic: 28/28 PASS
+  reference_fuzz: 46/46 BLOCKED; 0 escaped
+  v2_1_14_interaction_entity_lifecycle: 68/68 PASS
+  v2_1_14_spec_evolution: 21/21 PASS
+  v2_1_13_stage_invariants: 18/18 PASS
+  v2_1_12: 60/60 PASS
+  v2_1_11: 54/54 PASS
+  v2_1_10: 43/43 PASS
+  v2_1_9: 24/24 PASS
+  v2_1_8: 24/24 PASS
+  v2_1_7: 25/25 PASS
+  v2_1_0: 12/12 PASS
+  post_v1_8_v2_1_0: 6/6 PASS
+  stage1_source_to_blueprint: 33/33 PASS
+  preformal_stress_repairs: 21/21 PASS
+  bugfix_regressions: 30/30 PASS
+  execution_load_guard: 14/14 PASS
+  pytest_collection_contract: PASS
+invocation_note:
+  bugfix_first_manual_run_without_required_WEB_GOVERNANCE_TRUST_ROOT: INVALID_INVOCATION_NOT_COUNTED
+  corrected_bugfix_run_with_external_trust_root: 30/30 PASS
+formal_status:
+  monolithic_preformal_terminal_pass: false
+  reason: wrapper_has_not_emitted_terminal_pass_within_tool_execution_window
+  formal_freeze_claimed: false
+  current_authority_promotion_claimed: false
+conclusion: All standalone mandatory/high-pressure component suites have terminal PASS on the validated package bytes; this receipt does not convert the NONCURRENT candidate into Current Authority.

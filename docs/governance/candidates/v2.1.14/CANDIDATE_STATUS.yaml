@@ -1,0 +1,44 @@
+schema_version: 1
+candidate_version: v2.1.14
+candidate_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+status: NONCURRENT_LOCAL_COMPONENT_VERIFIED
+source_control_profile: GITHUB
+branch: governance-v2.1.14-product-neutral-candidate
+formal_freeze_allowed: false
+current_authority_promotion_allowed: false
+monolithic_preformal_wrapper: NOT_COMPLETED_NO_TERMINAL_RESULT
+standalone_full_pressure_validation: PASS
+standalone_suite_terminal_results: ALL_PASS
+high_pressure_original_case_set: 25/25 PASS
+reference_semantic_cases: 28/28 PASS
+reference_semantic_fuzz: 46/46 BLOCKED; 0 ESCAPED
+v2_1_14_interaction_entity_lifecycle_regression: 68/68 PASS
+v2_1_14_spec_evolution_regression: 21/21 PASS
+stage1_source_to_blueprint_regression: 33/33 PASS
+execution_load_guard: 14/14 PASS
+product_provider_binding_audit: PASS
+bounded_functional_completion_guard: PASS
+logic_visual_synchronized_completion: PASS
+functional_workbench_cohesion: PASS
+interaction_topology_binding: PASS
+conditional_ai_continuity_profile: PASS
+source_materialization:
+  canonical_source_file_count: 75
+  canonical_source_bytes: 1595523
+  generated_bytecode_cache_excluded: true
+  exact_archive_binary_uploaded_by_connector: false
+  reason: CONNECTOR_HAS_NO_LOCAL_BINARY_FILE_UPLOAD_AND_LARGE_TEXT_TRANSFER_CAN_TRUNCATE
+  source_hash_manifest_status: LOCAL_VERIFIED_PENDING_SPLIT_REMOTE_MATERIALIZATION
+local_verified_package:
+  filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_COMPONENT_VERIFIED.zip
+  sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
+  zip_integrity: PASS
+candidate_projection:
+  bounded_completion_delta: docs/governance/candidates/v2.1.14/BOUNDED_FUNCTIONAL_COMPLETION_DELTA.yaml
+  interaction_topology_ai_continuity_delta: docs/governance/candidates/v2.1.14/INTERACTION_TOPOLOGY_AI_CONTINUITY_DELTA.yaml
+  full_pressure_receipt: docs/governance/candidates/v2.1.14/FULL_PRESSURE_VALIDATION_RECEIPT_2026-09-14.yaml
+main_current_authority_entry:
+  expected_adapter_path: docs/governance/CURRENT_GOVERNANCE_SPEC.yaml
+  materialized_on_main: false
+  candidate_must_not_create_or_replace_current_entry: true
+promotion_rule: Candidate remains NONCURRENT until registered Current-authority promotion gates pass; standalone high-pressure PASS does not by itself claim Formal Freeze.
