@@ -134,11 +134,11 @@ findings:
     class: TEST_HARNESS_OR_VALIDATOR_BUG
     title: Stage remediation closure protocol validator required a frozen Stage-02 UID before Stage-02 entry
     evidence: "After stale cross-UID Stage-02 active evidence was cleared on SHA d5223b0f7cb74f24b3b9bca7b1984deecf977be1, targeted run 34887229186 job 104120765693 failed because validate_stage_test_remediation_closure_protocol.py required 'frozen_specification_uid' even though ACTIVE_STATE correctly represented STAGE-01-CLOSED with Stage-02 result NOT_EXECUTED."
-    disposition: OPEN_VALIDATOR_SCOPE_REPAIR
+    disposition: RESOLVED_VALIDATOR_SCOPE_ONLY
     specification_change_required: false
     formal_specification_mutated_for_fix: false
     current_specification_may_be_modified_from_this_finding_alone: false
-    required_fix: "Require a frozen Stage UID only after Stage entry. In STAGE-01-CLOSED / Stage-02 NOT_EXECUTED predecessor state, a Stage-02 frozen UID must be absent/null; once Stage-02 begins or has an executed result, the frozen UID must equal the current Registry UID."
+    resolution: "Validator now treats STAGE-01-CLOSED / Stage-02 NOT_EXECUTED as a pre-entry state: a Stage-02 frozen UID is forbidden before entry and the pending freeze marker must be null. Once a stage is entered, its frozen UID must equal the active Registry UID. Targeted run 34887538993 completed SUCCESS and Full-Line run 34887539030 completed SUCCESS on SHA 96a57a2886b5492f9a5a1236a51cd9aad602de40; the Full-Line log proved Stage-02 tracked artifact/evidence residual count=0, exact Stage-01 ledger restoration, 13/13 Registry stress, 11/11 lifecycle, 20/20 PRE_FORMAL, 17/17 mandatory suites with exact denominators, no skip/timeout, and source runtime residual=0."
 
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
