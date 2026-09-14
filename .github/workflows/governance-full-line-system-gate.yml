@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/governance-source/FULL_LINE_TRIGGER'
       - '.github/workflows/governance-full-line-system-gate.yml'
-      - 'governance/ci/validate_stage02_state_integrity.py'
+      - 'governance/ci/validate_stage02_successor_integrity.py'
       - 'governance/ci/validate_stage_test_remediation_closure_protocol.py'
       - 'governance/specifications/current/**'
       - 'governance/specifications/REGISTRY.yaml'
@@ -53,8 +53,8 @@ jobs:
       - name: Validate Stage-01 binding invariants
         run: python governance/ci/validate_stage01_registry_binding.py
 
-      - name: Validate Stage-02 predecessor or legal successor state integrity
-        run: python governance/ci/validate_stage02_state_integrity.py
+      - name: Validate Stage-02 predecessor or legal successor/remediation state integrity
+        run: python governance/ci/validate_stage02_successor_integrity.py
 
       - name: Run complete 75-file full-lifecycle high-pressure system gate
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
