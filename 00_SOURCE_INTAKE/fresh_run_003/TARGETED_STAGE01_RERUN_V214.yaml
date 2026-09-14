@@ -1,0 +1,39 @@
+schema_version: 1
+record_uid: FRESH-RUN-003-CORE-ASSET-V214-TARGETED-RERUN
+status: STAGE1_RERUN_ACTIVE
+scope_mode: EXACT_PAGE_SCOPE_ONLY
+target_pages: [CORE-01, ASSET-01]
+base_governance_authority:
+  version: v2.1.12
+  disposition: PRESERVE_AS_HISTORICAL_FORMAL_TEST_BASE
+execution_governance_overlay:
+  version: v2.1.14
+  revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+  status: NONCURRENT_LOCAL_COMPONENT_VERIFIED
+  use: TARGETED_STAGE01_STAGE02_RERUN_ONLY
+  candidate_status_ref: governance/candidates/v2.1.14/CANDIDATE_STATUS.yaml
+  bounded_completion_ref: governance/candidates/v2.1.14/BOUNDED_FUNCTIONAL_COMPLETION_DELTA.yaml
+  interaction_topology_ref: governance/candidates/v2.1.14/INTERACTION_TOPOLOGY_AI_CONTINUITY_DELTA.yaml
+rollback_semantics:
+  historical_stage2_receipts_preserved: true
+  historical_stage2_results_are_current_rerun_result: false
+  rollback_source: STAGE-02
+  active_stage: STAGE-01
+  stage1_rerun_status: ACTIVE
+  stage2_rerun_status: NOT_STARTED_AFTER_ROLLBACK
+  stage2_previous_outputs: HISTORICAL_INPUT_ONLY_NOT_CURRENT_RESULT
+  source_truth_reuse: SAME_CAPTURED_RAW_SOURCE_READ_ONLY
+  stage1_revalidation_required: true
+  stage2_recompile_required_after_stage1_pass: true
+preservation:
+  pages_outside_scope: NO_MUTATION
+  product_runtime: NO_MUTATION
+  deployment: NO_MUTATION
+  formal_authority_promotion: FORBIDDEN
+rules:
+  - Stage-01 rerun must execute before any v2.1.14 Stage-02 result is accepted.
+  - Stage-02 must apply entity lifecycle, bounded completion, logic-visual synchronization, workbench cohesion and interaction topology checks.
+  - AI conversation continuity checks activate only when the page scope declares an applicable AI profile.
+  - Missing Authority remains BLOCK; the rerun may not invent Chapter, World Setting, Blueprint or other product behavior.
+  - A detected blocker is not a repaired blocker.
+next_action: RUN_STAGE1_TARGETED_REVALIDATION_THEN_STAGE2_RECOMPILE
