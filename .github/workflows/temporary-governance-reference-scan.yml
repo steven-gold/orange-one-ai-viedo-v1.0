@@ -1,0 +1,29 @@
+name: Temporary Governance Reference Scan
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+permissions:
+  contents: read
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Scan legacy governance references
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .tmp-governance-scan
+          {
+            echo '# legacy root/current references'
+            grep -RInE --exclude-dir=.git --exclude='temporary-governance-reference-scan.yml' \
+              'GOVERNANCE_CURRENT_R3\.yaml|GOVERNANCE_CURRENT_R4\.yaml|REBUILD_BRANCH_BASELINE_R3\.yaml|REBUILD_BRANCH_BASELINE_R4\.yaml|STAGE_TEST_CORRECTION_PROMOTION_POLICY_V1\.yaml|governance/test-runtime' . || true
+          } > .tmp-governance-scan/references.txt
+          cat .tmp-governance-scan/references.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: temporary-governance-reference-scan
+          path: .tmp-governance-scan/references.txt
+          if-no-files-found: error
