@@ -1,9 +1,10 @@
-schema_version: 24
+schema_version: 25
 role: STABLE_GOVERNANCE_ENTRYPOINT_COMPATIBILITY_SHIM
 repository_branch: rebuild-v2.1.1
 
 registry_ref: governance/specifications/REGISTRY.yaml
 resolver_ref: governance/ci/governance_resolver.py
+active_state_ref: governance/test/ACTIVE_STATE.yaml
 active_test_state_ref: governance/test/ACTIVE_STATE.yaml
 
 rules:
@@ -13,10 +14,16 @@ rules:
   version_label_change_may_break_resolution: false
   latest_may_be_selected_by_filename_sort: false
   unverified_candidate_may_be_selected_automatically: false
+  canonical_execution_rule_set_only: true
+  governance_calibration_and_later_pages_share_same_active_rules: true
+  alternate_scale_out_rule_set: FORBIDDEN
+  stage_current_specification_freeze_required: true
+  ordinary_mid_stage_normative_promotion: FORBIDDEN
+  stage_end_consolidated_promotion_and_restart_required_when_normative_change_occurs: true
 
 preservation:
   main_branch: NO_MUTATION
   new_branch: NO_MUTATION
-  all_other_pages: NO_MUTATION
+  all_other_pages: NO_MUTATION_UNTIL_PILOT_FULL_LIFECYCLE_CALIBRATION_CLOSES
 
-status: USE_REGISTRY_FOR_GOVERNANCE_AND_TEST_STATE_FOR_EXECUTION
+status: USE_REGISTRY_FOR_GOVERNANCE_AND_ACTIVE_STATE_FOR_EXECUTION

@@ -30,38 +30,56 @@ uid = resolved["governance_uid"]
 
 required_protocol_tokens = (
     "artifact_uid: GOV-COMP-STAGE-TEST-REMEDIATION-CLOSURE-PROTOCOL",
-    "audit_pass_with_product_gap_still_present_is_remediation_success: false",
-    "repeated_audit_blocked_loop_counts_as_progress: false",
-    "discovered_remediable_gap_may_be_left_for_later_stage: false",
-    "required_before_first_test_and_every_retest: true",
-    "required_before_every_fresh_physical_stage_test_or_retest: true",
+    "normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT",
+    "single_rule_set: true",
+    "governance_calibration_uses_same_execution_rules_as_later_pages: true",
+    "alternate_lifecycle_rule_set_for_scale_out: FORBIDDEN",
+    "required_at_stage_entry: true",
+    "current_specification_registry_and_manifest_are_immutable_during_stage: true",
+    "ordinary_mid_stage_normative_promotion: FORBIDDEN",
+    "candidate_may_change_current_specification_mid_stage: false",
     "audit_or_diagnosis_only: NOT_REMEDIATION",
-    "evidence_only_without_owning_layer_change: NOT_REMEDIATION",
     "legal_elimination_count_zero_with_reproducible_remediable_gap: BLOCK_CLOSURE",
     "every_previous_remediable_defect_signature_must_reproduce_count: 0",
-    "same_signature_reappears_after_claimed_fix:",
     "classification: REMEDIATION_FAILURE",
-    "hidden_defect_sweep:",
+    "stage_end_governance_consolidation_review:",
+    "mandatory_for_every_stage_attempt_after_known_defects_reach_zero_and_hidden_sweep_passes: true",
+    "max_atomic_promotion_transactions_per_stage_attempt: 1",
+    "promotion_may_occur_before_stage_end_review: false",
+    "single_atomic_promotion_commit_required: true",
+    "all_required_candidates_for_that_stage_attempt_must_be_consolidated_together: true",
+    "previous_stage_attempt_may_close_after_promotion_without_restart: false",
+    "post_promotion_restart:",
+    "required_when_consolidated_normative_promotion_occurs: true",
+    "RESTART_STAGE_FROM_FIRST_MANDATORY_STEP",
+    "fatal_specification_contradiction_exception:",
+    "may_interrupt_stage_only_when_current_specification_baseline_is_proven_invalid: true",
+    "exception_may_be_used_to_bypass_owning_layer_remediation: false",
+    "OBTAIN_NEW_EXPLICIT_USER_SPECIFICATION_CHANGE_AUTHORIZATION",
+    "stage_execution_used_one_final_governance_uid_from_freeze_through_closure: REQUIRED",
     "pilot_must_complete_all_required_lifecycle_stages_before_scale_out: true",
-    "other_pages_may_consume_completed_governance_before_pilot_full_lifecycle_closure: false",
-    "explicit_user_specification_change_directive_required: true",
+    "other_pages_may_directly_consume_same_active_governance: true",
+    "alternate_execution_rule_set_for_other_pages: FORBIDDEN",
 )
 for token in required_protocol_tokens:
     if token not in protocol:
         errors.append("PROTOCOL_TOKEN_MISSING:" + token)
 
 expected_steps = [
+    "STAGE_CURRENT_SPECIFICATION_BASELINE_FREEZE",
     "CLEAN_PREDECESSOR_BASELINE_RESET",
     "FULL_LINE_MULTIDIRECTIONAL_HIGH_PRESSURE_SYSTEM_GATE",
-    "FRESH_PHYSICAL_FILE_STAGE_TEST",
-    "DEFECT_AND_GAP_ROOT_CAUSE_CLASSIFICATION",
+    "FRESH_PHYSICAL_FILE_STAGE_EXECUTION",
+    "DEFECT_AND_GAP_ROOT_CAUSE_CLASSIFICATION_AND_LEDGER",
     "MATERIAL_REMEDIATION_AT_OWNING_LAYER",
-    "REUSABLE_GOVERNANCE_RULE_PROMOTION_WHEN_REQUIRED",
-    "TEST_OUTPUT_AND_RUNTIME_EVIDENCE_CLEAN_RESET",
+    "EXECUTION_OUTPUT_AND_RUNTIME_EVIDENCE_CLEAN_RESET",
     "FULL_LINE_MULTIDIRECTIONAL_HIGH_PRESSURE_SYSTEM_REGRESSION",
-    "FRESH_PHYSICAL_FILE_STAGE_RETEST",
+    "FRESH_PHYSICAL_FILE_STAGE_REEXECUTION",
     "KNOWN_DEFECT_SIGNATURE_ZERO_REPRODUCTION_CHECK",
     "HIDDEN_DEFECT_MULTIDIRECTIONAL_SWEEP",
+    "STAGE_END_GOVERNANCE_CONSOLIDATION_REVIEW",
+    "CONSOLIDATED_NORMATIVE_PROMOTION_IF_AUTHORIZED_AND_REQUIRED",
+    "POST_PROMOTION_FULL_LINE_AND_STAGE_RESTART_IF_PROMOTED",
     "STAGE_CLOSURE_DECISION",
 ]
 
@@ -98,29 +116,51 @@ if "uid: GOV-COMP-STAGE-TEST-REMEDIATION-CLOSURE-PROTOCOL" not in manifest:
     errors.append("MANIFEST_PROTOCOL_UID_MISSING")
 if f"artifact_uid: {uid}" not in manifest:
     errors.append("MANIFEST_ACTIVE_UID_MISMATCH")
+if "normative_status: ACTIVE_CURRENT_GOVERNANCE" not in manifest:
+    errors.append("MANIFEST_MODE_NEUTRAL_ACTIVE_STATUS_MISSING")
 if "component_ref: governance/specifications/current/STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml" not in registry:
     errors.append("REGISTRY_PROTOCOL_COMPONENT_REF_MISSING")
-if "audit_only_blocked_loop_is_progress: false" not in registry:
-    errors.append("REGISTRY_AUDIT_ONLY_PROGRESS_GUARD_MISSING")
-if "material_remediation_required_for_remediable_gap: true" not in registry:
-    errors.append("REGISTRY_MATERIAL_REMEDIATION_GUARD_MISSING")
-if "pilot_full_lifecycle_before_other_page_scale_out: true" not in registry:
-    errors.append("REGISTRY_PILOT_SCALEOUT_GUARD_MISSING")
+registry_required = (
+    "status: ACTIVE_CURRENT_GOVERNANCE",
+    "single_canonical_execution_rule_set: true",
+    "stage_specification_freeze_required: true",
+    "ordinary_mid_stage_promotion: FORBIDDEN",
+    "stage_end_consolidated_promotion_only: true",
+    "max_atomic_normative_promotions_per_stage_attempt: 1",
+    "promotion_requires_same_stage_restart_from_clean_predecessor_baseline: true",
+    "later_pages_consume_same_active_governance_after_calibration: true",
+    "alternate_scale_out_rule_set: FORBIDDEN",
+)
+for token in registry_required:
+    if token not in registry:
+        errors.append("REGISTRY_TOKEN_MISSING:" + token)
 
 if f"specification_uid: {uid}" not in state:
     errors.append("ACTIVE_STATE_SPECIFICATION_UID_STALE")
-if "specification_ref: governance/specifications/current/STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml" not in state:
-    errors.append("ACTIVE_STATE_PROTOCOL_BINDING_MISSING")
-if "audit_only_blocked_loop_may_count_as_progress: false" not in state:
-    errors.append("ACTIVE_STATE_AUDIT_LOOP_GUARD_MISSING")
+state_required = (
+    "canonical_execution_rule_set: true",
+    "stage_specification_freeze_required: true",
+    f"frozen_specification_uid: {uid}",
+    "ordinary_mid_stage_normative_promotion: BLOCK",
+    "candidate_may_be_active_rule_during_stage: false",
+    "stage_end_governance_consolidation_review_required: true",
+    "max_atomic_normative_promotions_per_stage_attempt: 1",
+    "post_promotion_same_stage_restart_required: true",
+    "later_pages_must_use_same_active_governance_after_calibration: true",
+)
+for token in state_required:
+    if token not in state:
+        errors.append("ACTIVE_STATE_TOKEN_MISSING:" + token)
 
 if errors:
     for error in errors:
         print("BLOCK:", error, file=sys.stderr)
     raise SystemExit(1)
 
-print(f"PASS: active governance UID {uid} binds the stage test remediation closure protocol")
-print("PASS: mandatory stage cycle order is exact and cannot skip remediation")
-print("PASS: audit-only BLOCKED loops cannot count as remediation or progress")
-print("PASS: previously discovered remediable defect signatures must reach zero on fresh retest")
-print("PASS: hidden-defect sweep and pilot-before-scale-out gates are enforced")
+print(f"PASS: active governance UID {uid} binds the canonical stage execution-remediation-closure protocol")
+print("PASS: mandatory 15-step stage cycle is exact and cannot skip owning-layer remediation")
+print("PASS: Current Specification is frozen during ordinary stage execution and candidates remain non-normative")
+print("PASS: Stage-End consolidated promotion is single-transaction, explicitly authorized, and forces same-stage restart under the new UID")
+print("PASS: fatal specification contradiction path is fail-closed and cannot replace ordinary owning-layer remediation")
+print("PASS: known defects must reach zero, hidden-defect sweep must pass, and pilot full lifecycle must close before scale-out")
+print("PASS: governance calibration and later pages consume one canonical active governance rule set")

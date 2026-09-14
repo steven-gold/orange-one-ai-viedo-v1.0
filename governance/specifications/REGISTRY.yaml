@@ -1,4 +1,4 @@
-schema_version: 1
+schema_version: 2
 registry_uid: GOV-SPEC-REGISTRY-001
 registry_role: SINGLE_STABLE_GOVERNANCE_ENTRYPOINT
 
@@ -10,16 +10,16 @@ stable_entrypoint:
   active_test_state: governance/test/ACTIVE_STATE.yaml
 
 active_specification:
-  governance_uid: GOV-REV-20260915-STAGE-REMEDIATION-CLOSURE-PROTOCOL
+  governance_uid: GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION
   display_version: v2.1.14
   aliases:
     - v2.1.14
     - product-neutral-interaction-topology-ai-continuity
     - explicit-specification-mutation-protection
-    - stage-test-remediation-closure-protocol
-    - remediation-before-stage-advance
-  status: ACTIVE_TEST_SPECIFICATION_NOT_FORMAL_FREEZE
-  formal_current_authority: false
+    - stage-remediation-closure-protocol
+    - stage-freeze-stage-end-consolidated-promotion
+    - single-canonical-execution-governance
+  status: ACTIVE_CURRENT_GOVERNANCE
 
 historical_formal_baseline:
   governance_uid: GOV-FORMAL-BASELINE-20260912
@@ -54,17 +54,37 @@ specification_mutation_control:
   authorization_receipt_root: governance/test/spec_change_authorizations
   authorization_must_preexist_mutation_commit: true
   protected_mutation_guard: governance/ci/specification_mutation_guard.py
+  stage_current_specification_freeze_required: true
+  ordinary_mid_stage_promotion: FORBIDDEN
+  stage_end_consolidated_promotion_only: true
+  fatal_specification_contradiction_exception_requires_new_explicit_authorization: true
 
-test_remediation_closure_protocol:
+stage_execution_remediation_closure_protocol:
   component_ref: governance/specifications/current/STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
-  mandatory_for_every_product_stage_test_and_retest: true
-  full_line_high_pressure_pretest_required: true
+  mandatory_for_every_product_stage_execution_and_reexecution: true
+  single_canonical_execution_rule_set: true
+  full_line_high_pressure_preexecution_required: true
   audit_only_blocked_loop_is_progress: false
   material_remediation_required_for_remediable_gap: true
   known_defect_signature_must_be_zero_before_stage_advance: true
   hidden_defect_sweep_required: true
+  stage_specification_freeze_required: true
+  specification_candidate_is_non_normative_during_stage: true
+  stage_end_governance_consolidation_review_required: true
+  max_atomic_normative_promotions_per_stage_attempt: 1
+  promotion_requires_new_uid_and_atomic_registry_manifest_update: true
+  promotion_requires_same_stage_restart_from_clean_predecessor_baseline: true
   pilot_full_lifecycle_before_other_page_scale_out: true
-  specification_promotion_still_governed_by_mutation_control: true
+  later_pages_consume_same_active_governance_after_calibration: true
+  alternate_scale_out_rule_set: FORBIDDEN
+
+canonical_execution_continuity:
+  governance_calibration_uses_same_rules_as_later_pages: true
+  pilot_full_lifecycle_closure_is_calibration_completion_gate: true
+  final_full_line_high_pressure_gate_required_at_calibration_completion: true
+  all_known_remediable_defects_zero_required: true
+  no_new_blocking_hidden_defects_required: true
+  after_completion_other_pages_may_directly_consume_same_registry: true
 
 test_layer_separation:
   normative_specifications_root: governance/specifications

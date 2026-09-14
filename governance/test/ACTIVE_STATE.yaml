@@ -1,8 +1,8 @@
-schema_version: 4
+schema_version: 5
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260915-STAGE-REMEDIATION-CLOSURE-PROTOCOL
+specification_uid: GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION
 
 execution:
   branch: rebuild-v2.1.1
@@ -91,21 +91,34 @@ stage02_current_test:
   inference_used: false
   current_specification_mutated: false
 
-stage_test_remediation_closure_protocol:
+stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
   active_for_current_stage: true
+  canonical_execution_rule_set: true
   audit_only_blocked_loop_may_count_as_progress: false
   remediation_must_materially_eliminate_remediable_gap: true
-  full_line_high_pressure_required_before_every_fresh_test_or_retest: true
-  clean_predecessor_baseline_required_before_every_fresh_test_or_retest: true
+  full_line_high_pressure_required_before_every_fresh_execution_or_reexecution: true
+  clean_predecessor_baseline_required_before_every_fresh_execution_or_reexecution: true
   hidden_defect_sweep_required_after_known_defect_fix: true
+  stage_specification_freeze_required: true
+  frozen_specification_uid: GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION
+  ordinary_mid_stage_normative_promotion: BLOCK
+  specification_candidate_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+  candidate_may_be_active_rule_during_stage: false
+  stage_end_governance_consolidation_review_required: true
+  max_atomic_normative_promotions_per_stage_attempt: 1
+  post_promotion_same_stage_restart_required: true
+  fatal_specification_contradiction_requires_stage_stop_and_new_explicit_authorization: true
   pilot_full_lifecycle_required_before_other_page_scale_out: true
+  later_pages_must_use_same_active_governance_after_calibration: true
 
 specification_mutation_safety:
   change_control_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   finding_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
   current_spec_mutation_for_construction_or_test_without_explicit_directive: BLOCK
   finding_may_auto_promote: false
+  ordinary_mid_stage_specification_mutation: BLOCK
+  stage_end_consolidated_promotion_requires_new_explicit_directive: true
 
 status: ACTIVE_STAGE2_TESTED_BLOCKED
-next_action: EXECUTE_STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL_ON_STAGE02_GAPS
+next_action: EXECUTE_MATERIAL_REMEDIATION_AT_OWNING_LAYER_UNDER_FROZEN_STAGE_SPECIFICATION
