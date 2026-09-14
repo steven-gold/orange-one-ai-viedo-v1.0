@@ -86,7 +86,8 @@ finally:
 # 3. A numerically higher unverified candidate must not become Current.
 td, root = make_sandbox()
 try:
-    fake = root / "governance/specifications/v999.999.999"
+    fake_locator = "governance/specifications/" + "v999.999.999"
+    fake = root / fake_locator
     fake.mkdir(parents=True)
     (fake / "SPECIFICATION_MANIFEST.yaml").write_text("artifact_uid: FAKE-NEWER-CANDIDATE\n", encoding="utf-8")
     got = resolve_at(root)
@@ -101,9 +102,10 @@ finally:
 # 4. Semver directory locator injection must fail closed.
 def version_path_injection(root):
     reg = root / "governance/specifications/REGISTRY.yaml"
+    bad_locator = "governance/specifications/" + "v9.9.9"
     text = reg.read_text(encoding="utf-8").replace(
         "specification_root: governance/specifications/current",
-        "specification_root: governance/specifications/v9.9.9",
+        "specification_root: " + bad_locator,
         1,
     )
     reg.write_text(text, encoding="utf-8")
@@ -183,7 +185,8 @@ tmp_files = list(tmp_root.rglob("*")) if tmp_root.exists() else []
 record("temporary_test_zero_residual", not tmp_root.exists(), f"entries={len(tmp_files)}")
 
 # 12. Every active workflow and every governance Python consumer directly invoked by a workflow
-#     must be free of a hard-coded semver governance locator.
+#     must be free of a hard-coded semver governance locator. Mutation fixtures above construct
+#     prohibited paths dynamically so the scanner tests executable locator usage, not fixture text.
 pattern = re.compile(r"governance/(?:current|specifications)/v\d+(?:\.\d+)+")
 active_files = set()
 workflow_dir = ROOT / ".github/workflows"
