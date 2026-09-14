@@ -1,21 +1,39 @@
 schema_version: 1
 candidate_version: v2.1.14
-candidate_revision: v2.1.14-product-neutral-entity-lifecycle
+candidate_revision: v2.1.14-product-neutral-bounded-functional-completion
 status: NONCURRENT_LOCAL_COMPONENT_VERIFIED
 source_control_profile: GITHUB
 branch: governance-v2.1.14-product-neutral-candidate
 formal_freeze_allowed: false
 current_authority_promotion_allowed: false
 monolithic_preformal_wrapper: NOT_COMPLETED_TOOL_TIMEOUT_240S
-definition_constituent_checks: 19/19 PASS
+preformal_non_matrix_constituents: 19/19 PASS
+preformal_total_with_matrix_constituent: 20/20 PASS
 mandatory_regression_matrix: 17/17 SUITES PASS
 high_pressure_original_case_set: 25/25 PASS
+reference_semantic_cases: 28/28 PASS
+reference_semantic_fuzz: 46/46 BLOCKED; 0 ESCAPED
+v2_1_14_bounded_entity_lifecycle_regression: 48/48 PASS
 product_provider_binding_audit: PASS
 business_entity_operation_universe: 23
+function_admission_score_max: 100
+bounded_functional_completion_guard: PASS
+logic_visual_synchronized_completion: PASS
+validation_performance_audit:
+  file_io_is_240_second_root_cause: false
+  construction_execution_index_loader_exists: true
+  requirement_index_used_as_mandatory_regression_impact_index: false
+  regression_copytree_call_sites: 28
+  status: INDEX_USAGE_GAP_RECORDED
+  formal_validation_denominator_may_be_reduced_by_index: false
 local_verified_package:
-  filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_ENTITY_LIFECYCLE_LOCAL_COMPONENT_VERIFIED.zip
-  sha256: 411806765c1a36914f5aa5ef9cbcd381b680d50c45845ef14841aba987c3ff0e
+  filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_BOUNDED_FUNCTIONAL_COMPLETION_LOCAL_COMPONENT_VERIFIED.zip
+  sha256: cda709b87d8a931900e1fb9843e398df4a4d78de8807584f7a4bbb17948002dd
   zip_integrity: PASS
+candidate_projection:
+  delta_registry: docs/governance/candidates/v2.1.14/BOUNDED_FUNCTIONAL_COMPLETION_DELTA.yaml
+  full_candidate_registry_is_inside_immutable_package: true
+  stale_predecessor_registry_projection_removed: true
 main_current_authority_entry:
   expected_adapter_path: docs/governance/CURRENT_GOVERNANCE_SPEC.yaml
   materialized_on_main: false
