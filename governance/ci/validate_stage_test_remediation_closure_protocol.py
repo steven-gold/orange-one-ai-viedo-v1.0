@@ -140,7 +140,6 @@ if f"specification_uid: {uid}" not in state:
 state_required = (
     "canonical_execution_rule_set: true",
     "stage_specification_freeze_required: true",
-    f"frozen_specification_uid: {uid}",
     "ordinary_mid_stage_normative_promotion: BLOCK",
     "candidate_may_be_active_rule_during_stage: false",
     "stage_end_governance_consolidation_review_required: true",
@@ -152,6 +151,19 @@ for token in state_required:
     if token not in state:
         errors.append("ACTIVE_STATE_TOKEN_MISSING:" + token)
 
+pre_stage02 = (
+    "current_stage: STAGE-01-CLOSED" in state
+    and "result: NOT_EXECUTED" in state
+)
+if pre_stage02:
+    if "frozen_specification_uid:" in state:
+        errors.append("PRE_STAGE02_FROZEN_UID_MUST_NOT_EXIST_BEFORE_STAGE_ENTRY")
+    if "next_stage02_attempt_frozen_governance_uid: null" not in state:
+        errors.append("PRE_STAGE02_PENDING_FREEZE_MARKER_MISSING")
+else:
+    if f"frozen_specification_uid: {uid}" not in state:
+        errors.append("ACTIVE_ENTERED_STAGE_FROZEN_UID_MISSING_OR_STALE")
+
 if errors:
     for error in errors:
         print("BLOCK:", error, file=sys.stderr)
@@ -159,6 +171,10 @@ if errors:
 
 print(f"PASS: active governance UID {uid} binds the canonical stage execution-remediation-closure protocol")
 print("PASS: mandatory 15-step stage cycle is exact and cannot skip owning-layer remediation")
+if pre_stage02:
+    print("PASS: Stage-02 is not entered; no frozen Stage-02 UID is fabricated before Stage entry")
+else:
+    print("PASS: entered Stage is frozen to the active governance UID")
 print("PASS: Current Specification is frozen during ordinary stage execution and candidates remain non-normative")
 print("PASS: Stage-End consolidated promotion is single-transaction, explicitly authorized, and forces same-stage restart under the new UID")
 print("PASS: fatal specification contradiction path is fail-closed and cannot replace ordinary owning-layer remediation")
