@@ -1,0 +1,57 @@
+schema_version: 1
+artifact_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY
+artifact_type: STABLE_CURRENT_SPECIFICATION_MANIFEST
+normative_status: ACTIVE_TEST_SPECIFICATION_NOT_FORMAL_FREEZE
+formal_current_authority: false
+display_version: v2.1.14
+version_label_is_identity: false
+
+components:
+  - uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
+    file: BOUNDED_FUNCTIONAL_COMPLETION.yaml
+  - uid: GOV-COMP-INTERACTION-TOPOLOGY-AI-CONTINUITY
+    file: INTERACTION_TOPOLOGY_AI_CONTINUITY.yaml
+  - uid: GOV-COMP-TEST-FEEDBACK-TEMPORARY-ARTIFACT-LIFECYCLE
+    file: TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE.yaml
+
+source_lineage:
+  verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_COMPONENT_VERIFIED.zip
+  verified_package_sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
+  verified_source_file_count: 75
+  exact_full_zip_binary_materialized_in_git: false
+
+resolution_contract:
+  canonical_root: governance/specifications/current
+  all_active_consumers_resolve_via_registry: true
+  direct_version_named_path_reference: FORBIDDEN
+  runtime_digest_generated_from_current_directory: true
+  runtime_digest_is_execution_evidence_not_normative_locator: true
+  manifest_hash_copy_to_other_consumers: FORBIDDEN
+
+stage02_applicability:
+  always_for_target_page_stage02:
+    - FUNCTIONAL_CHAIN_SPEC
+    - PAGE_CONSTRUCTION_SPEC_PACKAGE
+  when_governed_business_entity_scope_present:
+    - BUSINESS_ENTITY_INVENTORY
+    - BUSINESS_ENTITY_OPERATION_MATRIX
+  when_entity_hierarchy_applies:
+    - ENTITY_HIERARCHY_MATRIX
+  when_continuous_work_unit_applies:
+    - FUNCTIONAL_WORKBENCH_CONTRACT
+    - INTERACTION_TOPOLOGY_MATRIX
+  when_user_visible_or_observable_required_operation_applies:
+    - FUNCTION_VISUAL_IMPACT_MATRIX
+  when_ai_or_auto_proposes_functional_addition:
+    - FUNCTION_ADMISSION_SCORECARD
+  when_bounded_auto_completion_is_activated:
+    - AUTO_COMPLETION_SCOPE_LEDGER
+  when_ai_interaction_profile_applies:
+    - AI_INTERACTION_CONTINUITY_CONTRACT
+
+closure_policy:
+  applicability_must_be_proven_before_missing_output_is_counted_as_blocker: true
+  missing_applicable_required_output: BLOCK
+  missing_non_applicable_conditional_output: NOT_A_BLOCKER
+  authority_gap: BLOCK
+  ai_invention_of_missing_product_behavior: FORBIDDEN

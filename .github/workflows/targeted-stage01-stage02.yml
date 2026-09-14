@@ -1,0 +1,29 @@
+name: Current Governance CORE ASSET Stage01 Stage02 Gate
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  current-governance-targeted-gate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Resolve active governance through stable registry
+        run: python governance/ci/governance_resolver.py
+      - name: Validate governance layout and zero residual
+        run: python governance/ci/validate_governance_layout.py
+      - name: Run applicability-aware Stage-01 then Stage-02 truth classification
+        run: python governance/ci/validate_targeted_stage01_stage02.py
+      - name: Upload targeted rerun result
+        uses: actions/upload-artifact@v4
+        with:
+          name: targeted-stage01-stage02-result
+          path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_RESULT.json
+          if-no-files-found: error

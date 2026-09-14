@@ -1,0 +1,49 @@
+schema_version: 1
+artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
+normative_authority: false
+specification_registry_ref: governance/specifications/REGISTRY.yaml
+specification_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY
+
+execution:
+  branch: rebuild-v2.1.1
+  run_uid: FRESH-RUN-003
+  scope_mode: EXACT_PAGE_SCOPE_ONLY
+  target_pages: [CORE-01, ASSET-01]
+  current_stage: STAGE-02
+  stage1:
+    CORE-01: PASS
+    ASSET-01: PASS
+  stage2:
+    applicability_model: EXACT_APPLICABILITY_BEFORE_BLOCKER_COUNT
+    CORE-01: {result: BLOCKED, blocker_count: 7}
+    ASSET-01: {result: BLOCKED, blocker_count: 6}
+  result_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_V214_RESULT.json
+  website_construction_allowed: false
+  deployment_allowed: false
+
+applicability:
+  FUNCTION_ADMISSION_SCORECARD:
+    CORE-01: NOT_APPLICABLE_NOT_ACTIVATED
+    ASSET-01: NOT_APPLICABLE_NOT_ACTIVATED
+  AUTO_COMPLETION_SCOPE_LEDGER:
+    CORE-01: NOT_APPLICABLE_NOT_ACTIVATED
+    ASSET-01: NOT_APPLICABLE_NOT_ACTIVATED
+  AI_INTERACTION_CONTINUITY_CONTRACT:
+    CORE-01: APPLIES
+    ASSET-01: NOT_APPLICABLE_NO_AI_INTERACTION_PROFILE
+
+cleanup:
+  zero_residual_scan: PASS
+  temporary_root: governance/test/temporary
+  temporary_files_remaining: 0
+  duplicate_candidate_governance: REMOVED
+  legacy_version_named_current_paths_active: false
+
+latest_verified_gate:
+  workflow: Current Governance CORE ASSET Stage01 Stage02 Gate
+  prior_run_id: 34817895696
+  prior_head_sha: 79daac6ff91dbc5880660ce5c27149e0812c0a71
+  prior_conclusion: SUCCESS
+
+status: ACTIVE_TARGETED_TEST_BLOCKED_AT_STAGE02
+next_action: MATERIALIZE_ONLY_APPLICABLE_STAGE02_OUTPUTS_FROM_EXISTING_AUTHORITY_THEN_RERUN

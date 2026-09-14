@@ -1,0 +1,58 @@
+schema_version: 1
+registry_uid: GOV-SPEC-REGISTRY-001
+registry_role: SINGLE_STABLE_GOVERNANCE_ENTRYPOINT
+
+stable_entrypoint:
+  specification_root: governance/specifications/current
+  specification_manifest: governance/specifications/current/SPECIFICATION_MANIFEST.yaml
+  resolver: governance/ci/governance_resolver.py
+  test_state_root: governance/test
+  active_test_state: governance/test/ACTIVE_STATE.yaml
+
+active_specification:
+  governance_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY
+  display_version: v2.1.14
+  aliases:
+    - v2.1.14
+    - product-neutral-interaction-topology-ai-continuity
+  status: ACTIVE_TEST_SPECIFICATION_NOT_FORMAL_FREEZE
+  formal_current_authority: false
+
+historical_formal_baseline:
+  governance_uid: GOV-FORMAL-BASELINE-20260912
+  display_version: v2.1.12
+  status: HISTORICAL_REFERENCE_ONLY
+  current_execution_locator: false
+  preservation: GIT_HISTORY_AND_PINNED_RECEIPTS
+
+resolution_policy:
+  immutable_governance_uid_is_identity: true
+  version_label_is_locator: false
+  version_label_may_be_renamed_without_breaking_resolution: true
+  active_consumers_must_use_registry_or_resolver: true
+  direct_semver_directory_reference_by_active_consumer: FORBIDDEN
+  lexicographic_latest_version_discovery: FORBIDDEN
+  unverified_candidate_may_become_latest_automatically: false
+  promotion_changes_registry_and_stable_current_content_only: true
+  consumer_specific_version_pointer: FORBIDDEN
+
+integrity_policy:
+  runtime_bundle_digest: COMPUTE_FROM_STABLE_CURRENT_DIRECTORY
+  per_consumer_copied_hash: FORBIDDEN
+  stale_manifest_or_digest_at_promotion: BLOCK_PROMOTION
+  stale_hash_may_not_redirect_consumer_to_old_version: true
+  path_resolution_independent_of_display_version: true
+
+test_layer_separation:
+  normative_specifications_root: governance/specifications
+  test_runtime_root: governance/test
+  temporary_test_root: governance/test/temporary
+  test_state_may_be_normative_authority: false
+  temporary_test_artifact_may_be_normative_authority: false
+  promoted_test_rule_must_move_into_specification_before_cleanup: true
+  after_promotion_or_discard_zero_residual_required: true
+
+legacy_path_policy:
+  governance_current_semver_tree_allowed_in_head: false
+  historical_version_materialization_in_head_required: false
+  git_history_preserves_retired_versions: true

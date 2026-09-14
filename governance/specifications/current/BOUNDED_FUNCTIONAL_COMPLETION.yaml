@@ -1,0 +1,35 @@
+schema_version: 1
+artifact_uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
+artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
+normative_status: ACTIVE_TEST_SPECIFICATION_COMPONENT
+formal_current_authority: false
+common_scope: PRODUCT_AND_SYSTEM_NEUTRAL
+
+rules:
+  FUNCTION_ADMISSION_NECESSITY_AND_UTILITY:
+    required_artifact: FUNCTION_ADMISSION_SCORECARD
+    activation: AI_OR_AUTOMATION_PROPOSES_FUNCTIONAL_ADDITION
+    score_is_diagnostic_not_authority: true
+    authority_gap_may_not_be_overridden_by_score: true
+  BOUNDED_FUNCTIONAL_COMPLETION:
+    required_artifact: AUTO_COMPLETION_SCOPE_LEDGER
+    activation: REQUIRED_GAP_CLOSURE_OR_AUTO_COMPLETION_FROM_REGISTERED_SEED
+    seed_gap_or_required_operation_required: true
+    minimal_closure_set_required: true
+    outside_frozen_closure: STOP_AND_REOPEN_DESIGN
+    generic_crud_symmetry_expansion: BLOCK
+    sibling_feature_symmetry_expansion: BLOCK
+    continue_after_stop_condition: BLOCK
+  FUNCTION_VISUAL_SYNCHRONIZED_COMPLETION:
+    required_artifact: FUNCTION_VISUAL_IMPACT_MATRIX
+    activation: USER_VISIBLE_OR_USER_OBSERVABLE_REQUIRED_OPERATION
+    logic_addition_without_visual_impact_classification: BLOCK
+    user_visible_operation_without_visual_binding: BLOCK
+    visual_control_without_allowed_operation: BLOCK
+    visual_delta_requires_approved_design_before_stage05: true
+  INDEXED_INCREMENTAL_VALIDATION:
+    construction_index_first_loading_required: true
+    validation_impact_index_required: true
+    reverse_dependency_index_required: true
+    index_may_skip_required_impacted_validator: false
+    full_sweep_required_before_freeze: true

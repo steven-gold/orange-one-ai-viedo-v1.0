@@ -1,84 +1,22 @@
-schema_version: 23
-role: CURRENT_GOVERNANCE_TEST_POINTER
+schema_version: 24
+role: STABLE_GOVERNANCE_ENTRYPOINT_COMPATIBILITY_SHIM
 repository_branch: rebuild-v2.1.1
 
-normative_authority:
-  version: v2.1.12
-  disposition: PRESERVED_HISTORICAL_FORMAL_TEST_BASE
-  replaces_by_test_governance: false
+registry_ref: governance/specifications/REGISTRY.yaml
+resolver_ref: governance/ci/governance_resolver.py
+active_test_state_ref: governance/test/ACTIVE_STATE.yaml
 
-current_test_governance:
-  version: v2.1.14
-  revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
-  state: CURRENT_TEST_GOVERNANCE_FOR_TARGETED_RERUN
-  manifest_ref: governance/current/v2.1.14/EFFECTIVE_TEST_GOVERNANCE_MANIFEST.yaml
-  test_feedback_component_ref: governance/current/v2.1.14/TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml
-  formal_freeze_allowed: false
-  production_current_authority_promotion_allowed: false
-  standalone_parallel_operational_governance_allowed: false
-
-active_execution:
-  run_uid: FRESH-RUN-003
-  scope_mode: EXACT_PAGE_SCOPE_ONLY
-  target_pages: [CORE-01, ASSET-01]
-  rollback_from: STAGE-02
-  stage1_rerun_status: PASS
-  current_stage: STAGE-02
-  stage2_rerun_status: BLOCKED_APPLICABILITY_AWARE
-  stage2_result_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_V214_RESULT.json
-  website_construction_allowed: false
-  deployment_allowed: false
-
-page_results:
-  CORE-01:
-    STAGE-01: PASS
-    STAGE-02: BLOCKED
-    blocker_count: 7
-  ASSET-01:
-    STAGE-01: PASS
-    STAGE-02: BLOCKED
-    blocker_count: 6
-
-applicability_corrections:
-  FUNCTION_ADMISSION_SCORECARD:
-    CORE-01: NOT_APPLICABLE_NOT_ACTIVATED
-    ASSET-01: NOT_APPLICABLE_NOT_ACTIVATED
-  AUTO_COMPLETION_SCOPE_LEDGER:
-    CORE-01: NOT_APPLICABLE_NOT_ACTIVATED
-    ASSET-01: NOT_APPLICABLE_NOT_ACTIVATED
-  AI_INTERACTION_CONTINUITY_CONTRACT:
-    CORE-01: APPLIES
-    ASSET-01: NOT_APPLICABLE_NO_AI_INTERACTION_PROFILE
-  interaction_topology_canonical_artifact: INTERACTION_TOPOLOGY_MATRIX
-
-superseded_targeted_result:
-  prior_classification: CORE_12_BLOCKERS_ASSET_8_BLOCKERS
-  disposition: SUPERSEDED
-  may_be_used_as_current_blocker_count: false
-
-cleanup_state:
-  zero_residual_scan: PASS
-  legacy_root_current_aliases: REMOVED
-  legacy_standalone_correction_policy: REMOVED_AFTER_RULE_PROMOTION
-  duplicate_candidate_governance_copies: REMOVED
-  retired_v216_runtime_shards: REMOVED
-  temporary_reference_scan: REMOVED
-  one_time_recovery_trigger: REMOVED
-  historical_receipts: PRESERVED
-  cleanup_receipt_ref: 11_EVIDENCE/audit/V214_GOVERNANCE_CLEANUP_RECEIPT.yaml
-
-terminal_receipt:
-  provider: GITHUB_ACTIONS
-  workflow: Current v2.1.14 CORE ASSET Stage01 Stage02 Gate
-  run_id: 34817453346
-  head_sha: f9d691a6fd136e96f265a0ead3c7a07735467a86
-  conclusion: SUCCESS
+rules:
+  this_file_may_define_governance_version: false
+  direct_version_named_governance_path: FORBIDDEN
+  all_active_consumers_must_resolve_via_registry: true
+  version_label_change_may_break_resolution: false
+  latest_may_be_selected_by_filename_sort: false
+  unverified_candidate_may_be_selected_automatically: false
 
 preservation:
-  all_other_pages: NO_MUTATION
   main_branch: NO_MUTATION
   new_branch: NO_MUTATION
-  historical_receipts: PRESERVE_IMMUTABLE
+  all_other_pages: NO_MUTATION
 
-status: STAGE2_TARGETED_RERUN_COMPLETED_BLOCKED_APPLICABILITY_AWARE_V214
-next_action: MATERIALIZE_ONLY_APPLICABLE_V214_STAGE02_OUTPUTS_FROM_EXISTING_AUTHORITY_THEN_RERUN
+status: USE_REGISTRY_FOR_GOVERNANCE_AND_TEST_STATE_FOR_EXECUTION
