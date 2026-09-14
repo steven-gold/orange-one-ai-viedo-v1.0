@@ -33,6 +33,23 @@ def trailer(message, key):
     return values[0]
 
 
+def prior_authorization_use_exists(auth_uid):
+    """Search all reachable refs but exclude exactly the current commit itself."""
+    current = git("rev-parse", "HEAD").strip()
+    marker = f"Spec-Change-Authorization: {auth_uid}"
+    records = git("log", "--all", "--format=%H%x1f%B%x1e")
+    for record in records.split("\x1e"):
+        record = record.strip("\n")
+        if not record or "\x1f" not in record:
+            continue
+        sha, body = record.split("\x1f", 1)
+        if sha.strip() == current:
+            continue
+        if marker in body:
+            return True, sha.strip()
+    return False, None
+
+
 def main():
     if not (ROOT / ".git").exists():
         print("BLOCK: SPEC_MUTATION_GUARD_REQUIRES_GIT_CHECKOUT", file=sys.stderr)
@@ -81,11 +98,10 @@ def main():
             print("MISSING:", token, file=sys.stderr)
         return 1
 
-    # Single use: requires full history checkout in CI. The current commit is excluded from the search.
-    prior_uses = git("log", "HEAD^", "--format=%B", "--all")
-    marker = f"Spec-Change-Authorization: {auth_uid}"
-    if marker in prior_uses:
-        print(f"BLOCK: single-use authorization already consumed: {auth_uid}", file=sys.stderr)
+    # Single use across all reachable refs, excluding only the exact current commit being evaluated.
+    reused, prior_sha = prior_authorization_use_exists(auth_uid)
+    if reused:
+        print(f"BLOCK: single-use authorization already consumed: {auth_uid} prior_commit={prior_sha}", file=sys.stderr)
         return 1
 
     # A spec mutation is never justified by construction/test need alone. The receipt is the only admissible authority.
