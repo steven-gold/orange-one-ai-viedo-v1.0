@@ -84,7 +84,7 @@ def flatten_strings(value) -> set[str]:
     return out
 
 
-def current_authority_set() -> set[str]:
+def load_current_manifest() -> dict:
     manifest = load(CURRENT_MANIFEST)
     authority = manifest.get('authority') or {}
     if authority.get('current_only') is not True or authority.get('status') != 'FINAL_LOCKED':
@@ -92,10 +92,23 @@ def current_authority_set() -> set[str]:
     load_policy = manifest.get('load_policy') or {}
     if load_policy.get('only_listed_files_are_current_authority') is not True:
         die('R7_CURRENT_AUTHORITY_MANIFEST_LOAD_POLICY_DRIFT')
+    return manifest
+
+
+def current_authority_set() -> set[str]:
+    manifest = load_current_manifest()
     current = flatten_strings(manifest.get('current_authority_set') or {})
     if not current:
         die('R7_CURRENT_AUTHORITY_SET_EMPTY')
     return current
+
+
+def current_manifest_revision() -> str:
+    manifest = load_current_manifest()
+    revision = (manifest.get('authority') or {}).get('revision')
+    if revision in (None, ''):
+        die('R7_CURRENT_AUTHORITY_MANIFEST_REVISION_MISSING')
+    return str(revision)
 
 
 def raw_capture_map(current: set[str]) -> dict[str, dict]:
@@ -203,6 +216,19 @@ def revision_tokens(doc: dict) -> set[str]:
             if value not in (None, ''):
                 out.add(str(value))
     return out
+
+
+def prove_revision_provenance(source_doc: dict, provenance: dict, requested_revision, uid: str) -> str:
+    requested = str(requested_revision)
+    if requested in revision_tokens(source_doc):
+        return 'INTRINSIC_SOURCE_REVISION_OR_VERSION'
+    canonical_source = provenance.get('canonical_source_path')
+    if not isinstance(canonical_source, str) or canonical_source not in current_authority_set():
+        die(f'R7_REVISION_PROVENANCE_NOT_CURRENT:{uid}:{canonical_source}')
+    manifest_revision = current_manifest_revision()
+    if requested == manifest_revision:
+        return 'CURRENT_AUTHORITY_MANIFEST_REVISION_WITH_EXACT_SOURCE_HASH'
+    die(f'R7_AUTHORITY_REVISION_NOT_PROVEN:{uid}:{requested}')
 
 
 def matches_subset(node, needle) -> bool:
@@ -367,13 +393,12 @@ def validate(approved_path: Path) -> tuple[dict, list[dict]]:
         source_hash = sha256_file(source_path)
         if inp['authority_content_sha256'] != source_hash:
             die(f'R7_AUTHORITY_HASH_MISMATCH:{uid}')
-        prove_current_admissibility(source_rel, source_path)
+        provenance = prove_current_admissibility(source_rel, source_path)
 
         source_doc = load(source_path)
         if inp['canonical_owner_uid'] not in owner_ids(source_doc):
             die(f'R7_CANONICAL_OWNER_UID_NOT_IN_SOURCE:{uid}:{inp["canonical_owner_uid"]}')
-        if str(inp['authority_revision']) not in revision_tokens(source_doc):
-            die(f'R7_AUTHORITY_REVISION_NOT_IN_SOURCE:{uid}:{inp["authority_revision"]}')
+        prove_revision_provenance(source_doc, provenance, inp['authority_revision'], uid)
 
         binding = inp['exact_binding']
         validate_binding_shape(rec, binding)
@@ -399,8 +424,9 @@ def main() -> None:
     print(f'PASS: R7 approved authority binding set validated records={len(records)} input={rel}')
     print('PASS: every record matches an exact R6 blocker identity and carries non-AI explicit approval metadata')
     print('PASS: every authority source is Current-admissible by direct membership or verified exact capture/materialization provenance')
-    print('PASS: canonical owner/revision and category-specific exact binding are physically represented by authority source bytes')
-    print('PASS: structured approval evidence binds the exact blocker, source hash and exact approved binding')
+    print('PASS: authority revision is proven by source-intrinsic token or the revisioned Current manifest that lists the exact hashed canonical source')
+    print('PASS: canonical owner and category-specific exact binding are physically represented by authority source bytes')
+    print('PASS: structured approval evidence binds the exact blocker, source hash, revision and exact approved binding')
 
 
 if __name__ == '__main__':
