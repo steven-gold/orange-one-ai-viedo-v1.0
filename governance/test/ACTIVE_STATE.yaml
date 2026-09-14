@@ -64,21 +64,25 @@ stage02_active_attempt:
   frozen_governance_receipt_ref: governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml
   clean_baseline_receipt_ref: governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml
   frozen_governance_uid: GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION
-  source_execution_sha: 0b192e6c9522470f4de0dc2621a06d4c199399e7
+  source_execution_sha: 49e895ee6ae8b3c75bfa517004f0e978b31cbf7b
   active_evidence_present: true
   active_findings_present: true
   active_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
   active_findings_ref: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
   historical_attempt_may_be_used_as_current_result: false
   historical_defect_signatures_may_be_used_only_as_regression_targets_after_fresh_rescan: true
-  fresh_functional_gap_total: 171
+  fresh_functional_gap_total: 154
   fresh_closure_blocker_total: 0
   preserved_external_authority_union_count: 8
   material_remediation_started: true
   material_remediation_receipt_ref: governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml
   reexecution_clean_baseline_receipt_ref: governance/test/stage02/STAGE02_REEXECUTION_CLEAN_BASELINE_RECEIPT_R1.yaml
-  defect_signature_regression_receipt_ref: governance/test/stage02/STAGE02_DEFECT_SIGNATURE_REGRESSION_R1.yaml
-  reexecution_cycle: R1
+  defect_signature_regression_receipt_ref: governance/test/stage02/STAGE02_DEFECT_SIGNATURE_REGRESSION_R2.yaml
+  reexecution_cycle: R2_DUAL_LAYER
+  raw_discovery_gap_total: 171
+  materialized_functional_elimination_count: 17
+  functional_material_remediation_receipt_ref: governance/test/stage02/STAGE02_FUNCTIONAL_MATERIAL_REMEDIATION_R3_RECEIPT.yaml
+  dual_layer_clean_baseline_receipt_ref: governance/test/stage02/STAGE02_DUAL_LAYER_REEXECUTION_CLEAN_BASELINE_RECEIPT_R2.yaml
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
@@ -113,14 +117,16 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
 status: ACTIVE_STAGE2_REEXECUTED_BLOCKED
-next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
+next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_EFFECTIVE_FUNCTIONAL_GAPS
 stage02_material_remediation:
-  cycle: R1
+  cycle: R3_MATERIALIZED_R2_DUAL_LAYER_ACCEPTANCE
   owning_layer: CURRENT_STAGE_PRODUCT_OR_CONTRACT_OUTPUT
-  materialized_missing_artifact_blockers: 13
-  fresh_reexecution_missing_artifact_blocker_count: 0
-  material_elimination_count: 13
-  remaining_fresh_functional_gap_count: 171
+  materialized_structural_blockers: 13
+  fresh_structural_blocker_count: 0
+  raw_discovery_functional_gap_count: 171
+  validated_functional_materialization_count: 17
+  fresh_functional_elimination_count: 17
+  remaining_fresh_functional_gap_count: 154
   external_authority_union_count: 8
   external_authority_resolution_claimed: false
   current_specification_mutated: false
