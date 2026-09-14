@@ -1,0 +1,425 @@
+schema_version: 1
+artifact_uid: REG-STAGE-EXECUTION-INVARIANT-001
+artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
+status: CURRENT_CANDIDATE
+canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
+governance_revision: v2.1.14-product-neutral-entity-lifecycle
+scope:
+  applies_to_stages:
+    - STAGE-01
+    - STAGE-02
+    - STAGE-03
+    - STAGE-04
+    - STAGE-05
+    - STAGE-06
+    - STAGE-07
+    - STAGE-08
+    - STAGE-09
+    - STAGE-10
+    - STAGE-11
+  applies_to:
+    - PAGE
+    - ACTION
+    - CONTROL
+    - TRIGGER
+    - PAYLOAD
+    - API
+    - RUNTIME
+    - PROVIDER
+    - ASYNC_LIFECYCLE
+    - EVIDENCE
+    - VALIDATOR
+    - LEDGER
+    - RECEIPT
+    - AUTHORITY
+    - BUSINESS_ENTITY
+    - ENTITY_RELATIONSHIP
+    - LIFECYCLE_OPERATION
+    - UI_OPERATION_BINDING
+    - PRODUCT_PROFILE
+  stage_specific_exception_without_registered_authority: BLOCK
+provenance:
+  empirical_source_role: DEFECT_DISCOVERY_INPUT_NOT_CURRENT_CONSTRUCTION_AUTHORITY
+  github_repository: steven-gold/orange-one-ai-viedo-v1.0
+  github_commit: 17bc1c30ee033f50dbb6ed99d02fcc5d951049c0
+  github_artifact: docs/construction/evidence/STAGE2_GOVERNANCE_CORRECTION_PACKAGE_R1.yaml
+  observed_stage: STAGE-02
+  generalization_rule: DEFECT_REPEATABLE_OUTSIDE_OBSERVED_STAGE_MUST_BE_REPAIRED_AT_COMMON_INVARIANT_LAYER
+  empirical_product_markers:
+    - ACPOS
+    - CORE-01
+    - steven-gold/orange-one-ai-viedo
+  legacy_product_env_prefixes:
+    - ACPOS_
+invariants:
+  RELATION_SEMANTIC_SEPARATION:
+    port_exposure_is_trigger: false
+    state_event_is_trigger_without_explicit_binding: false
+    registry_membership_is_action_binding: false
+    semantic_similarity_may_create_binding: false
+    explicit_binding_or_unique_current_authority_required: true
+    ambiguous_relation_resolution: BLOCK
+    error_registry_requires_explicit_action_error_binding: true
+  GAP_REMEDIATION_ADMISSIBILITY:
+    gap_classes:
+      AUTO_REMEDIABLE: ALLOW_ONLY_DETERMINISTIC_CURRENT_AUTHORITY
+      IMPLEMENTATION_GAP: ALLOW_ONLY_IF_UNIQUELY_RESOLVED_BY_CURRENT_AUTHORITY
+      INPUT_SOURCE_GAP: AI_AUTO_FILL_BLOCK
+      AUTHORITY_GAP: AI_AUTO_FILL_BLOCK
+      ARCHITECTURE_GAP: AI_AUTO_FILL_BLOCK
+      DESIGN_REQUIRED: BLOCK_UNTIL_FORMAL_CONTRACT
+      EXTERNAL_REQUIRED: BLOCK_UNTIL_EXTERNAL_AUTHORITY
+    default_or_inferred_fill_for_unresolved_fields: BLOCK
+    reviewed_gap_may_be_closed_without_resolution_evidence: false
+  CURRENT_AUTHORITY_ADMISSIBILITY:
+    current_authority_set_membership_required: true
+    final_or_locked_status_alone_confers_current_authority: false
+    raw_candidate_reviewed_or_non_current_source_may_resolve_current_gap: false
+    unique_current_authority_resolution_required: true
+    non_current_final_locked_source_use: BLOCK
+  REQUIRED_EVIDENCE_MATERIALIZATION:
+    ledger_or_plan_claim_proves_physical_artifact: false
+    canonical_physical_artifact_required: true
+    parse_required: true
+    schema_or_required_field_validation_required: true
+    digest_verification_when_registered: true
+    review_complete_implies_stage_closed: false
+    missing_required_evidence: BLOCK
+  VALIDATOR_SCHEMA_SEMANTICS:
+    authoritative_schema_path_required: true
+    authoritative_enum_or_status_constant_required: true
+    stale_path_or_constant_is_validator_defect_not_data_defect: true
+    optional_sparse_zero_missing_key_equals_zero: true
+    mandatory_missing_field_equals_zero: false
+    prohibited_class_nonzero: BLOCK
+    serialized_zero_key_may_be_required_only_if_schema_requires_it: true
+  UNRESOLVED_PRESERVATION:
+    unresolved_owner_operation_port_must_remain_null: true
+    unresolved_lifecycle_fields_must_remain_unresolved: true
+    derived_default_or_similarity_binding: BLOCK
+    unresolved_to_resolved_requires_authority_evidence: true
+  SUCCESSOR_CURRENT_ATOMIC_PROJECTION:
+    verified_successor_must_project_to_current_atomically: true
+    cross_ledger_current_projection_identity_must_match: true
+    stale_current_snapshot_after_successor_acceptance: BLOCK
+    stale_current_snapshot_disposition: REMOVE_FROM_CURRENT_PROJECTION_AND_MARK_SUPERSEDED
+    predecessor_evidence_disposition: RETAIN_IMMUTABLE_HISTORY_ONLY
+    physical_delete_predecessor_evidence_to_fix_current_state: BLOCK
+    blocker_ledger_and_all_current_ledgers_same_transaction: true
+    current_denominator_projection_must_match: true
+  BLOCKER_DENOMINATOR_AND_RECEIPT:
+    denominator_change_invalidates_old_receipt_for_successor: true
+    old_receipt_role_after_change: PREDECESSOR_EVIDENCE_ONLY
+    successor_state_before_new_external_receipt: PENDING_EXTERNAL_CI
+    successor_state_after_valid_external_receipt: SUCCESS_EXTERNAL_RECEIPT
+    prior_pass_may_be_reused_as_successor_verification: false
+    self_referential_terminal_receipt_requirement: BLOCK
+    new_gate_created_only_to_record_same_gate_receipt: BLOCK
+  AUTHORITY_EVIDENCE_CONSUMPTION:
+    enumerate_current_admissible_evidence_before_gap_disposition: true
+    track_evidence_consumption_per_gap: true
+    uniquely_relevant_current_evidence_skipped: GOVERNANCE_DEFECT
+    zero_auto_remediable_or_zero_unique_resolution_claim_requires_review_evidence: true
+    unconsumed_evidence_may_be_silently_ignored: false
+  FUNCTIONAL_CONTRACT_COMPLETENESS:
+    async_additional_required_fields:
+      - queue_or_trigger_contract
+      - provider_or_worker_owner
+      - idempotency
+      - retry_policy
+      - timeout_or_expiry
+      - failure_or_dlq
+      - recovery_or_compensation
+      - completion_or_response_binding
+    missing_required_contract_field: BLOCK
+    effectful_action_required_fields:
+      - business_intent_or_user_journey
+      - explicit_trigger_or_control_binding
+      - input_source
+      - payload_schema
+      - validation
+      - permission_or_gate
+      - authority_ref
+      - prerequisite_state
+      - resulting_state_or_state_transition
+      - runtime_owner
+      - next_action_or_terminal_disposition
+      - audit_event
+      - error_or_failure_binding
+      - retry_recovery_or_rollback_disposition
+    create_additional_required_fields:
+      - creation_mode
+      - created_entity_or_output_identity
+  STAGE_ENTRY_PRECHECK:
+    current_authority_admissibility_verified: true
+    required_inputs_physically_materialized: true
+    validator_schema_revision_compatible: true
+    current_ledgers_synchronized: true
+    required_evidence_contract_registered: true
+    entry_with_failed_precheck: BLOCK
+  IMPLEMENTATION_DEVIATION_FEEDBACK:
+    deviation_record_required: true
+    affected_consumers_status: REVERIFY_REQUIRED
+    continue_as_if_approved_without_correction_record: BLOCK
+  REVIEW_VS_CLOSURE_SEPARATION:
+    review_completion_is_evidence_of_review_only: true
+    review_completion_may_override_open_blockers: false
+    stage_exit_requires_exit_gate_and_required_evidence_and_zero_unwaived_blockers: true
+  TEST_DEFECT_FEEDBACK_AND_SPEC_EVOLUTION:
+    required_for_every_stage_test: true
+    defect_and_gap_record_required_during_execution: true
+    evidence_required_for_each_record: true
+    production_or_construction_conformance_review_after_test: true
+    defect_scope_classification_required: true
+    scope_classes:
+      GLOBAL_SHARED:
+        rule: REPAIR_AT_COMMON_INVARIANT_LAYER_AND_ALL_AFFECTED_LAYERS
+        required_layers:
+          - NORMATIVE_MOTHER_SPEC
+          - COMMON_INVARIANT_REGISTRY
+          - LIFECYCLE_STAGE_REGISTRY
+          - ACCEPTANCE_AUDIT_BLUEPRINT
+          - VALIDATOR
+          - REGRESSION
+          - VERSIONING
+          - SOURCE_CONTROL_CURRENT_SPEC_AUTHORITY
+      STAGE_LOCAL:
+        rule: REPAIR_ONLY_STAGE_SCOPED_CONTRACT_AND_AFFECTED_VALIDATORS
+        expansion_without_cross_stage_recurrence_evidence: BLOCK
+    unclassified_defect_scope_before_spec_patch: BLOCK
+    bug_or_gap_may_be_silently_ignored_after_test: false
+    production_nonconformance_may_be_closed_without_rule_or_implementation_disposition: false
+    required_process_order:
+      - STAGE_TEST_EXECUTION
+      - DEFECT_GAP_RECORD
+      - PRODUCTION_CONFORMANCE_REVIEW
+      - DEFECT_SCOPE_CLASSIFICATION
+      - SPEC_PATCH_CANDIDATE
+      - MULTIDIRECTION_HIGH_PRESSURE_TEST
+      - VERSION_PROMOTION_V2_1_X
+      - SOURCE_CONTROL_VERSIONED_CANDIDATE_SYNC
+      - PREDECESSOR_BACKTRACE_REGRESSION
+      - FULL_CURRENT_RULE_REVALIDATION
+      - SOURCE_CONTROL_CURRENT_AUTHORITY_PROMOTION
+      - FORMAL_FREEZE
+      - NEXT_STAGE_ELIGIBLE
+    order_skip: BLOCK
+    version_promotion_requires_high_pressure_pass: true
+    predecessor_backtrace_required_after_version_promotion: true
+    full_revalidation_required_after_predecessor_backtrace: true
+    freeze_with_open_governance_bug_or_gap: BLOCK
+    next_stage_before_freeze: BLOCK
+  SOURCE_CONTROL_SINGLE_SPEC_AUTHORITY:
+    required: true
+    exactly_one_current_governance_entry_required: true
+    canonical_entry_path_is_adapter_defined: true
+    all_governance_consumers_must_start_from_adapter_current_entry: true
+    historical_evidence_or_stage_correction_package_may_be_loaded_as_current_spec: false
+    multiple_current_version_pointers: BLOCK
+    current_version_must_equal_frozen_governance_version: true
+    current_package_sha256_required: true
+    current_spec_content_hash_required: true
+    candidate_sync_before_backtrace_is_noncurrent_only: true
+    promote_current_before_predecessor_backtrace_and_full_revalidation: BLOCK
+    current_promotion_requires_full_revalidation_pass: true
+    stale_source_control_current_after_local_freeze: BLOCK
+    source_control_provider_is_common_semantic_dependency: false
+  GITHUB_SINGLE_SPEC_AUTHORITY:
+    required_for_github_adapter_profile: true
+    canonical_entry_path: docs/governance/CURRENT_GOVERNANCE_SPEC.yaml
+    all_github_consumers_must_start_from_canonical_entry: true
+    adapter_role: GITHUB_SOURCE_CONTROL_PROFILE
+    common_semantic_dependency: false
+    inherits_common_invariant: SOURCE_CONTROL_SINGLE_SPEC_AUTHORITY
+    non_github_equivalent_single_authority_adapter_allowed: true
+  PRODUCT_NEUTRAL_APPLICABILITY:
+    common_rule_may_require_product_name: false
+    common_rule_may_require_product_page_uid_or_route: false
+    common_rule_may_require_product_repository: false
+    common_rule_may_require_product_provider_or_database_schema: false
+    product_specific_material_allowed_contexts:
+      - EMPIRICAL_PROVENANCE
+      - SYNTHETIC_TEST_FIXTURE
+      - COMPATIBILITY_ALIAS
+      - PRODUCT_PROFILE_EXTENSION
+    product_profile_can_add_stricter_rules: true
+    product_profile_can_weaken_common_rule: false
+    product_profile_can_replace_common_invariant: false
+    binding_substitution_test_required: true
+    binding_substitution_failure: GOVERNANCE_DEFECT
+  BUSINESS_ENTITY_INVENTORY_COMPLETENESS:
+    required_for_every_governed_interaction_scope: true
+    required_artifact: BUSINESS_ENTITY_INVENTORY
+    user_manageable_child_is_entity_when_identity_state_order_parent_edit_or_lifecycle_exists: true
+    list_or_selector_presence_proves_entity_completeness: false
+    entity_kinds_examples_are_non_exhaustive:
+      - ITEM
+      - CATEGORY
+      - CHAPTER
+      - SECTION
+      - ENTRY
+      - TASK
+      - VERSION
+      - ASSET
+      - RECORD
+      - CONFIGURATION
+      - RULE
+      - PACKAGE
+    missing_required_entity: BLOCK
+  BUSINESS_ENTITY_LIFECYCLE_COMPLETENESS:
+    required_artifact: BUSINESS_ENTITY_OPERATION_MATRIX
+    operation_universe:
+      - DISCOVER_OR_LIST
+      - SELECT_OR_OPEN
+      - CREATE
+      - CREATION_MODE
+      - PARENT_BIND
+      - CATEGORY_OR_GROUP_BIND
+      - DRAFT
+      - RESUME
+      - EDIT
+      - SAVE
+      - VALIDATE
+      - CONFIRM_OR_APPROVE
+      - VERSION
+      - REVISE
+      - LOCK_OR_UNLOCK
+      - REORDER
+      - MOVE_OR_REPARENT
+      - ARCHIVE_OR_DELETE
+      - RESTORE
+      - DEPENDENCY_IMPACT
+      - AUDIT
+      - ERROR_RECOVERY
+      - NEXT_STEP
+    allowed_applicability_status:
+      - REQUIRED
+      - OPTIONAL
+      - NOT_APPLICABLE
+    blank_or_omitted_operation_status: BLOCK
+    not_applicable_requires_authority_evidence: true
+    required_operation_without_complete_contract: BLOCK
+    required_operation_contract_fields:
+      - business_intent_or_user_journey
+      - entry_trigger_or_control
+      - input_source
+      - payload_schema
+      - validation
+      - permission_or_gate
+      - authority_ref
+      - prerequisite_state
+      - resulting_state_or_transition
+      - runtime_owner
+      - persistence_or_state_owner_when_applicable
+      - audit_event
+      - error_or_failure_binding
+      - recovery_or_rollback
+      - user_or_system_feedback
+      - next_action_or_terminal_disposition
+    create_only_without_governed_post_create_lifecycle: BLOCK
+    confirmed_or_locked_entity_revision_without_version_disposition: BLOCK
+  ENTITY_HIERARCHY_COMPLETENESS:
+    required_artifact: ENTITY_HIERARCHY_MATRIX
+    required_relation_fields:
+      - parent_entity_identity
+      - child_entity_identity
+      - cardinality
+      - creation_entry
+      - payload_or_reference_binding
+      - ordering_semantics_when_applicable
+      - permission_or_gate
+      - state_dependency
+      - version_dependency
+      - move_or_reparent_rule
+      - archive_or_delete_propagation
+      - upstream_change_impact
+      - downstream_revalidation
+      - authority_ref
+    unresolved_required_parent_child_relation: BLOCK
+    list_only_child_without_governed_lifecycle: BLOCK
+    category_or_group_relation_without_management_contract: BLOCK
+  OPERATION_TO_UI_RUNTIME_BIDIRECTIONAL_COVERAGE:
+    required_operation_forward_chain:
+      - BUSINESS_ENTITY_OPERATION
+      - UI_CONTROL_OR_SYSTEM_TRIGGER
+      - ACTION
+      - INPUT_OR_PAYLOAD
+      - API_OR_COMMAND
+      - RUNTIME_OWNER
+      - PERSISTENCE_OR_STATE_TRANSITION
+      - FEEDBACK_OR_AUDIT
+    system_trigger_without_visible_ui_allowed_only_with_registered_contract: true
+    required_operation_without_entry: BLOCK
+    visible_control_without_allowed_operation: BLOCK
+    action_without_operation: BLOCK
+    runtime_endpoint_without_operation: BLOCK
+    implementation_may_invent_missing_upstream_contract: false
+  BUSINESS_CAPABILITY_COMPLETENESS_DENOMINATOR:
+    authoritative_denominator_formula: BUSINESS_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES
+    page_count_is_completeness_denominator: false
+    control_count_is_completeness_denominator: false
+    action_count_is_completeness_denominator: false
+    api_or_port_count_is_completeness_denominator: false
+    missing_entity_count_must_equal_zero_for_stage02_close: true
+    missing_required_operation_count_must_equal_zero_for_stage02_close: true
+    unresolved_hierarchy_edge_count_must_equal_zero_for_stage02_close: true
+    orphan_control_action_runtime_count_must_equal_zero_for_relevant_stage_close: true
+  SINGLE_SPEC_AUTHORITY_ABSTRACTION:
+    single_current_governance_authority_required: true
+    source_control_provider_is_adapter_not_common_semantic_dependency: true
+    github_adapter_supported: true
+    non_github_equivalent_adapter_allowed: true
+    provider_specific_path_must_be_declared_by_adapter: true
+    multiple_current_governance_authorities: BLOCK
+stage02_observed_defect_mapping:
+  - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
+    mapped_invariant: RELATION_SEMANTIC_SEPARATION
+  - finding: STATE_EVENT_WITHOUT_TRIGGER_BINDING
+    mapped_invariant: RELATION_SEMANTIC_SEPARATION
+  - finding: ERROR_REGISTRY_WITHOUT_ACTION_ERROR_BINDING
+    mapped_invariant: RELATION_SEMANTIC_SEPARATION
+  - finding: ARCHITECTURE_INPUT_AUTHORITY_GAP_AI_FILL_RISK
+    mapped_invariant: GAP_REMEDIATION_ADMISSIBILITY
+  - finding: REQUIRED_EVIDENCE_LEDGER_CLAIM_WITHOUT_PHYSICAL_FILE
+    mapped_invariant: REQUIRED_EVIDENCE_MATERIALIZATION
+  - finding: VALIDATOR_WRONG_SCHEMA_PATH
+    mapped_invariant: VALIDATOR_SCHEMA_SEMANTICS
+  - finding: VALIDATOR_STALE_ENUM_CONSTANT
+    mapped_invariant: VALIDATOR_SCHEMA_SEMANTICS
+  - finding: SPARSE_ZERO_CLASS_FALSE_FAILURE
+    mapped_invariant: VALIDATOR_SCHEMA_SEMANTICS
+  - finding: UNRESOLVED_SHARED_OWNER_FIELDS_MUST_REMAIN_NULL
+    mapped_invariant: UNRESOLVED_PRESERVATION
+  - finding: SUCCESSOR_VERIFIED_BUT_CURRENT_LEDGER_STALE
+    mapped_invariant: SUCCESSOR_CURRENT_ATOMIC_PROJECTION
+  - finding: BLOCKER_DENOMINATOR_CHANGED_BUT_OLD_RECEIPT_REUSED
+    mapped_invariant: BLOCKER_DENOMINATOR_AND_RECEIPT
+  - finding: CURRENT_AUTHORITY_EVIDENCE_SKIPPED_GAP006
+    mapped_invariant: AUTHORITY_EVIDENCE_CONSUMPTION
+  - finding: FINAL_LOCKED_NON_CURRENT_PAYLOAD_REGISTRY_INADMISSIBLE
+    mapped_invariant: CURRENT_AUTHORITY_ADMISSIBILITY
+  - finding: FUNCTIONAL_AND_ASYNC_CONTRACT_FIELDS_GENUINELY_MISSING
+    mapped_invariant: FUNCTIONAL_CONTRACT_COMPLETENESS
+  - finding: REVIEW_COMPLETE_BUT_STAGE_EXIT_BLOCKED
+    mapped_invariant: REVIEW_VS_CLOSURE_SEPARATION
+acceptance:
+  validator_uid: VAL-GOV-035
+  validator_path: 09_TESTS/governance/validate_stage_execution_invariants.py
+  regression_asset: 09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py
+  fail_closed: true
+applicability:
+  common_spec_is_product_neutral: true
+  supported_adoption_scope:
+    - WEBSITE
+    - WEB_APPLICATION
+    - AI_ASSISTED_APPLICATION
+    - INFORMATION_SYSTEM
+    - WORKFLOW_PLATFORM
+    - COMPARABLE_SOFTWARE_SYSTEM
+  specific_product_identity_required_to_interpret_common_rules: false
+  product_profile_extension_allowed: true
+  product_profile_may_weaken_common_invariants: false
+  product_specific_examples_role: EMPIRICAL_PROVENANCE_OR_FIXTURE_ONLY
+  product_specific_binding_in_common_normative_rule: BLOCK
+  binding_substitution_audit_required_before_freeze: true
