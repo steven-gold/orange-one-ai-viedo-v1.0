@@ -1,0 +1,35 @@
+schema_version: 1
+artifact_uid: STAGE02-FAILURE-STATE-ERROR-BINDING-CURRENT-AUTHORITY-AUDIT-20260914-001
+artifact_type: NON_NORMATIVE_STAGE02_REMEDIATION_EVIDENCE
+normative_authority: false
+stage_uid: STAGE-02
+page_uid: ASSET-01
+category: FAILURE_STATE_ERROR_BINDING_MISSING
+source_head_sha: 887b7dad1a2cb07f78daebd4cbfa280236b68203
+github_run_id: 34871244976
+github_job_id: 104067383241
+github_artifact_id: 10358559945
+github_artifact_digest: sha256:6b7bc93ec3643d7cdf4b3b25fe179f40e20a3347a4007cd5bf24259458668f92
+result: AUDIT_PASS_PRODUCT_GAPS_REMAIN_BLOCKED
+fresh_denominator:
+  actions: 44
+  page_error_registry: 17
+current_failure_state_error_binding_authority:
+  exact_bindings_materializable: 0
+  authorized_gap_removals: 0
+  blocked: 44
+  classification:
+    CURRENT_FAILURE_STATE_ERROR_BINDING_AUTHORITY_MISSING: 44
+safety:
+  generic_error_join_used: false
+  semantic_inference_used: false
+  prior_stage2_results_used: false
+  ai_autofill_used: false
+  inference_used: false
+  current_specification_mutated: false
+  stage1_product_source_mutated: false
+  website_construction_allowed: false
+  deployment_allowed: false
+classification: AUTHORITY_BLOCKED_PRODUCT_FAILURE_ERROR_GAPS
+rule: "A gap may resolve only when the exact action_uid is bound on the same Current Authority node to failure_state+recovery or to an explicit registered error_uid whose same-page error entry supplies recovery. Generic error registries or semantic similarity are not bindings."
+status: OPEN_AWAITING_EXACT_PRODUCT_FAILURE_ERROR_AUTHORITY
