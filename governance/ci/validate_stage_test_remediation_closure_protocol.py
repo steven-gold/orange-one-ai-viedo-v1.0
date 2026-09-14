@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import re
 import sys
 
 from governance_resolver import resolve
@@ -65,11 +64,31 @@ expected_steps = [
     "HIDDEN_DEFECT_MULTIDIRECTIONAL_SWEEP",
     "STAGE_CLOSURE_DECISION",
 ]
-match = re.search(r"(?ms)^mandatory_stage_cycle:\s*\n  ordered_steps:\s*\n((?:    - .*\n)+)", protocol)
-if not match:
+
+lines = protocol.splitlines()
+actual_steps = []
+cycle_idx = None
+ordered_idx = None
+for i, line in enumerate(lines):
+    if line == "mandatory_stage_cycle:":
+        cycle_idx = i
+        break
+if cycle_idx is not None:
+    for i in range(cycle_idx + 1, len(lines)):
+        line = lines[i]
+        if line == "  ordered_steps:":
+            ordered_idx = i
+            break
+        if line and not line.startswith("  "):
+            break
+if ordered_idx is None:
     errors.append("MANDATORY_STAGE_CYCLE_ORDER_MISSING")
 else:
-    actual_steps = [line.strip()[2:].strip() for line in match.group(1).splitlines() if line.strip().startswith("- ")]
+    for line in lines[ordered_idx + 1:]:
+        if line.startswith("    - "):
+            actual_steps.append(line[len("    - "):].strip())
+            continue
+        break
     if actual_steps != expected_steps:
         errors.append(f"MANDATORY_STAGE_CYCLE_ORDER_DRIFT:{actual_steps!r}")
 
