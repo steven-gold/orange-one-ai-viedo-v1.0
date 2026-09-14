@@ -4,7 +4,7 @@ artifact_type: NON_NORMATIVE_TEST_HARNESS_FINDING
 normative_authority: false
 class: TEST_HARNESS_OR_VALIDATOR_BUG
 title: Targeted Stage01/Stage02 integrity workflow remained bound to legacy Stage-02 successor validator after external-authority-aware R3 became the accepted successor path
-status: OPEN_REMEDIATION
+status: CLOSED_VERIFIED
 stage_uid: STAGE-02
 observed_run_id: 34906555930
 observed_job_id: 104184463023
@@ -16,20 +16,22 @@ failure_chain:
   - MATERIALIZED_STAGE2_PRODUCT_ROOT_VALIDATION_FAILED
 owning_harness: .github/workflows/targeted-stage01-stage02.yml
 root_cause: TARGETED_STAGE01_STAGE02_GATE_RETAINED_LEGACY_SUCCESSOR_VALIDATOR_BINDING_AFTER_EXTERNAL_AUTHORITY_AWARE_R3_SUCCESSOR_VALIDATOR_BECAME_THE_LEGAL_CURRENT_PATH
-verified_pre_failure_state:
+required_fix:
+  - replace the targeted workflow legacy Stage-02 successor validator with validate_stage02_successor_integrity_external_aware_r3.py
+  - do not relax or remove stale-materialization protection inside the legacy validator
+  - rerun the targeted Stage01/Stage02 integrity gate on the remediation commit
+verification:
+  remediation_commit: 4d233caddba270efa9354aa74451d50fc9d2b100
+  verification_run_id: 34907147429
+  verification_job_id: 104186354900
+  conclusion: SUCCESS
+  external_aware_successor_step: PASS
   specification_mutation_guard: PASS
   governance_registry_resolution: PASS
   remediation_closure_protocol: PASS
   governance_layout_zero_residual: PASS
   registry_stress_suite: PASS
   stage01_registry_binding: PASS
-  r6_external_aware_truth_revalidation: PASS
-  current_effective_stage02_blockers: 150
-required_fix:
-  - replace the targeted workflow legacy Stage-02 successor validator with validate_stage02_successor_integrity_external_aware_r3.py
-  - do not relax or remove stale-materialization protection inside the legacy validator
-  - rerun the targeted Stage01/Stage02 integrity gate on the remediation commit
-  - mark this finding closed only after the external-aware targeted gate passes on a fresh commit
 formal_specification_change_required: false
 formal_specification_mutated_for_fix: false
 stage02_result_changed_by_this_finding: false

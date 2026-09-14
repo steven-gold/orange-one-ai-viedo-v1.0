@@ -1,0 +1,113 @@
+name: Stage-02 Approved Product Authority Ingestion R7
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - 'governance/ci/validate_stage02_approved_product_authority_r7.py'
+      - 'governance/ci/materialize_stage02_approved_product_authority_r7.py'
+      - 'governance/test/stage02/STAGE02_APPROVED_PRODUCT_AUTHORITY_BINDINGS_R7.yaml'
+      - '.github/workflows/stage02-approved-product-authority-r7.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stage02-approved-product-authority-r7
+  cancel-in-progress: false
+
+jobs:
+  approved-authority-r7:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+      APPROVED_INPUT: governance/test/stage02/STAGE02_APPROVED_PRODUCT_AUTHORITY_BINDINGS_R7.yaml
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: rebuild-v2.1.1
+
+      - run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+
+      - name: Compile R7 ingestion machinery
+        run: |
+          python -m py_compile governance/ci/validate_stage02_approved_product_authority_r7.py
+          python -m py_compile governance/ci/materialize_stage02_approved_product_authority_r7.py
+
+      - name: Re-prove exact 75-file governance source identity
+        run: python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+
+      - name: Enforce frozen Current Specification
+        run: python governance/ci/specification_mutation_guard.py
+
+      - name: Resolve Current governance and remediation protocol
+        run: |
+          set -euo pipefail
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_stage_test_remediation_closure_protocol.py
+
+      - name: Revalidate current external-authority-aware Stage-02 truth
+        run: |
+          set -euo pipefail
+          python governance/ci/validate_stage02_successor_integrity_external_aware_r3.py
+          python governance/ci/validate_current_stage2_materialized_closure_external_aware_r3.py
+          python governance/ci/validate_current_stage2_functional_remediation_r3.py
+          python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
+          python governance/ci/validate_stage02_remediation_reset_continuity_external_aware_r3.py
+          python governance/ci/validate_stage02_product_design_authority_intake_r6.py
+
+      - name: Fail closed when no separately approved product authority exists
+        if: ${{ hashFiles('governance/test/stage02/STAGE02_APPROVED_PRODUCT_AUTHORITY_BINDINGS_R7.yaml') == '' }}
+        run: |
+          set -euo pipefail
+          if python governance/ci/validate_stage02_approved_product_authority_r7.py; then
+            echo 'BLOCK: R7 validator accepted missing approved authority input' >&2
+            exit 1
+          fi
+          if python governance/ci/materialize_stage02_approved_product_authority_r7.py; then
+            echo 'BLOCK: R7 materializer wrote without approved authority input' >&2
+            exit 1
+          fi
+          git diff --exit-code
+          echo 'PASS: R7 machinery is fail-closed; 150 blockers remain until separately approved authority is supplied'
+
+      - name: Validate separately approved product authority bindings
+        if: ${{ hashFiles('governance/test/stage02/STAGE02_APPROVED_PRODUCT_AUTHORITY_BINDINGS_R7.yaml') != '' }}
+        run: python governance/ci/validate_stage02_approved_product_authority_r7.py "$APPROVED_INPUT"
+
+      - name: Materialize approved bindings at Stage-02 owning product/contract layer
+        if: ${{ hashFiles('governance/test/stage02/STAGE02_APPROVED_PRODUCT_AUTHORITY_BINDINGS_R7.yaml') != '' }}
+        run: python governance/ci/materialize_stage02_approved_product_authority_r7.py "$APPROVED_INPUT"
+
+      - name: Prove immutable layers remain unchanged after R7 materialization
+        if: ${{ hashFiles('governance/test/stage02/STAGE02_APPROVED_PRODUCT_AUTHORITY_BINDINGS_R7.yaml') != '' }}
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          echo 'PASS: R7 writes only Stage-02 owning-layer product/contract output plus non-normative receipt'
+
+      - name: Commit approved R7 materialization without claiming fresh blocker reduction
+        if: ${{ hashFiles('governance/test/stage02/STAGE02_APPROVED_PRODUCT_AUTHORITY_BINDINGS_R7.yaml') != '' }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/PRODUCT_AUTHORITY_MATERIALIZATION_LEDGER_R7.yaml \
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/PRODUCT_AUTHORITY_MATERIALIZATION_LEDGER_R7.yaml \
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml \
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml \
+            governance/test/stage02/STAGE02_PRODUCT_AUTHORITY_MATERIALIZATION_R7_RECEIPT.yaml 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo 'BLOCK: approved R7 input produced no owning-layer materialization' >&2
+            exit 1
+          fi
+          git commit -m 'fix(stage02): materialize approved product authority R7'
+          git push origin HEAD:rebuild-v2.1.1
