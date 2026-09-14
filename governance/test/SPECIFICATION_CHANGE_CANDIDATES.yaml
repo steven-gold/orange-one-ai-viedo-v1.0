@@ -1,0 +1,76 @@
+schema_version: 1
+artifact_uid: GOV-TEST-SPECIFICATION-CHANGE-CANDIDATES-001
+artifact_type: NON_NORMATIVE_SPECIFICATION_CHANGE_CANDIDATE_LEDGER
+normative_authority: false
+may_modify_current_specification: false
+may_auto_promote: false
+explicit_specification_change_directive_required_for_promotion: true
+
+rules:
+  test_failure_is_spec_change_authority: false
+  construction_need_is_spec_change_authority: false
+  implementation_need_is_spec_change_authority: false
+  validator_bug_is_spec_change_authority: false
+  harness_bug_is_spec_change_authority: false
+  version_bump_is_spec_change_authority: false
+  ai_may_infer_authorization: false
+  finding_must_be_recorded_before_governance_promotion_review: true
+  unresolved_product_or_authority_gap_must_remain_blocking: true
+
+findings:
+  - finding_uid: FIND-20260914-001
+    class: TEST_HARNESS_BUG
+    title: Registry stress suite scanned its own negative semver fixture
+    evidence: "GitHub run 34820068623: 12/13 PASS; active_consumer locator check falsely included stress fixture itself."
+    disposition: RESOLVED_TEST_HARNESS_ONLY
+    specification_change_required: false
+    formal_specification_mutated_for_fix: false
+
+  - finding_uid: FIND-20260914-002
+    class: TEST_STATE_EVIDENCE_STALENESS
+    title: ACTIVE_STATE stored prior run/head static evidence and became stale
+    evidence: "ACTIVE_STATE previously pointed to prior run/head while a newer exact-SHA gate had succeeded."
+    disposition: RESOLVED_NON_NORMATIVE_TEST_STATE
+    specification_change_required: false
+    formal_specification_mutated_for_fix: false
+
+  - finding_uid: FIND-20260914-003
+    class: GOVERNANCE_BINDING_MODEL_GAP
+    title: Preserved Stage-01 artifacts contained historical v2.1.8/v2.1.9/v2.1.10 governance_overlay labels
+    evidence: "CORE-01 and ASSET-01 preserved Page/Visual/Binding artifacts retained creation-time overlay labels."
+    disposition: RESOLVED_BY_NON_OWNING_ACTIVE_BINDING
+    specification_change_required: false
+    formal_specification_mutated_for_fix: false
+    resolution: "Classified overlay fields as CREATION_PROVENANCE_ONLY and bound active governance through Registry immutable UID without rewriting Stage-01 artifact bytes/hashes."
+
+  - finding_uid: FIND-20260914-004
+    class: TEST_HARNESS_EXECUTION_RESIDUE
+    title: Python bytecode cache caused parser_hygiene false failure during extracted-package test
+    evidence: "Fresh local full-package preformal decomposition found garbage: 09_TESTS/governance/__pycache__/validate_governance.cpython-313.pyc after importing test modules."
+    disposition: OPEN_RUNNER_HARDENING
+    specification_change_required: false
+    required_fix: "Execute source-package validation with PYTHONDONTWRITEBYTECODE=1 and isolated PYTHONPYCACHEPREFIX; zero-residual scan after run."
+
+  - finding_uid: FIND-20260914-005
+    class: GITHUB_FULL_SOURCE_MATERIALIZATION_GAP
+    title: Verified 75-file full-lifecycle source package is referenced by manifest but not fully materialized in GitHub
+    evidence: "SPECIFICATION_MANIFEST declares verified_source_file_count=75 and exact_full_zip_binary_materialized_in_git=false."
+    disposition: OPEN_INFRASTRUCTURE_REMEDIATION
+    specification_change_required: false
+    required_fix: "Materialize or otherwise provide exact hash-verifiable full source to GitHub CI without making version-named paths the active locator."
+
+  - finding_uid: FIND-20260914-006
+    class: GITHUB_FULL_LIFECYCLE_VALIDATION_COVERAGE_GAP
+    title: Existing 13/13 stress gate covers Registry/binding/current Stage-01-to-Stage-02 classification, not complete 11-stage governance definition/regression source package
+    evidence: "Current GitHub Current Specification materializes three active components while source lineage contains 75 files and an 11-stage lifecycle registry."
+    disposition: OPEN_CI_REMEDIATION
+    specification_change_required: false
+    required_fix: "Add full-source integrity + mandatory regression matrix + 11-stage definition coverage gate; keep actual page execution state independent and fail-closed."
+
+execution_blockers_not_specification_defects:
+  CORE-01_STAGE02_BLOCKED: 7
+  ASSET-01_STAGE02_BLOCKED: 6
+  classification: PRODUCT_EXECUTION_OUTPUT_GAPS
+  may_be_promoted_to_spec_defect_without_evidence: false
+
+status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER
