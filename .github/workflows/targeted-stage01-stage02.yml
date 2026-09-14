@@ -21,6 +21,8 @@ jobs:
         run: python governance/ci/validate_governance_layout.py
       - name: Stress test registry resolution and fail-closed invariants
         run: python governance/ci/stress_test_governance_registry.py
+      - name: Validate Stage-01 artifacts bind to current governance by Registry UID
+        run: python governance/ci/validate_stage01_registry_binding.py
       - name: Run applicability-aware Stage-01 then Stage-02 truth classification
         run: python governance/ci/validate_targeted_stage01_stage02.py
       - name: Upload targeted rerun result
