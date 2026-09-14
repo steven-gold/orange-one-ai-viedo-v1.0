@@ -10,11 +10,12 @@ stable_entrypoint:
   active_test_state: governance/test/ACTIVE_STATE.yaml
 
 active_specification:
-  governance_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY
+  governance_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY-SPEC-PROTECTION
   display_version: v2.1.14
   aliases:
     - v2.1.14
     - product-neutral-interaction-topology-ai-continuity
+    - explicit-specification-mutation-protection
   status: ACTIVE_TEST_SPECIFICATION_NOT_FORMAL_FREEZE
   formal_current_authority: false
 
@@ -42,6 +43,15 @@ integrity_policy:
   stale_manifest_or_digest_at_promotion: BLOCK_PROMOTION
   stale_hash_may_not_redirect_consumer_to_old_version: true
   path_resolution_independent_of_display_version: true
+
+specification_mutation_control:
+  component_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
+  default_without_explicit_user_directive: DENY
+  construction_or_test_need_is_authority: false
+  findings_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+  authorization_receipt_root: governance/test/spec_change_authorizations
+  authorization_must_preexist_mutation_commit: true
+  protected_mutation_guard: governance/ci/specification_mutation_guard.py
 
 test_layer_separation:
   normative_specifications_root: governance/specifications

@@ -1,0 +1,97 @@
+schema_version: 1
+artifact_uid: GOV-COMP-SPECIFICATION-MUTATION-CONTROL
+artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
+normative_status: ACTIVE_TEST_SPECIFICATION_COMPONENT
+formal_current_authority: false
+control_precedence: HIGHEST_CURRENT_SPECIFICATION_MUTATION_CONTROL
+
+purpose:
+  statement: Current Specification is immutable during construction, implementation, testing, debugging, validation, deployment preparation, or gate remediation unless an explicit user specification-change directive authorizes the exact change scope.
+  default_decision: DENY_MUTATION
+  fail_closed: true
+
+protected_scope:
+  - governance/specifications/current/**
+  - governance/specifications/REGISTRY.yaml
+  - GOVERNANCE_CURRENT.yaml
+
+non_authorities:
+  construction_need: NOT_AUTHORITY
+  implementation_need: NOT_AUTHORITY
+  test_failure: NOT_AUTHORITY
+  validator_failure: NOT_AUTHORITY
+  harness_failure: NOT_AUTHORITY
+  regression_failure: NOT_AUTHORITY
+  stale_hash: NOT_AUTHORITY
+  compatibility_need: NOT_AUTHORITY
+  display_version_change: NOT_AUTHORITY
+  candidate_newer_version: NOT_AUTHORITY
+  ai_inference: NOT_AUTHORITY
+  ai_autofill: NOT_AUTHORITY
+  convenience_or_gate_passing: NOT_AUTHORITY
+
+explicit_change_authorization:
+  required: true
+  authority_source: EXPLICIT_USER_DIRECTIVE
+  exact_scope_required: true
+  reusable_for_unrelated_change: false
+  ai_may_create_scope_extension: false
+  ai_may_infer_missing_authorization: false
+  authorization_receipt_must_preexist_spec_mutation_commit: true
+  same_commit_authorization_fabrication: BLOCK
+  single_use_receipt_when_marked_single_use: true
+  atomic_specification_update_required: true
+  immutable_governance_uid_must_change_when_normative_content_changes: true
+  registry_manifest_binding_must_change_in_same_atomic_commit: true
+
+construction_and_test_behavior:
+  formal_specification_mutation_to_make_test_pass: BLOCK
+  formal_specification_mutation_to_unblock_construction: BLOCK
+  formal_specification_mutation_to_fit_existing_implementation: BLOCK
+  hidden_semantic_relaxation: BLOCK
+  unresolved_authority_gap_auto_fill: BLOCK
+  preserved_artifact_rewrite_for_display_version_only: BLOCK
+  allowed_without_spec_change:
+    - Fix a test harness implementation bug outside protected specification paths.
+    - Fix a validator implementation bug outside protected specification paths when the normative rule itself is unchanged.
+    - Correct non-normative runtime/test-state evidence.
+    - Record findings, defects, and proposed changes in the non-normative candidate ledger.
+
+finding_and_defect_intake:
+  ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+  every_test_discovered_bug_or_defect_must_be_recorded: true
+  every_test_discovered_tuning_or_spec_concern_must_be_recorded: true
+  finding_is_normative_change: false
+  finding_may_auto_promote: false
+  finding_may_silently_modify_current_specification: false
+  product_execution_gap_is_specification_defect_without_evidence: false
+  promotion_requires_new_explicit_user_specification_change_directive: true
+
+promotion_gate:
+  required_sequence:
+    - RECORD_FINDING_OR_EXPLICIT_CHANGE_REQUEST
+    - VERIFY_CHANGE_AUTHORIZATION_EXISTS_BEFORE_MUTATION_COMMIT
+    - CONFIRM_EXACT_AUTHORIZED_SCOPE
+    - APPLY_ONLY_AUTHORIZED_NORMATIVE_CHANGE
+    - ASSIGN_NEW_IMMUTABLE_GOVERNANCE_UID
+    - UPDATE_REGISTRY_AND_SPECIFICATION_MANIFEST_ATOMICALLY
+    - RUN_GOVERNANCE_REGRESSION_AND_STRESS_GATES
+    - KEEP_PRODUCT_STAGE_STATE_FAIL_CLOSED
+  unauthorized_step_or_scope_expansion: BLOCK
+  regression_failure_after_authorized_change: BLOCK_PROMOTION_AND_RECORD_FINDING
+
+stage_execution_separation:
+  governance_definition_validation_may_pass_without_product_stage_completion: true
+  governance_definition_pass_may_mark_product_stage_pass: false
+  product_stage_must_follow_sequential_stage_gates: true
+  later_stage_may_pass_while_required_prior_stage_blocked: false
+  current_product_stage_state_must_not_be_rewritten_to_match_governance_test_result: true
+
+ci_enforcement:
+  guard: governance/ci/specification_mutation_guard.py
+  protected_mutation_without_preexisting_authorization: BLOCK
+  protected_mutation_with_reused_single_use_authorization: BLOCK
+  protected_mutation_with_missing_scope: BLOCK
+  ordinary_non_spec_construction_commit: ALLOW_SUBJECT_TO_OTHER_GATES
+
+status: ACTIVE

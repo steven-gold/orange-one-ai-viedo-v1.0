@@ -5,7 +5,7 @@ status: ACTIVE_TEST_BINDING
 
 current_governance_resolution:
   registry_ref: governance/specifications/REGISTRY.yaml
-  governance_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY
+  governance_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY-SPEC-PROTECTION
   locator_mode: REGISTRY_ONLY
   version_labels_are_locator: false
   copied_runtime_digest_required: false
@@ -46,3 +46,4 @@ binding_rules:
   - Display-version changes MUST NOT force Stage-01 artifact or artifact-hash rewrites.
   - Immutable governance UID is the active governance identity.
   - Historical receipts may retain old versioned references only as historical evidence and MUST NOT be active pointers.
+  - Stage-01 preserved artifact bytes MUST NOT be rewritten to satisfy later Current Specification changes unless a distinct explicit artifact-migration authority exists.

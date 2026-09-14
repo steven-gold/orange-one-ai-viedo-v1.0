@@ -2,7 +2,7 @@ schema_version: 2
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY
+specification_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY-SPEC-PROTECTION
 
 execution:
   branch: rebuild-v2.1.1
@@ -25,6 +25,12 @@ execution:
     static_result_pointer_required: false
   website_construction_allowed: false
   deployment_allowed: false
+
+specification_mutation_safety:
+  change_control_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
+  finding_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+  current_spec_mutation_for_construction_or_test_without_explicit_directive: BLOCK
+  finding_may_auto_promote: false
 
 applicability:
   FUNCTION_ADMISSION_SCORECARD:
@@ -53,5 +59,12 @@ verification_gate:
   static_specification_digest_copy_forbidden: true
   exact_run_evidence_must_be_read_from_runtime: true
 
+full_lifecycle_governance_validation:
+  lifecycle_stage_count: 11
+  local_verified_source_mandatory_regression_latest_observed: 17_OF_17_PASS
+  github_full_source_materialization: OPEN
+  github_full_lifecycle_gate: NOT_YET_CLOSED
+  may_claim_full_line_github_pass: false
+
 status: ACTIVE_TARGETED_TEST_BLOCKED_AT_STAGE02
-next_action: MATERIALIZE_ONLY_APPLICABLE_STAGE02_OUTPUTS_FROM_EXISTING_AUTHORITY_THEN_RERUN
+next_action: CLOSE_GITHUB_FULL_SOURCE_VALIDATION_GAP_THEN_MATERIALIZE_ONLY_APPLICABLE_STAGE02_OUTPUTS_FROM_EXISTING_AUTHORITY
