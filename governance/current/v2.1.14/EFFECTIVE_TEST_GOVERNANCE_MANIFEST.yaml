@@ -1,4 +1,4 @@
-schema_version: 2
+schema_version: 3
 artifact_uid: REBUILD-V211-V214-EFFECTIVE-TEST-GOVERNANCE
 branch: rebuild-v2.1.1
 status: CURRENT_TEST_GOVERNANCE_FOR_TARGETED_RERUN
@@ -15,10 +15,11 @@ composition:
     - BOUNDED_FUNCTIONAL_COMPLETION_DELTA.yaml
     - INTERACTION_TOPOLOGY_AI_CONTINUITY_DELTA.yaml
     - TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml
-    - CANDIDATE_STATUS.yaml
+    - CURRENT_TEST_GOVERNANCE_STATUS.yaml
   component_semantics:
     one_governance_revision_only: true
     standalone_operational_policy_outside_v214: FORBIDDEN
+    candidate_projection_as_current_component: FORBIDDEN
 
 source_package:
   filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_COMPONENT_VERIFIED.zip
@@ -88,3 +89,4 @@ test_correction_cleanup:
   temporary_artifact_may_be_current_authority: false
   governance_worthy_fix_must_be_promoted_before_cycle_close: true
   cleanup_and_zero_residual_scan_required_before_cycle_close: true
+  promoted_candidate_duplicates_must_be_removed: true

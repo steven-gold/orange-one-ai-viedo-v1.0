@@ -1,4 +1,4 @@
-schema_version: 2
+schema_version: 3
 artifact_type: GOVERNANCE_TEMPORARY_CORRECTION_CLEANUP_RECEIPT
 receipt_uid: V214-CLEANUP-20260914-001
 branch: rebuild-v2.1.1
@@ -6,11 +6,13 @@ parent_governance_revision: v2.1.14-product-neutral-interaction-topology-ai-cont
 promotion:
   promoted_component: governance/current/v2.1.14/TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml
   manifest_updated: governance/current/v2.1.14/EFFECTIVE_TEST_GOVERNANCE_MANIFEST.yaml
+  current_status_ref: governance/current/v2.1.14/CURRENT_TEST_GOVERNANCE_STATUS.yaml
   standalone_parallel_policy_allowed: false
 cleanup_actions:
   legacy_root_current_aliases: REMOVED
   legacy_rebuild_baseline_aliases: REMOVED
-  duplicate_candidate_governance_copies: REMOVED
+  duplicate_candidate_governance_directory: REMOVED
+  stale_candidate_status_inside_current: REPLACED_BY_CURRENT_TEST_GOVERNANCE_STATUS
   standalone_v212_correction_policy: REMOVED_AFTER_RULE_PROMOTION
   standalone_v212_policy_workflow_and_validator: REMOVED
   old_monolithic_rebuild_governance_gate: RETIRED_AND_REMOVED
@@ -29,6 +31,10 @@ validation_receipts:
   evidence_revalidation:
     run_id: 34817453346
     head_sha: f9d691a6fd136e96f265a0ead3c7a07735467a86
+    conclusion: SUCCESS
+  candidate_duplicate_cleanup_revalidation:
+    run_id: 34817644825
+    head_sha: 11811db97e925b74a58d5f788514ce5b4a07ab27
     conclusion: SUCCESS
 validation:
   zero_residual_result: PASS

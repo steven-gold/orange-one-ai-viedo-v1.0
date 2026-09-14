@@ -12,6 +12,7 @@ forbidden_files = [
     'REBUILD_BRANCH_BASELINE_R4.yaml',
     'governance/STAGE_TEST_CORRECTION_PROMOTION_POLICY_V1.yaml',
     'governance/BRANCH_RECOVERY_TRIGGER_2026-09-14.txt',
+    'governance/current/v2.1.14/CANDIDATE_STATUS.yaml',
     '.github/workflows/stage-test-correction-promotion-policy.yml',
     '.github/workflows/rebuild-governance-gate.yml',
     '.github/workflows/temporary-governance-reference-scan.yml',
@@ -42,22 +43,24 @@ root_current=sorted(p.name for p in ROOT.glob('GOVERNANCE_CURRENT*.yaml'))
 if root_current != ['GOVERNANCE_CURRENT.yaml']:
     errors.append(f'CURRENT_POINTER_UNIVERSE:{root_current}')
 
-component=ROOT/'governance/current/v2.1.14/TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml'
-manifest=ROOT/'governance/current/v2.1.14/EFFECTIVE_TEST_GOVERNANCE_MANIFEST.yaml'
-if not component.is_file(): errors.append('V214_TEST_FEEDBACK_COMPONENT_MISSING')
-if not manifest.is_file(): errors.append('V214_MANIFEST_MISSING')
-else:
+current_dir=ROOT/'governance/current/v2.1.14'
+component=current_dir/'TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml'
+manifest=current_dir/'EFFECTIVE_TEST_GOVERNANCE_MANIFEST.yaml'
+status=current_dir/'CURRENT_TEST_GOVERNANCE_STATUS.yaml'
+for p,code in ((component,'V214_TEST_FEEDBACK_COMPONENT_MISSING'),(manifest,'V214_MANIFEST_MISSING'),(status,'V214_CURRENT_STATUS_MISSING')):
+    if not p.is_file(): errors.append(code)
+if manifest.is_file():
     text=manifest.read_text(encoding='utf-8')
-    if 'TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml' not in text:
-        errors.append('V214_MANIFEST_COMPONENT_BINDING_MISSING')
-    if 'standalone_operational_policy_outside_v214: FORBIDDEN' not in text:
-        errors.append('V214_SINGLE_GOVERNANCE_GUARD_MISSING')
-    if 'applicability_must_be_proven_before_missing_output_is_counted_as_blocker: true' not in text:
-        errors.append('V214_APPLICABILITY_GUARD_MISSING')
+    for token,code in (
+      ('TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml','V214_MANIFEST_COMPONENT_BINDING_MISSING'),
+      ('CURRENT_TEST_GOVERNANCE_STATUS.yaml','V214_CURRENT_STATUS_BINDING_MISSING'),
+      ('standalone_operational_policy_outside_v214: FORBIDDEN','V214_SINGLE_GOVERNANCE_GUARD_MISSING'),
+      ('applicability_must_be_proven_before_missing_output_is_counted_as_blocker: true','V214_APPLICABILITY_GUARD_MISSING')):
+        if token not in text: errors.append(code)
 
 if errors:
     for e in errors: print('BLOCK:',e,file=sys.stderr)
     raise SystemExit(1)
 print('PASS: v2.1.14 is the only active test-governance rule layer for the targeted rerun')
-print('PASS: legacy Current aliases, standalone correction policy, retired runtime shards, candidate duplicates, and temporary scan artifacts are absent')
+print('PASS: legacy Current aliases, standalone correction policy, retired runtime shards, candidate duplicates/status, and temporary scan artifacts are absent')
 print('PASS: no temporary correction directory remains after governance promotion')

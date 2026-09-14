@@ -1,0 +1,57 @@
+schema_version: 1
+artifact_type: CURRENT_TEST_GOVERNANCE_STATUS
+version: v2.1.14
+revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+state: CURRENT_TEST_GOVERNANCE_FOR_TARGETED_RERUN
+formal_current_authority: false
+formal_freeze_allowed: false
+production_current_authority_promotion_allowed: false
+
+source_baseline:
+  prior_local_verified_package:
+    filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_COMPONENT_VERIFIED.zip
+    bytes: 456054
+    sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
+    source_file_count: 75
+    zip_integrity: PASS
+  github_current_test_governance_has_post_package_promoted_component: true
+  post_package_component:
+    - TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml
+  exact_modified_full_zip_materialized_in_git: false
+
+validation_baseline:
+  standalone_full_pressure_validation: PASS
+  high_pressure_original_case_set: 25/25 PASS
+  reference_semantic_cases: 28/28 PASS
+  reference_semantic_fuzz: 46/46 BLOCKED; 0 ESCAPED
+  interaction_entity_lifecycle_regression: 68/68 PASS
+  test_feedback_regression_after_temp_artifact_lifecycle: 28/28 PASS
+  mandatory_suite_terminal_results: ALL_PASS
+
+rebuild_targeted_execution:
+  branch: rebuild-v2.1.1
+  target_pages: [CORE-01, ASSET-01]
+  stage1:
+    CORE-01: PASS
+    ASSET-01: PASS
+  stage2:
+    applicability_model: V214_EXACT_APPLICABILITY_BEFORE_BLOCKER_COUNT
+    CORE-01: {result: BLOCKED, blocker_count: 7}
+    ASSET-01: {result: BLOCKED, blocker_count: 6}
+  prior_12_8_denominator: SUPERSEDED
+
+cleanup:
+  zero_residual: PASS
+  duplicate_candidate_projection: REMOVED
+  standalone_v212_test_policy: REMOVED_AFTER_RULE_PROMOTION
+  legacy_current_aliases: REMOVED
+  retired_test_runtime: REMOVED
+  cleanup_receipt: 11_EVIDENCE/audit/V214_GOVERNANCE_CLEANUP_RECEIPT.yaml
+
+latest_verified_github_gate:
+  workflow: Current v2.1.14 CORE ASSET Stage01 Stage02 Gate
+  run_id: 34817644825
+  head_sha: 11811db97e925b74a58d5f788514ce5b4a07ab27
+  conclusion: SUCCESS
+
+status: ACTIVE_TARGETED_TEST_GOVERNANCE_BLOCKED_AT_STAGE02
