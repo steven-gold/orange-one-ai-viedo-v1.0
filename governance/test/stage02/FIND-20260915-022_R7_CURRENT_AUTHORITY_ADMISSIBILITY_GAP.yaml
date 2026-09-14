@@ -4,7 +4,7 @@ artifact_type: NON_NORMATIVE_TEST_HARNESS_FINDING
 normative_authority: false
 class: TEST_HARNESS_OR_VALIDATOR_BUG
 title: R7 approved Product Authority ingestion did not enforce Current Authority admissibility and exact binding provenance
-status: OPEN_REMEDIATION
+status: CLOSED_VERIFIED
 stage_uid: STAGE-02
 observed_head_sha: d326f253682f3f445c19426d2199a15e4adf137d
 owning_harness: governance/ci/validate_stage02_approved_product_authority_r7.py
@@ -34,6 +34,24 @@ required_fix:
   - require structured approval evidence to bind blocker UID, exact binding, source path, source hash, approver and approval time
   - add negative regressions for non-current source and source/binding divergence
   - preserve fail-closed behavior and zero blocker reduction until valid approved authority exists
+verification:
+  validator_hardening_commit: c765db724449281fe37fd7bb9c762d95518f38c9
+  negative_regression_commit: 300af37dd36f9c51bfcb9d3f82f5006496b9563c
+  workflow_binding_commit: fe1a1e21280396bc35bdc8fdd9588e44eb538301
+  exact_cleanliness_fix_commit: 9649b96ada9dc38a652990c45a1506dfdf20eb6e
+  verified_head_sha: 9649b96ada9dc38a652990c45a1506dfdf20eb6e
+  r7_workflow_run_id: 34909234230
+  r7_job_id: 104192787943
+  r7_workflow_conclusion: SUCCESS
+  current_authority_negative_regression: PASS
+  source_binding_divergence_negative_regression: PASS
+  missing_approved_input_fail_closed: PASS
+  approved_materialization_steps_without_input: SKIPPED
+  targeted_stage01_stage02_gate_run_id: 34909234173
+  targeted_stage01_stage02_gate: SUCCESS
+  repository_three_branch_guard_run_id: 34909234311
+  repository_three_branch_guard: SUCCESS
+  blocker_reduction_claimed_by_fix: 0
 formal_specification_change_required: false
 formal_specification_mutated_for_fix: false
 stage02_result_changed_by_this_finding: false
