@@ -7,6 +7,11 @@ on:
       - '.github/governance-source/FULL_LINE_TRIGGER'
       - '.github/workflows/governance-full-line-system-gate.yml'
       - 'governance/ci/validate_stage02_state_integrity.py'
+      - 'governance/ci/validate_stage_test_remediation_closure_protocol.py'
+      - 'governance/specifications/current/**'
+      - 'governance/specifications/REGISTRY.yaml'
+      - 'governance/test/ACTIVE_STATE.yaml'
+      - 'governance/test/STAGE01_ACTIVE_BINDING.yaml'
   workflow_dispatch:
 
 permissions:
@@ -35,6 +40,9 @@ jobs:
 
       - name: Resolve stable Current governance registry
         run: python governance/ci/governance_resolver.py
+
+      - name: Validate stage test remediation closure protocol
+        run: python governance/ci/validate_stage_test_remediation_closure_protocol.py
 
       - name: Validate Current governance layout and zero residual
         run: python governance/ci/validate_governance_layout.py

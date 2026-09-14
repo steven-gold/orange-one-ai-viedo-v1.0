@@ -2,7 +2,7 @@ schema_version: 4
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY-SPEC-PROTECTION
+specification_uid: GOV-REV-20260915-STAGE-REMEDIATION-CLOSURE-PROTOCOL
 
 execution:
   branch: rebuild-v2.1.1
@@ -91,6 +91,16 @@ stage02_current_test:
   inference_used: false
   current_specification_mutated: false
 
+stage_test_remediation_closure_protocol:
+  specification_ref: governance/specifications/current/STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
+  active_for_current_stage: true
+  audit_only_blocked_loop_may_count_as_progress: false
+  remediation_must_materially_eliminate_remediable_gap: true
+  full_line_high_pressure_required_before_every_fresh_test_or_retest: true
+  clean_predecessor_baseline_required_before_every_fresh_test_or_retest: true
+  hidden_defect_sweep_required_after_known_defect_fix: true
+  pilot_full_lifecycle_required_before_other_page_scale_out: true
+
 specification_mutation_safety:
   change_control_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   finding_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
@@ -98,4 +108,4 @@ specification_mutation_safety:
   finding_may_auto_promote: false
 
 status: ACTIVE_STAGE2_TESTED_BLOCKED
-next_action: REMEDIATE_STAGE02_FRESH_TEST_GAPS_WITHOUT_MODIFYING_CURRENT_SPECIFICATION
+next_action: EXECUTE_STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL_ON_STAGE02_GAPS
