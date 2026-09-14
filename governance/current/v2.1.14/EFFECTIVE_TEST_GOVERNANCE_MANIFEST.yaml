@@ -1,0 +1,54 @@
+schema_version: 1
+artifact_uid: REBUILD-V211-V214-EFFECTIVE-TEST-GOVERNANCE
+branch: rebuild-v2.1.1
+status: CURRENT_TEST_GOVERNANCE_FOR_TARGETED_RERUN
+formal_current_authority: false
+formal_freeze: false
+scope_mode: EXACT_PAGE_SCOPE_ONLY
+target_pages: [CORE-01, ASSET-01]
+composition:
+  historical_formal_test_base:
+    version: v2.1.12
+    disposition: PRESERVED_BASELINE_ONLY
+  latest_effective_overlays:
+    - BOUNDED_FUNCTIONAL_COMPLETION_DELTA.yaml
+    - INTERACTION_TOPOLOGY_AI_CONTINUITY_DELTA.yaml
+    - CANDIDATE_STATUS.yaml
+source_package:
+  filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_COMPONENT_VERIFIED.zip
+  bytes: 456054
+  sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
+  source_file_count: 75
+  zip_integrity: PASS
+  exact_zip_binary_materialized_in_git: false
+  reason: CONNECTOR_HAS_NO_SAFE_LOCAL_BINARY_UPLOAD_PATH
+required_stage02_rules:
+  entity_lifecycle_completeness: REQUIRED
+  entity_hierarchy_completeness: REQUIRED
+  bounded_functional_completion: REQUIRED
+  function_visual_synchronized_completion: REQUIRED
+  functional_workbench_cohesion: REQUIRED
+  interaction_topology_binding: REQUIRED
+  conditional_ai_continuity: REQUIRED_WHEN_PROFILE_APPLIES
+stage02_required_outputs:
+  - FUNCTIONAL_CHAIN_SPEC
+  - DEPENDENCY_MAP
+  - PAGE_CONSTRUCTION_SPEC_PACKAGE
+  - ASYNC_PROVIDER_CONTRACT
+  - SHARED_OWNER_PORT_MAP
+  - FUNCTIONAL_WORKBENCH_CONTRACT
+  - INTERACTION_TOPOLOGY_SPEC
+  - BUSINESS_ENTITY_INVENTORY
+  - BUSINESS_ENTITY_OPERATION_MATRIX
+  - ENTITY_HIERARCHY_MATRIX
+  - FUNCTION_ADMISSION_SCORECARD
+  - AUTO_COMPLETION_SCOPE_LEDGER
+  - FUNCTION_VISUAL_IMPACT_MATRIX
+closure_policy:
+  missing_required_output: BLOCK
+  unresolved_required_operation: BLOCK
+  unresolved_parent_child_relation: BLOCK
+  atomic_workbench_fragmentation: BLOCK
+  authority_gap: BLOCK
+  ai_invention_of_missing_product_behavior: FORBIDDEN
+  detected_blocker_is_repaired_blocker: false

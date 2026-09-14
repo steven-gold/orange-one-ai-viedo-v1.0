@@ -1,0 +1,31 @@
+name: Targeted CORE ASSET Stage01 Stage02 v2.1.14 Rerun
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  targeted-rerun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact scope and governance materialization
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "rebuild-v2.1.1"
+          test -f governance/current/v2.1.14/EFFECTIVE_TEST_GOVERNANCE_MANIFEST.yaml
+          grep -q 'target_pages: \[CORE-01, ASSET-01\]' GOVERNANCE_CURRENT.yaml
+          grep -q 'current_stage: STAGE-01' GOVERNANCE_CURRENT.yaml
+      - name: Run targeted Stage-01 then Stage-02 truth classification
+        run: python governance/ci/validate_targeted_stage01_stage02_v214.py
+      - name: Upload targeted rerun result
+        uses: actions/upload-artifact@v4
+        with:
+          name: targeted-stage01-stage02-v214-result
+          path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/TARGETED_STAGE2_RERUN_V214_RESULT.json
+          if-no-files-found: error
