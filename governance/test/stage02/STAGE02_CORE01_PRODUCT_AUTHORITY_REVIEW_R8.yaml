@@ -1,0 +1,1775 @@
+schema_version: 1
+artifact_type: NON_NORMATIVE_CORE01_PRODUCT_AUTHORITY_REVIEW_CONTRACT_R8
+normative_authority: false
+stage_uid: STAGE-02
+page_uid: CORE-01
+cycle: CORE01_PRODUCT_AUTHORITY_REVIEW_R8
+source_r6_ref: governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.yaml
+source_head_sha: bfd9735fa6e18c193961490a1a43bdbe49e44c41
+current_authority_source:
+  authority_id: CORE_PAGE_VISUAL_AUTHORITY_FINAL
+  authority_version: V2.0
+  authority_status: FINAL_LOCKED
+  current_only: true
+  physical_capture_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  physical_capture_sha256: 55263928a98956d8376ca1e9d0b92647f61154f62cd2ab3439a3c965a404b273
+  canonical_source_path: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  source_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+  target_git_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+  content_mutated: false
+purpose: PRESENT_EXACT_CURRENT_CORE01_CONTEXT_FOR_40_OPEN_PRODUCT_AUTHORITY_DECISIONS_WITHOUT_INVENTING_ANY_MISSING_PRODUCT_VALUE
+safety:
+  review_package_is_product_authority: false
+  contains_approved_product_authority_values: false
+  ai_may_fill_missing_product_values: false
+  semantic_similarity_may_create_binding: false
+  historical_non_current_authority_may_fill_values: false
+  materialization_allowed_from_review_package: false
+  stage02_blocker_reduction_claimed: false
+  current_specification_mutated: false
+  stage01_source_mutated: false
+  stage02_product_output_mutated: false
+denominators:
+  core01_open_product_authority_decisions: 40
+  payload_input_decisions: 16
+  audit_event_decisions: 4
+  state_transition_field_decisions: 20
+  approved_bindings_in_review_package: 0
+  materializable_bindings_in_review_package: 0
+  effective_stage02_blocker_reduction_claimed: 0
+records:
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-111
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-PROJECT-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-PROJECT-CREATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - &id002
+      action_uid: CORE-01-ACT-PROJECT-CREATE
+      label: Create Project Draft
+      permission_uid: CORE_PROJECT_WRITE
+      gate_uid: CORE-01-GATE-PROJECT-DRAFT
+      effect_type: PROJECT_MUTATION
+      owner: CORE-01
+      success_contract: createProjectDraft returns exact ProjectDraftVersion ref
+      error_uid: CORE-01-ERR-CONTEXT-001
+      state_effect: Project draft created
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-PROJECT-CREATE
+        decision: SOURCE_DERIVED
+    - &id001
+      control_uid: CORE-01-BTN-PROJECT-CREATE
+      section_uid: CORE-01-SEC-01
+      component_uid: CORE-01-CMP-CONTEXT
+      visual_uid: CORE-01-VIS-CONTEXT
+      type: PRIMARY_BUTTON
+      label: 建立 Project
+      action_uid: CORE-01-ACT-PROJECT-CREATE
+      gate_uid: CORE-01-GATE-PROJECT-DRAFT
+      permission_uid: CORE_PROJECT_WRITE
+      default: —
+    control_nodes:
+    - *id001
+    exposed_port_nodes:
+    - &id003
+      port_uid: CORE-01-PORT-PROJECT-CREATE
+      boundary: Project Draft
+      operation: createProjectDraft
+      method_path: POST /v1/projects/drafts
+      permission: entity.write
+      state_event: NONE | event none
+      exposure: CORE-01-ACT-PROJECT-CREATE
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-112
+  scope: CORE-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: CORE-01-ACT-PROJECT-CREATE
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the same-page event registry
+  current_authority_context:
+    target_uid: CORE-01-ACT-PROJECT-CREATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - *id002
+    - *id001
+    control_nodes:
+    - *id001
+    exposed_port_nodes:
+    - *id003
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-113
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-TOPIC-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-TOPIC-CREATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - &id005
+      action_uid: CORE-01-ACT-TOPIC-CREATE
+      label: Create Topic
+      permission_uid: CORE_TOPIC_WRITE
+      gate_uid: CORE-01-GATE-TOPIC-CREATE
+      effect_type: TOPIC_MUTATION
+      owner: CORE-01
+      success_contract: createTopic only from valid Project/Topic lineage; returns exact Topic ref
+      error_uid: CORE-01-ERR-TOPIC-LINEAGE-001
+      state_effect: Topic created
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-TOPIC-CREATE
+        decision: SOURCE_DERIVED
+    - &id004
+      control_uid: CORE-01-BTN-TOPIC-CREATE
+      section_uid: CORE-01-SEC-01
+      component_uid: CORE-01-CMP-CONTEXT
+      visual_uid: CORE-01-VIS-CONTEXT
+      type: PRIMARY_BUTTON
+      label: 建立 Topic
+      action_uid: CORE-01-ACT-TOPIC-CREATE
+      gate_uid: CORE-01-GATE-TOPIC-CREATE
+      permission_uid: CORE_TOPIC_WRITE
+      default: —
+    control_nodes:
+    - *id004
+    exposed_port_nodes: []
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-114
+  scope: CORE-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: CORE-01-ACT-TOPIC-CREATE
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the same-page event registry
+  current_authority_context:
+    target_uid: CORE-01-ACT-TOPIC-CREATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - *id005
+    - *id004
+    control_nodes:
+    - *id004
+    exposed_port_nodes: []
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-115
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-THREAD-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-THREAD-CREATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-THREAD-CREATE
+      label: New Conversation Thread
+      permission_uid: CORE_CONVERSATION
+      gate_uid: CORE-01-GATE-THREAD
+      effect_type: CONVERSATION_WRITE
+      owner: CORE-01
+      success_contract: Create thread bound to current Project/Topic/work item
+      error_uid: CORE-01-ERR-THREAD-001
+      state_effect: New thread current
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-THREAD-CREATE
+        decision: SOURCE_DERIVED
+    - &id006
+      control_uid: CORE-01-BTN-NEW-THREAD
+      section_uid: CORE-01-SEC-02
+      component_uid: CORE-01-CMP-THREADS
+      visual_uid: CORE-01-VIS-LEFT
+      type: BUTTON
+      label: ＋ 新增對話
+      action_uid: CORE-01-ACT-THREAD-CREATE
+      gate_uid: CORE-01-GATE-THREAD
+      permission_uid: CORE_CONVERSATION
+      default: —
+    control_nodes:
+    - *id006
+    exposed_port_nodes:
+    - port_uid: CORE-01-PORT-THREAD-CREATE
+      boundary: Conversation
+      operation: createConversationThread
+      method_path: POST /v1/projects/{projectId}/conversations
+      permission: conversation.write
+      state_event: NONE→DRAFT | conversation.thread.created
+      exposure: CORE-01-ACT-THREAD-CREATE
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-116
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-SEND
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-SEND
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-SEND
+      label: Send Message
+      permission_uid: CORE_CONVERSATION
+      gate_uid: CORE-01-GATE-MESSAGE
+      effect_type: CONVERSATION_WRITE
+      owner: CORE-01
+      success_contract: sendConversationMessage; provider/model resolved by ACPOS shared Router
+      error_uid: CORE-01-ERR-CONVERSATION-001
+      state_effect: Conversation responding
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-MESSAGE-SEND
+        decision: SOURCE_DERIVED
+    - &id007
+      control_uid: CORE-01-FLD-MESSAGE
+      section_uid: CORE-01-SEC-07
+      component_uid: CORE-01-CMP-COMPOSER
+      visual_uid: CORE-01-VIS-COMPOSER
+      type: MULTILINE_INPUT
+      label: 輸入訊息；@ 叫用 AI / Data / Reference / Assistant
+      action_uid: CORE-01-ACT-SEND
+      gate_uid: CORE-01-GATE-MESSAGE
+      permission_uid: CORE_CONVERSATION
+      default: —
+    - &id008
+      control_uid: CORE-01-BTN-SEND
+      section_uid: CORE-01-SEC-07
+      component_uid: CORE-01-CMP-COMPOSER
+      visual_uid: CORE-01-VIS-COMPOSER
+      type: PRIMARY_BUTTON
+      label: 傳送
+      action_uid: CORE-01-ACT-SEND
+      gate_uid: CORE-01-GATE-MESSAGE
+      permission_uid: CORE_CONVERSATION
+      default: —
+    control_nodes:
+    - *id007
+    - *id008
+    exposed_port_nodes:
+    - port_uid: CORE-01-PORT-MESSAGE-SEND
+      boundary: Conversation
+      operation: sendConversationMessage
+      method_path: POST /v1/conversations/{conversationId}/messages
+      permission: conversation.write
+      state_event: Conversation ACTIVE→ACTIVE; Core DRAFT→RUNNING | conversation.message.sent
+      exposure: CORE-01-ACT-SEND
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-117
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-CANDIDATE-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-CANDIDATE-CREATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-CANDIDATE-CREATE
+      label: Create Candidate
+      permission_uid: CORE_CANDIDATE_CREATE
+      gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+      effect_type: CANDIDATE_CREATE
+      owner: CORE-01
+      success_contract: Create immutable candidate from confirmed structured human decision
+      error_uid: CORE-01-ERR-CANDIDATE-001
+      state_effect: Candidate ready
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-CANDIDATE-CREATE
+        decision: SOURCE_DERIVED
+    - &id009
+      control_uid: CORE-01-FLD-ASSISTANT-SUMMARY
+      section_uid: CORE-01-SEC-05
+      component_uid: CORE-01-CMP-SUMMARY
+      visual_uid: CORE-01-VIS-DECISION
+      type: READONLY
+      label: Assistant Summary
+      action_uid: CORE-01-ACT-CANDIDATE-CREATE
+      gate_uid: CORE-01-GATE-SUMMARY
+      permission_uid: CORE_USE
+      default: —
+    - &id010
+      control_uid: CORE-01-FLD-EVALUATION
+      section_uid: CORE-01-SEC-05
+      component_uid: CORE-01-CMP-EVALUATION
+      visual_uid: CORE-01-VIS-DECISION
+      type: READONLY
+      label: CORE Evaluation / Criteria Version / Evidence
+      action_uid: CORE-01-ACT-CANDIDATE-CREATE
+      gate_uid: CORE-01-GATE-EVALUATION
+      permission_uid: CORE_USE
+      default: —
+    - &id011
+      control_uid: CORE-01-FLD-HUMAN-DECISION
+      section_uid: CORE-01-SEC-05
+      component_uid: CORE-01-CMP-HUMAN-DECISION
+      visual_uid: CORE-01-VIS-DECISION
+      type: TEXTAREA
+      label: Human Decision
+      action_uid: CORE-01-ACT-CANDIDATE-CREATE
+      gate_uid: CORE-01-GATE-HUMAN-DECISION
+      permission_uid: CORE_CANDIDATE_CREATE
+      default: —
+    - &id012
+      control_uid: CORE-01-FLD-STRUCTURED-DECISION
+      section_uid: CORE-01-SEC-05
+      component_uid: CORE-01-CMP-HUMAN-DECISION
+      visual_uid: CORE-01-VIS-DECISION
+      type: READONLY
+      label: Assistant Structured Decision
+      action_uid: CORE-01-ACT-CANDIDATE-CREATE
+      gate_uid: CORE-01-GATE-HUMAN-DECISION
+      permission_uid: CORE_USE
+      default: —
+    - &id013
+      control_uid: CORE-01-BTN-CANDIDATE-CREATE
+      section_uid: CORE-01-SEC-05
+      component_uid: CORE-01-CMP-HUMAN-DECISION
+      visual_uid: CORE-01-VIS-DECISION
+      type: PRIMARY_BUTTON
+      label: 建立 Candidate
+      action_uid: CORE-01-ACT-CANDIDATE-CREATE
+      gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+      permission_uid: CORE_CANDIDATE_CREATE
+      default: —
+    control_nodes:
+    - *id009
+    - *id010
+    - *id011
+    - *id012
+    - *id013
+    exposed_port_nodes:
+    - port_uid: CORE-01-PORT-CANDIDATE-CREATE
+      boundary: Candidate
+      operation: createCandidate
+      method_path: POST /v1/candidates
+      permission: candidate.create
+      state_event: '*→CANDIDATE | candidate.created'
+      exposure: CORE-01-ACT-CANDIDATE-CREATE
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-118
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-CANDIDATE-ACCEPT
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-CANDIDATE-ACCEPT
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-CANDIDATE-ACCEPT
+      label: Confirm Candidate
+      permission_uid: CORE_CANDIDATE_DECIDE
+      gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+      effect_type: CANDIDATE_DECISION
+      owner: CORE-01
+      success_contract: Record ACCEPTED candidate decision with reason/evidence
+      error_uid: CORE-01-ERR-DECISION-001
+      state_effect: Candidate accepted
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-CANDIDATE-DECIDE
+        decision: SOURCE_DERIVED
+    - &id014
+      control_uid: CORE-01-BTN-CANDIDATE-CONFIRM
+      section_uid: CORE-01-SEC-05
+      component_uid: CORE-01-CMP-HUMAN-DECISION
+      visual_uid: CORE-01-VIS-DECISION
+      type: PRIMARY_BUTTON
+      label: 確認 Candidate
+      action_uid: CORE-01-ACT-CANDIDATE-ACCEPT
+      gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+      permission_uid: CORE_CANDIDATE_DECIDE
+      default: —
+    control_nodes:
+    - *id014
+    exposed_port_nodes: []
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-119
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-PROJECT-VALIDATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-PROJECT-VALIDATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - &id016
+      action_uid: CORE-01-ACT-PROJECT-VALIDATE
+      label: Validate Project Draft
+      permission_uid: CORE_PROJECT_WRITE
+      gate_uid: CORE-01-GATE-PROJECT-DRAFT
+      effect_type: PROJECT_MUTATION
+      owner: CORE-01
+      success_contract: validateProjectDraft completes without inventing fields
+      error_uid: CORE-01-ERR-CONTEXT-001
+      state_effect: Project draft validation refreshed
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-PROJECT-VALIDATE
+        decision: SOURCE_DERIVED
+    - &id015
+      control_uid: CORE-01-BTN-PROJECT-VALIDATE
+      section_uid: CORE-01-SEC-08
+      component_uid: CORE-01-CMP-PROJECT-STATE
+      visual_uid: CORE-01-VIS-RIGHT-CORE
+      type: BUTTON
+      label: 驗證 Project Draft
+      action_uid: CORE-01-ACT-PROJECT-VALIDATE
+      gate_uid: CORE-01-GATE-PROJECT-DRAFT
+      permission_uid: CORE_PROJECT_WRITE
+      default: —
+    control_nodes:
+    - *id015
+    exposed_port_nodes:
+    - &id017
+      port_uid: CORE-01-PORT-PROJECT-VALIDATE
+      boundary: Project Draft
+      operation: validateProjectDraft
+      method_path: POST /v1/projects/drafts/{projectVersionId}/validate
+      permission: core.project.read
+      state_event: DRAFT→DRAFT
+      exposure: CORE-01-ACT-PROJECT-VALIDATE
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-120
+  scope: CORE-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: CORE-01-ACT-PROJECT-VALIDATE
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the same-page event registry
+  current_authority_context:
+    target_uid: CORE-01-ACT-PROJECT-VALIDATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - *id016
+    - *id015
+    control_nodes:
+    - *id015
+    exposed_port_nodes:
+    - *id017
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-121
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-PROJECT-CONFIRM
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-PROJECT-CONFIRM
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-PROJECT-CONFIRM
+      label: Confirm Project Draft
+      permission_uid: CORE_PROJECT_CONFIRM
+      gate_uid: CORE-01-GATE-PROJECT-CONFIRM
+      effect_type: PROJECT_MUTATION
+      owner: CORE-01
+      success_contract: confirmProjectDraft uses exact adopt refs/version; event timing follows runtime authority
+      error_uid: CORE-01-ERR-CONTEXT-001
+      state_effect: Project enters core modeling
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-PROJECT-CONFIRM
+        decision: SOURCE_DERIVED
+    - &id018
+      control_uid: CORE-01-BTN-PROJECT-CONFIRM
+      section_uid: CORE-01-SEC-08
+      component_uid: CORE-01-CMP-PROJECT-STATE
+      visual_uid: CORE-01-VIS-RIGHT-CORE
+      type: BUTTON
+      label: 確認 Project Draft
+      action_uid: CORE-01-ACT-PROJECT-CONFIRM
+      gate_uid: CORE-01-GATE-PROJECT-CONFIRM
+      permission_uid: CORE_PROJECT_CONFIRM
+      default: —
+    control_nodes:
+    - *id018
+    exposed_port_nodes: []
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-122
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-STORY-CANDIDATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-STORY-CANDIDATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-STORY-CANDIDATE
+      label: Generate Story Candidate Set
+      permission_uid: CORE_STORY_WRITE
+      gate_uid: CORE-01-GATE-STORY
+      effect_type: CANDIDATE_CREATE
+      owner: CORE-01
+      success_contract: createStoryCandidateSet for current Project only
+      error_uid: CORE-01-ERR-CANDIDATE-001
+      state_effect: Story candidate set created
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-STORY-CANDIDATE
+        decision: SOURCE_DERIVED
+    - &id019
+      control_uid: CORE-01-BTN-STORY-CANDIDATE
+      section_uid: CORE-01-SEC-08
+      component_uid: CORE-01-CMP-PROJECT-STATE
+      visual_uid: CORE-01-VIS-RIGHT-CORE
+      type: BUTTON
+      label: 產生 Story Candidate Set
+      action_uid: CORE-01-ACT-STORY-CANDIDATE
+      gate_uid: CORE-01-GATE-STORY
+      permission_uid: CORE_STORY_WRITE
+      default: —
+    control_nodes:
+    - *id019
+    exposed_port_nodes:
+    - port_uid: CORE-01-PORT-STORY-CANDIDATE
+      boundary: Story
+      operation: createStoryCandidateSet
+      method_path: POST /v1/projects/{projectId}/story-candidate-sets
+      permission: core.story.write
+      state_event: DRAFT→GENERATING | story.candidate_set.created
+      exposure: CORE-01-ACT-STORY-CANDIDATE
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-123
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+      label: Request DNA Lock
+      permission_uid: CORE_DNA_LOCK
+      gate_uid: CORE-01-GATE-DNA-LOCK
+      effect_type: DNA_LOCK_REQUEST
+      owner: CORE-01
+      success_contract: requestDNALock creates review request only
+      error_uid: CORE-01-ERR-DNA-LOCK-001
+      state_effect: DNA review pending
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-DNA-LOCK
+        decision: SOURCE_DERIVED
+    - &id020
+      control_uid: CORE-01-BTN-DNA-LOCK
+      section_uid: CORE-01-SEC-08
+      component_uid: CORE-01-CMP-PROJECT-STATE
+      visual_uid: CORE-01-VIS-RIGHT-CORE
+      type: BUTTON
+      label: 要求 DNA Lock
+      action_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+      gate_uid: CORE-01-GATE-DNA-LOCK
+      permission_uid: CORE_DNA_LOCK
+      default: —
+    control_nodes:
+    - *id020
+    exposed_port_nodes:
+    - port_uid: CORE-01-PORT-DNA-LOCK
+      boundary: DNA Lock Review
+      operation: requestDNALock
+      method_path: POST /v1/state-commands/dnaversion/requestdnalock
+      permission: dna.lock.request
+      state_event: CANDIDATE→REVIEW_REQUIRED | dna.lock.requested
+      exposure: CORE-01-ACT-DNA-LOCK-REQUEST
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-124
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+      label: Submit Project Core Review
+      permission_uid: CORE_PROJECT_WRITE
+      gate_uid: CORE-01-GATE-CORE-REVIEW
+      effect_type: PROJECT_MUTATION
+      owner: CORE-01
+      success_contract: submitCoreReview with exact ProjectVersion
+      error_uid: CORE-01-ERR-CONTEXT-001
+      state_effect: Project core review pending
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-CORE-REVIEW
+        decision: SOURCE_DERIVED
+    - &id021
+      control_uid: CORE-01-BTN-CORE-REVIEW
+      section_uid: CORE-01-SEC-08
+      component_uid: CORE-01-CMP-PROJECT-STATE
+      visual_uid: CORE-01-VIS-RIGHT-CORE
+      type: BUTTON
+      label: 送出 Project Core Review
+      action_uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+      gate_uid: CORE-01-GATE-CORE-REVIEW
+      permission_uid: CORE_PROJECT_WRITE
+      default: —
+    control_nodes:
+    - *id021
+    exposed_port_nodes:
+    - port_uid: CORE-01-PORT-CORE-REVIEW
+      boundary: Project Core Review
+      operation: submitCoreReview
+      method_path: POST /v1/state-commands/projectversion/submitcorereview
+      permission: core.project.write
+      state_event: CORE_MODELING→CORE_REVIEW | project.core_review_submitted
+      exposure: CORE-01-ACT-CORE-REVIEW-SUBMIT
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-125
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+      label: Request Project Lock
+      permission_uid: CORE_LOCK_REQUEST
+      gate_uid: CORE-01-GATE-PROJECT-LOCK-READY
+      effect_type: LOCK_REQUEST
+      owner: CORE-01
+      success_contract: requestMotherLock only when review contract resolvable
+      error_uid: CORE-01-ERR-LOCK-CONTRACT-001
+      state_effect: Mother lock review pending
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-MOTHER-LOCK
+        decision: SOURCE_DERIVED
+    - &id022
+      control_uid: CORE-01-BTN-PROJECT-LOCK
+      section_uid: CORE-01-SEC-08
+      component_uid: CORE-01-CMP-PROJECT-STATE
+      visual_uid: CORE-01-VIS-RIGHT-CORE
+      type: BUTTON
+      label: 提出 Project Lock
+      action_uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+      gate_uid: CORE-01-GATE-PROJECT-LOCK-READY
+      permission_uid: CORE_LOCK_REQUEST
+      default: —
+    control_nodes:
+    - *id022
+    exposed_port_nodes: []
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-126
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-BLUEPRINT-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-BLUEPRINT-CREATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - &id024
+      action_uid: CORE-01-ACT-BLUEPRINT-CREATE
+      label: Create Blueprint
+      permission_uid: CORE_BLUEPRINT_WRITE
+      gate_uid: CORE-01-GATE-BLUEPRINT-CREATE
+      effect_type: BLUEPRINT_MUTATION
+      owner: CORE-01
+      success_contract: createBlueprint returns exact BlueprintVersion ref
+      error_uid: CORE-01-ERR-BLUEPRINT-001
+      state_effect: Blueprint draft created
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-BLUEPRINT-CREATE
+        decision: SOURCE_DERIVED
+    - &id023
+      control_uid: CORE-01-BTN-BLUEPRINT-CREATE
+      section_uid: CORE-01-SEC-08
+      component_uid: CORE-01-CMP-BLUEPRINT-STATE
+      visual_uid: CORE-01-VIS-RIGHT-CORE
+      type: BUTTON
+      label: 建立 Blueprint
+      action_uid: CORE-01-ACT-BLUEPRINT-CREATE
+      gate_uid: CORE-01-GATE-BLUEPRINT-CREATE
+      permission_uid: CORE_BLUEPRINT_WRITE
+      default: —
+    control_nodes:
+    - *id023
+    exposed_port_nodes:
+    - &id025
+      port_uid: CORE-01-PORT-BLUEPRINT-CREATE
+      boundary: Blueprint
+      operation: createBlueprint
+      method_path: POST /v1/topics/{id}/blueprints
+      permission: core.blueprint.write
+      state_event: READY_FOR_BLUEPRINT→BLUEPRINT_DRAFT
+      exposure: CORE-01-ACT-BLUEPRINT-CREATE
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-127
+  scope: CORE-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: CORE-01-ACT-BLUEPRINT-CREATE
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the same-page event registry
+  current_authority_context:
+    target_uid: CORE-01-ACT-BLUEPRINT-CREATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - *id024
+    - *id023
+    control_nodes:
+    - *id023
+    exposed_port_nodes:
+    - *id025
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-128
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+      label: Validate Blueprint
+      permission_uid: CORE_BLUEPRINT_REVIEW
+      gate_uid: CORE-01-GATE-BLUEPRINT-VALIDATE
+      effect_type: BLUEPRINT_MUTATION
+      owner: CORE-01
+      success_contract: validateBlueprint transitions exact version to review
+      error_uid: CORE-01-ERR-BLUEPRINT-001
+      state_effect: Blueprint review
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-BLUEPRINT-VALIDATE
+        decision: SOURCE_DERIVED
+    - &id026
+      control_uid: CORE-01-BTN-BLUEPRINT-VALIDATE
+      section_uid: CORE-01-SEC-08
+      component_uid: CORE-01-CMP-BLUEPRINT-STATE
+      visual_uid: CORE-01-VIS-RIGHT-CORE
+      type: BUTTON
+      label: 驗證 Blueprint
+      action_uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+      gate_uid: CORE-01-GATE-BLUEPRINT-VALIDATE
+      permission_uid: CORE_BLUEPRINT_REVIEW
+      default: —
+    control_nodes:
+    - *id026
+    exposed_port_nodes:
+    - port_uid: CORE-01-PORT-BLUEPRINT-VALIDATE
+      boundary: Blueprint
+      operation: validateBlueprint
+      method_path: POST /v1/blueprints/{id}/validate
+      permission: core.blueprint.review
+      state_event: BLUEPRINT_DRAFT→BLUEPRINT_REVIEW | blueprint.validated
+      exposure: CORE-01-ACT-BLUEPRINT-VALIDATE
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-129
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-BLUEPRINT-APPROVE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-BLUEPRINT-APPROVE
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-BLUEPRINT-APPROVE
+      label: Approve Blueprint
+      permission_uid: CORE_BLUEPRINT_APPROVE
+      gate_uid: CORE-01-GATE-BLUEPRINT-APPROVE
+      effect_type: BLUEPRINT_MUTATION
+      owner: CORE-01
+      success_contract: approveBlueprint transitions exact version to child-review readiness
+      error_uid: CORE-01-ERR-BLUEPRINT-001
+      state_effect: Blueprint child-review ready
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-BLUEPRINT-APPROVE
+        decision: SOURCE_DERIVED
+    - &id027
+      control_uid: CORE-01-BTN-BLUEPRINT-APPROVE
+      section_uid: CORE-01-SEC-08
+      component_uid: CORE-01-CMP-BLUEPRINT-STATE
+      visual_uid: CORE-01-VIS-RIGHT-CORE
+      type: BUTTON
+      label: 核准 Blueprint
+      action_uid: CORE-01-ACT-BLUEPRINT-APPROVE
+      gate_uid: CORE-01-GATE-BLUEPRINT-APPROVE
+      permission_uid: CORE_BLUEPRINT_APPROVE
+      default: —
+    control_nodes:
+    - *id027
+    exposed_port_nodes:
+    - port_uid: CORE-01-PORT-BLUEPRINT-APPROVE
+      boundary: Blueprint
+      operation: approveBlueprint
+      method_path: POST /v1/blueprints/{id}/approve
+      permission: core.blueprint.approve
+      state_event: BLUEPRINT_REVIEW→READY_FOR_CHILD_REVIEW | blueprint.approved
+      exposure: CORE-01-ACT-BLUEPRINT-APPROVE
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-130
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  current_authority_context:
+    target_uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+    source_is_current_authority_exact_capture: true
+    action_nodes:
+    - action_uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+      label: Request Child Lock
+      permission_uid: CORE_LOCK_REQUEST
+      gate_uid: CORE-01-GATE-CHILD-LOCK
+      effect_type: LOCK_REQUEST
+      owner: CORE-01
+      success_contract: requestChildLock review request only; no fabricated evidence/reviewer
+      error_uid: CORE-01-ERR-LOCK-CONTRACT-001
+      state_effect: Child lock review pending
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: CORE-01-PORT-CHILD-LOCK
+        decision: SOURCE_DERIVED
+    - &id028
+      control_uid: CORE-01-BTN-CHILD-LOCK
+      section_uid: CORE-01-SEC-08
+      component_uid: CORE-01-CMP-BLUEPRINT-STATE
+      visual_uid: CORE-01-VIS-RIGHT-CORE
+      type: BUTTON
+      label: 提出 Child Lock
+      action_uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+      gate_uid: CORE-01-GATE-CHILD-LOCK
+      permission_uid: CORE_LOCK_REQUEST
+      default: —
+    control_nodes:
+    - *id028
+    exposed_port_nodes: []
+    transition_nodes: []
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-131
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty mutation_owner value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-01
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - &id029
+      transition_uid: CORE-01-STTR-01
+      from_stage: CORE-01-STAGE-01-CONTEXT
+      to_stage: CORE-01-STAGE-02-CONVERSE
+      trigger_event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+      gate_uid: CORE-01-GATE-WORK-ITEM
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-132
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty failure_state value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-01
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id029
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-133
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty recovery value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-01
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id029
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-134
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty audit_event_uid value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-01
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id029
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-135
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty mutation_owner value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-02
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - &id030
+      transition_uid: CORE-01-STTR-02
+      from_stage: CORE-01-STAGE-02-CONVERSE
+      to_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+      trigger_event_uid: CORE-01-EVT-AI-RESPONSES-READY
+      gate_uid: CORE-01-GATE-SUMMARY
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-136
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty failure_state value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-02
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id030
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-137
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty recovery value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-02
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id030
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-138
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty audit_event_uid value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-02
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id030
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-139
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty mutation_owner value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-03
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - &id031
+      transition_uid: CORE-01-STTR-03
+      from_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+      to_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+      trigger_event_uid: CORE-01-EVT-EVALUATION-READY
+      gate_uid: CORE-01-GATE-EVALUATION
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-140
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty failure_state value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-03
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id031
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-141
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty recovery value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-03
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id031
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-142
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty audit_event_uid value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-03
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id031
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-143
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty mutation_owner value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-04
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - &id032
+      transition_uid: CORE-01-STTR-04
+      from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+      to_stage: CORE-01-STAGE-02-CONVERSE
+      trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+      gate_uid: CORE-01-GATE-HUMAN-DECISION
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-144
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty failure_state value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-04
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id032
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-145
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty recovery value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-04
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id032
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-146
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty audit_event_uid value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-04
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id032
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-147
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty mutation_owner value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-05
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - &id033
+      transition_uid: CORE-01-STTR-05
+      from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+      to_stage: CORE-01-STAGE-05-CANDIDATE
+      trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+      gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-148
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty failure_state value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-05
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id033
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-149
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty recovery value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-05
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id033
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-150
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - exact non-empty audit_event_uid value bound to the same transition_uid
+  current_authority_context:
+    target_uid: CORE-01-STTR-05
+    source_is_current_authority_exact_capture: true
+    action_nodes: []
+    control_nodes: []
+    exposed_port_nodes: []
+    transition_nodes:
+    - *id033
+  review_decision_required:
+    canonical_owner_uid: null
+    authority_revision: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_value_supplied_by_ai: false
+  semantic_inference_used: false
+  historical_non_current_authority_used: false
+  request_package_used_as_authority: false
+  materialization_allowed: false
+approval_boundary:
+  review_context_may_be_used_to_understand_existing_current_authority: true
+  review_context_may_not_be_treated_as_missing_value_authority: true
+  separate_current_admissible_authority_source_required_before_r7: true
+  separate_structured_approval_evidence_required_before_r7: true
+  r7_must_reject_binding_not_physically_present_in_authority_source: true
+  fresh_stage02_reexecution_required_before_any_blocker_reduction: true
+stage02_status: BLOCKED
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
