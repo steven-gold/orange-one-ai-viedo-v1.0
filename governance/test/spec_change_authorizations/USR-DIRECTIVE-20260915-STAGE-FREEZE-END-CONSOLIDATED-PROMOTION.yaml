@@ -1,0 +1,33 @@
+schema_version: 1
+authorization_uid: USR-DIRECTIVE-20260915-STAGE-FREEZE-END-CONSOLIDATED-PROMOTION
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+issued_date: 2026-09-15
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+
+exact_scope:
+  - Tighten the active lifecycle execution/remediation protocol so every lifecycle stage begins from one frozen Current Specification baseline and that baseline remains immutable throughout the stage execution cycle.
+  - Require ordinary product, contract, validator, harness, runtime, evidence, and implementation defects to be repaired only at their owning layer while the Current Specification remains frozen.
+  - Require every suspected reusable governance/specification deficiency discovered during a stage to be recorded first in the non-normative candidate ledger and forbid mid-stage normative promotion during ordinary execution.
+  - Require a single Stage-End Governance Consolidation Review after the stage's known remediable defects have been materially corrected and fresh-retested, consolidating only evidence-backed reusable rule deficiencies for one atomic normative promotion.
+  - Require any Stage-End normative promotion to use a new immutable governance UID, atomically update Registry and Manifest, rerun the complete full-line multidirectional high-pressure system gate, and rerun the affected stage from the same clean predecessor baseline before stage advance.
+  - Define one exception for a fatal Current Specification contradiction that invalidates the current stage test/execution baseline: stop the stage, record a blocking specification defect, obtain explicit user authorization, atomically repair the governance specification, pass the full-line high-pressure gate, reset to the same clean predecessor baseline, and restart the stage from the beginning.
+  - Prohibit using a fatal-specification exception to bypass ordinary owning-layer remediation or to turn a product gap into a specification change.
+  - Define one canonical execution lifecycle rather than separate testing/formal modes; the same rules used during governance calibration remain the rules consumed later by all pages.
+  - Define governance calibration completion as one pilot path completing the entire lifecycle with known defect signatures at zero, no new blocking hidden defects, all required stage closures, and a final full-line high-pressure gate PASS; only then may other pages directly consume the same stabilized governance without creating a second execution mode.
+  - Update the active remediation protocol, mutation control, Registry, Manifest, related active-state/validator bindings only as necessary to enforce this exact scope.
+
+not_authorized:
+  - Inventing product behavior, payloads, transitions, controls, APIs, permissions, or authority to close a product gap.
+  - Auto-resolving preserved unresolved external authority references.
+  - Mid-stage normative promotion for ordinary defects.
+  - Treating a candidate-ledger entry as an active rule before authorized Stage-End promotion.
+  - Relaxing existing high-pressure denominators, stage closure requirements, mutation controls, or fail-closed behavior.
+  - Creating a separate production-mode rule set after governance calibration; subsequent pages must consume the same canonical lifecycle governance.
+
+provenance:
+  conversation_instruction_summary: "User requires a stricter stage governance model: Current Specification is frozen during each stage; ordinary bugs/gaps are fixed only at owning layers; true reusable specification issues are staged in a candidate ledger and consolidated once at Stage-End; only a fatal specification contradiction may interrupt a stage for an explicitly authorized atomic governance repair followed by full-line high-pressure validation and a full clean-baseline stage restart. The lifecycle rules are one canonical execution system, not separate test/formal modes. After one pilot path completes the entire lifecycle with bugs eliminated, other pages directly consume the same stabilized governance."
+  ai_may_expand_scope: false
+  ai_may_reuse_authorization: false
