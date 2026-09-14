@@ -61,7 +61,8 @@ test('CORE-01 Stage-02 correctly remains BLOCKED on lifecycle and topology defec
   assert.ok(hasAll(coreAuth, ['name: Message Workspace', 'name: Evaluation / Human Decision', 'name: Runtime Stage Strip', 'name: Input Composer']));
   assert.ok(topology.includes('FUNCTIONAL_WORKBENCH_COHESION'));
   assert.ok(topology.includes('INTERACTION_TOPOLOGY_BINDING'));
-  assert.ok(topology.includes('forbidden_interruption'));
+  assert.ok(topology.includes('unrelated_surface_interrupting_atomic_workbench'));
+  assert.ok(topology.includes('functional_unit_present_but_fragmented_across_unapproved_surfaces'));
 
   const blockers = [
     !chapterPortPresent,
