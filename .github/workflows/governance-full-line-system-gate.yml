@@ -10,11 +10,10 @@ on:
 permissions:
   contents: read
 
-timeout-minutes: 45
-
 jobs:
   full-line-system-high-pressure:
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
     env:
       PYTHONDONTWRITEBYTECODE: '1'
       PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
