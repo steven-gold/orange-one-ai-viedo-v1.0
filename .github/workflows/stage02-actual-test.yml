@@ -7,6 +7,9 @@ on:
       - '.github/workflows/stage02-actual-test.yml'
       - 'governance/ci/run_current_stage2_actual_test.py'
       - 'governance/ci/validate_stage02_state_integrity.py'
+      - 'governance/ci/validate_stage02_entry_receipts.py'
+      - 'governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml'
+      - 'governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml'
   workflow_dispatch:
 
 permissions:
@@ -36,6 +39,9 @@ jobs:
       - name: Resolve stable Current governance registry
         run: python governance/ci/governance_resolver.py
 
+      - name: Validate canonical stage remediation closure protocol
+        run: python governance/ci/validate_stage_test_remediation_closure_protocol.py
+
       - name: Validate Current governance layout
         run: python governance/ci/validate_governance_layout.py
 
@@ -47,6 +53,9 @@ jobs:
 
       - name: Validate Stage-02 admission predecessor state
         run: python governance/ci/validate_stage02_state_integrity.py
+
+      - name: Validate Stage-02 frozen governance and clean baseline entry receipts
+        run: python governance/ci/validate_stage02_entry_receipts.py
 
       - name: Run complete 75-file full-lifecycle high-pressure system gate on exact Stage-02 test SHA
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
@@ -77,6 +86,8 @@ jobs:
           name: stage02-actual-test-evidence
           path: |
             .github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json
+            governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml
+            governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml
             .github/governance-source/SOURCE_IDENTITY_REPORT.json
             .github/governance-source/FULL_LINE_SYSTEM_GATE_RESULT.json
           if-no-files-found: error
