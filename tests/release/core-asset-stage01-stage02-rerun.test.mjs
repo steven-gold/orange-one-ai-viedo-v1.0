@@ -15,12 +15,16 @@ const coreDraft = read('src/domain/core/coreDraftFormAdapter.ts');
 const bounded = read('docs/governance/candidates/v2.1.14/BOUNDED_FUNCTIONAL_COMPLETION_DELTA.yaml');
 const topology = read('docs/governance/candidates/v2.1.14/INTERACTION_TOPOLOGY_AI_CONTINUITY_DELTA.yaml');
 
-test('target scope is exactly CORE-01 and ASSET-01; other pages/global state are preserved', () => {
+test('targeted rerun result is scoped exactly to CORE-01 and ASSET-01; other pages/global state are preserved', () => {
+  assert.match(state, /status:\s*TARGETED_RERUN_VALIDATED/);
   assert.match(state, /scope_mode:\s*EXACT_PAGE_SCOPE_ONLY/);
   assert.match(state, /workspace:CORE-01/);
   assert.match(state, /workspace:ASSET-01/);
-  assert.equal((state.match(/rerun_stage:\s*STAGE-01/g) || []).length, 2);
-  assert.equal((state.match(/stage_02_status:\s*PENDING_RERUN/g) || []).length, 2);
+  assert.equal((state.match(/stage_01_status:\s*PASS/g) || []).length, 2);
+  assert.equal((state.match(/stage_02_status:\s*BLOCKED/g) || []).length, 1);
+  assert.equal((state.match(/stage_02_status:\s*PASS_TARGETED_CONTRACT_AUDIT/g) || []).length, 1);
+  assert.match(state, /release_gate_run_number:\s*1291/);
+  assert.match(state, /release_gate_conclusion:\s*SUCCESS/);
   assert.match(state, /all_other_current_pages:\s*PRESERVE_CURRENT_STATE/);
   assert.match(state, /current_execution_state_json:\s*NO_GLOBAL_STAGE_RESET/);
   assert.match(state, /production_runtime:\s*NO_MUTATION/);
