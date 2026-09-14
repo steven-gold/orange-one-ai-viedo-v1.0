@@ -1,4 +1,4 @@
-schema_version: 18
+schema_version: 19
 role: CURRENT_GOVERNANCE_TEST_POINTER
 repository_branch: rebuild-v2.1.1
 normative_authority:
@@ -6,9 +6,37 @@ normative_authority:
   package_sha256: 2d6602b20983a9764c2f1496f36ab20a2f0ebcd73826492c27ba67159f5ef3df
   external_trust_root_sha256: 4c013cfc1a91142a8b4ce44830ef467c5c960f56b136a75ff670729a523f71e3
   semantic_authority_content_hash: 512eb9178054d26fce807ae8b7617f06818788e23260b9f104bbb588bd5d0ee9
-current_execution:
+  disposition: PRESERVED_HISTORICAL_FORMAL_TEST_BASE
+test_governance_overlay:
+  version: v2.1.14
+  revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+  state: NONCURRENT_LOCAL_COMPONENT_VERIFIED
+  replaces_normative_authority: false
+  permitted_use: TARGETED_STAGE01_STAGE02_RERUN_ONLY
+  target_pages: [CORE-01, ASSET-01]
+  candidate_status_ref: governance/candidates/v2.1.14/CANDIDATE_STATUS.yaml
+  bounded_completion_ref: governance/candidates/v2.1.14/BOUNDED_FUNCTIONAL_COMPLETION_DELTA.yaml
+  interaction_topology_ref: governance/candidates/v2.1.14/INTERACTION_TOPOLOGY_AI_CONTINUITY_DELTA.yaml
+  package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_COMPONENT_VERIFIED.zip
+  package_sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
+  formal_freeze_allowed: false
+  current_authority_promotion_allowed: false
+active_execution:
   run_uid: FRESH-RUN-003
-  state: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
+  rerun_record: 00_SOURCE_INTAKE/fresh_run_003/TARGETED_STAGE01_RERUN_V214.yaml
+  scope_mode: EXACT_PAGE_SCOPE_ONLY
+  target_pages: [CORE-01, ASSET-01]
+  rollback_from: STAGE-02
+  current_stage: STAGE-01
+  stage1_rerun_status: ACTIVE
+  stage2_rerun_status: NOT_STARTED_AFTER_ROLLBACK
+  historical_stage2_receipts_preserved: true
+  historical_stage2_is_current_rerun_result: false
+  website_construction_allowed: false
+  deployment_allowed: false
+historical_execution_snapshot:
+  run_uid: FRESH-RUN-003
+  previous_state: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
   source_segment_count: 61
   source_fact_materialization_completed: true
   responsibility_classification_completed: true
@@ -17,9 +45,6 @@ current_execution:
   visual_base_blueprint_count: 2
   blueprint_binding_count: 2
   unresolved_authority_gap_count: 8
-  blueprint_binding_started: true
-  blueprint_binding_completed: true
-  stage1_validation_started: true
   stage1_validation_completed: true
   stage1_exit_gate: SUCCESS_EXTERNAL_CI
   stage2_started: true
@@ -36,8 +61,6 @@ current_execution:
   stage2_external_authority_gap_uids_affecting_blockers: [GAP-005, GAP-006, GAP-008]
   stage2_exit_gate: BLOCKED
   stage2_functional_completion: false
-  website_construction_started: false
-  deployment_started: false
 terminal_receipts:
   visual_closure: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: e653fbcf39a18775790c6403439b076c9ed3f534, run_id: 34739267938, job_denominator: 8/8, conclusion: SUCCESS}
   v210_governance: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 91f4271b5145f5646be07da32b5624fad7528034, run_id: 34741356025, job_denominator: 9/9, conclusion: SUCCESS}
@@ -52,53 +75,13 @@ terminal_receipts:
   stage2_blocker_ledger_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 42736f94524f7e46d280271b1d15dd1221a9af8d, run_id: 34766464982, job_denominator: 20/20, conclusion: SUCCESS}
   stage2_current_ledger_sync_r1: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: 92b4c2f148fbd5690eea03a0f554ba25ff1cffea, run_id: 34768036053, job_denominator: 21/21, conclusion: SUCCESS}
   stage2_blocker_ledger_r2: {provider: GITHUB_ACTIONS, repository_or_project: steven-gold/orange-one-ai-viedo-v1.0, head_sha: d662a28422a9f7a671359f2f284a4d20f5cfe6e4, run_id: 34768554331, job_denominator: 21/21, conclusion: SUCCESS}
-stage1_validation:
-  source_enumeration_evidence: PRESENT_PARSE_VALID
-  conflict_decision_evidence: PRESENT_PARSE_VALID
-  stage1_validation_evidence: PRESENT_PARSE_VALID
-  clean_scan: COMPLETED
-  run_close: COMPLETED
-  dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
-  reverse_dependency_index_disposition: NOT_APPLICABLE_NO_REGISTERED_PROGRAM_ARTIFACT_INSTANCE_IN_STAGE01
-  stage1_dependency_authority: SOURCE_DEPENDENCY_MAP
-successor_state_monotonicity:
-  contract_uid: V212-SUCCESSOR-STATE-MONOTONIC-EVIDENCE-PARSE
-  predecessor_current_state_exact_terminal_lock: FORBIDDEN
-  successor_started_false_permanent_condition: FORBIDDEN
-  registered_legal_successor: ALLOW_IF_PREDECESSOR_INVARIANTS_HOLD
-  phase_order_owner: PHASE_BOUNDARY_GATE
-stage2_functional_contract:
-  current_operation: BLOCKER_RESOLUTION_WAIT
+rollback_policy:
+  history_rewrite: FORBIDDEN
+  previous_stage2_receipts: PRESERVE_IMMUTABLE
+  previous_stage2_outputs: HISTORICAL_NOT_CURRENT_RERUN_RESULT
+  only_targeted_pages_may_rerun: true
   target_pages: [CORE-01, ASSET-01]
-  functional_chain_specs: 2
-  canonical_required_outputs: VALIDATED_18_OF_18
-  page_functional_review_evidence: PRESENT_VALIDATED_19_OF_19
-  blocker_ledger: R2_VALIDATED_EXTERNAL_CI_21_OF_21
-  blocker_ledger_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
-  open_gap_total: 171
-  blocker_count: 4
-  functional_gap_blocker_count: 3
-  required_output_blocker_count: 1
-  async_provider_unresolved_lifecycle_binding_count: 24
-  stage2_external_authority_gap_uids_affecting_blockers: [GAP-005, GAP-006, GAP-008]
-  exit_gate: ALL_REQUIRED_PAGES_STAGE2_CLOSED
-  exit_gate_result: BLOCKED
-  functional_completion_claim: false
-  website_construction_allowed: false
-  deployment_allowed: false
-current_v212_receipt:
-  mode: EXTERNAL_IMMUTABLE_RECEIPT
-  required: true
-  embedded_run_id: null
-  canonical_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
-  same_commit_self_write: FORBIDDEN
-current_stage2_blocker_receipt:
-  mode: EXTERNAL_IMMUTABLE_RECEIPT
-  required: true
-  current_revision: R2_ASYNC_PROVIDER_REQUIRED_OUTPUT_INCLUDED
-  validation_status: SUCCESS_EXTERNAL_RECEIPT
-  embedded_run_id: 34768554331
-  receipt_key: stage2_blocker_ledger_r2
-  same_commit_self_write: FORBIDDEN
-next_action: RESOLVE_STAGE2_FORMAL_CONTRACT_OR_AUTHORITY_BLOCKERS_THEN_RERUN_STAGE2_COMPILES
-status: STAGE2_FUNCTIONAL_REVIEW_COMPLETE_BLOCKED_BY_FORMAL_CONTRACT_AND_AUTHORITY
+  undefined_behavior: BLOCK_AND_REPORT_AUTHORITY_GAP
+  ai_invent_missing_product_behavior: FORBIDDEN
+next_action: RUN_TARGETED_STAGE1_REVALIDATION_THEN_V214_STAGE2_RECOMPILE
+status: STAGE1_TARGETED_RERUN_ACTIVE_V214_OVERLAY
