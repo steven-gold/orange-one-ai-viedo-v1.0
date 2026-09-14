@@ -1,0 +1,38 @@
+schema_version: 1
+finding_uid: FIND-20260915-020
+artifact_type: NON_NORMATIVE_TEST_HARNESS_FINDING
+normative_authority: false
+class: TEST_HARNESS_OR_VALIDATOR_BUG
+title: Fresh R3 runner dispatch replaced the structural validator but left the legacy continuity validator bound to the stale structural path
+status: OPEN_REMEDIATION
+stage_uid: STAGE-02
+observed_run_id: 34898774410
+observed_job_id: 104159355459
+observed_head_sha: c75973a1202e749b62bffb33ef9a37779e3a3334
+failed_step: Execute fresh external-authority-aware Stage-02 R3 reexecution
+failure_chain:
+  - R3_PRE_EXECUTION_VALIDATOR_FAILED:validate_stage02_remediation_reset_continuity_r3.py
+  - REMEDIATION_CONTINUITY_VALIDATOR_FAILED:validate_current_stage2_materialized_closure.py
+  - STALE_EXTERNAL_AUTHORITY_MATERIALIZATION_FORBIDDEN
+owning_harness: governance/ci/run_current_stage2_external_authority_reexecution_r3_dispatch.py
+root_cause: R3_RUNNER_DISPATCH_REBOUND_ONLY_DIRECT_STRUCTURAL_VALIDATOR_BUT_NOT_THE_CONTINUITY_VALIDATOR_THAT_TRANSITIVELY_INVOKES_THE_LEGACY_STRUCTURAL_VALIDATOR
+verified_pre_failure_state:
+  clean_reset: PASS
+  post_reset_remediation_continuity: PASS
+  full_line_system_gate: PASS
+  verified_governance_source_byte_clean: PASS
+  fresh_scanner_reached_denominator_calculation: false
+required_fix:
+  - require the direct structural validator reference to occur exactly once in the R3 runner source
+  - require the continuity validator reference to occur exactly once in the R3 runner source
+  - replace both with their external-aware R3 equivalents before executing the runner source
+  - fail closed if either expected binding count drifts
+  - rerun clean reset, full-line SYSTEM gate, then fresh R3 execution
+formal_specification_change_required: false
+formal_specification_mutated_for_fix: false
+stage02_result_changed_by_this_finding: false
+current_authoritative_effective_blocker_count_remains: 154
+stage02_exit_allowed: false
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
