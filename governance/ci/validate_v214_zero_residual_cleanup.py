@@ -29,7 +29,7 @@ for rel in forbidden_files:
     if (ROOT/rel).exists():
         errors.append(f'RESIDUAL_FILE:{rel}')
 
-for rel in ('governance/test-runtime','governance/test-temporary'):
+for rel in ('governance/test-runtime','governance/test-temporary','governance/candidates'):
     p=ROOT/rel
     if p.exists():
         files=[x for x in p.rglob('*') if x.is_file()]
@@ -52,10 +52,12 @@ else:
         errors.append('V214_MANIFEST_COMPONENT_BINDING_MISSING')
     if 'standalone_operational_policy_outside_v214: FORBIDDEN' not in text:
         errors.append('V214_SINGLE_GOVERNANCE_GUARD_MISSING')
+    if 'applicability_must_be_proven_before_missing_output_is_counted_as_blocker: true' not in text:
+        errors.append('V214_APPLICABILITY_GUARD_MISSING')
 
 if errors:
     for e in errors: print('BLOCK:',e,file=sys.stderr)
     raise SystemExit(1)
 print('PASS: v2.1.14 is the only active test-governance rule layer for the targeted rerun')
-print('PASS: legacy Current aliases, standalone correction policy, retired runtime shards, and temporary scan artifacts are absent')
+print('PASS: legacy Current aliases, standalone correction policy, retired runtime shards, candidate duplicates, and temporary scan artifacts are absent')
 print('PASS: no temporary correction directory remains after governance promotion')
