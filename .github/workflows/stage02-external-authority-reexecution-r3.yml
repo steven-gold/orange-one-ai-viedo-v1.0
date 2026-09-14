@@ -7,9 +7,14 @@ on:
       - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R3.yaml'
       - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/**'
       - 'governance/ci/validate_current_stage2_external_authority_resolution_r3.py'
+      - 'governance/ci/validate_current_stage2_materialized_closure_external_aware_r3.py'
+      - 'governance/ci/validate_stage02_successor_integrity_external_aware_r3.py'
       - 'governance/ci/validate_stage02_remediation_reset_continuity_r3.py'
+      - 'governance/ci/validate_stage02_remediation_reset_continuity_external_aware_r3.py'
       - 'governance/ci/prepare_stage02_external_authority_reexecution_clean_baseline_r3.py'
+      - 'governance/ci/prepare_stage02_external_authority_reexecution_clean_baseline_r3_dispatch.py'
       - 'governance/ci/run_current_stage2_external_authority_reexecution_r3.py'
+      - 'governance/ci/run_current_stage2_external_authority_reexecution_r3_dispatch.py'
       - 'governance/ci/validate_current_stage2_external_authority_reexecution_r3.py'
       - '.github/workflows/stage02-external-authority-reexecution-r3.yml'
   workflow_dispatch:
@@ -46,20 +51,20 @@ jobs:
         run: python governance/ci/validate_stage_test_remediation_closure_protocol.py
 
       - name: Validate current blocked Stage-02 successor before reset
-        run: python governance/ci/validate_stage02_successor_integrity.py
+        run: python governance/ci/validate_stage02_successor_integrity_external_aware_r3.py
 
       - name: Validate all owning-layer remediation including exact GAP-006 successor
         run: |
-          python governance/ci/validate_current_stage2_materialized_closure.py
+          python governance/ci/validate_current_stage2_materialized_closure_external_aware_r3.py
           python governance/ci/validate_current_stage2_functional_remediation_r3.py
           python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
-          python governance/ci/validate_stage02_remediation_reset_continuity_r3.py
+          python governance/ci/validate_stage02_remediation_reset_continuity_external_aware_r3.py
 
       - name: Reset only R3 execution evidence while preserving verified remediation
-        run: python governance/ci/prepare_stage02_external_authority_reexecution_clean_baseline_r3.py
+        run: python governance/ci/prepare_stage02_external_authority_reexecution_clean_baseline_r3_dispatch.py
 
       - name: Re-prove remediation continuity immediately after clean reset
-        run: python governance/ci/validate_stage02_remediation_reset_continuity_r3.py
+        run: python governance/ci/validate_stage02_remediation_reset_continuity_external_aware_r3.py
 
       - name: Run complete full-line multidirectional high-pressure SYSTEM gate
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
@@ -76,14 +81,14 @@ jobs:
       - name: Execute fresh external-authority-aware Stage-02 R3 reexecution
         env:
           STAGE02_FULL_LINE_CONFIRMED: '1'
-        run: python governance/ci/run_current_stage2_external_authority_reexecution_r3.py
+        run: python governance/ci/run_current_stage2_external_authority_reexecution_r3_dispatch.py
 
       - name: Validate fresh R3 result and known-signature zero reproduction
         run: |
           python governance/ci/validate_current_stage2_external_authority_reexecution_r3.py
           python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
-          python governance/ci/validate_stage02_remediation_reset_continuity_r3.py
-          python governance/ci/validate_stage02_successor_integrity.py
+          python governance/ci/validate_stage02_remediation_reset_continuity_external_aware_r3.py
+          python governance/ci/validate_stage02_successor_integrity_external_aware_r3.py
 
       - name: Prove formal Current Specification and immutable Stage-01 inputs were not mutated
         shell: bash
