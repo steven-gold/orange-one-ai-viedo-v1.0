@@ -83,6 +83,11 @@ stage02_active_attempt:
   materialized_functional_elimination_count: 17
   functional_material_remediation_receipt_ref: governance/test/stage02/STAGE02_FUNCTIONAL_MATERIAL_REMEDIATION_R3_RECEIPT.yaml
   dual_layer_clean_baseline_receipt_ref: governance/test/stage02/STAGE02_DUAL_LAYER_REEXECUTION_CLEAN_BASELINE_RECEIPT_R2.yaml
+  remaining_blocker_disposition_ref: governance/test/stage02/STAGE02_REMAINING_BLOCKER_DISPOSITION_R4.yaml
+  authority_sufficient_materializable_now: 0
+  product_design_authority_blocked: 150
+  preserved_external_shared_authority_blocked: 4
+  repeat_audit_without_new_authority_counts_as_progress: false
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
@@ -117,7 +122,7 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
 status: ACTIVE_STAGE2_REEXECUTED_BLOCKED
-next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_EFFECTIVE_FUNCTIONAL_GAPS
+next_action: REOPEN_PRODUCT_DESIGN_AUTHORITY_FOR_150_EXACT_FIELD_BINDINGS_AND_PRESERVE_4_GAP006_EXTERNAL_BLOCKERS
 stage02_material_remediation:
   cycle: R3_MATERIALIZED_R2_DUAL_LAYER_ACCEPTANCE
   owning_layer: CURRENT_STAGE_PRODUCT_OR_CONTRACT_OUTPUT
@@ -130,3 +135,5 @@ stage02_material_remediation:
   external_authority_union_count: 8
   external_authority_resolution_claimed: false
   current_specification_mutated: false
+  remaining_blocker_disposition_ref: governance/test/stage02/STAGE02_REMAINING_BLOCKER_DISPOSITION_R4.yaml
+  authority_sufficient_materializable_now: 0
