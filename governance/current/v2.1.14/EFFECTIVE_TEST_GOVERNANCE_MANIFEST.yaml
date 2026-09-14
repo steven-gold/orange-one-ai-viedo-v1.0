@@ -1,4 +1,4 @@
-schema_version: 1
+schema_version: 2
 artifact_uid: REBUILD-V211-V214-EFFECTIVE-TEST-GOVERNANCE
 branch: rebuild-v2.1.1
 status: CURRENT_TEST_GOVERNANCE_FOR_TARGETED_RERUN
@@ -6,49 +6,85 @@ formal_current_authority: false
 formal_freeze: false
 scope_mode: EXACT_PAGE_SCOPE_ONLY
 target_pages: [CORE-01, ASSET-01]
+
 composition:
   historical_formal_test_base:
     version: v2.1.12
     disposition: PRESERVED_BASELINE_ONLY
-  latest_effective_overlays:
+  latest_effective_components:
     - BOUNDED_FUNCTIONAL_COMPLETION_DELTA.yaml
     - INTERACTION_TOPOLOGY_AI_CONTINUITY_DELTA.yaml
+    - TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml
     - CANDIDATE_STATUS.yaml
+  component_semantics:
+    one_governance_revision_only: true
+    standalone_operational_policy_outside_v214: FORBIDDEN
+
 source_package:
   filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_COMPONENT_VERIFIED.zip
-  bytes: 456054
-  sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
+  prior_verified_bytes: 456054
+  prior_verified_sha256: 3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de
   source_file_count: 75
-  zip_integrity: PASS
-  exact_zip_binary_materialized_in_git: false
-  reason: CONNECTOR_HAS_NO_SAFE_LOCAL_BINARY_UPLOAD_PATH
+  prior_zip_integrity: PASS
+  exact_modified_v214_zip_binary_materialized_in_git: false
+  note: CURRENT_GITHUB_TEST_GOVERNANCE_INCLUDES_VERIFIED_POST_PACKAGE_TEST_FEEDBACK_LIFECYCLE_COMPONENT
+
 required_stage02_rules:
-  entity_lifecycle_completeness: REQUIRED
-  entity_hierarchy_completeness: REQUIRED
-  bounded_functional_completion: REQUIRED
-  function_visual_synchronized_completion: REQUIRED
-  functional_workbench_cohesion: REQUIRED
-  interaction_topology_binding: REQUIRED
-  conditional_ai_continuity: REQUIRED_WHEN_PROFILE_APPLIES
-stage02_required_outputs:
-  - FUNCTIONAL_CHAIN_SPEC
-  - DEPENDENCY_MAP
-  - PAGE_CONSTRUCTION_SPEC_PACKAGE
-  - ASYNC_PROVIDER_CONTRACT
-  - SHARED_OWNER_PORT_MAP
-  - FUNCTIONAL_WORKBENCH_CONTRACT
-  - INTERACTION_TOPOLOGY_SPEC
-  - BUSINESS_ENTITY_INVENTORY
-  - BUSINESS_ENTITY_OPERATION_MATRIX
-  - ENTITY_HIERARCHY_MATRIX
-  - FUNCTION_ADMISSION_SCORECARD
-  - AUTO_COMPLETION_SCOPE_LEDGER
-  - FUNCTION_VISUAL_IMPACT_MATRIX
+  entity_lifecycle_completeness: REQUIRED_WHEN_GOVERNED_BUSINESS_ENTITY_SCOPE_PRESENT
+  entity_hierarchy_completeness: REQUIRED_WHEN_ENTITY_RELATIONSHIP_OR_HIERARCHY_APPLIES
+  bounded_functional_completion: REQUIRED_WHEN_REQUIRED_GAP_CLOSURE_OR_AUTO_COMPLETION_IS_ACTIVATED
+  function_visual_synchronized_completion: REQUIRED_FOR_USER_VISIBLE_OR_OBSERVABLE_REQUIRED_OPERATIONS
+  functional_workbench_cohesion: REQUIRED_FOR_CONTINUOUS_USER_OR_SYSTEM_WORK_UNITS
+  interaction_topology_binding: REQUIRED_WHEN_WORKBENCH_OR_CROSS_SURFACE_FLOW_APPLIES
+  conditional_ai_continuity: REQUIRED_WHEN_AI_INTERACTION_PROFILE_APPLIES
+  async_provider_lifecycle: REQUIRED_WHEN_ASYNC_PROVIDER_SCOPE_APPLIES
+
+stage02_output_applicability:
+  always_for_target_page_stage02:
+    - FUNCTIONAL_CHAIN_SPEC
+    - PAGE_CONSTRUCTION_SPEC_PACKAGE
+  shared_when_declared_by_scope:
+    - DEPENDENCY_MAP
+    - SHARED_OWNER_PORT_MAP
+  when_async_provider_applies:
+    - ASYNC_PROVIDER_CONTRACT
+  when_governed_business_entity_scope_present:
+    - BUSINESS_ENTITY_INVENTORY
+    - BUSINESS_ENTITY_OPERATION_MATRIX
+  when_entity_hierarchy_applies:
+    - ENTITY_HIERARCHY_MATRIX
+  when_continuous_work_unit_applies:
+    - FUNCTIONAL_WORKBENCH_CONTRACT
+    - INTERACTION_TOPOLOGY_MATRIX
+  when_user_visible_or_observable_required_operation_applies:
+    - FUNCTION_VISUAL_IMPACT_MATRIX
+  when_ai_or_auto_proposes_functional_addition:
+    - FUNCTION_ADMISSION_SCORECARD
+  when_bounded_auto_completion_is_activated_from_seed_gap_or_required_operation:
+    - AUTO_COMPLETION_SCOPE_LEDGER
+  when_ai_interaction_profile_applies:
+    - AI_INTERACTION_CONTINUITY_CONTRACT
+
+naming_resolution:
+  canonical_interaction_topology_artifact: INTERACTION_TOPOLOGY_MATRIX
+  accepted_legacy_alias_during_migration: INTERACTION_TOPOLOGY_SPEC
+  new_materialization_must_use_canonical_name: true
+  alias_presence_alone_may_not_create_duplicate_authority: true
+
 closure_policy:
-  missing_required_output: BLOCK
+  missing_applicable_required_output: BLOCK
+  missing_non_applicable_conditional_output: NOT_A_BLOCKER
   unresolved_required_operation: BLOCK
-  unresolved_parent_child_relation: BLOCK
+  unresolved_parent_child_relation_when_hierarchy_applies: BLOCK
   atomic_workbench_fragmentation: BLOCK
   authority_gap: BLOCK
   ai_invention_of_missing_product_behavior: FORBIDDEN
   detected_blocker_is_repaired_blocker: false
+  applicability_must_be_proven_before_missing_output_is_counted_as_blocker: true
+
+test_correction_cleanup:
+  lifecycle_component: TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE_DELTA.yaml
+  temporary_artifact_root: governance/test-temporary
+  temporary_artifact_may_be_current_authority: false
+  governance_worthy_fix_must_be_promoted_before_cycle_close: true
+  cleanup_and_zero_residual_scan_required_before_cycle_close: true
