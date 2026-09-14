@@ -1,0 +1,48 @@
+schema_version: 1
+binding_uid: GOV-TEST-STAGE01-ACTIVE-BINDING-001
+binding_role: ACTIVE_STAGE01_TEST_ARTIFACT_TO_CURRENT_GOVERNANCE_BINDING
+status: ACTIVE_TEST_BINDING
+
+current_governance_resolution:
+  registry_ref: governance/specifications/REGISTRY.yaml
+  governance_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY
+  locator_mode: REGISTRY_ONLY
+  version_labels_are_locator: false
+  copied_runtime_digest_required: false
+
+artifact_semantics:
+  governance_overlay_field: CREATION_PROVENANCE_ONLY
+  historical_version_labels_may_be_preserved: true
+  historical_version_labels_may_select_current_governance: false
+  artifact_content_rewrite_for_display_version_change: false
+  artifact_hash_rewrite_for_display_version_change: false
+  current_governance_must_be_resolved_at_validation_runtime: true
+
+scope:
+  CORE-01:
+    stage_uid: STAGE-01
+    expected_result: PASS
+    artifacts:
+      - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
+        creation_governance_overlay: v2.1.8
+      - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
+        creation_governance_overlay: v2.1.9
+      - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
+        creation_governance_overlay: v2.1.10
+  ASSET-01:
+    stage_uid: STAGE-01
+    expected_result: PASS
+    artifacts:
+      - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml
+        creation_governance_overlay: v2.1.8
+      - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT/ASSET-01/VISUAL_BASE_BLUEPRINT.yaml
+        creation_governance_overlay: v2.1.9
+      - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING/ASSET-01/BLUEPRINT_BINDING_MANIFEST.yaml
+        creation_governance_overlay: v2.1.10
+
+binding_rules:
+  - Active Stage-01 validation MUST resolve current governance through REGISTRY.yaml.
+  - governance_overlay inside preserved Stage-01 artifacts is provenance only and MUST NOT be used as a locator.
+  - Display-version changes MUST NOT force Stage-01 artifact or artifact-hash rewrites.
+  - Immutable governance UID is the active governance identity.
+  - Historical receipts may retain old versioned references only as historical evidence and MUST NOT be active pointers.
