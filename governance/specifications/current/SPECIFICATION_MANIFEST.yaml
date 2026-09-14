@@ -1,5 +1,5 @@
 schema_version: 1
-artifact_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY-SPEC-PROTECTION
+artifact_uid: GOV-REV-20260915-STAGE-REMEDIATION-CLOSURE-PROTOCOL
 artifact_type: STABLE_CURRENT_SPECIFICATION_MANIFEST
 normative_status: ACTIVE_TEST_SPECIFICATION_NOT_FORMAL_FREEZE
 formal_current_authority: false
@@ -15,6 +15,8 @@ components:
     file: TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE.yaml
   - uid: GOV-COMP-SPECIFICATION-MUTATION-CONTROL
     file: SPECIFICATION_MUTATION_CONTROL.yaml
+  - uid: GOV-COMP-STAGE-TEST-REMEDIATION-CLOSURE-PROTOCOL
+    file: STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
 
 source_lineage:
   verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_COMPONENT_VERIFIED.zip
@@ -38,6 +40,16 @@ specification_change_control:
   non_normative_findings_ledger: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
   preexisting_authorization_receipt_required: true
   atomic_uid_registry_manifest_update_required: true
+
+test_remediation_closure_protocol:
+  component: STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
+  audit_only_may_close_remediable_gap: false
+  same_reproducible_gap_after_claimed_fix: REMEDIATION_FAILURE
+  full_line_high_pressure_gate_before_every_fresh_stage_test_or_retest: true
+  clean_predecessor_baseline_before_every_fresh_test_or_retest: true
+  discovered_remediable_gap_must_be_materially_eliminated_before_stage_advance: true
+  hidden_defect_sweep_after_known_fix: true
+  pilot_full_lifecycle_closure_required_before_other_page_scale_out: true
 
 stage02_applicability:
   always_for_target_page_stage02:
@@ -67,3 +79,7 @@ closure_policy:
   authority_gap: BLOCK
   ai_invention_of_missing_product_behavior: FORBIDDEN
   governance_definition_pass_may_not_mark_product_stage_complete: true
+  successful_audit_with_reproducible_remediable_gap: NOT_CLOSURE
+  remediable_gap_elimination_count_must_equal_discovered_denominator_before_stage_closure: true
+  prior_known_defect_signature_must_be_zero_on_fresh_retest: true
+  hidden_defect_sweep_must_pass_before_stage_closure: true

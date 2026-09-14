@@ -10,12 +10,14 @@ stable_entrypoint:
   active_test_state: governance/test/ACTIVE_STATE.yaml
 
 active_specification:
-  governance_uid: GOV-REV-20260914-INTERACTION-TOPOLOGY-AI-CONTINUITY-SPEC-PROTECTION
+  governance_uid: GOV-REV-20260915-STAGE-REMEDIATION-CLOSURE-PROTOCOL
   display_version: v2.1.14
   aliases:
     - v2.1.14
     - product-neutral-interaction-topology-ai-continuity
     - explicit-specification-mutation-protection
+    - stage-test-remediation-closure-protocol
+    - remediation-before-stage-advance
   status: ACTIVE_TEST_SPECIFICATION_NOT_FORMAL_FREEZE
   formal_current_authority: false
 
@@ -52,6 +54,17 @@ specification_mutation_control:
   authorization_receipt_root: governance/test/spec_change_authorizations
   authorization_must_preexist_mutation_commit: true
   protected_mutation_guard: governance/ci/specification_mutation_guard.py
+
+test_remediation_closure_protocol:
+  component_ref: governance/specifications/current/STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
+  mandatory_for_every_product_stage_test_and_retest: true
+  full_line_high_pressure_pretest_required: true
+  audit_only_blocked_loop_is_progress: false
+  material_remediation_required_for_remediable_gap: true
+  known_defect_signature_must_be_zero_before_stage_advance: true
+  hidden_defect_sweep_required: true
+  pilot_full_lifecycle_before_other_page_scale_out: true
+  specification_promotion_still_governed_by_mutation_control: true
 
 test_layer_separation:
   normative_specifications_root: governance/specifications
