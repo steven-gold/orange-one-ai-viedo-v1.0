@@ -57,29 +57,39 @@ findings:
     evidence: "SPECIFICATION_MANIFEST declares verified_source_file_count=75 and exact_full_zip_binary_materialized_in_git=false."
     disposition: OPEN_INFRASTRUCTURE_REMEDIATION
     specification_change_required: false
-    required_fix: "Materialize or otherwise provide exact hash-verifiable full source to GitHub CI without making version-named paths the active locator."
+    required_fix: "Materialize exact hash-verifiable 75-file source under the non-normative GitHub CI source root without making version-named paths the active governance locator."
 
   - finding_uid: FIND-20260914-006
     class: GITHUB_FULL_LIFECYCLE_VALIDATION_COVERAGE_GAP
-    title: Existing 13/13 stress gate covers Registry/binding/current Stage-01-to-Stage-02 classification, not complete 11-stage governance definition/regression source package
-    evidence: "Current GitHub Current Specification materializes three active components while source lineage contains 75 files and an 11-stage lifecycle registry."
+    title: Existing registry stress gate is not the complete 11-stage 75-file governance regression system gate
+    evidence: "Current GitHub Current Specification is a stable active projection while source lineage contains 75 files and an 11-stage lifecycle registry."
     disposition: OPEN_CI_REMEDIATION
     specification_change_required: false
-    required_fix: "Add full-source integrity + mandatory regression matrix + 11-stage definition coverage gate; keep actual page execution state independent and fail-closed."
+    required_fix: "Add full-source integrity + all 17 mandatory regression suites + 11-stage definition coverage as one unskippable Round-1 system gate; keep practical product execution as separate Round 2."
 
   - finding_uid: FIND-20260914-007
     class: TEST_HARNESS_BUG
     title: Single-use specification authorization guard included current HEAD in prior-use search
     evidence: "GitHub run 34822640060 blocked the first authorized spec mutation because git log HEAD^ --all reintroduced the current HEAD through --all."
-    disposition: OPEN_GUARD_HARNESS_REPAIR
+    disposition: RESOLVED_GUARD_HARNESS_ONLY
     specification_change_required: false
     formal_specification_mutated_for_fix: false
-    required_fix: "Enumerate all commits with hashes, exclude the exact current HEAD, then search remaining commit bodies for prior authorization use."
+    resolution: "Enumerate all commits with hashes, exclude the exact current HEAD, then search remaining commit bodies for prior authorization use. Verified by later mutation admission run 34822937460."
 
-execution_blockers_not_specification_defects:
-  CORE-01_STAGE02_BLOCKED: 7
-  ASSET-01_STAGE02_BLOCKED: 6
-  classification: PRODUCT_EXECUTION_OUTPUT_GAPS
-  may_be_promoted_to_spec_defect_without_evidence: false
+  - finding_uid: FIND-20260914-008
+    class: VALIDATOR_SCOPE_BUG
+    title: Stage-01 registry binding validator required Stage-02 runtime result-evidence fields after Stage-02 clean reset
+    evidence: "GitHub reset run 34824307982 failed validate_stage01_registry_binding.py because it required RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT/static-result-pointer fields that belong to an executed Stage-02 result state."
+    disposition: OPEN_VALIDATOR_REPAIR
+    specification_change_required: false
+    formal_specification_mutated_for_fix: false
+    required_fix: "Keep Stage-01 identity/provenance invariants unconditional; require Stage-02 runtime result-evidence fields only when ACTIVE_STATE declares Stage-02 executed. Stage-02 NOT_EXECUTED must not require or recreate those fields."
+
+historical_stage2_execution_findings:
+  prior_CORE-01_STAGE02_BLOCKED: 7
+  prior_ASSET-01_STAGE02_BLOCKED: 6
+  current_authority_after_explicit_reset: NOT_EXECUTED_NON_AUTHORITATIVE
+  may_influence_next_stage2_run: false
+  classification: HISTORICAL_PRODUCT_EXECUTION_OUTPUT_GAPS
 
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER
