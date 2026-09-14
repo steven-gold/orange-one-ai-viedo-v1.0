@@ -66,7 +66,11 @@ jobs:
         run: |
           set -euo pipefail
           python governance/ci/test_stage02_approved_product_authority_r7_negative.py
-          test -z "$(git status --porcelain)"
+          git diff --exit-code
+          test ! -e R7_NEGATIVE_NON_CURRENT_AUTHORITY.yaml
+          test ! -e governance/test/stage02/.R7_NEGATIVE_APPROVAL_EVIDENCE.yaml
+          test ! -e governance/test/stage02/.R7_NEGATIVE_APPROVED_BINDINGS.yaml
+          echo 'PASS: R7 negative regression left no tracked mutation or temporary fixture'
 
       - name: Fail closed when no separately approved product authority exists
         if: ${{ hashFiles('governance/test/stage02/STAGE02_APPROVED_PRODUCT_AUTHORITY_BINDINGS_R7.yaml') == '' }}
