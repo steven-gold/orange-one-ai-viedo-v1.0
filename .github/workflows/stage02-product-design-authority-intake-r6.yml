@@ -37,12 +37,20 @@ jobs:
       - name: Enforce frozen Current Specification
         run: python governance/ci/specification_mutation_guard.py
 
-      - name: Revalidate current Stage-02 materialized truth before intake generation
+      - name: Resolve Current governance registry and closure protocol
         run: |
           set -euo pipefail
-          python governance/ci/validate_current_stage2_materialized_closure.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_stage_test_remediation_closure_protocol.py
+
+      - name: Revalidate current external-authority-aware Stage-02 truth before intake generation
+        run: |
+          set -euo pipefail
+          python governance/ci/validate_stage02_successor_integrity_external_aware_r3.py
+          python governance/ci/validate_current_stage2_materialized_closure_external_aware_r3.py
           python governance/ci/validate_current_stage2_functional_remediation_r3.py
-          python governance/ci/validate_stage02_successor_integrity.py
+          python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
+          python governance/ci/validate_stage02_remediation_reset_continuity_external_aware_r3.py
 
       - name: Build exact 150-record fail-closed Authority Intake contract
         run: python governance/ci/build_stage02_product_design_authority_intake_r6.py
