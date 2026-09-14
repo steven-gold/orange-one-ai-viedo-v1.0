@@ -1,0 +1,33 @@
+schema_version: 1
+artifact_uid: STAGE02-ACTION-CONTROL-TRIGGER-CURRENT-AUTHORITY-AUDIT-20260914-001
+artifact_type: NON_NORMATIVE_STAGE02_REMEDIATION_EVIDENCE
+normative_authority: false
+stage_uid: STAGE-02
+page_uid: ASSET-01
+category: ACTION_WITHOUT_CONTROL_OR_TRIGGER
+source_head_sha: ceb690775cf6d34d447de9f3cbc4f47c46e415d2
+github_run_id: 34874328002
+github_job_id: 104077647482
+github_artifact_id: 10360880586
+github_artifact_digest: sha256:a6a50fbbf92282e8989b2e8832a94566c96c7a3232687c3b32836171bd7f1132
+result: AUDIT_PASS_PRODUCT_GAP_REMAINS_BLOCKED
+fresh_denominator:
+  total: 1
+blocked_action_uid: ASSET-01-ACT-FINDING-CREATE
+current_control_trigger_authority:
+  exact_bindings_materializable: 0
+  authorized_gap_removals: 0
+  blocked: 1
+safety:
+  exact_stage2_fresh_scanner_predicate_reused: true
+  semantic_inference_used: false
+  prior_stage2_results_used: false
+  ai_autofill_used: false
+  inference_used: false
+  current_specification_mutated: false
+  stage1_product_source_mutated: false
+  website_construction_allowed: false
+  deployment_allowed: false
+classification: AUTHORITY_BLOCKED_PRODUCT_ACTION_TRIGGER_GAP
+rule: "Only an exact registered control.action_uid, exact transition trigger resolving to the action_uid, or an explicit non-empty action trigger_event_uid/trigger_uid/invocation/system_trigger/trigger_kind may satisfy this gap. Neighboring controls, labels, route identity, or semantic similarity are not authority."
+status: OPEN_AWAITING_EXACT_PRODUCT_ACTION_TRIGGER_AUTHORITY
