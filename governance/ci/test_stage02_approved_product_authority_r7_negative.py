@@ -11,13 +11,21 @@ ROOT = Path(__file__).resolve().parents[2]
 R6 = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.yaml'
 CORE_SOURCE_REL = '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml'
 CORE_SOURCE = ROOT / CORE_SOURCE_REL
+ASSET_SOURCE_REL = '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml'
+ASSET_SOURCE = ROOT / ASSET_SOURCE_REL
+CURRENT_MANIFEST = ROOT / '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml'
 TMP_SOURCE = ROOT / 'R7_NEGATIVE_NON_CURRENT_AUTHORITY.yaml'
 TMP_EVIDENCE = ROOT / 'governance/test/stage02/.R7_NEGATIVE_APPROVAL_EVIDENCE.yaml'
 TMP_INPUT = ROOT / 'governance/test/stage02/.R7_NEGATIVE_APPROVED_BINDINGS.yaml'
 
 import sys
 sys.path.insert(0, str((ROOT / 'governance/ci').resolve()))
-from validate_stage02_approved_product_authority_r7 import validate  # noqa: E402
+from validate_stage02_approved_product_authority_r7 import (  # noqa: E402
+    load as validator_load,
+    prove_current_admissibility,
+    prove_revision_provenance,
+    validate,
+)
 
 
 def sha256_file(path: Path) -> str:
@@ -117,6 +125,21 @@ def expect_block(expected: str) -> None:
     raise AssertionError(f'EXPECTED_BLOCK_NOT_RAISED:{expected}')
 
 
+def expect_revision_block(source_doc: dict, provenance: dict, requested_revision: str, expected: str) -> None:
+    buf = StringIO()
+    try:
+        with redirect_stderr(buf):
+            prove_revision_provenance(source_doc, provenance, requested_revision, 'R7-REVISION-NEGATIVE-FIXTURE')
+    except SystemExit as exc:
+        if exc.code == 0:
+            raise AssertionError(f'EXPECTED_REVISION_BLOCK_BUT_EXITED_ZERO:{expected}')
+        text = buf.getvalue()
+        if expected not in text:
+            raise AssertionError(f'WRONG_REVISION_BLOCK:expected={expected}:actual={text!r}')
+        return
+    raise AssertionError(f'EXPECTED_REVISION_BLOCK_NOT_RAISED:{expected}')
+
+
 def test_non_current_source_rejected(base: dict) -> None:
     binding = {
         'action_uid': base['target_uid'],
@@ -146,6 +169,23 @@ def test_binding_not_in_current_source_rejected(base: dict) -> None:
     expect_block('R7_EXACT_BINDING_NOT_PHYSICALLY_PRESENT_IN_AUTHORITY')
 
 
+def test_manifest_revision_provenance_for_current_asset_source() -> None:
+    if not ASSET_SOURCE.is_file() or not CURRENT_MANIFEST.is_file():
+        raise AssertionError('ASSET_OR_CURRENT_MANIFEST_MISSING')
+    source_doc = validator_load(ASSET_SOURCE)
+    if any(str(v) for v in (
+        (source_doc.get('authority') or {}).get('version'),
+        (source_doc.get('authority') or {}).get('revision'),
+    ) if v not in (None, '')):
+        raise AssertionError('ASSET_FIXTURE_UNEXPECTEDLY_HAS_INTRINSIC_REVISION')
+    provenance = prove_current_admissibility(ASSET_SOURCE_REL, ASSET_SOURCE)
+    manifest_revision = str((validator_load(CURRENT_MANIFEST).get('authority') or {}).get('revision'))
+    kind = prove_revision_provenance(source_doc, provenance, manifest_revision, 'R7-ASSET-MANIFEST-REVISION-FIXTURE')
+    if kind != 'CURRENT_AUTHORITY_MANIFEST_REVISION_WITH_EXACT_SOURCE_HASH':
+        raise AssertionError(f'WRONG_MANIFEST_REVISION_PROVENANCE_KIND:{kind}')
+    expect_revision_block(source_doc, provenance, 'R7-ARBITRARY-REVISION-NOT-AUTHORITY', 'R7_AUTHORITY_REVISION_NOT_PROVEN')
+
+
 def cleanup() -> None:
     for path in (TMP_SOURCE, TMP_EVIDENCE, TMP_INPUT):
         path.unlink(missing_ok=True)
@@ -157,10 +197,13 @@ def main() -> None:
         base = core_payload_base()
         test_non_current_source_rejected(base)
         test_binding_not_in_current_source_rejected(base)
+        test_manifest_revision_provenance_for_current_asset_source()
     finally:
         cleanup()
     print('PASS: R7 rejects a physically present but non-Current authority source')
     print('PASS: R7 rejects caller-supplied exact_binding that is not physically represented in Current authority bytes')
+    print('PASS: R7 accepts frozen Current manifest revision as provenance for an exact hashed Current member lacking intrinsic revision')
+    print('PASS: R7 rejects arbitrary revision not proven by source or Current manifest')
     print('PASS: negative fixtures cleaned; no product/spec/Stage-01/Stage-02 output mutation performed')
 
 
