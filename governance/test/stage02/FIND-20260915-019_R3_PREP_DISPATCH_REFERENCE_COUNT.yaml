@@ -1,0 +1,36 @@
+schema_version: 1
+finding_uid: FIND-20260915-019
+artifact_type: NON_NORMATIVE_TEST_HARNESS_FINDING
+normative_authority: false
+class: TEST_HARNESS_OR_VALIDATOR_BUG
+title: R3 clean-baseline dispatch assumed a single continuity-validator reference although the target source contains two exact references
+status: OPEN_REMEDIATION
+stage_uid: STAGE-02
+observed_run_id: 34898566892
+observed_job_id: 104158667370
+observed_head_sha: a8ea2c9699b435b37c2cfa983fd52d704dd00198
+failed_step: Reset only R3 execution evidence while preserving verified remediation
+failure_signature: "R3_PREP_VALIDATOR_BINDING_DRIFT:ROOT / 'governance/ci/validate_stage02_remediation_reset_continuity_r3.py'"
+owning_harness: governance/ci/prepare_stage02_external_authority_reexecution_clean_baseline_r3_dispatch.py
+root_cause: PREP_DISPATCH_ASSUMED_SINGLE_CONTINUITY_VALIDATOR_REFERENCE_BUT_SOURCE_CONTAINS_TWO_EXACT_REFERENCES
+verified_pre_failure_state:
+  successor_integrity: PASS
+  structural_materialization: PASS
+  bounded_functional_materialization: PASS_17_OF_17
+  gap006_exact_authority_successor: PASS_4_OF_4
+  full_line_system_gate_executed_in_failed_run: false
+  fresh_r3_stage02_reexecution_executed_in_failed_run: false
+required_fix:
+  - keep the structural-validator substitution exact and single-occurrence
+  - require exactly two continuity-validator references in the prep source
+  - replace both continuity-validator references with the external-aware R3 continuity validator
+  - block if either expected occurrence count drifts
+  - rerun clean reset then full-line SYSTEM gate then fresh R3 Stage-02 execution
+formal_specification_change_required: false
+formal_specification_mutated_for_fix: false
+stage02_result_changed_by_this_finding: false
+current_authoritative_effective_blocker_count_remains: 154
+stage02_exit_allowed: false
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
