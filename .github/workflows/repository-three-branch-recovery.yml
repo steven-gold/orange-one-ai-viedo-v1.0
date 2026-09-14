@@ -1,19 +1,18 @@
-name: Repository three-branch recovery
+name: Repository three-branch authority guard
 
 on:
   push:
     branches:
-      - rebuild-v2.1.1
+      - '**'
 
 permissions:
   contents: write
 
 jobs:
-  recover:
-    if: github.event.head_commit.message == 'repo(recovery): restore main/new pre-0912 and purge post-0912 temp branches'
+  enforce:
     runs-on: ubuntu-latest
     steps:
-      - name: Restore main/new and remove post-0912 temporary branches
+      - name: Enforce primary refs and remove post-0912 temporary refs
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -33,20 +32,20 @@ jobs:
 
           patch_ref() {
             local branch="$1" sha="$2"
-            echo "Restoring ${branch} -> ${sha}"
+            echo "ENFORCE ${branch} -> ${sha}"
             api -X PATCH \
               "https://api.github.com/repos/${REPO}/git/refs/heads/${branch}" \
-              -d "{\"sha\":\"${sha}\",\"force\":true}" >/tmp/ref-${branch}.json
-            test "$(jq -r '.object.sha' /tmp/ref-${branch}.json)" = "${sha}"
+              -d "{\"sha\":\"${sha}\",\"force\":true}" >"/tmp/ref-${branch}.json"
+            test "$(jq -r '.object.sha' "/tmp/ref-${branch}.json")" = "${sha}"
           }
 
           patch_ref main "${MAIN_TARGET}"
           patch_ref new "${NEW_TARGET}"
 
-          # GitHub's branch API does not expose branch creation timestamps.
-          # Therefore cleanup uses two conservative signals:
-          # (1) branch head committer timestamp is on/after the 2026-09-12 Taipei cutoff; OR
-          # (2) branch is one of the known GPT temporary/rebuild-helper refs created during the bad run.
+          # GitHub branch records do not expose creation timestamps.
+          # We therefore delete a non-primary ref when either:
+          #   A. its head commit is at/after 2026-09-12 00:00 Asia/Taipei; or
+          #   B. it matches a known GPT temporary/helper namespace from the bad run.
           known_bad='^(tmp-|rebuild-v2\.1\.1-(cleanup-safety|foundation-safety|sourcefacts-staging|v215-pre-v216-sync-safety)$|governance-pilot/)'
 
           api "https://api.github.com/repos/${REPO}/branches?per_page=100" >/tmp/branches.json
@@ -67,7 +66,7 @@ jobs:
             commit_date="$(jq -r '.commit.committer.date // .commit.author.date' <<<"${commit_json}")"
 
             delete=false
-            if [[ "${commit_date}" >="${CUTOFF}" ]]; then
+            if [[ "${commit_date}" > "${CUTOFF}" || "${commit_date}" == "${CUTOFF}" ]]; then
               delete=true
             fi
             if [[ "${branch}" =~ ${known_bad} ]]; then
@@ -83,7 +82,7 @@ jobs:
                 -H "X-GitHub-Api-Version: 2022-11-28" \
                 "https://api.github.com/repos/${REPO}/git/refs/heads/${encoded}")"
               if [[ "${code}" != "204" ]]; then
-                echo "Delete failed: ${branch} HTTP ${code}"
+                echo "DELETE_FAILED ${branch} HTTP ${code}"
                 cat /tmp/delete.json || true
                 exit 1
               fi
@@ -98,6 +97,8 @@ jobs:
           echo '--- PRESERVED ---'
           cat /tmp/preserved.txt
 
-          # Final hard assertion for the two restored primary refs.
-          test "$(api "https://api.github.com/repos/${REPO}/git/ref/heads/main" | jq -r '.object.sha')" = "${MAIN_TARGET}"
-          test "$(api "https://api.github.com/repos/${REPO}/git/ref/heads/new" | jq -r '.object.sha')" = "${NEW_TARGET}"
+          main_now="$(api "https://api.github.com/repos/${REPO}/git/ref/heads/main" | jq -r '.object.sha')"
+          new_now="$(api "https://api.github.com/repos/${REPO}/git/ref/heads/new" | jq -r '.object.sha')"
+          test "${main_now}" = "${MAIN_TARGET}"
+          test "${new_now}" = "${NEW_TARGET}"
+          echo "PRIMARY_REFS_OK main=${main_now} new=${new_now} rebuild-v2.1.1=${GITHUB_SHA}"
