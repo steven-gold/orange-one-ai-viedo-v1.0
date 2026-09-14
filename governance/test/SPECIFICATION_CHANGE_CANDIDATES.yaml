@@ -67,6 +67,15 @@ findings:
     specification_change_required: false
     required_fix: "Add full-source integrity + mandatory regression matrix + 11-stage definition coverage gate; keep actual page execution state independent and fail-closed."
 
+  - finding_uid: FIND-20260914-007
+    class: TEST_HARNESS_BUG
+    title: Single-use specification authorization guard included current HEAD in prior-use search
+    evidence: "GitHub run 34822640060 blocked the first authorized spec mutation because git log HEAD^ --all reintroduced the current HEAD through --all."
+    disposition: OPEN_GUARD_HARNESS_REPAIR
+    specification_change_required: false
+    formal_specification_mutated_for_fix: false
+    required_fix: "Enumerate all commits with hashes, exclude the exact current HEAD, then search remaining commit bodies for prior authorization use."
+
 execution_blockers_not_specification_defects:
   CORE-01_STAGE02_BLOCKED: 7
   ASSET-01_STAGE02_BLOCKED: 6
