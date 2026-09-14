@@ -53,20 +53,40 @@ for token in required_binding_tokens:
     if token not in binding_text:
         errors.append("STAGE01_BINDING_TOKEN_MISSING:" + token)
 
+# These are permanent Stage-01/current-governance identity invariants.
 required_state_tokens = (
     "specification_registry_ref: governance/specifications/REGISTRY.yaml",
     f"specification_uid: {resolved['governance_uid']}",
     "stage1_binding_ref: governance/test/STAGE01_ACTIVE_BINDING.yaml",
     "stage1_binding_mode: REGISTRY_UID_RUNTIME_RESOLUTION",
+)
+for token in required_state_tokens:
+    if token not in state_text:
+        errors.append("ACTIVE_STATE_TOKEN_MISSING:" + token)
+
+# Stage-02 runtime-result evidence is conditional execution evidence, not a Stage-01 binding invariant.
+# A clean Stage-02 reset MUST NOT recreate these fields merely to satisfy this validator.
+stage2_not_executed = (
+    "current_stage: STAGE-01-CLOSED" in state_text
+    and re.search(r"(?ms)^  stage2:\s*\n(?:    .*\n)*?    result:\s*NOT_EXECUTED\s*$", state_text) is not None
+)
+
+stage2_runtime_result_tokens = (
     "mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT",
     "static_result_pointer_required: false",
     "static_run_id_copy_forbidden: true",
     "static_head_sha_copy_forbidden: true",
     "static_specification_digest_copy_forbidden: true",
 )
-for token in required_state_tokens:
-    if token not in state_text:
-        errors.append("ACTIVE_STATE_TOKEN_MISSING:" + token)
+if stage2_not_executed:
+    # Clean reset semantics: old Stage-02 evidence/pointers must not survive as active state.
+    for token in stage2_runtime_result_tokens:
+        if token in state_text:
+            errors.append("STAGE2_RESET_RUNTIME_RESULT_RESIDUAL:" + token)
+else:
+    for token in stage2_runtime_result_tokens:
+        if token not in state_text:
+            errors.append("ACTIVE_STAGE2_RESULT_TOKEN_MISSING:" + token)
 
 # Active test state/binding may never point at a version-named governance directory.
 version_locator = re.compile(r"governance/(?:current|specifications)/v\d+(?:\.\d+)+")
@@ -107,7 +127,6 @@ for page, artifacts in EXPECTED.items():
             errors.append(f"STAGE01_CREATION_PROVENANCE_DRIFT:{rel}:expected={expected_overlay}:actual={overlay}")
         if f"artifact_ref: {rel}" not in binding_text:
             errors.append("STAGE01_BINDING_ARTIFACT_REF_MISSING:" + rel)
-        # The binding must preserve and explicitly classify the creation overlay; it must not silently rewrite it.
         artifact_marker = f"artifact_ref: {rel}"
         marker_at = binding_text.find(artifact_marker)
         overlay_at = binding_text.find(f"creation_governance_overlay: {expected_overlay}", marker_at)
@@ -127,4 +146,8 @@ print("PASS: Stage-01 CORE-01 and ASSET-01 artifacts remain byte-preserved histo
 print("PASS: artifact governance_overlay values are classified as creation provenance only")
 print("PASS: active Stage-01 governance identity resolves through Registry immutable UID")
 print("PASS: display-version changes do not require Stage-01 artifact/hash rewrites")
+if stage2_not_executed:
+    print("PASS: Stage-02 is NOT_EXECUTED and no Stage-02 runtime result evidence is required or retained")
+else:
+    print("PASS: executed Stage-02 runtime result evidence contract is present")
 print("PASS: active test state contains no stale static run/head/specification-digest pointer")
