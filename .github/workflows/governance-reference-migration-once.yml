@@ -38,6 +38,7 @@ jobs:
           from pathlib import Path
 
           root = Path('.github/workflows')
+          transport_name = 'governance-reference-migration-once.yml'
           old = 'governance/ci/validate_stage_test_remediation_closure_protocol.py'
           new = 'governance/ci/validate_validation_remediation_closure_protocol.py'
           expected = {
@@ -64,6 +65,8 @@ jobs:
           touched = set()
           replacements = 0
           for path in sorted([*root.glob('*.yml'), *root.glob('*.yaml')]):
+              if path.name == transport_name:
+                  continue
               text = path.read_text(encoding='utf-8')
               count = text.count(old)
               if not count:
@@ -75,7 +78,10 @@ jobs:
               raise SystemExit(f'BLOCK: consumer set drift expected={sorted(expected)} actual={sorted(touched)}')
           if replacements != 19:
               raise SystemExit(f'BLOCK: replacement denominator drift expected=19 actual={replacements}')
-          residual = [p.as_posix() for p in root.glob('*.y*ml') if old in p.read_text(encoding='utf-8')]
+          residual = [
+              p.as_posix() for p in root.glob('*.y*ml')
+              if p.name != transport_name and old in p.read_text(encoding='utf-8')
+          ]
           if residual:
               raise SystemExit(f'BLOCK: obsolete validator reference residual={residual}')
           print('PASS: exact 19/19 active workflow references migrated to canonical validator')
