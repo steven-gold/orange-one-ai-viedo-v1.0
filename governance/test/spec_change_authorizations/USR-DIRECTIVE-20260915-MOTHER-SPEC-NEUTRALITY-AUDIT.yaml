@@ -1,0 +1,57 @@
+authorization_uid: USR-DIRECTIVE-20260915-MOTHER-SPEC-NEUTRALITY-AUDIT
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-15
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+
+exact_scope:
+  purpose: >-
+    Perform a complete file-by-file audit of the reusable mother specification and its active
+    governance projection; remove or neutralize execution-instance contamination, contradictions,
+    useless or duplicated normative content, repair missing reusable governance rules, and prevent
+    future test/run/stage-specific material from being promoted into reusable mother authority.
+  required_audit_scope:
+    - .github/governance-source/active/source/12_DOCS/mother-spec/**
+    - governance/specifications/current/**
+    - governance/specifications/REGISTRY.yaml
+    - GOVERNANCE_CURRENT.yaml
+  permitted_supporting_changes:
+    - governance/ci/**
+    - governance/test/**
+    - .github/workflows/**
+    - .github/governance-source/active/source/10_REGISTRY/** only when required to separate reusable policy from a project-specific execution profile without changing product semantics
+  permitted_normative_changes:
+    - Make reusable mother authority independent of fixed Stage numbers, run IDs, attempt IDs, Rxx identifiers, workflow names, test script names, and other execution-instance identifiers.
+    - Preserve reusable semantics such as authority freeze, clean baseline, ownership-layer remediation, fresh verification, fail-closed acceptance, atomic promotion, stale-state invalidation, evidence integrity, and unresolved external-authority preservation.
+    - Replace fixed execution sequence/count authority with semantic prerequisites, capabilities, gates, and dependency constraints.
+    - Move project-specific Stage mappings into an explicitly non-global execution profile when such mapping is still operationally required.
+    - Remove active normative components that self-declare non-authoritative or otherwise contradict the Current manifest, after consumer/reference verification.
+    - Eliminate duplicate or dead normative rules when a single canonical rule owner can be established without semantic loss.
+    - Add rule-placement classification separating POLICY, EXECUTION_PROFILE, RUN_STATE, IMPLEMENTATION, and HISTORICAL_EVIDENCE.
+    - Add promotion contamination guards that block execution-instance identifiers or implementation paths from becoming reusable normative authority unless explicitly modeled as non-normative examples or profile bindings.
+    - Add manifest/file authority-consistency validation, canonical-rule-owner validation, contradiction/supersession validation, and portability validation across differently named execution profiles.
+    - Require promotion-time active-consumer inventory and projection atomicity so stale prior-governance pins cannot survive a successful promotion.
+    - Preserve historical evidence and Git history while removing unjustified active residuals.
+  excluded_scope:
+    - Inventing or changing ACPOS product/business behavior.
+    - Resolving external authority by inference or AI autofill.
+    - Deleting historical evidence solely because it contains Stage, Run, attempt, or Rxx identifiers.
+    - Production deployment or website feature construction.
+    - Treating successful governance cleanup as product-stage acceptance.
+
+completion_requirements:
+  mother_spec_files_reviewed_individually: true
+  active_governance_components_reviewed_individually: true
+  registry_and_entrypoint_reviewed: true
+  cross_file_contradiction_audit_required: true
+  active_residual_and_duplicate_audit_required: true
+  portability_guard_required: true
+  promotion_contamination_guard_required: true
+  new_immutable_governance_uid_required_for_normative_change: true
+  registry_manifest_atomic_binding_required: true
+  regression_and_stress_validation_required: true
+  no_historical_evidence_destruction: true
