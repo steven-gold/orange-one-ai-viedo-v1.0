@@ -25,6 +25,12 @@ manifest = yaml.safe_load(MANIFEST.read_text(encoding='utf-8')) or {}
 registry = yaml.safe_load(REGISTRY.read_text(encoding='utf-8')) or {}
 expected_uid = rules.get('registry_uid')
 expected_digest = rules.get('registry_digest')
+if rules.get('governance_uid_role') != 'REGISTRY_MATERIALIZATION_PROVENANCE_ONLY':
+    fail('CANONICAL_RULE_REGISTRY_GOVERNANCE_UID_ROLE_AMBIGUOUS')
+if rules.get('governance_uid_may_select_current_governance') is not False:
+    fail('CANONICAL_RULE_REGISTRY_GOVERNANCE_UID_MAY_SELECT_CURRENT')
+if rules.get('current_governance_identity_source') != 'governance/specifications/REGISTRY.yaml':
+    fail('CANONICAL_RULE_REGISTRY_CURRENT_IDENTITY_SOURCE_DRIFT')
 support = manifest.get('support_authorities') or []
 matched = [x for x in support if x.get('uid') == expected_uid]
 if len(matched) != 1:

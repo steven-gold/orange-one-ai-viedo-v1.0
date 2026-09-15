@@ -215,10 +215,14 @@ def validate(root=ROOT):
     if (pr.get('policy') or {}).get('product_neutral_reference_identity_required') is not True or (pr.get('policy') or {}).get('product_specific_identity_in_common_registry')!='BLOCK': failures.append('program_identity_product_neutral_policy_missing')
     for marker in forbidden_markers:
         if marker in pt: failures.append('product_binding_in_program_identity_registry:'+marker)
-    # Empirical product markers are allowed only inside explicit provenance of the common invariant registry.
+    # Product-specific material is legal only in explicit provenance or an explicitly
+    # non-global execution-profile projection. It remains forbidden in reusable invariants.
+    profile_identity_allowed=(reg.get('layer_classification')=='EXECUTION_PROFILE' and reg.get('global_normative_authority') is False)
     for path,val in recursive_strings(reg):
-        if any(marker and marker in val for marker in forbidden_markers) and (not path or path[0] != 'provenance'):
-            failures.append('product_marker_outside_empirical_provenance:'+('.'.join(path)))
+        has_marker=any(marker and marker in val for marker in forbidden_markers)
+        allowed=(bool(path) and path[0]=='provenance') or (profile_identity_allowed and path==('profile_uid',))
+        if has_marker and not allowed:
+            failures.append('product_marker_outside_allowed_profile_or_provenance:'+('.'.join(path)))
     if prov.get('empirical_source_role')!='DEFECT_DISCOVERY_INPUT_NOT_CURRENT_CONSTRUCTION_AUTHORITY': failures.append('empirical_product_provenance_role_invalid')
     # Generic governance runtime must not require legacy product-named environment variables.
     runtime_text=(root/'09_TESTS/governance/validate_governance.py').read_text(encoding='utf-8')

@@ -65,3 +65,14 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - Exact-value absence alone is not Authority Gap; two or more materially distinct viable behaviors are required for Product Authority escalation.
 - Stage execution uses dependency-ordered batches, local reverse-impact validation, checkpoint full sweeps, one Current Problem Register, and an append-only Resolution Ledger.
 - A normative promotion invalidates active Stage completion credit and requires a clean retry under the new Governance UID.
+
+## v2.2.0 neutral-portable governance rule
+- v2.2.0 is the verified neutral/portable predecessor source revision. Product/profile identities may exist only in explicitly non-global profile/provenance layers and MUST NOT be required to interpret reusable Mother Policy.
+- Semantic authority baseline identity remains immutable across a successor unless an explicit semantic-baseline maintenance authorization changes that baseline itself.
+
+## v2.2.1 full-line source-integrity successor rule
+- v2.2.1 is a bounded successor for reproduced Full-Line integrity defects: stale semantic-baseline hash consumers, stale revision whitelists, stale prose-coupled validators, and product-neutrality classification drift.
+- Validator/harness defects MUST be repaired at validation implementation; they MUST NOT be solved by weakening denominators, deleting expectations, or reinserting obsolete prose into Mother Policy.
+- The reusable Mother Policy MUST remain product-neutral. Product-specific profile identity is legal only in an explicitly classified non-global execution-profile/provenance context.
+- Source bytes, Root Manifest, compiled baseline, checksum manifest, deterministic package identity, external trust projection, and Current governance source-lineage projection MUST advance atomically.
+

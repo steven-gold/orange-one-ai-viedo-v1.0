@@ -16,7 +16,8 @@ def validate(root=ROOT):
     d=load(root,rel); inv=d.get('invariants') or {}
     if d.get('artifact_uid')!='REG-STAGE-EXECUTION-INVARIANT-001': failures.append('registry_uid_invalid')
     rev=str(d.get('governance_revision') or '')
-    if not (rev.startswith('v2.1.13-') or rev.startswith('v2.1.14-') or rev.startswith('v2.1.15-')): failures.append('revision_invalid')
+    root_rev=str(load(root,'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml').get('governance_revision') or '')
+    if not rev or rev != root_rev: failures.append('revision_invalid')
     scope=d.get('scope') or {}; expected=[f'STAGE-{i:02d}' for i in range(1,12)]
     if scope.get('applies_to_stages')!=expected: failures.append('stage_scope_not_all_11')
     if scope.get('stage_specific_exception_without_registered_authority')!='BLOCK': failures.append('unregistered_stage_exception_not_blocked')

@@ -44,8 +44,8 @@ results += [
  mutate_yaml('acceptance_receipt_projection_drop_blocked','10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml',lambda d:d['closure_evidence_continuity_contract'].pop('ledger_terminal_receipt_required_fields')),
  mutate_yaml('stage1_authority_tuple_weaken_blocked','10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml',lambda d:d['unresolved_external_authority_preservation_contract'].__setitem__('blueprint_carry_must_preserve_exact_identity_fields',['gap_uid'])),
  mutate_yaml('stage1_receipt_alias_allow_blocked','10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml',lambda d:d['closure_evidence_continuity_contract'].__setitem__('terminal_receipt_alias_substitution','ALLOW')),
- mutate_text('normative_authority_tuple_text_removal_blocked','12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',lambda t:t.replace('canonical tuple `gap_uid`, `authority_ref`, `disposition`, and `authority_evidence_ref`','canonical identity')),
- mutate_text('normative_receipt_schema_text_removal_blocked','12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',lambda t:t.replace('canonical six fields `provider`, `repository_or_project`, `head_sha`, `run_id`, `job_denominator`, and `conclusion`','canonical fields')),
+ mutate_text('normative_authority_tuple_text_removal_blocked','12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',lambda t:t.replace('Unresolved Authority continuity is exact, not count-only.','Unresolved Authority continuity may be count-only.')),
+ mutate_text('normative_receipt_schema_text_removal_blocked','12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',lambda t:t.replace('provider, repository/project, head SHA, evidence-cycle identity, job denominator, and conclusion','provider and conclusion')),
  mutate_text('version_rule_count_only_rule_removal_blocked','VERSIONING_RULE.md',lambda t:t.replace('Count-only, GAP-UID-only','Loose identity')),
 ]
 prev_auth=[{'gap_uid':'GAP-001','authority_ref':'A@1','disposition':'UNRESOLVED_AUTHORITY_GAP','authority_evidence_ref':'e#1'},{'gap_uid':'GAP-002','authority_ref':'B@1','disposition':'UNRESOLVED_AUTHORITY_GAP','authority_evidence_ref':'e#2'}]

@@ -1,0 +1,111 @@
+{
+  "artifact_type": "NON_NORMATIVE_AUTHORING_REFERENCE_GOVERNANCE_COVERAGE_REPORT",
+  "scope": "AUTHORING_REFERENCE_DUPLICATE_CONFLICT_RESIDUAL_GOVERNANCE",
+  "normative_authority": false,
+  "authority_sources": [
+    ".github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md",
+    ".github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md",
+    ".github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md",
+    "governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml",
+    "governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml",
+    "governance/specifications/current/GOVERNANCE_LAYER_SEPARATION_AND_PORTABILITY.yaml",
+    "governance/specifications/current/EVIDENCE_FEEDBACK_ARTIFACT_LIFECYCLE.yaml"
+  ],
+  "control_count": 13,
+  "controls": [
+    {
+      "control_id": "MOTHER_CANONICAL_OWNERSHIP",
+      "path": ".github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md",
+      "required_token_count": 6,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "MOTHER_SEARCH_AND_REFERENCE",
+      "path": ".github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md",
+      "required_token_count": 4,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "MOTHER_DUPLICATE_CONFLICT_SECOND_SYSTEM",
+      "path": ".github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md",
+      "required_token_count": 10,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "MOTHER_STUB_AND_RESIDUAL",
+      "path": ".github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md",
+      "required_token_count": 6,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "MOTHER_AUDIT_COVERAGE",
+      "path": ".github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md",
+      "required_token_count": 10,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "CURRENT_EXECUTION_PREWRITE",
+      "path": "governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml",
+      "required_token_count": 9,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "CURRENT_REFERENCE_ATOMICITY",
+      "path": "governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml",
+      "required_token_count": 7,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "CURRENT_SINGLE_RULE_OWNER",
+      "path": "governance/specifications/current/GOVERNANCE_LAYER_SEPARATION_AND_PORTABILITY.yaml",
+      "required_token_count": 4,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "CURRENT_EVIDENCE_RESIDUAL",
+      "path": "governance/specifications/current/EVIDENCE_FEEDBACK_ARTIFACT_LIFECYCLE.yaml",
+      "required_token_count": 3,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "MACHINE_PREWRITE_GUARD",
+      "path": "governance/ci/specification_mutation_guard.py",
+      "required_token_count": 9,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "MACHINE_REFERENCE_GATE",
+      "path": "governance/ci/validate_active_consumer_reference_integrity.py",
+      "required_token_count": 5,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "MACHINE_CANONICAL_GATE",
+      "path": "governance/ci/validate_canonical_rule_registry.py",
+      "required_token_count": 3,
+      "missing": [],
+      "status": "PASS"
+    },
+    {
+      "control_id": "MACHINE_LAYOUT_RESIDUAL_GATE",
+      "path": "governance/ci/validate_governance_layout.py",
+      "required_token_count": 3,
+      "missing": [],
+      "status": "PASS"
+    }
+  ],
+  "current_normative_surface_count": 11,
+  "result": "PASS",
+  "failures": []
+}

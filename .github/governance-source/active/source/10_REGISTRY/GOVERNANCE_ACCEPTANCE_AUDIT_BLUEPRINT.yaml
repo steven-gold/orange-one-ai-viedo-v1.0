@@ -5,7 +5,7 @@ blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
 owner_uid: OWNER-GOVERNANCE-ACCEPTANCE
-governance_revision: v2.1.15-stage-execution-optimization
+governance_revision: v2.2.1-full-line-source-integrity
 normative_section_uids:
 - WEB-GOV-04-S071
 - WEB-GOV-04-S076
@@ -53,6 +53,10 @@ current_test_evidence_sync_contract:
   constituent_success_must_not_substitute_monolithic_wrapper_pass: true
   wrapper_timeout_evidence_status: BLOCKED_TOOL_TIMEOUT
   local_component_verification_may_be_recorded_separately: true
+  predecessor_evidence_may_be_retained_as_history: true
+  predecessor_evidence_current_closure_credit: BLOCK
+  fresh_successor_revalidation_required_after_revision_change: true
+  registered_predecessor_revision_identity_required: true
 closure_evidence_continuity_contract:
   required: true
   validator_uid: VAL-GOV-034

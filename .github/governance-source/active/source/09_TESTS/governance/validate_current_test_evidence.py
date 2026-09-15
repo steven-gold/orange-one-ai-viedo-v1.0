@@ -12,10 +12,24 @@ def validate(root=ROOT):
     ref=L('11_EVIDENCE/audit/REFERENCE_SEMANTIC_REPAIR_RESULT.yaml')
     review=L('10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml')
     bp=L('10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml')
+    root_manifest=L('10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml')
     candidate=str(state.get('candidate',''))
     m=re.match(r'(v\d+\.\d+\.\d+)',candidate)
     current=m.group(1) if m else None
-    if current!='v2.1.15': failures.append('candidate_revision_not_v215:'+str(current))
+    root_revision=str(root_manifest.get('governance_revision') or '')
+    rm=re.match(r'(v\d+\.\d+\.\d+)',root_revision)
+    root_current=rm.group(1) if rm else None
+    if not current or current!=root_current: failures.append('candidate_revision_not_current_source:'+str(current)+':'+str(root_current))
+    fresh=state.get('fresh_revalidation') or {}
+    fresh_required=fresh.get('required') is True
+    if fresh_required:
+        if fresh.get('current_source_revision')!=root_revision: failures.append('fresh_revalidation_source_revision_drift')
+        if fresh.get('current_closure_credit') is not False: failures.append('fresh_revalidation_current_closure_credit_not_false')
+        if fresh.get('predecessor_evidence_current_closure_credit') is not False: failures.append('predecessor_evidence_current_closure_credit_not_false')
+        if fresh.get('embedded_preformal_execution_role')!='HISTORICAL_PREDECESSOR_EVIDENCE_ONLY': failures.append('embedded_preformal_execution_role_invalid')
+        if fresh.get('predecessor_wrapper_result_role')!='HISTORICAL_PREDECESSOR_EVIDENCE_ONLY': failures.append('predecessor_wrapper_result_role_invalid')
+        if fresh.get('persisted_head_full_line_required') is not True: failures.append('persisted_head_full_line_not_required')
+        if fresh.get('historical_evidence_may_close_successor') is not False: failures.append('historical_evidence_may_close_successor')
     contract=bp.get('current_test_evidence_sync_contract') or {}
     runner_contract=bp.get('test_runner_isolation_contract') or {}
     if runner_contract.get('required') is not True: failures.append('test_runner_isolation_contract_not_required')
@@ -37,8 +51,19 @@ def validate(root=ROOT):
         if contract.get(k) is not True: failures.append('evidence_sync_contract_not_enforced:'+k)
     if contract.get('historical_pass_substitution')!='BLOCK' or contract.get('evidence_result_denominator_drift')!='BLOCK' or contract.get('evidence_revision_drift')!='BLOCK': failures.append('evidence_sync_fail_closed_policy_missing')
     if contract.get('wrapper_timeout_evidence_status')!='BLOCKED_TOOL_TIMEOUT': failures.append('wrapper_timeout_evidence_status_missing')
-    revs=[hp.get('governance_revision'),ref.get('governance_revision'),review.get('governance_revision'),bp.get('governance_revision')]
-    if any(not str(x).startswith(current or '<none>') for x in revs): failures.append('current_evidence_revision_drift:'+str(revs))
+    if fresh_required:
+        if contract.get('predecessor_evidence_may_be_retained_as_history') is not True: failures.append('predecessor_evidence_history_retention_not_enabled')
+        if contract.get('predecessor_evidence_current_closure_credit')!='BLOCK': failures.append('predecessor_evidence_closure_credit_not_blocked')
+        if contract.get('fresh_successor_revalidation_required_after_revision_change') is not True: failures.append('fresh_successor_revalidation_not_required')
+        if contract.get('registered_predecessor_revision_identity_required') is not True: failures.append('registered_predecessor_identity_not_required')
+        pred=fresh.get('predecessor_evidence_revisions') or {}
+        if hp.get('governance_revision')!=pred.get('high_pressure'): failures.append('high_pressure_predecessor_revision_drift:'+str(hp.get('governance_revision')))
+        if ref.get('governance_revision')!=pred.get('reference_semantic'): failures.append('reference_predecessor_revision_drift:'+str(ref.get('governance_revision')))
+        if review.get('governance_revision')!=root_revision: failures.append('review_registry_revision_drift:'+str(review.get('governance_revision')))
+        if bp.get('governance_revision')!=root_revision: failures.append('acceptance_blueprint_revision_drift:'+str(bp.get('governance_revision')))
+    else:
+        revs=[hp.get('governance_revision'),ref.get('governance_revision'),review.get('governance_revision'),bp.get('governance_revision')]
+        if any(not str(x).startswith(current or '<none>') for x in revs): failures.append('current_evidence_revision_drift:'+str(revs))
     specs=sem.get('mandatory_regression_assets') or []
     for spec in specs:
         rel=spec.get('path') or ''
@@ -46,7 +71,7 @@ def validate(root=ROOT):
         if not fp.exists(): failures.append('mandatory_regression_asset_missing_for_runner_contract:'+rel)
         elif not guard_marker or guard_marker not in fp.read_text(encoding='utf-8'): failures.append('standalone_pytest_isolation_guard_missing:'+rel)
     suite_count=len(specs)
-    if suite_count!=len(specs) or suite_count<1: failures.append('mandatory_suite_denominator_invalid:'+str(suite_count))
+    if suite_count<1: failures.append('mandatory_suite_denominator_invalid:'+str(suite_count))
     expected={Path(x.get('path','')).name:x for x in specs}
     req={'test_high_pressure_hardening.py':(25,25),'test_execution_load_guard.py':(14,14),'test_prefomal_stress_repairs.py':(21,21),'test_stage1_source_to_blueprint_minimal_control.py':(33,33),'test_v2_1_0_regressions.py':(12,12),'test_v2_1_0_post_v1_8_regressions.py':(6,6),'test_bugfix_regressions.py':(30,30),'test_v2_1_7_phase_authority_bugfix.py':(25,25),'test_v2_1_8_successor_evidence_sync_bugfix.py':(24,24),'test_v2_1_9_evidence_state_closure.py':(24,24),'test_v2_1_10_closure_evidence_continuity.py':(43,43),'test_v2_1_11_binding_authority_receipt_schema.py':(54,54),'test_v2_1_12_successor_state_evidence_parse.py':(60,60),'test_v2_1_13_stage_execution_invariants.py':(26,26),'test_v2_1_14_test_feedback_spec_evolution.py':(21,21),'test_v2_1_14_product_neutral_entity_lifecycle.py':(68,68)}
     for fn,(tot,pas) in req.items():
@@ -71,12 +96,13 @@ def validate(root=ROOT):
     if hr.get('preformal_global')!=expected_wrapper or rr.get('preformal_global')!=expected_wrapper: failures.append('formal_evidence_preformal_wrapper_truth_drift')
     if hr.get('preformal_constituent_checks')!=expected_constituents or rr.get('preformal_constituent_checks')!=expected_constituents: failures.append('formal_evidence_preformal_constituent_drift')
     mr=review.get('machine_review_plan') or []
-    if len(mr)!=1 or mr[0].get('status')!='PASS' or mr[0].get('target_revision')!=current or mr[0].get('verification_method')!='MACHINE_RECOMPUTED_BY_VAL-GOV-032': failures.append('machine_review_not_current_pass')
+    expected_review_target=(fresh.get('predecessor_evidence_revisions') or {}).get('machine_review_target_revision') if fresh_required else current
+    if len(mr)!=1 or mr[0].get('status')!='PASS' or mr[0].get('target_revision')!=expected_review_target or mr[0].get('verification_method')!='MACHINE_RECOMPUTED_BY_VAL-GOV-032': failures.append('machine_review_identity_not_exact')
+    if fresh_required and (review.get('machine_review_policy') or {}).get('historical_revision_evidence')!='REVERIFY_REQUIRED': failures.append('machine_review_historical_reverify_policy_missing')
     mp=review.get('machine_review_progress') or {}
     if (mp.get('required'),mp.get('approved'),mp.get('pending'),mp.get('percentage'))!=(1,1,0,100): failures.append('machine_review_progress_not_closed')
-    # Human approval remains separate; if it claims approval, actual evidence must exist.
     hpgr=review.get('progress') or {}; current_results=review.get('current_results') or []
     if hpgr.get('approved',0)>0 and not current_results: failures.append('human_review_self_claim_without_evidence')
-    return {'status':'PASS' if not failures else 'FAIL','current_revision':current,'mandatory_suite_count':suite_count,'failures':failures}
+    return {'status':'PASS' if not failures else 'FAIL','current_revision':current,'current_source_revision':root_revision,'fresh_revalidation_required':fresh_required,'mandatory_suite_count':suite_count,'failures':failures}
 if __name__=='__main__':
     out=validate(); print(json.dumps(out,ensure_ascii=False,indent=2)); raise SystemExit(0 if out['status']=='PASS' else 1)

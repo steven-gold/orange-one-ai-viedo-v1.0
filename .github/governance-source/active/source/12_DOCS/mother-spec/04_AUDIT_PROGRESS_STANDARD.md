@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-04
-version: 2.2.0
+version: 2.2.1
 order: 4
 category: audit_progress_reporting
 required_before_execution: true

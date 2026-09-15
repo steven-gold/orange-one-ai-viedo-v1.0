@@ -13,7 +13,8 @@ def validate(root=ROOT):
     invreg=load(root,'10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml')
     inv=invreg.get('invariants') or {}
     rev=str(invreg.get('governance_revision') or '')
-    if not (rev.startswith('v2.1.14-') or rev.startswith('v2.1.15-')): failures.append('revision_not_v214_or_v215')
+    root_rev=str(load(root,'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml').get('governance_revision') or '')
+    if not rev or rev != root_rev: failures.append('revision_not_current_source_revision')
     t=inv.get('TEST_DEFECT_FEEDBACK_AND_SPEC_EVOLUTION') or {}
     sc=inv.get('SOURCE_CONTROL_SINGLE_SPEC_AUTHORITY') or {}
     gh=inv.get('GITHUB_SINGLE_SPEC_AUTHORITY') or {}
@@ -51,8 +52,14 @@ def validate(root=ROOT):
     if ur.get('github_adapter_current_spec_path')!='docs/governance/CURRENT_GOVERNANCE_SPEC.yaml': failures.append('construction_github_adapter_profile_invalid')
     d3=(root/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md').read_text(encoding='utf-8')
     d4=(root/'12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md').read_text(encoding='utf-8')
-    if 'SECTION_UID: WEB-GOV-03-S059' not in d3 or 'SOURCE_CONTROL_CURRENT_AUTHORITY_PROMOTION' not in d3: failures.append('mother_spec_03_closed_loop_missing')
-    if 'SECTION_UID: WEB-GOV-04-S075' not in d4 or 'Source-Control Single-Authority Audit' not in d4: failures.append('mother_spec_04_audit_missing')
+    s3_marker='<!-- SECTION_UID: WEB-GOV-03-S059 -->'
+    s4_marker='<!-- SECTION_UID: WEB-GOV-04-S075 -->'
+    s3=(d3.split(s3_marker,1)[1].split('<!-- SECTION_UID:',1)[0] if s3_marker in d3 else '')
+    s4=(d4.split(s4_marker,1)[1].split('<!-- SECTION_UID:',1)[0] if s4_marker in d4 else '')
+    for tok in ['Every governed validation cycle MUST durably record reproduced bugs','Each issue MUST be classified by one primary owner','Reusable-policy candidates remain non-normative until explicit authorization','provider/project adapter MUST expose exactly one Current governance entry']:
+        if tok not in s3: failures.append('mother_spec_03_closed_loop_missing:'+tok)
+    for tok in ['Audit MUST verify every governed validation cycle produces a complete defect/gap ledger','Reusable-policy repair is valid only when explicit authorization preexists','Source-Control governance audit MUST verify exactly one Current policy entry']:
+        if tok not in s4: failures.append('mother_spec_04_audit_missing:'+tok)
     vr=(root/'VERSIONING_RULE.md').read_text(encoding='utf-8')
     if 'v2.1.14 test-feedback / specification-evolution rule' not in vr: failures.append('versioning_v214_rule_missing')
     return {'status':'PASS' if not failures else 'FAIL','failures':failures,'process_steps':len(t.get('required_process_order') or []),'scope_classes':sorted(scopes.keys())}

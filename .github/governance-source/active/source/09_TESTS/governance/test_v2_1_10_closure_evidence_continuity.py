@@ -55,7 +55,7 @@ results += [
  mutate_yaml('terminal_receipt_internal_model_blocked','10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d['cross_stage_invariants']['closure_evidence_continuity']['terminal_ci_receipt'].__setitem__('model','INTERNAL_SELF_WRITTEN')),
  mutate_yaml('terminal_required_field_loss_blocked','10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d['cross_stage_invariants']['closure_evidence_continuity']['terminal_ci_receipt']['required_fields'].remove('head_sha')),
  mutate_yaml('common_bundle_s058_removal_blocked','10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',lambda d:d['mandatory_common_normative_bundles']['BUNDLE-GOV-COMMON-CORE']['section_uids'].remove('WEB-GOV-03-S058')),
- mutate_text('normative_self_reference_rule_removal_blocked','12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',lambda t:t.replace('infinite self-reference loop','self reference')),
+ mutate_text('normative_self_reference_rule_removal_blocked','12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',lambda t:t.replace('Materialization evidence and terminal CI receipt are separate identities.','Materialization and receipt evidence exist.')),
 ]
 # Dynamic transition stress.
 prev={'predecessor_facts':{'source_fact_started':True,'source_fact_completed':True,'replay_proof':'proof-A','checkpoint_sha':'abc','gate_status':'SUCCESS'}}

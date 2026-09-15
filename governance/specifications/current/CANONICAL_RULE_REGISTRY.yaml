@@ -14,95 +14,156 @@ registry_digest_scope:
 registry_digest: edeefffe7ebdfd1b626c8b3b3e12a2d27e69c94eaf0e84ea4ede913c2d7bc196
 semantic_types:
   FIXED_WORK_UNIT_ID:
-    allowed_layers: [EXECUTION_PROFILE, RUN_STATE, IMPLEMENTATION, HISTORICAL_EVIDENCE]
-    forbidden_layers: [POLICY]
+    allowed_layers:
+    - EXECUTION_PROFILE
+    - RUN_STATE
+    - IMPLEMENTATION
+    - HISTORICAL_EVIDENCE
+    forbidden_layers:
+    - POLICY
     lexical_hints:
     - (?i)\bstage(?:[-_ ]?0?\d{1,2}|\d{1,2})\b
   FIXED_WORK_UNIT_DENOMINATOR:
-    allowed_layers: [EXECUTION_PROFILE, RUN_STATE, HISTORICAL_EVIDENCE]
-    forbidden_layers: [POLICY]
+    allowed_layers:
+    - EXECUTION_PROFILE
+    - RUN_STATE
+    - HISTORICAL_EVIDENCE
+    forbidden_layers:
+    - POLICY
     lexical_hints:
     - (?i)\b11[- ]?stage\b
     - (?i)\bexactly eleven ordered stages\b
     - (?i)\bfixed lifecycle\b
   REMEDIATION_ROUND_ID:
-    allowed_layers: [RUN_STATE, IMPLEMENTATION, HISTORICAL_EVIDENCE]
-    forbidden_layers: [POLICY]
+    allowed_layers:
+    - RUN_STATE
+    - IMPLEMENTATION
+    - HISTORICAL_EVIDENCE
+    forbidden_layers:
+    - POLICY
     lexical_hints:
     - \bR\d{1,3}\b
   RUN_ID:
-    allowed_layers: [RUN_STATE, IMPLEMENTATION, HISTORICAL_EVIDENCE]
-    forbidden_layers: [POLICY]
+    allowed_layers:
+    - RUN_STATE
+    - IMPLEMENTATION
+    - HISTORICAL_EVIDENCE
+    forbidden_layers:
+    - POLICY
     lexical_hints:
     - (?i)\brun[_ -]?(?:id|uid)\b
   ATTEMPT_ID:
-    allowed_layers: [RUN_STATE, IMPLEMENTATION, HISTORICAL_EVIDENCE]
-    forbidden_layers: [POLICY]
+    allowed_layers:
+    - RUN_STATE
+    - IMPLEMENTATION
+    - HISTORICAL_EVIDENCE
+    forbidden_layers:
+    - POLICY
     lexical_hints:
     - (?i)\battempt[_ -]?(?:id|uid)\b
   IMPLEMENTATION_PATH:
-    allowed_layers: [IMPLEMENTATION, RUN_STATE, HISTORICAL_EVIDENCE]
-    forbidden_layers: [POLICY]
+    allowed_layers:
+    - IMPLEMENTATION
+    - RUN_STATE
+    - HISTORICAL_EVIDENCE
+    forbidden_layers:
+    - POLICY
     lexical_hints:
     - (?i)\b(?:workflow|script|implementation)[_ -]?path\b
   EXECUTION_TOOL_ID:
-    allowed_layers: [IMPLEMENTATION, RUN_STATE, HISTORICAL_EVIDENCE]
-    forbidden_layers: [POLICY]
+    allowed_layers:
+    - IMPLEMENTATION
+    - RUN_STATE
+    - HISTORICAL_EVIDENCE
+    forbidden_layers:
+    - POLICY
     lexical_hints:
     - (?i)\b(?:workflow|job|validator|tool)[_ -]?(?:id|uid|name)\b
 canonical_rules:
   GOV-RULE-ANTI-DRIFT-001:
     canonical_key: POLICY_MUST_NOT_BIND_FIXED_WORK_UNIT_ID
     semantic_type: FIXED_WORK_UNIT_ID
-    applicability: [POLICY, MOTHER_POLICY]
+    applicability:
+    - POLICY
+    - MOTHER_POLICY
     constraint: FORBID_IN_REUSABLE_POLICY
   GOV-RULE-ANTI-DRIFT-002:
     canonical_key: POLICY_MUST_NOT_BIND_FIXED_WORK_UNIT_DENOMINATOR
     semantic_type: FIXED_WORK_UNIT_DENOMINATOR
-    applicability: [POLICY, MOTHER_POLICY]
+    applicability:
+    - POLICY
+    - MOTHER_POLICY
     constraint: FORBID_IN_REUSABLE_POLICY
   GOV-RULE-ANTI-DRIFT-003:
     canonical_key: POLICY_MUST_NOT_BIND_REMEDIATION_ROUND_ID
     semantic_type: REMEDIATION_ROUND_ID
-    applicability: [POLICY, MOTHER_POLICY]
+    applicability:
+    - POLICY
+    - MOTHER_POLICY
     constraint: FORBID_IN_REUSABLE_POLICY
   GOV-RULE-ANTI-DRIFT-004:
     canonical_key: POLICY_MUST_NOT_BIND_RUN_ID
     semantic_type: RUN_ID
-    applicability: [POLICY, MOTHER_POLICY]
+    applicability:
+    - POLICY
+    - MOTHER_POLICY
     constraint: FORBID_IN_REUSABLE_POLICY
   GOV-RULE-ANTI-DRIFT-005:
     canonical_key: POLICY_MUST_NOT_BIND_ATTEMPT_ID
     semantic_type: ATTEMPT_ID
-    applicability: [POLICY, MOTHER_POLICY]
+    applicability:
+    - POLICY
+    - MOTHER_POLICY
     constraint: FORBID_IN_REUSABLE_POLICY
   GOV-RULE-ANTI-DRIFT-006:
     canonical_key: POLICY_MUST_NOT_BIND_IMPLEMENTATION_PATH
     semantic_type: IMPLEMENTATION_PATH
-    applicability: [POLICY, MOTHER_POLICY]
+    applicability:
+    - POLICY
+    - MOTHER_POLICY
     constraint: FORBID_NORMATIVE_BINDING_IN_REUSABLE_POLICY
   GOV-RULE-ANTI-DRIFT-007:
     canonical_key: POLICY_MUST_NOT_BIND_EXECUTION_TOOL_ID
     semantic_type: EXECUTION_TOOL_ID
-    applicability: [POLICY, MOTHER_POLICY]
+    applicability:
+    - POLICY
+    - MOTHER_POLICY
     constraint: FORBID_NORMATIVE_BINDING_IN_REUSABLE_POLICY
   GOV-RULE-ANTI-DRIFT-008:
     canonical_key: ONE_CANONICAL_OWNER_PER_SEMANTIC_RULE
     semantic_type: CANONICAL_RULE_OWNERSHIP
-    applicability: [POLICY, VALIDATOR, NORMALIZER, PROMOTION_TOOL, ACTIVE_WORKFLOW]
+    applicability:
+    - POLICY
+    - VALIDATOR
+    - NORMALIZER
+    - PROMOTION_TOOL
+    - ACTIVE_WORKFLOW
     constraint: REQUIRE_SINGLE_REGISTRY_OWNER
   GOV-RULE-ANTI-DRIFT-009:
     canonical_key: LOCAL_RULE_VOCABULARY_FORK_FORBIDDEN
     semantic_type: CANONICAL_RULE_OWNERSHIP
-    applicability: [VALIDATOR, NORMALIZER, PROMOTION_TOOL, ACTIVE_WORKFLOW]
+    applicability:
+    - VALIDATOR
+    - NORMALIZER
+    - PROMOTION_TOOL
+    - ACTIVE_WORKFLOW
     constraint: FORBID_LOCAL_FORK
   GOV-RULE-ANTI-DRIFT-010:
     canonical_key: REGISTRY_UID_AND_DIGEST_BINDING_REQUIRED
     semantic_type: CANONICAL_RULE_OWNERSHIP
-    applicability: [POLICY, VALIDATOR, NORMALIZER, PROMOTION_TOOL, ACTIVE_WORKFLOW]
+    applicability:
+    - POLICY
+    - VALIDATOR
+    - NORMALIZER
+    - PROMOTION_TOOL
+    - ACTIVE_WORKFLOW
     constraint: REQUIRE_UID_DIGEST_MATCH
 consumer_contract:
-  primary_enforcement: [RULE_UID, SEMANTIC_TYPE, LAYER_CONSTRAINT, SCHEMA]
+  primary_enforcement:
+  - RULE_UID
+  - SEMANTIC_TYPE
+  - LAYER_CONSTRAINT
+  - SCHEMA
   lexical_hints_role: SECONDARY_DEFENSE_ONLY
   local_regex_or_synonym_taxonomy: FORBIDDEN_WHEN_DUPLICATING_REGISTRY
   stale_registry_uid_or_digest: BLOCK
@@ -114,9 +175,12 @@ layer_contract:
   EXECUTION_PROFILE:
     global_normative_authority: false
     may_bind_profile_local_execution_identity: true
-  RUN_STATE: {global_normative_authority: false}
-  IMPLEMENTATION: {global_normative_authority: false}
-  HISTORICAL_EVIDENCE: {global_normative_authority: false}
+  RUN_STATE:
+    global_normative_authority: false
+  IMPLEMENTATION:
+    global_normative_authority: false
+  HISTORICAL_EVIDENCE:
+    global_normative_authority: false
 execution_profile_reference_source:
   ref: .github/governance-source/active/source/10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
   classification: EXECUTION_PROFILE_REFERENCE_SOURCE
@@ -138,3 +202,6 @@ binding_contract:
   consumer_loader: governance/ci/canonical_rule_registry.py
   validator: governance/ci/validate_canonical_rule_registry.py
 status: ACTIVE
+governance_uid_role: REGISTRY_MATERIALIZATION_PROVENANCE_ONLY
+governance_uid_may_select_current_governance: false
+current_governance_identity_source: governance/specifications/REGISTRY.yaml

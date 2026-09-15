@@ -4,14 +4,14 @@ artifact_type: AUDIT_BASELINE
 status: CURRENT_COMPILED
 canonical_path: 11_EVIDENCE/audit/AUDIT_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-AUDIT-BASELINE
-governance_revision: v2.2.0-neutral-portable-governance
+governance_revision: v2.2.1-full-line-source-integrity
 compiled_from:
   acceptance_blueprint_uid: BP-GOVERNANCE-ACCEPTANCE-001
-  acceptance_blueprint_sha256: 3e52b326e5ccf155c9b664f44a683bc44a0b3d3e58f30d4947b6b9959371a535
+  acceptance_blueprint_sha256: 26c8ffcd52a83f6e0508b7f5d8ff44e532a9986bc08bbfd9dc029667868cb0cf
   audit_catalog_uid: REG-AUDIT-CATALOG-001
-  audit_catalog_sha256: 1efdfdb4165573f40ff388fb68f0df5063a65361e23fbade49b5efb4a9c7fc3d
+  audit_catalog_sha256: 71bd4f1ff1b766cbf466f145b405f3df2096e87eb89f495b8d7ef5942cb4ea1d
   section_registry_uid: REG-NORMATIVE-SECTION-001
-  section_registry_sha256: 1c945eceb2baec56150ce92e101d76edfbd7ae22f36e1c71d2a02426fe514177
+  section_registry_sha256: e362f6850571584abedee2f296c43c921c6a3525f44f6419b7b7efb780e12646
 denominator:
   audit_item_uids:
   - AUD-GOV-001
@@ -36,26 +36,26 @@ governance_compilation:
   sources:
   - document_id: WEB-GOV-01
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-    sha256: c2d29fe7e92c7235f785de6daf3c637c68b0209a60a2981331d8ddc31c334eab
-    version: 2.2.0
+    sha256: d1dd00519ead0e4fe254f03dfcf878832c6dc8771607f955515f25e6ebdb0cfb
+    version: 2.2.1
     status: normative
     permanent_inheritance: true
   - document_id: WEB-GOV-02
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-    sha256: f21a73ad74d8037ff50b38083899c9a81fa71fc4e525c38642f9296a060f7710
-    version: 2.2.0
+    sha256: 50cfa3c738a599eff89d472e9fbec341290361bc3cb6cf8f1cd4c271aa8ff586
+    version: 2.2.1
     status: normative
     permanent_inheritance: true
   - document_id: WEB-GOV-03
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-    sha256: 30c3bae0032394d992849dcfd95b401e1f74ec618acadd257cfffc737573cca8
-    version: 2.2.0
+    sha256: 609ceb58b16af4f3ce340f6ba9895186af880d0f7fc6e0db3ece18643527d617
+    version: 2.2.1
     status: normative
     permanent_inheritance: true
   - document_id: WEB-GOV-04
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-    sha256: 41c9f7895cf9fa2c7dd5e40bd512c2726df7dfc0a1d539038c6478f29c212bd7
-    version: 2.2.0
+    sha256: 725d8b474baee27908ffb5e78506c9e859fe461857aad2c3150df0eda9bbe07e
+    version: 2.2.1
     status: normative
     permanent_inheritance: true
   counts:
@@ -2780,7 +2780,7 @@ governance_compilation:
     src: WEB-GOV-02
     line: 1130
     mode: MUST
-    hash: 669216ceb9d4106c68c2dbe4d67122e31249eaa37371f64f7b4fbd303bfca6fd
+    hash: 2f7be70c9e09ac5ff493619b8ff59979866c97ed9b22fdc80fa7777728b6b0bc
     validator: manual_semantic_guard
     auto: MANUAL_EVIDENCE
     blocking: true
@@ -5056,4 +5056,4 @@ governance_compilation:
     validator: mapping_schema_guard
     auto: AUTO
     blocking: true
-content_hash: 204f086509a573152780f47646ddb3b845d3dfa60f8a0a992e95a81f7f742213
+content_hash: ad572c581094c5ddf2b0d931be01c22bd2d5d9da5d072d076d3106a947a8c07d

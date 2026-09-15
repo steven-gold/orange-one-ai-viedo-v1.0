@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-02
-version: 2.2.0
+version: 2.2.1
 order: 2
 category: implementation_delivery
 required_before_execution: true
@@ -1127,7 +1127,7 @@ A project that requires a concrete lifecycle MUST materialize exactly one select
 
 Every profile step MUST define: step UID, semantic capability, scope mode, prerequisites/entry gate, inputs, input origins, operations, outputs, producers, validators, required evidence, failure/invalidation behavior, exit condition, and legal successor relation.
 
-Profile step names, numeric identities, counts, and ordering MUST NOT become reusable Mother Policy. The selected profile MUST inherit common policy without weakening it. Profile completion requires every applicable profile-required step to close; a profile-local 11-step ACPOS lifecycle therefore remains 11/11 for ACPOS while a different website MAY legally use a different profile.
+Profile step names, numeric identities, counts, and ordering MUST NOT become reusable Mother Policy. The selected profile MUST inherit common policy without weakening it. Profile completion requires every applicable profile-required step to close; whatever denominator the selected profile declares MUST close against that profile-local denominator, while a different adopter MAY legally use a different profile.
 
 <!-- SECTION_UID: WEB-GOV-02-S068 -->
 ## 68. Mode-Aware Governance Validation

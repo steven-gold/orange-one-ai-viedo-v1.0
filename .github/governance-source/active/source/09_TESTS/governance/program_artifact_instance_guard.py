@@ -3,7 +3,7 @@ from pathlib import Path
 import json,re,yaml,hashlib,sys,copy
 sys.dont_write_bytecode=True
 ROOT=Path(__file__).resolve().parents[2]
-SEMANTIC_BASELINE_CONTENT_HASH='9af585e1b2f289a04795a3dbc528b98380c0a64d6528dc6a6cc8cbf6995df0a6'
+SEMANTIC_BASELINE_CONTENT_HASH='81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a'
 IDENTITY_REGISTRY_UID='REG-PROGRAM-IDENTITY-AUTHORITY-001'
 
 def load(p): return yaml.safe_load(Path(p).read_text(encoding='utf-8')) or {}
