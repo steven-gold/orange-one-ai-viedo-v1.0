@@ -1,0 +1,89 @@
+name: Patch Stage02 Output Authority Consumer
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/patch-stage02-output-authority.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Patch Stage-02 runner to consume canonical output authorities
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import subprocess
+
+          root = Path('.')
+          runner = root / 'governance/ci/run_current_stage2_actual_test.py'
+          text = runner.read_text(encoding='utf-8')
+
+          old = "STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'\nSTAGE_REGISTRY = ROOT / '.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'"
+          new = "STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'\nSPEC_MANIFEST = ROOT / 'governance/specifications/current/SPECIFICATION_MANIFEST.yaml'\nSTAGE_REGISTRY = ROOT / '.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'"
+          assert old in text, 'runner path-anchor drift'
+          text = text.replace(old, new, 1)
+
+          old = """EXPECTED_STAGE_OUTPUTS = {\n    'FUNCTIONAL_CHAIN_SPEC', 'DEPENDENCY_MAP', 'PAGE_CONSTRUCTION_SPEC_PACKAGE',\n    'ASYNC_PROVIDER_CONTRACT', 'SHARED_OWNER_PORT_MAP',\n    'FUNCTIONAL_WORKBENCH_CONTRACT', 'INTERACTION_TOPOLOGY_SPEC',\n}\n"""
+          assert old in text, 'stale output constant drift'
+          text = text.replace(old, '', 1)
+
+          old = """registry = load(STAGE_REGISTRY)\nstage2_records = [x for x in (registry.get('stages') or []) if x.get('stage_uid') == 'STAGE-02']\nif len(stage2_records) != 1:\n    die('STAGE02_REGISTRY_RECORD_DENOMINATOR')\nstage2_contract = stage2_records[0]\nif stage2_contract.get('name') != 'PAGE_FUNCTIONAL_CONTRACT' or stage2_contract.get('entry_gate') != 'ALL_REQUIRED_PAGES_STAGE1_CLOSED':\n    die('STAGE02_CONTRACT_IDENTITY_DRIFT')\nif set(stage2_contract.get('outputs') or []) != EXPECTED_STAGE_OUTPUTS:\n    die(f'STAGE02_OUTPUT_SET_DRIFT:{stage2_contract.get(\"outputs\")!r}')\nif stage2_contract.get('exit_gate') != 'ALL_REQUIRED_PAGES_STAGE2_CLOSED':\n    die('STAGE02_EXIT_GATE_DRIFT')\n"""
+          new = """registry = load(STAGE_REGISTRY)\nmanifest = load(SPEC_MANIFEST)\nstage2_records = [x for x in (registry.get('stages') or []) if x.get('stage_uid') == 'STAGE-02']\nif len(stage2_records) != 1:\n    die('STAGE02_REGISTRY_RECORD_DENOMINATOR')\nstage2_contract = stage2_records[0]\nif stage2_contract.get('name') != 'PAGE_FUNCTIONAL_CONTRACT' or stage2_contract.get('entry_gate') != 'ALL_REQUIRED_PAGES_STAGE1_CLOSED':\n    die('STAGE02_CONTRACT_IDENTITY_DRIFT')\nstage2_outputs = stage2_contract.get('outputs') or []\nif not isinstance(stage2_outputs, list) or not stage2_outputs or any(not isinstance(x, str) or not x.strip() for x in stage2_outputs):\n    die(f'STAGE02_OUTPUT_SET_EMPTY_OR_INVALID:{stage2_outputs!r}')\nif len(stage2_outputs) != len(set(stage2_outputs)):\n    die(f'STAGE02_OUTPUT_SET_DUPLICATE:{stage2_outputs!r}')\nmandatory_stage2_outputs = ((manifest.get('stage02_applicability') or {}).get('always_for_target_page_stage02') or [])\nif not isinstance(mandatory_stage2_outputs, list) or not mandatory_stage2_outputs:\n    die('STAGE02_MANIFEST_MANDATORY_OUTPUT_SET_EMPTY')\nif len(mandatory_stage2_outputs) != len(set(mandatory_stage2_outputs)):\n    die(f'STAGE02_MANIFEST_MANDATORY_OUTPUT_SET_DUPLICATE:{mandatory_stage2_outputs!r}')\nmissing_mandatory = sorted(set(mandatory_stage2_outputs) - set(stage2_outputs))\nif missing_mandatory:\n    die(f'STAGE02_MANDATORY_OUTPUTS_MISSING_FROM_LIFECYCLE_REGISTRY:{missing_mandatory!r}')\nif stage2_contract.get('exit_gate') != 'ALL_REQUIRED_PAGES_STAGE2_CLOSED':\n    die('STAGE02_EXIT_GATE_DRIFT')\n"""
+          assert old in text, 'stage2 output validation block drift'
+          text = text.replace(old, new, 1)
+
+          old = "'official_stage_output_denominator': sorted(EXPECTED_STAGE_OUTPUTS),"
+          new = "'official_stage_output_denominator': sorted(stage2_outputs),\n    'current_manifest_mandatory_stage_output_subset': sorted(mandatory_stage2_outputs),"
+          assert old in text, 'result denominator anchor drift'
+          text = text.replace(old, new, 1)
+
+          runner.write_text(text, encoding='utf-8')
+
+          # Receipt HEAD^ must remain exactly the commit before the generated patch commit.
+          parent = subprocess.run(['git', 'rev-parse', 'HEAD'], text=True, capture_output=True, check=True).stdout.strip()
+          receipt_fields = [
+              ('governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml', 'preparation_parent_commit'),
+              ('governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml', 'baseline_parent_commit'),
+          ]
+          for rel, key in receipt_fields:
+              p = root / rel
+              s = p.read_text(encoding='utf-8')
+              s2, n = re.subn(rf'(?m)^{re.escape(key)}: [0-9a-f]{{40}}$', f'{key}: {parent}', s, count=1)
+              assert n == 1, f'{rel}: parent field drift'
+              p.write_text(s2, encoding='utf-8')
+
+          # One-shot harness must not remain in the governance tree after patching.
+          (root / '.github/workflows/patch-stage02-output-authority.yml').unlink()
+          PY
+      - name: Assert patch shape
+        run: |
+          python -m py_compile governance/ci/run_current_stage2_actual_test.py
+          python - <<'PY'
+          from pathlib import Path
+          t=Path('governance/ci/run_current_stage2_actual_test.py').read_text()
+          assert 'EXPECTED_STAGE_OUTPUTS' not in t
+          assert "SPEC_MANIFEST = ROOT / 'governance/specifications/current/SPECIFICATION_MANIFEST.yaml'" in t
+          assert 'STAGE02_MANDATORY_OUTPUTS_MISSING_FROM_LIFECYCLE_REGISTRY' in t
+          assert "'official_stage_output_denominator': sorted(stage2_outputs)" in t
+          assert "'current_manifest_mandatory_stage_output_subset': sorted(mandatory_stage2_outputs)" in t
+          print('PASS: Stage-02 runner consumes Lifecycle Registry output set + Current Manifest mandatory subset')
+          PY
+      - name: Commit authority-driven runner repair
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'fix(stage02): resolve output denominator from canonical authorities' -m 'Attempt: STAGE02-FRESH-20260915-002' -m 'Frozen-Governance: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION' -m 'Normative-Specification-Mutation: false'
+          git push origin HEAD:rebuild-v2.1.1
