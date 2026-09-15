@@ -160,7 +160,7 @@ findings:
   evidence: GitHub run 34890864792 freshly reexecuted Stage-02 after materializing and validating the Stage-02 product root. It correctly proved structural closure blockers 13 -> 0,
     but functional evaluation invoked the exact original raw-only fresh_scan implementation and therefore reported the same 171 raw-source gaps without evaluating whether a bounded Stage-02
     functional contract could legally satisfy any of them.
-  disposition: OPEN_HARNESS_REMEDIATION
+  disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
@@ -169,6 +169,16 @@ findings:
   required_fix: Add a dual-layer Stage-02 remediation validator that requires exact Stage-01 seed/required-operation provenance, bounded minimal closure, zero authority-gap override,
     and source-linked Stage-02 contract evidence before a raw discovery gap can count as eliminated. Preserve the raw-only scanner as the immutable discovery/regression baseline.
   stage03_may_advance_before_fix: false
+  resolution_type: TEST_VALIDATOR_IMPLEMENTATION_FIX
+  target_path: governance/ci/validate_stage02_successor_integrity.py
+  supporting_target_path: governance/ci/validate_current_stage2_materialized_closure.py
+  resolution_commit: 0b192e6c9522470f4de0dc2621a06d4c199399e7
+  supporting_resolution_commit: 131c211d46b5ec014ac6475b83b153a7b724da8c
+  validation_run: github-actions:35035977598
+  evidence_ref: github-actions://run/35035977598/artifact/10423228421/governance/test/FINDING_CLOSURE_READINESS.json
+  resolved_at: '2026-09-15T23:30:56Z'
+  reopen_condition: Reopen if immutable raw discovery is again conflated with owning-layer remediation, source-bounded materialization validation is removed, authority-gap override or semantic inference is accepted, or the exact Current persisted-head closure probe regresses.
+  semantic_fingerprint: sha256:25a0f9f6e42334760ead4b67b979a7dff1f6c0354dfdd57f92da4bc38e5b8387
 - finding_uid: FIND-20260915-016
   class: TEST_HARNESS_OR_VALIDATOR_BUG
   title: Stage-02 R2 remediability classifier accepted same-UID neighboring fields as proof of the missing functional field
@@ -176,7 +186,7 @@ findings:
     authority showed 11 EXACT_CURRENT_AUTHORITY_BINDING records where candidate evidence did not prove the missing field itself: three AUDIT_EVENT_NODE_MISSING records matched generic
     state_event values, one ACTION_WITHOUT_CONTROL_OR_TRIGGER record matched action_uid existence only, and seven SUCCESS_NEXT_STATE_BINDING_MISSING records matched action/control action_uid
     only. These records must not be materialized until a category-specific exact-field or exact deterministic UID join proves the required value.'
-  disposition: OPEN_CLASSIFIER_REMEDIATION
+  disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
@@ -185,6 +195,14 @@ findings:
     relation; SUCCESS_NEXT_STATE requires exact state_effect or deterministic action runtime_binding port_uid -> integration_port state_event provenance. Keep illegal_transition_tests
     generation limited to exact authorized transitions.
   stage03_may_advance_before_fix: false
+  resolution_type: TEST_CLASSIFIER_IMPLEMENTATION_FIX
+  target_path: governance/ci/classify_current_stage2_functional_remediability_r3.py
+  resolution_commit: b15e3c25106746a89657980172d73196b01cad0b
+  validation_run: github-actions:35035977598
+  evidence_ref: github-actions://run/35035977598/artifact/10423228421/governance/test/FINDING_CLOSURE_READINESS.json
+  resolved_at: '2026-09-15T23:30:56Z'
+  reopen_condition: Reopen if same-UID neighboring evidence can again authorize audit, trigger, or success-state completion; if an incomplete transition can authorize illegal-transition tests; or if any exact Current classifier behavior probe regresses.
+  semantic_fingerprint: sha256:f2cf2b773e34b29f51fc519719a94b12bb253475aae6474ab8af0a82df05b874
 - finding_uid: FIND-20260915-027
   class: GOVERNANCE_SPECIFICATION_REUSABILITY_GAP
   title: Governance promotion does not explicitly require atomic synchronization of
@@ -195,9 +213,9 @@ findings:
     against the canonical seventeen-output lifecycle set in run 34936690855. After
     non-normative consumer fixes, run 34937106161 passed source identity, 11/11 lifecycle,
     20/20 PRE_FORMAL, 17/17 mandatory suites and completed fresh Stage-02 execution.'
-  disposition: OPEN_FOR_STAGE_END_CONSOLIDATED_PROMOTION_REVIEW
+  disposition: ABSORBED_INTO_CANONICAL_OWNER
   specification_change_required: true
-  formal_specification_mutated_for_fix: false
+  formal_specification_mutated_for_fix: true
   current_specification_may_be_modified_from_this_finding_alone: false
   ordinary_mid_stage_normative_promotion_allowed: false
   proposed_rule_ref: governance/test/stage02/FIND-20260915-027_PROMOTION_PROJECTION_ATOMICITY.yaml
@@ -207,6 +225,18 @@ findings:
     stale prior-governance consumer blocks promotion.
   new_explicit_authorization_required_before_normative_promotion: true
   stage03_may_advance_before_candidate_review: false
+  resolution_type: CANONICAL_POLICY_ABSORPTION
+  target_path: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
+  resolution_commit: 2a894c2a92e37235a8521aeda03a8ec43e8acdfc
+  validation_run: github-actions:35035977598
+  evidence_ref: github-actions://run/35035977598/artifact/10423228421/governance/test/FINDING_CLOSURE_READINESS.json
+  resolved_at: '2026-09-15T23:30:56Z'
+  reopen_condition: Reopen if governance promotion can proceed without complete active reverse-consumer inventory, atomic projection/reference migration, stale-predecessor blocking, persisted-head reference-integrity validation, or Full-Line regression.
+  semantic_fingerprint: sha256:ae8ddf8c84c82d7e982071386e3b9dd6c5fb3db5ff535b85e364d5db02ccb3fd
+  canonical_owner_uid: GOV-COMP-SPECIFICATION-MUTATION-CONTROL
+  canonical_rule_uid: GOV-RULE-ANTI-DRIFT-008
+  canonical_rule_binding: consolidated_promotion_control+reference_migration_atomicity_control
+  normative_promotion_authorization: USR-DIRECTIVE-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
