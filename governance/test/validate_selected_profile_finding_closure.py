@@ -19,7 +19,7 @@ MATERIAL = ROOT / "governance/ci/validate_current_stage2_materialized_closure.py
 CLASSIFIER = ROOT / "governance/ci/classify_current_stage2_functional_remediability_r3.py"
 ACTIVE_REF_GATE = ROOT / "governance/ci/validate_active_consumer_reference_integrity.py"
 FULL_LINE_WORKFLOW = ROOT / ".github/workflows/governance-full-line-system-gate.yml"
-REPORT = ROOT / "governance/test/STAGE02_FINDING_CLOSURE_READINESS.json"
+REPORT = ROOT / "governance/test/FINDING_CLOSURE_READINESS.json"
 
 TARGETS = {
     "FIND-20260915-015": {
@@ -239,7 +239,7 @@ require(cp.returncode == 0, "027_ACTIVE_CONSUMER_REFERENCE_GATE_FAILED")
 workflow_text = FULL_LINE_WORKFLOW.read_text(encoding="utf-8")
 require("governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml" in workflow_text,
         "FINDING_LEDGER_NOT_BOUND_TO_FULL_LINE_PERSISTED_HEAD_GATE")
-require("validate_stage02_finding_closure_readiness.py" in workflow_text,
+require("validate_selected_profile_finding_closure.py" in workflow_text,
         "CLOSURE_READINESS_NOT_WIRED_TO_FULL_LINE")
 
 # If a target finding has already been terminalized, enforce the current terminal schema.

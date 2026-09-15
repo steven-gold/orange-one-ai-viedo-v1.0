@@ -15,7 +15,6 @@ on:
       - 'governance/test/ACTIVE_STATE.yaml'
       - 'governance/test/SELECTED_PROFILE_HISTORY_BINDING.yaml'
       - 'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
-      - 'governance/test/stage02/FIND-20260915-027_PROMOTION_PROJECTION_ATOMICITY.yaml'
   workflow_dispatch:
 
 permissions:
@@ -56,8 +55,8 @@ jobs:
         run: python governance/ci/stress_test_governance_registry.py
       - name: Validate selected execution profile and profile-local evidence
         run: python governance/ci/validate_selected_execution_profile_integrity.py
-      - name: Validate Stage-02 finding closure readiness under Current governance
-        run: python governance/ci/validate_stage02_finding_closure_readiness.py
+      - name: Validate profile-local finding closure readiness
+        run: python governance/test/validate_selected_profile_finding_closure.py
       - name: Run complete 75-file full-lifecycle high-pressure system gate
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
       - name: Expand exact Full-Line failure diagnostics
@@ -83,5 +82,5 @@ jobs:
             .github/governance-source/FULL_LINE_FAILURE_DIAGNOSTICS.json
             governance/test/AUTHORING_REFERENCE_GOVERNANCE_COVERAGE_REPORT.json
             governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
-            governance/test/STAGE02_FINDING_CLOSURE_READINESS.json
+            governance/test/FINDING_CLOSURE_READINESS.json
           if-no-files-found: error
