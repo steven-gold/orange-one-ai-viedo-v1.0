@@ -1,0 +1,111 @@
+name: Stage-02 Post-Action Signal Correctness Rollback R25
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/stage02-post-action-signal-correctness-rollback-r25.yml'
+      - 'governance/ci/classify_stage02_post_action_signal_invalidations_r25.py'
+      - 'governance/ci/validate_stage02_post_action_signal_invalidations_r25.py'
+      - 'governance/ci/rollback_stage02_invalid_post_action_signals_r25.py'
+      - 'governance/ci/validate_stage02_r25_correctness_rollback.py'
+      - 'governance/ci/run_current_stage2_r25_effective_reexecution.py'
+      - 'governance/test/stage02/STAGE02_POST_ACTION_VALIDATION_DEPENDENCY_TRACE_R15.yaml'
+      - 'governance/test/stage02/STAGE02_FUNCTIONAL_CHAIN_AUTO_REMEDIABILITY_R20.yaml'
+      - 'governance/test/stage02/STAGE02_POST_ACTION_SIGNAL_ROLE_RECLASSIFICATION_R22.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  classify-rollback-reexecute:
+    runs-on: ubuntu-latest
+    env:
+      STAGE02_FULL_LINE_CONFIRMED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install YAML dependency
+        run: python -m pip install pyyaml
+      - name: Compile R25 implementation
+        run: |
+          python -m py_compile governance/ci/classify_stage02_post_action_signal_invalidations_r25.py
+          python -m py_compile governance/ci/validate_stage02_post_action_signal_invalidations_r25.py
+          python -m py_compile governance/ci/rollback_stage02_invalid_post_action_signals_r25.py
+          python -m py_compile governance/ci/validate_stage02_r25_correctness_rollback.py
+          python -m py_compile governance/ci/run_current_stage2_r25_effective_reexecution.py
+      - name: Revalidate R15 and current R24 baseline
+        run: |
+          python governance/ci/validate_stage02_post_action_validation_dependency_trace_r15.py
+          python governance/ci/validate_stage02_r24_correctness_rollback.py
+      - name: Classify invalid post-action signal promotions R25
+        run: python governance/ci/classify_stage02_post_action_signal_invalidations_r25.py
+      - name: Validate exact R25 invalidation set
+        run: python governance/ci/validate_stage02_post_action_signal_invalidations_r25.py
+      - name: Roll back only invalid R20/R22 post-action signal promotions
+        run: python governance/ci/rollback_stage02_invalid_post_action_signals_r25.py
+      - name: Validate corrected product ledger
+        run: python governance/ci/validate_stage02_r25_correctness_rollback.py
+      - name: Prove frozen Current Specification and immutable Stage-1 Raw authority unchanged
+        run: |
+          git diff --exit-code -- governance/specifications/current
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+      - name: Fresh Stage-02 effective reexecution after R25 rollback
+        run: python governance/ci/run_current_stage2_r25_effective_reexecution.py
+      - name: Assert corrected fresh denominator and fail-closed state
+        run: |
+          python - <<'PY'
+          import json, yaml
+          from pathlib import Path
+          receipt=yaml.safe_load(Path('governance/test/stage02/STAGE02_R25_CORRECTNESS_ROLLBACK_RECEIPT.yaml').read_text())
+          result=json.loads(Path('.github/stage02-test/STAGE02_R25_EFFECTIVE_REEXECUTION_RESULT.json').read_text())
+          assert receipt['before_product_materialization_total']==34, receipt
+          assert receipt['removed_invalid_materialization_total']==17, receipt
+          assert receipt['after_product_materialization_total']==17, receipt
+          assert receipt['removed_r20_post_action_total']==15, receipt
+          assert receipt['removed_r22_post_action_total']==2, receipt
+          assert result['raw_discovery_gap_total']==171, result
+          assert result['product_materialization_elimination_count']==17, result
+          assert result['gap006_authority_elimination_count']==4, result
+          assert result['total_effective_elimination_count']==21, result
+          assert result['fresh_functional_gap_total']==150, result
+          assert result['effective_gap_categories']=={
+            'ACTION_WITHOUT_CONTROL_OR_TRIGGER':1,
+            'AUDIT_EVENT_NODE_MISSING':13,
+            'FAILURE_STATE_ERROR_BINDING_MISSING':44,
+            'PAYLOAD_INPUT_CONTRACT_MISSING':34,
+            'POST_ACTION_VALIDATION_NODE_MISSING':18,
+            'STATE_TRANSITION_LEDGER_FIELD_MISSING':40,
+          }, result
+          assert result['correctness_correction']['replacement_validation_contract_materialized'] is False, result
+          assert result['result']=='BLOCKED' and result['stage_exit_allowed'] is False, result
+          assert result['current_specification_mutated'] is False and result['immutable_stage1_source_mutated'] is False, result
+          assert result['website_construction_allowed'] is False and result['deployment_allowed'] is False, result
+          print('PASS: corrected fresh Stage-02 denominator=150; post-action validation gaps=18; fail-closed')
+          PY
+      - name: Persist R25 correction and fresh evidence
+        run: |
+          paths=(
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml'
+            'governance/test/stage02/STAGE02_POST_ACTION_SIGNAL_INVALIDATION_R25.yaml'
+            'governance/test/stage02/STAGE02_R25_CORRECTNESS_ROLLBACK_RECEIPT.yaml'
+            '.github/stage02-test/STAGE02_R25_EFFECTIVE_REEXECUTION_RESULT.json'
+            'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
+            'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
+          )
+          if [ -z "$(git status --porcelain -- "${paths[@]}")" ]; then
+            echo 'R25 outputs unchanged'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "${paths[@]}"
+          git commit -m 'test(stage02): rollback invalid post-action signal promotions and persist R25 evidence'
+          git push origin HEAD:rebuild-v2.1.1
