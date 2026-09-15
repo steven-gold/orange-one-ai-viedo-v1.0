@@ -1,0 +1,49 @@
+authorization_uid: AUTH-20260915-STAGE02-EXECUTION-OPTIMIZATION
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-15
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+
+exact_scope:
+  purpose: Consolidate test-proven Stage-02 governance/execution defects into the next Current Governance revision, optimize the execution model to prevent repeated late rework, preserve bounded automatic functional-chain completion, then invalidate and clean the prior Stage-02 attempt and restart Stage-02 from a clean predecessor baseline under the new governance UID.
+  permitted_normative_changes:
+    - Add one canonical Stage Execution Optimization component used by every lifecycle stage and later page scale-out.
+    - Require one pre-execution canonical manifest set before stage execution: REQUIRED_FIELD_MANIFEST, FUNCTIONAL_CHAIN_MANIFEST, EFFECTIVE_CONTRACT_OVERLAY, DEPENDENCY_TOPOLOGY, DENOMINATOR_SNAPSHOT, CLASSIFICATION_RULESET, CHANGE_IMPACT_MAP.
+    - Require all validators, scanners, trace builders and remediation runners to consume the same canonical manifests and prohibit local hard-coded required-field subsets or independent denominator truth.
+    - Define Raw Requirement plus legal Current successor/materialization overlay as Current Effective Contract truth.
+    - Require applicability classification before counting a missing field or contract as a blocker, including explicit REQUIRED, OPTIONAL and NOT_APPLICABLE handling.
+    - Require role-safe semantic boundaries so adjacent signals cannot be promoted across contract roles without exact authority.
+    - Require unique functional closure derivation before AUTO_REMEDIABLE classification when an exact pre-materialized value is absent.
+    - Require AUTHORITY_GAP classification to identify at least two materially distinct viable product behaviors.
+    - Preserve automatic minimal completion of missing upstream/downstream functional steps when the existing frozen chain uniquely determines the required closure.
+    - Require dependency-ordered remediation, root/shared contract repair before downstream leaf repair, local impact revalidation after each batch, and checkpoint full sweeps instead of whole-stage reconstruction after every small fix.
+    - Require a single Current Problem Register plus append-only Resolution Ledger as active issue state; snapshots are checkpoint evidence, not competing current truth.
+    - Require harness/validator defects to repair the common execution engine before continuing affected product remediation; no per-run semantic patch may become an alternate rule set.
+    - Record and prevent recurrence of Stage-02 test-proven defects: exact-value-absence misclassified as Authority Gap; action runtime owner promoted to transition mutation_owner; result/state signal promoted to validation contract; unconditional failure/recovery blocker for non-effectful client/view actions; Raw-missing counted despite legal successor closure; partial required-field lists diverging from canonical scanner; stale/intermediate denominator and register drift; untracked generated evidence not persisted; parser/validator role confusion; repeated full-register rebuild after small batches.
+    - Require stage preflight load receipt proving required normative sections and canonical manifests were consumed before functional execution.
+    - Require post-promotion Stage-02 cleanup and full restart from the immutable predecessor baseline; pre-promotion Stage-02 evidence remains historical only and cannot contribute completion credit.
+  permitted_files:
+    - governance/specifications/current/**
+    - governance/specifications/REGISTRY.yaml
+    - GOVERNANCE_CURRENT.yaml
+    - governance/ci/**
+    - governance/test/**
+    - .github/workflows/**
+  excluded_scope:
+    - New ACPOS business features not required by an already-authorized functional chain.
+    - Product authority decisions where two or more materially distinct viable behaviors remain.
+    - Replacement or invention of unresolved external authority.
+    - Stage-03 or later-stage product execution before the new Stage-02 attempt legally closes.
+    - Production deployment.
+
+restart_requirement:
+  old_stage02_attempt_must_be_invalidated_for_closure: true
+  generated_stage02_test_outputs_must_be_removed_from_active_input_paths: true
+  immutable_predecessor_authority_and_authorized_product_contracts_must_be_preserved: true
+  new_governance_uid_required: true
+  full_line_governance_gate_required_before_restart: true
+  clean_stage02_restart_required: true
