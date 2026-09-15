@@ -61,6 +61,7 @@ jobs:
       - name: Run complete 75-file full-lifecycle high-pressure system gate
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
       - name: Prove verified source remained byte-clean after destructive suites
+        if: ${{ always() }}
         shell: bash
         run: |
           set -euo pipefail
@@ -69,6 +70,7 @@ jobs:
           test -z "$bad" || { printf 'BLOCK: source runtime residue\n%s\n' "$bad" >&2; exit 1; }
           echo 'PASS: active 75-file source unchanged and runtime-residual free after full-line gate'
       - name: Upload full-line system evidence
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: governance-round1-full-line-system-evidence
