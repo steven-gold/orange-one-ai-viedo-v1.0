@@ -1,0 +1,468 @@
+schema_version: 1
+artifact_type: NON_NORMATIVE_STAGE02_POST_ACTION_SIGNAL_INVALIDATION_R25
+normative_authority: false
+stage_uid: STAGE-02
+source_head_sha: e99bde3eee1f77c79802d77e1a6514c0b56d584b
+source_r15: governance/test/stage02/STAGE02_POST_ACTION_VALIDATION_DEPENDENCY_TRACE_R15.yaml
+source_r20: governance/test/stage02/STAGE02_FUNCTIONAL_CHAIN_AUTO_REMEDIABILITY_R20.yaml
+source_r22: governance/test/stage02/STAGE02_POST_ACTION_SIGNAL_ROLE_RECLASSIFICATION_R22.yaml
+source_current_ledger: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml
+correction_basis:
+  r15_exact_validation_trace_controls_validation_semantics: true
+  fresh_scanner_requires_explicit_validation_contract: true
+  result_or_state_signal_is_validation_contract: false
+  rollback_only_no_replacement_value: true
+  current_specification_mutation_forbidden: true
+  stage1_raw_mutation_forbidden: true
+denominators:
+  r20_post_action_auto_total: 15
+  r22_post_action_auto_total: 2
+  invalid_post_action_materialization_total: 17
+  current_product_materialization_total_before_rollback: 34
+  expected_product_materialization_total_after_rollback: 17
+  blocker_reduction_claimed_before_fresh_reexecution: 0
+invalidations:
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-005
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-FLOW-START
+  source_cycle: R22
+  current_ledger_remediation_uid: R22::ASSET-01::STAGE02-R5-PRODUCT-AUTH-005
+  materialized_validation_signal: READY→ROUTING | provider.job.requested
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.1
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: READY→ROUTING | provider.job.requested
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.23.runtime_binding.result
+    proof: EXACT_PORT_UID+RESULT_OR_STATE_SIGNAL
+    key: result
+    value: NEW candidate/version; never overwrite source version
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.1.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: READY→ROUTING | provider.job.requested
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-024
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+  source_cycle: R22
+  current_ledger_remediation_uid: R22::ASSET-01::STAGE02-R5-PRODUCT-AUTH-024
+  materialized_validation_signal: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.5
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.5.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-033
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-FINDING-CREATE
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-033
+  materialized_validation_signal: IN_REVIEW→FINDING_OPEN | finding.created
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.3
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: IN_REVIEW→FINDING_OPEN | finding.created
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.3.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: IN_REVIEW→FINDING_OPEN | finding.created
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-036
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-TASK-RETRY
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-036
+  materialized_validation_signal: BLOCKED/FAILED→ROUTING | provider.job.requested
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.2
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: BLOCKED/FAILED→ROUTING | provider.job.requested
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.2.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: BLOCKED/FAILED→ROUTING | provider.job.requested
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-043
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-HANDOFF
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-043
+  materialized_validation_signal: HANDOFF_READY→HANDED_OFF; VIDEO dependency→READY | handoff.created
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.7
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: HANDOFF_READY→HANDED_OFF; VIDEO dependency→READY | handoff.created
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.0.state_event
+    proof: EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: Upstream HANDOFF_READY→HANDED_OFF; ASSET WAITING_DEPENDENCY→READY | handoff.created
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.7.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: HANDOFF_READY→HANDED_OFF; VIDEO dependency→READY | handoff.created
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-046
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-LAYER-DOC-CREATE
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-046
+  materialized_validation_signal: DRAFT→ACTIVE | layer.document.created
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.8
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: DRAFT→ACTIVE | layer.document.created
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.8.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: DRAFT→ACTIVE | layer.document.created
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-049
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-LAYER-DOC-UPDATE
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-049
+  materialized_validation_signal: ACTIVE→ACTIVE | layer.document.updated
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.9
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: ACTIVE→ACTIVE | layer.document.updated
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.9.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: ACTIVE→ACTIVE | layer.document.updated
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-052
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-LAYER-ADD
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-052
+  materialized_validation_signal: layer document version increments
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.10
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.10.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-056
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-LAYER-DELETE
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-056
+  materialized_validation_signal: layer document version increments
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.11
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.11.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-060
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-LAYER-DUPLICATE
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-060
+  materialized_validation_signal: layer document version increments
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.12
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.12.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-064
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-LAYER-REORDER
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-064
+  materialized_validation_signal: layer document version increments
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.13
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.13.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-068
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-LAYER-PROPERTIES
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-068
+  materialized_validation_signal: layer document version increments
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.14
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.14.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-072
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-LAYER-MASK
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-072
+  materialized_validation_signal: layer document version increments
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.15
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.15.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-076
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-PATCH-CREATE
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-076
+  materialized_validation_signal: asset.patch.created
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.16
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: asset.patch.created
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.16.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: asset.patch.created
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-079
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-PATCH-PREVIEW
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-079
+  materialized_validation_signal: Patch→PREVIEW_READY
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.17
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: Patch→PREVIEW_READY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.17.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: Patch→PREVIEW_READY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-083
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-PATCH-ACCEPT
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-083
+  materialized_validation_signal: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no output
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.18
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no output
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.18.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no output
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-087
+  page_uid: ASSET-01
+  action_uid: ASSET-01-ACT-PATCH-REJECT
+  source_cycle: R20
+  current_ledger_remediation_uid: R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-087
+  materialized_validation_signal: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no output
+  r15_explicit_validation_contract_evidence: []
+  r15_result_or_state_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.18
+    proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+    key: state_event
+    value: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no output
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.18.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no output
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  invalidity: RESULT_OR_STATE_SIGNAL_WAS_PROMOTED_TO_POST_ACTION_VALIDATION_CONTRACT_CONTRARY_TO_R15_AND_FRESH_SCANNER
+  rollback_required: true
+  replacement_validation_contract: null
+  semantic_inference_used_for_replacement: false
+  product_authority_value_invented: false
+current_specification_mutated: false
+immutable_stage1_source_mutated: false
+stage02_status: BLOCKED
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
+next_execution_gate: ROLLBACK_EXACT_17_INVALID_POST_ACTION_SIGNAL_PROMOTIONS_THEN_FRESH_STAGE02_REEXECUTION

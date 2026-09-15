@@ -1,24 +1,21 @@
-schema_version: 7
+schema_version: 8
 artifact_type: STAGE02_CURRENT_FINDINGS
 normative_authority: false
 stage_uid: STAGE-02
-source_cycle: R24_CORRECTNESS_ROLLBACK_INVALID_R20_TRANSITION_OWNER
-source_head_sha: 0381d3e2327c5415acdd19a66f3622e7ed5d546b
+source_cycle: R25_CORRECTNESS_ROLLBACK_INVALID_POST_ACTION_SIGNAL_PROMOTION
+source_head_sha: e99bde3eee1f77c79802d77e1a6514c0b56d584b
 raw_discovery_gap_total: 171
-validated_product_materialization_elimination_count: 34
+validated_product_materialization_elimination_count: 17
 validated_external_authority_elimination_count: 4
-invalid_r20_transition_owner_materialization_rollback_count: 4
-fresh_functional_gap_total: 133
+invalid_r20_r22_post_action_materialization_rollback_count: 17
+fresh_functional_gap_total: 150
 effective_gap_categories:
   ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
   AUDIT_EVENT_NODE_MISSING: 13
   FAILURE_STATE_ERROR_BINDING_MISSING: 44
   PAYLOAD_INPUT_CONTRACT_MISSING: 34
-  POST_ACTION_VALIDATION_NODE_MISSING: 1
+  POST_ACTION_VALIDATION_NODE_MISSING: 18
   STATE_TRANSITION_LEDGER_FIELD_MISSING: 40
-remaining_true_authority_gap_count: 1
-remaining_true_authority_gap_targets:
-- ASSET-01-ACT-CORRECTION-EXECUTE
 result: BLOCKED
 current_specification_mutated: false
 immutable_stage1_source_mutated: false
