@@ -1,0 +1,46 @@
+schema_version: 1
+artifact_type: STAGE02_CORRECTNESS_FINDING
+normative_authority: false
+finding_uid: FIND-20260915-025
+stage_uid: STAGE-02
+title: FAILURE_RECOVERY_SCANNER_APPLICABILITY_OVERREACH
+status: OPEN_VERIFIED_REMEDIATION_REQUIRED
+severity: HIGH
+source_audit_ref: governance/test/stage02/STAGE02_FAILURE_RECOVERY_APPLICABILITY_AUDIT_R28.yaml
+source_scanner: governance/ci/run_current_stage2_actual_test.py
+governance_basis:
+  WEB-GOV-01-S040C: Functional-chain nodes MUST be classified Required, Optional, or Not Applicable.
+  WEB-GOV-02-S009: Effectful Capability MUST materialize the traceable contract chain and every node MUST have error behavior.
+verified_defect:
+  description: The canonical fresh scanner emitted FAILURE_STATE_ERROR_BINDING_MISSING before applying its own effectful/action applicability boundary, causing exact non-effectful client-state/view actions to be treated as if an effectful failure/recovery contract were mandatory.
+  audited_failure_recovery_gap_count: 44
+  exact_not_applicable_false_positive_count: 21
+  still_required_or_unresolved_count: 23
+  exact_na_machine_proof_all_required:
+  - effect_type in READ_ONLY|UI_ONLY|CONTEXT_STATE
+  - runtime_binding.binding_kind == CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+  - runtime_binding.api_required == false
+  - action.error_uid absent
+  - no exact stage transition triggered by action
+  product_behavior_value_invented: false
+  recovery_value_invented: false
+required_remediation:
+  - Correct canonical fresh scanner applicability before emitting FAILURE_STATE_ERROR_BINDING_MISSING.
+  - Preserve explicit error_uid validation whenever an error_uid exists.
+  - Suppress only the exact 21 N/A cases proven by R28; do not suppress effectful, transitioned, shared-operation, or otherwise non-proven cases.
+  - Re-run a fresh Raw Stage-02 scan after the scanner correction.
+  - Reconcile existing validated product materializations and current exact external-authority resolutions against the new fresh signatures.
+  - Rebuild the current problem denominator and owning-layer remediation input packet from the corrected fresh result.
+forbidden_remediation:
+  - invent recovery values for client-only actions
+  - mutate Stage-1 Raw Authority to make the scanner pass
+  - mutate frozen Current Specification mid-stage
+  - infer NOT_APPLICABLE from absence alone
+  - reduce blockers before fresh reexecution proves the new denominator
+current_specification_mutation_allowed: false
+immutable_stage1_source_mutation_allowed: false
+stage02_status: BLOCKED
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
+closure_gate: CANONICAL_SCANNER_CORRECTION -> FRESH_STAGE02_REEXECUTION -> EXACT_DENOMINATOR_RECONCILIATION -> FINDING_VERIFIED_CLOSED
