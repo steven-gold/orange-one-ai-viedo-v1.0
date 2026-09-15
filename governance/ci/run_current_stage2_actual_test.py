@@ -124,21 +124,26 @@ def fresh_scan(page: str, raw: dict):
             ref = action.get(field)
             if not ref or ref not in registry:
                 add(gaps, page, 'IMPLEMENTATION_GAP', category, aid, str(ref))
+        rb = action.get('runtime_binding') or {}
+        kind = rb.get('binding_kind')
+        failure_recovery_not_applicable = (
+            not is_effectful
+            and kind == 'CLIENT_STATE_OR_VIEW_NO_API_REQUIRED'
+            and rb.get('api_required') is False
+            and not transitions_by_action.get(aid)
+        )
         err = action.get('error_uid')
         if err:
             if err not in errors:
                 add(gaps, page, 'IMPLEMENTATION_GAP', 'ACTION_ERROR_REF_MISSING', aid, str(err))
             elif not errors[err].get('recovery'):
                 add(gaps, page, 'IMPLEMENTATION_GAP', 'RECOVERY_CONTRACT_MISSING', aid, str(err))
-        elif not any((transitions.get(tid) or {}).get('recovery') for tid in transitions_by_action.get(aid, [])):
+        elif not failure_recovery_not_applicable and not any((transitions.get(tid) or {}).get('recovery') for tid in transitions_by_action.get(aid, [])):
             add(gaps, page, 'ARCHITECTURE_GAP', 'FAILURE_STATE_ERROR_BINDING_MISSING', aid, 'no exact action->error/recovery or transition recovery binding')
 
         explicit_trigger = present(action, 'trigger_event_uid', 'trigger_uid', 'invocation', 'system_trigger', 'trigger_kind') or bool(transitions_by_action.get(aid))
         if not controls_by_action.get(aid) and not explicit_trigger:
             add(gaps, page, 'ARCHITECTURE_GAP', 'ACTION_WITHOUT_CONTROL_OR_TRIGGER', aid, 'no registered control or exact transition/system trigger')
-
-        rb = action.get('runtime_binding') or {}
-        kind = rb.get('binding_kind')
         if not kind:
             add(gaps, page, 'IMPLEMENTATION_GAP', 'RUNTIME_BINDING_MISSING', aid, 'runtime_binding.binding_kind absent')
             continue
