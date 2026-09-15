@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import subprocess
 import sys
 import yaml
@@ -15,6 +16,7 @@ OUT = ROOT / "governance/test/stage02/STAGE02_ACTION_CONTROL_TRIGGER_DEPENDENCY_
 CHAIN = STAGE2 / "ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml"
 RAW_PAGE = RAW / "ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml"
 TARGET = "ASSET-01-ACT-FINDING-CREATE"
+UID_TOKEN = re.compile(r"\b[A-Z0-9]+(?:-[A-Z0-9]+)+\b")
 
 
 def die(msg: str) -> None:
@@ -51,24 +53,27 @@ def ev(path: Path, node_path, proof, value=None, source_kind=None):
     return item
 
 
+def exact_uid_tokens(value):
+    if not isinstance(value, str):
+        return []
+    return UID_TOKEN.findall(value)
+
+
 def relations(path: Path, doc, source_kind: str):
     controls, triggers, nonqualifying = [], [], []
     for node_path, node in walk(doc):
         if not isinstance(node, dict):
             continue
-        # Exact UI control binding: the same node must be a control and directly bind target action.
         if isinstance(node.get("control_uid"), str) and node.get("action_uid") == TARGET:
             controls.append(ev(path, node_path, "EXACT_CONTROL_UID_DIRECT_ACTION_BINDING", {
                 "control_uid": node.get("control_uid"), "action_uid": TARGET,
             }, source_kind))
-        # Exact stage transition binding.
         if isinstance(node.get("transition_uid"), str) and (node.get("trigger") == TARGET or node.get("trigger_action_uid") == TARGET):
             triggers.append(ev(path, node_path, "EXACT_STAGE_TRANSITION_ACTION_TRIGGER", {
                 "transition_uid": node.get("transition_uid"),
                 "trigger": node.get("trigger"),
                 "trigger_action_uid": node.get("trigger_action_uid"),
             }, source_kind))
-        # Exact registered system trigger binding: require trigger identity plus direct action reference.
         trigger_identity = node.get("trigger_uid") or node.get("system_trigger_uid") or node.get("event_trigger_uid")
         direct_action = node.get("action_uid") == TARGET or node.get("trigger_action_uid") == TARGET or node.get("action_ref") == TARGET
         if isinstance(trigger_identity, str) and trigger_identity and direct_action:
@@ -78,12 +83,15 @@ def relations(path: Path, doc, source_kind: str):
                 "trigger_action_uid": node.get("trigger_action_uid"),
                 "action_ref": node.get("action_ref"),
             }, source_kind))
-        # Port exposure is useful lineage evidence but explicitly not a control/trigger.
-        if node.get("exposure") == TARGET and (node.get("port_uid") or node.get("registered_operation")):
-            nonqualifying.append(ev(path, node_path, "EXACT_PORT_EXPOSURE_NOT_CONTROL_OR_TRIGGER", {
+        exposure = node.get("exposure")
+        exposure_tokens = exact_uid_tokens(exposure)
+        if TARGET in exposure_tokens and (node.get("port_uid") or node.get("registered_operation")):
+            nonqualifying.append(ev(path, node_path, "EXACT_UID_TOKEN_IN_PORT_EXPOSURE_NOT_CONTROL_OR_TRIGGER", {
                 "port_uid": node.get("port_uid"),
                 "registered_operation": node.get("registered_operation"),
-                "exposure": TARGET,
+                "exposure_raw": exposure,
+                "exposure_uid_tokens": exposure_tokens,
+                "matched_action_uid": TARGET,
             }, source_kind))
     return controls, triggers, nonqualifying
 
@@ -144,6 +152,7 @@ def main():
             "control_requires_same_node_control_uid_and_direct_action_uid": True,
             "stage_trigger_requires_transition_uid_and_direct_trigger_action": True,
             "system_trigger_requires_trigger_identity_and_direct_action_reference": True,
+            "port_exposure_uid_is_extracted_syntactically_not_semantically": True,
             "port_exposure_is_control_or_trigger": False,
             "semantic_trigger_inference_allowed": False,
             "invented_control_or_trigger_allowed": False,
@@ -190,7 +199,7 @@ def main():
     }
     OUT.write_text(yaml.safe_dump(doc, sort_keys=False, allow_unicode=True), encoding="utf-8")
     print(f"PASS: R18 traced {TARGET} classification={classification} controls={len(controls)} triggers={len(triggers)} port_exposures={len(nonqualifying)}")
-    print("PASS: port exposure is preserved as lineage only and never promoted to a control or registered trigger")
+    print("PASS: exact UID token extraction preserves punctuated port exposure as lineage without promoting it to a control/trigger")
     print("PASS: zero blocker reduction until separate bounded materialization and fresh reexecution")
 
 
