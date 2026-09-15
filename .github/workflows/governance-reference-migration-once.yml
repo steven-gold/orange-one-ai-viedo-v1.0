@@ -1,0 +1,107 @@
+name: One-shot Canonical Consumer Reference Migration
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/governance-reference-migration-once.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: governance-reference-migration-once
+  cancel-in-progress: false
+
+jobs:
+  migrate-and-self-delete:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: rebuild-v2.1.1
+
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+
+      - name: Replace exact obsolete validator reference in the complete active consumer set
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          root = Path('.github/workflows')
+          old = 'governance/ci/validate_stage_test_remediation_closure_protocol.py'
+          new = 'governance/ci/validate_validation_remediation_closure_protocol.py'
+          expected = {
+              'stage02-action-control-trigger-audit.yml',
+              'stage02-action-control-trigger-dependency-trace-r18.yml',
+              'stage02-asset01-product-authority-review-r9.yml',
+              'stage02-audit-event-audit.yml',
+              'stage02-audit-event-dependency-trace-r13.yml',
+              'stage02-authority-dependency-reclassification-r12.yml',
+              'stage02-auto-completion-admission-audit-r11.yml',
+              'stage02-core01-product-authority-review-r8.yml',
+              'stage02-failure-error-recovery-dependency-trace-r16.yml',
+              'stage02-failure-state-error-binding-audit.yml',
+              'stage02-material-remediation-r1.yml',
+              'stage02-payload-dependency-trace-r14.yml',
+              'stage02-payload-input-audit.yml',
+              'stage02-post-action-validation-audit.yml',
+              'stage02-post-action-validation-dependency-trace-r15.yml',
+              'stage02-product-authority-approval-docket-r10.yml',
+              'stage02-state-transition-ledger-audit.yml',
+              'stage02-state-transition-ledger-dependency-trace-r17.yml',
+              'stage02-success-next-state-audit.yml',
+          }
+          touched = set()
+          replacements = 0
+          for path in sorted([*root.glob('*.yml'), *root.glob('*.yaml')]):
+              text = path.read_text(encoding='utf-8')
+              count = text.count(old)
+              if not count:
+                  continue
+              touched.add(path.name)
+              replacements += count
+              path.write_text(text.replace(old, new), encoding='utf-8')
+          if touched != expected:
+              raise SystemExit(f'BLOCK: consumer set drift expected={sorted(expected)} actual={sorted(touched)}')
+          if replacements != 19:
+              raise SystemExit(f'BLOCK: replacement denominator drift expected=19 actual={replacements}')
+          residual = [p.as_posix() for p in root.glob('*.y*ml') if old in p.read_text(encoding='utf-8')]
+          if residual:
+              raise SystemExit(f'BLOCK: obsolete validator reference residual={residual}')
+          print('PASS: exact 19/19 active workflow references migrated to canonical validator')
+          PY
+
+      - name: Prove active consumer reference integrity after migration
+        run: python governance/ci/validate_active_consumer_reference_integrity.py
+
+      - name: Re-run Registry multidirectional stress after migration
+        run: python governance/ci/stress_test_governance_registry.py
+
+      - name: Commit exact migration and self-delete transport workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
+          git rm .github/workflows/governance-reference-migration-once.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows
+          if git diff --cached --quiet; then
+            echo 'BLOCK: migration produced no persistent changes' >&2
+            exit 1
+          fi
+          changed="$(git diff --cached --name-only)"
+          unexpected="$(printf '%s\n' "$changed" | grep -Ev '^\.github/workflows/(governance-reference-migration-once\.yml|stage02-.*\.yml)$' || true)"
+          test -z "$unexpected" || { printf 'BLOCK: unexpected migration paths\n%s\n' "$unexpected" >&2; exit 1; }
+          git commit -m 'fix(governance): migrate all active consumers to canonical closure validator' -m 'Obsolete-Reference-Replacements: 19' -m 'Residual-Obsolete-References: 0' -m 'Reference-Integrity-Gate: PASS' -m 'Registry-Stress: PASS'
+          git push origin HEAD:rebuild-v2.1.1
