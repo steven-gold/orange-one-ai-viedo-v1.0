@@ -1,0 +1,111 @@
+name: Stage-02 Payload Dependency Trace R14
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - 'governance/ci/build_stage02_payload_dependency_trace_r14.py'
+      - 'governance/ci/validate_stage02_payload_dependency_trace_r14.py'
+      - '.github/workflows/stage02-payload-dependency-trace-r14.yml'
+      - 'governance/test/stage02/STAGE02_AUTHORITY_DEPENDENCY_RECLASSIFICATION_R12.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stage02-payload-dependency-trace-r14
+  cancel-in-progress: false
+
+jobs:
+  payload-dependency-trace-r14:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: rebuild-v2.1.1
+
+      - run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+
+      - name: Compile R14 trace machinery
+        run: |
+          python -m py_compile governance/ci/build_stage02_payload_dependency_trace_r14.py
+          python -m py_compile governance/ci/validate_stage02_payload_dependency_trace_r14.py
+
+      - name: Re-prove exact governance source identity
+        run: python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+
+      - name: Enforce frozen Current Specification
+        run: python governance/ci/specification_mutation_guard.py
+
+      - name: Resolve Current governance and remediation protocol
+        run: |
+          set -euo pipefail
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_stage_test_remediation_closure_protocol.py
+
+      - name: Revalidate R12 and Current external-authority continuity
+        run: |
+          set -euo pipefail
+          python governance/ci/validate_stage02_authority_dependency_reclassification_r12.py
+          python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
+          python governance/ci/validate_stage02_successor_integrity_external_aware_r3.py
+
+      - name: Build exact 34-row payload dependency trace
+        run: python governance/ci/build_stage02_payload_dependency_trace_r14.py
+
+      - name: Validate R14 exact structured-schema evidence boundary
+        run: python governance/ci/validate_stage02_payload_dependency_trace_r14.py
+
+      - name: Prove R14 did not mutate specification, Stage-01, or Stage-02 product output
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
+          echo 'PASS: R14 trace is non-mutating diagnostic evidence only'
+
+      - name: Verify exact 34 denominator and zero closure credit
+        run: |
+          python - <<'PY'
+          import yaml
+          p='governance/test/stage02/STAGE02_PAYLOAD_DEPENDENCY_TRACE_R14.yaml'
+          d=yaml.safe_load(open(p, encoding='utf-8'))
+          den=d['denominators']
+          assert den['payload_input_gaps_traced'] == 34
+          assert den['scope_counts'] == {'ASSET-01': 18, 'CORE-01': 16}
+          assert den['exact_structured_payload_schema_found'] + den['conflicting_structured_payload_schemas'] + den['frozen_payload_rule_only'] + den['current_frozen_payload_contract_missing'] == 34
+          assert den['effective_stage02_blocker_reduction_claimed'] == 0
+          assert d['stage02_status'] == 'BLOCKED'
+          print('PASS: exact 34 payload/input gaps traced; zero blocker credit until separate materialization and fresh reexecution')
+          PY
+
+      - name: Commit R14 dependency trace
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add governance/test/stage02/STAGE02_PAYLOAD_DEPENDENCY_TRACE_R14.yaml
+          if git diff --cached --quiet; then
+            echo 'BLOCK: R14 generated no persistent dependency trace' >&2
+            exit 1
+          fi
+          git commit -m 'test(stage02): persist payload dependency trace R14'
+          git push origin HEAD:rebuild-v2.1.1
+
+      - name: Upload R14 dependency trace
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage02-payload-dependency-trace-r14
+          path: governance/test/stage02/STAGE02_PAYLOAD_DEPENDENCY_TRACE_R14.yaml
+          if-no-files-found: error
