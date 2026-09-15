@@ -1,0 +1,114 @@
+name: Stage-02 Functional Contract Remediation Problem Register R19
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - 'governance/ci/build_stage02_functional_contract_remediation_problem_register_r19.py'
+      - 'governance/ci/validate_stage02_functional_contract_remediation_problem_register_r19.py'
+      - '.github/workflows/stage02-functional-contract-remediation-problem-register-r19.yml'
+      - 'governance/test/stage02/STAGE02_AUTHORITY_DEPENDENCY_RECLASSIFICATION_R12.yaml'
+      - 'governance/test/stage02/STAGE02_AUDIT_EVENT_DEPENDENCY_TRACE_R13.yaml'
+      - 'governance/test/stage02/STAGE02_PAYLOAD_DEPENDENCY_TRACE_R14.yaml'
+      - 'governance/test/stage02/STAGE02_POST_ACTION_VALIDATION_DEPENDENCY_TRACE_R15.yaml'
+      - 'governance/test/stage02/STAGE02_FAILURE_ERROR_RECOVERY_DEPENDENCY_TRACE_R16.yaml'
+      - 'governance/test/stage02/STAGE02_STATE_TRANSITION_LEDGER_DEPENDENCY_TRACE_R17.yaml'
+      - 'governance/test/stage02/STAGE02_ACTION_CONTROL_TRIGGER_DEPENDENCY_TRACE_R18.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stage02-functional-contract-remediation-problem-register-r19
+  cancel-in-progress: false
+
+jobs:
+  functional-contract-remediation-problem-register-r19:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: rebuild-v2.1.1
+
+      - run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+
+      - name: Compile R19 register machinery
+        run: |
+          python -m py_compile governance/ci/build_stage02_functional_contract_remediation_problem_register_r19.py
+          python -m py_compile governance/ci/validate_stage02_functional_contract_remediation_problem_register_r19.py
+
+      - name: Re-prove exact governance source identity
+        run: python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+
+      - name: Enforce frozen Current Specification
+        run: python governance/ci/specification_mutation_guard.py
+
+      - name: Revalidate exact trace chain R12 through R18
+        run: |
+          set -euo pipefail
+          python governance/ci/validate_stage02_authority_dependency_reclassification_r12.py
+          python governance/ci/validate_stage02_audit_event_dependency_trace_r13.py
+          python governance/ci/validate_stage02_payload_dependency_trace_r14.py
+          python governance/ci/validate_stage02_post_action_validation_dependency_trace_r15.py
+          python governance/ci/validate_stage02_failure_error_recovery_dependency_trace_r16.py
+          python governance/ci/validate_stage02_state_transition_ledger_dependency_trace_r17.py
+          python governance/ci/validate_stage02_action_control_trigger_dependency_trace_r18.py
+
+      - name: Build exact 150-problem functional-contract remediation register
+        run: python governance/ci/build_stage02_functional_contract_remediation_problem_register_r19.py
+
+      - name: Validate R19 exact coverage and safety boundary
+        run: python governance/ci/validate_stage02_functional_contract_remediation_problem_register_r19.py
+
+      - name: Prove R19 did not mutate specification or Stage product layers
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
+          echo 'PASS: R19 problem registration is non-mutating evidence only'
+
+      - name: Verify exact 150 denominator and zero closure credit
+        run: |
+          python - <<'PY'
+          import yaml
+          p='governance/test/stage02/STAGE02_FUNCTIONAL_CONTRACT_REMEDIATION_PROBLEM_REGISTER_R19.yaml'
+          d=yaml.safe_load(open(p, encoding='utf-8'))
+          den=d['denominators']
+          assert den['total_registered_problems'] == 150
+          assert den['scope_counts'] == {'ASSET-01': 110, 'CORE-01': 40}
+          assert den['deterministic_materialization_candidates'] == 0
+          assert den['product_authority_gaps_proven'] == 0
+          assert den['effective_stage02_blocker_reduction_claimed'] == 0
+          assert d['stage02_effective_blocker_count'] == 150
+          assert d['next_execution_gate'] == 'FUNCTIONAL_CONTRACT_OWNING_LAYER_REMEDIATION_INPUT_REQUIRED'
+          print('PASS: exact 150 functional-contract remediation problems registered; Stage-02 remains blocked pending owning-layer contract definition')
+          PY
+
+      - name: Commit R19 problem register
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add governance/test/stage02/STAGE02_FUNCTIONAL_CONTRACT_REMEDIATION_PROBLEM_REGISTER_R19.yaml
+          if git diff --cached --quiet; then
+            echo 'BLOCK: R19 generated no persistent problem register' >&2
+            exit 1
+          fi
+          git commit -m 'test(stage02): persist functional contract remediation problem register R19'
+          git push origin HEAD:rebuild-v2.1.1
+
+      - name: Upload R19 problem register
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage02-functional-contract-remediation-problem-register-r19
+          path: governance/test/stage02/STAGE02_FUNCTIONAL_CONTRACT_REMEDIATION_PROBLEM_REGISTER_R19.yaml
+          if-no-files-found: error
