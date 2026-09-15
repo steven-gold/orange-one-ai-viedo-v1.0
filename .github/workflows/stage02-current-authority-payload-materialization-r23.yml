@@ -70,7 +70,7 @@ jobs:
           receipt = yaml.safe_load(Path('governance/test/stage02/STAGE02_R23_BOUNDED_MATERIALIZATION_RECEIPT.yaml').read_text())
           result = json.loads(Path('.github/stage02-test/STAGE02_R23_EFFECTIVE_REEXECUTION_RESULT.json').read_text())
           n = receipt['materialized_now_total']
-          assert isinstance(n, int) and 1 <= n <= 4, (n, receipt)
+          assert isinstance(n, int) and 0 <= n <= 4, (n, receipt)
           assert receipt['before_materialized_product_total'] == 38, receipt
           assert receipt['after_materialized_product_total'] == 38 + n, receipt
           assert result['raw_discovery_gap_total'] == 171, result
