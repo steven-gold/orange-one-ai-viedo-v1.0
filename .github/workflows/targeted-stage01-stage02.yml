@@ -19,8 +19,12 @@ jobs:
         run: python governance/ci/specification_mutation_guard.py
       - name: Resolve active governance through stable registry
         run: python governance/ci/governance_resolver.py
-      - name: Validate stage test remediation closure protocol
-        run: python governance/ci/validate_stage_test_remediation_closure_protocol.py
+      - name: Validate canonical rule registry anti-drift binding
+        run: python governance/ci/validate_canonical_rule_registry.py
+      - name: Validate reusable governance portability through canonical taxonomy
+        run: python governance/ci/validate_governance_portability.py
+      - name: Validate neutral validation remediation closure protocol
+        run: python governance/ci/validate_validation_remediation_closure_protocol.py
       - name: Validate governance layout and zero residual
         run: python governance/ci/validate_governance_layout.py
       - name: Stress test registry resolution and fail-closed invariants

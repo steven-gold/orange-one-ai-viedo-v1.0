@@ -1,13 +1,17 @@
-schema_version: 3
+schema_version: 4
 artifact_uid: GOV-COMP-SPECIFICATION-MUTATION-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
 formal_current_authority: true
 layer_classification: POLICY
 control_precedence: HIGHEST_CURRENT_SPECIFICATION_MUTATION_CONTROL
+canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+canonical_rule_refs:
+- GOV-RULE-ANTI-DRIFT-008
+- GOV-RULE-ANTI-DRIFT-009
+- GOV-RULE-ANTI-DRIFT-010
 purpose:
-  statement: Current reusable policy is immutable throughout a governed execution/validation cycle. Ordinary defects are repaired at their owning layer. Normative
-    change requires explicit exact-scope authorization and atomic successor promotion.
+  statement: Current reusable policy is immutable throughout a governed execution/validation cycle. Ordinary defects are repaired at their owning layer. Normative change requires explicit exact-scope authorization and atomic successor promotion.
   default_decision: DENY_MUTATION
   fail_closed: true
 non_authorities:
@@ -56,6 +60,9 @@ consolidated_promotion_control:
   preexisting_authorization_required: true
   new_immutable_governance_uid_required: true
   registry_manifest_atomic_update_required: true
+  canonical_rule_registry_binding_required: true
+  local_rule_vocabulary_fork_forbidden: true
+  canonical_rule_registry_uid_digest_match_required: true
   active_consumer_inventory_required: true
   stale_predecessor_pin_scan_required: true
   projection_atomicity_required: true
@@ -74,9 +81,10 @@ promotion_gate:
   - RECORD_FINDING_OR_EXPLICIT_CHANGE_REQUEST
   - VERIFY_PREEXISTING_EXACT_SCOPE_AUTHORIZATION
   - CLASSIFY_LAYER_AND_CANONICAL_OWNER
+  - RESOLVE_CANONICAL_RULE_UID_AND_REGISTRY_DIGEST
   - APPLY_ONLY_AUTHORIZED_NORMATIVE_CHANGE
   - ASSIGN_NEW_IMMUTABLE_GOVERNANCE_UID
-  - UPDATE_REGISTRY_AND_MANIFEST_ATOMICALLY
+  - UPDATE_REGISTRY_MANIFEST_CANONICAL_RULE_BINDING_ATOMICALLY
   - VERIFY_ACTIVE_CONSUMER_PROJECTIONS
   - RUN_CONTAMINATION_CONTRADICTION_PORTABILITY_GATES
   - RUN_GOVERNANCE_REGRESSION_AND_STRESS_GATES

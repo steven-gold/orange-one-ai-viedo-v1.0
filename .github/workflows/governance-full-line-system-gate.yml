@@ -6,8 +6,11 @@ on:
     paths:
       - '.github/governance-source/FULL_LINE_TRIGGER'
       - '.github/workflows/governance-full-line-system-gate.yml'
+      - 'governance/ci/canonical_rule_registry.py'
+      - 'governance/ci/validate_canonical_rule_registry.py'
+      - 'governance/ci/validate_governance_portability.py'
       - 'governance/ci/validate_stage02_successor_integrity.py'
-      - 'governance/ci/validate_stage_test_remediation_closure_protocol.py'
+      - 'governance/ci/validate_validation_remediation_closure_protocol.py'
       - 'governance/specifications/current/**'
       - 'governance/specifications/REGISTRY.yaml'
       - 'governance/test/ACTIVE_STATE.yaml'
@@ -28,37 +31,30 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Install verifier dependency
         run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
-
       - name: Re-prove exact 75-file source identity before system testing
         run: python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
-
       - name: Enforce Current Specification mutation authorization
         run: python governance/ci/specification_mutation_guard.py
-
       - name: Resolve stable Current governance registry
         run: python governance/ci/governance_resolver.py
-
-      - name: Validate stage test remediation closure protocol
-        run: python governance/ci/validate_stage_test_remediation_closure_protocol.py
-
+      - name: Validate canonical rule registry anti-drift binding
+        run: python governance/ci/validate_canonical_rule_registry.py
+      - name: Validate reusable governance portability through canonical taxonomy
+        run: python governance/ci/validate_governance_portability.py
+      - name: Validate neutral validation remediation closure protocol
+        run: python governance/ci/validate_validation_remediation_closure_protocol.py
       - name: Validate Current governance layout and zero residual
         run: python governance/ci/validate_governance_layout.py
-
       - name: Run Current Registry multidirectional stress 13 of 13
         run: python governance/ci/stress_test_governance_registry.py
-
       - name: Validate Stage-01 binding invariants
         run: python governance/ci/validate_stage01_registry_binding.py
-
       - name: Validate Stage-02 predecessor or legal successor/remediation state integrity
         run: python governance/ci/validate_stage02_successor_integrity.py
-
       - name: Run complete 75-file full-lifecycle high-pressure system gate
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
-
       - name: Prove verified source remained byte-clean after destructive suites
         shell: bash
         run: |
@@ -67,7 +63,6 @@ jobs:
           bad="$(find .github/governance-source/active/source \( -name '*.pyc' -o -name '__pycache__' -o -name '*.tmp' -o -name '*.bak' -o -name '*~' \) -print)"
           test -z "$bad" || { printf 'BLOCK: source runtime residue\n%s\n' "$bad" >&2; exit 1; }
           echo 'PASS: active 75-file source unchanged and runtime-residual free after full-line gate'
-
       - name: Upload full-line system evidence
         uses: actions/upload-artifact@v4
         with:

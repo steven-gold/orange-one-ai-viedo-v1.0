@@ -1,8 +1,10 @@
-schema_version: 9
+schema_version: 10
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
+specification_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
+canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 execution:
   branch: rebuild-v2.1.1
   run_uid: FRESH-RUN-003
@@ -136,12 +138,13 @@ stage02_current_problem_state:
 status: ACTIVE_STAGE2_TESTED_BLOCKED
 next_action: OWNING_LAYER_REMEDIATION_OF_150_FUNCTIONAL_GAPS_AND_13_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
 governance_revision_transition:
-  previous_governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
-  current_governance_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
+  previous_governance_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
+  current_governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
   predecessor_attempt_frozen_governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_may_close_under_current_governance: false
   fresh_revalidation_required: true
   selected_execution_profile_preserved: true
+  canonical_rule_registry_required_for_fresh_revalidation: true
   website_construction_remains_blocked: true
   deployment_remains_blocked: true

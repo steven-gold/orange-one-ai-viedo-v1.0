@@ -1,10 +1,29 @@
-schema_version: 1
+schema_version: 2
 artifact_uid: GOV-COMP-LAYER-SEPARATION-PORTABILITY
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
 formal_current_authority: true
 layer_classification: POLICY
 common_scope: ALL_ADOPTING_SYSTEMS
+canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+canonical_rule_refs:
+- GOV-RULE-ANTI-DRIFT-001
+- GOV-RULE-ANTI-DRIFT-002
+- GOV-RULE-ANTI-DRIFT-003
+- GOV-RULE-ANTI-DRIFT-004
+- GOV-RULE-ANTI-DRIFT-005
+- GOV-RULE-ANTI-DRIFT-006
+- GOV-RULE-ANTI-DRIFT-007
+- GOV-RULE-ANTI-DRIFT-008
+- GOV-RULE-ANTI-DRIFT-009
+- GOV-RULE-ANTI-DRIFT-010
+rule_identity_contract:
+  semantic_rule_identity_source: CANONICAL_RULE_REGISTRY
+  free_text_is_rule_identity: false
+  local_synonym_or_regex_fork: BLOCK
+  registry_uid_digest_binding_required: true
+  structural_layer_validation_is_primary: true
+  lexical_matching_is_secondary_defense_only: true
 layer_model:
   POLICY:
     may_define:
@@ -51,6 +70,8 @@ authority_consistency:
   one_canonical_rule_owner_per_semantic_rule: true
   duplicate_or_contradictory_active_rule_owner: BLOCK
   superseded_active_residual: BLOCK
+  canonical_rule_registry_uid_digest_mismatch: BLOCK
+  duplicate_local_rule_vocabulary: BLOCK
 portability:
   minimum_synthetic_execution_profiles: 2
   profiles_must_have_materially_different_step_names: true
@@ -61,7 +82,9 @@ promotion_projection_atomicity:
   active_consumer_inventory_required: true
   stale_predecessor_governance_pin_scan_required: true
   registry_manifest_current_policy_update_same_transaction: true
-  source_identity_and_external_trust_projection_update_same_transaction: true
+  canonical_rule_registry_and_consumer_binding_update_same_transaction: true
+  source_identity_and_external_trust_projection_update_same_transaction_when_source_bytes_change: true
+  source_identity_must_remain_exactly_unchanged_when_source_bytes_do_not_change: true
   first_clean_restart_may_discover_preexisting_projection_staleness: false
   discovered_projection_staleness_after_successful_promotion_classification: PROMOTION_ATOMICITY_DEFECT
   timeout_or_skipped_consumer_validation_may_count_as_pass: false

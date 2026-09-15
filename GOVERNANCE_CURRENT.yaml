@@ -1,11 +1,14 @@
-schema_version: 4
+schema_version: 5
 artifact_uid: GOVERNANCE-CURRENT-ENTRYPOINT-001
 artifact_type: GOVERNANCE_CURRENT_ENTRYPOINT
-active_governance_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
-display_version: v2.2.0
+active_governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
+display_version: v2.2.1
 registry_ref: governance/specifications/REGISTRY.yaml
 specification_root: governance/specifications/current
 specification_manifest: governance/specifications/current/SPECIFICATION_MANIFEST.yaml
+canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
+canonical_rule_registry_digest: edeefffe7ebdfd1b626c8b3b3e12a2d27e69c94eaf0e84ea4ede913c2d7bc196
 policy_scope: PRODUCT_SYSTEM_AND_EXECUTION_PROFILE_NEUTRAL
 selected_execution_profile:
   profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
@@ -18,6 +21,7 @@ selected_execution_profile:
 active_test_state: governance/test/ACTIVE_STATE.yaml
 historical_evidence_is_current_authority: false
 source_identity:
+  source_bytes_changed_by_current_successor: false
   verified_package_sha256: dd5a09e8b309168c46d37f3ff2bbb87c292d7b779bcd6d756f201e07bcc82754
   deterministic_source_bundle_sha256: fd7f0ffc8711685fa230b2003d20937cbfb135b57cd3f9a1fce84cec9c18e51a
   checksum_manifest_sha256: 19ddfe5372fd8c45bb54919f589352b3c6e58ae59a0bfd13e5c567d2213f0796

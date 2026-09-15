@@ -1,11 +1,13 @@
-schema_version: 1
+schema_version: 2
 binding_uid: GOV-TEST-STAGE01-ACTIVE-BINDING-001
 binding_role: ACTIVE_STAGE01_TEST_ARTIFACT_TO_CURRENT_GOVERNANCE_BINDING
 status: ACTIVE_TEST_BINDING
 
 current_governance_resolution:
   registry_ref: governance/specifications/REGISTRY.yaml
-  governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
+  governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
+  canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+  canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
   locator_mode: REGISTRY_ONLY
   version_labels_are_locator: false
   copied_runtime_digest_required: false
@@ -42,6 +44,7 @@ scope:
 
 binding_rules:
   - Active Stage-01 validation MUST resolve current governance through REGISTRY.yaml.
+  - Canonical reusable rule identity MUST resolve through the Current Canonical Rule Registry.
   - governance_overlay inside preserved Stage-01 artifacts is provenance only and MUST NOT be used as a locator.
   - Display-version changes MUST NOT force Stage-01 artifact or artifact-hash rewrites.
   - Immutable governance UID is the active governance identity.
