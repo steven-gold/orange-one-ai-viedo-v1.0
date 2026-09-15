@@ -7,6 +7,13 @@ on:
       - '.github/workflows/stage02-functional-chain-auto-remediability-r20.yml'
       - 'governance/ci/classify_stage02_functional_chain_auto_remediability_r20.py'
       - 'governance/ci/validate_stage02_functional_chain_auto_remediability_r20.py'
+      - 'governance/test/stage02/STAGE02_FUNCTIONAL_CONTRACT_REMEDIATION_PROBLEM_REGISTER_R19.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/BUSINESS_ENTITY_OPERATION_MATRIX.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/BUSINESS_ENTITY_OPERATION_MATRIX.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml'
   workflow_dispatch:
 
 permissions:
@@ -31,20 +38,21 @@ jobs:
           python -m py_compile governance/ci/validate_stage02_functional_chain_auto_remediability_r20.py
       - name: Revalidate R19 source register
         run: python governance/ci/validate_stage02_functional_contract_remediation_problem_register_r19.py
-      - name: Build full-chain deterministic closure classification
+      - name: Build full Stage-02 functional-chain deterministic closure classification
         run: python governance/ci/classify_stage02_functional_chain_auto_remediability_r20.py
-      - name: Validate exact 150 denominator and safety boundary
+      - name: Validate exact 150 denominator, complete source bundle, and safety boundary
         run: python governance/ci/validate_stage02_functional_chain_auto_remediability_r20.py
       - name: Prove Current Specification unchanged
         run: git diff --exit-code HEAD^ HEAD -- governance/specifications/current
       - name: Persist R20 evidence
         run: |
-          if git diff --quiet -- governance/test/stage02/STAGE02_FUNCTIONAL_CHAIN_AUTO_REMEDIABILITY_R20.yaml; then
+          output='governance/test/stage02/STAGE02_FUNCTIONAL_CHAIN_AUTO_REMEDIABILITY_R20.yaml'
+          if [ -z "$(git status --porcelain -- "$output")" ]; then
             echo 'R20 output unchanged'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add governance/test/stage02/STAGE02_FUNCTIONAL_CHAIN_AUTO_REMEDIABILITY_R20.yaml
-          git commit -m 'test(stage02): persist functional-chain auto-remediability R20'
+          git add "$output"
+          git commit -m 'test(stage02): persist corrected full-chain auto-remediability R20'
           git push origin HEAD:rebuild-v2.1.1
