@@ -26,5 +26,21 @@ jobs:
           ref: rebuild-v2.1.1
       - name: Install verifier dependency
         run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
-      - name: Apply profile-neutral machine-layer remediation and push only after complete verification
-        run: python governance/ci/apply_profile_neutral_machine_layer.py
+      - name: Compile corrected bootstrap then apply profile-neutral remediation
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('governance/ci/apply_profile_neutral_machine_layer.py')
+          source = path.read_text(encoding='utf-8')
+          bad = "'))).decode())"
+          good = "')).decode())"
+          stripped = source.rstrip()
+          if not stripped.endswith(bad):
+              raise SystemExit('BLOCKED: expected one known bootstrap suffix defect was not found')
+          fixed = stripped[:-len(bad)] + good + '\n'
+          code = compile(fixed, str(path), 'exec')
+          print('PASS: one known bootstrap parenthesis defect corrected in-memory; payload compiled')
+          exec(code, {'__name__': '__main__', '__file__': str(path)})
+          PY
