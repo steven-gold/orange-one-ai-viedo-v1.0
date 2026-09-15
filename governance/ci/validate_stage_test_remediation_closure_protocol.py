@@ -136,13 +136,14 @@ for token in registry_required:
     if token not in registry:
         errors.append("REGISTRY_TOKEN_MISSING:" + token)
 
+# Manifest is only the stable Current projection; detailed pilot/scale-out rules
+# are asserted above from the bound Protocol itself. Do not require duplicated
+# Protocol-only fields in Manifest.
 manifest_required = (
     "single_canonical_execution_rule_set: true",
-    "stage_specification_uid_must_remain_frozen_during_stage: true",
+    "stage_specification_uid_must_remain_frozen_during_stage_attempt: true",
     "required_stage_candidates_consolidated_in_single_atomic_promotion: true",
     "stage_restart_under_new_uid_required_after_promotion: true",
-    "pilot_full_lifecycle_required_before_other_page_scale_out: true",
-    "later_pages_must_use_same_active_governance_after_calibration: true",
 )
 for token in manifest_required:
     if token not in manifest:
