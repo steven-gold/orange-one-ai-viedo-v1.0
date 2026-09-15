@@ -1,4 +1,4 @@
-schema_version: 2
+schema_version: 3
 artifact_uid: GOV-COMP-EVIDENCE-FEEDBACK-ARTIFACT-LIFECYCLE
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -18,6 +18,39 @@ finding_classification:
   EXTERNAL_AUTHORITY_GAP:
     may_be_inferred_from_semantics: false
     unresolved_reference_must_remain_explicit: true
+finding_terminalization:
+  terminal_state_required_after_verified_resolution: true
+  allowed_states:
+  - OPEN
+  - REMEDIATION_IN_PROGRESS
+  - IMPLEMENTATION_REMEDIATED
+  - ABSORBED_INTO_CANONICAL_OWNER
+  - CLOSED_NO_SPEC_CHANGE_REQUIRED
+  - SUPERSEDED
+  - REOPENED_BY_REGRESSION
+  terminal_states:
+  - IMPLEMENTATION_REMEDIATED
+  - ABSORBED_INTO_CANONICAL_OWNER
+  - CLOSED_NO_SPEC_CHANGE_REQUIRED
+  - SUPERSEDED
+  terminal_required_fields:
+  - resolution_type
+  - target_path
+  - resolution_commit
+  - validation_run
+  - evidence_ref
+  - resolved_at
+  - reopen_condition
+  canonical_absorption_additional_fields:
+  - canonical_owner_uid
+  - canonical_rule_uid
+  semantic_fingerprint_required: true
+  new_finding_with_existing_terminal_semantic_fingerprint: BLOCK_UNLESS_NEW_REGRESSION_EVIDENCE
+  regression_reopen_requires_new_evidence_ref: true
+  resolved_implementation_or_harness_bug_may_remain_open: false
+  absorbed_policy_candidate_may_remain_open: false
+  history_must_be_preserved: true
+  terminal_finding_must_not_be_deleted: true
 temporary_artifact_lifecycle:
   allowed: true
   current_authority_eligible: false
@@ -41,6 +74,8 @@ temporary_artifact_lifecycle:
   stale_temporary_artifact_after_cleanup_condition: BLOCK
 closure_rules:
   verified_generalizable_fix_not_promoted_or_dispositioned: BLOCK
+  resolved_finding_not_terminalized: BLOCK
+  duplicate_semantic_finding_without_regression_evidence: BLOCK
   temporary_artifact_cleanup_incomplete: BLOCK
   zero_residual_scan_failed: BLOCK
   unresolved_true_product_or_authority_gap: BLOCK

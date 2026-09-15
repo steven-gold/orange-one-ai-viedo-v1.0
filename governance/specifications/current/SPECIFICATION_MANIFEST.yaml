@@ -1,9 +1,10 @@
 schema_version: 5
-artifact_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
+artifact_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
 artifact_type: STABLE_CURRENT_SPECIFICATION_MANIFEST
 normative_status: ACTIVE_CURRENT_GOVERNANCE
-display_version: v2.2.1
+display_version: v2.2.2
 version_label_is_identity: false
+version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
 policy_scope: PRODUCT_SYSTEM_AND_EXECUTION_PROFILE_NEUTRAL
 components:
 - uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
@@ -27,19 +28,21 @@ support_authorities:
   digest_algorithm: SHA256_CANONICAL_JSON_V1
   digest: edeefffe7ebdfd1b626c8b3b3e12a2d27e69c94eaf0e84ea4ede913c2d7bc196
 source_lineage:
+  version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
   verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.0_NEUTRAL_PORTABLE_GOVERNANCE_LOCAL_VERIFIED.zip
   verified_package_sha256: dd5a09e8b309168c46d37f3ff2bbb87c292d7b779bcd6d756f201e07bcc82754
   verified_source_file_count: 75
   exact_full_zip_binary_materialized_in_git: false
   full_source_materialized_in_git: true
   full_source_root: .github/governance-source/active/source
-  predecessor_governance_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
-  promotion_authorization_uid: USR-DIRECTIVE-20260915-CANONICAL-RULE-REGISTRY-ANTI-DRIFT
+  predecessor_governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
+  promotion_authorization_uid: USR-DIRECTIVE-20260916-GOVERNANCE-CONTEXT-HARDENING-CLEANUP
   source_bytes_changed_by_this_successor: false
   source_identity_reused_only_because_source_bytes_are_unchanged: true
   deterministic_source_bundle_sha256: fd7f0ffc8711685fa230b2003d20937cbfb135b57cd3f9a1fce84cec9c18e51a
   checksum_manifest_sha256: 19ddfe5372fd8c45bb54919f589352b3c6e58ae59a0bfd13e5c567d2213f0796
   semantic_authority_content_hash: 81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a
+  historical_source_version_prose_may_override_current_registry: false
 resolution_contract:
   canonical_root: governance/specifications/current
   all_active_policy_consumers_resolve_via_registry: true
@@ -48,6 +51,7 @@ resolution_contract:
   canonical_rule_registry_digest: edeefffe7ebdfd1b626c8b3b3e12a2d27e69c94eaf0e84ea4ede913c2d7bc196
   direct_version_named_path_reference: FORBIDDEN
   runtime_digest_is_execution_evidence_not_normative_locator: true
+  historical_source_version_rule_is_current_version_authority: false
 layer_separation:
   common_policy_contains_fixed_execution_profile_denominator: false
   execution_profile_step_identity_is_global_policy: false

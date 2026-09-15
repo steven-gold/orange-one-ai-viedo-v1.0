@@ -1,4 +1,4 @@
-schema_version: 5
+schema_version: 6
 registry_uid: GOV-SPEC-REGISTRY-001
 registry_role: SINGLE_STABLE_GOVERNANCE_ENTRYPOINT
 stable_entrypoint:
@@ -8,19 +8,28 @@ stable_entrypoint:
   test_state_root: governance/test
   active_test_state: governance/test/ACTIVE_STATE.yaml
 active_specification:
-  governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
-  display_version: v2.2.1
+  governance_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+  display_version: v2.2.2
+  version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
   aliases:
   - neutral-portable-governance
   - canonical-rule-anti-drift
-  - policy-profile-layer-separation
-  - promotion-projection-atomicity
-  - profile-independent-acceptance
+  - execution-context-lock
+  - finding-terminal-closure
+  - version-role-separation
   status: ACTIVE_CURRENT_GOVERNANCE
 immediate_predecessor:
-  governance_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
-  display_version: v2.2.0
-  status: SUPERSEDED_HISTORY_ONLY_AFTER_V221_PROMOTION
+  governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
+  display_version: v2.2.1
+  version_role: SUPERSEDED_CURRENT_GOVERNANCE_HISTORY
+  status: SUPERSEDED_HISTORY_ONLY_AFTER_V222_PROMOTION
+version_role_contract:
+  current_governance_display_version_owner: active_specification
+  verified_source_package_version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
+  historical_provenance_version_role: HISTORICAL_PROVENANCE_ONLY
+  source_lineage_version_may_override_current: false
+  historical_mother_version_prose_may_override_current: false
+  untyped_version_value_used_for_authority_resolution: BLOCK
 canonical_rule_registry:
   uid: GOV-CANONICAL-RULE-REGISTRY-001
   ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
@@ -35,6 +44,7 @@ resolution_policy:
   direct_semver_directory_reference_by_active_consumer: FORBIDDEN
   unverified_candidate_may_become_latest_automatically: false
   consumer_specific_version_pointer: FORBIDDEN
+  non_normative_source_materialization_may_be_current_locator: false
 specification_mutation_control:
   component_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   default_without_explicit_user_directive: DENY

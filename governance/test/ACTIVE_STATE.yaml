@@ -1,23 +1,19 @@
-schema_version: 10
+schema_version: 11
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
+specification_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 execution:
   branch: rebuild-v2.1.1
   run_uid: FRESH-RUN-003
   scope_mode: EXACT_PAGE_SCOPE_ONLY
-  target_pages:
-  - CORE-01
-  - ASSET-01
+  target_pages: [CORE-01, ASSET-01]
   current_stage: STAGE-02-TESTED-BLOCKED
   stage1_binding_ref: governance/test/STAGE01_ACTIVE_BINDING.yaml
   stage1_binding_mode: REGISTRY_UID_RUNTIME_RESOLUTION
-  stage1:
-    CORE-01: PASS
-    ASSET-01: PASS
+  stage1: {CORE-01: PASS, ASSET-01: PASS}
   stage2:
     result: TEST_EXECUTED_BLOCKED
     stage_entry_gate: PASS
@@ -47,8 +43,8 @@ stage02_clean_reset:
 full_lifecycle_governance_system_test:
   round: SYSTEM_FULL_LINE_HIGH_PRESSURE_ROUND_1
   meaning: GOVERNANCE_SYSTEM_EXECUTION_HEALTH_ONLY
-  verified_source_package_sha256: b83ca213b6783732de5e9577ef76cb734446f3b43a1901c3c865a43f65d84ebe
-  deterministic_source_bundle_sha256: b8bc298b749f4304afd46fb96f03472d319c432bd7b29d8990ecf49b517d7ddd
+  verified_source_package_sha256: dd5a09e8b309168c46d37f3ff2bbb87c292d7b779bcd6d756f201e07bcc82754
+  deterministic_source_bundle_sha256: fd7f0ffc8711685fa230b2003d20937cbfb135b57cd3f9a1fce84cec9c18e51a
   verified_source_file_count: 75
   github_source_materialization: PASS_EXACT_75_FILE_IDENTITY
   mandatory_regression_suite_count: 17
@@ -57,7 +53,7 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: PASS
+  full_line_github_result: HISTORICAL_PASS_REVERIFY_REQUIRED_AFTER_V222_PROMOTION
   full_line_verification_run_id: 34937106161
   exact_denominators_verified: true
   source_runtime_residual_count: 0
@@ -125,6 +121,7 @@ specification_mutation_safety:
   finding_may_auto_promote: false
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
+  execution_context_lock_required: true
 stage02_current_problem_state:
   fresh_functional_gap_total: 150
   fresh_closure_blocker_total: 13
@@ -132,14 +129,14 @@ stage02_current_problem_state:
   input_source_gap_total: 34
   authority_gap_total: 4
   external_authority_union_count: 8
-  current_specification_mutated: false
+  current_specification_mutated: true
   immutable_stage1_source_mutated: false
   prior_stage2_results_used: false
-status: ACTIVE_STAGE2_TESTED_BLOCKED
-next_action: OWNING_LAYER_REMEDIATION_OF_150_FUNCTIONAL_GAPS_AND_13_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
+status: ACTIVE_STAGE2_TESTED_BLOCKED_REVERIFY_REQUIRED_AFTER_GOVERNANCE_PROMOTION
+next_action: FRESH_REVALIDATION_UNDER_GOV_REV_20260916_CONTEXT_LOCK_FINDING_CLOSURE_BEFORE_PRODUCT_REMEDIATION_CREDIT
 governance_revision_transition:
-  previous_governance_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
-  current_governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
+  previous_governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
+  current_governance_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
   predecessor_attempt_frozen_governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_may_close_under_current_governance: false

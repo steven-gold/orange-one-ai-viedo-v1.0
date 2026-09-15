@@ -1,8 +1,9 @@
-schema_version: 5
+schema_version: 6
 artifact_uid: GOVERNANCE-CURRENT-ENTRYPOINT-001
 artifact_type: GOVERNANCE_CURRENT_ENTRYPOINT
-active_governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
-display_version: v2.2.1
+active_governance_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+display_version: v2.2.2
+version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
 registry_ref: governance/specifications/REGISTRY.yaml
 specification_root: governance/specifications/current
 specification_manifest: governance/specifications/current/SPECIFICATION_MANIFEST.yaml
@@ -21,8 +22,10 @@ selected_execution_profile:
 active_test_state: governance/test/ACTIVE_STATE.yaml
 historical_evidence_is_current_authority: false
 source_identity:
+  version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
   source_bytes_changed_by_current_successor: false
   verified_package_sha256: dd5a09e8b309168c46d37f3ff2bbb87c292d7b779bcd6d756f201e07bcc82754
   deterministic_source_bundle_sha256: fd7f0ffc8711685fa230b2003d20937cbfb135b57cd3f9a1fce84cec9c18e51a
   checksum_manifest_sha256: 19ddfe5372fd8c45bb54919f589352b3c6e58ae59a0bfd13e5c567d2213f0796
   semantic_authority_content_hash: 81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a
+  may_override_active_governance_version: false

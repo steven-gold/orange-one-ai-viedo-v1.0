@@ -1,10 +1,58 @@
-schema_version: 2
+schema_version: 3
 artifact_uid: GOV-COMP-EXECUTION-CYCLE-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
 formal_current_authority: true
 layer_classification: POLICY
 common_scope: ALL_GOVERNED_EXECUTION_CYCLES
+execution_context_lock:
+  required_before_any_mutating_execution: true
+  resolver_only_not_second_authority: true
+  required_identity_fields:
+  - repository
+  - branch
+  - commit_sha
+  - tree_sha
+  - current_governance_uid
+  - current_display_version
+  - current_registry_digest
+  - canonical_rule_registry_uid
+  - canonical_rule_registry_digest
+  - verified_source_package_revision
+  - verified_source_bundle_sha256
+  - requested_semantic_concern
+  - resolved_canonical_owner
+  - required_read_set
+  - write_target
+  - existing_equivalent_semantics
+  - confirmed_gap
+  required_gate_order:
+  - IDENTITY_LOCK
+  - INTENT_CLASSIFICATION
+  - CANONICAL_OWNER_RESOLUTION
+  - COMPLETE_READ_SET
+  - DUPLICATE_CONFLICT_SUPERSESSION_SCAN
+  - GAP_PROOF
+  - PRE_WRITE_IDENTITY_RECHECK
+  - POST_WRITE_CLOSURE
+  head_or_tree_changed_after_read: BLOCK_RELOAD_REQUIRED
+  current_registry_or_rule_digest_changed_after_read: BLOCK_RELOAD_REQUIRED
+  missing_required_read_set: BLOCK
+  unresolved_canonical_owner: BLOCK
+  existing_equivalent_semantics_found:
+    default_write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+    parallel_rule_or_shadow_owner_creation: FORBIDDEN
+  no_existing_owner_found:
+    first_search_miss_is_sufficient: false
+    complete_registered_search_and_gap_proof_required: true
+  pre_write_identity_recheck_required: true
+  post_write_requirements:
+  - RECOMPUTE_AFFECTED_BINDINGS
+  - UPDATE_FINDING_TERMINAL_STATE
+  - VERIFY_ACTIVE_CONSUMERS
+  - RUN_AFFECTED_REGRESSION
+  - PROVE_ZERO_STALE_REFERENCE
+  - PROVE_ZERO_UNJUSTIFIED_RESIDUAL
 canonical_preflight:
   required_before_material_remediation: true
   artifacts:
@@ -16,6 +64,7 @@ canonical_preflight:
   - CLASSIFICATION_RULESET
   - CHANGE_IMPACT_MAP
   - EXECUTION_CYCLE_PREFLIGHT_RECEIPT
+  - GOVERNANCE_EXECUTION_CONTEXT_RECEIPT
   one_current_problem_register_required: true
   append_only_resolution_ledger_required: true
   all_consumers_use_same_manifest_set: true

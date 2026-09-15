@@ -3,17 +3,12 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTECTED_PREFIXES = (
-    "governance/specifications/current/",
-)
-PROTECTED_EXACT = {
-    "governance/specifications/REGISTRY.yaml",
-    "GOVERNANCE_CURRENT.yaml",
-}
+PROTECTED_PREFIXES = ("governance/specifications/current/",)
+PROTECTED_EXACT = {"governance/specifications/REGISTRY.yaml", "GOVERNANCE_CURRENT.yaml"}
 AUTH_ROOT = "governance/test/spec_change_authorizations"
-
 _PREWRITE_TRUE_FIELDS = (
     "relevant_scope_read_complete",
     "canonical_owner_resolution_complete",
@@ -23,10 +18,7 @@ _PREWRITE_TRUE_FIELDS = (
     "second_system_search_complete",
     "gap_proven_before_write",
 )
-_PREWRITE_DECISIONS = {
-    "MODIFY_EXISTING_CANONICAL_OWNER",
-    "CREATE_NEW_ONLY_AFTER_NO_EXISTING_OWNER_PROVEN",
-}
+_PREWRITE_DECISIONS = {"MODIFY_EXISTING_CANONICAL_OWNER", "CREATE_NEW_ONLY_AFTER_NO_EXISTING_OWNER_PROVEN"}
 
 
 def git(*args, check=True):
@@ -60,7 +52,6 @@ def prewrite_context_errors(receipt_text: str) -> list[str]:
     for field in _PREWRITE_TRUE_FIELDS:
         if scalar(receipt_text, field) != "true":
             errors.append("PREWRITE_CONTEXT_NOT_PROVEN:" + field)
-
     for field in ("reviewed_authority_ref_count", "reviewed_existing_owner_ref_count"):
         raw = scalar(receipt_text, field)
         try:
@@ -69,18 +60,14 @@ def prewrite_context_errors(receipt_text: str) -> list[str]:
             count = 0
         if count < 1:
             errors.append("PREWRITE_CONTEXT_REFERENCE_COUNT_INVALID:" + field)
-
-    decision = scalar(receipt_text, "write_disposition")
-    if decision not in _PREWRITE_DECISIONS:
-        errors.append("PREWRITE_CONTEXT_WRITE_DISPOSITION_INVALID:" + str(decision))
-
+    if scalar(receipt_text, "write_disposition") not in _PREWRITE_DECISIONS:
+        errors.append("PREWRITE_CONTEXT_WRITE_DISPOSITION_INVALID:" + str(scalar(receipt_text, "write_disposition")))
     if scalar(receipt_text, "comparison_result") != "NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM":
         errors.append("PREWRITE_CONTEXT_COMPARISON_RESULT_INVALID")
     return errors
 
 
 def prior_authorization_use_exists(auth_uid):
-    """Search all reachable refs but exclude exactly the current commit itself."""
     current = git("rev-parse", "HEAD").strip()
     marker = f"Spec-Change-Authorization: {auth_uid}"
     records = git("log", "--all", "--format=%H%x1f%B%x1e")
@@ -96,87 +83,76 @@ def prior_authorization_use_exists(auth_uid):
     return False, None
 
 
+def verify_receipt_identity_lock(parent_auth: str) -> list[str]:
+    errors = []
+    baseline = scalar(parent_auth, "baseline_commit_sha")
+    baseline_tree = scalar(parent_auth, "baseline_tree_sha")
+    if not baseline or not baseline_tree:
+        return ["EXECUTION_CONTEXT_BASELINE_IDENTITY_MISSING"]
+    grandparent = git("rev-parse", "HEAD^^", check=False).strip()
+    if not grandparent or grandparent != baseline:
+        errors.append(f"EXECUTION_CONTEXT_HEAD_DRIFT expected_baseline={baseline} actual_pre_authorization_parent={grandparent or 'MISSING'}")
+    actual_tree = git("rev-parse", f"{baseline}^{{tree}}", check=False).strip()
+    if not actual_tree or actual_tree != baseline_tree:
+        errors.append(f"EXECUTION_CONTEXT_TREE_DRIFT expected={baseline_tree} actual={actual_tree or 'MISSING'}")
+    parent_registry = git("show", "HEAD^:governance/specifications/REGISTRY.yaml", check=False)
+    expected_uid = scalar(parent_auth, "current_governance_uid")
+    if parent_registry and expected_uid:
+        data = yaml.safe_load(parent_registry) or {}
+        actual_uid = ((data.get("active_specification") or {}).get("governance_uid"))
+        if actual_uid != expected_uid:
+            errors.append(f"EXECUTION_CONTEXT_GOVERNANCE_UID_DRIFT expected={expected_uid} actual={actual_uid}")
+    else:
+        errors.append("EXECUTION_CONTEXT_PARENT_REGISTRY_OR_UID_MISSING")
+    return errors
+
+
 def main():
     if not (ROOT / ".git").exists():
-        print("BLOCK: SPEC_MUTATION_GUARD_REQUIRES_GIT_CHECKOUT", file=sys.stderr)
-        return 2
-
-    parent_ok = subprocess.run(["git", "rev-parse", "HEAD^"], cwd=ROOT, capture_output=True).returncode == 0
-    if not parent_ok:
-        print("BLOCK: SPEC_MUTATION_GUARD_REQUIRES_PARENT_COMMIT", file=sys.stderr)
-        return 2
-
+        print("BLOCK: SPEC_MUTATION_GUARD_REQUIRES_GIT_CHECKOUT", file=sys.stderr); return 2
+    if subprocess.run(["git", "rev-parse", "HEAD^"], cwd=ROOT, capture_output=True).returncode != 0:
+        print("BLOCK: SPEC_MUTATION_GUARD_REQUIRES_PARENT_COMMIT", file=sys.stderr); return 2
     changed = [p for p in git("diff", "--name-only", "HEAD^", "HEAD").splitlines() if p]
     protected_changed = [p for p in changed if protected(p)]
     if not protected_changed:
-        print("PASS: no Current Specification / Registry / compatibility-entrypoint mutation in this commit")
-        return 0
-
+        print("PASS: no Current Specification / Registry / compatibility-entrypoint mutation in this commit"); return 0
     message = git("log", "-1", "--pretty=%B")
     auth_uid = trailer(message, "Spec-Change-Authorization")
     scope = trailer(message, "Spec-Change-Scope")
     if not auth_uid or not scope:
-        print("BLOCK: protected governance mutation without explicit Spec-Change-Authorization and Spec-Change-Scope trailers", file=sys.stderr)
-        print("CHANGED:", *protected_changed, sep="\n- ", file=sys.stderr)
-        return 1
-
+        print("BLOCK: protected governance mutation without explicit Spec-Change-Authorization and Spec-Change-Scope trailers", file=sys.stderr); return 1
     auth_rel = f"{AUTH_ROOT}/{auth_uid}.yaml"
-    # Authorization and its pre-write comparison proof must already exist in the
-    # parent commit. Neither may be fabricated together with the normative mutation.
     parent_auth = git("show", f"HEAD^:{auth_rel}", check=False)
     if not parent_auth:
-        print(f"BLOCK: authorization {auth_uid} did not exist in parent commit", file=sys.stderr)
-        return 1
-
+        print(f"BLOCK: authorization {auth_uid} did not exist in parent commit", file=sys.stderr); return 1
     required = (
-        f"authorization_uid: {auth_uid}",
-        "artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT",
-        "normative_authority: false",
-        "authority_source: EXPLICIT_USER_DIRECTIVE",
-        "single_use: true",
-        "status: APPROVED_FOR_EXACT_SCOPE",
-        "ai_may_expand_scope: false",
-        "ai_may_reuse_authorization: false",
+        f"authorization_uid: {auth_uid}", "artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT",
+        "normative_authority: false", "authority_source: EXPLICIT_USER_DIRECTIVE", "single_use: true",
+        "status: APPROVED_FOR_EXACT_SCOPE", "ai_may_expand_scope: false", "ai_may_reuse_authorization: false",
     )
     missing = [token for token in required if token not in parent_auth]
     if missing:
         print("BLOCK: authorization receipt missing required fail-closed fields", file=sys.stderr)
-        for token in missing:
-            print("MISSING:", token, file=sys.stderr)
+        for token in missing: print("MISSING:", token, file=sys.stderr)
         return 1
-
-    prewrite_errors = prewrite_context_errors(parent_auth)
-    if prewrite_errors:
-        print("BLOCK: authorization receipt lacks proven pre-write context verification", file=sys.stderr)
-        for error in prewrite_errors:
-            print("MISSING_OR_INVALID:", error, file=sys.stderr)
+    errors = prewrite_context_errors(parent_auth) + verify_receipt_identity_lock(parent_auth)
+    if errors:
+        print("BLOCK: authorization receipt / execution context lock invalid", file=sys.stderr)
+        for error in errors: print("MISSING_OR_INVALID:", error, file=sys.stderr)
         return 1
-
-    # Single use across all reachable refs, excluding only the exact current commit being evaluated.
     reused, prior_sha = prior_authorization_use_exists(auth_uid)
     if reused:
-        print(f"BLOCK: single-use authorization already consumed: {auth_uid} prior_commit={prior_sha}", file=sys.stderr)
-        return 1
-
-    # A spec mutation is never justified by construction/test need alone. The receipt is the only admissible authority.
-    forbidden_claims = (
-        "AUTO_AUTHORIZED_BY_TEST_FAILURE",
-        "AUTO_AUTHORIZED_BY_CONSTRUCTION",
-        "AUTO_AUTHORIZED_BY_IMPLEMENTATION",
-        "AUTO_AUTHORIZED_BY_VERSION_BUMP",
-    )
+        print(f"BLOCK: single-use authorization already consumed: {auth_uid} prior_commit={prior_sha}", file=sys.stderr); return 1
+    forbidden_claims = ("AUTO_AUTHORIZED_BY_TEST_FAILURE", "AUTO_AUTHORIZED_BY_CONSTRUCTION", "AUTO_AUTHORIZED_BY_IMPLEMENTATION", "AUTO_AUTHORIZED_BY_VERSION_BUMP")
     if any(token in message for token in forbidden_claims):
-        print("BLOCK: invalid automatic specification-change authority claim", file=sys.stderr)
-        return 1
-
+        print("BLOCK: invalid automatic specification-change authority claim", file=sys.stderr); return 1
     print(f"PASS: protected governance mutation authorized by pre-existing explicit user directive {auth_uid}")
+    print("PASS: execution context identity lock matches pre-authorization parent commit/tree and parent governance UID")
     print("PASS: pre-write context verification proves read/owner/duplicate/conflict/second-system/gap checks")
     print(f"PASS: authorization scope trailer={scope}")
     print("PASS: protected changed paths:")
-    for path in protected_changed:
-        print("-", path)
+    for path in protected_changed: print("-", path)
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
