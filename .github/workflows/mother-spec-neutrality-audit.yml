@@ -1,0 +1,70 @@
+name: Mother Spec Neutrality Audit
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - .github/workflows/mother-spec-neutrality-audit.yml
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Audit active authority layers
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re,yaml
+          root=Path('.')
+          mother=root/'.github/governance-source/active/source/12_DOCS/mother-spec'
+          current=root/'governance/specifications/current'
+          extra=[root/'GOVERNANCE_CURRENT.yaml',root/'governance/specifications/REGISTRY.yaml',root/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',root/'.github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml']
+          files=sorted(mother.glob('*'))+sorted(current.glob('*'))+extra
+          pats={
+            'fixed_stage_id': re.compile(r'\bSTAGE[-_ ]?\d{1,2}\b',re.I),
+            'stage_number_phrase': re.compile(r'\bStage[- ]?\d{1,2}\b',re.I),
+            'retry_round_id': re.compile(r'\bR\d{1,3}\b'),
+            'run_id_field': re.compile(r'\b(?:run_uid|run_id|attempt_id|fresh_run)\b',re.I),
+            'workflow_path': re.compile(r'\.github/workflows/|governance/test/|governance/ci/',re.I),
+          }
+          out=[]
+          for p in files:
+            if not p.is_file(): continue
+            text=p.read_text(encoding='utf-8')
+            hits={k:len(v.findall(text)) for k,v in pats.items()}
+            out.append({'path':p.as_posix(),'hits':hits,'total':sum(hits.values())})
+          manifest=yaml.safe_load((current/'SPECIFICATION_MANIFEST.yaml').read_text()) or {}
+          contradictions=[]
+          for rel in manifest.get('components') or []:
+            p=Path(rel)
+            if not p.is_absolute(): p=root/p
+            if p.is_file() and p.suffix in ('.yaml','.yml'):
+              d=yaml.safe_load(p.read_text()) or {}
+              if d.get('formal_current_authority') is False:
+                contradictions.append({'component':rel,'reason':'LISTED_CURRENT_BUT_SELF_DECLARED_NON_AUTHORITY'})
+              if 'TEST_SPECIFICATION' in str(d.get('normative_status','')):
+                contradictions.append({'component':rel,'reason':'LISTED_CURRENT_BUT_TEST_COMPONENT'})
+          refs={}
+          needles=['STAGE_EXECUTION_OPTIMIZATION.yaml','STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml','TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE.yaml','GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml']
+          scan_roots=[root/'governance',root/'.github']
+          for needle in needles:
+            matches=[]
+            for sr in scan_roots:
+              if not sr.exists(): continue
+              for p in sr.rglob('*'):
+                if not p.is_file() or p.suffix.lower() not in {'.py','.yaml','.yml','.md','.json'}: continue
+                try: t=p.read_text(encoding='utf-8')
+                except Exception: continue
+                if needle in t: matches.append(p.as_posix())
+            refs[needle]=sorted(set(matches))
+          result={'files':out,'manifest_contradictions':contradictions,'active_reference_consumers':refs}
+          print(json.dumps(result,ensure_ascii=False,indent=2))
+          if contradictions:
+            print(f'AUDIT_FOUND_MANIFEST_CONTRADICTIONS={len(contradictions)}')
+          print('AUDIT_FILE_COUNT=',len(out))
+          print('AUDIT_TOTAL_CONTAMINATION_HITS=',sum(x['total'] for x in out))
+          PY
