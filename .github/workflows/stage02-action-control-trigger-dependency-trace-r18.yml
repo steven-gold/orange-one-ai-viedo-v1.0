@@ -49,7 +49,7 @@ jobs:
         run: |
           set -euo pipefail
           python governance/ci/governance_resolver.py
-          python governance/ci/validate_stage_test_remediation_closure_protocol.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
 
       - name: Revalidate R12 baseline and Stage-02 successor integrity
         run: |
