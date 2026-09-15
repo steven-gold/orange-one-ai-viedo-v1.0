@@ -5,11 +5,13 @@ on:
     branches: [rebuild-v2.1.1]
     paths:
       - '.github/governance-source/FULL_LINE_TRIGGER'
+      - '.github/governance-source/FULL_LINE_FAILURE_DIAGNOSTICS.py'
       - '.github/workflows/governance-full-line-system-gate.yml'
       - 'GOVERNANCE_CURRENT.yaml'
       - 'governance/ci/canonical_rule_registry.py'
       - 'governance/ci/specification_mutation_guard.py'
       - 'governance/ci/validate_active_consumer_reference_integrity.py'
+      - 'governance/ci/validate_authoring_reference_governance_coverage.py'
       - 'governance/ci/validate_canonical_rule_registry.py'
       - 'governance/ci/validate_governance_portability.py'
       - 'governance/ci/validate_stage02_successor_integrity.py'
@@ -50,6 +52,8 @@ jobs:
         run: python governance/ci/validate_validation_remediation_closure_protocol.py
       - name: Validate Current governance layout and zero residual
         run: python governance/ci/validate_governance_layout.py
+      - name: Validate authoring reference duplicate conflict and residual governance coverage
+        run: python governance/ci/validate_authoring_reference_governance_coverage.py
       - name: Validate active consumer reference integrity
         run: python governance/ci/validate_active_consumer_reference_integrity.py
       - name: Run Current Registry multidirectional stress 13 of 13
@@ -60,6 +64,9 @@ jobs:
         run: python governance/ci/validate_stage02_successor_integrity.py
       - name: Run complete 75-file full-lifecycle high-pressure system gate
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Expand exact Full-Line failure diagnostics
+        if: ${{ failure() }}
+        run: python .github/governance-source/FULL_LINE_FAILURE_DIAGNOSTICS.py
       - name: Prove verified source remained byte-clean after destructive suites
         if: ${{ always() }}
         shell: bash
@@ -77,5 +84,7 @@ jobs:
           path: |
             .github/governance-source/SOURCE_IDENTITY_REPORT.json
             .github/governance-source/FULL_LINE_SYSTEM_GATE_RESULT.json
+            .github/governance-source/FULL_LINE_FAILURE_DIAGNOSTICS.json
+            governance/test/AUTHORING_REFERENCE_GOVERNANCE_COVERAGE_REPORT.json
             governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
           if-no-files-found: error
