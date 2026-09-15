@@ -40,7 +40,7 @@ def sig(page, rem):
 r23 = load(R23)
 auto = [r for r in (r23.get("records") or []) if r.get("authorized_for_auto_completion") is True]
 expected_auto = (r23.get("denominators") or {}).get("auto_remediable_current_authority_payload_total")
-if len(auto) != expected_auto or not isinstance(expected_auto, int) or expected_auto < 1 or expected_auto > 4:
+if len(auto) != expected_auto or not isinstance(expected_auto, int) or expected_auto < 0 or expected_auto > 4:
     die(f"R23_AUTO_DENOMINATOR:{len(auto)}:{expected_auto}")
 if any(r.get("page_uid") != "ASSET-01" or r.get("category") != "PAYLOAD_INPUT_CONTRACT_MISSING" for r in auto):
     die("R23_AUTO_SCOPE_OR_CATEGORY_DRIFT")
@@ -85,11 +85,7 @@ for rec in auto:
         "remediation_uid": f"R23::{rec.get('page_uid')}::{rec.get('blocker_uid')}",
         "source_cycle": "R23_CURRENT_AUTHORITY_REQUIRED_PAYLOAD",
         "source_blocker_uid": rec.get("blocker_uid"),
-        "defect_signature": {
-            "category": rec.get("category"),
-            "uid": rec.get("target_uid"),
-            "detail": rec.get("gap_detail"),
-        },
+        "defect_signature": {"category": rec.get("category"), "uid": rec.get("target_uid"), "detail": rec.get("gap_detail")},
         "owning_layer": "STAGE-02_PAGE_FUNCTIONAL_CONTRACT",
         "completion_basis": "CURRENT_MANIFEST_LISTED_RUNTIME_AUTHORITY_REQUIRED_PAYLOAD_EXACT_PROJECTION",
         "exact_proof": {
@@ -112,9 +108,7 @@ for rec in auto:
             "operation_id": ev.get("operation_id"),
             "method": ev.get("method"),
             "route": ev.get("route"),
-            "payload_contract": {
-                "required_fields": list(required_fields),
-            },
+            "payload_contract": {"required_fields": list(required_fields)},
             "projection_rule": "EXACT_COPY_OF_CURRENT_AUTHORITY_REQUIRED_PAYLOAD_NO_FIELD_INFERENCE",
         },
         "semantic_inference_used": False,
@@ -130,23 +124,27 @@ for rec in auto:
 if len(new) != expected_auto:
     die("R23_NEW_DENOMINATOR_DRIFT")
 asset_path, asset = ledgers["ASSET-01"]
-asset["remediations"] = list(asset.get("remediations") or []) + [rem for _, rem in sorted(new)]
-asset["materialized_remediation_count"] = len(asset["remediations"])
-refs = list(asset.get("source_classification_refs") or [])
 r23ref = str(R23.relative_to(ROOT))
-if r23ref not in refs:
-    refs.append(r23ref)
-asset["source_classification_refs"] = refs
-asset["latest_bounded_completion_cycle"] = "R23_CURRENT_AUTHORITY_REQUIRED_PAYLOAD"
-asset["stage_exit_claimed"] = False
-dump(asset_path, asset)
+if new:
+    asset["remediations"] = list(asset.get("remediations") or []) + [rem for _, rem in sorted(new)]
+    asset["materialized_remediation_count"] = len(asset["remediations"])
+    refs = list(asset.get("source_classification_refs") or [])
+    if r23ref not in refs:
+        refs.append(r23ref)
+    asset["source_classification_refs"] = refs
+    asset["latest_bounded_completion_cycle"] = "R23_CURRENT_AUTHORITY_REQUIRED_PAYLOAD"
+    asset["stage_exit_claimed"] = False
+    dump(asset_path, asset)
+else:
+    if asset.get("materialized_remediation_count") != 33:
+        die(f"R23_ZERO_CLOSURE_LEDGER_BASELINE_DRIFT:{asset.get('materialized_remediation_count')}")
 expected_after_asset = 33 + expected_auto
-if asset["materialized_remediation_count"] != expected_after_asset:
-    die(f"ASSET_AFTER_COUNT_DRIFT:{asset['materialized_remediation_count']}:{expected_after_asset}")
+if (asset.get("materialized_remediation_count") or 0) != expected_after_asset:
+    die(f"ASSET_AFTER_COUNT_DRIFT:{asset.get('materialized_remediation_count')}:{expected_after_asset}")
 
 head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=str(ROOT), text=True, capture_output=True, check=True).stdout.strip()
 receipt = {
-    "schema_version": 1,
+    "schema_version": 2,
     "artifact_type": "STAGE02_R23_BOUNDED_MATERIALIZATION_RECEIPT",
     "normative_authority": False,
     "stage_uid": "STAGE-02",
@@ -159,6 +157,7 @@ receipt = {
     "materialized_targets": [key[2] for key, _ in sorted(new)],
     "materialized_category": "PAYLOAD_INPUT_CONTRACT_MISSING",
     "source_authority": "ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY@1.0",
+    "zero_closure_preserves_existing_ledger_bytes": expected_auto == 0,
     "blocker_reduction_claimed_before_reexecution": 0,
     "current_specification_mutated": False,
     "immutable_stage1_source_mutated": False,
@@ -173,4 +172,6 @@ dump(RECEIPT, receipt)
 print("PASS: preserved prior product materializations=38")
 print(f"PASS: appended exact R23 Current Authority payload materializations={expected_auto}")
 print(f"PASS: product materialization total now={38 + expected_auto} (CORE=5 ASSET={expected_after_asset})")
+if expected_auto == 0:
+    print("PASS: zero exact intersection; ASSET ledger intentionally not mutated")
 print("PASS: blocker reduction remains unclaimed before fresh reexecution")
