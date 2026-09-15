@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -12,6 +13,20 @@ PROTECTED_EXACT = {
     "GOVERNANCE_CURRENT.yaml",
 }
 AUTH_ROOT = "governance/test/spec_change_authorizations"
+
+_PREWRITE_TRUE_FIELDS = (
+    "relevant_scope_read_complete",
+    "canonical_owner_resolution_complete",
+    "existing_semantics_comparison_complete",
+    "duplicate_search_complete",
+    "conflict_search_complete",
+    "second_system_search_complete",
+    "gap_proven_before_write",
+)
+_PREWRITE_DECISIONS = {
+    "MODIFY_EXISTING_CANONICAL_OWNER",
+    "CREATE_NEW_ONLY_AFTER_NO_EXISTING_OWNER_PROVEN",
+}
 
 
 def git(*args, check=True):
@@ -31,6 +46,37 @@ def trailer(message, key):
     if len(values) != 1 or not values[0]:
         return None
     return values[0]
+
+
+def scalar(text: str, key: str):
+    match = re.search(r"(?m)^\s*" + re.escape(key) + r":\s*([^#\n]+?)\s*$", text)
+    return match.group(1).strip().strip("\"'") if match else None
+
+
+def prewrite_context_errors(receipt_text: str) -> list[str]:
+    errors = []
+    if "pre_write_context_verification:" not in receipt_text:
+        errors.append("PREWRITE_CONTEXT_SECTION_MISSING")
+    for field in _PREWRITE_TRUE_FIELDS:
+        if scalar(receipt_text, field) != "true":
+            errors.append("PREWRITE_CONTEXT_NOT_PROVEN:" + field)
+
+    for field in ("reviewed_authority_ref_count", "reviewed_existing_owner_ref_count"):
+        raw = scalar(receipt_text, field)
+        try:
+            count = int(raw) if raw is not None else 0
+        except ValueError:
+            count = 0
+        if count < 1:
+            errors.append("PREWRITE_CONTEXT_REFERENCE_COUNT_INVALID:" + field)
+
+    decision = scalar(receipt_text, "write_disposition")
+    if decision not in _PREWRITE_DECISIONS:
+        errors.append("PREWRITE_CONTEXT_WRITE_DISPOSITION_INVALID:" + str(decision))
+
+    if scalar(receipt_text, "comparison_result") != "NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM":
+        errors.append("PREWRITE_CONTEXT_COMPARISON_RESULT_INVALID")
+    return errors
 
 
 def prior_authorization_use_exists(auth_uid):
@@ -75,7 +121,8 @@ def main():
         return 1
 
     auth_rel = f"{AUTH_ROOT}/{auth_uid}.yaml"
-    # Authorization must already exist in the parent commit. It cannot be fabricated in the same commit as the spec mutation.
+    # Authorization and its pre-write comparison proof must already exist in the
+    # parent commit. Neither may be fabricated together with the normative mutation.
     parent_auth = git("show", f"HEAD^:{auth_rel}", check=False)
     if not parent_auth:
         print(f"BLOCK: authorization {auth_uid} did not exist in parent commit", file=sys.stderr)
@@ -98,6 +145,13 @@ def main():
             print("MISSING:", token, file=sys.stderr)
         return 1
 
+    prewrite_errors = prewrite_context_errors(parent_auth)
+    if prewrite_errors:
+        print("BLOCK: authorization receipt lacks proven pre-write context verification", file=sys.stderr)
+        for error in prewrite_errors:
+            print("MISSING_OR_INVALID:", error, file=sys.stderr)
+        return 1
+
     # Single use across all reachable refs, excluding only the exact current commit being evaluated.
     reused, prior_sha = prior_authorization_use_exists(auth_uid)
     if reused:
@@ -116,6 +170,7 @@ def main():
         return 1
 
     print(f"PASS: protected governance mutation authorized by pre-existing explicit user directive {auth_uid}")
+    print("PASS: pre-write context verification proves read/owner/duplicate/conflict/second-system/gap checks")
     print(f"PASS: authorization scope trailer={scope}")
     print("PASS: protected changed paths:")
     for path in protected_changed:
