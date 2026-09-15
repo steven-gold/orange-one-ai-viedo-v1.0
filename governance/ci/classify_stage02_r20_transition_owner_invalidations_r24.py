@@ -64,14 +64,6 @@ ledger_entries = {
     x.get("source_blocker_uid"): x
     for x in (ledger.get("remediations") or [])
     if x.get("source_cycle") == "R20_FUNCTIONAL_CHAIN_AUTO_REMEDIABILITY"
-    and x.get("category") is None
-    and (x.get("defect_signature") or {}).get("category") == "STATE_TRANSITION_LEDGER_FIELD_MISSING"
-}
-# The category lives under defect_signature. Require exactly the four current R21 state-owner entries.
-ledger_entries = {
-    x.get("source_blocker_uid"): x
-    for x in (ledger.get("remediations") or [])
-    if x.get("source_cycle") == "R20_FUNCTIONAL_CHAIN_AUTO_REMEDIABILITY"
     and (x.get("defect_signature") or {}).get("category") == "STATE_TRANSITION_LEDGER_FIELD_MISSING"
 }
 if set(ledger_entries) != EXPECTED_BLOCKERS:
@@ -95,9 +87,10 @@ for row in sorted(auto_state, key=lambda x: x.get("blocker_uid")):
     evidence = row.get("candidate_evidence") or []
     if not evidence:
         die(f"R20_CANDIDATE_EVIDENCE_MISSING:{blocker}")
-    if any("actions:" not in str(ev.get("node") or "") for ev in evidence):
-        die(f"R20_SUSPECT_EVIDENCE_NOT_ACTION_OWNER:{blocker}")
-    if any(f"stage_transitions:{target}" in str(ev.get("node") or "") for ev in evidence):
+    nodes = [str(ev.get("node") or "") for ev in evidence]
+    if not any(node.startswith("actions:") and ("runtime_binding.port_uid" in node or "runtime_binding.persist_via_port_uid" in node) for node in nodes):
+        die(f"R20_SUSPECT_ACTION_RUNTIME_OWNER_EVIDENCE_MISSING:{blocker}")
+    if any("stage_transitions:" in node or "mutation_owner" in node for node in nodes):
         die(f"R20_SUSPECT_EVIDENCE_UNEXPECTED_SAME_TRANSITION_FIELD:{blocker}")
     current = ledger_entries[blocker]
     if current.get("completion_basis") != "TRANSITION_MUTATION_OWNER_FROM_UNIQUE_TRIGGER_RUNTIME_OWNER":
@@ -127,7 +120,7 @@ for row in sorted(auto_state, key=lambda x: x.get("blocker_uid")):
 
 head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=str(ROOT), text=True, capture_output=True, check=True).stdout.strip()
 out = {
-    "schema_version": 1,
+    "schema_version": 2,
     "artifact_type": "NON_NORMATIVE_STAGE02_R20_TRANSITION_OWNER_INVALIDATION_R24",
     "normative_authority": False,
     "stage_uid": "STAGE-02",
@@ -139,6 +132,7 @@ out = {
         "r17_precedes_r20_as_category_exact_trace": True,
         "same_transition_physical_field_required": True,
         "action_owner_to_transition_mutation_owner_promotion_forbidden": True,
+        "action_operation_matrix_lineage_is_not_transition_field_authority": True,
         "rollback_only_no_replacement_value": True,
         "current_specification_mutation_forbidden": True,
         "stage1_raw_mutation_forbidden": True,
@@ -165,4 +159,5 @@ OUT.write_text(yaml.safe_dump(out, allow_unicode=True, sort_keys=False, width=18
 print("PASS: R24 identified exactly four invalid R20 transition mutation_owner materializations")
 for x in invalidations:
     print(f"INVALIDATE {x['blocker_uid']} {x['transition_uid']}.mutation_owner")
+print("PASS: action/operation-matrix lineage was not promoted into same-transition field authority")
 print("PASS: no replacement mutation_owner value invented")
