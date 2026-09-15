@@ -21,7 +21,7 @@ if (ROOT/'governance/test/temporary').exists():
 shim=(ROOT/'GOVERNANCE_CURRENT.yaml').read_text(encoding='utf-8')
 if re.search(r'governance/(?:current|specifications)/(?:v\d)',shim): errors.append('ROOT_SHIM_VERSION_PATH')
 if 'registry_ref: governance/specifications/REGISTRY.yaml' not in shim: errors.append('ROOT_SHIM_REGISTRY_BINDING_MISSING')
-for rel in ('.github/workflows/targeted-stage01-stage02.yml','governance/ci/validate_targeted_stage01_stage02.py'):
+for rel in ('.github/workflows/governance-selected-profile-integrity.yml','governance/ci/validate_selected_execution_profile_integrity.py'):
     p=ROOT/rel
     if not p.is_file(): errors.append('ACTIVE_CONSUMER_MISSING:'+rel); continue
     txt=p.read_text(encoding='utf-8')
