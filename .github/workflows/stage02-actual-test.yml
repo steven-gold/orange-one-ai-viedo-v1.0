@@ -48,39 +48,39 @@ jobs:
       - name: Run Current Registry multidirectional stress 13 of 13
         run: python governance/ci/stress_test_governance_registry.py
 
-      - name: Validate Stage-01 binding invariants
-        run: python governance/ci/validate_stage01_registry_binding.py
+      - name: Validate selected execution profile and historical predecessor binding
+        run: python governance/ci/validate_selected_execution_profile_integrity.py
 
-      - name: Validate Stage-02 admission predecessor state
+      - name: Validate Stage-02 admission predecessor state within selected profile
         run: python governance/ci/validate_stage02_state_integrity.py
 
-      - name: Validate Stage-02 frozen governance and clean baseline entry receipts
+      - name: Validate Stage-02 frozen governance and clean baseline entry receipts within selected profile
         run: python governance/ci/validate_stage02_entry_receipts.py
 
-      - name: Run complete 75-file full-lifecycle high-pressure system gate on exact Stage-02 test SHA
+      - name: Run complete 75-file full-lifecycle high-pressure system gate on exact selected-profile test SHA
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
 
-      - name: Prove verified source remained byte-clean before Stage-02 actual test
+      - name: Prove verified source remained byte-clean before selected-profile Stage-02 actual test
         shell: bash
         run: |
           set -euo pipefail
           git diff --exit-code -- .github/governance-source/active/source
           bad="$(find .github/governance-source/active/source \( -name '*.pyc' -o -name '__pycache__' -o -name '*.tmp' -o -name '*.bak' -o -name '*~' \) -print)"
           test -z "$bad" || { printf 'BLOCK: source runtime residue\n%s\n' "$bad" >&2; exit 1; }
-          echo 'PASS: exact source remains byte-clean before Stage-02 actual test'
+          echo 'PASS: exact source remains byte-clean before selected-profile Stage-02 actual test'
 
-      - name: Execute fresh Stage-02 actual test from Stage-01 immutable inputs
+      - name: Execute fresh Stage-02 actual test inside selected execution profile
         run: python governance/ci/run_current_stage2_actual_test.py
 
-      - name: Prove Current Specification and Stage-01 inputs were not mutated by Stage-02 test
+      - name: Prove Current Specification and historical predecessor inputs were not mutated by selected-profile test
         shell: bash
         run: |
           set -euo pipefail
           git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
-          echo 'PASS: Stage-02 actual test did not mutate Current Specification or immutable Stage-01 inputs'
+          echo 'PASS: selected-profile Stage-02 actual test did not mutate Current Specification or immutable predecessor inputs'
 
-      - name: Upload Stage-02 actual test evidence
+      - name: Upload selected-profile Stage-02 actual test evidence
         uses: actions/upload-artifact@v4
         with:
           name: stage02-actual-test-evidence
