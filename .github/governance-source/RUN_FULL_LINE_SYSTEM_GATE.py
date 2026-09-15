@@ -16,10 +16,10 @@ CHECKSUMS = SOURCE / 'CHECKSUMS.sha256'
 TRUST_ROOT = Path('/tmp/acpos-governance-external-trust-root.json')
 RESULT = ROOT / '.github' / 'governance-source' / 'FULL_LINE_SYSTEM_GATE_RESULT.json'
 
-EXPECTED_CHECKSUMS_SHA256 = '46add0505c620a016bf32fbda9136d1910da0f974e94a6912f90c6a78a116f4d'
-EXPECTED_SEMANTIC_CONTENT_HASH = 'e7e1eec7d4beb8f78f901d403c2494e62c1e9e117b97a09a5f56c13f6971bab1'
-EXPECTED_SOURCE_ZIP_SHA256 = '3ee11cbef7b406e7a57970ee46a59ea8a16e0125cbf69c9be5d7fec1fbad92de'
-EXPECTED_BUNDLE_SHA256 = 'b5bf1af1817e41832e53aeb6e4b78f7fa0c24ac41204fe6de2a69eb663ceb625'
+EXPECTED_CHECKSUMS_SHA256 = '7208659cd9ddc0c549b4732e34d9953fd8213eaf14e33d278a8984dad819d24e'
+EXPECTED_SEMANTIC_CONTENT_HASH = '9af585e1b2f289a04795a3dbc528b98380c0a64d6528dc6a6cc8cbf6995df0a6'
+EXPECTED_SOURCE_ZIP_SHA256 = 'b83ca213b6783732de5e9577ef76cb734446f3b43a1901c3c865a43f65d84ebe'
+EXPECTED_BUNDLE_SHA256 = 'b8bc298b749f4304afd46fb96f03472d319c432bd7b29d8990ecf49b517d7ddd'
 EXPECTED_STAGE_UIDS = [f'STAGE-{i:02}' for i in range(1, 12)]
 EXPECTED_STAGE_NAMES = [
     'SOURCE_INTAKE_AND_BASE_BLUEPRINT','PAGE_FUNCTIONAL_CONTRACT','VISUAL_DESIGN','FOUNDATION_FREEZE',
@@ -41,7 +41,7 @@ EXPECTED_SUITES = {
     'test_v2_1_10_closure_evidence_continuity.py': {'total': 43, 'passed_expectations': 43},
     'test_v2_1_11_binding_authority_receipt_schema.py': {'total': 54, 'passed_expectations': 54},
     'test_v2_1_12_successor_state_evidence_parse.py': {'total': 60, 'passed_expectations': 60},
-    'test_v2_1_13_stage_execution_invariants.py': {'total': 18, 'passed_expectations': 18},
+    'test_v2_1_13_stage_execution_invariants.py': {'total': 26, 'passed_expectations': 26},
     'test_v2_1_14_test_feedback_spec_evolution.py': {'total': 21, 'passed_expectations': 21},
     'test_v2_1_14_product_neutral_entity_lifecycle.py': {'total': 68, 'passed_expectations': 68},
 }
@@ -55,7 +55,7 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 # Build an external trust-root outside the source tree, anchored by immutable hashes copied
-# from the original verified package, never by unverified live source content alone.
+# from the verified v2.1.15 package, never by unverified live source content alone.
 if not CHECKSUMS.is_file():
     block('CHECKSUMS_MISSING')
 elif sha256(CHECKSUMS) != EXPECTED_CHECKSUMS_SHA256:
@@ -85,7 +85,7 @@ trust = {
 }
 TRUST_ROOT.write_text(json.dumps(trust, indent=2) + '\n', encoding='utf-8')
 
-# Pin the original semantic authority and lifecycle denominator before executing any suite.
+# Pin the active semantic authority and lifecycle denominator before executing any suite.
 semantic_path = SOURCE / '10_REGISTRY' / 'SEMANTIC_AUTHORITY_BASELINE.yaml'
 stage_path = SOURCE / '10_REGISTRY' / 'GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 try:
