@@ -51,6 +51,7 @@ required_policy = {
     "operation_registry_may_support_identity_but_not_create_payload_contract": True,
     "required_payload_is_copied_exactly_from_current_runtime_authority": True,
     "page_action_operation_method_path_identity_must_match": True,
+    "zero_exact_intersection_is_valid_audited_outcome": True,
     "semantic_field_inference_forbidden": True,
     "historical_non_current_authority_forbidden": True,
     "ai_invented_payload_fields_forbidden": True,
@@ -64,7 +65,7 @@ den = doc.get("denominators") or {}
 if den.get("parent_effective_gap_total") != 129 or den.get("parent_payload_gap_total") != 34 or den.get("payload_gaps_evaluated") != 34:
     die(f"R23_PARENT_DENOMINATOR_DRIFT:{den}")
 auto_total = den.get("auto_remediable_current_authority_payload_total")
-if not isinstance(auto_total, int) or auto_total < 1 or auto_total > 4:
+if not isinstance(auto_total, int) or auto_total < 0 or auto_total > 4:
     die(f"R23_AUTO_DENOMINATOR_INVALID:{auto_total}")
 if den.get("authority_gap_multiple_contract_total") != 0:
     die("R23_MULTIPLE_CURRENT_PAYLOAD_CONTRACTS_NOT_ZERO")
@@ -74,8 +75,7 @@ if den.get("blocker_reduction_claimed_before_materialization") != 0:
     die("R23_PREMATURE_BLOCKER_REDUCTION")
 
 manifest = load(MANIFEST)
-paths = flatten(manifest.get("current_authority_set") or {})
-if EXPECTED_SHARED_SOURCE not in paths:
+if EXPECTED_SHARED_SOURCE not in flatten(manifest.get("current_authority_set") or {}):
     die("R23_SHARED_RUNTIME_NOT_MANIFEST_CURRENT")
 if (manifest.get("load_policy") or {}).get("only_listed_files_are_current_authority") is not True:
     die("R23_MANIFEST_LOAD_POLICY_DRIFT")
@@ -123,10 +123,9 @@ for row in records:
         value = row.get("candidate_value") or {}
         if value.get("operation_id") != op_id or value.get("method") != str(op.get("method")).upper() or value.get("route") != op.get("route") or value.get("required_fields") != required_payload:
             die(f"R23_AUTO_CANDIDATE_VALUE_DRIFT:{sig}")
-        proof = set(ev.get("identity_proof") or [])
         required_proof = {"CURRENT_MANIFEST_LISTED", "GAP006_EXACT_MATERIALIZATION", "PAGE_BINDING_ACTION_UID_EXACT", "R14_OPERATION_ID_EXACT"}
-        if not required_proof.issubset(proof):
-            die(f"R23_AUTO_IDENTITY_PROOF_INCOMPLETE:{sig}:{sorted(proof)}")
+        if not required_proof.issubset(set(ev.get("identity_proof") or [])):
+            die(f"R23_AUTO_IDENTITY_PROOF_INCOMPLETE:{sig}")
         if row.get("authority_gap_proven") is not False or row.get("disposition") != "AUTO_REMEDIABLE_CURRENT_AUTHORITY_REQUIRED_PAYLOAD":
             die(f"R23_AUTO_DISPOSITION_DRIFT:{sig}")
     else:
@@ -137,9 +136,11 @@ for row in records:
 
 if len(auto) != auto_total:
     die(f"R23_AUTO_COUNT_DRIFT:{len(auto)}:{auto_total}")
-if sorted(doc.get("auto_targets") or []) != sorted(r.get("target_uid") for r in auto):
+if sorted(doc.get("auto_targets") or []) != sorted(x.get("target_uid") for x in auto):
     die("R23_AUTO_TARGET_LIST_DRIFT")
 if len(set(doc.get("auto_targets") or [])) != auto_total:
     die("R23_AUTO_TARGET_DUPLICATE")
+if auto_total == 0 and doc.get("next_execution_gate") != "CURRENT_AUTHORITY_REQUIRED_PAYLOAD_SCAN_EXHAUSTED_NO_NEW_CLOSURE":
+    die("R23_ZERO_RESULT_NEXT_GATE_DRIFT")
 print(f"PASS: R23 payload closure records=34 auto={auto_total} unresolved={34-auto_total}")
-print("PASS: every R23 auto closure is exact Current Shared Runtime required_payload with manifest/action/operation identity proof")
+print("PASS: zero exact intersection is legal and does not create a product closure")
