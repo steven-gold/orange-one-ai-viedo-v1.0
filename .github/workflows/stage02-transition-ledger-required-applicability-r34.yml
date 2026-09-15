@@ -1,0 +1,71 @@
+name: Stage-02 Transition Ledger Required Applicability R34
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/stage02-transition-ledger-required-applicability-r34.yml'
+      - 'governance/ci/build_stage02_transition_ledger_required_applicability_r34.py'
+      - 'governance/ci/validate_stage02_transition_ledger_required_applicability_r34.py'
+      - 'governance/test/stage02/STAGE02_STATE_TRANSITION_LEDGER_DEPENDENCY_TRACE_R17.yaml'
+      - 'governance/test/stage02/STAGE02_CURRENT_FUNCTIONAL_CONTRACT_DECISION_STATUS_R33.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-validate-required:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install YAML dependency
+        run: python -m pip install pyyaml
+      - name: Compile R34 implementation
+        run: |
+          python -m py_compile governance/ci/build_stage02_transition_ledger_required_applicability_r34.py
+          python -m py_compile governance/ci/validate_stage02_transition_ledger_required_applicability_r34.py
+      - name: Revalidate R17 R33 baselines
+        run: |
+          python governance/ci/validate_stage02_state_transition_ledger_dependency_trace_r17.py
+          python governance/ci/validate_stage02_current_decision_status_r33.py
+      - name: Build R34 transition ledger required applicability proof
+        run: python governance/ci/build_stage02_transition_ledger_required_applicability_r34.py
+      - name: Validate R34 required applicability proof
+        run: python governance/ci/validate_stage02_transition_ledger_required_applicability_r34.py
+      - name: Prove frozen Current Specification and immutable Stage-1 Raw authority unchanged
+        run: |
+          git diff --exit-code -- governance/specifications/current
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+      - name: Assert zero premature reduction
+        run: |
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          d=yaml.safe_load(Path('governance/test/stage02/STAGE02_TRANSITION_LEDGER_REQUIRED_APPLICABILITY_R34.yaml').read_text())
+          den=d['denominators']
+          assert den['current_transition_ledger_field_problems']==40, den
+          assert den['transition_count']==10 and den['required_missing_fields_per_transition']==4, den
+          assert den['required_count']==40 and den['not_applicable_count']==0 and den['optional_count']==0, den
+          assert den['candidate_values_materialized']==0 and den['blocker_reduction_claimed']==0, den
+          assert d['stage02_status']=='BLOCKED' and d['stage03_allowed'] is False, d
+          print('PASS: R34 confirms all 40 transition-ledger gaps are REQUIRED; reduction=0')
+          PY
+      - name: Persist R34 proof
+        run: |
+          path='governance/test/stage02/STAGE02_TRANSITION_LEDGER_REQUIRED_APPLICABILITY_R34.yaml'
+          if [ -z "$(git status --porcelain -- "$path")" ]; then
+            echo 'R34 output unchanged'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$path"
+          git commit -m 'test(stage02): persist transition ledger required applicability R34'
+          git push origin HEAD:rebuild-v2.1.1
