@@ -1,0 +1,61 @@
+schema_version: 1
+authorization_uid: USR-DIRECTIVE-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+
+exact_scope:
+  statement: >-
+    Harden the existing canonical governance owners so delete, rename, move, supersede,
+    replacement, entrypoint change, executable-owner change, and governance promotion
+    cannot close unless the complete active reverse-consumer set and every derived trust
+    identity, authoritative denominator, lifecycle-output expectation, and active projector
+    are discovered, frozen, atomically migrated, and freshly verified with zero stale or
+    broken Current reference. Integrate the permanent active-consumer reference integrity
+    gate into required regression paths and use fresh evidence to terminalize only directly
+    related reproduced findings whose required fixes are proven.
+  unrelated_product_behavior_change: FORBIDDEN
+  unrelated_execution_profile_change: FORBIDDEN
+  unrelated_external_authority_resolution: FORBIDDEN
+
+execution_context_identity_lock:
+  baseline_commit_sha: 6b76722e4a7e824735030df1ed94d841ce773602
+  baseline_tree_sha: fd9cf984406bbfa013b9c86b58d51150a4787f19
+  current_governance_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+  current_display_version: v2.2.2
+  registry_ref: governance/specifications/REGISTRY.yaml
+  canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 8
+  reviewed_existing_owner_ref_count: 4
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+  comparison_result: NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM
+  canonical_owners:
+    - governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
+    - governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+    - governance/specifications/current/EVIDENCE_FEEDBACK_ARTIFACT_LIFECYCLE.yaml
+    - governance/specifications/current/SPECIFICATION_MANIFEST.yaml
+  supporting_current_entrypoints:
+    - governance/specifications/REGISTRY.yaml
+    - GOVERNANCE_CURRENT.yaml
+  implementation_evidence:
+    - governance/ci/validate_active_consumer_reference_integrity.py
+    - governance/ci/stress_test_governance_registry.py
+    - .github/workflows/targeted-stage01-stage02.yml
+  reproduced_gap_evidence:
+    - FIND-20260915-027
+    - GitHub run 35015195752 exposed nineteen active workflows referencing a deleted validator target.
+    - GitHub run 35015441857 proved exact 19/19 canonical migration, active-consumer reference integrity PASS, and Registry Stress 13/13 PASS before persistence.
+    - GitHub run 35015822246 proved the persisted branch has active-consumer reference integrity PASS and Registry Stress 13/13 PASS; its later failure was Stage-01 binding staleness, not reference integrity.
