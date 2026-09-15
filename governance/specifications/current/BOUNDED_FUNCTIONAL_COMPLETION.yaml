@@ -1,7 +1,7 @@
-schema_version: 1
+schema_version: 2
 artifact_uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
-normative_status: ACTIVE_TEST_SPECIFICATION_COMPONENT
+normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
 formal_current_authority: false
 common_scope: PRODUCT_AND_SYSTEM_NEUTRAL
 
@@ -16,10 +16,19 @@ rules:
     activation: REQUIRED_GAP_CLOSURE_OR_AUTO_COMPLETION_FROM_REGISTERED_SEED
     seed_gap_or_required_operation_required: true
     minimal_closure_set_required: true
+    complete_before_after_functional_chain_review_required: true
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    unique_functional_closure_derivation_required_before_auto_remediable: true
+    one_role_correct_minimal_closure: AUTO_REMEDIABLE
+    authority_gap_minimum_materially_distinct_viable_behaviors: 2
+    zero_role_correct_closure: OWNING_LAYER_UNRESOLVED_CONTRACT_GAP
     outside_frozen_closure: STOP_AND_REOPEN_DESIGN
     generic_crud_symmetry_expansion: BLOCK
     sibling_feature_symmetry_expansion: BLOCK
     continue_after_stop_condition: BLOCK
+    role_safe_evidence_required: true
+    adjacent_signal_or_owner_may_substitute_missing_contract_role: false
+    existing_function_with_missing_upstream_or_downstream_step_must_be_evaluated_for_minimal_completion: true
   FUNCTION_VISUAL_SYNCHRONIZED_COMPLETION:
     required_artifact: FUNCTION_VISUAL_IMPACT_MATRIX
     activation: USER_VISIBLE_OR_USER_OBSERVABLE_REQUIRED_OPERATION
@@ -32,4 +41,6 @@ rules:
     validation_impact_index_required: true
     reverse_dependency_index_required: true
     index_may_skip_required_impacted_validator: false
+    impacted_reverse_dependency_only_validation_after_batch: true
+    checkpoint_full_sweep_required: true
     full_sweep_required_before_freeze: true

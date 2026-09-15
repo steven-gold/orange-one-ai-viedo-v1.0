@@ -1511,3 +1511,27 @@ When a scope declares `AI_CONVERSATION`, `AI_ASSISTED_WORKSPACE`, or `MULTI_AGEN
 Conversation identity continuity MUST classify at least `conversation_id`, `thread_id`, `context_ref_or_hash`, `work_scope_ref`, and `base_version_ref_when_applicable`. Multi-agent comparison MUST prove input equivalence using the same original-request identity and exact relevant-context snapshot unless registered Authority explicitly permits participant-specific context. Different inputs MUST_NOT be presented as a directly comparable same-baseline result.
 
 AI output formalization MUST distinguish `RAW_AI_OUTPUT`, `WORKING_EVIDENCE`, `CANDIDATE`, `GOVERNED_DECISION`, and `AUTHORITATIVE_VERSION` or semantically equivalent product-neutral states. Direct promotion from raw AI output to authoritative state without the registered decision/approval boundary is forbidden. A returned revision MUST retain exact base candidate/version, reason/evidence, and source conversation/evidence continuity. A branch MUST bind to its exact source message/reference, own branch thread/context snapshot, isolation rule, and explicit adoption path; silent merge into the mainline is forbidden.
+
+<!-- SECTION_UID: WEB-GOV-01-S073 -->
+## 73. Canonical Stage Preflight / Effective Contract Overlay / Role-Safe Functional Closure
+
+Every governed Stage MUST establish one canonical execution preflight before the first product/contract remediation begins. The preflight MUST resolve the governing rule universe once, freeze that universe for the attempt, and materialize the following machine-readable artifacts from Current Authority and the immutable predecessor baseline:
+
+- `REQUIRED_FIELD_MANIFEST`
+- `FUNCTIONAL_CHAIN_MANIFEST`
+- `EFFECTIVE_CONTRACT_OVERLAY`
+- `DEPENDENCY_TOPOLOGY`
+- `DENOMINATOR_SNAPSHOT`
+- `CLASSIFICATION_RULESET`
+- `CHANGE_IMPACT_MAP`
+- `STAGE_EXECUTION_PREFLIGHT_RECEIPT`
+
+`REQUIRED_FIELD_MANIFEST` is the only canonical required-field universe for scanners, trace builders, validators, remediation classifiers and checkpoint reconciliation. A local runner MUST_NOT hard-code, omit, narrow, or independently reinterpret a subset while claiming canonical completeness. Applicability MUST be classified before a missing node is counted: every governed requirement is `REQUIRED`, `OPTIONAL`, or `NOT_APPLICABLE`, and `NOT_APPLICABLE` requires exact governing evidence.
+
+Current Effective Contract truth is computed as `Immutable Raw/Predecessor Requirement + Legally Admitted Current Successor/Materialization Overlay`. Raw absence alone MUST_NOT be counted as an effective gap when an exact, validated, role-correct successor closure already satisfies the same canonical signature. Conversely, a neighboring value, same-UID membership, semantic similarity, or earlier test result MUST_NOT substitute for the missing role.
+
+For every existing authorized function, incomplete before/after flow remains a functional defect and MUST be evaluated against the complete chain: `Business Intent -> Preconditions -> Entry -> Input Source -> Trigger -> Gate -> Permission -> Action -> Validation -> Payload -> API/Runtime -> Persistence/Provider -> Audit -> Response/Feedback -> Success/Next -> Failure/Recovery -> Terminal`. Absence of a pre-materialized exact value is not by itself an `AUTHORITY_GAP`. The executor MUST first run `UNIQUE_FUNCTIONAL_CLOSURE_DERIVATION` over the frozen dependency closure.
+
+A missing step is `AUTO_REMEDIABLE` only when exactly one role-correct minimal closure is determined by Current Authority plus upstream/downstream contracts and no materially distinct product behavior remains. Two or more materially distinct viable behaviors MUST be recorded and classified `AUTHORITY_GAP`; zero role-correct derivations remain an owning-layer unresolved contract gap unless another registered class applies. Discovery of a required dependency outside the frozen closure MUST stop automation and reopen design.
+
+Role identity is non-substitutable. In particular: port exposure is not a trigger; a state/event signal is not a trigger without an explicit binding; an action/runtime owner is not a transition mutation owner; result/state-event evidence is not itself a validation contract; a dotted event token is not an Audit Event UID without exact registered identity; and a neighboring same-UID field is not proof of the missing field. A minimal assertion wrapper MAY be generated from one unique frozen success signal only when its assertion semantics and observation point are uniquely determined and no alternative result/timing interpretation remains.

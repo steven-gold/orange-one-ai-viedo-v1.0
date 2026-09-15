@@ -1,4 +1,4 @@
-# AI Web Governance v2.1.14 — Stage Test Feedback / Specification Evolution Candidate
+# AI Web Governance v2.1.15 — Canonical Stage Execution Optimization
 
 This successor preserves v2.1.11 as immutable history. It closes defects reproduced during the Stage-01 closure replay: predecessor validators may not hard-code the global Current state to the predecessor terminal state or permanently require successor-started=false; registered legal successors are allowed only while predecessor closure invariants remain intact and phase order remains owned by the Phase Boundary Gate.
 
@@ -48,3 +48,7 @@ A dedicated binding audit verifies that common normative material remains produc
 - A complete set of components may still fail when the workflow is visually fragmented or context handoff is broken.
 - AI conversation/multi-agent rules are conditional profiles only. When such a profile is declared, conversation identity, same-baseline context equivalence, formalization boundary, revision lineage, and branch isolation/adoption are mandatory.
 - These rules are product-neutral and apply to any comparable contiguous workflow; AI is an optional governed interaction profile, not a prerequisite for adopting the common governance specification.
+
+
+## v2.1.15 canonical Stage execution optimization
+This revision consolidates defects reproduced during real Stage-02 execution. It freezes one preflight manifest set before remediation, computes effective truth from immutable requirements plus legal successor overlay, forbids cross-role evidence promotion, keeps bounded automatic completion for uniquely derivable missing functional steps, executes remediation in dependency order, validates only impacted chains between checkpoints, and uses one Current Problem Register plus an append-only Resolution Ledger. After promotion, the prior Stage-02 attempt must be reset and Stage-02 rerun from the clean predecessor baseline under the new Governance UID.

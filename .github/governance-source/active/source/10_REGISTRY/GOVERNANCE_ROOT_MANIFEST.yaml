@@ -4,7 +4,7 @@ artifact_type: GOVERNANCE_ROOT_MANIFEST
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
 owner_uid: OWNER-GOVERNANCE-ROOT-MANIFEST
-governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+governance_revision: v2.1.15-stage-execution-optimization
 load_policy: ROOT_MANIFEST_TO_REGISTRY_TO_EXACT_ARTIFACT_TO_DEPENDENCY_CLOSURE
 whole_package_scan_only_for:
 - PARSER_HYGIENE_AUDIT
@@ -17,19 +17,19 @@ whole_package_scan_only_for:
 current_artifacts:
 - artifact_uid: DOC-01_BLUEPRINT_DESIGN_GOVERNANCE
   path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-  sha256: 3a2fcd00cb84480f2f4b07c836d285f9368b9a28f53c6dbf0585c37f0a231c8e
+  sha256: d482ef855adcf62d9d292f56a6f2a0884d4a96f399b83e0e243c48edd2d92909
 - artifact_uid: DOC-02_IMPLEMENTATION_DELIVERY_STANDARD
   path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-  sha256: c9cba6288887add888bd3007462fa429b19d068ae550712bebbf5eaf68f55172
+  sha256: 750ce56b31c47713ad6c04f06beb0b5fe705cd9607d9a6c0790778637cb50bfb
 - artifact_uid: DOC-03_EXECUTION_CONTROL_STANDARD
   path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-  sha256: 25934c5ec094971174877fb470daec540bdc66fd2d5ab58f7582caa9eb839b35
+  sha256: 03e7e1467aa9f78947c7e81d4fd0163b36f20604c97b113dcbf4ac2fd04479af
 - artifact_uid: DOC-04_AUDIT_PROGRESS_STANDARD
   path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-  sha256: 3085fb9f539cb126bd00c9f6a00917d93bfc80d9baccf8c6e4e4cf8d146177d4
+  sha256: 324f2417aa5143c22031916017f1dac615534ddf0d8061093b6af3d06ced01f4
 - artifact_uid: REG-NORMATIVE-SECTION-001
   path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
-  sha256: 3dfe08a9ed3e8d117f5088692a26e0e4902945d4fef1c1427b22e012a6f561f4
+  sha256: c0f5993cdb3497d44480b88b8f66c71acfd08fe2935bbd9cf9f88e8a4211be89
 - artifact_uid: REG-PROTECTED-CURRENT-ARTIFACT-001
   path: 10_REGISTRY/PROTECTED_CURRENT_ARTIFACT_REGISTRY.yaml
   sha256: 9bc37b1e2126fe19eb28727d4da10886ddcf078a7d2bd408a95a5024b9231e70
@@ -51,22 +51,22 @@ current_artifacts:
   sha256: 1efdfdb4165573f40ff388fb68f0df5063a65361e23fbade49b5efb4a9c7fc3d
 - artifact_uid: REG-REVIEW-PROGRESS-001
   path: 10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
-  sha256: dbeea61f85bef6518d75a53ceae9f608cce3a1e1b98d5159f822dad1e7747df8
+  sha256: 6a632d1693109fe14ffd38e9822d1e38a5b30e8d746a4eaa8d2c740d9bc6f3e0
 - artifact_uid: REG-LIFECYCLE-STAGE-001
   path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-  sha256: 754cef466a78cdf4dc50f4c4b89c37ba4684654c0c9224d7e24693957ccbaad9
+  sha256: 527ea234e7c8d48c0ab7bebaf53ebffd9e8ec80b11207a34443c00c9def04168
 - artifact_uid: REG-STAGE1-SOURCE-FACT-CONTRACTS-001
   path: 10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
   sha256: 02c028fb08fc94ec4199bcdea2d1b2e8773dab60a318c69f3ae38397da4f690e
 - artifact_uid: BP-GOVERNANCE-ACCEPTANCE-001
   path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
-  sha256: 7503ec2f166a3c42e9084d7705966b1d1b58aefe8c05a27e9b804c4411f75537
+  sha256: 3e52b326e5ccf155c9b664f44a683bc44a0b3d3e58f30d4947b6b9959371a535
 - artifact_uid: AUDIT-BASELINE-GOV-001
   path: 11_EVIDENCE/audit/AUDIT_BASELINE.yaml
-  sha256: b493f19f14c15c6144b09c060dd7cace5d03d344757d5529801f90afe88d12eb
+  sha256: ae215af8767b94d621f685e41a7c964e10bd33f8cc34c0efdfe597b145d5686a
 - artifact_uid: STATE-GOVERNANCE-CANDIDATE-001
   path: 11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml
-  sha256: ac24076fb229feefdeeb80e69bdb5a78d27ba3da26a4f6bcafade232ce2d96f7
+  sha256: 9b7036ee520d1814d9abeba06e92945b5830115ff99baf769a7dd279fbaccdc4
 - artifact_uid: LEDGER-GOVERNANCE-DEFECT-001
   path: 11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml
   sha256: 4cb75413a7402547c66e27f26c6faaea6c86a333ff79dcd49d6ddeea375e4bf8
@@ -74,20 +74,20 @@ current_artifacts:
   sha256: 6da585274cfb4121203d5300c2c29bab0610c29f197f0ed2e8ef2d8f97f734ec
   artifact_uid: LEDGER-GOVERNANCE-CLEANUP-001
 - path: 11_EVIDENCE/audit/generated/GOVERNANCE_REQUIREMENT_INDEX.json
-  sha256: 686152fb964e72634b1ddf43bb40d6f3870f03101d2f757bf1dab13cd01d3add
+  sha256: f240e583c1ad96d3e0ce470f3d524fa68abd841401f79f7d67e7c202617b59c5
   artifact_uid: null
 - artifact_uid: REG-REFERENCE-RULE-001
   path: 10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
-  sha256: afee33d46c8ece11ae0c115f5478a09d8b23600ca1fd6d1092e93a00ea636534
+  sha256: 09c9868a21c9de71505291c62677136f72841cdd6382c2993079f394df5e6c02
 - artifact_uid: EVID-GOV-REFERENCE-SEMANTIC-REPAIR-001
   path: 11_EVIDENCE/audit/REFERENCE_SEMANTIC_REPAIR_RESULT.yaml
-  sha256: 870b524b6d6a545b17efd2bef1722bff142bb9f8fe6917a0f65393657c1e14ab
+  sha256: f336df9d095d951ac00222a0c47808eda23e11a48b494128fb0509cf71045d14
 - artifact_uid: REG-SEMANTIC-AUTHORITY-BASELINE-001
   path: 10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
-  sha256: 35a0c593e626e7562f267f19798fb7ed8d7d7b4ca74589d86453565f586b7214
+  sha256: 93ae2cc1c0a12e63c42078246b259a54f3dba1124ba6e26076c1adbfec253c79
 - artifact_uid: EVID-GOV-HIGH-PRESSURE-HARDENING-001
   path: 11_EVIDENCE/audit/HIGH_PRESSURE_HARDENING_RESULT.yaml
-  sha256: e8b13b216163767f6d8d515459bec95015246fd22bf6505c4b330b6f99df3dd9
+  sha256: 01026d5c028f834ac5337c5f03f72cbbd2207c01fe541136ed79df6bf1373dc5
 - artifact_uid: REG-PROGRAM-IDENTITY-AUTHORITY-001
   path: 10_REGISTRY/PROGRAM_IDENTITY_AUTHORITY_REGISTRY.yaml
   sha256: ddfc0c2c060dc0e0c4e633601ab0711fe71d12834f320eba095c5b67bb31dbd8
@@ -108,10 +108,10 @@ current_artifacts:
   sha256: f10d66af78ea5fc96376a1120dc1affd9573be3da4cefba7b0563524543afefc
 - artifact_uid: REG-STAGE-EXECUTION-INVARIANT-001
   path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
-  sha256: aeef2247971edfd96217aba5eb820996dfa85dc5f0a7fcc5cac18a21ef629ae1
+  sha256: ef1516a65d1f0dcbef97d449a47fb8939fdbe5ed60ebfe3901f565409f52fb61
 - artifact_uid: TEST-GOV-V213-STAGE-EXECUTION-INVARIANT-001
   path: 09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py
-  sha256: 3182f48ca7fecf8dc5c3d170411ec2266f291dbc8394a68b12954bf0888b32d4
+  sha256: 7bfa5699e19d8d183468fa33f54d220cbb430bf83fe0a1f16d80b33f58e87798
 - artifact_uid: TEST-GOV-V214-TEST-FEEDBACK-SPEC-EVOLUTION-001
   path: 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
   sha256: b6369c2de971785cca1f47f73d36868ee46cdcdcc71753f0305aed611409d5de
@@ -162,10 +162,10 @@ validators:
   sha256: 43a1815492be8b4a4a6f3c4d29bd94127937f0df946e195df68c605786298649
   artifact_uid: null
 - path: 09_TESTS/governance/validate_reference_semantics.py
-  sha256: 40bee25ddb98c0702f1021ff603d6583560c9af48d654c83e2b976ba60eb8a8c
+  sha256: 319386a5ba3aa504c9ecbd1edaffec0de4b8eca13122e414a6cd9f6befdeb3aa
   artifact_uid: VAL-GOV-021
 - path: 09_TESTS/governance/program_artifact_instance_guard.py
-  sha256: ea0cf9b0ae5c188ce682cadc2dae1acc4184e98a972bfc606c210d7bddb919a1
+  sha256: aa32af6eb7ffe8e0e92eedc9ddaf05b8a24438bc78e4843b8c87fe26046733af
   artifact_uid: VAL-GOV-018
 - path: 09_TESTS/governance/test_reference_semantic_guard.py
   sha256: 0e12df7b1f20e622b960d78f6f312e481972aec1fac017581e33c9a4f6699a79
@@ -186,7 +186,7 @@ validators:
   path: 09_TESTS/governance/test_v2_1_7_phase_authority_bugfix.py
   sha256: cafd4923770533a708cfaa16127e4efde98bd455c1978e1e658f3ef11cf99344
 - path: 09_TESTS/governance/validate_current_test_evidence.py
-  sha256: a5e92f21f8b75e8a166b64874e4d80af247a95fffbb0bc0c695d561009700802
+  sha256: 58be6f153c9466546860c0a9f9e02c71dd47083990ac6683f3519320cc2afea2
   artifact_uid: VAL-GOV-032
 - path: 09_TESTS/governance/test_v2_1_8_successor_evidence_sync_bugfix.py
   sha256: 87c4ff60a3bb0e52ee33396b2796ca717d34b66d6455f76016fa19d7aa10683f
@@ -205,10 +205,10 @@ validators:
   sha256: 23f41c9d4e761ccb8eba0f6bb158bd11183513f4dfa0d3a97a18823d3f44f654
 - artifact_uid: VAL-GOV-035
   path: 09_TESTS/governance/validate_stage_execution_invariants.py
-  sha256: db62ff189cdc4d8fbf412aafe38c90e04612f27acc79692f0fa2f1f6b0391007
+  sha256: 4209b75c00eb2f54853840783281413edf4b9f8d47aa2bb51173eb122613a84a
 - artifact_uid: VAL-GOV-036
   path: 09_TESTS/governance/validate_test_feedback_spec_evolution.py
-  sha256: 08f3afd6d4df3f6d32f8b363681ef9e4b7a9fa1c9a414b4924ed727b8e292a39
+  sha256: 44c6c61c5ae1f765eaf3d0469706aeba7b24b9130f6492fcf11177eeaecc28b9
 - artifact_uid: VAL-GOV-037
   path: 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
   sha256: af02a502df8df9a5d4db1b53addeb3604f3fccb2d3815844556e2e26dd2f7389

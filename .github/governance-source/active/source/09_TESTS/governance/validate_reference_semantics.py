@@ -3,7 +3,7 @@ from pathlib import Path
 import json,re,yaml,sys,hashlib,copy
 sys.dont_write_bytecode=True
 ROOT=Path(__file__).resolve().parents[2]
-SEMANTIC_BASELINE_CONTENT_HASH='e7e1eec7d4beb8f78f901d403c2494e62c1e9e117b97a09a5f56c13f6971bab1'
+SEMANTIC_BASELINE_CONTENT_HASH='9af585e1b2f289a04795a3dbc528b98380c0a64d6528dc6a6cc8cbf6995df0a6'
 
 _YAML_CACHE={}
 _FRONTMATTER_CACHE={}

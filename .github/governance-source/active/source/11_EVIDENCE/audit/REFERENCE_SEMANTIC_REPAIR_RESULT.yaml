@@ -4,7 +4,7 @@ artifact_type: REFERENCE_SEMANTIC_REPAIR_RESULT
 status: PASS_LOCAL_COMPONENT_VERIFIED_V214_BOUNDED_FUNCTIONAL_COMPLETION
 canonical_path: 11_EVIDENCE/audit/REFERENCE_SEMANTIC_REPAIR_RESULT.yaml
 owner_uid: OWNER-GOVERNANCE-AUDIT
-governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+governance_revision: v2.1.15-stage-execution-optimization
 formal_test_started: false
 github_upload_performed: false
 website_construction_performed: false
@@ -23,7 +23,7 @@ results:
   v2_1_0_inherited_regression: 12/12 PASS
   post_v1_8_regression: 6/6 PASS
   preformal_global: BLOCKED_TOOL_TIMEOUT; MONOLITHIC WRAPPER NOT COMPLETED
-  section_registry: 306 UID; 0 unresolved; 0 duplicate UID
+  section_registry: 314 UID; 0 unresolved; 0 duplicate UID
   garbage_count: 0
   mandatory_regression_matrix: 17/17 SUITES PASS
   v2_1_6_cross_lifecycle_regression: 30/30 PASS
@@ -33,7 +33,7 @@ results:
   v2_1_10_closure_evidence_continuity_regression: 43/43 PASS
   v2_1_11_binding_authority_receipt_schema_regression: 54/54 PASS
   v2_1_12_successor_state_evidence_parse_regression: 60/60 PASS
-  v2_1_13_stage_execution_invariant_regression: 18/18 PASS
+  v2_1_13_stage_execution_invariant_regression: 26/26 PASS
   v2_1_13_high_pressure_reexecution: 25/25 PASS; ORIGINAL CASE SET SPLIT 14+1+10 FOR TOOL EXECUTION LIMIT
   v2_1_14_test_feedback_spec_evolution_regression: 21/21 PASS
   v2_1_14_predecessor_backtrace_v2_1_13: 18/18 PASS
@@ -45,6 +45,7 @@ results:
   bounded_functional_completion_guard: PASS
   logic_visual_synchronized_completion: PASS
   validation_performance_audit: PASS_WITH_REGRESSION_INDEX_USAGE_GAP_RECORDED
+  v2_1_15_stage_execution_optimization_regression: COMMON PREFLIGHT/OVERLAY/ROLE-SAFE/INCREMENTAL CONTRACT PASS
 disposition:
   formal_freeze_allowed: false
   formal_test_allowed: false

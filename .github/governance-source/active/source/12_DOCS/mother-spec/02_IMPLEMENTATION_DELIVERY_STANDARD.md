@@ -1318,3 +1318,16 @@ For an approved `CROSS_SURFACE_FLOW`, implementation MUST materialize the regist
 For AI-assisted interaction profiles, mode changes such as single/multi-agent, discussion/comparison, resume, revision, or branch operations MUST obey the frozen identity-transition classification. Shared conversation/context state MUST NOT be duplicated into a second unregistered service or silently reset. Multi-agent execution MUST preserve the registered same-baseline request/context identity. Raw AI output MUST remain working evidence until the registered decision/formalization boundary is satisfied. Revision and branch delivery MUST preserve lineage, isolation, and explicit adoption semantics.
 
 Logic, interaction topology, and visual grouping are one acceptance unit. A backend-complete feature with fragmented interaction topology, or a visually cohesive workbench with broken context/state continuity, is incomplete and MUST NOT be reported as delivered.
+
+<!-- SECTION_UID: WEB-GOV-02-S073 -->
+## 73. Dependency-Ordered Materialization / Incremental Impact Validation / Single Current Problem State
+
+Formal remediation MUST execute in dependency order, not discovery order. The required ordering is: shared/root Authority and contract primitives -> reusable runtime/transport/state contracts -> dependent business operations -> leaf page/control behavior -> visual/interaction binding. A downstream leaf MUST_NOT be repeatedly patched while an unresolved shared/root contract can change the leaf's admissibility or expected value.
+
+Each accepted remediation batch MUST write only to the canonical owning layer, append a machine-readable resolution entry, and validate only the affected reverse-dependency closure using `CHANGE_IMPACT_MAP`. Routine batch validation MUST be incremental. A complete full-stage rescan is required at registered checkpoints, after common-engine changes, before Stage closure, before governance freeze, and whenever indexed/local validation diverges from a full sweep.
+
+There MUST be exactly one active `CURRENT_PROBLEM_REGISTER` for the Stage and one append-only `RESOLUTION_LEDGER`. Per-run reports, snapshots and candidate reviews are evidence only and MUST_NOT become competing Current problem truth. Resolving a gap MUST update the active view by canonical signature/UID; it MUST_NOT cause wholesale re-numbering of unaffected problems. A new denominator MUST be derived from physical scan plus exact successor reconciliation, never copied from a predecessor report or hard-coded expected count.
+
+Generated evidence persistence is part of completion. A workflow MUST detect both tracked modifications and untracked newly generated outputs; `git diff --quiet` alone is insufficient for persistence decisions. The persistence gate MUST prove the exact output paths are staged/committed or deliberately unchanged.
+
+If a validator, parser, classifier, required-field resolver, denominator calculator, overlay resolver or impact-index implementation is defective, the affected remediation batch MUST stop. The defect MUST be repaired in the common engine or common manifest producer first, then the impacted preflight/manifests and affected validations MUST be regenerated. A Stage-specific per-run semantic patch MUST_NOT become an alternate rule system.

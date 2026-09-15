@@ -1501,3 +1501,25 @@ For `CROSS_SURFACE_FLOW`, Audit MUST verify transition identity and exact contex
 When the conditional AI-assisted interaction profile applies, Audit MUST verify conversation identity transitions, thread/context preservation or explicit fork semantics, same-baseline multi-agent input equivalence, the raw-output-to-authoritative formalization boundary, revision context continuity, and branch isolation/adoption. Silent conversation reset, participant baseline drift presented as comparable output, raw AI output promoted directly to canonical state, revision without exact base lineage, or branch output silently merged into mainline is FAIL.
 
 Audit MUST compare Stage-02 functional topology against Stage-03 visual topology and Stage-05/06/10 execution evidence. Geometry may vary only within the approved responsive/reflow contract; semantic order, workbench cohesion, context continuity, and decision boundaries MUST remain equivalent. Any mismatch MUST reopen the owning Stage rather than being waived as a cosmetic difference.
+
+<!-- SECTION_UID: WEB-GOV-04-S078 -->
+## 78. Stage Execution Preflight / Effective Denominator / Remediation Continuity Audit
+
+Stage acceptance MUST independently audit the execution model, not merely the final blocker count. The audit MUST prove:
+
+- all required preflight manifests and the preflight receipt physically exist and bind the active Governance UID;
+- all registered lifecycle Stage entries (`STAGE-01` through `STAGE-11`) explicitly bind the canonical Stage execution optimization invariant, with a required binding denominator of 11/11;
+- every scanner, validator, trace builder and classifier that claims canonical coverage consumed the same `REQUIRED_FIELD_MANIFEST` and `CLASSIFICATION_RULESET`;
+- the effective denominator was recomputed from immutable discovery plus exact legal successor/materialization overlay;
+- applicability decisions precede blocker counting and include evidence for every `NOT_APPLICABLE` result;
+- role-safe evidence boundaries were enforced and no adjacent signal/owner/event/field was promoted across contract roles without exact Authority;
+- every `AUTO_REMEDIABLE` closure has one and only one viable role-correct minimal derivation inside the frozen dependency closure;
+- every `AUTHORITY_GAP` records at least two materially distinct viable product behaviors, or is rejected as misclassified;
+- dependency/root ordering was respected and no leaf was repeatedly reworked because an upstream shared contract was deferred;
+- local incremental validations match the next checkpoint full sweep for the impacted signatures;
+- one Current Problem Register and one append-only Resolution Ledger define Current issue state;
+- generated outputs, including new untracked artifacts, were persisted correctly;
+- harness/engine defects were repaired at the common engine and replayed before product progress was credited;
+- a post-promotion retry contains no active completion credit from the superseded Stage attempt.
+
+A mismatch between local and full-sweep results, a stale denominator, duplicate Current problem truth, missing generated output, cross-role evidence substitution, or reuse of pre-promotion Stage credit is blocking. Historical attempts MAY be retained for regression signatures and defect provenance only.

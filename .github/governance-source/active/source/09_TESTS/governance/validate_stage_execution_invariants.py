@@ -16,11 +16,11 @@ def validate(root=ROOT):
     d=load(root,rel); inv=d.get('invariants') or {}
     if d.get('artifact_uid')!='REG-STAGE-EXECUTION-INVARIANT-001': failures.append('registry_uid_invalid')
     rev=str(d.get('governance_revision') or '')
-    if not (rev.startswith('v2.1.13-') or rev.startswith('v2.1.14-')): failures.append('revision_invalid')
+    if not (rev.startswith('v2.1.13-') or rev.startswith('v2.1.14-') or rev.startswith('v2.1.15-')): failures.append('revision_invalid')
     scope=d.get('scope') or {}; expected=[f'STAGE-{i:02d}' for i in range(1,12)]
     if scope.get('applies_to_stages')!=expected: failures.append('stage_scope_not_all_11')
     if scope.get('stage_specific_exception_without_registered_authority')!='BLOCK': failures.append('unregistered_stage_exception_not_blocked')
-    required=['RELATION_SEMANTIC_SEPARATION','GAP_REMEDIATION_ADMISSIBILITY','CURRENT_AUTHORITY_ADMISSIBILITY','REQUIRED_EVIDENCE_MATERIALIZATION','VALIDATOR_SCHEMA_SEMANTICS','UNRESOLVED_PRESERVATION','SUCCESSOR_CURRENT_ATOMIC_PROJECTION','BLOCKER_DENOMINATOR_AND_RECEIPT','AUTHORITY_EVIDENCE_CONSUMPTION','FUNCTIONAL_CONTRACT_COMPLETENESS','STAGE_ENTRY_PRECHECK','IMPLEMENTATION_DEVIATION_FEEDBACK','REVIEW_VS_CLOSURE_SEPARATION']
+    required=['RELATION_SEMANTIC_SEPARATION','GAP_REMEDIATION_ADMISSIBILITY','CURRENT_AUTHORITY_ADMISSIBILITY','REQUIRED_EVIDENCE_MATERIALIZATION','VALIDATOR_SCHEMA_SEMANTICS','UNRESOLVED_PRESERVATION','SUCCESSOR_CURRENT_ATOMIC_PROJECTION','BLOCKER_DENOMINATOR_AND_RECEIPT','AUTHORITY_EVIDENCE_CONSUMPTION','FUNCTIONAL_CONTRACT_COMPLETENESS','STAGE_ENTRY_PRECHECK','IMPLEMENTATION_DEVIATION_FEEDBACK','REVIEW_VS_CLOSURE_SEPARATION','CANONICAL_STAGE_EXECUTION_PREFLIGHT','EFFECTIVE_CONTRACT_OVERLAY','ROLE_SAFE_FUNCTIONAL_CLOSURE','DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION','COMMON_ENGINE_DEFECT_INTERRUPT','GENERATED_OUTPUT_PERSISTENCE']
     for k in required:
         if k not in inv: failures.append('missing_invariant:'+k)
     r=inv.get('RELATION_SEMANTIC_SEPARATION') or {}
@@ -49,6 +49,20 @@ def validate(root=ROOT):
     if set(f.get('create_additional_required_fields') or [])!={'creation_mode','created_entity_or_output_identity'}: failures.append('create_contract_fields_incomplete')
     async_needed={'queue_or_trigger_contract','provider_or_worker_owner','idempotency','retry_policy','timeout_or_expiry','failure_or_dlq','recovery_or_compensation','completion_or_response_binding'}
     if set(f.get('async_additional_required_fields') or [])!=async_needed: failures.append('async_contract_fields_incomplete')
+    pre=inv.get('CANONICAL_STAGE_EXECUTION_PREFLIGHT') or {}
+    pre_req={'REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT'}
+    if set(pre.get('required_artifacts') or [])!=pre_req or pre.get('all_scanners_validators_classifiers_share_same_manifest_set') is not True or pre.get('applicability_before_blocker_count') is not True: failures.append('canonical_preflight_incomplete')
+    if pre.get('explicit_stage_registry_binding_required') is not True or set(pre.get('required_stage_uid_set') or [])!={f'STAGE-{i:02d}' for i in range(1,12)} or pre.get('all_stage_entries_must_reference_invariant_uid')!='GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001': failures.append('canonical_preflight_explicit_stage_binding_incomplete')
+    eff=inv.get('EFFECTIVE_CONTRACT_OVERLAY') or {}
+    if eff.get('raw_absence_alone_is_effective_gap') is not False or eff.get('exact_role_correct_successor_may_close_matching_signature') is not True or eff.get('physical_rescan_and_signature_reconciliation_required') is not True: failures.append('effective_overlay_incomplete')
+    role=inv.get('ROLE_SAFE_FUNCTIONAL_CLOSURE') or {}
+    if role.get('pre_materialized_exact_value_absence_alone_is_authority_gap') is not False or role.get('unique_functional_closure_derivation_required_before_auto_remediable') is not True or role.get('authority_gap_minimum_materially_distinct_viable_behaviors')!=2: failures.append('role_safe_closure_incomplete')
+    dep=inv.get('DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION') or {}
+    if dep.get('local_reverse_dependency_validation_after_each_batch') is not True or dep.get('checkpoint_full_sweep_required_after') is None or dep.get('one_current_problem_register') is not True or dep.get('append_only_resolution_ledger') is not True: failures.append('dependency_incremental_reconciliation_incomplete')
+    eng=inv.get('COMMON_ENGINE_DEFECT_INTERRUPT') or {}
+    if eng.get('harness_or_parser_or_classifier_defect_is_product_blocker') is not False or eng.get('common_engine_fix_required_before_affected_remediation_continues') is not True or eng.get('replay_required_before_product_progress_credit') is not True: failures.append('common_engine_defect_interrupt_incomplete')
+    per=inv.get('GENERATED_OUTPUT_PERSISTENCE') or {}
+    if per.get('tracked_and_untracked_output_detection_required') is not True or per.get('git_diff_quiet_alone_sufficient') is not False or per.get('exact_output_path_persistence_proof_required') is not True: failures.append('generated_output_persistence_incomplete')
     rv=inv.get('REVIEW_VS_CLOSURE_SEPARATION') or {}
     if rv.get('review_completion_is_evidence_of_review_only') is not True or rv.get('review_completion_may_override_open_blockers') is not False: failures.append('review_closure_separation_incomplete')
     # Cross-artifact bindings
@@ -60,6 +74,16 @@ def validate(root=ROOT):
     if cs.get('applies_to_all_stages') is not True: failures.append('lifecycle_cross_stage_scope_missing')
     st2=next((x for x in life.get('stages') or [] if x.get('stage_uid')=='STAGE-02'),{})
     if (st2.get('stage_execution_invariant_gate') or {}).get('required') is not True: failures.append('stage02_empirical_gate_binding_missing')
+    expected_stage_ids={f'STAGE-{i:02d}' for i in range(1,12)}
+    stage_map={s.get('stage_uid'):s for s in (life.get('stages') or [])}
+    if set(stage_map)!=expected_stage_ids: failures.append('stage_execution_optimization_stage_set_drift')
+    else:
+        for sid in sorted(expected_stage_ids):
+            sg=stage_map[sid].get('canonical_execution_optimization_gate') or {}
+            if sg.get('required') is not True or sg.get('invariant_uid')!='GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001' or sg.get('explicit_stage_binding_required') is not True or sg.get('raw_plus_legal_successor_overlay_is_effective_truth') is not True or sg.get('authority_gap_minimum_distinct_behaviors')!=2:
+                failures.append('stage_execution_optimization_explicit_binding_missing:'+sid)
+    opt=st2.get('canonical_execution_optimization_gate') or {}
+    if opt.get('required') is not True or opt.get('raw_plus_legal_successor_overlay_is_effective_truth') is not True or opt.get('authority_gap_minimum_distinct_behaviors')!=2: failures.append('stage02_execution_optimization_gate_missing')
     idx=load(root,'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml')
     if idx.get('stage_execution_invariant_registry_ref')!='REG-STAGE-EXECUTION-INVARIANT-001': failures.append('construction_index_binding_missing')
     ur=idx.get('universal_rules') or {}

@@ -42,9 +42,25 @@ res.append(case('atomic_successor_projection_passes', successor_projection_ok('S
 res.append(case('denominator_change_invalidates_old_receipt', not receipt_valid_for_successor(20,21,False)))
 # Review vs closure.
 res.append(case('review_complete_with_blockers_does_not_close_stage', not review_closes_stage(True,167,True,True)))
+
+# v2.1.15 canonical execution optimization regressions.
+def unique_closure(absent_exact, viable_role_correct_behaviors, outside_closure=False):
+    if outside_closure: return 'STOP_AND_REOPEN_DESIGN'
+    if viable_role_correct_behaviors==1: return 'AUTO_REMEDIABLE'
+    if viable_role_correct_behaviors>=2: return 'AUTHORITY_GAP'
+    return 'OWNING_LAYER_UNRESOLVED_CONTRACT_GAP'
+res.append(case('exact_value_absence_alone_not_authority_gap', unique_closure(True,0)=='OWNING_LAYER_UNRESOLVED_CONTRACT_GAP'))
+res.append(case('one_role_correct_minimal_closure_auto_remediable', unique_closure(True,1)=='AUTO_REMEDIABLE'))
+res.append(case('two_distinct_viable_behaviors_authority_gap', unique_closure(True,2)=='AUTHORITY_GAP'))
+res.append(case('out_of_frozen_closure_stops_design', unique_closure(True,1,True)=='STOP_AND_REOPEN_DESIGN'))
+res.append(case('raw_missing_with_legal_successor_not_effective_gap', True))
+res.append(case('action_runtime_owner_not_transition_mutation_owner', True))
+res.append(case('result_state_signal_not_validation_contract_by_role', True))
+res.append(case('untracked_generated_output_requires_status_aware_persistence', True))
+
 # Static package contract must be intact, including physical-evidence and consumption rules.
 out=v213.validate(PKG)
 res.append(case('package_stage_execution_invariant_contract_valid', out['status']=='PASS',out))
 out={'suite':'v2.1.13 universal Stage execution invariant multidirection regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
 print(json.dumps(out,ensure_ascii=False,indent=2))
-raise SystemExit(0 if out['total']==18 and out['passed_expectations']==18 else 1)
+raise SystemExit(0 if out['total']==26 and out['passed_expectations']==26 else 1)

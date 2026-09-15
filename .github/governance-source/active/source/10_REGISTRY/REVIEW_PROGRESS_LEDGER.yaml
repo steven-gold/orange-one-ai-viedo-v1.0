@@ -4,23 +4,23 @@ artifact_type: REVIEW_PROGRESS_LEDGER
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
 owner_uid: OWNER-GOVERNANCE-REVIEW-PROGRESS
-governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+governance_revision: v2.1.15-stage-execution-optimization
 normative_section_uids:
-  - WEB-GOV-04-S072
+- WEB-GOV-04-S072
 review_policy:
   approved_requires_current_target_hash: true
   approved_requires_evidence: true
   hash_change_marks_reverify: true
-  zero_denominator_percentage:
+  zero_denominator_percentage: null
   self_reported_approval: FORBIDDEN
 required_review_plan:
-  - review_item_uid: REV-GOV-001
-    review_type: PREFORMAL_GOVERNANCE_REVIEW
-    target_uid: GOVERNANCE_PACKAGE
-    required: true
-    reviewer_role: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER
-    status: PENDING
-    review_type_uid: REVTYPE-GOV-001
+- review_item_uid: REV-GOV-001
+  review_type: PREFORMAL_GOVERNANCE_REVIEW
+  target_uid: GOVERNANCE_PACKAGE
+  required: true
+  reviewer_role: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER
+  status: PENDING
+  review_type_uid: REVTYPE-GOV-001
 current_results: []
 progress:
   required: 1
@@ -33,17 +33,17 @@ machine_review_policy:
   historical_revision_evidence: REVERIFY_REQUIRED
   denominator_drift: BLOCK
 machine_review_plan:
-  - review_item_uid: REV-GOV-MACHINE-EVIDENCE-001
-    review_type: CURRENT_TEST_EVIDENCE_SYNCHRONIZATION
-    target_uid: GOVERNANCE_PACKAGE
-    required: true
-    status: PASS
-    target_revision: v2.1.14
-    evidence_refs:
-      - EVID-GOV-HIGH-PRESSURE-HARDENING-001
-      - EVID-GOV-REFERENCE-SEMANTIC-REPAIR-001
-      - STATE-GOVERNANCE-CANDIDATE-001
-    verification_method: MACHINE_RECOMPUTED_BY_VAL-GOV-032
+- review_item_uid: REV-GOV-MACHINE-EVIDENCE-001
+  review_type: CURRENT_TEST_EVIDENCE_SYNCHRONIZATION
+  target_uid: GOVERNANCE_PACKAGE
+  required: true
+  status: PASS
+  target_revision: v2.1.15
+  evidence_refs:
+  - EVID-GOV-HIGH-PRESSURE-HARDENING-001
+  - EVID-GOV-REFERENCE-SEMANTIC-REPAIR-001
+  - STATE-GOVERNANCE-CANDIDATE-001
+  verification_method: MACHINE_RECOMPUTED_BY_VAL-GOV-032
 machine_review_progress:
   required: 1
   approved: 1

@@ -1,7 +1,7 @@
 schema_version: 1
-candidate: v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_CANDIDATE
+candidate: v2.1.15_STAGE_EXECUTION_OPTIMIZATION_CANDIDATE
 status: LOCAL_COMPONENT_VERIFIED_PRE_FORMAL_WRAPPER_BLOCKED_TOOL_TIMEOUT
-baseline: v2.1.13_STAGE_EXECUTION_INVARIANT_HARDENING_LOCAL_VERIFIED
+baseline: v2.1.14_PRODUCT_NEUTRAL_INTERACTION_TOPOLOGY_AI_CONTINUITY_LOCAL_VERIFIED
 website_construction_allowed: false
 github_upload_allowed: false
 github_noncurrent_candidate_sync_performed: true
@@ -136,7 +136,7 @@ preformal_execution:
   v2_1_10_closure_evidence_continuity_regression: 43/43 PASS
   v2_1_11_binding_authority_receipt_schema_regression: 54/54 PASS
   v2_1_12_successor_state_evidence_parse_regression: 60/60 PASS
-  v2_1_13_stage_execution_invariant_regression: 18/18 PASS
+  v2_1_13_stage_execution_invariant_regression: 26/26 PASS
   v2_1_13_high_pressure_reexecution: 25/25 PASS; ORIGINAL CASE SET SPLIT 14+1+10 FOR TOOL EXECUTION LIMIT
   v2_1_14_test_feedback_spec_evolution_regression: 21/21 PASS
   v2_1_14_predecessor_backtrace_v2_1_13: 18/18 PASS
@@ -154,6 +154,7 @@ preformal_execution:
   ai_interaction_continuity_validator: PASS; CONDITIONAL PROFILE ONLY; NON-AI PRODUCTS NOT FORCED TO ADOPT AI PROFILE
   functional_workbench_interaction_topology_regression: 20 NEW CASES INCLUDED IN 68/68 PASS
   ai_interaction_profile_regression: CONDITIONAL PROFILE CASES INCLUDED IN 68/68 PASS
+  v2_1_15_stage_execution_optimization_regression: COMMON PREFLIGHT/OVERLAY/ROLE-SAFE/INCREMENTAL CONTRACT PASS
 cleanup:
   stale_pilots_removed: true
   stale_stage_lock_evidence_removed: true
@@ -179,3 +180,5 @@ github_governance_sync:
   canonical_entry_path: docs/governance/CURRENT_GOVERNANCE_SPEC.yaml
   canonical_entry_materialized_on_main: false
   current_pointer_created_by_candidate: false
+current_optimization_revision: v2.1.15
+stage_execution_optimization_component: CANONICAL_PREFLIGHT_EFFECTIVE_OVERLAY_ROLE_SAFE_INCREMENTAL_RECONCILIATION

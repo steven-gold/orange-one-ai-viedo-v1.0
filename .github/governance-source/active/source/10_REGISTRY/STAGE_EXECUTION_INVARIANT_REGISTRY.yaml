@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+governance_revision: v2.1.15-stage-execution-optimization
 scope:
   applies_to_stages:
   - STAGE-01
@@ -642,6 +642,91 @@ invariants:
     mainline_future_messages_auto_merge_into_branch: false
     branch_output_silent_merge_into_mainline: BLOCK
     explicit_governed_adoption_required: true
+  CANONICAL_STAGE_EXECUTION_PREFLIGHT:
+    required_before_first_product_remediation: true
+    required_artifacts:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    all_scanners_validators_classifiers_share_same_manifest_set: true
+    local_hardcoded_required_field_subset_as_canonical: BLOCK
+    applicability_before_blocker_count: true
+    applicability_states:
+    - REQUIRED
+    - OPTIONAL
+    - NOT_APPLICABLE
+    not_applicable_requires_exact_evidence: true
+    explicit_stage_registry_binding_required: true
+    required_stage_uid_set:
+    - STAGE-01
+    - STAGE-02
+    - STAGE-03
+    - STAGE-04
+    - STAGE-05
+    - STAGE-06
+    - STAGE-07
+    - STAGE-08
+    - STAGE-09
+    - STAGE-10
+    - STAGE-11
+    all_stage_entries_must_reference_invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+  EFFECTIVE_CONTRACT_OVERLAY:
+    formula: IMMUTABLE_RAW_OR_PREDECESSOR_REQUIREMENT_PLUS_LEGAL_CURRENT_SUCCESSOR_OVERLAY
+    raw_absence_alone_is_effective_gap: false
+    exact_role_correct_successor_may_close_matching_signature: true
+    prior_test_result_without_current_materialization_may_close_gap: false
+    physical_rescan_and_signature_reconciliation_required: true
+  ROLE_SAFE_FUNCTIONAL_CLOSURE:
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    unique_functional_closure_derivation_required_before_auto_remediable: true
+    authority_gap_minimum_materially_distinct_viable_behaviors: 2
+    zero_role_correct_derivations_default: OWNING_LAYER_UNRESOLVED_CONTRACT_GAP
+    outside_frozen_dependency_closure: STOP_AND_REOPEN_DESIGN
+    forbidden_role_promotions:
+    - PORT_EXPOSURE_TO_TRIGGER
+    - STATE_EVENT_TO_TRIGGER_WITHOUT_BINDING
+    - ACTION_RUNTIME_OWNER_TO_TRANSITION_MUTATION_OWNER
+    - RESULT_OR_STATE_EVENT_TO_VALIDATION_CONTRACT_WITHOUT_ROLE_SAFE_WRAPPER
+    - DOTTED_EVENT_TOKEN_TO_AUDIT_EVENT_UID_WITHOUT_EXACT_IDENTITY
+    - NEIGHBOR_SAME_UID_FIELD_TO_MISSING_FIELD_PROOF
+    single_unique_frozen_success_signal_may_form_minimal_assertion_wrapper: true
+    multiple_result_or_timing_semantics_blocks_wrapper: true
+  DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION:
+    order:
+    - SHARED_OR_ROOT_AUTHORITY
+    - CONTRACT_PRIMITIVES
+    - RUNTIME_TRANSPORT_STATE_CONTRACTS
+    - DEPENDENT_BUSINESS_OPERATIONS
+    - LEAF_PAGE_CONTROL_BEHAVIOR
+    - VISUAL_INTERACTION_BINDING
+    local_reverse_dependency_validation_after_each_batch: true
+    checkpoint_full_sweep_required_after:
+    - ROOT_OR_SHARED_BATCH
+    - COMMON_ENGINE_REPAIR
+    - FUNCTIONAL_CATEGORY_CLOSURE
+    - BEFORE_STAGE_EXIT
+    - BEFORE_FREEZE
+    whole_problem_register_rebuild_after_every_leaf_change: false
+    one_current_problem_register: true
+    append_only_resolution_ledger: true
+    unaffected_problem_uid_renumbering: BLOCK
+  COMMON_ENGINE_DEFECT_INTERRUPT:
+    harness_or_parser_or_classifier_defect_is_product_blocker: false
+    affected_batch_must_stop: true
+    common_engine_fix_required_before_affected_remediation_continues: true
+    impacted_preflight_or_manifest_rebuild_required: true
+    replay_required_before_product_progress_credit: true
+    stage_specific_semantic_patch_as_alternate_rule_set: BLOCK
+  GENERATED_OUTPUT_PERSISTENCE:
+    tracked_and_untracked_output_detection_required: true
+    git_diff_quiet_alone_sufficient: false
+    status_or_equivalent_untracked_aware_check_required: true
+    exact_output_path_persistence_proof_required: true
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION
@@ -673,6 +758,26 @@ stage02_observed_defect_mapping:
   mapped_invariant: FUNCTIONAL_CONTRACT_COMPLETENESS
 - finding: REVIEW_COMPLETE_BUT_STAGE_EXIT_BLOCKED
   mapped_invariant: REVIEW_VS_CLOSURE_SEPARATION
+- finding: EXACT_VALUE_ABSENCE_CIRCULAR_AUTHORITY_CLASSIFICATION
+  mapped_invariant: ROLE_SAFE_FUNCTIONAL_CLOSURE
+- finding: ACTION_RUNTIME_OWNER_PROMOTED_TO_TRANSITION_MUTATION_OWNER
+  mapped_invariant: ROLE_SAFE_FUNCTIONAL_CLOSURE
+- finding: RESULT_OR_STATE_SIGNAL_PROMOTED_TO_VALIDATION_CONTRACT
+  mapped_invariant: ROLE_SAFE_FUNCTIONAL_CLOSURE
+- finding: NON_EFFECTFUL_FAILURE_RECOVERY_APPLICABILITY_OVERREACH
+  mapped_invariant: CANONICAL_STAGE_EXECUTION_PREFLIGHT
+- finding: RAW_MISSING_COUNTED_DESPITE_LEGAL_SUCCESSOR
+  mapped_invariant: EFFECTIVE_CONTRACT_OVERLAY
+- finding: PARTIAL_REQUIRED_FIELD_LIST_DIVERGED_FROM_CANONICAL_SCANNER
+  mapped_invariant: CANONICAL_STAGE_EXECUTION_PREFLIGHT
+- finding: STALE_INTERMEDIATE_DENOMINATOR_OR_REGISTER_DRIFT
+  mapped_invariant: DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION
+- finding: UNTRACKED_GENERATED_EVIDENCE_NOT_PERSISTED
+  mapped_invariant: GENERATED_OUTPUT_PERSISTENCE
+- finding: VALIDATOR_OR_PARSER_ROLE_CONFUSION
+  mapped_invariant: COMMON_ENGINE_DEFECT_INTERRUPT
+- finding: REPEATED_FULL_REGISTER_REBUILD_AFTER_SMALL_BATCH
+  mapped_invariant: DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION
 acceptance:
   validator_uid: VAL-GOV-035
   validator_path: 09_TESTS/governance/validate_stage_execution_invariants.py

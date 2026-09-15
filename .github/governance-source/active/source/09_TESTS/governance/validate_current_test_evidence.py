@@ -15,7 +15,7 @@ def validate(root=ROOT):
     candidate=str(state.get('candidate',''))
     m=re.match(r'(v\d+\.\d+\.\d+)',candidate)
     current=m.group(1) if m else None
-    if current!='v2.1.14': failures.append('candidate_revision_not_v214:'+str(current))
+    if current!='v2.1.15': failures.append('candidate_revision_not_v215:'+str(current))
     contract=bp.get('current_test_evidence_sync_contract') or {}
     runner_contract=bp.get('test_runner_isolation_contract') or {}
     if runner_contract.get('required') is not True: failures.append('test_runner_isolation_contract_not_required')
@@ -48,7 +48,7 @@ def validate(root=ROOT):
     suite_count=len(specs)
     if suite_count!=len(specs) or suite_count<1: failures.append('mandatory_suite_denominator_invalid:'+str(suite_count))
     expected={Path(x.get('path','')).name:x for x in specs}
-    req={'test_high_pressure_hardening.py':(25,25),'test_execution_load_guard.py':(14,14),'test_prefomal_stress_repairs.py':(21,21),'test_stage1_source_to_blueprint_minimal_control.py':(33,33),'test_v2_1_0_regressions.py':(12,12),'test_v2_1_0_post_v1_8_regressions.py':(6,6),'test_bugfix_regressions.py':(30,30),'test_v2_1_7_phase_authority_bugfix.py':(25,25),'test_v2_1_8_successor_evidence_sync_bugfix.py':(24,24),'test_v2_1_9_evidence_state_closure.py':(24,24),'test_v2_1_10_closure_evidence_continuity.py':(43,43),'test_v2_1_11_binding_authority_receipt_schema.py':(54,54),'test_v2_1_12_successor_state_evidence_parse.py':(60,60),'test_v2_1_13_stage_execution_invariants.py':(18,18),'test_v2_1_14_test_feedback_spec_evolution.py':(21,21),'test_v2_1_14_product_neutral_entity_lifecycle.py':(68,68)}
+    req={'test_high_pressure_hardening.py':(25,25),'test_execution_load_guard.py':(14,14),'test_prefomal_stress_repairs.py':(21,21),'test_stage1_source_to_blueprint_minimal_control.py':(33,33),'test_v2_1_0_regressions.py':(12,12),'test_v2_1_0_post_v1_8_regressions.py':(6,6),'test_bugfix_regressions.py':(30,30),'test_v2_1_7_phase_authority_bugfix.py':(25,25),'test_v2_1_8_successor_evidence_sync_bugfix.py':(24,24),'test_v2_1_9_evidence_state_closure.py':(24,24),'test_v2_1_10_closure_evidence_continuity.py':(43,43),'test_v2_1_11_binding_authority_receipt_schema.py':(54,54),'test_v2_1_12_successor_state_evidence_parse.py':(60,60),'test_v2_1_13_stage_execution_invariants.py':(26,26),'test_v2_1_14_test_feedback_spec_evolution.py':(21,21),'test_v2_1_14_product_neutral_entity_lifecycle.py':(68,68)}
     for fn,(tot,pas) in req.items():
         s=expected.get(fn) or {}
         if s.get('expected_total')!=tot or s.get('expected_passed')!=pas: failures.append('mandatory_suite_denominator_drift:'+fn)
@@ -56,7 +56,7 @@ def validate(root=ROOT):
     if (rs.get('expected_semantic_total'),rs.get('expected_semantic_passed'),rs.get('expected_fuzz_total'),rs.get('expected_fuzz_blocked'),rs.get('expected_escaped'))!=(28,28,46,46,0): failures.append('reference_semantic_denominator_drift')
     pe=state.get('preformal_execution') or {}; hr=hp.get('results') or {}; rr=ref.get('results') or {}
     exact={
-      'mandatory_regression_matrix':f'{suite_count}/{suite_count} SUITES PASS','high_pressure_suite':'25/25 PASS','execution_governance_load':'14/14 PASS','multidirection_stress_repair':'21/21 PASS','stage1_minimal_control':'33/33 PASS','v2_1_0_inherited_regression':'12/12 PASS','post_v1_8_regression':'6/6 PASS','v2_1_6_cross_lifecycle_regression':'30/30 PASS','v2_1_7_phase_authority_regression':'25/25 PASS','v2_1_8_successor_evidence_sync_regression':'24/24 PASS','v2_1_9_evidence_state_closure_regression':'24/24 PASS','v2_1_10_closure_evidence_continuity_regression':'43/43 PASS','v2_1_11_binding_authority_receipt_schema_regression':'54/54 PASS','v2_1_12_successor_state_evidence_parse_regression':'60/60 PASS','v2_1_13_stage_execution_invariant_regression':'18/18 PASS','v2_1_14_test_feedback_spec_evolution_regression':'21/21 PASS','v2_1_14_product_neutral_entity_lifecycle_regression':'68/68 PASS'}
+      'mandatory_regression_matrix':f'{suite_count}/{suite_count} SUITES PASS','high_pressure_suite':'25/25 PASS','execution_governance_load':'14/14 PASS','multidirection_stress_repair':'21/21 PASS','stage1_minimal_control':'33/33 PASS','v2_1_0_inherited_regression':'12/12 PASS','post_v1_8_regression':'6/6 PASS','v2_1_6_cross_lifecycle_regression':'30/30 PASS','v2_1_7_phase_authority_regression':'25/25 PASS','v2_1_8_successor_evidence_sync_regression':'24/24 PASS','v2_1_9_evidence_state_closure_regression':'24/24 PASS','v2_1_10_closure_evidence_continuity_regression':'43/43 PASS','v2_1_11_binding_authority_receipt_schema_regression':'54/54 PASS','v2_1_12_successor_state_evidence_parse_regression':'60/60 PASS','v2_1_13_stage_execution_invariant_regression':'26/26 PASS','v2_1_14_test_feedback_spec_evolution_regression':'21/21 PASS','v2_1_14_product_neutral_entity_lifecycle_regression':'68/68 PASS'}
     for k,v in exact.items():
         if pe.get(k)!=v: failures.append('candidate_test_evidence_drift:'+k+':'+str(pe.get(k)))
         if hr.get(k)!=v: failures.append('high_pressure_evidence_drift:'+k+':'+str(hr.get(k)))

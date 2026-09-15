@@ -1,0 +1,159 @@
+schema_version: 1
+artifact_uid: GOV-COMP-STAGE-EXECUTION-OPTIMIZATION
+artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
+normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
+common_scope: ALL_LIFECYCLE_STAGES_ALL_PAGES
+purpose:
+  statement: Freeze the common rule universe before execution, keep one effective-contract truth, remediate in dependency order, validate only impacted chains between checkpoints, and
+    prevent late rule discovery from forcing repeated stage rework.
+  preserves_bounded_functional_completion: true
+  functions_with_incomplete_before_or_after_flow_remain_remediable: true
+  ai_may_invent_product_behavior: false
+canonical_stage_preflight:
+  required_before_first_product_or_contract_remediation: true
+  required_artifacts:
+  - REQUIRED_FIELD_MANIFEST
+  - FUNCTIONAL_CHAIN_MANIFEST
+  - EFFECTIVE_CONTRACT_OVERLAY
+  - DEPENDENCY_TOPOLOGY
+  - DENOMINATOR_SNAPSHOT
+  - CLASSIFICATION_RULESET
+  - CHANGE_IMPACT_MAP
+  - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+  all_scanners_validators_trace_builders_and_classifiers_must_consume_same_manifest_set: true
+  local_hardcoded_required_field_subset_may_claim_canonical_completeness: false
+  applicability_before_blocker_count: true
+  applicability_states:
+  - REQUIRED
+  - OPTIONAL
+  - NOT_APPLICABLE
+  not_applicable_requires_exact_governing_evidence: true
+  stage_required_normative_sections_must_be_proven_loaded: true
+effective_contract_truth:
+  formula: IMMUTABLE_RAW_OR_PREDECESSOR_REQUIREMENT_PLUS_LEGAL_CURRENT_SUCCESSOR_OR_MATERIALIZATION_OVERLAY
+  raw_absence_alone_is_effective_gap: false
+  exact_role_correct_successor_may_close_matching_signature: true
+  previous_test_result_without_current_materialization_may_close_gap: false
+  physical_rescan_and_exact_signature_reconciliation_required: true
+  stale_or_intermediate_denominator_may_be_current_truth: false
+role_safe_functional_closure:
+  complete_chain:
+  - BUSINESS_INTENT
+  - PRECONDITIONS
+  - ENTRY
+  - INPUT_SOURCE
+  - TRIGGER
+  - GATE
+  - PERMISSION
+  - ACTION
+  - VALIDATION
+  - PAYLOAD
+  - API_OR_RUNTIME
+  - PERSISTENCE_OR_PROVIDER
+  - AUDIT
+  - RESPONSE_OR_FEEDBACK
+  - SUCCESS_OR_NEXT
+  - FAILURE_OR_RECOVERY
+  - TERMINAL
+  pre_materialized_exact_value_absence_alone_is_authority_gap: false
+  unique_functional_closure_derivation_required_before_auto_remediable: true
+  one_role_correct_minimal_closure: AUTO_REMEDIABLE
+  two_or_more_materially_distinct_viable_product_behaviors: AUTHORITY_GAP
+  authority_gap_minimum_distinct_behaviors: 2
+  zero_role_correct_closure: OWNING_LAYER_UNRESOLVED_CONTRACT_GAP
+  outside_frozen_dependency_closure: STOP_AND_REOPEN_DESIGN
+  forbidden_role_promotions:
+  - PORT_EXPOSURE_TO_TRIGGER
+  - STATE_EVENT_TO_TRIGGER_WITHOUT_EXPLICIT_BINDING
+  - ACTION_RUNTIME_OWNER_TO_TRANSITION_MUTATION_OWNER
+  - RESULT_OR_STATE_EVENT_TO_VALIDATION_CONTRACT_WITHOUT_ROLE_SAFE_WRAPPER
+  - DOTTED_EVENT_TOKEN_TO_AUDIT_EVENT_UID_WITHOUT_EXACT_IDENTITY
+  - NEIGHBOR_SAME_UID_FIELD_TO_MISSING_FIELD_PROOF
+  unique_frozen_success_signal_may_form_minimal_assertion_wrapper: true
+  multiple_result_or_timing_semantics_blocks_validation_wrapper: true
+dependency_ordered_execution:
+  order:
+  - SHARED_OR_ROOT_AUTHORITY
+  - CONTRACT_PRIMITIVES
+  - RUNTIME_TRANSPORT_STATE_CONTRACTS
+  - DEPENDENT_BUSINESS_OPERATIONS
+  - LEAF_PAGE_CONTROL_BEHAVIOR
+  - VISUAL_INTERACTION_BINDING
+  downstream_leaf_patch_before_unresolved_root_that_can_change_leaf: BLOCK
+  batch_materialization_required: true
+  local_reverse_dependency_validation_after_each_batch: true
+  checkpoint_full_sweep_required_after:
+  - ROOT_OR_SHARED_BATCH
+  - COMMON_ENGINE_OR_HARNESS_REPAIR
+  - FUNCTIONAL_CATEGORY_CLOSURE
+  - BEFORE_STAGE_EXIT
+  - BEFORE_FREEZE
+  full_problem_register_rebuild_after_every_leaf_change: false
+current_problem_state:
+  one_current_problem_register_required: true
+  current_problem_register: CURRENT_PROBLEM_REGISTER
+  append_only_resolution_ledger_required: true
+  resolution_ledger: RESOLUTION_LEDGER
+  snapshot_or_run_report_may_be_competing_current_truth: false
+  unaffected_problem_uid_may_be_renumbered: false
+  denominator_must_be_derived_from_physical_scan_plus_exact_overlay_reconciliation: true
+common_engine_defect_interrupt:
+  applies_to:
+  - PARSER
+  - VALIDATOR
+  - CLASSIFIER
+  - REQUIRED_FIELD_RESOLVER
+  - DENOMINATOR_CALCULATOR
+  - OVERLAY_RESOLVER
+  - IMPACT_INDEX
+  defect_counts_as_product_blocker: false
+  affected_batch_must_stop: true
+  common_engine_fix_required_before_affected_product_remediation_continues: true
+  impacted_preflight_or_manifest_rebuild_required: true
+  replay_required_before_product_progress_credit: true
+  per_run_semantic_patch_as_alternate_rule_set: BLOCK
+  validator_may_be_weakened_to_make_gate_pass: false
+generated_output_persistence:
+  tracked_and_untracked_output_detection_required: true
+  git_diff_quiet_alone_sufficient: false
+  status_or_equivalent_untracked_aware_check_required: true
+  exact_output_path_persistence_proof_required: true
+post_promotion_restart:
+  prior_stage_attempt_closure_credit: 0
+  active_stage_outputs_and_derived_test_state_must_be_reset: true
+  immutable_predecessor_inputs_preserved: true
+  separately_authorized_external_authority_preserved_only_at_its_owning_source: true
+  prior_stage_materialization_may_be_silently_reused_as_new_attempt_credit: false
+  new_governance_uid_freeze_required: true
+  canonical_preflight_required_from_clean_predecessor: true
+  full_fresh_stage_execution_required: true
+stage02_test_proven_defect_prevention:
+  EXACT_VALUE_ABSENCE_CIRCULAR_AUTHORITY_CLASSIFICATION: PREVENTED_BY_UNIQUE_FUNCTIONAL_CLOSURE_DERIVATION
+  ACTION_RUNTIME_OWNER_PROMOTED_TO_TRANSITION_MUTATION_OWNER: PREVENTED_BY_ROLE_SAFE_CLOSURE
+  RESULT_OR_STATE_SIGNAL_PROMOTED_TO_VALIDATION_CONTRACT: PREVENTED_BY_ROLE_SAFE_CLOSURE
+  NON_EFFECTFUL_FAILURE_RECOVERY_APPLICABILITY_OVERREACH: PREVENTED_BY_APPLICABILITY_BEFORE_BLOCKER_COUNT
+  RAW_MISSING_COUNTED_DESPITE_LEGAL_SUCCESSOR: PREVENTED_BY_EFFECTIVE_CONTRACT_OVERLAY
+  PARTIAL_REQUIRED_FIELD_LIST_DIVERGED_FROM_CANONICAL_SCANNER: PREVENTED_BY_REQUIRED_FIELD_MANIFEST
+  STALE_INTERMEDIATE_DENOMINATOR_OR_REGISTER_DRIFT: PREVENTED_BY_PHYSICAL_RESCAN_AND_SINGLE_CURRENT_REGISTER
+  UNTRACKED_GENERATED_EVIDENCE_NOT_PERSISTED: PREVENTED_BY_UNTRACKED_AWARE_PERSISTENCE_GATE
+  VALIDATOR_OR_PARSER_ROLE_CONFUSION: PREVENTED_BY_COMMON_ENGINE_DEFECT_INTERRUPT
+  REPEATED_FULL_REGISTER_REBUILD_AFTER_SMALL_BATCH: PREVENTED_BY_INCREMENTAL_IMPACT_RECONCILIATION
+status: ACTIVE
+explicit_stage_registry_binding:
+  required: true
+  invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+  applies_to_stages:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+  expected_binding_count: 11
+  each_stage_must_bind_same_invariant: true
+  cross_stage_invariant_alone_without_explicit_stage_binding_is_insufficient: true

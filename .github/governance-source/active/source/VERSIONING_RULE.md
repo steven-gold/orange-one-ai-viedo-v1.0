@@ -58,3 +58,10 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - Cross-surface flows require explicit context handoff; responsive reflow must preserve semantic operation order.
 - AI-assisted interaction governance is conditional. Declared AI conversation/multi-agent scopes must preserve identity continuity, same-baseline comparison, governed output formalization, exact revision lineage, and isolated branch adoption.
 - Non-AI products remain fully valid adopters of the common specification without implementing AI-specific artifacts.
+
+## v2.1.15 canonical Stage execution optimization rule
+- v2.1.15 consolidates Stage-test-proven execution defects into common governance and introduces one frozen canonical preflight/overlay/classification/impact model for every Stage attempt.
+- Existing authorized functions with missing before/after flow remain eligible for bounded automatic minimal completion when the frozen functional chain uniquely determines one role-correct closure.
+- Exact-value absence alone is not Authority Gap; two or more materially distinct viable behaviors are required for Product Authority escalation.
+- Stage execution uses dependency-ordered batches, local reverse-impact validation, checkpoint full sweeps, one Current Problem Register, and an append-only Resolution Ledger.
+- A normative promotion invalidates active Stage completion credit and requires a clean retry under the new Governance UID.

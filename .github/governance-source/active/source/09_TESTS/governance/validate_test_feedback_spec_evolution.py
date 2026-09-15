@@ -13,7 +13,7 @@ def validate(root=ROOT):
     invreg=load(root,'10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml')
     inv=invreg.get('invariants') or {}
     rev=str(invreg.get('governance_revision') or '')
-    if not rev.startswith('v2.1.14-'): failures.append('revision_not_v214')
+    if not (rev.startswith('v2.1.14-') or rev.startswith('v2.1.15-')): failures.append('revision_not_v214_or_v215')
     t=inv.get('TEST_DEFECT_FEEDBACK_AND_SPEC_EVOLUTION') or {}
     sc=inv.get('SOURCE_CONTROL_SINGLE_SPEC_AUTHORITY') or {}
     gh=inv.get('GITHUB_SINGLE_SPEC_AUTHORITY') or {}

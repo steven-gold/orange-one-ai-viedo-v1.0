@@ -4,12 +4,16 @@ artifact_type: GOVERNANCE_LIFECYCLE_STAGE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+governance_revision: v2.1.15-stage-execution-optimization
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
 - WEB-GOV-02-S068
 - WEB-GOV-02-S069
+- WEB-GOV-01-S073
+- WEB-GOV-02-S073
+- WEB-GOV-03-S062
+- WEB-GOV-04-S078
 topology:
   foundation_stages:
   - STAGE-01
@@ -142,6 +146,35 @@ stages:
     validator_uid: VAL-GOV-037
     responsibility: EXTRACT_ENTITY_AND_HIERARCHY_CANDIDATES_FROM_SOURCE
     candidate_function_expansion_seed_provenance_required: true
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 - stage_uid: STAGE-02
   name: PAGE_FUNCTIONAL_CONTRACT
   scope_mode: ALL_REQUIRED_PAGES
@@ -157,6 +190,10 @@ stages:
     CONTENT_SUPERSESSION_CONFLICT_LEDGER: STAGE-01
     SOURCE_DEPENDENCY_MAP: STAGE-01
   operations:
+  - STAGE_EXECUTION_PREFLIGHT_COMPILE
+  - EFFECTIVE_CONTRACT_OVERLAY_COMPILE
+  - DEPENDENCY_TOPOLOGY_COMPILE
+  - CHANGE_IMPACT_MAP_COMPILE
   - FUNCTIONAL_CHAIN_COMPILE
   - DEPENDENCY_MAP_COMPILE
   - PAGE_CONSTRUCTION_SPEC_COMPILE
@@ -172,6 +209,16 @@ stages:
   - SHARED_OWNER_PORT_MAP
   - FUNCTIONAL_WORKBENCH_CONTRACT
   - INTERACTION_TOPOLOGY_SPEC
+  - REQUIRED_FIELD_MANIFEST
+  - FUNCTIONAL_CHAIN_MANIFEST
+  - EFFECTIVE_CONTRACT_OVERLAY
+  - DEPENDENCY_TOPOLOGY
+  - DENOMINATOR_SNAPSHOT
+  - CLASSIFICATION_RULESET
+  - CHANGE_IMPACT_MAP
+  - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+  - CURRENT_PROBLEM_REGISTER
+  - RESOLUTION_LEDGER
   output_producers:
     FUNCTIONAL_CHAIN_SPEC: FUNCTIONAL_CHAIN_COMPILE
     DEPENDENCY_MAP: DEPENDENCY_MAP_COMPILE
@@ -180,6 +227,16 @@ stages:
     SHARED_OWNER_PORT_MAP: SHARED_OWNER_PORT_RESOLVE
     FUNCTIONAL_WORKBENCH_CONTRACT: FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE
     INTERACTION_TOPOLOGY_SPEC: INTERACTION_TOPOLOGY_COMPILE
+    REQUIRED_FIELD_MANIFEST: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    FUNCTIONAL_CHAIN_MANIFEST: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    DENOMINATOR_SNAPSHOT: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    CLASSIFICATION_RULESET: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    STAGE_EXECUTION_PREFLIGHT_RECEIPT: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    CURRENT_PROBLEM_REGISTER: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    RESOLUTION_LEDGER: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    EFFECTIVE_CONTRACT_OVERLAY: EFFECTIVE_CONTRACT_OVERLAY_COMPILE
+    DEPENDENCY_TOPOLOGY: DEPENDENCY_TOPOLOGY_COMPILE
+    CHANGE_IMPACT_MAP: CHANGE_IMPACT_MAP_COMPILE
   validators:
   - VAL-GOV-008
   - VAL-GOV-004
@@ -199,6 +256,10 @@ stages:
   - WEB-GOV-04-S059C
   - WEB-GOV-01-S072
   - WEB-GOV-03-S061
+  - WEB-GOV-01-S073
+  - WEB-GOV-02-S073
+  - WEB-GOV-03-S062
+  - WEB-GOV-04-S078
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - FUNCTIONAL_CONTRACT_GUARD
@@ -253,6 +314,35 @@ stages:
       when_scope_kind_in: *id001
       required: true
       producer: AI_INTERACTION_CONTINUITY_COMPILE
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 - stage_uid: STAGE-03
   name: VISUAL_DESIGN
   scope_mode: ALL_REQUIRED_PAGES
@@ -349,6 +439,35 @@ stages:
       when_scope_kind_in: *id001
       required: true
       origin: STAGE-02_IMMUTABLE_REFERENCE_ONLY
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 - stage_uid: STAGE-04
   name: FOUNDATION_FREEZE
   scope_mode: ALL_REQUIRED_PAGES
@@ -416,6 +535,35 @@ stages:
     validator_uid: VAL-GOV-037
     responsibility: FREEZE_ENTITY_OPERATION_HIERARCHY_UI_ACCEPTANCE_DENOMINATOR
     function_logic_visual_denominator_freeze_required: true
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 - stage_uid: STAGE-05
   name: IMPLEMENTATION
   scope_mode: SINGLE_PAGE_VERTICAL
@@ -516,6 +664,35 @@ stages:
     implement_frozen_interaction_topology_without_fragmentation: true
     preserve_context_handoff_and_identity_continuity: true
     new_surface_transition_outside_frozen_topology_reopens_design: true
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 - stage_uid: STAGE-06
   name: VERIFICATION_QA
   scope_mode: SAME_SELECTED_PAGE
@@ -608,6 +785,35 @@ stages:
     interaction_topology_e2e_required: true
     atomic_workbench_continuity_e2e_required: true
     ai_interaction_identity_and_decision_boundary_e2e_when_applicable: true
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 - stage_uid: STAGE-07
   name: BUILD_RELEASE_CANDIDATE
   scope_mode: SAME_SELECTED_PAGE
@@ -669,6 +875,35 @@ stages:
     mode: REQUIRED
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 - stage_uid: STAGE-08
   name: STAGING
   scope_mode: SAME_SELECTED_PAGE
@@ -720,6 +955,35 @@ stages:
     mode: REQUIRED
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 - stage_uid: STAGE-09
   name: PRODUCTION_CUTOVER
   scope_mode: SAME_SELECTED_PAGE
@@ -776,6 +1040,35 @@ stages:
     mode: REQUIRED
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 - stage_uid: STAGE-10
   name: PRODUCTION_ACCEPTANCE
   scope_mode: SAME_SELECTED_PAGE
@@ -859,6 +1152,35 @@ stages:
     production_interaction_topology_acceptance_required: true
     production_context_handoff_acceptance_required: true
     production_ai_continuity_boundary_acceptance_when_applicable: true
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 - stage_uid: STAGE-11
   name: CLOSURE_OPERATIONS
   scope_mode: SAME_SELECTED_PAGE
@@ -923,6 +1245,35 @@ stages:
     mode: REQUIRED
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
+  canonical_execution_optimization_gate:
+    required: true
+    normative_section_uids:
+    - WEB-GOV-01-S073
+    - WEB-GOV-02-S073
+    - WEB-GOV-03-S062
+    - WEB-GOV-04-S078
+    preflight_manifest_set:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    one_current_problem_register_required: true
+    append_only_resolution_ledger_required: true
+    dependency_ordered_batches_required: true
+    incremental_impact_validation_required: true
+    checkpoint_full_sweep_required: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    local_required_field_subset_as_canonical: BLOCK
+    role_substitution_without_exact_authority: BLOCK
+    pre_materialized_exact_value_absence_alone_is_authority_gap: false
+    authority_gap_minimum_distinct_behaviors: 2
+    engine_defect_requires_common_engine_repair_and_replay: true
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    explicit_stage_binding_required: true
 delivery_step_bindings:
 - step: 1
   operation_uid: OP-01-BLUEPRINT_INTAKE
@@ -1302,4 +1653,29 @@ cross_stage_invariants:
     raw_ai_output_direct_authoritative_promotion: BLOCK
     revision_context_continuity_required_when_applicable: true
     branch_context_isolation_and_explicit_adoption_required_when_applicable: true
+  canonical_stage_execution_optimization:
+    invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
+    normative_section_uid: WEB-GOV-03-S062
+    applies_to_stages:
+    - STAGE-01
+    - STAGE-02
+    - STAGE-03
+    - STAGE-04
+    - STAGE-05
+    - STAGE-06
+    - STAGE-07
+    - STAGE-08
+    - STAGE-09
+    - STAGE-10
+    - STAGE-11
+    global_preflight_before_first_remediation: true
+    shared_required_field_manifest: true
+    raw_plus_legal_successor_overlay_is_effective_truth: true
+    dependency_ordered_batches: true
+    incremental_then_checkpoint_full_sweep: true
+    common_engine_fix_before_affected_product_remediation: true
+    single_current_problem_register: true
+    append_only_resolution_ledger: true
+    explicit_stage_registry_binding_required: true
+    explicit_stage_binding_denominator: 11
 stage_execution_invariant_ref: REG-STAGE-EXECUTION-INVARIANT-001

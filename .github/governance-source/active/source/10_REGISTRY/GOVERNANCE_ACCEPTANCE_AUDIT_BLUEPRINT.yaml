@@ -5,7 +5,7 @@ blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
 owner_uid: OWNER-GOVERNANCE-ACCEPTANCE
-governance_revision: v2.1.14-product-neutral-interaction-topology-ai-continuity
+governance_revision: v2.1.15-stage-execution-optimization
 normative_section_uids:
 - WEB-GOV-04-S071
 - WEB-GOV-04-S076
@@ -216,3 +216,26 @@ product_neutral_entity_lifecycle_contract:
   raw_ai_output_direct_authoritative_promotion: BLOCK
   revision_context_continuity_required_when_applicable: true
   branch_context_isolation_and_explicit_adoption_required_when_applicable: true
+stage_execution_optimization_contract:
+  required: true
+  invariant_registry_uid: REG-STAGE-EXECUTION-INVARIANT-001
+  normative_section_uids:
+  - WEB-GOV-01-S073
+  - WEB-GOV-02-S073
+  - WEB-GOV-03-S062
+  - WEB-GOV-04-S078
+  required_preflight_artifacts:
+  - REQUIRED_FIELD_MANIFEST
+  - FUNCTIONAL_CHAIN_MANIFEST
+  - EFFECTIVE_CONTRACT_OVERLAY
+  - DEPENDENCY_TOPOLOGY
+  - DENOMINATOR_SNAPSHOT
+  - CLASSIFICATION_RULESET
+  - CHANGE_IMPACT_MAP
+  - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+  single_current_problem_register_required: true
+  append_only_resolution_ledger_required: true
+  role_safe_closure_required: true
+  dependency_ordered_incremental_validation_required: true
+  checkpoint_full_sweep_required: true
+  post_promotion_clean_restart_required: true

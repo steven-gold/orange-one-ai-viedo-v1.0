@@ -1,55 +1,51 @@
-schema_version: 2
+schema_version: 3
 registry_uid: GOV-SPEC-REGISTRY-001
 registry_role: SINGLE_STABLE_GOVERNANCE_ENTRYPOINT
-
 stable_entrypoint:
   specification_root: governance/specifications/current
   specification_manifest: governance/specifications/current/SPECIFICATION_MANIFEST.yaml
   resolver: governance/ci/governance_resolver.py
   test_state_root: governance/test
   active_test_state: governance/test/ACTIVE_STATE.yaml
-
 active_specification:
-  governance_uid: GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION
-  display_version: v2.1.14
+  governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
+  display_version: v2.1.15
   aliases:
-    - v2.1.14
-    - product-neutral-interaction-topology-ai-continuity
-    - explicit-specification-mutation-protection
-    - stage-remediation-closure-protocol
-    - stage-freeze-stage-end-consolidated-promotion
-    - single-canonical-execution-governance
+  - v2.1.15
+  - stage-execution-canonical-preflight
+  - effective-contract-overlay
+  - role-safe-bounded-functional-completion
+  - dependency-ordered-incremental-reconciliation
+  - stage-clean-restart-after-promotion
   status: ACTIVE_CURRENT_GOVERNANCE
-
 historical_formal_baseline:
   governance_uid: GOV-FORMAL-BASELINE-20260912
   display_version: v2.1.12
   status: HISTORICAL_REFERENCE_ONLY
   current_execution_locator: false
   preservation: GIT_HISTORY_AND_PINNED_RECEIPTS
-
+immediate_predecessor:
+  governance_uid: GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION
+  display_version: v2.1.14
+  status: SUPERSEDED_HISTORY_ONLY_AFTER_V215_PROMOTION
 resolution_policy:
   immutable_governance_uid_is_identity: true
   version_label_is_locator: false
-  version_label_may_be_renamed_without_breaking_resolution: true
   active_consumers_must_use_registry_or_resolver: true
   direct_semver_directory_reference_by_active_consumer: FORBIDDEN
   lexicographic_latest_version_discovery: FORBIDDEN
   unverified_candidate_may_become_latest_automatically: false
   promotion_changes_registry_and_stable_current_content_only: true
   consumer_specific_version_pointer: FORBIDDEN
-
 integrity_policy:
   runtime_bundle_digest: COMPUTE_FROM_STABLE_CURRENT_DIRECTORY
   per_consumer_copied_hash: FORBIDDEN
   stale_manifest_or_digest_at_promotion: BLOCK_PROMOTION
   stale_hash_may_not_redirect_consumer_to_old_version: true
   path_resolution_independent_of_display_version: true
-
 specification_mutation_control:
   component_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   default_without_explicit_user_directive: DENY
-  construction_or_test_need_is_authority: false
   findings_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
   authorization_receipt_root: governance/test/spec_change_authorizations
   authorization_must_preexist_mutation_commit: true
@@ -57,35 +53,30 @@ specification_mutation_control:
   stage_current_specification_freeze_required: true
   ordinary_mid_stage_promotion: FORBIDDEN
   stage_end_consolidated_promotion_only: true
-  fatal_specification_contradiction_exception_requires_new_explicit_authorization: true
-
+stage_execution_optimization:
+  component_ref: governance/specifications/current/STAGE_EXECUTION_OPTIMIZATION.yaml
+  mandatory_for_every_stage_execution_and_reexecution: true
+  canonical_preflight_before_first_remediation: true
+  common_required_field_manifest: true
+  effective_contract_overlay: true
+  dependency_ordered_batches: true
+  incremental_reverse_impact_validation: true
+  checkpoint_full_sweep: true
+  one_current_problem_register: true
+  append_only_resolution_ledger: true
+  common_engine_bug_interrupt_and_replay: true
+  post_promotion_clean_stage_restart: true
+  explicit_stage_registry_binding_required: true
+  explicit_stage_binding_denominator: 11
+  explicit_stage_invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
 stage_execution_remediation_closure_protocol:
   component_ref: governance/specifications/current/STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
   mandatory_for_every_product_stage_execution_and_reexecution: true
   single_canonical_execution_rule_set: true
-  full_line_high_pressure_preexecution_required: true
-  audit_only_blocked_loop_is_progress: false
   material_remediation_required_for_remediable_gap: true
   known_defect_signature_must_be_zero_before_stage_advance: true
   hidden_defect_sweep_required: true
-  stage_specification_freeze_required: true
-  specification_candidate_is_non_normative_during_stage: true
-  stage_end_governance_consolidation_review_required: true
-  max_atomic_normative_promotions_per_stage_attempt: 1
-  promotion_requires_new_uid_and_atomic_registry_manifest_update: true
-  promotion_requires_same_stage_restart_from_clean_predecessor_baseline: true
-  pilot_full_lifecycle_before_other_page_scale_out: true
-  later_pages_consume_same_active_governance_after_calibration: true
-  alternate_scale_out_rule_set: FORBIDDEN
-
-canonical_execution_continuity:
-  governance_calibration_uses_same_rules_as_later_pages: true
-  pilot_full_lifecycle_closure_is_calibration_completion_gate: true
-  final_full_line_high_pressure_gate_required_at_calibration_completion: true
-  all_known_remediable_defects_zero_required: true
-  no_new_blocking_hidden_defects_required: true
-  after_completion_other_pages_may_directly_consume_same_registry: true
-
+  promotion_requires_new_uid_and_same_stage_restart_from_clean_predecessor_baseline: true
 test_layer_separation:
   normative_specifications_root: governance/specifications
   test_runtime_root: governance/test
@@ -94,7 +85,6 @@ test_layer_separation:
   temporary_test_artifact_may_be_normative_authority: false
   promoted_test_rule_must_move_into_specification_before_cleanup: true
   after_promotion_or_discard_zero_residual_required: true
-
 legacy_path_policy:
   governance_current_semver_tree_allowed_in_head: false
   historical_version_materialization_in_head_required: false

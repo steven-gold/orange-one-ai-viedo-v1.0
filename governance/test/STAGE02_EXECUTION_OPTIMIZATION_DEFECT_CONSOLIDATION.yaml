@@ -1,0 +1,54 @@
+schema_version: 1
+artifact_uid: STAGE02-EXECUTION-OPTIMIZATION-DEFECT-CONSOLIDATION-20260915
+artifact_type: NON_NORMATIVE_TEST_PROVEN_DEFECT_CONSOLIDATION
+normative_authority: false
+source_stage: STAGE-02
+promotion_authorization_uid: AUTH-20260915-STAGE02-EXECUTION-OPTIMIZATION
+target_governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
+
+test_proven_defects:
+  - defect: EXACT_VALUE_ABSENCE_CIRCULAR_AUTHORITY_CLASSIFICATION
+    observed_in: [R5, R10, R11, R12]
+    correction: UNIQUE_FUNCTIONAL_CLOSURE_DERIVATION_BEFORE_AUTHORITY_ESCALATION
+  - defect: ACTION_RUNTIME_OWNER_PROMOTED_TO_TRANSITION_MUTATION_OWNER
+    observed_in: [R20, R21]
+    corrected_by: R24
+    correction: ROLE_IDENTITY_NON_SUBSTITUTABLE
+  - defect: RESULT_OR_STATE_SIGNAL_PROMOTED_TO_VALIDATION_CONTRACT
+    observed_in: [R20, R22]
+    corrected_by: R25
+    correction: ROLE_SAFE_VALIDATION_WRAPPER_ONLY_WHEN_UNIQUE
+  - defect: NON_EFFECTFUL_FAILURE_RECOVERY_APPLICABILITY_OVERREACH
+    observed_in: [R28]
+    corrected_by: R29
+    correction: APPLICABILITY_BEFORE_BLOCKER_COUNT
+  - defect: RAW_MISSING_COUNTED_OR_INTERPRETED_WITHOUT_LEGAL_SUCCESSOR_OVERLAY
+    observed_in: [R34, R35]
+    correction: RAW_PLUS_LEGAL_SUCCESSOR_EQUALS_EFFECTIVE_CONTRACT
+  - defect: PARTIAL_REQUIRED_FIELD_LIST_DIVERGED_FROM_CANONICAL_SCANNER
+    observed_in: [R17, R34]
+    correction: ONE_REQUIRED_FIELD_MANIFEST_FOR_ALL_CONSUMERS
+  - defect: STALE_INTERMEDIATE_DENOMINATOR_OR_REGISTER_DRIFT
+    observed_in: [R29, R30, R31, R33, R38]
+    correction: PHYSICAL_RESCAN_PLUS_SINGLE_CURRENT_PROBLEM_REGISTER
+  - defect: UNTRACKED_GENERATED_EVIDENCE_NOT_PERSISTED
+    observed_in: [R20]
+    correction: UNTRACKED_AWARE_OUTPUT_PERSISTENCE_GATE
+  - defect: PARSER_VALIDATOR_OR_CLASSIFIER_SELF_BUG_REPORTED_AS_PRODUCT_PROBLEM
+    observed_in: [R13, R24, R34]
+    correction: COMMON_ENGINE_DEFECT_INTERRUPT_FIX_AND_REPLAY
+  - defect: REPEATED_FULL_REGISTER_REBUILD_AFTER_SMALL_BATCH
+    observed_in: [R30, R31, R33, R39]
+    correction: LOCAL_CHANGE_IMPACT_VALIDATION_AND_CHECKPOINT_FULL_SWEEP
+
+preserved_required_behavior:
+  existing_function_with_incomplete_before_or_after_steps_is_still_a_defect: true
+  uniquely_derivable_minimal_missing_flow_is_auto_remediable: true
+  two_or_more_materially_distinct_product_behaviors_require_product_authority: true
+  missing_external_authority_is_never_invented: true
+  out_of_frozen_dependency_closure_reopens_design: true
+
+promotion_effect:
+  old_stage02_attempt_becomes_historical_for_closure: true
+  old_stage02_completion_credit: 0
+  clean_stage02_restart_required: true
