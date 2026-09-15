@@ -1,0 +1,59 @@
+name: Fix Mother Neutrality Normalizer
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - .github/workflows/fix-mother-neutrality-normalizer.yml
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Align normalizer with contamination guard
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/mother-spec-neutrality-promotion.yml')
+          t=p.read_text(encoding='utf-8')
+          anchor="              text=re.sub(r'\\b11 stages\\b','selected-profile step set',text,flags=re.I)\n"
+          if anchor not in t:
+              raise SystemExit('NORMALIZER_ANCHOR_NOT_FOUND')
+          hardened=(
+              anchor+
+              "              text=re.sub(r'\\b11[- ]?stage\\b','selected-profile step set',text,flags=re.I)\n"+
+              "              text=re.sub(r'\\bexactly eleven ordered stages\\b','profile-defined ordered steps',text,flags=re.I)\n"+
+              "              text=re.sub(r'\\bfixed lifecycle\\b','selected execution profile',text,flags=re.I)\n"
+          )
+          t=t.replace(anchor,hardened,1)
+          # Keep validator strict and make the forbidden denominator vocabulary explicit in one reusable expression.
+          old="              if re.search(r'(?i)\\b(?:11[- ]?stage|exactly eleven ordered stages|fixed lifecycle)\\b',t): failures.append('mother_fixed_profile_denominator:'+p.name)\n"
+          new="              fixed_denominator=re.compile(r'(?i)\\b(?:11[- ]?stage|exactly eleven ordered stages|fixed lifecycle)\\b')\n              if fixed_denominator.search(t): failures.append('mother_fixed_profile_denominator:'+p.name)\n"
+          if old not in t:
+              raise SystemExit('VALIDATOR_ANCHOR_NOT_FOUND')
+          t=t.replace(old,new,1)
+          p.write_text(t,encoding='utf-8')
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/mother-spec-neutrality-promotion.yml')
+          t=p.read_text(encoding='utf-8')
+          required=["11[- ]?stage","exactly eleven ordered stages","fixed lifecycle","mother_fixed_profile_denominator"]
+          missing=[x for x in required if x not in t]
+          if missing: raise SystemExit('HARDENING_MISSING:'+','.join(missing))
+          print('PASS: neutrality normalizer and contamination guard aligned')
+          PY
+      - name: Persist correction and remove one-shot fixer
+        shell: bash
+        run: |
+          rm .github/workflows/fix-mother-neutrality-normalizer.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/mother-spec-neutrality-promotion.yml .github/workflows/fix-mother-neutrality-normalizer.yml
+          git diff --cached --quiet && { echo 'NO_CORRECTION_MATERIALIZED'; exit 1; }
+          git commit -m "governance: align neutrality normalizer with contamination guard"
+          git push origin HEAD:rebuild-v2.1.1
