@@ -1,78 +1,23 @@
 schema_version: 4
-artifact_uid: STAGE02-FRESH-EXTERNAL-AUTHORITY-AWARE-FINDINGS-20260915-R3
-artifact_type: NON_NORMATIVE_STAGE_TEST_FINDING_LEDGER
+artifact_type: STAGE02_CURRENT_FINDINGS
 normative_authority: false
 stage_uid: STAGE-02
-stage_name: PAGE_FUNCTIONAL_CONTRACT
-source_execution_sha: 47a02adaa3a6e216790be021f0ad49e52e54e78f
-reexecution_cycle: R3_EXTERNAL_AUTHORITY_AWARE
-prior_stage2_results_used: false
-current_specification_mutated: false
-ai_autofill_used: false
-inference_used: false
-result: BLOCKED
-stage_entry_gate: PASS
-stage_exit_allowed: false
+source_cycle: R21_R20_BOUNDED_CLOSURE_PLUS_GAP006
+source_head_sha: 16c5e49c24f739f930d870b99c965933c7a45454
 raw_discovery_gap_total: 171
-product_materialization_elimination_count: 17
-gap006_authority_elimination_count: 4
-fresh_total_elimination_count: 21
-fresh_functional_gap_total: 150
-closure_blocker_total: 0
-pages:
-  CORE-01:
-    raw_discovery_gap_total: 45
-    raw_categories:
-      AUDIT_EVENT_NODE_MISSING: 4
-      PAYLOAD_INPUT_CONTRACT_MISSING: 16
-      STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
-    product_materialization_elimination_count: 5
-    gap006_authority_elimination_count: 0
-    fresh_functional_gap_total: 40
-    effective_categories:
-      AUDIT_EVENT_NODE_MISSING: 4
-      PAYLOAD_INPUT_CONTRACT_MISSING: 16
-      STATE_TRANSITION_LEDGER_FIELD_MISSING: 20
-    closure_blocker_count: 0
-    closure_blockers: []
-  ASSET-01:
-    raw_discovery_gap_total: 126
-    raw_categories:
-      ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
-      AUDIT_EVENT_NODE_MISSING: 9
-      FAILURE_STATE_ERROR_BINDING_MISSING: 44
-      PAYLOAD_INPUT_CONTRACT_MISSING: 18
-      POST_ACTION_VALIDATION_NODE_MISSING: 18
-      SHARED_OWNER_AUTHORITY_UNRESOLVED: 4
-      STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
-      SUCCESS_NEXT_STATE_BINDING_MISSING: 7
-    product_materialization_elimination_count: 12
-    gap006_authority_elimination_count: 4
-    fresh_functional_gap_total: 110
-    effective_categories:
-      ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
-      AUDIT_EVENT_NODE_MISSING: 9
-      FAILURE_STATE_ERROR_BINDING_MISSING: 44
-      PAYLOAD_INPUT_CONTRACT_MISSING: 18
-      POST_ACTION_VALIDATION_NODE_MISSING: 18
-      STATE_TRANSITION_LEDGER_FIELD_MISSING: 20
-    closure_blocker_count: 0
-    closure_blockers: []
-preserved_external_authority:
-  source_union_count: 8
-  source_gap_uids:
-  - GAP-001
-  - GAP-002
-  - GAP-003
-  - GAP-004
-  - GAP-005
-  - GAP-006
-  - GAP-007
-  - GAP-008
-  gap006_stage2_successor_status: RESOLVED_EXACT_AUTHORITY
-  effective_shared_owner_gap_count: 0
-  all_other_source_references_bulk_closed: false
-remaining_product_design_authority_request_count: 150
-specification_change_required: false
-formal_specification_may_be_modified_from_this_finding: false
-status: OPEN_STAGE02_PRODUCT_DESIGN_AUTHORITY_REMEDIATION
+validated_product_materialization_elimination_count: 36
+validated_external_authority_elimination_count: 4
+fresh_functional_gap_total: 131
+effective_gap_categories:
+  ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
+  AUDIT_EVENT_NODE_MISSING: 13
+  FAILURE_STATE_ERROR_BINDING_MISSING: 44
+  PAYLOAD_INPUT_CONTRACT_MISSING: 34
+  POST_ACTION_VALIDATION_NODE_MISSING: 3
+  STATE_TRANSITION_LEDGER_FIELD_MISSING: 36
+result: BLOCKED
+current_specification_mutated: false
+immutable_stage1_source_mutated: false
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
