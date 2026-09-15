@@ -93,6 +93,8 @@ jobs:
           WEB_GOVERNANCE_TRUST_ROOT: /tmp/acpos-v215-trust.json
         run: python .github/governance-source/active/source/09_TESTS/governance/validate_governance.py --mode PRE_FORMAL_DEFINITION_AUDIT
       - name: Assert critical v2.1.15 source invariants
+        env:
+          WEB_GOVERNANCE_TRUST_ROOT: /tmp/acpos-v215-trust.json
         run: |
           python .github/governance-source/active/source/09_TESTS/governance/validate_section_registry.py
           python .github/governance-source/active/source/09_TESTS/governance/governance_lifecycle_stage_contract_guard.py
