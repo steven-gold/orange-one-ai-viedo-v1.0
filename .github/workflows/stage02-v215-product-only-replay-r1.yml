@@ -1,0 +1,107 @@
+name: Stage02 v2.1.15 Product-Only Replay R1
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/stage02-v215-product-only-replay-r1.yml'
+      - 'governance/ci/reconcile_stage02_product_successor_materialization.py'
+      - 'governance/ci/validate_stage02_state_integrity.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+  PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+
+jobs:
+  materialize-reconcile-full-line-persist:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Compile current reconciliation and successor-state harness
+        run: |
+          python -m py_compile governance/ci/reconcile_stage02_product_successor_materialization.py
+          python -m py_compile governance/ci/validate_stage02_state_integrity.py
+      - name: Re-prove frozen current governance and pre-remediation successor state
+        run: |
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_stage01_registry_binding.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_stage_test_remediation_closure_protocol.py
+      - name: Restore only previously validated page-owned Stage-02 product candidates
+        run: |
+          set -euo pipefail
+          git cat-file -e 94b83f60716be3fc138790781357b22b084cb24e^{commit}
+          git checkout 94b83f60716be3fc138790781357b22b084cb24e -- \
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01 \
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01
+          test ! -e 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY
+          test ! -e 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP.yaml
+          test ! -e 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R2.yaml
+          test ! -e 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R3.yaml
+      - name: Fresh product-only reconciliation against immutable Stage-01 authority
+        run: python governance/ci/reconcile_stage02_product_successor_materialization.py
+      - name: Validate remediated blocked successor state
+        run: |
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_stage_test_remediation_closure_protocol.py
+          python governance/ci/validate_governance_layout.py
+          python governance/ci/stress_test_governance_registry.py
+          python governance/ci/validate_stage01_registry_binding.py
+      - name: Run complete 75-file Full-Line high-pressure gate before accepting reexecution
+        run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Prove Current Specification and immutable Stage-01 inputs remain byte-clean
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code HEAD -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code HEAD -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+          git diff --exit-code HEAD -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          bad="$(find .github/governance-source/active/source \( -name '*.pyc' -o -name '__pycache__' -o -name '*.tmp' -o -name '*.bak' -o -name '*~' \) -print)"
+          test -z "$bad" || { printf 'BLOCK: source runtime residue\n%s\n' "$bad" >&2; exit 1; }
+      - name: Assert exact fresh product-only denominator and authority preservation
+        run: |
+          python -c "import json; d=json.load(open('governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json')); assert d['fresh_functional_gap_total']==150 and d['validated_product_successor_signature_count']==32 and d['validated_external_authority_elimination_count']==0 and d['effective_functional_gap_total']==118 and d['closure_blocker_total']==0 and d['preserved_external_authority_union_gap_uids']==['GAP-001','GAP-002','GAP-003','GAP-004','GAP-005','GAP-006','GAP-007','GAP-008'] and d['result']=='BLOCKED'; print('PASS: fresh effective denominator 118 with 8 external authorities preserved')"
+      - name: Upload pre-persistence remediation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage02-v215-product-only-replay-r1-evidence
+          path: |
+            governance/test/stage02/STAGE02_PRODUCT_ONLY_REPLAY_V215_R1.yaml
+            governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+            governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+            .github/governance-source/FULL_LINE_SYSTEM_GATE_RESULT.json
+          if-no-files-found: error
+      - name: Persist exact validated owning-layer replay and self-delete transport workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/stage02-v215-product-only-replay-r1.yml
+          unexpected="$(git status --porcelain | awk '{print $2}' | grep -Ev '^(00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/(CORE-01|ASSET-01)/|governance/test/ACTIVE_STATE.yaml$|governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml$|governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json$|governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml$|governance/test/stage02/STAGE02_PRODUCT_ONLY_REPLAY_V215_R1.yaml$|governance/test/stage02/FIND-20260915-028_STAGE02_REMEDIATION_SUCCESSOR_STATE_MODEL.yaml$|.github/workflows/stage02-v215-product-only-replay-r1.yml$)' || true)"
+          test -z "$unexpected" || { printf 'BLOCK: unexpected persistence paths\n%s\n' "$unexpected" >&2; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01 \
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01 \
+            governance/test/ACTIVE_STATE.yaml \
+            governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml \
+            governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json \
+            governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml \
+            governance/test/stage02/STAGE02_PRODUCT_ONLY_REPLAY_V215_R1.yaml \
+            governance/test/stage02/FIND-20260915-028_STAGE02_REMEDIATION_SUCCESSOR_STATE_MODEL.yaml
+          git commit -m 'test(stage02): persist v2.1.15 product-only replay R1' -m 'Raw: 150' -m 'Validated-Product-Successors: 32' -m 'External-Authority-Eliminations: 0' -m 'Effective: 118' -m 'Closure-Blockers: 0' -m 'Normative-Specification-Mutation: false'
+          git push origin HEAD:rebuild-v2.1.1
