@@ -13,7 +13,7 @@ bounded_completion:
   sibling_feature_symmetry_expansion_used: false
   semantic_similarity_used: false
   external_authority_auto_resolution_used: false
-materialized_remediation_count: 31
+materialized_remediation_count: 33
 remediations:
 - remediation_uid: R3::ASSET-01::SUCCESS_NEXT_STATE_BINDING_MISSING::ASSET-01-ACT-LAYER-ADD::no state_effect, state transition, or port state_event transition
   defect_signature:
@@ -999,6 +999,106 @@ remediations:
   outside_frozen_registered_dependency_closure: false
   generic_crud_symmetry_expansion_used: false
   sibling_feature_symmetry_expansion_used: false
+- remediation_uid: R22::ASSET-01::STAGE02-R5-PRODUCT-AUTH-024
+  source_cycle: R22_POST_ACTION_SIGNAL_ROLE_CORRECTION
+  source_blocker_uid: STAGE02-R5-PRODUCT-AUTH-024
+  defect_signature:
+    category: POST_ACTION_VALIDATION_NODE_MISSING
+    uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+    detail: no explicit success/validation/evaluation contract
+  owning_layer: STAGE-02_PAGE_FUNCTIONAL_CONTRACT
+  completion_basis: POST_ACTION_VALIDATION_FROM_ROLE_CORRECT_UNIQUE_FROZEN_RESULT_SIGNAL
+  exact_proof:
+    candidate_value: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+    admissible_validation_evidence:
+    - source_kind: RAW_CURRENT_PAGE_REGISTRY
+      source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+      node: ports:ASSET-01-PORT-DECISION.state_event
+      value: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+      signal_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+      scanner_validation_role_admissible: true
+    - source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+      source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node: ports:ASSET-01-PORT-DECISION.state_event
+      value: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+      signal_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+      scanner_validation_role_admissible: true
+    excluded_non_validation_role_evidence:
+    - source_kind: RAW_CURRENT_PAGE_REGISTRY
+      source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+      node: transitions:ASSET-01-STTR-05.to_stage
+      value: ASSET-01-STAGE-05-FINALIZE
+      signal_role: FLOW_TRANSITION_DESTINATION_NON_VALIDATION_ROLE
+      scanner_validation_role_admissible: false
+    - source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+      source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node: transitions:ASSET-01-STTR-05.to_stage
+      value: ASSET-01-STAGE-05-FINALIZE
+      signal_role: FLOW_TRANSITION_DESTINATION_NON_VALIDATION_ROLE
+      scanner_validation_role_admissible: false
+    admissible_candidate_value_count: 1
+    signal_role_correction_applied: true
+  materialized_closure:
+    closure_type: POST_ACTION_VALIDATION_FROM_ROLE_CORRECT_UNIQUE_FROZEN_RESULT_SIGNAL
+    action_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+    validation_signal: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+    projection_rule: EXACT_COPY_AFTER_EXCLUDING_FLOW_TRANSITION_DESTINATION_FROM_VALIDATION_ROLE
+  semantic_inference_used: false
+  ai_invented_business_value: false
+  external_authority_resolution_performed: false
+  outside_frozen_registered_dependency_closure: false
+  generic_crud_symmetry_expansion_used: false
+  sibling_feature_symmetry_expansion_used: false
+- remediation_uid: R22::ASSET-01::STAGE02-R5-PRODUCT-AUTH-005
+  source_cycle: R22_POST_ACTION_SIGNAL_ROLE_CORRECTION
+  source_blocker_uid: STAGE02-R5-PRODUCT-AUTH-005
+  defect_signature:
+    category: POST_ACTION_VALIDATION_NODE_MISSING
+    uid: ASSET-01-ACT-FLOW-START
+    detail: no explicit success/validation/evaluation contract
+  owning_layer: STAGE-02_PAGE_FUNCTIONAL_CONTRACT
+  completion_basis: POST_ACTION_VALIDATION_FROM_ROLE_CORRECT_UNIQUE_FROZEN_RESULT_SIGNAL
+  exact_proof:
+    candidate_value: READY→ROUTING | provider.job.requested
+    admissible_validation_evidence:
+    - source_kind: RAW_CURRENT_PAGE_REGISTRY
+      source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+      node: ports:ASSET-01-PORT-EXECUTE.state_event
+      value: READY→ROUTING | provider.job.requested
+      signal_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+      scanner_validation_role_admissible: true
+    - source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+      source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node: ports:ASSET-01-PORT-EXECUTE.state_event
+      value: READY→ROUTING | provider.job.requested
+      signal_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+      scanner_validation_role_admissible: true
+    excluded_non_validation_role_evidence:
+    - source_kind: RAW_CURRENT_PAGE_REGISTRY
+      source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+      node: transitions:ASSET-01-STTR-01.to_stage
+      value: ASSET-01-STAGE-02-REUSE-GENERATE
+      signal_role: FLOW_TRANSITION_DESTINATION_NON_VALIDATION_ROLE
+      scanner_validation_role_admissible: false
+    - source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+      source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node: transitions:ASSET-01-STTR-01.to_stage
+      value: ASSET-01-STAGE-02-REUSE-GENERATE
+      signal_role: FLOW_TRANSITION_DESTINATION_NON_VALIDATION_ROLE
+      scanner_validation_role_admissible: false
+    admissible_candidate_value_count: 1
+    signal_role_correction_applied: true
+  materialized_closure:
+    closure_type: POST_ACTION_VALIDATION_FROM_ROLE_CORRECT_UNIQUE_FROZEN_RESULT_SIGNAL
+    action_uid: ASSET-01-ACT-FLOW-START
+    validation_signal: READY→ROUTING | provider.job.requested
+    projection_rule: EXACT_COPY_AFTER_EXCLUDING_FLOW_TRANSITION_DESTINATION_FROM_VALIDATION_ROLE
+  semantic_inference_used: false
+  ai_invented_business_value: false
+  external_authority_resolution_performed: false
+  outside_frozen_registered_dependency_closure: false
+  generic_crud_symmetry_expansion_used: false
+  sibling_feature_symmetry_expansion_used: false
 unresolved_external_authority_refs_preserved:
 - GAP-001
 - GAP-002
@@ -1012,4 +1112,5 @@ stage_exit_claimed: false
 source_classification_refs:
 - governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R3.yaml
 - governance/test/stage02/STAGE02_FUNCTIONAL_CHAIN_AUTO_REMEDIABILITY_R20.yaml
-latest_bounded_completion_cycle: R21_R20_DETERMINISTIC_MINIMAL_CLOSURE_MATERIALIZATION
+- governance/test/stage02/STAGE02_POST_ACTION_SIGNAL_ROLE_RECLASSIFICATION_R22.yaml
+latest_bounded_completion_cycle: R22_POST_ACTION_SIGNAL_ROLE_CORRECTION

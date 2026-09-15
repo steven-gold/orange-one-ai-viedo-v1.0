@@ -1,0 +1,25 @@
+schema_version: 1
+artifact_type: STAGE02_R22_BOUNDED_MATERIALIZATION_RECEIPT
+normative_authority: false
+stage_uid: STAGE-02
+source_head_sha: b819353ebb22f06602a23a1f41dd90667cf99d80
+source_r22_ref: governance/test/stage02/STAGE02_POST_ACTION_SIGNAL_ROLE_RECLASSIFICATION_R22.yaml
+before_materialized_product_total: 36
+materialized_now_total: 2
+after_materialized_product_total: 38
+after_materialized_by_page:
+  CORE-01: 5
+  ASSET-01: 33
+materialized_targets:
+- ASSET-01-ACT-CANDIDATE-CONFIRM
+- ASSET-01-ACT-FLOW-START
+remaining_r22_authority_gap_targets:
+- ASSET-01-ACT-CORRECTION-EXECUTE
+blocker_reduction_claimed_before_reexecution: 0
+current_specification_mutated: false
+immutable_stage1_source_mutated: false
+semantic_inference_used: false
+ai_invented_business_value: false
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false

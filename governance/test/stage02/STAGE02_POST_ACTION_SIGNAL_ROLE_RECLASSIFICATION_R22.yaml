@@ -1,0 +1,195 @@
+schema_version: 1
+artifact_type: NON_NORMATIVE_STAGE02_POST_ACTION_SIGNAL_ROLE_RECLASSIFICATION_R22
+normative_authority: false
+stage_uid: STAGE-02
+source_head_sha: b819353ebb22f06602a23a1f41dd90667cf99d80
+source_r20_ref: governance/test/stage02/STAGE02_FUNCTIONAL_CHAIN_AUTO_REMEDIABILITY_R20.yaml
+correction_basis:
+  fresh_scanner_rule: POST_ACTION_VALIDATION accepts action success/validation fields, runtime validation/evaluation fields, or bound-port validation fields; stage transition destination
+    is not a validation node.
+  transition_destination_role: FLOW_PROGRESSION_NOT_POST_ACTION_VALIDATION
+  action_result_role: ACTION_RESULT_SIGNAL
+  bound_port_state_event_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+  no_source_precedence_invented: true
+  multiple_admissible_result_signals_remain_authority_gap: true
+denominators:
+  input_r20_post_action_authority_gap_total: 3
+  auto_remediable_after_role_correction: 2
+  authority_gap_after_role_correction: 1
+  blocker_reduction_claimed_before_materialization: 0
+records:
+- problem_uid: STAGE02-FUNCTIONAL-REMEDIATION-005
+  blocker_uid: STAGE02-R5-PRODUCT-AUTH-005
+  page_uid: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-FLOW-START
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  prior_r20_disposition: AUTHORITY_GAP_MULTIPLE_REASONABLE_CLOSURES
+  disposition: AUTO_REMEDIABLE_AFTER_SIGNAL_ROLE_CORRECTION
+  authorized_for_auto_completion: true
+  authority_gap_proven: false
+  candidate_value: READY→ROUTING | provider.job.requested
+  admissible_candidate_value_count: 1
+  admissible_validation_evidence:
+  - &id001
+    source_kind: RAW_CURRENT_PAGE_REGISTRY
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node: ports:ASSET-01-PORT-EXECUTE.state_event
+    value: READY→ROUTING | provider.job.requested
+    signal_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+    scanner_validation_role_admissible: true
+  - &id002
+    source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node: ports:ASSET-01-PORT-EXECUTE.state_event
+    value: READY→ROUTING | provider.job.requested
+    signal_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+    scanner_validation_role_admissible: true
+  excluded_non_validation_role_evidence:
+  - &id003
+    source_kind: RAW_CURRENT_PAGE_REGISTRY
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node: transitions:ASSET-01-STTR-01.to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    signal_role: FLOW_TRANSITION_DESTINATION_NON_VALIDATION_ROLE
+    scanner_validation_role_admissible: false
+  - &id004
+    source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node: transitions:ASSET-01-STTR-01.to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    signal_role: FLOW_TRANSITION_DESTINATION_NON_VALIDATION_ROLE
+    scanner_validation_role_admissible: false
+  all_classified_evidence:
+  - *id001
+  - *id002
+  - *id003
+  - *id004
+  closure_type: POST_ACTION_VALIDATION_FROM_ROLE_CORRECT_UNIQUE_FROZEN_RESULT_SIGNAL
+  semantic_similarity_used: false
+  ai_invented_business_value: false
+  outside_frozen_registered_dependency_closure: false
+- problem_uid: STAGE02-FUNCTIONAL-REMEDIATION-024
+  blocker_uid: STAGE02-R5-PRODUCT-AUTH-024
+  page_uid: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  prior_r20_disposition: AUTHORITY_GAP_MULTIPLE_REASONABLE_CLOSURES
+  disposition: AUTO_REMEDIABLE_AFTER_SIGNAL_ROLE_CORRECTION
+  authorized_for_auto_completion: true
+  authority_gap_proven: false
+  candidate_value: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+  admissible_candidate_value_count: 1
+  admissible_validation_evidence:
+  - &id005
+    source_kind: RAW_CURRENT_PAGE_REGISTRY
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node: ports:ASSET-01-PORT-DECISION.state_event
+    value: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+    signal_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+    scanner_validation_role_admissible: true
+  - &id006
+    source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node: ports:ASSET-01-PORT-DECISION.state_event
+    value: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+    signal_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+    scanner_validation_role_admissible: true
+  excluded_non_validation_role_evidence:
+  - &id007
+    source_kind: RAW_CURRENT_PAGE_REGISTRY
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node: transitions:ASSET-01-STTR-05.to_stage
+    value: ASSET-01-STAGE-05-FINALIZE
+    signal_role: FLOW_TRANSITION_DESTINATION_NON_VALIDATION_ROLE
+    scanner_validation_role_admissible: false
+  - &id008
+    source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node: transitions:ASSET-01-STTR-05.to_stage
+    value: ASSET-01-STAGE-05-FINALIZE
+    signal_role: FLOW_TRANSITION_DESTINATION_NON_VALIDATION_ROLE
+    scanner_validation_role_admissible: false
+  all_classified_evidence:
+  - *id005
+  - *id006
+  - *id007
+  - *id008
+  closure_type: POST_ACTION_VALIDATION_FROM_ROLE_CORRECT_UNIQUE_FROZEN_RESULT_SIGNAL
+  semantic_similarity_used: false
+  ai_invented_business_value: false
+  outside_frozen_registered_dependency_closure: false
+- problem_uid: STAGE02-FUNCTIONAL-REMEDIATION-030
+  blocker_uid: STAGE02-R5-PRODUCT-AUTH-030
+  page_uid: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-CORRECTION-EXECUTE
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  prior_r20_disposition: AUTHORITY_GAP_MULTIPLE_REASONABLE_CLOSURES
+  disposition: AUTHORITY_GAP_MULTIPLE_ACTION_RESULT_SIGNALS_AFTER_ROLE_CORRECTION
+  authorized_for_auto_completion: false
+  authority_gap_proven: true
+  candidate_value: null
+  admissible_candidate_value_count: 2
+  admissible_validation_evidence:
+  - &id009
+    source_kind: RAW_CURRENT_PAGE_REGISTRY
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node: actions:ASSET-01-ACT-CORRECTION-EXECUTE.runtime_binding.result
+    value: NEW candidate/version; never overwrite source version
+    signal_role: ACTION_RESULT_SIGNAL
+    scanner_validation_role_admissible: true
+  - &id010
+    source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node: actions:ASSET-01-ACT-CORRECTION-EXECUTE.runtime_binding.result
+    value: NEW candidate/version; never overwrite source version
+    signal_role: ACTION_RESULT_SIGNAL
+    scanner_validation_role_admissible: true
+  - &id011
+    source_kind: RAW_CURRENT_PAGE_REGISTRY
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node: ports:ASSET-01-PORT-EXECUTE.state_event
+    value: READY→ROUTING | provider.job.requested
+    signal_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+    scanner_validation_role_admissible: true
+  - &id012
+    source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node: ports:ASSET-01-PORT-EXECUTE.state_event
+    value: READY→ROUTING | provider.job.requested
+    signal_role: BOUND_PORT_RESULT_OR_STATE_SIGNAL
+    scanner_validation_role_admissible: true
+  excluded_non_validation_role_evidence:
+  - &id013
+    source_kind: RAW_CURRENT_PAGE_REGISTRY
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node: transitions:ASSET-01-STTR-04.to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    signal_role: FLOW_TRANSITION_DESTINATION_NON_VALIDATION_ROLE
+    scanner_validation_role_admissible: false
+  - &id014
+    source_kind: FROZEN_STAGE02_FUNCTIONAL_CHAIN_EXACT_PROJECTION
+    source_path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node: transitions:ASSET-01-STTR-04.to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    signal_role: FLOW_TRANSITION_DESTINATION_NON_VALIDATION_ROLE
+    scanner_validation_role_admissible: false
+  all_classified_evidence:
+  - *id009
+  - *id010
+  - *id011
+  - *id012
+  - *id013
+  - *id014
+  closure_type: null
+  semantic_similarity_used: false
+  ai_invented_business_value: false
+  outside_frozen_registered_dependency_closure: false
+current_specification_mutated: false
+immutable_stage1_source_mutated: false
+stage02_status: BLOCKED
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
