@@ -1,0 +1,62 @@
+name: Hardened Mother Spec Neutrality Promotion Executor R5
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - .github/workflows/mother-spec-neutrality-promotion-executor-r5.yml
+permissions:
+  contents: write
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install yaml
+        run: python3 -m pip install pyyaml
+      - name: Execute full R4 promotion with location-independent final source identity proof
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,yaml
+          d=yaml.safe_load(Path('.github/workflows/mother-spec-neutrality-promotion-executor-r4.yml').read_text())
+          names=[
+            'Materialize R3 neutral candidate and authority projection',
+            'Validate all neutral governance gates',
+            'Exhaustive parent-aware Mother Current source and immutable-baseline audit',
+          ]
+          for name in names:
+              step=next(s for s in d['jobs']['promote']['steps'] if s.get('name')==name)
+              run=step['run']
+              if name=='Exhaustive parent-aware Mother Current source and immutable-baseline audit':
+                  stale='python3 .github/governance-source/active/source/11_TEST/VERIFY_GITHUB_MATERIALIZED_SOURCE.py'
+                  if stale not in run:
+                      raise SystemExit('STALE_VERIFIER_ANCHOR_NOT_FOUND')
+                  replacement='''\
+          SOURCE_ROOT=.github/governance-source/active/source
+          test "$(find "$SOURCE_ROOT" -type f | wc -l | tr -d ' ')" = "75"
+          test "$(wc -l < "$SOURCE_ROOT/CHECKSUMS.sha256" | tr -d ' ')" = "74"
+          (cd "$SOURCE_ROOT" && sha256sum -c CHECKSUMS.sha256 >/tmp/mother-neutrality-source-sha.log)
+          test "$(grep -c ': OK$' /tmp/mother-neutrality-source-sha.log)" = "74"
+          if find "$SOURCE_ROOT" -type d -name __pycache__ -o -type f -name '*.pyc' | grep -q .; then
+            echo 'SOURCE_CACHE_RESIDUAL'; exit 1
+          fi
+          echo 'PASS: location-independent source identity file_count=75 checksum_entries=74 checksum_matches=74 cache_residual=0'
+          '''
+                  run=run.replace(stale,replacement,1)
+              print('EXECUTE:',name,flush=True)
+              subprocess.run(['bash','-e','-o','pipefail','-c',run],check=True)
+          PY
+      - name: Persist authorized neutral governance promotion
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add GOVERNANCE_CURRENT.yaml governance .github/governance-source
+          git reset -- .github/workflows || true
+          git diff --cached --check
+          test -n "$(git diff --cached --name-only)"
+          git commit -m "governance(spec): promote neutral portable mother policy v2.2.0" -m "Authorization: USR-DIRECTIVE-20260915-MOTHER-SPEC-NEUTRALITY-AUDIT" -m "Separates reusable POLICY from ACPOS EXECUTION_PROFILE, removes Stage/Run-specific authority pollution, preserves structural parent sections and historical execution evidence, and requires fresh revalidation after authority promotion."
+          git push origin HEAD:rebuild-v2.1.1
