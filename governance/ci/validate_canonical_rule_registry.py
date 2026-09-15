@@ -58,12 +58,14 @@ for forbidden in ('fixed=re.compile(', 'retry=re.compile(', 'exactly eleven orde
     if forbidden in portability:
         fail('PORTABILITY_LOCAL_RULE_FORK:'+forbidden)
 
-# Lexical hints are secondary. Language that forbids a semantic type is not a
-# concrete binding, but a real project/run/tool binding must still be caught.
+# Lexical hints are secondary. Language that forbids or requires a semantic field
+# is not a concrete binding, but a real project/run/tool binding must still be caught.
 negative_probes = (
     'Reusable POLICY MUST NOT bind run UID or attempt UID.',
     'workflow path in reusable policy is FORBIDDEN.',
     'may_not_define:\n  - WORKFLOW_PATH\n  - RUN_OR_ATTEMPT_ID',
+    '每次正式 Validation MUST 建立唯一 `run_uid`，所有本次 Gate Evidence MUST 綁同一 `run_uid` 與 `source_revision`。',
+    'Audit MUST 顯示本次 `run_uid`、Execution Cycle、Source Revision、開始/結束時間與 Terminal Status。',
 )
 for probe in negative_probes:
     findings = scan_policy_text(probe)
@@ -72,6 +74,7 @@ for probe in negative_probes:
 
 positive_probes = {
     'run_uid: FRESH-RUN-TEST-001': 'RUN_ID',
+    'Bind run UID FRESH-RUN-TEST-001 for this reusable policy.': 'RUN_ID',
     'workflow_path: .github/workflows/example.yml': 'IMPLEMENTATION_PATH',
     'selected fixed work unit STAGE-02': 'FIXED_WORK_UNIT_ID',
 }

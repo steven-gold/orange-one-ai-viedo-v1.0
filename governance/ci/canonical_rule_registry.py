@@ -52,9 +52,21 @@ def _line_context(text: str, start: int, end: int) -> tuple[str, int, int]:
     return text[line_start:line_end], start - line_start, end - line_start
 
 
+def _immediate_structured_identifier(tail: str) -> bool:
+    # A concrete identity must be adjacent to the semantic label and look like an
+    # actual structured identifier. Arbitrary later policy tokens such as MUST,
+    # PASS, Gate, or Evidence are not identity bindings.
+    cleaned = tail.lstrip(" \t`'\"：:=，,；;()[]")
+    match = re.match(r'([A-Za-z0-9]+(?:[-_:/.][A-Za-z0-9.]+)+)', cleaned)
+    if not match:
+        return False
+    candidate = match.group(1)
+    return any(ch.isdigit() for ch in candidate)
+
+
 def _is_confirmed_policy_binding(semantic_type: str, line: str, local_start: int, local_end: int) -> bool:
-    # Lexical hints are discovery only. A prohibition/definition of a forbidden semantic
-    # type is not itself a forbidden binding.
+    # Lexical hints are discovery only. A prohibition/definition/schema requirement
+    # is not itself a forbidden concrete execution binding.
     if _PROHIBITION_OR_META.search(line):
         return False
 
@@ -68,11 +80,12 @@ def _is_confirmed_policy_binding(semantic_type: str, line: str, local_start: int
         if value and value.upper() not in _POLICY_SENTINELS:
             return True
 
-    # Free-form Mother prose can still contain a concrete implementation binding.
+    # Free-form Mother prose can still contain a concrete implementation binding,
+    # but the concrete value must be adjacent to the semantic label.
     if semantic_type == 'IMPLEMENTATION_PATH':
-        return bool(re.search(r'(?i)(?:\.github/|governance/|[A-Za-z0-9_.-]+/)[A-Za-z0-9_./-]+\.(?:ya?ml|py|ts|tsx|js|jsx)\b', tail))
+        return bool(re.match(r'\s*[`"\']?(?:(?:\.github|governance|src|scripts?)/)[A-Za-z0-9_./-]+\.(?:ya?ml|py|ts|tsx|js|jsx)\b', tail, re.I))
     if semantic_type in {'RUN_ID', 'ATTEMPT_ID', 'EXECUTION_TOOL_ID'}:
-        return bool(re.search(r'''[`"']?[A-Z][A-Z0-9_.:/-]{3,}[`"']?''', tail))
+        return _immediate_structured_identifier(tail)
 
     return False
 
