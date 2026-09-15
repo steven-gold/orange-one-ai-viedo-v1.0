@@ -9,6 +9,9 @@ on:
       - 'governance/ci/validate_stage02_transition_ledger_required_applicability_r34.py'
       - 'governance/test/stage02/STAGE02_STATE_TRANSITION_LEDGER_DEPENDENCY_TRACE_R17.yaml'
       - 'governance/test/stage02/STAGE02_CURRENT_FUNCTIONAL_CONTRACT_DECISION_STATUS_R33.yaml'
+      - 'governance/test/stage02/STAGE02_INDEPENDENT_DENOMINATOR_RECOMPUTATION_R35.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml'
+      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml'
   workflow_dispatch:
 
 permissions:
@@ -31,10 +34,11 @@ jobs:
         run: |
           python -m py_compile governance/ci/build_stage02_transition_ledger_required_applicability_r34.py
           python -m py_compile governance/ci/validate_stage02_transition_ledger_required_applicability_r34.py
-      - name: Revalidate R17 R33 baselines
+      - name: Revalidate R17 R33 R35 baselines
         run: |
           python governance/ci/validate_stage02_state_transition_ledger_dependency_trace_r17.py
           python governance/ci/validate_stage02_current_decision_status_r33.py
+          python governance/ci/validate_stage02_independent_denominator_recomputation_r35.py
       - name: Build R34 transition ledger required applicability proof
         run: python governance/ci/build_stage02_transition_ledger_required_applicability_r34.py
       - name: Validate R34 required applicability proof
@@ -50,12 +54,14 @@ jobs:
           from pathlib import Path
           d=yaml.safe_load(Path('governance/test/stage02/STAGE02_TRANSITION_LEDGER_REQUIRED_APPLICABILITY_R34.yaml').read_text())
           den=d['denominators']
+          assert den['raw_transition_required_field_gaps_r35']==50, den
+          assert den['already_materialized_illegal_transition_test_gaps']==10, den
           assert den['current_transition_ledger_field_problems']==40, den
           assert den['transition_count']==10 and den['required_missing_fields_per_transition']==4, den
           assert den['required_count']==40 and den['not_applicable_count']==0 and den['optional_count']==0, den
-          assert den['candidate_values_materialized']==0 and den['blocker_reduction_claimed']==0, den
+          assert den['candidate_values_materialized_this_cycle']==0 and den['blocker_reduction_claimed_this_cycle']==0, den
           assert d['stage02_status']=='BLOCKED' and d['stage03_allowed'] is False, d
-          print('PASS: R34 confirms all 40 transition-ledger gaps are REQUIRED; reduction=0')
+          print('PASS: R34 raw transition gaps=50; existing bounded closures=10; unresolved required=40; new reduction=0')
           PY
       - name: Persist R34 proof
         run: |
