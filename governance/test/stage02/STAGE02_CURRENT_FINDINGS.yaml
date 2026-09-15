@@ -1,11 +1,12 @@
-schema_version: 5
+schema_version: 6
 artifact_type: STAGE02_CURRENT_FINDINGS
 normative_authority: false
 stage_uid: STAGE-02
-source_cycle: R22_POST_ACTION_SIGNAL_ROLE_CORRECTION
-source_head_sha: b819353ebb22f06602a23a1f41dd90667cf99d80
+source_cycle: R23_CURRENT_AUTHORITY_REQUIRED_PAYLOAD_ZERO_INTERSECTION
+source_head_sha: 5611e4f516da01adb59321bbd55c4df9285cd0c1
 raw_discovery_gap_total: 171
 validated_product_materialization_elimination_count: 38
+validated_r23_current_authority_payload_elimination_count: 0
 validated_external_authority_elimination_count: 4
 fresh_functional_gap_total: 129
 effective_gap_categories:
@@ -15,6 +16,7 @@ effective_gap_categories:
   PAYLOAD_INPUT_CONTRACT_MISSING: 34
   POST_ACTION_VALIDATION_NODE_MISSING: 1
   STATE_TRANSITION_LEDGER_FIELD_MISSING: 36
+remaining_payload_gap_total: 34
 remaining_true_authority_gap_count: 1
 remaining_true_authority_gap_targets:
 - ASSET-01-ACT-CORRECTION-EXECUTE
