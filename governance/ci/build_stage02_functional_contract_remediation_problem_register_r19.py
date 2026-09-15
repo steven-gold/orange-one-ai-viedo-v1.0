@@ -64,11 +64,11 @@ def load(path: Path):
     return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
 
 
-def identity(row):
-    return (
-        row.get("blocker_uid"), row.get("scope"), row.get("category"),
-        row.get("target_uid"), row.get("missing_field_or_relation"),
-    )
+def stable_uid(row):
+    uid = row.get("blocker_uid")
+    if not isinstance(uid, str) or not uid:
+        die(f"R19_BLOCKER_UID_MISSING:{row}")
+    return uid
 
 
 def evidence_summary(category: str, row: dict):
@@ -120,45 +120,56 @@ def main():
     if len(baseline) != 150 or any(r.get("classification") != "UNRESOLVED_FUNCTIONAL_CONTRACT_GAP" for r in baseline):
         die("R19_REQUIRES_EXACT_R12_150_UNRESOLVED_BASELINE")
 
+    baseline_by_uid = {}
+    for row in baseline:
+        uid = stable_uid(row)
+        if uid in baseline_by_uid:
+            die(f"R19_DUPLICATE_BASELINE_BLOCKER_UID:{uid}")
+        baseline_by_uid[uid] = row
+
     trace_rows = {}
     trace_meta = {}
-    for category, (path, revision) in TRACES.items():
+    for expected_category, (path, revision) in TRACES.items():
         doc = load(path)
         rows = doc.get("records") or []
         for row in rows:
-            key = identity(row)
-            if key in trace_rows:
-                die(f"R19_DUPLICATE_TRACE_IDENTITY:{key}")
-            trace_rows[key] = row
-            trace_meta[key] = {"trace_revision": revision, "trace_path": str(path.relative_to(ROOT))}
+            uid = stable_uid(row)
+            if uid in trace_rows:
+                die(f"R19_DUPLICATE_TRACE_BLOCKER_UID:{uid}")
+            if row.get("category") != expected_category:
+                die(f"R19_TRACE_CATEGORY_SOURCE_DRIFT:{uid}:{row.get('category')}:{expected_category}")
+            trace_rows[uid] = row
+            trace_meta[uid] = {"trace_revision": revision, "trace_path": str(path.relative_to(ROOT))}
 
     if len(trace_rows) != 150:
         die(f"R19_TRACE_TOTAL_NOT_150:{len(trace_rows)}")
-    base_ids = {identity(r) for r in baseline}
-    if base_ids != set(trace_rows):
-        missing = sorted(base_ids - set(trace_rows))[:10]
-        extra = sorted(set(trace_rows) - base_ids)[:10]
-        die(f"R19_TRACE_COVERAGE_DRIFT:missing={missing}:extra={extra}")
+    if set(baseline_by_uid) != set(trace_rows):
+        missing = sorted(set(baseline_by_uid) - set(trace_rows))[:10]
+        extra = sorted(set(trace_rows) - set(baseline_by_uid))[:10]
+        die(f"R19_TRACE_BLOCKER_UID_COVERAGE_DRIFT:missing={missing}:extra={extra}")
 
     problems = []
     categories = Counter()
     scopes = Counter()
     trace_classes = Counter()
     for base in baseline:
-        key = identity(base)
-        trace = trace_rows[key]
+        uid = stable_uid(base)
+        trace = trace_rows[uid]
         category = base["category"]
+        for field in ("scope", "category", "target_uid"):
+            if trace.get(field) != base.get(field):
+                die(f"R19_TRACE_IDENTITY_FIELD_DRIFT:{uid}:{field}:{trace.get(field)}:{base.get(field)}")
         if trace.get("materialization_candidate") is not False:
-            die(f"R19_UNEXPECTED_MATERIALIZATION_CANDIDATE:{base['blocker_uid']}:{trace.get('classification')}")
+            die(f"R19_UNEXPECTED_MATERIALIZATION_CANDIDATE:{uid}:{trace.get('classification')}")
         if trace.get("blocker_reduction_credit") != 0:
-            die(f"R19_FALSE_TRACE_REDUCTION:{base['blocker_uid']}")
+            die(f"R19_FALSE_TRACE_REDUCTION:{uid}")
         categories[category] += 1
         scopes[base["scope"]] += 1
         trace_classes[trace.get("classification")] += 1
         rule = REMEDIATION[category]
         problems.append({
             "problem_uid": f"STAGE02-FUNCTIONAL-REMEDIATION-{len(problems)+1:03d}",
-            "blocker_uid": base["blocker_uid"],
+            "blocker_uid": uid,
             "scope": base["scope"],
             "category": category,
             "target_uid": base["target_uid"],
@@ -170,7 +181,7 @@ def main():
             "owning_contract": rule["owning_contract"],
             "required_definition": rule["required_definition"],
             "forbidden_substitutions": rule["forbidden_substitutions"],
-            "trace_ref": trace_meta[key],
+            "trace_ref": trace_meta[uid],
             "trace_evidence_summary": evidence_summary(category, trace),
             "current_specification_mutation_allowed": False,
             "historical_non_current_authority_allowed": False,
@@ -200,6 +211,10 @@ def main():
         "source_head_sha": head,
         "source_contracts": {
             "r12_identity_baseline": str(R12.relative_to(ROOT)),
+            "trace_join_key": "blocker_uid",
+            "trace_join_key_uniqueness_proven": True,
+            "trace_identity_fields_revalidated": ["scope", "category", "target_uid"],
+            "missing_field_or_relation_source": "R12_BASELINE_ONLY",
             "exact_trace_sources": {cat: {"path": str(path.relative_to(ROOT)), "revision": rev} for cat, (path, rev) in TRACES.items()},
         },
         "registration_contract": {
@@ -230,8 +245,8 @@ def main():
     }
     OUT.write_text(yaml.safe_dump(doc, sort_keys=False, allow_unicode=True), encoding="utf-8")
     print(f"PASS: R19 registered exact 150 verified functional-contract remediation problems categories={dict(categories)}")
-    print(f"PASS: trace classifications aggregated without authority promotion classes={dict(trace_classes)}")
-    print("PASS: 0 deterministic candidates, 0 proven Product Authority gaps, 0 blocker reduction")
+    print(f"PASS: stable blocker_uid join covers all traces and scope/category/target identities were revalidated classes={dict(trace_classes)}")
+    print("PASS: missing_field_or_relation is retained from R12 baseline only; 0 deterministic candidates, 0 proven Product Authority gaps, 0 blocker reduction")
 
 
 if __name__ == "__main__":
