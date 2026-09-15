@@ -4,7 +4,7 @@ artifact_type: NON_NORMATIVE_TEST_HARNESS_FINDING
 normative_authority: false
 class: TEST_HARNESS_OR_CLASSIFIER_BUG
 title: R4/R5/R10/R11 circularly promoted absence of bounded-completion proof into Product Authority without an independent authority-vs-deterministic-dependency classification
-status: OPEN_CORRECTION_ACTIVE
+status: CLOSED_VERIFIED_CLASSIFICATION_SUPERSEDED
 stage_uid: STAGE-02
 observed_head_sha: 496f1a6a216ac4242bb4653a601fd84cf794c565
 affected_harness:
@@ -37,6 +37,25 @@ required_fix:
   - do not reduce any Stage-02 blocker from classification alone
   - deterministic candidates must be materialized only at the owning Stage-02 layer and then proven by clean reset, Full-Line gate, and fresh reexecution
   - R5/R10/R11 remain historical/non-normative evidence and must not be treated as current proof that all 150 require Product Authority
+verification:
+  finding_record_commit: 20c527447ddb9856e807c16321b49d985f8a583d
+  r12_builder_commit: 194896990bec8058cf0729ae3e7710142d15845b
+  r12_validator_commit: 52e9b6ddb3c7f59472720a9ff58a1b646bbf2ee9
+  r12_workflow_commit: 7f5a0aa04040b1c6cef751796f39d9075de59845
+  r12_run_id: 34911602158
+  r12_job_id: 104200094098
+  r12_conclusion: success
+  r12_persisted_output_commit: d08ba84d40a0342d2b6ad85a81cfe8e353e4fbde
+  sibling_repository_three_branch_guard_run_id: 34911602139
+  sibling_repository_three_branch_guard_conclusion: success
+  corrected_classification:
+    total_reclassified: 150
+    deterministic_required_dependency: 0
+    true_product_authority_gap_proven: 0
+    unresolved_functional_contract_gap: 150
+    effective_stage02_blocker_reduction_claimed: 0
+  supersession: R5_R10_R11_ALL_150_PRODUCT_AUTHORITY_INTERPRETATION_SUPERSEDED_FOR_CLASSIFICATION_BY_R12
+  verified_fact: ABSENCE_OF_EXACT_BINDING_ALONE_DOES_NOT_PROVE_PRODUCT_AUTHORITY
 safety:
   current_specification_mutation_allowed: false
   stage01_source_mutation_allowed: false
@@ -47,4 +66,4 @@ safety:
   stage03_allowed_during_fix: false
   website_construction_allowed_during_fix: false
   deployment_allowed_during_fix: false
-formal_next_execution_point: R12_AUTHORITY_VS_DETERMINISTIC_DEPENDENCY_RECLASSIFICATION
+formal_next_execution_point: CATEGORY_BY_CATEGORY_EXACT_FROZEN_DEPENDENCY_TRACE_BEGIN_WITH_AUDIT_EVENT_13
