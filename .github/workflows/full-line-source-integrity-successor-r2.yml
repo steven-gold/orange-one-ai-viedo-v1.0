@@ -1,0 +1,31 @@
+name: Full-Line Source Integrity Successor R2
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - 'governance/test/spec_change_authorizations/USR-DIRECTIVE-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE-R2.yaml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: full-line-source-integrity-successor-r2-rebuild-v2-1-1
+  cancel-in-progress: false
+
+jobs:
+  build-verify-and-push-successor-r2:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: rebuild-v2.1.1
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Apply R2 atomic source-integrity successor, verify exact full line, then push
+        run: python governance/ci/apply_full_line_source_integrity_successor_r2.py
