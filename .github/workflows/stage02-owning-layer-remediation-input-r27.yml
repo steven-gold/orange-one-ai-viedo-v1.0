@@ -1,0 +1,70 @@
+name: Stage-02 Owning-Layer Remediation Input R27
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/stage02-owning-layer-remediation-input-r27.yml'
+      - 'governance/ci/build_stage02_owning_layer_remediation_input_packet_r27.py'
+      - 'governance/ci/validate_stage02_owning_layer_remediation_input_packet_r27.py'
+      - 'governance/test/stage02/STAGE02_CURRENT_FUNCTIONAL_CONTRACT_PROBLEM_RECONCILIATION_R26.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-validate-input-packet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install YAML dependency
+        run: python -m pip install pyyaml
+      - name: Compile R27 implementation
+        run: |
+          python -m py_compile governance/ci/build_stage02_owning_layer_remediation_input_packet_r27.py
+          python -m py_compile governance/ci/validate_stage02_owning_layer_remediation_input_packet_r27.py
+      - name: Revalidate R26 current 150-problem baseline
+        run: python governance/ci/validate_stage02_current_problem_reconciliation_r26.py
+      - name: Build R27 owning-layer remediation input packet
+        run: python governance/ci/build_stage02_owning_layer_remediation_input_packet_r27.py
+      - name: Validate R27 owning-layer remediation input packet
+        run: python governance/ci/validate_stage02_owning_layer_remediation_input_packet_r27.py
+      - name: Prove frozen Current Specification and immutable Stage-1 Raw authority unchanged
+        run: |
+          git diff --exit-code -- governance/specifications/current
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+      - name: Assert R27 fail-closed input state
+        run: |
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          x=yaml.safe_load(Path('governance/test/stage02/STAGE02_OWNING_LAYER_REMEDIATION_INPUT_PACKET_R27.yaml').read_text())
+          d=x['denominators']
+          assert d['total_required_inputs']==150, x
+          assert d['provided_inputs']==0 and d['pending_inputs']==150, x
+          assert d['deterministic_materialization_candidates_before_input']==0, x
+          assert d['blocker_reduction_claimed']==0, x
+          assert x['stage02_effective_blocker_count']==150 and x['stage02_status']=='BLOCKED', x
+          assert x['next_execution_gate']=='INGEST_AND_VALIDATE_OWNING_LAYER_CONTRACT_DEFINITIONS_OR_CURRENT_ADMISSIBLE_EXACT_EVIDENCE', x
+          assert x['stage03_allowed'] is False and x['website_construction_allowed'] is False and x['deployment_allowed'] is False, x
+          print('PASS: R27 exact remediation input denominator=150; provided=0; pending=150; fail-closed')
+          PY
+      - name: Persist R27 owning-layer remediation input packet
+        run: |
+          path='governance/test/stage02/STAGE02_OWNING_LAYER_REMEDIATION_INPUT_PACKET_R27.yaml'
+          if [ -z "$(git status --porcelain -- "$path")" ]; then
+            echo 'R27 output unchanged'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$path"
+          git commit -m 'test(stage02): persist owning-layer remediation input packet R27'
+          git push origin HEAD:rebuild-v2.1.1
