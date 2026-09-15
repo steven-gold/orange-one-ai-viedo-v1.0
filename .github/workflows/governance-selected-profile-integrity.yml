@@ -35,3 +35,11 @@ jobs:
         run: python governance/ci/stress_test_governance_registry.py
       - name: Validate selected execution profile and profile-local evidence
         run: python governance/ci/validate_selected_execution_profile_integrity.py
+      - name: Validate Stage-02 finding closure readiness under Current governance
+        run: python governance/ci/validate_stage02_finding_closure_readiness.py
+      - name: Upload Stage-02 finding closure readiness evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage02-finding-closure-readiness
+          path: governance/test/STAGE02_FINDING_CLOSURE_READINESS.json
+          if-no-files-found: error
