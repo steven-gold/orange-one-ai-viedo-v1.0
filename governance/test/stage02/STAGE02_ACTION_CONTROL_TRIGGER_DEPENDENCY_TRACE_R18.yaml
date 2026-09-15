@@ -1,0 +1,63 @@
+schema_version: 1
+artifact_type: NON_NORMATIVE_STAGE02_ACTION_CONTROL_TRIGGER_DEPENDENCY_TRACE_R18
+normative_authority: false
+stage_uid: STAGE-02
+cycle: ACTION_CONTROL_TRIGGER_EXACT_DEPENDENCY_TRACE_R18
+source_head_sha: a26c9e133e6527767e0798e0009fc4c40b55b1d6
+source_contracts:
+  r12_identity_source: governance/test/stage02/STAGE02_AUTHORITY_DEPENDENCY_RECLASSIFICATION_R12.yaml
+  r12_classification_accepted_as_authority: false
+  functional_chain_source: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+  current_page_authority_exact_capture: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+trace_contract:
+  control_requires_same_node_control_uid_and_direct_action_uid: true
+  stage_trigger_requires_transition_uid_and_direct_trigger_action: true
+  system_trigger_requires_trigger_identity_and_direct_action_reference: true
+  port_exposure_is_control_or_trigger: false
+  semantic_trigger_inference_allowed: false
+  invented_control_or_trigger_allowed: false
+  classification_alone_may_reduce_blocker: false
+denominators:
+  action_without_control_or_trigger_gaps_traced: 1
+  scope_counts:
+    ASSET-01: 1
+  exact_control_binding_count: 0
+  exact_trigger_binding_count: 0
+  nonqualifying_port_exposure_count: 0
+  materialization_candidates: 0
+  effective_stage02_blocker_reduction_claimed: 0
+records:
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-032
+  scope: ASSET-01
+  category: ACTION_WITHOUT_CONTROL_OR_TRIGGER
+  target_uid: ASSET-01-ACT-FINDING-CREATE
+  missing_field_or_relation: no registered control or exact transition/system trigger
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-032
+  r12_classification_used_as_authority: false
+  action_identity_evidence:
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.actions.24
+    proof: EXACT_ACTION_RUNTIME_NODE
+    value:
+      action_uid: ASSET-01-ACT-FINDING-CREATE
+      runtime_binding:
+        binding_kind: SOURCE_INTEGRATION_PORT
+        port_uid: ASSET-01-PORT-FINDING
+        decision: SOURCE_DERIVED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  exact_control_binding_evidence: []
+  exact_trigger_binding_evidence: []
+  nonqualifying_lineage_evidence: []
+  classification: CURRENT_FROZEN_CONTROL_TRIGGER_CONTRACT_MISSING
+  materialization_candidate: false
+  port_exposure_promoted_to_control_or_trigger: false
+  semantic_trigger_inference_used: false
+  invented_control_or_trigger_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_CONTROL_OR_REGISTERED_TRIGGER_IS_PROVEN
+stage02_status: BLOCKED
+stage02_effective_blocker_count_before_any_materialization_and_fresh_reexecution: 150
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
