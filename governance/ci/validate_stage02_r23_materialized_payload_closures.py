@@ -30,7 +30,7 @@ r23 = load(R23)
 receipt = load(RECEIPT)
 auto = [r for r in (r23.get("records") or []) if r.get("authorized_for_auto_completion") is True]
 expected = len(auto)
-if expected < 1 or expected > 4:
+if expected < 0 or expected > 4:
     die(f"R23_AUTO_DENOMINATOR_INVALID:{expected}")
 if receipt.get("artifact_type") != "STAGE02_R23_BOUNDED_MATERIALIZATION_RECEIPT" or receipt.get("materialized_now_total") != expected:
     die("R23_RECEIPT_IDENTITY_OR_COUNT_DRIFT")
@@ -42,6 +42,8 @@ if receipt.get("current_specification_mutated") is not False or receipt.get("imm
     die("R23_RECEIPT_MUTATION_FLAG_DRIFT")
 if receipt.get("semantic_inference_used") is not False or receipt.get("ai_invented_business_value") is not False or receipt.get("operation_registry_used_as_payload_authority") is not False:
     die("R23_RECEIPT_SAFETY_FLAG_DRIFT")
+if expected == 0 and receipt.get("zero_closure_preserves_existing_ledger_bytes") is not True:
+    die("R23_ZERO_CLOSURE_LEDGER_PRESERVATION_FLAG_DRIFT")
 
 all_rems = {}
 by_page = Counter()
@@ -62,7 +64,7 @@ for page in ("CORE-01", "ASSET-01"):
 
 if len(all_rems) != 38 + expected or by_page != Counter({"CORE-01": 5, "ASSET-01": 33 + expected}):
     die(f"R23_LEDGER_DENOMINATOR_DRIFT:total={len(all_rems)} by_page={dict(by_page)} expected={expected}")
-if cycle.get("R23_CURRENT_AUTHORITY_REQUIRED_PAYLOAD") != expected:
+if cycle.get("R23_CURRENT_AUTHORITY_REQUIRED_PAYLOAD", 0) != expected:
     die(f"R23_CYCLE_COUNT_DRIFT:{dict(cycle)}")
 
 expected_targets = set()
@@ -76,15 +78,15 @@ for row in auto:
         die(f"R23_MATERIALIZED_LINEAGE_DRIFT:{sig}")
     proof = rem.get("exact_proof") or {}
     closure = rem.get("materialized_closure") or {}
-    ev = (row.get("candidate_evidence") or [None])[0]
-    if not isinstance(ev, dict):
-        die(f"R23_SOURCE_EVIDENCE_MISSING:{sig}")
+    evidence = row.get("candidate_evidence") or []
+    if len(evidence) != 1:
+        die(f"R23_SOURCE_EVIDENCE_COUNT_DRIFT:{sig}")
+    ev = evidence[0]
     if proof.get("source_authority_id") != ev.get("authority_id") or proof.get("operation_id") != ev.get("operation_id") or proof.get("required_payload") != ev.get("required_payload"):
         die(f"R23_EXACT_PROOF_DRIFT:{sig}")
     if closure.get("closure_type") != "REQUEST_INPUT_CONTRACT_FROM_CURRENT_SHARED_RUNTIME_REQUIRED_PAYLOAD":
         die(f"R23_CLOSURE_TYPE_DRIFT:{sig}")
-    payload = closure.get("payload_contract") or {}
-    if payload.get("required_fields") != ev.get("required_payload"):
+    if (closure.get("payload_contract") or {}).get("required_fields") != ev.get("required_payload"):
         die(f"R23_PAYLOAD_CONTRACT_DRIFT:{sig}")
     if closure.get("projection_rule") != "EXACT_COPY_OF_CURRENT_AUTHORITY_REQUIRED_PAYLOAD_NO_FIELD_INFERENCE":
         die(f"R23_PROJECTION_RULE_DRIFT:{sig}")
@@ -97,4 +99,5 @@ if set(receipt.get("materialized_targets") or []) != expected_targets:
     die("R23_RECEIPT_TARGET_SET_DRIFT")
 print(f"PASS: R23 materialized payload closures={expected}; total product materializations={38+expected}")
 print(f"PASS: ledger by page CORE=5 ASSET={33+expected}")
-print("PASS: every R23 closure preserves exact Current Authority required_payload without field inference")
+if expected == 0:
+    print("PASS: zero-closure R23 preserved the R22 ledger denominator exactly")
