@@ -39,17 +39,35 @@ jobs:
             out.append({'path':p.as_posix(),'hits':hits,'total':sum(hits.values())})
           manifest=yaml.safe_load((current/'SPECIFICATION_MANIFEST.yaml').read_text()) or {}
           contradictions=[]
-          for rel in manifest.get('components') or []:
+          component_resolution=[]
+          for item in manifest.get('components') or []:
+            if isinstance(item,str):
+              rel=item
+            elif isinstance(item,dict):
+              rel=item.get('path') or item.get('component_path') or item.get('canonical_path') or item.get('file')
+            else:
+              rel=None
+            if not rel:
+              contradictions.append({'component':item,'reason':'CURRENT_COMPONENT_PATH_UNRESOLVED'})
+              continue
             p=Path(rel)
-            if not p.is_absolute(): p=root/p
-            if p.is_file() and p.suffix in ('.yaml','.yml'):
-              d=yaml.safe_load(p.read_text()) or {}
+            if not p.is_absolute():
+              p=root/p
+            if not p.exists():
+              alt=current/Path(rel).name
+              if alt.exists(): p=alt
+            component_resolution.append({'declared':rel,'resolved':p.as_posix(),'exists':p.is_file()})
+            if not p.is_file():
+              contradictions.append({'component':rel,'reason':'CURRENT_COMPONENT_FILE_MISSING'})
+              continue
+            if p.suffix in ('.yaml','.yml'):
+              d=yaml.safe_load(p.read_text(encoding='utf-8')) or {}
               if d.get('formal_current_authority') is False:
                 contradictions.append({'component':rel,'reason':'LISTED_CURRENT_BUT_SELF_DECLARED_NON_AUTHORITY'})
               if 'TEST_SPECIFICATION' in str(d.get('normative_status','')):
                 contradictions.append({'component':rel,'reason':'LISTED_CURRENT_BUT_TEST_COMPONENT'})
           refs={}
-          needles=['STAGE_EXECUTION_OPTIMIZATION.yaml','STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml','TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE.yaml','GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml']
+          needles=['STAGE_EXECUTION_OPTIMIZATION.yaml','STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml','TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE.yaml','GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml','SEMANTIC_AUTHORITY_BASELINE.yaml']
           scan_roots=[root/'governance',root/'.github']
           for needle in needles:
             matches=[]
@@ -61,10 +79,9 @@ jobs:
                 except Exception: continue
                 if needle in t: matches.append(p.as_posix())
             refs[needle]=sorted(set(matches))
-          result={'files':out,'manifest_contradictions':contradictions,'active_reference_consumers':refs}
+          result={'files':out,'component_resolution':component_resolution,'manifest_contradictions':contradictions,'active_reference_consumers':refs}
           print(json.dumps(result,ensure_ascii=False,indent=2))
-          if contradictions:
-            print(f'AUDIT_FOUND_MANIFEST_CONTRADICTIONS={len(contradictions)}')
+          print(f'AUDIT_FOUND_MANIFEST_CONTRADICTIONS={len(contradictions)}')
           print('AUDIT_FILE_COUNT=',len(out))
           print('AUDIT_TOTAL_CONTAMINATION_HITS=',sum(x['total'] for x in out))
           PY
