@@ -1,0 +1,23 @@
+schema_version: 1
+finding_uid: FIND-20260915-026
+stage_uid: STAGE-02
+finding_type: TEST_EVIDENCE_DENOMINATOR_UNDERCOUNT_OR_DRIFT
+status: NOT_REPRODUCED
+summary: R29/R30 denominator must be reconciled against an independent current-scanner recomputation; no expected denominator constant is accepted as evidence.
+r35_evidence_ref: governance/test/stage02/STAGE02_INDEPENDENT_DENOMINATOR_RECOMPUTATION_R35.yaml
+observed_raw_gap_total: 150
+observed_effective_gap_total: 129
+prior_r29_raw_gap_total: 150
+prior_r29_effective_gap_total: 129
+transition_required_field_gap_total: 50
+transition_missing_field_counts:
+  audit_event_uid: 10
+  failure_state: 10
+  illegal_transition_tests: 10
+  mutation_owner: 10
+  recovery: 10
+forbidden_resolution:
+- LOOSEN_R34_VALIDATOR_TO_MATCH_STALE_DENOMINATOR
+- DROP_ILLEGAL_TRANSITION_TESTS
+- MUTATE_FROZEN_CURRENT_SPEC
+required_remediation_if_reproduced: CORRECT_INTERMEDIATE_TRACE_REGISTER_DENOMINATOR_AND_REBUILD_SUCCESSORS_FROM_FRESH_PHYSICAL_SCAN
