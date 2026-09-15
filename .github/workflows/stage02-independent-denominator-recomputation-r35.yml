@@ -1,0 +1,54 @@
+name: Stage-02 Independent Denominator Recomputation R35
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/stage02-independent-denominator-recomputation-r35.yml'
+      - 'governance/ci/build_stage02_independent_denominator_recomputation_r35.py'
+      - 'governance/ci/validate_stage02_independent_denominator_recomputation_r35.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  recompute-validate-persist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install YAML dependency
+        run: python -m pip install pyyaml
+      - name: Compile R35 implementation
+        run: |
+          python -m py_compile governance/ci/build_stage02_independent_denominator_recomputation_r35.py
+          python -m py_compile governance/ci/validate_stage02_independent_denominator_recomputation_r35.py
+      - name: Recompute current Stage-02 denominator independently
+        run: python governance/ci/build_stage02_independent_denominator_recomputation_r35.py
+      - name: Validate independent denominator evidence
+        run: python governance/ci/validate_stage02_independent_denominator_recomputation_r35.py
+      - name: Prove frozen Current Specification and immutable Stage-1 Raw authority unchanged
+        run: |
+          git diff --exit-code -- governance/specifications/current
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+      - name: Persist R35 evidence and finding
+        run: |
+          paths=(
+            'governance/test/stage02/STAGE02_INDEPENDENT_DENOMINATOR_RECOMPUTATION_R35.yaml'
+            'governance/test/stage02/FIND-20260915-026_STAGE02_DENOMINATOR_UNDERCOUNT.yaml'
+          )
+          if [ -z "$(git status --porcelain -- "${paths[@]}")" ]; then
+            echo 'R35 outputs unchanged'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "${paths[@]}"
+          git commit -m 'test(stage02): persist independent denominator recomputation R35'
+          git push origin HEAD:rebuild-v2.1.1
