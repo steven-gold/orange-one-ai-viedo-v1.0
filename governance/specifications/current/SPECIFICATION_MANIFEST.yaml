@@ -1,121 +1,54 @@
-schema_version: 3
-artifact_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
+schema_version: 4
+artifact_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
 artifact_type: STABLE_CURRENT_SPECIFICATION_MANIFEST
 normative_status: ACTIVE_CURRENT_GOVERNANCE
-display_version: v2.1.15
+display_version: v2.2.0
 version_label_is_identity: false
+policy_scope: PRODUCT_SYSTEM_AND_EXECUTION_PROFILE_NEUTRAL
 components:
 - uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
   file: BOUNDED_FUNCTIONAL_COMPLETION.yaml
 - uid: GOV-COMP-INTERACTION-TOPOLOGY-AI-CONTINUITY
   file: INTERACTION_TOPOLOGY_AI_CONTINUITY.yaml
-- uid: GOV-COMP-TEST-FEEDBACK-TEMPORARY-ARTIFACT-LIFECYCLE
-  file: TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE.yaml
+- uid: GOV-COMP-EVIDENCE-FEEDBACK-ARTIFACT-LIFECYCLE
+  file: EVIDENCE_FEEDBACK_ARTIFACT_LIFECYCLE.yaml
 - uid: GOV-COMP-SPECIFICATION-MUTATION-CONTROL
   file: SPECIFICATION_MUTATION_CONTROL.yaml
-- uid: GOV-COMP-STAGE-TEST-REMEDIATION-CLOSURE-PROTOCOL
-  file: STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
-- uid: GOV-COMP-STAGE-EXECUTION-OPTIMIZATION
-  file: STAGE_EXECUTION_OPTIMIZATION.yaml
+- uid: GOV-COMP-EXECUTION-CYCLE-CONTROL
+  file: EXECUTION_CYCLE_CONTROL.yaml
+- uid: GOV-COMP-VALIDATION-REMEDIATION-CLOSURE-PROTOCOL
+  file: VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
+- uid: GOV-COMP-LAYER-SEPARATION-PORTABILITY
+  file: GOVERNANCE_LAYER_SEPARATION_AND_PORTABILITY.yaml
 source_lineage:
-  verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.1.15_STAGE_EXECUTION_OPTIMIZATION_LOCAL_VERIFIED_11_STAGE_BINDINGS.zip
-  verified_package_sha256: b83ca213b6783732de5e9577ef76cb734446f3b43a1901c3c865a43f65d84ebe
+  verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.0_NEUTRAL_PORTABLE_GOVERNANCE_LOCAL_VERIFIED.zip
+  verified_package_sha256: dd5a09e8b309168c46d37f3ff2bbb87c292d7b779bcd6d756f201e07bcc82754
   verified_source_file_count: 75
   exact_full_zip_binary_materialized_in_git: false
   full_source_materialized_in_git: true
   full_source_root: .github/governance-source/active/source
-  predecessor_governance_uid: GOV-REV-20260915-STAGE-FREEZE-CONSOLIDATED-PROMOTION
-  promotion_authorization_uid: AUTH-20260915-STAGE02-EXECUTION-OPTIMIZATION
+  predecessor_governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
+  promotion_authorization_uid: USR-DIRECTIVE-20260915-MOTHER-SPEC-NEUTRALITY-AUDIT
+  deterministic_source_bundle_sha256: fd7f0ffc8711685fa230b2003d20937cbfb135b57cd3f9a1fce84cec9c18e51a
+  checksum_manifest_sha256: 19ddfe5372fd8c45bb54919f589352b3c6e58ae59a0bfd13e5c567d2213f0796
+  semantic_authority_content_hash: 81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a
 resolution_contract:
   canonical_root: governance/specifications/current
-  all_active_consumers_resolve_via_registry: true
+  all_active_policy_consumers_resolve_via_registry: true
   direct_version_named_path_reference: FORBIDDEN
-  runtime_digest_generated_from_current_directory: true
   runtime_digest_is_execution_evidence_not_normative_locator: true
-  manifest_hash_copy_to_other_consumers: FORBIDDEN
-specification_change_control:
-  component: SPECIFICATION_MUTATION_CONTROL.yaml
-  mutation_default_without_explicit_user_directive: DENY
-  construction_or_test_need_may_authorize_mutation: false
-  non_normative_findings_ledger: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
-  preexisting_authorization_receipt_required: true
-  atomic_uid_registry_manifest_update_required: true
-  stage_specification_freeze_required: true
-  ordinary_mid_stage_normative_promotion: FORBIDDEN
-  stage_end_consolidated_promotion_required_for_normative_change: true
-  fatal_specification_contradiction_exception_requires_stage_stop_and_new_explicit_authorization: true
-stage_execution_optimization:
-  component: STAGE_EXECUTION_OPTIMIZATION.yaml
-  canonical_preflight_before_first_remediation: true
-  shared_required_field_and_classification_manifests: true
-  raw_plus_legal_successor_overlay_is_effective_truth: true
-  dependency_ordered_batch_execution: true
-  local_reverse_impact_validation: true
-  checkpoint_full_sweep: true
-  common_engine_repair_before_affected_product_remediation: true
-  one_current_problem_register: true
-  append_only_resolution_ledger: true
-  bounded_functional_flow_auto_completion_preserved: true
-  exact_value_absence_alone_is_authority_gap: false
-  authority_gap_requires_at_least_two_distinct_viable_behaviors: true
-  post_promotion_clean_stage_restart_required: true
-  explicit_stage_registry_binding_required: true
-  explicit_stage_binding_denominator: 11
-  explicit_stage_invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
-stage_execution_remediation_closure_protocol:
-  component: STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
-  single_canonical_execution_rule_set: true
-  audit_only_may_close_remediable_gap: false
-  same_reproducible_gap_after_claimed_fix: REMEDIATION_FAILURE
-  full_line_high_pressure_gate_before_every_fresh_stage_execution_or_reexecution: true
-  clean_predecessor_baseline_before_every_fresh_execution_or_reexecution: true
-  discovered_remediable_gap_must_be_materially_eliminated_before_stage_advance: true
-  hidden_defect_sweep_after_known_fix: true
-  stage_specification_uid_must_remain_frozen_during_stage_attempt: true
-  suspected_reusable_rule_deficiency_goes_to_candidate_ledger_first: true
-  stage_end_governance_consolidation_review_required: true
-  required_stage_candidates_consolidated_in_single_atomic_promotion: true
-  promotion_invalidates_pre_promotion_stage_acceptance: true
-  stage_restart_under_new_uid_required_after_promotion: true
-stage02_applicability:
-  always_for_target_page_stage02:
-  - FUNCTIONAL_CHAIN_SPEC
-  - PAGE_CONSTRUCTION_SPEC_PACKAGE
-  - REQUIRED_FIELD_MANIFEST
-  - FUNCTIONAL_CHAIN_MANIFEST
-  - EFFECTIVE_CONTRACT_OVERLAY
-  - DEPENDENCY_TOPOLOGY
-  - DENOMINATOR_SNAPSHOT
-  - CLASSIFICATION_RULESET
-  - CHANGE_IMPACT_MAP
-  - STAGE_EXECUTION_PREFLIGHT_RECEIPT
-  - CURRENT_PROBLEM_REGISTER
-  - RESOLUTION_LEDGER
-  when_governed_business_entity_scope_present:
-  - BUSINESS_ENTITY_INVENTORY
-  - BUSINESS_ENTITY_OPERATION_MATRIX
-  when_entity_hierarchy_applies:
-  - ENTITY_HIERARCHY_MATRIX
-  when_continuous_work_unit_applies:
-  - FUNCTIONAL_WORKBENCH_CONTRACT
-  - INTERACTION_TOPOLOGY_MATRIX
-  when_user_visible_or_observable_required_operation_applies:
-  - FUNCTION_VISUAL_IMPACT_MATRIX
-  when_ai_or_auto_proposes_functional_addition:
-  - FUNCTION_ADMISSION_SCORECARD
-  when_bounded_auto_completion_is_activated:
-  - AUTO_COMPLETION_SCOPE_LEDGER
-  when_ai_interaction_profile_applies:
-  - AI_INTERACTION_CONTINUITY_CONTRACT
+layer_separation:
+  common_policy_contains_fixed_execution_profile_denominator: false
+  execution_profile_step_identity_is_global_policy: false
+  run_state_is_policy_authority: false
+  implementation_is_policy_authority: false
+  historical_evidence_is_policy_authority: false
+  selected_profile_may_define_local_step_count: true
 closure_policy:
-  applicability_must_be_proven_before_missing_output_is_counted_as_blocker: true
+  applicability_must_be_proven_before_missing_output_is_blocker: true
   missing_applicable_required_output: BLOCK
-  missing_non_applicable_conditional_output: NOT_A_BLOCKER
   authority_gap: BLOCK
-  authority_gap_minimum_distinct_viable_product_behaviors: 2
   ai_invention_of_missing_product_behavior: FORBIDDEN
-  governance_definition_pass_may_not_mark_product_stage_complete: true
   successful_audit_with_reproducible_remediable_gap: NOT_CLOSURE
-  prior_known_defect_signature_must_be_zero_on_fresh_reexecution: true
-  hidden_defect_sweep_must_pass_before_stage_closure: true
-  stage_may_not_mix_evidence_from_multiple_governance_uids: true
+  hidden_defect_sweep_required_before_closure: true
+  one_closure_may_mix_governance_uids: false

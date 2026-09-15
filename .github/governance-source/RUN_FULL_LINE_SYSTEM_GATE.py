@@ -16,12 +16,12 @@ CHECKSUMS = SOURCE / 'CHECKSUMS.sha256'
 TRUST_ROOT = Path('/tmp/acpos-governance-external-trust-root.json')
 RESULT = ROOT / '.github' / 'governance-source' / 'FULL_LINE_SYSTEM_GATE_RESULT.json'
 
-EXPECTED_CHECKSUMS_SHA256 = '7208659cd9ddc0c549b4732e34d9953fd8213eaf14e33d278a8984dad819d24e'
-EXPECTED_SEMANTIC_CONTENT_HASH = '9af585e1b2f289a04795a3dbc528b98380c0a64d6528dc6a6cc8cbf6995df0a6'
-EXPECTED_SOURCE_ZIP_SHA256 = 'b83ca213b6783732de5e9577ef76cb734446f3b43a1901c3c865a43f65d84ebe'
-EXPECTED_BUNDLE_SHA256 = 'b8bc298b749f4304afd46fb96f03472d319c432bd7b29d8990ecf49b517d7ddd'
-EXPECTED_STAGE_UIDS = [f'STAGE-{i:02}' for i in range(1, 12)]
-EXPECTED_STAGE_NAMES = [
+EXPECTED_CHECKSUMS_SHA256 = '19ddfe5372fd8c45bb54919f589352b3c6e58ae59a0bfd13e5c567d2213f0796'
+EXPECTED_SEMANTIC_CONTENT_HASH = '81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a'
+EXPECTED_SOURCE_ZIP_SHA256 = 'dd5a09e8b309168c46d37f3ff2bbb87c292d7b779bcd6d756f201e07bcc82754'
+EXPECTED_BUNDLE_SHA256 = 'fd7f0ffc8711685fa230b2003d20937cbfb135b57cd3f9a1fce84cec9c18e51a'
+EXPECTED_SELECTED_PROFILE_STEP_UIDS = [f'STAGE-{i:02}' for i in range(1, 12)]
+EXPECTED_SELECTED_PROFILE_STEP_NAMES = [
     'SOURCE_INTAKE_AND_BASE_BLUEPRINT','PAGE_FUNCTIONAL_CONTRACT','VISUAL_DESIGN','FOUNDATION_FREEZE',
     'IMPLEMENTATION','VERIFICATION_QA','BUILD_RELEASE_CANDIDATE','STAGING','PRODUCTION_CUTOVER',
     'PRODUCTION_ACCEPTANCE','CLOSURE_OPERATIONS',
@@ -99,10 +99,10 @@ if semantic.get('content_hash') != EXPECTED_SEMANTIC_CONTENT_HASH:
 records = stages.get('stages') or []
 actual_stage_uids = [x.get('stage_uid') for x in records]
 actual_stage_names = [x.get('name') or x.get('stage_name') for x in records]
-if actual_stage_uids != EXPECTED_STAGE_UIDS:
-    block(f'LIFECYCLE_STAGE_UID_SET_MISMATCH:{actual_stage_uids}')
-if actual_stage_names != EXPECTED_STAGE_NAMES:
-    block(f'LIFECYCLE_STAGE_NAME_SET_MISMATCH:{actual_stage_names}')
+if actual_stage_uids != EXPECTED_SELECTED_PROFILE_STEP_UIDS:
+    block(f'SELECTED_PROFILE_STEP_UID_SET_MISMATCH:{actual_stage_uids}')
+if actual_stage_names != EXPECTED_SELECTED_PROFILE_STEP_NAMES:
+    block(f'SELECTED_PROFILE_STEP_NAME_SET_MISMATCH:{actual_stage_names}')
 mandatory_assets = semantic.get('mandatory_regression_assets') or []
 if len(mandatory_assets) != 17:
     block(f'MANDATORY_ASSET_COUNT_MISMATCH expected=17 actual={len(mandatory_assets)}')

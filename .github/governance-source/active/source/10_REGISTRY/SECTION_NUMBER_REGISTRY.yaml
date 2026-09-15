@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.1.15-stage-execution-optimization
+governance_revision: v2.2.0-neutral-portable-governance
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -547,16 +547,16 @@ documents:
     level: 2
     canonical_number: '63'
     title: Stage-1 Correction — Source Domain Extraction Separation
-    heading: '## 63. Stage-1 Correction — Source Domain Extraction Separation'
+    heading: '## 63. Source-Domain Extraction / Authority Isolation'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-    binding_sha256: 4764f9b67148ce52d6e2ccc79c354948d9b3b54ef0ba3077a9c25ee0eaca397c
+    binding_sha256: 450165d8a2cfac4f844b52c6ab79d3913184539e01b6ed086dc7e940aa866cc9
   - section_uid: WEB-GOV-01-S064
     level: 2
     canonical_number: '64'
     title: Stage-1 Bugfix — Classified Responsibility Materialization and Base Blueprint Compilation
-    heading: '## 64. Stage-1 Bugfix — Classified Responsibility Materialization and Base Blueprint Compilation'
+    heading: '## 64. Responsibility Classification / Base Blueprint Materialization'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-    binding_sha256: b1d2f745096d11ebce0a776e3da442dd6f7a051c84295d34a94e81ce7315fae6
+    binding_sha256: 44f7d69fa00723a0c241b5e50bf3995a79a9dbc7ddc86d98ee9ddf4c4c95ac73
   - section_uid: WEB-GOV-01-S064-01
     level: 3
     canonical_number: '64.1'
@@ -586,19 +586,19 @@ documents:
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
     binding_sha256: 10124ad15210a4ca05ed863483dee4651125bd40f6121256389b16988bc52d65
   - section_uid: WEB-GOV-01-S064-05
-    level: 3
+    level: 2
     canonical_number: '64.5'
     title: Clean workspace / zero garbage
-    heading: '### 64.5 Clean workspace / zero garbage'
+    heading: '## 64.5 Validation-Cycle Reset / Replay Boundary'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-    binding_sha256: 5dd6797db5c3594bd17b74f699b27a939163807c44313679bb7373133b8c5b49
+    binding_sha256: eba66a780cf712e48747266bf578141da07b04d4e6ead0b1ddbdd3af462b1900
   - section_uid: WEB-GOV-01-S065
     level: 2
     canonical_number: '65'
     title: Stage-1 Bugfix — Source Enumeration Completeness and Blueprint Domain Separation
-    heading: '## 65. Stage-1 Bugfix — Source Enumeration Completeness and Blueprint Domain Separation'
+    heading: '## 65. Source Enumeration Completeness / Blueprint Domain Separation'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-    binding_sha256: 352718c76def3d0d268911a48a5082d3221f1eb360b81f56c74ccca4237545d0
+    binding_sha256: 0fd29320b5656832b94bec2d62bf298fbb4085b063c3ee935c1f5af202a23e68
   - section_uid: WEB-GOV-01-S065-01
     level: 3
     canonical_number: '65.1'
@@ -645,9 +645,9 @@ documents:
     level: 2
     canonical_number: '69'
     title: Stage-1 Source Context / Supersession / Dependency Contracts
-    heading: '## 69. Stage-1 Source Context / Supersession / Dependency Contracts'
+    heading: '## 69. Source Context / Supersession / Dependency Contract'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-    binding_sha256: be2a5ad6ca9ccbf29c93219b8f78d953d397f882b0da8f81c23d34aab80a1e92
+    binding_sha256: 16fad8374e652585686d36bc1f45434821fdd054bb450adb853369b8bda03081
   - section_uid: WEB-GOV-01-S070
     level: 2
     canonical_number: '70'
@@ -666,16 +666,21 @@ documents:
     level: 2
     canonical_number: '72'
     title: Functional Workbench Cohesion / Interaction Topology / AI-Assisted Continuity
-    heading: '## 72. Functional Workbench Cohesion / Interaction Topology / AI-Assisted Continuity'
+    heading: '## 72. Functional / Visual / Interaction Authority Boundary'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-    binding_sha256: 4504292ec31e5c39510a436dc6d35041865cd0425b0164927af91af64236cf11
+    binding_sha256: 62fe11fb37e0f8cb913d47d620ca9e1c986a27a4f3f8207a306f9982b70a18f0
   - section_uid: WEB-GOV-01-S073
     level: 2
     canonical_number: '73'
     title: Canonical Stage Preflight / Effective Contract Overlay / Role-Safe Functional Closure
-    heading: '## 73. Canonical Stage Preflight / Effective Contract Overlay / Role-Safe Functional Closure'
+    heading: '## 73. Canonical Execution-Cycle Preflight / Effective Contract Truth'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-    binding_sha256: fcf5d34ab00f57ec5639620a40240b955ee3f8087e8d197b6f5b6a095e5b7710
+    binding_sha256: 29f8fbb58d40d87e9c2b4f0a19fe4c87f02899475cba81bcd5b5b95588581309
+  - section_uid: WEB-GOV-01-S074
+    level: 2
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    heading: '## 74. Reusable Policy / Execution Profile / Run-State Layer Separation'
+    binding_sha256: 559e9427afab7606dd7d44e7f3b8f39851f02fe3020e1f2e63dbedc8df776ea5
 - document_id: WEB-GOV-02
   path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
   sections:
@@ -718,9 +723,9 @@ documents:
     level: 2
     canonical_number: '4'
     title: 正式施工總順序
-    heading: '## 4. 正式施工總順序'
+    heading: '## 4. 施工能力與 Gate Catalog（順序由依賴與適用性決定）'
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-    binding_sha256: 9acff793b365d775dae774c7d5d404d547ebdd2faa0fc7f3d74214e1c5f89674
+    binding_sha256: 595969b3f5694fb81de4ee509b22cdf93d135a3a55cab9e3a5de4993544963ad
   - section_uid: WEB-GOV-02-S005
     level: 2
     canonical_number: '5'
@@ -1082,9 +1087,9 @@ documents:
     level: 2
     canonical_number: 54A
     title: Page Full-Lifecycle Execution Gate
-    heading: '## 54A. Page Full-Lifecycle Execution Gate'
+    heading: '## 54A. Page / Capability Full-Lifecycle Applicability Gate'
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-    binding_sha256: 60ef4dafdaaf33afdb48552f1d70b991d022c2ac53d57164b3c5ac2e4a50dbac
+    binding_sha256: 9eee2dc0f53b976924423ef34a58b5c42d5517e913412411c5c9a5a49bd25c91
   - section_uid: WEB-GOV-02-S054B
     level: 2
     canonical_number: 54B
@@ -1173,9 +1178,9 @@ documents:
     level: 2
     canonical_number: '65'
     title: Stage-Gated Governance Validation Before Website Reconstruction
-    heading: '## 65. Stage-Gated Governance Validation Before Website Reconstruction'
+    heading: '## 65. Dependency-Gated Governance Validation Before Website Reconstruction'
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-    binding_sha256: 0f00bda3b87ef83ca7c08b10077dfca53a8f57ba8226edb8481e5352b7b790cd
+    binding_sha256: 4f42e2ad4d3bc96cc5c70a6583760e58937b523edb529d211aae663dfa8692f0
   - section_uid: WEB-GOV-02-S057
     level: 2
     canonical_number: '57'
@@ -1201,9 +1206,9 @@ documents:
     level: 2
     canonical_number: '67'
     title: Full 11-Stage Machine Contract
-    heading: '## 67. Full 11-Stage Machine Contract'
+    heading: '## 67. Execution Profile Machine Contract'
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-    binding_sha256: 2364688149ede79ac3ca2e81a464e326b69a37c866f92a37d1e9404e85b8a8fc
+    binding_sha256: c607778cf3297b87dae884c6ab394013c291b596ad59580920d64925cca8c25c
   - section_uid: WEB-GOV-02-S068
     level: 2
     canonical_number: '68'
@@ -1645,23 +1650,23 @@ documents:
     level: 2
     canonical_number: '46'
     title: Governance Specification Development / Test Lock Discipline
-    heading: '## 46. Governance Specification Development / Test Lock Discipline'
+    heading: '## 46. Governance Specification Development / Validation Lock Discipline'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-    binding_sha256: dc0242ee2e6879437bd27f4be786d8c77a7e3849169849e5333403c95215e72a
+    binding_sha256: 0065fc8da5cdb1516a074268e6f049609a41cd1797fd1bccc966a54e029da47f
   - section_uid: WEB-GOV-03-S051
     level: 2
     canonical_number: '51'
     title: Stage-1 Retry / Relock Execution Control
-    heading: '## 51. Stage-1 Retry / Relock Execution Control'
+    heading: '## 51. Validation-Cycle Retry / Relock Execution Control'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-    binding_sha256: d7bb1a0ea95b6b8f93ff065b22a305e2eba693457e77a9433efc70ce536a94d9
+    binding_sha256: b907a4e8e0ba561eee7358d25e9411dd5c1eb8be58ef22fba34e293b180e921f
   - section_uid: WEB-GOV-03-S052
     level: 2
     canonical_number: '52'
     title: Source Enumeration Before Classification / Dual-Blueprint Compile Order
-    heading: '## 52. Source Enumeration Before Classification / Dual-Blueprint Compile Order'
+    heading: '## 52. Source Enumeration Before Classification / Dual-Blueprint Dependency Order'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-    binding_sha256: 68015a64ce0361cefe24ead07e6da270e21fd9286a8fe0a5de69f578b9cb75e7
+    binding_sha256: 969d53d8b6684663a77e654e4b340b3b10fb3f833a9f417aef64cbf824f389c5
   - section_uid: WEB-GOV-03-S053
     level: 2
     canonical_number: '53'
@@ -1708,9 +1713,9 @@ documents:
     level: 2
     canonical_number: '59'
     title: Stage Test Defect Feedback / Specification Evolution Closed Loop
-    heading: '## 59. Stage Test Defect Feedback / Specification Evolution Closed Loop'
+    heading: '## 59. Validation Feedback / Specification Evolution Closed Loop'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-    binding_sha256: cdeccbc65b11f55699e3417f8b44af3fa6ee75db9686c1a2e95a83f3ed34460e
+    binding_sha256: af873168ecb1e528f3e2d53a3e674b175c68d009c452390fce34340c5b471a71
   - section_uid: WEB-GOV-03-S060
     level: 2
     canonical_number: '60'
@@ -1729,9 +1734,9 @@ documents:
     level: 2
     canonical_number: '62'
     title: Canonical Stage Execution Engine / Checkpoint Control / Clean-Restart Rule
-    heading: '## 62. Canonical Stage Execution Engine / Checkpoint Control / Clean-Restart Rule'
+    heading: '## 62. Canonical Execution Engine / Checkpoint Control / Clean-Restart Rule'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-    binding_sha256: dd3a04f614c001d04e04a69dc0ee8b6be9ab1e515ff51f37ab42494fef3771f1
+    binding_sha256: f9d6e073f82e5fc376d9b2b600e38f2260c7e23a7db9d7dfa16ee9ce6d4051ed
 - document_id: WEB-GOV-04
   path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sections:
@@ -2264,16 +2269,16 @@ documents:
     level: 2
     canonical_number: '68'
     title: Governance Stage Lock / Anti-Moving-Target Audit
-    heading: '## 68. Governance Stage Lock / Anti-Moving-Target Audit'
+    heading: '## 68. Governance Revision Lock / Anti-Moving-Target Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-    binding_sha256: 68cf100b85d4a512913143943203de2803013b46e39133060538cf3a89947a8a
+    binding_sha256: e4d0c7dc7b57156fd2335c9e3e59efb753594da7d17def9385b33d24fabad093
   - section_uid: WEB-GOV-04-S069
     level: 2
     canonical_number: '69'
     title: Stage-1 Classified Extraction / Base Blueprint Audit
-    heading: '## 69. Stage-1 Classified Extraction / Base Blueprint Audit'
+    heading: '## 69. Classified Extraction / Base Blueprint Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-    binding_sha256: 1307759fff85bf74a8c6be8c5d03c9b40cd39d6ffdda6fe58a537be72e5ea877
+    binding_sha256: e8784af03d17688961b06d1aba3085e256c378404a1df0c23faba07d920a9963
   - section_uid: WEB-GOV-04-S070
     level: 2
     canonical_number: '70'
@@ -2306,16 +2311,16 @@ documents:
     level: 2
     canonical_number: '72'
     title: Management Registry Audit
-    heading: '## 72. Management Registry Audit'
+    heading: '## 72. Management Registry / Layer Classification Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-    binding_sha256: 813a94b5c6ae2aa79c1eb578617ed802af2fed5ad52b3d44288f0efed81c86cb
+    binding_sha256: ea63c0e6b6d7d102f2e6ecaa40c0925e71625f6f21bf7cb04097b61508735fd6
   - section_uid: WEB-GOV-04-S073
     level: 2
     canonical_number: '73'
     title: Pre-formal Multidirection Stress Audit
-    heading: '## 73. Pre-formal Multidirection Stress Audit'
+    heading: '## 73. Pre-formal Multidirection Stress / Portability Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-    binding_sha256: c3e7282183df535e066fdfc80cf64dc4d170b4687cefa78f002c73e359b7fe0e
+    binding_sha256: ee9b18015385d891ad3dc3344337c18b8b483a1fce600ef86735530ad2953567
   - section_uid: WEB-GOV-04-S074
     level: 2
     canonical_number: '74'
@@ -2327,9 +2332,9 @@ documents:
     level: 2
     canonical_number: '75'
     title: Stage Test Defect Ledger / Spec Evolution / Source-Control Single-Authority Audit
-    heading: '## 75. Stage Test Defect Ledger / Spec Evolution / Source-Control Single-Authority Audit'
+    heading: '## 75. Validation Defect Ledger / Spec Evolution / Single-Authority Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-    binding_sha256: b5cfd311e1b15419309a85366461d000ddb3cf029b0ef376adac7111ddd735ab
+    binding_sha256: ef864b9c3860ac45297d14be766b326f795d3c03a684ad3110f90b1699637f0a
   - section_uid: WEB-GOV-04-S076
     level: 2
     canonical_number: '76'
@@ -2348,9 +2353,9 @@ documents:
     level: 2
     canonical_number: '78'
     title: Stage Execution Preflight / Effective Denominator / Remediation Continuity Audit
-    heading: '## 78. Stage Execution Preflight / Effective Denominator / Remediation Continuity Audit'
+    heading: '## 78. Execution-Cycle Preflight / Single Current Problem-State Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-    binding_sha256: dce5aa01d1def349b6f7838c4971fe9158524fb1c359c72da5911c124412423a
+    binding_sha256: 4563cf8e041f48208e2cbfb51a03a674d43a4ad34187db8688ba792f37835737
 historical_duplicate_groups:
 - document_id: WEB-GOV-01
   duplicate_number: '63'

@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-01
-version: 2.1.0
+version: 2.2.0
 order: 1
 category: blueprint_design_governance
 required_before_execution: true
@@ -344,7 +344,7 @@ MUST_NOT 同時存在多個意義相同但名稱不同的資料夾。
 
 `MIXED_ALLOWED` 必須記錄具體理由，證明其內容共享同一 Owner、Lifecycle、Approval、Version 與 Runtime/Testing Scope。
 
-治理切分粒度 MUST 以責任語義為準，不得以 YAML/JSON/Markdown/DOM/資料夾/檔案等語法或容器層級直接視為最終治理單元。任何仍包含多個獨立 Owner、Lifecycle、Approval、Version、Test/Acceptance Scope 或 Stage Identity 的 Terminal Unit MUST 標記 `SPLIT_REQUIRED` 並遞迴拆分；只有完整 `MIXED_ALLOWED` 證據才可例外。
+治理切分粒度 MUST 以責任語義為準，不得以 YAML/JSON/Markdown/DOM/資料夾/檔案等語法或容器層級直接視為最終治理單元。任何仍包含多個獨立 Owner、Lifecycle、Approval、Version、Test/Acceptance Scope 或 Lifecycle / Approval / Acceptance / Ownership Boundary Identity 的 Terminal Unit MUST 標記 `SPLIT_REQUIRED` 並遞迴拆分；只有完整 `MIXED_ALLOWED` 證據才可例外。
 
 MUST_NOT 為了拆檔而過度碎片化普通 Page-local 或 Parent-local 細項。
 
@@ -1225,30 +1225,22 @@ Database / Runtime 產生的 ID、Version、Checksum、Canonical Filename MUST �
 - Embedded self-validation / derived-validation inside an Authority file is provenance only and MUST_NOT satisfy a current validation-run Gate.
 
 <!-- SECTION_UID: WEB-GOV-01-S063 -->
-## 63. Stage-1 Correction — Source Domain Extraction Separation
+## 63. Source-Domain Extraction / Authority Isolation
 
-This correction is scoped only to the governance defect reproduced during Source Intake testing. It does not authorize website implementation.
+Source intake MUST enumerate the complete declared source universe before responsibility classification. Extraction MUST preserve source identity, location, hash, semantic responsibility candidates, and unresolved external Authority references without inventing missing product behavior.
 
-Before any Page Blueprint or Visual Blueprint may be treated as current planning input, mixed Raw Source MUST be decomposed at the extraction boundary into independent planning-domain outputs.
+Classification MUST be responsibility-based rather than file-name-, folder-, syntax-, or execution-step-based. A source unit that mixes Page, Visual, Data, Runtime, Provider, Permission, Audit, or Shared-Owner responsibilities MUST be decomposed until each terminal unit has one governed responsibility or explicit `MIXED_ALLOWED` evidence.
 
-For every required Page, Source Intake MUST produce exactly one current `PAGE_CONSTRUCTION_EXTRACTION` and exactly one current `VISUAL_CONSTRUCTION_EXTRACTION` before planning closure.
-
-The two extraction outputs MUST use different artifact UIDs, different physical target paths, and different editable owner UIDs. A mixed Raw Source MAY remain as immutable `REFERENCE_ONLY_SOURCE_SNAPSHOT`, but MUST_NOT be promoted directly as either current planning owner.
-
-Each extraction output MUST record source lineage down to source section/reference scope, source hash/revision, extraction artifact hash, target role, and canonical owner reference.
-
-Facts shared by Page Construction and Visual Construction MUST be referenced through a single shared fact/authority UID. Shared facts MUST_NOT be copied into two independently editable owners.
-
-`PAGE_CONSTRUCTION_DESIGN` MUST be derived only from approved Page Construction extraction outputs plus explicitly referenced shared facts. `VISUAL_CONSTRUCTION_DESIGN` MUST be derived only from approved Visual Construction extraction outputs plus explicitly referenced shared facts.
-
-Missing domain extraction, same target path, same editable owner, missing section lineage, direct promotion of a mixed source, or duplicate shared-fact ownership MUST BLOCK Source Intake closure.
-
-During governance-system development and validation, these rules govern test fixtures and extraction evidence only. They MUST_NOT be interpreted as authorization to begin formal product, site, application, or page reconstruction for any governed implementation.
+Raw Source remains immutable evidence. Derived classifications, manifests, blueprints, tests, generated files, and validation output MUST_NOT become replacement source Authority merely because they are newer or more structured.
 
 <!-- SECTION_UID: WEB-GOV-01-S064 -->
-## 64. Stage-1 Bugfix — Classified Responsibility Materialization and Base Blueprint Compilation
+## 64. Responsibility Classification / Base Blueprint Materialization
 
-This bugfix is scoped only to the Stage-1 defect discovered after the v2.1.1 extraction-domain lock. It does not authorize formal website reconstruction and does not redefine product/page authority.
+Every classified responsibility MUST resolve to one Canonical Owner, one current lineage, and one legal downstream consumer set before Base Blueprint materialization.
+
+Page and Visual responsibilities MUST have independent editable owners. Their materialized blueprints MAY share registered references, but one blueprint MUST_NOT silently absorb the other's responsibility or become a second Authority copy.
+
+Base Blueprint compilation MUST consume current classified artifacts and registered shared references only. Required responsibility loss, duplicate ownership, unresolved mixed responsibility, stale source hash, or direct post-classification Raw Source bypass MUST block closure.
 
 <!-- SECTION_UID: WEB-GOV-01-S064-01 -->
 ### 64.1 Two-level decomposition is mandatory
@@ -1339,18 +1331,18 @@ Base Blueprint compilation MUST satisfy:
 - any unresolved required classification/gap => `BLOCKED`.
 
 <!-- SECTION_UID: WEB-GOV-01-S064-05 -->
-### 64.5 Clean workspace / zero garbage
+## 64.5 Validation-Cycle Reset / Replay Boundary
 
-Every Stage-1 retry MUST start from an empty current test-output workspace. Previous-run extracted/classified/blueprint outputs MUST be removed from the Current Test Workspace before the new run starts. Historical evidence MAY be retained only in the dedicated evidence ledger/archive location and MUST_NOT be loadable as current input.
+A fresh validation or remediation cycle MUST begin from the registered immutable inputs plus authorized owning-layer corrections. Prior generated outputs, caches, temporary artifacts, stale evidence, or previous-result summaries MUST_NOT be reused as current completion credit.
 
-After each Stage-1 mutating batch, the validator MUST detect and block unreferenced artifacts, abandoned split files, temporary copies, backups, generated caches, duplicate payload copies, and stale previous-run outputs.
-
-A successful retry therefore proves both correct classification and **zero unexplained residual artifacts**.
+Reset MUST remove replaceable execution residue while preserving immutable source and externally owned Authority. If the governing policy revision changes, current-cycle evidence becomes historical for closure and a new cycle MUST freeze the new policy identity before verification resumes.
 
 <!-- SECTION_UID: WEB-GOV-01-S065 -->
-## 65. Stage-1 Bugfix — Source Enumeration Completeness and Blueprint Domain Separation
+## 65. Source Enumeration Completeness / Blueprint Domain Separation
 
-This correction closes two defects reproduced by the first clean Source-to-Blueprint retry. It remains Stage-1 governance work only.
+Source enumeration MUST be independently provable before classification. The enumerated source denominator MUST be preserved through mapping, source-fact materialization, responsibility classification, Page Base Blueprint, Visual Base Blueprint, and binding so that downstream processing cannot silently shrink the source universe.
+
+Page and Visual blueprint compilation MUST remain separate work units with explicit inputs, outputs, hashes, owners, and a binding artifact. A combined editable Page+Visual owner, unexplained source loss, or downstream denominator shrink is blocking.
 
 <!-- SECTION_UID: WEB-GOV-01-S065-01 -->
 ### 65.1 Independent source-structure enumeration
@@ -1378,7 +1370,7 @@ If the source bytes/complete machine parse are unavailable, the run MUST be mark
 <!-- SECTION_UID: WEB-GOV-01-S065-02 -->
 ### 65.2 Page and Visual Base Blueprints remain independent
 
-For every Page, Stage-1 MUST materialize exactly two independent Base Blueprints:
+For every Page, SOURCE_INTAKE_CAPABILITY MUST materialize exactly two independent Base Blueprints:
 
 - `PAGE_BASE_BLUEPRINT` — consumes only current `PAGE_CONSTRUCTION` classification artifacts and permitted Shared Fact References.
 - `VISUAL_BASE_BLUEPRINT` — consumes only current `VISUAL_CONSTRUCTION` classification artifacts and permitted Shared Fact References.
@@ -1394,7 +1386,7 @@ A Page Base Blueprint MUST_NOT consume Visual classification artifacts. A Visual
 <!-- SECTION_UID: WEB-GOV-01-S065-03 -->
 ### 65.3 Retry closure
 
-A Stage-1 retry may close only when all of the following are independently proven:
+A SOURCE_INTAKE_CAPABILITY retry may close only when all of the following are independently proven:
 
 - source structure enumeration complete for the claimed scope;
 - all required source nodes legally disposed;
@@ -1414,7 +1406,7 @@ A Stage-1 retry may close only when all of the following are independently prove
 
 Program source files are governed construction artifacts. Their names and paths MUST be resolved before code generation begins.
 
-Every program artifact MUST be registered with at least: Program Artifact UID, Work Unit UID, Page/Scope UID, Construction Profile, Canonical Name, Canonical Path, Canonical Filename, Owner UID, Producer Stage UID, Input Artifact Refs, Required Normative Refs, Dependency Refs, Reverse Dependency Refs, Acceptance Audit Blueprint Ref, Required Test Refs, Current Hash, and Status.
+Every program artifact MUST be registered with at least: Program Artifact UID, Work Unit UID, Page/Scope UID, Construction Profile, Canonical Name, Canonical Path, Canonical Filename, Owner UID, Producer Profile Step UID, Input Artifact Refs, Required Normative Refs, Dependency Refs, Reverse Dependency Refs, Acceptance Audit Blueprint Ref, Required Test Refs, Current Hash, and Status.
 
 A framework-reserved filename such as `page.tsx`, `layout.tsx`, `route.ts`, `loading.tsx`, `error.tsx`, or `not-found.tsx` is permitted only as a controlled filename exception. The filename itself MUST_NOT become identity; the registered Canonical Path + Program Artifact UID + Owner UID remain authoritative.
 
@@ -1442,30 +1434,16 @@ Within one normative document every canonical numeric section number MUST be uni
 A normative reference is valid only when the Section Registry resolves the UID to exactly one current document path and the physical document contains the matching `SECTION_UID` anchor. Zero matches or multiple matches MUST block execution.
 
 <!-- SECTION_UID: WEB-GOV-01-S069 -->
-## 69. Stage-1 Source Context / Supersession / Dependency Contracts
+## 69. Source Context / Supersession / Dependency Contract
 
-Before Base Blueprint compilation, Stage 1 MUST materialize three independent source-fact artifacts for every required page/scope:
+Current source context MUST expose source identity, supersession decisions, unresolved Authority references, forward dependencies, reverse dependencies, and exact consumer impact. A superseded Current owner MUST_NOT remain concurrently active with its replacement.
 
-- `SOURCE_CONTEXT_MANIFEST`
-- `CONTENT_SUPERSESSION_CONFLICT_LEDGER`
-- `SOURCE_DEPENDENCY_MAP`
-
-`SOURCE_CONTEXT_MANIFEST` MUST preserve source parent/child, previous/next, cross-file reference, page/module scope, source node identity, and lineage relationships required to understand the original construction context.
-
-`CONTENT_SUPERSESSION_CONFLICT_LEDGER` MUST identify old/current/conflicting/duplicate content, authority disposition, superseded-by relation, conflict decision evidence, and downstream reverify impact. Superseded content MUST_NOT remain a Current owner.
-
-`SOURCE_DEPENDENCY_MAP` MUST contain only dependencies explicitly supported by source/authority evidence. Unknown functional dependency MUST be recorded as `UNRESOLVED_AUTHORITY_GAP`; AI MUST_NOT invent a dependency merely to close the graph.
-
-An Authority reference that is explicitly present in captured Raw Source but whose Authority file/runtime contract is outside the current capture scope is **not** a Source Fact failure and MUST_NOT be reclassified as an invented dependency. It MUST remain a machine-readable `UNRESOLVED_AUTHORITY_GAP` with stable `gap_uid`, exact `authority_ref`, captured consumer source UID(s), and physical evidence reference. Source Fact closure is legal while such gaps remain unresolved only when every gap is explicitly preserved.
-
-No AI, compiler, validator, Blueprint generator, construction runtime, QA step, or Release Gate may silently drop, ignore, auto-fill, infer, alias-substitute, default, or mark such a gap satisfied. Resolution requires materialized authoritative source, exact Authority-reference match, Authority content hash, and Authority evidence reference. Until that proof exists, the unresolved identity MUST be carried forward unchanged through Responsibility Classification, Base Blueprint, Blueprint Binding, Compiler, Runtime Construction, Validation/QA, and Release Gate. Any count or identity drift is blocking.
-
-Each Page/Visual Base Blueprint MUST reference the current hashes of these source-fact artifacts. It MUST_NOT duplicate their editable payload. If the page/scope is affected by unresolved external Authority gaps, the Blueprint MUST also carry them explicitly in `unresolved_external_authority_refs` with the same `gap_uid`, `authority_ref`, and `UNRESOLVED_AUTHORITY_GAP` disposition; it MUST_NOT represent them as satisfied. Affected Blueprint/execution closure that requires the missing Authority is fail-closed until authoritative resolution evidence is present.
+A legal successor may add or supersede facts only through explicit lineage. It MUST_NOT erase predecessor truth, rewrite immutable source, or convert an unresolved external Authority reference into a locally inferred value.
 
 <!-- SECTION_UID: WEB-GOV-01-S070 -->
 ## 70. Canonical Management Artifact Materialization
 
-Naming, Blueprint, Audit Catalog, Review Progress, Lifecycle Stage Contract, Acceptance Audit Blueprint, Section Registry, Protected Current Artifact Registry, Root Manifest, and Construction Artifact Index are Current governance machine artifacts and MUST physically exist in the package before formal governance test begins.
+Naming, Blueprint, Audit Catalog, Review Progress, Execution Profile Step Contract, Acceptance Audit Blueprint, Section Registry, Protected Current Artifact Registry, Root Manifest, and Construction Artifact Index are Current governance machine artifacts and MUST physically exist in the package before formal governance test begins.
 
 A prose-only declaration of any such registry/contract MUST_NOT satisfy materialization. Every Current management artifact MUST have one canonical path, one owner UID, one current hash, and one schema/version identity.
 
@@ -1498,40 +1476,32 @@ Every admitted function MUST also classify visual impact through a `FUNCTION_VIS
 
 
 <!-- SECTION_UID: WEB-GOV-01-S072 -->
-## 72. Functional Workbench Cohesion / Interaction Topology / AI-Assisted Continuity
+## 72. Functional / Visual / Interaction Authority Boundary
 
-This section governs not only whether a function exists, but whether a contiguous functional journey is assembled as one coherent interaction unit. Every continuous user or system work sequence MUST be classified as one of `ATOMIC_WORKBENCH`, `SAME_SURFACE_CLUSTER`, `CROSS_SURFACE_FLOW`, or `INDEPENDENT_SUPPORT_PANEL`, and MUST materialize a `FUNCTIONAL_WORKBENCH_CONTRACT` plus an `INTERACTION_TOPOLOGY_MATRIX` before visual layout is approved.
+Functional topology, interaction topology, visual projection, implementation, verification, and Production acceptance MUST remain bound by explicit Authority boundaries rather than by selected execution profile step numbers.
 
-The `FUNCTIONAL_WORKBENCH_CONTRACT` MUST identify the functional cluster UID, business journey, required operations, shared context identity, workbench class, visual-container requirement, required operation order, adjacency requirements, same-surface requirement, allowed separation modes, forbidden interruptions, cross-surface transition contract, context-handoff contract, responsive-reflow rule, and Authority reference. An atomic workbench MUST_NOT be fragmented by an unrelated panel, dashboard, approval block, analytics block, or support surface between operations that require immediate continuity. Mere presence of all controls/components does not prove workbench cohesion.
+The authority that owns functional behavior defines required operations, context transitions, workbench cohesion, and allowed separation. Visual Design Authority MAY change geometry and presentation only within an approved change set and MUST preserve functional semantics unless a higher-level authorized contract change exists. Implementation MUST consume the approved contracts; it MUST_NOT invent topology or visual behavior to fit code.
 
-The `INTERACTION_TOPOLOGY_MATRIX` MUST preserve the authoritative topology from functional design into visual design: operation sequence, grouping, adjacency, interruption boundary, surface-transition boundary, shared context/state identity, and continuation/recovery path. Stage-03 MAY change geometry and responsive placement only within the allowed topology. An unapproved visual reorder, separation, or insertion that breaks the required operation chain is a functional defect, not a cosmetic preference.
-
-When a scope declares `AI_CONVERSATION`, `AI_ASSISTED_WORKSPACE`, or `MULTI_AGENT_INTERACTION`, the common AI-assisted interaction profile becomes conditionally mandatory. It MUST materialize an `AI_INTERACTION_CONTINUITY_MATRIX` without making AI a requirement for non-AI products. The profile MUST preserve conversation/context identity across declared mode changes, distinguish preserve/fork/replace/terminate transitions, prevent silent context reset, prevent raw generative output from silently becoming authoritative state, preserve revision lineage back to exact base evidence/version, and isolate branches until an explicit governed adoption step occurs.
-
-Conversation identity continuity MUST classify at least `conversation_id`, `thread_id`, `context_ref_or_hash`, `work_scope_ref`, and `base_version_ref_when_applicable`. Multi-agent comparison MUST prove input equivalence using the same original-request identity and exact relevant-context snapshot unless registered Authority explicitly permits participant-specific context. Different inputs MUST_NOT be presented as a directly comparable same-baseline result.
-
-AI output formalization MUST distinguish `RAW_AI_OUTPUT`, `WORKING_EVIDENCE`, `CANDIDATE`, `GOVERNED_DECISION`, and `AUTHORITATIVE_VERSION` or semantically equivalent product-neutral states. Direct promotion from raw AI output to authoritative state without the registered decision/approval boundary is forbidden. A returned revision MUST retain exact base candidate/version, reason/evidence, and source conversation/evidence continuity. A branch MUST bind to its exact source message/reference, own branch thread/context snapshot, isolation rule, and explicit adoption path; silent merge into the mainline is forbidden.
+Verification and Production acceptance MUST prove semantic continuity from functional contract through visual projection and runtime behavior for every applicable governed journey.
 
 <!-- SECTION_UID: WEB-GOV-01-S073 -->
-## 73. Canonical Stage Preflight / Effective Contract Overlay / Role-Safe Functional Closure
+## 73. Canonical Execution-Cycle Preflight / Effective Contract Truth
 
-Every governed Stage MUST establish one canonical execution preflight before the first product/contract remediation begins. The preflight MUST resolve the governing rule universe once, freeze that universe for the attempt, and materialize the following machine-readable artifacts from Current Authority and the immutable predecessor baseline:
+Before material remediation or construction begins, every governed execution cycle MUST compile one canonical preflight from the Current policy, selected execution profile when one exists, exact dependency closure, required-field/applicability rules, Current Authority, and immutable predecessor inputs.
 
-- `REQUIRED_FIELD_MANIFEST`
-- `FUNCTIONAL_CHAIN_MANIFEST`
-- `EFFECTIVE_CONTRACT_OVERLAY`
-- `DEPENDENCY_TOPOLOGY`
-- `DENOMINATOR_SNAPSHOT`
-- `CLASSIFICATION_RULESET`
-- `CHANGE_IMPACT_MAP`
-- `STAGE_EXECUTION_PREFLIGHT_RECEIPT`
+The preflight MUST materialize one required-field manifest, functional-chain manifest, effective-contract overlay, dependency topology, denominator snapshot, classification ruleset, change-impact map, `EXECUTION_CYCLE_PREFLIGHT_RECEIPT`, one Current problem register, and one append-only resolution ledger when those artifacts are applicable.
 
-`REQUIRED_FIELD_MANIFEST` is the only canonical required-field universe for scanners, trace builders, validators, remediation classifiers and checkpoint reconciliation. A local runner MUST_NOT hard-code, omit, narrow, or independently reinterpret a subset while claiming canonical completeness. Applicability MUST be classified before a missing node is counted: every governed requirement is `REQUIRED`, `OPTIONAL`, or `NOT_APPLICABLE`, and `NOT_APPLICABLE` requires exact governing evidence.
+All scanners, validators, classifiers, trace builders, and remediation executors MUST consume the same canonical preflight. A local hard-coded subset, stale denominator, prior-run report, or execution-profile copy that weakens common policy MUST_NOT claim canonical completeness.
 
-Current Effective Contract truth is computed as `Immutable Raw/Predecessor Requirement + Legally Admitted Current Successor/Materialization Overlay`. Raw absence alone MUST_NOT be counted as an effective gap when an exact, validated, role-correct successor closure already satisfies the same canonical signature. Conversely, a neighboring value, same-UID membership, semantic similarity, or earlier test result MUST_NOT substitute for the missing role.
 
-For every existing authorized function, incomplete before/after flow remains a functional defect and MUST be evaluated against the complete chain: `Business Intent -> Preconditions -> Entry -> Input Source -> Trigger -> Gate -> Permission -> Action -> Validation -> Payload -> API/Runtime -> Persistence/Provider -> Audit -> Response/Feedback -> Success/Next -> Failure/Recovery -> Terminal`. Absence of a pre-materialized exact value is not by itself an `AUTHORITY_GAP`. The executor MUST first run `UNIQUE_FUNCTIONAL_CLOSURE_DERIVATION` over the frozen dependency closure.
 
-A missing step is `AUTO_REMEDIABLE` only when exactly one role-correct minimal closure is determined by Current Authority plus upstream/downstream contracts and no materially distinct product behavior remains. Two or more materially distinct viable behaviors MUST be recorded and classified `AUTHORITY_GAP`; zero role-correct derivations remain an owning-layer unresolved contract gap unless another registered class applies. Discovery of a required dependency outside the frozen closure MUST stop automation and reopen design.
+<!-- SECTION_UID: WEB-GOV-01-S074 -->
+## 74. Reusable Policy / Execution Profile / Run-State Layer Separation
 
-Role identity is non-substitutable. In particular: port exposure is not a trigger; a state/event signal is not a trigger without an explicit binding; an action/runtime owner is not a transition mutation owner; result/state-event evidence is not itself a validation contract; a dotted event token is not an Audit Event UID without exact registered identity; and a neighboring same-UID field is not proof of the missing field. A minimal assertion wrapper MAY be generated from one unique frozen success signal only when its assertion semantics and observation point are uniquely determined and no alternative result/timing interpretation remains.
+Reusable Mother Policy MUST be product-neutral, project-neutral, execution-profile-neutral, and validation-run-neutral. It MUST define semantic invariants, Authority boundaries, applicability rules, evidence requirements, closure conditions, and fail-closed behavior without requiring a fixed numbered sequence, fixed step names, fixed step count, run identifier, retry label, workflow path, test-script name, or provider-specific implementation path.
+
+A project MAY select an `EXECUTION_PROFILE` that binds the reusable policy to concrete step identities, names, order, concurrency, input/output contracts, and a profile-local denominator. Those bindings are project execution metadata, not global Mother Policy. The selected profile MUST NOT weaken or redefine common policy, and every profile-required step MUST close before profile completion.
+
+`RUN_STATE`, generated evidence, CI implementation, validators, temporary artifacts, and historical evidence MUST remain separate layers. Evidence MAY prove policy compliance but MUST_NOT become policy Authority merely by being promoted, copied, generated, newer, or marked PASS.
+
+Promotion into reusable policy MUST run a contamination scan, canonical-rule-owner check, contradiction/supersession check, active-consumer projection audit, and portability test against differently named execution profiles. Any execution-instance identifier or profile-local denominator found in reusable policy without an explicit non-normative example classification MUST block promotion.

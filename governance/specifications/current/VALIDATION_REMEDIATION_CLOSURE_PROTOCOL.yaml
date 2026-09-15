@@ -1,0 +1,59 @@
+schema_version: 3
+artifact_uid: GOV-COMP-VALIDATION-REMEDIATION-CLOSURE-PROTOCOL
+artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
+normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
+formal_current_authority: true
+layer_classification: POLICY
+common_scope: ALL_GOVERNED_VALIDATION_AND_EXECUTION_CYCLES
+purpose:
+  discovery_without_material_remediation_is_progress: false
+  fail_closed: true
+principles:
+  audit_pass_with_reproducible_product_gap_is_closure: false
+  repeated_audit_blocked_loop_counts_as_progress: false
+  hidden_defect_search_after_known_fix: true
+  fresh_verification_from_clean_registered_baseline: true
+  prior_result_reuse_as_current: false
+  ai_may_invent_missing_product_authority: false
+  external_authority_auto_resolution: false
+  mixed_governance_uid_evidence_for_one_closure: false
+canonical_cycle:
+- FREEZE_CURRENT_POLICY_AND_INPUT_BASELINE
+- RUN_SYSTEM_DEFINITION_AND_HIGH_PRESSURE_GATES
+- EXECUTE_FRESH_PHYSICAL_VALIDATION
+- CLASSIFY_DEFECT_ROOT_CAUSE_AND_OWNER
+- MATERIALLY_REMEDIATE_AT_OWNER
+- RESET_REPLACEABLE_OUTPUT_AND_EVIDENCE
+- RUN_REGRESSION
+- FRESHLY_REEXECUTE
+- VERIFY_KNOWN_SIGNATURE_ZERO
+- RUN_HIDDEN_DEFECT_SWEEP
+- REVIEW_REUSABLE_POLICY_CANDIDATES
+- PROMOTE_ONLY_IF_EXPLICITLY_AUTHORIZED
+- MAKE_CLOSURE_DECISION
+defect_classes:
+  SPECIFICATION_DEFECT: REUSABLE_POLICY_CANDIDATE_ONLY_UNTIL_AUTHORIZED
+  TEST_HARNESS_OR_VALIDATOR_BUG: TEST_OR_VALIDATION_IMPLEMENTATION
+  PRODUCT_MATERIALIZATION_OR_CONTRACT_GAP: PRODUCT_OR_CONTRACT_OWNER
+  RUNTIME_OR_IMPLEMENTATION_BUG: IMPLEMENTATION_OR_RUNTIME
+  EVIDENCE_OR_STATE_BUG: NON_NORMATIVE_EVIDENCE_OR_STATE
+  EXTERNAL_AUTHORITY_GAP: EXTERNAL_OR_SHARED_AUTHORITY
+material_remediation:
+  required_for_every_remediable_defect: true
+  audit_or_diagnosis_only: NOT_REMEDIATION
+  evidence_only_without_owning_layer_change: NOT_REMEDIATION
+  external_authority_gap: PRESERVE_UNRESOLVED_AND_BLOCK_APPLICABLE_CLOSURE
+retest_and_regression:
+  clean_registered_baseline_required: true
+  same_governance_uid_until_authorized_promotion: true
+  fresh_reexecution_required: true
+  known_remediable_signature_reproduction_count: 0
+  same_signature_after_claimed_fix: REMEDIATION_FAILURE
+closure_gate:
+  all_discovered_remediable_defects_materially_eliminated: REQUIRED
+  new_blocking_defect_count: 0
+  required_outputs_complete: REQUIRED
+  external_authority_resolved_or_formally_non_applicable: REQUIRED_WHERE_CLOSURE_DEPENDS_ON_IT
+  hidden_defect_sweep: PASS_REQUIRED
+  evidence_chain_complete: REQUIRED
+  otherwise: BLOCK_ADVANCE

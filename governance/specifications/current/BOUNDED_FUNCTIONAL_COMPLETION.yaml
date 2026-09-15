@@ -1,10 +1,10 @@
-schema_version: 2
+schema_version: 3
 artifact_uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
-formal_current_authority: false
+formal_current_authority: true
+layer_classification: POLICY
 common_scope: PRODUCT_AND_SYSTEM_NEUTRAL
-
 rules:
   FUNCTION_ADMISSION_NECESSITY_AND_UTILITY:
     required_artifact: FUNCTION_ADMISSION_SCORECARD
@@ -17,7 +17,6 @@ rules:
     seed_gap_or_required_operation_required: true
     minimal_closure_set_required: true
     complete_before_after_functional_chain_review_required: true
-    pre_materialized_exact_value_absence_alone_is_authority_gap: false
     unique_functional_closure_derivation_required_before_auto_remediable: true
     one_role_correct_minimal_closure: AUTO_REMEDIABLE
     authority_gap_minimum_materially_distinct_viable_behaviors: 2
@@ -28,19 +27,17 @@ rules:
     continue_after_stop_condition: BLOCK
     role_safe_evidence_required: true
     adjacent_signal_or_owner_may_substitute_missing_contract_role: false
-    existing_function_with_missing_upstream_or_downstream_step_must_be_evaluated_for_minimal_completion: true
   FUNCTION_VISUAL_SYNCHRONIZED_COMPLETION:
     required_artifact: FUNCTION_VISUAL_IMPACT_MATRIX
     activation: USER_VISIBLE_OR_USER_OBSERVABLE_REQUIRED_OPERATION
     logic_addition_without_visual_impact_classification: BLOCK
     user_visible_operation_without_visual_binding: BLOCK
     visual_control_without_allowed_operation: BLOCK
-    visual_delta_requires_approved_design_before_stage05: true
+    visual_delta_requires_prior_approved_design_authority: true
   INDEXED_INCREMENTAL_VALIDATION:
     construction_index_first_loading_required: true
     validation_impact_index_required: true
     reverse_dependency_index_required: true
     index_may_skip_required_impacted_validator: false
-    impacted_reverse_dependency_only_validation_after_batch: true
     checkpoint_full_sweep_required: true
     full_sweep_required_before_freeze: true

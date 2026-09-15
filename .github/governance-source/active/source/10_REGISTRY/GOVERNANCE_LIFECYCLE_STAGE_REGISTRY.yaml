@@ -1,10 +1,10 @@
-schema_version: 1
+schema_version: 2
 artifact_uid: REG-LIFECYCLE-STAGE-001
-artifact_type: GOVERNANCE_LIFECYCLE_STAGE_REGISTRY
+artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.1.15-stage-execution-optimization
+governance_revision: v2.2.0-neutral-portable-governance
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -343,6 +343,36 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  required_output_applicability:
+    always_for_target_scope:
+    - FUNCTIONAL_CHAIN_SPEC
+    - PAGE_CONSTRUCTION_SPEC_PACKAGE
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - EFFECTIVE_CONTRACT_OVERLAY
+    - DEPENDENCY_TOPOLOGY
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - CHANGE_IMPACT_MAP
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    - CURRENT_PROBLEM_REGISTER
+    - RESOLUTION_LEDGER
+    when_governed_business_entity_scope_present:
+    - BUSINESS_ENTITY_INVENTORY
+    - BUSINESS_ENTITY_OPERATION_MATRIX
+    when_entity_hierarchy_applies:
+    - ENTITY_HIERARCHY_MATRIX
+    when_continuous_work_unit_applies:
+    - FUNCTIONAL_WORKBENCH_CONTRACT
+    - INTERACTION_TOPOLOGY_MATRIX
+    when_user_visible_or_observable_required_operation_applies:
+    - FUNCTION_VISUAL_IMPACT_MATRIX
+    when_ai_or_auto_proposes_functional_addition:
+    - FUNCTION_ADMISSION_SCORECARD
+    when_bounded_auto_completion_is_activated:
+    - AUTO_COMPLETION_SCOPE_LEDGER
+    when_ai_interaction_profile_applies:
+    - AI_INTERACTION_CONTINUITY_CONTRACT
 - stage_uid: STAGE-03
   name: VISUAL_DESIGN
   scope_mode: ALL_REQUIRED_PAGES
@@ -1679,3 +1709,18 @@ cross_stage_invariants:
     explicit_stage_registry_binding_required: true
     explicit_stage_binding_denominator: 11
 stage_execution_invariant_ref: REG-STAGE-EXECUTION-INVARIANT-001
+layer_classification: EXECUTION_PROFILE
+profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
+profile_scope: ACPOS_PROJECT
+global_normative_authority: false
+profile_may_weaken_common_policy: false
+profile_local_denominator: 11
+profile_completion_rule: ALL_APPLICABLE_PROFILE_REQUIRED_STEPS_CLOSED
+policy_inheritance:
+- GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
+- GOV-COMP-INTERACTION-TOPOLOGY-AI-CONTINUITY
+- GOV-COMP-SPECIFICATION-MUTATION-CONTROL
+- GOV-COMP-EXECUTION-CYCLE-CONTROL
+- GOV-COMP-VALIDATION-REMEDIATION-CLOSURE-PROTOCOL
+- GOV-COMP-EVIDENCE-FEEDBACK-ARTIFACT-LIFECYCLE
+- GOV-COMP-LAYER-SEPARATION-PORTABILITY

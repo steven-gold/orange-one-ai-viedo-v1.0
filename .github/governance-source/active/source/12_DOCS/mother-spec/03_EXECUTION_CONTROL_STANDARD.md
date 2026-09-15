@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-03
-version: 2.1.0
+version: 2.2.0
 order: 3
 category: execution_control
 required_before_execution: true
@@ -894,100 +894,31 @@ Cross-page Flow、Provider、Deployment、State Machine、Field Identity 等 Gat
 - `NOT_APPLICABLE` for page-local transport/data nodes is legal only when exact shared-owner Authority evidence explains where that responsibility is owned.
 
 <!-- SECTION_UID: WEB-GOV-03-S046 -->
-## 46. Governance Specification Development / Test Lock Discipline
+## 46. Governance Specification Development / Validation Lock Discipline
 
-`v2.1.0` is the immutable baseline for the current governance repair cycle. The original baseline package and its checksums MUST remain unchanged.
+A released governance revision is immutable. A successor candidate MAY change reusable policy only under an explicit, pre-existing exact-scope authorization and MUST preserve predecessor history.
 
-A governance working candidate MAY be created from that baseline only to repair a reproduced governance defect. Experimental changes from prior candidates MUST_NOT be silently carried forward unless each change is independently justified by a recorded defect against the baseline.
+Every formal validation cycle MUST freeze the candidate governance UID/hash and immutable input baseline before execution. Normative mutation during that validation cycle invalidates its acceptance result. Test fixtures carry observable facts only; expected outcomes belong to the external harness and MUST_NOT instruct validators what conclusion to return.
 
-Each governance test stage MUST have a `GOVERNANCE_STAGE_LOCK` with at least: baseline version/hash, stage UID, allowed defect UIDs, candidate normative hash, test run UID, lock state, start timestamp, end timestamp, and next-stage eligibility.
-
-When a stage enters `TEST_FROZEN`, normative governance files are read-only for that test run. If their aggregate hash changes before run closure, the test result MUST be `INVALIDATED_SPEC_MUTATED_DURING_TEST`, regardless of individual test outcomes.
-
-Test fixtures MUST contain observable facts only. They MUST_NOT carry validator-consumed expected outcomes such as `should_fail`, `expected_status`, precomputed blocker totals, or equivalent instructions that tell the validator what conclusion to return. Expected results belong only in the external test harness after validator execution.
-
-Self-declared `PASS`, `COMPLETE`, `LOCKED`, or zero-error counters inside the fixture MUST NOT override facts recomputed by the validator.
-
-A reproduced defect MUST follow this sequence:
-
-`TEST_FROZEN -> RUN_FAIL -> DEFECT_RECORDED -> BUGFIX_WINDOW_OPEN -> PATCHED_CANDIDATE -> RETEST_REQUIRED -> TEST_FROZEN`
-
-A successful stage MUST follow:
-
-`TEST_FROZEN -> RUN_PASS -> STAGE_RELEASE_LOCKED`
-
-Once `STAGE_RELEASE_LOCKED`, the released rule content MUST_NOT be edited. A later defect opens a new candidate/version; it does not reopen or mutate the locked release.
-
-During governance validation, product-specific page/application data MAY be used only as empirical test/reference input. Product identity MUST_NOT become a normative dependency of the common governance rules. Formal governed implementation is forbidden until governance release state is `FINAL_LOCKED_FOR_WEBSITE_RECONSTRUCTION` or the equivalent release state registered by the adopting system.
+Reproduced defects MUST be recorded, classified by owning layer, repaired in a successor candidate or non-policy owning layer as applicable, and freshly revalidated. Product-specific evidence MAY be test input but MUST_NOT become a common-policy dependency.
 
 <!-- SECTION_UID: WEB-GOV-03-S051 -->
-## 51. Stage-1 Retry / Relock Execution Control
+## 51. Validation-Cycle Retry / Relock Execution Control
 
-When a locked Stage-1 release reveals a reproduced governance defect, the locked release remains immutable. A new bugfix candidate MUST be created from that locked release and may change only the reproduced defect scope.
+When a locked policy revision later exposes a reproduced defect, the locked revision remains immutable. A successor candidate MUST be created under explicit authorization; unrelated changes MUST NOT be carried into the defect scope.
 
-For a Source-to-Blueprint retry, execution order is fixed:
+Fresh retry/replay MUST begin from registered immutable inputs plus authorized owning-layer remediation, with prior generated outputs and stale test residue removed. The retry MUST bind immutable input hashes, candidate governance UID/hash, evidence-cycle identity, output root, and clean-start evidence.
 
-`EMPTY_CURRENT_TEST_WORKSPACE -> RAW_SOURCE_REFERENCE -> DOMAIN_EXTRACTION -> RESPONSIBILITY_CLASSIFICATION -> CLASSIFICATION_VALIDATION -> BASE_BLUEPRINT_COMPILE -> BLUEPRINT_VALIDATION -> CLEAN_SCAN -> RUN_CLOSE`
-
-The executor MUST_NOT:
-
-- reuse prior-run Current extraction/classification/blueprint outputs;
-- skip directly from Raw Source to Base Blueprint;
-- treat a domain-level mixed artifact as a final responsibility owner;
-- mutate normative rules while a run is active;
-- patch a failing fixture to manufacture PASS;
-- leave previous-run output in the Current Test Workspace.
-
-A retry run MUST bind: immutable source refs/hashes, candidate normative hash, run UID, output root, and clean-start evidence before extraction begins.
-
-If the candidate rules are changed, the active run is invalid and MUST be restarted from an empty Current Test Workspace under a new run UID and new candidate hash.
+If candidate normative bytes change after the retry begins, that retry is invalid for closure and MUST restart under the new candidate identity. Prior-result reuse, fixture patching to manufacture PASS, and stale-output carry-forward are forbidden.
 
 <!-- SECTION_UID: WEB-GOV-03-S052 -->
-## 52. Source Enumeration Before Classification / Dual-Blueprint Compile Order
+## 52. Source Enumeration Before Classification / Dual-Blueprint Dependency Order
 
-Stage-1 execution order is refined to:
+Source intake MUST close Raw Source Capture before Source Structure Enumeration; enumeration MUST close before segment mapping; source facts MUST materialize before responsibility classification; Page and Visual Base Blueprint compilation MUST remain separate; binding occurs only after both current blueprint hashes exist.
 
-`EMPTY_CURRENT_TEST_WORKSPACE -> RAW_SOURCE_REFERENCE -> SOURCE_STRUCTURE_ENUMERATION -> SOURCE_SEGMENT_MAPPING -> SOURCE_FACT_MATERIALIZATION -> DOMAIN_EXTRACTION -> RESPONSIBILITY_CLASSIFICATION -> PAGE_BASE_BLUEPRINT -> VISUAL_BASE_BLUEPRINT -> BLUEPRINT_BINDING -> CLEAN_SCAN -> RUN_CLOSE`
+Validators MUST distinguish predecessor closure facts from legal successor activity. Starting a registered legal successor MUST NOT retroactively invalidate an otherwise valid predecessor merely because the global execution state has advanced. Illegal skip, proof loss, Authority identity drift, or unregistered successor remains fail-closed.
 
-`SOURCE_STRUCTURE_ENUMERATION` is a required independent observation step. Classification code MUST consume its node UIDs; it MUST_NOT silently define its own smaller source universe.
-
-Page and Visual Base Blueprint compilation are separate work units. Neither may read the other domain's classified payload. Binding occurs only after both blueprint hashes are available.
-
-`SOURCE_FACT_MATERIALIZATION` is the only legal phase immediately after a closed `SOURCE_SEGMENT_MAPPING`. Starting Source Fact Materialization after Segment Mapping completion MUST_NOT be treated as a Segment Mapping boundary violation. The Source Fact phase consists of `SOURCE_CONTEXT_COMPILATION`, `SOURCE_SUPERSESSION_CONFLICT_RESOLUTION`, and `SOURCE_DEPENDENCY_EXTRACTION`; all required Source Fact artifacts MUST close before Domain Extraction, Responsibility Classification, or Base Blueprint work may start. Website construction and deployment remain forbidden in Stage-01.
-
-A predecessor-stage validator MUST validate the predecessor's closure invariants without permanently forbidding the registered legal successor phase. A successor may start only after its predecessor closes, and a later phase may not be used to retroactively invalidate an otherwise valid predecessor merely because the registered successor has begun. Illegal skipping remains fail-closed.
-
-A predecessor validator MUST_NOT require the global Current phase/state to remain exactly equal to the predecessor terminal state after a registered legal successor begins, and MUST_NOT require a successor-started flag to remain false as a permanent acceptance condition. It MUST instead validate the predecessor closure facts, immutable proof identities, exact unresolved-Authority identity, and terminal receipt that it owns. Registered phase-order legality is owned by the Phase Boundary Gate. An unregistered successor, stage skip, predecessor completion reversion, proof loss, Authority identity drift, or terminal-receipt drift remains blocking. Every registered predecessor→successor edge MUST have regression coverage proving both legal-successor acceptance and illegal-skip rejection.
-
-
-Raw Source Capture is a separately closable sub-step before `SOURCE_STRUCTURE_ENUMERATION` and MUST obey all of the following:
-
-- the capture terminal state MUST be exactly `CAPTURE_CLOSED` before enumeration may start;
-- the only legal next-step identity is exactly `SOURCE_STRUCTURE_ENUMERATION`; aliases such as classification, structure classification, or free-text equivalents MUST_NOT satisfy the gate;
-- a source that contains both Page Construction and Visual Construction facts MUST use the neutral role `MIXED_PAGE_VISUAL_SOURCE_INPUT` until segment-level classification; it MUST_NOT be pre-labelled `PAGE_SOURCE_INPUT` or `VISUAL_SOURCE_INPUT`;
-- the Raw Source directory MUST contain source bytes only. Manifests, binding records, README/NOTICE files, status records, evidence metadata, and any generated control artifact MUST live outside the Raw Source directory;
-- the Raw Source physical file set MUST exactly equal the target paths registered by the Raw Source Reference Manifest; any extra or missing file MUST block the stage;
-- closing Raw Source Capture freezes its captured source bytes for that run. Re-capture requires a new clean retry/run; an already closed capture MUST_NOT remain writable.
-
-### Cross-Lifecycle Semantic Granularity / Mixed Terminal Unit Guard
-
-The syntax tree, file hierarchy, JSON/YAML indentation level, DOM nesting level, contract object boundary, runtime module boundary, test grouping, deployment grouping, or audit row boundary MUST_NOT by itself be treated as governance granularity. Governance granularity is semantic and responsibility-based.
-
-For every Stage-01 through Stage-11 operation, any candidate terminal unit MUST be semantically homogeneous for its current governance responsibility. If one candidate terminal unit contains responsibilities that differ in Owner, Lifecycle, Approval, Version, Test/Acceptance Scope, Planning Domain, Release Identity, Rollback Identity, Applicability, or Closure Identity, that unit is a mixed terminal unit and MUST be recursively decomposed before the current Stage may close.
-
-The only exception is explicit `MIXED_ALLOWED` evidence proving all applicable responsibility dimensions share the same Owner, Lifecycle, Approval, Version, Test/Acceptance Scope and current-stage identity. Convenience, syntax nesting, file size, implementation proximity, or AI-generated grouping MUST_NOT satisfy `MIXED_ALLOWED`.
-
-Every Stage close MUST prove all of the following for the units governed by that Stage:
-
-- `MIXED_TERMINAL_UNITS = 0`;
-- `UNRESOLVED_CONTAINER_UNITS = 0`;
-- recursive decomposition preserves every required parent/child responsibility with no lost, duplicate, or multiply-owned responsibility;
-- downstream mapping consumes the final terminal-unit UIDs rather than redefining a smaller semantic universe;
-- a later Stage MUST re-run the same semantic-granularity check on its own terminal units; an earlier Stage PASS does not waive later-stage granularity validation.
-
-Stage-specific terminal-unit identities are registered in `GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml` and this rule is loaded through the common governance bundle for every Stage.
-
-
+Semantic granularity is responsibility-based rather than syntax-based. Every candidate terminal unit MUST be homogeneous across Owner, Lifecycle, Approval, Version, Acceptance Scope, Planning Domain, Release/Rollback Identity, Applicability, and Closure Identity, or carry explicit `MIXED_ALLOWED` evidence. Every applicable work unit MUST re-run this check for its own terminal units.
 
 <!-- SECTION_UID: WEB-GOV-03-S053 -->
 ## 53. Universal Supersession / Cleanup Transaction
@@ -1005,7 +936,7 @@ A stage cannot close while any of the following is non-zero: Current reference t
 <!-- SECTION_UID: WEB-GOV-03-S054 -->
 ## 54. Index / Hash / Lazy-Load Execution Rule
 
-Every execution stage MUST use index-first loading. A Work Unit resolves its registered manifest, then exact artifact refs, then dependency closure. Re-reading the full governance package or all page construction files for an ordinary local change is forbidden.
+Every governed execution cycle MUST use index-first loading. A Work Unit resolves its registered manifest, then exact artifact refs, then dependency closure. Re-reading the full governance package or all page construction files for an ordinary local change is forbidden.
 
 Changed hashes invalidate only the affected reverse dependency closure unless a shared/global owner change explicitly requires wider revalidation.
 
@@ -1035,11 +966,11 @@ A delete transaction MUST_NOT be considered complete at pre-delete authorization
 <!-- SECTION_UID: WEB-GOV-03-S056 -->
 ## 56. Universal Index / Continuity Transaction
 
-Every construction stage MUST use the same Root Manifest → Registry/Index → Exact Artifact → Dependency Closure loading model. Whole-package rescans are allowed only for explicit integrity/audit operations.
+Every governed construction work unit MUST use the same Root Manifest → Registry/Index → Exact Artifact → Dependency Closure loading model. Whole-package rescans are allowed only for explicit integrity/audit operations.
 
 Creating, replacing, moving, renaming, or deleting a Current artifact MUST atomically update forward dependency, reverse dependency, canonical path/name registry, current-owner index, supersession/cleanup ledger, and affected review/audit state.
 
-Cross-layer, cross-stage, cross-page, Page/Visual reference, shared-owner port, provider/async, and data/runtime dependencies MUST remain bidirectionally resolvable. A broken producer/consumer edge or stale producer hash MUST block closure and mark affected consumers `REVERIFY_REQUIRED`.
+Cross-layer, cross-work-unit, cross-page, Page/Visual reference, shared-owner port, provider/async, and data/runtime dependencies MUST remain bidirectionally resolvable. A broken producer/consumer edge or stale producer hash MUST block closure and mark affected consumers `REVERIFY_REQUIRED`.
 
 <!-- SECTION_UID: WEB-GOV-03-S057 -->
 ## 57. Typed UID Resolution / Read-Write Target Lock
@@ -1060,85 +991,48 @@ The executor MUST persist a resolution receipt for every normative Section UID a
 <!-- SECTION_UID: WEB-GOV-03-S058 -->
 ## 58. Universal Closure Evidence Continuity / Ledger Synchronization / Terminal CI Receipt
 
-This invariant applies to `STAGE-01` through `STAGE-11`, including Stage-1 sub-phases such as Page Base Blueprint, Visual Base Blueprint, and Blueprint Binding. It also applies to Stage-02 functional contracts, Stage-03 visual design, Foundation Freeze, Implementation, Verification/QA, Release Candidate, Staging, Production Cutover, Production Acceptance, and Closure Operations.
+Closure continuity applies to every governed work unit and selected execution-profile step. A legal successor MUST NOT erase, revert, or silently rewrite proven predecessor facts. Closure mutation semantics are `MERGE_APPEND_OR_EXPLICIT_SUPERSEDE`.
 
-A legal successor MUST NOT erase, revert, or silently rewrite already-proven predecessor facts. Closure mutation semantics are `MERGE_APPEND_OR_EXPLICIT_SUPERSEDE`, never destructive re-generation of a smaller Current ledger. Once a predecessor fact is proven true for the active lineage, `started`, `completed`, immutable source/checkpoint identity, gate result, replay proof, content-audit proof, and required run/evidence identity MUST remain resolvable in Current evidence until an explicit supersession/reverification transaction replaces it.
+Current execution/evidence ledgers MUST synchronize as one logical transaction for the affected scope, including immutable baseline identity, governance UID, work-unit/profile-step identity when applicable, artifact/evidence plans, dependency indexes, unresolved Authority identity, gate state, and next legal transition. Material drift MUST block closure.
 
-For every affected closure, the Current execution/evidence ledgers MUST be synchronized as one logical transaction. At minimum this covers `EXECUTION_STATE`, `RUN_MANIFEST`, `ARTIFACT_PLAN`, `GOVERNANCE_CURRENT`, branch baseline/current baseline, stage lock, sealed test baseline, stage evidence, dependency/reverse-dependency indexes, and the applicable closure receipt. A material mismatch in current phase, artifact count, authoritative hash, unresolved Authority count/identity, gate status, next legal transition, or predecessor proof MUST block closure with `CURRENT_LEDGER_SYNCHRONIZATION_DRIFT`.
+Materialization evidence and terminal CI receipt are separate identities. Terminal receipt MUST externally bind provider, repository/project, head SHA, evidence-cycle identity, job denominator, and conclusion without requiring self-writing into the same commit. Required evidence must parse and pass its schema/field validator; presence alone is not evidence validity.
 
-A closure MUST preserve monotonic predecessor truth. The following are blocking defects unless explicit supersession evidence exists: `completed=true` while the corresponding start proof is absent; a previously required replay/content-audit proof disappears; a predecessor run/checkpoint/hash becomes unresolvable; a legal successor causes predecessor PASS to become FAIL solely because the successor exists; or a closure summary replaces a richer Current ledger while dropping required predecessor facts.
-
-Materialization evidence and terminal closure CI receipt are separate identities. Materialization evidence binds the candidate bytes and the run that first proves the materialized artifacts. Terminal closure receipt binds the final validated head externally with at least `provider`, `repository_or_project`, `head_sha`, `run_id`, `job_denominator`, and `conclusion`. The terminal receipt is an external immutable receipt and MUST NOT be required to self-write its own `run_id` into the same commit it validates; doing so would create an infinite self-reference loop. A later ledger MAY reference that external receipt, but creating that later reference produces a new candidate head and therefore MUST NOT redefine the prior receipt as if it validated the new head.
-
-Every Stage close MUST enforce this invariant through the common governance bundle. Stage-specific validators MAY add stricter fields but MUST NOT weaken continuity, synchronization, or terminal-receipt semantics. Missing predecessor evidence, destructive closure rewrite, self-referential terminal receipt, or cross-ledger drift MUST fail closed.
-
-Required Evidence is not valid merely because a file/path exists. Before an evidence item may be marked `MATERIALIZED`, `PASS`, `CLOSED`, or used to satisfy a Stage exit gate, the exact bytes MUST pass the registered parser and the applicable schema/required-field validator. Malformed YAML/JSON, unparseable evidence, missing required fields, or a validator exception MUST block closure. Presence-only acceptance is forbidden.
-
-Unresolved Authority identity continuity is exact, not denominator-only. Every carry-forward record MUST preserve the canonical tuple `gap_uid`, `authority_ref`, `disposition`, and `authority_evidence_ref` exactly against the current `SOURCE_DEPENDENCY_MAP` or an explicit authoritative successor ledger. Matching only the unresolved count or GAP UID is insufficient and MUST fail closed. A tuple change requires explicit authoritative supersession/resolution evidence; AI inference, alias substitution, default filling, or evidence-ref drift MUST NOT be accepted as continuity.
-
-Every ledger-local terminal CI receipt projection that claims terminal receipt status MUST expose the canonical six fields `provider`, `repository_or_project`, `head_sha`, `run_id`, `job_denominator`, and `conclusion`, with identical values for the same receipt identity. Abbreviations such as `jobs` or `result` MAY exist only as non-authoritative display aliases and MUST NOT substitute for canonical fields. A receipt missing any canonical field, or two ledgers projecting different values for the same receipt, MUST block closure.
+Unresolved Authority continuity is exact, not count-only. AI inference, alias substitution, default filling, or evidence-reference drift MUST_NOT resolve external Authority.
 
 <!-- SECTION_UID: WEB-GOV-03-S059 -->
-## 59. Stage Test Defect Feedback / Specification Evolution Closed Loop
+## 59. Validation Feedback / Specification Evolution Closed Loop
 
-Every lifecycle Stage test MUST record every reproduced bug, gap, validator defect, evidence defect, implementation deviation, and unresolved contract discovered during execution. A test run MUST_NOT close merely because its planned assertions finished; discovered defects and gaps require a durable defect/gap record with evidence, affected scope, current disposition, and whether they block Stage exit.
+Every governed validation cycle MUST durably record reproduced bugs, gaps, validator/harness defects, evidence defects, implementation deviations, unresolved contracts, and suspected reusable policy deficiencies. Finishing planned assertions alone is not closure.
 
-After each Stage test, the executor MUST compare the tested construction/production content against the Current governance specification and record any nonconformance. The required closed-loop order is:
+Each issue MUST be classified by one primary owner: reusable policy, validation/harness implementation, product/contract materialization, runtime/implementation, non-normative evidence/state, or external/shared Authority. Product-specific evidence becomes a common-policy candidate only when recurrence/generalizability is proven.
 
-`STAGE_TEST_EXECUTION -> DEFECT_GAP_RECORD -> PRODUCTION_CONFORMANCE_REVIEW -> DEFECT_SCOPE_CLASSIFICATION -> SPEC_PATCH_CANDIDATE -> MULTIDIRECTION_HIGH_PRESSURE_TEST -> VERSION_PROMOTION_V2_1_X -> SOURCE_CONTROL_VERSIONED_CANDIDATE_SYNC -> PREDECESSOR_BACKTRACE_REGRESSION -> FULL_CURRENT_RULE_REVALIDATION -> SOURCE_CONTROL_CURRENT_AUTHORITY_PROMOTION -> FORMAL_FREEZE -> NEXT_STAGE_ELIGIBLE`
-
-A defect scope MUST be classified before governance repair:
-
-- `GLOBAL_SHARED`: the failure mode can recur across more than one Stage, profile, page, validator, ledger, or execution layer. The repair MUST be made at the common invariant layer and propagated to every affected normative mother specification, lifecycle contract, acceptance contract, validator, regression asset, versioning rule, and configured Source-Control Current governance authority. Patching only the Stage where the bug was first observed is forbidden.
-- `STAGE_LOCAL`: the failure is proven to be unique to one Stage contract. The repair MUST remain Stage-scoped and MUST_NOT be generalized to other Stages without recurrence evidence or explicit higher-level Authority.
-
-A governance candidate MUST pass multidirection/high-pressure tests before its `v2.1.X` version is promoted. Version promotion MUST be followed by predecessor backtrace regression and a full Current-rule revalidation. Any failure reopens the bugfix window and prohibits Formal Freeze. Only after the new version passes those checks may the configured Source-Control Current governance authority be promoted and the Stage become eligible for freeze and next-stage transition.
-
-Every adopting system MUST configure exactly one Source-Control Single-Spec Authority adapter. The adapter MUST expose one canonical Current governance entry point, and every automated governance consumer MUST begin from that entry. The canonical path and provider identity are adapter-defined profile data and MUST_NOT become common governance semantics. Historical correction packages, predecessor versions, evidence files, local archives, branch-local copies, or stage-specific reports MUST_NOT act as competing Current specifications. A versioned candidate may be synchronized for evidence before backtrace, but it remains NONCURRENT until predecessor backtrace plus full revalidation pass and the adapter's single Current entry is atomically promoted.
-
+Reusable-policy candidates remain non-normative until explicit authorization, atomic successor promotion, multidirectional regression, active-consumer projection verification, and full Current-policy revalidation pass. A provider/project adapter MUST expose exactly one Current governance entry; historical candidates and evidence MUST remain non-current.
 
 <!-- SECTION_UID: WEB-GOV-03-S060 -->
 ## 60. Universal Business-Entity Completeness / Product-Neutral Execution Gate
 
-The Business Entity completeness rules are common execution invariants, not product-specific requirements. Every adopting system MUST execute them using its own registered Product Profile, entity identities, routes, runtimes, and repositories without changing the common invariant semantics.
+Business Entity completeness is a common semantic invariant. Source-intake capability extracts entity/relationship candidates; functional-contract capability materializes entity inventory, operation/hierarchy matrices, functional contracts, state dependencies, and unresolved Authority gaps; visual-design capability binds applicable operations to approved interaction/visual entries; freeze capability locks the accepted denominator; implementation consumes it without invention; verification and Production acceptance execute applicable lifecycle behavior.
 
-Stage execution MUST enforce the following responsibility split: Stage-01 extracts candidate Business Entities and parent/child/category relationships from Source Authority; Stage-02 materializes the authoritative Entity Inventory, Operation Matrix, Hierarchy Matrix, functional contracts, state dependencies, and unresolved Authority gaps; Stage-03 binds every required operation to an approved interaction/visual entry; Stage-04 freezes the entity/operation/hierarchy/UI acceptance denominator; Stage-05 implements the frozen denominator without invention or omission; Stage-06 runs executable end-to-end lifecycle tests for every required operation; Stage-10 repeats applicable effectful lifecycle acceptance against Production or the target release environment.
+Required entity/operation/hierarchy/functional/visual continuity gaps MUST block the capability that owns them. Automatic functional completion is allowed only for a uniquely necessary minimal closure inside authorized dependency bounds; two or more materially distinct viable behaviors constitute an Authority gap and MUST block AI autofill.
 
-Stage-02 MUST remain BLOCKED while any required Business Entity is missing, any required operation is unclassified, any `NOT_APPLICABLE` lacks Authority evidence, any parent/child edge is unresolved, any required operation lacks a complete functional contract, or any business capability is represented only by a list/control/action count. Stage-03 MUST remain BLOCKED while a required operation lacks a visual/system interaction binding. Stage-05 MUST remain BLOCKED when implementation invents a contract not frozen upstream.
-
-Product-specific evidence first observed in one system MAY justify a common-rule defect only after defect scope classification proves the defect class can recur outside that system. Product-specific examples and repositories remain empirical provenance; they MUST_NOT become common execution prerequisites.
-
-Before recursive functional completion may execute, the candidate addition MUST pass function admission and minimal-closure controls. A score alone is never execution Authority. Automatic execution is allowed only when the source gap/REQUIRED operation is registered, the dependency is uniquely necessary, no equivalent capability already satisfies the requirement, no unresolved Authority ambiguity exists, and the addition remains inside the frozen dependency closure. Any out-of-closure dependency discovery MUST terminate the automatic chain and reopen design.
-
-Execution MUST detect recursive dependency cycles and unauthorized denominator growth. Each expansion step MUST retain source gap UID, source Entity UID, REQUIRED operation, dependency edge, Authority reference, necessity score, minimal-necessity explanation, and visual-impact reference. Once all seed REQUIRED gaps are closed and no unresolved REQUIRED edges remain inside the frozen closure, further automatic expansion is forbidden.
-
-Logic and visual state MUST advance together for user-visible or user-observable operations. Stage-03 must approve the visual binding before Stage-05 implementation; Stage-05 must not invent new visual patterns; Stage-06 and Stage-10 must verify the same operation across logic, state, control/trigger, pending/disabled state, success/error/recovery feedback, and visual projection.
-
-Indexed validation MUST be used as a performance optimization without changing the validation denominator. The impact index and reverse-dependency index may select and cache unchanged inputs, but cannot suppress any validator affected by changed bytes, changed Section UIDs, changed semantic authority, or changed dependency closure. A full sweep before freeze MUST compare indexed results with the full package; divergence is blocking.
-
+Logic and visual state MUST remain synchronized for user-visible or observable operations. Indexed validation MAY optimize performance but MUST NOT change the semantic denominator or suppress an impacted validator.
 
 <!-- SECTION_UID: WEB-GOV-03-S061 -->
 ## 61. Interaction Topology / Workbench Continuity Execution Control
 
-Stage execution MUST preserve one authoritative interaction topology from functional contract through visual design, implementation, QA, production acceptance, and later revision. Stage-02 owns functional-cluster boundaries, operation order, context/state continuity, allowed separation, cross-surface handoff, and conditional AI-interaction identity rules. Stage-03 owns the visual projection of that frozen topology, including grouping, adjacency, same-surface placement, support-panel separation, responsive reflow, and geometry. Stage-03 MUST NOT silently redefine Stage-02 functional topology.
+Governed execution MUST preserve one authoritative interaction topology from functional contract through approved visual projection, implementation, verification, Production acceptance, and later revision.
 
-Stage-02 MUST BLOCK when a continuous functional journey lacks a `FUNCTIONAL_WORKBENCH_CONTRACT` or `INTERACTION_TOPOLOGY_MATRIX`, when the workbench class is unresolved, or when required shared-context identity/transition semantics are missing. For declared AI-assisted interaction scopes, Stage-02 MUST also BLOCK when conversation identity transitions, multi-agent context equivalence, AI-output formalization boundary, revision lineage, or branch isolation/adoption are unresolved.
+Functional-contract Authority owns workbench boundaries, operation order, context/state continuity, allowed separation, cross-surface handoff, and conditional AI-interaction identity. Visual Design Authority owns approved projection and geometry but MUST NOT silently redefine functional topology. Implementation MUST consume both without invention or omission.
 
-Stage-03 MUST BLOCK visual approval when required operations are present but visually fragmented contrary to the workbench contract; when an unrelated surface interrupts an atomic workbench; when required adjacency/order is broken; when a same-surface cluster is split without Authority; when a cross-surface transition lacks visible/interaction handoff; or when responsive reflow changes the approved semantic order.
-
-Stage-05 MUST implement the frozen topology without invention or omission. Discovery that a required function cannot fit the approved topology, or that a new surface/context transition is needed, MUST reopen the appropriate Stage-02/03 contract rather than being solved ad hoc in implementation. Stage-06 and Stage-10 MUST execute topology-aware acceptance that proves not only presence of controls and runtime effects but continuity of the actual journey, shared context, transition/handoff behavior, revision lineage, branch isolation, and AI decision boundary when applicable.
+Verification/Production acceptance MUST prove actual journey continuity, context handoff, revision lineage, branch isolation/adoption, and AI decision boundary when applicable. Discovery of a required topology change MUST reopen the owning contract/design Authority rather than be solved ad hoc downstream.
 
 <!-- SECTION_UID: WEB-GOV-03-S062 -->
-## 62. Canonical Stage Execution Engine / Checkpoint Control / Clean-Restart Rule
+## 62. Canonical Execution Engine / Checkpoint Control / Clean-Restart Rule
 
-Every Stage execution MUST use one canonical engine contract: `Global Preflight -> Frozen Canonical Manifests -> Dependency-Ordered Batch Execution -> Local Impact Validation -> Checkpoint Reconciliation -> Final Fresh Full Sweep`. A runner MAY specialize Stage operations and artifact schemas, but it MUST consume the same canonical required-field, applicability, classification, effective-overlay and denominator rules as every validator and trace builder for that attempt.
+Every governed execution cycle MUST use one canonical engine contract: `Global Preflight -> Frozen Canonical Manifests -> Dependency-Ordered Batch Execution -> Local Impact Validation -> Checkpoint Reconciliation -> Final Fresh Full Sweep`.
 
-Every registered lifecycle Stage from `STAGE-01` through `STAGE-11` MUST contain an explicit machine-readable `canonical_execution_optimization_gate` binding to `GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001`. Cross-Stage applicability declared only at the invariant layer is insufficient for execution closure when a Stage entry omits the binding. The gate contract MUST be shared by reference/identity; Stage-specific copies MUST_NOT diverge semantically.
+Selected execution profiles MAY specialize operations and artifact schemas, but MUST consume the same common required-field, applicability, classification, effective-overlay, denominator, Authority, and evidence rules. Profile-local copies MUST_NOT diverge from common policy.
 
-Before the first remediation batch, the engine MUST validate `STAGE_EXECUTION_PREFLIGHT_RECEIPT` and prove that all Stage-required normative Section UIDs, common Stage Execution Invariants, Current Authority sets and the seven canonical manifest artifacts were consumed. Missing or stale preflight proof is blocking.
+Before remediation, the engine MUST validate `EXECUTION_CYCLE_PREFLIGHT_RECEIPT`. After each batch it MUST update the affected reverse-dependency closure and append `RESOLUTION_LEDGER`; full sweeps are mandatory after shared/common-engine changes, registered category closure, before cycle closure, and before policy/release freeze.
 
-After each batch the engine MUST recalculate only the impacted functional chains/reverse dependencies and append the result to `RESOLUTION_LEDGER`. A checkpoint full sweep is mandatory after a root/shared-contract batch, after a common-engine/harness repair, after a registered functional category closes, before Stage exit, and before freeze. A full problem-register rebuild after every individual leaf mutation is prohibited unless the mutation changes the canonical rule universe or denominator semantics.
-
-Test/harness defects and product defects are different execution classes. A harness defect MUST_NOT consume product blocker credit, MUST_NOT create product Authority, and MUST_NOT be repaired by weakening validation. The common engine is repaired, the affected scope is replayed, and only the replay result may update Current problem state.
-
-When an authorized normative promotion occurs during or after a blocked Stage attempt, the old attempt becomes historical for closure purposes. The active Stage outputs, temporary test evidence, derived denominators, materialization ledgers and Current Stage projections MUST be reset before retry. Immutable predecessor Authority and separately authorized external Authority sources are preserved according to their owning stage/source; prior Stage remediation outputs MUST_NOT be silently carried as new-attempt completion credit. The retry MUST freeze the new Governance UID and run the canonical preflight from a clean predecessor baseline.
+Harness defects MUST NOT consume product blocker credit or create product Authority. Authorized normative promotion invalidates prior-cycle closure credit under the old UID; generated outputs/derived state are reset, immutable predecessor/external Authority is preserved at its owner, and fresh execution restarts under the new UID.

@@ -1,0 +1,86 @@
+schema_version: 2
+artifact_uid: GOV-COMP-EXECUTION-CYCLE-CONTROL
+artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
+normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
+formal_current_authority: true
+layer_classification: POLICY
+common_scope: ALL_GOVERNED_EXECUTION_CYCLES
+canonical_preflight:
+  required_before_material_remediation: true
+  artifacts:
+  - REQUIRED_FIELD_MANIFEST
+  - FUNCTIONAL_CHAIN_MANIFEST
+  - EFFECTIVE_CONTRACT_OVERLAY
+  - DEPENDENCY_TOPOLOGY
+  - DENOMINATOR_SNAPSHOT
+  - CLASSIFICATION_RULESET
+  - CHANGE_IMPACT_MAP
+  - EXECUTION_CYCLE_PREFLIGHT_RECEIPT
+  one_current_problem_register_required: true
+  append_only_resolution_ledger_required: true
+  all_consumers_use_same_manifest_set: true
+  hardcoded_local_subset_may_claim_canonical_completeness: false
+  applicability_before_blocker_count: true
+effective_contract_truth:
+  formula: IMMUTABLE_AUTHORITY_OR_PREDECESSOR_REQUIREMENT_PLUS_LEGAL_CURRENT_SUCCESSOR_OR_MATERIALIZATION_OVERLAY
+  previous_test_result_without_current_materialization_may_close_gap: false
+  physical_rescan_and_exact_signature_reconciliation_required: true
+  stale_or_intermediate_denominator_may_be_current_truth: false
+role_safe_functional_closure:
+  complete_chain:
+  - BUSINESS_INTENT
+  - PRECONDITIONS
+  - ENTRY
+  - INPUT_SOURCE
+  - TRIGGER
+  - GATE
+  - PERMISSION
+  - ACTION
+  - VALIDATION
+  - PAYLOAD
+  - API_OR_RUNTIME
+  - PERSISTENCE_OR_PROVIDER
+  - AUDIT
+  - RESPONSE_OR_FEEDBACK
+  - SUCCESS_OR_NEXT
+  - FAILURE_OR_RECOVERY
+  - TERMINAL
+  unique_functional_closure_derivation_required_before_auto_remediable: true
+  one_role_correct_minimal_closure: AUTO_REMEDIABLE
+  two_or_more_materially_distinct_viable_product_behaviors: AUTHORITY_GAP
+  zero_role_correct_closure: OWNING_LAYER_UNRESOLVED_CONTRACT_GAP
+dependency_ordered_execution:
+  order:
+  - SHARED_OR_ROOT_AUTHORITY
+  - CONTRACT_PRIMITIVES
+  - RUNTIME_TRANSPORT_STATE_CONTRACTS
+  - DEPENDENT_BUSINESS_OPERATIONS
+  - LEAF_CONTROL_BEHAVIOR
+  - VISUAL_INTERACTION_BINDING
+  downstream_patch_before_unresolved_root: BLOCK
+  local_reverse_dependency_validation_after_each_batch: true
+  checkpoint_full_sweep_required: true
+common_engine_defect_interrupt:
+  applies_to:
+  - PARSER
+  - VALIDATOR
+  - CLASSIFIER
+  - REQUIRED_FIELD_RESOLVER
+  - DENOMINATOR_CALCULATOR
+  - OVERLAY_RESOLVER
+  - IMPACT_INDEX
+  defect_counts_as_product_blocker: false
+  affected_batch_must_stop: true
+  common_engine_fix_and_replay_required: true
+  validator_may_be_weakened_to_make_gate_pass: false
+generated_output_persistence:
+  tracked_and_untracked_detection_required: true
+  git_diff_quiet_alone_sufficient: false
+  exact_output_path_persistence_proof_required: true
+post_promotion_fresh_restart:
+  old_acceptance_credit_for_affected_scope: 0
+  replaceable_generated_state_reset_required: true
+  immutable_predecessor_and_external_authority_preserved_at_owner: true
+  new_governance_uid_freeze_required: true
+  canonical_preflight_from_clean_baseline_required: true
+  fresh_reverification_required: true

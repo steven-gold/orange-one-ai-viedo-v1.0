@@ -1,33 +1,24 @@
-schema_version: 26
-role: STABLE_GOVERNANCE_ENTRYPOINT_COMPATIBILITY_SHIM
-repository_branch: rebuild-v2.1.1
+schema_version: 4
+artifact_uid: GOVERNANCE-CURRENT-ENTRYPOINT-001
+artifact_type: GOVERNANCE_CURRENT_ENTRYPOINT
+active_governance_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
+display_version: v2.2.0
 registry_ref: governance/specifications/REGISTRY.yaml
-resolver_ref: governance/ci/governance_resolver.py
-active_state_ref: governance/test/ACTIVE_STATE.yaml
-active_test_state_ref: governance/test/ACTIVE_STATE.yaml
-rules:
-  this_file_may_define_governance_version: false
-  direct_version_named_governance_path: FORBIDDEN
-  all_active_consumers_must_resolve_via_registry: true
-  latest_may_be_selected_by_filename_sort: false
-  unverified_candidate_may_be_selected_automatically: false
-  canonical_execution_rule_set_only: true
-  canonical_stage_preflight_required: true
-  effective_contract_overlay_required: true
-  role_safe_bounded_functional_completion_required: true
-  dependency_ordered_incremental_validation_required: true
-  one_current_problem_register_required: true
-  append_only_resolution_ledger_required: true
-  common_engine_defect_fix_before_affected_product_progress: true
-  governance_calibration_and_later_pages_share_same_active_rules: true
-  alternate_scale_out_rule_set: FORBIDDEN
-  stage_current_specification_freeze_required: true
-  ordinary_mid_stage_normative_promotion: FORBIDDEN
-  stage_end_consolidated_promotion_and_restart_required_when_normative_change_occurs: true
-  all_lifecycle_stages_explicitly_bind_canonical_execution_optimization: true
-  canonical_execution_optimization_binding_denominator: 11
-preservation:
-  main_branch: NO_MUTATION
-  new_branch: NO_MUTATION
-  all_other_pages: NO_MUTATION_UNTIL_PILOT_FULL_LIFECYCLE_CALIBRATION_CLOSES
-status: USE_REGISTRY_FOR_GOVERNANCE_AND_ACTIVE_STATE_FOR_EXECUTION
+specification_root: governance/specifications/current
+specification_manifest: governance/specifications/current/SPECIFICATION_MANIFEST.yaml
+policy_scope: PRODUCT_SYSTEM_AND_EXECUTION_PROFILE_NEUTRAL
+selected_execution_profile:
+  profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
+  registry: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  layer_classification: EXECUTION_PROFILE
+  global_normative_authority: false
+  profile_local_denominator: 11
+  profile_completion_rule: ALL_APPLICABLE_PROFILE_REQUIRED_STEPS_CLOSED
+  may_weaken_common_policy: false
+active_test_state: governance/test/ACTIVE_STATE.yaml
+historical_evidence_is_current_authority: false
+source_identity:
+  verified_package_sha256: dd5a09e8b309168c46d37f3ff2bbb87c292d7b779bcd6d756f201e07bcc82754
+  deterministic_source_bundle_sha256: fd7f0ffc8711685fa230b2003d20937cbfb135b57cd3f9a1fce84cec9c18e51a
+  checksum_manifest_sha256: 19ddfe5372fd8c45bb54919f589352b3c6e58ae59a0bfd13e5c567d2213f0796
+  semantic_authority_content_hash: 81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a

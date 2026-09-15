@@ -2,7 +2,7 @@ schema_version: 9
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
+specification_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
 execution:
   branch: rebuild-v2.1.1
   run_uid: FRESH-RUN-003
@@ -23,6 +23,8 @@ execution:
     prior_results_authoritative_for_next_run: false
     prior_results_used_in_current_run: false
     artifact_root_present: false
+    revalidation_required_under_current_governance: true
+    prior_results_authoritative_for_current_governance: false
   website_construction_allowed: false
   deployment_allowed: false
 stage02_clean_reset:
@@ -83,6 +85,9 @@ stage02_active_attempt:
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: false
   next_action: OWNING_LAYER_REMEDIATION_OF_150_FUNCTIONAL_GAPS_AND_13_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
+  governance_status: HISTORICAL_FROZEN_PREDECESSOR_AFTER_PROMOTION
+  closure_credit_under_current_governance: false
+  fresh_revalidation_required: true
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
@@ -92,7 +97,7 @@ stage2_result_evidence:
   tracked_current_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
   artifact_provenance_recorded_in_active_attempt: true
 stage_execution_remediation_closure_protocol:
-  specification_ref: governance/specifications/current/STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
+  specification_ref: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
   frozen_specification_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
   audit_only_blocked_loop_may_count_as_progress: false
@@ -110,6 +115,7 @@ stage_execution_remediation_closure_protocol:
   fatal_specification_contradiction_requires_stage_stop_and_new_explicit_authorization: true
   pilot_full_lifecycle_required_before_other_page_scale_out: true
   later_pages_must_use_same_active_governance_after_calibration: true
+  binding_status: CURRENT_POLICY_REQUIRES_FRESH_REVALIDATION_OF_PREDECESSOR_ATTEMPT
 specification_mutation_safety:
   change_control_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   finding_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
@@ -129,3 +135,13 @@ stage02_current_problem_state:
   prior_stage2_results_used: false
 status: ACTIVE_STAGE2_TESTED_BLOCKED
 next_action: OWNING_LAYER_REMEDIATION_OF_150_FUNCTIONAL_GAPS_AND_13_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
+governance_revision_transition:
+  previous_governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
+  current_governance_uid: GOV-REV-20260915-NEUTRAL-PORTABLE-GOVERNANCE
+  predecessor_attempt_frozen_governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
+  predecessor_attempt_preserved_as_historical_evidence: true
+  predecessor_attempt_may_close_under_current_governance: false
+  fresh_revalidation_required: true
+  selected_execution_profile_preserved: true
+  website_construction_remains_blocked: true
+  deployment_remains_blocked: true

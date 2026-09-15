@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-02
-version: 2.1.0
+version: 2.2.0
 order: 2
 category: implementation_delivery
 required_before_execution: true
@@ -93,66 +93,13 @@ MUST_NOT 使用版本副檔、同義新名稱或第二 Runtime 來迴避既有 O
 驗收標準如需調整，MUST 走 Authority Change Procedure。
 
 <!-- SECTION_UID: WEB-GOV-02-S004 -->
-## 4. 正式施工總順序
+## 4. 施工能力與 Gate Catalog（順序由依賴與適用性決定）
 
-每個 Work Unit MUST 依序執行：
+正式施工 MUST 依 Authority、dependency graph、applicability 與 selected execution profile 計算所需 Gate；Mother Policy MUST_NOT 以固定編號或固定總數宣告所有網站都必須採用同一流程。
 
-1. Blueprint Intake
-2. Blueprint Validation
-3. Audit Baseline Intake
-4. Acceptance Matrix Validation
-5. Dependency Mapping
-6. Duplicate / Conflict Pre-check
-7. Contract Materialization
-8. Repository Owner Resolution
-9. Shared Foundation Verification
-10. Frontend Implementation
-11. Control / Field Implementation
-12. Action Layer
-13. Backend Runtime
-14. Repository / Data Access Layer
-15. Database Schema / Migration
-16. Authentication
-17. Authorization
-18. Data Security
-19. Audit / Logging
-20. Error Contract
-21. External Integration
-22. Async Runtime
-23. Storage Runtime
-24. Unit Test
-25. Integration Test
-26. Database Test
-27. Permission Test
-28. Browser E2E
-29. Control Acceptance
-30. Visual Regression
-31. Responsive Verification
-32. Localization Verification
-33. Accessibility Verification
-34. Security Verification
-35. Audit Matrix Reconciliation
-36. Production Build
-37. Staging Deployment
-38. Staging Acceptance
-39. Production Configuration
-40. Production Migration
-41. Production Deployment
-42. Production Smoke
-43. Production Browser Acceptance
-44. Production Page Acceptance
-45. Production Control Acceptance
-46. Production Database Acceptance
-47. Production Effectful Acceptance
-48. External Integration Acceptance
-49. Async Runtime Acceptance
-50. Monitoring Verification
-51. Backup Verification
-52. Rollback Verification
-53. Final Audit Matrix Reconciliation
-54. Final Production Acceptance
+可適用能力至少涵蓋：Source/Blueprint Intake、Requirement/Acceptance Binding、Dependency Mapping、Design/Visual Authority、Repository Owner Resolution、Contract Materialization、Frontend/Control/Action、Runtime/Data/Database、Authentication/Authorization/Security、Audit/Error/Recovery、External/Async/Storage、Unit/Integration/Permission/Browser E2E、Visual/Responsive/i18n/Accessibility、Build/Deployment、Production Identity/Smoke/Page/Control/Data/Effectful Acceptance、Monitoring/Backup/Rollback 與 Final Reconciliation。
 
-MUST_NOT 任意跨越 REQUIRED Step。
+每個 REQUIRED Gate MUST 定義 prerequisites、inputs、outputs、owner、validator、evidence、failure behavior、invalidation rule 與 closure condition。僅在 prerequisites 已滿足且 Authority 允許時 MAY 並行；不得以固定流水號取代依賴關係，也不得跳過 applicable REQUIRED Gate。
 
 <!-- SECTION_UID: WEB-GOV-02-S005 -->
 ## 5. Blueprint Intake
@@ -965,61 +912,13 @@ MUST_NOT：
 
 
 <!-- SECTION_UID: WEB-GOV-02-S054A -->
-## 54A. Page Full-Lifecycle Execution Gate
+## 54A. Page / Capability Full-Lifecycle Applicability Gate
 
-任何被選為 Pilot、正式施工或重新施工的 Page MUST 從 `SOURCE_INTAKE_GATE` 開始，不得從既有 UI、某個 Runtime、某個 Test 或某個中段 Commit 直接開始並宣稱完成全流程驗證。
+Pilot、正式施工或重新施工 MUST 從該 Scope 的最早未被有效 Current evidence 覆蓋之 Authority boundary 開始，並沿 dependency graph 關閉全部 applicable REQUIRED capabilities。不得從既有 UI、Runtime、Test 或中段 Commit 開始後冒充完整生命週期驗證。
 
-固定生命周期為：
+Full-lifecycle closure MUST prove Source Truth、Canonical Classification、Naming/Owner、Requirement/Architecture、Functional Chain、Design/Visual、Acceptance Baseline、Implementation、State/Error/Audit、Executable Verification、Build/Deployment identity、Production Runtime acceptance、Monitoring/Recovery 與 Final Reconciliation 中所有 applicable Gate 已閉環。
 
-1. Raw Source Intake
-2. Source Truth / Contamination Resolution
-3. Canonical Classification
-4. Source-to-Target Mapping
-5. Naming / UID / Owner Resolution
-6. Requirement Gate
-7. Architecture / Dependency Gate
-8. Page / Capability Registry
-9. Functional Chain Planning
-10. Cross-page Flow Mapping（如適用）
-11. Design System Binding
-12. Layout / Geometry Baseline
-13. Component / Control / Field Spec
-14. Asset Registry / Binding
-15. Visual Generation Manifest
-16. Visual Preview
-17. Visual Review / Approval
-18. Audit Baseline / Acceptance Matrix / DoD
-19. Design Freeze
-20. Repository Owner Resolution
-21. Contract Materialization
-22. Frontend / Control / Field Implementation
-23. Action / Validation / Permission
-24. API / Runtime / Repository / Data / Provider
-25. State / Error / Audit / Recovery
-26. Unit / Integration / DB / Permission Tests
-27. Browser Functional E2E
-28. Functional Chain Reconciliation
-29. Visual Geometry Audit
-30. Visual Regression
-31. Responsive / Localization / Accessibility
-32. Cross-page Flow E2E（如適用）
-33. Security Verification
-34. Production Build
-35. Staging / Equivalent Acceptance（如適用）
-36. Production Configuration / Migration
-37. Production Deployment
-38. Deployment Identity Verification
-39. Production Smoke
-40. Production Browser / Page / Control Acceptance
-41. Production Functional Chain Acceptance
-42. Production Visual Geometry / Responsive Acceptance
-43. Production Data / Effectful / External / Async Acceptance（如適用）
-44. Production Render Freshness Verification
-45. Monitoring / Backup / Rollback
-46. Final Audit Reconciliation
-47. Closure
-
-任一 REQUIRED Step 未 PASS，後續 Step MAY 被執行以蒐集證據，但該 Page MUST_NOT 標示 End-to-End Closed。
+Execution Profile MAY 將這些能力綁成具體步驟與順序；該 profile 的 step count 與 step names 僅為 profile-local denominator。Mother Policy 只要求 dependencies、applicability 與 closure truth，不要求固定步驟數。
 
 <!-- SECTION_UID: WEB-GOV-02-S054B -->
 ## 54B. Functional Chain Reconstruction 與補齊
@@ -1183,28 +1082,13 @@ Governance Installer 與 Generated Evidence MUST 限制在 declared repository r
 Deployment Success 而 Production route 仍載入舊 DOM / 舊 Asset / 舊 Geometry MUST FAIL，分類為 `PRODUCTION_ASSET_STALE` / `PRODUCTION_DOM_STALE` / `PRODUCTION_VISUAL_STALE` / `PRODUCTION_CACHE_STALE`。
 
 <!-- SECTION_UID: WEB-GOV-02-S065 -->
-## 65. Stage-Gated Governance Validation Before Website Reconstruction
+## 65. Dependency-Gated Governance Validation Before Website Reconstruction
 
-The governance package itself MUST be validated and locked before formal website reconstruction begins.
+Governance package MUST be validated and locked before formal website reconstruction begins. Validation freezes one candidate policy identity, executes the applicable definition/regression/portability gates, records every reproduced defect, and prohibits normative mutation during an active validation cycle.
 
-Governance validation proceeds one lifecycle step at a time. For step `N`:
+A reproduced governance defect MUST close the active validation attempt as failed or blocked before policy editing. Repair occurs in a separately authorized candidate, followed by fresh validation. A released policy remains immutable; later defects create a successor policy revision and invalidate only affected acceptance evidence.
 
-1. define and freeze the candidate rules for step `N`;
-2. bind the test run to the frozen candidate hash;
-3. execute minimal-control / black-box tests for step `N`;
-4. if a governance defect is reproduced, close that run as FAIL and record the defect before any rule edit;
-5. open a bounded bugfix window for that defect only;
-6. create a new candidate hash and rerun all tests required for step `N`;
-7. once PASS is accepted, lock step `N` and prohibit further edits to that released rule set;
-8. only then may step `N+1` validation begin.
-
-A test run MUST_NOT modify normative governance files while the run is active. Editing the rule set to make an active test pass invalidates the run.
-
-After a step is locked, later source extraction or later-stage testing MAY discover a new governance defect, but the locked release MUST remain immutable. The defect MUST be recorded and fixed in a subsequent governance candidate/version. All artifacts affected by that change MUST become `REVERIFY_REQUIRED` and be brought into conformance with the new released governance version.
-
-Formal website implementation, page reconstruction, runtime construction, deployment, or Production Acceptance MUST remain blocked until the governance release is explicitly `FINAL_LOCKED_FOR_WEBSITE_RECONSTRUCTION`.
-
-
+Formal website implementation, deployment, or Production Acceptance MUST remain blocked until the selected policy revision and execution profile, when applicable, satisfy their release conditions.
 
 <!-- SECTION_UID: WEB-GOV-02-S057 -->
 ## 57. Program Construction Profile / Implementation Manifest
@@ -1231,62 +1115,44 @@ Implementation closure requires: canonical path match, owner match, profile comp
 <!-- SECTION_UID: WEB-GOV-02-S066 -->
 ## 66. Cross-Layer / Cross-Page Continuity Gate
 
-Every required dependency edge MUST have both forward and reverse index entries. Required edge classes include Cross Layer, Cross Stage, Cross Page, Page/Visual Reference, Shared Owner Port, Provider/Async, and Data/Runtime.
+Every required dependency edge MUST have both forward and reverse index entries. Required edge classes include Cross Layer, Cross Work Unit, Cross Page, Page/Visual Reference, Shared Owner Port, Provider/Async, and Data/Runtime.
 
 A producer hash change MUST mark all dependent consumers `REVERIFY_REQUIRED` until their contracts/tests are revalidated. A cross-page handoff without a registered handoff/contract reference is BLOCKED.
 
 No later implementation layer may repair an unresolved earlier-layer authority or dependency gap by inventing a second local behavior.
 <!-- SECTION_UID: WEB-GOV-02-S067 -->
-## 67. Full 11-Stage Machine Contract
+## 67. Execution Profile Machine Contract
 
-The lifecycle MUST be machine-materialized as exactly eleven ordered stages: Source/Base Blueprint, Page Functional Contract, Visual Design, Foundation Freeze, Implementation, Verification/QA, Build/Release Candidate, Staging, Production Cutover, Production Acceptance, and Closure/Operations.
+A project that requires a concrete lifecycle MUST materialize exactly one selected `EXECUTION_PROFILE`. The profile MAY define any evidence-justified number of ordered or partially concurrent steps and MUST declare its own profile-local denominator.
 
-Every Stage Contract MUST define: stage UID, scope mode, entry gate, required inputs, input origins, operations, outputs, output producers, validators, required evidence, failure behavior, invalidation behavior, exit gate, and next-stage condition.
+Every profile step MUST define: step UID, semantic capability, scope mode, prerequisites/entry gate, inputs, input origins, operations, outputs, producers, validators, required evidence, failure/invalidation behavior, exit condition, and legal successor relation.
 
-Stages 1–4 MUST use `ALL_REQUIRED_PAGES` foundation barriers. No required page may advance to Stage N+1 while another required page is incomplete at Stage N. Stages 5–11 MUST preserve one selected `page_uid` through Production Page Closure before the next page can begin implementation.
-
-Delivery Steps 1–54 MUST each bind to exactly one real operation in the Lifecycle Stage Registry. Number-only stage ranges without operation bindings MUST_NOT satisfy the contract.
+Profile step names, numeric identities, counts, and ordering MUST NOT become reusable Mother Policy. The selected profile MUST inherit common policy without weakening it. Profile completion requires every applicable profile-required step to close; a profile-local 11-step ACPOS lifecycle therefore remains 11/11 for ACPOS while a different website MAY legally use a different profile.
 
 <!-- SECTION_UID: WEB-GOV-02-S068 -->
 ## 68. Mode-Aware Governance Validation
 
-Governance validation MUST select one explicit validation mode:
+Governance validation MUST select one explicit mode appropriate to the requested decision: definition/pre-formal audit, selected-profile execution validation, or release-final validation.
 
-- `PRE_FORMAL_DEFINITION_AUDIT`
-- `STAGE_EXECUTION_VALIDATION`
-- `RELEASE_FINAL_VALIDATION`
+Definition audit validates governance definitions, registries, references, schemas, compilers, package self-containment, portability, layer separation, and hygiene; it MUST_NOT require product/Production evidence that cannot yet legally exist.
 
-Pre-formal validation MUST validate governance definitions, registries, references, schemas, compilers, package self-containment, and hygiene only. It MUST_NOT require website execution or Production evidence that cannot yet legally exist.
-
-Stage execution validation MUST validate the selected stage, applicable persisted Foundation artifacts, predecessor closure, and exact dependency closure only. It MUST_NOT require future-stage evidence.
-
-Release final validation MUST require all applicable lifecycle and Production acceptance evidence.
+Selected-profile validation consumes only the current profile step, its persisted predecessor/foundation artifacts, common policy, and exact dependency closure. Release-final validation requires every applicable product, profile, deployment, and Production acceptance evidence item.
 
 <!-- SECTION_UID: WEB-GOV-02-S069 -->
 ## 69. Output Producer / Input Origin Binding
 
-Every required Stage input MUST resolve to exactly one legal origin: predecessor output, persisted Foundation output, Current Authority/Project Configuration, or previous-page closure contract.
+Every required work-unit input MUST resolve to exactly one legal origin: predecessor output, persisted foundation output, Current Authority/Project Configuration, shared-owner contract, or previous-scope closure contract. Every output MUST resolve to an explicit producer operation.
 
-Every Stage output MUST resolve to exactly one explicit producer operation. Aggregate outputs MUST have a named compile/reconciliation operation; they MUST_NOT appear as unowned side effects of an unrelated operation.
-
-Missing, future-stage, cyclic, duplicated, or unresolved origin/producer bindings MUST block Stage closure.
+Missing, future-only, cyclic, duplicated, unresolved, or profile-inapplicable origin/producer bindings MUST block closure. Aggregate outputs require a named compile/reconciliation owner and MUST_NOT appear as unowned side effects.
 
 <!-- SECTION_UID: WEB-GOV-02-S070 -->
 ## 70. Pre-Execution Governance Load Gate
 
-Every mutating execution item, Stage operation, Work Unit, and program-construction action MUST load governance before execution. `NO_GOVERNANCE_LOAD_RECEIPT = NO_EXECUTION`. Presence of an Implementation Manifest alone is not proof that governance was read.
+Every mutating execution item, work unit, profile operation, and program-construction action MUST load governance before execution. `NO_GOVERNANCE_LOAD_RECEIPT = NO_EXECUTION`.
 
-The effective normative set MUST be compiled before execution from all of the following layers: (1) mandatory common governance bundles, (2) the current Stage normative bundle, (3) the registered Construction Profile normative sections when program code is involved, (4) artifact-specific normative section UIDs registered for the target, and (5) normative refs required by the exact dependency closure. Omitting any required layer is BLOCKED.
+The effective normative set MUST be compiled from common reusable policy, the selected execution-profile binding when applicable, Construction Profile requirements, artifact-specific normative refs, and exact dependency closure. A `GOVERNANCE_LOAD_RECEIPT` MUST bind execution identity, evidence-cycle identity, Work Unit/profile-step identity when applicable, governance UID, Root Manifest hash, effective normative-set hash, resolved Section UID receipts, dependency artifact hashes, acceptance blueprint identity, timestamp, and loader identity/version.
 
-A `GOVERNANCE_LOAD_RECEIPT` MUST bind execution UID, run UID, Work Unit UID or Stage operation UID, governance revision, Root Manifest hash, effective normative set hash, resolved Section UID receipts, loaded dependency artifact UIDs/hashes, loaded acceptance blueprint UID/hash, load timestamp, and loader identity/version. Any governance/hash change invalidates the receipt and requires reload before further execution.
-
-Execution MUST NOT begin when a required normative Section UID is missing, resolves ambiguously, points to a stale document hash, or belongs to a non-current governance revision.
-
-
-A registered Construction Profile's `mandatory_contracts` MUST be materialized by the target Program Artifact instance before code write; declaration of the profile definition alone is insufficient. Missing or empty required profile contracts MUST block execution. The Program Artifact UID itself MUST already exist in the Typed Program Identity Authority with the exact canonical path, filename, owner, Work Unit, scope, profile and producer Stage that will be written.
-
-Framework-reserved filenames require exact pre-registration authority, and each Construction Profile MUST enforce an allowed file class/extension set. A valid filename at an unregistered path, or a configuration/data file substituted for a runtime source artifact, MUST be blocked.
-
+Required normative refs that are missing, ambiguous, stale, non-current, or sourced from non-authoritative run state MUST block execution.
 
 <!-- SECTION_UID: WEB-GOV-02-S071 -->
 ## 71. Product-Neutral Entity Operation Implementation / Bidirectional Coverage Gate
@@ -1322,12 +1188,8 @@ Logic, interaction topology, and visual grouping are one acceptance unit. A back
 <!-- SECTION_UID: WEB-GOV-02-S073 -->
 ## 73. Dependency-Ordered Materialization / Incremental Impact Validation / Single Current Problem State
 
-Formal remediation MUST execute in dependency order, not discovery order. The required ordering is: shared/root Authority and contract primitives -> reusable runtime/transport/state contracts -> dependent business operations -> leaf page/control behavior -> visual/interaction binding. A downstream leaf MUST_NOT be repeatedly patched while an unresolved shared/root contract can change the leaf's admissibility or expected value.
+Formal remediation MUST execute in dependency order: shared/root Authority and contract primitives -> reusable runtime/transport/state contracts -> dependent business operations -> leaf behavior -> visual/interaction binding. A downstream leaf MUST_NOT be repeatedly patched while an unresolved upstream owner can change its admissibility or expected value.
 
-Each accepted remediation batch MUST write only to the canonical owning layer, append a machine-readable resolution entry, and validate only the affected reverse-dependency closure using `CHANGE_IMPACT_MAP`. Routine batch validation MUST be incremental. A complete full-stage rescan is required at registered checkpoints, after common-engine changes, before Stage closure, before governance freeze, and whenever indexed/local validation diverges from a full sweep.
+Each accepted remediation batch MUST write only to the canonical owning layer, append a machine-readable resolution entry, and validate the affected reverse-dependency closure. Complete sweeps remain mandatory at registered checkpoints, after common-engine changes, before governed-cycle closure, before policy/release freeze, and whenever indexed validation diverges from a full sweep.
 
-There MUST be exactly one active `CURRENT_PROBLEM_REGISTER` for the Stage and one append-only `RESOLUTION_LEDGER`. Per-run reports, snapshots and candidate reviews are evidence only and MUST_NOT become competing Current problem truth. Resolving a gap MUST update the active view by canonical signature/UID; it MUST_NOT cause wholesale re-numbering of unaffected problems. A new denominator MUST be derived from physical scan plus exact successor reconciliation, never copied from a predecessor report or hard-coded expected count.
-
-Generated evidence persistence is part of completion. A workflow MUST detect both tracked modifications and untracked newly generated outputs; `git diff --quiet` alone is insufficient for persistence decisions. The persistence gate MUST prove the exact output paths are staged/committed or deliberately unchanged.
-
-If a validator, parser, classifier, required-field resolver, denominator calculator, overlay resolver or impact-index implementation is defective, the affected remediation batch MUST stop. The defect MUST be repaired in the common engine or common manifest producer first, then the impacted preflight/manifests and affected validations MUST be regenerated. A Stage-specific per-run semantic patch MUST_NOT become an alternate rule system.
+There MUST be one active `CURRENT_PROBLEM_REGISTER` for the governed cycle and one append-only `RESOLUTION_LEDGER`. Per-run reports and snapshots are evidence only. New denominators MUST derive from physical scan plus exact authorized successor reconciliation, never from predecessor reports or hard-coded expected counts.

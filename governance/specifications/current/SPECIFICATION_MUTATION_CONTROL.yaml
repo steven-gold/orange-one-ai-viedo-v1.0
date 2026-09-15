@@ -1,169 +1,85 @@
-schema_version: 2
+schema_version: 3
 artifact_uid: GOV-COMP-SPECIFICATION-MUTATION-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
+formal_current_authority: true
+layer_classification: POLICY
 control_precedence: HIGHEST_CURRENT_SPECIFICATION_MUTATION_CONTROL
-
 purpose:
-  statement: Current Specification is immutable throughout each lifecycle stage execution attempt. Ordinary defects must be repaired at their owning layer. Normative changes are admitted only through an explicitly authorized Stage-End consolidated promotion or a separately authorized fatal-specification-contradiction interruption.
+  statement: Current reusable policy is immutable throughout a governed execution/validation cycle. Ordinary defects are repaired at their owning layer. Normative
+    change requires explicit exact-scope authorization and atomic successor promotion.
   default_decision: DENY_MUTATION
   fail_closed: true
-
-protected_scope:
-  - governance/specifications/current/**
-  - governance/specifications/REGISTRY.yaml
-  - GOVERNANCE_CURRENT.yaml
-
 non_authorities:
-  construction_need: NOT_AUTHORITY
-  implementation_need: NOT_AUTHORITY
-  product_gap: NOT_AUTHORITY
-  test_failure: NOT_AUTHORITY
-  validator_failure: NOT_AUTHORITY
-  harness_failure: NOT_AUTHORITY
-  runtime_failure: NOT_AUTHORITY
-  evidence_or_state_failure: NOT_AUTHORITY
-  regression_failure: NOT_AUTHORITY
-  stale_hash: NOT_AUTHORITY
-  compatibility_need: NOT_AUTHORITY
-  display_version_change: NOT_AUTHORITY
-  candidate_newer_version: NOT_AUTHORITY
-  ai_inference: NOT_AUTHORITY
-  ai_autofill: NOT_AUTHORITY
-  convenience_or_gate_passing: NOT_AUTHORITY
-  candidate_ledger_entry_by_itself: NOT_AUTHORITY
-
+- CONSTRUCTION_NEED
+- IMPLEMENTATION_NEED
+- PRODUCT_GAP
+- TEST_FAILURE
+- VALIDATOR_OR_HARNESS_FAILURE
+- RUNTIME_FAILURE
+- EVIDENCE_OR_STATE_FAILURE
+- STALE_HASH
+- DISPLAY_VERSION_CHANGE
+- AI_INFERENCE
+- AI_AUTOFILL
+- CONVENIENCE_OR_GATE_PASSING
+- CANDIDATE_LEDGER_ENTRY_BY_ITSELF
 explicit_change_authorization:
   required: true
   authority_source: EXPLICIT_USER_DIRECTIVE
   exact_scope_required: true
   reusable_for_unrelated_change: false
-  ai_may_create_scope_extension: false
-  ai_may_infer_missing_authorization: false
+  ai_may_expand_scope: false
   authorization_receipt_must_preexist_spec_mutation_commit: true
   same_commit_authorization_fabrication: BLOCK
-  single_use_receipt_when_marked_single_use: true
   atomic_specification_update_required: true
   immutable_governance_uid_must_change_when_normative_content_changes: true
   registry_manifest_binding_must_change_in_same_atomic_commit: true
-
-stage_freeze_control:
-  freeze_required_at_stage_entry: true
+execution_cycle_freeze_control:
+  freeze_required_before_validation_or_governed_execution: true
   frozen_governance_uid_must_be_recorded: true
-  current_specification_registry_and_manifest_may_mutate_during_ordinary_stage_execution: false
-  ordinary_candidate_may_promote_mid_stage: false
-  mid_stage_mutation_without_fatal_contradiction_path: BLOCK
-  stage_result_may_mix_multiple_governance_uids: false
-  stage_uid_drift_before_stage_end_review: BLOCK_STAGE
-  product_or_contract_gap_must_be_repaired_at_product_or_contract_owning_layer: true
-  validator_or_harness_bug_must_be_repaired_outside_protected_specification_paths: true
-  runtime_or_implementation_bug_must_be_repaired_at_runtime_or_implementation_layer: true
-  non_normative_state_or_evidence_bug_must_be_repaired_only_in_non_normative_state_or_evidence: true
-  external_authority_gap_must_remain_unresolved_until_authoritative_resolution_or_formal_non_applicability: true
-
-finding_and_defect_intake:
-  ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
-  every_discovered_bug_or_defect_must_be_recorded: true
-  every_discovered_tuning_or_spec_concern_must_be_recorded: true
+  ordinary_cycle_mutation: false
+  results_may_mix_multiple_governance_uids: false
+  product_or_contract_gap_owner: PRODUCT_OR_CONTRACT_LAYER
+  validator_or_harness_bug_owner: TEST_OR_VALIDATION_IMPLEMENTATION
+  runtime_bug_owner: IMPLEMENTATION_OR_RUNTIME
+  evidence_state_bug_owner: NON_NORMATIVE_EVIDENCE_OR_STATE
+  external_authority_gap: PRESERVE_UNRESOLVED_UNTIL_AUTHORITATIVE_RESOLUTION_OR_FORMAL_NON_APPLICABILITY
+finding_intake:
+  candidate_ledger_identity: NON_NORMATIVE_SPECIFICATION_CHANGE_CANDIDATE_LEDGER
+  every_suspected_reusable_defect_recorded: true
   finding_is_normative_change: false
   finding_may_auto_promote: false
-  finding_may_silently_modify_current_specification: false
-  product_execution_gap_is_specification_defect_without_evidence: false
-  suspected_reusable_specification_defect_during_stage: RECORD_CANDIDATE_ONLY
-  candidate_may_be_treated_as_active_rule_before_authorized_promotion: false
-
-stage_end_consolidated_promotion_control:
-  stage_end_governance_consolidation_review_required: true
-  stage_current_specification_remains_frozen_during_review: true
-  promotion_before_stage_end_review: FORBIDDEN
-  max_atomic_promotion_transactions_per_stage_attempt: 1
-  every_candidate_for_stage_attempt_requires_disposition: true
-  required_reusable_governance_deficiencies_must_be_consolidated_into_one_scope: true
-  unrelated_scope_expansion: FORBIDDEN
-  promotion_requires_new_explicit_user_specification_change_directive: true
-  authorization_receipt_must_preexist_promotion_commit: true
+  candidate_may_be_active_rule_before_authorized_promotion: false
+consolidated_promotion_control:
+  explicit_user_directive_required: true
+  preexisting_authorization_required: true
   new_immutable_governance_uid_required: true
   registry_manifest_atomic_update_required: true
-  promotion_invalidates_pre_promotion_stage_acceptance_for_closure: true
-  post_promotion_full_line_high_pressure_gate_required: true
-  post_promotion_reset_to_same_predecessor_baseline_required: true
-  post_promotion_stage_restart_from_first_step_required: true
-  pre_promotion_and_post_promotion_stage_evidence_may_be_mixed: false
-
+  active_consumer_inventory_required: true
+  stale_predecessor_pin_scan_required: true
+  projection_atomicity_required: true
+  portability_validation_required: true
+  policy_layer_contamination_scan_required: true
+  promotion_invalidates_affected_old_closure_evidence: true
+  fresh_reverification_required: true
 fatal_specification_contradiction_exception:
   default: DENY
-  may_interrupt_stage_only_when_current_specification_baseline_is_proven_invalid: true
-  ordinary_product_gap_qualifies: false
-  ordinary_validator_or_harness_bug_qualifies: false
-  ordinary_runtime_or_implementation_bug_qualifies: false
-  ordinary_evidence_or_state_bug_qualifies: false
-  external_authority_gap_qualifies: false
-  convenience_or_gate_passing_qualifies: false
-  required_before_mutation:
-    - STOP_CURRENT_STAGE
-    - RECORD_BLOCKING_SPECIFICATION_DEFECT
-    - RECORD_FATAL_CONTRADICTION_EVIDENCE
-    - MARK_INTERRUPTED_STAGE_ATTEMPT_NON_AUTHORITATIVE_FOR_CLOSURE
-    - OBTAIN_NEW_EXPLICIT_USER_SPECIFICATION_CHANGE_DIRECTIVE
-    - CREATE_PREEXISTING_EXACT_SCOPE_AUTHORIZATION_RECEIPT
-  required_after_mutation:
-    - ASSIGN_NEW_IMMUTABLE_GOVERNANCE_UID
-    - UPDATE_REGISTRY_AND_MANIFEST_ATOMICALLY
-    - PASS_FULL_LINE_MULTIDIRECTIONAL_HIGH_PRESSURE_SYSTEM_GATE
-    - RESET_TO_SAME_CLEAN_PREDECESSOR_BASELINE
-    - RESTART_STAGE_FROM_FIRST_MANDATORY_STEP
-  ai_may_self_authorize_exception: false
-  exception_may_bypass_owning_layer_remediation: false
-
-construction_and_execution_behavior:
-  formal_specification_mutation_to_make_gate_pass: BLOCK
-  formal_specification_mutation_to_unblock_ordinary_construction: BLOCK
-  formal_specification_mutation_to_fit_existing_implementation: BLOCK
-  hidden_semantic_relaxation: BLOCK
-  unresolved_authority_gap_auto_fill: BLOCK
-  preserved_artifact_rewrite_for_display_version_only: BLOCK
-  allowed_without_spec_change:
-    - Fix a test harness implementation bug outside protected specification paths.
-    - Fix a validator implementation bug outside protected specification paths when the normative rule itself is unchanged.
-    - Fix a runtime or implementation bug at its owning implementation layer.
-    - Materialize an authorized product or contract closure at its owning stage layer.
-    - Correct non-normative runtime or execution-state evidence.
-    - Record findings, defects, and proposed reusable governance changes in the non-normative candidate ledger.
-
+  requires_proven_current_policy_self_contradiction: true
+  ordinary_product_validator_runtime_evidence_or_external_authority_gap_qualifies: false
+  new_explicit_authorization_required: true
+  ai_may_self_authorize: false
 promotion_gate:
   required_sequence:
-    - RECORD_FINDING_OR_EXPLICIT_CHANGE_REQUEST
-    - COMPLETE_STAGE_END_GOVERNANCE_CONSOLIDATION_REVIEW_OR_FATAL_CONTRADICTION_STOP_PATH
-    - VERIFY_CHANGE_AUTHORIZATION_EXISTS_BEFORE_MUTATION_COMMIT
-    - CONFIRM_EXACT_AUTHORIZED_SCOPE
-    - APPLY_ONLY_AUTHORIZED_NORMATIVE_CHANGE
-    - ASSIGN_NEW_IMMUTABLE_GOVERNANCE_UID
-    - UPDATE_REGISTRY_AND_SPECIFICATION_MANIFEST_ATOMICALLY
-    - RUN_GOVERNANCE_REGRESSION_AND_STRESS_GATES
-    - RESET_AND_RESTART_AFFECTED_STAGE_WHEN_PROMOTION_CHANGES_STAGE_BASIS
-    - KEEP_PRODUCT_STAGE_STATE_FAIL_CLOSED_UNTIL_REEXECUTION_CLOSES_STAGE
-  unauthorized_step_or_scope_expansion: BLOCK
-  regression_failure_after_authorized_change: BLOCK_PROMOTION_AND_RECORD_FINDING
-
-canonical_execution_continuity:
-  one_active_governance_rule_set: true
-  governance_calibration_and_later_page_execution_share_same_rules: true
-  alternate_scale_out_rule_set: FORBIDDEN
-  later_pages_must_resolve_same_registry_entrypoint: true
-  future_normative_change_requires_new_evidence_and_new_explicit_authorization: true
-
-stage_execution_separation:
-  governance_definition_validation_may_pass_without_product_stage_completion: true
-  governance_definition_pass_may_mark_product_stage_pass: false
-  product_stage_must_follow_sequential_stage_gates: true
-  later_stage_may_pass_while_required_prior_stage_blocked: false
-  current_product_stage_state_must_not_be_rewritten_to_match_governance_test_result: true
-
-ci_enforcement:
-  guard: governance/ci/specification_mutation_guard.py
-  protected_mutation_without_preexisting_authorization: BLOCK
-  protected_mutation_with_reused_single_use_authorization: BLOCK
-  protected_mutation_with_missing_scope: BLOCK
-  ordinary_non_spec_construction_commit: ALLOW_SUBJECT_TO_OTHER_GATES
-
+  - RECORD_FINDING_OR_EXPLICIT_CHANGE_REQUEST
+  - VERIFY_PREEXISTING_EXACT_SCOPE_AUTHORIZATION
+  - CLASSIFY_LAYER_AND_CANONICAL_OWNER
+  - APPLY_ONLY_AUTHORIZED_NORMATIVE_CHANGE
+  - ASSIGN_NEW_IMMUTABLE_GOVERNANCE_UID
+  - UPDATE_REGISTRY_AND_MANIFEST_ATOMICALLY
+  - VERIFY_ACTIVE_CONSUMER_PROJECTIONS
+  - RUN_CONTAMINATION_CONTRADICTION_PORTABILITY_GATES
+  - RUN_GOVERNANCE_REGRESSION_AND_STRESS_GATES
+  - FRESHLY_REVERIFY_AFFECTED_EXECUTION_SCOPE
+  unauthorized_scope_expansion: BLOCK
 status: ACTIVE

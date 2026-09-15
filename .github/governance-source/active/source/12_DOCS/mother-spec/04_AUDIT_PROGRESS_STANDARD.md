@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-04
-version: 2.1.0
+version: 2.2.0
 order: 4
 category: audit_progress_reporting
 required_before_execution: true
@@ -400,7 +400,7 @@ MUST 檢查未引用的正式舊：
 - `MIXED_TERMINAL_UNITS = 0`
 - `UNRESOLVED_CONTAINER_UNITS = 0`
 
-此稽核不是 Stage-1 專用。Stage-01～Stage-11 每一階段都 MUST 重新驗證本階段的 Terminal Unit 是否為語義同質單元。Audit MUST_NOT 接受「檔案已拆、物件已分層、測試已分組、部署已分批」作為充分證據；必須證明每個 Terminal Unit 的 Owner/Lifecycle/Approval/Version/Test-or-Acceptance/Stage Identity 一致，或具有完整 `MIXED_ALLOWED` 證據。任何 mixed terminal、未解析 container、parent-child responsibility loss、duplicate 或 remap shrinkage MUST fail-closed。
+此稽核不是 SOURCE_INTAKE_CAPABILITY 專用。SOURCE_INTAKE_CAPABILITY～CLOSURE_OPERATIONS_CAPABILITY 每一階段都 MUST 重新驗證本階段的 Terminal Unit 是否為語義同質單元。Audit MUST_NOT 接受「檔案已拆、物件已分層、測試已分組、部署已分批」作為充分證據；必須證明每個 Terminal Unit 的 Owner/Lifecycle/Approval/Version/Test-or-Acceptance/Lifecycle / Approval / Acceptance / Ownership Boundary Identity 一致，或具有完整 `MIXED_ALLOWED` 證據。任何 mixed terminal、未解析 container、parent-child responsibility loss、duplicate 或 remap shrinkage MUST fail-closed。
 
 檔案數、壓縮檔大小、程式行數或 Commit 數 MUST_NOT 被視為分類完成度本身。
 
@@ -1327,49 +1327,18 @@ Geometry PASS MUST 來自 Browser DOM Measurement 或等價可驗證 Runtime Cap
 - Embedded self-validation / derived-validation inside an Authority file is provenance only and MUST_NOT satisfy a current validation-run Gate.
 
 <!-- SECTION_UID: WEB-GOV-04-S068 -->
-## 68. Governance Stage Lock / Anti-Moving-Target Audit
+## 68. Governance Revision Lock / Anti-Moving-Target Audit
 
-Governance audit MUST distinguish three things: immutable baseline, mutable bugfix candidate, and locked released governance.
+Audit MUST distinguish immutable released policy, mutable authorized successor candidate, and frozen validation-cycle candidate. For every formal validation cycle Audit MUST verify the baseline/candidate hash at start and closure, exact authorized change scope, immutable released predecessor, fact-only fixtures, recomputed results, and zero normative mutation during the active cycle.
 
-For every stage test, Audit MUST verify:
-
-- original `v2.1.0` baseline hash remains unchanged;
-- candidate normative aggregate hash is captured before test execution;
-- candidate normative aggregate hash is identical at run closure;
-- allowed changes are limited to defect UIDs declared before the bugfix window;
-- no later lifecycle-stage feature was mixed into the current-stage bugfix;
-- fixture inputs contain observable facts, not validator-directed expected outcomes;
-- fixture self-declared PASS/COMPLETE values do not satisfy a Gate without recomputation;
-- Page Construction extraction and Visual Construction extraction are independent physical artifacts and independent editable owners;
-- locked stage content has not been edited after release;
-- next-stage validation did not begin before current-stage release lock;
-- website reconstruction has not begun before governance release final lock.
-
-Any normative hash mutation during an active frozen test MUST invalidate the test run. The operator MUST NOT edit the rules and continue the same run.
-
-If a new governance defect is discovered after a stage release lock, Audit MUST preserve the locked release, create a new defect record, and require a new candidate/version plus regression of every impacted earlier stage. Existing extracted/page artifacts affected by the new rule MUST become `REVERIFY_REQUIRED`; they MUST_NOT be silently grandfathered.
-
-A governance stage may be reported PASS only when the test run, candidate hash, defect ledger, and release lock all refer to the same immutable candidate content.
+A new defect after release creates a new defect record and successor candidate; affected prior evidence becomes `REVERIFY_REQUIRED`. Website construction MUST remain blocked until the selected governance release and execution profile, when applicable, satisfy their release gates.
 
 <!-- SECTION_UID: WEB-GOV-04-S069 -->
-## 69. Stage-1 Classified Extraction / Base Blueprint Audit
+## 69. Classified Extraction / Base Blueprint Audit
 
-Stage-1 audit MUST verify physical source-to-classification-to-blueprint lineage, not filename presence alone.
+Source-intake audit MUST recompute physical source -> enumeration -> mapping -> source facts -> responsibility classification -> Page/Visual Base Blueprint -> binding lineage rather than accept filename presence.
 
-The audit MUST recompute:
-
-- every required source segment has one legal disposition;
-- every current classification artifact has one responsibility scope and one Canonical Owner unless `MIXED_ALLOWED` proof is complete;
-- Page and Visual responsibilities do not share the same editable owner/path;
-- Base Blueprint consumes only current classified artifact refs/shared refs, never Raw Source directly after classification closure;
-- Base Blueprint input hashes equal current classification artifact hashes;
-- no classification payload is duplicated into the Base Blueprint as a second owner;
-- all current output files are referenced by the current run manifest;
-- previous-run output, temp files, backups, caches, abandoned split files and unexplained residuals equal zero.
-
-A Stage-1 result MUST be reported `FAIL` when any required source content remains unclassified/unmapped/multi-mapped/lost, any required responsibility is missing from the Base Blueprint, or any residual current artifact cannot be explained by the current run manifest.
-
-File count, folder count, presence of a large `PAGE_CONSTRUCTION` file, or a self-declared `PASS` MUST_NOT be accepted as evidence that classified materialization or Base Blueprint construction is complete.
+Every required source segment must have one legal disposition; every classified artifact one responsibility scope/Canonical Owner unless explicit mixed evidence exists; Page/Visual editable owners must remain separate; blueprint inputs must match current classified hashes; Current outputs must be referenced by the current evidence-cycle manifest; stale prior output/temp/cache/residual must be zero or explicitly historical.
 
 <!-- SECTION_UID: WEB-GOV-04-S070 -->
 ## 70. Full-Source Coverage / Dual-Blueprint Audit
@@ -1415,111 +1384,60 @@ Acceptance requirements MUST be planned before implementation in a canonical `GO
 Audit Matrix and Review Progress MUST reference the same acceptance blueprint UID/revision/hash and audit item UIDs. If the blueprint hash changes, prior PASS/APPROVED results for affected items MUST become `REVERIFY_REQUIRED`.
 
 <!-- SECTION_UID: WEB-GOV-04-S072 -->
-## 72. Management Registry Audit
+## 72. Management Registry / Layer Classification Audit
 
-Formal governance test MUST verify physical Current instances for Naming Registry, Blueprint Registry, Audit Catalog, Review Progress Ledger, Lifecycle Stage Registry, Acceptance Audit Blueprint, Section Number Registry, Protected Current Artifact Registry, Root Manifest, and Construction Artifact Index.
+Formal governance audit MUST verify physical Current instances for Naming, Blueprint, Audit, Review, Acceptance, Section, Protected Current, Root Manifest, Construction Artifact, semantic Authority, and the selected Execution Profile Registry when a profile is active.
 
-Missing registry, duplicate current registry, stale hash, unresolved canonical path, or schema mismatch MUST be a blocking governance-definition defect.
+Every management artifact MUST declare its layer classification. Reusable `POLICY` MUST NOT contain execution-instance authority; `EXECUTION_PROFILE` MAY contain project-local step identities/counts but MUST declare `global_normative_authority: false`; `RUN_STATE`, `IMPLEMENTATION`, and `HISTORICAL_EVIDENCE` MUST NOT become reusable policy Authority.
+
+Missing registry, duplicate current registry, stale hash, unresolved canonical path, layer contradiction, or schema mismatch is blocking.
 
 <!-- SECTION_UID: WEB-GOV-04-S073 -->
-## 73. Pre-formal Multidirection Stress Audit
+## 73. Pre-formal Multidirection Stress / Portability Audit
 
-Before formal freeze, governance MUST pass destructive mutation tests covering at minimum: missing required artifacts, wrong section reference, duplicate section number, unsafe cleanup deletion, broken forward/reverse dependency, cross-page page_uid drift, source lineage drift, unresolved shared ref, stale hash, unregistered program file, invalid stage transition, N/A misuse, duplicate owner, residual backup/temp/old file, and baseline/blueprint divergence.
+Before formal release, governance MUST pass destructive mutation tests for missing required artifacts, wrong references, duplicate identity, unsafe cleanup, broken forward/reverse dependency, scope drift, source lineage drift, unresolved shared refs, stale hashes, unregistered program files, illegal profile transition, N/A misuse, duplicate owner, residual files, and baseline divergence.
 
-A mutation test counts only when the target validator detects the semantic violation; failure caused solely by an unrelated mirror/hash mismatch MUST_NOT be counted as proof of the intended guard.
+Reusable policy MUST also pass a portability test against at least two synthetic execution profiles with materially different step names and step counts. Both profiles MUST be enforceable without changing common policy semantics. Failure means the Mother Policy is profile-coupled and promotion MUST block.
+
+A mutation test counts only when the intended semantic guard detects the violation; unrelated checksum/mirror failure is not proof of the target guard.
 
 <!-- SECTION_UID: WEB-GOV-04-S074 -->
 ## 74. Governance Load / UID Resolution / Write-Target Audit
 
-Audit MUST prove that every executed item has a current `GOVERNANCE_LOAD_RECEIPT` created before execution and bound to the exact governance revision/hash used by that run. Missing, stale, post-hoc, or mismatched receipts are FAIL.
+Audit MUST prove that every executed item has a current governance-load receipt created before execution and bound to the exact governance UID/hash. Effective normative sets MUST include common policy plus selected execution-profile, Construction Profile, artifact-specific, and dependency-closure bindings only when applicable.
 
-Audit MUST verify that the effective normative set includes the mandatory common bundles plus the exact Stage, Construction Profile, artifact-specific, and dependency-closure normative refs applicable to the item. Loading only item-specific rules while omitting common construction governance is FAIL.
+Section UID resolution MUST be exact through Current Section Registry and Root Manifest. Every write MUST resolve `Program Artifact UID -> canonical path/filename -> owner -> Work Unit -> expected pre-write hash`; writing another legal artifact or unregistered path is still invalid.
 
-Audit MUST recompute each Section UID resolution against the Current Section Registry and Root Manifest. Each UID must resolve to exactly one document/anchor under the expected current document hash. Fuzzy/heading-only resolution or substitution is FAIL.
-
-For every write, Audit MUST prove `Program Artifact UID -> canonical target path/filename -> owner -> Work Unit -> expected pre-write hash`. A write to a different registered artifact, a normative document, or an unregistered path is FAIL even when the target file itself is otherwise valid.
-
-
-Pre-formal acceptance MUST execute the complete registered destructive regression matrix on every run; the presence, checksum, or historical PASS claim of a suite is not execution evidence. Exact denominators and expected blocked/pass counts MUST be machine-checked, and any omitted suite, timeout, invalid JSON result, changed denominator, or failed expectation is a blocking failure.
-
-The final candidate trust decision MUST be anchored outside the candidate package. Candidate-local compiler, Root Manifest refresh, checksum regeneration, or validator edits MUST_NOT be able to update the external trust root. Formal Freeze eligibility requires an external immutable package hash-set verification before candidate-local validators are accepted.
-### Test Runner Isolation / Collection-Safety Contract
-
-Governance regression assets that are registered as standalone subprocess/JSON executables MUST be isolated from generic test-runner collection. A collector such as pytest MUST_NOT import and execute a standalone regression body as a side effect of test discovery, and collection MUST_NOT trigger `SystemExit`, process termination, mutation, external-trust evaluation, or acceptance-result emission from those standalone assets.
-
-Every standalone regression asset MUST declare an explicit collection-isolation guard before its executable body. Standalone exit status remains legal only for direct execution by the registered governance regression runner. Generic pytest collection is diagnostic only and MUST_NOT substitute for the mandatory regression subprocess matrix.
-
-The Current package MUST carry a machine-readable Test Runner Isolation Contract defining the standalone runner, pytest collection policy, configuration path, and collector contract test. `pytest` INTERNALERROR, collector-triggered `SystemExit`, accidental execution of a standalone regression during discovery, missing collection isolation, or runner-mode ambiguity is a blocking governance-definition defect.
-
-A missing external execution precondition (for example the external immutable trust root required by Pre-formal) MUST remain fail-closed for the applicable acceptance run, but MUST_NOT be misreported as a pytest collection crash. Runner/collector failure and governance semantic failure are separate evidence classes and MUST remain distinguishable.
+Pre-formal acceptance MUST execute the registered destructive regression matrix and machine-check actual denominators/results. Candidate trust MUST be anchored outside candidate-local self-updatable metadata.
 
 <!-- SECTION_UID: WEB-GOV-04-S075 -->
-## 75. Stage Test Defect Ledger / Spec Evolution / Source-Control Single-Authority Audit
+## 75. Validation Defect Ledger / Spec Evolution / Single-Authority Audit
 
-Audit MUST verify that every Stage test produces a complete defect/gap ledger covering all defects discovered during execution, including defects not anticipated by the original test plan. Every record MUST include evidence, affected artifact or runtime identity, defect class, scope class (`GLOBAL_SHARED` or `STAGE_LOCAL`), disposition, blocking state, and the governance revision that resolves or preserves it. Missing records, silent omission, or closing a Stage while a discovered blocking defect has no disposition is FAIL.
+Audit MUST verify every governed validation cycle produces a complete defect/gap ledger for all discovered issues, including unplanned defects. Each record MUST include evidence, affected identity, defect owner/class, generalizability scope, disposition, blocking state, and resolving/preserving governance UID.
 
-Audit MUST compare construction/production output against the Current governance revision after test execution. For every mismatch, Audit MUST prove either an implementation correction or a governance-spec correction with explicit Authority. A `GLOBAL_SHARED` defect is PASS only when all affected governance layers have been updated and regression-protected; a `STAGE_LOCAL` defect is PASS only when it remains Stage-scoped unless evidence proves cross-stage recurrence.
+Reusable-policy repair is valid only when explicit authorization preexists, all affected common policy projections and consumers are updated atomically, multidirection/high-pressure regression passes, stale predecessor pins are absent, and full Current validation passes. Product/local defects MUST remain at their owning layer.
 
-Before version promotion, Audit MUST verify multidirection/high-pressure regression against the patched candidate. After promotion to the next `v2.1.X`, Audit MUST run predecessor backtrace regression against the immediately preceding version and then rerun the complete Current governance validation. Historical PASS receipts MAY support provenance but MUST_NOT substitute for those Current-version executions.
-
-Source-Control governance audit MUST verify exactly one Current governance entry through the configured Single-Spec Authority adapter. The entry MUST identify the frozen Current governance version, canonical spec-content hash, package SHA256, current status, and adapter identity. The canonical entry path is adapter-defined; provider-specific paths are profile data, not common governance semantics. Historical Stage correction packages and evidence files MUST remain history/evidence only. More than one Current version pointer, a stale adapter Current version after freeze, or Current promotion before predecessor backtrace plus full revalidation is a blocking authority divergence.
-
-A Stage is eligible for Formal Freeze and next-stage testing only when: defect/gap recording is complete, production conformance review is complete, scope classification is complete, all required shared/stage-local spec repairs are complete, multidirection high-pressure testing passes, the `v2.1.X` version is promoted, versioned candidate evidence is synchronized through the configured Source-Control adapter, predecessor backtrace passes, full Current validation passes, the single Source-Control Current authority is promoted, and no unwaived blocking governance defect remains.
-
+Source-Control governance audit MUST verify exactly one Current policy entry through the configured adapter. Historical correction packages, execution-profile receipts, test evidence, and candidate files remain history/evidence only and MUST_NOT act as competing Current policy.
 
 <!-- SECTION_UID: WEB-GOV-04-S076 -->
 ## 76. Product-Neutral Binding / Business Entity Lifecycle Completeness Audit
 
-Audit MUST prove that the common governance package is not bound to a specific product. Normative Mother Specs and common invariant registries MUST NOT require a product name, product-only Page UID, route, repository, provider, database schema, department, or runtime identity. Product-specific strings MAY exist only in explicitly labeled provenance, synthetic fixtures, compatibility aliases, or Product Profile extensions that cannot weaken common invariants.
+Audit MUST prove common Mother Policy is not bound to a product, project, repository, route, provider, database schema, department, runtime identity, fixed execution-step name, or fixed profile step count. Product/profile-specific values MAY exist only in explicitly classified profile/provenance/evidence layers that cannot weaken common invariants.
 
-Audit MUST enumerate every governed Business Entity for every required Page/Surface/Module/Workflow and compare the Entity Inventory against Source Authority. It MUST then audit every entity against its Operation Matrix and every relationship against the Hierarchy Matrix. Missing entities, silently omitted operations, unauthorised `NOT_APPLICABLE`, list-only child entities, create-only lifecycle truncation, missing revision/version disposition, unresolved category/chapter/item relationships, or missing parent/child bindings are blocking failures.
+Entity completeness audit MUST derive denominators from authoritative `Business Entity × Applicable REQUIRED Operation` plus hierarchy edges and prove bidirectional operation -> interaction/system trigger -> action -> payload -> runtime -> state/audit -> feedback coverage. Counts of pages/controls/actions/APIs are diagnostic only.
 
-Audit MUST verify bidirectional coverage for every required entity operation: operation-to-interaction-to-action-to-payload-to-runtime-to-state/audit, and visible interaction back to an allowed operation. Orphan Controls, orphan Actions, orphan Runtime endpoints, or required operations with no user/system entry are failures.
-
-Completeness denominators MUST be derived from the authoritative set of `Business Entity × Applicable REQUIRED Operation` plus required hierarchy edges. Page/Control/Action/API/Port counts MAY be diagnostic metrics but MUST_NOT be accepted as functional completeness evidence.
-
-Before Formal Freeze, a binding audit MUST confirm that product-specific examples can be replaced by a different Product Profile without changing common Mother Spec semantics, common invariant keys, lifecycle-stage semantics, acceptance rules, or validator logic. Failure of that substitution test is a common-governance binding defect.
-
-Audit MUST review every automatic functional addition against a `FUNCTION_ADMISSION_SCORECARD` and `AUTO_COMPLETION_SCOPE_LEDGER`. It MUST distinguish `REQUIRED_AUTO_COMPLETION_ELIGIBLE`, `REVIEW_ONLY_OPTIONAL`, and `REJECT_REDUNDANT_OR_SCOPE_EXPANSION`. Audit MUST verify that score evidence is reproducible and that no score was used to override an Authority gap, ambiguity, existing equivalent capability, or unsupported product-scope expansion.
-
-Audit MUST prove bounded completion: every added node/edge traces to a seed gap or REQUIRED operation; every transitive dependency has independent admission evidence; all additions remain inside the frozen dependency closure; no generic CRUD/sibling symmetry expansion occurred; no dependency cycle exists; and automation stopped once the minimal required closure was reached. Any denominator growth without Authority trace is `UNAUTHORIZED_SCOPE_EXPANSION`.
-
-Audit MUST also compare logic and visual completion. For each user-visible or user-observable REQUIRED operation, the `FUNCTION_VISUAL_IMPACT_MATRIX` MUST resolve the approved visual surface/control, state binding, pending/disabled behavior, success/error/recovery feedback, applicable revision/version visibility, responsive/overflow behavior, i18n/accessibility bindings, and visual Authority. Logic-only completion of a user-facing function and visual-only controls without an allowed operation are both blocking.
-
-Validation-performance audit MUST report files read, bytes read, parse count, cache hits/misses, full-package copy count, impacted validator set, and elapsed time when indexed validation is used. Indexing is a performance mechanism, not an acceptance shortcut. Before Formal Freeze, Audit MUST run an index-drift full sweep and block if indexed and full-sweep results diverge.
-
+Before policy release, substitution of a materially different Product Profile and a materially different Execution Profile MUST NOT require common Mother Policy edits. Automatic additions require bounded minimal closure and Authority-safe admission; logic and visual completion must remain synchronized.
 
 <!-- SECTION_UID: WEB-GOV-04-S077 -->
 ## 77. Functional Workbench / Interaction Topology / AI Continuity Audit
 
-Audit MUST verify that every contiguous governed journey has a `FUNCTIONAL_WORKBENCH_CONTRACT` and `INTERACTION_TOPOLOGY_MATRIX`, and that every declared workbench class is supported by Authority. It MUST distinguish a complete set of individual controls/components from a coherent usable workflow. Functional presence without topology conformity is FAIL.
+Audit MUST verify each contiguous governed journey has an applicable functional-workbench/topology contract and preserves approved operation order, adjacency/separation, context/state continuity, cross-surface handoff, responsive semantic order, and conditional AI identity/decision boundaries.
 
-For each `ATOMIC_WORKBENCH`, Audit MUST verify required operation order, adjacency, same-surface placement, interruption boundaries, shared context/state identity, and responsive reflow. Unapproved placement of unrelated surfaces inside the atomic chain, or splitting required operations across independent panels/routes/tabs without an allowed separation contract, is a blocking `FUNCTIONAL_VISUAL_FRAGMENTATION` defect.
-
-For `CROSS_SURFACE_FLOW`, Audit MUST verify transition identity and exact context handoff. A destination that restarts without required context, reconstructs state by inference, or loses base entity/version identity is FAIL. For `SAME_SURFACE_CLUSTER`, Audit MUST verify that spatial separation does not break the defined continuation relationship.
-
-When the conditional AI-assisted interaction profile applies, Audit MUST verify conversation identity transitions, thread/context preservation or explicit fork semantics, same-baseline multi-agent input equivalence, the raw-output-to-authoritative formalization boundary, revision context continuity, and branch isolation/adoption. Silent conversation reset, participant baseline drift presented as comparable output, raw AI output promoted directly to canonical state, revision without exact base lineage, or branch output silently merged into mainline is FAIL.
-
-Audit MUST compare Stage-02 functional topology against Stage-03 visual topology and Stage-05/06/10 execution evidence. Geometry may vary only within the approved responsive/reflow contract; semantic order, workbench cohesion, context continuity, and decision boundaries MUST remain equivalent. Any mismatch MUST reopen the owning Stage rather than being waived as a cosmetic difference.
+Audit MUST compare functional-contract Authority, approved visual projection, implementation evidence, verification evidence, and Production acceptance evidence semantically. Geometry may vary only within approved responsive/reflow constraints; functional topology and context continuity MUST remain equivalent unless an authorized upstream contract change exists.
 
 <!-- SECTION_UID: WEB-GOV-04-S078 -->
-## 78. Stage Execution Preflight / Effective Denominator / Remediation Continuity Audit
+## 78. Execution-Cycle Preflight / Single Current Problem-State Audit
 
-Stage acceptance MUST independently audit the execution model, not merely the final blocker count. The audit MUST prove:
+Audit MUST prove each governed execution cycle consumed one canonical preflight generated from Current reusable policy, selected execution profile when applicable, immutable inputs, exact dependencies, applicability rules, and Current Authority.
 
-- all required preflight manifests and the preflight receipt physically exist and bind the active Governance UID;
-- all registered lifecycle Stage entries (`STAGE-01` through `STAGE-11`) explicitly bind the canonical Stage execution optimization invariant, with a required binding denominator of 11/11;
-- every scanner, validator, trace builder and classifier that claims canonical coverage consumed the same `REQUIRED_FIELD_MANIFEST` and `CLASSIFICATION_RULESET`;
-- the effective denominator was recomputed from immutable discovery plus exact legal successor/materialization overlay;
-- applicability decisions precede blocker counting and include evidence for every `NOT_APPLICABLE` result;
-- role-safe evidence boundaries were enforced and no adjacent signal/owner/event/field was promoted across contract roles without exact Authority;
-- every `AUTO_REMEDIABLE` closure has one and only one viable role-correct minimal derivation inside the frozen dependency closure;
-- every `AUTHORITY_GAP` records at least two materially distinct viable product behaviors, or is rejected as misclassified;
-- dependency/root ordering was respected and no leaf was repeatedly reworked because an upstream shared contract was deferred;
-- local incremental validations match the next checkpoint full sweep for the impacted signatures;
-- one Current Problem Register and one append-only Resolution Ledger define Current issue state;
-- generated outputs, including new untracked artifacts, were persisted correctly;
-- harness/engine defects were repaired at the common engine and replayed before product progress was credited;
-- a post-promotion retry contains no active completion credit from the superseded Stage attempt.
-
-A mismatch between local and full-sweep results, a stale denominator, duplicate Current problem truth, missing generated output, cross-role evidence substitution, or reuse of pre-promotion Stage credit is blocking. Historical attempts MAY be retained for regression signatures and defect provenance only.
+All validators/scanners/classifiers/remediation executors MUST consume the same required-field, effective-contract, denominator, classification, impact, problem-register, and resolution-ledger truth. Local hard-coded subsets, stale prior-run denominators, profile-local policy overrides, or unpersisted generated evidence are blocking.

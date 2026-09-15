@@ -11,7 +11,6 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 RUN = ROOT / '00_SOURCE_INTAKE/fresh_run_003'
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
-SPEC_MANIFEST = ROOT / 'governance/specifications/current/SPECIFICATION_MANIFEST.yaml'
 STAGE_REGISTRY = ROOT / '.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 RESULT = ROOT / '.github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json'
 OLD_STAGE2_ROOT = RUN / '04_PAGE_FUNCTIONAL_CONTRACT'
@@ -243,7 +242,6 @@ if OLD_STAGE2_ROOT.exists():
     die('STAGE02_ADMISSION_OLD_PRODUCT_ARTIFACT_ROOT_PRESENT')
 
 registry = load(STAGE_REGISTRY)
-manifest = load(SPEC_MANIFEST)
 stage2_records = [x for x in (registry.get('stages') or []) if x.get('stage_uid') == 'STAGE-02']
 if len(stage2_records) != 1:
     die('STAGE02_REGISTRY_RECORD_DENOMINATOR')
@@ -255,11 +253,11 @@ if not isinstance(stage2_outputs, list) or not stage2_outputs or any(not isinsta
     die(f'STAGE02_OUTPUT_SET_EMPTY_OR_INVALID:{stage2_outputs!r}')
 if len(stage2_outputs) != len(set(stage2_outputs)):
     die(f'STAGE02_OUTPUT_SET_DUPLICATE:{stage2_outputs!r}')
-mandatory_stage2_outputs = ((manifest.get('stage02_applicability') or {}).get('always_for_target_page_stage02') or [])
+mandatory_stage2_outputs = ((stage2_contract.get('required_output_applicability') or {}).get('always_for_target_scope') or [])
 if not isinstance(mandatory_stage2_outputs, list) or not mandatory_stage2_outputs:
-    die('STAGE02_MANIFEST_MANDATORY_OUTPUT_SET_EMPTY')
+    die('STAGE02_PROFILE_MANDATORY_OUTPUT_SET_EMPTY')
 if len(mandatory_stage2_outputs) != len(set(mandatory_stage2_outputs)):
-    die(f'STAGE02_MANIFEST_MANDATORY_OUTPUT_SET_DUPLICATE:{mandatory_stage2_outputs!r}')
+    die(f'STAGE02_PROFILE_MANDATORY_OUTPUT_SET_DUPLICATE:{mandatory_stage2_outputs!r}')
 missing_mandatory = sorted(set(mandatory_stage2_outputs) - set(stage2_outputs))
 if missing_mandatory:
     die(f'STAGE02_MANDATORY_OUTPUTS_MISSING_FROM_LIFECYCLE_REGISTRY:{missing_mandatory!r}')
@@ -326,7 +324,7 @@ result = {
     'stage_exit_allowed': False,
     'result': 'BLOCKED' if (functional_total or closure_total) else 'PASS',
     'official_stage_output_denominator': sorted(stage2_outputs),
-    'current_manifest_mandatory_stage_output_subset': sorted(mandatory_stage2_outputs),
+    'execution_profile_mandatory_output_subset': sorted(mandatory_stage2_outputs),
     'physical_stage2_product_artifact_root_present': False,
     'pages': pages,
     'fresh_functional_gap_total': functional_total,

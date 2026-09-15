@@ -1,0 +1,46 @@
+schema_version: 2
+artifact_uid: GOV-COMP-EVIDENCE-FEEDBACK-ARTIFACT-LIFECYCLE
+artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
+normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
+formal_current_authority: true
+layer_classification: POLICY
+scope: ALL_GOVERNED_VALIDATION_CYCLES
+finding_classification:
+  TEST_HARNESS_OR_VALIDATOR_BUG:
+    may_be_corrected_without_business_authority: true
+    failing_evidence_required: true
+    correction_verification_required: true
+    reusable_rule_candidate_required_when_generalizable: true
+  PRODUCT_OR_ARCHITECTURE_GAP:
+    may_be_auto_filled_by_ai: false
+    exact_authority_or_human_approved_contract_required: true
+    unresolved_gap_remains_blocking: true
+  EXTERNAL_AUTHORITY_GAP:
+    may_be_inferred_from_semantics: false
+    unresolved_reference_must_remain_explicit: true
+temporary_artifact_lifecycle:
+  allowed: true
+  current_authority_eligible: false
+  production_authority_eligible: false
+  required_registration_fields:
+  - temporary_artifact_uid
+  - source_finding_uid
+  - target_work_unit
+  - validation_cycle_uid
+  - exact_scope
+  - purpose
+  - disposition
+  - cleanup_condition
+  promotion_requires_normative_integration_not_copy: true
+  after_promotion_or_discard:
+  - DELETE_TEMPORARY_FILES
+  - DELETE_EMPTY_TEMPORARY_DIRECTORIES
+  - REMOVE_TEMPORARY_POINTERS
+  - EMIT_CLEANUP_RECEIPT
+  - RUN_ZERO_RESIDUAL_SCAN
+  stale_temporary_artifact_after_cleanup_condition: BLOCK
+closure_rules:
+  verified_generalizable_fix_not_promoted_or_dispositioned: BLOCK
+  temporary_artifact_cleanup_incomplete: BLOCK
+  zero_residual_scan_failed: BLOCK
+  unresolved_true_product_or_authority_gap: BLOCK

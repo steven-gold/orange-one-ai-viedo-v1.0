@@ -1,41 +1,42 @@
-schema_version: 1
+schema_version: 2
 artifact_uid: GOV-COMP-INTERACTION-TOPOLOGY-AI-CONTINUITY
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
-normative_status: ACTIVE_TEST_SPECIFICATION_COMPONENT
-formal_current_authority: false
-
+normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
+formal_current_authority: true
+layer_classification: POLICY
+common_scope: PRODUCT_AND_SYSTEM_NEUTRAL
 common_invariants:
   FUNCTIONAL_WORKBENCH_COHESION:
     required_contract: FUNCTIONAL_WORKBENCH_CONTRACT
-    workbench_classes: [ATOMIC_WORKBENCH, SAME_SURFACE_CLUSTER, CROSS_SURFACE_FLOW, INDEPENDENT_SUPPORT_PANEL]
+    workbench_classes:
+    - ATOMIC_WORKBENCH
+    - SAME_SURFACE_CLUSTER
+    - CROSS_SURFACE_FLOW
+    - INDEPENDENT_SUPPORT_PANEL
     functional_unit_present_but_fragmented_across_unapproved_surfaces: BLOCK
     unrelated_surface_interrupting_atomic_workbench: BLOCK
   INTERACTION_TOPOLOGY_BINDING:
     canonical_required_contract: INTERACTION_TOPOLOGY_MATRIX
-    stage02_defines_functional_topology: true
-    stage03_may_redefine_stage02_functional_topology: false
+    functional_contract_authority_owns_topology: true
+    visual_authority_may_change_topology_only_with_approved_contract_change: true
     visual_presence_without_topology_conformance: BLOCK
     cross_surface_flow_requires_context_handoff_contract: true
     responsive_reflow_must_preserve_semantic_order: true
   AI_INTERACTION_CONTINUITY_AND_DECISION_BOUNDARY:
     activation: CONDITIONAL_ONLY
-    applicable_scope_profiles: [AI_CONVERSATION, AI_ASSISTED_WORKSPACE, MULTI_AGENT_INTERACTION]
+    applicable_scope_profiles:
+    - AI_CONVERSATION
+    - AI_ASSISTED_WORKSPACE
+    - MULTI_AGENT_INTERACTION
     non_ai_scope_requires_ai_artifacts: false
     conversation_identity_silent_reset: BLOCK
     multi_agent_context_divergence_without_authority: BLOCK
     raw_ai_output_direct_to_authoritative_version: BLOCK
     detached_revision_without_lineage: BLOCK
     silent_branch_merge: BLOCK
-
-stage_binding:
-  STAGE-02:
-    owns: [FUNCTIONAL_WORKBENCH_CONTRACT, INTERACTION_TOPOLOGY_MATRIX]
-    conditional_ai_contracts: true
-  STAGE-03:
-    must_preserve_stage02_topology: true
-  STAGE-05:
-    unapproved_workbench_fragmentation_during_implementation: BLOCK
-  STAGE-06:
-    e2e_interaction_continuity_validation_required: true
-  STAGE-10:
-    production_interaction_continuity_acceptance_required: true
+authority_boundaries:
+  functional_contract_authority: DEFINE_FUNCTIONAL_TOPOLOGY
+  visual_design_authority: PROJECT_APPROVED_VISUAL_PROJECTION
+  implementation: CONSUME_WITHOUT_INVENTION
+  verification: PROVE_END_TO_END_CONTINUITY
+  production_acceptance: PROVE_TARGET_RUNTIME_CONTINUITY
