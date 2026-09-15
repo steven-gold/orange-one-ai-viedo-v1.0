@@ -12,7 +12,7 @@ layers_p=ROOT/'governance/specifications/current/GOVERNANCE_LAYER_SEPARATION_AND
 manifest_p=ROOT/'governance/specifications/current/SPECIFICATION_MANIFEST.yaml'
 registry_p=ROOT/'governance/specifications/REGISTRY.yaml'
 state_p=ROOT/'governance/test/ACTIVE_STATE.yaml'
-targeted_workflow_p=ROOT/'.github/workflows/targeted-stage01-stage02.yml'
+targeted_workflow_p=ROOT/'.github/workflows/governance-selected-profile-integrity.yml'
 full_line_workflow_p=ROOT/'.github/workflows/governance-full-line-system-gate.yml'
 errors=[]
 for p in (protocol_p,mutation_p,execution_p,evidence_p,layers_p,manifest_p,registry_p,state_p,targeted_workflow_p,full_line_workflow_p):
@@ -140,13 +140,24 @@ if sum(1 for x in comps if x.get('file')=='VALIDATION_REMEDIATION_CLOSURE_PROTOC
 if (registry.get('active_specification') or {}).get('governance_uid')!=uid: errors.append('REGISTRY_UID_RESOLUTION_DRIFT')
 if state.get('specification_uid')!=uid: errors.append('ACTIVE_STATE_CURRENT_UID_STALE')
 trans=state.get('governance_revision_transition') or {}
-attempt=state.get('stage02_active_attempt') or {}
-ex=state.get('execution') or {}
-s2=ex.get('stage2') or {}
+profile_state=state.get('selected_execution_profile_state') or {}
+execution_state_key=profile_state.get('execution_state_key')
+current_step_state_key=profile_state.get('current_step_state_key')
+active_attempt_state_key=profile_state.get('active_attempt_state_key')
+if not execution_state_key or not current_step_state_key or not active_attempt_state_key:
+    errors.append('SELECTED_PROFILE_STATE_BINDING_INCOMPLETE')
+    ex={}; current_step={}; attempt={}
+else:
+    ex=state.get(str(execution_state_key)) or {}
+    current_step=ex.get(str(current_step_state_key)) or {}
+    attempt=state.get(str(active_attempt_state_key)) or {}
+if profile_state.get('owner_ref')!='GOVERNANCE_CURRENT.yaml': errors.append('SELECTED_PROFILE_STATE_OWNER_INVALID')
+if profile_state.get('global_normative_authority') is not False: errors.append('SELECTED_PROFILE_STATE_WRONGLY_NORMATIVE')
+if profile_state.get('profile_step_identities_are_global_governance') is not False: errors.append('PROFILE_STEP_IDENTITY_WRONGLY_GLOBAL')
 if trans.get('current_governance_uid')!=uid or trans.get('fresh_revalidation_required') is not True: errors.append('AUTHORITY_TRANSITION_REVALIDATION_MISSING')
 if trans.get('predecessor_attempt_may_close_under_current_governance') is not False: errors.append('PREDECESSOR_ATTEMPT_CLOSURE_CREDIT_NOT_BLOCKED')
 if attempt.get('closure_credit_under_current_governance') is not False or attempt.get('fresh_revalidation_required') is not True: errors.append('PREDECESSOR_ATTEMPT_NOT_HISTORICAL')
-if s2.get('prior_results_authoritative_for_current_governance') is not False or s2.get('revalidation_required_under_current_governance') is not True: errors.append('RUN_STATE_REVALIDATION_PROJECTION_INVALID')
+if current_step.get('prior_results_authoritative_for_current_governance') is not False or current_step.get('revalidation_required_under_current_governance') is not True: errors.append('RUN_STATE_REVALIDATION_PROJECTION_INVALID')
 if ex.get('website_construction_allowed') is not False or ex.get('deployment_allowed') is not False: errors.append('PRODUCT_GATE_WRONGLY_OPENED')
 
 gate_ref='governance/ci/validate_active_consumer_reference_integrity.py'
@@ -164,5 +175,5 @@ print('PASS: reusable validation/remediation/closure policy is profile-neutral a
 print('PASS: mutation control preserves freeze, explicit authorization, complete reverse-consumer inventory, atomic reference migration, and fresh revalidation')
 print('PASS: finding terminalization requires persisted-head evidence tied to the exact finding signature and remediation target')
 print('PASS: active-consumer reference-integrity gate is mandatory in targeted and Full-Line regression paths')
-print('PASS: predecessor Stage/Run evidence remains historical RUN_STATE and cannot become current closure credit')
+print('PASS: predecessor profile/run evidence remains historical RUN_STATE and cannot become current closure credit')
 print('PASS: website construction and deployment remain blocked')

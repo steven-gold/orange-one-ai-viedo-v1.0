@@ -1,0 +1,24 @@
+{
+  "artifact_type": "NON_NORMATIVE_ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT",
+  "workflow_count": 56,
+  "direct_governance_python_target_count": 124,
+  "missing_targets": {},
+  "semver_locator_consumers": {},
+  "active_governance_projectors": {
+    "governance/specifications/current/SPECIFICATION_MANIFEST.yaml": "GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE",
+    "GOVERNANCE_CURRENT.yaml": "GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE",
+    "governance/test/ACTIVE_STATE.yaml": "GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE",
+    "governance/test/ACTIVE_STATE.yaml#transition": "GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE"
+  },
+  "selected_execution_profile": {
+    "profile_uid": "ACPOS-WEB-DELIVERY-PROFILE-11",
+    "registry": ".github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml",
+    "global_normative_authority": false
+  },
+  "required_regression_gate_presence": {
+    ".github/workflows/governance-selected-profile-integrity.yml": true,
+    ".github/workflows/governance-full-line-system-gate.yml": true
+  },
+  "result": "PASS",
+  "errors": []
+}

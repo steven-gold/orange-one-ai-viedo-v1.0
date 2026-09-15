@@ -8,7 +8,7 @@ from canonical_rule_registry import load_registry, scan_policy_text
 ROOT=Path(__file__).resolve().parents[2]
 CUR=ROOT/'governance/specifications/current'
 MOTHER=ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec'
-PROFILE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
+CURRENT_ENTRY=ROOT/'GOVERNANCE_CURRENT.yaml'
 failures=[]
 try:
     canonical=load_registry()
@@ -37,16 +37,79 @@ old={'STAGE_EXECUTION_OPTIMIZATION.yaml','STAGE_TEST_REMEDIATION_CLOSURE_PROTOCO
 if old & set(files): failures.append('superseded_stage_test_component_still_manifested')
 if any((CUR/x).exists() for x in old): failures.append('superseded_stage_test_component_residual')
 
-prof=yaml.safe_load(PROFILE.read_text()) or {}
-if prof.get('layer_classification')!='EXECUTION_PROFILE' or prof.get('global_normative_authority') is not False: failures.append('profile_layer_classification_invalid')
-if prof.get('profile_local_denominator')!=len(prof.get('stages') or []): failures.append('profile_local_denominator_drift')
-if prof.get('profile_local_denominator')!=11: failures.append('acpos_profile_11_step_contract_drift')
+entry=yaml.safe_load(CURRENT_ENTRY.read_text(encoding='utf-8')) or {}
+selected=entry.get('selected_execution_profile') or {}
+profile_ref=selected.get('registry')
+if not profile_ref:
+    failures.append('selected_profile_registry_missing')
+    prof={}
+else:
+    profile_path=ROOT/str(profile_ref)
+    if not profile_path.is_file():
+        failures.append('selected_profile_registry_target_missing:'+str(profile_ref))
+        prof={}
+    else:
+        prof=yaml.safe_load(profile_path.read_text(encoding='utf-8')) or {}
 
-synthetic=[{'uid':'SYNTH-A','steps':['discover','design','ship']},{'uid':'SYNTH-B','steps':['intake','contract','visual','build','verify','release','operate']}]
+if selected.get('layer_classification')!='EXECUTION_PROFILE' or selected.get('global_normative_authority') is not False:
+    failures.append('current_selected_profile_classification_invalid')
+if prof.get('artifact_type')!='EXECUTION_PROFILE_REGISTRY':
+    failures.append('profile_registry_type_invalid')
+if prof.get('layer_classification')!='EXECUTION_PROFILE' or prof.get('global_normative_authority') is not False:
+    failures.append('profile_layer_classification_invalid')
+if prof.get('profile_uid') != selected.get('profile_uid'):
+    failures.append('selected_profile_uid_drift')
+profile_steps=prof.get('stages') or []
+if int(prof.get('profile_local_denominator') or -1)!=len(profile_steps):
+    failures.append('profile_local_denominator_drift')
+if int(selected.get('profile_local_denominator') or -1)!=len(profile_steps):
+    failures.append('current_selected_profile_denominator_drift')
+
+synthetic=[
+    {'uid':'SYNTH-A','steps':['discover','design','ship']},
+    {'uid':'SYNTH-B','steps':['intake','contract','visual','build','verify','release','operate']},
+]
+if len({len(x['steps']) for x in synthetic}) < 2:
+    failures.append('synthetic_profile_denominators_not_materially_different')
 policy_blob='\n'.join((CUR/f).read_text(encoding='utf-8') for f in files)
-for s in synthetic:
-    for step in s['steps']:
-        if step.upper() in policy_blob and ('SYNTH-' in policy_blob): failures.append('synthetic_profile_leaked_into_policy')
+for synthetic_profile in synthetic:
+    if synthetic_profile['uid'] in policy_blob:
+        failures.append('synthetic_profile_leaked_into_policy:'+synthetic_profile['uid'])
 
-out={'status':'PASS' if not failures else 'FAIL','canonical_registry_uid':canonical.get('registry_uid'),'canonical_registry_digest':canonical.get('registry_digest'),'mother_files':len(list(MOTHER.glob('*.md'))),'current_components':len(files),'selected_profile_steps':len(prof.get('stages') or []),'synthetic_profile_denominators':[len(x['steps']) for x in synthetic],'failures':failures}
-print(json.dumps(out,ensure_ascii=False,indent=2)); raise SystemExit(0 if not failures else 1)
+# Machine-layer portability: reusable/global validators and workflows must not
+# hard-bind any concrete profile step identity or profile-specific step schema.
+global_surfaces=[
+    ROOT/'governance/ci/validate_governance_portability.py',
+    ROOT/'governance/ci/validate_active_consumer_reference_integrity.py',
+    ROOT/'governance/ci/validate_authoring_reference_governance_coverage.py',
+    ROOT/'governance/ci/validate_validation_remediation_closure_protocol.py',
+    ROOT/'governance/ci/validate_selected_execution_profile_integrity.py',
+    ROOT/'.github/workflows/governance-selected-profile-integrity.yml',
+    ROOT/'.github/workflows/governance-full-line-system-gate.yml',
+]
+fixed_step=re.compile(r'\bSTAGE-\d{2}\b', re.IGNORECASE)
+fixed_schema=re.compile(r'\bstage0?[1-9]\b', re.IGNORECASE)
+for surface in global_surfaces:
+    if not surface.is_file():
+        failures.append('global_portability_surface_missing:'+surface.relative_to(ROOT).as_posix())
+        continue
+    body=surface.read_text(encoding='utf-8')
+    if fixed_step.search(body):
+        failures.append('global_machine_fixed_profile_step_identity:'+surface.relative_to(ROOT).as_posix())
+    if fixed_schema.search(body):
+        failures.append('global_machine_profile_specific_step_schema:'+surface.relative_to(ROOT).as_posix())
+
+out={
+    'status':'PASS' if not failures else 'FAIL',
+    'canonical_registry_uid':canonical.get('registry_uid'),
+    'canonical_registry_digest':canonical.get('registry_digest'),
+    'mother_files':len(list(MOTHER.glob('*.md'))),
+    'current_components':len(files),
+    'selected_profile_uid':selected.get('profile_uid'),
+    'selected_profile_steps':len(profile_steps),
+    'synthetic_profile_denominators':[len(x['steps']) for x in synthetic],
+    'global_machine_surfaces_checked':len(global_surfaces),
+    'failures':failures,
+}
+print(json.dumps(out,ensure_ascii=False,indent=2))
+raise SystemExit(0 if not failures else 1)

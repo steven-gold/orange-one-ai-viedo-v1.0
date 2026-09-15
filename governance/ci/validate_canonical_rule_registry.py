@@ -111,7 +111,7 @@ invalid_prewrite_receipt = valid_prewrite_receipt.replace('duplicate_search_comp
 if not prewrite_context_errors(invalid_prewrite_receipt):
     fail('PREWRITE_MISSING_DUPLICATE_PROOF_NOT_BLOCKED')
 
-for rel in ('.github/workflows/governance-full-line-system-gate.yml','.github/workflows/targeted-stage01-stage02.yml'):
+for rel in ('.github/workflows/governance-full-line-system-gate.yml','.github/workflows/governance-selected-profile-integrity.yml'):
     p=ROOT/rel
     if not p.is_file():
         fail('ACTIVE_WORKFLOW_MISSING:'+rel)

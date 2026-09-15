@@ -1,4 +1,4 @@
-name: Current Governance Stage01 Reset Integrity Gate
+name: Current Governance Selected Execution Profile Integrity Gate
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  stage01-reset-integrity:
+  selected-profile-integrity:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
         run: python governance/ci/governance_resolver.py
       - name: Validate canonical rule registry anti-drift binding
         run: python governance/ci/validate_canonical_rule_registry.py
-      - name: Validate reusable governance portability through canonical taxonomy
+      - name: Validate reusable governance portability and machine-layer profile isolation
         run: python governance/ci/validate_governance_portability.py
       - name: Validate neutral validation remediation closure protocol
         run: python governance/ci/validate_validation_remediation_closure_protocol.py
@@ -33,7 +33,5 @@ jobs:
         run: python governance/ci/validate_active_consumer_reference_integrity.py
       - name: Stress test registry resolution and fail-closed invariants
         run: python governance/ci/stress_test_governance_registry.py
-      - name: Validate Stage-01 artifacts bind to current governance by Registry UID
-        run: python governance/ci/validate_stage01_registry_binding.py
-      - name: Validate Stage-02 predecessor or legal external-authority-aware successor/remediation state integrity
-        run: python governance/ci/validate_stage02_successor_integrity_external_aware_r3.py
+      - name: Validate selected execution profile and profile-local evidence
+        run: python governance/ci/validate_selected_execution_profile_integrity.py

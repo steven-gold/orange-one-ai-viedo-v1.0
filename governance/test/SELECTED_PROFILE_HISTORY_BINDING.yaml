@@ -1,15 +1,15 @@
-schema_version: 2
-binding_uid: GOV-TEST-STAGE01-ACTIVE-BINDING-001
-binding_role: ACTIVE_STAGE01_TEST_ARTIFACT_TO_CURRENT_GOVERNANCE_BINDING
-status: ACTIVE_TEST_BINDING
-current_governance_resolution:
-  registry_ref: governance/specifications/REGISTRY.yaml
-  governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
-  canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
-  canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
-  locator_mode: REGISTRY_ONLY
-  version_labels_are_locator: false
-  copied_runtime_digest_required: false
+schema_version: 3
+binding_uid: GOV-TEST-SELECTED-PROFILE-HISTORY-BINDING-001
+artifact_type: PROFILE_SPECIFIC_HISTORICAL_ARTIFACT_BINDING
+normative_authority: false
+global_governance_projector: false
+status: ACTIVE_PROFILE_HISTORY_EVIDENCE_BINDING
+selected_execution_profile:
+  owner_ref: GOVERNANCE_CURRENT.yaml
+  profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
+  registry_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  layer_classification: EXECUTION_PROFILE
+  global_normative_authority: false
 artifact_semantics:
   governance_overlay_field: CREATION_PROVENANCE_ONLY
   historical_version_labels_may_be_preserved: true
@@ -19,7 +19,6 @@ artifact_semantics:
   current_governance_must_be_resolved_at_validation_runtime: true
 scope:
   CORE-01:
-    stage_uid: STAGE-01
     expected_result: PASS
     artifacts:
     - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
@@ -28,8 +27,8 @@ scope:
       creation_governance_overlay: v2.1.9
     - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
       creation_governance_overlay: v2.1.10
+    profile_step_uid: STAGE-01
   ASSET-01:
-    stage_uid: STAGE-01
     expected_result: PASS
     artifacts:
     - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml
@@ -38,11 +37,12 @@ scope:
       creation_governance_overlay: v2.1.9
     - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING/ASSET-01/BLUEPRINT_BINDING_MANIFEST.yaml
       creation_governance_overlay: v2.1.10
+    profile_step_uid: STAGE-01
 binding_rules:
-- Active Stage-01 validation MUST resolve current governance through REGISTRY.yaml.
-- Canonical reusable rule identity MUST resolve through the Current Canonical Rule Registry.
-- governance_overlay inside preserved Stage-01 artifacts is provenance only and MUST NOT be used as a locator.
-- Display-version changes MUST NOT force Stage-01 artifact or artifact-hash rewrites.
-- Immutable governance UID is the active governance identity.
-- Historical receipts may retain old versioned references only as historical evidence and MUST NOT be active pointers.
-- Stage-01 preserved artifact bytes MUST NOT be rewritten to satisfy later Current Specification changes unless a distinct explicit artifact-migration authority exists.
+- Profile step identities in this artifact are selected-profile-local historical evidence
+  only.
+- This artifact MUST NOT project, select, or override Current Governance identity.
+- Current Governance MUST resolve independently through governance/specifications/REGISTRY.yaml.
+- Historical artifact governance_overlay values are creation provenance only.
+- Historical artifact bytes and hashes MUST NOT be rewritten merely because Current
+  Governance changes.

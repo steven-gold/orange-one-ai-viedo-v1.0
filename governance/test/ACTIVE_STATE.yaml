@@ -5,6 +5,18 @@ specification_registry_ref: governance/specifications/REGISTRY.yaml
 specification_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
+selected_execution_profile_state:
+  owner_ref: GOVERNANCE_CURRENT.yaml
+  profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
+  global_normative_authority: false
+  profile_step_identities_are_global_governance: false
+  execution_state_key: execution
+  current_step_state_key: stage2
+  active_attempt_state_key: stage02_active_attempt
+  history_binding_ref: governance/test/SELECTED_PROFILE_HISTORY_BINDING.yaml
+  profile_validator_refs:
+  - governance/ci/validate_profile_history_binding.py
+  - governance/ci/validate_stage02_successor_integrity_external_aware_r3.py
 execution:
   branch: rebuild-v2.1.1
   run_uid: FRESH-RUN-003
@@ -13,8 +25,6 @@ execution:
   - CORE-01
   - ASSET-01
   current_stage: STAGE-02-TESTED-BLOCKED
-  stage1_binding_ref: governance/test/STAGE01_ACTIVE_BINDING.yaml
-  stage1_binding_mode: REGISTRY_UID_RUNTIME_RESOLUTION
   stage1:
     CORE-01: PASS
     ASSET-01: PASS

@@ -29,7 +29,7 @@ REFERENCE_GATE = ROOT / "governance/ci/validate_active_consumer_reference_integr
 CANONICAL_GATE = ROOT / "governance/ci/validate_canonical_rule_registry.py"
 LAYOUT_GATE = ROOT / "governance/ci/validate_governance_layout.py"
 
-TARGETED = ROOT / ".github/workflows/targeted-stage01-stage02.yml"
+TARGETED = ROOT / ".github/workflows/governance-selected-profile-integrity.yml"
 FULL_LINE = ROOT / ".github/workflows/governance-full-line-system-gate.yml"
 
 failures: list[str] = []
