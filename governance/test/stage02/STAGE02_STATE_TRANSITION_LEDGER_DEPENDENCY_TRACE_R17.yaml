@@ -1,0 +1,3242 @@
+schema_version: 1
+artifact_type: NON_NORMATIVE_STAGE02_STATE_TRANSITION_LEDGER_DEPENDENCY_TRACE_R17
+normative_authority: false
+stage_uid: STAGE-02
+cycle: STATE_TRANSITION_LEDGER_EXACT_DEPENDENCY_TRACE_R17
+source_head_sha: 0f941e27be891ad2d5f85e3bd97000718013fdad
+source_contracts:
+  r12_identity_source: governance/test/stage02/STAGE02_AUTHORITY_DEPENDENCY_RECLASSIFICATION_R12.yaml
+  r12_classification_accepted_as_authority: false
+  functional_chain_sources:
+    CORE-01: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    ASSET-01: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+  current_page_authority_exact_captures:
+    CORE-01: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    ASSET-01: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  external_authority_materialization_evidence: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/STAGE2_EXTERNAL_AUTHORITY_MATERIALIZATION_EVIDENCE.yaml
+  current_admissible_external_sources:
+  - gap_uid: GAP-005
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-005/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_MATCH
+    git_blob_sha: 12ef6d233e09f84571dd5d694ae8e3789ae70502
+  - gap_uid: GAP-006
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-006/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_MATCH
+    git_blob_sha: 12dbdf59a60df5b1cb3d3b18666209c05bb0c0a3
+  - gap_uid: GAP-008
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_CHAIN_LOCATED
+    git_blob_sha: b09b7ca50313172ea021d9da0c8d57f2942f7b19
+  - gap_uid: GAP-008
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_CHAIN_LOCATED
+    git_blob_sha: dd9f05e295af57cc833e90d1a12030c8198580c6
+  - gap_uid: GAP-008
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_CHAIN_LOCATED
+    git_blob_sha: 7d234cc2f2f831b82f2007403c71d4008b46a012
+  - gap_uid: ASYNC-QUEUE
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ASYNC/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_MATCH
+    git_blob_sha: ac3619b3bc547ce06f244c239fa69d3cac78da76
+trace_contract:
+  required_exact_ledger_fields:
+  - audit_event_uid
+  - failure_state
+  - mutation_owner
+  - recovery
+  field_must_be_physically_present_on_same_exact_transition_uid: true
+  action_owner_may_supply_mutation_owner: false
+  error_uid_may_supply_failure_state: false
+  state_event_may_supply_audit_event_uid: false
+  semantic_recovery_inference_allowed: false
+  cross_node_field_inference_allowed: false
+  classification_alone_may_reduce_blocker: false
+denominators:
+  state_transition_ledger_field_gaps_traced: 40
+  unique_transition_count: 10
+  scope_counts:
+    ASSET-01: 20
+    CORE-01: 20
+  missing_field_counts:
+    mutation_owner: 10
+    failure_state: 10
+    recovery: 10
+    audit_event_uid: 10
+  exact_transition_ledger_field_found: 0
+  conflicting_transition_ledger_field_values: 0
+  frozen_transition_identity_only_field_missing: 40
+  current_frozen_transition_ledger_contract_missing: 0
+  effective_stage02_blocker_reduction_claimed: 0
+records:
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-091
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-01
+  missing_field_or_relation: mutation_owner
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-091
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-01
+    from_stage: ASSET-01-STAGE-01-RESOLVE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-FLOW-START
+    gate: ASSET-01-GATE-EXECUTE
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-EXECUTE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-01-RESOLVE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-FLOW-START
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-EXECUTE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-01-RESOLVE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-FLOW-START
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-092
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-01
+  missing_field_or_relation: failure_state
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-092
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-01
+    from_stage: ASSET-01-STAGE-01-RESOLVE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-FLOW-START
+    gate: ASSET-01-GATE-EXECUTE
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-EXECUTE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-01-RESOLVE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-FLOW-START
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-EXECUTE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-01-RESOLVE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-FLOW-START
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-093
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-01
+  missing_field_or_relation: recovery
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-093
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-01
+    from_stage: ASSET-01-STAGE-01-RESOLVE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-FLOW-START
+    gate: ASSET-01-GATE-EXECUTE
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-EXECUTE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-01-RESOLVE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-FLOW-START
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-EXECUTE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-01-RESOLVE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-FLOW-START
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-094
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-01
+  missing_field_or_relation: audit_event_uid
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-094
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-01
+    from_stage: ASSET-01-STAGE-01-RESOLVE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-FLOW-START
+    gate: ASSET-01-GATE-EXECUTE
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-EXECUTE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-01-RESOLVE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-FLOW-START
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-EXECUTE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-01-RESOLVE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-FLOW-START
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-095
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-02
+  missing_field_or_relation: mutation_owner
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-095
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-02
+    from_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    to_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    trigger: Verified Candidate/Reuse Resolution
+    gate: all required items resolved or valid candidate produced
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: all required items resolved or valid candidate produced
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: Verified Candidate/Reuse Resolution
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: all required items resolved or valid candidate produced
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: Verified Candidate/Reuse Resolution
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-096
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-02
+  missing_field_or_relation: failure_state
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-096
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-02
+    from_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    to_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    trigger: Verified Candidate/Reuse Resolution
+    gate: all required items resolved or valid candidate produced
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: all required items resolved or valid candidate produced
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: Verified Candidate/Reuse Resolution
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: all required items resolved or valid candidate produced
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: Verified Candidate/Reuse Resolution
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-097
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-02
+  missing_field_or_relation: recovery
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-097
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-02
+    from_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    to_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    trigger: Verified Candidate/Reuse Resolution
+    gate: all required items resolved or valid candidate produced
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: all required items resolved or valid candidate produced
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: Verified Candidate/Reuse Resolution
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: all required items resolved or valid candidate produced
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: Verified Candidate/Reuse Resolution
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-098
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-02
+  missing_field_or_relation: audit_event_uid
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-098
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-02
+    from_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    to_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    trigger: Verified Candidate/Reuse Resolution
+    gate: all required items resolved or valid candidate produced
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: all required items resolved or valid candidate produced
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: Verified Candidate/Reuse Resolution
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: all required items resolved or valid candidate produced
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: Verified Candidate/Reuse Resolution
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-099
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-03
+  missing_field_or_relation: mutation_owner
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-099
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-03
+    from_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    to_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    trigger: ASSET-01-ACT-EVALUATE
+    gate: candidate/layer/composite provenance PASS
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: candidate/layer/composite provenance PASS
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-EVALUATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: candidate/layer/composite provenance PASS
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-EVALUATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-100
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-03
+  missing_field_or_relation: failure_state
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-100
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-03
+    from_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    to_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    trigger: ASSET-01-ACT-EVALUATE
+    gate: candidate/layer/composite provenance PASS
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: candidate/layer/composite provenance PASS
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-EVALUATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: candidate/layer/composite provenance PASS
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-EVALUATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-101
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-03
+  missing_field_or_relation: recovery
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-101
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-03
+    from_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    to_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    trigger: ASSET-01-ACT-EVALUATE
+    gate: candidate/layer/composite provenance PASS
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: candidate/layer/composite provenance PASS
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-EVALUATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: candidate/layer/composite provenance PASS
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-EVALUATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-102
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-03
+  missing_field_or_relation: audit_event_uid
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-102
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-03
+    from_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    to_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    trigger: ASSET-01-ACT-EVALUATE
+    gate: candidate/layer/composite provenance PASS
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: candidate/layer/composite provenance PASS
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-EVALUATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: candidate/layer/composite provenance PASS
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-EVALUATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-103
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-04
+  missing_field_or_relation: mutation_owner
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-103
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-04
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-CORRECTION-EXECUTE
+    gate: Modify path; approved correction only
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: Modify path; approved correction only
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CORRECTION-EXECUTE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: Modify path; approved correction only
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CORRECTION-EXECUTE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-104
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-04
+  missing_field_or_relation: failure_state
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-104
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-04
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-CORRECTION-EXECUTE
+    gate: Modify path; approved correction only
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: Modify path; approved correction only
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CORRECTION-EXECUTE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: Modify path; approved correction only
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CORRECTION-EXECUTE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-105
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-04
+  missing_field_or_relation: recovery
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-105
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-04
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-CORRECTION-EXECUTE
+    gate: Modify path; approved correction only
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: Modify path; approved correction only
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CORRECTION-EXECUTE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: Modify path; approved correction only
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CORRECTION-EXECUTE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-106
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-04
+  missing_field_or_relation: audit_event_uid
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-106
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-04
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-CORRECTION-EXECUTE
+    gate: Modify path; approved correction only
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: Modify path; approved correction only
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CORRECTION-EXECUTE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-02-REUSE-GENERATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: Modify path; approved correction only
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CORRECTION-EXECUTE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-107
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-05
+  missing_field_or_relation: mutation_owner
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-107
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-05
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-05-FINALIZE
+    trigger: ASSET-01-ACT-CANDIDATE-CONFIRM
+    gate: ASSET-01-GATE-CONFIRM
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-05-FINALIZE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-CONFIRM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CANDIDATE-CONFIRM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-05-FINALIZE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-CONFIRM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CANDIDATE-CONFIRM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-108
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-05
+  missing_field_or_relation: failure_state
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-108
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-05
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-05-FINALIZE
+    trigger: ASSET-01-ACT-CANDIDATE-CONFIRM
+    gate: ASSET-01-GATE-CONFIRM
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-05-FINALIZE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-CONFIRM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CANDIDATE-CONFIRM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-05-FINALIZE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-CONFIRM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CANDIDATE-CONFIRM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-109
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-05
+  missing_field_or_relation: recovery
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-109
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-05
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-05-FINALIZE
+    trigger: ASSET-01-ACT-CANDIDATE-CONFIRM
+    gate: ASSET-01-GATE-CONFIRM
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-05-FINALIZE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-CONFIRM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CANDIDATE-CONFIRM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-05-FINALIZE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-CONFIRM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CANDIDATE-CONFIRM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-110
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-05
+  missing_field_or_relation: audit_event_uid
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-110
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: ASSET-01-STTR-05
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-05-FINALIZE
+    trigger: ASSET-01-ACT-CANDIDATE-CONFIRM
+    gate: ASSET-01-GATE-CONFIRM
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-05-FINALIZE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-CONFIRM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CANDIDATE-CONFIRM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: ASSET-01-STAGE-05-FINALIZE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate
+    value: ASSET-01-GATE-CONFIRM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger
+    value: ASSET-01-ACT-CANDIDATE-CONFIRM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-131
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: mutation_owner
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-131
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-01
+    from_stage: CORE-01-STAGE-01-CONTEXT
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    gate_uid: CORE-01-GATE-WORK-ITEM
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-01-CONTEXT
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-CONTEXT-RESOLVED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-WORK-ITEM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-01-CONTEXT
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-CONTEXT-RESOLVED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-WORK-ITEM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-132
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: failure_state
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-132
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-01
+    from_stage: CORE-01-STAGE-01-CONTEXT
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    gate_uid: CORE-01-GATE-WORK-ITEM
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-01-CONTEXT
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-CONTEXT-RESOLVED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-WORK-ITEM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-01-CONTEXT
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-CONTEXT-RESOLVED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-WORK-ITEM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-133
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: recovery
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-133
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-01
+    from_stage: CORE-01-STAGE-01-CONTEXT
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    gate_uid: CORE-01-GATE-WORK-ITEM
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-01-CONTEXT
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-CONTEXT-RESOLVED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-WORK-ITEM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-01-CONTEXT
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-CONTEXT-RESOLVED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-WORK-ITEM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-134
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: audit_event_uid
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-134
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-01
+    from_stage: CORE-01-STAGE-01-CONTEXT
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    gate_uid: CORE-01-GATE-WORK-ITEM
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-01-CONTEXT
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-CONTEXT-RESOLVED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.0
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-WORK-ITEM
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-01-CONTEXT
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-CONTEXT-RESOLVED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.0
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-WORK-ITEM
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-135
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: mutation_owner
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-135
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-02
+    from_stage: CORE-01-STAGE-02-CONVERSE
+    to_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    trigger_event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    gate_uid: CORE-01-GATE-SUMMARY
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-AI-RESPONSES-READY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-SUMMARY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-AI-RESPONSES-READY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-SUMMARY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-136
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: failure_state
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-136
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-02
+    from_stage: CORE-01-STAGE-02-CONVERSE
+    to_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    trigger_event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    gate_uid: CORE-01-GATE-SUMMARY
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-AI-RESPONSES-READY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-SUMMARY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-AI-RESPONSES-READY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-SUMMARY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-137
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: recovery
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-137
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-02
+    from_stage: CORE-01-STAGE-02-CONVERSE
+    to_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    trigger_event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    gate_uid: CORE-01-GATE-SUMMARY
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-AI-RESPONSES-READY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-SUMMARY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-AI-RESPONSES-READY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-SUMMARY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-138
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: audit_event_uid
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-138
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-02
+    from_stage: CORE-01-STAGE-02-CONVERSE
+    to_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    trigger_event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    gate_uid: CORE-01-GATE-SUMMARY
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-AI-RESPONSES-READY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.1
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-SUMMARY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-AI-RESPONSES-READY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.1
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-SUMMARY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-139
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: mutation_owner
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-139
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-03
+    from_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    to_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    trigger_event_uid: CORE-01-EVT-EVALUATION-READY
+    gate_uid: CORE-01-GATE-EVALUATION
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-EVALUATION-READY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-EVALUATION
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-EVALUATION-READY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-EVALUATION
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-140
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: failure_state
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-140
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-03
+    from_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    to_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    trigger_event_uid: CORE-01-EVT-EVALUATION-READY
+    gate_uid: CORE-01-GATE-EVALUATION
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-EVALUATION-READY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-EVALUATION
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-EVALUATION-READY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-EVALUATION
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-141
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: recovery
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-141
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-03
+    from_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    to_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    trigger_event_uid: CORE-01-EVT-EVALUATION-READY
+    gate_uid: CORE-01-GATE-EVALUATION
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-EVALUATION-READY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-EVALUATION
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-EVALUATION-READY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-EVALUATION
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-142
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: audit_event_uid
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-142
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-03
+    from_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    to_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    trigger_event_uid: CORE-01-EVT-EVALUATION-READY
+    gate_uid: CORE-01-GATE-EVALUATION
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-EVALUATION-READY
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.2
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-EVALUATION
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-03-SUMMARY-EVAL
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-EVALUATION-READY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.2
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-EVALUATION
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-143
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: mutation_owner
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-143
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-04
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-HUMAN-DECISION
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-HUMAN-DECISION
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-HUMAN-DECISION
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-144
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: failure_state
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-144
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-04
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-HUMAN-DECISION
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-HUMAN-DECISION
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-HUMAN-DECISION
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-145
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: recovery
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-145
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-04
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-HUMAN-DECISION
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-HUMAN-DECISION
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-HUMAN-DECISION
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-146
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: audit_event_uid
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-146
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-04
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-HUMAN-DECISION
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.3
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-HUMAN-DECISION
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-02-CONVERSE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.3
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-HUMAN-DECISION
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-147
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: mutation_owner
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-147
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-05
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-05-CANDIDATE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-05-CANDIDATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-CANDIDATE-CREATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-05-CANDIDATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-CANDIDATE-CREATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-148
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: failure_state
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-148
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-05
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-05-CANDIDATE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-05-CANDIDATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-CANDIDATE-CREATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-05-CANDIDATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-CANDIDATE-CREATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-149
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: recovery
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-149
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-05
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-05-CANDIDATE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-05-CANDIDATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-CANDIDATE-CREATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-05-CANDIDATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-CANDIDATE-CREATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-150
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: audit_event_uid
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-150
+  r12_classification_used_as_authority: false
+  transition_identity:
+    transition_uid: CORE-01-STTR-05
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-05-CANDIDATE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+  current_transition_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  exact_transition_ledger_field_evidence: []
+  transition_identity_or_signal_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-05-CANDIDATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.stage_transitions.4
+    proof: EXACT_FROZEN_TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-CANDIDATE-CREATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: to_stage
+    value: CORE-01-STAGE-05-CANDIDATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: from_stage
+    value: CORE-01-STAGE-04-HUMAN-DECIDE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: trigger_event_uid
+    value: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    node_path: registries.stage_transitions.4
+    proof: EXACT_TRANSITION_UID+TRANSITION_IDENTITY_OR_SIGNAL
+    key: gate_uid
+    value: CORE-01-GATE-CANDIDATE-CREATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_exact_field_value_count: 0
+  classification: FROZEN_TRANSITION_IDENTITY_ONLY_FIELD_MISSING
+  materialization_candidate: false
+  cross_node_field_inference_used: false
+  action_owner_promoted_to_mutation_owner: false
+  error_uid_promoted_to_failure_state: false
+  state_event_promoted_to_audit_event_uid: false
+  semantic_recovery_inference_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_SAME_TRANSITION_UID_LEDGER_FIELD_IS_PROVEN
+stage02_status: BLOCKED
+stage02_effective_blocker_count_before_any_materialization_and_fresh_reexecution: 150
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
