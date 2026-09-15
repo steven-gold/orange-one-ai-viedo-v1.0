@@ -1,0 +1,71 @@
+name: Stage-02 Post-Action Validation Materialization R38
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/stage02-post-action-validation-materialization-r38.yml'
+      - 'governance/ci/build_stage02_post_action_validation_materialization_r38.py'
+      - 'governance/ci/validate_stage02_post_action_validation_materialization_r38.py'
+      - 'governance/test/stage02/STAGE02_POST_ACTION_VALIDATION_CANDIDATE_AUTHORING_R37.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-reexecute-validate-persist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install YAML dependency
+        run: python -m pip install pyyaml
+      - name: Compile R38 implementation
+        run: |
+          python -m py_compile governance/ci/build_stage02_post_action_validation_materialization_r38.py
+          python -m py_compile governance/ci/validate_stage02_post_action_validation_materialization_r38.py
+      - name: Revalidate R37 candidate authority boundary
+        run: python governance/ci/validate_stage02_post_action_validation_candidate_authoring_r37.py
+      - name: Materialize candidates and perform fresh physical reexecution
+        run: python governance/ci/build_stage02_post_action_validation_materialization_r38.py
+      - name: Validate material remediation and fresh denominator
+        run: python governance/ci/validate_stage02_post_action_validation_materialization_r38.py
+      - name: Prove frozen Current Specification and immutable Stage-1 Raw authority unchanged
+        run: |
+          git diff --exit-code -- governance/specifications/current
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+      - name: Assert exact 15-signature closure before persistence
+        run: |
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          d=yaml.safe_load(Path('governance/test/stage02/STAGE02_POST_ACTION_VALIDATION_MATERIALIZATION_R38.yaml').read_text())
+          fresh=d['fresh_physical_reexecution']; base=d['baseline_comparison']
+          assert fresh['new_r38_signatures_present_in_raw_count']==15
+          assert fresh['new_r38_signatures_eliminated_from_effective_count']==15
+          assert fresh['new_r38_signatures_remaining_effective_count']==0
+          assert base['proven_blocker_reduction_this_cycle']==15
+          assert d['stage02_status']=='BLOCKED' and d['stage03_allowed'] is False
+          print(f"PASS: exact R38 closure proven; effective={fresh['effective_gap_total']}")
+          PY
+      - name: Persist owning-layer remediation and R38 evidence
+        run: |
+          paths=(
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml'
+            'governance/test/stage02/STAGE02_POST_ACTION_VALIDATION_MATERIALIZATION_R38.yaml'
+          )
+          if [ -z "$(git status --porcelain -- "${paths[@]}")" ]; then
+            echo 'R38 outputs unchanged'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "${paths[@]}"
+          git commit -m 'feat(stage02): materialize exact post-action validation closures R38'
+          git push origin HEAD:rebuild-v2.1.1
