@@ -1,0 +1,84 @@
+schema_version: 1
+artifact_type: NON_NORMATIVE_SPECIFICATION_CHANGE_CANDIDATE
+normative_authority: false
+finding_uid: FIND-20260915-027
+stage_uid: STAGE-02
+title: GOVERNANCE_PROMOTION_PROJECTION_ATOMICITY_GAP
+class: GOVERNANCE_SPECIFICATION_REUSABILITY_GAP
+status: OPEN_FOR_STAGE_END_CONSOLIDATED_PROMOTION_REVIEW
+severity: HIGH
+specification_change_required: true
+formal_specification_mutated_for_fix: false
+current_specification_may_be_modified_from_this_finding_alone: false
+ordinary_mid_stage_normative_promotion_allowed: false
+finding_may_auto_promote: false
+observed_failures:
+- run_id: 34935154063
+  defect: VERIFY_SOURCE_IDENTITY retained the pre-promotion deterministic bundle SHA
+    after v2.1.15 source promotion.
+- run_id: 34935792840
+  defect: Full-Line runner retained pre-promotion checksum-manifest SHA, semantic
+    content hash, package SHA, bundle SHA, and a stale v2.1.13 suite denominator.
+- run_id: 34936690855
+  defect: Stage-02 actual-test consumer retained a local seven-output subset while
+    the promoted lifecycle authority required seventeen Stage-02 outputs.
+verified_closure:
+  source_identity_current_bundle_sha256: b8bc298b749f4304afd46fb96f03472d319c432bd7b29d8990ecf49b517d7ddd
+  checksum_manifest_sha256: 7208659cd9ddc0c549b4732e34d9953fd8213eaf14e33d278a8984dad819d24e
+  semantic_authority_content_hash: 9af585e1b2f289a04795a3dbc528b98380c0a64d6528dc6a6cc8cbf6995df0a6
+  verified_package_sha256: b83ca213b6783732de5e9577ef76cb734446f3b43a1901c3c865a43f65d84ebe
+  final_verification_run_id: 34937106161
+  full_line_lifecycle: 11/11
+  preformal: 20/20
+  mandatory_regression_suites: 17/17
+  stage02_official_output_denominator: 17/17
+  fresh_stage02_actual_test_completed: true
+root_cause: v2.1.15 requires atomic governance promotion and post-promotion clean
+  restart, but does not explicitly require every active derived consumer projection
+  to be synchronized and validated in the same promotion transaction. Source identity
+  pins, external trust pins, exact regression denominators, and lifecycle-output consumers
+  could therefore remain bound to the previous governance baseline.
+proposed_normative_rule:
+  promotion_projection_atomicity_required: true
+  promotion_may_complete_with_stale_active_consumer_projection: false
+  same_atomic_promotion_transaction_must_include:
+  - MOTHER_SOURCE_AND_CHECKSUM_MANIFEST
+  - CURRENT_SPECIFICATION_AND_MANIFEST
+  - REGISTRY_PROJECTION
+  - SOURCE_IDENTITY_PINS_AND_CONSUMERS
+  - EXTERNAL_TRUST_ROOT_PINS_AND_CONSUMERS
+  - SEMANTIC_AUTHORITY_CONTENT_HASH_CONSUMERS
+  - VERIFIED_PACKAGE_AND_DETERMINISTIC_BUNDLE_CONSUMERS
+  - MANDATORY_REGRESSION_SUITE_DENOMINATORS
+  - LIFECYCLE_STAGE_OUTPUT_DENOMINATOR_CONSUMERS
+  - ACTIVE_VALIDATOR_AND_WORKFLOW_EXPECTATIONS
+  canonical_denominator_resolution:
+    registry_or_manifest_runtime_resolution_required_when_canonical_authority_exists: true
+    duplicated_local_subset_may_override_canonical_denominator: false
+    hardcoded_version_specific_denominator_without_external_immutable_anchor: false
+  promotion_gate:
+    active_consumer_inventory_required: true
+    stale_previous_governance_pin_scan_required: true
+    exact_candidate_tree_full_line_validation_required: true
+    source_identity_validation_required: true
+    trust_root_validation_required: true
+    all_consumer_projections_must_resolve_promoted_governance_before_commit: true
+    any_stale_active_consumer_blocks_promotion: true
+  post_promotion_invariant:
+    first_clean_stage_restart_may_discover_preexisting_projection_staleness: false
+    discovered_stale_projection_classification: PROMOTION_ATOMICITY_DEFECT
+    timeout_or_skipped_consumer_validation_may_count_as_pass: false
+required_promotion_scope:
+  target_components:
+  - STAGE_EXECUTION_OPTIMIZATION.yaml
+  - STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml
+  - SPECIFICATION_MANIFEST.yaml
+  - REGISTRY.yaml
+  implementation_guards:
+  - specification mutation guard must verify projection inventory coverage
+  - promotion workflow must verify no stale prior-version pins remain in active consumers
+  - source trust and denominator consumers should derive canonical values from authority
+    registries where safe and externally anchored hashes where required
+promotion_timing: STAGE_END_CONSOLIDATED_PROMOTION_ONLY
+new_explicit_authorization_required_before_normative_promotion: true
+stage03_may_advance_before_candidate_review: false
