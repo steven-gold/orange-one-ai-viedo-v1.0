@@ -72,7 +72,7 @@ td, root = make_sandbox()
 try:
     p = root / "governance/specifications/REGISTRY.yaml"
     text = p.read_text(encoding="utf-8")
-    text = text.replace("display_version: v2.1.14", "display_version: release-green", 1)
+    text = text.replace(f"display_version: {BASE['display_version']}", "display_version: release-green", 1)
     p.write_text(text, encoding="utf-8")
     got = resolve_at(root)
     record(

@@ -118,22 +118,35 @@ if f"artifact_uid: {uid}" not in manifest:
     errors.append("MANIFEST_ACTIVE_UID_MISMATCH")
 if "normative_status: ACTIVE_CURRENT_GOVERNANCE" not in manifest:
     errors.append("MANIFEST_MODE_NEUTRAL_ACTIVE_STATUS_MISSING")
+
+# v2.1.15 keeps REGISTRY as the compact stable locator/policy projection. Detailed
+# closure semantics remain canonical in the bound Current Manifest + Protocol and
+# must not be duplicated into REGISTRY solely to satisfy a validator.
 if "component_ref: governance/specifications/current/STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml" not in registry:
     errors.append("REGISTRY_PROTOCOL_COMPONENT_REF_MISSING")
 registry_required = (
     "status: ACTIVE_CURRENT_GOVERNANCE",
-    "single_canonical_execution_rule_set: true",
-    "stage_specification_freeze_required: true",
+    "stage_current_specification_freeze_required: true",
     "ordinary_mid_stage_promotion: FORBIDDEN",
     "stage_end_consolidated_promotion_only: true",
-    "max_atomic_normative_promotions_per_stage_attempt: 1",
-    "promotion_requires_same_stage_restart_from_clean_predecessor_baseline: true",
-    "later_pages_consume_same_active_governance_after_calibration: true",
-    "alternate_scale_out_rule_set: FORBIDDEN",
+    "single_canonical_execution_rule_set: true",
+    "promotion_requires_new_uid_and_same_stage_restart_from_clean_predecessor_baseline: true",
 )
 for token in registry_required:
     if token not in registry:
         errors.append("REGISTRY_TOKEN_MISSING:" + token)
+
+manifest_required = (
+    "single_canonical_execution_rule_set: true",
+    "stage_specification_uid_must_remain_frozen_during_stage: true",
+    "required_stage_candidates_consolidated_in_single_atomic_promotion: true",
+    "stage_restart_under_new_uid_required_after_promotion: true",
+    "pilot_full_lifecycle_required_before_other_page_scale_out: true",
+    "later_pages_must_use_same_active_governance_after_calibration: true",
+)
+for token in manifest_required:
+    if token not in manifest:
+        errors.append("MANIFEST_PROTOCOL_PROJECTION_TOKEN_MISSING:" + token)
 
 if f"specification_uid: {uid}" not in state:
     errors.append("ACTIVE_STATE_SPECIFICATION_UID_STALE")
