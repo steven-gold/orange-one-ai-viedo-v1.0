@@ -1,0 +1,106 @@
+schema_version: 1
+authorization_uid: USR-DIRECTIVE-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE-R2
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+
+exact_scope:
+  statement: >-
+    Continue the user-directed Full-Line source-integrity closure after the first fail-closed
+    successor attempt reduced PRE_FORMAL failures from 7 to 2 without pushing any partial mutation.
+    Preserve the validated R1 repairs and additionally make Current Test Evidence synchronization
+    successor-aware: Current registry/blueprint owners advance to the v2.2.1 source successor,
+    while v2.1.15 High-Pressure, Reference Repair, and machine-review evidence remain exact
+    predecessor history with zero Current successor closure credit and mandatory fresh persisted-head
+    revalidation. Update only the obsolete regression mutation fixtures so they attack the current
+    canonical S058 semantics rather than predecessor prose, while retaining the exact 24/43/54
+    denominators and all other mandatory denominators. Build, validate, and push the source and
+    Current-governance successor only if exact 75-file identity, PRE_FORMAL 20/20, mandatory suites
+    17/17, reference integrity, Registry Stress 13/13, Stage-01, Stage-02, and mutation authorization
+    all pass. Do not relabel historical evidence as Current and do not weaken any gate.
+  denominator_reduction: FORBIDDEN
+  required_expectation_deletion: FORBIDDEN
+  historical_evidence_revision_rewrite: FORBIDDEN
+  historical_evidence_current_closure_credit: FORBIDDEN
+  immutable_semantic_authority_baseline_mutation: FORBIDDEN
+  stage01_artifact_rewrite: FORBIDDEN
+  product_behavior_change: FORBIDDEN
+  external_authority_resolution_or_inference: FORBIDDEN
+  parallel_governance_system_creation: FORBIDDEN
+
+execution_context_identity_lock:
+  baseline_commit_sha: eea8dbec71d00aaccc245a7213d5967d3b8a1d20
+  baseline_tree_sha: c1d0e27e66e1f65d119fd2dd7cc96cd518601ff6
+  current_governance_uid: GOV-REV-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
+  current_display_version: v2.2.2
+  registry_ref: governance/specifications/REGISTRY.yaml
+  canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 18
+  reviewed_existing_owner_ref_count: 13
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+  comparison_result: NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM
+  canonical_owners:
+    - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+    - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
+    - .github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
+    - .github/governance-source/active/source/11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml
+    - .github/governance-source/active/source/11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml
+    - governance/specifications/current/SPECIFICATION_MANIFEST.yaml
+    - governance/specifications/REGISTRY.yaml
+    - GOVERNANCE_CURRENT.yaml
+  implementation_owners:
+    - .github/governance-source/active/source/09_TESTS/governance/validate_current_test_evidence.py
+    - .github/governance-source/active/source/09_TESTS/governance/test_v2_1_8_successor_evidence_sync_bugfix.py
+    - .github/governance-source/active/source/09_TESTS/governance/test_v2_1_10_closure_evidence_continuity.py
+    - .github/governance-source/active/source/09_TESTS/governance/test_v2_1_11_binding_authority_receipt_schema.py
+    - governance/ci/apply_full_line_source_integrity_successor_r2.py
+  predecessor_evidence_owners_preserved_immutable_for_revision_identity:
+    - .github/governance-source/active/source/11_EVIDENCE/audit/HIGH_PRESSURE_HARDENING_RESULT.yaml
+    - .github/governance-source/active/source/11_EVIDENCE/audit/REFERENCE_SEMANTIC_REPAIR_RESULT.yaml
+
+reproduced_gap_evidence:
+  first_attempt_run_id: 35028008168
+  first_attempt_result: FAIL_CLOSED_NO_SUCCESSOR_PUSH
+  source_identity_rebuild: PASS_75_FILES_74_CHECKSUMS_ZERO_RUNTIME_RESIDUAL
+  first_attempt_preformal_before: 13/20
+  first_attempt_preformal_after: 18/20
+  remaining_preformal_failures:
+    - current_test_evidence_sync
+    - mandatory_regression_and_package_integrity
+  remaining_suite_signatures:
+    - test_v2_1_8_successor_evidence_sync_bugfix.py=23/24
+    - test_v2_1_10_closure_evidence_continuity.py=42/43
+    - test_v2_1_11_binding_authority_receipt_schema.py=52/54
+  root_cause: >-
+    Current Test Evidence synchronization still required every evidence artifact and machine-review
+    target to equal the historical v2.1.15 revision, preventing a legal successor from retaining
+    predecessor evidence truthfully while entering fresh revalidation. Two regression files also
+    mutated predecessor exact prose that no longer exists in canonical WEB-GOV-03-S058, making
+    those negative cases no-ops rather than meaningful destructive tests.
+
+required_closure_evidence:
+  - Exact source identity: 75 files, 74 checksum entries, every digest exact, zero runtime residual.
+  - PRE_FORMAL_DEFINITION_AUDIT: 20/20 PASS and 0 blocking failures.
+  - Mandatory regression suites: 17/17 PASS with unchanged registered denominators.
+  - v2.1.8 successor evidence regression remains exactly 24/24.
+  - v2.1.10 closure continuity regression remains exactly 43/43.
+  - v2.1.11 binding authority receipt schema regression remains exactly 54/54.
+  - v2.1.15 predecessor High-Pressure and Reference Repair evidence revisions remain unchanged and are explicitly history-only for the successor.
+  - Active Consumer Reference Integrity PASS with zero stale/broken Current reference.
+  - Registry Stress 13/13 PASS.
+  - Stage-01 binding PASS without immutable artifact rewrite.
+  - Stage-02 successor integrity PASS with historical predecessor attempt receiving zero new closure credit.
+  - Persisted-head GitHub Full-Line PASS before findings are terminalized.
