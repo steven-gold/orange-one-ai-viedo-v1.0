@@ -1,22 +1,21 @@
-schema_version: 6
+schema_version: 7
 artifact_type: STAGE02_CURRENT_FINDINGS
 normative_authority: false
 stage_uid: STAGE-02
-source_cycle: R23_CURRENT_AUTHORITY_REQUIRED_PAYLOAD_ZERO_INTERSECTION
-source_head_sha: 5611e4f516da01adb59321bbd55c4df9285cd0c1
+source_cycle: R24_CORRECTNESS_ROLLBACK_INVALID_R20_TRANSITION_OWNER
+source_head_sha: 0381d3e2327c5415acdd19a66f3622e7ed5d546b
 raw_discovery_gap_total: 171
-validated_product_materialization_elimination_count: 38
-validated_r23_current_authority_payload_elimination_count: 0
+validated_product_materialization_elimination_count: 34
 validated_external_authority_elimination_count: 4
-fresh_functional_gap_total: 129
+invalid_r20_transition_owner_materialization_rollback_count: 4
+fresh_functional_gap_total: 133
 effective_gap_categories:
   ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
   AUDIT_EVENT_NODE_MISSING: 13
   FAILURE_STATE_ERROR_BINDING_MISSING: 44
   PAYLOAD_INPUT_CONTRACT_MISSING: 34
   POST_ACTION_VALIDATION_NODE_MISSING: 1
-  STATE_TRANSITION_LEDGER_FIELD_MISSING: 36
-remaining_payload_gap_total: 34
+  STATE_TRANSITION_LEDGER_FIELD_MISSING: 40
 remaining_true_authority_gap_count: 1
 remaining_true_authority_gap_targets:
 - ASSET-01-ACT-CORRECTION-EXECUTE

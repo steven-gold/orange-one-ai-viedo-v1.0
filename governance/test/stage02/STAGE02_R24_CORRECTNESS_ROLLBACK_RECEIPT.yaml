@@ -1,0 +1,33 @@
+schema_version: 1
+artifact_type: STAGE02_R24_CORRECTNESS_ROLLBACK_RECEIPT
+normative_authority: false
+stage_uid: STAGE-02
+source_head_sha: 0381d3e2327c5415acdd19a66f3622e7ed5d546b
+source_invalidation_ref: governance/test/stage02/STAGE02_R20_TRANSITION_OWNER_INVALIDATION_R24.yaml
+before_product_materialization_total: 38
+removed_invalid_materialization_total: 4
+after_product_materialization_total: 34
+after_materialized_by_page:
+  CORE-01: 5
+  ASSET-01: 29
+removed_blocker_uids:
+- STAGE02-R5-PRODUCT-AUTH-091
+- STAGE02-R5-PRODUCT-AUTH-099
+- STAGE02-R5-PRODUCT-AUTH-103
+- STAGE02-R5-PRODUCT-AUTH-107
+removed_remediation_uids:
+- R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-091
+- R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-099
+- R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-103
+- R21::ASSET-01::STAGE02-R5-PRODUCT-AUTH-107
+preserved_r20_valid_post_action_total: 15
+preserved_r22_role_correct_total: 2
+replacement_materialization_total: 0
+blocker_reduction_claimed: 0
+effective_gap_increase_claimed_before_fresh_reexecution: 0
+current_specification_mutated: false
+immutable_stage1_source_mutated: false
+product_authority_value_invented: false
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
