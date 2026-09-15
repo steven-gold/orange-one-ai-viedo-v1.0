@@ -1,0 +1,1260 @@
+schema_version: 1
+artifact_type: NON_NORMATIVE_STAGE02_POST_ACTION_VALIDATION_DEPENDENCY_TRACE_R15
+normative_authority: false
+stage_uid: STAGE-02
+cycle: POST_ACTION_VALIDATION_EXACT_DEPENDENCY_TRACE_R15
+source_head_sha: 450bbb3db9f68c4c04185aae9d53dbbf96d85d66
+source_contracts:
+  r12_identity_source: governance/test/stage02/STAGE02_AUTHORITY_DEPENDENCY_RECLASSIFICATION_R12.yaml
+  r12_classification_accepted_as_authority: false
+  functional_chain_source: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+  current_page_authority_exact_capture: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  external_authority_materialization_evidence: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/STAGE2_EXTERNAL_AUTHORITY_MATERIALIZATION_EVIDENCE.yaml
+  current_admissible_external_sources:
+  - gap_uid: GAP-005
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-005/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_MATCH
+    git_blob_sha: 12ef6d233e09f84571dd5d694ae8e3789ae70502
+  - gap_uid: GAP-006
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-006/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_MATCH
+    git_blob_sha: 12dbdf59a60df5b1cb3d3b18666209c05bb0c0a3
+  - gap_uid: GAP-008
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_CHAIN_LOCATED
+    git_blob_sha: b09b7ca50313172ea021d9da0c8d57f2942f7b19
+  - gap_uid: GAP-008
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_CHAIN_LOCATED
+    git_blob_sha: dd9f05e295af57cc833e90d1a12030c8198580c6
+  - gap_uid: GAP-008
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_CHAIN_LOCATED
+    git_blob_sha: 7d234cc2f2f831b82f2007403c71d4008b46a012
+  - gap_uid: ASYNC-QUEUE
+    path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ASYNC/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+    manifest_current: true
+    authority_identity_status: EXACT_MATCH
+    git_blob_sha: ac3619b3bc547ce06f244c239fa69d3cac78da76
+trace_contract:
+  explicit_validation_contract_keys:
+  - acceptance_criteria
+  - completion_criteria
+  - evaluation_contract
+  - output_validation
+  - post_action_validation
+  - post_action_validation_contract
+  - postcondition
+  - postconditions
+  - result_validation
+  - success_contract
+  - success_criteria
+  - validation_contract
+  - validation_rule
+  result_or_state_signal_keys:
+  - completion_state
+  - result
+  - result_state
+  - state_effect
+  - state_event
+  result_or_state_signal_is_validation_contract: false
+  precondition_gate_is_post_action_validation: false
+  semantic_validation_inference_allowed: false
+  invented_validation_rule_allowed: false
+  classification_alone_may_reduce_blocker: false
+denominators:
+  post_action_validation_gaps_traced: 18
+  scope_counts:
+    ASSET-01: 18
+  exact_post_action_validation_contract_found: 0
+  conflicting_post_action_validation_contracts: 0
+  frozen_result_or_state_signal_only: 18
+  current_frozen_post_action_validation_contract_missing: 0
+  effective_stage02_blocker_reduction_claimed: 0
+records:
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-005
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-FLOW-START
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-005
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-FLOW-START
+    port_uid: ASSET-01-PORT-EXECUTE
+    operation_id: requestTaskExecution
+    operation: null
+    registered_operation: requestTaskExecution
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/tasks/{taskId}/execute
+    method: POST
+    path: /v1/tasks/{taskId}/execute
+    state_event: READY→ROUTING | provider.job.requested
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id001
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.1
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: READY→ROUTING | provider.job.requested
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.3
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.3.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.23.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.5
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.1
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml
+    node_path: operation_registry.operations.29
+    proof: EXACT_OPERATION_ID+EXACT_METHOD_AND_PATH
+    source_kind: CURRENT_EXTERNAL_AUTHORITY:GAP-008
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id001
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.23.runtime_binding.result
+    proof: EXACT_PORT_UID+RESULT_OR_STATE_SIGNAL
+    key: result
+    value: NEW candidate/version; never overwrite source version
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.1.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: READY→ROUTING | provider.job.requested
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-024
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-024
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+    port_uid: ASSET-01-PORT-DECISION
+    operation_id: decideOutputCandidate
+    operation: null
+    registered_operation: decideOutputCandidate
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
+    method: POST
+    path: /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
+    state_event: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id002
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.5
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.19
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.19.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.68
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.5
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml
+    node_path: operation_registry.operations.31
+    proof: EXACT_OPERATION_ID+EXACT_METHOD_AND_PATH
+    source_kind: CURRENT_EXTERNAL_AUTHORITY:GAP-008
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id002
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.5.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-030
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-CORRECTION-EXECUTE
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-030
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-CORRECTION-EXECUTE
+    port_uid: ASSET-01-PORT-EXECUTE
+    operation_id: requestTaskExecution
+    operation: null
+    registered_operation: requestTaskExecution
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/tasks/{taskId}/execute
+    method: POST
+    path: /v1/tasks/{taskId}/execute
+    state_event: READY→ROUTING | provider.job.requested
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id003
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.actions.23.runtime_binding
+      proof: EXACT_FROZEN_RUNTIME_RESULT_SIGNAL
+      key: result
+      value: NEW candidate/version; never overwrite source version
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+    - &id004
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.1
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: READY→ROUTING | provider.job.requested
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.3.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.23
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.23.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.40
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.1
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml
+    node_path: operation_registry.operations.29
+    proof: EXACT_OPERATION_ID+EXACT_METHOD_AND_PATH
+    source_kind: CURRENT_EXTERNAL_AUTHORITY:GAP-008
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id003
+  - *id004
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.23.runtime_binding.result
+    proof: EXACT_ACTION_UID+RESULT_OR_STATE_SIGNAL
+    key: result
+    value: NEW candidate/version; never overwrite source version
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.23.runtime_binding.result
+    proof: EXACT_PORT_UID+RESULT_OR_STATE_SIGNAL
+    key: result
+    value: NEW candidate/version; never overwrite source version
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.1.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: READY→ROUTING | provider.job.requested
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-033
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-FINDING-CREATE
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-033
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-FINDING-CREATE
+    port_uid: ASSET-01-PORT-FINDING
+    operation_id: createFinding
+    operation: null
+    registered_operation: createFinding
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/findings
+    method: POST
+    path: /v1/findings
+    state_event: IN_REVIEW→FINDING_OPEN | finding.created
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id005
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.3
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: IN_REVIEW→FINDING_OPEN | finding.created
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.24
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.24.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.3
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml
+    node_path: operation_registry.operations.33
+    proof: EXACT_OPERATION_ID+EXACT_METHOD_AND_PATH
+    source_kind: CURRENT_EXTERNAL_AUTHORITY:GAP-008
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id005
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.3.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: IN_REVIEW→FINDING_OPEN | finding.created
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-036
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-TASK-RETRY
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-036
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-TASK-RETRY
+    port_uid: ASSET-01-PORT-RETRY
+    operation_id: retryTaskExecution
+    operation: null
+    registered_operation: retryTaskExecution
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/tasks/{taskId}/retry
+    method: POST
+    path: /v1/tasks/{taskId}/retry
+    state_event: BLOCKED/FAILED→ROUTING | provider.job.requested
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id006
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.2
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: BLOCKED/FAILED→ROUTING | provider.job.requested
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.25
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.25.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.61
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.2
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml
+    node_path: operation_registry.operations.30
+    proof: EXACT_OPERATION_ID+EXACT_METHOD_AND_PATH
+    source_kind: CURRENT_EXTERNAL_AUTHORITY:GAP-008
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id006
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.2.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: BLOCKED/FAILED→ROUTING | provider.job.requested
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-043
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-HANDOFF
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-043
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-HANDOFF
+    port_uid: ASSET-01-PORT-OUT-VIDEO
+    operation_id: createDepartmentHandoff
+    operation: null
+    registered_operation: createDepartmentHandoff
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/handoffs
+    method: POST
+    path: /v1/handoffs
+    state_event: HANDOFF_READY→HANDED_OFF; VIDEO dependency→READY | handoff.created
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id007
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.7
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: HANDOFF_READY→HANDED_OFF; VIDEO dependency→READY | handoff.created
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.30
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.30.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.84
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.0
+    proof: EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.7
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml
+    node_path: operation_registry.operations.35
+    proof: EXACT_OPERATION_ID+EXACT_METHOD_AND_PATH
+    source_kind: CURRENT_EXTERNAL_AUTHORITY:GAP-008
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id007
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.0.state_event
+    proof: EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: Upstream HANDOFF_READY→HANDED_OFF; ASSET WAITING_DEPENDENCY→READY | handoff.created
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.7.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: HANDOFF_READY→HANDED_OFF; VIDEO dependency→READY | handoff.created
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-046
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DOC-CREATE
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-046
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-LAYER-DOC-CREATE
+    port_uid: ASSET-01-PORT-LAYER-DOC-CREATE
+    operation_id: createLayerDocument
+    operation: null
+    registered_operation: createLayerDocument
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/layer-documents
+    method: POST
+    path: /v1/layer-documents
+    state_event: DRAFT→ACTIVE | layer.document.created
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id008
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.8
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: DRAFT→ACTIVE | layer.document.created
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.31
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.31.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.41
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.8
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id008
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.8.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: DRAFT→ACTIVE | layer.document.created
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-049
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DOC-UPDATE
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-049
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-LAYER-DOC-UPDATE
+    port_uid: ASSET-01-PORT-LAYER-DOC-UPDATE
+    operation_id: updateLayerDocument
+    operation: null
+    registered_operation: updateLayerDocument
+    operation_ref: null
+    method_path: null
+    method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}
+    method: PATCH
+    path: /v1/layer-documents/{layerDocumentId}
+    state_event: ACTIVE→ACTIVE | layer.document.updated
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id009
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.9
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: ACTIVE→ACTIVE | layer.document.updated
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.32
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.32.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.42
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.9
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id009
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.9.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: ACTIVE→ACTIVE | layer.document.updated
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-052
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-ADD
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-052
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-LAYER-ADD
+    port_uid: ASSET-01-PORT-LAYER-ADD
+    operation_id: addLayer
+    operation: null
+    registered_operation: addLayer
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers
+    method: POST
+    path: /v1/layer-documents/{layerDocumentId}/layers
+    state_event: layer document version increments
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id010
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.10
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: layer document version increments
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.33
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.33.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.43
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.10
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id010
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.10.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-056
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DELETE
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-056
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-LAYER-DELETE
+    port_uid: ASSET-01-PORT-LAYER-DELETE
+    operation_id: deleteLayer
+    operation: null
+    registered_operation: deleteLayer
+    operation_ref: null
+    method_path: null
+    method_effective_path: DELETE /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+    method: DELETE
+    path: /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+    state_event: layer document version increments
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id011
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.11
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: layer document version increments
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.34
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.34.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.44
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.11
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id011
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.11.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-060
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DUPLICATE
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-060
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-LAYER-DUPLICATE
+    port_uid: ASSET-01-PORT-LAYER-DUP
+    operation_id: duplicateLayer
+    operation: null
+    registered_operation: duplicateLayer
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/duplicate
+    method: POST
+    path: /v1/layer-documents/{layerDocumentId}/layers/{layerId}/duplicate
+    state_event: layer document version increments
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id012
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.12
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: layer document version increments
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.35
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.35.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.45
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.12
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id012
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.12.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-064
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-REORDER
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-064
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-LAYER-REORDER
+    port_uid: ASSET-01-PORT-LAYER-REORDER
+    operation_id: reorderLayer
+    operation: null
+    registered_operation: reorderLayer
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/reorder
+    method: POST
+    path: /v1/layer-documents/{layerDocumentId}/layers/{layerId}/reorder
+    state_event: layer document version increments
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id013
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.13
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: layer document version increments
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.36
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.36.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.46
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.13
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id013
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.13.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-068
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-PROPERTIES
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-068
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-LAYER-PROPERTIES
+    port_uid: ASSET-01-PORT-LAYER-PROPS
+    operation_id: updateLayerProperties
+    operation: null
+    registered_operation: updateLayerProperties
+    operation_ref: null
+    method_path: null
+    method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+    method: PATCH
+    path: /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+    state_event: layer document version increments
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id014
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.14
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: layer document version increments
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.37
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.37.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.47
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.14
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id014
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.14.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-072
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-MASK
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-072
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-LAYER-MASK
+    port_uid: ASSET-01-PORT-LAYER-MASK
+    operation_id: updateLayerMask
+    operation: null
+    registered_operation: updateLayerMask
+    operation_ref: null
+    method_path: null
+    method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}/mask
+    method: PATCH
+    path: /v1/layer-documents/{layerDocumentId}/layers/{layerId}/mask
+    state_event: layer document version increments
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id015
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.15
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: layer document version increments
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.38
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.38.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.48
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.15
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id015
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.15.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: layer document version increments
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-076
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-CREATE
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-076
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-PATCH-CREATE
+    port_uid: ASSET-01-PORT-PATCH-CREATE
+    operation_id: createAssetPatch
+    operation: null
+    registered_operation: createAssetPatch
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/asset-patches
+    method: POST
+    path: /v1/asset-patches
+    state_event: asset.patch.created
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id016
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.16
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: asset.patch.created
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.39
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.39.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.49
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.16
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id016
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.16.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: asset.patch.created
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-079
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-PREVIEW
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-079
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-PATCH-PREVIEW
+    port_uid: ASSET-01-PORT-PATCH-PREVIEW
+    operation_id: previewAssetPatch
+    operation: null
+    registered_operation: previewAssetPatch
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/asset-patches/{patchId}/preview
+    method: POST
+    path: /v1/asset-patches/{patchId}/preview
+    state_event: Patch→PREVIEW_READY
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id017
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.17
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: Patch→PREVIEW_READY
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.40
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.40.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.50
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.17
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id017
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.17.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: Patch→PREVIEW_READY
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-083
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-ACCEPT
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-083
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-PATCH-ACCEPT
+    port_uid: ASSET-01-PORT-PATCH-DECIDE
+    operation_id: decideAssetPatch
+    operation: null
+    registered_operation: decideAssetPatch
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/asset-patches/{patchId}/decision
+    method: POST
+    path: /v1/asset-patches/{patchId}/decision
+    state_event: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE
+      no output
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id018
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.18
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE
+        no output
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.41
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.41.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.42.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.51
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.18
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id018
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.18.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no
+      output
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+- blocker_uid: STAGE02-R5-PRODUCT-AUTH-087
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-REJECT
+  r12_identity_ref: STAGE02-R5-PRODUCT-AUTH-087
+  r12_classification_used_as_authority: false
+  trace:
+    action_uid: ASSET-01-ACT-PATCH-REJECT
+    port_uid: ASSET-01-PORT-PATCH-DECIDE
+    operation_id: decideAssetPatch
+    operation: null
+    registered_operation: decideAssetPatch
+    operation_ref: null
+    method_path: null
+    method_effective_path: POST /v1/asset-patches/{patchId}/decision
+    method: POST
+    path: /v1/asset-patches/{patchId}/decision
+    state_event: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE
+      no output
+    frozen_validation_contracts: []
+    frozen_result_signals:
+    - &id019
+      path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      node_path: source_projection.integration_ports.18
+      proof: EXACT_FROZEN_PORT_STATE_SIGNAL
+      key: state_event
+      value: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE
+        no output
+      source_kind: FROZEN_FUNCTIONAL_CHAIN
+  current_identity_matches:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.41.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.42
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.actions.42.runtime_binding
+    proof: EXACT_PORT_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.controls.52
+    proof: EXACT_ACTION_UID
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.18
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  post_action_validation_contract_evidence: []
+  result_or_state_signal_evidence:
+  - *id019
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.18.state_event
+    proof: EXACT_PORT_UID+EXACT_OPERATION_ID+EXACT_METHOD_EFFECTIVE_PATH+RESULT_OR_STATE_SIGNAL
+    key: state_event
+    value: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no
+      output
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  unique_validation_contract_count: 0
+  classification: FROZEN_RESULT_OR_STATE_SIGNAL_ONLY
+  materialization_candidate: false
+  semantic_validation_inference_used: false
+  invented_validation_rule_used: false
+  historical_non_current_authority_used: false
+  blocker_reduction_credit: 0
+  next_action: KEEP_UNRESOLVED_UNTIL_EXACT_POST_ACTION_VALIDATION_CONTRACT_IS_PROVEN
+stage02_status: BLOCKED
+stage02_effective_blocker_count_before_any_materialization_and_fresh_reexecution: 150
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
