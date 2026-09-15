@@ -1,0 +1,48 @@
+schema_version: 1
+authorization_uid: USR-DIRECTIVE-20260916-GOVERNANCE-CONTEXT-HARDENING-CLEANUP
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+source_date: '2026-09-16'
+source_summary: >-
+  User explicitly directed correction of wrong references, removal of contradictory/polluted/empty content where safe, root-cause prevention in Mother/current governance and downstream execution, and mandatory read-confirm-before-write sequencing.
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+exact_scope:
+  - governance execution context identity/read/write locking
+  - canonical version-role separation and stale-version prevention
+  - finding terminalization and same-semantic-finding reopening discipline
+  - stale active workflow validator-reference migration
+  - stale source-identity documentation correction
+  - safe cleanup of proven obsolete or empty artifacts only after dependency proof
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 8
+  reviewed_existing_owner_ref_count: 5
+  comparison_result: NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+  baseline_branch: rebuild-v2.1.1
+  baseline_commit_sha: 02c80a2a0690d90ccf729c64e6984592a77b4b45
+  baseline_tree_sha: 0e1c1c2dfd3fcdb41dcba04f1f46ab89bf001455
+  current_governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
+  current_display_version: v2.2.1
+confirmed_defects:
+  - outer governance-source README deterministic bundle SHA is stale versus VERIFY_SOURCE_IDENTITY.py and Current manifest
+  - active workflows still reference deleted validate_stage_test_remediation_closure_protocol.py instead of current neutral validator
+  - finding lifecycle lacks terminal canonical absorption/reopen metadata and duplicate semantic-finding blocking
+  - execution cycle policy lacks one machine-readable identity/read-set/pre-write recheck/post-write closure lock contract
+  - version values are not strongly typed by role across Current/source/history consumption
+  - non-normative ACTIVE_STATE contains historical source-identity values and must not be mistaken for Current source identity
+non_goals:
+  - no second governance authority or shadow Mother index
+  - no restoration of deleted compatibility shim
+  - no deletion of historical findings or immutable source evidence
+  - no AI inference of unresolved external authority
