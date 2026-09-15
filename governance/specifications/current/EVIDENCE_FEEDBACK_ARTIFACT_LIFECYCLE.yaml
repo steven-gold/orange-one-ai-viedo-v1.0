@@ -1,4 +1,4 @@
-schema_version: 3
+schema_version: 4
 artifact_uid: GOV-COMP-EVIDENCE-FEEDBACK-ARTIFACT-LIFECYCLE
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -51,6 +51,16 @@ finding_terminalization:
   absorbed_policy_candidate_may_remain_open: false
   history_must_be_preserved: true
   terminal_finding_must_not_be_deleted: true
+  fresh_evidence_integrity:
+    persisted_current_head_validation_required: true
+    validation_governance_uid_must_equal_current_registry_uid: true
+    exact_finding_signature_to_remediation_relation_required: true
+    exact_remediation_target_evidence_required: true
+    only_directly_related_reproduced_finding_may_terminalize: true
+    disappearance_from_current_view_is_terminalization_evidence: false
+    commit_message_or_declared_fix_count_is_terminalization_evidence: false
+    inferred_fix_without_fresh_validation: BLOCK
+    historical_origin_and_prior_evidence_must_remain_traceable: true
 temporary_artifact_lifecycle:
   allowed: true
   current_authority_eligible: false

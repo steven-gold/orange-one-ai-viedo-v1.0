@@ -8,7 +8,7 @@ stable_entrypoint:
   test_state_root: governance/test
   active_test_state: governance/test/ACTIVE_STATE.yaml
 active_specification:
-  governance_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+  governance_uid: GOV-REV-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
   display_version: v2.2.2
   version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
   aliases:
@@ -16,13 +16,14 @@ active_specification:
   - canonical-rule-anti-drift
   - execution-context-lock
   - finding-terminal-closure
+  - canonical-reference-migration-atomicity
   - version-role-separation
   status: ACTIVE_CURRENT_GOVERNANCE
 immediate_predecessor:
-  governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
-  display_version: v2.2.1
+  governance_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+  display_version: v2.2.2
   version_role: SUPERSEDED_CURRENT_GOVERNANCE_HISTORY
-  status: SUPERSEDED_HISTORY_ONLY_AFTER_V222_PROMOTION
+  status: SUPERSEDED_HISTORY_ONLY_AFTER_REFERENCE_ATOMICITY_PROMOTION
 version_role_contract:
   current_governance_display_version_owner: active_specification
   verified_source_package_version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
@@ -45,6 +46,8 @@ resolution_policy:
   unverified_candidate_may_become_latest_automatically: false
   consumer_specific_version_pointer: FORBIDDEN
   non_normative_source_materialization_may_be_current_locator: false
+  active_reference_target_must_exist: true
+  stale_superseded_owner_pointer_by_active_consumer: FORBIDDEN
 specification_mutation_control:
   component_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   default_without_explicit_user_directive: DENY
@@ -52,6 +55,12 @@ specification_mutation_control:
   authorization_receipt_root: governance/test/spec_change_authorizations
   authorization_must_preexist_mutation_commit: true
   protected_mutation_guard: governance/ci/specification_mutation_guard.py
+active_consumer_reference_integrity:
+  validator: governance/ci/validate_active_consumer_reference_integrity.py
+  required_in_targeted_regression: true
+  required_in_full_line_regression: true
+  persisted_head_verification_required: true
+  zero_stale_or_broken_current_reference_required: true
 execution_profile_separation:
   common_policy_profile_neutral: true
   selected_profile_binding_owner: GOVERNANCE_CURRENT.yaml

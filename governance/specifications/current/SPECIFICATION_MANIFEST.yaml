@@ -1,5 +1,5 @@
-schema_version: 5
-artifact_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+schema_version: 6
+artifact_uid: GOV-REV-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
 artifact_type: STABLE_CURRENT_SPECIFICATION_MANIFEST
 normative_status: ACTIVE_CURRENT_GOVERNANCE
 display_version: v2.2.2
@@ -35,8 +35,8 @@ source_lineage:
   exact_full_zip_binary_materialized_in_git: false
   full_source_materialized_in_git: true
   full_source_root: .github/governance-source/active/source
-  predecessor_governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
-  promotion_authorization_uid: USR-DIRECTIVE-20260916-GOVERNANCE-CONTEXT-HARDENING-CLEANUP
+  predecessor_governance_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+  promotion_authorization_uid: USR-DIRECTIVE-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
   source_bytes_changed_by_this_successor: false
   source_identity_reused_only_because_source_bytes_are_unchanged: true
   deterministic_source_bundle_sha256: fd7f0ffc8711685fa230b2003d20937cbfb135b57cd3f9a1fce84cec9c18e51a
@@ -67,3 +67,4 @@ closure_policy:
   successful_audit_with_reproducible_remediable_gap: NOT_CLOSURE
   hidden_defect_sweep_required_before_closure: true
   one_closure_may_mix_governance_uids: false
+  canonical_reference_migration_requires_zero_stale_current_reference: true

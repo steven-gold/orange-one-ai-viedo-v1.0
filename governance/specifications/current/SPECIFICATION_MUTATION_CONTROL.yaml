@@ -1,4 +1,4 @@
-schema_version: 4
+schema_version: 5
 artifact_uid: GOV-COMP-SPECIFICATION-MUTATION-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -70,6 +70,34 @@ consolidated_promotion_control:
   policy_layer_contamination_scan_required: true
   promotion_invalidates_affected_old_closure_evidence: true
   fresh_reverification_required: true
+reference_migration_atomicity_control:
+  applies_to:
+  - DELETE
+  - RENAME
+  - MOVE
+  - SUPERSEDE
+  - REPLACEMENT
+  - ENTRYPOINT_CHANGE
+  - EXECUTABLE_OWNER_CHANGE
+  - GOVERNANCE_PROMOTION
+  complete_active_reverse_consumer_set_required: true
+  reverse_consumer_set_must_be_frozen_against_prewrite_commit_and_tree: true
+  required_inventory_classes:
+  - ACTIVE_WORKFLOW_REFERENCES
+  - WORKFLOW_INVOKED_GOVERNANCE_PYTHON_CONSUMERS
+  - DERIVED_TRUST_IDENTITY_CONSUMERS
+  - AUTHORITATIVE_DENOMINATOR_CONSUMERS
+  - LIFECYCLE_OUTPUT_EXPECTATION_CONSUMERS
+  - ACTIVE_PROJECTORS
+  partial_consumer_migration: BLOCK
+  old_target_retirement_before_complete_migration: BLOCK
+  all_affected_active_references_must_migrate_in_same_atomic_commit: true
+  persisted_head_reference_integrity_gate_required: true
+  full_line_regression_required_after_reference_migration: true
+  zero_stale_or_broken_current_reference_required: true
+  zero_unjustified_residual_required: true
+  commit_message_or_declared_migration_count_is_closure_evidence: false
+  required_machine_gate: governance/ci/validate_active_consumer_reference_integrity.py
 fatal_specification_contradiction_exception:
   default: DENY
   requires_proven_current_policy_self_contradiction: true
@@ -82,9 +110,12 @@ promotion_gate:
   - VERIFY_PREEXISTING_EXACT_SCOPE_AUTHORIZATION
   - CLASSIFY_LAYER_AND_CANONICAL_OWNER
   - RESOLVE_CANONICAL_RULE_UID_AND_REGISTRY_DIGEST
+  - FREEZE_COMPLETE_ACTIVE_REVERSE_CONSUMER_SET
   - APPLY_ONLY_AUTHORIZED_NORMATIVE_CHANGE
   - ASSIGN_NEW_IMMUTABLE_GOVERNANCE_UID
+  - ATOMICALLY_MIGRATE_ACTIVE_REFERENCES_DERIVED_IDENTITIES_DENOMINATORS_AND_PROJECTORS
   - UPDATE_REGISTRY_MANIFEST_CANONICAL_RULE_BINDING_ATOMICALLY
+  - VERIFY_PERSISTED_HEAD_REFERENCE_INTEGRITY
   - VERIFY_ACTIVE_CONSUMER_PROJECTIONS
   - RUN_CONTAMINATION_CONTRADICTION_PORTABILITY_GATES
   - RUN_GOVERNANCE_REGRESSION_AND_STRESS_GATES

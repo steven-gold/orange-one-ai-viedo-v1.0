@@ -1,4 +1,4 @@
-schema_version: 3
+schema_version: 4
 artifact_uid: GOV-COMP-EXECUTION-CYCLE-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -53,6 +53,24 @@ execution_context_lock:
   - RUN_AFFECTED_REGRESSION
   - PROVE_ZERO_STALE_REFERENCE
   - PROVE_ZERO_UNJUSTIFIED_RESIDUAL
+reference_change_execution_control:
+  applies_when_reference_target_or_governance_identity_changes: true
+  discover_complete_active_reverse_consumer_set_before_write: true
+  freeze_reverse_consumer_set_to_same_commit_and_tree_as_context_lock: true
+  derived_trust_identity_impact_map_required: true
+  authoritative_denominator_impact_map_required: true
+  lifecycle_output_expectation_impact_map_required: true
+  active_projector_impact_map_required: true
+  partial_reference_rewrite: BLOCK
+  broad_search_replace_without_role_classification: BLOCK
+  historical_evidence_may_be_rewritten_as_active_pointer: false
+  active_pointer_may_remain_on_superseded_owner: false
+  post_write_persisted_head_checks:
+  - ACTIVE_CONSUMER_REFERENCE_INTEGRITY
+  - REGISTRY_STRESS_13_OF_13
+  - AFFECTED_REGRESSION
+  - FULL_LINE_WHEN_GOVERNANCE_PROMOTION_OR_SHARED_REFERENCE_OWNER_CHANGES
+  stale_reference_or_unjustified_residual: BLOCK_CLOSURE
 canonical_preflight:
   required_before_material_remediation: true
   artifacts:

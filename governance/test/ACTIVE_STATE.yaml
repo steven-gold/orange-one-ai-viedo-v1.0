@@ -2,7 +2,7 @@ schema_version: 11
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+specification_uid: GOV-REV-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 execution:
@@ -53,7 +53,7 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: HISTORICAL_PASS_REVERIFY_REQUIRED_AFTER_V222_PROMOTION
+  full_line_github_result: HISTORICAL_PASS_REVERIFY_REQUIRED_AFTER_REFERENCE_ATOMICITY_PROMOTION
   full_line_verification_run_id: 34937106161
   exact_denominators_verified: true
   source_runtime_residual_count: 0
@@ -133,10 +133,10 @@ stage02_current_problem_state:
   immutable_stage1_source_mutated: false
   prior_stage2_results_used: false
 status: ACTIVE_STAGE2_TESTED_BLOCKED_REVERIFY_REQUIRED_AFTER_GOVERNANCE_PROMOTION
-next_action: FRESH_REVALIDATION_UNDER_GOV_REV_20260916_CONTEXT_LOCK_FINDING_CLOSURE_BEFORE_PRODUCT_REMEDIATION_CREDIT
+next_action: FRESH_REVALIDATION_UNDER_GOV-REV-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY_BEFORE_PRODUCT_REMEDIATION_CREDIT
 governance_revision_transition:
-  previous_governance_uid: GOV-REV-20260916-CANONICAL-RULE-ANTI-DRIFT
-  current_governance_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+  previous_governance_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+  current_governance_uid: GOV-REV-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
   predecessor_attempt_frozen_governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_may_close_under_current_governance: false
