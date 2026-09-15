@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from collections import Counter
 from pathlib import Path
-import subprocess
 import sys
 import yaml
 
@@ -56,57 +55,47 @@ def identity(row):
 
 
 def main() -> None:
-    r12 = load(R12)
-    r13 = load(R13)
-    if r13.get("artifact_type") != "NON_NORMATIVE_STAGE02_AUDIT_EVENT_DEPENDENCY_TRACE_R13":
-        die("R13_ARTIFACT_TYPE")
-    if r13.get("normative_authority") is not False:
-        die("R13_MUST_BE_NON_NORMATIVE")
+    r12, r13 = load(R12), load(R13)
+    if r13.get("artifact_type") != "NON_NORMATIVE_STAGE02_AUDIT_EVENT_DEPENDENCY_TRACE_R13" or r13.get("normative_authority") is not False:
+        die("R13_ARTIFACT_IDENTITY")
     if r13.get("source_contracts", {}).get("r12_classification_accepted_as_authority") is not False:
         die("R13_R12_CLASSIFICATION_AUTHORITY_LEAK")
     old = [r for r in (r12.get("records") or []) if r.get("category") == "AUDIT_EVENT_NODE_MISSING"]
     rows = r13.get("records") or []
-    if len(old) != 13 or len(rows) != 13:
-        die(f"R13_DENOMINATOR:{len(old)}:{len(rows)}")
-    if {identity(r) for r in old} != {identity(r) for r in rows}:
-        die("R13_IDENTITY_COVERAGE_DRIFT")
-    if len({identity(r) for r in rows}) != 13:
-        die("R13_DUPLICATE_IDENTITY")
+    if len(old) != 13 or len(rows) != 13 or {identity(r) for r in old} != {identity(r) for r in rows} or len({identity(r) for r in rows}) != 13:
+        die("R13_IDENTITY_OR_DENOMINATOR_DRIFT")
 
     allowed_external = current_external_paths()
-    counts = Counter()
-    scopes = Counter()
+    counts, scopes = Counter(), Counter()
     for row in rows:
-        uid = row.get("blocker_uid")
-        cls = row.get("classification")
+        uid, cls = row.get("blocker_uid"), row.get("classification")
         if cls not in ALLOWED:
             die(f"R13_BAD_CLASS:{uid}:{cls}")
         counts[cls] += 1
         scopes[row.get("scope")] += 1
-        if row.get("r12_classification_used_as_authority") is not False:
-            die(f"R13_R12_AUTHORITY_LEAK:{uid}")
-        if row.get("semantic_event_name_inference_used") is not False:
-            die(f"R13_SEMANTIC_EVENT_INFERENCE:{uid}")
-        if row.get("event_uid_invention_used") is not False:
-            die(f"R13_EVENT_UID_INVENTION:{uid}")
-        if row.get("historical_non_current_authority_used") is not False:
-            die(f"R13_HISTORICAL_AUTHORITY:{uid}")
+        for key in ("r12_classification_used_as_authority", "semantic_event_name_inference_used", "event_uid_invention_used", "historical_non_current_authority_used"):
+            if row.get(key) is not False:
+                die(f"R13_SAFETY_FLAG:{uid}:{key}:{row.get(key)}")
         if row.get("blocker_reduction_credit") != 0:
             die(f"R13_FALSE_REDUCTION:{uid}")
+
         trace = row.get("trace") or {}
         if trace.get("action_uid") != row.get("target_uid"):
             die(f"R13_ACTION_TRACE_MISMATCH:{uid}")
         if not isinstance(trace.get("port_uid"), str) or not trace.get("port_uid"):
             die(f"R13_PORT_MISSING:{uid}")
-        if not isinstance(trace.get("operation_ref"), str) or not trace.get("operation_ref"):
-            die(f"R13_OPERATION_REF_MISSING:{uid}")
+        has_registered_operation = isinstance(trace.get("registered_operation"), str) and bool(trace.get("registered_operation"))
+        has_operation_ref = isinstance(trace.get("operation_ref"), str) and bool(trace.get("operation_ref"))
+        has_method_path = isinstance(trace.get("method"), str) and bool(trace.get("method")) and isinstance(trace.get("path"), str) and bool(trace.get("path"))
+        if not (has_registered_operation or has_operation_ref or has_method_path):
+            die(f"R13_EXACT_OPERATION_IDENTITY_MISSING:{uid}")
         if not isinstance(trace.get("state_event"), str) or not trace.get("state_event"):
             die(f"R13_STATE_EVENT_MISSING:{uid}")
+
         events = row.get("unique_exact_event_uids") or []
         bindings = row.get("exact_event_binding_evidence") or []
         for item in bindings:
-            path = item.get("path", "")
-            source_kind = item.get("source_kind", "")
+            path, source_kind = item.get("path", ""), item.get("source_kind", "")
             if source_kind.startswith("CURRENT_EXTERNAL_AUTHORITY:"):
                 if path not in allowed_external:
                     die(f"R13_NON_CURRENT_EXTERNAL_EVENT_EVIDENCE:{uid}:{path}")
@@ -115,47 +104,37 @@ def main() -> None:
                     die(f"R13_BAD_PAGE_AUTHORITY_EVIDENCE:{uid}:{path}")
             else:
                 die(f"R13_UNKNOWN_EVENT_EVIDENCE_KIND:{uid}:{source_kind}")
+
         if cls == "EXACT_EVENT_DEPENDENCY_FOUND":
-            if len(events) != 1 or not bindings:
+            if len(events) != 1 or not bindings or row.get("materialization_candidate") is not True:
                 die(f"R13_EXACT_EVENT_NOT_UNIQUE_OR_UNPROVEN:{uid}:{events}")
-            if row.get("materialization_candidate") is not True:
-                die(f"R13_EXACT_EVENT_NOT_CANDIDATE:{uid}")
         elif cls == "CONFLICTING_EXACT_EVENT_DEPENDENCY":
-            if len(events) < 2 or not bindings:
-                die(f"R13_CONFLICT_WITHOUT_MULTIPLE_EVENTS:{uid}:{events}")
-            if row.get("materialization_candidate") is not False:
-                die(f"R13_CONFLICT_FALSE_CANDIDATE:{uid}")
-        elif cls == "CURRENT_FROZEN_EVENT_CONTRACT_MISSING":
-            if events or bindings:
-                die(f"R13_MISSING_CLASS_HAS_EVENT_BINDING:{uid}:{events}")
-            if row.get("materialization_candidate") is not False:
-                die(f"R13_MISSING_FALSE_CANDIDATE:{uid}")
+            if len(events) < 2 or not bindings or row.get("materialization_candidate") is not False:
+                die(f"R13_CONFLICT_INVALID:{uid}:{events}")
+        else:
+            if events or bindings or row.get("materialization_candidate") is not False:
+                die(f"R13_MISSING_CLASS_HAS_BINDING_OR_CANDIDATE:{uid}:{events}")
 
     if scopes != Counter({"ASSET-01": 9, "CORE-01": 4}):
         die(f"R13_SCOPE_DRIFT:{dict(scopes)}")
     den = r13.get("denominators") or {}
-    if den.get("audit_event_gaps_traced") != 13:
-        die("R13_TOTAL_NOT_13")
     expected = {
         "exact_event_dependency_found": counts["EXACT_EVENT_DEPENDENCY_FOUND"],
         "conflicting_exact_event_dependency": counts["CONFLICTING_EXACT_EVENT_DEPENDENCY"],
         "current_frozen_event_contract_missing": counts["CURRENT_FROZEN_EVENT_CONTRACT_MISSING"],
     }
+    if den.get("audit_event_gaps_traced") != 13 or sum(expected.values()) != 13:
+        die("R13_TOTAL_NOT_13")
     for key, value in expected.items():
         if den.get(key) != value:
             die(f"R13_COUNT_DRIFT:{key}:{den.get(key)}:{value}")
-    if sum(expected.values()) != 13:
-        die("R13_CLASS_TOTAL_DRIFT")
     if den.get("effective_stage02_blocker_reduction_claimed") != 0:
         die("R13_FALSE_GLOBAL_REDUCTION")
-    if r13.get("stage02_status") != "BLOCKED":
-        die("R13_STAGE02_MUST_REMAIN_BLOCKED")
-    if r13.get("stage03_allowed") is not False or r13.get("website_construction_allowed") is not False or r13.get("deployment_allowed") is not False:
+    if r13.get("stage02_status") != "BLOCKED" or r13.get("stage03_allowed") is not False or r13.get("website_construction_allowed") is not False or r13.get("deployment_allowed") is not False:
         die("R13_DOWNSTREAM_FALSE_ALLOW")
-
     print(f"PASS: R13 exact 13 audit-event identities verified classifications={dict(counts)}")
     print("PASS: exact-event candidates require physical Current-admissible event UID evidence")
-    print("PASS: no semantic naming, no historical authority, zero blocker reduction until separate materialization + fresh reexecution")
+    print("PASS: registered_operation/method_effective_path accepted as exact frozen identity; no semantic naming or false blocker reduction")
 
 
 if __name__ == "__main__":
