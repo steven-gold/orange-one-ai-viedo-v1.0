@@ -1,0 +1,103 @@
+name: Stage-02 Post-Action Signal Role Correction + Materialization R22
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/stage02-post-action-signal-role-materialization-r22.yml'
+      - 'governance/ci/classify_stage02_post_action_signal_roles_r22.py'
+      - 'governance/ci/validate_stage02_post_action_signal_roles_r22.py'
+      - 'governance/ci/materialize_stage02_r22_signal_role_closures.py'
+      - 'governance/ci/validate_stage02_r22_materialized_closures.py'
+      - 'governance/ci/run_current_stage2_r22_effective_reexecution.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  correct-materialize-reexecute:
+    runs-on: ubuntu-latest
+    env:
+      STAGE02_FULL_LINE_CONFIRMED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install YAML dependency
+        run: python -m pip install pyyaml
+      - name: Compile R22 implementation
+        run: |
+          python -m py_compile governance/ci/classify_stage02_post_action_signal_roles_r22.py
+          python -m py_compile governance/ci/validate_stage02_post_action_signal_roles_r22.py
+          python -m py_compile governance/ci/materialize_stage02_r22_signal_role_closures.py
+          python -m py_compile governance/ci/validate_stage02_r22_materialized_closures.py
+          python -m py_compile governance/ci/run_current_stage2_r22_effective_reexecution.py
+      - name: Revalidate R21 current 129-parent baseline dependencies
+        run: |
+          python governance/ci/validate_stage02_functional_chain_auto_remediability_r20.py
+          python governance/ci/validate_stage02_r20_materialized_closures_r21.py
+          python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
+      - name: Classify three R20 post-action conflicts by exact signal role
+        run: python governance/ci/classify_stage02_post_action_signal_roles_r22.py
+      - name: Validate R22 role correction
+        run: python governance/ci/validate_stage02_post_action_signal_roles_r22.py
+      - name: Materialize only two R22 unique role-correct closures
+        run: python governance/ci/materialize_stage02_r22_signal_role_closures.py
+      - name: Validate exact R22 materialization set
+        run: python governance/ci/validate_stage02_r22_materialized_closures.py
+      - name: Prove frozen Current Specification and immutable Stage-1 Raw authority unchanged
+        run: |
+          git diff --exit-code -- governance/specifications/current
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+      - name: Fresh Stage-02 effective reexecution after R22
+        run: python governance/ci/run_current_stage2_r22_effective_reexecution.py
+      - name: Assert fresh R22 denominator and remaining authority gap
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d = json.loads(Path('.github/stage02-test/STAGE02_R22_EFFECTIVE_REEXECUTION_RESULT.json').read_text())
+          assert d['raw_discovery_gap_total'] == 171, d
+          assert d['product_materialization_elimination_count'] == 38, d
+          assert d['gap006_authority_elimination_count'] == 4, d
+          assert d['total_effective_elimination_count'] == 42, d
+          assert d['fresh_functional_gap_total'] == 129, d
+          assert d['effective_gap_categories'] == {
+              'ACTION_WITHOUT_CONTROL_OR_TRIGGER': 1,
+              'AUDIT_EVENT_NODE_MISSING': 13,
+              'FAILURE_STATE_ERROR_BINDING_MISSING': 44,
+              'PAYLOAD_INPUT_CONTRACT_MISSING': 34,
+              'POST_ACTION_VALIDATION_NODE_MISSING': 1,
+              'STATE_TRANSITION_LEDGER_FIELD_MISSING': 36,
+          }, d
+          assert d['remaining_r22_authority_gap']['target_uid'] == 'ASSET-01-ACT-CORRECTION-EXECUTE'
+          assert d['result'] == 'BLOCKED' and d['stage_exit_allowed'] is False
+          assert d['website_construction_allowed'] is False and d['deployment_allowed'] is False
+          assert d['current_specification_mutated'] is False and d['immutable_stage1_source_mutated'] is False
+          assert d['prior_stage2_results_used'] is False and d['prior_stage2_counts_used_as_scan_input'] is False
+          print('PASS: R22 fresh effective denominator=129; exactly one post-action authority gap remains; Stage-02 fail-closed')
+          PY
+      - name: Persist R22 materialization and fresh evidence
+        run: |
+          paths=(
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml'
+            'governance/test/stage02/STAGE02_POST_ACTION_SIGNAL_ROLE_RECLASSIFICATION_R22.yaml'
+            'governance/test/stage02/STAGE02_R22_BOUNDED_MATERIALIZATION_RECEIPT.yaml'
+            '.github/stage02-test/STAGE02_R22_EFFECTIVE_REEXECUTION_RESULT.json'
+            'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
+            'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
+          )
+          if [ -z "$(git status --porcelain -- "${paths[@]}")" ]; then
+            echo 'R22 outputs unchanged'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "${paths[@]}"
+          git commit -m 'test(stage02): persist R22 role-correct materialization and fresh evidence'
+          git push origin HEAD:rebuild-v2.1.1
