@@ -3,7 +3,7 @@ artifact_type: NON_NORMATIVE_STAGE02_ACTION_CONTROL_TRIGGER_DEPENDENCY_TRACE_R18
 normative_authority: false
 stage_uid: STAGE-02
 cycle: ACTION_CONTROL_TRIGGER_EXACT_DEPENDENCY_TRACE_R18
-source_head_sha: a26c9e133e6527767e0798e0009fc4c40b55b1d6
+source_head_sha: 31b850ff06286b690684b6dacc9ebaa0032d1619
 source_contracts:
   r12_identity_source: governance/test/stage02/STAGE02_AUTHORITY_DEPENDENCY_RECLASSIFICATION_R12.yaml
   r12_classification_accepted_as_authority: false
@@ -13,6 +13,7 @@ trace_contract:
   control_requires_same_node_control_uid_and_direct_action_uid: true
   stage_trigger_requires_transition_uid_and_direct_trigger_action: true
   system_trigger_requires_trigger_identity_and_direct_action_reference: true
+  port_exposure_uid_is_extracted_syntactically_not_semantically: true
   port_exposure_is_control_or_trigger: false
   semantic_trigger_inference_allowed: false
   invented_control_or_trigger_allowed: false
@@ -23,7 +24,7 @@ denominators:
     ASSET-01: 1
   exact_control_binding_count: 0
   exact_trigger_binding_count: 0
-  nonqualifying_port_exposure_count: 0
+  nonqualifying_port_exposure_count: 2
   materialization_candidates: 0
   effective_stage02_blocker_reduction_claimed: 0
 records:
@@ -47,8 +48,30 @@ records:
     source_kind: FROZEN_FUNCTIONAL_CHAIN
   exact_control_binding_evidence: []
   exact_trigger_binding_evidence: []
-  nonqualifying_lineage_evidence: []
-  classification: CURRENT_FROZEN_CONTROL_TRIGGER_CONTRACT_MISSING
+  nonqualifying_lineage_evidence:
+  - path: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    node_path: source_projection.integration_ports.3
+    proof: EXACT_UID_TOKEN_IN_PORT_EXPOSURE_NOT_CONTROL_OR_TRIGGER
+    value:
+      port_uid: ASSET-01-PORT-FINDING
+      registered_operation: createFinding
+      exposure_raw: ASSET-01-ACT-FINDING-CREATE.
+      exposure_uid_tokens:
+      - ASSET-01-ACT-FINDING-CREATE
+      matched_action_uid: ASSET-01-ACT-FINDING-CREATE
+    source_kind: FROZEN_FUNCTIONAL_CHAIN
+  - path: 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    node_path: registries.integration_ports.3
+    proof: EXACT_UID_TOKEN_IN_PORT_EXPOSURE_NOT_CONTROL_OR_TRIGGER
+    value:
+      port_uid: ASSET-01-PORT-FINDING
+      registered_operation: createFinding
+      exposure_raw: ASSET-01-ACT-FINDING-CREATE.
+      exposure_uid_tokens:
+      - ASSET-01-ACT-FINDING-CREATE
+      matched_action_uid: ASSET-01-ACT-FINDING-CREATE
+    source_kind: CURRENT_PAGE_AUTHORITY_EXACT_CAPTURE
+  classification: EXACT_PORT_EXPOSURE_ONLY_CONTROL_TRIGGER_MISSING
   materialization_candidate: false
   port_exposure_promoted_to_control_or_trigger: false
   semantic_trigger_inference_used: false
