@@ -29,6 +29,7 @@ jobs:
       - name: Compile corrected bootstrap then apply profile-neutral remediation
         shell: bash
         run: |
+          # R3: baseline includes governance-layout active-consumer migration.
           python - <<'PY'
           from pathlib import Path
 
