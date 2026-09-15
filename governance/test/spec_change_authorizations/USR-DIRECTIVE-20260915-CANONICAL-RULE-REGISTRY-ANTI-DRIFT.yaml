@@ -1,0 +1,83 @@
+authorization_uid: USR-DIRECTIVE-20260915-CANONICAL-RULE-REGISTRY-ANTI-DRIFT
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-15
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+
+exact_scope:
+  purpose: >-
+    Prevent governance-rule wording drift and synonym-based detection gaps by establishing one
+    machine-readable canonical rule registry and one shared semantic identifier taxonomy consumed
+    by reusable policy validation, normalization, promotion, and active governance consumers.
+    Continue the previously authorized cleanup of obsolete active implementation residuals without
+    deleting historical audit evidence.
+  required_audit_scope:
+    - governance/specifications/current/**
+    - governance/specifications/REGISTRY.yaml
+    - GOVERNANCE_CURRENT.yaml
+    - governance/ci/**
+    - .github/workflows/**
+    - .github/governance-source/active/source/10_REGISTRY/**
+    - .github/governance-source/active/source/12_DOCS/mother-spec/**
+  permitted_normative_changes:
+    - Add a machine-readable canonical rule registry with stable rule_uid, canonical_key, layer, semantic_type, applicability, and constraint fields.
+    - Require Mother prose and Current POLICY components to map reusable governance semantics to stable canonical rule identities rather than independently redefining equivalent rules in free text.
+    - Add one shared execution-identifier taxonomy for fixed work-unit IDs, fixed work-unit denominators, remediation-round IDs, run IDs, attempt IDs, implementation paths, and execution-tool IDs.
+    - Require validators, normalizers, promotion tools, and active governance consumers to resolve the same canonical registry and taxonomy instead of maintaining duplicate local regex or synonym lists.
+    - Make structural and layer-semantic validation primary, with shared lexical classification only as a secondary defense for free-form text.
+    - Require registry UID/digest binding and reject stale, duplicated, shadow, or locally forked rule vocabularies in active governance consumers.
+    - Preserve POLICY, EXECUTION_PROFILE, RUN_STATE, IMPLEMENTATION, and HISTORICAL_EVIDENCE layer separation while allowing project-specific fixed execution identifiers only in the appropriate non-global layers.
+    - Update the immutable Current governance UID and display version as a controlled successor revision and atomically update Registry, Manifest, root entrypoint, source identity, checksums, and active consumers as required.
+  permitted_supporting_changes:
+    - governance/ci/**
+    - governance/test/**
+    - .github/workflows/**
+    - .github/governance-source/active/source/10_REGISTRY/**
+    - .github/governance-source/active/source/11_EVIDENCE/** only for regenerated non-normative identity or validation evidence
+  cleanup_scope:
+    - Delete completed one-shot mother-neutrality migration, diagnostic, and normalizer workflows that remain executable on the active branch after successful v2.2.0 promotion.
+    - Repair or retire active consumers that still pin the superseded v2.1.15 governance UID or retired Stage-specific Current component paths.
+    - Preserve workflows required for future fresh revalidation unless their role is conclusively superseded.
+  excluded_scope:
+    - Inventing or changing ACPOS product or business behavior.
+    - Resolving any external authority reference by inference, AI autofill, or convenience.
+    - Deleting historical evidence because it contains Stage, Run, attempt, Rxx, or workflow identifiers.
+    - Mutating immutable Stage-01 source facts.
+    - Production deployment or website feature construction.
+    - Treating governance cleanup or registry validation as product acceptance.
+
+preservation_requirements:
+  unresolved_external_authority_refs:
+    exact_count: 8
+    identifiers:
+      - GAP-001
+      - GAP-002
+      - GAP-003
+      - GAP-004
+      - GAP-005
+      - GAP-006
+      - GAP-007
+      - GAP-008
+    must_remain_unresolved_without_authoritative_resolution: true
+  historical_evidence_preserved: true
+  predecessor_execution_evidence_receives_current_closure_credit: false
+  fresh_revalidation_required_after_successor_promotion: true
+  website_gate_remains_closed: true
+  deployment_gate_remains_closed: true
+
+completion_requirements:
+  authorization_receipt_must_preexist_normative_mutation_commit: true
+  single_canonical_rule_registry: true
+  single_shared_identifier_taxonomy: true
+  duplicate_local_rule_vocabularies_forbidden: true
+  active_consumer_stale_pin_scan_required: true
+  one_shot_active_workflow_cleanup_required: true
+  registry_manifest_atomic_binding_required: true
+  portability_and_contamination_regression_required: true
+  source_identity_reverification_required: true
+  stage01_immutable_verification_required: true
+  unresolved_external_authority_exact_set_verification_required: true
