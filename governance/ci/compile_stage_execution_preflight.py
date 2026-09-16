@@ -41,7 +41,7 @@ SECTION_BINDINGS={
  'WEB-GOV-02-S073':MOTHERS[1],
  'WEB-GOV-03-S062':MOTHERS[2],
  'WEB-GOV-04-S078':MOTHERS[3],
- 'WEB-GOV-04-S080':MOTHERS[3],
+ 'WEB-GOV-04-S074':MOTHERS[3],
 }
 
 def die(m): print('BLOCK:',m,file=sys.stderr); raise SystemExit(1)
