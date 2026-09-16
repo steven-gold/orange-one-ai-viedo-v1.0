@@ -1,0 +1,193 @@
+name: Governance One-Shot Stage-02 Automatic Entrypoint Cleanup
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/governance-cleanup-stage02-autoentry-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Sanitize Stage-02 workflow entrypoints and remove current test products
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          ROOT = Path('.')
+          WORKFLOW_DIR = ROOT / '.github/workflows'
+          ALLOWED = {'workflow_dispatch', 'workflow_call'}
+
+          def sanitize_workflow(path: Path):
+              original = path.read_text(encoding='utf-8')
+              lines = original.splitlines(keepends=True)
+              on_idx = None
+              for i, line in enumerate(lines):
+                  if re.match(r'^on\s*:', line):
+                      on_idx = i
+                      break
+              if on_idx is None:
+                  raise SystemExit(f'BLOCK: workflow has no on: block: {path}')
+
+              line = lines[on_idx]
+              rhs = line.split(':', 1)[1].strip()
+              if rhs:
+                  tokens = []
+                  if rhs.startswith('[') and rhs.endswith(']'):
+                      tokens = [x.strip().strip("'\"") for x in rhs[1:-1].split(',') if x.strip()]
+                  else:
+                      tokens = [rhs.strip().strip("'\"")]
+                  kept = [x for x in tokens if x in ALLOWED]
+                  if not kept:
+                      kept = ['workflow_dispatch']
+                  replacement = ['on:\n'] + [f'  {x}:\n' for x in kept]
+                  lines = lines[:on_idx] + replacement + lines[on_idx + 1:]
+              else:
+                  end = on_idx + 1
+                  while end < len(lines):
+                      raw = lines[end]
+                      stripped = raw.strip()
+                      if not stripped or stripped.startswith('#'):
+                          end += 1
+                          continue
+                      indent = len(raw) - len(raw.lstrip(' '))
+                      if indent == 0:
+                          break
+                      end += 1
+
+                  block = lines[on_idx + 1:end]
+                  starts = []
+                  for j, raw in enumerate(block):
+                      m = re.match(r'^  ([A-Za-z0-9_-]+)\s*:', raw)
+                      if m:
+                          starts.append((j, m.group(1)))
+
+                  kept_segments = []
+                  for pos, (start, key) in enumerate(starts):
+                      stop = starts[pos + 1][0] if pos + 1 < len(starts) else len(block)
+                      if key in ALLOWED:
+                          kept_segments.extend(block[start:stop])
+
+                  if not kept_segments:
+                      kept_segments = ['  workflow_dispatch:\n']
+                  lines = lines[:on_idx + 1] + kept_segments + lines[end:]
+
+              updated = ''.join(lines)
+              path.write_text(updated, encoding='utf-8')
+              return original != updated
+
+          changed = []
+          for pattern in ('stage02-*.yml', 'stage02-*.yaml'):
+              for path in sorted(WORKFLOW_DIR.glob(pattern)):
+                  if sanitize_workflow(path):
+                      changed.append(path.as_posix())
+
+          # Current/transient Stage-02 test-result products are not Current authority.
+          # Canonical immutable predecessor evidence under governance/test/history/stage02 is preserved.
+          import shutil
+          for residual in (ROOT / '.github/stage02-test', ROOT / 'governance/test/stage02'):
+              if residual.exists():
+                  shutil.rmtree(residual)
+
+          validator = ROOT / 'governance/ci/validate_stage02_zero_residual.py'
+          text = validator.read_text(encoding='utf-8')
+          if '".github/stage02-test",' not in text:
+              text = text.replace('FORBIDDEN = [\n', 'FORBIDDEN = [\n    ".github/stage02-test",\n', 1)
+
+          helper_marker = 'def stage02_workflow_triggers(path):'
+          if helper_marker not in text:
+              helper = r'''
+
+def stage02_workflow_triggers(path):
+    import re
+    lines = path.read_text(encoding="utf-8").splitlines()
+    for i, line in enumerate(lines):
+        if not re.match(r"^on\s*:", line):
+            continue
+        rhs = line.split(":", 1)[1].strip()
+        if rhs:
+            if rhs.startswith("[") and rhs.endswith("]"):
+                return {x.strip().strip("'\"") for x in rhs[1:-1].split(",") if x.strip()}
+            return {rhs.strip().strip("'\"")}
+        triggers = set()
+        j = i + 1
+        while j < len(lines):
+            raw = lines[j]
+            stripped = raw.strip()
+            if not stripped or stripped.startswith("#"):
+                j += 1
+                continue
+            indent = len(raw) - len(raw.lstrip(" "))
+            if indent == 0:
+                break
+            m = re.match(r"^  ([A-Za-z0-9_-]+)\s*:", raw)
+            if m:
+                triggers.add(m.group(1))
+            j += 1
+        return triggers
+    return set()
+'''
+              text = text.replace('\ndef main():\n', helper + '\ndef main():\n', 1)
+
+          check_marker = 'STAGE2_WORKFLOW_AUTOMATIC_TRIGGER_RESIDUAL'
+          if check_marker not in text:
+              needle = '    state = (ROOT / "00_SOURCE_INTAKE/fresh_run_003/EXECUTION_STATE.yaml").read_text(encoding="utf-8")\n'
+              check = '''    allowed_stage02_triggers = {"workflow_dispatch", "workflow_call"}\n    workflow_dir = ROOT / ".github/workflows"\n    for workflow in sorted(list(workflow_dir.glob("stage02-*.yml")) + list(workflow_dir.glob("stage02-*.yaml"))):\n        triggers = stage02_workflow_triggers(workflow)\n        automatic = sorted(triggers - allowed_stage02_triggers)\n        if automatic:\n            return fail(f"STAGE2_WORKFLOW_AUTOMATIC_TRIGGER_RESIDUAL:{workflow.relative_to(ROOT)}:{','.join(automatic)}")\n        if not triggers:\n            return fail(f"STAGE2_WORKFLOW_EXPLICIT_TRIGGER_MISSING:{workflow.relative_to(ROOT)}")\n\n'''
+              if needle not in text:
+                  raise SystemExit('BLOCK: zero-residual validator insertion owner not found')
+              text = text.replace(needle, check + needle, 1)
+
+          validator.write_text(text, encoding='utf-8')
+
+          print(f'Sanitized workflow count: {len(changed)}')
+          for item in changed:
+              print(f'  {item}')
+          PY
+
+          git rm -r --ignore-unmatch .github/stage02-test governance/test/stage02
+
+      - name: Validate zero residual and current resume state
+        shell: bash
+        run: |
+          python governance/ci/validate_stage02_zero_residual.py
+          python governance/ci/validate_profile_history_binding.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+
+      - name: Protect Mother and Current normative content from this cleanup
+        shell: bash
+        run: |
+          if ! git diff --quiet -- .github/governance-source/active/source/12_DOCS/mother-spec governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml; then
+            echo 'BLOCK: cleanup touched normative Mother/Current governance' >&2
+            git diff -- .github/governance-source/active/source/12_DOCS/mother-spec governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+            exit 1
+          fi
+
+      - name: Remove one-shot runner and persist cleanup atomically
+        shell: bash
+        run: |
+          git rm .github/workflows/governance-cleanup-stage02-autoentry-once.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows governance/ci/validate_stage02_zero_residual.py
+          if git diff --cached --quiet; then
+            echo 'BLOCK: cleanup produced no persisted change' >&2
+            exit 1
+          fi
+          git commit -m 'chore(stage02): remove automatic execution residue'
+          git push origin HEAD:rebuild-v2.1.1
