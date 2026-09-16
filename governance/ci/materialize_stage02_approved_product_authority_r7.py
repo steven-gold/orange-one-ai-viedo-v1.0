@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from validate_stage02_approved_product_authority_r7 import validate, repo_path  # noqa: E402
 
 STAGE2 = ROOT / '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+R6 = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.yaml'
 DEFAULT_APPROVED = ROOT / 'governance/test/stage02/STAGE02_APPROVED_PRODUCT_AUTHORITY_BINDINGS_R7.yaml'
 RECEIPT = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_AUTHORITY_MATERIALIZATION_R7_RECEIPT.yaml'
 ALLOWED_PAGES = {'CORE-01', 'ASSET-01'}
@@ -46,6 +47,15 @@ def main() -> None:
 
     # Critical ordering invariant: perform full validation before any owning-layer write.
     approved, records = validate(approved_path)
+    r6 = load(R6)
+    r6_den = r6.get('denominators') or {}
+    current_total = r6_den.get('current_open_stage02_problems')
+    product_denominator = r6_den.get('product_design_contract_blockers_locked_for_intake')
+    external_denominator = r6_den.get('external_authority_blockers_preserved_outside_product_intake')
+    if not all(isinstance(v, int) and v >= 0 for v in (current_total, product_denominator, external_denominator)):
+        die(f'R7_INVALID_CURRENT_DENOMINATORS:{r6_den}')
+    if product_denominator + external_denominator != current_total:
+        die(f'R7_CURRENT_AUTHORITY_PARTITION_DRIFT:product={product_denominator}:external={external_denominator}:total={current_total}')
 
     by_page: dict[str, list[dict]] = defaultdict(list)
     for rec in records:
@@ -125,7 +135,7 @@ def main() -> None:
 
     total = len(records)
     receipt = {
-        'schema_version': 1,
+        'schema_version': 2,
         'artifact_type': 'PRODUCT_AUTHORITY_MATERIAL_REMEDIATION_RECEIPT_R7',
         'normative_authority': False,
         'stage_uid': 'STAGE-02',
@@ -138,10 +148,16 @@ def main() -> None:
             'CORE-01': len(by_page.get('CORE-01', [])),
             'ASSET-01': len(by_page.get('ASSET-01', [])),
         },
+        'current_denominators': {
+            'open_stage02_problems': current_total,
+            'product_authority_partition': product_denominator,
+            'external_authority_partition': external_denominator,
+        },
         'changed_artifacts': changed,
-        'before_effective_stage02_blockers': 150,
+        'before_effective_stage02_blockers': current_total,
         'after_state_claim_before_fresh_reexecution': 'NOT_CLAIMED',
-        'expected_remaining_only_if_fresh_reexecution_accepts_all_materialized_signatures': 150 - total,
+        'expected_remaining_only_if_fresh_reexecution_accepts_all_materialized_signatures': current_total - total,
+        'external_authority_resolution_claimed': False,
         'current_specification_mutated': False,
         'immutable_stage1_source_mutated': False,
         'ai_invented_business_value': False,
@@ -152,6 +168,7 @@ def main() -> None:
     }
     dump(RECEIPT, receipt)
     print(f'PASS: R7 materially wrote approved authority-backed closures total={total}')
+    print(f'PASS: Current denominator remains {current_total} = product {product_denominator} + external {external_denominator}')
     print('PASS: no blocker reduction is claimed before fresh Stage-02 reexecution')
     print('PASS: Current Specification and immutable Stage-01 Raw Source are not mutation targets')
 
