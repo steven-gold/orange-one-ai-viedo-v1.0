@@ -308,6 +308,38 @@ jobs:
           sysrun['exact_denominators_verified'] = True
           sysrun['persisted_head_revalidation_required'] = True
           state_p.write_text(yaml.safe_dump(state, sort_keys=False, allow_unicode=True), encoding='utf-8')
+
+          candidate_p = ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
+          candidate = yaml.safe_load(candidate_p.read_text()) or {}
+          current = candidate.setdefault('current_stage2_execution', {})
+          current.update({
+              'state': 'TEST_EXECUTED_BLOCKED',
+              'attempt_uid': attempt_uid,
+              'frozen_governance_uid': governance_uid,
+              'raw_discovery_gap_count': int(ev['fresh_functional_gap_total']),
+              'product_materialization_elimination_count': 0,
+              'external_authority_elimination_count': 0,
+              'total_fresh_elimination_count': 0,
+              'current_functional_gap_count': int(ev['fresh_functional_gap_total']),
+              'current_closure_blocker_count': int(ev['closure_blocker_total']),
+              'official_stage_output_denominator_count': len(ev.get('official_stage_output_denominator') or []),
+              'current_manifest_mandatory_stage_output_subset_count': len(ev.get('execution_profile_mandatory_output_subset') or []),
+              'preserved_external_authority_union_count': int(ev['preserved_external_authority_union_count']),
+              'active_evidence_present': True,
+              'active_findings_present': True,
+              'stage_exit_allowed': False,
+              'website_construction_allowed': False,
+              'deployment_allowed': False,
+              'historical_counts_may_be_treated_as_current': False,
+              'prior_stage2_results_used': False,
+              'source_execution_sha': source_sha,
+              'source_workflow_run_id': source_run,
+              'source_artifact_id': artifact_id,
+              'source_artifact_sha256': artifact_sha,
+              'reexecution_cycle': f'FRESH_CURRENT_GOVERNANCE_STAGE02_ATTEMPT_{attempt_uid.rsplit("-", 1)[-1]}',
+              'next_action': 'OWNING_LAYER_REMEDIATION_OF_FRESH_FUNCTIONAL_GAPS_AND_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED',
+          })
+          candidate_p.write_text(yaml.safe_dump(candidate, sort_keys=False, allow_unicode=True), encoding='utf-8')
           PY
       - name: Validate persisted Current Stage-02 state before commit
         run: |
