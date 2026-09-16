@@ -10,7 +10,12 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 RUN = ROOT / '00_SOURCE_INTAKE/fresh_run_003'
+CONTRACT_ROOT = RUN / '04_PAGE_FUNCTIONAL_CONTRACT'
 EVIDENCE = ROOT / 'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
+PROBLEM_REGISTER = CONTRACT_ROOT / 'CURRENT_PROBLEM_REGISTER.yaml'
+DENOMINATOR = CONTRACT_ROOT / 'DENOMINATOR_SNAPSHOT.yaml'
+STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
+REGISTRY = ROOT / 'governance/specifications/REGISTRY.yaml'
 OUT = ROOT / 'governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml'
 MATERIAL_VALIDATOR = ROOT / 'governance/ci/validate_current_stage2_materialized_closure.py'
 
@@ -51,9 +56,12 @@ def load_yaml(path: Path):
     if not path.is_file():
         die(f'MISSING_INPUT:{path.relative_to(ROOT)}')
     try:
-        return yaml.safe_load(path.read_text(encoding='utf-8')) or {}
+        obj = yaml.safe_load(path.read_text(encoding='utf-8')) or {}
     except Exception as exc:
         die(f'YAML_PARSE:{path.relative_to(ROOT)}:{exc!r}')
+    if not isinstance(obj, dict):
+        die(f'MAPPING_REQUIRED:{path.relative_to(ROOT)}')
+    return obj
 
 
 def scalar_equal(value, uid: str) -> bool:
@@ -178,19 +186,74 @@ def classify_gap(gap: dict, raw: dict, corpus):
     }
 
 
+def evidence_gap_rows(evidence: dict):
+    rows = []
+    for page_uid in sorted(PAGES):
+        scan = (((evidence.get('pages') or {}).get(page_uid) or {}).get('functional_chain_fresh_scan') or {})
+        gaps = scan.get('gaps') or []
+        if int(scan.get('gap_count') or 0) != len(gaps):
+            die(f'PAGE_GAP_COUNT_DRIFT:{page_uid}')
+        for gap in gaps:
+            rows.append((page_uid, gap.get('uid'), gap.get('category'), gap.get('class'), gap.get('detail'), gap.get('gap_owner')))
+    return rows
+
+
+def problem_rows(problem: dict):
+    rows = []
+    for item in problem.get('problems') or []:
+        rows.append((item.get('page_uid'), item.get('target_uid'), item.get('category'), item.get('gap_class'), item.get('detail'), item.get('gap_owner')))
+    return rows
+
+
 if subprocess.run([sys.executable, str(MATERIAL_VALIDATOR)], cwd=str(ROOT), text=True).returncode != 0:
     die('MATERIALIZED_STAGE02_STRUCTURAL_ROOT_INVALID')
 if not EVIDENCE.is_file():
     die('CURRENT_STAGE02_EVIDENCE_MISSING')
 evidence = json.loads(EVIDENCE.read_text(encoding='utf-8'))
+state = load_yaml(STATE)
+registry = load_yaml(REGISTRY)
+problem = load_yaml(PROBLEM_REGISTER)
+denominator = load_yaml(DENOMINATOR)
+active = state.get('stage02_active_attempt') or {}
+current_governance_uid = (registry.get('active_specification') or {}).get('governance_uid')
+attempt_uid = active.get('attempt_uid')
+
 if evidence.get('result') != 'BLOCKED':
     die(f'CURRENT_STAGE02_RESULT_NOT_BLOCKED:{evidence.get("result")!r}')
 if evidence.get('closure_blocker_total') != 0:
     die(f'CLASSIFIER_REQUIRES_STRUCTURAL_BLOCKERS_ZERO:{evidence.get("closure_blocker_total")!r}')
-if evidence.get('fresh_functional_gap_total') != 171:
-    die(f'CURRENT_FRESH_FUNCTIONAL_DENOMINATOR_DRIFT:{evidence.get("fresh_functional_gap_total")!r}')
 if evidence.get('prior_stage2_results_used') is not False or evidence.get('prior_stage2_counts_used_as_scan_input') is not False:
     die('CURRENT_EVIDENCE_NOT_FRESH')
+if not current_governance_uid or state.get('specification_uid') != current_governance_uid:
+    die('CURRENT_GOVERNANCE_UID_DRIFT')
+if active.get('frozen_governance_uid') != current_governance_uid or evidence.get('frozen_governance_uid') != current_governance_uid:
+    die('CURRENT_EVIDENCE_GOVERNANCE_UID_DRIFT')
+if not attempt_uid or evidence.get('attempt_uid') != attempt_uid:
+    die('CURRENT_ATTEMPT_UID_DRIFT')
+
+current_denominator = int(evidence.get('fresh_functional_gap_total') or 0)
+if current_denominator <= 0:
+    die(f'CURRENT_FRESH_FUNCTIONAL_DENOMINATOR_INVALID:{current_denominator}')
+if problem.get('current_governance_uid') != current_governance_uid or problem.get('attempt_uid') != attempt_uid:
+    die('CURRENT_PROBLEM_REGISTER_IDENTITY_DRIFT')
+if denominator.get('current_governance_uid') != current_governance_uid or denominator.get('attempt_uid') != attempt_uid:
+    die('CURRENT_DENOMINATOR_SNAPSHOT_IDENTITY_DRIFT')
+if int(problem.get('fresh_physical_problem_count') or 0) != current_denominator:
+    die('CURRENT_PROBLEM_REGISTER_DENOMINATOR_DRIFT')
+if int(problem.get('open_problem_count') or 0) != current_denominator or int(problem.get('resolved_problem_count') or 0) != 0:
+    die('CURRENT_PROBLEM_REGISTER_OPEN_RESOLVED_DRIFT')
+if len(problem.get('problems') or []) != current_denominator:
+    die('CURRENT_PROBLEM_REGISTER_ROW_COUNT_DRIFT')
+if int(denominator.get('fresh_functional_gap_total') or 0) != current_denominator:
+    die('CURRENT_DENOMINATOR_SNAPSHOT_COUNT_DRIFT')
+if denominator.get('hardcoded_or_historical_denominator_used') is not False:
+    die('CURRENT_DENOMINATOR_SNAPSHOT_MUST_BE_PHYSICAL')
+
+evidence_rows = evidence_gap_rows(evidence)
+if len(evidence_rows) != current_denominator:
+    die(f'CURRENT_EVIDENCE_ROW_COUNT_DRIFT:{len(evidence_rows)}:{current_denominator}')
+if sorted(evidence_rows, key=lambda x: tuple(str(v) for v in x)) != sorted(problem_rows(problem), key=lambda x: tuple(str(v) for v in x)):
+    die('CURRENT_PROBLEM_REGISTER_NOT_EXACT_EVIDENCE_PROJECTION')
 
 shared_corpus = [(p, load_yaml(p)) for p in SHARED_INPUTS]
 records = []
@@ -213,8 +276,8 @@ for page_uid, cfg in PAGES.items():
         rec.update(classify_gap(gap, raw, corpus))
         records.append(rec)
 
-if len(records) != 171:
-    die(f'CLASSIFIED_GAP_DENOMINATOR_DRIFT:{len(records)}')
+if len(records) != current_denominator:
+    die(f'CLASSIFIED_GAP_DENOMINATOR_DRIFT:{len(records)}:{current_denominator}')
 summary = Counter(r['disposition'] for r in records)
 basis = Counter(r['completion_basis'] for r in records)
 by_category = {}
@@ -229,15 +292,21 @@ for category in sorted({r['category'] for r in records}):
 
 head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=str(ROOT), text=True, capture_output=True, check=True).stdout.strip()
 out = {
-    'schema_version': 1,
+    'schema_version': 2,
     'artifact_type': 'STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION',
     'normative_authority': False,
     'stage_uid': 'STAGE-02',
     'cycle': 'R2_CLASSIFICATION',
     'source_head_sha': head,
+    'current_governance_uid': current_governance_uid,
+    'attempt_uid': attempt_uid,
     'current_fresh_evidence_ref': 'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json',
-    'fresh_functional_gap_denominator': 171,
+    'current_problem_register_ref': '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml',
+    'denominator_snapshot_ref': '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DENOMINATOR_SNAPSHOT.yaml',
+    'fresh_functional_gap_denominator': current_denominator,
     'closure_blocker_denominator': 0,
+    'denominator_source': 'CURRENT_PHYSICAL_EVIDENCE_PROBLEM_REGISTER_AND_DENOMINATOR_SNAPSHOT_EXACT_AGREEMENT',
+    'hardcoded_historical_denominator_used': False,
     'authority_corpus_policy': {
         'official_stage2_inputs_only': True,
         'stage2_current_product_output_may_self_authorize_completion': False,
@@ -255,8 +324,9 @@ out = {
 }
 OUT.parent.mkdir(parents=True, exist_ok=True)
 OUT.write_text(yaml.safe_dump(out, allow_unicode=True, sort_keys=False, width=160), encoding='utf-8')
-print('STAGE02_REMEDIABILITY_TOTAL=171')
+print(f'STAGE02_REMEDIABILITY_TOTAL={current_denominator}')
 for key in ('BOUNDED_COMPLETION_ADMISSIBLE', 'EXACT_EXTERNAL_AUTHORITY_REQUIRED', 'NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS'):
     print(f'{key}={summary.get(key, 0)}')
 print('PASS: every current fresh Stage-02 functional gap classified with exact UID and bounded-completion disposition')
+print('PASS: classifier denominator is derived from exact agreement of fresh evidence, Current Problem Register, and Denominator Snapshot')
 print('PASS: Stage-02 product output was not used to self-authorize completion')
