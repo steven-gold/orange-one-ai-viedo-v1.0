@@ -1,12 +1,6 @@
 name: Stage-02 ASSET-01 Product Authority Review R9
 
 on:
-  push:
-    branches: [rebuild-v2.1.1]
-    paths:
-      - 'governance/ci/build_stage02_asset01_product_authority_review_r9.py'
-      - 'governance/ci/validate_stage02_asset01_product_authority_review_r9.py'
-      - '.github/workflows/stage02-asset01-product-authority-review-r9.yml'
   workflow_dispatch:
 
 permissions:
