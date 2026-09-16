@@ -152,7 +152,7 @@ def build():
     iv=inv.get('invariants') or {}; need=['CANONICAL_STAGE_EXECUTION_PREFLIGHT','DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION','GAP_REMEDIATION_ADMISSIBILITY','ROLE_SAFE_FUNCTIONAL_CLOSURE','COMMON_ENGINE_DEFECT_INTERRUPT','GENERATED_OUTPUT_PERSISTENCE','FUNCTIONAL_CONTRACT_COMPLETENESS']
     for n in need:
         if not iv.get(n): die(f'INVARIANT_MISSING:{n}')
-    preflight=((cycle.get('execution_cycle_control') or {}).get('canonical_preflight') or {})
+    preflight=cycle.get('canonical_preflight') or {}
     req_artifacts=set(preflight.get('artifacts') or [])
     if not {'EXECUTION_CYCLE_PREFLIGHT_RECEIPT','GOVERNANCE_EXECUTION_CONTEXT_RECEIPT'}.issubset(req_artifacts): die('POLICY_SUPPORT_RECEIPT_REQUIREMENT_DRIFT')
     gs=gaps(e); existing=old_uids(); problems=[]
