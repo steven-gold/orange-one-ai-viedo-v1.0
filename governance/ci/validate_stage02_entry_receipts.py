@@ -12,7 +12,7 @@ FREEZE = ROOT / 'governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT
 BASELINE = ROOT / 'governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml'
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
 ZERO = ROOT / 'governance/ci/validate_stage02_zero_residual.py'
-EXPECTED_ATTEMPT = 'STAGE02-FRESH-20260915-002'
+EXPECTED_ATTEMPT = 'STAGE02-FRESH-20260916-003'
 EXPECTED_STAGE1_BLOBS = {
     '00_SOURCE_INTAKE/fresh_run_003/ARTIFACT_PLAN.yaml': 'c64ab04846b228c14978c07f88164a8d02a22f0d',
     '00_SOURCE_INTAKE/fresh_run_003/EXECUTION_STATE.yaml': '4f2bf558f5807a03d081f848184334ba16901fb1',
@@ -85,9 +85,12 @@ if execution.get('current_stage') != 'STAGE-01-CLOSED':
     die('ACTIVE_STATE_NOT_CLEAN_PRE_STAGE02')
 if (execution.get('stage2') or {}).get('result') != 'NOT_EXECUTED':
     die('ACTIVE_STATE_STAGE2_NOT_NOT_EXECUTED')
-if (state.get('stage02_active_attempt') or {}).get('active_evidence_present') is not False:
+active_attempt = state.get('stage02_active_attempt') or {}
+if active_attempt.get('attempt_uid') != EXPECTED_ATTEMPT:
+    die('ACTIVE_STATE_ATTEMPT_UID_MISMATCH')
+if active_attempt.get('active_evidence_present') is not False:
     die('ACTIVE_STATE_STALE_EVIDENCE')
-if (state.get('stage02_active_attempt') or {}).get('active_findings_present') is not False:
+if active_attempt.get('active_findings_present') is not False:
     die('ACTIVE_STATE_STALE_FINDINGS')
 
 cp = subprocess.run([sys.executable, str(ZERO)], cwd=ROOT, text=True)
@@ -97,4 +100,4 @@ if cp.returncode != 0:
 print(f'PASS: Stage-02 entry freeze receipt locks governance UID {uid}')
 print(f'PASS: Stage-02 clean predecessor receipt binds parent {parent}')
 print('PASS: five Stage-01 predecessor blobs are exact and Stage-02 active residual is zero')
-print('PASS: prior Stage-02 results are non-authoritative and unused for this fresh attempt')
+print('PASS: prior Stage-02 results are historical only and unused for this fresh attempt')
