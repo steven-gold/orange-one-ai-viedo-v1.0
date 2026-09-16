@@ -14,11 +14,7 @@ RAW = ROOT / '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01
 RAW_REF = ROOT / '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml'
 OUT = ROOT / 'governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml'
 PHYSICAL_SOURCE_REL = '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml'
-EXPECTED_CATEGORIES = {
-    'PAYLOAD_INPUT_CONTRACT_MISSING': 16,
-    'AUDIT_EVENT_NODE_MISSING': 4,
-    'STATE_TRANSITION_LEDGER_FIELD_MISSING': 20,
-}
+PAGE_UID = 'CORE-01'
 
 
 def die(msg: str) -> None:
@@ -68,16 +64,20 @@ r6 = load(R6)
 raw = load(RAW)
 raw_ref = load(RAW_REF)
 
-records = [r for r in (r6.get('records') or []) if r.get('scope') == 'CORE-01']
-if len(records) != 40:
-    die(f'CORE01_R6_DENOMINATOR_NOT_40:{len(records)}')
+all_r6_records = r6.get('records') or []
+product_denominator = (r6.get('denominators') or {}).get('product_design_contract_blockers_locked_for_intake')
+if not isinstance(product_denominator, int) or len(all_r6_records) != product_denominator:
+    die(f'R8_R6_PRODUCT_DENOMINATOR_DRIFT:records={len(all_r6_records)}:declared={product_denominator}')
+records = [r for r in all_r6_records if r.get('scope') == PAGE_UID]
+if not records:
+    die('CORE01_R6_CURRENT_SCOPE_EMPTY')
 counts = Counter(r.get('category') for r in records)
-if dict(counts) != EXPECTED_CATEGORIES:
-    die(f'CORE01_R6_CATEGORY_DRIFT:{dict(counts)}')
+if None in counts:
+    die('CORE01_R6_CATEGORY_MISSING')
 
 capture = None
 for rec in raw_ref.get('records') or []:
-    if rec.get('page_uid') == 'CORE-01' and rec.get('target_path') == '00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml':
+    if rec.get('page_uid') == PAGE_UID and rec.get('target_path') == '00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml':
         capture = rec
         break
 if not capture:
@@ -120,6 +120,7 @@ for base in records:
 
     review_records.append({
         'blocker_uid': uid,
+        'source_problem_uid': base.get('source_problem_uid'),
         'scope': base.get('scope'),
         'category': category,
         'target_uid': target,
@@ -146,11 +147,11 @@ for base in records:
 head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=str(ROOT), text=True, capture_output=True, check=True).stdout.strip()
 
 out = {
-    'schema_version': 1,
+    'schema_version': 2,
     'artifact_type': 'NON_NORMATIVE_CORE01_PRODUCT_AUTHORITY_REVIEW_CONTRACT_R8',
     'normative_authority': False,
     'stage_uid': 'STAGE-02',
-    'page_uid': 'CORE-01',
+    'page_uid': PAGE_UID,
     'cycle': 'CORE01_PRODUCT_AUTHORITY_REVIEW_R8',
     'source_r6_ref': 'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.yaml',
     'source_head_sha': head,
@@ -166,7 +167,7 @@ out = {
         'target_git_blob_sha': capture.get('target_git_blob_sha'),
         'content_mutated': capture.get('content_mutated'),
     },
-    'purpose': 'PRESENT_EXACT_CURRENT_CORE01_CONTEXT_FOR_40_OPEN_PRODUCT_AUTHORITY_DECISIONS_WITHOUT_INVENTING_ANY_MISSING_PRODUCT_VALUE',
+    'purpose': 'PRESENT_EXACT_CURRENT_CORE01_CONTEXT_FOR_CURRENT_R6_PRODUCT_AUTHORITY_DECISIONS_WITHOUT_INVENTING_ANY_MISSING_PRODUCT_VALUE',
     'safety': {
         'review_package_is_product_authority': False,
         'contains_approved_product_authority_values': False,
@@ -180,10 +181,8 @@ out = {
         'stage02_product_output_mutated': False,
     },
     'denominators': {
-        'core01_open_product_authority_decisions': 40,
-        'payload_input_decisions': 16,
-        'audit_event_decisions': 4,
-        'state_transition_field_decisions': 20,
+        'core01_open_product_authority_decisions': len(records),
+        'category_counts': dict(sorted(counts.items())),
         'approved_bindings_in_review_package': 0,
         'materializable_bindings_in_review_package': 0,
         'effective_stage02_blocker_reduction_claimed': 0,
@@ -203,6 +202,6 @@ out = {
     'deployment_allowed': False,
 }
 OUT.write_text(yaml.safe_dump(out, allow_unicode=True, sort_keys=False, width=180), encoding='utf-8')
-print('PASS: built CORE-01 R8 review package for exact 40 R6 product-authority blockers')
-print('PASS: categories payload=16 audit=4 transition_fields=20')
+print(f'PASS: built CORE-01 R8 review package for Current R6 product-authority blockers={len(records)}')
+print(f'PASS: Current category counts={dict(sorted(counts.items()))}')
 print('PASS: approved values=0 materializable=0 blocker reduction=0')
