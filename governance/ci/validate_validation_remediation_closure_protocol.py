@@ -144,36 +144,52 @@ profile_state=state.get('selected_execution_profile_state') or {}
 execution_state_key=profile_state.get('execution_state_key')
 current_step_state_key=profile_state.get('current_step_state_key')
 active_attempt_state_key=profile_state.get('active_attempt_state_key')
-if not execution_state_key or not current_step_state_key or not active_attempt_state_key:
+if not execution_state_key or not current_step_state_key:
     errors.append('SELECTED_PROFILE_STATE_BINDING_INCOMPLETE')
     ex={}; current_step={}; attempt={}
 else:
     ex=state.get(str(execution_state_key)) or {}
     current_step=ex.get(str(current_step_state_key)) or {}
-    attempt=state.get(str(active_attempt_state_key)) or {}
+    attempt=state.get(str(active_attempt_state_key)) or {} if active_attempt_state_key else {}
 if profile_state.get('owner_ref')!='GOVERNANCE_CURRENT.yaml': errors.append('SELECTED_PROFILE_STATE_OWNER_INVALID')
 if profile_state.get('global_normative_authority') is not False: errors.append('SELECTED_PROFILE_STATE_WRONGLY_NORMATIVE')
 if profile_state.get('profile_step_identities_are_global_governance') is not False: errors.append('PROFILE_STEP_IDENTITY_WRONGLY_GLOBAL')
 if trans.get('current_governance_uid')!=uid: errors.append('AUTHORITY_TRANSITION_CURRENT_UID_MISMATCH')
 if trans.get('predecessor_attempt_may_close_under_current_governance') is not False: errors.append('PREDECESSOR_ATTEMPT_CLOSURE_CREDIT_NOT_BLOCKED')
 if trans.get('predecessor_attempt_preserved_as_historical_evidence') is not True: errors.append('PREDECESSOR_ATTEMPT_HISTORY_PRESERVATION_MISSING')
-active_current_revalidation = (
-    attempt.get('frozen_governance_uid') == uid
-    and current_step.get('result') in {'TEST_EXECUTED_BLOCKED','TEST_EXECUTED_PASS'}
-    and attempt.get('active_evidence_present') is True
-    and attempt.get('active_findings_present') is True
-    and attempt.get('fresh_revalidation_required') is False
-)
-if active_current_revalidation:
-    if trans.get('fresh_revalidation_required') is not False: errors.append('CURRENT_REVALIDATION_TRANSITION_NOT_CLOSED')
-    if attempt.get('closure_credit_under_current_governance') is not True: errors.append('CURRENT_REVALIDATED_ATTEMPT_CREDIT_MISSING')
-    if current_step.get('prior_results_authoritative_for_current_governance') is not False or current_step.get('revalidation_required_under_current_governance') is not False: errors.append('CURRENT_RUN_STATE_REVALIDATION_PROJECTION_INVALID')
-    for k in ('source_execution_sha','source_workflow_run_id','source_artifact_id','source_artifact_sha256'):
-        if attempt.get(k) in (None,''): errors.append('CURRENT_REVALIDATION_PROVENANCE_MISSING:'+k)
+
+stage_not_executed = current_step.get('result') == 'NOT_EXECUTED'
+if stage_not_executed:
+    if active_attempt_state_key:
+        errors.append('NOT_EXECUTED_STAGE_MUST_NOT_HAVE_ACTIVE_ATTEMPT_POINTER')
+    if trans.get('fresh_revalidation_required') is not False:
+        errors.append('NOT_EXECUTED_STAGE_WRONGLY_REQUIRES_REVALIDATION')
+    if current_step.get('prior_results_authoritative_for_current_governance') is not False:
+        errors.append('NOT_EXECUTED_STAGE_PRIOR_RESULT_CREDIT_INVALID')
+    if current_step.get('revalidation_required_under_current_governance') is not False:
+        errors.append('NOT_EXECUTED_STAGE_REVALIDATION_PROJECTION_INVALID')
+    if current_step.get('artifact_root_present') is not False:
+        errors.append('NOT_EXECUTED_STAGE_ARTIFACT_ROOT_MUST_BE_ABSENT')
 else:
-    if trans.get('fresh_revalidation_required') is not True: errors.append('AUTHORITY_TRANSITION_REVALIDATION_MISSING')
-    if attempt.get('closure_credit_under_current_governance') is not False or attempt.get('fresh_revalidation_required') is not True: errors.append('PREDECESSOR_ATTEMPT_NOT_HISTORICAL')
-    if current_step.get('prior_results_authoritative_for_current_governance') is not False or current_step.get('revalidation_required_under_current_governance') is not True: errors.append('RUN_STATE_REVALIDATION_PROJECTION_INVALID')
+    if not active_attempt_state_key:
+        errors.append('EXECUTED_STAGE_ACTIVE_ATTEMPT_BINDING_MISSING')
+    active_current_revalidation = (
+        attempt.get('frozen_governance_uid') == uid
+        and current_step.get('result') in {'TEST_EXECUTED_BLOCKED','TEST_EXECUTED_PASS'}
+        and attempt.get('active_evidence_present') is True
+        and attempt.get('active_findings_present') is True
+        and attempt.get('fresh_revalidation_required') is False
+    )
+    if active_current_revalidation:
+        if trans.get('fresh_revalidation_required') is not False: errors.append('CURRENT_REVALIDATION_TRANSITION_NOT_CLOSED')
+        if attempt.get('closure_credit_under_current_governance') is not True: errors.append('CURRENT_REVALIDATED_ATTEMPT_CREDIT_MISSING')
+        if current_step.get('prior_results_authoritative_for_current_governance') is not False or current_step.get('revalidation_required_under_current_governance') is not False: errors.append('CURRENT_RUN_STATE_REVALIDATION_PROJECTION_INVALID')
+        for k in ('source_execution_sha','source_workflow_run_id','source_artifact_id','source_artifact_sha256'):
+            if attempt.get(k) in (None,''): errors.append('CURRENT_REVALIDATION_PROVENANCE_MISSING:'+k)
+    else:
+        if trans.get('fresh_revalidation_required') is not True: errors.append('AUTHORITY_TRANSITION_REVALIDATION_MISSING')
+        if attempt.get('closure_credit_under_current_governance') is not False or attempt.get('fresh_revalidation_required') is not True: errors.append('PREDECESSOR_ATTEMPT_NOT_HISTORICAL')
+        if current_step.get('prior_results_authoritative_for_current_governance') is not False or current_step.get('revalidation_required_under_current_governance') is not True: errors.append('RUN_STATE_REVALIDATION_PROJECTION_INVALID')
 if ex.get('website_construction_allowed') is not False or ex.get('deployment_allowed') is not False: errors.append('PRODUCT_GATE_WRONGLY_OPENED')
 
 gate_ref='governance/ci/validate_active_consumer_reference_integrity.py'
@@ -192,4 +208,5 @@ print('PASS: mutation control preserves freeze, explicit authorization, complete
 print('PASS: finding terminalization requires persisted-head evidence tied to the exact finding signature and remediation target')
 print('PASS: active-consumer reference-integrity gate is mandatory in targeted and Full-Line regression paths')
 print('PASS: predecessor profile/run evidence remains historical RUN_STATE and cannot become current closure credit')
+print('PASS: not-executed selected-profile step requires no active-attempt pointer or current artifact root')
 print('PASS: website construction and deployment remain blocked')

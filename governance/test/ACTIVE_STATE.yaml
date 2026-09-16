@@ -1,4 +1,4 @@
-schema_version: 13
+schema_version: 14
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
@@ -12,11 +12,9 @@ selected_execution_profile_state:
   profile_step_identities_are_global_governance: false
   execution_state_key: execution
   current_step_state_key: stage2
-  active_attempt_state_key: stage02_active_attempt
   history_binding_ref: governance/test/SELECTED_PROFILE_HISTORY_BINDING.yaml
   profile_validator_refs:
   - governance/ci/validate_profile_history_binding.py
-  - governance/ci/validate_stage02_successor_integrity_external_aware_r3.py
 execution:
   branch: rebuild-v2.1.1
   run_uid: FRESH-RUN-003
@@ -24,13 +22,13 @@ execution:
   target_pages:
   - CORE-01
   - ASSET-01
-  current_stage: STAGE-02-TESTED-BLOCKED
+  current_stage: STAGE-01-CLOSED
   stage1:
     CORE-01: PASS
     ASSET-01: PASS
   stage2:
-    result: TEST_EXECUTED_BLOCKED
-    stage_entry_gate: PASS
+    result: NOT_EXECUTED
+    stage_entry_gate: NOT_EVALUATED
     stage_exit_allowed: false
     prior_results_authoritative_for_next_run: false
     prior_results_used_in_current_run: false
@@ -39,22 +37,6 @@ execution:
     prior_results_authoritative_for_current_governance: false
   website_construction_allowed: false
   deployment_allowed: false
-stage02_clean_reset:
-  directive: POST_PROMOTION_CLEAN_STAGE_RESTART_CURRENT_UID_2026-09-16
-  reset_base_commit: 7be3945700d163854dd2b6f6715e5bfb313f004d
-  reset_base_state: STAGE1_VALIDATION_COMPLETED_CI_PASS
-  reset_base_stage2_started: false
-  restore_stage1_current_ledgers_from_exact_git_blobs: true
-  delete_stage2_materialized_contract_root: true
-  delete_stage2_review_and_preflight_evidence: true
-  delete_stage2_successor_ledgers: true
-  delete_stage2_cycle_audit_evidence: true
-  preserve_stage1_blueprints_and_bindings: true
-  preserve_raw_source_and_classification: true
-  preserve_current_specification: true
-  preserve_prior_stage2_attempt_only_as_historical_non_active_evidence: true
-  prior_stage2_pass_blocked_or_gap_counts_may_influence_next_run: false
-  archived_predecessor_attempt_ref: governance/test/history/stage02/attempt-ae42ef7ba4d6
 full_lifecycle_governance_system_test:
   round: SYSTEM_FULL_LINE_HIGH_PRESSURE_ROUND_1
   meaning: GOVERNANCE_SYSTEM_EXECUTION_HEALTH_ONLY
@@ -67,48 +49,14 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: PASS_CURRENT_UID_PERSISTED_HEAD
-  full_line_verification_run_id: 35036212931
-  exact_denominators_verified: true
+  full_line_github_result: REVALIDATION_REQUIRED_AFTER_STATE_CLEANUP
+  exact_denominators_verified: false
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
 stage_execution_loading:
   full_line_round_reads_all_source_files_for_integrity_and_regression: true
   normal_stage_execution_reads_only_stage_required_files_and_shared_dependencies: true
   stage_selector_required: true
-stage02_active_attempt:
-  attempt_uid: STAGE02-FRESH-20260916-003
-  frozen_governance_receipt_ref: governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml
-  clean_baseline_receipt_ref: governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml
-  frozen_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
-  source_execution_sha: 312c06a3dddb2509d884a5f1ef6f636d893e9826
-  source_workflow_run_id: 35040165635
-  source_artifact_id: 10424976911
-  source_artifact_sha256: 823b91f54ae1f082f7e036da0a0f7dbfecc03c75ca8e8f9984ff04837fc7ad64
-  active_evidence_present: true
-  active_findings_present: true
-  active_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-  active_findings_ref: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
-  historical_attempt_may_be_used_as_current_result: false
-  historical_defect_signatures_may_be_used_only_as_regression_targets_after_fresh_rescan: true
-  fresh_functional_gap_total: 150
-  fresh_closure_blocker_total: 13
-  preserved_external_authority_union_count: 8
-  official_stage_output_denominator_count: 17
-  current_manifest_mandatory_stage_output_subset_count: 12
-  product_or_contract_material_remediation_started: false
-  next_action: OWNING_LAYER_REMEDIATION_OF_150_FUNCTIONAL_GAPS_AND_13_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
-  governance_status: CURRENT_FROZEN_ATTEMPT_FRESHLY_REVALIDATED_BLOCKED
-  closure_credit_under_current_governance: true
-  fresh_revalidation_required: false
-stage2_result_evidence:
-  mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
-  static_result_pointer_required: false
-  static_run_id_copy_forbidden: true
-  static_head_sha_copy_forbidden: true
-  static_specification_digest_copy_forbidden: true
-  tracked_current_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-  artifact_provenance_recorded_in_active_attempt: true
 stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
@@ -128,7 +76,7 @@ stage_execution_remediation_closure_protocol:
   fatal_specification_contradiction_requires_stage_stop_and_new_explicit_authorization: true
   pilot_full_lifecycle_required_before_other_page_scale_out: true
   later_pages_must_use_same_active_governance_after_calibration: true
-  binding_status: CURRENT_POLICY_FRESH_REVALIDATION_PASS_BLOCKED_RESULT
+  binding_status: CURRENT_POLICY_STAGE2_NOT_EXECUTED
 specification_mutation_safety:
   change_control_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   finding_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
@@ -137,23 +85,18 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-stage02_current_problem_state:
-  fresh_functional_gap_total: 150
-  fresh_closure_blocker_total: 13
-  architecture_gap_total: 112
-  input_source_gap_total: 34
-  authority_gap_total: 4
-  external_authority_union_count: 8
-  current_specification_mutated: false
-  immutable_stage1_source_mutated: false
-  prior_stage2_results_used: false
-status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
-next_action: OWNING_LAYER_REMEDIATION_OF_150_FUNCTIONAL_GAPS_AND_13_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
+status: ACTIVE_STAGE1_CLOSED_STAGE2_CLEARED
+next_action: RESOLVE_SELECTED_PROFILE_NEXT_TRANSITION_FROM_CURRENT_GOVERNANCE
+resume_control:
+  chat_memory_is_authority: false
+  historical_stage2_results_are_current_state: false
+  stage2_execution_requires_fresh_entry_resolution: true
+  effectful_stage2_execution_before_entry_resolution: BLOCK
+  current_resume_point: STAGE1_CLOSED_STAGE2_NOT_EXECUTED
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
-  predecessor_attempt_uid: STAGE02-FRESH-20260915-002
-  predecessor_attempt_frozen_governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
   predecessor_attempt_preserved_as_historical_evidence: true
+  predecessor_attempt_history_ref: governance/test/history/stage02/attempt-ae42ef7ba4d6
   predecessor_attempt_may_close_under_current_governance: false
   fresh_revalidation_required: false
   selected_execution_profile_preserved: true
