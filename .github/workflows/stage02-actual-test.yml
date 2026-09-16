@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   stage02-actual-test:
-    if: ${{ !contains(github.event.head_commit.message, 'persist fresh current result') }}
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -86,7 +86,7 @@ jobs:
           if-no-files-found: error
 
   persist-fresh-current-result:
-    if: ${{ contains(github.event.head_commit.message, 'persist fresh current result') }}
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'persist fresh current result') }}
     permissions:
       contents: write
       actions: read
@@ -358,7 +358,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add governance/test/ACTIVE_STATE.yaml governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+          git add governance/test/ACTIVE_STATE.yaml governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
           test -n "$(git diff --cached --name-only)" || { echo 'BLOCK: no persistence changes staged' >&2; exit 1; }
           git commit -m "test(stage02): persist fresh current-governance attempt evidence"
           git push origin HEAD:rebuild-v2.1.1
