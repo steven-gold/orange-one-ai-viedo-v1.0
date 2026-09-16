@@ -1,4 +1,4 @@
-schema_version: 17
+schema_version: 18
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
@@ -54,7 +54,7 @@ full_lifecycle_governance_system_test:
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
-  full_line_verification_run_id: 35147994108
+  full_line_verification_run_id: 35139102607
 stage_execution_loading:
   full_line_round_reads_all_source_files_for_integrity_and_regression: true
   normal_stage_execution_reads_only_stage_required_files_and_shared_dependencies: true
@@ -87,69 +87,20 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STAGE2_TESTED_BLOCKED_COMMON_ENGINE_INTERRUPT
-next_action: PATCH_CURRENT_REMEDIABILITY_CLASSIFIER_GAP_CLASS_POLICY_ENFORCEMENT_THEN_REPLAY
+status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
+next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
   effectful_stage2_execution_before_entry_resolution: PASS_ENTRY_RESOLVED
-  parent_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
-  current_resume_point: STAGE2_COMMON_ENGINE_INTERRUPT_CLASSIFIER_POLICY_ENFORCEMENT
-  current_work_unit_uid: WU-STAGE02-COMMON-ENGINE-002
-  current_owner: governance/ci/classify_current_stage2_functional_remediability.py
-  current_step: CLASSIFICATION_RULESET_GAP_CLASS_ENFORCEMENT_REPAIR
-  last_successful_gate: CLASSIFIER_POLICY_FIX_EXACT_HEAD_FULL_LINE_35147994108
-  last_failed_gate: CURRENT_REMEDIABILITY_CLASSIFIER_POLICY_CONSUMPTION_AUDIT
-  current_blocker: CLASSIFIER_IGNORES_CURRENT_GAP_CLASS_AI_AUTO_FILL_BLOCK_AND_FALSELY_AUTHORIZES_17_ARCHITECTURE_GAPS
-  pending_tests:
-  - CURRENT_REMEDIABILITY_CLASSIFICATION_REPLAY
-  - CURRENT_REMEDIABILITY_CLASSIFICATION_POLICY_CONSISTENCY
-  pending_deployment: false
-  exact_next_action: PATCH_CURRENT_REMEDIABILITY_CLASSIFIER_GAP_CLASS_POLICY_ENFORCEMENT_THEN_REPLAY
-active_work_unit:
-  work_unit_uid: WU-STAGE02-COMMON-ENGINE-002
-  canonical_name: STAGE02_COMMON_ENGINE_REMEDIABILITY_GAP_CLASS_POLICY_ENFORCEMENT
-  scope:
-  - CURRENT_REMEDIABILITY_CLASSIFIER_POLICY_CONSUMPTION
-  - GAP_CLASS_HARD_BLOCK_ENFORCEMENT
-  - CURRENT_150_CLASSIFICATION_REPLAY
-  out_of_scope:
-  - PRODUCT_FUNCTIONAL_CONTRACT_MUTATION
-  - EXTERNAL_AUTHORITY_RESOLUTION
-  - MOTHER_POLICY_MUTATION
-  - STAGE03_EXECUTION
-  - WEBSITE_CONSTRUCTION
-  - DEPLOYMENT
-  canonical_owner: governance/ci/classify_current_stage2_functional_remediability.py
-  affected_owner_files:
-  - governance/ci/classify_current_stage2_functional_remediability.py
-  dependencies:
-  - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CLASSIFICATION_RULESET.yaml
-  - .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
-  - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  - governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml
-  start_condition: R2_CLASSIFIER_REPRODUCED_17_ARCHITECTURE_GAPS_AS_AUTO_COMPLETION_ADMISSIBLE_WHILE_CURRENT_RULESET_HARD_BLOCKS_ARCHITECTURE_GAP_AI_AUTO_FILL
-  definition_of_done:
-  - CLASSIFIER_LOADS_AND_CONSUMES_CURRENT_CLASSIFICATION_RULESET
-  - GAP_CLASS_HARD_BLOCK_PRECEDES_CATEGORY_PROOF_ADMISSION
-  - INPUT_SOURCE_AUTHORITY_ARCHITECTURE_DESIGN_EXTERNAL_BLOCKS_CANNOT_RETURN_AUTHORIZED_FOR_AUTO_COMPLETION_TRUE
-  - CURRENT_150_CLASSIFICATION_REPLAY_PERSISTS_FRESH_EVIDENCE
-  - FALSE_BOUNDED_COMPLETION_ADMISSIBLE_COUNT_REDUCED_TO_ZERO_UNDER_CURRENT_RULESET
-  - EXACT_EXTERNAL_AUTHORITY_REQUIRED_COUNT_REMAINS_FOUR
-  - PRODUCT_BLOCKER_CREDIT_REMAINS_ZERO_FOR_COMMON_ENGINE_FIX
-  - PARENT_OWNING_LAYER_REMEDIATION_RESUME_POINT_RESTORED_AFTER_CLOSURE
-  required_tests:
-  - GOVERNANCE_FULL_LINE_HIGH_PRESSURE_SYSTEM_GATE
-  - CURRENT_STAGE02_REMEDIABILITY_CLASSIFICATION_REPLAY
-  - CLASSIFICATION_RULESET_CONSISTENCY_CHECK
-  required_evidence:
-  - CURRENT_HEAD_FULL_LINE_RUN
-  - CURRENT_REMEDIABILITY_CLASSIFICATION
-  - CLASSIFICATION_RULESET_CONSISTENCY_RESULT
-  current_status: IN_PROGRESS_COMMON_ENGINE_INTERRUPT
-  product_blocker_credit: 0
-  resume_point: PATCH_CURRENT_REMEDIABILITY_CLASSIFIER_GAP_CLASS_POLICY_ENFORCEMENT_THEN_REPLAY
+  current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
+  last_closed_work_unit_uid: WU-STAGE02-COMMON-ENGINE-002
+  last_closed_work_unit_result: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  last_closed_work_unit_full_line_run_id: 35139102607
+  last_closed_work_unit_full_line_job_id: 104970774976
+  last_closed_work_unit_evidence_head: ba1aebddbeb0be48e5c2f94eab4ffcb009cbd919
+  exact_next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
   predecessor_attempt_preserved_as_historical_evidence: true
@@ -181,8 +132,8 @@ stage02_active_attempt:
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: true
-  next_action: PATCH_CURRENT_REMEDIABILITY_CLASSIFIER_GAP_CLASS_POLICY_ENFORCEMENT_THEN_REPLAY
-  governance_status: CURRENT_FROZEN_ATTEMPT_COMMON_ENGINE_INTERRUPT
+  next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
+  governance_status: CURRENT_FROZEN_ATTEMPT_FRESHLY_REVALIDATED_BLOCKED
   closure_credit_under_current_governance: true
   fresh_revalidation_required: false
   material_remediation_started: true
@@ -190,9 +141,12 @@ stage02_active_attempt:
   reexecution_clean_baseline_receipt_ref: governance/test/stage02/STAGE02_REEXECUTION_CLEAN_BASELINE_RECEIPT_R1.yaml
   defect_signature_regression_receipt_ref: governance/test/stage02/STAGE02_DEFECT_SIGNATURE_REGRESSION_R1.yaml
   reexecution_cycle: R1
-  last_closed_common_engine_work_unit_uid: WU-STAGE02-COMMON-ENGINE-001
-  common_engine_closure_full_line_run_id: 35147438377
-  active_common_engine_work_unit_uid: WU-STAGE02-COMMON-ENGINE-002
+  previous_closed_common_engine_work_unit_uid: WU-STAGE02-COMMON-ENGINE-001
+  previous_common_engine_closure_full_line_run_id: 35147438377
+  last_closed_common_engine_work_unit_uid: WU-STAGE02-COMMON-ENGINE-002
+  common_engine_closure_full_line_run_id: 35139102607
+  common_engine_closure_full_line_job_id: 104970774976
+  common_engine_closure_source_head: ba1aebddbeb0be48e5c2f94eab4ffcb009cbd919
   common_engine_product_blocker_credit: 0
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
@@ -213,10 +167,10 @@ stage02_current_problem_state:
   immutable_stage1_source_mutated: false
   prior_stage2_results_used: false
   remediability_classification_ref: governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml
-  remediability_classification_status: REVERIFY_REQUIRED_COMMON_ENGINE_CLASSIFIER_DEFECT
-  bounded_completion_admissible_count: 17
+  remediability_classification_status: CURRENT_POLICY_FRESH_REVALIDATION_PASS_BLOCKED_RESULT
+  bounded_completion_admissible_count: 0
   exact_external_authority_required_count: 4
-  no_authorized_bounded_completion_basis_count: 129
+  no_authorized_bounded_completion_basis_count: 146
 stage02_material_remediation:
   cycle: R1
   owning_layer: CURRENT_STAGE_PRODUCT_OR_CONTRACT_OUTPUT
@@ -228,4 +182,4 @@ stage02_material_remediation:
   external_authority_union_count: 8
   external_authority_resolution_claimed: false
   current_specification_mutated: false
-  status: INTERRUPTED_BY_COMMON_ENGINE_REPAIR_NO_PRODUCT_CREDIT
+  status: STRUCTURAL_REMEDIATION_FRESHLY_REEXECUTED_BLOCKED_ON_FUNCTIONAL_GAPS
