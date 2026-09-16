@@ -1,0 +1,290 @@
+name: Stage-02 Current Authority Pipeline Repair
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/stage02-current-authority-pipeline-repair.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  repair-r6-r10:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Re-prove Current governance and active common-engine Work Unit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_canonical_rule_registry.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          s=yaml.safe_load(Path('governance/test/ACTIVE_STATE.yaml').read_text()) or {}
+          a=s.get('active_work_unit') or {}
+          assert a.get('work_unit_uid') == 'WU-STAGE02-COMMON-ENGINE-003', a
+          assert a.get('canonical_owner') == 'governance/ci/build_stage02_product_design_authority_intake_r6.py', a
+          assert a.get('current_status') == 'IN_PROGRESS_COMMON_ENGINE_INTERRUPT', a
+          assert int(a.get('product_blocker_credit') or 0) == 0, a
+          assert s.get('execution',{}).get('current_stage') == 'STAGE-02-TESTED-BLOCKED'
+          assert s.get('execution',{}).get('stage2',{}).get('stage_exit_allowed') is False
+          print('PASS: WU-STAGE02-COMMON-ENGINE-003 is the exact active repair context with zero product credit')
+          PY
+      - name: Patch canonical R5 persistence block without rewriting unrelated workflow content
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/stage02-actual-test.yml')
+          text=p.read_text(encoding='utf-8')
+          start='      - name: Persist exact Current R5 request and synchronized Current projectors\n'
+          end='      - name: Reconcile canonical preflight after Current R5 state persistence\n'
+          assert text.count(start)==1, text.count(start)
+          assert text.count(end)==1, text.count(end)
+          a=text.index(start)
+          b=text.index(end,a)
+          replacement='''      - name: Persist exact Current R5 request and synchronized Current projectors
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(governance/test/ACTIVE_STATE.yaml governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml)
+          test -f governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml || { echo 'BLOCK: Current R5 request package missing' >&2; exit 1; }
+          actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | sort)"
+          unexpected="$(comm -23 <(printf '%s\n' "$actual" | sed '/^$/d' | sort -u) <(printf '%s\n' "${files[@]}" | sort -u))"
+          test -z "$unexpected" || { printf 'BLOCK: unexpected Current R5 persistence delta\n%s\n' "$unexpected" >&2; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "${files[@]}"
+          staged="$(git diff --cached --name-only | sort)"
+          staged_unexpected="$(comm -23 <(printf '%s\n' "$staged" | sed '/^$/d' | sort -u) <(printf '%s\n' "${files[@]}" | sort -u))"
+          test -z "$staged_unexpected" || { printf 'BLOCK: unexpected staged Current R5 persistence delta\n%s\n' "$staged_unexpected" >&2; exit 1; }
+          if [ -n "$staged" ]; then
+            git commit -m 'test(stage02): persist current product design authority request R5'
+            git push origin HEAD:rebuild-v2.1.1
+          else
+            echo 'PASS: Current R5 persistence is idempotent; no authorized projector delta requires a commit'
+          fi
+'''
+          p.write_text(text[:a]+replacement+text[b:], encoding='utf-8')
+          print('PASS: R5 persistence now allows only the authorized dirty subset, blocks unexpected paths, and permits idempotent no-op')
+          PY
+      - name: Materialize Current WU preflight and build R6 R8 R9 R10 evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python governance/ci/compile_stage_execution_preflight.py --materialize
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python governance/ci/build_stage02_product_design_authority_intake_r6.py
+          python governance/ci/validate_stage02_product_design_authority_intake_r6.py
+          python governance/ci/test_stage02_approved_product_authority_r7_negative.py
+          python governance/ci/build_stage02_core01_product_authority_review_r8.py
+          python governance/ci/validate_stage02_core01_product_authority_review_r8.py
+          python governance/ci/build_stage02_asset01_product_authority_review_r9.py
+          python governance/ci/validate_stage02_asset01_product_authority_review_r9.py
+          python governance/ci/build_stage02_product_authority_approval_docket_r10.py
+          python governance/ci/validate_stage02_product_authority_approval_docket_r10.py
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          r5=yaml.safe_load(Path('governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml').read_text()) or {}
+          r6=yaml.safe_load(Path('governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.yaml').read_text()) or {}
+          r10=yaml.safe_load(Path('governance/test/stage02/STAGE02_PRODUCT_AUTHORITY_APPROVAL_DOCKET_R10.yaml').read_text()) or {}
+          d5=r5.get('denominators') or {}
+          d6=r6.get('denominators') or {}
+          d10=r10.get('denominators') or {}
+          assert d5.get('current_open_problems') == 150
+          assert d5.get('product_design_authority_requests') == 146
+          assert d5.get('external_authority_requests') == 4
+          assert d6.get('current_open_stage02_problems') == 150
+          assert d6.get('product_design_contract_blockers_locked_for_intake') == 146
+          assert d6.get('external_authority_blockers_preserved_outside_product_intake') == 4
+          assert len(r6.get('records') or []) == 146
+          assert d10.get('total_product_authority_decisions') == 146
+          assert d10.get('external_authority_decisions_preserved_outside_product_docket') == 4
+          assert len(r10.get('records') or []) == 146
+          assert d10.get('approved_decisions') == 0
+          assert d10.get('r7_materializable_decisions') == 0
+          assert d10.get('effective_stage02_blocker_reduction_claimed') == 0
+          print('PASS: Current authority pipeline partition remains exact 146 product + 4 external = 150, with zero approval/materialization credit')
+          PY
+      - name: Prove repair mutation boundary and persist repair evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          allowed={
+            '.github/workflows/stage02-actual-test.yml',
+            'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.yaml',
+            'governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml',
+            'governance/test/stage02/STAGE02_ASSET01_PRODUCT_AUTHORITY_REVIEW_R9.yaml',
+            'governance/test/stage02/STAGE02_PRODUCT_AUTHORITY_APPROVAL_DOCKET_R10.yaml',
+          }
+          base=Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
+          for n in ['REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT','CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER','GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECEIPT']:
+            allowed.add((base/f'{n}.yaml').as_posix())
+          status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'], text=True)
+          actual={line[3:] for line in status.splitlines() if line.strip()}
+          unexpected=sorted(actual-allowed)
+          assert not unexpected, {'unexpected_repair_delta':unexpected,'actual':sorted(actual)}
+          required={
+            '.github/workflows/stage02-actual-test.yml',
+            'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.yaml',
+            'governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml',
+            'governance/test/stage02/STAGE02_ASSET01_PRODUCT_AUTHORITY_REVIEW_R9.yaml',
+            'governance/test/stage02/STAGE02_PRODUCT_AUTHORITY_APPROVAL_DOCKET_R10.yaml',
+          }
+          assert required.issubset(actual), {'missing_required_repair_delta':sorted(required-actual),'actual':sorted(actual)}
+          print(f'PASS: repair dirty set is bounded to authorized files changed={len(actual)}')
+          PY
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/stage02-actual-test.yml governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.yaml governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml governance/test/stage02/STAGE02_ASSET01_PRODUCT_AUTHORITY_REVIEW_R9.yaml governance/test/stage02/STAGE02_PRODUCT_AUTHORITY_APPROVAL_DOCKET_R10.yaml 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/*.yaml
+          git commit -m 'test(stage02): persist current authority pipeline R6-R10 repair evidence'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Revalidate persisted repair child with complete Full-Line
+        shell: bash
+        run: |
+          set -euo pipefail
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python governance/ci/validate_stage02_product_design_authority_intake_r6.py
+          python governance/ci/test_stage02_approved_product_authority_r7_negative.py
+          python governance/ci/validate_stage02_core01_product_authority_review_r8.py
+          python governance/ci/validate_stage02_asset01_product_authority_review_r9.py
+          python governance/ci/validate_stage02_product_authority_approval_docket_r10.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+          echo "REPAIR_EVIDENCE_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      - name: Close WU-003 only after fresh persisted repair PASS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import os,yaml
+          p=Path('governance/test/ACTIVE_STATE.yaml')
+          s=yaml.safe_load(p.read_text()) or {}
+          a=s.get('active_work_unit') or {}
+          assert a.get('work_unit_uid') == 'WU-STAGE02-COMMON-ENGINE-003', a
+          assert int(a.get('product_blocker_credit') or 0)==0
+          resume=s.setdefault('resume_control',{})
+          resume.clear()
+          resume.update({
+            'chat_memory_is_authority': False,
+            'historical_stage2_results_are_current_state': False,
+            'stage2_execution_requires_fresh_entry_resolution': False,
+            'effectful_stage2_execution_before_entry_resolution': 'PASS_ENTRY_RESOLVED',
+            'current_resume_point': 'STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION',
+            'last_closed_work_unit_uid': 'WU-STAGE02-COMMON-ENGINE-003',
+            'last_closed_work_unit_result': 'CLOSED_VERIFIED_NO_PRODUCT_CREDIT',
+            'last_closed_work_unit_full_line_run_id': int(os.environ['GITHUB_RUN_ID']),
+            'last_closed_work_unit_evidence_head': os.environ['REPAIR_EVIDENCE_HEAD'],
+            'exact_next_action': 'AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY',
+          })
+          s.pop('active_work_unit',None)
+          s['schema_version']=20
+          s['status']='ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE'
+          s['next_action']='AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY'
+          sysrun=s.setdefault('full_lifecycle_governance_system_test',{})
+          sysrun['full_line_github_result']='PASS_EXECUTION_SOURCE_HEAD'
+          sysrun['full_line_verification_run_id']=int(os.environ['GITHUB_RUN_ID'])
+          sysrun['persisted_head_revalidation_required']=True
+          attempt=s.setdefault('stage02_active_attempt',{})
+          attempt.pop('active_common_engine_work_unit_uid',None)
+          attempt['previous_closed_common_engine_work_unit_uid']=attempt.get('last_closed_common_engine_work_unit_uid')
+          attempt['last_closed_common_engine_work_unit_uid']='WU-STAGE02-COMMON-ENGINE-003'
+          attempt['common_engine_closure_full_line_run_id']=int(os.environ['GITHUB_RUN_ID'])
+          attempt['common_engine_closure_source_head']=os.environ['REPAIR_EVIDENCE_HEAD']
+          attempt['common_engine_product_blocker_credit']=0
+          attempt['next_action']='AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY'
+          attempt['governance_status']='CURRENT_FROZEN_ATTEMPT_FRESHLY_REVALIDATED_BLOCKED'
+          mat=s.setdefault('stage02_material_remediation',{})
+          mat['status']='STRUCTURAL_REMEDIATION_FRESHLY_REEXECUTED_BLOCKED_ON_FUNCTIONAL_GAPS'
+          mat['external_authority_resolution_claimed']=False
+          mat['current_specification_mutated']=False
+          s['stage02_current_problem_state']['bounded_completion_admissible_count']=0
+          s['stage02_current_problem_state']['exact_external_authority_required_count']=4
+          s['stage02_current_problem_state']['no_authorized_bounded_completion_basis_count']=146
+          p.write_text(yaml.safe_dump(s,sort_keys=False,allow_unicode=True),encoding='utf-8')
+          print('PASS: WU-003 closed with zero product credit; parent Stage-02 resumes at explicit-authority ingestion boundary')
+          PY
+          python governance/ci/compile_stage_execution_preflight.py --materialize
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          git add governance/test/ACTIVE_STATE.yaml 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/*.yaml
+          git commit -m 'test(stage02): close current authority pipeline common-engine WU-003'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Revalidate exact closure head and prove Stage-02 remains authority-blocked
+        shell: bash
+        run: |
+          set -euo pipefail
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          s=yaml.safe_load(Path('governance/test/ACTIVE_STATE.yaml').read_text()) or {}
+          assert not s.get('active_work_unit')
+          assert (s.get('resume_control') or {}).get('last_closed_work_unit_uid') == 'WU-STAGE02-COMMON-ENGINE-003'
+          assert s.get('stage02_current_problem_state',{}).get('bounded_completion_admissible_count') == 0
+          assert s.get('stage02_current_problem_state',{}).get('exact_external_authority_required_count') == 4
+          assert s.get('stage02_current_problem_state',{}).get('no_authorized_bounded_completion_basis_count') == 146
+          assert s.get('execution',{}).get('stage2',{}).get('stage_exit_allowed') is False
+          assert s.get('execution',{}).get('current_stage') == 'STAGE-02-TESTED-BLOCKED'
+          print('PASS: common-engine repair is closed; Stage-02 remains legally blocked on 146 explicit product + 4 external authority decisions')
+          PY
+      - name: Remove one-shot repair workflow and verify final persisted head
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/stage02-current-authority-pipeline-repair.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore(stage02): remove one-shot current authority pipeline repair workflow'
+          git push origin HEAD:rebuild-v2.1.1
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+          echo "PASS: final persisted HEAD $(git rev-parse HEAD) retains no one-shot repair workflow"
