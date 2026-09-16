@@ -3,300 +3,269 @@ from __future__ import annotations
 
 from collections import Counter
 from pathlib import Path
-import json
+import subprocess
 import sys
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-LATEST = ROOT / 'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
-R4 = ROOT / 'governance/test/stage02/STAGE02_REMAINING_BLOCKER_DISPOSITION_R4.yaml'
+BASE = ROOT / '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+PROBLEMS = BASE / 'CURRENT_PROBLEM_REGISTER.yaml'
+CLASSIFICATION = ROOT / 'governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml'
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
 CANDIDATES = ROOT / 'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
+REGISTRY = ROOT / 'governance/specifications/REGISTRY.yaml'
 OUT = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml'
-ASSET_RAW = ROOT / '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml'
-
-EXPECTED = {
-    'PAYLOAD_INPUT_CONTRACT_MISSING': 34,
-    'AUDIT_EVENT_NODE_MISSING': 13,
-    'FAILURE_STATE_ERROR_BINDING_MISSING': 44,
-    'POST_ACTION_VALIDATION_NODE_MISSING': 18,
-    'ACTION_WITHOUT_CONTROL_OR_TRIGGER': 1,
-    'STATE_TRANSITION_LEDGER_FIELD_MISSING': 40,
-    'SHARED_OWNER_AUTHORITY_UNRESOLVED': 4,
-}
-LOCAL_CATEGORIES = set(EXPECTED) - {'SHARED_OWNER_AUTHORITY_UNRESOLVED'}
 
 
 def die(msg: str) -> None:
-    print('BLOCK:', msg, file=sys.stderr)
+    print(f'BLOCK: {msg}', file=sys.stderr)
     raise SystemExit(1)
 
 
-def load_yaml(path: Path):
+def load(path: Path) -> dict:
     if not path.is_file():
         die(f'MISSING:{path.relative_to(ROOT)}')
-    return yaml.safe_load(path.read_text(encoding='utf-8')) or {}
+    obj = yaml.safe_load(path.read_text(encoding='utf-8')) or {}
+    if not isinstance(obj, dict):
+        die(f'MAPPING_REQUIRED:{path.relative_to(ROOT)}')
+    return obj
 
 
-def dump_yaml(path: Path, obj) -> None:
+def dump(path: Path, obj: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(obj, allow_unicode=True, sort_keys=False, width=180), encoding='utf-8')
 
 
-def nonempty(v) -> bool:
-    return v not in (None, '', [], {})
+def signature(row: dict) -> tuple[str, str, str, str]:
+    return (
+        str(row.get('page_uid') or ''),
+        str(row.get('category') or ''),
+        str(row.get('uid') or row.get('target_uid') or ''),
+        str(row.get('detail') or ''),
+    )
 
 
-def action_index(raw: dict) -> dict:
-    actions = ((raw.get('registries') or {}).get('actions') or [])
-    out = {}
-    for a in actions:
-        if isinstance(a, dict) and nonempty(a.get('action_uid')):
-            out[a['action_uid']] = a
-    return out
+def authority_requirement(category: str, detail: str) -> dict:
+    table = {
+        'PAYLOAD_INPUT_CONTRACT_MISSING': (
+            'EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING',
+            ['explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid'],
+            ['operation name', 'route identity', 'port identity alone', 'semantic similarity', 'AI-inferred request fields'],
+        ),
+        'AUDIT_EVENT_NODE_MISSING': (
+            'EXACT_REGISTERED_AUDIT_EVENT_BINDING',
+            ['exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry'],
+            ['state text', 'trigger text', 'semantic event guess', 'invented event UID'],
+        ),
+        'FAILURE_STATE_ERROR_BINDING_MISSING': (
+            'EXACT_FAILURE_ERROR_RECOVERY_BINDING',
+            ['same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery'],
+            ['generic page error registry', 'nearest error by meaning', 'AI-selected recovery'],
+        ),
+        'POST_ACTION_VALIDATION_NODE_MISSING': (
+            'EXACT_POST_ACTION_VALIDATION_BINDING',
+            ['same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation'],
+            ['operation response label', 'route response wording', 'gate similarity', 'AI-generated validator'],
+        ),
+        'ACTION_WITHOUT_CONTROL_OR_TRIGGER': (
+            'EXACT_ACTION_ADMISSION_TRIGGER_RELATION',
+            ['registered control.action_uid equals this action_uid OR exact stage-transition trigger/action_uid equals this action_uid OR the action has an explicit governed trigger identity'],
+            ['neighboring control', 'label similarity', 'route identity', 'inferred system trigger'],
+        ),
+        'STATE_TRANSITION_LEDGER_FIELD_MISSING': (
+            'EXACT_TRANSITION_FIELD_BINDING',
+            [f'exact non-empty governed transition value satisfying the missing relation: {detail}'],
+            ['trigger/gate/action/error/owner similarity', 'value copied from sibling transition', 'AI-inferred value'],
+        ),
+        'SUCCESS_NEXT_STATE_BINDING_MISSING': (
+            'EXACT_SUCCESS_OR_NEXT_STATE_BINDING',
+            ['same action_uid or exact governed transition explicitly binds the required success/next-state relation'],
+            ['neighboring transition', 'semantic success wording', 'AI-inferred next state'],
+        ),
+    }
+    if category not in table:
+        die(f'UNSUPPORTED_LOCAL_CATEGORY:{category}')
+    kind, required, forbidden = table[category]
+    return {
+        'required_authority_kind': kind,
+        'required_exact_fields_or_relation': required,
+        'not_acceptable_as_authority': forbidden,
+    }
 
 
-def local_authority_requirement(category: str, detail: str | None) -> dict:
-    if category == 'PAYLOAD_INPUT_CONTRACT_MISSING':
-        return {
-            'required_authority_kind': 'EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING',
-            'required_exact_fields_or_relation': [
-                'explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid',
-            ],
-            'not_acceptable_as_authority': ['operation name', 'route identity', 'port identity alone', 'semantic similarity', 'AI-inferred request fields'],
-        }
-    if category == 'AUDIT_EVENT_NODE_MISSING':
-        return {
-            'required_authority_kind': 'EXACT_REGISTERED_AUDIT_EVENT_BINDING',
-            'required_exact_fields_or_relation': [
-                'exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the same-page event registry',
-            ],
-            'not_acceptable_as_authority': ['state text', 'trigger text', 'semantic event guess', 'invented event UID'],
-        }
-    if category == 'FAILURE_STATE_ERROR_BINDING_MISSING':
-        return {
-            'required_authority_kind': 'EXACT_FAILURE_ERROR_RECOVERY_BINDING',
-            'required_exact_fields_or_relation': [
-                'same action_uid explicitly binds failure_state + recovery',
-                'OR same action_uid explicitly binds a registered error_uid whose same-page error entry supplies recovery',
-            ],
-            'not_acceptable_as_authority': ['generic page error registry', 'nearest error by meaning', 'AI-selected recovery'],
-        }
-    if category == 'POST_ACTION_VALIDATION_NODE_MISSING':
-        return {
-            'required_authority_kind': 'EXACT_POST_ACTION_VALIDATION_BINDING',
-            'required_exact_fields_or_relation': [
-                'same action_uid has success_contract/validation_contract/validator_uid',
-                'OR exact runtime binding has validation/validation_rule/evaluation_rule',
-                'OR exact resolved port has validation/validation_rule/validator_uid',
-            ],
-            'not_acceptable_as_authority': ['operation response label', 'route response wording', 'gate similarity', 'AI-generated validator'],
-        }
-    if category == 'ACTION_WITHOUT_CONTROL_OR_TRIGGER':
-        return {
-            'required_authority_kind': 'EXACT_ACTION_ADMISSION_TRIGGER_RELATION',
-            'required_exact_fields_or_relation': [
-                'registered control.action_uid equals this action_uid',
-                'OR exact stage transition trigger/action_uid equals this action_uid',
-                'OR action has explicit trigger_event_uid/trigger_uid/invocation/system_trigger/trigger_kind',
-            ],
-            'not_acceptable_as_authority': ['neighboring control', 'label similarity', 'route identity', 'inferred system trigger'],
-        }
-    if category == 'STATE_TRANSITION_LEDGER_FIELD_MISSING':
-        if detail not in {'mutation_owner', 'failure_state', 'recovery', 'audit_event_uid'}:
-            die(f'UNEXPECTED_REMAINING_TRANSITION_FIELD:{detail}')
-        return {
-            'required_authority_kind': 'EXACT_TRANSITION_FIELD_BINDING',
-            'required_exact_fields_or_relation': [f'exact non-empty {detail} value bound to the same transition_uid'],
-            'not_acceptable_as_authority': ['trigger/gate/action/error/owner similarity', 'value copied from sibling transition', 'AI-inferred value'],
-        }
-    die(f'UNSUPPORTED_LOCAL_CATEGORY:{category}')
+problem = load(PROBLEMS)
+classification = load(CLASSIFICATION)
+state = load(STATE)
+candidates = load(CANDIDATES)
+registry = load(REGISTRY)
 
+governance_uid = (registry.get('active_specification') or {}).get('governance_uid')
+attempt_uid = (state.get('stage02_active_attempt') or {}).get('attempt_uid')
+current_n = int(problem.get('fresh_physical_problem_count') or 0)
+open_n = int(problem.get('open_problem_count') or 0)
+class_n = int(classification.get('fresh_functional_gap_denominator') or 0)
+if not governance_uid or problem.get('current_governance_uid') != governance_uid or classification.get('current_governance_uid') != governance_uid:
+    die('CURRENT_GOVERNANCE_UID_DRIFT')
+if not attempt_uid or problem.get('attempt_uid') != attempt_uid or classification.get('attempt_uid') != attempt_uid:
+    die('CURRENT_ATTEMPT_UID_DRIFT')
+if current_n <= 0 or open_n != current_n or class_n != current_n:
+    die(f'CURRENT_DENOMINATOR_DRIFT:problem={current_n}:open={open_n}:classification={class_n}')
+if ((state.get('execution') or {}).get('stage2') or {}).get('stage_exit_allowed') is not False:
+    die('STAGE02_EXIT_MUST_REMAIN_BLOCKED')
+if (state.get('resume_control') or {}).get('current_resume_point') != 'STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION':
+    die('CURRENT_RESUME_POINT_DRIFT')
 
-evidence = json.loads(LATEST.read_text(encoding='utf-8')) if LATEST.is_file() else die('LATEST_MISSING')
-r4 = load_yaml(R4)
-if evidence.get('result') != 'BLOCKED' or evidence.get('fresh_functional_gap_total') != 154:
-    die('R5_REQUIRES_CURRENT_FRESH_BLOCKED_154')
-if evidence.get('closure_blocker_total') != 0:
-    die('R5_REQUIRES_ZERO_CLOSURE_BLOCKERS')
-truth = r4.get('current_truth') or {}
-if truth.get('effective_remaining_functional_gap_total') != 154 or truth.get('authority_sufficient_materializable_now') != 0:
-    die('R4_CURRENT_TRUTH_DRIFT')
-if truth.get('product_design_authority_blocked') != 150 or truth.get('preserved_external_shared_authority_blocked') != 4:
-    die('R4_BLOCKER_DENOMINATOR_DRIFT')
+problems = problem.get('problems') or []
+records = classification.get('records') or []
+if len(problems) != current_n or len(records) != current_n:
+    die(f'CURRENT_RECORD_DENOMINATOR_DRIFT:problems={len(problems)}:classification={len(records)}:expected={current_n}')
+problem_by_sig = {signature(p): p for p in problems}
+record_by_sig = {signature(r): r for r in records}
+if len(problem_by_sig) != current_n or len(record_by_sig) != current_n:
+    die('DUPLICATE_CURRENT_SIGNATURE')
+if set(problem_by_sig) != set(record_by_sig):
+    die(f'CURRENT_PROBLEM_CLASSIFICATION_SIGNATURE_DRIFT:missing_in_classifier={len(set(problem_by_sig)-set(record_by_sig))}:missing_in_register={len(set(record_by_sig)-set(problem_by_sig))}')
 
-remaining = []
-for page_uid, page in (evidence.get('pages') or {}).items():
-    scan = page.get('functional_chain_effective_dual_layer_scan') or {}
-    for gap in scan.get('gaps') or []:
-        rec = dict(gap)
-        rec['page_uid'] = page_uid
-        remaining.append(rec)
-if len(remaining) != 154:
-    die(f'REMAINING_LIST_NOT_154:{len(remaining)}')
-counts = Counter(g.get('category') for g in remaining)
-if dict(counts) != EXPECTED:
-    die(f'CATEGORY_DRIFT:{dict(counts)}')
-
-asset_actions = action_index(load_yaml(ASSET_RAW))
-completed_gates = [
-    'EXACT_75_FILE_GOVERNANCE_SOURCE_IDENTITY_PASS',
-    'CURRENT_SPECIFICATION_FREEZE_PASS',
-    'STAGE01_CLOSURE_CONTINUITY_PASS',
-    'STAGE02_STRUCTURAL_CLOSURE_BLOCKERS_13_TO_0_FRESH_PROVEN',
-    'R3_BOUNDED_FUNCTIONAL_MATERIALIZATION_17_OF_17_VALIDATED',
-    'FULL_LINE_MULTIDIRECTIONAL_HIGH_PRESSURE_SYSTEM_GATE_PASS_BEFORE_R2_REEXECUTION',
-    'R2_DUAL_LAYER_FRESH_REEXECUTION_RAW_171_EFFECTIVE_154_PASS',
-    'R4_REMAINING_BLOCKER_DISPOSITION_PASS',
-]
-resume_point = 'AFTER_APPROVED_AUTHORITY_INGESTION_RESET_EXECUTION_OUTPUTS_TO_SAME_STAGE01_BASELINE_THEN_FULL_LINE_SYSTEM_GATE_THEN_FRESH_STAGE02_REEXECUTION'
+summary = Counter(r.get('disposition') for r in records)
+if summary.get('BOUNDED_COMPLETION_ADMISSIBLE', 0) != 0:
+    die(f'R5_AUTHORITY_REQUEST_REQUIRES_ZERO_AUTO_COMPLETION_CANDIDATES:{dict(summary)}')
+local_n = int(summary.get('NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS', 0))
+external_n = int(summary.get('EXACT_EXTERNAL_AUTHORITY_REQUIRED', 0))
+if local_n + external_n != current_n:
+    die(f'R5_CLASSIFICATION_PARTITION_DRIFT:{dict(summary)}')
 
 local_requests = []
 external_requests = []
-seq_local = 0
-seq_external = 0
-for gap in remaining:
-    category = gap.get('category')
-    page_uid = gap.get('page_uid')
-    target_uid = str(gap.get('uid'))
-    detail = gap.get('detail')
-    if category in LOCAL_CATEGORIES:
-        seq_local += 1
-        req = local_authority_requirement(category, detail)
+for sig in sorted(problem_by_sig):
+    p = problem_by_sig[sig]
+    r = record_by_sig[sig]
+    if p.get('status') != 'OPEN' or int(p.get('resolution_credit') or 0) != 0:
+        die(f'R5_PROBLEM_NOT_OPEN_ZERO_CREDIT:{p.get("problem_uid")}')
+    if r.get('authorized_for_auto_completion') is not False or r.get('gap_class_policy') != 'AI_AUTO_FILL_BLOCK':
+        die(f'R5_CLASSIFICATION_POLICY_DRIFT:{sig}')
+    common = {
+        'problem_uid': p.get('problem_uid'),
+        'scope': p.get('page_uid'),
+        'category': p.get('category'),
+        'gap_class': p.get('gap_class'),
+        'gap_owner': p.get('gap_owner'),
+        'target_uid': p.get('target_uid'),
+        'missing_field_or_relation': p.get('detail'),
+        'classification_disposition': r.get('disposition'),
+        'completion_basis': r.get('completion_basis'),
+        'reason': 'CURRENT_CANONICAL_PREFLIGHT_AND_POLICY_CORRECT_R2_CLASSIFIER_PROVIDE_NO_AUTHORIZED_AUTOMATIC_CLOSURE_FOR_THIS_OPEN_PROBLEM',
+        'impact': 'STAGE02_REMAINS_BLOCKED; STAGE03_WEBSITE_CONSTRUCTION_AND_DEPLOYMENT_REMAIN_FAIL_CLOSED',
+        'source_problem_register_ref': str(PROBLEMS.relative_to(ROOT)),
+        'source_classification_ref': str(CLASSIFICATION.relative_to(ROOT)),
+        'authority_value_supplied_by_ai': False,
+        'request_is_authority': False,
+        'blocker_reduction_credit': 0,
+    }
+    if r.get('disposition') == 'NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS':
+        if p.get('gap_owner') != 'PAGE_FUNCTIONAL_CONTRACT':
+            die(f'R5_LOCAL_OWNER_DRIFT:{sig}:{p.get("gap_owner")}')
         local_requests.append({
-            'blocker_uid': f'STAGE02-R5-PRODUCT-AUTH-{seq_local:03d}',
-            'scope': page_uid,
-            'severity': 'STAGE_EXIT_BLOCKING',
-            'category': category,
-            'target_uid': target_uid,
-            'missing_field_or_relation': detail,
-            'reason': 'CURRENT_FROZEN_PRODUCT_AUTHORITY_HAS_NO_EXACT_ADMISSIBLE_BINDING_FOR_THIS_REQUIRED_STAGE02_CONTRACT_ELEMENT',
-            'impact': 'STAGE02_CANNOT_CLOSE_AND_STAGE03_CONSTRUCTION_AND_DEPLOYMENT_REMAIN_FAIL_CLOSED',
-            'authority_request': req,
-            'unlock_condition': 'APPROVED_PRODUCT_DESIGN_AUTHORITY_PROVIDES_THE_REQUIRED_EXACT_BINDING_AND_CATEGORY_SPECIFIC_VALIDATOR_ACCEPTS_IT_WITHOUT_INFERENCE',
-            'completed_gates': completed_gates,
-            'missing_gates': [
-                'APPROVED_EXACT_PRODUCT_DESIGN_AUTHORITY_BINDING',
-                'CATEGORY_SPECIFIC_EXACT_AUTHORITY_VALIDATION_PASS',
-                'CLEAN_STAGE02_REEXECUTION_KNOWN_SIGNATURE_ZERO_FOR_THIS_BLOCKER',
-            ],
-            'exact_resume_point': resume_point,
-            'authority_value_supplied_by_ai': False,
-            'request_is_authority': False,
+            **common,
+            'request_uid': f'R5::{p.get("problem_uid")}',
+            'authority_request': authority_requirement(str(p.get('category')), str(p.get('detail'))),
+            'unlock_condition': 'SEPARATELY_APPROVED_CURRENT_ADMISSIBLE_PRODUCT_AUTHORITY_SUPPLIES_THE_EXACT_MISSING_BINDING_AND_VALIDATION_ACCEPTS_IT_WITHOUT_SEMANTIC_INFERENCE',
         })
-    elif category == 'SHARED_OWNER_AUTHORITY_UNRESOLVED':
-        seq_external += 1
-        action = asset_actions.get(target_uid) or {}
-        rb = action.get('runtime_binding') or {}
-        shared_authority_id = rb.get('shared_authority_id')
-        shared_operation_id = rb.get('shared_operation_id')
-        if shared_authority_id != 'ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY' or not nonempty(shared_operation_id):
-            die(f'GAP006_SHARED_REFERENCE_INCOMPLETE:{target_uid}:{shared_authority_id}:{shared_operation_id}')
+    elif r.get('disposition') == 'EXACT_EXTERNAL_AUTHORITY_REQUIRED':
+        if p.get('gap_owner') != 'EXTERNAL_AUTHORITY' or p.get('category') != 'SHARED_OWNER_AUTHORITY_UNRESOLVED':
+            die(f'R5_EXTERNAL_OWNER_DRIFT:{sig}:{p.get("gap_owner")}:{p.get("category")}')
         external_requests.append({
-            'blocker_uid': f'STAGE02-R5-EXTERNAL-AUTH-{seq_external:03d}',
-            'scope': page_uid,
-            'severity': 'STAGE_EXIT_BLOCKING',
-            'category': category,
-            'target_uid': target_uid,
-            'gap_uid': 'GAP-006',
-            'shared_authority_id': shared_authority_id,
-            'shared_operation_id': shared_operation_id,
-            'reason': 'EXACT_SHARED_OWNER_AUTHORITY_IS_REFERENCED_BUT_NOT_CAPTURED_IN_CURRENT_AUTHORITY_SET',
-            'impact': 'SHARED_OPERATION_OWNER_CANNOT_BE_RESOLVED_AND_STAGE02_REMAINS_BLOCKED',
-            'unlock_condition': 'AUTHORITATIVE_GAP006_SOURCE_IS_PROVIDED_AND_EXACTLY_RESOLVES_THIS_SHARED_OPERATION_OR_FORMAL_NON_APPLICABILITY_IS_AUTHORIZED',
-            'completed_gates': completed_gates,
-            'missing_gates': [
-                'GAP006_AUTHORITATIVE_SOURCE_RESOLUTION_OR_FORMAL_NON_APPLICABILITY',
-                'SHARED_OWNER_EXACT_RESOLUTION_VALIDATION_PASS',
-                'CLEAN_STAGE02_REEXECUTION_KNOWN_SIGNATURE_ZERO_FOR_THIS_BLOCKER',
-            ],
-            'exact_resume_point': resume_point,
-            'authority_value_supplied_by_ai': False,
-            'request_is_authority': False,
+            **common,
+            'request_uid': f'R5-EXTERNAL::{p.get("problem_uid")}',
+            'authority_request': {
+                'required_authority_kind': 'EXACT_REFERENCED_EXTERNAL_SHARED_OWNER_AUTHORITY',
+                'required_exact_fields_or_relation': ['authoritative source for GAP-006 / ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY resolving the exact target operation, or formal non-applicability authority'],
+                'not_acceptable_as_authority': ['AI inference', 'same-name local operation', 'historical non-current snapshot', 'request package itself'],
+            },
+            'unlock_condition': 'AUTHORITATIVE_EXTERNAL_SOURCE_IS_PROVIDED_AND_EXACTLY_RESOLVES_THE_REFERENCED_SHARED_OPERATION_OR_FORMAL_NON_APPLICABILITY_IS_AUTHORIZED',
         })
     else:
-        die(f'UNEXPECTED_CATEGORY:{category}')
+        die(f'R5_UNEXPECTED_DISPOSITION:{r.get("disposition")}:{sig}')
 
-if len(local_requests) != 150 or len(external_requests) != 4:
-    die(f'REQUEST_DENOMINATOR_DRIFT:local={len(local_requests)} external={len(external_requests)}')
-if len({r['blocker_uid'] for r in local_requests + external_requests}) != 154:
-    die('DUPLICATE_BLOCKER_UID')
-if len({(r['scope'], r['category'], r['target_uid'], r.get('missing_field_or_relation')) for r in local_requests}) != 150:
-    die('DUPLICATE_LOCAL_REQUEST_SIGNATURE')
+if len(local_requests) != local_n or len(external_requests) != external_n:
+    die(f'R5_REQUEST_DENOMINATOR_DRIFT:local={len(local_requests)}/{local_n}:external={len(external_requests)}/{external_n}')
 
+head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=str(ROOT), text=True, capture_output=True, check=True).stdout.strip()
 out = {
-    'schema_version': 1,
-    'artifact_uid': 'STAGE02-PRODUCT-DESIGN-AUTHORITY-REQUEST-20260915-R5',
-    'artifact_type': 'NON_NORMATIVE_AUTHORITY_REQUEST_AND_BLOCKER_PACKAGE',
+    'schema_version': 2,
+    'artifact_uid': 'STAGE02-PRODUCT-DESIGN-AUTHORITY-REQUEST-CURRENT-R5',
+    'artifact_type': 'NON_NORMATIVE_CURRENT_AUTHORITY_REQUEST_AND_BLOCKER_PACKAGE',
     'normative_authority': False,
     'request_is_product_authority': False,
     'stage_uid': 'STAGE-02',
-    'current_frozen_governance_uid': evidence.get('frozen_governance_uid'),
-    'source_execution_sha': evidence.get('source_head_sha'),
-    'source_evidence_ref': 'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json',
-    'source_disposition_ref': 'governance/test/stage02/STAGE02_REMAINING_BLOCKER_DISPOSITION_R4.yaml',
-    'purpose': 'REQUEST_ONLY_THE_EXACT_MISSING_PRODUCT_OR_EXTERNAL_AUTHORITY_NEEDED_TO_RESUME_STAGE02_WITHOUT_AI_INVENTION',
+    'current_governance_uid': governance_uid,
+    'attempt_uid': attempt_uid,
+    'source_head_sha': head,
+    'source_problem_register_ref': str(PROBLEMS.relative_to(ROOT)),
+    'source_classification_ref': str(CLASSIFICATION.relative_to(ROOT)),
+    'purpose': 'REQUEST_ONLY_EXACT_AUTHORITY_NEEDED_FOR_CURRENT_OPEN_STAGE02_PROBLEMS_WITHOUT_AI_INVENTION_OR_HISTORICAL_DENOMINATOR_REUSE',
     'safety': {
         'contains_product_authority_values': False,
         'may_be_used_as_authority_input': False,
-        'may_auto_resolve_any_blocker': False,
+        'may_auto_resolve_any_problem': False,
         'current_specification_mutated': False,
         'stage1_immutable_source_mutated': False,
-        'stage2_stage_exit_claimed': False,
-        'stage3_allowed': False,
+        'product_materialization_performed': False,
+        'blocker_reduction_claimed': 0,
+        'stage03_allowed': False,
         'website_construction_allowed': False,
         'deployment_allowed': False,
     },
     'denominators': {
-        'current_effective_blockers': 154,
-        'product_design_authority_requests': 150,
-        'gap006_external_authority_requests': 4,
+        'current_open_problems': current_n,
+        'product_design_authority_requests': local_n,
+        'external_authority_requests': external_n,
+        'bounded_completion_admissible': 0,
         'materializable_from_current_authority_now': 0,
     },
-    'category_counts': dict(counts),
+    'category_counts': dict(sorted(Counter(p.get('category') for p in problems).items())),
     'product_design_authority_requests': local_requests,
-    'gap006_external_authority_requests': external_requests,
+    'external_authority_requests': external_requests,
     'intake_rule': {
-        'approved_authority_must_be_new_explicit_input': True,
+        'approved_authority_must_be_separate_from_this_request': True,
         'request_package_itself_is_not_authority': True,
-        'do_not_rewrite_historical_stage1_authority': True,
-        'do_not_mutate_current_governance_specification_for_product_values': True,
-        'after_authority_arrival': [
-            'VALIDATE_EXACT_UID_FIELD_RELATIONS',
-            'BIND_APPROVED_AUTHORITY_AS_AUTHORIZED_STAGE02_REOPEN_INPUT_WITH_PROVENANCE',
-            'RESET_STAGE02_EXECUTION_OUTPUT_AND_RUNTIME_EVIDENCE_TO_SAME_STAGE01_BASELINE_WHILE_PRESERVING_AUTHORIZED_FIXES',
-            'RUN_FULL_LINE_MULTIDIRECTIONAL_HIGH_PRESSURE_SYSTEM_GATE',
-            'RUN_FRESH_STAGE02_REEXECUTION',
-            'REQUIRE_KNOWN_DEFECT_ZERO_REPRODUCTION_BEFORE_HIDDEN_SWEEP',
-        ],
+        'approved_input_must_resolve_exact_problem_uid_and_signature': True,
+        'approved_input_must_name_current_admissible_canonical_owner_and_provenance': True,
+        'ai_may_not_fill_product_or_external_authority_values': True,
+        'historical_non_current_output_may_not_supply_current_authority': True,
+        'materialization_requires_separate_approval_and_exact_validation': True,
+        'fresh_stage02_reexecution_required_before_any_blocker_reduction_credit': True,
     },
-    'exact_resume_point': resume_point,
-    'status': 'OPEN_AWAITING_150_PRODUCT_DESIGN_AUTHORITY_BINDINGS_AND_4_GAP006_EXTERNAL_AUTHORITY_RESOLUTIONS',
+    'resume_control': {
+        'current_resume_point_preserved': 'STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION',
+        'exact_next_action': 'INGEST_SEPARATELY_APPROVED_CURRENT_PRODUCT_AUTHORITY_FOR_146_LOCAL_REQUESTS_OR_EXTERNAL_AUTHORITY_FOR_4_REFERENCED_GAPS; OTHERWISE_REMAIN_BLOCKED',
+    },
+    'status': f'OPEN_AWAITING_{local_n}_PRODUCT_AUTHORITY_BINDINGS_AND_{external_n}_EXTERNAL_AUTHORITY_RESOLUTIONS',
 }
-dump_yaml(OUT, out)
+dump(OUT, out)
 
-state = load_yaml(STATE)
-state['next_action'] = 'AWAIT_OR_INGEST_APPROVED_STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_REPEAT_AUDIT_WITHOUT_NEW_AUTHORITY'
+state['next_action'] = 'AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY'
+resume = state.setdefault('resume_control', {})
+resume['exact_next_action'] = state['next_action']
 attempt = state.setdefault('stage02_active_attempt', {})
 attempt['authority_request_package_ref'] = str(OUT.relative_to(ROOT))
-attempt['authority_request_product_count'] = 150
-attempt['authority_request_gap006_external_count'] = 4
+attempt['authority_request_product_count'] = local_n
+attempt['authority_request_external_count'] = external_n
 attempt['authority_request_is_authority'] = False
-attempt['exact_resume_point'] = resume_point
 attempt['new_authority_required_before_more_material_remediation'] = True
-dump_yaml(STATE, state)
+attempt['next_action'] = state['next_action']
+dump(STATE, state)
 
-candidates = load_yaml(CANDIDATES)
 current = candidates.setdefault('current_stage2_execution', {})
 current['next_action'] = state['next_action']
 current['authority_request_package_ref'] = str(OUT.relative_to(ROOT))
-current['authority_request_product_count'] = 150
-current['authority_request_gap006_external_count'] = 4
+current['authority_request_product_count'] = local_n
+current['authority_request_external_count'] = external_n
 current['authority_request_is_authority'] = False
-dump_yaml(CANDIDATES, candidates)
+dump(CANDIDATES, candidates)
 
-print('STAGE02_R5_PRODUCT_AUTHORITY_REQUESTS=150')
-print('STAGE02_R5_GAP006_EXTERNAL_REQUESTS=4')
+print(f'STAGE02_R5_CURRENT_OPEN_PROBLEMS={current_n}')
+print(f'STAGE02_R5_PRODUCT_AUTHORITY_REQUESTS={local_n}')
+print(f'STAGE02_R5_EXTERNAL_AUTHORITY_REQUESTS={external_n}')
 print('STAGE02_R5_MATERIALIZABLE_NOW=0')
-print('PASS: authority request package contains no invented product authority values')
-print('PASS: every blocker has reason, impact, unlock condition, completed gates, missing gates, and exact resume point')
-print('PASS: historical Stage-01 and Current Specification remain immutable')
+print('PASS: R5 consumes the one Current Problem Register and policy-correct Current R2 classification')
+print('PASS: request package contains no invented product/external authority values and claims zero blocker reduction')
