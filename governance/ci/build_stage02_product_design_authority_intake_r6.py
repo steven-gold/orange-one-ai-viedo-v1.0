@@ -24,21 +24,34 @@ def load(path: Path):
 
 r5 = load(R5)
 requests = r5.get('product_design_authority_requests') or []
-if len(requests) != 150:
-    die(f'R5_PRODUCT_AUTHORITY_REQUEST_DENOMINATOR_NOT_150:{len(requests)}')
+den = r5.get('denominators') or {}
+product_denominator = den.get('product_design_authority_requests')
+external_denominator = den.get('external_authority_requests')
+current_total = den.get('current_open_problems')
+
+if not isinstance(product_denominator, int) or product_denominator < 0:
+    die(f'R5_INVALID_PRODUCT_AUTHORITY_DENOMINATOR:{product_denominator}')
+if not isinstance(external_denominator, int) or external_denominator < 0:
+    die(f'R5_INVALID_EXTERNAL_AUTHORITY_DENOMINATOR:{external_denominator}')
+if not isinstance(current_total, int) or current_total < 0:
+    die(f'R5_INVALID_CURRENT_OPEN_PROBLEM_DENOMINATOR:{current_total}')
+if len(requests) != product_denominator:
+    die(f'R5_PRODUCT_AUTHORITY_REQUEST_DENOMINATOR_DRIFT:records={len(requests)}:declared={product_denominator}')
+if product_denominator + external_denominator != current_total:
+    die(f'R5_AUTHORITY_PARTITION_DRIFT:product={product_denominator}:external={external_denominator}:total={current_total}')
 if r5.get('normative_authority') is not False or r5.get('request_is_product_authority') is not False:
     die('R5_REQUEST_MASQUERADES_AS_AUTHORITY')
 
 seen = set()
 records = []
 for req in requests:
-    blocker_uid = req.get('blocker_uid')
+    problem_uid = req.get('problem_uid')
     scope = req.get('scope')
     category = req.get('category')
     target_uid = req.get('target_uid')
     missing = req.get('missing_field_or_relation')
     auth_req = req.get('authority_request') or {}
-    key = (blocker_uid, scope, category, target_uid, missing)
+    key = (problem_uid, scope, category, target_uid, missing)
     if any(v in (None, '') for v in key):
         die(f'INCOMPLETE_R5_REQUEST_IDENTITY:{key}')
     if key in seen:
@@ -47,10 +60,13 @@ for req in requests:
     required_kind = auth_req.get('required_authority_kind')
     required_relation = auth_req.get('required_exact_fields_or_relation') or []
     if not required_kind or not required_relation:
-        die(f'INCOMPLETE_R5_AUTHORITY_REQUEST:{blocker_uid}')
+        die(f'INCOMPLETE_R5_AUTHORITY_REQUEST:{problem_uid}')
 
     records.append({
-        'blocker_uid': blocker_uid,
+        # Keep the downstream compatibility field name, but bind it exactly to
+        # the Current R5 problem UID. No new identifier is invented here.
+        'blocker_uid': problem_uid,
+        'source_problem_uid': problem_uid,
         'scope': scope,
         'category': category,
         'target_uid': target_uid,
@@ -81,14 +97,14 @@ head = subprocess.run(
 ).stdout.strip()
 
 out = {
-    'schema_version': 1,
+    'schema_version': 2,
     'artifact_type': 'NON_NORMATIVE_PRODUCT_DESIGN_AUTHORITY_INTAKE_CONTRACT',
     'normative_authority': False,
     'stage_uid': 'STAGE-02',
     'cycle': 'PRODUCT_DESIGN_AUTHORITY_INTAKE_R6',
     'source_request_ref': 'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml',
     'source_head_sha': head,
-    'purpose': 'LOCK_THE_150_EXACT_PRODUCT_CONTRACT_GAP_IDENTITIES_AND_DEFINE_FAIL_CLOSED_INGESTION_FIELDS_FOR_A_SEPARATELY_APPROVED_CANONICAL_PRODUCT_AUTHORITY',
+    'purpose': 'LOCK_CURRENT_R5_PRODUCT_CONTRACT_GAP_IDENTITIES_AND_DEFINE_FAIL_CLOSED_INGESTION_FIELDS_FOR_SEPARATELY_APPROVED_CANONICAL_PRODUCT_AUTHORITY',
     'safety': {
         'contains_product_authority_values': False,
         'may_be_used_as_product_authority': False,
@@ -115,12 +131,20 @@ out = {
         'partial_approved_sets_may_not_be_counted_closed_until_fresh_reexecution_proves_each_signature_zero': True,
     },
     'denominators': {
-        'product_design_contract_blockers_locked_for_intake': 150,
+        'current_open_stage02_problems': current_total,
+        'product_design_contract_blockers_locked_for_intake': product_denominator,
+        'external_authority_blockers_preserved_outside_product_intake': external_denominator,
         'approved_product_authority_bindings_present_in_this_package': 0,
         'materializable_from_this_package': 0,
         'effective_stage02_blocker_reduction_claimed': 0,
     },
     'records': records,
+    'external_authority_partition': {
+        'count': external_denominator,
+        'source': 'R5_DENOMINATORS_EXTERNAL_AUTHORITY_REQUESTS',
+        'included_in_product_authority_records': False,
+        'resolution_claimed': False,
+    },
     'next_legal_sequence': [
         'INGEST_SEPARATE_APPROVED_CANONICAL_PRODUCT_AUTHORITY',
         'VALIDATE_EXACT_UID_FIELD_RELATIONS_AND_CURRENT_AUTHORITY_ADMISSIBILITY',
@@ -138,5 +162,6 @@ out = {
 }
 
 OUT.write_text(yaml.safe_dump(out, allow_unicode=True, sort_keys=False, width=180), encoding='utf-8')
-print('PASS: built fail-closed R6 intake contract for exact 150 product-design/functional-contract blockers')
+print(f'PASS: built fail-closed R6 intake contract for {product_denominator} Current product-design/functional-contract blockers')
+print(f'PASS: preserved {external_denominator} external-authority blockers outside the product-authority intake partition')
 print('PASS: product authority values supplied=0; materializable=0; blocker reduction claimed=0')
