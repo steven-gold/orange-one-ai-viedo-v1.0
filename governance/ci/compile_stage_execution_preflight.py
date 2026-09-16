@@ -73,6 +73,19 @@ def repo_identity():
         elif 'github.com/' in remote: repo=remote.split('github.com/',1)[1]
     if not repo or '/' not in repo: die('REPOSITORY_IDENTITY_UNRESOLVED')
     return {'repository':repo,'branch':branch,'head_sha':head,'tree_sha':tree}
+def persisted_check_identity():
+    current=repo_identity(); p=BASE/'GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml'
+    if not p.is_file(): return current
+    prior=(y(p).get('repository_identity') or {})
+    if prior.get('head_sha')==current['head_sha']: return current
+    if prior.get('repository')!=current['repository'] or prior.get('branch')!=current['branch']: return current
+    parent=git('rev-parse','HEAD^')
+    if prior.get('head_sha')!=parent: return current
+    allowed={(BASE/f'{n}.yaml').as_posix() for n in OUTS+SUPPORTS}
+    changed={x for x in git('diff','--name-only',f'{parent}..{current["head_sha"]}').splitlines() if x}
+    if not changed or not changed.issubset(allowed): return current
+    if prior.get('tree_sha')!=git('rev-parse',f'{parent}^{{tree}}'): return current
+    return prior
 def stable_loaded_at(identity):
     p=BASE/'GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml'
     if p.is_file():
@@ -133,7 +146,7 @@ def normative_set_digest(read_set):
     normative={x['path']:x['sha256'] for x in read_set if x['path'] in {p.as_posix() for p in [ENTRY,REG,RULE,CYCLE,CLOSURE,LIFE,INV,ROOT_MANIFEST,SECTION_REGISTRY,ACCEPTANCE,*MOTHERS]}}
     return sha(json.dumps(normative,sort_keys=True,separators=(',',':')).encode())
 
-def build():
+def build(identity_override=None):
     entry,reg,rule,cycle,closure,life,inv,state,e,frozen,cal=y(ENTRY),y(REG),y(RULE),y(CYCLE),y(CLOSURE),y(LIFE),y(INV),y(STATE),j(EVID),y(FROZEN),y(CAL); st=stage(life)
     gov=(reg.get('active_specification') or {}).get('governance_uid'); att=state.get('stage02_active_attempt') or {}
     if not gov or entry.get('active_governance_uid')!=gov or att.get('frozen_governance_uid')!=gov or e.get('frozen_governance_uid')!=gov or frozen.get('frozen_governance_uid')!=gov: die('CURRENT_GOVERNANCE_UID_DRIFT')
@@ -177,7 +190,7 @@ def build():
         r1=y(R1); entries.append({'resolution_uid':'STAGE02-RESOLUTION-R1-STRUCTURAL-CLOSURE','resolution_type':'VERIFIED_STRUCTURAL_MATERIALIZATION','source_receipt_ref':R1.as_posix(),'materialized_missing_artifact_blocker_count':int(e.get('materialized_missing_artifact_blocker_count',0)),'fresh_reexecution_closure_blocker_total':int(e.get('closure_blocker_total',0)),'functional_gap_reduction_credit':0,'external_authority_resolution_credit':0,'verification_run_id':int(att.get('source_workflow_run_id',0)),'verification_status':'PASS' if e.get('materialized_structural_contract_validation')=='PASS' else 'BLOCKED','receipt_artifact_type':r1.get('artifact_type')})
     docs['RESOLUTION_LEDGER']={**common,'artifact_type':'RESOLUTION_LEDGER','operation_uid':prod['RESOLUTION_LEDGER'],'ledger_mode':'APPEND_ONLY','existing_verified_entries_preserved_on_recompile':True,'entries':entries,'functional_problem_resolution_credit_total':sum(int(x.get('functional_gap_reduction_credit',0)) for x in entries),'external_authority_resolution_credit_total':sum(int(x.get('external_authority_resolution_credit',0)) for x in entries)}
 
-    identity=repo_identity(); loaded_at=stable_loaded_at(identity); read_set=canonical_read_set(); section_receipts=validate_sections(); norm_digest=normative_set_digest(read_set)
+    identity=identity_override or repo_identity(); loaded_at=stable_loaded_at(identity); read_set=canonical_read_set(); section_receipts=validate_sections(); norm_digest=normative_set_digest(read_set)
     entry_source=entry.get('source_identity') or {}; rule_digest=((reg.get('canonical_rule_registry') or {}).get('digest'))
     if not rule_digest or entry.get('canonical_rule_registry_digest')!=rule_digest: die('CANONICAL_RULE_DIGEST_DRIFT')
     writes=[(BASE/f'{n}.yaml').as_posix() for n in OUTS+SUPPORTS]
@@ -208,7 +221,7 @@ def check(docs):
 def main():
     p=argparse.ArgumentParser(); p.add_argument('--stage',default=STAGE); g=p.add_mutually_exclusive_group(required=True); g.add_argument('--materialize',action='store_true'); g.add_argument('--check',action='store_true'); a=p.parse_args()
     if a.stage!=STAGE: die(f'UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS:{a.stage}')
-    docs=build()
+    docs=build(persisted_check_identity() if a.check else None)
     if a.materialize: write(docs)
     check(docs)
 if __name__=='__main__': main()
