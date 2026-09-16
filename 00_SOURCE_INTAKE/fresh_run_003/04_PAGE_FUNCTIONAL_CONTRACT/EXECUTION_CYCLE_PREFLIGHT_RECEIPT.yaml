@@ -8,17 +8,17 @@ source_evidence_sha256: 5e327c71fbe0a9ff2c6f8d8107eac11e5d0f3192b673602be2db681a
 artifact_type: EXECUTION_CYCLE_PREFLIGHT_RECEIPT
 producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
 policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-active_work_unit_ref: WU-STAGE02-COMMON-ENGINE-002
+active_work_unit_ref: null
 selected_execution_profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
 execution_identity:
   repository: steven-gold/orange-one-ai-viedo-v1.0
   branch: rebuild-v2.1.1
-  head_sha: a821c724118e98be0534df02482014768398bb47
-  tree_sha: 0b559da5e334a8176b9f7da66c351c8d933191d2
+  head_sha: 8e96501da778a1105ca9eaadcb50bb204cb3c0c0
+  tree_sha: 5dcc071ff0003f1f65f6bf0ee42c9bfb38398fab
 governance_load:
   governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
-  work_unit_uid: WU-STAGE02-COMMON-ENGINE-002
-  resolved_work_unit_owner: governance/ci/classify_current_stage2_functional_remediability.py
+  work_unit_uid: null
+  resolved_work_unit_owner: null
   root_manifest_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
   root_manifest_sha256: fa530e3124e13e2df66fab131cccb6e91bd1cbaeaec4bc1b325a1c78b33164e0
   effective_normative_set_sha256: 67870521c23a766023c07a810a579ade0f0ad731debf7a65cc5623ed535af0d1
@@ -47,13 +47,15 @@ governance_load:
     governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml: 3f7073fc9af92ec60708fc4c77007e5334b47187bfb701e18d288201172c361a
     .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml: f7dbaca0b7be48b92c4190f8024dbfd74569ed8753529e0e926f528b62481b9c
     .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml: 9b3d53adc34423b34f670d85d09861582d09599585acdee3ffb5ff60df6a1f4d
-    governance/test/ACTIVE_STATE.yaml: 237f84ef1467734b853780f45e962da442013028172927fae3ef3e48dc669262
+    governance/test/ACTIVE_STATE.yaml: c6472f66b99231623ae442dfba7a384ba8fbbd9fb483427ce943c4433a8acaf7
     governance/test/STAGE02_EXECUTION_OPTIMIZATION_DEFECT_CONSOLIDATION.yaml: 0231c9bf59e27b94fd24aa792b3e6e93fea169c84118e97ab1af0134a8dbb5da
   acceptance_blueprint_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
   acceptance_blueprint_sha256: 26c8ffcd52a83f6e0508b7f5d8ff44e532a9986bc08bbfd9dc029667868cb0cf
   loader_identity: governance/ci/compile_stage_execution_preflight.py
-  loader_version: '3'
-  loaded_at_utc: '2026-09-16T20:47:26.022538Z'
+  loader_version: '4'
+  loaded_at_utc: '2026-09-16T21:53:05.811969Z'
+  execution_context_mode: PARENT_OWNING_LAYER_REMEDIATION
+  current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
 canonical_stage_output_denominator_count: 17
 canonical_stage_output_denominator:
 - FUNCTIONAL_CHAIN_SPEC
@@ -93,3 +95,5 @@ product_blocker_credit: 0
 stage_exit_allowed: false
 stage03_allowed: false
 result: PASS_GOVERNANCE_LOADED_FOR_PREFLIGHT
+execution_context_mode: PARENT_OWNING_LAYER_REMEDIATION
+current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
