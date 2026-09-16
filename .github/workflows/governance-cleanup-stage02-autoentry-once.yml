@@ -49,16 +49,14 @@ jobs:
               if on_idx is None:
                   raise SystemExit(f'BLOCK: workflow has no on: block: {path}')
 
-              line = lines[on_idx]
-              rhs = line.split(':', 1)[1].strip()
+              rhs = lines[on_idx].split(':', 1)[1].strip()
               if rhs:
                   if rhs.startswith('[') and rhs.endswith(']'):
                       tokens = [x.strip().strip("'\"") for x in rhs[1:-1].split(',') if x.strip()]
                   else:
                       tokens = [rhs.strip().strip("'\"")]
                   kept = [x for x in tokens if x in ALLOWED] or ['workflow_dispatch']
-                  replacement = ['on:\n'] + [f'  {x}:\n' for x in kept]
-                  lines = lines[:on_idx] + replacement + lines[on_idx + 1:]
+                  lines = lines[:on_idx] + ['on:\n'] + [f'  {x}:\n' for x in kept] + lines[on_idx + 1:]
               else:
                   end = on_idx + 1
                   while end < len(lines):
@@ -67,18 +65,15 @@ jobs:
                       if not stripped or stripped.startswith('#'):
                           end += 1
                           continue
-                      indent = len(raw) - len(raw.lstrip(' '))
-                      if indent == 0:
+                      if len(raw) - len(raw.lstrip(' ')) == 0:
                           break
                       end += 1
-
                   block = lines[on_idx + 1:end]
                   starts = []
                   for j, raw in enumerate(block):
                       m = re.match(r'^  ([A-Za-z0-9_-]+)\s*:', raw)
                       if m:
                           starts.append((j, m.group(1)))
-
                   kept_segments = []
                   for pos, (start, key) in enumerate(starts):
                       stop = starts[pos + 1][0] if pos + 1 < len(starts) else len(block)
@@ -107,8 +102,7 @@ jobs:
           if '".github/stage02-test",' not in text:
               text = text.replace('FORBIDDEN = [\n', 'FORBIDDEN = [\n    ".github/stage02-test",\n', 1)
 
-          helper_marker = 'def stage02_workflow_triggers(path):'
-          if helper_marker not in text:
+          if 'def stage02_workflow_triggers(path):' not in text:
               helper = textwrap.dedent(r'''
               def stage02_workflow_triggers(path):
                   import re
@@ -141,8 +135,7 @@ jobs:
               ''')
               text = text.replace('\ndef main():\n', '\n' + helper + '\ndef main():\n', 1)
 
-          check_marker = 'STAGE2_WORKFLOW_AUTOMATIC_TRIGGER_RESIDUAL'
-          if check_marker not in text:
+          if 'STAGE2_WORKFLOW_AUTOMATIC_TRIGGER_RESIDUAL' not in text:
               needle = '    state = (ROOT / "00_SOURCE_INTAKE/fresh_run_003/EXECUTION_STATE.yaml").read_text(encoding="utf-8")\n'
               check = textwrap.dedent('''
                   allowed_stage02_triggers = {"workflow_dispatch", "workflow_call"}
@@ -162,40 +155,92 @@ jobs:
               text = text.replace(needle, check + needle, 1)
 
           validator.write_text(text, encoding='utf-8')
-          print(f'Sanitized workflow count: {len(changed)}')
-          for item in changed:
-              print(f'  {item}')
+          print(f'SANITIZED_WORKFLOW_COUNT={len(changed)}')
           PY
-
           git rm -r --ignore-unmatch .github/stage02-test governance/test/stage02
 
-      - name: Validate zero residual and current resume state
+      - name: Validate cleanup workspace
         shell: bash
         run: |
           python governance/ci/validate_stage02_zero_residual.py
           python governance/ci/validate_profile_history_binding.py
           python governance/ci/validate_selected_execution_profile_integrity.py
           python governance/ci/validate_validation_remediation_closure_protocol.py
-
-      - name: Protect Mother and Current normative content from this cleanup
-        shell: bash
-        run: |
           if ! git diff --quiet -- .github/governance-source/active/source/12_DOCS/mother-spec governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml; then
             echo 'BLOCK: cleanup touched normative Mother/Current governance' >&2
-            git diff -- .github/governance-source/active/source/12_DOCS/mother-spec governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
             exit 1
           fi
 
-      - name: Remove one-shot runner and persist cleanup atomically
+      - name: Remove one-shot runner from candidate
+        run: git rm .github/workflows/governance-cleanup-stage02-autoentry-once.yml
+
+      - name: Create detached cleanup commit through Git database API
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          git rm .github/workflows/governance-cleanup-stage02-autoentry-once.yml
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/workflows governance/ci/validate_stage02_zero_residual.py
-          if git diff --cached --quiet; then
-            echo 'BLOCK: cleanup produced no persisted change' >&2
-            exit 1
-          fi
-          git commit -m 'chore(stage02): remove automatic execution residue'
-          git push origin HEAD:rebuild-v2.1.1
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+          import json
+          import os
+          import subprocess
+          import urllib.request
+
+          repo = os.environ['GITHUB_REPOSITORY']
+          token = os.environ['GH_TOKEN']
+          base = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          base_tree = subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip()
+
+          def api(method, path, payload):
+              req = urllib.request.Request(
+                  f'https://api.github.com/repos/{repo}{path}',
+                  data=json.dumps(payload).encode('utf-8'),
+                  method=method,
+                  headers={
+                      'Authorization': f'Bearer {token}',
+                      'Accept': 'application/vnd.github+json',
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      'Content-Type': 'application/json',
+                  },
+              )
+              with urllib.request.urlopen(req) as r:
+                  return json.load(r)
+
+          raw = subprocess.check_output(['git', 'diff', '--name-status', '-z', 'HEAD'])
+          parts = raw.split(b'\0')
+          entries = []
+          i = 0
+          changed_paths = []
+          while i < len(parts) and parts[i]:
+              status = parts[i].decode('utf-8')
+              path = parts[i + 1].decode('utf-8')
+              i += 2
+              if status.startswith('R') or status.startswith('C'):
+                  path2 = parts[i].decode('utf-8')
+                  i += 1
+                  raise SystemExit(f'BLOCK: unexpected rename/copy {status}: {path} -> {path2}')
+              changed_paths.append(path)
+              if status == 'D':
+                  entries.append({'path': path, 'mode': '100644', 'type': 'blob', 'sha': None})
+                  continue
+              data = Path(path).read_bytes()
+              blob = api('POST', '/git/blobs', {'content': base64.b64encode(data).decode('ascii'), 'encoding': 'base64'})
+              mode_line = subprocess.check_output(['git', 'ls-files', '-s', '--', path], text=True).strip()
+              mode = mode_line.split()[0] if mode_line else '100644'
+              entries.append({'path': path, 'mode': mode, 'type': 'blob', 'sha': blob['sha']})
+
+          if not entries:
+              raise SystemExit('BLOCK: detached candidate has no changes')
+
+          tree = api('POST', '/git/trees', {'base_tree': base_tree, 'tree': entries})
+          commit = api('POST', '/git/commits', {
+              'message': 'chore(stage02): remove automatic execution residue',
+              'tree': tree['sha'],
+              'parents': [base],
+          })
+          print(f'CANDIDATE_BASE_SHA={base}')
+          print(f'CANDIDATE_TREE_SHA={tree["sha"]}')
+          print(f'CANDIDATE_COMMIT_SHA={commit["sha"]}')
+          print(f'CANDIDATE_CHANGED_PATHS={len(changed_paths)}')
+          PY
