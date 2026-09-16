@@ -1,15 +1,6 @@
 name: Stage-02 Actual Product Test After Full-Line Gate
 
 on:
-  push:
-    branches: [rebuild-v2.1.1]
-    paths:
-      - '.github/workflows/stage02-actual-test.yml'
-      - 'governance/ci/run_current_stage2_actual_test.py'
-      - 'governance/ci/validate_stage02_state_integrity.py'
-      - 'governance/ci/validate_stage02_entry_receipts.py'
-      - 'governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml'
-      - 'governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml'
   workflow_dispatch:
 
 permissions:
