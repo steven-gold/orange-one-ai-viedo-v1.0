@@ -12,6 +12,7 @@ BASE = ROOT / '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
 PROBLEMS = BASE / 'CURRENT_PROBLEM_REGISTER.yaml'
 CLASSIFICATION = ROOT / 'governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml'
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
+FINDINGS = ROOT / 'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
 CANDIDATES = ROOT / 'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
 REGISTRY = ROOT / 'governance/specifications/REGISTRY.yaml'
 OUT = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml'
@@ -96,6 +97,7 @@ def authority_requirement(category: str, detail: str) -> dict:
 problem = load(PROBLEMS)
 classification = load(CLASSIFICATION)
 state = load(STATE)
+findings = load(FINDINGS)
 candidates = load(CANDIDATES)
 registry = load(REGISTRY)
 
@@ -108,6 +110,8 @@ if not governance_uid or problem.get('current_governance_uid') != governance_uid
     die('CURRENT_GOVERNANCE_UID_DRIFT')
 if not attempt_uid or problem.get('attempt_uid') != attempt_uid or classification.get('attempt_uid') != attempt_uid:
     die('CURRENT_ATTEMPT_UID_DRIFT')
+if findings.get('frozen_governance_uid') != governance_uid or findings.get('attempt_uid') != attempt_uid:
+    die('CURRENT_FINDINGS_IDENTITY_DRIFT')
 if current_n <= 0 or open_n != current_n or class_n != current_n:
     die(f'CURRENT_DENOMINATOR_DRIFT:problem={current_n}:open={open_n}:classification={class_n}')
 if ((state.get('execution') or {}).get('stage2') or {}).get('stage_exit_allowed') is not False:
@@ -254,6 +258,9 @@ attempt['authority_request_is_authority'] = False
 attempt['new_authority_required_before_more_material_remediation'] = True
 attempt['next_action'] = state['next_action']
 dump(STATE, state)
+
+findings['next_action'] = state['next_action']
+dump(FINDINGS, findings)
 
 current = candidates.setdefault('current_stage2_execution', {})
 current['next_action'] = state['next_action']
