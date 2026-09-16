@@ -5,7 +5,7 @@ from collections import Counter
 from pathlib import Path
 import yaml
 ROOT=Path('.'); BASE=ROOT/'00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'; STAGE='STAGE-02'
-ENTRY=ROOT/'GOVERNANCE_CURRENT.yaml'; LIFE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'; REG=ROOT/'governance/specifications/REGISTRY.yaml'; RULE=ROOT/'governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml'; CYCLE=ROOT/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml'; STATE=ROOT/'governance/test/ACTIVE_STATE.yaml'; EVID=ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
+ENTRY=ROOT/'GOVERNANCE_CURRENT.yaml'; LIFE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'; REG=ROOT/'governance/specifications/REGISTRY.yaml'; RULE=ROOT/'governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml'; CYCLE=ROOT/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml'; STATE=ROOT/'governance/test/ACTIVE_STATE.yaml'; FINDINGS=ROOT/'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'; CANDIDATES=ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'; EVID=ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
 ROOT_MANIFEST=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml'; SECTION_REGISTRY=ROOT/'.github/governance-source/active/source/10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml'; ACCEPTANCE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml'
 GENERATED=['REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT','CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER']
 SUPPORTS=['GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECEIPT']
@@ -19,7 +19,6 @@ PAGE={
 OWNER_OPERATION='STAGE_EXECUTION_PREFLIGHT_COMPILE'
 PARENT_STATUS='ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE'
 PARENT_RESUME_POINT='STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION'
-PARENT_NEXT_ACTION='MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS'
 def die(m): print('BLOCK:',m,file=sys.stderr); raise SystemExit(1)
 def y(p):
     if not p.is_file(): die(f'MISSING_REQUIRED_OUTPUT:{p}')
@@ -51,9 +50,20 @@ def execution_context(state):
         return {'mode':'ACTIVE_WORK_UNIT','work_unit_uid':uid,'canonical_owner':owner,'semantic_concern':name,'resume_point':resume.get('current_resume_point')}
     if state.get('status')!=PARENT_STATUS: die('CURRENT_EXECUTION_CONTEXT_MODE_UNRESOLVED')
     if resume.get('current_resume_point')!=PARENT_RESUME_POINT: die('PARENT_RESUME_POINT_DRIFT')
-    if state.get('next_action')!=PARENT_NEXT_ACTION: die('PARENT_NEXT_ACTION_DRIFT')
     if resume.get('current_work_unit_uid') or resume.get('current_owner'): die('STALE_INTERRUPT_WORK_UNIT_BINDING_IN_PARENT_MODE')
-    return {'mode':'PARENT_OWNING_LAYER_REMEDIATION','work_unit_uid':None,'canonical_owner':None,'semantic_concern':PARENT_NEXT_ACTION,'resume_point':PARENT_RESUME_POINT}
+    next_action=state.get('next_action')
+    if not isinstance(next_action,str) or not next_action.strip(): die('PARENT_NEXT_ACTION_MISSING')
+    attempt=state.get('stage02_active_attempt') or {}
+    findings=y(FINDINGS); candidates=y(CANDIDATES); current=candidates.get('current_stage2_execution') or {}
+    if attempt.get('next_action')!=next_action: die('PARENT_ATTEMPT_NEXT_ACTION_DRIFT')
+    if findings.get('next_action')!=next_action: die('PARENT_FINDINGS_NEXT_ACTION_DRIFT')
+    if current.get('next_action')!=next_action: die('PARENT_CANDIDATE_NEXT_ACTION_DRIFT')
+    if resume.get('exact_next_action') is not None and resume.get('exact_next_action')!=next_action: die('PARENT_RESUME_EXACT_NEXT_ACTION_DRIFT')
+    attempt_uid=attempt.get('attempt_uid'); governance_uid=attempt.get('frozen_governance_uid')
+    if not attempt_uid or not governance_uid: die('PARENT_ATTEMPT_IDENTITY_MISSING')
+    if findings.get('attempt_uid')!=attempt_uid or findings.get('frozen_governance_uid')!=governance_uid: die('PARENT_FINDINGS_IDENTITY_DRIFT')
+    if current.get('attempt_uid')!=attempt_uid or current.get('frozen_governance_uid')!=governance_uid: die('PARENT_CANDIDATE_IDENTITY_DRIFT')
+    return {'mode':'PARENT_OWNING_LAYER_REMEDIATION','work_unit_uid':None,'canonical_owner':None,'semantic_concern':next_action,'resume_point':PARENT_RESUME_POINT}
 def rows(e):
     out=[]
     for pu,p in sorted((e.get('pages') or {}).items()):
@@ -131,7 +141,7 @@ def main():
     gl=cyc.get('governance_load') or {}
     if gl.get('governance_uid')!=cur or gl.get('work_unit_uid')!=work_unit or gl.get('resolved_work_unit_owner')!=work_owner or gl.get('root_manifest_sha256')!=h(ROOT_MANIFEST) or gl.get('acceptance_blueprint_sha256')!=h(ACCEPTANCE): die('GOVERNANCE_LOAD_AUTHORITY_DRIFT')
     if context['mode']=='PARENT_OWNING_LAYER_REMEDIATION':
-        if gl.get('execution_context_mode')!=context['mode'] or gl.get('current_resume_point')!=context['resume_point'] or gl.get('loader_version')!='4': die('PARENT_GOVERNANCE_LOAD_CONTEXT_DRIFT')
+        if gl.get('execution_context_mode')!=context['mode'] or gl.get('current_resume_point')!=context['resume_point'] or gl.get('loader_version')!='5': die('PARENT_GOVERNANCE_LOAD_CONTEXT_DRIFT')
     sections=gl.get('resolved_section_uid_receipts') or []
     if len(sections)<6 or len({x.get('section_uid') for x in sections})!=len(sections): die('GOVERNANCE_LOAD_SECTION_RECEIPTS_INVALID')
     registry_text=SECTION_REGISTRY.read_text(encoding='utf-8')
