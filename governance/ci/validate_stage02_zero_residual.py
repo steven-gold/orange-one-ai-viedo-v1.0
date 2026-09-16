@@ -6,6 +6,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 
 FORBIDDEN = [
+    ".github/stage02-test",
+    "governance/test/stage02",
     "00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT",
     "00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/evidence/PAGE_FUNCTIONAL_REVIEW_EVIDENCE.yaml",
     "00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/evidence/PAGE_FUNCTIONAL_REVIEW_EVIDENCE_R2.yaml",
@@ -50,6 +52,13 @@ def main():
         if path in tracked or any(p.startswith(path.rstrip("/") + "/") for p in tracked):
             return fail(f"STAGE2_RESIDUAL_TRACKED:{path}")
 
+    stage02_workflows = sorted(
+        p for p in tracked
+        if p.startswith(".github/workflows/stage02-") and p.endswith((".yml", ".yaml"))
+    )
+    if stage02_workflows:
+        return fail("STAGE2_WORKFLOW_RESIDUAL_TRACKED:" + ",".join(stage02_workflows))
+
     for path, expected in EXPECTED_STAGE1_BLOBS.items():
         actual = git("rev-parse", f"HEAD:{path}")
         if actual != expected:
@@ -73,7 +82,7 @@ def main():
         if token not in active:
             return fail(f"ACTIVE_STATE_RESET_TOKEN_MISSING:{token}")
 
-    print("PASS: Stage-02 tracked artifact/evidence residual count = 0")
+    print("PASS: Stage-02 tracked artifact/evidence/workflow residual count = 0")
     print("PASS: five current ledgers restored to exact Stage-01 CI-PASS blobs")
     print("PASS: Stage-01 remains closed; Stage-02 is NOT_EXECUTED")
     return 0
