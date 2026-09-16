@@ -9,6 +9,8 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 R6 = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.yaml'
+CORE_CANONICAL_SOURCE_REL = 'authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml'
+ASSET_CANONICAL_SOURCE_REL = 'authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml'
 CORE_SOURCE_REL = '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml'
 CORE_SOURCE = ROOT / CORE_SOURCE_REL
 ASSET_SOURCE_REL = '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml'
@@ -54,21 +56,16 @@ def write_test_only_current_manifest_fixture() -> None:
         'persist_as_current_authority': False,
         'product_authority_approval_granted': False,
         'authority': {
-            'current_designation': 'CURRENT',
+            'current_only': True,
             'status': 'FINAL_LOCKED',
             'revision': FIXTURE_REVISION,
         },
-        'files': [
-            {
-                'path': CORE_SOURCE_REL,
-                'sha256': sha256_file(CORE_SOURCE),
-                'role': 'NEGATIVE_REGRESSION_CURRENT_MEMBER_FIXTURE_CORE',
-            },
-            {
-                'path': ASSET_SOURCE_REL,
-                'sha256': sha256_file(ASSET_SOURCE),
-                'role': 'NEGATIVE_REGRESSION_CURRENT_MEMBER_FIXTURE_ASSET',
-            },
+        'load_policy': {
+            'only_listed_files_are_current_authority': True,
+        },
+        'current_authority_set': [
+            CORE_CANONICAL_SOURCE_REL,
+            ASSET_CANONICAL_SOURCE_REL,
         ],
     })
     validator.CURRENT_MANIFEST = TMP_MANIFEST
@@ -239,7 +236,7 @@ def main() -> None:
     print('PASS: R7 negative regression uses a test-only manifest fixture and does not require parent-layer production authority materialization')
     print('PASS: R7 rejects a physically present but non-Current authority source')
     print('PASS: R7 rejects caller-supplied exact_binding that is not physically represented in Current authority bytes')
-    print('PASS: R7 accepts frozen Current-manifest revision provenance only for an exact hashed fixture member')
+    print('PASS: R7 accepts frozen Current-manifest revision provenance only for an exact Stage-01 capture of a listed canonical source member')
     print('PASS: R7 rejects arbitrary revision not proven by source or Current manifest')
     print('PASS: negative fixtures cleaned; production CURRENT_MANIFEST restored; no product/spec/Stage-01/Stage-02 output mutation performed')
 
