@@ -26,6 +26,8 @@ MOTHERS=[
  ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md',
 ]
 STATE=ROOT/'governance/test/ACTIVE_STATE.yaml'
+FINDINGS=ROOT/'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
+CANDIDATES=ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
 EVID=ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
 FROZEN=ROOT/'governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml'
 R1=ROOT/'governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml'
@@ -35,7 +37,6 @@ SUPPORTS=['GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECE
 OWNER_OPERATION='STAGE_EXECUTION_PREFLIGHT_COMPILE'
 PARENT_STATUS='ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE'
 PARENT_RESUME_POINT='STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION'
-PARENT_NEXT_ACTION='MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS'
 SECTION_BINDINGS={
  'WEB-GOV-01-S073':MOTHERS[0],
  'WEB-GOV-02-S070':MOTHERS[1],
@@ -110,9 +111,20 @@ def execution_context(state):
         return {'mode':'ACTIVE_WORK_UNIT','work_unit_uid':uid,'canonical_owner':owner,'semantic_concern':name,'resume_point':resume.get('current_resume_point')}
     if state.get('status')!=PARENT_STATUS: die('CURRENT_EXECUTION_CONTEXT_MODE_UNRESOLVED')
     if resume.get('current_resume_point')!=PARENT_RESUME_POINT: die('PARENT_RESUME_POINT_DRIFT')
-    if state.get('next_action')!=PARENT_NEXT_ACTION: die('PARENT_NEXT_ACTION_DRIFT')
     if resume.get('current_work_unit_uid') or resume.get('current_owner'): die('STALE_INTERRUPT_WORK_UNIT_BINDING_IN_PARENT_MODE')
-    return {'mode':'PARENT_OWNING_LAYER_REMEDIATION','work_unit_uid':None,'canonical_owner':None,'semantic_concern':PARENT_NEXT_ACTION,'resume_point':PARENT_RESUME_POINT}
+    next_action=state.get('next_action')
+    if not isinstance(next_action,str) or not next_action.strip(): die('PARENT_NEXT_ACTION_MISSING')
+    attempt=state.get('stage02_active_attempt') or {}
+    findings=y(FINDINGS); candidates=y(CANDIDATES); current=candidates.get('current_stage2_execution') or {}
+    if attempt.get('next_action')!=next_action: die('PARENT_ATTEMPT_NEXT_ACTION_DRIFT')
+    if findings.get('next_action')!=next_action: die('PARENT_FINDINGS_NEXT_ACTION_DRIFT')
+    if current.get('next_action')!=next_action: die('PARENT_CANDIDATE_NEXT_ACTION_DRIFT')
+    if resume.get('exact_next_action') is not None and resume.get('exact_next_action')!=next_action: die('PARENT_RESUME_EXACT_NEXT_ACTION_DRIFT')
+    attempt_uid=attempt.get('attempt_uid'); governance_uid=attempt.get('frozen_governance_uid')
+    if not attempt_uid or not governance_uid: die('PARENT_ATTEMPT_IDENTITY_MISSING')
+    if findings.get('attempt_uid')!=attempt_uid or findings.get('frozen_governance_uid')!=governance_uid: die('PARENT_FINDINGS_IDENTITY_DRIFT')
+    if current.get('attempt_uid')!=attempt_uid or current.get('frozen_governance_uid')!=governance_uid: die('PARENT_CANDIDATE_IDENTITY_DRIFT')
+    return {'mode':'PARENT_OWNING_LAYER_REMEDIATION','work_unit_uid':None,'canonical_owner':None,'semantic_concern':next_action,'resume_point':PARENT_RESUME_POINT}
 def gaps(e):
     out=[]
     for page_uid,page in sorted((e.get('pages') or {}).items()):
@@ -154,7 +166,7 @@ def validate_sections():
         receipts.append({'section_uid':uid,'document_ref':p.as_posix(),'document_sha256':file_sha(p)})
     return receipts
 def canonical_read_set():
-    paths=[ENTRY,REG,RULE,CYCLE,CLOSURE,LIFE,INV,ROOT_MANIFEST,SECTION_REGISTRY,ACCEPTANCE,*MOTHERS,STATE,EVID,FROZEN,R1,CAL]
+    paths=[ENTRY,REG,RULE,CYCLE,CLOSURE,LIFE,INV,ROOT_MANIFEST,SECTION_REGISTRY,ACCEPTANCE,*MOTHERS,STATE,FINDINGS,CANDIDATES,EVID,FROZEN,R1,CAL]
     return [{'path':p.as_posix(),'sha256':file_sha(p)} for p in paths]
 def normative_set_digest(read_set):
     normative={x['path']:x['sha256'] for x in read_set if x['path'] in {p.as_posix() for p in [ENTRY,REG,RULE,CYCLE,CLOSURE,LIFE,INV,ROOT_MANIFEST,SECTION_REGISTRY,ACCEPTANCE,*MOTHERS]}}
@@ -214,10 +226,10 @@ def build(identity_override=None):
     if work['mode']=='PARENT_OWNING_LAYER_REMEDIATION':
         context_receipt['execution_context_mode']=work['mode']; context_receipt['current_resume_point']=work['resume_point']
     docs['GOVERNANCE_EXECUTION_CONTEXT_RECEIPT']=context_receipt
-    dep_hashes={p.as_posix():file_sha(p) for p in [EVID,FROZEN,R1,LIFE,INV,STATE,CAL]}
+    dep_hashes={p.as_posix():file_sha(p) for p in [EVID,FROZEN,R1,LIFE,INV,STATE,FINDINGS,CANDIDATES,CAL]}
     governance_load={'governance_uid':gov,'work_unit_uid':work_uid,'resolved_work_unit_owner':work_owner,'root_manifest_ref':ROOT_MANIFEST.as_posix(),'root_manifest_sha256':file_sha(ROOT_MANIFEST),'effective_normative_set_sha256':norm_digest,'resolved_section_uid_receipts':section_receipts,'dependency_artifact_hashes':dep_hashes,'acceptance_blueprint_ref':ACCEPTANCE.as_posix(),'acceptance_blueprint_sha256':file_sha(ACCEPTANCE),'loader_identity':'governance/ci/compile_stage_execution_preflight.py','loader_version':'3','loaded_at_utc':loaded_at}
     if work['mode']=='PARENT_OWNING_LAYER_REMEDIATION':
-        governance_load['execution_context_mode']=work['mode']; governance_load['current_resume_point']=work['resume_point']; governance_load['loader_version']='4'
+        governance_load['execution_context_mode']=work['mode']; governance_load['current_resume_point']=work['resume_point']; governance_load['loader_version']='5'
     cycle_receipt={
       **common,'artifact_type':'EXECUTION_CYCLE_PREFLIGHT_RECEIPT','producer_operation_uid':OWNER_OPERATION,'policy_ref':CYCLE.as_posix(),'active_work_unit_ref':work_uid,'selected_execution_profile_uid':((entry.get('selected_execution_profile') or {}).get('profile_uid')),'execution_identity':identity,
       'governance_load':governance_load,
