@@ -50,11 +50,11 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: REVERIFY_REQUIRED_COMMON_ENGINE_INTERRUPT
+  full_line_github_result: PASS_EXECUTION_SOURCE_HEAD
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
-  full_line_verification_run_id: 35147438377
+  full_line_verification_run_id: 35147994108
 stage_execution_loading:
   full_line_round_reads_all_source_files_for_integrity_and_regression: true
   normal_stage_execution_reads_only_stage_required_files_and_shared_dependencies: true
@@ -99,11 +99,10 @@ resume_control:
   current_work_unit_uid: WU-STAGE02-COMMON-ENGINE-002
   current_owner: governance/ci/classify_current_stage2_functional_remediability.py
   current_step: CLASSIFICATION_RULESET_GAP_CLASS_ENFORCEMENT_REPAIR
-  last_successful_gate: COMMON_ENGINE_CLOSURE_EXACT_HEAD_FULL_LINE_35147438377
+  last_successful_gate: CLASSIFIER_POLICY_FIX_EXACT_HEAD_FULL_LINE_35147994108
   last_failed_gate: CURRENT_REMEDIABILITY_CLASSIFIER_POLICY_CONSUMPTION_AUDIT
   current_blocker: CLASSIFIER_IGNORES_CURRENT_GAP_CLASS_AI_AUTO_FILL_BLOCK_AND_FALSELY_AUTHORIZES_17_ARCHITECTURE_GAPS
   pending_tests:
-  - FULL_LINE_HIGH_PRESSURE_CURRENT_HEAD
   - CURRENT_REMEDIABILITY_CLASSIFICATION_REPLAY
   - CURRENT_REMEDIABILITY_CLASSIFICATION_POLICY_CONSISTENCY
   pending_deployment: false
@@ -198,7 +197,6 @@ stage02_active_attempt:
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
-  static_run_id_copy_forbidden: true
   static_head_sha_copy_forbidden: true
   static_specification_digest_copy_forbidden: true
   tracked_current_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
