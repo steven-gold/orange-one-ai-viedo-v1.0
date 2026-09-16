@@ -109,6 +109,15 @@ def load_exact_fresh_scan_implementation():
 if os.environ.get('STAGE02_FULL_LINE_CONFIRMED') != '1':
     die('REEXECUTION_REQUIRES_SAME_WORKFLOW_FULL_LINE_CONFIRMATION')
 state = load_yaml(STATE)
+active_work = state.get('active_work_unit') or {}
+resume = state.get('resume_control') or {}
+if active_work:
+    if resume.get('current_work_unit_uid') != active_work.get('work_unit_uid'):
+        die('REEXECUTION_ACTIVE_WORK_UNIT_RESUME_DRIFT')
+    if resume.get('current_owner') != active_work.get('canonical_owner'):
+        die('REEXECUTION_ACTIVE_WORK_UNIT_OWNER_DRIFT')
+    if active_work.get('current_status') == 'IN_PROGRESS_COMMON_ENGINE_INTERRUPT':
+        die('REEXECUTION_FORBIDDEN_DURING_COMMON_ENGINE_INTERRUPT')
 freeze = load_yaml(FREEZE)
 clean = load_yaml(CLEAN)
 material_receipt = load_yaml(MATERIAL_RECEIPT)
