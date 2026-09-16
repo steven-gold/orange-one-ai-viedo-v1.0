@@ -8,16 +8,15 @@ source_evidence_sha256: 5e327c71fbe0a9ff2c6f8d8107eac11e5d0f3192b673602be2db681a
 artifact_type: GOVERNANCE_EXECUTION_CONTEXT_RECEIPT
 producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
 policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-active_work_unit_ref: null
-semantic_concern: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS;
-  DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
+active_work_unit_ref: WU-STAGE02-COMMON-ENGINE-003
+semantic_concern: STAGE02_COMMON_ENGINE_CURRENT_AUTHORITY_PIPELINE_DENOMINATOR_SCHEMA_REPAIR
 canonical_owner_operation: STAGE_EXECUTION_PREFLIGHT_COMPILE
-resolved_current_work_unit_owner: null
+resolved_current_work_unit_owner: governance/ci/build_stage02_product_design_authority_intake_r6.py
 repository_identity:
   repository: steven-gold/orange-one-ai-viedo-v1.0
   branch: rebuild-v2.1.1
-  head_sha: 66c1837fd6c240d1a997b449e8ace818bbb638cf
-  tree_sha: 9b047615d6f88d742049fdb2dbb3ecc8a2c5a7a5
+  head_sha: da677baffebae13416075872e36f3ae2ac78ea1d
+  tree_sha: 48fd8393033e30d48db45374a48c60b4c5197311
 current_registry:
   entry_ref: GOVERNANCE_CURRENT.yaml
   entry_sha256: aee461a4e8d87a79b5b158fe3edd760e6412f32af2c4587dd93064d830941d82
@@ -58,7 +57,7 @@ exact_read_set:
 - path: .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sha256: 725d8b474baee27908ffb5e78506c9e859fe461857aad2c3150df0eda9bbe07e
 - path: governance/test/ACTIVE_STATE.yaml
-  sha256: 11b6562555752838bc2659ed092cc76e7e9fa86a165c6d52943cd9f4c08d9050
+  sha256: e4ae3960076b9be99438bd8a508d4b3b9a92a83b6fedafeed9c08baeb4243a85
 - path: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
   sha256: 03f06c5a7a2542cbc653ea28442f5b7719e34fc5977b3ead3f21bb478db43c63
 - path: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
@@ -85,10 +84,8 @@ exact_write_targets:
 - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml
 - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml
 duplicate_search_result: EXISTING_CANONICAL_COMPILER_OWNER_REUSED_NO_PRIOR_SUPPORT_RECEIPT_OWNER_FOUND
-confirmed_gap_uid: null
-loaded_at_utc: '2026-09-16T21:59:23.840237Z'
+confirmed_gap_uid: WU-STAGE02-COMMON-ENGINE-003
+loaded_at_utc: '2026-09-16T23:36:16.302499Z'
 product_blocker_credit: 0
 stage03_allowed: false
 result: PASS_CONTEXT_RESOLVED
-execution_context_mode: PARENT_OWNING_LAYER_REMEDIATION
-current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION

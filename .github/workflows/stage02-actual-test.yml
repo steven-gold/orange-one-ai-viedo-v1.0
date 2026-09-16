@@ -1252,13 +1252,21 @@ jobs:
           set -euo pipefail
           files=(governance/test/ACTIVE_STATE.yaml governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml)
           actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | sort)"
-          expected="$(printf '%s\n' "${files[@]}" | sort)"
-          test "$actual" = "$expected" || { printf 'BLOCK: unexpected Current R5 persistence delta\n%s\n' "$actual" >&2; exit 1; }
+          allowed="$(printf '%s\n' "${files[@]}" | sort -u)"
+          unexpected="$(comm -23 <(printf '%s\n' "$actual" | sed '/^$/d' | sort -u) <(printf '%s\n' "$allowed"))"
+          test -z "$unexpected" || { printf 'BLOCK: unexpected Current R5 persistence delta\n%s\n' "$unexpected" >&2; exit 1; }
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- "${files[@]}"
-          git commit -m 'test(stage02): persist current product design authority request R5'
-          git push origin HEAD:rebuild-v2.1.1
+          staged="$(git diff --cached --name-only | sort)"
+          staged_unexpected="$(comm -23 <(printf '%s\n' "$staged" | sed '/^$/d' | sort -u) <(printf '%s\n' "$allowed"))"
+          test -z "$staged_unexpected" || { printf 'BLOCK: unexpected staged Current R5 persistence delta\n%s\n' "$staged_unexpected" >&2; exit 1; }
+          if [ -n "$staged" ]; then
+            git commit -m 'test(stage02): persist current product design authority request R5'
+            git push origin HEAD:rebuild-v2.1.1
+          else
+            echo 'PASS: Current R5 persistence is idempotent; no authorized projector delta requires a commit'
+          fi
       - name: Reconcile canonical preflight after Current R5 state persistence
         shell: bash
         run: |

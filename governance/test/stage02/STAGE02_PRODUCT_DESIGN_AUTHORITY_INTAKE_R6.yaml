@@ -1,0 +1,3561 @@
+schema_version: 2
+artifact_type: NON_NORMATIVE_PRODUCT_DESIGN_AUTHORITY_INTAKE_CONTRACT
+normative_authority: false
+stage_uid: STAGE-02
+cycle: PRODUCT_DESIGN_AUTHORITY_INTAKE_R6
+source_request_ref: governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml
+source_head_sha: da677baffebae13416075872e36f3ae2ac78ea1d
+purpose: LOCK_CURRENT_R5_PRODUCT_CONTRACT_GAP_IDENTITIES_AND_DEFINE_FAIL_CLOSED_INGESTION_FIELDS_FOR_SEPARATELY_APPROVED_CANONICAL_PRODUCT_AUTHORITY
+safety:
+  contains_product_authority_values: false
+  may_be_used_as_product_authority: false
+  may_reduce_stage02_blocker_count: false
+  may_materialize_without_separate_approved_authority: false
+  ai_may_fill_product_values: false
+  historical_non_current_final_locked_source_may_fill_values: false
+  current_specification_mutation_allowed: false
+  stage01_source_mutation_allowed: false
+  stage02_existing_output_mutation_performed: false
+approved_authority_ingestion_contract:
+  approved_input_must_be_separate_from_this_package: true
+  approved_input_must_resolve_exact_blocker_uid: true
+  approved_input_must_match_scope_category_target_uid_and_missing_relation: true
+  approved_input_must_supply_required_authority_kind: true
+  approved_input_must_name_canonical_owner_uid_and_owner_file: true
+  approved_input_must_supply_authority_revision_and_content_sha256: true
+  approved_input_must_supply_exact_binding_without_semantic_inference: true
+  approved_input_must_supply_approval_identity_time_and_evidence: true
+  approved_owner_must_be_current_admissible_product_authority_at_ingestion_time: true
+  generated_test_evidence_or_runtime_snapshot_cannot_be_product_authority: true
+  all_category_specific_validation_must_pass_before_materialization: true
+  partial_approved_sets_may_not_be_counted_closed_until_fresh_reexecution_proves_each_signature_zero: true
+denominators:
+  current_open_stage02_problems: 150
+  product_design_contract_blockers_locked_for_intake: 146
+  external_authority_blockers_preserved_outside_product_intake: 4
+  approved_product_authority_bindings_present_in_this_package: 0
+  materializable_from_this_package: 0
+  effective_stage02_blocker_reduction_claimed: 0
+records:
+- blocker_uid: STAGE02-PROBLEM-DE7AB37A00996BD8
+  source_problem_uid: STAGE02-PROBLEM-DE7AB37A00996BD8
+  scope: ASSET-01
+  category: ACTION_WITHOUT_CONTROL_OR_TRIGGER
+  target_uid: ASSET-01-ACT-FINDING-CREATE
+  missing_field_or_relation: no registered control or exact transition/system trigger
+  required_authority_kind: EXACT_ACTION_ADMISSION_TRIGGER_RELATION
+  required_exact_fields_or_relation:
+  - registered control.action_uid equals this action_uid OR exact stage-transition trigger/action_uid equals this action_uid OR the action has an explicit governed trigger identity
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-CBFE20F4BB46027D
+  source_problem_uid: STAGE02-PROBLEM-CBFE20F4BB46027D
+  scope: ASSET-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-ADD
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-6E8AC3B31D8E9470
+  source_problem_uid: STAGE02-PROBLEM-6E8AC3B31D8E9470
+  scope: ASSET-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DELETE
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-42E01A5C23F0B4DB
+  source_problem_uid: STAGE02-PROBLEM-42E01A5C23F0B4DB
+  scope: ASSET-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DUPLICATE
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-DF66A6CC2174588C
+  source_problem_uid: STAGE02-PROBLEM-DF66A6CC2174588C
+  scope: ASSET-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-MASK
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-DA02D8EF38A24611
+  source_problem_uid: STAGE02-PROBLEM-DA02D8EF38A24611
+  scope: ASSET-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-PROPERTIES
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-60F5BE5DFEFAB19B
+  source_problem_uid: STAGE02-PROBLEM-60F5BE5DFEFAB19B
+  scope: ASSET-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-REORDER
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-791E957E03F02D5B
+  source_problem_uid: STAGE02-PROBLEM-791E957E03F02D5B
+  scope: ASSET-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-ACCEPT
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-F13A44E51E6CACEC
+  source_problem_uid: STAGE02-PROBLEM-F13A44E51E6CACEC
+  scope: ASSET-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-PREVIEW
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-F4E9EBE46539833C
+  source_problem_uid: STAGE02-PROBLEM-F4E9EBE46539833C
+  scope: ASSET-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-REJECT
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-B05595174A1633F7
+  source_problem_uid: STAGE02-PROBLEM-B05595174A1633F7
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-0A5273C58E3CA8B5
+  source_problem_uid: STAGE02-PROBLEM-0A5273C58E3CA8B5
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-CORRECTION-APPROVE
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-C29E1F807BA95149
+  source_problem_uid: STAGE02-PROBLEM-C29E1F807BA95149
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-CORRECTION-EXECUTE
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-01BD2BC3A8018CB9
+  source_problem_uid: STAGE02-PROBLEM-01BD2BC3A8018CB9
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-CORRECTION-GENERATE
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-163A86506356EDEE
+  source_problem_uid: STAGE02-PROBLEM-163A86506356EDEE
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-EVALUATE
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-D7FC435CEFFAD9CA
+  source_problem_uid: STAGE02-PROBLEM-D7FC435CEFFAD9CA
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-FINDING-CREATE
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-704EEAB7E8195538
+  source_problem_uid: STAGE02-PROBLEM-704EEAB7E8195538
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-FLOW-START
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-D158343E57903C97
+  source_problem_uid: STAGE02-PROBLEM-D158343E57903C97
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-HANDOFF
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-F66A7148EBEABE72
+  source_problem_uid: STAGE02-PROBLEM-F66A7148EBEABE72
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-ADD
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-B397C3E654864178
+  source_problem_uid: STAGE02-PROBLEM-B397C3E654864178
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DELETE
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-9FABF8D5DC1E65F7
+  source_problem_uid: STAGE02-PROBLEM-9FABF8D5DC1E65F7
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DOC-CREATE
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-0A8F554586F4F292
+  source_problem_uid: STAGE02-PROBLEM-0A8F554586F4F292
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DOC-UPDATE
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-2865D163CEE83822
+  source_problem_uid: STAGE02-PROBLEM-2865D163CEE83822
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DUPLICATE
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-55C41BB3D70DD9DF
+  source_problem_uid: STAGE02-PROBLEM-55C41BB3D70DD9DF
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-MASK
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-0C276732F69ADCFF
+  source_problem_uid: STAGE02-PROBLEM-0C276732F69ADCFF
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-PROPERTIES
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-FD394F91D9DAFA10
+  source_problem_uid: STAGE02-PROBLEM-FD394F91D9DAFA10
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-REORDER
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-97B68E25AB557293
+  source_problem_uid: STAGE02-PROBLEM-97B68E25AB557293
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-PATCH-ACCEPT
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-502A1737C5893A42
+  source_problem_uid: STAGE02-PROBLEM-502A1737C5893A42
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-PATCH-CREATE
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-FF7BC3399AD49C9B
+  source_problem_uid: STAGE02-PROBLEM-FF7BC3399AD49C9B
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-PATCH-PREVIEW
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-6B5DE06356FBB6FC
+  source_problem_uid: STAGE02-PROBLEM-6B5DE06356FBB6FC
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-PATCH-REJECT
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-D4E509721B4EC1E4
+  source_problem_uid: STAGE02-PROBLEM-D4E509721B4EC1E4
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-RESTORE-AS-NEW
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-E2DEFB6E7945389F
+  source_problem_uid: STAGE02-PROBLEM-E2DEFB6E7945389F
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-TASK-RETRY
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-FD4DD7FDC989F522
+  source_problem_uid: STAGE02-PROBLEM-FD4DD7FDC989F522
+  scope: ASSET-01
+  category: FAILURE_STATE_ERROR_BINDING_MISSING
+  target_uid: ASSET-01-ACT-VERSION-LOCK
+  missing_field_or_relation: no exact action->error/recovery or transition recovery binding
+  required_authority_kind: EXACT_FAILURE_ERROR_RECOVERY_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds failure_state + recovery OR same action_uid explicitly binds a registered error_uid whose governed error entry supplies recovery
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-8192D87EDC1BE2F6
+  source_problem_uid: STAGE02-PROBLEM-8192D87EDC1BE2F6
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-67601993987F7F57
+  source_problem_uid: STAGE02-PROBLEM-67601993987F7F57
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-EVALUATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-27E96DEBCC459C28
+  source_problem_uid: STAGE02-PROBLEM-27E96DEBCC459C28
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-FINDING-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-87C8FC27B512A17D
+  source_problem_uid: STAGE02-PROBLEM-87C8FC27B512A17D
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-FLOW-START
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-B9ABA9D60EA11714
+  source_problem_uid: STAGE02-PROBLEM-B9ABA9D60EA11714
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-HANDOFF
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-5ED4C2A57B37E63E
+  source_problem_uid: STAGE02-PROBLEM-5ED4C2A57B37E63E
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-LAYER-ADD
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-2272DF431D897A3D
+  source_problem_uid: STAGE02-PROBLEM-2272DF431D897A3D
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DELETE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-FF57047307321608
+  source_problem_uid: STAGE02-PROBLEM-FF57047307321608
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DOC-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-6F3808E29E9E6174
+  source_problem_uid: STAGE02-PROBLEM-6F3808E29E9E6174
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DOC-UPDATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-1B793CC7A21CB9AF
+  source_problem_uid: STAGE02-PROBLEM-1B793CC7A21CB9AF
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DUPLICATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-6ACCB9997AC5AC34
+  source_problem_uid: STAGE02-PROBLEM-6ACCB9997AC5AC34
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-LAYER-MASK
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-4A6EE89B65A22296
+  source_problem_uid: STAGE02-PROBLEM-4A6EE89B65A22296
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-LAYER-PROPERTIES
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-AB649B0377850B99
+  source_problem_uid: STAGE02-PROBLEM-AB649B0377850B99
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-LAYER-REORDER
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-85EFEEFF44F94003
+  source_problem_uid: STAGE02-PROBLEM-85EFEEFF44F94003
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-PATCH-ACCEPT
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-36389C7A022E2999
+  source_problem_uid: STAGE02-PROBLEM-36389C7A022E2999
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-PATCH-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-7F0B08E040315C10
+  source_problem_uid: STAGE02-PROBLEM-7F0B08E040315C10
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-PATCH-PREVIEW
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-DBEFDBB4E25F1730
+  source_problem_uid: STAGE02-PROBLEM-DBEFDBB4E25F1730
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-PATCH-REJECT
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-057A42240730A4E6
+  source_problem_uid: STAGE02-PROBLEM-057A42240730A4E6
+  scope: ASSET-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: ASSET-01-ACT-TASK-RETRY
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-EDB3AA4F13881902
+  source_problem_uid: STAGE02-PROBLEM-EDB3AA4F13881902
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-CANDIDATE-CONFIRM
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-CA6B35B9B8492D93
+  source_problem_uid: STAGE02-PROBLEM-CA6B35B9B8492D93
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-CORRECTION-EXECUTE
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-0219F4FE9F8A0C1B
+  source_problem_uid: STAGE02-PROBLEM-0219F4FE9F8A0C1B
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-FINDING-CREATE
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-A272FCAE8355D389
+  source_problem_uid: STAGE02-PROBLEM-A272FCAE8355D389
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-FLOW-START
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-1C227B40496E0D2C
+  source_problem_uid: STAGE02-PROBLEM-1C227B40496E0D2C
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-HANDOFF
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-C528C60ED4825C37
+  source_problem_uid: STAGE02-PROBLEM-C528C60ED4825C37
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-ADD
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-CA0A156E8A17E96A
+  source_problem_uid: STAGE02-PROBLEM-CA0A156E8A17E96A
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DELETE
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-1DA705942E490CEC
+  source_problem_uid: STAGE02-PROBLEM-1DA705942E490CEC
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DOC-CREATE
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-3F51F898DD0EDB44
+  source_problem_uid: STAGE02-PROBLEM-3F51F898DD0EDB44
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DOC-UPDATE
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-E89DCA267B949CFE
+  source_problem_uid: STAGE02-PROBLEM-E89DCA267B949CFE
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DUPLICATE
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-F64BBA40CB0E09C2
+  source_problem_uid: STAGE02-PROBLEM-F64BBA40CB0E09C2
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-MASK
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-94274309EEDBEE53
+  source_problem_uid: STAGE02-PROBLEM-94274309EEDBEE53
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-PROPERTIES
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-726863F9D1AF1BC9
+  source_problem_uid: STAGE02-PROBLEM-726863F9D1AF1BC9
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-LAYER-REORDER
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-50158ACE8DFEA25B
+  source_problem_uid: STAGE02-PROBLEM-50158ACE8DFEA25B
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-ACCEPT
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-5D3A62F490EB13E8
+  source_problem_uid: STAGE02-PROBLEM-5D3A62F490EB13E8
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-CREATE
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-3804A3410DE6F291
+  source_problem_uid: STAGE02-PROBLEM-3804A3410DE6F291
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-PREVIEW
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-43BBDC96B34F138D
+  source_problem_uid: STAGE02-PROBLEM-43BBDC96B34F138D
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-PATCH-REJECT
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-7A01BBAD73995666
+  source_problem_uid: STAGE02-PROBLEM-7A01BBAD73995666
+  scope: ASSET-01
+  category: POST_ACTION_VALIDATION_NODE_MISSING
+  target_uid: ASSET-01-ACT-TASK-RETRY
+  missing_field_or_relation: no explicit success/validation/evaluation contract
+  required_authority_kind: EXACT_POST_ACTION_VALIDATION_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid explicitly binds success_contract/validation_contract/validator_uid OR the exact runtime/port binding supplies the exact validation relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-76083BEE24337C21
+  source_problem_uid: STAGE02-PROBLEM-76083BEE24337C21
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-01
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: audit_event_uid'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-C9CBCA3D851E2BA9
+  source_problem_uid: STAGE02-PROBLEM-C9CBCA3D851E2BA9
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-01
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: failure_state'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-DFCF7B3BB0991DDC
+  source_problem_uid: STAGE02-PROBLEM-DFCF7B3BB0991DDC
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-01
+  missing_field_or_relation: illegal_transition_tests
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: illegal_transition_tests'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-CEDDABFD58DCA68E
+  source_problem_uid: STAGE02-PROBLEM-CEDDABFD58DCA68E
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-01
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: mutation_owner'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-D7820F85C23DA8BE
+  source_problem_uid: STAGE02-PROBLEM-D7820F85C23DA8BE
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-01
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: recovery'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-982113C39805254D
+  source_problem_uid: STAGE02-PROBLEM-982113C39805254D
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-02
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: audit_event_uid'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-EF4E295AE62B36D6
+  source_problem_uid: STAGE02-PROBLEM-EF4E295AE62B36D6
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-02
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: failure_state'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-DAE38E63D42883AD
+  source_problem_uid: STAGE02-PROBLEM-DAE38E63D42883AD
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-02
+  missing_field_or_relation: illegal_transition_tests
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: illegal_transition_tests'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-A699D10E19023982
+  source_problem_uid: STAGE02-PROBLEM-A699D10E19023982
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-02
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: mutation_owner'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-701D1B5007FBA950
+  source_problem_uid: STAGE02-PROBLEM-701D1B5007FBA950
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-02
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: recovery'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-0CE0B6D32EA3EC05
+  source_problem_uid: STAGE02-PROBLEM-0CE0B6D32EA3EC05
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-03
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: audit_event_uid'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-0801CBD957FA3F77
+  source_problem_uid: STAGE02-PROBLEM-0801CBD957FA3F77
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-03
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: failure_state'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-766D48D74BF0B7AB
+  source_problem_uid: STAGE02-PROBLEM-766D48D74BF0B7AB
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-03
+  missing_field_or_relation: illegal_transition_tests
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: illegal_transition_tests'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-045A1BEBFE67F650
+  source_problem_uid: STAGE02-PROBLEM-045A1BEBFE67F650
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-03
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: mutation_owner'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-5DD4A2E5F620B9CC
+  source_problem_uid: STAGE02-PROBLEM-5DD4A2E5F620B9CC
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-03
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: recovery'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-36299F9FCA19A907
+  source_problem_uid: STAGE02-PROBLEM-36299F9FCA19A907
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-04
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: audit_event_uid'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-4F89124B8C06EC9E
+  source_problem_uid: STAGE02-PROBLEM-4F89124B8C06EC9E
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-04
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: failure_state'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-B7B1EFCC1B1A0F31
+  source_problem_uid: STAGE02-PROBLEM-B7B1EFCC1B1A0F31
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-04
+  missing_field_or_relation: illegal_transition_tests
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: illegal_transition_tests'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-EACF031926285BEE
+  source_problem_uid: STAGE02-PROBLEM-EACF031926285BEE
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-04
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: mutation_owner'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-69945FE5D4B46E34
+  source_problem_uid: STAGE02-PROBLEM-69945FE5D4B46E34
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-04
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: recovery'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-45C5A1A244F7A71E
+  source_problem_uid: STAGE02-PROBLEM-45C5A1A244F7A71E
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-05
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: audit_event_uid'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-D516F8B65498CA88
+  source_problem_uid: STAGE02-PROBLEM-D516F8B65498CA88
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-05
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: failure_state'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-E10A6E26DFC0B2ED
+  source_problem_uid: STAGE02-PROBLEM-E10A6E26DFC0B2ED
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-05
+  missing_field_or_relation: illegal_transition_tests
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: illegal_transition_tests'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-7649A37FE1BCF51B
+  source_problem_uid: STAGE02-PROBLEM-7649A37FE1BCF51B
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-05
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: mutation_owner'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-4D6B6FB4E694F581
+  source_problem_uid: STAGE02-PROBLEM-4D6B6FB4E694F581
+  scope: ASSET-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: ASSET-01-STTR-05
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: recovery'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-43B16EDD9228FC30
+  source_problem_uid: STAGE02-PROBLEM-43B16EDD9228FC30
+  scope: ASSET-01
+  category: SUCCESS_NEXT_STATE_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-ADD
+  missing_field_or_relation: no state_effect, state transition, or port state_event transition
+  required_authority_kind: EXACT_SUCCESS_OR_NEXT_STATE_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid or exact governed transition explicitly binds the required success/next-state relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-01589B71B1A6E63A
+  source_problem_uid: STAGE02-PROBLEM-01589B71B1A6E63A
+  scope: ASSET-01
+  category: SUCCESS_NEXT_STATE_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DELETE
+  missing_field_or_relation: no state_effect, state transition, or port state_event transition
+  required_authority_kind: EXACT_SUCCESS_OR_NEXT_STATE_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid or exact governed transition explicitly binds the required success/next-state relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-193144C1E6153956
+  source_problem_uid: STAGE02-PROBLEM-193144C1E6153956
+  scope: ASSET-01
+  category: SUCCESS_NEXT_STATE_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-DUPLICATE
+  missing_field_or_relation: no state_effect, state transition, or port state_event transition
+  required_authority_kind: EXACT_SUCCESS_OR_NEXT_STATE_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid or exact governed transition explicitly binds the required success/next-state relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-482F9E7891866AF7
+  source_problem_uid: STAGE02-PROBLEM-482F9E7891866AF7
+  scope: ASSET-01
+  category: SUCCESS_NEXT_STATE_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-MASK
+  missing_field_or_relation: no state_effect, state transition, or port state_event transition
+  required_authority_kind: EXACT_SUCCESS_OR_NEXT_STATE_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid or exact governed transition explicitly binds the required success/next-state relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-DC6BB051828DCE2D
+  source_problem_uid: STAGE02-PROBLEM-DC6BB051828DCE2D
+  scope: ASSET-01
+  category: SUCCESS_NEXT_STATE_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-PROPERTIES
+  missing_field_or_relation: no state_effect, state transition, or port state_event transition
+  required_authority_kind: EXACT_SUCCESS_OR_NEXT_STATE_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid or exact governed transition explicitly binds the required success/next-state relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-E9A533733BC5AF77
+  source_problem_uid: STAGE02-PROBLEM-E9A533733BC5AF77
+  scope: ASSET-01
+  category: SUCCESS_NEXT_STATE_BINDING_MISSING
+  target_uid: ASSET-01-ACT-LAYER-REORDER
+  missing_field_or_relation: no state_effect, state transition, or port state_event transition
+  required_authority_kind: EXACT_SUCCESS_OR_NEXT_STATE_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid or exact governed transition explicitly binds the required success/next-state relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-07AE05B6A6E598D0
+  source_problem_uid: STAGE02-PROBLEM-07AE05B6A6E598D0
+  scope: ASSET-01
+  category: SUCCESS_NEXT_STATE_BINDING_MISSING
+  target_uid: ASSET-01-ACT-PATCH-CREATE
+  missing_field_or_relation: no state_effect, state transition, or port state_event transition
+  required_authority_kind: EXACT_SUCCESS_OR_NEXT_STATE_BINDING
+  required_exact_fields_or_relation:
+  - same action_uid or exact governed transition explicitly binds the required success/next-state relation
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-9BBABB28DD787D16
+  source_problem_uid: STAGE02-PROBLEM-9BBABB28DD787D16
+  scope: CORE-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: CORE-01-ACT-BLUEPRINT-CREATE
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-0F2F59760B078E8B
+  source_problem_uid: STAGE02-PROBLEM-0F2F59760B078E8B
+  scope: CORE-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: CORE-01-ACT-PROJECT-CREATE
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-4DF0E6BD9173770E
+  source_problem_uid: STAGE02-PROBLEM-4DF0E6BD9173770E
+  scope: CORE-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: CORE-01-ACT-PROJECT-VALIDATE
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-EE2102A472BE01C9
+  source_problem_uid: STAGE02-PROBLEM-EE2102A472BE01C9
+  scope: CORE-01
+  category: AUDIT_EVENT_NODE_MISSING
+  target_uid: CORE-01-ACT-TOPIC-CREATE
+  missing_field_or_relation: registered port has no explicit audit/event UID in state_event
+  required_authority_kind: EXACT_REGISTERED_AUDIT_EVENT_BINDING
+  required_exact_fields_or_relation:
+  - exact event_uid/audit_event_uid bound to the same action or exact resolved port and present in the governed event registry
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-179E8C2969A29494
+  source_problem_uid: STAGE02-PROBLEM-179E8C2969A29494
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-BLUEPRINT-APPROVE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-6141B9A73894667C
+  source_problem_uid: STAGE02-PROBLEM-6141B9A73894667C
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-BLUEPRINT-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-408FEDF4D680B48D
+  source_problem_uid: STAGE02-PROBLEM-408FEDF4D680B48D
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-AE5B957EC0F79FED
+  source_problem_uid: STAGE02-PROBLEM-AE5B957EC0F79FED
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-CANDIDATE-ACCEPT
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-C15DE740456A08DC
+  source_problem_uid: STAGE02-PROBLEM-C15DE740456A08DC
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-CANDIDATE-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-7B583BC4163ECE78
+  source_problem_uid: STAGE02-PROBLEM-7B583BC4163ECE78
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-0311698938BE34E0
+  source_problem_uid: STAGE02-PROBLEM-0311698938BE34E0
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-7BEAAB7254BBF92B
+  source_problem_uid: STAGE02-PROBLEM-7BEAAB7254BBF92B
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-128169DBC5E997B6
+  source_problem_uid: STAGE02-PROBLEM-128169DBC5E997B6
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-143594D494D8B8CF
+  source_problem_uid: STAGE02-PROBLEM-143594D494D8B8CF
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-PROJECT-CONFIRM
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-0C9225AF42F0A50C
+  source_problem_uid: STAGE02-PROBLEM-0C9225AF42F0A50C
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-PROJECT-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-D39FD566C23D4583
+  source_problem_uid: STAGE02-PROBLEM-D39FD566C23D4583
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-PROJECT-VALIDATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-C17CBED7B4413C8C
+  source_problem_uid: STAGE02-PROBLEM-C17CBED7B4413C8C
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-SEND
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-E571E68A0F0DF4FF
+  source_problem_uid: STAGE02-PROBLEM-E571E68A0F0DF4FF
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-STORY-CANDIDATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-F352D083AABD597F
+  source_problem_uid: STAGE02-PROBLEM-F352D083AABD597F
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-THREAD-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-D3236E963AD6818F
+  source_problem_uid: STAGE02-PROBLEM-D3236E963AD6818F
+  scope: CORE-01
+  category: PAYLOAD_INPUT_CONTRACT_MISSING
+  target_uid: CORE-01-ACT-TOPIC-CREATE
+  missing_field_or_relation: no explicit payload/input contract or schema
+  required_authority_kind: EXACT_PAYLOAD_OR_INPUT_SCHEMA_BINDING
+  required_exact_fields_or_relation:
+  - explicit action payload/input/request schema OR exact runtime/port payload/input/request schema bound to the same action_uid
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-F12DADA9654B86F2
+  source_problem_uid: STAGE02-PROBLEM-F12DADA9654B86F2
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: audit_event_uid'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-CC89B15D982B7B10
+  source_problem_uid: STAGE02-PROBLEM-CC89B15D982B7B10
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: failure_state'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-D2A9FED18BCBEBDD
+  source_problem_uid: STAGE02-PROBLEM-D2A9FED18BCBEBDD
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: illegal_transition_tests
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: illegal_transition_tests'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-3A68F4A3A8C73B0F
+  source_problem_uid: STAGE02-PROBLEM-3A68F4A3A8C73B0F
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: mutation_owner'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-FCBD5D0CB12AB0E1
+  source_problem_uid: STAGE02-PROBLEM-FCBD5D0CB12AB0E1
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-01
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: recovery'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-C2D96DD973D204D7
+  source_problem_uid: STAGE02-PROBLEM-C2D96DD973D204D7
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: audit_event_uid'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-C9E4F6D82D992560
+  source_problem_uid: STAGE02-PROBLEM-C9E4F6D82D992560
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: failure_state'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-DED8A71FB00EE11E
+  source_problem_uid: STAGE02-PROBLEM-DED8A71FB00EE11E
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: illegal_transition_tests
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: illegal_transition_tests'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-38EF76A7C92F7D48
+  source_problem_uid: STAGE02-PROBLEM-38EF76A7C92F7D48
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: mutation_owner'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-D19D79DAC9BDC671
+  source_problem_uid: STAGE02-PROBLEM-D19D79DAC9BDC671
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-02
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: recovery'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-49AE662398F49E43
+  source_problem_uid: STAGE02-PROBLEM-49AE662398F49E43
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: audit_event_uid'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-F3C9FFC8A9420580
+  source_problem_uid: STAGE02-PROBLEM-F3C9FFC8A9420580
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: failure_state'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-57B49BEFC57709BE
+  source_problem_uid: STAGE02-PROBLEM-57B49BEFC57709BE
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: illegal_transition_tests
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: illegal_transition_tests'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-3D18377467ABA06D
+  source_problem_uid: STAGE02-PROBLEM-3D18377467ABA06D
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: mutation_owner'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-BC37AA3864084D9C
+  source_problem_uid: STAGE02-PROBLEM-BC37AA3864084D9C
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-03
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: recovery'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-88B1029C86148DA1
+  source_problem_uid: STAGE02-PROBLEM-88B1029C86148DA1
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: audit_event_uid'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-94958B2695E1E199
+  source_problem_uid: STAGE02-PROBLEM-94958B2695E1E199
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: failure_state'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-6F1BD4743AA2596C
+  source_problem_uid: STAGE02-PROBLEM-6F1BD4743AA2596C
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: illegal_transition_tests
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: illegal_transition_tests'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-61560A97CACF9BDC
+  source_problem_uid: STAGE02-PROBLEM-61560A97CACF9BDC
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: mutation_owner'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-E71120DA8ACA8EE4
+  source_problem_uid: STAGE02-PROBLEM-E71120DA8ACA8EE4
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-04
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: recovery'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-1A7488C4938C6F4D
+  source_problem_uid: STAGE02-PROBLEM-1A7488C4938C6F4D
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: audit_event_uid
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: audit_event_uid'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-C5B96517A0DF7520
+  source_problem_uid: STAGE02-PROBLEM-C5B96517A0DF7520
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: failure_state
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: failure_state'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-505196EEF61D3F27
+  source_problem_uid: STAGE02-PROBLEM-505196EEF61D3F27
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: illegal_transition_tests
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: illegal_transition_tests'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-729B07DAA0CA6990
+  source_problem_uid: STAGE02-PROBLEM-729B07DAA0CA6990
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: mutation_owner
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: mutation_owner'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+- blocker_uid: STAGE02-PROBLEM-FAD46C613B7694EA
+  source_problem_uid: STAGE02-PROBLEM-FAD46C613B7694EA
+  scope: CORE-01
+  category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+  target_uid: CORE-01-STTR-05
+  missing_field_or_relation: recovery
+  required_authority_kind: EXACT_TRANSITION_FIELD_BINDING
+  required_exact_fields_or_relation:
+  - 'exact non-empty governed transition value satisfying the missing relation: recovery'
+  approval_state: PENDING_EXPLICIT_PRODUCT_AUTHORITY
+  authority_input:
+    canonical_owner_uid: null
+    canonical_owner_file: null
+    authority_revision: null
+    authority_source_path: null
+    authority_content_sha256: null
+    exact_binding: null
+    approved_by: null
+    approved_at: null
+    approval_evidence_ref: null
+  authority_value_supplied_by_ai: false
+  request_package_used_as_authority: false
+  historical_non_current_authority_used: false
+  materialization_allowed: false
+external_authority_partition:
+  count: 4
+  source: R5_DENOMINATORS_EXTERNAL_AUTHORITY_REQUESTS
+  included_in_product_authority_records: false
+  resolution_claimed: false
+next_legal_sequence:
+- INGEST_SEPARATE_APPROVED_CANONICAL_PRODUCT_AUTHORITY
+- VALIDATE_EXACT_UID_FIELD_RELATIONS_AND_CURRENT_AUTHORITY_ADMISSIBILITY
+- MATERIALIZE_ONLY_VALIDATED_BINDINGS_AT_STAGE02_OWNING_CONTRACT_LAYER
+- CLEAN_RESET_EXECUTION_OUTPUTS_TO_SAME_STAGE01_BASELINE
+- RUN_FULL_LINE_SYSTEM_HIGH_PRESSURE_GATE
+- RUN_FRESH_STAGE02_REEXECUTION
+- REQUIRE_KNOWN_DEFECT_SIGNATURE_REPRODUCTION_ZERO
+- ONLY_THEN_RECALCULATE_EFFECTIVE_BLOCKER_DENOMINATOR
+stage02_status: BLOCKED
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
