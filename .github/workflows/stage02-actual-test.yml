@@ -765,7 +765,7 @@ jobs:
           fetch-depth: 0
       - name: Install verifier dependency
         run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
-      - name: Re-prove Current governance identity before common-engine mutation
+      - name: Re-prove Current governance identity and full-line gate before common-engine mutation
         run: |
           python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
           python governance/ci/governance_resolver.py
@@ -775,19 +775,22 @@ jobs:
           python governance/ci/validate_validation_remediation_closure_protocol.py
           python governance/ci/specification_mutation_guard.py
           python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
       - name: Materialize and validate the one canonical Stage-02 preflight
         run: |
           python governance/ci/compile_stage_execution_preflight.py --materialize
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
-      - name: Prove generated delta is exactly the authorized 12-output persistence set
+      - name: Prove generated delta is authorized first-materialization or reconciliation persistence
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
+          from pathlib import Path
           import subprocess
-          base = '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/'
-          expected = sorted(base + name + '.yaml' for name in [
+
+          base = Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
+          names = [
               'REQUIRED_FIELD_MANIFEST',
               'FUNCTIONAL_CHAIN_MANIFEST',
               'EFFECTIVE_CONTRACT_OVERLAY',
@@ -800,13 +803,30 @@ jobs:
               'RESOLUTION_LEDGER',
               'GOVERNANCE_EXECUTION_CONTEXT_RECEIPT',
               'EXECUTION_CYCLE_PREFLIGHT_RECEIPT',
-          ])
+          ]
+          expected = sorted((base / f'{name}.yaml').as_posix() for name in names)
+          missing = [path for path in expected if not Path(path).is_file()]
+          assert not missing, {'missing_canonical_outputs': missing}
+          tracked = []
+          for path in expected:
+              probe = subprocess.run(['git', 'ls-files', '--error-unmatch', path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+              if probe.returncode == 0:
+                  tracked.append(path)
           status = subprocess.check_output(['git', 'status', '--porcelain=v1', '--untracked-files=all'], text=True)
           actual = sorted(line[3:] for line in status.splitlines() if line.strip())
-          assert actual == expected, {'expected': expected, 'actual': actual}
-          print('PASS: exact authorized 12-output generated delta')
+          unexpected = sorted(set(actual) - set(expected))
+          assert not unexpected, {'unexpected_generated_delta': unexpected, 'authorized': expected}
+          assert actual, {'error': 'canonical preflight materialization produced no persistence delta'}
+          if not tracked:
+              assert actual == expected, {'mode': 'FIRST_MATERIALIZATION', 'expected': expected, 'actual': actual}
+              mode = 'FIRST_MATERIALIZATION'
+          else:
+              assert len(tracked) == len(expected), {'error': 'partial_preexisting_canonical_persistence_set', 'tracked': tracked, 'expected': expected}
+              assert set(actual).issubset(set(expected)), {'mode': 'RECONCILIATION', 'actual': actual, 'expected': expected}
+              mode = 'RECONCILIATION'
+          print(f'PASS: authorized canonical preflight persistence delta mode={mode} changed={len(actual)}/12')
           PY
-      - name: Persist exact canonical preflight outputs as an isolated child commit
+      - name: Persist authorized canonical preflight outputs as an isolated child commit
         shell: bash
         run: |
           set -euo pipefail
@@ -829,17 +849,34 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- "${files[@]}"
           python - <<'PY'
+          from pathlib import Path
           import subprocess
-          base = '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/'
-          expected = sorted(base + name + '.yaml' for name in [
+
+          base = Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
+          names = [
               'REQUIRED_FIELD_MANIFEST', 'FUNCTIONAL_CHAIN_MANIFEST', 'EFFECTIVE_CONTRACT_OVERLAY',
               'DEPENDENCY_TOPOLOGY', 'DENOMINATOR_SNAPSHOT', 'CLASSIFICATION_RULESET',
               'CHANGE_IMPACT_MAP', 'STAGE_EXECUTION_PREFLIGHT_RECEIPT', 'CURRENT_PROBLEM_REGISTER',
               'RESOLUTION_LEDGER', 'GOVERNANCE_EXECUTION_CONTEXT_RECEIPT', 'EXECUTION_CYCLE_PREFLIGHT_RECEIPT',
-          ])
+          ]
+          expected = sorted((base / f'{name}.yaml').as_posix() for name in names)
+          missing = [path for path in expected if not Path(path).is_file()]
+          assert not missing, {'missing_canonical_outputs': missing}
+          tracked = []
+          for path in expected:
+              probe = subprocess.run(['git', 'ls-files', '--error-unmatch', path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+              if probe.returncode == 0:
+                  tracked.append(path)
           actual = sorted(subprocess.check_output(['git','diff','--cached','--name-only'], text=True).splitlines())
-          assert actual == expected, {'expected': expected, 'actual': actual}
-          print('PASS: staged delta is exactly 12 authorized outputs')
+          assert actual, {'error': 'no_authorized_canonical_preflight_delta_staged'}
+          assert set(actual).issubset(set(expected)), {'unexpected_staged_delta': actual, 'authorized': expected}
+          if not tracked:
+              assert actual == expected, {'mode': 'FIRST_MATERIALIZATION', 'expected': expected, 'actual': actual}
+              mode = 'FIRST_MATERIALIZATION'
+          else:
+              assert len(tracked) == len(expected), {'error': 'partial_preexisting_canonical_persistence_set', 'tracked': tracked, 'expected': expected}
+              mode = 'RECONCILIATION'
+          print(f'PASS: staged canonical preflight persistence delta mode={mode} changed={len(actual)}/12')
           PY
           git commit -m 'test(stage02): persist canonical preflight outputs'
           git push origin HEAD:rebuild-v2.1.1
