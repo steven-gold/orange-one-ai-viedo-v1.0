@@ -12,15 +12,6 @@ R6 = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.
 R8 = ROOT / 'governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml'
 R9 = ROOT / 'governance/test/stage02/STAGE02_ASSET01_PRODUCT_AUTHORITY_REVIEW_R9.yaml'
 OUT = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_AUTHORITY_APPROVAL_DOCKET_R10.yaml'
-EXPECTED_PAGE_COUNTS = {'CORE-01': 40, 'ASSET-01': 110}
-EXPECTED_CATEGORIES = {
-    'ACTION_WITHOUT_CONTROL_OR_TRIGGER': 1,
-    'AUDIT_EVENT_NODE_MISSING': 13,
-    'FAILURE_STATE_ERROR_BINDING_MISSING': 44,
-    'PAYLOAD_INPUT_CONTRACT_MISSING': 34,
-    'POST_ACTION_VALIDATION_NODE_MISSING': 18,
-    'STATE_TRANSITION_LEDGER_FIELD_MISSING': 40,
-}
 
 
 def die(msg: str) -> None:
@@ -39,7 +30,7 @@ def load(path: Path) -> dict:
 
 def identity(rec: dict):
     return (
-        rec.get('blocker_uid'), rec.get('scope'), rec.get('category'), rec.get('target_uid'),
+        rec.get('blocker_uid'), rec.get('source_problem_uid'), rec.get('scope'), rec.get('category'), rec.get('target_uid'),
         rec.get('missing_field_or_relation'), rec.get('required_authority_kind'),
         tuple(rec.get('required_exact_fields_or_relation') or []),
     )
@@ -61,15 +52,24 @@ for doc, name in ((r8, 'R8'), (r9, 'R9')):
         die(f'R10_{name}_PREMATURE_APPROVAL_OR_REDUCTION')
 
 r6_records = r6.get('records') or []
+r6_den = r6.get('denominators') or {}
+product_denominator = r6_den.get('product_design_contract_blockers_locked_for_intake')
+external_denominator = r6_den.get('external_authority_blockers_preserved_outside_product_intake')
+current_total = r6_den.get('current_open_stage02_problems')
+if not all(isinstance(v, int) and v >= 0 for v in (product_denominator, external_denominator, current_total)):
+    die(f'R10_INVALID_R6_DENOMINATORS:{r6_den}')
+if product_denominator + external_denominator != current_total:
+    die(f'R10_R6_AUTHORITY_PARTITION_DRIFT:product={product_denominator}:external={external_denominator}:total={current_total}')
+
 core = r8.get('records') or []
 asset = r9.get('records') or []
 combined = core + asset
-if len(r6_records) != 150 or len(core) != 40 or len(asset) != 110 or len(combined) != 150:
-    die(f'R10_DENOMINATOR_DRIFT:r6={len(r6_records)} core={len(core)} asset={len(asset)} total={len(combined)}')
+if len(r6_records) != product_denominator or len(combined) != product_denominator:
+    die(f'R10_DENOMINATOR_DRIFT:r6={len(r6_records)} reviews={len(combined)} declared_product={product_denominator}')
 
 r6_by_uid = {r.get('blocker_uid'): r for r in r6_records}
 combined_by_uid = {r.get('blocker_uid'): r for r in combined}
-if len(r6_by_uid) != 150 or len(combined_by_uid) != 150 or None in r6_by_uid or None in combined_by_uid:
+if len(r6_by_uid) != product_denominator or len(combined_by_uid) != product_denominator or None in r6_by_uid or None in combined_by_uid:
     die('R10_DUPLICATE_OR_NULL_BLOCKER_UID')
 if set(r6_by_uid) != set(combined_by_uid):
     die('R10_REVIEW_COVERAGE_UID_SET_DRIFT')
@@ -84,19 +84,27 @@ for uid, review in combined_by_uid.items():
     if any(v not in (None, '', [], {}) for v in decision.values()):
         die(f'R10_REVIEW_CONTAINS_AUTHORITY_DECISION:{uid}')
 
-page_counts = Counter(r.get('scope') for r in combined)
-category_counts = Counter(r.get('category') for r in combined)
-if dict(page_counts) != EXPECTED_PAGE_COUNTS:
-    die(f'R10_PAGE_COUNT_DRIFT:{dict(page_counts)}')
-if dict(category_counts) != EXPECTED_CATEGORIES:
-    die(f'R10_CATEGORY_COUNT_DRIFT:{dict(category_counts)}')
+page_counts = Counter(r.get('scope') for r in r6_records)
+category_counts = Counter(r.get('category') for r in r6_records)
+if None in page_counts or None in category_counts:
+    die('R10_R6_SCOPE_OR_CATEGORY_MISSING')
+if Counter(r.get('scope') for r in combined) != page_counts:
+    die('R10_REVIEW_PAGE_COUNT_DRIFT_FROM_R6')
+if Counter(r.get('category') for r in combined) != category_counts:
+    die('R10_REVIEW_CATEGORY_COUNT_DRIFT_FROM_R6')
 
 records = []
 for base in r6_records:
     uid = base['blocker_uid']
     review = combined_by_uid[uid]
     ctx = review.get('current_authority_context') or {}
-    source_review = 'governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml' if base.get('scope') == 'CORE-01' else 'governance/test/stage02/STAGE02_ASSET01_PRODUCT_AUTHORITY_REVIEW_R9.yaml'
+    scope = base.get('scope')
+    if scope == 'CORE-01':
+        source_review = 'governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml'
+    elif scope == 'ASSET-01':
+        source_review = 'governance/test/stage02/STAGE02_ASSET01_PRODUCT_AUTHORITY_REVIEW_R9.yaml'
+    else:
+        die(f'R10_UNSUPPORTED_PRODUCT_SCOPE:{uid}:{scope}')
     context_counts = {
         key: len(ctx.get(key) or [])
         for key in ('action_nodes', 'control_nodes', 'exposed_port_nodes', 'referenced_error_nodes', 'transition_nodes')
@@ -104,7 +112,8 @@ for base in r6_records:
     }
     records.append({
         'blocker_uid': uid,
-        'scope': base.get('scope'),
+        'source_problem_uid': base.get('source_problem_uid'),
+        'scope': scope,
         'category': base.get('category'),
         'target_uid': base.get('target_uid'),
         'missing_field_or_relation': base.get('missing_field_or_relation'),
@@ -133,7 +142,7 @@ for base in r6_records:
 
 head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=str(ROOT), text=True, capture_output=True, check=True).stdout.strip()
 out = {
-    'schema_version': 1,
+    'schema_version': 2,
     'artifact_type': 'NON_NORMATIVE_STAGE02_PRODUCT_AUTHORITY_APPROVAL_DOCKET_R10',
     'normative_authority': False,
     'stage_uid': 'STAGE-02',
@@ -146,12 +155,13 @@ out = {
         'ingestion_validator': 'governance/ci/validate_stage02_approved_product_authority_r7.py',
         'ingestion_materializer': 'governance/ci/materialize_stage02_approved_product_authority_r7.py',
     },
-    'purpose': 'SINGLE_REVIEW_ENTRY_FOR_ALL_150_STAGE02_PRODUCT_AUTHORITY_DECISIONS_AFTER_EXACT_CURRENT_CONTEXT_PREPARATION',
+    'purpose': 'SINGLE_REVIEW_ENTRY_FOR_ALL_CURRENT_R6_PRODUCT_AUTHORITY_DECISIONS_AFTER_EXACT_CURRENT_CONTEXT_PREPARATION',
     'status': 'READY_FOR_EXPLICIT_PRODUCT_AUTHORITY_DECISION_BLOCKED_UNTIL_VALUES_ARE_AUTHORIZED',
     'denominators': {
-        'total_product_authority_decisions': 150,
-        'core01_decisions': 40,
-        'asset01_decisions': 110,
+        'current_open_stage02_problems': current_total,
+        'total_product_authority_decisions': product_denominator,
+        'external_authority_decisions_preserved_outside_product_docket': external_denominator,
+        'page_counts': dict(sorted(page_counts.items())),
         'category_counts': dict(sorted(category_counts.items())),
         'approved_decisions': 0,
         'r7_materializable_decisions': 0,
@@ -165,6 +175,7 @@ out = {
         'historical_non_current_authority_may_complete_decision_values': False,
         'review_context_may_be_promoted_to_authority_without_explicit_decision': False,
         'r7_may_materialize_from_docket_directly': False,
+        'external_authority_resolution_claimed': False,
         'current_specification_mutated': False,
         'stage01_source_mutated': False,
         'stage02_product_output_mutated': False,
@@ -188,6 +199,7 @@ out = {
     'deployment_allowed': False,
 }
 OUT.write_text(yaml.safe_dump(out, allow_unicode=True, sort_keys=False, width=180), encoding='utf-8')
-print('PASS: R10 unified exact 150-decision Product Authority approval docket built')
-print('PASS: CORE-01=40 ASSET-01=110; categories=1/13/44/34/18/40')
+print(f'PASS: R10 unified Current Product Authority docket built decisions={product_denominator}')
+print(f'PASS: page_counts={dict(sorted(page_counts.items()))} category_counts={dict(sorted(category_counts.items()))}')
+print(f'PASS: external authority preserved outside docket={external_denominator}')
 print('PASS: approved=0 R7-materializable=0 blocker-reduction=0')
