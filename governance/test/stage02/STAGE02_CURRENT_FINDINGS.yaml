@@ -4,13 +4,13 @@ normative_authority: false
 stage_uid: STAGE-02
 attempt_uid: STAGE02-FRESH-20260916-004
 frozen_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
-source_cycle: FRESH_CURRENT_GOVERNANCE_STAGE02_ACTUAL_TEST
-source_head_sha: 0e45b8529fee3cdd52e2dce4ecf57833df533f83
-source_workflow_run_id: 35049491331
-source_artifact_id: 10428222796
-source_artifact_sha256: 96e5bef47ce5dc218de8c20c497f0696eb74b25c1875eb3101ac294a7e8d3b37
+source_cycle: FRESH_CURRENT_GOVERNANCE_STAGE02_STRUCTURAL_REEXECUTION_R1
+source_head_sha: 0a645ffe2a87bb67ff0c76cb4f0a618e4452398a
+source_workflow_run_id: 35065189789
+source_artifact_id: 10433933078
+source_artifact_sha256: 5a06093090b8026eb00b36a30acf7a3990584c3749d9045685ed01508a7800ae
 fresh_functional_gap_total: 150
-fresh_closure_blocker_total: 13
+fresh_closure_blocker_total: 0
 gap_classes:
   ARCHITECTURE_GAP: 112
   AUTHORITY_GAP: 4
@@ -27,25 +27,12 @@ gap_categories:
 page_results:
   ASSET-01:
     functional_gap_count: 105
-    closure_blocker_count: 6
-    closure_blockers:
-    - MISSING_BUSINESS_ENTITY_INVENTORY
-    - MISSING_BUSINESS_ENTITY_OPERATION_MATRIX
-    - MISSING_ENTITY_HIERARCHY_MATRIX
-    - MISSING_FUNCTIONAL_WORKBENCH_CONTRACT
-    - MISSING_INTERACTION_TOPOLOGY_SPEC
-    - MISSING_FUNCTION_VISUAL_IMPACT_MATRIX
+    closure_blocker_count: 0
+    closure_blockers: []
   CORE-01:
     functional_gap_count: 45
-    closure_blocker_count: 7
-    closure_blockers:
-    - MISSING_BUSINESS_ENTITY_INVENTORY
-    - MISSING_BUSINESS_ENTITY_OPERATION_MATRIX
-    - MISSING_ENTITY_HIERARCHY_MATRIX
-    - MISSING_FUNCTIONAL_WORKBENCH_CONTRACT
-    - MISSING_INTERACTION_TOPOLOGY_SPEC
-    - MISSING_FUNCTION_VISUAL_IMPACT_MATRIX
-    - MISSING_AI_INTERACTION_CONTINUITY_CONTRACT
+    closure_blocker_count: 0
+    closure_blockers: []
 official_stage_output_denominator_count: 17
 current_manifest_mandatory_stage_output_subset_count: 12
 preserved_external_authority_union_count: 8
@@ -65,4 +52,4 @@ immutable_stage1_source_mutated: false
 stage03_allowed: false
 website_construction_allowed: false
 deployment_allowed: false
-next_action: OWNING_LAYER_REMEDIATION_OF_FRESH_FUNCTIONAL_GAPS_AND_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
+next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
