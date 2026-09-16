@@ -73,10 +73,30 @@ current_calibration:
   newly_confirmed_common_engine_gap:
     finding_class: COMMON_EXECUTION_ENGINE_IMPLEMENTATION_GAP
     status: OPEN_RECORDED_BEFORE_FIX
-    description: Current Lifecycle Registry requires STAGE_EXECUTION_PREFLIGHT_COMPILE and canonical preflight outputs, but Current CI has no producer implementation and the existing required-output validator still binds historical fixed denominators and predecessor blobs.
+    description: At calibration discovery the Current Lifecycle Registry required STAGE_EXECUTION_PREFLIGHT_COMPILE and canonical preflight outputs while Current CI lacked the producer and used a stale required-output validator. The producer and Current-registry validator now exist, but fresh CI verification and governance-load/context support-receipt wiring remain open.
     product_blocker_credit: 0
     specification_change_required: false
     common_invariant_already_exists: true
+    implementation_progress_before_fresh_ci:
+      canonical_compiler_commit: bf4438c57587b5f2b3d53a6052f259c5b7c0d408
+      current_required_output_validator_commit: 7e268bc9b4da3f6ebed1c463a29681dfa85df1f5
+      fresh_ci_verified: false
+      workflow_wiring_complete: false
+    confirmed_subgaps:
+      - subgap_uid: STAGE02-CALIBRATION-GOVERNANCE-LOAD-CONTEXT-001
+        status: OPEN_RECORDED_BEFORE_FIX
+        evidence:
+          - Current EXECUTION_CYCLE_CONTROL canonical preflight requires EXECUTION_CYCLE_PREFLIGHT_RECEIPT and GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.
+          - Current Stage-02 compiler materializes the Lifecycle canonical output set but STAGE_EXECUTION_PREFLIGHT_RECEIPT does not yet bind the policy-level support receipts.
+          - Existing stage02-actual-test workflow has no canonical preflight materialization, validation, and exact-output persistence job.
+        product_blocker_credit: 0
+        frozen_source_mutation_required: false
+        official_stage_output_denominator_must_remain: 17
+        required_resolution:
+          - PATCH_EXISTING_CANONICAL_PREFLIGHT_COMPILER_WITH_POLICY_SUPPORT_RECEIPTS
+          - EXTEND_EXISTING_CURRENT_REQUIRED_OUTPUT_VALIDATOR_FOR_SUPPORT_RECEIPT_CONSISTENCY
+          - WIRE_EXISTING_STAGE02_WORKFLOW_FOR_FULL_LINE_PREFLIGHT_REPLAY_AND_EXACT_PERSISTENCE
+          - REPLAY_AND_VERIFY_BEFORE_ANY_PRODUCT_CREDIT
     required_fix_scope:
       - IMPLEMENT_CURRENT_STAGE_EXECUTION_PREFLIGHT_COMPILE_OWNER
       - PATCH_EXISTING_REQUIRED_OUTPUT_VALIDATOR_TO_CURRENT_REGISTRY_AND_FRESH_EVIDENCE
