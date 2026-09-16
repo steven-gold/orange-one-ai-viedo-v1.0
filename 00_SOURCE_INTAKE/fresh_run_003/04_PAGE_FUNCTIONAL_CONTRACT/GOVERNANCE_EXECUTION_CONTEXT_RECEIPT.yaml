@@ -9,14 +9,15 @@ artifact_type: GOVERNANCE_EXECUTION_CONTEXT_RECEIPT
 producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
 policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
 active_work_unit_ref: null
-semantic_concern: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
+semantic_concern: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS;
+  DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
 canonical_owner_operation: STAGE_EXECUTION_PREFLIGHT_COMPILE
 resolved_current_work_unit_owner: null
 repository_identity:
   repository: steven-gold/orange-one-ai-viedo-v1.0
   branch: rebuild-v2.1.1
-  head_sha: 8e96501da778a1105ca9eaadcb50bb204cb3c0c0
-  tree_sha: 5dcc071ff0003f1f65f6bf0ee42c9bfb38398fab
+  head_sha: 66c1837fd6c240d1a997b449e8ace818bbb638cf
+  tree_sha: 9b047615d6f88d742049fdb2dbb3ecc8a2c5a7a5
 current_registry:
   entry_ref: GOVERNANCE_CURRENT.yaml
   entry_sha256: aee461a4e8d87a79b5b158fe3edd760e6412f32af2c4587dd93064d830941d82
@@ -57,7 +58,11 @@ exact_read_set:
 - path: .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sha256: 725d8b474baee27908ffb5e78506c9e859fe461857aad2c3150df0eda9bbe07e
 - path: governance/test/ACTIVE_STATE.yaml
-  sha256: c6472f66b99231623ae442dfba7a384ba8fbbd9fb483427ce943c4433a8acaf7
+  sha256: 11b6562555752838bc2659ed092cc76e7e9fa86a165c6d52943cd9f4c08d9050
+- path: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+  sha256: 03f06c5a7a2542cbc653ea28442f5b7719e34fc5977b3ead3f21bb478db43c63
+- path: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+  sha256: 28affbed932ac17ce6ebad36449e550adec120a53a09dc37f1b4cc09f3c151e9
 - path: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
   sha256: 5e327c71fbe0a9ff2c6f8d8107eac11e5d0f3192b673602be2db681a0879a222
 - path: governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml
@@ -81,7 +86,7 @@ exact_write_targets:
 - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml
 duplicate_search_result: EXISTING_CANONICAL_COMPILER_OWNER_REUSED_NO_PRIOR_SUPPORT_RECEIPT_OWNER_FOUND
 confirmed_gap_uid: null
-loaded_at_utc: '2026-09-16T21:53:05.811969Z'
+loaded_at_utc: '2026-09-16T21:59:23.840237Z'
 product_blocker_credit: 0
 stage03_allowed: false
 result: PASS_CONTEXT_RESOLVED
