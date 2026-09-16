@@ -1,4 +1,4 @@
-schema_version: 2
+schema_version: 3
 artifact_uid: STAGE02-EXECUTION-OPTIMIZATION-DEFECT-CONSOLIDATION-20260915
 artifact_type: NON_NORMATIVE_TEST_PROVEN_DEFECT_CONSOLIDATION
 normative_authority: false
@@ -72,23 +72,39 @@ current_calibration:
     source_artifact_sha256: 5a06093090b8026eb00b36a30acf7a3990584c3749d9045685ed01508a7800ae
   newly_confirmed_common_engine_gap:
     finding_class: COMMON_EXECUTION_ENGINE_IMPLEMENTATION_GAP
-    status: OPEN_RECORDED_BEFORE_FIX
-    description: At calibration discovery the Current Lifecycle Registry required STAGE_EXECUTION_PREFLIGHT_COMPILE and canonical preflight outputs while Current CI lacked the producer and used a stale required-output validator. The producer and Current-registry validator now exist, but fresh CI verification and governance-load/context support-receipt wiring remain open.
+    status: CLOSED_VERIFIED
+    description: The canonical Stage-02 preflight producer, policy support receipts, Current-registry validator, workflow replay/persistence wiring, Current Work Unit projection, and physical Current denominator binding have been repaired and freshly replayed. Parent owning-layer Resume context is supported without inventing a replacement product Work Unit UID.
     product_blocker_credit: 0
     specification_change_required: false
     common_invariant_already_exists: true
     implementation_progress_before_fresh_ci:
       canonical_compiler_commit: bf4438c57587b5f2b3d53a6052f259c5b7c0d408
       current_required_output_validator_commit: 7e268bc9b4da3f6ebed1c463a29681dfa85df1f5
-      fresh_ci_verified: false
-      workflow_wiring_complete: false
+      fresh_ci_verified: true
+      workflow_wiring_complete: true
+    closure_evidence:
+      r2_replay_run_id: 35139102607
+      r2_replay_result: SUCCESS
+      r2_persisted_classification_head_sha: d129cccf09383b43dd2982562c880e9ea4f8c69f
+      current_physical_denominator: 150
+      bounded_completion_admissible_count: 17
+      exact_external_authority_required_count: 4
+      no_authorized_bounded_completion_basis_count: 129
+      parent_context_compiler_commit: 213f158877941f60f2817b711398bcc6fff416b9
+      parent_context_validator_commit: 530867086e01c286aa1b27d1e9294b2fd64b8b3b
+      parent_context_full_line_run_id: 35142161970
+      parent_context_full_line_result: SUCCESS
+      product_blocker_credit: 0
+      external_authority_resolution_credit: 0
     confirmed_subgaps:
       - subgap_uid: STAGE02-CALIBRATION-GOVERNANCE-LOAD-CONTEXT-001
-        status: OPEN_RECORDED_BEFORE_FIX
+        status: CLOSED_VERIFIED
         evidence:
           - Current EXECUTION_CYCLE_CONTROL canonical preflight requires EXECUTION_CYCLE_PREFLIGHT_RECEIPT and GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.
-          - Current Stage-02 compiler materializes the Lifecycle canonical output set but STAGE_EXECUTION_PREFLIGHT_RECEIPT does not yet bind the policy-level support receipts.
-          - Existing stage02-actual-test workflow has no canonical preflight materialization, validation, and exact-output persistence job.
+          - Canonical compiler and Current required-output validator share the same support-receipt contract and exact Current denominator.
+          - Existing stage02-actual-test workflow persists and revalidates canonical preflight outputs without a parallel workflow.
+          - R2 replay run 35139102607 completed successfully and persisted Current 150-gap classification evidence.
+          - Exact-head Full-Line run 35142161970 passed after parent owning-layer context support was added to the existing compiler and validator.
         product_blocker_credit: 0
         frozen_source_mutation_required: false
         official_stage_output_denominator_must_remain: 17
@@ -97,6 +113,7 @@ current_calibration:
           - EXTEND_EXISTING_CURRENT_REQUIRED_OUTPUT_VALIDATOR_FOR_SUPPORT_RECEIPT_CONSISTENCY
           - WIRE_EXISTING_STAGE02_WORKFLOW_FOR_FULL_LINE_PREFLIGHT_REPLAY_AND_EXACT_PERSISTENCE
           - REPLAY_AND_VERIFY_BEFORE_ANY_PRODUCT_CREDIT
+        resolution_result: PASS_ALL_REQUIRED_RESOLUTION_ITEMS_NO_PRODUCT_CREDIT
     required_fix_scope:
       - IMPLEMENT_CURRENT_STAGE_EXECUTION_PREFLIGHT_COMPILE_OWNER
       - PATCH_EXISTING_REQUIRED_OUTPUT_VALIDATOR_TO_CURRENT_REGISTRY_AND_FRESH_EVIDENCE
@@ -135,6 +152,7 @@ current_calibration:
     same_verify_fix_reverify_loop_required: true
     page_specific_process_fork_without_registered_authority: BLOCK
     successful_calibration_becomes_reusable_execution_baseline_only_after_fresh_ci_pass: true
-  next_legal_action: FIX_COMMON_EXECUTION_ENGINE_THEN_REPLAY_CURRENT_STAGE02_PREFLIGHT
+    successful_calibration_is_reusable_execution_baseline: true
+  next_legal_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
   stage03_allowed: false
   deployment_allowed: false
