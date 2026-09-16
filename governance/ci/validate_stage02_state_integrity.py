@@ -87,9 +87,30 @@ for key, values in count_checks.items():
     if len(set(values)) != 1:
         die(f'STAGE2_CURRENT_PROJECTOR_COUNT_DRIFT:{key}:{values!r}')
 
-next_actions = (state.get('next_action'), active.get('next_action'), findings.get('next_action'), candidate.get('next_action'))
-if any(v in (None, '') for v in next_actions) or len(set(next_actions)) != 1:
-    die(f'STAGE2_CURRENT_PROJECTOR_NEXT_ACTION_DRIFT:{next_actions!r}')
+active_work = state.get('active_work_unit') or {}
+resume = state.get('resume_control') or {}
+common_engine_interrupt = active_work.get('current_status') == 'IN_PROGRESS_COMMON_ENGINE_INTERRUPT'
+if common_engine_interrupt:
+    work_uid = active_work.get('work_unit_uid')
+    work_owner = active_work.get('canonical_owner')
+    interrupt_action = state.get('next_action')
+    if not work_uid or not work_owner or not interrupt_action:
+        die('COMMON_ENGINE_INTERRUPT_IDENTITY_INCOMPLETE')
+    if resume.get('current_work_unit_uid') != work_uid or resume.get('current_owner') != work_owner:
+        die('COMMON_ENGINE_INTERRUPT_RESUME_IDENTITY_DRIFT')
+    if resume.get('exact_next_action') != interrupt_action or active.get('next_action') != interrupt_action:
+        die(f'COMMON_ENGINE_INTERRUPT_NEXT_ACTION_DRIFT:{(interrupt_action, active.get("next_action"), resume.get("exact_next_action"))!r}')
+    parent_actions = (findings.get('next_action'), candidate.get('next_action'))
+    if any(v in (None, '') for v in parent_actions) or len(set(parent_actions)) != 1:
+        die(f'COMMON_ENGINE_INTERRUPT_PARENT_PROJECTOR_DRIFT:{parent_actions!r}')
+    if not resume.get('parent_resume_point') or resume.get('current_resume_point') == resume.get('parent_resume_point'):
+        die('COMMON_ENGINE_INTERRUPT_PARENT_RESUME_MISSING')
+    if active_work.get('product_blocker_credit') != 0:
+        die('COMMON_ENGINE_INTERRUPT_PRODUCT_BLOCKER_CREDIT_FORBIDDEN')
+else:
+    next_actions = (state.get('next_action'), active.get('next_action'), findings.get('next_action'), candidate.get('next_action'))
+    if any(v in (None, '') for v in next_actions) or len(set(next_actions)) != 1:
+        die(f'STAGE2_CURRENT_PROJECTOR_NEXT_ACTION_DRIFT:{next_actions!r}')
 for key in ('stage_exit_allowed', 'website_construction_allowed', 'deployment_allowed'):
     expected = False if result == 'TEST_EXECUTED_BLOCKED' else True if key == 'stage_exit_allowed' else False
     if candidate.get(key) is not expected:
@@ -119,6 +140,8 @@ else:
 print(f'PASS: Stage-02 successor state integrity result={result}')
 print('PASS: Stage-01 closure continuity retained')
 print('PASS: ACTIVE_STATE, findings, evidence, and candidate Current projectors are identity/count/action synchronized')
+if common_engine_interrupt:
+    print(f'PASS: common-engine interrupt work_unit={active_work.get("work_unit_uid")} preserves prior product projector while execution resume is interrupted')
 print('PASS: blocked remediation root is allowed only with explicit material-remediation state')
 print('PASS: Current Specification mutation/autofill/inference all false')
 print('PASS: website construction and deployment remain fail-closed unless Stage-02 is formally closed')
