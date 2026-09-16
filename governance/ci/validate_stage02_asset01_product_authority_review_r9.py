@@ -12,14 +12,7 @@ R6 = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.
 RAW = ROOT / '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml'
 RAW_REF = ROOT / '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml'
 OUT = ROOT / 'governance/test/stage02/STAGE02_ASSET01_PRODUCT_AUTHORITY_REVIEW_R9.yaml'
-EXPECTED_CATEGORIES = {
-    'ACTION_WITHOUT_CONTROL_OR_TRIGGER': 1,
-    'AUDIT_EVENT_NODE_MISSING': 9,
-    'FAILURE_STATE_ERROR_BINDING_MISSING': 44,
-    'PAYLOAD_INPUT_CONTRACT_MISSING': 18,
-    'POST_ACTION_VALIDATION_NODE_MISSING': 18,
-    'STATE_TRANSITION_LEDGER_FIELD_MISSING': 20,
-}
+PAGE_UID = 'ASSET-01'
 
 
 def die(msg: str) -> None:
@@ -42,7 +35,7 @@ def sha256(path: Path) -> str:
 
 def identity(rec: dict):
     return (
-        rec.get('blocker_uid'), rec.get('scope'), rec.get('category'), rec.get('target_uid'),
+        rec.get('blocker_uid'), rec.get('source_problem_uid'), rec.get('scope'), rec.get('category'), rec.get('target_uid'),
         rec.get('missing_field_or_relation'), rec.get('required_authority_kind'),
         tuple(rec.get('required_exact_fields_or_relation') or []),
     )
@@ -65,20 +58,25 @@ out = load(OUT)
 
 if out.get('artifact_type') != 'NON_NORMATIVE_ASSET01_PRODUCT_AUTHORITY_REVIEW_CONTRACT_R9':
     die('R9_WRONG_ARTIFACT_TYPE')
-if out.get('normative_authority') is not False or out.get('page_uid') != 'ASSET-01' or out.get('stage_uid') != 'STAGE-02':
+if out.get('normative_authority') is not False or out.get('page_uid') != PAGE_UID or out.get('stage_uid') != 'STAGE-02':
     die('R9_IDENTITY_OR_NORMATIVE_STATUS_DRIFT')
 if out.get('cycle') != 'ASSET01_PRODUCT_AUTHORITY_REVIEW_R9':
     die('R9_CYCLE_DRIFT')
 
-expected = [r for r in (r6.get('records') or []) if r.get('scope') == 'ASSET-01']
+all_r6_records = r6.get('records') or []
+product_denominator = (r6.get('denominators') or {}).get('product_design_contract_blockers_locked_for_intake')
+if not isinstance(product_denominator, int) or len(all_r6_records) != product_denominator:
+    die(f'R9_R6_PRODUCT_DENOMINATOR_DRIFT:records={len(all_r6_records)}:declared={product_denominator}')
+expected = [r for r in all_r6_records if r.get('scope') == PAGE_UID]
 actual = out.get('records') or []
-if len(expected) != 110 or len(actual) != 110:
+if not expected or len(actual) != len(expected):
     die(f'R9_DENOMINATOR_DRIFT:expected={len(expected)}:actual={len(actual)}')
 if [identity(r) for r in actual] != [identity(r) for r in expected]:
     die('R9_BLOCKER_IDENTITY_OR_ORDER_DRIFT_FROM_R6')
-if len({r.get('blocker_uid') for r in actual}) != 110:
+if len({r.get('blocker_uid') for r in actual}) != len(expected):
     die('R9_DUPLICATE_BLOCKER_UID')
-if dict(Counter(r.get('category') for r in actual)) != EXPECTED_CATEGORIES:
+expected_categories = dict(sorted(Counter(r.get('category') for r in expected).items()))
+if None in expected_categories or dict(sorted(Counter(r.get('category') for r in actual).items())) != expected_categories:
     die('R9_CATEGORY_DENOMINATOR_DRIFT')
 
 source = out.get('current_authority_source') or {}
@@ -92,7 +90,7 @@ if source.get('physical_capture_sha256') != sha256(RAW):
 
 capture = None
 for rec in raw_ref.get('records') or []:
-    if rec.get('page_uid') == 'ASSET-01' and rec.get('target_path') == '00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml':
+    if rec.get('page_uid') == PAGE_UID and rec.get('target_path') == '00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml':
         capture = rec
         break
 if not capture:
@@ -156,13 +154,8 @@ for key in required_false:
         die(f'R9_SAFETY_NOT_FALSE:{key}')
 
 expected_denominators = {
-    'asset01_open_product_authority_decisions': 110,
-    'action_without_control_or_trigger_decisions': 1,
-    'audit_event_decisions': 9,
-    'failure_state_error_binding_decisions': 44,
-    'payload_input_decisions': 18,
-    'post_action_validation_decisions': 18,
-    'state_transition_field_decisions': 20,
+    'asset01_open_product_authority_decisions': len(expected),
+    'category_counts': expected_categories,
     'approved_bindings_in_review_package': 0,
     'materializable_bindings_in_review_package': 0,
     'effective_stage02_blocker_reduction_claimed': 0,
@@ -172,7 +165,7 @@ if out.get('denominators') != expected_denominators:
 if out.get('stage02_status') != 'BLOCKED' or out.get('stage03_allowed') is not False or out.get('website_construction_allowed') is not False or out.get('deployment_allowed') is not False:
     die('R9_DOWNSTREAM_EXECUTION_PREMATURELY_ALLOWED')
 
-print('PASS: R9 exact ASSET-01 blocker set is 110 and matches R6 one-for-one')
-print('PASS: action-trigger=1 audit=9 failure=44 payload=18 validation=18 state-transition-fields=20')
+print(f'PASS: R9 exact Current ASSET-01 blocker set={len(expected)} and matches R6 one-for-one')
+print(f'PASS: Current ASSET-01 category counts={expected_categories}')
 print('PASS: all context nodes are byte-derived exact mappings from the captured Current ASSET-01 authority')
 print('PASS: R9 contains zero approved/missing product values, allows zero materialization, and claims zero blocker reduction')
