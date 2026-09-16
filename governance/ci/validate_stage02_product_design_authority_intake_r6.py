@@ -48,15 +48,32 @@ for field in required_false:
         die(f'R6_SAFETY_FIELD_NOT_FALSE:{field}')
 
 r5_reqs = r5.get('product_design_authority_requests') or []
+r5_den = r5.get('denominators') or {}
+product_denominator = r5_den.get('product_design_authority_requests')
+external_denominator = r5_den.get('external_authority_requests')
+current_total = r5_den.get('current_open_problems')
 r6_recs = r6.get('records') or []
-if len(r5_reqs) != 150 or len(r6_recs) != 150:
-    die(f'R6_DENOMINATOR_DRIFT:r5={len(r5_reqs)}:r6={len(r6_recs)}')
+
+for name, value in (
+    ('product', product_denominator),
+    ('external', external_denominator),
+    ('current_total', current_total),
+):
+    if not isinstance(value, int) or value < 0:
+        die(f'R5_INVALID_{name.upper()}_DENOMINATOR:{value}')
+if len(r5_reqs) != product_denominator:
+    die(f'R5_PRODUCT_REQUEST_COUNT_DRIFT:records={len(r5_reqs)}:declared={product_denominator}')
+if product_denominator + external_denominator != current_total:
+    die(f'R5_AUTHORITY_PARTITION_DRIFT:product={product_denominator}:external={external_denominator}:total={current_total}')
+if len(r6_recs) != product_denominator:
+    die(f'R6_PRODUCT_DENOMINATOR_DRIFT:r5={product_denominator}:r6={len(r6_recs)}')
 
 
 def identity_from_r5(x):
     a = x.get('authority_request') or {}
+    problem_uid = x.get('problem_uid')
     return (
-        x.get('blocker_uid'), x.get('scope'), x.get('category'), x.get('target_uid'),
+        problem_uid, problem_uid, x.get('scope'), x.get('category'), x.get('target_uid'),
         x.get('missing_field_or_relation'), a.get('required_authority_kind'),
         tuple(a.get('required_exact_fields_or_relation') or []),
     )
@@ -64,16 +81,17 @@ def identity_from_r5(x):
 
 def identity_from_r6(x):
     return (
-        x.get('blocker_uid'), x.get('scope'), x.get('category'), x.get('target_uid'),
+        x.get('blocker_uid'), x.get('source_problem_uid'), x.get('scope'), x.get('category'), x.get('target_uid'),
         x.get('missing_field_or_relation'), x.get('required_authority_kind'),
         tuple(x.get('required_exact_fields_or_relation') or []),
     )
+
 
 expected = [identity_from_r5(x) for x in r5_reqs]
 actual = [identity_from_r6(x) for x in r6_recs]
 if actual != expected:
     die('R6_REQUEST_IDENTITY_OR_ORDER_DRIFT_FROM_R5')
-if len(set(actual)) != 150:
+if len(set(actual)) != product_denominator:
     die('R6_DUPLICATE_REQUEST_IDENTITY')
 
 input_fields = (
@@ -101,13 +119,23 @@ for rec in r6_recs:
         die(f'R6_UNAPPROVED_AUTHORITY_VALUE_PRESENT:{uid}:{sorted(nonempty)}')
 
 expected_den = {
-    'product_design_contract_blockers_locked_for_intake': 150,
+    'current_open_stage02_problems': current_total,
+    'product_design_contract_blockers_locked_for_intake': product_denominator,
+    'external_authority_blockers_preserved_outside_product_intake': external_denominator,
     'approved_product_authority_bindings_present_in_this_package': 0,
     'materializable_from_this_package': 0,
     'effective_stage02_blocker_reduction_claimed': 0,
 }
 if r6.get('denominators') != expected_den:
     die(f'R6_DENOMINATOR_CLAIM_DRIFT:{r6.get("denominators")}')
+partition = r6.get('external_authority_partition') or {}
+if partition != {
+    'count': external_denominator,
+    'source': 'R5_DENOMINATORS_EXTERNAL_AUTHORITY_REQUESTS',
+    'included_in_product_authority_records': False,
+    'resolution_claimed': False,
+}:
+    die(f'R6_EXTERNAL_AUTHORITY_PARTITION_DRIFT:{partition}')
 if r6.get('stage02_status') != 'BLOCKED':
     die('R6_STAGE02_MUST_REMAIN_BLOCKED')
 if r6.get('stage03_allowed') is not False or r6.get('website_construction_allowed') is not False or r6.get('deployment_allowed') is not False:
@@ -118,7 +146,7 @@ for k, v in contract.items():
     if v is not True:
         die(f'R6_INGESTION_CONTRACT_NOT_FAIL_CLOSED:{k}')
 
-print('PASS: R6 exact 150 blocker identities match R5 one-for-one')
+print(f'PASS: R6 exact {product_denominator} Current product-authority identities match R5 one-for-one')
+print(f'PASS: R6 preserves {external_denominator} external-authority blockers outside the product intake partition')
 print('PASS: R6 contains 0 approved product-authority values and cannot masquerade as authority')
-print('PASS: R6 materialization remains fail-closed until separate approved canonical product authority is ingested')
 print('PASS: Stage-02 remains BLOCKED; Stage-03/construction/deployment remain prohibited')
