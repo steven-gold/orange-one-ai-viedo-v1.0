@@ -14,6 +14,7 @@ RUN = ROOT / "00_SOURCE_INTAKE/fresh_run_003"
 OUT = RUN / "04_PAGE_FUNCTIONAL_CONTRACT"
 STATE = ROOT / "governance/test/ACTIVE_STATE.yaml"
 FREEZE = ROOT / "governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml"
+EVIDENCE = ROOT / "governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json"
 RECEIPT = ROOT / "governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml"
 
 PAGES = {
@@ -104,13 +105,36 @@ def port_refs(action: dict):
 
 state = load(STATE)
 freeze = load(FREEZE)
+evidence = load(EVIDENCE)
 execution = state.get("execution") or {}
+active = state.get("stage02_active_attempt") or {}
 if execution.get("current_stage") != "STAGE-02-TESTED-BLOCKED":
     die(f"CURRENT_STAGE_NOT_STAGE02_TESTED_BLOCKED:{execution.get('current_stage')!r}")
 if (execution.get("stage2") or {}).get("result") != "TEST_EXECUTED_BLOCKED":
     die("STAGE02_RESULT_NOT_TEST_EXECUTED_BLOCKED")
 if freeze.get("stage_uid") != "STAGE-02" or not freeze.get("frozen_governance_uid"):
     die("FROZEN_GOVERNANCE_RECEIPT_INVALID")
+if evidence.get("stage_uid") != "STAGE-02" or evidence.get("result") != "BLOCKED" or evidence.get("stage_exit_allowed") is not False:
+    die("CURRENT_STAGE02_EVIDENCE_NOT_BLOCKED")
+if not active:
+    die("CURRENT_STAGE02_ACTIVE_ATTEMPT_MISSING")
+if freeze.get("attempt_uid") != active.get("attempt_uid"):
+    die(f"CURRENT_ATTEMPT_FREEZE_DRIFT:freeze={freeze.get('attempt_uid')!r}:active={active.get('attempt_uid')!r}")
+if freeze.get("frozen_governance_uid") != active.get("frozen_governance_uid"):
+    die("CURRENT_GOVERNANCE_FREEZE_DRIFT")
+if active.get("frozen_governance_uid") != state.get("specification_uid"):
+    die("CURRENT_ACTIVE_ATTEMPT_GOVERNANCE_UID_DRIFT")
+if evidence.get("source_head_sha") != active.get("source_execution_sha"):
+    die(f"CURRENT_EVIDENCE_SOURCE_SHA_DRIFT:evidence={evidence.get('source_head_sha')!r}:active={active.get('source_execution_sha')!r}")
+
+before_functional_gaps = int(evidence.get("fresh_functional_gap_total") or 0)
+before_closure_blockers = int(evidence.get("closure_blocker_total") or 0)
+if before_functional_gaps != int(active.get("fresh_functional_gap_total") or 0):
+    die("CURRENT_FUNCTIONAL_GAP_COUNT_DRIFT")
+if before_closure_blockers != int(active.get("fresh_closure_blocker_total") or 0):
+    die("CURRENT_CLOSURE_BLOCKER_COUNT_DRIFT")
+if before_closure_blockers != 13:
+    die(f"STRUCTURAL_MATERIALIZATION_DENOMINATOR_DRIFT:expected=13:actual={before_closure_blockers}")
 if OUT.exists():
     die("STAGE02_PRODUCT_ROOT_ALREADY_EXISTS_REFUSE_OVERWRITE")
 if RECEIPT.exists():
@@ -476,7 +500,7 @@ dump(RECEIPT, {
     "source_execution_sha": head,
     "owning_layer": "CURRENT_STAGE_PRODUCT_OR_CONTRACT_OUTPUT",
     "changed_artifact_root": "00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT",
-    "before_state": {"fresh_functional_gaps": 171, "closure_blockers": 13},
+    "before_state": {"fresh_functional_gaps": before_functional_gaps, "closure_blockers": before_closure_blockers},
     "materialized_missing_artifact_blockers": materialized_blockers,
     "materialized_missing_artifact_blocker_count": 13,
     "claimed_legal_elimination_before_fresh_reexecution": 0,
@@ -492,6 +516,8 @@ dump(RECEIPT, {
 })
 
 print(f"MATERIALIZED_STAGE02_ROOT={OUT.relative_to(ROOT)}")
+print(f"MATERIALIZATION_BEFORE_FUNCTIONAL_GAPS={before_functional_gaps}")
+print(f"MATERIALIZATION_BEFORE_CLOSURE_BLOCKERS={before_closure_blockers}")
 print("MATERIALIZED_MISSING_ARTIFACT_BLOCKERS=13")
 print("FUNCTIONAL_GAP_ELIMINATION_CLAIMED=0")
 print("EXTERNAL_AUTHORITY_UNION=" + ",".join(sorted(all_external)))
