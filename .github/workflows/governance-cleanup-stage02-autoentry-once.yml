@@ -28,6 +28,8 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import re
+          import shutil
+          import textwrap
 
           ROOT = Path('.')
           WORKFLOW_DIR = ROOT / '.github/workflows'
@@ -47,14 +49,11 @@ jobs:
               line = lines[on_idx]
               rhs = line.split(':', 1)[1].strip()
               if rhs:
-                  tokens = []
                   if rhs.startswith('[') and rhs.endswith(']'):
                       tokens = [x.strip().strip("'\"") for x in rhs[1:-1].split(',') if x.strip()]
                   else:
                       tokens = [rhs.strip().strip("'\"")]
-                  kept = [x for x in tokens if x in ALLOWED]
-                  if not kept:
-                      kept = ['workflow_dispatch']
+                  kept = [x for x in tokens if x in ALLOWED] or ['workflow_dispatch']
                   replacement = ['on:\n'] + [f'  {x}:\n' for x in kept]
                   lines = lines[:on_idx] + replacement + lines[on_idx + 1:]
               else:
@@ -82,7 +81,6 @@ jobs:
                       stop = starts[pos + 1][0] if pos + 1 < len(starts) else len(block)
                       if key in ALLOWED:
                           kept_segments.extend(block[start:stop])
-
                   if not kept_segments:
                       kept_segments = ['  workflow_dispatch:\n']
                   lines = lines[:on_idx + 1] + kept_segments + lines[end:]
@@ -97,9 +95,7 @@ jobs:
                   if sanitize_workflow(path):
                       changed.append(path.as_posix())
 
-          # Current/transient Stage-02 test-result products are not Current authority.
-          # Canonical immutable predecessor evidence under governance/test/history/stage02 is preserved.
-          import shutil
+          # Remove only Current/transient Stage-02 products. Immutable history stays under governance/test/history/stage02.
           for residual in (ROOT / '.github/stage02-test', ROOT / 'governance/test/stage02'):
               if residual.exists():
                   shutil.rmtree(residual)
@@ -111,49 +107,59 @@ jobs:
 
           helper_marker = 'def stage02_workflow_triggers(path):'
           if helper_marker not in text:
-              helper = r'''
-
-def stage02_workflow_triggers(path):
-    import re
-    lines = path.read_text(encoding="utf-8").splitlines()
-    for i, line in enumerate(lines):
-        if not re.match(r"^on\s*:", line):
-            continue
-        rhs = line.split(":", 1)[1].strip()
-        if rhs:
-            if rhs.startswith("[") and rhs.endswith("]"):
-                return {x.strip().strip("'\"") for x in rhs[1:-1].split(",") if x.strip()}
-            return {rhs.strip().strip("'\"")}
-        triggers = set()
-        j = i + 1
-        while j < len(lines):
-            raw = lines[j]
-            stripped = raw.strip()
-            if not stripped or stripped.startswith("#"):
-                j += 1
-                continue
-            indent = len(raw) - len(raw.lstrip(" "))
-            if indent == 0:
-                break
-            m = re.match(r"^  ([A-Za-z0-9_-]+)\s*:", raw)
-            if m:
-                triggers.add(m.group(1))
-            j += 1
-        return triggers
-    return set()
-'''
-              text = text.replace('\ndef main():\n', helper + '\ndef main():\n', 1)
+              helper = textwrap.dedent(r'''
+              def stage02_workflow_triggers(path):
+                  import re
+                  lines = path.read_text(encoding="utf-8").splitlines()
+                  for i, line in enumerate(lines):
+                      if not re.match(r"^on\s*:", line):
+                          continue
+                      rhs = line.split(":", 1)[1].strip()
+                      if rhs:
+                          if rhs.startswith("[") and rhs.endswith("]"):
+                              return {x.strip().strip("'\"") for x in rhs[1:-1].split(",") if x.strip()}
+                          return {rhs.strip().strip("'\"")}
+                      triggers = set()
+                      j = i + 1
+                      while j < len(lines):
+                          raw = lines[j]
+                          stripped = raw.strip()
+                          if not stripped or stripped.startswith("#"):
+                              j += 1
+                              continue
+                          indent = len(raw) - len(raw.lstrip(" "))
+                          if indent == 0:
+                              break
+                          m = re.match(r"^  ([A-Za-z0-9_-]+)\s*:", raw)
+                          if m:
+                              triggers.add(m.group(1))
+                          j += 1
+                      return triggers
+                  return set()
+              ''')
+              text = text.replace('\ndef main():\n', '\n' + helper + '\ndef main():\n', 1)
 
           check_marker = 'STAGE2_WORKFLOW_AUTOMATIC_TRIGGER_RESIDUAL'
           if check_marker not in text:
               needle = '    state = (ROOT / "00_SOURCE_INTAKE/fresh_run_003/EXECUTION_STATE.yaml").read_text(encoding="utf-8")\n'
-              check = '''    allowed_stage02_triggers = {"workflow_dispatch", "workflow_call"}\n    workflow_dir = ROOT / ".github/workflows"\n    for workflow in sorted(list(workflow_dir.glob("stage02-*.yml")) + list(workflow_dir.glob("stage02-*.yaml"))):\n        triggers = stage02_workflow_triggers(workflow)\n        automatic = sorted(triggers - allowed_stage02_triggers)\n        if automatic:\n            return fail(f"STAGE2_WORKFLOW_AUTOMATIC_TRIGGER_RESIDUAL:{workflow.relative_to(ROOT)}:{','.join(automatic)}")\n        if not triggers:\n            return fail(f"STAGE2_WORKFLOW_EXPLICIT_TRIGGER_MISSING:{workflow.relative_to(ROOT)}")\n\n'''
+              check = textwrap.dedent('''
+                  allowed_stage02_triggers = {"workflow_dispatch", "workflow_call"}
+                  workflow_dir = ROOT / ".github/workflows"
+                  for workflow in sorted(list(workflow_dir.glob("stage02-*.yml")) + list(workflow_dir.glob("stage02-*.yaml"))):
+                      triggers = stage02_workflow_triggers(workflow)
+                      automatic = sorted(triggers - allowed_stage02_triggers)
+                      if automatic:
+                          return fail(f"STAGE2_WORKFLOW_AUTOMATIC_TRIGGER_RESIDUAL:{workflow.relative_to(ROOT)}:{','.join(automatic)}")
+                      if not triggers:
+                          return fail(f"STAGE2_WORKFLOW_EXPLICIT_TRIGGER_MISSING:{workflow.relative_to(ROOT)}")
+
+              ''')
+              check = textwrap.indent(check, '    ')
               if needle not in text:
                   raise SystemExit('BLOCK: zero-residual validator insertion owner not found')
               text = text.replace(needle, check + needle, 1)
 
           validator.write_text(text, encoding='utf-8')
-
           print(f'Sanitized workflow count: {len(changed)}')
           for item in changed:
               print(f'  {item}')
