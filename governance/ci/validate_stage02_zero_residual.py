@@ -8,6 +8,7 @@ ENTRY_RECEIPTS = {
     'governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml',
     'governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml',
 }
+CANONICAL_ENTRY_WORKFLOW = '.github/workflows/stage02-actual-test.yml'
 FORBIDDEN = [
     '.github/stage02-test',
     '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT',
@@ -47,18 +48,16 @@ def main():
     tracked = set(git('ls-files').splitlines())
     stage2_current = {p for p in tracked if p.startswith('governance/test/stage02/')}
     unexpected_stage2_current = sorted(stage2_current - ENTRY_RECEIPTS)
-    if unexpected_stage2_current:
-        return fail('STAGE2_CURRENT_RUNTIME_RESIDUAL_TRACKED:' + ','.join(unexpected_stage2_current))
+    if unexpected_stage2_current: return fail('STAGE2_CURRENT_RUNTIME_RESIDUAL_TRACKED:' + ','.join(unexpected_stage2_current))
     for path in FORBIDDEN:
-        if path in tracked or any(p.startswith(path.rstrip('/') + '/') for p in tracked):
-            return fail(f'STAGE2_RESIDUAL_TRACKED:{path}')
+        if path in tracked or any(p.startswith(path.rstrip('/') + '/') for p in tracked): return fail(f'STAGE2_RESIDUAL_TRACKED:{path}')
     stage02_workflows = sorted(p for p in tracked if p.startswith('.github/workflows/stage02-') and p.endswith(('.yml', '.yaml')))
-    if stage02_workflows:
-        return fail('STAGE2_WORKFLOW_RESIDUAL_TRACKED:' + ','.join(stage02_workflows))
+    allowed_workflows = [CANONICAL_ENTRY_WORKFLOW] if ENTRY_RECEIPTS.issubset(tracked) else []
+    if stage02_workflows != allowed_workflows:
+        return fail('STAGE2_WORKFLOW_SET_INVALID:expected=' + ','.join(allowed_workflows) + ':actual=' + ','.join(stage02_workflows))
     for path, expected in EXPECTED_STAGE1_BLOBS.items():
         actual = git('rev-parse', f'HEAD:{path}')
-        if actual != expected:
-            return fail(f'STAGE1_RESET_BLOB_MISMATCH:{path}:expected={expected}:actual={actual}')
+        if actual != expected: return fail(f'STAGE1_RESET_BLOB_MISMATCH:{path}:expected={expected}:actual={actual}')
     state = (ROOT / '00_SOURCE_INTAKE/fresh_run_003/EXECUTION_STATE.yaml').read_text(encoding='utf-8')
     if 'state: STAGE1_VALIDATION_COMPLETED_CI_PASS' not in state: return fail('EXECUTION_STATE_NOT_STAGE1_CI_PASS')
     if 'stage2_started: false' not in state: return fail('EXECUTION_STATE_STAGE2_NOT_FALSE')
@@ -67,9 +66,9 @@ def main():
     for token in ('current_stage: STAGE-01-CLOSED','result: NOT_EXECUTED','prior_results_authoritative_for_next_run: false','status: ACTIVE_STAGE1_CLOSED_STAGE2_CLEARED'):
         if token not in active: return fail(f'ACTIVE_STATE_RESET_TOKEN_MISSING:{token}')
     print(f'PASS: Stage-02 current runtime/evidence/product residual count = 0; entry_receipts={len(stage2_current)}')
+    print(f'PASS: canonical Stage-02 execution workflow set={stage02_workflows}')
     print('PASS: five current ledgers restored to exact Stage-01 CI-PASS blobs')
     print('PASS: Stage-01 remains closed; Stage-02 is NOT_EXECUTED')
     return 0
 
-if __name__ == '__main__':
-    raise SystemExit(main())
+if __name__ == '__main__': raise SystemExit(main())
