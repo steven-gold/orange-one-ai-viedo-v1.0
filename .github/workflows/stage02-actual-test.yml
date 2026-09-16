@@ -15,6 +15,7 @@ on:
         options:
           - actual-test
           - structural-reexecution-r1
+          - current-remediability-classification-r2
 
 permissions:
   contents: read
@@ -901,3 +902,140 @@ jobs:
           test -n "$replay_run_id" || { echo 'BLOCK: dispatched fresh Stage-02 replay run was not resolved' >&2; exit 1; }
           echo "FRESH_STAGE02_REPLAY_RUN_ID=$replay_run_id"
           gh run watch "$replay_run_id" --exit-status
+
+  current-remediability-classification-r2:
+    if: ${{ (github.event_name == 'push' && contains(github.event.head_commit.message, 'run current remediability classification r2')) || (github.event_name == 'workflow_dispatch' && inputs.mode == 'current-remediability-classification-r2') }}
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 70
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Re-prove exact Current governance and full-line gate before classifier replay
+        run: |
+          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_canonical_rule_registry.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Validate persisted canonical preflight and active Work Unit binding
+        shell: bash
+        run: |
+          set -euo pipefail
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+
+          root = Path('.')
+          state = yaml.safe_load((root/'governance/test/ACTIVE_STATE.yaml').read_text()) or {}
+          registry = yaml.safe_load((root/'governance/specifications/REGISTRY.yaml').read_text()) or {}
+          receipt = yaml.safe_load((root/'00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml').read_text()) or {}
+          active = state.get('active_work_unit') or {}
+          attempt = state.get('stage02_active_attempt') or {}
+          governance_uid = (registry.get('active_specification') or {}).get('governance_uid')
+          assert active.get('work_unit_uid')
+          assert active.get('current_status') == 'IN_PROGRESS_COMMON_ENGINE_INTERRUPT'
+          assert int(active.get('product_blocker_credit') or 0) == 0
+          assert receipt.get('work_unit_uid') == active.get('work_unit_uid')
+          assert receipt.get('work_unit_status') == active.get('current_status')
+          assert receipt.get('current_governance_uid') == governance_uid
+          assert receipt.get('attempt_uid') == attempt.get('attempt_uid')
+          assert int(receipt.get('product_blocker_credit') or 0) == 0
+          print(f"PASS: canonical preflight is bound to Current Work Unit {active.get('work_unit_uid')} with zero product blocker credit")
+          PY
+      - name: Execute Current 150-gap remediability classification replay
+        run: python governance/ci/classify_current_stage2_functional_remediability.py
+      - name: Validate exact Current classification evidence before persistence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json, os, yaml
+
+          root = Path('.')
+          out_p = root/'governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml'
+          assert out_p.is_file(), 'classification output missing'
+          out = yaml.safe_load(out_p.read_text()) or {}
+          state = yaml.safe_load((root/'governance/test/ACTIVE_STATE.yaml').read_text()) or {}
+          registry = yaml.safe_load((root/'governance/specifications/REGISTRY.yaml').read_text()) or {}
+          evidence = json.loads((root/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json').read_text())
+          problem = yaml.safe_load((root/'00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml').read_text()) or {}
+          denominator = yaml.safe_load((root/'00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DENOMINATOR_SNAPSHOT.yaml').read_text()) or {}
+          governance_uid = (registry.get('active_specification') or {}).get('governance_uid')
+          attempt_uid = (state.get('stage02_active_attempt') or {}).get('attempt_uid')
+          current_n = int(evidence.get('fresh_functional_gap_total') or 0)
+          assert current_n > 0
+          assert out.get('source_head_sha') == os.environ['GITHUB_SHA']
+          assert out.get('current_governance_uid') == governance_uid
+          assert out.get('attempt_uid') == attempt_uid
+          assert out.get('fresh_functional_gap_denominator') == current_n
+          assert out.get('closure_blocker_denominator') == 0
+          assert int(problem.get('fresh_physical_problem_count') or 0) == current_n
+          assert int(problem.get('open_problem_count') or 0) == current_n
+          assert int(denominator.get('fresh_functional_gap_total') or 0) == current_n
+          assert out.get('hardcoded_historical_denominator_used') is False
+          policy = out.get('authority_corpus_policy') or {}
+          assert policy.get('same_uid_neighboring_field_is_proof') is False
+          assert policy.get('missing_field_specific_proof_required') is True
+          assert policy.get('semantic_similarity_used') is False
+          assert policy.get('sibling_symmetry_used') is False
+          assert policy.get('generic_crud_expansion_used') is False
+          assert policy.get('external_authority_auto_resolution_used') is False
+          assert out.get('stage03_allowed') is False
+          records = out.get('records') or []
+          assert len(records) == current_n
+          summary = out.get('classification_summary') or {}
+          assert sum(int(v) for v in summary.values()) == current_n
+          for rec in records:
+              disposition = rec.get('disposition')
+              if disposition == 'BOUNDED_COMPLETION_ADMISSIBLE':
+                  assert rec.get('authorized_for_auto_completion') is True
+                  assert rec.get('proof')
+                  assert rec.get('candidate_evidence')
+              elif disposition == 'EXACT_EXTERNAL_AUTHORITY_REQUIRED':
+                  assert rec.get('authorized_for_auto_completion') is False
+                  assert rec.get('proof') is None
+              elif disposition == 'NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS':
+                  assert rec.get('authorized_for_auto_completion') is False
+                  assert rec.get('proof') is None
+              else:
+                  raise AssertionError(f'unknown disposition: {disposition!r}')
+          print(f"PASS: Current remediability classification validated records={current_n} summary={summary}")
+          PY
+      - name: Prove classifier replay did not mutate normative or immutable predecessor inputs
+        run: |
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+      - name: Upload Current R2 classification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage02-current-remediability-classification-r2
+          path: governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml
+          if-no-files-found: error
+      - name: Persist only Current R2 classification evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          target='governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$target"
+          actual="$(git diff --cached --name-only)"
+          test "$actual" = "$target" || { printf 'BLOCK: unexpected classifier persistence set\n%s\n' "$actual" >&2; exit 1; }
+          git commit -m 'test(stage02): persist current remediability classification'
+          git push origin HEAD:rebuild-v2.1.1
