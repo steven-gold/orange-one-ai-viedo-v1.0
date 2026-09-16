@@ -52,6 +52,7 @@ def core_payload_base() -> dict:
 def approved_record(base: dict, source_rel: str, source_hash: str, owner_uid: str, revision: str, binding: dict) -> dict:
     return {
         'blocker_uid': base['blocker_uid'],
+        'source_problem_uid': base.get('source_problem_uid'),
         'scope': base['scope'],
         'category': base['category'],
         'target_uid': base['target_uid'],
