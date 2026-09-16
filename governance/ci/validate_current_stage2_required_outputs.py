@@ -10,7 +10,12 @@ ROOT_MANIFEST=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNAN
 GENERATED=['REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT','CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER']
 SUPPORTS=['GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECEIPT']
 ROOT_EXISTING=['DEPENDENCY_MAP','ASYNC_PROVIDER_CONTRACT','SHARED_OWNER_PORT_MAP']
-PAGE={'FUNCTIONAL_CHAIN_SPEC':'FUNCTIONAL_CHAIN_SPEC.yaml','PAGE_CONSTRUCTION_SPEC_PACKAGE':'PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml','FUNCTIONAL_WORKBENCH_CONTRACT':'FUNCTIONAL_WORKBENCH_CONTRACT.yaml','INTERACTION_TOPOLOGY_SPEC':'INTERACTION_TOPOLOGY_SPEC.yaml'}
+PAGE={
+    'FUNCTIONAL_CHAIN_SPEC':('FUNCTIONAL_CHAIN_SPEC.yaml','FUNCTIONAL_CHAIN_SPEC'),
+    'PAGE_CONSTRUCTION_SPEC_PACKAGE':('PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml','PAGE_CONSTRUCTION_SPEC_PACKAGE'),
+    'FUNCTIONAL_WORKBENCH_CONTRACT':('FUNCTIONAL_WORKBENCH_CONTRACT.yaml','FUNCTIONAL_WORKBENCH_CONTRACT'),
+    'INTERACTION_TOPOLOGY_SPEC':('INTERACTION_TOPOLOGY_SPEC.yaml','INTERACTION_TOPOLOGY_MATRIX'),
+}
 WORK_UNIT='STAGE02-CALIBRATION-GOVERNANCE-LOAD-CONTEXT-001'; OWNER_OPERATION='STAGE_EXECUTION_PREFLIGHT_COMPILE'
 def die(m): print('BLOCK:',m,file=sys.stderr); raise SystemExit(1)
 def y(p):
@@ -77,10 +82,10 @@ def main():
         if d.get('artifact_type')!=n or d.get('stage_uid')!=STAGE: die(f'EXISTING_ROOT_OUTPUT_DRIFT:{n}')
     pages=sorted((e.get('pages') or {}).keys())
     if not pages: die('NO_PAGE_SCOPE')
-    for n,f in PAGE.items():
+    for n,(f,artifact_type) in PAGE.items():
         for pu in pages:
             d=y(BASE/pu/f)
-            if d.get('artifact_type')!=n or d.get('stage_uid')!=STAGE or d.get('page_uid')!=pu: die(f'PAGE_OUTPUT_DRIFT:{pu}:{n}')
+            if d.get('artifact_type')!=artifact_type or d.get('stage_uid')!=STAGE or d.get('page_uid')!=pu: die(f'PAGE_OUTPUT_DRIFT:{pu}:{n}')
     docs={n:y(BASE/f'{n}.yaml') for n in GENERATED}; support={n:y(BASE/f'{n}.yaml') for n in SUPPORTS}
     for n,d in docs.items():
         if d.get('artifact_type')!=n or d.get('operation_uid')!=prod.get(n): die(f'GENERATED_OUTPUT_PRODUCER_DRIFT:{n}')
