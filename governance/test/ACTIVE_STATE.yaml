@@ -88,7 +88,7 @@ specification_mutation_safety:
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
 status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
-next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
+next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
@@ -100,7 +100,7 @@ resume_control:
   last_closed_work_unit_full_line_run_id: 35139102607
   last_closed_work_unit_full_line_job_id: 104970774976
   last_closed_work_unit_evidence_head: ba1aebddbeb0be48e5c2f94eab4ffcb009cbd919
-  exact_next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
+  exact_next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
   predecessor_attempt_preserved_as_historical_evidence: true
@@ -132,7 +132,7 @@ stage02_active_attempt:
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: true
-  next_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
+  next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
   governance_status: CURRENT_FROZEN_ATTEMPT_FRESHLY_REVALIDATED_BLOCKED
   closure_credit_under_current_governance: true
   fresh_revalidation_required: false
@@ -148,6 +148,11 @@ stage02_active_attempt:
   common_engine_closure_full_line_job_id: 104970774976
   common_engine_closure_source_head: ba1aebddbeb0be48e5c2f94eab4ffcb009cbd919
   common_engine_product_blocker_credit: 0
+  authority_request_package_ref: governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml
+  authority_request_product_count: 146
+  authority_request_external_count: 4
+  authority_request_is_authority: false
+  new_authority_required_before_more_material_remediation: true
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
