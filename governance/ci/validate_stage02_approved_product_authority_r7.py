@@ -288,6 +288,10 @@ def validate_binding_shape(rec: dict, binding) -> None:
     elif category == 'ACTION_WITHOUT_CONTROL_OR_TRIGGER':
         if binding.get('control_uid') in (None, '') and binding.get('trigger_uid') in (None, ''):
             die(f'R7_CONTROL_OR_TRIGGER_BINDING_MISSING:{uid}')
+    elif category == 'SUCCESS_NEXT_STATE_BINDING_MISSING':
+        keys = ('next_state', 'success_next_state', 'success_state', 'to_state', 'next_state_uid')
+        if not any(binding.get(k) not in (None, '', [], {}) for k in keys):
+            die(f'R7_SUCCESS_NEXT_STATE_BINDING_MISSING:{uid}')
     else:
         die(f'R7_UNSUPPORTED_PRODUCT_AUTHORITY_CATEGORY:{uid}:{category}')
 
@@ -334,17 +338,21 @@ def validate(approved_path: Path) -> tuple[dict, list[dict]]:
         die('R7_STAGE_OR_CYCLE_DRIFT')
 
     r6_records = r6.get('records') or []
-    if len(r6_records) != 150:
-        die(f'R6_DENOMINATOR_DRIFT:{len(r6_records)}')
+    r6_den = r6.get('denominators') or {}
+    product_denominator = r6_den.get('product_design_contract_blockers_locked_for_intake')
+    if not isinstance(product_denominator, int) or product_denominator < 0:
+        die(f'R6_INVALID_PRODUCT_DENOMINATOR:{product_denominator}')
+    if len(r6_records) != product_denominator:
+        die(f'R6_DENOMINATOR_DRIFT:records={len(r6_records)}:declared={product_denominator}')
     expected = {r.get('blocker_uid'): r for r in r6_records}
-    if len(expected) != 150 or None in expected:
+    if len(expected) != product_denominator or None in expected:
         die('R6_BLOCKER_UID_SET_INVALID')
 
     records = approved.get('records') or []
     if not isinstance(records, list) or not records:
         die('R7_APPROVED_RECORD_SET_EMPTY')
-    if len(records) > 150:
-        die(f'R7_APPROVED_RECORD_COUNT_EXCEEDS_150:{len(records)}')
+    if len(records) > product_denominator:
+        die(f'R7_APPROVED_RECORD_COUNT_EXCEEDS_CURRENT_PRODUCT_DENOMINATOR:{len(records)}>{product_denominator}')
 
     seen = set()
     required_input_fields = {
@@ -422,7 +430,7 @@ def main() -> None:
     rel, path = repo_path(args.approved_input, 'approved_input')
     approved, records = validate(path)
     print(f'PASS: R7 approved authority binding set validated records={len(records)} input={rel}')
-    print('PASS: every record matches an exact R6 blocker identity and carries non-AI explicit approval metadata')
+    print('PASS: every record matches an exact Current R6 product-blocker identity and carries non-AI explicit approval metadata')
     print('PASS: every authority source is Current-admissible by direct membership or verified exact capture/materialization provenance')
     print('PASS: authority revision is proven by source-intrinsic token or the revisioned Current manifest that lists the exact hashed canonical source')
     print('PASS: canonical owner and category-specific exact binding are physically represented by authority source bytes')
