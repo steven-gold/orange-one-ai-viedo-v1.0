@@ -1,4 +1,4 @@
-schema_version: 1
+schema_version: 2
 artifact_uid: STAGE02-EXECUTION-OPTIMIZATION-DEFECT-CONSOLIDATION-20260915
 artifact_type: NON_NORMATIVE_TEST_PROVEN_DEFECT_CONSOLIDATION
 normative_authority: false
@@ -52,3 +52,69 @@ promotion_effect:
   old_stage02_attempt_becomes_historical_for_closure: true
   old_stage02_completion_credit: 0
   clean_stage02_restart_required: true
+
+current_calibration:
+  calibration_uid: STAGE02-CURRENT-EXECUTION-CALIBRATION-20260916-001
+  current_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
+  calibration_input_head_sha: 96dcf873f6d7f17abca1dd8bd29304fd06e8a010
+  active_attempt_uid: STAGE02-FRESH-20260916-004
+  persisted_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
+  current_fresh_functional_gap_total: 150
+  current_fresh_closure_blocker_total: 0
+  preserved_external_authority_union_count: 8
+  current_verified_good_baseline:
+    structural_materialization_freshly_reexecuted: true
+    structural_closure_blockers_eliminated: 13
+    functional_gap_reduction_credit: 0
+    external_authority_resolution_credit: 0
+    source_workflow_run_id: 35065189789
+    source_artifact_id: 10433933078
+    source_artifact_sha256: 5a06093090b8026eb00b36a30acf7a3990584c3749d9045685ed01508a7800ae
+  newly_confirmed_common_engine_gap:
+    finding_class: COMMON_EXECUTION_ENGINE_IMPLEMENTATION_GAP
+    status: OPEN_RECORDED_BEFORE_FIX
+    description: Current Lifecycle Registry requires STAGE_EXECUTION_PREFLIGHT_COMPILE and canonical preflight outputs, but Current CI has no producer implementation and the existing required-output validator still binds historical fixed denominators and predecessor blobs.
+    product_blocker_credit: 0
+    specification_change_required: false
+    common_invariant_already_exists: true
+    required_fix_scope:
+      - IMPLEMENT_CURRENT_STAGE_EXECUTION_PREFLIGHT_COMPILE_OWNER
+      - PATCH_EXISTING_REQUIRED_OUTPUT_VALIDATOR_TO_CURRENT_REGISTRY_AND_FRESH_EVIDENCE
+      - WIRE_EXISTING_WORKFLOW_WITHOUT_CREATING_PARALLEL_WORKFLOW
+      - REPLAY_FULL_LINE_AND_STAGE02_PREFLIGHT
+  stable_execution_loop:
+    - RESOLVE_CURRENT_TRUTH
+    - READ_CURRENT_GOVERNANCE_AND_STAGE_BINDING
+    - COMPILE_CANONICAL_PREFLIGHT_MANIFEST_SET
+    - FRESH_PHYSICAL_SCAN
+    - RECONCILE_EFFECTIVE_CONTRACT
+    - PROJECT_SINGLE_CURRENT_PROBLEM_REGISTER
+    - EXECUTE_ONE_DEPENDENCY_ORDERED_REMEDIATION_BATCH
+    - RUN_LOCAL_REVERSE_DEPENDENCY_VALIDATION
+    - RUN_CHECKPOINT_FULL_SWEEP_WHEN_REQUIRED
+    - FRESH_REEXECUTE
+    - REQUIRE_KNOWN_SIGNATURE_ZERO_FOR_FIXED_DEFECTS
+    - RUN_HIDDEN_DEFECT_SWEEP
+    - APPEND_RESOLUTION_LEDGER_ONLY_AFTER_VERIFIED_SUCCESS
+    - PERSIST_NEXT_RESUME_POINT
+  baseline_retention_contract:
+    verified_good_result_is_preserved: true
+    verified_good_problem_uid_must_not_be_renumbered: true
+    verified_resolution_entry_is_append_only: true
+    failed_or_unverified_change_may_become_next_baseline: false
+    denominator_source: FRESH_PHYSICAL_SCAN_PLUS_AUTHORIZED_SUCCESSOR_RECONCILIATION
+    historical_or_hardcoded_denominator_as_current_truth: false
+    common_engine_defect_stops_affected_product_batch: true
+    common_engine_fix_requires_replay_before_product_credit: true
+  later_page_reuse_contract:
+    same_governance_resolution_sequence_required: true
+    same_preflight_compiler_required: true
+    same_current_problem_register_model_required: true
+    same_append_only_resolution_ledger_required: true
+    same_dependency_order_required: true
+    same_verify_fix_reverify_loop_required: true
+    page_specific_process_fork_without_registered_authority: BLOCK
+    successful_calibration_becomes_reusable_execution_baseline_only_after_fresh_ci_pass: true
+  next_legal_action: FIX_COMMON_EXECUTION_ENGINE_THEN_REPLAY_CURRENT_STAGE02_PREFLIGHT
+  stage03_allowed: false
+  deployment_allowed: false
