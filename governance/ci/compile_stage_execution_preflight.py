@@ -33,6 +33,9 @@ CAL=ROOT/'governance/test/STAGE02_EXECUTION_OPTIMIZATION_DEFECT_CONSOLIDATION.ya
 OUTS=['REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT','CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER']
 SUPPORTS=['GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECEIPT']
 OWNER_OPERATION='STAGE_EXECUTION_PREFLIGHT_COMPILE'
+PARENT_STATUS='ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE'
+PARENT_RESUME_POINT='STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION'
+PARENT_NEXT_ACTION='MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS'
 SECTION_BINDINGS={
  'WEB-GOV-01-S073':MOTHERS[0],
  'WEB-GOV-02-S070':MOTHERS[1],
@@ -97,13 +100,19 @@ def stage(life):
     rows=[x for x in life.get('stages',[]) if x.get('stage_uid')==STAGE]
     if len(rows)!=1: die(f'STAGE_RECORD_COUNT:{len(rows)}')
     return rows[0]
-def active_work_unit(state):
+def execution_context(state):
     work=state.get('active_work_unit') or {}; resume=state.get('resume_control') or {}
-    uid=work.get('work_unit_uid'); owner=work.get('canonical_owner'); name=work.get('canonical_name')
-    if not uid or not owner or not name: die('CURRENT_ACTIVE_WORK_UNIT_IDENTITY_MISSING')
-    if resume.get('current_work_unit_uid')!=uid: die('CURRENT_ACTIVE_WORK_UNIT_RESUME_DRIFT')
-    if resume.get('current_owner')!=owner: die('CURRENT_ACTIVE_WORK_UNIT_OWNER_DRIFT')
-    return {'work_unit_uid':uid,'canonical_owner':owner,'canonical_name':name}
+    if work:
+        uid=work.get('work_unit_uid'); owner=work.get('canonical_owner'); name=work.get('canonical_name')
+        if not uid or not owner or not name: die('CURRENT_ACTIVE_WORK_UNIT_IDENTITY_MISSING')
+        if resume.get('current_work_unit_uid')!=uid: die('CURRENT_ACTIVE_WORK_UNIT_RESUME_DRIFT')
+        if resume.get('current_owner')!=owner: die('CURRENT_ACTIVE_WORK_UNIT_OWNER_DRIFT')
+        return {'mode':'ACTIVE_WORK_UNIT','work_unit_uid':uid,'canonical_owner':owner,'semantic_concern':name,'resume_point':resume.get('current_resume_point')}
+    if state.get('status')!=PARENT_STATUS: die('CURRENT_EXECUTION_CONTEXT_MODE_UNRESOLVED')
+    if resume.get('current_resume_point')!=PARENT_RESUME_POINT: die('PARENT_RESUME_POINT_DRIFT')
+    if state.get('next_action')!=PARENT_NEXT_ACTION: die('PARENT_NEXT_ACTION_DRIFT')
+    if resume.get('current_work_unit_uid') or resume.get('current_owner'): die('STALE_INTERRUPT_WORK_UNIT_BINDING_IN_PARENT_MODE')
+    return {'mode':'PARENT_OWNING_LAYER_REMEDIATION','work_unit_uid':None,'canonical_owner':None,'semantic_concern':PARENT_NEXT_ACTION,'resume_point':PARENT_RESUME_POINT}
 def gaps(e):
     out=[]
     for page_uid,page in sorted((e.get('pages') or {}).items()):
@@ -152,7 +161,7 @@ def normative_set_digest(read_set):
     return sha(json.dumps(normative,sort_keys=True,separators=(',',':')).encode())
 
 def build(identity_override=None):
-    entry,reg,rule,cycle,closure,life,inv,state,e,frozen,cal=y(ENTRY),y(REG),y(RULE),y(CYCLE),y(CLOSURE),y(LIFE),y(INV),y(STATE),j(EVID),y(FROZEN),y(CAL); st=stage(life); work=active_work_unit(state)
+    entry,reg,rule,cycle,closure,life,inv,state,e,frozen,cal=y(ENTRY),y(REG),y(RULE),y(CYCLE),y(CLOSURE),y(LIFE),y(INV),y(STATE),j(EVID),y(FROZEN),y(CAL); st=stage(life); work=execution_context(state)
     gov=(reg.get('active_specification') or {}).get('governance_uid'); att=state.get('stage02_active_attempt') or {}
     if not gov or entry.get('active_governance_uid')!=gov or att.get('frozen_governance_uid')!=gov or e.get('frozen_governance_uid')!=gov or frozen.get('frozen_governance_uid')!=gov: die('CURRENT_GOVERNANCE_UID_DRIFT')
     if att.get('attempt_uid')!=e.get('attempt_uid') or frozen.get('attempt_uid')!=e.get('attempt_uid'): die('ATTEMPT_UID_DRIFT')
@@ -197,16 +206,25 @@ def build(identity_override=None):
     entry_source=entry.get('source_identity') or {}; rule_digest=((reg.get('canonical_rule_registry') or {}).get('digest'))
     if not rule_digest or entry.get('canonical_rule_registry_digest')!=rule_digest: die('CANONICAL_RULE_DIGEST_DRIFT')
     writes=[(BASE/f'{n}.yaml').as_posix() for n in OUTS+SUPPORTS]
-    work_uid=work['work_unit_uid']; work_owner=work['canonical_owner']; semantic_concern=work['canonical_name']
-    docs['GOVERNANCE_EXECUTION_CONTEXT_RECEIPT']={
+    work_uid=work['work_unit_uid']; work_owner=work['canonical_owner']; semantic_concern=work['semantic_concern']
+    context_receipt={
       **common,'artifact_type':'GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','producer_operation_uid':OWNER_OPERATION,'policy_ref':CYCLE.as_posix(),'active_work_unit_ref':work_uid,'semantic_concern':semantic_concern,'canonical_owner_operation':OWNER_OPERATION,'resolved_current_work_unit_owner':work_owner,
       'repository_identity':identity,'current_registry':{'entry_ref':ENTRY.as_posix(),'entry_sha256':file_sha(ENTRY),'registry_ref':REG.as_posix(),'registry_sha256':file_sha(REG),'canonical_rule_registry_ref':RULE.as_posix(),'canonical_rule_registry_sha256':file_sha(RULE),'canonical_rule_registry_digest':rule_digest,'verified_source_revision':entry_source.get('verified_source_revision'),'deterministic_source_bundle_sha256':entry_source.get('deterministic_source_bundle_sha256')},
       'exact_read_set':read_set,'exact_write_targets':writes,'duplicate_search_result':'EXISTING_CANONICAL_COMPILER_OWNER_REUSED_NO_PRIOR_SUPPORT_RECEIPT_OWNER_FOUND','confirmed_gap_uid':work_uid,'loaded_at_utc':loaded_at,'product_blocker_credit':0,'stage03_allowed':False,'result':'PASS_CONTEXT_RESOLVED'}
+    if work['mode']=='PARENT_OWNING_LAYER_REMEDIATION':
+        context_receipt['execution_context_mode']=work['mode']; context_receipt['current_resume_point']=work['resume_point']
+    docs['GOVERNANCE_EXECUTION_CONTEXT_RECEIPT']=context_receipt
     dep_hashes={p.as_posix():file_sha(p) for p in [EVID,FROZEN,R1,LIFE,INV,STATE,CAL]}
-    docs['EXECUTION_CYCLE_PREFLIGHT_RECEIPT']={
+    governance_load={'governance_uid':gov,'work_unit_uid':work_uid,'resolved_work_unit_owner':work_owner,'root_manifest_ref':ROOT_MANIFEST.as_posix(),'root_manifest_sha256':file_sha(ROOT_MANIFEST),'effective_normative_set_sha256':norm_digest,'resolved_section_uid_receipts':section_receipts,'dependency_artifact_hashes':dep_hashes,'acceptance_blueprint_ref':ACCEPTANCE.as_posix(),'acceptance_blueprint_sha256':file_sha(ACCEPTANCE),'loader_identity':'governance/ci/compile_stage_execution_preflight.py','loader_version':'3','loaded_at_utc':loaded_at}
+    if work['mode']=='PARENT_OWNING_LAYER_REMEDIATION':
+        governance_load['execution_context_mode']=work['mode']; governance_load['current_resume_point']=work['resume_point']; governance_load['loader_version']='4'
+    cycle_receipt={
       **common,'artifact_type':'EXECUTION_CYCLE_PREFLIGHT_RECEIPT','producer_operation_uid':OWNER_OPERATION,'policy_ref':CYCLE.as_posix(),'active_work_unit_ref':work_uid,'selected_execution_profile_uid':((entry.get('selected_execution_profile') or {}).get('profile_uid')),'execution_identity':identity,
-      'governance_load':{'governance_uid':gov,'work_unit_uid':work_uid,'resolved_work_unit_owner':work_owner,'root_manifest_ref':ROOT_MANIFEST.as_posix(),'root_manifest_sha256':file_sha(ROOT_MANIFEST),'effective_normative_set_sha256':norm_digest,'resolved_section_uid_receipts':section_receipts,'dependency_artifact_hashes':dep_hashes,'acceptance_blueprint_ref':ACCEPTANCE.as_posix(),'acceptance_blueprint_sha256':file_sha(ACCEPTANCE),'loader_identity':'governance/ci/compile_stage_execution_preflight.py','loader_version':'3','loaded_at_utc':loaded_at},
+      'governance_load':governance_load,
       'canonical_stage_output_denominator_count':len(outputs),'canonical_stage_output_denominator':outputs,'canonical_preflight_generated_output_refs':[(BASE/f'{n}.yaml').as_posix() for n in OUTS],'support_receipt_refs':[(BASE/f'{n}.yaml').as_posix() for n in SUPPORTS],'fresh_problem_count':len(problems),'common_engine_repair_requires_replay':True,'product_blocker_credit':0,'stage_exit_allowed':False,'stage03_allowed':False,'result':'PASS_GOVERNANCE_LOADED_FOR_PREFLIGHT'}
+    if work['mode']=='PARENT_OWNING_LAYER_REMEDIATION':
+        cycle_receipt['execution_context_mode']=work['mode']; cycle_receipt['current_resume_point']=work['resume_point']
+    docs['EXECUTION_CYCLE_PREFLIGHT_RECEIPT']=cycle_receipt
     support_dig={n:sha(yaml.safe_dump(docs[n],sort_keys=False,allow_unicode=True).encode()) for n in SUPPORTS}
     dig={n:sha(yaml.safe_dump(d,sort_keys=False,allow_unicode=True).encode()) for n,d in docs.items() if n not in {'STAGE_EXECUTION_PREFLIGHT_RECEIPT',*SUPPORTS}}
     docs['STAGE_EXECUTION_PREFLIGHT_RECEIPT']={**common,'artifact_type':'STAGE_EXECUTION_PREFLIGHT_RECEIPT','operation_uid':prod['STAGE_EXECUTION_PREFLIGHT_RECEIPT'],'invariant_uid':'GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001','required_output_types':outputs,'canonical_preflight_output_digests':dig,'policy_support_receipt_digests':support_dig,'policy_support_receipt_refs':[(BASE/f'{n}.yaml').as_posix() for n in SUPPORTS],'fresh_problem_count':len(problems),'preserved_verified_resolution_entry_count':len(entries),'single_current_problem_register':True,'append_only_resolution_ledger':True,'dependency_ordered_remediation_required':True,'local_impact_validation_required':True,'checkpoint_full_sweep_required':True,'stage_exit_allowed':False,'stage03_allowed':False,'result':'PASS_PREFLIGHT_WITH_OPEN_PRODUCT_GAPS'}
