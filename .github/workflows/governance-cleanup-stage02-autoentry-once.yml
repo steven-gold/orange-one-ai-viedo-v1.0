@@ -22,6 +22,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install validator dependency
+        run: python -m pip install pyyaml
+
       - name: Sanitize Stage-02 workflow entrypoints and remove current test products
         shell: bash
         run: |
@@ -95,7 +98,6 @@ jobs:
                   if sanitize_workflow(path):
                       changed.append(path.as_posix())
 
-          # Remove only Current/transient Stage-02 products. Immutable history stays under governance/test/history/stage02.
           for residual in (ROOT / '.github/stage02-test', ROOT / 'governance/test/stage02'):
               if residual.exists():
                   shutil.rmtree(residual)
