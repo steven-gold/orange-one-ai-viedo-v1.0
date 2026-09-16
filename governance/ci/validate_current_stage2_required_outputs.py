@@ -17,6 +17,9 @@ PAGE={
     'INTERACTION_TOPOLOGY_SPEC':('INTERACTION_TOPOLOGY_SPEC.yaml','INTERACTION_TOPOLOGY_MATRIX'),
 }
 OWNER_OPERATION='STAGE_EXECUTION_PREFLIGHT_COMPILE'
+PARENT_STATUS='ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE'
+PARENT_RESUME_POINT='STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION'
+PARENT_NEXT_ACTION='MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS'
 def die(m): print('BLOCK:',m,file=sys.stderr); raise SystemExit(1)
 def y(p):
     if not p.is_file(): die(f'MISSING_REQUIRED_OUTPUT:{p}')
@@ -38,13 +41,19 @@ def st(l):
     r=[x for x in l.get('stages',[]) if x.get('stage_uid')==STAGE]
     if len(r)!=1: die(f'STAGE_RECORD_COUNT:{len(r)}')
     return r[0]
-def active_work_unit(state):
+def execution_context(state):
     work=state.get('active_work_unit') or {}; resume=state.get('resume_control') or {}
-    uid=work.get('work_unit_uid'); owner=work.get('canonical_owner')
-    if not uid or not owner: die('CURRENT_ACTIVE_WORK_UNIT_IDENTITY_MISSING')
-    if resume.get('current_work_unit_uid')!=uid: die('CURRENT_ACTIVE_WORK_UNIT_RESUME_DRIFT')
-    if resume.get('current_owner')!=owner: die('CURRENT_ACTIVE_WORK_UNIT_OWNER_DRIFT')
-    return uid,owner
+    if work:
+        uid=work.get('work_unit_uid'); owner=work.get('canonical_owner'); name=work.get('canonical_name')
+        if not uid or not owner or not name: die('CURRENT_ACTIVE_WORK_UNIT_IDENTITY_MISSING')
+        if resume.get('current_work_unit_uid')!=uid: die('CURRENT_ACTIVE_WORK_UNIT_RESUME_DRIFT')
+        if resume.get('current_owner')!=owner: die('CURRENT_ACTIVE_WORK_UNIT_OWNER_DRIFT')
+        return {'mode':'ACTIVE_WORK_UNIT','work_unit_uid':uid,'canonical_owner':owner,'semantic_concern':name,'resume_point':resume.get('current_resume_point')}
+    if state.get('status')!=PARENT_STATUS: die('CURRENT_EXECUTION_CONTEXT_MODE_UNRESOLVED')
+    if resume.get('current_resume_point')!=PARENT_RESUME_POINT: die('PARENT_RESUME_POINT_DRIFT')
+    if state.get('next_action')!=PARENT_NEXT_ACTION: die('PARENT_NEXT_ACTION_DRIFT')
+    if resume.get('current_work_unit_uid') or resume.get('current_owner'): die('STALE_INTERRUPT_WORK_UNIT_BINDING_IN_PARENT_MODE')
+    return {'mode':'PARENT_OWNING_LAYER_REMEDIATION','work_unit_uid':None,'canonical_owner':None,'semantic_concern':PARENT_NEXT_ACTION,'resume_point':PARENT_RESUME_POINT}
 def rows(e):
     out=[]
     for pu,p in sorted((e.get('pages') or {}).items()):
@@ -76,7 +85,7 @@ def validate_execution_identity(identity,allowed_persistence_paths):
     if identity.get('tree_sha')!=git('rev-parse',f'{parent}^{{tree}}'): die('CONTEXT_PARENT_TREE_DRIFT')
     return 'EXACT_PERSISTENCE_CHILD'
 def main():
-    life,reg,entry,state,e=y(LIFE),y(REG),y(ENTRY),y(STATE),j(EVID); stage=st(life); cur=(reg.get('active_specification') or {}).get('governance_uid'); att=state.get('stage02_active_attempt') or {}; work_unit,work_owner=active_work_unit(state)
+    life,reg,entry,state,e=y(LIFE),y(REG),y(ENTRY),y(STATE),j(EVID); stage=st(life); cur=(reg.get('active_specification') or {}).get('governance_uid'); att=state.get('stage02_active_attempt') or {}; context=execution_context(state); work_unit=context['work_unit_uid']; work_owner=context['canonical_owner']
     if entry.get('active_governance_uid')!=cur or att.get('frozen_governance_uid')!=cur or e.get('frozen_governance_uid')!=cur: die('CURRENT_GOVERNANCE_UID_DRIFT')
     if att.get('attempt_uid')!=e.get('attempt_uid'): die('ATTEMPT_UID_DRIFT')
     if ((state.get('execution') or {}).get('stage2') or {}).get('stage_exit_allowed') is not False: die('STAGE02_EXIT_MUST_REMAIN_BLOCKED')
@@ -101,9 +110,12 @@ def main():
         if d.get('artifact_type')!=n or d.get('producer_operation_uid')!=OWNER_OPERATION: die(f'SUPPORT_RECEIPT_PRODUCER_DRIFT:{n}')
         if d.get('current_governance_uid')!=cur or d.get('attempt_uid')!=e.get('attempt_uid'): die(f'SUPPORT_RECEIPT_IDENTITY_DRIFT:{n}')
         if d.get('active_work_unit_ref')!=work_unit or d.get('product_blocker_credit')!=0 or d.get('stage03_allowed') is not False: die(f'SUPPORT_RECEIPT_SCOPE_DRIFT:{n}')
+        if context['mode']=='PARENT_OWNING_LAYER_REMEDIATION' and (d.get('execution_context_mode')!=context['mode'] or d.get('current_resume_point')!=context['resume_point']): die(f'PARENT_SUPPORT_RECEIPT_CONTEXT_DRIFT:{n}')
     allowed={(BASE/f'{n}.yaml').as_posix() for n in GENERATED+SUPPORTS}
     ctx=support['GOVERNANCE_EXECUTION_CONTEXT_RECEIPT']; identity_mode=validate_execution_identity(ctx.get('repository_identity') or {},allowed)
     if ctx.get('canonical_owner_operation')!=OWNER_OPERATION or ctx.get('resolved_current_work_unit_owner')!=work_owner or ctx.get('duplicate_search_result')!='EXISTING_CANONICAL_COMPILER_OWNER_REUSED_NO_PRIOR_SUPPORT_RECEIPT_OWNER_FOUND' or ctx.get('result')!='PASS_CONTEXT_RESOLVED': die('GOVERNANCE_CONTEXT_RECEIPT_DRIFT')
+    if ctx.get('semantic_concern')!=context['semantic_concern']: die('GOVERNANCE_CONTEXT_SEMANTIC_CONCERN_DRIFT')
+    if context['mode']=='PARENT_OWNING_LAYER_REMEDIATION' and ctx.get('confirmed_gap_uid') is not None: die('PARENT_CONTEXT_MUST_NOT_INVENT_GAP_UID')
     if set(ctx.get('exact_write_targets') or [])!=allowed: die('GOVERNANCE_CONTEXT_WRITE_SET_DRIFT')
     read_set=ctx.get('exact_read_set') or []
     if not read_set or len({r.get('path') for r in read_set})!=len(read_set): die('GOVERNANCE_CONTEXT_READ_SET_INVALID')
@@ -118,6 +130,8 @@ def main():
     if cyc.get('canonical_stage_output_denominator_count')!=len(expected) or set(cyc.get('canonical_stage_output_denominator') or [])!=set(expected): die('SUPPORT_RECEIPT_DENOMINATOR_DRIFT')
     gl=cyc.get('governance_load') or {}
     if gl.get('governance_uid')!=cur or gl.get('work_unit_uid')!=work_unit or gl.get('resolved_work_unit_owner')!=work_owner or gl.get('root_manifest_sha256')!=h(ROOT_MANIFEST) or gl.get('acceptance_blueprint_sha256')!=h(ACCEPTANCE): die('GOVERNANCE_LOAD_AUTHORITY_DRIFT')
+    if context['mode']=='PARENT_OWNING_LAYER_REMEDIATION':
+        if gl.get('execution_context_mode')!=context['mode'] or gl.get('current_resume_point')!=context['resume_point'] or gl.get('loader_version')!='4': die('PARENT_GOVERNANCE_LOAD_CONTEXT_DRIFT')
     sections=gl.get('resolved_section_uid_receipts') or []
     if len(sections)<6 or len({x.get('section_uid') for x in sections})!=len(sections): die('GOVERNANCE_LOAD_SECTION_RECEIPTS_INVALID')
     registry_text=SECTION_REGISTRY.read_text(encoding='utf-8')
@@ -154,7 +168,7 @@ def main():
     for n in SUPPORTS:
         if sd.get(n)!=h(BASE/f'{n}.yaml'): die(f'PREFLIGHT_SUPPORT_DIGEST_DRIFT:{n}')
     print(f'PASS: Current Stage-02 logical outputs={len(expected)}/{len(expected)} and page scope={pages}')
-    print(f'PASS: policy support receipts={len(SUPPORTS)}/2 identity_mode={identity_mode} work_unit={work_unit}')
+    print(f'PASS: policy support receipts={len(SUPPORTS)}/2 identity_mode={identity_mode} execution_context_mode={context["mode"]} work_unit={work_unit}')
     print(f'PASS: CURRENT_PROBLEM_REGISTER exact fresh projection problems={len(erows)} stable UIDs')
     print(f'PASS: RESOLUTION_LEDGER append-only entries={len(entries)} unverified product/external credit=0')
     print('PASS: Stage-02 blocked; Stage-03 forbidden')
