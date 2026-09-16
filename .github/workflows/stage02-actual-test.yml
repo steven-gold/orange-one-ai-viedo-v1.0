@@ -931,11 +931,86 @@ jobs:
           python governance/ci/specification_mutation_guard.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Materialize fresh canonical preflight for the Current R2 execution head
+        run: |
+          python governance/ci/compile_stage_execution_preflight.py --materialize
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+      - name: Prove Current R2 preflight delta is an authorized reconciliation subset
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          base = Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
+          names = [
+              'REQUIRED_FIELD_MANIFEST', 'FUNCTIONAL_CHAIN_MANIFEST', 'EFFECTIVE_CONTRACT_OVERLAY',
+              'DEPENDENCY_TOPOLOGY', 'DENOMINATOR_SNAPSHOT', 'CLASSIFICATION_RULESET',
+              'CHANGE_IMPACT_MAP', 'STAGE_EXECUTION_PREFLIGHT_RECEIPT', 'CURRENT_PROBLEM_REGISTER',
+              'RESOLUTION_LEDGER', 'GOVERNANCE_EXECUTION_CONTEXT_RECEIPT', 'EXECUTION_CYCLE_PREFLIGHT_RECEIPT',
+          ]
+          expected = sorted((base / f'{name}.yaml').as_posix() for name in names)
+          assert all(Path(path).is_file() for path in expected), 'canonical preflight output missing'
+          tracked = [path for path in expected if subprocess.run(['git','ls-files','--error-unmatch',path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0]
+          assert len(tracked) == len(expected), {'error': 'current_r2_requires_existing_full_canonical_persistence_set', 'tracked': tracked}
+          status = subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'], text=True)
+          actual = sorted(line[3:] for line in status.splitlines() if line.strip())
+          assert actual, {'error': 'fresh_r2_preflight_produced_no_reconciliation_delta'}
+          assert set(actual).issubset(set(expected)), {'unexpected_generated_delta': actual, 'authorized': expected}
+          print(f'PASS: Current R2 preflight reconciliation delta changed={len(actual)}/12')
+          PY
+      - name: Persist Current R2 canonical preflight reconciliation as an isolated child
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+          files=(
+            "$base/REQUIRED_FIELD_MANIFEST.yaml"
+            "$base/FUNCTIONAL_CHAIN_MANIFEST.yaml"
+            "$base/EFFECTIVE_CONTRACT_OVERLAY.yaml"
+            "$base/DEPENDENCY_TOPOLOGY.yaml"
+            "$base/DENOMINATOR_SNAPSHOT.yaml"
+            "$base/CLASSIFICATION_RULESET.yaml"
+            "$base/CHANGE_IMPACT_MAP.yaml"
+            "$base/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml"
+            "$base/CURRENT_PROBLEM_REGISTER.yaml"
+            "$base/RESOLUTION_LEDGER.yaml"
+            "$base/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml"
+            "$base/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml"
+          )
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "${files[@]}"
+          staged="$(git diff --cached --name-only)"
+          test -n "$staged" || { echo 'BLOCK: no Current R2 canonical preflight reconciliation staged' >&2; exit 1; }
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          base=Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
+          names=['REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT','CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER','GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECEIPT']
+          expected={(base/f'{name}.yaml').as_posix() for name in names}
+          actual=set(subprocess.check_output(['git','diff','--cached','--name-only'], text=True).splitlines())
+          assert actual and actual.issubset(expected), {'unexpected_staged_delta': sorted(actual), 'authorized': sorted(expected)}
+          print(f'PASS: isolated Current R2 preflight persistence set={len(actual)}/12')
+          PY
+          git commit -m 'test(stage02): persist fresh preflight for current r2 classification'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Revalidate persistence child and rerun complete Full-Line before classifier
+        run: |
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
       - name: Validate persisted canonical preflight and active Work Unit binding
         shell: bash
         run: |
           set -euo pipefail
-          python governance/ci/validate_current_stage2_required_outputs.py
           python - <<'PY'
           from pathlib import Path
           import yaml
@@ -944,17 +1019,26 @@ jobs:
           state = yaml.safe_load((root/'governance/test/ACTIVE_STATE.yaml').read_text()) or {}
           registry = yaml.safe_load((root/'governance/specifications/REGISTRY.yaml').read_text()) or {}
           receipt = yaml.safe_load((root/'00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml').read_text()) or {}
+          cycle = yaml.safe_load((root/'00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml').read_text()) or {}
           active = state.get('active_work_unit') or {}
           attempt = state.get('stage02_active_attempt') or {}
           governance_uid = (registry.get('active_specification') or {}).get('governance_uid')
           assert active.get('work_unit_uid')
           assert active.get('current_status') == 'IN_PROGRESS_COMMON_ENGINE_INTERRUPT'
           assert int(active.get('product_blocker_credit') or 0) == 0
-          assert receipt.get('work_unit_uid') == active.get('work_unit_uid')
-          assert receipt.get('work_unit_status') == active.get('current_status')
+          assert receipt.get('active_work_unit_ref') == active.get('work_unit_uid')
+          assert receipt.get('resolved_current_work_unit_owner') == active.get('canonical_owner')
+          assert receipt.get('semantic_concern') == active.get('canonical_name')
           assert receipt.get('current_governance_uid') == governance_uid
           assert receipt.get('attempt_uid') == attempt.get('attempt_uid')
           assert int(receipt.get('product_blocker_credit') or 0) == 0
+          assert receipt.get('stage03_allowed') is False
+          load = cycle.get('governance_load') or {}
+          assert cycle.get('active_work_unit_ref') == active.get('work_unit_uid')
+          assert load.get('work_unit_uid') == active.get('work_unit_uid')
+          assert load.get('resolved_work_unit_owner') == active.get('canonical_owner')
+          assert int(cycle.get('product_blocker_credit') or 0) == 0
+          assert cycle.get('stage03_allowed') is False
           print(f"PASS: canonical preflight is bound to Current Work Unit {active.get('work_unit_uid')} with zero product blocker credit")
           PY
       - name: Execute Current 150-gap remediability classification replay
@@ -965,7 +1049,7 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          import json, os, yaml
+          import json, subprocess, yaml
 
           root = Path('.')
           out_p = root/'governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml'
@@ -979,8 +1063,9 @@ jobs:
           governance_uid = (registry.get('active_specification') or {}).get('governance_uid')
           attempt_uid = (state.get('stage02_active_attempt') or {}).get('attempt_uid')
           current_n = int(evidence.get('fresh_functional_gap_total') or 0)
+          actual_head = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
           assert current_n > 0
-          assert out.get('source_head_sha') == os.environ['GITHUB_SHA']
+          assert out.get('source_head_sha') == actual_head
           assert out.get('current_governance_uid') == governance_uid
           assert out.get('attempt_uid') == attempt_uid
           assert out.get('fresh_functional_gap_denominator') == current_n
@@ -1015,7 +1100,7 @@ jobs:
                   assert rec.get('proof') is None
               else:
                   raise AssertionError(f'unknown disposition: {disposition!r}')
-          print(f"PASS: Current remediability classification validated records={current_n} summary={summary}")
+          print(f"PASS: Current remediability classification validated records={current_n} source_head={actual_head} summary={summary}")
           PY
       - name: Prove classifier replay did not mutate normative or immutable predecessor inputs
         run: |
@@ -1039,3 +1124,14 @@ jobs:
           test "$actual" = "$target" || { printf 'BLOCK: unexpected classifier persistence set\n%s\n' "$actual" >&2; exit 1; }
           git commit -m 'test(stage02): persist current remediability classification'
           git push origin HEAD:rebuild-v2.1.1
+      - name: Run fresh Full-Line on persisted classification evidence child
+        run: |
+          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_canonical_rule_registry.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
