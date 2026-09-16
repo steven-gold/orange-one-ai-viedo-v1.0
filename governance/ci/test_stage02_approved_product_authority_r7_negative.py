@@ -13,19 +13,21 @@ CORE_SOURCE_REL = '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CO
 CORE_SOURCE = ROOT / CORE_SOURCE_REL
 ASSET_SOURCE_REL = '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml'
 ASSET_SOURCE = ROOT / ASSET_SOURCE_REL
-CURRENT_MANIFEST = ROOT / '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml'
+TMP_MANIFEST = ROOT / 'governance/test/stage02/.R7_NEGATIVE_CURRENT_AUTHORITY_MANIFEST_FIXTURE.yaml'
 TMP_SOURCE = ROOT / 'R7_NEGATIVE_NON_CURRENT_AUTHORITY.yaml'
 TMP_EVIDENCE = ROOT / 'governance/test/stage02/.R7_NEGATIVE_APPROVAL_EVIDENCE.yaml'
 TMP_INPUT = ROOT / 'governance/test/stage02/.R7_NEGATIVE_APPROVED_BINDINGS.yaml'
+FIXTURE_REVISION = 'R7-NEGATIVE-REGRESSION-FIXTURE-REVISION'
 
 import sys
 sys.path.insert(0, str((ROOT / 'governance/ci').resolve()))
-from validate_stage02_approved_product_authority_r7 import (  # noqa: E402
-    load as validator_load,
-    prove_current_admissibility,
-    prove_revision_provenance,
-    validate,
-)
+import validate_stage02_approved_product_authority_r7 as validator  # noqa: E402
+
+validator_load = validator.load
+prove_current_admissibility = validator.prove_current_admissibility
+prove_revision_provenance = validator.prove_revision_provenance
+validate = validator.validate
+PRODUCTION_CURRENT_MANIFEST = validator.CURRENT_MANIFEST
 
 
 def sha256_file(path: Path) -> str:
@@ -39,6 +41,37 @@ def load(path: Path):
 def dump(path: Path, doc: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(doc, allow_unicode=True, sort_keys=False, width=180), encoding='utf-8')
+
+
+def write_test_only_current_manifest_fixture() -> None:
+    if not CORE_SOURCE.is_file() or not ASSET_SOURCE.is_file():
+        raise AssertionError('R7_NEGATIVE_FIXTURE_SOURCE_CAPTURE_MISSING')
+    dump(TMP_MANIFEST, {
+        'schema_version': 1,
+        'artifact_type': 'EXTERNAL_AUTHORITY_MANIFEST',
+        'normative_authority': False,
+        'test_fixture_only': True,
+        'persist_as_current_authority': False,
+        'product_authority_approval_granted': False,
+        'authority': {
+            'current_designation': 'CURRENT',
+            'status': 'FINAL_LOCKED',
+            'revision': FIXTURE_REVISION,
+        },
+        'files': [
+            {
+                'path': CORE_SOURCE_REL,
+                'sha256': sha256_file(CORE_SOURCE),
+                'role': 'NEGATIVE_REGRESSION_CURRENT_MEMBER_FIXTURE_CORE',
+            },
+            {
+                'path': ASSET_SOURCE_REL,
+                'sha256': sha256_file(ASSET_SOURCE),
+                'role': 'NEGATIVE_REGRESSION_CURRENT_MEMBER_FIXTURE_ASSET',
+            },
+        ],
+    })
+    validator.CURRENT_MANIFEST = TMP_MANIFEST
 
 
 def core_payload_base() -> dict:
@@ -164,15 +197,15 @@ def test_binding_not_in_current_source_rejected(base: dict) -> None:
         'action_uid': base['target_uid'],
         'payload_schema': {'invented_fixture_field': {'type': 'string'}},
     }
-    rec = approved_record(base, CORE_SOURCE_REL, sha256_file(CORE_SOURCE), 'CORE_PAGE_VISUAL_AUTHORITY_FINAL', 'V2.0', binding)
+    rec = approved_record(base, CORE_SOURCE_REL, sha256_file(CORE_SOURCE), 'CORE_PAGE_VISUAL_AUTHORITY_FINAL', FIXTURE_REVISION, binding)
     write_evidence(rec)
     write_input(rec)
     expect_block('R7_EXACT_BINDING_NOT_PHYSICALLY_PRESENT_IN_AUTHORITY')
 
 
 def test_manifest_revision_provenance_for_current_asset_source() -> None:
-    if not ASSET_SOURCE.is_file() or not CURRENT_MANIFEST.is_file():
-        raise AssertionError('ASSET_OR_CURRENT_MANIFEST_MISSING')
+    if not ASSET_SOURCE.is_file() or not TMP_MANIFEST.is_file():
+        raise AssertionError('ASSET_OR_TEST_CURRENT_MANIFEST_FIXTURE_MISSING')
     source_doc = validator_load(ASSET_SOURCE)
     if any(str(v) for v in (
         (source_doc.get('authority') or {}).get('version'),
@@ -180,7 +213,7 @@ def test_manifest_revision_provenance_for_current_asset_source() -> None:
     ) if v not in (None, '')):
         raise AssertionError('ASSET_FIXTURE_UNEXPECTEDLY_HAS_INTRINSIC_REVISION')
     provenance = prove_current_admissibility(ASSET_SOURCE_REL, ASSET_SOURCE)
-    manifest_revision = str((validator_load(CURRENT_MANIFEST).get('authority') or {}).get('revision'))
+    manifest_revision = str((validator_load(TMP_MANIFEST).get('authority') or {}).get('revision'))
     kind = prove_revision_provenance(source_doc, provenance, manifest_revision, 'R7-ASSET-MANIFEST-REVISION-FIXTURE')
     if kind != 'CURRENT_AUTHORITY_MANIFEST_REVISION_WITH_EXACT_SOURCE_HASH':
         raise AssertionError(f'WRONG_MANIFEST_REVISION_PROVENANCE_KIND:{kind}')
@@ -188,24 +221,27 @@ def test_manifest_revision_provenance_for_current_asset_source() -> None:
 
 
 def cleanup() -> None:
-    for path in (TMP_SOURCE, TMP_EVIDENCE, TMP_INPUT):
+    validator.CURRENT_MANIFEST = PRODUCTION_CURRENT_MANIFEST
+    for path in (TMP_MANIFEST, TMP_SOURCE, TMP_EVIDENCE, TMP_INPUT):
         path.unlink(missing_ok=True)
 
 
 def main() -> None:
     cleanup()
     try:
+        write_test_only_current_manifest_fixture()
         base = core_payload_base()
         test_non_current_source_rejected(base)
         test_binding_not_in_current_source_rejected(base)
         test_manifest_revision_provenance_for_current_asset_source()
     finally:
         cleanup()
+    print('PASS: R7 negative regression uses a test-only manifest fixture and does not require parent-layer production authority materialization')
     print('PASS: R7 rejects a physically present but non-Current authority source')
     print('PASS: R7 rejects caller-supplied exact_binding that is not physically represented in Current authority bytes')
-    print('PASS: R7 accepts frozen Current manifest revision as provenance for an exact hashed Current member lacking intrinsic revision')
+    print('PASS: R7 accepts frozen Current-manifest revision provenance only for an exact hashed fixture member')
     print('PASS: R7 rejects arbitrary revision not proven by source or Current manifest')
-    print('PASS: negative fixtures cleaned; no product/spec/Stage-01/Stage-02 output mutation performed')
+    print('PASS: negative fixtures cleaned; production CURRENT_MANIFEST restored; no product/spec/Stage-01/Stage-02 output mutation performed')
 
 
 if __name__ == '__main__':
