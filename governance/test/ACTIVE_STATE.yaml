@@ -1,4 +1,4 @@
-schema_version: 19
+schema_version: 20
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
@@ -50,11 +50,11 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: REVERIFY_REQUIRED_COMMON_ENGINE_INTERRUPT
+  full_line_github_result: PASS_EXECUTION_SOURCE_HEAD
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
-  full_line_verification_run_id: 35139102607
+  full_line_verification_run_id: 35163581458
 stage_execution_loading:
   full_line_round_reads_all_source_files_for_integrity_and_regression: true
   normal_stage_execution_reads_only_stage_required_files_and_shared_dependencies: true
@@ -87,96 +87,21 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STAGE2_TESTED_BLOCKED_COMMON_ENGINE_INTERRUPT
-next_action: PATCH_STAGE02_R5_R10_CURRENT_AUTHORITY_PIPELINE_CONSUMERS_THEN_FRESH_REPLAY
+status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
+next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS;
+  DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
   effectful_stage2_execution_before_entry_resolution: PASS_ENTRY_RESOLVED
-  parent_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
-  current_resume_point: STAGE2_COMMON_ENGINE_INTERRUPT_CURRENT_AUTHORITY_PIPELINE_REPAIR
-  current_work_unit_uid: WU-STAGE02-COMMON-ENGINE-003
-  current_owner: governance/ci/build_stage02_product_design_authority_intake_r6.py
-  current_step: CURRENT_AUTHORITY_PIPELINE_DENOMINATOR_SCHEMA_AND_PERSISTENCE_REPAIR
-  last_successful_gate: STAGE02_R5_CURRENT_AUTHORITY_REQUEST_146_PRODUCT_4_EXTERNAL
-  last_failed_gate: CURRENT_AUTHORITY_PIPELINE_CONSUMER_AUDIT
-  current_blocker: R6_R7_R8_R9_R10_AND_R5_PERSISTENCE_CONSUMERS_RETAIN_STALE_150_PRODUCT_DENOMINATOR_OR_STALE_PROBLEM_ID_SCHEMA
-  pending_tests:
-  - CURRENT_R6_INTAKE_BUILD_AND_VALIDATE
-  - CURRENT_R8_CORE_REVIEW_BUILD_AND_VALIDATE
-  - CURRENT_R9_ASSET_REVIEW_BUILD_AND_VALIDATE
-  - CURRENT_R10_DOCKET_BUILD_AND_VALIDATE
-  - R7_CURRENT_PRODUCT_DENOMINATOR_VALIDATION_NEGATIVE_REGRESSION
-  - STAGE02_R5_PERSISTENCE_IDEMPOTENCY_REGRESSION
-  - FULL_LINE_HIGH_PRESSURE_CURRENT_HEAD
-  pending_deployment: false
-  exact_next_action: PATCH_STAGE02_R5_R10_CURRENT_AUTHORITY_PIPELINE_CONSUMERS_THEN_FRESH_REPLAY
-active_work_unit:
-  work_unit_uid: WU-STAGE02-COMMON-ENGINE-003
-  canonical_name: STAGE02_COMMON_ENGINE_CURRENT_AUTHORITY_PIPELINE_DENOMINATOR_SCHEMA_REPAIR
-  scope:
-  - R5_AUTHORITY_REQUEST_PERSISTENCE_IDEMPOTENCY
-  - R6_CURRENT_PRODUCT_DENOMINATOR_AND_PROBLEM_UID_BINDING
-  - R7_CURRENT_PRODUCT_DENOMINATOR_CONSUMPTION
-  - R8_R9_CURRENT_SCOPE_AND_CATEGORY_DERIVATION
-  - R10_CURRENT_PRODUCT_AUTHORITY_DOCKET_DERIVATION
-  - CURRENT_146_PRODUCT_PLUS_4_EXTERNAL_PARTITION_PRESERVATION
-  out_of_scope:
-  - PRODUCT_AUTHORITY_VALUE_CREATION
-  - EXTERNAL_AUTHORITY_RESOLUTION
-  - CURRENT_SPECIFICATION_MUTATION
-  - MOTHER_POLICY_MUTATION
-  - STAGE03_EXECUTION
-  - WEBSITE_CONSTRUCTION
-  - DEPLOYMENT
-  canonical_owner: governance/ci/build_stage02_product_design_authority_intake_r6.py
-  affected_owner_files:
-  - governance/ci/build_stage02_product_design_authority_intake_r6.py
-  - governance/ci/validate_stage02_product_design_authority_intake_r6.py
-  - governance/ci/validate_stage02_approved_product_authority_r7.py
-  - governance/ci/materialize_stage02_approved_product_authority_r7.py
-  - governance/ci/build_stage02_core01_product_authority_review_r8.py
-  - governance/ci/validate_stage02_core01_product_authority_review_r8.py
-  - governance/ci/build_stage02_asset01_product_authority_review_r9.py
-  - governance/ci/validate_stage02_asset01_product_authority_review_r9.py
-  - governance/ci/build_stage02_product_authority_approval_docket_r10.py
-  - governance/ci/validate_stage02_product_authority_approval_docket_r10.py
-  - .github/workflows/stage02-actual-test.yml
-  dependencies:
-  - governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  - governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml
-  - governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml
-  start_condition: CURRENT_R5_PROVES_146_PRODUCT_PLUS_4_EXTERNAL_WHILE_DOWNSTREAM_ACTIVE_CONSUMERS_REPRODUCE_STALE_150_PRODUCT_DENOMINATOR_OR_STALE_BLOCKER_UID_INPUT
-  definition_of_done:
-  - R6_DERIVES_PRODUCT_DENOMINATOR_FROM_CURRENT_R5_WITHOUT_LITERAL_150_PRODUCT_ASSUMPTION
-  - R6_BINDS_R5_PROBLEM_UID_TO_DOWNSTREAM_BLOCKER_UID_COMPATIBILITY_FIELD_WITHOUT_RENUMBERING
-  - R7_DERIVES_PRODUCT_DENOMINATOR_FROM_CURRENT_R6_AND_CURRENT_TOTAL_FROM_CURRENT_REGISTER_OR_R5
-  - R8_R9_DERIVE_SCOPE_AND_CATEGORY_COUNTS_FROM_CURRENT_R6_WITHOUT_STALE_LITERAL_COUNTS
-  - R10_DERIVES_COMPLETE_PRODUCT_DOCKET_FROM_CURRENT_R6_R8_R9_WITHOUT_STALE_LITERAL_COUNTS
-  - EXTERNAL_AUTHORITY_REQUESTS_REMAIN_EXCLUDED_FROM_PRODUCT_AUTHORITY_DOCKET_AND_UNRESOLVED
-  - R5_PERSISTENCE_ACCEPTS_IDEMPOTENT_ALLOWED_SUBSET_AND_REJECTS_UNEXPECTED_DIRTY_PATHS
-  - CURRENT_PIPELINE_REPLAY_PASSES_WITH_146_PRODUCT_REQUESTS_AND_4_EXTERNAL_REQUESTS
-  - PRODUCT_BLOCKER_CREDIT_REMAINS_ZERO_FOR_COMMON_ENGINE_FIX
-  - FULL_LINE_CURRENT_HEAD_REVALIDATION_PASSES
-  - PARENT_OWNING_LAYER_REMEDIATION_RESUME_POINT_RESTORED_AFTER_CLOSURE
-  required_tests:
-  - CURRENT_R6_INTAKE_BUILD_AND_VALIDATE
-  - CURRENT_R8_CORE_REVIEW_BUILD_AND_VALIDATE
-  - CURRENT_R9_ASSET_REVIEW_BUILD_AND_VALIDATE
-  - CURRENT_R10_DOCKET_BUILD_AND_VALIDATE
-  - R7_NEGATIVE_AUTHORITY_VALIDATION
-  - GOVERNANCE_FULL_LINE_HIGH_PRESSURE_SYSTEM_GATE
-  required_evidence:
-  - CURRENT_R6_INTAKE_OUTPUT
-  - CURRENT_R8_R9_REVIEW_OUTPUTS
-  - CURRENT_R10_DOCKET_OUTPUT
-  - CURRENT_HEAD_FULL_LINE_RUN
-  - CURRENT_AUTHORITY_PIPELINE_REGRESSION_RESULT
-  current_status: IN_PROGRESS_COMMON_ENGINE_INTERRUPT
-  product_blocker_credit: 0
-  resume_point: PATCH_STAGE02_R5_R10_CURRENT_AUTHORITY_PIPELINE_CONSUMERS_THEN_FRESH_REPLAY
+  current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
+  last_closed_work_unit_uid: WU-STAGE02-COMMON-ENGINE-003
+  last_closed_work_unit_result: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  last_closed_work_unit_full_line_run_id: 35163581458
+  last_closed_work_unit_evidence_head: 265cc7dbff89097e55f013f5c37bb62fe1bc6fe9
+  exact_next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS;
+    DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
   predecessor_attempt_preserved_as_historical_evidence: true
@@ -206,8 +131,9 @@ stage02_active_attempt:
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: true
-  next_action: PATCH_STAGE02_R5_R10_CURRENT_AUTHORITY_PIPELINE_CONSUMERS_THEN_FRESH_REPLAY
-  governance_status: CURRENT_FROZEN_ATTEMPT_COMMON_ENGINE_INTERRUPT
+  next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS;
+    DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
+  governance_status: CURRENT_FROZEN_ATTEMPT_FRESHLY_REVALIDATED_BLOCKED
   closure_credit_under_current_governance: true
   fresh_revalidation_required: false
   material_remediation_started: true
@@ -215,19 +141,18 @@ stage02_active_attempt:
   reexecution_clean_baseline_receipt_ref: governance/test/stage02/STAGE02_REEXECUTION_CLEAN_BASELINE_RECEIPT_R1.yaml
   defect_signature_regression_receipt_ref: governance/test/stage02/STAGE02_DEFECT_SIGNATURE_REGRESSION_R1.yaml
   reexecution_cycle: R1
-  previous_closed_common_engine_work_unit_uid: WU-STAGE02-COMMON-ENGINE-001
-  previous_common_engine_closure_full_line_run_id: 35147438377
-  last_closed_common_engine_work_unit_uid: WU-STAGE02-COMMON-ENGINE-002
-  common_engine_closure_full_line_run_id: 35139102607
-  common_engine_closure_full_line_job_id: 104970774976
-  common_engine_closure_source_head: ba1aebddbeb0be48e5c2f94eab4ffcb009cbd919
-  active_common_engine_work_unit_uid: WU-STAGE02-COMMON-ENGINE-003
+  previous_closed_common_engine_work_unit_uid: WU-STAGE02-COMMON-ENGINE-002
+  previous_common_engine_closure_full_line_run_id: 35139102607
+  last_closed_common_engine_work_unit_uid: WU-STAGE02-COMMON-ENGINE-003
+  common_engine_closure_full_line_run_id: 35163581458
+  common_engine_closure_source_head: 265cc7dbff89097e55f013f5c37bb62fe1bc6fe9
   common_engine_product_blocker_credit: 0
   authority_request_package_ref: governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml
   authority_request_product_count: 146
   authority_request_external_count: 4
   authority_request_is_authority: false
   new_authority_required_before_more_material_remediation: true
+  previous_common_engine_closure_full_line_job_id: 104970774976
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
@@ -262,4 +187,4 @@ stage02_material_remediation:
   external_authority_union_count: 8
   external_authority_resolution_claimed: false
   current_specification_mutated: false
-  status: INTERRUPTED_BY_COMMON_ENGINE_REPAIR_NO_PRODUCT_CREDIT
+  status: STRUCTURAL_REMEDIATION_FRESHLY_REEXECUTED_BLOCKED_ON_FUNCTIONAL_GAPS
