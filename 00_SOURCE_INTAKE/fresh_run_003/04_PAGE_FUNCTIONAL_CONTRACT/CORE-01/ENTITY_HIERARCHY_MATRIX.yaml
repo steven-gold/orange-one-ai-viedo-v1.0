@@ -1,0 +1,140 @@
+schema_version: 1
+artifact_type: ENTITY_HIERARCHY_MATRIX
+stage_uid: STAGE-02
+page_uid: CORE-01
+derivation: EXACT_OBJECT_AND_OWNER_PROJECTION_PARENT_UID_NEVER_INFERRED
+semantic_parent_inference_used: false
+row_count: 22
+rows:
+- object_uid: CORE-01-REF-PROJECT
+  entity: ProjectRef
+  owner: ACPOS Project
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: exact project id/version/status/source hash
+- object_uid: CORE-01-REF-TOPIC
+  entity: TopicRef
+  owner: ACPOS Topic
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: exact topic id/version/project lineage/contract refs
+- object_uid: CORE-01-OBJ-THREAD
+  entity: ConversationThread
+  owner: AI Conversation Core
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: project/topic/work_item/thread id + history scope
+- object_uid: CORE-01-OBJ-MESSAGE
+  entity: ConversationMessage
+  owner: AI Conversation Core
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: message id/type/thread/source refs/version
+- object_uid: CORE-01-OBJ-CONTEXT
+  entity: RelevantContextPackage
+  owner: Context Resolver
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: confirmed relevant refs only; no wrong version
+- object_uid: CORE-01-REF-AI-SET
+  entity: AssignedAISetRef
+  owner: ACPOS AI Router
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: capability-resolved AI/provider assignment snapshot; read-only
+- object_uid: CORE-01-OBJ-SUMMARY
+  entity: AssistantSummary
+  owner: AI Assistant
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: source response ids + summary + context hash
+- object_uid: CORE-01-OBJ-EVALUATION
+  entity: CoreEvaluation
+  owner: CORE Evaluation
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: criteria version + dimensions from authority + evidence + hard blocks + result
+- object_uid: CORE-01-OBJ-HUMAN-DECISION
+  entity: HumanDecision
+  owner: Human
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: target ref + decision + reason + evidence refs
+- object_uid: CORE-01-OBJ-STRUCTURED-DECISION
+  entity: StructuredDecision
+  owner: AI Assistant
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: structured restatement of human decision; cannot self-approve
+- object_uid: CORE-01-OBJ-CANDIDATE
+  entity: CandidateVersion
+  owner: Candidate Service
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: immutable candidate + parent/source refs + version lineage
+- object_uid: CORE-01-OBJ-PROJECT-DRAFT
+  entity: ProjectDraftVersion
+  owner: Project Service
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: registered create/validate/confirm Project draft fields
+- object_uid: CORE-01-OBJ-STORY-CANDIDATE-SET
+  entity: StoryCandidateSet
+  owner: CORE Story
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: project ref + candidates + preserve canon refs
+- object_uid: CORE-01-REF-CANON
+  entity: ProjectCanonComponentRef
+  owner: CORE
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: type=Story/Chapter/World; exact confirmed version/hash
+- object_uid: CORE-01-REF-DNA
+  entity: DNAVersionRef
+  owner: CORE DNA
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: exact candidate/confirmed DNA version/hash/lock status
+- object_uid: CORE-01-REF-BLUEPRINT
+  entity: BlueprintVersionRef
+  owner: CORE Blueprint
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: exact topic/project lineage + blueprint version/hash/state
+- object_uid: CORE-01-OBJ-TOPIC-SCOPE
+  entity: TopicProductionScope
+  owner: CORE Topic
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: scope/boundary/bridge/product type/delivery unit refs from valid contract lineage
+- object_uid: CORE-01-REF-CANONICAL-SCRIPT
+  entity: CanonicalProductionScriptRef
+  owner: CORE Script System
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: topic canonical production script exact version/hash; provider-neutral
+- object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE
+  entity: TopicProductionPackage
+  owner: CORE Orchestration Boundary
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: project lock + blueprint child lock + topic scope + canonical script + DNA refs + naming authority ref
+- object_uid: CORE-01-REF-NAMING
+  entity: ACPOSNamingAuthorityRef
+  owner: ACPOS_SYSTEM
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: global naming policy/version ref only; no filename formula in CORE
+- object_uid: CORE-01-OBJ-DOWNSTREAM-READINESS
+  entity: DownstreamProjectionReadiness
+  owner: ACPOS Orchestration
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: read-only ASSET/VIDEO/EDIT boundary status + required refs; no downstream internals
+- object_uid: CORE-01-OBJ-LOCK-REVIEW
+  entity: LockReviewRef
+  owner: VersionLockService boundary
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: target ref/hash + review status + resolvable evidence/reviewer path; unresolved contract remains blocker

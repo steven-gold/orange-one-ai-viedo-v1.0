@@ -1,0 +1,116 @@
+schema_version: 1
+artifact_type: ENTITY_HIERARCHY_MATRIX
+stage_uid: STAGE-02
+page_uid: ASSET-01
+derivation: EXACT_OBJECT_AND_OWNER_PROJECTION_PARENT_UID_NEVER_INFERRED
+semantic_parent_inference_used: false
+row_count: 18
+rows:
+- object_uid: ASSET-01-REF-BLUEPRINT
+  entity: LockedBlueprintRef
+  owner: CORE/BLUEPRINT
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: immutable exact child lock/blueprint version/hash
+- object_uid: ASSET-01-REF-SCRIPT
+  entity: AssetProductionScriptViewRef
+  owner: CORE/SCRIPT
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: provider-neutral ASSET Script View/Section/version/hash
+- object_uid: ASSET-01-REF-DNA
+  entity: DNABindingRef
+  owner: CORE/BLUEPRINT
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: DNA/identity/continuity exact refs
+- object_uid: ASSET-01-REF-MANIFEST
+  entity: AssetManifestRef
+  owner: CORE/BLUEPRINT
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: required asset items/type/purpose/reuse policy
+- object_uid: ASSET-01-REF-NAMING
+  entity: SystemOutputNamingRef
+  owner: ACPOS_SYSTEM
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: canonical filename/output artifact identity/version/checksum policy; page read-only
+- object_uid: ASSET-01-REF-INSTRUCTION
+  entity: InstructionPackageRef
+  owner: InstructionCompiler
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: approved provider-neutral instruction package
+- object_uid: ASSET-01-REF-ROUTE
+  entity: ProviderRouteSnapshotRef
+  owner: ACPOS AI API Router
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: approved route/provider/model/capability snapshot; page read-only
+- object_uid: ASSET-01-OBJ-INPUT-MANIFEST
+  entity: AssetExecutionInputManifest
+  owner: ASSET/ORCH
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: task+blueprint+script+DNA+manifest+naming+instruction+route+input fingerprint
+- object_uid: ASSET-01-OBJ-CANDIDATE
+  entity: AssetCandidateOutput
+  owner: ASSET
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: candidate artifact exact version/uri/canonical filename/checksum/provenance
+- object_uid: ASSET-01-OBJ-EVALUATION
+  entity: AssetEvaluation
+  owner: ASSET/EVALUATION
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: criteria version/dimension scores/hard blocks/evidence/result
+- object_uid: ASSET-01-OBJ-FINDING
+  entity: AssetFinding
+  owner: ASSET/EVALUATION
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: issue type/asset/layer/region/evidence
+- object_uid: ASSET-01-OBJ-CORRECTION
+  entity: AssetCorrectionContext
+  owner: ASSET/AI
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: current exact refs + issue + zh-TW request + candidate
+- object_uid: ASSET-01-OBJ-CORRECTION-SCRIPT
+  entity: CorrectionScriptCandidate
+  owner: ACPOS Script System
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: provider-neutral delta; human approved before translation
+- object_uid: ASSET-01-OBJ-LAYER-DOC
+  entity: VersionedLayerDocument
+  owner: AssetCatalogService
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: immutable versions of image-compatible layer document
+- object_uid: ASSET-01-OBJ-ASSET-PATCH
+  entity: AssetPatch
+  owner: AssetCatalogService
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: source asset/layer/region/blueprint/DNA/preserve constraints/preview/decision
+- object_uid: ASSET-01-OBJ-ASSET-VERSION
+  entity: AssetOutputVersion
+  owner: AssetCatalogService
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: immutable exact artifact version + canonical filename/checksum
+- object_uid: ASSET-01-OBJ-SCORECARD
+  entity: AssetScorecard
+  owner: ASSET/EVALUATION
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: target output + criteria version + scores/issues/evidence
+- object_uid: ASSET-01-OBJ-HANDOFF
+  entity: AssetHandoffManifest
+  owner: ASSET boundary
+  parent_object_uid: null
+  hierarchy_status: ROOT_OR_NO_EXACT_PARENT_OBJECT_UID_DECLARED
+  required_content_exact: exact locked output + layer/composite refs + blueprint/script/DNA/manifest/naming/score/rights/contract hash
