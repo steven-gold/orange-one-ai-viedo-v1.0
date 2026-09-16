@@ -1135,3 +1135,169 @@ jobs:
           python governance/ci/specification_mutation_guard.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+
+  current-authority-request-r5:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'wire current r5 authority request') }}
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Resolve Current governance and synchronize active-consumer inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_canonical_rule_registry.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          report='governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json'
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          if ! git diff --quiet -- "$report"; then
+            actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//')"
+            test "$actual" = "$report" || { printf 'BLOCK: unexpected consumer synchronization delta\n%s\n' "$actual" >&2; exit 1; }
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- "$report"
+            git commit -m 'test(stage02): refresh active consumer integrity for current r5'
+            git push origin HEAD:rebuild-v2.1.1
+          fi
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Materialize and persist fresh canonical preflight for Current R5
+        shell: bash
+        run: |
+          set -euo pipefail
+          python governance/ci/compile_stage_execution_preflight.py --materialize
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          base=Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
+          names=['REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT','CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER','GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECEIPT']
+          expected={(base/f'{n}.yaml').as_posix() for n in names}
+          status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'], text=True)
+          actual={line[3:] for line in status.splitlines() if line.strip()}
+          assert actual and actual.issubset(expected), {'unexpected_pre_r5_delta':sorted(actual),'authorized':sorted(expected)}
+          PY
+          base='00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+          git add -- "$base/REQUIRED_FIELD_MANIFEST.yaml" "$base/FUNCTIONAL_CHAIN_MANIFEST.yaml" "$base/EFFECTIVE_CONTRACT_OVERLAY.yaml" "$base/DEPENDENCY_TOPOLOGY.yaml" "$base/DENOMINATOR_SNAPSHOT.yaml" "$base/CLASSIFICATION_RULESET.yaml" "$base/CHANGE_IMPACT_MAP.yaml" "$base/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml" "$base/CURRENT_PROBLEM_REGISTER.yaml" "$base/RESOLUTION_LEDGER.yaml" "$base/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml" "$base/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml"
+          test -n "$(git diff --cached --name-only)" || { echo 'BLOCK: no Current R5 preflight reconciliation staged' >&2; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'test(stage02): persist fresh preflight for current r5 authority request'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Revalidate persisted pre-R5 child and Full-Line
+        run: |
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Generate and validate Current R5 authority request package
+        shell: bash
+        run: |
+          set -euo pipefail
+          python governance/ci/build_stage02_product_design_authority_request_r5.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          root=Path('.')
+          req=yaml.safe_load((root/'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml').read_text()) or {}
+          problem=yaml.safe_load((root/'00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml').read_text()) or {}
+          cls=yaml.safe_load((root/'governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml').read_text()) or {}
+          state=yaml.safe_load((root/'governance/test/ACTIVE_STATE.yaml').read_text()) or {}
+          d=req.get('denominators') or {}
+          s=cls.get('classification_summary') or {}
+          current=int(problem.get('open_problem_count') or 0)
+          local=int(s.get('NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS') or 0)
+          external=int(s.get('EXACT_EXTERNAL_AUTHORITY_REQUIRED') or 0)
+          assert current == 150
+          assert d == {'current_open_problems':current,'product_design_authority_requests':local,'external_authority_requests':external,'bounded_completion_admissible':0,'materializable_from_current_authority_now':0}, d
+          assert local == 146 and external == 4
+          assert len(req.get('product_design_authority_requests') or []) == local
+          assert len(req.get('external_authority_requests') or []) == external
+          assert req.get('normative_authority') is False and req.get('request_is_product_authority') is False
+          safety=req.get('safety') or {}
+          assert safety.get('contains_product_authority_values') is False
+          assert safety.get('may_be_used_as_authority_input') is False
+          assert safety.get('product_materialization_performed') is False
+          assert safety.get('blocker_reduction_claimed') == 0
+          assert safety.get('stage03_allowed') is False and safety.get('website_construction_allowed') is False and safety.get('deployment_allowed') is False
+          assert (state.get('resume_control') or {}).get('current_resume_point') == 'STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION'
+          print(f'PASS: Current R5 request validated current={current} local={local} external={external} materializable=0')
+          PY
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
+      - name: Persist exact Current R5 request and synchronized Current projectors
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(governance/test/ACTIVE_STATE.yaml governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml)
+          actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | sort)"
+          expected="$(printf '%s\n' "${files[@]}" | sort)"
+          test "$actual" = "$expected" || { printf 'BLOCK: unexpected Current R5 persistence delta\n%s\n' "$actual" >&2; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "${files[@]}"
+          git commit -m 'test(stage02): persist current product design authority request R5'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Reconcile canonical preflight after Current R5 state persistence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python governance/ci/compile_stage_execution_preflight.py --materialize
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          base=Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
+          names=['REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT','CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER','GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECEIPT']
+          expected={(base/f'{n}.yaml').as_posix() for n in names}
+          status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'], text=True)
+          actual={line[3:] for line in status.splitlines() if line.strip()}
+          assert actual and actual.issubset(expected), {'unexpected_post_r5_preflight_delta':sorted(actual),'authorized':sorted(expected)}
+          PY
+          base='00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+          git add -- "$base/REQUIRED_FIELD_MANIFEST.yaml" "$base/FUNCTIONAL_CHAIN_MANIFEST.yaml" "$base/EFFECTIVE_CONTRACT_OVERLAY.yaml" "$base/DEPENDENCY_TOPOLOGY.yaml" "$base/DENOMINATOR_SNAPSHOT.yaml" "$base/CLASSIFICATION_RULESET.yaml" "$base/CHANGE_IMPACT_MAP.yaml" "$base/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml" "$base/CURRENT_PROBLEM_REGISTER.yaml" "$base/RESOLUTION_LEDGER.yaml" "$base/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml" "$base/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml"
+          test -n "$(git diff --cached --name-only)" || { echo 'BLOCK: no post-R5 canonical preflight reconciliation staged' >&2; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'test(stage02): reconcile canonical preflight after current r5 authority request'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Final persisted-head Current R5 validation and Full-Line
+        run: |
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+      - name: Upload Current R5 authority request evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage02-current-product-design-authority-request-r5
+          path: governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml
+          if-no-files-found: error
