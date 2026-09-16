@@ -14,6 +14,7 @@ CONTRACT_ROOT = RUN / '04_PAGE_FUNCTIONAL_CONTRACT'
 EVIDENCE = ROOT / 'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
 PROBLEM_REGISTER = CONTRACT_ROOT / 'CURRENT_PROBLEM_REGISTER.yaml'
 DENOMINATOR = CONTRACT_ROOT / 'DENOMINATOR_SNAPSHOT.yaml'
+CLASSIFICATION_RULESET = CONTRACT_ROOT / 'CLASSIFICATION_RULESET.yaml'
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
 REGISTRY = ROOT / 'governance/specifications/REGISTRY.yaml'
 OUT = ROOT / 'governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml'
@@ -26,6 +27,11 @@ PAGES = {
 EXTERNAL_CATEGORIES = {'SHARED_OWNER_AUTHORITY_UNRESOLVED'}
 TRIGGER_FIELDS = ('trigger_event_uid', 'trigger_uid', 'invocation', 'system_trigger', 'trigger_kind')
 EXPLICIT_EVENT_FIELDS = ('audit_event_uid', 'event_uid')
+HARD_BLOCK_GAP_CLASS_POLICIES = {
+    'AI_AUTO_FILL_BLOCK',
+    'BLOCK_UNTIL_FORMAL_CONTRACT',
+    'BLOCK_UNTIL_EXTERNAL_AUTHORITY',
+}
 
 
 def die(msg: str) -> None:
@@ -213,7 +219,18 @@ def negative_transition_test_proof(idx, transition_uid):
     }
 
 
-def classify_gap(gap: dict, idx):
+def blocked_disposition(policy_value: str):
+    return {
+        'disposition': 'NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS',
+        'completion_basis': 'NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY',
+        'candidate_evidence': [],
+        'authorized_for_auto_completion': False,
+        'proof': None,
+        'gap_class_policy': policy_value,
+    }
+
+
+def classify_gap(gap: dict, idx, gap_class_policy: dict):
     category = gap.get('category')
     uid = str(gap.get('uid'))
     detail = str(gap.get('detail') or '')
@@ -225,7 +242,15 @@ def classify_gap(gap: dict, idx):
             'candidate_evidence': [],
             'authorized_for_auto_completion': False,
             'proof': None,
+            'gap_class_policy': gap_class_policy.get(gap.get('class')),
         }
+
+    gap_class = gap.get('class')
+    class_policy = gap_class_policy.get(gap_class)
+    if not nonempty(class_policy):
+        die(f'GAP_CLASS_POLICY_MISSING:{gap_class!r}')
+    if class_policy in HARD_BLOCK_GAP_CLASS_POLICIES:
+        return blocked_disposition(class_policy)
 
     proof = None
     basis = None
@@ -242,9 +267,6 @@ def classify_gap(gap: dict, idx):
         proof = success_next_state_proof(idx, uid)
         basis = proof.get('proof_kind') if proof else None
     else:
-        # Never admit a category merely because another field on a node carries the
-        # same UID. Unknown categories remain blocked until a missing-field-specific
-        # proof is implemented and validated.
         proof = None
 
     if proof:
@@ -254,14 +276,10 @@ def classify_gap(gap: dict, idx):
             'candidate_evidence': [proof],
             'authorized_for_auto_completion': True,
             'proof': proof,
+            'gap_class_policy': class_policy,
         }
-    return {
-        'disposition': 'NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS',
-        'completion_basis': 'NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY',
-        'candidate_evidence': [],
-        'authorized_for_auto_completion': False,
-        'proof': None,
-    }
+    result = blocked_disposition(class_policy)
+    return result
 
 
 def evidence_gap_rows(evidence: dict):
@@ -306,6 +324,7 @@ state = load_yaml(STATE)
 registry = load_yaml(REGISTRY)
 problem = load_yaml(PROBLEM_REGISTER)
 denominator = load_yaml(DENOMINATOR)
+classification_ruleset = load_yaml(CLASSIFICATION_RULESET)
 active = state.get('stage02_active_attempt') or {}
 current_governance_uid = (registry.get('active_specification') or {}).get('governance_uid')
 attempt_uid = active.get('attempt_uid')
@@ -322,6 +341,15 @@ if active.get('frozen_governance_uid') != current_governance_uid or evidence.get
     die('CURRENT_EVIDENCE_GOVERNANCE_UID_DRIFT')
 if not attempt_uid or evidence.get('attempt_uid') != attempt_uid:
     die('CURRENT_ATTEMPT_UID_DRIFT')
+if classification_ruleset.get('current_governance_uid') != current_governance_uid or classification_ruleset.get('attempt_uid') != attempt_uid:
+    die('CURRENT_CLASSIFICATION_RULESET_IDENTITY_DRIFT')
+if classification_ruleset.get('artifact_type') != 'CLASSIFICATION_RULESET':
+    die('CURRENT_CLASSIFICATION_RULESET_TYPE_DRIFT')
+
+gap_class_policy = ((classification_ruleset.get('gap_remediation_admissibility') or {}).get('gap_classes') or {})
+required_gap_classes = {'AUTO_REMEDIABLE', 'IMPLEMENTATION_GAP', 'INPUT_SOURCE_GAP', 'AUTHORITY_GAP', 'ARCHITECTURE_GAP', 'DESIGN_REQUIRED', 'EXTERNAL_REQUIRED'}
+if set(gap_class_policy) != required_gap_classes:
+    die(f'CURRENT_GAP_CLASS_POLICY_SET_DRIFT:{sorted(gap_class_policy)!r}')
 
 current_denominator = int(evidence.get('fresh_functional_gap_total') or 0)
 if current_denominator <= 0:
@@ -361,7 +389,7 @@ for page_uid, raw_path in PAGES.items():
             'detail': gap.get('detail'),
             'gap_owner': gap.get('gap_owner'),
         }
-        rec.update(classify_gap(gap, idx))
+        rec.update(classify_gap(gap, idx, gap_class_policy))
         records.append(rec)
 
 if len(records) != current_denominator:
@@ -386,7 +414,7 @@ head = subprocess.run(
     check=True,
 ).stdout.strip()
 out = {
-    'schema_version': 3,
+    'schema_version': 4,
     'artifact_type': 'STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION',
     'normative_authority': False,
     'stage_uid': 'STAGE-02',
@@ -397,6 +425,8 @@ out = {
     'current_fresh_evidence_ref': 'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json',
     'current_problem_register_ref': '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml',
     'denominator_snapshot_ref': '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DENOMINATOR_SNAPSHOT.yaml',
+    'classification_ruleset_ref': '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CLASSIFICATION_RULESET.yaml',
+    'gap_class_policy_enforced': True,
     'fresh_functional_gap_denominator': current_denominator,
     'closure_blocker_denominator': 0,
     'denominator_source': 'CURRENT_PHYSICAL_EVIDENCE_PROBLEM_REGISTER_AND_DENOMINATOR_SNAPSHOT_EXACT_AGREEMENT',
@@ -416,7 +446,7 @@ out = {
     'completion_basis_summary': dict(basis),
     'by_category': by_category,
     'records': records,
-    'next_action': 'MATERIALIZE_ONLY_BOUNDED_COMPLETION_ADMISSIBLE_RECORDS_THEN_DUAL_LAYER_REEXECUTION',
+    'next_action': 'NO_AUTO_COMPLETION_UNDER_CURRENT_GAP_CLASS_POLICY_RESOLVE_OWNING_LAYER_OR_AUTHORITY',
     'stage03_allowed': False,
 }
 OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -435,6 +465,7 @@ for category, counts in by_category.items():
     print(f'CATEGORY::{category}::{counts}')
 print('PASS: every current fresh Stage-02 functional gap classified against the Current physical denominator')
 print('PASS: denominator is derived from exact agreement of fresh evidence, Current Problem Register, and Denominator Snapshot')
-print('PASS: classifier requires missing-field-specific or exact deterministic UID-join proof')
+print('PASS: classifier consumes Current CLASSIFICATION_RULESET and enforces gap-class hard blocks before category proof admission')
+print('PASS: no hard-blocked gap class can return authorized_for_auto_completion=true')
 print('PASS: no same-UID neighboring-field admission remains')
 print('PASS: Stage-02 product output was not used to self-authorize completion')
