@@ -1,14 +1,6 @@
 name: Stage-02 Approved Product Authority Ingestion R7
 
 on:
-  push:
-    branches: [rebuild-v2.1.1]
-    paths:
-      - 'governance/ci/validate_stage02_approved_product_authority_r7.py'
-      - 'governance/ci/materialize_stage02_approved_product_authority_r7.py'
-      - 'governance/ci/test_stage02_approved_product_authority_r7_negative.py'
-      - 'governance/test/stage02/STAGE02_APPROVED_PRODUCT_AUTHORITY_BINDINGS_R7.yaml'
-      - '.github/workflows/stage02-approved-product-authority-r7.yml'
   workflow_dispatch:
 
 permissions:
