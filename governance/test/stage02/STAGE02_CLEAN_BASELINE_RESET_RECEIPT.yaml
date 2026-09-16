@@ -1,0 +1,21 @@
+schema_version: 2
+artifact_type: CLEAN_BASELINE_RESET_RECEIPT
+normative_authority: false
+stage_uid: STAGE-02
+attempt_uid: STAGE02-FRESH-20260916-004
+baseline_status: CLEAN_PREDECESSOR_BASELINE_VERIFIED
+baseline_parent_commit: 6021ace3f73b5df3d63d8231167ec1523264aee7
+predecessor_stage: STAGE-01
+predecessor_state: STAGE1_VALIDATION_COMPLETED_CI_PASS
+stage2_started_in_predecessor: false
+stage2_active_evidence_present: false
+stage2_active_findings_present: false
+stage2_prior_attempt_counts_may_be_current: false
+expected_stage1_blobs:
+  00_SOURCE_INTAKE/fresh_run_003/ARTIFACT_PLAN.yaml: c64ab04846b228c14978c07f88164a8d02a22f0d
+  00_SOURCE_INTAKE/fresh_run_003/EXECUTION_STATE.yaml: 4f2bf558f5807a03d081f848184334ba16901fb1
+  00_SOURCE_INTAKE/fresh_run_003/RUN_MANIFEST.yaml: 110e672114aa244279ad5af932c83d169fdebfe5
+  11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml: 96d9e64940f24154cf086fdd26ee0e6d4e0653ef
+  11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml: a75551629448349732c08e34d252fee8fb040e94
+zero_residual_validator: governance/ci/validate_stage02_zero_residual.py
+fresh_execution_requires_full_line_gate_after_this_receipt: true
