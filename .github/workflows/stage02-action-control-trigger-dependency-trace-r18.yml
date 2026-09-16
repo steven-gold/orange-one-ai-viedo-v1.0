@@ -1,15 +1,6 @@
 name: Stage-02 Action Control Trigger Dependency Trace R18
 
 on:
-  push:
-    branches: [rebuild-v2.1.1]
-    paths:
-      - 'governance/ci/build_stage02_action_control_trigger_dependency_trace_r18.py'
-      - 'governance/ci/validate_stage02_action_control_trigger_dependency_trace_r18.py'
-      - '.github/workflows/stage02-action-control-trigger-dependency-trace-r18.yml'
-      - 'governance/test/stage02/STAGE02_AUTHORITY_DEPENDENCY_RECLASSIFICATION_R12.yaml'
-      - '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml'
-      - '00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml'
   workflow_dispatch:
 
 permissions:
