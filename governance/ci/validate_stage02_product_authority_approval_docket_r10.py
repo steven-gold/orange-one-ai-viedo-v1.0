@@ -11,14 +11,6 @@ R6 = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_INTAKE_R6.
 R8 = ROOT / 'governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml'
 R9 = ROOT / 'governance/test/stage02/STAGE02_ASSET01_PRODUCT_AUTHORITY_REVIEW_R9.yaml'
 OUT = ROOT / 'governance/test/stage02/STAGE02_PRODUCT_AUTHORITY_APPROVAL_DOCKET_R10.yaml'
-EXPECTED_CATEGORIES = {
-    'ACTION_WITHOUT_CONTROL_OR_TRIGGER': 1,
-    'AUDIT_EVENT_NODE_MISSING': 13,
-    'FAILURE_STATE_ERROR_BINDING_MISSING': 44,
-    'PAYLOAD_INPUT_CONTRACT_MISSING': 34,
-    'POST_ACTION_VALIDATION_NODE_MISSING': 18,
-    'STATE_TRANSITION_LEDGER_FIELD_MISSING': 40,
-}
 
 
 def die(msg: str) -> None:
@@ -37,7 +29,7 @@ def load(path: Path) -> dict:
 
 def identity(rec: dict):
     return (
-        rec.get('blocker_uid'), rec.get('scope'), rec.get('category'), rec.get('target_uid'),
+        rec.get('blocker_uid'), rec.get('source_problem_uid'), rec.get('scope'), rec.get('category'), rec.get('target_uid'),
         rec.get('missing_field_or_relation'), rec.get('required_authority_kind'),
         tuple(rec.get('required_exact_fields_or_relation') or []),
     )
@@ -58,17 +50,27 @@ if out.get('status') != 'READY_FOR_EXPLICIT_PRODUCT_AUTHORITY_DECISION_BLOCKED_U
     die('R10_STATUS_DRIFT')
 
 r6_records = r6.get('records') or []
+r6_den = r6.get('denominators') or {}
+product_denominator = r6_den.get('product_design_contract_blockers_locked_for_intake')
+external_denominator = r6_den.get('external_authority_blockers_preserved_outside_product_intake')
+current_total = r6_den.get('current_open_stage02_problems')
+if not all(isinstance(v, int) and v >= 0 for v in (product_denominator, external_denominator, current_total)):
+    die(f'R10_INVALID_R6_DENOMINATORS:{r6_den}')
+if product_denominator + external_denominator != current_total:
+    die(f'R10_R6_AUTHORITY_PARTITION_DRIFT:product={product_denominator}:external={external_denominator}:total={current_total}')
+
 core_records = r8.get('records') or []
 asset_records = r9.get('records') or []
 docket_records = out.get('records') or []
-if [len(r6_records), len(core_records), len(asset_records), len(docket_records)] != [150, 40, 110, 150]:
-    die(f'R10_DENOMINATOR_DRIFT:{[len(r6_records), len(core_records), len(asset_records), len(docket_records)]}')
+if len(r6_records) != product_denominator or len(core_records) + len(asset_records) != product_denominator or len(docket_records) != product_denominator:
+    die(f'R10_DENOMINATOR_DRIFT:r6={len(r6_records)} reviews={len(core_records)+len(asset_records)} docket={len(docket_records)} declared={product_denominator}')
 
 r6_by_uid = {r.get('blocker_uid'): r for r in r6_records}
 review_by_uid = {r.get('blocker_uid'): r for r in core_records + asset_records}
 docket_by_uid = {r.get('blocker_uid'): r for r in docket_records}
-if any(len(x) != 150 or None in x for x in (r6_by_uid, review_by_uid, docket_by_uid)):
-    die('R10_UID_SET_DUPLICATE_OR_NULL')
+for name, mapping in (('R6', r6_by_uid), ('REVIEW', review_by_uid), ('DOCKET', docket_by_uid)):
+    if len(mapping) != product_denominator or None in mapping:
+        die(f'R10_{name}_UID_SET_DUPLICATE_OR_NULL')
 if set(r6_by_uid) != set(review_by_uid) or set(r6_by_uid) != set(docket_by_uid):
     die('R10_UID_COVERAGE_DRIFT')
 
@@ -76,7 +78,13 @@ for uid, rec in docket_by_uid.items():
     if identity(rec) != identity(r6_by_uid[uid]):
         die(f'R10_IDENTITY_DRIFT:{uid}')
     review = review_by_uid[uid]
-    expected_ref = 'governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml' if rec.get('scope') == 'CORE-01' else 'governance/test/stage02/STAGE02_ASSET01_PRODUCT_AUTHORITY_REVIEW_R9.yaml'
+    scope = rec.get('scope')
+    if scope == 'CORE-01':
+        expected_ref = 'governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml'
+    elif scope == 'ASSET-01':
+        expected_ref = 'governance/test/stage02/STAGE02_ASSET01_PRODUCT_AUTHORITY_REVIEW_R9.yaml'
+    else:
+        die(f'R10_UNSUPPORTED_PRODUCT_SCOPE:{uid}:{scope}')
     if rec.get('verified_review_ref') != expected_ref:
         die(f'R10_REVIEW_REF_DRIFT:{uid}')
     summary = rec.get('verified_current_context_summary') or {}
@@ -104,27 +112,36 @@ for uid, rec in docket_by_uid.items():
     if rec.get('r7_materialization_allowed') is not False or rec.get('blocker_reduction_credit') != 0:
         die(f'R10_PREMATURE_MATERIALIZATION_OR_CREDIT:{uid}')
 
-page_counts = Counter(r.get('scope') for r in docket_records)
-category_counts = Counter(r.get('category') for r in docket_records)
-if dict(page_counts) != {'CORE-01': 40, 'ASSET-01': 110}:
-    die(f'R10_PAGE_COUNTS_DRIFT:{dict(page_counts)}')
-if dict(category_counts) != EXPECTED_CATEGORIES:
-    die(f'R10_CATEGORY_COUNTS_DRIFT:{dict(category_counts)}')
+expected_page_counts = dict(sorted(Counter(r.get('scope') for r in r6_records).items()))
+expected_category_counts = dict(sorted(Counter(r.get('category') for r in r6_records).items()))
+if None in expected_page_counts or None in expected_category_counts:
+    die('R10_R6_SCOPE_OR_CATEGORY_MISSING')
+if dict(sorted(Counter(r.get('scope') for r in docket_records).items())) != expected_page_counts:
+    die('R10_PAGE_COUNTS_DRIFT_FROM_R6')
+if dict(sorted(Counter(r.get('category') for r in docket_records).items())) != expected_category_counts:
+    die('R10_CATEGORY_COUNTS_DRIFT_FROM_R6')
 
 den = out.get('denominators') or {}
-if den.get('total_product_authority_decisions') != 150 or den.get('core01_decisions') != 40 or den.get('asset01_decisions') != 110:
-    die('R10_TOP_DENOMINATORS_DRIFT')
-if den.get('category_counts') != dict(sorted(EXPECTED_CATEGORIES.items())):
-    die('R10_CATEGORY_DENOMINATOR_CLAIM_DRIFT')
-if den.get('approved_decisions') != 0 or den.get('r7_materializable_decisions') != 0 or den.get('effective_stage02_blocker_reduction_claimed') != 0:
-    die('R10_FALSE_APPROVAL_OR_REDUCTION_CLAIM')
+expected_den = {
+    'current_open_stage02_problems': current_total,
+    'total_product_authority_decisions': product_denominator,
+    'external_authority_decisions_preserved_outside_product_docket': external_denominator,
+    'page_counts': expected_page_counts,
+    'category_counts': expected_category_counts,
+    'approved_decisions': 0,
+    'r7_materializable_decisions': 0,
+    'effective_stage02_blocker_reduction_claimed': 0,
+}
+if den != expected_den:
+    die(f'R10_DENOMINATOR_CLAIM_DRIFT:{den}')
 
 safety = out.get('safety') or {}
 for key in (
     'docket_is_product_authority', 'docket_is_approval_evidence', 'ai_may_complete_decision_values',
     'semantic_inference_may_complete_decision_values', 'historical_non_current_authority_may_complete_decision_values',
     'review_context_may_be_promoted_to_authority_without_explicit_decision', 'r7_may_materialize_from_docket_directly',
-    'current_specification_mutated', 'stage01_source_mutated', 'stage02_product_output_mutated',
+    'external_authority_resolution_claimed', 'current_specification_mutated', 'stage01_source_mutated',
+    'stage02_product_output_mutated',
 ):
     if safety.get(key) is not False:
         die(f'R10_SAFETY_FIELD_NOT_FALSE:{key}')
@@ -135,7 +152,8 @@ if len(sequence) != 10 or sequence[-1] != 'ONLY_ZERO_REPRODUCED_SIGNATURES_RECEI
 if out.get('stage02_status') != 'BLOCKED' or out.get('stage03_allowed') is not False or out.get('website_construction_allowed') is not False or out.get('deployment_allowed') is not False:
     die('R10_DOWNSTREAM_EXECUTION_PREMATURELY_ALLOWED')
 
-print('PASS: R10 covers exact 150 R6 blocker identities with no overlap or omission')
-print('PASS: CORE-01=40 ASSET-01=110; categories action=1 audit=13 failure=44 payload=34 validation=18 transition=40')
+print(f'PASS: R10 covers exact Current R6 product blocker identities={product_denominator} with no overlap or omission')
+print(f'PASS: page_counts={expected_page_counts} category_counts={expected_category_counts}')
+print(f'PASS: external authority preserved outside product docket={external_denominator}')
 print('PASS: every docket row points to its verified exact-current review context and carries zero authority values')
 print('PASS: approved=0 R7-materializable=0 blocker-reduction=0; Stage-02 remains BLOCKED')
