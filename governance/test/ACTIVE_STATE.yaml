@@ -197,6 +197,7 @@ stage02_active_attempt:
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
+  static_run_id_copy_forbidden: true
   static_head_sha_copy_forbidden: true
   static_specification_digest_copy_forbidden: true
   tracked_current_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
