@@ -1,14 +1,16 @@
-schema_version: 3
+schema_version: 4
 artifact_type: STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION
 normative_authority: false
 stage_uid: STAGE-02
 cycle: R2_CLASSIFICATION
-source_head_sha: 6f55ea870bee4dbc5e8ce67d5a035c4c4d0d2bf2
+source_head_sha: 86977f9de54fbdef5b4d647cd8c1e6ce4287ae15
 current_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
 attempt_uid: STAGE02-FRESH-20260916-004
 current_fresh_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
 current_problem_register_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
 denominator_snapshot_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DENOMINATOR_SNAPSHOT.yaml
+classification_ruleset_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CLASSIFICATION_RULESET.yaml
+gap_class_policy_enforced: true
 fresh_functional_gap_denominator: 150
 closure_blocker_denominator: 0
 denominator_source: CURRENT_PHYSICAL_EVIDENCE_PROBLEM_REGISTER_AND_DENOMINATOR_SNAPSHOT_EXACT_AGREEMENT
@@ -24,14 +26,11 @@ authority_corpus_policy:
   generic_crud_expansion_used: false
   external_authority_auto_resolution_used: false
 classification_summary:
-  NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS: 129
-  BOUNDED_COMPLETION_ADMISSIBLE: 17
+  NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS: 146
   EXACT_EXTERNAL_AUTHORITY_REQUIRED: 4
 completion_basis_summary:
-  NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY: 129
-  DETERMINISTIC_REQUIRED_DEPENDENCY: 10
+  NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY: 146
   EXTERNAL_OR_SHARED_AUTHORITY: 4
-  DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION: 7
 by_category:
   ACTION_WITHOUT_CONTROL_OR_TRIGGER:
     total: 1
@@ -65,14 +64,14 @@ by_category:
     NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS: 0
   STATE_TRANSITION_LEDGER_FIELD_MISSING:
     total: 50
-    BOUNDED_COMPLETION_ADMISSIBLE: 10
+    BOUNDED_COMPLETION_ADMISSIBLE: 0
     EXACT_EXTERNAL_AUTHORITY_REQUIRED: 0
-    NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS: 40
+    NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS: 50
   SUCCESS_NEXT_STATE_BINDING_MISSING:
     total: 7
-    BOUNDED_COMPLETION_ADMISSIBLE: 7
+    BOUNDED_COMPLETION_ADMISSIBLE: 0
     EXACT_EXTERNAL_AUTHORITY_REQUIRED: 0
-    NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS: 0
+    NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS: 7
 records:
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
@@ -85,6 +84,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -96,6 +96,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -107,6 +108,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -118,6 +120,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -129,6 +132,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -140,6 +144,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -151,6 +156,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -162,6 +168,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -173,6 +180,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -184,6 +192,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -195,6 +204,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -206,6 +216,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -217,6 +228,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -228,6 +240,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -239,6 +252,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -250,6 +264,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -261,6 +276,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -272,6 +288,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -283,6 +300,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -294,6 +312,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -305,6 +324,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -316,6 +336,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -327,6 +348,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -338,25 +360,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
   uid: CORE-01-STTR-01
   detail: illegal_transition_tests
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_REQUIRED_DEPENDENCY
-  candidate_evidence:
-  - &id001
-    proof_kind: DETERMINISTIC_REQUIRED_DEPENDENCY
-    transition_uid: CORE-01-STTR-01
-    from_stage: CORE-01-STAGE-01-CONTEXT
-    to_stage: CORE-01-STAGE-02-CONVERSE
-    trigger: CORE-01-EVT-CONTEXT-RESOLVED
-    gate: CORE-01-GATE-WORK-ITEM
-    bounded_output: GENERATE_NEGATIVE_TESTS_ONLY_NO_STATE_OR_AUTHORITY_VALUE_INVENTION
-  authorized_for_auto_completion: true
-  proof: *id001
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -368,6 +384,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -379,6 +396,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -390,6 +408,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -401,25 +420,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
   uid: CORE-01-STTR-02
   detail: illegal_transition_tests
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_REQUIRED_DEPENDENCY
-  candidate_evidence:
-  - &id002
-    proof_kind: DETERMINISTIC_REQUIRED_DEPENDENCY
-    transition_uid: CORE-01-STTR-02
-    from_stage: CORE-01-STAGE-02-CONVERSE
-    to_stage: CORE-01-STAGE-03-SUMMARY-EVAL
-    trigger: CORE-01-EVT-AI-RESPONSES-READY
-    gate: CORE-01-GATE-SUMMARY
-    bounded_output: GENERATE_NEGATIVE_TESTS_ONLY_NO_STATE_OR_AUTHORITY_VALUE_INVENTION
-  authorized_for_auto_completion: true
-  proof: *id002
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -431,6 +444,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -442,6 +456,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -453,6 +468,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -464,25 +480,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
   uid: CORE-01-STTR-03
   detail: illegal_transition_tests
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_REQUIRED_DEPENDENCY
-  candidate_evidence:
-  - &id003
-    proof_kind: DETERMINISTIC_REQUIRED_DEPENDENCY
-    transition_uid: CORE-01-STTR-03
-    from_stage: CORE-01-STAGE-03-SUMMARY-EVAL
-    to_stage: CORE-01-STAGE-04-HUMAN-DECIDE
-    trigger: CORE-01-EVT-EVALUATION-READY
-    gate: CORE-01-GATE-EVALUATION
-    bounded_output: GENERATE_NEGATIVE_TESTS_ONLY_NO_STATE_OR_AUTHORITY_VALUE_INVENTION
-  authorized_for_auto_completion: true
-  proof: *id003
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -494,6 +504,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -505,6 +516,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -516,6 +528,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -527,25 +540,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
   uid: CORE-01-STTR-04
   detail: illegal_transition_tests
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_REQUIRED_DEPENDENCY
-  candidate_evidence:
-  - &id004
-    proof_kind: DETERMINISTIC_REQUIRED_DEPENDENCY
-    transition_uid: CORE-01-STTR-04
-    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
-    to_stage: CORE-01-STAGE-02-CONVERSE
-    trigger: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
-    gate: CORE-01-GATE-HUMAN-DECISION
-    bounded_output: GENERATE_NEGATIVE_TESTS_ONLY_NO_STATE_OR_AUTHORITY_VALUE_INVENTION
-  authorized_for_auto_completion: true
-  proof: *id004
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -557,6 +564,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -568,6 +576,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -579,6 +588,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -590,25 +600,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: CORE-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
   uid: CORE-01-STTR-05
   detail: illegal_transition_tests
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_REQUIRED_DEPENDENCY
-  candidate_evidence:
-  - &id005
-    proof_kind: DETERMINISTIC_REQUIRED_DEPENDENCY
-    transition_uid: CORE-01-STTR-05
-    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
-    to_stage: CORE-01-STAGE-05-CANDIDATE
-    trigger: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
-    gate: CORE-01-GATE-CANDIDATE-CREATE
-    bounded_output: GENERATE_NEGATIVE_TESTS_ONLY_NO_STATE_OR_AUTHORITY_VALUE_INVENTION
-  authorized_for_auto_completion: true
-  proof: *id005
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -620,6 +624,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -631,6 +636,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -642,6 +648,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -653,6 +660,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -664,6 +672,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -675,6 +684,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -686,6 +696,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -697,6 +708,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -708,6 +720,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: AUTHORITY_GAP
   category: SHARED_OWNER_AUTHORITY_UNRESOLVED
@@ -719,6 +732,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -730,6 +744,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: AUTHORITY_GAP
   category: SHARED_OWNER_AUTHORITY_UNRESOLVED
@@ -741,6 +756,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -752,6 +768,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -763,6 +780,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -774,6 +792,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: ACTION_WITHOUT_CONTROL_OR_TRIGGER
@@ -785,6 +804,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -796,6 +816,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -807,6 +828,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -818,6 +840,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -829,6 +852,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -840,6 +864,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -851,6 +876,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: AUTHORITY_GAP
   category: SHARED_OWNER_AUTHORITY_UNRESOLVED
@@ -862,6 +888,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -873,6 +900,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: AUTHORITY_GAP
   category: SHARED_OWNER_AUTHORITY_UNRESOLVED
@@ -884,6 +912,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -895,6 +924,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -906,6 +936,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -917,6 +948,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -928,6 +960,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -939,6 +972,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -950,6 +984,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -961,6 +996,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -972,6 +1008,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -983,6 +1020,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -994,6 +1032,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -1005,6 +1044,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -1016,6 +1056,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -1027,22 +1068,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: SUCCESS_NEXT_STATE_BINDING_MISSING
   uid: ASSET-01-ACT-LAYER-ADD
   detail: no state_effect, state transition, or port state_event transition
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-  candidate_evidence:
-  - &id006
-    proof_kind: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-    port_uid: ASSET-01-PORT-LAYER-ADD
-    state_event: layer document version increments
-    bounded_output: COPY_EXACT_PORT_STATE_EVENT_AS_SUCCESS_STATE_EFFECT_ONLY
-  authorized_for_auto_completion: true
-  proof: *id006
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -1054,6 +1092,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -1065,6 +1104,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -1076,6 +1116,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -1087,22 +1128,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: SUCCESS_NEXT_STATE_BINDING_MISSING
   uid: ASSET-01-ACT-LAYER-DELETE
   detail: no state_effect, state transition, or port state_event transition
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-  candidate_evidence:
-  - &id007
-    proof_kind: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-    port_uid: ASSET-01-PORT-LAYER-DELETE
-    state_event: layer document version increments
-    bounded_output: COPY_EXACT_PORT_STATE_EVENT_AS_SUCCESS_STATE_EFFECT_ONLY
-  authorized_for_auto_completion: true
-  proof: *id007
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -1114,6 +1152,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -1125,6 +1164,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -1136,6 +1176,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -1147,22 +1188,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: SUCCESS_NEXT_STATE_BINDING_MISSING
   uid: ASSET-01-ACT-LAYER-DUPLICATE
   detail: no state_effect, state transition, or port state_event transition
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-  candidate_evidence:
-  - &id008
-    proof_kind: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-    port_uid: ASSET-01-PORT-LAYER-DUP
-    state_event: layer document version increments
-    bounded_output: COPY_EXACT_PORT_STATE_EVENT_AS_SUCCESS_STATE_EFFECT_ONLY
-  authorized_for_auto_completion: true
-  proof: *id008
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -1174,6 +1212,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -1185,6 +1224,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -1196,6 +1236,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -1207,22 +1248,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: SUCCESS_NEXT_STATE_BINDING_MISSING
   uid: ASSET-01-ACT-LAYER-REORDER
   detail: no state_effect, state transition, or port state_event transition
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-  candidate_evidence:
-  - &id009
-    proof_kind: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-    port_uid: ASSET-01-PORT-LAYER-REORDER
-    state_event: layer document version increments
-    bounded_output: COPY_EXACT_PORT_STATE_EVENT_AS_SUCCESS_STATE_EFFECT_ONLY
-  authorized_for_auto_completion: true
-  proof: *id009
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -1234,6 +1272,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -1245,6 +1284,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -1256,6 +1296,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -1267,22 +1308,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: SUCCESS_NEXT_STATE_BINDING_MISSING
   uid: ASSET-01-ACT-LAYER-PROPERTIES
   detail: no state_effect, state transition, or port state_event transition
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-  candidate_evidence:
-  - &id010
-    proof_kind: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-    port_uid: ASSET-01-PORT-LAYER-PROPS
-    state_event: layer document version increments
-    bounded_output: COPY_EXACT_PORT_STATE_EVENT_AS_SUCCESS_STATE_EFFECT_ONLY
-  authorized_for_auto_completion: true
-  proof: *id010
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -1294,6 +1332,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -1305,6 +1344,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -1316,6 +1356,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -1327,22 +1368,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: SUCCESS_NEXT_STATE_BINDING_MISSING
   uid: ASSET-01-ACT-LAYER-MASK
   detail: no state_effect, state transition, or port state_event transition
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-  candidate_evidence:
-  - &id011
-    proof_kind: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-    port_uid: ASSET-01-PORT-LAYER-MASK
-    state_event: layer document version increments
-    bounded_output: COPY_EXACT_PORT_STATE_EVENT_AS_SUCCESS_STATE_EFFECT_ONLY
-  authorized_for_auto_completion: true
-  proof: *id011
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -1354,6 +1392,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -1365,6 +1404,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -1376,22 +1416,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: SUCCESS_NEXT_STATE_BINDING_MISSING
   uid: ASSET-01-ACT-PATCH-CREATE
   detail: no state_effect, state transition, or port state_event transition
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-  candidate_evidence:
-  - &id012
-    proof_kind: DETERMINISTIC_ACTION_PORT_STATE_EFFECT_PROJECTION
-    port_uid: ASSET-01-PORT-PATCH-CREATE
-    state_event: asset.patch.created
-    bounded_output: COPY_EXACT_PORT_STATE_EVENT_AS_SUCCESS_STATE_EFFECT_ONLY
-  authorized_for_auto_completion: true
-  proof: *id012
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -1403,6 +1440,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -1414,6 +1452,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -1425,6 +1464,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -1436,6 +1476,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -1447,6 +1488,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -1458,6 +1500,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -1469,6 +1512,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -1480,6 +1524,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: FAILURE_STATE_ERROR_BINDING_MISSING
@@ -1491,6 +1536,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: POST_ACTION_VALIDATION_NODE_MISSING
@@ -1502,6 +1548,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: INPUT_SOURCE_GAP
   category: PAYLOAD_INPUT_CONTRACT_MISSING
@@ -1513,6 +1560,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: AUDIT_EVENT_NODE_MISSING
@@ -1524,6 +1572,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1535,6 +1584,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1546,6 +1596,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1557,6 +1608,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1568,25 +1620,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
   uid: ASSET-01-STTR-01
   detail: illegal_transition_tests
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_REQUIRED_DEPENDENCY
-  candidate_evidence:
-  - &id013
-    proof_kind: DETERMINISTIC_REQUIRED_DEPENDENCY
-    transition_uid: ASSET-01-STTR-01
-    from_stage: ASSET-01-STAGE-01-RESOLVE
-    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
-    trigger: ASSET-01-ACT-FLOW-START
-    gate: ASSET-01-GATE-EXECUTE
-    bounded_output: GENERATE_NEGATIVE_TESTS_ONLY_NO_STATE_OR_AUTHORITY_VALUE_INVENTION
-  authorized_for_auto_completion: true
-  proof: *id013
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1598,6 +1644,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1609,6 +1656,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1620,6 +1668,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1631,25 +1680,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
   uid: ASSET-01-STTR-02
   detail: illegal_transition_tests
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_REQUIRED_DEPENDENCY
-  candidate_evidence:
-  - &id014
-    proof_kind: DETERMINISTIC_REQUIRED_DEPENDENCY
-    transition_uid: ASSET-01-STTR-02
-    from_stage: ASSET-01-STAGE-02-REUSE-GENERATE
-    to_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
-    trigger: Verified Candidate/Reuse Resolution
-    gate: all required items resolved or valid candidate produced
-    bounded_output: GENERATE_NEGATIVE_TESTS_ONLY_NO_STATE_OR_AUTHORITY_VALUE_INVENTION
-  authorized_for_auto_completion: true
-  proof: *id014
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1661,6 +1704,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1672,6 +1716,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1683,6 +1728,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1694,25 +1740,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
   uid: ASSET-01-STTR-03
   detail: illegal_transition_tests
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_REQUIRED_DEPENDENCY
-  candidate_evidence:
-  - &id015
-    proof_kind: DETERMINISTIC_REQUIRED_DEPENDENCY
-    transition_uid: ASSET-01-STTR-03
-    from_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
-    to_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
-    trigger: ASSET-01-ACT-EVALUATE
-    gate: candidate/layer/composite provenance PASS
-    bounded_output: GENERATE_NEGATIVE_TESTS_ONLY_NO_STATE_OR_AUTHORITY_VALUE_INVENTION
-  authorized_for_auto_completion: true
-  proof: *id015
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1724,6 +1764,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1735,6 +1776,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1746,6 +1788,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1757,25 +1800,19 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
   uid: ASSET-01-STTR-04
   detail: illegal_transition_tests
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_REQUIRED_DEPENDENCY
-  candidate_evidence:
-  - &id016
-    proof_kind: DETERMINISTIC_REQUIRED_DEPENDENCY
-    transition_uid: ASSET-01-STTR-04
-    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
-    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
-    trigger: ASSET-01-ACT-CORRECTION-EXECUTE
-    gate: Modify path; approved correction only
-    bounded_output: GENERATE_NEGATIVE_TESTS_ONLY_NO_STATE_OR_AUTHORITY_VALUE_INVENTION
-  authorized_for_auto_completion: true
-  proof: *id016
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1787,6 +1824,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1798,6 +1836,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1809,6 +1848,7 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
@@ -1820,24 +1860,18 @@ records:
   candidate_evidence: []
   authorized_for_auto_completion: false
   proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
 - page_uid: ASSET-01
   class: ARCHITECTURE_GAP
   category: STATE_TRANSITION_LEDGER_FIELD_MISSING
   uid: ASSET-01-STTR-05
   detail: illegal_transition_tests
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
-  disposition: BOUNDED_COMPLETION_ADMISSIBLE
-  completion_basis: DETERMINISTIC_REQUIRED_DEPENDENCY
-  candidate_evidence:
-  - &id017
-    proof_kind: DETERMINISTIC_REQUIRED_DEPENDENCY
-    transition_uid: ASSET-01-STTR-05
-    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
-    to_stage: ASSET-01-STAGE-05-FINALIZE
-    trigger: ASSET-01-ACT-CANDIDATE-CONFIRM
-    gate: ASSET-01-GATE-CONFIRM
-    bounded_output: GENERATE_NEGATIVE_TESTS_ONLY_NO_STATE_OR_AUTHORITY_VALUE_INVENTION
-  authorized_for_auto_completion: true
-  proof: *id017
-next_action: MATERIALIZE_ONLY_BOUNDED_COMPLETION_ADMISSIBLE_RECORDS_THEN_DUAL_LAYER_REEXECUTION
+  disposition: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS
+  completion_basis: NO_EXACT_MISSING_FIELD_OR_UNIQUE_DETERMINISTIC_DEPENDENCY
+  candidate_evidence: []
+  authorized_for_auto_completion: false
+  proof: null
+  gap_class_policy: AI_AUTO_FILL_BLOCK
+next_action: NO_AUTO_COMPLETION_UNDER_CURRENT_GAP_CLASS_POLICY_RESOLVE_OWNING_LAYER_OR_AUTHORITY
 stage03_allowed: false
