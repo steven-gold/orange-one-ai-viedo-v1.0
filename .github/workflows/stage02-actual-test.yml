@@ -6,6 +6,15 @@ on:
     paths:
       - '.github/workflows/stage02-actual-test.yml'
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Stage-02 execution mode
+        required: true
+        default: actual-test
+        type: choice
+        options:
+          - actual-test
+          - structural-reexecution-r1
 
 permissions:
   contents: read
@@ -13,7 +22,7 @@ permissions:
 
 jobs:
   stage02-actual-test:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'actual-test' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
@@ -364,7 +373,7 @@ jobs:
           git push origin HEAD:rebuild-v2.1.1
 
   structural-reexecution-r1:
-    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'run structural reexecution r1') }}
+    if: ${{ (github.event_name == 'push' && contains(github.event.head_commit.message, 'run structural reexecution r1')) || (github.event_name == 'workflow_dispatch' && inputs.mode == 'structural-reexecution-r1') }}
     permissions:
       contents: write
       actions: read
@@ -408,6 +417,7 @@ jobs:
           python governance/ci/validate_stage02_state_integrity.py
           python governance/ci/validate_stage02_successor_integrity.py
           python governance/ci/validate_current_stage2_materialized_closure.py
+          python governance/ci/validate_current_stage2_required_outputs.py
       - name: Snapshot Current denominator metadata before fresh reexecution
         run: cp governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json /tmp/stage02-pre-r1-evidence.json
       - name: Prepare clean structural reexecution baseline
@@ -736,3 +746,121 @@ jobs:
           test -n "$(git diff --cached --name-only)" || { echo 'BLOCK: no structural reexecution persistence changes staged' >&2; exit 1; }
           git commit -m "test(stage02): persist structural reexecution R1 current evidence"
           git push origin HEAD:rebuild-v2.1.1
+
+  canonical-preflight-calibration:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'wire canonical preflight calibration') }}
+    permissions:
+      contents: write
+      actions: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 70
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Re-prove Current governance identity before common-engine mutation
+        run: |
+          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_canonical_rule_registry.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+      - name: Materialize and validate the one canonical Stage-02 preflight
+        run: |
+          python governance/ci/compile_stage_execution_preflight.py --materialize
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+      - name: Prove generated delta is exactly the authorized 12-output persistence set
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import subprocess
+          base = '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/'
+          expected = sorted(base + name + '.yaml' for name in [
+              'REQUIRED_FIELD_MANIFEST',
+              'FUNCTIONAL_CHAIN_MANIFEST',
+              'EFFECTIVE_CONTRACT_OVERLAY',
+              'DEPENDENCY_TOPOLOGY',
+              'DENOMINATOR_SNAPSHOT',
+              'CLASSIFICATION_RULESET',
+              'CHANGE_IMPACT_MAP',
+              'STAGE_EXECUTION_PREFLIGHT_RECEIPT',
+              'CURRENT_PROBLEM_REGISTER',
+              'RESOLUTION_LEDGER',
+              'GOVERNANCE_EXECUTION_CONTEXT_RECEIPT',
+              'EXECUTION_CYCLE_PREFLIGHT_RECEIPT',
+          ])
+          status = subprocess.check_output(['git', 'status', '--porcelain=v1', '--untracked-files=all'], text=True)
+          actual = sorted(line[3:] for line in status.splitlines() if line.strip())
+          assert actual == expected, {'expected': expected, 'actual': actual}
+          print('PASS: exact authorized 12-output generated delta')
+          PY
+      - name: Persist exact canonical preflight outputs as an isolated child commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+          files=(
+            "$base/REQUIRED_FIELD_MANIFEST.yaml"
+            "$base/FUNCTIONAL_CHAIN_MANIFEST.yaml"
+            "$base/EFFECTIVE_CONTRACT_OVERLAY.yaml"
+            "$base/DEPENDENCY_TOPOLOGY.yaml"
+            "$base/DENOMINATOR_SNAPSHOT.yaml"
+            "$base/CLASSIFICATION_RULESET.yaml"
+            "$base/CHANGE_IMPACT_MAP.yaml"
+            "$base/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml"
+            "$base/CURRENT_PROBLEM_REGISTER.yaml"
+            "$base/RESOLUTION_LEDGER.yaml"
+            "$base/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml"
+            "$base/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml"
+          )
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "${files[@]}"
+          python - <<'PY'
+          import subprocess
+          base = '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/'
+          expected = sorted(base + name + '.yaml' for name in [
+              'REQUIRED_FIELD_MANIFEST', 'FUNCTIONAL_CHAIN_MANIFEST', 'EFFECTIVE_CONTRACT_OVERLAY',
+              'DEPENDENCY_TOPOLOGY', 'DENOMINATOR_SNAPSHOT', 'CLASSIFICATION_RULESET',
+              'CHANGE_IMPACT_MAP', 'STAGE_EXECUTION_PREFLIGHT_RECEIPT', 'CURRENT_PROBLEM_REGISTER',
+              'RESOLUTION_LEDGER', 'GOVERNANCE_EXECUTION_CONTEXT_RECEIPT', 'EXECUTION_CYCLE_PREFLIGHT_RECEIPT',
+          ])
+          actual = sorted(subprocess.check_output(['git','diff','--cached','--name-only'], text=True).splitlines())
+          assert actual == expected, {'expected': expected, 'actual': actual}
+          print('PASS: staged delta is exactly 12 authorized outputs')
+          PY
+          git commit -m 'test(stage02): persist canonical preflight outputs'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Revalidate canonical preflight on the persistence child
+        run: |
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+      - name: Dispatch and wait for fresh Current Stage-02 replay through the existing R1 producer
+        shell: bash
+        run: |
+          set -euo pipefail
+          child_sha="$(git rev-parse HEAD)"
+          gh workflow run stage02-actual-test.yml --ref rebuild-v2.1.1 -f mode=structural-reexecution-r1
+          replay_run_id=''
+          for _ in $(seq 1 60); do
+            replay_run_id="$(gh run list --workflow stage02-actual-test.yml --branch rebuild-v2.1.1 --event workflow_dispatch --limit 30 --json databaseId,headSha --jq ".[] | select(.headSha == \"${child_sha}\") | .databaseId" | head -n1)"
+            if [ -n "$replay_run_id" ]; then break; fi
+            sleep 5
+          done
+          test -n "$replay_run_id" || { echo 'BLOCK: dispatched fresh Stage-02 replay run was not resolved' >&2; exit 1; }
+          echo "FRESH_STAGE02_REPLAY_RUN_ID=$replay_run_id"
+          gh run watch "$replay_run_id" --exit-status
