@@ -91,7 +91,7 @@ specification_mutation_safety:
   execution_context_lock_required: true
 status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
 next_action: >-
-  AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
+  AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
@@ -103,14 +103,14 @@ resume_control:
   last_closed_work_unit_full_line_run_id: 35237042702
   last_closed_work_unit_evidence_head: 819aca62a3e3ad81a8acc477bdcf847e956420ce
   exact_next_action: >-
-    AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
+    AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
   predecessor_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/attempt-ae42ef7ba4d6
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: false
+  fresh_revalidation_required: true
   selected_execution_profile_preserved: true
   canonical_rule_registry_required_for_fresh_revalidation: true
   website_construction_remains_blocked: true
@@ -135,7 +135,7 @@ stage02_active_attempt:
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: true
   next_action: >-
-    AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
+    AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
   governance_status: PREDECESSOR_FROZEN_ATTEMPT_REVALIDATION_REQUIRED_AFTER_GOVERNANCE_PROMOTION
   closure_credit_under_current_governance: false
   fresh_revalidation_required: true
