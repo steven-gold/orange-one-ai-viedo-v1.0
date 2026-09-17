@@ -44,7 +44,7 @@ jobs:
           PY
           git rm .github/workflows/execution-closure-owning-layer-repair.yml
           git diff --check
-          actual="$(git diff --name-only | sort)"
+          actual="$(git diff --name-only HEAD | sort)"
           expected="$(printf '%s\n' .github/workflows/execution-closure-owning-layer-repair.yml .github/workflows/stage02-actual-test.yml governance/ci/validate_active_consumer_reference_integrity.py | sort)"
           test "$actual" = "$expected" || { printf 'BLOCK: unexpected repair delta\n%s\n' "$actual" >&2; exit 1; }
           git config user.name 'github-actions[bot]'
