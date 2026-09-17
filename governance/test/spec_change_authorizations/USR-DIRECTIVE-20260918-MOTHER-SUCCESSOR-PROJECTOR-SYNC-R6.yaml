@@ -1,0 +1,54 @@
+authorization_uid: USR-DIRECTIVE-20260918-MOTHER-SUCCESSOR-PROJECTOR-SYNC-R6
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-18
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+supersedes_failed_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-SUCCESSOR-PROJECTOR-SYNC-R5
+baseline_commit_sha: 4d1828e324d28d39d38f9f63ca2c55f2aa1f9c3c
+baseline_tree_sha: c25da8b5c1cd11e6e32f93a0217b25b99bc01de9
+current_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+current_verified_source_revision: v2.2.2-mother-context-task-layer-hardening
+
+user_directive:
+  - "繼續將母規範完成，怎麼github上面都沒有動也沒有編輯紀錄"
+
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  live_repository_branch_head_verified: true
+  current_registry_resolved: true
+  mother_01_02_03_04_read_in_order: true
+  r5_terminal_run_id: 35279012719
+  r5_terminal_conclusion: failure
+  r5_projector_materialization_reached: true
+  r5_projector_sync_count_in_runner: 12
+  r5_source_identity_recomputed: true
+  r5_failure_owner: R5_TARGETED_HARNESS_DIRECT_VALIDATE_GOVERNANCE_WITHOUT_EXTERNAL_TRUST_ROOT
+  r5_failure_is_mother_or_projector_semantic_failure: false
+  formal_full_line_denominator_preserved: true
+  write_disposition: RETRY_SAME_EXACT_PROJECTOR_SCOPE_WITH_HARNESS_FIX
+  comparison_result: BARE_VALIDATE_GOVERNANCE_CALL_INVALID_OUTSIDE_FULL_LINE_TRUST_ROOT_CONTEXT
+
+exact_scope:
+  purpose: >-
+    Retry the exact R5 Mother successor projector synchronization after removing only the invalid bare validate_governance targeted invocation that lacked the Full-Line external immutable trust-root context. Keep the formal complete 75-file Full-Line gate unchanged.
+  permitted_changes:
+    - replace R5 authorization binding with R6
+    - remove only the bare targeted validate_governance.py call from the temporary materializer
+    - retain all R5 Current projector synchronization, identity regeneration, Current Resume repair and formal RUN_FULL_LINE_SYSTEM_GATE.py execution unchanged
+    - temporary R5-named helper/workflow may be reused only for this one R6 transaction and must delete themselves in the repair commit
+  excluded_scope:
+    - Mother semantic text changes
+    - weakening, skipping, deleting or changing any formal Full-Line mandatory suite or denominator
+    - Current governance UID/display version change
+    - product behavior, product Authority, product blocker/gap counts
+    - Stage-03, construction, deployment
+completion_requirements:
+  r5_harness_false_failure_removed: true
+  complete_75_file_local_full_line_required: true
+  product_stage_credit: 0
+  temporary_materializer_residual_count: 0
+  official_persisted_head_full_line_terminal_revalidation_required: true

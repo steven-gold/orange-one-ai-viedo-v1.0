@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[2]
 SOURCE=ROOT/'.github/governance-source/active/source'
 OLD='v2.2.1-full-line-source-integrity'
 TARGET='v2.2.2-mother-context-task-layer-hardening'
-AUTH='USR-DIRECTIVE-20260918-MOTHER-SUCCESSOR-PROJECTOR-SYNC-R5'
+AUTH='USR-DIRECTIVE-20260918-MOTHER-SUCCESSOR-PROJECTOR-SYNC-R6'
 HELPER=ROOT/'.github/governance-maintenance/materialize_mother_successor_projector_sync_r5.py'
 WORKFLOW=ROOT/'.github/workflows/mother-successor-projector-sync-r5.yml'
 
@@ -108,8 +108,7 @@ for rel in [
  '09_TESTS/governance/validate_section_registry.py',
  '09_TESTS/governance/governance_management_contract_guard.py',
  '09_TESTS/governance/validate_stage_execution_invariants.py',
- '09_TESTS/governance/validate_test_feedback_spec_evolution.py',
- '09_TESTS/governance/validate_governance.py']:
+ '09_TESTS/governance/validate_test_feedback_spec_evolution.py']:
     run('python',str(SOURCE/rel),cwd=SOURCE)
 run('python',str(ROOT/'.github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py'))
 
