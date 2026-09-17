@@ -1,0 +1,89 @@
+authorization_uid: USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R2
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-18
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+supersedes_unused_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+baseline_commit_sha: d4f26961cc332b63aafeedf773b041d856d5c815
+baseline_tree_sha: 351723b403eef0e36118fa8fb024deccc0586228
+current_governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
+
+user_directive:
+  - "現在不是還在整理母規範嗎怎麼跳到stage-02"
+  - "繼續將母規範整理好"
+
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 12
+  reviewed_existing_owner_ref_count: 10
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+  comparison_result: NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM
+  live_repository_branch_head_verified: true
+  current_registry_resolved: true
+  mother_01_02_03_04_read_in_order: true
+  current_mutation_control_read: true
+  current_closure_protocol_read: true
+  source_identity_contract_read: true
+  section_registry_contract_read: true
+  current_machine_owner_resolution_complete: true
+
+exact_scope:
+  purpose: >-
+    Harden the existing reusable Mother Governance and existing Current machine owners so every conversation and execution cycle resolves Current Truth and the primary task layer before any current-state judgment or effectful work, and so governance-maintenance work cannot be confused with a product Stage work unit or receive product completion credit.
+  permitted_normative_changes:
+    - Reconcile all four Mother documents as one successor package; preserve existing requirements and add only missing task-context closure rules.
+    - Add one mandatory SESSION_BOOTSTRAP_RESUME_GATE with ordered live repository/branch/head, Registry/Current entry, Mother 01 through 04, Current Canonical Authority, task layer, Work Unit/owner, Resume, Evidence, selected profile and entry/DoD/gate/transition resolution.
+    - Add fail-closed behavior for missing, stale, ambiguous or contradictory Current identity, authority, owner, resume, evidence, revision or reference.
+    - Add TASK_LAYER_CLASSIFICATION separating GOVERNANCE_MAINTENANCE, PRODUCT_STAGE_EXECUTION, TEST_OR_VALIDATION_MAINTENANCE, EVIDENCE_STATE_MAINTENANCE and DEPLOYMENT_OR_PRODUCTION.
+    - Lock the primary task so Stage/profile/run identities cannot redefine Current Governance or silently redirect the requested governance-maintenance task into a product Stage.
+    - Add WORK_UNIT_RESOLUTION_GATE when no legal Active Work Unit exists; successor derivation may use registered Authority, authorized change request, impact, dependency and applicability evidence only; AI invention is forbidden.
+    - Prohibit governance cleanup, validator/harness repair, evidence/state repair, reference repair and CI/gate repair from receiving product-stage gap reduction or product completion credit.
+    - Strengthen stale/deleted/superseded owner fail-closed behavior and complete active/transitive reference reconciliation.
+    - Require observed outer terminal conclusion for terminal closure credit; inner-step success or in-progress workflow is never terminal PASS.
+    - Update only the existing canonical machine owners for execution-cycle and validation/remediation/closure policy; do not create a parallel policy component.
+  permitted_supporting_changes:
+    - .github/governance-source/active/source/** only for authorized Mother successor, section/management machine bindings, compiled baseline, root-manifest, checksum and source-identity synchronization
+    - .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+    - .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+    - governance/specifications/current/**
+    - governance/specifications/REGISTRY.yaml
+    - GOVERNANCE_CURRENT.yaml
+    - governance/ci/**
+    - governance/test/**
+    - temporary governance-maintenance materializer/workflow that must delete itself in the successor commit
+  excluded_scope:
+    - ACPOS product or business behavior changes
+    - Supplying unresolved Stage-02 product or external Authority values
+    - Product materialization or product gap remediation
+    - Entering any product Stage as the primary task
+    - Stage-03 progression
+    - Website feature construction
+    - Production deployment
+    - Deleting valid historical provenance
+
+completion_requirements:
+  all_four_mother_files_reconciled: true
+  bootstrap_resume_gate_machine_enforceable: true
+  task_layer_classification_machine_enforceable: true
+  work_unit_resolution_gate_machine_enforceable: true
+  governance_maintenance_zero_product_credit_enforced: true
+  current_history_stage_profile_role_separation_enforced: true
+  active_transitive_reference_integrity_enforced: true
+  new_immutable_governance_uid_required: true
+  registry_manifest_atomic_binding_required: true
+  verified_source_checksum_identity_resynchronized: true
+  temporary_materializer_residual_count: 0
+  targeted_regression_required: true
+  full_line_high_pressure_validation_required: true
+  website_construction_allowed: false
+  deployment_allowed: false

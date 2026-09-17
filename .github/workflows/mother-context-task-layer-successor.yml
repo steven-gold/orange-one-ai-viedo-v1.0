@@ -1,0 +1,55 @@
+name: Mother Context Task-Layer Successor Materializer
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - 'governance/test/spec_change_authorizations/USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R2.yaml'
+      - '.github/governance-maintenance/materialize_mother_context_task_layer_successor.py'
+      - '.github/workflows/mother-context-task-layer-successor.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-authorized-successor:
+    if: ${{ github.event.head_commit.message == 'chore(governance): authorize mother context task-layer hardening R2' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Assert exact authorization parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "d4f26961cc332b63aafeedf773b041d856d5c815"
+          test -f governance/test/spec_change_authorizations/USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R2.yaml
+      - name: Materialize authorized Mother successor and run targeted validators
+        run: python .github/governance-maintenance/materialize_mother_context_task_layer_successor.py
+      - name: Verify transaction diff hygiene
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          test ! -e .github/governance-maintenance/materialize_mother_context_task_layer_successor.py
+          test ! -e .github/workflows/mother-context-task-layer-successor.yml
+          git status --short
+      - name: Persist atomic successor
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'steven-gold'
+          git config user.email 'proorangeone@gmail.com'
+          git add -A
+          git commit -m "feat(governance): promote mother context task-layer hardening" \
+            -m "Spec-Change-Authorization: USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R2" \
+            -m "Spec-Change-Scope: MOTHER_CONTEXT_TASK_LAYER_HARDENING"
+          git push origin HEAD:rebuild-v2.1.1
