@@ -1,0 +1,74 @@
+authorization_uid: USR-DIRECTIVE-20260918-MOTHER-SUCCESSOR-PROJECTOR-SYNC-R5
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-18
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+baseline_commit_sha: 375102f777dc786df5feb0e39ac04592c6509008
+baseline_tree_sha: cc194abbafc1b9c0ee9e1df26550b8b0bb1feae8
+current_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+current_verified_source_revision: v2.2.2-mother-context-task-layer-hardening
+
+user_directive:
+  - "繼續將母規範完成，怎麼github上面都沒有動也沒有編輯紀錄"
+
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  live_repository_branch_head_verified: true
+  current_registry_resolved: true
+  mother_01_02_03_04_read_in_order: true
+  current_mutation_control_read: true
+  current_closure_protocol_read: true
+  source_identity_contract_read: true
+  current_machine_owner_resolution_complete: true
+  full_line_failure_run_id: 35278225179
+  full_line_failure_isolated_to_complete_75_file_lifecycle_step: true
+  selected_profile_same_tree_terminal_success: true
+  repository_three_branch_guard_same_tree_terminal_success: true
+  write_disposition: MODIFY_EXISTING_CURRENT_PROJECTORS
+  comparison_result: STALE_CURRENT_PROJECTOR_REVISION_SPLIT_CONFIRMED
+
+exact_scope:
+  purpose: >-
+    Complete the already-promoted Mother context/task-layer successor by synchronizing every verified-source Current registry projector still pinned to the predecessor source revision, refreshing derived source identity, and fixing Current governance-maintenance Resume/validation state without changing Mother semantics or product behavior.
+  permitted_changes:
+    - .github/governance-source/active/source/10_REGISTRY/*.yaml Current top-level governance_revision projectors that still equal v2.2.1-full-line-source-integrity
+    - .github/governance-source/active/source/11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml Current candidate/current_source_revision projectors
+    - derived AUDIT_BASELINE, GOVERNANCE_ROOT_MANIFEST, CHECKSUMS.sha256 and deterministic source identities
+    - .github/governance-source/VERIFY_SOURCE_IDENTITY.py pinned deterministic bundle/zip hashes
+    - .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py pinned checksum/bundle/zip hashes
+    - governance/specifications/current/SPECIFICATION_MANIFEST.yaml source identity projection only
+    - GOVERNANCE_CURRENT.yaml source identity projection only
+    - governance/test/ACTIVE_STATE.yaml governance-maintenance authorization/resume and source revalidation projection only
+    - temporary one-time R5 materializer/workflow which must delete itself in the repair commit
+  excluded_scope:
+    - Mother 01/02/03/04 semantic text changes
+    - Current governance UID or display version change
+    - ACPOS product/business behavior
+    - Stage-02 product or external Authority values
+    - product gap/blocker denominator reduction
+    - Stage-03 progression
+    - website construction
+    - deployment
+    - deleting valid historical provenance
+
+completion_requirements:
+  old_current_registry_projector_revision_count: 0
+  mother_semantic_change_count: 0
+  product_stage_credit: 0
+  verified_source_checksum_identity_resynchronized: true
+  current_manifest_source_identity_resynchronized: true
+  current_resume_points_to_governance_maintenance_revalidation: true
+  temporary_materializer_residual_count: 0
+  targeted_source_validation_required: true
+  complete_75_file_local_gate_required_before_repair_commit: true
+  official_full_line_terminal_revalidation_required_after_repair_commit: true
