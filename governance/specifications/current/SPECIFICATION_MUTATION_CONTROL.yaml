@@ -1,4 +1,4 @@
-schema_version: 5
+schema_version: 6
 artifact_uid: GOV-COMP-SPECIFICATION-MUTATION-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -85,6 +85,7 @@ reference_migration_atomicity_control:
   required_inventory_classes:
   - ACTIVE_WORKFLOW_REFERENCES
   - WORKFLOW_INVOKED_GOVERNANCE_PYTHON_CONSUMERS
+  - TRANSITIVE_EXECUTABLE_OWNER_CONSUMERS
   - DERIVED_TRUST_IDENTITY_CONSUMERS
   - AUTHORITATIVE_DENOMINATOR_CONSUMERS
   - LIFECYCLE_OUTPUT_EXPECTATION_CONSUMERS
@@ -97,6 +98,21 @@ reference_migration_atomicity_control:
   zero_stale_or_broken_current_reference_required: true
   zero_unjustified_residual_required: true
   commit_message_or_declared_migration_count_is_closure_evidence: false
+  required_machine_gate: governance/ci/validate_active_consumer_reference_integrity.py
+post_write_reconciliation_control:
+  same_transaction_as_promotion_required: true
+  complete_registered_current_projector_rebuild_required: true
+  complete_active_and_transitive_consumer_sweep_required: true
+  residual_classification_requires_content_semantic_review: true
+  count_only_cleanup_claim: BLOCK
+  superseded_current_projector_required_count: 0
+  stale_current_reference_required_count: 0
+  unjustified_residual_required_count: 0
+  unknown_residual_disposition: BLOCK
+  historical_failure_may_receive_current_credit: false
+  terminal_run_conclusion_must_be_observed_before_current_closure_projection: true
+  inner_step_pass_may_substitute_terminal_run_pass: false
+  same_run_preterminal_self_projection_of_terminal_pass: FORBIDDEN
   required_machine_gate: governance/ci/validate_active_consumer_reference_integrity.py
 fatal_specification_contradiction_exception:
   default: DENY
@@ -115,10 +131,12 @@ promotion_gate:
   - ASSIGN_NEW_IMMUTABLE_GOVERNANCE_UID
   - ATOMICALLY_MIGRATE_ACTIVE_REFERENCES_DERIVED_IDENTITIES_DENOMINATORS_AND_PROJECTORS
   - UPDATE_REGISTRY_MANIFEST_CANONICAL_RULE_BINDING_ATOMICALLY
+  - POST_WRITE_RECONCILE_COMPLETE_PROJECTORS_CONSUMERS_AND_RESIDUALS
   - VERIFY_PERSISTED_HEAD_REFERENCE_INTEGRITY
   - VERIFY_ACTIVE_CONSUMER_PROJECTIONS
   - RUN_CONTAMINATION_CONTRADICTION_PORTABILITY_GATES
   - RUN_GOVERNANCE_REGRESSION_AND_STRESS_GATES
+  - VERIFY_TERMINAL_RUN_CONCLUSION
   - FRESHLY_REVERIFY_AFFECTED_EXECUTION_SCOPE
   unauthorized_scope_expansion: BLOCK
 status: ACTIVE

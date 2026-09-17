@@ -91,68 +91,186 @@ def verify_receipt_identity_lock(parent_auth: str) -> list[str]:
         return ["EXECUTION_CONTEXT_BASELINE_IDENTITY_MISSING"]
     grandparent = git("rev-parse", "HEAD^^", check=False).strip()
     if not grandparent or grandparent != baseline:
-        errors.append(f"EXECUTION_CONTEXT_HEAD_DRIFT expected_baseline={baseline} actual_pre_authorization_parent={grandparent or 'MISSING'}")
+        errors.append(
+            f"EXECUTION_CONTEXT_HEAD_DRIFT expected_baseline={baseline} "
+            f"actual_pre_authorization_parent={grandparent or 'MISSING'}"
+        )
     actual_tree = git("rev-parse", f"{baseline}^{{tree}}", check=False).strip()
     if not actual_tree or actual_tree != baseline_tree:
-        errors.append(f"EXECUTION_CONTEXT_TREE_DRIFT expected={baseline_tree} actual={actual_tree or 'MISSING'}")
+        errors.append(
+            f"EXECUTION_CONTEXT_TREE_DRIFT expected={baseline_tree} actual={actual_tree or 'MISSING'}"
+        )
     parent_registry = git("show", "HEAD^:governance/specifications/REGISTRY.yaml", check=False)
     expected_uid = scalar(parent_auth, "current_governance_uid")
     if parent_registry and expected_uid:
         data = yaml.safe_load(parent_registry) or {}
         actual_uid = ((data.get("active_specification") or {}).get("governance_uid"))
         if actual_uid != expected_uid:
-            errors.append(f"EXECUTION_CONTEXT_GOVERNANCE_UID_DRIFT expected={expected_uid} actual={actual_uid}")
+            errors.append(
+                f"EXECUTION_CONTEXT_GOVERNANCE_UID_DRIFT expected={expected_uid} actual={actual_uid}"
+            )
     else:
         errors.append("EXECUTION_CONTEXT_PARENT_REGISTRY_OR_UID_MISSING")
     return errors
 
 
+def current_uid_binding_errors() -> list[str]:
+    errors = []
+    try:
+        registry = yaml.safe_load((ROOT / "governance/specifications/REGISTRY.yaml").read_text()) or {}
+        manifest = yaml.safe_load((ROOT / "governance/specifications/current/SPECIFICATION_MANIFEST.yaml").read_text()) or {}
+        current = yaml.safe_load((ROOT / "GOVERNANCE_CURRENT.yaml").read_text()) or {}
+        active = yaml.safe_load((ROOT / "governance/test/ACTIVE_STATE.yaml").read_text()) or {}
+    except Exception as exc:
+        return [f"POSTWRITE_CURRENT_BINDING_PARSE_FAILED:{exc}"]
+
+    values = {
+        "REGISTRY": (registry.get("active_specification") or {}).get("governance_uid"),
+        "MANIFEST": manifest.get("artifact_uid"),
+        "GOVERNANCE_CURRENT": current.get("active_governance_uid"),
+        "ACTIVE_STATE": active.get("specification_uid"),
+        "ACTIVE_STATE_TRANSITION": (active.get("governance_revision_transition") or {}).get("current_governance_uid"),
+    }
+    expected = values["REGISTRY"]
+    if not expected:
+        errors.append("POSTWRITE_CURRENT_UID_MISSING:REGISTRY")
+        return errors
+    for owner, value in values.items():
+        if value != expected:
+            errors.append(f"POSTWRITE_CURRENT_UID_DRIFT:{owner}:expected={expected}:actual={value}")
+
+    parent_registry_text = git("show", "HEAD^:governance/specifications/REGISTRY.yaml", check=False)
+    if parent_registry_text:
+        parent_registry = yaml.safe_load(parent_registry_text) or {}
+        old_uid = (parent_registry.get("active_specification") or {}).get("governance_uid")
+        if old_uid == expected:
+            errors.append("NORMATIVE_MUTATION_WITHOUT_NEW_IMMUTABLE_GOVERNANCE_UID")
+    return errors
+
+
+def post_write_reconciliation_errors(parent_auth: str) -> list[str]:
+    errors = current_uid_binding_errors()
+    if "duplicate_and_residual_cleanup_required: true" in parent_auth:
+        validator = ROOT / "governance/ci/validate_active_consumer_reference_integrity.py"
+        if not validator.is_file():
+            errors.append("POSTWRITE_ACTIVE_CONSUMER_VALIDATOR_MISSING")
+        else:
+            cp = subprocess.run(
+                [sys.executable, str(validator)],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+            )
+            if cp.returncode != 0:
+                tail = (cp.stderr or cp.stdout).strip().replace("\n", " | ")
+                errors.append(f"POSTWRITE_ACTIVE_CONSUMER_RECONCILIATION_FAILED:{tail[:1200]}")
+    protocol = ROOT / "governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml"
+    if "one_canonical_execution_closure_model_required: true" in parent_auth:
+        text = protocol.read_text(encoding="utf-8") if protocol.is_file() else ""
+        required_tokens = (
+            "POST_WRITE_RECONCILIATION",
+            "REBUILD_COMPLETE_REGISTERED_CURRENT_PROJECTOR_SET",
+            "VERIFY_TERMINAL_RUN_CONCLUSION",
+            "inner_step_pass_is_terminal_run_pass: false",
+            "unknown_residual_disposition: BLOCK",
+        )
+        for token in required_tokens:
+            if token not in text:
+                errors.append(f"POSTWRITE_CLOSURE_PROTOCOL_TOKEN_MISSING:{token}")
+    return errors
+
+
 def main():
     if not (ROOT / ".git").exists():
-        print("BLOCK: SPEC_MUTATION_GUARD_REQUIRES_GIT_CHECKOUT", file=sys.stderr); return 2
+        print("BLOCK: SPEC_MUTATION_GUARD_REQUIRES_GIT_CHECKOUT", file=sys.stderr)
+        return 2
     if subprocess.run(["git", "rev-parse", "HEAD^"], cwd=ROOT, capture_output=True).returncode != 0:
-        print("BLOCK: SPEC_MUTATION_GUARD_REQUIRES_PARENT_COMMIT", file=sys.stderr); return 2
+        print("BLOCK: SPEC_MUTATION_GUARD_REQUIRES_PARENT_COMMIT", file=sys.stderr)
+        return 2
+
     changed = [p for p in git("diff", "--name-only", "HEAD^", "HEAD").splitlines() if p]
     protected_changed = [p for p in changed if protected(p)]
     if not protected_changed:
-        print("PASS: no Current Specification / Registry / compatibility-entrypoint mutation in this commit"); return 0
+        print("PASS: no Current Specification / Registry / compatibility-entrypoint mutation in this commit")
+        return 0
+
     message = git("log", "-1", "--pretty=%B")
     auth_uid = trailer(message, "Spec-Change-Authorization")
     scope = trailer(message, "Spec-Change-Scope")
     if not auth_uid or not scope:
-        print("BLOCK: protected governance mutation without explicit Spec-Change-Authorization and Spec-Change-Scope trailers", file=sys.stderr); return 1
+        print(
+            "BLOCK: protected governance mutation without explicit "
+            "Spec-Change-Authorization and Spec-Change-Scope trailers",
+            file=sys.stderr,
+        )
+        return 1
+
     auth_rel = f"{AUTH_ROOT}/{auth_uid}.yaml"
     parent_auth = git("show", f"HEAD^:{auth_rel}", check=False)
     if not parent_auth:
-        print(f"BLOCK: authorization {auth_uid} did not exist in parent commit", file=sys.stderr); return 1
+        print(f"BLOCK: authorization {auth_uid} did not exist in parent commit", file=sys.stderr)
+        return 1
+
     required = (
-        f"authorization_uid: {auth_uid}", "artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT",
-        "normative_authority: false", "authority_source: EXPLICIT_USER_DIRECTIVE", "single_use: true",
-        "status: APPROVED_FOR_EXACT_SCOPE", "ai_may_expand_scope: false", "ai_may_reuse_authorization: false",
+        f"authorization_uid: {auth_uid}",
+        "artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT",
+        "normative_authority: false",
+        "authority_source: EXPLICIT_USER_DIRECTIVE",
+        "single_use: true",
+        "status: APPROVED_FOR_EXACT_SCOPE",
+        "ai_may_expand_scope: false",
+        "ai_may_reuse_authorization: false",
     )
     missing = [token for token in required if token not in parent_auth]
     if missing:
         print("BLOCK: authorization receipt missing required fail-closed fields", file=sys.stderr)
-        for token in missing: print("MISSING:", token, file=sys.stderr)
+        for token in missing:
+            print("MISSING:", token, file=sys.stderr)
         return 1
+
     errors = prewrite_context_errors(parent_auth) + verify_receipt_identity_lock(parent_auth)
     if errors:
         print("BLOCK: authorization receipt / execution context lock invalid", file=sys.stderr)
-        for error in errors: print("MISSING_OR_INVALID:", error, file=sys.stderr)
+        for error in errors:
+            print("MISSING_OR_INVALID:", error, file=sys.stderr)
         return 1
+
     reused, prior_sha = prior_authorization_use_exists(auth_uid)
     if reused:
-        print(f"BLOCK: single-use authorization already consumed: {auth_uid} prior_commit={prior_sha}", file=sys.stderr); return 1
-    forbidden_claims = ("AUTO_AUTHORIZED_BY_TEST_FAILURE", "AUTO_AUTHORIZED_BY_CONSTRUCTION", "AUTO_AUTHORIZED_BY_IMPLEMENTATION", "AUTO_AUTHORIZED_BY_VERSION_BUMP")
+        print(
+            f"BLOCK: single-use authorization already consumed: {auth_uid} prior_commit={prior_sha}",
+            file=sys.stderr,
+        )
+        return 1
+
+    forbidden_claims = (
+        "AUTO_AUTHORIZED_BY_TEST_FAILURE",
+        "AUTO_AUTHORIZED_BY_CONSTRUCTION",
+        "AUTO_AUTHORIZED_BY_IMPLEMENTATION",
+        "AUTO_AUTHORIZED_BY_VERSION_BUMP",
+    )
     if any(token in message for token in forbidden_claims):
-        print("BLOCK: invalid automatic specification-change authority claim", file=sys.stderr); return 1
+        print("BLOCK: invalid automatic specification-change authority claim", file=sys.stderr)
+        return 1
+
+    post_errors = post_write_reconciliation_errors(parent_auth)
+    if post_errors:
+        print("BLOCK: atomic promotion post-write reconciliation failed", file=sys.stderr)
+        for error in post_errors:
+            print("POSTWRITE:", error, file=sys.stderr)
+        return 1
+
     print(f"PASS: protected governance mutation authorized by pre-existing explicit user directive {auth_uid}")
     print("PASS: execution context identity lock matches pre-authorization parent commit/tree and parent governance UID")
     print("PASS: pre-write context verification proves read/owner/duplicate/conflict/second-system/gap checks")
+    print("PASS: post-write Current UID/projector/consumer reconciliation is part of the same promotion transaction")
+    print("PASS: content-semantic residual cleanup is machine-gated; count-only closure is rejected")
     print(f"PASS: authorization scope trailer={scope}")
     print("PASS: protected changed paths:")
-    for path in protected_changed: print("-", path)
+    for path in protected_changed:
+        print("-", path)
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

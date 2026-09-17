@@ -1,4 +1,4 @@
-schema_version: 3
+schema_version: 4
 artifact_uid: GOV-COMP-VALIDATION-REMEDIATION-CLOSURE-PROTOCOL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -17,17 +17,30 @@ principles:
   ai_may_invent_missing_product_authority: false
   external_authority_auto_resolution: false
   mixed_governance_uid_evidence_for_one_closure: false
+  inner_step_pass_is_terminal_run_pass: false
+  failed_terminal_run_may_close_work_unit: false
+  file_count_or_residual_count_without_semantic_review_is_cleanup_proof: false
 canonical_cycle:
+- RESOLVE_CURRENT_TRUTH_AND_CANONICAL_OWNER
 - FREEZE_CURRENT_POLICY_AND_INPUT_BASELINE
+- COMPILE_APPLICABILITY_DEPENDENCY_VALIDATOR_AND_PROJECTOR_PLAN
 - RUN_SYSTEM_DEFINITION_AND_HIGH_PRESSURE_GATES
 - EXECUTE_FRESH_PHYSICAL_VALIDATION
 - CLASSIFY_DEFECT_ROOT_CAUSE_AND_OWNER
 - MATERIALLY_REMEDIATE_AT_OWNER
+- PRE_WRITE_RECONCILIATION
+- WRITE_AUTHORIZED_CHANGE_SET
+- POST_WRITE_RECONCILIATION
+- REBUILD_COMPLETE_REGISTERED_CURRENT_PROJECTOR_SET
+- SWEEP_COMPLETE_ACTIVE_AND_TRANSITIVE_CONSUMER_SET
+- CLASSIFY_RESIDUALS_BY_CONTENT_OWNER_REFERENCE_AND_RETENTION_ROLE
+- REMOVE_OR_MIGRATE_SUPERSEDED_ACTIVE_CONTENT
 - RESET_REPLACEABLE_OUTPUT_AND_EVIDENCE
 - RUN_REGRESSION
 - FRESHLY_REEXECUTE
 - VERIFY_KNOWN_SIGNATURE_ZERO
 - RUN_HIDDEN_DEFECT_SWEEP
+- VERIFY_TERMINAL_RUN_CONCLUSION
 - REVIEW_REUSABLE_POLICY_CANDIDATES
 - PROMOTE_ONLY_IF_EXPLICITLY_AUTHORIZED
 - MAKE_CLOSURE_DECISION
@@ -43,17 +56,76 @@ material_remediation:
   audit_or_diagnosis_only: NOT_REMEDIATION
   evidence_only_without_owning_layer_change: NOT_REMEDIATION
   external_authority_gap: PRESERVE_UNRESOLVED_AND_BLOCK_APPLICABLE_CLOSURE
+validator_applicability:
+  owner: CANONICAL_PREFLIGHT_COMPILER
+  applicability_must_be_resolved_before_validator_selection: true
+  workflow_local_validator_selection_policy: FORBIDDEN
+  workflow_may_orchestrate_compiled_plan_only: true
+  stale_missing_or_out_of_domain_validator_target: BLOCK_AT_ADMISSION
+active_consumer_and_projector_integrity:
+  complete_active_workflow_inventory_required: true
+  transitive_invoked_consumer_graph_required: true
+  complete_projector_inventory_source: GOVERNANCE_SPECIFICATION_REGISTRY
+  handwritten_projector_subset_may_define_completeness: false
+  every_state_mutation_producer_must_project_complete_registered_set: true
+  partial_current_projection: BLOCK_BEFORE_PERSISTENCE
+  stale_current_reference_required_count: 0
+persistence_transaction:
+  pre_write_reconciliation_required: true
+  post_write_reconciliation_required: true
+  promotion_and_cleanup_are_one_closure_transaction: true
+  superseded_active_content_may_survive_terminal_closure: false
+  unknown_residual_disposition: BLOCK
+  unjustified_residual_files_required_count: 0
+residual_classification:
+  semantic_content_review_required: true
+  count_is_summary_not_classification: true
+  required_dimensions:
+  - CANONICAL_OWNER
+  - FORWARD_REFERENCE
+  - REVERSE_REFERENCE
+  - RUNTIME_OR_WORKFLOW_REACHABILITY
+  - TEST_REGRESSION_ROLE
+  - HISTORICAL_RETENTION_ROLE
+  dispositions:
+    CURRENT_REQUIRED: KEEP_ACTIVE
+    HISTORICAL_PROVENANCE: KEEP_NON_CURRENT
+    NEGATIVE_REGRESSION_PATTERN: KEEP_AS_NON_CURRENT_TEST_OR_SIGNATURE
+    SUPERSEDED_ACTIVE_CONTENT: REMOVE_OR_MIGRATE
+    DEAD_OR_UNREFERENCED_ACTIVE_CONTENT: REMOVE
+    TEMP_BACKUP_COPY_EMPTY_OR_INTERMEDIATE: REMOVE
+    UNKNOWN: BLOCK
+historical_failure_semantics:
+  historical_failed_evidence_may_be_deleted_only_because_it_failed: false
+  historical_failed_evidence_may_receive_current_authority_credit: false
+  historical_failed_evidence_may_receive_current_closure_credit: false
+  known_failure_pattern_should_be_bound_as_negative_regression: true
+  original_failure_evidence_role: PROVENANCE_ONLY
+terminal_result_semantics:
+  inner_step_pass_is_terminal_run_pass: false
+  workflow_in_progress_may_project_terminal_pass: false
+  terminal_success_required_for_closure_credit: true
+  terminal_failure_cancel_timeout_or_skipped_blocks_closure_credit: true
+  current_terminal_pass_projection_must_be_based_on_observed_terminal_conclusion: true
+  same_run_preterminal_self_projection_of_terminal_pass: FORBIDDEN
+  terminal_receipt_projection_must_be_external_to_or_after_terminal_conclusion: true
 retest_and_regression:
   clean_registered_baseline_required: true
   same_governance_uid_until_authorized_promotion: true
   fresh_reexecution_required: true
   known_remediable_signature_reproduction_count: 0
   same_signature_after_claimed_fix: REMEDIATION_FAILURE
+  success_and_failure_path_regression_required_for_reusable_invariant: true
 closure_gate:
   all_discovered_remediable_defects_materially_eliminated: REQUIRED
   new_blocking_defect_count: 0
   required_outputs_complete: REQUIRED
   external_authority_resolved_or_formally_non_applicable: REQUIRED_WHERE_CLOSURE_DEPENDS_ON_IT
   hidden_defect_sweep: PASS_REQUIRED
+  complete_registered_current_projectors: PASS_REQUIRED
+  complete_active_transitive_consumer_sweep: PASS_REQUIRED
+  unjustified_residual_files: ZERO_REQUIRED
+  stale_current_references: ZERO_REQUIRED
+  terminal_run_conclusion: PASS_REQUIRED
   evidence_chain_complete: REQUIRED
   otherwise: BLOCK_ADVANCE

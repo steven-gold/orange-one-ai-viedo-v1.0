@@ -1,5 +1,5 @@
-schema_version: 6
-artifact_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
+schema_version: 7
+artifact_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
 artifact_type: STABLE_CURRENT_SPECIFICATION_MANIFEST
 normative_status: ACTIVE_CURRENT_GOVERNANCE
 display_version: v2.2.2
@@ -35,10 +35,10 @@ source_lineage:
   exact_full_zip_binary_materialized_in_git: false
   full_source_materialized_in_git: true
   full_source_root: .github/governance-source/active/source
-  predecessor_governance_uid: GOV-REV-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
-  promotion_authorization_uid: USR-DIRECTIVE-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE-R2
-  source_bytes_changed_by_this_successor: true
-  source_identity_reused_only_because_source_bytes_are_unchanged: false
+  predecessor_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
+  promotion_authorization_uid: USR-DIRECTIVE-20260917-MOTHER-EXECUTION-CLOSURE-HARDENING
+  source_bytes_changed_by_this_successor: false
+  source_identity_reused_only_because_source_bytes_are_unchanged: true
   deterministic_source_bundle_sha256: ccbe7e107b074139606df6716815d2068e773073b28837e99c48a291519d52af
   checksum_manifest_sha256: 85fe8d33eb6f85428c8ee7c8b916ba870ba9d0e3781b155d9489172f507bfaa1
   semantic_authority_content_hash: 81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a
@@ -72,3 +72,9 @@ closure_policy:
   hidden_defect_sweep_required_before_closure: true
   one_closure_may_mix_governance_uids: false
   canonical_reference_migration_requires_zero_stale_current_reference: true
+  inner_step_pass_is_terminal_run_pass: false
+  terminal_workflow_conclusion_required_for_terminal_credit: true
+  failed_terminal_run_may_project_current_closure_pass: false
+  post_write_reconciliation_required_before_closure: true
+  complete_registered_current_projector_rebuild_required: true
+  residual_disposition_requires_content_semantic_review: true

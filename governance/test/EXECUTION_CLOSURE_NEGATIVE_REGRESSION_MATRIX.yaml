@@ -1,0 +1,21 @@
+schema_version: 1
+artifact_uid: GOV-TEST-EXECUTION-CLOSURE-NEGATIVE-REGRESSION-MATRIX-001
+artifact_type: NON_NORMATIVE_EXECUTION_CLOSURE_NEGATIVE_REGRESSION_MATRIX
+normative_authority: false
+purpose: Prevent recurrence of terminal-result, Current-projector, active-consumer, and residual-cleanup defects.
+cases:
+- case_uid: NEG-TERMINAL-001
+  defect: INNER_STEP_PASS_PRETERMINAL_CURRENT_PASS_PROJECTION
+  synthetic_workflow_text: governance/test/ACTIVE_STATE.yaml GITHUB_RUN_ID PASS_EXECUTION_SOURCE_HEAD
+  expected: BLOCK_PRETERMINAL_CURRENT_CLOSURE_PROJECTION
+- case_uid: NEG-TERMINAL-002
+  defect: SAME_RUN_CLOSED_VERIFIED_PROJECTION
+  synthetic_workflow_text: ACTIVE_STATE.yaml github.run_id CLOSED_VERIFIED
+  expected: BLOCK_PRETERMINAL_CURRENT_CLOSURE_PROJECTION
+- case_uid: NEG-HISTORY-001
+  defect: HISTORICAL_FAILURE_AS_CURRENT_CREDIT
+  expected: BLOCK_BY_TERMINAL_RESULT_SEMANTICS
+- case_uid: NEG-RESIDUAL-001
+  defect: COUNT_ONLY_RESIDUAL_CLOSURE
+  expected: BLOCK_BY_CONTENT_SEMANTIC_RESIDUAL_CLASSIFICATION
+status: ACTIVE_REGRESSION_FIXTURE

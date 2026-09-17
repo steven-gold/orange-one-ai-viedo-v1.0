@@ -1,4 +1,4 @@
-schema_version: 6
+schema_version: 7
 registry_uid: GOV-SPEC-REGISTRY-001
 registry_role: SINGLE_STABLE_GOVERNANCE_ENTRYPOINT
 stable_entrypoint:
@@ -8,7 +8,7 @@ stable_entrypoint:
   test_state_root: governance/test
   active_test_state: governance/test/ACTIVE_STATE.yaml
 active_specification:
-  governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
+  governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
   display_version: v2.2.2
   version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
   aliases:
@@ -19,12 +19,13 @@ active_specification:
   - canonical-reference-migration-atomicity
   - version-role-separation
   - full-line-source-integrity-closure
+  - execution-closure-transaction-hardening
   status: ACTIVE_CURRENT_GOVERNANCE
 immediate_predecessor:
-  governance_uid: GOV-REV-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
+  governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
   display_version: v2.2.2
   version_role: SUPERSEDED_CURRENT_GOVERNANCE_HISTORY
-  status: SUPERSEDED_HISTORY_ONLY_AFTER_FULL_LINE_SOURCE_INTEGRITY_SUCCESSOR
+  status: SUPERSEDED_HISTORY_ONLY_AFTER_EXECUTION_CLOSURE_TRANSACTION_HARDENING
 version_role_contract:
   current_governance_display_version_owner: active_specification
   verified_source_package_version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
@@ -62,6 +63,28 @@ active_consumer_reference_integrity:
   required_in_full_line_regression: true
   persisted_head_verification_required: true
   zero_stale_or_broken_current_reference_required: true
+  transitive_executable_owner_graph_required: true
+  workflow_local_policy_selection_forbidden: true
+  terminal_run_projection_requires_terminal_conclusion: true
+  projector_inventory:
+  - owner: governance/specifications/current/SPECIFICATION_MANIFEST.yaml
+    kind: GOVERNANCE_UID
+    yaml_path: artifact_uid
+  - owner: GOVERNANCE_CURRENT.yaml
+    kind: GOVERNANCE_UID
+    yaml_path: active_governance_uid
+  - owner: governance/test/ACTIVE_STATE.yaml
+    kind: GOVERNANCE_UID
+    yaml_path: specification_uid
+  - owner: governance/test/ACTIVE_STATE.yaml
+    kind: GOVERNANCE_UID
+    yaml_path: governance_revision_transition.current_governance_uid
+  - owner: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+    kind: STAGE02_CURRENT_EXECUTION_CROSSCHECK
+    yaml_path: current_stage2_execution
+  - owner: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+    kind: STAGE02_CURRENT_FINDINGS_CROSSCHECK
+    yaml_path: ROOT
 execution_profile_separation:
   common_policy_profile_neutral: true
   selected_profile_binding_owner: GOVERNANCE_CURRENT.yaml
