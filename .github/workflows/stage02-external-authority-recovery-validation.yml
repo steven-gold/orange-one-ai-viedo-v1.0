@@ -27,13 +27,20 @@ jobs:
           fetch-depth: 0
       - name: Install verifier dependency
         run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
-      - name: Finalize exact authority recovery Work Unit and restore permanent harness
+      - name: Finalize recovery with receipt-only persistence children
         shell: bash
         run: |
           set -euo pipefail
           WORKFLOW='.github/workflows/stage02-external-authority-recovery-validation.yml'
           ORIGINAL_WORKFLOW_BLOB='407b462fc05beb0fc0c38b4d2f76d2d8b91ee8fb'
-          PARENT_ACTION='AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY'
+          BASE='00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+          R1="$BASE/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml"
+          R2="$BASE/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml"
+          R3="$BASE/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml"
+          PARENT_ACTION='AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY'
+          # Preserve the exact canonical parent spelling already persisted before this Work Unit.
+          PARENT_ACTION='AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT MATERIALIZE_WITHOUT_APPROVED_AUTHORITY'
+
           trigger_head="$(git rev-parse HEAD)"
           test "$trigger_head" = "$GITHUB_SHA" || { echo "BLOCK: branch moved before finalizer checkout expected=$GITHUB_SHA actual=$trigger_head" >&2; exit 1; }
 
@@ -83,41 +90,43 @@ jobs:
             '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R2.yaml':'65f821ad766994716f4336e961b1b160b5aac457',
             '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R3.yaml':'acb56fc7df74b50c3ef808dc29b0ef2e668bc92b',
           }
-          for p, want in expected.items():
+          for p,want in expected.items():
               got=subprocess.check_output(['git','hash-object',p],text=True).strip()
               assert got == want, (p,want,got)
           print('PASS: exact 11 recovered authority/materialization blobs retained')
           PY
 
+          # Consumer inventory must already be stable. It is deliberately NOT part of a receipt child.
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          git diff --exit-code -- governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
+
           python governance/ci/compile_stage_execution_preflight.py --materialize
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
           python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
-          python governance/ci/validate_active_consumer_reference_integrity.py
           python governance/ci/specification_mutation_guard.py
           python - <<'PY'
-          from pathlib import Path
           import subprocess
-          base=Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
-          names=['REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT','CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER','GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECEIPT']
-          allowed={(base/f'{n}.yaml').as_posix() for n in names}
-          allowed.add('governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json')
+          receipts={
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml',
+          }
           status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],text=True)
           actual={line[3:] for line in status.splitlines() if line.strip()}
-          unexpected=sorted(actual-allowed)
-          assert not unexpected, {'unexpected_preflight_delta':unexpected,'actual':sorted(actual)}
-          assert actual, 'retry finalizer HEAD must produce canonical active-WU preflight reconciliation'
-          print(f'PASS: active-WU preflight/report delta files={len(actual)}')
+          assert actual == receipts, {'expected_receipt_only_child':sorted(receipts),'actual':sorted(actual)}
+          print('PASS: active-WU persistence delta is exactly three canonical receipts')
           PY
           git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/*.yaml governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
-          git commit -m 'test(stage02): persist exact-head preflight for authority recovery closure'
+          git add "$R1" "$R2" "$R3"
+          git commit -m 'test(stage02): persist receipt-only preflight for authority recovery closure'
           git push origin HEAD:rebuild-v2.1.1
           evidence_head="$(git rev-parse HEAD)"
 
+          # This must resolve as EXACT_PERSISTENCE_CHILD, not current-child identity.
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
           python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
@@ -129,13 +138,13 @@ jobs:
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
           git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
-          echo "PASS: active-WU evidence head=$evidence_head"
+          echo "PASS: active-WU terminal evidence child=$evidence_head"
 
           export AUTH_RECOVERY_PARENT_ACTION="$PARENT_ACTION"
           export AUTH_RECOVERY_EVIDENCE_HEAD="$evidence_head"
           python - <<'PY'
           from pathlib import Path
-          import os, yaml
+          import os,yaml
           state_p=Path('governance/test/ACTIVE_STATE.yaml')
           findings_p=Path('governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml')
           candidates_p=Path('governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml')
@@ -202,12 +211,12 @@ jobs:
           state_p.write_text(yaml.safe_dump(state,sort_keys=False,allow_unicode=True),encoding='utf-8')
           findings_p.write_text(yaml.safe_dump(findings,sort_keys=False,allow_unicode=True),encoding='utf-8')
           candidates_p.write_text(yaml.safe_dump(candidates,sort_keys=False,allow_unicode=True),encoding='utf-8')
-          print('PASS: local authority recovery closure state/projectors prepared with zero product credit')
+          print('PASS: closure state/projectors prepared with zero product credit')
           PY
 
           actual="$(git diff --name-only | sort)"
           expected="$(printf '%s\n' governance/test/ACTIVE_STATE.yaml governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml | sort)"
-          test "$actual" = "$expected" || { printf 'BLOCK: unexpected closure delta\n%s\n' "$actual" >&2; exit 1; }
+          test "$actual" = "$expected" || { printf 'BLOCK: unexpected closure-state delta\n%s\n' "$actual" >&2; exit 1; }
           git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
           git add governance/test/ACTIVE_STATE.yaml governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
@@ -219,8 +228,11 @@ jobs:
           python governance/ci/validate_current_stage2_required_outputs.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           git diff --exit-code -- governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
-          git add 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/*.yaml
-          git commit -m 'test(stage02): persist canonical preflight for authority recovery closure state'
+          actual="$(git diff --name-only | sort)"
+          expected="$(printf '%s\n' "$R1" "$R2" "$R3" | sort)"
+          test "$actual" = "$expected" || { printf 'BLOCK: closure preflight child is not receipt-only\n%s\n' "$actual" >&2; exit 1; }
+          git add "$R1" "$R2" "$R3"
+          git commit -m 'test(stage02): persist receipt-only preflight for authority recovery closure state'
           closure_head="$(git rev-parse HEAD)"
 
           python governance/ci/compile_stage_execution_preflight.py --check
@@ -256,6 +268,7 @@ jobs:
           git push origin "$closure_head":rebuild-v2.1.1
           echo "PASS: closure pushed state=$closure_state_sha head=$closure_head"
 
+          # Persisted readback/revalidation before cleanup.
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
           python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
@@ -265,11 +278,15 @@ jobs:
           python governance/ci/validate_active_consumer_reference_integrity.py
           git diff --exit-code -- governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
-          echo "PASS: persisted authority recovery closure head=$(git rev-parse HEAD)"
+          echo "PASS: persisted closure head=$(git rev-parse HEAD)"
 
+          # Cleanup is a state commit because workflow/reference inventory changes together.
           git show "${original_parent}:${WORKFLOW}" > "$WORKFLOW"
           test "$(git hash-object "$WORKFLOW")" = "$ORIGINAL_WORKFLOW_BLOB"
           python governance/ci/validate_active_consumer_reference_integrity.py
+          actual="$(git diff --name-only | sort)"
+          expected="$(printf '%s\n' "$WORKFLOW" governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json | sort)"
+          test "$actual" = "$expected" || { printf 'BLOCK: unexpected cleanup-state delta\n%s\n' "$actual" >&2; exit 1; }
           git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
           git add "$WORKFLOW" governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
@@ -279,8 +296,12 @@ jobs:
           python governance/ci/compile_stage_execution_preflight.py --materialize
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
-          git add 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/*.yaml
-          git commit -m 'test(stage02): persist canonical preflight after authority recovery closure cleanup'
+          git diff --exit-code -- governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
+          actual="$(git diff --name-only | sort)"
+          expected="$(printf '%s\n' "$R1" "$R2" "$R3" | sort)"
+          test "$actual" = "$expected" || { printf 'BLOCK: cleanup preflight child is not receipt-only\n%s\n' "$actual" >&2; exit 1; }
+          git add "$R1" "$R2" "$R3"
+          git commit -m 'test(stage02): persist receipt-only preflight after authority recovery closure cleanup'
           cleanup_head="$(git rev-parse HEAD)"
 
           python governance/ci/compile_stage_execution_preflight.py --check
