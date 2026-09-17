@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+specification_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -41,7 +41,7 @@ execution:
 full_lifecycle_governance_system_test:
   round: SYSTEM_FULL_LINE_HIGH_PRESSURE_ROUND_1
   meaning: GOVERNANCE_SYSTEM_EXECUTION_HEALTH_ONLY
-  deterministic_source_bundle_sha256: 645756069889d47767a1ed6eaebfc7ff35d5ea6add3e02f8fcf8b4405f0f152b
+  deterministic_source_bundle_sha256: 35760d0f30c390ff6634de22b554111c396b68268bb81d55dcd5f081347c749f
   verified_source_file_count: 75
   github_source_materialization: PASS_EXACT_75_FILE_IDENTITY
   mandatory_regression_suite_count: 17
@@ -50,7 +50,7 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: REVALIDATION_REQUIRED_AFTER_MOTHER_SUCCESSOR_PROJECTOR_SYNC
+  full_line_github_result: REVALIDATION_REQUIRED_AFTER_RESIDUAL_CLASSIFICATION_MOTHER_SUCCESSOR
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
@@ -64,7 +64,7 @@ stage_execution_loading:
 stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
-  frozen_specification_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+  frozen_specification_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
   audit_only_blocked_loop_may_count_as_progress: false
   remediation_must_materially_eliminate_remediable_gap: true
   full_line_high_pressure_required_before_every_fresh_execution_or_reexecution: true
@@ -96,15 +96,15 @@ resume_control:
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
   effectful_stage2_execution_before_entry_resolution: PASS_ENTRY_RESOLVED
-  current_resume_point: GOVERNANCE_MAINTENANCE_MOTHER_SUCCESSOR_FULL_LINE_REVALIDATION
+  current_resume_point: GOVERNANCE_MAINTENANCE_RESIDUAL_CLASSIFICATION_HARDENING_REVALIDATION
   last_closed_work_unit_uid: WU-GOV-EXECUTION-CLOSURE-HARDENING-001
   last_closed_work_unit_result: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   last_closed_work_unit_full_line_run_id: 35237042702
   last_closed_work_unit_evidence_head: 819aca62a3e3ad81a8acc477bdcf847e956420ce
-  exact_next_action: REVALIDATE_MOTHER_SUCCESSOR_PROJECTOR_SYNC_ON_EXACT_PERSISTED_HEAD; DO NOT ENTER PRODUCT_STAGE
+  exact_next_action: REVALIDATE_RESIDUAL_CLASSIFICATION_MOTHER_SUCCESSOR_ON_EXACT_PERSISTED_HEAD; THEN_RESUME_R26_R38_SEMANTIC_RESIDUAL_CLASSIFICATION
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
-  predecessor_governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
+  current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+  predecessor_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/attempt-ae42ef7ba4d6
   predecessor_attempt_may_close_under_current_governance: false
@@ -189,5 +189,5 @@ stage02_material_remediation:
   current_specification_mutated: false
   status: STRUCTURAL_REMEDIATION_PREDECESSOR_RESULT_REVALIDATION_REQUIRED
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-SUCCESSOR-PROJECTOR-SYNC-R6
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-RESIDUAL-CLASSIFICATION-HARDENING-R1
 current_primary_task_product_stage_credit: 0

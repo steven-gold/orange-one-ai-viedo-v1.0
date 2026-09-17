@@ -98,6 +98,9 @@ residual_classification:
     DEAD_OR_UNREFERENCED_ACTIVE_CONTENT: REMOVE
     TEMP_BACKUP_COPY_EMPTY_OR_INTERMEDIATE: REMOVE
     UNKNOWN: BLOCK
+  mother_policy_refs:
+  - WEB-GOV-03-S068
+  - WEB-GOV-04-S082
 historical_failure_semantics:
   historical_failed_evidence_may_be_deleted_only_because_it_failed: false
   historical_failed_evidence_may_receive_current_authority_credit: false

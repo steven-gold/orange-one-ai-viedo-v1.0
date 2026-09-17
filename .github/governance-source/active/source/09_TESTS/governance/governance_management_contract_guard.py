@@ -49,6 +49,12 @@ def validate(root=ROOT):
         if token not in m3: failures.append('mother_context_task_layer_rule_missing:WEB-GOV-03:'+token)
     for token in required_m4:
         if token not in m4: failures.append('mother_context_task_layer_audit_missing:WEB-GOV-04:'+token)
+    residual_m3=['WEB-GOV-03-S068','CANONICAL_OWNER','FORWARD_REFERENCE','REVERSE_REFERENCE','RUNTIME_OR_WORKFLOW_REACHABILITY','TEST_REGRESSION_ROLE','HISTORICAL_RETENTION_ROLE','NEGATIVE_REGRESSION_PATTERN -> KEEP_AS_NON_CURRENT_TEST_OR_SIGNATURE','DEAD_OR_UNREFERENCED_ACTIVE_CONTENT -> REMOVE','UNKNOWN -> BLOCK']
+    residual_m4=['WEB-GOV-04-S082','partial direct-reference scan','active direct or transitive workflow/runtime consumer','negative-regression signatures','exact persisted head/tree','governance-maintenance evidence only']
+    for token in residual_m3:
+        if token not in m3: failures.append('mother_residual_classification_rule_missing:WEB-GOV-03:'+token)
+    for token in residual_m4:
+        if token not in m4: failures.append('mother_residual_classification_audit_missing:WEB-GOV-04:'+token)
     return {'status':'PASS' if not failures else 'FAIL','management_artifacts':len(REQ),'failures':failures}
 if __name__=='__main__':
     out=validate(); print(json.dumps(out,ensure_ascii=False,indent=2)); raise SystemExit(0 if out['status']=='PASS' else 1)

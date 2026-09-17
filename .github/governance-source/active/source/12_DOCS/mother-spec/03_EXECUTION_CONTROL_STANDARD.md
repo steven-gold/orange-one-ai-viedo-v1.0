@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-03
-version: 2.2.2
+version: 2.2.3
 order: 3
 category: execution_control
 required_before_execution: true
@@ -1120,3 +1120,37 @@ A Work Unit, validation cycle, promotion, cleanup transaction, workflow-backed G
 When terminal execution is delegated to CI or another external executor, closure requires an observed outer terminal conclusion bound to the exact repository/project, commit SHA, evidence-cycle identity, required job/test denominator, and Current Governance UID. `INNER_STEP_PASS != TERMINAL_RUN_PASS`.
 
 Before moving to a new Primary Task Layer or Work Unit, the executor MUST persist the terminal disposition, exact evidence refs, unresolved blockers, Current Resume Point, and legal next transition. A later session MUST recover from those persisted facts through WEB-GOV-03-S063 rather than from conversational memory.
+
+<!-- SECTION_UID: WEB-GOV-03-S068 -->
+## 68. Semantic Residual Classification / Disposition Gate
+
+Before any Current artifact, validator, runner, workflow helper, generated projector, temporary file, backup, intermediate, superseded implementation, or other residual content may be kept, migrated, or deleted, the owning Work Unit MUST classify that residual by content and execution role. Filename age, naming pattern, file count, directory location, historical Stage number, or absence from a partial search MUST_NOT be treated as deletion proof.
+
+Every residual classification MUST evaluate all six dimensions:
+
+1. CANONICAL_OWNER
+2. FORWARD_REFERENCE
+3. REVERSE_REFERENCE
+4. RUNTIME_OR_WORKFLOW_REACHABILITY
+5. TEST_REGRESSION_ROLE
+6. HISTORICAL_RETENTION_ROLE
+
+The legal disposition vocabulary is closed:
+
+- CURRENT_REQUIRED -> KEEP_ACTIVE
+- HISTORICAL_PROVENANCE -> KEEP_NON_CURRENT
+- NEGATIVE_REGRESSION_PATTERN -> KEEP_AS_NON_CURRENT_TEST_OR_SIGNATURE
+- SUPERSEDED_ACTIVE_CONTENT -> REMOVE_OR_MIGRATE
+- DEAD_OR_UNREFERENCED_ACTIVE_CONTENT -> REMOVE
+- TEMP_BACKUP_INTERMEDIATE -> REMOVE
+- UNKNOWN -> BLOCK
+
+UNKNOWN is fail-closed. AI MUST_NOT silently convert uncertainty into REMOVE, KEEP, SATISFIED, or product completion.
+
+For executable/validator/runner cleanup, deletion additionally requires proof that the candidate is not an active direct or transitive workflow consumer, not a Current registry/projector/owner target, not required by Current Authority materialization, not the sole preserved negative-regression signature for a known defect, and not required historical provenance. A validator MAY remain even when its former producer is gone when it directly protects a Current invariant or negative-regression signature.
+
+A removable cohort SHOULD be mutated atomically when the files share one proven disposition and dependency closure. The transaction MUST preserve required Authority machinery, Current owners, Current projectors, historical provenance, and required regression signatures; then run post-delete reference/residual scans and exact-head terminal validation under the applicable gates.
+
+This section classifies residuals before WEB-GOV-03-S053 and WEB-GOV-03-S055 perform supersession/delete operations. It does not replace those owners.
+
+Governance residual cleanup is governed by WEB-GOV-03-S066 and receives zero product-stage gap reduction or completion credit unless separate fresh product-owner evidence independently changes a product denominator.

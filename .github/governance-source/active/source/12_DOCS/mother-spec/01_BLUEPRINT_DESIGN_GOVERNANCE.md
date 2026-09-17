@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-01
-version: 2.2.2
+version: 2.2.3
 order: 1
 category: blueprint_design_governance
 required_before_execution: true

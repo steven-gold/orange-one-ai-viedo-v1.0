@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.2.2-mother-context-task-layer-hardening
+governance_revision: v2.2.3-residual-classification-hardening
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -1772,6 +1772,13 @@ documents:
     heading: '## 67. Terminal Closure Observation / Context Continuity Gate'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
     binding_sha256: da58a33f22fe79ab61e2e35122c6bad979b96d73611d8881b4fac91d44d39b94
+  - section_uid: WEB-GOV-03-S068
+    level: 2
+    canonical_number: '68'
+    title: Semantic Residual Classification / Disposition Gate
+    heading: '## 68. Semantic Residual Classification / Disposition Gate'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: d144f1b95df9eadc5e6296c6b6e188e392d441f366301d5264fc250fd98bcc0a
 - document_id: WEB-GOV-04
   path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sections:
@@ -2412,6 +2419,13 @@ documents:
     heading: '## 81. Outer Terminal Conclusion / Resume Continuity Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
     binding_sha256: 44322b7f4136729e0eb1d4f8b3d5db041bb10eebcc6f1489d00a6cd1155af76f
+  - section_uid: WEB-GOV-04-S082
+    level: 2
+    canonical_number: '82'
+    title: Semantic Residual Classification / Cleanup Cohort Audit
+    heading: '## 82. Semantic Residual Classification / Cleanup Cohort Audit'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: 91245576145b3336cd6bf751166ce23680a8044b51f5a79a8d0b91428ecb955c
 historical_duplicate_groups:
 - document_id: WEB-GOV-01
   duplicate_number: '63'

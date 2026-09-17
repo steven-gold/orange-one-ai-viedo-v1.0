@@ -1,8 +1,8 @@
 {
   "artifact_type": "NON_NORMATIVE_FULL_LINE_SYSTEM_GATE_EVIDENCE",
   "mode": "SYSTEM_ROUND_1_FULL_LINE_HIGH_PRESSURE",
-  "source_zip_sha256": "6f39f26ebc81e2dc27f2e869709826b07c988cf5d6bdc37195812efecce03781",
-  "deterministic_source_bundle_sha256": "645756069889d47767a1ed6eaebfc7ff35d5ea6add3e02f8fcf8b4405f0f152b",
+  "source_zip_sha256": "ce518e5301b2ad2de8d84e06c0241e3da6b3f51495466fcb65f1b9df59fa41f0",
+  "deterministic_source_bundle_sha256": "35760d0f30c390ff6634de22b554111c396b68268bb81d55dcd5f081347c749f",
   "lifecycle_stage_count": 11,
   "lifecycle_stage_uids": [
     "STAGE-01",
@@ -119,7 +119,7 @@
       {
         "check_id": "section_registry",
         "status": "PASS",
-        "section_count": 323,
+        "section_count": 325,
         "failures": [],
         "section_uids": [
           "WEB-GOV-01-S000",
@@ -354,6 +354,7 @@
           "WEB-GOV-03-S065",
           "WEB-GOV-03-S066",
           "WEB-GOV-03-S067",
+          "WEB-GOV-03-S068",
           "WEB-GOV-04-S000",
           "WEB-GOV-04-S001",
           "WEB-GOV-04-S001A",
@@ -444,7 +445,8 @@
           "WEB-GOV-04-S078",
           "WEB-GOV-04-S079",
           "WEB-GOV-04-S080",
-          "WEB-GOV-04-S081"
+          "WEB-GOV-04-S081",
+          "WEB-GOV-04-S082"
         ]
       },
       {
@@ -500,8 +502,8 @@
       {
         "check_id": "current_test_evidence_sync",
         "status": "PASS",
-        "current_revision": "v2.2.2",
-        "current_source_revision": "v2.2.2-mother-context-task-layer-hardening",
+        "current_revision": "v2.2.3",
+        "current_source_revision": "v2.2.3-residual-classification-hardening",
         "fresh_revalidation_required": true,
         "mandatory_suite_count": 17,
         "failures": []
@@ -557,7 +559,7 @@
       {
         "check_id": "acceptance_blueprint_compiled_baseline",
         "status": "PASS",
-        "compiled_requirements": 648,
+        "compiled_requirements": 657,
         "audit_denominator": 13,
         "failures": []
       },

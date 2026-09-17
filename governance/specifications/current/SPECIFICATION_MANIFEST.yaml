@@ -1,8 +1,8 @@
 schema_version: 7
-artifact_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+artifact_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
 artifact_type: STABLE_CURRENT_SPECIFICATION_MANIFEST
 normative_status: ACTIVE_CURRENT_GOVERNANCE
-display_version: v2.2.3
+display_version: v2.2.4
 version_label_is_identity: false
 version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
 policy_scope: PRODUCT_SYSTEM_AND_EXECUTION_PROFILE_NEUTRAL
@@ -29,21 +29,21 @@ support_authorities:
   digest: edeefffe7ebdfd1b626c8b3b3e12a2d27e69c94eaf0e84ea4ede913c2d7bc196
 source_lineage:
   version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
-  verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.2_MOTHER_CONTEXT_TASK_LAYER_HARDENING_LOCAL_VERIFIED.zip
-  verified_package_sha256: 6f39f26ebc81e2dc27f2e869709826b07c988cf5d6bdc37195812efecce03781
+  verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.3_RESIDUAL_CLASSIFICATION_HARDENING_LOCAL_VERIFIED.zip
+  verified_package_sha256: ce518e5301b2ad2de8d84e06c0241e3da6b3f51495466fcb65f1b9df59fa41f0
   verified_source_file_count: 75
   exact_full_zip_binary_materialized_in_git: false
   full_source_materialized_in_git: true
   full_source_root: .github/governance-source/active/source
-  predecessor_governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
-  promotion_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R4
+  predecessor_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+  promotion_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-RESIDUAL-CLASSIFICATION-HARDENING-R1
   source_bytes_changed_by_this_successor: true
   source_identity_reused_only_because_source_bytes_are_unchanged: false
-  deterministic_source_bundle_sha256: 645756069889d47767a1ed6eaebfc7ff35d5ea6add3e02f8fcf8b4405f0f152b
-  checksum_manifest_sha256: 56983910f8019ae3a5a88fdc30d27881184fee9b6f90bf63ce4edfc364a466f1
+  deterministic_source_bundle_sha256: 35760d0f30c390ff6634de22b554111c396b68268bb81d55dcd5f081347c749f
+  checksum_manifest_sha256: 0ebdb639e7f91306f378389a1512766b8c7f53ba94acc8ca30c8c57fa93aef69
   semantic_authority_content_hash: 81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a
   historical_source_version_prose_may_override_current_registry: false
-  verified_source_revision: v2.2.2-mother-context-task-layer-hardening
+  verified_source_revision: v2.2.3-residual-classification-hardening
   verified_package_hash_model: DETERMINISTIC_ZIP_SOURCE_SET_V2_FIXED_METADATA
   predecessor_verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.0_NEUTRAL_PORTABLE_GOVERNANCE_LOCAL_VERIFIED.zip
   predecessor_verified_package_sha256: dd5a09e8b309168c46d37f3ff2bbb87c292d7b779bcd6d756f201e07bcc82754
@@ -84,3 +84,4 @@ closure_policy:
   governance_maintenance_product_credit: 0
   work_unit_resolution_gate_required_when_no_active_work_unit: true
   outer_terminal_conclusion_required_for_terminal_credit: true
+  mother_semantic_residual_classification_required: true

@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-04
-version: 2.2.2
+version: 2.2.3
 order: 4
 category: audit_progress_reporting
 required_before_execution: true
@@ -1462,3 +1462,24 @@ For governance, test/harness, evidence/state, reference, residual, CI, or gate m
 Terminal Audit MUST distinguish inner-step/job success from the outer terminal execution result. Closure credit requires the exact terminal conclusion and required denominator for the exact tested commit/evidence cycle; queued, in-progress, timed-out, cancelled, skipped, failed, ambiguous, or historical runs are not Current terminal PASS.
 
 Audit MUST prove closure state, evidence references, unresolved blockers, exact Resume Point, and legal next transition were persisted before task-layer or Work Unit movement. A resumed session that cannot reconcile these facts to the Current Governance UID and live repository identity MUST be `NOT_VERIFIED` or `BLOCKED`, never inferred PASS.
+
+<!-- SECTION_UID: WEB-GOV-04-S082 -->
+## 82. Semantic Residual Classification / Cleanup Cohort Audit
+
+Audit MUST verify that every residual keep/migrate/delete decision has evidence for all six WEB-GOV-03-S068 classification dimensions: Canonical Owner, forward reference, reverse reference, runtime/workflow reachability, test-regression role, and historical-retention role.
+
+Audit MUST reject deletion justified only by filename, version-looking name, directory location, file age, builder disappearance, missing output, file-count reduction, or a partial direct-reference scan.
+
+For each removed executable/validator/runner cohort, Audit MUST prove:
+
+- no active direct or transitive workflow/runtime consumer remains;
+- no Current registry, projector, Canonical Owner, Authority materializer, or required evidence owner resolves to the removed content;
+- required negative-regression signatures and historical provenance remain available in their legal non-current role;
+- every removed item has a non-UNKNOWN disposition;
+- Authority-critical machinery excluded from the cohort remains present;
+- post-delete stale Current reference, broken reference, superseded active content, and unjustified residual counts are zero;
+- the exact persisted head/tree receives the required outer terminal validation result.
+
+A cleanup cohort PASS is governance-maintenance evidence only. Audit MUST_NOT convert it into product-stage gap reduction, product completion, Stage exit, or Authority satisfaction.
+
+This audit extends WEB-GOV-04-S022A and WEB-GOV-04-S065; it does not replace their denominators.

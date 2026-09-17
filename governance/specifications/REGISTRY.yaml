@@ -8,8 +8,8 @@ stable_entrypoint:
   test_state_root: governance/test
   active_test_state: governance/test/ACTIVE_STATE.yaml
 active_specification:
-  governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
-  display_version: v2.2.3
+  governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+  display_version: v2.2.4
   version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
   aliases:
   - neutral-portable-governance
@@ -21,12 +21,13 @@ active_specification:
   - full-line-source-integrity-closure
   - execution-closure-transaction-hardening
   - mother-context-task-layer-hardening
+  - residual-classification-hardening
   status: ACTIVE_CURRENT_GOVERNANCE
 immediate_predecessor:
-  governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
-  display_version: v2.2.2
+  governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+  display_version: v2.2.3
   version_role: SUPERSEDED_CURRENT_GOVERNANCE_HISTORY
-  status: SUPERSEDED_HISTORY_ONLY_AFTER_MOTHER_CONTEXT_TASK_LAYER_HARDENING
+  status: SUPERSEDED_HISTORY_ONLY_AFTER_RESIDUAL_CLASSIFICATION_HARDENING
 version_role_contract:
   current_governance_display_version_owner: active_specification
   verified_source_package_version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
