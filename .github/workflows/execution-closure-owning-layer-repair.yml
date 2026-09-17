@@ -24,6 +24,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           python - <<'PY'
           from pathlib import Path
+          import re
 
           workflow = Path('.github/workflows/stage02-actual-test.yml')
           text = workflow.read_text(encoding='utf-8')
@@ -35,16 +36,15 @@ jobs:
 
           validator = Path('governance/ci/validate_active_consumer_reference_integrity.py')
           text = validator.read_text(encoding='utf-8')
-          old = '    r"(?:python(?:3)?\\\\s+|python(?:3)?\\\\s+-m\\\\s+)?"\n'
-          new = '    r"python(?:3)?\\\\s+(?:-m\\\\s+)?"\n'
-          count = text.count(old)
-          assert count == 1, f'expected one optional execution-prefix regex, got {count}'
-          validator.write_text(text.replace(old, new), encoding='utf-8')
+          pattern = re.compile(r'(?m)^\s{4}r"\(\?:python\(\?:3\)\?\\s\+\|python\(\?:3\)\?\\s\+-m\\s\+\)\?"$')
+          matches = pattern.findall(text)
+          assert len(matches) == 1, f'expected exactly one optional executable-prefix regex line, got {len(matches)}'
+          text = pattern.sub('    r"python(?:3)?\\\\s+(?:-m\\\\s+)?"', text)
+          validator.write_text(text, encoding='utf-8')
           print('PASS: exact Stage-02 terminal-pending projection and executable-reference parser repairs applied')
           PY
           git rm .github/workflows/execution-closure-owning-layer-repair.yml
           git diff --check
-          git diff --name-only | sort
           actual="$(git diff --name-only | sort)"
           expected="$(printf '%s\n' .github/workflows/execution-closure-owning-layer-repair.yml .github/workflows/stage02-actual-test.yml governance/ci/validate_active_consumer_reference_integrity.py | sort)"
           test "$actual" = "$expected" || { printf 'BLOCK: unexpected repair delta\n%s\n' "$actual" >&2; exit 1; }
