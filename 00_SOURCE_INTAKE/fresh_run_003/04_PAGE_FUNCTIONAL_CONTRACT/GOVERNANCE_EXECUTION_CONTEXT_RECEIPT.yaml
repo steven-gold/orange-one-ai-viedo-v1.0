@@ -8,15 +8,16 @@ source_evidence_sha256: 5e327c71fbe0a9ff2c6f8d8107eac11e5d0f3192b673602be2db681a
 artifact_type: GOVERNANCE_EXECUTION_CONTEXT_RECEIPT
 producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
 policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-active_work_unit_ref: WU-STAGE02-AUTHORITY-RECOVERY-001
-semantic_concern: STAGE02_EXACT_EXTERNAL_AUTHORITY_MATERIALIZATION_RECOVERY
+active_work_unit_ref: null
+semantic_concern: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS;
+  DO NOT MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
 canonical_owner_operation: STAGE_EXECUTION_PREFLIGHT_COMPILE
-resolved_current_work_unit_owner: governance/ci/validate_current_stage2_external_authority_resolution_r3.py
+resolved_current_work_unit_owner: null
 repository_identity:
   repository: steven-gold/orange-one-ai-viedo-v1.0
   branch: rebuild-v2.1.1
-  head_sha: 30de2565cf00f3d06e0ce1b90a254e838b4478f9
-  tree_sha: ba8bd50503380fe054f922afa967b7301b1d40f2
+  head_sha: a669d1bfad8f2fc4186362a15c72a6fdc3910e40
+  tree_sha: 75365b9eee3f7f54666a3abd7f6170c98e7d875d
 current_registry:
   entry_ref: GOVERNANCE_CURRENT.yaml
   entry_sha256: aee461a4e8d87a79b5b158fe3edd760e6412f32af2c4587dd93064d830941d82
@@ -57,11 +58,11 @@ exact_read_set:
 - path: .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sha256: 725d8b474baee27908ffb5e78506c9e859fe461857aad2c3150df0eda9bbe07e
 - path: governance/test/ACTIVE_STATE.yaml
-  sha256: ab7bf01af3ea74612cabca2a4bb5f10d7d071ae99405412c611bef9067710bd4
+  sha256: 5c903d1720bc17697ae28e19d63b9ead7176a54360f403f93eeae93016e7ce1c
 - path: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
-  sha256: 14828f9b39acd05d14e82337e18e25315c63922558c11482babed7ac19c06f03
+  sha256: 555e18365493423411e0cc33ab400486f7066b4cbdad8b5519a97411dc4dce79
 - path: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
-  sha256: 5bf866a0b1f66d32b0cb751db1ef2af6693c629da2ba9fc6e415a6867536ad59
+  sha256: 68eec90b295dbd9a5e5459a662b77ba7e3b67348ca0084dbb514e032463b13ca
 - path: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
   sha256: 5e327c71fbe0a9ff2c6f8d8107eac11e5d0f3192b673602be2db681a0879a222
 - path: governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml
@@ -84,8 +85,10 @@ exact_write_targets:
 - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml
 - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml
 duplicate_search_result: EXISTING_CANONICAL_COMPILER_OWNER_REUSED_NO_PRIOR_SUPPORT_RECEIPT_OWNER_FOUND
-confirmed_gap_uid: WU-STAGE02-AUTHORITY-RECOVERY-001
-loaded_at_utc: '2026-09-17T01:57:26.987828Z'
+confirmed_gap_uid: null
+loaded_at_utc: '2026-09-17T01:57:53.449105Z'
 product_blocker_credit: 0
 stage03_allowed: false
 result: PASS_CONTEXT_RESOLVED
+execution_context_mode: PARENT_OWNING_LAYER_REMEDIATION
+current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION

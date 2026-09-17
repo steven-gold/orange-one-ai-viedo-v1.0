@@ -8,17 +8,17 @@ source_evidence_sha256: 5e327c71fbe0a9ff2c6f8d8107eac11e5d0f3192b673602be2db681a
 artifact_type: EXECUTION_CYCLE_PREFLIGHT_RECEIPT
 producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
 policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-active_work_unit_ref: WU-STAGE02-AUTHORITY-RECOVERY-001
+active_work_unit_ref: null
 selected_execution_profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
 execution_identity:
   repository: steven-gold/orange-one-ai-viedo-v1.0
   branch: rebuild-v2.1.1
-  head_sha: 30de2565cf00f3d06e0ce1b90a254e838b4478f9
-  tree_sha: ba8bd50503380fe054f922afa967b7301b1d40f2
+  head_sha: a669d1bfad8f2fc4186362a15c72a6fdc3910e40
+  tree_sha: 75365b9eee3f7f54666a3abd7f6170c98e7d875d
 governance_load:
   governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
-  work_unit_uid: WU-STAGE02-AUTHORITY-RECOVERY-001
-  resolved_work_unit_owner: governance/ci/validate_current_stage2_external_authority_resolution_r3.py
+  work_unit_uid: null
+  resolved_work_unit_owner: null
   root_manifest_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
   root_manifest_sha256: fa530e3124e13e2df66fab131cccb6e91bd1cbaeaec4bc1b325a1c78b33164e0
   effective_normative_set_sha256: 67870521c23a766023c07a810a579ade0f0ad731debf7a65cc5623ed535af0d1
@@ -47,15 +47,17 @@ governance_load:
     governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml: 3f7073fc9af92ec60708fc4c77007e5334b47187bfb701e18d288201172c361a
     .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml: f7dbaca0b7be48b92c4190f8024dbfd74569ed8753529e0e926f528b62481b9c
     .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml: 9b3d53adc34423b34f670d85d09861582d09599585acdee3ffb5ff60df6a1f4d
-    governance/test/ACTIVE_STATE.yaml: ab7bf01af3ea74612cabca2a4bb5f10d7d071ae99405412c611bef9067710bd4
-    governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml: 14828f9b39acd05d14e82337e18e25315c63922558c11482babed7ac19c06f03
-    governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml: 5bf866a0b1f66d32b0cb751db1ef2af6693c629da2ba9fc6e415a6867536ad59
+    governance/test/ACTIVE_STATE.yaml: 5c903d1720bc17697ae28e19d63b9ead7176a54360f403f93eeae93016e7ce1c
+    governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml: 555e18365493423411e0cc33ab400486f7066b4cbdad8b5519a97411dc4dce79
+    governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml: 68eec90b295dbd9a5e5459a662b77ba7e3b67348ca0084dbb514e032463b13ca
     governance/test/STAGE02_EXECUTION_OPTIMIZATION_DEFECT_CONSOLIDATION.yaml: 0231c9bf59e27b94fd24aa792b3e6e93fea169c84118e97ab1af0134a8dbb5da
   acceptance_blueprint_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
   acceptance_blueprint_sha256: 26c8ffcd52a83f6e0508b7f5d8ff44e532a9986bc08bbfd9dc029667868cb0cf
   loader_identity: governance/ci/compile_stage_execution_preflight.py
-  loader_version: '3'
-  loaded_at_utc: '2026-09-17T01:57:26.987828Z'
+  loader_version: '5'
+  loaded_at_utc: '2026-09-17T01:57:53.449105Z'
+  execution_context_mode: PARENT_OWNING_LAYER_REMEDIATION
+  current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
 canonical_stage_output_denominator_count: 17
 canonical_stage_output_denominator:
 - FUNCTIONAL_CHAIN_SPEC
@@ -95,3 +97,5 @@ product_blocker_credit: 0
 stage_exit_allowed: false
 stage03_allowed: false
 result: PASS_GOVERNANCE_LOADED_FOR_PREFLIGHT
+execution_context_mode: PARENT_OWNING_LAYER_REMEDIATION
+current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
