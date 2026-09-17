@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.2.1-full-line-source-integrity
+governance_revision: v2.2.2-mother-context-task-layer-hardening
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -1737,6 +1737,41 @@ documents:
     heading: '## 62. Canonical Execution Engine / Checkpoint Control / Clean-Restart Rule'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
     binding_sha256: f9d6e073f82e5fc376d9b2b600e38f2260c7e23a7db9d7dfa16ee9ce6d4051ed
+  - section_uid: WEB-GOV-03-S063
+    level: 2
+    canonical_number: '63'
+    title: Mandatory Session Bootstrap / Resume Gate
+    heading: '## 63. Mandatory Session Bootstrap / Resume Gate'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: 20194deaffbfe9cb1bdfa02dfafe2fafbef52b1a80342ef0a3df5cfa1775bf61
+  - section_uid: WEB-GOV-03-S064
+    level: 2
+    canonical_number: '64'
+    title: Task Layer Classification / Primary Task Lock
+    heading: '## 64. Task Layer Classification / Primary Task Lock'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: f76547514ad5e85ca2a7c0df1c5ff0dc947acee2b7ad1c46c3fdee5be8f7bf11
+  - section_uid: WEB-GOV-03-S065
+    level: 2
+    canonical_number: '65'
+    title: Work Unit Resolution Gate
+    heading: '## 65. Work Unit Resolution Gate'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: b5c58eed1cc975b0325af8067f5d6dae5314fc348b4cb571316eb821e79863cc
+  - section_uid: WEB-GOV-03-S066
+    level: 2
+    canonical_number: '66'
+    title: Governance Maintenance Credit Isolation
+    heading: '## 66. Governance Maintenance Credit Isolation'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: 83b090e963cceed3c0f65785c3292179179e24aa10ee8c1b73ae919407e18f22
+  - section_uid: WEB-GOV-03-S067
+    level: 2
+    canonical_number: '67'
+    title: Terminal Closure Observation / Context Continuity Gate
+    heading: '## 67. Terminal Closure Observation / Context Continuity Gate'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: da58a33f22fe79ab61e2e35122c6bad979b96d73611d8881b4fac91d44d39b94
 - document_id: WEB-GOV-04
   path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sections:
@@ -2356,6 +2391,27 @@ documents:
     heading: '## 78. Execution-Cycle Preflight / Single Current Problem-State Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
     binding_sha256: 4563cf8e041f48208e2cbfb51a03a674d43a4ad34187db8688ba792f37835737
+  - section_uid: WEB-GOV-04-S079
+    level: 2
+    canonical_number: '79'
+    title: Session Bootstrap / Current Primary Task Audit
+    heading: '## 79. Session Bootstrap / Current Primary Task Audit'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: e26c09c11899f0fa6ed8517c9f0fa7812dd2259a3a846b08fd7aac074516bfea
+  - section_uid: WEB-GOV-04-S080
+    level: 2
+    canonical_number: '80'
+    title: Work Unit Resolution / Task-Layer Credit Isolation Audit
+    heading: '## 80. Work Unit Resolution / Task-Layer Credit Isolation Audit'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: e2e442c85685d63b509cc55c57bb2a4116add5cc57bef0ac554b15be3750d49a
+  - section_uid: WEB-GOV-04-S081
+    level: 2
+    canonical_number: '81'
+    title: Outer Terminal Conclusion / Resume Continuity Audit
+    heading: '## 81. Outer Terminal Conclusion / Resume Continuity Audit'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: 44322b7f4136729e0eb1d4f8b3d5db041bb10eebcc6f1489d00a6cd1155af76f
 historical_duplicate_groups:
 - document_id: WEB-GOV-01
   duplicate_number: '63'

@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
+specification_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -64,7 +64,7 @@ stage_execution_loading:
 stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
-  frozen_specification_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
+  frozen_specification_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
   audit_only_blocked_loop_may_count_as_progress: false
   remediation_must_materially_eliminate_remediable_gap: true
   full_line_high_pressure_required_before_every_fresh_execution_or_reexecution: true
@@ -90,8 +90,7 @@ specification_mutation_safety:
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
 status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
-next_action: >-
-  AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
+next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
@@ -102,11 +101,10 @@ resume_control:
   last_closed_work_unit_result: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   last_closed_work_unit_full_line_run_id: 35237042702
   last_closed_work_unit_evidence_head: 819aca62a3e3ad81a8acc477bdcf847e956420ce
-  exact_next_action: >-
-    AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
+  exact_next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
-  predecessor_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
+  current_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+  predecessor_governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/attempt-ae42ef7ba4d6
   predecessor_attempt_may_close_under_current_governance: false
@@ -134,8 +132,7 @@ stage02_active_attempt:
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: true
-  next_action: >-
-    AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
+  next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO NOT MATERIALIZE_WITHOUT APPROVED_AUTHORITY
   governance_status: PREDECESSOR_FROZEN_ATTEMPT_REVALIDATION_REQUIRED_AFTER_GOVERNANCE_PROMOTION
   closure_credit_under_current_governance: false
   fresh_revalidation_required: true
@@ -191,3 +188,6 @@ stage02_material_remediation:
   external_authority_resolution_claimed: false
   current_specification_mutated: false
   status: STRUCTURAL_REMEDIATION_PREDECESSOR_RESULT_REVALIDATION_REQUIRED
+current_primary_task_layer: GOVERNANCE_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R4
+current_primary_task_product_stage_credit: 0

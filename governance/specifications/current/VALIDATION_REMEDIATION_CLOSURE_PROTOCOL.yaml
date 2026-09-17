@@ -21,6 +21,9 @@ principles:
   failed_terminal_run_may_close_work_unit: false
   file_count_or_residual_count_without_semantic_review_is_cleanup_proof: false
 canonical_cycle:
+- RESOLVE_ACTIVE_WORK_UNIT_OR_WORK_UNIT_RESOLUTION_GATE
+- CLASSIFY_AND_LOCK_CURRENT_PRIMARY_TASK_LAYER
+- SESSION_BOOTSTRAP_RESUME_GATE
 - RESOLVE_CURRENT_TRUTH_AND_CANONICAL_OWNER
 - FREEZE_CURRENT_POLICY_AND_INPUT_BASELINE
 - COMPILE_APPLICABILITY_DEPENDENCY_VALIDATOR_AND_PROJECTOR_PLAN
@@ -109,6 +112,9 @@ terminal_result_semantics:
   current_terminal_pass_projection_must_be_based_on_observed_terminal_conclusion: true
   same_run_preterminal_self_projection_of_terminal_pass: FORBIDDEN
   terminal_receipt_projection_must_be_external_to_or_after_terminal_conclusion: true
+  outer_terminal_conclusion_is_closure_authority: true
+  inner_job_or_step_success_may_close_outer_workflow: false
+  queued_or_in_progress_workflow_may_close: false
 retest_and_regression:
   clean_registered_baseline_required: true
   same_governance_uid_until_authorized_promotion: true
@@ -129,3 +135,15 @@ closure_gate:
   terminal_run_conclusion: PASS_REQUIRED
   evidence_chain_complete: REQUIRED
   otherwise: BLOCK_ADVANCE
+governance_maintenance_credit_isolation:
+  applies_to:
+  - GOVERNANCE_POLICY_OR_REGISTRY
+  - REFERENCE_OR_RESIDUAL_CLEANUP
+  - VALIDATOR_SCANNER_CLASSIFIER_PARSER_HARNESS
+  - WORKFLOW_CI_OR_GATE
+  - EVIDENCE_STATE_PROJECTOR_RESUME_LEDGER_OR_RECEIPT
+  - NEGATIVE_REGRESSION_OR_HISTORICAL_EVIDENCE_MAINTENANCE
+  product_stage_gap_reduction_credit: 0
+  product_completion_credit: 0
+  fresh_product_owner_evidence_required_to_change_product_denominator: true
+  governance_maintenance_pass_is_product_stage_pass: false

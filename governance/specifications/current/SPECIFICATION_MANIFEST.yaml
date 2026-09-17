@@ -1,8 +1,8 @@
 schema_version: 7
-artifact_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
+artifact_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
 artifact_type: STABLE_CURRENT_SPECIFICATION_MANIFEST
 normative_status: ACTIVE_CURRENT_GOVERNANCE
-display_version: v2.2.2
+display_version: v2.2.3
 version_label_is_identity: false
 version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
 policy_scope: PRODUCT_SYSTEM_AND_EXECUTION_PROFILE_NEUTRAL
@@ -29,22 +29,22 @@ support_authorities:
   digest: edeefffe7ebdfd1b626c8b3b3e12a2d27e69c94eaf0e84ea4ede913c2d7bc196
 source_lineage:
   version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
-  verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.1_FULL_LINE_SOURCE_INTEGRITY_LOCAL_VERIFIED.zip
-  verified_package_sha256: 466f8294892b1de663eee7a9b3d38b83089f9950787efb80fb1ce7b6cbad9928
+  verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.2_MOTHER_CONTEXT_TASK_LAYER_HARDENING_LOCAL_VERIFIED.zip
+  verified_package_sha256: a27e8876cabeec2af961a12d4006a4a3695c3fb70178f667762c0c50ec1aeabc
   verified_source_file_count: 75
   exact_full_zip_binary_materialized_in_git: false
   full_source_materialized_in_git: true
   full_source_root: .github/governance-source/active/source
-  predecessor_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
-  promotion_authorization_uid: USR-DIRECTIVE-20260917-MOTHER-EXECUTION-CLOSURE-HARDENING
-  source_bytes_changed_by_this_successor: false
-  source_identity_reused_only_because_source_bytes_are_unchanged: true
-  deterministic_source_bundle_sha256: ccbe7e107b074139606df6716815d2068e773073b28837e99c48a291519d52af
-  checksum_manifest_sha256: 85fe8d33eb6f85428c8ee7c8b916ba870ba9d0e3781b155d9489172f507bfaa1
+  predecessor_governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
+  promotion_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R4
+  source_bytes_changed_by_this_successor: true
+  source_identity_reused_only_because_source_bytes_are_unchanged: false
+  deterministic_source_bundle_sha256: a265845bfebfe2e5ac71ec7bd2d4be3422734f2739e87bbd6be69f4ec8180a62
+  checksum_manifest_sha256: 3862ab8441a15ea518e0c593667eefeac4bcd2c5e196bddd08f8f603d7d72825
   semantic_authority_content_hash: 81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a
   historical_source_version_prose_may_override_current_registry: false
-  verified_source_revision: v2.2.1-full-line-source-integrity
-  verified_package_hash_model: DETERMINISTIC_ZIP_SOURCE_SET_V1
+  verified_source_revision: v2.2.2-mother-context-task-layer-hardening
+  verified_package_hash_model: DETERMINISTIC_ZIP_SOURCE_SET_V2_FIXED_METADATA
   predecessor_verified_package_filename: AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.0_NEUTRAL_PORTABLE_GOVERNANCE_LOCAL_VERIFIED.zip
   predecessor_verified_package_sha256: dd5a09e8b309168c46d37f3ff2bbb87c292d7b779bcd6d756f201e07bcc82754
 resolution_contract:
@@ -78,3 +78,8 @@ closure_policy:
   post_write_reconciliation_required_before_closure: true
   complete_registered_current_projector_rebuild_required: true
   residual_disposition_requires_content_semantic_review: true
+  session_bootstrap_resume_gate_required: true
+  current_primary_task_layer_lock_required: true
+  governance_maintenance_product_credit: 0
+  work_unit_resolution_gate_required_when_no_active_work_unit: true
+  outer_terminal_conclusion_required_for_terminal_credit: true

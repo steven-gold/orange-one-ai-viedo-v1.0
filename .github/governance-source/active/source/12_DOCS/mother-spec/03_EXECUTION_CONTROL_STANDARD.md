@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-03
-version: 2.2.1
+version: 2.2.2
 order: 3
 category: execution_control
 required_before_execution: true
@@ -1036,3 +1036,87 @@ Selected execution profiles MAY specialize operations and artifact schemas, but 
 Before remediation, the engine MUST validate `EXECUTION_CYCLE_PREFLIGHT_RECEIPT`. After each batch it MUST update the affected reverse-dependency closure and append `RESOLUTION_LEDGER`; full sweeps are mandatory after shared/common-engine changes, registered category closure, before cycle closure, and before policy/release freeze.
 
 Harness defects MUST NOT consume product blocker credit or create product Authority. Authorized normative promotion invalidates prior-cycle closure credit under the old UID; generated outputs/derived state are reset, immutable predecessor/external Authority is preserved at its owner, and fresh execution restarts under the new UID.
+
+<!-- SECTION_UID: WEB-GOV-03-S063 -->
+## 63. Mandatory Session Bootstrap / Resume Gate
+
+Before any Current State judgment, planning, mutation, test, commit, workflow execution, deployment decision, closure claim, or continuation decision, the executor MUST complete one `SESSION_BOOTSTRAP_RESUME_GATE` in this exact dependency order:
+
+1. Resolve the live repository, target branch, commit SHA, and tree SHA from the repository itself.
+2. Resolve the formal Registry / Current Governance entry and immutable Current Governance UID; chat memory, historical summaries, Stage labels, profile labels, and run labels MUST_NOT select Current Governance.
+3. Read the Current Mother Governance in canonical order `WEB-GOV-01 -> WEB-GOV-02 -> WEB-GOV-03 -> WEB-GOV-04` through the Current Section/Root registries.
+4. Resolve Current Canonical Authority for the requested semantic concern.
+5. Classify and lock the Current Primary Task Layer under WEB-GOV-03-S064.
+6. Resolve the one legal Active Primary Work Unit for that task layer; if none exists, enter `WORK_UNIT_RESOLUTION_GATE` under WEB-GOV-03-S065 before doing effectful work.
+7. Resolve Canonical Owner Mapping, exact write target, forward dependencies, reverse dependencies, and impacted consumers.
+8. Resolve the persisted Current Resume Point and verify the last completed effectful action.
+9. Resolve Current Audit / Evidence State and prove that evidence belongs to the Current Governance UID/revision or is explicitly classified historical/non-current evidence.
+10. Resolve the selected Execution Profile only when applicable; profile-local Stage/step identity MUST remain subordinate to the Current Primary Task Layer and common Mother Policy.
+11. Resolve Entry Conditions, Dependencies, Definition of Done, required Gates, terminal transition, and closure evidence requirements.
+12. Recheck live commit/tree and Current Governance identity immediately before the first write or effectful action.
+
+The gate MUST fail closed when any required Current identity, Authority, task layer, Work Unit, owner, Resume Point, evidence identity, dependency, reference, revision, or transition is missing, stale, ambiguous, conflicting, or points to a superseded/deleted owner.
+
+`CHAT_MEMORY != CURRENT_TRUTH` and `INNER_STAGE_IDENTITY != PRIMARY_TASK_SELECTION` are permanent invariants.
+
+<!-- SECTION_UID: WEB-GOV-03-S064 -->
+## 64. Task Layer Classification / Primary Task Lock
+
+Every governed request MUST be classified before Work Unit execution into exactly one Current Primary Task Layer:
+
+- `GOVERNANCE_MAINTENANCE`
+- `PRODUCT_STAGE_EXECUTION`
+- `TEST_OR_VALIDATION_MAINTENANCE`
+- `EVIDENCE_STATE_MAINTENANCE`
+- `DEPLOYMENT_OR_PRODUCTION`
+
+The classification MUST derive from the explicit user directive, Current Authority, authorized Change Request, Current Work Unit/Resume state, and applicable dependency/impact evidence. A Stage number, profile step, historical run, failing test, open blocker, or nearby executable MUST_NOT silently redefine the requested Primary Task Layer.
+
+When `GOVERNANCE_MAINTENANCE` is primary, product Stage artifacts MAY be read only as evidence, regression provenance, dependency context, or impacted-consumer context unless a separately authorized product Work Unit becomes the legal primary task. Governance maintenance MUST_NOT drift into product materialization merely because a product Stage remains blocked.
+
+Task-layer changes MUST be explicit, evidence-backed, recorded in Resume/Current State, and re-run the full Session Bootstrap / Resume Gate before effectful work continues.
+
+<!-- SECTION_UID: WEB-GOV-03-S065 -->
+## 65. Work Unit Resolution Gate
+
+If the Current Primary Task Layer has no legal Active Primary Work Unit, execution MUST enter `WORK_UNIT_RESOLUTION_GATE`; absence of an Active Work Unit is not permission for AI to invent one or jump to the nearest Stage, file, test, or blocker.
+
+The legal successor Work Unit MAY be resolved only from registered Current Authority, a valid explicit authorization or Change Request, Current impact set, dependency graph, applicability decision, unresolved blocker ledger, prior closure transition, and canonical owner mapping.
+
+The resolution MUST prove:
+
+- predecessor/current Work Unit state and terminal disposition;
+- requested Primary Task Layer;
+- candidate successor scope and canonical owner;
+- dependency and reverse-dependency legality;
+- applicability and Entry Conditions;
+- no duplicate/parallel Work Unit or second owner;
+- exact Resume Point and Definition of Done;
+- whether the successor is blocked, executable, or requires human/Authority decision.
+
+If two or more materially distinct successor Work Units remain legal without Authority selecting one, the result is `WORK_UNIT_RESOLUTION_AMBIGUOUS` and effectful execution MUST BLOCK. AI MUST_NOT create a synthetic Work Unit merely to continue activity.
+
+<!-- SECTION_UID: WEB-GOV-03-S066 -->
+## 66. Governance Maintenance Credit Isolation
+
+Governance maintenance and product completion are different accounting domains. The following work MAY repair governance correctness but MUST receive zero product-stage gap-reduction and zero product-completion credit unless it separately materializes an already-authorized product requirement at the canonical product owner and passes that product requirement's own acceptance gates:
+
+- Mother/Current governance repair or promotion;
+- Registry, index, reference, checksum, source-identity, supersession, or residual cleanup;
+- validator, scanner, classifier, parser, harness, workflow, CI, gate, or test-infrastructure repair;
+- evidence, projector, Current State, Resume, ledger, report, or receipt repair;
+- migration of stale/deleted/superseded governance references;
+- negative-regression preservation or historical evidence cleanup.
+
+`GOVERNANCE_MAINTENANCE_PASS != PRODUCT_STAGE_PASS`.
+
+A governance Work Unit MUST record its own closure evidence and MUST_NOT decrement product blocker/gap denominators solely because the governance machinery became correct. Product denominators change only from fresh product/contract evidence under the legal product owner and Current Authority.
+
+<!-- SECTION_UID: WEB-GOV-03-S067 -->
+## 67. Terminal Closure Observation / Context Continuity Gate
+
+A Work Unit, validation cycle, promotion, cleanup transaction, workflow-backed Gate, or release Gate MUST_NOT receive terminal closure credit from an inner step, job subset, generated preterminal projection, queued/in-progress workflow, timeout, cancellation, skipped terminal, or historical successful run.
+
+When terminal execution is delegated to CI or another external executor, closure requires an observed outer terminal conclusion bound to the exact repository/project, commit SHA, evidence-cycle identity, required job/test denominator, and Current Governance UID. `INNER_STEP_PASS != TERMINAL_RUN_PASS`.
+
+Before moving to a new Primary Task Layer or Work Unit, the executor MUST persist the terminal disposition, exact evidence refs, unresolved blockers, Current Resume Point, and legal next transition. A later session MUST recover from those persisted facts through WEB-GOV-03-S063 rather than from conversational memory.

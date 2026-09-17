@@ -33,6 +33,22 @@ def validate(root=ROOT):
     if (mp.get('required'),mp.get('approved'),mp.get('pending'),mp.get('percentage'))!=(1,1,0,100): failures.append('machine_review_progress_not_closed')
     sync=bp.get('current_test_evidence_sync_contract') or {}
     if sync.get('validator_uid')!='VAL-GOV-032' or sync.get('required') is not True: failures.append('current_test_evidence_sync_contract_missing')
+    # Mother context/task-layer hardening: this existing management owner verifies the
+    # canonical Mother sections directly instead of creating a second validator.
+    m3=(root/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md').read_text(encoding='utf-8')
+    m4=(root/'12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md').read_text(encoding='utf-8')
+    required_m3=[
+      'WEB-GOV-03-S063','SESSION_BOOTSTRAP_RESUME_GATE','live repository, target branch, commit SHA, and tree SHA',
+      'WEB-GOV-03-S064','GOVERNANCE_MAINTENANCE','PRODUCT_STAGE_EXECUTION','INNER_STAGE_IDENTITY != PRIMARY_TASK_SELECTION',
+      'WEB-GOV-03-S065','WORK_UNIT_RESOLUTION_GATE','WORK_UNIT_RESOLUTION_AMBIGUOUS',
+      'WEB-GOV-03-S066','GOVERNANCE_MAINTENANCE_PASS != PRODUCT_STAGE_PASS','zero product-stage gap-reduction',
+      'WEB-GOV-03-S067','INNER_STEP_PASS != TERMINAL_RUN_PASS','outer terminal conclusion',
+    ]
+    required_m4=['WEB-GOV-04-S079','WEB-GOV-04-S080','WEB-GOV-04-S081','Current Primary Task Layer','Product gap/blocker denominators MUST remain unchanged','outer terminal execution result']
+    for token in required_m3:
+        if token not in m3: failures.append('mother_context_task_layer_rule_missing:WEB-GOV-03:'+token)
+    for token in required_m4:
+        if token not in m4: failures.append('mother_context_task_layer_audit_missing:WEB-GOV-04:'+token)
     return {'status':'PASS' if not failures else 'FAIL','management_artifacts':len(REQ),'failures':failures}
 if __name__=='__main__':
     out=validate(); print(json.dumps(out,ensure_ascii=False,indent=2)); raise SystemExit(0 if out['status']=='PASS' else 1)

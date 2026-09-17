@@ -99,6 +99,23 @@ for surface in global_surfaces:
     if fixed_schema.search(body):
         failures.append('global_machine_profile_specific_step_schema:'+surface.relative_to(ROOT).as_posix())
 
+# Mother context/task-layer machine binding checks. These extend the existing portability owner.
+exec_control=yaml.safe_load((CUR/'EXECUTION_CYCLE_CONTROL.yaml').read_text(encoding='utf-8')) or {}
+closure=yaml.safe_load((CUR/'VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml').read_text(encoding='utf-8')) or {}
+boot=exec_control.get('session_bootstrap_resume_gate') or {}
+task=exec_control.get('task_layer_classification') or {}
+wu=exec_control.get('work_unit_resolution_gate') or {}
+credit=closure.get('governance_maintenance_credit_isolation') or {}
+terminal=closure.get('terminal_result_semantics') or {}
+if boot.get('required_before_any_current_state_judgment_planning_write_test_commit_workflow_deployment_or_closure_claim') is not True: failures.append('session_bootstrap_resume_gate_not_required')
+if boot.get('stage_profile_or_run_identity_may_select_current_governance') is not False: failures.append('stage_profile_run_may_select_current_governance')
+expected_layers={'GOVERNANCE_MAINTENANCE','PRODUCT_STAGE_EXECUTION','TEST_OR_VALIDATION_MAINTENANCE','EVIDENCE_STATE_MAINTENANCE','DEPLOYMENT_OR_PRODUCTION'}
+if set(task.get('allowed_primary_layers') or []) != expected_layers: failures.append('primary_task_layer_denominator_drift')
+if task.get('stage_profile_run_or_open_blocker_may_silently_redirect_primary_task') is not False: failures.append('primary_task_silent_redirect_not_forbidden')
+if wu.get('required_when_no_legal_active_primary_work_unit') is not True or wu.get('ai_may_invent_successor_work_unit') is not False: failures.append('work_unit_resolution_gate_not_fail_closed')
+if credit.get('product_stage_gap_reduction_credit') != 0 or credit.get('product_completion_credit') != 0: failures.append('governance_maintenance_product_credit_not_zero')
+if terminal.get('outer_terminal_conclusion_is_closure_authority') is not True or terminal.get('inner_step_pass_is_terminal_run_pass') is not False: failures.append('outer_terminal_closure_semantics_invalid')
+
 out={
     'status':'PASS' if not failures else 'FAIL',
     'canonical_registry_uid':canonical.get('registry_uid'),

@@ -8,8 +8,8 @@ stable_entrypoint:
   test_state_root: governance/test
   active_test_state: governance/test/ACTIVE_STATE.yaml
 active_specification:
-  governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
-  display_version: v2.2.2
+  governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+  display_version: v2.2.3
   version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
   aliases:
   - neutral-portable-governance
@@ -20,12 +20,13 @@ active_specification:
   - version-role-separation
   - full-line-source-integrity-closure
   - execution-closure-transaction-hardening
+  - mother-context-task-layer-hardening
   status: ACTIVE_CURRENT_GOVERNANCE
 immediate_predecessor:
-  governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
+  governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
   display_version: v2.2.2
   version_role: SUPERSEDED_CURRENT_GOVERNANCE_HISTORY
-  status: SUPERSEDED_HISTORY_ONLY_AFTER_EXECUTION_CLOSURE_TRANSACTION_HARDENING
+  status: SUPERSEDED_HISTORY_ONLY_AFTER_MOTHER_CONTEXT_TASK_LAYER_HARDENING
 version_role_contract:
   current_governance_display_version_owner: active_specification
   verified_source_package_version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
@@ -50,6 +51,10 @@ resolution_policy:
   non_normative_source_materialization_may_be_current_locator: false
   active_reference_target_must_exist: true
   stale_superseded_owner_pointer_by_active_consumer: FORBIDDEN
+  session_bootstrap_resume_gate_required_before_current_state_or_effectful_execution: true
+  current_primary_task_layer_required: true
+  stage_profile_run_identity_may_redirect_primary_task: false
+  work_unit_resolution_gate_required_when_active_work_unit_missing: true
 specification_mutation_control:
   component_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   default_without_explicit_user_directive: DENY

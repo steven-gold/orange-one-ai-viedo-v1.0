@@ -6,13 +6,15 @@ import json
 import lzma
 import sys
 import tarfile
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / '.github' / 'governance-source' / 'active' / 'source'
 EXPECTED_FILE_COUNT = 75
 EXPECTED_CHECKSUM_ENTRIES = 74
-EXPECTED_BUNDLE_SHA256 = 'ccbe7e107b074139606df6716815d2068e773073b28837e99c48a291519d52af'
+EXPECTED_BUNDLE_SHA256 = 'a265845bfebfe2e5ac71ec7bd2d4be3422734f2739e87bbd6be69f4ec8180a62'
+EXPECTED_SOURCE_ZIP_SHA256 = 'a27e8876cabeec2af961a12d4006a4a3695c3fb70178f667762c0c50ec1aeabc'
 CRITICAL = {
     '10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',
     '10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml',
@@ -104,6 +106,22 @@ if not errors:
     if bundle_sha != EXPECTED_BUNDLE_SHA256:
         fail(f'DETERMINISTIC_BUNDLE_SHA_MISMATCH expected={EXPECTED_BUNDLE_SHA256} actual={bundle_sha}')
 
+source_zip_sha = None
+if not errors:
+    zbuf = io.BytesIO()
+    with zipfile.ZipFile(zbuf, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+        for p in files:
+            rel = p.relative_to(SOURCE).as_posix()
+            zi = zipfile.ZipInfo(rel, date_time=(1980, 1, 1, 0, 0, 0))
+            zi.compress_type = zipfile.ZIP_DEFLATED
+            zi.create_system = 3
+            mode = 0o755 if (p.stat().st_mode & 0o111) else 0o644
+            zi.external_attr = (mode & 0xFFFF) << 16
+            zf.writestr(zi, p.read_bytes())
+    source_zip_sha = hashlib.sha256(zbuf.getvalue()).hexdigest()
+    if source_zip_sha != EXPECTED_SOURCE_ZIP_SHA256:
+        fail(f'DETERMINISTIC_SOURCE_ZIP_SHA_MISMATCH expected={EXPECTED_SOURCE_ZIP_SHA256} actual={source_zip_sha}')
+
 report = {
     'artifact_type': 'NON_NORMATIVE_SOURCE_IDENTITY_EVIDENCE',
     'source_root': '.github/governance-source/active/source',
@@ -115,6 +133,8 @@ report = {
     'runtime_residual_count': len(residual),
     'deterministic_bundle_sha256_expected': EXPECTED_BUNDLE_SHA256,
     'deterministic_bundle_sha256_actual': bundle_sha,
+    'deterministic_source_zip_sha256_expected': EXPECTED_SOURCE_ZIP_SHA256,
+    'deterministic_source_zip_sha256_actual': source_zip_sha,
     'deterministic_bundle_size': bundle_size,
     'result': 'PASS' if not errors else 'FAIL',
     'errors': errors,
@@ -132,4 +152,5 @@ print('PASS: every listed source checksum matches')
 print('PASS: critical registry/baseline/validator files present')
 print('PASS: no pyc/__pycache__ residual')
 print(f'PASS: deterministic bundle sha256={bundle_sha}')
+print(f'PASS: deterministic source zip sha256={source_zip_sha}')
 print('PASS: GITHUB_MATERIALIZED_SOURCE_IDENTICAL_TO_VERIFIED_75_FILE_SOURCE')

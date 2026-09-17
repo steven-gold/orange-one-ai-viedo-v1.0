@@ -151,3 +151,46 @@ post_promotion_fresh_restart:
   new_governance_uid_freeze_required: true
   canonical_preflight_from_clean_baseline_required: true
   fresh_reverification_required: true
+session_bootstrap_resume_gate:
+  required_before_any_current_state_judgment_planning_write_test_commit_workflow_deployment_or_closure_claim: true
+  ordered_resolution:
+  - LIVE_REPOSITORY_BRANCH_COMMIT_TREE
+  - FORMAL_REGISTRY_AND_CURRENT_GOVERNANCE_ENTRY
+  - MOTHER_GOVERNANCE_01_02_03_04
+  - CURRENT_CANONICAL_AUTHORITY
+  - CURRENT_PRIMARY_TASK_LAYER
+  - ACTIVE_WORK_UNIT_OR_WORK_UNIT_RESOLUTION_GATE
+  - CANONICAL_OWNER_AND_IMPACTED_CONSUMERS
+  - PERSISTED_RESUME_POINT_AND_LAST_EFFECTFUL_ACTION
+  - CURRENT_AUDIT_AND_EVIDENCE_STATE
+  - SELECTED_EXECUTION_PROFILE_WHEN_APPLICABLE
+  - ENTRY_DEPENDENCIES_DOD_GATES_AND_TRANSITION
+  - PRE_WRITE_LIVE_IDENTITY_RECHECK
+  chat_memory_or_historical_summary_may_select_current_truth: false
+  stage_profile_or_run_identity_may_select_current_governance: false
+  missing_stale_ambiguous_conflicting_or_superseded_reference: BLOCK_RELOAD_OR_RESOLVE_REQUIRED
+task_layer_classification:
+  required_before_work_unit_execution: true
+  allowed_primary_layers:
+  - GOVERNANCE_MAINTENANCE
+  - PRODUCT_STAGE_EXECUTION
+  - TEST_OR_VALIDATION_MAINTENANCE
+  - EVIDENCE_STATE_MAINTENANCE
+  - DEPLOYMENT_OR_PRODUCTION
+  explicit_user_directive_and_current_authority_take_precedence_over_stage_profile_run_labels: true
+  stage_profile_run_or_open_blocker_may_silently_redirect_primary_task: false
+  task_layer_change_requires_fresh_session_bootstrap: true
+work_unit_resolution_gate:
+  required_when_no_legal_active_primary_work_unit: true
+  legal_inputs:
+  - CURRENT_AUTHORITY
+  - EXPLICIT_AUTHORIZATION_OR_CHANGE_REQUEST
+  - CHANGE_IMPACT_SET
+  - DEPENDENCY_GRAPH
+  - APPLICABILITY
+  - BLOCKER_LEDGER
+  - PREDECESSOR_CLOSURE_TRANSITION
+  - CANONICAL_OWNER_MAPPING
+  ai_may_invent_successor_work_unit: false
+  multiple_materially_distinct_legal_successors_without_authority: WORK_UNIT_RESOLUTION_AMBIGUOUS_BLOCK
+  nearest_stage_file_test_or_blocker_is_implicit_successor: false

@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-04
-version: 2.2.1
+version: 2.2.2
 order: 4
 category: audit_progress_reporting
 required_before_execution: true
@@ -1441,3 +1441,24 @@ Audit MUST compare functional-contract Authority, approved visual projection, im
 Audit MUST prove each governed execution cycle consumed one canonical preflight generated from Current reusable policy, selected execution profile when applicable, immutable inputs, exact dependencies, applicability rules, and Current Authority.
 
 All validators/scanners/classifiers/remediation executors MUST consume the same required-field, effective-contract, denominator, classification, impact, problem-register, and resolution-ledger truth. Local hard-coded subsets, stale prior-run denominators, profile-local policy overrides, or unpersisted generated evidence are blocking.
+
+<!-- SECTION_UID: WEB-GOV-04-S079 -->
+## 79. Session Bootstrap / Current Primary Task Audit
+
+Every `PRE_WORK_AUDIT` and every resumed execution MUST verify the complete `SESSION_BOOTSTRAP_RESUME_GATE` defined by WEB-GOV-03-S063 before accepting Current State. Audit MUST record at least live repository/branch/commit/tree, Current Governance UID, Mother read-set identity, Current Canonical Authority, Current Primary Task Layer, Active Work Unit or Work Unit Resolution disposition, Canonical Owner, Resume Point, Current evidence identity, selected profile when applicable, and pre-write identity recheck state.
+
+Audit MUST FAIL when Current State was selected from chat memory, a historical summary, Stage/profile/run identity, stale evidence, or a superseded/deleted reference instead of the formal Current chain.
+
+<!-- SECTION_UID: WEB-GOV-04-S080 -->
+## 80. Work Unit Resolution / Task-Layer Credit Isolation Audit
+
+Audit MUST prove the Active Work Unit belongs to the locked Current Primary Task Layer. When no Active Work Unit existed, Audit MUST require a persisted `WORK_UNIT_RESOLUTION_GATE` result and prove the successor was derived from registered Authority/authorization, impact, dependency, applicability and owner evidence rather than AI invention.
+
+For governance, test/harness, evidence/state, reference, residual, CI, or gate maintenance, Audit MUST separately report governance-maintenance closure and product-stage status. Product gap/blocker denominators MUST remain unchanged unless fresh product-owner evidence proves an authorized product remediation. Governance cleanup, successful validator repair, successful workflow repair, or source/reference hygiene MUST_NOT be reported as product completion.
+
+<!-- SECTION_UID: WEB-GOV-04-S081 -->
+## 81. Outer Terminal Conclusion / Resume Continuity Audit
+
+Terminal Audit MUST distinguish inner-step/job success from the outer terminal execution result. Closure credit requires the exact terminal conclusion and required denominator for the exact tested commit/evidence cycle; queued, in-progress, timed-out, cancelled, skipped, failed, ambiguous, or historical runs are not Current terminal PASS.
+
+Audit MUST prove closure state, evidence references, unresolved blockers, exact Resume Point, and legal next transition were persisted before task-layer or Work Unit movement. A resumed session that cannot reconcile these facts to the Current Governance UID and live repository identity MUST be `NOT_VERIFIED` or `BLOCKED`, never inferred PASS.

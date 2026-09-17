@@ -1,6 +1,6 @@
 ---
 document_id: WEB-GOV-02
-version: 2.2.1
+version: 2.2.2
 order: 2
 category: implementation_delivery
 required_before_execution: true
