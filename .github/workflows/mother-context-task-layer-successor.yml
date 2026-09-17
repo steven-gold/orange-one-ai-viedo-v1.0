@@ -4,8 +4,7 @@ on:
   push:
     branches: [rebuild-v2.1.1]
     paths:
-      - 'governance/test/spec_change_authorizations/USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R2.yaml'
-      - '.github/governance-maintenance/materialize_mother_context_task_layer_successor.py'
+      - 'governance/test/spec_change_authorizations/USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R3.yaml'
       - '.github/workflows/mother-context-task-layer-successor.yml'
 
 permissions:
@@ -13,7 +12,7 @@ permissions:
 
 jobs:
   materialize-authorized-successor:
-    if: ${{ github.event.head_commit.message == 'chore(governance): authorize mother context task-layer hardening R2' }}
+    if: "${{ github.event.head_commit.message == 'chore(governance): authorize mother context task-layer hardening R3' }}"
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
@@ -30,8 +29,22 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "d4f26961cc332b63aafeedf773b041d856d5c815"
-          test -f governance/test/spec_change_authorizations/USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R2.yaml
+          test "$(git rev-parse HEAD^)" = "751c73d5f17a1d8e2e38768ad58090c6bcdaa9f5"
+          test -f governance/test/spec_change_authorizations/USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R3.yaml
+      - name: Bind one-time materializer to R3 authorization
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/governance-maintenance/materialize_mother_context_task_layer_successor.py')
+          t=p.read_text(encoding='utf-8')
+          old='USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R2'
+          new='USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R3'
+          if t.count(old) != 1:
+              raise SystemExit(f'expected one R2 materializer binding, got {t.count(old)}')
+          p.write_text(t.replace(old,new),encoding='utf-8')
+          PY
       - name: Materialize authorized Mother successor and run targeted validators
         run: python .github/governance-maintenance/materialize_mother_context_task_layer_successor.py
       - name: Verify transaction diff hygiene
@@ -50,6 +63,6 @@ jobs:
           git config user.email 'proorangeone@gmail.com'
           git add -A
           git commit -m "feat(governance): promote mother context task-layer hardening" \
-            -m "Spec-Change-Authorization: USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R2" \
+            -m "Spec-Change-Authorization: USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING-R3" \
             -m "Spec-Change-Scope: MOTHER_CONTEXT_TASK_LAYER_HARDENING"
           git push origin HEAD:rebuild-v2.1.1
