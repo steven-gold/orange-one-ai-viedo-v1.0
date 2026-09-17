@@ -59,6 +59,29 @@ def unsafe_preterminal_current_projection(text: str) -> bool:
     )
 
 
+def resolve_profile_bound_state(active_state: dict, errors: list[str]) -> tuple[dict, dict]:
+    profile_state = active_state.get("selected_execution_profile_state") or {}
+    attempt_key = str(profile_state.get("active_attempt_state_key") or "")
+    execution_key = str(profile_state.get("execution_state_key") or "")
+    step_key = str(profile_state.get("current_step_state_key") or "")
+    if not attempt_key or not execution_key or not step_key:
+        errors.append("PROFILE_BOUND_PROJECTOR_STATE_KEYS_INCOMPLETE")
+        return {}, {}
+    attempt = active_state.get(attempt_key)
+    execution = active_state.get(execution_key)
+    if not isinstance(attempt, dict):
+        errors.append(f"PROFILE_BOUND_ACTIVE_ATTEMPT_STATE_MISSING:{attempt_key}")
+        attempt = {}
+    if not isinstance(execution, dict):
+        errors.append(f"PROFILE_BOUND_EXECUTION_STATE_MISSING:{execution_key}")
+        execution = {}
+    step = execution.get(step_key)
+    if not isinstance(step, dict):
+        errors.append(f"PROFILE_BOUND_CURRENT_STEP_STATE_MISSING:{execution_key}.{step_key}")
+        step = {}
+    return attempt, step
+
+
 def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> dict[str, object]:
     cfg = registry.get("active_consumer_reference_integrity") or {}
     inventory = cfg.get("projector_inventory")
@@ -67,6 +90,7 @@ def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> 
         return {}
 
     active_state = load_yaml(ROOT / "governance/test/ACTIVE_STATE.yaml")
+    active_attempt, current_step = resolve_profile_bound_state(active_state, errors)
     projectors: dict[str, object] = {}
     seen = set()
 
@@ -97,42 +121,39 @@ def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> 
                 errors.append(
                     f"ACTIVE_GOVERNANCE_PROJECTOR_STALE:{label}:expected={current_uid}:actual={value}"
                 )
-        elif kind == "STAGE02_CURRENT_EXECUTION_CROSSCHECK":
+        elif kind.endswith("_CURRENT_EXECUTION_CROSSCHECK"):
             projectors[label] = {
                 "attempt_uid": value.get("attempt_uid") if isinstance(value, dict) else None,
                 "state": value.get("state") if isinstance(value, dict) else None,
             }
             if not isinstance(value, dict):
-                errors.append(f"CURRENT_STAGE02_PROJECTOR_INVALID:{label}")
+                errors.append(f"CURRENT_PROFILE_EXECUTION_PROJECTOR_INVALID:{label}")
                 continue
-            expected_attempt = (active_state.get("stage02_active_attempt") or {}).get("attempt_uid")
-            expected_result = (active_state.get("execution") or {}).get("stage2", {}).get("result")
-            expected_gaps = (active_state.get("stage02_current_problem_state") or {}).get("fresh_functional_gap_total")
-            expected_next = (active_state.get("resume_control") or {}).get("parent_resume_point")
             checks = {
-                "attempt_uid": (value.get("attempt_uid"), expected_attempt),
-                "state": (value.get("state"), expected_result),
-                "current_functional_gap_count": (value.get("current_functional_gap_count"), expected_gaps),
+                "attempt_uid": (value.get("attempt_uid"), active_attempt.get("attempt_uid")),
+                "state": (value.get("state"), current_step.get("result")),
+                "current_functional_gap_count": (
+                    value.get("current_functional_gap_count"),
+                    active_attempt.get("fresh_functional_gap_total"),
+                ),
             }
             for field, (actual, expected) in checks.items():
                 if actual != expected:
                     errors.append(
-                        f"CURRENT_STAGE02_PROJECTOR_DRIFT:{label}:{field}:expected={expected}:actual={actual}"
+                        f"CURRENT_PROFILE_EXECUTION_PROJECTOR_DRIFT:{label}:{field}:expected={expected}:actual={actual}"
                     )
-        elif kind == "STAGE02_CURRENT_FINDINGS_CROSSCHECK":
+        elif kind.endswith("_CURRENT_FINDINGS_CROSSCHECK"):
             projectors[label] = {
                 "attempt_uid": value.get("attempt_uid") if isinstance(value, dict) else None,
                 "fresh_functional_gap_total": value.get("fresh_functional_gap_total") if isinstance(value, dict) else None,
             }
             if not isinstance(value, dict):
-                errors.append(f"CURRENT_FINDINGS_PROJECTOR_INVALID:{label}")
+                errors.append(f"CURRENT_PROFILE_FINDINGS_PROJECTOR_INVALID:{label}")
                 continue
-            expected_attempt = (active_state.get("stage02_active_attempt") or {}).get("attempt_uid")
-            expected_gaps = (active_state.get("stage02_current_problem_state") or {}).get("fresh_functional_gap_total")
-            if value.get("attempt_uid") != expected_attempt:
-                errors.append(f"CURRENT_FINDINGS_ATTEMPT_DRIFT:{label}")
-            if value.get("fresh_functional_gap_total") != expected_gaps:
-                errors.append(f"CURRENT_FINDINGS_GAP_DRIFT:{label}")
+            if value.get("attempt_uid") != active_attempt.get("attempt_uid"):
+                errors.append(f"CURRENT_PROFILE_FINDINGS_ATTEMPT_DRIFT:{label}")
+            if value.get("fresh_functional_gap_total") != active_attempt.get("fresh_functional_gap_total"):
+                errors.append(f"CURRENT_PROFILE_FINDINGS_GAP_DRIFT:{label}")
         else:
             errors.append(f"PROJECTOR_KIND_UNKNOWN:{label}:{kind}")
 
@@ -282,7 +303,7 @@ def main() -> int:
 
     print(f"PASS: active workflows scanned={workflow_count}")
     print(f"PASS: direct+transitive executable targets={len(referenced_by)} all exist")
-    print("PASS: complete projector inventory resolved from Registry and cross-ledger checks passed")
+    print("PASS: complete projector inventory resolved from Registry and profile-bound state keys")
     print("PASS: no same-run preterminal Current closure PASS projection remains")
     print("PASS: terminal-result negative regressions blocked")
     print("PASS: ACTIVE_CONSUMER_REFERENCE_INTEGRITY")
