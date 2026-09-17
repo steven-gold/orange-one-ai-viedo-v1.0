@@ -1,4 +1,4 @@
-schema_version: 21
+schema_version: 22
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
@@ -50,11 +50,11 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: REVERIFY_REQUIRED_AUTHORITY_RECOVERY_WORK_UNIT
+  full_line_github_result: PASS_EXECUTION_SOURCE_HEAD
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
-  full_line_verification_run_id: 35163581458
+  full_line_verification_run_id: 35172521035
 stage_execution_loading:
   full_line_round_reads_all_source_files_for_integrity_and_regression: true
   normal_stage_execution_reads_only_stage_required_files_and_shared_dependencies: true
@@ -87,76 +87,21 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STAGE2_TESTED_BLOCKED_AUTHORITY_RECOVERY_WORK_UNIT
-next_action: RESTORE_EXACT_EXISTING_EXTERNAL_AUTHORITY_MATERIALIZATION_THEN_VALIDATE_R3_AND_FULL_LINE
+status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
+next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS;
+  DO NOT MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
   effectful_stage2_execution_before_entry_resolution: PASS_ENTRY_RESOLVED
-  parent_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
-  current_resume_point: STAGE2_EXTERNAL_AUTHORITY_RECOVERY_WORK_UNIT
-  current_work_unit_uid: WU-STAGE02-AUTHORITY-RECOVERY-001
-  current_owner: governance/ci/validate_current_stage2_external_authority_resolution_r3.py
-  current_step: RESTORE_EXACT_EXISTING_EXTERNAL_AUTHORITY_MATERIALIZATION
-  last_successful_gate: WU_STAGE02_COMMON_ENGINE_003_CLOSED_FULL_LINE_PASS
-  current_blocker: CURRENT_R7_AND_R3_CONSUMERS_REQUIRE_EXACT_EXTERNAL_AUTHORITY_MATERIALIZATION_BLOBS_REMOVED_BY_PRIOR_CLEANUP
-  pending_tests:
-  - CURRENT_EXTERNAL_AUTHORITY_RESOLUTION_R3
-  - CURRENT_STAGE02_REQUIRED_OUTPUTS
-  - ACTIVE_CONSUMER_REFERENCE_INTEGRITY
-  - FULL_LINE_HIGH_PRESSURE_CURRENT_HEAD
-  pending_deployment: false
-  exact_next_action: RESTORE_EXACT_EXISTING_EXTERNAL_AUTHORITY_MATERIALIZATION_THEN_VALIDATE_R3_AND_FULL_LINE
-  last_closed_work_unit_uid: WU-STAGE02-COMMON-ENGINE-003
+  current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
+  last_closed_work_unit_uid: WU-STAGE02-AUTHORITY-RECOVERY-001
   last_closed_work_unit_result: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
-  last_closed_work_unit_full_line_run_id: 35163581458
-  last_closed_work_unit_evidence_head: 265cc7dbff89097e55f013f5c37bb62fe1bc6fe9
-active_work_unit:
-  work_unit_uid: WU-STAGE02-AUTHORITY-RECOVERY-001
-  canonical_name: STAGE02_EXACT_EXTERNAL_AUTHORITY_MATERIALIZATION_RECOVERY
-  canonical_owner: governance/ci/validate_current_stage2_external_authority_resolution_r3.py
-  scope:
-  - RESTORE_EXACT_HISTORICAL_EXTERNAL_AUTHORITY_BLOBS_ALREADY_LOCKED_BY_CURRENT_R3_VALIDATOR
-  - RESTORE_SHARED_OWNER_PORT_MAP_R3_EXACT_BLOB
-  - REVALIDATE_CURRENT_R3_EXTERNAL_AUTHORITY_RESOLUTION
-  - REVALIDATE_CURRENT_CONSUMERS_AND_FULL_LINE
-  out_of_scope:
-  - INVENT_PRODUCT_AUTHORITY_VALUES
-  - CREATE_NEW_EXTERNAL_AUTHORITY
-  - MODIFY_CURRENT_SPECIFICATION
-  - MODIFY_IMMUTABLE_STAGE01_SOURCE
-  - CLAIM_PRODUCT_BLOCKER_REDUCTION
-  - STAGE03_EXECUTION
-  - WEBSITE_CONSTRUCTION
-  - DEPLOYMENT
-  dependencies:
-  - governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  - governance/ci/validate_current_stage2_external_authority_resolution_r3.py
-  - governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml
-  - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  start_condition: CURRENT_R3_VALIDATOR_REFERENCES_EXACT_PREVIOUSLY_VERIFIED_AUTHORITY_BLOB_SHAS_WHILE_THEIR_MATERIALIZED_PATHS_ARE_ABSENT_AT_CURRENT_HEAD
-  definition_of_done:
-  - ALL_R3_LOCKED_EXTERNAL_AUTHORITY_PATHS_RESTORED_FROM_THE_EXACT_EXPECTED_GIT_BLOB_SHAS
-  - SHARED_OWNER_PORT_MAP_R3_RESTORED_FROM_EXACT_EXPECTED_GIT_BLOB_SHA
-  - VALIDATE_CURRENT_STAGE2_EXTERNAL_AUTHORITY_RESOLUTION_R3_PASS
-  - ACTIVE_CONSUMER_REFERENCE_INTEGRITY_PASS
-  - CURRENT_SPECIFICATION_AND_IMMUTABLE_STAGE01_SOURCE_BYTE_CLEAN
-  - FULL_LINE_CURRENT_HEAD_PASS
-  - PRODUCT_BLOCKER_CREDIT_REMAINS_ZERO
-  - PARENT_STAGE2_AUTHORITY_INGESTION_RESUME_RESTORED_AFTER_CLOSURE
-  required_tests:
-  - governance/ci/validate_current_stage2_external_authority_resolution_r3.py
-  - governance/ci/validate_current_stage2_required_outputs.py
-  - governance/ci/validate_active_consumer_reference_integrity.py
-  - .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
-  required_evidence:
-  - EXACT_RESTORED_BLOB_IDENTITY
-  - CURRENT_R3_VALIDATOR_PASS
-  - CURRENT_HEAD_FULL_LINE_PASS
-  current_status: IN_PROGRESS_AUTHORITY_RECOVERY
-  product_blocker_credit: 0
-  resume_point: RESTORE_EXACT_EXISTING_EXTERNAL_AUTHORITY_MATERIALIZATION_THEN_VALIDATE_R3_AND_FULL_LINE
+  last_closed_work_unit_full_line_run_id: 35172521035
+  last_closed_work_unit_evidence_head: d7279e40e934452ae971c4d71ba27d16cfb2b4b9
+  exact_next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS;
+    DO NOT MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260916-FULL-LINE-SOURCE-INTEGRITY-CLOSURE
   predecessor_attempt_preserved_as_historical_evidence: true
@@ -186,8 +131,9 @@ stage02_active_attempt:
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: true
-  next_action: RESTORE_EXACT_EXISTING_EXTERNAL_AUTHORITY_MATERIALIZATION_THEN_VALIDATE_R3_AND_FULL_LINE
-  governance_status: CURRENT_FROZEN_ATTEMPT_AUTHORITY_RECOVERY_WORK_UNIT
+  next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS;
+    DO NOT MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
+  governance_status: CURRENT_FROZEN_ATTEMPT_FRESHLY_REVALIDATED_BLOCKED
   closure_credit_under_current_governance: true
   fresh_revalidation_required: false
   material_remediation_started: true
@@ -207,7 +153,6 @@ stage02_active_attempt:
   authority_request_is_authority: false
   new_authority_required_before_more_material_remediation: true
   previous_common_engine_closure_full_line_job_id: 104970774976
-  active_authority_recovery_work_unit_uid: WU-STAGE02-AUTHORITY-RECOVERY-001
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
@@ -242,4 +187,4 @@ stage02_material_remediation:
   external_authority_union_count: 8
   external_authority_resolution_claimed: false
   current_specification_mutated: false
-  status: INTERRUPTED_BY_AUTHORITY_RECOVERY_NO_PRODUCT_CREDIT
+  status: STRUCTURAL_REMEDIATION_FRESHLY_REEXECUTED_BLOCKED_ON_FUNCTIONAL_GAPS
