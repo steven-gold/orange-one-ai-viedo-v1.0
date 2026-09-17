@@ -1,0 +1,75 @@
+authorization_uid: USR-DIRECTIVE-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-18
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+baseline_commit_sha: c7bb9f1547dbc49aacd76d0bf0d5c33e6c963ae4
+baseline_tree_sha: bca2a766f520970a762e1a26726dd6dd40c093b7
+current_governance_uid: GOV-REV-20260917-EXECUTION-CLOSURE-TRANSACTION-HARDENING
+
+user_directive:
+  - "現在不是還在整理母規範嗎怎麼跳到stage-02"
+  - "繼續將母規範整理好"
+
+pre_write_context_verification:
+  live_repository_branch_head_verified: true
+  current_registry_resolved: true
+  mother_01_02_03_04_read_in_order: true
+  current_mutation_control_read: true
+  current_closure_protocol_read: true
+  existing_authorization_inventory_checked: true
+  prior_20260917_authorization_is_single_use_and_not_reusable: true
+  write_disposition: MODIFY_EXISTING_CANONICAL_MOTHER_OWNERS
+
+exact_scope:
+  purpose: >-
+    Harden the reusable Mother Governance so every conversation and execution cycle resolves Current Truth and task layer before any current-state judgment or effectful work, and so governance-maintenance work cannot be confused with a product Stage work unit or receive product completion credit.
+  permitted_normative_changes:
+    - Define one mandatory SESSION_BOOTSTRAP_RESUME_GATE with ordered resolution of live repository/branch/head, formal Registry/Current Governance entry, Mother 01 through 04, Current Canonical Authority, Active Work Unit or legal Work Unit resolution, Canonical Owner Mapping, Resume Point, Current Audit/Evidence, selected execution profile, entry/dependency/DoD/gates/transition.
+    - Define fail-closed behavior when required Current identity, owner, resume, evidence, authority, revision or reference is missing, stale, ambiguous or contradictory.
+    - Define TASK_LAYER_CLASSIFICATION separating GOVERNANCE_MAINTENANCE, PRODUCT_STAGE_EXECUTION, TEST_OR_VALIDATION_MAINTENANCE, EVIDENCE_STATE_MAINTENANCE and DEPLOYMENT_OR_PRODUCTION operations before Work Unit execution.
+    - Require that Stage/profile/run identities never select Current Governance or redefine the current primary task.
+    - Define WORK_UNIT_RESOLUTION_GATE when no legal Active Work Unit exists, deriving a successor only from registered authority/change request/impact/dependency/applicability evidence and forbidding AI invention.
+    - Explicitly prohibit governance cleanup, validator/harness repair, evidence/state repair and CI/gate repair from receiving product-stage gap reduction or product completion credit.
+    - Strengthen canonical-reference and context continuity so stale/deleted/superseded owners fail before execution and reference migration uses the complete active/transitive consumer set.
+    - Require terminal closure to depend on observed outer terminal conclusion, not inner-step success or an in-progress workflow.
+    - Reconcile duplicated Mother clauses without lowering any existing requirement.
+  permitted_supporting_changes:
+    - .github/governance-source/active/source/12_DOCS/mother-spec/**
+    - .github/governance-source/active/source/10_REGISTRY/**
+    - .github/governance-source/** only for checksum/source-identity synchronization caused by the authorized Mother successor
+    - governance/specifications/current/**
+    - governance/specifications/REGISTRY.yaml
+    - GOVERNANCE_CURRENT.yaml
+    - governance/ci/**
+    - governance/test/**
+    - .github/workflows/** only where required to enforce the authorized Mother rules
+  excluded_scope:
+    - ACPOS product or business behavior changes
+    - Supplying unresolved Stage-02 product or external authority values
+    - Product materialization or product gap remediation
+    - Entering any product Stage as the primary task
+    - Stage-03 progression
+    - Website feature construction
+    - Production deployment
+    - Deleting valid historical provenance
+
+completion_requirements:
+  all_four_mother_files_reconciled: true
+  bootstrap_resume_gate_machine_enforceable: true
+  task_layer_classification_machine_enforceable: true
+  work_unit_resolution_gate_machine_enforceable: true
+  governance_maintenance_zero_product_credit_enforced: true
+  current_history_stage_profile_role_separation_enforced: true
+  active_transitive_reference_integrity_enforced: true
+  new_immutable_governance_uid_required: true
+  registry_manifest_atomic_binding_required: true
+  verified_source_checksum_identity_resynchronized: true
+  targeted_regression_required: true
+  full_line_high_pressure_validation_required: true
+  website_construction_allowed: false
+  deployment_allowed: false
