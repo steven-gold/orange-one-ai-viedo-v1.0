@@ -1,0 +1,52 @@
+authorization_uid: USR-DIRECTIVE-20260918-MOTHER-RESIDUAL-CLASSIFICATION-HARDENING-R1
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-18
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+baseline_commit_sha: 201bdcb9069eb253120320c639b61fc8317a523b
+baseline_tree_sha: 6a30dfdd11518c288acfd178725b803a0363c996
+current_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
+user_directive:
+  - "這些也都有加進去了嗎，將前面沒有加入的都補齊並且要確認內容沒有衝突。然後繼續剛剛斷點繼續"
+pre_write_context_verification:
+  live_repository_branch_head_verified: true
+  current_registry_resolved: true
+  mother_01_02_03_04_read_in_order: true
+  existing_residual_rules_reviewed: true
+  existing_supersession_transaction_reviewed: true
+  existing_safe_delete_gate_reviewed: true
+  existing_residual_audit_reviewed: true
+  current_closure_protocol_residual_classification_reviewed: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  canonical_owner_resolution_complete: true
+  comparison_result: MOTHER_MISSING_COMPLETE_SEMANTIC_RESIDUAL_CLASSIFICATION_AND_DISPOSITION_TABLE
+  write_disposition: EXTEND_EXISTING_MOTHER_OWNER_WITH_NON_DUPLICATING_CLASSIFICATION_GATE
+exact_scope:
+  purpose: Promote the already-active Current residual classification semantics into Mother Governance without duplicating existing residual, supersession, cleanup-delete, or audit owners.
+  permitted_normative_changes:
+    - Add WEB-GOV-03-S068 semantic residual classification/disposition gate.
+    - Add WEB-GOV-04-S082 matching semantic residual classification audit.
+    - Preserve S16A, S53, S55, 22A and 65 as existing owners.
+    - Bind existing Current VALIDATION_REMEDIATION_CLOSURE_PROTOCOL residual_classification to the new Mother section UIDs.
+    - Update existing management guard, Section Registry, Current source revision projectors, compiled baseline, Root Manifest, checksums, deterministic source identities, Current Registry/Manifest/GOVERNANCE_CURRENT/ACTIVE_STATE projectors.
+  excluded_scope:
+    - ACPOS product/business behavior
+    - Stage-02 product/external Authority values
+    - product gap/blocker denominator reduction
+    - product Stage progression
+    - website construction
+    - deployment
+    - deletion of valid historical provenance or required negative regression signatures
+completion_requirements:
+  duplicate_or_conflicting_owner_count: 0
+  unknown_residual_disposition_blocks: true
+  product_stage_credit: 0
+  temporary_materializer_residual_count: 0
+  complete_75_file_local_full_line_required: true
+  official_exact_tree_terminal_revalidation_required: true
