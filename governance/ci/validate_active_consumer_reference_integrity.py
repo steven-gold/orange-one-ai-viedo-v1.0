@@ -16,7 +16,7 @@ REGISTRY = ROOT / "governance/specifications/REGISTRY.yaml"
 NEGATIVE_MATRIX = ROOT / "governance/test/EXECUTION_CLOSURE_NEGATIVE_REGRESSION_MATRIX.yaml"
 
 EXEC_REF = re.compile(
-    r"(?:python(?:3)?\s+|python(?:3)?\s+-m\s+)?"
+    r"python(?:3)?\s+(?:-m\s+)?"
     r"((?:governance/(?:ci|test)|\.github/governance-source)/[A-Za-z0-9_./-]+\.py)"
 )
 LOCAL_WORKFLOW_REF = re.compile(r"uses:\s*\./(\.github/workflows/[A-Za-z0-9_.-]+\.ya?ml)")

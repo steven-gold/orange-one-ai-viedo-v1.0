@@ -313,10 +313,12 @@ jobs:
           trans['website_construction_remains_blocked'] = True
           trans['deployment_remains_blocked'] = True
           sysrun = state.setdefault('full_lifecycle_governance_system_test', {})
-          sysrun['full_line_github_result'] = 'PASS_EXECUTION_SOURCE_HEAD'
+          sysrun['full_line_github_result'] = 'INNER_FULL_LINE_PASS_PENDING_TERMINAL_WORKFLOW'
           sysrun['full_line_verification_run_id'] = source_run
           sysrun['exact_denominators_verified'] = True
           sysrun['persisted_head_revalidation_required'] = True
+          sysrun['terminal_run_conclusion'] = 'PENDING'
+          sysrun['terminal_result_credit_allowed'] = False
           state_p.write_text(yaml.safe_dump(state, sort_keys=False, allow_unicode=True), encoding='utf-8')
 
           candidate_p = ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
@@ -673,10 +675,12 @@ jobs:
           trans['website_construction_remains_blocked'] = True
           trans['deployment_remains_blocked'] = True
           sysrun = state.setdefault('full_lifecycle_governance_system_test', {})
-          sysrun['full_line_github_result'] = 'PASS_EXECUTION_SOURCE_HEAD'
+          sysrun['full_line_github_result'] = 'INNER_FULL_LINE_PASS_PENDING_TERMINAL_WORKFLOW'
           sysrun['full_line_verification_run_id'] = source_run
           sysrun['exact_denominators_verified'] = True
           sysrun['persisted_head_revalidation_required'] = True
+          sysrun['terminal_run_conclusion'] = 'PENDING'
+          sysrun['terminal_result_credit_allowed'] = False
           state_p.write_text(yaml.safe_dump(state, sort_keys=False, allow_unicode=True), encoding='utf-8')
 
           candidate_p = ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
