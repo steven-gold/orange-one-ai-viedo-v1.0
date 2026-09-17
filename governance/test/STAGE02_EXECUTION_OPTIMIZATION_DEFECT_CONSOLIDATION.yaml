@@ -1,4 +1,4 @@
-schema_version: 3
+schema_version: 4
 artifact_uid: STAGE02-EXECUTION-OPTIMIZATION-DEFECT-CONSOLIDATION-20260915
 artifact_type: NON_NORMATIVE_TEST_PROVEN_DEFECT_CONSOLIDATION
 normative_authority: false
@@ -6,7 +6,7 @@ source_stage: STAGE-02
 promotion_authorization_uid: AUTH-20260915-STAGE02-EXECUTION-OPTIMIZATION
 target_governance_uid: GOV-REV-20260915-STAGE-EXECUTION-OPTIMIZATION
 
-test_proven_defects:
+historical_test_proven_defects:
   - defect: EXACT_VALUE_ABSENCE_CIRCULAR_AUTHORITY_CLASSIFICATION
     observed_in: [R5, R10, R11, R12]
     correction: UNIQUE_FUNCTIONAL_CLOSURE_DERIVATION_BEFORE_AUTHORITY_ESCALATION
@@ -73,7 +73,7 @@ current_calibration:
   newly_confirmed_common_engine_gap:
     finding_class: COMMON_EXECUTION_ENGINE_IMPLEMENTATION_GAP
     status: CLOSED_VERIFIED
-    description: The canonical Stage-02 preflight producer, policy support receipts, Current-registry validator, workflow replay/persistence wiring, Current Work Unit projection, and physical Current denominator binding have been repaired and freshly replayed. Parent owning-layer Resume context is supported without inventing a replacement product Work Unit UID.
+    description: The canonical Stage-02 preflight producer, policy support receipts, Current-registry validator, workflow replay/persistence wiring, Current Work Unit projection, and physical Current denominator binding were repaired and freshly replayed. Parent owning-layer Resume context is supported without inventing a replacement product Work Unit UID.
     product_blocker_credit: 0
     specification_change_required: false
     common_invariant_already_exists: true
@@ -156,3 +156,162 @@ current_calibration:
   next_legal_action: MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS
   stage03_allowed: false
   deployment_allowed: false
+
+comprehensive_replan_20260917:
+  authorization_uid: USR-DIRECTIVE-20260917-MOTHER-EXECUTION-CLOSURE-HARDENING
+  objective: >-
+    Use every observed successful and failed execution pattern as empirical input to redesign the reusable Mother process into one coherent machine-executable closed loop. Historical Stage/Rxx/workflow identities remain evidence only and must not become reusable policy identity.
+  uploaded_detail_floor:
+    package: ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+    observed_file_count: 39
+    required_reusable_detail_equivalence:
+      - CURRENT_TRUTH_SOURCE_MAP_AND_SCOPE_GATE_STATUS
+      - TYPED_NAMING_OWNER_AND_REFERENCE_RESOLUTION
+      - CHANGE_SET_AND_CHANGE_IMPACT
+      - DESIGN_SECTION_COMPONENT_CONTROL_FIELD_BINDINGS
+      - ENTITY_OPERATION_AND_STATE_GATE_LIFECYCLE
+      - DATA_RUNTIME_PERMISSION_AUDIT_ERROR_RECOVERY_BINDINGS
+      - PRE_IMPLEMENTATION_GUARDS
+      - IMPLEMENTATION_HANDOFF
+      - VISUAL_ANCHOR_GEOMETRY_AND_INTERACTION_BINDING
+      - ACCEPTANCE_MATRIX_AUDIT_BASELINE_AND_REQUIRED_EVIDENCE
+      - DEFINITION_OF_DONE
+      - WORK_UNIT_MATRIX
+      - RESUME_LEDGER
+    rule: NEW_REUSABLE_GOVERNANCE_MUST_COMPILE_EQUIVALENT_OR_GREATER_MACHINE_DETAIL_WITHOUT_COPYING_PRODUCT_SPECIFIC_VALUES
+
+  verified_success_patterns_to_preserve:
+    - pattern: CURRENT_TRUTH_BOOTSTRAP_BEFORE_EFFECTFUL_EXECUTION
+      reason: Registry/Current entry/Mother/Owner/Resume/Evidence reload prevented chat-memory authority drift.
+    - pattern: CANONICAL_PREFLIGHT_SINGLE_MANIFEST_SET
+      reason: Common compiler plus Current required-output validator eliminated workflow-local required-field and denominator forks.
+    - pattern: PHYSICAL_RESCAN_PLUS_AUTHORIZED_SUCCESSOR_RECONCILIATION
+      reason: Preserved immutable discovery baseline while allowing legal owning-layer remediation evidence.
+    - pattern: COMMON_ENGINE_INTERRUPT_WITH_ZERO_PRODUCT_CREDIT
+      reason: Parser/validator/classifier defects were repaired and replayed without converting harness repairs into product completion.
+    - pattern: DEPENDENCY_ORDERED_REMEDIATION_WITH_LOCAL_REVERSE_DEPENDENCY_VALIDATION
+      reason: Reduced repeated full-register rebuilds while preserving checkpoint and final full sweeps.
+    - pattern: RECEIPT_ONLY_PERSISTENCE_CHILD_IDENTITY
+      reason: Correctly separates execution source identity from a persistence-only child when no unrelated mutation is mixed into that child.
+    - pattern: TERMINAL_CI_RECEIPT_EXTERNAL_HEAD_BINDING
+      reason: Terminal CI conclusion can bind the tested head without requiring the run to self-write into the same commit.
+    - pattern: EXACT_EXTERNAL_AUTHORITY_PRESERVATION
+      reason: Unresolved external/shared Authority remained unresolved instead of being fabricated for closure.
+    - pattern: CURRENT_PROJECTOR_CROSS_CHECK
+      reason: Current validate_stage02_state_integrity now cross-checks ACTIVE_STATE, findings, evidence and candidate execution projector.
+    - pattern: SUCCESSOR_AWARE_STATE_VALIDATION
+      reason: Successor integrity validator accepts legal predecessor/blocked/pass states instead of hard-coding one phase.
+
+  verified_failure_patterns_to_eliminate:
+    - defect: INCOMPLETE_ACTIVE_PROJECTOR_COVERAGE_MODEL
+      current_evidence: validate_active_consumer_reference_integrity.py hand-lists four governance projectors and omits registered non-normative Current state projectors such as SPECIFICATION_CHANGE_CANDIDATES.current_stage2_execution.
+      correction: PROJECTOR_INVENTORY_MUST_BE_REGISTERED_DERIVED_COMPLETE_AND_CROSS_LEDGER_VALIDATED
+    - defect: PERSISTENCE_OWNER_PARTIAL_CURRENT_PROJECTION
+      historical_evidence: Earlier Stage-02 producer persisted ACTIVE_STATE/evidence without synchronizing candidate Current projection.
+      correction: EVERY_STATE_MUTATION_PRODUCER_MUST_COMMIT_THE_COMPLETE_REGISTERED_PROJECTOR_SET_OR_FAIL_BEFORE_WRITE
+    - defect: VALIDATOR_APPLICABILITY_SCOPE_NOT_MACHINE_BOUND
+      current_evidence: validate_stage02_entry_receipts.py requires STAGE-01-CLOSED plus NOT_EXECUTED while stage02-actual-test.yml invokes it unconditionally inside the actual-test job; validate_stage02_successor_integrity.py is the state-aware owner.
+      correction: VALIDATOR_DOMAIN_CONTRACT_PLUS_STATE_AWARE_SELECTION_BEFORE_WORKFLOW_ADMISSION
+    - defect: WORKFLOW_CAN_REFERENCE_RETIRED_OR_MISSING_VALIDATOR_UNTIL_EXECUTION
+      historical_evidence: Historical reexecution harness referenced validate_stage_test_remediation_closure_protocol.py after that owner no longer existed.
+      correction: FREEZE_COMPLETE_TRANSITIVE_EXECUTABLE_OWNER_GRAPH_AND_PROVE_TARGET_EXISTENCE_BEFORE_RUN
+    - defect: WORKFLOW_LOCAL_POLICY_AND_DENOMINATOR_COPY
+      historical_evidence: Required-output denominators and schema/projector logic diverged between workflow-local code and canonical owners.
+      correction: WORKFLOW_MAY_ORCHESTRATE_BUT_MUST_NOT_OWN_POLICY_REQUIRED_FIELD_DENOMINATOR_APPLICABILITY_OR_PROJECTOR_SCHEMA
+    - defect: DISCOVERY_SCANNER_AND_REMEDIATION_VALIDATOR_CONFLATION
+      historical_evidence: Raw-only scan could not recognize legal owning-layer remediation.
+      correction: SEPARATE_DISCOVERY_EFFECTIVE_CONTRACT_REMEDIATION_PROOF_AND_CLOSURE_VALIDATION
+    - defect: SAME_UID_NEIGHBOR_FIELD_FALSE_AUTHORITY_PROOF
+      historical_evidence: R2 classifier treated neighboring same-UID values as proof of the missing field.
+      correction: CATEGORY_AND_ROLE_SPECIFIC_EXACT_RELATION_PROOF
+    - defect: APPLICABILITY_AFTER_BLOCKER_COUNT
+      historical_evidence: Non-effectful behaviors were charged failure/recovery requirements before applicability was established.
+      correction: APPLICABILITY_BEFORE_REQUIRED_FIELD_AND_BLOCKER_DENOMINATOR
+    - defect: CURRENT_EVIDENCE_OR_RECEIPT_STALE_AFTER_HEAD_ADVANCE
+      historical_evidence: Static evidence/projector heads became stale after persistence commits and authority-recovery closure transitions.
+      correction: EXECUTION_SOURCE_RECEIPT_PERSISTENCE_CHILD_STATE_CLOSURE_AND_TERMINAL_CI_IDENTITIES_MUST_BE_TYPED_AND_RECONCILED
+    - defect: UNTRACKED_GENERATED_OUTPUT_ESCAPED_PERSISTENCE_CHECK
+      historical_evidence: Generated evidence existed outside tracked diff and was not persisted.
+      correction: TRACKED_AND_UNTRACKED_EXACT_OUTPUT_SET_PERSISTENCE_PROOF
+    - defect: REGEX_OR_PARSER_SELF_BUG_ESCAPED_AS_GOVERNANCE_FAILURE
+      historical_evidence: ordered_steps parser over-captured later YAML lists; registry scanner scanned its own negative fixture.
+      correction: SEMANTIC_PARSER_BOUNDARY_TESTS_AND_SELF_FIXTURE_ISOLATION_WITH_NEGATIVE_REGRESSION
+    - defect: WORKFLOW_SCHEMA_BUG_PREVENTED_ADMISSION
+      historical_evidence: timeout-minutes at workflow root prevented a Full-Line workflow from starting.
+      correction: WORKFLOW_STATIC_SCHEMA_LINT_AND_ADMISSION_PROBE_REQUIRED_BEFORE_CLAIMING_TEST_COVERAGE
+    - defect: SOURCE_MATERIALIZATION_AND_FULL_LINE_COVERAGE_GAPS
+      historical_evidence: Verified source package was referenced before all source bytes and full lifecycle suites were materially present in GitHub.
+      correction: PHYSICAL_SOURCE_IDENTITY_AND_MANDATORY_SUITE_DENOMINATOR_ARE_SEPARATE_REQUIRED_GATES
+    - defect: AUTHORIZATION_GUARD_SELF_HISTORY_BUG
+      historical_evidence: Single-use authorization scan initially counted current HEAD as prior usage.
+      correction: MUTATION_GUARD_MUST_HAVE_OWN_NEGATIVE_AND_TOPOLOGY_REGRESSION_TESTS
+    - defect: PROMOTION_ACTIVE_CONSUMER_ATOMICITY_GAP
+      historical_evidence: Governance promotion left stale source identity/semantic package/denominator consumers.
+      correction: COMPLETE_REVERSE_CONSUMER_FREEZE_ATOMIC_MIGRATION_AND_PERSISTED_HEAD_VERIFICATION
+    - defect: LEGACY_PROJECTOR_SCHEMA_REINTRODUCTION
+      historical_evidence: Existing producer could overwrite hardened Current projector with legacy schema.
+      correction: PROJECTOR_SCHEMA_OWNER_MUST_BE_SINGLE_AND_PRODUCERS_MUST_CONSUME_IT_NOT_REDECLARE_IT
+    - defect: RECEIPT_PERSISTENCE_CHILD_MIXED_UNRELATED_OUTPUT
+      historical_evidence: Authority recovery preflight child also persisted consumer report, preventing EXACT_PERSISTENCE_CHILD identity recognition.
+      correction: PERSISTENCE_CHILD_CHANGESET_MUST_MATCH_REGISTERED_RECEIPT_ONLY_ALLOWLIST_EXACTLY
+    - defect: TERMINAL_RUN_AND_LEDGER_CONCLUSION_DRIFT
+      historical_evidence: State could reference a run as closure evidence while run-level terminal conclusion was not equivalent to the claimed closure scope.
+      correction: TERMINAL_RECEIPT_MUST_BIND_EXACT_JOB_SCOPE_DENOMINATOR_HEAD_AND_CONCLUSION_AND_LEDGER_MUST_VALIDATE_THE_BINDING
+
+  required_reusable_closed_loop:
+    - RESOLVE_CURRENT_TRUTH_AND_IDENTITY_LOCK
+    - LOAD_CURRENT_REUSABLE_POLICY_AND_SELECTED_PROFILE
+    - RESOLVE_CANONICAL_OWNER_AND_COMPLETE_READ_SET
+    - FREEZE_COMPLETE_EXECUTABLE_CONSUMER_PROJECTOR_AND_DEPENDENCY_GRAPH
+    - COMPILE_CANONICAL_REQUIRED_FIELD_APPLICABILITY_EFFECTIVE_CONTRACT_AND_ACCEPTANCE_PREFLIGHT
+    - PROVE_PLANNING_DETAIL_COMPLETENESS_BEFORE_IMPLEMENTATION
+    - FRESH_PHYSICAL_DISCOVERY
+    - CLASSIFY_ROOT_CAUSE_OWNER_AND_AUTOMATION_ADMISSIBILITY
+    - INTERRUPT_AND_REPAIR_COMMON_ENGINE_DEFECTS_WITH_ZERO_PRODUCT_CREDIT
+    - EXECUTE_ONE_DEPENDENCY_ORDERED_OWNING_LAYER_BATCH
+    - PERSIST_ALL_REGISTERED_CURRENT_PROJECTORS_ATOMICALLY
+    - RUN_LOCAL_REVERSE_DEPENDENCY_VALIDATION
+    - RUN_REQUIRED_CHECKPOINT_FULL_SWEEP
+    - FRESH_REEXECUTE_FROM_REGISTERED_BASELINE
+    - VERIFY_KNOWN_SIGNATURES_ZERO_AND_RUN_HIDDEN_DEFECT_SWEEP
+    - RECONCILE_SINGLE_CURRENT_PROBLEM_REGISTER_AND_APPEND_RESOLUTION_LEDGER
+    - CLEAN_DUPLICATE_STALE_SUPERSEDED_TEMP_BACKUP_EMPTY_AND_OBSOLETE_RESIDUALS
+    - PERSIST_EVIDENCE_AND_EXACT_NEXT_RESUME
+    - VERIFY_TERMINAL_CI_RECEIPT_AND_PERSISTED_HEAD
+    - CLOSE_WORK_UNIT_ONLY_AFTER_COMPLETE_EVIDENCE_CHAIN
+    - ENTER_ONLY_THE_REGISTERED_LEGAL_SUCCESSOR
+
+  reusable_machine_contracts_required:
+    validator_applicability_registry: true
+    executable_owner_graph: true
+    current_projector_registry: true
+    persistence_projection_plan: true
+    canonical_preflight_manifest_set: true
+    acceptance_audit_blueprint: true
+    work_unit_matrix: true
+    definition_of_done: true
+    resume_ledger: true
+    dependency_and_reverse_dependency_index: true
+    change_impact_map: true
+    cleanup_and_supersession_ledger: true
+    terminal_receipt_binding: true
+    negative_regression_matrix: true
+    portability_matrix: true
+
+  cleanup_requirements:
+    semantic_duplicate_normative_rules: 0
+    competing_current_owner_rules: 0
+    workflow_local_policy_copies: 0
+    stale_current_projectors: 0
+    missing_active_executable_targets: 0
+    superseded_current_references: 0
+    unjustified_temp_backup_copy_or_intermediate_artifacts: 0
+    empty_placeholders: 0
+    broken_forward_or_reverse_references: 0
+
+  product_boundary:
+    product_authority_values_may_be_invented: false
+    external_authority_may_be_inferred: false
+    current_150_gap_product_credit_from_governance_refactor: 0
+    stage03_allowed_by_this_replan: false
+    deployment_allowed_by_this_replan: false
