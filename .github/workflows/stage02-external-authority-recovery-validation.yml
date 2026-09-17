@@ -13,110 +13,6 @@ permissions:
   actions: read
 
 jobs:
-  synchronize-current-projectors:
-    if: ${{ contains(github.event.head_commit.message, 'wire authority recovery projector synchronization') }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    env:
-      PYTHONDONTWRITEBYTECODE: '1'
-      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: rebuild-v2.1.1
-          fetch-depth: 0
-      - name: Install verifier dependency
-        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
-      - name: Synchronize only the two non-normative Current Stage-02 projectors
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          import yaml
-          action='RESTORE_EXACT_EXISTING_EXTERNAL_AUTHORITY_MATERIALIZATION_THEN_VALIDATE_R3_AND_FULL_LINE'
-          fp=Path('governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml')
-          cp=Path('governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml')
-          findings=yaml.safe_load(fp.read_text()) or {}
-          candidates=yaml.safe_load(cp.read_text()) or {}
-          assert findings.get('artifact_type') == 'STAGE02_CURRENT_FINDINGS'
-          assert findings.get('normative_authority') is False
-          current=candidates.get('current_stage2_execution') or {}
-          assert candidates.get('normative_authority') is False
-          findings['next_action']=action
-          current['next_action']=action
-          candidates['current_stage2_execution']=current
-          fp.write_text(yaml.safe_dump(findings, sort_keys=False, allow_unicode=True), encoding='utf-8')
-          cp.write_text(yaml.safe_dump(candidates, sort_keys=False, allow_unicode=True), encoding='utf-8')
-          PY
-          actual="$(git diff --name-only | sort)"
-          expected="$(printf '%s\n' governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml | sort)"
-          test "$actual" = "$expected" || { printf 'BLOCK: unexpected projector synchronization delta\n%s\n' "$actual" >&2; exit 1; }
-          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
-          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
-          git commit -m 'test(stage02): synchronize external authority recovery projectors'
-          git push origin HEAD:rebuild-v2.1.1
-
-  validate-exact-recovery:
-    if: ${{ contains(github.event.head_commit.message, 'synchronize external authority recovery projectors') }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 90
-    env:
-      PYTHONDONTWRITEBYTECODE: '1'
-      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: rebuild-v2.1.1
-          fetch-depth: 0
-      - name: Install verifier dependency
-        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
-      - name: Re-prove Current governance and exact WU context
-        shell: bash
-        run: |
-          set -euo pipefail
-          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
-          python governance/ci/governance_resolver.py
-          python governance/ci/validate_canonical_rule_registry.py
-          python governance/ci/validate_selected_execution_profile_integrity.py
-          python governance/ci/validate_stage02_state_integrity.py
-          python governance/ci/validate_validation_remediation_closure_protocol.py
-          python governance/ci/specification_mutation_guard.py
-          python -c "import yaml; s=yaml.safe_load(open('governance/test/ACTIVE_STATE.yaml')) or {}; a=s.get('active_work_unit') or {}; assert a.get('work_unit_uid')=='WU-STAGE02-AUTHORITY-RECOVERY-001'; assert a.get('canonical_owner')=='governance/ci/validate_current_stage2_external_authority_resolution_r3.py'; assert int(a.get('product_blocker_credit') or 0)==0; print('PASS: exact authority recovery WU resolved')"
-      - name: Verify exact restored Git blob identities
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml)" = 465329b6fb19b8e44c3083a9f280015ee95cc55c
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ASYNC/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml)" = ac3619b3bc547ce06f244c239fa69d3cac78da76
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-005/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml)" = 12ef6d233e09f84571dd5d694ae8e3789ae70502
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-006/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml)" = 12dbdf59a60df5b1cb3d3b18666209c05bb0c0a3
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml)" = dd9f05e295af57cc833e90d1a12030c8198580c6
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml)" = b09b7ca50313172ea021d9da0c8d57f2942f7b19
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml)" = 7d234cc2f2f831b82f2007403c71d4008b46a012
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/STAGE2_EXTERNAL_AUTHORITY_MATERIALIZATION_EVIDENCE.yaml)" = ff99fd8c48f4593c5ef5cdeab1d49c5caa027cfd
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP.yaml)" = 93f395264d7deec54dc86ddc286e484a8368c239
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R2.yaml)" = 65f821ad766994716f4336e961b1b160b5aac457
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R3.yaml)" = acb56fc7df74b50c3ef808dc29b0ef2e668bc92b
-          echo 'PASS: all exact historical authority blobs restored byte-identically'
-      - name: Materialize Current preflight and validate R3 authority resolution
-        shell: bash
-        run: |
-          set -euo pipefail
-          python governance/ci/compile_stage_execution_preflight.py --materialize
-          python governance/ci/compile_stage_execution_preflight.py --check
-          python governance/ci/validate_current_stage2_required_outputs.py
-          python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
-          python governance/ci/validate_active_consumer_reference_integrity.py
-          python governance/ci/specification_mutation_guard.py
-          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
-          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
-      - name: Run complete Current Full-Line after exact authority recovery
-        run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
-
   finalize-authority-recovery:
     if: ${{ contains(github.event.head_commit.message, 'finalize external authority recovery closure') }}
     runs-on: ubuntu-24.04
@@ -131,21 +27,27 @@ jobs:
           fetch-depth: 0
       - name: Install verifier dependency
         run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
-      - name: Lock trigger head and original recovery workflow parent
+      - name: Finalize exact authority recovery Work Unit and restore permanent harness
         shell: bash
         run: |
           set -euo pipefail
+          WORKFLOW='.github/workflows/stage02-external-authority-recovery-validation.yml'
+          ORIGINAL_WORKFLOW_BLOB='407b462fc05beb0fc0c38b4d2f76d2d8b91ee8fb'
+          PARENT_ACTION='AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY'
           trigger_head="$(git rev-parse HEAD)"
           test "$trigger_head" = "$GITHUB_SHA" || { echo "BLOCK: branch moved before finalizer checkout expected=$GITHUB_SHA actual=$trigger_head" >&2; exit 1; }
-          original_parent="$(git rev-parse HEAD^)"
-          {
-            echo "AUTH_RECOVERY_TRIGGER_HEAD=$trigger_head"
-            echo "AUTH_RECOVERY_ORIGINAL_PARENT=$original_parent"
-          } >> "$GITHUB_ENV"
-      - name: Re-prove Current governance, exact Work Unit, and restored authority
-        shell: bash
-        run: |
-          set -euo pipefail
+
+          original_parent=''
+          while read -r commit; do
+            blob="$(git rev-parse "${commit}:${WORKFLOW}" 2>/dev/null || true)"
+            if [ "$blob" = "$ORIGINAL_WORKFLOW_BLOB" ]; then
+              original_parent="$commit"
+              break
+            fi
+          done < <(git rev-list HEAD)
+          test -n "$original_parent" || { echo 'BLOCK: canonical permanent recovery workflow ancestor not found' >&2; exit 1; }
+          echo "PASS: permanent recovery workflow ancestor=$original_parent"
+
           python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
           python governance/ci/governance_resolver.py
           python governance/ci/validate_canonical_rule_registry.py
@@ -165,22 +67,28 @@ jobs:
           assert r.get('current_resume_point') == 'STAGE2_EXTERNAL_AUTHORITY_RECOVERY_WORK_UNIT', r
           print('PASS: exact authority recovery WU and parent resume resolved')
           PY
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml)" = 465329b6fb19b8e44c3083a9f280015ee95cc55c
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ASYNC/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml)" = ac3619b3bc547ce06f244c239fa69d3cac78da76
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-005/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml)" = 12ef6d233e09f84571dd5d694ae8e3789ae70502
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-006/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml)" = 12dbdf59a60df5b1cb3d3b18666209c05bb0c0a3
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml)" = dd9f05e295af57cc833e90d1a12030c8198580c6
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml)" = b09b7ca50313172ea021d9da0c8d57f2942f7b19
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml)" = 7d234cc2f2f831b82f2007403c71d4008b46a012
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/STAGE2_EXTERNAL_AUTHORITY_MATERIALIZATION_EVIDENCE.yaml)" = ff99fd8c48f4593c5ef5cdeab1d49c5caa027cfd
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP.yaml)" = 93f395264d7deec54dc86ddc286e484a8368c239
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R2.yaml)" = 65f821ad766994716f4336e961b1b160b5aac457
-          test "$(git hash-object 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R3.yaml)" = acb56fc7df74b50c3ef808dc29b0ef2e668bc92b
-          echo 'PASS: exact recovered authority blob identity retained'
-      - name: Persist exact-head active-WU canonical preflight child
-        shell: bash
-        run: |
-          set -euo pipefail
+
+          python - <<'PY'
+          import subprocess
+          expected={
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml':'465329b6fb19b8e44c3083a9f280015ee95cc55c',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/ASYNC/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml':'ac3619b3bc547ce06f244c239fa69d3cac78da76',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-005/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml':'12ef6d233e09f84571dd5d694ae8e3789ae70502',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-006/ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY_V1.0.yaml':'12dbdf59a60df5b1cb3d3b18666209c05bb0c0a3',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml':'dd9f05e295af57cc833e90d1a12030c8198580c6',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml':'b09b7ca50313172ea021d9da0c8d57f2942f7b19',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/GAP-008/operation_registry.yaml':'7d234cc2f2f831b82f2007403c71d4008b46a012',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXTERNAL_AUTHORITY/STAGE2_EXTERNAL_AUTHORITY_MATERIALIZATION_EVIDENCE.yaml':'ff99fd8c48f4593c5ef5cdeab1d49c5caa027cfd',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP.yaml':'93f395264d7deec54dc86ddc286e484a8368c239',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R2.yaml':'65f821ad766994716f4336e961b1b160b5aac457',
+            '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP_R3.yaml':'acb56fc7df74b50c3ef808dc29b0ef2e668bc92b',
+          }
+          for p, want in expected.items():
+              got=subprocess.check_output(['git','hash-object',p],text=True).strip()
+              assert got == want, (p,want,got)
+          print('PASS: exact 11 recovered authority/materialization blobs retained')
+          PY
+
           python governance/ci/compile_stage_execution_preflight.py --materialize
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
@@ -193,25 +101,23 @@ jobs:
           base=Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
           names=['REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT','CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER','GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECEIPT']
           allowed={(base/f'{n}.yaml').as_posix() for n in names}
+          allowed.add('governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json')
           status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],text=True)
           actual={line[3:] for line in status.splitlines() if line.strip()}
           unexpected=sorted(actual-allowed)
           assert not unexpected, {'unexpected_preflight_delta':unexpected,'actual':sorted(actual)}
-          assert actual, 'finalizer trigger HEAD must produce canonical active-WU preflight reconciliation'
-          print(f'PASS: active-WU canonical preflight delta files={len(actual)}')
+          assert actual, 'retry finalizer HEAD must produce canonical active-WU preflight reconciliation'
+          print(f'PASS: active-WU preflight/report delta files={len(actual)}')
           PY
           git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/*.yaml
+          git add 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/*.yaml governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
           git commit -m 'test(stage02): persist exact-head preflight for authority recovery closure'
           git push origin HEAD:rebuild-v2.1.1
-          echo "AUTH_RECOVERY_EVIDENCE_HEAD=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-      - name: Revalidate active-WU evidence head before closure
-        shell: bash
-        run: |
-          set -euo pipefail
+          evidence_head="$(git rev-parse HEAD)"
+
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
           python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
@@ -223,13 +129,10 @@ jobs:
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
           git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
-          echo "PASS: authority recovery active-WU evidence head=$(git rev-parse HEAD)"
-      - name: Build, validate, and atomically push closure transaction
-        shell: bash
-        run: |
-          set -euo pipefail
-          parent_action='AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY'
-          export AUTH_RECOVERY_PARENT_ACTION="$parent_action"
+          echo "PASS: active-WU evidence head=$evidence_head"
+
+          export AUTH_RECOVERY_PARENT_ACTION="$PARENT_ACTION"
+          export AUTH_RECOVERY_EVIDENCE_HEAD="$evidence_head"
           python - <<'PY'
           from pathlib import Path
           import os, yaml
@@ -299,16 +202,18 @@ jobs:
           state_p.write_text(yaml.safe_dump(state,sort_keys=False,allow_unicode=True),encoding='utf-8')
           findings_p.write_text(yaml.safe_dump(findings,sort_keys=False,allow_unicode=True),encoding='utf-8')
           candidates_p.write_text(yaml.safe_dump(candidates,sort_keys=False,allow_unicode=True),encoding='utf-8')
-          print('PASS: local authority recovery closure state and projectors prepared with zero product credit')
+          print('PASS: local authority recovery closure state/projectors prepared with zero product credit')
           PY
+
           actual="$(git diff --name-only | sort)"
           expected="$(printf '%s\n' governance/test/ACTIVE_STATE.yaml governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml | sort)"
-          test "$actual" = "$expected" || { printf 'BLOCK: unexpected authority recovery closure delta\n%s\n' "$actual" >&2; exit 1; }
+          test "$actual" = "$expected" || { printf 'BLOCK: unexpected closure delta\n%s\n' "$actual" >&2; exit 1; }
           git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
           git add governance/test/ACTIVE_STATE.yaml governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
           git commit -m 'test(stage02): close authority recovery work unit and restore parent resume'
           closure_state_sha="$(git rev-parse HEAD)"
+
           python governance/ci/compile_stage_execution_preflight.py --materialize
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
@@ -317,6 +222,7 @@ jobs:
           git add 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/*.yaml
           git commit -m 'test(stage02): persist canonical preflight for authority recovery closure state'
           closure_head="$(git rev-parse HEAD)"
+
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
           python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
@@ -345,18 +251,11 @@ jobs:
           assert p.get('exact_external_authority_required_count') == 4
           assert p.get('no_authorized_bounded_completion_basis_count') == 146
           assert p.get('bounded_completion_admissible_count') == 0
-          print('PASS: local two-commit authority recovery closure chain validated')
+          print('PASS: local authority recovery closure chain validated')
           PY
           git push origin "$closure_head":rebuild-v2.1.1
-          {
-            echo "AUTH_RECOVERY_CLOSURE_STATE_SHA=$closure_state_sha"
-            echo "AUTH_RECOVERY_CLOSURE_HEAD=$closure_head"
-          } >> "$GITHUB_ENV"
-      - name: Revalidate persisted authority recovery closure
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$AUTH_RECOVERY_CLOSURE_HEAD"
+          echo "PASS: closure pushed state=$closure_state_sha head=$closure_head"
+
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
           python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
@@ -367,23 +266,23 @@ jobs:
           git diff --exit-code -- governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
           echo "PASS: persisted authority recovery closure head=$(git rev-parse HEAD)"
-      - name: Restore permanent recovery workflow and persist cleanup preflight
-        shell: bash
-        run: |
-          set -euo pipefail
-          git show "${AUTH_RECOVERY_ORIGINAL_PARENT}:.github/workflows/stage02-external-authority-recovery-validation.yml" > .github/workflows/stage02-external-authority-recovery-validation.yml
+
+          git show "${original_parent}:${WORKFLOW}" > "$WORKFLOW"
+          test "$(git hash-object "$WORKFLOW")" = "$ORIGINAL_WORKFLOW_BLOB"
           python governance/ci/validate_active_consumer_reference_integrity.py
           git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
-          git add .github/workflows/stage02-external-authority-recovery-validation.yml governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
+          git add "$WORKFLOW" governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
           git commit -m 'chore(stage02): restore verified authority recovery workflow after closure'
           cleanup_state_sha="$(git rev-parse HEAD)"
+
           python governance/ci/compile_stage_execution_preflight.py --materialize
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
           git add 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/*.yaml
           git commit -m 'test(stage02): persist canonical preflight after authority recovery closure cleanup'
           cleanup_head="$(git rev-parse HEAD)"
+
           python governance/ci/compile_stage_execution_preflight.py --check
           python governance/ci/validate_current_stage2_required_outputs.py
           python governance/ci/validate_current_stage2_external_authority_resolution_r3.py
@@ -394,5 +293,4 @@ jobs:
           git diff --exit-code -- governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
           git push origin "$cleanup_head":rebuild-v2.1.1
-          echo "AUTH_RECOVERY_CLEANUP_STATE_SHA=$cleanup_state_sha"
-          echo "AUTH_RECOVERY_FINAL_HEAD=$cleanup_head"
+          echo "PASS: authority recovery closure cleanup state=$cleanup_state_sha final_head=$cleanup_head"
