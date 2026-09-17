@@ -5,13 +5,63 @@ on:
     branches: [rebuild-v2.1.1]
     paths:
       - '.github/workflows/stage02-external-authority-recovery-validation.yml'
+      - 'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
+      - 'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
 
 permissions:
-  contents: read
+  contents: write
   actions: read
 
 jobs:
+  synchronize-current-projectors:
+    if: ${{ contains(github.event.head_commit.message, 'wire authority recovery projector synchronization') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Synchronize only the two non-normative Current Stage-02 projectors
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          action='RESTORE_EXACT_EXISTING_EXTERNAL_AUTHORITY_MATERIALIZATION_THEN_VALIDATE_R3_AND_FULL_LINE'
+          fp=Path('governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml')
+          cp=Path('governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml')
+          findings=yaml.safe_load(fp.read_text()) or {}
+          candidates=yaml.safe_load(cp.read_text()) or {}
+          assert findings.get('artifact_type') == 'STAGE02_CURRENT_FINDINGS'
+          assert findings.get('normative_authority') is False
+          current=candidates.get('current_stage2_execution') or {}
+          assert candidates.get('normative_authority') is False
+          findings['next_action']=action
+          current['next_action']=action
+          candidates['current_stage2_execution']=current
+          fp.write_text(yaml.safe_dump(findings, sort_keys=False, allow_unicode=True), encoding='utf-8')
+          cp.write_text(yaml.safe_dump(candidates, sort_keys=False, allow_unicode=True), encoding='utf-8')
+          PY
+          actual="$(git diff --name-only | sort)"
+          expected="$(printf '%s\n' governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml | sort)"
+          test "$actual" = "$expected" || { printf 'BLOCK: unexpected projector synchronization delta\n%s\n' "$actual" >&2; exit 1; }
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+          git commit -m 'test(stage02): synchronize external authority recovery projectors'
+          git push origin HEAD:rebuild-v2.1.1
+
   validate-exact-recovery:
+    if: ${{ contains(github.event.head_commit.message, 'synchronize external authority recovery projectors') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
