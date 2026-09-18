@@ -476,6 +476,138 @@ jobs:
           git commit -m "test(stage02): persist fresh current-governance attempt evidence"
           git push origin HEAD:rebuild-v2.1.1
 
+  core01-structural-materialization:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'materialize core01 structural contracts') }}
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Re-prove exact Current authority before CORE-01 structural materialization
+        run: |
+          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_canonical_rule_registry.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Prove active CORE-01 structural Work Unit and exact scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json, yaml
+          state=yaml.safe_load(Path('governance/test/ACTIVE_STATE.yaml').read_text()) or {}
+          ev=json.loads(Path('governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json').read_text())
+          work=state.get('active_work_unit') or {}
+          assert work.get('work_unit_uid') == 'WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001', work
+          assert work.get('canonical_owner') == '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT', work
+          assert work.get('scope') == ['CORE-01'], work
+          assert ev.get('target_pages') == ['CORE-01'], ev.get('target_pages')
+          assert ev.get('remaining_pages') == ['ASSET-01'], ev.get('remaining_pages')
+          assert ev.get('closure_blocker_total') == 7, ev.get('closure_blocker_total')
+          assert set(ev.get('preserved_external_authority_union_gap_uids') or []) == {'GAP-001','GAP-002','GAP-003','GAP-004','GAP-005','GAP-007','GAP-008'}
+          print('PASS: CORE-01-only structural remediation scope is exact and ASSET-01 remains excluded')
+          PY
+      - name: Materialize CORE-01 structural contracts from immutable source authority
+        run: python governance/ci/materialize_current_stage2_closure_artifacts.py
+      - name: Validate source-bounded CORE-01 structural materialization
+        run: python governance/ci/validate_current_stage2_materialized_closure.py
+      - name: Prove exact first structural write-set and no ASSET-01 materialization
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          base=Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
+          allowed={
+            (base/'CORE-01/BUSINESS_ENTITY_INVENTORY.yaml').as_posix(),
+            (base/'CORE-01/BUSINESS_ENTITY_OPERATION_MATRIX.yaml').as_posix(),
+            (base/'CORE-01/ENTITY_HIERARCHY_MATRIX.yaml').as_posix(),
+            (base/'CORE-01/FUNCTIONAL_WORKBENCH_CONTRACT.yaml').as_posix(),
+            (base/'CORE-01/INTERACTION_TOPOLOGY_SPEC.yaml').as_posix(),
+            (base/'CORE-01/FUNCTION_VISUAL_IMPACT_MATRIX.yaml').as_posix(),
+            (base/'CORE-01/AI_INTERACTION_CONTINUITY_CONTRACT.yaml').as_posix(),
+            (base/'CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml').as_posix(),
+            (base/'CORE-01/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml').as_posix(),
+            (base/'DEPENDENCY_MAP.yaml').as_posix(),
+            (base/'ASYNC_PROVIDER_CONTRACT.yaml').as_posix(),
+            (base/'SHARED_OWNER_PORT_MAP.yaml').as_posix(),
+            'governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml',
+          }
+          status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],text=True)
+          actual={line[3:] for line in status.splitlines() if line.strip()}
+          assert actual == allowed, {'actual':sorted(actual),'allowed':sorted(allowed)}
+          print(f'PASS: exact CORE-01 structural materialization write-set={len(actual)}/13')
+          PY
+      - name: Persist CORE-01 structural materialization as isolated child
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --             00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01             00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_MAP.yaml             00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASYNC_PROVIDER_CONTRACT.yaml             00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP.yaml             governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml
+          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = '13'
+          git commit -m 'test(stage02): persist core01 structural contracts'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Rebind canonical preflight to active structural Work Unit
+        run: |
+          python governance/ci/compile_stage_execution_preflight.py --materialize
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_materialized_closure.py
+          python governance/ci/validate_current_stage2_required_outputs.py
+      - name: Prove canonical preflight reconciliation write-set
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          base=Path('00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT')
+          names=['REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT','CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER','GOVERNANCE_EXECUTION_CONTEXT_RECEIPT','EXECUTION_CYCLE_PREFLIGHT_RECEIPT']
+          allowed={(base/f'{n}.yaml').as_posix() for n in names}
+          status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],text=True)
+          actual={line[3:] for line in status.splitlines() if line.strip()}
+          assert actual and actual.issubset(allowed), {'actual':sorted(actual),'allowed':sorted(allowed)}
+          print(f'PASS: canonical preflight reconciliation delta={len(actual)}/12')
+          PY
+      - name: Persist canonical preflight reconciliation as isolated child
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+          git add --             "$base/REQUIRED_FIELD_MANIFEST.yaml" "$base/FUNCTIONAL_CHAIN_MANIFEST.yaml"             "$base/EFFECTIVE_CONTRACT_OVERLAY.yaml" "$base/DEPENDENCY_TOPOLOGY.yaml"             "$base/DENOMINATOR_SNAPSHOT.yaml" "$base/CLASSIFICATION_RULESET.yaml"             "$base/CHANGE_IMPACT_MAP.yaml" "$base/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml"             "$base/CURRENT_PROBLEM_REGISTER.yaml" "$base/RESOLUTION_LEDGER.yaml"             "$base/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml" "$base/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml"
+          test -n "$(git diff --cached --name-only)"
+          git commit -m 'test(stage02): rebind core01 preflight to structural work unit'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Exact child validation after structural materialization and preflight rebind
+        run: |
+          python governance/ci/validate_current_stage2_materialized_closure.py
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+
   structural-reexecution-r1:
     if: ${{ (github.event_name == 'push' && contains(github.event.head_commit.message, 'run structural reexecution r1')) || (github.event_name == 'workflow_dispatch' && inputs.mode == 'structural-reexecution-r1') }}
     permissions:

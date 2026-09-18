@@ -147,8 +147,34 @@ if before_closure_blockers != int(active.get("fresh_closure_blocker_total") or 0
     die("CURRENT_CLOSURE_BLOCKER_COUNT_DRIFT")
 if before_closure_blockers != expected_closure_blockers:
     die(f"STRUCTURAL_MATERIALIZATION_DENOMINATOR_DRIFT:expected={expected_closure_blockers}:actual={before_closure_blockers}")
+PREEXISTING_CANONICAL_PREFLIGHT_FILES = {
+    "REQUIRED_FIELD_MANIFEST.yaml",
+    "FUNCTIONAL_CHAIN_MANIFEST.yaml",
+    "EFFECTIVE_CONTRACT_OVERLAY.yaml",
+    "DEPENDENCY_TOPOLOGY.yaml",
+    "DENOMINATOR_SNAPSHOT.yaml",
+    "CLASSIFICATION_RULESET.yaml",
+    "CHANGE_IMPACT_MAP.yaml",
+    "STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml",
+    "CURRENT_PROBLEM_REGISTER.yaml",
+    "RESOLUTION_LEDGER.yaml",
+    "GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml",
+    "EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml",
+}
 if OUT.exists():
-    die("STAGE02_PRODUCT_ROOT_ALREADY_EXISTS_REFUSE_OVERWRITE")
+    existing = {
+        p.relative_to(OUT).as_posix()
+        for p in OUT.rglob("*")
+        if p.is_file()
+    }
+    unexpected = sorted(existing - PREEXISTING_CANONICAL_PREFLIGHT_FILES)
+    missing = sorted(PREEXISTING_CANONICAL_PREFLIGHT_FILES - existing)
+    if unexpected:
+        die(f"STAGE02_PRODUCT_ROOT_HAS_UNAUTHORIZED_PREEXISTING_OUTPUTS:{unexpected}")
+    if missing:
+        die(f"CANONICAL_PREFLIGHT_BASELINE_INCOMPLETE:{missing}")
+else:
+    die("CANONICAL_PREFLIGHT_ROOT_MISSING_BEFORE_STRUCTURAL_MATERIALIZATION")
 if RECEIPT.exists():
     die("REMEDIATION_RECEIPT_ALREADY_EXISTS_REFUSE_OVERWRITE")
 
