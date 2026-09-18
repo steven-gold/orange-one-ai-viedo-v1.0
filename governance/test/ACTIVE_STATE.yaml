@@ -432,6 +432,19 @@ active_work_unit:
   design_contract_candidate_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_CANDIDATE.json
   design_contract_semantic_review_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_SEMANTIC_REVIEW.json
   coherent_review_package_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
+  review_package_machine_validation:
+    package_persisted_commit: fbbb875314ff936b39539c7dec7ac1ee3b890f32
+    trigger_head_sha: a1bae099049b0f7a15bf1893bcc35ef7beff02c7
+    outer_workflow_run_id: 35340278635
+    outer_workflow_result: success
+    persisted_child_revalidated_in_workflow: true
+    persisted_child_full_line_result: success
+    uploaded_artifact_id: 10545061003
+    uploaded_artifact_digest: sha256:b7103123b18c7580659fc5c804613476b2fbc87b2e550460308bd13361a3d6e8
+    artifact_name: stage02-core01-current-design-contract-review-package
+    candidate_is_product_authority: false
+    materialization_allowed: false
+    product_blocker_credit: 0
   human_product_contract_review_status: PENDING_EXPLICIT_COHERENT_PACKAGE_REVIEW
 resume_control:
   chat_memory_is_authority: false
