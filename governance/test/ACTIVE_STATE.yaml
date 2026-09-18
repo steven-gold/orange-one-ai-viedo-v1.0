@@ -279,7 +279,12 @@ governance_revision_transition:
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/attempt-ae42ef7ba4d6
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: false
+  fresh_revalidation_required: true
+  fresh_revalidation_scope: STAGE02_PREDECESSOR_ATTEMPT_UNDER_CURRENT_GOVERNANCE
+  mother_machine_revalidation_complete: true
+  mother_machine_revalidation_run_id: 35291878285
+  mother_machine_revalidation_head: 4e528620ed4a27377f86b3ce05c05978df29a381
+  mother_machine_revalidation_result: success
   selected_execution_profile_preserved: true
   canonical_rule_registry_required_for_fresh_revalidation: true
   website_construction_remains_blocked: true
