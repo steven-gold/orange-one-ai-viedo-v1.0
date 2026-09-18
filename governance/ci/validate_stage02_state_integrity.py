@@ -201,7 +201,13 @@ if result == "TEST_EXECUTED_BLOCKED":
         if evidence.get("physical_stage2_product_artifact_root_present") is not True: die("BLOCKED_PRODUCT_ROOT_EVIDENCE_MISMATCH")
     effective = evidence.get("effective_functional_gap_total")
     blocking_functional = int(effective if effective is not None else fresh_gap_total)
-    if blocking_functional <= 0 and closure_total <= 0: die("BLOCKED_STATE_WITHOUT_EFFECTIVE_OR_STRUCTURAL_BLOCKERS")
+    scope_incomplete = evidence.get("stage_scope_complete") is False and bool(evidence.get("remaining_pages"))
+    if blocking_functional <= 0 and closure_total <= 0 and not scope_incomplete:
+        die("BLOCKED_STATE_WITHOUT_EFFECTIVE_OR_STRUCTURAL_BLOCKERS_OR_REMAINING_SCOPE")
+    if blocking_functional <= 0 and closure_total <= 0 and scope_incomplete:
+        page_effective = [int((rec or {}).get("effective_functional_gap_count") or 0) for rec in (pages or {}).values()]
+        if any(page_effective):
+            die("PARTIAL_SCOPE_EFFECTIVE_ZERO_DECLARATION_DRIFT")
 else:
     if candidate.get("state") != "TEST_EXECUTED_PASS": die("PASS_CANDIDATE_STATE_MISMATCH")
     if evidence.get("result") != "PASS" or evidence.get("stage_exit_allowed") is not True: die("PASS_STATE_EVIDENCE_MISMATCH")
