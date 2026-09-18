@@ -882,6 +882,28 @@ jobs:
           python governance/ci/specification_mutation_guard.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Synchronize derived active-consumer report before preflight write-set
+        shell: bash
+        run: |
+          set -euo pipefail
+          report='governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json'
+          unexpected="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | grep -v "^$report$" || true)"
+          test -z "$unexpected" || { printf 'BLOCK: unexpected pre-preflight validator delta\n%s\n' "$unexpected" >&2; exit 1; }
+          if ! git diff --quiet -- "$report"; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- "$report"
+            test "$(git diff --cached --name-only)" = "$report" || { echo 'BLOCK: active-consumer report commit is not isolated' >&2; exit 1; }
+            git commit -m 'test(governance): refresh active consumer integrity before core preflight'
+            git push origin HEAD:rebuild-v2.1.1
+            python governance/ci/validate_active_consumer_reference_integrity.py
+            git diff --exit-code -- "$report"
+            python governance/ci/validate_selected_execution_profile_integrity.py
+            python governance/ci/validate_stage02_state_integrity.py
+            python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+          else
+            echo 'PASS: active-consumer report already current; no synchronization commit required'
+          fi
       - name: Materialize and validate the one canonical Stage-02 preflight
         run: |
           python governance/ci/compile_stage_execution_preflight.py --materialize

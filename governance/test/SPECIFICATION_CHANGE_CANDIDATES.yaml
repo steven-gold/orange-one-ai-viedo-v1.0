@@ -395,6 +395,19 @@ findings:
   product_gap_or_blocker_denominator_changed: false
   rule: A predecessor material-remediation receipt may be read and preserved only when physically present; a clean fresh attempt starts with zero verified prior resolution entries and must not recreate a deleted legacy receipt to satisfy preflight.
   reopen_condition: Reopen if clean fresh Stage-02 preflight again requires a non-existent predecessor remediation artifact or silently recreates one.
+- finding_uid: FIND-20260918-004
+  class: EVIDENCE_WRITESET_OR_WORKFLOW_ORDERING_BUG
+  title: Canonical preflight persistence was contaminated by a derived active-consumer report delta
+  evidence: Canonical preflight run 35301990717 successfully materialized and checked all 10 logical preflight outputs plus 2 support receipts, then the strict persistence-set guard rejected governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json as an unexpected generated delta.
+  disposition: IMPLEMENTATION_REMEDIATED
+  specification_change_required: false
+  formal_specification_mutated_for_fix: false
+  current_specification_may_be_modified_from_this_finding_alone: false
+  resolution_type: ISOLATED_DERIVED_REPORT_SYNCHRONIZATION_BEFORE_PREFLIGHT_WRITESET
+  product_stage_credit: 0
+  product_gap_or_blocker_denominator_changed: false
+  rule: Derived validator reports that change during preflight prerequisites must be synchronized in an isolated child commit and revalidated before canonical preflight materialization; the canonical preflight commit allowlist remains exactly twelve outputs.
+  reopen_condition: Reopen if a canonical preflight persistence transaction can again contain any file outside its exact twelve-output allowlist.
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
