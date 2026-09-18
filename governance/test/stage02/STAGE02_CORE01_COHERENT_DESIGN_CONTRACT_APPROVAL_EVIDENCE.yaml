@@ -1,0 +1,49 @@
+schema_version: 1
+artifact_uid: STAGE02-CORE01-COHERENT-DESIGN-CONTRACT-APPROVAL-20260919-001
+artifact_type: PRODUCT_DESIGN_CONTRACT_PACKAGE_REVIEW_EVIDENCE
+normative_authority: false
+current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-002
+page_uid: CORE-01
+review_scope: WHOLE_COHERENT_CORE01_DESIGN_CONTRACT_CANDIDATE
+decision: APPROVE_WHOLE_COHERENT_CANDIDATE_AND_CONTINUE_CORE01_TO_CLOSURE
+approved_by: USER
+approved_at: '2026-09-19T00:58:00+08:00'
+explicit_user_decision_observed: true
+approval_source: CURRENT_CHAT_EXPLICIT_USER_DIRECTIVE
+approval_directive: '繼續接著執行把core-01完成'
+approval_context:
+  previously_disclosed_resume_point: STAGE2_CORE01_COHERENT_DESIGN_CONTRACT_PACKAGE_REVIEW
+  previously_disclosed_status: PENDING_EXPLICIT_COHERENT_PACKAGE_REVIEW
+  requested_outcome: COMPLETE_CORE01_ONLY
+  listed_pending_items:
+  - CORE-01_ACTUAL_STAGE02_FUNCTIONAL_CLOSURE
+  - PRODUCT_BLOCKER_REDUCTION_FROM_45
+  - R7_NOT_YET_ENTERED
+approved_denominator:
+  source_blockers: 45
+  coherent_design_units: 25
+bound_artifacts:
+  review_package:
+    path: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
+    artifact_uid: STAGE02-CORE01-DESIGN-CONTRACT-REVIEW-PACKAGE-CURRENT
+    git_blob_sha: 666a299a00b12b96cf808d839d2341f3b60e872d
+  candidate:
+    path: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_CANDIDATE.json
+    artifact_uid: STAGE02-CORE01-DESIGN-CONTRACT-CANDIDATE-CURRENT
+    git_blob_sha: baccb320047e896886cb0402f5d32085009cf2d4
+  semantic_review:
+    path: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_SEMANTIC_REVIEW.json
+    artifact_uid: STAGE02-CORE01-DESIGN-CONTRACT-SEMANTIC-REVIEW-CURRENT
+    git_blob_sha: 854674b2da43da481df0a2f2c0d6023681ef5786
+candidate_is_product_authority: false
+canonical_owner_materialization_allowed: true
+canonical_owner_target: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+identity_promotion_rule: TEMP-CORE01-* -> CORE-01-* ONLY; SEMANTIC_PAYLOAD_UNCHANGED
+r7_allowed_before_canonical_owner_materialization: false
+raw_source_mutation_allowed: false
+external_authority_autofill_allowed: false
+asset01_allowed: false
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
