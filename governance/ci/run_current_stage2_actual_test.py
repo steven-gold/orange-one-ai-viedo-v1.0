@@ -122,6 +122,209 @@ def effective_page_contract(page: str, raw: dict):
     }
 
 
+
+def declared_stage02_completeness_gaps(page: str, raw: dict, controls: dict, objects: dict, gaps: list[dict]):
+    meta = raw.get('stage02_completeness_contract')
+    if not isinstance(meta, dict) or meta.get('status') != 'REQUIRED_FOR_STAGE02_CLOSURE':
+        add(gaps, page, 'ARCHITECTURE_GAP', 'STAGE02_PLANNING_COMPLETENESS_CONTRACT_MISSING', page, 'required Stage-02 planning completeness contract absent')
+        return
+    baseline = str(meta.get('planning_baseline_sha256') or '')
+    if not re.fullmatch(r'[0-9a-f]{64}', baseline):
+        add(gaps, page, 'ARCHITECTURE_GAP', 'PLANNING_BASELINE_IDENTITY_MISSING', page, baseline or 'missing sha256')
+    for key in meta.get('required_contracts') or []:
+        if not isinstance(raw.get(str(key)), (dict, list)):
+            add(gaps, page, 'ARCHITECTURE_GAP', 'DECLARED_COMPLETENESS_CONTRACT_MISSING', str(key), 'required top-level contract missing')
+
+    field_contract = raw.get('field_binding_contract') or {}
+    declared_fields = field_contract.get('fields') or []
+    for row in declared_fields:
+        if not isinstance(row, dict) or not row.get('control_uid'):
+            add(gaps, page, 'ARCHITECTURE_GAP', 'FIELD_BINDING_DECLARATION_INVALID', page, str(row))
+            continue
+        cid = str(row['control_uid'])
+        control = controls.get(cid)
+        if not control:
+            add(gaps, page, 'IMPLEMENTATION_GAP', 'DECLARED_FIELD_CONTROL_MISSING', cid, 'field binding control absent')
+            continue
+        if control.get('action_uid') not in (None, '', 'NONE_FIELD_BINDING'):
+            add(gaps, page, 'ARCHITECTURE_GAP', 'FIELD_MASQUERADES_AS_ACTION', cid, str(control.get('action_uid')))
+        if control.get('binding_semantics') != 'DATA_OR_DRAFT_STATE_ONLY':
+            add(gaps, page, 'ARCHITECTURE_GAP', 'FIELD_BINDING_SEMANTICS_MISSING', cid, str(control.get('binding_semantics')))
+        if not control.get('data_binding') or control.get('data_binding') != row.get('data_binding'):
+            add(gaps, page, 'ARCHITECTURE_GAP', 'FIELD_DATA_BINDING_DRIFT', cid, str(control.get('data_binding')))
+    send = field_contract.get('send_binding') or {}
+    send_action = send.get('action_uid')
+    send_control = send.get('send_control_uid')
+    owners = sorted(cid for cid, control in controls.items() if control.get('action_uid') == send_action)
+    if send_action and owners != [send_control]:
+        add(gaps, page, 'ARCHITECTURE_GAP', 'SEND_ACTION_NOT_UNIQUELY_OWNED_BY_SEND_CONTROL', str(send_action), str(owners))
+
+    wb = raw.get('functional_workbench_topology_contract') or {}
+    conv = wb.get('conversation_workbench') or {}
+    required_sections = ['CORE-01-SEC-03','CORE-01-SEC-04','CORE-01-SEC-06','CORE-01-SEC-07']
+    if conv.get('workbench_type') != 'ATOMIC_WORKBENCH' or conv.get('same_surface') != 'REQUIRED' or conv.get('section_order') != required_sections or conv.get('split_into_independent_surfaces') != 'FORBIDDEN':
+        add(gaps, page, 'ARCHITECTURE_GAP', 'CONVERSATION_ATOMIC_WORKBENCH_CONTRACT_INCOMPLETE', str(conv.get('workbench_uid') or page), str(conv))
+
+    lifecycle = raw.get('work_item_lifecycle_contract') or {}
+    declared_items = {}
+    for row in (lifecycle.get('project_core_order') or []) + (lifecycle.get('topic_production_order') or []):
+        if isinstance(row, dict) and row.get('work_item'):
+            declared_items[str(row['work_item'])] = row
+    modes = raw.get('page_modes') or {}
+    expected_items = []
+    for mode in ('PROJECT_CORE','TOPIC_PRODUCTION'):
+        expected_items.extend((modes.get(mode) or {}).get('editable_work_items') or [])
+    if set(declared_items) != set(expected_items):
+        add(gaps, page, 'ARCHITECTURE_GAP', 'WORK_ITEM_LIFECYCLE_DENOMINATOR_DRIFT', page, str({'expected':sorted(expected_items),'actual':sorted(declared_items)}))
+    domain_ops = {str(x.get('operation_uid')): x for x in (raw.get('domain_materialization_operations') or []) if isinstance(x, dict) and x.get('operation_uid')}
+    actions = idx((raw.get('registries') or {}).get('actions'), 'action_uid')
+    for wi, row in declared_items.items():
+        if not row.get('formal_output'):
+            add(gaps, page, 'ARCHITECTURE_GAP', 'WORK_ITEM_FORMAL_OUTPUT_MISSING', wi, 'formal_output')
+        op = row.get('finalization_operation_uid')
+        action = row.get('finalization_action_uid')
+        actions_list = row.get('finalization_action_uids') or []
+        if op:
+            rec = domain_ops.get(str(op))
+            if not rec:
+                add(gaps, page, 'ARCHITECTURE_GAP', 'WORK_ITEM_DOMAIN_FINALIZATION_OPERATION_MISSING', wi, str(op))
+            else:
+                for required in ('runtime_owner','persistence_owner','required_inputs','validation','audit_event_uid','failure_state','recovery','resulting_state','transport_surface'):
+                    if rec.get(required) in (None,'',[],{}):
+                        add(gaps, page, 'ARCHITECTURE_GAP', 'DOMAIN_FINALIZATION_FIELD_MISSING', str(op), required)
+                if 'PAGE_LOCAL_API' in str(rec.get('transport_surface')) and 'NOT_PAGE_LOCAL_API' not in str(rec.get('transport_surface')):
+                    add(gaps, page, 'ARCHITECTURE_GAP', 'PAGE_LOCAL_FINALIZATION_API_FORBIDDEN', str(op), str(rec.get('transport_surface')))
+        elif action:
+            if action not in actions:
+                add(gaps, page, 'IMPLEMENTATION_GAP', 'WORK_ITEM_FINALIZATION_ACTION_MISSING', wi, str(action))
+        elif actions_list:
+            missing = [x for x in actions_list if x not in actions]
+            if missing:
+                add(gaps, page, 'IMPLEMENTATION_GAP', 'WORK_ITEM_FINALIZATION_ACTION_SET_INCOMPLETE', wi, str(missing))
+        else:
+            add(gaps, page, 'ARCHITECTURE_GAP', 'WORK_ITEM_FINALIZATION_BINDING_MISSING', wi, 'no operation/action binding')
+    if lifecycle.get('known_authority_gaps_open') not in ([], None):
+        add(gaps, page, 'AUTHORITY_GAP', 'KNOWN_WORK_ITEM_AUTHORITY_GAP_STILL_OPEN', page, str(lifecycle.get('known_authority_gaps_open')))
+
+    memory = raw.get('working_memory_binding') or {}
+    if not memory.get('owner') or memory.get('page_local_second_service') != 'FORBIDDEN' or memory.get('formal_truth') is not False:
+        add(gaps, page, 'ARCHITECTURE_GAP', 'WORKING_MEMORY_OWNER_BINDING_INCOMPLETE', page, str(memory))
+
+    cp = raw.get('conversation_policy') or {}
+    required_context = ['Project','Topic if applicable','Work Item','Thread','Attachment refs','Reference refs','Context Package']
+    if not cp.get('same_problem_rule') or cp.get('exact_relevant_context') != required_context or not cp.get('response_traceability') or not cp.get('finalization_reentry'):
+        add(gaps, page, 'ARCHITECTURE_GAP', 'MULTI_AI_SAME_QUESTION_EXACT_CONTEXT_INCOMPLETE', page, str(cp))
+
+    impact = raw.get('change_impact_contract') or {}
+    states = set(impact.get('affected_downstream_states') or [])
+    if not {'NEEDS_REVIEW','NEEDS_REVALIDATION'}.issubset(states) or impact.get('silent_downstream_rewrite') != 'FORBIDDEN' or impact.get('exact_base_version_required_for_revision') is not True:
+        add(gaps, page, 'ARCHITECTURE_GAP', 'UPSTREAM_CHANGE_IMPACT_REVALIDATION_INCOMPLETE', page, str(impact))
+
+    op_contract = raw.get('entity_operation_applicability_contract') or {}
+    vocabulary = op_contract.get('operation_vocabulary') or []
+    profiles = op_contract.get('profiles') or {}
+    bindings = op_contract.get('entity_profile_bindings') or []
+    binding_map = {str(x.get('object_uid')): str(x.get('profile')) for x in bindings if isinstance(x, dict) and x.get('object_uid')}
+    if set(binding_map) != set(objects):
+        add(gaps, page, 'ARCHITECTURE_GAP', 'BUSINESS_ENTITY_OPERATION_APPLICABILITY_DENOMINATOR_DRIFT', page, str({'entity_count':len(objects),'binding_count':len(binding_map)}))
+    if not vocabulary or not profiles:
+        add(gaps, page, 'ARCHITECTURE_GAP', 'BUSINESS_ENTITY_OPERATION_APPLICABILITY_AUTHORITY_MISSING', page, 'vocabulary/profiles absent')
+    for oid, profile in binding_map.items():
+        rec = profiles.get(profile)
+        if not isinstance(rec, dict):
+            add(gaps, page, 'ARCHITECTURE_GAP', 'BUSINESS_ENTITY_OPERATION_PROFILE_MISSING', oid, profile)
+            continue
+        required = rec.get('required') or []
+        optional = rec.get('optional') or []
+        if any(x not in vocabulary for x in required + optional):
+            add(gaps, page, 'ARCHITECTURE_GAP', 'BUSINESS_ENTITY_OPERATION_PROFILE_UNKNOWN_OPERATION', oid, profile)
+
+    hierarchy = raw.get('entity_hierarchy_contract') or {}
+    rels = hierarchy.get('relationships') or []
+    rel_map = {str(x.get('object_uid')): x for x in rels if isinstance(x, dict) and x.get('object_uid')}
+    if set(rel_map) != set(objects):
+        add(gaps, page, 'ARCHITECTURE_GAP', 'ENTITY_HIERARCHY_DENOMINATOR_DRIFT', page, str({'entity_count':len(objects),'relationship_count':len(rel_map)}))
+    for oid, row in rel_map.items():
+        if not row.get('relation_status') or not row.get('relation'):
+            add(gaps, page, 'ARCHITECTURE_GAP', 'ENTITY_HIERARCHY_RELATION_INCOMPLETE', oid, str(row))
+        parent = row.get('parent_object_uid')
+        if parent and parent not in objects:
+            add(gaps, page, 'IMPLEMENTATION_GAP', 'ENTITY_HIERARCHY_PARENT_REF_MISSING', oid, str(parent))
+
+    pipeline = raw.get('conversation_finalization_pipeline_contract') or {}
+    steps = pipeline.get('steps') or []
+    if pipeline.get('singular_pipeline') is not True or [x.get('order') for x in steps if isinstance(x,dict)] != list(range(1,11)):
+        add(gaps, page, 'ARCHITECTURE_GAP', 'SINGULAR_FINALIZATION_PIPELINE_INCOMPLETE', page, str(pipeline.get('singular_pipeline')))
+
+
+def materialized_stage02_completeness_blockers(page_dir: Path, raw: dict) -> list[str]:
+    meta = raw.get('stage02_completeness_contract')
+    if not isinstance(meta, dict) or meta.get('status') != 'REQUIRED_FOR_STAGE02_CLOSURE':
+        return []
+    blockers = []
+    baseline = meta.get('planning_baseline_sha256')
+    reg = raw.get('registries') or {}
+    objects = idx(reg.get('objects_refs'), 'object_uid')
+    field_contract = raw.get('field_binding_contract') or {}
+    declared_field_uids = {str(x.get('control_uid')) for x in (field_contract.get('fields') or []) if isinstance(x,dict) and x.get('control_uid')}
+
+    def doc(name):
+        path = page_dir / name
+        return load(path) if path.is_file() else {}
+
+    opm = doc('BUSINESS_ENTITY_OPERATION_MATRIX.yaml')
+    if opm.get('semantic_entity_join_used') is not True or opm.get('entity_count') != len(objects):
+        blockers.append('BUSINESS_ENTITY_OPERATION_MATRIX_SEMANTIC_JOIN_MISSING')
+    vocabulary = (raw.get('entity_operation_applicability_contract') or {}).get('operation_vocabulary') or []
+    rows = opm.get('entity_rows') or []
+    if len(rows) != len(objects):
+        blockers.append('BUSINESS_ENTITY_OPERATION_MATRIX_ENTITY_DENOMINATOR_DRIFT')
+    else:
+        for row in rows:
+            decisions = row.get('operation_applicability') or {}
+            if set(decisions) != set(vocabulary) or any(v not in {'REQUIRED','OPTIONAL','NOT_APPLICABLE'} for v in decisions.values()):
+                blockers.append('BUSINESS_ENTITY_OPERATION_MATRIX_APPLICABILITY_INCOMPLETE')
+                break
+
+    hm = doc('ENTITY_HIERARCHY_MATRIX.yaml')
+    if hm.get('explicit_relationship_authority_used') is not True or hm.get('entity_count') != len(objects) or len(hm.get('rows') or []) != len(objects):
+        blockers.append('ENTITY_HIERARCHY_RELATIONSHIPS_MISSING')
+    elif any(not x.get('relation_status') or not x.get('relation') for x in (hm.get('rows') or [])):
+        blockers.append('ENTITY_HIERARCHY_RELATIONSHIPS_INCOMPLETE')
+
+    wb = doc('FUNCTIONAL_WORKBENCH_CONTRACT.yaml')
+    atomics = {str(x.get('workbench_uid')): x for x in (wb.get('atomic_workbenches') or []) if isinstance(x,dict)}
+    conv = atomics.get('CORE-01-WB-CONVERSATION') or {}
+    if conv.get('workbench_type') != 'ATOMIC_WORKBENCH' or conv.get('same_surface') != 'REQUIRED' or conv.get('section_order') != ['CORE-01-SEC-03','CORE-01-SEC-04','CORE-01-SEC-06','CORE-01-SEC-07']:
+        blockers.append('CONVERSATION_ATOMIC_WORKBENCH_MISSING')
+
+    topo = doc('INTERACTION_TOPOLOGY_SPEC.yaml')
+    illegal = [x for x in (topo.get('edges') or []) if x.get('relation') == 'CONTROL_TRIGGERS_ACTION' and x.get('from') in declared_field_uids]
+    if illegal:
+        blockers.append('FIELD_ACTION_TOPOLOGY_DRIFT')
+    send = field_contract.get('send_binding') or {}
+    send_edges = [x for x in (topo.get('edges') or []) if x.get('relation') == 'CONTROL_TRIGGERS_ACTION' and x.get('to') == send.get('action_uid')]
+    if sorted(x.get('from') for x in send_edges) != [send.get('send_control_uid')]:
+        blockers.append('SEND_ACTION_TOPOLOGY_NOT_UNIQUE')
+
+    ai = doc('AI_INTERACTION_CONTINUITY_CONTRACT.yaml')
+    if not ai.get('same_problem_rule') or ai.get('exact_relevant_context') != ['Project','Topic if applicable','Work Item','Thread','Attachment refs','Reference refs','Context Package'] or ai.get('single_finalization_pipeline') is not True:
+        blockers.append('AI_SAME_QUESTION_CONTEXT_CONTINUITY_MISSING')
+
+    chain = doc('FUNCTIONAL_CHAIN_SPEC.yaml')
+    required_projected = [
+        'field_binding_contract','functional_workbench_topology_contract','working_memory_binding',
+        'conversation_finalization_pipeline_contract','domain_materialization_operations',
+        'work_item_lifecycle_contract','change_impact_contract','entity_operation_applicability_contract',
+        'entity_hierarchy_contract','stage02_completeness_contract'
+    ]
+    if any(key not in chain for key in required_projected):
+        blockers.append('FUNCTIONAL_CHAIN_PLANNING_CONTRACT_PROJECTION_INCOMPLETE')
+    if chain.get('planning_baseline_sha256') != baseline:
+        blockers.append('FUNCTIONAL_CHAIN_PLANNING_BASELINE_IDENTITY_DRIFT')
+
+    return sorted(set(blockers))
+
 def fresh_scan(page: str, raw: dict, unresolved_authority_by_ref: dict):
     reg = raw.get('registries') or {}
     actions = idx(reg.get('actions'), 'action_uid')
@@ -139,10 +342,17 @@ def fresh_scan(page: str, raw: dict, unresolved_authority_by_ref: dict):
 
     for cid, control in controls.items():
         aid = control.get('action_uid')
-        if aid:
-            controls_by_action[aid].append(cid)
-        if not aid or aid not in actions:
-            add(gaps, page, 'IMPLEMENTATION_GAP', 'CONTROL_WITHOUT_VALID_ACTION', cid, str(aid))
+        is_data_field = control.get('binding_semantics') == 'DATA_OR_DRAFT_STATE_ONLY'
+        if is_data_field:
+            if aid not in (None, '', 'NONE_FIELD_BINDING'):
+                add(gaps, page, 'ARCHITECTURE_GAP', 'FIELD_MASQUERADES_AS_ACTION', cid, str(aid))
+            if not control.get('data_binding'):
+                add(gaps, page, 'ARCHITECTURE_GAP', 'FIELD_DATA_BINDING_MISSING', cid, 'data_binding absent')
+        else:
+            if aid:
+                controls_by_action[aid].append(cid)
+            if not aid or aid not in actions:
+                add(gaps, page, 'IMPLEMENTATION_GAP', 'CONTROL_WITHOUT_VALID_ACTION', cid, str(aid))
         if control.get('gate_uid') and control.get('gate_uid') not in gates:
             add(gaps, page, 'IMPLEMENTATION_GAP', 'CONTROL_GATE_REF_MISSING', cid, str(control.get('gate_uid')))
         if control.get('permission_uid') and control.get('permission_uid') not in permissions:
@@ -256,6 +466,8 @@ def fresh_scan(page: str, raw: dict, unresolved_authority_by_ref: dict):
             if transition.get(required) in (None, '', [], {}):
                 add(gaps, page, 'ARCHITECTURE_GAP', 'STATE_TRANSITION_LEDGER_FIELD_MISSING', tid, required)
 
+    declared_stage02_completeness_gaps(page, raw, controls, idx(reg.get('objects_refs'), 'object_uid'), gaps)
+
     unique, seen = [], set()
     for gap in gaps:
         key = (gap['page_uid'], gap['class'], gap['category'], gap['uid'], gap['detail'])
@@ -360,6 +572,7 @@ for page, paths in target_pages.items():
     closure = [code for filename, code in closure_defs if not (page_dir / filename).is_file()]
     if ai_profile_active and not (page_dir / 'AI_INTERACTION_CONTINUITY_CONTRACT.yaml').is_file():
         closure.append('MISSING_AI_INTERACTION_CONTINUITY_CONTRACT')
+    closure.extend(materialized_stage02_completeness_blockers(page_dir, effective_raw))
     if scan.get('gap_count', 0) > 0:
         if not (page_dir / 'FUNCTION_ADMISSION_SCORECARD.yaml').is_file():
             closure.append('MISSING_FUNCTION_ADMISSION_SCORECARD')
@@ -371,8 +584,9 @@ for page, paths in target_pages.items():
         'unresolved_external_authority_ref_count': len(refs),
         'functional_chain_fresh_scan': scan,
         'effective_contract_input': effective_contract,
-        'closure_blockers': closure,
-        'closure_blocker_count': len(closure),
+        'planning_baseline_completeness': 'PASS' if not materialized_stage02_completeness_blockers(page_dir, effective_raw) else 'BLOCKED',
+        'closure_blockers': sorted(set(closure)),
+        'closure_blocker_count': len(set(closure)),
         'function_admission_scorecard': 'PRESENT' if (page_dir / 'FUNCTION_ADMISSION_SCORECARD.yaml').is_file() else 'REQUIRED_WHEN_GAP_ANALYSIS_EXISTS',
         'automatic_completion_scope': 'PRESENT' if (page_dir / 'AUTO_COMPLETION_SCOPE_LEDGER.yaml').is_file() else 'REQUIRED_WHEN_GAP_ANALYSIS_EXISTS',
     }
@@ -415,6 +629,7 @@ result = {
     'ai_autofill_used': False,
     'inference_used': False,
     'prior_stage2_results_used': False,
+    'planning_baseline_completeness': 'PASS' if all(x.get('planning_baseline_completeness') == 'PASS' for x in pages.values()) else 'BLOCKED',
     'website_construction_allowed': False,
     'deployment_allowed': False,
     'notes': [

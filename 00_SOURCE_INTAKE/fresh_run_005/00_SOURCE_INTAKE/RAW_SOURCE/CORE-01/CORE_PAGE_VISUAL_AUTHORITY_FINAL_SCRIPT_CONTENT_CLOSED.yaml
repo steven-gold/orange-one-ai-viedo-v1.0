@@ -139,6 +139,18 @@ conversation_policy:
   - 複製此訊息
   hover_message_toolbar: FORBIDDEN
   branch_discussion_is_production_topic: false
+  same_problem_rule: All selected AI receive the same Original User Question plus the same Exact Relevant Context for the current turn.
+  exact_relevant_context:
+  - Project
+  - Topic if applicable
+  - Work Item
+  - Thread
+  - Attachment refs
+  - Reference refs
+  - Context Package
+  response_traceability: Every Single/Multi AI response remains bound to the same governed conversation_id/thread_id, original question identity, exact context fingerprint and source response identity.
+  mode_fluidity: Switching SINGLE/MULTI inside the same Conversation MUST NOT create a new Work Item, Topic, Thread, Candidate or Version solely because AI participation changed.
+  finalization_reentry: All Single/Multi/branch messages remain Conversation Evidence and re-enter the single Conversation Finalization Pipeline.
 decision_flow:
 - AI_RESPONSES
 - ASSISTANT_SUMMARY
@@ -1106,7 +1118,9 @@ registries:
     visual_uid: CORE-01-VIS-CONTEXT
     type: READONLY
     label: 'Mode: PROJECT_CORE / TOPIC_PRODUCTION'
-    action_uid: CORE-01-ACT-PROJECT-SELECT
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CURRENT_PAGE_MODE
     gate_uid: CORE-01-GATE-PAGE
     permission_uid: CORE_USE
     default: —
@@ -1116,7 +1130,9 @@ registries:
     visual_uid: CORE-01-VIS-CONTEXT
     type: READONLY
     label: Naming Authority = ACPOS_SYSTEM
-    action_uid: CORE-01-ACT-PROJECT-SELECT
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-REF-NAMING
     gate_uid: CORE-01-GATE-NAMING
     permission_uid: CORE_USE
     default: —
@@ -1176,8 +1192,10 @@ registries:
     visual_uid: CORE-01-VIS-CENTER-HEADER
     type: READONLY
     label: Assigned AI Set / Route
-    action_uid: CORE-01-ACT-ASSISTANT-RECORD
-    gate_uid: CORE-01-GATE-PAGE
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-REF-AI-SET
+    gate_uid: CORE-01-GATE-MULTI-AI
     permission_uid: CORE_USE
     default: —
   - control_uid: CORE-01-BTN-ASSISTANT-RECORD
@@ -1256,7 +1274,9 @@ registries:
     visual_uid: CORE-01-VIS-DECISION
     type: READONLY
     label: Assistant Summary
-    action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-SUMMARY
     gate_uid: CORE-01-GATE-SUMMARY
     permission_uid: CORE_USE
     default: —
@@ -1266,7 +1286,9 @@ registries:
     visual_uid: CORE-01-VIS-DECISION
     type: READONLY
     label: CORE Evaluation / Criteria Version / Evidence
-    action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-EVALUATION
     gate_uid: CORE-01-GATE-EVALUATION
     permission_uid: CORE_USE
     default: —
@@ -1276,7 +1298,9 @@ registries:
     visual_uid: CORE-01-VIS-DECISION
     type: TEXTAREA
     label: Human Decision
-    action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-HUMAN-DECISION_DRAFT
     gate_uid: CORE-01-GATE-HUMAN-DECISION
     permission_uid: CORE_CANDIDATE_CREATE
     default: —
@@ -1286,8 +1310,10 @@ registries:
     visual_uid: CORE-01-VIS-DECISION
     type: READONLY
     label: Assistant Structured Decision
-    action_uid: CORE-01-ACT-CANDIDATE-CREATE
-    gate_uid: CORE-01-GATE-HUMAN-DECISION
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-STRUCTURED-DECISION
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
     permission_uid: CORE_USE
     default: —
   - control_uid: CORE-01-BTN-CANDIDATE-CREATE
@@ -1326,7 +1352,9 @@ registries:
     visual_uid: CORE-01-VIS-RUNTIME
     type: READONLY
     label: Current Runtime Stage
-    action_uid: CORE-01-ACT-PROJECT-SELECT
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CURRENT_RUNTIME_STAGE_STATE_ERROR
     gate_uid: CORE-01-GATE-PAGE
     permission_uid: CORE_USE
     default: —
@@ -1356,7 +1384,9 @@ registries:
     visual_uid: CORE-01-VIS-COMPOSER
     type: MULTILINE_INPUT
     label: 輸入訊息；@ 叫用 AI / Data / Reference / Assistant
-    action_uid: CORE-01-ACT-SEND
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: COMPOSER_MESSAGE_DRAFT
     gate_uid: CORE-01-GATE-MESSAGE
     permission_uid: CORE_CONVERSATION
     default: —
@@ -1476,7 +1506,9 @@ registries:
     visual_uid: CORE-01-VIS-RIGHT-TOPIC
     type: READONLY
     label: Topic Production Scope / Contract Refs
-    action_uid: CORE-01-ACT-TOPIC-SELECT
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-TOPIC-SCOPE
     gate_uid: CORE-01-GATE-TOPIC-CONTEXT
     permission_uid: CORE_USE
     default: —
@@ -1496,7 +1528,9 @@ registries:
     visual_uid: CORE-01-VIS-RIGHT-TOPIC
     type: READONLY
     label: Production Package / Blueprint / DNA / Script refs
-    action_uid: CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-PRODUCTION-PACKAGE
     gate_uid: CORE-01-GATE-TOPIC-CONTEXT
     permission_uid: CORE_USE
     default: —
@@ -1506,7 +1540,9 @@ registries:
     visual_uid: CORE-01-VIS-RIGHT-TOPIC
     type: READONLY
     label: ASSET Boundary Readiness
-    action_uid: CORE-01-ACT-PROJECT-SELECT
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.ASSET
     gate_uid: CORE-01-GATE-TOPIC-CONTEXT
     permission_uid: CORE_USE
     default: —
@@ -1516,7 +1552,9 @@ registries:
     visual_uid: CORE-01-VIS-RIGHT-TOPIC
     type: READONLY
     label: VIDEO Boundary Readiness
-    action_uid: CORE-01-ACT-PROJECT-SELECT
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.VIDEO
     gate_uid: CORE-01-GATE-TOPIC-CONTEXT
     permission_uid: CORE_USE
     default: —
@@ -1526,7 +1564,9 @@ registries:
     visual_uid: CORE-01-VIS-RIGHT-TOPIC
     type: READONLY
     label: EDIT Boundary Readiness
-    action_uid: CORE-01-ACT-PROJECT-SELECT
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.EDIT
     gate_uid: CORE-01-GATE-TOPIC-CONTEXT
     permission_uid: CORE_USE
     default: —
@@ -1546,7 +1586,9 @@ registries:
     visual_uid: CORE-01-VIS-RIGHT-VERSION
     type: READONLY
     label: Current Candidate / Confirmed Version
-    action_uid: CORE-01-ACT-CANDIDATE-COMPARE
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-CANDIDATE_OR_CONFIRMED_VERSION
     gate_uid: CORE-01-GATE-PAGE
     permission_uid: CORE_USE
     default: —
@@ -1556,7 +1598,9 @@ registries:
     visual_uid: CORE-01-VIS-RIGHT-VERSION
     type: READONLY
     label: Lock Review Status / Block Reason
-    action_uid: CORE-01-ACT-PROJECT-SELECT
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-LOCK-REVIEW
     gate_uid: CORE-01-GATE-PAGE
     permission_uid: CORE_USE
     default: —
@@ -1732,7 +1776,7 @@ acceptance:
   condition: Main Workspace height:auto and overflow-y:auto; not bound to Global Sidebar/Menu height; sections may extend downward
 - acceptance_uid: CORE-01-ACC-12
   item: Machine Binding
-  condition: Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted=BLOCK
+  condition: Every visible Action-bearing control resolves Section/Component/Visual/Action/Gate/Permission; Field controls resolve explicit data/draft bindings and MUST NOT masquerade as Actions; unlisted=BLOCK
 hard_locks:
 - Only CORE-01 is the current executable CORE workspace page. Old CORE-02/03/04/06 page layouts are legacy references only and MUST NOT be recreated
   as separate pages.
@@ -1759,15 +1803,17 @@ final_gap_closure:
   parallel_action_runtime_registry_removed: true
   parallel_control_runtime_registry_removed: true
   shared_operation_definition_location: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
-  rule: Action owns one embedded runtime_binding. Shared service details are referenced by shared_operation_id only.
+  rule: Action owns one embedded runtime_binding. Field controls own explicit data/draft bindings and no action_uid. Shared service details are referenced by shared_operation_id only.
 derived_validation:
   final_gap_closure:
     status: FINAL_GAP_CLOSED
     source_action_count: 34
     source_control_count: 50
     action_runtime_binding_coverage: 34/34
-    control_runtime_binding_coverage: 50/50
-    unresolved_control_action_refs: 0
+    control_semantic_binding_coverage: 50/50
+    data_or_draft_field_binding_count: 16
+    action_bearing_control_count: 34
+    invalid_control_action_refs: 0
     unbound_actions: 0
     shared_delegations_are_explicit: true
     frontend_route_inference_required: false
@@ -1982,3 +2028,485 @@ canonical_production_script_authoring_contract:
   - Department specialized scripts must reference the exact Canonical Script version/hash; they may not become an independent story authority.
   - CORE Canonical Script may not contain provider/model-specific request syntax.
   - No QA production-script authoring contract is created.
+
+field_binding_contract:
+  authority_source: USER_APPROVED_ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+  planning_baseline_sha256: 9b0cc3c227cf53427e5cf60caf6b07f5e43a0a76f16800076641f22487642351
+  rule: Field controls bind data/state/draft only; they MUST NOT own or trigger unrelated Action UIDs. Send button uniquely owns CORE-01-ACT-SEND.
+  fields:
+  - control_uid: CORE-01-FLD-PAGE-MODE
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CURRENT_PAGE_MODE
+  - control_uid: CORE-01-FLD-NAMING-AUTHORITY
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-REF-NAMING
+  - control_uid: CORE-01-FLD-ASSIGNED-AI
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-REF-AI-SET
+  - control_uid: CORE-01-FLD-ASSISTANT-SUMMARY
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-SUMMARY
+  - control_uid: CORE-01-FLD-EVALUATION
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-EVALUATION
+  - control_uid: CORE-01-FLD-HUMAN-DECISION
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-HUMAN-DECISION_DRAFT
+  - control_uid: CORE-01-FLD-STRUCTURED-DECISION
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-STRUCTURED-DECISION
+  - control_uid: CORE-01-FLD-RUNTIME-STAGE
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CURRENT_RUNTIME_STAGE_STATE_ERROR
+  - control_uid: CORE-01-FLD-MESSAGE
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: COMPOSER_MESSAGE_DRAFT
+  - control_uid: CORE-01-FLD-TOPIC-SCOPE
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-TOPIC-SCOPE
+  - control_uid: CORE-01-FLD-PACKAGE
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-PRODUCTION-PACKAGE
+  - control_uid: CORE-01-FLD-DOWNSTREAM-ASSET
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.ASSET
+  - control_uid: CORE-01-FLD-DOWNSTREAM-VIDEO
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.VIDEO
+  - control_uid: CORE-01-FLD-DOWNSTREAM-EDIT
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.EDIT
+  - control_uid: CORE-01-FLD-VERSION-STATE
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-CANDIDATE_OR_CONFIRMED_VERSION
+  - control_uid: CORE-01-FLD-LOCK-REVIEW
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-LOCK-REVIEW
+  send_binding:
+    draft_control_uid: CORE-01-FLD-MESSAGE
+    send_control_uid: CORE-01-BTN-SEND
+    action_uid: CORE-01-ACT-SEND
+    unique_action_owner_required: true
+
+functional_workbench_topology_contract:
+  authority_source: USER_APPROVED_ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+  conversation_workbench:
+    workbench_uid: CORE-01-WB-CONVERSATION
+    workbench_type: ATOMIC_WORKBENCH
+    same_surface: REQUIRED
+    section_order:
+    - CORE-01-SEC-03
+    - CORE-01-SEC-04
+    - CORE-01-SEC-06
+    - CORE-01-SEC-07
+    shared_context:
+    - Project
+    - Topic if applicable
+    - Work Item
+    - Thread
+    interruption_boundary: NONE_BETWEEN_HEADER_MESSAGES_RUNTIME_COMPOSER
+    split_into_independent_surfaces: FORBIDDEN
+  decision_dock:
+    workbench_uid: CORE-01-WB-DECISION-DOCK
+    section_order:
+    - CORE-01-SEC-05
+    relation_to_conversation: DOWNSTREAM_OF_CONVERSATION_EVIDENCE_NOT_PART_OF_MESSAGE_INPUT_LOOP
+  visual_merge_is_contract_merge: false
+  preserve_section_component_uids: true
+
+working_memory_binding:
+  authority_source: USER_APPROVED_ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+  owner: AI Conversation Core
+  owner_basis:
+  - CORE-01-OBJ-THREAD
+  - CORE-01-OBJ-MESSAGE
+  infrastructure_role: EXISTING_ACPOS_WORKING_MEMORY_CONVERSATION_MEMORY
+  capture_scope:
+  - selected_message_refs
+  - working_content_segments
+  - decision_evidence
+  formal_truth: false
+  page_local_second_service: FORBIDDEN
+  raw_conversation_direct_to_canon: FORBIDDEN
+  decision_evidence_action: CORE-01-ACT-MSG-DECISION
+  decision_evidence_target: CORE-01-OBJ-HUMAN-DECISION
+
+conversation_finalization_pipeline_contract:
+  authority_source: USER_APPROVED_ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+  singular_pipeline: true
+  conversation_truth_rule: Conversation History is evidence/history, not Canonical Work Item truth.
+  steps:
+  - order: 1
+    name: Resolve Exact Context
+    formal_write: false
+  - order: 2
+    name: Conversation / Analysis
+    formal_write: false
+  - order: 3
+    name: Incremental Capture
+    owner_ref: AI Conversation Core
+    formal_write: false
+  - order: 4
+    name: Assistant Summary
+    object_uid: CORE-01-OBJ-SUMMARY
+    formal_write: false
+  - order: 5
+    name: CORE Evaluation
+    object_uid: CORE-01-OBJ-EVALUATION
+    formal_write: false
+  - order: 6
+    name: Human Decision
+    object_uid: CORE-01-OBJ-HUMAN-DECISION
+    formal_write: false
+  - order: 7
+    name: Assistant Structured Decision
+    object_uid: CORE-01-OBJ-STRUCTURED-DECISION
+    self_approval: FORBIDDEN
+    formal_write: false
+  - order: 8
+    name: Create Immutable Candidate
+    action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    formal_write: true
+  - order: 9
+    name: Candidate Decision
+    action_uids:
+    - CORE-01-ACT-CANDIDATE-ACCEPT
+    - CORE-01-ACT-CANDIDATE-RETURN
+    formal_write: true
+  - order: 10
+    name: Domain-specific Confirm/Lock/Version
+    owner_rule: EXISTING_DOMAIN_OWNER
+    append_new_version_no_overwrite: true
+    formal_write: true
+  return_modify:
+    action_uid: CORE-01-ACT-CANDIDATE-RETURN
+    preserve:
+    - returned_candidate
+    - reason_and_evidence
+    - conversation_history
+    - exact_base_version_lineage
+    next: RESUME_GOVERNED_DISCUSSION_THEN_CREATE_NEW_IMMUTABLE_CANDIDATE
+  forbidden:
+  - LAST_AI_RESPONSE_EQUALS_FINAL_VERSION
+  - MULTI_AI_MAJORITY_VOTE_EQUALS_FORMAL_DECISION
+  - ASSISTANT_SUMMARY_AUTO_CONFIRMS
+  - OVERWRITE_CONFIRMED_OR_LOCKED_VERSION
+  - RAW_CONVERSATION_DIRECT_TO_CANON
+
+domain_materialization_operations:
+- operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-STORY-VERSION
+  work_item: STORY
+  trigger: ACCEPTED_IMMUTABLE_CANDIDATE_FOR_STORY
+  runtime_owner: CORE
+  persistence_owner: CORE
+  required_inputs:
+  - project_ref
+  - accepted_candidate_ref
+  - exact_base_version_ref_if_revision
+  validation: candidate lineage and Project context exact; no overwrite
+  audit_event_uid: core.story.version.confirmed
+  failure_state: BLOCKED
+  recovery: preserve candidate and conversation; repair exact lineage then retry domain materialization
+  resulting_state: CONFIRMED_STORY_VERSION
+  transport_surface: EXISTING_DOMAIN_HANDLER_NOT_PAGE_LOCAL_API
+- operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-CHAPTER-VERSION
+  work_item: CHAPTER
+  trigger: ACCEPTED_IMMUTABLE_CANDIDATE_FOR_CHAPTER
+  runtime_owner: CORE
+  persistence_owner: CORE
+  required_inputs:
+  - project_ref
+  - confirmed_story_ref
+  - accepted_candidate_ref
+  - exact_base_version_ref_if_revision
+  validation: confirmed Story dependency and candidate lineage exact; no overwrite
+  audit_event_uid: core.chapter.version.confirmed
+  failure_state: BLOCKED
+  recovery: preserve candidate and conversation; repair Story/base-version lineage then retry domain materialization
+  resulting_state: CONFIRMED_CHAPTER_VERSION
+  transport_surface: EXISTING_DOMAIN_HANDLER_NOT_PAGE_LOCAL_API
+- operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-WORLD-VERSION
+  work_item: WORLD_SETTING
+  trigger: ACCEPTED_IMMUTABLE_CANDIDATE_FOR_WORLD_SETTING
+  runtime_owner: CORE
+  persistence_owner: CORE
+  required_inputs:
+  - project_ref
+  - confirmed_story_ref
+  - confirmed_chapter_ref
+  - accepted_candidate_ref
+  - exact_base_version_ref_if_revision
+  validation: confirmed Story/Chapter dependencies and candidate lineage exact; no overwrite
+  audit_event_uid: core.world.version.confirmed
+  failure_state: BLOCKED
+  recovery: preserve candidate and conversation; repair upstream/base-version lineage then retry domain materialization
+  resulting_state: CONFIRMED_WORLD_VERSION
+  transport_surface: EXISTING_DOMAIN_HANDLER_NOT_PAGE_LOCAL_API
+- operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-TOPIC-SCOPE
+  work_item: TOPIC_SCOPE
+  trigger: ACCEPTED_IMMUTABLE_CANDIDATE_FOR_TOPIC_SCOPE
+  runtime_owner: CORE Topic
+  persistence_owner: CORE Topic
+  required_inputs:
+  - project_ref
+  - topic_ref
+  - confirmed_project_canon_refs
+  - blueprint_ref
+  - dna_refs
+  - accepted_candidate_ref
+  - exact_base_version_ref_if_revision
+  validation: Topic belongs to exact Project; Project Canon/Blueprint/DNA dependencies exact; no overwrite
+  audit_event_uid: core.topic_scope.version.confirmed
+  failure_state: BLOCKED
+  recovery: preserve candidate and conversation; repair exact Topic/upstream lineage then retry domain materialization
+  resulting_state: CONFIRMED_TOPIC_PRODUCTION_SCOPE
+  transport_surface: EXISTING_DOMAIN_HANDLER_NOT_PAGE_LOCAL_API
+- operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-CANONICAL-SCRIPT
+  work_item: PRODUCTION_SCRIPT
+  trigger: ACCEPTED_IMMUTABLE_CANDIDATE_FOR_PRODUCTION_SCRIPT
+  runtime_owner: CORE Script System
+  persistence_owner: CORE Script System
+  required_inputs:
+  - project_ref
+  - topic_ref
+  - project_blueprint_ref
+  - topic_production_scope_ref
+  - project_canon_refs
+  - dna_refs
+  - accepted_candidate_ref
+  - exact_base_version_ref_if_revision
+  validation: CORE-01-CONTRACT-TOPIC-CANONICAL-PRODUCTION-SCRIPT
+  audit_event_uid: core.canonical_script.version.confirmed
+  failure_state: BLOCKED
+  recovery: preserve candidate and source bindings; repair exact lineage then retry existing CORE Script System materialization
+  resulting_state: CONFIRMED_CANONICAL_PRODUCTION_SCRIPT
+  transport_surface: EXISTING_CORE_SCRIPT_DOMAIN_HANDLER_NOT_PAGE_LOCAL_API
+
+work_item_lifecycle_contract:
+  authority_source: USER_APPROVED_ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+  principle: Each Work Item has governed Conversation continuity and immutable version lineage; AI participation is fluid and finalization is singular.
+  project_core_order:
+  - work_item: STORY
+    required_upstream:
+    - Project context
+    formal_output: Confirmed Story Version
+    finalization_operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-STORY-VERSION
+  - work_item: CHAPTER
+    required_upstream:
+    - Confirmed Story
+    formal_output: Confirmed Chapter Version
+    finalization_operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-CHAPTER-VERSION
+  - work_item: WORLD_SETTING
+    required_upstream:
+    - Confirmed Story
+    - Confirmed Chapter
+    formal_output: Confirmed World Version
+    finalization_operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-WORLD-VERSION
+  - work_item: DNA
+    required_upstream:
+    - Confirmed Story
+    - Confirmed Chapter
+    - Confirmed World
+    formal_output: Confirmed/Locked DNA Versions
+    finalization_action_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+  - work_item: BLUEPRINT
+    required_upstream:
+    - Confirmed Story
+    - Confirmed Chapter
+    - Confirmed World
+    - Required DNA
+    formal_output: Confirmed/Approved Blueprint Version
+    finalization_action_uids:
+    - CORE-01-ACT-BLUEPRINT-VALIDATE
+    - CORE-01-ACT-BLUEPRINT-APPROVE
+    - CORE-01-ACT-CHILD-LOCK-REQUEST
+  topic_production_order:
+  - work_item: TOPIC_SCOPE
+    required_upstream:
+    - Confirmed/locked Project Canon
+    - Blueprint
+    - DNA refs
+    formal_output: Confirmed Topic Production Scope
+    finalization_operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-TOPIC-SCOPE
+  - work_item: PRODUCTION_SCRIPT
+    required_upstream:
+    - Exact Topic
+    - Project Blueprint
+    - Topic Scope
+    - source candidate lineage
+    formal_output: Confirmed Canonical Production Script
+    finalization_operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-CANONICAL-SCRIPT
+    authoring_contract_ref: CORE-01-CONTRACT-TOPIC-CANONICAL-PRODUCTION-SCRIPT
+  conversation_cycle_rules:
+    first_create: Create or resolve the first thread under exact Project/Topic + Work Item; no unrelated history.
+    resume_unfinished: Return to the same unfinished thread/cycle; do not create duplicate draft versions.
+    modify_before_confirm: Continue current conversation cycle; immutable candidate replacement requires a new Candidate.
+    modify_after_confirm_or_lock: Start a new revision Conversation bound to exact base version; prior version and prior thread remain immutable/read-only history.
+    branch_discussion: Branch stays under the same Work Item and is not a production Topic/formal truth until adopted through finalization.
+    switch_work_item: Load selected Work Item Conversation; confirmed upstream outputs enter Context; raw prior-item chat is not merged.
+  known_authority_gaps_open: []
+  chapter_world_gap_resolution:
+    GAP-CORE-01-WI-CHAPTER-FINALIZATION: CORE-01-DOMAIN-OP-MATERIALIZE-CHAPTER-VERSION
+    GAP-CORE-01-WI-WORLD-FINALIZATION: CORE-01-DOMAIN-OP-MATERIALIZE-WORLD-VERSION
+  page_local_api_invention: FORBIDDEN
+
+change_impact_contract:
+  authority_source: USER_APPROVED_ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+  trigger: UPSTREAM_CONFIRMED_VERSION_CHANGED
+  affected_downstream_states:
+  - NEEDS_REVIEW
+  - NEEDS_REVALIDATION
+  silent_downstream_rewrite: FORBIDDEN
+  exact_base_version_required_for_revision: true
+  prior_confirmed_locked_version_immutable: true
+  dependency_order:
+  - STORY
+  - CHAPTER
+  - WORLD_SETTING
+  - DNA
+  - BLUEPRINT
+  - TOPIC_SCOPE
+  - PRODUCTION_SCRIPT
+
+entity_operation_applicability_contract:
+  authority_source: CURRENT_CORE_OBJECT_OWNERSHIP_PLUS_USER_APPROVED_2026-09-11_LIFECYCLE
+  operation_vocabulary:
+  - DISCOVER_OR_LIST
+  - SELECT_OR_OPEN
+  - CREATE
+  - CREATION_MODE
+  - PARENT_BIND
+  - CATEGORY_OR_GROUP_BIND
+  - DRAFT
+  - RESUME
+  - EDIT
+  - SAVE
+  - VALIDATE
+  - CONFIRM_OR_APPROVE
+  - VERSION
+  - REVISE
+  - LOCK_OR_UNLOCK
+  - REORDER
+  - MOVE_OR_REPARENT
+  - ARCHIVE_OR_DELETE
+  - RESTORE
+  - DEPENDENCY_IMPACT
+  - AUDIT
+  - ERROR_RECOVERY
+  - NEXT_STEP
+  profile_rule: Every operation not listed as REQUIRED or OPTIONAL in the bound profile is explicitly NOT_APPLICABLE under that profile.
+  profiles:
+    READ_ONLY_REFERENCE:
+      required: [DISCOVER_OR_LIST, SELECT_OR_OPEN, DEPENDENCY_IMPACT, AUDIT, ERROR_RECOVERY, NEXT_STEP]
+      optional: []
+    CONVERSATION_THREAD:
+      required: [DISCOVER_OR_LIST, SELECT_OR_OPEN, CREATE, PARENT_BIND, DRAFT, RESUME, SAVE, VERSION, REVISE, DEPENDENCY_IMPACT, AUDIT, ERROR_RECOVERY, NEXT_STEP]
+      optional: [ARCHIVE_OR_DELETE]
+    CONVERSATION_MESSAGE:
+      required: [DISCOVER_OR_LIST, SELECT_OR_OPEN, CREATE, PARENT_BIND, SAVE, AUDIT, ERROR_RECOVERY, NEXT_STEP]
+      optional: []
+    DERIVED_EVIDENCE:
+      required: [DISCOVER_OR_LIST, SELECT_OR_OPEN, PARENT_BIND, VALIDATE, DEPENDENCY_IMPACT, AUDIT, ERROR_RECOVERY, NEXT_STEP]
+      optional: []
+    HUMAN_DECISION:
+      required: [DISCOVER_OR_LIST, SELECT_OR_OPEN, CREATE, PARENT_BIND, DRAFT, RESUME, EDIT, SAVE, VALIDATE, CONFIRM_OR_APPROVE, VERSION, REVISE, DEPENDENCY_IMPACT, AUDIT, ERROR_RECOVERY, NEXT_STEP]
+      optional: []
+    CANDIDATE_VERSION:
+      required: [DISCOVER_OR_LIST, SELECT_OR_OPEN, CREATE, PARENT_BIND, VALIDATE, CONFIRM_OR_APPROVE, VERSION, REVISE, DEPENDENCY_IMPACT, AUDIT, ERROR_RECOVERY, NEXT_STEP]
+      optional: [ARCHIVE_OR_DELETE]
+    PROJECT_DRAFT:
+      required: [DISCOVER_OR_LIST, SELECT_OR_OPEN, CREATE, PARENT_BIND, DRAFT, RESUME, EDIT, SAVE, VALIDATE, CONFIRM_OR_APPROVE, VERSION, REVISE, DEPENDENCY_IMPACT, AUDIT, ERROR_RECOVERY, NEXT_STEP]
+      optional: []
+    VERSIONED_DOMAIN_ENTITY:
+      required: [DISCOVER_OR_LIST, SELECT_OR_OPEN, CREATE, PARENT_BIND, DRAFT, RESUME, EDIT, SAVE, VALIDATE, CONFIRM_OR_APPROVE, VERSION, REVISE, DEPENDENCY_IMPACT, AUDIT, ERROR_RECOVERY, NEXT_STEP]
+      optional: [LOCK_OR_UNLOCK]
+    LOCK_REVIEW:
+      required: [DISCOVER_OR_LIST, SELECT_OR_OPEN, CREATE, PARENT_BIND, RESUME, VALIDATE, CONFIRM_OR_APPROVE, VERSION, AUDIT, ERROR_RECOVERY, NEXT_STEP]
+      optional: []
+  entity_profile_bindings:
+  - {object_uid: CORE-01-REF-PROJECT, profile: READ_ONLY_REFERENCE}
+  - {object_uid: CORE-01-REF-TOPIC, profile: READ_ONLY_REFERENCE}
+  - {object_uid: CORE-01-OBJ-THREAD, profile: CONVERSATION_THREAD}
+  - {object_uid: CORE-01-OBJ-MESSAGE, profile: CONVERSATION_MESSAGE}
+  - {object_uid: CORE-01-OBJ-CONTEXT, profile: DERIVED_EVIDENCE}
+  - {object_uid: CORE-01-REF-AI-SET, profile: READ_ONLY_REFERENCE}
+  - {object_uid: CORE-01-OBJ-SUMMARY, profile: DERIVED_EVIDENCE}
+  - {object_uid: CORE-01-OBJ-EVALUATION, profile: DERIVED_EVIDENCE}
+  - {object_uid: CORE-01-OBJ-HUMAN-DECISION, profile: HUMAN_DECISION}
+  - {object_uid: CORE-01-OBJ-STRUCTURED-DECISION, profile: DERIVED_EVIDENCE}
+  - {object_uid: CORE-01-OBJ-CANDIDATE, profile: CANDIDATE_VERSION}
+  - {object_uid: CORE-01-OBJ-PROJECT-DRAFT, profile: PROJECT_DRAFT}
+  - {object_uid: CORE-01-OBJ-STORY-CANDIDATE-SET, profile: VERSIONED_DOMAIN_ENTITY}
+  - {object_uid: CORE-01-REF-CANON, profile: VERSIONED_DOMAIN_ENTITY}
+  - {object_uid: CORE-01-REF-DNA, profile: VERSIONED_DOMAIN_ENTITY}
+  - {object_uid: CORE-01-REF-BLUEPRINT, profile: VERSIONED_DOMAIN_ENTITY}
+  - {object_uid: CORE-01-OBJ-TOPIC-SCOPE, profile: VERSIONED_DOMAIN_ENTITY}
+  - {object_uid: CORE-01-REF-CANONICAL-SCRIPT, profile: VERSIONED_DOMAIN_ENTITY}
+  - {object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE, profile: VERSIONED_DOMAIN_ENTITY}
+  - {object_uid: CORE-01-REF-NAMING, profile: READ_ONLY_REFERENCE}
+  - {object_uid: CORE-01-OBJ-DOWNSTREAM-READINESS, profile: DERIVED_EVIDENCE}
+  - {object_uid: CORE-01-OBJ-LOCK-REVIEW, profile: LOCK_REVIEW}
+
+entity_hierarchy_contract:
+  authority_source: CURRENT_CORE_OBJECT_LINEAGE_AND_USER_APPROVED_2026-09-11_CONTEXT_RULES
+  relationships:
+  - {object_uid: CORE-01-REF-PROJECT, relation_status: ROOT, parent_object_uid: null, relation: PROJECT_ROOT}
+  - {object_uid: CORE-01-REF-TOPIC, relation_status: EXACT, parent_object_uid: CORE-01-REF-PROJECT, relation: TOPIC_BELONGS_TO_PROJECT}
+  - {object_uid: CORE-01-OBJ-THREAD, relation_status: EXACT_WITH_CONDITIONAL_TOPIC, parent_object_uid: CORE-01-REF-PROJECT, conditional_parent_object_uid: CORE-01-REF-TOPIC, relation: THREAD_SCOPED_TO_PROJECT_TOPIC_WORK_ITEM}
+  - {object_uid: CORE-01-OBJ-MESSAGE, relation_status: EXACT, parent_object_uid: CORE-01-OBJ-THREAD, relation: MESSAGE_BELONGS_TO_THREAD}
+  - {object_uid: CORE-01-OBJ-CONTEXT, relation_status: EXACT, parent_object_uid: CORE-01-OBJ-THREAD, relation: CONTEXT_PACKAGE_BELONGS_TO_CURRENT_THREAD}
+  - {object_uid: CORE-01-REF-AI-SET, relation_status: EXACT, parent_object_uid: CORE-01-OBJ-CONTEXT, relation: ASSIGNED_AI_SET_BOUND_TO_EXACT_CONTEXT}
+  - {object_uid: CORE-01-OBJ-SUMMARY, relation_status: EXACT, parent_object_uid: CORE-01-OBJ-THREAD, relation: SUMMARY_DERIVED_FROM_THREAD_RESPONSES}
+  - {object_uid: CORE-01-OBJ-EVALUATION, relation_status: EXACT, parent_object_uid: CORE-01-OBJ-THREAD, relation: EVALUATION_BOUND_TO_THREAD_TARGET_AND_EVIDENCE}
+  - {object_uid: CORE-01-OBJ-HUMAN-DECISION, relation_status: EXACT, parent_object_uid: CORE-01-OBJ-THREAD, relation: HUMAN_DECISION_BOUND_TO_THREAD_TARGET}
+  - {object_uid: CORE-01-OBJ-STRUCTURED-DECISION, relation_status: EXACT, parent_object_uid: CORE-01-OBJ-HUMAN-DECISION, relation: STRUCTURED_DECISION_RESTATES_HUMAN_DECISION}
+  - {object_uid: CORE-01-OBJ-CANDIDATE, relation_status: EXACT, parent_object_uid: CORE-01-OBJ-HUMAN-DECISION, relation: CANDIDATE_CREATED_FROM_CONFIRMED_HUMAN_DECISION}
+  - {object_uid: CORE-01-OBJ-PROJECT-DRAFT, relation_status: EXACT, parent_object_uid: CORE-01-REF-PROJECT, relation: PROJECT_DRAFT_VERSION_LINEAGE}
+  - {object_uid: CORE-01-OBJ-STORY-CANDIDATE-SET, relation_status: EXACT, parent_object_uid: CORE-01-REF-PROJECT, relation: STORY_CANDIDATES_BELONG_TO_PROJECT}
+  - {object_uid: CORE-01-REF-CANON, relation_status: EXACT, parent_object_uid: CORE-01-REF-PROJECT, relation: CANON_COMPONENT_BELONGS_TO_PROJECT}
+  - {object_uid: CORE-01-REF-DNA, relation_status: EXACT, parent_object_uid: CORE-01-REF-PROJECT, relation: DNA_VERSION_BELONGS_TO_PROJECT_CANON}
+  - {object_uid: CORE-01-REF-BLUEPRINT, relation_status: EXACT_WITH_TOPIC_CONTEXT, parent_object_uid: CORE-01-REF-PROJECT, conditional_parent_object_uid: CORE-01-REF-TOPIC, relation: BLUEPRINT_BOUND_TO_PROJECT_TOPIC_LINEAGE}
+  - {object_uid: CORE-01-OBJ-TOPIC-SCOPE, relation_status: EXACT, parent_object_uid: CORE-01-REF-TOPIC, relation: TOPIC_SCOPE_BELONGS_TO_TOPIC}
+  - {object_uid: CORE-01-REF-CANONICAL-SCRIPT, relation_status: EXACT, parent_object_uid: CORE-01-REF-TOPIC, relation: CANONICAL_SCRIPT_BELONGS_TO_TOPIC}
+  - {object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE, relation_status: EXACT, parent_object_uid: CORE-01-REF-TOPIC, relation: PRODUCTION_PACKAGE_BELONGS_TO_TOPIC}
+  - {object_uid: CORE-01-REF-NAMING, relation_status: EXTERNAL_ROOT, parent_object_uid: null, relation: GLOBAL_NAMING_AUTHORITY_REFERENCE}
+  - {object_uid: CORE-01-OBJ-DOWNSTREAM-READINESS, relation_status: EXACT, parent_object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE, relation: DOWNSTREAM_READINESS_DERIVED_FROM_PRODUCTION_PACKAGE}
+  - {object_uid: CORE-01-OBJ-LOCK-REVIEW, relation_status: DYNAMIC_EXACT_TARGET_REF, parent_object_uid: null, relation: LOCK_REVIEW_PARENT_IS_EXACT_TARGET_REF_AND_HASH}
+
+stage02_completeness_contract:
+  authority_source: USER_APPROVED_ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+  planning_baseline_file: ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11 (2)(4).zip
+  planning_baseline_sha256: 9b0cc3c227cf53427e5cf60caf6b07f5e43a0a76f16800076641f22487642351
+  status: REQUIRED_FOR_STAGE02_CLOSURE
+  required_contracts:
+  - field_binding_contract
+  - functional_workbench_topology_contract
+  - working_memory_binding
+  - conversation_finalization_pipeline_contract
+  - domain_materialization_operations
+  - work_item_lifecycle_contract
+  - change_impact_contract
+  - entity_operation_applicability_contract
+  - entity_hierarchy_contract
+  required_invariants:
+  - FIELD_NE_ACTION
+  - COMPOSER_DRAFT_NE_SEND_ACTION
+  - CONVERSATION_ATOMIC_SAME_SURFACE
+  - PROJECT_WORK_ITEMS_EXACT_5
+  - TOPIC_WORK_ITEMS_EXACT_2
+  - SINGLE_MULTI_SAME_ORIGINAL_QUESTION_EXACT_CONTEXT
+  - SINGLE_FINALIZATION_PIPELINE
+  - RAW_AI_NOT_FORMAL
+  - CANDIDATE_IMMUTABLE
+  - RETURN_MODIFY_PRESERVES_HISTORY_AND_BASE_LINEAGE
+  - CROSS_WORK_ITEM_RAW_CHAT_ISOLATION
+  - CONFIRMED_UPSTREAM_CONTEXT
+  - REVISION_EXACT_BASE_VERSION
+  - UPSTREAM_CHANGE_REQUIRES_REVIEW_OR_REVALIDATION
+  - BUSINESS_ENTITY_BY_OPERATION_APPLICABILITY
+  - EXPLICIT_ENTITY_HIERARCHY
+  - CHAPTER_WORLD_FINALIZATION_OWNER_RUNTIME_RESOLVED
+  - TOPIC_SCOPE_FINALIZATION_RESOLVED
+  - PRODUCTION_SCRIPT_FINALIZATION_RESOLVED
+  product_specific_adapter: true
+  common_policy_override: false
