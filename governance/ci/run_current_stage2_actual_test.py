@@ -16,27 +16,22 @@ STAGE_REGISTRY = ROOT / '.github/governance-source/active/source/10_REGISTRY/GOV
 RESULT = ROOT / '.github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json'
 OLD_STAGE2_ROOT = RUN / '04_PAGE_FUNCTIONAL_CONTRACT'
 
-PAGES = {
-    'CORE-01': {
-        'raw': RUN / '00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml',
-        'blueprint': RUN / '02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml',
-    },
-    'ASSET-01': {
-        'raw': RUN / '00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml',
-        'blueprint': RUN / '02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml',
-    },
-}
-EXPECTED_GAPS = {f'GAP-{i:03}' for i in range(1, 9)}
-KNOWN_AUTHORITIES = {
-    'GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9': 'GAP-001',
-    'GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0': 'GAP-002',
-    'ACPOS_SYSTEM_AUTHORITY@V1.0': 'GAP-003',
-    'ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0': 'GAP-004',
-    'ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3': 'GAP-005',
-    'ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY': 'GAP-006',
-    'IAM-01 / account permission runtime': 'GAP-007',
-    'ACPOS shared AI Router/Capability Assignment': 'GAP-008',
-}
+def resolve_page(page_uid: str):
+    raw_dir = RUN / '00_SOURCE_INTAKE/RAW_SOURCE' / page_uid
+    blueprint = RUN / '02_BASE_BLUEPRINT' / page_uid / 'PAGE_BASE_BLUEPRINT.yaml'
+    if not raw_dir.is_dir() or not blueprint.is_file():
+        die(f'PAGE_SCOPE_OWNER_MISSING:{page_uid}')
+    candidates = []
+    for path in sorted(raw_dir.glob('*.yaml')):
+        try:
+            obj = yaml.safe_load(path.read_text(encoding='utf-8')) or {}
+        except Exception:
+            continue
+        if (obj.get('authority') or {}).get('page_uid') == page_uid and isinstance(obj.get('registries'), dict):
+            candidates.append(path)
+    if len(candidates) != 1:
+        die(f'PAGE_RAW_OWNER_DENOMINATOR:{page_uid}:{len(candidates)}')
+    return {'raw': candidates[0], 'blueprint': blueprint}
 
 
 def die(msg: str) -> None:
@@ -74,7 +69,7 @@ def has_transition(text: str):
 def add(gaps, page, klass, category, uid, detail, owner='PAGE_FUNCTIONAL_CONTRACT'):
     gaps.append({'page_uid': page, 'class': klass, 'category': category, 'uid': uid, 'detail': detail, 'gap_owner': owner})
 
-def fresh_scan(page: str, raw: dict):
+def fresh_scan(page: str, raw: dict, unresolved_authority_by_ref: dict):
     reg = raw.get('registries') or {}
     actions = idx(reg.get('actions'), 'action_uid')
     controls = idx(reg.get('controls'), 'control_uid')
@@ -163,8 +158,8 @@ def fresh_scan(page: str, raw: dict):
             op = rb.get('shared_operation_id')
             if not auth or not op:
                 add(gaps, page, 'IMPLEMENTATION_GAP', 'SHARED_OWNER_REFERENCE_INCOMPLETE', aid, str((auth, op)))
-            elif auth in KNOWN_AUTHORITIES:
-                add(gaps, page, 'AUTHORITY_GAP', 'SHARED_OWNER_AUTHORITY_UNRESOLVED', aid, f'{KNOWN_AUTHORITIES[auth]}: {auth}', 'EXTERNAL_AUTHORITY')
+            elif auth in unresolved_authority_by_ref:
+                add(gaps, page, 'AUTHORITY_GAP', 'SHARED_OWNER_AUTHORITY_UNRESOLVED', aid, f'{unresolved_authority_by_ref[auth]}: {auth}', 'EXTERNAL_AUTHORITY')
         else:
             if not resolved_ports:
                 add(gaps, page, 'IMPLEMENTATION_GAP', 'RUNTIME_ENTRY_OR_PORT_MISSING', aid, str(kind))
@@ -237,10 +232,10 @@ if execution.get('current_stage') != 'STAGE-01-CLOSED':
     die(f'STAGE02_ADMISSION_CURRENT_STAGE:{execution.get("current_stage")!r}')
 if (execution.get('stage2') or {}).get('result') != 'NOT_EXECUTED':
     die('STAGE02_ADMISSION_REQUIRES_NOT_EXECUTED')
-if (execution.get('stage1') or {}) != {'CORE-01': 'PASS', 'ASSET-01': 'PASS'}:
-    die('STAGE02_ADMISSION_STAGE1_NOT_CLOSED')
-if OLD_STAGE2_ROOT.exists():
-    die('STAGE02_ADMISSION_OLD_PRODUCT_ARTIFACT_ROOT_PRESENT')
+stage1_state = execution.get('stage1') or {}
+if not isinstance(stage1_state, dict) or not stage1_state or any(v != 'PASS' for v in stage1_state.values()):
+    die(f'STAGE02_ADMISSION_STAGE1_NOT_CLOSED:{stage1_state!r}')
+required_page_uids = list(stage1_state)
 
 registry = load(STAGE_REGISTRY)
 stage2_records = [x for x in (registry.get('stages') or []) if x.get('stage_uid') == 'STAGE-02']
@@ -266,14 +261,17 @@ if stage2_contract.get('exit_gate') != 'ALL_REQUIRED_PAGES_STAGE2_CLOSED':
     die('STAGE02_EXIT_GATE_DRIFT')
 
 scope = os.environ.get('STAGE02_PAGE_SCOPE', 'ALL_REQUIRED_PAGES').strip()
-if scope == 'CORE-01':
-    target_page_uids = ['CORE-01']
-elif scope == 'ALL_REQUIRED_PAGES':
-    target_page_uids = list(PAGES)
+if scope == 'ALL_REQUIRED_PAGES':
+    target_page_uids = list(required_page_uids)
 else:
-    die(f'UNSUPPORTED_STAGE02_PAGE_SCOPE:{scope!r}')
-target_pages = {page: PAGES[page] for page in target_page_uids}
-remaining_page_uids = [page for page in PAGES if page not in target_page_uids]
+    target_page_uids = [x.strip() for x in scope.split(',') if x.strip()]
+    if not target_page_uids or len(target_page_uids) != len(set(target_page_uids)):
+        die(f'INVALID_STAGE02_PAGE_SCOPE:{scope!r}')
+    unknown = sorted(set(target_page_uids) - set(required_page_uids))
+    if unknown:
+        die(f'STAGE02_PAGE_SCOPE_OUTSIDE_STAGE1:{unknown!r}')
+target_pages = {page: resolve_page(page) for page in target_page_uids}
+remaining_page_uids = [page for page in required_page_uids if page not in target_page_uids]
 scope_complete = not remaining_page_uids
 
 pages = {}
@@ -292,19 +290,27 @@ for page, paths in target_pages.items():
             die(f'{page}:EXTERNAL_AUTHORITY_FALSE_RESOLUTION:{gid}')
         external.setdefault(gid, {'authority_ref': ref.get('authority_ref'), 'consumers': []})['consumers'].append(page)
 
-    scan = fresh_scan(page, raw)
+    unresolved_authority_by_ref = {str(x.get('authority_ref')): x.get('gap_uid') for x in refs if isinstance(x, dict) and x.get('authority_ref') and x.get('gap_uid')}
+    scan = fresh_scan(page, raw, unresolved_authority_by_ref)
     responsibilities = set(blueprint.get('required_responsibility_uids') or [])
     ai_profile_active = 'CONVERSATION_POLICY' in responsibilities
-    closure = [
-        'MISSING_BUSINESS_ENTITY_INVENTORY',
-        'MISSING_BUSINESS_ENTITY_OPERATION_MATRIX',
-        'MISSING_ENTITY_HIERARCHY_MATRIX',
-        'MISSING_FUNCTIONAL_WORKBENCH_CONTRACT',
-        'MISSING_INTERACTION_TOPOLOGY_SPEC',
-        'MISSING_FUNCTION_VISUAL_IMPACT_MATRIX',
+    page_dir = OLD_STAGE2_ROOT / page
+    closure_defs = [
+        ('BUSINESS_ENTITY_INVENTORY.yaml', 'MISSING_BUSINESS_ENTITY_INVENTORY'),
+        ('BUSINESS_ENTITY_OPERATION_MATRIX.yaml', 'MISSING_BUSINESS_ENTITY_OPERATION_MATRIX'),
+        ('ENTITY_HIERARCHY_MATRIX.yaml', 'MISSING_ENTITY_HIERARCHY_MATRIX'),
+        ('FUNCTIONAL_WORKBENCH_CONTRACT.yaml', 'MISSING_FUNCTIONAL_WORKBENCH_CONTRACT'),
+        ('INTERACTION_TOPOLOGY_SPEC.yaml', 'MISSING_INTERACTION_TOPOLOGY_SPEC'),
+        ('FUNCTION_VISUAL_IMPACT_MATRIX.yaml', 'MISSING_FUNCTION_VISUAL_IMPACT_MATRIX'),
     ]
-    if ai_profile_active:
+    closure = [code for filename, code in closure_defs if not (page_dir / filename).is_file()]
+    if ai_profile_active and not (page_dir / 'AI_INTERACTION_CONTINUITY_CONTRACT.yaml').is_file():
         closure.append('MISSING_AI_INTERACTION_CONTINUITY_CONTRACT')
+    if scan.get('gap_count', 0) > 0:
+        if not (page_dir / 'FUNCTION_ADMISSION_SCORECARD.yaml').is_file():
+            closure.append('MISSING_FUNCTION_ADMISSION_SCORECARD')
+        if not (page_dir / 'AUTO_COMPLETION_SCOPE_LEDGER.yaml').is_file():
+            closure.append('MISSING_AUTO_COMPLETION_SCOPE_LEDGER')
     pages[page] = {
         'blueprint_uid': blueprint.get('blueprint_uid'),
         'ai_interaction_profile_active': ai_profile_active,
@@ -312,14 +318,12 @@ for page, paths in target_pages.items():
         'functional_chain_fresh_scan': scan,
         'closure_blockers': closure,
         'closure_blocker_count': len(closure),
-        'function_admission_scorecard': 'NOT_APPLICABLE_NO_AUTO_OR_AI_PROPOSED_FUNCTION_CREATED_BY_THIS_TEST',
-        'automatic_completion_scope': 'NOT_APPLICABLE_NO_AUTOMATIC_COMPLETION_ATTEMPT',
+        'function_admission_scorecard': 'PRESENT' if (page_dir / 'FUNCTION_ADMISSION_SCORECARD.yaml').is_file() else 'REQUIRED_WHEN_GAP_ANALYSIS_EXISTS',
+        'automatic_completion_scope': 'PRESENT' if (page_dir / 'AUTO_COMPLETION_SCOPE_LEDGER.yaml').is_file() else 'REQUIRED_WHEN_GAP_ANALYSIS_EXISTS',
     }
 
-if not union_gap_uids.issubset(EXPECTED_GAPS):
-    die(f'EXTERNAL_AUTHORITY_SCOPE_DRIFT:allowed={sorted(EXPECTED_GAPS)} actual={sorted(union_gap_uids)}')
-if scope_complete and union_gap_uids != EXPECTED_GAPS:
-    die(f'EXTERNAL_AUTHORITY_UNION_DRIFT:expected={sorted(EXPECTED_GAPS)} actual={sorted(union_gap_uids)}')
+if any(not gid for gid in union_gap_uids):
+    die('EXTERNAL_AUTHORITY_GAP_UID_MISSING')
 
 head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=str(ROOT), text=True, capture_output=True, check=True).stdout.strip()
 functional_total = sum(x['functional_chain_fresh_scan']['gap_count'] for x in pages.values())
@@ -345,7 +349,7 @@ result = {
     'result': 'PASS' if stage_exit_allowed else 'BLOCKED',
     'official_stage_output_denominator': sorted(stage2_outputs),
     'execution_profile_mandatory_output_subset': sorted(mandatory_stage2_outputs),
-    'physical_stage2_product_artifact_root_present': False,
+    'physical_stage2_product_artifact_root_present': OLD_STAGE2_ROOT.is_dir(),
     'pages': pages,
     'fresh_functional_gap_total': functional_total,
     'closure_blocker_total': closure_total,

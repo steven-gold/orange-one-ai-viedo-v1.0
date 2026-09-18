@@ -12,18 +12,27 @@ OUT = RUN / "04_PAGE_FUNCTIONAL_CONTRACT"
 RECEIPT = ROOT / "governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml"
 STATE = ROOT / "governance/test/ACTIVE_STATE.yaml"
 EVIDENCE = ROOT / "governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json"
-PAGES = {
-    "CORE-01": {
-        "raw": RUN / "00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
-        "blueprint": RUN / "02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml",
-        "ai": True,
-    },
-    "ASSET-01": {
-        "raw": RUN / "00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
-        "blueprint": RUN / "02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml",
-        "ai": False,
-    },
-}
+def resolve_page(page_uid: str):
+    raw_dir = RUN / "00_SOURCE_INTAKE/RAW_SOURCE" / page_uid
+    blueprint = RUN / "02_BASE_BLUEPRINT" / page_uid / "PAGE_BASE_BLUEPRINT.yaml"
+    if not raw_dir.is_dir() or not blueprint.is_file():
+        errors.append(f"CURRENT_TARGET_PAGE_SCOPE_UNRESOLVED:{page_uid}")
+        return None
+    candidates = []
+    for path in sorted(raw_dir.glob("*.yaml")):
+        try:
+            obj = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        except Exception:
+            continue
+        if (obj.get("authority") or {}).get("page_uid") == page_uid and isinstance(obj.get("registries"), dict):
+            candidates.append(path)
+    if len(candidates) != 1:
+        errors.append(f"CURRENT_PAGE_RAW_OWNER_DENOMINATOR:{page_uid}:{len(candidates)}")
+        return None
+    bp = yaml.safe_load(blueprint.read_text(encoding="utf-8")) or {}
+    ai = "CONVERSATION_POLICY" in set(bp.get("required_responsibility_uids") or [])
+    return {"raw": candidates[0], "blueprint": blueprint, "ai": ai}
+
 REQUIRED_PAGE_FILES = [
     "BUSINESS_ENTITY_INVENTORY.yaml",
     "BUSINESS_ENTITY_OPERATION_MATRIX.yaml",
@@ -35,7 +44,6 @@ REQUIRED_PAGE_FILES = [
     "PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml",
 ]
 REQUIRED_ROOT_FILES = ["DEPENDENCY_MAP.yaml", "ASYNC_PROVIDER_CONTRACT.yaml", "SHARED_OWNER_PORT_MAP.yaml"]
-EXPECTED_GAPS = {f"GAP-{i:03}" for i in range(1, 9)}
 errors = []
 
 
@@ -63,14 +71,19 @@ evidence = load(EVIDENCE)
 target_page_uids = list(evidence.get("target_pages") or (state.get("execution") or {}).get("target_pages") or [])
 if not target_page_uids or len(target_page_uids) != len(set(target_page_uids)):
     errors.append(f"CURRENT_TARGET_PAGE_SCOPE_INVALID:{target_page_uids!r}")
-unknown_target_pages = sorted(set(target_page_uids) - set(PAGES))
-if unknown_target_pages:
-    errors.append(f"CURRENT_TARGET_PAGE_SCOPE_UNKNOWN:{unknown_target_pages!r}")
-target_pages = {uid: PAGES[uid] for uid in target_page_uids if uid in PAGES}
+target_pages = {}
+for uid in target_page_uids:
+    cfg = resolve_page(uid)
+    if cfg:
+        target_pages[uid] = cfg
 expected_gaps = set(evidence.get("preserved_external_authority_union_gap_uids") or [])
-if not expected_gaps or not expected_gaps.issubset(EXPECTED_GAPS):
-    errors.append(f"CURRENT_EXTERNAL_AUTHORITY_SCOPE_INVALID:{sorted(expected_gaps)!r}")
-expected_blocker_count = sum(7 if cfg["ai"] else 6 for cfg in target_pages.values())
+if not expected_gaps:
+    errors.append("CURRENT_EXTERNAL_AUTHORITY_SCOPE_MISSING")
+receipt_for_scope = load(RECEIPT)
+receipt_blockers = receipt_for_scope.get("materialized_missing_artifact_blockers") or {}
+expected_blocker_count = sum(len(receipt_blockers.get(uid) or []) for uid in target_page_uids)
+if receipt_for_scope.get("materialized_missing_artifact_blocker_count") != expected_blocker_count:
+    errors.append("REMEDIATION_RECEIPT_INTERNAL_BLOCKER_DENOMINATOR_DRIFT")
 
 if not OUT.is_dir():
     errors.append("STAGE02_PRODUCT_ROOT_MISSING")
@@ -272,5 +285,5 @@ if errors:
 print("PASS: Stage-02 materialized structural product root is present and source-bounded")
 print("PASS: entity/action/control/section/component/visual/port denominators match immutable Stage-01 registries")
 print(f"PASS: {expected_blocker_count} in-scope missing-artifact blockers have owning-layer artifacts; zero legal elimination is claimed before fresh reexecution")
-print("PASS: GAP-001..GAP-008 remain unresolved and no stale EXTERNAL_AUTHORITY tree was restored")
+print(f"PASS: preserved external Authority refs remain unresolved for Current scope count={len(expected_gaps)} and no stale EXTERNAL_AUTHORITY tree was restored")
 print("PASS: no semantic authority completion, AI autofill, or invented object-parent binding is present")

@@ -36,7 +36,7 @@ stage1 = execution.get('stage1') or {}
 stage2 = execution.get('stage2') or {}
 result = stage2.get('result')
 
-if stage1 != {'CORE-01': 'PASS', 'ASSET-01': 'PASS'}:
+if not isinstance(stage1, dict) or not stage1 or any(v != 'PASS' for v in stage1.values()):
     die(f'STAGE1_CLOSURE_CONTINUITY_MISSING:{stage1!r}')
 if execution.get('website_construction_allowed') is not False:
     die('WEBSITE_CONSTRUCTION_MUST_REMAIN_BLOCKED')

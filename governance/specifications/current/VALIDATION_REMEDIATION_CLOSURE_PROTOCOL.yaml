@@ -159,3 +159,15 @@ design_remediation_candidate_boundary:
   approved_candidate_requires_single_owner_materialization_before_ingestion: true
   governance_or_candidate_test_product_credit: 0
   fresh_product_reexecution_required_for_blocker_reduction: true
+scope_and_reentry_boundary:
+  execution_scope_manifest_required: true
+  partial_work_unit_closure_may_grant_stage_exit: false
+  remaining_scope_must_persist: true
+  reusable_validator_literal_product_scope_or_count_as_denominator: BLOCK
+  downstream_upstream_owner_mismatch: STOP_REOPEN_OWNER_AND_REVERIFY_IMPACTED_DESCENDANTS
+  source_replay_without_source_defect_as_downstream_remediation: BLOCK
+temporary_formalization_boundary:
+  temporary_artifact_is_authority: false
+  temporary_residual_zero_before_formal_full_line_freeze_release_or_closure: true
+  temporary_residual_block_is_semantic_candidate_failure: false
+  candidate_semantic_result_and_package_cleanliness_are_separate: true

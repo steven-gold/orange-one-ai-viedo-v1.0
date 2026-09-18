@@ -1487,3 +1487,20 @@ For each removed executable/validator/runner cohort, Audit MUST prove:
 A cleanup cohort PASS is governance-maintenance evidence only. Audit MUST_NOT convert it into product-stage gap reduction, product completion, Stage exit, or Authority satisfaction.
 
 This audit extends WEB-GOV-04-S022A and WEB-GOV-04-S065; it does not replace their denominators.
+
+<!-- SECTION_UID: WEB-GOV-04-S083 -->
+## Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit
+
+Audit MUST verify one exact EXECUTION_SCOPE_MANIFEST for every governed Work Unit/cycle and prove its included, excluded, remaining, dependency, denominator, partial-scope, and Stage-exit-credit fields came from Current Authority/profile/state rather than chat memory, old reports, or reusable-code literals.
+
+For every reusable validator, scanner, classifier, remediation executor, projector, or common workflow helper, Audit MUST prove that concrete product page/module identities, fixed product page combinations, blocker/gap counts, and historical run denominators do not define the common scope or expected completion denominator. Product/profile adapters may contain concrete identities only when their local-adapter role is explicit and the values are checked against the Current scope/identity authority.
+
+Audit MUST distinguish Work Unit closure from Stage/capability closure. A partial-scope PASS with remaining required units MUST have zero Stage-exit credit. Remaining scope MUST be persisted and recoverable through Resume/Work Unit Resolution.
+
+Audit MUST prove each discovered gap was routed to its owning capability. Re-running an earlier capability without a defect/change in that owner MUST NOT be credited as repairing a later-owned semantic gap. Downstream discovery of an upstream-owned defect MUST show: downstream stop, owner re-entry, impacted reverse-dependency set, REVERIFY_REQUIRED descendants, preserved unaffected evidence where proven, owner remediation, and fresh successor verification.
+
+For missing required functional/contract behavior, Audit MUST require FUNCTION_ADMISSION_SCORECARD and AUTO_COMPLETION_SCOPE_LEDGER before completion/remediation routing. NO_AUTO_COMPLETION and review-only outcomes do not waive those artifacts. Review-only candidate evidence receives zero Product Authority or product blocker credit until approved content reaches the single Current canonical owner and fresh execution closes the affected signatures.
+
+Audit MUST independently report candidate semantic result and temporary/formal package cleanliness. A TEMPORARY_LIFECYCLE_RESIDUAL may block Full-Line or formal closure, but MUST NOT be mislabeled as candidate semantic invalidity. Formal Freeze/Release/Deployment/Production closure requires zero unauthorized temporary residuals.
+
+Portability audit MUST substitute materially different product/profile scope identities and denominators without changing common Mother Policy. If reusable policy or reusable execution consumers require edits merely because page names, module count, blocker count, or profile-local execution scope changes, portability MUST FAIL.

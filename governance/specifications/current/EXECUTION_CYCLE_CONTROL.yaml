@@ -210,3 +210,82 @@ design_contract_remediation_routing:
   approved_content_target: SINGLE_CURRENT_CANONICAL_PRODUCT_CONTRACT_OWNER
   ingestion_before_owner_materialization: BLOCK
   product_blocker_reduction_before_fresh_reexecution: 0
+execution_scope_manifest_contract:
+  required_for_every_governed_work_unit_or_cycle: true
+  artifact: EXECUTION_SCOPE_MANIFEST
+  layer: RUN_STATE_NON_NORMATIVE
+  required_fields:
+  - scope_uid
+  - scope_kind
+  - included_units
+  - excluded_units
+  - remaining_units
+  - scope_selection_authority
+  - owning_capability
+  - dependency_closure_refs
+  - denominator_source_refs
+  - partial_scope
+  - stage_exit_credit_allowed
+  - content_hash
+  reusable_consumer_literal_product_scope_as_denominator: BLOCK
+  reusable_consumer_literal_problem_count_as_denominator: BLOCK
+  work_unit_closure_is_stage_exit: false
+  partial_scope_stage_exit_credit: 0
+  stage_exit_requires_declared_required_universe_reconciliation: true
+capability_ownership_and_reentry_contract:
+  SOURCE_INTAKE_BASE_BLUEPRINT:
+  - SOURCE_CAPTURE
+  - SOURCE_FACTS
+  - RESPONSIBILITY_CLASSIFICATION
+  - BASE_BLUEPRINT
+  FUNCTIONAL_CONTRACT:
+  - BUSINESS_ENTITY_LIFECYCLE
+  - OPERATION_HIERARCHY
+  - FIELD_DATA_ACTION_BOUNDARY
+  - PAYLOAD_INPUT
+  - STATE_TRANSITION
+  - ERROR_RECOVERY_AUDIT
+  - FUNCTIONAL_WORKBENCH
+  - INTERACTION_TOPOLOGY
+  - AI_INTERACTION_IDENTITY
+  - FINALIZATION_VERSION
+  - DEPENDENCY_CHANGE_IMPACT
+  - FUNCTION_VISUAL_IMPACT
+  VISUAL_DESIGN:
+  - VISUAL_PROJECTION
+  - GEOMETRY
+  - RESPONSIVE_REFLOW
+  FOUNDATION_FREEZE:
+  - FROZEN_DENOMINATOR
+  - ACCEPTANCE_BLUEPRINT
+  IMPLEMENTATION:
+  - FRONTEND
+  - CONTROL_HANDLER
+  - API_RUNTIME
+  - DATA_PERSISTENCE
+  - ASYNC_STORAGE_EXTERNAL_ADAPTER
+  VERIFICATION:
+  - UNIT_INTEGRATION_PERMISSION_BROWSER_VISUAL_I18N_ACCESSIBILITY_QA
+  BUILD_RELEASE:
+  - BUILD_IDENTITY
+  - RELEASE_CANDIDATE
+  STAGING:
+  - STAGING_EXECUTION_AND_ACCEPTANCE
+  PRODUCTION_CUTOVER:
+  - DEPLOYMENT_AND_RUNTIME_RELEASE_IDENTITY
+  PRODUCTION_ACCEPTANCE:
+  - PRODUCTION_BROWSER_DATA_EFFECTFUL_VISUAL_ACCEPTANCE
+  CLOSURE_OPERATIONS:
+  - MONITORING_RECOVERY_ROLLBACK_FINAL_RECONCILIATION
+  downstream_may_patch_upstream_owned_gap: false
+  downstream_discovery_action: STOP_AND_REOPEN_OWNING_CAPABILITY
+  impacted_descendants: REVERIFY_REQUIRED
+  unaffected_evidence_may_be_preserved_only_by_reverse_dependency_proof: true
+  source_replay_repairs_functional_contract_without_source_or_base_defect: false
+temporary_cycle_transition_contract:
+  temporary_layer_is_authority: false
+  temporary_cycle_must_declare_root_owner_and_cleanup_boundary: true
+  formal_full_line_freeze_release_deployment_closure_requires_temporary_residual_zero: true
+  temporary_residual_classification: TEMPORARY_LIFECYCLE_RESIDUAL
+  temporary_residual_is_candidate_semantic_failure: false
+  promotion_requires_registered_candidate_approval_materialization_path: true

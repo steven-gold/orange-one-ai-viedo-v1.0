@@ -1197,3 +1197,18 @@ Formal remediation MUST execute in dependency order: shared/root Authority and c
 Each accepted remediation batch MUST write only to the canonical owning layer, append a machine-readable resolution entry, and validate the affected reverse-dependency closure. Complete sweeps remain mandatory at registered checkpoints, after common-engine changes, before governed-cycle closure, before policy/release freeze, and whenever indexed validation diverges from a full sweep.
 
 There MUST be one active `CURRENT_PROBLEM_REGISTER` for the governed cycle and one append-only `RESOLUTION_LEDGER`. Per-run reports and snapshots are evidence only. New denominators MUST derive from physical scan plus exact authorized successor reconciliation, never from predecessor reports or hard-coded expected counts.
+
+<!-- SECTION_UID: WEB-GOV-02-S074 -->
+## Scope-Bound Delivery / Re-entry / Temporary-to-Formal Boundary
+
+Implementation and delivery MUST consume the frozen EXECUTION_SCOPE_MANIFEST, functional contracts, approved visual projection, dependency closure, and acceptance denominator applicable to the exact Work Unit. Reusable implementation validators, runners, and workflow helpers MUST derive included units and denominators from Current manifests/registers. A literal product page set, module list, blocker count, expected gap count, prior-run report count, or manually copied denominator MUST NOT define reusable completion.
+
+A registered product adapter MAY contain concrete product identities needed to invoke a local implementation or test, but those identities MUST be resolved against the Current scope manifest and typed program identity/owner registries before use. The adapter MUST fail when a requested identity is outside Current scope and MUST NOT expand the scope, Stage universe, or common denominator by code literals.
+
+If implementation or any later delivery capability discovers an upstream functional, interaction, visual, freeze, Authority, dependency, or acceptance-definition defect, it MUST stop the affected downstream write path and return the issue to the owning capability. Downstream code MUST NOT invent a local substitute. The impact closure MUST mark affected descendants REVERIFY_REQUIRED and resume only after the upstream canonical owner is materially corrected and freshly revalidated.
+
+Temporary analysis, mutation-test, destructive-test, candidate, harness, or intermediate artifacts are non-authoritative. They MAY exist only inside an explicitly declared temporary cycle and MUST have owner, lifecycle, cleanup disposition, and promotion boundary. Formal Full-Line, Foundation Freeze, Release Candidate, Staging, Production Cutover, Production Acceptance, and terminal closure gates require temporary residual count zero unless a Current Authority explicitly classifies the artifact as required non-current evidence outside the temporary root.
+
+A formal gate blocked solely because temporary residuals still exist is an execution-environment or lifecycle-hygiene block. It MUST NOT be reported as proof that the underlying Design/Contract Candidate is semantically invalid. Candidate semantic validation and formal package cleanliness are separate evidence dimensions and both must pass at their proper boundaries.
+
+No downstream delivery PASS may compensate for an unresolved upstream owning-capability gap. Conversely, a governance, validator, workflow, or temporary-artifact fix receives zero product completion credit until the product owner is freshly executed and the affected product denominator changes through Current evidence.

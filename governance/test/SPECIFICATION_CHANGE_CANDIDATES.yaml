@@ -432,7 +432,7 @@ current_stage2_execution:
   remaining_pages:
   - ASSET-01
   stage_scope_complete: false
-  next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_REMAINING_STAGE02_SCOPE
+  next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE02_REVALIDATION_UNDER_CURRENT_GOVERNANCE
   attempt_uid: STAGE02-FRESH-20260918-007
   frozen_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   raw_discovery_gap_count: 45
@@ -456,4 +456,8 @@ current_stage2_execution:
   core01_closure_materialization_head: d7d1fbd9ae353e256bc766bd8150d9448ed6b230
   core01_closure_outer_run_id: 35373928957
   r7_disposition: NOT_TRIGGERED_OLD_AUTHORITY_WAIT_ROUTE_NOT_APPLICABLE_AFTER_CURRENT_V2_2_5_CANONICAL_OWNER_MATERIALIZATION
+  fresh_revalidation_required_under_current_governance: true
+  current_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
+  closure_credit_under_current_governance: false
+  execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER

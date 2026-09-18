@@ -4,14 +4,14 @@ artifact_type: AUDIT_BASELINE
 status: CURRENT_COMPILED
 canonical_path: 11_EVIDENCE/audit/AUDIT_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-AUDIT-BASELINE
-governance_revision: v2.2.4-design-remediation-routing-hardening
+governance_revision: v2.2.5-scope-stage-reentry-portability-hardening
 compiled_from:
   acceptance_blueprint_uid: BP-GOVERNANCE-ACCEPTANCE-001
-  acceptance_blueprint_sha256: dacc8c07f9d554bd7e2bf51ff0a8fe951d13f3aa24884c01bf847ae028b557a9
+  acceptance_blueprint_sha256: 4433f03df95b5218740cb2511d78dbc39daecfbcb5d22058bad405677d08759a
   audit_catalog_uid: REG-AUDIT-CATALOG-001
-  audit_catalog_sha256: 99e4753edcee4078c0b26f0ea4253d94f7baea2b86fee2eccd8dc9cf60c1fbb3
+  audit_catalog_sha256: 8ffae164133fce2646470ddc617178af93b0b000abc91507e503bff7f7678a53
   section_registry_uid: REG-NORMATIVE-SECTION-001
-  section_registry_sha256: b5b6ef46af10a1d85c13fefbc9f5cae96742f5eec7f5aad0c08304e92e799c34
+  section_registry_sha256: 851b55c826a25fa5b598b3083500b1cd3b3bc0562d20ce3cf7137ffa750fdcb6
 denominator:
   audit_item_uids:
   - AUD-GOV-001
@@ -36,34 +36,34 @@ governance_compilation:
   sources:
   - document_id: WEB-GOV-01
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-    sha256: 34a3a34376baa4d8379d94ae26979568287ed11a71a16ec44e355e62a7c039b2
+    sha256: de44db7e5c7d705b59a2aef737f454340775117f73df0dcd6bdfcb14be47ba4d
     version: 2.2.3
     status: normative
     permanent_inheritance: true
   - document_id: WEB-GOV-02
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-    sha256: 0533bc997ff0b2c164e4bbea6129ae0b65731545dfdf7e62628c4d0f56245cf9
+    sha256: b91d0c2af17d786b7b3bba0b5d89d8a6402ad69b4acff35c7dd78127bcb88712
     version: 2.2.3
     status: normative
     permanent_inheritance: true
   - document_id: WEB-GOV-03
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-    sha256: 88af349d6f0d92c3d4198986df051f8aa6bca74bebd5b2c6ccfd337253cb6c27
+    sha256: 21a5f0bb321dc75fa8020652ba017e1a5d0b117dad7fae8c9aac0680e5082cc4
     version: 2.2.3
     status: normative
     permanent_inheritance: true
   - document_id: WEB-GOV-04
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-    sha256: 6b50dea2801d3f65c09bd067efd5eb3ea893a923ed95bd5c47c764a976ebae3d
+    sha256: 7a3d49de91c5a780e77a987611f59ad4c464863e6a536616e381c01433677f03
     version: 2.2.3
     status: normative
     permanent_inheritance: true
   counts:
-    total: 665
-    must: 512
+    total: 687
+    must: 534
     must_not: 153
-    auto: 371
-    manual_evidence: 294
+    auto: 391
+    manual_evidence: 296
   coverage_contract:
     uncompiled_must: 0
     uncompiled_must_not: 0
@@ -1856,6 +1856,46 @@ governance_compilation:
     validator: mapping_schema_guard
     auto: AUTO
     blocking: true
+  - id: GOV01-MUST-163
+    src: WEB-GOV-01
+    line: 1516
+    mode: MUST
+    hash: b87881194698c03cbcdcfb103754a7e9d3066560b49c81092c43797ee0192231
+    validator: authority_manifest_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV01-MUST-164
+    src: WEB-GOV-01
+    line: 1518
+    mode: MUST
+    hash: 5302ca8a86a62fec6fee55dd5f6d937867d1cf095d0d869b2a0d02ebd6585960
+    validator: authority_manifest_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV01-MUST-165
+    src: WEB-GOV-01
+    line: 1520
+    mode: MUST
+    hash: f01784a9b40069188bf1ddea6c618b442f15c0f15d1ab7bbdf279db4467b9d37
+    validator: authority_manifest_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV01-MUST-166
+    src: WEB-GOV-01
+    line: 1524
+    mode: MUST
+    hash: 8f16f4799aa844f27c12f63df9237161fedad4f873643d45252d8f439225e5ac
+    validator: authority_manifest_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV01-MUST-167
+    src: WEB-GOV-01
+    line: 1526
+    mode: MUST
+    hash: 484edc0cf9f00f088e9b77aece24fec27fabda366b38df4bf5eb2a82f9150b09
+    validator: current_revision_guard
+    auto: AUTO
+    blocking: true
   - id: GOV02-MUST_NOT-001
     src: WEB-GOV-02
     line: 19
@@ -3037,6 +3077,46 @@ governance_compilation:
     line: 1199
     mode: MUST
     hash: a92d1123e32cd1b962ba331215a9d61e5baa20fd8df2f30c03f2e15030718cf9
+    validator: audit_binding_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV02-MUST-121
+    src: WEB-GOV-02
+    line: 1204
+    mode: MUST
+    hash: 068005366f5702bc261ef358926ef8d489b6a98c64c29edf4e35dde01b809c18
+    validator: residual_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV02-MUST-122
+    src: WEB-GOV-02
+    line: 1206
+    mode: MUST
+    hash: 3f1e627f64e952c06716283f4d8391c7f3dc785807726119be9a53791b0fc326
+    validator: residual_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV02-MUST-123
+    src: WEB-GOV-02
+    line: 1208
+    mode: MUST
+    hash: c430b132a64f06f87761df46950e5eac23accc3dee1031a41ae98bdfb7d6ee96
+    validator: current_revision_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV02-MUST-124
+    src: WEB-GOV-02
+    line: 1210
+    mode: MUST
+    hash: 1e84de7bd84d59277959e13cd473d5db142aec9cdf3f5b6187ecc49c69496dd7
+    validator: audit_binding_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV02-MUST-125
+    src: WEB-GOV-02
+    line: 1212
+    mode: MUST
+    hash: f2c50ac2d04e80cab2459a3bd74ec9ad3334bd43b57104aafba0ca8fdc0840b3
     validator: audit_binding_guard
     auto: AUTO
     blocking: true
@@ -4344,6 +4424,46 @@ governance_compilation:
     validator: mapping_schema_guard
     auto: AUTO
     blocking: true
+  - id: GOV03-MUST-120
+    src: WEB-GOV-03
+    line: 1165
+    mode: MUST
+    hash: 9d43bce9ef645124ed9dc96c6c4479d332b00386e45a8d5501b9c7b0b514e259
+    validator: manual_semantic_guard
+    auto: MANUAL_EVIDENCE
+    blocking: true
+  - id: GOV03-MUST-121
+    src: WEB-GOV-03
+    line: 1177
+    mode: MUST
+    hash: 6e616285a5608d55117ef695086daa6399c7e8a92fb4ef98d5e456705325009c
+    validator: manual_semantic_guard
+    auto: MANUAL_EVIDENCE
+    blocking: true
+  - id: GOV03-MUST-122
+    src: WEB-GOV-03
+    line: 1179
+    mode: MUST
+    hash: 1b17a28f92f9d79990fbe42e8ead250ef37b52d1b19183ce91fa1a92ad08032b
+    validator: authority_manifest_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV03-MUST-123
+    src: WEB-GOV-03
+    line: 1181
+    mode: MUST
+    hash: c8d34b59397846e4c08288f522a8a0a15996a0afd7fa626f3a30ac8627a56414
+    validator: mapping_schema_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV03-MUST-124
+    src: WEB-GOV-03
+    line: 1183
+    mode: MUST
+    hash: 99e20b5bac5d41a5be25db6af11fa56bac9f42191109941f3b7971f14f82e072
+    validator: mapping_schema_guard
+    auto: AUTO
+    blocking: true
   - id: GOV04-MUST-001
     src: WEB-GOV-04
     line: 24
@@ -5392,4 +5512,60 @@ governance_compilation:
     validator: mapping_schema_guard
     auto: AUTO
     blocking: true
-content_hash: 194e34b6c248d734eedfcf6f7205c4da61e354ff514766a6b4972aadd70e9dc4
+  - id: GOV04-MUST-112
+    src: WEB-GOV-04
+    line: 1494
+    mode: MUST
+    hash: e8add7236171b9160f78dac56000f1975a674897f9a18b6ff144104ae021d22f
+    validator: authority_manifest_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV04-MUST-113
+    src: WEB-GOV-04
+    line: 1496
+    mode: MUST
+    hash: d0cfb3554a659018332777782e5531b67e7473d50ff06b7f763b708a2f4930e2
+    validator: authority_manifest_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV04-MUST-114
+    src: WEB-GOV-04
+    line: 1498
+    mode: MUST
+    hash: cd0fca2b06f6994629f89f97569f5cf9b151e32c953b741a73081edb998c594c
+    validator: audit_binding_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV04-MUST-115
+    src: WEB-GOV-04
+    line: 1500
+    mode: MUST
+    hash: c2292361aaebd18ed8276b5d6e63cf32c03a76012282dc38a862e2d92286f20d
+    validator: current_revision_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV04-MUST-116
+    src: WEB-GOV-04
+    line: 1502
+    mode: MUST
+    hash: dbbbd9c79b4f3189e5a5c60dba48345169d77ba5eda7e790a9ad423fbaa1405f
+    validator: audit_binding_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV04-MUST-117
+    src: WEB-GOV-04
+    line: 1504
+    mode: MUST
+    hash: ca840a0f1e07096a58feba0199fa42f45f8643b685c56a265cdb2cf6a2f89206
+    validator: residual_guard
+    auto: AUTO
+    blocking: true
+  - id: GOV04-MUST-118
+    src: WEB-GOV-04
+    line: 1506
+    mode: MUST
+    hash: d638bf46e49b03e9bab68fea5e4d7a970d9955dc04479ed595f53e78b2a8364e
+    validator: authority_manifest_guard
+    auto: AUTO
+    blocking: true
+content_hash: 90d6d556baa0b9fd291674e9792114c80616be8e3ef5c8c471816109f36e4bd7

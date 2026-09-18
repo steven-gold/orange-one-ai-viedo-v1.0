@@ -1158,3 +1158,26 @@ A removable cohort SHOULD be mutated atomically when the files share one proven 
 This section classifies residuals before WEB-GOV-03-S053 and WEB-GOV-03-S055 perform supersession/delete operations. It does not replace those owners.
 
 Governance residual cleanup is governed by WEB-GOV-03-S066 and receives zero product-stage gap reduction or completion credit unless separate fresh product-owner evidence independently changes a product denominator.
+
+<!-- SECTION_UID: WEB-GOV-03-S069 -->
+## Execution Scope Manifest / Dynamic Denominator / Capability Re-entry Control
+
+Every governed execution iteration MUST use this order:
+
+1. Resolve Current Governance, Product/Execution Profile, Current Primary Task Layer, and legal Work Unit.
+2. Resolve or materialize one EXECUTION_SCOPE_MANIFEST from Current Authority, applicability, dependency closure, and persisted state.
+3. Derive all product units and denominators from that manifest plus Current physical scan/registered manifests; never from literal reusable-code page lists or historical expected counts.
+4. Execute only included scope. Persist excluded and remaining scope explicitly.
+5. Classify every discovered issue by owning capability before remediation.
+6. For INPUT_SOURCE_GAP or ARCHITECTURE_GAP without a unique role-correct Current closure, enter bounded Design/Contract Remediation with FUNCTION_ADMISSION_SCORECARD and AUTO_COMPLETION_SCOPE_LEDGER. Only two or more materially distinct viable behaviors become AUTHORITY_GAP.
+7. Materialize approved content only to the single Current canonical owner, then rerun the affected owner and reverse-dependency closure from fresh inputs/evidence.
+8. A partial Work Unit may receive local closure credit only for its exact scope. Stage/capability exit requires reconciliation of the full declared required universe and cannot be granted while remaining required scope exists.
+9. If a downstream capability discovers an upstream-owned defect, stop downstream mutation, reopen the owning capability, mark affected descendants REVERIFY_REQUIRED, preserve proven-unaffected evidence, and resume at the earliest impacted successor boundary.
+
+Reusable validators/scanners/classifiers/remediation executors MUST be scope-parametric. Product IDs, page IDs, provider IDs, fixed page combinations, blocker counts, gap counts, write-set counts, and retry/run identifiers MAY be asserted only when they are resolved from a Current product/profile/Work Unit manifest or typed adapter input. Such values MUST NOT appear as the implicit denominator of a reusable consumer.
+
+The current denominator for an execution cycle MUST be computed from Current scope plus physical scan and legal successor reconciliation. Raw discovery count, effective open count, resolved count, remaining-scope count, and external/shared Authority count are separate values. A validator MUST NOT force effective open count to equal raw historical discovery count after a legal Current successor closes a signature.
+
+Temporary cycles MUST declare temporary roots and cleanup boundaries. Temporary residuals may block a formal cleanliness gate, but this classification is TEMPORARY_LIFECYCLE_RESIDUAL, not PRODUCT_SEMANTIC_FAILURE. Temporary output MUST be promoted only through the registered candidate/approval/materialization path and MUST be absent from formal package roots at formal closure unless explicitly retained as legal non-current evidence.
+
+Capability re-entry is owner-based, not stage-number-based Mother Policy. A selected Execution Profile MAY map source intake, functional contract, visual design, freeze, implementation, verification, build/release, staging, cutover, production acceptance, and operations/closure capabilities to concrete stage UIDs. Changing that profile mapping MUST NOT require Mother Policy changes.

@@ -64,6 +64,9 @@ promotion_contamination_guard:
   workflow_or_test_path_in_policy: BLOCK_UNLESS_EXPLICIT_NON_NORMATIVE_REFERENCE
   test_result_promoted_as_policy_without_generalization: BLOCK
   profile_data_promoted_as_global_policy: BLOCK
+  product_page_or_module_identity_in_common_policy: BLOCK
+  fixed_product_scope_combination_in_common_policy: BLOCK
+  fixed_product_problem_or_blocker_count_in_common_policy: BLOCK
 authority_consistency:
   current_manifest_component_must_self_declare_formal_current_authority: true
   active_test_component_in_current_manifest: BLOCK
@@ -88,3 +91,10 @@ promotion_projection_atomicity:
   first_clean_restart_may_discover_preexisting_projection_staleness: false
   discovered_projection_staleness_after_successful_promotion_classification: PROMOTION_ATOMICITY_DEFECT
   timeout_or_skipped_consumer_validation_may_count_as_pass: false
+reusable_consumer_portability:
+  reusable_validator_runner_scanner_projector_scope_parametric: true
+  literal_product_identity_may_define_common_denominator: false
+  literal_historical_problem_count_may_define_common_denominator: false
+  registered_product_adapter_may_name_concrete_identity: true
+  product_adapter_must_validate_identity_against_current_scope_manifest: true
+  product_adapter_may_redefine_common_policy_or_stage_universe: false

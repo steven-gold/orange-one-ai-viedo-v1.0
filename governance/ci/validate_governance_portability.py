@@ -99,6 +99,22 @@ for surface in global_surfaces:
     if fixed_schema.search(body):
         failures.append('global_machine_profile_specific_step_schema:'+surface.relative_to(ROOT).as_posix())
 
+# Reusable product-scope consumers must remain scope-parametric.
+scope_neutral_surfaces=[
+    ROOT/'governance/ci/run_current_stage2_actual_test.py',
+    ROOT/'governance/ci/validate_current_stage2_materialized_closure.py',
+    ROOT/'governance/ci/validate_stage02_state_integrity.py',
+    ROOT/'governance/ci/validate_stage02_successor_integrity.py',
+]
+literal_product_identity=re.compile(r"['\"](?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|IAM|ERP|AIAPI)-\d+['\"]")
+for surface in scope_neutral_surfaces:
+    if not surface.is_file():
+        failures.append('scope_neutral_surface_missing:'+surface.relative_to(ROOT).as_posix())
+        continue
+    body=surface.read_text(encoding='utf-8')
+    if literal_product_identity.search(body):
+        failures.append('reusable_consumer_literal_product_scope:'+surface.relative_to(ROOT).as_posix())
+
 # Mother context/task-layer machine binding checks. These extend the existing portability owner.
 exec_control=yaml.safe_load((CUR/'EXECUTION_CYCLE_CONTROL.yaml').read_text(encoding='utf-8')) or {}
 closure=yaml.safe_load((CUR/'VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml').read_text(encoding='utf-8')) or {}

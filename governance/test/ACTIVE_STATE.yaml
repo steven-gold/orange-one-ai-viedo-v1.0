@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+specification_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -33,19 +33,20 @@ execution:
     prior_results_authoritative_for_next_run: false
     prior_results_used_in_current_run: false
     artifact_root_present: true
-    revalidation_required_under_current_governance: false
+    revalidation_required_under_current_governance: true
     prior_results_authoritative_for_current_governance: false
     tested_page_uids:
     - CORE-01
     remaining_page_uids:
     - ASSET-01
     stage_scope_complete: false
+    current_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   website_construction_allowed: false
   deployment_allowed: false
 full_lifecycle_governance_system_test:
   round: SYSTEM_FULL_LINE_HIGH_PRESSURE_ROUND_1
   meaning: GOVERNANCE_SYSTEM_EXECUTION_HEALTH_ONLY
-  deterministic_source_bundle_sha256: 94125fcff9d0ea8773720686711a421c7f04f06f2b2dd50430d33836152c9d1f
+  deterministic_source_bundle_sha256: 8b2fc7b8811f461895ed937733d3ab6ded087835cdad5dea33ee6fa58acc5fd9
   verified_source_file_count: 75
   github_source_materialization: PASS_EXACT_75_FILE_IDENTITY
   mandatory_regression_suite_count: 17
@@ -54,13 +55,13 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: INNER_FULL_LINE_PASS_PENDING_TERMINAL_WORKFLOW
+  full_line_github_result: REVALIDATION_REQUIRED_AFTER_SCOPE_STAGE_REENTRY_PROMOTION
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
   full_line_verification_run_id: 35326298900
   full_line_verification_head_sha: 736622cf32e1a19119317b4d9b56af51c036ce03
-  terminal_run_conclusion: PENDING
+  terminal_run_conclusion: REVALIDATION_REQUIRED
   terminal_result_credit_allowed: false
 stage_execution_loading:
   full_line_round_reads_all_source_files_for_integrity_and_regression: true
@@ -110,7 +111,7 @@ stage02_reset_control:
   next_action_after_mother_review: RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE
   product_stage_credit: 0
 status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
-next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_REMAINING_STAGE02_SCOPE
+next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE02_REVALIDATION_UNDER_CURRENT_GOVERNANCE
 work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-002
   normative_authority: false
@@ -442,15 +443,15 @@ previous_closed_work_unit:
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
-  stage2_execution_requires_fresh_entry_resolution: false
+  stage2_execution_requires_fresh_entry_resolution: true
   effectful_stage2_execution_before_entry_resolution: PASS_ENTRY_RESOLVED
-  current_resume_point: STAGE2_CORE01_FUNCTIONAL_REMEDIATION_CLOSED_TRANSITION_BOUNDARY
+  current_resume_point: POST_GOVERNANCE_PROMOTION_STAGE2_REVERIFY_REQUIRED
   current_work_unit_uid: null
   current_owner: null
   last_effectful_governance_action: PREFORMAL_REVIEW_APPROVED_AND_MACHINE_REVALIDATED
   last_effectful_governance_evidence_head: 7765b763d0559f3ccf2f15246b9841ca165ad6e0
   last_effectful_governance_full_line_run_id: 35324482092
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_REMAINING_STAGE02_SCOPE
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE02_REVALIDATION_UNDER_CURRENT_GOVERNANCE
   last_closed_structural_work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   last_closed_structural_validation_head: 474e31931561340bfc12ed23b54cb115b7bda1d0
   last_closed_structural_full_line_run_id: 35329842073
@@ -459,13 +460,13 @@ resume_control:
   last_closed_product_outer_run_id: 35373928957
   last_closed_product_outer_result: success
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
-  predecessor_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+  current_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
+  predecessor_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: false
-  fresh_revalidation_scope: STAGE02_NOT_EXECUTED_NO_ACTIVE_ATTEMPT
+  fresh_revalidation_required: true
+  fresh_revalidation_scope: AFFECTED_FUNCTIONAL_CONTRACT_SCOPE_AND_REUSABLE_SCOPE_CONSUMERS
   mother_machine_revalidation_complete: true
   mother_machine_revalidation_run_id: 35321233970
   mother_machine_revalidation_head: 736622cf32e1a19119317b4d9b56af51c036ce03
@@ -477,6 +478,7 @@ governance_revision_transition:
   canonical_rule_registry_required_for_fresh_revalidation: true
   website_construction_remains_blocked: true
   deployment_remains_blocked: true
+  execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
 pending_governance_review:
   review_item_uid: REV-GOV-001
   review_type: PREFORMAL_GOVERNANCE_REVIEW
@@ -505,9 +507,9 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-COMPLETE-CORE01-STAGE02-TEST
-current_primary_task_product_stage_credit: 45
+current_primary_task_layer: GOVERNANCE_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-MOTHER-SCOPE-STAGE-OWNERSHIP-REENTRY-PORTABILITY-HARDENING-R1
+current_primary_task_product_stage_credit: 0
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
@@ -582,10 +584,10 @@ stage02_active_attempt:
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: true
-  next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_REMAINING_STAGE02_SCOPE
+  next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE02_REVALIDATION_UNDER_CURRENT_GOVERNANCE
   governance_status: CURRENT_FROZEN_ATTEMPT_FRESHLY_REVALIDATED_BLOCKED
-  closure_credit_under_current_governance: true
-  fresh_revalidation_required: false
+  closure_credit_under_current_governance: false
+  fresh_revalidation_required: true
   material_remediation_started: true
   material_remediation_receipt_ref: governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml
   reexecution_clean_baseline_receipt_ref: governance/test/stage02/STAGE02_REEXECUTION_CLEAN_BASELINE_RECEIPT_R1.yaml
@@ -596,6 +598,7 @@ stage02_active_attempt:
   effective_functional_gap_total: 0
   validated_product_materialization_count: 45
   design_contract_approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_COHERENT_DESIGN_CONTRACT_APPROVAL_EVIDENCE.yaml
+  current_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
   canonical_name: CORE01_FRESH_STAGE02_ACTUAL_TEST
@@ -642,3 +645,13 @@ earlier_closed_product_work_unit:
     fresh_functional_gap_total: 45
     fresh_closure_blocker_total: 7
     terminal_disposition: CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED
+scope_stage_reentry_successor:
+  authorization_uid: USR-DIRECTIVE-20260919-MOTHER-SCOPE-STAGE-OWNERSHIP-REENTRY-PORTABILITY-HARDENING-R1
+  predecessor_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+  current_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
+  execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  included_unit_count: 1
+  remaining_unit_count: 1
+  partial_scope_stage_exit_credit: 0
+  product_stage_credit: 0
+  status: GOVERNANCE_PROMOTED_PRODUCT_REVERIFY_REQUIRED

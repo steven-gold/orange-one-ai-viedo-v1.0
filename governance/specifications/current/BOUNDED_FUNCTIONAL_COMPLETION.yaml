@@ -8,9 +8,10 @@ common_scope: PRODUCT_AND_SYSTEM_NEUTRAL
 rules:
   FUNCTION_ADMISSION_NECESSITY_AND_UTILITY:
     required_artifact: FUNCTION_ADMISSION_SCORECARD
-    activation: AI_OR_AUTOMATION_PROPOSES_FUNCTIONAL_ADDITION
+    activation: MISSING_REQUIRED_FUNCTION_OR_CONTRACT_ANALYZED_FOR_COMPLETION_OR_DESIGN_REMEDIATION
     score_is_diagnostic_not_authority: true
     authority_gap_may_not_be_overridden_by_score: true
+    required_even_when_outcome_is_no_auto_completion_or_review_only: true
   BOUNDED_FUNCTIONAL_COMPLETION:
     required_artifact: AUTO_COMPLETION_SCOPE_LEDGER
     activation: REQUIRED_GAP_CLOSURE_OR_AUTO_COMPLETION_FROM_REGISTERED_SEED
@@ -33,6 +34,10 @@ rules:
     coherent_package_review_may_cover_multiple_blockers: true
     approved_candidate_must_materialize_to_single_current_product_owner_before_ingestion: true
     candidate_analysis_product_blocker_reduction_credit: 0
+    scope_ledger_required_even_when_auto_completion_not_activated: true
+    no_auto_completion_is_legal_terminal_analysis_disposition: true
+    stage1_replay_without_stage1_defect_may_close_stage2_functional_gap: false
+    approved_candidate_requires_fresh_owner_and_reverse_dependency_reexecution: true
   FUNCTION_VISUAL_SYNCHRONIZED_COMPLETION:
     required_artifact: FUNCTION_VISUAL_IMPACT_MATRIX
     activation: USER_VISIBLE_OR_USER_OBSERVABLE_REQUIRED_OPERATION

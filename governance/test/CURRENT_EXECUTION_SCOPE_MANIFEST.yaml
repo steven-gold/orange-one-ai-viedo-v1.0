@@ -1,0 +1,27 @@
+schema_version: 1
+artifact_type: EXECUTION_SCOPE_MANIFEST
+normative_authority: false
+governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
+owning_capability: FUNCTIONAL_CONTRACT
+scope_kind: PARTIAL_WORK_UNIT
+included_units:
+- CORE-01
+excluded_units:
+- ASSET-01
+remaining_units:
+- ASSET-01
+stage_required_units:
+- CORE-01
+- ASSET-01
+scope_selection_authority: PERSISTED_CURRENT_STAGE_STATE_AND_STAGE1_CLOSED_UNIVERSE
+dependency_closure_refs:
+- governance/test/ACTIVE_STATE.yaml
+denominator_source_refs:
+- governance/test/ACTIVE_STATE.yaml
+- governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+partial_scope: true
+stage_exit_credit_allowed: false
+predecessor_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+fresh_revalidation_required: true
+content_hash: 3de7fd90ee155c4ff12ed1368782e7b5c105495934e64979f1dde61dad8d3003

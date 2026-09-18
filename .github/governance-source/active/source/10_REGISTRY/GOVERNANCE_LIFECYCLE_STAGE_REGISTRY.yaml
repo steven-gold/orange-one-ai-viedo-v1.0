@@ -4,7 +4,7 @@ artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.2.4-design-remediation-routing-hardening
+governance_revision: v2.2.5-scope-stage-reentry-portability-hardening
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -14,6 +14,10 @@ normative_section_uids:
 - WEB-GOV-02-S073
 - WEB-GOV-03-S062
 - WEB-GOV-04-S078
+- WEB-GOV-01-S075
+- WEB-GOV-02-S074
+- WEB-GOV-03-S069
+- WEB-GOV-04-S083
 topology:
   foundation_stages:
   - STAGE-01
@@ -93,6 +97,9 @@ stages:
   - WEB-GOV-04-S067
   - WEB-GOV-04-S069
   - WEB-GOV-04-S070
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - STAGE1_SOURCE_PIPELINE_GUARD
@@ -175,6 +182,17 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  capability_ownership_boundary:
+    owns:
+    - SOURCE_CAPTURE
+    - SOURCE_FACTS
+    - RESPONSIBILITY_CLASSIFICATION
+    - BASE_BLUEPRINT
+    functional_contract_materialization: BLOCK
+    stage2_gap_repair_by_stage1_replay_without_stage1_defect: BLOCK
 - stage_uid: STAGE-02
   name: PAGE_FUNCTIONAL_CONTRACT
   scope_mode: ALL_REQUIRED_PAGES
@@ -201,6 +219,8 @@ stages:
   - SHARED_OWNER_PORT_RESOLVE
   - FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE
   - INTERACTION_TOPOLOGY_COMPILE
+  - FUNCTION_ADMISSION_SCORECARD_COMPILE
+  - AUTO_COMPLETION_SCOPE_LEDGER_COMPILE
   outputs:
   - FUNCTIONAL_CHAIN_SPEC
   - DEPENDENCY_MAP
@@ -219,6 +239,8 @@ stages:
   - STAGE_EXECUTION_PREFLIGHT_RECEIPT
   - CURRENT_PROBLEM_REGISTER
   - RESOLUTION_LEDGER
+  - FUNCTION_ADMISSION_SCORECARD
+  - AUTO_COMPLETION_SCOPE_LEDGER
   output_producers:
     FUNCTIONAL_CHAIN_SPEC: FUNCTIONAL_CHAIN_COMPILE
     DEPENDENCY_MAP: DEPENDENCY_MAP_COMPILE
@@ -237,6 +259,8 @@ stages:
     EFFECTIVE_CONTRACT_OVERLAY: EFFECTIVE_CONTRACT_OVERLAY_COMPILE
     DEPENDENCY_TOPOLOGY: DEPENDENCY_TOPOLOGY_COMPILE
     CHANGE_IMPACT_MAP: CHANGE_IMPACT_MAP_COMPILE
+    FUNCTION_ADMISSION_SCORECARD: FUNCTION_ADMISSION_SCORECARD_COMPILE
+    AUTO_COMPLETION_SCOPE_LEDGER: AUTO_COMPLETION_SCOPE_LEDGER_COMPILE
   validators:
   - VAL-GOV-008
   - VAL-GOV-004
@@ -260,6 +284,9 @@ stages:
   - WEB-GOV-02-S073
   - WEB-GOV-03-S062
   - WEB-GOV-04-S078
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - FUNCTIONAL_CONTRACT_GUARD
@@ -367,12 +394,28 @@ stages:
     - INTERACTION_TOPOLOGY_MATRIX
     when_user_visible_or_observable_required_operation_applies:
     - FUNCTION_VISUAL_IMPACT_MATRIX
-    when_ai_or_auto_proposes_functional_addition:
-    - FUNCTION_ADMISSION_SCORECARD
-    when_bounded_auto_completion_is_activated:
-    - AUTO_COMPLETION_SCOPE_LEDGER
     when_ai_interaction_profile_applies:
     - AI_INTERACTION_CONTINUITY_CONTRACT
+    when_missing_required_function_or_contract_is_analyzed:
+    - FUNCTION_ADMISSION_SCORECARD
+    - AUTO_COMPLETION_SCOPE_LEDGER
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  functional_contract_ownership:
+  - BUSINESS_ENTITY_LIFECYCLE
+  - OPERATION_HIERARCHY
+  - FIELD_DATA_ACTION_BOUNDARY
+  - PAYLOAD_INPUT
+  - STATE_TRANSITION
+  - ERROR_RECOVERY_AUDIT
+  - FUNCTIONAL_WORKBENCH
+  - INTERACTION_TOPOLOGY
+  - AI_INTERACTION_IDENTITY
+  - FINALIZATION_VERSION
+  - DEPENDENCY_CHANGE_IMPACT
+  - FUNCTION_VISUAL_IMPACT
+  downstream_discovered_owned_gap_reentry: REOPEN_STAGE02_AND_MARK_IMPACTED_SUCCESSORS_REVERIFY_REQUIRED
 - stage_uid: STAGE-03
   name: VISUAL_DESIGN
   scope_mode: ALL_REQUIRED_PAGES
@@ -430,6 +473,9 @@ stages:
   - WEB-GOV-04-S059D
   - WEB-GOV-01-S072
   - WEB-GOV-03-S061
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - VISUAL_DOMAIN_GUARD
@@ -498,6 +544,10 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  functional_topology_redefinition: BLOCK_REOPEN_STAGE02
 - stage_uid: STAGE-04
   name: FOUNDATION_FREEZE
   scope_mode: ALL_REQUIRED_PAGES
@@ -537,6 +587,9 @@ stages:
   - WEB-GOV-01-S038
   - WEB-GOV-03-S022
   - WEB-GOV-04-S023
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - DESIGN_FREEZE_GUARD
@@ -594,6 +647,10 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  upstream_contract_or_visual_change_after_freeze: INVALIDATE_IMPACTED_FREEZE_AND_REVERIFY
 - stage_uid: STAGE-05
   name: IMPLEMENTATION
   scope_mode: SINGLE_PAGE_VERTICAL
@@ -661,6 +718,9 @@ stages:
   - WEB-GOV-03-S015
   - WEB-GOV-02-S072
   - WEB-GOV-03-S061
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - CONSTRUCTION_ARTIFACT_INDEX_GUARD
@@ -723,6 +783,10 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
 - stage_uid: STAGE-06
   name: VERIFICATION_QA
   scope_mode: SAME_SELECTED_PAGE
@@ -783,6 +847,9 @@ stages:
   - WEB-GOV-02-S036
   - WEB-GOV-02-S072
   - WEB-GOV-03-S061
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - QA_ACCEPTANCE_GUARD
@@ -844,6 +911,10 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
 - stage_uid: STAGE-07
   name: BUILD_RELEASE_CANDIDATE
   scope_mode: SAME_SELECTED_PAGE
@@ -882,6 +953,9 @@ stages:
   - WEB-GOV-02-S054D
   - WEB-GOV-02-S059
   - WEB-GOV-02-S062
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - RELEASE_CANDIDATE_GUARD
@@ -934,6 +1008,10 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
 - stage_uid: STAGE-08
   name: STAGING
   scope_mode: SAME_SELECTED_PAGE
@@ -963,6 +1041,9 @@ stages:
   required_normative_section_uids:
   - WEB-GOV-02-S038
   - WEB-GOV-02-S063
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - STAGING_APPLICABILITY_GUARD
@@ -1014,6 +1095,10 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
 - stage_uid: STAGE-09
   name: PRODUCTION_CUTOVER
   scope_mode: SAME_SELECTED_PAGE
@@ -1048,6 +1133,9 @@ stages:
   - WEB-GOV-02-S040
   - WEB-GOV-02-S041
   - WEB-GOV-02-S054D
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - PRODUCTION_CUTOVER_GUARD
@@ -1099,6 +1187,10 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
 - stage_uid: STAGE-10
   name: PRODUCTION_ACCEPTANCE
   scope_mode: SAME_SELECTED_PAGE
@@ -1151,6 +1243,9 @@ stages:
   - WEB-GOV-02-S072
   - WEB-GOV-03-S061
   - WEB-GOV-04-S077
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - PRODUCTION_ACCEPTANCE_DIMENSION_GUARD
@@ -1211,6 +1306,10 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
 - stage_uid: STAGE-11
   name: CLOSURE_OPERATIONS
   scope_mode: SAME_SELECTED_PAGE
@@ -1253,6 +1352,9 @@ stages:
   - WEB-GOV-04-S055
   - WEB-GOV-04-S056
   - WEB-GOV-04-S057
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - FINAL_PRODUCTION_ACCEPTANCE_GUARD
@@ -1304,6 +1406,10 @@ stages:
     engine_defect_requires_common_engine_repair_and_replay: true
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
+  work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
 delivery_step_bindings:
 - step: 1
   operation_uid: OP-01-BLUEPRINT_INTAKE
@@ -1724,3 +1830,24 @@ policy_inheritance:
 - GOV-COMP-VALIDATION-REMEDIATION-CLOSURE-PROTOCOL
 - GOV-COMP-EVIDENCE-FEEDBACK-ARTIFACT-LIFECYCLE
 - GOV-COMP-LAYER-SEPARATION-PORTABILITY
+execution_scope_contract:
+  current_scope_artifact: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  scope_source: CURRENT_AUTHORITY_PROFILE_APPLICABILITY_DEPENDENCY_AND_PERSISTED_STATE
+  work_unit_scope_source: EXECUTION_SCOPE_MANIFEST
+  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  partial_work_unit_closure_may_grant_stage_exit: false
+  remaining_scope_persistence_required: true
+  reusable_consumer_literal_product_scope_or_denominator: BLOCK
+capability_reentry_map:
+  SOURCE_INTAKE_BASE_BLUEPRINT: STAGE-01
+  FUNCTIONAL_CONTRACT: STAGE-02
+  VISUAL_DESIGN: STAGE-03
+  FOUNDATION_FREEZE: STAGE-04
+  IMPLEMENTATION: STAGE-05
+  VERIFICATION: STAGE-06
+  BUILD_RELEASE: STAGE-07
+  STAGING: STAGE-08
+  PRODUCTION_CUTOVER: STAGE-09
+  PRODUCTION_ACCEPTANCE: STAGE-10
+  CLOSURE_OPERATIONS: STAGE-11
+  downstream_gap_owned_by_earlier_capability: STOP_REOPEN_OWNER_MARK_IMPACTED_DESCENDANTS_REVERIFY_REQUIRED
