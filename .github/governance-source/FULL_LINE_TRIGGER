@@ -1,9 +1,12 @@
-2026-09-18 Stage-02 fresh CORE-01 result persistence trigger
-source_execution_head: f1c97a67731fbe1c6df95450c944ed33ca36d008
-source_workflow_run_id: 35324883473
-source_artifact_id: 10539001854
-source_artifact_digest: sha256:034955cdf9f6fff31eea634e604f26d1ed9458f0a53850eae89f24b4a134fc56
-attempt_uid: STAGE02-FRESH-20260918-007
-page_scope: CORE-01
+2026-09-18 Stage-02 canonical preflight first materialization
+source_head: 62a9beaf79d85fb74b5268a534e1e91ac3399600
 current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
-action: PERSIST_FRESH_CURRENT_RESULT_USING_CANONICAL_WORKFLOW
+attempt_uid: STAGE02-FRESH-20260918-007
+active_work_unit: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
+source_functional_gap_total: 45
+source_closure_blocker_total: 7
+page_scope: CORE-01
+mode: FIRST_MATERIALIZATION
+required_write_set: CANONICAL_PREFLIGHT_12_ONLY
+product_stage_credit: 0
+action: WIRE_CANONICAL_PREFLIGHT_CALIBRATION
