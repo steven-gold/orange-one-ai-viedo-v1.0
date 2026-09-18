@@ -1408,7 +1408,8 @@ jobs:
           attempt = state.get('stage02_active_attempt') or {}
           governance_uid = (registry.get('active_specification') or {}).get('governance_uid')
           assert active.get('work_unit_uid')
-          assert active.get('current_status') == 'IN_PROGRESS_COMMON_ENGINE_INTERRUPT'
+          assert active.get('current_status') == 'CLASSIFICATION_REQUIRED', active
+          assert active.get('entry_action') == 'RUN_CURRENT_REMEDIABILITY_CLASSIFICATION_R2_ON_FRESH_45_PROBLEM_REGISTER', active
           assert int(active.get('product_blocker_credit') or 0) == 0
           assert receipt.get('active_work_unit_ref') == active.get('work_unit_uid')
           assert receipt.get('resolved_current_work_unit_owner') == active.get('canonical_owner')
@@ -1425,7 +1426,7 @@ jobs:
           assert cycle.get('stage03_allowed') is False
           print(f"PASS: canonical preflight is bound to Current Work Unit {active.get('work_unit_uid')} with zero product blocker credit")
           PY
-      - name: Execute Current 150-gap remediability classification replay
+      - name: Execute Current fresh-gap remediability classification replay
         run: python governance/ci/classify_current_stage2_functional_remediability.py
       - name: Validate exact Current classification evidence before persistence
         shell: bash
