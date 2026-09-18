@@ -50,12 +50,12 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: PASS_PRE_CLOSURE_RECONCILIATION_HEAD
+  full_line_github_result: PASS_CLOSURE_RECONCILIATION_WORK_UNIT_HEAD
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
-  full_line_verification_run_id: 35288088261
-  full_line_verification_head_sha: 64af804342f3ab28aac7c03a06ef195f6dcee8c7
+  full_line_verification_run_id: 35290941831
+  full_line_verification_head_sha: 20d47e89494c9106d965bd7937746812e32d033a
   terminal_run_conclusion: success
   terminal_result_credit_allowed: true
 stage_execution_loading:
@@ -90,8 +90,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_GOVERNANCE_MAINTENANCE_RESIDUAL_CLEANUP_CLOSURE_RECONCILIATION
-next_action: REVALIDATE_CLOSURE_RECONCILIATION_WORK_UNIT_ON_EXACT_PERSISTED_HEAD; THEN_CLOSE_AND_RESUME_R26_R38_SEMANTIC_RESIDUAL_CLASSIFICATION
+status: ACTIVE_GOVERNANCE_MAINTENANCE_R26_R38_SEMANTIC_RESIDUAL_CLASSIFICATION
+next_action: RESUME_R26_R38_SEMANTIC_RESIDUAL_CLASSIFICATION_FROM_CURRENT_GOVERNANCE; DO_NOT_ENTER_PRODUCT_STAGE_OR_DEPLOY
 work_unit_resolution_gate:
   resolution_uid: WUR-GOV-RESIDUAL-CLEANUP-CLOSURE-001
   normative_authority: false
@@ -117,7 +117,17 @@ work_unit_resolution_gate:
   - CURRENT_MOTHER_WEB_GOV_04_S082_REQUIRES_EXACT_PERSISTED_HEAD_TERMINAL_VALIDATION
   - USER_EXPLICITLY_DIRECTED_CONTINUATION_AND_CLOSURE_RECONCILIATION
   product_stage_credit: 0
-active_work_unit:
+  resolved_work_unit_terminal_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  closure_evidence_head: 20d47e89494c9106d965bd7937746812e32d033a
+  closure_terminal_run_id: 35290941831
+  closure_terminal_conclusion: success
+  closure_active_workflow_count: 6
+  closure_active_transitive_executable_target_count: 25
+  closure_lifecycle_stage_denominator: 11/11
+  closure_preformal_denominator: 20/20
+  closure_mandatory_regression_denominator: 17/17
+  closure_source_runtime_residual_count: 0
+closed_work_unit:
   work_unit_uid: WU-GOV-RESIDUAL-CLEANUP-CLOSURE-001
   canonical_name: GOVERNANCE_RESIDUAL_CLEANUP_CLOSURE_RECONCILIATION
   scope: SEMANTIC_RESIDUAL_CLEANUP_CLOSURE_RECONCILIATION_AND_PERSISTED_HEAD_REVALIDATION
@@ -131,7 +141,7 @@ active_work_unit:
   state_owner: governance/test/ACTIVE_STATE.yaml
   implementation_validation_owner: governance/ci/validate_active_consumer_reference_integrity.py
   authorization_uid: USR-DIRECTIVE-20260918-MOTHER-RESIDUAL-CLASSIFICATION-HARDENING-R1
-  current_status: IN_PROGRESS_CLOSURE_RECONCILIATION
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   product_blocker_credit: 0
   start_condition: WORK_UNIT_RESOLUTION_GATE_PASS_AND_PRE_RESOLUTION_EXACT_HEAD_TERMINAL_SUCCESS
   dependencies:
@@ -163,20 +173,32 @@ active_work_unit:
   - VALIDATION_REMEDIATION_CLOSURE_PROTOCOL
   - FULL_LINE_HIGH_PRESSURE
   resume_after_closure: GOVERNANCE_MAINTENANCE_R26_R38_SEMANTIC_RESIDUAL_CLASSIFICATION
+  closure_evidence:
+    governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+    branch: rebuild-v2.1.1
+    tested_head_sha: 20d47e89494c9106d965bd7937746812e32d033a
+    tested_tree_sha: ea8905d41b268e313da710f81920e567ebf2a756
+    full_line_run_id: 35290941831
+    outer_terminal_conclusion: success
+    active_workflows_scanned: 6
+    active_transitive_executable_targets: 25
+    source_identity_file_count: 75
+    lifecycle_stage_result: 11/11
+    preformal_result: 20/20
+    mandatory_regression_result: 17/17
+    source_runtime_residual_count: 0
+    product_stage_credit: 0
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
   effectful_stage2_execution_before_entry_resolution: BLOCK_DURING_GOVERNANCE_MAINTENANCE
-  current_resume_point: GOVERNANCE_MAINTENANCE_RESIDUAL_CLEANUP_CLOSURE_RECONCILIATION
-  parent_resume_point: GOVERNANCE_MAINTENANCE_R26_R38_SEMANTIC_RESIDUAL_CLASSIFICATION
-  current_work_unit_uid: WU-GOV-RESIDUAL-CLEANUP-CLOSURE-001
-  current_owner: governance/test/ACTIVE_STATE.yaml
-  last_closed_work_unit_uid: WU-GOV-EXECUTION-CLOSURE-HARDENING-001
+  current_resume_point: GOVERNANCE_MAINTENANCE_R26_R38_SEMANTIC_RESIDUAL_CLASSIFICATION
+  last_closed_work_unit_uid: WU-GOV-RESIDUAL-CLEANUP-CLOSURE-001
   last_closed_work_unit_result: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
-  last_closed_work_unit_full_line_run_id: 35237042702
-  last_closed_work_unit_evidence_head: 819aca62a3e3ad81a8acc477bdcf847e956420ce
-  exact_next_action: REVALIDATE_CLOSURE_RECONCILIATION_WORK_UNIT_ON_EXACT_PERSISTED_HEAD; THEN_CLOSE_AND_RESUME_R26_R38_SEMANTIC_RESIDUAL_CLASSIFICATION
+  last_closed_work_unit_full_line_run_id: 35290941831
+  last_closed_work_unit_evidence_head: 20d47e89494c9106d965bd7937746812e32d033a
+  exact_next_action: RESUME_R26_R38_SEMANTIC_RESIDUAL_CLASSIFICATION_FROM_CURRENT_GOVERNANCE; DO_NOT_ENTER_PRODUCT_STAGE_OR_DEPLOY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
