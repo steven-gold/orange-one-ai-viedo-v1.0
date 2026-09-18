@@ -101,8 +101,15 @@ for step in stages:
 for step in stages:
     uid = str(step.get('stage_uid'))
     nxt = str(step.get('next_stage_uid') or '')
-    if nxt in stage_by_uid and stage_by_uid[nxt].get('entry_gate') != step.get('exit_gate'):
-        die(f'SELECTED_PROFILE_SUCCESSOR_GATE_MISMATCH:{uid}->{nxt}')
+    if nxt in stage_by_uid:
+        predecessor_exit = str(step.get('exit_gate') or '')
+        successor_entry = str(stage_by_uid[nxt].get('entry_gate') or '')
+        exact_or_stricter = (
+            successor_entry == predecessor_exit
+            or successor_entry.startswith(predecessor_exit + '_AND_')
+        )
+        if not exact_or_stricter:
+            die(f'SELECTED_PROFILE_SUCCESSOR_GATE_MISMATCH:{uid}->{nxt}:{predecessor_exit}:{successor_entry}')
 
 if profile_state.get('owner_ref') != 'GOVERNANCE_CURRENT.yaml':
     die('PROFILE_STATE_OWNER_INVALID')
