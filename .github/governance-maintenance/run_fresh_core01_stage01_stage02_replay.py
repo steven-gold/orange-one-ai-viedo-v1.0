@@ -322,7 +322,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
 
     def blueprint(kind,domain,inputs,path,uid):
         d={
-          'blueprint_uid':uid,'page_uid':PAGE,'stage_uid':'STAGE-01',
+          'blueprint_uid':uid,'page_uid':PAGE,'stage_uid':'STAGE-01','governance_overlay':'v2.2.7',
           'blueprint_type':kind,'planning_domain':domain,'target_path':path,
           'input_artifacts':[{'artifact_uid':a['artifact_uid'],'content_hash':a['content_hash']} for a in inputs],
           'required_responsibility_uids':[a['responsibility_uid'] for a in inputs],
@@ -335,7 +335,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
     page_bp=blueprint('PAGE_BASE_BLUEPRINT','PAGE_CONSTRUCTION',page_artifacts,f'02_BASE_BLUEPRINT/{PAGE}/PAGE_BASE_BLUEPRINT.yaml',f'BP-{PAGE}-PAGE-FRESH-005')
     visual_bp=blueprint('VISUAL_BASE_BLUEPRINT','VISUAL_CONSTRUCTION',visual_artifacts,f'02_BASE_BLUEPRINT/{PAGE}/VISUAL_BASE_BLUEPRINT.yaml',f'BP-{PAGE}-VISUAL-FRESH-005')
     binding={
-      'binding_uid':f'BIND-{PAGE}-FRESH-005','page_uid':PAGE,'stage_uid':'STAGE-01',
+      'binding_uid':f'BIND-{PAGE}-FRESH-005','page_uid':PAGE,'stage_uid':'STAGE-01','governance_overlay':'v2.2.7',
       'target_path':f'03_BLUEPRINT_BINDING/{PAGE}/BLUEPRINT_BINDING_MANIFEST.yaml',
       'page_blueprint':{'blueprint_uid':page_bp['blueprint_uid'],'blueprint_hash':page_bp['blueprint_hash']},
       'visual_blueprint':{'blueprint_uid':visual_bp['blueprint_uid'],'blueprint_hash':visual_bp['blueprint_hash']},
