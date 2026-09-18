@@ -382,6 +382,19 @@ findings:
   product_stage_credit: 0
   product_gap_or_blocker_denominator_changed: false
   reopen_condition: Reopen if a freshly persisted tracked Current Stage-02 evidence file can omit or drift from the exact frozen attempt/governance identity while its runtime source artifact provenance is retained separately.
+- finding_uid: FIND-20260918-003
+  class: TEST_HARNESS_OR_PREDECESSOR_BINDING_BUG
+  title: Canonical preflight compiler unconditionally required cleared legacy R1 material-remediation receipt
+  evidence: Canonical preflight run 35301785349 on clean CORE-01 attempt STAGE02-FRESH-20260918-006 passed Current governance and Full-Line validation, then blocked on missing governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml even though the fresh cycle intentionally cleared predecessor Stage-02 outputs and current closure blockers remain seven.
+  disposition: IMPLEMENTATION_REMEDIATED
+  specification_change_required: false
+  formal_specification_mutated_for_fix: false
+  current_specification_may_be_modified_from_this_finding_alone: false
+  resolution_type: OPTIONAL_PREDECESSOR_RESOLUTION_LEDGER_BINDING
+  product_stage_credit: 0
+  product_gap_or_blocker_denominator_changed: false
+  rule: A predecessor material-remediation receipt may be read and preserved only when physically present; a clean fresh attempt starts with zero verified prior resolution entries and must not recreate a deleted legacy receipt to satisfy preflight.
+  reopen_condition: Reopen if clean fresh Stage-02 preflight again requires a non-existent predecessor remediation artifact or silently recreates one.
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6

@@ -167,7 +167,12 @@ def validate_sections():
         receipts.append({'section_uid':uid,'document_ref':p.as_posix(),'document_sha256':file_sha(p)})
     return receipts
 def canonical_read_set():
-    paths=[ENTRY,REG,RULE,CYCLE,CLOSURE,LIFE,INV,ROOT_MANIFEST,SECTION_REGISTRY,ACCEPTANCE,*MOTHERS,STATE,FINDINGS,CANDIDATES,EVID,FROZEN,R1,CAL]
+    paths=[ENTRY,REG,RULE,CYCLE,CLOSURE,LIFE,INV,ROOT_MANIFEST,SECTION_REGISTRY,ACCEPTANCE,*MOTHERS,STATE,FINDINGS,CANDIDATES,EVID,FROZEN,CAL]
+    # A clean fresh attempt legitimately has no predecessor material-remediation receipt.
+    # Only bind R1 when a physical predecessor receipt actually exists; never recreate it
+    # merely to satisfy the compiler.
+    if R1.is_file():
+        paths.append(R1)
     return [{'path':p.as_posix(),'sha256':file_sha(p)} for p in paths]
 
 def admission_check():
@@ -288,8 +293,9 @@ def build(identity_override=None):
       'CURRENT_PROBLEM_REGISTER':{**common,'artifact_type':'CURRENT_PROBLEM_REGISTER','operation_uid':prod['CURRENT_PROBLEM_REGISTER'],'current_truth_role':'SINGLE_CURRENT_PROBLEM_REGISTER','problem_uid_policy':'STABLE_FINGERPRINT_PRESERVED_ACROSS_RECOMPILE','fresh_physical_problem_count':len(problems),'page_counts':dict(sorted(pages.items())),'category_counts':dict(sorted(cats.items())),'class_counts':dict(sorted(classes.items())),'open_problem_count':len(problems),'resolved_problem_count':0,'problems':problems,'stage_exit_allowed':False,'stage03_allowed':False},
     }
     entries=old_resolutions()
-    if not any(x.get('resolution_uid')=='STAGE02-RESOLUTION-R1-STRUCTURAL-CLOSURE' for x in entries):
-        r1=y(R1); entries.append({'resolution_uid':'STAGE02-RESOLUTION-R1-STRUCTURAL-CLOSURE','resolution_type':'VERIFIED_STRUCTURAL_MATERIALIZATION','source_receipt_ref':R1.as_posix(),'materialized_missing_artifact_blocker_count':int(e.get('materialized_missing_artifact_blocker_count',0)),'fresh_reexecution_closure_blocker_total':int(e.get('closure_blocker_total',0)),'functional_gap_reduction_credit':0,'external_authority_resolution_credit':0,'verification_run_id':int(att.get('source_workflow_run_id',0)),'verification_status':'PASS' if e.get('materialized_structural_contract_validation')=='PASS' else 'BLOCKED','receipt_artifact_type':r1.get('artifact_type')})
+    if R1.is_file() and not any(x.get('resolution_uid')=='STAGE02-RESOLUTION-R1-STRUCTURAL-CLOSURE' for x in entries):
+        r1=y(R1)
+        entries.append({'resolution_uid':'STAGE02-RESOLUTION-R1-STRUCTURAL-CLOSURE','resolution_type':'VERIFIED_STRUCTURAL_MATERIALIZATION','source_receipt_ref':R1.as_posix(),'materialized_missing_artifact_blocker_count':int(e.get('materialized_missing_artifact_blocker_count',0)),'fresh_reexecution_closure_blocker_total':int(e.get('closure_blocker_total',0)),'functional_gap_reduction_credit':0,'external_authority_resolution_credit':0,'verification_run_id':int(att.get('source_workflow_run_id',0)),'verification_status':'PASS' if e.get('materialized_structural_contract_validation')=='PASS' else 'BLOCKED','receipt_artifact_type':r1.get('artifact_type')})
     docs['RESOLUTION_LEDGER']={**common,'artifact_type':'RESOLUTION_LEDGER','operation_uid':prod['RESOLUTION_LEDGER'],'ledger_mode':'APPEND_ONLY','existing_verified_entries_preserved_on_recompile':True,'entries':entries,'functional_problem_resolution_credit_total':sum(int(x.get('functional_gap_reduction_credit',0)) for x in entries),'external_authority_resolution_credit_total':sum(int(x.get('external_authority_resolution_credit',0)) for x in entries)}
 
     identity=identity_override or repo_identity(); loaded_at=stable_loaded_at(identity); read_set=canonical_read_set(); section_receipts=validate_sections(); norm_digest=normative_set_digest(read_set)
@@ -304,7 +310,10 @@ def build(identity_override=None):
     if work['mode']=='PARENT_OWNING_LAYER_REMEDIATION':
         context_receipt['execution_context_mode']=work['mode']; context_receipt['current_resume_point']=work['resume_point']
     docs['GOVERNANCE_EXECUTION_CONTEXT_RECEIPT']=context_receipt
-    dep_hashes={p.as_posix():file_sha(p) for p in [EVID,FROZEN,R1,LIFE,INV,STATE,FINDINGS,CANDIDATES,CAL]}
+    dep_paths=[EVID,FROZEN,LIFE,INV,STATE,FINDINGS,CANDIDATES,CAL]
+    if R1.is_file():
+        dep_paths.append(R1)
+    dep_hashes={p.as_posix():file_sha(p) for p in dep_paths}
     governance_load={'governance_uid':gov,'work_unit_uid':work_uid,'resolved_work_unit_owner':work_owner,'root_manifest_ref':ROOT_MANIFEST.as_posix(),'root_manifest_sha256':file_sha(ROOT_MANIFEST),'effective_normative_set_sha256':norm_digest,'resolved_section_uid_receipts':section_receipts,'dependency_artifact_hashes':dep_hashes,'acceptance_blueprint_ref':ACCEPTANCE.as_posix(),'acceptance_blueprint_sha256':file_sha(ACCEPTANCE),'loader_identity':'governance/ci/compile_stage_execution_preflight.py','loader_version':'3','loaded_at_utc':loaded_at}
     if work['mode']=='PARENT_OWNING_LAYER_REMEDIATION':
         governance_load['execution_context_mode']=work['mode']; governance_load['current_resume_point']=work['resume_point']; governance_load['loader_version']='5'
