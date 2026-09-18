@@ -17,6 +17,8 @@ on:
       - 'governance/ci/validate_stage02_successor_integrity.py'
       - 'governance/ci/build_stage02_core01_design_contract_review_package.py'
       - 'governance/ci/validate_stage02_core01_design_contract_review_package.py'
+      - 'governance/ci/materialize_stage02_core01_approved_design_contract.py'
+      - 'governance/test/stage02/STAGE02_CORE01_COHERENT_DESIGN_CONTRACT_APPROVAL_EVIDENCE.yaml'
   workflow_dispatch:
     inputs:
       mode:
@@ -1704,6 +1706,146 @@ jobs:
             governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_SEMANTIC_REVIEW.json
             governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
           if-no-files-found: error
+
+
+  core01-approved-design-contract-materialization:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'materialize approved core01 design contract') }}
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 80
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Re-prove Current governance and review boundary before product-contract materialization
+        run: |
+          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_canonical_rule_registry.py
+          python governance/ci/validate_stage02_core01_design_contract_review_package.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_stage02_successor_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Persist active-consumer inventory synchronization before materialization
+        shell: bash
+        run: |
+          set -euo pipefail
+          report='governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json'
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          if [ -n "$(git status --porcelain=v1 --untracked-files=all -- "$report")" ]; then
+            actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//')"
+            test "$actual" = "$report" || { printf 'BLOCK: unexpected pre-materialization synchronization delta\n%s\n' "$actual" >&2; exit 1; }
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- "$report"
+            git commit -m 'test(stage02): refresh active consumer integrity before core01 design contract materialization'
+            git push origin HEAD:rebuild-v2.1.1
+          fi
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Materialize approved coherent CORE-01 Design Contract and fresh reconcile signatures
+        run: python governance/ci/materialize_stage02_core01_approved_design_contract.py --mode materialize
+      - name: Validate materialized canonical owner before evidence upload
+        run: python governance/ci/materialize_stage02_core01_approved_design_contract.py --mode validate-only
+      - name: Upload fresh CORE-01 materialization and reexecution evidence
+        id: upload_core01_design_contract
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage02-core01-approved-design-contract-materialization
+          path: |
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EFFECTIVE_CONTRACT_OVERLAY.yaml
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/RESOLUTION_LEDGER.yaml
+            governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+            governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+            governance/test/stage02/STAGE02_CORE01_COHERENT_DESIGN_CONTRACT_APPROVAL_EVIDENCE.yaml
+          if-no-files-found: error
+      - name: Finalize current-run artifact identity in synchronized projectors
+        env:
+          STAGE02_SOURCE_ARTIFACT_ID: ${{ steps.upload_core01_design_contract.outputs.artifact-id }}
+          STAGE02_SOURCE_ARTIFACT_DIGEST: ${{ steps.upload_core01_design_contract.outputs.artifact-digest }}
+        run: python governance/ci/materialize_stage02_core01_approved_design_contract.py --mode finalize-artifact
+      - name: Validate fresh effective-zero CORE-01 state before persistence
+        run: |
+          python governance/ci/materialize_stage02_core01_approved_design_contract.py --mode validate-only --require-finalized
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_stage02_successor_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Prove exact materialization write-set and immutable Authority safety
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EFFECTIVE_CONTRACT_OVERLAY.yaml
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/RESOLUTION_LEDGER.yaml
+            governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+            governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+            governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+            governance/test/ACTIVE_STATE.yaml
+          )
+          actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | sort -u)"
+          permitted="$(printf '%s\n' "${files[@]}" | sort -u)"
+          unexpected="$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$permitted"))"
+          test -z "$unexpected" || { printf 'BLOCK: unexpected CORE-01 materialization delta\n%s\n' "$unexpected" >&2; exit 1; }
+          test "$(printf '%s\n' "$actual" | sed '/^$/d' | wc -l | tr -d ' ')" = '8' || { printf 'BLOCK: CORE-01 materialization write-set must be exactly 8 files\n%s\n' "$actual" >&2; exit 1; }
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+      - name: Persist approved CORE-01 Design Contract materialization and fresh reexecution
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EFFECTIVE_CONTRACT_OVERLAY.yaml
+            00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/RESOLUTION_LEDGER.yaml
+            governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+            governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+            governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+            governance/test/ACTIVE_STATE.yaml
+          )
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "${files[@]}"
+          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = '8'
+          git commit -m 'test(stage02): persist approved core01 design contract materialization and fresh reexecution'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Revalidate persisted child and complete Full-Line
+        run: |
+          python governance/ci/materialize_stage02_core01_approved_design_contract.py --mode validate-only --require-finalized
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_stage02_successor_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
 
   current-authority-request-r5:
     if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'wire current r5 authority request') }}
