@@ -95,14 +95,46 @@ fresh_scan_calls = [
     and node.func.id == "fresh_scan"
 ]
 require(fresh_scan_calls, "015_RAW_DISCOVERY_FRESH_SCAN_CALL_MISSING")
-require(
-    any(
+
+# Current policy separates immutable Raw discovery from effective-contract truth.
+# Accept the direct legacy binding only when present; otherwise require an explicit
+# page+raw -> effective_page_contract -> effective_raw -> fresh_scan chain.
+direct_raw_binding = any(
+    len(call.args) >= 2
+    and isinstance(call.args[0], ast.Name) and call.args[0].id == "page"
+    and isinstance(call.args[1], ast.Name) and call.args[1].id == "raw"
+    for call in fresh_scan_calls
+)
+effective_binding = False
+effective_assign = False
+for node in ast.walk(raw_tree):
+    if isinstance(node, (ast.Assign, ast.AnnAssign)):
+        value = node.value
+        if (
+            isinstance(value, ast.Call)
+            and isinstance(value.func, ast.Name)
+            and value.func.id == "effective_page_contract"
+            and len(value.args) >= 2
+            and isinstance(value.args[0], ast.Name) and value.args[0].id == "page"
+            and isinstance(value.args[1], ast.Name) and value.args[1].id == "raw"
+        ):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            for target in targets:
+                if isinstance(target, (ast.Tuple, ast.List)):
+                    if any(isinstance(elt, ast.Name) and elt.id == "effective_raw" for elt in target.elts):
+                        effective_assign = True
+                elif isinstance(target, ast.Name) and target.id == "effective_raw":
+                    effective_assign = True
+for call in fresh_scan_calls:
+    if (
         len(call.args) >= 2
         and isinstance(call.args[0], ast.Name) and call.args[0].id == "page"
-        and isinstance(call.args[1], ast.Name) and call.args[1].id == "raw"
-        for call in fresh_scan_calls
-    ),
-    "015_RAW_DISCOVERY_FRESH_SCAN_PAGE_RAW_BINDING_MISSING",
+        and isinstance(call.args[1], ast.Name) and call.args[1].id == "effective_raw"
+    ):
+        effective_binding = True
+require(
+    direct_raw_binding or (effective_assign and effective_binding),
+    "015_RAW_PLUS_EFFECTIVE_CONTRACT_SCAN_BINDING_MISSING",
 )
 
 prior_false = False
