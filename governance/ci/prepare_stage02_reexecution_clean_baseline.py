@@ -51,6 +51,11 @@ if bad:
     die('REEXECUTION_PRODUCT_ROOT_RESIDUE:' + ','.join(sorted(bad)))
 
 head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=str(ROOT), text=True, capture_output=True, check=True).stdout.strip()
+current_evidence = __import__('json').loads((ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json').read_text(encoding='utf-8'))
+target_page_uids = list(current_evidence.get('target_pages') or (state.get('execution') or {}).get('target_pages') or [])
+if not target_page_uids:
+    die('REEXECUTION_TARGET_PAGE_SCOPE_MISSING')
+
 receipt = {
     'schema_version': 1,
     'artifact_type': 'CLEAN_BASELINE_RESET_RECEIPT',
@@ -63,6 +68,9 @@ receipt = {
     'predecessor_stage1_inputs_preserved': True,
     'owning_layer_product_fix_preserved': True,
     'product_fix_root': '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT',
+    'target_pages': target_page_uids,
+    'remaining_pages': list(current_evidence.get('remaining_pages') or []),
+    'stage_scope_complete': bool(current_evidence.get('stage_scope_complete')),
     'prior_reexecution_runtime_result_removed': True,
     'prior_stage2_result_used_as_scan_input': False,
     'materialized_product_root_validation': 'PASS',

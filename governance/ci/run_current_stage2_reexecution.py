@@ -136,12 +136,30 @@ cp = subprocess.run([sys.executable, str(MATERIAL_VALIDATOR)], cwd=str(ROOT), te
 if cp.returncode != 0:
     die('MATERIALIZED_STAGE02_PRODUCT_ROOT_INVALID')
 
+current_evidence = json.loads(LATEST.read_text(encoding='utf-8'))
+target_page_uids = list(current_evidence.get('target_pages') or execution.get('target_pages') or [])
+if not target_page_uids or len(target_page_uids) != len(set(target_page_uids)):
+    die(f'REEXECUTION_TARGET_PAGE_SCOPE_INVALID:{target_page_uids!r}')
+unknown_target_pages = sorted(set(target_page_uids) - set(PAGES))
+if unknown_target_pages:
+    die(f'REEXECUTION_TARGET_PAGE_SCOPE_UNKNOWN:{unknown_target_pages!r}')
+target_pages = {uid: PAGES[uid] for uid in target_page_uids}
+remaining_page_uids = [uid for uid in PAGES if uid not in target_page_uids]
+stage_scope_complete = not remaining_page_uids
+expected_gap_uids = set(current_evidence.get('preserved_external_authority_union_gap_uids') or [])
+if not expected_gap_uids or not expected_gap_uids.issubset(EXPECTED_GAPS):
+    die(f'REEXECUTION_EXTERNAL_AUTHORITY_SCOPE_INVALID:{sorted(expected_gap_uids)!r}')
+materialized_blocker_count = int(material_receipt.get('materialized_missing_artifact_blocker_count') or 0)
+expected_materialized_blockers = sum(7 if cfg['ai_profile'] else 6 for cfg in target_pages.values())
+if materialized_blocker_count != expected_materialized_blockers:
+    die(f'REEXECUTION_MATERIALIZED_BLOCKER_DENOMINATOR_DRIFT:expected={expected_materialized_blockers}:actual={materialized_blocker_count}')
+
 fresh_scan = load_exact_fresh_scan_implementation()
 head = git_head()
 pages = {}
 external = {}
 union_gap_uids = set()
-for page_uid, cfg in PAGES.items():
+for page_uid, cfg in target_pages.items():
     raw = load_yaml(cfg['raw'])
     blueprint = load_yaml(cfg['blueprint'])
     refs = exact_external_refs(blueprint)
@@ -162,12 +180,12 @@ for page_uid, cfg in PAGES.items():
         'automatic_completion_scope': 'NOT_APPLICABLE_NO_AUTOMATIC_COMPLETION_ATTEMPT',
     }
 
-if union_gap_uids != EXPECTED_GAPS:
-    die(f'EXTERNAL_AUTHORITY_UNION_DRIFT:expected={sorted(EXPECTED_GAPS)} actual={sorted(union_gap_uids)}')
+if union_gap_uids != expected_gap_uids:
+    die(f'EXTERNAL_AUTHORITY_UNION_DRIFT:expected={sorted(expected_gap_uids)} actual={sorted(union_gap_uids)}')
 functional_total = sum(x['functional_chain_fresh_scan']['gap_count'] for x in pages.values())
 closure_total = 0
-result_status = 'BLOCKED' if functional_total else 'PASS'
-stage_exit = result_status == 'PASS'
+stage_exit = stage_scope_complete and functional_total == 0
+result_status = 'PASS' if stage_exit else 'BLOCKED'
 result = {
     'schema_version': 2,
     'artifact_type': 'NON_NORMATIVE_STAGE02_ACTUAL_TEST_EVIDENCE',
@@ -186,7 +204,11 @@ result = {
     'result': result_status,
     'physical_stage2_product_artifact_root_present': True,
     'materialized_structural_contract_validation': 'PASS',
-    'materialized_missing_artifact_blocker_count': material_receipt.get('materialized_missing_artifact_blocker_count'),
+    'materialized_missing_artifact_blocker_count': materialized_blocker_count,
+    'scope_mode': 'ALL_REQUIRED_PAGES' if stage_scope_complete else 'EXACT_PAGE_SCOPE_ONLY',
+    'target_pages': target_page_uids,
+    'remaining_pages': remaining_page_uids,
+    'stage_scope_complete': stage_scope_complete,
     'pages': pages,
     'fresh_functional_gap_total': functional_total,
     'closure_blocker_total': closure_total,
@@ -202,9 +224,10 @@ result = {
     'deployment_allowed': False,
     'notes': [
         'Fresh functional scan is executed again from immutable Stage-01 raw authority using the exact scanner implementation extracted from the first-run harness.',
-        'The prior 171/13 result is not used as scan input; it is regression context only.',
-        'The 13 missing structural artifact blockers are counted as eliminated only because the current Stage-02 product root passed its source-bounded validator before this reexecution.',
-        'GAP-001..GAP-008 remain unresolved; no external authority was inferred or auto-filled.',
+        'Prior Stage-02 result counts are not used as scan input; they are regression context only.',
+        f'The {materialized_blocker_count} in-scope missing structural artifact blockers are counted as eliminated only because the current Stage-02 product root passed its source-bounded validator before this reexecution.',
+        'Only the current page-scope external-authority union is preserved unresolved; no external authority was inferred or auto-filled.',
+        'A partial page-scope replay cannot grant whole-stage exit credit.',
     ],
 }
 RESULT.parent.mkdir(parents=True, exist_ok=True)
@@ -246,9 +269,9 @@ findings = {
     },
     'material_remediation': {
         'receipt_ref': 'governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml',
-        'missing_structural_artifact_blockers_before': 13,
+        'missing_structural_artifact_blockers_before': materialized_blocker_count,
         'missing_structural_artifact_blockers_after_fresh_reexecution': 0,
-        'material_elimination_count': 13,
+        'material_elimination_count': materialized_blocker_count,
         'functional_gap_elimination_count': 0,
     },
     'specification_change_required': False,
@@ -266,9 +289,9 @@ dump_yaml(REGRESSION, {
     'frozen_governance_uid': freeze.get('frozen_governance_uid'),
     'fresh_reexecution_sha': head,
     'missing_structural_artifact_signature': {
-        'previous_reproduction_count': 13,
+        'previous_reproduction_count': materialized_blocker_count,
         'fresh_reproduction_count': 0,
-        'material_elimination_count': 13,
+        'material_elimination_count': materialized_blocker_count,
         'status': 'ZERO_REPRODUCTION_PASS',
     },
     'functional_gap_signature': {
@@ -277,6 +300,9 @@ dump_yaml(REGRESSION, {
         'status': 'REMAINS_BLOCKING' if functional_total else 'ZERO_REPRODUCTION_PASS',
     },
     'external_authority_union_count': len(union_gap_uids),
+    'target_pages': target_page_uids,
+    'remaining_pages': remaining_page_uids,
+    'stage_scope_complete': stage_scope_complete,
     'external_authority_resolution_claimed': False,
     'stage_closure_claimed': False,
 })
@@ -309,6 +335,9 @@ ledger['current_stage2_execution'] = {
     'historical_counts_may_be_treated_as_current': False,
     'source_execution_sha': head,
     'reexecution_cycle': 'R1',
+    'target_pages': target_page_uids,
+    'remaining_pages': remaining_page_uids,
+    'stage_scope_complete': stage_scope_complete,
     'next_action': 'MATERIAL_REMEDIATION_OF_REMAINING_FRESH_FUNCTIONAL_GAPS' if result_status == 'BLOCKED' else 'KNOWN_SIGNATURE_ZERO_CHECK_AND_HIDDEN_DEFECT_SWEEP',
 }
 dump_yaml(LEDGER, ledger)
@@ -323,6 +352,10 @@ stage2['stage_exit_allowed'] = stage_exit
 stage2['prior_results_authoritative_for_next_run'] = False
 stage2['prior_results_used_in_current_run'] = False
 stage2['artifact_root_present'] = True
+stage2['tested_page_uids'] = target_page_uids
+stage2['remaining_page_uids'] = remaining_page_uids
+stage2['stage_scope_complete'] = stage_scope_complete
+execution['target_pages'] = target_page_uids
 execution['website_construction_allowed'] = stage_exit
 execution['deployment_allowed'] = False
 attempt = state.setdefault('stage02_active_attempt', {})
@@ -340,16 +373,22 @@ attempt['reexecution_cycle'] = 'R1'
 state['stage02_material_remediation'] = {
     'cycle': 'R1',
     'owning_layer': 'CURRENT_STAGE_PRODUCT_OR_CONTRACT_OUTPUT',
-    'materialized_missing_artifact_blockers': 13,
+    'materialized_missing_artifact_blockers': materialized_blocker_count,
     'fresh_reexecution_missing_artifact_blocker_count': 0,
-    'material_elimination_count': 13,
+    'material_elimination_count': materialized_blocker_count,
     'remaining_fresh_functional_gap_count': functional_total,
     'external_authority_union_count': len(union_gap_uids),
     'external_authority_resolution_claimed': False,
     'current_specification_mutated': False,
 }
 state['status'] = 'ACTIVE_STAGE2_REEXECUTED_BLOCKED' if result_status == 'BLOCKED' else 'ACTIVE_STAGE2_REEXECUTED_PASS_PENDING_CLOSURE'
-state['next_action'] = 'MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS' if result_status == 'BLOCKED' else 'KNOWN_DEFECT_ZERO_AND_HIDDEN_DEFECT_SWEEP'
+state['next_action'] = (
+    'MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS'
+    if functional_total
+    else 'REMAINING_REQUIRED_PAGE_SCOPE_NOT_YET_EXECUTED'
+    if not stage_scope_complete
+    else 'KNOWN_DEFECT_ZERO_AND_HIDDEN_DEFECT_SWEEP'
+)
 dump_yaml(STATE, state)
 
 print('STAGE02_REEXECUTION_SOURCE_HEAD=' + head)
