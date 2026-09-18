@@ -108,8 +108,8 @@ stage02_reset_control:
   entry_receipts_must_be_regenerated_after_mother_review: true
   next_action_after_mother_review: CREATE_FRESH_STAGE02_ENTRY_RECEIPTS_THEN_RUN_FRESH_STAGE02
   product_stage_credit: 0
-status: ACTIVE_GOVERNANCE_MAINTENANCE_PREEXECUTION_HARDENING
-next_action: REMOVE_PROVEN_DEAD_STAGE02_RESIDUALS_AND_ENFORCE_PREEXECUTION_FEASIBILITY_BEFORE_FRESH_STAGE02; PRESERVE_REV_GOV_001_REVIEW_BOUNDARY
+status: GOVERNANCE_PREEXECUTION_HARDENING_COMPLETE_PREFORMAL_REVIEW_PENDING
+next_action: AWAIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_FOR_REV_GOV_001; AFTER_APPROVAL_CREATE_FRESH_STAGE02_ENTRY_RECEIPTS_THEN_RUN_PREEXECUTION_ADMISSION_AND_FRESH_STAGE02
 work_unit_resolution_gate:
   resolution_uid: WUR-GOV-PREEXECUTION-HARDENING-001
   normative_authority: false
@@ -141,7 +141,21 @@ work_unit_resolution_gate:
   - CURRENT_MOTHER_REQUIRES_CANONICAL_PREFLIGHT_AND_DEPENDENCY_ORDER_BEFORE_MATERIAL_EXECUTION
   - CURRENT_STAGE02_INITIAL_ACTUAL_TEST_PATH_DOES_NOT_YET_INVOKE_CANONICAL_PREFLIGHT_BEFORE_EXECUTION
   product_stage_credit: 0
-active_work_unit:
+  resolved_work_unit_terminal_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  closure_evidence_head: 48c42c282d9c39ddea02225e7fc2455d230cc408
+  closure_terminal_run_id: 35298286640
+  closure_terminal_conclusion: success
+  closure_selected_profile_run_id: 35298286628
+  closure_branch_guard_run_id: 35298286722
+  closure_stage02_boundary_regression_run_id: 35296059982
+  closure_profile_structural_contracts: 11/11
+  closure_stage01_immutable_blob_count: 5
+  closure_dead_history_attempt_47a_removed: true
+  closure_referenced_history_attempt_count: 2
+  closure_stale_action_control_architecture_audit_cohort_removed: true
+  closure_preexecution_admission_order_enforced: true
+  closure_product_stage_credit: 0
+closed_work_unit:
   work_unit_uid: WU-GOV-PREEXECUTION-HARDENING-001
   canonical_name: GOVERNANCE_PREEXECUTION_FEASIBILITY_AND_RESIDUAL_HARDENING
   primary_task_layer: GOVERNANCE_MAINTENANCE
@@ -158,7 +172,7 @@ active_work_unit:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  current_status: IN_PROGRESS
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   product_blocker_credit: 0
   definition_of_done:
   - DEAD_ATTEMPT_47A_CURRENT_TREE_RESIDUAL_ZERO
@@ -172,7 +186,24 @@ active_work_unit:
   - ACTIVE_CONSUMER_REFERENCE_INTEGRITY_PASS
   - FULL_LINE_EXACT_PERSISTED_HEAD_SUCCESS
   resume_after_closure: PREFORMAL_GOVERNANCE_REVIEW_PENDING
-closed_work_unit:
+  closure_evidence:
+    governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+    branch: rebuild-v2.1.1
+    tested_head_sha: 48c42c282d9c39ddea02225e7fc2455d230cc408
+    full_line_run_id: 35298286640
+    full_line_result: success
+    selected_profile_run_id: 35298286628
+    selected_profile_result: success
+    branch_guard_run_id: 35298286722
+    branch_guard_result: success
+    stage02_admission_boundary_regression_run_id: 35296059982
+    stage02_admission_boundary_regression_result: success
+    selected_profile_structural_contracts: 11/11
+    stage01_immutable_predecessor_blobs: 5/5
+    dead_history_attempt_47a_current_tree_residual: 0
+    referenced_history_attempts_preserved_non_current: 2
+    product_stage_credit: 0
+previous_closed_work_unit:
   work_unit_uid: WU-GOV-MOTHER-FINALIZATION-001
   canonical_name: GOVERNANCE_MOTHER_MACHINE_FINALIZATION
   scope: RECONCILE_COMPLETED_SEMANTIC_RESIDUAL_TRANSACTION_AND_CLOSE_CURRENT_MOTHER_MACHINE_GOVERNANCE
@@ -305,15 +336,12 @@ resume_control:
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
   effectful_stage2_execution_before_entry_resolution: BLOCK_PENDING_MOTHER_PREFORMAL_REVIEW_AND_FRESH_ENTRY_RECEIPTS
-  current_resume_point: GOVERNANCE_MAINTENANCE_PREEXECUTION_HARDENING
-  parent_resume_point: PREFORMAL_GOVERNANCE_REVIEW_PENDING
-  current_work_unit_uid: WU-GOV-PREEXECUTION-HARDENING-001
-  current_owner: governance/test/ACTIVE_STATE.yaml
-  last_closed_work_unit_uid: WU-GOV-MOTHER-FINALIZATION-001
+  current_resume_point: PREFORMAL_GOVERNANCE_REVIEW_PENDING
+  last_closed_work_unit_uid: WU-GOV-PREEXECUTION-HARDENING-001
   last_closed_work_unit_result: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
-  last_closed_work_unit_full_line_run_id: 35291878285
-  last_closed_work_unit_evidence_head: 4e528620ed4a27377f86b3ce05c05978df29a381
-  exact_next_action: COMPLETE_PREEXECUTION_HARDENING_WORK_UNIT; THEN_RESUME_PREFORMAL_GOVERNANCE_REVIEW_PENDING
+  last_closed_work_unit_full_line_run_id: 35298286640
+  last_closed_work_unit_evidence_head: 48c42c282d9c39ddea02225e7fc2455d230cc408
+  exact_next_action: AWAIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_FOR_REV_GOV_001; AFTER_APPROVAL_CREATE_FRESH_STAGE02_ENTRY_RECEIPTS_THEN_RUN_PREEXECUTION_ADMISSION_AND_FRESH_STAGE02
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
