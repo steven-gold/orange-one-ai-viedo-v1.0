@@ -1,0 +1,58 @@
+name: Fresh CORE-01 Design Contract Candidate
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/governance-maintenance/build_fresh_core01_design_contract_candidate.py'
+
+permissions:
+  contents: write
+
+jobs:
+  build-review-package:
+    if: "${{ github.event.head_commit.message == 'test(core01): stage fresh design contract candidate' }}"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Assert fresh replay identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e 00_SOURCE_INTAKE/fresh_run_003
+          test -f 00_SOURCE_INTAKE/fresh_run_004/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+          grep -q 'FRESH-RUN-004' governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+          grep -q 'BUILD_FRESH_CORE01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS' governance/test/ACTIVE_STATE.yaml
+      - name: Compile candidate builder
+        run: python -m py_compile .github/governance-maintenance/build_fresh_core01_design_contract_candidate.py
+      - name: Build fresh candidate and semantic review
+        run: python .github/governance-maintenance/build_fresh_core01_design_contract_candidate.py
+      - name: Prove no predecessor candidate reuse and clean write-set
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_CANDIDATE.json
+          test -f governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_CANDIDATE.json
+          grep -q '"historical_candidate_reuse": false' governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_CANDIDATE.json
+          grep -q '"prior_approval_reuse": false' governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_REVIEW_PACKAGE.json
+          git diff --check
+      - name: Persist fresh review-only package
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'steven-gold'
+          git config user.email 'proorangeone@gmail.com'
+          git add -A
+          git commit -m "test(core01): persist fresh design contract review package" \
+            -m "Source-Run: FRESH-RUN-004" \
+            -m "Authority-Effect: NONE"
+          git push origin HEAD:rebuild-v2.1.1
