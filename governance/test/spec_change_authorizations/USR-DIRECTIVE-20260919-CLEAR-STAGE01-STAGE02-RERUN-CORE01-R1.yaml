@@ -1,0 +1,36 @@
+authorization_uid: USR-DIRECTIVE-20260919-CLEAR-STAGE01-STAGE02-RERUN-CORE01-R1
+artifact_type: PRODUCT_EXECUTION_RESET_AND_FRESH_REPLAY_AUTHORIZATION
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+baseline_commit_sha: 8020d91278e6308c97c8a287ba612dd692124fcb
+baseline_tree_sha: 3a3e478982cac86dc997a09643e65e69488ab806
+current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+user_directives:
+  - "把stage-01.stage-02生產出來的資料都刪除後從新跑一次核心頁面整個流程。"
+  - "把素材頁面生產的資料也都刪除只留規範。"
+scope:
+  delete_all_prior_stage01_stage02_generated_product_data: true
+  delete_prior_core01_generated_data: true
+  delete_prior_asset01_generated_data: true
+  delete_prior_stage02_test_and_history_evidence: true
+  preserve_current_mother_governance: true
+  preserve_registry_and_execution_rules: true
+  preserve_governance_change_authorization_audit: true
+  fresh_replay_page_scope:
+  - CORE-01
+  asset01_replay_allowed: false
+  stage03_or_later_execution_allowed: false
+source_safety:
+  prior_run_root_may_be_read_once_only_to_recover_exact_upstream_source_bytes_before_deletion: true
+  prior_generated_stage01_or_stage02_artifacts_may_be_reused_as_fresh_output: false
+  prior_stage02_candidate_or_materialized_contract_may_be_reused_as_current_authority: false
+  external_authority_auto_fill: false
+completion:
+  old_run_root_absent: true
+  old_stage02_evidence_absent: true
+  asset01_generated_product_data_absent: true
+  core01_stage1_fresh_from_source_required: true
+  core01_stage2_fresh_from_new_stage1_required: true
+  product_credit_only_from_fresh_current_run: true
