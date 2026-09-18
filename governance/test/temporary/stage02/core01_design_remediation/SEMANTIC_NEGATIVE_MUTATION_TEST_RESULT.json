@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-REMEDIATION-SEMANTIC-NEGATIVE-MATRIX",
+  "artifact_type": "TEMPORARY_NON_NORMATIVE_SEMANTIC_DESTRUCTIVE_MUTATION_TEST_RESULT",
+  "layer_classification": "RUN_STATE",
+  "normative_authority": false,
+  "test_candidate_only": true,
+  "source_head_sha": "9622d98f551914b7a0d9e601cbe28406fb58327b",
+  "current_governance_uid": "GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING",
+  "work_unit_uid": "WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001",
+  "page_uid": "CORE-01",
+  "source_candidate_ref": "governance/test/temporary/stage02/core01_design_remediation/CORE01_FUNCTIONAL_CONTRACT_CANDIDATE.json",
+  "source_semantic_review_ref": "governance/test/temporary/stage02/core01_design_remediation/SEMANTIC_REVIEW_RESULT.json",
+  "baseline_detectors": [],
+  "result": {
+    "baseline": "PASS",
+    "negative_test_count": 12,
+    "pass": 12,
+    "fail": 0
+  },
+  "tests": [
+    {
+      "test_uid": "SEM-NEG-01",
+      "description": "Swap payload action to an existing but unrelated current port",
+      "expected_detector": "ACTION_PORT_RELATION_DRIFT",
+      "observed_detectors": [
+        "ACTION_PORT_RELATION_DRIFT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-02",
+      "description": "Change transition from_stage to another existing current stage",
+      "expected_detector": "TRANSITION_FROM_STAGE_DRIFT",
+      "observed_detectors": [
+        "TRANSITION_FROM_STAGE_DRIFT",
+        "TRANSITION_RECOVERY_STAGE_DRIFT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-03",
+      "description": "Change transition gate to another existing current gate",
+      "expected_detector": "TRANSITION_GATE_UID_DRIFT",
+      "observed_detectors": [
+        "TRANSITION_GATE_UID_DRIFT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-04",
+      "description": "Change recovery retain_stage to transition target stage",
+      "expected_detector": "TRANSITION_RECOVERY_STAGE_DRIFT",
+      "observed_detectors": [
+        "TRANSITION_RECOVERY_STAGE_DRIFT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-05",
+      "description": "Remove replay protection from illegal transition tests",
+      "expected_detector": "ILLEGAL_TRANSITION_TEST_SET_WEAKENED",
+      "observed_detectors": [
+        "ILLEGAL_TRANSITION_TEST_SET_WEAKENED"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-06",
+      "description": "Use unknown mutation owner identity",
+      "expected_detector": "TRANSITION_MUTATION_OWNER_NOT_CURRENT_SCOPE_IDENTITY",
+      "observed_detectors": [
+        "TRANSITION_MUTATION_OWNER_NOT_CURRENT_SCOPE_IDENTITY"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-07",
+      "description": "Change transition trigger to another existing event",
+      "expected_detector": "TRANSITION_TRIGGER_EVENT_UID_DRIFT",
+      "observed_detectors": [
+        "TRANSITION_TRIGGER_EVENT_UID_DRIFT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-08",
+      "description": "Use non-current audit event on transition",
+      "expected_detector": "TRANSITION_AUDIT_EVENT_NOT_CURRENT",
+      "observed_detectors": [
+        "TRANSITION_AUDIT_EVENT_NOT_CURRENT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-09",
+      "description": "Inject provider field into an existing payload schema",
+      "expected_detector": "FORBIDDEN_PROVIDER_MODEL_WRITE",
+      "observed_detectors": [
+        "FORBIDDEN_PROVIDER_MODEL_WRITE"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-10",
+      "description": "Replace current object ref with invented object identity",
+      "expected_detector": "OBJECT_REF_NOT_CURRENT_OR_CREATES_ENTITY",
+      "observed_detectors": [
+        "OBJECT_REF_NOT_CURRENT_OR_CREATES_ENTITY"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-11",
+      "description": "Collide proposed audit event UID with an existing current event",
+      "expected_detector": "AUDIT_EVENT_UID_COLLISION",
+      "observed_detectors": [
+        "AUDIT_EVENT_UID_COLLISION"
+      ],
+      "result": "PASS"
+    },
+    {
+      "test_uid": "SEM-NEG-12",
+      "description": "Promote temporary candidate to normative authority",
+      "expected_detector": "CANDIDATE_AUTHORITY_ESCALATION",
+      "observed_detectors": [
+        "CANDIDATE_AUTHORITY_ESCALATION"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "authority_effect": "NONE",
+  "product_blocker_reduction_credit": 0,
+  "status": "PASS_12_OF_12_SEMANTIC_DESTRUCTIVE_MUTATIONS_BLOCKED"
+}
