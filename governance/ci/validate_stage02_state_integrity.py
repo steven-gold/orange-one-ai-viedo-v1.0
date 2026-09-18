@@ -129,7 +129,8 @@ if frozen_governance_uid != current_governance_uid:
     if active.get("closure_credit_under_current_governance") is not False:
         die("PREDECESSOR_ATTEMPT_CANNOT_RECEIVE_CURRENT_GOVERNANCE_CLOSURE_CREDIT")
     if result == "TEST_EXECUTED_PASS":
-    if not evidence.get("stage_scope_complete"): die("PARTIAL_SCOPE_CANNOT_RECEIVE_STAGE2_PASS")
+        if not evidence.get("stage_scope_complete"):
+            die("PARTIAL_SCOPE_CANNOT_RECEIVE_STAGE2_PASS")
         die("PREDECESSOR_ATTEMPT_CANNOT_PROJECT_CURRENT_STAGE_PASS_AFTER_GOVERNANCE_PROMOTION")
 else:
     if promotion_revalidation and active.get("closure_credit_under_current_governance") is True:
