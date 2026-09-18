@@ -1,0 +1,105 @@
+name: CORE-01 Stage-02 Completion R3
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/governance-maintenance/complete_core01_stage02_r3.py'
+
+permissions:
+  contents: write
+
+jobs:
+  complete-stage02:
+    if: "${{ github.event.head_commit.message == 'test(core01): execute Stage-02 completion R3' }}"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+
+      - name: Assert exact authorization Current governance and clean scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-COMPLETE-CORE01-STAGE02-R3.yaml
+          grep -q 'GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING' governance/specifications/REGISTRY.yaml
+          grep -q 'WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002' governance/test/ACTIVE_STATE.yaml
+          test -f 00_SOURCE_INTAKE/fresh_run_005/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+          test ! -e 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01
+          test ! -e 00_SOURCE_INTAKE/fresh_run_005/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01
+
+      - name: Compile Stage-02 completion helper
+        run: python -m py_compile .github/governance-maintenance/complete_core01_stage02_r3.py
+
+      - name: Materialize unique coherent candidate and freshly reexecute Stage-02
+        run: python .github/governance-maintenance/complete_core01_stage02_r3.py --mode materialize
+
+      - name: Prove Stage-01 Raw Source remained immutable and ASSET absent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:00_SOURCE_INTAKE/fresh_run_005/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml)" = "9490f3bcc28c5511bc04d6c3ce53c026e3c4667f"
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_005/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+          test ! -e 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01
+          test ! -e 00_SOURCE_INTAKE/fresh_run_005/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01
+          grep -q 'effective_functional_gap_total: 0' governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+          grep -q 'closure_blocker_total: 0' governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+
+      - name: Upload fresh Stage-02 completion evidence
+        id: evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: core01-stage02-completion-r3
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT
+            .github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json
+            governance/test/stage02
+            governance/test/ACTIVE_STATE.yaml
+            governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+            governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+
+      - name: Bind exact workflow and artifact provenance
+        env:
+          STAGE02_ARTIFACT_ID: "${{ steps.evidence.outputs.artifact-id }}"
+          STAGE02_ARTIFACT_DIGEST: "${{ steps.evidence.outputs.artifact-digest }}"
+        run: python .github/governance-maintenance/complete_core01_stage02_r3.py --mode finalize
+
+      - name: Validate Current Stage-02 state before persistence
+        run: |
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_profile_history_binding.py
+          python governance/test/validate_selected_profile_finding_closure.py
+
+      - name: Verify transaction hygiene
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          test ! -d governance/test/temporary
+          git status --short
+
+      - name: Persist Stage-02 completion candidate materialization and fresh reexecution
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'steven-gold'
+          git config user.email 'proorangeone@gmail.com'
+          git add -A
+          test -n "$(git diff --cached --name-only)" || { echo 'BLOCK: no Stage-02 completion changes staged' >&2; exit 1; }
+          git commit -m "test(core01): persist Stage-02 completion R3 current result" \
+            -m "Execution-Authorization: USR-DIRECTIVE-20260919-COMPLETE-CORE01-STAGE02-R3" \
+            -m "Scope: CORE-01 Stage-02 only; Stage-01 Raw immutable; ASSET-01 absent"
+          git push origin HEAD:rebuild-v2.1.1
