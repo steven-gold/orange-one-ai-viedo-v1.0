@@ -168,7 +168,7 @@ def validate(semantic_hash):
         'trust_model':'EXTERNAL_IMMUTABLE_PACKAGE_HASH_SET',
         'semantic_authority_content_hash':semantic_hash,
         'package_files':package_files,
-    },indent=2)+'\\n',encoding='utf-8')
+    },indent=2)+'\n',encoding='utf-8')
     env=dict(os.environ)
     env['WEB_GOVERNANCE_TRUST_ROOT']=str(trust_path)
     print('+ python',SOURCE/'09_TESTS/governance/test_bugfix_regressions.py','[with external trust root]')
