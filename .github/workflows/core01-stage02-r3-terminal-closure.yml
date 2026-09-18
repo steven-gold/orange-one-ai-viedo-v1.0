@@ -28,6 +28,9 @@ jobs:
       - name: Compile closure helper
         run: python -m py_compile .github/governance-maintenance/close_core01_stage02_r3.py
       - name: Close Stage-02 from exact terminal evidence
+        env:
+          GITHUB_TOKEN: "${{ github.token }}"
+          GITHUB_REPOSITORY: "${{ github.repository }}"
         run: python .github/governance-maintenance/close_core01_stage02_r3.py
       - name: Validate closed Current state before persistence
         run: |
