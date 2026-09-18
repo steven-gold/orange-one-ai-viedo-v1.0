@@ -21,6 +21,22 @@ for p in sorted(MOTHER.glob('*.md')):
     for finding in scan_policy_text(t):
         failures.append('mother_policy_semantic_leak:'+p.name+':'+finding['semantic_type']+':'+finding['match'])
 
+# Secondary literal contamination defense for reusable Mother prose. These values
+# belong to execution-profile, product-adapter, run-state, workflow or evidence layers.
+mother_literal_patterns={
+    'profile_retry_token': re.compile(r'\bR\d{1,3}\b'),
+    'fixed_stage_token': re.compile(r'\bSTAGE-\d{1,2}\b', re.IGNORECASE),
+    'concrete_product_uid': re.compile(r'\b(?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|IAM|ERP|AIAPI)-\d+\b'),
+    'workflow_path': re.compile(r'\.github/workflows/'),
+    'governance_script_path': re.compile(r'\bgovernance/ci/[A-Za-z0-9_.\-/]+'),
+    'long_run_id': re.compile(r'\b\d{8,12}\b'),
+}
+for p in sorted(MOTHER.glob('*.md')):
+    body=p.read_text(encoding='utf-8')
+    for kind,pat in mother_literal_patterns.items():
+        for m in pat.finditer(body):
+            failures.append('mother_policy_literal_contamination:'+p.name+':'+kind+':'+m.group(0))
+
 manifest=yaml.safe_load((CUR/'SPECIFICATION_MANIFEST.yaml').read_text()) or {}
 files=[]
 for rec in manifest.get('components') or []:

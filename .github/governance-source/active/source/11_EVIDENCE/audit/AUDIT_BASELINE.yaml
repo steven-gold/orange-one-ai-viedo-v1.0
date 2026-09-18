@@ -4,14 +4,14 @@ artifact_type: AUDIT_BASELINE
 status: CURRENT_COMPILED
 canonical_path: 11_EVIDENCE/audit/AUDIT_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-AUDIT-BASELINE
-governance_revision: v2.2.5-scope-stage-reentry-portability-hardening
+governance_revision: v2.2.6-profile-token-decontamination-hardening
 compiled_from:
   acceptance_blueprint_uid: BP-GOVERNANCE-ACCEPTANCE-001
-  acceptance_blueprint_sha256: 4433f03df95b5218740cb2511d78dbc39daecfbcb5d22058bad405677d08759a
+  acceptance_blueprint_sha256: b108ebaf46a38d99de7f6c640ff35d379cb690b37bced514119116d8e8c8cf9c
   audit_catalog_uid: REG-AUDIT-CATALOG-001
-  audit_catalog_sha256: 8ffae164133fce2646470ddc617178af93b0b000abc91507e503bff7f7678a53
+  audit_catalog_sha256: 649701f0204689c7e953b873dfcfc73d39479c8ca9fe30c9b9d77d420c1892cf
   section_registry_uid: REG-NORMATIVE-SECTION-001
-  section_registry_sha256: 4a641726080d44afa4d5849ba2bf0a83009f988a6017cc35375a8a18c4306e2c
+  section_registry_sha256: 34c12ceaa0d9afb8c34a80c40f148b1f71df231e56b854889b889295e92c7bdb
 denominator:
   audit_item_uids:
   - AUD-GOV-001
@@ -36,13 +36,13 @@ governance_compilation:
   sources:
   - document_id: WEB-GOV-01
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-    sha256: 21b8fd73fbb8fc0b5cbe9b5d1fdbfe0a00c820692f110f67ec65fea662726409
+    sha256: 800ea482a71b8979341d8da6248176c1f7125faa8cc9f35aa90bd15b80b417b3
     version: 2.2.3
     status: normative
     permanent_inheritance: true
   - document_id: WEB-GOV-02
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-    sha256: 1b099179f83a3f9ae8b2ca75725673fa3d94fcdb2893c70e1a4e79d79ca05bb3
+    sha256: a7cd93f991d13ca545bd781e0cba9980379b42a1074e479d223b39240ab300be
     version: 2.2.3
     status: normative
     permanent_inheritance: true
@@ -1724,7 +1724,7 @@ governance_compilation:
     src: WEB-GOV-01
     line: 1477
     mode: MUST_NOT
-    hash: a03688c1882f866ca0cca7b5780eae9ca5d2aaf4d4457ea87428f6d93864c0f1
+    hash: 08eedaa2300dcec6ab9fdda2db0d345b9d2f400e6aa27e75beb364cb281070b3
     validator: authority_manifest_guard
     auto: AUTO
     blocking: true
@@ -1732,7 +1732,7 @@ governance_compilation:
     src: WEB-GOV-01
     line: 1477
     mode: MUST
-    hash: a03688c1882f866ca0cca7b5780eae9ca5d2aaf4d4457ea87428f6d93864c0f1
+    hash: 08eedaa2300dcec6ab9fdda2db0d345b9d2f400e6aa27e75beb364cb281070b3
     validator: authority_manifest_guard
     auto: AUTO
     blocking: true
@@ -5568,4 +5568,4 @@ governance_compilation:
     validator: authority_manifest_guard
     auto: AUTO
     blocking: true
-content_hash: 95574b54c06fbcdd5f460d6e38ad6c200d37ca1cad1607902364d1e7608e5c96
+content_hash: 8aee7f25da4ba3edc4c37adbe5d774a134d02832be0450e064297305c980b41b

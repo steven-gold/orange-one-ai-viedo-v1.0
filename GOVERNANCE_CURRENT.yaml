@@ -1,8 +1,8 @@
 schema_version: 7
 artifact_uid: GOVERNANCE-CURRENT-ENTRYPOINT-001
 artifact_type: GOVERNANCE_CURRENT_ENTRYPOINT
-active_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
-display_version: v2.2.6
+active_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+display_version: v2.2.7
 version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
 registry_ref: governance/specifications/REGISTRY.yaml
 specification_root: governance/specifications/current
@@ -24,12 +24,12 @@ historical_evidence_is_current_authority: false
 source_identity:
   version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
   source_bytes_changed_by_current_successor: true
-  verified_package_sha256: adbb39e42b1d091afbe2ff8836f5293dfff31feeb79148110382f25b4988b61d
-  deterministic_source_bundle_sha256: 196d2d6be84f904daa3b206e2d8ac3664a79df6f8c6033dbb27914e90027e310
-  checksum_manifest_sha256: c7dbff5486125fc9f5fb70537b3651ec04b64f532782b8557cf89c85be3b2401
-  semantic_authority_content_hash: 101ccba6ead322d685627b0f3f5b6ff214b703db17d0b9eed201f95173820256
+  verified_package_sha256: 48895530cf0c0143106c0925910136c8759be49c695626ff2896879240544226
+  deterministic_source_bundle_sha256: 04080917a0d885e1de0ab56ab36168f90118ff44d816ad9705a73a84d20ae91f
+  checksum_manifest_sha256: ba408cce4cbe42317fe72e6e81b60b57d5dca69dfab0f28e708a00107e88c24e
+  semantic_authority_content_hash: 0c87e5c9a8d81cf608c270ae7298dd4d80735376eef63039671c38dbe580a590
   may_override_active_governance_version: false
-  verified_source_revision: v2.2.5-scope-stage-reentry-portability-hardening
+  verified_source_revision: v2.2.6-profile-token-decontamination-hardening
 current_primary_task_selection_contract:
   session_bootstrap_resume_gate_required: true
   task_layer_classification_required: true

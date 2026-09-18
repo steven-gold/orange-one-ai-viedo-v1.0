@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
+specification_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -46,7 +46,7 @@ execution:
 full_lifecycle_governance_system_test:
   round: SYSTEM_FULL_LINE_HIGH_PRESSURE_ROUND_1
   meaning: GOVERNANCE_SYSTEM_EXECUTION_HEALTH_ONLY
-  deterministic_source_bundle_sha256: 196d2d6be84f904daa3b206e2d8ac3664a79df6f8c6033dbb27914e90027e310
+  deterministic_source_bundle_sha256: 04080917a0d885e1de0ab56ab36168f90118ff44d816ad9705a73a84d20ae91f
   verified_source_file_count: 75
   github_source_materialization: PASS_EXACT_75_FILE_IDENTITY
   mandatory_regression_suite_count: 17
@@ -55,7 +55,7 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: REVALIDATION_REQUIRED_AFTER_PROMOTION_ATOMIC_SYNC_REPAIR
+  full_line_github_result: REVALIDATION_REQUIRED_AFTER_PROFILE_TOKEN_DECONTAMINATION_PROMOTION
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
@@ -460,13 +460,13 @@ resume_control:
   last_closed_product_outer_run_id: 35373928957
   last_closed_product_outer_result: success
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
-  predecessor_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+  current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+  predecessor_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
   fresh_revalidation_required: true
-  fresh_revalidation_scope: AFFECTED_FUNCTIONAL_CONTRACT_SCOPE_AND_REUSABLE_SCOPE_CONSUMERS
+  fresh_revalidation_scope: AFFECTED_PRODUCT_SCOPE_AND_REUSABLE_POLICY_CONSUMERS
   mother_machine_revalidation_complete: true
   mother_machine_revalidation_run_id: 35321233970
   mother_machine_revalidation_head: 736622cf32e1a19119317b4d9b56af51c036ce03
@@ -508,7 +508,7 @@ pending_governance_review:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-MOTHER-SCOPE-STAGE-OWNERSHIP-REENTRY-PORTABILITY-HARDENING-R1
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-MOTHER-PROFILE-TOKEN-DECONTAMINATION-R1
 current_primary_task_product_stage_credit: 0
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
@@ -654,4 +654,13 @@ scope_stage_reentry_successor:
   remaining_unit_count: 1
   partial_scope_stage_exit_credit: 0
   product_stage_credit: 0
+  status: GOVERNANCE_PROMOTED_PRODUCT_REVERIFY_REQUIRED
+profile_token_decontamination_successor:
+  authorization_uid: USR-DIRECTIVE-20260919-MOTHER-PROFILE-TOKEN-DECONTAMINATION-R1
+  predecessor_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
+  current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+  product_stage_credit: 0
+  mother_profile_local_token_count_after_promotion: 0
+  neutrality_validator_hardened: true
+  neutrality_workflow_hardening_pending: true
   status: GOVERNANCE_PROMOTED_PRODUCT_REVERIFY_REQUIRED

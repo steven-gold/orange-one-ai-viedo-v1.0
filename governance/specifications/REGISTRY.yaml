@@ -8,8 +8,8 @@ stable_entrypoint:
   test_state_root: governance/test
   active_test_state: governance/test/ACTIVE_STATE.yaml
 active_specification:
-  governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
-  display_version: v2.2.6
+  governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+  display_version: v2.2.7
   version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
   aliases:
   - neutral-portable-governance
@@ -24,12 +24,13 @@ active_specification:
   - residual-classification-hardening
   - design-remediation-routing-hardening
   - scope-stage-reentry-portability-hardening
+  - profile-token-decontamination-hardening
   status: ACTIVE_CURRENT_GOVERNANCE
 immediate_predecessor:
-  governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
-  display_version: v2.2.5
+  governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
+  display_version: v2.2.6
   version_role: SUPERSEDED_CURRENT_GOVERNANCE_HISTORY
-  status: SUPERSEDED_HISTORY_ONLY_AFTER_SCOPE_STAGE_REENTRY_PORTABILITY_HARDENING
+  status: SUPERSEDED_HISTORY_ONLY_AFTER_PROFILE_TOKEN_DECONTAMINATION_HARDENING
 version_role_contract:
   current_governance_display_version_owner: active_specification
   verified_source_package_version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
