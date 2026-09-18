@@ -370,6 +370,18 @@ findings:
     or retain an active-attempt/current-findings projector, if a Current findings
     artifact can survive zero-residual reset, or if an executed selected-profile step
     can bypass active-attempt/current-findings crosschecks.
+- finding_uid: FIND-20260918-002
+  class: EVIDENCE_STATE_OR_HARNESS_BUG
+  title: Fresh Stage-02 tracked Current evidence omitted frozen attempt and governance identity
+  evidence: Canonical preflight run 35301497457 passed Current governance and Full-Line checks, then blocked with CURRENT_GOVERNANCE_UID_DRIFT because STAGE02_LATEST_TEST_EVIDENCE.json had been copied verbatim from the runtime artifact without attempt_uid or frozen_governance_uid while Registry, Current Entry, Active State and freeze receipt all resolved GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING.
+  disposition: IMPLEMENTATION_REMEDIATED
+  specification_change_required: false
+  formal_specification_mutated_for_fix: false
+  current_specification_may_be_modified_from_this_finding_alone: false
+  resolution_type: CURRENT_EVIDENCE_IDENTITY_PROJECTION_FIX
+  product_stage_credit: 0
+  product_gap_or_blocker_denominator_changed: false
+  reopen_condition: Reopen if a freshly persisted tracked Current Stage-02 evidence file can omit or drift from the exact frozen attempt/governance identity while its runtime source artifact provenance is retained separately.
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6

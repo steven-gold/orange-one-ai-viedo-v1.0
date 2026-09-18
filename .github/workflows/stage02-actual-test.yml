@@ -260,8 +260,18 @@ jobs:
           assert attempt_uid and baseline.get('attempt_uid') == attempt_uid
           assert governance_uid
 
+          # The uploaded runtime artifact is provenance; the tracked Current evidence must
+          # additionally bind the exact frozen attempt/governance identity used by Current State.
+          ev['attempt_uid'] = attempt_uid
+          ev['frozen_governance_uid'] = governance_uid
+          ev['current_evidence_projection'] = {
+              'source_artifact_payload_preserved_as_provenance': True,
+              'projection_adds_current_attempt_identity_only': True,
+              'product_gap_or_blocker_values_modified': False,
+          }
+          tracked_raw = (json.dumps(ev, ensure_ascii=False, indent=2, sort_keys=True) + '\n').encode()
           latest = ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
-          latest.write_bytes(raw)
+          latest.write_bytes(tracked_raw)
 
           gap_classes = {}
           gap_categories = {}
