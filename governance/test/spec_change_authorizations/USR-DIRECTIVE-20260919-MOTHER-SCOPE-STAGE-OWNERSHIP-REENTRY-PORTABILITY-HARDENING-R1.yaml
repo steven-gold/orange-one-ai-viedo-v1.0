@@ -1,0 +1,106 @@
+authorization_uid: USR-DIRECTIVE-20260919-MOTHER-SCOPE-STAGE-OWNERSHIP-REENTRY-PORTABILITY-HARDENING-R1
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-19
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+baseline_commit_sha: 230315893a42c25dcf83ecba2c9eb50ab9c66d8c
+baseline_tree_sha: c596ddb66fde7f3ba9c8ec7dbdc074612b4c0ada
+current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+
+user_directive:
+  - "比對母規範內容彙整好正確的流程內容後調整補齊母規範，確定好整個流程內容在寫入，不要再寫一部分段一部分。"
+  - "該調整哪一些階段都全部補齊，光stage-02的流程一直改都改不好確認好流程不要一直無法完整執行。"
+  - "所有規範定義都是中立的規範與執行流程的定義，不應把產品頁面、固定頁面組合、固定 blocker 數量或單次測試值寫死在可重用規範/執行器。"
+  - "補齊 R2 類 gap classification 到 Design/Contract Remediation、Authority decision、materialization、fresh reexecution 的完整通用路由。"
+  - "釐清 Stage-01 與 Stage-02 的責任，並補齊所有後續階段的 upstream re-entry / revalidation 流程。"
+
+pre_write_context_verification:
+  live_repository_branch_head_verified: true
+  current_registry_resolved: true
+  current_governance_uid_resolved: true
+  mother_01_02_03_04_read_in_order: true
+  lifecycle_registry_read: true
+  current_mutation_control_read: true
+  current_stage_state_read: true
+  existing_product_neutrality_rules_reviewed: true
+  existing_design_remediation_rules_reviewed: true
+  existing_topology_continuity_rules_reviewed: true
+  existing_denominator_rules_reviewed: true
+  recurring_failure_examples_compared: true
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNERS_AND_PROFILE_BINDING
+  current_problem_summary:
+    - reusable Mother principles already forbid product-specific policy contamination, but scope/denominator authority is not yet one explicit executable contract shared by all lifecycle stages
+    - profile stage scope and work-unit execution slice are not explicitly separated, allowing reusable consumers to hard-code page sets or historical problem counts
+    - stage ownership and upstream re-entry are defined only in fragments, allowing downstream stages or validators to repair upstream semantic gaps ad hoc
+    - Stage-02 conditional Scorecard/Scope-Ledger production is not fully represented as an owned producer/output route for design-remediation analysis
+    - temporary analysis artifacts and formal Full-Line cleanliness are separated conceptually but lack one complete transition rule that distinguishes environment residual blocking from candidate semantic failure
+    - consumer portability rules need explicit machine-facing prohibition on literal product scope identifiers and expected denominator counts in reusable validators/runners/workflows
+
+exact_scope:
+  purpose: >-
+    Promote one product-neutral Mother successor that defines a single reusable execution-scope authority,
+    stage/capability ownership and re-entry model, Design/Contract remediation route, temporary-to-formal evidence lifecycle,
+    and consumer portability rules across the full lifecycle. The change must prevent page IDs, page combinations,
+    blocker counts, run labels, or single-product assumptions from becoming reusable policy or reusable execution truth.
+  permitted_normative_changes:
+    - Define an EXECUTION_SCOPE_MANIFEST as the sole Current execution-slice authority for included units, excluded units, remaining units, scope kind, dependency closure, denominator source, partial-scope policy, and stage-exit-credit policy.
+    - Separate Work Unit execution scope from Stage completion scope; partial Work Unit closure MUST NOT imply Stage exit.
+    - Require reusable validators, scanners, classifiers, remediation executors, and workflows to derive scope and denominators from Current manifests/registers rather than literal page IDs, fixed page combinations, historical blocker counts, or previous-run reports.
+    - Define capability ownership across source intake/base blueprint, functional contract, visual design, freeze, implementation, verification, build/release, staging, production cutover, production acceptance, and closure/operations.
+    - Clarify that replaying source-intake/base-blueprint capability does not repair a functional-contract gap unless the owning Source/Stage-1 input itself changed or was defective.
+    - Define Stage-02/functional-contract ownership for Business Entity lifecycle, operation/hierarchy completeness, functional workbench and interaction topology, conditional AI interaction identity, field/data/action boundaries, payload/input contracts, state/error/recovery/audit, finalization/version lifecycle, dependency/change impact, and function-to-visual impact classification.
+    - Require FUNCTION_ADMISSION_SCORECARD and AUTO_COMPLETION_SCOPE_LEDGER whenever a missing required function/contract is analyzed for completion or Design/Contract remediation, including the explicit NO_AUTO_COMPLETION outcome.
+    - Route local INPUT_SOURCE_GAP / ARCHITECTURE_GAP without a unique Current closure to bounded review-only Design/Contract remediation; route only materially distinct alternatives to AUTHORITY_GAP; materialize approved content to one Current canonical owner before ingestion; require fresh reexecution.
+    - Define downstream discovery re-entry: later capability discovering an upstream semantic/design defect MUST reopen the owning capability, stop downstream mutation, mark impacted descendants REVERIFY_REQUIRED, preserve unaffected evidence, and resume only after fresh owner closure.
+    - Define temporary analysis/test artifacts as non-authoritative and allowed only inside an explicitly temporary cycle; formal Full-Line/Freeze/Release gates require temporary residual zero. A temporary-residual block is an execution-environment/hygiene block and MUST NOT be misreported as semantic candidate failure.
+    - Bind the selected 11-stage execution profile to the common scope/re-entry contract without making its stage numbers or page identities reusable Mother Policy.
+    - Add audit requirements proving dynamic scope derivation, stage ownership, re-entry, partial-scope credit isolation, temporary lifecycle, and zero reusable hard-coded product scope/count assumptions.
+  permitted_machine_projection_changes:
+    - .github/governance-source/active/source/**
+    - governance/specifications/current/**
+    - governance/specifications/REGISTRY.yaml
+    - GOVERNANCE_CURRENT.yaml
+    - governance/ci/**
+    - governance/test/**
+    - .github/workflows/**
+    - .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+    - .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+  excluded_scope:
+    - CORE-01 or ASSET-01 product behavior/value changes
+    - any new product-specific page/control/action/API/runtime behavior
+    - external Authority autofill
+    - immutable product Raw Source mutation
+    - Stage-03 visual candidate approval
+    - website implementation
+    - deployment
+    - production acceptance
+    - treating governance repair as product-stage gap reduction
+    - weakening fail-closed, Authority, evidence freshness, or anti-inference rules
+
+completion_requirements:
+  new_immutable_governance_uid_required: true
+  one_consolidated_mother_successor_change: true
+  mother_01_02_03_04_semantically_reconciled: true
+  lifecycle_stage_registry_all_stage_binding_reconciled: true
+  machine_policy_projection_updated: true
+  no_product_specific_scope_identifier_in_new_common_policy: true
+  no_fixed_problem_denominator_in_new_common_policy: true
+  partial_scope_stage_exit_credit_isolated: true
+  stage_owner_reentry_contract_complete: true
+  stage01_stage02_responsibility_boundary_complete: true
+  design_remediation_route_complete: true
+  temporary_to_formal_transition_complete: true
+  source_identity_resynchronized: true
+  active_consumer_projection_updated: true
+  targeted_regression_required: true
+  portability_validation_required: true
+  contamination_scan_required: true
+  active_consumer_reference_integrity_required: true
+  full_line_high_pressure_validation_required: true
+  selected_profile_validation_required: true
+  fresh_product_execution_required_after_governance_promotion: true
+  product_stage_credit: 0
