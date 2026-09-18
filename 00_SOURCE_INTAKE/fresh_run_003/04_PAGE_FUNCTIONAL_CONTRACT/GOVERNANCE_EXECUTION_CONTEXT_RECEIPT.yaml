@@ -1,0 +1,91 @@
+schema_version: 1
+normative_authority: false
+stage_uid: STAGE-02
+current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+attempt_uid: STAGE02-FRESH-20260918-006
+source_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+source_evidence_sha256: 7bb692e7c674ffa88918f68ef7f3dcef7ccfb1295372f56b9cab8d94e0f86ee5
+artifact_type: GOVERNANCE_EXECUTION_CONTEXT_RECEIPT
+producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
+policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+active_work_unit_ref: null
+semantic_concern: MATERIALIZE_CANONICAL_PREFLIGHT_FOR_CORE01_THEN_RESOLVE_STRUCTURAL_REMEDIATION_WORK_UNIT
+canonical_owner_operation: STAGE_EXECUTION_PREFLIGHT_COMPILE
+resolved_current_work_unit_owner: null
+repository_identity:
+  repository: steven-gold/orange-one-ai-viedo-v1.0
+  branch: rebuild-v2.1.1
+  head_sha: e9ab659cf6c50dd94ef4a0b35130dda51876c500
+  tree_sha: b4f15e745749aa2162ccab2b408ec207ebe57f47
+current_registry:
+  entry_ref: GOVERNANCE_CURRENT.yaml
+  entry_sha256: f94507371c80e11185a81f6c26ed20e67c0c155f8f29c6e736ba6bcef4f0a41a
+  registry_ref: governance/specifications/REGISTRY.yaml
+  registry_sha256: 9d1f9f4eec062e37966755723de87c01a733e1fedec8de5790110b099dcaea56
+  canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+  canonical_rule_registry_sha256: 842a734e2f2018a9b4a0bf89955c04266affc23bf79048cc69bcc0bb06c8b225
+  canonical_rule_registry_digest: edeefffe7ebdfd1b626c8b3b3e12a2d27e69c94eaf0e84ea4ede913c2d7bc196
+  verified_source_revision: v2.2.3-residual-classification-hardening
+  deterministic_source_bundle_sha256: 35760d0f30c390ff6634de22b554111c396b68268bb81d55dcd5f081347c749f
+exact_read_set:
+- path: GOVERNANCE_CURRENT.yaml
+  sha256: f94507371c80e11185a81f6c26ed20e67c0c155f8f29c6e736ba6bcef4f0a41a
+- path: governance/specifications/REGISTRY.yaml
+  sha256: 9d1f9f4eec062e37966755723de87c01a733e1fedec8de5790110b099dcaea56
+- path: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+  sha256: 842a734e2f2018a9b4a0bf89955c04266affc23bf79048cc69bcc0bb06c8b225
+- path: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  sha256: 113314b32959aaa46bf7124b876839e4f58a264dd4f7f794cab7fcea639126ed
+- path: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
+  sha256: 7c1a1b3f4cc6fb94185b759005d11f7fb9c4211aad4b1f67a52bbc385f011a46
+- path: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  sha256: 25587057f3f6b540b5083d02f332b29ad3deb5bb56ad5ff4df07f3f5e65451aa
+- path: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+  sha256: 10000e05f3695df738b02882de5915c8a9e1fa278abb8b9201ae6f081d3e6581
+- path: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
+  sha256: bf40b52da7445e11e6fa1b62fa5b9ca447396201ae5d164d113d75d024a8a794
+- path: .github/governance-source/active/source/10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
+  sha256: 60cd80f019fc08ca52eed6084bbef4fe935b88bb890047f307b509b1053eb07a
+- path: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+  sha256: f9a51cd99e86d65bca005b9d608abef14769bcfc98139735394687c2a23b9f69
+- path: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+  sha256: 45fca9aef792282e8df344bd5955e416538be6fa71ed3992dda7da9a6edcc0c6
+- path: .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+  sha256: 3bc168608ef468d5e84af8d79a084fe5e2d470b9fee0e3ee166439464bb7fc72
+- path: .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+  sha256: c912b9bb1e50b28b430c6e36f973f42d21fc4dd73d91ff666197f9f269f7ee3a
+- path: .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+  sha256: 7a057c62bb1650968ec593237bd9e4cb5d22f9c2deeb9963db014705d063dd25
+- path: governance/test/ACTIVE_STATE.yaml
+  sha256: a1ee5ff038f60368a1e7c805ab3a163fb652e90d7e02a69dba6b5764f2e34789
+- path: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+  sha256: c1ad6491b074ced20737cc18e1764cda3084da5cc0185f8b068c45c0a828e460
+- path: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+  sha256: 2f85222c6aba82e018984cf147e5d534e59bbe27bdc5a8fba5cf78d15e0bb6fd
+- path: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+  sha256: 7bb692e7c674ffa88918f68ef7f3dcef7ccfb1295372f56b9cab8d94e0f86ee5
+- path: governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml
+  sha256: 8f07ba01d3ae593a583f6b677e8c499df209ed9ca68bc5752a6cc96d23c2c3c0
+- path: governance/test/STAGE02_EXECUTION_OPTIMIZATION_DEFECT_CONSOLIDATION.yaml
+  sha256: eb83c5351185776676732a02c96dbbba7d8237c22d19b78c60cd7a5e525a45ec
+exact_write_targets:
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/REQUIRED_FIELD_MANIFEST.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/FUNCTIONAL_CHAIN_MANIFEST.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EFFECTIVE_CONTRACT_OVERLAY.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_TOPOLOGY.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DENOMINATOR_SNAPSHOT.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CLASSIFICATION_RULESET.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CHANGE_IMPACT_MAP.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/RESOLUTION_LEDGER.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml
+duplicate_search_result: EXISTING_CANONICAL_COMPILER_OWNER_REUSED_NO_PRIOR_SUPPORT_RECEIPT_OWNER_FOUND
+confirmed_gap_uid: null
+loaded_at_utc: '2026-09-18T03:22:40.327775Z'
+product_blocker_credit: 0
+stage03_allowed: false
+result: PASS_CONTEXT_RESOLVED
+execution_context_mode: PARENT_OWNING_LAYER_REMEDIATION
+current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION

@@ -1,0 +1,27 @@
+schema_version: 1
+normative_authority: false
+stage_uid: STAGE-02
+current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+attempt_uid: STAGE02-FRESH-20260918-006
+source_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+source_evidence_sha256: 7bb692e7c674ffa88918f68ef7f3dcef7ccfb1295372f56b9cab8d94e0f86ee5
+artifact_type: DEPENDENCY_TOPOLOGY
+operation_uid: DEPENDENCY_TOPOLOGY_COMPILE
+canonical_remediation_order:
+- SHARED_OR_ROOT_AUTHORITY
+- CONTRACT_PRIMITIVES
+- RUNTIME_TRANSPORT_STATE_CONTRACTS
+- DEPENDENT_BUSINESS_OPERATIONS
+- LEAF_PAGE_CONTROL_BEHAVIOR
+- VISUAL_INTERACTION_BINDING
+local_reverse_dependency_validation_required_after_each_batch: true
+checkpoint_full_sweep_triggers:
+- ROOT_OR_SHARED_BATCH
+- COMMON_ENGINE_REPAIR
+- FUNCTIONAL_CATEGORY_CLOSURE
+- BEFORE_STAGE_EXIT
+- BEFORE_FREEZE
+current_dependency_map_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_MAP.yaml
+shared_owner_port_map_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP.yaml
+problem_owner_counts:
+  PAGE_FUNCTIONAL_CONTRACT: 45

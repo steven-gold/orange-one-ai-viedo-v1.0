@@ -1,0 +1,100 @@
+schema_version: 1
+normative_authority: false
+stage_uid: STAGE-02
+current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+attempt_uid: STAGE02-FRESH-20260918-006
+source_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+source_evidence_sha256: 7bb692e7c674ffa88918f68ef7f3dcef7ccfb1295372f56b9cab8d94e0f86ee5
+artifact_type: EXECUTION_CYCLE_PREFLIGHT_RECEIPT
+producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
+policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+active_work_unit_ref: null
+selected_execution_profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
+execution_identity:
+  repository: steven-gold/orange-one-ai-viedo-v1.0
+  branch: rebuild-v2.1.1
+  head_sha: e9ab659cf6c50dd94ef4a0b35130dda51876c500
+  tree_sha: b4f15e745749aa2162ccab2b408ec207ebe57f47
+governance_load:
+  governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+  work_unit_uid: null
+  resolved_work_unit_owner: null
+  root_manifest_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
+  root_manifest_sha256: bf40b52da7445e11e6fa1b62fa5b9ca447396201ae5d164d113d75d024a8a794
+  effective_normative_set_sha256: dd26a08de58b2ca5bcfd61d6dbf3674c0cd748a877727f6ea092d0150da12bfb
+  resolved_section_uid_receipts:
+  - section_uid: WEB-GOV-01-S073
+    document_ref: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    document_sha256: 45fca9aef792282e8df344bd5955e416538be6fa71ed3992dda7da9a6edcc0c6
+  - section_uid: WEB-GOV-02-S070
+    document_ref: .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+    document_sha256: 3bc168608ef468d5e84af8d79a084fe5e2d470b9fee0e3ee166439464bb7fc72
+  - section_uid: WEB-GOV-02-S073
+    document_ref: .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+    document_sha256: 3bc168608ef468d5e84af8d79a084fe5e2d470b9fee0e3ee166439464bb7fc72
+  - section_uid: WEB-GOV-03-S062
+    document_ref: .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    document_sha256: c912b9bb1e50b28b430c6e36f973f42d21fc4dd73d91ff666197f9f269f7ee3a
+  - section_uid: WEB-GOV-04-S078
+    document_ref: .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    document_sha256: 7a057c62bb1650968ec593237bd9e4cb5d22f9c2deeb9963db014705d063dd25
+  - section_uid: WEB-GOV-04-S074
+    document_ref: .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    document_sha256: 7a057c62bb1650968ec593237bd9e4cb5d22f9c2deeb9963db014705d063dd25
+  dependency_artifact_hashes:
+    governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json: 7bb692e7c674ffa88918f68ef7f3dcef7ccfb1295372f56b9cab8d94e0f86ee5
+    governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml: 8f07ba01d3ae593a583f6b677e8c499df209ed9ca68bc5752a6cc96d23c2c3c0
+    .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml: 25587057f3f6b540b5083d02f332b29ad3deb5bb56ad5ff4df07f3f5e65451aa
+    .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml: 10000e05f3695df738b02882de5915c8a9e1fa278abb8b9201ae6f081d3e6581
+    governance/test/ACTIVE_STATE.yaml: a1ee5ff038f60368a1e7c805ab3a163fb652e90d7e02a69dba6b5764f2e34789
+    governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml: c1ad6491b074ced20737cc18e1764cda3084da5cc0185f8b068c45c0a828e460
+    governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml: 2f85222c6aba82e018984cf147e5d534e59bbe27bdc5a8fba5cf78d15e0bb6fd
+    governance/test/STAGE02_EXECUTION_OPTIMIZATION_DEFECT_CONSOLIDATION.yaml: eb83c5351185776676732a02c96dbbba7d8237c22d19b78c60cd7a5e525a45ec
+  acceptance_blueprint_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+  acceptance_blueprint_sha256: f9a51cd99e86d65bca005b9d608abef14769bcfc98139735394687c2a23b9f69
+  loader_identity: governance/ci/compile_stage_execution_preflight.py
+  loader_version: '5'
+  loaded_at_utc: '2026-09-18T03:22:40.327775Z'
+  execution_context_mode: PARENT_OWNING_LAYER_REMEDIATION
+  current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
+canonical_stage_output_denominator_count: 17
+canonical_stage_output_denominator:
+- FUNCTIONAL_CHAIN_SPEC
+- DEPENDENCY_MAP
+- PAGE_CONSTRUCTION_SPEC_PACKAGE
+- ASYNC_PROVIDER_CONTRACT
+- SHARED_OWNER_PORT_MAP
+- FUNCTIONAL_WORKBENCH_CONTRACT
+- INTERACTION_TOPOLOGY_SPEC
+- REQUIRED_FIELD_MANIFEST
+- FUNCTIONAL_CHAIN_MANIFEST
+- EFFECTIVE_CONTRACT_OVERLAY
+- DEPENDENCY_TOPOLOGY
+- DENOMINATOR_SNAPSHOT
+- CLASSIFICATION_RULESET
+- CHANGE_IMPACT_MAP
+- STAGE_EXECUTION_PREFLIGHT_RECEIPT
+- CURRENT_PROBLEM_REGISTER
+- RESOLUTION_LEDGER
+canonical_preflight_generated_output_refs:
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/REQUIRED_FIELD_MANIFEST.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/FUNCTIONAL_CHAIN_MANIFEST.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EFFECTIVE_CONTRACT_OVERLAY.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_TOPOLOGY.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DENOMINATOR_SNAPSHOT.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CLASSIFICATION_RULESET.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CHANGE_IMPACT_MAP.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/RESOLUTION_LEDGER.yaml
+support_receipt_refs:
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml
+- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml
+fresh_problem_count: 45
+common_engine_repair_requires_replay: true
+product_blocker_credit: 0
+stage_exit_allowed: false
+stage03_allowed: false
+result: PASS_GOVERNANCE_LOADED_FOR_PREFLIGHT
+execution_context_mode: PARENT_OWNING_LAYER_REMEDIATION
+current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
