@@ -59,6 +59,11 @@ def safe_uid(s:str)->str:
     s=re.sub(r'[^A-Za-z0-9]+','-',s).strip('-').upper()
     return s or 'X'
 
+def safe_generated_filename(resp:str, idx:int)->str:
+    banned={'NEW':'CURRENT','FINAL':'TERMINAL','LATEST':'CURRENT','FIXED':'REPAIRED','BACKUP':'ARCHIVE','COPY':'REPLICA','TEMP':'TRANSIENT','OLD':'PREVIOUS'}
+    toks=[banned.get(x,x) for x in safe_uid(resp).split('-') if x]
+    return f"CLS_{idx:03d}_" + "_".join(toks) + ".yaml"
+
 def stable_uid(prefix:str,*parts)->str:
     h=hashlib.sha256('|'.join(map(str,parts)).encode()).hexdigest()[:12].upper()
     return f'{prefix}-{h}'
@@ -219,7 +224,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
         seg_uid=f'SEG-{safe_uid(source_uid)}-{idx:03d}'
         artifact_uid=f'CLS-{PAGE}-{safe_uid(resp)}-{idx:03d}'
         folder='VISUAL' if domain=='VISUAL_CONSTRUCTION' else 'PAGE'
-        filename=safe_uid(resp).replace('-','_')+'.yaml'
+        filename=safe_generated_filename(resp,idx)
         target=f'01_CLASSIFIED/{PAGE}/{folder}/{filename}'
         segments.append({
           'segment_uid':seg_uid,'source_uid':source_uid,'source_node_uid':node_uid,'page_uid':PAGE,
