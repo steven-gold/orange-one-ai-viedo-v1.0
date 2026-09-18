@@ -778,15 +778,10 @@ def main():
     patch_machine()
     patch_lifecycle()
     patch_consumer_scripts()
-    patch_workflow()
     update_source_revision()
     checksum, bundle, zips = refresh_source()
     patch_projectors(checksum, bundle, zips)
     validate()
-    if HELPER.exists():
-        HELPER.unlink()
-    if WORKFLOW.exists():
-        WORKFLOW.unlink()
     run('git', 'diff', '--check')
     print(json.dumps({
         'new_governance_uid': NEW_UID,
