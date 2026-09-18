@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "artifact_uid": "STAGE02-CORE01-DESIGN-REMEDIATION-TEST-EVIDENCE",
+  "artifact_type": "NON_NORMATIVE_STAGE02_DESIGN_REMEDIATION_TEST_EVIDENCE",
+  "layer_classification": "RUN_STATE",
+  "normative_authority": false,
+  "current_governance_uid": "GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING",
+  "source_head_sha": "d6d58e0c8dc4464c95650b6250189b1e10d014a8",
+  "branch": "rebuild-v2.1.1",
+  "work_unit_uid": "WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001",
+  "page_uid": "CORE-01",
+  "user_directive": "KEEP_DESIGN_REMEDIATION_IN_TEMPORARY_TEST_RECORDS_UNTIL_FULL_TEST_CYCLE_COMPLETES_THEN_REVIEW_MOTHER_GOVERNANCE_ONCE",
+  "purpose": "PERSIST_VERIFIABLE_FACTS_FROM_TEMPORARY_CORE01_DESIGN_REMEDIATION_PIPELINE_BEFORE_TEMPORARY_RESIDUAL_CLEANUP",
+  "source_problem_state": {
+    "source_functional_gaps": 45,
+    "gap_classes": {
+      "INPUT_SOURCE_GAP": 16,
+      "ARCHITECTURE_GAP": 29,
+      "AUTHORITY_GAP": 0
+    },
+    "unique_design_units": 25,
+    "product_blocker_reduction_credit": 0,
+    "current_state_promoted": false,
+    "current_product_authority_modified": false,
+    "current_specification_modified": false,
+    "mother_governance_modified": false
+  },
+  "verified_results": {
+    "routing_candidate": "PASS_LOCAL_INPUT_AND_ARCHITECTURE_GAPS_ROUTE_TO_REVIEW_ONLY_DESIGN_REMEDIATION_CANDIDATE",
+    "function_admission_scorecard": "25_DESIGN_UNITS_REVIEW_ONLY",
+    "auto_completion_scope_ledger": "45_BLOCKERS_TO_25_MINIMAL_DESIGN_UNITS_ZERO_SCOPE_EXPANSION",
+    "candidate_blocker_coverage": "45_OF_45_ZERO_DUPLICATE_ZERO_OMISSION",
+    "candidate_validation": "34_OF_34_PASS",
+    "reference_identity": "23_OF_23_OBJECT_REFS_PASS_17_OF_17_OPAQUE_REFS_PASS_ZERO_NEW_ENTITY_RUNTIME_API",
+    "r7_structural_preview": "45_OF_45_BINDING_SHAPES_PASS_EXPECTED_AUTHORITY_BOUNDARY_BLOCK_ZERO_MATERIALIZABLE",
+    "structural_destructive_mutations": "17_OF_17_BLOCKED",
+    "semantic_review": "25_OF_25_PASS_AS_COHERENT_TEMPORARY_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+    "semantic_destructive_mutations": "12_OF_12_BLOCKED",
+    "review_model": "ONE_COHERENT_PACKAGE_REVIEW_SUPPORTED_NOT_45_MANUAL_FIELD_APPROVALS",
+    "formal_full_line_with_temp_residual": "EXPECTED_BLOCK_TEMPORARY_TEST_ARTIFACT_RESIDUAL",
+    "selected_profile_with_temp_residual": "EXPECTED_BLOCK_TEMPORARY_TEST_ARTIFACT_RESIDUAL",
+    "stage02_product_execution_guard": "PASS_PRODUCT_JOBS_SKIPPED"
+  },
+  "defect_candidate": {
+    "class": "GOVERNANCE_EXECUTION_PIPELINE_DESIGN_GAP",
+    "title": "R2_TO_R5_DIRECT_WAIT_PATH_SKIPS_REVIEW_ONLY_DESIGN_REMEDIATION_FOR_LOCAL_INPUT_SOURCE_AND_ARCHITECTURE_GAPS",
+    "reproduced": true,
+    "current_r2_r5_behavior": "NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS_LOCAL_GAPS_ARE_ROUTED_DIRECTLY_TO_AWAIT_SEPARATELY_APPROVED_PRODUCT_AUTHORITY",
+    "tested_successor_behavior": "LOCAL_INPUT_SOURCE_GAP_AND_ARCHITECTURE_GAP_FIRST_MATERIALIZE_NON_NORMATIVE_DESIGN_REMEDIATION_ANALYSIS_AND_COHERENT_CONTRACT_CANDIDATE; TRUE_AUTHORITY_GAP_REMAINS_EXPLICIT_DECISION_ROUTE",
+    "current_policy_change_applied": false,
+    "product_authority_change_applied": false,
+    "recommended_post_test_action": "AFTER_CLEAN_TEMPORARY_AND_FORMAL_FULL_LINE_PASS_RECORD_ONE_SPEC_CHANGE_CANDIDATE_AND_APPLY_ONE_AUTHORIZED_MOTHER_GOVERNANCE_SUCCESSOR_CHANGE"
+  },
+  "temporary_artifact_history": [
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/ROUTING_CANDIDATE.json",
+      "blob_sha": "3eea762fa9b7f59cbc8e46443393158b5fbaabf9",
+      "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-REMEDIATION-ROUTING",
+      "artifact_type": "TEMPORARY_NON_NORMATIVE_DESIGN_REMEDIATION_ROUTING_CANDIDATE",
+      "status": "ACTIVE_TEMPORARY_TEST_HYPOTHESIS",
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/FUNCTION_ADMISSION_SCORECARD.json",
+      "blob_sha": "01cb8f05e27b53a8da57f6138ce6b80600415cad",
+      "artifact_uid": "TEMP-STAGE02-CORE01-FUNCTION-ADMISSION-SCORECARD",
+      "artifact_type": "FUNCTION_ADMISSION_SCORECARD",
+      "status": null,
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/AUTO_COMPLETION_SCOPE_LEDGER.json",
+      "blob_sha": "2f604e984dc2872d03c606d7c60ce05af6bb7ff1",
+      "artifact_uid": "TEMP-STAGE02-CORE01-AUTO-COMPLETION-SCOPE-LEDGER",
+      "artifact_type": "AUTO_COMPLETION_SCOPE_LEDGER",
+      "status": null,
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/CORE01_FUNCTIONAL_CONTRACT_CANDIDATE.json",
+      "blob_sha": "af8daae83fc9d3f4a099170498ecaf0347480081",
+      "artifact_uid": "TEMP-STAGE02-CORE01-FUNCTIONAL-CONTRACT-CANDIDATE",
+      "artifact_type": "TEMPORARY_NON_NORMATIVE_CORE01_FUNCTIONAL_CONTRACT_CANDIDATE",
+      "status": "READY_FOR_TEMPORARY_CANDIDATE_REVALIDATION_AFTER_REFERENCE_NORMALIZATION",
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/CANDIDATE_VALIDATION_RESULT.json",
+      "blob_sha": "7dfbc9d02a693afa54ffa3d6f3db8798bc2b1324",
+      "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-CANDIDATE-VALIDATION-RESULT",
+      "artifact_type": "TEMPORARY_NON_NORMATIVE_DESIGN_CANDIDATE_VALIDATION_RESULT",
+      "status": "PASS_TEMPORARY_CANDIDATE_REVALIDATED_AFTER_REFERENCE_NORMALIZATION",
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/R7_COMPATIBILITY_PREVIEW.json",
+      "blob_sha": "79e4e56bc4a450b485bf7359dab0681ab6f944d0",
+      "artifact_uid": "TEMP-STAGE02-CORE01-R7-COMPATIBILITY-PREVIEW",
+      "artifact_type": "TEMPORARY_NON_NORMATIVE_R7_STRUCTURAL_COMPATIBILITY_PREVIEW",
+      "status": "PASS_STRUCTURAL_PREVIEW_NORMALIZED_CANDIDATE_EXPECTED_AUTHORITY_BOUNDARY_BLOCK",
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/NEGATIVE_MUTATION_TEST_RESULT.json",
+      "blob_sha": "eab5121afa745dd2060f7a72805c7f5db7914e51",
+      "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-CANDIDATE-NEGATIVE-MUTATION-TEST",
+      "artifact_type": "TEMPORARY_NON_NORMATIVE_DESTRUCTIVE_MUTATION_TEST_RESULT",
+      "status": "PASS_17_OF_17_DESTRUCTIVE_MUTATIONS_BLOCKED_AFTER_REFERENCE_NORMALIZATION",
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/DESIGN_DECISION_ANALYSIS.json",
+      "blob_sha": "8cf713887ffdb630928cde8b98e1e46c5854a693",
+      "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-DECISION-ANALYSIS",
+      "artifact_type": "TEMPORARY_NON_NORMATIVE_DESIGN_DECISION_ANALYSIS",
+      "status": "READY_FOR_TEMPORARY_SEMANTIC_REVIEW",
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/REFERENCE_IDENTITY_AUDIT.json",
+      "blob_sha": "34fee3c38973ee43cdb6f5450e793f5e320b346c",
+      "artifact_uid": "TEMP-STAGE02-CORE01-REFERENCE-IDENTITY-AUDIT",
+      "artifact_type": "TEMPORARY_NON_NORMATIVE_REFERENCE_IDENTITY_AUDIT",
+      "status": "PASS_REFERENCE_IDENTITIES_NORMALIZED_NO_NEW_ENTITY_RUNTIME_API",
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/PIPELINE_REPLAY_RESULT.json",
+      "blob_sha": "fb691a4bb145403a199cceed531c87b66b86568b",
+      "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-REMEDIATION-PIPELINE-REPLAY",
+      "artifact_type": "TEMPORARY_NON_NORMATIVE_PIPELINE_REPLAY_RESULT",
+      "status": "PASS_TEMPORARY_DESIGN_REMEDIATION_PIPELINE_REPLAY_COMPLETE_ZERO_PRODUCT_CREDIT",
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/SEMANTIC_REVIEW_RESULT.json",
+      "blob_sha": "110574d03ae2549163c81b3dfea6034135067f31",
+      "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-REMEDIATION-SEMANTIC-REVIEW",
+      "artifact_type": "TEMPORARY_NON_NORMATIVE_DESIGN_CANDIDATE_SEMANTIC_REVIEW_RESULT",
+      "status": "PASS_TEMPORARY_SEMANTIC_REVIEW_25_OF_25_COHERENT_ZERO_AUTHORITY_EFFECT",
+      "normative_authority": false,
+      "test_candidate_only": true
+    },
+    {
+      "path": "governance/test/temporary/stage02/core01_design_remediation/SEMANTIC_NEGATIVE_MUTATION_TEST_RESULT.json",
+      "blob_sha": "2c233f6a6c260609e36a86cd232bd9fd44c42761",
+      "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-REMEDIATION-SEMANTIC-NEGATIVE-MATRIX",
+      "artifact_type": "TEMPORARY_NON_NORMATIVE_SEMANTIC_DESTRUCTIVE_MUTATION_TEST_RESULT",
+      "status": "PASS_12_OF_12_SEMANTIC_DESTRUCTIVE_MUTATIONS_BLOCKED",
+      "normative_authority": false,
+      "test_candidate_only": true
+    }
+  ],
+  "temporary_cleanup_contract": {
+    "temporary_root": "governance/test/temporary/stage02/core01_design_remediation",
+    "delete_after_this_evidence_is_persisted": true,
+    "deletion_does_not_delete_git_history": true,
+    "formal_full_line_required_after_cleanup": true,
+    "selected_profile_required_after_cleanup": true,
+    "exact_head_terminal_results_required": true
+  },
+  "closure_status": "TEST_FACTS_PERSISTED_PENDING_TEMPORARY_CLEANUP_AND_CLEAN_FORMAL_FULL_LINE"
+}
