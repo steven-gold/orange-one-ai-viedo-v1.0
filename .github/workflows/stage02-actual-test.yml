@@ -83,7 +83,7 @@ jobs:
               )
               combined = (cp.stdout or '') + '\n' + (cp.stderr or '')
               assert cp.returncode != 0, 'pending review unexpectedly admitted product execution'
-              assert 'PREEXECUTION_PREFORMAL_REVIEW_NOT_APPROVED' in combined, combined
+              assert 'PREEXECUTION_PREFORMAL_REVIEW_PROJECTION_NOT_APPROVED' in combined, combined
               print('PASS: REV-GOV-001=PENDING blocks in pre-execution admission before Stage-02 actual execution')
           elif status == 'APPROVED':
               print('PASS: source review plan is APPROVED; pending-review negative regression is not applicable')
