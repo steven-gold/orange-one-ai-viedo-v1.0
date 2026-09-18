@@ -15,6 +15,8 @@ on:
       - 'governance/ci/run_current_stage2_actual_test.py'
       - 'governance/ci/validate_stage02_state_integrity.py'
       - 'governance/ci/validate_stage02_successor_integrity.py'
+      - 'governance/ci/build_stage02_core01_design_contract_review_package.py'
+      - 'governance/ci/validate_stage02_core01_design_contract_review_package.py'
   workflow_dispatch:
     inputs:
       mode:
@@ -1581,6 +1583,107 @@ jobs:
           python governance/ci/specification_mutation_guard.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+
+
+  core01-design-contract-review-package:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'build current core01 design contract review package') }}
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 70
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Re-prove Current governance and fail-closed Stage-02 state before review-only package
+        run: |
+          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_canonical_rule_registry.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Build Current CORE-01 review-only Design Contract package
+        run: python governance/ci/build_stage02_core01_design_contract_review_package.py
+      - name: Validate Current CORE-01 review-only Design Contract package
+        run: python governance/ci/validate_stage02_core01_design_contract_review_package.py
+      - name: Prove exact review-only package write-set and Authority safety
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            governance/test/ACTIVE_STATE.yaml
+            governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+            governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+            governance/test/stage02/STAGE02_CORE01_FUNCTION_ADMISSION_SCORECARD.json
+            governance/test/stage02/STAGE02_CORE01_AUTO_COMPLETION_SCOPE_LEDGER.json
+            governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_CANDIDATE.json
+            governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_SEMANTIC_REVIEW.json
+            governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
+          )
+          actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | sort -u)"
+          permitted="$(printf '%s\n' "${files[@]}" | sort -u)"
+          unexpected="$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$permitted"))"
+          test -z "$unexpected" || { printf 'BLOCK: unexpected review-only package delta\n%s\n' "$unexpected" >&2; exit 1; }
+          test "$(printf '%s\n' "$actual" | sed '/^$/d' | wc -l | tr -d ' ')" = '8' || { printf 'BLOCK: review-only package write-set must be exactly 8 files\n%s\n' "$actual" >&2; exit 1; }
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
+      - name: Persist Current review-only Design Contract package as isolated child
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            governance/test/ACTIVE_STATE.yaml
+            governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+            governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+            governance/test/stage02/STAGE02_CORE01_FUNCTION_ADMISSION_SCORECARD.json
+            governance/test/stage02/STAGE02_CORE01_AUTO_COMPLETION_SCOPE_LEDGER.json
+            governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_CANDIDATE.json
+            governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_SEMANTIC_REVIEW.json
+            governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
+          )
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "${files[@]}"
+          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = '8'
+          git commit -m 'test(stage02): persist current core01 design contract review package'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Revalidate persisted review package and complete Full-Line
+        run: |
+          python governance/ci/validate_stage02_core01_design_contract_review_package.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
+      - name: Upload Current review-only package evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage02-core01-current-design-contract-review-package
+          path: |
+            governance/test/stage02/STAGE02_CORE01_FUNCTION_ADMISSION_SCORECARD.json
+            governance/test/stage02/STAGE02_CORE01_AUTO_COMPLETION_SCOPE_LEDGER.json
+            governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_CANDIDATE.json
+            governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_SEMANTIC_REVIEW.json
+            governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
+          if-no-files-found: error
 
   current-authority-request-r5:
     if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'wire current r5 authority request') }}
