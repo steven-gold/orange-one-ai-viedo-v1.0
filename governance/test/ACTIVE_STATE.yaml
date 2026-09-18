@@ -113,7 +113,7 @@ stage02_reset_control:
   next_action_after_mother_review: CORE01_SCOPE_AUTHORIZED_CREATE_FRESH_RECEIPTS_AND_RUN_ACTUAL_TEST
   product_stage_credit: 0
 status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
-next_action: OWNING_LAYER_REMEDIATION_OF_FRESH_FUNCTIONAL_GAPS_AND_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
+next_action: MATERIALIZE_CANONICAL_PREFLIGHT_FOR_CORE01_THEN_RESOLVE_STRUCTURAL_REMEDIATION_WORK_UNIT
 work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-FRESH-TEST-001
   normative_authority: false
@@ -144,7 +144,7 @@ work_unit_resolution_gate:
   - PREEXECUTION_ADMISSION_PASS
   - FULL_LINE_PASS_ON_EXECUTION_HEAD
   product_stage_credit_before_fresh_test: 0
-active_work_unit:
+last_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
   canonical_name: CORE01_FRESH_STAGE02_ACTUAL_TEST
   primary_task_layer: PRODUCT_STAGE_EXECUTION
@@ -158,7 +158,7 @@ active_work_unit:
   - PRODUCT_AUTHORITY_AUTOFILL
   execution_owner: governance/ci/run_current_stage2_actual_test.py
   state_owner: governance/test/ACTIVE_STATE.yaml
-  current_status: PREPARED_FOR_FRESH_EXECUTION
+  current_status: CLOSED_VERIFIED_BLOCKED_RESULT_PERSISTED
   start_condition: FRESH_ENTRY_RECEIPTS_AND_PREEXECUTION_ADMISSION_PASS
   definition_of_done:
   - CORE01_ONLY_FRESH_PHYSICAL_SCAN_EXECUTED
@@ -171,6 +171,25 @@ active_work_unit:
   - CURRENT_STATE_PERSISTED_FROM_FRESH_CORE01_RESULT
   - EXACT_PERSISTED_HEAD_REVALIDATED
   product_stage_credit_before_result: 0
+  closure_evidence:
+    source_execution_head: 0d9cf1462370e859b41d512460cf33c658191255
+    source_workflow_run_id: 35300497511
+    persisted_current_state_commit: bb4640ef23bd1785cda5dfee488ee108ea79a2ca
+    exact_persisted_state_validation_head: 38ded547d9f6050c7cae8dd249521a1eb7ff77ae
+    full_line_run_id: 35300652499
+    full_line_result: success
+    selected_profile_run_id: 35300652521
+    selected_profile_result: success
+    branch_guard_run_id: 35300652492
+    branch_guard_result: success
+    target_pages:
+    - CORE-01
+    remaining_pages:
+    - ASSET-01
+    stage_scope_complete: false
+    fresh_functional_gap_total: 45
+    fresh_closure_blocker_total: 7
+    terminal_disposition: CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED
 closed_work_unit:
   work_unit_uid: WU-GOV-PREEXECUTION-HARDENING-001
   canonical_name: GOVERNANCE_PREEXECUTION_FEASIBILITY_AND_RESIDUAL_HARDENING
@@ -286,13 +305,13 @@ resume_control:
   stage2_execution_requires_fresh_entry_resolution: false
   effectful_stage2_execution_before_entry_resolution: PASS_ENTRY_RESOLVED
   current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
-  current_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
-  current_owner: governance/ci/run_current_stage2_actual_test.py
-  last_closed_work_unit_uid: WU-GOV-PREEXECUTION-HARDENING-001
-  last_closed_work_unit_result: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
-  last_closed_work_unit_full_line_run_id: 35298286640
-  last_closed_work_unit_evidence_head: 48c42c282d9c39ddea02225e7fc2455d230cc408
-  exact_next_action: RUN_CORE01_FRESH_STAGE02_ACTUAL_TEST_WITH_PREEXECUTION_ADMISSION_AND_NO_ASSET01_EXECUTION
+  current_work_unit_uid: null
+  current_owner: null
+  last_closed_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
+  last_closed_work_unit_result: CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED
+  last_closed_work_unit_full_line_run_id: 35300652499
+  last_closed_work_unit_evidence_head: 38ded547d9f6050c7cae8dd249521a1eb7ff77ae
+  exact_next_action: MATERIALIZE_CANONICAL_PREFLIGHT_FOR_CORE01_THEN_RESOLVE_STRUCTURAL_REMEDIATION_WORK_UNIT
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
@@ -331,7 +350,7 @@ pending_governance_review:
   approved_product_test_page_scope:
   - CORE-01
 current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-CORE01-FRESH-STAGE02-TEST
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-CORE01-NEXT-STEP
 current_primary_task_product_stage_credit: 0
 stage02_active_attempt:
   attempt_uid: STAGE02-FRESH-20260918-006
@@ -359,7 +378,7 @@ stage02_active_attempt:
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: false
-  next_action: OWNING_LAYER_REMEDIATION_OF_FRESH_FUNCTIONAL_GAPS_AND_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
+  next_action: MATERIALIZE_CANONICAL_PREFLIGHT_FOR_CORE01_THEN_RESOLVE_STRUCTURAL_REMEDIATION_WORK_UNIT
   governance_status: CURRENT_FROZEN_ATTEMPT_FRESHLY_REVALIDATED_BLOCKED
   closure_credit_under_current_governance: true
   fresh_revalidation_required: false
