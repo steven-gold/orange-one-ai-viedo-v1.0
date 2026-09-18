@@ -17,6 +17,8 @@ jobs:
           fetch-depth: 0
       - name: Enforce explicit authorization before Current Specification mutation
         run: python governance/ci/specification_mutation_guard.py
+      - name: Regression test specification mutation cycle boundary
+        run: python governance/ci/test_specification_mutation_guard_cycle_boundary.py
       - name: Resolve active governance through stable registry
         run: python governance/ci/governance_resolver.py
       - name: Validate canonical rule registry anti-drift binding

@@ -20,6 +20,14 @@ _PREWRITE_TRUE_FIELDS = (
 )
 _PREWRITE_DECISIONS = {"MODIFY_EXISTING_CANONICAL_OWNER", "CREATE_NEW_ONLY_AFTER_NO_EXISTING_OWNER_PROVEN"}
 
+_ALLOWED_MUTATION_BOUNDARIES = {
+    "STAGE_END_CONSOLIDATION_AFTER_TERMINAL_CYCLE",
+    "FATAL_SPEC_CONTRADICTION_AFTER_TERMINAL_BLOCK",
+    "OUTSIDE_GOVERNED_EXECUTION_CYCLE",
+}
+_TERMINAL_WORK_UNIT_TOKENS = ("CLOSED", "BLOCKED", "TERMINATED", "CANCELLED")
+
+
 
 def git(*args, check=True):
     cp = subprocess.run(["git", *args], cwd=ROOT, text=True, capture_output=True)
@@ -180,6 +188,102 @@ def post_write_reconciliation_errors(parent_auth: str) -> list[str]:
     return errors
 
 
+
+def _nonterminal_work_unit(work_unit: dict) -> bool:
+    if not isinstance(work_unit, dict) or not work_unit:
+        return False
+    status = str(work_unit.get("current_status") or work_unit.get("status") or "").upper()
+    if not status:
+        return True
+    return not any(token in status for token in _TERMINAL_WORK_UNIT_TOKENS)
+
+
+def cycle_boundary_errors(receipt_text: str, baseline_state_text: str, parent_state_text: str) -> list[str]:
+    """Enforce the frozen-cycle boundary before any protected policy mutation.
+
+    The pre-authorization baseline must not contain an active non-governance
+    execution Work Unit. The authorization parent must explicitly switch to one
+    governance-maintenance Work Unit. A legal authorization never overrides an
+    active product/test/deployment cycle.
+    """
+    errors: list[str] = []
+    try:
+        baseline = yaml.safe_load(baseline_state_text) or {}
+        parent = yaml.safe_load(parent_state_text) or {}
+    except Exception as exc:
+        return [f"EXECUTION_CYCLE_BOUNDARY_STATE_PARSE_FAILED:{exc}"]
+
+    boundary = scalar(receipt_text, "governance_mutation_boundary")
+    if boundary not in _ALLOWED_MUTATION_BOUNDARIES:
+        errors.append(f"GOVERNANCE_MUTATION_BOUNDARY_INVALID:{boundary or 'MISSING'}")
+
+    baseline_primary = str(baseline.get("current_primary_task_layer") or "")
+    baseline_resume_uid = str((baseline.get("resume_control") or {}).get("current_work_unit_uid") or "")
+    baseline_active = baseline.get("active_work_unit") or {}
+    baseline_suspended = baseline.get("suspended_product_work_unit") or {}
+
+    if (
+        baseline_primary
+        and baseline_primary != "GOVERNANCE_MAINTENANCE"
+        and (baseline_resume_uid or _nonterminal_work_unit(baseline_active))
+    ):
+        errors.append(
+            "PROTECTED_POLICY_MUTATION_DURING_ACTIVE_NON_GOVERNANCE_EXECUTION_CYCLE:"
+            + baseline_primary
+        )
+    if _nonterminal_work_unit(baseline_suspended):
+        errors.append("PROTECTED_POLICY_MUTATION_WITH_SUSPENDED_NONTERMINAL_PRODUCT_WORK_UNIT")
+
+    parent_primary = str(parent.get("current_primary_task_layer") or "")
+    parent_active = parent.get("active_work_unit") or {}
+    parent_active_layer = str(parent_active.get("primary_task_layer") or "")
+    parent_active_uid = str(parent_active.get("work_unit_uid") or "")
+    parent_resume_uid = str((parent.get("resume_control") or {}).get("current_work_unit_uid") or "")
+    if parent_primary != "GOVERNANCE_MAINTENANCE":
+        errors.append(f"PARENT_PRIMARY_TASK_LAYER_NOT_GOVERNANCE_MAINTENANCE:{parent_primary or 'MISSING'}")
+    if parent_active_layer != "GOVERNANCE_MAINTENANCE" or not parent_active_uid:
+        errors.append("PARENT_ACTIVE_GOVERNANCE_MAINTENANCE_WORK_UNIT_MISSING")
+    if parent_active_uid and parent_resume_uid != parent_active_uid:
+        errors.append(
+            f"PARENT_GOVERNANCE_WORK_UNIT_RESUME_DRIFT:active={parent_active_uid}:resume={parent_resume_uid or 'MISSING'}"
+        )
+
+    if boundary in {
+        "STAGE_END_CONSOLIDATION_AFTER_TERMINAL_CYCLE",
+        "FATAL_SPEC_CONTRADICTION_AFTER_TERMINAL_BLOCK",
+    }:
+        if scalar(receipt_text, "predecessor_execution_cycle_terminal") != "true":
+            errors.append("PREDECESSOR_EXECUTION_CYCLE_TERMINAL_NOT_PROVEN")
+        disposition = str(scalar(receipt_text, "predecessor_execution_cycle_terminal_disposition") or "").upper()
+        if not disposition:
+            errors.append("PREDECESSOR_EXECUTION_CYCLE_TERMINAL_DISPOSITION_MISSING")
+        if not scalar(receipt_text, "predecessor_execution_cycle_evidence_ref"):
+            errors.append("PREDECESSOR_EXECUTION_CYCLE_EVIDENCE_REF_MISSING")
+        if boundary == "STAGE_END_CONSOLIDATION_AFTER_TERMINAL_CYCLE":
+            if disposition and not any(token in disposition for token in ("CLOSED", "TERMINATED", "STAGE_END")):
+                errors.append("STAGE_END_BOUNDARY_WITHOUT_TERMINAL_CLOSED_DISPOSITION")
+        else:
+            if scalar(receipt_text, "fatal_specification_contradiction_proven") != "true":
+                errors.append("FATAL_SPECIFICATION_CONTRADICTION_NOT_PROVEN")
+            if disposition and not any(token in disposition for token in ("BLOCKED", "TERMINATED")):
+                errors.append("FATAL_SPEC_BOUNDARY_WITHOUT_BLOCKED_OR_TERMINATED_DISPOSITION")
+
+    return errors
+
+
+def execution_cycle_boundary_errors(parent_auth: str) -> list[str]:
+    baseline = scalar(parent_auth, "baseline_commit_sha")
+    if not baseline:
+        return ["EXECUTION_CYCLE_BOUNDARY_BASELINE_MISSING"]
+    baseline_state = git("show", f"{baseline}:governance/test/ACTIVE_STATE.yaml", check=False)
+    parent_state = git("show", "HEAD^:governance/test/ACTIVE_STATE.yaml", check=False)
+    if not baseline_state:
+        return ["EXECUTION_CYCLE_BOUNDARY_BASELINE_STATE_MISSING"]
+    if not parent_state:
+        return ["EXECUTION_CYCLE_BOUNDARY_PARENT_STATE_MISSING"]
+    return cycle_boundary_errors(parent_auth, baseline_state, parent_state)
+
+
 def main():
     if not (ROOT / ".git").exists():
         print("BLOCK: SPEC_MUTATION_GUARD_REQUIRES_GIT_CHECKOUT", file=sys.stderr)
@@ -228,7 +332,7 @@ def main():
             print("MISSING:", token, file=sys.stderr)
         return 1
 
-    errors = prewrite_context_errors(parent_auth) + verify_receipt_identity_lock(parent_auth)
+    errors = prewrite_context_errors(parent_auth) + verify_receipt_identity_lock(parent_auth) + execution_cycle_boundary_errors(parent_auth)
     if errors:
         print("BLOCK: authorization receipt / execution context lock invalid", file=sys.stderr)
         for error in errors:
@@ -263,6 +367,7 @@ def main():
     print(f"PASS: protected governance mutation authorized by pre-existing explicit user directive {auth_uid}")
     print("PASS: execution context identity lock matches pre-authorization parent commit/tree and parent governance UID")
     print("PASS: pre-write context verification proves read/owner/duplicate/conflict/second-system/gap checks")
+    print("PASS: protected policy mutation occurs only outside an active non-governance execution cycle and under an explicit governance-maintenance boundary")
     print("PASS: post-write Current UID/projector/consumer reconciliation is part of the same promotion transaction")
     print("PASS: content-semantic residual cleanup is machine-gated; count-only closure is rejected")
     print(f"PASS: authorization scope trailer={scope}")

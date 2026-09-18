@@ -37,6 +37,8 @@ jobs:
         run: python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
       - name: Enforce Current Specification mutation authorization
         run: python governance/ci/specification_mutation_guard.py
+      - name: Regression test specification mutation cycle boundary
+        run: python governance/ci/test_specification_mutation_guard_cycle_boundary.py
       - name: Resolve stable Current governance registry
         run: python governance/ci/governance_resolver.py
       - name: Validate canonical rule registry anti-drift binding
