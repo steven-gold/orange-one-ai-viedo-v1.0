@@ -1,0 +1,455 @@
+artifact_uid: CLS-CORE-01-REGISTRIES-ACTIONS-020
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_ACTIONS
+responsibility_class: REGISTRIES_ACTIONS
+responsibilities:
+- REGISTRIES_ACTIONS
+canonical_owner_uid: OWNER-CLS-CORE-01-REGISTRIES-ACTIONS-020
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_020_REGISTRIES_ACTIONS.yaml
+lifecycle_uid: LC-REGISTRIES-ACTIONS
+approval_scope_uid: AP-REGISTRIES-ACTIONS
+version_scope_uid: VER-REGISTRIES-ACTIONS
+test_scope_uid: TEST-REGISTRIES-ACTIONS
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-020
+facts:
+- source_ref: $.registries.actions
+  value:
+  - action_uid: CORE-01-ACT-PROJECT-SELECT
+    label: Select Project
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-PAGE
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Resolve exact Project projection; clear Topic/work item/thread dependent state
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: CORE context reset
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-PROJECT-CREATE
+    label: Create Project Draft
+    permission_uid: CORE_PROJECT_WRITE
+    gate_uid: CORE-01-GATE-PROJECT-DRAFT
+    effect_type: PROJECT_MUTATION
+    owner: CORE-01
+    success_contract: createProjectDraft returns exact ProjectDraftVersion ref
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Project draft created
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-PROJECT-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-TOPIC-SELECT
+    label: Select Topic
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Load exact Topic under current Project; switch to TOPIC_PRODUCTION mode
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Topic context loaded
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-TOPIC-CREATE
+    label: Create Topic
+    permission_uid: CORE_TOPIC_WRITE
+    gate_uid: CORE-01-GATE-TOPIC-CREATE
+    effect_type: TOPIC_MUTATION
+    owner: CORE-01
+    success_contract: createTopic only from valid Project/Topic lineage; returns exact Topic ref
+    error_uid: CORE-01-ERR-TOPIC-LINEAGE-001
+    state_effect: Topic created
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-TOPIC-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-WORK-ITEM-SELECT
+    label: Select Work Item
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-WORK-ITEM
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Load only current-mode work item and its threads
+    error_uid: CORE-01-ERR-WORK-ITEM-001
+    state_effect: Work item context loaded
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-THREAD-CREATE
+    label: New Conversation Thread
+    permission_uid: CORE_CONVERSATION
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONVERSATION_WRITE
+    owner: CORE-01
+    success_contract: Create thread bound to current Project/Topic/work item
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: New thread current
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-THREAD-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-THREAD-SELECT
+    label: Select Thread
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Load exact matching thread history
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Thread current
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-AI-MODE-SINGLE
+    label: Single AI
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-WORK-ITEM
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Set conversation presentation to Single AI; routing remains system-owned
+    error_uid: CORE-01-ERR-AI-ROUTE-001
+    state_effect: AI mode=SINGLE
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-AI-MODE-MULTI
+    label: Multi AI
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-MULTI-AI
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Set Multi AI presentation using system AssignedAISetRef
+    error_uid: CORE-01-ERR-AI-ROUTE-001
+    state_effect: AI mode=MULTI
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-ASSISTANT-RECORD
+    label: Open Assistant Record
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-PAGE
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Open in-page overlay/drawer with recorded summaries/structured decisions
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Overlay open
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-MSG-QUOTE
+    label: 引用此訊息
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Insert quoted message ref into composer
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Composer ref updated
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-MSG-CONTINUE
+    label: 繼續討論此主題
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Focus composer with current thread topic context
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Composer focused
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-MSG-ANALYZE
+    label: 分析此內容
+    permission_uid: CORE_CONVERSATION
+    gate_uid: CORE-01-GATE-MESSAGE
+    effect_type: CONVERSATION_WRITE
+    owner: CORE-01
+    success_contract: Send analysis instruction referencing exact message id
+    error_uid: CORE-01-ERR-CONVERSATION-001
+    state_effect: New analysis response request
+    runtime_binding:
+      binding_kind: PORT_WITH_PAYLOAD_MODE
+      port_uid: CORE-01-PORT-MESSAGE-SEND
+      payload_rule: Use CORE-01-PORT-MESSAGE-SEND; exact conversation_id + source_message_id + analysis instruction; provider/model remains shared Router-resolved.
+      decision: SOURCE_DERIVED_CLOSURE
+  - action_uid: CORE-01-ACT-MSG-DECISION
+    label: 加入決策清單
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Add exact message ref to current Human Decision evidence draft
+    error_uid: CORE-01-ERR-DECISION-001
+    state_effect: Decision evidence updated
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-MSG-BRANCH
+    label: 建立分支討論
+    permission_uid: CORE_CONVERSATION
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONVERSATION_WRITE
+    owner: CORE-01
+    success_contract: Create branch thread under current work item; NOT a production Topic
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Branch thread created
+    runtime_binding:
+      binding_kind: PORT_WITH_RELATION_PAYLOAD
+      port_uid: CORE-01-PORT-THREAD-CREATE
+      payload_rule: Use CORE-01-PORT-THREAD-CREATE with exact parent_thread/work_item/source_message branch relation; branch is conversation thread, NOT production Topic.
+      decision: SOURCE_DERIVED_CLOSURE
+  - action_uid: CORE-01-ACT-MSG-COPY
+    label: 複製此訊息
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: UI_ONLY
+    owner: CORE-01
+    success_contract: Copy visible message text locally
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Clipboard only
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-SEND
+    label: Send Message
+    permission_uid: CORE_CONVERSATION
+    gate_uid: CORE-01-GATE-MESSAGE
+    effect_type: CONVERSATION_WRITE
+    owner: CORE-01
+    success_contract: sendConversationMessage; provider/model resolved by ACPOS shared Router
+    error_uid: CORE-01-ERR-CONVERSATION-001
+    state_effect: Conversation responding
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-MESSAGE-SEND
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    label: Create Candidate
+    permission_uid: CORE_CANDIDATE_CREATE
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+    effect_type: CANDIDATE_CREATE
+    owner: CORE-01
+    success_contract: Create immutable candidate from confirmed structured human decision
+    error_uid: CORE-01-ERR-CANDIDATE-001
+    state_effect: Candidate ready
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CANDIDATE-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CANDIDATE-ACCEPT
+    label: Confirm Candidate
+    permission_uid: CORE_CANDIDATE_DECIDE
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    effect_type: CANDIDATE_DECISION
+    owner: CORE-01
+    success_contract: Record ACCEPTED candidate decision with reason/evidence
+    error_uid: CORE-01-ERR-DECISION-001
+    state_effect: Candidate accepted
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CANDIDATE-DECIDE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CANDIDATE-RETURN
+    label: Return to Modify
+    permission_uid: CORE_CANDIDATE_DECIDE
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    effect_type: CANDIDATE_DECISION
+    owner: CORE-01
+    success_contract: Record revision/reject decision; preserve candidate and return discussion
+    error_uid: CORE-01-ERR-DECISION-001
+    state_effect: Return conversation; new candidate required later
+    runtime_binding:
+      binding_kind: PORT_WITH_DECISION_VALUE
+      port_uid: CORE-01-PORT-CANDIDATE-DECIDE
+      payload_rule: Use CORE-01-PORT-CANDIDATE-DECIDE with RETURN/return-to-modify decision; do not create a second candidate endpoint.
+      decision: SOURCE_DERIVED_CLOSURE
+  - action_uid: CORE-01-ACT-CANDIDATE-COMPARE
+    label: Compare Candidates
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    effect_type: READ_ONLY
+    owner: CORE-01
+    success_contract: Read comparison only; no version mutation
+    error_uid: CORE-01-ERR-CANDIDATE-001
+    state_effect: Compare overlay/read model
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CANDIDATE-COMPARE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-PROJECT-VALIDATE
+    label: Validate Project Draft
+    permission_uid: CORE_PROJECT_WRITE
+    gate_uid: CORE-01-GATE-PROJECT-DRAFT
+    effect_type: PROJECT_MUTATION
+    owner: CORE-01
+    success_contract: validateProjectDraft completes without inventing fields
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Project draft validation refreshed
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-PROJECT-VALIDATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-PROJECT-CONFIRM
+    label: Confirm Project Draft
+    permission_uid: CORE_PROJECT_CONFIRM
+    gate_uid: CORE-01-GATE-PROJECT-CONFIRM
+    effect_type: PROJECT_MUTATION
+    owner: CORE-01
+    success_contract: confirmProjectDraft uses exact adopt refs/version; event timing follows runtime authority
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Project enters core modeling
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-PROJECT-CONFIRM
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-STORY-CANDIDATE
+    label: Generate Story Candidate Set
+    permission_uid: CORE_STORY_WRITE
+    gate_uid: CORE-01-GATE-STORY
+    effect_type: CANDIDATE_CREATE
+    owner: CORE-01
+    success_contract: createStoryCandidateSet for current Project only
+    error_uid: CORE-01-ERR-CANDIDATE-001
+    state_effect: Story candidate set created
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-STORY-CANDIDATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+    label: Request DNA Lock
+    permission_uid: CORE_DNA_LOCK
+    gate_uid: CORE-01-GATE-DNA-LOCK
+    effect_type: DNA_LOCK_REQUEST
+    owner: CORE-01
+    success_contract: requestDNALock creates review request only
+    error_uid: CORE-01-ERR-DNA-LOCK-001
+    state_effect: DNA review pending
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-DNA-LOCK
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+    label: Submit Project Core Review
+    permission_uid: CORE_PROJECT_WRITE
+    gate_uid: CORE-01-GATE-CORE-REVIEW
+    effect_type: PROJECT_MUTATION
+    owner: CORE-01
+    success_contract: submitCoreReview with exact ProjectVersion
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Project core review pending
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CORE-REVIEW
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+    label: Request Project Lock
+    permission_uid: CORE_LOCK_REQUEST
+    gate_uid: CORE-01-GATE-PROJECT-LOCK-READY
+    effect_type: LOCK_REQUEST
+    owner: CORE-01
+    success_contract: requestMotherLock only when review contract resolvable
+    error_uid: CORE-01-ERR-LOCK-CONTRACT-001
+    state_effect: Mother lock review pending
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-MOTHER-LOCK
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-BLUEPRINT-CREATE
+    label: Create Blueprint
+    permission_uid: CORE_BLUEPRINT_WRITE
+    gate_uid: CORE-01-GATE-BLUEPRINT-CREATE
+    effect_type: BLUEPRINT_MUTATION
+    owner: CORE-01
+    success_contract: createBlueprint returns exact BlueprintVersion ref
+    error_uid: CORE-01-ERR-BLUEPRINT-001
+    state_effect: Blueprint draft created
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-BLUEPRINT-CREATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+    label: Validate Blueprint
+    permission_uid: CORE_BLUEPRINT_REVIEW
+    gate_uid: CORE-01-GATE-BLUEPRINT-VALIDATE
+    effect_type: BLUEPRINT_MUTATION
+    owner: CORE-01
+    success_contract: validateBlueprint transitions exact version to review
+    error_uid: CORE-01-ERR-BLUEPRINT-001
+    state_effect: Blueprint review
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-BLUEPRINT-VALIDATE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-BLUEPRINT-APPROVE
+    label: Approve Blueprint
+    permission_uid: CORE_BLUEPRINT_APPROVE
+    gate_uid: CORE-01-GATE-BLUEPRINT-APPROVE
+    effect_type: BLUEPRINT_MUTATION
+    owner: CORE-01
+    success_contract: approveBlueprint transitions exact version to child-review readiness
+    error_uid: CORE-01-ERR-BLUEPRINT-001
+    state_effect: Blueprint child-review ready
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-BLUEPRINT-APPROVE
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+    label: Request Child Lock
+    permission_uid: CORE_LOCK_REQUEST
+    gate_uid: CORE-01-GATE-CHILD-LOCK
+    effect_type: LOCK_REQUEST
+    owner: CORE-01
+    success_contract: requestChildLock review request only; no fabricated evidence/reviewer
+    error_uid: CORE-01-ERR-LOCK-CONTRACT-001
+    state_effect: Child lock review pending
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CHILD-LOCK
+      decision: SOURCE_DERIVED
+  - action_uid: CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+    label: View Canonical Production Script
+    permission_uid: CORE_SCRIPT_READ
+    gate_uid: CORE-01-GATE-CANONICAL-SCRIPT
+    effect_type: READ_ONLY
+    owner: CORE-01
+    success_contract: getCanonicalScript exact Topic canonical script projection including exact Project/Blueprint/TopicScope/source-candidate lineage
+    error_uid: CORE-01-ERR-CONTEXT-001
+    state_effect: Read-only script view
+    runtime_binding:
+      binding_kind: SOURCE_INTEGRATION_PORT
+      port_uid: CORE-01-PORT-CANONICAL-SCRIPT
+      decision: SOURCE_DERIVED
+    source_contract_ref: CORE-01-CONTRACT-TOPIC-CANONICAL-PRODUCTION-SCRIPT
+  - action_uid: CORE-01-ACT-ATTACHMENT
+    label: Attach File Reference
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Open global attachment/reference boundary and append returned attachment_ref to composer; CORE owns no upload backend
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Composer attachment_refs updated
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+  - action_uid: CORE-01-ACT-REFERENCE-ATTACH
+    label: Attach Data / Reference
+    permission_uid: CORE_USE
+    gate_uid: CORE-01-GATE-THREAD
+    effect_type: CONTEXT_STATE
+    owner: CORE-01
+    success_contract: Open allowed reference selector and append exact reference ref to composer
+    error_uid: CORE-01-ERR-THREAD-001
+    state_effect: Composer reference refs updated
+    runtime_binding:
+      binding_kind: CLIENT_STATE_OR_VIEW_NO_API_REQUIRED
+      api_required: false
+status: CURRENT_CLASSIFICATION
+content_hash: fef8356836dc500326683a12ecbe92e4342790b67658f886ccc9675440ace5e0

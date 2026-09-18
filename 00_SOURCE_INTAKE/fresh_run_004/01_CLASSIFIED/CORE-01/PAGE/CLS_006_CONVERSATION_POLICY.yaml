@@ -1,0 +1,35 @@
+artifact_uid: CLS-CORE-01-CONVERSATION-POLICY-006
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: CONVERSATION_POLICY
+responsibility_class: CONVERSATION_POLICY
+responsibilities:
+- CONVERSATION_POLICY
+canonical_owner_uid: OWNER-CLS-CORE-01-CONVERSATION-POLICY-006
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_006_CONVERSATION_POLICY.yaml
+lifecycle_uid: LC-CONVERSATION-POLICY
+approval_scope_uid: AP-CONVERSATION-POLICY
+version_scope_uid: VER-CONVERSATION-POLICY
+test_scope_uid: TEST-CONVERSATION-POLICY
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-006
+facts:
+- source_ref: $.conversation_policy
+  value:
+    single_multi_same_context: true
+    assistant_is_third_mode: false
+    provider_model_picker: FORBIDDEN
+    assigned_ai_set: Resolved by ACPOS shared AI Router/Capability Assignment; page read-only
+    right_click_message_actions:
+    - 引用此訊息
+    - 繼續討論此主題
+    - 分析此內容
+    - 加入決策清單
+    - 建立分支討論
+    - 複製此訊息
+    hover_message_toolbar: FORBIDDEN
+    branch_discussion_is_production_topic: false
+status: CURRENT_CLASSIFICATION
+content_hash: 1abbc213fd9f9494842bc7960fa5a2b86e5c1cb91769b7297afbc7b4540a423d

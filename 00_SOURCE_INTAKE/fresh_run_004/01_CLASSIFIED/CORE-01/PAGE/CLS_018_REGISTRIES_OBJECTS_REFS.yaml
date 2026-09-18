@@ -1,0 +1,114 @@
+artifact_uid: CLS-CORE-01-REGISTRIES-OBJECTS-REFS-018
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_OBJECTS_REFS
+responsibility_class: REGISTRIES_OBJECTS_REFS
+responsibilities:
+- REGISTRIES_OBJECTS_REFS
+canonical_owner_uid: OWNER-CLS-CORE-01-REGISTRIES-OBJECTS-REFS-018
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_018_REGISTRIES_OBJECTS_REFS.yaml
+lifecycle_uid: LC-REGISTRIES-OBJECTS-REFS
+approval_scope_uid: AP-REGISTRIES-OBJECTS-REFS
+version_scope_uid: VER-REGISTRIES-OBJECTS-REFS
+test_scope_uid: TEST-REGISTRIES-OBJECTS-REFS
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-018
+facts:
+- source_ref: $.registries.objects_refs
+  value:
+  - object_uid: CORE-01-REF-PROJECT
+    entity: ProjectRef
+    owner: ACPOS Project
+    required_content: exact project id/version/status/source hash
+  - object_uid: CORE-01-REF-TOPIC
+    entity: TopicRef
+    owner: ACPOS Topic
+    required_content: exact topic id/version/project lineage/contract refs
+  - object_uid: CORE-01-OBJ-THREAD
+    entity: ConversationThread
+    owner: AI Conversation Core
+    required_content: project/topic/work_item/thread id + history scope
+  - object_uid: CORE-01-OBJ-MESSAGE
+    entity: ConversationMessage
+    owner: AI Conversation Core
+    required_content: message id/type/thread/source refs/version
+  - object_uid: CORE-01-OBJ-CONTEXT
+    entity: RelevantContextPackage
+    owner: Context Resolver
+    required_content: confirmed relevant refs only; no wrong version
+  - object_uid: CORE-01-REF-AI-SET
+    entity: AssignedAISetRef
+    owner: ACPOS AI Router
+    required_content: capability-resolved AI/provider assignment snapshot; read-only
+  - object_uid: CORE-01-OBJ-SUMMARY
+    entity: AssistantSummary
+    owner: AI Assistant
+    required_content: source response ids + summary + context hash
+  - object_uid: CORE-01-OBJ-EVALUATION
+    entity: CoreEvaluation
+    owner: CORE Evaluation
+    required_content: criteria version + dimensions from authority + evidence + hard blocks + result
+  - object_uid: CORE-01-OBJ-HUMAN-DECISION
+    entity: HumanDecision
+    owner: Human
+    required_content: target ref + decision + reason + evidence refs
+  - object_uid: CORE-01-OBJ-STRUCTURED-DECISION
+    entity: StructuredDecision
+    owner: AI Assistant
+    required_content: structured restatement of human decision; cannot self-approve
+  - object_uid: CORE-01-OBJ-CANDIDATE
+    entity: CandidateVersion
+    owner: Candidate Service
+    required_content: immutable candidate + parent/source refs + version lineage
+  - object_uid: CORE-01-OBJ-PROJECT-DRAFT
+    entity: ProjectDraftVersion
+    owner: Project Service
+    required_content: registered create/validate/confirm Project draft fields
+  - object_uid: CORE-01-OBJ-STORY-CANDIDATE-SET
+    entity: StoryCandidateSet
+    owner: CORE Story
+    required_content: project ref + candidates + preserve canon refs
+  - object_uid: CORE-01-REF-CANON
+    entity: ProjectCanonComponentRef
+    owner: CORE
+    required_content: type=Story/Chapter/World; exact confirmed version/hash
+  - object_uid: CORE-01-REF-DNA
+    entity: DNAVersionRef
+    owner: CORE DNA
+    required_content: exact candidate/confirmed DNA version/hash/lock status
+  - object_uid: CORE-01-REF-BLUEPRINT
+    entity: BlueprintVersionRef
+    owner: CORE Blueprint
+    required_content: exact topic/project lineage + blueprint version/hash/state
+  - object_uid: CORE-01-OBJ-TOPIC-SCOPE
+    entity: TopicProductionScope
+    owner: CORE Topic
+    required_content: scope/boundary/bridge/product type/delivery unit refs from valid contract lineage
+  - object_uid: CORE-01-REF-CANONICAL-SCRIPT
+    entity: CanonicalProductionScriptRef
+    owner: CORE Script System
+    required_content: topic canonical production script exact version/hash; provider-neutral
+    authoring_contract_ref: CORE-01-CONTRACT-TOPIC-CANONICAL-PRODUCTION-SCRIPT
+    binding_rule: Exact Topic + Project Blueprint + Topic Production Scope + source candidate lineage; formalized only after existing human candidate decision.
+  - object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE
+    entity: TopicProductionPackage
+    owner: CORE Orchestration Boundary
+    required_content: project lock + blueprint child lock + topic scope + canonical script + DNA refs + naming authority ref
+    canonical_script_binding_rule: Package must reference the exact confirmed CanonicalProductionScriptRef/version/hash for the Topic. Department script views remain department-owned
+      and consume this exact source.
+  - object_uid: CORE-01-REF-NAMING
+    entity: ACPOSNamingAuthorityRef
+    owner: ACPOS_SYSTEM
+    required_content: global naming policy/version ref only; no filename formula in CORE
+  - object_uid: CORE-01-OBJ-DOWNSTREAM-READINESS
+    entity: DownstreamProjectionReadiness
+    owner: ACPOS Orchestration
+    required_content: read-only ASSET/VIDEO/EDIT boundary status + required refs; no downstream internals
+  - object_uid: CORE-01-OBJ-LOCK-REVIEW
+    entity: LockReviewRef
+    owner: VersionLockService boundary
+    required_content: target ref/hash + review status + resolvable evidence/reviewer path; unresolved contract remains blocker
+status: CURRENT_CLASSIFICATION
+content_hash: 4df697d265f23e31a2783eb99bd70f79aa575d6ee07eacfcf4e2b2d1a4776e19

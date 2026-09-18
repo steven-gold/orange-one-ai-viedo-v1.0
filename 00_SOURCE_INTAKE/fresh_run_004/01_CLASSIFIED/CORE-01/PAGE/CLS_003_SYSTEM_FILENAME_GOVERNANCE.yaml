@@ -1,0 +1,40 @@
+artifact_uid: CLS-CORE-01-SYSTEM-FILENAME-GOVERNANCE-003
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: SYSTEM_FILENAME_GOVERNANCE
+responsibility_class: SYSTEM_FILENAME_GOVERNANCE
+responsibilities:
+- SYSTEM_FILENAME_GOVERNANCE
+canonical_owner_uid: OWNER-CLS-CORE-01-SYSTEM-FILENAME-GOVERNANCE-003
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_003_SYSTEM_FILENAME_GOVERNANCE.yaml
+lifecycle_uid: LC-SYSTEM-FILENAME-GOVERNANCE
+approval_scope_uid: AP-SYSTEM-FILENAME-GOVERNANCE
+version_scope_uid: VER-SYSTEM-FILENAME-GOVERNANCE
+test_scope_uid: TEST-SYSTEM-FILENAME-GOVERNANCE
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-003
+facts:
+- source_ref: $.system_filename_governance
+  value:
+    authority: ACPOS_SYSTEM
+    level: GLOBAL_SYSTEM_HIGHEST_RULE
+    core_page_behavior: READ_ONLY_REFERENCE_ONLY
+    core_supplies:
+    - project_id / project_version_ref
+    - topic_id / topic_version_ref
+    - blueprint_version_ref
+    - dna_refs
+    - canonical_script_ref
+    - production_package_ref
+    forbidden:
+    - CORE-local filename formula
+    - manual filename input
+    - manual rename
+    - filename parsing as business authority
+    - department-local naming override
+    rule: Canonical filename / artifact identity / version / checksum naming governance belongs to ACPOS_SYSTEM. CORE only supplies upstream source identity refs; downstream departments
+      consume exact IDs/versions and system-issued canonical filenames.
+status: CURRENT_CLASSIFICATION
+content_hash: 1ae3d1a995b3fe10fcd40221f8dc2a602efa082c861a7e6c3898916a1892b555

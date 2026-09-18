@@ -1,0 +1,47 @@
+artifact_uid: CLS-CORE-01-REGISTRIES-STAGE-TRANSITIONS-017
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_STAGE_TRANSITIONS
+responsibility_class: REGISTRIES_STAGE_TRANSITIONS
+responsibilities:
+- REGISTRIES_STAGE_TRANSITIONS
+canonical_owner_uid: OWNER-CLS-CORE-01-REGISTRIES-STAGE-TRANSITIONS-017
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_017_REGISTRIES_STAGE_TRANSITIONS.yaml
+lifecycle_uid: LC-REGISTRIES-STAGE-TRANSITIONS
+approval_scope_uid: AP-REGISTRIES-STAGE-TRANSITIONS
+version_scope_uid: VER-REGISTRIES-STAGE-TRANSITIONS
+test_scope_uid: TEST-REGISTRIES-STAGE-TRANSITIONS
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-017
+facts:
+- source_ref: $.registries.stage_transitions
+  value:
+  - transition_uid: CORE-01-STTR-01
+    from_stage: CORE-01-STAGE-01-CONTEXT
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    gate_uid: CORE-01-GATE-WORK-ITEM
+  - transition_uid: CORE-01-STTR-02
+    from_stage: CORE-01-STAGE-02-CONVERSE
+    to_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    trigger_event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    gate_uid: CORE-01-GATE-SUMMARY
+  - transition_uid: CORE-01-STTR-03
+    from_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    to_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    trigger_event_uid: CORE-01-EVT-EVALUATION-READY
+    gate_uid: CORE-01-GATE-EVALUATION
+  - transition_uid: CORE-01-STTR-04
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-HUMAN-DECISION
+  - transition_uid: CORE-01-STTR-05
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-05-CANDIDATE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+status: CURRENT_CLASSIFICATION
+content_hash: 706a2e019e5399d30cc8a0d360338f5e1060fa99ce7d9b74b3fcf8c1c663447a

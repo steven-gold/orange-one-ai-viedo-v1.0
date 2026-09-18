@@ -1,0 +1,457 @@
+schema_version: 1
+artifact_type: FUNCTION_ADMISSION_SCORECARD
+stage_uid: STAGE-02
+page_uid: CORE-01
+fresh_gap_count: 45
+rows:
+- gap_uid: PROBLEM-02BEC4084559
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-PROJECT-CREATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-CA6F7F42F602
+  source_gap:
+    category: AUDIT_EVENT_NODE_MISSING
+    class: ARCHITECTURE_GAP
+    detail: registered port has no explicit audit/event UID in state_event
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-PROJECT-CREATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-F6F93559AA41
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-TOPIC-CREATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-CD2F1402A282
+  source_gap:
+    category: AUDIT_EVENT_NODE_MISSING
+    class: ARCHITECTURE_GAP
+    detail: registered port has no explicit audit/event UID in state_event
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-TOPIC-CREATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-B4E059B38A41
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-THREAD-CREATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-1CC2B01E6BE1
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-SEND
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-035D3F5E8B0D
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-CANDIDATE-CREATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-D8B30D29E9A4
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-CANDIDATE-ACCEPT
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-B7C0892A6ABA
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-PROJECT-VALIDATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-08D8A7A19E50
+  source_gap:
+    category: AUDIT_EVENT_NODE_MISSING
+    class: ARCHITECTURE_GAP
+    detail: registered port has no explicit audit/event UID in state_event
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-PROJECT-VALIDATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-17C53F808D43
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-PROJECT-CONFIRM
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-5D4526F39F33
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-STORY-CANDIDATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-8FEDA9600516
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-DNA-LOCK-REQUEST
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-DC60937A0AF9
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-213AB99A76A8
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-46E77C2E8924
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-BLUEPRINT-CREATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-C37211ECC4F6
+  source_gap:
+    category: AUDIT_EVENT_NODE_MISSING
+    class: ARCHITECTURE_GAP
+    detail: registered port has no explicit audit/event UID in state_event
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-BLUEPRINT-CREATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-131FD784DC07
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-2CB609FDC403
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-BLUEPRINT-APPROVE
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-C2724738F2B3
+  source_gap:
+    category: PAYLOAD_INPUT_CONTRACT_MISSING
+    class: INPUT_SOURCE_GAP
+    detail: no explicit payload/input contract or schema
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-0C1E7A6BA973
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: mutation_owner
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-01
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-CBA968902A72
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: failure_state
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-01
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-D758C764B47D
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: recovery
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-01
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-C3A32FFD34F4
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: audit_event_uid
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-01
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-E79437E65EA3
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: illegal_transition_tests
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-01
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-B1A727256D13
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: mutation_owner
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-02
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-6DC574065CBA
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: failure_state
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-02
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-41FF3E817EFC
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: recovery
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-02
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-6236EE590264
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: audit_event_uid
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-02
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-058E644B1D65
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: illegal_transition_tests
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-02
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-5EF88CAF9FEC
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: mutation_owner
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-03
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-6459E9690481
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: failure_state
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-03
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-D03C3CA14F5C
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: recovery
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-03
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-DA8392DE3257
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: audit_event_uid
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-03
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-0BAF4D913E72
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: illegal_transition_tests
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-03
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-E9FA2EBE131F
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: mutation_owner
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-04
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-ADF0AD7683B7
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: failure_state
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-04
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-992DCCF0698B
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: recovery
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-04
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-359F9E722361
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: audit_event_uid
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-04
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-415C547E404D
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: illegal_transition_tests
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-04
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-255959C8E45C
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: mutation_owner
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-05
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-371671C96208
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: failure_state
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-05
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-C81A08B1A0F9
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: recovery
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-05
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-196FF800EC50
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: audit_event_uid
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-05
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+- gap_uid: PROBLEM-895781C1CD10
+  source_gap:
+    category: STATE_TRANSITION_LEDGER_FIELD_MISSING
+    class: ARCHITECTURE_GAP
+    detail: illegal_transition_tests
+    gap_owner: PAGE_FUNCTIONAL_CONTRACT
+    page_uid: CORE-01
+    uid: CORE-01-STTR-05
+  admission: REQUIRED
+  route: DESIGN_CONTRACT_REMEDIATION
+product_blocker_credit: 0

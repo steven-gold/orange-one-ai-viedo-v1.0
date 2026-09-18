@@ -1,0 +1,36 @@
+artifact_uid: CLS-CORE-01-REGISTRIES-EVENTS-016
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_EVENTS
+responsibility_class: REGISTRIES_EVENTS
+responsibilities:
+- REGISTRIES_EVENTS
+canonical_owner_uid: OWNER-CLS-CORE-01-REGISTRIES-EVENTS-016
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_016_REGISTRIES_EVENTS.yaml
+lifecycle_uid: LC-REGISTRIES-EVENTS
+approval_scope_uid: AP-REGISTRIES-EVENTS
+version_scope_uid: VER-REGISTRIES-EVENTS
+test_scope_uid: TEST-REGISTRIES-EVENTS
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-016
+facts:
+- source_ref: $.registries.events
+  value:
+  - event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    event: context.resolved
+  - event_uid: CORE-01-EVT-CONVERSATION-SENT
+    event: conversation.message.sent
+  - event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    event: ai.responses.ready
+  - event_uid: CORE-01-EVT-EVALUATION-READY
+    event: core.evaluation.ready
+  - event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    event: human.decision.confirmed
+  - event_uid: CORE-01-EVT-CANDIDATE-CREATED
+    event: candidate.created
+  - event_uid: CORE-01-EVT-CANDIDATE-DECIDED
+    event: candidate.decided
+status: CURRENT_CLASSIFICATION
+content_hash: 7ac38fa3bef83f2a8f9d021b5c8caad7fb20263ffa7925652de392cb6edac0a5

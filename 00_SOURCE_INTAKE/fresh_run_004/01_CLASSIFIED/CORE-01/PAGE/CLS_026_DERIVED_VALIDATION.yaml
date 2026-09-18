@@ -1,0 +1,37 @@
+artifact_uid: CLS-CORE-01-DERIVED-VALIDATION-026
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: DERIVED_VALIDATION
+responsibility_class: DERIVED_VALIDATION
+responsibilities:
+- DERIVED_VALIDATION
+canonical_owner_uid: OWNER-CLS-CORE-01-DERIVED-VALIDATION-026
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_026_DERIVED_VALIDATION.yaml
+lifecycle_uid: LC-DERIVED-VALIDATION
+approval_scope_uid: AP-DERIVED-VALIDATION
+version_scope_uid: VER-DERIVED-VALIDATION
+test_scope_uid: TEST-DERIVED-VALIDATION
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-026
+facts:
+- source_ref: $.derived_validation
+  value:
+    final_gap_closure:
+      status: FINAL_GAP_CLOSED
+      source_action_count: 34
+      source_control_count: 50
+      action_runtime_binding_coverage: 34/34
+      control_runtime_binding_coverage: 50/50
+      unresolved_control_action_refs: 0
+      unbound_actions: 0
+      shared_delegations_are_explicit: true
+      frontend_route_inference_required: false
+    final_dedup_cleanup:
+      status: PASS
+      action_runtime_embedded_in_single_action_registry: true
+      parallel_action_runtime_registry: 0
+      parallel_control_binding_registry: 0
+status: CURRENT_CLASSIFICATION
+content_hash: c8a9b4fcc1b9982a1c8fe005c5ef0acae92b194f3f090514f366b286f5a5e94c

@@ -1,0 +1,37 @@
+artifact_uid: CLS-CORE-01-REGISTRIES-STAGES-015
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_STAGES
+responsibility_class: REGISTRIES_STAGES
+responsibilities:
+- REGISTRIES_STAGES
+canonical_owner_uid: OWNER-CLS-CORE-01-REGISTRIES-STAGES-015
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_015_REGISTRIES_STAGES.yaml
+lifecycle_uid: LC-REGISTRIES-STAGES
+approval_scope_uid: AP-REGISTRIES-STAGES
+version_scope_uid: VER-REGISTRIES-STAGES
+test_scope_uid: TEST-REGISTRIES-STAGES
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-015
+facts:
+- source_ref: $.registries.stages
+  value:
+  - stage_uid: CORE-01-STAGE-01-CONTEXT
+    name: Resolve Context
+    flow: Resolve Project/Topic/work item/thread + assigned AI route refs; no provider picker.
+  - stage_uid: CORE-01-STAGE-02-CONVERSE
+    name: Converse / Analyze
+    flow: User input → shared AI routing → Single/Multi responses; no formal data write from raw AI response.
+  - stage_uid: CORE-01-STAGE-03-SUMMARY-EVAL
+    name: Assistant Summary / CORE Evaluation
+    flow: Assistant summary + task-bound approved CORE criteria/evidence.
+  - stage_uid: CORE-01-STAGE-04-HUMAN-DECIDE
+    name: Human Decision
+    flow: Human decision → Assistant structured decision → final confirm or return modify.
+  - stage_uid: CORE-01-STAGE-05-CANDIDATE
+    name: Candidate / Domain Review Ready
+    flow: Create/decide immutable Candidate; domain-specific Project/DNA/Blueprint/Topic lock request remains gated by its registered action.
+status: CURRENT_CLASSIFICATION
+content_hash: 06b0f12fec0225b92e28a5ea73b9bdcd0e8f128a2d603fcded91c816c99480fb

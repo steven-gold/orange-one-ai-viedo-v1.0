@@ -1,0 +1,27 @@
+artifact_uid: CLS-CORE-01-CURRENT-VISUAL-VALIDATION-032
+page_uid: CORE-01
+planning_domain: VISUAL_CONSTRUCTION
+responsibility_uid: CURRENT_VISUAL_VALIDATION
+responsibility_class: CURRENT_VISUAL_VALIDATION
+responsibilities:
+- CURRENT_VISUAL_VALIDATION
+canonical_owner_uid: OWNER-CLS-CORE-01-CURRENT-VISUAL-VALIDATION-032
+target_path: 01_CLASSIFIED/CORE-01/VISUAL/CLS_032_CURRENT_VISUAL_VALIDATION.yaml
+lifecycle_uid: LC-CURRENT-VISUAL-VALIDATION
+approval_scope_uid: AP-CURRENT-VISUAL-VALIDATION
+version_scope_uid: VER-CURRENT-VISUAL-VALIDATION
+test_scope_uid: TEST-CURRENT-VISUAL-VALIDATION
+source_lineage:
+- source_uid: SRC-CORE01-VISUAL
+  source_segment_uids:
+  - SEG-SRC-CORE01-VISUAL-032
+facts:
+- source_ref: $.validation
+  value:
+    page_level_current_canonical_visual_count: 1
+    page_uid: CORE-01
+    child_visual_refs: 10
+    broken_child_visual_ref: 0
+    canonical_visual_trace_gate: PASS
+status: CURRENT_CLASSIFICATION
+content_hash: 560ef5ec1104ed3fc2021cbee1f2b083af61f3fb9ef600d58048014e66dc6b5b

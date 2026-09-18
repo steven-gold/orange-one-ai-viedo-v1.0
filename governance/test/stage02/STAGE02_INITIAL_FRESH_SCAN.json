@@ -3,7 +3,7 @@
   "actual_product_stage_test_started": true,
   "ai_autofill_used": false,
   "artifact_type": "NON_NORMATIVE_STAGE02_ACTUAL_TEST_EVIDENCE",
-  "closure_blocker_total": 0,
+  "closure_blocker_total": 9,
   "current_specification_mutated": false,
   "deployment_allowed": false,
   "execution_profile_mandatory_output_subset": [
@@ -53,11 +53,21 @@
   "pages": {
     "CORE-01": {
       "ai_interaction_profile_active": true,
-      "automatic_completion_scope": "PRESENT",
+      "automatic_completion_scope": "REQUIRED_WHEN_GAP_ANALYSIS_EXISTS",
       "blueprint_uid": "BP-CORE-01-PAGE-FRESH-004",
-      "closure_blocker_count": 0,
-      "closure_blockers": [],
-      "function_admission_scorecard": "PRESENT",
+      "closure_blocker_count": 9,
+      "closure_blockers": [
+        "MISSING_BUSINESS_ENTITY_INVENTORY",
+        "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
+        "MISSING_ENTITY_HIERARCHY_MATRIX",
+        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_INTERACTION_TOPOLOGY_SPEC",
+        "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX",
+        "MISSING_AI_INTERACTION_CONTINUITY_CONTRACT",
+        "MISSING_FUNCTION_ADMISSION_SCORECARD",
+        "MISSING_AUTO_COMPLETION_SCOPE_LEDGER"
+      ],
+      "function_admission_scorecard": "REQUIRED_WHEN_GAP_ANALYSIS_EXISTS",
       "functional_chain_fresh_scan": {
         "functional_completion": false,
         "gap_categories": {
@@ -449,7 +459,7 @@
       "unresolved_external_authority_ref_count": 7
     }
   },
-  "physical_stage2_product_artifact_root_present": true,
+  "physical_stage2_product_artifact_root_present": false,
   "preserved_external_authorities": {
     "GAP-EXT-3DD576F9FA3A": {
       "authority_ref": "GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0",

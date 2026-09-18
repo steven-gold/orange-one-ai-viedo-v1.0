@@ -1,0 +1,39 @@
+artifact_uid: CLS-CORE-01-PAGE-AUTHORITY-001
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: PAGE_AUTHORITY
+responsibility_class: PAGE_AUTHORITY
+responsibilities:
+- PAGE_AUTHORITY
+canonical_owner_uid: OWNER-CLS-CORE-01-PAGE-AUTHORITY-001
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_001_PAGE_AUTHORITY.yaml
+lifecycle_uid: LC-PAGE-AUTHORITY
+approval_scope_uid: AP-PAGE-AUTHORITY
+version_scope_uid: VER-PAGE-AUTHORITY
+test_scope_uid: TEST-PAGE-AUTHORITY
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-001
+facts:
+- source_ref: $.authority
+  value:
+    id: CORE_PAGE_VISUAL_AUTHORITY_FINAL
+    page_uid: CORE-01
+    version: V2.0
+    status: FINAL_LOCKED
+    current_only: true
+    legacy_merge: FORBIDDEN
+    route: /core
+    scope: CORE-01 Main Workspace only
+    global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+    global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+    undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+    vertical_length: UNBOUNDED; Main Workspace overflow-y:auto; sections extend downward by content
+    department_boundary: CORE owns Project Core + Topic Production Scope/Canonical Script source; ASSET/VIDEO/EDIT/VOICE internals are not defined here
+    parallel_authority_for_same_page: FORBIDDEN
+    system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+    navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+    production_script_authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+status: CURRENT_CLASSIFICATION
+content_hash: 1d54b3c1944db07dbd42f408831d155e484f1b5391b40d1343426beeac3d15d2
