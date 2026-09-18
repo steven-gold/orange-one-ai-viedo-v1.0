@@ -50,12 +50,12 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: PASS_CLOSURE_RECONCILIATION_WORK_UNIT_HEAD
+  full_line_github_result: PASS_MOTHER_FINALIZATION_WORK_UNIT_HEAD
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
-  full_line_verification_run_id: 35290941831
-  full_line_verification_head_sha: 20d47e89494c9106d965bd7937746812e32d033a
+  full_line_verification_run_id: 35291878285
+  full_line_verification_head_sha: 4e528620ed4a27377f86b3ce05c05978df29a381
   terminal_run_conclusion: success
   terminal_result_credit_allowed: true
 stage_execution_loading:
@@ -90,8 +90,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_GOVERNANCE_MAINTENANCE_MOTHER_FINALIZATION
-next_action: REVALIDATE_MOTHER_FINALIZATION_WORK_UNIT_ON_EXACT_PERSISTED_HEAD; THEN_CLOSE_MACHINE_GOVERNANCE_AND_RESUME_PREFORMAL_HUMAN_REVIEW
+status: GOVERNANCE_MOTHER_MACHINE_CLOSURE_COMPLETE_PREFORMAL_REVIEW_PENDING
+next_action: AWAIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_FOR_REV_GOV_001; DO_NOT_AUTO_APPROVE; DO_NOT_ENTER_PRODUCT_STAGE_OR_DEPLOY
 work_unit_resolution_gate:
   resolution_uid: WUR-GOV-MOTHER-FINALIZATION-001
   normative_authority: false
@@ -122,7 +122,19 @@ work_unit_resolution_gate:
   - CURRENT_SPECIFICATION_CHANGE_CANDIDATE_LEDGER_HAS_NO_NEW_MACHINE_OPEN_MOTHER_DEFECT_REQUIRING_NORMATIVE_MUTATION
   - PREFORMAL_GOVERNANCE_REVIEW_REV_GOV_001_REMAINS_HUMAN_OR_AUTHORIZED_REVIEWER_ONLY_AND_MUST_NOT_BE_AUTO_APPROVED
   product_stage_credit: 0
-active_work_unit:
+  resolved_work_unit_terminal_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  closure_evidence_head: 4e528620ed4a27377f86b3ce05c05978df29a381
+  closure_evidence_tree: a8597c2067da36774c3f8cb39945ada1b6157301
+  closure_terminal_run_id: 35291878285
+  closure_terminal_conclusion: success
+  closure_active_workflow_count: 6
+  closure_active_transitive_executable_target_count: 25
+  closure_lifecycle_stage_denominator: 11/11
+  closure_preformal_machine_denominator: 20/20
+  closure_mandatory_regression_denominator: 17/17
+  closure_source_runtime_residual_count: 0
+  closure_temporary_test_residual_count: 0
+closed_work_unit:
   work_unit_uid: WU-GOV-MOTHER-FINALIZATION-001
   canonical_name: GOVERNANCE_MOTHER_MACHINE_FINALIZATION
   scope: RECONCILE_COMPLETED_SEMANTIC_RESIDUAL_TRANSACTION_AND_CLOSE_CURRENT_MOTHER_MACHINE_GOVERNANCE
@@ -136,7 +148,7 @@ active_work_unit:
   canonical_policy_owner: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
   authorization_uid: USR-DIRECTIVE-20260918-MOTHER-RESIDUAL-CLASSIFICATION-HARDENING-R1
-  current_status: IN_PROGRESS_MOTHER_MACHINE_FINALIZATION
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   product_blocker_credit: 0
   start_condition: WORK_UNIT_RESOLUTION_GATE_PASS_AND_CURRENT_PERSISTED_HEAD_FULL_LINE_SUCCESS
   dependencies:
@@ -171,7 +183,25 @@ active_work_unit:
   - VALIDATION_REMEDIATION_CLOSURE_PROTOCOL
   - FULL_LINE_HIGH_PRESSURE
   resume_after_closure: PREFORMAL_GOVERNANCE_REVIEW_PENDING
-closed_work_unit:
+  closure_evidence:
+    governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+    branch: rebuild-v2.1.1
+    tested_head_sha: 4e528620ed4a27377f86b3ce05c05978df29a381
+    tested_tree_sha: a8597c2067da36774c3f8cb39945ada1b6157301
+    full_line_run_id: 35291878285
+    outer_terminal_conclusion: success
+    active_workflows_scanned: 6
+    active_transitive_executable_targets: 25
+    source_identity_file_count: 75
+    lifecycle_stage_result: 11/11
+    preformal_machine_result: 20/20
+    mandatory_regression_result: 17/17
+    source_runtime_residual_count: 0
+    temporary_test_residual_count: 0
+    product_stage_credit: 0
+    human_preformal_review_item_uid: REV-GOV-001
+    human_preformal_review_status: PENDING
+previous_closed_work_unit:
   work_unit_uid: WU-GOV-RESIDUAL-CLEANUP-CLOSURE-001
   canonical_name: GOVERNANCE_RESIDUAL_CLEANUP_CLOSURE_RECONCILIATION
   scope: SEMANTIC_RESIDUAL_CLEANUP_CLOSURE_RECONCILIATION_AND_PERSISTED_HEAD_REVALIDATION
@@ -237,22 +267,19 @@ resume_control:
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
   effectful_stage2_execution_before_entry_resolution: BLOCK_DURING_GOVERNANCE_MAINTENANCE
-  current_resume_point: GOVERNANCE_MAINTENANCE_MOTHER_FINALIZATION
-  current_work_unit_uid: WU-GOV-MOTHER-FINALIZATION-001
-  current_owner: governance/test/ACTIVE_STATE.yaml
-  parent_resume_point: PREFORMAL_GOVERNANCE_REVIEW_PENDING
-  last_closed_work_unit_uid: WU-GOV-RESIDUAL-CLEANUP-CLOSURE-001
+  current_resume_point: PREFORMAL_GOVERNANCE_REVIEW_PENDING
+  last_closed_work_unit_uid: WU-GOV-MOTHER-FINALIZATION-001
   last_closed_work_unit_result: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
-  last_closed_work_unit_full_line_run_id: 35290941831
-  last_closed_work_unit_evidence_head: 20d47e89494c9106d965bd7937746812e32d033a
-  exact_next_action: REVALIDATE_MOTHER_FINALIZATION_WORK_UNIT_ON_EXACT_PERSISTED_HEAD; THEN_CLOSE_MACHINE_GOVERNANCE_AND_RESUME_PREFORMAL_HUMAN_REVIEW
+  last_closed_work_unit_full_line_run_id: 35291878285
+  last_closed_work_unit_evidence_head: 4e528620ed4a27377f86b3ce05c05978df29a381
+  exact_next_action: AWAIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_FOR_REV_GOV_001; DO_NOT_AUTO_APPROVE; DO_NOT_ENTER_PRODUCT_STAGE_OR_DEPLOY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/attempt-ae42ef7ba4d6
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: true
+  fresh_revalidation_required: false
   selected_execution_profile_preserved: true
   canonical_rule_registry_required_for_fresh_revalidation: true
   website_construction_remains_blocked: true
@@ -332,6 +359,18 @@ stage02_material_remediation:
   external_authority_resolution_claimed: false
   current_specification_mutated: false
   status: STRUCTURAL_REMEDIATION_PREDECESSOR_RESULT_REVALIDATION_REQUIRED
+pending_governance_review:
+  review_item_uid: REV-GOV-001
+  review_type: PREFORMAL_GOVERNANCE_REVIEW
+  target_uid: GOVERNANCE_PACKAGE
+  reviewer_role: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER
+  status: PENDING
+  machine_may_auto_approve: false
+  blocks_machine_governance_closure: false
+  blocks_formal_governance_review_completion: true
+  unlock_condition: EXPLICIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION
+  current_machine_evidence_head: 4e528620ed4a27377f86b3ce05c05978df29a381
+  current_machine_evidence_run_id: 35291878285
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
 current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-RESIDUAL-CLASSIFICATION-HARDENING-R1
 current_primary_task_product_stage_credit: 0
