@@ -1,0 +1,42 @@
+authorization_uid: USR-DIRECTIVE-20260919-PROFILE-TOKEN-PROMOTION-CONSUMER-SYNC-R1
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-19
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+baseline_commit_sha: 603ccef8bb2b34fb9463ebe9b5103b9a9cbbda6b
+baseline_tree_sha: 508628519776d7e2eb4504b54039719fdcfe6e92
+current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+
+user_directive:
+  - "母規範修改後不得留下舊固定、舊 consumer、舊 hash 或執行到後面才爆炸的殘留。"
+  - "確定整個流程內容與所有受影響 consumer 都完整同步後再驗證，不要只寫一部分。"
+
+exact_scope:
+  purpose: >-
+    Repair the promotion-derived semantic baseline consumer synchronization defect discovered
+    by the fresh v2.2.7 Full-Line run, without changing Mother semantics or product behavior.
+  permitted_changes:
+    - synchronize every stale semantic baseline trust-anchor consumer to the Current semantic baseline hash
+    - refresh source Root Manifest, CHECKSUMS, deterministic source identity, and external source-identity consumers
+    - update Current source-identity projections and mark Full-Line revalidation required
+    - add/remove one-shot non-normative repair helper/workflow
+  excluded_scope:
+    - Mother semantic changes
+    - product behavior or Stage-02 contract changes
+    - visual design
+    - implementation
+    - deployment
+    - production acceptance
+    - product-stage credit
+completion_requirements:
+  current_governance_uid_unchanged: true
+  semantic_authority_content_hash_unchanged: true
+  stale_semantic_hash_consumer_count: 0
+  source_identity_resynchronized: true
+  full_line_high_pressure_success_required: true
+  selected_profile_success_required: true
+  product_stage_credit: 0
