@@ -1,0 +1,53 @@
+schema_version: 1
+artifact_type: MATERIAL_REMEDIATION_RECEIPT
+normative_authority: false
+stage_uid: STAGE-02
+attempt_uid: STAGE02-FRESH-20260918-007
+frozen_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+source_execution_sha: ac1389f0de1fe1b19903c4af30227ace06893155
+owning_layer: CURRENT_STAGE_PRODUCT_OR_CONTRACT_OUTPUT
+changed_artifact_root: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
+before_state:
+  fresh_functional_gaps: 45
+  closure_blockers: 7
+materialized_missing_artifact_blockers:
+  CORE-01:
+  - MISSING_BUSINESS_ENTITY_INVENTORY
+  - MISSING_BUSINESS_ENTITY_OPERATION_MATRIX
+  - MISSING_ENTITY_HIERARCHY_MATRIX
+  - MISSING_FUNCTIONAL_WORKBENCH_CONTRACT
+  - MISSING_INTERACTION_TOPOLOGY_SPEC
+  - MISSING_FUNCTION_VISUAL_IMPACT_MATRIX
+  - MISSING_AI_INTERACTION_CONTINUITY_CONTRACT
+materialized_missing_artifact_blocker_count: 7
+claimed_legal_elimination_before_fresh_reexecution: 0
+functional_gap_elimination_claimed: 0
+external_authority_union_preserved_unresolved:
+- GAP-001
+- GAP-002
+- GAP-003
+- GAP-004
+- GAP-005
+- GAP-007
+- GAP-008
+target_pages:
+- CORE-01
+excluded_pages:
+- ASSET-01
+current_specification_mutated: false
+stage1_immutable_inputs_mutated: false
+ai_autofill_used: false
+semantic_inference_for_missing_authority_used: false
+page_summaries:
+  CORE-01:
+    entity_count: 22
+    action_count: 34
+    control_count: 50
+    section_count: 10
+    component_count: 17
+    visual_count: 10
+    stage_transition_count: 5
+    integration_port_count: 19
+    ai_continuity_contract_materialized: true
+required_next_action: VALIDATE_MATERIALIZATION_THEN_CLEAN_REEXECUTION_EVIDENCE_RUN_FULL_LINE_AND_FRESH_STAGE02_REEXECUTION
+status: MATERIALIZED_PENDING_FRESH_REEXECUTION_PROOF

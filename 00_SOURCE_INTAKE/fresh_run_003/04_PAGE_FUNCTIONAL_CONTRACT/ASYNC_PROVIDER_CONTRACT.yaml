@@ -1,0 +1,162 @@
+schema_version: 1
+artifact_type: ASYNC_PROVIDER_CONTRACT
+stage_uid: STAGE-02
+derivation: EXACT_INTEGRATION_PORT_REGISTRY_PROJECTION
+provider_route_inference_used: false
+port_count: 19
+ports:
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-PROJECTION
+  boundary: Read Page Projection
+  operation: getUiProjection
+  method_path: GET /v1/ui-projections/{pageUid}
+  permission: page.view
+  state_event: read only
+  exposure: All page state/read cards; no invented data
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-PROJECT-CREATE
+  boundary: Project Draft
+  operation: createProjectDraft
+  method_path: POST /v1/projects/drafts
+  permission: entity.write
+  state_event: NONE | event none
+  exposure: CORE-01-ACT-PROJECT-CREATE
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-PROJECT-VALIDATE
+  boundary: Project Draft
+  operation: validateProjectDraft
+  method_path: POST /v1/projects/drafts/{projectVersionId}/validate
+  permission: core.project.read
+  state_event: DRAFT→DRAFT
+  exposure: CORE-01-ACT-PROJECT-VALIDATE
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-PROJECT-CONFIRM
+  boundary: Project Draft
+  operation: confirmProjectDraft
+  method_path: POST /v1/projects/drafts/{id}/confirm
+  permission: core.project.confirm
+  state_event: DRAFT→CORE_MODELING | project.created timing governed by runtime/pending decision
+  exposure: CORE-01-ACT-PROJECT-CONFIRM; do not duplicate event
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-STORY-CANDIDATE
+  boundary: Story
+  operation: createStoryCandidateSet
+  method_path: POST /v1/projects/{projectId}/story-candidate-sets
+  permission: core.story.write
+  state_event: DRAFT→GENERATING | story.candidate_set.created
+  exposure: CORE-01-ACT-STORY-CANDIDATE
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-THREAD-CREATE
+  boundary: Conversation
+  operation: createConversationThread
+  method_path: POST /v1/projects/{projectId}/conversations
+  permission: conversation.write
+  state_event: NONE→DRAFT | conversation.thread.created
+  exposure: CORE-01-ACT-THREAD-CREATE
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-MESSAGE-SEND
+  boundary: Conversation
+  operation: sendConversationMessage
+  method_path: POST /v1/conversations/{conversationId}/messages
+  permission: conversation.write
+  state_event: Conversation ACTIVE→ACTIVE; Core DRAFT→RUNNING | conversation.message.sent
+  exposure: CORE-01-ACT-SEND
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-CANDIDATE-CREATE
+  boundary: Candidate
+  operation: createCandidate
+  method_path: POST /v1/candidates
+  permission: candidate.create
+  state_event: '*→CANDIDATE | candidate.created'
+  exposure: CORE-01-ACT-CANDIDATE-CREATE
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-CANDIDATE-COMPARE
+  boundary: Candidate
+  operation: compareCandidates
+  method_path: GET /v1/candidates/compare
+  permission: candidate.read
+  state_event: read only
+  exposure: CORE-01-ACT-CANDIDATE-COMPARE
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-CANDIDATE-DECIDE
+  boundary: Candidate
+  operation: decideCandidate
+  method_path: POST /v1/candidates/{id}/decision
+  permission: candidate.decide
+  state_event: CANDIDATE→ACCEPTED/REJECTED | candidate.decided
+  exposure: CORE-01-ACT-CANDIDATE-ACCEPT / RETURN
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-DNA-LOCK
+  boundary: DNA Lock Review
+  operation: requestDNALock
+  method_path: POST /v1/state-commands/dnaversion/requestdnalock
+  permission: dna.lock.request
+  state_event: CANDIDATE→REVIEW_REQUIRED | dna.lock.requested
+  exposure: CORE-01-ACT-DNA-LOCK-REQUEST
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-CORE-REVIEW
+  boundary: Project Core Review
+  operation: submitCoreReview
+  method_path: POST /v1/state-commands/projectversion/submitcorereview
+  permission: core.project.write
+  state_event: CORE_MODELING→CORE_REVIEW | project.core_review_submitted
+  exposure: CORE-01-ACT-CORE-REVIEW-SUBMIT
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-MOTHER-LOCK
+  boundary: Project Lock Review
+  operation: requestMotherLock
+  method_path: POST /v1/locks/mother-requests
+  permission: core.lock.request
+  state_event: READY_FOR_MOTHER_REVIEW→IN_REVIEW | lock.review_requested
+  exposure: CORE-01-ACT-MOTHER-LOCK-REQUEST; unresolved LockReview evidence/reviewer contract = BLOCK
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-TOPIC-CREATE
+  boundary: Topic
+  operation: createTopic
+  method_path: POST /v1/projects/{projectId}/topics
+  permission: entity.write
+  state_event: business action; no canonical transition/event
+  exposure: CORE-01-ACT-TOPIC-CREATE; valid Topic draft lineage required; no fabricated fields
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-BLUEPRINT-CREATE
+  boundary: Blueprint
+  operation: createBlueprint
+  method_path: POST /v1/topics/{id}/blueprints
+  permission: core.blueprint.write
+  state_event: READY_FOR_BLUEPRINT→BLUEPRINT_DRAFT
+  exposure: CORE-01-ACT-BLUEPRINT-CREATE
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-BLUEPRINT-VALIDATE
+  boundary: Blueprint
+  operation: validateBlueprint
+  method_path: POST /v1/blueprints/{id}/validate
+  permission: core.blueprint.review
+  state_event: BLUEPRINT_DRAFT→BLUEPRINT_REVIEW | blueprint.validated
+  exposure: CORE-01-ACT-BLUEPRINT-VALIDATE
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-BLUEPRINT-APPROVE
+  boundary: Blueprint
+  operation: approveBlueprint
+  method_path: POST /v1/blueprints/{id}/approve
+  permission: core.blueprint.approve
+  state_event: BLUEPRINT_REVIEW→READY_FOR_CHILD_REVIEW | blueprint.approved
+  exposure: CORE-01-ACT-BLUEPRINT-APPROVE
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-CHILD-LOCK
+  boundary: Blueprint/Topic Package Lock Review
+  operation: requestChildLock
+  method_path: POST /v1/locks/child-requests
+  permission: core.lock.request
+  state_event: READY_FOR_CHILD_REVIEW→IN_REVIEW | lock.review_requested
+  exposure: CORE-01-ACT-CHILD-LOCK-REQUEST; no hidden reviewer/exception
+- page_uid: CORE-01
+  port_uid: CORE-01-PORT-CANONICAL-SCRIPT
+  boundary: Canonical Production Script
+  operation: getCanonicalScript
+  method_path: GET /v1/topics/{id}/scripts/canonical
+  permission: core.script.read
+  state_event: read only
+  exposure: CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+unresolved_provider_authority_gaps:
+- GAP-005
+- GAP-008
