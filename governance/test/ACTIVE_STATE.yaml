@@ -22,7 +22,7 @@ execution:
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
-  current_stage: STAGE-02-CLOSED
+  current_stage: STAGE-03-PREEXECUTION
   stage1:
     CORE-01: PASS
   stage2:
@@ -38,6 +38,23 @@ execution:
     remaining_page_uids: []
     stage_scope_complete: true
     current_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  stage3:
+    result: NOT_EXECUTED
+    work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+    work_unit_resolution: PASS_SINGLE_LEGAL_SUCCESSOR
+    execution_started: false
+    predecessor_entry_condition: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+    predecessor_entry_condition_status: SATISFIED
+    pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
+    pre_execution_gate_status: NOT_EXECUTED
+    stage_exit_allowed: false
+    target_page_uids:
+    - CORE-01
+    remaining_page_uids:
+    - CORE-01
+    current_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+    output_owner_materialized: false
+    visual_review_required: true
   website_construction_allowed: false
   deployment_allowed: false
 full_lifecycle_governance_system_test:
@@ -92,8 +109,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: STAGE02_CLOSED_VERIFIED_CORE01
-next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE03
+status: STAGE03_WORK_UNIT_RESOLVED_PREEXECUTION
+next_action: STAGE03_PREEXECUTION_GATE_AND_OUTPUT_OWNER_MATERIALIZATION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -272,12 +289,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: null
+  current_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
+  current_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  current_owner: 00_SOURCE_INTAKE/fresh_run_005/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE03
+  exact_next_action: STAGE03_PREEXECUTION_GATE_AND_OUTPUT_OWNER_MATERIALIZATION
   last_closed_product_work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002
   last_closed_product_validation_head: e48ac1bce7e7798c107694087f0056b8a434bf08
   last_closed_product_outer_run_id: 35401771995
@@ -510,7 +527,7 @@ last_closed_product_work_unit:
     candidate_ref: governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_CANDIDATE_R3.json
     approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_APPROVAL_R3.yaml
     canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
-last_work_unit_resolution_gate:
+previous_work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-FRESH-20260919-002
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
@@ -536,3 +553,125 @@ stage02_terminal_closure:
   validation_head: e48ac1bce7e7798c107694087f0056b8a434bf08
   terminal_runs: *id001
   next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE03
+
+last_work_unit_resolution_gate:
+  resolution_uid: WUR-STAGE03-CORE01-20260919-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  authorization_basis:
+  - PERSISTED_STAGE02_LEGAL_NEXT_TRANSITION
+  - EXPLICIT_CURRENT_USER_DIRECTIVE_COMPLETE_ACTIVE_WORK_UNIT_AND_RESUME
+  predecessor_work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002
+  predecessor_terminal_disposition: CLOSED_VERIFIED_PRODUCT_CONTRACT_MATERIALIZATION_FRESH_REEXECUTION_AND_PERSISTED_HEAD_GATES
+  persisted_resume_before: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
+  resolved_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  resolved_stage_uid: STAGE-03
+  resolved_capability: VISUAL_DESIGN
+  page_scope:
+  - CORE-01
+  excluded_page_scope:
+  - ASSET-01
+  candidate_successor_count: 1
+  duplicate_parallel_work_unit_found: false
+  existing_stage03_product_output_owner_found: false
+  output_owner_resolution:
+    registry_ref: .github/governance-source/active/source/10_REGISTRY/BLUEPRINT_REGISTRY.yaml
+    blueprint_type_uid: BPTYPE-GOV-004
+    canonical_name: VISUAL_DESIGN_SPEC_PACKAGE
+    owner_mode: VISUAL
+    current_materialization_status: NOT_YET_MATERIALIZED
+    effectful_output_write_allowed_before_preexecution_gate: false
+  entry_disposition: ACTIVE_PREEXECUTION
+  resolved_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
+
+active_work_unit:
+  work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  canonical_name: CORE01_VISUAL_DESIGN
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  stage_uid: STAGE-03
+  semantic_capability: VISUAL_DESIGN
+  scope:
+  - CORE-01
+  out_of_scope:
+  - ASSET-01
+  - STAGE-04
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - EXTERNAL_AUTHORITY_AUTOFILL
+  canonical_policy_owner: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  current_status: ACTIVE_PREEXECUTION
+  canonical_owner_mapping:
+    current_visual_base_blueprint_ref: 00_SOURCE_INTAKE/fresh_run_005/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
+    layout_geometry_owner_uid: OWNER-CLS-CORE-01-LAYOUT-GEOMETRY-004
+    visual_registry_owner_uid: OWNER-CLS-CORE-01-REGISTRIES-VISUALS-009
+    current_visual_identity_owner_uid: OWNER-CLS-CORE-01-CURRENT-VISUAL-AUTHORITY-028
+    current_canonical_visual_owner_uid: OWNER-CLS-CORE-01-CURRENT-VISUAL-CURRENT-CANONICAL-VISUAL-029
+    child_visual_contract_owner_uid: OWNER-CLS-CORE-01-CURRENT-VISUAL-CHILD-VISUAL-CONTRACT-030
+    visual_change_trace_owner_uid: OWNER-CLS-CORE-01-CURRENT-VISUAL-CHANGE-TRACE-CONTRACT-031
+    visual_validation_owner_uid: OWNER-CLS-CORE-01-CURRENT-VISUAL-VALIDATION-032
+    stage03_output_owner_contract:
+      registry_ref: .github/governance-source/active/source/10_REGISTRY/BLUEPRINT_REGISTRY.yaml
+      blueprint_type_uid: BPTYPE-GOV-004
+      canonical_name: VISUAL_DESIGN_SPEC_PACKAGE
+      owner_mode: VISUAL
+      materialization_status: NOT_YET_MATERIALIZED
+      exact_write_target_status: MUST_RESOLVE_UNDER_NAMING_AND_OWNER_GATE_BEFORE_FIRST_STAGE03_PRODUCT_WRITE
+  start_condition:
+  - STAGE02_CLOSED_VERIFIED
+  - STAGE02_EFFECTIVE_FUNCTIONAL_GAPS_ZERO
+  - STAGE02_REMAINING_REQUIRED_UNITS_ZERO
+  - CURRENT_SCOPE_CORE01_ONLY
+  - WORK_UNIT_RESOLUTION_PASS_SINGLE_LEGAL_SUCCESSOR
+  dependencies:
+  - 00_SOURCE_INTAKE/fresh_run_005/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
+  - 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+  - 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_WORKBENCH_CONTRACT.yaml
+  - 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/INTERACTION_TOPOLOGY_SPEC.yaml
+  - 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/AI_INTERACTION_CONTINUITY_CONTRACT.yaml
+  - 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTION_VISUAL_IMPACT_MATRIX.yaml
+  required_operations:
+  - VISUAL_SPEC_COMPILE
+  - GEOMETRY_CONTRACT_COMPILE
+  - VISUAL_PREVIEW_RENDER
+  - VISUAL_CHANGESET_COMPILE
+  - VISUAL_INTERACTION_TOPOLOGY_BIND
+  - FUNCTIONAL_WORKBENCH_LAYOUT_BIND
+  required_outputs:
+  - VISUAL_DESIGN_SPEC_PACKAGE
+  - VISUAL_GEOMETRY_CONTRACT
+  - VISUAL_PREVIEW_EVIDENCE
+  - VISUAL_CHANGESET
+  - VISUAL_INTERACTION_TOPOLOGY_BINDING
+  - FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT
+  required_gates:
+  - ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  - GOVERNANCE_LOAD_RECEIPT_PASS
+  - VAL-GOV-029
+  - VAL-GOV-030
+  - VAL-GOV-037
+  - CLOSURE_EVIDENCE_CONTINUITY
+  - CANONICAL_EXECUTION_PREFLIGHT
+  required_evidence:
+  - VISUAL_REVIEW_EVIDENCE
+  definition_of_done:
+  - ALL_SIX_STAGE03_REQUIRED_OUTPUTS_MATERIALIZED_FOR_CORE01
+  - FUNCTIONAL_TO_VISUAL_TOPOLOGY_EQUIVALENCE_PRESERVED
+  - NO_UNAPPROVED_FUNCTIONAL_TOPOLOGY_REDEFINITION
+  - VISUAL_DOMAIN_AND_GEOMETRY_VALIDATORS_PASS
+  - BUSINESS_ENTITY_TO_VISUAL_BINDING_VALIDATED
+  - VISUAL_REVIEW_EVIDENCE_PERSISTED
+  - CORE01_STAGE03_REQUIRED_SCOPE_CLOSED_WITH_FRESH_EVIDENCE
+  - ASSET01_REMAINS_OUT_OF_SCOPE_AND_UNMATERIALIZED
+  - NEXT_RESUME_PERSISTED_TO_STAGE04_WORK_UNIT_RESOLUTION_BOUNDARY
+  human_review_boundary:
+    source_ref: 00_SOURCE_INTAKE/fresh_run_005/01_CLASSIFIED/CORE-01/VISUAL/CLS_031_CURRENT_VISUAL_CHANGE_TRACE_CONTRACT.yaml
+    current_progress_stops_at: CANDIDATE
+    visual_review: NOT_VERIFIED
+    visual_approval: BLOCKED_PENDING_USER_REVIEW
+    authority_update: BLOCKED_PENDING_VISUAL_APPROVAL
+    design_freeze: BLOCKED
+    rule: DO_NOT_CROSS_VISUAL_APPROVAL_OR_DESIGN_FREEZE_WITHOUT_REQUIRED_REVIEW
+  legal_next_transition: STAGE03_CLOSED_TO_STAGE04_WORK_UNIT_RESOLUTION
