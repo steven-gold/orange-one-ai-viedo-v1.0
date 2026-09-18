@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "layer_classification": "RUN_STATE",
+  "normative_authority": false,
+  "test_candidate_only": true,
+  "current_governance_uid": "GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING",
+  "source_head_sha": "1bc5eada7e7fad398b03fa348131a403b7ef2266",
+  "work_unit_uid": "WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001",
+  "page_uid": "CORE-01",
+  "user_directive": "KEEP_DESIGN_REMEDIATION_IN_TEMPORARY_TEST_RECORDS_UNTIL_FULL_TEST_CYCLE_COMPLETES_THEN_REVIEW_MOTHER_GOVERNANCE_ONCE",
+  "authority_safety": {
+    "current_specification_mutated": false,
+    "mother_governance_mutated": false,
+    "raw_source_mutated": false,
+    "r5_r6_r8_mutated": false,
+    "candidate_is_product_authority": false,
+    "candidate_may_materialize": false,
+    "product_blocker_reduction_credit": 0
+  },
+  "sources": {
+    "current_problem_register": "00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml",
+    "remediability_classification": "governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml",
+    "authority_request_r5": "governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml",
+    "core_review_r8": "governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml",
+    "current_raw_authority_capture": "00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+    "current_raw_authority_sha256": "55263928a98956d8376ca1e9d0b92647f61154f62cd2ab3439a3c965a404b273"
+  },
+  "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-REMEDIATION-ROUTING",
+  "artifact_type": "TEMPORARY_NON_NORMATIVE_DESIGN_REMEDIATION_ROUTING_CANDIDATE",
+  "observed_current_behavior": {
+    "r2_open_gap_count": 45,
+    "gap_classes": {
+      "ARCHITECTURE_GAP": 29,
+      "INPUT_SOURCE_GAP": 16,
+      "AUTHORITY_GAP": 0
+    },
+    "r5_current_route": "NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS -> DIRECT_WAIT_FOR_SEPARATELY_APPROVED_PRODUCT_AUTHORITY",
+    "defect_hypothesis": "CURRENT_PIPELINE_SKIPS_NON_NORMATIVE_DESIGN_REMEDIATION_CANDIDATE_LAYER_FOR_LOCAL_INPUT_SOURCE_AND_ARCHITECTURE_GAPS"
+  },
+  "temporary_test_routing": [
+    {
+      "when": "BOUNDED_COMPLETION_ADMISSIBLE",
+      "route": "EXISTING_MINIMAL_BOUNDED_REMEDIATION"
+    },
+    {
+      "when": "NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS AND gap_class IN [INPUT_SOURCE_GAP, ARCHITECTURE_GAP]",
+      "route": "TEMPORARY_DESIGN_REMEDIATION_CANDIDATE"
+    },
+    {
+      "when": "AUTHORITY_GAP OR TWO_OR_MORE_MATERIALLY_DISTINCT_VIABLE_PRODUCT_BEHAVIORS",
+      "route": "EXPLICIT_PRODUCT_AUTHORITY_DECISION"
+    },
+    {
+      "when": "EXACT_EXTERNAL_AUTHORITY_REQUIRED",
+      "route": "PRESERVE_EXTERNAL_AUTHORITY_BLOCK_AND_INGEST_EXACT_EXTERNAL_SOURCE"
+    }
+  ],
+  "promotion_rule": "DO_NOT_CHANGE_MOTHER_OR_CURRENT_PIPELINE_DURING_THIS_TEST_CYCLE; COLLECT_RESULTS_AND_PROMOTE_ONE_CONSOLIDATED_GOVERNANCE_CHANGE_ONLY_AFTER_TEST_COMPLETION",
+  "status": "ACTIVE_TEMPORARY_TEST_HYPOTHESIS"
+}
