@@ -8,6 +8,8 @@ ROOT=Path(__file__).resolve().parents[2]
 STATE=ROOT/'governance/test/ACTIVE_STATE.yaml'
 SCOPE=ROOT/'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
 HISTORY=ROOT/'governance/test/SELECTED_PROFILE_HISTORY_BINDING.yaml'
+CANDIDATES=ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
+FINDINGS=ROOT/'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
 EVIDENCE=ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
 CURRENT_UID='GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING'
 RUN_UID='FRESH-RUN-005'
@@ -139,6 +141,60 @@ def main():
       'binding_reason':'FRESH_STAGE01_REPLAY_CURRENT_SCOPE',
     }
     dump_yaml(HISTORY,history)
+
+    candidates=load_yaml(CANDIDATES)
+    candidates['current_stage2_execution']={
+      'state':s2.get('result'),
+      'current_functional_gap_count':attempt.get('fresh_functional_gap_total'),
+      'current_closure_blocker_count':attempt.get('fresh_closure_blocker_total'),
+      'active_evidence_present':True,
+      'active_findings_present':True,
+      'stage_exit_allowed':bool(s2.get('stage_exit_allowed')),
+      'website_construction_allowed':False,
+      'deployment_allowed':False,
+      'historical_counts_may_be_treated_as_current':False,
+      'source_execution_sha':source_sha,
+      'reexecution_cycle':RUN_UID,
+      'target_pages':[PAGE],
+      'remaining_pages':[],
+      'stage_scope_complete':True,
+      'next_action':state.get('next_action'),
+      'attempt_uid':ATTEMPT_UID,
+      'frozen_governance_uid':CURRENT_UID,
+      'raw_discovery_gap_count':attempt.get('fresh_functional_gap_total'),
+      'product_materialization_elimination_count':0,
+      'external_authority_elimination_count':0,
+      'total_fresh_elimination_count':0,
+      'preserved_external_authority_union_count':ev.get('preserved_external_authority_union_count'),
+      'prior_stage2_results_used':False,
+      'source_workflow_run_id':attempt['source_workflow_run_id'],
+      'source_artifact_id':attempt['source_artifact_id'],
+      'source_artifact_sha256':attempt['source_artifact_sha256'],
+      'product_blocker_reduction_credit':0,
+      'validated_product_successor_signature_count':0,
+      'effective_functional_gap_count':attempt.get('fresh_functional_gap_total'),
+      'core01_work_unit_status':'DESIGN_CONTRACT_REMEDIATION_REQUIRED' if attempt.get('fresh_functional_gap_total') else 'READY_FOR_TERMINAL_CLOSURE',
+      'fresh_revalidation_required_under_current_governance':False,
+      'current_governance_uid':CURRENT_UID,
+      'closure_credit_under_current_governance':True,
+      'execution_scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
+      'canonical_product_contract_owner_ref':'00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml',
+    }
+    dump_yaml(CANDIDATES,candidates)
+
+    findings=load_yaml(FINDINGS)
+    findings['attempt_uid']=ATTEMPT_UID
+    findings['run_uid']=RUN_UID
+    findings['governance_uid']=CURRENT_UID
+    findings['source_execution_sha']=source_sha
+    findings['source_workflow_run_id']=attempt['source_workflow_run_id']
+    findings['source_artifact_id']=attempt['source_artifact_id']
+    findings['source_artifact_sha256']=attempt['source_artifact_sha256']
+    findings['fresh_functional_gap_total']=attempt.get('fresh_functional_gap_total')
+    findings['closure_blocker_total']=attempt.get('fresh_closure_blocker_total')
+    findings['prior_stage2_results_used']=False
+    findings['product_blocker_credit']=0
+    dump_yaml(FINDINGS,findings)
 
     print(json.dumps({
       'run_uid':RUN_UID,
