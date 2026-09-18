@@ -1,0 +1,733 @@
+{
+  "schema_version": 1,
+  "layer_classification": "RUN_STATE",
+  "normative_authority": false,
+  "test_candidate_only": true,
+  "current_governance_uid": "GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING",
+  "source_head_sha": "1bc5eada7e7fad398b03fa348131a403b7ef2266",
+  "work_unit_uid": "WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001",
+  "page_uid": "CORE-01",
+  "user_directive": "KEEP_DESIGN_REMEDIATION_IN_TEMPORARY_TEST_RECORDS_UNTIL_FULL_TEST_CYCLE_COMPLETES_THEN_REVIEW_MOTHER_GOVERNANCE_ONCE",
+  "authority_safety": {
+    "current_specification_mutated": false,
+    "mother_governance_mutated": false,
+    "raw_source_mutated": false,
+    "r5_r6_r8_mutated": false,
+    "candidate_is_product_authority": false,
+    "candidate_may_materialize": false,
+    "product_blocker_reduction_credit": 0
+  },
+  "sources": {
+    "current_problem_register": "00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml",
+    "remediability_classification": "governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml",
+    "authority_request_r5": "governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml",
+    "core_review_r8": "governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml",
+    "current_raw_authority_capture": "00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+    "current_raw_authority_sha256": "55263928a98956d8376ca1e9d0b92647f61154f62cd2ab3439a3c965a404b273"
+  },
+  "artifact_uid": "TEMP-STAGE02-CORE01-FUNCTION-ADMISSION-SCORECARD",
+  "artifact_type": "FUNCTION_ADMISSION_SCORECARD",
+  "activation_reason": "AI_OR_AUTOMATION_PROPOSES_FUNCTIONAL_CONTRACT_ADDITIONS_TO_CLOSE_REGISTERED_REQUIRED_GAPS",
+  "scoring_note": "Scores are diagnostic only and create no Authority.",
+  "denominator": {
+    "source_blockers": 45,
+    "design_units": 25
+  },
+  "records": [
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-BLUEPRINT-CREATE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-9BBABB28DD787D16"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-PROJECT-CREATE",
+      "target_uid": "CORE-01-ACT-PROJECT-CREATE",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-0F2F59760B078E8B"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-PROJECT-VALIDATE",
+      "target_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-4DF0E6BD9173770E"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-TOPIC-CREATE",
+      "target_uid": "CORE-01-ACT-TOPIC-CREATE",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-EE2102A472BE01C9"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-BLUEPRINT-APPROVE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-APPROVE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-179E8C2969A29494"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-BLUEPRINT-CREATE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-6141B9A73894667C"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-BLUEPRINT-VALIDATE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-VALIDATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-408FEDF4D680B48D"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CANDIDATE-ACCEPT",
+      "target_uid": "CORE-01-ACT-CANDIDATE-ACCEPT",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-AE5B957EC0F79FED"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CANDIDATE-CREATE",
+      "target_uid": "CORE-01-ACT-CANDIDATE-CREATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-C15DE740456A08DC"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CHILD-LOCK-REQUEST",
+      "target_uid": "CORE-01-ACT-CHILD-LOCK-REQUEST",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-7B583BC4163ECE78"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CORE-REVIEW-SUBMIT",
+      "target_uid": "CORE-01-ACT-CORE-REVIEW-SUBMIT",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-0311698938BE34E0"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-DNA-LOCK-REQUEST",
+      "target_uid": "CORE-01-ACT-DNA-LOCK-REQUEST",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-7BEAAB7254BBF92B"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-MOTHER-LOCK-REQUEST",
+      "target_uid": "CORE-01-ACT-MOTHER-LOCK-REQUEST",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-128169DBC5E997B6"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-PROJECT-CONFIRM",
+      "target_uid": "CORE-01-ACT-PROJECT-CONFIRM",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-143594D494D8B8CF"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-PROJECT-CREATE",
+      "target_uid": "CORE-01-ACT-PROJECT-CREATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-0C9225AF42F0A50C"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-PROJECT-VALIDATE",
+      "target_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-D39FD566C23D4583"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-SEND",
+      "target_uid": "CORE-01-ACT-SEND",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-C17CBED7B4413C8C"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-STORY-CANDIDATE",
+      "target_uid": "CORE-01-ACT-STORY-CANDIDATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-E571E68A0F0DF4FF"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-THREAD-CREATE",
+      "target_uid": "CORE-01-ACT-THREAD-CREATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-F352D083AABD597F"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-TOPIC-CREATE",
+      "target_uid": "CORE-01-ACT-TOPIC-CREATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-D3236E963AD6818F"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 75,
+        "accessibility_or_recovery_impact": 65
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-01",
+      "target_uid": "CORE-01-STTR-01",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-F12DADA9654B86F2",
+        "STAGE02-PROBLEM-CC89B15D982B7B10",
+        "STAGE02-PROBLEM-D2A9FED18BCBEBDD",
+        "STAGE02-PROBLEM-3A68F4A3A8C73B0F",
+        "STAGE02-PROBLEM-FCBD5D0CB12AB0E1"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 90,
+        "accessibility_or_recovery_impact": 95
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-02",
+      "target_uid": "CORE-01-STTR-02",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-C2D96DD973D204D7",
+        "STAGE02-PROBLEM-C9E4F6D82D992560",
+        "STAGE02-PROBLEM-DED8A71FB00EE11E",
+        "STAGE02-PROBLEM-38EF76A7C92F7D48",
+        "STAGE02-PROBLEM-D19D79DAC9BDC671"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 90,
+        "accessibility_or_recovery_impact": 95
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-03",
+      "target_uid": "CORE-01-STTR-03",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-49AE662398F49E43",
+        "STAGE02-PROBLEM-F3C9FFC8A9420580",
+        "STAGE02-PROBLEM-57B49BEFC57709BE",
+        "STAGE02-PROBLEM-3D18377467ABA06D",
+        "STAGE02-PROBLEM-BC37AA3864084D9C"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 90,
+        "accessibility_or_recovery_impact": 95
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-04",
+      "target_uid": "CORE-01-STTR-04",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-88B1029C86148DA1",
+        "STAGE02-PROBLEM-94958B2695E1E199",
+        "STAGE02-PROBLEM-6F1BD4743AA2596C",
+        "STAGE02-PROBLEM-61560A97CACF9BDC",
+        "STAGE02-PROBLEM-E71120DA8ACA8EE4"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 90,
+        "accessibility_or_recovery_impact": 95
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-05",
+      "target_uid": "CORE-01-STTR-05",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-1A7488C4938C6F4D",
+        "STAGE02-PROBLEM-C5B96517A0DF7520",
+        "STAGE02-PROBLEM-505196EEF61D3F27",
+        "STAGE02-PROBLEM-729B07DAA0CA6990",
+        "STAGE02-PROBLEM-FAD46C613B7694EA"
+      ],
+      "exact_seed_gap_present": true,
+      "required_operation_or_transition_present": true,
+      "existing_capability_reuse_check": "PASS_REUSE_EXISTING_ACTION_PORT_STAGE_EVENT_ERROR_AND_OBJECT_IDENTITIES_WHERE_AVAILABLE",
+      "alternative_path_check": "NO_CURRENT_EXACT_CONTRACT_CLOSES_THE_REGISTERED_MISSING_RELATION",
+      "new_business_entity": false,
+      "new_runtime": false,
+      "new_api": false,
+      "scores": {
+        "authority_necessity": 100,
+        "task_completion_criticality": 100,
+        "dependency_blocking_impact": 100,
+        "error_risk_reduction": 95,
+        "user_reach_or_frequency": 70,
+        "reuse_across_required_flows": 90,
+        "accessibility_or_recovery_impact": 95
+      },
+      "admission_result": "ADMIT_TEMPORARY_REVIEW_ONLY",
+      "authority_effect": "NONE_UNTIL_EXPLICIT_REVIEW_AND_CANONICAL_PROMOTION",
+      "visual_impact": "NO_NEW_CONTROL_OR_LAYOUT_PROPOSED; EXISTING_FUNCTION_VISUAL_IMPACT_MATRIX_REVIEW_REQUIRED_BEFORE_PROMOTION"
+    }
+  ]
+}
