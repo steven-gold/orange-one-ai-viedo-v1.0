@@ -40,8 +40,8 @@ jobs:
         run: |
           set -euo pipefail
           git diff --check
-          test ! -e .github/governance-maintenance/materialize_scope_stage_reentry_successor.py
-          test ! -e .github/workflows/scope-stage-reentry-governance-successor.yml
+          test -f .github/governance-maintenance/materialize_scope_stage_reentry_successor.py
+          test -f .github/workflows/scope-stage-reentry-governance-successor.yml
           test ! -d governance/test/temporary
           git status --short
       - name: Persist one atomic Mother successor
