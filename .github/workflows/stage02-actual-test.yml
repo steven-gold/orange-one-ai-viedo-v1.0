@@ -799,14 +799,14 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          import json, os, yaml
+          import json, os, subprocess, yaml
 
           ROOT = Path('.')
           result_p = ROOT/'.github/stage02-test/STAGE02_REEXECUTION_RESULT.json'
           raw = result_p.read_bytes()
           ev = json.loads(raw)
           prev = json.loads(Path('/tmp/stage02-pre-r1-evidence.json').read_text())
-          source_sha = os.environ['GITHUB_SHA']
+          source_sha = subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip()
           source_run = int(os.environ['STAGE02_SOURCE_RUN_ID'])
           artifact_id = int(os.environ['STAGE02_SOURCE_ARTIFACT_ID'])
           artifact_digest = os.environ['STAGE02_SOURCE_ARTIFACT_DIGEST']
