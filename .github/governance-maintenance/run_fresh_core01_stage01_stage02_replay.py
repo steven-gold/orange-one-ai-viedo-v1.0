@@ -1,4 +1,4 @@
-# R2_TRIGGER: fresh CORE-01 Stage-01 Stage-02 replay
+# R2_TRIGGER: fresh CORE-01 Stage-01 Stage-02 replay retry-2
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
