@@ -64,14 +64,10 @@ def resolve_profile_bound_state(active_state: dict, errors: list[str]) -> tuple[
     attempt_key = str(profile_state.get("active_attempt_state_key") or "")
     execution_key = str(profile_state.get("execution_state_key") or "")
     step_key = str(profile_state.get("current_step_state_key") or "")
-    if not attempt_key or not execution_key or not step_key:
+    if not execution_key or not step_key:
         errors.append("PROFILE_BOUND_PROJECTOR_STATE_KEYS_INCOMPLETE")
         return {}, {}
-    attempt = active_state.get(attempt_key)
     execution = active_state.get(execution_key)
-    if not isinstance(attempt, dict):
-        errors.append(f"PROFILE_BOUND_ACTIVE_ATTEMPT_STATE_MISSING:{attempt_key}")
-        attempt = {}
     if not isinstance(execution, dict):
         errors.append(f"PROFILE_BOUND_EXECUTION_STATE_MISSING:{execution_key}")
         execution = {}
@@ -79,6 +75,21 @@ def resolve_profile_bound_state(active_state: dict, errors: list[str]) -> tuple[
     if not isinstance(step, dict):
         errors.append(f"PROFILE_BOUND_CURRENT_STEP_STATE_MISSING:{execution_key}.{step_key}")
         step = {}
+    # A NOT_EXECUTED profile step must not require or materialize an active-attempt projector.
+    # Once the step is executed, the active-attempt key and mapping become mandatory.
+    if step.get("result") == "NOT_EXECUTED":
+        if attempt_key:
+            attempt = active_state.get(attempt_key)
+            if isinstance(attempt, dict) and attempt:
+                errors.append(f"NOT_EXECUTED_PROFILE_ACTIVE_ATTEMPT_MUST_BE_ABSENT:{attempt_key}")
+        return {}, step
+    if not attempt_key:
+        errors.append("PROFILE_BOUND_ACTIVE_ATTEMPT_STATE_KEY_MISSING")
+        return {}, step
+    attempt = active_state.get(attempt_key)
+    if not isinstance(attempt, dict):
+        errors.append(f"PROFILE_BOUND_ACTIVE_ATTEMPT_STATE_MISSING:{attempt_key}")
+        attempt = {}
     return attempt, step
 
 
@@ -107,6 +118,19 @@ def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> 
             continue
         seen.add(key)
         path = ROOT / owner
+        label = f"{owner}#{yaml_path}"
+        # Current findings are an executed-step projector. In the canonical NOT_EXECUTED
+        # clean-reset state they must be absent; requiring them would contradict the
+        # Stage-02 zero-residual contract.
+        if kind.endswith("_CURRENT_FINDINGS_CROSSCHECK") and current_step.get("result") == "NOT_EXECUTED":
+            present = path.is_file()
+            projectors[label] = {
+                "applicability": "NOT_APPLICABLE_WHILE_NOT_EXECUTED",
+                "present": present,
+            }
+            if present:
+                errors.append(f"NOT_EXECUTED_PROFILE_FINDINGS_PROJECTOR_MUST_BE_ABSENT:{label}")
+            continue
         try:
             data = load_yaml(path)
             value = deep_get(data, yaml_path)
@@ -114,7 +138,6 @@ def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> 
             errors.append(f"PROJECTOR_PARSE_OR_PATH_MISSING:{owner}#{yaml_path}:{exc}")
             continue
 
-        label = f"{owner}#{yaml_path}"
         if kind == "GOVERNANCE_UID":
             projectors[label] = value
             if value != current_uid:
