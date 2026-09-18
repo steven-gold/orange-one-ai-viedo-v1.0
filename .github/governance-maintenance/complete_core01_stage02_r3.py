@@ -118,7 +118,7 @@ def validate_fresh_candidate(candidate, raw, problems):
     reg=raw.get('registries') or {}
     actions=idx(reg.get('actions'),'action_uid'); ports=idx(reg.get('integration_ports'),'port_uid')
     transitions=idx(reg.get('stage_transitions'),'transition_uid'); events=idx(reg.get('events'),'event_uid')
-    objects=idx(reg.get('objects_refs'),'object_uid'); states=idx(raw.get('page_states'),'state_uid')
+    objects=idx(reg.get('objects_refs'),'object_uid'); states=idx(reg.get('page_states'),'state_uid')
     rows=problems.get('problems') or []
     current_ids={r.get('problem_uid') for r in rows}
     covered=[]; cats=Counter(); semantic_records=[]
@@ -436,8 +436,11 @@ def finalize():
     digest=digest.removeprefix('sha256:')
     if not re.fullmatch(r'[0-9a-f]{64}',digest): die('FINALIZE_DIGEST_INVALID')
     state=load_yaml(STATE); findings=load_yaml(FINDINGS); change=load_yaml(CHANGE); review=load_yaml(REVIEW)
-    active=state.get('stage02_active_attempt') or {}; active.update({'source_workflow_run_id':int(run_id),'source_artifact_id':int(aid),
-      'source_artifact_sha256':digest,'fresh_revalidation_required':False,'closure_credit_under_current_governance':True})
+    source_sha=os.environ.get('GITHUB_SHA','').strip()
+    if not re.fullmatch(r'[0-9a-f]{40}',source_sha): die('FINALIZE_SOURCE_SHA_INVALID')
+    active=state.get('stage02_active_attempt') or {}; active.update({'source_execution_sha':source_sha,'source_workflow_run_id':int(run_id),'source_artifact_id':int(aid),
+      'source_artifact_sha256':digest,'active_evidence_present':True,'active_findings_present':True,
+      'fresh_revalidation_required':False,'closure_credit_under_current_governance':True})
     state['stage02_active_attempt']=active
     trans=state.setdefault('governance_revision_transition',{}); trans['fresh_revalidation_required']=False
     ex=state.get('execution') or {}; s2=ex.get('stage2') or {}; s2['revalidation_required_under_current_governance']=False; ex['stage2']=s2; state['execution']=ex
@@ -446,10 +449,10 @@ def finalize():
     state['status']='STAGE02_PASS_CURRENT_EVIDENCE_BOUND_PENDING_TERMINAL_VALIDATION'
     state['resume_control'].update({'current_resume_point':'STAGE2_PASS_CURRENT_EVIDENCE_BOUND_PENDING_TERMINAL_VALIDATION','exact_next_action':state['next_action']})
     dump_yaml(STATE,state)
-    findings.update({'source_workflow_run_id':int(run_id),'source_artifact_id':int(aid),'source_artifact_sha256':digest,'status':'STAGE02_PASS_CURRENT_EVIDENCE_BOUND'}); dump_yaml(FINDINGS,findings)
-    cur=change.get('current_stage2_execution') or {}; cur.update({'source_workflow_run_id':int(run_id),'source_artifact_id':int(aid),'source_artifact_sha256':digest,
+    findings.update({'source_execution_sha':source_sha,'source_workflow_run_id':int(run_id),'source_artifact_id':int(aid),'source_artifact_sha256':digest,'status':'STAGE02_PASS_CURRENT_EVIDENCE_BOUND'}); dump_yaml(FINDINGS,findings)
+    cur=change.get('current_stage2_execution') or {}; cur.update({'source_execution_sha':source_sha,'source_workflow_run_id':int(run_id),'source_artifact_id':int(aid),'source_artifact_sha256':digest,
       'fresh_revalidation_required_under_current_governance':False,'closure_credit_under_current_governance':True,'next_action':state['next_action']}); dump_yaml(CHANGE,change)
-    review.update({'source_workflow_run_id':int(run_id),'source_artifact_id':int(aid),'source_artifact_sha256':digest,'status':'PASS_CURRENT_EVIDENCE_BOUND_PENDING_PERSISTED_HEAD_TERMINAL_VALIDATION'}); dump_yaml(REVIEW,review)
+    review.update({'source_execution_sha':source_sha,'source_workflow_run_id':int(run_id),'source_artifact_id':int(aid),'source_artifact_sha256':digest,'status':'PASS_CURRENT_EVIDENCE_BOUND_PENDING_PERSISTED_HEAD_TERMINAL_VALIDATION'}); dump_yaml(REVIEW,review)
     scope=load_yaml(SCOPE); scope['fresh_revalidation_required']=False; tmp=deepcopy(scope); tmp.pop('content_hash',None); scope['content_hash']=sha_obj(tmp); dump_yaml(SCOPE,scope)
 
 def materialize_and_reexecute():
