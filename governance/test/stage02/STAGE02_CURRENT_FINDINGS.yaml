@@ -1,0 +1,56 @@
+schema_version: 11
+artifact_type: STAGE02_CURRENT_FINDINGS
+normative_authority: false
+stage_uid: STAGE-02
+attempt_uid: STAGE02-FRESH-20260918-007
+frozen_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+source_cycle: FRESH_CURRENT_GOVERNANCE_STAGE02_ACTUAL_TEST
+source_head_sha: f1c97a67731fbe1c6df95450c944ed33ca36d008
+source_workflow_run_id: 35324883473
+source_artifact_id: 10539001854
+source_artifact_sha256: 034955cdf9f6fff31eea634e604f26d1ed9458f0a53850eae89f24b4a134fc56
+fresh_functional_gap_total: 45
+fresh_closure_blocker_total: 7
+gap_classes:
+  ARCHITECTURE_GAP: 29
+  INPUT_SOURCE_GAP: 16
+gap_categories:
+  AUDIT_EVENT_NODE_MISSING: 4
+  PAYLOAD_INPUT_CONTRACT_MISSING: 16
+  STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
+page_results:
+  CORE-01:
+    functional_gap_count: 45
+    closure_blocker_count: 7
+    closure_blockers:
+    - MISSING_BUSINESS_ENTITY_INVENTORY
+    - MISSING_BUSINESS_ENTITY_OPERATION_MATRIX
+    - MISSING_ENTITY_HIERARCHY_MATRIX
+    - MISSING_FUNCTIONAL_WORKBENCH_CONTRACT
+    - MISSING_INTERACTION_TOPOLOGY_SPEC
+    - MISSING_FUNCTION_VISUAL_IMPACT_MATRIX
+    - MISSING_AI_INTERACTION_CONTINUITY_CONTRACT
+target_pages:
+- CORE-01
+remaining_pages:
+- ASSET-01
+stage_scope_complete: false
+official_stage_output_denominator_count: 17
+current_manifest_mandatory_stage_output_subset_count: 12
+preserved_external_authority_union_count: 7
+preserved_external_authority_union_gap_uids:
+- GAP-001
+- GAP-002
+- GAP-003
+- GAP-004
+- GAP-005
+- GAP-007
+- GAP-008
+prior_stage2_results_used: false
+result: BLOCKED
+current_specification_mutated: false
+immutable_stage1_source_mutated: false
+stage03_allowed: false
+website_construction_allowed: false
+deployment_allowed: false
+next_action: OWNING_LAYER_REMEDIATION_OF_FRESH_FUNCTIONAL_GAPS_AND_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED

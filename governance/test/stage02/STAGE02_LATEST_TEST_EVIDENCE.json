@@ -1,0 +1,539 @@
+{
+  "actual_product_stage_test_completed": true,
+  "actual_product_stage_test_started": true,
+  "ai_autofill_used": false,
+  "artifact_type": "NON_NORMATIVE_STAGE02_ACTUAL_TEST_EVIDENCE",
+  "attempt_uid": "STAGE02-FRESH-20260918-007",
+  "closure_blocker_total": 7,
+  "current_evidence_projection": {
+    "product_gap_or_blocker_values_modified": false,
+    "projection_adds_current_attempt_identity_only": true,
+    "source_artifact_payload_preserved_as_provenance": true
+  },
+  "current_specification_mutated": false,
+  "deployment_allowed": false,
+  "execution_profile_mandatory_output_subset": [
+    "CHANGE_IMPACT_MAP",
+    "CLASSIFICATION_RULESET",
+    "CURRENT_PROBLEM_REGISTER",
+    "DENOMINATOR_SNAPSHOT",
+    "DEPENDENCY_TOPOLOGY",
+    "EFFECTIVE_CONTRACT_OVERLAY",
+    "FUNCTIONAL_CHAIN_MANIFEST",
+    "FUNCTIONAL_CHAIN_SPEC",
+    "PAGE_CONSTRUCTION_SPEC_PACKAGE",
+    "REQUIRED_FIELD_MANIFEST",
+    "RESOLUTION_LEDGER",
+    "STAGE_EXECUTION_PREFLIGHT_RECEIPT"
+  ],
+  "fresh_functional_gap_total": 45,
+  "frozen_governance_uid": "GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING",
+  "inference_used": false,
+  "normative_authority": false,
+  "notes": [
+    "BLOCKED is a valid Stage-02 product-test outcome and does not mean the test runner failed.",
+    "External authority references are preserved unresolved; they are neither dropped nor auto-resolved.",
+    "No Current Specification file is modified by this test.",
+    "A page-scoped test does not grant Stage-02 exit credit until every required page has fresh evidence."
+  ],
+  "official_stage_output_denominator": [
+    "ASYNC_PROVIDER_CONTRACT",
+    "CHANGE_IMPACT_MAP",
+    "CLASSIFICATION_RULESET",
+    "CURRENT_PROBLEM_REGISTER",
+    "DENOMINATOR_SNAPSHOT",
+    "DEPENDENCY_MAP",
+    "DEPENDENCY_TOPOLOGY",
+    "EFFECTIVE_CONTRACT_OVERLAY",
+    "FUNCTIONAL_CHAIN_MANIFEST",
+    "FUNCTIONAL_CHAIN_SPEC",
+    "FUNCTIONAL_WORKBENCH_CONTRACT",
+    "INTERACTION_TOPOLOGY_SPEC",
+    "PAGE_CONSTRUCTION_SPEC_PACKAGE",
+    "REQUIRED_FIELD_MANIFEST",
+    "RESOLUTION_LEDGER",
+    "SHARED_OWNER_PORT_MAP",
+    "STAGE_EXECUTION_PREFLIGHT_RECEIPT"
+  ],
+  "pages": {
+    "CORE-01": {
+      "ai_interaction_profile_active": true,
+      "automatic_completion_scope": "NOT_APPLICABLE_NO_AUTOMATIC_COMPLETION_ATTEMPT",
+      "blueprint_uid": "V218-REPLAY-BP-CORE-01-PAGE-BASE",
+      "closure_blocker_count": 7,
+      "closure_blockers": [
+        "MISSING_BUSINESS_ENTITY_INVENTORY",
+        "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
+        "MISSING_ENTITY_HIERARCHY_MATRIX",
+        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_INTERACTION_TOPOLOGY_SPEC",
+        "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX",
+        "MISSING_AI_INTERACTION_CONTINUITY_CONTRACT"
+      ],
+      "function_admission_scorecard": "NOT_APPLICABLE_NO_AUTO_OR_AI_PROPOSED_FUNCTION_CREATED_BY_THIS_TEST",
+      "functional_chain_fresh_scan": {
+        "functional_completion": false,
+        "gap_categories": {
+          "AUDIT_EVENT_NODE_MISSING": 4,
+          "PAYLOAD_INPUT_CONTRACT_MISSING": 16,
+          "STATE_TRANSITION_LEDGER_FIELD_MISSING": 25
+        },
+        "gap_classes": {
+          "ARCHITECTURE_GAP": 29,
+          "INPUT_SOURCE_GAP": 16
+        },
+        "gap_count": 45,
+        "gaps": [
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-PROJECT-CREATE"
+          },
+          {
+            "category": "AUDIT_EVENT_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "registered port has no explicit audit/event UID in state_event",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-PROJECT-CREATE"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-TOPIC-CREATE"
+          },
+          {
+            "category": "AUDIT_EVENT_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "registered port has no explicit audit/event UID in state_event",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-TOPIC-CREATE"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-THREAD-CREATE"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-SEND"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-CANDIDATE-CREATE"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-CANDIDATE-ACCEPT"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-PROJECT-VALIDATE"
+          },
+          {
+            "category": "AUDIT_EVENT_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "registered port has no explicit audit/event UID in state_event",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-PROJECT-VALIDATE"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-PROJECT-CONFIRM"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-STORY-CANDIDATE"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-DNA-LOCK-REQUEST"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-CORE-REVIEW-SUBMIT"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-MOTHER-LOCK-REQUEST"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-BLUEPRINT-CREATE"
+          },
+          {
+            "category": "AUDIT_EVENT_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "registered port has no explicit audit/event UID in state_event",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-BLUEPRINT-CREATE"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-BLUEPRINT-VALIDATE"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-BLUEPRINT-APPROVE"
+          },
+          {
+            "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+            "class": "INPUT_SOURCE_GAP",
+            "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-ACT-CHILD-LOCK-REQUEST"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "mutation_owner",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-01"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "failure_state",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-01"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "recovery",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-01"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "audit_event_uid",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-01"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "illegal_transition_tests",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-01"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "mutation_owner",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-02"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "failure_state",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-02"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "recovery",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-02"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "audit_event_uid",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-02"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "illegal_transition_tests",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-02"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "mutation_owner",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-03"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "failure_state",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-03"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "recovery",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-03"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "audit_event_uid",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-03"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "illegal_transition_tests",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-03"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "mutation_owner",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-04"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "failure_state",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-04"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "recovery",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-04"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "audit_event_uid",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-04"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "illegal_transition_tests",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-04"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "mutation_owner",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-05"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "failure_state",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-05"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "recovery",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-05"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "audit_event_uid",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-05"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "illegal_transition_tests",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "CORE-01",
+            "uid": "CORE-01-STTR-05"
+          }
+        ],
+        "registered_runtime_reference_count": 21,
+        "registry_denominator": {
+          "actions": 34,
+          "controls": 50,
+          "effectful_actions": 19,
+          "errors": 16,
+          "events": 7,
+          "gates": 26,
+          "integration_ports": 19,
+          "permissions": 14,
+          "stage_transitions": 5,
+          "stages": 5
+        }
+      },
+      "unresolved_external_authority_ref_count": 7
+    }
+  },
+  "physical_stage2_product_artifact_root_present": false,
+  "preserved_external_authorities": {
+    "GAP-001": {
+      "authority_ref": "GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9",
+      "consumers": [
+        "CORE-01"
+      ]
+    },
+    "GAP-002": {
+      "authority_ref": "GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0",
+      "consumers": [
+        "CORE-01"
+      ]
+    },
+    "GAP-003": {
+      "authority_ref": "ACPOS_SYSTEM_AUTHORITY@V1.0",
+      "consumers": [
+        "CORE-01"
+      ]
+    },
+    "GAP-004": {
+      "authority_ref": "ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0",
+      "consumers": [
+        "CORE-01"
+      ]
+    },
+    "GAP-005": {
+      "authority_ref": "ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3",
+      "consumers": [
+        "CORE-01"
+      ]
+    },
+    "GAP-007": {
+      "authority_ref": "IAM-01 / account permission runtime",
+      "consumers": [
+        "CORE-01"
+      ]
+    },
+    "GAP-008": {
+      "authority_ref": "ACPOS shared AI Router/Capability Assignment",
+      "consumers": [
+        "CORE-01"
+      ]
+    }
+  },
+  "preserved_external_authority_union_count": 7,
+  "preserved_external_authority_union_gap_uids": [
+    "GAP-001",
+    "GAP-002",
+    "GAP-003",
+    "GAP-004",
+    "GAP-005",
+    "GAP-007",
+    "GAP-008"
+  ],
+  "prior_stage2_results_used": false,
+  "remaining_pages": [
+    "ASSET-01"
+  ],
+  "requested_page_scope": "CORE-01",
+  "result": "BLOCKED",
+  "schema_version": 1,
+  "scope_mode": "EXACT_PAGE_SCOPE_ONLY",
+  "source_head_sha": "f1c97a67731fbe1c6df95450c944ed33ca36d008",
+  "stage_entry_gate": "PASS",
+  "stage_exit_allowed": false,
+  "stage_name": "PAGE_FUNCTIONAL_CONTRACT",
+  "stage_scope_complete": false,
+  "stage_uid": "STAGE-02",
+  "target_pages": [
+    "CORE-01"
+  ],
+  "test_mode": "FRESH_FROM_STAGE1_IMMUTABLE_INPUTS_NO_PRIOR_STAGE2_RESULT_REUSE",
+  "website_construction_allowed": false
+}
