@@ -166,9 +166,10 @@ def deterministic_hashes():
     cp.write_text("".join(f"{sha(p)}  {p.relative_to(SOURCE).as_posix()}\n" for p in files),encoding="utf-8")
     checksum=sha(cp)
 
+    identity_files=sorted(files+[cp], key=lambda p:p.relative_to(SOURCE).as_posix())
     tb=io.BytesIO()
     with tarfile.open(fileobj=tb,mode="w",format=tarfile.PAX_FORMAT) as tf:
-        for p in files+[cp]:
+        for p in identity_files:
             rel=p.relative_to(SOURCE).as_posix()
             info=tf.gettarinfo(str(p),arcname=rel)
             info.uid=0; info.gid=0; info.uname=""; info.gname=""; info.mtime=0
@@ -177,7 +178,7 @@ def deterministic_hashes():
 
     zb=io.BytesIO()
     with zipfile.ZipFile(zb,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=9) as zf:
-        for p in files+[cp]:
+        for p in identity_files:
             rel=p.relative_to(SOURCE).as_posix()
             zi=zipfile.ZipInfo(rel,date_time=(1980,1,1,0,0,0))
             zi.compress_type=zipfile.ZIP_DEFLATED; zi.create_system=3
