@@ -113,22 +113,21 @@ stage02_reset_control:
   next_action_after_mother_review: CORE01_SCOPE_AUTHORIZED_CREATE_FRESH_RECEIPTS_AND_RUN_ACTUAL_TEST
   product_stage_credit: 0
 status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
-next_action: CLOSE_CORE01_STRUCTURAL_REMEDIATION_WORK_UNIT_THEN_REMEDIATE_FRESH_FUNCTIONAL_GAPS
+next_action: RUN_CURRENT_REMEDIABILITY_CLASSIFICATION_R2_FOR_CORE01_FRESH_45_GAPS
 work_unit_resolution_gate:
-  resolution_uid: WUR-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
+  resolution_uid: WUR-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
-  predecessor_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
-  predecessor_terminal_disposition: CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED
+  predecessor_work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
+  predecessor_terminal_disposition: CLOSED_VERIFIED_STRUCTURAL_REMEDIATION_ZERO_CLOSURE_BLOCKERS
   requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
   resume_point_before_resolution: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
-  resolved_work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
+  resolved_work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
   explicit_user_directive: NEXT_STEP
-  authorization_uid: USR-DIRECTIVE-20260918-CORE01-NEXT-STEP
+  authorization_uid: USR-DIRECTIVE-20260918-CORE01-FUNCTIONAL-NEXT-STEP
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   canonical_problem_register_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  dependency_topology_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_TOPOLOGY.yaml
-  required_field_manifest_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/REQUIRED_FIELD_MANIFEST.yaml
+  classification_ruleset_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CLASSIFICATION_RULESET.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
   page_scope:
   - CORE-01
@@ -137,15 +136,53 @@ work_unit_resolution_gate:
   applicability: APPLICABLE
   duplicate_or_parallel_work_unit_count: 0
   source_problem_denominator: 45
-  structural_closure_blocker_denominator: 7
-  product_stage_credit_before_remediation: 0
+  source_closure_blocker_denominator: 0
   resolution_basis:
-  - CANONICAL_PREFLIGHT_PERSISTED_12_OF_12
+  - STRUCTURAL_REMEDIATION_FRESH_REEXECUTION_CLOSURE_BLOCKERS_ZERO
   - CURRENT_PROBLEM_REGISTER_OPEN_PROBLEMS_45_CORE01_ONLY
-  - DEPENDENCY_ORDER_REQUIRES_UPSTREAM_STRUCTURAL_CONTRACTS_BEFORE_LEAF_GAPS
-  - EXTERNAL_AUTHORITY_REFS_MUST_REMAIN_UNRESOLVED_UNLESS_EXACT_AUTHORITY_EVIDENCE_EXISTS
-  - STAGE01_IMMUTABLE_INPUTS_MUST_REMAIN_UNCHANGED
+  - CLASSIFICATION_REQUIRED_BEFORE_ANY_FUNCTIONAL_VALUE_MATERIALIZATION
+  - EXTERNAL_AUTHORITY_REFS_MUST_REMAIN_UNRESOLVED_WITHOUT_EXACT_AUTHORITY_EVIDENCE
+  - ASSET01_REMAINS_OUT_OF_SCOPE
+
 active_work_unit:
+  work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
+  canonical_name: CORE01_FRESH_FUNCTIONAL_GAP_REMEDIATION
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  scope:
+  - CORE-01
+  canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  canonical_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_status: CLASSIFICATION_REQUIRED
+  source_problem_denominator: 45
+  source_closure_blocker_denominator: 0
+  gap_classes:
+    ARCHITECTURE_GAP: 29
+    INPUT_SOURCE_GAP: 16
+  gap_categories:
+    AUDIT_EVENT_NODE_MISSING: 4
+    PAYLOAD_INPUT_CONTRACT_MISSING: 16
+    STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
+  preserved_external_authority_union_count: 7
+  out_of_scope:
+  - ASSET-01
+  - STAGE03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - EXTERNAL_AUTHORITY_AUTOFILL
+  - PRODUCT_VALUE_INFERENCE
+  entry_action: RUN_CURRENT_REMEDIABILITY_CLASSIFICATION_R2_ON_FRESH_45_PROBLEM_REGISTER
+  definition_of_done:
+  - ALL_45_CURRENT_PROBLEMS_CLASSIFIED_FROM_EXACT_CURRENT_AUTHORITY
+  - BOUNDED_COMPLETION_ONLY_WHERE_EXACT_CURRENT_AUTHORITY_PROVES_MISSING_FIELD_VALUE
+  - EXTERNAL_OR_PRODUCT_AUTHORITY_REQUIRED_ITEMS_REMAIN_BLOCKED
+  - NO_SEMANTIC_SIMILARITY_SIBLING_SYMMETRY_OR_GENERIC_CRUD_INFERENCE
+  - ANY_MATERIAL_REMEDIATION_REQUIRES_FRESH_REEXECUTION
+  - CORE01_ONLY_SCOPE_PRESERVED
+  - STAGE01_IMMUTABLE_INPUTS_UNCHANGED
+  - EXACT_PERSISTED_HEAD_FULL_LINE_SUCCESS
+  resume_after_closure: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION_OR_STAGE_EXIT_IF_ZERO
+
+last_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
   primary_task_layer: PRODUCT_STAGE_EXECUTION
@@ -168,7 +205,7 @@ active_work_unit:
   - UNAUTHORIZED_PRODUCT_SCOPE_EXPANSION
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   canonical_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
-  current_status: IN_PROGRESS
+  current_status: CLOSED_VERIFIED_STRUCTURAL_REMEDIATION_ZERO_CLOSURE_BLOCKERS
   source_problem_denominator: 45
   source_closure_blocker_denominator: 7
   product_stage_credit_before_verified_replay: 0
@@ -189,8 +226,24 @@ active_work_unit:
   - CURRENT_PROBLEM_REGISTER_RECOMPILED_FROM_FRESH_EVIDENCE
   - STAGE01_IMMUTABLE_INPUTS_UNCHANGED
   - EXACT_PERSISTED_HEAD_FULL_LINE_SUCCESS
-  resume_after_closure: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION_OR_STAGE_EXIT_IF_ZERO
-last_closed_product_work_unit:
+  resume_after_closure: STAGE2_TESTED_BLOCKED_FUNCTIONAL_REMEDIATION
+  closure_evidence:
+    source_reexecution_head: 6d66f4b9364c5c307dc87e0bd53857e6537f706c
+    source_workflow_run_id: 35306642304
+    source_artifact_id: 10532025879
+    persisted_current_state_commit: 47f36c77d5a9d6fbee44182a6119100a29b9fe05
+    exact_persisted_state_validation_head: f61e175f46a18e0cab175f44da810d6e67a69acb
+    full_line_run_id: 35306746020
+    full_line_result: success
+    selected_profile_run_id: 35306746013
+    selected_profile_result: success
+    branch_guard_run_id: 35306746022
+    branch_guard_result: success
+    materialized_structural_blocker_count: 7
+    fresh_closure_blocker_total: 0
+    fresh_functional_gap_total: 45
+    terminal_disposition: CLOSED_VERIFIED_STRUCTURAL_REMEDIATION_ZERO_CLOSURE_BLOCKERS
+previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
   canonical_name: CORE01_FRESH_STAGE02_ACTUAL_TEST
   primary_task_layer: PRODUCT_STAGE_EXECUTION
@@ -350,14 +403,14 @@ resume_control:
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
   effectful_stage2_execution_before_entry_resolution: PASS_ENTRY_RESOLVED
-  current_resume_point: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION
-  current_work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
-  current_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
+  current_resume_point: STAGE2_TESTED_BLOCKED_FUNCTIONAL_REMEDIATION
+  current_work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
+  current_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   last_closed_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
   last_closed_work_unit_result: CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED
   last_closed_work_unit_full_line_run_id: 35300652499
   last_closed_work_unit_evidence_head: 38ded547d9f6050c7cae8dd249521a1eb7ff77ae
-  exact_next_action: EXECUTE_CORE01_STRUCTURAL_REMEDIATION_IN_DEPENDENCY_ORDER_FROM_CANONICAL_PROBLEM_REGISTER
+  exact_next_action: RUN_CURRENT_REMEDIABILITY_CLASSIFICATION_R2_FOR_CORE01_FRESH_45_GAPS
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
@@ -396,7 +449,7 @@ pending_governance_review:
   approved_product_test_page_scope:
   - CORE-01
 current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-CORE01-NEXT-STEP
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-CORE01-FUNCTIONAL-NEXT-STEP
 current_primary_task_product_stage_credit: 0
 stage02_active_attempt:
   attempt_uid: STAGE02-FRESH-20260918-006
