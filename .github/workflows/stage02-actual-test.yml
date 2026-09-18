@@ -889,7 +889,7 @@ jobs:
           report='governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json'
           unexpected="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | grep -v "^$report$" || true)"
           test -z "$unexpected" || { printf 'BLOCK: unexpected pre-preflight validator delta\n%s\n' "$unexpected" >&2; exit 1; }
-          if ! git diff --quiet -- "$report"; then
+          if [ -n "$(git status --porcelain=v1 --untracked-files=all -- "$report")" ]; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add -- "$report"
@@ -1329,7 +1329,7 @@ jobs:
           python governance/ci/specification_mutation_guard.py
           report='governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json'
           python governance/ci/validate_active_consumer_reference_integrity.py
-          if ! git diff --quiet -- "$report"; then
+          if [ -n "$(git status --porcelain=v1 --untracked-files=all -- "$report")" ]; then
             actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//')"
             test "$actual" = "$report" || { printf 'BLOCK: unexpected consumer synchronization delta\n%s\n' "$actual" >&2; exit 1; }
             git config user.name 'github-actions[bot]'
