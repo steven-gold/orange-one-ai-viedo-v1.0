@@ -819,6 +819,10 @@ Pilot Evidence MUST 能逐步指出：
 - 多個合理 State Transition
 - 需要產品決策的 UI / Flow
 
+對被禁止自動修改的 `INPUT_SOURCE_GAP` / `ARCHITECTURE_GAP`，禁止自動「產品修改」不代表禁止分析或設計候選。若 Current Authority 沒有唯一 exact closure，執行器 MUST 先建立 bounded review-only Design/Contract Remediation Work Unit，產生 Scorecard、Scope Ledger、最小依賴閉環與 non-normative Candidate；Candidate MUST 標示未批准、不可 materialize、不可取得 product credit。
+
+只有兩種以上 materially distinct viable product behaviors 才進 `AUTHORITY_GAP` / `USER_DECISION_REQUIRED`。同一 coherent design boundary 的多筆 blocker SHOULD 合併為單一 package review，而不是預設逐欄要求使用者填入。批准後仍 MUST 先 materialize 到單一 Current canonical product owner，才能進 ingestion/implementation。
+
 自動修補完成後 MUST 回到原 Gap 的上一 Gate 重新驗證，禁止只跑新增 Test。
 
 <!-- SECTION_UID: WEB-GOV-03-S044C -->

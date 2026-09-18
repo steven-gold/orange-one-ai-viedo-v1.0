@@ -1,26 +1,11 @@
-schema_version: 3
-artifact_type: CLEAN_BASELINE_RESET_RECEIPT
+schema_version: 1
+artifact_type: STAGE02_CLEAN_BASELINE_RESET_RECEIPT
 normative_authority: false
-stage_uid: STAGE-02
-attempt_uid: STAGE02-FRESH-20260918-006
-baseline_status: CLEAN_PREDECESSOR_BASELINE_VERIFIED
-baseline_parent_commit: 77245c42527fe1018bd744d9b57754047d38a316
-predecessor_stage: STAGE-01
-predecessor_state: STAGE1_VALIDATION_COMPLETED_CI_PASS
-scope_mode: EXACT_PAGE_SCOPE_ONLY
-target_pages:
-- CORE-01
-excluded_pages:
-- ASSET-01
-stage2_started_in_predecessor: false
-stage2_active_evidence_present: false
-stage2_active_findings_present: false
-stage2_prior_attempt_counts_may_be_current: false
-expected_stage1_blobs:
-  00_SOURCE_INTAKE/fresh_run_003/ARTIFACT_PLAN.yaml: c64ab04846b228c14978c07f88164a8d02a22f0d
-  00_SOURCE_INTAKE/fresh_run_003/EXECUTION_STATE.yaml: 4f2bf558f5807a03d081f848184334ba16901fb1
-  00_SOURCE_INTAKE/fresh_run_003/RUN_MANIFEST.yaml: 110e672114aa244279ad5af932c83d169fdebfe5
-  11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml: 96d9e64940f24154cf086fdd26ee0e6d4e0653ef
-  11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml: a75551629448349732c08e34d252fee8fb040e94
-zero_residual_validator: governance/ci/validate_stage02_zero_residual.py
-fresh_execution_requires_full_line_gate_after_this_receipt: true
+current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+predecessor_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+reason: POST_GOVERNANCE_PROMOTION_FRESH_RESTART_REQUIRED
+stage1_immutable_inputs_preserved: true
+current_stage02_generated_outputs_removed: true
+historical_design_remediation_test_evidence_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
+product_stage_credit: 0
+next_action: RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE

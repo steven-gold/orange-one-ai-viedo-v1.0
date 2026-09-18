@@ -168,11 +168,22 @@ for sig in sorted(problem_by_sig):
     if r.get('disposition') == 'NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS':
         if p.get('gap_owner') != 'PAGE_FUNCTIONAL_CONTRACT':
             die(f'R5_LOCAL_OWNER_DRIFT:{sig}:{p.get("gap_owner")}')
+        gap_class = str(p.get('gap_class') or '')
+        if gap_class in {'INPUT_SOURCE_GAP', 'ARCHITECTURE_GAP'}:
+            routing = 'REVIEW_ONLY_DESIGN_CONTRACT_REMEDIATION_REQUIRED'
+            unlock = 'BOUNDED_DESIGN_REMEDIATION_PACKAGE_IS_REVIEWED_AND_APPROVED_CONTENT_IS_MATERIALIZED_TO_THE_SINGLE_CURRENT_CANONICAL_PRODUCT_CONTRACT_OWNER'
+        elif gap_class == 'AUTHORITY_GAP':
+            routing = 'EXPLICIT_PRODUCT_AUTHORITY_SELECTION_REQUIRED'
+            unlock = 'EXPLICIT_PRODUCT_AUTHORITY_SELECTS_THE_MATERIALLY_DISTINCT_PRODUCT_BEHAVIOR_AND_APPROVED_CONTENT_IS_MATERIALIZED_TO_THE_SINGLE_CURRENT_CANONICAL_PRODUCT_CONTRACT_OWNER'
+        else:
+            routing = 'SEPARATELY_APPROVED_PRODUCT_AUTHORITY_REQUIRED'
+            unlock = 'SEPARATELY_APPROVED_CURRENT_ADMISSIBLE_PRODUCT_AUTHORITY_SUPPLIES_THE_EXACT_MISSING_BINDING_AND_VALIDATION_ACCEPTS_IT_WITHOUT_SEMANTIC_INFERENCE'
         local_requests.append({
             **common,
             'request_uid': f'R5::{p.get("problem_uid")}',
+            'routing_disposition': routing,
             'authority_request': authority_requirement(str(p.get('category')), str(p.get('detail'))),
-            'unlock_condition': 'SEPARATELY_APPROVED_CURRENT_ADMISSIBLE_PRODUCT_AUTHORITY_SUPPLIES_THE_EXACT_MISSING_BINDING_AND_VALIDATION_ACCEPTS_IT_WITHOUT_SEMANTIC_INFERENCE',
+            'unlock_condition': unlock,
         })
     elif r.get('disposition') == 'EXACT_EXTERNAL_AUTHORITY_REQUIRED':
         if p.get('gap_owner') != 'EXTERNAL_AUTHORITY' or p.get('category') != 'SHARED_OWNER_AUTHORITY_UNRESOLVED':
@@ -247,7 +258,7 @@ out = {
 }
 dump(OUT, out)
 
-state['next_action'] = 'AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY'
+state['next_action'] = 'BUILD_AND_REVIEW_BOUNDED_NON_NORMATIVE_DESIGN_REMEDIATION_PACKAGE_FOR_LOCAL_INPUT_SOURCE_AND_ARCHITECTURE_GAPS; ROUTE_ONLY_TRUE_AUTHORITY_GAPS_TO_EXPLICIT_SELECTION; DO_NOT_R7_MATERIALIZE_REVIEW_ONLY_CANDIDATES'
 resume = state.setdefault('resume_control', {})
 resume['exact_next_action'] = state['next_action']
 attempt = state.setdefault('stage02_active_attempt', {})

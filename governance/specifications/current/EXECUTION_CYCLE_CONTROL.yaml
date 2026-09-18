@@ -194,3 +194,19 @@ work_unit_resolution_gate:
   ai_may_invent_successor_work_unit: false
   multiple_materially_distinct_legal_successors_without_authority: WORK_UNIT_RESOLUTION_AMBIGUOUS_BLOCK
   nearest_stage_file_test_or_blocker_is_implicit_successor: false
+design_contract_remediation_routing:
+  applies_to_local_gap_classes:
+  - INPUT_SOURCE_GAP
+  - ARCHITECTURE_GAP
+  activation: NO_UNIQUE_ROLE_CORRECT_CURRENT_CLOSURE
+  direct_field_by_field_authority_wait_from_missing_value: BLOCK
+  required_pre_candidate_artifacts:
+  - FUNCTION_ADMISSION_SCORECARD
+  - AUTO_COMPLETION_SCOPE_LEDGER
+  candidate_layer: RUN_STATE_NON_NORMATIVE_REVIEW_ONLY
+  candidate_may_be_product_authority: false
+  two_or_more_materially_distinct_viable_behaviors: AUTHORITY_GAP_EXPLICIT_SELECTION_REQUIRED
+  coherent_package_review_for_multiple_blockers: true
+  approved_content_target: SINGLE_CURRENT_CANONICAL_PRODUCT_CONTRACT_OWNER
+  ingestion_before_owner_materialization: BLOCK
+  product_blocker_reduction_before_fresh_reexecution: 0

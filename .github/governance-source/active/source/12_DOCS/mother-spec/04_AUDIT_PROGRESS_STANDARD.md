@@ -1186,6 +1186,10 @@ Page End-to-End 完成度 MUST 使用：
 
 任何 Required 功能只要有未關閉 Gap，該 Capability MUST_NOT PASS。
 
+Functional Chain Audit MUST additionally verify the remediation route. A local `INPUT_SOURCE_GAP` or `ARCHITECTURE_GAP` with no unique role-correct Current closure MUST show bounded Design/Contract Remediation evidence before direct Product Authority ingestion: applicable Scorecard, Scope Ledger, frozen minimal dependency closure, review-only Candidate, blocker coverage, semantic review, and explicit non-authority/non-materializable status. The mere absence of an existing exact value is insufficient evidence for field-by-field human authority wait.
+
+Audit MUST distinguish `REVIEW_ONLY_DESIGN_CANDIDATE` from `AUTHORITY_GAP`. Two or more materially distinct viable product behaviors require explicit Authority selection; a coherent package may cover multiple blocker identities. Candidate/test/governance evidence MUST carry zero product blocker reduction until approved content is materialized at the single Current canonical product owner and fresh execution proves the affected signatures closed.
+
 <!-- SECTION_UID: WEB-GOV-04-S059D -->
 ## 59D. Visual Geometry Audit
 

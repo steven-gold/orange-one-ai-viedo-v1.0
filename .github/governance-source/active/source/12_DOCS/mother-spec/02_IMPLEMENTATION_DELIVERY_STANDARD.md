@@ -935,6 +935,10 @@ Execution Profile MAY 將這些能力綁成具體步驟與順序；該 profile �
 
 自動補齊 MUST 以「補完整前後步驟」為目的，不得只為了讓 UI 看起來完整而新增按鈕。
 
+對 `INPUT_SOURCE_GAP` / `ARCHITECTURE_GAP`，Production Closure 仍 MUST BLOCK，但「缺少既有 exact value」本身不得直接等同於逐欄 Product Authority 輸入。若沒有唯一可自動補齊值，MUST 先回到正式 Design/Contract Remediation：以既有 Business Entity、Operation、Functional Chain、Topology、State、Runtime/Port、Error/Recovery 與 Visual Impact 為邊界，建立 `FUNCTION_ADMISSION_SCORECARD`、`AUTO_COMPLETION_SCOPE_LEDGER` 與 non-normative review-only Design/Contract Candidate。
+
+只有候選分析後仍存在兩種以上 materially distinct viable product behaviors 的項目才轉為 `AUTHORITY_GAP` 交由 Product Authority 選擇。可形成單一一致設計邊界的多筆 blocker MAY 以一份 coherent package review，而不得預設要求使用者逐欄填值。任何 approved candidate 必須先回寫到單一 Current canonical product Contract/Authority owner，再由 R7 或等價 ingestion 消費；Candidate/Test/Evidence 不得直接成為 Authority。
+
 <!-- SECTION_UID: WEB-GOV-02-S054C -->
 ## 54C. Visual Geometry Implementation Verification
 

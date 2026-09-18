@@ -1,8 +1,8 @@
 schema_version: 7
 artifact_uid: GOVERNANCE-CURRENT-ENTRYPOINT-001
 artifact_type: GOVERNANCE_CURRENT_ENTRYPOINT
-active_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
-display_version: v2.2.4
+active_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+display_version: v2.2.5
 version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
 registry_ref: governance/specifications/REGISTRY.yaml
 specification_root: governance/specifications/current
@@ -24,12 +24,12 @@ historical_evidence_is_current_authority: false
 source_identity:
   version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
   source_bytes_changed_by_current_successor: true
-  verified_package_sha256: ce518e5301b2ad2de8d84e06c0241e3da6b3f51495466fcb65f1b9df59fa41f0
-  deterministic_source_bundle_sha256: 35760d0f30c390ff6634de22b554111c396b68268bb81d55dcd5f081347c749f
-  checksum_manifest_sha256: 0ebdb639e7f91306f378389a1512766b8c7f53ba94acc8ca30c8c57fa93aef69
+  verified_package_sha256: 5e85bc3ace110d9158a5f4bb392c32f3ef18872198bcbb6329490beb6d556778
+  deterministic_source_bundle_sha256: 49119abdb80f817701b14a677caaec9c033d5475aa297ac27a7b6c36a49507cc
+  checksum_manifest_sha256: b8021372a86c4fac9fac7369035638a167c9fc2f4c74ac47d7cb96d4f9ebd24d
   semantic_authority_content_hash: 81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a
   may_override_active_governance_version: false
-  verified_source_revision: v2.2.3-residual-classification-hardening
+  verified_source_revision: v2.2.4-design-remediation-routing-hardening
 current_primary_task_selection_contract:
   session_bootstrap_resume_gate_required: true
   task_layer_classification_required: true
