@@ -1,0 +1,53 @@
+authorization_uid: USR-DIRECTIVE-20260919-RERUN-CORE01-STAGE01-STAGE02-R2
+artifact_type: EXECUTION_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-19
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+baseline_commit_sha: f4ad31e331b307382bfe1cc46abe55cc69ecda8d
+baseline_tree_sha: d4a01b1202d1d0e283000dc0a04948eb12a0267d
+current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+
+user_directive:
+  - "將core-01重新測試stage-01.02"
+  - "既有 CORE-01 Stage-01 / Stage-02 產品執行產物不得當成本輪 fresh 結果重用。"
+  - "ASSET-01 素材頁生產資料維持清除，不得重新帶回本輪。"
+
+exact_scope:
+  page_scope:
+    - CORE-01
+  stages:
+    - STAGE-01
+    - STAGE-02
+  allowed_actions:
+    - read exact CORE-01 Raw Source bytes from the immediately preceding fresh run only as immutable source input
+    - remove prior current Stage-01 / Stage-02 generated product artifacts and current Stage-02 evidence
+    - materialize a new fresh run root
+    - execute Stage-01 source-to-base-blueprint validation
+    - execute Stage-02 fresh functional-contract scan and structural materialization
+    - persist exact workflow/artifact provenance for the new current attempt
+    - correct the replay producer's run-state projection defect without weakening any validator
+    - remove orphan one-shot design-candidate workflow not part of this Stage-01/02 rerun
+  excluded_scope:
+    - ASSET-01
+    - STAGE-03_AND_LATER
+    - DESIGN_CONTRACT_APPROVAL_OR_MATERIALIZATION
+    - WEBSITE_CONSTRUCTION
+    - DEPLOYMENT
+    - EXTERNAL_AUTHORITY_AUTOFILL
+    - MOTHER_GOVERNANCE_MUTATION
+
+completion_requirements:
+  fresh_run_uid_must_differ_from_predecessor: true
+  prior_generated_stage01_stage02_outputs_removed_before_new_materialization: true
+  raw_source_bytes_must_match_predecessor_capture_exactly: true
+  asset01_current_generated_artifact_count: 0
+  stage1_guard_pass_required: true
+  stage2_actual_test_required: true
+  prior_stage2_result_reuse: false
+  exact_workflow_run_id_required: true
+  exact_evidence_artifact_id_and_digest_required: true
+  persisted_head_selected_profile_validation_required: true
+  product_blocker_credit: 0
