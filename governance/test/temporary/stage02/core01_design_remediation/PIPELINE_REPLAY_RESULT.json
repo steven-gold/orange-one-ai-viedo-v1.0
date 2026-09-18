@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-REMEDIATION-PIPELINE-REPLAY",
+  "artifact_type": "TEMPORARY_NON_NORMATIVE_PIPELINE_REPLAY_RESULT",
+  "layer_classification": "RUN_STATE",
+  "normative_authority": false,
+  "test_candidate_only": true,
+  "source_head_sha": "b5eed0294de807c8fd26542e48c815d6ec84f05f",
+  "current_governance_uid": "GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING",
+  "work_unit_uid": "WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001",
+  "page_uid": "CORE-01",
+  "user_directive": "KEEP_DESIGN_REMEDIATION_IN_TEMPORARY_TEST_RECORDS_UNTIL_FULL_TEST_CYCLE_COMPLETES_THEN_REVIEW_MOTHER_GOVERNANCE_ONCE",
+  "replay_chain": [
+    {
+      "step": "R2_CURRENT_CLASSIFICATION",
+      "result": "PASS",
+      "records": 45,
+      "gap_classes": {
+        "INPUT_SOURCE_GAP": 16,
+        "ARCHITECTURE_GAP": 29,
+        "AUTHORITY_GAP": 0
+      },
+      "disposition": "NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS_45_OF_45"
+    },
+    {
+      "step": "R5_CURRENT_REQUEST_IDENTITY",
+      "result": "PASS",
+      "product_requests": 45,
+      "external_requests": 0,
+      "signature_match_to_r2": "45_OF_45"
+    },
+    {
+      "step": "R6_CURRENT_INTAKE_IDENTITY",
+      "result": "PASS",
+      "records": 45,
+      "identity_match_to_r5": "45_OF_45"
+    },
+    {
+      "step": "TEMPORARY_ROUTING_HYPOTHESIS",
+      "result": "PASS",
+      "local_input_or_architecture_gap_route": "TEMPORARY_DESIGN_REMEDIATION_CANDIDATE",
+      "authority_gap_route": "EXPLICIT_PRODUCT_AUTHORITY_DECISION"
+    },
+    {
+      "step": "FUNCTION_ADMISSION_SCORECARD",
+      "result": "PASS",
+      "records": 25,
+      "authority_effect": "NONE_REVIEW_ONLY"
+    },
+    {
+      "step": "AUTO_COMPLETION_SCOPE_LEDGER",
+      "result": "PASS",
+      "source_blockers": 45,
+      "design_units": 25,
+      "scope_expansion": "FORBIDDEN",
+      "product_credit": 0
+    },
+    {
+      "step": "CORE01_FUNCTIONAL_CONTRACT_CANDIDATE",
+      "result": "PASS",
+      "source_blocker_coverage": "45_OF_45",
+      "design_units": 25,
+      "partition": {
+        "audit": 4,
+        "payload": 16,
+        "transition": 5
+      }
+    },
+    {
+      "step": "DESIGN_DECISION_ANALYSIS",
+      "result": "PASS",
+      "design_units": 25,
+      "review_mode": "ONE_COHERENT_PACKAGE_NOT_45_MANUAL_FIELDS"
+    },
+    {
+      "step": "REFERENCE_IDENTITY_AUDIT",
+      "result": "PASS",
+      "object_refs": "23/23",
+      "opaque_refs": "17/17",
+      "descriptive_alias_residual": 0
+    },
+    {
+      "step": "CANDIDATE_VALIDATION",
+      "result": "PASS",
+      "checks": "34_OF_34"
+    },
+    {
+      "step": "R7_STRUCTURAL_COMPATIBILITY_PREVIEW",
+      "result": "PASS_EXPECTED_BOUNDARY_BLOCK",
+      "binding_shapes": "45_OF_45",
+      "current_admissible_bindings": 0,
+      "r7_materializable_now": 0
+    },
+    {
+      "step": "DESTRUCTIVE_NEGATIVE_MUTATION_MATRIX",
+      "result": "PASS",
+      "tests": "17_OF_17"
+    },
+    {
+      "step": "FORMAL_FULL_LINE_DURING_TEMPORARY_PHASE",
+      "result": "EXPECTED_BLOCK",
+      "run_id": 35314053333,
+      "exact_failure": "TEMPORARY_TEST_ARTIFACT_RESIDUAL",
+      "meaning": "TEMPORARY_ARTIFACTS_MUST_NOT_SURVIVE_FORMAL_FULL_LINE_CLOSURE"
+    },
+    {
+      "step": "SELECTED_PROFILE_DURING_TEMPORARY_PHASE",
+      "result": "EXPECTED_BLOCK",
+      "run_id": 35314053356,
+      "exact_failure": "TEMPORARY_TEST_ARTIFACT_RESIDUAL"
+    },
+    {
+      "step": "STAGE02_PRODUCT_EXECUTION_GUARD",
+      "result": "PASS",
+      "run_id": 35314053320,
+      "executed_job": "preexecution-admission-boundary-regression",
+      "product_jobs": "SKIPPED"
+    }
+  ],
+  "recomputed_invariants": {
+    "r2_record_count": 45,
+    "r2_unique_signature_count": 45,
+    "r2_r5_signature_set_exact": true,
+    "r5_r6_identity_exact": true,
+    "candidate_r6_blocker_coverage_exact": true,
+    "candidate_blocker_coverage_count": 45,
+    "duplicate_blocker_coverage_count": 0,
+    "design_unit_count": 25,
+    "candidate_validation_pass": "34_OF_34",
+    "negative_mutation_pass": "17_OF_17",
+    "r7_binding_shape_pass": "45_OF_45",
+    "current_admissible_authority_bindings": 0,
+    "r7_materializable_now": 0,
+    "product_blocker_reduction_credit": 0,
+    "current_state_promoted": false,
+    "mother_governance_mutated": false,
+    "current_specification_mutated": false
+  },
+  "temporary_artifact_inventory_at_replay": {
+    "count_before_this_result": 9,
+    "names": [
+      "AUTO_COMPLETION_SCOPE_LEDGER.json",
+      "CANDIDATE_VALIDATION_RESULT.json",
+      "CORE01_FUNCTIONAL_CONTRACT_CANDIDATE.json",
+      "DESIGN_DECISION_ANALYSIS.json",
+      "FUNCTION_ADMISSION_SCORECARD.json",
+      "NEGATIVE_MUTATION_TEST_RESULT.json",
+      "R7_COMPATIBILITY_PREVIEW.json",
+      "REFERENCE_IDENTITY_AUDIT.json",
+      "ROUTING_CANDIDATE.json"
+    ]
+  },
+  "test_cycle_disposition": {
+    "temporary_design_remediation_mechanism": "VALIDATED_AS_TEST_CANDIDATE",
+    "direct_r2_to_r5_wait_path": "REPRODUCED_AS_PIPELINE_DESIGN_DEFECT_CANDIDATE",
+    "product_contract_candidate": "REVIEWABLE_NOT_AUTHORITY",
+    "formal_policy_change": "DEFERRED_UNTIL_TEMPORARY_TEST_CYCLE_CLOSURE",
+    "next_action": "PERSIST_NON_TEMPORARY_CONSOLIDATED_DEFECT_EVIDENCE_AND_SPEC_CHANGE_CANDIDATE; THEN CLEAN_TEMPORARY; THEN PERFORM_SINGLE_AUTHORIZED_MOTHER_GOVERNANCE_SUCCESSOR_CHANGE"
+  },
+  "status": "PASS_TEMPORARY_DESIGN_REMEDIATION_PIPELINE_REPLAY_COMPLETE_ZERO_PRODUCT_CREDIT"
+}
