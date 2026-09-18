@@ -151,7 +151,13 @@ active_work_unit:
   - CORE-01
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   canonical_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  current_status: CLASSIFICATION_REQUIRED
+  current_status: AUTHORITY_REQUIRED
+  classification_result: NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS_45_OF_45
+  classification_evidence_ref: governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml
+  authority_request_package_ref: governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml
+  authority_request_product_count: 45
+  authority_request_external_count: 0
+  materializable_from_current_authority_now: 0
   source_problem_denominator: 45
   source_closure_blocker_denominator: 0
   gap_classes:
@@ -169,7 +175,7 @@ active_work_unit:
   - DEPLOYMENT
   - EXTERNAL_AUTHORITY_AUTOFILL
   - PRODUCT_VALUE_INFERENCE
-  entry_action: RUN_CURRENT_REMEDIABILITY_CLASSIFICATION_R2_ON_FRESH_45_PROBLEM_REGISTER
+  entry_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS
   definition_of_done:
   - ALL_45_CURRENT_PROBLEMS_CLASSIFIED_FROM_EXACT_CURRENT_AUTHORITY
   - BOUNDED_COMPLETION_ONLY_WHERE_EXACT_CURRENT_AUTHORITY_PROVES_MISSING_FIELD_VALUE
