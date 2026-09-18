@@ -1,0 +1,76 @@
+authorization_uid: USR-DIRECTIVE-20260919-MOTHER-PROFILE-TOKEN-DECONTAMINATION-R1
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-19
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+baseline_commit_sha: ea7deb74cf7e75e93681dc9c3ad265fc9ff26d49
+baseline_tree_sha: c02bbb00246bf7a3d3af3f4dd046360d96afcadf
+current_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
+
+user_directive:
+  - "比對母規範內容彙整好正確的流程內容後調整補齊母規範，確定好整個流程內容在寫入，不要再寫一部分段一部分。"
+  - "所有規範定義都是中立的規範與執行流程的定義，不應有固定產品頁面、固定頁面組合、固定 blocker 數量、run/retry 名稱或 profile-local step 名稱寫進 reusable Mother Policy。"
+  - "該調整哪一些階段都全部補齊，避免 Stage-02 或其他階段因 Mother 流程不完整反覆重做。"
+  - "修正後要能監督所有類型網站/網頁製作，不綁 ACPOS 特定頁面或單一 pipeline 名稱。"
+
+pre_write_context_verification:
+  live_repository_branch_head_verified: true
+  current_registry_resolved: true
+  current_governance_uid_resolved: true
+  mother_01_02_03_04_read_in_order: true
+  lifecycle_registry_read: true
+  current_mutation_control_read: true
+  current_stage_state_read: true
+  scope_stage_reentry_v2_2_6_reviewed: true
+  mother_product_or_run_literal_scan_complete: true
+  discovered_common_policy_residuals:
+    - WEB-GOV-01 contains profile-local token R7
+    - WEB-GOV-02 contains profile-local token R7
+  write_disposition: NEW_IMMUTABLE_MOTHER_SUCCESSOR_ATOMIC_PROMOTION
+
+exact_scope:
+  purpose: >-
+    Remove the remaining execution-profile-local R7 token from reusable Mother Policy without
+    changing the already-established product-neutral capability flow, and harden the executable
+    neutrality/portability gate so future profile/run/product literals in common policy fail closed.
+  permitted_normative_changes:
+    - Replace R7 or equivalent profile-step-name wording in WEB-GOV-01 and WEB-GOV-02 with capability/owner-based authority-ingestion terminology.
+    - Preserve the existing v2.2.6 capability ownership, dynamic scope, partial-scope credit, Design/Contract remediation, temporary lifecycle, upstream re-entry, and Stage/Profile separation semantics without creating a second flow.
+  permitted_machine_projection_changes:
+    - .github/governance-source/active/source/**
+    - governance/specifications/current/**
+    - governance/specifications/REGISTRY.yaml
+    - GOVERNANCE_CURRENT.yaml
+    - governance/test/**
+    - governance/ci/validate_governance_portability.py
+    - .github/workflows/mother-spec-neutrality-audit.yml
+    - .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+    - .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+  excluded_scope:
+    - product behavior changes
+    - CORE-01 or ASSET-01 contract changes
+    - visual approval
+    - website implementation
+    - deployment
+    - production acceptance
+    - external Authority autofill
+    - product-stage blocker reduction from governance maintenance
+
+completion_requirements:
+  new_immutable_governance_uid_required: true
+  one_atomic_successor_commit_required: true
+  mother_01_02_03_04_semantic_flow_preserved: true
+  zero_profile_local_retry_step_token_in_common_mother: true
+  portability_validator_must_fail_on_profile_run_product_literal_contamination: true
+  neutrality_workflow_must_execute_on_mother_or_current_policy_change: true
+  source_identity_resynchronized: true
+  registry_manifest_current_entry_atomic_sync_required: true
+  active_consumer_projection_updated: true
+  full_line_high_pressure_validation_required: true
+  selected_profile_validation_required: true
+  fresh_product_execution_required_after_governance_promotion: true
+  product_stage_credit: 0
