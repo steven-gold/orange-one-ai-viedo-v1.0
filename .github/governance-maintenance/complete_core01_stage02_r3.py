@@ -390,7 +390,7 @@ def reset_and_reexecute():
       'approval_evidence_ref':str(APPROVAL.relative_to(ROOT)),'canonical_product_contract_owner_ref':str(SPEC.relative_to(ROOT)),
       'prior_stage2_results_used':False,'product_blocker_credit':45}); dump_yaml(FINDINGS,findings)
     change=load_yaml(CHANGE); cur=change.setdefault('current_stage2_execution',{})
-    cur.clear(); cur.update({'state':'PASS','current_functional_gap_count':0,'current_closure_blocker_count':0,'active_evidence_present':True,
+    cur.clear(); cur.update({'state':'TEST_EXECUTED_PASS','current_functional_gap_count':0,'current_closure_blocker_count':0,'active_evidence_present':True,
       'active_findings_present':True,'stage_exit_allowed':True,'website_construction_allowed':False,'deployment_allowed':False,
       'historical_counts_may_be_treated_as_current':False,'source_execution_sha':git('rev-parse','HEAD'),'reexecution_cycle':'CORE01_FRESH_R3',
       'target_pages':[PAGE],'remaining_pages':[],'stage_scope_complete':True,'next_action':'FINALIZE_STAGE02_CURRENT_EVIDENCE_AND_PERSISTED_HEAD_VALIDATION',
@@ -404,7 +404,7 @@ def reset_and_reexecute():
     dump_yaml(CHANGE,change)
 
     state=load_yaml(STATE); ex=state['execution']; ex['current_stage']='STAGE-02-CLOSED'; ex['stage2']={
-      'result':'PASS','stage_entry_gate':'PASS','stage_exit_allowed':True,'prior_results_used_in_current_run':False,
+      'result':'TEST_EXECUTED_PASS','stage_entry_gate':'PASS','stage_exit_allowed':True,'prior_results_used_in_current_run':False,
       'prior_results_authoritative_for_current_governance':False,'revalidation_required_under_current_governance':True,
       'artifact_root_present':True,'tested_page_uids':[PAGE],'remaining_page_uids':[],'stage_scope_complete':True,
       'current_scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'}
