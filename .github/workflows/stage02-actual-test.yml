@@ -250,9 +250,12 @@ jobs:
               assert ev.get(k) == v, (k, ev.get(k), v)
           pages = ev.get('pages') or {}
           target_pages = ev.get('target_pages') or []
-          assert target_pages in (['CORE-01'], ['CORE-01', 'ASSET-01']), target_pages
+          scope_state = yaml.safe_load((ROOT/'governance/test/ACTIVE_STATE.yaml').read_text()) or {}
+          stage1_scope = (scope_state.get('execution') or {}).get('stage1') or {}
+          required_pages = {uid for uid, status in stage1_scope.items() if status == 'PASS'}
+          assert target_pages and set(target_pages).issubset(required_pages), (target_pages, sorted(required_pages))
           assert set(pages) == set(target_pages), (sorted(pages), target_pages)
-          assert ev.get('stage_scope_complete') is (set(target_pages) == {'CORE-01', 'ASSET-01'})
+          assert ev.get('stage_scope_complete') is (set(target_pages) == required_pages)
           assert ev.get('fresh_functional_gap_total') == sum((v.get('functional_chain_fresh_scan') or {}).get('gap_count', 0) for v in pages.values())
           assert ev.get('closure_blocker_total') == sum(v.get('closure_blocker_count', 0) for v in pages.values())
           assert ev.get('preserved_external_authority_union_count') == len(set(ev.get('preserved_external_authority_union_gap_uids') or []))
@@ -412,7 +415,7 @@ jobs:
               'canonical_name': fresh_test_work.get('canonical_name'),
               'primary_task_layer': 'PRODUCT_STAGE_EXECUTION',
               'scope': list(target_pages),
-              'out_of_scope': ['ASSET-01','STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT','PRODUCT_AUTHORITY_AUTOFILL'],
+              'out_of_scope': list(ev.get('remaining_pages') or []) + ['STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT','PRODUCT_AUTHORITY_AUTOFILL'],
               'current_status': 'TEST_EXECUTED_BLOCKED_RESULT_PERSISTED',
               'source_attempt_uid': attempt_uid,
               'closure_evidence': {
@@ -451,7 +454,7 @@ jobs:
               'primary_task_layer': 'PRODUCT_STAGE_EXECUTION',
               'canonical_owner': '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT',
               'scope': list(target_pages),
-              'out_of_scope': ['ASSET-01','STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT','PRODUCT_AUTHORITY_AUTOFILL','EXTERNAL_AUTHORITY_AUTOFILL'],
+              'out_of_scope': list(ev.get('remaining_pages') or []) + ['STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT','PRODUCT_AUTHORITY_AUTOFILL','EXTERNAL_AUTHORITY_AUTOFILL'],
               'current_status': 'READY_FOR_CURRENT_ATTEMPT_MATERIALIZATION',
               'source_attempt_uid': attempt_uid,
               'source_problem_denominator': int(ev['fresh_functional_gap_total']),
@@ -644,7 +647,7 @@ jobs:
           status=subprocess.check_output(['git','status','--porcelain=v1','--untracked-files=all'],text=True)
           actual={line[3:] for line in status.splitlines() if line.strip()}
           assert actual == allowed, {'actual':sorted(actual),'allowed':sorted(allowed)}
-          print(f'PASS: exact CORE-01 structural materialization write-set={len(actual)}/13')
+          print(f'PASS: exact structural materialization write-set={len(actual)}/{len(permitted)}')
           PY
       - name: Persist CORE-01 structural materialization as isolated child
         shell: bash
@@ -653,7 +656,8 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add --             00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01             00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_MAP.yaml             00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/ASYNC_PROVIDER_CONTRACT.yaml             00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/SHARED_OWNER_PORT_MAP.yaml             governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml
-          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = '13'
+          expected_count="$(printf '%s\n' "$permitted" | sed '/^$/d' | wc -l | tr -d ' ')"
+          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = "$expected_count"
           git commit -m 'test(stage02): persist core01 structural contracts'
           git push origin HEAD:rebuild-v2.1.1
       - name: Rebind canonical preflight to active structural Work Unit
@@ -881,16 +885,16 @@ jobs:
           assert ev.get('closure_blocker_total') == 0
           assert int(ev.get('fresh_functional_gap_total') or 0) > 0
           assert ev.get('preserved_external_authority_union_count') == int(prev.get('preserved_external_authority_union_count') or 0)
-          assert len(ev.get('official_stage_output_denominator') or []) == 17
-          assert len(ev.get('execution_profile_mandatory_output_subset') or []) == 12
+          assert len(ev.get('official_stage_output_denominator') or []) == len(prev.get('official_stage_output_denominator') or [])
+          assert len(ev.get('execution_profile_mandatory_output_subset') or []) == len(prev.get('execution_profile_mandatory_output_subset') or [])
           pages = ev.get('pages') or {}
           target_pages = list(prev.get('target_pages') or [])
           remaining_pages = list(prev.get('remaining_pages') or [])
-          assert target_pages == ['CORE-01'], target_pages
+          assert target_pages and len(target_pages) == len(set(target_pages)), target_pages
           assert set(pages) == set(target_pages), (sorted(pages), target_pages)
           assert ev.get('target_pages') == target_pages
           assert ev.get('remaining_pages') == remaining_pages
-          assert ev.get('stage_scope_complete') is False
+          assert ev.get('stage_scope_complete') is (not remaining_pages)
 
           freeze = yaml.safe_load((ROOT/'governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml').read_text()) or {}
           attempt_uid = freeze.get('attempt_uid')
