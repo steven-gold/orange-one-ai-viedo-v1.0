@@ -187,10 +187,20 @@ def admission_check():
     if len(reviews)!=1: die(f'PREEXECUTION_PREFORMAL_REVIEW_ITEM_COUNT:{len(reviews)}')
     r=reviews[0]
     if r.get('reviewer_role')!='USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER': die('PREEXECUTION_PREFORMAL_REVIEW_ROLE_DRIFT')
-    if r.get('status')!='APPROVED': die('PREEXECUTION_PREFORMAL_REVIEW_NOT_APPROVED')
+    if r.get('status') not in {'PENDING','APPROVED'}: die('PREEXECUTION_PREFORMAL_REVIEW_PLAN_STATUS_INVALID')
     projected=state.get('pending_governance_review') or {}
     if projected.get('review_item_uid')!='REV-GOV-001' or projected.get('status')!='APPROVED':
         die('PREEXECUTION_PREFORMAL_REVIEW_PROJECTION_NOT_APPROVED')
+    if projected.get('approval_source')!='EXPLICIT_USER_DIRECTIVE' or projected.get('explicit_user_decision_observed') is not True:
+        die('PREEXECUTION_PREFORMAL_REVIEW_EXPLICIT_USER_EVIDENCE_MISSING')
+    if projected.get('target_governance_uid')!=gov:
+        die('PREEXECUTION_PREFORMAL_REVIEW_TARGET_UID_DRIFT')
+    root_blob=subprocess.run(['git','rev-parse',f'HEAD:{ROOT_MANIFEST.as_posix()}'],text=True,capture_output=True,check=True).stdout.strip()
+    if projected.get('target_root_manifest_git_blob_sha')!=root_blob:
+        die('PREEXECUTION_PREFORMAL_REVIEW_TARGET_HASH_DRIFT')
+    target_pages=(ex.get('target_pages') or [])
+    if target_pages!=['CORE-01']:
+        die(f'PREEXECUTION_CURRENT_AUTHORIZED_PAGE_SCOPE_DRIFT:{target_pages}')
     st=stage(life)
     if st.get('entry_gate')!='ALL_REQUIRED_PAGES_STAGE1_CLOSED':
         die('PREEXECUTION_STAGE2_ENTRY_GATE_DRIFT')

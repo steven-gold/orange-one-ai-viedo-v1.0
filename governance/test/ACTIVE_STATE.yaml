@@ -22,14 +22,13 @@ execution:
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
-  - ASSET-01
   current_stage: STAGE-01-CLOSED
   stage1:
     CORE-01: PASS
     ASSET-01: PASS
   stage2:
     result: NOT_EXECUTED
-    stage_entry_gate: WAITING_FOR_MOTHER_PREFORMAL_REVIEW_AND_FRESH_ENTRY_RECEIPTS
+    stage_entry_gate: PREPARED_FOR_CORE01_FRESH_ENTRY_VALIDATION
     stage_exit_allowed: false
     prior_results_authoritative_for_next_run: false
     prior_results_used_in_current_run: false
@@ -105,56 +104,68 @@ stage02_reset_control:
   preserved_historical_stage02_evidence: true
   preserved_entry_receipts_only: true
   entry_receipts_current_result_credit: false
-  entry_receipts_must_be_regenerated_after_mother_review: true
-  next_action_after_mother_review: CREATE_FRESH_STAGE02_ENTRY_RECEIPTS_THEN_RUN_FRESH_STAGE02
+  entry_receipts_must_be_regenerated_after_mother_review: false
+  next_action_after_mother_review: CORE01_SCOPE_AUTHORIZED_CREATE_FRESH_RECEIPTS_AND_RUN_ACTUAL_TEST
   product_stage_credit: 0
-status: GOVERNANCE_PREEXECUTION_HARDENING_COMPLETE_PREFORMAL_REVIEW_PENDING
-next_action: AWAIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_FOR_REV_GOV_001; AFTER_APPROVAL_CREATE_FRESH_STAGE02_ENTRY_RECEIPTS_THEN_RUN_PREEXECUTION_ADMISSION_AND_FRESH_STAGE02
+status: ACTIVE_STAGE02_CORE01_FRESH_TEST_PREPARED
+next_action: RUN_CORE01_FRESH_STAGE02_ACTUAL_TEST_WITH_PREEXECUTION_ADMISSION_AND_NO_ASSET01_EXECUTION
 work_unit_resolution_gate:
-  resolution_uid: WUR-GOV-PREEXECUTION-HARDENING-001
+  resolution_uid: WUR-STAGE02-CORE01-FRESH-TEST-001
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
-  predecessor_work_unit_uid: WU-GOV-MOTHER-FINALIZATION-001
+  predecessor_work_unit_uid: WU-GOV-PREEXECUTION-HARDENING-001
   predecessor_terminal_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
-  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
   resume_point_before_resolution: PREFORMAL_GOVERNANCE_REVIEW_PENDING
-  resolved_work_unit_uid: WU-GOV-PREEXECUTION-HARDENING-001
+  resolved_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
+  explicit_user_directive: START_ACTUAL_NEW_TEST_CORE_PAGE_ONLY
+  authorization_uid: USR-DIRECTIVE-20260918-CORE01-FRESH-STAGE02-TEST
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  implementation_owners:
-  - governance/ci/compile_stage_execution_preflight.py
-  - governance/ci/validate_selected_execution_profile_integrity.py
-  - governance/ci/validate_stage02_entry_receipts.py
-  - .github/workflows/stage02-actual-test.yml
+  execution_owner: governance/ci/run_current_stage2_actual_test.py
   state_owner: governance/test/ACTIVE_STATE.yaml
+  page_scope:
+  - CORE-01
+  excluded_page_scope:
+  - ASSET-01
   applicability: APPLICABLE
   duplicate_or_parallel_work_unit_count: 0
-  explicit_user_directive: CLEAR_RESOLVED_STAGE02_RESIDUALS_AND_REQUIRE_PREEXECUTION_COMPLETION_PLANNING
-  exact_pre_resolution_evidence_head: 4b3a04370aa5b28e4c7c2d805b2d93aeccd09ecb
-  exact_pre_resolution_terminal_run_id: 35294591024
-  exact_pre_resolution_terminal_conclusion: success
-  resolution_basis:
-  - STAGE01_IMMUTABLE_INPUTS_ARE_CURRENT_PREDECESSOR_INPUTS_AND_MUST_BE_PRESERVED
-  - ATTEMPT_8D5C69947CD8_IS_REFERENCED_HISTORICAL_REGRESSION_PROVENANCE
-  - ATTEMPT_AE42EF7BA4D6_IS_REFERENCED_PREDECESSOR_PROVENANCE
-  - ATTEMPT_47A02ADAA3A6_HAS_NO_CURRENT_REVERSE_REFERENCE_IN_CURRENT_STATE_LEDGER_WORKFLOW_OR_SCANNED_CI_CONSUMERS
-  - LEGACY_ACTION_CONTROL_ARCHITECTURE_AUDIT_COHORT_USES_SUPERSEDED_167_133_DENOMINATORS_AND_HAS_NO_ACTIVE_WORKFLOW_CONSUMER
-  - CURRENT_MOTHER_REQUIRES_CANONICAL_PREFLIGHT_AND_DEPENDENCY_ORDER_BEFORE_MATERIAL_EXECUTION
-  - CURRENT_STAGE02_INITIAL_ACTUAL_TEST_PATH_DOES_NOT_YET_INVOKE_CANONICAL_PREFLIGHT_BEFORE_EXECUTION
-  product_stage_credit: 0
-  resolved_work_unit_terminal_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
-  closure_evidence_head: 48c42c282d9c39ddea02225e7fc2455d230cc408
-  closure_terminal_run_id: 35298286640
-  closure_terminal_conclusion: success
-  closure_selected_profile_run_id: 35298286628
-  closure_branch_guard_run_id: 35298286722
-  closure_stage02_boundary_regression_run_id: 35296059982
-  closure_profile_structural_contracts: 11/11
-  closure_stage01_immutable_blob_count: 5
-  closure_dead_history_attempt_47a_removed: true
-  closure_referenced_history_attempt_count: 2
-  closure_stale_action_control_architecture_audit_cohort_removed: true
-  closure_preexecution_admission_order_enforced: true
-  closure_product_stage_credit: 0
+  entry_conditions:
+  - MOTHER_MACHINE_CLOSURE_COMPLETE
+  - PREEXECUTION_HARDENING_CLOSED
+  - EXPLICIT_USER_REVIEW_DECISION_PRESENT
+  - STAGE01_IMMUTABLE_BASELINE_5_OF_5
+  - STAGE02_ZERO_RESIDUAL
+  - FRESH_ENTRY_RECEIPTS_BOUND_TO_PARENT_HEAD
+  - PREEXECUTION_ADMISSION_PASS
+  - FULL_LINE_PASS_ON_EXECUTION_HEAD
+  product_stage_credit_before_fresh_test: 0
+active_work_unit:
+  work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
+  canonical_name: CORE01_FRESH_STAGE02_ACTUAL_TEST
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  scope:
+  - CORE-01
+  out_of_scope:
+  - ASSET-01
+  - STAGE03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - PRODUCT_AUTHORITY_AUTOFILL
+  execution_owner: governance/ci/run_current_stage2_actual_test.py
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  current_status: PREPARED_FOR_FRESH_EXECUTION
+  start_condition: FRESH_ENTRY_RECEIPTS_AND_PREEXECUTION_ADMISSION_PASS
+  definition_of_done:
+  - CORE01_ONLY_FRESH_PHYSICAL_SCAN_EXECUTED
+  - ASSET01_NOT_SCANNED_NOT_COUNTED_NOT_PERSISTED_AS_CURRENT_TEST_RESULT
+  - FUNCTIONAL_CHAIN_CONTROL_ACTION_RUNTIME_SUCCESS_FAILURE_RELATIONS_RESCANNED
+  - EXTERNAL_AUTHORITY_REFS_PRESERVED_UNRESOLVED
+  - CURRENT_SPECIFICATION_UNCHANGED
+  - STAGE01_IMMUTABLE_INPUTS_UNCHANGED
+  - FRESH_RESULT_ARTIFACT_BOUND_TO_EXACT_EXECUTION_HEAD_AND_RUN
+  - CURRENT_STATE_PERSISTED_FROM_FRESH_CORE01_RESULT
+  - EXACT_PERSISTED_HEAD_REVALIDATED
+  product_stage_credit_before_result: 0
 closed_work_unit:
   work_unit_uid: WU-GOV-PREEXECUTION-HARDENING-001
   canonical_name: GOVERNANCE_PREEXECUTION_FEASIBILITY_AND_RESIDUAL_HARDENING
@@ -335,13 +346,15 @@ resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  effectful_stage2_execution_before_entry_resolution: BLOCK_PENDING_MOTHER_PREFORMAL_REVIEW_AND_FRESH_ENTRY_RECEIPTS
-  current_resume_point: PREFORMAL_GOVERNANCE_REVIEW_PENDING
+  effectful_stage2_execution_before_entry_resolution: AUTHORIZED_PENDING_FRESH_ENTRY_RECEIPTS_AND_PREFLIGHT
+  current_resume_point: STAGE2_CORE01_FRESH_TEST_EXECUTION
+  current_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
+  current_owner: governance/ci/run_current_stage2_actual_test.py
   last_closed_work_unit_uid: WU-GOV-PREEXECUTION-HARDENING-001
   last_closed_work_unit_result: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   last_closed_work_unit_full_line_run_id: 35298286640
   last_closed_work_unit_evidence_head: 48c42c282d9c39ddea02225e7fc2455d230cc408
-  exact_next_action: AWAIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_FOR_REV_GOV_001; AFTER_APPROVAL_CREATE_FRESH_STAGE02_ENTRY_RECEIPTS_THEN_RUN_PREEXECUTION_ADMISSION_AND_FRESH_STAGE02
+  exact_next_action: RUN_CORE01_FRESH_STAGE02_ACTUAL_TEST_WITH_PREEXECUTION_ADMISSION_AND_NO_ASSET01_EXECUTION
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
@@ -363,13 +376,22 @@ pending_governance_review:
   review_type: PREFORMAL_GOVERNANCE_REVIEW
   target_uid: GOVERNANCE_PACKAGE
   reviewer_role: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER
-  status: PENDING
+  status: APPROVED
   machine_may_auto_approve: false
-  blocks_machine_governance_closure: false
-  blocks_formal_governance_review_completion: true
-  unlock_condition: EXPLICIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION
-  current_machine_evidence_head: 4e528620ed4a27377f86b3ce05c05978df29a381
-  current_machine_evidence_run_id: 35291878285
-current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-RESIDUAL-CLASSIFICATION-HARDENING-R1
+  approval_source: EXPLICIT_USER_DIRECTIVE
+  approval_directive_uid: USR-DIRECTIVE-20260918-CORE01-FRESH-STAGE02-TEST
+  approval_directive: START_ACTUAL_NEW_TEST_CORE_PAGE_ONLY
+  approval_scope: GOVERNANCE_PACKAGE_FOR_CORE01_FRESH_STAGE02_ENTRY
+  target_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+  target_root_manifest_git_blob_sha: 1d8d7a373c5ff866852c5ef5466d8dcacfd1702c
+  machine_evidence_head: 48c42c282d9c39ddea02225e7fc2455d230cc408
+  machine_evidence_run_id: 35298286640
+  source_review_plan_status_at_package_freeze: PENDING
+  source_review_plan_owner: .github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
+  explicit_user_decision_required: true
+  explicit_user_decision_observed: true
+  approved_product_test_page_scope:
+  - CORE-01
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-CORE01-FRESH-STAGE02-TEST
 current_primary_task_product_stage_credit: 0

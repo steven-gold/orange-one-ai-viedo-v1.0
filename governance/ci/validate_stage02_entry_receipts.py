@@ -74,13 +74,20 @@ if len(review_items) != 1:
 review_item = review_items[0]
 if review_item.get("reviewer_role") != "USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER":
     die("MOTHER_PREFORMAL_REVIEW_ROLE_DRIFT")
-if review_item.get("status") != "APPROVED":
-    die("MOTHER_PREFORMAL_REVIEW_NOT_APPROVED")
+if review_item.get("status") not in {"PENDING", "APPROVED"}:
+    die("MOTHER_PREFORMAL_REVIEW_PLAN_STATUS_INVALID")
 pending_review = state.get("pending_governance_review") or {}
 if pending_review.get("review_item_uid") != "REV-GOV-001":
     die("ACTIVE_STATE_PREFORMAL_REVIEW_IDENTITY_DRIFT")
 if pending_review.get("status") != "APPROVED":
     die("ACTIVE_STATE_PREFORMAL_REVIEW_NOT_APPROVED")
+if pending_review.get("approval_source") != "EXPLICIT_USER_DIRECTIVE" or pending_review.get("explicit_user_decision_observed") is not True:
+    die("ACTIVE_STATE_PREFORMAL_REVIEW_USER_EVIDENCE_MISSING")
+if pending_review.get("target_governance_uid") != resolve()["governance_uid"]:
+    die("ACTIVE_STATE_PREFORMAL_REVIEW_TARGET_UID_DRIFT")
+root_manifest = ".github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml"
+if pending_review.get("target_root_manifest_git_blob_sha") != git("rev-parse", f"HEAD:{root_manifest}"):
+    die("ACTIVE_STATE_PREFORMAL_REVIEW_TARGET_HASH_DRIFT")
 
 workflow_text = WORKFLOW.read_text(encoding="utf-8")
 ordered_commands = [
@@ -104,6 +111,11 @@ if not isinstance(attempt, str) or not re.fullmatch(r"STAGE02-FRESH-\d{8}-\d{3}"
     die(f"FRESH_ATTEMPT_UID_INVALID:{attempt!r}")
 if baseline.get("attempt_uid") != attempt:
     die("ENTRY_RECEIPT_ATTEMPT_IDENTITY_MISMATCH")
+expected_scope = execution.get("target_pages") or []
+if expected_scope != ["CORE-01"]:
+    die(f"ACTIVE_STATE_CORE01_SCOPE_REQUIRED:{expected_scope!r}")
+if freeze.get("target_pages") != expected_scope or baseline.get("target_pages") != expected_scope:
+    die("ENTRY_RECEIPT_PAGE_SCOPE_DRIFT")
 
 if freeze.get("artifact_type") != "STAGE_FROZEN_GOVERNANCE_RECEIPT": die("FREEZE_RECEIPT_TYPE")
 if freeze.get("stage_uid") != "STAGE-02": die("FREEZE_RECEIPT_IDENTITY")

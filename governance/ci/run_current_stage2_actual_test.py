@@ -2,6 +2,7 @@
 from __future__ import annotations
 from collections import Counter, defaultdict
 import json
+import os
 import re
 import subprocess
 import sys
@@ -264,10 +265,21 @@ if missing_mandatory:
 if stage2_contract.get('exit_gate') != 'ALL_REQUIRED_PAGES_STAGE2_CLOSED':
     die('STAGE02_EXIT_GATE_DRIFT')
 
+scope = os.environ.get('STAGE02_PAGE_SCOPE', 'ALL_REQUIRED_PAGES').strip()
+if scope == 'CORE-01':
+    target_page_uids = ['CORE-01']
+elif scope == 'ALL_REQUIRED_PAGES':
+    target_page_uids = list(PAGES)
+else:
+    die(f'UNSUPPORTED_STAGE02_PAGE_SCOPE:{scope!r}')
+target_pages = {page: PAGES[page] for page in target_page_uids}
+remaining_page_uids = [page for page in PAGES if page not in target_page_uids]
+scope_complete = not remaining_page_uids
+
 pages = {}
 external = {}
 union_gap_uids = set()
-for page, paths in PAGES.items():
+for page, paths in target_pages.items():
     blueprint = load(paths['blueprint'])
     raw = load(paths['raw'])
     if blueprint.get('page_uid') != page or blueprint.get('stage_uid') != 'STAGE-01':
@@ -304,12 +316,15 @@ for page, paths in PAGES.items():
         'automatic_completion_scope': 'NOT_APPLICABLE_NO_AUTOMATIC_COMPLETION_ATTEMPT',
     }
 
-if union_gap_uids != EXPECTED_GAPS:
+if not union_gap_uids.issubset(EXPECTED_GAPS):
+    die(f'EXTERNAL_AUTHORITY_SCOPE_DRIFT:allowed={sorted(EXPECTED_GAPS)} actual={sorted(union_gap_uids)}')
+if scope_complete and union_gap_uids != EXPECTED_GAPS:
     die(f'EXTERNAL_AUTHORITY_UNION_DRIFT:expected={sorted(EXPECTED_GAPS)} actual={sorted(union_gap_uids)}')
 
 head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=str(ROOT), text=True, capture_output=True, check=True).stdout.strip()
 functional_total = sum(x['functional_chain_fresh_scan']['gap_count'] for x in pages.values())
 closure_total = sum(x['closure_blocker_count'] for x in pages.values())
+stage_exit_allowed = scope_complete and functional_total == 0 and closure_total == 0
 result = {
     'schema_version': 1,
     'artifact_type': 'NON_NORMATIVE_STAGE02_ACTUAL_TEST_EVIDENCE',
@@ -321,8 +336,13 @@ result = {
     'actual_product_stage_test_started': True,
     'actual_product_stage_test_completed': True,
     'stage_entry_gate': 'PASS',
-    'stage_exit_allowed': False,
-    'result': 'BLOCKED' if (functional_total or closure_total) else 'PASS',
+    'scope_mode': 'EXACT_PAGE_SCOPE_ONLY' if not scope_complete else 'ALL_REQUIRED_PAGES',
+    'requested_page_scope': scope,
+    'target_pages': target_page_uids,
+    'remaining_pages': remaining_page_uids,
+    'stage_scope_complete': scope_complete,
+    'stage_exit_allowed': stage_exit_allowed,
+    'result': 'PASS' if stage_exit_allowed else 'BLOCKED',
     'official_stage_output_denominator': sorted(stage2_outputs),
     'execution_profile_mandatory_output_subset': sorted(mandatory_stage2_outputs),
     'physical_stage2_product_artifact_root_present': False,
@@ -342,6 +362,7 @@ result = {
         'BLOCKED is a valid Stage-02 product-test outcome and does not mean the test runner failed.',
         'External authority references are preserved unresolved; they are neither dropped nor auto-resolved.',
         'No Current Specification file is modified by this test.',
+        'A page-scoped test does not grant Stage-02 exit credit until every required page has fresh evidence.',
     ],
 }
 RESULT.parent.mkdir(parents=True, exist_ok=True)

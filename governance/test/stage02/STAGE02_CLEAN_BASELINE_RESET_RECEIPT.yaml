@@ -1,12 +1,17 @@
-schema_version: 2
+schema_version: 3
 artifact_type: CLEAN_BASELINE_RESET_RECEIPT
 normative_authority: false
 stage_uid: STAGE-02
-attempt_uid: STAGE02-FRESH-20260916-004
+attempt_uid: STAGE02-FRESH-20260918-005
 baseline_status: CLEAN_PREDECESSOR_BASELINE_VERIFIED
-baseline_parent_commit: c685da66e04ffa2fa024aa63f215b7263ed8964c
+baseline_parent_commit: d4c9ea9e02eb28aa775a29988ca75e947ea1c527
 predecessor_stage: STAGE-01
 predecessor_state: STAGE1_VALIDATION_COMPLETED_CI_PASS
+scope_mode: EXACT_PAGE_SCOPE_ONLY
+target_pages:
+- CORE-01
+excluded_pages:
+- ASSET-01
 stage2_started_in_predecessor: false
 stage2_active_evidence_present: false
 stage2_active_findings_present: false

@@ -129,6 +129,7 @@ if frozen_governance_uid != current_governance_uid:
     if active.get("closure_credit_under_current_governance") is not False:
         die("PREDECESSOR_ATTEMPT_CANNOT_RECEIVE_CURRENT_GOVERNANCE_CLOSURE_CREDIT")
     if result == "TEST_EXECUTED_PASS":
+    if not evidence.get("stage_scope_complete"): die("PARTIAL_SCOPE_CANNOT_RECEIVE_STAGE2_PASS")
         die("PREDECESSOR_ATTEMPT_CANNOT_PROJECT_CURRENT_STAGE_PASS_AFTER_GOVERNANCE_PROMOTION")
 else:
     if promotion_revalidation and active.get("closure_credit_under_current_governance") is True:
@@ -186,7 +187,11 @@ if result == "TEST_EXECUTED_BLOCKED":
     if evidence.get("result") != "BLOCKED" or evidence.get("stage_exit_allowed") is not False: die("BLOCKED_STATE_EVIDENCE_MISMATCH")
     if execution.get("current_stage") != "STAGE-02-TESTED-BLOCKED": die("BLOCKED_STATE_CURRENT_STAGE_MISMATCH")
     pages = evidence.get("pages") or {}
-    if set(pages) != {"CORE-01", "ASSET-01"}: die("STAGE2_PAGE_DENOMINATOR_MISMATCH")
+    target_pages = evidence.get("target_pages") or []
+    if not isinstance(target_pages, list) or not target_pages: die("STAGE2_TARGET_PAGE_SCOPE_MISSING")
+    if set(pages) != set(target_pages): die("STAGE2_PAGE_DENOMINATOR_MISMATCH")
+    if not set(target_pages).issubset(set(stage1)): die("STAGE2_TARGET_PAGE_SCOPE_OUTSIDE_STAGE1")
+    if evidence.get("stage_scope_complete") is not (set(target_pages) == set(stage1)): die("STAGE2_SCOPE_COMPLETENESS_DRIFT")
     root_present = stage2.get("artifact_root_present")
     if root_present not in {True, False}: die("BLOCKED_STAGE2_ARTIFACT_ROOT_FLAG_INVALID")
     material = state.get("stage02_material_remediation") or {}

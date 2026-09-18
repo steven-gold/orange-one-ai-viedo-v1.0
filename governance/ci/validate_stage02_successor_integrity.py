@@ -97,8 +97,15 @@ if result == 'TEST_EXECUTED_BLOCKED':
     if execution.get('current_stage') != 'STAGE-02-TESTED-BLOCKED':
         die('BLOCKED_STATE_CURRENT_STAGE_MISMATCH')
     pages = evidence.get('pages') or {}
-    if set(pages) != {'CORE-01', 'ASSET-01'}:
+    target_pages = evidence.get('target_pages') or []
+    if not isinstance(target_pages, list) or not target_pages:
+        die('STAGE2_TARGET_PAGE_SCOPE_MISSING')
+    if set(pages) != set(target_pages):
         die('STAGE2_PAGE_DENOMINATOR_MISMATCH')
+    if not set(target_pages).issubset(set(stage1)):
+        die('STAGE2_TARGET_PAGE_SCOPE_OUTSIDE_STAGE1')
+    if evidence.get('stage_scope_complete') is not (set(target_pages) == set(stage1)):
+        die('STAGE2_SCOPE_COMPLETENESS_DRIFT')
     functional_total = int(evidence.get('fresh_functional_gap_total') or 0)
     closure_total = int(evidence.get('closure_blocker_total') or 0)
     if functional_total + closure_total <= 0:
