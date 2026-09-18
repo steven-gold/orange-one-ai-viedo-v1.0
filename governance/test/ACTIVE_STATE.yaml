@@ -26,9 +26,9 @@ execution:
   stage1:
     CORE-01: PASS
   stage2:
-    result: TEST_EXECUTED_PASS
-    stage_entry_gate: PASS
-    stage_exit_allowed: true
+    result: REVERIFY_REQUIRED
+    stage_entry_gate: REENTRY_AUTHORIZED
+    stage_exit_allowed: false
     prior_results_used_in_current_run: false
     prior_results_authoritative_for_current_governance: false
     revalidation_required_under_current_governance: false
@@ -44,7 +44,7 @@ execution:
     work_unit_resolution: SUSPENDED_BY_UPSTREAM_FUNCTIONAL_CONTRACT_REENTRY
     execution_started: false
     predecessor_entry_condition: ALL_REQUIRED_PAGES_STAGE2_CLOSED
-    predecessor_entry_condition_status: SATISFIED
+    predecessor_entry_condition_status: REVERIFY_REQUIRED_AFTER_STAGE02_REENTRY
     pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
     pre_execution_gate_status: NOT_EXECUTED
     stage_exit_allowed: false
@@ -354,7 +354,7 @@ pending_governance_review:
   - DEPLOYMENT
 current_primary_task_layer: PRODUCT_STAGE_EXECUTION
 current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-CORE01-STAGE02-COMPLETENESS-R3
-current_primary_task_product_stage_credit: 45
+current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
   canonical_name: CORE01_FRESH_STAGE02_ACTUAL_TEST
