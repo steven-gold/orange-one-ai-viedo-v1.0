@@ -63,6 +63,8 @@ jobs:
         run: python governance/ci/validate_stage02_state_integrity.py
       - name: Validate Stage-02 frozen governance and clean baseline entry receipts
         run: python governance/ci/validate_stage02_entry_receipts.py
+      - name: Prove pre-execution completion path before Stage-02 execution
+        run: python governance/ci/compile_stage_execution_preflight.py --admission-check
       - name: Run complete 75-file full-lifecycle high-pressure system gate on exact Stage-02 execution SHA
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
       - name: Prove verified source remained byte-clean before Stage-02 actual test

@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 FREEZE = ROOT / "governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml"
 BASELINE = ROOT / "governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml"
 STATE = ROOT / "governance/test/ACTIVE_STATE.yaml"
+REVIEW = ROOT / ".github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml"
 ZERO = ROOT / "governance/ci/validate_stage02_zero_residual.py"
 SUCCESSOR = ROOT / "governance/ci/validate_stage02_successor_integrity.py"
 EXPECTED_STAGE1_BLOBS = {
@@ -62,6 +63,24 @@ if stage2_result in {"TEST_EXECUTED_BLOCKED", "TEST_EXECUTED_PASS"}:
 if stage2_result != "NOT_EXECUTED":
     die(f"ENTRY_RECEIPT_VALIDATOR_DOMAIN_UNRESOLVED:{stage2_result!r}")
 
+review = load(REVIEW)
+review_items = [
+    row for row in (review.get("required_review_plan") or [])
+    if isinstance(row, dict) and row.get("review_item_uid") == "REV-GOV-001"
+]
+if len(review_items) != 1:
+    die(f"MOTHER_PREFORMAL_REVIEW_ITEM_COUNT:{len(review_items)}")
+review_item = review_items[0]
+if review_item.get("reviewer_role") != "USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER":
+    die("MOTHER_PREFORMAL_REVIEW_ROLE_DRIFT")
+if review_item.get("status") != "APPROVED":
+    die("MOTHER_PREFORMAL_REVIEW_NOT_APPROVED")
+pending_review = state.get("pending_governance_review") or {}
+if pending_review.get("review_item_uid") != "REV-GOV-001":
+    die("ACTIVE_STATE_PREFORMAL_REVIEW_IDENTITY_DRIFT")
+if pending_review.get("status") != "APPROVED":
+    die("ACTIVE_STATE_PREFORMAL_REVIEW_NOT_APPROVED")
+
 freeze = load(FREEZE)
 baseline = load(BASELINE)
 uid = resolve()["governance_uid"]
@@ -102,3 +121,4 @@ print(f"PASS: Stage-02 fresh entry receipts agree on attempt {attempt}")
 print(f"PASS: Stage-02 entry freeze receipt locks governance UID {uid}")
 print(f"PASS: Stage-02 clean predecessor receipt binds parent {parent}")
 print("PASS: five Stage-01 predecessor blobs are exact; no active attempt/evidence/findings are persisted before execution")
+print("PASS: REV-GOV-001 human/authorized preformal approval is persisted before Stage-02 entry")

@@ -60,6 +60,50 @@ if int(profile.get('profile_local_denominator') or -1) != len(stages):
 if int(selected.get('profile_local_denominator') or -1) != len(stages):
     die('CURRENT_SELECTED_PROFILE_DENOMINATOR_DRIFT')
 
+# A selected profile is executable only when every declared step has a complete
+# structural contract. This proves a legal downstream path exists before execution;
+# it does not invent missing product Authority or guarantee external systems succeed.
+if len(step_uids) != len(stages):
+    die('SELECTED_PROFILE_STAGE_UID_DUPLICATE_OR_MISSING')
+stage_by_uid = {str(x.get('stage_uid')): x for x in stages if isinstance(x, dict) and x.get('stage_uid')}
+required_scalars = ('stage_uid', 'name', 'scope_mode', 'entry_gate', 'exit_gate', 'next_stage_uid', 'pre_execution_gate')
+for step in stages:
+    if not isinstance(step, dict):
+        die('SELECTED_PROFILE_STAGE_RECORD_INVALID')
+    uid = str(step.get('stage_uid') or '')
+    for field in required_scalars:
+        if step.get(field) in (None, ''):
+            die(f'SELECTED_PROFILE_STAGE_FIELD_MISSING:{uid}:{field}')
+    inputs = step.get('inputs') or []
+    origins = step.get('input_origins') or {}
+    operations = step.get('operations') or []
+    outputs = step.get('outputs') or []
+    producers = step.get('output_producers') or {}
+    validators = step.get('validators') or []
+    evidence = step.get('required_evidence') or []
+    refs = step.get('required_normative_section_uids') or []
+    for name, rows in (
+        ('inputs', inputs), ('operations', operations), ('outputs', outputs),
+        ('validators', validators), ('required_evidence', evidence),
+        ('required_normative_section_uids', refs),
+    ):
+        if not isinstance(rows, list) or not rows or len(rows) != len(set(map(str, rows))):
+            die(f'SELECTED_PROFILE_STAGE_LIST_INVALID:{uid}:{name}')
+    if not isinstance(origins, dict) or set(origins) != set(inputs):
+        die(f'SELECTED_PROFILE_INPUT_ORIGIN_COVERAGE_INVALID:{uid}')
+    if not isinstance(producers, dict) or set(producers) != set(outputs):
+        die(f'SELECTED_PROFILE_OUTPUT_PRODUCER_COVERAGE_INVALID:{uid}')
+    missing_producers = sorted({str(v) for v in producers.values()} - {str(v) for v in operations})
+    if missing_producers:
+        die(f'SELECTED_PROFILE_OUTPUT_PRODUCER_NOT_OPERATION:{uid}:{missing_producers}')
+    if step.get('pre_execution_gate') != 'GOVERNANCE_LOAD_RECEIPT_PASS':
+        die(f'SELECTED_PROFILE_PREEXECUTION_GATE_DRIFT:{uid}')
+for step in stages:
+    uid = str(step.get('stage_uid'))
+    nxt = str(step.get('next_stage_uid') or '')
+    if nxt in stage_by_uid and stage_by_uid[nxt].get('entry_gate') != step.get('exit_gate'):
+        die(f'SELECTED_PROFILE_SUCCESSOR_GATE_MISMATCH:{uid}->{nxt}')
+
 if profile_state.get('owner_ref') != 'GOVERNANCE_CURRENT.yaml':
     die('PROFILE_STATE_OWNER_INVALID')
 if profile_state.get('profile_uid') != selected.get('profile_uid'):
@@ -93,4 +137,5 @@ for rel in validators:
 
 print(f"PASS: selected execution profile {selected.get('profile_uid')} resolves as non-global execution profile")
 print(f'PASS: selected profile local denominator={len(stages)} and profile-local validators={len(validators)}')
+print(f'PASS: selected profile structural execution contracts={len(stages)}/{len(stages)} complete before execution')
 print('PASS: fixed profile step identities are isolated from reusable Current Governance')

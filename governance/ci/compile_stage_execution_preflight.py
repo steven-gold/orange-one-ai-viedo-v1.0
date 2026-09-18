@@ -26,6 +26,7 @@ MOTHERS=[
  ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md',
 ]
 STATE=ROOT/'governance/test/ACTIVE_STATE.yaml'
+REVIEW=ROOT/'.github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml'
 FINDINGS=ROOT/'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
 CANDIDATES=ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
 EVID=ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
@@ -168,6 +169,73 @@ def validate_sections():
 def canonical_read_set():
     paths=[ENTRY,REG,RULE,CYCLE,CLOSURE,LIFE,INV,ROOT_MANIFEST,SECTION_REGISTRY,ACCEPTANCE,*MOTHERS,STATE,FINDINGS,CANDIDATES,EVID,FROZEN,R1,CAL]
     return [{'path':p.as_posix(),'sha256':file_sha(p)} for p in paths]
+
+def admission_check():
+    entry,reg,cycle,life,inv,state,review=y(ENTRY),y(REG),y(CYCLE),y(LIFE),y(INV),y(STATE),y(REVIEW)
+    gov=(reg.get('active_specification') or {}).get('governance_uid')
+    if not gov or entry.get('active_governance_uid')!=gov or state.get('specification_uid')!=gov:
+        die('PREEXECUTION_CURRENT_GOVERNANCE_IDENTITY_DRIFT')
+    ex=state.get('execution') or {}; s2=ex.get('stage2') or {}
+    if ex.get('current_stage')!='STAGE-01-CLOSED' or s2.get('result')!='NOT_EXECUTED':
+        die('PREEXECUTION_REQUIRES_CLEAN_STAGE1_CLOSED_STAGE2_NOT_EXECUTED')
+    if s2.get('artifact_root_present') is not False or BASE.exists():
+        die('PREEXECUTION_STAGE2_PRODUCT_ROOT_MUST_BE_ABSENT')
+    reset=state.get('stage02_reset_control') or {}
+    if reset.get('status')!='ACTIVE_STAGE1_CLOSED_STAGE2_CLEARED':
+        die('PREEXECUTION_STAGE2_RESET_STATE_NOT_CLEAN')
+    reviews=[x for x in (review.get('required_review_plan') or []) if isinstance(x,dict) and x.get('review_item_uid')=='REV-GOV-001']
+    if len(reviews)!=1: die(f'PREEXECUTION_PREFORMAL_REVIEW_ITEM_COUNT:{len(reviews)}')
+    r=reviews[0]
+    if r.get('reviewer_role')!='USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER': die('PREEXECUTION_PREFORMAL_REVIEW_ROLE_DRIFT')
+    if r.get('status')!='APPROVED': die('PREEXECUTION_PREFORMAL_REVIEW_NOT_APPROVED')
+    projected=state.get('pending_governance_review') or {}
+    if projected.get('review_item_uid')!='REV-GOV-001' or projected.get('status')!='APPROVED':
+        die('PREEXECUTION_PREFORMAL_REVIEW_PROJECTION_NOT_APPROVED')
+    st=stage(life)
+    if st.get('entry_gate')!='ALL_REQUIRED_PAGES_STAGE1_CLOSED':
+        die('PREEXECUTION_STAGE2_ENTRY_GATE_DRIFT')
+    if st.get('pre_execution_gate')!='GOVERNANCE_LOAD_RECEIPT_PASS':
+        die('PREEXECUTION_GOVERNANCE_LOAD_GATE_MISSING')
+    inputs=st.get('inputs') or []; origins=st.get('input_origins') or {}
+    if not inputs or set(origins)!=set(inputs): die('PREEXECUTION_INPUT_ORIGIN_COVERAGE_INVALID')
+    operations=st.get('operations') or []; outputs=st.get('outputs') or []; producers=st.get('output_producers') or {}
+    if not operations or not outputs or set(producers)!=set(outputs): die('PREEXECUTION_OUTPUT_PRODUCER_COVERAGE_INVALID')
+    if set(map(str,producers.values()))-set(map(str,operations)): die('PREEXECUTION_OUTPUT_PRODUCER_NOT_REGISTERED_OPERATION')
+    applicability=st.get('required_output_applicability') or {}
+    required_conditional={
+      'when_governed_business_entity_scope_present':{'BUSINESS_ENTITY_INVENTORY','BUSINESS_ENTITY_OPERATION_MATRIX'},
+      'when_entity_hierarchy_applies':{'ENTITY_HIERARCHY_MATRIX'},
+      'when_continuous_work_unit_applies':{'FUNCTIONAL_WORKBENCH_CONTRACT','INTERACTION_TOPOLOGY_MATRIX'},
+      'when_user_visible_or_observable_required_operation_applies':{'FUNCTION_VISUAL_IMPACT_MATRIX'},
+      'when_ai_or_auto_proposes_functional_addition':{'FUNCTION_ADMISSION_SCORECARD'},
+      'when_bounded_auto_completion_is_activated':{'AUTO_COMPLETION_SCOPE_LEDGER'},
+      'when_ai_interaction_profile_applies':{'AI_INTERACTION_CONTINUITY_CONTRACT'},
+    }
+    for key,need in required_conditional.items():
+        if not need.issubset(set(applicability.get(key) or [])):
+            die(f'PREEXECUTION_REQUIRED_OUTPUT_APPLICABILITY_MISSING:{key}:{sorted(need)}')
+    iv=inv.get('invariants') or {}
+    required_invariants={
+      'CANONICAL_STAGE_EXECUTION_PREFLIGHT','FUNCTIONAL_CONTRACT_COMPLETENESS',
+      'BUSINESS_ENTITY_INVENTORY_COMPLETENESS','BUSINESS_ENTITY_LIFECYCLE_COMPLETENESS',
+      'ENTITY_HIERARCHY_COMPLETENESS','OPERATION_TO_UI_RUNTIME_BIDIRECTIONAL_COVERAGE',
+      'FUNCTION_ADMISSION_NECESSITY_AND_UTILITY','BOUNDED_FUNCTIONAL_COMPLETION',
+      'FUNCTION_VISUAL_SYNCHRONIZED_COMPLETION'
+    }
+    missing=sorted(required_invariants-set(iv))
+    if missing: die(f'PREEXECUTION_REQUIRED_INVARIANT_MISSING:{missing}')
+    order=(cycle.get('dependency_ordered_execution') or {}).get('order') or []
+    expected_order=['SHARED_OR_ROOT_AUTHORITY','CONTRACT_PRIMITIVES','RUNTIME_TRANSPORT_STATE_CONTRACTS','DEPENDENT_BUSINESS_OPERATIONS','LEAF_CONTROL_BEHAVIOR','VISUAL_INTERACTION_BINDING']
+    if order!=expected_order: die(f'PREEXECUTION_DEPENDENCY_ORDER_DRIFT:{order}')
+    stages={str(x.get('stage_uid')):x for x in (life.get('stages') or []) if isinstance(x,dict) and x.get('stage_uid')}
+    nxt=stages.get(str(st.get('next_stage_uid')))
+    if not nxt or nxt.get('entry_gate')!=st.get('exit_gate'):
+        die('PREEXECUTION_LEGAL_SUCCESSOR_PATH_INVALID')
+    print(f'PASS: pre-execution completion path is structurally closed for {STAGE} under governance {gov}')
+    print('PASS: entity/operation/control/action/runtime/feedback and bounded-completion invariants are registered before execution')
+    print('PASS: dependency order and legal successor path are complete; no product execution or Authority autofill performed')
+    print('PASS: REV-GOV-001 human/authorized preformal approval is required and persisted')
+
 def normative_set_digest(read_set):
     normative={x['path']:x['sha256'] for x in read_set if x['path'] in {p.as_posix() for p in [ENTRY,REG,RULE,CYCLE,CLOSURE,LIFE,INV,ROOT_MANIFEST,SECTION_REGISTRY,ACCEPTANCE,*MOTHERS]}}
     return sha(json.dumps(normative,sort_keys=True,separators=(',',':')).encode())
@@ -253,8 +321,11 @@ def check(docs):
     print(f'PASS: CURRENT_PROBLEM_REGISTER fresh problems={docs["CURRENT_PROBLEM_REGISTER"]["fresh_physical_problem_count"]} stable UIDs')
     print(f'PASS: RESOLUTION_LEDGER entries={len(docs["RESOLUTION_LEDGER"]["entries"])} append-only')
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--stage',default=STAGE); g=p.add_mutually_exclusive_group(required=True); g.add_argument('--materialize',action='store_true'); g.add_argument('--check',action='store_true'); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('--stage',default=STAGE); g=p.add_mutually_exclusive_group(required=True); g.add_argument('--materialize',action='store_true'); g.add_argument('--check',action='store_true'); g.add_argument('--admission-check',action='store_true'); a=p.parse_args()
     if a.stage!=STAGE: die(f'UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS:{a.stage}')
+    if a.admission_check:
+        admission_check()
+        return
     docs=build(persisted_check_identity() if a.check else None)
     if a.materialize: write(docs)
     check(docs)
