@@ -10,7 +10,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-RUN = ROOT / '00_SOURCE_INTAKE/fresh_run_003'
+RUN = ROOT / os.environ.get('ACPOS_RUN_ROOT', '00_SOURCE_INTAKE/fresh_run_003')
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
 STAGE_REGISTRY = ROOT / '.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 RESULT = ROOT / '.github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json'
