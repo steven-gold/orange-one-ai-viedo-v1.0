@@ -112,33 +112,25 @@ stage02_reset_control:
 status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
 next_action: OWNING_LAYER_REMEDIATION_OF_FRESH_FUNCTIONAL_GAPS_AND_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
 work_unit_resolution_gate:
-  resolution_uid: WUR-STAGE02-CORE01-FRESH-TEST-002
+  resolution_uid: WUR-STAGE02-CORE01-STRUCTURAL-REMEDIATION-002
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
-  predecessor_terminal_disposition: GOVERNANCE_MACHINE_CLOSURE_AND_PREFORMAL_REVIEW_APPROVED
+  predecessor_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-002
+  predecessor_terminal_disposition: CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED
   requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  resume_point_before_resolution: PREFORMAL_GOVERNANCE_REVIEW_APPROVED_FRESH_STAGE2_WORK_UNIT_RESOLUTION_REQUIRED
-  resolved_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-002
-  explicit_user_directive: 繼續完成測試stage-02
+  resolved_work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   authorization_uid: USR-DIRECTIVE-20260918-COMPLETE-CORE01-STAGE02-TEST
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  execution_owner: governance/ci/run_current_stage2_actual_test.py
+  canonical_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
   state_owner: governance/test/ACTIVE_STATE.yaml
+  source_attempt_uid: STAGE02-FRESH-20260918-007
   page_scope:
   - CORE-01
   excluded_page_scope:
   - ASSET-01
-  applicability: APPLICABLE
-  duplicate_or_parallel_work_unit_count: 0
-  entry_conditions:
-  - CURRENT_GOVERNANCE_UID_RESOLVED
-  - PREFORMAL_GOVERNANCE_REVIEW_APPROVED
-  - CLEAN_STAGE1_PREDECESSOR_BASELINE
-  - STAGE02_ZERO_CURRENT_RESIDUAL
-  - FRESH_ENTRY_RECEIPTS_BOUND_TO_EXECUTION_PARENT
-  - PREEXECUTION_ADMISSION_PASS
-  - FULL_LINE_PASS_ON_EXECUTION_HEAD
-  product_stage_credit_before_fresh_test: 0
+  source_problem_denominator: 45
+  source_closure_blocker_denominator: 7
+  product_stage_credit_before_verified_replay: 0
 last_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -356,10 +348,10 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 active_work_unit:
-  work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-002
-  canonical_name: CORE01_FRESH_STAGE02_ACTUAL_TEST
+  work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
+  canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
   primary_task_layer: PRODUCT_STAGE_EXECUTION
-  canonical_owner: governance/ci/run_current_stage2_actual_test.py
+  canonical_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
   scope:
   - CORE-01
   out_of_scope:
@@ -368,23 +360,21 @@ active_work_unit:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
   - PRODUCT_AUTHORITY_AUTOFILL
-  execution_owner: governance/ci/run_current_stage2_actual_test.py
-  state_owner: governance/test/ACTIVE_STATE.yaml
-  current_status: PREPARED_FOR_FRESH_EXECUTION
-  start_condition: FRESH_ENTRY_RECEIPTS_AND_PREEXECUTION_ADMISSION_PASS
-  attempt_uid: STAGE02-FRESH-20260918-007
-  definition_of_done:
-  - CORE01_ONLY_FRESH_PHYSICAL_SCAN_EXECUTED
-  - ASSET01_NOT_SCANNED_NOT_COUNTED_NOT_PERSISTED_AS_CURRENT_TEST_RESULT
-  - FUNCTIONAL_CHAIN_CONTROL_ACTION_RUNTIME_SUCCESS_FAILURE_RELATIONS_RESCANNED
-  - CURRENT_DESIGN_REMEDIATION_ROUTING_APPLIED
-  - TRUE_AUTHORITY_GAPS_ONLY_ROUTE_TO_EXPLICIT_SELECTION
-  - CURRENT_SPECIFICATION_UNCHANGED
-  - STAGE01_IMMUTABLE_INPUTS_UNCHANGED
-  - FRESH_RESULT_ARTIFACT_BOUND_TO_EXACT_EXECUTION_HEAD_AND_RUN
-  - CURRENT_STATE_PERSISTED_FROM_FRESH_CORE01_RESULT
-  - EXACT_PERSISTED_HEAD_REVALIDATED
-  product_stage_credit_before_result: 0
+  - EXTERNAL_AUTHORITY_AUTOFILL
+  current_status: READY_FOR_CURRENT_ATTEMPT_MATERIALIZATION
+  source_attempt_uid: STAGE02-FRESH-20260918-007
+  source_problem_denominator: 45
+  source_closure_blocker_denominator: 7
+  structural_closure_blockers:
+  - MISSING_BUSINESS_ENTITY_INVENTORY
+  - MISSING_BUSINESS_ENTITY_OPERATION_MATRIX
+  - MISSING_ENTITY_HIERARCHY_MATRIX
+  - MISSING_FUNCTIONAL_WORKBENCH_CONTRACT
+  - MISSING_INTERACTION_TOPOLOGY_SPEC
+  - MISSING_FUNCTION_VISUAL_IMPACT_MATRIX
+  - MISSING_AI_INTERACTION_CONTINUITY_CONTRACT
+  start_condition: FRESH_CURRENT_ATTEMPT_BLOCKED_WITH_SEVEN_STRUCTURAL_CLOSURE_BLOCKERS
+  product_blocker_credit: 0
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
@@ -396,7 +386,7 @@ resume_control:
   last_effectful_governance_action: PREFORMAL_REVIEW_APPROVED_AND_MACHINE_REVALIDATED
   last_effectful_governance_evidence_head: 7765b763d0559f3ccf2f15246b9841ca165ad6e0
   last_effectful_governance_full_line_run_id: 35324482092
-  exact_next_action: RUN_CORE01_FRESH_STAGE02_ACTUAL_TEST_WITH_PREEXECUTION_ADMISSION_AND_NO_ASSET01_EXECUTION
+  exact_next_action: OWNING_LAYER_REMEDIATION_OF_FRESH_FUNCTIONAL_GAPS_AND_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING

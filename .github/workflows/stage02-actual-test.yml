@@ -402,6 +402,60 @@ jobs:
           }
           state['status'] = 'ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE'
           state['next_action'] = 'OWNING_LAYER_REMEDIATION_OF_FRESH_FUNCTIONAL_GAPS_AND_CLOSURE_BLOCKERS_WITH_EXTERNAL_AUTHORITY_GAPS_PRESERVED'
+          fresh_test_work = state.get('active_work_unit') or {}
+          state['last_closed_product_work_unit'] = {
+              'work_unit_uid': fresh_test_work.get('work_unit_uid'),
+              'canonical_name': fresh_test_work.get('canonical_name'),
+              'primary_task_layer': 'PRODUCT_STAGE_EXECUTION',
+              'scope': list(target_pages),
+              'out_of_scope': ['ASSET-01','STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT','PRODUCT_AUTHORITY_AUTOFILL'],
+              'current_status': 'CLOSED_VERIFIED_BLOCKED_RESULT_PERSISTED',
+              'source_attempt_uid': attempt_uid,
+              'closure_evidence': {
+                  'source_execution_sha': source_sha,
+                  'source_workflow_run_id': source_run,
+                  'source_artifact_id': artifact_id,
+                  'source_artifact_sha256': artifact_sha,
+                  'fresh_functional_gap_total': int(ev['fresh_functional_gap_total']),
+                  'fresh_closure_blocker_total': int(ev['closure_blocker_total']),
+                  'terminal_disposition': 'CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED',
+              },
+          }
+          state['work_unit_resolution_gate'] = {
+              'resolution_uid': 'WUR-STAGE02-CORE01-STRUCTURAL-REMEDIATION-002',
+              'normative_authority': False,
+              'result': 'PASS_SINGLE_LEGAL_SUCCESSOR',
+              'predecessor_work_unit_uid': fresh_test_work.get('work_unit_uid'),
+              'predecessor_terminal_disposition': 'CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED',
+              'requested_primary_task_layer': 'PRODUCT_STAGE_EXECUTION',
+              'resolved_work_unit_uid': 'WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001',
+              'authorization_uid': state.get('current_primary_task_authorization_uid'),
+              'canonical_policy_owner': 'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml',
+              'canonical_owner': '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT',
+              'state_owner': 'governance/test/ACTIVE_STATE.yaml',
+              'source_attempt_uid': attempt_uid,
+              'page_scope': list(target_pages),
+              'excluded_page_scope': list(ev.get('remaining_pages') or []),
+              'source_problem_denominator': int(ev['fresh_functional_gap_total']),
+              'source_closure_blocker_denominator': int(ev['closure_blocker_total']),
+              'product_stage_credit_before_verified_replay': 0,
+          }
+          closure_blockers = list(((page_results.get('CORE-01') or {}).get('closure_blockers')) or [])
+          state['active_work_unit'] = {
+              'work_unit_uid': 'WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001',
+              'canonical_name': 'CORE01_STRUCTURAL_CONTRACT_REMEDIATION',
+              'primary_task_layer': 'PRODUCT_STAGE_EXECUTION',
+              'canonical_owner': '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT',
+              'scope': list(target_pages),
+              'out_of_scope': ['ASSET-01','STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT','PRODUCT_AUTHORITY_AUTOFILL','EXTERNAL_AUTHORITY_AUTOFILL'],
+              'current_status': 'READY_FOR_CURRENT_ATTEMPT_MATERIALIZATION',
+              'source_attempt_uid': attempt_uid,
+              'source_problem_denominator': int(ev['fresh_functional_gap_total']),
+              'source_closure_blocker_denominator': int(ev['closure_blocker_total']),
+              'structural_closure_blockers': closure_blockers,
+              'start_condition': 'FRESH_CURRENT_ATTEMPT_BLOCKED_WITH_STRUCTURAL_CLOSURE_BLOCKERS',
+              'product_blocker_credit': 0,
+          }
           resume = state.setdefault('resume_control', {})
           resume['chat_memory_is_authority'] = False
           resume['historical_stage2_results_are_current_state'] = False
@@ -410,6 +464,7 @@ jobs:
           resume['current_resume_point'] = 'STAGE2_CORE01_STRUCTURAL_REMEDIATION'
           resume['current_work_unit_uid'] = 'WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001'
           resume['current_owner'] = '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+          resume['exact_next_action'] = state['next_action']
           trans = state.setdefault('governance_revision_transition', {})
           trans['current_governance_uid'] = governance_uid
           trans['fresh_revalidation_required'] = False
