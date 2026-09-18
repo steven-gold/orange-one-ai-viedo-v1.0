@@ -15,7 +15,10 @@
     "r5_r6_r8_mutated": false,
     "candidate_is_product_authority": false,
     "candidate_may_materialize": false,
-    "product_blocker_reduction_credit": 0
+    "product_blocker_reduction_credit": 0,
+    "new_business_entity_created": false,
+    "new_runtime_created": false,
+    "new_api_or_port_created": false
   },
   "sources": {
     "current_problem_register": "00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml",
@@ -311,17 +314,23 @@
           "optional": [],
           "fields": {
             "expected_blueprint_version": {
-              "type": "integer",
-              "minimum": 1
+              "minimum": 1,
+              "kind": "scalar",
+              "scalar_type": "integer"
             },
             "expected_hash": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "approval_evidence_refs": {
-              "type": "array",
-              "items": "CanonicalEvidenceRef",
-              "min_items": 1
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "evidence refs",
+                "no_new_entity": true
+              },
+              "min_items": 1,
+              "kind": "array"
             }
           },
           "server_derived": [
@@ -393,26 +402,42 @@
           ],
           "fields": {
             "project_ref": {
-              "type": "ProjectRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-REF-PROJECT",
+              "no_new_entity": true
             },
             "topic_ref": {
-              "type": "TopicRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-REF-TOPIC",
+              "no_new_entity": true
             },
             "topic_production_scope_ref": {
-              "type": "TopicProductionScopeRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-TOPIC-SCOPE",
+              "no_new_entity": true
             },
             "source_candidate_ref": {
-              "type": "CandidateRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-CANDIDATE",
+              "no_new_entity": true
             },
             "canon_refs": {
-              "type": "array",
-              "items": "ProjectCanonComponentRef",
-              "default": []
+              "items": {
+                "kind": "object_ref",
+                "object_uid": "CORE-01-REF-CANON",
+                "no_new_entity": true
+              },
+              "default": [],
+              "kind": "array"
             },
             "dna_refs": {
-              "type": "array",
-              "items": "DNAVersionRef",
-              "default": []
+              "items": {
+                "kind": "object_ref",
+                "object_uid": "CORE-01-REF-DNA",
+                "no_new_entity": true
+              },
+              "default": [],
+              "kind": "array"
             }
           },
           "server_derived": [
@@ -481,12 +506,14 @@
           "optional": [],
           "fields": {
             "expected_blueprint_version": {
-              "type": "integer",
-              "minimum": 1
+              "minimum": 1,
+              "kind": "scalar",
+              "scalar_type": "integer"
             },
             "expected_hash": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             }
           },
           "server_derived": [
@@ -555,22 +582,28 @@
           "optional": [],
           "fields": {
             "decision": {
-              "type": "enum",
               "values": [
                 "ACCEPTED"
-              ]
+              ],
+              "kind": "enum"
             },
             "reason": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "evidence_refs": {
-              "type": "array",
-              "items": "CanonicalEvidenceRef"
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "evidence refs",
+                "no_new_entity": true
+              },
+              "kind": "array"
             },
             "expected_candidate_hash": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             }
           },
           "server_derived": [
@@ -640,26 +673,38 @@
           ],
           "fields": {
             "target_ref": {
-              "type": "CanonicalTargetRef"
+              "kind": "opaque_ref",
+              "source_authority_term": "target ref",
+              "no_new_entity": true
             },
             "human_decision_ref": {
-              "type": "HumanDecisionRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-HUMAN-DECISION",
+              "no_new_entity": true
             },
             "structured_decision_ref": {
-              "type": "StructuredDecisionRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-STRUCTURED-DECISION",
+              "no_new_entity": true
             },
             "source_response_ids": {
-              "type": "array",
-              "items": "string",
-              "min_items": 1
+              "items": {
+                "kind": "scalar",
+                "scalar_type": "string"
+              },
+              "min_items": 1,
+              "kind": "array"
             },
             "work_item_uid": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "parent_candidate_ref": {
-              "type": "CandidateRef",
-              "nullable": true
+              "nullable": true,
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-CANDIDATE",
+              "no_new_entity": true
             }
           },
           "server_derived": [
@@ -729,22 +774,33 @@
           "optional": [],
           "fields": {
             "blueprint_version_ref": {
-              "type": "BlueprintVersionRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-REF-BLUEPRINT",
+              "no_new_entity": true
             },
             "topic_ref": {
-              "type": "TopicRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-REF-TOPIC",
+              "no_new_entity": true
             },
             "expected_hash": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "review_contract_ref": {
-              "type": "LockReviewContractRef",
-              "rule": "MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION"
+              "rule": "MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION",
+              "kind": "opaque_ref",
+              "source_authority_term": "resolvable LockReview evidence/reviewer-path/expected-hash contract",
+              "no_new_entity": true
             },
             "evidence_refs": {
-              "type": "array",
-              "items": "CanonicalEvidenceRef"
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "evidence refs",
+                "no_new_entity": true
+              },
+              "kind": "array"
             }
           },
           "server_derived": [
@@ -812,18 +868,27 @@
           "optional": [],
           "fields": {
             "project_version_ref": {
-              "type": "ProjectVersionRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-REF-PROJECT",
+              "no_new_entity": true
             },
             "criteria_version_ref": {
-              "type": "CriteriaVersionRef"
+              "kind": "opaque_ref",
+              "source_authority_term": "approved CORE criteria version",
+              "no_new_entity": true
             },
             "evidence_refs": {
-              "type": "array",
-              "items": "CanonicalEvidenceRef"
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "evidence refs",
+                "no_new_entity": true
+              },
+              "kind": "array"
             },
             "expected_hash": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             }
           },
           "server_derived": [
@@ -890,19 +955,28 @@
           "optional": [],
           "fields": {
             "dna_version_ref": {
-              "type": "DNAVersionRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-REF-DNA",
+              "no_new_entity": true
             },
             "expected_hash": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "review_contract_ref": {
-              "type": "LockReviewContractRef",
-              "rule": "MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION"
+              "rule": "MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION",
+              "kind": "opaque_ref",
+              "source_authority_term": "resolvable LockReview evidence/reviewer-path/expected-hash contract",
+              "no_new_entity": true
             },
             "evidence_refs": {
-              "type": "array",
-              "items": "CanonicalEvidenceRef"
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "evidence refs",
+                "no_new_entity": true
+              },
+              "kind": "array"
             }
           },
           "server_derived": [
@@ -970,19 +1044,28 @@
           "optional": [],
           "fields": {
             "project_version_ref": {
-              "type": "ProjectVersionRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-REF-PROJECT",
+              "no_new_entity": true
             },
             "expected_hash": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "review_contract_ref": {
-              "type": "LockReviewContractRef",
-              "rule": "MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION"
+              "rule": "MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION",
+              "kind": "opaque_ref",
+              "source_authority_term": "resolvable LockReview evidence/reviewer-path/expected-hash contract",
+              "no_new_entity": true
             },
             "evidence_refs": {
-              "type": "array",
-              "items": "CanonicalEvidenceRef"
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "evidence refs",
+                "no_new_entity": true
+              },
+              "kind": "array"
             }
           },
           "server_derived": [
@@ -1051,18 +1134,24 @@
           "optional": [],
           "fields": {
             "expected_version": {
-              "type": "integer",
-              "minimum": 1
+              "minimum": 1,
+              "kind": "scalar",
+              "scalar_type": "integer"
             },
             "expected_source_hash": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "adopt_refs": {
-              "type": "array",
-              "items": "CanonicalAdoptRef",
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "exact adopt refs required by confirmProjectDraft",
+                "no_new_entity": true
+              },
               "min_items": 1,
-              "rule": "EXACT_EXISTING_REFS_ONLY"
+              "rule": "EXACT_EXISTING_REFS_ONLY",
+              "kind": "array"
             }
           },
           "server_derived": [
@@ -1128,15 +1217,20 @@
           ],
           "fields": {
             "project_name": {
-              "type": "string",
               "min_length": 1,
-              "source": "USER_INPUT_TO_PROJECT_DRAFT"
+              "source": "USER_INPUT_TO_PROJECT_DRAFT",
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "source_refs": {
-              "type": "array",
-              "items": "CanonicalSourceRef",
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "source refs",
+                "no_new_entity": true
+              },
               "default": [],
-              "rule": "REFERENCES_ONLY_NO_INLINE_AUTHORITY_COPY"
+              "rule": "REFERENCES_ONLY_NO_INLINE_AUTHORITY_COPY",
+              "kind": "array"
             }
           },
           "server_derived": [
@@ -1205,14 +1299,16 @@
           "optional": [],
           "fields": {
             "expected_version": {
-              "type": "integer",
               "minimum": 1,
-              "role": "OPTIMISTIC_CONCURRENCY_GUARD"
+              "role": "OPTIMISTIC_CONCURRENCY_GUARD",
+              "kind": "scalar",
+              "scalar_type": "integer"
             },
             "expected_source_hash": {
-              "type": "string",
               "min_length": 1,
-              "role": "EXACT_DRAFT_IDENTITY_GUARD"
+              "role": "EXACT_DRAFT_IDENTITY_GUARD",
+              "kind": "scalar",
+              "scalar_type": "string"
             }
           },
           "server_derived": [
@@ -1286,45 +1382,62 @@
           ],
           "fields": {
             "message_text": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "work_item_uid": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "context_hash": {
-              "type": "string",
-              "min_length": 1
+              "min_length": 1,
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "attachment_refs": {
-              "type": "array",
-              "items": "AttachmentRef",
-              "default": []
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "attachment_ref returned by the global attachment/reference boundary",
+                "no_new_entity": true
+              },
+              "default": [],
+              "kind": "array"
             },
             "reference_refs": {
-              "type": "array",
-              "items": "CanonicalRef",
-              "default": []
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "reference refs",
+                "no_new_entity": true
+              },
+              "default": [],
+              "kind": "array"
             },
             "mention_refs": {
-              "type": "array",
-              "items": "MentionTargetRef",
-              "default": []
+              "items": {
+                "kind": "opaque_ref",
+                "source_authority_term": "@ parser target ref",
+                "no_new_entity": true
+              },
+              "default": [],
+              "kind": "array"
             },
             "source_message_ref": {
-              "type": "ConversationMessageRef",
-              "nullable": true
+              "nullable": true,
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-MESSAGE",
+              "no_new_entity": true
             },
             "instruction_mode": {
-              "type": "enum",
               "values": [
                 "NORMAL",
                 "CONTINUE",
                 "ANALYZE",
                 "QUOTE"
               ],
-              "default": "NORMAL"
+              "default": "NORMAL",
+              "kind": "enum"
             }
           },
           "forbidden_fields": [
@@ -1400,17 +1513,27 @@
           "optional": [],
           "fields": {
             "project_ref": {
-              "type": "ProjectRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-REF-PROJECT",
+              "no_new_entity": true
             },
             "source_decision_ref": {
-              "type": "StructuredDecisionRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-STRUCTURED-DECISION",
+              "no_new_entity": true
             },
             "canon_refs": {
-              "type": "array",
-              "items": "ProjectCanonComponentRef"
+              "items": {
+                "kind": "object_ref",
+                "object_uid": "CORE-01-REF-CANON",
+                "no_new_entity": true
+              },
+              "kind": "array"
             },
             "context_ref": {
-              "type": "RelevantContextPackageRef"
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-CONTEXT",
+              "no_new_entity": true
             }
           },
           "server_derived": [
@@ -1481,23 +1604,30 @@
           ],
           "fields": {
             "work_item_uid": {
-              "type": "string",
               "min_length": 1,
-              "rule": "CURRENT_MODE_WORK_ITEM_ONLY"
+              "rule": "CURRENT_MODE_WORK_ITEM_ONLY",
+              "kind": "scalar",
+              "scalar_type": "string"
             },
             "topic_ref": {
-              "type": "TopicRef",
               "nullable": true,
-              "rule": "REQUIRED_IN_TOPIC_MODE"
+              "rule": "REQUIRED_IN_TOPIC_MODE",
+              "kind": "object_ref",
+              "object_uid": "CORE-01-REF-TOPIC",
+              "no_new_entity": true
             },
             "parent_thread_ref": {
-              "type": "ConversationThreadRef",
-              "nullable": true
+              "nullable": true,
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-THREAD",
+              "no_new_entity": true
             },
             "source_message_ref": {
-              "type": "ConversationMessageRef",
               "nullable": true,
-              "rule": "USED_FOR_BRANCH_RELATION"
+              "rule": "USED_FOR_BRANCH_RELATION",
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-MESSAGE",
+              "no_new_entity": true
             }
           },
           "server_derived": [
@@ -1566,16 +1696,21 @@
           ],
           "fields": {
             "topic_draft_contract_ref": {
-              "type": "CanonicalContractRef",
-              "rule": "MUST_RESOLVE_TOPIC_CODE_BOUNDARY_BRIDGE_FROM_VALID_LINEAGE"
+              "rule": "MUST_RESOLVE_TOPIC_CODE_BOUNDARY_BRIDGE_FROM_VALID_LINEAGE",
+              "kind": "opaque_ref",
+              "source_authority_term": "valid Topic draft/contract lineage",
+              "no_new_entity": true
             },
             "expected_project_version": {
-              "type": "integer",
-              "minimum": 1
+              "minimum": 1,
+              "kind": "scalar",
+              "scalar_type": "integer"
             },
             "source_candidate_ref": {
-              "type": "CandidateRef",
-              "nullable": true
+              "nullable": true,
+              "kind": "object_ref",
+              "object_uid": "CORE-01-OBJ-CANDIDATE",
+              "no_new_entity": true
             }
           },
           "server_derived": [
@@ -2021,5 +2156,12 @@
     "promotion_requires_materialization_into_single_current_canonical_product_contract_owner": true,
     "r7_input_must_reference_promoted_current_admissible_bytes_not_this_temporary_file": true
   },
-  "status": "READY_FOR_TEMPORARY_CANDIDATE_VALIDATION_NOT_READY_FOR_R7"
+  "status": "READY_FOR_TEMPORARY_CANDIDATE_REVALIDATION_AFTER_REFERENCE_NORMALIZATION",
+  "schema_reference_policy": {
+    "existing_governed_object_reference": "USE_EXACT_CORE01_OBJECT_UID",
+    "non_entity_reference_term": "USE_OPAQUE_REF_WITH_SOURCE_AUTHORITY_TERM",
+    "opaque_ref_creates_business_entity": false,
+    "opaque_ref_creates_runtime_or_api": false,
+    "new_business_entity_type_aliases_forbidden": true
+  }
 }
