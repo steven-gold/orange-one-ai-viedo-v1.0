@@ -1,11 +1,9 @@
-2026-09-18 Stage-02 structural reexecution R1
-source_head: 7d16abd22277e86d4089e3dc23d643f4bccfb445
+2026-09-18 revalidate persisted CORE-01 structural R1 result
+source_persisted_head: c5534e7b1c3f8f017034cd0907af665eb3b66c13
 current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
 attempt_uid: STAGE02-FRESH-20260918-007
-active_work_unit: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
-structural_contract_commit: 278bcb7e55c8953d0db98d6f4e276ea97e5bb9ce
-canonical_preflight_rebind_commit: 7d16abd22277e86d4089e3dc23d643f4bccfb445
-pre_materialization_functional_gaps: 45
-pre_materialization_closure_blockers: 7
-claimed_functional_gap_reduction_before_reexecution: 0
-action: RUN_STRUCTURAL_REEXECUTION_R1
+fresh_functional_gap_total: 45
+fresh_closure_blocker_total: 0
+materialized_structural_contract_validation: PASS
+page_scope: CORE-01
+action: EXACT_PERSISTED_HEAD_REVALIDATION_BEFORE_WORK_UNIT_CLOSURE
