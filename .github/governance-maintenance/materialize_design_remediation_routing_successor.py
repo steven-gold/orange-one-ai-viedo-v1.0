@@ -4,7 +4,7 @@ import hashlib, io, json, lzma, re, shutil, subprocess, tarfile, zipfile, yaml
 
 ROOT=Path(__file__).resolve().parents[2]
 SOURCE=ROOT/'.github/governance-source/active/source'
-AUTH_UID='USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R2'
+AUTH_UID='USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R3'
 OLD_UID='GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING'
 NEW_UID='GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING'
 DISPLAY_VERSION='v2.2.5'
@@ -209,13 +209,13 @@ def patch_projectors(checksum,bundle,zips):
 
     p=ROOT/'governance/test/ACTIVE_STATE.yaml'; a=load(p); a['specification_uid']=NEW_UID
     ex=a['execution']; ex['current_stage']='STAGE-01-CLOSED'; ex['website_construction_allowed']=False; ex['deployment_allowed']=False
-    ex['stage2']={'result':'NOT_EXECUTED','stage_entry_gate':'REVERIFY_REQUIRED_AFTER_GOVERNANCE_PROMOTION','stage_exit_allowed':False,'prior_results_authoritative_for_next_run':False,'prior_results_used_in_current_run':False,'artifact_root_present':False,'revalidation_required_under_current_governance':True,'prior_results_authoritative_for_current_governance':False,'tested_page_uids':[],'remaining_page_uids':['CORE-01','ASSET-01'],'stage_scope_complete':False}
-    a['status']='ACTIVE_STAGE1_CLOSED_STAGE2_CLEARED_AFTER_DESIGN_REMEDIATION_ROUTING_PROMOTION'
+    ex['stage2']={'result':'NOT_EXECUTED','stage_entry_gate':'WAITING_FOR_FRESH_POST_PROMOTION_ENTRY_RESOLUTION','stage_exit_allowed':False,'prior_results_authoritative_for_next_run':False,'prior_results_used_in_current_run':False,'artifact_root_present':False,'revalidation_required_under_current_governance':False,'prior_results_authoritative_for_current_governance':False,'tested_page_uids':[],'remaining_page_uids':['CORE-01','ASSET-01'],'stage_scope_complete':False}
+    a['selected_execution_profile_state']['active_attempt_state_key']=None\n    a['status']='ACTIVE_STAGE1_CLOSED_STAGE2_CLEARED_AFTER_DESIGN_REMEDIATION_ROUTING_PROMOTION'
     a['next_action']='RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE'
     a.pop('stage02_active_attempt',None); a.pop('active_work_unit',None)
     a['current_primary_task_layer']='GOVERNANCE_MAINTENANCE'; a['current_primary_task_authorization_uid']=AUTH_UID; a['current_primary_task_product_stage_credit']=0
     rc=a.setdefault('resume_control',{}); rc['current_resume_point']='POST_PROMOTION_STAGE2_FRESH_RESTART_REQUIRED'; rc['exact_next_action']=a['next_action']; rc['historical_stage2_results_are_current_state']=False; rc['stage2_execution_requires_fresh_entry_resolution']=True
-    tr=a.setdefault('governance_revision_transition',{}); tr['predecessor_governance_uid']=OLD_UID; tr['current_governance_uid']=NEW_UID; tr['fresh_revalidation_required']=True; tr['fresh_revalidation_scope']='CORE01_STAGE02_FROM_CLEAN_STAGE1_BASELINE'; tr['website_construction_remains_blocked']=True; tr['deployment_remains_blocked']=True
+    tr=a.setdefault('governance_revision_transition',{}); tr['predecessor_governance_uid']=OLD_UID; tr['current_governance_uid']=NEW_UID; tr['fresh_revalidation_required']=False; tr['fresh_revalidation_scope']='STAGE02_NOT_EXECUTED_NO_ACTIVE_ATTEMPT'; tr['predecessor_attempt_preserved_as_historical_evidence']=True; tr['predecessor_attempt_may_close_under_current_governance']=False; tr['website_construction_remains_blocked']=True; tr['deployment_remains_blocked']=True
     fl=a.setdefault('full_lifecycle_governance_system_test',{}); fl['deterministic_source_bundle_sha256']=bundle; fl['persisted_head_revalidation_required']=True; fl['full_line_github_result']='REVALIDATION_REQUIRED_AFTER_DESIGN_REMEDIATION_ROUTING_PROMOTION'; fl['terminal_run_conclusion']='REVALIDATION_REQUIRED'; fl['terminal_result_credit_allowed']=False
     proto=a.setdefault('stage_execution_remediation_closure_protocol',{}); proto['frozen_specification_uid']=NEW_UID; proto['binding_status']='CURRENT_POLICY_POST_PROMOTION_STAGE2_FRESH_RESTART_REQUIRED'
     a['stage02_reset_control']={'reset_uid':'RESET-STAGE02-20260918-DESIGN-REMEDIATION-ROUTING','directive':'CLEAR_CURRENT_STAGE02_GENERATED_OUTPUTS_AND_RERUN_AFTER_GOVERNANCE_PROMOTION','result_state':'ACTIVE_STAGE1_CLOSED_STAGE2_CLEARED','status':'ACTIVE_STAGE1_CLOSED_STAGE2_CLEARED','product_stage_output_root_removed':True,'current_stage02_runtime_evidence_removed':True,'current_stage02_findings_removed':True,'current_stage02_remediation_and_authority_request_outputs_removed':True,'current_stage02_counts_cleared':True,'preserved_stage1_immutable_inputs':True,'preserved_historical_stage02_evidence':True,'entry_receipts_must_be_regenerated_after_mother_review':True,'next_action_after_mother_review':a['next_action'],'product_stage_credit':0}
