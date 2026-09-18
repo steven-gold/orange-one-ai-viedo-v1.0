@@ -339,7 +339,7 @@ findings:
     mutations 12/12, and R7 binding-shape preview 45/45 with 0 current-admissible bindings and 0 materializable product bindings. Clean temporary residual revalidation on exact head
     d505beb5b5683153ca4eae67c2bb9026de698584 completed Full-Line run 35316067061 SUCCESS, Selected Profile run 35316067060 SUCCESS, Stage-02 boundary run 35316067140 SUCCESS, and Branch
     Guard run 35316067008 SUCCESS.
-  disposition: ABSORBED_INTO_CANONICAL_OWNER_PENDING_PERSISTED_HEAD_REVALIDATION
+  disposition: ABSORBED_INTO_CANONICAL_OWNER_MACHINE_REVALIDATED_PENDING_HUMAN_PREFORMAL_REVIEW
   specification_change_required: true
   formal_specification_mutated_for_fix: true
   current_specification_may_be_modified_from_this_finding_alone: false
@@ -374,6 +374,34 @@ findings:
     design-remediation analysis, or if a review-only candidate can self-promote, bypass single-authority materialization, or receive product closure credit before fresh reexecution.
   normative_promotion_authorization: USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R4
   resolution_type: CANONICAL_POLICY_AND_EXECUTION_ROUTING_ABSORPTION
+  resolution_commit: e975781d911fdd190b73ba26e1194d101087775c
+  projector_sync_commit: 3ce02401e961d7366367f4580bfc30dcbcb94c2f
+  persisted_head_full_line_run: github-actions:35321233970
+  persisted_head_selected_profile_run: github-actions:35321233960
+  persisted_head_branch_guard_run: github-actions:35321234031
+  persisted_head_stage02_boundary_run: github-actions:35321234019
+  machine_revalidation_result: PASS
+  human_preformal_review_item_uid: REV-GOV-001
+  human_preformal_review_status: PENDING
+- finding_uid: FIND-20260918-007
+  class: TEST_HARNESS_OR_WORKFLOW_ASSERTION_DRIFT
+  title: Stage-02 pending-review negative regression expected a superseded admission reason token
+  evidence: >-
+    Stage-02 boundary run 35321584405 on head 87a890b5530f437435797bd9164624007738dfb6 correctly blocked pre-execution because Current REV-GOV-001 was PENDING, but the workflow assertion still expected PREEXECUTION_PREFORMAL_REVIEW_NOT_APPROVED while the canonical compiler emits PREEXECUTION_PREFORMAL_REVIEW_PROJECTION_NOT_APPROVED when the Current projection itself is not approved. Product execution jobs were skipped. The workflow assertion was aligned to the canonical compiler reason at commit c58440d48f2f9bd9b793a4121f78cd5e9b2b3f3b, and validation run 35321698708 completed SUCCESS with stage02-actual-test, structural-reexecution-r1, R2, R5, materialization, persistence and preflight jobs all skipped.
+  disposition: IMPLEMENTATION_REMEDIATED
+  specification_change_required: false
+  formal_specification_mutated_for_fix: false
+  current_specification_may_be_modified_from_this_finding_alone: false
+  resolution_type: WORKFLOW_NEGATIVE_REGRESSION_ASSERTION_FIX
+  target_path: .github/workflows/stage02-actual-test.yml
+  canonical_behavior_owner: governance/ci/compile_stage_execution_preflight.py
+  failure_run: github-actions:35321584405
+  resolution_commit: c58440d48f2f9bd9b793a4121f78cd5e9b2b3f3b
+  validation_run: github-actions:35321698708
+  validation_result: PENDING_REVIEW_FAIL_CLOSED_ASSERTION_PASS_AND_ALL_PRODUCT_JOBS_SKIPPED
+  product_stage_credit: 0
+  product_gap_or_blocker_denominator_changed: false
+  reopen_condition: Reopen if the Stage-02 boundary regression accepts product execution while REV-GOV-001 is not approved, or if the workflow assertion diverges again from the canonical compiler fail-closed reason.
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
