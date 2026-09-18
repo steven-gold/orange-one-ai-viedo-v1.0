@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
-import hashlib, io, json, lzma, re, subprocess, tarfile, zipfile
+import hashlib, io, json, lzma, os, re, subprocess, tarfile, zipfile
 import yaml
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -147,7 +147,32 @@ def validate(semantic_hash):
     # Reproduce the exact previously failing positive artifact baseline.
     run('python',str(SOURCE/'09_TESTS/governance/test_reference_semantic_guard.py'))
     run('python',str(SOURCE/'09_TESTS/governance/test_execution_load_guard.py'))
-    run('python',str(SOURCE/'09_TESTS/governance/test_bugfix_regressions.py'))
+
+    # test_bugfix_regressions contains the external-trust-root negative/positive case.
+    # Reproduce the same trust environment used by the Full-Line runner instead of
+    # treating a missing test harness environment variable as a product/governance failure.
+    cp=SOURCE/'CHECKSUMS.sha256'
+    package_files=[]
+    for raw in cp.read_text(encoding='utf-8').splitlines():
+        line=raw.strip()
+        if not line:
+            continue
+        digest,rel=line.split(None,1)
+        package_files.append({'path':rel.lstrip('* '),'sha256':digest})
+    package_files.append({'path':'CHECKSUMS.sha256','sha256':sha(cp)})
+    trust_path=Path('/tmp/acpos-v227-external-trust-root.json')
+    trust_path.write_text(json.dumps({
+        'schema_version':1,
+        'artifact_type':'NON_NORMATIVE_EXTERNAL_TRUST_ROOT',
+        'normative_authority':False,
+        'trust_model':'EXTERNAL_IMMUTABLE_PACKAGE_HASH_SET',
+        'semantic_authority_content_hash':semantic_hash,
+        'package_files':package_files,
+    },indent=2)+'\\n',encoding='utf-8')
+    env=dict(os.environ)
+    env['WEB_GOVERNANCE_TRUST_ROOT']=str(trust_path)
+    print('+ python',SOURCE/'09_TESTS/governance/test_bugfix_regressions.py','[with external trust root]')
+    subprocess.run(['python',str(SOURCE/'09_TESTS/governance/test_bugfix_regressions.py')],cwd=ROOT,env=env,check=True)
     run('git','diff','--check')
 
 def main():
