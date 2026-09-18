@@ -45,7 +45,7 @@ execution:
 full_lifecycle_governance_system_test:
   round: SYSTEM_FULL_LINE_HIGH_PRESSURE_ROUND_1
   meaning: GOVERNANCE_SYSTEM_EXECUTION_HEALTH_ONLY
-  deterministic_source_bundle_sha256: 49119abdb80f817701b14a677caaec9c033d5475aa297ac27a7b6c36a49507cc
+  deterministic_source_bundle_sha256: 94125fcff9d0ea8773720686711a421c7f04f06f2b2dd50430d33836152c9d1f
   verified_source_file_count: 75
   github_source_materialization: PASS_EXACT_75_FILE_IDENTITY
   mandatory_regression_suite_count: 17
@@ -54,7 +54,7 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: REVALIDATION_REQUIRED_AFTER_DESIGN_REMEDIATION_ROUTING_PROMOTION
+  full_line_github_result: REVALIDATION_REQUIRED_AFTER_SUCCESSOR_PROJECTOR_SYNC
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
@@ -361,14 +361,14 @@ resume_control:
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
   effectful_stage2_execution_before_entry_resolution: PASS_ENTRY_RESOLVED
-  current_resume_point: POST_PROMOTION_STAGE2_FRESH_RESTART_REQUIRED
+  current_resume_point: GOVERNANCE_MAINTENANCE_SUCCESSOR_PROJECTOR_SYNC_REVALIDATION
   current_work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
   current_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   last_closed_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
   last_closed_work_unit_result: CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED
   last_closed_work_unit_full_line_run_id: 35300652499
   last_closed_work_unit_evidence_head: 38ded547d9f6050c7cae8dd249521a1eb7ff77ae
-  exact_next_action: RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE
+  exact_next_action: REVALIDATE_SUCCESSOR_PROJECTOR_SYNC_ON_EXACT_PERSISTED_HEAD_THEN_RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
@@ -407,7 +407,7 @@ pending_governance_review:
   approved_product_test_page_scope:
   - CORE-01
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R4
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-DESIGN-REMEDIATION-SUCCESSOR-PROJECTOR-SYNC-R5
 current_primary_task_product_stage_credit: 0
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
