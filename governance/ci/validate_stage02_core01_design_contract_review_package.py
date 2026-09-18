@@ -76,7 +76,7 @@ work=state.get('active_work_unit') or {}
 if work.get('work_unit_uid')!=WORK or work.get('current_status')!='PENDING_EXPLICIT_COHERENT_PACKAGE_REVIEW': die('CURRENT_WORK_UNIT_REVIEW_STATE_DRIFT')
 if state.get('next_action')!=NEXT or (state.get('stage02_active_attempt') or {}).get('next_action')!=NEXT or findings.get('next_action')!=NEXT or (candidates.get('current_stage2_execution') or {}).get('next_action')!=NEXT: die('CURRENT_PROJECTOR_NEXT_ACTION_DRIFT')
 if (state.get('resume_control') or {}).get('exact_next_action')!=NEXT: die('CURRENT_RESUME_NEXT_ACTION_DRIFT')
-if int(r2.get('fresh_functional_gap_denominator') or 0)!=45 or int(r2.get('closure_blocker_denominator') or -1)!=0: die('R2_DENOMINATOR_DRIFT')
+if int(r2.get('fresh_functional_gap_denominator') or 0)!=45 or int(r2.get('closure_blocker_denominator'))!=0: die('R2_DENOMINATOR_DRIFT')
 if (r2.get('classification_summary') or {})!={'NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS':45}: die('R2_SUMMARY_DRIFT')
 rows=problems.get('problems') or []; pids=[r.get('problem_uid') for r in rows]
 if len(rows)!=45 or len(set(pids))!=45 or int(problems.get('open_problem_count') or 0)!=45: die('CURRENT_PROBLEM_DENOMINATOR_DRIFT')

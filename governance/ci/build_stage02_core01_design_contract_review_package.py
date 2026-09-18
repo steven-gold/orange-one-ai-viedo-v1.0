@@ -101,7 +101,7 @@ work=state.get('active_work_unit') or {}
 if work.get('work_unit_uid')!=WORK or work.get('current_status')!='REVIEW_ONLY_DESIGN_CONTRACT_REMEDIATION_REQUIRED': die('CURRENT_WORK_UNIT_NOT_READY_FOR_REVIEW_ONLY_DESIGN_REMEDIATION')
 if state.get('next_action')!='BUILD_CORE01_REVIEW_ONLY_DESIGN_CONTRACT_REMEDIATION_PACKAGE': die('CURRENT_NEXT_ACTION_DRIFT')
 summary=r2.get('classification_summary') or {}
-if int(r2.get('fresh_functional_gap_denominator') or 0)!=45 or int(r2.get('closure_blocker_denominator') or -1)!=0: die('R2_DENOMINATOR_DRIFT')
+if int(r2.get('fresh_functional_gap_denominator') or 0)!=45 or int(r2.get('closure_blocker_denominator'))!=0: die('R2_DENOMINATOR_DRIFT')
 if summary!={'NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS':45}: die('R2_CLASSIFICATION_SUMMARY_DRIFT:'+repr(summary))
 if r2.get('current_governance_uid')!=CURRENT_UID or r2.get('attempt_uid')!=ATTEMPT: die('R2_IDENTITY_DRIFT')
 rows=problems.get('problems') or []
