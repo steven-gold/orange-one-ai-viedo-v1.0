@@ -9,6 +9,16 @@ artifact_type: RESOLUTION_LEDGER
 operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
 ledger_mode: APPEND_ONLY
 existing_verified_entries_preserved_on_recompile: true
-entries: []
+entries:
+- resolution_uid: STAGE02-RESOLUTION-R1-STRUCTURAL-CLOSURE
+  resolution_type: VERIFIED_STRUCTURAL_MATERIALIZATION
+  source_receipt_ref: governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml
+  materialized_missing_artifact_blocker_count: 0
+  fresh_reexecution_closure_blocker_total: 7
+  functional_gap_reduction_credit: 0
+  external_authority_resolution_credit: 0
+  verification_run_id: 35324883473
+  verification_status: BLOCKED
+  receipt_artifact_type: MATERIAL_REMEDIATION_RECEIPT
 functional_problem_resolution_credit_total: 0
 external_authority_resolution_credit_total: 0
