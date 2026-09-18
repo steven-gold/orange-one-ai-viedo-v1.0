@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import ast
 import json
 import subprocess
 import sys
@@ -77,11 +78,48 @@ for key in (
     require(fresh.get(key) is True, f"FRESH_TERMINALIZATION_POLICY_MISSING:{key}")
 
 # 015: immutable raw discovery remains raw-only; owning-layer remediation is separately source-bounded and fail-closed.
+# Validate the runner structurally rather than pinning one source-code spelling/signature.
+# Reusable governance validation MUST survive scope-parametric refactors that preserve the same semantic invariant.
 raw_text = RAW_RUNNER.read_text(encoding="utf-8")
 successor_text = SUCCESSOR.read_text(encoding="utf-8")
 material_text = MATERIAL.read_text(encoding="utf-8")
-for token in ("scan = fresh_scan(page, raw)", "'prior_stage2_results_used': False"):
-    require(token in raw_text, f"015_RAW_DISCOVERY_GUARD_MISSING:{token}")
+try:
+    raw_tree = ast.parse(raw_text, filename=str(RAW_RUNNER))
+except SyntaxError as exc:
+    die(f"015_RAW_RUNNER_PARSE_FAILED:{exc}")
+
+fresh_scan_calls = [
+    node for node in ast.walk(raw_tree)
+    if isinstance(node, ast.Call)
+    and isinstance(node.func, ast.Name)
+    and node.func.id == "fresh_scan"
+]
+require(fresh_scan_calls, "015_RAW_DISCOVERY_FRESH_SCAN_CALL_MISSING")
+require(
+    any(
+        len(call.args) >= 2
+        and isinstance(call.args[0], ast.Name) and call.args[0].id == "page"
+        and isinstance(call.args[1], ast.Name) and call.args[1].id == "raw"
+        for call in fresh_scan_calls
+    ),
+    "015_RAW_DISCOVERY_FRESH_SCAN_PAGE_RAW_BINDING_MISSING",
+)
+
+prior_false = False
+for node in ast.walk(raw_tree):
+    if isinstance(node, ast.Dict):
+        for key, value in zip(node.keys, node.values):
+            if (
+                isinstance(key, ast.Constant)
+                and key.value == "prior_stage2_results_used"
+                and isinstance(value, ast.Constant)
+                and value.value is False
+            ):
+                prior_false = True
+                break
+    if prior_false:
+        break
+require(prior_false, "015_PRIOR_STAGE2_RESULTS_FALSE_GUARD_MISSING")
 for token in ("MATERIAL_VALIDATOR", "PENDING_REMEDIATION_PRODUCT_ROOT_INVALID"):
     require(token in successor_text, f"015_SUCCESSOR_GUARD_MISSING:{token}")
 for token in (
