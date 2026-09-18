@@ -382,7 +382,8 @@ def patch_projectors(checksum, bundle, zhash, sem_hash):
         'current_governance_uid': NEW_UID,
         'product_stage_credit': 0,
         'mother_profile_local_token_count_after_promotion': 0,
-        'neutrality_gate_hardened': True,
+        'neutrality_validator_hardened': True,
+        'neutrality_workflow_hardening_pending': True,
         'status': 'GOVERNANCE_PROMOTED_PRODUCT_REVERIFY_REQUIRED',
     }
     fl = a.setdefault('full_lifecycle_governance_system_test', {})
@@ -446,7 +447,9 @@ def main():
 
     patch_mother_profile_tokens()
     patch_portability_validator()
-    patch_neutrality_workflow()
+    # GitHub Actions App cannot mutate workflow files. The normative Mother successor
+    # remains one atomic transaction; the non-normative neutrality workflow is hardened
+    # separately through the authorized repository connector after promotion succeeds.
     update_source_revision_and_semantic_anchor()
     sync_source_candidate_state()
     checksum, bundle, zhash = refresh_source()
