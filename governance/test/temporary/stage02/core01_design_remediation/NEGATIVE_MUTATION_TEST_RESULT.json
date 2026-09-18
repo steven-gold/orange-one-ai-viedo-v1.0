@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "artifact_uid": "TEMP-STAGE02-CORE01-DESIGN-CANDIDATE-NEGATIVE-MUTATION-TEST",
+  "artifact_type": "TEMPORARY_NON_NORMATIVE_DESTRUCTIVE_MUTATION_TEST_RESULT",
+  "layer_classification": "RUN_STATE",
+  "normative_authority": false,
+  "test_candidate_only": true,
+  "source_head_sha": "aa5a1a3fe217b9e585edce4443ab4a776918922b",
+  "current_governance_uid": "GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING",
+  "source_candidate_ref": "governance/test/temporary/stage02/core01_design_remediation/CORE01_FUNCTIONAL_CONTRACT_CANDIDATE.json",
+  "result": {
+    "baseline": "PASS",
+    "negative_test_count": 15,
+    "pass": 15,
+    "fail": 0
+  },
+  "tests": [
+    {
+      "test_uid": "NEG-01",
+      "mutation": "Remove one blocker mapping",
+      "expected_detector": "BLOCKER_COVERAGE_OR_DUPLICATE",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-02",
+      "mutation": "Duplicate one blocker in another unit",
+      "expected_detector": "BLOCKER_COVERAGE_OR_DUPLICATE",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-03",
+      "mutation": "Delete one design unit",
+      "expected_detector": "DESIGN_UNIT_DENOMINATOR",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-04",
+      "mutation": "Mark a candidate materializable",
+      "expected_detector": "PREMATURE_MATERIALIZATION_OR_CREDIT",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-05",
+      "mutation": "Grant product blocker credit",
+      "expected_detector": "PREMATURE_MATERIALIZATION_OR_CREDIT",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-06",
+      "mutation": "Masquerade temporary candidate as authority",
+      "expected_detector": "CANDIDATE_AUTHORITY_ESCALATION",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-07",
+      "mutation": "Replace existing payload port with invented port",
+      "expected_detector": "UNKNOWN_OR_NEW_PORT",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-08",
+      "mutation": "Insert provider selector into payload fields",
+      "expected_detector": "FORBIDDEN_PROVIDER_MODEL_WRITE",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-09",
+      "mutation": "Reuse existing Current event UID for new audit event",
+      "expected_detector": "AUDIT_EVENT_UID_COLLISION",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-10",
+      "mutation": "Duplicate proposed audit event UID",
+      "expected_detector": "DUPLICATE_AUDIT_EVENT_UID",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-11",
+      "mutation": "Remove transition recovery",
+      "expected_detector": "TRANSITION_REQUIRED_FIELD_MISSING",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-12",
+      "mutation": "Use non-current transition audit event",
+      "expected_detector": "TRANSITION_AUDIT_EVENT_NOT_CURRENT",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-13",
+      "mutation": "Use non-current failure state",
+      "expected_detector": "TRANSITION_FAILURE_STATE_NOT_CURRENT",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-14",
+      "mutation": "Allow scorecard to self-authorize",
+      "expected_detector": "SCORECARD_AUTHORITY_OR_DENOMINATOR_DRIFT",
+      "result": "PASS_DETECTOR_FIRED"
+    },
+    {
+      "test_uid": "NEG-15",
+      "mutation": "Give ledger immediate R7 materialization",
+      "expected_detector": "LEDGER_PREMATURE_PRODUCT_CREDIT",
+      "result": "PASS_DETECTOR_FIRED"
+    }
+  ],
+  "authority_boundary": {
+    "product_blocker_reduction_credit": 0,
+    "r7_materializable_now": 0,
+    "mother_governance_mutated": false,
+    "current_specification_mutated": false
+  },
+  "status": "PASS_15_OF_15_DESTRUCTIVE_MUTATIONS_BLOCKED"
+}
