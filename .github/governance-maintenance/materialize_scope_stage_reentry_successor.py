@@ -673,11 +673,14 @@ def patch_projectors(checksum, bundle, zips):
     s2['current_scope_manifest_ref'] = 'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
     ex['website_construction_allowed'] = False
     ex['deployment_allowed'] = False
+    new_action = 'WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE02_REVALIDATION_UNDER_CURRENT_GOVERNANCE'
     active = a.get('stage02_active_attempt')
     if isinstance(active, dict):
         active['fresh_revalidation_required'] = True
         active['closure_credit_under_current_governance'] = False
         active['current_scope_manifest_ref'] = 'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
+        active['next_action'] = new_action
+    a['next_action'] = new_action
     a['current_primary_task_layer'] = 'GOVERNANCE_MAINTENANCE'
     a['current_primary_task_authorization_uid'] = AUTH_UID
     a['current_primary_task_product_stage_credit'] = 0
@@ -716,6 +719,14 @@ def patch_projectors(checksum, bundle, zips):
     fl['terminal_run_conclusion'] = 'REVALIDATION_REQUIRED'
     fl['terminal_result_credit_allowed'] = False
     write(p, a)
+
+    findings_path = ROOT/'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
+    if findings_path.is_file():
+        findings = load(findings_path)
+        findings['next_action'] = new_action
+        findings['current_governance_revalidation_required'] = True
+        findings['closure_credit_under_current_governance'] = False
+        write(findings_path, findings)
 
     p = ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
     c = load(p)
