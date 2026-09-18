@@ -15,6 +15,7 @@ STATE = ROOT / "governance/test/ACTIVE_STATE.yaml"
 REVIEW = ROOT / ".github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml"
 ZERO = ROOT / "governance/ci/validate_stage02_zero_residual.py"
 SUCCESSOR = ROOT / "governance/ci/validate_stage02_successor_integrity.py"
+WORKFLOW = ROOT / ".github/workflows/stage02-actual-test.yml"
 EXPECTED_STAGE1_BLOBS = {
     "00_SOURCE_INTAKE/fresh_run_003/ARTIFACT_PLAN.yaml": "c64ab04846b228c14978c07f88164a8d02a22f0d",
     "00_SOURCE_INTAKE/fresh_run_003/EXECUTION_STATE.yaml": "4f2bf558f5807a03d081f848184334ba16901fb1",
@@ -81,6 +82,19 @@ if pending_review.get("review_item_uid") != "REV-GOV-001":
 if pending_review.get("status") != "APPROVED":
     die("ACTIVE_STATE_PREFORMAL_REVIEW_NOT_APPROVED")
 
+workflow_text = WORKFLOW.read_text(encoding="utf-8")
+ordered_commands = [
+    "python governance/ci/validate_stage02_entry_receipts.py",
+    "python governance/ci/compile_stage_execution_preflight.py --admission-check",
+    "python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py",
+    "python governance/ci/run_current_stage2_actual_test.py",
+]
+positions = [workflow_text.find(command) for command in ordered_commands]
+if any(pos < 0 for pos in positions):
+    die(f"STAGE02_ADMISSION_COMMAND_MISSING:{positions}")
+if positions != sorted(positions) or len(set(positions)) != len(positions):
+    die(f"STAGE02_ADMISSION_ORDER_INVALID:{positions}")
+
 freeze = load(FREEZE)
 baseline = load(BASELINE)
 uid = resolve()["governance_uid"]
@@ -122,3 +136,4 @@ print(f"PASS: Stage-02 entry freeze receipt locks governance UID {uid}")
 print(f"PASS: Stage-02 clean predecessor receipt binds parent {parent}")
 print("PASS: five Stage-01 predecessor blobs are exact; no active attempt/evidence/findings are persisted before execution")
 print("PASS: REV-GOV-001 human/authorized preformal approval is persisted before Stage-02 entry")
+print("PASS: Stage-02 workflow ordering is entry review -> completion-path admission -> Full-Line -> actual execution")
