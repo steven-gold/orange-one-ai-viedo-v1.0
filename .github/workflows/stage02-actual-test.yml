@@ -1625,7 +1625,7 @@ jobs:
           assert safety.get('product_materialization_performed') is False
           assert safety.get('blocker_reduction_claimed') == 0
           assert safety.get('stage03_allowed') is False and safety.get('website_construction_allowed') is False and safety.get('deployment_allowed') is False
-          assert (state.get('resume_control') or {}).get('current_resume_point') == 'STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION'
+          assert (state.get('resume_control') or {}).get('current_resume_point') == 'STAGE2_TESTED_BLOCKED_FUNCTIONAL_REMEDIATION'
           print(f'PASS: Current R5 request validated current={current} local={local} external={external} materializable=0')
           PY
           git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml

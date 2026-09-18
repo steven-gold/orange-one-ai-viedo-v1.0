@@ -116,7 +116,7 @@ if current_n <= 0 or open_n != current_n or class_n != current_n:
     die(f'CURRENT_DENOMINATOR_DRIFT:problem={current_n}:open={open_n}:classification={class_n}')
 if ((state.get('execution') or {}).get('stage2') or {}).get('stage_exit_allowed') is not False:
     die('STAGE02_EXIT_MUST_REMAIN_BLOCKED')
-if (state.get('resume_control') or {}).get('current_resume_point') != 'STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION':
+if (state.get('resume_control') or {}).get('current_resume_point') != 'STAGE2_TESTED_BLOCKED_FUNCTIONAL_REMEDIATION':
     die('CURRENT_RESUME_POINT_DRIFT')
 
 problems = problem.get('problems') or []
@@ -240,7 +240,7 @@ out = {
         'fresh_stage02_reexecution_required_before_any_blocker_reduction_credit': True,
     },
     'resume_control': {
-        'current_resume_point_preserved': 'STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION',
+        'current_resume_point_preserved': 'STAGE2_TESTED_BLOCKED_FUNCTIONAL_REMEDIATION',
         'exact_next_action': f'INGEST_SEPARATELY_APPROVED_CURRENT_PRODUCT_AUTHORITY_FOR_{local_n}_LOCAL_REQUESTS_OR_EXTERNAL_AUTHORITY_FOR_{external_n}_REFERENCED_GAPS; OTHERWISE_REMAIN_BLOCKED',
     },
     'status': f'OPEN_AWAITING_{local_n}_PRODUCT_AUTHORITY_BINDINGS_AND_{external_n}_EXTERNAL_AUTHORITY_RESOLUTIONS',
