@@ -113,7 +113,7 @@ stage02_reset_control:
   next_action_after_mother_review: CORE01_SCOPE_AUTHORIZED_CREATE_FRESH_RECEIPTS_AND_RUN_ACTUAL_TEST
   product_stage_credit: 0
 status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
-next_action: RUN_CURRENT_REMEDIABILITY_CLASSIFICATION_R2_FOR_CORE01_FRESH_45_GAPS
+next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
 work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
   normative_authority: false
@@ -143,7 +143,6 @@ work_unit_resolution_gate:
   - CLASSIFICATION_REQUIRED_BEFORE_ANY_FUNCTIONAL_VALUE_MATERIALIZATION
   - EXTERNAL_AUTHORITY_REFS_MUST_REMAIN_UNRESOLVED_WITHOUT_EXACT_AUTHORITY_EVIDENCE
   - ASSET01_REMAINS_OUT_OF_SCOPE
-
 active_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
   canonical_name: CORE01_FRESH_FUNCTIONAL_GAP_REMEDIATION
@@ -181,7 +180,6 @@ active_work_unit:
   - STAGE01_IMMUTABLE_INPUTS_UNCHANGED
   - EXACT_PERSISTED_HEAD_FULL_LINE_SUCCESS
   resume_after_closure: STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION_OR_STAGE_EXIT_IF_ZERO
-
 last_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -410,7 +408,7 @@ resume_control:
   last_closed_work_unit_result: CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED
   last_closed_work_unit_full_line_run_id: 35300652499
   last_closed_work_unit_evidence_head: 38ded547d9f6050c7cae8dd249521a1eb7ff77ae
-  exact_next_action: RUN_CURRENT_REMEDIABILITY_CLASSIFICATION_R2_FOR_CORE01_FRESH_45_GAPS
+  exact_next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-MOTHER-CONTEXT-TASK-LAYER-HARDENING
@@ -477,7 +475,7 @@ stage02_active_attempt:
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: true
-  next_action: RUN_CURRENT_REMEDIABILITY_CLASSIFICATION_R2_FOR_CORE01_FRESH_45_GAPS
+  next_action: AWAIT_OR_INGEST_SEPARATELY_APPROVED_CURRENT_STAGE02_AUTHORITY_REQUEST_R5_INPUTS; DO_NOT_MATERIALIZE_WITHOUT_APPROVED_AUTHORITY
   governance_status: CURRENT_FROZEN_ATTEMPT_FRESHLY_REVALIDATED_BLOCKED
   closure_credit_under_current_governance: true
   fresh_revalidation_required: false
@@ -486,6 +484,11 @@ stage02_active_attempt:
   reexecution_clean_baseline_receipt_ref: governance/test/stage02/STAGE02_REEXECUTION_CLEAN_BASELINE_RECEIPT_R1.yaml
   defect_signature_regression_receipt_ref: governance/test/stage02/STAGE02_DEFECT_SIGNATURE_REGRESSION_R1.yaml
   reexecution_cycle: R1
+  authority_request_package_ref: governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml
+  authority_request_product_count: 45
+  authority_request_external_count: 0
+  authority_request_is_authority: false
+  new_authority_required_before_more_material_remediation: true
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
