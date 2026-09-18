@@ -10,6 +10,8 @@ ROOT = Path(__file__).resolve().parents[2]
 RUN = ROOT / "00_SOURCE_INTAKE/fresh_run_003"
 OUT = RUN / "04_PAGE_FUNCTIONAL_CONTRACT"
 RECEIPT = ROOT / "governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml"
+STATE = ROOT / "governance/test/ACTIVE_STATE.yaml"
+EVIDENCE = ROOT / "governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json"
 PAGES = {
     "CORE-01": {
         "raw": RUN / "00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
@@ -56,13 +58,27 @@ def uidset(items, key):
     return {x.get(key) for x in (items or []) if isinstance(x, dict) and x.get(key)}
 
 
+state = load(STATE)
+evidence = load(EVIDENCE)
+target_page_uids = list(evidence.get("target_pages") or (state.get("execution") or {}).get("target_pages") or [])
+if not target_page_uids or len(target_page_uids) != len(set(target_page_uids)):
+    errors.append(f"CURRENT_TARGET_PAGE_SCOPE_INVALID:{target_page_uids!r}")
+unknown_target_pages = sorted(set(target_page_uids) - set(PAGES))
+if unknown_target_pages:
+    errors.append(f"CURRENT_TARGET_PAGE_SCOPE_UNKNOWN:{unknown_target_pages!r}")
+target_pages = {uid: PAGES[uid] for uid in target_page_uids if uid in PAGES}
+expected_gaps = set(evidence.get("preserved_external_authority_union_gap_uids") or [])
+if not expected_gaps or not expected_gaps.issubset(EXPECTED_GAPS):
+    errors.append(f"CURRENT_EXTERNAL_AUTHORITY_SCOPE_INVALID:{sorted(expected_gaps)!r}")
+expected_blocker_count = sum(7 if cfg["ai"] else 6 for cfg in target_pages.values())
+
 if not OUT.is_dir():
     errors.append("STAGE02_PRODUCT_ROOT_MISSING")
 
 all_blueprint_gaps = set()
 expected_shared = set()
 expected_ports = set()
-for page_uid, cfg in PAGES.items():
+for page_uid, cfg in target_pages.items():
     raw = load(cfg["raw"])
     blueprint = load(cfg["blueprint"])
     reg = raw.get("registries") or {}
@@ -208,7 +224,7 @@ for name in REQUIRED_ROOT_FILES:
         errors.append(f"MISSING_REQUIRED_STAGE2_ROOT_ARTIFACT:{name}")
 
 dep = load(OUT / "DEPENDENCY_MAP.yaml")
-if set(dep.get("external_authority_union") or []) != EXPECTED_GAPS:
+if set(dep.get("external_authority_union") or []) != expected_gaps:
     errors.append("DEPENDENCY_MAP_EXTERNAL_GAP_UNION_DRIFT")
 if dep.get("external_authority_auto_resolution") is not False:
     errors.append("DEPENDENCY_MAP_EXTERNAL_AUTOREsolve_FORBIDDEN")
@@ -227,17 +243,19 @@ if actual_shared != expected_shared:
 if shared.get("external_authority_resolution_performed") is not False:
     errors.append("SHARED_OWNER_EXTERNAL_RESOLUTION_FORBIDDEN")
 
-if all_blueprint_gaps != EXPECTED_GAPS:
-    errors.append(f"BLUEPRINT_EXTERNAL_AUTHORITY_UNION_DRIFT:{sorted(all_blueprint_gaps)}")
+if all_blueprint_gaps != expected_gaps:
+    errors.append(f"BLUEPRINT_EXTERNAL_AUTHORITY_UNION_DRIFT:expected={sorted(expected_gaps)} actual={sorted(all_blueprint_gaps)}")
 
 receipt = load(RECEIPT)
-if receipt.get("materialized_missing_artifact_blocker_count") != 13:
+if receipt.get("materialized_missing_artifact_blocker_count") != expected_blocker_count:
     errors.append("REMEDIATION_RECEIPT_BLOCKER_DENOMINATOR_DRIFT")
+if list(receipt.get("target_pages") or []) != target_page_uids:
+    errors.append("REMEDIATION_RECEIPT_TARGET_SCOPE_DRIFT")
 if receipt.get("claimed_legal_elimination_before_fresh_reexecution") != 0:
     errors.append("REMEDIATION_RECEIPT_PREMATURE_ELIMINATION_CLAIM")
 if receipt.get("functional_gap_elimination_claimed") != 0:
     errors.append("REMEDIATION_RECEIPT_PREMATURE_FUNCTIONAL_GAP_CLAIM")
-if set(receipt.get("external_authority_union_preserved_unresolved") or []) != EXPECTED_GAPS:
+if set(receipt.get("external_authority_union_preserved_unresolved") or []) != expected_gaps:
     errors.append("REMEDIATION_RECEIPT_EXTERNAL_GAP_UNION_DRIFT")
 for field in ("current_specification_mutated", "stage1_immutable_inputs_mutated", "ai_autofill_used", "semantic_inference_for_missing_authority_used"):
     if receipt.get(field) is not False:
@@ -253,6 +271,6 @@ if errors:
 
 print("PASS: Stage-02 materialized structural product root is present and source-bounded")
 print("PASS: entity/action/control/section/component/visual/port denominators match immutable Stage-01 registries")
-print("PASS: 13 missing-artifact blockers have owning-layer artifacts; zero legal elimination is claimed before fresh reexecution")
+print(f"PASS: {expected_blocker_count} in-scope missing-artifact blockers have owning-layer artifacts; zero legal elimination is claimed before fresh reexecution")
 print("PASS: GAP-001..GAP-008 remain unresolved and no stale EXTERNAL_AUTHORITY tree was restored")
 print("PASS: no semantic authority completion, AI autofill, or invented object-parent binding is present")

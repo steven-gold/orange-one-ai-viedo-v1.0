@@ -127,14 +127,26 @@ if active.get("frozen_governance_uid") != state.get("specification_uid"):
 if evidence.get("source_head_sha") != active.get("source_execution_sha"):
     die(f"CURRENT_EVIDENCE_SOURCE_SHA_DRIFT:evidence={evidence.get('source_head_sha')!r}:active={active.get('source_execution_sha')!r}")
 
+target_page_uids = list(evidence.get("target_pages") or execution.get("target_pages") or [])
+if not target_page_uids or len(target_page_uids) != len(set(target_page_uids)):
+    die(f"CURRENT_TARGET_PAGE_SCOPE_INVALID:{target_page_uids!r}")
+unknown_target_pages = sorted(set(target_page_uids) - set(PAGES))
+if unknown_target_pages:
+    die(f"CURRENT_TARGET_PAGE_SCOPE_UNKNOWN:{unknown_target_pages!r}")
+target_pages = {uid: PAGES[uid] for uid in target_page_uids}
+expected_closure_blockers = sum(7 if cfg["ai_continuity_required"] else 6 for cfg in target_pages.values())
+expected_external = set(evidence.get("preserved_external_authority_union_gap_uids") or [])
+if not expected_external or not expected_external.issubset(EXPECTED_GAPS):
+    die(f"CURRENT_EXTERNAL_AUTHORITY_SCOPE_INVALID:{sorted(expected_external)!r}")
+
 before_functional_gaps = int(evidence.get("fresh_functional_gap_total") or 0)
 before_closure_blockers = int(evidence.get("closure_blocker_total") or 0)
 if before_functional_gaps != int(active.get("fresh_functional_gap_total") or 0):
     die("CURRENT_FUNCTIONAL_GAP_COUNT_DRIFT")
 if before_closure_blockers != int(active.get("fresh_closure_blocker_total") or 0):
     die("CURRENT_CLOSURE_BLOCKER_COUNT_DRIFT")
-if before_closure_blockers != 13:
-    die(f"STRUCTURAL_MATERIALIZATION_DENOMINATOR_DRIFT:expected=13:actual={before_closure_blockers}")
+if before_closure_blockers != expected_closure_blockers:
+    die(f"STRUCTURAL_MATERIALIZATION_DENOMINATOR_DRIFT:expected={expected_closure_blockers}:actual={before_closure_blockers}")
 if OUT.exists():
     die("STAGE02_PRODUCT_ROOT_ALREADY_EXISTS_REFUSE_OVERWRITE")
 if RECEIPT.exists():
@@ -147,7 +159,7 @@ shared_owner_rows = []
 provider_rows = []
 dependency_pages = []
 
-for page_uid, cfg in PAGES.items():
+for page_uid, cfg in target_pages.items():
     raw = load(cfg["raw"])
     blueprint = load(cfg["blueprint"])
     authority = raw.get("authority") or {}
@@ -437,8 +449,8 @@ for page_uid, cfg in PAGES.items():
         "ai_continuity_contract_materialized": cfg["ai_continuity_required"],
     }
 
-if all_external != EXPECTED_GAPS:
-    die(f"EXTERNAL_AUTHORITY_UNION_DRIFT:expected={sorted(EXPECTED_GAPS)} actual={sorted(all_external)}")
+if all_external != expected_external:
+    die(f"EXTERNAL_AUTHORITY_UNION_DRIFT:expected={sorted(expected_external)} actual={sorted(all_external)}")
 
 dump(OUT / "DEPENDENCY_MAP.yaml", {
     "schema_version": 1,
@@ -471,25 +483,20 @@ dump(OUT / "SHARED_OWNER_PORT_MAP.yaml", {
     "external_authority_resolution_performed": False,
 })
 
-materialized_blockers = {
-    "CORE-01": [
+materialized_blockers = {}
+for page_uid, cfg in target_pages.items():
+    blockers = [
         "MISSING_BUSINESS_ENTITY_INVENTORY",
         "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
         "MISSING_ENTITY_HIERARCHY_MATRIX",
         "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
         "MISSING_INTERACTION_TOPOLOGY_SPEC",
         "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX",
-        "MISSING_AI_INTERACTION_CONTINUITY_CONTRACT",
-    ],
-    "ASSET-01": [
-        "MISSING_BUSINESS_ENTITY_INVENTORY",
-        "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
-        "MISSING_ENTITY_HIERARCHY_MATRIX",
-        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
-        "MISSING_INTERACTION_TOPOLOGY_SPEC",
-        "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX",
-    ],
-}
+    ]
+    if cfg["ai_continuity_required"]:
+        blockers.append("MISSING_AI_INTERACTION_CONTINUITY_CONTRACT")
+    materialized_blockers[page_uid] = blockers
+materialized_blocker_count = sum(len(v) for v in materialized_blockers.values())
 dump(RECEIPT, {
     "schema_version": 1,
     "artifact_type": "MATERIAL_REMEDIATION_RECEIPT",
@@ -502,10 +509,12 @@ dump(RECEIPT, {
     "changed_artifact_root": "00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT",
     "before_state": {"fresh_functional_gaps": before_functional_gaps, "closure_blockers": before_closure_blockers},
     "materialized_missing_artifact_blockers": materialized_blockers,
-    "materialized_missing_artifact_blocker_count": 13,
+    "materialized_missing_artifact_blocker_count": materialized_blocker_count,
     "claimed_legal_elimination_before_fresh_reexecution": 0,
     "functional_gap_elimination_claimed": 0,
     "external_authority_union_preserved_unresolved": sorted(all_external),
+    "target_pages": target_page_uids,
+    "excluded_pages": sorted(set(PAGES) - set(target_page_uids)),
     "current_specification_mutated": False,
     "stage1_immutable_inputs_mutated": False,
     "ai_autofill_used": False,
@@ -518,7 +527,7 @@ dump(RECEIPT, {
 print(f"MATERIALIZED_STAGE02_ROOT={OUT.relative_to(ROOT)}")
 print(f"MATERIALIZATION_BEFORE_FUNCTIONAL_GAPS={before_functional_gaps}")
 print(f"MATERIALIZATION_BEFORE_CLOSURE_BLOCKERS={before_closure_blockers}")
-print("MATERIALIZED_MISSING_ARTIFACT_BLOCKERS=13")
+print(f"MATERIALIZED_MISSING_ARTIFACT_BLOCKERS={materialized_blocker_count}")
 print("FUNCTIONAL_GAP_ELIMINATION_CLAIMED=0")
 print("EXTERNAL_AUTHORITY_UNION=" + ",".join(sorted(all_external)))
 print("PASS: Stage-02 structural remediation artifacts materialized from exact Stage-01 registries without Current Specification mutation")
