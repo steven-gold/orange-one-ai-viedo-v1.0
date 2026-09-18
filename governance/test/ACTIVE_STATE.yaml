@@ -109,22 +109,26 @@ stage02_reset_control:
   entry_receipts_must_be_regenerated_after_mother_review: true
   next_action_after_mother_review: RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE
   product_stage_credit: 0
-status: GOVERNANCE_MACHINE_VERIFIED_PREFORMAL_REVIEW_PENDING_STAGE2_NOT_EXECUTED
-next_action: AWAIT_EXPLICIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_FOR_REV_GOV_001; DO_NOT_ENTER_PRODUCT_STAGE
+status: PREFORMAL_GOVERNANCE_REVIEW_APPROVED_STAGE2_FRESH_ENTRY_RESOLUTION_REQUIRED
+next_action: RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE
 work_unit_resolution_gate:
-  resolution_uid: WUR-GOV-DESIGN-REMEDIATION-PREFORMAL-REVIEW-001
+  resolution_uid: WUR-STAGE02-CORE01-FRESH-CURRENT-GOVERNANCE-001
   normative_authority: false
-  result: BLOCKED_REQUIRED_REVIEW_NO_EFFECTFUL_SUCCESSOR
-  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
-  canonical_policy_owner: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
+  result: PENDING_FRESH_RESOLUTION
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  requested_page_scope:
+  - CORE-01
+  excluded_scope:
+  - ASSET-01
+  - STAGE03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
-  blocking_review_item_uid: REV-GOV-001
-  blocking_review_status: PENDING
-  source_review_plan_owner: .github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
+  authorization_uid: USR-DIRECTIVE-20260918-COMPLETE-CORE01-STAGE02-TEST
   resolved_work_unit_uid: null
-  ai_may_invent_successor_work_unit: false
   product_stage_credit: 0
-  legal_next_transition: EXPLICIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION
+  legal_next_transition: RESOLVE_SINGLE_FRESH_CORE01_STAGE02_WORK_UNIT_FROM_CLEAN_STAGE1_BASELINE
 last_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -345,17 +349,14 @@ resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  effectful_stage2_execution_before_entry_resolution: BLOCK_PENDING_CURRENT_GOVERNANCE_PREFORMAL_REVIEW_AND_FRESH_ENTRY_RESOLUTION
-  current_resume_point: PREFORMAL_GOVERNANCE_REVIEW_PENDING_CURRENT_SUCCESSOR
+  effectful_stage2_execution_before_entry_resolution: BLOCK
+  current_resume_point: PREFORMAL_GOVERNANCE_REVIEW_APPROVED_FRESH_STAGE2_WORK_UNIT_RESOLUTION_REQUIRED
   current_work_unit_uid: null
-  current_owner: .github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
-  last_effectful_governance_action: SUCCESSOR_PROJECTOR_SYNC_PERSISTED_HEAD_REVALIDATED
-  last_effectful_governance_evidence_head: 736622cf32e1a19119317b4d9b56af51c036ce03
-  last_effectful_governance_full_line_run_id: 35321233970
-  last_effectful_selected_profile_run_id: 35321233960
-  last_effectful_branch_guard_run_id: 35321234031
-  last_effectful_stage02_boundary_run_id: 35321234019
-  exact_next_action: AWAIT_EXPLICIT_USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_FOR_REV_GOV_001; AFTER_APPROVAL_RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT
+  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  last_effectful_governance_action: PREFORMAL_REVIEW_APPROVED_BY_EXPLICIT_USER_DIRECTIVE
+  last_effectful_governance_evidence_head: 43fdb79d35a185733548089018d5b51ba2e69ef8
+  last_effectful_governance_full_line_run_id: 35321777929
+  exact_next_action: RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
@@ -380,18 +381,29 @@ pending_governance_review:
   review_type: PREFORMAL_GOVERNANCE_REVIEW
   target_uid: GOVERNANCE_PACKAGE
   reviewer_role: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER
-  status: PENDING
+  status: APPROVED
   machine_may_auto_approve: false
+  approval_source: EXPLICIT_USER_DIRECTIVE
+  approval_directive_uid: USR-DIRECTIVE-20260918-COMPLETE-CORE01-STAGE02-TEST
+  approval_directive: 繼續完成測試stage-02
+  approval_scope: CURRENT_GOVERNANCE_PACKAGE_FOR_CORE01_FRESH_STAGE02_TEST_ONLY
   target_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   target_source_revision: v2.2.4-design-remediation-routing-hardening
   target_root_manifest_git_blob_sha: cadacc6c106dd02e717e2e910bf69c0e51c393e7
-  machine_evidence_head: 736622cf32e1a19119317b4d9b56af51c036ce03
-  machine_evidence_run_id: 35321233970
+  machine_evidence_head: 43fdb79d35a185733548089018d5b51ba2e69ef8
+  machine_evidence_run_id: 35321777929
   source_review_plan_status_at_package_freeze: PENDING
   source_review_plan_owner: .github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
   explicit_user_decision_required: true
-  explicit_user_decision_observed: false
+  explicit_user_decision_observed: true
   self_reported_approval: FORBIDDEN
+  approved_product_test_page_scope:
+  - CORE-01
+  excluded_scope:
+  - ASSET-01
+  - STAGE03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
 current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-DESIGN-REMEDIATION-SUCCESSOR-PROJECTOR-SYNC-R5
 current_primary_task_product_stage_credit: 0
