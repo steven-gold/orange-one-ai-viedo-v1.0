@@ -678,6 +678,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Finding-closure readiness is a derived validation report from the prior step,
+          # not part of the structural replay mutation set. Keep the context transaction exact.
+          git checkout -- governance/test/FINDING_CLOSURE_READINESS.json
           python governance/ci/compile_stage_execution_preflight.py --materialize
           python governance/ci/compile_stage_execution_preflight.py --check
           base='00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
