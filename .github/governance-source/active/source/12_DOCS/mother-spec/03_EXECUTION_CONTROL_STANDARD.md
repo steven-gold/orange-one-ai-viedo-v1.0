@@ -1160,7 +1160,7 @@ This section classifies residuals before WEB-GOV-03-S053 and WEB-GOV-03-S055 per
 Governance residual cleanup is governed by WEB-GOV-03-S066 and receives zero product-stage gap reduction or completion credit unless separate fresh product-owner evidence independently changes a product denominator.
 
 <!-- SECTION_UID: WEB-GOV-03-S069 -->
-## Execution Scope Manifest / Dynamic Denominator / Capability Re-entry Control
+## 69. Execution Scope Manifest / Dynamic Denominator / Capability Re-entry Control
 
 Every governed execution iteration MUST use this order:
 

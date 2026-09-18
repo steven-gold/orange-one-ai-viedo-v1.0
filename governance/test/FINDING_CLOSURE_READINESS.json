@@ -1,0 +1,33 @@
+{
+  "all_target_findings_ready": true,
+  "artifact_type": "NON_NORMATIVE_FINDING_CLOSURE_READINESS_EVIDENCE",
+  "current_governance_uid": "GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING",
+  "finding_results": {
+    "FIND-20260915-015": {
+      "remediation_target": "governance/ci/validate_stage02_successor_integrity.py",
+      "signature": "RAW_DISCOVERY_VS_STAGE02_OWNING_LAYER_REMEDIATION",
+      "status": "PASS"
+    },
+    "FIND-20260915-016": {
+      "exact_behavior_probes": 8,
+      "remediation_target": "governance/ci/classify_current_stage2_functional_remediability_r3.py",
+      "signature": "SAME_UID_NEIGHBORING_FIELD_FALSE_ADMISSION",
+      "status": "PASS"
+    },
+    "FIND-20260915-027": {
+      "active_consumer_reference_gate": "PASS",
+      "remediation_target": "governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml",
+      "signature": "PROMOTION_DERIVED_CONSUMER_PROJECTION_ATOMICITY",
+      "status": "PASS"
+    }
+  },
+  "historical_evidence_used_as_current_closure_credit": false,
+  "ledger_dispositions_at_validation": {
+    "FIND-20260915-015": "IMPLEMENTATION_REMEDIATED",
+    "FIND-20260915-016": "IMPLEMENTATION_REMEDIATED",
+    "FIND-20260915-027": "ABSORBED_INTO_CANONICAL_OWNER"
+  },
+  "normative_authority": false,
+  "schema_version": 1,
+  "validated_head_sha": "bb0711f7f56f4fc945127d10f837b8eff1f5a7ba"
+}

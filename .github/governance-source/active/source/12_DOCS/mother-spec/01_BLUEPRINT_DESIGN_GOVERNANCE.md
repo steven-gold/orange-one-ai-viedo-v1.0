@@ -1511,7 +1511,7 @@ A project MAY select an `EXECUTION_PROFILE` that binds the reusable policy to co
 Promotion into reusable policy MUST run a contamination scan, canonical-rule-owner check, contradiction/supersession check, active-consumer projection audit, and portability test against differently named execution profiles. Any execution-instance identifier or profile-local denominator found in reusable policy without an explicit non-normative example classification MUST block promotion.
 
 <!-- SECTION_UID: WEB-GOV-01-S075 -->
-## Execution Scope Authority / Capability Ownership / Upstream Re-entry
+## 75. Execution Scope Authority / Capability Ownership / Upstream Re-entry
 
 Every governed execution cycle and Work Unit MUST resolve one Current EXECUTION_SCOPE_MANIFEST before product analysis, design remediation, validation, implementation, verification, release, deployment, or closure work begins. The manifest is execution state, not reusable Product Authority. It MUST identify scope UID and scope kind; included, excluded, and remaining governed units; scope-selection Authority; owning capability; predecessor and dependency closure references; denominator sources; partial-scope status; Stage-exit-credit policy; and an exact content hash.
 

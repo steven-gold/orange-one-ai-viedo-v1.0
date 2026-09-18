@@ -1489,7 +1489,7 @@ A cleanup cohort PASS is governance-maintenance evidence only. Audit MUST_NOT co
 This audit extends WEB-GOV-04-S022A and WEB-GOV-04-S065; it does not replace their denominators.
 
 <!-- SECTION_UID: WEB-GOV-04-S083 -->
-## Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit
+## 83. Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit
 
 Audit MUST verify one exact EXECUTION_SCOPE_MANIFEST for every governed Work Unit/cycle and prove its included, excluded, remaining, dependency, denominator, partial-scope, and Stage-exit-credit fields came from Current Authority/profile/state rather than chat memory, old reports, or reusable-code literals.
 

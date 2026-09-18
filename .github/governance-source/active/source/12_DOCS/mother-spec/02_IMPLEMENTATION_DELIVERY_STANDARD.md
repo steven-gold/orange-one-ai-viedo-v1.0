@@ -1199,7 +1199,7 @@ Each accepted remediation batch MUST write only to the canonical owning layer, a
 There MUST be one active `CURRENT_PROBLEM_REGISTER` for the governed cycle and one append-only `RESOLUTION_LEDGER`. Per-run reports and snapshots are evidence only. New denominators MUST derive from physical scan plus exact authorized successor reconciliation, never from predecessor reports or hard-coded expected counts.
 
 <!-- SECTION_UID: WEB-GOV-02-S074 -->
-## Scope-Bound Delivery / Re-entry / Temporary-to-Formal Boundary
+## 74. Scope-Bound Delivery / Re-entry / Temporary-to-Formal Boundary
 
 Implementation and delivery MUST consume the frozen EXECUTION_SCOPE_MANIFEST, functional contracts, approved visual projection, dependency closure, and acceptance denominator applicable to the exact Work Unit. Reusable implementation validators, runners, and workflow helpers MUST derive included units and denominators from Current manifests/registers. A literal product page set, module list, blocker count, expected gap count, prior-run report count, or manually copied denominator MUST NOT define reusable completion.
 
