@@ -1,3 +1,4 @@
+# R3_TRIGGER: CORE-01 Stage-02 completion
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
