@@ -121,7 +121,7 @@ def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> 
         label = f"{owner}#{yaml_path}"
         # Current findings are an executed-step projector. In the canonical NOT_EXECUTED
         # clean-reset state they must be absent; requiring them would contradict the
-        # Stage-02 zero-residual contract.
+        # selected-profile zero-residual contract.
         if kind.endswith("_CURRENT_FINDINGS_CROSSCHECK") and current_step.get("result") == "NOT_EXECUTED":
             present = path.is_file()
             projectors[label] = {
