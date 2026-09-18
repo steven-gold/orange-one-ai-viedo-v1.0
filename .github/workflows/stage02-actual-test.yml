@@ -564,22 +564,28 @@ jobs:
           python governance/ci/specification_mutation_guard.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
-      - name: Isolate derived active-consumer report before structural write-set
+      - name: Isolate derived governance reports before structural write-set
         shell: bash
         run: |
           set -euo pipefail
-          report='governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json'
-          actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | sed '/^$/d')"
+          reports=(
+            '.github/governance-source/SOURCE_IDENTITY_REPORT.json'
+            'governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json'
+          )
+          actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | sed '/^$/d' | sort -u)"
+          permitted="$(printf '%s\n' "${reports[@]}" | sort -u)"
+          unexpected="$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$permitted"))"
+          test -z "$unexpected" || { printf 'BLOCK: unexpected pre-structural derived delta\n%s\n' "$unexpected" >&2; exit 1; }
           if [ -n "$actual" ]; then
-            test "$actual" = "$report" || { printf 'BLOCK: unexpected pre-structural derived delta\n%s\n' "$actual" >&2; exit 1; }
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add -- "$report"
-            git commit -m 'test(governance): refresh active consumer integrity before core structural materialization'
+            git add -- "${reports[@]}"
+            git commit -m 'test(governance): refresh derived reports before core structural materialization'
             git push origin HEAD:rebuild-v2.1.1
           fi
+          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
           python governance/ci/validate_active_consumer_reference_integrity.py
-          git diff --exit-code -- "$report"
+          git diff --exit-code -- "${reports[@]}"
           python governance/ci/validate_stage02_state_integrity.py
           python governance/ci/validate_selected_execution_profile_integrity.py
           python governance/ci/validate_validation_remediation_closure_protocol.py
