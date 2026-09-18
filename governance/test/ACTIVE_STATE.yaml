@@ -109,26 +109,36 @@ stage02_reset_control:
   entry_receipts_must_be_regenerated_after_mother_review: true
   next_action_after_mother_review: RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE
   product_stage_credit: 0
-status: PREFORMAL_GOVERNANCE_REVIEW_APPROVED_STAGE2_FRESH_ENTRY_RESOLUTION_REQUIRED
-next_action: RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE
+status: ACTIVE_STAGE02_CORE01_FRESH_TEST_PREPARED
+next_action: RUN_CORE01_FRESH_STAGE02_ACTUAL_TEST_WITH_PREEXECUTION_ADMISSION_AND_NO_ASSET01_EXECUTION
 work_unit_resolution_gate:
-  resolution_uid: WUR-STAGE02-CORE01-FRESH-CURRENT-GOVERNANCE-001
+  resolution_uid: WUR-STAGE02-CORE01-FRESH-TEST-002
   normative_authority: false
-  result: PENDING_FRESH_RESOLUTION
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  predecessor_terminal_disposition: GOVERNANCE_MACHINE_CLOSURE_AND_PREFORMAL_REVIEW_APPROVED
   requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  requested_page_scope:
-  - CORE-01
-  excluded_scope:
-  - ASSET-01
-  - STAGE03
-  - WEBSITE_CONSTRUCTION
-  - DEPLOYMENT
-  canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  state_owner: governance/test/ACTIVE_STATE.yaml
+  resume_point_before_resolution: PREFORMAL_GOVERNANCE_REVIEW_APPROVED_FRESH_STAGE2_WORK_UNIT_RESOLUTION_REQUIRED
+  resolved_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-002
+  explicit_user_directive: 繼續完成測試stage-02
   authorization_uid: USR-DIRECTIVE-20260918-COMPLETE-CORE01-STAGE02-TEST
-  resolved_work_unit_uid: null
-  product_stage_credit: 0
-  legal_next_transition: RESOLVE_SINGLE_FRESH_CORE01_STAGE02_WORK_UNIT_FROM_CLEAN_STAGE1_BASELINE
+  canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  execution_owner: governance/ci/run_current_stage2_actual_test.py
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  page_scope:
+  - CORE-01
+  excluded_page_scope:
+  - ASSET-01
+  applicability: APPLICABLE
+  duplicate_or_parallel_work_unit_count: 0
+  entry_conditions:
+  - CURRENT_GOVERNANCE_UID_RESOLVED
+  - PREFORMAL_GOVERNANCE_REVIEW_APPROVED
+  - CLEAN_STAGE1_PREDECESSOR_BASELINE
+  - STAGE02_ZERO_CURRENT_RESIDUAL
+  - FRESH_ENTRY_RECEIPTS_BOUND_TO_EXECUTION_PARENT
+  - PREEXECUTION_ADMISSION_PASS
+  - FULL_LINE_PASS_ON_EXECUTION_HEAD
+  product_stage_credit_before_fresh_test: 0
 last_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -345,18 +355,48 @@ previous_closed_work_unit:
     mandatory_regression_result: 17/17
     source_runtime_residual_count: 0
     product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-002
+  canonical_name: CORE01_FRESH_STAGE02_ACTUAL_TEST
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  canonical_owner: governance/ci/run_current_stage2_actual_test.py
+  scope:
+  - CORE-01
+  out_of_scope:
+  - ASSET-01
+  - STAGE03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - PRODUCT_AUTHORITY_AUTOFILL
+  execution_owner: governance/ci/run_current_stage2_actual_test.py
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  current_status: PREPARED_FOR_FRESH_EXECUTION
+  start_condition: FRESH_ENTRY_RECEIPTS_AND_PREEXECUTION_ADMISSION_PASS
+  attempt_uid: STAGE02-FRESH-20260918-007
+  definition_of_done:
+  - CORE01_ONLY_FRESH_PHYSICAL_SCAN_EXECUTED
+  - ASSET01_NOT_SCANNED_NOT_COUNTED_NOT_PERSISTED_AS_CURRENT_TEST_RESULT
+  - FUNCTIONAL_CHAIN_CONTROL_ACTION_RUNTIME_SUCCESS_FAILURE_RELATIONS_RESCANNED
+  - CURRENT_DESIGN_REMEDIATION_ROUTING_APPLIED
+  - TRUE_AUTHORITY_GAPS_ONLY_ROUTE_TO_EXPLICIT_SELECTION
+  - CURRENT_SPECIFICATION_UNCHANGED
+  - STAGE01_IMMUTABLE_INPUTS_UNCHANGED
+  - FRESH_RESULT_ARTIFACT_BOUND_TO_EXACT_EXECUTION_HEAD_AND_RUN
+  - CURRENT_STATE_PERSISTED_FROM_FRESH_CORE01_RESULT
+  - EXACT_PERSISTED_HEAD_REVALIDATED
+  product_stage_credit_before_result: 0
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
-  stage2_execution_requires_fresh_entry_resolution: true
-  effectful_stage2_execution_before_entry_resolution: BLOCK
-  current_resume_point: PREFORMAL_GOVERNANCE_REVIEW_APPROVED_FRESH_STAGE2_WORK_UNIT_RESOLUTION_REQUIRED
-  current_work_unit_uid: null
-  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  last_effectful_governance_action: PREFORMAL_REVIEW_APPROVED_BY_EXPLICIT_USER_DIRECTIVE
-  last_effectful_governance_evidence_head: 43fdb79d35a185733548089018d5b51ba2e69ef8
-  last_effectful_governance_full_line_run_id: 35321777929
-  exact_next_action: RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE
+  stage2_execution_requires_fresh_entry_resolution: false
+  effectful_stage2_execution_before_entry_resolution: AUTHORIZED_PENDING_FRESH_ENTRY_RECEIPTS_AND_PREFLIGHT
+  current_resume_point: STAGE2_CORE01_FRESH_TEST_EXECUTION
+  current_work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-002
+  current_owner: governance/ci/run_current_stage2_actual_test.py
+  last_effectful_governance_action: PREFORMAL_REVIEW_APPROVED_AND_MACHINE_REVALIDATED
+  last_effectful_governance_evidence_head: 7765b763d0559f3ccf2f15246b9841ca165ad6e0
+  last_effectful_governance_full_line_run_id: 35324482092
+  exact_next_action: RUN_CORE01_FRESH_STAGE02_ACTUAL_TEST_WITH_PREEXECUTION_ADMISSION_AND_NO_ASSET01_EXECUTION
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
@@ -404,8 +444,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-DESIGN-REMEDIATION-SUCCESSOR-PROJECTOR-SYNC-R5
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-COMPLETE-CORE01-STAGE02-TEST
 current_primary_task_product_stage_credit: 0
 stage2_result_evidence:
   mode: NOT_EXECUTED_CURRENT_GOVERNANCE
