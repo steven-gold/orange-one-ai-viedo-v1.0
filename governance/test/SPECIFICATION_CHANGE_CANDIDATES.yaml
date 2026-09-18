@@ -19,134 +19,97 @@ findings:
 - finding_uid: FIND-20260914-001
   class: TEST_HARNESS_BUG
   title: Registry stress suite scanned its own negative semver fixture
-  evidence: 'GitHub run 34820068623: 12/13 PASS; active_consumer locator check falsely
-    included stress fixture itself.'
+  evidence: 'GitHub run 34820068623: 12/13 PASS; active_consumer locator check falsely included stress fixture itself.'
   disposition: RESOLVED_TEST_HARNESS_ONLY
   specification_change_required: false
   formal_specification_mutated_for_fix: false
 - finding_uid: FIND-20260914-002
   class: TEST_STATE_EVIDENCE_STALENESS
   title: ACTIVE_STATE stored prior run/head static evidence and became stale
-  evidence: ACTIVE_STATE previously pointed to prior run/head while a newer exact-SHA
-    gate had succeeded.
+  evidence: ACTIVE_STATE previously pointed to prior run/head while a newer exact-SHA gate had succeeded.
   disposition: RESOLVED_NON_NORMATIVE_TEST_STATE
   specification_change_required: false
   formal_specification_mutated_for_fix: false
 - finding_uid: FIND-20260914-003
   class: GOVERNANCE_BINDING_MODEL_GAP
-  title: Preserved Stage-01 artifacts contained historical v2.1.8/v2.1.9/v2.1.10 governance_overlay
-    labels
-  evidence: CORE-01 and ASSET-01 preserved Page/Visual/Binding artifacts retained
-    creation-time overlay labels.
+  title: Preserved Stage-01 artifacts contained historical v2.1.8/v2.1.9/v2.1.10 governance_overlay labels
+  evidence: CORE-01 and ASSET-01 preserved Page/Visual/Binding artifacts retained creation-time overlay labels.
   disposition: RESOLVED_BY_NON_OWNING_ACTIVE_BINDING
   specification_change_required: false
   formal_specification_mutated_for_fix: false
-  resolution: Classified overlay fields as CREATION_PROVENANCE_ONLY and bound active
-    governance through Registry immutable UID without rewriting Stage-01 artifact
-    bytes/hashes.
+  resolution: Classified overlay fields as CREATION_PROVENANCE_ONLY and bound active governance through Registry immutable UID without rewriting Stage-01 artifact bytes/hashes.
 - finding_uid: FIND-20260914-004
   class: TEST_HARNESS_EXECUTION_RESIDUE
-  title: Python bytecode cache caused parser_hygiene false failure during extracted-package
-    test
-  evidence: 'Fresh local full-package preformal decomposition found garbage: 09_TESTS/governance/__pycache__/validate_governance.cpython-313.pyc
-    after importing test modules.'
+  title: Python bytecode cache caused parser_hygiene false failure during extracted-package test
+  evidence: 'Fresh local full-package preformal decomposition found garbage: 09_TESTS/governance/__pycache__/validate_governance.cpython-313.pyc after importing test modules.'
   disposition: RESOLVED_RUNNER_HARDENING
   specification_change_required: false
   formal_specification_mutated_for_fix: false
-  resolution: Full-line GitHub run 34866095740 executed with PYTHONDONTWRITEBYTECODE=1
-    and external PYTHONPYCACHEPREFIX; destructive/high-pressure regressions passed
-    and source runtime residual count remained 0.
+  resolution: Full-line GitHub run 34866095740 executed with PYTHONDONTWRITEBYTECODE=1 and external PYTHONPYCACHEPREFIX; destructive/high-pressure regressions passed and source runtime
+    residual count remained 0.
 - finding_uid: FIND-20260914-005
   class: GITHUB_FULL_SOURCE_MATERIALIZATION_GAP
-  title: Verified 75-file full-lifecycle source package is referenced by manifest
-    but not fully materialized in GitHub
-  evidence: SPECIFICATION_MANIFEST declared verified_source_file_count=75 while the
-    exact full source was not yet materialized in GitHub.
+  title: Verified 75-file full-lifecycle source package is referenced by manifest but not fully materialized in GitHub
+  evidence: SPECIFICATION_MANIFEST declared verified_source_file_count=75 while the exact full source was not yet materialized in GitHub.
   disposition: RESOLVED_GITHUB_FULL_SOURCE_MATERIALIZATION
   specification_change_required: false
   formal_specification_mutated_for_fix: false
-  resolution: GitHub materialization run 34860950871 succeeded; identity run 34861307634
-    proved exact file count 75, checksum/path-set identity, zero residue, and deterministic
-    bundle SHA256 b5bf1af1817e41832e53aeb6e4b78f7fa0c24ac41204fe6de2a69eb663ceb625.
+  resolution: GitHub materialization run 34860950871 succeeded; identity run 34861307634 proved exact file count 75, checksum/path-set identity, zero residue, and deterministic bundle
+    SHA256 b5bf1af1817e41832e53aeb6e4b78f7fa0c24ac41204fe6de2a69eb663ceb625.
 - finding_uid: FIND-20260914-006
   class: GITHUB_FULL_LIFECYCLE_VALIDATION_COVERAGE_GAP
-  title: Existing registry stress gate is not the complete 11-stage 75-file governance
-    regression system gate
-  evidence: Current GitHub Current Specification was a stable active projection while
-    source lineage contained 75 files and an 11-stage lifecycle registry.
+  title: Existing registry stress gate is not the complete 11-stage 75-file governance regression system gate
+  evidence: Current GitHub Current Specification was a stable active projection while source lineage contained 75 files and an 11-stage lifecycle registry.
   disposition: RESOLVED_FULL_LINE_SYSTEM_GATE
   specification_change_required: false
   formal_specification_mutated_for_fix: false
-  resolution: GitHub Round-1 run 34866095740 passed exact 75-file identity, Current
-    guards, 13/13 registry stress, 11/11 lifecycle stages, official PRE_FORMAL_DEFINITION_AUDIT
-    20/20, all 17/17 mandatory regression suites with exact denominators, no skip/timeout,
-    and zero source residual.
+  resolution: GitHub Round-1 run 34866095740 passed exact 75-file identity, Current guards, 13/13 registry stress, 11/11 lifecycle stages, official PRE_FORMAL_DEFINITION_AUDIT 20/20,
+    all 17/17 mandatory regression suites with exact denominators, no skip/timeout, and zero source residual.
 - finding_uid: FIND-20260914-007
   class: TEST_HARNESS_BUG
-  title: Single-use specification authorization guard included current HEAD in prior-use
-    search
-  evidence: GitHub run 34822640060 blocked the first authorized spec mutation because
-    git log HEAD^ --all reintroduced the current HEAD through --all.
+  title: Single-use specification authorization guard included current HEAD in prior-use search
+  evidence: GitHub run 34822640060 blocked the first authorized spec mutation because git log HEAD^ --all reintroduced the current HEAD through --all.
   disposition: RESOLVED_GUARD_HARNESS_ONLY
   specification_change_required: false
   formal_specification_mutated_for_fix: false
-  resolution: Enumerate all commits with hashes, exclude the exact current HEAD, then
-    search remaining commit bodies for prior authorization use. Verified by later
-    mutation admission run 34822937460.
+  resolution: Enumerate all commits with hashes, exclude the exact current HEAD, then search remaining commit bodies for prior authorization use. Verified by later mutation admission
+    run 34822937460.
 - finding_uid: FIND-20260914-008
   class: VALIDATOR_SCOPE_BUG
-  title: Stage-01 registry binding validator required Stage-02 runtime result-evidence
-    fields after Stage-02 clean reset
-  evidence: GitHub reset run 34824307982 failed validate_stage01_registry_binding.py
-    because it required RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT/static-result-pointer
-    fields that belong to an executed Stage-02 result state.
+  title: Stage-01 registry binding validator required Stage-02 runtime result-evidence fields after Stage-02 clean reset
+  evidence: GitHub reset run 34824307982 failed validate_stage01_registry_binding.py because it required RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT/static-result-pointer fields that belong
+    to an executed Stage-02 result state.
   disposition: RESOLVED_VALIDATOR_SCOPE
   specification_change_required: false
   formal_specification_mutated_for_fix: false
-  resolution: Stage-01 identity/provenance invariants remain unconditional while Stage-02
-    runtime evidence is conditional on execution state. GitHub Round-1 run 34866095740
-    passed Stage-01 binding with Stage-02 NOT_EXECUTED and zero Stage-02 runtime evidence/residual.
+  resolution: Stage-01 identity/provenance invariants remain unconditional while Stage-02 runtime evidence is conditional on execution state. GitHub Round-1 run 34866095740 passed Stage-01
+    binding with Stage-02 NOT_EXECUTED and zero Stage-02 runtime evidence/residual.
 - finding_uid: FIND-20260914-009
   class: TEST_HARNESS_BUG
-  title: Round-1 full-line workflow was not admitted because timeout-minutes was placed
-    at workflow root
-  evidence: Trigger commit 8f942575860bf3b5fece8db3ca340e485bdee332 produced repository
-    and Stage-01 reset checks but no full-line workflow run; workflow YAML placed
-    timeout-minutes at the unsupported workflow-root level.
+  title: Round-1 full-line workflow was not admitted because timeout-minutes was placed at workflow root
+  evidence: Trigger commit 8f942575860bf3b5fece8db3ca340e485bdee332 produced repository and Stage-01 reset checks but no full-line workflow run; workflow YAML placed timeout-minutes
+    at the unsupported workflow-root level.
   disposition: RESOLVED_WORKFLOW_HARNESS
   specification_change_required: false
   formal_specification_mutated_for_fix: false
-  resolution: Moved timeout-minutes to the full-line job without removing any test
-    step or denominator. GitHub run 34866095740 was admitted and completed SUCCESS
-    on exact SHA 8bbd10d965ab768caf99397b3793799ec37fa623.
+  resolution: Moved timeout-minutes to the full-line job without removing any test step or denominator. GitHub run 34866095740 was admitted and completed SUCCESS on exact SHA 8bbd10d965ab768caf99397b3793799ec37fa623.
 - finding_uid: FIND-20260914-010
   class: TEST_HARNESS_SUCCESSOR_STATE_BUG
-  title: Full-line and targeted gates hard-code Stage-02 NOT_EXECUTED and would reject
-    a legal Stage-02 successor test state
-  evidence: Before the new Stage-02 test, both governance-full-line-system-gate.yml
-    and targeted-stage01-stage02.yml invoked validate_stage02_zero_residual.py unconditionally;
-    that validator intentionally accepted only the clean-reset NOT_EXECUTED predecessor
-    state.
+  title: Full-line and targeted gates hard-code Stage-02 NOT_EXECUTED and would reject a legal Stage-02 successor test state
+  evidence: Before the new Stage-02 test, both governance-full-line-system-gate.yml and targeted-stage01-stage02.yml invoked validate_stage02_zero_residual.py unconditionally; that validator
+    intentionally accepted only the clean-reset NOT_EXECUTED predecessor state.
   disposition: RESOLVED_STAGE_SUCCESSOR_HARNESS
   specification_change_required: false
   formal_specification_mutated_for_fix: false
-  resolution: Added successor-aware validate_stage02_state_integrity.py and updated
-    both gates. Predecessor admission passed in Stage-02 actual-test run 34868009420
-    on SHA 8d5c69947cd8a964fa433c94764d6615a5c65c7a. After fresh Stage-02 evidence
-    was persisted, targeted run 34868474055 explicitly passed TEST_EXECUTED_BLOCKED
-    successor integrity and full-line run 34868473895 again passed 11/11 lifecycle,
-    20/20 PRE_FORMAL, 17/17 mandatory suites with exact denominators, no skip/timeout,
-    and zero source residual on SHA 1db9d4af5d43364644cff27bde495392480b1631.
+  resolution: Added successor-aware validate_stage02_state_integrity.py and updated both gates. Predecessor admission passed in Stage-02 actual-test run 34868009420 on SHA 8d5c69947cd8a964fa433c94764d6615a5c65c7a.
+    After fresh Stage-02 evidence was persisted, targeted run 34868474055 explicitly passed TEST_EXECUTED_BLOCKED successor integrity and full-line run 34868473895 again passed 11/11
+    lifecycle, 20/20 PRE_FORMAL, 17/17 mandatory suites with exact denominators, no skip/timeout, and zero source residual on SHA 1db9d4af5d43364644cff27bde495392480b1631.
 - finding_uid: FIND-20260914-011
   class: PRODUCT_STAGE_EXECUTION_GAPS
-  title: Historical Stage-02 actual test was blocked by 171 functional gaps and 13
-    closure blockers
-  evidence: GitHub Stage-02 run 34868009420 job 104056614223 on SHA 8d5c69947cd8a964fa433c94764d6615a5c65c7a
-    completed the full pre-test system gate, then freshly scanned Stage-01 immutable
-    inputs and produced artifact 10357817311 (sha256:e43880003b4bf1eda36aeddc3f7d8eddd9b8c622a1dd2ee5c52d2162b8487738).
-    CORE-01 = 45 functional gaps / 7 closure blockers; ASSET-01 = 126 functional gaps
-    / 6 closure blockers; preserved external authority union = GAP-001..GAP-008; prior
-    Stage-02 results were not used.
+  title: Historical Stage-02 actual test was blocked by 171 functional gaps and 13 closure blockers
+  evidence: GitHub Stage-02 run 34868009420 job 104056614223 on SHA 8d5c69947cd8a964fa433c94764d6615a5c65c7a completed the full pre-test system gate, then freshly scanned Stage-01 immutable
+    inputs and produced artifact 10357817311 (sha256:e43880003b4bf1eda36aeddc3f7d8eddd9b8c622a1dd2ee5c52d2162b8487738). CORE-01 = 45 functional gaps / 7 closure blockers; ASSET-01 =
+    126 functional gaps / 6 closure blockers; preserved external authority union = GAP-001..GAP-008; prior Stage-02 results were not used.
   disposition: HISTORICAL_REGRESSION_REFERENCE_AFTER_GOVERNANCE_UID_PROMOTION
   specification_change_required: false
   formal_specification_mutated_for_fix: false
@@ -155,84 +118,56 @@ findings:
   tracked_evidence_ref: governance/test/history/stage02/attempt-8d5c69947cd8/STAGE02_ACTUAL_TEST_EVIDENCE.json
   may_be_used_as_current_stage_result: false
   may_be_used_as_regression_signature_reference_after_fresh_rescan: true
-  required_next_action: Run a new Stage-02 attempt under the current frozen governance
-    UID. Historical defect signatures may only be used as regression references after
-    a fresh rescan and may not populate current Stage-02 counts.
+  required_next_action: Run a new Stage-02 attempt under the current frozen governance UID. Historical defect signatures may only be used as regression references after a fresh rescan
+    and may not populate current Stage-02 counts.
 - finding_uid: FIND-20260915-012
   class: TEST_HARNESS_OR_VALIDATOR_BUG
-  title: Stage remediation closure protocol validator over-captured later YAML lists
-    when checking ordered_steps
-  evidence: GitHub targeted run 34880186352 job 104097264544 on SHA dabe81cead54d1fbc4209a39a98845196dab5849
-    failed MANDATORY_STAGE_CYCLE_ORDER_DRIFT because the regex parsed the correct
-    12 mandatory ordered steps plus later remediation/evidence lists as if they were
-    ordered_steps.
+  title: Stage remediation closure protocol validator over-captured later YAML lists when checking ordered_steps
+  evidence: GitHub targeted run 34880186352 job 104097264544 on SHA dabe81cead54d1fbc4209a39a98845196dab5849 failed MANDATORY_STAGE_CYCLE_ORDER_DRIFT because the regex parsed the correct
+    12 mandatory ordered steps plus later remediation/evidence lists as if they were ordered_steps.
   disposition: RESOLVED_VALIDATOR_PARSER_ONLY
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
-  resolution: Replaced the over-broad regex with indentation-bounded ordered_steps
-    parsing without changing the normative 12-step denominator or order. Targeted
-    run 34880434917 passed every step and full-line run 34880434934 passed the protocol
-    validator plus 75/75 source identity, 13/13 registry stress, 11/11 lifecycle,
-    20/20 PRE_FORMAL, 17/17 mandatory exact denominators, no skip/timeout, and zero
-    source residual on SHA df6e2c9b6b4501d2e5e2f03d66bb4661909111be.
+  resolution: Replaced the over-broad regex with indentation-bounded ordered_steps parsing without changing the normative 12-step denominator or order. Targeted run 34880434917 passed
+    every step and full-line run 34880434934 passed the protocol validator plus 75/75 source identity, 13/13 registry stress, 11/11 lifecycle, 20/20 PRE_FORMAL, 17/17 mandatory exact
+    denominators, no skip/timeout, and zero source residual on SHA df6e2c9b6b4501d2e5e2f03d66bb4661909111be.
 - finding_uid: FIND-20260915-013
   class: TEST_HARNESS_OR_VALIDATOR_BUG
-  title: Stage remediation closure protocol validator required a frozen Stage-02 UID
-    before Stage-02 entry
-  evidence: After stale cross-UID Stage-02 active evidence was cleared on SHA d5223b0f7cb74f24b3b9bca7b1984deecf977be1,
-    targeted run 34887229186 job 104120765693 failed because validate_stage_test_remediation_closure_protocol.py
-    required 'frozen_specification_uid' even though ACTIVE_STATE correctly represented
-    STAGE-01-CLOSED with Stage-02 result NOT_EXECUTED.
+  title: Stage remediation closure protocol validator required a frozen Stage-02 UID before Stage-02 entry
+  evidence: After stale cross-UID Stage-02 active evidence was cleared on SHA d5223b0f7cb74f24b3b9bca7b1984deecf977be1, targeted run 34887229186 job 104120765693 failed because validate_stage_test_remediation_closure_protocol.py
+    required 'frozen_specification_uid' even though ACTIVE_STATE correctly represented STAGE-01-CLOSED with Stage-02 result NOT_EXECUTED.
   disposition: RESOLVED_VALIDATOR_SCOPE_ONLY
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
-  resolution: 'Validator now treats STAGE-01-CLOSED / Stage-02 NOT_EXECUTED as a pre-entry
-    state: a Stage-02 frozen UID is forbidden before entry and the pending freeze
-    marker must be null. Once a stage is entered, its frozen UID must equal the active
-    Registry UID. Targeted run 34887538993 completed SUCCESS and Full-Line run 34887539030
-    completed SUCCESS on SHA 96a57a2886b5492f9a5a1236a51cd9aad602de40; the Full-Line
-    log proved Stage-02 tracked artifact/evidence residual count=0, exact Stage-01
-    ledger restoration, 13/13 Registry stress, 11/11 lifecycle, 20/20 PRE_FORMAL,
-    17/17 mandatory suites with exact denominators, no skip/timeout, and source runtime
-    residual=0.'
+  resolution: 'Validator now treats STAGE-01-CLOSED / Stage-02 NOT_EXECUTED as a pre-entry state: a Stage-02 frozen UID is forbidden before entry and the pending freeze marker must be
+    null. Once a stage is entered, its frozen UID must equal the active Registry UID. Targeted run 34887538993 completed SUCCESS and Full-Line run 34887539030 completed SUCCESS on SHA
+    96a57a2886b5492f9a5a1236a51cd9aad602de40; the Full-Line log proved Stage-02 tracked artifact/evidence residual count=0, exact Stage-01 ledger restoration, 13/13 Registry stress,
+    11/11 lifecycle, 20/20 PRE_FORMAL, 17/17 mandatory suites with exact denominators, no skip/timeout, and source runtime residual=0.'
 - finding_uid: FIND-20260915-014
   class: EVIDENCE_OR_STATE_BUG
-  title: Specification candidate ledger Current Stage-02 projection remained NOT_EXECUTED
-    after fresh Stage-02 execution
-  evidence: STAGE02_LATEST_TEST_EVIDENCE and ACTIVE_STATE had already established
-    TEST_EXECUTED_BLOCKED while SPECIFICATION_CHANGE_CANDIDATES.current_stage2_execution
-    still said NOT_EXECUTED.
+  title: Specification candidate ledger Current Stage-02 projection remained NOT_EXECUTED after fresh Stage-02 execution
+  evidence: STAGE02_LATEST_TEST_EVIDENCE and ACTIVE_STATE had already established TEST_EXECUTED_BLOCKED while SPECIFICATION_CHANGE_CANDIDATES.current_stage2_execution still said NOT_EXECUTED.
   disposition: RESOLVED_NON_NORMATIVE_STATE_SYNC_DURING_R1_REEXECUTION
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
-  resolution: Record the evidence/state bug, then synchronize only the non-normative
-    Current Stage-02 projection to the fresh reexecution result.
+  resolution: Record the evidence/state bug, then synchronize only the non-normative Current Stage-02 projection to the fresh reexecution result.
 - finding_uid: FIND-20260915-015
   class: TEST_HARNESS_OR_VALIDATOR_BUG
-  title: Stage-02 remediation reexecution functional detector rescans immutable Stage-01
-    raw authority only and cannot recognize legal Stage-02 owning-layer remediation
-  evidence: GitHub run 34890864792 freshly reexecuted Stage-02 after materializing
-    and validating the Stage-02 product root. It correctly proved structural closure
-    blockers 13 -> 0, but functional evaluation invoked the exact original raw-only
-    fresh_scan implementation and therefore reported the same 171 raw-source gaps
-    without evaluating whether a bounded Stage-02 functional contract could legally
-    satisfy any of them.
+  title: Stage-02 remediation reexecution functional detector rescans immutable Stage-01 raw authority only and cannot recognize legal Stage-02 owning-layer remediation
+  evidence: GitHub run 34890864792 freshly reexecuted Stage-02 after materializing and validating the Stage-02 product root. It correctly proved structural closure blockers 13 -> 0,
+    but functional evaluation invoked the exact original raw-only fresh_scan implementation and therefore reported the same 171 raw-source gaps without evaluating whether a bounded Stage-02
+    functional contract could legally satisfy any of them.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
-  root_cause: Discovery scanner and remediation-closure validator are conflated. Stage-01
-    immutable authority must remain the authorization baseline, while Stage-02 owning-layer
-    contracts must be evaluated as the legal materialization layer under bounded functional
-    completion rules.
-  required_fix: Add a dual-layer Stage-02 remediation validator that requires exact
-    Stage-01 seed/required-operation provenance, bounded minimal closure, zero authority-gap
-    override, and source-linked Stage-02 contract evidence before a raw discovery
-    gap can count as eliminated. Preserve the raw-only scanner as the immutable discovery/regression
-    baseline.
+  root_cause: Discovery scanner and remediation-closure validator are conflated. Stage-01 immutable authority must remain the authorization baseline, while Stage-02 owning-layer contracts
+    must be evaluated as the legal materialization layer under bounded functional completion rules.
+  required_fix: Add a dual-layer Stage-02 remediation validator that requires exact Stage-01 seed/required-operation provenance, bounded minimal closure, zero authority-gap override,
+    and source-linked Stage-02 contract evidence before a raw discovery gap can count as eliminated. Preserve the raw-only scanner as the immutable discovery/regression baseline.
   stage03_may_advance_before_fix: false
   resolution_type: TEST_VALIDATOR_IMPLEMENTATION_FIX
   target_path: governance/ci/validate_stage02_successor_integrity.py
@@ -242,36 +177,24 @@ findings:
   validation_run: github-actions:35035977598
   evidence_ref: github-actions://run/35035977598/artifact/10423228421/governance/test/FINDING_CLOSURE_READINESS.json
   resolved_at: '2026-09-15T23:30:56Z'
-  reopen_condition: Reopen if immutable raw discovery is again conflated with owning-layer
-    remediation, source-bounded materialization validation is removed, authority-gap
-    override or semantic inference is accepted, or the exact Current persisted-head
-    closure probe regresses.
+  reopen_condition: Reopen if immutable raw discovery is again conflated with owning-layer remediation, source-bounded materialization validation is removed, authority-gap override or
+    semantic inference is accepted, or the exact Current persisted-head closure probe regresses.
   semantic_fingerprint: sha256:25a0f9f6e42334760ead4b67b979a7dff1f6c0354dfdd57f92da4bc38e5b8387
 - finding_uid: FIND-20260915-016
   class: TEST_HARNESS_OR_VALIDATOR_BUG
-  title: Stage-02 R2 remediability classifier accepted same-UID neighboring fields
-    as proof of the missing functional field
-  evidence: 'GitHub run 34892089735 classified 21/171 as BOUNDED_COMPLETION_ADMISSIBLE.
-    Review of STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml and immutable
-    CORE/ASSET raw authority showed 11 EXACT_CURRENT_AUTHORITY_BINDING records where
-    candidate evidence did not prove the missing field itself: three AUDIT_EVENT_NODE_MISSING
-    records matched generic state_event values, one ACTION_WITHOUT_CONTROL_OR_TRIGGER
-    record matched action_uid existence only, and seven SUCCESS_NEXT_STATE_BINDING_MISSING
-    records matched action/control action_uid only. These records must not be materialized
-    until a category-specific exact-field or exact deterministic UID join proves the
-    required value.'
+  title: Stage-02 R2 remediability classifier accepted same-UID neighboring fields as proof of the missing functional field
+  evidence: 'GitHub run 34892089735 classified 21/171 as BOUNDED_COMPLETION_ADMISSIBLE. Review of STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml and immutable CORE/ASSET raw
+    authority showed 11 EXACT_CURRENT_AUTHORITY_BINDING records where candidate evidence did not prove the missing field itself: three AUDIT_EVENT_NODE_MISSING records matched generic
+    state_event values, one ACTION_WITHOUT_CONTROL_OR_TRIGGER record matched action_uid existence only, and seven SUCCESS_NEXT_STATE_BINDING_MISSING records matched action/control action_uid
+    only. These records must not be materialized until a category-specific exact-field or exact deterministic UID join proves the required value.'
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
-  root_cause: R2 used broad candidate-key matching on any node mentioning the target
-    UID instead of requiring evidence for the exact missing field and relation semantics.
-  required_fix: Replace broad same-UID candidate matching with category-specific proof.
-    AUDIT_EVENT requires an explicit event/audit value; ACTION trigger requires an
-    exact control/transition/system-trigger relation; SUCCESS_NEXT_STATE requires
-    exact state_effect or deterministic action runtime_binding port_uid -> integration_port
-    state_event provenance. Keep illegal_transition_tests generation limited to exact
-    authorized transitions.
+  root_cause: R2 used broad candidate-key matching on any node mentioning the target UID instead of requiring evidence for the exact missing field and relation semantics.
+  required_fix: Replace broad same-UID candidate matching with category-specific proof. AUDIT_EVENT requires an explicit event/audit value; ACTION trigger requires an exact control/transition/system-trigger
+    relation; SUCCESS_NEXT_STATE requires exact state_effect or deterministic action runtime_binding port_uid -> integration_port state_event provenance. Keep illegal_transition_tests
+    generation limited to exact authorized transitions.
   stage03_may_advance_before_fix: false
   resolution_type: TEST_CLASSIFIER_IMPLEMENTATION_FIX
   target_path: governance/ci/classify_current_stage2_functional_remediability_r3.py
@@ -279,30 +202,23 @@ findings:
   validation_run: github-actions:35035977598
   evidence_ref: github-actions://run/35035977598/artifact/10423228421/governance/test/FINDING_CLOSURE_READINESS.json
   resolved_at: '2026-09-15T23:30:56Z'
-  reopen_condition: Reopen if same-UID neighboring evidence can again authorize audit,
-    trigger, or success-state completion; if an incomplete transition can authorize
-    illegal-transition tests; or if any exact Current classifier behavior probe regresses.
+  reopen_condition: Reopen if same-UID neighboring evidence can again authorize audit, trigger, or success-state completion; if an incomplete transition can authorize illegal-transition
+    tests; or if any exact Current classifier behavior probe regresses.
   semantic_fingerprint: sha256:f2cf2b773e34b29f51fc519719a94b12bb253475aae6474ab8af0a82df05b874
 - finding_uid: FIND-20260915-027
   class: GOVERNANCE_SPECIFICATION_REUSABILITY_GAP
-  title: Governance promotion does not explicitly require atomic synchronization of
-    all derived trust identity denominator and lifecycle-output consumers
-  evidence: 'Fresh v2.1.15 restart exposed three promotion-time stale-consumer classes:
-    source identity bundle pin in run 34935154063; Full-Line trust semantic package
-    and denominator pins in run 34935792840; and Stage-02 local seven-output denominator
-    against the canonical seventeen-output lifecycle set in run 34936690855. After
-    non-normative consumer fixes, run 34937106161 passed source identity, 11/11 lifecycle,
-    20/20 PRE_FORMAL, 17/17 mandatory suites and completed fresh Stage-02 execution.'
+  title: Governance promotion does not explicitly require atomic synchronization of all derived trust identity denominator and lifecycle-output consumers
+  evidence: 'Fresh v2.1.15 restart exposed three promotion-time stale-consumer classes: source identity bundle pin in run 34935154063; Full-Line trust semantic package and denominator
+    pins in run 34935792840; and Stage-02 local seven-output denominator against the canonical seventeen-output lifecycle set in run 34936690855. After non-normative consumer fixes,
+    run 34937106161 passed source identity, 11/11 lifecycle, 20/20 PRE_FORMAL, 17/17 mandatory suites and completed fresh Stage-02 execution.'
   disposition: ABSORBED_INTO_CANONICAL_OWNER
   specification_change_required: true
   formal_specification_mutated_for_fix: true
   current_specification_may_be_modified_from_this_finding_alone: false
   ordinary_mid_stage_normative_promotion_allowed: false
   proposed_rule_ref: governance/test/stage02/FIND-20260915-027_PROMOTION_PROJECTION_ATOMICITY.yaml
-  required_promotion_behavior: Any governance promotion that changes source package
-    semantic baseline or lifecycle denominators must atomically synchronize and validate
-    every active derived consumer projection in the same promotion transaction; any
-    stale prior-governance consumer blocks promotion.
+  required_promotion_behavior: Any governance promotion that changes source package semantic baseline or lifecycle denominators must atomically synchronize and validate every active
+    derived consumer projection in the same promotion transaction; any stale prior-governance consumer blocks promotion.
   new_explicit_authorization_required_before_normative_promotion: true
   stage03_may_advance_before_candidate_review: false
   resolution_type: CANONICAL_POLICY_ABSORPTION
@@ -311,9 +227,8 @@ findings:
   validation_run: github-actions:35035977598
   evidence_ref: github-actions://run/35035977598/artifact/10423228421/governance/test/FINDING_CLOSURE_READINESS.json
   resolved_at: '2026-09-15T23:30:56Z'
-  reopen_condition: Reopen if governance promotion can proceed without complete active
-    reverse-consumer inventory, atomic projection/reference migration, stale-predecessor
-    blocking, persisted-head reference-integrity validation, or Full-Line regression.
+  reopen_condition: Reopen if governance promotion can proceed without complete active reverse-consumer inventory, atomic projection/reference migration, stale-predecessor blocking,
+    persisted-head reference-integrity validation, or Full-Line regression.
   semantic_fingerprint: sha256:ae8ddf8c84c82d7e982071386e3b9dd6c5fb3db5ff535b85e364d5db02ccb3fd
   canonical_owner_uid: GOV-COMP-SPECIFICATION-MUTATION-CONTROL
   canonical_rule_uid: GOV-RULE-ANTI-DRIFT-008
@@ -321,42 +236,29 @@ findings:
   normative_promotion_authorization: USR-DIRECTIVE-20260916-CANONICAL-REFERENCE-MIGRATION-ATOMICITY
 - finding_uid: FIND-20260916-001
   class: EVIDENCE_OR_STATE_BUG
-  title: Stage-02 structural reexecution R1 producer emitted a legacy Current projector
-    schema after atomic projector hardening
-  evidence: Pre-execution Current validation showed run_current_stage2_reexecution.py
-    would overwrite current_stage2_execution with REEXECUTED_BLOCKED/REEXECUTED_PASS
-    and omit Current attempt/run/artifact/denominator identity fields required by
-    validate_stage02_state_integrity.py.
+  title: Stage-02 structural reexecution R1 producer emitted a legacy Current projector schema after atomic projector hardening
+  evidence: Pre-execution Current validation showed run_current_stage2_reexecution.py would overwrite current_stage2_execution with REEXECUTED_BLOCKED/REEXECUTED_PASS and omit Current
+    attempt/run/artifact/denominator identity fields required by validate_stage02_state_integrity.py.
   disposition: RESOLVED_CURRENT_EXECUTION_WIRING
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
-  resolution: Keep the existing canonical R1 producer for fresh scan semantics, then
-    atomically project its fresh uploaded artifact into the hardened Current projector
-    schema inside the existing canonical Stage-02 workflow before validation and persistence.
+  resolution: Keep the existing canonical R1 producer for fresh scan semantics, then atomically project its fresh uploaded artifact into the hardened Current projector schema inside
+    the existing canonical Stage-02 workflow before validation and persistence.
 - finding_uid: FIND-20260918-001
   class: TEST_HARNESS_OR_VALIDATOR_BUG
-  title: Active-consumer projector integrity validator treated a NOT_EXECUTED selected-profile
-    step as requiring executed-step projectors
-  evidence: Stage-02 clean-reset commit cc94154a667d29d41da72fbf73f21f29b269e88b removed
-    the Current Stage-02 product/evidence outputs and restored the selected profile
-    step to NOT_EXECUTED. Selected-profile run 35294327474 then passed the reusable
-    closure protocol and governance zero-residual checks but failed validate_active_consumer_reference_integrity.py
-    with PROFILE_BOUND_PROJECTOR_STATE_KEYS_INCOMPLETE, CURRENT_PROFILE_EXECUTION_PROJECTOR_DRIFT,
-    and missing STAGE02_CURRENT_FINDINGS projector errors.
+  title: Active-consumer projector integrity validator treated a NOT_EXECUTED selected-profile step as requiring executed-step projectors
+  evidence: Stage-02 clean-reset commit cc94154a667d29d41da72fbf73f21f29b269e88b removed the Current Stage-02 product/evidence outputs and restored the selected profile step to NOT_EXECUTED.
+    Selected-profile run 35294327474 then passed the reusable closure protocol and governance zero-residual checks but failed validate_active_consumer_reference_integrity.py with PROFILE_BOUND_PROJECTOR_STATE_KEYS_INCOMPLETE,
+    CURRENT_PROFILE_EXECUTION_PROJECTOR_DRIFT, and missing STAGE02_CURRENT_FINDINGS projector errors.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
-  root_cause: The validator unconditionally required an active-attempt state key and
-    a current-findings projector even when the selected profile step result was NOT_EXECUTED,
-    contradicting the canonical zero-residual reset contract that requires no active
-    attempt and no Current findings artifact before a fresh run.
-  required_fix: 'Make profile-bound projector applicability depend on the selected
-    profile step state: NOT_EXECUTED requires no active attempt, an empty-count Current
-    execution projector, and absence of the executed-step Current findings projector;
-    executed states continue to require active-attempt/current-execution/current-findings
-    identity and denominator agreement.'
+  root_cause: The validator unconditionally required an active-attempt state key and a current-findings projector even when the selected profile step result was NOT_EXECUTED, contradicting
+    the canonical zero-residual reset contract that requires no active attempt and no Current findings artifact before a fresh run.
+  required_fix: 'Make profile-bound projector applicability depend on the selected profile step state: NOT_EXECUTED requires no active attempt, an empty-count Current execution projector,
+    and absence of the executed-step Current findings projector; executed states continue to require active-attempt/current-execution/current-findings identity and denominator agreement.'
   resolution_type: VALIDATOR_APPLICABILITY_IMPLEMENTATION_FIX
   target_path: governance/ci/validate_active_consumer_reference_integrity.py
   resolution_commit: f05d5f3f0aa93bfab9a34fc307fdb9f789a2e1ef
@@ -366,18 +268,13 @@ findings:
   validation_result: SELECTED_PROFILE_SUCCESS_AND_FULL_LINE_SUCCESS
   product_stage_credit: 0
   resolved_at: '2026-09-18T01:14:45Z'
-  reopen_condition: Reopen if a NOT_EXECUTED selected-profile step can again require
-    or retain an active-attempt/current-findings projector, if a Current findings
-    artifact can survive zero-residual reset, or if an executed selected-profile step
-    can bypass active-attempt/current-findings crosschecks.
+  reopen_condition: Reopen if a NOT_EXECUTED selected-profile step can again require or retain an active-attempt/current-findings projector, if a Current findings artifact can survive
+    zero-residual reset, or if an executed selected-profile step can bypass active-attempt/current-findings crosschecks.
 - finding_uid: FIND-20260918-002
   class: EVIDENCE_STATE_OR_HARNESS_BUG
-  title: Fresh Stage-02 tracked Current evidence omitted frozen attempt and governance
-    identity
-  evidence: Canonical preflight run 35301497457 passed Current governance and Full-Line
-    checks, then blocked with CURRENT_GOVERNANCE_UID_DRIFT because STAGE02_LATEST_TEST_EVIDENCE.json
-    had been copied verbatim from the runtime artifact without attempt_uid or frozen_governance_uid
-    while Registry, Current Entry, Active State and freeze receipt all resolved GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING.
+  title: Fresh Stage-02 tracked Current evidence omitted frozen attempt and governance identity
+  evidence: Canonical preflight run 35301497457 passed Current governance and Full-Line checks, then blocked with CURRENT_GOVERNANCE_UID_DRIFT because STAGE02_LATEST_TEST_EVIDENCE.json
+    had been copied verbatim from the runtime artifact without attempt_uid or frozen_governance_uid while Registry, Current Entry, Active State and freeze receipt all resolved GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
@@ -385,17 +282,13 @@ findings:
   resolution_type: CURRENT_EVIDENCE_IDENTITY_PROJECTION_FIX
   product_stage_credit: 0
   product_gap_or_blocker_denominator_changed: false
-  reopen_condition: Reopen if a freshly persisted tracked Current Stage-02 evidence
-    file can omit or drift from the exact frozen attempt/governance identity while
-    its runtime source artifact provenance is retained separately.
+  reopen_condition: Reopen if a freshly persisted tracked Current Stage-02 evidence file can omit or drift from the exact frozen attempt/governance identity while its runtime source
+    artifact provenance is retained separately.
 - finding_uid: FIND-20260918-003
   class: TEST_HARNESS_OR_PREDECESSOR_BINDING_BUG
-  title: Canonical preflight compiler unconditionally required cleared legacy R1 material-remediation
-    receipt
-  evidence: Canonical preflight run 35301785349 on clean CORE-01 attempt STAGE02-FRESH-20260918-006
-    passed Current governance and Full-Line validation, then blocked on missing governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml
-    even though the fresh cycle intentionally cleared predecessor Stage-02 outputs
-    and current closure blockers remain seven.
+  title: Canonical preflight compiler unconditionally required cleared legacy R1 material-remediation receipt
+  evidence: Canonical preflight run 35301785349 on clean CORE-01 attempt STAGE02-FRESH-20260918-006 passed Current governance and Full-Line validation, then blocked on missing governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml
+    even though the fresh cycle intentionally cleared predecessor Stage-02 outputs and current closure blockers remain seven.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
@@ -403,19 +296,14 @@ findings:
   resolution_type: OPTIONAL_PREDECESSOR_RESOLUTION_LEDGER_BINDING
   product_stage_credit: 0
   product_gap_or_blocker_denominator_changed: false
-  rule: A predecessor material-remediation receipt may be read and preserved only
-    when physically present; a clean fresh attempt starts with zero verified prior
-    resolution entries and must not recreate a deleted legacy receipt to satisfy preflight.
-  reopen_condition: Reopen if clean fresh Stage-02 preflight again requires a non-existent
-    predecessor remediation artifact or silently recreates one.
+  rule: A predecessor material-remediation receipt may be read and preserved only when physically present; a clean fresh attempt starts with zero verified prior resolution entries and
+    must not recreate a deleted legacy receipt to satisfy preflight.
+  reopen_condition: Reopen if clean fresh Stage-02 preflight again requires a non-existent predecessor remediation artifact or silently recreates one.
 - finding_uid: FIND-20260918-004
   class: EVIDENCE_WRITESET_OR_WORKFLOW_ORDERING_BUG
-  title: Canonical preflight persistence was contaminated by a derived active-consumer
-    report delta
-  evidence: Canonical preflight run 35301990717 successfully materialized and checked
-    all 10 logical preflight outputs plus 2 support receipts, then the strict persistence-set
-    guard rejected governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
-    as an unexpected generated delta.
+  title: Canonical preflight persistence was contaminated by a derived active-consumer report delta
+  evidence: Canonical preflight run 35301990717 successfully materialized and checked all 10 logical preflight outputs plus 2 support receipts, then the strict persistence-set guard
+    rejected governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json as an unexpected generated delta.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
@@ -423,21 +311,14 @@ findings:
   resolution_type: ISOLATED_DERIVED_REPORT_SYNCHRONIZATION_BEFORE_PREFLIGHT_WRITESET
   product_stage_credit: 0
   product_gap_or_blocker_denominator_changed: false
-  rule: Derived validator reports that change during preflight prerequisites must
-    be synchronized in an isolated child commit and revalidated before canonical preflight
-    materialization; the canonical preflight commit allowlist remains exactly twelve
-    outputs.
-  reopen_condition: Reopen if a canonical preflight persistence transaction can again
-    contain any file outside its exact twelve-output allowlist.
+  rule: Derived validator reports that change during preflight prerequisites must be synchronized in an isolated child commit and revalidated before canonical preflight materialization;
+    the canonical preflight commit allowlist remains exactly twelve outputs.
+  reopen_condition: Reopen if a canonical preflight persistence transaction can again contain any file outside its exact twelve-output allowlist.
 - finding_uid: FIND-20260918-005
   class: WORKFLOW_UNTRACKED_EVIDENCE_DETECTION_BUG
-  title: Active-consumer report synchronization used git diff and missed an untracked
-    generated report
-  evidence: Canonical preflight run 35302216985 showed the report synchronization
-    step claiming no delta, while the subsequent strict preflight write-set guard
-    found governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json as an unexpected
-    untracked file. The report path was absent from the branch tree, so git diff --quiet
-    could not detect it.
+  title: Active-consumer report synchronization used git diff and missed an untracked generated report
+  evidence: Canonical preflight run 35302216985 showed the report synchronization step claiming no delta, while the subsequent strict preflight write-set guard found governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
+    as an unexpected untracked file. The report path was absent from the branch tree, so git diff --quiet could not detect it.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
@@ -445,28 +326,19 @@ findings:
   resolution_type: TRACKED_AND_UNTRACKED_REPORT_STATUS_DETECTION
   product_stage_credit: 0
   product_gap_or_blocker_denominator_changed: false
-  rule: Every derived-report synchronization gate must use git status --porcelain
-    with untracked-file visibility rather than git diff alone before deciding whether
-    a report requires isolated persistence.
+  rule: Every derived-report synchronization gate must use git status --porcelain with untracked-file visibility rather than git diff alone before deciding whether a report requires
+    isolated persistence.
   affected_workflow_checks_updated: 2
-  reopen_condition: Reopen if an untracked derived report can again bypass synchronization
-    and contaminate a later exact write-set transaction.
+  reopen_condition: Reopen if an untracked derived report can again bypass synchronization and contaminate a later exact write-set transaction.
 - finding_uid: FIND-20260918-006
   class: GOVERNANCE_EXECUTION_PIPELINE_DESIGN_GAP
-  title: R2 to R5 direct authority-wait routing skips review-only design remediation
-    for local input-source and architecture gaps
-  evidence: CORE-01 temporary design-remediation replay proved that the 45 Current
-    functional gaps are 16 INPUT_SOURCE_GAP + 29 ARCHITECTURE_GAP + 0 AUTHORITY_GAP
-    and can be organized into 25 bounded review-only design units before any authority
-    promotion. Persisted evidence governance/test/stage02/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
-    records candidate coverage 45/45, candidate validation 34/34, reference identity
-    23/23 object refs + 17/17 opaque refs, structural destructive mutations 17/17,
-    semantic review 25/25, semantic destructive mutations 12/12, and R7 binding-shape
-    preview 45/45 with 0 current-admissible bindings and 0 materializable product
-    bindings. Clean temporary residual revalidation on exact head d505beb5b5683153ca4eae67c2bb9026de698584
-    completed Full-Line run 35316067061 SUCCESS, Selected Profile run 35316067060
-    SUCCESS, Stage-02 boundary run 35316067140 SUCCESS, and Branch Guard run 35316067008
-    SUCCESS.
+  title: R2 to R5 direct authority-wait routing skips review-only design remediation for local input-source and architecture gaps
+  evidence: CORE-01 temporary design-remediation replay proved that the 45 Current functional gaps are 16 INPUT_SOURCE_GAP + 29 ARCHITECTURE_GAP + 0 AUTHORITY_GAP and can be organized
+    into 25 bounded review-only design units before any authority promotion. Persisted evidence governance/test/stage02/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json records candidate
+    coverage 45/45, candidate validation 34/34, reference identity 23/23 object refs + 17/17 opaque refs, structural destructive mutations 17/17, semantic review 25/25, semantic destructive
+    mutations 12/12, and R7 binding-shape preview 45/45 with 0 current-admissible bindings and 0 materializable product bindings. Clean temporary residual revalidation on exact head
+    d505beb5b5683153ca4eae67c2bb9026de698584 completed Full-Line run 35316067061 SUCCESS, Selected Profile run 35316067060 SUCCESS, Stage-02 boundary run 35316067140 SUCCESS, and Branch
+    Guard run 35316067008 SUCCESS.
   disposition: ABSORBED_INTO_CANONICAL_OWNER_MACHINE_REVALIDATED_PENDING_HUMAN_PREFORMAL_REVIEW
   specification_change_required: true
   formal_specification_mutated_for_fix: true
@@ -480,20 +352,13 @@ findings:
     ARCHITECTURE_GAP: 29
     AUTHORITY_GAP: 0
   required_policy_behavior:
-  - A missing exact Current value alone must not route every local INPUT_SOURCE_GAP
-    or ARCHITECTURE_GAP directly to field-by-field Product Authority input.
-  - Before product-authority ingestion, local unresolved contract gaps must pass bounded
-    functional analysis using FUNCTION_ADMISSION_SCORECARD and AUTO_COMPLETION_SCOPE_LEDGER
-    and may materialize only a non-normative review-only Design/Contract Candidate.
-  - Two or more materially distinct viable product behaviors remain AUTHORITY_GAP
-    and require explicit product authority selection.
-  - One coherent review package may bind multiple blocker identities; review-only
-    candidate bytes are never Current Authority and cannot be consumed by R7 until
-    approved content is promoted into the single Current canonical product contract
-    owner.
-  - Candidate analysis, temporary testing, or semantic review receives zero product
-    blocker reduction until fresh product-owner materialization and Stage-02 reexecution
-    prove closure.
+  - A missing exact Current value alone must not route every local INPUT_SOURCE_GAP or ARCHITECTURE_GAP directly to field-by-field Product Authority input.
+  - Before product-authority ingestion, local unresolved contract gaps must pass bounded functional analysis using FUNCTION_ADMISSION_SCORECARD and AUTO_COMPLETION_SCOPE_LEDGER and may
+    materialize only a non-normative review-only Design/Contract Candidate.
+  - Two or more materially distinct viable product behaviors remain AUTHORITY_GAP and require explicit product authority selection.
+  - One coherent review package may bind multiple blocker identities; review-only candidate bytes are never Current Authority and cannot be consumed by R7 until approved content is promoted
+    into the single Current canonical product contract owner.
+  - Candidate analysis, temporary testing, or semantic review receives zero product blocker reduction until fresh product-owner materialization and Stage-02 reexecution prove closure.
   canonical_policy_owners:
   - .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
   - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
@@ -505,11 +370,8 @@ findings:
   consolidated_evidence_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   new_explicit_authorization_required_before_normative_promotion: true
   stage03_may_advance_before_promotion_and_fresh_product_reexecution: false
-  reopen_condition: Reopen if local INPUT_SOURCE_GAP or ARCHITECTURE_GAP can again
-    be routed directly from classifier failure to manual field-by-field authority
-    wait without bounded design-remediation analysis, or if a review-only candidate
-    can self-promote, bypass single-authority materialization, or receive product
-    closure credit before fresh reexecution.
+  reopen_condition: Reopen if local INPUT_SOURCE_GAP or ARCHITECTURE_GAP can again be routed directly from classifier failure to manual field-by-field authority wait without bounded
+    design-remediation analysis, or if a review-only candidate can self-promote, bypass single-authority materialization, or receive product closure credit before fresh reexecution.
   normative_promotion_authorization: USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R4
   resolution_type: CANONICAL_POLICY_AND_EXECUTION_ROUTING_ABSORPTION
   resolution_commit: e975781d911fdd190b73ba26e1194d101087775c
@@ -523,17 +385,11 @@ findings:
   human_preformal_review_status: PENDING
 - finding_uid: FIND-20260918-007
   class: TEST_HARNESS_OR_WORKFLOW_ASSERTION_DRIFT
-  title: Stage-02 pending-review negative regression expected a superseded admission
-    reason token
-  evidence: Stage-02 boundary run 35321584405 on head 87a890b5530f437435797bd9164624007738dfb6
-    correctly blocked pre-execution because Current REV-GOV-001 was PENDING, but the
-    workflow assertion still expected PREEXECUTION_PREFORMAL_REVIEW_NOT_APPROVED while
-    the canonical compiler emits PREEXECUTION_PREFORMAL_REVIEW_PROJECTION_NOT_APPROVED
-    when the Current projection itself is not approved. Product execution jobs were
-    skipped. The workflow assertion was aligned to the canonical compiler reason at
-    commit c58440d48f2f9bd9b793a4121f78cd5e9b2b3f3b, and validation run 35321698708
-    completed SUCCESS with stage02-actual-test, structural-reexecution-r1, R2, R5,
-    materialization, persistence and preflight jobs all skipped.
+  title: Stage-02 pending-review negative regression expected a superseded admission reason token
+  evidence: Stage-02 boundary run 35321584405 on head 87a890b5530f437435797bd9164624007738dfb6 correctly blocked pre-execution because Current REV-GOV-001 was PENDING, but the workflow
+    assertion still expected PREEXECUTION_PREFORMAL_REVIEW_NOT_APPROVED while the canonical compiler emits PREEXECUTION_PREFORMAL_REVIEW_PROJECTION_NOT_APPROVED when the Current projection
+    itself is not approved. Product execution jobs were skipped. The workflow assertion was aligned to the canonical compiler reason at commit c58440d48f2f9bd9b793a4121f78cd5e9b2b3f3b,
+    and validation run 35321698708 completed SUCCESS with stage02-actual-test, structural-reexecution-r1, R2, R5, materialization, persistence and preflight jobs all skipped.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
@@ -547,9 +403,8 @@ findings:
   validation_result: PENDING_REVIEW_FAIL_CLOSED_ASSERTION_PASS_AND_ALL_PRODUCT_JOBS_SKIPPED
   product_stage_credit: 0
   product_gap_or_blocker_denominator_changed: false
-  reopen_condition: Reopen if the Stage-02 boundary regression accepts product execution
-    while REV-GOV-001 is not approved, or if the workflow assertion diverges again
-    from the canonical compiler fail-closed reason.
+  reopen_condition: Reopen if the Stage-02 boundary regression accepts product execution while REV-GOV-001 is not approved, or if the workflow assertion diverges again from the canonical
+    compiler fail-closed reason.
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
@@ -577,7 +432,7 @@ current_stage2_execution:
   remaining_pages:
   - ASSET-01
   stage_scope_complete: false
-  next_action: BUILD_CORE01_REVIEW_ONLY_DESIGN_CONTRACT_REMEDIATION_PACKAGE
+  next_action: REVIEW_CURRENT_CORE01_DESIGN_CONTRACT_REMEDIATION_PACKAGE
   attempt_uid: STAGE02-FRESH-20260918-007
   frozen_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   raw_discovery_gap_count: 45
@@ -591,4 +446,6 @@ current_stage2_execution:
   source_workflow_run_id: 35326298900
   source_artifact_id: 10538443890
   source_artifact_sha256: 2272c0c6e651a70b8fa23bf075de488c7acc5e0bc4f22c52fa563e2ded64a822
+  review_only_design_contract_package_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
+  product_blocker_reduction_credit: 0
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER

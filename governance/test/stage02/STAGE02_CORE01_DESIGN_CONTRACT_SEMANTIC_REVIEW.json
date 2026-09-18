@@ -1,0 +1,578 @@
+{
+  "schema_version": 2,
+  "artifact_uid": "STAGE02-CORE01-DESIGN-CONTRACT-SEMANTIC-REVIEW-CURRENT",
+  "artifact_type": "NON_NORMATIVE_DESIGN_CONTRACT_SEMANTIC_REVIEW_RESULT",
+  "layer_classification": "RUN_STATE",
+  "normative_authority": false,
+  "review_only_candidate": true,
+  "current_governance_uid": "GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING",
+  "attempt_uid": "STAGE02-FRESH-20260918-007",
+  "source_head_sha": "8b31cd68933fc91c0a980a3e5ae02a94b321edab",
+  "work_unit_uid": "WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-002",
+  "page_uid": "CORE-01",
+  "source_candidate_ref": "governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_CANDIDATE.json",
+  "source_candidate_semantic_sha256": "e0fe58a15ad3b306b7fed7516daff2c9b94e8b0d37231a8d31feda45587fe036",
+  "current_revalidation": {
+    "current_problem_uid_set_exact_match_to_tested_template": true,
+    "current_problem_count": 45,
+    "current_raw_git_blob_sha": "9490f3bcc28c5511bc04d6c3ce53c026e3c4667f",
+    "raw_blob_exact_match_to_tested_template": true,
+    "candidate_product_semantic_payload_exact_match_to_tested_template": true,
+    "design_units": 25,
+    "blocker_coverage": 45,
+    "duplicate_blocker_coverage": 0,
+    "candidate_is_product_authority": false,
+    "candidate_materialization_allowed": false,
+    "product_blocker_reduction_credit": 0
+  },
+  "regression_anchors": {
+    "historical_candidate_blob_sha": "af8daae83fc9d3f4a099170498ecaf0347480081",
+    "candidate_validation_34_of_34_blob_sha": "7dfbc9d02a693afa54ffa3d6f3db8798bc2b1324",
+    "reference_identity_23_object_17_opaque_blob_sha": "34fee3c38973ee43cdb6f5450e793f5e320b346c",
+    "destructive_negative_17_of_17_blob_sha": "eab5121afa745dd2060f7a72805c7f5db7914e51",
+    "semantic_review_25_of_25_blob_sha": "110574d03ae2549163c81b3dfea6034135067f31",
+    "semantic_negative_12_of_12_blob_sha": "2c233f6a6c260609e36a86cd232bd9fd44c42761"
+  },
+  "records": [
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-BLUEPRINT-CREATE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-PROJECT-CREATE",
+      "target_uid": "CORE-01-ACT-PROJECT-CREATE",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-PROJECT-VALIDATE",
+      "target_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-TOPIC-CREATE",
+      "target_uid": "CORE-01-ACT-TOPIC-CREATE",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-BLUEPRINT-APPROVE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-APPROVE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-BLUEPRINT-CREATE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-BLUEPRINT-VALIDATE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-VALIDATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CANDIDATE-ACCEPT",
+      "target_uid": "CORE-01-ACT-CANDIDATE-ACCEPT",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CANDIDATE-CREATE",
+      "target_uid": "CORE-01-ACT-CANDIDATE-CREATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CHILD-LOCK-REQUEST",
+      "target_uid": "CORE-01-ACT-CHILD-LOCK-REQUEST",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CORE-REVIEW-SUBMIT",
+      "target_uid": "CORE-01-ACT-CORE-REVIEW-SUBMIT",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-DNA-LOCK-REQUEST",
+      "target_uid": "CORE-01-ACT-DNA-LOCK-REQUEST",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-MOTHER-LOCK-REQUEST",
+      "target_uid": "CORE-01-ACT-MOTHER-LOCK-REQUEST",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-PROJECT-CONFIRM",
+      "target_uid": "CORE-01-ACT-PROJECT-CONFIRM",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-PROJECT-CREATE",
+      "target_uid": "CORE-01-ACT-PROJECT-CREATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-PROJECT-VALIDATE",
+      "target_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-SEND",
+      "target_uid": "CORE-01-ACT-SEND",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-STORY-CANDIDATE",
+      "target_uid": "CORE-01-ACT-STORY-CANDIDATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-THREAD-CREATE",
+      "target_uid": "CORE-01-ACT-THREAD-CREATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-TOPIC-CREATE",
+      "target_uid": "CORE-01-ACT-TOPIC-CREATE",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "blocker_count": 1,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": null,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": []
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-01",
+      "target_uid": "CORE-01-STTR-01",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "blocker_count": 5,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": true,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": [
+        "MUTATION_OWNER_CORE01_IS_TEMPORARY_PAGE_SCOPE_CONTRACT_PROPOSAL_NOT_RUNTIME_OWNER_AUTHORITY"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-02",
+      "target_uid": "CORE-01-STTR-02",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "blocker_count": 5,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": true,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": [
+        "MUTATION_OWNER_CORE01_IS_TEMPORARY_PAGE_SCOPE_CONTRACT_PROPOSAL_NOT_RUNTIME_OWNER_AUTHORITY"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-03",
+      "target_uid": "CORE-01-STTR-03",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "blocker_count": 5,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": true,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": [
+        "MUTATION_OWNER_CORE01_IS_TEMPORARY_PAGE_SCOPE_CONTRACT_PROPOSAL_NOT_RUNTIME_OWNER_AUTHORITY"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-04",
+      "target_uid": "CORE-01-STTR-04",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "blocker_count": 5,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": true,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": [
+        "MUTATION_OWNER_CORE01_IS_TEMPORARY_PAGE_SCOPE_CONTRACT_PROPOSAL_NOT_RUNTIME_OWNER_AUTHORITY"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-05",
+      "target_uid": "CORE-01-STTR-05",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "blocker_count": 5,
+      "checks": {
+        "current_target_identity_resolves": true,
+        "current_port_identity_resolves": true,
+        "referenced_current_object_identities_resolve": true,
+        "transition_existing_identity_preserved": true,
+        "new_runtime_api_provider_or_data_owner_detected": false
+      },
+      "semantic_disposition": "PASS_AS_CURRENT_REVIEW_ONLY_COHERENT_DESIGN_PROPOSAL_PENDING_SINGLE_PACKAGE_REVIEW",
+      "authority_boundary": {
+        "proposal_is_current_authority": false,
+        "proposal_is_approved": false,
+        "materialization_allowed": false,
+        "product_blocker_reduction_credit": 0
+      },
+      "notes": [
+        "MUTATION_OWNER_CORE01_IS_TEMPORARY_PAGE_SCOPE_CONTRACT_PROPOSAL_NOT_RUNTIME_OWNER_AUTHORITY"
+      ]
+    }
+  ],
+  "machine_review_result": "PASS_CURRENT_IDENTITY_AND_TESTED_SEMANTIC_TEMPLATE_REVALIDATION",
+  "human_product_contract_review_status": "PENDING_EXPLICIT_COHERENT_PACKAGE_REVIEW",
+  "authority_effect": "NONE",
+  "stage02_status": "BLOCKED",
+  "stage03_allowed": false
+}
