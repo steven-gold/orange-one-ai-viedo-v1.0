@@ -11,6 +11,8 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 CURRENT = ROOT / 'GOVERNANCE_CURRENT.yaml'
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
+REVIEW = ROOT / '.github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml'
+STAGE02_WORKFLOW = ROOT / '.github/workflows/stage02-actual-test.yml'
 
 
 def die(msg: str) -> None:
@@ -131,6 +133,38 @@ history_ref = profile_state.get('history_binding_ref')
 if not history_ref or not (ROOT / str(history_ref)).is_file():
     die('PROFILE_HISTORY_BINDING_REF_INVALID')
 
+review = load_yaml(REVIEW)
+review_rows = [
+    row for row in (review.get('required_review_plan') or [])
+    if isinstance(row, dict) and row.get('review_item_uid') == 'REV-GOV-001'
+]
+if len(review_rows) != 1:
+    die(f'PREFORMAL_REVIEW_ITEM_COUNT:{len(review_rows)}')
+review_item = review_rows[0]
+if review_item.get('reviewer_role') != 'USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER':
+    die('PREFORMAL_REVIEW_ROLE_DRIFT')
+if review_item.get('status') not in {'PENDING', 'APPROVED'}:
+    die(f'PREFORMAL_REVIEW_STATUS_INVALID:{review_item.get("status")!r}')
+if review_item.get('status') == 'PENDING':
+    current_step = (execution.get('stage2') or {})
+    if execution.get('current_stage') != 'STAGE-01-CLOSED' or current_step.get('result') != 'NOT_EXECUTED':
+        die('PREFORMAL_PENDING_MUST_KEEP_STAGE02_NOT_EXECUTED')
+    if profile_state.get('active_attempt_state_key') or state.get('stage02_active_attempt'):
+        die('PREFORMAL_PENDING_MUST_NOT_HAVE_STAGE02_ACTIVE_ATTEMPT')
+
+workflow_text = STAGE02_WORKFLOW.read_text(encoding='utf-8')
+ordered_commands = [
+    'python governance/ci/validate_stage02_entry_receipts.py',
+    'python governance/ci/compile_stage_execution_preflight.py --admission-check',
+    'python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py',
+    'python governance/ci/run_current_stage2_actual_test.py',
+]
+positions = [workflow_text.find(command) for command in ordered_commands]
+if any(pos < 0 for pos in positions):
+    die(f'STAGE_EXECUTION_ADMISSION_COMMAND_MISSING:{positions}')
+if positions != sorted(positions) or len(set(positions)) != len(positions):
+    die(f'STAGE_EXECUTION_ADMISSION_ORDER_INVALID:{positions}')
+
 validators = profile_state.get('profile_validator_refs') or []
 if not validators or len(validators) != len(set(validators)):
     die('PROFILE_VALIDATOR_REFS_EMPTY_OR_DUPLICATE')
@@ -146,3 +180,4 @@ print(f"PASS: selected execution profile {selected.get('profile_uid')} resolves 
 print(f'PASS: selected profile local denominator={len(stages)} and profile-local validators={len(validators)}')
 print(f'PASS: selected profile structural execution contracts={len(stages)}/{len(stages)} complete before execution')
 print('PASS: fixed profile step identities are isolated from reusable Current Governance')
+print(f"PASS: preformal review boundary status={review_item.get('status')} and Stage-02 admission ordering is fail-closed before actual execution")
