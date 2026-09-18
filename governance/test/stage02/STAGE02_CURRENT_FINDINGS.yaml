@@ -4,13 +4,13 @@ normative_authority: false
 stage_uid: STAGE-02
 attempt_uid: STAGE02-FRESH-20260918-006
 frozen_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
-source_cycle: FRESH_CURRENT_GOVERNANCE_STAGE02_ACTUAL_TEST
-source_head_sha: 0d9cf1462370e859b41d512460cf33c658191255
-source_workflow_run_id: 35300497511
-source_artifact_id: 10529312489
-source_artifact_sha256: bbecf8453c09b3112ca21b0e123dc269aff846b0c6fab603ea12cfd85302f060
+source_cycle: FRESH_CURRENT_GOVERNANCE_STAGE02_STRUCTURAL_REEXECUTION_R1
+source_head_sha: 6d66f4b9364c5c307dc87e0bd53857e6537f706c
+source_workflow_run_id: 35306642304
+source_artifact_id: 10532025879
+source_artifact_sha256: 8f126dd609471f6d21cad51128aaef5dd798481cc3e7af663aeb478de90ae675
 fresh_functional_gap_total: 45
-fresh_closure_blocker_total: 7
+fresh_closure_blocker_total: 0
 gap_classes:
   ARCHITECTURE_GAP: 29
   INPUT_SOURCE_GAP: 16
@@ -21,15 +21,8 @@ gap_categories:
 page_results:
   CORE-01:
     functional_gap_count: 45
-    closure_blocker_count: 7
-    closure_blockers:
-    - MISSING_BUSINESS_ENTITY_INVENTORY
-    - MISSING_BUSINESS_ENTITY_OPERATION_MATRIX
-    - MISSING_ENTITY_HIERARCHY_MATRIX
-    - MISSING_FUNCTIONAL_WORKBENCH_CONTRACT
-    - MISSING_INTERACTION_TOPOLOGY_SPEC
-    - MISSING_FUNCTION_VISUAL_IMPACT_MATRIX
-    - MISSING_AI_INTERACTION_CONTINUITY_CONTRACT
+    closure_blocker_count: 0
+    closure_blockers: []
 target_pages:
 - CORE-01
 remaining_pages:
@@ -53,4 +46,4 @@ immutable_stage1_source_mutated: false
 stage03_allowed: false
 website_construction_allowed: false
 deployment_allowed: false
-next_action: EXECUTE_CORE01_STRUCTURAL_REMEDIATION_IN_DEPENDENCY_ORDER_FROM_CANONICAL_PROBLEM_REGISTER
+next_action: CLOSE_CORE01_STRUCTURAL_REMEDIATION_WORK_UNIT_THEN_REMEDIATE_FRESH_FUNCTIONAL_GAPS

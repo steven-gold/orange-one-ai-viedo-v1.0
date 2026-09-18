@@ -372,8 +372,12 @@ findings:
     can bypass active-attempt/current-findings crosschecks.
 - finding_uid: FIND-20260918-002
   class: EVIDENCE_STATE_OR_HARNESS_BUG
-  title: Fresh Stage-02 tracked Current evidence omitted frozen attempt and governance identity
-  evidence: Canonical preflight run 35301497457 passed Current governance and Full-Line checks, then blocked with CURRENT_GOVERNANCE_UID_DRIFT because STAGE02_LATEST_TEST_EVIDENCE.json had been copied verbatim from the runtime artifact without attempt_uid or frozen_governance_uid while Registry, Current Entry, Active State and freeze receipt all resolved GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING.
+  title: Fresh Stage-02 tracked Current evidence omitted frozen attempt and governance
+    identity
+  evidence: Canonical preflight run 35301497457 passed Current governance and Full-Line
+    checks, then blocked with CURRENT_GOVERNANCE_UID_DRIFT because STAGE02_LATEST_TEST_EVIDENCE.json
+    had been copied verbatim from the runtime artifact without attempt_uid or frozen_governance_uid
+    while Registry, Current Entry, Active State and freeze receipt all resolved GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
@@ -381,11 +385,17 @@ findings:
   resolution_type: CURRENT_EVIDENCE_IDENTITY_PROJECTION_FIX
   product_stage_credit: 0
   product_gap_or_blocker_denominator_changed: false
-  reopen_condition: Reopen if a freshly persisted tracked Current Stage-02 evidence file can omit or drift from the exact frozen attempt/governance identity while its runtime source artifact provenance is retained separately.
+  reopen_condition: Reopen if a freshly persisted tracked Current Stage-02 evidence
+    file can omit or drift from the exact frozen attempt/governance identity while
+    its runtime source artifact provenance is retained separately.
 - finding_uid: FIND-20260918-003
   class: TEST_HARNESS_OR_PREDECESSOR_BINDING_BUG
-  title: Canonical preflight compiler unconditionally required cleared legacy R1 material-remediation receipt
-  evidence: Canonical preflight run 35301785349 on clean CORE-01 attempt STAGE02-FRESH-20260918-006 passed Current governance and Full-Line validation, then blocked on missing governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml even though the fresh cycle intentionally cleared predecessor Stage-02 outputs and current closure blockers remain seven.
+  title: Canonical preflight compiler unconditionally required cleared legacy R1 material-remediation
+    receipt
+  evidence: Canonical preflight run 35301785349 on clean CORE-01 attempt STAGE02-FRESH-20260918-006
+    passed Current governance and Full-Line validation, then blocked on missing governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml
+    even though the fresh cycle intentionally cleared predecessor Stage-02 outputs
+    and current closure blockers remain seven.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
@@ -393,12 +403,19 @@ findings:
   resolution_type: OPTIONAL_PREDECESSOR_RESOLUTION_LEDGER_BINDING
   product_stage_credit: 0
   product_gap_or_blocker_denominator_changed: false
-  rule: A predecessor material-remediation receipt may be read and preserved only when physically present; a clean fresh attempt starts with zero verified prior resolution entries and must not recreate a deleted legacy receipt to satisfy preflight.
-  reopen_condition: Reopen if clean fresh Stage-02 preflight again requires a non-existent predecessor remediation artifact or silently recreates one.
+  rule: A predecessor material-remediation receipt may be read and preserved only
+    when physically present; a clean fresh attempt starts with zero verified prior
+    resolution entries and must not recreate a deleted legacy receipt to satisfy preflight.
+  reopen_condition: Reopen if clean fresh Stage-02 preflight again requires a non-existent
+    predecessor remediation artifact or silently recreates one.
 - finding_uid: FIND-20260918-004
   class: EVIDENCE_WRITESET_OR_WORKFLOW_ORDERING_BUG
-  title: Canonical preflight persistence was contaminated by a derived active-consumer report delta
-  evidence: Canonical preflight run 35301990717 successfully materialized and checked all 10 logical preflight outputs plus 2 support receipts, then the strict persistence-set guard rejected governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json as an unexpected generated delta.
+  title: Canonical preflight persistence was contaminated by a derived active-consumer
+    report delta
+  evidence: Canonical preflight run 35301990717 successfully materialized and checked
+    all 10 logical preflight outputs plus 2 support receipts, then the strict persistence-set
+    guard rejected governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json
+    as an unexpected generated delta.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
@@ -406,12 +423,21 @@ findings:
   resolution_type: ISOLATED_DERIVED_REPORT_SYNCHRONIZATION_BEFORE_PREFLIGHT_WRITESET
   product_stage_credit: 0
   product_gap_or_blocker_denominator_changed: false
-  rule: Derived validator reports that change during preflight prerequisites must be synchronized in an isolated child commit and revalidated before canonical preflight materialization; the canonical preflight commit allowlist remains exactly twelve outputs.
-  reopen_condition: Reopen if a canonical preflight persistence transaction can again contain any file outside its exact twelve-output allowlist.
+  rule: Derived validator reports that change during preflight prerequisites must
+    be synchronized in an isolated child commit and revalidated before canonical preflight
+    materialization; the canonical preflight commit allowlist remains exactly twelve
+    outputs.
+  reopen_condition: Reopen if a canonical preflight persistence transaction can again
+    contain any file outside its exact twelve-output allowlist.
 - finding_uid: FIND-20260918-005
   class: WORKFLOW_UNTRACKED_EVIDENCE_DETECTION_BUG
-  title: Active-consumer report synchronization used git diff and missed an untracked generated report
-  evidence: Canonical preflight run 35302216985 showed the report synchronization step claiming no delta, while the subsequent strict preflight write-set guard found governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json as an unexpected untracked file. The report path was absent from the branch tree, so git diff --quiet could not detect it.
+  title: Active-consumer report synchronization used git diff and missed an untracked
+    generated report
+  evidence: Canonical preflight run 35302216985 showed the report synchronization
+    step claiming no delta, while the subsequent strict preflight write-set guard
+    found governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json as an unexpected
+    untracked file. The report path was absent from the branch tree, so git diff --quiet
+    could not detect it.
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
@@ -419,9 +445,12 @@ findings:
   resolution_type: TRACKED_AND_UNTRACKED_REPORT_STATUS_DETECTION
   product_stage_credit: 0
   product_gap_or_blocker_denominator_changed: false
-  rule: Every derived-report synchronization gate must use git status --porcelain with untracked-file visibility rather than git diff alone before deciding whether a report requires isolated persistence.
+  rule: Every derived-report synchronization gate must use git status --porcelain
+    with untracked-file visibility rather than git diff alone before deciding whether
+    a report requires isolated persistence.
   affected_workflow_checks_updated: 2
-  reopen_condition: Reopen if an untracked derived report can again bypass synchronization and contaminate a later exact write-set transaction.
+  reopen_condition: Reopen if an untracked derived report can again bypass synchronization
+    and contaminate a later exact write-set transaction.
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
@@ -435,19 +464,21 @@ historical_stage2_execution_findings:
 current_stage2_execution:
   state: TEST_EXECUTED_BLOCKED
   current_functional_gap_count: 45
-  current_closure_blocker_count: 7
+  current_closure_blocker_count: 0
   active_evidence_present: true
   active_findings_present: true
   stage_exit_allowed: false
   website_construction_allowed: false
   deployment_allowed: false
   historical_counts_may_be_treated_as_current: false
-  current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
-  fresh_revalidation_required: false
-  prior_stage2_results_used: false
-  current_stage2_counts_cleared: true
-  product_credit_from_reset: 0
-  next_action: EXECUTE_CORE01_STRUCTURAL_REMEDIATION_IN_DEPENDENCY_ORDER_FROM_CANONICAL_PROBLEM_REGISTER
+  source_execution_sha: 6d66f4b9364c5c307dc87e0bd53857e6537f706c
+  reexecution_cycle: R1_STRUCTURAL_REEXECUTION_CURRENT_GOVERNANCE
+  target_pages:
+  - CORE-01
+  remaining_pages:
+  - ASSET-01
+  stage_scope_complete: false
+  next_action: CLOSE_CORE01_STRUCTURAL_REMEDIATION_WORK_UNIT_THEN_REMEDIATE_FRESH_FUNCTIONAL_GAPS
   attempt_uid: STAGE02-FRESH-20260918-006
   frozen_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
   raw_discovery_gap_count: 45
@@ -457,14 +488,8 @@ current_stage2_execution:
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   preserved_external_authority_union_count: 7
-  source_execution_sha: 0d9cf1462370e859b41d512460cf33c658191255
-  source_workflow_run_id: 35300497511
-  source_artifact_id: 10529312489
-  source_artifact_sha256: bbecf8453c09b3112ca21b0e123dc269aff846b0c6fab603ea12cfd85302f060
-  target_pages:
-  - CORE-01
-  remaining_pages:
-  - ASSET-01
-  stage_scope_complete: false
-  reexecution_cycle: FRESH_CURRENT_GOVERNANCE_STAGE02_ATTEMPT_006
+  prior_stage2_results_used: false
+  source_workflow_run_id: 35306642304
+  source_artifact_id: 10532025879
+  source_artifact_sha256: 8f126dd609471f6d21cad51128aaef5dd798481cc3e7af663aeb478de90ae675
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER

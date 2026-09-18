@@ -3,7 +3,8 @@
   "actual_product_stage_test_started": true,
   "ai_autofill_used": false,
   "artifact_type": "NON_NORMATIVE_STAGE02_ACTUAL_TEST_EVIDENCE",
-  "closure_blocker_total": 7,
+  "attempt_uid": "STAGE02-FRESH-20260918-006",
+  "closure_blocker_total": 0,
   "current_specification_mutated": false,
   "deployment_allowed": false,
   "execution_profile_mandatory_output_subset": [
@@ -21,13 +22,18 @@
     "STAGE_EXECUTION_PREFLIGHT_RECEIPT"
   ],
   "fresh_functional_gap_total": 45,
+  "fresh_scan_implementation": "EXACT_AST_EXTRACT_OF_run_current_stage2_actual_test.py::fresh_scan",
+  "frozen_governance_uid": "GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING",
   "inference_used": false,
+  "materialized_missing_artifact_blocker_count": 7,
+  "materialized_structural_contract_validation": "PASS",
   "normative_authority": false,
   "notes": [
-    "BLOCKED is a valid Stage-02 product-test outcome and does not mean the test runner failed.",
-    "External authority references are preserved unresolved; they are neither dropped nor auto-resolved.",
-    "No Current Specification file is modified by this test.",
-    "A page-scoped test does not grant Stage-02 exit credit until every required page has fresh evidence."
+    "Fresh functional scan is executed again from immutable Stage-01 raw authority using the exact scanner implementation extracted from the first-run harness.",
+    "Prior Stage-02 result counts are not used as scan input; they are regression context only.",
+    "The 7 in-scope missing structural artifact blockers are counted as eliminated only because the current Stage-02 product root passed its source-bounded validator before this reexecution.",
+    "Only the current page-scope external-authority union is preserved unresolved; no external authority was inferred or auto-filled.",
+    "A partial page-scope replay cannot grant whole-stage exit credit."
   ],
   "official_stage_output_denominator": [
     "ASYNC_PROVIDER_CONTRACT",
@@ -53,17 +59,9 @@
       "ai_interaction_profile_active": true,
       "automatic_completion_scope": "NOT_APPLICABLE_NO_AUTOMATIC_COMPLETION_ATTEMPT",
       "blueprint_uid": "V218-REPLAY-BP-CORE-01-PAGE-BASE",
-      "closure_blocker_count": 7,
-      "closure_blockers": [
-        "MISSING_BUSINESS_ENTITY_INVENTORY",
-        "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
-        "MISSING_ENTITY_HIERARCHY_MATRIX",
-        "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
-        "MISSING_INTERACTION_TOPOLOGY_SPEC",
-        "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX",
-        "MISSING_AI_INTERACTION_CONTINUITY_CONTRACT"
-      ],
-      "function_admission_scorecard": "NOT_APPLICABLE_NO_AUTO_OR_AI_PROPOSED_FUNCTION_CREATED_BY_THIS_TEST",
+      "closure_blocker_count": 0,
+      "closure_blockers": [],
+      "function_admission_scorecard": "NOT_APPLICABLE_NO_AUTO_OR_AI_PROPOSED_FUNCTION_CREATED_BY_THIS_REEXECUTION",
       "functional_chain_fresh_scan": {
         "functional_completion": false,
         "gap_categories": {
@@ -452,10 +450,11 @@
           "stages": 5
         }
       },
+      "materialized_structural_contract_validation": "PASS",
       "unresolved_external_authority_ref_count": 7
     }
   },
-  "physical_stage2_product_artifact_root_present": false,
+  "physical_stage2_product_artifact_root_present": true,
   "preserved_external_authorities": {
     "GAP-001": {
       "authority_ref": "GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9",
@@ -510,15 +509,16 @@
     "GAP-007",
     "GAP-008"
   ],
+  "prior_stage2_counts_used_as_scan_input": false,
   "prior_stage2_results_used": false,
+  "reexecution_cycle": "R1",
   "remaining_pages": [
     "ASSET-01"
   ],
-  "requested_page_scope": "CORE-01",
   "result": "BLOCKED",
-  "schema_version": 1,
+  "schema_version": 2,
   "scope_mode": "EXACT_PAGE_SCOPE_ONLY",
-  "source_head_sha": "0d9cf1462370e859b41d512460cf33c658191255",
+  "source_head_sha": "6d66f4b9364c5c307dc87e0bd53857e6537f706c",
   "stage_entry_gate": "PASS",
   "stage_exit_allowed": false,
   "stage_name": "PAGE_FUNCTIONAL_CONTRACT",
@@ -527,13 +527,6 @@
   "target_pages": [
     "CORE-01"
   ],
-  "test_mode": "FRESH_FROM_STAGE1_IMMUTABLE_INPUTS_NO_PRIOR_STAGE2_RESULT_REUSE",
-  "website_construction_allowed": false,
-  "attempt_uid": "STAGE02-FRESH-20260918-006",
-  "frozen_governance_uid": "GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING",
-  "current_evidence_projection": {
-    "source_artifact_payload_preserved_as_provenance": true,
-    "projection_adds_current_attempt_identity_only": true,
-    "product_gap_or_blocker_values_modified": false
-  }
+  "test_mode": "FRESH_REEXECUTION_FROM_IMMUTABLE_STAGE1_INPUTS_WITH_VALIDATED_STAGE2_OWNING_LAYER_REMEDIATION",
+  "website_construction_allowed": false
 }
