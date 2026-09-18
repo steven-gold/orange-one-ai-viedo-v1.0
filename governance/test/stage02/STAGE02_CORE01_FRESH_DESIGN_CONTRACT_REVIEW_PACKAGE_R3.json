@@ -1,0 +1,32 @@
+{
+  "schema_version": 3,
+  "artifact_uid": "STAGE02-CORE01-FRESH-DESIGN-CONTRACT-REVIEW-PACKAGE-R3",
+  "artifact_type": "NON_NORMATIVE_COHERENT_DESIGN_CONTRACT_REVIEW_PACKAGE",
+  "normative_authority": false,
+  "current_governance_uid": "GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING",
+  "run_uid": "FRESH-RUN-005",
+  "attempt_uid": "STAGE02-FRESH-20260919-CORE01-002",
+  "work_unit_uid": "WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002",
+  "page_uid": "CORE-01",
+  "package_scope": {
+    "source_blockers": 45,
+    "design_units": 25,
+    "categories": {
+      "PAYLOAD_INPUT_CONTRACT_MISSING": 16,
+      "AUDIT_EVENT_NODE_MISSING": 4,
+      "STATE_TRANSITION_LEDGER_FIELD_MISSING": 25
+    }
+  },
+  "artifact_refs": {
+    "candidate": "governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_CANDIDATE_R3.json",
+    "semantic_review": "governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_SEMANTIC_REVIEW_R3.json",
+    "function_admission_scorecard": "00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTION_ADMISSION_SCORECARD.yaml",
+    "auto_completion_scope_ledger": "00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml"
+  },
+  "review_result_precondition": "SEMANTIC_PASS_AND_MATERIALLY_DISTINCT_VIABLE_BEHAVIOR_COUNT_1",
+  "field_by_field_user_approval_required": false,
+  "whole_package_user_authorization_ref": "governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-COMPLETE-CORE01-STAGE02-R3.yaml",
+  "candidate_is_authority": false,
+  "product_blocker_credit": 0,
+  "status": "READY_FOR_AUTHORIZED_WHOLE_PACKAGE_MATERIALIZATION"
+}

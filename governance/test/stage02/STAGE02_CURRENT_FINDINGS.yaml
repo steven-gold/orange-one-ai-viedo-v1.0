@@ -4,7 +4,7 @@ governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
 run_uid: FRESH-RUN-005
 target_pages:
 - CORE-01
-fresh_functional_gap_total: 45
+fresh_functional_gap_total: 0
 closure_blocker_total: 0
 gap_classes:
   ARCHITECTURE_GAP: 29
@@ -13,11 +13,18 @@ gap_categories:
   AUDIT_EVENT_NODE_MISSING: 4
   PAYLOAD_INPUT_CONTRACT_MISSING: 16
   STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
-status: DESIGN_CONTRACT_REMEDIATION_REQUIRED
+status: STAGE02_PASS_CURRENT_EVIDENCE_BOUND
 attempt_uid: STAGE02-FRESH-20260919-CORE01-002
-source_execution_sha: dbb19ee6d59dc4ca5c5d210fe3ffdcfb49def304
-source_workflow_run_id: 35392016061
-source_artifact_id: 10565353789
-source_artifact_sha256: 1b9947bc1f701f6e108f097246170e564dae5466d5f1c8b98d50e316be75cd88
+source_execution_sha: c144d88b144deaa967be26bb37db78ba9bdc688c
+source_workflow_run_id: 35401715045
+source_artifact_id: 10570741908
+source_artifact_sha256: e6a9907f125faccc477e13cbfd6e131ce787bea8aa5dba701aba37aa8cc81bb6
 prior_stage2_results_used: false
-product_blocker_credit: 0
+product_blocker_credit: 45
+raw_discovery_functional_gap_total: 45
+validated_product_successor_signature_count: 45
+effective_functional_gap_total: 0
+result: PASS
+candidate_ref: governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_CANDIDATE_R3.json
+approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_APPROVAL_R3.yaml
+canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml

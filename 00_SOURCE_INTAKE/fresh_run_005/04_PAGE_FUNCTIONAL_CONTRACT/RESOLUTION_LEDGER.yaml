@@ -1,4 +1,18 @@
 schema_version: 1
 artifact_type: RESOLUTION_LEDGER
 stage_uid: STAGE-02
-entries: []
+entries:
+- resolution_uid: STAGE02-RESOLUTION-CORE01-FRESH-R3-001
+  resolution_type: APPROVED_COHERENT_DESIGN_CONTRACT_MATERIALIZATION_FRESHLY_REEXECUTED
+  work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002
+  page_uid: CORE-01
+  source_problem_denominator: 45
+  materialized_design_unit_count: 25
+  validated_product_successor_signature_count: 45
+  functional_gap_reduction_credit: 45
+  external_authority_resolution_credit: 0
+  canonical_owner_ref: 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+  approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_APPROVAL_R3.yaml
+  validation_status: PASS_FRESH_REEXECUTION_45_OF_45_ZERO_REPRODUCTION
+functional_problem_resolution_credit_total: 45
+external_authority_resolution_credit_total: 0

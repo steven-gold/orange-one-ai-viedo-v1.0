@@ -1,0 +1,345 @@
+{
+  "schema_version": 3,
+  "artifact_uid": "STAGE02-CORE01-FRESH-DESIGN-CONTRACT-SEMANTIC-REVIEW-R3",
+  "artifact_type": "NON_NORMATIVE_DESIGN_CONTRACT_SEMANTIC_REVIEW",
+  "normative_authority": false,
+  "current_governance_uid": "GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING",
+  "run_uid": "FRESH-RUN-005",
+  "attempt_uid": "STAGE02-FRESH-20260919-CORE01-002",
+  "work_unit_uid": "WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002",
+  "page_uid": "CORE-01",
+  "candidate_ref": "governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_CANDIDATE_R3.json",
+  "candidate_sha256": "10cd96392e8751836584c0c0882a75efeaaf544e9e635b4971a5e55632262745",
+  "current_raw_git_blob_sha": "9490f3bcc28c5511bc04d6c3ce53c026e3c4667f",
+  "current_problem_coverage": "45/45",
+  "design_unit_result": "25/25 PASS",
+  "semantic_records": [
+    {
+      "candidate_uid": "FRESH-R3-CORE01-AUDIT-BLUEPRINT-CREATE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+      "proposal_kind": "AUDIT_EVENT_BINDING_AND_EVENT_REGISTRY_ENTRY",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "EVENT_UID_NONCONFLICTING",
+        "EVENT_TOKEN_VALID"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-AUDIT-PROJECT-CREATE",
+      "target_uid": "CORE-01-ACT-PROJECT-CREATE",
+      "proposal_kind": "AUDIT_EVENT_BINDING_AND_EVENT_REGISTRY_ENTRY",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "EVENT_UID_NONCONFLICTING",
+        "EVENT_TOKEN_VALID"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-AUDIT-PROJECT-VALIDATE",
+      "target_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+      "proposal_kind": "AUDIT_EVENT_BINDING_AND_EVENT_REGISTRY_ENTRY",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "EVENT_UID_NONCONFLICTING",
+        "EVENT_TOKEN_VALID"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-AUDIT-TOPIC-CREATE",
+      "target_uid": "CORE-01-ACT-TOPIC-CREATE",
+      "proposal_kind": "AUDIT_EVENT_BINDING_AND_EVENT_REGISTRY_ENTRY",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "EVENT_UID_NONCONFLICTING",
+        "EVENT_TOKEN_VALID"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-BLUEPRINT-APPROVE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-APPROVE",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-BLUEPRINT-CREATE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-BLUEPRINT-VALIDATE",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-VALIDATE",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-CANDIDATE-ACCEPT",
+      "target_uid": "CORE-01-ACT-CANDIDATE-ACCEPT",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-CANDIDATE-CREATE",
+      "target_uid": "CORE-01-ACT-CANDIDATE-CREATE",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-CHILD-LOCK-REQUEST",
+      "target_uid": "CORE-01-ACT-CHILD-LOCK-REQUEST",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-CORE-REVIEW-SUBMIT",
+      "target_uid": "CORE-01-ACT-CORE-REVIEW-SUBMIT",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-DNA-LOCK-REQUEST",
+      "target_uid": "CORE-01-ACT-DNA-LOCK-REQUEST",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-MOTHER-LOCK-REQUEST",
+      "target_uid": "CORE-01-ACT-MOTHER-LOCK-REQUEST",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-PROJECT-CONFIRM",
+      "target_uid": "CORE-01-ACT-PROJECT-CONFIRM",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-PROJECT-CREATE",
+      "target_uid": "CORE-01-ACT-PROJECT-CREATE",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-PROJECT-VALIDATE",
+      "target_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-SEND",
+      "target_uid": "CORE-01-ACT-SEND",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-STORY-CANDIDATE",
+      "target_uid": "CORE-01-ACT-STORY-CANDIDATE",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-THREAD-CREATE",
+      "target_uid": "CORE-01-ACT-THREAD-CREATE",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-PAYLOAD-TOPIC-CREATE",
+      "target_uid": "CORE-01-ACT-TOPIC-CREATE",
+      "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+      "checks": [
+        "ACTION_EXISTS",
+        "EXACT_PORT_BINDING",
+        "PATH_PARAMS_MATCH",
+        "OBJECT_REFS_EXIST",
+        "NO_PROVIDER_MODEL_INPUT"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-TRANSITION-01",
+      "target_uid": "CORE-01-STTR-01",
+      "proposal_kind": "STATE_TRANSITION_LEDGER_ENRICHMENT",
+      "checks": [
+        "BASE_TRANSITION_EXACT",
+        "FAILURE_STATE_EXISTS",
+        "AUDIT_EVENT_EXISTS",
+        "RECOVERY_RETains_SOURCE_STAGE",
+        "ILLEGAL_TESTS_4_OF_4"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-TRANSITION-02",
+      "target_uid": "CORE-01-STTR-02",
+      "proposal_kind": "STATE_TRANSITION_LEDGER_ENRICHMENT",
+      "checks": [
+        "BASE_TRANSITION_EXACT",
+        "FAILURE_STATE_EXISTS",
+        "AUDIT_EVENT_EXISTS",
+        "RECOVERY_RETains_SOURCE_STAGE",
+        "ILLEGAL_TESTS_4_OF_4"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-TRANSITION-03",
+      "target_uid": "CORE-01-STTR-03",
+      "proposal_kind": "STATE_TRANSITION_LEDGER_ENRICHMENT",
+      "checks": [
+        "BASE_TRANSITION_EXACT",
+        "FAILURE_STATE_EXISTS",
+        "AUDIT_EVENT_EXISTS",
+        "RECOVERY_RETains_SOURCE_STAGE",
+        "ILLEGAL_TESTS_4_OF_4"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-TRANSITION-04",
+      "target_uid": "CORE-01-STTR-04",
+      "proposal_kind": "STATE_TRANSITION_LEDGER_ENRICHMENT",
+      "checks": [
+        "BASE_TRANSITION_EXACT",
+        "FAILURE_STATE_EXISTS",
+        "AUDIT_EVENT_EXISTS",
+        "RECOVERY_RETains_SOURCE_STAGE",
+        "ILLEGAL_TESTS_4_OF_4"
+      ],
+      "result": "PASS"
+    },
+    {
+      "candidate_uid": "FRESH-R3-CORE01-TRANSITION-05",
+      "target_uid": "CORE-01-STTR-05",
+      "proposal_kind": "STATE_TRANSITION_LEDGER_ENRICHMENT",
+      "checks": [
+        "BASE_TRANSITION_EXACT",
+        "FAILURE_STATE_EXISTS",
+        "AUDIT_EVENT_EXISTS",
+        "RECOVERY_RETains_SOURCE_STAGE",
+        "ILLEGAL_TESTS_4_OF_4"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "materially_distinct_viable_behavior_count": 1,
+  "authority_gap_selection_required": false,
+  "historical_reference_used_as_authority": false,
+  "prior_approval_reused": false,
+  "product_blocker_credit": 0,
+  "result": "PASS_UNIQUE_COHERENT_MINIMAL_CLOSURE"
+}
