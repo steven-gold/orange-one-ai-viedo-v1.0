@@ -7,6 +7,7 @@ import yaml
 ROOT=Path(__file__).resolve().parents[2]
 STATE=ROOT/'governance/test/ACTIVE_STATE.yaml'
 SCOPE=ROOT/'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
+HISTORY=ROOT/'governance/test/SELECTED_PROFILE_HISTORY_BINDING.yaml'
 EVIDENCE=ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
 CURRENT_UID='GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING'
 RUN_UID='FRESH-RUN-005'
@@ -116,6 +117,28 @@ def main():
     tmp.pop('content_hash',None)
     scope['content_hash']=sha_obj(tmp)
     dump_yaml(SCOPE,scope)
+
+    history=load_yaml(HISTORY)
+    history['status']='ACTIVE_PROFILE_HISTORY_EVIDENCE_BINDING'
+    history['scope']={
+      PAGE:{
+        'expected_result':'PASS',
+        'artifacts':[
+          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_005/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml','creation_governance_overlay':'v2.2.7'},
+          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_005/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml','creation_governance_overlay':'v2.2.7'},
+          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_005/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml','creation_governance_overlay':'v2.2.7'},
+        ],
+        'profile_step_uid':'STAGE-01',
+      }
+    }
+    history['current_scope_binding']={
+      'run_uid':RUN_UID,
+      'page_scope':[PAGE],
+      'excluded_page_scope':['ASSET-01'],
+      'prior_product_artifact_reuse':False,
+      'binding_reason':'FRESH_STAGE01_REPLAY_CURRENT_SCOPE',
+    }
+    dump_yaml(HISTORY,history)
 
     print(json.dumps({
       'run_uid':RUN_UID,
