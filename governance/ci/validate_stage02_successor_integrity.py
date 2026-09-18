@@ -106,10 +106,16 @@ if result == 'TEST_EXECUTED_BLOCKED':
         die('STAGE2_TARGET_PAGE_SCOPE_OUTSIDE_STAGE1')
     if evidence.get('stage_scope_complete') is not (set(target_pages) == set(stage1)):
         die('STAGE2_SCOPE_COMPLETENESS_DRIFT')
-    functional_total = int(evidence.get('fresh_functional_gap_total') or 0)
+    raw_functional_total = int(evidence.get('fresh_functional_gap_total') or 0)
+    effective = evidence.get('effective_functional_gap_total')
+    functional_total = int(effective if effective is not None else raw_functional_total)
     closure_total = int(evidence.get('closure_blocker_total') or 0)
-    if functional_total + closure_total <= 0:
-        die('BLOCKED_STATE_WITHOUT_CURRENT_FUNCTIONAL_OR_CLOSURE_GAP')
+    scope_incomplete = evidence.get('stage_scope_complete') is False and bool(evidence.get('remaining_pages'))
+    if functional_total + closure_total <= 0 and not scope_incomplete:
+        die('BLOCKED_STATE_WITHOUT_EFFECTIVE_FUNCTIONAL_OR_CLOSURE_GAP_OR_REMAINING_SCOPE')
+    if functional_total + closure_total <= 0 and scope_incomplete:
+        if any(int((rec or {}).get('effective_functional_gap_count') or 0) for rec in (pages or {}).values()):
+            die('PARTIAL_SCOPE_EFFECTIVE_ZERO_DECLARATION_DRIFT')
 
     if declared_root is True:
         if not physical_exists:
