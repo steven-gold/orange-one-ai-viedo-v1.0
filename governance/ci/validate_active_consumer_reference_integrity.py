@@ -157,7 +157,9 @@ def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> 
                 "state": (value.get("state"), current_step.get("result")),
                 "current_functional_gap_count": (
                     value.get("current_functional_gap_count"),
-                    active_attempt.get("fresh_functional_gap_total"),
+                    active_attempt.get("effective_functional_gap_total")
+                    if active_attempt.get("effective_functional_gap_total") is not None
+                    else active_attempt.get("fresh_functional_gap_total"),
                 ),
             }
             for field, (actual, expected) in checks.items():
