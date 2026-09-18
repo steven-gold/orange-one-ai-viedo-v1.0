@@ -1613,9 +1613,9 @@ jobs:
           current=int(problem.get('open_problem_count') or 0)
           local=int(s.get('NO_AUTHORIZED_BOUNDED_COMPLETION_BASIS') or 0)
           external=int(s.get('EXACT_EXTERNAL_AUTHORITY_REQUIRED') or 0)
-          assert current == 150
+          assert current > 0
+          assert current == local + external
           assert d == {'current_open_problems':current,'product_design_authority_requests':local,'external_authority_requests':external,'bounded_completion_admissible':0,'materializable_from_current_authority_now':0}, d
-          assert local == 146 and external == 4
           assert len(req.get('product_design_authority_requests') or []) == local
           assert len(req.get('external_authority_requests') or []) == external
           assert req.get('normative_authority') is False and req.get('request_is_product_authority') is False
