@@ -1613,6 +1613,26 @@ jobs:
           python governance/ci/specification_mutation_guard.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Persist active-consumer inventory synchronization before review-only package
+        shell: bash
+        run: |
+          set -euo pipefail
+          report='governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json'
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          if [ -n "$(git status --porcelain=v1 --untracked-files=all -- "$report")" ]; then
+            actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//')"
+            test "$actual" = "$report" || { printf 'BLOCK: unexpected pre-package synchronization delta\n%s\n' "$actual" >&2; exit 1; }
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- "$report"
+            git commit -m 'test(stage02): refresh active consumer integrity for current design review package'
+            git push origin HEAD:rebuild-v2.1.1
+          fi
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/specification_mutation_guard.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
       - name: Build Current CORE-01 review-only Design Contract package
         run: python governance/ci/build_stage02_core01_design_contract_review_package.py
       - name: Validate Current CORE-01 review-only Design Contract package
