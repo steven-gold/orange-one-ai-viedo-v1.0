@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 from collections import Counter, defaultdict
+from copy import deepcopy
 import json
 import os
 import re
@@ -68,6 +69,58 @@ def has_transition(text: str):
 
 def add(gaps, page, klass, category, uid, detail, owner='PAGE_FUNCTIONAL_CONTRACT'):
     gaps.append({'page_uid': page, 'class': klass, 'category': category, 'uid': uid, 'detail': detail, 'gap_owner': owner})
+
+def effective_page_contract(page: str, raw: dict):
+    """Compose immutable Stage-01 source facts with an approved Stage-02 canonical successor.
+
+    Review-only candidate bytes are never consumed here. The overlay is eligible only after
+    the candidate has been materialized into the page's single canonical FUNCTIONAL_CHAIN_SPEC
+    owner with explicit approval provenance and an immutable-Raw guarantee.
+    """
+    spec_path = OLD_STAGE2_ROOT / page / 'FUNCTIONAL_CHAIN_SPEC.yaml'
+    if not spec_path.is_file():
+        return raw, {'applied': False, 'reason': 'NO_STAGE2_CANONICAL_SUCCESSOR'}
+    spec = load(spec_path)
+    meta = spec.get('design_contract_remediation') or {}
+    if meta.get('canonical_owner_materialization') is not True:
+        return raw, {'applied': False, 'reason': 'NO_APPROVED_CANONICAL_MATERIALIZATION'}
+    if spec.get('page_uid') != page:
+        die(f'{page}:FUNCTIONAL_CHAIN_PAGE_UID_DRIFT')
+    if meta.get('candidate_bytes_became_authority_directly') is not False:
+        die(f'{page}:CANDIDATE_BYTES_MASQUERADE_AS_AUTHORITY')
+    if meta.get('raw_source_mutated') is not False:
+        die(f'{page}:STAGE1_RAW_SOURCE_MUTATION_FORBIDDEN')
+    approval_ref = str(meta.get('approval_evidence_ref') or '').strip()
+    if not approval_ref or not (ROOT / approval_ref).is_file():
+        die(f'{page}:APPROVAL_EVIDENCE_MISSING_FOR_CANONICAL_SUCCESSOR')
+    projection = spec.get('source_projection')
+    if not isinstance(projection, dict):
+        die(f'{page}:FUNCTIONAL_CHAIN_SOURCE_PROJECTION_MISSING')
+
+    merged = deepcopy(raw)
+    reg = merged.setdefault('registries', {})
+    if not isinstance(reg, dict):
+        die(f'{page}:RAW_REGISTRY_INVALID')
+    overlay_keys = ('actions', 'controls', 'stages', 'stage_transitions', 'events', 'integration_ports')
+    applied = []
+    for key in overlay_keys:
+        if key not in projection:
+            continue
+        value = projection.get(key)
+        if not isinstance(value, list):
+            die(f'{page}:FUNCTIONAL_CHAIN_PROJECTION_INVALID:{key}')
+        reg[key] = deepcopy(value)
+        applied.append(key)
+    if not applied:
+        die(f'{page}:FUNCTIONAL_CHAIN_PROJECTION_EMPTY')
+    return merged, {
+        'applied': True,
+        'canonical_owner_ref': str(spec_path.relative_to(ROOT)),
+        'approval_evidence_ref': approval_ref,
+        'overlay_registry_keys': applied,
+        'raw_source_mutated': False,
+    }
+
 
 def fresh_scan(page: str, raw: dict, unresolved_authority_by_ref: dict):
     reg = raw.get('registries') or {}
@@ -291,7 +344,8 @@ for page, paths in target_pages.items():
         external.setdefault(gid, {'authority_ref': ref.get('authority_ref'), 'consumers': []})['consumers'].append(page)
 
     unresolved_authority_by_ref = {str(x.get('authority_ref')): x.get('gap_uid') for x in refs if isinstance(x, dict) and x.get('authority_ref') and x.get('gap_uid')}
-    scan = fresh_scan(page, raw, unresolved_authority_by_ref)
+    effective_raw, effective_contract = effective_page_contract(page, raw)
+    scan = fresh_scan(page, effective_raw, unresolved_authority_by_ref)
     responsibilities = set(blueprint.get('required_responsibility_uids') or [])
     ai_profile_active = 'CONVERSATION_POLICY' in responsibilities
     page_dir = OLD_STAGE2_ROOT / page
@@ -316,6 +370,7 @@ for page, paths in target_pages.items():
         'ai_interaction_profile_active': ai_profile_active,
         'unresolved_external_authority_ref_count': len(refs),
         'functional_chain_fresh_scan': scan,
+        'effective_contract_input': effective_contract,
         'closure_blockers': closure,
         'closure_blocker_count': len(closure),
         'function_admission_scorecard': 'PRESENT' if (page_dir / 'FUNCTION_ADMISSION_SCORECARD.yaml').is_file() else 'REQUIRED_WHEN_GAP_ANALYSIS_EXISTS',
