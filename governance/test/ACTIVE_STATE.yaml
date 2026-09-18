@@ -110,7 +110,7 @@ stage02_reset_control:
   next_action_after_mother_review: RESOLVE_FRESH_CORE01_STAGE02_WORK_UNIT_AND_REBUILD_CANONICAL_PREFLIGHT_UNDER_CURRENT_GOVERNANCE
   product_stage_credit: 0
 status: ACTIVE_STAGE2_TESTED_BLOCKED_CURRENT_GOVERNANCE
-next_action: VERIFY_PERSISTED_CORE01_DESIGN_CONTRACT_MATERIALIZATION_AND_CLOSE_WORK_UNIT
+next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_REMAINING_STAGE02_SCOPE
 work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-002
   normative_authority: false
@@ -142,6 +142,127 @@ work_unit_resolution_gate:
   - EXTERNAL_AUTHORITY_REFS_MUST_REMAIN_UNRESOLVED_WITHOUT_EXACT_AUTHORITY_EVIDENCE
   - ASSET01_REMAINS_OUT_OF_SCOPE
 last_closed_product_work_unit:
+  work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-002
+  canonical_name: CORE01_FRESH_FUNCTIONAL_GAP_REMEDIATION
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  scope:
+  - CORE-01
+  canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  canonical_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_status: CLOSED_VERIFIED_CORE01_EFFECTIVE_FUNCTIONAL_GAPS_ZERO
+  source_attempt_uid: STAGE02-FRESH-20260918-007
+  source_problem_denominator: 45
+  source_closure_blocker_denominator: 0
+  gap_classes:
+    ARCHITECTURE_GAP: 29
+    INPUT_SOURCE_GAP: 16
+  gap_categories:
+    AUDIT_EVENT_NODE_MISSING: 4
+    PAYLOAD_INPUT_CONTRACT_MISSING: 16
+    STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
+  preserved_external_authority_union_count: 7
+  out_of_scope:
+  - ASSET-01
+  - STAGE03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - EXTERNAL_AUTHORITY_AUTOFILL
+  - PRODUCT_VALUE_INFERENCE
+  entry_action: REVIEW_CURRENT_CORE01_DESIGN_CONTRACT_REMEDIATION_PACKAGE
+  post_classification_policy: CURRENT_V2_2_5_DESIGN_CONTRACT_REMEDIATION_ROUTING
+  required_pre_candidate_artifacts:
+  - FUNCTION_ADMISSION_SCORECARD
+  - AUTO_COMPLETION_SCOPE_LEDGER
+  direct_field_by_field_authority_wait_for_local_input_or_architecture_gap: BLOCK
+  definition_of_done:
+  - ALL_45_CURRENT_PROBLEMS_CLASSIFIED_FROM_EXACT_CURRENT_AUTHORITY
+  - BOUNDED_COMPLETION_ONLY_WHERE_EXACT_CURRENT_AUTHORITY_PROVES_UNIQUE_ROLE_CORRECT_CLOSURE
+  - INPUT_SOURCE_OR_ARCHITECTURE_GAP_WITHOUT_UNIQUE_CLOSURE_ROUTES_TO_REVIEW_ONLY_DESIGN_CONTRACT_REMEDIATION
+  - TRUE_AUTHORITY_GAP_ONLY_WHERE_TWO_OR_MORE_MATERIALLY_DISTINCT_VIABLE_BEHAVIORS_EXIST
+  - EXTERNAL_AUTHORITY_REQUIRED_ITEMS_REMAIN_BLOCKED
+  - NO_SEMANTIC_SIMILARITY_SIBLING_SYMMETRY_OR_GENERIC_CRUD_INFERENCE
+  - ANY_MATERIAL_REMEDIATION_REQUIRES_FRESH_REEXECUTION
+  - CORE01_ONLY_SCOPE_PRESERVED
+  - STAGE01_IMMUTABLE_INPUTS_UNCHANGED
+  - EXACT_PERSISTED_HEAD_FULL_LINE_SUCCESS
+  r2_classification_result:
+    source_ref: governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml
+    classified_problem_count: 45
+    bounded_completion_admissible: 0
+    exact_external_authority_required: 0
+    no_authorized_bounded_completion_basis: 45
+    closure_blocker_denominator: 0
+  review_only_design_contract_routing:
+    policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml#design_contract_remediation_routing
+    required_pre_candidate_artifacts:
+    - FUNCTION_ADMISSION_SCORECARD
+    - AUTO_COMPLETION_SCOPE_LEDGER
+    coherent_package_review_allowed: true
+    direct_field_by_field_authority_wait: BLOCK
+    candidate_is_product_authority: false
+    candidate_materialization_allowed_before_review: false
+    product_blocker_credit: 0
+  product_blocker_credit: 45
+  resume_after_closure: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_REMAINING_STAGE02_SCOPE
+  function_admission_scorecard_ref: governance/test/stage02/STAGE02_CORE01_FUNCTION_ADMISSION_SCORECARD.json
+  auto_completion_scope_ledger_ref: governance/test/stage02/STAGE02_CORE01_AUTO_COMPLETION_SCOPE_LEDGER.json
+  design_contract_candidate_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_CANDIDATE.json
+  design_contract_semantic_review_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_SEMANTIC_REVIEW.json
+  coherent_review_package_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
+  review_package_machine_validation:
+    package_persisted_commit: fbbb875314ff936b39539c7dec7ac1ee3b890f32
+    trigger_head_sha: a1bae099049b0f7a15bf1893bcc35ef7beff02c7
+    outer_workflow_run_id: 35340278635
+    outer_workflow_result: success
+    persisted_child_revalidated_in_workflow: true
+    persisted_child_full_line_result: success
+    uploaded_artifact_id: 10545061003
+    uploaded_artifact_digest: sha256:b7103123b18c7580659fc5c804613476b2fbc87b2e550460308bd13361a3d6e8
+    artifact_name: stage02-core01-current-design-contract-review-package
+    candidate_is_product_authority: false
+    materialization_allowed: false
+    product_blocker_credit: 0
+  human_product_contract_review_status: APPROVED_EXPLICIT_COHERENT_PACKAGE_REVIEW
+  product_contract_materialization_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+  design_contract_materialization:
+    approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_COHERENT_DESIGN_CONTRACT_APPROVAL_EVIDENCE.yaml
+    approved_design_unit_count: 25
+    raw_discovery_problem_count: 45
+    validated_product_successor_signature_count: 45
+    effective_open_problem_count: 0
+    resolution_uid: STAGE02-RESOLUTION-CORE01-DESIGN-CONTRACT-20260919-001
+    fresh_reexecution_source_head: 0e7ed1141352176660f3d0efd30df89e87f7b85f
+    outer_terminal_result: success
+    source_workflow_run_id: 35373928957
+    source_artifact_id: 10558928076
+    source_artifact_sha256: fb91d25d23aaea4839b76ee0685d5b474e4bb0ebb702961bb2c1054d6c173796
+    persisted_materialization_commit: d7d1fbd9ae353e256bc766bd8150d9448ed6b230
+  terminal_disposition: CLOSED_VERIFIED_PRODUCT_CONTRACT_MATERIALIZATION_AND_FRESH_REEXECUTION
+  closure_evidence:
+    current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
+    attempt_uid: STAGE02-FRESH-20260918-007
+    approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_COHERENT_DESIGN_CONTRACT_APPROVAL_EVIDENCE.yaml
+    review_package_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
+    canonical_product_contract_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    resolution_uid: STAGE02-RESOLUTION-CORE01-DESIGN-CONTRACT-20260919-001
+    raw_discovery_problem_count: 45
+    validated_product_successor_signature_count: 45
+    effective_open_problem_count: 0
+    product_blocker_reduction_credit: 45
+    external_authority_resolution_credit: 0
+    persisted_materialization_commit: d7d1fbd9ae353e256bc766bd8150d9448ed6b230
+    materialization_outer_run_id: 35373928957
+    materialization_outer_run_result: success
+    source_artifact_id: 10558928076
+    source_artifact_sha256: fb91d25d23aaea4839b76ee0685d5b474e4bb0ebb702961bb2c1054d6c173796
+    persisted_child_revalidated_in_outer_workflow: true
+    persisted_child_full_line_result: success
+    full_line_source_file_count: 75
+    lifecycle_stage_result: 11/11
+    preformal_result: 20/20
+    mandatory_regression_result: 17/17
+    immutable_raw_blob_sha: 9490f3bcc28c5511bc04d6c3ce53c026e3c4667f
+previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
   primary_task_layer: PRODUCT_STAGE_EXECUTION
@@ -209,52 +330,6 @@ last_closed_product_work_unit:
     fresh_closure_blocker_total: 0
     fresh_functional_gap_total: 45
     terminal_disposition: CLOSED_VERIFIED_STRUCTURAL_REMEDIATION_ZERO_CLOSURE_BLOCKERS
-previous_closed_product_work_unit:
-  work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
-  canonical_name: CORE01_FRESH_STAGE02_ACTUAL_TEST
-  primary_task_layer: PRODUCT_STAGE_EXECUTION
-  scope:
-  - CORE-01
-  out_of_scope:
-  - ASSET-01
-  - STAGE03
-  - WEBSITE_CONSTRUCTION
-  - DEPLOYMENT
-  - PRODUCT_AUTHORITY_AUTOFILL
-  execution_owner: governance/ci/run_current_stage2_actual_test.py
-  state_owner: governance/test/ACTIVE_STATE.yaml
-  current_status: CLOSED_VERIFIED_BLOCKED_RESULT_PERSISTED
-  start_condition: FRESH_ENTRY_RECEIPTS_AND_PREEXECUTION_ADMISSION_PASS
-  definition_of_done:
-  - CORE01_ONLY_FRESH_PHYSICAL_SCAN_EXECUTED
-  - ASSET01_NOT_SCANNED_NOT_COUNTED_NOT_PERSISTED_AS_CURRENT_TEST_RESULT
-  - FUNCTIONAL_CHAIN_CONTROL_ACTION_RUNTIME_SUCCESS_FAILURE_RELATIONS_RESCANNED
-  - EXTERNAL_AUTHORITY_REFS_PRESERVED_UNRESOLVED
-  - CURRENT_SPECIFICATION_UNCHANGED
-  - STAGE01_IMMUTABLE_INPUTS_UNCHANGED
-  - FRESH_RESULT_ARTIFACT_BOUND_TO_EXACT_EXECUTION_HEAD_AND_RUN
-  - CURRENT_STATE_PERSISTED_FROM_FRESH_CORE01_RESULT
-  - EXACT_PERSISTED_HEAD_REVALIDATED
-  product_stage_credit_before_result: 0
-  closure_evidence:
-    source_execution_head: 0d9cf1462370e859b41d512460cf33c658191255
-    source_workflow_run_id: 35300497511
-    persisted_current_state_commit: bb4640ef23bd1785cda5dfee488ee108ea79a2ca
-    exact_persisted_state_validation_head: 38ded547d9f6050c7cae8dd249521a1eb7ff77ae
-    full_line_run_id: 35300652499
-    full_line_result: success
-    selected_profile_run_id: 35300652521
-    selected_profile_result: success
-    branch_guard_run_id: 35300652492
-    branch_guard_result: success
-    target_pages:
-    - CORE-01
-    remaining_pages:
-    - ASSET-01
-    stage_scope_complete: false
-    fresh_functional_gap_total: 45
-    fresh_closure_blocker_total: 7
-    terminal_disposition: CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED
 closed_work_unit:
   work_unit_uid: WU-GOV-PREEXECUTION-HARDENING-001
   canonical_name: GOVERNANCE_PREEXECUTION_FEASIBILITY_AND_RESIDUAL_HARDENING
@@ -364,116 +439,25 @@ previous_closed_work_unit:
     mandatory_regression_result: 17/17
     source_runtime_residual_count: 0
     product_stage_credit: 0
-active_work_unit:
-  work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-002
-  canonical_name: CORE01_FRESH_FUNCTIONAL_GAP_REMEDIATION
-  primary_task_layer: PRODUCT_STAGE_EXECUTION
-  scope:
-  - CORE-01
-  canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  canonical_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  current_status: PENDING_EXACT_HEAD_TERMINAL_CLOSURE
-  source_attempt_uid: STAGE02-FRESH-20260918-007
-  source_problem_denominator: 45
-  source_closure_blocker_denominator: 0
-  gap_classes:
-    ARCHITECTURE_GAP: 29
-    INPUT_SOURCE_GAP: 16
-  gap_categories:
-    AUDIT_EVENT_NODE_MISSING: 4
-    PAYLOAD_INPUT_CONTRACT_MISSING: 16
-    STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
-  preserved_external_authority_union_count: 7
-  out_of_scope:
-  - ASSET-01
-  - STAGE03
-  - WEBSITE_CONSTRUCTION
-  - DEPLOYMENT
-  - EXTERNAL_AUTHORITY_AUTOFILL
-  - PRODUCT_VALUE_INFERENCE
-  entry_action: REVIEW_CURRENT_CORE01_DESIGN_CONTRACT_REMEDIATION_PACKAGE
-  post_classification_policy: CURRENT_V2_2_5_DESIGN_CONTRACT_REMEDIATION_ROUTING
-  required_pre_candidate_artifacts:
-  - FUNCTION_ADMISSION_SCORECARD
-  - AUTO_COMPLETION_SCOPE_LEDGER
-  direct_field_by_field_authority_wait_for_local_input_or_architecture_gap: BLOCK
-  definition_of_done:
-  - ALL_45_CURRENT_PROBLEMS_CLASSIFIED_FROM_EXACT_CURRENT_AUTHORITY
-  - BOUNDED_COMPLETION_ONLY_WHERE_EXACT_CURRENT_AUTHORITY_PROVES_UNIQUE_ROLE_CORRECT_CLOSURE
-  - INPUT_SOURCE_OR_ARCHITECTURE_GAP_WITHOUT_UNIQUE_CLOSURE_ROUTES_TO_REVIEW_ONLY_DESIGN_CONTRACT_REMEDIATION
-  - TRUE_AUTHORITY_GAP_ONLY_WHERE_TWO_OR_MORE_MATERIALLY_DISTINCT_VIABLE_BEHAVIORS_EXIST
-  - EXTERNAL_AUTHORITY_REQUIRED_ITEMS_REMAIN_BLOCKED
-  - NO_SEMANTIC_SIMILARITY_SIBLING_SYMMETRY_OR_GENERIC_CRUD_INFERENCE
-  - ANY_MATERIAL_REMEDIATION_REQUIRES_FRESH_REEXECUTION
-  - CORE01_ONLY_SCOPE_PRESERVED
-  - STAGE01_IMMUTABLE_INPUTS_UNCHANGED
-  - EXACT_PERSISTED_HEAD_FULL_LINE_SUCCESS
-  r2_classification_result:
-    source_ref: governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml
-    classified_problem_count: 45
-    bounded_completion_admissible: 0
-    exact_external_authority_required: 0
-    no_authorized_bounded_completion_basis: 45
-    closure_blocker_denominator: 0
-  review_only_design_contract_routing:
-    policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml#design_contract_remediation_routing
-    required_pre_candidate_artifacts:
-    - FUNCTION_ADMISSION_SCORECARD
-    - AUTO_COMPLETION_SCOPE_LEDGER
-    coherent_package_review_allowed: true
-    direct_field_by_field_authority_wait: BLOCK
-    candidate_is_product_authority: false
-    candidate_materialization_allowed_before_review: false
-    product_blocker_credit: 0
-  product_blocker_credit: 45
-  resume_after_closure: STAGE2_TESTED_BLOCKED_DESIGN_CONTRACT_REMEDIATION_OR_STAGE_EXIT_IF_ZERO
-  function_admission_scorecard_ref: governance/test/stage02/STAGE02_CORE01_FUNCTION_ADMISSION_SCORECARD.json
-  auto_completion_scope_ledger_ref: governance/test/stage02/STAGE02_CORE01_AUTO_COMPLETION_SCOPE_LEDGER.json
-  design_contract_candidate_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_CANDIDATE.json
-  design_contract_semantic_review_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_SEMANTIC_REVIEW.json
-  coherent_review_package_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
-  review_package_machine_validation:
-    package_persisted_commit: fbbb875314ff936b39539c7dec7ac1ee3b890f32
-    trigger_head_sha: a1bae099049b0f7a15bf1893bcc35ef7beff02c7
-    outer_workflow_run_id: 35340278635
-    outer_workflow_result: success
-    persisted_child_revalidated_in_workflow: true
-    persisted_child_full_line_result: success
-    uploaded_artifact_id: 10545061003
-    uploaded_artifact_digest: sha256:b7103123b18c7580659fc5c804613476b2fbc87b2e550460308bd13361a3d6e8
-    artifact_name: stage02-core01-current-design-contract-review-package
-    candidate_is_product_authority: false
-    materialization_allowed: false
-    product_blocker_credit: 0
-  human_product_contract_review_status: APPROVED_EXPLICIT_COHERENT_PACKAGE_REVIEW
-  product_contract_materialization_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
-  design_contract_materialization:
-    approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_COHERENT_DESIGN_CONTRACT_APPROVAL_EVIDENCE.yaml
-    approved_design_unit_count: 25
-    raw_discovery_problem_count: 45
-    validated_product_successor_signature_count: 45
-    effective_open_problem_count: 0
-    resolution_uid: STAGE02-RESOLUTION-CORE01-DESIGN-CONTRACT-20260919-001
-    fresh_reexecution_source_head: 0e7ed1141352176660f3d0efd30df89e87f7b85f
-    outer_terminal_result: PENDING
-    source_workflow_run_id: 35373928957
-    source_artifact_id: 10558928076
-    source_artifact_sha256: fb91d25d23aaea4839b76ee0685d5b474e4bb0ebb702961bb2c1054d6c173796
 resume_control:
   chat_memory_is_authority: false
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
   effectful_stage2_execution_before_entry_resolution: PASS_ENTRY_RESOLVED
-  current_resume_point: STAGE2_CORE01_DESIGN_CONTRACT_MATERIALIZED_PENDING_EXACT_HEAD_TERMINAL_CLOSURE
-  current_work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-002
-  current_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_resume_point: STAGE2_CORE01_FUNCTIONAL_REMEDIATION_CLOSED_TRANSITION_BOUNDARY
+  current_work_unit_uid: null
+  current_owner: null
   last_effectful_governance_action: PREFORMAL_REVIEW_APPROVED_AND_MACHINE_REVALIDATED
   last_effectful_governance_evidence_head: 7765b763d0559f3ccf2f15246b9841ca165ad6e0
   last_effectful_governance_full_line_run_id: 35324482092
-  exact_next_action: VERIFY_PERSISTED_CORE01_DESIGN_CONTRACT_MATERIALIZATION_AND_CLOSE_WORK_UNIT
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_REMAINING_STAGE02_SCOPE
   last_closed_structural_work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   last_closed_structural_validation_head: 474e31931561340bfc12ed23b54cb115b7bda1d0
   last_closed_structural_full_line_run_id: 35329842073
+  last_closed_product_work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-002
+  last_closed_product_validation_head: d7d1fbd9ae353e256bc766bd8150d9448ed6b230
+  last_closed_product_outer_run_id: 35373928957
+  last_closed_product_outer_result: success
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   predecessor_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
@@ -523,7 +507,7 @@ pending_governance_review:
   - DEPLOYMENT
 current_primary_task_layer: PRODUCT_STAGE_EXECUTION
 current_primary_task_authorization_uid: USR-DIRECTIVE-20260918-COMPLETE-CORE01-STAGE02-TEST
-current_primary_task_product_stage_credit: 0
+current_primary_task_product_stage_credit: 45
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
@@ -565,10 +549,13 @@ stage02_material_remediation:
   stage_scope_complete: false
   external_authority_resolution_claimed: false
   current_specification_mutated: false
-  status: CORE01_DESIGN_CONTRACT_MATERIALIZED_FRESHLY_REEXECUTED_EFFECTIVE_ZERO
+  status: CORE01_FUNCTIONAL_REMEDIATION_CLOSED_EFFECTIVE_ZERO
   raw_discovery_functional_gap_count: 45
   validated_product_materialization_count: 45
   effective_functional_gap_total: 0
+  functional_work_unit_closed: true
+  closure_materialization_head: d7d1fbd9ae353e256bc766bd8150d9448ed6b230
+  closure_outer_run_id: 35373928957
 stage02_active_attempt:
   attempt_uid: STAGE02-FRESH-20260918-007
   frozen_governance_receipt_ref: governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml
@@ -595,7 +582,7 @@ stage02_active_attempt:
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   product_or_contract_material_remediation_started: true
-  next_action: VERIFY_PERSISTED_CORE01_DESIGN_CONTRACT_MATERIALIZATION_AND_CLOSE_WORK_UNIT
+  next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_REMAINING_STAGE02_SCOPE
   governance_status: CURRENT_FROZEN_ATTEMPT_FRESHLY_REVALIDATED_BLOCKED
   closure_credit_under_current_governance: true
   fresh_revalidation_required: false
@@ -609,3 +596,49 @@ stage02_active_attempt:
   effective_functional_gap_total: 0
   validated_product_materialization_count: 45
   design_contract_approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_COHERENT_DESIGN_CONTRACT_APPROVAL_EVIDENCE.yaml
+earlier_closed_product_work_unit:
+  work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
+  canonical_name: CORE01_FRESH_STAGE02_ACTUAL_TEST
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  scope:
+  - CORE-01
+  out_of_scope:
+  - ASSET-01
+  - STAGE03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - PRODUCT_AUTHORITY_AUTOFILL
+  execution_owner: governance/ci/run_current_stage2_actual_test.py
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  current_status: CLOSED_VERIFIED_BLOCKED_RESULT_PERSISTED
+  start_condition: FRESH_ENTRY_RECEIPTS_AND_PREEXECUTION_ADMISSION_PASS
+  definition_of_done:
+  - CORE01_ONLY_FRESH_PHYSICAL_SCAN_EXECUTED
+  - ASSET01_NOT_SCANNED_NOT_COUNTED_NOT_PERSISTED_AS_CURRENT_TEST_RESULT
+  - FUNCTIONAL_CHAIN_CONTROL_ACTION_RUNTIME_SUCCESS_FAILURE_RELATIONS_RESCANNED
+  - EXTERNAL_AUTHORITY_REFS_PRESERVED_UNRESOLVED
+  - CURRENT_SPECIFICATION_UNCHANGED
+  - STAGE01_IMMUTABLE_INPUTS_UNCHANGED
+  - FRESH_RESULT_ARTIFACT_BOUND_TO_EXACT_EXECUTION_HEAD_AND_RUN
+  - CURRENT_STATE_PERSISTED_FROM_FRESH_CORE01_RESULT
+  - EXACT_PERSISTED_HEAD_REVALIDATED
+  product_stage_credit_before_result: 0
+  closure_evidence:
+    source_execution_head: 0d9cf1462370e859b41d512460cf33c658191255
+    source_workflow_run_id: 35300497511
+    persisted_current_state_commit: bb4640ef23bd1785cda5dfee488ee108ea79a2ca
+    exact_persisted_state_validation_head: 38ded547d9f6050c7cae8dd249521a1eb7ff77ae
+    full_line_run_id: 35300652499
+    full_line_result: success
+    selected_profile_run_id: 35300652521
+    selected_profile_result: success
+    branch_guard_run_id: 35300652492
+    branch_guard_result: success
+    target_pages:
+    - CORE-01
+    remaining_pages:
+    - ASSET-01
+    stage_scope_complete: false
+    fresh_functional_gap_total: 45
+    fresh_closure_blocker_total: 7
+    terminal_disposition: CLOSED_TEST_EXECUTED_BLOCKED_RESULT_PERSISTED

@@ -432,7 +432,7 @@ current_stage2_execution:
   remaining_pages:
   - ASSET-01
   stage_scope_complete: false
-  next_action: VERIFY_PERSISTED_CORE01_DESIGN_CONTRACT_MATERIALIZATION_AND_CLOSE_WORK_UNIT
+  next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_REMAINING_STAGE02_SCOPE
   attempt_uid: STAGE02-FRESH-20260918-007
   frozen_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   raw_discovery_gap_count: 45
@@ -452,4 +452,8 @@ current_stage2_execution:
   effective_functional_gap_count: 0
   approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_COHERENT_DESIGN_CONTRACT_APPROVAL_EVIDENCE.yaml
   canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+  core01_work_unit_status: CLOSED_VERIFIED_CORE01_EFFECTIVE_FUNCTIONAL_GAPS_ZERO
+  core01_closure_materialization_head: d7d1fbd9ae353e256bc766bd8150d9448ed6b230
+  core01_closure_outer_run_id: 35373928957
+  r7_disposition: NOT_TRIGGERED_OLD_AUTHORITY_WAIT_ROUTE_NOT_APPLICABLE_AFTER_CURRENT_V2_2_5_CANONICAL_OWNER_MATERIALIZATION
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER
