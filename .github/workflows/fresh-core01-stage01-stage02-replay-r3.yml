@@ -32,9 +32,10 @@ jobs:
           set -euo pipefail
           test -f governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-CORE01-STAGE02-COMPLETENESS-R3.yaml
           grep -q 'GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING' governance/specifications/REGISTRY.yaml
-          test -d 00_SOURCE_INTAKE/fresh_run_006
-          test -f 00_SOURCE_INTAKE/fresh_run_006/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
-          test ! -e 00_SOURCE_INTAKE/fresh_run_006/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01
+          test -d 00_SOURCE_INTAKE/fresh_run_005
+          test -f 00_SOURCE_INTAKE/fresh_run_005/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+          test ! -e 00_SOURCE_INTAKE/fresh_run_006
+          test ! -e 00_SOURCE_INTAKE/fresh_run_005/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01
       - name: Compile fresh replay producer and provenance finalizer
         run: |
           python -m py_compile .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r3.py
@@ -53,7 +54,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test ! -e 00_SOURCE_INTAKE/fresh_run_006
+          test ! -e 00_SOURCE_INTAKE/fresh_run_005
           test -d 00_SOURCE_INTAKE/fresh_run_006
           test ! -e 00_SOURCE_INTAKE/fresh_run_006/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01
           test ! -e 00_SOURCE_INTAKE/fresh_run_006/01_CLASSIFIED/ASSET-01

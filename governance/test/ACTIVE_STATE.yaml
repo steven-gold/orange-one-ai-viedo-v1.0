@@ -31,7 +31,7 @@ execution:
     stage_exit_allowed: false
     prior_results_used_in_current_run: false
     prior_results_authoritative_for_current_governance: false
-    revalidation_required_under_current_governance: false
+    revalidation_required_under_current_governance: true
     artifact_root_present: true
     tested_page_uids:
     - CORE-01
@@ -305,8 +305,8 @@ governance_revision_transition:
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: false
-  fresh_revalidation_scope: AFFECTED_PRODUCT_SCOPE_AND_REUSABLE_POLICY_CONSUMERS
+  fresh_revalidation_required: true
+  fresh_revalidation_scope: CORE01_STAGE01_STAGE02_20260911_COMPLETENESS_AND_REUSABLE_CONSUMERS
   mother_machine_revalidation_complete: true
   mother_machine_revalidation_run_id: 35321233970
   mother_machine_revalidation_head: 736622cf32e1a19119317b4d9b56af51c036ce03
@@ -440,8 +440,8 @@ stage02_active_attempt:
   prior_results_used: false
   active_evidence_present: true
   active_findings_present: true
-  fresh_revalidation_required: false
-  closure_credit_under_current_governance: true
+  fresh_revalidation_required: true
+  closure_credit_under_current_governance: false
   source_workflow_run_id: 35401715045
   source_artifact_id: 10570741908
   source_artifact_sha256: e6a9907f125faccc477e13cbfd6e131ce787bea8aa5dba701aba37aa8cc81bb6
