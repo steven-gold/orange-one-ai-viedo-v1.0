@@ -13,7 +13,7 @@ gap_categories:
   AUDIT_EVENT_NODE_MISSING: 4
   PAYLOAD_INPUT_CONTRACT_MISSING: 16
   STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
-status: STAGE02_PASS_CURRENT_EVIDENCE_BOUND
+status: STAGE02_CLOSED_VERIFIED
 attempt_uid: STAGE02-FRESH-20260919-CORE01-002
 source_execution_sha: c144d88b144deaa967be26bb37db78ba9bdc688c
 source_workflow_run_id: 35401715045
@@ -28,3 +28,27 @@ result: PASS
 candidate_ref: governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_CANDIDATE_R3.json
 approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_APPROVAL_R3.yaml
 canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE03
+stage_exit_allowed: true
+terminal_validation_head: e48ac1bce7e7798c107694087f0056b8a434bf08
+terminal_validation_runs:
+  full_line:
+    run_id: 35401771995
+    status: completed
+    conclusion: success
+    head_sha: e48ac1bce7e7798c107694087f0056b8a434bf08
+  selected_profile:
+    run_id: 35401771918
+    status: completed
+    conclusion: success
+    head_sha: e48ac1bce7e7798c107694087f0056b8a434bf08
+  stage02_boundary:
+    run_id: 35401771883
+    status: completed
+    conclusion: success
+    head_sha: e48ac1bce7e7798c107694087f0056b8a434bf08
+  branch_guard:
+    run_id: 35401772007
+    status: completed
+    conclusion: success
+    head_sha: e48ac1bce7e7798c107694087f0056b8a434bf08

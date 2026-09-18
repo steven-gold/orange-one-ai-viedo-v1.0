@@ -2,10 +2,15 @@
   "actual_product_stage_test_completed": true,
   "actual_product_stage_test_started": true,
   "ai_autofill_used": false,
+  "approval_evidence_ref": "governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_APPROVAL_R3.yaml",
   "artifact_type": "NON_NORMATIVE_STAGE02_ACTUAL_TEST_EVIDENCE",
+  "attempt_uid": "STAGE02-FRESH-20260919-CORE01-002",
+  "candidate_ref": "governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_CANDIDATE_R3.json",
+  "canonical_product_contract_owner_ref": "00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml",
   "closure_blocker_total": 0,
   "current_specification_mutated": false,
   "deployment_allowed": false,
+  "effective_functional_gap_total": 0,
   "execution_profile_mandatory_output_subset": [
     "CHANGE_IMPACT_MAP",
     "CLASSIFICATION_RULESET",
@@ -22,6 +27,7 @@
   ],
   "fresh_functional_gap_total": 0,
   "inference_used": false,
+  "next_action": "WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE03",
   "normative_authority": false,
   "notes": [
     "BLOCKED is a valid Stage-02 product-test outcome and does not mean the test runner failed.",
@@ -151,12 +157,15 @@
     "GAP-EXT-E9D39973941C"
   ],
   "prior_stage2_results_used": false,
+  "raw_discovery_functional_gap_total": 45,
   "remaining_pages": [],
   "requested_page_scope": "CORE-01",
   "result": "PASS",
+  "run_uid": "FRESH-RUN-005",
   "schema_version": 1,
   "scope_mode": "ALL_REQUIRED_PAGES",
   "source_head_sha": "c144d88b144deaa967be26bb37db78ba9bdc688c",
+  "stage2_terminal_closure": "PASS",
   "stage_entry_gate": "PASS",
   "stage_exit_allowed": true,
   "stage_name": "PAGE_FUNCTIONAL_CONTRACT",
@@ -165,14 +174,34 @@
   "target_pages": [
     "CORE-01"
   ],
+  "terminal_validation_head": "e48ac1bce7e7798c107694087f0056b8a434bf08",
+  "terminal_validation_runs": {
+    "branch_guard": {
+      "conclusion": "success",
+      "head_sha": "e48ac1bce7e7798c107694087f0056b8a434bf08",
+      "run_id": 35401772007,
+      "status": "completed"
+    },
+    "full_line": {
+      "conclusion": "success",
+      "head_sha": "e48ac1bce7e7798c107694087f0056b8a434bf08",
+      "run_id": 35401771995,
+      "status": "completed"
+    },
+    "selected_profile": {
+      "conclusion": "success",
+      "head_sha": "e48ac1bce7e7798c107694087f0056b8a434bf08",
+      "run_id": 35401771918,
+      "status": "completed"
+    },
+    "stage02_boundary": {
+      "conclusion": "success",
+      "head_sha": "e48ac1bce7e7798c107694087f0056b8a434bf08",
+      "run_id": 35401771883,
+      "status": "completed"
+    }
+  },
   "test_mode": "FRESH_FROM_STAGE1_IMMUTABLE_INPUTS_NO_PRIOR_STAGE2_RESULT_REUSE",
-  "website_construction_allowed": false,
-  "run_uid": "FRESH-RUN-005",
-  "attempt_uid": "STAGE02-FRESH-20260919-CORE01-002",
-  "raw_discovery_functional_gap_total": 45,
   "validated_product_successor_signature_count": 45,
-  "effective_functional_gap_total": 0,
-  "candidate_ref": "governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_CANDIDATE_R3.json",
-  "approval_evidence_ref": "governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_APPROVAL_R3.yaml",
-  "canonical_product_contract_owner_ref": "00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml"
+  "website_construction_allowed": false
 }
