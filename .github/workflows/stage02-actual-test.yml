@@ -407,7 +407,9 @@ jobs:
           resume['historical_stage2_results_are_current_state'] = False
           resume['stage2_execution_requires_fresh_entry_resolution'] = False
           resume['effectful_stage2_execution_before_entry_resolution'] = 'PASS_ENTRY_RESOLVED'
-          resume['current_resume_point'] = 'STAGE2_TESTED_BLOCKED_OWNING_LAYER_REMEDIATION'
+          resume['current_resume_point'] = 'STAGE2_CORE01_STRUCTURAL_REMEDIATION'
+          resume['current_work_unit_uid'] = 'WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001'
+          resume['current_owner'] = '00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
           trans = state.setdefault('governance_revision_transition', {})
           trans['current_governance_uid'] = governance_uid
           trans['fresh_revalidation_required'] = False
@@ -766,6 +768,7 @@ jobs:
           result_p = ROOT/'.github/stage02-test/STAGE02_REEXECUTION_RESULT.json'
           raw = result_p.read_bytes()
           ev = json.loads(raw)
+          prev = json.loads(Path('/tmp/stage02-pre-r1-evidence.json').read_text())
           source_sha = os.environ['GITHUB_SHA']
           source_run = int(os.environ['STAGE02_SOURCE_RUN_ID'])
           artifact_id = int(os.environ['STAGE02_SOURCE_ARTIFACT_ID'])
@@ -775,7 +778,7 @@ jobs:
           assert ev.get('result') == 'BLOCKED'
           assert ev.get('closure_blocker_total') == 0
           assert int(ev.get('fresh_functional_gap_total') or 0) > 0
-          assert ev.get('preserved_external_authority_union_count') == 8
+          assert ev.get('preserved_external_authority_union_count') == int(prev.get('preserved_external_authority_union_count') or 0)
           assert len(ev.get('official_stage_output_denominator') or []) == 17
           assert len(ev.get('execution_profile_mandatory_output_subset') or []) == 12
           pages = ev.get('pages') or {}
@@ -793,7 +796,7 @@ jobs:
           assert attempt_uid and governance_uid
           assert ev.get('attempt_uid') == attempt_uid
           assert ev.get('frozen_governance_uid') == governance_uid
-          next_action = 'MATERIAL_REMEDIATION_AT_OWNING_LAYER_FOR_REMAINING_FRESH_FUNCTIONAL_GAPS'
+          next_action = 'CLOSE_CORE01_STRUCTURAL_REMEDIATION_WORK_UNIT_THEN_REMEDIATE_FRESH_FUNCTIONAL_GAPS'
 
           gap_classes = {}
           gap_categories = {}
@@ -829,6 +832,9 @@ jobs:
               'gap_classes': gap_classes,
               'gap_categories': gap_categories,
               'page_results': page_results,
+              'target_pages': list(ev.get('target_pages') or []),
+              'remaining_pages': list(ev.get('remaining_pages') or []),
+              'stage_scope_complete': bool(ev.get('stage_scope_complete')),
               'official_stage_output_denominator_count': 17,
               'current_manifest_mandatory_stage_output_subset_count': 12,
               'preserved_external_authority_union_count': int(ev['preserved_external_authority_union_count']),
@@ -849,6 +855,7 @@ jobs:
           profile = state.setdefault('selected_execution_profile_state', {})
           profile['active_attempt_state_key'] = 'stage02_active_attempt'
           ex = state.setdefault('execution', {})
+          ex['target_pages'] = list(ev.get('target_pages') or [])
           ex['current_stage'] = 'STAGE-02-TESTED-BLOCKED'
           s2 = ex.setdefault('stage2', {})
           s2.update({
@@ -860,6 +867,9 @@ jobs:
               'artifact_root_present': True,
               'revalidation_required_under_current_governance': False,
               'prior_results_authoritative_for_current_governance': False,
+              'tested_page_uids': list(ev.get('target_pages') or []),
+              'remaining_page_uids': list(ev.get('remaining_pages') or []),
+              'stage_scope_complete': bool(ev.get('stage_scope_complete')),
           })
           ex['website_construction_allowed'] = False
           ex['deployment_allowed'] = False
@@ -925,7 +935,10 @@ jobs:
               'architecture_gap_total': int(gap_classes.get('ARCHITECTURE_GAP', 0)),
               'input_source_gap_total': int(gap_classes.get('INPUT_SOURCE_GAP', 0)),
               'authority_gap_total': int(gap_classes.get('AUTHORITY_GAP', 0)),
-              'external_authority_union_count': 8,
+              'external_authority_union_count': int(ev['preserved_external_authority_union_count']),
+              'target_pages': list(ev.get('target_pages') or []),
+              'remaining_pages': list(ev.get('remaining_pages') or []),
+              'stage_scope_complete': bool(ev.get('stage_scope_complete')),
               'current_specification_mutated': False,
               'immutable_stage1_source_mutated': False,
               'prior_stage2_results_used': False,
@@ -981,7 +994,10 @@ jobs:
               'current_closure_blocker_count': 0,
               'official_stage_output_denominator_count': 17,
               'current_manifest_mandatory_stage_output_subset_count': 12,
-              'preserved_external_authority_union_count': 8,
+              'preserved_external_authority_union_count': int(ev['preserved_external_authority_union_count']),
+              'target_pages': list(ev.get('target_pages') or []),
+              'remaining_pages': list(ev.get('remaining_pages') or []),
+              'stage_scope_complete': bool(ev.get('stage_scope_complete')),
               'active_evidence_present': True,
               'active_findings_present': True,
               'stage_exit_allowed': False,
