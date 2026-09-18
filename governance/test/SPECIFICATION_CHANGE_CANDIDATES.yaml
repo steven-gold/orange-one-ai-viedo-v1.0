@@ -417,7 +417,7 @@ historical_stage2_execution_findings:
   findings_ref: governance/test/history/stage02/attempt-8d5c69947cd8/STAGE02_FINDINGS.yaml
 current_stage2_execution:
   state: TEST_EXECUTED_BLOCKED
-  current_functional_gap_count: 45
+  current_functional_gap_count: 0
   current_closure_blocker_count: 0
   active_evidence_present: true
   active_findings_present: true
@@ -425,27 +425,31 @@ current_stage2_execution:
   website_construction_allowed: false
   deployment_allowed: false
   historical_counts_may_be_treated_as_current: false
-  source_execution_sha: 5ca0912ff5b3fb9cb868be918bfe939723958b0a
-  reexecution_cycle: R1_STRUCTURAL_REEXECUTION_CURRENT_GOVERNANCE
+  source_execution_sha: 0e7ed1141352176660f3d0efd30df89e87f7b85f
+  reexecution_cycle: CORE01_DESIGN_CONTRACT_REEXECUTION_R1
   target_pages:
   - CORE-01
   remaining_pages:
   - ASSET-01
   stage_scope_complete: false
-  next_action: REVIEW_CURRENT_CORE01_DESIGN_CONTRACT_REMEDIATION_PACKAGE
+  next_action: VERIFY_PERSISTED_CORE01_DESIGN_CONTRACT_MATERIALIZATION_AND_CLOSE_WORK_UNIT
   attempt_uid: STAGE02-FRESH-20260918-007
   frozen_governance_uid: GOV-REV-20260918-DESIGN-REMEDIATION-ROUTING-HARDENING
   raw_discovery_gap_count: 45
-  product_materialization_elimination_count: 0
+  product_materialization_elimination_count: 45
   external_authority_elimination_count: 0
-  total_fresh_elimination_count: 0
+  total_fresh_elimination_count: 45
   official_stage_output_denominator_count: 17
   current_manifest_mandatory_stage_output_subset_count: 12
   preserved_external_authority_union_count: 7
   prior_stage2_results_used: false
-  source_workflow_run_id: 35326298900
-  source_artifact_id: 10538443890
-  source_artifact_sha256: 2272c0c6e651a70b8fa23bf075de488c7acc5e0bc4f22c52fa563e2ded64a822
+  source_workflow_run_id: 35373928957
+  source_artifact_id: 10558928076
+  source_artifact_sha256: fb91d25d23aaea4839b76ee0685d5b474e4bb0ebb702961bb2c1054d6c173796
   review_only_design_contract_package_ref: governance/test/stage02/STAGE02_CORE01_DESIGN_CONTRACT_REVIEW_PACKAGE.json
-  product_blocker_reduction_credit: 0
+  product_blocker_reduction_credit: 45
+  validated_product_successor_signature_count: 45
+  effective_functional_gap_count: 0
+  approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_COHERENT_DESIGN_CONTRACT_APPROVAL_EVIDENCE.yaml
+  canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER

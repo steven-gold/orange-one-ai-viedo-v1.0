@@ -7,6 +7,17 @@
   "closure_blocker_total": 0,
   "current_specification_mutated": false,
   "deployment_allowed": false,
+  "design_contract_materialization": {
+    "approval_evidence_ref": "governance/test/stage02/STAGE02_CORE01_COHERENT_DESIGN_CONTRACT_APPROVAL_EVIDENCE.yaml",
+    "approved_design_unit_count": 25,
+    "canonical_owner_ref": "00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml",
+    "effective_functional_gap_count": 0,
+    "external_authority_resolution_claimed": false,
+    "raw_source_mutated": false,
+    "validated_product_successor_signature_count": 45,
+    "work_unit_uid": "WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-002"
+  },
+  "effective_functional_gap_total": 0,
   "execution_profile_mandatory_output_subset": [
     "CHANGE_IMPACT_MAP",
     "CLASSIFICATION_RULESET",
@@ -29,11 +40,10 @@
   "materialized_structural_contract_validation": "PASS",
   "normative_authority": false,
   "notes": [
-    "Fresh functional scan is executed again from immutable Stage-01 raw authority using the exact scanner implementation extracted from the first-run harness.",
-    "Prior Stage-02 result counts are not used as scan input; they are regression context only.",
-    "The 7 in-scope missing structural artifact blockers are counted as eliminated only because the current Stage-02 product root passed its source-bounded validator before this reexecution.",
-    "Only the current page-scope external-authority union is preserved unresolved; no external authority was inferred or auto-filled.",
-    "A partial page-scope replay cannot grant whole-stage exit credit."
+    "Raw discovery remains 45 because immutable Stage-1 Raw Source is preserved by design.",
+    "Exactly 45 CORE-01 signatures are freshly reconciled against the approved canonical product-contract successor.",
+    "CORE-01 effective functional gaps are zero; whole Stage-02 remains BLOCKED only because ASSET-01 is outside this work unit and not yet executed.",
+    "All seven external Authority references remain unresolved and receive zero resolution credit."
   ],
   "official_stage_output_denominator": [
     "ASYNC_PROVIDER_CONTRACT",
@@ -61,6 +71,7 @@
       "blueprint_uid": "V218-REPLAY-BP-CORE-01-PAGE-BASE",
       "closure_blocker_count": 0,
       "closure_blockers": [],
+      "effective_functional_gap_count": 0,
       "function_admission_scorecard": "NOT_APPLICABLE_NO_AUTO_OR_AI_PROPOSED_FUNCTION_CREATED_BY_THIS_REEXECUTION",
       "functional_chain_fresh_scan": {
         "functional_completion": false,
@@ -450,8 +461,10 @@
           "stages": 5
         }
       },
+      "functional_completion_effective": true,
       "materialized_structural_contract_validation": "PASS",
-      "unresolved_external_authority_ref_count": 7
+      "unresolved_external_authority_ref_count": 7,
+      "validated_product_successor_signature_count": 45
     }
   },
   "physical_stage2_product_artifact_root_present": true,
@@ -511,14 +524,14 @@
   ],
   "prior_stage2_counts_used_as_scan_input": false,
   "prior_stage2_results_used": false,
-  "reexecution_cycle": "R1",
+  "reexecution_cycle": "CORE01_DESIGN_CONTRACT_REEXECUTION_R1",
   "remaining_pages": [
     "ASSET-01"
   ],
   "result": "BLOCKED",
   "schema_version": 2,
   "scope_mode": "EXACT_PAGE_SCOPE_ONLY",
-  "source_head_sha": "5ca0912ff5b3fb9cb868be918bfe939723958b0a",
+  "source_head_sha": "0e7ed1141352176660f3d0efd30df89e87f7b85f",
   "stage_entry_gate": "PASS",
   "stage_exit_allowed": false,
   "stage_name": "PAGE_FUNCTIONAL_CONTRACT",
@@ -527,6 +540,7 @@
   "target_pages": [
     "CORE-01"
   ],
-  "test_mode": "FRESH_REEXECUTION_FROM_IMMUTABLE_STAGE1_INPUTS_WITH_VALIDATED_STAGE2_OWNING_LAYER_REMEDIATION",
+  "test_mode": "FRESH_REEXECUTION_FROM_IMMUTABLE_STAGE1_INPUTS_WITH_APPROVED_CORE01_DESIGN_CONTRACT_SUCCESSOR",
+  "validated_product_successor_signature_count": 45,
   "website_construction_allowed": false
 }
