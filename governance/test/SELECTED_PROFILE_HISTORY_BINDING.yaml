@@ -21,28 +21,24 @@ scope:
   CORE-01:
     expected_result: PASS
     artifacts:
-    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
-      creation_governance_overlay: v2.1.8
-    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
-      creation_governance_overlay: v2.1.9
-    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
-      creation_governance_overlay: v2.1.10
-    profile_step_uid: STAGE-01
-  ASSET-01:
-    expected_result: PASS
-    artifacts:
-    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml
-      creation_governance_overlay: v2.1.8
-    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT/ASSET-01/VISUAL_BASE_BLUEPRINT.yaml
-      creation_governance_overlay: v2.1.9
-    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING/ASSET-01/BLUEPRINT_BINDING_MANIFEST.yaml
-      creation_governance_overlay: v2.1.10
+    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_005/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
+      creation_governance_overlay: v2.2.7
+    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_005/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
+      creation_governance_overlay: v2.2.7
+    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_005/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
+      creation_governance_overlay: v2.2.7
     profile_step_uid: STAGE-01
 binding_rules:
-- Profile step identities in this artifact are selected-profile-local historical evidence
-  only.
+- Profile step identities in this artifact are selected-profile-local historical evidence only.
 - This artifact MUST NOT project, select, or override Current Governance identity.
 - Current Governance MUST resolve independently through governance/specifications/REGISTRY.yaml.
 - Historical artifact governance_overlay values are creation provenance only.
-- Historical artifact bytes and hashes MUST NOT be rewritten merely because Current
-  Governance changes.
+- Historical artifact bytes and hashes MUST NOT be rewritten merely because Current Governance changes.
+current_scope_binding:
+  run_uid: FRESH-RUN-005
+  page_scope:
+  - CORE-01
+  excluded_page_scope:
+  - ASSET-01
+  prior_product_artifact_reuse: false
+  binding_reason: FRESH_STAGE01_REPLAY_CURRENT_SCOPE

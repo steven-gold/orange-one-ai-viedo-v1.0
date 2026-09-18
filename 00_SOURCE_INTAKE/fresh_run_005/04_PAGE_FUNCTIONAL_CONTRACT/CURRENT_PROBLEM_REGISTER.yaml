@@ -1,9 +1,12 @@
 schema_version: 1
-artifact_type: STAGE02_FRESH_DESIGN_REMEDIATION_INTAKE
-governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+artifact_type: CURRENT_PROBLEM_REGISTER
 run_uid: FRESH-RUN-005
-page_uid: CORE-01
-problem_count: 45
+stage_uid: STAGE-02
+target_pages:
+- CORE-01
+fresh_physical_problem_count: 45
+open_problem_count: 45
+resolved_problem_count: 0
 problems:
 - problem_uid: STAGE02-PROBLEM-02BEC4084559
   page_uid: CORE-01
@@ -410,6 +413,3 @@ problems:
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
   status: OPEN_FRESH_CURRENT_RUN
   resolution_credit: 0
-candidate_reuse_from_prior_run: false
-prior_materialized_contract_reuse: false
-next_action: BUILD_FRESH_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS

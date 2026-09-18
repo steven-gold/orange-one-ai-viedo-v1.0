@@ -18,7 +18,7 @@ selected_execution_profile_state:
   active_attempt_state_key: stage02_active_attempt
 execution:
   branch: rebuild-v2.1.1
-  run_uid: FRESH-RUN-004
+  run_uid: FRESH-RUN-005
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
@@ -36,6 +36,8 @@ execution:
     remaining_page_uids: []
     stage_scope_complete: true
     current_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+    prior_results_authoritative_for_current_governance: false
+    revalidation_required_under_current_governance: false
   website_construction_allowed: false
   deployment_allowed: false
 full_lifecycle_governance_system_test:
@@ -271,8 +273,8 @@ previous_closed_work_unit:
     product_stage_credit: 0
 resume_control:
   current_resume_point: FRESH_CORE01_STAGE2_DESIGN_REMEDIATION_REQUIRED
-  current_work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-001
-  current_owner: 00_SOURCE_INTAKE/fresh_run_004/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002
+  current_owner: 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
   exact_next_action: BUILD_FRESH_CORE01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS
@@ -282,7 +284,7 @@ governance_revision_transition:
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: true
+  fresh_revalidation_required: false
   fresh_revalidation_scope: AFFECTED_PRODUCT_SCOPE_AND_REUSABLE_POLICY_CONSUMERS
   mother_machine_revalidation_complete: true
   mother_machine_revalidation_run_id: 35321233970
@@ -296,6 +298,11 @@ governance_revision_transition:
   website_construction_remains_blocked: true
   deployment_remains_blocked: true
   execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  current_product_attempt_uid: STAGE02-FRESH-20260919-CORE01-002
+  current_product_attempt_run_uid: FRESH-RUN-005
+  current_product_attempt_workflow_run_id: 35392016061
+  current_product_attempt_artifact_id: 10565353789
+  current_product_attempt_artifact_sha256: 1b9947bc1f701f6e108f097246170e564dae5466d5f1c8b98d50e316be75cd88
 pending_governance_review:
   review_item_uid: REV-GOV-001
   review_type: PREFORMAL_GOVERNANCE_REVIEW
@@ -325,7 +332,7 @@ pending_governance_review:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
 current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-CLEAR-STAGE01-STAGE02-RERUN-CORE01-R1
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-RERUN-CORE01-STAGE01-STAGE02-R2
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -400,23 +407,30 @@ v227_promotion_consumer_sync_repair:
   product_stage_credit: 0
   status: DERIVED_CONSUMER_SYNC_REPAIRED_FULL_LINE_REVERIFY_REQUIRED
 stage02_active_attempt:
-  attempt_uid: STAGE02-FRESH-20260919-CORE01-001
-  run_uid: FRESH-RUN-004
+  attempt_uid: STAGE02-FRESH-20260919-CORE01-002
+  run_uid: FRESH-RUN-005
   frozen_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
-  source_execution_sha: 6cc8b8646620be017d7d6b0dc0ccac8f725f7a19
+  source_execution_sha: dbb19ee6d59dc4ca5c5d210fe3ffdcfb49def304
   target_pages:
   - CORE-01
   fresh_functional_gap_total: 45
   fresh_closure_blocker_total: 0
   product_blocker_credit: 0
   prior_results_used: false
+  active_evidence_present: true
+  active_findings_present: true
+  fresh_revalidation_required: false
+  closure_credit_under_current_governance: true
+  source_workflow_run_id: 35392016061
+  source_artifact_id: 10565353789
+  source_artifact_sha256: 1b9947bc1f701f6e108f097246170e564dae5466d5f1c8b98d50e316be75cd88
 work_unit_resolution_gate:
-  resolution_uid: WUR-STAGE02-CORE01-FRESH-20260919-001
+  resolution_uid: WUR-STAGE02-CORE01-FRESH-20260919-002
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
   requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  resolved_work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-001
-  authorization_uid: USR-DIRECTIVE-20260919-CLEAR-STAGE01-STAGE02-RERUN-CORE01-R1
+  resolved_work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002
+  authorization_uid: USR-DIRECTIVE-20260919-RERUN-CORE01-STAGE01-STAGE02-R2
   page_scope:
   - CORE-01
   excluded_page_scope:
@@ -424,14 +438,14 @@ work_unit_resolution_gate:
   source_problem_denominator: 45
   source_closure_blocker_denominator: 0
 active_work_unit:
-  work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-001
+  work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002
   canonical_name: CORE01_FRESH_FROM_ZERO_FUNCTIONAL_CONTRACT_REMEDIATION
   primary_task_layer: PRODUCT_STAGE_EXECUTION
   scope:
   - CORE-01
-  canonical_owner: 00_SOURCE_INTAKE/fresh_run_004/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  canonical_owner: 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   current_status: DESIGN_CONTRACT_REMEDIATION_REQUIRED
-  source_attempt_uid: STAGE02-FRESH-20260919-CORE01-001
+  source_attempt_uid: STAGE02-FRESH-20260919-CORE01-002
   source_problem_denominator: 45
   source_closure_blocker_denominator: 0
   product_blocker_credit: 0
@@ -440,3 +454,15 @@ active_work_unit:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
+fresh_replay_provenance:
+  run_uid: FRESH-RUN-005
+  page_scope:
+  - CORE-01
+  workflow_run_id: 35392016061
+  source_execution_sha: dbb19ee6d59dc4ca5c5d210fe3ffdcfb49def304
+  evidence_artifact_id: 10565353789
+  evidence_artifact_sha256: 1b9947bc1f701f6e108f097246170e564dae5466d5f1c8b98d50e316be75cd88
+  prior_stage01_stage02_product_outputs_reused: false
+  asset01_generated_data_present: false
+  product_blocker_credit: 0
+  status: CURRENT_FRESH_STAGE01_STAGE02_EXECUTION_EVIDENCE_BOUND
