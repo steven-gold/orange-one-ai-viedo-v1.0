@@ -4,14 +4,14 @@ on:
   push:
     branches: [rebuild-v2.1.1]
     paths:
-      - 'governance/test/spec_change_authorizations/USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R3.yaml'
+      - 'governance/test/spec_change_authorizations/USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R4.yaml'
 
 permissions:
   contents: write
 
 jobs:
   materialize-authorized-successor:
-    if: "${{ github.event.head_commit.message == 'chore(governance): authorize design remediation routing successor R3' }}"
+    if: "${{ github.event.head_commit.message == 'chore(governance): authorize design remediation routing successor R4' }}"
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
@@ -28,9 +28,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -f governance/test/spec_change_authorizations/USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R3.yaml
+          test -f governance/test/spec_change_authorizations/USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R4.yaml
           grep -q 'GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING' governance/specifications/REGISTRY.yaml
           test -f .github/governance-maintenance/materialize_design_remediation_routing_successor.py
+      - name: Static-compile one-time successor helper
+        run: python -m py_compile .github/governance-maintenance/materialize_design_remediation_routing_successor.py
       - name: Materialize authorized successor and targeted validation
         run: python .github/governance-maintenance/materialize_design_remediation_routing_successor.py
       - name: Verify transaction hygiene
@@ -50,6 +52,6 @@ jobs:
           git config user.email 'proorangeone@gmail.com'
           git add -A
           git commit -m "feat(governance): promote design remediation routing hardening" \
-            -m "Spec-Change-Authorization: USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R3" \
+            -m "Spec-Change-Authorization: USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R4" \
             -m "Spec-Change-Scope: MOTHER_DESIGN_REMEDIATION_ROUTING_HARDENING"
           git push origin HEAD:rebuild-v2.1.1
