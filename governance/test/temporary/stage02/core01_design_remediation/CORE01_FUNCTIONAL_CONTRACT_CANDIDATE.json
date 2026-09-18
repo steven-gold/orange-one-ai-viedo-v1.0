@@ -1,0 +1,2025 @@
+{
+  "schema_version": 1,
+  "layer_classification": "RUN_STATE",
+  "normative_authority": false,
+  "test_candidate_only": true,
+  "current_governance_uid": "GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING",
+  "source_head_sha": "1bc5eada7e7fad398b03fa348131a403b7ef2266",
+  "work_unit_uid": "WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001",
+  "page_uid": "CORE-01",
+  "user_directive": "KEEP_DESIGN_REMEDIATION_IN_TEMPORARY_TEST_RECORDS_UNTIL_FULL_TEST_CYCLE_COMPLETES_THEN_REVIEW_MOTHER_GOVERNANCE_ONCE",
+  "authority_safety": {
+    "current_specification_mutated": false,
+    "mother_governance_mutated": false,
+    "raw_source_mutated": false,
+    "r5_r6_r8_mutated": false,
+    "candidate_is_product_authority": false,
+    "candidate_may_materialize": false,
+    "product_blocker_reduction_credit": 0
+  },
+  "sources": {
+    "current_problem_register": "00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml",
+    "remediability_classification": "governance/test/stage02/STAGE02_FUNCTIONAL_REMEDIABILITY_CLASSIFICATION_R2.yaml",
+    "authority_request_r5": "governance/test/stage02/STAGE02_PRODUCT_DESIGN_AUTHORITY_REQUEST_R5.yaml",
+    "core_review_r8": "governance/test/stage02/STAGE02_CORE01_PRODUCT_AUTHORITY_REVIEW_R8.yaml",
+    "current_raw_authority_capture": "00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml",
+    "current_raw_authority_sha256": "55263928a98956d8376ca1e9d0b92647f61154f62cd2ab3439a3c965a404b273"
+  },
+  "artifact_uid": "TEMP-STAGE02-CORE01-FUNCTIONAL-CONTRACT-CANDIDATE",
+  "artifact_type": "TEMPORARY_NON_NORMATIVE_CORE01_FUNCTIONAL_CONTRACT_CANDIDATE",
+  "purpose": "COMPLETE_REVIEWABLE_DESIGN_CANDIDATE_FOR_THE_45_CURRENT_LOCAL_CORE01_FUNCTIONAL_GAPS_BEFORE_ANY_AUTHORITY_PROMOTION",
+  "denominator": {
+    "source_blockers": 45,
+    "unique_design_units": 25,
+    "audit_binding_units": 4,
+    "payload_schema_units": 16,
+    "transition_units": 5,
+    "covered_blockers": 45,
+    "uncovered_blockers": 0,
+    "duplicate_blocker_coverage": 0
+  },
+  "design_principles": [
+    "REUSE_EXISTING_ACTION_PORT_GATE_PERMISSION_EVENT_ERROR_STAGE_AND_OBJECT_IDENTITIES_WHERE_PRESENT",
+    "DO_NOT_CREATE_SECOND_RUNTIME_API_PROVIDER_OR_DATA_OWNER",
+    "USE_REFERENCE_BASED_PAYLOADS_FOR_GOVERNED_LINEAGE_INSTEAD_OF_COPYING_AUTHORITY_CONTENT",
+    "KEEP_PROVIDER_MODEL_ROUTING_OUTSIDE_CORE01",
+    "LOCK_REQUESTS_CREATE_REVIEW_REQUESTS_ONLY_AND_NEVER_FABRICATE_REVIEWER_OR_EVIDENCE",
+    "TRANSITION_FAILURE_PRESERVES_SOURCE_STAGE_AND_REQUIRES_GATE_REVALIDATION_BEFORE_RETRY",
+    "ALL_VALUES_IN_THIS_FILE_ARE_DESIGN_PROPOSALS_NOT_CURRENT_AUTHORITY"
+  ],
+  "units": [
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-BLUEPRINT-CREATE",
+      "page_uid": "CORE-01",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-9BBABB28DD787D16"
+      ],
+      "missing_fields_or_relations": [
+        "registered port has no explicit audit/event UID in state_event"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+        "label": "Create Blueprint",
+        "effect_type": "BLUEPRINT_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-BLUEPRINT-CREATE",
+        "permission_uid": "CORE_BLUEPRINT_WRITE",
+        "success_contract": "createBlueprint returns exact BlueprintVersion ref",
+        "error_uid": "CORE-01-ERR-BLUEPRINT-001",
+        "state_effect": "Blueprint draft created",
+        "port_uid": "CORE-01-PORT-BLUEPRINT-CREATE",
+        "operation": "createBlueprint",
+        "method_path": "POST /v1/topics/{id}/blueprints",
+        "state_event": "READY_FOR_BLUEPRINT→BLUEPRINT_DRAFT",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "AUDIT_EVENT_BINDING_AND_EVENT_REGISTRY_ENTRY",
+        "event_uid": "CORE-01-EVT-BLUEPRINT-CREATED",
+        "event": "blueprint.created",
+        "port_uid": "CORE-01-PORT-BLUEPRINT-CREATE",
+        "bind_when": "CREATE_BLUEPRINT_SUCCEEDS_AND_EXACT_BLUEPRINT_VERSION_EXISTS",
+        "action_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+        "exact_binding_shape": {
+          "action_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+          "port_uid": "CORE-01-PORT-BLUEPRINT-CREATE",
+          "audit_event_uid": "CORE-01-EVT-BLUEPRINT-CREATED"
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-PROJECT-CREATE",
+      "page_uid": "CORE-01",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "target_uid": "CORE-01-ACT-PROJECT-CREATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-0F2F59760B078E8B"
+      ],
+      "missing_fields_or_relations": [
+        "registered port has no explicit audit/event UID in state_event"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-PROJECT-CREATE",
+        "label": "Create Project Draft",
+        "effect_type": "PROJECT_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-PROJECT-DRAFT",
+        "permission_uid": "CORE_PROJECT_WRITE",
+        "success_contract": "createProjectDraft returns exact ProjectDraftVersion ref",
+        "error_uid": "CORE-01-ERR-CONTEXT-001",
+        "state_effect": "Project draft created",
+        "port_uid": "CORE-01-PORT-PROJECT-CREATE",
+        "operation": "createProjectDraft",
+        "method_path": "POST /v1/projects/drafts",
+        "state_event": "NONE | event none",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "AUDIT_EVENT_BINDING_AND_EVENT_REGISTRY_ENTRY",
+        "event_uid": "CORE-01-EVT-PROJECT-DRAFT-CREATED",
+        "event": "project.draft.created",
+        "port_uid": "CORE-01-PORT-PROJECT-CREATE",
+        "bind_when": "CREATE_PROJECT_DRAFT_SUCCEEDS_AND_EXACT_PROJECT_DRAFT_VERSION_EXISTS",
+        "action_uid": "CORE-01-ACT-PROJECT-CREATE",
+        "exact_binding_shape": {
+          "action_uid": "CORE-01-ACT-PROJECT-CREATE",
+          "port_uid": "CORE-01-PORT-PROJECT-CREATE",
+          "audit_event_uid": "CORE-01-EVT-PROJECT-DRAFT-CREATED"
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-PROJECT-VALIDATE",
+      "page_uid": "CORE-01",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "target_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-4DF0E6BD9173770E"
+      ],
+      "missing_fields_or_relations": [
+        "registered port has no explicit audit/event UID in state_event"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+        "label": "Validate Project Draft",
+        "effect_type": "PROJECT_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-PROJECT-DRAFT",
+        "permission_uid": "CORE_PROJECT_WRITE",
+        "success_contract": "validateProjectDraft completes without inventing fields",
+        "error_uid": "CORE-01-ERR-CONTEXT-001",
+        "state_effect": "Project draft validation refreshed",
+        "port_uid": "CORE-01-PORT-PROJECT-VALIDATE",
+        "operation": "validateProjectDraft",
+        "method_path": "POST /v1/projects/drafts/{projectVersionId}/validate",
+        "state_event": "DRAFT→DRAFT",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "AUDIT_EVENT_BINDING_AND_EVENT_REGISTRY_ENTRY",
+        "event_uid": "CORE-01-EVT-PROJECT-DRAFT-VALIDATED",
+        "event": "project.draft.validated",
+        "port_uid": "CORE-01-PORT-PROJECT-VALIDATE",
+        "bind_when": "VALIDATE_PROJECT_DRAFT_SUCCEEDS_FOR_EXACT_PROJECT_VERSION",
+        "action_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+        "exact_binding_shape": {
+          "action_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+          "port_uid": "CORE-01-PORT-PROJECT-VALIDATE",
+          "audit_event_uid": "CORE-01-EVT-PROJECT-DRAFT-VALIDATED"
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-AUDIT-TOPIC-CREATE",
+      "page_uid": "CORE-01",
+      "category": "AUDIT_EVENT_NODE_MISSING",
+      "target_uid": "CORE-01-ACT-TOPIC-CREATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-EE2102A472BE01C9"
+      ],
+      "missing_fields_or_relations": [
+        "registered port has no explicit audit/event UID in state_event"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-TOPIC-CREATE",
+        "label": "Create Topic",
+        "effect_type": "TOPIC_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-TOPIC-CREATE",
+        "permission_uid": "CORE_TOPIC_WRITE",
+        "success_contract": "createTopic only from valid Project/Topic lineage; returns exact Topic ref",
+        "error_uid": "CORE-01-ERR-TOPIC-LINEAGE-001",
+        "state_effect": "Topic created",
+        "port_uid": "CORE-01-PORT-TOPIC-CREATE",
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "AUDIT_EVENT_BINDING_AND_EVENT_REGISTRY_ENTRY",
+        "event_uid": "CORE-01-EVT-TOPIC-CREATED",
+        "event": "topic.created",
+        "port_uid": "CORE-01-PORT-TOPIC-CREATE",
+        "bind_when": "CREATE_TOPIC_SUCCEEDS_FROM_VALID_TOPIC_CONTRACT_LINEAGE",
+        "action_uid": "CORE-01-ACT-TOPIC-CREATE",
+        "exact_binding_shape": {
+          "action_uid": "CORE-01-ACT-TOPIC-CREATE",
+          "port_uid": "CORE-01-PORT-TOPIC-CREATE",
+          "audit_event_uid": "CORE-01-EVT-TOPIC-CREATED"
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-BLUEPRINT-APPROVE",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-APPROVE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-179E8C2969A29494"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-BLUEPRINT-APPROVE",
+        "label": "Approve Blueprint",
+        "effect_type": "BLUEPRINT_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-BLUEPRINT-APPROVE",
+        "permission_uid": "CORE_BLUEPRINT_APPROVE",
+        "success_contract": "approveBlueprint transitions exact version to child-review readiness",
+        "error_uid": "CORE-01-ERR-BLUEPRINT-001",
+        "state_effect": "Blueprint child-review ready",
+        "port_uid": "CORE-01-PORT-BLUEPRINT-APPROVE",
+        "operation": "approveBlueprint",
+        "method_path": "POST /v1/blueprints/{id}/approve",
+        "state_event": "BLUEPRINT_REVIEW→READY_FOR_CHILD_REVIEW | blueprint.approved",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-BLUEPRINT-APPROVE",
+        "port_uid": "CORE-01-PORT-BLUEPRINT-APPROVE",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-BLUEPRINT-APPROVE",
+          "path_params": [
+            "id"
+          ],
+          "required": [
+            "expected_blueprint_version",
+            "expected_hash",
+            "approval_evidence_refs"
+          ],
+          "optional": [],
+          "fields": {
+            "expected_blueprint_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "expected_hash": {
+              "type": "string",
+              "min_length": 1
+            },
+            "approval_evidence_refs": {
+              "type": "array",
+              "items": "CanonicalEvidenceRef",
+              "min_items": 1
+            }
+          },
+          "server_derived": [
+            "approved_version_ref",
+            "child_review_readiness"
+          ],
+          "rationale": "Approval acts on exact reviewed version and carries evidence; resulting readiness remains runtime-owned."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-BLUEPRINT-CREATE",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-6141B9A73894667C"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+        "label": "Create Blueprint",
+        "effect_type": "BLUEPRINT_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-BLUEPRINT-CREATE",
+        "permission_uid": "CORE_BLUEPRINT_WRITE",
+        "success_contract": "createBlueprint returns exact BlueprintVersion ref",
+        "error_uid": "CORE-01-ERR-BLUEPRINT-001",
+        "state_effect": "Blueprint draft created",
+        "port_uid": "CORE-01-PORT-BLUEPRINT-CREATE",
+        "operation": "createBlueprint",
+        "method_path": "POST /v1/topics/{id}/blueprints",
+        "state_event": "READY_FOR_BLUEPRINT→BLUEPRINT_DRAFT",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-BLUEPRINT-CREATE",
+        "port_uid": "CORE-01-PORT-BLUEPRINT-CREATE",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-BLUEPRINT-CREATE",
+          "path_params": [
+            "id"
+          ],
+          "required": [
+            "project_ref",
+            "topic_ref",
+            "topic_production_scope_ref",
+            "source_candidate_ref"
+          ],
+          "optional": [
+            "canon_refs",
+            "dna_refs"
+          ],
+          "fields": {
+            "project_ref": {
+              "type": "ProjectRef"
+            },
+            "topic_ref": {
+              "type": "TopicRef"
+            },
+            "topic_production_scope_ref": {
+              "type": "TopicProductionScopeRef"
+            },
+            "source_candidate_ref": {
+              "type": "CandidateRef"
+            },
+            "canon_refs": {
+              "type": "array",
+              "items": "ProjectCanonComponentRef",
+              "default": []
+            },
+            "dna_refs": {
+              "type": "array",
+              "items": "DNAVersionRef",
+              "default": []
+            }
+          },
+          "server_derived": [
+            "blueprint_id",
+            "blueprint_version",
+            "blueprint_hash",
+            "blueprint_state"
+          ],
+          "rationale": "Blueprint draft is derived from exact Topic/Project lineage and confirmed candidate context; no provider-specific fields."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-BLUEPRINT-VALIDATE",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-BLUEPRINT-VALIDATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-408FEDF4D680B48D"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-BLUEPRINT-VALIDATE",
+        "label": "Validate Blueprint",
+        "effect_type": "BLUEPRINT_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-BLUEPRINT-VALIDATE",
+        "permission_uid": "CORE_BLUEPRINT_REVIEW",
+        "success_contract": "validateBlueprint transitions exact version to review",
+        "error_uid": "CORE-01-ERR-BLUEPRINT-001",
+        "state_effect": "Blueprint review",
+        "port_uid": "CORE-01-PORT-BLUEPRINT-VALIDATE",
+        "operation": "validateBlueprint",
+        "method_path": "POST /v1/blueprints/{id}/validate",
+        "state_event": "BLUEPRINT_DRAFT→BLUEPRINT_REVIEW | blueprint.validated",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-BLUEPRINT-VALIDATE",
+        "port_uid": "CORE-01-PORT-BLUEPRINT-VALIDATE",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-BLUEPRINT-VALIDATE",
+          "path_params": [
+            "id"
+          ],
+          "required": [
+            "expected_blueprint_version",
+            "expected_hash"
+          ],
+          "optional": [],
+          "fields": {
+            "expected_blueprint_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "expected_hash": {
+              "type": "string",
+              "min_length": 1
+            }
+          },
+          "server_derived": [
+            "validation_result",
+            "review_state"
+          ],
+          "rationale": "Validation is identity/concurrency guarded and does not alter blueprint content."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CANDIDATE-ACCEPT",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-CANDIDATE-ACCEPT",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-AE5B957EC0F79FED"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-CANDIDATE-ACCEPT",
+        "label": "Confirm Candidate",
+        "effect_type": "CANDIDATE_DECISION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-CANDIDATE-DECIDE",
+        "permission_uid": "CORE_CANDIDATE_DECIDE",
+        "success_contract": "Record ACCEPTED candidate decision with reason/evidence",
+        "error_uid": "CORE-01-ERR-DECISION-001",
+        "state_effect": "Candidate accepted",
+        "port_uid": "CORE-01-PORT-CANDIDATE-DECIDE",
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-CANDIDATE-ACCEPT",
+        "port_uid": "CORE-01-PORT-CANDIDATE-DECIDE",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-CANDIDATE-DECIDE",
+          "path_params": [
+            "id"
+          ],
+          "required": [
+            "decision",
+            "reason",
+            "evidence_refs",
+            "expected_candidate_hash"
+          ],
+          "optional": [],
+          "fields": {
+            "decision": {
+              "type": "enum",
+              "values": [
+                "ACCEPTED"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "min_length": 1
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": "CanonicalEvidenceRef"
+            },
+            "expected_candidate_hash": {
+              "type": "string",
+              "min_length": 1
+            }
+          },
+          "server_derived": [
+            "decision_id",
+            "decision_timestamp"
+          ],
+          "rationale": "Matches Current HumanDecision content and existing shared decision port; RETURN remains the existing sibling action using the same port."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CANDIDATE-CREATE",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-CANDIDATE-CREATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-C15DE740456A08DC"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-CANDIDATE-CREATE",
+        "label": "Create Candidate",
+        "effect_type": "CANDIDATE_CREATE",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-CANDIDATE-CREATE",
+        "permission_uid": "CORE_CANDIDATE_CREATE",
+        "success_contract": "Create immutable candidate from confirmed structured human decision",
+        "error_uid": "CORE-01-ERR-CANDIDATE-001",
+        "state_effect": "Candidate ready",
+        "port_uid": "CORE-01-PORT-CANDIDATE-CREATE",
+        "operation": "createCandidate",
+        "method_path": "POST /v1/candidates",
+        "state_event": "'*→CANDIDATE | candidate.created'",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-CANDIDATE-CREATE",
+        "port_uid": "CORE-01-PORT-CANDIDATE-CREATE",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-CANDIDATE-CREATE",
+          "path_params": [],
+          "required": [
+            "target_ref",
+            "human_decision_ref",
+            "structured_decision_ref",
+            "source_response_ids",
+            "work_item_uid"
+          ],
+          "optional": [
+            "parent_candidate_ref"
+          ],
+          "fields": {
+            "target_ref": {
+              "type": "CanonicalTargetRef"
+            },
+            "human_decision_ref": {
+              "type": "HumanDecisionRef"
+            },
+            "structured_decision_ref": {
+              "type": "StructuredDecisionRef"
+            },
+            "source_response_ids": {
+              "type": "array",
+              "items": "string",
+              "min_items": 1
+            },
+            "work_item_uid": {
+              "type": "string",
+              "min_length": 1
+            },
+            "parent_candidate_ref": {
+              "type": "CandidateRef",
+              "nullable": true
+            }
+          },
+          "server_derived": [
+            "candidate_id",
+            "candidate_version",
+            "candidate_hash",
+            "immutable_created_at"
+          ],
+          "rationale": "Candidate must be created only from confirmed human decision + structured restatement + exact source refs/version lineage."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CHILD-LOCK-REQUEST",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-CHILD-LOCK-REQUEST",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-7B583BC4163ECE78"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-CHILD-LOCK-REQUEST",
+        "label": "Request Child Lock",
+        "effect_type": "LOCK_REQUEST",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-CHILD-LOCK",
+        "permission_uid": "CORE_LOCK_REQUEST",
+        "success_contract": "requestChildLock review request only; no fabricated evidence/reviewer",
+        "error_uid": "CORE-01-ERR-LOCK-CONTRACT-001",
+        "state_effect": "Child lock review pending",
+        "port_uid": "CORE-01-PORT-CHILD-LOCK",
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-CHILD-LOCK-REQUEST",
+        "port_uid": "CORE-01-PORT-CHILD-LOCK",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-CHILD-LOCK-REQUEST",
+          "path_params": [],
+          "required": [
+            "blueprint_version_ref",
+            "topic_ref",
+            "expected_hash",
+            "review_contract_ref",
+            "evidence_refs"
+          ],
+          "optional": [],
+          "fields": {
+            "blueprint_version_ref": {
+              "type": "BlueprintVersionRef"
+            },
+            "topic_ref": {
+              "type": "TopicRef"
+            },
+            "expected_hash": {
+              "type": "string",
+              "min_length": 1
+            },
+            "review_contract_ref": {
+              "type": "LockReviewContractRef",
+              "rule": "MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION"
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": "CanonicalEvidenceRef"
+            }
+          },
+          "server_derived": [
+            "lock_review_id",
+            "reviewer_path",
+            "review_status"
+          ],
+          "rationale": "Child lock is a review request only; it cannot fabricate reviewer path, evidence, exception, or final lock."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-CORE-REVIEW-SUBMIT",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-CORE-REVIEW-SUBMIT",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-0311698938BE34E0"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-CORE-REVIEW-SUBMIT",
+        "label": "Submit Project Core Review",
+        "effect_type": "PROJECT_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-CORE-REVIEW",
+        "permission_uid": "CORE_PROJECT_WRITE",
+        "success_contract": "submitCoreReview with exact ProjectVersion",
+        "error_uid": "CORE-01-ERR-CONTEXT-001",
+        "state_effect": "Project core review pending",
+        "port_uid": "CORE-01-PORT-CORE-REVIEW",
+        "operation": "submitCoreReview",
+        "method_path": "POST /v1/state-commands/projectversion/submitcorereview",
+        "state_event": "CORE_MODELING→CORE_REVIEW | project.core_review_submitted",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-CORE-REVIEW-SUBMIT",
+        "port_uid": "CORE-01-PORT-CORE-REVIEW",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-PROJECT-CORE-REVIEW-SUBMIT",
+          "path_params": [],
+          "required": [
+            "project_version_ref",
+            "criteria_version_ref",
+            "evidence_refs",
+            "expected_hash"
+          ],
+          "optional": [],
+          "fields": {
+            "project_version_ref": {
+              "type": "ProjectVersionRef"
+            },
+            "criteria_version_ref": {
+              "type": "CriteriaVersionRef"
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": "CanonicalEvidenceRef"
+            },
+            "expected_hash": {
+              "type": "string",
+              "min_length": 1
+            }
+          },
+          "server_derived": [
+            "review_request_id",
+            "review_status"
+          ],
+          "rationale": "Current success contract requires exact ProjectVersion; evaluation evidence and approved criteria remain explicit."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-DNA-LOCK-REQUEST",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-DNA-LOCK-REQUEST",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-7BEAAB7254BBF92B"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-DNA-LOCK-REQUEST",
+        "label": "Request DNA Lock",
+        "effect_type": "DNA_LOCK_REQUEST",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-DNA-LOCK",
+        "permission_uid": "CORE_DNA_LOCK",
+        "success_contract": "requestDNALock creates review request only",
+        "error_uid": "CORE-01-ERR-DNA-LOCK-001",
+        "state_effect": "DNA review pending",
+        "port_uid": "CORE-01-PORT-DNA-LOCK",
+        "operation": "requestDNALock",
+        "method_path": "POST /v1/state-commands/dnaversion/requestdnalock",
+        "state_event": "CANDIDATE→REVIEW_REQUIRED | dna.lock.requested",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-DNA-LOCK-REQUEST",
+        "port_uid": "CORE-01-PORT-DNA-LOCK",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-DNA-LOCK-REQUEST",
+          "path_params": [],
+          "required": [
+            "dna_version_ref",
+            "expected_hash",
+            "review_contract_ref",
+            "evidence_refs"
+          ],
+          "optional": [],
+          "fields": {
+            "dna_version_ref": {
+              "type": "DNAVersionRef"
+            },
+            "expected_hash": {
+              "type": "string",
+              "min_length": 1
+            },
+            "review_contract_ref": {
+              "type": "LockReviewContractRef",
+              "rule": "MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION"
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": "CanonicalEvidenceRef"
+            }
+          },
+          "server_derived": [
+            "lock_review_id",
+            "reviewer_path",
+            "review_status"
+          ],
+          "rationale": "Request only; reviewer/evidence routing must resolve through the review contract rather than client-supplied identities."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-MOTHER-LOCK-REQUEST",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-MOTHER-LOCK-REQUEST",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-128169DBC5E997B6"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-MOTHER-LOCK-REQUEST",
+        "label": "Request Project Lock",
+        "effect_type": "LOCK_REQUEST",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-PROJECT-LOCK-READY",
+        "permission_uid": "CORE_LOCK_REQUEST",
+        "success_contract": "requestMotherLock only when review contract resolvable",
+        "error_uid": "CORE-01-ERR-LOCK-CONTRACT-001",
+        "state_effect": "Mother lock review pending",
+        "port_uid": "CORE-01-PORT-MOTHER-LOCK",
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-MOTHER-LOCK-REQUEST",
+        "port_uid": "CORE-01-PORT-MOTHER-LOCK",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-MOTHER-LOCK-REQUEST",
+          "path_params": [],
+          "required": [
+            "project_version_ref",
+            "expected_hash",
+            "review_contract_ref",
+            "evidence_refs"
+          ],
+          "optional": [],
+          "fields": {
+            "project_version_ref": {
+              "type": "ProjectVersionRef"
+            },
+            "expected_hash": {
+              "type": "string",
+              "min_length": 1
+            },
+            "review_contract_ref": {
+              "type": "LockReviewContractRef",
+              "rule": "MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION"
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": "CanonicalEvidenceRef"
+            }
+          },
+          "server_derived": [
+            "lock_review_id",
+            "reviewer_path",
+            "review_status"
+          ],
+          "rationale": "Preserves the existing fail-closed LockReview rule and removes any need to fabricate reviewer/evidence identity."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-PROJECT-CONFIRM",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-PROJECT-CONFIRM",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-143594D494D8B8CF"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-PROJECT-CONFIRM",
+        "label": "Confirm Project Draft",
+        "effect_type": "PROJECT_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-PROJECT-CONFIRM",
+        "permission_uid": "CORE_PROJECT_CONFIRM",
+        "success_contract": "confirmProjectDraft uses exact adopt refs/version; event timing follows runtime authority",
+        "error_uid": "CORE-01-ERR-CONTEXT-001",
+        "state_effect": "Project enters core modeling",
+        "port_uid": "CORE-01-PORT-PROJECT-CONFIRM",
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-PROJECT-CONFIRM",
+        "port_uid": "CORE-01-PORT-PROJECT-CONFIRM",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-PROJECT-DRAFT-CONFIRM",
+          "path_params": [
+            "id"
+          ],
+          "required": [
+            "expected_version",
+            "expected_source_hash",
+            "adopt_refs"
+          ],
+          "optional": [],
+          "fields": {
+            "expected_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "expected_source_hash": {
+              "type": "string",
+              "min_length": 1
+            },
+            "adopt_refs": {
+              "type": "array",
+              "items": "CanonicalAdoptRef",
+              "min_items": 1,
+              "rule": "EXACT_EXISTING_REFS_ONLY"
+            }
+          },
+          "server_derived": [
+            "confirmed_project_version",
+            "confirmation_event_timing"
+          ],
+          "rationale": "Directly follows Current success contract: exact adopt refs/version, with runtime-owned event timing."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-PROJECT-CREATE",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-PROJECT-CREATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-0C9225AF42F0A50C"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-PROJECT-CREATE",
+        "label": "Create Project Draft",
+        "effect_type": "PROJECT_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-PROJECT-DRAFT",
+        "permission_uid": "CORE_PROJECT_WRITE",
+        "success_contract": "createProjectDraft returns exact ProjectDraftVersion ref",
+        "error_uid": "CORE-01-ERR-CONTEXT-001",
+        "state_effect": "Project draft created",
+        "port_uid": "CORE-01-PORT-PROJECT-CREATE",
+        "operation": "createProjectDraft",
+        "method_path": "POST /v1/projects/drafts",
+        "state_event": "NONE | event none",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-PROJECT-CREATE",
+        "port_uid": "CORE-01-PORT-PROJECT-CREATE",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-PROJECT-DRAFT-CREATE",
+          "path_params": [],
+          "required": [
+            "project_name"
+          ],
+          "optional": [
+            "source_refs"
+          ],
+          "fields": {
+            "project_name": {
+              "type": "string",
+              "min_length": 1,
+              "source": "USER_INPUT_TO_PROJECT_DRAFT"
+            },
+            "source_refs": {
+              "type": "array",
+              "items": "CanonicalSourceRef",
+              "default": [],
+              "rule": "REFERENCES_ONLY_NO_INLINE_AUTHORITY_COPY"
+            }
+          },
+          "server_derived": [
+            "project_id",
+            "project_version_id",
+            "status",
+            "source_hash"
+          ],
+          "rationale": "Create a draft, not a confirmed Project. Keep creation payload minimal; IDs/version/status/hash remain runtime-owned."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-PROJECT-VALIDATE",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-D39FD566C23D4583"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+        "label": "Validate Project Draft",
+        "effect_type": "PROJECT_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-PROJECT-DRAFT",
+        "permission_uid": "CORE_PROJECT_WRITE",
+        "success_contract": "validateProjectDraft completes without inventing fields",
+        "error_uid": "CORE-01-ERR-CONTEXT-001",
+        "state_effect": "Project draft validation refreshed",
+        "port_uid": "CORE-01-PORT-PROJECT-VALIDATE",
+        "operation": "validateProjectDraft",
+        "method_path": "POST /v1/projects/drafts/{projectVersionId}/validate",
+        "state_event": "DRAFT→DRAFT",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-PROJECT-VALIDATE",
+        "port_uid": "CORE-01-PORT-PROJECT-VALIDATE",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-PROJECT-DRAFT-VALIDATE",
+          "path_params": [
+            "projectVersionId"
+          ],
+          "required": [
+            "expected_version",
+            "expected_source_hash"
+          ],
+          "optional": [],
+          "fields": {
+            "expected_version": {
+              "type": "integer",
+              "minimum": 1,
+              "role": "OPTIMISTIC_CONCURRENCY_GUARD"
+            },
+            "expected_source_hash": {
+              "type": "string",
+              "min_length": 1,
+              "role": "EXACT_DRAFT_IDENTITY_GUARD"
+            }
+          },
+          "server_derived": [
+            "validation_result",
+            "validation_errors"
+          ],
+          "rationale": "Validation operates on the exact existing ProjectDraftVersion and must not invent or mutate draft fields."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-SEND",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-SEND",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-C17CBED7B4413C8C"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-SEND",
+        "label": "Send Message",
+        "effect_type": "CONVERSATION_WRITE",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-MESSAGE",
+        "permission_uid": "CORE_CONVERSATION",
+        "success_contract": "sendConversationMessage; provider/model resolved by ACPOS shared Router",
+        "error_uid": "CORE-01-ERR-CONVERSATION-001",
+        "state_effect": "Conversation responding",
+        "port_uid": "CORE-01-PORT-MESSAGE-SEND",
+        "operation": "sendConversationMessage",
+        "method_path": "POST /v1/conversations/{conversationId}/messages",
+        "state_event": "Conversation ACTIVE→ACTIVE; Core DRAFT→RUNNING | conversation.message.sent",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-SEND",
+        "port_uid": "CORE-01-PORT-MESSAGE-SEND",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-CONVERSATION-MESSAGE-SEND",
+          "path_params": [
+            "conversationId"
+          ],
+          "required": [
+            "message_text",
+            "work_item_uid",
+            "context_hash"
+          ],
+          "optional": [
+            "attachment_refs",
+            "reference_refs",
+            "mention_refs",
+            "source_message_ref",
+            "instruction_mode"
+          ],
+          "fields": {
+            "message_text": {
+              "type": "string",
+              "min_length": 1
+            },
+            "work_item_uid": {
+              "type": "string",
+              "min_length": 1
+            },
+            "context_hash": {
+              "type": "string",
+              "min_length": 1
+            },
+            "attachment_refs": {
+              "type": "array",
+              "items": "AttachmentRef",
+              "default": []
+            },
+            "reference_refs": {
+              "type": "array",
+              "items": "CanonicalRef",
+              "default": []
+            },
+            "mention_refs": {
+              "type": "array",
+              "items": "MentionTargetRef",
+              "default": []
+            },
+            "source_message_ref": {
+              "type": "ConversationMessageRef",
+              "nullable": true
+            },
+            "instruction_mode": {
+              "type": "enum",
+              "values": [
+                "NORMAL",
+                "CONTINUE",
+                "ANALYZE",
+                "QUOTE"
+              ],
+              "default": "NORMAL"
+            }
+          },
+          "forbidden_fields": [
+            "provider",
+            "model",
+            "api_key"
+          ],
+          "server_derived": [
+            "assigned_ai_set",
+            "provider_route",
+            "model_route",
+            "message_id"
+          ],
+          "rationale": "Composer owns message/reference intent; provider/model selection remains shared Router-owned and read-only to CORE-01."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-STORY-CANDIDATE",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-STORY-CANDIDATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-E571E68A0F0DF4FF"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-STORY-CANDIDATE",
+        "label": "Generate Story Candidate Set",
+        "effect_type": "CANDIDATE_CREATE",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-STORY",
+        "permission_uid": "CORE_STORY_WRITE",
+        "success_contract": "createStoryCandidateSet for current Project only",
+        "error_uid": "CORE-01-ERR-CANDIDATE-001",
+        "state_effect": "Story candidate set created",
+        "port_uid": "CORE-01-PORT-STORY-CANDIDATE",
+        "operation": "createStoryCandidateSet",
+        "method_path": "POST /v1/projects/{projectId}/story-candidate-sets",
+        "state_event": "DRAFT→GENERATING | story.candidate_set.created",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-STORY-CANDIDATE",
+        "port_uid": "CORE-01-PORT-STORY-CANDIDATE",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-STORY-CANDIDATE-SET-CREATE",
+          "path_params": [
+            "projectId"
+          ],
+          "required": [
+            "project_ref",
+            "source_decision_ref",
+            "canon_refs",
+            "context_ref"
+          ],
+          "optional": [],
+          "fields": {
+            "project_ref": {
+              "type": "ProjectRef"
+            },
+            "source_decision_ref": {
+              "type": "StructuredDecisionRef"
+            },
+            "canon_refs": {
+              "type": "array",
+              "items": "ProjectCanonComponentRef"
+            },
+            "context_ref": {
+              "type": "RelevantContextPackageRef"
+            }
+          },
+          "server_derived": [
+            "candidate_set_id",
+            "candidate_refs",
+            "candidate_set_hash"
+          ],
+          "rationale": "Preserves current Project/canon context and keeps generated candidates downstream of a structured decision."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-THREAD-CREATE",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-THREAD-CREATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-F352D083AABD597F"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-THREAD-CREATE",
+        "label": "New Conversation Thread",
+        "effect_type": "CONVERSATION_WRITE",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-THREAD",
+        "permission_uid": "CORE_CONVERSATION",
+        "success_contract": "Create thread bound to current Project/Topic/work item",
+        "error_uid": "CORE-01-ERR-THREAD-001",
+        "state_effect": "New thread current",
+        "port_uid": "CORE-01-PORT-THREAD-CREATE",
+        "operation": "createConversationThread",
+        "method_path": "POST /v1/projects/{projectId}/conversations",
+        "state_event": "NONE→DRAFT | conversation.thread.created",
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-THREAD-CREATE",
+        "port_uid": "CORE-01-PORT-THREAD-CREATE",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-CONVERSATION-THREAD-CREATE",
+          "path_params": [
+            "projectId"
+          ],
+          "required": [
+            "work_item_uid"
+          ],
+          "optional": [
+            "topic_ref",
+            "parent_thread_ref",
+            "source_message_ref"
+          ],
+          "fields": {
+            "work_item_uid": {
+              "type": "string",
+              "min_length": 1,
+              "rule": "CURRENT_MODE_WORK_ITEM_ONLY"
+            },
+            "topic_ref": {
+              "type": "TopicRef",
+              "nullable": true,
+              "rule": "REQUIRED_IN_TOPIC_MODE"
+            },
+            "parent_thread_ref": {
+              "type": "ConversationThreadRef",
+              "nullable": true
+            },
+            "source_message_ref": {
+              "type": "ConversationMessageRef",
+              "nullable": true,
+              "rule": "USED_FOR_BRANCH_RELATION"
+            }
+          },
+          "server_derived": [
+            "thread_id",
+            "history_scope"
+          ],
+          "rationale": "Matches ConversationThread required content and existing branch payload relation without creating a second conversation API."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-PAYLOAD-TOPIC-CREATE",
+      "page_uid": "CORE-01",
+      "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
+      "target_uid": "CORE-01-ACT-TOPIC-CREATE",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-D3236E963AD6818F"
+      ],
+      "missing_fields_or_relations": [
+        "no explicit payload/input contract or schema"
+      ],
+      "current_context": {
+        "action_uid": "CORE-01-ACT-TOPIC-CREATE",
+        "label": "Create Topic",
+        "effect_type": "TOPIC_MUTATION",
+        "owner": "CORE-01",
+        "gate_uid": "CORE-01-GATE-TOPIC-CREATE",
+        "permission_uid": "CORE_TOPIC_WRITE",
+        "success_contract": "createTopic only from valid Project/Topic lineage; returns exact Topic ref",
+        "error_uid": "CORE-01-ERR-TOPIC-LINEAGE-001",
+        "state_effect": "Topic created",
+        "port_uid": "CORE-01-PORT-TOPIC-CREATE",
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": null,
+        "from_stage": null,
+        "to_stage": null,
+        "trigger_event_uid": null
+      },
+      "proposal": {
+        "proposal_kind": "ACTION_PAYLOAD_INPUT_SCHEMA",
+        "action_uid": "CORE-01-ACT-TOPIC-CREATE",
+        "port_uid": "CORE-01-PORT-TOPIC-CREATE",
+        "schema": {
+          "schema_uid": "TEMP-CORE01-SCHEMA-TOPIC-CREATE",
+          "path_params": [
+            "projectId"
+          ],
+          "required": [
+            "topic_draft_contract_ref",
+            "expected_project_version"
+          ],
+          "optional": [
+            "source_candidate_ref"
+          ],
+          "fields": {
+            "topic_draft_contract_ref": {
+              "type": "CanonicalContractRef",
+              "rule": "MUST_RESOLVE_TOPIC_CODE_BOUNDARY_BRIDGE_FROM_VALID_LINEAGE"
+            },
+            "expected_project_version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "source_candidate_ref": {
+              "type": "CandidateRef",
+              "nullable": true
+            }
+          },
+          "server_derived": [
+            "topic_id",
+            "topic_version",
+            "topic_hash",
+            "topic_status"
+          ],
+          "rationale": "CORE-01 must not fabricate topic_code/boundary/bridge. Payload points to a governed Topic draft/contract lineage instead."
+        }
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-01",
+      "page_uid": "CORE-01",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "target_uid": "CORE-01-STTR-01",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-F12DADA9654B86F2",
+        "STAGE02-PROBLEM-CC89B15D982B7B10",
+        "STAGE02-PROBLEM-D2A9FED18BCBEBDD",
+        "STAGE02-PROBLEM-3A68F4A3A8C73B0F",
+        "STAGE02-PROBLEM-FCBD5D0CB12AB0E1"
+      ],
+      "missing_fields_or_relations": [
+        "audit_event_uid",
+        "failure_state",
+        "illegal_transition_tests",
+        "mutation_owner",
+        "recovery"
+      ],
+      "current_context": {
+        "action_uid": null,
+        "label": null,
+        "effect_type": null,
+        "owner": null,
+        "gate_uid": "CORE-01-GATE-WORK-ITEM",
+        "permission_uid": null,
+        "success_contract": null,
+        "error_uid": null,
+        "state_effect": null,
+        "port_uid": null,
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": "CORE-01-STTR-01",
+        "from_stage": "CORE-01-STAGE-01-CONTEXT",
+        "to_stage": "CORE-01-STAGE-02-CONVERSE",
+        "trigger_event_uid": "CORE-01-EVT-CONTEXT-RESOLVED"
+      },
+      "proposal": {
+        "proposal_kind": "STATE_TRANSITION_LEDGER_ENRICHMENT",
+        "transition_uid": "CORE-01-STTR-01",
+        "from_stage": "CORE-01-STAGE-01-CONTEXT",
+        "to_stage": "CORE-01-STAGE-02-CONVERSE",
+        "trigger_event_uid": "CORE-01-EVT-CONTEXT-RESOLVED",
+        "gate_uid": "CORE-01-GATE-WORK-ITEM",
+        "mutation_owner": "CORE-01",
+        "failure_state": "CORE-01-ST-ERROR",
+        "recovery": {
+          "retain_stage": "CORE-01-STAGE-01-CONTEXT",
+          "action": "RESET_TO_EXACT_PROJECT_CONTEXT_AND_RERESOLVE_WORK_ITEM_THREAD_AND_AI_ROUTE",
+          "retry_condition": "CORE-01-GATE-WORK-ITEM_PASS_AND_CORE-01-EVT-CONTEXT-RESOLVED"
+        },
+        "audit_event_uid": "CORE-01-EVT-CONTEXT-RESOLVED",
+        "illegal_transition_tests": [
+          {
+            "test_uid": "TEMP-CORE01-STTR-01-ILLEGAL-WRONG-FROM",
+            "reject_when": "current_stage != CORE-01-STAGE-01-CONTEXT"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-01-ILLEGAL-TRIGGER",
+            "reject_when": "trigger_event_uid != CORE-01-EVT-CONTEXT-RESOLVED"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-01-ILLEGAL-GATE",
+            "reject_when": "CORE-01-GATE-WORK-ITEM != PASS"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-01-ILLEGAL-REPLAY",
+            "reject_when": "transition already committed or current_stage == CORE-01-STAGE-02-CONVERSE"
+          }
+        ]
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-02",
+      "page_uid": "CORE-01",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "target_uid": "CORE-01-STTR-02",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-C2D96DD973D204D7",
+        "STAGE02-PROBLEM-C9E4F6D82D992560",
+        "STAGE02-PROBLEM-DED8A71FB00EE11E",
+        "STAGE02-PROBLEM-38EF76A7C92F7D48",
+        "STAGE02-PROBLEM-D19D79DAC9BDC671"
+      ],
+      "missing_fields_or_relations": [
+        "audit_event_uid",
+        "failure_state",
+        "illegal_transition_tests",
+        "mutation_owner",
+        "recovery"
+      ],
+      "current_context": {
+        "action_uid": null,
+        "label": null,
+        "effect_type": null,
+        "owner": null,
+        "gate_uid": "CORE-01-GATE-SUMMARY",
+        "permission_uid": null,
+        "success_contract": null,
+        "error_uid": null,
+        "state_effect": null,
+        "port_uid": null,
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": "CORE-01-STTR-02",
+        "from_stage": "CORE-01-STAGE-02-CONVERSE",
+        "to_stage": "CORE-01-STAGE-03-SUMMARY-EVAL",
+        "trigger_event_uid": "CORE-01-EVT-AI-RESPONSES-READY"
+      },
+      "proposal": {
+        "proposal_kind": "STATE_TRANSITION_LEDGER_ENRICHMENT",
+        "transition_uid": "CORE-01-STTR-02",
+        "from_stage": "CORE-01-STAGE-02-CONVERSE",
+        "to_stage": "CORE-01-STAGE-03-SUMMARY-EVAL",
+        "trigger_event_uid": "CORE-01-EVT-AI-RESPONSES-READY",
+        "gate_uid": "CORE-01-GATE-SUMMARY",
+        "mutation_owner": "CORE-01",
+        "failure_state": "CORE-01-ST-ERROR",
+        "recovery": {
+          "retain_stage": "CORE-01-STAGE-02-CONVERSE",
+          "action": "PRESERVE_THREAD_AND_DRAFT_WAIT_FOR_COMPLETE_AI_RESPONSES_THEN_REEVALUATE_SUMMARY_GATE",
+          "retry_condition": "CORE-01-GATE-SUMMARY_PASS_AND_CORE-01-EVT-AI-RESPONSES-READY"
+        },
+        "audit_event_uid": "CORE-01-EVT-AI-RESPONSES-READY",
+        "illegal_transition_tests": [
+          {
+            "test_uid": "TEMP-CORE01-STTR-02-ILLEGAL-WRONG-FROM",
+            "reject_when": "current_stage != CORE-01-STAGE-02-CONVERSE"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-02-ILLEGAL-TRIGGER",
+            "reject_when": "trigger_event_uid != CORE-01-EVT-AI-RESPONSES-READY"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-02-ILLEGAL-GATE",
+            "reject_when": "CORE-01-GATE-SUMMARY != PASS"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-02-ILLEGAL-REPLAY",
+            "reject_when": "transition already committed or current_stage == CORE-01-STAGE-03-SUMMARY-EVAL"
+          }
+        ]
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-03",
+      "page_uid": "CORE-01",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "target_uid": "CORE-01-STTR-03",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-49AE662398F49E43",
+        "STAGE02-PROBLEM-F3C9FFC8A9420580",
+        "STAGE02-PROBLEM-57B49BEFC57709BE",
+        "STAGE02-PROBLEM-3D18377467ABA06D",
+        "STAGE02-PROBLEM-BC37AA3864084D9C"
+      ],
+      "missing_fields_or_relations": [
+        "audit_event_uid",
+        "failure_state",
+        "illegal_transition_tests",
+        "mutation_owner",
+        "recovery"
+      ],
+      "current_context": {
+        "action_uid": null,
+        "label": null,
+        "effect_type": null,
+        "owner": null,
+        "gate_uid": "CORE-01-GATE-EVALUATION",
+        "permission_uid": null,
+        "success_contract": null,
+        "error_uid": null,
+        "state_effect": null,
+        "port_uid": null,
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": "CORE-01-STTR-03",
+        "from_stage": "CORE-01-STAGE-03-SUMMARY-EVAL",
+        "to_stage": "CORE-01-STAGE-04-HUMAN-DECIDE",
+        "trigger_event_uid": "CORE-01-EVT-EVALUATION-READY"
+      },
+      "proposal": {
+        "proposal_kind": "STATE_TRANSITION_LEDGER_ENRICHMENT",
+        "transition_uid": "CORE-01-STTR-03",
+        "from_stage": "CORE-01-STAGE-03-SUMMARY-EVAL",
+        "to_stage": "CORE-01-STAGE-04-HUMAN-DECIDE",
+        "trigger_event_uid": "CORE-01-EVT-EVALUATION-READY",
+        "gate_uid": "CORE-01-GATE-EVALUATION",
+        "mutation_owner": "CORE-01",
+        "failure_state": "CORE-01-ST-ERROR",
+        "recovery": {
+          "retain_stage": "CORE-01-STAGE-03-SUMMARY-EVAL",
+          "action": "PRESERVE_SUMMARY_AND_EVIDENCE_RESOLVE_APPROVED_CRITERIA_OR_EVALUATION_BLOCKER_THEN_REEVALUATE",
+          "retry_condition": "CORE-01-GATE-EVALUATION_PASS_AND_CORE-01-EVT-EVALUATION-READY"
+        },
+        "audit_event_uid": "CORE-01-EVT-EVALUATION-READY",
+        "illegal_transition_tests": [
+          {
+            "test_uid": "TEMP-CORE01-STTR-03-ILLEGAL-WRONG-FROM",
+            "reject_when": "current_stage != CORE-01-STAGE-03-SUMMARY-EVAL"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-03-ILLEGAL-TRIGGER",
+            "reject_when": "trigger_event_uid != CORE-01-EVT-EVALUATION-READY"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-03-ILLEGAL-GATE",
+            "reject_when": "CORE-01-GATE-EVALUATION != PASS"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-03-ILLEGAL-REPLAY",
+            "reject_when": "transition already committed or current_stage == CORE-01-STAGE-04-HUMAN-DECIDE"
+          }
+        ]
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-04",
+      "page_uid": "CORE-01",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "target_uid": "CORE-01-STTR-04",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-88B1029C86148DA1",
+        "STAGE02-PROBLEM-94958B2695E1E199",
+        "STAGE02-PROBLEM-6F1BD4743AA2596C",
+        "STAGE02-PROBLEM-61560A97CACF9BDC",
+        "STAGE02-PROBLEM-E71120DA8ACA8EE4"
+      ],
+      "missing_fields_or_relations": [
+        "audit_event_uid",
+        "failure_state",
+        "illegal_transition_tests",
+        "mutation_owner",
+        "recovery"
+      ],
+      "current_context": {
+        "action_uid": null,
+        "label": null,
+        "effect_type": null,
+        "owner": null,
+        "gate_uid": "CORE-01-GATE-HUMAN-DECISION",
+        "permission_uid": null,
+        "success_contract": null,
+        "error_uid": null,
+        "state_effect": null,
+        "port_uid": null,
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": "CORE-01-STTR-04",
+        "from_stage": "CORE-01-STAGE-04-HUMAN-DECIDE",
+        "to_stage": "CORE-01-STAGE-02-CONVERSE",
+        "trigger_event_uid": "CORE-01-EVT-HUMAN-DECISION-CONFIRMED"
+      },
+      "proposal": {
+        "proposal_kind": "STATE_TRANSITION_LEDGER_ENRICHMENT",
+        "transition_uid": "CORE-01-STTR-04",
+        "from_stage": "CORE-01-STAGE-04-HUMAN-DECIDE",
+        "to_stage": "CORE-01-STAGE-02-CONVERSE",
+        "trigger_event_uid": "CORE-01-EVT-HUMAN-DECISION-CONFIRMED",
+        "gate_uid": "CORE-01-GATE-HUMAN-DECISION",
+        "mutation_owner": "CORE-01",
+        "failure_state": "CORE-01-ST-ERROR",
+        "recovery": {
+          "retain_stage": "CORE-01-STAGE-04-HUMAN-DECIDE",
+          "action": "PRESERVE_DECISION_DRAFT_REJECT_STALE_OR_INVALID_CONFIRMATION_AND_REQUIRE_RECONFIRM",
+          "retry_condition": "CORE-01-GATE-HUMAN-DECISION_PASS_AND_CORE-01-EVT-HUMAN-DECISION-CONFIRMED"
+        },
+        "audit_event_uid": "CORE-01-EVT-HUMAN-DECISION-CONFIRMED",
+        "illegal_transition_tests": [
+          {
+            "test_uid": "TEMP-CORE01-STTR-04-ILLEGAL-WRONG-FROM",
+            "reject_when": "current_stage != CORE-01-STAGE-04-HUMAN-DECIDE"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-04-ILLEGAL-TRIGGER",
+            "reject_when": "trigger_event_uid != CORE-01-EVT-HUMAN-DECISION-CONFIRMED"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-04-ILLEGAL-GATE",
+            "reject_when": "CORE-01-GATE-HUMAN-DECISION != PASS"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-04-ILLEGAL-REPLAY",
+            "reject_when": "transition already committed or current_stage == CORE-01-STAGE-02-CONVERSE"
+          }
+        ]
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    },
+    {
+      "candidate_uid": "TEMP-CORE01-TRANSITION-05",
+      "page_uid": "CORE-01",
+      "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+      "target_uid": "CORE-01-STTR-05",
+      "blocker_uids": [
+        "STAGE02-PROBLEM-1A7488C4938C6F4D",
+        "STAGE02-PROBLEM-C5B96517A0DF7520",
+        "STAGE02-PROBLEM-505196EEF61D3F27",
+        "STAGE02-PROBLEM-729B07DAA0CA6990",
+        "STAGE02-PROBLEM-FAD46C613B7694EA"
+      ],
+      "missing_fields_or_relations": [
+        "audit_event_uid",
+        "failure_state",
+        "illegal_transition_tests",
+        "mutation_owner",
+        "recovery"
+      ],
+      "current_context": {
+        "action_uid": null,
+        "label": null,
+        "effect_type": null,
+        "owner": null,
+        "gate_uid": "CORE-01-GATE-CANDIDATE-CREATE",
+        "permission_uid": null,
+        "success_contract": null,
+        "error_uid": null,
+        "state_effect": null,
+        "port_uid": null,
+        "operation": null,
+        "method_path": null,
+        "state_event": null,
+        "transition_uid": "CORE-01-STTR-05",
+        "from_stage": "CORE-01-STAGE-04-HUMAN-DECIDE",
+        "to_stage": "CORE-01-STAGE-05-CANDIDATE",
+        "trigger_event_uid": "CORE-01-EVT-HUMAN-DECISION-CONFIRMED"
+      },
+      "proposal": {
+        "proposal_kind": "STATE_TRANSITION_LEDGER_ENRICHMENT",
+        "transition_uid": "CORE-01-STTR-05",
+        "from_stage": "CORE-01-STAGE-04-HUMAN-DECIDE",
+        "to_stage": "CORE-01-STAGE-05-CANDIDATE",
+        "trigger_event_uid": "CORE-01-EVT-HUMAN-DECISION-CONFIRMED",
+        "gate_uid": "CORE-01-GATE-CANDIDATE-CREATE",
+        "mutation_owner": "CORE-01",
+        "failure_state": "CORE-01-ST-ERROR",
+        "recovery": {
+          "retain_stage": "CORE-01-STAGE-04-HUMAN-DECIDE",
+          "action": "PRESERVE_CONFIRMED_STRUCTURED_DECISION_RESOLVE_CANDIDATE_SOURCE_LINEAGE_THEN_RETRY_CREATE",
+          "retry_condition": "CORE-01-GATE-CANDIDATE-CREATE_PASS_AND_CORE-01-EVT-HUMAN-DECISION-CONFIRMED"
+        },
+        "audit_event_uid": "CORE-01-EVT-HUMAN-DECISION-CONFIRMED",
+        "illegal_transition_tests": [
+          {
+            "test_uid": "TEMP-CORE01-STTR-05-ILLEGAL-WRONG-FROM",
+            "reject_when": "current_stage != CORE-01-STAGE-04-HUMAN-DECIDE"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-05-ILLEGAL-TRIGGER",
+            "reject_when": "trigger_event_uid != CORE-01-EVT-HUMAN-DECISION-CONFIRMED"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-05-ILLEGAL-GATE",
+            "reject_when": "CORE-01-GATE-CANDIDATE-CREATE != PASS"
+          },
+          {
+            "test_uid": "TEMP-CORE01-STTR-05-ILLEGAL-REPLAY",
+            "reject_when": "transition already committed or current_stage == CORE-01-STAGE-05-CANDIDATE"
+          }
+        ]
+      },
+      "status": "PROPOSED_NOT_AUTHORITY",
+      "materialization_allowed": false,
+      "product_blocker_credit": 0,
+      "promotion_requirements": [
+        "TEMPORARY_CANDIDATE_VALIDATION_PASS",
+        "HUMAN_OR_AUTHORIZED_PRODUCT_CONTRACT_REVIEW",
+        "PROMOTE_TO_SINGLE_CANONICAL_PRODUCT_CONTRACT_OWNER_WITH_EXACT_PROVENANCE",
+        "R7_VALIDATION_ONLY_AFTER_PROMOTED_BYTES_ARE_CURRENT_ADMISSIBLE",
+        "FRESH_STAGE02_REEXECUTION_BEFORE_ANY_BLOCKER_REDUCTION"
+      ]
+    }
+  ],
+  "review_boundary": {
+    "review_mode": "ONE_COHERENT_CORE01_CONTRACT_CANDIDATE_REVIEW_NOT_45_MANUAL_FIELD_APPROVALS",
+    "reviewer_may_accept_whole_candidate_or_return_specific_candidate_uids_for_revision": true,
+    "approval_does_not_directly_make_this_temporary_file_authority": true,
+    "promotion_requires_materialization_into_single_current_canonical_product_contract_owner": true,
+    "r7_input_must_reference_promoted_current_admissible_bytes_not_this_temporary_file": true
+  },
+  "status": "READY_FOR_TEMPORARY_CANDIDATE_VALIDATION_NOT_READY_FOR_R7"
+}
