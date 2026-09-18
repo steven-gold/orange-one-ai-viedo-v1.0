@@ -1847,6 +1847,113 @@ jobs:
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
           git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/02_BASE_BLUEPRINT 00_SOURCE_INTAKE/fresh_run_003/03_BLUEPRINT_BINDING
 
+
+  core01-close-functional-remediation:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'close verified core01 functional remediation work unit') }}
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 80
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Re-prove persisted CORE-01 effective-zero state before terminal closure
+        run: |
+          python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_canonical_rule_registry.py
+          python governance/ci/materialize_stage02_core01_approved_design_contract.py --mode validate-only --require-finalized
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_stage02_successor_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Persist active-consumer inventory synchronization before Work Unit closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          report='governance/test/ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json'
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          if [ -n "$(git status --porcelain=v1 --untracked-files=all -- "$report")" ]; then
+            actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//')"
+            test "$actual" = "$report" || { printf 'BLOCK: unexpected pre-closure synchronization delta\n%s\n' "$actual" >&2; exit 1; }
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- "$report"
+            git commit -m 'test(stage02): refresh active consumer integrity before core01 work unit closure'
+            git push origin HEAD:rebuild-v2.1.1
+          fi
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python governance/ci/validate_stage02_state_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Close verified CORE-01 functional remediation Work Unit
+        run: python governance/ci/materialize_stage02_core01_approved_design_contract.py --mode close-work-unit
+      - name: Validate terminal CORE-01 closure state
+        run: |
+          python governance/ci/materialize_stage02_core01_approved_design_contract.py --mode validate-closure
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_stage02_successor_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+      - name: Prove exact Work Unit closure write-set
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            governance/test/ACTIVE_STATE.yaml
+            governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+            governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+          )
+          actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | sort -u)"
+          permitted="$(printf '%s\n' "${files[@]}" | sort -u)"
+          unexpected="$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$permitted"))"
+          test -z "$unexpected" || { printf 'BLOCK: unexpected CORE-01 closure delta\n%s\n' "$unexpected" >&2; exit 1; }
+          test "$(printf '%s\n' "$actual" | sed '/^$/d' | wc -l | tr -d ' ')" = '3'
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+      - name: Persist terminal CORE-01 Work Unit closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(
+            governance/test/ACTIVE_STATE.yaml
+            governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+            governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+          )
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "${files[@]}"
+          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = '3'
+          git commit -m 'test(stage02): close verified core01 functional remediation work unit'
+          git push origin HEAD:rebuild-v2.1.1
+      - name: Revalidate persisted closure and complete Full-Line
+        run: |
+          python governance/ci/materialize_stage02_core01_approved_design_contract.py --mode validate-closure
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_stage02_successor_integrity.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/specification_mutation_guard.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+          git diff --exit-code -- governance/specifications/current governance/specifications/REGISTRY.yaml GOVERNANCE_CURRENT.yaml
+          git diff --exit-code -- 00_SOURCE_INTAKE/fresh_run_003/00_SOURCE_INTAKE/RAW_SOURCE
+
   current-authority-request-r5:
     if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'wire current r5 authority request') }}
     permissions:
