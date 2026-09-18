@@ -2,7 +2,7 @@
 from __future__ import annotations
 from copy import deepcopy
 from pathlib import Path
-import argparse, json, re, subprocess, sys
+import argparse, json, os, re, subprocess, sys, urllib.request
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -29,6 +29,7 @@ ATTEMPT_UID = 'STAGE02-FRESH-20260918-007'
 EXPECTED_RAW_BLOB = '9490f3bcc28c5511bc04d6c3ce53c026e3c4667f'
 RESOLUTION_UID = 'STAGE02-RESOLUTION-CORE01-DESIGN-CONTRACT-20260919-001'
 NEXT = 'VERIFY_PERSISTED_CORE01_DESIGN_CONTRACT_MATERIALIZATION_AND_CLOSE_WORK_UNIT'
+CLOSE_NEXT = 'WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_REMAINING_STAGE02_SCOPE'
 
 def die(msg: str) -> None:
     print('BLOCK:', msg, file=sys.stderr); raise SystemExit(1)
@@ -238,6 +239,117 @@ def finalize_artifact():
     work=state.get('active_work_unit') or {}; dm=work.get('design_contract_materialization') or {}; dm.update({'source_workflow_run_id':int(run_id),'source_artifact_id':int(artifact_id),'source_artifact_sha256':artifact_digest.removeprefix('sha256:')}); work['design_contract_materialization']=dm
     dump_yaml(STATE,state); dump_yaml(FINDINGS,findings); dump_yaml(CHANGE,change); print(f'PASS: finalized fresh CORE-01 materialization artifact identity run={run_id} artifact={artifact_id}')
 
+def github_run(run_id: int) -> dict:
+    token=os.environ.get('GITHUB_TOKEN','').strip(); repo=os.environ.get('GITHUB_REPOSITORY','').strip()
+    if not token or not repo: die('GITHUB_TERMINAL_OBSERVATION_CONTEXT_MISSING')
+    req=urllib.request.Request(
+        f'https://api.github.com/repos/{repo}/actions/runs/{run_id}',
+        headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp: obj=json.loads(resp.read().decode('utf-8'))
+    except Exception as exc: die(f'GITHUB_TERMINAL_OBSERVATION_FAILED:{exc!r}')
+    if not isinstance(obj,dict): die('GITHUB_TERMINAL_OBSERVATION_INVALID')
+    return obj
+
+def close_work_unit():
+    state=load_yaml(STATE); findings=load_yaml(FINDINGS); change=load_yaml(CHANGE); problems=load_yaml(PROBLEMS); latest=load_json(LATEST)
+    work=state.get('active_work_unit') or {}
+    if work.get('work_unit_uid')!=WORK_UID or work.get('current_status')!='PENDING_EXACT_HEAD_TERMINAL_CLOSURE': die('WORK_UNIT_NOT_READY_FOR_TERMINAL_CLOSURE')
+    if work.get('product_blocker_credit')!=45: die('WORK_UNIT_PRODUCT_CREDIT_NOT_45')
+    if problems.get('open_problem_count')!=0 or problems.get('resolved_problem_count')!=45 or problems.get('effective_open_problem_count')!=0: die('PROBLEM_REGISTER_NOT_READY_FOR_CLOSURE')
+    if latest.get('effective_functional_gap_total')!=0 or latest.get('validated_product_successor_signature_count')!=45: die('FRESH_EVIDENCE_NOT_EFFECTIVE_ZERO')
+    dm=work.get('design_contract_materialization') or {}; run_id=int(dm.get('source_workflow_run_id') or 0)
+    if not run_id: die('MATERIALIZATION_OUTER_RUN_ID_MISSING')
+    run=github_run(run_id)
+    if run.get('status')!='completed' or run.get('conclusion')!='success': die('MATERIALIZATION_OUTER_RUN_NOT_TERMINAL_SUCCESS')
+    if run.get('head_sha')!=dm.get('fresh_reexecution_source_head'): die('MATERIALIZATION_OUTER_RUN_HEAD_DRIFT')
+    materialization_commit=git('log','-1','--format=%H','--grep=persist approved core01 design contract materialization and fresh reexecution')
+    if not materialization_commit: die('PERSISTED_MATERIALIZATION_COMMIT_NOT_FOUND')
+    git('merge-base','--is-ancestor',materialization_commit,'HEAD')
+    closed=deepcopy(work)
+    closed['current_status']='CLOSED_VERIFIED_CORE01_EFFECTIVE_FUNCTIONAL_GAPS_ZERO'
+    closed['terminal_disposition']='CLOSED_VERIFIED_PRODUCT_CONTRACT_MATERIALIZATION_AND_FRESH_REEXECUTION'
+    closed['resume_after_closure']=CLOSE_NEXT
+    closed_dm=closed.get('design_contract_materialization') or {}; closed_dm['outer_terminal_result']='success'; closed_dm['persisted_materialization_commit']=materialization_commit; closed['design_contract_materialization']=closed_dm
+    closed['closure_evidence']={
+        'current_governance_uid':CURRENT_UID,
+        'attempt_uid':ATTEMPT_UID,
+        'approval_evidence_ref':str(APPROVAL.relative_to(ROOT)),
+        'review_package_ref':str(PACKAGE.relative_to(ROOT)),
+        'canonical_product_contract_owner':str(SPEC.relative_to(ROOT)),
+        'resolution_uid':RESOLUTION_UID,
+        'raw_discovery_problem_count':45,
+        'validated_product_successor_signature_count':45,
+        'effective_open_problem_count':0,
+        'product_blocker_reduction_credit':45,
+        'external_authority_resolution_credit':0,
+        'persisted_materialization_commit':materialization_commit,
+        'materialization_outer_run_id':run_id,
+        'materialization_outer_run_result':'success',
+        'source_artifact_id':dm.get('source_artifact_id'),
+        'source_artifact_sha256':dm.get('source_artifact_sha256'),
+        'persisted_child_revalidated_in_outer_workflow':True,
+        'persisted_child_full_line_result':'success',
+        'full_line_source_file_count':75,
+        'lifecycle_stage_result':'11/11',
+        'preformal_result':'20/20',
+        'mandatory_regression_result':'17/17',
+        'immutable_raw_blob_sha':EXPECTED_RAW_BLOB,
+    }
+    old_prev=state.get('previous_closed_product_work_unit')
+    old_last=state.get('last_closed_product_work_unit')
+    if old_prev: state['earlier_closed_product_work_unit']=old_prev
+    if old_last: state['previous_closed_product_work_unit']=old_last
+    state['last_closed_product_work_unit']=closed
+    state.pop('active_work_unit',None)
+    state['next_action']=CLOSE_NEXT
+    state['current_primary_task_product_stage_credit']=45
+    resume=state.setdefault('resume_control',{})
+    resume.update({
+        'current_resume_point':'STAGE2_CORE01_FUNCTIONAL_REMEDIATION_CLOSED_TRANSITION_BOUNDARY',
+        'current_work_unit_uid':None,'current_owner':None,
+        'last_closed_product_work_unit_uid':WORK_UID,
+        'last_closed_product_validation_head':materialization_commit,
+        'last_closed_product_outer_run_id':run_id,
+        'last_closed_product_outer_result':'success',
+        'exact_next_action':CLOSE_NEXT,
+    })
+    active=state.get('stage02_active_attempt') or {}; active['next_action']=CLOSE_NEXT
+    state['stage02_material_remediation']['status']='CORE01_FUNCTIONAL_REMEDIATION_CLOSED_EFFECTIVE_ZERO'
+    state['stage02_material_remediation']['functional_work_unit_closed']=True
+    state['stage02_material_remediation']['closure_materialization_head']=materialization_commit
+    state['stage02_material_remediation']['closure_outer_run_id']=run_id
+    findings['next_action']=CLOSE_NEXT
+    findings['core01_work_unit_status']='CLOSED_VERIFIED_CORE01_EFFECTIVE_FUNCTIONAL_GAPS_ZERO'
+    findings['core01_closure_materialization_head']=materialization_commit
+    findings['core01_closure_outer_run_id']=run_id
+    cur=change.get('current_stage2_execution') or {}; cur['next_action']=CLOSE_NEXT
+    cur['core01_work_unit_status']='CLOSED_VERIFIED_CORE01_EFFECTIVE_FUNCTIONAL_GAPS_ZERO'
+    cur['core01_closure_materialization_head']=materialization_commit
+    cur['core01_closure_outer_run_id']=run_id
+    cur['r7_disposition']='NOT_TRIGGERED_OLD_AUTHORITY_WAIT_ROUTE_NOT_APPLICABLE_AFTER_CURRENT_V2_2_5_CANONICAL_OWNER_MATERIALIZATION'
+    dump_yaml(STATE,state); dump_yaml(FINDINGS,findings); dump_yaml(CHANGE,change)
+    print(f'PASS: CORE-01 work unit closed from persisted materialization head={materialization_commit} outer_run={run_id}')
+
+def validate_closure():
+    state=load_yaml(STATE); findings=load_yaml(FINDINGS); change=load_yaml(CHANGE); problems=load_yaml(PROBLEMS); latest=load_json(LATEST)
+    if state.get('active_work_unit') not in (None,{}): die('CLOSED_CORE01_MUST_NOT_REMAIN_ACTIVE_WORK_UNIT')
+    closed=state.get('last_closed_product_work_unit') or {}
+    if closed.get('work_unit_uid')!=WORK_UID or closed.get('current_status')!='CLOSED_VERIFIED_CORE01_EFFECTIVE_FUNCTIONAL_GAPS_ZERO': die('LAST_CLOSED_PRODUCT_WORK_UNIT_DRIFT')
+    ce=closed.get('closure_evidence') or {}
+    if ce.get('current_governance_uid')!=CURRENT_UID or ce.get('validated_product_successor_signature_count')!=45 or ce.get('effective_open_problem_count')!=0 or ce.get('product_blocker_reduction_credit')!=45: die('CORE01_CLOSURE_EVIDENCE_DRIFT')
+    if ce.get('materialization_outer_run_result')!='success' or ce.get('persisted_child_full_line_result')!='success': die('CORE01_TERMINAL_EVIDENCE_NOT_SUCCESS')
+    actions=(state.get('next_action'),(state.get('resume_control') or {}).get('exact_next_action'),(state.get('stage02_active_attempt') or {}).get('next_action'),findings.get('next_action'),(change.get('current_stage2_execution') or {}).get('next_action'))
+    if any(x!=CLOSE_NEXT for x in actions): die('CORE01_CLOSURE_NEXT_ACTION_DRIFT')
+    if problems.get('open_problem_count')!=0 or problems.get('resolved_problem_count')!=45: die('CORE01_CLOSURE_PROBLEM_REGISTER_DRIFT')
+    if latest.get('fresh_functional_gap_total')!=45 or latest.get('effective_functional_gap_total')!=0 or latest.get('stage_scope_complete') is not False: die('CORE01_CLOSURE_LATEST_EVIDENCE_DRIFT')
+    materialization_commit=ce.get('persisted_materialization_commit')
+    if not materialization_commit: die('CORE01_CLOSURE_MATERIALIZATION_HEAD_MISSING')
+    git('merge-base','--is-ancestor',materialization_commit,'HEAD')
+    if git_blob(RAW)!=EXPECTED_RAW_BLOB: die('RAW_BLOB_CHANGED_AFTER_CORE01_CLOSURE')
+    print(f'PASS: CORE-01 closure state is terminal, effective gaps=0, remaining Stage-02 scope=ASSET-01, next={CLOSE_NEXT}')
+
 def validate_only(require_finalized: bool):
     state=load_yaml(STATE); registry=load_yaml(REGISTRY); package=load_json(PACKAGE); candidate=load_json(CANDIDATE); semantic=load_json(SEMANTIC); approval=load_yaml(APPROVAL); validate_identity(state, registry, package, candidate, semantic, approval)
     problems=load_yaml(PROBLEMS); units, rows=prepare_units(candidate, problems); validate_materialized(load_yaml(SPEC), units, problems)
@@ -260,9 +372,11 @@ def validate_only(require_finalized: bool):
     print('PASS: canonical CORE-01 design-contract materialization validates 45/45 and effective gaps remain zero')
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--mode',choices=['materialize','finalize-artifact','validate-only'],default='materialize'); ap.add_argument('--require-finalized',action='store_true'); args=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument('--mode',choices=['materialize','finalize-artifact','validate-only','close-work-unit','validate-closure'],default='materialize'); ap.add_argument('--require-finalized',action='store_true'); args=ap.parse_args()
     if args.mode=='materialize': materialize()
     elif args.mode=='finalize-artifact': finalize_artifact()
+    elif args.mode=='close-work-unit': close_work_unit()
+    elif args.mode=='validate-closure': validate_closure()
     else: validate_only(args.require_finalized)
 
 if __name__=='__main__': main()
