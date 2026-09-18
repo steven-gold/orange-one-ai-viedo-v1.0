@@ -4,21 +4,21 @@ stage_uid: STAGE-02
 current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
 attempt_uid: STAGE02-FRESH-20260918-006
 source_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-source_evidence_sha256: 7bb692e7c674ffa88918f68ef7f3dcef7ccfb1295372f56b9cab8d94e0f86ee5
+source_evidence_sha256: 60fa56db6a95c71703edd537df4ba1ad63785496771cf78608b0c9a602c10217
 artifact_type: EXECUTION_CYCLE_PREFLIGHT_RECEIPT
 producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
 policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-active_work_unit_ref: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
+active_work_unit_ref: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
 selected_execution_profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
 execution_identity:
   repository: steven-gold/orange-one-ai-viedo-v1.0
   branch: rebuild-v2.1.1
-  head_sha: b1deb977dce68012e371a8ec1b4d1963ff8823bd
-  tree_sha: eb8fe929f2a38afc20c694d7bfd4bb5a7b739c41
+  head_sha: dc5da3599665363ef0b425d31d2f79878c3885ea
+  tree_sha: 95d0765caf7a9e3bcc2af6f0f2c301a3bc8f37d8
 governance_load:
   governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
-  work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
-  resolved_work_unit_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
+  work_unit_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
+  resolved_work_unit_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   root_manifest_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
   root_manifest_sha256: bf40b52da7445e11e6fa1b62fa5b9ca447396201ae5d164d113d75d024a8a794
   effective_normative_set_sha256: dd26a08de58b2ca5bcfd61d6dbf3674c0cd748a877727f6ea092d0150da12bfb
@@ -42,20 +42,20 @@ governance_load:
     document_ref: .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
     document_sha256: 7a057c62bb1650968ec593237bd9e4cb5d22f9c2deeb9963db014705d063dd25
   dependency_artifact_hashes:
-    governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json: 7bb692e7c674ffa88918f68ef7f3dcef7ccfb1295372f56b9cab8d94e0f86ee5
+    governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json: 60fa56db6a95c71703edd537df4ba1ad63785496771cf78608b0c9a602c10217
     governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml: 8f07ba01d3ae593a583f6b677e8c499df209ed9ca68bc5752a6cc96d23c2c3c0
     .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml: 25587057f3f6b540b5083d02f332b29ad3deb5bb56ad5ff4df07f3f5e65451aa
     .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml: 10000e05f3695df738b02882de5915c8a9e1fa278abb8b9201ae6f081d3e6581
-    governance/test/ACTIVE_STATE.yaml: fd5326e10d005c8c819a7d6891a6748e36d74974f079481052c49437fbccb99c
-    governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml: 841078af6d5f3bfd409db6f22667985e7b8d1741d2d0db51d107d9211fdbbbb7
-    governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml: e95fdd63d2a96a526ec3acb6d6f51ce11ebadbda0a775b75db07c189ad6d68a7
+    governance/test/ACTIVE_STATE.yaml: 8887025c92d8d91bef22eb92b233e2dc66c199aa5919f225864dc8d4df395320
+    governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml: a4316592c079997e78839010bb8e744768fbeba5b24d8286065c94232078c80b
+    governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml: 436aaf8343d2efa7df5ea587181ac83f0bbd6d6d1d7e0cb8ef16aa99798e368c
     governance/test/STAGE02_EXECUTION_OPTIMIZATION_DEFECT_CONSOLIDATION.yaml: eb83c5351185776676732a02c96dbbba7d8237c22d19b78c60cd7a5e525a45ec
     governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml: 43c19edc0ed750a9f3154abb38f22801814a502f74736fe29f3c30f9825f553f
   acceptance_blueprint_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
   acceptance_blueprint_sha256: f9a51cd99e86d65bca005b9d608abef14769bcfc98139735394687c2a23b9f69
   loader_identity: governance/ci/compile_stage_execution_preflight.py
   loader_version: '3'
-  loaded_at_utc: '2026-09-18T04:21:35.435433Z'
+  loaded_at_utc: '2026-09-18T04:29:00.741230Z'
 canonical_stage_output_denominator_count: 17
 canonical_stage_output_denominator:
 - FUNCTIONAL_CHAIN_SPEC

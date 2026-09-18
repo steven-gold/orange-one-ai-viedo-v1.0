@@ -4,19 +4,19 @@ stage_uid: STAGE-02
 current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
 attempt_uid: STAGE02-FRESH-20260918-006
 source_evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-source_evidence_sha256: 7bb692e7c674ffa88918f68ef7f3dcef7ccfb1295372f56b9cab8d94e0f86ee5
+source_evidence_sha256: 60fa56db6a95c71703edd537df4ba1ad63785496771cf78608b0c9a602c10217
 artifact_type: GOVERNANCE_EXECUTION_CONTEXT_RECEIPT
 producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
 policy_ref: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-active_work_unit_ref: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
-semantic_concern: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
+active_work_unit_ref: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
+semantic_concern: CORE01_FRESH_FUNCTIONAL_GAP_REMEDIATION
 canonical_owner_operation: STAGE_EXECUTION_PREFLIGHT_COMPILE
-resolved_current_work_unit_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
+resolved_current_work_unit_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
 repository_identity:
   repository: steven-gold/orange-one-ai-viedo-v1.0
   branch: rebuild-v2.1.1
-  head_sha: b1deb977dce68012e371a8ec1b4d1963ff8823bd
-  tree_sha: eb8fe929f2a38afc20c694d7bfd4bb5a7b739c41
+  head_sha: dc5da3599665363ef0b425d31d2f79878c3885ea
+  tree_sha: 95d0765caf7a9e3bcc2af6f0f2c301a3bc8f37d8
 current_registry:
   entry_ref: GOVERNANCE_CURRENT.yaml
   entry_sha256: f94507371c80e11185a81f6c26ed20e67c0c155f8f29c6e736ba6bcef4f0a41a
@@ -57,13 +57,13 @@ exact_read_set:
 - path: .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sha256: 7a057c62bb1650968ec593237bd9e4cb5d22f9c2deeb9963db014705d063dd25
 - path: governance/test/ACTIVE_STATE.yaml
-  sha256: fd5326e10d005c8c819a7d6891a6748e36d74974f079481052c49437fbccb99c
+  sha256: 8887025c92d8d91bef22eb92b233e2dc66c199aa5919f225864dc8d4df395320
 - path: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
-  sha256: 841078af6d5f3bfd409db6f22667985e7b8d1741d2d0db51d107d9211fdbbbb7
+  sha256: a4316592c079997e78839010bb8e744768fbeba5b24d8286065c94232078c80b
 - path: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
-  sha256: e95fdd63d2a96a526ec3acb6d6f51ce11ebadbda0a775b75db07c189ad6d68a7
+  sha256: 436aaf8343d2efa7df5ea587181ac83f0bbd6d6d1d7e0cb8ef16aa99798e368c
 - path: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-  sha256: 7bb692e7c674ffa88918f68ef7f3dcef7ccfb1295372f56b9cab8d94e0f86ee5
+  sha256: 60fa56db6a95c71703edd537df4ba1ad63785496771cf78608b0c9a602c10217
 - path: governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml
   sha256: 8f07ba01d3ae593a583f6b677e8c499df209ed9ca68bc5752a6cc96d23c2c3c0
 - path: governance/test/STAGE02_EXECUTION_OPTIMIZATION_DEFECT_CONSOLIDATION.yaml
@@ -84,8 +84,8 @@ exact_write_targets:
 - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml
 - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml
 duplicate_search_result: EXISTING_CANONICAL_COMPILER_OWNER_REUSED_NO_PRIOR_SUPPORT_RECEIPT_OWNER_FOUND
-confirmed_gap_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
-loaded_at_utc: '2026-09-18T04:21:35.435433Z'
+confirmed_gap_uid: WU-STAGE02-CORE01-FUNCTIONAL-REMEDIATION-001
+loaded_at_utc: '2026-09-18T04:29:00.741230Z'
 product_blocker_credit: 0
 stage03_allowed: false
 result: PASS_CONTEXT_RESOLVED
