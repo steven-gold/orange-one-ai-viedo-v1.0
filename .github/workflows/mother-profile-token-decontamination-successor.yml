@@ -1,0 +1,55 @@
+name: Mother Profile Token Decontamination Successor
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/governance-maintenance/materialize_profile_token_decontamination_successor.py'
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-authorized-successor:
+    if: "${{ github.event.head_commit.message == 'chore(governance): stage mother profile-token decontamination successor' }}"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Assert exact authorization parent and Current governance
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-MOTHER-PROFILE-TOKEN-DECONTAMINATION-R1.yaml
+          grep -q 'GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING' governance/specifications/REGISTRY.yaml
+          test -f .github/governance-maintenance/materialize_profile_token_decontamination_successor.py
+      - name: Static-compile one-time successor helper
+        run: python -m py_compile .github/governance-maintenance/materialize_profile_token_decontamination_successor.py
+      - name: Materialize complete authorized successor
+        run: python .github/governance-maintenance/materialize_profile_token_decontamination_successor.py
+      - name: Verify transaction hygiene
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          test ! -d governance/test/temporary
+          git status --short
+      - name: Persist one atomic Mother successor
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'steven-gold'
+          git config user.email 'proorangeone@gmail.com'
+          git add -A
+          git commit -m "feat(governance): promote profile-token decontamination hardening" \
+            -m "Spec-Change-Authorization: USR-DIRECTIVE-20260919-MOTHER-PROFILE-TOKEN-DECONTAMINATION-R1" \
+            -m "Spec-Change-Scope: MOTHER_PROFILE_TOKEN_DECONTAMINATION_AND_NEUTRALITY_GATE_HARDENING"
+          git push origin HEAD:rebuild-v2.1.1
