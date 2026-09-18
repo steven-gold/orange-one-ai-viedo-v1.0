@@ -109,8 +109,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: STAGE03_WORK_UNIT_RESOLVED_PREEXECUTION
-next_action: STAGE03_PREEXECUTION_GATE_AND_OUTPUT_OWNER_MATERIALIZATION
+status: GOVERNANCE_MAINTENANCE_MUTATION_GUARD_CYCLE_FREEZE_ACTIVE
+next_action: EXECUTE_MUTATION_GUARD_CYCLE_FREEZE_HARDENING_AND_CAPTURE_R3_DEFECTS
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -289,12 +289,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
-  current_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-  current_owner: 00_SOURCE_INTAKE/fresh_run_005/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
+  current_resume_point: GOVERNANCE_MAINTENANCE_MUTATION_GUARD_CYCLE_FREEZE_ACTIVE
+  current_work_unit_uid: WU-GOV-MUTATION-GUARD-CYCLE-FREEZE-001
+  current_owner: governance/ci/specification_mutation_guard.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: STAGE03_PREEXECUTION_GATE_AND_OUTPUT_OWNER_MATERIALIZATION
+  exact_next_action: EXECUTE_MUTATION_GUARD_CYCLE_FREEZE_HARDENING_AND_CAPTURE_R3_DEFECTS
   last_closed_product_work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002
   last_closed_product_validation_head: e48ac1bce7e7798c107694087f0056b8a434bf08
   last_closed_product_outer_run_id: 35401771995
@@ -352,9 +352,9 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-RERUN-CORE01-STAGE01-STAGE02-R2
-current_primary_task_product_stage_credit: 45
+current_primary_task_layer: GOVERNANCE_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-MUTATION-GUARD-CYCLE-FREEZE-HARDENING-R1
+current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
   canonical_name: CORE01_FRESH_STAGE02_ACTUAL_TEST
@@ -554,7 +554,7 @@ stage02_terminal_closure:
   terminal_runs: *id001
   next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_STAGE03
 
-last_work_unit_resolution_gate:
+previous_work_unit_resolution_gate_stage03:
   resolution_uid: WUR-STAGE03-CORE01-20260919-001
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
@@ -585,7 +585,65 @@ last_work_unit_resolution_gate:
   entry_disposition: ACTIVE_PREEXECUTION
   resolved_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
 
+last_work_unit_resolution_gate:
+  resolution_uid: WUR-GOV-MUTATION-GUARD-CYCLE-FREEZE-20260919-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  authorization_basis:
+  - EXPLICIT_CURRENT_USER_DIRECTIVE_HARDEN_MUTATION_GUARD
+  - CURRENT_MOTHER_STAGE_FREEZE_AND_STAGE_END_CONSOLIDATION_RULES
+  - CURRENT_SPECIFICATION_MUTATION_CONTROL_EXECUTION_CYCLE_FREEZE_CONTROL
+  predecessor_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  predecessor_disposition: SUSPENDED_PREEXECUTION_NO_PRODUCT_MUTATION_STARTED
+  resolved_work_unit_uid: WU-GOV-MUTATION-GUARD-CYCLE-FREEZE-001
+  candidate_successor_count: 1
+  duplicate_parallel_governance_work_unit_found: false
+  entry_disposition: ACTIVE
+  product_stage_credit: 0
+  resolved_resume_point: GOVERNANCE_MAINTENANCE_MUTATION_GUARD_CYCLE_FREEZE_ACTIVE
+
 active_work_unit:
+  work_unit_uid: WU-GOV-MUTATION-GUARD-CYCLE-FREEZE-001
+  canonical_name: GOVERNANCE_MUTATION_GUARD_CYCLE_FREEZE_HARDENING
+  primary_task_layer: GOVERNANCE_MAINTENANCE
+  semantic_capability: SPECIFICATION_MUTATION_ENFORCEMENT_AND_DEFECT_LEDGER_COMPLETENESS
+  scope:
+  - HARDEN_SPECIFICATION_MUTATION_GUARD_AGAINST_ACTIVE_EXECUTION_CYCLE_POLICY_MUTATION
+  - REQUIRE_TERMINAL_STAGE_END_OR_TERMINATED_FATAL_CYCLE_BOUNDARY_BEFORE_PROTECTED_POLICY_PROMOTION
+  - CAPTURE_THREE_STAGE02_R3_IMPLEMENTATION_DEFECTS_IN_CURRENT_NON_NORMATIVE_LEDGER
+  - ADD_NEGATIVE_REGRESSION_FOR_AUTHORIZED_BUT_ACTIVE_CYCLE_MUTATION
+  out_of_scope:
+  - MOTHER_NORMATIVE_TEXT_CHANGE
+  - CURRENT_SPECIFICATION_NORMATIVE_CHANGE
+  - STAGE03_PRODUCT_EXECUTION
+  - PRODUCT_MATERIALIZATION
+  - VISUAL_APPROVAL
+  - DEPLOYMENT
+  canonical_policy_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
+  implementation_owner: governance/ci/specification_mutation_guard.py
+  finding_ledger_owner: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  current_status: ACTIVE
+  suspended_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  suspended_product_execution_started: false
+  reverse_consumers:
+  - .github/workflows/governance-full-line-system-gate.yml
+  - .github/workflows/governance-selected-profile-integrity.yml
+  - .github/workflows/stage02-actual-test.yml
+  definition_of_done:
+  - THREE_R3_DEFECTS_RECORDED_WITH_FAILURE_AND_RESOLUTION_EVIDENCE
+  - ACTIVE_PRODUCT_OR_VALIDATION_CYCLE_BLOCKS_PROTECTED_POLICY_MUTATION_EVEN_WITH_VALID_AUTHORIZATION
+  - STAGE_END_CONSOLIDATION_REQUIRES_TERMINAL_PREDECESSOR_CYCLE_AND_EXPLICIT_BOUNDARY
+  - FATAL_SPEC_CONTRADICTION_PATH_REQUIRES_PREDECESSOR_CYCLE_TERMINATED_BLOCKED_BEFORE_GOVERNANCE_MUTATION
+  - NO_MOTHER_OR_CURRENT_SPECIFICATION_NORMATIVE_BYTES_CHANGED
+  - NEGATIVE_REGRESSION_EXECUTED
+  - FULL_LINE_AND_SELECTED_PROFILE_TERMINAL_SUCCESS_ON_PERSISTED_HEAD
+  - STAGE03_PREEXECUTION_WORK_UNIT_AND_RESUME_RESTORED_AFTER_GOVERNANCE_MAINTENANCE_CLOSURE
+  product_stage_credit: 0
+  legal_next_transition: GOVERNANCE_MAINTENANCE_CLOSE_THEN_RESTORE_STAGE03_PREEXECUTION_RESUME
+
+suspended_product_work_unit:
   work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
   canonical_name: CORE01_VISUAL_DESIGN
   primary_task_layer: PRODUCT_STAGE_EXECUTION
