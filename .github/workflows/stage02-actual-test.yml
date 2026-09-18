@@ -674,6 +674,40 @@ jobs:
         run: python governance/ci/validate_selected_execution_profile_integrity.py
       - name: Validate profile-local finding closure readiness
         run: python governance/test/validate_selected_profile_finding_closure.py
+      - name: Refresh canonical preflight context for exact structural replay HEAD
+        shell: bash
+        run: |
+          set -euo pipefail
+          python governance/ci/compile_stage_execution_preflight.py --materialize
+          python governance/ci/compile_stage_execution_preflight.py --check
+          base='00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+          allowed=(
+            "$base/REQUIRED_FIELD_MANIFEST.yaml"
+            "$base/FUNCTIONAL_CHAIN_MANIFEST.yaml"
+            "$base/EFFECTIVE_CONTRACT_OVERLAY.yaml"
+            "$base/DEPENDENCY_TOPOLOGY.yaml"
+            "$base/DENOMINATOR_SNAPSHOT.yaml"
+            "$base/CLASSIFICATION_RULESET.yaml"
+            "$base/CHANGE_IMPACT_MAP.yaml"
+            "$base/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml"
+            "$base/CURRENT_PROBLEM_REGISTER.yaml"
+            "$base/RESOLUTION_LEDGER.yaml"
+            "$base/GOVERNANCE_EXECUTION_CONTEXT_RECEIPT.yaml"
+            "$base/EXECUTION_CYCLE_PREFLIGHT_RECEIPT.yaml"
+          )
+          actual="$(git status --porcelain=v1 --untracked-files=all | sed -E 's/^...//' | sed '/^$/d' | sort -u)"
+          permitted="$(printf '%s\n' "${allowed[@]}" | sort -u)"
+          unexpected="$(comm -23 <(printf '%s\n' "$actual") <(printf '%s\n' "$permitted"))"
+          test -z "$unexpected" || { printf 'BLOCK: unexpected structural replay context delta\n%s\n' "$unexpected" >&2; exit 1; }
+          if [ -n "$actual" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- "${allowed[@]}"
+            git commit -m 'test(stage02): refresh structural replay execution context'
+            git push origin HEAD:rebuild-v2.1.1
+          fi
+          python governance/ci/compile_stage_execution_preflight.py --check
+          python governance/ci/validate_current_stage2_required_outputs.py
       - name: Validate Current Stage-02 state and materialized pending successor
         run: |
           python governance/ci/validate_stage02_state_integrity.py
