@@ -1,0 +1,113 @@
+authorization_uid: USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R4
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+user_directive_date: 2026-09-18
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+supersedes_failed_authorization_uid: USR-DIRECTIVE-20260918-MOTHER-DESIGN-REMEDIATION-ROUTING-HARDENING-R3
+baseline_commit_sha: 501917259c57ae874dd5ea55b4c754687f005126
+baseline_tree_sha: 28f5c38e668f76af7a30f6e20ecb1377a2a7d1aa
+current_governance_uid: GOV-REV-20260918-RESIDUAL-CLASSIFICATION-HARDENING
+
+user_directive:
+  - "這個建立在臨時紀錄上面，等這次全部測試完成後再一次修改母規範。接著執行"
+  - "繼續執行"
+
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 12
+  reviewed_existing_owner_ref_count: 7
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+  comparison_result: NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM
+  live_repository_branch_head_verified: true
+  current_registry_resolved: true
+  mother_01_02_03_04_read_in_order: true
+  current_mutation_control_read: true
+  current_bounded_functional_completion_read: true
+  current_execution_cycle_control_read: true
+  current_validation_remediation_protocol_read: true
+  temporary_test_cycle_completed: true
+  temporary_residual_count: 0
+  clean_full_line_run_id: 35316067061
+  clean_full_line_terminal_conclusion: success
+  failed_r2_successor_run_id: 35317216824
+  failed_r2_terminal_conclusion: failure
+  failed_r3_successor_run_id: 35320404023
+  failed_r3_terminal_conclusion: failure
+  failed_r3_commit_persisted: false
+  failed_r3_failure_owner: ONE_TIME_HELPER_LITERAL_NEWLINE_SYNTAX_ERROR
+  r4_helper_literal_newline_fixed: true
+  r4_helper_markdown_escape_warning_removed: true
+  r4_static_python_compile_gate_added: true
+  r4_workflow_binding_corrected: true
+
+exact_scope:
+  purpose: >-
+    Retry the same authorized Design Remediation Routing Mother successor after correcting only the one-time helper syntax defect. Preserve the already-tested Mother/Current policy scope and the corrected NOT_EXECUTED reset semantics; do not add product behavior.
+  permitted_normative_changes:
+    - Same Mother Design/Contract Remediation routing change authorized by R2/R3.
+    - Local INPUT_SOURCE_GAP and ARCHITECTURE_GAP without a unique role-correct Current closure must first enter bounded review-only Design/Contract Remediation instead of defaulting to field-by-field Product Authority wait.
+    - Preserve FUNCTION_ADMISSION_SCORECARD and AUTO_COMPLETION_SCOPE_LEDGER before candidate authoring.
+    - Preserve review-only candidate versus Current Product Authority separation.
+    - Preserve AUTHORITY_GAP for two or more materially distinct product behaviors requiring explicit selection.
+    - Preserve coherent package review across multiple blocker identities.
+    - Preserve single Current canonical product owner materialization before R7/equivalent ingestion.
+    - Preserve zero product blocker reduction until fresh product-owner materialization and Stage reexecution.
+    - Update existing R5 routing producer without supplying product values.
+  permitted_retry_fix:
+    - Repair only the one-time helper Python syntax caused by a literal escaped newline in the Active State projection.
+    - Add a static Python compile gate before helper execution.
+    - Preserve the corrected NOT_EXECUTED reset projector semantics from R3.
+  permitted_supporting_changes:
+    - .github/governance-source/active/source/**
+    - .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+    - .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+    - governance/specifications/current/**
+    - governance/specifications/REGISTRY.yaml
+    - GOVERNANCE_CURRENT.yaml
+    - governance/ci/**
+    - governance/test/**
+    - 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT/**
+    - .github/governance-maintenance/materialize_design_remediation_routing_successor.py
+    - .github/workflows/design-remediation-routing-successor.yml
+  excluded_scope:
+    - New product behavior or Product Authority value approval
+    - R7 product materialization
+    - Treating governance change as closure of the prior 45 CORE-01 gaps
+    - ASSET-01 product execution
+    - Stage-03 progression
+    - website construction
+    - deployment
+    - external authority autofill
+    - immutable Stage-01 raw source mutation
+    - weakening existing fail-closed or anti-inference rules
+
+completion_requirements:
+  new_immutable_governance_uid_required: true
+  one_consolidated_mother_successor_change: true
+  prior_failed_runs_not_counted_as_success: true
+  helper_static_compile_pass_required: true
+  all_affected_mother_documents_semantically_reconciled: true
+  machine_policy_projection_updated: true
+  r5_routing_updated_without_product_value_invention: true
+  source_identity_resynchronized: true
+  current_stage02_state_not_executed_without_active_attempt: true
+  stage1_immutable_inputs_preserved: true
+  temporary_materializer_residual_count: 0
+  product_stage_credit: 0
+  targeted_regression_required: true
+  full_line_high_pressure_validation_required: true
+  selected_profile_validation_required: true
+  active_consumer_reference_integrity_required: true
+  fresh_stage02_execution_requires_new_entry_resolution: true
+  website_construction_allowed: false
+  deployment_allowed: false
