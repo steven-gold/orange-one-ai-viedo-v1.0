@@ -111,45 +111,7 @@ def _current_design_context():
     state = load(STATE)
     scope = load(scope_path)
     if state.get("current_primary_task_layer") != "PRODUCT_STAGE_EXECUTION":
-        authorization_uid = os.environ.get("STAGE02_PRODUCT_REENTRY_AUTHORIZATION_UID", "").strip()
-        if not authorization_uid:
-            die(f"APPROVED_DESIGN_MATERIALIZATION_REQUIRES_PRODUCT_LAYER:{state.get('current_primary_task_layer')!r}")
-        preserved_key = "suspended_product_work_unit_asset01_stage02_design_projector_maintenance"
-        preserved = state.get(preserved_key) or {}
-        if (
-            preserved.get("work_unit_uid") != "WU-STAGE02-ASSET01-8133839F-REPLAY"
-            or preserved.get("stage_uid") != "STAGE-02"
-            or preserved.get("semantic_capability") != "PAGE_FUNCTIONAL_CONTRACT"
-            or preserved.get("scope") != list(scope.get("included_units") or [])
-        ):
-            die(f"ASSET01_PRODUCT_REENTRY_CONTEXT_INVALID:{preserved.get('work_unit_uid')!r}")
-        if "deferred_foreground_work_unit_after_asset01_stage02" in state:
-            die("ASSET01_PRODUCT_REENTRY_ALREADY_HAS_DEFERRED_FOREGROUND_WORK_UNIT")
-        state["deferred_foreground_work_unit_after_asset01_stage02"] = copy.deepcopy(state.get("active_work_unit") or {})
-        state["deferred_foreground_resume_control_after_asset01_stage02"] = copy.deepcopy(state.get("resume_control") or {})
-        state["deferred_foreground_primary_task_after_asset01_stage02"] = {
-            "current_primary_task_layer": state.get("current_primary_task_layer"),
-            "current_primary_task_authorization_uid": state.get("current_primary_task_authorization_uid"),
-            "current_primary_task_product_stage_credit": state.get("current_primary_task_product_stage_credit"),
-            "status": state.get("status"),
-            "next_action": state.get("next_action"),
-        }
-        product_work = copy.deepcopy(preserved)
-        product_work["current_status"] = "EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED"
-        state["active_work_unit"] = product_work
-        state["current_primary_task_layer"] = "PRODUCT_STAGE_EXECUTION"
-        state["current_primary_task_authorization_uid"] = authorization_uid
-        state["current_primary_task_product_stage_credit"] = int(product_work.get("product_blocker_credit") or 0)
-        state["status"] = "ACTIVE_ASSET01_STAGE02_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED"
-        state["next_action"] = "MATERIALIZE_ASSET01_STAGE02_APPROVED_DESIGN_CONTRACT"
-        state["resume_control"] = {
-            "current_resume_point": "ASSET01_STAGE2_EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED",
-            "current_work_unit_uid": product_work.get("work_unit_uid"),
-            "current_owner": product_work.get("canonical_owner"),
-            "historical_stage2_results_are_current_state": False,
-            "stage2_execution_requires_fresh_entry_resolution": False,
-            "exact_next_action": "MATERIALIZE_ASSET01_STAGE02_APPROVED_DESIGN_CONTRACT",
-        }
+        die(f"APPROVED_DESIGN_MATERIALIZATION_REQUIRES_PRODUCT_LAYER:{state.get('current_primary_task_layer')!r}")
     work = state.get("active_work_unit") or {}
     if work.get("stage_uid") != "STAGE-02" or work.get("semantic_capability") != "PAGE_FUNCTIONAL_CONTRACT":
         die(f"CURRENT_STAGE02_PRODUCT_WORK_UNIT_REQUIRED:{work.get('work_unit_uid')!r}")
@@ -190,7 +152,6 @@ def _current_design_context():
     if paths["approval"].exists() or paths["receipt"].exists():
         die("APPROVED_DESIGN_MATERIALIZATION_EVIDENCE_ALREADY_EXISTS_REFUSE_OVERWRITE")
     return state, scope, work, page, run_root, product_root, page_root, paths
-
 
 def _profile_for_entity(entity: str) -> str:
     mapping = {
@@ -602,7 +563,7 @@ def materialize_current_approved_design_contract():
         die("AUDIT_EVENT_PROPOSAL_DENOMINATOR_DRIFT")
     for proposal in audit_rows:
         aid = str(proposal.get("action_uid") or "")
-        event_uid = str(proposal.get("audit_event_uid") or proposal.get("event_uid") or "")
+        event_uid = str(proposal.get("audit_event_uid") or "")
         action = actions.get(aid)
         if not action or not event_uid:
             die(f"AUDIT_EVENT_PROPOSAL_INVALID:{aid}:{event_uid}")
