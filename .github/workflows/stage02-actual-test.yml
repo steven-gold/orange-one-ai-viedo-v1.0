@@ -54,6 +54,8 @@ jobs:
         run: python governance/ci/run_current_stage2_actual_test.py --self-test-revalidation-authority
       - name: Regression test required-contract applicability and approved successor projection
         run: python governance/ci/run_current_stage2_actual_test.py --self-test-applicability-projection
+      - name: Regression test bounded-remediation product-root continuity
+        run: python governance/ci/validate_stage02_state_integrity.py --self-test-revalidation-root-continuity
       - name: Prove pending preformal review blocks before product execution
         shell: bash
         run: |

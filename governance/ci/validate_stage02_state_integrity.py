@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -29,6 +30,95 @@ def load_yaml(path: Path, label: str) -> dict:
     if not isinstance(obj, dict):
         die(f"{label}_MAPPING_REQUIRED")
     return obj
+
+
+def blocked_product_root_continuity_error(
+    *,
+    root_present,
+    evidence_root_present,
+    material: dict,
+    revalidation_mode: bool,
+    canonical_owner_ref: str,
+    repo_root: Path = ROOT,
+) -> str | None:
+    if root_present not in {True, False}:
+        return "BLOCKED_STAGE2_ARTIFACT_ROOT_FLAG_INVALID"
+    if root_present is False:
+        return None
+    if material.get("material_remediation_started") is not True:
+        return "BLOCKED_PRODUCT_ROOT_REQUIRES_MATERIAL_REMEDIATION_STATE"
+    if evidence_root_present is True:
+        return None
+    if not revalidation_mode:
+        return "BLOCKED_PRODUCT_ROOT_EVIDENCE_MISMATCH"
+    if int(material.get("product_blocker_credit") or 0) != 0:
+        return "REVALIDATION_PRODUCT_ROOT_PREMATURE_PRODUCT_CREDIT"
+    if int(material.get("exact_materialized_closure_count_pending_revalidation") or 0) <= 0:
+        return "REVALIDATION_PRODUCT_ROOT_PENDING_CLOSURE_COUNT_MISSING"
+    owner = str(canonical_owner_ref or "").strip()
+    if not owner:
+        return "REVALIDATION_PRODUCT_ROOT_CANONICAL_OWNER_MISSING"
+    owner_path = Path(owner)
+    if owner_path.is_absolute() or ".." in owner_path.parts:
+        return "REVALIDATION_PRODUCT_ROOT_CANONICAL_OWNER_INVALID"
+    if not (repo_root / owner_path).is_file():
+        return "REVALIDATION_PRODUCT_ROOT_CANONICAL_OWNER_NOT_MATERIALIZED"
+    return None
+
+
+def self_test_revalidation_root_continuity() -> None:
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td)
+        owner = Path("run/04_PAGE_FUNCTIONAL_CONTRACT/PAGE/FUNCTIONAL_CHAIN_SPEC.yaml")
+        target = root / owner
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("artifact_type: FUNCTIONAL_CHAIN_SPEC\n", encoding="utf-8")
+        material = {
+            "material_remediation_started": True,
+            "exact_materialized_closure_count_pending_revalidation": 1,
+            "product_blocker_credit": 0,
+        }
+        assert blocked_product_root_continuity_error(
+            root_present=True,
+            evidence_root_present=False,
+            material=material,
+            revalidation_mode=True,
+            canonical_owner_ref=str(owner),
+            repo_root=root,
+        ) is None
+        assert blocked_product_root_continuity_error(
+            root_present=True,
+            evidence_root_present=False,
+            material=material,
+            revalidation_mode=False,
+            canonical_owner_ref=str(owner),
+            repo_root=root,
+        ) == "BLOCKED_PRODUCT_ROOT_EVIDENCE_MISMATCH"
+        bad_credit = dict(material)
+        bad_credit["product_blocker_credit"] = 1
+        assert blocked_product_root_continuity_error(
+            root_present=True,
+            evidence_root_present=False,
+            material=bad_credit,
+            revalidation_mode=True,
+            canonical_owner_ref=str(owner),
+            repo_root=root,
+        ) == "REVALIDATION_PRODUCT_ROOT_PREMATURE_PRODUCT_CREDIT"
+        assert blocked_product_root_continuity_error(
+            root_present=True,
+            evidence_root_present=False,
+            material=material,
+            revalidation_mode=True,
+            canonical_owner_ref="missing/FUNCTIONAL_CHAIN_SPEC.yaml",
+            repo_root=root,
+        ) == "REVALIDATION_PRODUCT_ROOT_CANONICAL_OWNER_NOT_MATERIALIZED"
+    print("PASS: Stage-02 revalidation product-root continuity remains fail-closed")
+
+
+if "--self-test-revalidation-root-continuity" in sys.argv:
+    self_test_revalidation_root_continuity()
+    raise SystemExit(0)
 
 
 state = load_yaml(STATE, "ACTIVE_STATE")
@@ -194,11 +284,19 @@ if result == "TEST_EXECUTED_BLOCKED":
     if not set(target_pages).issubset(set(stage1)): die("STAGE2_TARGET_PAGE_SCOPE_OUTSIDE_STAGE1")
     if evidence.get("stage_scope_complete") is not (set(target_pages) == set(stage1)): die("STAGE2_SCOPE_COMPLETENESS_DRIFT")
     root_present = stage2.get("artifact_root_present")
-    if root_present not in {True, False}: die("BLOCKED_STAGE2_ARTIFACT_ROOT_FLAG_INVALID")
     material = state.get("stage02_material_remediation") or {}
-    if root_present is True:
-        if material.get("material_remediation_started") is not True: die("BLOCKED_PRODUCT_ROOT_REQUIRES_MATERIAL_REMEDIATION_STATE")
-        if evidence.get("physical_stage2_product_artifact_root_present") is not True: die("BLOCKED_PRODUCT_ROOT_EVIDENCE_MISMATCH")
+    revalidation_mode = os.environ.get("STAGE02_REVALIDATION_MODE", "").strip() == "1"
+    root_error = blocked_product_root_continuity_error(
+        root_present=root_present,
+        evidence_root_present=evidence.get("physical_stage2_product_artifact_root_present"),
+        material=material,
+        revalidation_mode=revalidation_mode,
+        canonical_owner_ref=active_work.get("canonical_owner"),
+    )
+    if root_error:
+        die(root_error)
+    if root_present is True and evidence.get("physical_stage2_product_artifact_root_present") is not True and revalidation_mode:
+        print("PASS: bounded remediation materialized a Current product root after predecessor evidence; fresh revalidation remains required before product credit")
     effective = evidence.get("effective_functional_gap_total")
     blocking_functional = int(effective if effective is not None else fresh_gap_total)
     scope_incomplete = evidence.get("stage_scope_complete") is False and bool(evidence.get("remaining_pages"))
