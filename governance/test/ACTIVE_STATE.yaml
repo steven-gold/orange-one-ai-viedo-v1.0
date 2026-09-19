@@ -22,7 +22,7 @@ execution:
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
-  current_stage: STAGE-02-CLOSED
+  current_stage: STAGE-02-CLOSED-VERIFIED
   stage1:
     CORE-01: PASS
   stage2:
@@ -41,7 +41,7 @@ execution:
   stage3:
     result: NOT_EXECUTED
     work_unit_uid: null
-    work_unit_resolution: NOT_RESOLVED_AFTER_FRESH_STAGE02
+    work_unit_resolution: WORK_UNIT_RESOLUTION_GATE_REQUIRED_AFTER_STAGE02_CLOSURE
     execution_started: false
     pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
     pre_execution_gate_status: NOT_EXECUTED
@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE_R4
-next_action: CLOSE_STAGE02
+status: STAGE02_CLOSED_VERIFIED_FRESH_RUN_007
+next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: FRESH_CORE01_STAGE2_READY_TO_CLOSE
-  current_work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R4
-  current_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: null
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: CLOSE_STAGE02
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
@@ -613,7 +613,7 @@ work_unit_resolution_gate_core01_clean_replay_r4:
   predecessor_run_uid: FRESH-RUN-006
   successor_run_uid: FRESH-RUN-007
   product_stage_credit: 0
-active_work_unit:
+closed_stage02_clean_replay_work_unit_r4:
   work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R4
   canonical_name: CORE01_STAGE02_20260911_PLANNING_COMPLETENESS_REMEDIATION_AND_FRESH_REPLAY
   stage_uid: STAGE-02
@@ -622,7 +622,7 @@ active_work_unit:
   scope:
   - CORE-01
   canonical_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  current_status: READY_FOR_TERMINAL_CLOSURE
+  current_status: CLOSED_VERIFIED
   source_attempt_uid: STAGE02-FRESH-20260919-CORE01-004
   source_problem_denominator: 0
   source_closure_blocker_denominator: 0
@@ -757,3 +757,40 @@ last_work_unit_resolution_gate:
   - ASSET-01
   source_problem_denominator: 0
   source_closure_blocker_denominator: 0
+
+stage02_terminal_closure_r4:
+  status: CLOSED_VERIFIED
+  work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R4
+  authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4
+  governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+  run_uid: FRESH-RUN-007
+  attempt_uid: STAGE02-FRESH-20260919-CORE01-004
+  cleanup_scope:
+  - CORE-01
+  - ASSET-01
+  replay_scope:
+  - CORE-01
+  replay_excluded_scope:
+  - ASSET-01
+  prior_run_uid: FRESH-RUN-006
+  prior_run_root_present_after_cleanup: false
+  asset01_generated_data_present_after_replay: false
+  stage02_history_present_after_cleanup: false
+  planning_baseline_completeness: PASS
+  fresh_functional_gap_total: 0
+  closure_blocker_total: 0
+  remaining_required_units: 0
+  prior_stage2_results_used: false
+  stage1_result: PASS
+  stage2_result: TEST_EXECUTED_PASS
+  common_stage_engine_required: true
+  common_stage_engine_admission_applied:
+  - STAGE-01
+  - STAGE-02
+  source_replay_workflow_run_id: 35418115888
+  source_replay_artifact_id: 10576198733
+  source_replay_artifact_sha256: 8efba832db6a1db191c7d82ccd0585903d7b937718c333df7818deffba1c77b1
+  source_replay_commit: b21662f46941216de32217da746565d99b559705
+  stage03_execution_started: false
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
+  closure_commit_exact_head_revalidation_required: true
