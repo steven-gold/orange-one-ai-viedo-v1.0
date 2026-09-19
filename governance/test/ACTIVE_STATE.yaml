@@ -37,7 +37,7 @@ execution:
     stage_scope_complete: true
     current_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
     prior_results_authoritative_for_current_governance: false
-    revalidation_required_under_current_governance: false
+    revalidation_required_under_current_governance: true
   stage3:
     result: NOT_EXECUTED
     work_unit_uid: null
@@ -79,7 +79,7 @@ stage_execution_loading:
 stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
-  frozen_specification_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+  frozen_specification_uid: GOV-REV-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING
   audit_only_blocked_loop_may_count_as_progress: false
   remediation_must_materially_eliminate_remediable_gap: true
   full_line_high_pressure_required_before_every_fresh_execution_or_reexecution: true
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: BLUEPRINT_TRACEABILITY_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
+  current_resume_point: BLUEPRINT_TRACEABILITY_SUCCESSOR_RUN_STATE_RESET_FRESH_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-GOV-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-001
   current_owner: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: RUN_SUCCESSOR_EXACT_HEAD_VALIDATION_THEN_EXECUTE_ONE_FRESH_BLUEPRINT_REPLANNING
+  exact_next_action: RUN_EXACT_HEAD_VALIDATION_AND_FRESH_SUCCESSOR_REEXECUTION
   parent_work_unit_uid: WU-TEST-STAGE02-DESIGN-PROJECTOR-001
   parent_resume_point: STAGE02_DESIGN_CONTRACT_REVALIDATION_PROJECTOR_MAINTENANCE_READY
   parent_exact_next_action: HARDEN_STAGE02_DESIGN_CONTRACT_REVALIDATION_PROJECTOR
@@ -351,7 +351,7 @@ pending_governance_review:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R1
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R12
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2013,8 +2013,8 @@ stage02_active_attempt:
   prior_results_used: false
   active_evidence_present: true
   active_findings_present: true
-  fresh_revalidation_required: false
-  closure_credit_under_current_governance: true
+  fresh_revalidation_required: true
+  closure_credit_under_current_governance: false
   source_workflow_run_id: 35435405975
   source_artifact_id: 10581363345
   source_artifact_sha256: a103e733a86be6f818e1f96411790b1bd75ba60f651ae6d2761d9ae1d83db342
@@ -2566,7 +2566,7 @@ active_work_unit:
   primary_task_layer: GOVERNANCE_MAINTENANCE
   canonical_owner: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
   current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
-  authorization_uid: USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R1
+  authorization_uid: USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R12
   scope:
   - CONSTRUCTION_BLUEPRINT_PACKAGE_COMPLETENESS
   - FUNCTION_VISUAL_BIDIRECTIONAL_TRACEABILITY
