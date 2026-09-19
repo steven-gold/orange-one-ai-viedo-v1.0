@@ -23,9 +23,9 @@ jobs:
       - name: Execute governance precheck or promotion
         shell: bash
         run: |
-          gzip -dc .github/governance-maintenance/promote_blueprint_traceability_governance.py.gz > /tmp/promote_blueprint_traceability_governance.py
+          gzip -dc .github/governance-maintenance/promote_blueprint_traceability_governance.py.gz > .github/governance-maintenance/promote_blueprint_traceability_governance.py
           if [ -f .github/governance-maintenance/BLUEPRINT_TRACEABILITY_PROMOTE_TRIGGER ]; then
-            python /tmp/promote_blueprint_traceability_governance.py --mode promote
+            python .github/governance-maintenance/promote_blueprint_traceability_governance.py --mode promote
           else
-            python /tmp/promote_blueprint_traceability_governance.py --mode precheck
+            python .github/governance-maintenance/promote_blueprint_traceability_governance.py --mode precheck
           fi
