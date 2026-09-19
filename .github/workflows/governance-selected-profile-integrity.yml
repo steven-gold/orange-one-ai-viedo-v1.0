@@ -33,6 +33,10 @@ jobs:
         run: python governance/ci/validate_authoring_reference_governance_coverage.py
       - name: Validate active consumer reference integrity
         run: python governance/ci/validate_active_consumer_reference_integrity.py
+      - name: Validate structured mutation selector safety
+        run: |
+          python governance/ci/validate_structured_mutation_safety.py
+          python governance/ci/validate_structured_mutation_safety.py --self-test
       - name: Stress test registry resolution and fail-closed invariants
         run: python governance/ci/stress_test_governance_registry.py
       - name: Validate selected execution profile and profile-local evidence
