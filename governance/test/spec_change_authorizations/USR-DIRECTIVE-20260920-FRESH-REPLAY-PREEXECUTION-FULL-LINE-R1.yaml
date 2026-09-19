@@ -1,0 +1,34 @@
+schema_version: 2
+artifact_type: TEST_VALIDATION_MAINTENANCE_AUTHORIZATION_RECEIPT
+authorization_uid: USR-DIRECTIVE-20260920-FRESH-REPLAY-PREEXECUTION-FULL-LINE-R1
+normative_authority: false
+authority_source: EXPLICIT_USER_CONTINUATION_OF_ASSET01_CLEAN_FRESH_REPLAY
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+baseline_commit_sha: 3b14a8651a3d9cb23f21bde50949546f06608e90
+baseline_tree_sha: 8e7730d2b4c120de55565e54bcd081f0f287818e
+directive_summary: >-
+  Continue the legal ASSET-01 clean fresh replay path. Repair the reusable Fresh Replay workflow so
+  the existing canonical Full-Line high-pressure gate completes on the same checked-out SHA before
+  any Product Stage replay executes. Do not create a second Full-Line implementation and grant zero Product credit.
+exact_scope:
+  allowed:
+  - MODIFY_EXISTING_FRESH_STAGE_REPLAY_WORKFLOW_ORDERING
+  - REUSE_EXISTING_RUN_FULL_LINE_SYSTEM_GATE
+  - SAME_SHA_PREEXECUTION_FULL_LINE
+  - FAIL_CLOSED_BEFORE_PRODUCT_EXECUTION
+  - EXACT_HEAD_VALIDATION
+  forbidden:
+  - PRODUCT_AUTHORITY_CHANGE
+  - PRODUCT_BLOCKER_CREDIT
+  - MOTHER_NORMATIVE_CHANGE
+  - NEW_PARALLEL_FULL_LINE_IMPLEMENTATION
+  - STAGE01_PRODUCT_EXECUTION
+  - STAGE02_PRODUCT_EXECUTION
+  - STAGE03_EXECUTION
+  - WEBSITE_IMPLEMENTATION
+  - DEPLOYMENT
+product_stage_credit: 0
