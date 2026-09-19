@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GOVERNANCE_V2_2_8_POST_PROMOTION_RESIDUAL_CLEANUP
-next_action: REMOVE_COMPLETED_ONE_SHOT_AND_STALE_SOURCE_MIGRATION_CONSUMERS_THEN_PREPARE_FRESH_CORE01_REPLAY
+status: GOVERNANCE_SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_REPAIR_ACTIVE
+next_action: PROMOTE_SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_SUCCESSOR_THEN_FULL_LINE_REVERIFY
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: POST_V2_2_8_PROMOTION_RESIDUAL_CLEANUP
-  current_work_unit_uid: WU-GOV-STRUCTURED-MUTATION-SELECTOR-HARDENING-001
-  current_owner: governance/ci/validate_structured_mutation_safety.py
+  current_resume_point: SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_REPAIR
+  current_work_unit_uid: WU-GOV-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-001
+  current_owner: .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: REMOVE_COMPLETED_ONE_SHOT_AND_STALE_SOURCE_MIGRATION_CONSUMERS_THEN_PREPARE_FRESH_CORE01_REPLAY
+  exact_next_action: PROMOTE_SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_SUCCESSOR_THEN_FULL_LINE_REVERIFY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
@@ -344,7 +344,7 @@ pending_governance_review:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-R2
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -805,12 +805,12 @@ work_unit_resolution_gate_structured_mutation_hardening:
   - R4_PREWRITE_DUPLICATE_RAW_STRING_SELECTOR_FAILURE
   - ACTIVE_WORKFLOW_MISSING_GOVERNANCE_MAINTENANCE_EXECUTABLE_ESCAPED_REFERENCE_GATE
   product_stage_credit: 0
-active_work_unit:
+suspended_governance_work_unit_structured_mutation_selector_hardening:
   work_unit_uid: WU-GOV-STRUCTURED-MUTATION-SELECTOR-HARDENING-001
   canonical_name: STRUCTURED_MUTATION_SELECTOR_AND_ACTIVE_CONSUMER_GRAPH_HARDENING
   primary_task_layer: GOVERNANCE_MAINTENANCE
   canonical_owner: governance/ci/validate_structured_mutation_safety.py
-  current_status: ACTIVE_DISCOVERY_AND_IMPLEMENTATION
+  current_status: SUSPENDED_FOR_SEMANTIC_BASELINE_CONSUMER_OWNER_REENTRY
   product_stage_credit: 0
   suspended_product_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
   suspended_product_stage3_execution_started: false
@@ -830,6 +830,41 @@ active_work_unit:
   - RAW_WHOLE_FILE_STRING_UNIQUENESS_NOT_PRIMARY_SELECTOR_FOR_STRUCTURED_MUTATION
   - STRUCTURED_MUTATION_NEGATIVE_REGRESSION_PASS
   - CURRENT_GOVERNANCE_SUCCESSOR_ATOMIC_PROMOTION_PASS
+  - EXACT_HEAD_SELECTED_PROFILE_AND_FULL_LINE_PASS
+  - PRODUCT_STAGE_CREDIT_ZERO
+
+active_work_unit:
+  work_unit_uid: WU-GOV-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-001
+  canonical_name: SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_AND_SOURCE_IDENTITY_REPAIR
+  primary_task_layer: GOVERNANCE_MAINTENANCE
+  canonical_owner: .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
+  current_status: ACTIVE_IMPLEMENTATION
+  product_stage_credit: 0
+  predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
+  source_defect_owner: .github/governance-source/active/source/09_TESTS/governance/program_artifact_instance_guard.py
+  exact_scope:
+  - REMOVE_DUPLICATE_LITERAL_SEMANTIC_BASELINE_HASH_OWNER
+  - RESOLVE_PROGRAM_ARTIFACT_GUARD_HASH_FROM_CANONICAL_SEMANTIC_VALIDATOR_OWNER
+  - ENFORCE_EXACTLY_ONE_LITERAL_SEMANTIC_BASELINE_HASH_OWNER_IN_75_FILE_SOURCE
+  - REFRESH_SOURCE_IDENTITY_AND_CURRENT_SOURCE_PROJECTORS
+  - PROMOTE_NEW_IMMUTABLE_CURRENT_GOVERNANCE_IDENTITY_WITHOUT_MOTHER_SEMANTIC_CHANGE
+  - EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_BRANCH_GUARD
+  out_of_scope:
+  - MOTHER_PROSE_CHANGE
+  - PRODUCT_CONTRACT_CHANGE
+  - ASSET01
+  - STAGE03
+  - WEBSITE_IMPLEMENTATION
+  - DEPLOYMENT
+  definition_of_done:
+  - SOURCE_PYTHON_37_FILE_SCAN_HAS_EXACTLY_ONE_LITERAL_SEMANTIC_HASH_OWNER
+  - PROGRAM_ARTIFACT_INSTANCE_BASELINE_PASS
+  - REFERENCE_SEMANTIC_28_OF_28_PASS
+  - EXECUTION_LOAD_14_OF_14_PASS
+  - BUGFIX_REGRESSION_30_OF_30_PASS
+  - PREFORMAL_20_OF_20_PASS
+  - MANDATORY_REGRESSION_17_OF_17_PASS
+  - SOURCE_IDENTITY_75_FILE_PASS
   - EXACT_HEAD_SELECTED_PROFILE_AND_FULL_LINE_PASS
   - PRODUCT_STAGE_CREDIT_ZERO
 structured_mutation_selector_successor:
@@ -866,3 +901,19 @@ post_v228_active_consumer_cleanup:
   stage02_actual_test_workflow_pruned_to_current_reusable_jobs: true
   stale_versioned_stage02_job_branch_count_removed: 9
   historical_run_root_literal_fresh_run_003_remaining_in_stage02_actual_workflow: false
+
+semantic_baseline_consumer_single_owner_reentry:
+  resolution_uid: WUR-GOV-SEMANTIC-BASELINE-CONSUMER-20260919-001
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  discovered_by_full_line_run: 35420067927
+  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  work_unit_uid: WU-GOV-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-001
+  authorization_uid: USR-DIRECTIVE-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-R2
+  current_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
+  current_semantic_baseline_hash: 446007aa22777d490ba50f04cc764232872a5d9a6f497a4c7e681bdf02d5d0e8
+  stale_consumer_hash: 0c87e5c9a8d81cf608c270ae7298dd4d80735376eef63039671c38dbe580a590
+  scanned_source_python_files: 37
+  literal_semantic_hash_owners_found: 2
+  legal_current_literal_owner: .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
+  stale_duplicate_literal_owner: .github/governance-source/active/source/09_TESTS/governance/program_artifact_instance_guard.py
+  product_stage_credit: 0
