@@ -4,6 +4,7 @@ import importlib.util
 import re
 import shutil
 import tempfile
+import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 RESOLVER_PATH = ROOT / "governance/ci/governance_resolver.py"
@@ -71,9 +72,12 @@ record(
 td, root = make_sandbox()
 try:
     p = root / "governance/specifications/REGISTRY.yaml"
-    text = p.read_text(encoding="utf-8")
-    text = text.replace(f"display_version: {BASE['display_version']}", "display_version: release-green", 1)
-    p.write_text(text, encoding="utf-8")
+    data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    active = data.get("active_specification")
+    if not isinstance(active, dict) or active.get("display_version") != BASE["display_version"]:
+        raise RuntimeError("stress fixture registry active_specification drift")
+    active["display_version"] = "release-green"
+    p.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
     got = resolve_at(root)
     record(
         "display_alias_rename_does_not_move_current",
@@ -103,20 +107,23 @@ finally:
 def version_path_injection(root):
     reg = root / "governance/specifications/REGISTRY.yaml"
     bad_locator = "governance/specifications/" + "v9.9.9"
-    text = reg.read_text(encoding="utf-8").replace(
-        "specification_root: governance/specifications/current",
-        "specification_root: " + bad_locator,
-        1,
-    )
-    reg.write_text(text, encoding="utf-8")
+    data = yaml.safe_load(reg.read_text(encoding="utf-8")) or {}
+    stable = data.get("stable_entrypoint")
+    if not isinstance(stable, dict) or stable.get("specification_root") != "governance/specifications/current":
+        raise RuntimeError("stress fixture stable_entrypoint drift")
+    stable["specification_root"] = bad_locator
+    reg.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
 expect_block("semantic_version_locator_is_blocked", version_path_injection, "semantic version segment")
 
 # 5. Registry/manifest UID mismatch must fail closed.
 def uid_mismatch(root):
     manifest = root / "governance/specifications/current/SPECIFICATION_MANIFEST.yaml"
-    text = manifest.read_text(encoding="utf-8").replace(BASE_UID, "GOV-REV-INVALID-MISMATCH", 1)
-    manifest.write_text(text, encoding="utf-8")
+    data = yaml.safe_load(manifest.read_text(encoding="utf-8")) or {}
+    if data.get("artifact_uid") != BASE_UID:
+        raise RuntimeError("stress fixture manifest artifact_uid drift")
+    data["artifact_uid"] = "GOV-REV-INVALID-MISMATCH"
+    manifest.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
 expect_block("registry_manifest_uid_mismatch_is_blocked", uid_mismatch, "governance_uid does not match")
 
@@ -136,7 +143,9 @@ expect_block("missing_test_root_is_blocked", missing_test_root, "test state root
 td, root = make_sandbox()
 try:
     target = root / "governance/specifications/current/BOUNDED_FUNCTIONAL_COMPLETION.yaml"
-    target.write_text(target.read_text(encoding="utf-8") + "\n# digest mutation probe\n", encoding="utf-8")
+    data = yaml.safe_load(target.read_text(encoding="utf-8")) or {}
+    data["stress_digest_mutation_probe"] = True
+    target.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False), encoding="utf-8")
     got = resolve_at(root)
     record(
         "current_content_change_recomputes_digest",
