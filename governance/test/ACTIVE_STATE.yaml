@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STAGE02_PROJECTOR_PERSISTENCE_MAINTENANCE_REVALIDATION_REQUIRED
-next_action: VALIDATE_STAGE02_PROJECTOR_PERSISTENCE_PRODUCERS
+status: STAGE02_PROJECTOR_PERSISTENCE_MAINTENANCE_CLOSED
+next_action: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER_AFTER_PROJECTOR_REPAIR
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,16 +284,19 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE02_PROJECTOR_PERSISTENCE_IMPLEMENTED_REVALIDATION_REQUIRED
-  current_work_unit_uid: WU-TEST-STAGE02-PROJECTOR-PERSISTENCE-001
-  current_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+  current_resume_point: STAGE02_PROJECTOR_PERSISTENCE_CLOSED_PRODUCT_LAYER_RESTORE_REQUIRED
+  current_work_unit_uid: null
+  current_owner: null
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: VALIDATE_STAGE02_PROJECTOR_PERSISTENCE_PRODUCERS
+  exact_next_action: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER_AFTER_PROJECTOR_REPAIR
+  closed_maintenance_work_unit_uid: WU-TEST-STAGE02-PROJECTOR-PERSISTENCE-001
+  closed_maintenance_owner: .github/governance-maintenance/run_fresh_stage_replay.py
   parent_primary_task_layer: PRODUCT_STAGE_EXECUTION
   parent_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   parent_resume_point: ASSET01_STAGE2_REVALIDATION_TRIGGERED_PENDING_TERMINAL_RESULT
   parent_exact_next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
+  next_primary_task_layer: PRODUCT_STAGE_EXECUTION
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -1745,7 +1748,8 @@ suspended_product_work_unit_asset01_stage02_projector_persistence:
     actual_stage02_scanner_executed: false
     product_denominator_changed: false
     product_blocker_credit: 0
-active_work_unit:
+active_work_unit: null
+closed_test_validation_maintenance_work_unit_stage02_projector_persistence:
   work_unit_uid: WU-TEST-STAGE02-PROJECTOR-PERSISTENCE-001
   canonical_name: STAGE02_RUNTIME_EVIDENCE_AND_PROJECTOR_PERSISTENCE_HARDENING
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
@@ -1755,7 +1759,7 @@ active_work_unit:
   - governance/test/ACTIVE_STATE.yaml
   - governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
   - governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
-  current_status: IMPLEMENTATION_REVALIDATION_REQUIRED
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   parent_product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   discovered_by:
     workflow_run_id: 35430150371
@@ -1793,6 +1797,24 @@ active_work_unit:
     product_denominator_changed: false
     product_stage_credit: 0
     exact_head_revalidation_required: true
+  terminal_evidence:
+    implementation_head_sha: 39ba541a66bc36d6eb251ea91859e917acedc2e9
+    fresh_replay_run_id: 35430402755
+    fresh_replay_conclusion: SUCCESS
+    stage02_regression_run_id: 35430402793
+    stage02_regression_conclusion: SUCCESS
+    selected_profile_run_id: 35430402762
+    selected_profile_conclusion: SUCCESS
+    full_line_run_id: 35430402747
+    full_line_conclusion: SUCCESS
+    branch_guard_run_id: 35430402795
+    branch_guard_conclusion: SUCCESS
+    current_projector_schema_repaired: true
+    stable_producer_schema_repaired: true
+    product_state_integrity_validation_deferred_to_restored_product_boundary: true
+    product_denominator_changed: false
+    product_stage_credit: 0
+    closure_persistence_exact_head_revalidation_required: true
 work_unit_resolution_gate_stage02_projector_persistence:
   resolution_uid: WUR-TEST-STAGE02-PROJECTOR-PERSISTENCE-20260919-001
   normative_authority: false
@@ -2182,3 +2204,30 @@ stage02_material_remediation:
   exact_materialized_closure_count_pending_revalidation: 31
   product_blocker_credit: 0
   status: BOUNDED_PRODUCT_REMEDIATION_MATERIALIZED_PENDING_FRESH_REVALIDATION
+
+stage02_projector_persistence_maintenance_closure:
+  closure_uid: CLOSE-WU-TEST-STAGE02-PROJECTOR-PERSISTENCE-20260919-001
+  work_unit_uid: WU-TEST-STAGE02-PROJECTOR-PERSISTENCE-001
+  status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  exact_implementation_head_sha: 39ba541a66bc36d6eb251ea91859e917acedc2e9
+  exact_head_validation:
+    fresh_replay_run_id: 35430402755
+    stage02_regression_run_id: 35430402793
+    selected_profile_run_id: 35430402762
+    full_line_run_id: 35430402747
+    branch_guard_run_id: 35430402795
+    conclusions:
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+  preserved_product_state:
+    product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
+    source_problem_denominator: 106
+    source_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_product_revalidation: 31
+    product_blocker_credit: 0
+  first_restored_product_gate: VALIDATE_STAGE02_STATE_INTEGRITY_THEN_REVALIDATE
+  legal_next_transition: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER_AFTER_PROJECTOR_REPAIR
+  closure_persistence_exact_head_revalidation_required: true
