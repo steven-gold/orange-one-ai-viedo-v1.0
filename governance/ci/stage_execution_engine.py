@@ -109,7 +109,15 @@ def validate_definition_data(profile,adapters):
         if ad.get('business_entity_gate_required') is True and not isinstance(st.get('business_entity_completeness_gate'),dict): fail(f'BUSINESS_ENTITY_GATE_REQUIRED_BUT_MISSING:{uid}')
     for uid,st in stages.items():
         nxt=str(st.get('next_stage_uid') or '')
-        if nxt in stages and str(stages[nxt].get('entry_gate'))!=str(st.get('exit_gate')): fail(f'SUCCESSOR_GATE_MISMATCH:{uid}->{nxt}')
+        if nxt in stages:
+            predecessor_exit=str(st.get('exit_gate') or '')
+            successor_entry=str(stages[nxt].get('entry_gate') or '')
+            exact_or_stricter=(
+                successor_entry==predecessor_exit
+                or successor_entry.startswith(predecessor_exit+'_AND_')
+            )
+            if not exact_or_stricter:
+                fail(f'SUCCESSOR_GATE_MISMATCH:{uid}->{nxt}:{predecessor_exit}:{successor_entry}')
     return stages
 
 def validate_definition():
