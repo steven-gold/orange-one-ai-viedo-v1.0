@@ -1,5 +1,6 @@
 # R3_PREPARED: CORE-01 2026-09-11 completeness fresh replay
 # EXECUTION_TRIGGER_R3: 2026-09-19_CORE01_STAGE01_STAGE02_CLEAN_REPLAY
+# EXECUTION_TRIGGER_R3_RETRY_AFTER_SOURCE_MIGRATION: 2026-09-19
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
