@@ -1229,7 +1229,9 @@ work_unit_resolution_gate_core01_fresh_replay_current:
   predecessor_maintenance_branch_guard_run_id: 35423708401
   result_target: EXECUTE_THROUGH_STAGE02_ONLY
   product_stage_credit: 0
-fresh_replay_execution_context:
+closed_fresh_replay_execution_context_core01:
+  historical_only: true
+  current_context_eligibility: false
   status: CONSUMED
   run_uid: FRESH-CORE01-D81DF9AC-STAGE02
   run_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02
