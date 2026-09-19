@@ -516,6 +516,52 @@ findings:
   full_line_validation_run: github-actions:35416572972
   product_stage_credit: 0
   reopen_condition: Reopen if regression code again uses raw source spelling to infer a semantic Stage binding.
+- finding_uid: FIND-20260919-006
+  class: GOVERNANCE_MUTATION_SELECTOR_POLICY_GAP
+  title: Structured-document mutation could treat an unscoped raw text token as a globally unique selector
+  evidence: >-
+    During R4 preparation, the pre-write mutation helper required one raw authorization-UID string
+    occurrence across the entire runner. The same legitimate UID appeared in both helper and reset
+    sections, so the mutation fail-closed before write. Existing Mother rules govern exact Section UID
+    resolution and semantic target ownership, but do not explicitly forbid unscoped whole-document raw
+    string uniqueness assumptions for structured state, registry, manifest, or source mutation.
+  defect_owner: REUSABLE_GOVERNANCE_POLICY_AND_MUTATION_IMPLEMENTATION
+  generalizability_scope: ALL_STRUCTURED_GOVERNANCE_STATE_EVIDENCE_REGISTRY_MANIFEST_AND_SOURCE_MUTATORS
+  blocking_state: AUTHORIZED_FOR_CONSOLIDATED_PROMOTION
+  disposition: GOVERNANCE_SUCCESSOR_REQUIRED
+  specification_change_required: true
+  formal_specification_mutated_for_fix: false
+  current_specification_may_be_modified_from_this_finding_alone: false
+  authorization_uid: USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1
+  product_stage_credit: 0
+  required_rule: >-
+    Structured mutation must resolve a typed structural identity or bounded section/path first;
+    raw lexical matching may be a secondary precondition only and may not assert global uniqueness
+    unless Current schema/registry explicitly guarantees that uniqueness.
+  reopen_condition: Reopen if any reusable or active mutator can again use an unbounded raw text token as its primary write selector.
+- finding_uid: FIND-20260919-007
+  class: ACTIVE_CONSUMER_REFERENCE_GRAPH_BUG
+  title: Active workflow referenced a missing governance-maintenance executable outside validator regex coverage
+  evidence: >-
+    .github/workflows/semantic-baseline-consumer-sync.yml invokes
+    .github/governance-maintenance/sync_semantic_baseline_consumer.py, but the target is absent from
+    the live tree and has no commit history on rebuild-v2.1.1. validate_active_consumer_reference_integrity.py
+    only recognizes governance/(ci|test) and .github/governance-source Python targets, so the missing
+    governance-maintenance executable escaped the Current reference-integrity denominator.
+  defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION_AND_STALE_WORKFLOW_RESIDUAL
+  generalizability_scope: ACTIVE_WORKFLOW_AND_TRANSITIVE_EXECUTABLE_GRAPH
+  blocking_state: REMEDIATION_REQUIRED
+  disposition: IMPLEMENTATION_REMEDIATION_REQUIRED
+  specification_change_required: false
+  formal_specification_mutated_for_fix: false
+  current_specification_may_be_modified_from_this_finding_alone: false
+  authorization_uid: USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1
+  product_stage_credit: 0
+  required_fix:
+  - EXPAND_EXECUTABLE_REFERENCE_GRAPH_TO_DOT_GITHUB_GOVERNANCE_MAINTENANCE
+  - REMOVE_PROVEN_UNREACHABLE_STALE_WORKFLOW
+  - ADD_NEGATIVE_REGRESSION_FOR_MISSING_GOVERNANCE_MAINTENANCE_TARGET
+  reopen_condition: Reopen if an active workflow can reference a missing local governance executable without blocking integrity validation.
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6

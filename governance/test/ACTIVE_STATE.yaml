@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: STAGE02_CLOSED_VERIFIED_FRESH_RUN_007
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
+status: GOVERNANCE_MAINTENANCE_STRUCTURED_MUTATION_HARDENING_ACTIVE
+next_action: HARDEN_STRUCTURED_MUTATION_AND_ACTIVE_CONSUMER_GRAPH
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: null
+  current_resume_point: GOVERNANCE_STRUCTURED_MUTATION_HARDENING_WU_RESOLVED
+  current_work_unit_uid: WU-GOV-STRUCTURED-MUTATION-SELECTOR-HARDENING-001
+  current_owner: governance/ci/validate_structured_mutation_safety.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
+  exact_next_action: HARDEN_STRUCTURED_MUTATION_AND_ACTIVE_CONSUMER_GRAPH
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
@@ -343,8 +343,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4
+current_primary_task_layer: GOVERNANCE_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -794,3 +794,43 @@ stage02_terminal_closure_r4:
   stage03_execution_started: false
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
   closure_commit_exact_head_revalidation_required: true
+
+work_unit_resolution_gate_structured_mutation_hardening:
+  resolution_uid: WUR-GOV-STRUCTURED-MUTATION-SELECTOR-20260919-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  resolved_work_unit_uid: WU-GOV-STRUCTURED-MUTATION-SELECTOR-HARDENING-001
+  authorization_uid: USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1
+  basis:
+  - EXPLICIT_USER_DIRECTIVE_REVIEW_AND_ADD_MISSING_MOTHER_RULE
+  - R4_PREWRITE_DUPLICATE_RAW_STRING_SELECTOR_FAILURE
+  - ACTIVE_WORKFLOW_MISSING_GOVERNANCE_MAINTENANCE_EXECUTABLE_ESCAPED_REFERENCE_GATE
+  product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-GOV-STRUCTURED-MUTATION-SELECTOR-HARDENING-001
+  canonical_name: STRUCTURED_MUTATION_SELECTOR_AND_ACTIVE_CONSUMER_GRAPH_HARDENING
+  primary_task_layer: GOVERNANCE_MAINTENANCE
+  canonical_owner: governance/ci/validate_structured_mutation_safety.py
+  current_status: ACTIVE_DISCOVERY_AND_IMPLEMENTATION
+  product_stage_credit: 0
+  suspended_product_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
+  suspended_product_stage3_execution_started: false
+  exact_scope:
+  - STRUCTURED_DOCUMENT_MUTATION_SELECTOR_POLICY
+  - STRUCTURED_MUTATION_AUDIT_POLICY
+  - ACTIVE_GOVERNANCE_MAINTENANCE_EXECUTABLE_REFERENCE_COVERAGE
+  - STALE_UNREACHABLE_WORKFLOW_CLEANUP
+  - NEGATIVE_REGRESSION
+  - CURRENT_GOVERNANCE_SUCCESSOR_PROMOTION
+  definition_of_done:
+  - MOTHER_COMMON_RULE_FOR_STRUCTURED_MUTATION_SELECTOR_SAFETY
+  - MOTHER_AUDIT_RULE_FOR_STRUCTURED_MUTATION_SELECTOR_SAFETY
+  - ACTIVE_CONSUMER_GRAPH_INCLUDES_GOVERNANCE_MAINTENANCE_EXECUTABLES
+  - MISSING_ACTIVE_EXECUTABLE_TARGET_FAILS_CLOSED
+  - UNREACHABLE_STALE_ONE_SHOT_WORKFLOW_REMOVED
+  - RAW_WHOLE_FILE_STRING_UNIQUENESS_NOT_PRIMARY_SELECTOR_FOR_STRUCTURED_MUTATION
+  - STRUCTURED_MUTATION_NEGATIVE_REGRESSION_PASS
+  - CURRENT_GOVERNANCE_SUCCESSOR_ATOMIC_PROMOTION_PASS
+  - EXACT_HEAD_SELECTED_PROFILE_AND_FULL_LINE_PASS
+  - PRODUCT_STAGE_CREDIT_ZERO
