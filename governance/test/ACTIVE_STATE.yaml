@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STAGE02_PERSISTED_REVALIDATION_ENTRY_REVALIDATION_REQUIRED
-next_action: VALIDATE_GENERIC_PERSISTED_STAGE02_REVALIDATION_PUSH_ENTRY
+status: STAGE02_PERSISTED_REVALIDATION_ENTRY_MAINTENANCE_CLOSED
+next_action: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER_FOR_REVALIDATION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,16 +284,19 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE02_PERSISTED_REVALIDATION_ENTRY_IMPLEMENTED_REVALIDATION_REQUIRED
-  current_work_unit_uid: WU-TEST-STAGE02-PERSISTED-REVALIDATION-ENTRY-001
-  current_owner: .github/workflows/stage02-actual-test.yml
+  current_resume_point: STAGE02_PERSISTED_REVALIDATION_ENTRY_CLOSED_PRODUCT_LAYER_RESTORE_REQUIRED
+  current_work_unit_uid: null
+  current_owner: null
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: VALIDATE_GENERIC_PERSISTED_STAGE02_REVALIDATION_PUSH_ENTRY
+  exact_next_action: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER_FOR_REVALIDATION
+  closed_maintenance_work_unit_uid: WU-TEST-STAGE02-PERSISTED-REVALIDATION-ENTRY-001
+  closed_maintenance_owner: .github/workflows/stage02-actual-test.yml
   parent_primary_task_layer: PRODUCT_STAGE_EXECUTION
   parent_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   parent_resume_point: ASSET01_STAGE2_EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
   parent_exact_next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
+  next_primary_task_layer: PRODUCT_STAGE_EXECUTION
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -1709,12 +1712,13 @@ suspended_product_work_unit_asset01_stage02_revalidation_entry:
     raw_source_mutated: false
     product_blocker_credit_before_fresh_revalidation: 0
   suspension_product_credit: 0
-active_work_unit:
+active_work_unit: null
+closed_test_validation_maintenance_work_unit_stage02_persisted_revalidation_entry:
   work_unit_uid: WU-TEST-STAGE02-PERSISTED-REVALIDATION-ENTRY-001
   canonical_name: STAGE02_PERSISTED_CURRENT_STATE_REVALIDATION_PUSH_ENTRY
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
   canonical_owner: .github/workflows/stage02-actual-test.yml
-  current_status: IMPLEMENTATION_REVALIDATION_REQUIRED
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   parent_product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   scope:
   - REUSE_EXISTING_STAGE02_ACTUAL_TEST_WORKFLOW_ONLY
@@ -1747,6 +1751,21 @@ active_work_unit:
     ordinary_push_product_execution: false
     product_stage_credit: 0
     exact_head_revalidation_required: true
+  terminal_evidence:
+    implementation_head_sha: 13033fc4c28ffe9f9e62c85cb5691e46f5cca23f
+    stage02_workflow_run_id: 35429714590
+    stage02_workflow_conclusion: SUCCESS
+    selected_profile_run_id: 35429714485
+    selected_profile_conclusion: SUCCESS
+    full_line_run_id: 35429714447
+    full_line_conclusion: SUCCESS
+    fresh_replay_integrity_run_id: 35429714545
+    fresh_replay_integrity_conclusion: SUCCESS
+    branch_guard_run_id: 35429714432
+    branch_guard_conclusion: SUCCESS
+    product_denominator_changed: false
+    product_stage_credit: 0
+    closure_persistence_exact_head_revalidation_required: true
 work_unit_resolution_gate_stage02_persisted_revalidation_entry:
   resolution_uid: WUR-TEST-STAGE02-PERSISTED-REVALIDATION-ENTRY-20260919-001
   normative_authority: false
@@ -2005,4 +2024,29 @@ stage02_applicability_projection_maintenance_closure:
     fresh_closure_blocker_total: 9
     product_blocker_credit: 0
   legal_next_transition: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER
+  closure_persistence_exact_head_revalidation_required: true
+stage02_persisted_revalidation_entry_maintenance_closure:
+  closure_uid: CLOSE-WU-TEST-STAGE02-PERSISTED-REVALIDATION-ENTRY-20260919-001
+  work_unit_uid: WU-TEST-STAGE02-PERSISTED-REVALIDATION-ENTRY-001
+  status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  exact_implementation_head_sha: 13033fc4c28ffe9f9e62c85cb5691e46f5cca23f
+  exact_head_validation:
+    stage02_workflow_run_id: 35429714590
+    selected_profile_run_id: 35429714485
+    full_line_run_id: 35429714447
+    fresh_replay_integrity_run_id: 35429714545
+    branch_guard_run_id: 35429714432
+    conclusions:
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+  preserved_product_state:
+    product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
+    source_problem_denominator: 106
+    source_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_product_revalidation: 31
+    product_blocker_credit: 0
+  legal_next_transition: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER_FOR_REVALIDATION
   closure_persistence_exact_head_revalidation_required: true
