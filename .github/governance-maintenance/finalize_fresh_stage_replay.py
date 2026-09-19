@@ -267,7 +267,127 @@ def finalize_stage02_revalidation_persistence():
     dump_yaml(SCOPE,scope)
     print(json.dumps({'result':'PASS','source_execution_sha':source_sha,'workflow_run_id':int(run_id) if run_id.isdigit() else run_id,'artifact_id':int(artifact_id) if artifact_id.isdigit() else artifact_id,'fresh_functional_gap_total':after_open,'fresh_closure_blocker_total':int(ev.get('closure_blocker_total') or 0),'exact_closure_product_credit':fresh_credit,'next_action':next_action},ensure_ascii=False,indent=2))
 
+
+def close_stage02_revalidation_persistence_maintenance():
+    state=load_yaml(STATE)
+    active=state.get('active_work_unit') or {}
+    if active.get('primary_task_layer')!='TEST_OR_VALIDATION_MAINTENANCE':
+        raise RuntimeError(f'PERSISTENCE_MAINTENANCE_TASK_LAYER_DRIFT:{active.get("primary_task_layer")!r}')
+    required_scope={
+      'SAME_ATTEMPT_REVALIDATION_ARTIFACT_PROVENANCE_BINDING',
+      'CURRENT_PROBLEM_REGISTER_RECONCILIATION',
+      'CURRENT_FINDINGS_CANDIDATE_ACTIVE_STATE_PROJECTOR_SYNC',
+      'RESOLUTION_LEDGER_EXACT_CLOSURE_PERSISTENCE',
+      'ATOMIC_CURRENT_STATE_COMMIT',
+    }
+    if set(active.get('scope') or [])!=required_scope:
+        raise RuntimeError(f'PERSISTENCE_MAINTENANCE_SCOPE_DRIFT:{active.get("scope")!r}')
+    if int(active.get('product_stage_credit') or 0)!=0:
+        raise RuntimeError('PERSISTENCE_MAINTENANCE_PRODUCT_CREDIT_MUST_BE_ZERO')
+    parent_uid=str(active.get('parent_product_work_unit_uid') or '')
+    if not parent_uid:
+        raise RuntimeError('PERSISTENCE_MAINTENANCE_PARENT_WORK_UNIT_MISSING')
+
+    matches=[]
+    for key,value in state.items():
+        if not isinstance(value,dict):
+            continue
+        if value.get('work_unit_uid')==parent_uid and value.get('primary_task_layer')=='PRODUCT_STAGE_EXECUTION':
+            matches.append((key,value))
+    if len(matches)!=1:
+        raise RuntimeError(f'PERSISTENCE_MAINTENANCE_PARENT_RESOLUTION_AMBIGUOUS:{[x[0] for x in matches]!r}')
+    parent_key,parent=matches[0]
+    if parent.get('current_status')!='SUSPENDED_FOR_STAGE02_REVALIDATION_PERSISTENCE_MAINTENANCE':
+        raise RuntimeError(f'PERSISTENCE_MAINTENANCE_PARENT_STATUS_DRIFT:{parent.get("current_status")!r}')
+
+    resume=state.get('resume_control') or {}
+    if resume.get('parent_work_unit_uid')!=parent_uid:
+        raise RuntimeError('PERSISTENCE_MAINTENANCE_PARENT_RESUME_UID_DRIFT')
+    parent_resume=str(resume.get('parent_resume_point') or '')
+    parent_next=str(resume.get('parent_exact_next_action') or '')
+    parent_layer=str(resume.get('parent_primary_task_layer') or '')
+    if not parent_resume or not parent_next or parent_layer!='PRODUCT_STAGE_EXECUTION':
+        raise RuntimeError('PERSISTENCE_MAINTENANCE_PARENT_RESUME_INCOMPLETE')
+
+    validated_head=need_env('MAINTENANCE_VALIDATED_HEAD')
+    if not re.fullmatch(r'[0-9a-f]{40}',validated_head):
+        raise RuntimeError('MAINTENANCE_VALIDATED_HEAD_INVALID')
+    run_fields={}
+    for env_name,out_name in (
+      ('MAINTENANCE_FULL_LINE_RUN_ID','full_line_run_id'),
+      ('MAINTENANCE_SELECTED_PROFILE_RUN_ID','selected_profile_run_id'),
+      ('MAINTENANCE_BRANCH_GUARD_RUN_ID','branch_guard_run_id'),
+      ('MAINTENANCE_STAGE02_REGRESSION_RUN_ID','stage02_regression_run_id'),
+    ):
+        raw=need_env(env_name)
+        if not raw.isdigit():
+            raise RuntimeError(f'MAINTENANCE_RUN_ID_INVALID:{env_name}')
+        run_fields[out_name]=int(raw)
+
+    evidence={
+      'validated_head_sha':validated_head,
+      **run_fields,
+      'outer_terminal_conclusions':['SUCCESS','SUCCESS','SUCCESS','SUCCESS'],
+      'maintenance_product_stage_credit':0,
+      'current_specification_mutated':False,
+      'product_contract_content_mutated':False,
+      'legal_next_transition':parent_next,
+    }
+    closed=copy.deepcopy(active)
+    closed['current_status']='CLOSED_VERIFIED_NO_PRODUCT_CREDIT'
+    closed['terminal_evidence']=copy.deepcopy(evidence)
+    closed['product_stage_credit']=0
+
+    closed_key='closed_test_validation_maintenance_work_unit_stage02_revalidation_persistence'
+    if closed_key in state:
+        raise RuntimeError('PERSISTENCE_MAINTENANCE_CLOSURE_ALREADY_PRESENT')
+    del state[parent_key]
+    state[closed_key]=closed
+
+    parent=copy.deepcopy(parent)
+    parent['current_status']='EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED'
+    parent['product_blocker_credit']=int(parent.get('product_blocker_credit') or 0)
+    if parent['product_blocker_credit']!=0:
+        raise RuntimeError('PERSISTENCE_MAINTENANCE_PARENT_PRODUCT_CREDIT_CHANGED_BEFORE_FRESH_REVALIDATION')
+    parent['restoration_after_revalidation_persistence_maintenance']=copy.deepcopy(evidence)
+    state['active_work_unit']=parent
+    state['current_primary_task_layer']='PRODUCT_STAGE_EXECUTION'
+    state['current_primary_task_product_stage_credit']=0
+    if '_STAGE2_' not in parent_resume:
+        raise RuntimeError(f'PERSISTENCE_MAINTENANCE_PARENT_RESUME_FORMAT_UNSUPPORTED:{parent_resume!r}')
+    state['status']='ACTIVE_'+parent_resume.replace('_STAGE2_','_STAGE02_')
+    state['next_action']=parent_next
+    owner=(parent.get('exact_closure_materialization') or {}).get('canonical_successor_ref') or parent.get('canonical_owner')
+    if not owner:
+        raise RuntimeError('PERSISTENCE_MAINTENANCE_PARENT_OWNER_MISSING')
+    state['resume_control']={
+      'current_resume_point':parent_resume,
+      'current_work_unit_uid':parent_uid,
+      'current_owner':owner,
+      'historical_stage2_results_are_current_state':False,
+      'stage2_execution_requires_fresh_entry_resolution':False,
+      'exact_next_action':parent_next,
+    }
+    state['stage02_revalidation_persistence_maintenance_closure']={
+      'work_unit_uid':closed.get('work_unit_uid'),
+      'status':'CLOSED_VERIFIED_NO_PRODUCT_CREDIT',
+      **copy.deepcopy(evidence),
+    }
+    dump_yaml(STATE,state)
+    print(json.dumps({
+      'result':'PASS',
+      'closed_work_unit_uid':closed.get('work_unit_uid'),
+      'restored_product_work_unit_uid':parent_uid,
+      'restored_resume_point':parent_resume,
+      'restored_next_action':parent_next,
+      'product_stage_credit':0,
+      'validated_head_sha':validated_head,
+    },ensure_ascii=False,indent=2))
+
 def main():
+    if '--close-stage02-revalidation-persistence-maintenance' in sys.argv:
+        close_stage02_revalidation_persistence_maintenance()
+        return
     if '--stage02-revalidation-self-test' in sys.argv:
         _stage02_revalidation_self_test()
         return

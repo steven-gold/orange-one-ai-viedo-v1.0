@@ -7,6 +7,7 @@ on:
       - '.github/workflows/fresh-stage-replay.yml'
       - '.github/governance-maintenance/run_fresh_stage_replay.py'
       - '.github/governance-maintenance/finalize_fresh_stage_replay.py'
+      - '.github/governance-source/FULL_LINE_TRIGGER'
       - 'governance/ci/validate_active_consumer_reference_integrity.py'
       - 'governance/test/ACTIVE_STATE.yaml'
   workflow_dispatch:
@@ -44,6 +45,81 @@ jobs:
           python .github/governance-maintenance/finalize_fresh_stage_replay.py --identity-self-test
       - name: Enforce active consumer dynamic identity integrity
         run: python governance/ci/validate_active_consumer_reference_integrity.py
+
+  close-stage02-revalidation-persistence-maintenance:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[stage02-persistence-close]') }}
+    needs: dynamic-identity-integrity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Resolve maintenance closure evidence request
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' >> "$GITHUB_ENV"
+          from pathlib import Path
+          allowed={
+            'validated_head':'MAINTENANCE_VALIDATED_HEAD',
+            'full_line_run_id':'MAINTENANCE_FULL_LINE_RUN_ID',
+            'selected_profile_run_id':'MAINTENANCE_SELECTED_PROFILE_RUN_ID',
+            'branch_guard_run_id':'MAINTENANCE_BRANCH_GUARD_RUN_ID',
+            'stage02_regression_run_id':'MAINTENANCE_STAGE02_REGRESSION_RUN_ID',
+          }
+          values={}
+          for raw in Path('.github/governance-source/FULL_LINE_TRIGGER').read_text(encoding='utf-8').splitlines():
+              if '=' not in raw:
+                  continue
+              k,v=raw.split('=',1)
+              if k in allowed:
+                  values[k]=v.strip()
+          missing=[k for k in allowed if not values.get(k)]
+          if missing:
+              raise SystemExit(f'BLOCK: missing maintenance closure trigger fields: {missing}')
+          for k,env_name in allowed.items():
+              print(f'{env_name}={values[k]}')
+          PY
+      - name: Verify exact-head outer terminal maintenance evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for id in "$MAINTENANCE_FULL_LINE_RUN_ID" "$MAINTENANCE_SELECTED_PROFILE_RUN_ID" "$MAINTENANCE_BRANCH_GUARD_RUN_ID" "$MAINTENANCE_STAGE02_REGRESSION_RUN_ID"; do
+            test "$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${id}" --jq .head_sha)" = "$MAINTENANCE_VALIDATED_HEAD"
+            test "$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${id}" --jq .status)" = "completed"
+            test "$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${id}" --jq .conclusion)" = "success"
+          done
+      - name: Close maintenance and restore parent Product Work Unit structurally
+        run: python .github/governance-maintenance/finalize_fresh_stage_replay.py --close-stage02-revalidation-persistence-maintenance
+      - name: Validate restored Current State before persistence
+        run: |
+          python governance/ci/validate_stage02_state_integrity.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/test/validate_selected_profile_finding_closure.py
+      - name: Persist maintenance closure and Product Work Unit restoration atomically
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin "${GITHUB_REF_NAME}"
+          test "$(git rev-parse "origin/${GITHUB_REF_NAME}")" = "${GITHUB_SHA}" || {
+            echo "BLOCK: branch moved during persistence-maintenance closure" >&2
+            exit 1
+          }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add governance/test/ACTIVE_STATE.yaml
+          test -n "$(git status --short)" || {
+            echo "BLOCK: maintenance closure produced no Current State change" >&2
+            exit 1
+          }
+          git commit -m "chore(governance): close Stage-02 revalidation persistence maintenance"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
 
   execute-fresh-replay:
     if: ${{ (github.event_name == 'workflow_dispatch' && inputs.mode == 'execute') || (github.event_name == 'push' && contains(github.event.head_commit.message, '[fresh-replay-execute]')) }}
