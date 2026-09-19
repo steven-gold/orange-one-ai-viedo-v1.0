@@ -25,6 +25,18 @@ SEMVER_LOCATOR = re.compile(r"governance/(?:current|specifications)/v\d+(?:\.\d+
 UNSAFE_TERMINAL_TOKENS = ("PASS_EXECUTION_SOURCE_HEAD", "CLOSED_VERIFIED")
 CURRENT_STATE_TOKENS = ("governance/test/ACTIVE_STATE.yaml", "ACTIVE_STATE.yaml")
 RUN_ID_TOKENS = ("GITHUB_RUN_ID", "github.run_id")
+DYNAMIC_REPLAY_EXECUTABLES = (
+    ".github/workflows/fresh-core-stage-replay.yml",
+    ".github/governance-maintenance/run_fresh_stage_replay.py",
+    ".github/governance-maintenance/finalize_fresh_stage_replay.py",
+)
+FIXED_REPLAY_IDENTITY_PATTERNS = {
+    "RUN_ROOT": re.compile(r"\bfresh_run_\d+\b"),
+    "RUN_UID": re.compile(r"\bFRESH-RUN-\d+\b"),
+    "GOVERNANCE_UID": re.compile(r"\bGOV-REV-\d{8}-[A-Z0-9-]+\b"),
+    "DISPLAY_VERSION": re.compile(r"(?<![A-Za-z0-9_-])v\d+\.\d+\.\d+\b"),
+    "ROUND_LABEL": re.compile(r"\bR\d+\b"),
+}
 
 
 def rel(path: Path) -> str:
@@ -84,6 +96,48 @@ def python_executable_refs(text: str) -> set[str]:
             if m and any(x in {"python", "python3"} for x in literals):
                 refs.add(m.group(1))
     return refs
+
+
+def _yaml_scalar_strings(text: str) -> list[str]:
+    try:
+        obj = yaml.load(text, Loader=yaml.BaseLoader)
+    except yaml.YAMLError:
+        return []
+    out: list[str] = []
+    def walk(value) -> None:
+        if isinstance(value, dict):
+            for k, v in value.items():
+                walk(k)
+                walk(v)
+        elif isinstance(value, list):
+            for v in value:
+                walk(v)
+        elif isinstance(value, str):
+            out.append(value)
+    walk(obj)
+    return out
+
+
+def fixed_dynamic_replay_identities(path_rel: str, text: str) -> list[str]:
+    if path_rel not in DYNAMIC_REPLAY_EXECUTABLES:
+        return []
+    if path_rel.endswith((".yml", ".yaml")):
+        strings = _yaml_scalar_strings(text)
+    else:
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            return ["PYTHON_PARSE_ERROR"]
+        strings = [
+            node.value for node in ast.walk(tree)
+            if isinstance(node, ast.Constant) and isinstance(node.value, str)
+        ]
+    findings: list[str] = []
+    for value in strings:
+        for kind, pattern in FIXED_REPLAY_IDENTITY_PATTERNS.items():
+            if pattern.search(value):
+                findings.append(f"{kind}:{value}")
+    return sorted(set(findings))
 
 
 def unsafe_preterminal_current_projection(text: str) -> bool:
@@ -285,6 +339,8 @@ def main() -> int:
         if unsafe_preterminal_current_projection(text):
             unsafe_workflows.append(rel(workflow))
             errors.append(f"PRETERMINAL_CURRENT_CLOSURE_PROJECTION_FORBIDDEN:{rel(workflow)}")
+        for finding in fixed_dynamic_replay_identities(rel(workflow), text):
+            errors.append(f"FIXED_EXECUTION_IDENTITY_IN_DYNAMIC_REPLAY:{rel(workflow)}:{finding}")
         for wf_ref in LOCAL_WORKFLOW_REF.findall(text):
             if not (ROOT / wf_ref).is_file():
                 missing_workflows.append(wf_ref)
@@ -305,6 +361,8 @@ def main() -> int:
         text = script.read_text(encoding="utf-8")
         if SEMVER_LOCATOR.search(text):
             errors.append(f"SEMVER_LOCATOR_IN_ACTIVE_CONSUMER:{script_rel}")
+        for finding in fixed_dynamic_replay_identities(script_rel, text):
+            errors.append(f"FIXED_EXECUTION_IDENTITY_IN_DYNAMIC_REPLAY:{script_rel}:{finding}")
         for child in python_executable_refs(text):
             referenced_by[child].add(script_rel)
             if child not in visited:
@@ -346,6 +404,8 @@ def main() -> int:
         "missing_targets": missing,
         "missing_reusable_workflows": sorted(set(missing_workflows)),
         "unsafe_preterminal_current_projection_workflows": unsafe_workflows,
+        "dynamic_replay_executable_set": list(DYNAMIC_REPLAY_EXECUTABLES),
+        "dynamic_replay_fixed_identity_guard": "ENFORCED",
         "active_governance_projectors": projector_values,
         "projector_inventory_source": "governance/specifications/REGISTRY.yaml",
         "required_regression_gate_presence": gate_presence,

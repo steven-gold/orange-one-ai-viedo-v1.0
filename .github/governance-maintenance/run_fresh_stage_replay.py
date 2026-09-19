@@ -1,30 +1,178 @@
-# R5_PREPARED: CLEAN ALL STAGE-01/STAGE-02 GENERATED DATA AND FRESH CORE-01 REPLAY
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
 from collections import defaultdict
-import copy, hashlib, json, os, re, shutil, subprocess
+import copy, hashlib, json, os, re, shutil, subprocess, sys
 import yaml
 
 ROOT=Path(__file__).resolve().parents[2]
-OLD=ROOT/'00_SOURCE_INTAKE/fresh_run_007'
-NEW=ROOT/'00_SOURCE_INTAKE/fresh_run_008'
 SOURCE=ROOT/'.github/governance-source/active/source'
-AUTH=ROOT/'governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5.yaml'
 STATE=ROOT/'governance/test/ACTIVE_STATE.yaml'
 SCOPE=ROOT/'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
+REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
+CURRENT_ENTRY=ROOT/'GOVERNANCE_CURRENT.yaml'
 STAGE2_TEST=ROOT/'.github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json'
-CURRENT_UID='GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING'
-RUN_UID='FRESH-RUN-008'
-PAGE='CORE-01'
 LIFECYCLE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
 COMMON_ENGINE=ROOT/'governance/ci/stage_execution_engine.py'
+RUNNER_OWNER='.github/governance-maintenance/run_fresh_stage_replay.py'
+CONTEXT_KEY='fresh_replay_execution_context'
 
-RAW_NAMES=[
- 'CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml',
- 'CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml',
-]
+OLD=None
+NEW=None
+AUTH=None
+CURRENT_UID=''
+DISPLAY_VERSION=''
+RUN_UID=''
+PAGE=''
+BRANCH=''
+AUTHORIZATION_UID=''
+ATTEMPT_UID=''
+STAGE1_WORK_UNIT_UID=''
+STAGE2_WORK_UNIT_UID=''
+STAGE2_RESOLUTION_UID=''
+STAGE2_CANONICAL_NAME=''
+EXCLUDED_UNITS=[]
+RAW_NAMES=[]
+RAW_SOURCE_BINDINGS={}
+PAGE_AUTHORITY_SOURCE_FILE=''
+LOCAL_AUTHORITY_PREFIXES=[]
+LOCAL_AUTHORITY_PATH_PREFIXES=[]
+
+def _bootstrap_load(p:Path)->dict:
+    obj=yaml.safe_load(p.read_text(encoding='utf-8'))
+    if not isinstance(obj,dict):
+        raise RuntimeError(f'MAPPING_REQUIRED:{p}')
+    return obj
+
+def _repo_rel(value:str,label:str)->str:
+    p=Path(str(value))
+    if p.is_absolute() or '..' in p.parts or not p.parts:
+        raise RuntimeError(f'{label}_INVALID_PATH:{value}')
+    return p.as_posix()
+
+def resolve_execution_context_docs(state:dict,scope:dict,registry:dict,current:dict)->dict:
+    ctx=state.get(CONTEXT_KEY) or {}
+    if not isinstance(ctx,dict) or ctx.get('status')!='READY_FOR_REPLAY':
+        raise RuntimeError('FRESH_REPLAY_EXECUTION_CONTEXT_NOT_READY')
+    active_spec=registry.get('active_specification') or {}
+    governance_uid=str(active_spec.get('governance_uid') or '')
+    display_version=str(active_spec.get('display_version') or '')
+    if not governance_uid or not display_version:
+        raise RuntimeError('CURRENT_GOVERNANCE_IDENTITY_INCOMPLETE')
+    if current.get('active_governance_uid')!=governance_uid or current.get('display_version')!=display_version:
+        raise RuntimeError('CURRENT_ENTRY_REGISTRY_DRIFT')
+    if state.get('specification_uid')!=governance_uid:
+        raise RuntimeError('ACTIVE_STATE_GOVERNANCE_DRIFT')
+    if state.get('current_primary_task_layer')!='PRODUCT_STAGE_EXECUTION':
+        raise RuntimeError('FRESH_REPLAY_REQUIRES_PRODUCT_STAGE_TASK_LAYER')
+    authorization_uid=str(ctx.get('authorization_uid') or '')
+    if state.get('current_primary_task_authorization_uid')!=authorization_uid:
+        raise RuntimeError('FRESH_REPLAY_AUTHORIZATION_UID_DRIFT')
+    page_scope=ctx.get('page_scope')
+    excluded=ctx.get('excluded_page_scope')
+    if not isinstance(page_scope,list) or len(page_scope)!=1 or not all(isinstance(x,str) and x for x in page_scope):
+        raise RuntimeError('EXACT_SINGLE_PAGE_SCOPE_REQUIRED')
+    if not isinstance(excluded,list) or not all(isinstance(x,str) and x for x in excluded):
+        raise RuntimeError('EXCLUDED_PAGE_SCOPE_INVALID')
+    if scope.get('included_units')!=page_scope or scope.get('excluded_units')!=excluded:
+        raise RuntimeError('CURRENT_SCOPE_MANIFEST_DRIFT')
+    if scope.get('governance_uid')!=governance_uid:
+        raise RuntimeError('CURRENT_SCOPE_GOVERNANCE_DRIFT')
+    required=('run_uid','run_root','predecessor_run_uid','predecessor_run_root','branch','authorization_uid','authorization_ref','attempt_uid','stage1_work_unit_uid','stage2_work_unit_uid','stage2_resolution_uid','stage2_canonical_name','page_authority_source_file')
+    for key in required:
+        if not isinstance(ctx.get(key),str) or not str(ctx.get(key)).strip():
+            raise RuntimeError(f'FRESH_REPLAY_CONTEXT_FIELD_MISSING:{key}')
+    run_root=_repo_rel(ctx['run_root'],'RUN_ROOT')
+    predecessor_root=_repo_rel(ctx['predecessor_run_root'],'PREDECESSOR_RUN_ROOT')
+    authorization_ref=_repo_rel(ctx['authorization_ref'],'AUTHORIZATION_REF')
+    if run_root==predecessor_root:
+        raise RuntimeError('RUN_ROOT_MUST_DIFFER_FROM_PREDECESSOR')
+    if not run_root.startswith('00_SOURCE_INTAKE/') or not predecessor_root.startswith('00_SOURCE_INTAKE/'):
+        raise RuntimeError('RUN_ROOT_OUTSIDE_SOURCE_INTAKE')
+    raw_sources=ctx.get('raw_sources')
+    if not isinstance(raw_sources,list) or not raw_sources:
+        raise RuntimeError('RAW_SOURCE_BINDINGS_REQUIRED')
+    bindings={}
+    for rec in raw_sources:
+        if not isinstance(rec,dict):
+            raise RuntimeError('RAW_SOURCE_BINDING_MAPPING_REQUIRED')
+        filename=str(rec.get('filename') or '')
+        if not filename or '/' in filename or filename in bindings:
+            raise RuntimeError('RAW_SOURCE_FILENAME_INVALID_OR_DUPLICATE')
+        for key in ('source_uid','source_role','source_domain_scope'):
+            if not isinstance(rec.get(key),str) or not rec.get(key):
+                raise RuntimeError(f'RAW_SOURCE_BINDING_FIELD_MISSING:{filename}:{key}')
+        bindings[filename]=dict(rec)
+    page_authority=str(ctx['page_authority_source_file'])
+    if page_authority not in bindings:
+        raise RuntimeError('PAGE_AUTHORITY_SOURCE_FILE_NOT_REGISTERED')
+    return {
+      'run_uid':str(ctx['run_uid']),'run_root':run_root,
+      'predecessor_run_uid':str(ctx['predecessor_run_uid']),'predecessor_run_root':predecessor_root,
+      'branch':str(ctx['branch']),'authorization_uid':authorization_uid,'authorization_ref':authorization_ref,
+      'attempt_uid':str(ctx['attempt_uid']),'stage1_work_unit_uid':str(ctx['stage1_work_unit_uid']),
+      'stage2_work_unit_uid':str(ctx['stage2_work_unit_uid']),'stage2_resolution_uid':str(ctx['stage2_resolution_uid']),
+      'stage2_canonical_name':str(ctx['stage2_canonical_name']),'page_scope':list(page_scope),
+      'excluded_page_scope':list(excluded),'raw_sources':list(raw_sources),
+      'raw_source_bindings':bindings,'page_authority_source_file':page_authority,
+      'local_authority_prefixes':list(ctx.get('local_authority_prefixes') or []),
+      'local_authority_path_prefixes':list(ctx.get('local_authority_path_prefixes') or []),
+      'governance_uid':governance_uid,'display_version':display_version,
+    }
+
+def resolve_execution_context()->dict:
+    ctx=resolve_execution_context_docs(_bootstrap_load(STATE),_bootstrap_load(SCOPE),_bootstrap_load(REGISTRY),_bootstrap_load(CURRENT_ENTRY))
+    auth_path=ROOT/ctx['authorization_ref']
+    if not auth_path.is_file():
+        raise RuntimeError('AUTHORIZATION_MISSING')
+    auth=_bootstrap_load(auth_path)
+    if auth.get('authorization_uid')!=ctx['authorization_uid'] or auth.get('status')!='APPROVED_FOR_EXACT_SCOPE' or auth.get('single_use') is not True:
+        raise RuntimeError('AUTHORIZATION_INVALID')
+    return ctx
+
+def bind_execution_context(ctx:dict)->None:
+    global OLD,NEW,AUTH,CURRENT_UID,DISPLAY_VERSION,RUN_UID,PAGE,BRANCH,AUTHORIZATION_UID,ATTEMPT_UID
+    global STAGE1_WORK_UNIT_UID,STAGE2_WORK_UNIT_UID,STAGE2_RESOLUTION_UID,STAGE2_CANONICAL_NAME
+    global EXCLUDED_UNITS,RAW_NAMES,RAW_SOURCE_BINDINGS,PAGE_AUTHORITY_SOURCE_FILE,LOCAL_AUTHORITY_PREFIXES,LOCAL_AUTHORITY_PATH_PREFIXES
+    OLD=ROOT/ctx['predecessor_run_root']; NEW=ROOT/ctx['run_root']; AUTH=ROOT/ctx['authorization_ref']
+    CURRENT_UID=ctx['governance_uid']; DISPLAY_VERSION=ctx['display_version']; RUN_UID=ctx['run_uid']; PAGE=ctx['page_scope'][0]
+    BRANCH=ctx['branch']; AUTHORIZATION_UID=ctx['authorization_uid']; ATTEMPT_UID=ctx['attempt_uid']
+    STAGE1_WORK_UNIT_UID=ctx['stage1_work_unit_uid']; STAGE2_WORK_UNIT_UID=ctx['stage2_work_unit_uid']
+    STAGE2_RESOLUTION_UID=ctx['stage2_resolution_uid']; STAGE2_CANONICAL_NAME=ctx['stage2_canonical_name']
+    EXCLUDED_UNITS=list(ctx['excluded_page_scope']); RAW_NAMES=[x['filename'] for x in ctx['raw_sources']]
+    RAW_SOURCE_BINDINGS=dict(ctx['raw_source_bindings']); PAGE_AUTHORITY_SOURCE_FILE=ctx['page_authority_source_file']
+    LOCAL_AUTHORITY_PREFIXES=list(ctx['local_authority_prefixes']); LOCAL_AUTHORITY_PATH_PREFIXES=list(ctx['local_authority_path_prefixes'])
+
+def identity_self_test()->None:
+    source_before=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    def docs(n:int,gid:str):
+        run=f'FRESH-RUN-{n}'
+        prev=f'FRESH-RUN-{n-1}'
+        auth=f'AUTH-SYNTH-{n}'
+        ver='v'+str(n//100)+'.'+str((n//10)%10)+'.'+str(n%10)
+        ctx={'status':'READY_FOR_REPLAY','run_uid':run,'run_root':f'00_SOURCE_INTAKE/fresh_run_{n}',
+             'predecessor_run_uid':prev,'predecessor_run_root':f'00_SOURCE_INTAKE/fresh_run_{n-1}',
+             'branch':'synthetic','authorization_uid':auth,'authorization_ref':f'governance/test/spec_change_authorizations/{auth}.yaml',
+             'attempt_uid':f'ATTEMPT-SYNTH-{n}','stage1_work_unit_uid':f'WU-S1-SYNTH-{n}',
+             'stage2_work_unit_uid':f'WU-S2-SYNTH-{n}','stage2_resolution_uid':f'WUR-S2-SYNTH-{n}',
+             'stage2_canonical_name':'SYNTHETIC_STAGE2_REPLAY','page_scope':['SYNTH-PAGE'],
+             'excluded_page_scope':['SYNTH-EXCLUDED'],'page_authority_source_file':'PAGE.yaml',
+             'raw_sources':[{'filename':'PAGE.yaml','source_uid':'SRC-PAGE','source_role':'PAGE_SOURCE_INPUT','source_domain_scope':'PAGE_CONSTRUCTION'}]}
+        state={'specification_uid':gid,'current_primary_task_layer':'PRODUCT_STAGE_EXECUTION','current_primary_task_authorization_uid':auth,CONTEXT_KEY:ctx}
+        scope={'governance_uid':gid,'included_units':['SYNTH-PAGE'],'excluded_units':['SYNTH-EXCLUDED']}
+        registry={'active_specification':{'governance_uid':gid,'display_version':ver}}
+        current={'active_governance_uid':gid,'display_version':ver}
+        return state,scope,registry,current
+    a=resolve_execution_context_docs(*docs(901,'GOV-SYNTH-A'))
+    b=resolve_execution_context_docs(*docs(902,'GOV-SYNTH-B'))
+    source_after=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    if a['run_uid']==b['run_uid'] or a['governance_uid']==b['governance_uid'] or source_before!=source_after:
+        raise RuntimeError('DYNAMIC_EXECUTION_IDENTITY_SELF_TEST_FAILED')
+    print(json.dumps({'result':'PASS','contexts':[a['run_uid'],b['run_uid']],
+      'governance_uids':[a['governance_uid'],b['governance_uid']],
+      'executable_sha256':source_before,'executable_bytes_equal':True},ensure_ascii=False,indent=2))
+
 
 def load(p:Path):
     x=yaml.safe_load(p.read_text(encoding='utf-8'))
@@ -104,12 +252,12 @@ def extract_external_refs(doc:dict)->list[str]:
         elif isinstance(x,list):
             for v in x: walk(v,key)
     walk(doc)
-    local_prefixes=('CORE_PAGE_VISUAL_AUTHORITY_FINAL','CORE01_CURRENT_CANONICAL_VISUAL_OWNER')
+    local_prefixes=tuple(LOCAL_AUTHORITY_PREFIXES)
     out=[]
     for x in sorted(refs):
         if not x or x.startswith(local_prefixes):
             continue
-        if x.startswith('authority/pages/workspace/CORE-01'):
+        if any(x.startswith(p) for p in LOCAL_AUTHORITY_PATH_PREFIXES):
             continue
         out.append(x)
     return out
@@ -163,7 +311,7 @@ def cleanup_old():
     NEW.mkdir(parents=True,exist_ok=True)
 
 def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
-    raw_root=NEW/'00_SOURCE_INTAKE/RAW_SOURCE/CORE-01'
+    raw_root=NEW/'00_SOURCE_INTAKE/RAW_SOURCE'/PAGE
     raw_docs={}
     manifest_records=[]
     for name,b in raw_bytes.items():
@@ -173,21 +321,22 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
         doc=yaml.safe_load(b.decode('utf-8'))
         if not isinstance(doc,dict):
             raise RuntimeError(f'RAW_MAPPING_REQUIRED:{name}')
-        source_uid='SRC-CORE01-PAGE' if name.startswith('CORE_PAGE_') else 'SRC-CORE01-VISUAL'
+        binding=RAW_SOURCE_BINDINGS[name]
+        source_uid=binding['source_uid']
         raw_docs[source_uid]=doc
         manifest_records.append({
           'source_uid':source_uid,
           'page_uid':PAGE,
-          'source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT' if source_uid.endswith('PAGE') else 'VISUAL_SOURCE_INPUT',
-          'source_domain_scope':'MIXED_PAGE_VISUAL' if source_uid.endswith('PAGE') else 'VISUAL_CONSTRUCTION',
-          'source_path':f'git:{source_head}:00_SOURCE_INTAKE/fresh_run_007/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/{name}',
+          'source_role':binding['source_role'],
+          'source_domain_scope':binding['source_domain_scope'],
+          'source_path':f"git:{source_head}:{OLD.relative_to(ROOT).as_posix()}/00_SOURCE_INTAKE/RAW_SOURCE/{PAGE}/{name}",
           'target_path':p.relative_to(NEW).as_posix(),
           'source_git_blob_sha':git_blob_sha_bytes(b),
           'target_git_blob_sha':git_blob_sha_bytes(b),
           'content_mutated':False,
         })
     dump(NEW/'00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml',{
-      'artifact_uid':'RAW-CAPTURE-FRESH-RUN-008-CORE01',
+      'artifact_uid':f'RAW-CAPTURE-{safe_uid(RUN_UID)}-{safe_uid(PAGE)}',
       'artifact_type':'RAW_SOURCE_REFERENCE_MANIFEST',
       'status':'CURRENT_RAW_SOURCE_CAPTURE',
       'capture_root':'00_SOURCE_INTAKE/RAW_SOURCE',
@@ -325,7 +474,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
 
     def blueprint(kind,domain,inputs,path,uid):
         d={
-          'blueprint_uid':uid,'page_uid':PAGE,'stage_uid':'STAGE-01','governance_overlay':'v2.2.9',
+          'blueprint_uid':uid,'page_uid':PAGE,'stage_uid':'STAGE-01','governance_overlay':DISPLAY_VERSION,
           'blueprint_type':kind,'planning_domain':domain,'target_path':path,
           'input_artifacts':[{'artifact_uid':a['artifact_uid'],'content_hash':a['content_hash']} for a in inputs],
           'required_responsibility_uids':[a['responsibility_uid'] for a in inputs],
@@ -335,10 +484,10 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
         d['blueprint_hash']=content_hash(d)
         dump(NEW/path,d)
         return d
-    page_bp=blueprint('PAGE_BASE_BLUEPRINT','PAGE_CONSTRUCTION',page_artifacts,f'02_BASE_BLUEPRINT/{PAGE}/PAGE_BASE_BLUEPRINT.yaml',f'BP-{PAGE}-PAGE-FRESH-008')
-    visual_bp=blueprint('VISUAL_BASE_BLUEPRINT','VISUAL_CONSTRUCTION',visual_artifacts,f'02_BASE_BLUEPRINT/{PAGE}/VISUAL_BASE_BLUEPRINT.yaml',f'BP-{PAGE}-VISUAL-FRESH-008')
+    page_bp=blueprint('PAGE_BASE_BLUEPRINT','PAGE_CONSTRUCTION',page_artifacts,f'02_BASE_BLUEPRINT/{PAGE}/PAGE_BASE_BLUEPRINT.yaml',f'BP-{PAGE}-PAGE-{safe_uid(RUN_UID)}')
+    visual_bp=blueprint('VISUAL_BASE_BLUEPRINT','VISUAL_CONSTRUCTION',visual_artifacts,f'02_BASE_BLUEPRINT/{PAGE}/VISUAL_BASE_BLUEPRINT.yaml',f'BP-{PAGE}-VISUAL-{safe_uid(RUN_UID)}')
     binding={
-      'binding_uid':f'BIND-{PAGE}-FRESH-008','page_uid':PAGE,'stage_uid':'STAGE-01','governance_overlay':'v2.2.9',
+      'binding_uid':f'BIND-{PAGE}-{safe_uid(RUN_UID)}','page_uid':PAGE,'stage_uid':'STAGE-01','governance_overlay':DISPLAY_VERSION,
       'target_path':f'03_BLUEPRINT_BINDING/{PAGE}/BLUEPRINT_BINDING_MANIFEST.yaml',
       'page_blueprint':{'blueprint_uid':page_bp['blueprint_uid'],'blueprint_hash':page_bp['blueprint_hash']},
       'visual_blueprint':{'blueprint_uid':visual_bp['blueprint_uid'],'blueprint_hash':visual_bp['blueprint_hash']},
@@ -388,10 +537,10 @@ def bind_common_stage_work_unit(stage_uid:str, canonical_owner:str, dependencies
         raise RuntimeError('COMMON_STAGE_ADAPTER_MISSING:'+stage_uid)
     state=load(STATE)
     state['current_primary_task_layer']='PRODUCT_STAGE_EXECUTION'
-    state['current_primary_task_authorization_uid']='USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5'
+    state['current_primary_task_authorization_uid']=AUTHORIZATION_UID
     state['active_work_unit']={
-      'work_unit_uid':f'WU-{stage_uid}-CORE01-FRESH-REPLAY-R5',
-      'canonical_name':f'CORE01_{stage_uid}_FRESH_REPLAY_R5',
+      'work_unit_uid':STAGE1_WORK_UNIT_UID if stage_uid=='STAGE-01' else STAGE2_WORK_UNIT_UID,
+      'canonical_name':f'{PAGE}_{stage_uid}_FRESH_REPLAY',
       'primary_task_layer':'PRODUCT_STAGE_EXECUTION',
       'stage_uid':stage_uid,
       'semantic_capability':stage.get('semantic_capability') or stage.get('name'),
@@ -402,7 +551,7 @@ def bind_common_stage_work_unit(stage_uid:str, canonical_owner:str, dependencies
       'required_outputs':list(stage.get('outputs') or []),
       'operation_bindings':{
         str(op):{
-          'executor_owner':'.github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py',
+          'executor_owner':RUNNER_OWNER,
           'result_owner':canonical_owner,
         } for op in (stage.get('operations') or [])
       },
@@ -413,15 +562,15 @@ def bind_common_stage_work_unit(stage_uid:str, canonical_owner:str, dependencies
         } for dim in (ad.get('scanner_dimensions') or [])
       },
       'product_blocker_credit':0,
-      'out_of_scope':['ASSET-01','STAGE-03','WEBSITE_CONSTRUCTION','DEPLOYMENT'],
+      'out_of_scope':[*EXCLUDED_UNITS,'STAGE-03','WEBSITE_CONSTRUCTION','DEPLOYMENT'],
     }
     state['resume_control']={
-      'current_resume_point':f'{stage_uid}_CORE01_R5_COMMON_ENGINE_BOUND',
+      'current_resume_point':f'{stage_uid}_{PAGE}_FRESH_REPLAY_COMMON_ENGINE_BOUND',
       'current_work_unit_uid':state['active_work_unit']['work_unit_uid'],
       'current_owner':canonical_owner,
       'historical_stage2_results_are_current_state':False,
       'stage2_execution_requires_fresh_entry_resolution':stage_uid=='STAGE-01',
-      'exact_next_action':f'EXECUTE_{stage_uid}_CORE01_FRESH_R5',
+      'exact_next_action':f'EXECUTE_{stage_uid}_{PAGE}_FRESH_REPLAY',
     }
     dump(STATE,state)
     if run_admission:
@@ -439,7 +588,7 @@ def reset_current_state_for_stage1():
     state['specification_uid']=CURRENT_UID
     ex=state.setdefault('execution',{})
     ex.update({
-      'branch':'rebuild-v2.1.1','run_uid':RUN_UID,'scope_mode':'EXACT_PAGE_SCOPE_ONLY','target_pages':[PAGE],
+      'branch':BRANCH,'run_uid':RUN_UID,'scope_mode':'EXACT_PAGE_SCOPE_ONLY','target_pages':[PAGE],
       'current_stage':'STAGE-01-CLOSED','stage1':{PAGE:'PASS'},
       'stage2':{'result':'NOT_EXECUTED','stage_entry_gate':'PENDING','stage_exit_allowed':False,'tested_page_uids':[],'remaining_page_uids':[],'stage_scope_complete':False},
       'website_construction_allowed':False,'deployment_allowed':False,
@@ -449,7 +598,7 @@ def reset_current_state_for_stage1():
     profile_state=state.setdefault('selected_execution_profile_state',{})
     profile_state['active_attempt_state_key']=None
     state['current_primary_task_layer']='PRODUCT_STAGE_EXECUTION'
-    state['current_primary_task_authorization_uid']='USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5'
+    state['current_primary_task_authorization_uid']=AUTHORIZATION_UID
     state['current_primary_task_product_stage_credit']=0
     state.pop('previous_work_unit_resolution_gate_stage03',None)
     state.pop('suspended_stage03_work_unit',None)
@@ -480,7 +629,7 @@ def reset_current_state_for_stage1():
     scope={
       'schema_version':1,'artifact_type':'EXECUTION_SCOPE_MANIFEST','normative_authority':False,
       'governance_uid':CURRENT_UID,'owning_capability':'SOURCE_INTAKE_AND_BASE_BLUEPRINT',
-      'scope_kind':'EXACT_SINGLE_PAGE_FRESH_REPLAY','included_units':[PAGE],'excluded_units':['ASSET-01'],
+      'scope_kind':'EXACT_SINGLE_PAGE_FRESH_REPLAY','included_units':[PAGE],'excluded_units':list(EXCLUDED_UNITS),
       'remaining_units':[],'stage_required_units':[PAGE],
       'scope_selection_authority':'EXPLICIT_USER_DIRECTIVE_AND_FRESH_RAW_SOURCE_CAPTURE',
       'dependency_closure_refs':['governance/test/ACTIVE_STATE.yaml',f'{NEW.relative_to(ROOT).as_posix()}/CURRENT_RUN_MANIFEST.yaml'],
@@ -494,7 +643,7 @@ def reset_current_state_for_stage1():
 def stage2_structural_materialize(stage1_meta, initial):
     out=NEW/'04_PAGE_FUNCTIONAL_CONTRACT'
     page_dir=out/PAGE
-    raw=load(NEW/'00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml')
+    raw=load(NEW/'00_SOURCE_INTAKE/RAW_SOURCE'/PAGE/PAGE_AUTHORITY_SOURCE_FILE)
     bp=load(NEW/f'02_BASE_BLUEPRINT/{PAGE}/PAGE_BASE_BLUEPRINT.yaml')
     reg=raw.get('registries') or {}
     def index(xs,key): return {x.get(key):x for x in (xs or []) if isinstance(x,dict) and x.get(key)}
@@ -725,7 +874,7 @@ def materialize_stage2_projection(final):
       'artifact_root_present':True,'tested_page_uids':[PAGE],'remaining_page_uids':[],
       'stage_scope_complete':True,'current_scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
     }
-    attempt_uid='STAGE02-FRESH-20260919-CORE01-005'
+    attempt_uid=ATTEMPT_UID
     state['stage02_active_attempt']={
       'attempt_uid':attempt_uid,'run_uid':RUN_UID,'frozen_governance_uid':CURRENT_UID,
       'source_execution_sha':git_head(),'target_pages':[PAGE],
@@ -743,11 +892,11 @@ def materialize_stage2_projection(final):
     ex['stage2']['prior_results_authoritative_for_current_governance']=False
     ex['stage2']['revalidation_required_under_current_governance']=True
     state['last_work_unit_resolution_gate']={
-      'resolution_uid':'WUR-STAGE02-CORE01-COMPLETENESS-20260919-005','normative_authority':False,
+      'resolution_uid':STAGE2_RESOLUTION_UID,'normative_authority':False,
       'result':'PASS_SINGLE_LEGAL_SUCCESSOR','requested_primary_task_layer':'PRODUCT_STAGE_EXECUTION',
-      'resolved_work_unit_uid':'WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5',
-      'authorization_uid':'USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5',
-      'page_scope':[PAGE],'excluded_page_scope':['ASSET-01'],'source_problem_denominator':len(problems),
+      'resolved_work_unit_uid':STAGE2_WORK_UNIT_UID,
+      'authorization_uid':AUTHORIZATION_UID,
+      'page_scope':[PAGE],'excluded_page_scope':list(EXCLUDED_UNITS),'source_problem_denominator':len(problems),
       'source_closure_blocker_denominator':int(final.get('closure_blocker_total') or 0),
     }
     stage_profile=load(LIFECYCLE)
@@ -755,8 +904,8 @@ def materialize_stage2_projection(final):
     stage2_def=next(x for x in stage_profile.get('stages',[]) if x.get('stage_uid')=='STAGE-02')
     stage2_ad=(stage_adapters.get('stages') or {})['STAGE-02']
     state['active_work_unit']={
-      'work_unit_uid':'WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5',
-      'canonical_name':'CORE01_STAGE02_20260911_PLANNING_COMPLETENESS_REMEDIATION_AND_FRESH_REPLAY',
+      'work_unit_uid':STAGE2_WORK_UNIT_UID,
+      'canonical_name':STAGE2_CANONICAL_NAME,
       'stage_uid':'STAGE-02',
       'semantic_capability':stage2_def.get('semantic_capability') or stage2_def.get('name'),
       'primary_task_layer':'PRODUCT_STAGE_EXECUTION','scope':[PAGE],
@@ -777,9 +926,9 @@ def materialize_stage2_projection(final):
         str(dim):{'scanner_owner':'governance/ci/run_current_stage2_actual_test.py','result_owner':'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'}
         for dim in (stage2_ad.get('scanner_dimensions') or [])
       },
-      'product_blocker_credit':0,'out_of_scope':['ASSET-01','STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT'],
+      'product_blocker_credit':0,'out_of_scope':[*EXCLUDED_UNITS,'STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT'],
     }
-    state['status']='ACTIVE_STAGE2_TESTED_BLOCKED_FRESH_CORE01' if problems else 'ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE_R5'
+    state['status']='ACTIVE_STAGE2_TESTED_BLOCKED_FRESH_CORE01' if problems else 'ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE'
     state['next_action']='BUILD_FRESH_CORE01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS' if problems else 'CLOSE_STAGE02'
     state['resume_control']={
       'current_resume_point':'FRESH_CORE01_STAGE2_DESIGN_REMEDIATION_REQUIRED' if problems else 'FRESH_CORE01_STAGE2_READY_TO_CLOSE',
@@ -800,16 +949,31 @@ def materialize_stage2_projection(final):
     dump(SCOPE,scope)
 
 def main():
+    if '--identity-self-test' in sys.argv:
+        identity_self_test()
+        return
+    ctx=resolve_execution_context()
+    if '--print-context-json' in sys.argv:
+        print(json.dumps(ctx,ensure_ascii=False,indent=2))
+        return
+    if '--print-context-github-output' in sys.argv:
+        print('run_uid='+ctx['run_uid'])
+        print('run_root='+ctx['run_root'])
+        print('predecessor_run_root='+ctx['predecessor_run_root'])
+        print('authorization_uid='+ctx['authorization_uid'])
+        print('artifact_name='+re.sub(r'[^A-Za-z0-9_.-]+','-',ctx['run_uid']).strip('-').lower())
+        return
+    bind_execution_context(ctx)
     auth=load(AUTH)
-    if auth.get('status')!='APPROVED_FOR_EXACT_SCOPE' or auth.get('single_use') is not True:
+    if auth.get('authorization_uid')!=AUTHORIZATION_UID or auth.get('status')!='APPROVED_FOR_EXACT_SCOPE' or auth.get('single_use') is not True:
         raise RuntimeError('AUTHORIZATION_INVALID')
-    reg=load(ROOT/'governance/specifications/REGISTRY.yaml')
+    reg=load(REGISTRY)
     if (reg.get('active_specification') or {}).get('governance_uid')!=CURRENT_UID:
         raise RuntimeError('CURRENT_GOVERNANCE_DRIFT')
     source_head=git_head()
     raw_bytes={}
     for name in RAW_NAMES:
-        p=OLD/'00_SOURCE_INTAKE/RAW_SOURCE/CORE-01'/name
+        p=OLD/'00_SOURCE_INTAKE/RAW_SOURCE'/PAGE/name
         if not p.is_file():
             raise RuntimeError('CORE_RAW_SOURCE_MISSING:'+name)
         raw_bytes[name]=p.read_bytes()
@@ -856,8 +1020,9 @@ def main():
     final=json.loads(STAGE2_TEST.read_text(encoding='utf-8'))
     if final.get('target_pages')!=[PAGE] or final.get('remaining_pages')!=[]:
         raise RuntimeError('FRESH_STAGE2_SCOPE_DRIFT')
-    if (NEW/'04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01').exists():
-        raise RuntimeError('ASSET01_MATERIALIZATION_FORBIDDEN')
+    for excluded_uid in EXCLUDED_UNITS:
+        if (NEW/'04_PAGE_FUNCTIONAL_CONTRACT'/excluded_uid).exists():
+            raise RuntimeError('EXCLUDED_UNIT_MATERIALIZATION_FORBIDDEN:'+excluded_uid)
     materialize_stage2_projection(final)
 
     print(json.dumps({

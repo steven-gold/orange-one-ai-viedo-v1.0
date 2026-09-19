@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_DYNAMIC_EXECUTION_IDENTITY_MAINTENANCE
-next_action: MIGRATE_FRESH_REPLAY_EXECUTABLES_TO_DYNAMIC_CONTEXT
+status: ACTIVE_DYNAMIC_EXECUTION_IDENTITY_MAINTENANCE_REVALIDATION_REQUIRED
+next_action: VALIDATE_DYNAMIC_EXECUTION_IDENTITY_MIGRATION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: DYNAMIC_EXECUTION_IDENTITY_MAINTENANCE_READY
+  current_resume_point: DYNAMIC_EXECUTION_IDENTITY_MIGRATION_PERSISTED_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-TEST-DYNAMIC-EXECUTION-IDENTITY-001
-  current_owner: .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
+  current_owner: .github/governance-maintenance/run_fresh_stage_replay.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: MIGRATE_FRESH_REPLAY_EXECUTABLES_TO_DYNAMIC_CONTEXT
+  exact_next_action: VALIDATE_DYNAMIC_EXECUTION_IDENTITY_MIGRATION
   parent_product_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
   parent_product_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03
   product_stage3_execution_started: false
@@ -1072,8 +1072,8 @@ active_work_unit:
   work_unit_uid: WU-TEST-DYNAMIC-EXECUTION-IDENTITY-001
   canonical_name: DYNAMIC_EXECUTION_IDENTITY_AND_STABLE_REPLAY_EXECUTABLE_MIGRATION
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  canonical_owner: .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
-  current_status: READY_FOR_IMPLEMENTATION
+  canonical_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+  current_status: IMPLEMENTATION_MIGRATED_REVALIDATION_REQUIRED
   scope:
   - STABLE_REPLAY_WORKFLOW_OWNER
   - STABLE_REPLAY_RUNNER_OWNER
@@ -1126,6 +1126,16 @@ active_work_unit:
   - EXACT_HEAD_BRANCH_GUARD_PASS
   - PRODUCT_STAGE_CREDIT_ZERO
   product_stage_credit: 0
+  implementation_evidence:
+    migration_mode: ATOMIC_OWNER_REFERENCE_MIGRATION
+    source_owner_disposition: RETIRED_FROM_CURRENT_TREE_PRESERVED_IN_GIT_HISTORY
+    stable_workflow_owner: .github/workflows/fresh-core-stage-replay.yml
+    stable_runner_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+    stable_finalizer_owner: .github/governance-maintenance/finalize_fresh_stage_replay.py
+    active_consumer_guard_owner: governance/ci/validate_active_consumer_reference_integrity.py
+    mother_normative_change: false
+    product_stage_credit: 0
+    exact_head_revalidation_required: true
 last_work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-COMPLETENESS-20260919-005
   normative_authority: false

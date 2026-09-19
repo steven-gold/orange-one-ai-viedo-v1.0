@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
-import copy, hashlib, json, os, re
+import copy, hashlib, importlib.util, json, os, re, sys
 import yaml
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -11,10 +11,15 @@ HISTORY=ROOT/'governance/test/SELECTED_PROFILE_HISTORY_BINDING.yaml'
 CANDIDATES=ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
 FINDINGS=ROOT/'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
 EVIDENCE=ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
-CURRENT_UID='GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING'
-RUN_UID='FRESH-RUN-008'
-PAGE='CORE-01'
-ATTEMPT_UID='STAGE02-FRESH-20260919-CORE01-005'
+RUNNER=ROOT/'.github/governance-maintenance/run_fresh_stage_replay.py'
+
+def load_runner():
+    spec=importlib.util.spec_from_file_location('acpos_dynamic_fresh_replay_runner',RUNNER)
+    if spec is None or spec.loader is None:
+        raise RuntimeError('DYNAMIC_REPLAY_RUNNER_IMPORT_FAILED')
+    module=importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 def load_yaml(p:Path):
     obj=yaml.safe_load(p.read_text(encoding='utf-8'))
@@ -35,6 +40,19 @@ def need_env(name:str)->str:
     return v
 
 def main():
+    runner=load_runner()
+    if '--identity-self-test' in sys.argv:
+        runner.identity_self_test()
+        print(json.dumps({'result':'PASS','finalizer_dynamic_context_import':True},indent=2))
+        return
+    ctx=runner.resolve_execution_context()
+    CURRENT_UID=ctx['governance_uid']
+    DISPLAY_VERSION=ctx['display_version']
+    RUN_UID=ctx['run_uid']
+    PAGE=ctx['page_scope'][0]
+    ATTEMPT_UID=ctx['attempt_uid']
+    RUN_ROOT=ctx['run_root']
+    EXCLUDED_UNITS=list(ctx['excluded_page_scope'])
     run_id=need_env('FRESH_REPLAY_RUN_ID')
     source_sha=need_env('FRESH_REPLAY_SOURCE_SHA')
     artifact_id=need_env('FRESH_EVIDENCE_ARTIFACT_ID')
@@ -126,9 +144,9 @@ def main():
       PAGE:{
         'expected_result':'PASS',
         'artifacts':[
-          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_008/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml','creation_governance_overlay':'v2.2.9'},
-          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_008/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml','creation_governance_overlay':'v2.2.9'},
-          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_008/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml','creation_governance_overlay':'v2.2.9'},
+          {'artifact_ref':f'{RUN_ROOT}/02_BASE_BLUEPRINT/{PAGE}/PAGE_BASE_BLUEPRINT.yaml','creation_governance_overlay':DISPLAY_VERSION},
+          {'artifact_ref':f'{RUN_ROOT}/02_BASE_BLUEPRINT/{PAGE}/VISUAL_BASE_BLUEPRINT.yaml','creation_governance_overlay':DISPLAY_VERSION},
+          {'artifact_ref':f'{RUN_ROOT}/03_BLUEPRINT_BINDING/{PAGE}/BLUEPRINT_BINDING_MANIFEST.yaml','creation_governance_overlay':DISPLAY_VERSION},
         ],
         'profile_step_uid':'STAGE-01',
       }
@@ -136,7 +154,7 @@ def main():
     history['current_scope_binding']={
       'run_uid':RUN_UID,
       'page_scope':[PAGE],
-      'excluded_page_scope':['ASSET-01'],
+      'excluded_page_scope':EXCLUDED_UNITS,
       'prior_product_artifact_reuse':False,
       'binding_reason':'FRESH_STAGE01_REPLAY_CURRENT_SCOPE',
     }
@@ -179,7 +197,7 @@ def main():
       'current_governance_uid':CURRENT_UID,
       'closure_credit_under_current_governance':True,
       'execution_scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
-      'canonical_product_contract_owner_ref':'00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml',
+      'canonical_product_contract_owner_ref':f'{RUN_ROOT}/04_PAGE_FUNCTIONAL_CONTRACT/{PAGE}/FUNCTIONAL_CHAIN_SPEC.yaml',
     }
     dump_yaml(CANDIDATES,candidates)
 

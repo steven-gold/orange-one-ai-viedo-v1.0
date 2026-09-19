@@ -1,0 +1,98 @@
+name: Fresh Stage Replay
+
+on:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/fresh-core-stage-replay.yml'
+      - '.github/governance-maintenance/run_fresh_stage_replay.py'
+      - '.github/governance-maintenance/finalize_fresh_stage_replay.py'
+      - 'governance/ci/validate_active_consumer_reference_integrity.py'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Execution mode
+        required: true
+        default: validate-only
+        type: choice
+        options:
+          - validate-only
+          - execute
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  dynamic-identity-integrity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Compile stable replay executable owners
+        run: |
+          python -m py_compile .github/governance-maintenance/run_fresh_stage_replay.py
+          python -m py_compile .github/governance-maintenance/finalize_fresh_stage_replay.py
+      - name: Prove two run and governance contexts require zero executable source change
+        run: |
+          python .github/governance-maintenance/run_fresh_stage_replay.py --identity-self-test
+          python .github/governance-maintenance/finalize_fresh_stage_replay.py --identity-self-test
+      - name: Enforce active consumer dynamic identity integrity
+        run: python governance/ci/validate_active_consumer_reference_integrity.py
+
+  execute-fresh-replay:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'execute' }}
+    needs: dynamic-identity-integrity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Resolve frozen Current execution context
+        id: context
+        shell: bash
+        run: python .github/governance-maintenance/run_fresh_stage_replay.py --print-context-github-output >> "$GITHUB_OUTPUT"
+      - name: Execute fresh replay from persisted Current context
+        run: python .github/governance-maintenance/run_fresh_stage_replay.py
+      - name: Upload fresh replay evidence
+        id: evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.context.outputs.artifact_name }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            ${{ steps.context.outputs.run_root }}
+            .github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json
+            governance/test/stage02
+      - name: Bind exact workflow and artifact provenance
+        env:
+          FRESH_REPLAY_RUN_ID: "${{ github.run_id }}"
+          FRESH_REPLAY_SOURCE_SHA: "${{ github.sha }}"
+          FRESH_EVIDENCE_ARTIFACT_ID: "${{ steps.evidence.outputs.artifact-id }}"
+          FRESH_EVIDENCE_ARTIFACT_DIGEST: "${{ steps.evidence.outputs.artifact-digest }}"
+        run: python .github/governance-maintenance/finalize_fresh_stage_replay.py
+      - name: Validate current-attempt projection before persistence
+        run: |
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_governance_portability.py
+          python governance/ci/validate_profile_history_binding.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+      - name: Persist fresh replay execution state
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'steven-gold'
+          git config user.email 'proorangeone@gmail.com'
+          git add -A
+          test -n "$(git diff --cached --name-only)" || { echo 'BLOCK: no fresh replay changes staged' >&2; exit 1; }
+          git commit -m "test(governance): persist dynamic fresh replay execution"             -m "Execution-Authorization: ${{ steps.context.outputs.authorization_uid }}"             -m "Run-UID: ${{ steps.context.outputs.run_uid }}"
+          git push origin HEAD:rebuild-v2.1.1
