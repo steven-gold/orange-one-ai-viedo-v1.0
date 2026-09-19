@@ -1,0 +1,34 @@
+schema_version: 2
+artifact_type: TEST_VALIDATION_MAINTENANCE_AUTHORIZATION_RECEIPT
+authorization_uid: USR-DIRECTIVE-20260920-ASSET-FRESH-REPLAY-HISTORY-CLEANUP-R1
+normative_authority: false
+authority_source: EXPLICIT_USER_CONTINUATION_OF_ASSET01_CLEAN_FRESH_REPLAY
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+baseline_commit_sha: ff7ff5852e2dd4b0e2bb1c9e083e7af4d9d63c20
+baseline_tree_sha: c8f4641454ae7d346955bffb0d9997e63311fe94
+directive_summary: >-
+  Continue the next legal ASSET-01 clean fresh replay step. Repair the blocking shared replay-cleanup
+  implementation defect that would delete legal Stage-02 historical evidence, without changing Product Authority,
+  Mother policy, or product blocker credit.
+exact_scope:
+  allowed:
+  - MODIFY_EXISTING_FRESH_REPLAY_RUNNER_CLEANUP_BOUNDARY
+  - PRESERVE_GOVERNANCE_TEST_HISTORY_STAGE02
+  - RESET_CURRENT_STAGE02_REPLACEABLE_TEST_OUTPUTS
+  - REBUILD_ONLY_TARGET_CURRENT_RUN_ROOT
+  - ADD_HISTORY_RETENTION_NEGATIVE_REGRESSION
+  - EXACT_HEAD_VALIDATION
+  forbidden:
+  - PRODUCT_AUTHORITY_CHANGE
+  - PRODUCT_BLOCKER_CREDIT
+  - MOTHER_NORMATIVE_CHANGE
+  - STAGE01_PRODUCT_EXECUTION
+  - STAGE02_PRODUCT_EXECUTION
+  - STAGE03_EXECUTION
+  - WEBSITE_IMPLEMENTATION
+  - DEPLOYMENT
+product_stage_credit: 0
