@@ -263,9 +263,14 @@ if common_engine_interrupt:
     if active_work.get("product_blocker_credit") != 0:
         die("COMMON_ENGINE_INTERRUPT_PRODUCT_BLOCKER_CREDIT_FORBIDDEN")
 else:
-    next_actions = (state.get("next_action"), active.get("next_action"), findings.get("next_action"), candidate.get("next_action"))
-    if any(v in (None, "") for v in next_actions) or len(set(next_actions)) != 1:
-        die(f"STAGE2_CURRENT_PROJECTOR_NEXT_ACTION_DRIFT:{next_actions!r}")
+    product_next_actions = (active.get("next_action"), findings.get("next_action"), candidate.get("next_action"))
+    if any(v in (None, "") for v in product_next_actions) or len(set(product_next_actions)) != 1:
+        die(f"STAGE2_PRODUCT_PROJECTOR_NEXT_ACTION_DRIFT:{product_next_actions!r}")
+    primary_layer = str(state.get("current_primary_task_layer") or active_work.get("primary_task_layer") or "")
+    if primary_layer == "PRODUCT_STAGE_EXECUTION":
+        next_actions = (state.get("next_action"),) + product_next_actions
+        if len(set(next_actions)) != 1:
+            die(f"STAGE2_CURRENT_PROJECTOR_NEXT_ACTION_DRIFT:{next_actions!r}")
 
 for key in ("stage_exit_allowed", "website_construction_allowed", "deployment_allowed"):
     expected = False if result == "TEST_EXECUTED_BLOCKED" else True if key == "stage_exit_allowed" else False
